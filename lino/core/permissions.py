@@ -28,15 +28,14 @@ class Permittable(object):
     required_roles = set()
     """A set of user roles required to view this actor or action.
 
-    Each element if the set must be either a subclass of `UserRole` or
-    a tuple thereof.
+    Each element of the set must be either a subclass of
+    :class:`lino.core.roles.UserRole` or a tuple thereof.  An empty
+    set means that the actor is visible to everybody, including
+    anonymous users.
 
-    The default value on actors is a set with a single element
-    :class:`SiteUser`, which means that the actor is available only
-    for authenticated users.
-
-    An empty set means that the actor is visible to everybody,
-    including anonymous users.
+    The default value on *actors* is a set with a single element
+    :class:`SiteUser <lino.core.roles.SiteUser>`, which means that the
+    actor is available only for authenticated users.
 
     Note that this is being ignored when
     :attr:`user_profiles_module

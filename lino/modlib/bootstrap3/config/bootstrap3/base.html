@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html language="{{requested_language}}"><head>
 <meta charset="utf-8"/>
-<title>{% block title %}{% endblock %}</title>
+<title>{% block title %}{{site.title or site.verbose_name}}{% endblock %}</title>
 <link rel="stylesheet" href="{{site.plugins.bootstrap3.build_lib_url('css','bootstrap.css')}}" type="text/css">
 <link rel="stylesheet" href="{{site.build_static_url('bootstrap.css')}}" type="text/css">
 </head><body>

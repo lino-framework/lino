@@ -25,9 +25,8 @@ day. Using plain English language. It is your diary.
 You probably know already one example of a developer blog, namely
 Luc's developer blog at :ref:`blog`.
 
-
-A developer blog *does not need* to be cool, popular, easy to follow,
-but it **should rather be**:
+A developer blog *does not need* to be cool, popular, easy to follow.
+It **should rather be**:
 
 - *complete* (e.g. not forget to mention any important code
   change you did) and 
@@ -60,14 +59,13 @@ perceive as important:
 - A developer should not be locked just because there is no internet
   connection available for a few hours.
 
-We don't know whether Luc's system is better than other systems, but
-we recommend to use so that we have a coherent system within the team.
-You may of course one day discover a better system, but we recommend
-that you give at least a serious try to our system.
+We don't know whether Luc's system is better than other systems.  You
+may of course one day discover a better system, but we recommend that
+you give at least a serious try to our system.
 
 As a new new team member, once you've got used to this system, this
-will be the easiest way for the other members to follow what you are
-doing, where you are stumbling, where you need help.
+can be the easiest way to ask for help in complex cases which need
+screenshots, links, sections etc.
 
 The developer blog is also part or our collaboration workflow: the
 :cmd:`fab ci` command knows where your developer blog is and generates
@@ -83,11 +81,6 @@ So don't mix up "a blog" with "a documentation tree".  You will
 probably maintain only one *developer blog*, but you will maintain
 many different *documentation trees*.  Not every documentation tree
 contains a blog.
-
-Luc's developer blog happens to be part of the Lino documentation tree
-because Luc is currently the main contributor of Lino. One day we
-might decide to split Luc's blog out of the Lino repo into a separate
-repository.
 
 You probably will soon have other documentation trees than the one
 which contains your blog. For example your first Lino application

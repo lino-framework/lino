@@ -1,3 +1,5 @@
+.. _lino.team:
+
 ==============
 Teamwork guide
 ==============
@@ -23,7 +25,9 @@ Development tools
 
    devblog
    projects
-   trac
+   pull_request
+   builddocs
+
 
 Member roles
 ============
@@ -35,4 +39,11 @@ Member roles
    lad
    sysadm
 
+Obsolete docs
+=============
 
+.. toctree::
+   :maxdepth: 1
+
+   graphviz
+   trac

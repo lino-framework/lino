@@ -413,6 +413,7 @@ class Restful(View):
             rows=[rh.store.row2dict(ar, elem, rh.store.list_fields)])
         return json_response(ar.response)
 
+NOT_FOUND = "%s has no row with primary key %r" 
 
 class ApiElement(View):
 
@@ -433,9 +434,6 @@ class ApiElement(View):
 
             ar.set_selected_pks(pk)
             elem = ar.selected_rows[0]
-            if elem is None:
-                raise http.Http404(
-                    "%s has no row with primary key %r" % (rpt, pk))
         else:
             ar = ba.request(request=request)
             elem = None
@@ -455,13 +453,14 @@ class ApiElement(View):
                 elif pk == '-99998':
                     elem = ar.create_instance()
                     datarec = elem2rec_empty(ar, ah, elem)
+                elif elem is None:
+                    datarec = dict(
+                        success=False, message=NOT_FOUND % (rpt, pk))
                 else:
                     datarec = ar.elem2rec_detailed(elem)
-
                 return json_response(datarec)
 
             after_show = ar.get_status(record_id=pk)
-
             tab = request.GET.get(constants.URL_PARAM_TAB, None)
             if tab is not None:
                 tab = int(tab)
@@ -483,7 +482,8 @@ class ApiElement(View):
             assert elem is None
             elem = ar.create_instance()
             ar.selected_rows = [elem]
-
+        elif elem is None:
+            raise http.Http404(NOT_FOUND % (rpt, pk))
         return settings.SITE.kernel.run_action(ar)
 
     def post(self, request, app_label=None, actor=None, pk=None):

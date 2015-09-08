@@ -367,7 +367,15 @@ class Actor(actions.Parametrizable, Permittable):
     """
 
     detail_html_template = 'bootstrap3/detail.html'
+    """The template to be used for rendering a row of this actor as a
+    detail html page.
+
+    """
     list_html_template = 'bootstrap3/table.html'
+    """The template to be used for rendering a collection of rows of this
+    actor as a table html page.
+
+    """
 
     get_welcome_messages = None
     get_row_classes = None

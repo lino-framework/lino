@@ -10,11 +10,16 @@ RichTextFields.  See also :attr:`tinymce_root`.  See
 
 from lino.api import ad
 
-TINYMCE3 = True
-"""Set this to False if you want Lino to use TinyMCE 4.1.10 instead of
-the currently used 3.4.8.  When you do this, windows containing a
-TextField don't open, and the JS console says "TypeError: sp is
-undefined". That's because we did not yet get Andrew Mayorov's
+
+#TINYMCE_VERSION = '3.4.8'
+TINYMCE_VERSION = '3.5.11'
+#TINYMCE_VERSION = '4.1.10'
+
+"""Which version of TinyMCE to use.
+
+With 4.1.10, windows containing a TextField don't open, and the JS
+console says "TypeError: sp is undefined". That's because we did not
+yet get Andrew Mayorov's
 :srcref:`lino/modlib/tinymce/static/byteforce/Ext.ux.TinyMCE.js` to
 work with TinyMCE 4.  It seems that either ControlManager or
 WindowManager no longer are functions in tinymce4.
@@ -86,11 +91,7 @@ class Plugin(ad.Plugin):
         "sub,sup,|,charmap,emotions,|,tablecontrols")
     """The third row of toolbar buttons when editing in own window."""
 
-    if TINYMCE3:
-        # media_name = 'tinymce-3.4.8'
-        media_name = 'tinymce-3.5.11'
-    else:
-        media_name = 'tinymce-4.1.10'
+    media_name = 'tinymce-' + TINYMCE_VERSION
     """Lino currently includes three versions of TinyMCE, but for
     production sites we still use the eldest version 3.4.8.
 
@@ -102,16 +103,11 @@ class Plugin(ad.Plugin):
 
     def get_used_libs(self, html=False):
         if html is not None:
-            if TINYMCE3:
-                # yield ("TinyMCE", '3.4.8', "http://www.tinymce.com/")
-                yield ("TinyMCE", '3.5.11', "http://www.tinymce.com/")
-            else:
-                yield ("TinyMCE", '4.1.10', "http://www.tinymce.com/")
-            # yield ("Ext.ux.TinyMCE", '0.8.4', "http://twitter.com/xorets")
+            yield ("TinyMCE", TINYMCE_VERSION, "http://www.tinymce.com/")
             yield ("Ext.ux.TinyMCE", '0.8.4', "http://www.byte-force.com")
 
     def get_js_includes(self, settings, language):
-        if TINYMCE3:
+        if TINYMCE_VERSION.startswith('3'):
             yield self.build_lib_url('tiny_mce.js')
         else:
             yield self.build_lib_url('tinymce.min.js')

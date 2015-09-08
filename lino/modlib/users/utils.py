@@ -17,9 +17,12 @@ from .choicelists import UserProfiles
 
 
 class AnonymousUser(object):
-    """
-    Similar to Django's approach to represent anonymous visitors
-    as a special kind of user.
+    """A singleton class whose instance will be assigned to the
+    :attr:`user` attribute of anonymous incoming requests, similar to
+    Django's approach.
+
+    See also :attr:`lino.core.site.Site.anonymous_user_profile`.
+
     """
     authenticated = False
     """This is always `False`.
@@ -32,7 +35,6 @@ class AnonymousUser(object):
     partner = None
     language = None
     readonly = True
-    #~ id = None
     pk = None
 
     _instance = None

@@ -6,6 +6,14 @@
 version 3 of `Bootstrap <http://twitter.github.com/bootstrap>`_ CSS
 toolkit.
 
+.. autosummary::
+   :toctree:
+
+    views
+    renderer
+    models
+
+
 """
 
 from lino.api.ad import Plugin

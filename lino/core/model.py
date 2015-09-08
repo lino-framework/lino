@@ -329,7 +329,7 @@ class Model(models.Model):
         for b in self.__class__.__bases__:
             if issubclass(b, models.Model) and not b._meta.abstract:
                 msg = b._lino_ddh.disable_delete_on_object(
-                    self, self.__class__)
+                    self, [self.__class__])
                 if msg is not None:
                     return msg
         return self.__class__._lino_ddh.disable_delete_on_object(self)

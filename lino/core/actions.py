@@ -35,7 +35,6 @@ else:
 from lino.core import constants
 from lino.core.utils import obj2unicode
 from lino.core.utils import resolve_model
-from lino.core.utils import navinfo
 from lino.core import layouts
 from lino.core import fields
 from lino.core import keyboard
@@ -45,10 +44,8 @@ from lino.core.permissions import Permittable
 from lino.core.utils import Parametrizable, InstanceAction
 # from lino.modlib.users.choicelists import SiteUser
 from lino.utils.choosers import Chooser
-from lino.utils.xmlgen import html as xghtml
 from lino.utils.xmlgen.html import E
 
-PLAIN_PAGE_LENGTH = 15
 
 
 def check_for_chooser(holder, field):
@@ -459,9 +456,6 @@ class Action(Parametrizable, Permittable):
     def get_choices_text(self, obj, request, field):
         return obj.get_choices_text(request, self, field)
 
-    def as_bootstrap_html(self, ar):
-        return "Oops, no as_bootstrap_html method for %s" % self
-
     def make_params_layout_handle(self, ui):
         return make_params_layout_handle(self, ui)
 
@@ -616,20 +610,6 @@ class RedirectAction(Action):
         raise NotImplementedError
 
 
-def buttons2pager(buttons, title=None):
-    items = []
-    if title:
-        items.append(E.li(E.span(title)))
-    for symbol, label, url in buttons:
-        if url is None:
-            items.append(E.li(E.span(symbol), class_="disabled"))
-        else:
-            items.append(E.li(E.a(symbol, href=url)))
-    # Bootstrap version 2.x
-    # return E.div(E.ul(*items), class_='pagination')
-    return E.ul(*items, class_='pagination pagination-sm')
-
-
 class GridEdit(TableAction):
     """Open a window with a grid editor on this table as main item.
 
@@ -654,80 +634,21 @@ class GridEdit(TableAction):
     def get_window_size(self, actor):
         return actor.window_size
 
-    def as_bootstrap_html(self, ar, as_main=True):
-        # used by lino.modlib.plain and lino.modlib.bootstrap3
-        t = xghtml.Table()
-        t.attrib.update(class_="table table-striped table-hover")
-        if ar.limit is None:
-            ar.limit = PLAIN_PAGE_LENGTH
-        pglen = ar.limit
-        if ar.offset is None:
-            page = 1
-        else:
-            """
-            (assuming pglen is 5)
-            offset page
-            0      1
-            5      2
-            """
-            page = int(ar.offset / pglen) + 1
-
-        ar.dump2html(t, ar.sliced_data_iterator)
-        if not as_main:
-            url = ar.get_request_url()  # open in own window
-            return E.div(E.a(ar.get_title(), href=url), t.as_element())
-
-        buttons = []
-        kw = dict()
-        kw = {}
-        if pglen != PLAIN_PAGE_LENGTH:
-            kw[constants.URL_PARAM_LIMIT] = pglen
-
-        if page > 1:
-            kw[constants.URL_PARAM_START] = pglen * (page - 2)
-            prev_url = ar.get_request_url(**kw)
-            kw[constants.URL_PARAM_START] = 0
-            first_url = ar.get_request_url(**kw)
-        else:
-            prev_url = None
-            first_url = None
-        buttons.append(('<<', _("First page"), first_url))
-        buttons.append(('<', _("Previous page"), prev_url))
-
-        next_start = pglen * page
-        if next_start < ar.get_total_count():
-            kw[constants.URL_PARAM_START] = next_start
-            next_url = ar.get_request_url(**kw)
-            last_page = int((ar.get_total_count() - 1) / pglen)
-            kw[constants.URL_PARAM_START] = pglen * last_page
-            last_url = ar.get_request_url(**kw)
-        else:
-            next_url = None
-            last_url = None
-        buttons.append(('>', _("Next page"), next_url))
-        buttons.append(('>>', _("Last page"), last_url))
-
-        return E.div(buttons2pager(buttons), t.as_element())
-
 
 class ShowDetailAction(Action):
-    """
-    Open the :term:`detail Window` on a row of this table.
+    """Open the detail window on a row of this table.
+
     """
     icon_name = 'application_form'
-    #~ icon_file = 'application_form.png'
     opens_a_window = True
     show_in_workflow = False
     save_action_name = 'submit_detail'
 
     sort_index = 20
-    #~ callable_from = (GridEdit,)
 
     def is_callable_from(self, caller):
         return isinstance(caller, GridEdit)
 
-    #~ show_in_detail = False
-    #~ needs_selection = True
     action_name = 'detail'
     label = _("Detail")
     help_text = _("Open a detail window on this record")
@@ -738,64 +659,6 @@ class ShowDetailAction(Action):
     def get_window_size(self, actor):
         wl = self.get_window_layout(actor)
         return wl.window_size
-
-    #~ def get_elem_title(self,elem):
-        #~ return _("%s (Detail)")  % unicode(elem)
-
-    def as_bootstrap_html(self, ar, pk):
-        rpt = ar.actor
-
-        navigator = None
-        if pk and pk != '-99999' and pk != '-99998':
-            elem = ar.get_row_by_pk(pk)
-            if elem is None:
-                raise http.Http404("%s has no row with primary key %r" %
-                                   (rpt, pk))
-                #~ raise Exception("20120327 %s.get_row_by_pk(%r)" % (rpt,pk))
-            if ar.actor.show_detail_navigator:
-
-                ni = navinfo(ar.data_iterator, elem)
-                if ni:
-                    buttons = []
-                    #~ buttons.append( ('*',_("Home"), '/' ))
-
-                    buttons.append(
-                        ('<<', _("First page"), ar.pk2url(ni['first'])))
-                    buttons.append(
-                        ('<', _("Previous page"), ar.pk2url(ni['prev'])))
-                    buttons.append(
-                        ('>', _("Next page"), ar.pk2url(ni['next'])))
-                    buttons.append(
-                        ('>>', _("Last page"), ar.pk2url(ni['last'])))
-
-                    navigator = buttons2pager(buttons)
-                else:
-                    navigator = E.p("No navinfo")
-        else:
-            elem = None
-
-        wl = ar.bound_action.get_window_layout()
-        #~ print 20120901, wl.main
-        lh = wl.get_layout_handle(settings.SITE.kernel.default_ui)
-
-        #~ items = list(render_detail(ar,elem,lh.main))
-        items = list(lh.main.as_plain_html(ar, elem))
-        if navigator:
-            items.insert(0, navigator)
-        #~ print E.tostring(E.div())
-        #~ if len(items) == 0: return ""
-        main = E.form(*items)
-        #~ print 20120901, lh.main.__html__(ar)
-        
-        # The `method="html"` argument isn't available in Python 2.6,
-        # only 2.7.  It is useful to avoid side effects in case of
-        # empty elements: the default method (xml) writes an empty
-        # E.div() as "<div/>" while in HTML5 it must be "<div></div>"
-        # (and the ending / is ignored).
-        
-        #~ return E.tostring(main, method="html")
-        #~ return E.tostring(main)
-        return main
 
 
 class ShowEmptyTable(ShowDetailAction):

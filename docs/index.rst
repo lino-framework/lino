@@ -6,6 +6,14 @@ The Lino framework
 
 Welcome to the project homepage of the Lino framework.
 
+.. .. admonition:: Job announcement
+
+.. note::
+
+  Rumma & Ko is hiring a `Lino Core Developer
+  <http://www.saffre-rumma.net/jobs/coredev.html>`_ to help Luc with
+  his work on Lino.
+
 .. py2rst::
 
   import lino

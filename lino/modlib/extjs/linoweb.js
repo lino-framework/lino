@@ -2828,7 +2828,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
         if (this.loadMask) this.loadMask.hide();
         if (response.responseText) {
           var rec = Ext.decode(response.responseText);
-          // console.log('20140917 load_record_id success', rec);
+          // console.log('20150905 load_record_id success', rec);
           this.set_param_values(rec.param_values);
           this.set_current_record(rec, after);
         }
@@ -2844,12 +2844,13 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   }
   
   ,set_current_record : function(record, after) {
+      // console.log('20150905 set_current_record', record);
     if (this.record_selector) {
         this.record_selector.clearValue();
         // e.g. InsertWrapper FormPanel doesn't have a record_selector
     }
     this.current_record = record;
-    if (record) {
+    if (record && record.data) {
       this.enable();
       this.form.my_loadRecord(record.data);
       this.set_window_title(record.title);

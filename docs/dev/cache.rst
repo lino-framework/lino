@@ -31,8 +31,8 @@ When to update your static files
 Lino comes with over 4000 static files, and together they take about
 50 MB of hard disk storage. To manage them, it uses Django's
 `staticfiles
-<https://docs.djangoproject.com/en/1.6/ref/contrib/staticfiles/>`_
-plugin which provides the :manage:`collectstatic` command.
+<https://docs.djangoproject.com/en/1.6/ref/contrib/staticfiles/>`_ app
+which provides the :manage:`collectstatic` command.
 
 .. management_command :: collectstatic
 

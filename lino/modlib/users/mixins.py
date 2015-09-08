@@ -93,7 +93,7 @@ class UserAuthored(model.Model):
         """
         if ar.user is not None:
             self.user = ar.user
-        super(UserAuthored, self).on_duplicate(ar)
+        super(UserAuthored, self).on_duplicate(ar, master)
 
     def get_row_permission(self, ar, state, ba):
         """Only "managers" or "editors" can edit other users' work.

@@ -64,18 +64,15 @@ class NOT_GIVEN:
     pass
 
 
-class HtmlRenderer(object):
+class Renderer(object):
     """
     See :doc:`/dev/rendering`.
     """
+
+    can_auth = False
+    is_interactive = False
     # not_implemented_js = "alert('Not implemented')"
     not_implemented_js = None
-    is_interactive = False
-    row_classes_map = {}
-
-    def __init__(self, plugin):
-        self.plugin = plugin
-        # self.ui = plugin.site.ui
 
     def ar2js(self, ar, obj, **status):
         """Return the Javascript code which would run this `ar` on the
@@ -83,6 +80,14 @@ class HtmlRenderer(object):
 
         """
         return self.not_implemented_js
+
+
+class HtmlRenderer(Renderer):
+    row_classes_map = {}
+
+    def __init__(self, plugin):
+        self.plugin = plugin
+        # self.ui = plugin.site.ui
 
     def js2url(self, js):
         if not js:

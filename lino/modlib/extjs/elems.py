@@ -1855,9 +1855,10 @@ class GridElement(Container):
             yield th
 
     def as_plain_html(self, ar, obj):
+        from lino.modlib.bootstrap3.views import table2html
         sar = ar.spawn(self.actor.default_action, master_instance=obj)
-        yield sar.as_bootstrap_html(as_main=(self.name == "main"))
-        #~ yield ar.ui.table2xhtml(sar,10)
+        yield table2html(sar, as_main=(self.name == "main"))
+        # yield sar.as_bootstrap_html(as_main=(self.name == "main"))
 
 
 class DetailMainPanel(Panel):

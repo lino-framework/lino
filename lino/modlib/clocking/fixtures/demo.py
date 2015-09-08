@@ -30,8 +30,9 @@ def objects():
     TICKETS = Cycler(Ticket.objects.all())
     DURATIONS = Cycler([12, 138, 90, 10, 122, 209, 37, 62, 179, 233, 5])
 
-    # every third ticket is unassigned and thus listed in PublicTickets
-    for i, t in enumerate(Ticket.objects.all()):
+    # every third non-private ticket is unassigned and thus listed in
+    # PublicTickets
+    for i, t in enumerate(Ticket.objects.exclude(private=True)):
         if i % 3:
             t.assigned_to = WORKERS.pop()
             yield t

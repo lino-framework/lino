@@ -416,6 +416,12 @@ documentation.
 
     """
 
+    # use_auth = True
+    # """Whether this site uses authentication.  If this is set to `False`,
+    # all requests are anonymous (as if :attr:`user_model` was `None`).
+    # This is ignored when :attr:`user_model` is `None`.
+    # """
+
     auth_middleware = None
     """
     Override used Authorisation middlewares with supplied tuple of
@@ -635,17 +641,15 @@ documentation.
     # "Replaced by :attr:`lino.modlib.tinymce.Plugin.media_root`."
 
     default_user = None
-    """Username to be used if a request with no remote user header (see
-    :attr:`remote_user_header`) makes its way through to Lino.  Which
-    may happen on a development server, in a test environment, or on a
-    real web server which is configured to allow it.
+    """Username of the user to be used for all incoming requests.  Setting
+    this to a nonempty value will disable authentication on this site.
+    The special value `'anonymous'` will cause anonymous requests
+    (whose `user` attribute is the :class:`AnonymousUser
+    <lino.modlib.users.utils.AnonymousUser>` instance).
 
-    This setting is ignored when :attr:`user_model` is `None`.
+    See also :meth:`get_auth_method`.
 
-    Setting this to a nonempty value will activate remote
-    authentication (see :meth:`get_auth_method`).  If this is nonempty
-    and :attr:`remote_user_header` is *empty*, the
-    :attr:`default_user` will be used for *every* request.
+    This setting should be `None` when :attr:`user_model` is `None`.
 
     """
 
@@ -655,7 +659,6 @@ documentation.
 
     """
 
-    #~ remote_user_header = "REMOTE_USER"
     remote_user_header = None
     """The name of the header (set by the web server) that Lino should
     consult for finding the user of a request.  The default value
@@ -1391,9 +1394,9 @@ documentation.
             stamp.write_file(this)
 
     def set_user_model(self, spec):
-        """This can be called during :meth:`Plugin.on_init
-        <lino.core.plugin.Plugin.on_init>` of apps which provide user
-        management (the only candidate is currently
+        """This can be called during the :meth:`on_init
+        <lino.core.plugin.Plugin.on_init>` of plugins which provide
+        user management (the only plugin which does this is currently
         :mod:`lino.modlib.users`).
 
         """
@@ -1412,7 +1415,8 @@ documentation.
         """Returns the authentication method used on this site. This is one of
         `None`, `'remote'` or `'session'`.
 
-        It depends on the values in  :attr:`user_model`,
+        It depends on the values in
+        :attr:`user_model`,
         :attr:`default_user` and
         :attr:`remote_user_header`.
 
@@ -1423,7 +1427,9 @@ documentation.
         """
         if self.user_model is None:
             return None
-        if self.default_user is None and self.remote_user_header is None:
+        if self.default_user is not None:
+            return None
+        if self.remote_user_header is None:
             return 'session'
         return 'remote'
 
@@ -2771,7 +2777,12 @@ Please convert to Plugin method".format(mod, methname)
         else:
             if self.user_model is None:
                 yield 'lino.core.auth.NoUserMiddleware'
-            elif self.remote_user_header or self.default_user:
+            elif self.default_user:
+                if self.default_user == "anonymous":
+                    yield 'lino.core.auth.NoUserMiddleware'
+                else:
+                    yield 'lino.core.auth.DefaultUserMiddleware'
+            elif self.remote_user_header:
                 yield 'lino.core.auth.RemoteUserMiddleware'
             else:
                 # not using remote http auth, so we need sessions
@@ -3017,9 +3028,9 @@ signature as `django.core.mail.EmailMessage`.
     def login(self, username=None, **kw):
         """Open a session as the user with the given `username`.
     
-        For usage from a shell.  Does not require any password because
-        when somebody has command-line access we trust that she has
-        already authenticated.
+        For usage from a shell or a tested document.  Does not require
+        any password because when somebody has command-line access we
+        trust that she has already authenticated.
     
         It returns a
         :class:`BaseRequest <lino.core.requests.BaseRequest>` object.
