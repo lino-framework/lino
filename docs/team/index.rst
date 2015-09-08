@@ -1,3 +1,5 @@
+.. _lino.team:
+
 ==============
 Teamwork guide
 ==============

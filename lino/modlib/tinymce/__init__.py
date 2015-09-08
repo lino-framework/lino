@@ -11,8 +11,8 @@ RichTextFields.  See also :attr:`tinymce_root`.  See
 from lino.api import ad
 
 
-TINYMCE_VERSION = '3.4.8'
-#TINYMCE_VERSION = '3.5.11'
+#TINYMCE_VERSION = '3.4.8'
+TINYMCE_VERSION = '3.5.11'
 #TINYMCE_VERSION = '4.1.10'
 
 """Which version of TinyMCE to use.
