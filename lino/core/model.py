@@ -327,7 +327,8 @@ class Model(models.Model):
         # parents whether they have a veto (other than self).
         
         for b in self.__class__.__bases__:
-            if issubclass(b, models.Model) and not b._meta.abstract:
+            if issubclass(b, models.Model) \
+               and b is not models.Model and not b._meta.abstract:
                 msg = b._lino_ddh.disable_delete_on_object(
                     self, [self.__class__])
                 if msg is not None:
