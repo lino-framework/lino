@@ -11,6 +11,8 @@ partners.  It requires the :mod:`lino.modlib.contacts` app.
     mixins
     utils
     fields
+    fixtures.demo
+    fixtures.sample_ibans
 
 """
 
