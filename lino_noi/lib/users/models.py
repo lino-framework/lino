@@ -43,7 +43,7 @@ class UserDetail(UserDetail):
     """, label=_("General"))
 
     tickets = dd.Panel("""
-    open_session_on_new_ticket #current_project
+    open_session_on_new_ticket user_site #current_project
     tickets.TicketsByReporter
     """, label=_("Tickets"))
 
