@@ -198,9 +198,9 @@ class Site(object):
 
     - :meth:`site_version` uses :attr:`verbose_name` (not :attr:`title`)
 
-    IOW, the :attr:`title` is rather for usage by :doc:`local system
-    administrators </team/sysadm>`, while the :attr:`verbose_name` is
-    rather for usage by :doc:`application developers </team/lad>`.
+    IOW, the :attr:`title` is rather for usage by local system
+    administrators, while the :attr:`verbose_name` is rather for usage
+    by application developers.
 
     """
 

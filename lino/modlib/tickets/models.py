@@ -164,6 +164,10 @@ class Site(dd.Model):
 
 class Milestone(Certifiable):  # mixins.Referrable):
     """
+    .. attribute:: closed
+
+       Closed milestones are hidden in most lists.
+
     """
     class Meta:
         verbose_name = _("Milestone")
@@ -183,6 +187,7 @@ class Milestone(Certifiable):  # mixins.Referrable):
         _("Changes since"), blank=True, null=True,
         help_text=_("In printed document include a list of "
                     "other changes since this date"))
+    closed = models.BooleanField(_("Closed"), default=False)
 
     #~ def __unicode__(self):
         #~ return self.label
@@ -360,6 +365,12 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
         An unformatted one-line text which describes what this ticket
         is waiting for.
 
+    .. attribute:: upgrade_notes
+
+        A formatted text field meant for writing instructions for the
+        hoster's site administrator when doing an upgrade where this
+        ticket is being deployed.
+
     """
     workflow_state_field = 'state'
 
@@ -378,6 +389,7 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
         blank=True,
         help_text=_("Short summary of the problem."))
     description = dd.RichTextField(_("Description"), blank=True)
+    upgrade_notes = dd.RichTextField(_("Upgrade notes"), blank=True)
     ticket_type = dd.ForeignKey('tickets.TicketType', blank=True, null=True)
     duplicate_of = models.ForeignKey(
         'self', blank=True, null=True, verbose_name=_("Duplicate of"))
@@ -441,6 +453,8 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
             if self.assigned_to_id is None:
                 if me.profile.has_required_roles([Worker]):
                     self.assigned_to = me
+        if self.reporter_id and self.reporter.user_site:
+            self.site = self.reporter.user_site
         super(Ticket, self).on_create(ar)
 
     def full_clean(self):
@@ -523,6 +537,10 @@ class Deployment(dd.Model):
 
     Deployments are visible to the user either by ticket or by milestone.
 
+    .. attribute:: milestone
+
+       The milestone (and site) of this deployment.
+
     """
     class Meta:
         verbose_name = _("Deployment")
@@ -530,14 +548,15 @@ class Deployment(dd.Model):
 
     ticket = dd.ForeignKey('tickets.Ticket')
     milestone = dd.ForeignKey('tickets.Milestone')
-    remark = dd.RichTextField(_("Remark"), blank=True, format="plain")
+    # remark = dd.RichTextField(_("Remark"), blank=True, format="plain")
+    remark = models.CharField(_("Remark"), blank=True, max_length=250)
 
     @dd.chooser()
     def milestone_choices(cls, ticket):
-        if not ticket:
-            return []
-        if ticket.site:
-            return ticket.site.milestones_by_site.all()
+        # if not ticket:
+        #     return []
+        # if ticket.site:
+        #     return ticket.site.milestones_by_site.all()
         return rt.modules.tickets.Milestone.objects.order_by('label')
 
 
@@ -548,5 +567,14 @@ if False:  # removed current_project field because it caused circular
         dd.ForeignKey(
             'tickets.Project', verbose_name=_("Current project"),
             blank=True, null=True, related_name="users_by_project"))
+
+
+dd.inject_field(
+    'users.User', 'user_site',
+    dd.ForeignKey(
+        'tickets.Site', verbose_name=_("Site"),
+        blank=True, null=True, related_name="users_by_site", 
+        help_text=_("")))
+
 
 from .ui import *
