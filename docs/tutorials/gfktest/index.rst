@@ -7,7 +7,7 @@ A tested example of GFK fields
 .. This document is part of the test suite.  To test only this
    document, run:
 
-     $ python setup.py test -s tests.DocsTests.test_gfks
+     $ python setup.py test -s tests.DocsTests.test_gfktest
 
    Or:
 

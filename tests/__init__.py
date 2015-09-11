@@ -53,6 +53,9 @@ class DocsTests(LinoTestCase):
     def test_households(self):
         self.run_simple_doctests('docs/tested/households.rst')
 
+    def test_gfks(self):
+        self.run_simple_doctests('docs/tested/gfks.rst')
+
     def test_dynamic(self):
         self.run_simple_doctests('docs/tested/dynamic.rst')
 
@@ -149,7 +152,7 @@ class DocsTests(LinoTestCase):
     def test_letsmti(self):
         self.run_django_manage_test('docs/tutorials/letsmti')
 
-    def test_gfks(self):
+    def test_gfktest(self):
         self.run_django_manage_test('docs/tutorials/gfktest')
 
     def test_mldbc(self):

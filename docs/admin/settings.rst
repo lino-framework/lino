@@ -3,8 +3,8 @@
 Modifying your local :file:`settings.py`
 ========================================
 
-This document is for :doc:`system administrators </team/sysadm>` who
-want to override certain settings locally.
+This document is for system administrators who want to override
+certain settings locally.
 
 To edit your local :xfile:`settings.py` file, go to the project
 directory and start your preferred editor on the file `settings.py`::

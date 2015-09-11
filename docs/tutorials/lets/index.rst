@@ -50,11 +50,11 @@ describes what an application does (or is expected to do).
 
 Such a description is an important document when doing software
 development in a team.  Writing this document is the job of the
-:doc:`analyst </team/analyst>`.  The analyst communicates directly
-with the customer and formulates their needs. The salesman then uses
-this document when discussion with the customer about the price.  The
-developer must be able to understand this document and to discuss with
-the analyst about it.
+**analyst**.  The analyst communicates directly with the customer and
+formulates their needs. The salesman then uses this document when
+discussion with the customer about the price.  The developer must be
+able to understand this document and to discuss with the analyst about
+it.
 
 The salesman, the analyst and the developer can be a single person in
 a small team. But even then it is a good habit to write a technical

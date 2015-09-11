@@ -26,9 +26,9 @@ This snippet also shows the recommended syntax for importing the
 Configuring plugins
 ===================
 
-As an :doc:`/team/lad` you can specify *in your application* that
-you want to configure certain plugins by overriding the 
-:meth:`lino.core.site.Site.setup_plugins` method. 
+As an application developer you can specify *in your application* that
+you want to configure certain plugins by overriding the
+:meth:`lino.core.site.Site.setup_plugins` method.
 
 You do this in your application's :xfile:`settings.py`.
 
@@ -43,10 +43,9 @@ For example::
             self.plugins.countries.configure(country_code='BE')
 
 
-As a :doc:`/team/sysadm` you can override these configuration defaults
-in your project's :xfile:`settings.py` using the
-:func:`configure_plugin <lino.core.site.configure_plugin>`
-function.  
+As a system administrator you can override these configuration
+defaults in your project's :xfile:`settings.py` using the
+:func:`configure_plugin <lino.core.site.configure_plugin>` function.
 
 For example, if you want to set the :attr:`country_code
 <lino.modlib.countries.Plugin.country_code>` of

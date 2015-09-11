@@ -1,17 +1,33 @@
+.. _admin.oood:
+
+=============================
 Install OpenOffice.org server
 =============================
 
 .. rubric:: Cheat sheet
 
-You must install `python3-uno` package::
+When creating .pdf files, Lino uses `appy.pod` which uses `python-uno`
+to connect to a `LibreOffice` server. 
 
-  $ sudo aptitude install python3-uno
+`appy.pod` is a Python package and automatically installed with Lino,
+but you must install `libreoffice` and `python3-uno` yourself using
+something like this::
 
-and then set your :attr:`appy_params
+  $ sudo aptitude install libreoffice python3-uno
+
+Then you need to run a LO server. I use something like this::
+
+  libreoffice '--accept=socket,host=127.0.0.1,port=8100;urp;' &
+
+And then you must set your :attr:`appy_params
 <lino.core.site.Site.appy_params>` to point to your `python3`
 executable, e.g. by specifying in your :xfile:`settings.py`::
 
   SITE.appy_params.update(pythonWithUnoPath='/usr/bin/python3')
+
+Lino needs Python 2 and `python-uno` needs Python 3.  To resolve that
+conflict, `appy.pod` has this configuration option which causes it to
+run its UNO call in a subprocess with Python 3.
 
 
 .. rubric:: The following is probably obsolete

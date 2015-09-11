@@ -35,6 +35,7 @@ class Plugin(ad.Plugin):
         # m.add_action('tickets.MyOwnedTickets')
         m.add_action('tickets.ActiveTickets')
         m.add_action('tickets.Tickets')
+        m.add_action('tickets.MyKnownProblems')
 
     def setup_config_menu(self, site, profile, m):
         p = self.get_menu_group()

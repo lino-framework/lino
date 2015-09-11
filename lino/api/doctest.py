@@ -28,15 +28,19 @@ HttpQuery = collections.namedtuple(
     ['username', 'url_base', 'json_fields', 'expected_rows', 'kwargs'])
 
 
-def get_json_soup(username, uri, fieldname, an='detail'):
+def get_json_dict(username, uri, an='detail'):
+    url = '/api/{0}?fmt=json&an={1}'.format(uri, an)
+    res = test_client.get(url, REMOTE_USER=username)
+    assert res.status_code == 200
+    return json.loads(res.content)
+
+
+def get_json_soup(username, uri, fieldname, **kwargs):
     """Being authentified as `username`, perform a web request to `uri` of
     the test client.
 
     """
-    url = '/api/{0}?fmt=json&an={1}'.format(uri, an)
-    res = test_client.get(url, REMOTE_USER=username)
-    assert res.status_code == 200
-    d = json.loads(res.content)
+    d = get_json_dict(username, uri, **kwargs)
     html = d['data'][fieldname]
     return BeautifulSoup(html)
 

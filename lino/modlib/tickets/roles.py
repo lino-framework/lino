@@ -7,9 +7,13 @@
 from lino.core.roles import SiteUser
 
 
-class Worker(SiteUser):
-    """A user who is candidate for working on a ticket.
+class Triager(SiteUser):
+    """A user who is responsible for triaging new tickets.
 
     """
 
 
+class Worker(SiteUser):
+    """A user who is candidate for working on a ticket.
+
+    """

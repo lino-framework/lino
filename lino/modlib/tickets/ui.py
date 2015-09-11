@@ -40,6 +40,8 @@ from lino.utils import join_elems
 
 from .choicelists import TicketEvents, ProjectEvents, TicketStates, LinkTypes
 
+from .roles import Triager
+
 
 class ProjectTypes(dd.Table):
     model = 'tickets.ProjectType'
@@ -240,36 +242,37 @@ class LinksByTicket(Links):
 
 
 class TicketDetail(dd.DetailLayout):
-    main = "general planning"
+    main = "general more"
 
     general = dd.Panel("""
-    general1 LinksByTicket
+    general1:60 DeploymentsByTicket:20
     description:30 clocking.SessionsByTicket:40
     """, label=_("General"))
     
     general1 = """
-    summary:40 id reporter
+    summary:40 id:6 reporter:12
     site product project private
     workflow_buttons:20 assigned_to waiting_for
     """
 
-    planning = dd.Panel("""
+    more = dd.Panel("""
     nickname:10 created modified reported_for #fixed_for ticket_type:10
     state duplicate_of planned_time priority
     standby feedback closed
-    DuplicatesByTicket  #ChildrenByTicket DeploymentsByTicket
-    """, label=_("Planning"))
+    upgrade_notes:30 DuplicatesByTicket:20  #ChildrenByTicket LinksByTicket:20
+    """, label=_("More"))
 
 
 class Tickets(dd.Table):
-    required_roles = set()
+    """Global list of all tickets."""
+    required_roles = set()  # also for anonymous
     model = 'tickets.Ticket'
     order_by = ["-id"]
     column_names = 'id summary:50 #feedback #standby closed ' \
                    'workflow_buttons:30 reporter:10 project:10 *'
     detail_layout = TicketDetail()
     insert_layout = """
-    reporter product
+    reporter #product
     summary
     """
 
@@ -380,9 +383,13 @@ class Tickets(dd.Table):
 
 
 class DuplicatesByTicket(Tickets):
+    """Shows the tickets which are marked as duplicates of this
+    (i.e. whose `duplicate_of` field points to this ticket.
+
+    """
     label = _("Duplicates")
     master_key = 'duplicate_of'
-    column_names = "id summary project reporter *"
+    column_names = "id summary *"
 
 
 # class UnassignedTickets(Tickets):
@@ -422,6 +429,12 @@ class PublicTickets(Tickets):
 
 
 class TicketsToTriage(Tickets):
+    """List of tickets that need to be triaged.  Currently this is
+    equivalent to those having their state set to :attr:`new
+    <lino.modlib.tickets.choicelists.TicketStates.new>`.
+
+    """
+    required_roles = dd.login_required(Triager)
     label = _("Tickets to triage")
     button_label = _("Triage")
     order_by = ["-id"]
@@ -436,10 +449,12 @@ class TicketsToTriage(Tickets):
 
     @classmethod
     def get_welcome_messages(cls, ar, **kw):
+        if not ar.get_user().profile.has_required_roles([Triager]):
+            return
         sar = ar.spawn(cls)
         count = sar.get_total_count()
         if count > 0:
-            msg = _("{0} new tickets.")
+            msg = _("You have {0} tickets to triage.")
             msg = msg.format(count)
             yield ar.href_to_request(sar, msg)
 
@@ -568,15 +583,69 @@ class InterestsByProduct(Interests):
 
 
 class TicketsBySite(Tickets):
+    label = _("Known problems")
     master_key = 'site'
+
+    @classmethod
+    def param_defaults(self, ar, **kw):
+        mi = ar.master_instance
+        kw = super(TicketsBySite, self).param_defaults(ar, **kw)
+        kw.update(interesting_for=mi)
+        kw.update(end_date=dd.today())
+        kw.update(observed_event=TicketEvents.todo)
+        return kw
+
+
+class MyKnownProblems(Tickets):
+    """For users whose `user_site` is set, show the known problems on
+    their site.
+
+    """
+    required_roles = dd.login_required()
+    label = _("My known problems")
+
+    # @classmethod
+    # def get_master_instance(self, ar, model, pk):
+    #     u = ar.get_user()
+    #     return u.user_site
+        
+    @classmethod
+    def get_request_queryset(self, ar):
+        u = ar.get_user()
+        print "20150910", u.user_site
+        if not u.user_site:
+            ar.no_data_text = _("Only for users whose `user_site` is set.")
+            return self.model.objects.none()
+        return super(MyKnownProblems, self).get_request_queryset(ar)
+
+    @classmethod
+    def param_defaults(self, ar, **kw):
+        u = ar.get_user()
+        kw = super(MyKnownProblems, self).param_defaults(ar, **kw)
+        kw.update(interesting_for=u.user_site)
+        kw.update(end_date=dd.today())
+        kw.update(observed_event=TicketEvents.todo)
+        return kw
+
+    @classmethod
+    def get_welcome_messages(cls, ar, **kw):
+        sar = ar.spawn(cls)
+        count = sar.get_total_count()
+        if count > 0:
+            msg = _("There are {0} known problems for {1}.")
+            msg = msg.format(count, ar.get_user().user_site)
+            yield ar.href_to_request(sar, msg)
 
 
 class Milestones(dd.Table):
+    """
+    .. attribute:: show_closed
+    """
     order_by = ['-id']
     # order_by = ['label', '-id']
     model = 'tickets.Milestone'
     detail_layout = """
-    site id label expected reached changes_since printed
+    site id label expected reached changes_since printed closed
     description
     #TicketsFixed
     TicketsReported DeploymentsByMilestone
@@ -587,15 +656,48 @@ class Milestones(dd.Table):
     description
     """, window_size=(50, 15))
 
+    parameters = mixins.ObservedPeriod(
+        show_closed=dd.YesNo.field(
+            blank=True, default=dd.YesNo.no,
+            help_text=_("Show milestons which are closed.")))
+
+    params_layout = "start_date end_date show_closed"
+
+    @classmethod
+    def get_request_queryset(self, ar):
+        qs = super(Milestones, self).get_request_queryset(ar)
+        pv = ar.param_values
+        if pv.show_closed == dd.YesNo.no:
+            qs = qs.filter(closed=False)
+        elif pv.show_closed == dd.YesNo.yes:
+            qs = qs.filter(closed=True)
+        return qs
+
 
 class MilestonesBySite(Milestones):
     order_by = ['-label', '-id']
     master_key = 'site'
-    column_names = "label reached expected id *"
+    column_names = "label expected reached closed id *"
 
 
 class Deployments(dd.Table):
     model = 'tickets.Deployment'
+    parameters = mixins.ObservedPeriod(
+        show_closed=dd.YesNo.field(
+            blank=True, default=dd.YesNo.no,
+            help_text=_("Show deployments on closed milestones.")))
+
+    params_layout = "start_date end_date show_closed"
+
+    @classmethod
+    def get_request_queryset(self, ar):
+        qs = super(Deployments, self).get_request_queryset(ar)
+        pv = ar.param_values
+        if pv.show_closed == dd.YesNo.no:
+            qs = qs.filter(milestone__closed=False)
+        elif pv.show_closed == dd.YesNo.yes:
+            qs = qs.filter(milestone__closed=True)
+        return qs
 
 
 class DeploymentsByMilestone(Deployments):
@@ -608,4 +710,5 @@ class DeploymentsByMilestone(Deployments):
 class DeploymentsByTicket(Deployments):
     order_by = ['-milestone__reached']
     master_key = 'ticket'
-    column_names = "milestone__reached milestone  remark *"
+    # column_names = "milestone__reached milestone  remark *"
+    column_names = "milestone  remark *"
