@@ -601,6 +601,7 @@ class MyKnownProblems(Tickets):
     their site.
 
     """
+    required_roles = dd.login_required()
     label = _("My known problems")
 
     # @classmethod
