@@ -64,3 +64,9 @@ Debian
 
 - `Debian homepage <https://www.debian.org/intro/about>`_
 
+
+Git
+===
+
+- https://www.atlassian.com/git/tutorials
+- https://blog.udemy.com/git-tutorial-a-comprehensive-guide/

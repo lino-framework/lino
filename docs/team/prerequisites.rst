@@ -32,8 +32,8 @@ Lino applications are Django projects.
   the field types, executing database queries
 
 
-Git & Trac
-==========
+Git
+===
 
 Lino is hosted on Github. You know how to use this collaboration
 platform.
@@ -43,9 +43,6 @@ platform.
 - You have created a free account on GitHub and made a fork of Lino.
 - You are able to make some change in your working copy, commit your
   branch and send a pull request.
-- You know why we prefer our own `Trac <http://trac.edgewall.org/>`_
-  instance over GitHub's integrated ticketing system and how we use
-  it.
 
 
 Sphinx
