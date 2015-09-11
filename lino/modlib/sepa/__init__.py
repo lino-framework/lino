@@ -25,14 +25,19 @@ class Plugin(ad.Plugin):
     verbose_name = _("SEPA")
     site_js_snippets = ['iban/uppercasetextfield.js']
 
-    import_statements_path = "/home/luc/tmp"
-    # import_statements_path = None
+    # import_statements_path = "/home/luc/tmp"
+    import_statements_path = None
     """A path wildcard pointing to xml files which need to get imported.
 
-    End-users will download SEPA statement files to that directory.
+    As a system admin you can set this e.g. by specifying in your
+    :xfile:`settings.py` (*before* instantiating your
+    :setting:`SITE`)::
 
-    The :class:`lino.modlib.sepa.models.ImportStatements` action
-    imports fiels from this location.
+       ad.configure_plugin('sepa', import_statements_path="/var/sepa")
+
+    End-users are supposed to download SEPA statement files to that
+    directory and then to invoke the
+    :class:`lino.modlib.sepa.models.ImportStatements` action.
 
     """
 

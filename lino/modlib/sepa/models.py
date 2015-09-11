@@ -28,6 +28,9 @@ class ImportStatements(dd.Action):
     :attr:`import_statements_path
     <lino.modlib.sepa.Plugin.import_statements_path>`.
 
+    End-users invoke this via the menu command :menuselection:`SEPA
+    --> Import SEPA`.
+
     When a file has been successfully imported, Lino deletes it.
 
     It might happen that an .xml file accidentally gets downloaded a

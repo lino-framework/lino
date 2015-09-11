@@ -1,3 +1,6 @@
+.. _admin.oood:
+
+=============================
 Install OpenOffice.org server
 =============================
 
