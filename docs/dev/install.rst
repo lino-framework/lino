@@ -48,8 +48,6 @@ System requirements
 
         $ sudo apt-get install python-dev
 
-
-
 #.  You will need to install git_ on your computer to get the source
     files.
 
@@ -220,3 +218,11 @@ this::
 Congratulations if you got the test suite to pass.
 
 As your next step, we now suggest to :doc:`/tutorials/hello/index`.
+
+
+Install LibreOffice if necessary
+================================
+
+Most Lino applications (:ref:`cosi`, `noi`, :ref:`welfare` use
+:mod:`lino.modlib.appypod` for printing and therefore require
+:ref:`admin.oood`
