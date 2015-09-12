@@ -223,6 +223,6 @@ As your next step, we now suggest to :doc:`/tutorials/hello/index`.
 Install LibreOffice if necessary
 ================================
 
-Most Lino applications (:ref:`cosi`, `noi`, :ref:`welfare` use
+Most Lino applications (:ref:`cosi`, :ref:`noi`, :ref:`welfare` use
 :mod:`lino.modlib.appypod` for printing and therefore require
-:ref:`admin.oood`
+:ref:`admin.oood`.

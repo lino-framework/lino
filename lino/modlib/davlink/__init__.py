@@ -2,16 +2,22 @@
 # Copyright 2014-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Adds actions that ask the client to launch webdav office documents.
+"""Adds actions for editing printable documents on a server with
+:doc:`/admin/webdav`.
 
-When this app is installed, then you must also add the `.jar` files
+When this plugin is installed, you can still easily disable it by
+setting :attr:`use_java <lino.core.site.Site.use_java>` to `False` in
+your :xfile:`settings.py`.
+
+When this plugin is enabled, then you must also add the `.jar` files
 required by :ref:`davlink` into your media directory, in a
-subdirectory named "davlink".
+subdirectory named "davlink".  TODO: move :ref:`davlink` to a `static`
+directory in the Lino repository.
 
 """
 
 import os
-from lino import ad
+from lino.api import ad
 import jinja2
 
 
