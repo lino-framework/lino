@@ -24,7 +24,7 @@ a name without spaces and non-ascii characters.
 Then you add this directory to you Python Path by saying in 
 your `.bashrc` (or whatever login script y use)::
 
-  export PYTHONPATH = ~/mypy
+  export PYTHONPATH = /home/memypy
   
 (Under Windows you click around to find the place 
 where you can define *environment variables* and define

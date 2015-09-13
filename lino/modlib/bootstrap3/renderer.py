@@ -75,5 +75,10 @@ class Renderer(HtmlRenderer):
         label = label or ba.action.label
         return label
 
-    def action_call(self, request, bound_action, after_show):
-        return "oops"
+    def action_call(self, request, bound_action, status):
+        ar = bound_action.request()
+        return self.get_request_url(ar)
+
+    def js2url(self, js):
+        """There is no Javascript here."""
+        return js

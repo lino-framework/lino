@@ -1,5 +1,25 @@
-Java Cheat sheet
+.. _lino.java:
+
+=============
+Lino and Java
+=============
+
+Some Lino applications (e.g. :ref:`welfare`) uses plugins
+that require two Java applets:
+
+- :mod:`lino.modlib.beid` is for reading Belgian eId cards
+- :mod:`lino.modlib.davlink` is to provide possibility to edit
+  printable documents on a server with :doc:`/admin/webdav`.
+
+You can easily disable these functionalities by setting
+:attr:`use_java <lino.core.site.Site.use_java>` to `False` in your
+:xfile:`djangosite_local.py`.
+
+Java cheat sheet
 ================
+
+When using Java applets, you might encounter problems due to Java's
+security system.
 
 .. note:: 
 

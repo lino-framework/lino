@@ -1,0 +1,11 @@
+{% extends "bootstrap3/base.html" %}
+{% set active_page = "" %}
+{% block title %}{{title}}{% endblock %}
+{% block main %}
+<div class="row-fluid">
+<h1>{{obj.name}}</h1>
+{{E.tostring(navigator)}}
+<div>{{ar.show('tickets.TicketsBySite', obj, header_level=2)}}</div>
+</div>
+{% endblock %}
+

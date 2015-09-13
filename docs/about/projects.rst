@@ -19,17 +19,19 @@ Separate code repositories
 The following Lino applications are available as separate projects
 maintained by the same author:
 
-- `Lino Faggio <http://faggio.lino-framework.org/>`_
-- `Lino Patrols <http://patrols.lino-framework.org/>`_
-- `Lino Così <http://cosi.lino-framework.org/>`_
-- `Lino Logos <http://logos.lino-framework.org/>`_
-
 .. _welfare:
 
 Lino Welfare
 ------------
 
 http://welfare.lino-framework.org/
+
+.. _noi:
+
+Lino Noi
+--------
+
+http://noi.lino-framework.org/
 
 .. _cosi:
 
@@ -55,7 +57,7 @@ http://patrols.lino-framework.org/
 .. _logos:
 
 Lino Logos
-------------
+----------
 
 http://logos.lino-framework.org/
 
