@@ -19,7 +19,11 @@ Introduction to printable documents
 
 Lino comes with a selection of ready-to-use mechanisms for generating
 **printable documents** using different types of **templates**.  This
-section introduces the basic concepts. See also :doc:`excerpts`.
+section introduces the basic concepts.
+
+
+General functionality for printing is provided by the
+:mod:`lino.modlib.printing` plugin.
 
 .. currentmodule:: lino.modlib.printing.mixins
 
@@ -33,7 +37,9 @@ print them out on their printer.
 
 Printable documents are typically either in `.pdf` format (for
 *read-only* files) or one of `.odt`, `.doc` or `.rtf` (for *editable*
-files).
+files). Sites which offer *editable* printables to their users might
+also use :ref:`davlink` so that the users don't need to save these
+files on their client machines.
 
 End-users see a printable document by invoking the :attr:`do_print
 <Printable.do_print>` action of a *printable database object* (see
@@ -78,53 +84,50 @@ Here is what happens when a user invokes the :attr:`do_print
 Build methods
 =============
 
-Most functionality described here is provided by the
-:mod:`lino.modlib.printing` plugin.
-
-This plugin defines a choicelist `BuildMethods`.
-
 .. currentmodule:: lino.modlib.printing.choicelists
 
+Lino comes with a list of "build methods".  You can imagine a build
+method as a kind of "driver" who generates ("builds") printable
+documents from a template.  Here is a list of all available build
+methods:
 
-..
-    >>> rt.show('printing.BuildMethods')
-    ========= ========= ====================
-     value     name      text
-    --------- --------- --------------------
-     latex     latex     LatexBuildMethod
-     pisa      pisa      PisaBuildMethod
-     rtf       rtf       RtfBuildMethod
-     appyodt   appyodt   AppyOdtBuildMethod
-     appydoc   appydoc   AppyDocBuildMethod
-     appypdf   appypdf   AppyPdfBuildMethod
-     appyrtf   appyrtf   AppyRtfBuildMethod
-    ========= ========= ====================
-    <BLANKLINE>
+>>> rt.show('printing.BuildMethods')
+========= ========= ====================
+ value     name      text
+--------- --------- --------------------
+ latex     latex     LatexBuildMethod
+ pisa      pisa      PisaBuildMethod
+ rtf       rtf       RtfBuildMethod
+ appyodt   appyodt   AppyOdtBuildMethod
+ appydoc   appydoc   AppyDocBuildMethod
+ appypdf   appypdf   AppyPdfBuildMethod
+ appyrtf   appyrtf   AppyRtfBuildMethod
+========= ========= ====================
+<BLANKLINE>
 
 
-Here is an overview of the build methods implemented (or planned) in Lino.
+When creating `.pdf` files, Lino applications currently use either the
+:class:`PisaBuildMethod
+<lino.modlib.printing.choicelists.PisaBuildMethod>` or
+:class:`AppyPdfBuildMethod
+<lino.modlib.appypod.choicelists.AppyPdfBuildMethod>`.  This choice is
+done by the application developer because they write their templates
+either for *pisa* or for *appy.pod*.
 
-  +-----------------------------+------------+---------+----------------------------+----------------------------+
-  | build method                | template   | output  | Parser                     | Post-processor             |
-  |                             | filename   | filename|                            |                            |
-  |                             | format     | format  |                            |                            |
-  +=============================+============+=========+============================+============================+
-  | :class:`AppyBuildMethod`    | .odt       | .odt    |  :doc:`appy_templates`     |  -                         |
-  +-----------------------------+------------+---------+----------------------------+----------------------------+
-  | :class:`AppyDocBuildMethod` | .odt       | .doc    |  :doc:`appy_templates`     |  LO server                 |
-  +-----------------------------+------------+---------+----------------------------+----------------------------+
-  | :class:`AppyPdfBuildMethod` | .odt       | .pdf    |  :doc:`appy_templates`     |  LO server                 |
-  +-----------------------------+------------+---------+----------------------------+----------------------------+
-  | :class:`RtfBuildMethod`     | .rtf       | .rtf    |  :term:`pyratemp`          |  -                         |
-  +-----------------------------+------------+---------+----------------------------+----------------------------+
-  | :class:`LatexBuildMethod`   | .tex       | .pdf    |  Django/Jinja              |  pdfLaTeX                  |
-  +-----------------------------+------------+---------+----------------------------+----------------------------+
-  | :class:`PisaBuildMethod`    | .pisa.html | .pdf    |  Django/Jinja              |  :term:`Pisa`              |
-  +-----------------------------+------------+---------+----------------------------+----------------------------+
-                                                                                             
+=========== ===============
+Method      Templates     
+=========== ===============
+pisa        `.html`
+appy.pod    `.odt`
+=========== ===============
+
+
+
 
 Template engines
 ================
+
+This section is partly obsolete.
 
 A `template engine <http://en.wikipedia.org/wiki/Template_engine_(web)>`_ 
 is responsible for replacing *template commands* by their result.
@@ -152,16 +155,16 @@ commands when designing templates.
 Markup versus WYSIWYG
 =====================
 
-Template collections that use some markup language are usually 
-less redundant because 
-you can design your collection intelligently by using template inheritance.
+Template collections that use some markup language are usually less
+redundant because you can design your collection intelligently by
+using template inheritance.
 
-On the other hand, maintaining a collection of markup templates 
-requires a relatively skilled person because the maintainer must 
-know two "languages": the template engine's syntax and the markup syntax.
+On the other hand, maintaining a collection of markup templates
+requires a relatively skilled person because the maintainer must know
+two "languages": the template engine's syntax and the markup syntax.
 
-WYSIWYG templates (OpenOffice or Word) increase the probability 
-that an end-user is able to maintain the template collection because 
+WYSIWYG templates (OpenOffice or Word) increase the probability that
+an end-user is able to maintain the template collection because
 there's only on language to learn (the template engine's syntax)
 
 

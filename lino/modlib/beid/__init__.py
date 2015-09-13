@@ -7,12 +7,17 @@ Installing this package makes sense only if there is exactly one
 subclass of the :class:`BeIdCardHolder` model mixin among your
 application's models.
 
-When this app is installed, then you must also add the `.jar` files
+When this plugin is installed, you can still easily disable it by
+setting :attr:`use_java <lino.core.site.Site.use_java>` to `False` in
+your :xfile:`settings.py`.
+
+When this plugin is activated, then you must also add the `.jar` files
 required by :ref:`eidreader` into your media directory, in a
-subdirectory named "eidreader".
+subdirectory named "eidreader".  TODO: move :ref:`eidreader` to a
+`static` directory in the Lino repository.
 
 An (untested) alternative implementation of the same functionality is
-:mod:`lino.modlib.eid_jslib.beid` which overrides this app and does
+:mod:`lino.modlib.eid_jslib.beid` which overrides this plugin and does
 the same except that it uses `eidjslib` instead of :ref:`eidreader`.
 
 .. autosummary::

@@ -128,9 +128,9 @@ class DjangoBuildMethod(BuildMethod):
 
 
 class PisaBuildMethod(DjangoBuildMethod):
-
     """
     Generates .pdf files from .html templates.
+    Requires `pisa <https://pypi.python.org/pypi/pisa>`_.
     Usage example see :doc:`/tutorials/pisa/index`.
     """
     # name = 'pisa'
@@ -214,9 +214,9 @@ class SimpleBuildMethod(BuildMethod):
 
 
 class LatexBuildMethod(BuildMethod):
-
     """
-    Generates .pdf files from .tex templates.
+    Generates `.pdf` files from `.tex` templates.
+    Not actively used.
     """
     target_ext = '.pdf'
     template_ext = '.tex'
@@ -227,9 +227,9 @@ class LatexBuildMethod(BuildMethod):
 
 
 class RtfBuildMethod(SimpleBuildMethod):
-
     """
     Generates .rtf files from .rtf templates.
+    Not actively used.
     """
 
     target_ext = '.rtf'

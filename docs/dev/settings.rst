@@ -101,15 +101,35 @@ which contains already 82 lines of text (Django version 1.6.9).
 
 .. _djangosite_local:
 
-The ``djangosite_local.py`` file
-================================
+Site-wide default settings
+==========================
 
-The :ref:`djangosite_local.py <djangosite_local>` file is another
-technique which Lino adds to plain Django.
+.. xfile:: djangosite_local.py
 
-When a :class:`lino.core.site.Site` gets instantiated, it will try to
-import an module named ``djangosite_local``, and if that module exists
-and has a function named ``setup_site``, Lino will call this function.
+The :xfile:`djangosite_local.py` file is a hook for defining
+system-wide default settings. This is a concept which Lino adds to
+plain Django.  It is useful on developer machines and on servers where
+many Lino sites are running
 
-This mechanism is used on servers where many Lino sites are running to
-provide local server-wide default settings.
+The mechanism is easy: When a :class:`lino.core.site.Site` gets
+instantiated, it will try to import an module named
+``djangosite_local``, and if that module exists and has a function
+named ``setup_site``, Lino will call that function.
+
+IOW, you must create a file named :xfile:`djangosite_local.py`
+somewhere on your :doc:`Python path </admin/pythonpath>`.  The
+filename :file:`djangosite_local.py` might sound strange, but it has
+historical reasons and is currently hard-coded.
+
+Here is some example content::
+
+    """
+    Local settings to be apllied to every Lino SITE on this computer.
+    """
+    def setup_site(self):
+
+        self.update_settings(ADMINS=[("John", "john.doe@example.com")])
+        self.update_settings(EMAIL_HOST="mail.provider.com")
+        self.update_settings(DEBUG=True)
+        self.update_settings(ALLOWED_HOSTS=['127.0.0.1'])
+        self.use_java = False

@@ -544,9 +544,11 @@ class TicketsByReporter(Tickets):
 
 
 class Sites(dd.Table):
+    # required_roles = set()  # also for anonymous
     model = 'tickets.Site'
     column_names = "name partner remark id *"
     order_by = ['name']
+    detail_html_template = "tickets/Site/detail.html"
 
     insert_layout = """
     name
