@@ -25,4 +25,11 @@ class AccountsByPartner(Accounts):
     order_by = ['iban']
     auto_fit_column_widths = True
 
+class Statements(dd.Table):
+    required_roles = dd.login_required(ContactsStaff)
+    model = 'sepa.Statement'
+
+class Movements(dd.Table):
+    required_roles = dd.login_required(ContactsStaff)
+    model = 'sepa.Movement'
 
