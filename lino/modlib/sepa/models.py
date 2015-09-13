@@ -18,7 +18,7 @@ import os
 
 from django.db import models
 
-from lino.api import dd, _ ,rt
+from lino.api import dd, _, rt
 from lino.core.utils import ChangeWatcher
 
 from .fields import IBANField, BICField
@@ -69,6 +69,9 @@ class ImportStatements(dd.Action):
         return ar.error(msg, alert=_("Error"))
 
     def import_file(self, ar, filename):
+        Account = rt.modules.sepa.Account
+        Partner = rt.modules.contacts.Partner
+
         msg = "File {0} would have imported.".format(filename)
         """Parse a CAMT053 XML file."""
         parser = CamtParser()
@@ -78,12 +81,13 @@ class ImportStatements(dd.Action):
             res = parser.parse(data_file)
             if res is not None:
                 for _statement in res:
-                    if _statement['account_number'] is not None:
+                    if _statement.get('account_number', None) is not None:
                         # TODO : How to query an account by iban field ?
                         # account = Account.objects.get(iban=_statement['account_number'])
                         account = Account.objects.get(id=1)
                         if account:
-                            s = Statement(account=account, date=_statement['date'].strftime("%Y-%m-%d"),
+                            s = Statement(account=account,
+                                          date=_statement['date'].strftime("%Y-%m-%d"),
                                           date_done=time.strftime("%Y-%m-%d"),
                                           statement_number=_statement['name'],
                                           balance_end=_statement['balance_end'],
@@ -93,20 +97,21 @@ class ImportStatements(dd.Action):
                             s.save()
                             for _movement in _statement['transactions']:
                                 partner = None
-                                if _movement['partner_name'] is not None:
-                                    if rt.modules.contacts.Partner.objects.filter(name=_movement['partner_name']).exists():
-                                        partner = rt.modules.contacts.Partner.objects.filter(name=_movement['partner_name'])
+                                if _movement.get('partner_name', None) is not None:
+                                    if Partner.objects.filter(name=_movement['partner_name']).exists():
+                                        partner = Partner.objects.get(name=_movement['partner_name'])
                                     else:
-                                        partner = rt.modules.contacts.Partner.objects.get(id=10)
+                                        partner = Partner.objects.order_by('name')[0]
                                 # TODO :check if the movement is already imported.
                                 if not Movement.objects.filter(unique_import_id=_movement['unique_import_id']).exists():
+                                    _ref = _movement.get('ref', '') or ''
                                     m = Movement(statement=s,
                                                  unique_import_id=_movement['unique_import_id'],
                                                  movement_date=_movement['date'],
                                                  amount=_movement['amount'],
-                                                 partner = partner,
+                                                 partner=partner,
                                                  partner_name=_movement['partner_name'],
-                                                 ref=_movement['ref']or '')
+                                                 ref=_movement.get('ref', '') or '')
                                     m.save()
 
         except ValueError:
@@ -198,8 +203,8 @@ class Statement(dd.Model):
 
     def __unicode__(self):
         if self.account:
-            if self.balance_start:
-                return "{0} ({1})".format(self.account, self.balance_start)
+            if self.date:
+                return "{0} ({1})".format(self.account, self.date)
             else:
                 return self.account
         return ''
@@ -207,7 +212,7 @@ class Statement(dd.Model):
     account = dd.ForeignKey('sepa.Account')
     date = models.DateField(null=True)
     date_done = models.DateTimeField(_('Import Date'), null=True)
-    # statement_number = models.CharField(null=False, max_length=32)
+    statement_number = models.CharField(_('Statement number'), null=False, max_length=128)
     balance_start = dd.PriceField(_("Initial amount"), null=True)
     balance_end = dd.PriceField(_("Final amount"), null=True)
     balance_end_real = dd.PriceField(_("Real end balance"), null=True)
@@ -231,7 +236,7 @@ class Movement(dd.Model):
     statement = dd.ForeignKey('sepa.Statement')
     unique_import_id = models.CharField(_('Unique import ID'), max_length=128)
     # movement_number = models.CharField(_("Ref of Mov"), null=False, max_length=32)
-    movement_date = models.DateField(null=True)
+    movement_date = models.DateField(_('Movement date'), null=True)
     amount = dd.PriceField(_('Amount'), null=True)
     partner = models.ForeignKey('contacts.Partner', related_name='sepa_movement', null=True)
     partner_name = models.CharField(_('Partner name'), max_length=32)
