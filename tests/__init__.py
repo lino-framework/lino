@@ -41,9 +41,6 @@ class DocsTests(LinoTestCase):
         docs/tested/test_i18n.rst
         """)
 
-    def test_accounting(self):
-        self.run_simple_doctests('docs/dev/accounting.rst')
-
     def test_i18n(self):
         self.run_simple_doctests('docs/dev/i18n.rst')
 
@@ -79,9 +76,6 @@ class DocsTests(LinoTestCase):
 
     def test_site(self):
         self.run_simple_doctests("docs/dev/site.rst")
-
-    def test_presto(self):
-        self.run_simple_doctests("docs/tested/test_presto.rst")
 
     def test_min1(self):
         self.run_simple_doctests("docs/tested/min1.rst")
@@ -273,12 +267,6 @@ class ProjectsTests(LinoTestCase):
         self.run_django_manage_test("lino/projects/min2")
 
 
-class Tutorials(LinoTestCase):
-
-    def test_mini(self):
-        self.run_django_manage_test("lino/tutorials/mini")
-    
-
 class TestAppsTests(LinoTestCase):
     
     def test_20100212(self):
@@ -290,7 +278,7 @@ class TestAppsTests(LinoTestCase):
 
 class DumpTests(LinoTestCase):
     def test_dump2py(self):
-        for prj in ("lino/projects/belref", "lino/projects/presto"):
+        for prj in ["lino/projects/belref"]:
             p = Path(prj)
             tmp = p.child('tmp').absolute()
             tmp.rmtree()

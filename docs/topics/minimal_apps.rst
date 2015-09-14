@@ -30,4 +30,3 @@ Currently Lino has the following minimal applications:
   :mod:`outbox <lino.modlib.outbox>`
   and :mod:`uploads <lino.modlib.uploads>`
 
-- :mod:`lino.projects.presto`

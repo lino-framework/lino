@@ -3,7 +3,6 @@
 # License: BSD (see file COPYING for details)
 
 """Choicelists for `lino.modlib.accounts`.
-See :doc:`/dev/accounting`.
 
 """
 

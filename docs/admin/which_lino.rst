@@ -11,9 +11,10 @@ or get somebody else write it for you,
 but in a first step we suggest that you choose one 
 of the "batteries included" applications:
 
-- :mod:`lino.projects.cosi` 
-- :mod:`lino.projects.presto` 
+- :mod:`lino_noi` 
 - :mod:`lino_welfare` 
+- :mod:`lino_cosi` 
+- :mod:`lino_presto` 
 
 - :mod:`lino.projects.igen` 
   (an accounting application focussed on sales) 

@@ -1,2 +1,0 @@
-django-admin.py initdb_demo --noinput --traceback --settings=lino.projects.presto.settings.memory
-

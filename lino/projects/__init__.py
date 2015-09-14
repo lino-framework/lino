@@ -7,8 +7,6 @@ Examples with their own documentation entry:
 
 - :mod:`lino.projects.belref` ---
   See :ref:`belref`
-- :mod:`lino.projects.presto`
-  See :ref:`presto`
 - :mod:`lino.projects.polly`
   See :ref:`polly`
 

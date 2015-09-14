@@ -89,7 +89,6 @@ Getting acquaintained
 #.  :doc:`plugin_inheritance` : Plugin inheritance
 #.  :doc:`plugin_cooperation` : Plugin cooperation
 #.  :doc:`printing` : (TODO)
-#.  :doc:`accounting` : Accounting explained to Python developers.
 #.  :doc:`cache` : telling Lino where to store temporari files.
 #.  :doc:`rendering` : 
 
@@ -125,7 +124,6 @@ Getting acquaintained
    plugin_inheritance
    plugin_cooperation
    printing
-   accounting
    cache
    rendering
    

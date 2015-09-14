@@ -61,6 +61,7 @@ class StarObject(dd.Action):
     help_text = _("Star this database object.")
     show_in_workflow = True
     show_in_bbar = False
+    required_roles = dd.login_required()
 
     def get_action_permission(self, ar, obj, state):
         star = get_favourite(obj, ar.get_user())
