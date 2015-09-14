@@ -3,7 +3,7 @@
 # License: BSD (see file COPYING for details)
 
 """The top-level plugin for doing accounting stuff with a Lino
-application.  See :doc:`/dev/accounting`.
+application.
 
 .. autosummary::
     :toctree:

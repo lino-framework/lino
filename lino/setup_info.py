@@ -242,14 +242,6 @@ lino.projects.min2.tests
 lino.projects.polly
 lino.projects.polly.settings
 lino.projects.polly.tests
-lino.projects.presto
-lino.projects.presto.lib
-lino.projects.presto.lib.contacts
-lino.projects.presto.lib.contacts.fixtures
-lino.projects.presto.lib.presto
-lino.projects.presto.lib.presto.fixtures
-lino.projects.presto.settings
-lino.projects.presto.tests
 lino.projects.std
 lino.sphinxcontrib
 lino.sphinxcontrib.logo
@@ -266,8 +258,6 @@ lino.test_apps.example
 lino.test_apps.nomti
 lino.test_apps.properties
 lino.test_apps.quantityfield
-lino.tutorials
-lino.tutorials.mini
 lino.utils
 lino.utils.demonames
 lino.utils.mldbc

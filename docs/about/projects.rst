@@ -40,6 +40,13 @@ Lino Così
 
 http://cosi.lino-framework.org/
 
+.. _presto:
+
+Lino Presto
+------------
+
+http://presto.lino-framework.org/
+
 .. _faggio:
 
 Lino Faggio
