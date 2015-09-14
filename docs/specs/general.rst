@@ -11,7 +11,7 @@ possible to publish **service reports**.
 
 .. How to test only this document:
 
-    $ python setup.py test -s tests.SpecsTests.test_tickets
+    $ python setup.py test -s tests.SpecsTests.test_general
     
     doctest init:
 
@@ -55,17 +55,17 @@ User profiles
 A default Lino Noi site has the following user profiles:
 
 >>> rt.show(users.UserProfiles)
-======= ============ ===============
+======= ============ ==================
  value   name         text
-------- ------------ ---------------
+------- ------------ ------------------
  000     anonymous    Anonymous
  100     user         User
  200     consultant   Consultant
  300     hoster       Hoster
  400     developer    Developer
- 490     senior       Senior
+ 490     senior       Senior developer
  900     admin        Administrator
-======= ============ ===============
+======= ============ ==================
 <BLANKLINE>
 
 

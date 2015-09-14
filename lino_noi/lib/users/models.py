@@ -1,6 +1,21 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2015 Luc Saffre
-# License: BSD (see file COPYING for details)
+#
+# This file is part of Lino Noi.
+#
+# Lino Noi is free software: you can redistribute it and/or modify it
+# under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# Lino Noi is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public
+# License along with Lino Noi.  If not, see
+# <http://www.gnu.org/licenses/>.
 
 """Database models for :mod:`lino_noi.modlib.users`.
 
@@ -43,7 +58,7 @@ class UserDetail(UserDetail):
     """, label=_("General"))
 
     tickets = dd.Panel("""
-    open_session_on_new_ticket #current_project
+    open_session_on_new_ticket user_site #current_project
     tickets.TicketsByReporter
     """, label=_("Tickets"))
 

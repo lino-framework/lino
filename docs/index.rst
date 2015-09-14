@@ -26,6 +26,8 @@ Content
    :maxdepth: 1
 
    install/index
+   guide/index
+   team/index
    specs/index
    api/index
    todo

@@ -185,21 +185,20 @@ Site #1 (u'welket')
 ==== ================================================================================================ ======= ===========
  ID   Description                                                                                      State   Time
 ---- ------------------------------------------------------------------------------------------------ ------- -----------
- 8    Is there any Bar in Foo?. Site: welsch. Reporter: jean. Project: docs. Product: Lino Welfare     New     3:42
- 9    Foo never matches Bar. Site: pypi. Reporter: luc. Project: linö. Product: Lino Cosi              New     5:08
- 11   Class-based Foos and Bars?. Site: welsch. Reporter: mathieu. Project: docs. Product: Lino Core   New     7:09
- 12   Foo cannot bar. Site: pypi. Reporter: Romain Raffault. Project: linö. Product: Lino Welfare      New     2:18
- 15   Bars have no foo. Site: pypi. Reporter: jean. Project: linö. Product: Lino Core                  New     1:02
-                                                                                                               **19:19**
+ 4    Foo and bar don't baz. Site: welket. Reporter: mathieu. Project: docs. Product: Lino Welfare     New     4:00
+ 9    Foo never matches Bar. Site: pypi. Reporter: luc. Project: linö. Product: Lino Cosi              New     4:38
+ 11   Class-based Foos and Bars?. Site: welsch. Reporter: mathieu. Project: docs. Product: Lino Core   New     6:28
+ 15   Bars have no foo. Site: pypi. Reporter: jean. Project: linö. Product: Lino Core                  New     5:08
+                                                                                                               **20:14**
 ==== ================================================================================================ ======= ===========
 <BLANKLINE>
 
 >>> rt.show(clocking.ProjectsByReport, obj)
-==================== =============== ==================== ===========
- Reference            Name            Tickets              Time
--------------------- --------------- -------------------- -----------
- docs                 Documentatión   *#11*, *#8*          10:51
- linö                 Framewörk       *#15*, *#12*, *#9*   8:28
- **Total (2 rows)**                                        **19:19**
-==================== =============== ==================== ===========
+==================== =============== ============= ===========
+ Reference            Name            Tickets       Time
+-------------------- --------------- ------------- -----------
+ docs                 Documentatión   *#11*, *#4*   10:28
+ linö                 Framewörk       *#15*, *#9*   9:46
+ **Total (2 rows)**                                 **20:14**
+==================== =============== ============= ===========
 <BLANKLINE>
