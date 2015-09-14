@@ -258,7 +258,6 @@ lino.test_apps.example
 lino.test_apps.nomti
 lino.test_apps.properties
 lino.test_apps.quantityfield
-lino.tutorials
 lino.utils
 lino.utils.demonames
 lino.utils.mldbc
