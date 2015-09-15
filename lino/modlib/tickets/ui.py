@@ -614,7 +614,7 @@ class MyKnownProblems(Tickets):
     @classmethod
     def get_request_queryset(self, ar):
         u = ar.get_user()
-        print "20150910", u.user_site
+        # print "20150910", u.user_site
         if not u.user_site:
             ar.no_data_text = _("Only for users whose `user_site` is set.")
             return self.model.objects.none()
