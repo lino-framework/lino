@@ -95,7 +95,9 @@ pay money.
  linö                 Framewörk                               No
  téam                 Téam                                    Yes
  docs                 Documentatión                           No
- **Total (3 rows)**                                           **1**
+ research             Research                                No
+ shop                 Shop                                    No
+ **Total (5 rows)**                                           **1**
 ==================== =============== ======== ============== =========
 <BLANKLINE>
 
@@ -117,6 +119,22 @@ project:
 <BLANKLINE>
 
 
+Distribution of tickets per project
+===================================
+
+In our demo database, tickets are distributed over the different
+projects as follows (not a realistic distribution):
+
+>>> for p in tickets.Project.objects.all():
+...     print p.ref, p.tickets_by_project.count()
+linö 3
+téam 3
+docs 3
+research 3
+shop 2
+
+
+
 Private tickets
 ===============
 
@@ -127,20 +145,50 @@ So the private tickets are (1) those in project "téam" and (2) those
 without project:
 
 >>> pv = dict(show_private=dd.YesNo.yes)
->>> rt.show(tickets.Tickets, param_values=pv)
+>>> rt.show(tickets.Tickets, param_values=pv,
+...     column_names="id summary assigned_to project")
 ... #doctest: +REPORT_UDIFF
-==== =========================================== ======== ========== ================= =========
- ID   Summary                                     Closed   Workflow   Reporter          Project
----- ------------------------------------------- -------- ---------- ----------------- ---------
- 16   How to get bar from foo                     No       **New**    luc               téam
- 13   Bar cannot foo                              No       **New**    Rolf Rompen       téam
- 10   Where can I find a Foo when bazing Bazes?   No       **New**    marc              téam
- 7    No Foo after deleting Bar                   No       **New**    Robin Rood        téam
- 5    Cannot create Foo                           No       **New**    Romain Raffault
- 3    Baz sucks                                   No       **New**    marc
- 2    Bar is not always baz                       No       **New**    luc               téam
-==== =========================================== ======== ========== ================= =========
+==== ======================= ============= =========
+ ID   Summary                 Assigned to   Project
+---- ----------------------- ------------- ---------
+ 14   Bar cannot baz          luc           téam
+ 9    Foo never matches Bar                 téam
+ 5    Cannot create Foo
+ 3    Baz sucks               luc
+ 2    Bar is not always baz   jean          téam
+==== ======================= ============= =========
 <BLANKLINE>
+
+And these are the public tickets:
+
+>>> pv = dict(show_private=dd.YesNo.no)
+>>> rt.show(tickets.Tickets, param_values=pv,
+...     column_names="id summary assigned_to project")
+... #doctest: +REPORT_UDIFF
+==== =========================================== ============= ==========
+ ID   Summary                                     Assigned to   Project
+---- ------------------------------------------- ------------- ----------
+ 16   How to get bar from foo                     mathieu       research
+ 15   Bars have no foo                            marc          docs
+ 13   Bar cannot foo                                            linö
+ 12   Foo cannot bar                              jean          shop
+ 11   Class-based Foos and Bars?                  mathieu       research
+ 10   Where can I find a Foo when bazing Bazes?   marc          docs
+ 8    Is there any Bar in Foo?                    luc           linö
+ 7    No Foo after deleting Bar                   jean          shop
+ 6    Sell bar in baz                             mathieu       research
+ 4    Foo and bar don't baz                       marc          docs
+ 1    Föö fails to bar when baz                                 linö
+==== =========================================== ============= ==========
+<BLANKLINE>
+
+
+There are 5 private and 11 public tickets in our database.
+
+>>> tickets.Ticket.objects.filter(private=True).count()
+5
+>>> tickets.Ticket.objects.filter(private=False).count()
+11
 
 
 
@@ -184,16 +232,16 @@ can see all local tickets for a given site object:
 >>> welket = tickets.Site.objects.get(name="welket")
 >>> rt.show(tickets.TicketsBySite, welket)
 ... #doctest: +REPORT_UDIFF
-==== =========================================== ======== ========== ============= =========
+==== =========================================== ======== ========== ============= ==========
  ID   Summary                                     Closed   Workflow   Reporter      Project
----- ------------------------------------------- -------- ---------- ------------- ---------
- 16   How to get bar from foo                     No       **New**    luc           téam
- 13   Bar cannot foo                              No       **New**    Rolf Rompen   téam
- 10   Where can I find a Foo when bazing Bazes?   No       **New**    marc          téam
- 7    No Foo after deleting Bar                   No       **New**    Robin Rood    téam
+---- ------------------------------------------- -------- ---------- ------------- ----------
+ 16   How to get bar from foo                     No       **New**    luc           research
+ 13   Bar cannot foo                              No       **New**    Rolf Rompen   linö
+ 10   Where can I find a Foo when bazing Bazes?   No       **New**    marc          docs
+ 7    No Foo after deleting Bar                   No       **New**    Robin Rood    shop
  4    Foo and bar don't baz                       No       **New**    mathieu       docs
  1    Föö fails to bar when baz                   No       **New**    jean          linö
-==== =========================================== ======== ========== ============= =========
+==== =========================================== ======== ========== ============= ==========
 <BLANKLINE>
 
 Note that the above table shows no state change actions in the
@@ -202,16 +250,16 @@ authenticated developer it looks like this:
 
 >>> rt.login('jean').show(tickets.TicketsBySite, welket)
 ... #doctest: +REPORT_UDIFF
-==== =========================================== ======== =========================================================================== ============= =========
+==== =========================================== ======== =========================================================================== ============= ==========
  ID   Summary                                     Closed   Workflow                                                                    Reporter      Project
----- ------------------------------------------- -------- --------------------------------------------------------------------------- ------------- ---------
- 16   How to get bar from foo                     No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [↗] [☆]   luc           téam
- 13   Bar cannot foo                              No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [↗] [☆]   Rolf Rompen   téam
- 10   Where can I find a Foo when bazing Bazes?   No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [↗] [☆]   marc          téam
- 7    No Foo after deleting Bar                   No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [↗] [☆]   Robin Rood    téam
+---- ------------------------------------------- -------- --------------------------------------------------------------------------- ------------- ----------
+ 16   How to get bar from foo                     No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [↗] [☆]   luc           research
+ 13   Bar cannot foo                              No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [↗] [☆]   Rolf Rompen   linö
+ 10   Where can I find a Foo when bazing Bazes?   No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [↗] [☆]   marc          docs
+ 7    No Foo after deleting Bar                   No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [↗] [☆]   Robin Rood    shop
  4    Foo and bar don't baz                       No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [↗] [☆]   mathieu       docs
  1    Föö fails to bar when baz                   No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [↗] [☆]   jean          linö
-==== =========================================== ======== =========================================================================== ============= =========
+==== =========================================== ======== =========================================================================== ============= ==========
 <BLANKLINE>
 
 
