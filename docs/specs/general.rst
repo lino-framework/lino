@@ -84,3 +84,35 @@ changes.
 
 A **senior** is a developer who additionaly can triage tickets.
 
+Here is a list of user profiles of those who can work on tickets:
+
+>>> from lino.modlib.tickets.roles import Worker
+>>> UserProfiles = rt.modules.users.UserProfiles
+>>> [p.name for p in UserProfiles.items()
+...     if p.has_required_roles([Worker])]
+['consultant', 'hoster', 'developer', 'senior', 'admin']
+
+And here are those who don't work:
+
+>>> [p.name for p in UserProfiles.items()
+...    if not p.has_required_roles([Worker])]
+['anonymous', 'user']
+
+
+Users
+=====
+
+>>> rt.show(users.UsersOverview)
+========== ================== ==========
+ Username   User Profile       Language
+---------- ------------------ ----------
+ jean       Senior developer   en
+ luc        Developer          en
+ marc       Consultant         en
+ mathieu    Consultant         en
+ robin      Administrator      en
+ rolf       Administrator      de
+ romain     Administrator      fr
+========== ================== ==========
+<BLANKLINE>
+

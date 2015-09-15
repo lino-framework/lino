@@ -29,6 +29,9 @@ Django
 UNIX shell
 ==========
 
+- `Bash Cheat sheet
+  <http://cli.learncodethehardway.org/bash_cheat_sheet.pdf>`__
+
 - `Bash guide on Greg's wiki <http://mywiki.wooledge.org/BashGuide>`_
 
 - `Steve Parker's shell scripting guide <http://steve-parker.org/sh/first.shtml>`_
@@ -38,6 +41,7 @@ UNIX shell
 
 - An in-depth exploration of the art of shell scripting: `Advanced Bash-Scripting Guide <http://www.tldp.org/LDP/abs/html>`_
   by Mendel Cooper
+
 
 Sphinx
 ======
@@ -56,17 +60,14 @@ SQL
 ===
 
 - `SQL Tutorial <http://www.w3schools.com/sql/>`_
-- `A Beginner’s Guide to SQL
+- `Udemy's Beginner’s Guide to SQL
   <https://blog.udemy.com/beginners-guide-to-sql/>`__
-
-Debian
-======
-
-- `Debian homepage <https://www.debian.org/intro/about>`_
 
 
 Git
 ===
 
-- https://www.atlassian.com/git/tutorials
-- https://blog.udemy.com/git-tutorial-a-comprehensive-guide/
+- `Atlassian's Git Tutorial <https://www.atlassian.com/git/tutorials>`__
+- `GitHub Help site <https://help.github.com/>`__
+- `Udemy Comprehensive Git Guide
+  <https://blog.udemy.com/git-tutorial-a-comprehensive-guide/>`__
