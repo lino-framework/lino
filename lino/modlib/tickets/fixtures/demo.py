@@ -68,6 +68,8 @@ def objects():
     yield Project(name="Framewörk", ref="linö", private=False)
     yield Project(name="Téam", ref="téam")
     yield Project(name="Documentatión", ref="docs", private=False)
+    yield Project(name="Research", ref="research", private=False)
+    yield Project(name="Shop", ref="shop", private=False)
 
     PROJECTS = Cycler(Project.objects.all())
     SITES = Cycler(Site.objects.all())

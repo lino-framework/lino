@@ -20,7 +20,9 @@ from lino.core import model
 
 
 class Duplicate(actions.Action):
-    """Duplicate the selected row.
+    """Duplicate the selected row. This will call
+    :meth:`lino.core.model.Model.on_duplicate` on the new object and
+    on related objects.
 
     """
     label = _("Duplicate")
