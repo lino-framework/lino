@@ -52,7 +52,7 @@ class TableRequest(ActionRequest):
     extra = None
     title = None
     filter = None
-    known_values = None
+    # known_values = None
 
     limit = None
     offset = None
@@ -85,7 +85,8 @@ class TableRequest(ActionRequest):
             w = WARNINGS_LOGGED.get(str(e))
             if w is None:
                 WARNINGS_LOGGED[str(e)] = True
-                logger.exception(e)
+                raise
+                # logger.exception(e)
             self._data_iterator = []
 
         if isinstance(self._data_iterator, GeneratorType):
