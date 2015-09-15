@@ -110,17 +110,17 @@ class Model(models.Model):
     :class:`lino.modlib.outbox.models.Recipient` has
     ``allow_cascaded_delete = 'mail'``.
     
-    This is also used by
-    :meth:`lino.mixins.duplicable.Duplicable.duplicate` to decide
-    whether slaves of a record being duplicated should be duplicated
-    as well.
-    
-    This mechanism doesn't depend on nor influence Django's `on_delete
-    <https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.ForeignKey.on_delete>`_
-    option.  But of course you should not
-    :attr:`allow_cascaded_delete` for fields which have
-    e.g. `on_delete=PROTECT`.
+    This is also used by :class:`lino.mixins.duplicable.Duplicate` to
+    decide whether slaves of a record being duplicated should be
+    duplicated as well.
 
+    A startup (in :meth:`kernel_startup
+    <lino.core.kernel.Kernel.kernel_startup>`) Lino automatically sets
+    `on_delete
+    <https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.ForeignKey.on_delete>`_
+    to ``PROTECT`` for all FK fields that are not listed in the
+    ``allow_cascaded_delete`` of their model.
+    
     """
 
     grid_post = actions.CreateRow()
@@ -571,12 +571,23 @@ class Model(models.Model):
         pass
 
     def on_duplicate(self, ar, master):
-        """
-        Called by :meth:`lino.mixins.duplicable.Duplicable.duplicate`.
-        `ar` is the action request that asked to duplicate.
-        If `master` is not None, then this is a cascaded duplicate initiated
-        be a duplicate() on the specifie `master`.
+        """Called by :class:`lino.mixins.duplicable.Duplicate` on
+        the new row instance and on all related objects.
 
+        `ar` is the action request that asked to duplicate.
+
+        If `master` is not None, then this is a cascaded duplicate initiated
+        be a :meth:`duplicate` on the specified `master`.
+
+        Note that on the master (i.e. when `master` is None), this is
+        called *after* having saved the object, and for related
+        objects (`master` is not `None`) it is called *before* saving
+        the object.
+
+        Note also that "related objects" means only those which point
+        to the master using a FK which is listed in
+        :attr:`allow_cascaded_delete
+        <lino.core.model.Model.allow_cascaded_delete>`.
 
         """
         pass

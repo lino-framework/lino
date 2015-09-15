@@ -352,8 +352,14 @@ request from it.
         return kw
 
     def set_selected_pks(self, *selected_pks):
+        """Given a tuple of primary keys, set :attr:`selected_rows` to a list
+        of corresponding database objects.
+
+        """
         #~ print 20131003, selected_pks
-        self.selected_rows = [self.get_row_by_pk(pk) for pk in selected_pks]
+        self.selected_rows = [
+            self.get_row_by_pk(pk) for pk in selected_pks if pk]
+        # note: ticket #523 was because the GET contained an empty pk ("&sr=")
 
     def get_permission(self, obj=None, **kw):
         """Whether this request has permission to run on the given database

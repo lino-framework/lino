@@ -10,6 +10,7 @@ import datetime
 from lino.api import rt, dd
 from lino.utils import Cycler
 
+from lino.core.roles import SiteAdmin
 from lino.modlib.cal.utils import DurationUnits
 from lino.modlib.tickets.roles import Worker
 from lino.utils.quantities import Duration
@@ -23,17 +24,20 @@ def objects():
     User = rt.modules.users.User
     UserProfiles = rt.modules.users.UserProfiles
     # devs = (UserProfiles.developer, UserProfiles.senior)
-    devs = [p for p in UserProfiles.items() if p.has_required_roles([Worker])]
+    devs = [p for p in UserProfiles.items()
+            if p.has_required_roles([Worker])
+            and not p.has_required_roles([SiteAdmin])]
     workers = User.objects.filter(profile__in=devs)
     WORKERS = Cycler(workers)
     TYPES = Cycler(SessionType.objects.all())
     TICKETS = Cycler(Ticket.objects.all())
     DURATIONS = Cycler([12, 138, 90, 10, 122, 209, 37, 62, 179, 233, 5])
 
-    # every third non-private ticket is unassigned and thus listed in
+    # every fourth ticket is unassigned and thus listed in
     # PublicTickets
-    for i, t in enumerate(Ticket.objects.exclude(private=True)):
-        if i % 3:
+    # for i, t in enumerate(Ticket.objects.exclude(private=True)):
+    for i, t in enumerate(Ticket.objects.all()):
+        if i % 4:
             t.assigned_to = WORKERS.pop()
             yield t
 
