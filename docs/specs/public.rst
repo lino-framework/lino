@@ -33,13 +33,12 @@ The demo database contains the following data:
 
 >>> rt.show(tickets.PublicTickets)
 ... #doctest: +REPORT_UDIFF
-================================== ======= ============= ========= ============== ==========
- Overview                           State   Ticket type   Project   Product        Priority
----------------------------------- ------- ------------- --------- -------------- ----------
- *#12 (Foo cannot bar)*             New     Upgrade       linö      Lino Welfare   0
- *#8 (Is there any Bar in Foo?)*    New     Enhancement   docs      Lino Welfare   0
- *#1 (Föö fails to bar when baz)*   New     Bugfix        linö      Lino Cosi      0
-================================== ======= ============= ========= ============== ==========
+================================== ======= ============= ========= =========== ==========
+ Overview                           State   Ticket type   Project   Product     Priority
+---------------------------------- ------- ------------- --------- ----------- ----------
+ *#13 (Bar cannot foo)*             New     Bugfix        linö      Lino Cosi   0
+ *#1 (Föö fails to bar when baz)*   New     Bugfix        linö      Lino Cosi   0
+================================== ======= ============= ========= =========== ==========
 <BLANKLINE>
 
 This data is being rendered using plain bootstrap HTML:
@@ -50,7 +49,7 @@ This data is being rendered using plain bootstrap HTML:
 >>> soup = BeautifulSoup(res.content)
 >>> links = soup.find_all('a')
 >>> len(links)
-30
+29
 >>> print(links[0].get('href'))
 /?ul=de
 >>> print(links[1].get('href'))
@@ -69,5 +68,5 @@ This data is being rendered using plain bootstrap HTML:
 Tickets Home en de fr Tickets Active tickets Tickets Site About #7 (No Foo after deleting Bar) << < > >> State: New
 <BLANKLINE>
 <BLANKLINE>
-(last update ...) Reported by: Robin Rood ... Product: Lino Core Site: welket (Private content) No dependencies. This is Lino Noi ...
+(last update ...) Reported by: Robin Rood ... Product: Lino Core Site: welket No dependencies. This is Lino Noi ...
 
