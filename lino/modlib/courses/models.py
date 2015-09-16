@@ -558,7 +558,6 @@ class Courses(dd.Table):
     parameters = mixins.ObservedPeriod(
         line=models.ForeignKey('courses.Line', blank=True, null=True),
         topic=models.ForeignKey('courses.Topic', blank=True, null=True),
-        city=models.ForeignKey('countries.Place', blank=True, null=True),
         teacher=models.ForeignKey(
             config.teacher_model,
             blank=True, null=True),
@@ -568,7 +567,8 @@ class Courses(dd.Table):
         state=CourseStates.field(blank=True),
         active=dd.YesNo.field(blank=True),
     )
-    params_layout = """topic line city teacher user state active:10"""
+
+    params_layout = """topic line teacher user state active:10"""
 
     simple_param_fields = 'line teacher state user'.split()
 
@@ -577,18 +577,9 @@ class Courses(dd.Table):
         qs = super(Courses, self).get_request_queryset(ar)
         if isinstance(qs, list):
             return qs
-        for n in self.simple_param_fields:
-            v = ar.param_values.get(n)
-            if v:
-                qs = qs.filter(**{n: v})
-                #~ print(20130530, qs.query)
 
         if ar.param_values.topic:
             qs = qs.filter(line__topic=ar.param_values.topic)
-        if ar.param_values.city:
-            flt = Q(room__isnull=True)
-            flt |= Q(room__company__city=ar.param_values.city)
-            qs = qs.filter(flt)
         flt = Q(enrolments_until__isnull=True)
         flt |= Q(enrolments_until__gte=dd.today())
         if ar.param_values.active == dd.YesNo.yes:
@@ -603,24 +594,12 @@ class Courses(dd.Table):
         for t in super(Courses, self).get_title_tags(ar):
             yield t
 
-        if ar.param_values.city:
-            yield _("in %s") % ar.param_values.city
         if ar.param_values.topic:
             yield unicode(ar.param_values.topic)
         for n in self.simple_param_fields:
             v = ar.param_values.get(n)
             if v:
                 yield unicode(v)
-
-    @dd.chooser()
-    def city_choices(cls):
-        Place = rt.modules.countries.Place
-        Room = rt.modules.cal.Room
-        places = set([
-            obj.company.city.id
-            for obj in Room.objects.filter(company__isnull=False)])
-        # logger.info("20140822 city_choices %s", places)
-        return Place.objects.filter(id__in=places)
 
 
 class CoursesByTeacher(Courses):
@@ -1107,7 +1086,7 @@ class SuggestedCoursesByPupil(ActiveCourses):
     hide_sums = True
     master = config.pupil_model
     details_of_master_template = _("%(details)s for %(master)s")
-    params_layout = 'topic line city teacher active'
+    params_layout = 'topic line teacher active'
 
     @classmethod
     def get_request_queryset(self, ar):
@@ -1116,15 +1095,6 @@ class SuggestedCoursesByPupil(ActiveCourses):
         if pupil is not None:
             qs = qs.exclude(enrolment__pupil=pupil)
         return qs
-
-    @classmethod
-    def param_defaults(self, ar, **kw):
-        kw = super(SuggestedCoursesByPupil, self).param_defaults(ar, **kw)
-        # kw.update(active=dd.YesNo.yes)
-        pupil = ar.master_instance
-        if pupil and pupil.city:
-            kw.update(city=pupil.city)
-        return kw
 
     @dd.displayfield(_("Actions"))
     def custom_actions(self, course, ar, **kw):
