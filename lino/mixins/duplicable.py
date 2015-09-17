@@ -17,7 +17,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino.core import actions
 from lino.core import model
-from lino.cure.utils import ChangeWatcher
+from lino.core.utils import ChangeWatcher
 
 
 class Duplicate(actions.Action):
