@@ -8,22 +8,18 @@ Database models for `lino.modlib.sepa`.
 """
 
 from __future__ import unicode_literals
-
 import logging
 from lino.modlib.sepa.camt import CamtParser
-
-logger = logging.getLogger(__name__)
 import glob
 import os
-
 from django.db import models
-
 from lino.api import dd, _, rt
 from lino.core.utils import ChangeWatcher
-
 from .fields import IBANField, BICField
 from .utils import belgian_nban_to_iban_bic, iban2bic
 import time
+
+logger = logging.getLogger(__name__)
 
 
 class ImportStatements(dd.Action):
@@ -210,7 +206,7 @@ class Statement(dd.Model):
         return ''
 
     account = dd.ForeignKey('sepa.Account')
-    date = models.DateField(null=True)
+    date = models.DateField(_('Date'), null=True)
     date_done = models.DateTimeField(_('Import Date'), null=True)
     statement_number = models.CharField(_('Statement number'), null=False, max_length=128)
     balance_start = dd.PriceField(_("Initial amount"), null=True)
