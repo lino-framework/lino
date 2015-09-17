@@ -37,7 +37,7 @@ class Duplicate(actions.Action):
             return False
         return True
 
-    def get_action_permission(self, ar, obj, state):
+    def unused_get_action_permission(self, ar, obj, state):
         if ar.get_user().profile.readonly:
             return False
         return super(Duplicate, self).get_action_permission(ar, obj, state)

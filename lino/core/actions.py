@@ -288,18 +288,16 @@ class Action(Parametrizable, Permittable):
     """
 
     readonly = True
-    """Whether this action possibly modifies data *in the given object*.
+    """Whether this action is readonly, i.e. does not change any data.
+
+    Setting this to `False` will make the action unavailable for
+    `readonly` user profiles and will cause it to be logged when
+    :attr:`log_each_action_request
+    <lino.core.site.Site.log_each_action_request>` is set to `True`.
     
-    This means that :class:`InsertRow` is a `readonly` action.
-    Actions like :class:`InsertRow` and :class:`Duplicable
-    <lino.mixins.duplicable.Duplicate>` which do not modify the given
-    object but *do* modify the database, must override their
-    `get_action_permission`::
-    
-      def get_action_permission(self, ar, obj, state):
-          if user.profile.readonly:
-              return False
-          return super(Duplicate, self).get_action_permission(ar, obj, state)
+    Note that Lino actually does not check whether it is true. When a
+    readonly action actually does modify the database, Lino won't
+    "notice" it.
 
     Discussion
     
@@ -307,14 +305,10 @@ class Action(Parametrizable, Permittable):
     `writing` (and set the default value `False`).  Because for the
     application developer that looks more natural.  Or --maybe better
     but probably even more consequences-- the default value should be
-    `False`.  Being readonly, for actions, is a kind of "privilege":
-    they don't get logged, they also exists for readonly users.  It
-    would be more "secure" when the developer must be explicit when
-    granting that privilege.
-    
-    A danger with this attribute is that Lino actually does not check
-    whether it is true. When a readonly action actually does modify
-    the database, Lino won't "notice" it.
+    `False`.  Because being readonly, for actions, is a kind of
+    "privilege": they don't get logged, they also exists for readonly
+    users.  It would be more "secure" when the developer must be
+    explicit when granting that privilege.
 
     """
 
@@ -713,7 +707,7 @@ class InsertRow(TableAction):
         wl = self.get_window_layout(actor)
         return wl.window_size
 
-    def get_action_permission(self, ar, obj, state):
+    def unused_get_action_permission(self, ar, obj, state):
         # see blog/2012/0726
         # if settings.SITE.user_model and ar.get_user().profile.readonly:
         if ar.get_user().profile.readonly:
