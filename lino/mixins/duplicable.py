@@ -17,6 +17,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino.core import actions
 from lino.core import model
+from lino.cure.utils import ChangeWatcher
 
 
 class Duplicate(actions.Action):
@@ -64,7 +65,11 @@ class Duplicate(actions.Action):
                     setattr(new, f.name, None)
 
         new.save(force_insert=True)
+        cw = ChangeWatcher(new)
         new.on_duplicate(ar, None)
+        if cw.is_dirty():
+            new.full_clean()
+            new.save()
 
         for fk, qs in related:
             for relobj in qs:
