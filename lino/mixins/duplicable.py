@@ -17,6 +17,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino.core import actions
 from lino.core import model
+from lino.core.utils import ChangeWatcher
 
 
 class Duplicate(actions.Action):
@@ -28,7 +29,7 @@ class Duplicate(actions.Action):
     label = _("Duplicate")
     sort_index = 11
     show_in_workflow = False
-    readonly = True  # like InsertRow. See docs/blog/2012/0726
+    readonly = False  # like InsertRow. See docs/blog/2012/0726
     icon_name = 'arrow_divide'
 
     def is_callable_from(self, caller):
@@ -36,7 +37,7 @@ class Duplicate(actions.Action):
             return False
         return True
 
-    def get_action_permission(self, ar, obj, state):
+    def unused_get_action_permission(self, ar, obj, state):
         if ar.get_user().profile.readonly:
             return False
         return super(Duplicate, self).get_action_permission(ar, obj, state)
@@ -64,7 +65,11 @@ class Duplicate(actions.Action):
                     setattr(new, f.name, None)
 
         new.save(force_insert=True)
+        cw = ChangeWatcher(new)
         new.on_duplicate(ar, None)
+        if cw.is_dirty():
+            new.full_clean()
+            new.save()
 
         for fk, qs in related:
             for relobj in qs:
