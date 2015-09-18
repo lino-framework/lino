@@ -15,6 +15,7 @@ Becoming a Lino developer
    mentoring
    prerequisites
    learning
+   noi_intro
 
 
 Development tools
