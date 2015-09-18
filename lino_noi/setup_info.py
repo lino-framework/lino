@@ -19,7 +19,7 @@
 
 SETUP_INFO = dict(
     name='lino-noi',
-    version='0.0.1',
+    version='0.0.2',  # since 20150918
     install_requires=['lino', 'xlwt'],
     test_suite='tests',
     description="The Lino application used by the Lino team for managing their work on the Lino project",
@@ -49,7 +49,7 @@ Intended Audience :: Developers
 Intended Audience :: System Administrators
 Intended Audience :: Information Technology
 Intended Audience :: Customer Service
-License :: OSI Approved :: GNU Affero General Public License
+License :: OSI Approved :: GNU Affero General Public License v3
 Operating System :: OS Independent
 Topic :: Software Development :: Bug Tracking
 """.splitlines())

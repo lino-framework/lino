@@ -13,6 +13,8 @@ The final truth about what's going on is only
 Version 0.0.2 (in development)
 ==============================
 
+- Changed license from BSD to AGPL (:ticket:`528`)
+
 
 Version 0.0.1 (released :blogref:`20150728`)
 ============================================
