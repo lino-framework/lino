@@ -179,7 +179,6 @@ class UtilsTests(LinoTestCase):
         self.run_simple_doctests("""
         lino/utils/instantiator.py
         lino/modlib/cal/utils.py
-        lino/modlib/sepa/utils.py
         """)
 
     def test_html2odf(self):
@@ -228,12 +227,6 @@ class UtilsTests(LinoTestCase):
 
     def test_ranges(self):
         self.run_simple_doctests('lino/utils/ranges.py')
-
-    def test_vat_utils(self):
-        self.run_simple_doctests('lino/modlib/vat/utils.py')
-
-    def test_ledger_utils(self):
-        self.run_simple_doctests('lino/modlib/ledger/utils.py')
 
     def test_contacts_utils(self):
         self.run_simple_doctests('lino/modlib/contacts/utils.py')
