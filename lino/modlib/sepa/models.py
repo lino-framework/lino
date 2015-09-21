@@ -8,19 +8,18 @@ Database models for `lino.modlib.sepa`.
 """
 
 from __future__ import unicode_literals
-
 import logging
-logger = logging.getLogger(__name__)
+from lino.modlib.sepa.camt import CamtParser
 import glob
 import os
-
 from django.db import models
-
-from lino.api import dd, _
+from lino.api import dd, _, rt
 from lino.core.utils import ChangeWatcher
-
 from .fields import IBANField, BICField
 from .utils import belgian_nban_to_iban_bic, iban2bic
+import time
+
+logger = logging.getLogger(__name__)
 
 
 class ImportStatements(dd.Action):
@@ -66,13 +65,59 @@ class ImportStatements(dd.Action):
         return ar.error(msg, alert=_("Error"))
 
     def import_file(self, ar, filename):
+        Account = rt.modules.sepa.Account
+        Partner = rt.modules.contacts.Partner
+
         msg = "File {0} would have imported.".format(filename)
+        """Parse a CAMT053 XML file."""
+        parser = CamtParser()
+        data_file = open(filename, 'rb').read()
+        try:
+            dd.logger.info("Try parsing with camt.")
+            res = parser.parse(data_file)
+            if res is not None:
+                for _statement in res:
+                    if _statement.get('account_number', None) is not None:
+                        # TODO : How to query an account by iban field ?
+                        # account = Account.objects.get(iban=_statement['account_number'])
+                        account = Account.objects.get(id=1)
+                        if account:
+                            s = Statement(account=account,
+                                          date=_statement['date'].strftime("%Y-%m-%d"),
+                                          date_done=time.strftime("%Y-%m-%d"),
+                                          statement_number=_statement['name'],
+                                          balance_end=_statement['balance_end'],
+                                          balance_start=_statement['balance_start'],
+                                          balance_end_real=_statement['balance_end_real'],
+                                          currency_code=_statement['currency_code'])
+                            s.save()
+                            for _movement in _statement['transactions']:
+                                partner = None
+                                if _movement.get('partner_name', None) is not None:
+                                    if Partner.objects.filter(name=_movement['partner_name']).exists():
+                                        partner = Partner.objects.get(name=_movement['partner_name'])
+                                    else:
+                                        partner = Partner.objects.order_by('name')[0]
+                                # TODO :check if the movement is already imported.
+                                if not Movement.objects.filter(unique_import_id=_movement['unique_import_id']).exists():
+                                    _ref = _movement.get('ref', '') or ''
+                                    m = Movement(statement=s,
+                                                 unique_import_id=_movement['unique_import_id'],
+                                                 movement_date=_movement['date'],
+                                                 amount=_movement['amount'],
+                                                 partner=partner,
+                                                 partner_name=_movement['partner_name'],
+                                                 ref=_movement.get('ref', '') or '')
+                                    m.save()
+
+        except ValueError:
+            dd.logger.info("Statement file was not a camt file.")
         dd.logger.info(msg)
         ar.info(msg)
 
 
 dd.inject_action('system.SiteConfig', import_sepa=ImportStatements())
-    
+
 
 class Account(dd.Model):
     """A bank account related to a given :class:`Partner
@@ -81,6 +126,7 @@ class Account(dd.Model):
     One partner can have more than one bank account.
 
     """
+
     class Meta:
         abstract = dd.is_abstract_model(__name__, 'Account')
         verbose_name = _("Account")
@@ -135,6 +181,7 @@ class Account(dd.Model):
             mi.save()
             watcher.send_update(ar.request)
 
+
 PRIMARY_FIELDS = dd.fields_list(Account, 'iban bic')
 
 
@@ -144,12 +191,29 @@ class Statement(dd.Model):
     This data is automaticaly imported by :class:`ImportStatements`.
 
     """
+
     class Meta:
         abstract = dd.is_abstract_model(__name__, 'Statement')
         verbose_name = _("Statement")
         verbose_name_plural = _("Statements")
 
+    def __unicode__(self):
+        if self.account:
+            if self.date:
+                return "{0} ({1})".format(self.account, self.date)
+            else:
+                return self.account
+        return ''
+
     account = dd.ForeignKey('sepa.Account')
+    date = models.DateField(_('Date'), null=True)
+    date_done = models.DateTimeField(_('Import Date'), null=True)
+    statement_number = models.CharField(_('Statement number'), null=False, max_length=128)
+    balance_start = dd.PriceField(_("Initial amount"), null=True)
+    balance_end = dd.PriceField(_("Final amount"), null=True)
+    balance_end_real = dd.PriceField(_("Real end balance"), null=True)
+    currency_code = models.CharField(_('Currency'), max_length=3)
+
     # fields like statement_number, date, solde_initial, solde_final
 
 
@@ -159,13 +223,21 @@ class Movement(dd.Model):
     This data is automaticaly imported by :class:`ImportStatements`.
 
     """
+
     class Meta:
         abstract = dd.is_abstract_model(__name__, 'Movement')
         verbose_name = _("Movement")
         verbose_name_plural = _("Movements")
 
     statement = dd.ForeignKey('sepa.Statement')
-
+    unique_import_id = models.CharField(_('Unique import ID'), max_length=128)
+    # movement_number = models.CharField(_("Ref of Mov"), null=False, max_length=32)
+    movement_date = models.DateField(_('Movement date'), null=True)
+    amount = dd.PriceField(_('Amount'), null=True)
+    partner = models.ForeignKey('contacts.Partner', related_name='sepa_movement', null=True)
+    partner_name = models.CharField(_('Partner name'), max_length=32)
+    bank_account = dd.ForeignKey('sepa.Account', blank=True, null=True)
+    ref = models.CharField(_('Ref'), null=False, max_length=32)
 
 
 from .ui import *
