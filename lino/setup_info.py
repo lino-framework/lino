@@ -120,11 +120,9 @@ lino.modlib.gfks
 lino.modlib.gfks.fixtures
 lino.modlib.countries
 lino.modlib.countries.fixtures
-lino.modlib.courses
 lino.modlib.cv
 lino.modlib.cv.fixtures
 lino.modlib.davlink
-lino.modlib.declarations
 lino.modlib.dupable_partners
 lino.modlib.dupable_partners.fixtures
 lino.modlib.eid_jslib
