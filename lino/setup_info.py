@@ -94,12 +94,9 @@ lino.history
 lino.mixins
 lino.modlib
 lino.modlib.about
-lino.modlib.accounts
 lino.modlib.addresses
 lino.modlib.addresses.fixtures
 lino.modlib.appypod
-lino.modlib.auto
-lino.modlib.auto.sales
 lino.modlib.awesomeuploader
 lino.modlib.beid
 lino.modlib.blogs
@@ -142,8 +139,6 @@ lino.modlib.extensible
 lino.modlib.extjs
 lino.modlib.jinja
 lino.modlib.families
-lino.modlib.finan
-lino.modlib.finan.fixtures
 lino.modlib.households
 lino.modlib.households.fixtures
 lino.modlib.humanlinks
@@ -151,8 +146,6 @@ lino.modlib.humanlinks.fixtures
 lino.modlib.importfilters
 lino.modlib.languages
 lino.modlib.languages.fixtures
-lino.modlib.ledger
-lino.modlib.ledger.fixtures
 lino.modlib.lino_startup
 lino.modlib.lino_startup.management
 lino.modlib.lino_startup.management.commands
@@ -182,10 +175,6 @@ lino.modlib.properties
 lino.modlib.properties.fixtures
 lino.modlib.reception
 lino.modlib.rooms
-lino.modlib.sales
-lino.modlib.sales.fixtures
-lino.modlib.sepa
-lino.modlib.sepa.fixtures
 lino.modlib.smtpd
 lino.modlib.smtpd.management
 lino.modlib.smtpd.management.commands
@@ -203,9 +192,6 @@ lino.modlib.tinymce.fixtures
 lino.modlib.uploads
 lino.modlib.users
 lino.modlib.users.fixtures
-lino.modlib.vat
-lino.modlib.vat.fixtures
-lino.modlib.vatless
 lino.modlib.vocbook
 lino.modlib.workflows
 lino.projects
