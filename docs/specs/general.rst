@@ -22,8 +22,8 @@ possible to publish **service reports**.
     >>> from lino.api.doctest import *
 
 
-Lino Noi uses both :mod:`lino.modlib.tickets` (Ticket management) and
-:mod:`lino.modlib.clocking` (Development time tracking).
+Lino Noi uses both :mod:`lino_noi.lib.tickets` (Ticket management) and
+:mod:`lino_noi.lib.clocking` (Development time tracking).
 
 
 .. contents::
@@ -33,15 +33,15 @@ Lino Noi uses both :mod:`lino.modlib.tickets` (Ticket management) and
 Tickets versus Clocking
 =======================
 
-Note that :mod:`lino.modlib.clocking` depends on
-:mod:`lino.modlib.tickets` and not vice-versa.  A time tracking system
+Note that :mod:`lino_noi.lib.clocking` depends on
+:mod:`lino_noi.lib.tickets` and not vice-versa.  A time tracking system
 makes no sense if you don't have a ticketing system.  Lino Noi uses
 them both, but some other applicaton might use only :mod:`tickets
-<lino.modlib.tickets>` without wanting to manage :mod:`clocking
-<lino.modlib.clocking>`.
+<lino_noi.lib.tickets>` without wanting to manage :mod:`clocking
+<lino_noi.lib.clocking>`.
 
 >>> dd.plugins.clocking.needs_plugins
-['lino.modlib.tickets']
+['lino_noi.lib.tickets']
 
 >>> dd.plugins.tickets.needs_plugins
 ['lino.modlib.excerpts']
@@ -86,7 +86,7 @@ A **senior** is a developer who additionaly can triage tickets.
 
 Here is a list of user profiles of those who can work on tickets:
 
->>> from lino.modlib.tickets.roles import Worker
+>>> from lino_noi.lib.tickets.roles import Worker
 >>> UserProfiles = rt.modules.users.UserProfiles
 >>> [p.name for p in UserProfiles.items()
 ...     if p.has_required_roles([Worker])]

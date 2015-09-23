@@ -1,4 +1,3 @@
-# -*- coding: UTF-8 -*-
 # Copyright 2015 Luc Saffre
 #
 # This file is part of Lino Noi.
@@ -17,20 +16,20 @@
 # License along with Lino Noi.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-"""Settings for providing readonly public access to the site. This
-does not use :mod:`lino.modlib.extjs` but :mod:`lino.modlib.bootstrap3`.
+"""User roles for `lino_noi.lib.tickets`.
 
 """
 
-from lino_noi.projects.team.settings.demo import *
+from lino.core.roles import SiteUser
 
 
-class Site(Site):
+class Triager(SiteUser):
+    """A user who is responsible for triaging new tickets.
 
-    default_ui = 'bootstrap3'
-    default_user = 'anonymous'
+    """
 
-    def get_installed_apps(self):
-        yield super(Site, self).get_installed_apps()
-        yield 'lino.modlib.bootstrap3'
 
+class Worker(SiteUser):
+    """A user who is candidate for working on a ticket.
+
+    """

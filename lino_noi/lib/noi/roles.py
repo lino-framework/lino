@@ -23,7 +23,7 @@
 
 from lino.core.roles import UserRole, SiteAdmin
 from lino.modlib.office.roles import OfficeStaff, OfficeUser
-from lino.modlib.tickets.roles import Worker, Triager
+from lino_noi.lib.tickets.roles import Worker, Triager
 from lino.modlib.users.choicelists import UserProfiles
 from django.utils.translation import ugettext_lazy as _
 

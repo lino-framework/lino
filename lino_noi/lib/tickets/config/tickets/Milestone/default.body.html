@@ -1,0 +1,16 @@
+Release notes for milestone <b>{{unicode(obj)}}</b>.
+
+{% if obj.reached %}
+Released on {{fdl(obj.reached)}}.
+{% endif %}
+{% if obj.expected %}
+Planned for {{fdl(obj.expected)}}.
+{% endif %}
+
+{{obj.description}}
+
+{{ar.show(rt.modules.tickets.DeploymentsByMilestone, obj, header_level=2)}}
+
+{{ar.show(rt.modules.clocking.OtherTicketsByMilestone, obj, header_level=2)}}
+
+
