@@ -30,26 +30,13 @@ Tickets
 =======
 
 A :class:`Ticket <lino.modlib.tickets.models.Ticket>` represents a
-concrete problem introduced by a 
-:attr:`reporter <lino.modlib.tickets.models.Ticket.reporter>` 
-(usually a customer).
+concrete problem introduced by a :attr:`reporter
+<lino.modlib.tickets.models.Ticket.reporter>` (a system user).
 
-A ticket is usually assigned to one and only one user
+A ticket is usually *assigned* to one and only one user
 (:attr:`assigned_to <lino.modlib.tickets.models.Ticket.assigned_to>`)
 who is expected to work on it. That user might be the customer,
 e.g. when the developer has a question.
-
-The :attr:`project <lino.modlib.tickets.models.Ticket.project>` of a
-ticket is used to specify "who is going to pay" for it. Lino Noi does
-not issue invoices, so it uses this information only for reporting
-about it and helping with the decision about whether and how worktime
-is being invoiced to the customer.  But the invoicing itself is not
-curently goal of Lino Noi.
-
-The :attr:`product <lino.modlib.tickets.models.Ticket.product>` is
-what Trac calls "component". Products are "customer-side
-classification" of the different components which are being developed
-by the team that uses a given Lino Noi site.
 
 Lifecycle of a ticket
 =====================
@@ -85,8 +72,15 @@ whether this is a cool feature (#372).
 Projects
 ========
 
-A **project** is something for which somebody is possibly willing to
-pay money.
+The :attr:`project <lino.modlib.tickets.models.Ticket.project>` of a
+ticket is used to specify "who is going to pay" for it. Lino Noi does
+not issue invoices, so it uses this information only for reporting
+about it and helping with the decision about whether and how worktime
+is being invoiced to the customer.  But the invoicing itself is not
+currently a goal of Lino Noi.
+
+So a **project** is something for which somebody is possibly willing
+to pay money.
 
 >>> rt.show(tickets.Projects)
 ==================== =============== ======== ============== =========
@@ -101,11 +95,12 @@ pay money.
 ==================== =============== ======== ============== =========
 <BLANKLINE>
 
-Developers can start working on tickets without needing to know who is
-going to pay for their work (i.e. without specifying a project).
-Every ticket should get assigned to some project after some time, but
-You can see a list of tickets which have not yet been assigned to a
-project:
+Developers can start working on tickets without specifying a project
+(i.e. without knowing who is going to pay for their work).  
+
+But after some time every ticket should get assigned to some
+project. You can see a list of tickets which have not yet been
+assigned to a project:
 
 >>> pv = dict(has_project=dd.YesNo.no)
 >>> rt.show(tickets.Tickets, param_values=pv)
@@ -183,7 +178,7 @@ And these are the public tickets:
 <BLANKLINE>
 
 
-There are 5 private and 11 public tickets in our database.
+There are 5 private and 11 public tickets in the demo database.
 
 >>> tickets.Ticket.objects.filter(private=True).count()
 5
@@ -194,6 +189,13 @@ There are 5 private and 11 public tickets in our database.
 
 Products
 ========
+
+The :attr:`product <lino.modlib.tickets.models.Ticket.product>` of a
+ticket is what Trac calls "component". Products are a "customer-side"
+classification of the different components which are being developed
+by the team that uses a given Lino Noi site.
+
+There are 4 producs in the demo database.
 
 >>> rt.show(products.Products)
 =========== ============== ================== ================== ==========
@@ -210,7 +212,7 @@ Products
 Sites
 =====
 
-We have a list of all sites for which we do support:
+Lino Noi has a list of all sites for which we do support:
 
 >>> rt.show(tickets.Sites)
 ============= ========= ======== ====
@@ -222,10 +224,7 @@ We have a list of all sites for which we do support:
 ============= ========= ======== ====
 <BLANKLINE>
 
-
-A ticket may or may not be **local**, i.e. assigned to a given
-**Site**.
-
+A ticket may or may not be "local", i.e. specific to a given site.
 When a ticket is site-specific, we simply assign the `site` field. We
 can see all local tickets for a given site object:
 
@@ -263,6 +262,37 @@ authenticated developer it looks like this:
 <BLANKLINE>
 
 
+Interests
+=========
+
+Every site can have its list of "interests". That is a list of the
+products that are being used on that site.
+
+>>> welket = tickets.Site.objects.get(name="welket")
+>>> rt.show(tickets.InterestsBySite, welket)
+... #doctest: +REPORT_UDIFF
+==============
+ Product
+--------------
+ Lino Core
+ Lino Welfare
+ Lino Cosi
+==============
+<BLANKLINE>
+
+
+
+Milestones
+==========
+
+Every site can have its list of "milestones" or "releases". A
+milestone is when a site gets an upgrade of the software which is
+running there. 
+
+A milestone is not necessary an *official* release of a new
+version. It just means that you release some changed software to the
+users of that site.
+
 >>> welket = tickets.Site.objects.get(name="welket")
 >>> rt.show(tickets.MilestonesBySite, welket)
 ... #doctest: +REPORT_UDIFF
@@ -275,6 +305,33 @@ authenticated developer it looks like this:
          5/3/15         5/3/15    No       1
 ======= ============== ========= ======== ====
 <BLANKLINE>
+
+
+Deployments
+===========
+
+Every milestone has its list of "deployments", i.e. the tickets that
+are being fixed when this milestone is reached.
+
+The demo database currently does not have any deployments:
+
+>>> rt.show(tickets.Deployments)
+No data to display
+
+
+Release notes
+=============
+
+Lino Noi has an excerpt type for printing a milestone.  This is used
+to produce *release notes*.
+
+>>> obj = tickets.Milestone.objects.get(pk=7)
+>>> rt.show(tickets.DeploymentsByMilestone, obj)
+No data to display
+
+>>> rt.show(clocking.OtherTicketsByMilestone, obj)
+No data to display
+
 
 
 Dependencies between tickets
