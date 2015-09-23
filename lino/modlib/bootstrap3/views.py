@@ -31,6 +31,18 @@ PLAIN_PAGE_LENGTH = 15
 
 MENUS = dict()
 
+from lino.utils.memo import Parser
+MEMO_PARSER = Parser()
+
+
+def url2html(s):
+    url, text = s.split(None, 1)
+    if not text:
+        text = url
+    return '<a href="%s">%s</a>' % (url, text)
+
+MEMO_PARSER.register_command('url', url2html)
+
 
 def http_response(ar, tplname, context):
     "Deserves a docstring"
@@ -51,6 +63,7 @@ def http_response(ar, tplname, context):
     context.update(menu=menu)
     context = ar.get_printable_context(**context)
     context['ar'] = ar
+    context['memo'] = MEMO_PARSER.parse
     env = settings.SITE.plugins.jinja.renderer.jinja_env
     template = env.get_template(tplname)
 
