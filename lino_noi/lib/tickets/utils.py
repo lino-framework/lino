@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015 Luc Saffre
+# Copyright 2011-2015 Luc Saffre
 #
 # This file is part of Lino Noi.
 #
@@ -17,20 +17,16 @@
 # License along with Lino Noi.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-"""Settings for providing readonly public access to the site. This
-does not use :mod:`lino.modlib.extjs` but :mod:`lino.modlib.bootstrap3`.
 
-"""
-
-from lino_noi.projects.team.settings.demo import *
+from django.utils.translation import ugettext_lazy as _
+from lino.api import dd, rt
 
 
-class Site(Site):
+class DependencyTypes(dd.ChoiceList):
+    verbose_name = _("Dependency type")
+add = DependencyTypes.add_item
+add('10', _("Requires"), 'requires')
+add('20', _("Callback"), 'callback')
+add('30', _("Duplicate"), 'duplicate')
 
-    default_ui = 'bootstrap3'
-    default_user = 'anonymous'
-
-    def get_installed_apps(self):
-        yield super(Site, self).get_installed_apps()
-        yield 'lino.modlib.bootstrap3'
-
+    

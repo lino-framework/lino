@@ -17,20 +17,21 @@
 # License along with Lino Noi.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-"""Settings for providing readonly public access to the site. This
-does not use :mod:`lino.modlib.extjs` but :mod:`lino.modlib.bootstrap3`.
+"""
+Installs a primary certifiable ExcerptType for Milestone.
 
 """
 
-from lino_noi.projects.team.settings.demo import *
+from lino.api import rt, dd
 
 
-class Site(Site):
+def objects():
+    Milestone = rt.modules.tickets.Milestone
+    ExcerptType = rt.modules.excerpts.ExcerptType
 
-    default_ui = 'bootstrap3'
-    default_user = 'anonymous'
-
-    def get_installed_apps(self):
-        yield super(Site, self).get_installed_apps()
-        yield 'lino.modlib.bootstrap3'
-
+    kw = dict(
+        body_template='default.body.html',
+        print_recipient=False,
+        primary=True, certifying=True)
+    kw.update(dd.str2kw('name', Milestone._meta.verbose_name))
+    yield ExcerptType.update_for_model(Milestone, **kw)

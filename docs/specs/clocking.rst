@@ -15,13 +15,13 @@ Work time tracking
     >>> from lino.api.doctest import *
 
 
-Lino Noi uses both :mod:`lino.modlib.tickets` (Ticket management) and
-:mod:`lino.modlib.clocking` (Development time tracking).
+Lino Noi uses both :mod:`lino_noi.lib.tickets` (Ticket management) and
+:mod:`lino_noi.lib.clocking` (Development time tracking).
 
 Sessions
 ========
 
-A :class:`Session <lino.modlib.clocking.models.Session>` is when a
+A :class:`Session <lino_noi.lib.clocking.models.Session>` is when a
 user works on a ticket for a given lapse of time.
 
 >>> rt.show(clocking.Sessions, limit=15)
@@ -69,7 +69,7 @@ Site interests
 Not every site is interested in everything. For example the site
 `welket` is interested only in three products. We define this by
 creating :class:`Interest
-<lino.modlib.tickets.models.Interest>` objects:
+<lino_noi.lib.tickets.models.Interest>` objects:
 
 >>> welket = tickets.Site.objects.get(name="welket")
 >>> rt.show(tickets.InterestsBySite, welket)
@@ -161,7 +161,7 @@ Service Report
 ==============
 
 A service report (:class:`clocking.ServiceReport
-<lino.modlib.clocking.ui.ServiceReport>`) is a document which reports
+<lino_noi.lib.clocking.ui.ServiceReport>`) is a document which reports
 about the hours invested during a given date range.  It can be
 addressed to a recipient (a user) and in that case will consider only
 the tickets for which this user has specified interest.

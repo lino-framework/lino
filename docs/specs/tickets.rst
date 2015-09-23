@@ -19,7 +19,7 @@ Ticket management
 
 
 This document specifies the ticket management functions of Lino Noi,
-implemented in :mod:`lino.modlib.tickets`.
+implemented in :mod:`lino_noi.lib.tickets`.
 
 
 .. contents::
@@ -29,19 +29,19 @@ implemented in :mod:`lino.modlib.tickets`.
 Tickets
 =======
 
-A :class:`Ticket <lino.modlib.tickets.models.Ticket>` represents a
+A :class:`Ticket <lino_noi.lib.tickets.models.Ticket>` represents a
 concrete problem introduced by a :attr:`reporter
-<lino.modlib.tickets.models.Ticket.reporter>` (a system user).
+<lino_noi.lib.tickets.models.Ticket.reporter>` (a system user).
 
 A ticket is usually *assigned* to one and only one user
-(:attr:`assigned_to <lino.modlib.tickets.models.Ticket.assigned_to>`)
+(:attr:`assigned_to <lino_noi.lib.tickets.models.Ticket.assigned_to>`)
 who is expected to work on it. That user might be the customer,
 e.g. when the developer has a question.
 
 Lifecycle of a ticket
 =====================
 
-The :attr:`state <lino.modlib.tickets.models.Ticket.state>` of a
+The :attr:`state <lino_noi.lib.tickets.models.Ticket.state>` of a
 ticket has one of the following values:
 
 >>> rt.show(tickets.TicketStates)
@@ -58,21 +58,21 @@ ticket has one of the following values:
 ======= ========== ===========
 <BLANKLINE>
 
-See :class:`lino.modlib.tickets.choicelists.TicketStates` for an
+See :class:`lino_noi.lib.tickets.choicelists.TicketStates` for an
 overview of these.
 
 Note that a ticket also has a checkbox for marking it as :attr:`closed
-<lino.modlib.tickets.models.Ticket.closed>`.  This means that a ticket
+<lino_noi.lib.tickets.models.Ticket.closed>`.  This means that a ticket
 can be marked as "closed" in any of above states.  We are not sure
 whether this is a cool feature (#372).
 
-- :attr:`standby <lino.modlib.tickets.models.Ticket.standby>` 
+- :attr:`standby <lino_noi.lib.tickets.models.Ticket.standby>` 
 
 
 Projects
 ========
 
-The :attr:`project <lino.modlib.tickets.models.Ticket.project>` of a
+The :attr:`project <lino_noi.lib.tickets.models.Ticket.project>` of a
 ticket is used to specify "who is going to pay" for it. Lino Noi does
 not issue invoices, so it uses this information only for reporting
 about it and helping with the decision about whether and how worktime
@@ -190,7 +190,7 @@ There are 5 private and 11 public tickets in the demo database.
 Products
 ========
 
-The :attr:`product <lino.modlib.tickets.models.Ticket.product>` of a
+The :attr:`product <lino_noi.lib.tickets.models.Ticket.product>` of a
 ticket is what Trac calls "component". Products are a "customer-side"
 classification of the different components which are being developed
 by the team that uses a given Lino Noi site.

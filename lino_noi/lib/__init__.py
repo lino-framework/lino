@@ -22,9 +22,11 @@
 .. autosummary::
    :toctree:
 
-   contacts
-   noi
-   products
-   users
+    contacts
+    noi
+    products
+    users
+    clocking
+    tickets
 
 """

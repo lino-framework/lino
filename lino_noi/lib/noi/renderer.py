@@ -19,7 +19,7 @@
 
 from lino.modlib.bootstrap3.renderer import Renderer
 
-from lino.modlib.tickets.models import Ticket
+from lino_noi.lib.tickets.models import Ticket
 
 
 class Renderer(Renderer):

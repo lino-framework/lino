@@ -22,8 +22,12 @@ class Site(Site):
         super(Site, self).setup_plugins()
         self.plugins.excerpts.configure(responsible_user='jean')
 
+team_db = DATABASES
 
 SITE = Site(globals())
 
+DATABASES = team_db
+
 # the following line should not be active in a checked-in version
-#~ DATABASES['default']['NAME'] = ':memory:'
+# DATABASES['default']['NAME'] = ':memory:'
+# DATABASES['default']['NAME'] = '../team/'
