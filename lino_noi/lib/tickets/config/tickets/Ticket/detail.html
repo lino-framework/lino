@@ -31,7 +31,7 @@
 {% if obj.private and not ar.get_user().authenticated%}
 (Private content)
 {% else %}
-{{obj.description}}
+{{memo(obj.description)}}
 {% endif %}
 </div>
 <div>{{ar.show('tickets.LinksByTicket', obj)}}</div>

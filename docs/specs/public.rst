@@ -68,5 +68,5 @@ This data is being rendered using plain bootstrap HTML:
 Tickets Home en de fr Tickets Active tickets Tickets Site About #7 (No Foo after deleting Bar) << < > >> State: New
 <BLANKLINE>
 <BLANKLINE>
-(last update ...) Reported by: Robin Rood ... Product: Lino Core Site: welket No dependencies. This is Lino Noi ...
+(last update ...) Reported by: Robin Rood ... Product: Lino Core Site: welket This is Lino Noi ...
 

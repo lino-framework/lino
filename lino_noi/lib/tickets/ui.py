@@ -223,8 +223,8 @@ class LinksByTicket(Links):
             # elems += join_elems(items)
             # elems.append(l(*items))
             elems.append(E.ul(*items))
-        else:
-            elems.append(_("No dependencies."))
+        # else:
+        #     elems.append(_("No dependencies."))
 
         # Buttons for creating relationships:
 

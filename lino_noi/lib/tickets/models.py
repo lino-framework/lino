@@ -386,7 +386,23 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
         hoster's site administrator when doing an upgrade where this
         ticket is being deployed.
 
+    .. attribute:: description
+
+        A complete and concise description of the ticket. This should
+        describe in more detail what this ticket is about. If the
+        ticket has evolved during time, it should reflect the latest
+        version.
+
+        This a formatted HTML text which can additionally contain
+        :mod:`memo <lino.utils.memo>` markup. Examples:
+
+        [url http://www.example.com]
+        [url http://www.example.com example]
+
+        [ticket 1]
+
     """
+
     workflow_state_field = 'state'
 
     class Meta:
@@ -591,5 +607,17 @@ dd.inject_field(
         blank=True, null=True, related_name="users_by_site", 
         help_text=_("")))
 
+from lino.modlib.bootstrap3.views import MEMO_PARSER
+
+
+def ticket2html(s):
+    pk = int(s)
+    obj = rt.modules.tickets.Ticket.objects.get(pk=pk)
+    url = dd.plugins.bootstrap3.renderer.get_detail_url(obj)
+    text = "#{0}".format(obj.id)
+    title = obj.summary
+    return '<a href="{0}" title="{2}">{1}</a>'.format(url, text, title)
+
+MEMO_PARSER.register_command('ticket', ticket2html)
 
 from .ui import *

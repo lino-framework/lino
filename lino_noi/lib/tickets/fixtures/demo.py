@@ -120,7 +120,13 @@ def objects():
                  project=PROJECTS.pop())
     yield ticket("Class-based Foos and Bars?", project=PROJECTS.pop())
     yield ticket("Foo cannot bar", project=PROJECTS.pop())
-    yield ticket("Bar cannot foo", project=PROJECTS.pop())
+
+    # Example of memo markup:
+    yield ticket("Bar cannot foo", project=PROJECTS.pop(),
+                 description="""<p>Linking to [ticket 1] and to
+                 [url http://luc.lino-framework.org/blog/2015/0923.html blog].</p>
+                 """)
+ 
     yield ticket("Bar cannot baz", project=PROJECTS.pop())
     yield ticket("Bars have no foo", project=PROJECTS.pop())
     yield ticket("How to get bar from foo", project=PROJECTS.pop())
