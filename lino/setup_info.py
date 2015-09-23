@@ -108,8 +108,6 @@ lino.modlib.cal.management
 lino.modlib.cal.management.commands
 lino.modlib.cal.workflows
 lino.modlib.changes
-lino.modlib.clocking
-lino.modlib.clocking.fixtures
 lino.modlib.comments
 lino.modlib.concepts
 lino.modlib.contacts
@@ -183,8 +181,6 @@ lino.modlib.statbel.countries.fixtures
 lino.modlib.system
 lino.modlib.system.tests
 lino.modlib.thirds
-lino.modlib.tickets
-lino.modlib.tickets.fixtures
 lino.modlib.tinymce
 lino.modlib.tinymce.fixtures
 lino.modlib.uploads

@@ -86,8 +86,6 @@ Lino applications.
     rooms
     smtpd
     thirds
-    clocking
-    tickets
     uploads
     vocbook
     workflows
