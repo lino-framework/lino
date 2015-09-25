@@ -1688,7 +1688,7 @@ documentation.
         installed app.
 
         Note that this mechanism is deprecated. It is still used (on
-        names like ``setup_workflows``and ``setup_site``) for
+        names like ``setup_workflows`` and ``setup_site``) for
         historical reasons but will disappear one day.
 
         """
