@@ -673,12 +673,13 @@ class Model(models.Model):
             #             obj, actor, actor.model)
             sep = ''
 
-        for ba in actor.get_actions():
-            if ba.action.show_in_workflow:
-                if actor.get_row_permission(obj, ar, state, ba):
-                    l.append(sep)
-                    l.append(ar.action_button(ba, obj))
-                    sep = ' '
+        if ar.renderer.is_interactive:
+            for ba in actor.get_actions():
+                if ba.action.show_in_workflow:
+                    if actor.get_row_permission(obj, ar, state, ba):
+                        l.append(sep)
+                        l.append(ar.action_button(ba, obj))
+                        sep = ' '
         return E.span(*l)
 
     def error2str(self, e):
