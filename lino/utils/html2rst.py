@@ -51,6 +51,20 @@ Second
 A header
 ========
 <BLANKLINE>
+
+For images we render the ``alt`` text between brackets:
+
+>>> e = E.img(src="http://example.com/images/1.jpg", alt="1")
+>>> print html2rst(e, True)
+[img 1]
+
+If there is no ``alt`` text, render the content of ``src``:
+
+>>> e = E.img(src="http://example.com/images/1.jpg")
+>>> print html2rst(e, True)
+[img http://example.com/images/1.jpg]
+
+
 """
 
 from __future__ import unicode_literals

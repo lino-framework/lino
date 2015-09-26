@@ -79,6 +79,7 @@ def set_default_verbose_name(f):
     if f.verbose_name == f.name.replace('_', ' '):
         f.verbose_name = f.rel.to._meta.verbose_name
 
+
 CLONEABLE_ATTRS = frozenset("""ah request user subst_user
 bound_action create_kw known_values param_values
 action_param_values""".split())
@@ -375,37 +376,8 @@ class Kernel(object):
                     # f.rel.to._lino_ddh.add_fk(f.model, f)
                     f.rel.to._lino_ddh.add_fk(m or model, f)
 
-        # Set on_delete=PROTECT for FK fields that are not listed
-        # in `allow_cascaded_delete`.
-        for model in models_list:
-            for m, fk in model._lino_ddh.fklist:
-                if fk.rel.on_delete == models.CASCADE:
-                    if not fk.name in m.allow_cascaded_delete:
-                        msg = (
-                            "Setting {0}.{1}.on_delete to PROTECT because "
-                            "field is not specified in "
-                            "allow_cascaded_delete.").format(fmn(m), fk.name)
-                        logger.debug(msg)
-                        fk.rel.on_delete = models.PROTECT
-                else:
-                    if fk.name in m.allow_cascaded_delete:
-                        msg = ("{0}.{1} specified in allow_cascaded_delete "
-                               "but on_delete is not CASCADE").format(
-                            fmn(m), fk.name)
-                        raise Exception(msg)
-    
-                    if fk.rel.on_delete == models.SET_NULL:
-                        if not fk.null:
-                            msg = ("{0}.{1} has on_delete SET_NULL but "
-                                   "is not nullable ")
-                            msg = msg.format(fmn(m), fk.name, fk.rel.to)
-                            raise Exception(msg)
+        kernel.protect_foreignkeys(models_list)
 
-                    else:
-                        msg = ("{0}.{1} has custom on_delete").format(
-                            fmn(m), fk.name, fk.rel.on_delete)
-                        logger.debug(msg)
-                
         for p in self.installed_plugins:
             if isinstance(p, Plugin):
                 p.before_analyze()
@@ -476,6 +448,63 @@ class Kernel(object):
 
         #~ logger.info("20130827 startup_site done")
 
+    def protect_foreignkeys(self, models_list):
+        """Change `on_delete` from CASCADE (Django's default value) to PROTECT
+        for foreignkeys that need to be protected.
+
+        Basically we protect all FK fields that are not listed in
+        `allow_cascaded_delete`. With one exception: pointers to the
+        MTI parent of a :class:`Polymorphic
+        <lino.mixins.polymorphic.Polymorphic>` must not get protected
+        because Lino handles it automatically.
+
+        """
+
+        from lino.mixins.polymorphic import Polymorphic
+
+        def must_protect(m, fk, model):
+            # Whether the given foreign key fk
+            if fk.name in m.allow_cascaded_delete:
+                return False
+            if m is model:  # FK to self
+                return True
+            # if issubclass(m, model) or issubclass(model, m):
+            if issubclass(m, model):
+                if issubclass(m, Polymorphic):
+                    # they have an MTI relation
+                    return False
+            return True
+
+        for model in models_list:
+            for m, fk in model._lino_ddh.fklist:
+                assert fk.rel.to is model
+                if fk.rel.on_delete == models.CASCADE:
+                    if must_protect(m, fk, model):
+                        msg = (
+                            "Setting {0}.{1}.on_delete to PROTECT because "
+                            "field is not specified in "
+                            "allow_cascaded_delete.").format(fmn(m), fk.name)
+                        logger.debug(msg)
+                        fk.rel.on_delete = models.PROTECT
+                else:
+                    if fk.name in m.allow_cascaded_delete:
+                        msg = ("{0}.{1} specified in allow_cascaded_delete "
+                               "but on_delete is not CASCADE").format(
+                            fmn(m), fk.name)
+                        raise Exception(msg)
+    
+                    if fk.rel.on_delete == models.SET_NULL:
+                        if not fk.null:
+                            msg = ("{0}.{1} has on_delete SET_NULL but "
+                                   "is not nullable ")
+                            msg = msg.format(fmn(m), fk.name, fk.rel.to)
+                            raise Exception(msg)
+
+                    else:
+                        msg = ("{0}.{1} has custom on_delete").format(
+                            fmn(m), fk.name, fk.rel.on_delete)
+                        logger.debug(msg)
+                
     def get_generic_related(self, obj):
         """Yield a series of `(gfk, fk_field, queryset)` tuples which together
          will return all database objects for which the given

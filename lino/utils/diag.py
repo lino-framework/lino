@@ -83,6 +83,22 @@ class Analyzer(object):
         return rstgen.ul(items)
     
     def show_foreign_keys(self):
+        """Return a list that shows how database objects are being referred to
+        by some other database object. This information is important
+        (1) before deleting objects and (2) when merging them.
+
+        For every model we see a list of "delete handlers" and a list
+        of fields from other models that point to this model using
+        that delete handler.
+
+        Delete handlers are:
+
+        - PROTECT : refuse to delete when other objects refer to this object
+        - CASCADE : delete objects refering to this object
+        - set_on_delete : make other objects point to something else (or set
+          their pointer to None)
+
+        """
         self.analyze()
         tdp = dict()  # target model -> delete handler -> pointer list
         for target in get_models():

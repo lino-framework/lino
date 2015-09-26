@@ -20,7 +20,7 @@ This document tests this functionality.
 
 
 >>> from lino.utils.diag import analyzer
->>> print(analyzer.show_foreign_keys())
+>>> print(analyzer.show_foreign_keys())  #doctest: +REPORT_UDIFF
 - cal.Calendar :
   - PROTECT : system.SiteConfig.site_calendar, cal.Subscription.calendar
 - cal.Event :
@@ -38,7 +38,8 @@ This document tests this functionality.
 - contacts.CompanyType :
   - PROTECT : contacts.Company.type
 - contacts.Partner :
-  - PROTECT : users.User.partner, contacts.Person.partner_ptr, contacts.Company.partner_ptr, cal.Guest.partner
+  - CASCADE : contacts.Person.partner_ptr, contacts.Company.partner_ptr
+  - PROTECT : users.User.partner, cal.Guest.partner
 - contacts.Person :
   - PROTECT : contacts.Role.person
 - contacts.RoleType :
