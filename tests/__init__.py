@@ -34,6 +34,9 @@ class SpecsTests(BaseTestCase):
     def test_smtpd(self):
         self.run_simple_doctests('docs/specs/smtpd.rst')
 
+    def test_ddh(self):
+        self.run_simple_doctests('docs/specs/ddh.rst')
+
     def test_hosts(self):
         self.run_simple_doctests('docs/specs/hosts.rst')
 
