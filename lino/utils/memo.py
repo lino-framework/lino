@@ -2,11 +2,16 @@
 # Copyright 2006-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-r"""
-``memo`` is a simple universal markup parser that expands "commands" 
-found in an input string to produce a resulting output string. 
-Commands are in the form ``[KEYWORD ARGS]``. 
-The caller defines itself all commands, there are no predefined commands.
+r""" A simple universal markup parser that expands "commands" found in
+an input string to produce a resulting output string.  Commands are in
+the form ``[KEYWORD ARGS]``.  The caller defines itself all commands,
+there are no predefined commands.
+
+This document is part of the Lino test suite. You can test only this
+document with::
+
+  $ python setup.py test -s tests.UtilsTests.test_memo
+
 
 Usage example
 -------------
@@ -23,56 +28,51 @@ We declare a "command handler" function `url2html` and register it:
 ...     if not s: return "XXX"
 ...     url,text = s.split(None,1)
 ...     return '<a href="%s">%s</a>' % (url,text)
->>> p.register_command('url',url2html)
+>>> p.register_command('url', url2html)
 
-The intended usage of our example handler is 
-``[url URL TEXT]``, where URL is the URL 
-to link to, and TEXT is the label of the link:
+The intended usage of our example handler is ``[url URL TEXT]``, where
+URL is the URL to link to, and TEXT is the label of the link:
 
 >>> print p.parse('This is a [url http://xyz.com test].')
 [DEBUG] url2html() got 'http://xyz.com test'
 This is a <a href="http://xyz.com">test</a>.
 
 
-A command handler will be called with one parameter:
-the portion of text between the KEYWORD and the 
-closing square bracket. Not including the whitespace 
-after the keyword.
-It must return the text which is to replace 
-the ``[KEYWORD ARGS]`` fragment.
-It is responsible for parsing 
-the text that it receives as parameter.
+A command handler will be called with one parameter: the portion of
+text between the KEYWORD and the closing square bracket.  Not
+including the whitespace after the keyword.  It must return the text
+which is to replace the ``[KEYWORD ARGS]`` fragment.  It is
+responsible for parsing the text that it receives as parameter.
 
-If an exception occurs during the command handler, 
-the final exception message is inserted into the result.
-The whole traceback is being logged to the lino logger.
+If an exception occurs during the command handler, the final exception
+message is inserted into the result.  The whole traceback is being
+logged to the lino logger.
 
-To demonstrate this, our example implementation has a bug, 
-it doesn't support the case of having only an URL without TEXT:
+To demonstrate this, our example implementation has a bug, it doesn't
+support the case of having only an URL without TEXT:
 
 >>> print p.parse('This is a [url http://xyz.com].')
 [DEBUG] url2html() got 'http://xyz.com'
 This is a [ERROR need more than 1 value to unpack in '[url http://xyz.com]' at position 10-30].
 
-Newlines preceded by a backslash will be removed 
-before the command handler is called:
+Newlines preceded by a backslash will be removed before the command
+handler is called:
 
 >>> print p.parse('''This is [url http://xy\
 ... z.com another test].''')
 [DEBUG] url2html() got 'http://xyz.com another test'
 This is <a href="http://xyz.com">another test</a>.
 
-The whitespace between the KEYWORD and ARGS can be any 
-whitespace, including newlines:
+The whitespace between the KEYWORD and ARGS can be any whitespace,
+including newlines:
 
 >>> print p.parse('''This is a [url 
 ... http://xyz.com test].''')
 [DEBUG] url2html() got 'http://xyz.com test'
 This is a <a href="http://xyz.com">test</a>.
 
-The ARGS part is optional
-(it's up to the command handler to react accordingly,
-our handler function returns XXX in that case):
+The ARGS part is optional (it's up to the command handler to react
+accordingly, our handler function returns XXX in that case):
 
 >>> print p.parse('''This is a [url] test.''')
 [DEBUG] url2html() got ''
@@ -85,9 +85,8 @@ The ARGS part may contain pairs of square brackets:
 [DEBUG] url2html() got 'http://xyz.com test with [more] brackets'
 This is a <a href="http://xyz.com">test with [more] brackets</a>.
 
-
-Fragments of text between brackets that do not match 
-any registered command will be left unchanged:
+Fragments of text between brackets that do not match any registered
+command will be left unchanged:
 
 >>> print p.parse('''This is a [1] test.''')
 This is a [1] test.
@@ -102,28 +101,26 @@ Text with only [opening square bracket.
 Limits
 ------
 
-A single closing square bracket as part of ARGS will not 
-produce the desired result:
+A single closing square bracket as part of ARGS will not produce the
+desired result:
 
->>> print p.parse('''This is a [url 
+>>> print p.parse('''This is a [url
 ... http://xyz.com The character "\]"].''')
 [DEBUG] url2html() got 'http://xyz.com The character "\\'
 This is a <a href="http://xyz.com">The character "\</a>"].
 
-Execution flow statements like 
-`[if ...]` and `[endif ...]`
-or ``[for ...]`` and ``[endfor ...]``
-would be nice.
+Execution flow statements like `[if ...]` and `[endif ...]` or ``[for
+...]`` and ``[endfor ...]`` would be nice.
 
 
 
 The ``[=expression]`` form
 --------------------------
 
-Instantiate a new parser with a context and without :
+Instantiate a new parser with and without a context:
 
 >>> print p.parse('''\
-... The answer is [=a*a*5-a].''',a=3)
+... The answer is [=a*a*5-a].''', a=3)
 The answer is 42.
 
 
@@ -133,16 +130,12 @@ The answer is 42.
 """
 
 import logging
-#~ logging.basicConfig()
 logger = logging.getLogger(__name__)
 
-#~ logger.addHandler(logging.NullHandler())
-#~ avoid "No handlers could be found for logger "__main__"" when doctesting
-#~ not available before Python 2.7
 
 import re
 COMMAND_REGEX = re.compile(r"\[(\w+)\s*((?:[^[\]]|\[.*?\])*?)\]")
-#~                                      ===...... .......=
+#                                       ===...... .......=
 
 EVAL_REGEX = re.compile(r"\[=((?:[^[\]]|\[.*?\])*?)\]")
 

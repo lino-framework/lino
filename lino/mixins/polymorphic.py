@@ -170,8 +170,9 @@ class Polymorphic(model.Model):
     def disable_delete(self, ar=None):
         """Overrides :meth:`lino.core.model.Model.disable_delete`.
         """
+        # ask all other forms of this for vetos:
         for m in self._mtinav_models:
-            if not self.__class__ is m:
+            if m is not self.__class__:
                 obj = mti.get_child(self, m)
                 if obj is not None:
                     ignore_models = set(self._mtinav_models)
@@ -183,7 +184,8 @@ class Polymorphic(model.Model):
 
         ignore_models = set(self._mtinav_models)
         ignore_models.remove(self.__class__)
-        # same as `super` but ignore those who have been asked
+        # ask my own model, ignoring all other forms because they have
+        # been asked
         return self.__class__._lino_ddh.disable_delete_on_object(
             self, ignore_models=ignore_models)
 

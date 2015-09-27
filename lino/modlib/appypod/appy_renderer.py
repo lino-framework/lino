@@ -149,7 +149,10 @@ class AppyRenderer(OriginalAppyRenderer):
             return ''
         if E.iselement(html):
             html = E.tostring(html)
-        html = html2xhtml(html)
+        try:
+            html = html2xhtml(html)
+        except Exception as e:
+            print 20150923, e
         # logger.debug("20141210 html_func() got:<<<\n%s\n>>>", html)
         # print __file__, ">>>"
         # print html

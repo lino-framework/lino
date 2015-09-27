@@ -34,6 +34,7 @@ from lino.core.plugin import Plugin
 
 from lino import assert_django_code, DJANGO_DEFAULT_LANGUAGE
 from lino.utils.xmlgen.html import E
+from .exceptions import ChangedAPI
 # from .roles import SiteUser
 
 startup_rlock = threading.RLock()
@@ -1683,9 +1684,12 @@ documentation.
             setattr(obj, name, resolve_model(spec, strict=msg))
 
     def on_each_app(self, methname, *args):
-        """
-        Call the named method on the :xfile:`models.py` module of each
+        """Call the named method on the :xfile:`models.py` module of each
         installed app.
+
+        Note that this mechanism is deprecated. It is still used (on
+        names like ``setup_workflows`` and ``setup_site``) for
+        historical reasons but will disappear one day.
 
         """
         if AFTER17:
@@ -1697,6 +1701,9 @@ documentation.
         for mod in apps:
             meth = getattr(mod, methname, None)
             if meth is not None:
+                if False:  # 20150925 once we will do it for good...
+                    raise ChangedAPI("{0} still has a function {1}".format(
+                        mod, methname))
                 meth(self, *args)
 
     def for_each_app(self, func, *args, **kw):

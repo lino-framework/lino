@@ -40,11 +40,12 @@ class DisableDeleteHandler():
         return "<DisableDeleteHandler(%s, %s)>" % (self.model, s)
 
     def disable_delete_on_object(self, obj, ignore_models=set()):
-        """Return a message which explains why this object cannot be deleted.
-        Return `None` if there is no veto.
+        """Return a veto message which explains why this object cannot be
+        deleted.  Return `None` if there is no veto.
 
-        If `ignore_model` is specified, do not check for vetos on
-        ForeignKey fields defined on that model.
+        If `ignore_model` (a set of model class objects) is specified,
+        do not check for vetos on ForeignKey fields defined on one of
+        these models.
 
         """
         #logger.info("20101104 called %s.disable_delete(%s)", obj, self)

@@ -49,7 +49,6 @@ Lino applications.
 .. autosummary::
    :toctree:
 
-    accounts
     addresses
     appypod
     awesomeuploader
@@ -61,20 +60,16 @@ Lino applications.
     concepts
     contacts
     countries
-    courses
     cv
     davlink
-    declarations
     dupable_partners
     eid_jslib
     events
     families
-    finan
     households
     humanlinks
     importfilters
     languages
-    ledger
     lists
     notes
     office
@@ -89,15 +84,9 @@ Lino applications.
     properties
     reception
     rooms
-    sales
-    sepa
     smtpd
     thirds
-    clocking
-    tickets
     uploads
-    vat
-    vatless
     vocbook
     workflows
 
@@ -108,7 +97,6 @@ Differentiator packages
 .. autosummary::
    :toctree:
 
-    auto
     statbel
 
 """

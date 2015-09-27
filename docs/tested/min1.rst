@@ -70,9 +70,12 @@ if the client has changed these.
     >>> ba.get_view_permission(u.profile)
     True
 
+A subtlety: the third column (`workflow_buttons`) contains images.
+
 >>> url = "/api/cal/MyEvents?_dc=1414106085710"
 >>> url += "&cw=411&cw=287&cw=411&cw=73&cw=274&cw=140&cw=274&cw=220&cw=220&cw=220&cw=287&cw=181&cw=114&cw=181&cw=114&cw=170&cw=73&cw=73&cw=274&cw=140&cw=274&cw=274&cw=181&cw=274&cw=140"
->>> url += "&ch=&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=false&ch=true&ch=true&ch=false&ch=false&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true"
+>>> url += "&ch=&ch=true&ch="
+>>> url += "&ch=true&ch=true&ch=true&ch=true&ch=true&ch=false&ch=true&ch=true&ch=false&ch=false&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true&ch=true"
 >>> url += "&ci=when_text&ci=summary&ci=workflow_buttons&ci=id&ci=owner_type&ci=owner_id&ci=user&ci=modified&ci=created&ci=build_time&ci=build_method&ci=start_date&ci=start_time&ci=end_date&ci=end_time&ci=access_class&ci=sequence&ci=auto_type&ci=event_type&ci=transparent&ci=room&ci=priority&ci=state&ci=assigned_to&ci=owner&name=0"
 >>> url += "&pv=23.10.2014&pv=22.11.2014&pv=&pv=&pv=2&pv=&pv=&pv=&pv=y"
 >>> url += "&an=export_excel&sr=61"
@@ -106,20 +109,20 @@ Note that long titles are truncated:
 >>> print(s.name.strip())
 My appointments (Managed by Rol
 
-It has 4 columns and 13 rows:
+It has 5 columns and 13 rows:
 
 >>> print(s.ncols, s.nrows)
-(4, 13)
+(5, 13)
 
 The first row contains our column headings. Which differ from those of
 the table above because our user had changed them manually:
 
 >>> print(s.row(0))
-[text:u'When', text:u'Created', text:u'Start date', text:u'Start time']
+[text:u'When', text:u'Workflow', text:u'Created', text:u'Start date', text:u'Start time']
 
 >>> print(s.row(1))
 ... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE
-[text:u'Thu 10/23/14 (08:30)', xldate:..., xldate:..., xldate:...]
+[text:u'Thu 10/23/14 (08:30)', text:u'**Suggested** \u2192 `[img flag_green] <...>`__', xldate:..., xldate:..., xldate:...]
 
 
 .. _invalid_requests:

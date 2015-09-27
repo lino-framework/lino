@@ -11,7 +11,12 @@ valid XHTML.
 
 It uses Jason Stitt's `pytidylib
 <http://countergram.com/open-source/pytidylib/docs/index.html>`__
-module.
+module. This module requires the `HTML Tidy library
+<http://tidy.sourceforge.net/>`__ to be installed on the system::
+
+    $ sudo aptitude install tidy
+
+Some examples:
 
 >>> print(html2xhtml('''\
 ... <p>Hello,&nbsp;world!<br>Again I say: Hello,&nbsp;world!</p>

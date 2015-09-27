@@ -51,6 +51,20 @@ Second
 A header
 ========
 <BLANKLINE>
+
+For images we render the ``alt`` text between brackets:
+
+>>> e = E.img(src="http://example.com/images/1.jpg", alt="1")
+>>> print html2rst(e, True)
+[img 1]
+
+If there is no ``alt`` text, render the content of ``src``:
+
+>>> e = E.img(src="http://example.com/images/1.jpg")
+>>> print html2rst(e, True)
+[img http://example.com/images/1.jpg]
+
+
 """
 
 from __future__ import unicode_literals
@@ -113,10 +127,13 @@ def html2rst(e, stripped=False):
             rst += '*'
     elif e.tag == 'a':
         rst += ' <%s>`__' % e.get('href')
+    elif e.tag == 'img':
+        text = e.get('alt') or e.get('src')
+        rst += '[img %s]' % text
     elif e.tag in ('td', 'th'):
         rst += ' '
     else:
-        if not e.tag in IGNORED_TAGS:
+        if e.tag not in IGNORED_TAGS:
             raise Exception("20150723 %s" % e.tag)
 
     if e.tail:

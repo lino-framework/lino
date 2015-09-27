@@ -459,16 +459,20 @@ class Actor(actions.Parametrizable, Permittable):
     actor_id = None
 
     detail_layout = None
-    """
-    Define the form layout to use for the detail window.  Actors
-    without :attr:`detail_layout` don't have a show_detail action.
+    """Define the form layout to use for the detail window.  Actors with
+    :attr:`detail_layout` will automatocally get a `show_detail`
+    action.
+
+    When you define a :attr:`detail_layout`, you will probably also
+    want to define a :attr:`insert_layout`.
+
     """
 
     insert_layout = None
-    """
-    Define the form layout to use for the insert window.  If there's a
+    """Define the form layout to use for the insert window.  If there's a
     :attr:`detail_layout` but no :attr:`insert_layout`, Lino will use
     :attr:`detail_layout` for the insert window.
+
     """
 
     detail_template = None    # deprecated: use insert_layout instead
