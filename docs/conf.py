@@ -359,3 +359,9 @@ gettext_compact = True
 
 autodoc_member_order = 'bysource'
 autodoc_default_flags = ['show-inheritance', 'members']
+
+my_font_family = "Swiss, Helvetica, 'Liberation Sans'"
+html_theme_options = {
+    "font_family": my_font_family,
+    "head_font_family": my_font_family,
+}

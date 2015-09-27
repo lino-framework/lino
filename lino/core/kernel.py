@@ -453,10 +453,12 @@ class Kernel(object):
         for foreignkeys that need to be protected.
 
         Basically we protect all FK fields that are not listed in
-        `allow_cascaded_delete`. With one exception: pointers to the
-        MTI parent of a :class:`Polymorphic
-        <lino.mixins.polymorphic.Polymorphic>` must not get protected
-        because Lino handles it automatically.
+        their model's :attr:`allow_cascaded_delete
+        <lino.core.model.Model.allow_cascaded_delete>`. With one
+        exception: pointers to the MTI parent of a :class:`Polymorphic
+        <lino.mixins.polymorphic.Polymorphic>` must not
+        become protected (because Lino handles it automatically, see
+        :meth:`lino.mixins.polymorphic.Polymorphic.disable_delete`).
 
         """
 
