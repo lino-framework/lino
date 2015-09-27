@@ -35,11 +35,12 @@ System requirements
 #.  We assume you have pip_ installed. `pip` is not automatically
     bundled with Python 2, but it has become the de-facto standard.
 
-#.  We recommend to use virtualenv_ (`pip install virtualenv`) and to
-    activate a new environment. Something like this::
+#.  We recommend to use virtualenv_ and to activate a new environment.
+    On a Debian system this means something like::
 
-        $ virtualenv tmp
-        $ . tmp/bin/activate
+        $ pip install python-virtualenv
+        $ virtualenv myenv
+        $ . myenv/bin/activate
 
 #.  You will need the **Python header files** on your system because
     Lino requires fabric_ which in turn requires pycrypto_ which is an
@@ -138,7 +139,7 @@ Don't forget to open a new terminal window after editing the file in
 order to activate these changes.  You can verify whether the variable
 is set using this command::
 
-    $ set | grep LINO_CACHE_ROOT
+    $ set | grep LINO
 
 More about this in :doc:`cache`.
 
