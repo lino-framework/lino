@@ -302,6 +302,7 @@ add_welcome_handler = settings.SITE.add_welcome_handler
 build_media_url = settings.SITE.build_media_url
 build_static_url = settings.SITE.build_static_url
 get_default_language = settings.SITE.get_default_language
+resolve_languages = settings.SITE.resolve_languages
 
 apps = plugins = settings.SITE.plugins
 # `apps` is an alias for `plugins`. We recommend plugins since `apps`

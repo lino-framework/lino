@@ -87,7 +87,7 @@ class InsertChild(ChildAction):
 
     def run_on_row(self, obj, ar):
         if ar is not None:
-            mti.pre_add_child.send(
+            pre_add_child.send(
                 sender=obj, request=ar.request,
                 child=self.child_model)
         mti.insert_child(obj, self.child_model, full_clean=True)
@@ -104,14 +104,14 @@ class Polymorphic(model.Model):
     person and an employee at the same time.
 
     Note that not every usage of Multiple Table Inheritance means
-    polymorphism. For example :class:`ml.ledger.Voucher` has a pointer
-    to the journal which knows which specialization to use.  A given
-    voucher has always exactly one specialization.
+    polymorphism. For example `lino_cosi.lib.ledger.Voucher` has a
+    pointer to the journal which knows which specialization to use.  A
+    given voucher has always exactly one specialization.
 
     .. attribute:: mti_navigator
 
-    A virtual field which defines buttons for switching between the
-    different views.
+        A virtual field which defines buttons for switching between the
+        different views.
 
     Usage example in :doc:`/tutorials/mti/index` and
     :doc:`/tutorials/letsmti/index`.
@@ -169,6 +169,17 @@ class Polymorphic(model.Model):
 
     def disable_delete(self, ar=None):
         """Overrides :meth:`lino.core.model.Model.disable_delete`.
+
+        In case of polymorphy, the user can ask to delete any MTI
+        instance of a polymorphic entity. Deleting one instance will
+        delete all other instances as well.
+
+        Before deleting one polymorphic instance, we ask all other
+        instances for their vetos.
+
+        Cascade-related objects are deleted independently of the
+        instance that initiated deletion.
+
         """
         # ask all other forms of this for vetos:
         for m in self._mtinav_models:

@@ -45,18 +45,6 @@ Lino has a concept of configuration directories that are a bit like
 Django's `templates` directories.
 See :mod:`lino.utils.config`.
 
-.. xfile:: linolib.js
-.. xfile:: lino.js
-
-The ExtJS3 user interface generates a series of files 
-:file:`lino_PROFILE_LANG.js` 
-at server startup which contain the 
-client side application logic. 
-The first part of this file comes from
-a file :srcref:`/lino/modlib/extjs/linolib.js`,
-the second part is purely generated from your models and reports).
-
-
 .. xfile:: .po
 
 :xfile:`.po` files are gettext catalogs. 
@@ -70,3 +58,9 @@ This is the template used to generate the inner content of the home
 page. It is split into two files
 :srcref:`admin_main.html<lino/config/admin_main.html>` and
 :srcref:`admin_main_base.html<lino/config/admin_main_base.html>`.
+
+.. xfile:: linolib.js
+.. xfile:: lino.js
+
+These are obsolete synonyms for :xfile:`linoweb.js`.
+
