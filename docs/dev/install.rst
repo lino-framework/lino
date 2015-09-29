@@ -39,9 +39,13 @@ System requirements
     On a Debian system this means something like::
 
         $ pip install python-virtualenv
-        $ virtualenv myenv
+        $ virtualenv --no-site-packages myenv
         $ . myenv/bin/activate
 
+    Note that the `--no-site-packages
+    <https://virtualenv.pypa.io/en/latest/reference.html?highlight=site-packages#cmdoption--no-site-packages>`__
+    option is needed only if your virtualenv is older than X.
+    
 #.  You will need the **Python header files** on your system because
     Lino requires fabric_ which in turn requires pycrypto_ which is an
     `extension module <https://docs.python.org/2/c-api/intro.html>`_. On a

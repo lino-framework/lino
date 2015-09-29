@@ -1,23 +1,41 @@
-The `using` directory
-=====================
+======================================
+Managing multiple virtual environments
+======================================
 
-If you run several Lino sites on a single server and want 
-to be able to easily switch Lino versions individually per site, 
-then you need to insert `lino` to the Python path in the
-:xfile:`settings.py` of each Lino instance.
+This document explains how to easily switch Lino versions individually
+on a server which hosts several Lino sites.
 
-But we recommend to not simply add the hard-coded path because your 
-decision (which Lino version that site should use) is needed 
-at another place: the `/media/lino/` must link to the 
-`/lino/media/` directory of the correct Lino version.
+This document is not finshed, and there is no warranty.
 
-That's why we recommend to use a `using` directory.
-The `using` directory is a subdirectory of your project 
-directory that contains a symbolic link to the root of 
-Lino's source tree.
-There are two places who need this information:
+For each Lino version "offered" on your server you create a new
+virtualenv. We suggest to create all virtualenvs in a central root
+directory named :xfile:`~/pythonenvs`.
 
-- `media/lino` links to `using/lino/media`
-- `settings.py` adds `using/lino` (and not some hard-coded directory) 
-  to the system path
+Name your environments simply "a", "b", "c" etc. (or find other names
+in alphabetical order), *do not* name them "dev", "testing" or "prod".
+Because a given environment is normally first used for testing and
+then for production.  And virtual environments cannot be renamed.
+
+In the project directory of every Lino site you create a symbolic link
+named :file:`env` which points to the root directory of the virtualenv
+to be used by that site.
+
+You can then easily switch between environments because Lino, Django
+and Apache activates them using the symbolic link :file:`env` in their
+project directory.
+
+You can add an alias to your `.bash_aliases`::
+
+  alias a='. env/bin/activate'
+
+In your :xfile:`wsgy.py` file you can add something like::
+
+    import site
+    pth = '/my/project/dir/env/lib/python2.7/site-packages'
+    site.addsitedir(pth)
+
+We also recommend this line in the :xfile:`settings.py` on a
+production site::
+
+  STATIC_ROOT = SITE.project_dir.child('env', 'collectstatic').resolve()
 

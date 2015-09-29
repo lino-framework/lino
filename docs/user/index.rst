@@ -1,10 +1,9 @@
-===========
-Users
-===========
+============
+User's Guide
+============
 
-This section contains information for Lino power users.
-It is only in English and more technical than the end-user docs 
-which are always application specific and multilingual.
+This section contains information for Lino power users.  It is more
+technical than application-specific end-user docs.
 
 .. toctree::
     :maxdepth: 2

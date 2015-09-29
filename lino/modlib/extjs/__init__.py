@@ -204,3 +204,4 @@ class Plugin(Plugin):
             urlpatterns.append(
                 url(rx + r'run-jasmine$', views.RunJasmine.as_view()))
         return urlpatterns
+        
