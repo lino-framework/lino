@@ -15,8 +15,10 @@ which contains at least a :xfile:`fabfile.py`.  That's the only real
 - A project usually corresponds to a public code repository (using Git
   or Mercurial). But you can have non-public projects which have no
   repo at all, e.g. your developer blog.
-- A project usually corresponds to a given Python package published to PyPI.
-- A project can have a number of Sphinx document trees.
+- A project usually corresponds to a given Python package to be
+  published on PyPI.
+- A project can have a number of Sphinx document trees (default is one
+  tree named :file:`docs`).
 
 You "activate" a project by opening a terminal and changing to its
 directory. That's all.
@@ -100,17 +102,20 @@ Looping over projects
 =====================
 
 You can also create a :xfile:`~/.atelier/config.py` file which
-declares all your projects. For example with this content::
+declares a list of all your atelier projects. For example with this
+content::
 
      add_project("/home/john/projects/myblog")
      add_project("/home/john/projects/hello")
      add_project("/home/john/repositories/lino")
 
-This would :cmd:`fab summary` displays a list of all your projects
 
-:xfile:`~/.bash_aliases`::
+This has the following advantages:
 
-    alias pp='per_project'
+- You can run the `per_project` script to run a command over each project
+- You can use :mod:`atelier.sphinxconf.interproject`
+- You can run :cmd:`fab summary` display a summary about all your
+  projects
 
 
 .. rubric:: Footnotes
