@@ -37,8 +37,9 @@ Opening a new ticket
   the insert window.
 
 Beware the pitfall: After creating the ticket, click the "Save" button
-once (or type Ctrl-S) in order to avoid #219 ("Lino sends second POST
-when clicking StartSession on newly created record"). Sorry for this bug.
+once (or type Ctrl-S) in order to avoid :ticket:`219` ("Lino sends
+second POST when clicking StartSession on newly created
+record"). Sorry for this bug.
 
 When you create a ticket, Lino automatically also creates a new
 session on that ticket which starts at current time.  (If it doesn't,

@@ -144,3 +144,9 @@ html_use_opensearch = ''
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'noi'
+
+my_font_family = "Swiss, Helvetica, 'Liberation Sans'"
+html_theme_options = {
+    "font_family": my_font_family,
+    "head_font_family": my_font_family,
+}
