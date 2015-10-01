@@ -1,7 +1,7 @@
 from atelier.fablib import *
 setup_from_fabfile(globals(), 'lino')
 
-env.locale_dir = 'lino/modlib/lino/locale'
+env.locale_dir = 'lino/modlib/lino_startup/locale'
 env.languages = "en de fr et nl pt-br es".split()
 # env.tolerate_sphinx_warnings = True
 

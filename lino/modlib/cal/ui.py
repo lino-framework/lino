@@ -564,7 +564,19 @@ add('20', _("Pending"), 'pending')
 
 
 class Events(dd.Table):
-    """Table which shows all calendar events. """
+    """Table which shows all calendar events.
+
+    .. attribute:: show_appointments
+
+        Whether only :term:`appointments <appointment>` should be
+        shown.  "Yes" means only appointments, "No"
+        means no appointments and leaving it to blank shows both types
+        of events.
+
+        An appointment is an event whose EventType has
+        `appointment` checked. 
+
+    """
 
     help_text = _("A List of calendar entries. Each entry is called an event.")
     model = 'cal.Event'
@@ -804,7 +816,7 @@ class OneEvent(Events):
 
 
 class MyEvents(Events):
-    """Table which shows today's and future appointments of the
+    """Table which shows today's and all future appointments of the
     requesting user.  The default filter parameters are set to show
     only :term:`appointments <appointment>`.
 
@@ -822,7 +834,7 @@ class MyEvents(Events):
         kw.update(show_appointments=dd.YesNo.yes)
         #~ kw.update(assigned_to=ar.get_user())
         #~ logger.info("20130807 %s %s",self,kw)
-        kw.update(start_date=settings.SITE.today())
+        kw.update(start_date=dd.today())
         # kw.update(end_date=settings.SITE.today(14))
         return kw
 
@@ -830,6 +842,19 @@ class MyEvents(Events):
     def create_instance(self, ar, **kw):
         kw.update(start_date=ar.param_values.start_date)
         return super(MyEvents, self).create_instance(ar, **kw)
+
+
+class MyEventsToday(MyEvents):
+    """Like :class:`MyEvents`, but only today."""
+    label = _("My appointments today")
+    column_names = 'start_time end_time project event_type '\
+                   'summary workflow_buttons *'
+
+    @classmethod
+    def param_defaults(self, ar, **kw):
+        kw = super(MyEventsToday, self).param_defaults(ar, **kw)
+        kw.update(end_date=dd.today())
+        return kw
 
 
 class MyAssignedEvents(MyEvents):
