@@ -389,6 +389,8 @@ class Kernel(object):
         # And MergeAction needs the info in _lino_ddh to correctly find
         # keep_volatiles
 
+        self.setup_actions()
+
         for model in models_list:
 
             """Virtual fields declared on the model must have been attached
@@ -430,7 +432,9 @@ class Kernel(object):
 
         #~ logger.info(settings.INSTALLED_APPS)
 
-        self.on_each_app('site_setup')
+        self.setup_layouts()
+
+        self.on_each_app('site_setup')  # deprecated
 
         # Actor.after_site_setup() is called after the apps'
         # site_setup().  Example: pcsw.site_setup() adds a detail to

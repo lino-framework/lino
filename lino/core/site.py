@@ -1895,6 +1895,44 @@ documentation.
     def setup_workflows(self):
         self.on_each_app('setup_workflows')
 
+    def setup_actions(self):
+        """Hook for subclasses to add or modify actions.
+
+        Usage example::
+
+            def setup_actions(self):
+                super(Site, self).setup_actions()
+                partners = rt.modules.contacts
+                for m in (partners.Person, partners.Organisation):
+                    m.define_action(merge_row=dd.MergeAction(m))
+
+        """
+        pass
+
+    def setup_layouts(self):
+        '''Hook for subclasses to add or modify layouts.
+        
+        Usage example::
+
+            def setup_layouts(self):
+                super(Site, self).setup_layouts()
+
+                self.modules.system.SiteConfigs.set_detail_layout("""
+                site_company next_partner_id:10
+                default_build_method
+                clients_account   sales_account     sales_vat_account
+                suppliers_account purchases_account purchases_vat_account
+                """)
+
+                self.modules.accounts.Accounts.set_detail_layout("""
+                ref:10 name id:5
+                seqno chart group type clearable
+                ledger.MovementsByAccount
+                """)
+
+        '''
+        pass
+
     def add_user_field(self, name, fld):
         if self.user_model:
             from lino.api import dd
