@@ -3024,6 +3024,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
         url: '{{extjs.build_plain_url("api")}}' + this.ls_url,
         method: 'POST'
       });
+      panel.refresh();
     } else {  // submit on existing row
       Ext.apply(submit_config, {
         url: '{{extjs.build_plain_url("api")}}' 
