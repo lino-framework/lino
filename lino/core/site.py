@@ -1902,9 +1902,10 @@ documentation.
 
             def setup_actions(self):
                 super(Site, self).setup_actions()
-                partners = rt.modules.contacts
+                from lino.core.merge import MergeAction
+                partners = self.modules.contacts
                 for m in (partners.Person, partners.Organisation):
-                    m.define_action(merge_row=dd.MergeAction(m))
+                    m.define_action(merge_row=MergeAction(m))
 
         """
         pass
