@@ -52,10 +52,14 @@ class Registrable(model.Model):
     (e.g. Invoices, Vouchers, Declarations, Reservations,...).
     "Registered" in general means "this object has been taken account of".
     Registered objects are not editable.
-    The ChoiceList of the `state` field must have at least two items
-    named "draft" and "registered".
-    There may be additional states.
-    Every state must have an extra attribute "editable".
+
+    .. attribute:: state
+
+        The ChoiceList of the `state` field must have at least two items
+        named "draft" and "registered".
+        There may be additional states.
+        Every state must have an extra attribute "editable".
+
     """
     class Meta:
         abstract = True
@@ -108,14 +112,27 @@ class Registrable(model.Model):
         return super(Registrable, self).get_row_permission(ar, state, ba)
 
     def register(self, ar):
-        """
-        Register this item.
-        The base implementation just sets the state to "registered".
-        Subclasses may override this to add custom behaviour.
+        """Register this object.  The base implementation just sets the state
+        to "registered".  Subclasses may override this to add custom
+        behaviour.  Instead of subclassing you can also override
+        `before_state_change` or `after_state_change`.
+
         """
 
         state_field = self._meta.get_field(self.workflow_state_field)
         target_state = state_field.choicelist.registered
+        self.set_workflow_state(ar, state_field, target_state)
+
+    def deregister(self, ar):
+        """Deregister this object.  The base implementation just sets the state
+        to "draft".  Subclasses may override this to add custom
+        behaviour.  Instead of subclassing you can also override
+        `before_state_change` or `after_state_change`.
+
+        """
+
+        state_field = self._meta.get_field(self.workflow_state_field)
+        target_state = state_field.choicelist.draft
         self.set_workflow_state(ar, state_field, target_state)
 
 

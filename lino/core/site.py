@@ -164,6 +164,14 @@ class Site(object):
 
     """
 
+    readonly = False
+    """Setting this to `True` turns this site in a readonly site.  This
+    means that :setting:`DATABASES` must point to the
+    :setting:`DATABASES` of some other (non-readonly) site, and that
+    :manage:`initdb` will do nothing.
+
+    """
+
     the_demo_date = None
     """
     Specify a fixed date instead of the process startup time to be
@@ -1894,6 +1902,45 @@ documentation.
 
     def setup_workflows(self):
         self.on_each_app('setup_workflows')
+
+    def setup_actions(self):
+        """Hook for subclasses to add or modify actions.
+
+        Usage example::
+
+            def setup_actions(self):
+                super(Site, self).setup_actions()
+                from lino.core.merge import MergeAction
+                partners = self.modules.contacts
+                for m in (partners.Person, partners.Organisation):
+                    m.define_action(merge_row=MergeAction(m))
+
+        """
+        pass
+
+    def setup_layouts(self):
+        '''Hook for subclasses to add or modify layouts.
+        
+        Usage example::
+
+            def setup_layouts(self):
+                super(Site, self).setup_layouts()
+
+                self.modules.system.SiteConfigs.set_detail_layout("""
+                site_company next_partner_id:10
+                default_build_method
+                clients_account   sales_account     sales_vat_account
+                suppliers_account purchases_account purchases_vat_account
+                """)
+
+                self.modules.accounts.Accounts.set_detail_layout("""
+                ref:10 name id:5
+                seqno chart group type clearable
+                ledger.MovementsByAccount
+                """)
+
+        '''
+        pass
 
     def add_user_field(self, name, fld):
         if self.user_model:
