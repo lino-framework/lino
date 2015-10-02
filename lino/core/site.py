@@ -164,6 +164,14 @@ class Site(object):
 
     """
 
+    readonly = False
+    """Setting this to `True` turns this site in a readonly site.  This
+    means that :setting:`DATABASES` must point to the
+    :setting:`DATABASES` of some other (non-readonly) site, and that
+    :manage:`initdb` will do nothing.
+
+    """
+
     the_demo_date = None
     """
     Specify a fixed date instead of the process startup time to be
