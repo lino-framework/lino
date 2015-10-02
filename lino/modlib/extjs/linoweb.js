@@ -2792,8 +2792,8 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
               todo();
             }
           }
+          Ext.MessageBox.show(config);
         }
-        Ext.MessageBox.show(config);
     }else{
       // console.log('20140421 do_when_clean : now!')
       todo();
