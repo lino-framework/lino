@@ -44,23 +44,24 @@ Verifying our configuration
 
 The following tests check whether the setup is as expected:
 
->>> from lino.utils.sendchanges import find_emitter
+>>> from lino.utils.sendchanges import find_emitters
 
 Instances of `Partner` and  `Person` get their own emitter:
 
->>> find_emitter(contacts.Partner.objects.all()[0])
-Emitter('contacts.Partner')
->>> find_emitter(contacts.Person.objects.all()[0])
-Emitter('contacts.Person')
+>>> list(find_emitters(contacts.Partner.objects.all()[0]))
+[Emitter('contacts.Partner')]
+>>> list(find_emitters(contacts.Person.objects.all()[0]))
+[Emitter('contacts.Person'), Emitter('contacts.Partner')]
 
 A `Company` instance gets the emitter for a `Partner`:
 
->>> find_emitter(contacts.Company.objects.all()[0])
-Emitter('contacts.Partner')
+>>> list(find_emitters(contacts.Company.objects.all()[0]))
+[Emitter('contacts.Partner')]
 
 A `Country` instance has no emitter:
 
->>> find_emitter(countries.Country.objects.all()[0])
+>>> list(find_emitters(countries.Country.objects.all()[0]))
+[]
 
 
 Templates
@@ -109,6 +110,10 @@ Create a Person:
 To: john@example.com, joe@example.com
 Subject: Created: Joe Doe
 User Robin Rood has created this record.
+To: john@example.com, joe@example.com
+Subject: Created partner Joe Doe
+User Robin Rood has created this record.
+
 >>> res.status_code
 200
 >>> r = json.loads(res.content)
