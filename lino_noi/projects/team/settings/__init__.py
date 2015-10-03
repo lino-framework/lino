@@ -105,5 +105,32 @@ class Site(Site):
         tb.add_action(self.modules.tickets.TicketsToDo)
         tb.add_action(self.modules.tickets.Tickets)
 
+    def do_site_startup(self):
+        """Defines an emitter to send notification emails about changes in
+        tickets.
+
+        """
+        super(Site, self).do_site_startup()
+
+        from lino.utils.sendchanges import Emitter
+        for_obj = self.modules.stars.Star.for_obj
+
+        class TicketEmitter(Emitter):
+
+            model = 'tickets.Ticket'
+            watched_fields = '*'
+            created_tpl = 'tickets/Ticket/created.eml'
+            updated_tpl = 'tickets/Ticket/updated.eml'
+            deleted_tpl = 'tickets/Ticket/deleted.eml'
+
+            def get_recipients(self, obj=None, master=None, **kwargs):
+                obj = master or obj
+                for u in (obj.reporter, obj.assigned_to) + tuple(for_obj(obj)):
+                    if u and u.email:
+                        yield u.email
+
+        TicketEmitter().register()
+
+
 # the following line should not be active in a checked-in version
 #~ DATABASES['default']['NAME'] = ':memory:'
