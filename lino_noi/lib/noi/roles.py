@@ -60,7 +60,7 @@ class Senior(Developer, Triager):
     pass
 
 
-class SiteAdmin(Developer, SiteAdmin, OfficeStaff):
+class SiteAdmin(Senior, SiteAdmin, OfficeStaff):
     """Like a developer, plus site admin and staff"""
     pass
 
