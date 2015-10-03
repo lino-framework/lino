@@ -35,12 +35,18 @@ class Star(UserAuthored, Controllable):
         verbose_name = _("Star")
         verbose_name_plural = _("Stars")
 
+    @classmethod
+    def for_obj(cls, obj, **kwargs):
+        """Return a queryset of :class:`Star` instances for the given database
+        object.
+
+        """
+        return cls.objects.filter(**gfk2lookup(cls.owner, obj, **kwargs))
+
 
 def get_favourite(obj, user):
     if user.authenticated:
-        Star = rt.modules.stars.Star
-        qs = Star.objects.filter(
-            **gfk2lookup(Star.owner, obj, user=user))
+        qs = rt.modules.stars.Star.for_obj(obj, user=user)
         if qs.count() == 0:
             return None
         return qs[0]

@@ -23,7 +23,7 @@ class Site(Site):
 
         from lino.utils.sendchanges import subscribe, register
         
-        register('contacts.Person', 'first_name last_name birth_date',
+        register('contacts.Person', '*',
                  'created_body.eml', 'updated_body.eml')
         e = register('contacts.Partner', 'name',
                      'created_body.eml', 'updated_body.eml')

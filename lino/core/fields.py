@@ -858,6 +858,26 @@ class DummyField(FakeField):
         pass
 
 
+def wildcard_data_elems(model):
+    """Yields names that will be used as wildcard in the
+    :attr:`column_names` of a table or when :func:`fields_list` find a
+    ``*``.
+
+    """
+    meta = model._meta
+    for f in meta.fields:
+        # if not isinstance(f, fields.RichTextField):
+        if not isinstance(f, VirtualField):
+            if not getattr(f, '_lino_babel_field', False):
+                yield f
+    for f in meta.many_to_many:
+        yield f
+    for f in meta.virtual_fields:
+        if not isinstance(f, VirtualField):
+            yield f
+    # todo: for slave in self.report.slaves
+
+
 class RecurrenceField(models.CharField):
     """
     Deserves more documentation.
@@ -867,6 +887,14 @@ class RecurrenceField(models.CharField):
     def __init__(self, *args, **kw):
         kw.setdefault('max_length', 200)
         models.CharField.__init__(self, *args, **kw)
+
+
+def use_as_wildcard(de):
+    if de.name.endswith('_ptr'):
+        return False
+    return True
+
+
 
 
 def fields_list(model, field_names):
@@ -888,7 +916,19 @@ def fields_list(model, field_names):
 
     """
     lst = set()
+    explicit_names = set()
     for name in field_names.split():
+        if name != '*':
+            explicit_names.add(name)
+
+    wildcard_names = [de.name for de in wildcard_data_elems(model)
+                      if (de.name not in explicit_names)
+                      and use_as_wildcard(de)]
+    wildcard_str = ' '.join(wildcard_names)
+    field_names = field_names.replace('*', wildcard_str)
+
+    for name in field_names.split():
+
         e = model.get_data_elem(name)
         if e is None:
             raise models.FieldDoesNotExist(

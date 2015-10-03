@@ -43,27 +43,6 @@ from lino.core.tables import AbstractTable, TableRequest, VirtualTable
 INVALID_MK = "Invalid master_key '{0}' in {1} : {2}"
 
 
-def wildcard_data_elems(model):
-    """Yields names that will be used as wildcard in the :attr:`column_names`
-    of a Table.
-
-    """
-    meta = model._meta
-    for f in meta.fields:
-        # if not isinstance(f, fields.RichTextField):
-        if not isinstance(f, fields.VirtualField):
-            if not getattr(f, '_lino_babel_field', False):
-                yield f
-    for f in meta.many_to_many:
-        yield f
-    for f in meta.virtual_fields:
-        if not isinstance(f, fields.VirtualField):
-            yield f
-    # todo: for slave in self.report.slaves
-
-    #~ for de in data_elems(self.model): yield de
-
-
 def base_attrs(cl):
     #~ if cl is Table or len(cl.__bases__) == 0:
         #~ return
@@ -473,7 +452,7 @@ class Table(AbstractTable):
 
     @classmethod
     def wildcard_data_elems(self):
-        return wildcard_data_elems(self.model)
+        return fields.wildcard_data_elems(self.model)
 
     @classmethod
     def is_valid_row(self, row):
