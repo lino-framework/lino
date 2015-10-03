@@ -141,8 +141,6 @@ def on_class_prepared(sender, **kw):
         #~ return
     k = model._meta.app_label + '.' + model.__name__
     PREPARED_MODELS[k] = model
-    if 'Company' in k:
-        pass
     #~ logger.info("20120627 on_class_prepared %r = %r",k,model)
     todos = PENDING_INJECTS.pop(k, None)
     if todos is not None:
