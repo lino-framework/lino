@@ -916,16 +916,16 @@ def fields_list(model, field_names):
 
     """
     lst = set()
-    explicit_names = set()
-    for name in field_names.split():
-        if name != '*':
-            explicit_names.add(name)
-
-    wildcard_names = [de.name for de in wildcard_data_elems(model)
-                      if (de.name not in explicit_names)
-                      and use_as_wildcard(de)]
-    wildcard_str = ' '.join(wildcard_names)
-    field_names = field_names.replace('*', wildcard_str)
+    if '*' in field_names:
+        explicit_names = set()
+        for name in field_names.split():
+            if name != '*':
+                explicit_names.add(name)
+        wildcard_names = [de.name for de in wildcard_data_elems(model)
+                          if (de.name not in explicit_names)
+                          and use_as_wildcard(de)]
+        wildcard_str = ' '.join(wildcard_names)
+        field_names = field_names.replace('*', wildcard_str)
 
     for name in field_names.split():
 

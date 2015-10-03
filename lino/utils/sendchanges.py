@@ -25,12 +25,6 @@ Usage example (taken from :doc:`/tutorials/sendchanges/index`)::
             subscribe('john.doe@example.org')
 
 
-Note that the order of subscription is important when the watched
-models inherit from each other: for a given model instance, the first
-matching subscription will be used.
-
-This module is not yet being used in reality.
-
 TODO: Currently it will go through the global list of emiters for each
 update, create, delete. It would be better to analyze the emitters at
 startup and install receivers only for the needed models and events.
@@ -55,8 +49,18 @@ EMITTERS = []
 
 
 class Emitter(object):
-    """
-    The object returned by :func:`register`.
+    """The object returned by :func:`register`.
+
+    The instantiator takes the following arguments:
+
+    `model` is either a class object or a string with the global name
+    of a model (e.g. ``'contacts.Person'``).
+
+    `watched_fields` is a string with a space-separated list of field
+    names to watch.
+
+    `master_field` can optionally specify a field which points to the
+    "master".
 
     """
     created_tpl = None
@@ -70,11 +74,7 @@ class Emitter(object):
     def __init__(self, model=None, watched_fields=None,
                  created_tpl=None, updated_tpl=None, deleted_tpl=None,
                  master_field=None):
-        """`model` is either a class object or a string with the global name
-        of a model (e.g. ``'contacts.Person'``). `watched_fields` is a
-        string with a space-separated list of field names to watch.
-        `master_field` can optionally specify a field which points to
-        the "master".
+        """
 
         """
         if model:
@@ -105,6 +105,7 @@ class Emitter(object):
         return "Emitter('{0}')".format(fmn(self.model))
 
     def register(self):
+        """Register this emitter."""
         assert self not in EMITTERS
         EMITTERS.append(self)
         return self
@@ -172,7 +173,7 @@ def subscribe(addr):
 
 
 def register(*args, **kwargs):
-    """Register an :class:`Emitter` for the given model. `args` and
+    """Instantiate an :class:`Emitter` for the given model. `args` and
     `kwargs` are forwarded to :meth:`Emitter.__init__`.
 
     """
