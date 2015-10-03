@@ -441,7 +441,10 @@ def resolve_field(name, app_label=None):
     if len(l) == 2:
         # print "models.get_model(",app_label,l[0],False,")"
         #~ model = models.get_model(app_label,l[0],False)
-        model = models.get_model(app_label, l[0])
+        if AFTER17:
+            model = apps.get_model(app_label, l[0])
+        else:
+            model = models.get_model(app_label, l[0])
         if model is None:
             raise FieldDoesNotExist("No model named '%s.%s'" %
                                     (app_label, l[0]))

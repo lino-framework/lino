@@ -68,17 +68,28 @@ def fix_field_cache(model):
         new_cache = []
         field_names = set()
         duplicates = []
-        for f in model._meta.fields:
-            if f.attname in field_names:
-                duplicates.append(f)
-            else:
-                field_names.add(f.attname)
-                new_cache.append(f)
+        used_fields = {}
+        # for f in model._meta.local_fields:
+        #     if f.attname in field_names:
+        #         duplicates.append(f)
+        #     else:
+        #         field_names.add(f.attname)
+        #         new_cache.append(f)
+        #
+        # if len(duplicates) == 0:
+        #     return
 
-        if len(duplicates) == 0:
-            return
+        for parent in model._meta.get_parent_list():
+            for f in parent._meta.local_fields:
+                used_fields[f.name] = f
+                used_fields[f.attname] = f
+        for f in model._meta.local_fields:
+            if not (used_fields.get(f.name) or used_fields.get(f.attname) or None):
+                new_cache.append(f)
             #~ raise Exception("20131110 %r" % (model._meta._field_cache,))
-        model._meta.fields = make_immutable_fields_list('fields', new_cache)
+        # tmp = make_immutable_fields_list('fields', new_cache)
+        model._meta.local_fields = new_cache
+        # print(model._meta.fields)
 
     else:
         if not hasattr(model._meta, '_field_cache'):
@@ -130,6 +141,8 @@ def on_class_prepared(sender, **kw):
         #~ return
     k = model._meta.app_label + '.' + model.__name__
     PREPARED_MODELS[k] = model
+    if 'Company' in k:
+        pass
     #~ logger.info("20120627 on_class_prepared %r = %r",k,model)
     todos = PENDING_INJECTS.pop(k, None)
     if todos is not None:
@@ -139,7 +152,7 @@ def on_class_prepared(sender, **kw):
             #~ model.add_to_class(k,v)
 
     if AFTER17:
-        #model._meta._expire_cache()
+        # model._meta._expire_cache()
         fix_field_cache(model)
     else:
         fix_field_cache(model)
