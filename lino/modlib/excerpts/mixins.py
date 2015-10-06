@@ -128,6 +128,20 @@ class Certifiable(dd.Model):
         super(Certifiable, cls).on_analyze(site)
 
     @classmethod
+    def get_printable_demo_objects(cls, excerpt_type):
+        """Return an iterable of database objects for which Lino should
+        generate a printable excerpt.
+
+        This is being called by
+        :mod:`lino.modlib.excerpts.fixtures.demo2`.
+
+        """
+
+        qs = cls.objects.all()
+        if qs.count() > 0:
+            yield qs[0]
+
+    @classmethod
     def get_certifiable_fields(cls):
         """
         Expected to return a string with a space-separated list of field
@@ -200,7 +214,6 @@ class ExcerptTitle(BabelNamed):
         blank=True,
         help_text=_(
             "The title to be used when printing an excerpt."))
-
 
     def get_excerpt_title(self):
         return dd.babelattr(self, 'excerpt_title') or unicode(self)

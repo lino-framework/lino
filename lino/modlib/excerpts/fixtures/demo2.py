@@ -8,6 +8,10 @@ Render all excerpts by running their do_print method.
 
 from lino.api import rt, dd
 
+from lino.modlib.excerpts.mixins import Certifiable
+
+PRINT_THEM_ALL = True
+
 
 def objects():
     ExcerptType = rt.modules.excerpts.ExcerptType
@@ -19,12 +23,22 @@ def objects():
     ses = rt.login(dd.plugins.excerpts.responsible_user)
 
     for et in ExcerptType.objects.all():
-        if Excerpt.objects.filter(excerpt_type=et).count() == 0:
-            model = et.content_type.model_class()
+        model = et.content_type.model_class()
+        if issubclass(model, Certifiable):
+            qs = model.get_printable_demo_objects(et)
+        else:
             qs = model.objects.all()
             if qs.count() > 0:
-                ses.selected_rows = [qs[0]]
-                yield et.get_or_create_excerpt(ses)
+                qs = [qs[0]]
+
+        for obj in qs:
+            ses.selected_rows = [obj]
+            yield et.get_or_create_excerpt(ses)
+        # qs2 = Excerpt.objects.filter(excerpt_type=et)
+        # if qs2.count() == 0:
+        #     if qs.count() > 0:
+        #         ses.selected_rows = [qs[0]]
+        #         yield et.get_or_create_excerpt(ses)
 
     for obj in Excerpt.objects.all():
         # dd.logger.info("20150526 rendering %s", obj)

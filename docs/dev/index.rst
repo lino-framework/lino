@@ -72,7 +72,7 @@ Getting acquaintained
 #.  :doc:`actors` :
 #.  :doc:`choicelists` :
 #.  :doc:`parameters` :
-
+#.  :doc:`virtualfields` :
 #.  :doc:`ar` : Using action requests
 #.  :doc:`html` : Generating HTML
 #.  :doc:`custom_actions` : Writing custom actions
@@ -110,6 +110,7 @@ Getting acquaintained
    choicelists
    parameters
    ar
+   virtualfields
    html
    custom_actions
    action_parameters

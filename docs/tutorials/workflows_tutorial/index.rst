@@ -33,11 +33,11 @@ Entry model to use it::
         state = EntryStates.field()
         
 
-And finally we added the `workflow_buttons` at different places: 
-in the detail layout of Entry, and in a `column_names` attribute to 
-`EntriesByCompany` and `MyEntries`. 
-That's because `workflow_buttons` 
-is a virtual field and therefore not automatically included.
+And finally we added the `workflow_buttons` at different places: in
+the detail layout of Entry, and in a `column_names` attribute to
+`EntriesByCompany` and `MyEntries`.  That's because `workflow_buttons`
+is a :doc:`virtual field </dev/virtualfields>` and therefore not
+automatically included.
 
 You can play with this application by cloning the latest development 
 version of Lino, then ``cd`` to the :file:`/docs/tutorials/workflow_tutorial` 
