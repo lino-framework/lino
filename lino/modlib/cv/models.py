@@ -297,9 +297,9 @@ class TrainingsByPerson(HistoryByPerson, Trainings):
     auto_fit_column_widths = True
 
 
-##
-## Studies
-##
+#
+# Studies
+#
 
 class Study(EducationEntry):
     """A **study** is an :class:`EducationEntry` at a higher school or university.

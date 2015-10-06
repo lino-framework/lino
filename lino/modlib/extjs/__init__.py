@@ -37,6 +37,19 @@ class Plugin(Plugin):
     """Extends :class:`lino.core.plugin.Plugin`.
 
     """
+
+    enter_submits_form = True
+    """Whether the :kbd:`ENTER` key (or :kbd:`CTRL+ENTER` when in a
+    textarea field) should submit the form.
+
+    The default is `True` for backwards compatibility.  We recommend
+    to set it to `False` and to explain users that :kbd:`Ctrl-S` is
+    the preferred keyboard shortcut for submitting a form.
+
+    This setting is read by :xfile:`linoweb.js` who adds the exotic
+    special mapping for :kbd:`ENTER` only when this is `True`.
+
+    """
     ui_label = _("Admin")
 
     use_statusbar = False
