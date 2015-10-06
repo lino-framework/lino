@@ -109,7 +109,12 @@ class KnowledgesByLanguage(LanguageKnowledges):
 ##
 
 class EducationEntry(PersonHistoryEntry, CountryCity):
-    "Abstract base class for :class:`Training` and :class:`Study`."
+    """An **education entry** is when a given person has received some
+    kind of educatio durinng a given period.
+
+    Abstract base class for :class:`Training` and :class:`Study`.
+
+    """
     class Meta:
         abstract = True
 
@@ -213,7 +218,14 @@ class StudyTypesByLevel(StudyTypes):
 ##
 
 class Training(SectorFunction, EducationEntry):
-    
+    """A **training** is an *education entry* with more practical
+    priorities than a study. There is no school.
+
+    .. attribute:: content
+
+       Describes the content of this training. A free one-line text field.
+
+    """
     class Meta:
         verbose_name = _("Training")
         verbose_name_plural = _("Trainings")
@@ -278,18 +290,20 @@ class TrainingsByType(Trainings):
 
 
 class TrainingsByPerson(HistoryByPerson, Trainings):
+    """Show the trainings of a given person."""
     required_roles = dd.required(CareerUser)
-    column_names = 'type sector content start_date end_date \
+    column_names = 'type sector function remarks start_date end_date \
     school country state certificates *'
     auto_fit_column_widths = True
 
 
-##
-## Studies
-##
+#
+# Studies
+#
 
 class Study(EducationEntry):
-    
+    """A **study** is an :class:`EducationEntry` at a higher school or university.
+    """
     class Meta:
         verbose_name = _("Study")
         verbose_name_plural = _("Studies")

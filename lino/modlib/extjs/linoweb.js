@@ -3058,21 +3058,29 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
           }
       });
 
-      wincfg.keys = [
-          {
+      wincfg.keys = [];
+{% if settings.SITE.plugins.extjs.enter_submits_form %}
+      wincfg.keys.push({
               key: Ext.EventObject.ENTER,
               scope:this,
-              fn: function(k, e) {
+              stopEvent: false,
+              handler: function(k, e) {
+                  // console.log("20151006", e.target.type, e.ctrlKey, e);
                   if(e.target.type === 'textarea' && !e.ctrlKey) {
+                      // do default behaviour (i.e. insert a newline)
+                      // console.log("20151006 default");
                       return true;
                   }
                   this.on_ok();
               }
-          },
-          { key: Ext.EventObject.ESCAPE, fn: this.on_cancel, scope:this }
-          ,{ key: 's', ctrl: true, 
-             stopEvent: true, fn: this.on_ok, scope:this }
-      ]
+          });
+{% endif %}
+      wincfg.keys.push({
+          key: Ext.EventObject.ESCAPE, 
+          handler: this.on_cancel, scope:this });
+      wincfg.keys.push({
+          key: 's', ctrl: true, 
+             stopEvent: true, handler: this.on_ok, scope:this });
   }
   
 });

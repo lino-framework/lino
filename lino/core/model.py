@@ -1031,3 +1031,4 @@ def pre_delete_handler(sender, instance=None, **kw):
                         obj2str(instance))
             for obj in qs:
                 obj.delete()
+

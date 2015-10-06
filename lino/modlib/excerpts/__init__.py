@@ -29,6 +29,7 @@ your own subclass of one of them) to the :attr:`detail_layout
    mixins
    choicelists
    fixtures.std
+   fixtures.demo2
 
 """
 
