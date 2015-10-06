@@ -131,6 +131,20 @@ class Site(Site):
 
         TicketEmitter().register()
 
+    def setup_plugins(self):
+        """
+        Change the default value of certain plugin settings.
+
+        - :attr:`lino_cosi.lib.accounts.Plugin.ref_length` = 5
+        
+        - :attr:`excerpts.responsible_user
+          <lino.modlib.excerpts.Plugin.responsible_user>` is set to
+          ``'melanie'``.
+
+        """
+        super(Site, self).setup_plugins()
+        self.plugins.extjs.configure(enter_submits_form=False)
+
 
 # the following line should not be active in a checked-in version
 #~ DATABASES['default']['NAME'] = ':memory:'
