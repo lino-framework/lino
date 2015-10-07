@@ -106,27 +106,12 @@ class Site(object):
 
         An :class:`AttrDict <atelier.utils.AttrDict>` which maps every
         installed `app_label` to the corresponding :xfile:`models.py`
-        module.
+        module object.
 
-        This is also available as the shortcut :mod:`lino.api.rt.modules`.
+        This is also available as the shortcut :attr:`rt.modules
+        <lino.api.rt.modules>`.
 
-        Note that it will be populated only during :meth:`startup`, so you
-        cannot use it at the module-level namespace of a models module.
-        For example (in a models module of an application that has at
-        least some app_label "foos") the following code **would not
-        work**::
-
-            from lino.api import rt
-            Foo = rt.foos.Foo  # error `AttrDict has no item "foos"`
-            def create_foo(name, price):
-                return Foo(name=name, price=price)
-
-        But this would work::
-
-            from lino.api import rt
-            def create_foo(name, price):
-                Foo = rt.foos.Foo
-                return Foo(name=name, price=price)
+        See :doc:`/dev/plugins`
 
     .. attribute:: LANGUAGE_CHOICES
     

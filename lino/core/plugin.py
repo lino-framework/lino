@@ -57,9 +57,6 @@ class Plugin(object):
     """The verbose name of this plugin, as shown to the user.  This can be
     a lazily translated string.
 
-    TODO: if this is not None, Lino might automatically add a
-    UserGroup.
-
     """
 
     short_name = None
