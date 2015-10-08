@@ -239,7 +239,7 @@ class Namespace(object):
         parent.append(e)
         return e
 
-    def fromstring(self, s):
+    def fromstring(self, s, **kwargs):
         """Build an element tree from the given XML source string.
 
         This just forwards to the
@@ -249,7 +249,7 @@ class Namespace(object):
         section of the Python docs.
 
         """
-        return etree.etree.fromstring(s)
+        return etree.etree.fromstring(s,  **kwargs)
 
     def raw(self, *args):
         return RAW(*args)
