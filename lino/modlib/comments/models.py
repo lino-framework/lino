@@ -24,14 +24,7 @@ from lino.modlib.users.mixins import ByUser, UserAuthored
 from lino.utils.xmlgen.html import E
 from lino.core.utils import gfk2lookup
 
-ALLOWED_TAGS = ['a', 'b', 'i', 'em']
 
-
-def html2li(html):
-    # html = obj.short_text
-    html = bleach.clean(
-        html, tags=ALLOWED_TAGS, strip=True)
-    return "<span>" + html + "</span>"
 
 
 class Comment(
@@ -39,7 +32,17 @@ class Comment(
         UserAuthored,
         # mixins.Hierarchical,
         Controllable):
-    """The model definition."""
+    """A **comment** is a short text which some user writes about some
+    other database object.
+
+    .. attribute:: short_text
+
+        A short "abstract" of your comment. This should not be more
+        than one paragraph.
+
+    """
+
+    ALLOWED_TAGS = ['a', 'b', 'i', 'em']
 
     class Meta:
         abstract = dd.is_abstract_model(__name__, 'Comment')
@@ -51,6 +54,29 @@ class Comment(
 
     def __unicode__(self):
         return u'%s #%s' % (self._meta.verbose_name, self.pk)
+
+    def as_li(self, ar):
+        """Return this comment as a list item. If `bleach
+        <http://bleach.readthedocs.org/en/latest/>`_ is installed, all
+        tags except some will be removed when
+
+        """
+        if bleach is None:
+            chunks = [self.short_text]
+        else:
+            chunks = [bleach.clean(
+                self.short_text, tags=self.ALLOWED_TAGS, strip=True)]
+
+        by = _("{0} by {1}").format(
+            naturaltime(self.created), unicode(self.user)),
+        chunks += [
+            " (", E.tostring(ar.obj2html(self, by)), ")"
+        ]
+        if self.more_text:
+            chunks.append(" (...)")
+
+        html = ''.join(chunks)
+        return "<li>" + html + "</li>"
 
 dd.update_field(Comment, 'user', editable=False)
 
@@ -121,69 +147,17 @@ class CommentsByController(CommentsByX):
         """
         sar = self.request_from(ar, master_instance=obj)
 
-        elems = []
-
-        if USE_ETREE:
-            elems.append(E.raw(obj.description))
-        else:
-            if obj.description:
-                elems.append(obj.description)
-
-        items = []
-        for obj in sar:
-            if bleach is None:
-                chunks = (
-                    E.raw(obj.short_text),
-                    " (",
-                    ar.obj2html(obj, naturaltime(obj.created)),
-                    unicode(_(" by ")),
-                    ar.obj2html(obj.user), ")"
-                )
-            else:
-                html = html2li(obj.short_text)
-                # print html
-                by = _("{0} by {1}").format(
-                    naturaltime(obj.created), unicode(obj.user)),
-                if USE_ETREE:
-                    chunks = [
-                        E.raw(html.encode('utf-8')),
-                        " (", ar.obj2html(obj, by), ")"
-                    ]
-                else:
-                    chunks = [
-                        html,
-                        " (", E.tostring(ar.obj2html(obj, by)), ")"
-                    ]
-
-                if obj.more_text:
-                    chunks.append(" (...)")
-            if USE_ETREE:
-                items.append(E.li(*chunks))
-            else:
-                items.append(u"<li>{0}</li>".format(''.join(chunks)))
+        html = obj.description
+        items = [o.as_li(ar) for o in sar]
         if len(items) > 0:
-            if USE_ETREE:
-                elems.append(E.ul(*items))
-            else:
-                elems.append(u"<ul>{0}</ul>".format(''.join(items)))
-        else:
-            elems.append(_("No comments."))
-
-        # Button for creating a new comment:
+            html += u"<ul>{0}</ul>".format(''.join(items))
 
         sar = self.insert_action.request_from(sar)
         if ar.renderer.is_interactive and sar.get_permission():
-            # gfk = rt.modules.comments.Comment.owner
-            # sar.known_values.update(gfk2lookup(gfk, obj))
             btn = sar.ar2button(None, _("Write comment"), icon_name=None)
-            if USE_ETREE:
-                elems += [E.br(), btn]
-            else:
-                elems.append("<br/>" + E.tostring(btn))
-        if USE_ETREE:
-            return E.div(*elems, class_="htmlText")
-        else:
-            return u"""<div class="htmlText">{0}</div>""".format(
-                ''.join(elems))
+            html += "<p>" + E.tostring(btn) + "</p>"
+        return u"""<div class="htmlText">{0}</div>""".format(html)
             
 
+def comments_by_owner(obj):
+    return CommentsByController.request(master_instance=obj)
