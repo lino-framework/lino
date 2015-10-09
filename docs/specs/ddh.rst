@@ -41,7 +41,7 @@ Lino Noi:
 - contacts.RoleType :
   - PROTECT : excerpts.Excerpt.contact_role, contacts.Role.type, tickets.Project.contact_role
 - contenttypes.ContentType :
-  - PROTECT : excerpts.ExcerptType.content_type, excerpts.Excerpt.owner_type, stars.Star.owner_type, gfks.HelpText.content_type, outbox.Mail.owner_type, outbox.Attachment.owner_type, uploads.Upload.owner_type
+  - PROTECT : excerpts.ExcerptType.content_type, excerpts.Excerpt.owner_type, comments.Comment.owner_type, stars.Star.owner_type, gfks.HelpText.content_type, outbox.Mail.owner_type, outbox.Attachment.owner_type, uploads.Upload.owner_type
 - countries.Country :
   - PROTECT : contacts.Partner.country, countries.Place.country
 - countries.Place :
@@ -75,5 +75,5 @@ Lino Noi:
 - uploads.UploadType :
   - PROTECT : uploads.Upload.type
 - users.User :
-  - PROTECT : excerpts.Excerpt.user, clocking.Session.user, tinymce.TextFieldTemplate.user, stars.Star.user, users.Authority.user, outbox.Mail.user, tickets.Project.assign_to, tickets.Ticket.assigned_to, uploads.Upload.user
+  - PROTECT : excerpts.Excerpt.user, clocking.Session.user, tinymce.TextFieldTemplate.user, comments.Comment.user, stars.Star.user, users.Authority.user, outbox.Mail.user, tickets.Project.assign_to, tickets.Ticket.assigned_to, uploads.Upload.user
 <BLANKLINE>
