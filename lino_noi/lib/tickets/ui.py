@@ -262,7 +262,7 @@ class TicketDetail(dd.DetailLayout):
 
     general = dd.Panel("""
     general1:60 DeploymentsByTicket:20
-    description:30 clocking.SessionsByTicket:40
+    comments.CommentsByController:30 clocking.SessionsByTicket:40
     """, label=_("General"))
     
     general1 = """
@@ -275,6 +275,7 @@ class TicketDetail(dd.DetailLayout):
     nickname:10 created modified reported_for #fixed_for ticket_type:10
     state duplicate_of planned_time priority
     standby feedback closed
+    description
     upgrade_notes:30 DuplicatesByTicket:20  #ChildrenByTicket LinksByTicket:20
     """, label=_("More"))
 

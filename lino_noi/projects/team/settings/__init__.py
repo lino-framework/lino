@@ -143,7 +143,8 @@ class Site(Site):
 
         """
         super(Site, self).setup_plugins()
-        self.plugins.extjs.configure(enter_submits_form=False)
+        if 'extjs' in self.plugins:
+            self.plugins.extjs.configure(enter_submits_form=False)
 
 
 # the following line should not be active in a checked-in version

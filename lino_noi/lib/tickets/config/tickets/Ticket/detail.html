@@ -32,6 +32,11 @@
 (Private content)
 {% else %}
 {{memo(obj.description)}}
+{% for comm in rt.modules.comments.comments_by_owner(obj) %}
+<ul>
+{{comm.as_li(ar)}}
+</ul>
+{% endfor %}
 {% endif %}
 </div>
 <div>{{ar.show('tickets.LinksByTicket', obj)}}</div>
