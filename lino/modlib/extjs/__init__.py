@@ -38,13 +38,21 @@ class Plugin(Plugin):
 
     """
 
-    enter_submits_form = True
+    enter_submits_form = False
     """Whether the :kbd:`ENTER` key (or :kbd:`CTRL+ENTER` when in a
     textarea field) should submit the form.
 
-    The default is `True` for backwards compatibility.  We recommend
-    to set it to `False` and to explain users that :kbd:`Ctrl-S` is
-    the preferred keyboard shortcut for submitting a form.
+    The default is `False`. For sites that were in production before
+    October 2015, we recomment to explain to the users that
+    :kbd:`Ctrl-S` is the preferred keyboard shortcut for submitting a
+    form. Alternatively for backwards compatibility you can set it to
+    `True` using something like this::
+
+        def setup_plugins(self):
+            super(Site, self).setup_plugins()
+            if self.is_installed('extjs'):
+                self.plugins.extjs.configure(enter_submits_form=False)
+
 
     This setting is read by :xfile:`linoweb.js` who adds the exotic
     special mapping for :kbd:`ENTER` only when this is `True`.
