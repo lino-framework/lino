@@ -86,7 +86,8 @@ class HtmlNamespace(Namespace):
         return unicode(v)
 
     def raw(self, raw_html):
-        print 20151008, raw_html
+        """Parses the given string into an HTML Element."""
+        # print 20151008, raw_html
         return self.fromstring(raw_html, parser=self.parser)
 
 

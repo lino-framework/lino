@@ -126,6 +126,8 @@ USE_ETREE = False
 
 
 class CommentsByController(CommentsByX):
+    """Shows the comments of a given database object.
+    """
     master_key = 'owner'
     column_names = "short_text created user *"
     stay_in_grid = True
