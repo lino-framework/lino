@@ -122,19 +122,24 @@ def get_child(obj, child_model):
 
 def delete_child(obj, child_model, ar=None, using=None):
     """
-    Delete the `child_model` instance related to `obj` without 
+    Delete the `child_model` instance related to `obj` without
     deleting the parent `obj` itself.
     """
-    #~ logger.info(u"delete_child %s from %s",child_model.__name__,obj)
+    # logger.info(u"delete_child %s from %s",child_model.__name__,obj)
     using = using or router.db_for_write(obj.__class__, instance=obj)
     child = get_child(obj, child_model)
     if child is None:
         raise Exception("%s has no child in %s" % (obj, child_model.__name__))
-    #~ msg = child_model._lino_ddh.disable_delete(child)
-    msg = child.disable_delete(ar)
+
+    # msg = child.disable_delete(ar)
+    ignore_models = set()
+    # for m in models_by_base(obj.__class__):
+    #     ignore_models.remove(child_model)
+    msg = child._lino_ddh.disable_delete_on_object(
+        obj, ignore_models)
     if msg:
         raise ValidationError(msg)
-    #~ logger.debug(u"Delete child %s from %s",child_model.__name__,obj)
+    # logger.debug(u"Delete child %s from %s",child_model.__name__,obj)
     if True:
         collector = ChildCollector(using=using)
         collector.collect([child])
@@ -227,6 +232,8 @@ def insert_child(obj, child_model, full_clean=False, **attrs):
 class EnableChild(VirtualField):
     """Rendered as a checkbox that indicates whether an mti child of the
     given model exists.
+
+    Deprecated. Use polymorphic.Polymorphic instead.
 
     """
 

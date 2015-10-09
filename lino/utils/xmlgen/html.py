@@ -49,6 +49,7 @@ Usage:
 
 from __future__ import unicode_literals
 
+import htmlentitydefs
 import types
 from xml.etree import ElementTree as ET
 
@@ -62,6 +63,12 @@ class HtmlNamespace(Namespace):
     This is instantiated as ``E``.
     """
 
+    def __init__(self, *args, **kwargs):
+        super(HtmlNamespace, self).__init__(*args, **kwargs)
+        self.parser = ET.XMLParser()
+        self.parser.entity.update(htmlentitydefs.entitydefs)
+        assert 'otilde' in self.parser.entity
+        
     def tostring(self, v, *args, **kw):
         # if isinstance(v, types.GeneratorType):
         if isinstance(v, (types.GeneratorType, list, tuple)):
@@ -77,6 +84,11 @@ class HtmlNamespace(Namespace):
         if E.iselement(v):
             return html2rst(v, stripped)
         return unicode(v)
+
+    def raw(self, raw_html):
+        """Parses the given string into an HTML Element."""
+        # print 20151008, raw_html
+        return self.fromstring(raw_html, parser=self.parser)
 
 
 E = HtmlNamespace(None, """

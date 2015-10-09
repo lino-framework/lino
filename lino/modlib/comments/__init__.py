@@ -4,6 +4,12 @@
 """
 Add comments to any model instance.
 
+.. autosummary::
+   :toctree:
+
+    models
+
+
 """
 
 from lino import ad

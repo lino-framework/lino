@@ -5,6 +5,7 @@
 """This defines the :class:`Action` class and the :func:`action`
 decorator, together with some of the predefined actions.
 
+
 See also:
 
 - :ref:`dev.actions`.

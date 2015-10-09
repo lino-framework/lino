@@ -1060,7 +1060,7 @@ class Actor(actions.Parametrizable, Permittable):
                 # added for 20120914c but it wasn't the problem
                 if existing and not isinstance(existing, basestring):
                     if not isinstance(dtl, existing.__class__):
-                        raise NotImplementedError(
+                        raise Exception(
                             "Cannot replace existing %s %r by %r" % (
                                 attname, existing, dtl))
                     if existing._added_panels:

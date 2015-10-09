@@ -7,7 +7,7 @@ initialized.
 
 You may *import* it at the global namespace of a :xfile:`models.py`
 file, but you can *use* most of it only when the :func:`startup`
-function has been called.  
+function has been called.
 
 .. attribute:: modules
 

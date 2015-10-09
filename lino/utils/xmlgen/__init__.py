@@ -106,8 +106,10 @@ TYPEMAP = {
 
 
 class Namespace(object):
+    """An XML namespace.  Base class for
+    :class:`lino.utils.xmlgen.html.HtmlNamespace` and the namespaces
+    defined in :mod:`lino.utils.xmlgen.intervat`.
 
-    """
     """
     prefix = None
     targetNamespace = None
@@ -239,7 +241,7 @@ class Namespace(object):
         parent.append(e)
         return e
 
-    def fromstring(self, s):
+    def fromstring(self, s, **kwargs):
         """Build an element tree from the given XML source string.
 
         This just forwards to the
@@ -249,9 +251,10 @@ class Namespace(object):
         section of the Python docs.
 
         """
-        return etree.etree.fromstring(s)
+        return etree.etree.fromstring(s,  **kwargs)
 
     def raw(self, *args):
+        """Parses the given string into an XML Element."""
         return RAW(*args)
 
 RAW = etree.XML
