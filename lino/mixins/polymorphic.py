@@ -193,10 +193,10 @@ class Polymorphic(model.Model):
                     if msg is not None:
                         return msg
 
+        # Now ask my own model, ignoring all other forms because they
+        # have been asked.
         ignore_models = set(self._mtinav_models)
         ignore_models.remove(self.__class__)
-        # ask my own model, ignoring all other forms because they have
-        # been asked
         return self.__class__._lino_ddh.disable_delete_on_object(
             self, ignore_models=ignore_models)
 
