@@ -20,6 +20,7 @@ import warnings
 import collections
 import threading
 from urllib import urlencode
+from django.apps import AppConfig
 
 from unipath import Path
 from atelier.utils import AttrDict, date_offset
@@ -145,12 +146,12 @@ class Site(object):
     application.
 
     """
-    
+
     confdirs = None
     """This attribute is available only after site startup.  See
     :mod:`lino.utils.config`.
     """
-    
+
     kernel = None
     """
     This attribute is available only after :meth:`startup`.
@@ -814,7 +815,7 @@ documentation.
     The default value is :mod:`lino.core.urls`.
 
     """
-    
+
     textfield_format = 'plain'
     """The default format for text fields.
     Valid choices are currently 'plain' and 'html'.
@@ -1264,6 +1265,8 @@ documentation.
     def install_settings(self):
 
         assert not self.help_url.endswith('/')
+        import django
+        django.setup()
 
         if self.webdav_url is None:
             self.webdav_url = self.site_prefix + 'media/webdav/'
@@ -1515,7 +1518,7 @@ documentation.
         self.django_settings.update(kwargs)
 
     _starting_up = False
-    
+
     def startup(self):
         """Start up this Site.
 
@@ -1533,7 +1536,7 @@ documentation.
         # finished `startup()`.
 
         with startup_rlock:
-        
+
             if self._starting_up:
                 # This is needed because Django "somehow" imports the
                 # settings module twice. The phenomen is not fully
@@ -1541,16 +1544,35 @@ documentation.
                 # code being run twice, which caused various error
                 # messages (e.g. Duplicate label in workflow setup)
                 return
-    
+
             if self._startup_done:
                 # self.logger.info("20140227 Lino startup already done")
                 return
-    
+
             self._starting_up = True
 
             from lino.core.signals import pre_startup, post_startup
 
             pre_startup.send(self)
+            lino_startup = False
+            for index , plugin in enumerate(self.installed_plugins):
+                if 'lino_startup' in plugin.app_name:
+                    lino_startup = plugin
+                    del plugin
+
+            if lino_startup:
+                badguy = list(self.installed_plugins)
+                badguy.append(lino_startup)
+                # badguy = tuple(badguy)
+                self.installed_plugins = tuple(badguy)
+
+            from django.apps import apps
+            # from django.conf import settings
+            # import django
+            #
+            # if not settings.INSTALLED_APPS:
+            #     django.setup()
+
 
             for p in self.installed_plugins:
                 # m = loading.load_app(p.app_name, False)
@@ -1563,10 +1585,16 @@ documentation.
                     # m = apps.load_app(p.app_name)
                     from django.utils.importlib import import_module
                     try:
-                        m = import_module(p.app_name + '.models')
-                    except ImportError:
+                        from django.apps import apps
+                        app_config = AppConfig.create(p.app_name)
+                        app_config.import_models(apps.all_models[app_config.label])
+                        apps.app_configs[app_config.label] = app_config
+                        apps.clear_cache()
+                        m = app_config.models_module
+                    except ImportError , rrrr:
                         m = "No module {0}.models".format(p.app_name)
                         # self.logger.warning(m)
+                        print(rrrr)
                 else:
                     from django.db.models import loading
                     m = loading.load_app(p.app_name, False)
@@ -1575,7 +1603,6 @@ documentation.
 
             for p in self.installed_plugins:
                 p.on_site_startup(self)
-
             self.do_site_startup()
             # self.logger.info("20140227 Site.do_site_startup() done")
             post_startup.send(self)
@@ -2787,13 +2814,13 @@ site. :manage:`diag` is a command-line shortcut to this.
 
         for k, label in self.top_level_menus:
             methname = "setup_{0}_menu".format(k)
-    
+
             for mod in apps:
                 if hasattr(mod, methname):
                     msg = "{0} still has a function {1}(). \
 Please convert to Plugin method".format(mod, methname)
                     raise Exception(msg)
-    
+
             if label is None:
                 menu = main
             else:
@@ -3015,7 +3042,7 @@ Please convert to Plugin method".format(mod, methname)
 
         """
         # self.logger.info("20121016 add_system_note() '%s'",subject)
-        
+
         if self.is_installed('notes'):
             notes = self.modules.notes
             notes.add_system_note(request, owner, subject, body)
