@@ -64,7 +64,18 @@ else:
     raise Exception("Unsupported Django version %s" % VERSION)
 
 
-def startup():
+def startup(settings_module=None):
+    """Until Django 1.6 this was called automatically, but after 1.7 only
+    when a process is invoked by a management command.
+
+    """
+    if settings_module:
+        import os
+        os.environ['DJANGO_SETTINGS_MODULE'] = settings_module
+        if AFTER17:
+            import django
+            django.setup()
+
     # called from `lino.models` (before Django 1.7) or below (after 1.7)
     from django.conf import settings
     if False:

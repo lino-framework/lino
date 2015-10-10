@@ -36,6 +36,7 @@ if AFTER17:
 
         def ready(self):
             # raise Exception("20150820")
+            # print "20151010 LinoConfig.ready() gonna call Site.startup"
             try:
                 startup()
             except Exception as e:

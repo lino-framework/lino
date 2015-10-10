@@ -1533,6 +1533,13 @@ documentation.
     
             self._starting_up = True
 
+            # print "20151010 Site.startup()"
+
+            # if AFTER17:
+            #     print "20151010 Site.startup() gonna call django.setup"
+            #     import django
+            #     django.setup()
+
             from lino.core.signals import pre_startup, post_startup
 
             pre_startup.send(self)
