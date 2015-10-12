@@ -27,6 +27,7 @@ from lino.utils.xmlgen.html import E
 from lino.utils.mti import insert_child, delete_child
 from lino.utils.djangotest import RemoteAuthTestCase
 from django.core.exceptions import ValidationError
+from django.utils import translation
 
 
 def create(m, **kw):
@@ -78,13 +79,45 @@ class QuickTest(RemoteAuthTestCase):
         ar = LinksByHuman.request(father)
         s = ar.to_rst()
         # print(s)
-        self.assertEqual(s, """\
-John is
-Father of *Mary* (4 years)
-Father of *Joseph* (5 years)
+        self.assertEquivalent("""
 
-Create relationship as **Father**/**Son** **Adoptive father**/**Adopted son** **Husband** **Partner** **Stepfather**/**Stepson** **Brother** **Cousin** **Uncle**/**Nephew** **Relative** **Other**
-""")
+        John is Father of *Mary* (4 years) Father of *Joseph* (5
+        years)
+
+        Create relationship as **Father**/**Son** **Adoptive
+        father**/**Adopted son** **Foster father**/**Foster son**
+        **Husband** **Partner** **Stepfather**/**Stepson** **Brother**
+        **Cousin** **Uncle**/**Nephew** **Relative** **Other** """, s)
+
+        with translation.override('de'):
+            ar = LinksByHuman.request(father)
+            s = ar.to_rst()
+            # print(s)
+            self.assertEquivalent("""
+            
+            John ist Vater von *Mary* (4 Jahre) Vater von *Joseph* (5
+            Jahre)
+
+            Beziehung erstellen als **Vater**/**Sohn**
+            **Adoptivvater**/**Adoptivsohn**
+            **Pflegevater**/**Pflegesohn** **Ehemann** **Partner**
+            **Stiefvater**/**Stiefsohn** **Bruder** **Vetter**
+            **Onkel**/**Neffe** **Verwandter** **Sonstiger** """, s)
+
+        with translation.override('fr'):
+            ar = LinksByHuman.request(father)
+            s = ar.to_rst()
+            # print(s)
+            self.assertEquivalent(u"""
+
+            John est Père de *Mary* (4 ans) Père de *Joseph* (5
+            ans)
+
+            Créer lien de parenté en tant que **Père**/**Fils** **Père
+            adoptif**/**Fils adoptif** **Père nourricier**/**Fils
+            nourricier** **Mari** **Partenaire**
+            **Beau-père**/**Beau-fils** **Frère** **Cousin**
+            **Oncle**/**Nephew** **Parent** **Autre** """, s)
 
         # Here we are just testing whether no exception is risen. The
         # ouptut itself is more thoroughly tested elsewhere.

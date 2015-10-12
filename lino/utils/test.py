@@ -29,6 +29,16 @@ class CommonTestCase(unittest.TestCase):
 
     """
 
+    def create_obj(self, model, **values):
+        """Create the given database object, run :meth:`full_clean` and
+        :meth:`save`, return the object.
+
+        """
+        obj = model(**values)
+        obj.full_clean()
+        obj.save()
+        return obj
+
     def check_json_result(self, response, expected_keys=None, msg=''):
         """Checks the result of response which is expected to return a
         JSON-encoded dictionary with the expected_keys.
@@ -49,9 +59,10 @@ class CommonTestCase(unittest.TestCase):
         return result
 
     def assertEquivalent(self, a, b, report_plain=False):
-        """Compares to strings, ignoring whitespace repetitions and writing a
-        logger message in case they are different.  For long strings
-        it's then more easy to find the difference.
+        """Compares two strings `a` (expected) and `b` (got), ignoring
+        whitespace repetitions and writing a logger message in case
+        they are different.  For long strings it's then more easy to
+        find the difference.
 
         """
         if a == b:
@@ -61,12 +72,15 @@ class CommonTestCase(unittest.TestCase):
         if ta == tb:
             return
         if report_plain:
-            logger.warning(
-                "----- EXPECTED : -----\n%s\n----- GOT : -----\n%s", a, b)
+            msg = "----- EXPECTED : -----\n%s\n----- GOT : -----\n%s" % (a, b)
         else:
-            logger.warning("EXPECTED : %s", ' '.join(ta))
-            logger.warning("     GOT : %s", ' '.join(tb))
-        self.fail("EXPECTED and GOT are not equivalent")
+            msg = "EXPECTED : %s" % (' '.join(ta))
+            msg += "\n     GOT : %s" % (' '.join(tb))
+        if False:
+            logger.warning(msg)
+            self.fail("EXPECTED and GOT are not equivalent")
+        else:
+            self.fail(msg)
 
     def request_PUT(self, url, data, **kw):
         """Sends a PUT request using Djangos test client, overriding the

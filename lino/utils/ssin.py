@@ -51,6 +51,9 @@ returns True or False while the other raises a ValidationError to be
 used in Django forms.  The message of this ValidationError depends on
 the user language.
 
+>>> import lino
+>>> lino.startup('lino.projects.min1.settings')
+
 >>> ssin_validator('123')
 Traceback (most recent call last):
 ...
