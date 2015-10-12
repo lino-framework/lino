@@ -4,8 +4,6 @@
 """
 Database models for `lino.modlib.humanlinks`.
 
-.. autosummary::
-
 """
 
 
@@ -17,132 +15,33 @@ logger = logging.getLogger(__name__)
 
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import pgettext_lazy as pgettext
-from django.utils.translation import string_concat
 from django.db.models import Q
 from lino.modlib.contacts.roles import ContactsUser, ContactsStaff
 
 from lino.api import dd, rt
 from lino.utils.xmlgen.html import E
+from .choicelists import LinkTypes
 
-config = dd.apps.humanlinks
-
-
-class LinkType(dd.Choice):
-
-    symmetric = False
-
-    def __init__(self, value, name,
-                 mptext, fptext,
-                 mctext, fctext,
-                 **kw):
-        self.mptext = mptext  # male parent
-        self.fptext = fptext
-        self.mctext = mctext
-        self.fctext = fctext
-        # text = string_concat(
-        #     mptext, ' (', fptext, ') / ', mctext, ' (', fctext, ')')
-        text = string_concat(mctext, ' (', fctext, ')')
-        # text = "%s (%s) / %s (%s)" % (mptext, fptext, mctext, fctext)
-        super(LinkType, self).__init__(value, text, name, **kw)
-
-    def as_parent(self, human):
-        if human is None:
-            return self.text
-        return human.mf(self.mptext, self.fptext)
-
-    def as_child(self, human):
-        if human is None:
-            return self.text
-        return human.mf(self.mctext, self.fctext)
-
-
-class LinkTypes(dd.ChoiceList):
-    required_roles = dd.required(ContactsStaff)
-    verbose_name = _("Parency type")
-    verbose_name_plural = _("Parency types")
-    item_class = LinkType
-
-add = LinkTypes.add_item
-add('01', 'parent',
-    _("Father"), _("Mother"),
-    _("Son"), _("Daughter"))
-
-add('02',
-    'adoptive',
-    _("Adoptive father"), _("Adoptive mother"),
-    _("Adopted son"), _("Adopted daughter"))
-
-add('03',
-    'grandparent',
-    _("Grandfather"), _("Grandmother"),
-    _("Grandson"), _("Granddaughter"))
-
-add('05',
-    'spouse',
-    _("Husband"), _("Wife"),
-    _("Husband"), _("Wife"), symmetric=True)
-
-add('06',
-    'friend',
-    pgettext("male", "Friend"), pgettext("female", "Friend"),
-    pgettext("male", "Friend"), pgettext("female", "Friend"),
-    symmetric=True)
-
-add('07',
-    'partner',
-    pgettext("male", "Partner"), pgettext("female", "Partner"),
-    pgettext("male", "Partner"), pgettext("female", "Partner"),
-    symmetric=True)
-
-add('08',
-    'step',
-    _("Stepfather"), _("Stepmother"),
-    _("Stepson"), _("Stepdaughter"))
-
-add('10',
-    'sibling',
-    pgettext("male", "Brother"), pgettext("female", "Sister"),
-    pgettext("male", "Brother"), pgettext("female", "Sister"),
-    symmetric=True)
-
-add('11',
-    'cousin',
-    pgettext("male", "Cousin"), pgettext("female", "Cousin"),
-    pgettext("male", "Cousin"), pgettext("female", "Cousin"),
-    symmetric=True)
-
-add('12',
-    'uncle',
-    _("Uncle"), _("Aunt"),
-    _("Nephew"), _("Niece"))
-
-add('80',
-    'relative',
-    pgettext("male", "Relative"), pgettext("female", "Relative"),
-    pgettext("male", "Relative"), pgettext("female", "Relative"),
-    symmetric=True)
-
-add('90',
-    'other',
-    pgettext("male", "Other"), pgettext("female", "Other"),
-    pgettext("male", "Other"), pgettext("female", "Other"),
-    symmetric=True)
-
-
-addable_link_types = (
-    LinkTypes.parent, LinkTypes.adoptive,
-    LinkTypes.spouse,
-    LinkTypes.partner,
-    LinkTypes.step,
-    LinkTypes.sibling,
-    LinkTypes.cousin,
-    LinkTypes.uncle,
-    LinkTypes.relative, LinkTypes.other)
+config = dd.plugins.humanlinks
 
 
 class Link(dd.Model):
+    """A link between two persons.
 
+    .. attribute:: parent
+
+        Pointer to the person who is "parent".
+
+    .. attribute:: child
+
+        Pointer to the person who is "child".
+
+    .. attribute:: type
+
+        The type of link.  Pointer to :class:`LinkTypes
+        <lino.modlib.humanlinks.choicelists.LinkTypes>`.
+
+    """
     class Meta:
         verbose_name = _("Personal Link")
         verbose_name_plural = _("Personal Links")
@@ -180,15 +79,26 @@ class Link(dd.Model):
             parent=self.parent,
             type=self.type.as_child(self.child))
 
+    parent_link_types = (LinkTypes.parent, LinkTypes.adoptive_parent)
+
     @classmethod
     def check_autocreate(cls, parent, child):
+        """Check whether there is a human link of type "parent" between the
+        given persons. Create one if not.
+
+        This is called from
+        :class:`lino_welfare.modlib.households.models.Member` to
+        automatically create human links between two household
+        members.
+
+        """
         if parent is None or child is None:
             return False
         if parent == child:
             return False
             # raise ValidationError("Parent and Child must differ")
-        t = (LinkTypes.parent, LinkTypes.adoptive)
-        qs = cls.objects.filter(parent=parent, child=child, type__in=t)
+        qs = cls.objects.filter(
+            parent=parent, child=child, type__in=cls.parent_link_types)
         if qs.count() == 0:
             obj = cls(parent=parent, child=child, type=LinkTypes.parent)
             obj.full_clean()
@@ -210,12 +120,36 @@ class Links(dd.Table):
 
 
 class LinksByHuman(Links):
-    """Show all links for which this human is either parent or child."""
+    """Show all links for which this human is either parent or child.
+
+    Display all human links of the master, using both the parent and
+    the child directions.
+
+    It is a cool usage example for using a :meth:`get_request_queryset
+    <lino.core.actors.dbtable.Table.get_request_queryset>` method
+    instead of :attr:`master_key
+    <lino.core.actors.dbtable.Table.master_key>`.
+
+    It is also a cool usage example for the
+    :meth:`lino.core.actors.dbtable.Table.get_slave_summary` method.
+
+    """
     label = _("Human Links")
     required_roles = dd.required(ContactsUser)
     master = config.person_model
     column_names = 'parent type_as_parent:10 child'
     slave_grid_format = 'summary'
+
+    addable_link_types = (
+        LinkTypes.parent, LinkTypes.adoptive_parent,
+        LinkTypes.foster_parent,
+        LinkTypes.spouse,
+        LinkTypes.partner,
+        LinkTypes.stepparent,
+        LinkTypes.sibling,
+        LinkTypes.cousin,
+        LinkTypes.uncle,
+        LinkTypes.relative, LinkTypes.other)
 
     @classmethod
     def get_request_queryset(self, ar):
@@ -278,7 +212,7 @@ class LinksByHuman(Links):
         sar = self.insert_action.request_from(ar)
         if sar.get_permission():
             actions = []
-            for lt in addable_link_types:
+            for lt in self.addable_link_types:
                 sar.known_values.update(type=lt, parent=obj)
                 sar.known_values.pop('child', None)
                 #sar = ar.spawn(self, known_values=dict(type=lt, parent=obj))

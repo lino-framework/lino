@@ -708,8 +708,11 @@ class Reservation(RecurrenceSet, EventGenerator, mixins.Registrable):
         return self.max_date
 
     def update_cal_rset(self):
-        if self.room:
-            return self
+        """Return the *reccurrency set* to be used when generating events for
+        this reservation.
+
+        """
+        return self
 
     def update_cal_room(self, i):
         return self.room

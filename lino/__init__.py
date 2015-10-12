@@ -65,8 +65,25 @@ else:
 
 
 def startup(settings_module=None):
-    """Until Django 1.6 this was called automatically, but after 1.7 only
-    when a process is invoked by a management command.
+    """Start up Django and Lino.
+
+    Until Django 1.6 this was called automatically (by
+    :mod:`lino.modlib.lino_startup`), but this trick no longer worked
+    after 1.7.
+
+    This is called automatically when a process is invoked by a
+    *management command*.
+
+    For testable documents you need to call it manually using e.g.:
+
+    >>> import lino
+    >>> lino.startup('my.project.settings')
+
+    Note that above two lines are recommended over the old-style
+    method (which works only under Django 1.6)::
+
+    >>> import os
+    >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'my.project.settings'
 
     """
     if settings_module:
