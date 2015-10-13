@@ -62,7 +62,11 @@ to explain how to use workflows: :doc:`../workflows_tutorial/index`).
 >>> from lino.api.doctest import *
 
 >>> from django.core.management import call_command
->>> call_command('initdb_demo', interactive=False)
+>>> from lino import AFTER17
+>>> if AFTER17:
+...     call_command('syncdb', interactive=False)
+... else:
+...     call_command('initdb_demo', interactive=False)
 ... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
 Creating tables ...
 Installing custom SQL ...

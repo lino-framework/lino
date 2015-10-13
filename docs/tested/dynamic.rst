@@ -95,7 +95,11 @@ given class.
 Abstract models are not stored in the models cache:
 
 >>> from django.db import models
->>> [m for m in models.get_models(only_installed=False) if m._meta.abstract]
+>>> from lino import AFTER17
+>>> if AFTER17:
+...  [m for m in models.get_models() if m._meta.abstract]
+... else:
+...  [m for m in models.get_models(only_installed=False) if m._meta.abstract]
 []
 
 And anyway the models cache is ready only when all models modules have

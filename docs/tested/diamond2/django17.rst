@@ -34,6 +34,9 @@ Let's look together into :mod:`lino.core.inject`.
 
 The problem comes (probably) because the `name` field occurs *twice*
 in the list of fields:
-
->>> [f.name for f in PizzeriaBar._meta.get_fields()]
+>>> from lino import AFTER17
+>>> if AFTER17:
+...     [f.name for f in PizzeriaBar._meta.get_fields()]
+... else:
+...     [f.name for f in PizzeriaBar._meta.get_fields()]
 [u'id', 'street', 'name', 'specialty', u'pizzeria_ptr', 'street', 'name', 'min_age', 'pizza_bar_specific_field']
