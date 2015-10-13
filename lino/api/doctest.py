@@ -5,7 +5,10 @@
 """A selection of names to be used in tested documents."""
 
 
-
+from lino import AFTER17
+if AFTER17:
+    import django
+    django.setup()
 from lino.api.shell import *
 from django.utils import translation
 from django.test import Client
