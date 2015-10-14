@@ -20,7 +20,9 @@ import warnings
 import collections
 import threading
 from urllib import urlencode
-from django.apps import AppConfig
+from lino import AFTER17
+if AFTER17:
+    from django.apps import AppConfig
 
 from unipath import Path
 from atelier.utils import AttrDict, date_offset
@@ -30,7 +32,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import get_language
 # from django.core.exceptions import ImproperlyConfigured
 
-from lino import AFTER17
 from lino.core.plugin import Plugin
 
 from lino import assert_django_code, DJANGO_DEFAULT_LANGUAGE
@@ -1250,8 +1251,8 @@ documentation.
     def install_settings(self):
 
         assert not self.help_url.endswith('/')
-        import django
-        django.setup()
+        # import django
+        # django.setup()
 
         if self.webdav_url is None:
             self.webdav_url = self.site_prefix + 'media/webdav/'
@@ -1558,7 +1559,6 @@ documentation.
                 # badguy = tuple(badguy)
                 self.installed_plugins = tuple(badguy)
 
-            from django.apps import apps
             # from django.conf import settings
             # import django
             #
