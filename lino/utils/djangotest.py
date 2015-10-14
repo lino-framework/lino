@@ -4,8 +4,6 @@
 """Two TestCase classes for writing tests be run using Django's test
 runner (i.e. `manage.py test`).
 
-.. autosummary::
-
 """
 
 from __future__ import print_function

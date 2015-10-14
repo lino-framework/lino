@@ -55,6 +55,8 @@ This is a tested document. To test it, run::
     sqllog
     ssin
     test
+    pythontest
+    djangotest
     textfields
     ucsv
     xmlgen
