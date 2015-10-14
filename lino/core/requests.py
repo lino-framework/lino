@@ -180,7 +180,8 @@ class BaseRequest(object):
                 # note that `body` was named `raw_post_data` before Django 1.4
                 #~ print 20130222, rqdata
             else:
-                rqdata = request.REQUEST
+                # rqdata = request.REQUEST
+                rqdata = getattr(request,request.method)
             kw = self.parse_req(request, rqdata, **kw)
         if parent is not None:
             for k in inheritable_attrs:
