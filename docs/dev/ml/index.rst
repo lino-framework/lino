@@ -2,22 +2,18 @@
 The model library ``modlib``
 ============================
 
-This document is being migrated to :mod:`lino.modlib`.
-
 .. module:: ml
 
-.. toctree::
-   :maxdepth: 2
-
-   extensible
-   households
-   humanlinks
-   ledger
+This content has been migrated to :mod:`lino.modlib`.
 
 
 .. toctree::
    :hidden:
 
+   extensible
+   households
+   ledger
+   humanlinks
    debts
    contacts
    addresses

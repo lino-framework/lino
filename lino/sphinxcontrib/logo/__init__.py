@@ -13,11 +13,11 @@ from unipath import Path
 def builder_inited(app):
     mydir = Path(__file__).parent.child('static').absolute()
     app.config.html_static_path.append(mydir)
-    app.config.html_logo = mydir.child('logo.png')
+    app.config.html_logo = mydir.child('logo_web3.png')
     app.config.html_favicon = mydir.child('favicon.ico')
 
 
 def setup(app):
-    app.add_stylesheet('centeredlogo.css')
+    # app.add_stylesheet('centeredlogo.css')
     app.connect('builder-inited', builder_inited)
 

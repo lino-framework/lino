@@ -129,15 +129,6 @@ Getting acquaintained
    rendering
    
 
-Reference
-=========
-
-.. toctree::
-   :maxdepth: 1
-
-   ml/index
-   
-
 Special topics
 ==============
 
@@ -208,3 +199,5 @@ Other
    rt
    mixins
    /tutorials/index
+   ml/index
+   

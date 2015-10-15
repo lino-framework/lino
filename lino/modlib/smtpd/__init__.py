@@ -1,9 +1,19 @@
 # Copyright 2014-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"See :mod:`ml.inbox`."
+"""Run an SMTP daemon process.
 
-from lino import ad, _
+.. autosummary::
+   :toctree:
+
+   signals
+   management.commands.recmail
+
+
+"""
+
+
+from lino.api import ad, _
 
 
 class Plugin(ad.Plugin):

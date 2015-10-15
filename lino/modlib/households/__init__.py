@@ -24,9 +24,15 @@ from lino.api import ad, _
 
 
 class Plugin(ad.Plugin):
-    "See :doc:`/dev/plugins`."
+    "Extends :class:`lino.core.plugin.Plugin`."
     verbose_name = _("Households")
+
     person_model = "contacts.Person"
+    """A string referring to the model which represents a human in your
+    application.  Default value is ``'contacts.Person'`` (referring to
+    :class:`lino.modlib.contacts.models.Person`).
+
+    """
 
     def setup_main_menu(config, site, profile, m):
         mnugrp = site.plugins.contacts
