@@ -2,18 +2,12 @@
 # Copyright 2013-2014 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Adds some css styling to your logo so that it's widths is set to
-100px.
+"""Sets the `html_logo` and `html_favicon` for all Lino-related sites.
 
+Using this extension currently means that you cannot set these config
+settings yourself.
 
-Note: using this extension currently means that you cannot set the
-following config settings yourself:
-
-- html_logo, html_favicon, html_theme_options
-- autodoc_member_order, autodoc_default_flags
-
-TODO: convert builder_inited function into a configure function to be
-called instead of :func:`atelier.sphinxconf.configure`.
+Also adds some css styling.
 
 """
 
