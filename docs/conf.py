@@ -356,12 +356,3 @@ gettext_compact = True
 # print 20150701, autodoc_default_flags
 # raise 123
 
-autodoc_member_order = 'bysource'
-autodoc_default_flags = ['show-inheritance', 'members']
-
-my_font_family = "Swiss, Helvetica, 'Liberation Sans'"
-html_theme_options = {
-    "font_family": my_font_family,
-    "head_font_family": my_font_family,
-}
-
