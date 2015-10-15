@@ -92,7 +92,11 @@ class ExtSummaryField(dd.VirtualField):
 
 
 class CalendarPanel(dd.Frame):
-    """Open a window with a classical "Calendar" view. """
+    """Opens the "Calendar View" (a special window with the Ext.ensible
+    CalendarAppPanel).
+
+    """
+
     help_text = _("""Displays your events in a "calendar view" \
     with the possibility to switch between daily, weekly, monthly view.""")
     required_roles = dd.required(OfficeUser)

@@ -1,7 +1,8 @@
 # Copyright 2013-2015 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
-""".. autosummary::
+"""An extended :class:`TestCase` for the plain python tests of a Lino
+project.
 
 """
 import os
@@ -24,9 +25,9 @@ class TestCase(TestCase):
     """
 
     django_settings_module = None
-    """
-    The `DJANGO_SETTINGS_MODULE` to set for each subprocess
+    """The :setting:`DJANGO_SETTINGS_MODULE` to set for each subprocess
     launched by this test case.
+
     """
 
     def build_environment(self):

@@ -27,7 +27,6 @@ config = dd.plugins.households
 
 
 class Type(mixins.BabelNamed):
-
     """
     Type of a household.
     http://www.belgium.be/fr/famille/couple/cohabitation/
@@ -190,8 +189,18 @@ class HouseholdsByType(Households):
 
 
 class Member(mixins.DatePeriod):
-    """
-    The role of a given :class:`Person` in a given :class:`Household`.
+    """A **household membership** represents the fact that a given person
+    is (or has been) part of a given household.
+
+    .. attribute:: start_date
+
+        Since when this membership exists. This is usually empty.
+
+    .. attribute:: end_date
+
+        Until when this membership exists.
+
+
     """
 
     class Meta:
@@ -269,9 +278,18 @@ class MembersByHousehold(Members):
 
 
 class SiblingsByPerson(Members):
-    """
-    If the master is member of a single household, display the members
-    of that Household. Otherwise display an explanation message.
+    """Displays the siblings of a given person in that person's active
+    household.
+
+    The active household is determined as follows:
+
+      - If the person has only one household, use this.
+      - Otherwise, if one household is marked as primary, use this.
+      - Otherwise, if there is exactly one membership whose end_date is
+        either empty or in the future, take this.
+
+    If no active household can be determined, the panel just displays
+    an apporpriate message.
 
     """
     label = _("Household composition")

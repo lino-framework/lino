@@ -1,3 +1,5 @@
+.. _dev.testing:
+
 =========================
 Testing Lino applications
 =========================
@@ -34,4 +36,3 @@ best to fill up this hole...  meanwhile you must use the source, Luke!
   - :mod:`atelier.test`
   - :mod:`lino.utils.pythontest` and :mod:`lino.utils.djangotest`
   - :mod:`lino.utils.test`
-

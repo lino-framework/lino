@@ -12,4 +12,5 @@ such documents.
 Examples:
 
 - :doc:`/tested/index`
-- http://welfare.lino-framework.org/tested
+- http://welfare.lino-framework.org/specs
+- http://noi.lino-framework.org/specs

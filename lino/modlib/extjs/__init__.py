@@ -12,9 +12,11 @@ method).
 
 When your Lino application uses the ExtJS user interface, then you may
 need a `commercial license from Sencha
-<https://www.sencha.com/store/extjs/>`__ if (1) your application is
+<https://www.sencha.com/store/extjs/>`__. Summary without warranty of
+correctness: you need a commercial license if (1) your application is
 not available under the GPL **and** (2) your site is used by other
-people than the empoyees of the company who wrote the application.
+people than the empoyees of the company who is the copyright holder of
+your application.
 
 
 .. autosummary::

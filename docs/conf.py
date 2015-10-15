@@ -192,9 +192,8 @@ html_static_path = ['.static']
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-#~ html_logo = 'logo.jpg'
-# html_logo = 'lino-logo-2.png'
-html_logo = 'logo.png'
+# html_logo = 'logo.png'  # The logo is set in lino.sphinxcontrib.logo
+
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
@@ -287,9 +286,9 @@ latex_documents = [
 
 # setup1 = setup
 
-def setup(app):
+# def setup(app):
     # app.add_stylesheet('linodocs.css')
-    app.add_stylesheet('centeredlogo.css')
+    # app.add_stylesheet('centeredlogo.css')
     # setup1(app)
     #~ app.add_stylesheet('dialog.css')
     #~ app.add_stylesheet('scrollwide.css')
@@ -357,11 +356,3 @@ gettext_compact = True
 # print 20150701, autodoc_default_flags
 # raise 123
 
-autodoc_member_order = 'bysource'
-autodoc_default_flags = ['show-inheritance', 'members']
-
-my_font_family = "Swiss, Helvetica, 'Liberation Sans'"
-html_theme_options = {
-    "font_family": my_font_family,
-    "head_font_family": my_font_family,
-}

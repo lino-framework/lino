@@ -48,3 +48,16 @@ p.caption {
 	text-align: center;
 }
 
+div.sphinxsidebarwrapper p.logo {
+    margin: 0px 5px 20px;
+}
+
+div.sphinxsidebarwrapper {
+    padding: 0px 10px;
+}
+
+div.body {
+    background-color: #FFF;
+    color: #3E4349;
+    padding: 30px 30px;
+}

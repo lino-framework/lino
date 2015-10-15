@@ -14,6 +14,7 @@
    mixins
    projects
    modlib
+   sphinxcontrib
 
 
 """
