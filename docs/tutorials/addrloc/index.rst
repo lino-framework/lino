@@ -20,11 +20,7 @@ You can initialize your demo database by running::
 .. This document does the equivalent:
 
     >>> from django.core.management import call_command
-    >>> from lino import AFTER17
-    >>> if AFTER17:
-    ...     call_command('syncdb', interactive=False)
-    ... else:
-    ...     call_command('initdb_demo', interactive=False)
+    >>> call_command('initdb_demo', interactive=False)
     Creating tables ...
     Installing custom SQL ...
     Installing indexes ...
