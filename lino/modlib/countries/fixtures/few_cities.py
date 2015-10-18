@@ -8,13 +8,15 @@ Adds an arbitrary selection of a few demo cities.
 from __future__ import unicode_literals
 
 import logging
+from lino.modlib.countries.choicelists import PlaceType
+
 logger = logging.getLogger(__name__)
 
 from django.core.exceptions import MultipleObjectsReturned
 from lino.utils import dblogger
 from lino.core.utils import resolve_model
 from lino.utils.instantiator import Instantiator
-
+from lino import AFTER17
 
 from lino.api import dd, rt
 
@@ -29,7 +31,12 @@ def objects():
     city = Instantiator(Place, 'name country').build
 
     def make_city(country_id, name=None, **kw):
-        kw.setdefault('type', PlaceTypes.city)
+        if AFTER17:
+            kw.setdefault('type', PlaceTypes.city.pk)
+            if kw.get('type',False) and isinstance(kw.get('type',False),PlaceType):
+                kw['type'] = kw['type'].pk
+        else:
+            kw.setdefault('type', PlaceTypes.city)
         flt = rt.lookup_filter(
             'name', name, country__isocode=country_id, **kw)
         try:
@@ -73,13 +80,24 @@ def objects():
     yield make_city('BE', 'Burdinne', zip_code='4210')
 
     def be_province(de, fr, nl):
-        return Place(
+        if AFTER17:
+            p = Place(
+                country=BE, type=PlaceTypes.province.pk,
+                **dd.babel_values('name', de=de, fr=fr, nl=nl, en=fr, et=fr))
+        else:
+            p = Place(
             country=BE, type=PlaceTypes.province,
             **dd.babel_values('name', de=de, fr=fr, nl=nl, en=fr, et=fr))
+        return p
 
     def be_city(zip_code, de=None, fr=None, nl=None, en=None, **kw):
         kw.update(dd.babel_values('name', de=de, fr=fr, nl=nl, en=en, et=en))
-        kw.setdefault('type', PlaceTypes.city)
+        if AFTER17:
+            kw.setdefault('type', PlaceTypes.city.pk)
+            if kw.get('type',False) and isinstance(kw.get('type',False),PlaceType):
+                kw['type'] = kw['type'].pk
+        else:
+            kw.setdefault('type', PlaceTypes.city)
         return Place(country=BE, zip_code=zip_code, **kw)
 
     yield be_province("Antwerpen", "Anvers", "Antwerpen")

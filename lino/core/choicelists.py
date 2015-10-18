@@ -472,7 +472,10 @@ Django creates copies of them when inheriting models.
                 raise Exception("Unresolved value %r for %s" % (value, cls))
             else:
                 return UnresolvedValue(cls, value)
-        return v
+        if hasattr(v,'value'):
+            return v.value
+        else:
+            return v
         #~ return cls.items_dict.get(value) or UnresolvedValue(cls,value)
         #~ return cls.items_dict[value]
 
@@ -661,6 +664,8 @@ class ChoiceListField(models.CharField):
         #~ if self.attname == 'query_register':
             #~ print '20120527 get_prep_value()', repr(value)
         #~ return value.value
+        if isinstance(value,unicode):
+            return str(value)
         if value:
             return value.value
         return ''
