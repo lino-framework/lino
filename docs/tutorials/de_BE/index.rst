@@ -42,10 +42,14 @@ Now we wrote a Python fixture with some data:
 We load this fixture using Django's standard loaddata command:
 
 >>> from django.core.management import call_command
->>> call_command('initdb_demo', interactive=False)
-Creating tables ...
-Installing custom SQL ...
-Installing indexes ...
+>>> import doctest
+>>> doctest.ELLIPSIS_MARKER = '-etc-'
+>>> call_command('initdb_demo', interactive=False)  # doctest: +ELLIPSIS
+-etc-
+-etc-Creating tables-etc-...
+-etc-
+-etc-Installing custom SQL-etc-...
+-etc-
 Installed 3 object(s) from 1 fixture(s)
 
 

@@ -62,15 +62,12 @@ to explain how to use workflows: :doc:`../workflows_tutorial/index`).
 >>> from lino.api.doctest import *
 
 >>> from django.core.management import call_command
->>> from lino import AFTER17
->>> if AFTER17:
-...     call_command('syncdb', interactive=False)
-... else:
-...     call_command('initdb_demo', interactive=False)
-... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
-Creating tables ...
-Installing custom SQL ...
-Installing indexes ...
+>>> import doctest
+>>> doctest.ELLIPSIS_MARKER = '-etc-'
+>>> call_command('initdb_demo', interactive=False) #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
+-etc-Creating tables-etc-...
+-etc-Installing custom SQL-etc-...
+-etc-
 Installed 191 object(s) from 6 fixture(s)
 
 The :mod:`lino.modlib.changes` plugin records only changes made using

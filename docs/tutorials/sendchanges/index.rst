@@ -32,9 +32,11 @@ We must load our demo data fixture using Django's standard loaddata
 command:
 
 >>> from django.core.management import call_command
->>> call_command('initdb_demo', interactive=False)
-... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
-Creating tables ...
+>>> import doctest
+>>> doctest.ELLIPSIS_MARKER = '-etc-'
+>>> call_command('initdb_demo', interactive=False) #doctest: +ELLIPSIS
+-etc-Creating tables-etc-...
+-etc-
 Installed 235 object(s) from 9 fixture(s)
 
 

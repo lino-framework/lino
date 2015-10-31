@@ -108,10 +108,12 @@ shell::
 And typing the following:
 
 >>> from django.core.management import call_command
->>> call_command('initdb', 'demo', interactive=False)
-Creating tables ...
-Installing custom SQL ...
-Installing indexes ...
+>>> import doctest
+>>> doctest.ELLIPSIS_MARKER = '-etc-'
+>>> call_command('initdb', 'demo', interactive=False) #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
+-etc-Creating tables-etc-...
+-etc-Installing custom SQL-etc-...
+-etc-
 Installed 6 object(s) from 1 fixture(s)
 
 You can print a catalog in different languages:

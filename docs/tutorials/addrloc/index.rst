@@ -20,10 +20,12 @@ You can initialize your demo database by running::
 .. This document does the equivalent:
 
     >>> from django.core.management import call_command
-    >>> call_command('initdb_demo', interactive=False)
-    Creating tables ...
-    Installing custom SQL ...
-    Installing indexes ...
+    >>> import doctest
+    >>> doctest.ELLIPSIS_MARKER = '-etc-'
+    >>> call_command('initdb_demo', interactive=False) #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
+    -etc-Creating tables-etc-...
+    -etc-Installing custom SQL-etc-...
+    -etc-
     Installed 172 object(s) from 4 fixture(s)
 
 
