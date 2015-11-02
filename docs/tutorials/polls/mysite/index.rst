@@ -196,15 +196,13 @@ The output should be::
 
 ..
     >>> from django.core.management import call_command
-    >>> from lino import AFTER17
-    >>> if AFTER17:
-    ...     call_command('syncdb', interactive=False)
-    ... else:
-    ...     call_command('initdb_demo', interactive=False)
-  Creating tables ...
-  Installing custom SQL ...
-  Installing indexes ...
-    
+    >>> import doctest
+    >>> doctest.ELLIPSIS_MARKER = '-etc-'
+    >>> call_command('initdb_demo', interactive=False) #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
+    -etc-Creating tables-etc-...
+    -etc-Installing custom SQL-etc-...
+    -etc-
+
 
 Adding a demo fixture
 ---------------------
@@ -254,10 +252,12 @@ We are now going to add a **demo fixture**.
 
 ..
   >>> from django.core.management import call_command
-  >>> call_command('initdb', 'demo', interactive=False)
-  Creating tables ...
-  Installing custom SQL ...
-  Installing indexes ...
+  >>> import doctest
+  >>> doctest.ELLIPSIS_MARKER = '-etc-'
+  >>> call_command('initdb', 'demo', interactive=False) #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
+  -etc-Creating tables-etc-...
+  -etc-Installing custom SQL-etc-...
+  -etc-
   Installed 13 object(s) from 1 fixture(s)
     
   
