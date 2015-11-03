@@ -78,8 +78,9 @@ field occurs *twice* in the list of fields:
 
 >>> Person = rt.modules.contacts.Person
 >>> from lino import AFTER17
+>>> from lino.core.fields import VirtualField
 >>> if AFTER17:
-...     [f.name for f in Person._meta.get_fields()]
+...     [f.name for f in Person._meta._get_fields(reverse=False) if not isinstance(f, VirtualField)]
 ... else:
 ...     [f.name for (f, m) in Person._meta.get_fields_with_model()]
 [u'id', 'modified', 'created', 'country', 'city', 'zip_code', 'region', 'addr1', 'street_prefix', 'street', 'street_no', 'street_box', 'addr2', 'name', 'language', 'email', 'url', 'phone', 'gsm', 'fax', 'remarks', u'partner_ptr', 'title', 'first_name', 'middle_name', 'last_name', 'gender', 'birth_date']

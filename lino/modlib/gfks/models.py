@@ -39,7 +39,7 @@ class ContentTypes(dd.Table):
     required_roles = dd.required(SiteStaff)
 
     detail_layout = """
-    id name app_label model base_classes
+    id app_label model base_classes
     HelpTextsByModel
     BrokenGFKsByModel
     """

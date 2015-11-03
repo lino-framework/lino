@@ -374,6 +374,8 @@ class Kernel(object):
                     if not hasattr(f.rel.to, '_lino_ddh'):
                         raise Exception("20150824")
                     # f.rel.to._lino_ddh.add_fk(f.model, f)
+                    # m = f.model._meta.concrete_model
+                    # f.rel.to._lino_ddh.add_fk(m, f)
                     f.rel.to._lino_ddh.add_fk(m or model, f)
 
         kernel.protect_foreignkeys(models_list)

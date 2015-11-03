@@ -209,6 +209,10 @@ def models_by_base(base, toplevel_only=False):
     """Yields a list of installed models that are subclass of the given
     base class.
 
+    Changed 2015-11-03: The list is sorted alphabetically using
+    :func:`full_model_name` because anyway the sort order was
+    unpredictable and changed between Django versions.
+
     """
     found = []
     for m in get_models():
@@ -223,6 +227,10 @@ def models_by_base(base, toplevel_only=False):
                         add = False
             if add:
                 found.append(m)
+
+    def f(a, b):
+        return cmp(full_model_name(a), full_model_name(b))
+    found.sort(f)
     return found
 
 
