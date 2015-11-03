@@ -45,9 +45,7 @@ We load this fixture using Django's standard loaddata command:
 >>> import doctest
 >>> doctest.ELLIPSIS_MARKER = '-etc-'
 >>> call_command('initdb_demo', interactive=False)  # doctest: +ELLIPSIS
--etc-
 -etc-Creating tables-etc-...
--etc-
 -etc-Installing custom SQL-etc-...
 -etc-
 Installed 3 object(s) from 1 fixture(s)
