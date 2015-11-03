@@ -1,3 +1,5 @@
+.. _tutorials.de_BE:
+
 ==============
 Ostbelgizismen
 ==============
@@ -12,23 +14,22 @@ for :ref:`mldbc` with different variants of a same language
 on a same Site.
 
 
-In our `settings.py` you can see that we have 
-two variants of German in 
-:setting:`languages`: 
-normal German ('de') and belgian German ('de_BE'):
+In our :xfile:`settings.py` you can see that we have two variants of
+German in :attr:`languages <lino.core.site.Site.languages>`: "normal"
+('de') and "Belgian" ('de_BE'):
 
 .. literalinclude:: settings.py
 
-This example site is going to show a list of differences between 
-those two languages.
-
-The site uses a single model, which is a :class:`BabelNamed 
-<lino.utils.mldbc.BabelNamed>`:
+The :xfile:`models.py` file defines a single model:
 
 .. literalinclude:: models.py
 
->>> from de_BE.models import *
->>> from lino.api import rt
+The model inherits from :class:`BabelNamed
+<lino.utils.mldbc.mixins.BabelNamed>`.
+
+
+This example site is going to show a list of differences between 
+those two languages.
 
 
 Populate the database
@@ -39,20 +40,16 @@ Now we wrote a Python fixture with some data:
 .. literalinclude:: fixtures/demo.py
    :lines: 1-14
 
+
 We load this fixture using Django's standard loaddata command:
 
 >>> from django.core.management import call_command
->>> import doctest
->>> doctest.ELLIPSIS_MARKER = '-etc-'
->>> call_command('initdb_demo', interactive=False)  # doctest: +ELLIPSIS
--etc-Creating tables-etc-...
--etc-Installing custom SQL-etc-...
--etc-
-Installed 3 object(s) from 1 fixture(s)
-
+>>> call_command('initdb_demo', interactive=False, verbosity=0)
 
 Here is the result:
 
+>>> from lino.api import rt
+>>> from de_BE.models import Expressions
 >>> rt.show(Expressions)
 ==== ============== ================== =====================
  ID   Designation    Designation (de)   Designation (de-be)
@@ -63,8 +60,6 @@ Here is the result:
 ==== ============== ================== =====================
 <BLANKLINE>
 
-
 See also
 
-- :setting:`languages`
-- :meth:`north.north_site.Site.get_language_info`
+- :meth:`lino.core.site.Site.get_language_info`
