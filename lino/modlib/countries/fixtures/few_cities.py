@@ -31,7 +31,7 @@ def objects():
     city = Instantiator(Place, 'name country').build
 
     def make_city(country_id, name=None, **kw):
-        if AFTER17:
+        if False:  # AFTER17:
             kw.setdefault('type', PlaceTypes.city.pk)
             if kw.get('type',False) and isinstance(kw.get('type',False),PlaceType):
                 kw['type'] = kw['type'].pk
@@ -80,7 +80,7 @@ def objects():
     yield make_city('BE', 'Burdinne', zip_code='4210')
 
     def be_province(de, fr, nl):
-        if AFTER17:
+        if False:  # AFTER17:
             p = Place(
                 country=BE, type=PlaceTypes.province.pk,
                 **dd.babel_values('name', de=de, fr=fr, nl=nl, en=fr, et=fr))
@@ -92,7 +92,7 @@ def objects():
 
     def be_city(zip_code, de=None, fr=None, nl=None, en=None, **kw):
         kw.update(dd.babel_values('name', de=de, fr=fr, nl=nl, en=en, et=en))
-        if AFTER17:
+        if False:  # AFTER17:
             kw.setdefault('type', PlaceTypes.city.pk)
             if kw.get('type',False) and isinstance(kw.get('type',False),PlaceType):
                 kw['type'] = kw['type'].pk

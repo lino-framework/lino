@@ -131,7 +131,8 @@ class Booking(ContactRelated, Reservation):
 
 dd.update_field(Booking, 'contact_person', verbose_name=_("Contact person"))
 dd.update_field(Booking, 'company', verbose_name=_("Organizer"))
-dd.update_field(Booking, 'every_unit', default=Recurrencies.once)
+dd.update_field(Booking, 'every_unit',
+                default=Recurrencies.once.as_callable())
 dd.update_field(Booking, 'every', default=1)
 
 

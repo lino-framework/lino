@@ -277,7 +277,7 @@ class Task(Component):
     # ~ done = models.BooleanField(_("Done"),default=False) # iCal:COMPLETED
     # iCal:PERCENT
     percent = models.IntegerField(_("Duration value"), null=True, blank=True)
-    state = TaskStates.field(default=TaskStates.todo)  # iCal:STATUS
+    state = TaskStates.field(default=TaskStates.todo.as_callable())  # iCal:STATUS
 
     def before_ui_save(self, ar, **kw):
         if self.state == TaskStates.todo:
@@ -341,7 +341,7 @@ class RecurrentEvent(mixins.BabelNamed, RecurrenceSet, EventGenerator):
 
 dd.update_field(
     RecurrentEvent, 'every_unit',
-    default=Recurrencies.yearly, blank=False, null=False)
+    default=Recurrencies.yearly.as_callable(), blank=False, null=False)
 
 
 class UpdateGuests(dd.MultipleRowAction):
@@ -448,7 +448,8 @@ class Event(Component, Ended,
 Indicates that this Event shouldn't prevent other Events at the same time."""))
     room = dd.ForeignKey('cal.Room', null=True, blank=True)  # iCal:LOCATION
     priority = models.ForeignKey(Priority, null=True, blank=True)
-    state = EventStates.field(default=EventStates.suggested)  # iCal:STATUS
+    state = EventStates.field(
+        default=EventStates.suggested.as_callable())  # iCal:STATUS
     all_day = ExtAllDayField(_("all day"))
 
     assigned_to = dd.ForeignKey(
@@ -771,7 +772,7 @@ class Guest(dd.Model):
                              verbose_name=_("Role"),
                              blank=True, null=True)
 
-    state = GuestStates.field(default=GuestStates.invited)
+    state = GuestStates.field(default=GuestStates.invited.as_callable())
 
     remark = models.CharField(
         _("Remark"), max_length=200, blank=True)
@@ -842,7 +843,7 @@ def migrate_reminder(obj, reminder_date, reminder_text,
 dd.inject_field(settings.SITE.user_model,
                 'access_class',
                 AccessClasses.field(
-                    default=AccessClasses.public,
+                    default=AccessClasses.public.as_callable(),
                     verbose_name=_("Default access class"),
                     help_text=_(
             """The default access class for your calendar events and tasks.""")

@@ -45,7 +45,8 @@ class Recipient(dd.Model):
     partner = models.ForeignKey('contacts.Partner',
                                 #~ verbose_name=_("Recipient"),
                                 blank=True, null=True)
-    type = RecipientTypes.field(default=RecipientTypes.to)
+    type = RecipientTypes.field(
+        default=RecipientTypes.to.as_callable())
     address = models.EmailField(_("Address"), blank=True)
     name = models.CharField(_("Name"), max_length=200)
 

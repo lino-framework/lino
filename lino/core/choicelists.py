@@ -158,9 +158,19 @@ class Choice(object):
     def __unicode__(self):
         return unicode(self.text)
 
-    def __call__(self):
-        """Make it callable so it can be used as `default` of a field."""
-        return self
+    def as_callable(self):
+        """Return this as a callable so it can be used as `default` of a
+        field. A Choice object may not be callable itself because
+        Django 1.9 would misunderstand it.
+
+        """
+        def f():
+            return self
+        return f
+
+    # def __call__(self):
+    #     """Make it callable so it can be used as `default` of a field."""
+    #     return self
 
     @classmethod
     def get_chooser_for_field(cls, fieldname):
@@ -462,14 +472,16 @@ Django creates copies of them when inheriting models.
 
     @classmethod
     def to_python(cls, value):
-        #~ if isinstance(value, babel.BabelChoice):
-            #~ return value
+        # if isinstance(value, Choice):
+        #     return value
         if not value:
             return None
         v = cls.items_dict.get(value)
         if v is None:
             if STRICT:
-                raise Exception("Unresolved value %r for %s" % (value, cls))
+                raise Exception(
+                    "Unresolved value %r (%s) for %s" % (
+                        value, value.__class__, cls))
             else:
                 return UnresolvedValue(cls, value)
         return v

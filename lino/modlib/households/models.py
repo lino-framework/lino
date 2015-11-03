@@ -211,7 +211,7 @@ class Member(mixins.DatePeriod):
     allow_cascaded_delete = 'household'
 
     role = MemberRoles.field(
-        default=MemberRoles.child, blank=True, null=True)
+        default=MemberRoles.child.as_callable(), blank=True, null=True)
     person = models.ForeignKey(
         config.person_model,
         related_name='household_members')
