@@ -22,11 +22,11 @@ This document tests this functionality.
 >>> from lino.utils.diag import analyzer
 >>> print(analyzer.show_foreign_keys())  #doctest: +REPORT_UDIFF
 - cal.Calendar :
-  - PROTECT : system.SiteConfig.site_calendar, cal.Subscription.calendar
+  - PROTECT : cal.Subscription.calendar, system.SiteConfig.site_calendar
 - cal.Event :
   - CASCADE : cal.Guest.event
 - cal.EventType :
-  - PROTECT : users.User.event_type, system.SiteConfig.default_event_type, cal.RecurrentEvent.event_type, cal.Event.event_type
+  - PROTECT : cal.Event.event_type, cal.RecurrentEvent.event_type, system.SiteConfig.default_event_type, users.User.event_type
 - cal.GuestRole :
   - PROTECT : cal.Guest.role
 - cal.Priority :
@@ -38,18 +38,18 @@ This document tests this functionality.
 - contacts.CompanyType :
   - PROTECT : contacts.Company.type
 - contacts.Partner :
-  - CASCADE : contacts.Person.partner_ptr, contacts.Company.partner_ptr
-  - PROTECT : users.User.partner, cal.Guest.partner
+  - CASCADE : contacts.Company.partner_ptr, contacts.Person.partner_ptr
+  - PROTECT : cal.Guest.partner, users.User.partner
 - contacts.Person :
   - PROTECT : contacts.Role.person
 - contacts.RoleType :
   - PROTECT : contacts.Role.type
 - contenttypes.ContentType :
-  - PROTECT : gfks.HelpText.content_type, cal.Task.owner_type, cal.Event.owner_type
+  - PROTECT : cal.Event.owner_type, cal.Task.owner_type, gfks.HelpText.content_type
 - countries.Country :
-  - PROTECT : countries.Place.country, contacts.Partner.country
+  - PROTECT : contacts.Partner.country, countries.Place.country
 - countries.Place :
-  - PROTECT : countries.Place.parent, contacts.Partner.city
+  - PROTECT : contacts.Partner.city, countries.Place.parent
 - users.User :
-  - PROTECT : users.Authority.user, cal.Subscription.user, cal.Task.user, cal.RecurrentEvent.user, cal.Event.user
+  - PROTECT : cal.Event.user, cal.RecurrentEvent.user, cal.Subscription.user, cal.Task.user, users.Authority.user
 <BLANKLINE>

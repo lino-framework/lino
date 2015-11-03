@@ -116,10 +116,7 @@ class ChoiceConverter(Converter):
 
         if value is not None:
             if not isinstance(value, self.field.choicelist.item_class):
-                if False:  # AFTER17:
-                    kw[self.field.name] = self.field.choicelist.get_by_value(value).pk
-                else:
-                    kw[self.field.name] = self.field.choicelist.get_by_value(value)
+                kw[self.field.name] = self.field.choicelist.get_by_value(value)
         return kw
 
 
