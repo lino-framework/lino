@@ -27,14 +27,13 @@ following fields:
 >>> sorted(d.keys())
 [u'data', u'disable_delete', u'id', u'navinfo', u'title']
 >>> sorted(d['data'].keys())
-[u'app_label', u'base_classes', u'disable_editing', u'disabled_actions', u'disabled_fields', u'id', u'model', u'name']
+[u'app_label', u'base_classes', u'disable_editing', u'disabled_actions', u'disabled_fields', u'id', u'model']
 >>> for k in sorted(d['data'].keys()):
-...    print k, d['data'][k]
-app_label contacts
-base_classes <p />
-disable_editing False
-disabled_actions {}
-disabled_fields {u'id': True}
-id 9
-model role
-name Contact Person
+...    print k, ":", d['data'][k]
+app_label : contacts
+base_classes : <p />
+disable_editing : False
+disabled_actions : {}
+disabled_fields : {u'id': True}
+id : 9
+model : role

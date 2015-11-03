@@ -10,6 +10,8 @@ logger = logging.getLogger(__name__)
 from django.conf import settings
 from django.db import models
 
+from .utils import full_model_name as fmn
+
 
 class DisableDeleteHandler():
     """Used to find out whether a known object can be deleted or not.
@@ -34,6 +36,11 @@ class DisableDeleteHandler():
                 # avoid duplicate entries caused by MTI children
                 return
         self.fklist.append((model, fk))
+
+        def f(a, b):
+            return cmp(
+                fmn(a[0])+'.'+a[1].name, fmn(b[0])+'.'+b[1].name)
+        self.fklist.sort(f)
 
     def __str__(self):
         s = ','.join([m.__name__ + '.' + fk.name for m, fk in self.fklist])

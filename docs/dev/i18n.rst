@@ -44,13 +44,19 @@ code prints English and not German:
 ...     print(s)
 January
 
+
 >>> from django.utils.translation import ugettext_lazy as _
 >>> s = _("January")
 >>> with translation.override('de'):
-...     print(s)  #doctest: +ELLIPSIS
-<django.utils.functional.__proxy__ object at ...>
-
->>> with translation.override('de'):
 ...     print(unicode(s))
 Januar
+
+    
+With Django until 1.6 we had a strange behaviour (but the following
+snippet would fail in newer Django versions and therefore is not
+tested anymore)::
+
+    >> with translation.override('de'):
+    ...     print(s)  #doctest: +ELLIPSIS
+    <django.utils.functional.__proxy__ object at ...>
 
