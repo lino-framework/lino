@@ -48,9 +48,11 @@ class Address(AddressLocation):
         verbose_name_plural = _("Addresses")
 
     data_source = DataSources.field(
-        editable=False, default=DataSources.manually)
+        editable=False,
+        default=DataSources.manually.as_callable())
     # address_type = AddressTypes.field(blank=True, null=True)
-    address_type = AddressTypes.field(default=AddressTypes.official)
+    address_type = AddressTypes.field(
+        default=AddressTypes.official.as_callable())
     partner = dd.ForeignKey(
         'contacts.Partner',
         related_name='addresses_by_partner')
