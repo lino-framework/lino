@@ -125,7 +125,8 @@ class Site(Site):
 
             def get_recipients(self, obj=None, master=None, **kwargs):
                 obj = master or obj
-                for u in (obj.reporter, obj.assigned_to) + tuple(for_obj(obj)):
+                for u in (obj.reporter, obj.assigned_to) + tuple(
+                        [o.user for o in for_obj(obj)]):
                     if u and u.email:
                         yield u.email
 
