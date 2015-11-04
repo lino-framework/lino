@@ -26,22 +26,22 @@ Lino Noi:
 
 >>> from lino.utils.diag import analyzer
 >>> print(analyzer.show_foreign_keys())
-... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF
+... #doctest: +NORMALIZE_WHITESPACE -REPORT_UDIFF
 - clocking.SessionType :
   - PROTECT : clocking.Session.session_type
 - contacts.Company :
-  - PROTECT : excerpts.Excerpt.company, contacts.Role.company, system.SiteConfig.site_company, tickets.Project.company
+  - PROTECT : contacts.Role.company, excerpts.Excerpt.company, system.SiteConfig.site_company, tickets.Project.company
 - contacts.CompanyType :
   - PROTECT : contacts.Company.type
 - contacts.Partner :
-  - CASCADE : contacts.Person.partner_ptr, contacts.Company.partner_ptr
-  - PROTECT : users.User.partner, lists.Member.partner, outbox.Recipient.partner, tickets.Site.partner
+  - CASCADE : contacts.Company.partner_ptr, contacts.Person.partner_ptr
+  - PROTECT : lists.Member.partner, outbox.Recipient.partner, tickets.Site.partner, users.User.partner
 - contacts.Person :
-  - PROTECT : excerpts.Excerpt.contact_person, contacts.Role.person, tickets.Project.contact_person
+  - PROTECT : contacts.Role.person, excerpts.Excerpt.contact_person, tickets.Project.contact_person
 - contacts.RoleType :
-  - PROTECT : excerpts.Excerpt.contact_role, contacts.Role.type, tickets.Project.contact_role
+  - PROTECT : contacts.Role.type, excerpts.Excerpt.contact_role, tickets.Project.contact_role
 - contenttypes.ContentType :
-  - PROTECT : excerpts.ExcerptType.content_type, excerpts.Excerpt.owner_type, comments.Comment.owner_type, stars.Star.owner_type, gfks.HelpText.content_type, outbox.Mail.owner_type, outbox.Attachment.owner_type, uploads.Upload.owner_type
+  - PROTECT : comments.Comment.owner_type, excerpts.Excerpt.owner_type, excerpts.ExcerptType.content_type, gfks.HelpText.content_type, outbox.Attachment.owner_type, outbox.Mail.owner_type, stars.Star.owner_type, uploads.Upload.owner_type
 - countries.Country :
   - PROTECT : contacts.Partner.country, countries.Place.country
 - countries.Place :
@@ -55,25 +55,25 @@ Lino Noi:
 - lists.ListType :
   - PROTECT : lists.List.list_type
 - outbox.Mail :
-  - CASCADE : outbox.Recipient.mail, outbox.Attachment.mail
+  - CASCADE : outbox.Attachment.mail, outbox.Recipient.mail
 - products.Product :
-  - PROTECT : tickets.Ticket.product, tickets.Interest.product
+  - PROTECT : tickets.Interest.product, tickets.Ticket.product
 - products.ProductCat :
   - PROTECT : products.Product.cat
 - tickets.Milestone :
-  - PROTECT : tickets.Ticket.reported_for, tickets.Deployment.milestone
+  - PROTECT : tickets.Deployment.milestone, tickets.Ticket.reported_for
 - tickets.Project :
   - PROTECT : excerpts.Excerpt.project, outbox.Mail.project, tickets.Project.parent, tickets.Ticket.project
 - tickets.ProjectType :
   - PROTECT : tickets.Project.type
 - tickets.Site :
-  - PROTECT : clocking.ServiceReport.interesting_for, users.User.user_site, tickets.Milestone.site, tickets.Ticket.site, tickets.Interest.site
+  - PROTECT : clocking.ServiceReport.interesting_for, tickets.Interest.site, tickets.Milestone.site, tickets.Ticket.site, users.User.user_site
 - tickets.Ticket :
-  - PROTECT : clocking.Session.ticket, tickets.Link.parent, tickets.Ticket.duplicate_of, tickets.Deployment.ticket
+  - PROTECT : clocking.Session.ticket, tickets.Deployment.ticket, tickets.Link.parent, tickets.Ticket.duplicate_of
 - tickets.TicketType :
   - PROTECT : tickets.Ticket.ticket_type
 - uploads.UploadType :
   - PROTECT : uploads.Upload.type
 - users.User :
-  - PROTECT : excerpts.Excerpt.user, clocking.Session.user, tinymce.TextFieldTemplate.user, comments.Comment.user, stars.Star.user, users.Authority.user, outbox.Mail.user, tickets.Project.assign_to, tickets.Ticket.assigned_to, uploads.Upload.user
+  - PROTECT : clocking.Session.user, comments.Comment.user, excerpts.Excerpt.user, outbox.Mail.user, stars.Star.user, tickets.Project.assign_to, tickets.Ticket.assigned_to, tinymce.TextFieldTemplate.user, uploads.Upload.user, users.Authority.user
 <BLANKLINE>
