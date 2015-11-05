@@ -24,7 +24,7 @@ even if they succeeded at the second attempt.
 
 # import sys
 
-from lino import AFTER17, startup
+from lino import AFTER17, site_startup
 
 if not AFTER17:
 
@@ -32,11 +32,11 @@ if not AFTER17:
 
     if len(loading.cache.postponed) > 0:
         # i.e. if this is the first time
-        if not 'lino' in loading.cache.postponed:
+        if 'lino' not in loading.cache.postponed:
             msg = "Waiting for postponed apps (%s) to import" % \
                   loading.cache.postponed
             # logging.info("20140227 " + msg)
             raise ImportError(msg)
 
-    startup()
+    site_startup()
 
