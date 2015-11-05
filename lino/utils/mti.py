@@ -23,6 +23,7 @@ from django.utils.translation import ugettext_lazy as _
 from lino.core.utils import resolve_model
 from lino.core.fields import VirtualField
 from lino.core.signals import pre_remove_child, pre_add_child  # , on_add_child
+from lino import AFTER17
 
 
 class ChildCollector(Collector):
@@ -194,12 +195,12 @@ def insert_child(obj, child_model, full_clean=False, **attrs):
     # ~ for pm,pf in child_model._meta.parents.items(): # pm : parent model, pf : parent link field
         #~ attrs[pf.name] = obj
     #~ attrs["%s_ptr" % obj.__class__.__name__.lower()] = obj
-    for field in obj._meta.fields:
+    if AFTER17:
+        fields_list = obj._meta.concrete_fields
+    else:
+        fields_list = obj._meta.fields
+    for field in fields_list:
         attrs[field.name] = getattr(obj, field.name)
-    #~ logger.info(u"Promote %s to %s : attrs=%s",
-        #~ obj.__class__.__name__,child_model.__name__,attrs)
-    #~ logger.debug(u"Promote %s to %s",
-        #~ obj.__class__.__name__,child_model.__name__)
     new_obj = child_model(**attrs)
     #~ logger.info("20120830 insert_child %s",obj2str(new_obj))
 

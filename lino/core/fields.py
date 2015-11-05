@@ -324,6 +324,9 @@ class VirtualGetter(object):
         obj = self.vf.value_from_object(self.instance, None)
         return getattr(obj, name)
 
+    def __repr__(self):
+        return "<{1}>.{0}".format(self.vf.name, repr(self.instance))
+
 
 class VirtualField(FakeField):
     """Represents a virtual field. Virtual fields are not stored in the
@@ -370,7 +373,8 @@ class VirtualField(FakeField):
         #~ logger.info('20120831 VirtualField %s.%s',full_model_name(model),name)
 
     def __repr__(self):
-        return "%s %s.%s" % (self.__class__.__name__, self.model, self.name)
+        return "%s %s.%s.%s" % (self.__class__.__name__, self.model.__module__,
+                                self.model.__name__, self.name)
 
     def lino_resolve_type(self):
         """
