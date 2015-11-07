@@ -87,14 +87,20 @@ def startup(settings_module=None):
     >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'my.project.settings'
 
     """
+    #print "startup"
     if settings_module:
         import os
         os.environ['DJANGO_SETTINGS_MODULE'] = settings_module
-        if AFTER17:
-            import django
-            django.setup()
 
-    # called from `lino.models` (before Django 1.7) or below (after 1.7)
+    if AFTER17:
+        import django
+        django.setup()
+    #print "startup done"
+
+
+def site_startup():
+    """Called from `lino.models` before Django 1.7"""
+    #print "site_startup"
     from django.conf import settings
     if False:
         settings.SITE.startup()

@@ -1,6 +1,8 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
+"""Defines the :class:`DisableDeleteHandler` class.
+"""
 
 from __future__ import unicode_literals
 
@@ -14,12 +16,21 @@ from .utils import full_model_name as fmn
 
 
 class DisableDeleteHandler():
-    """Used to find out whether a known object can be deleted or not.
+    """A helper object used to find out whether a known object can be
+    deleted or not.
 
-    Lino's default behaviour is to forbit deletion if there is any
-    other object in the database that refers to this. To implement
-    this, Lino installs a :class:`DisableDeleteHandler` instance on
-    each model in an attribute `_lino_ddh` during kernel startup.
+    Lino installs an instance of this on each model in an attribute
+    `_lino_ddh` during kernel startup.
+
+    .. attribute:: fklist
+
+        A list of tuples `(model, fk)`, one item for each FK field in
+        the application which points to this model.
+
+    .. attribute:: model
+
+        The owning model (i.e. ``m._lino_ddh.model is m`` is True for
+        every model)
 
     """
 
