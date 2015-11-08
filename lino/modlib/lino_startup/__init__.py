@@ -20,7 +20,7 @@
 
 #     # media_name = 'lino'
 
-from lino import AFTER17, startup
+from lino import AFTER17, site_startup
 
 if AFTER17:
 
@@ -38,7 +38,7 @@ if AFTER17:
             # raise Exception("20150820")
             # print "20151010 LinoConfig.ready() gonna call Site.startup"
             try:
-                startup()
+                site_startup()
             except Exception as e:
                 print e
                 raise
