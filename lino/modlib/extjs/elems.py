@@ -26,6 +26,7 @@ from django.db.models.fields.related import ManyRelatedObjectsDescriptor
 from lino import AFTER17
 if AFTER17:
     from django.contrib.contenttypes.fields import GenericForeignKey
+    from django.db.models.fields.related import ManyToManyRel
 else:
     from django.contrib.contenttypes.generic import GenericForeignKey
 from django.db.models.fields import NOT_PROVIDED
@@ -2114,6 +2115,12 @@ def create_layout_element(lh, name, **kw):
         e = ManyToManyElement(lh, de.related, **kw)
         lh.add_store_field(e.field)
         return e
+
+    if AFTER17 and isinstance(de, ManyToManyRel):
+        e = ManyRelatedObjectElement(lh, de, **kw)
+        lh.add_store_field(e.field)
+        return e
+
 
     if isinstance(de, models.Field):
         if isinstance(de, (BabelCharField, BabelTextField)):
