@@ -172,7 +172,11 @@ def obj2str(i, force_detailed=False):
     #~ names = [fld.name for (fld,model) in i._meta.get_fields_with_model()]
     #~ s = ','.join(["%s=%r" % (n, getattr(i,n)) for n in names])
     pairs = []
-    for (fld, model) in i._meta.get_fields_with_model():
+    if AFTER17:
+        fields_list = i._meta.concrete_fields
+    else:
+        fields_list = i._meta.fields
+    for fld in fields_list:
         #~ if fld.name == 'language':
             #~ print 20120905, model, fld
         if isinstance(fld, models.ForeignKey):
