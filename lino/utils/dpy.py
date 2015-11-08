@@ -17,7 +17,7 @@ from StringIO import StringIO
 import os
 import imp
 from decimal import Decimal
-
+from lino import AFTER17
 
 from django.conf import settings
 from django.db import models
@@ -649,7 +649,11 @@ class DpyDeserializer(LoaderBase):
                     empty_fixture = False
                     yield o
 
-        if empty_fixture:
+        # Since Django 1.7 no longer considers empty fixtures as an
+        # error, we don't need to use our trick of yielding the
+        # SiteConfig instance. That trick sometimes could cause side
+        # effects.
+        if empty_fixture and not AFTER17:
             if SUPPORT_EMPTY_FIXTURES:
                 # avoid Django interpreting empty fixtures as an error
                 yield DummyDeserializedObject()
