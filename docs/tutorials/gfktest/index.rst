@@ -93,7 +93,10 @@ method in order produce broken GFKs:
 
 >>> from django.db.models.signals import pre_delete
 >>> from lino.core.model import pre_delete_handler
->>> pre_delete.disconnect(pre_delete_handler)
+>>> pre_delete.disconnect(pre_delete_handler) in (None, True)
+True
+
+(Above syntax is because Django 1.6 returns None while 1.7+ returns True)
 
 Now deleting the member will not fail
 
