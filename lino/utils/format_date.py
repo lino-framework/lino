@@ -13,6 +13,8 @@ To run the Lino test suite on this module::
 This module provides shortcuts to `python-babel`'s `date formatting
 functions <http://babel.pocoo.org/docs/dates/>`_.
 
+>>> from lino import startup
+>>> startup('lino.projects.min1.settings')
 >>> import datetime
 >>> d = datetime.date(2013,8,26)
 >>> print(fds(d)) # short
