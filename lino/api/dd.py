@@ -17,7 +17,6 @@ Application:
 - :attr:`demo_date <lino.core.site.Site.demo_date>`
 - :attr:`is_abstract_model <lino.core.site.Site.is_abstract_model>`
 - :attr:`is_installed <lino.core.site.Site.is_installed>`
-- :attr:`get_db_overview_rst <lino.core.site.Site.get_db_overview_rst>`
 - :attr:`add_welcome_handler <lino.core.site.Site.add_welcome_handler>`
 - :attr:`build_media_url <lino.core.site.Site.build_media_url>`
 - :attr:`get_default_language <lino.core.site.Site.get_default_language>`
@@ -297,7 +296,7 @@ strftime = settings.SITE.strftime
 demo_date = settings.SITE.demo_date
 is_abstract_model = settings.SITE.is_abstract_model
 is_installed = settings.SITE.is_installed
-get_db_overview_rst = settings.SITE.get_db_overview_rst
+# get_db_overview_rst = settings.SITE.get_db_overview_rst
 add_welcome_handler = settings.SITE.add_welcome_handler
 build_media_url = settings.SITE.build_media_url
 build_static_url = settings.SITE.build_static_url

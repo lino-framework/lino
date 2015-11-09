@@ -82,6 +82,70 @@ class Analyzer(object):
 
         return rstgen.ul(items)
     
+    def show_database_structure(self):
+        """Show a bullet list of all models and their fields."""
+        self.analyze()
+        items = []
+        for model in get_models():
+            names = []
+            for f, m in model._meta.get_fields_with_model():
+                names.append(f.name)
+            items.append(
+                "{0} : {1}".format(fmn(model), ', '.join(names)))
+
+        items = sorted(items)
+        return rstgen.ul(items)
+
+    def show_db_overview(self):
+        """Return a reStructredText-formatted "database overview" report.
+        Used by test cases in tested documents.
+
+        """
+        from lino.core.utils import (full_model_name,
+                                     sorted_models_list, app_labels)
+
+        models_list = sorted_models_list()
+        apps = app_labels()
+        s = "%d apps: %s." % (len(apps), ", ".join(apps))
+        s += "\n%d models:\n" % len(models_list)
+        i = 0
+        headers = [
+            #~ "No.",
+            "Name",
+            "Default table",
+            #~ "M",
+            "#fields",
+            "#rows",
+            #~ ,"first","last"
+        ]
+        rows = []
+        for model in models_list:
+            if True:  # model._meta.managed:
+                i += 1
+                cells = []
+                #~ cells.append(str(i))
+                cells.append(full_model_name(model))
+                cells.append(model.get_default_table())
+                #~ cells.append(str(model))
+                #~ if model._meta.managed:
+                #~ cells.append('X')
+                #~ else:
+                #~ cells.append('')
+                cells.append(str(len(model._meta.fields)))
+                qs = model.objects.all()
+                n = qs.count()
+                cells.append(str(n))
+                #~ if n:
+                #~ cells.append(obj2str(qs[0]))
+                #~ cells.append(obj2str(qs[n-1]))
+                #~ else:
+                #~ cells.append('')
+                #~ cells.append('')
+
+                rows.append(cells)
+        s += rstgen.table(headers, rows)
+        return s
+
     def show_foreign_keys(self):
         """Return a list that shows how database objects are being referred to
         by some other database object. This information is important

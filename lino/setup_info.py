@@ -150,7 +150,6 @@ lino.modlib.lists.fixtures
 lino.modlib.notes
 lino.modlib.notes.fixtures
 lino.modlib.office
-lino.modlib.orders
 lino.modlib.outbox
 lino.modlib.outbox.fixtures
 lino.modlib.pages
