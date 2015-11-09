@@ -16,7 +16,7 @@ from lino.core.utils import full_model_name as fmn
 
 
 class Analyzer(object):
-    
+    "The class of the :data:`lino.utils.diag.analyzer` object."
     def __init__(self):
         self._initialized = False
 
@@ -191,6 +191,8 @@ class Analyzer(object):
         return rstgen.ul(items1)
     
 analyzer = Analyzer()
+"""This is a docstring
+"""
 
 
 def visible_for(ba):
