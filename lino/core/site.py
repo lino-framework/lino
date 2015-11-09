@@ -2603,55 +2603,9 @@ site. :manage:`diag` is a command-line shortcut to this.
         #     p = self.plugins[arg]
         return s
 
-    def get_db_overview_rst(self):
-        """Return a reStructredText-formatted "database overview" report.
-        Used by test cases in tested documents.
-
-        """
-        from lino.core.utils import (full_model_name,
-                                       sorted_models_list, app_labels)
-
-        models_list = sorted_models_list()
-        apps = app_labels()
-        s = "%d apps: %s." % (len(apps), ", ".join(apps))
-        s += "\n%d models:\n" % len(models_list)
-        i = 0
-        headers = [
-            #~ "No.",
-            "Name",
-            "Default table",
-            #~ "M",
-            "#fields",
-            "#rows",
-            #~ ,"first","last"
-        ]
-        rows = []
-        for model in models_list:
-            if True:  # model._meta.managed:
-                i += 1
-                cells = []
-                #~ cells.append(str(i))
-                cells.append(full_model_name(model))
-                cells.append(model.get_default_table())
-                #~ cells.append(str(model))
-                #~ if model._meta.managed:
-                #~ cells.append('X')
-                #~ else:
-                #~ cells.append('')
-                cells.append(str(len(model._meta.fields)))
-                qs = model.objects.all()
-                n = qs.count()
-                cells.append(str(n))
-                #~ if n:
-                #~ cells.append(obj2str(qs[0]))
-                #~ cells.append(obj2str(qs[n-1]))
-                #~ else:
-                #~ cells.append('')
-                #~ cells.append('')
-
-                rows.append(cells)
-        s += rstgen.table(headers, rows)
-        return s
+    # def get_db_overview_rst(self):
+    #     from lino.utils.diag import analyzer
+    #     analyzer.show_db_overview()
 
     def override_defaults(self, **kwargs):
         self.override_settings(**kwargs)

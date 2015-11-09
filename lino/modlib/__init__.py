@@ -73,7 +73,6 @@ Lino applications.
     lists
     notes
     office
-    orders
     outbox
     pages
     polls

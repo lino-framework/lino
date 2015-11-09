@@ -68,7 +68,7 @@ class Booking(ContactRelated, Reservation):
 
     #~ workflow_state_field = 'state'
 
-    state = BookingStates.field(default=BookingStates.draft)
+    state = BookingStates.field(default=BookingStates.draft.as_callable())
 
     event_type = dd.ForeignKey('cal.EventType', null=True, blank=True,
         help_text=_("""The Event Type to which events will be generated."""))

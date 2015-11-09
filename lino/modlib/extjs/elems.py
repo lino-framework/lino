@@ -2121,7 +2121,6 @@ def create_layout_element(lh, name, **kw):
         lh.add_store_field(e.field)
         return e
 
-
     if isinstance(de, models.Field):
         if isinstance(de, (BabelCharField, BabelTextField)):
             if len(settings.SITE.BABEL_LANGS) > 0:
