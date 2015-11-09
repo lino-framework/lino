@@ -16,13 +16,14 @@ from lino.utils.djangotest import TestCase
 
 class TestCase(TestCase):
 
+    maxDiff = None
+
     def test01(self):
         """We create a member, and three GFK-related objects whose `owner`
         fields point to that member. And then we try to delete that
         member.
 
         """
-
         Member = rt.modules.gfktest.Member
         Note = rt.modules.gfktest.Note
         Memo = rt.modules.gfktest.Memo
@@ -46,7 +47,7 @@ class TestCase(TestCase):
             (Memo, 'owner_id', 'owner_type')])
 
         def create_objects():
-            mbr = Member(name="John")
+            mbr = Member(name="John",id=1)
             mbr.save()
 
             self.assertEqual(mbr.name, "John")

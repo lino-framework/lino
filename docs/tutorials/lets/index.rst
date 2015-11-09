@@ -260,11 +260,7 @@ Since doctests run on a temporary database, we need to load our
 fixture each time this document is being tested.
 
 >>> from django.core.management import call_command
->>> call_command('initdb', 'demo', interactive=False)
-Creating tables ...
-Installing custom SQL ...
-Installing indexes ...
-Installed 26 object(s) from 1 fixture(s)
+>>> call_command('initdb', 'demo', interactive=False, verbosity=0)
 
     
 Show the list of members:    

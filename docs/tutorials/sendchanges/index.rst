@@ -33,11 +33,7 @@ command:
 
 >>> from django.core.management import call_command
 >>> import doctest
->>> doctest.ELLIPSIS_MARKER = '-etc-'
->>> call_command('initdb_demo', interactive=False) #doctest: +ELLIPSIS
--etc-Creating tables-etc-...
--etc-
-Installed 235 object(s) from 9 fixture(s)
+>>> call_command('initdb_demo', interactive=False,verbosity=0) #doctest: +ELLIPSIS
 
 
 
