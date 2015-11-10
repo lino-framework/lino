@@ -76,6 +76,7 @@ from django.db.utils import ProgrammingError
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.sessions.models import Session
 
+from lino import AFTER17
 from lino.utils import puts
 from lino.core.utils import sorted_models_list, full_model_name
 
@@ -171,6 +172,8 @@ def bv2kw(fieldname, values):
         for model in self.models:
             fields = [f for f,
                       m in model._meta.get_fields_with_model() if m is None]
+            if AFTER17:
+                fields = [f for f in fields if f.concrete]
             for f in fields:
                 if getattr(f, 'auto_now_add', False):
                     raise Exception("%s.%s.auto_now_add is True : values will be lost!" % (
@@ -257,6 +260,8 @@ def main():
                 fields = [
                     f for f in fields
                     if not getattr(f, '_lino_babel_field', False)]
+                if AFTER17:
+                    fields = [f for f in fields if f.concrete]
                 stream.write(
                     "# fields: %s\n" % ', '.join(
                         [f.name for f in fields]))
