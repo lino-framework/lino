@@ -70,7 +70,7 @@ class Site(Site):
         # automatically added by 'clocking', because we want
         # :meth:`lino.core.plugin.Plugin.get_menu_group` to return
         # "Tickets", not "Clocking".
-
+        yield 'lino_noi.lib.faculties'
         yield 'lino_noi.lib.clocking'
         yield 'lino.modlib.lists'
 
