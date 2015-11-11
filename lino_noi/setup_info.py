@@ -62,6 +62,7 @@ SETUP_INFO.update(packages=[
     'lino_noi.lib.contacts',
     'lino_noi.lib.tickets',
     'lino_noi.lib.tickets.fixtures',
+    'lino_noi.lib.faculties',
     'lino_noi.lib.clocking',
     'lino_noi.lib.clocking.fixtures',
     'lino_noi.lib.products',
