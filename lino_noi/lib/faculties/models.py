@@ -23,7 +23,7 @@ Defines the models :class:`Broker`, :class:`Faculty` and
 """
 
 import logging
-from django.db import models
+from lino_noi.lib.tickets.models import *
 
 logger = logging.getLogger(__name__)
 from lino import mixins
@@ -87,7 +87,7 @@ dd.update_field(Competence, 'user', verbose_name=_("User"))
 
 dd.inject_field('tickets.Ticket',
                 'faculty',
-                dd.ForeignKey("faculties.Faculty",
-                              blank=True, null=True))
+                models.ForeignKey("faculties.Faculty",
+                                  blank=True, null=True))
 
 from .ui import *
