@@ -34,6 +34,7 @@ from odf.style import ListLevelProperties
 from odf.style import (TableColumnProperties, TableRowProperties,
                        TableCellProperties)
 from odf import text
+from odf import office
 from odf.table import (Table, TableColumns, TableColumn,
                        TableHeaderRows, TableRows, TableRow, TableCell)
 
@@ -172,9 +173,9 @@ class AppyRenderer(OriginalAppyRenderer):
         #~ if not self.stylesManager.styles.getStyle('UL'):
             #~ self.insert_chunk(fn,'content.xml',OAS,UL_LIST_STYLE)
         self.insert_chunk(fn, 'content.xml', OAS, ''.join(
-            [toxml(e).decode('utf-8') for e in self.my_automaticstyles]))
+            [toxml(n).decode('utf-8') for n in self.my_automaticstyles]))
         self.insert_chunk(fn, 'styles.xml', OFFICE_STYLES, ''.join(
-            [toxml(e).decode('utf-8') for e in self.my_styles]))
+            [toxml(n).decode('utf-8') for n in self.my_styles]))
 
     def insert_chunk(self, root, leaf, insert_marker, chunk):
         """
