@@ -45,18 +45,49 @@ Usage:
 <button class="x-btn-text x-tbar-upload" type="button" />
 </a>
 
+You can also do the opposite, i.e. parse HTML:
+
+>>> html = E.raw('''<a href="foo/bar.html"
+... title="Ein s&#252;&#223;es Beispiel">
+... <button class="x-btn-text x-tbar-upload" type="button" />
+... </a>''')
+>>> print E.tostring_pretty(html)
+<a href="foo/bar.html" title="Ein s&#252;&#223;es Beispiel">
+<button class="x-btn-text x-tbar-upload" type="button" />
+</a>
+
 """
 
 from __future__ import unicode_literals
 
-import htmlentitydefs
 import types
 from xml.etree import ElementTree as ET
 
 from lino.utils import join_elems
 from lino.utils.xmlgen import Namespace
 from lino.utils.html2rst import html2rst
+from htmlentitydefs import name2codepoint
 
+ENTITIES = {}
+ENTITIES.update((x, unichr(i)) for x, i in name2codepoint.iteritems())
+
+
+def CreateParser():
+    """Every string that is being parsed must get its own parser instance.
+    This is because "Due to limitations in the Expat library used by
+    pyexpat, the xmlparser instance returned can only be used to parse
+    a single XML document. Call ParserCreate for each document to
+    provide unique parser instances. (`docs.python.org
+    <https://docs.python.org/2/library/pyexpat.html>`_)
+
+    """
+    p = ET.XMLParser()
+    # PARSER.entity.update(htmlentitydefs.entitydefs)
+    p.entity = ENTITIES
+    assert 'otilde' in p.entity
+    assert 'eacute' in p.entity
+    assert 'nbsp' in p.entity
+    return p
 
 # class RAW_HTML_STRING(unicode):
 #     pass
@@ -67,14 +98,6 @@ class HtmlNamespace(Namespace):
     This is instantiated as ``E``.
     """
 
-    def __init__(self, *args, **kwargs):
-        super(HtmlNamespace, self).__init__(*args, **kwargs)
-        self.parser = ET.XMLParser()
-        self.parser.entity.update(htmlentitydefs.entitydefs)
-        assert 'otilde' in self.parser.entity
-        assert 'eacute' in self.parser.entity
-        assert 'nbsp' in self.parser.entity
-        
     def tostring(self, v, *args, **kw):
         # if isinstance(v, types.GeneratorType):
         if isinstance(v, (types.GeneratorType, list, tuple)):
@@ -98,7 +121,7 @@ class HtmlNamespace(Namespace):
         """Parses the given string into an HTML Element."""
         # print 20151008, raw_html
         try:
-            return self.fromstring(raw_html, parser=self.parser)
+            return self.fromstring(raw_html, parser=CreateParser())
         except ET.ParseError as e:
             raise Exception("ParseError {0} in {1}".format(e, raw_html))
 
