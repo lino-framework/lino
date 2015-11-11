@@ -22,6 +22,7 @@
 from __future__ import unicode_literals
 
 from lino_noi.lib.tickets.ui import *
+from lino.api import dd, _
 from lino.modlib.users.mixins import ByUser
 
 
@@ -36,6 +37,14 @@ class TicketDetail(TicketDetail):
 
 def site_setup(site):
     site.modules.tickets.Tickets.set_detail_layout(TicketDetail())
+
+class UnassignedTickets(Tickets):
+    column_names = "summary project reporter *"
+    label = _("Unassigned Tickets")
+
+    @classmethod
+    def get_queryset(self, ar):
+        return self.model.objects.filter(assigned_to=None)
 
 class Faculties(dd.Table):
     model = 'faculties.Faculty'

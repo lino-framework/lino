@@ -23,8 +23,6 @@
    :toctree:
 
    models
-   fixtures
-   roles
 
 """
 
@@ -39,14 +37,17 @@ class Plugin(ad.Plugin):
     needs_plugins = ['lino_noi.lib.tickets']
 
 
-    # def setup_main_menu(self, site, profile, m):
-    #     m = m.add_menu(self.app_label, self.verbose_name)
-    #     m.add_action('faculties.Faculties')
-    #     m.add_action('faculties.Competences')
+    def setup_main_menu(self, site, profile, m):
+        mgt = site.plugins.tickets
+        m = m.add_menu(mgt.app_label, mgt.verbose_name)
+        m.add_action('faculties.UnassignedTickets')
+        # m = m.add_menu(self.app_label, self.verbose_name)
+        # m.add_action('faculties.Faculties')
+        # m.add_action('faculties.Competences')
 
     def setup_config_menu(self, site, profile, m):
-        p = self.get_menu_group()
-        m = m.add_menu(p.app_label, p.verbose_name)
+        mgt = site.plugins.tickets
+        m = m.add_menu(mgt.app_label, mgt.verbose_name)
         m.add_action('faculties.Faculties')
         m.add_action('faculties.Competences')
 
