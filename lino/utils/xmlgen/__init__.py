@@ -251,7 +251,7 @@ class Namespace(object):
         section of the Python docs.
 
         """
-        return etree.etree.fromstring(s,  **kwargs)
+        return etree.etree.fromstringlist([s], **kwargs)
 
     def raw(self, *args):
         """Parses the given string into an XML Element."""

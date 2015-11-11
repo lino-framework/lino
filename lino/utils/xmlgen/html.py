@@ -58,6 +58,10 @@ from lino.utils.xmlgen import Namespace
 from lino.utils.html2rst import html2rst
 
 
+# class RAW_HTML_STRING(unicode):
+#     pass
+
+
 class HtmlNamespace(Namespace):
     """The HTML namespace.
     This is instantiated as ``E``.
@@ -86,6 +90,9 @@ class HtmlNamespace(Namespace):
         if E.iselement(v):
             return html2rst(v, stripped)
         return unicode(v)
+
+    # def raw(self, raw_html):
+    #     return RAW_HTML_STRING(raw_html)
 
     def raw(self, raw_html):
         """Parses the given string into an HTML Element."""
