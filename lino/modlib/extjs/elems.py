@@ -1179,7 +1179,6 @@ class DisplayElement(FieldElement):
             return E.td(str(e), **cellattrs)
 
     def format_value(self, ar, v):
-        #~ from lino.utils.xmlgen.html import E
         from lino.utils.xmlgen.html import html2rst
         if etree.iselement(v):
             return html2rst(v)
