@@ -57,7 +57,7 @@ class RichTextField(models.TextField):
     .. attribute:: textfield_format
 
         Override the global
-        :attr:`lino.core.site.Site.textfield_format`.
+        :attr:`lino.core.site.Site.textfield_format` setting.
     
         For backwards compatibility `format` is an alias for
         `textfield_format`.
@@ -259,7 +259,7 @@ class RemoteField(FakeField):
 
 class DisplayField(FakeField):
     """A field to be rendered like a normal read-only form field, but with
-    plain HTML instead of an ``<input>`` tag.  
+    plain HTML instead of an ``<input>`` tag.
 
     This is to be used as
     the `return_type` of a :class:`VirtualField`.

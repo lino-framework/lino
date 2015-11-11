@@ -5,10 +5,19 @@
 """Defines the :class:`Site` class. For an overview see
 :doc:`/dev/site` and :doc:`/dev/plugins` .
 
-.. This document is part of the Lino test suite. You can test only
-   this document using::
 
-    $ python setup.py test -s tests.CoreTests.test_site
+.. 
+
+    This document is part of the Lino test suite. You can test only
+    this document using::
+
+        $ python setup.py test -s tests.CoreTests.test_site
+        $ python lino/core/site.py
+
+    doctest init:
+
+    >>> import lino
+    >>> lino.startup('lino.projects.docs.settings')
 
 """
 
@@ -36,7 +45,7 @@ from lino.core.plugin import Plugin
 
 from lino import assert_django_code, DJANGO_DEFAULT_LANGUAGE
 from lino.utils.xmlgen.html import E
-from .exceptions import ChangedAPI
+from lino.core.exceptions import ChangedAPI
 # from .roles import SiteUser
 
 startup_rlock = threading.RLock()
@@ -930,10 +939,13 @@ documentation.
 
     """
 
-    #~ decimal_group_separator = ','
-    decimal_group_separator = ' '
+    # decimal_group_separator = ','
+    # decimal_group_separator = ' '
+    # decimal_group_separator = '.'
+    decimal_group_separator = u"\u00A0"
+
     """
-    Decimal group separator for :func:`lino.utils.moneyfmt`.
+    Decimal group separator for :meth:`decfmt`.
     """
 
     time_format_strftime = '%H:%M'
@@ -2427,7 +2439,7 @@ given object `obj`. The dict will have one key for each
 
     def babelitem(self, *args, **values):
         """
-        Given a dictionary with babel values, return the 
+        Given a dictionary with babel values, return the
         value corresponding to the current language.
 
         This is available in templates as a function `tr`.
@@ -2454,11 +2466,11 @@ given object `obj`. The dict will have one key for each
 
         >>> with translation.override('jp'):
         ...    tr(en="Hello", de="Hallo", fr="Salut")
-        'Hello'
+        'Hallo'
 
         Testing detail: default language should be "de" in our example, but
         we are playing here with more than one Site instance while Django
-        knows only one "default language" which is the one specified in 
+        knows only one "default language" which is the one specified in
         `lino.projects.docs.settings`.
 
         Another way is to specify an explicit default value using a
@@ -2482,7 +2494,6 @@ given object `obj`. The dict will have one key for each
 
 
         """
-        from django.utils import translation
         if len(args) == 0:
             info = self.language_dict.get(
                 get_language(), self.DEFAULT_LANGUAGE)
@@ -3103,12 +3114,35 @@ signature as `django.core.mail.EmailMessage`.
         return []
 
     def decfmt(self, v, places=2, **kw):
-        """
-        Format a Decimal value.
-        Like :func:`lino.utils.moneyfmt`, but using the site settings
-        :attr:`lino.Lino.decimal_group_separator`
-        and
+        r""" Format a Decimal value using :func:`lino.utils.moneyfmt`, but
+        applying the site settings
+        :attr:`lino.Lino.decimal_group_separator` and
         :attr:`lino.Lino.decimal_separator`.
+
+        >>> from lino.core.site import TestSite as Site
+        >>> from decimal import Decimal
+        >>> self = Site()
+        >>> self.decimal_group_separator
+        u'\xa0'
+        >>> self.decimal_separator
+        ','
+
+        >>> x = Decimal(1234)
+        >>> self.decfmt(x)
+        u'1\xa0234,00'
+
+        >>> self.decfmt(x, sep=".")
+        '1.234,00'
+
+        >>> self.decimal_group_separator = '.'
+        >>> self.decfmt(x)
+        '1.234,00'
+        
+        >>> self.decimal_group_separator = "oops"
+        >>> self.decfmt(x)
+        '1oops234,00'
+        
+
         """
         kw.setdefault('sep', self.decimal_group_separator)
         kw.setdefault('dp', self.decimal_separator)
@@ -3149,7 +3183,7 @@ class TestSite(Site):
     for the two first arguments that are mandatory but not used in our
     examples::
     
-    >> from lino.ad import Site
+    >> from lino.core.site import Site
     >> Site(globals(), ...)
     
     >> from lino.core.site import TestSite as Site
@@ -3169,8 +3203,14 @@ class TestSite(Site):
 
 
 def _test():
+    # we want to raise an Exception if there is a failure, but
+    # doctest's raise_on_error=True option is not useful because it
+    # does not report the traceback if some test fails.
     import doctest
-    doctest.testmod()
+    res = doctest.testmod()
+    if res.failed > 0:
+        raise Exception("{0} (see earlier output)".format(res))
+        
 
 if __name__ == "__main__":
     _test()

@@ -1,3 +1,4 @@
+import sys
 from unipath import Path
 
 from lino.utils.pythontest import TestCase
@@ -163,10 +164,20 @@ class DocsTests(LinoTestCase):
         self.run_django_manage_test("docs/tested/integer_pk")
 
 
-class CoreTests(LinoTestCase):
+class CoreTests(TestCase):
 
     def test_site(self):
-        self.run_simple_doctests('lino/core/site.py')
+
+        # note that run_simple_doctests (i.e. python -m doctest
+        # lino/core/site.py) does NOT run any tests in Python 2.7.6
+        # because it imports the `site` module of the standard
+        # library.
+
+        # self.run_simple_doctests('lino/core/site.py')
+        args = [sys.executable]
+        args += ['lino/core/site.py']
+        self.run_subprocess(args)
+
 
     # TODO: implement pseudo tests for QuantityField
     # def test_fields(self):

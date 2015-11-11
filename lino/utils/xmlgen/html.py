@@ -68,6 +68,8 @@ class HtmlNamespace(Namespace):
         self.parser = ET.XMLParser()
         self.parser.entity.update(htmlentitydefs.entitydefs)
         assert 'otilde' in self.parser.entity
+        assert 'eacute' in self.parser.entity
+        assert 'nbsp' in self.parser.entity
         
     def tostring(self, v, *args, **kw):
         # if isinstance(v, types.GeneratorType):
@@ -88,7 +90,10 @@ class HtmlNamespace(Namespace):
     def raw(self, raw_html):
         """Parses the given string into an HTML Element."""
         # print 20151008, raw_html
-        return self.fromstring(raw_html, parser=self.parser)
+        try:
+            return self.fromstring(raw_html, parser=self.parser)
+        except ET.ParseError as e:
+            raise Exception("ParseError {0} in {1}".format(e, raw_html))
 
 
 E = HtmlNamespace(None, """
