@@ -26,7 +26,6 @@ Adds functionality for managing tickets.
     models
     ui
     choicelists
-    fixtures.demo
 
 
 """

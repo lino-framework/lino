@@ -26,7 +26,7 @@ Lino Noi:
 
 >>> from lino.utils.diag import analyzer
 >>> print(analyzer.show_foreign_keys())
-... #doctest: +NORMALIZE_WHITESPACE -REPORT_UDIFF
+... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF
 - clocking.SessionType :
   - PROTECT : clocking.Session.session_type
 - contacts.Company :
@@ -50,6 +50,8 @@ Lino Noi:
   - set_on_delete : clocking.ServiceReport.printed_by, tickets.Milestone.printed_by
 - excerpts.ExcerptType :
   - PROTECT : excerpts.Excerpt.excerpt_type
+- faculties.Faculty :
+  - PROTECT : faculties.Competence.faculty, tickets.Ticket.faculty
 - lists.List :
   - PROTECT : lists.Member.list
 - lists.ListType :
@@ -75,5 +77,5 @@ Lino Noi:
 - uploads.UploadType :
   - PROTECT : uploads.Upload.type
 - users.User :
-  - PROTECT : clocking.Session.user, comments.Comment.user, excerpts.Excerpt.user, outbox.Mail.user, stars.Star.user, tickets.Project.assign_to, tickets.Ticket.assigned_to, tinymce.TextFieldTemplate.user, uploads.Upload.user, users.Authority.user
+  - PROTECT : clocking.Session.user, comments.Comment.user, excerpts.Excerpt.user, faculties.Competence.user, outbox.Mail.user, stars.Star.user, tickets.Project.assign_to, tickets.Ticket.assigned_to, tinymce.TextFieldTemplate.user, uploads.Upload.user, users.Authority.user
 <BLANKLINE>
