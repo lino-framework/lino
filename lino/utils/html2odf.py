@@ -6,20 +6,21 @@
 which converts an ElementTree object generated using
 :mod:`lino.utils.xmlgen.html` to a fragment of ODF.
 
-This is part of the Lino test suite. To test it individually, run::
+.. This is part of the Lino test suite. To test it individually, run:
 
     $ python lino/utils/html2odf.py
 
-The challenge is that HTML and ODF are quite different. This is not
-trivial.  But something like this seems necessary. It is used in order
-to generate .odt documents which contain (among other) chunks of html
-that have been entered using TinyMCE and stored in database fields.
+This is not trivial. The challenge is that HTML and ODF are quite
+different document representations. But something like this seems
+necessary. Lino uses it in order to generate .odt documents which
+contain (among other) chunks of html that have been entered using
+TinyMCE and stored in database fields.
 
-TODO: is there really no existing library for this task? The only
-approaches I saw call libreoffice in headless mode to do the
-conversion. Which sounds inappropriate for our situation where we must
-glue together fragments from different sources. Also note that we use
-:mod:`appy.pod` to do the actual generation.
+TODO: is there really no existing library for this task? I saw
+approaches which call libreoffice in headless mode to do the
+conversion, but this sounds inappropriate for our situation where we
+must glue together fragments from different sources. Also note that we
+use :mod:`appy.pod` to do the actual generation.
 
 Usage examples:
 

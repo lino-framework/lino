@@ -64,19 +64,10 @@ def add_quick_search_filter(qs, search_text):
 def quick_search_filter(model, search_text, prefix=''):
     #~ logger.info("20130425 quick_search_filter(%s,%r)",model,search_text)
     q = models.Q()
-    if model.quick_search_fields is not None:
-        for fn in model.quick_search_fields:
-            kw = {prefix + fn + "__icontains": search_text}
-            q = q | models.Q(**kw)
-            #~ logger.info("20130425 %s",kw)
-    else:
-        for field in model._meta.fields:
-            if isinstance(field, models.CharField):
-                kw = {prefix + field.name + "__icontains": search_text}
-                q = q | models.Q(**kw)
-                #~ logger.info("20120709 %s__icontains=%r",field.name,search_text)
-            #~ else:
-                #~ logger.info("20120709 %s : not a CharField",field.name)
+    for fn in model.quick_search_fields:
+        kw = {prefix + fn + "__icontains": search_text}
+        q = q | models.Q(**kw)
+
     if search_text.isdigit():
         for field in model._meta.fields:
             if isinstance(field, (models.IntegerField, models.AutoField)):
@@ -743,7 +734,6 @@ class Table(AbstractTable):
             # TODO: use Q object instead of dict
 
         if rr.quick_search is not None:
-            #~ qs = add_quick_search_filter(qs,self.model,rr.quick_search)
             qs = add_quick_search_filter(qs, rr.quick_search)
         if rr.gridfilters is not None:
             qs = add_gridfilters(qs, rr.gridfilters)

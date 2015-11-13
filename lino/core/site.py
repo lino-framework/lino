@@ -1038,6 +1038,12 @@ documentation.
         *does* contain a `fixtures` subdir, then Lino automatically adds this
         as a local fixtures directory to Django's :setting:`FIXTURE_DIRS`.
 
+        But only once: if your application defines its own local
+        fixtures directory, then this directory "overrides" those of
+        parent applications. E.g. lino_noi.projects.care does not want
+        to load the application-specific fixtures of
+        lino_noi.projects.team.
+
         """
         if isinstance(local_apps, basestring):
             local_apps = [local_apps]
@@ -1319,18 +1325,23 @@ documentation.
         self.define_settings(
             MIDDLEWARE_CLASSES=tuple(self.get_middleware_classes()))
 
-        def settings_subdirs(lst, name):
+        def collect_settings_subdirs(lst, name, max_count=None):
             def add(p):
                 p = p.replace(os.sep, "/")
-                if not p in lst:
+                if p not in lst:
                     lst.append(p)
 
             for p in self.get_settings_subdirs(name):
                 # if the parent of a settings subdir has a
                 # `models.py`, then it is a plugin and we must not add
                 # the subdir because Django does that.
-                if not exists(join(p, '..', 'models.py')):
+                if exists(join(p, '..', 'models.py')):
+                    self.logger.info(
+                        "Ignoring %s %s because it is a plugin", p, name)
+                else:
                     add(p)
+                    if (max_count is not None) and len(lst) >= max_count:
+                        break
 
             # local_dir = self.cache_dir.child(name)
             # if local_dir.exists():
@@ -1357,9 +1368,9 @@ documentation.
         locale_paths = list(self.django_settings.get('LOCALE_PATHS', []))
         sfd = list(self.django_settings.get('STATICFILES_DIRS', []))
         # sfd.append(self.cache_dir.child('genjs'))
-        settings_subdirs(fixture_dirs, 'fixtures')
-        settings_subdirs(locale_paths, 'locale')
-        settings_subdirs(sfd, 'static')
+        collect_settings_subdirs(fixture_dirs, 'fixtures', 1)
+        collect_settings_subdirs(locale_paths, 'locale')
+        collect_settings_subdirs(sfd, 'static')
         self.update_settings(FIXTURE_DIRS=tuple(fixture_dirs))
         self.update_settings(LOCALE_PATHS=tuple(locale_paths))
         self.update_settings(STATICFILES_DIRS=tuple(sfd))
@@ -1625,7 +1636,6 @@ documentation.
         project directory and it's inherited project directories.
 
         """
-
         # if local settings.py doesn't subclass Site:
         if self.project_dir != normpath(dirname(
                 inspect.getfile(self.__class__))):
