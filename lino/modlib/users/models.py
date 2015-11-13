@@ -15,7 +15,6 @@ from django.conf import settings
 from django.contrib.auth.hashers import (
     check_password, make_password, is_password_usable)
 
-
 from lino.api import dd
 from lino.utils.xmlgen.html import E
 from lino.core import actions
@@ -43,7 +42,7 @@ class ChangePassword(dd.Action):
     """
 
     def run_from_ui(self, ar, **kw):
-        
+
         pv = ar.action_param_values
         if pv.new1 != pv.new2:
             ar.error("New passwords didn't match!")
@@ -51,7 +50,7 @@ class ChangePassword(dd.Action):
         count = 0
         for obj in ar.selected_rows:
             if not obj.has_usable_password() \
-               or obj.check_password(pv.current):
+                    or obj.check_password(pv.current):
                 obj.set_password(pv.new1)
                 obj.full_clean()
                 obj.save()
@@ -124,6 +123,11 @@ class User(CreatedModified):
 
     language = dd.LanguageField(default=models.NOT_PROVIDED, blank=True)
 
+    if dd.use_tz:
+        timezone = dd.TimezoneField(blank=True)
+    else:
+        timezone = dd.DummyField()
+
     if dd.is_installed('contacts'):
 
         partner = models.ForeignKey(
@@ -145,7 +149,7 @@ class User(CreatedModified):
 
     @dd.displayfield(_("Name"), max_length=15)
     def name_column(self, request):
-        #~ return join_words(self.last_name.upper(),self.first_name)
+        # ~ return join_words(self.last_name.upper(),self.first_name)
         return unicode(self)
 
     if dd.is_installed('contacts'):
@@ -163,14 +167,14 @@ class User(CreatedModified):
         Only system managers may edit other users.
         See also :meth:`User.disabled_fields`.
         """
-        #~ print 20120621, self, user, state, action
+        # ~ print 20120621, self, user, state, action
         if not ba.action.readonly:
             user = ar.get_user()
             if user != self:
                 if not isinstance(user.profile.role, dd.SiteAdmin):
                     return False
         return super(User, self).get_row_permission(ar, state, ba)
-        #~ return False
+        # ~ return False
 
     def disabled_fields(self, ar):
         """
@@ -188,9 +192,9 @@ class User(CreatedModified):
             for n in ('first_name', 'last_name', 'email', 'language'):
                 if not getattr(self, n):
                     setattr(self, n, getattr(p, n))
-            #~ self.language = p.language
+                    # ~ self.language = p.language
         if not self.language:
-            #~ self.language = settings.SITE.DEFAULT_LANGUAGE.django_code
+            # ~ self.language = settings.SITE.DEFAULT_LANGUAGE.django_code
             self.language = settings.SITE.get_default_language()
         if not self.password:
             self.set_unusable_password()
@@ -200,9 +204,9 @@ class User(CreatedModified):
         super(User, self).full_clean(*args, **kw)
 
     def get_received_mandates(self):
-        #~ return [ [u.id,_("as %s")%u] for u in self.__class__.objects.all()]
+        # ~ return [ [u.id,_("as %s")%u] for u in self.__class__.objects.all()]
         return [[u.id, unicode(u)] for u in self.__class__.objects.all()]
-        #~ return self.__class__.objects.all()
+        # ~ return self.__class__.objects.all()
 
     change_password = ChangePassword()
 
@@ -217,9 +221,11 @@ class User(CreatedModified):
         Returns a boolean of whether the raw_password was correct. Handles
         hashing formats behind the scenes.
         """
+
         def setter(raw_password):
             self.set_password(raw_password)
             self.save()
+
         return check_password(raw_password, self.password, setter)
 
     def set_unusable_password(self):
@@ -253,11 +259,10 @@ class User(CreatedModified):
 
 
 class UserDetail(dd.FormLayout):
-
     box1 = """
     username profile:20 partner
     first_name last_name initials
-    email language
+    email language timezone
     id created modified
     """
 
@@ -268,7 +273,6 @@ class UserDetail(dd.FormLayout):
 
 
 class UserInsert(dd.FormLayout):
-
     window_size = (60, 'auto')
 
     main = """
@@ -281,30 +285,30 @@ class UserInsert(dd.FormLayout):
 
 class Users(dd.Table):
     help_text = _("""Shows the list of all users on this site.""")
-    #~ debug_actions  = True
+    # ~ debug_actions  = True
     required_roles = dd.required(dd.SiteAdmin)
     model = 'users.User'
-    #~ order_by = "last_name first_name".split()
+    # ~ order_by = "last_name first_name".split()
     order_by = ["username"]
     active_fields = 'partner'
 
-    #~ column_names = 'username first_name last_name is_active is_staff is_expert is_superuser *'
+    # ~ column_names = 'username first_name last_name is_active is_staff is_expert is_superuser *'
     column_names = 'username profile first_name last_name *'
     detail_layout = UserDetail()
     insert_layout = UserInsert()
 
-    #~ @classmethod
-    #~ def get_row_permission(cls,action,user,obj):
-        #~ """
-        #~ Only system managers may edit other users.
-        #~ See also :meth:`User.disabled_fields`.
-        #~ """
-        #~ if not super(Users,cls).get_row_permission(action,user,obj):
-            #~ return False
-        #~ if user.level >= UserLevel.manager: return True
-        #~ if action.readonly: return True
-        #~ if user is not None and user == obj: return True
-        #~ return False
+    # ~ @classmethod
+    # ~ def get_row_permission(cls,action,user,obj):
+    # ~ """
+    # ~ Only system managers may edit other users.
+    # ~ See also :meth:`User.disabled_fields`.
+    # ~ """
+    # ~ if not super(Users,cls).get_row_permission(action,user,obj):
+    # ~ return False
+    # ~ if user.level >= UserLevel.manager: return True
+    # ~ if action.readonly: return True
+    # ~ if user is not None and user == obj: return True
+    # ~ return False
 
 
 class MySettings(Users):
@@ -319,7 +323,6 @@ class MySettings(Users):
 
 
 class UsersOverview(Users):
-
     """
     A variant of :ddref:`users.Users` showing only active users
     and only some fields. 
@@ -331,7 +334,6 @@ class UsersOverview(Users):
 
 
 class Authority(UserAuthored):
-
     """
     An Authority is when a User gives another User the right to "represent him"
    
@@ -344,7 +346,7 @@ class Authority(UserAuthored):
         verbose_name = _("Authority")
         verbose_name_plural = _("Authorities")
 
-    #~ quick_search_fields = ('user__username','user__first_name','user__last_name')
+    # ~ quick_search_fields = ('user__username','user__first_name','user__last_name')
 
     authorized = models.ForeignKey(
         settings.SITE.user_model,
@@ -354,10 +356,10 @@ class Authority(UserAuthored):
     def authorized_choices(cls, user):
         qs = settings.SITE.user_model.objects.exclude(
             profile=None)
-            #~ profile=UserProfiles.blank_item) 20120829
+        # ~ profile=UserProfiles.blank_item) 20120829
         if user is not None:
             qs = qs.exclude(id=user.id)
-            #~ .exclude(level__gte=UserLevels.admin)
+            # ~ .exclude(level__gte=UserLevels.admin)
         return qs
 
 

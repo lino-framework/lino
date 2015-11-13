@@ -27,6 +27,7 @@ SETUP_INFO = dict(
         'fuzzy',  # lino.mixins.dupable
         'clint',  # lino.modlib.plausibility.management.commands
         'django-localflavor',  # lino.modlib.sepa
+        'pytz',
         # 'django-iban',  # lino.modlib.sepa
         'xlwt', 'xlrd'],
     tests_require=[],

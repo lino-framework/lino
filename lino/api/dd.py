@@ -277,7 +277,7 @@ babelitem = settings.SITE.babelitem
 field2kw = settings.SITE.field2kw
 
 from lino.utils.mldbc.fields import BabelTextField
-from lino.utils.mldbc.fields import BabelCharField, LanguageField
+from lino.utils.mldbc.fields import BabelCharField, LanguageField, TimezoneField
 
 from lino.modlib.system.mixins import Genders, PeriodEvents, YesNo
 
@@ -302,6 +302,7 @@ build_media_url = settings.SITE.build_media_url
 build_static_url = settings.SITE.build_static_url
 get_default_language = settings.SITE.get_default_language
 resolve_languages = settings.SITE.resolve_languages
+use_tz = settings.SITE.use_tz
 
 apps = plugins = settings.SITE.plugins
 # `apps` is an alias for `plugins`. We recommend plugins since `apps`

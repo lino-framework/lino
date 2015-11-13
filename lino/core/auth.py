@@ -12,6 +12,10 @@ Lino's authentification middleware
 from __future__ import unicode_literals
 
 import logging
+from django.utils.timezone import activate
+from pytz import timezone
+from lino.utils.mldbc.fields import TIMEZONE_CHOICES
+
 logger = logging.getLogger(__name__)
 
 from django.core import exceptions
@@ -97,6 +101,10 @@ class AuthMiddleWareBase(object):
         request.user = user
 
         user_language = user.language or settings.SITE.get_default_language()
+
+        user_timezone = user.timezone or settings.SITE.default_time_zone
+        tz = timezone(TIMEZONE_CHOICES[int(user_timezone) - 1][1])
+        activate(tz)  # This still don't work as expected
 
         if request.method == 'GET':
             rqdata = request.GET
