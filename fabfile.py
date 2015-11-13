@@ -7,6 +7,7 @@ setup_from_fabfile(globals(), 'lino_noi')
 # and sessions.
 add_demo_project('lino_noi.projects.team.settings.demo')
 add_demo_project('lino_noi.projects.bs3.settings.demo')
+add_demo_project('lino_noi.projects.care.settings.demo')
 # no longer used:
 # add_demo_project('lino_noi.projects.public.settings.demo')
 

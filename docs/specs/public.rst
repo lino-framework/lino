@@ -12,8 +12,10 @@ Public read-only interface
 
     >>> from __future__ import print_function 
     >>> from __future__ import unicode_literals
-    >>> import os
-    >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_noi.projects.bs3.settings.demo'
+    >>> from lino import startup
+    >>> startup('lino_noi.projects.bs3.settings.demo')
+    >>> # import os
+    >>> # os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_noi.projects.bs3.settings.demo'
     >>> from lino.api.doctest import *
 
 
@@ -49,7 +51,7 @@ This data is being rendered using plain bootstrap HTML:
 >>> soup = BeautifulSoup(res.content)
 >>> links = soup.find_all('a')
 >>> len(links)
-29
+30
 >>> print(links[0].get('href'))
 /?ul=de
 >>> print(links[1].get('href'))
@@ -65,7 +67,7 @@ This data is being rendered using plain bootstrap HTML:
 >>> soup = BeautifulSoup(res.content)
 >>> print(soup.get_text(' ', strip=True))
 ... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF +ELLIPSIS
-Tickets Home en de fr Tickets Active tickets Tickets Site About #7 (No Foo after deleting Bar) << < > >> State: New
+Tickets Home en de fr Tickets Active tickets Tickets Unassigned Tickets Site About #7 (No Foo after deleting Bar) << < > >> State: New
 <BLANKLINE>
 <BLANKLINE>
 (last update ...) Reported by: Robin Rood ... Product: Lino Core Site: welket This is Lino Noi ...

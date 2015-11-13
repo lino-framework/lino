@@ -16,7 +16,7 @@ from lino_noi.lib.tickets.roles import Worker
 from lino.utils.quantities import Duration
 
 
-def objects():
+def unused_objects():
     Analysis = rt.modules.faculties.Faculty.objects.get(name="Analysis")
     Code_changes = rt.modules.faculties.Faculty.objects.get(name="Code changes")
     Documentation = rt.modules.faculties.Faculty.objects.get(name="Documentation")
