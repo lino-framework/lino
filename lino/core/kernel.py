@@ -67,6 +67,7 @@ from .utils import full_model_name as fmn
 from .utils import obj2str
 from .utils import GenericForeignKey, get_models
 # from .utils import format_request
+from .exceptions import ChangedAPI
 
 
 def set_default_verbose_name(f):
@@ -312,6 +313,23 @@ class Kernel(object):
             if isinstance(model.allow_cascaded_delete, basestring):
                 model.allow_cascaded_delete = frozenset(
                     fields.fields_list(model, model.allow_cascaded_delete))
+
+            qsf = model.__dict__.get('quick_search_fields', None)
+            # never inherit from concrete parent model.
+            if qsf is None:
+                fields_list = []
+                for field in model._meta.fields:
+                    if isinstance(field, models.CharField):
+                        fields_list.append(field.name)
+                model.quick_search_fields = frozenset(fields_list)
+            elif isinstance(qsf, basestring):
+                model.quick_search_fields = frozenset(
+                    fields.fields_list(model, model.quick_search_fields))
+            else:
+                raise ChangedAPI(
+                    "{0}.quick_search_fields must be None or a string "
+                    "of space-separated field names (not {1})".format(
+                        model, qsf))
 
             if model._meta.abstract:
                 raise Exception("Tiens?")

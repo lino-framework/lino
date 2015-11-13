@@ -132,10 +132,13 @@ class Model(models.Model):
     """
 
     quick_search_fields = None
-    """When quick_search text is given for a table on this model, Lino by
-    default searches the query text in all CharFields.  But on models
-    with `quick_search_fields` will search only those fields.
-    
+    """Explicitly specify the fields to be included in quick search.
+
+    If this is None, Lino searches the query text in all CharFields.
+
+    This should be either None or a string with a space-separated list
+    of field names.
+
     This is also used when a gridfilter has been set on a foreign key
     column which points to this model.
 

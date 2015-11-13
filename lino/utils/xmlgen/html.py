@@ -62,32 +62,33 @@ from __future__ import unicode_literals
 
 import types
 from xml.etree import ElementTree as ET
+from lxml.etree import HTML
 
 from lino.utils import join_elems
 from lino.utils.xmlgen import Namespace
 from lino.utils.html2rst import html2rst
-from htmlentitydefs import name2codepoint
+# from htmlentitydefs import name2codepoint
 
-ENTITIES = {}
-ENTITIES.update((x, unichr(i)) for x, i in name2codepoint.iteritems())
+# ENTITIES = {}
+# ENTITIES.update((x, unichr(i)) for x, i in name2codepoint.iteritems())
 
 
-def CreateParser():
-    """Every string that is being parsed must get its own parser instance.
-    This is because "Due to limitations in the Expat library used by
-    pyexpat, the xmlparser instance returned can only be used to parse
-    a single XML document. Call ParserCreate for each document to
-    provide unique parser instances. (`docs.python.org
-    <https://docs.python.org/2/library/pyexpat.html>`_)
+# def CreateParser():
+#     """Every string that is being parsed must get its own parser instance.
+#     This is because "Due to limitations in the Expat library used by
+#     pyexpat, the xmlparser instance returned can only be used to parse
+#     a single XML document. Call ParserCreate for each document to
+#     provide unique parser instances. (`docs.python.org
+#     <https://docs.python.org/2/library/pyexpat.html>`_)
 
-    """
-    p = ET.XMLParser()
-    # PARSER.entity.update(htmlentitydefs.entitydefs)
-    p.entity = ENTITIES
-    assert 'otilde' in p.entity
-    assert 'eacute' in p.entity
-    assert 'nbsp' in p.entity
-    return p
+#     """
+#     p = ET.XMLParser()
+#     # PARSER.entity.update(htmlentitydefs.entitydefs)
+#     p.entity = ENTITIES
+#     assert 'otilde' in p.entity
+#     assert 'eacute' in p.entity
+#     assert 'nbsp' in p.entity
+#     return p
 
 # class RAW_HTML_STRING(unicode):
 #     pass
@@ -120,10 +121,14 @@ class HtmlNamespace(Namespace):
     def raw(self, raw_html):
         """Parses the given string into an HTML Element."""
         # print 20151008, raw_html
-        try:
-            return self.fromstring(raw_html, parser=CreateParser())
-        except ET.ParseError as e:
-            raise Exception("ParseError {0} in {1}".format(e, raw_html))
+
+        # the lxml parser wraps `<html><body>...</body></html>` around
+        # the snippet, but we don't want it.
+        return HTML(raw_html)[0][0]
+        # try:
+        #     return self.fromstring(raw_html, parser=CreateParser())
+        # except ET.ParseError as e:
+        #     raise Exception("ParseError {0} in {1}".format(e, raw_html))
 
 
 E = HtmlNamespace(None, """

@@ -2,9 +2,27 @@
 # Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""This module contains mainly a utility function :func:`html2odf` which
-converts an ElementTree object generated using
+"""This module contains mainly a utility function :func:`html2odf`
+which converts an ElementTree object generated using
 :mod:`lino.utils.xmlgen.html` to a fragment of ODF.
+
+.. This is part of the Lino test suite. To test it individually, run:
+
+    $ python lino/utils/html2odf.py
+
+This is not trivial. The challenge is that HTML and ODF are quite
+different document representations. But something like this seems
+necessary. Lino uses it in order to generate .odt documents which
+contain (among other) chunks of html that have been entered using
+TinyMCE and stored in database fields.
+
+TODO: is there really no existing library for this task? I saw
+approaches which call libreoffice in headless mode to do the
+conversion, but this sounds inappropriate for our situation where we
+must glue together fragments from different sources. Also note that we
+use :mod:`appy.pod` to do the actual generation.
+
+Usage examples:
 
 >>> from lino.utils.xmlgen.html import E
 >>> def test(e):
@@ -72,6 +90,19 @@ Edge case:
 ... #doctest: +NORMALIZE_WHITESPACE
 <text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0">Ein
 schÃ¶ner Text</text:p>
+
+Not yet supported
+=================
+
+Fails if a sequence of paragraph-level items are grouped using a div:
+
+>>> test(E.div(E.p("Two numbered items:"),
+...    E.ol(E.li("first"), E.li("second"))))
+... #doctest: +NORMALIZE_WHITESPACE
+Traceback (most recent call last):
+...
+IllegalText: The <text:section> element does not allow text
+
 """
 
 import logging
@@ -81,6 +112,7 @@ from StringIO import StringIO
 
 
 def toxml(node):
+    """Convert an ODF node to a string with its XML representation."""
     buf = StringIO()
     node.toXml(0, buf)
     return buf.getvalue()
@@ -98,6 +130,9 @@ def html2odf(e, ct=None, **ctargs):
     Convert a :mod:`lino.utils.xmlgen.html` element to an ODF text element.
     Most formats are not implemented.
     There's probably a better way to do this...
+
+    :ct: the root element ("container"). If not specified, we create one.
+
     """
     sections_counter = 1
     #~ print "20120613 html2odf()", e.tag, e.text
