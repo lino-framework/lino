@@ -404,6 +404,8 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
 
     """
 
+    quick_search_fields = "summary description"
+
     workflow_state_field = 'state'
 
     class Meta:
