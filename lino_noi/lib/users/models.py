@@ -59,7 +59,7 @@ class UserDetail(UserDetail):
 
     tickets = dd.Panel("""
     open_session_on_new_ticket user_site #current_project
-    tickets.TicketsByReporter
+    tickets.TicketsByReporter faculties.CompetencesByUser
     """, label=_("Tickets"))
 
 
