@@ -6,6 +6,7 @@
 
 """
 
+from django.db import models
 from lino.api import dd, rt, _
 
 
@@ -58,6 +59,21 @@ class Stars(dd.Table):
 
 class MyStars(Stars, ByUser):
     pass
+
+
+class Notification(dd.Model):
+    class Meta:
+        verbose_name = _("Star")
+        verbose_name_plural = _("Stars")
+
+    star = dd.ForeignKey('stars.Star', editable=False)
+    change = dd.ForeignKey('changes.Change', editable=False)
+    seen = models.DateTimeField(
+        _("seen"), null=True, editable=False)
+
+
+class Notifications(dd.Table):
+    model = 'stars.Notification'
 
 
 class StarObject(dd.Action):
@@ -125,3 +141,19 @@ def welcome_messages(ar):
         yield E.span(*chunks)
 
 dd.add_welcome_handler(welcome_messages)
+
+
+from lino.modlib.changes.models import Change
+from django.db.models.signals import post_save
+
+
+@dd.receiver(post_save, sender=Change)
+def notify_handler(sender, **kwargs):
+    self = sender
+    star = rt.modules.stars.Star.objects.get(user=self.user, owner=self.owner)
+    Notification = rt.modules.stars.Notification
+    qs = Notification.objects.filter(
+        change__owner=self.owner, star=star, seen__isnull=True)
+    if not qs.exists():
+        Notification(change=self, star=star, seen=False).save()
+    
