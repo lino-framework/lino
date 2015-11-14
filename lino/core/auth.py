@@ -14,7 +14,7 @@ from __future__ import unicode_literals
 import logging
 from django.utils.timezone import activate
 from pytz import timezone
-from lino.utils.mldbc.fields import TIMEZONE_CHOICES
+import pytz
 
 logger = logging.getLogger(__name__)
 
@@ -102,9 +102,12 @@ class AuthMiddleWareBase(object):
 
         user_language = user.language or settings.SITE.get_default_language()
 
-        user_timezone = user.timezone or settings.SITE.default_time_zone
-        tz = timezone(TIMEZONE_CHOICES[int(user_timezone) - 1][1])
-        activate(tz)  # This still don't work as expected
+        if settings.USE_TZ and user.partner and user.partner.country:
+            country = user.partner.country
+            patner_timezone = pytz.country_timezones[country.isocode]
+            if len(patner_timezone) == 1:
+                tz = timezone(patner_timezone[0])
+                activate(tz)  # This still don't work as expected
 
         if request.method == 'GET':
             rqdata = request.GET

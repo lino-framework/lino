@@ -13,7 +13,7 @@ Example::
 
   class Foo(models.Model):
       name = BabelCharField(_("Foo"), max_length=200)
-
+      
 
 .. autosummary::
 
@@ -22,7 +22,6 @@ Example::
 from __future__ import unicode_literals
 
 import logging
-
 logger = logging.getLogger(__name__)
 
 from django.conf import settings
@@ -32,13 +31,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 
 from lino.core.fields import RichTextField
-from pytz import all_timezones
-
-TIMEZONE_CHOICES = [(str(i), all_timezones[i]) for i in range(1, len(all_timezones))]
 
 LANGUAGE_CODE_MAX_LENGTH = 5
-
-TIMEZONE_MAX_LENGTH = 15
 
 
 def contribute_to_class(field, cls, fieldclass, **kw):
@@ -50,7 +44,7 @@ def contribute_to_class(field, cls, fieldclass, **kw):
         kw.update(verbose_name=string_concat(
             field.verbose_name, ' (' + lang.django_code + ')'))
         newfield = fieldclass(**kw)
-        # ~ newfield._lino_babel_field = True
+        #~ newfield._lino_babel_field = True
         # used by dbtools.get_data_elems
         newfield._lino_babel_field = field.name
         newfield._babel_language = lang
@@ -58,6 +52,7 @@ def contribute_to_class(field, cls, fieldclass, **kw):
 
 
 class BabelCharField(models.CharField):
+
     """Define a variable number of `CharField` database fields, one for
     each language of your :attr:`lino.core.site.Site.languages`.  See
     :ref:`mldbc`.
@@ -71,6 +66,7 @@ class BabelCharField(models.CharField):
 
 
 class BabelTextField(RichTextField):
+
     """
     Define a variable number of clones of the "master" field,
     one for each language .
@@ -98,23 +94,10 @@ class LanguageField(models.CharField):
             choices=settings.SITE.LANGUAGE_CHOICES,
             blank=True,
             # default=settings.SITE.get_default_language,
-            # ~ default=get_language,
+            #~ default=get_language,
             max_length=LANGUAGE_CODE_MAX_LENGTH,
         )
         defaults.update(kw)
         models.CharField.__init__(self, *args, **defaults)
 
 
-class TimezoneField(models.CharField):
-    """A field that define the Timezone for a user.
-    """
-
-    def __init__(self, *args, **kw):
-        defaults = dict(
-            verbose_name=_("Timezone"),
-            choices=TIMEZONE_CHOICES,
-            blank=True,
-            max_length=TIMEZONE_MAX_LENGTH,
-        )
-        defaults.update(kw)
-        models.CharField.__init__(self, *args, **defaults)

@@ -621,16 +621,6 @@ documentation.
     """Alternative date entry formats accepted by ExtJS Date widgets.
 
     """
-    use_tz = True
-    """
-    Whether this site should use timezone option for the user.
-    """
-
-    default_time_zone = 'Europe/Tallinn'
-    # default_time_zone = 'Asia/Kabul'
-    """
-    Default TIMEZONE to use
-    """
 
     #~ default_number_format_extjs = '0,000.00/i'
     default_number_format_extjs = '0,00/i'
@@ -1108,10 +1098,6 @@ documentation.
         self.update_settings(SERIALIZATION_MODULES={
             "py": "lino.utils.dpy",
         })
-
-        self.django_settings.update(USE_TZ = self.use_tz)
-        if self.default_time_zone and self.use_tz:
-            self.django_settings.update(TIME_ZONE = self.default_time_zone)
 
         if self.site_prefix != '/':
             if not self.site_prefix.endswith('/'):
