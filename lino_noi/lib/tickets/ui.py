@@ -258,7 +258,7 @@ class LinksByTicket(Links):
 
 
 class TicketDetail(dd.DetailLayout):
-    main = "general more"
+    main = "general more changes.ChangesByMaster"
 
     general = dd.Panel("""
     general1:60 DeploymentsByTicket:20
