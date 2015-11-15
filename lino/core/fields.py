@@ -229,7 +229,6 @@ class RemoteField(FakeField):
         self.name = name
         self.attname = name
         self.field = fld
-        self.rel = self.field.rel
         self.verbose_name = fld.verbose_name
         self.max_length = getattr(fld, 'max_length', None)
         self.max_digits = getattr(fld, 'max_digits', None)
@@ -237,8 +236,10 @@ class RemoteField(FakeField):
         #~ print 20120424, self.name
         #~ settings.SITE.register_virtual_field(self)
 
-        from lino.core import store
-        store.get_atomizer(self.rel, self, name)
+        if isinstance(fld, models.ForeignKey):
+            self.rel = self.field.rel
+            from lino.core import store
+            store.get_atomizer(self.rel, self, name)
 
     #~ def lino_resolve_type(self):
         #~ self._lino_atomizer = self.field._lino_atomizer

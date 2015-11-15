@@ -206,7 +206,7 @@ class TableRequest(ActionRequest):
                     pass
                     # master is None
 
-            if not 'master_instance' in kw:
+            if 'master_instance' not in kw:
                 pk = rqdata.get(constants.URL_PARAM_MASTER_PK, None)
                 #~ print '20100406a', self.actor,URL_PARAM_MASTER_PK,"=",pk
                 #~ if pk in ('', '-99999'):
