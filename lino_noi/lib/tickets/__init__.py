@@ -38,7 +38,8 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("Tickets")
 
-    needs_plugins = ['lino.modlib.excerpts', 'lino.modlib.comments']
+    needs_plugins = [
+        'lino.modlib.excerpts', 'lino.modlib.comments', 'lino.modlib.changes']
 
     def setup_main_menu(self, site, profile, m):
         p = self.get_menu_group()

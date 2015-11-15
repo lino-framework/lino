@@ -105,7 +105,7 @@ class Site(Site):
         tb.add_action(self.modules.tickets.TicketsToDo)
         tb.add_action(self.modules.tickets.Tickets)
 
-    def do_site_startup(self):
+    def unused_do_site_startup(self):
         """Defines an emitter to send notification emails about changes in
         tickets.
 
@@ -131,6 +131,14 @@ class Site(Site):
                         yield u.email
 
         TicketEmitter().register()
+
+    def do_site_startup(self):
+        super(Site, self).do_site_startup()
+
+        from lino.modlib.changes.models import watch_changes as wc
+
+        wc(self.modules.tickets.Ticket)
+        wc(self.modules.comments.Comment, master_key='owner')
 
 
 # the following line should not be active in a checked-in version
