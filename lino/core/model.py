@@ -214,7 +214,7 @@ class Model(models.Model):
         return None
 
     @classmethod
-    def get_data_elem(model, name):
+    def get_data_elem(cls, name):
         """Return the named data element. This can be a database field, a
         :class:`lino.core.fields.RemoteField`, a
         :class:`lino.core.fields.VirtualField` or a Django-style
@@ -225,16 +225,17 @@ class Model(models.Model):
         if not name.startswith('__'):
             parts = name.split('__')
             if len(parts) > 1:
-                """It's going to be a RemoteField
-                """
+                # It's going to be a RemoteField
                 # logger.warning("20120406 RemoteField %s in %s",name,self)
-                #~ model = self.model
 
                 from lino.core import store
 
+                model = cls
                 field_chain = []
                 for n in parts:
-                    assert model is not None
+                    if model is None:
+                        raise Exception(
+                            "Invalid remote field {0} for {1}".format(name, cls))
                     # ~ 20130508 model.get_default_table().get_handle() # make sure that all atomizers of those fields get created.
                     fld = model.get_data_elem(n)
                     if fld is None:
@@ -245,7 +246,7 @@ class Model(models.Model):
                     # make sure that the atomizer gets created.
                     store.get_atomizer(model, fld, fld.name)
                     field_chain.append(fld)
-                    if fld.rel:
+                    if getattr(fld, 'rel', None):
                         model = fld.rel.to
                     else:
                         model = None
@@ -269,15 +270,15 @@ class Model(models.Model):
                 return fields.RemoteField(func, name, fld)
 
         try:
-            return model._meta.get_field(name)
+            return cls._meta.get_field(name)
         except models.FieldDoesNotExist:
             pass
 
-        v = get_class_attr(model, name)
+        v = get_class_attr(cls, name)
         if v is not None:
             return v
 
-        for vf in model._meta.virtual_fields:
+        for vf in cls._meta.virtual_fields:
             if vf.name == name:
                 return vf
 
