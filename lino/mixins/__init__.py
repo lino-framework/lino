@@ -153,7 +153,13 @@ class Modified(model.Model):
 
 
 class Created(model.Model):
+    """Mixin for models which have a field :attr:`created` 
 
+    .. attribute:: created
+
+        The timestame when this object was created.
+
+    """
     class Meta:
         abstract = True
 

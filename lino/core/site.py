@@ -156,7 +156,7 @@ class Site(object):
 
     ui = None
     """
-    Used to be an alias for :attr:`kernel`.
+    Deprecated alias for :attr:`kernel`.
 
     """
 
@@ -215,7 +215,14 @@ class Site(object):
     url = None
     """
     The URL of the website that describes this application.
-    Used e.g. in a :menuselection:`Site --> About` dialog bix.
+    Used e.g. in a :menuselection:`Site --> About` dialog box.
+    """
+
+    server_url = None
+    """The "official" URL used by "normal" users when accessing this Lino
+    site. This is used by templates such as the email sent by
+    :class:`lino.modlib.notifier.Notification`
+
     """
 
     make_missing_dirs = True

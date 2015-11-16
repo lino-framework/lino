@@ -787,13 +787,13 @@ class PollResult(Questions):
     master_key = 'poll'
     column_names = "question choiceset answers a1"
 
-    @classmethod
-    def get_data_rows(self, ar):
-        poll = ar.master_instance
-        if poll is None:
-            return
-        for obj in super(PollResult, self).get_request_queryset(ar):
-            yield obj
+    # @classmethod
+    # def get_data_rows(self, ar):
+    #     poll = ar.master_instance
+    #     if poll is None:
+    #         return
+    #     for obj in super(PollResult, self).get_request_queryset(ar):
+    #         yield obj
 
     @dd.virtualfield(dd.ForeignKey('polls.Question'))
     def question(self, obj, ar):

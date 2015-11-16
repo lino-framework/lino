@@ -1,0 +1,10 @@
+Notification about {{obj}}
+
+{{obj.overview(ar)}}
+
+Any subsequent notifications about this object are suspended until 
+you view this notification in the Lino web interface. Please visit 
+
+  {{rt.settings.SITE.server_url}} 
+
+and follow your welcome messages.

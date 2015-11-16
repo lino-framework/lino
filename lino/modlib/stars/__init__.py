@@ -30,4 +30,3 @@ class Plugin(ad.Plugin):
         p = self.get_menu_group()
         m = m.add_menu(p.app_label, p.verbose_name)
         m.add_action('stars.Stars')
-        m.add_action('stars.Notifications')
