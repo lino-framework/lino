@@ -37,10 +37,11 @@ Lino applications.
    :toctree:
 
     about
-    changes
     export_excel
     extensible
     tinymce
+    notifier
+    changes
     stars
 
 "Enterprise Resources"

@@ -19,6 +19,8 @@ from lino.core.utils import gfk2lookup
 from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.users.mixins import UserAuthored, ByUser
 
+from lino.core.requests import BaseRequest
+
 
 class Star(UserAuthored, Controllable):
     """Represents the fact that a given database object is starred by a
@@ -63,57 +65,6 @@ class Stars(dd.Table):
 
 class MyStars(Stars, ByUser):
     pass
-
-
-class Notification(dd.Model):
-    class Meta:
-        verbose_name = _("Notification")
-        verbose_name_plural = _("Notifications")
-
-    star = dd.ForeignKey('stars.Star', editable=False)
-    change = dd.ForeignKey('changes.Change', editable=False)
-    seen = models.DateTimeField(
-        _("seen"), null=True, editable=False)
-
-    def __unicode__(self):
-        return _("Notify {0} about change on {1}").format(
-            self.star.user, self.star.owner)
-
-    def send_email(self, ar):
-        subject = unicode(self)
-        template = rt.get_template('stars/Notification/body.eml')
-        context = dict(ar=ar, obj=self, E=E)
-        body = template.render(**context)
-        sender = self.star.user.email or settings.SERVER_EMAIL
-        rt.send_email(
-            subject, sender, body, [self.star.user.email])
-    
-
-class Notifications(dd.Table):
-    """Shows the gobal list of all notifications.
-    
-    """
-    model = 'stars.Notification'
-    column_names = "overview change__time star__user seen"
-
-    detail_layout = """
-    overview
-    stars.ChangesByNotification
-    """
-
-    @classmethod
-    def get_detail_title(self, ar, obj):
-        if obj.seen is None and obj.star.user == ar.get_user():
-            obj.seen = datetime.datetime.now()
-            obj.save()
-            dd.logger.info("20151115 marked %s as seen", obj)
-        return super(Notifications, self).get_detail_title(ar, obj)
-
-    @dd.displayfield()
-    def overview(cls, self, ar):
-        return E.p(
-            ar.obj2html(self.star.owner), " ",
-            _("was modified by {0}").format(self.change.user))
 
 
 class StarObject(dd.Action):
@@ -171,68 +122,29 @@ from lino.utils import join_elems
 
 
 def welcome_messages(ar):
-    """Yield messages for the welcome page."""
-    # Star = rt.modules.stars.Star
-    # qs = Star.objects.filter(user=ar.get_user())
-    # if qs.count() > 0:
-    #     chunks = [unicode(_("Your stars are "))]
-    #     chunks += join_elems([ar.obj2html(obj.owner) for obj in qs])
-    #     yield E.span(*chunks)
-
-    Notification = rt.modules.stars.Notification
-    qs = Notification.objects.filter(
-        star__user=ar.get_user(), seen__isnull=True)
+    """Yield messages for the welcome page. Currently not used."""
+    Star = rt.modules.stars.Star
+    qs = Star.objects.filter(user=ar.get_user())
     if qs.count() > 0:
-        chunks = [
-            unicode(_("You have %d unseen notifications: ")) % qs.count()]
-        chunks += join_elems([
-            ar.obj2html(obj, unicode(obj.star.owner)) for obj in qs])
+        chunks = [unicode(_("Your stars are "))]
+        chunks += join_elems([ar.obj2html(obj.owner) for obj in qs])
         yield E.span(*chunks)
 
-dd.add_welcome_handler(welcome_messages)
+
+# dd.add_welcome_handler(welcome_messages)
 
 
-from lino.modlib.changes.models import Change, ChangesByMaster
+from lino.modlib.changes.models import Change
 from django.db.models.signals import post_save
-
-
-class ChangesByNotification(ChangesByMaster):
-
-    master = 'stars.Notification'
-
-    # @classmethod
-    # def get_master_instance(self, ar, master, pk):
-    #     notification = super(self).get_master_instance(ar, master, pk)
-    #     if notification is None:
-    #         return
-    #     return notification.
-        
-    @classmethod
-    def get_request_queryset(cls, ar):
-        mi = ar.master_instance
-        if mi is None:
-            return cls.model.objects.null()
-        return cls.model.objects.filter(
-            time__gte=mi.change.time,
-            **gfk2lookup(cls.model.master, mi.star.owner))
 
 
 @dd.receiver(post_save, sender=Change)
 def notify_handler(sender, instance=None, **kwargs):
-    Notification = rt.modules.stars.Notification
     self = instance  # a Change object
+    notify = rt.modules.notifier.Notification.notify
     others = rt.modules.stars.Star.for_obj(self.master).exclude(user=self.user)
-    ar = rt.login(self.user, renderer=settings.SITE.kernel.default_ui.renderer)
+    ar = BaseRequest(user=self.user)
     for star in others:
-        fltkw = dict()
-        for k, v in gfk2lookup(Change.master, self.master).items():
-            fltkw['change__'+k] = v
-        qs = Notification.objects.filter(
-            star=star, seen__isnull=True, **fltkw)
-        if not qs.exists():
-            # create a notification object and send email
-            obj = Notification(change=self, star=star)
-            obj.full_clean()
-            obj.save()
-            obj.send_email(ar)
+        msg = "{obj} was modified by %s" % self.user
+        notify(ar, self.master, star.user, msg)
 

@@ -89,3 +89,10 @@ See :blogref:`20100716`
 
 .. setting:: FIXTURE_DIRS
 
+
+.. setting:: EMAIL_SUBJECT_PREFIX
+
+    See `Django doc
+    <https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-EMAIL_SUBJECT_PREFIX>`__
+
+    Lino also uses this in :mod:`lino.modlib.notifier`.

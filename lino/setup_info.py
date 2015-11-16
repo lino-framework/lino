@@ -173,6 +173,7 @@ lino.modlib.rooms
 lino.modlib.smtpd
 lino.modlib.smtpd.management
 lino.modlib.smtpd.management.commands
+lino.modlib.notifier
 lino.modlib.stars
 lino.modlib.statbel
 lino.modlib.statbel.countries
