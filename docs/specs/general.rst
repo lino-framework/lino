@@ -44,7 +44,8 @@ them both, but some other applicaton might use only :mod:`tickets
 ['lino_noi.lib.tickets']
 
 >>> dd.plugins.tickets.needs_plugins
-['lino.modlib.excerpts', 'lino.modlib.comments']
+['lino.modlib.excerpts', 'lino.modlib.comments', 'lino.modlib.changes']
+
 
 See also :attr:`needs_plugins <lino.core.plugin.Plugin.needs_plugins>`.
 

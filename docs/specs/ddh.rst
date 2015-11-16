@@ -27,8 +27,6 @@ Lino Noi:
 >>> from lino.utils.diag import analyzer
 >>> print(analyzer.show_foreign_keys())
 ... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF
-- changes.Change :
-  - PROTECT : stars.Notification.change
 - clocking.SessionType :
   - PROTECT : clocking.Session.session_type
 - contacts.Company :
@@ -43,7 +41,7 @@ Lino Noi:
 - contacts.RoleType :
   - PROTECT : contacts.Role.type, excerpts.Excerpt.contact_role, tickets.Project.contact_role
 - contenttypes.ContentType :
-  - PROTECT : changes.Change.object_type, comments.Comment.owner_type, excerpts.Excerpt.owner_type, excerpts.ExcerptType.content_type, gfks.HelpText.content_type, outbox.Attachment.owner_type, outbox.Mail.owner_type, stars.Star.owner_type, uploads.Upload.owner_type
+  - PROTECT : changes.Change.object_type, comments.Comment.owner_type, excerpts.Excerpt.owner_type, excerpts.ExcerptType.content_type, gfks.HelpText.content_type, notifier.Notification.owner_type, outbox.Attachment.owner_type, outbox.Mail.owner_type, stars.Star.owner_type, uploads.Upload.owner_type
 - countries.Country :
   - PROTECT : contacts.Partner.country, countries.Place.country
 - countries.Place :
@@ -64,8 +62,6 @@ Lino Noi:
   - PROTECT : tickets.Interest.product, tickets.Ticket.product
 - products.ProductCat :
   - PROTECT : products.Product.cat
-- stars.Star :
-  - PROTECT : stars.Notification.star
 - tickets.Milestone :
   - PROTECT : tickets.Deployment.milestone, tickets.Ticket.reported_for
 - tickets.Project :
@@ -81,5 +77,5 @@ Lino Noi:
 - uploads.UploadType :
   - PROTECT : uploads.Upload.type
 - users.User :
-  - PROTECT : changes.Change.user, clocking.Session.user, comments.Comment.user, excerpts.Excerpt.user, faculties.Competence.user, outbox.Mail.user, stars.Star.user, tickets.Project.assign_to, tickets.Ticket.assigned_to, tinymce.TextFieldTemplate.user, uploads.Upload.user, users.Authority.user
+  - PROTECT : changes.Change.user, clocking.Session.user, comments.Comment.user, excerpts.Excerpt.user, faculties.Competence.user, notifier.Notification.user, outbox.Mail.user, stars.Star.user, tickets.Project.assign_to, tickets.Ticket.assigned_to, tinymce.TextFieldTemplate.user, uploads.Upload.user, users.Authority.user
 <BLANKLINE>
