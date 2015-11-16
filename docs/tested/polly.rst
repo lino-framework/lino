@@ -58,7 +58,7 @@ Question 10/23/14
 
 The "My answer" column for the first row has 5 links:
 
->>> soup = BeautifulSoup(d['rows'][0][1])
+>>> soup = BeautifulSoup(d['rows'][0][1], 'lxml')
 >>> links = soup.find_all('a')
 >>> len(links)
 5

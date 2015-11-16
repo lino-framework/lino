@@ -13,13 +13,13 @@ Diamond inheritance (continued)
 
     >>> from __future__ import print_function
 
-This document shows a case of multi-table diamond inheritance which is
-still broken in Django 1.7.  The difference with
+This document shows a case of multi-table diamond inheritance which
+was caused problems in Django 1.7.  The difference with
 :doc:`../diamond/index` is that now we have two abstract parents.
 
 This document also shows that Lino has a work-around for both
 problems. Unfortunately that workaround works only until Django
-1.6. We are trying to adapt it to newer Django versions.
+1.6. We had some fun to adapt it to newer Django versions.
 
 The source code used to generate and test this document is at
 :srcref:`docs/tested/diamond2/`.

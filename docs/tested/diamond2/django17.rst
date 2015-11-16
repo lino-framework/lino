@@ -23,17 +23,3 @@ A
 >>> print(p.pizza_bar_specific_field)
 Doodle
 
-
-Unfortunately although above code snippet passes, there seems to be
-still problems since :mod:`lino.projects.min2` which (under Django
-1.7+) says::
-
-  contacts.Person.addr1: (models.E006) The field 'addr1' clashes with the field 'addr1' from model 'contacts.partner'.
-
-Let's look together into :mod:`lino.core.inject`.
-
-The problem comes (probably) because the `name` field occurs *twice*
-in the list of fields:
-
->>> [f.name for f in PizzeriaBar._meta.get_fields()]
-[u'id', 'street', 'name', 'specialty', u'pizzeria_ptr', 'street', 'name', 'min_age', 'pizza_bar_specific_field']
