@@ -45,7 +45,7 @@ def get_json_soup(username, uri, fieldname, **kwargs):
     """
     d = get_json_dict(username, uri, **kwargs)
     html = d['data'][fieldname]
-    return BeautifulSoup(html)
+    return BeautifulSoup(html, 'lxml')
 
 
 def post_json_dict(username, url, data, **extra):

@@ -44,8 +44,11 @@ It is okay to assign integer values to DecimalFields:
 >>> a.save()
 >>> pk = a.pk
 >>> a = A.objects.get(pk=pk)
->>> a.total()
-Decimal('20')
+>>> print '{0:.2f}'.format(a.total())
+20.00
+
+(Note: unformatted output of above snippet differs between Django
+versions 1.6 and 1.8)
 
 >>> a = A(price=2.50, qty=8.0)
 >>> a.total()

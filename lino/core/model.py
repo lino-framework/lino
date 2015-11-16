@@ -520,11 +520,11 @@ class Model(models.Model):
     @classmethod
     def lookup_or_create(model, lookup_field, value, **known_values):
         """
-        Look-up whether there is a model instance having 
+        Look-up whether there is a model instance having
         `lookup_field` with value `value`
         (and optionally other `known_values` matching exactly).
         
-        If it doesn't exist, create it and emit an 
+        If it doesn't exist, create it and emit an
         :attr:`auto_create <lino.core.signals.auto_create>` signal.
         
         """
@@ -562,8 +562,8 @@ class Model(models.Model):
         except ValidationError, e:
             raise ValidationError("Failed to auto_create %s : %s" %
                                   (obj2str(obj), e))
-        signals.auto_create.send(obj, known_values=known_values)
         obj.save()
+        signals.auto_create.send(obj, known_values=known_values)
         return obj
 
     @classmethod
