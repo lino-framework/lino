@@ -274,7 +274,7 @@ request from it.
         self.requesting_panel = other.requesting_panel
 
     def spawn_request(self, **kw):
-        """Create a new ActionRequest which inherits from this one.
+        """Create a new of same class which inherits from this one.
 
         """
         kw.update(parent=self)

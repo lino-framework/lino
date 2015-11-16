@@ -28,12 +28,12 @@ class Plugin(ad.Plugin):
 
     """
 
-    def setup_main_menu(self, site, profile, m):
-        p = self.get_menu_group()
-        m = m.add_menu(p.app_label, p.verbose_name)
-        m.add_action('notifier.MyNotifications')
+    # def setup_main_menu(self, site, profile, m):
+    #     p = site.plugins.office
+    #     m = m.add_menu(p.app_label, p.verbose_name)
+    #     m.add_action('notifier.MyNotifications')
 
     def setup_explorer_menu(self, site, profile, m):
-        p = self.get_menu_group()
+        p = site.plugins.system
         m = m.add_menu(p.app_label, p.verbose_name)
         m.add_action('notifier.Notifications')

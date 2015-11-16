@@ -506,3 +506,9 @@ class TextRenderer(HtmlRenderer):
                 #     print(i)
             else:
                 raise Exception("Cannot handle %r" % item)
+
+    # def obj2html(self, ar, obj, text=None, **kwargs):
+    #     if text is None:
+    #         text = force_unicode(obj)
+    #     return "*{0}*".format(text)
+
