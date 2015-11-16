@@ -76,9 +76,18 @@ class Notification(dd.Model):
         _("seen"), null=True, editable=False)
 
     def __unicode__(self):
-        return _("Change notification {0} {1}").format(
+        return _("Notify {0} about change on {1}").format(
             self.star.user, self.star.owner)
 
+    def send_email(self, ar):
+        subject = unicode(self)
+        template = rt.get_template('stars/Notification/body.eml')
+        context = dict(ar=ar, obj=self, E=E)
+        body = template.render(**context)
+        sender = self.star.user.email or settings.SERVER_EMAIL
+        rt.send_email(
+            subject, sender, body, [self.star.user.email])
+    
 
 class Notifications(dd.Table):
     """Shows the gobal list of all notifications.
@@ -104,7 +113,7 @@ class Notifications(dd.Table):
     def overview(cls, self, ar):
         return E.p(
             ar.obj2html(self.star.owner), " ",
-            _("was modified by {0}").format(self.star.user))
+            _("was modified by {0}").format(self.change.user))
 
 
 class StarObject(dd.Action):
@@ -204,7 +213,7 @@ class ChangesByNotification(ChangesByMaster):
         if mi is None:
             return cls.model.objects.null()
         return cls.model.objects.filter(
-            time__lte=mi.change.time,
+            time__gte=mi.change.time,
             **gfk2lookup(cls.model.master, mi.star.owner))
 
 
@@ -213,6 +222,7 @@ def notify_handler(sender, instance=None, **kwargs):
     Notification = rt.modules.stars.Notification
     self = instance  # a Change object
     others = rt.modules.stars.Star.for_obj(self.master).exclude(user=self.user)
+    ar = rt.login(self.user, renderer=settings.SITE.kernel.default_ui.renderer)
     for star in others:
         fltkw = dict()
         for k, v in gfk2lookup(Change.master, self.master).items():
@@ -220,16 +230,9 @@ def notify_handler(sender, instance=None, **kwargs):
         qs = Notification.objects.filter(
             star=star, seen__isnull=True, **fltkw)
         if not qs.exists():
-            # create a notification
+            # create a notification object and send email
             obj = Notification(change=self, star=star)
             obj.full_clean()
             obj.save()
-            dd.logger.info("20151115 TODO: send the email")
-            subject = unicode(obj)
-            template = rt.get_template('stars/Notification/body.eml')
-            context = dict(obj=obj)
-            body = template.render(**context)
-            sender = obj.star.user.email or settings.SERVER_EMAIL
-            rt.send_email(
-                subject, sender, body, [obj.star.user.email])
-    
+            obj.send_email(ar)
+

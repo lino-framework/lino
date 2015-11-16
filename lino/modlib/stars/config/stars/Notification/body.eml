@@ -1,4 +1,4 @@
 User {{obj.change.user}} has modified {{obj.star.master}}.
 
-Please visit {{ar.absolute_uri()}} in order to view all subsequent
+Please visit {{E.tostring(ar.obj2html(obj))}} in order to view all subsequent
 changes on this object.
