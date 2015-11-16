@@ -31,6 +31,17 @@ A **Milestone** is a named step of evolution of a Project.  For
 software projects we usually call them a "release" and they are named
 by a version number.
 
+
+.. rubric:: Change notifications
+
+This also defines a `post_save` handler on :class:`Change
+<lino.modlib.changes.models.Change>` so that the ticket
+:attr:`reporter <Ticket.reporter>` and the :attr:`assigned_to
+<Ticket.assigned_to>` worker get automatically notified about any
+change. This is similar to what happens
+:mod:`lino.modlib.stars.models` (but the reporter and the assignee
+don't need to star a ticket in order to get notified.
+
 """
 
 from __future__ import unicode_literals
@@ -608,7 +619,7 @@ dd.inject_field(
     'users.User', 'user_site',
     dd.ForeignKey(
         'tickets.Site', verbose_name=_("Site"),
-        blank=True, null=True, related_name="users_by_site", 
+        blank=True, null=True, related_name="users_by_site",
         help_text=_("")))
 
 from lino.modlib.bootstrap3.views import MEMO_PARSER
@@ -623,5 +634,34 @@ def ticket2html(s):
     return '<a href="{0}" title="{2}">{1}</a>'.format(url, text, title)
 
 MEMO_PARSER.register_command('ticket', ticket2html)
+
+if True:  # dd.is_installed('changes'):
+    """
+    """
+
+    from lino.modlib.changes.models import Change
+    from django.db.models.signals import post_save
+    from lino.core.requests import BaseRequest
+
+    @dd.receiver(post_save, sender=Change)
+    def notify_handler(sender, instance=None, **kwargs):
+        self = instance  # a Change object
+        if not isinstance(self.master, Ticket):
+            return
+        ticket = self.master
+        notify = rt.modules.notifier.Notification.notify
+        others = []
+
+        def collect(user):
+            if user and user != self.user and user.email:
+                others.append(user)
+
+        collect(ticket.assigned_to)
+        collect(ticket.reporter)
+        ar = BaseRequest(user=self.user)
+        for user in others:
+            msg = "%s worked on {obj}" % self.user
+            notify(ar, self.master, user, msg)
+
 
 from .ui import *
