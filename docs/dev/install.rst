@@ -104,7 +104,6 @@ Notes:
       $ cd lino ; python setup.py develop ; cd ..
 
 
-
 Telling your Lino version
 =========================
 
@@ -121,6 +120,27 @@ The above launches Python with the `-m
 <https://docs.python.org/2/using/cmdline.html#cmdoption-m>`_
 command-line switch which basically instructs it to just import the
 specified module :mod:`lino.hello`.
+
+Updating your copy of the Lino sources
+======================================
+
+Since we recommend to use the development version of Lino, we also
+recommend that you update your copy of the code repository often.  The
+Lino repository changes almost every day.
+
+In order to get the latest version, you just need to run::
+
+  $ cd ~/repositories/lino
+  $ git pull
+
+You don't need to reinstall it in Python after such an upgrade since
+you used the ``-e`` option of `pip install` above. The new version
+will automatically become active.
+
+See the documentation of `git pull
+<https://git-scm.com/docs/git-pull>`_ for more information.
+
+
 
 Defining a cache directory for Lino
 ===================================
