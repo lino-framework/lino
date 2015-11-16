@@ -131,7 +131,6 @@ class Notifications(dd.Table):
     """
     model = 'notifier.Notification'
     column_names = "created overview user seen *"
-    required_roles = dd.required(SiteStaff)
 
     detail_layout = """
     overview
@@ -145,6 +144,10 @@ class Notifications(dd.Table):
             obj.save()
             dd.logger.info("20151115 Marked %s as seen", obj)
         return super(Notifications, self).get_detail_title(ar, obj)
+
+
+class AllNotifications(Notifications):
+    required_roles = dd.required(SiteStaff)
 
 
 class MyNotifications(My, Notifications):
