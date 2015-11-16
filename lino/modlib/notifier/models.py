@@ -111,14 +111,14 @@ class Notification(UserAuthored, Controllable, Created):
             return
         # dd.logger.info("20151116 %s %s", ar.bound_action, ar.actor)
         # ar = ar.spawn_request(renderer=dd.plugins.bootstrap3.renderer)
-        ar = BaseRequest(
+        sar = BaseRequest(
             # user=self.user, renderer=dd.plugins.bootstrap3.renderer)
             user=self.user, renderer=settings.SITE.kernel.text_renderer)
         tpl = dd.plugins.notifier.email_subject_template
         subject = tpl.format(obj=self)
         subject = settings.EMAIL_SUBJECT_PREFIX + subject
         template = rt.get_template('notifier/body.eml')
-        context = dict(obj=self, E=E, rt=rt, ar=ar)
+        context = dict(obj=self, E=E, rt=rt, ar=sar)
         body = template.render(**context)
         sender = ar.get_user().email or settings.SERVER_EMAIL
         rt.send_email(
