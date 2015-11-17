@@ -161,6 +161,8 @@ class Certifiable(dd.Model):
 
     @dd.displayfield(_("Printed"))
     def printed(self, ar):
+        if ar is None:
+            return ''
         ex = self.printed_by
         if ex is None:
             return ''

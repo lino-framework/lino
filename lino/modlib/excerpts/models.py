@@ -354,8 +354,9 @@ class BodyTemplateContentField(dd.VirtualField):
 
         lcd = settings.SITE.confdirs.LOCAL_CONFIG_DIR
         if lcd is None:
-            raise Warning("No local config directory. "
-                          "Contact your system administrator.")
+            # raise Warning("No local config directory. "
+            #               "Contact your system administrator.")
+            return
         local_file = join(lcd.name, fn)
         settings.SITE.makedirs_if_missing(dirname(local_file))
         value = value.encode('utf-8')
@@ -581,7 +582,7 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
                 kw.update(this=self.owner)
 
             tplname = self.get_body_template_name()
-            if tplname:
+            if tplname and ar is not None:
                 # sar = copy(ar)
                 # sar.renderer = settings.SITE.kernel.html_renderer
                 env = settings.SITE.plugins.jinja.renderer.jinja_env
