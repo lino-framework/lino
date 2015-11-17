@@ -262,6 +262,8 @@ We override everything in Excerpt to not call the class method.""")
 
     @dd.displayfield(_("Model"))
     def content_type_display(self, ar):
+        if ar is None:
+            return ''
         model = self.content_type.model_class()
         label = "{0} ({1})".format(
             dd.full_model_name(model), model._meta.verbose_name)
@@ -342,6 +344,8 @@ class BodyTemplateContentField(dd.VirtualField):
         return file(fn).read().decode('utf8')
 
     def set_value_in_object(self, ar, obj, value):
+        if value is None:
+            return
         fn = obj.get_body_template_name()
         if not fn:
             return
@@ -847,6 +851,8 @@ def set_excerpts_actions(sender, **kw):
     for i in Shortcuts.items():
 
         def f(obj, ar):
+            if ar is None:
+                return ''
             if obj is None:
                 return E.div()
             try:

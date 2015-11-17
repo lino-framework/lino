@@ -360,6 +360,8 @@ def inject_quick_add_buttons(model, name, target):
     """
 
     def fn(self, ar):
+        if ar is None:
+            return ''
         return ar.renderer.quick_add_buttons(
             ar.spawn(target, master_instance=self))
     tm = resolve_model(target.model)

@@ -663,7 +663,8 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
 
     @dd.displayfield(_("When"))
     def when_text(self, ar):
-        assert ar is not None
+        if ar is None:
+            return ''
         txt = when_text(self.start_date, self.start_time)
         if self.end_date and self.end_date != self.start_date:
             txt += "-" + when_text(self.end_date, self.end_time)
@@ -797,8 +798,9 @@ class Guest(dd.Model):
 
     @dd.displayfield(_("Event"))
     def event_summary(self, ar):
+        if ar is None:
+            return ''
         return ar.obj2html(self.event, self.event.get_event_summary(ar))
-        #~ return event_summary(self.event,ar.get_user())
 
 
 def migrate_reminder(obj, reminder_date, reminder_text,

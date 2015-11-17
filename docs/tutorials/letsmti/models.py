@@ -46,12 +46,16 @@ class Product(dd.Model):
 
     @dd.displayfield("Offered by")
     def offered_by(self, ar):
+        if ar is None:
+            return ''
         items = [ar.obj2html(o) for o in self.suppliers.all()]
         items = join_elems(items, sep=', ')
         return E.p(*items)
 
     @dd.displayfield("Wanted by")
     def demanded_by(self, ar):
+        if ar is None:
+            return ''
         items = [ar.obj2html(o) for o in self.customers.all()]
         items = join_elems(items, sep=', ')
         return E.p(*items)

@@ -656,33 +656,36 @@ class Model(models.Model):
 
     @fields.displayfield(_("Description"))
     def description_column(self, ar):
+        if ar is None:
+            return ''
         return ar.obj2html(self)
 
     @fields.displayfield(_("Workflow"))
     def workflow_buttons(obj, ar):
         #~ logger.info('20120930 workflow_buttons %r', obj)
-        actor = ar.actor
         l = []
-        state = actor.get_row_state(obj)
-        if state is not None:
-            #~ l.append(E.b(unicode(state),style="vertical-align:middle;"))
-            l.append(E.b(unicode(state)))
-            #~ l.append(u" » ")
-            #~ l.append(u" \u25b8 ")
-            #~ l.append(u" \u2192 ")
-            #~ sep = u" \u25b8 "
-            sep = u" \u2192 "
-        else:
-            # logger.info('20150602 no state for %s in %s (%s)',
-            #             obj, actor, actor.model)
-            sep = ''
+        if ar is not None:
+            actor = ar.actor
+            state = actor.get_row_state(obj)
+            if state is not None:
+                #~ l.append(E.b(unicode(state),style="vertical-align:middle;"))
+                l.append(E.b(unicode(state)))
+                #~ l.append(u" » ")
+                #~ l.append(u" \u25b8 ")
+                #~ l.append(u" \u2192 ")
+                #~ sep = u" \u25b8 "
+                sep = u" \u2192 "
+            else:
+                # logger.info('20150602 no state for %s in %s (%s)',
+                #             obj, actor, actor.model)
+                sep = ''
 
-        for ba in actor.get_actions():
-            if ba.action.show_in_workflow:
-                if actor.get_row_permission(obj, ar, state, ba):
-                    l.append(sep)
-                    l.append(ar.action_button(ba, obj))
-                    sep = ' '
+            for ba in actor.get_actions():
+                if ba.action.show_in_workflow:
+                    if actor.get_row_permission(obj, ar, state, ba):
+                        l.append(sep)
+                        l.append(ar.action_button(ba, obj))
+                        sep = ' '
         return E.span(*l)
 
     def error2str(self, e):
@@ -867,7 +870,8 @@ action on individual instances.
 
         """
         # same as lino.utils.report.EmptyTableRow.get_printable_context
-        kw = ar.get_printable_context(**kw)
+        if ar is not None:
+            kw = ar.get_printable_context(**kw)
         kw.update(this=self)  # preferred in new templates
         kw.update(language=self.get_print_language())
         return kw

@@ -199,7 +199,7 @@ class LinksByHuman(Links):
             items.append(E.li(
                 unicode(type), _(" of "),
                 obj.format_family_member(ar, other),
-                " (%s)" % other.age()
+                " (%s)" % other.age
             ))
         elems = []
         if len(items) > 0:

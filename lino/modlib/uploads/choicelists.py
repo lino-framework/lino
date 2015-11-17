@@ -89,7 +89,7 @@ def set_upload_shortcuts(sender, **kw):
     for i in Shortcuts.items():
 
         def f(obj, ar):
-            if obj is None:
+            if obj is None or ar is None:
                 return E.div()
             try:
                 utype = UploadType.objects.get(shortcut=i)
