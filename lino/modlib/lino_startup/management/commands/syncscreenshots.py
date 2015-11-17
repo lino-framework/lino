@@ -38,7 +38,7 @@ from django.conf import settings
 #~ from django.test import LiveServerTestCase
 from django.test.testcases import StoppableWSGIServer
 
-from lino.core.utils import obj2str, full_model_name, sorted_models_list, app_labels
+from lino.core.utils import obj2str, full_model_name, sorted_models_list
 from lino.utils import screenshots
 from atelier.utils import SubProcessParent
 

@@ -19,7 +19,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db.models import loading
 
 import lino
-from lino.core.utils import app_labels
+#from lino.core.utils import app_labels
 from lino.utils import curry
 from lino.utils import rstgen
 from lino.utils.restify import doc2rst, abstract
@@ -182,6 +182,9 @@ class GeneratingCommand(BaseCommand):
 
         logger.info("Generating %s", fn)
         #~ logger.info("Generating %s from %s",fn,tpl_filename)
+
+        def app_labels():
+            return [p.app_label for p in settings.SITE.installed_plugins]
         context.update(
             lino=lino,
             #~ models=models,
