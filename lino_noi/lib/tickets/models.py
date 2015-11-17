@@ -550,6 +550,8 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
 
     @dd.displayfield(_("Overview"))
     def overview(self, ar):
+        if ar is None:
+            return ''
         # return ar.obj2html(self, "#{0}".self.id)
         return ar.obj2html(self)
         # return E.span(ar.obj2html(self), ' ', self.summary)
