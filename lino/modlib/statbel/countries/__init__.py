@@ -9,7 +9,6 @@ codes of the Belgian statistical institute .
 .. autosummary::
    :toctree:
 
-    models
     fixtures
 
 """

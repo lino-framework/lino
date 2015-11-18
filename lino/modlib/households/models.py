@@ -32,6 +32,7 @@ class Type(mixins.BabelNamed):
     http://www.belgium.be/fr/famille/couple/cohabitation/
     """
     class Meta:
+        app_label = 'households'
         verbose_name = _("Household Type")
         verbose_name_plural = _("Household Types")
 
@@ -51,6 +52,7 @@ class Household(contacts.Partner):
     A Household has a list of :class:`members <Member>`.
     """
     class Meta:
+        app_label = 'households'
         abstract = dd.is_abstract_model(__name__, 'Household')
         verbose_name = _("Household")
         verbose_name_plural = _("Households")
@@ -204,6 +206,7 @@ class Member(mixins.DatePeriod):
     """
 
     class Meta:
+        app_label = 'households'
         abstract = dd.is_abstract_model(__name__, 'Member')
         verbose_name = _("Household Member")
         verbose_name_plural = _("Household Members")

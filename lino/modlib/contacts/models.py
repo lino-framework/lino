@@ -252,6 +252,7 @@ class Person(Human, Born, Partner):
 
     """
     class Meta:
+        app_label = 'contacts'
         abstract = dd.is_abstract_model(__name__, 'Person')
         verbose_name = _("Person")
         verbose_name_plural = _("Persons")

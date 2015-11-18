@@ -12,7 +12,6 @@
     monitor
     run
     show
-    syncscreenshots
 
 
 
