@@ -46,7 +46,7 @@ class Link(dd.Model):
         verbose_name = _("Personal Link")
         verbose_name_plural = _("Personal Links")
 
-    type = LinkTypes.field(default=LinkTypes.parent.as_callable())
+    type = LinkTypes.field(default=LinkTypes.parent.as_callable)
     parent = dd.ForeignKey(
         config.person_model,
         verbose_name=_("Parent"),

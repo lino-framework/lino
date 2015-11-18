@@ -123,7 +123,7 @@ class Note(mixins.TypedPrintable,
         verbose_name_plural = _("Notes")
 
     date = models.DateField(
-        verbose_name=_('Date'), default=settings.SITE.today)
+        verbose_name=_('Date'), default=dd.today)
     time = models.TimeField(
         blank=True, null=True,
         verbose_name=_("Time"),

@@ -164,9 +164,10 @@ class Choice(object):
         Django 1.9 would misunderstand it.
 
         """
-        def f():
-            return self
-        return f
+        return self
+        # def f():
+        #     return self
+        # return f
 
     # def __call__(self):
     #     """Make it callable so it can be used as `default` of a field."""
@@ -649,6 +650,10 @@ class ChoiceListField(models.CharField):
 
         name, path, args, kwargs = super(ChoiceListField, self).deconstruct()
         args = [self.choicelist]
+        kwargs.pop('default', None)
+        # TODO: this is cheating. we remove the default attribute
+        # because it is not serializable. This means that our
+        # migrations are probably invalid and not usable.
         return name, path, args, kwargs
 
     def get_internal_type(self):
