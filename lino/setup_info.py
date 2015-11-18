@@ -90,6 +90,7 @@ SETUP_INFO.update(packages=[str(n) for n in """
 lino
 lino.api
 lino.core
+lino.fake_migrations
 lino.history
 lino.mixins
 lino.modlib
