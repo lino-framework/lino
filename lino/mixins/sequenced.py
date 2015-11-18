@@ -16,6 +16,9 @@ order which can be manipulated by the user using actions
 
 from __future__ import unicode_literals
 
+import logging
+logger = logging.getLogger(__name__)
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
@@ -206,7 +209,12 @@ class Sequenced(Duplicable):
     def full_clean(self, *args, **kw):
         if self.seqno is None:
             self.set_seqno()
+        # if hasattr(self, 'amount'):
+        #     logger.info("20151117 Sequenced.full_clean a %s", self.amount)
+        #     logger.info("20151117  %s", self.__class__.mro())
         super(Sequenced, self).full_clean(*args, **kw)
+        # if hasattr(self, 'amount'):
+        #     logger.info("20151117 Sequenced.full_clean b %s", self.amount)
 
     def swap_seqno(self, ar, offset):
         """
@@ -236,6 +244,8 @@ class Sequenced(Duplicable):
         """
         Displays the buttons for this row and this user.
         """
+        if ar is None:
+            return ''
         actor = ar.actor
         l = []
         state = None  # TODO: support a possible state?

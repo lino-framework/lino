@@ -744,6 +744,8 @@ class EventsByDay(Events):
 
     @classmethod
     def as_link(cls, ar, today, txt=None):
+        if ar is None:
+            return ''
         if today is None:
             today = settings.SITE.today()
         if txt is None:

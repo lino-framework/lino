@@ -75,3 +75,6 @@ DATABASES = {
 SECRET_KEY = "20227"  # see :djangoticket:`20227`
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+
+# disable migrations:
+MIGRATION_MODULES = dict(contenttypes='lino.fake_migrations', sessions='lino.fake_migrations')

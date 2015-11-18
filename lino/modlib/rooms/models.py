@@ -68,7 +68,7 @@ class Booking(ContactRelated, Reservation):
 
     #~ workflow_state_field = 'state'
 
-    state = BookingStates.field(default=BookingStates.draft.as_callable())
+    state = BookingStates.field(default=BookingStates.draft.as_callable)
 
     event_type = dd.ForeignKey('cal.EventType', null=True, blank=True,
         help_text=_("""The Event Type to which events will be generated."""))
@@ -132,7 +132,7 @@ class Booking(ContactRelated, Reservation):
 dd.update_field(Booking, 'contact_person', verbose_name=_("Contact person"))
 dd.update_field(Booking, 'company', verbose_name=_("Organizer"))
 dd.update_field(Booking, 'every_unit',
-                default=Recurrencies.once.as_callable())
+                default=Recurrencies.once.as_callable)
 dd.update_field(Booking, 'every', default=1)
 
 

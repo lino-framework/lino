@@ -238,14 +238,15 @@ def models_by_base(base, toplevel_only=False):
     return found
 
 
-def app_labels():
-    if AFTER17:
-        from django.apps import get_app_configs
-        return [a.models_module.__name__.split('.')[-2]
-                for a in get_app_configs()]
-    else:
-        from django.db.models import loading
-        return [a.__name__.split('.')[-2] for a in loading.get_apps()]
+# def app_labels():
+#     return [p.app_name for p in settings.SITE.installed_plugins]
+    # if AFTER17:
+    #     from django.apps import get_app_configs
+    #     return [a.models_module.__name__.split('.')[-2]
+    #             for a in get_app_configs()]
+    # else:
+    #     from django.db.models import loading
+    #     return [a.__name__.split('.')[-2] for a in loading.get_apps()]
 
 
 def range_filter(value, f1, f2):
@@ -344,7 +345,10 @@ def resolve_model(model_spec, app_label=None, strict=False):
 
         if AFTER17:
             from django.apps import apps
-            model = apps.get_model(app_label, model_name)
+            try:
+                model = apps.get_model(app_label, model_name)
+            except LookupError:
+                model = None
         else:
             model = models.get_model(app_label, model_name, seed_cache=False)
         #~ model = models.get_model(app_label,model_name,seed_cache=seed_cache)
@@ -755,7 +759,7 @@ class ChangeWatcher(object):
 
         """
         for k, old in self.original_state.iteritems():
-            if not k in ignored_fields:
+            if k not in ignored_fields:
                 if watched_fields is None or k in watched_fields:
                     new = self.watched.__dict__.get(k, NOT_PROVIDED)
                     if old != new:

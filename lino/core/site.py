@@ -1230,6 +1230,9 @@ documentation.
             plugins.append(p)
             self.plugins.define(k, p)
 
+        # lino_startup is always the first plugin:
+        install_plugin(str('lino.modlib.lino_startup'))
+
         for app_name in requested_apps:
             install_plugin(app_name)
 
@@ -1577,17 +1580,17 @@ documentation.
             from lino.core.signals import pre_startup, post_startup
 
             pre_startup.send(self)
-            lino_startup = False
-            for index , plugin in enumerate(self.installed_plugins):
-                if 'lino_startup' in plugin.app_name:
-                    lino_startup = plugin
-                    del plugin
+            # lino_startup = False
+            # for index , plugin in enumerate(self.installed_plugins):
+            #     if 'lino_startup' in plugin.app_name:
+            #         lino_startup = plugin
+            #         del plugin
 
-            if lino_startup:
-                badguy = list(self.installed_plugins)
-                badguy.append(lino_startup)
-                # badguy = tuple(badguy)
-                self.installed_plugins = tuple(badguy)
+            # if lino_startup:
+            #     badguy = list(self.installed_plugins)
+            #     badguy.append(lino_startup)
+            #     # badguy = tuple(badguy)
+            #     self.installed_plugins = tuple(badguy)
 
             # from django.conf import settings
             # import django
@@ -2934,7 +2937,7 @@ Please convert to Plugin method".format(mod, methname)
         for a in self.local_apps:
             yield a
 
-        yield "lino.modlib.lino_startup"
+        # yield "lino.modlib.lino_startup"
 
     site_prefix = '/'
     """The string to prefix to every URL of the Lino web interface.

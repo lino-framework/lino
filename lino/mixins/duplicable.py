@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 from django.utils.translation import ugettext_lazy as _
 
+from lino import AFTER17
 from lino.core import actions
 from lino.core import model
 from lino.core.utils import ChangeWatcher
@@ -49,8 +50,12 @@ class Duplicate(actions.Action):
             if fk.name in m.allow_cascaded_delete:
                 related.append((fk, m.objects.filter(**{fk.name: obj})))
 
+        if AFTER17:
+            fields_list = obj._meta.concrete_fields
+        else:
+            fields_list = obj._meta.fields
         if True:
-            for f in obj._meta.fields:
+            for f in fields_list:
                 if not f.primary_key:
                     known_values[f.name] = getattr(obj, f.name)
             new = obj.__class__(**known_values)
@@ -59,7 +64,7 @@ class Duplicate(actions.Action):
         else:
             # doesn't seem to want to work
             new = obj
-            for f in obj._meta.fields:
+            for f in fields_list:
                 if f.primary_key:
                     # causes Django to consider this an unsaved instance
                     setattr(new, f.name, None)

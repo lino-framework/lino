@@ -82,6 +82,7 @@ class RemoteCalendar(mixins.Sequenced):
     and local modifications will be sent back to the remote calendar.
     """
     class Meta:
+        app_label = 'cal'
         abstract = dd.is_abstract_model(__name__, 'RemoteCalendar')
         verbose_name = _("Remote Calendar")
         verbose_name_plural = _("Remote Calendars")
@@ -118,6 +119,7 @@ class Room(mixins.BabelNamed):
 
     """
     class Meta:
+        app_label = 'cal'
         abstract = dd.is_abstract_model(__name__, 'Room')
         verbose_name = _("Room")
         verbose_name_plural = _("Rooms")
@@ -127,6 +129,7 @@ class Priority(mixins.BabelNamed):
 
     "The priority of a Task or Event."
     class Meta:
+        app_label = 'cal'
         verbose_name = _("Priority")
         verbose_name_plural = _('Priorities')
     ref = models.CharField(max_length='1')
@@ -154,6 +157,7 @@ class EventType(mixins.BabelNamed, mixins.Sequenced, MailableType):
     templates_group = 'cal/Event'
 
     class Meta:
+        app_label = 'cal'
         abstract = dd.is_abstract_model(__name__, 'EventType')
         verbose_name = _("Calendar Event Type")
         verbose_name_plural = _("Calendar Event Types")
@@ -197,6 +201,7 @@ class GuestRole(mixins.BabelNamed):
     templates_group = 'cal/Guest'
 
     class Meta:
+        app_label = 'cal'
         verbose_name = _("Guest Role")
         verbose_name_plural = _("Guest Roles")
 
@@ -212,6 +217,7 @@ class Calendar(mixins.BabelNamed):
     COLOR_CHOICES = [i + 1 for i in range(32)]
 
     class Meta:
+        app_label = 'cal'
         abstract = dd.is_abstract_model(__name__, 'Calendar')
         verbose_name = _("Calendar")
         verbose_name_plural = _("Calendars")
@@ -237,6 +243,7 @@ class Subscription(UserAuthored):
     """
 
     class Meta:
+        app_label = 'cal'
         abstract = dd.is_abstract_model(__name__, 'Subscription')
         verbose_name = _("Subscription")
         verbose_name_plural = _("Subscriptions")
@@ -264,6 +271,7 @@ class Task(Component):
 
     """
     class Meta:
+        app_label = 'cal'
         verbose_name = _("Task")
         verbose_name_plural = _("Tasks")
         abstract = dd.is_abstract_model(__name__, 'Task')
@@ -277,7 +285,7 @@ class Task(Component):
     # ~ done = models.BooleanField(_("Done"),default=False) # iCal:COMPLETED
     # iCal:PERCENT
     percent = models.IntegerField(_("Duration value"), null=True, blank=True)
-    state = TaskStates.field(default=TaskStates.todo.as_callable())  # iCal:STATUS
+    state = TaskStates.field(default=TaskStates.todo.as_callable)  # iCal:STATUS
 
     def before_ui_save(self, ar, **kw):
         if self.state == TaskStates.todo:
@@ -307,6 +315,7 @@ class RecurrentEvent(mixins.BabelNamed, RecurrenceSet, EventGenerator):
     """An event that recurs at intervals.
     """
     class Meta:
+        app_label = 'cal'
         verbose_name = _("Recurrent Event")
         verbose_name_plural = _("Recurrent Events")
 
@@ -341,7 +350,7 @@ class RecurrentEvent(mixins.BabelNamed, RecurrenceSet, EventGenerator):
 
 dd.update_field(
     RecurrentEvent, 'every_unit',
-    default=Recurrencies.yearly.as_callable(), blank=False, null=False)
+    default=Recurrencies.yearly.as_callable, blank=False, null=False)
 
 
 class UpdateGuests(dd.MultipleRowAction):
@@ -434,6 +443,7 @@ class Event(Component, Ended,
 
     """
     class Meta:
+        app_label = 'cal'
         abstract = dd.is_abstract_model(__name__, 'Event')
         #~ abstract = True
         verbose_name = pgettext("cal", "Event")
@@ -449,7 +459,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     room = dd.ForeignKey('cal.Room', null=True, blank=True)  # iCal:LOCATION
     priority = models.ForeignKey(Priority, null=True, blank=True)
     state = EventStates.field(
-        default=EventStates.suggested.as_callable())  # iCal:STATUS
+        default=EventStates.suggested.as_callable)  # iCal:STATUS
     all_day = ExtAllDayField(_("all day"))
 
     assigned_to = dd.ForeignKey(
@@ -663,7 +673,8 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
 
     @dd.displayfield(_("When"))
     def when_text(self, ar):
-        assert ar is not None
+        if ar is None:
+            return ''
         txt = when_text(self.start_date, self.start_time)
         if self.end_date and self.end_date != self.start_date:
             txt += "-" + when_text(self.end_date, self.end_time)
@@ -760,6 +771,7 @@ class Guest(dd.Model):
     allow_cascaded_delete = ['event']
 
     class Meta:
+        app_label = 'cal'
         abstract = dd.is_abstract_model(__name__, 'Guest')
         verbose_name = _("Participant")
         verbose_name_plural = _("Participants")
@@ -772,7 +784,7 @@ class Guest(dd.Model):
                              verbose_name=_("Role"),
                              blank=True, null=True)
 
-    state = GuestStates.field(default=GuestStates.invited.as_callable())
+    state = GuestStates.field(default=GuestStates.invited.as_callable)
 
     remark = models.CharField(
         _("Remark"), max_length=200, blank=True)
@@ -797,8 +809,9 @@ class Guest(dd.Model):
 
     @dd.displayfield(_("Event"))
     def event_summary(self, ar):
+        if ar is None:
+            return ''
         return ar.obj2html(self.event, self.event.get_event_summary(ar))
-        #~ return event_summary(self.event,ar.get_user())
 
 
 def migrate_reminder(obj, reminder_date, reminder_text,
@@ -843,7 +856,7 @@ def migrate_reminder(obj, reminder_date, reminder_text,
 dd.inject_field(settings.SITE.user_model,
                 'access_class',
                 AccessClasses.field(
-                    default=AccessClasses.public.as_callable(),
+                    default=AccessClasses.public.as_callable,
                     verbose_name=_("Default access class"),
                     help_text=_(
             """The default access class for your calendar events and tasks.""")

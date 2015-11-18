@@ -27,8 +27,6 @@ uses:
 .. autosummary::
    :toctree:
 
-   modlib.contacts
-
    tests.test_addresses
    tests.test_birth_date
    tests.test_min2

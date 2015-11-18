@@ -43,7 +43,7 @@ from django.db import models
 
 from lino.api import dd
 
-from lino.core.utils import app_labels
+# from lino.core.utils import app_labels
 from lino import AFTER17
 from atelier.utils import confirm
 
@@ -164,8 +164,8 @@ Are you sure (y/n) ?""" % dbname):
             elif USE_SQLDELETE:
                 #~ sql_list = u'\n'.join(sql_reset(app, no_style(), conn)).encode('utf-8')
                 
-                app_list = [models.get_app(app_label)
-                            for app_label in app_labels()]
+                app_list = [models.get_app(p.app_label)
+                            for p in settings.SITE.installed_plugins]
                 for app in app_list:
                     # app_label = app.__name__.split('.')[-2]
                     sql_list.extend(sql_delete(app, no_style(), conn))

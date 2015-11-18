@@ -53,6 +53,7 @@ class LanguageKnowledge(dd.Model):
     Specifies how well a certain Person knows a certain Language.
     """
     class Meta:
+        app_label = 'cv'
         verbose_name = _("language knowledge")
         verbose_name_plural = _("language knowledges")
 
@@ -142,6 +143,7 @@ class StudyOrTraining(dd.Model):
 class EducationLevel(StudyOrTraining, mixins.BabelNamed, mixins.Sequenced):
 
     class Meta:
+        app_label = 'cv'
         verbose_name = _("Education Level")
         verbose_name_plural = _("Education Levels")
 
@@ -181,6 +183,7 @@ class StudyType(StudyOrTraining, mixins.BabelNamed):
 
     """
     class Meta:
+        app_label = 'cv'
         verbose_name = _("Education Type")
         verbose_name_plural = _("Education Types")
 
@@ -227,6 +230,7 @@ class Training(SectorFunction, EducationEntry):
 
     """
     class Meta:
+        app_label = 'cv'
         verbose_name = _("Training")
         verbose_name_plural = _("Trainings")
 
@@ -305,6 +309,7 @@ class Study(EducationEntry):
     """A **study** is an :class:`EducationEntry` at a higher school or university.
     """
     class Meta:
+        app_label = 'cv'
         verbose_name = _("Study")
         verbose_name_plural = _("Studies")
 
@@ -384,6 +389,7 @@ class StudiesByPerson(HistoryByPerson, Studies):
 class Status(mixins.BabelNamed):
 
     class Meta:
+        app_label = 'cv'
         verbose_name = pgettext("work experience", "Status")
         verbose_name_plural = pgettext("work experience", 'Statuses')
 
@@ -404,6 +410,7 @@ class Statuses(dd.Table):
 class Regime(mixins.BabelNamed):
     # e.g. "38h/week"
     class Meta:
+        app_label = 'cv'
         verbose_name = _("Work Regime")
         verbose_name_plural = _('Work Regimes')
 
@@ -422,6 +429,7 @@ class Regimes(dd.Table):
 
 class Duration(mixins.BabelNamed):
     class Meta:
+        app_label = 'cv'
         verbose_name = _("Contract Duration")
         verbose_name_plural = _('Contract Durations')
 
@@ -441,6 +449,7 @@ class Durations(dd.Table):
 class Sector(mixins.BabelNamed):
 
     class Meta:
+        app_label = 'cv'
         verbose_name = _("Job Sector")
         verbose_name_plural = _('Job Sectors')
 
@@ -466,6 +475,7 @@ class Function(mixins.BabelNamed):
 
     """Each Job may have a Function."""
     class Meta:
+        app_label = 'cv'
         verbose_name = _("Job Function")
         verbose_name_plural = _('Job Functions')
 
@@ -504,6 +514,7 @@ class Experience(PersonHistoryEntry, SectorFunction, CountryCity):
 
     """
     class Meta:
+        app_label = 'cv'
         verbose_name = _("Job Experience")
         verbose_name_plural = _("Job Experiences")
         get_latest_by = 'start_date'

@@ -203,6 +203,8 @@ class Polymorphic(model.Model):
     def get_mti_buttons(self, ar):
         """"""
         elems = []
+        if ar is None:
+            return elems
         sep = None
         for m in self._mtinav_models:
             item = None

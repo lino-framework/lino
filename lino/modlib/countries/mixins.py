@@ -254,7 +254,7 @@ class AddressLocation(CountryRegionCity):
         return linesep.join(self.address_location_lines())
 
     @dd.displayfield(_("Address"))
-    def address_column(self, request):
+    def address_column(self, ar):
         return self.address_location(', ')
 
 

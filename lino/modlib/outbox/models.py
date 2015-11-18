@@ -46,7 +46,7 @@ class Recipient(dd.Model):
                                 #~ verbose_name=_("Recipient"),
                                 blank=True, null=True)
     type = RecipientTypes.field(
-        default=RecipientTypes.to.as_callable())
+        default=RecipientTypes.to.as_callable)
     address = models.EmailField(_("Address"), blank=True)
     name = models.CharField(_("Name"), max_length=200)
 

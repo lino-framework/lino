@@ -342,6 +342,7 @@ class Authority(UserAuthored):
     """
 
     class Meta:
+        app_label = 'users'
         verbose_name = _("Authority")
         verbose_name_plural = _("Authorities")
 

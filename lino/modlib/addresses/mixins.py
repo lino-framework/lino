@@ -66,6 +66,8 @@ class AddressOwner(dd.Model):
         self.save()
 
     def get_overview_elems(self, ar):
+        if ar is None:
+            return []
         elems = super(AddressOwner, self).get_overview_elems(ar)
         sar = ar.spawn('addresses.AddressesByPartner',
                        master_instance=self)

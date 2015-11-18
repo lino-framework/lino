@@ -37,7 +37,6 @@ except ImproperlyConfigured:
 
 
 import lino
-from lino.core.utils import app_labels
 from lino.utils import rstgen
 from lino.core.utils import obj2str, full_model_name, sorted_models_list
 
@@ -107,7 +106,7 @@ class Command(BaseCommand):
 
         models_list = sorted_models_list()
 
-        apps = app_labels()
+        apps = [p.app_label for p in settings.SITE.installed_plugins]
         state.update(applications=" ".join(apps))
         for model in models_list:
             if model._meta.managed:

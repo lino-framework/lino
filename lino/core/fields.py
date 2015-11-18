@@ -109,10 +109,21 @@ class MonthField(models.DateField):
         models.DateField.__init__(self, *args, **kw)
 
 
-class PriceField(models.DecimalField):
+# def PriceField(*args, **kwargs):
+#     defaults = dict(
+#         max_length=10,
+#         max_digits=10,
+#         decimal_places=2,
+#     )
+#     defaults.update(kwargs)
+#     return models.DecimalField(*args, **defaults)
 
-    """
-    A Decimalfield with default values for decimal_places, max_length and max_digits.
+
+class PriceField(models.DecimalField):
+    """A thin wrapper around Django's `DecimalField
+    <https://docs.djangoproject.com/en/1.8/ref/models/fields/#decimalfield>`_
+    which adds default values for `decimal_places`, `max_length` and
+    `max_digits`.
 
     """
 
@@ -125,12 +136,6 @@ class PriceField(models.DecimalField):
         defaults.update(kwargs)
         super(PriceField, self).__init__(*args, **defaults)
 
-    #~ def formfield(self, **kwargs):
-        #~ fld = super(PriceField, self).formfield(**kwargs)
-        # ~ # display size is smaller than full size:
-        #~ fld.widget.attrs['size'] = "6"
-        #~ fld.widget.attrs['style'] = "text-align:right;"
-        #~ return fld
 
 #~ class MyDateField(models.DateField):
 
@@ -208,7 +213,7 @@ class FakeField(object):
 
     def clean(self, raw_value, obj):
         # needed for Django 1.8
-        pass
+        return raw_value
 
     def has_default(self):
         return self.default is not NOT_PROVIDED
@@ -305,28 +310,28 @@ class HtmlBox(DisplayField):
     pass
 
 
-class VirtualGetter(object):
-    """A wrapper object for getting the content of a virtual field
-    programmatically.
+# class VirtualGetter(object):
+#     """A wrapper object for getting the content of a virtual field
+#     programmatically.
 
-    """
+#     """
 
-    def __init__(self, vf, instance):
-        self.vf = vf
-        self.instance = instance
+#     def __init__(self, vf, instance):
+#         self.vf = vf
+#         self.instance = instance
 
-    def __call__(self, ar=None):
-        return self.vf.value_from_object(self.instance, ar)
+#     def __call__(self, ar=None):
+#         return self.vf.value_from_object(self.instance, ar)
 
-    # def __get__(self, instance, owner):
-    #     return self.vf.value_from_object(instance, None)
+#     # def __get__(self, instance, owner):
+#     #     return self.vf.value_from_object(instance, None)
 
-    def __getattr__(self, name):
-        obj = self.vf.value_from_object(self.instance, None)
-        return getattr(obj, name)
+#     def __getattr__(self, name):
+#         obj = self.vf.value_from_object(self.instance, None)
+#         return getattr(obj, name)
 
-    def __repr__(self):
-        return "<{1}>.{0}".format(self.vf.name, repr(self.instance))
+#     def __repr__(self):
+#         return "<{0}>.{1}".format(repr(self.instance), self.vf.name)
 
 
 class VirtualField(FakeField):
@@ -348,7 +353,7 @@ class VirtualField(FakeField):
         settings.SITE.register_virtual_field(self)
         """
         Normal VirtualFields are read-only and not editable.
-        We don't want to require application developers to explicitly 
+        We don't want to require application developers to explicitly
         specify `editable=False` in their return_type::
         
           @dd.virtualfield(dd.PriceField(_("Total")))
@@ -435,7 +440,9 @@ class VirtualField(FakeField):
         cls._meta.add_virtual_field(self)
         #~ cls._meta.add_field(self)
 
-    #~ def to_python(self,*args,**kw): return self.return_type.to_python(*args,**kw)
+    def to_python(self, *args, **kwargs):
+        return self.return_type.to_python(*args, **kwargs)
+
     #~ def save_form_data(self,*args,**kw): return self.return_type.save_form_data(*args,**kw)
     #~ def value_to_string(self,*args,**kw): return self.return_type.value_to_string(*args,**kw)
     #~ def get_choices(self): return self.return_type.choices
@@ -451,9 +458,10 @@ class VirtualField(FakeField):
         This special behaviour is needed to implement
         :class:`lino.utils.mti.EnableChild`.
         """
-        if value is not None:
-            raise NotImplementedError("Cannot write %r to field %s" %
-                                      (value, self))
+        pass
+        # if value is not None:
+        #     raise NotImplementedError("Cannot write %s to field %s" %
+        #                               (value, self))
 
     #~ def value_from_object(self,request,obj):
     def value_from_object(self, obj, ar=None):
@@ -470,10 +478,12 @@ class VirtualField(FakeField):
     def __get__(self, instance, owner):
         if instance is None:
             return self
-        return VirtualGetter(self, instance)
+        return self.value_from_object(instance, None)
+        # return VirtualGetter(self, instance)
 
     def __set__(self, instance, value):
         return self.set_value_in_object(None, instance, value)
+
 
 
 def virtualfield(return_type):

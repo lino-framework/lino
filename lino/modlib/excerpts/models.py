@@ -262,6 +262,8 @@ We override everything in Excerpt to not call the class method.""")
 
     @dd.displayfield(_("Model"))
     def content_type_display(self, ar):
+        if ar is None:
+            return ''
         model = self.content_type.model_class()
         label = "{0} ({1})".format(
             dd.full_model_name(model), model._meta.verbose_name)
@@ -342,6 +344,8 @@ class BodyTemplateContentField(dd.VirtualField):
         return file(fn).read().decode('utf8')
 
     def set_value_in_object(self, ar, obj, value):
+        if not value:
+            return
         fn = obj.get_body_template_name()
         if not fn:
             return
@@ -350,8 +354,9 @@ class BodyTemplateContentField(dd.VirtualField):
 
         lcd = settings.SITE.confdirs.LOCAL_CONFIG_DIR
         if lcd is None:
-            raise Warning("No local config directory. "
-                          "Contact your system administrator.")
+            # raise Warning("No local config directory. "
+            #               "Contact your system administrator.")
+            return
         local_file = join(lcd.name, fn)
         settings.SITE.makedirs_if_missing(dirname(local_file))
         value = value.encode('utf-8')
@@ -577,7 +582,7 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
                 kw.update(this=self.owner)
 
             tplname = self.get_body_template_name()
-            if tplname:
+            if tplname and ar is not None:
                 # sar = copy(ar)
                 # sar.renderer = settings.SITE.kernel.html_renderer
                 env = settings.SITE.plugins.jinja.renderer.jinja_env
@@ -847,6 +852,8 @@ def set_excerpts_actions(sender, **kw):
     for i in Shortcuts.items():
 
         def f(obj, ar):
+            if ar is None:
+                return ''
             if obj is None:
                 return E.div()
             try:

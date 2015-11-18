@@ -291,7 +291,12 @@ from django.utils.importlib import import_module
 
 decfmt = settings.SITE.decfmt
 str2kw = settings.SITE.str2kw
-today = settings.SITE.today
+
+
+def today(*args, **kwargs):
+    # make it serializable for Django migrations
+    return settings.SITE.today(*args, **kwargs)
+# today = settings.SITE.today
 strftime = settings.SITE.strftime
 demo_date = settings.SITE.demo_date
 is_abstract_model = settings.SITE.is_abstract_model

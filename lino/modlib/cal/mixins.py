@@ -548,7 +548,7 @@ class RecurrenceSet(Started, Ended):
     #~ every_unit = DurationUnits.field(_("Repeat every (unit)"),
     every_unit = Recurrencies.field(
         _("Recurrency"),
-        default=Recurrencies.monthly.as_callable(),
+        default=Recurrencies.monthly.as_callable,
         blank=True)  # iCal:DURATION
     every = models.IntegerField(_("Repeat every"), default=0)
 
@@ -682,7 +682,7 @@ virtual field labelled "When".
         #~ logger.info('20130529 is_available_on(%s) -> %s -> %s',date,wd,rv)
         return rv
 
-dd.update_field(RecurrenceSet, 'start_date', default=settings.SITE.today)
+dd.update_field(RecurrenceSet, 'start_date', default=dd.today)
 
 
 class Reservation(RecurrenceSet, EventGenerator, mixins.Registrable):

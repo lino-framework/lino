@@ -458,6 +458,8 @@ class BeIdCardHolder(dd.Model):
     @dd.displayfield(_("eID card"), default='<br/><br/><br/><br/>')
     def eid_info(self, ar):
         "Display some information about the eID card."
+        if ar is None:
+            return ''
         must_read = False
         attrs = dict(class_="lino-info")
         elems = []

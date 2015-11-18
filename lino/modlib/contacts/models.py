@@ -158,6 +158,8 @@ but e.g. :class:`Human` overrides this.
 
     def get_overview_elems(self, ar):
         elems = []
+        if ar is None:
+            return elems
         buttons = self.get_mti_buttons(ar)
         # buttons = join_elems(buttons, ', ')
         elems.append(E.p(unicode(_("See as ")), *buttons,
@@ -250,6 +252,7 @@ class Person(Human, Born, Partner):
 
     """
     class Meta:
+        app_label = 'contacts'
         abstract = dd.is_abstract_model(__name__, 'Person')
         verbose_name = _("Person")
         verbose_name_plural = _("Persons")

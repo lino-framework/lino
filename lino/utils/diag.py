@@ -88,7 +88,8 @@ class Analyzer(object):
         items = []
         for model in get_models():
             names = []
-            for f, m in model._meta.get_fields_with_model():
+            # for f, m in model._meta.get_fields_with_model():
+            for f in model._meta.concrete_fields:
                 names.append(f.name)
             items.append(
                 "{0} : {1}".format(fmn(model), ', '.join(names)))
@@ -101,11 +102,10 @@ class Analyzer(object):
         Used by test cases in tested documents.
 
         """
-        from lino.core.utils import (full_model_name,
-                                     sorted_models_list, app_labels)
+        from lino.core.utils import (full_model_name, sorted_models_list)
 
         models_list = sorted_models_list()
-        apps = app_labels()
+        apps = [p.app_label for p in settings.SITE.installed_plugins]
         s = "%d apps: %s." % (len(apps), ", ".join(apps))
         s += "\n%d models:\n" % len(models_list)
         i = 0
@@ -131,7 +131,7 @@ class Analyzer(object):
                 #~ cells.append('X')
                 #~ else:
                 #~ cells.append('')
-                cells.append(str(len(model._meta.fields)))
+                cells.append(str(len(model._meta.concrete_fields)))
                 qs = model.objects.all()
                 n = qs.count()
                 cells.append(str(n))

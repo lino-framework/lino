@@ -21,6 +21,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
 from django.core.exceptions import ValidationError
 
+from lino.api import dd
 from lino.core.model import Model
 from lino.core.choicelists import Choice
 from lino.utils.format_date import fdl
@@ -70,7 +71,7 @@ class DatePeriod(Model):
         return (self.start_date, self.end_date)
 
     def is_past(self):
-        return (self.end_date and self.end_date <= settings.SITE.today())
+        return (self.end_date and self.end_date <= dd.today())
 
     def is_future(self):
         return (self.start_date and self.start_date > settings.SITE.today())

@@ -123,13 +123,13 @@ These will go into the :setting:`INSTALLED_APPS` setting (but
 >>> Site(pseudoglobals, "lino.modlib.notes")  #doctest: +ELLIPSIS
 <lino.projects.min1.settings.Site object at ...>
 >>> print('\n'.join(pseudoglobals['INSTALLED_APPS']))
+lino.modlib.lino_startup
 django.contrib.staticfiles
 lino.modlib.about
 lino.modlib.extjs
 lino.modlib.jinja
 lino.modlib.bootstrap3
 lino.modlib.notes
-lino.modlib.lino_startup
 lino.modlib.appypod
 lino.modlib.printing
 lino.modlib.system
@@ -179,12 +179,12 @@ These are the Django settings which Lino will override:
 {'DATABASES': {'default': {'ENGINE': 'django.db.backends.sqlite3',
                            'NAME': .../default.db')}},
  'FIXTURE_DIRS': (),
- 'INSTALLED_APPS': ('django.contrib.staticfiles',
+ 'INSTALLED_APPS': ('lino.modlib.lino_startup',
+                    'django.contrib.staticfiles',
                     'lino.modlib.about',
                     'lino.modlib.extjs',
                     'lino.modlib.jinja',
-                    'lino.modlib.bootstrap3',
-                    'lino.modlib.lino_startup'),
+                    'lino.modlib.bootstrap3'),
  'LANGUAGES': [],
  'LOCALE_PATHS': (),
  'LOGGING': {'disable_existing_loggers': True,
