@@ -51,6 +51,9 @@ class Plugin(ad.Plugin):
     def get_my_country(self):
         """Return the :class:`Country` instance configured by
 :attr:`country_code`."""
-        return self.site.modules.countries.Country.objects.get(
-            pk=self.country_code)
+        Country = self.site.modules.countries.Country
+        try:
+            return Country.objects.get(pk=self.country_code)
+        except Country.DoesNotExist:
+            return
 

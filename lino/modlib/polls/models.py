@@ -51,6 +51,7 @@ NullBooleanField = models.NullBooleanField
 class ChoiceSet(mixins.BabelNamed):
 
     class Meta:
+        app_label = 'polls'
         verbose_name = _("Choice Set")
         verbose_name_plural = _("Choice Sets")
 
@@ -67,6 +68,7 @@ class ChoiceSets(dd.Table):
 class Choice(mixins.BabelNamed, mixins.Sequenced):
 
     class Meta:
+        app_label = 'polls'
         verbose_name = _("Choice")
         verbose_name_plural = _("Choices")
 
@@ -96,6 +98,7 @@ class ChoicesBySet(Choices):
 class Poll(UserAuthored, mixins.CreatedModified, Referrable):
     """A series of questions."""
     class Meta:
+        app_label = 'polls'
         abstract = dd.is_abstract_model(__name__, 'Poll')
         verbose_name = _("Poll")
         verbose_name_plural = _("Polls")
@@ -218,6 +221,7 @@ class Question(mixins.Sequenced):
 
     """
     class Meta:
+        app_label = 'polls'
         verbose_name = _("Question")
         verbose_name_plural = _("Questions")
         ordering = ['seqno']
@@ -322,6 +326,7 @@ class ToggleChoice(dd.Action):
 class Response(UserAuthored, mixins.Registrable):
 
     class Meta:
+        app_label = 'polls'
         verbose_name = _("Response")
         verbose_name_plural = _("Responses")
         ordering = ['date']
@@ -438,6 +443,7 @@ class ResponsesByPartner(Responses):
 class AnswerChoice(dd.Model):
 
     class Meta:
+        app_label = 'polls'
         verbose_name = _("Answer Choice")
         verbose_name_plural = _("Answer Choices")
         ordering = ['question__seqno']
@@ -462,6 +468,7 @@ class AnswerChoices(dd.Table):
 class AnswerRemark(dd.Model):
 
     class Meta:
+        app_label = 'polls'
         verbose_name = _("Answer Remark")
         verbose_name_plural = _("Answer Remarks")
         ordering = ['question__seqno']

@@ -37,6 +37,7 @@ class NoteType(mixins.BabelNamed, mixins.PrintableType, MailableType):
     templates_group = 'notes/Note'
 
     class Meta:
+        app_label = 'notes'
         verbose_name = _("Note Type")
         verbose_name_plural = _("Note Types")
 
@@ -77,10 +78,9 @@ class EventType(mixins.BabelNamed):
     A possible choice for :attr:`Note.event_type`.
     """
     class Meta:
+        app_label = 'notes'
         verbose_name = pgettext_lazy(u"notes", u"Event Type")
-        #~ verbose_name = _("Event Type")
         verbose_name_plural = _("Event Types")
-    #~ name = dd.BabelCharField(max_length=200,verbose_name=_("Designation"))
     remark = models.TextField(verbose_name=_("Remark"), blank=True)
     body = dd.BabelTextField(_("Body"), blank=True, format='html')
 
@@ -117,6 +117,7 @@ class Note(mixins.TypedPrintable,
     manager_roles_required = dd.login_required(OfficeStaff)
 
     class Meta:
+        app_label = 'notes'
         abstract = dd.is_abstract_model(__name__, 'Note')
         verbose_name = _("Note")
         verbose_name_plural = _("Notes")

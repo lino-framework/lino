@@ -82,6 +82,7 @@ class RemoteCalendar(mixins.Sequenced):
     and local modifications will be sent back to the remote calendar.
     """
     class Meta:
+        app_label = 'cal'
         abstract = dd.is_abstract_model(__name__, 'RemoteCalendar')
         verbose_name = _("Remote Calendar")
         verbose_name_plural = _("Remote Calendars")
@@ -118,6 +119,7 @@ class Room(mixins.BabelNamed):
 
     """
     class Meta:
+        app_label = 'cal'
         abstract = dd.is_abstract_model(__name__, 'Room')
         verbose_name = _("Room")
         verbose_name_plural = _("Rooms")
@@ -127,6 +129,7 @@ class Priority(mixins.BabelNamed):
 
     "The priority of a Task or Event."
     class Meta:
+        app_label = 'cal'
         verbose_name = _("Priority")
         verbose_name_plural = _('Priorities')
     ref = models.CharField(max_length='1')
@@ -154,6 +157,7 @@ class EventType(mixins.BabelNamed, mixins.Sequenced, MailableType):
     templates_group = 'cal/Event'
 
     class Meta:
+        app_label = 'cal'
         abstract = dd.is_abstract_model(__name__, 'EventType')
         verbose_name = _("Calendar Event Type")
         verbose_name_plural = _("Calendar Event Types")
@@ -197,6 +201,7 @@ class GuestRole(mixins.BabelNamed):
     templates_group = 'cal/Guest'
 
     class Meta:
+        app_label = 'cal'
         verbose_name = _("Guest Role")
         verbose_name_plural = _("Guest Roles")
 
@@ -212,6 +217,7 @@ class Calendar(mixins.BabelNamed):
     COLOR_CHOICES = [i + 1 for i in range(32)]
 
     class Meta:
+        app_label = 'cal'
         abstract = dd.is_abstract_model(__name__, 'Calendar')
         verbose_name = _("Calendar")
         verbose_name_plural = _("Calendars")
@@ -237,6 +243,7 @@ class Subscription(UserAuthored):
     """
 
     class Meta:
+        app_label = 'cal'
         abstract = dd.is_abstract_model(__name__, 'Subscription')
         verbose_name = _("Subscription")
         verbose_name_plural = _("Subscriptions")
@@ -264,6 +271,7 @@ class Task(Component):
 
     """
     class Meta:
+        app_label = 'cal'
         verbose_name = _("Task")
         verbose_name_plural = _("Tasks")
         abstract = dd.is_abstract_model(__name__, 'Task')
@@ -307,6 +315,7 @@ class RecurrentEvent(mixins.BabelNamed, RecurrenceSet, EventGenerator):
     """An event that recurs at intervals.
     """
     class Meta:
+        app_label = 'cal'
         verbose_name = _("Recurrent Event")
         verbose_name_plural = _("Recurrent Events")
 
@@ -434,6 +443,7 @@ class Event(Component, Ended,
 
     """
     class Meta:
+        app_label = 'cal'
         abstract = dd.is_abstract_model(__name__, 'Event')
         #~ abstract = True
         verbose_name = pgettext("cal", "Event")
@@ -761,6 +771,7 @@ class Guest(dd.Model):
     allow_cascaded_delete = ['event']
 
     class Meta:
+        app_label = 'cal'
         abstract = dd.is_abstract_model(__name__, 'Guest')
         verbose_name = _("Participant")
         verbose_name_plural = _("Participants")

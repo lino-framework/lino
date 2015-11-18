@@ -310,28 +310,28 @@ class HtmlBox(DisplayField):
     pass
 
 
-class VirtualGetter(object):
-    """A wrapper object for getting the content of a virtual field
-    programmatically.
+# class VirtualGetter(object):
+#     """A wrapper object for getting the content of a virtual field
+#     programmatically.
 
-    """
+#     """
 
-    def __init__(self, vf, instance):
-        self.vf = vf
-        self.instance = instance
+#     def __init__(self, vf, instance):
+#         self.vf = vf
+#         self.instance = instance
 
-    def __call__(self, ar=None):
-        return self.vf.value_from_object(self.instance, ar)
+#     def __call__(self, ar=None):
+#         return self.vf.value_from_object(self.instance, ar)
 
-    # def __get__(self, instance, owner):
-    #     return self.vf.value_from_object(instance, None)
+#     # def __get__(self, instance, owner):
+#     #     return self.vf.value_from_object(instance, None)
 
-    def __getattr__(self, name):
-        obj = self.vf.value_from_object(self.instance, None)
-        return getattr(obj, name)
+#     def __getattr__(self, name):
+#         obj = self.vf.value_from_object(self.instance, None)
+#         return getattr(obj, name)
 
-    def __repr__(self):
-        return "<{0}>.{1}".format(repr(self.instance), self.vf.name)
+#     def __repr__(self):
+#         return "<{0}>.{1}".format(repr(self.instance), self.vf.name)
 
 
 class VirtualField(FakeField):
@@ -353,7 +353,7 @@ class VirtualField(FakeField):
         settings.SITE.register_virtual_field(self)
         """
         Normal VirtualFields are read-only and not editable.
-        We don't want to require application developers to explicitly 
+        We don't want to require application developers to explicitly
         specify `editable=False` in their return_type::
         
           @dd.virtualfield(dd.PriceField(_("Total")))

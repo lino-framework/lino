@@ -22,20 +22,13 @@ from django import http
 from django.core import exceptions
 
 from lino.core.utils import obj2unicode
-
-from lino.utils import AttrDict
-from lino.utils import isiterable
-
 from lino.core import constants
-
 from lino.core.utils import navinfo
 from lino.core.boundaction import BoundAction
-
-from lino.utils.xmlgen.html import E
-
 from lino.core.signals import on_ui_created, pre_ui_save
 from lino.core.utils import ChangeWatcher
-
+from lino.utils import AttrDict
+from lino.utils.xmlgen.html import E
 
 CATCHED_AJAX_EXCEPTIONS = (Warning, exceptions.ValidationError)
 
@@ -523,6 +516,14 @@ request from it.
 
     def must_execute(self):
         return True
+
+    def get_data_value(self, obj, name):
+        """Return the value of the virtual field `name` for this action
+        request on the given object `obj`.
+
+        """
+        fld = obj.get_data_elem(name)
+        return fld.value_from_object(obj, self)
 
     def get_user(self):
         """Return the :class:`User <lino.modlib.users.models.User>` instance
