@@ -344,7 +344,7 @@ class BodyTemplateContentField(dd.VirtualField):
         return file(fn).read().decode('utf8')
 
     def set_value_in_object(self, ar, obj, value):
-        if value is None:
+        if not value:
             return
         fn = obj.get_body_template_name()
         if not fn:
