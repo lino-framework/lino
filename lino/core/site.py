@@ -48,7 +48,7 @@ from lino.utils.xmlgen.html import E
 from lino.core.exceptions import ChangedAPI
 # from .roles import SiteUser
 
-startup_rlock = threading.RLock()
+startup_rlock = threading.Lock()
 
 LanguageInfo = collections.namedtuple(
     'LanguageInfo', ('django_code', 'name', 'index', 'suffix'))
