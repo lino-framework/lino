@@ -645,15 +645,20 @@ class ChoiceListField(models.CharField):
     #         setattr(cls, a.action_name, a)
     
     def deconstruct(self):
-        # needed for Django 1.7
-        # https://docs.djangoproject.com/en/dev/howto/custom-model-fields/#custom-field-deconstruct-method
+        """Needed for Django 1.7+, see
+        https://docs.djangoproject.com/en/dev/howto/custom-model-fields/#custom-field-deconstruct-method
+
+        """
 
         name, path, args, kwargs = super(ChoiceListField, self).deconstruct()
         args = [self.choicelist]
+
         # kwargs.pop('default', None)
-        # TODO: this is cheating. we remove the default attribute
-        # because it is not serializable. This means that our
-        # migrations are probably invalid and not usable.
+        # TODO: above line is cheating in order to get makemigrations
+        # to pass. we remove the default attribute because it is not
+        # serializable. This means that our migrations are probably
+        # invalid and not usable.
+
         return name, path, args, kwargs
 
     def get_internal_type(self):

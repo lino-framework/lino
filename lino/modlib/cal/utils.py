@@ -42,13 +42,15 @@ from lino.api import dd, rt
 
 
 def format_date(d, fmt):
-    """Return the given date `d` formatted using Django's current language
-    combined with `Babel's date formatting
-    <http://babel.edgewall.org/wiki/Documentation/dates.html>`_
+    """Return the given date `d` formatted with `Babel's date formatting
+    <http://babel.edgewall.org/wiki/Documentation/dates.html>`_ and
+    using Django's current language.
 
     """
-    return babel_format_date(
-        d, fmt, locale=to_locale(translation.get_language()))
+    lng = translation.get_language()
+    if lng is None:  # occured during syncdb
+        lng = settings.SITE.languages[0].django_code
+    return babel_format_date(d, fmt, locale=to_locale(lng))
 
 
 def aware(d):
