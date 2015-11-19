@@ -50,6 +50,10 @@ def format_date(d, fmt):
     lng = translation.get_language()
     if lng is None:  # occured during syncdb
         lng = settings.SITE.languages[0].django_code
+        if lng is None:
+            raise Exception(
+                "No django_code for default language in {0}".format(
+                    settings.SITE.languages))
     return babel_format_date(d, fmt, locale=to_locale(lng))
 
 
