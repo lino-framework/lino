@@ -533,6 +533,7 @@ class LoaderBase(object):
         d = self.save_later.setdefault(obj.object.__class__, {})
         l = d.setdefault(msg, [])
         if len(l) == 0:
+            logger.error(e)
             logger.info("Deferred %s : %s", obj2str(obj.object), msg)
         l.append(obj)
 
