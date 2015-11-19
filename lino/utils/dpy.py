@@ -534,9 +534,7 @@ class LoaderBase(object):
         d = self.save_later.setdefault(obj.object.__class__, {})
         l = d.setdefault(msg, [])
         if len(l) == 0:
-            logger.info("Deferred %s (and possibly more "
-                        "instances of same model): %s",
-                        obj2str(obj.object), msg)
+            logger.info("Deferred %s : %s", obj2str(obj.object), msg)
         l.append(obj)
         # report a full traceback, but only once per model and
         # exception type:
