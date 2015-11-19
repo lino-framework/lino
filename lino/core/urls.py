@@ -15,62 +15,59 @@ from django.conf.urls.static import static
 from lino.core.signals import database_ready
 from lino.core.utils import is_devserver
 
-from lino.core.site import startup_rlock
+import lino
+lino.startup()
+lino.site_startup()
 
-with startup_rlock:
+site = settings.SITE
 
-    site = settings.SITE
+# site.startup()
 
-    site.startup()
+urlpatterns = []
 
-    # from lino.modlib.extjs.urls import urlpatterns
+database_ready.send(site)
 
-    urlpatterns = []
+urlpatterns = []
 
+if site.site_prefix:
+    prefix = site.site_prefix[1:]
+else:
+    prefix = ''
+rx = '^' + prefix
 
-    database_ready.send(site)
-
-    urlpatterns = []
-
-    if site.site_prefix:
-        prefix = site.site_prefix[1:]
+for p in site.installed_plugins:
+    pat = p.get_patterns()
+    prx = rx
+    if p.url_prefix:
+        prx += p.url_prefix + "/"
+    if prx == '^':
+        urlpatterns += pat
     else:
-        prefix = ''
-    rx = '^' + prefix
+        urlpatterns.append(url(prx, include(pat)))
 
-    for p in site.installed_plugins:
-        pat = p.get_patterns()
-        prx = rx
-        if p.url_prefix:
-            prx += p.url_prefix + "/"
-        if prx == '^':
-            urlpatterns += pat
-        else:
-            urlpatterns.append(url(prx, include(pat)))
+if site.django_admin_prefix:  # not tested
+    from django.contrib import admin
+    admin.autodiscover()
+    urlpatterns.append(url(
+        rx + site.django_admin_prefix[1:]
+        + "/", include(admin.site.urls)))
 
-    if site.django_admin_prefix:  # not tested
-        from django.contrib import admin
-        admin.autodiscover()
-        urlpatterns.append(url(
-            rx + site.django_admin_prefix[1:]
-            + "/", include(admin.site.urls)))
+#~ logger.info("20130409 is_devserver() returns %s.",is_devserver())
+if is_devserver():
+    # from django.contrib.staticfiles.views import serve
+    # opts = {'document_root': settings.MEDIA_ROOT,
+    #         'show_indexes': False}
+    # pat = r'^%s(?P<path>.*)$' % prefix
+    urlpatterns += static(
+        settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+        # 'django.views.static', (pat, 'serve', opts))
 
-    #~ logger.info("20130409 is_devserver() returns %s.",is_devserver())
-    if is_devserver():
-        # from django.contrib.staticfiles.views import serve
-        # opts = {'document_root': settings.MEDIA_ROOT,
-        #         'show_indexes': False}
-        # pat = r'^%s(?P<path>.*)$' % prefix
-        urlpatterns += static(
-            settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-            # 'django.views.static', (pat, 'serve', opts))
+    # why do i need the following? i thought that this is done
+    # automatically:
+    # urlpatterns += static(
+    #     settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    # logger.info("20150426 serve static %s -> %s",
+    #             settings.STATIC_URL, settings.STATIC_ROOT)
 
-        # why do i need the following? i thought that this is done
-        # automatically:
-        # urlpatterns += static(
-        #     settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-        # logger.info("20150426 serve static %s -> %s",
-        #             settings.STATIC_URL, settings.STATIC_ROOT)
-
-        # pat = r'^{0}(?P<path>.*)$'.format(settings.STATIC_URL[1:])
-        # urlpatterns.append(url(pat, serve))
+    # pat = r'^{0}(?P<path>.*)$'.format(settings.STATIC_URL[1:])
+    # urlpatterns.append(url(pat, serve))
