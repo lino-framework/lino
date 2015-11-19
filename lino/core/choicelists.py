@@ -650,7 +650,7 @@ class ChoiceListField(models.CharField):
 
         name, path, args, kwargs = super(ChoiceListField, self).deconstruct()
         args = [self.choicelist]
-        kwargs.pop('default', None)
+        # kwargs.pop('default', None)
         # TODO: this is cheating. we remove the default attribute
         # because it is not serializable. This means that our
         # migrations are probably invalid and not usable.
