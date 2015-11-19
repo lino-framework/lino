@@ -1598,7 +1598,6 @@ documentation.
             # if not settings.INSTALLED_APPS:
             #     django.setup()
 
-
             for p in self.installed_plugins:
                 # m = loading.load_app(p.app_name, False)
                 if AFTER17:
@@ -1608,18 +1607,17 @@ documentation.
                     # load_app(app_name) is deprecated
                     # from django.apps import apps
                     # m = apps.load_app(p.app_name)
-                    from django.utils.importlib import import_module
                     try:
                         from django.apps import apps
                         app_config = AppConfig.create(p.app_name)
-                        app_config.import_models(apps.all_models[app_config.label])
+                        app_config.import_models(
+                            apps.all_models[app_config.label])
                         apps.app_configs[app_config.label] = app_config
                         apps.clear_cache()
                         m = app_config.models_module
-                    except ImportError , rrrr:
-                        m = "No module {0}.models".format(p.app_name)
-                        # self.logger.warning(m)
-                        print(rrrr)
+                    except ImportError:
+                        self.logger.debug("No module {0}.models", p.app_name)
+                        # print(rrrr)
                 else:
                     from django.db.models import loading
                     m = loading.load_app(p.app_name, False)
