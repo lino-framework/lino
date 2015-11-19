@@ -77,7 +77,6 @@ from babel.dates import format_date as babel_format_date
 
 from django.utils import translation
 from django.template import defaultfilters
-from django.conf import settings
 
 from lino.core.site import to_locale
 from lino.utils import IncompleteDate
@@ -114,6 +113,7 @@ def format_date(d, format='medium'):
         raise Exception("Not a date: {0!r}".format(d))
     lng = translation.get_language()
     if lng is None:  # occured during syncdb
+        from django.conf import settings
         lng = settings.SITE.languages[0].django_code
     return babel_format_date(d, format=format, locale=to_locale(lng))
 
