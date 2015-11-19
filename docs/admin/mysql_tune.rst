@@ -9,6 +9,30 @@ See also :doc:`install_mysql`.
     :local:
     :depth: 1
 
+.. _innodb:
+
+Lino and the InnoDB engine
+==========================
+
+Lino versions before :blogref:`20141220` were more easy to use with
+the MyISAM storage instead of the default InnoDB storage (see `Setting
+the Storage Engine
+<http://dev.mysql.com/doc/refman/5.1/en/storage-engine-setting.html>`_).
+
+Using InnoDB could cause
+the following error message when trying to run :manage:`initdb` on a
+non-empty database::
+
+    IntegrityError: (1217, 'Cannot delete or update a parent row: 
+    a foreign key constraint fails')
+
+This was because :manage:`initdb` could fail to drop tables due to
+InnoDB's more severe integrity contraints.
+
+Even with InnoDB it was possible to work around this problem by doing
+yourself a `DROP DATABASE` followed by a new `CREATE DATABASE` each
+time before running :manage:`initdb`.
+
 .. _mysql.engine:
 
 MyISAM or InnoDB?
@@ -21,13 +45,21 @@ database engines
 <https://en.wikipedia.org/wiki/Comparison_of_MySQL_database_engines>`_)
 can influence your database performance.
 
-MySQL can set the storage engine per table, but Django has no API for
-specifying this setting because it is specific to MySQL.  So all
-tables in a Lino database will have the default database storage
-defined.
 
-MySQL has no possibility to specify the default storage *per
-database*, but you can set the *system-wide* default database storage
+To set the default storage engine to InnoDB, add an `init_command`
+option to your database setting::
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            ...
+            'OPTIONS': {
+                "init_command": "SET storage_engine=MyISAM",
+            }
+        },
+    }
+
+Alternatively you can set the *system-wide* default database storage
 on a Debian server by creating a file
 :file:`/etc/mysql/conf.d/set_myisam_engine.cnf` with this content::
 

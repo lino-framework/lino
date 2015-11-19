@@ -480,6 +480,7 @@ class LoaderBase(object):
     def __init__(self):
         #~ logger.info("20120225 DpyLoader.__init__()")
         self.save_later = {}
+        self.reported_tracebacks = set()
         self.saved = 0
         self.count_objects = 0
         self.AFTER_LOAD_HANDLERS = []
@@ -533,9 +534,16 @@ class LoaderBase(object):
         d = self.save_later.setdefault(obj.object.__class__, {})
         l = d.setdefault(msg, [])
         if len(l) == 0:
-            logger.error(e)
-            logger.info("Deferred %s : %s", obj2str(obj.object), msg)
+            logger.info("Deferred %s (and possibly more "
+                        "instances of same model): %s",
+                        obj2str(obj.object), msg)
         l.append(obj)
+        # report a full traceback, but only once per model and
+        # exception type:
+        k = (obj.object.__class__, e.__class__)
+        if k not in self.reported_tracebacks:
+            logger.exception(e)
+            self.reported_tracebacks.add(k)
 
     def initialize(self):
         """To be called after initdb and before starting to load the dumped
