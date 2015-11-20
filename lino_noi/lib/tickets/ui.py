@@ -677,7 +677,7 @@ class Milestones(dd.Table):
 
     parameters = mixins.ObservedPeriod(
         show_closed=dd.YesNo.field(
-            blank=True, default=dd.YesNo.no.as_callable(),
+            blank=True, default=dd.YesNo.no.as_callable,
             help_text=_("Show milestons which are closed.")))
 
     params_layout = "start_date end_date show_closed"
@@ -703,7 +703,7 @@ class Deployments(dd.Table):
     model = 'tickets.Deployment'
     parameters = mixins.ObservedPeriod(
         show_closed=dd.YesNo.field(
-            blank=True, default=dd.YesNo.no.as_callable(),
+            blank=True, default=dd.YesNo.no.as_callable,
             help_text=_("Show deployments on closed milestones.")))
 
     params_layout = "start_date end_date show_closed"

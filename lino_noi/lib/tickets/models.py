@@ -235,7 +235,7 @@ class Link(dd.Model):
         verbose_name_plural = _("Dependencies")
 
     type = LinkTypes.field(
-        default=LinkTypes.requires.as_callable())
+        default=LinkTypes.requires.as_callable)
     parent = dd.ForeignKey(
         'tickets.Ticket',
         verbose_name=_("Parent"),
@@ -463,7 +463,7 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
         related_name="reported_tickets",
         help_text=_("The user who reported this ticket."))
     state = TicketStates.field(
-        default=TicketStates.new.as_callable())
+        default=TicketStates.new.as_callable)
     waiting_for = models.CharField(
         _("Waiting for"), max_length=200,
         blank=True,
