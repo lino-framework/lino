@@ -30,25 +30,12 @@ from dateutil.tz import tzlocal
 
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from django.utils import translation
 from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import force_unicode
 
-from babel.dates import format_date as babel_format_date
-
-from lino.core.site import to_locale
+from lino.utils.format_date import format_date
 
 from lino.api import dd, rt
-
-
-def format_date(d, fmt):
-    """Return the given date `d` formatted using Django's current language
-    combined with `Babel's date formatting
-    <http://babel.edgewall.org/wiki/Documentation/dates.html>`_
-
-    """
-    return babel_format_date(
-        d, fmt, locale=to_locale(translation.get_language()))
 
 
 def aware(d):

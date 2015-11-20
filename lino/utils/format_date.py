@@ -75,6 +75,7 @@ from __future__ import unicode_literals, print_function
 import datetime
 from babel.dates import format_date as babel_format_date
 
+from django.conf import settings
 from django.utils import translation
 from django.template import defaultfilters
 
@@ -100,14 +101,21 @@ def fdmy(d):
 
 
 def format_date(d, format='medium'):
+    """Return the given date `d` formatted with `Babel's date formatting
+    <http://babel.edgewall.org/wiki/Documentation/dates.html>`_ and
+    using Django's current language.
+
+    """
     if not d:
         return ''
     if isinstance(d, IncompleteDate):
         d = d.as_date()
     if not isinstance(d, datetime.date):
         raise Exception("Not a date: {0!r}".format(d))
-    return babel_format_date(
-        d, format=format, locale=to_locale(translation.get_language()))
+    lng = translation.get_language()
+    if lng is None:  # occured during syncdb
+        lng = settings.SITE.languages[0].django_code
+    return babel_format_date(d, format=format, locale=to_locale(lng))
 
 
 def fdf(d):

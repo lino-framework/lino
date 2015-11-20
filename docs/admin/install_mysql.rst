@@ -99,30 +99,6 @@ See the following chapters of the MySQL documentation
    See `Database Character Set and Collation
    <http://dev.mysql.com/doc/refman/5.0/en/charset-database.html>`_
 
-.. _innodb:
-
-Lino and the InnoDB engine
-==========================
-
-Lino versions before :blogref:`20141220` were more easy to use with
-the MyISAM storage instead of the default InnoDB storage (see `Setting
-the Storage Engine
-<http://dev.mysql.com/doc/refman/5.1/en/storage-engine-setting.html>`_).
-
-Using InnoDB could cause
-the following error message when trying to run :manage:`initdb` on a
-non-empty database::
-
-    IntegrityError: (1217, 'Cannot delete or update a parent row: 
-    a foreign key constraint fails')
-
-This was because :manage:`initdb` could fail to drop tables due to
-InnoDB's more severe integrity contraints.
-
-Even with InnoDB it was possible to work around this problem by doing
-yourself a `DROP DATABASE` followed by a new `CREATE DATABASE` each
-time before running :manage:`initdb`.
-
 
 Tuning
 ======

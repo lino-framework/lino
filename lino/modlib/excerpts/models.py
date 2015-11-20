@@ -344,7 +344,7 @@ class BodyTemplateContentField(dd.VirtualField):
         return file(fn).read().decode('utf8')
 
     def set_value_in_object(self, ar, obj, value):
-        if not value:
+        if ar is None or value is None:
             return
         fn = obj.get_body_template_name()
         if not fn:
@@ -571,8 +571,8 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
         documents. See :doc:`/user/templates_api`.
 
         """
-
-        kw = self.owner.get_printable_context(ar, **kw)
+        if self.owner is not None:
+            kw = self.owner.get_printable_context(ar, **kw)
         kw = super(Excerpt, self).get_printable_context(**kw)
         kw.update(obj=self.owner)
         body = ''
