@@ -11,9 +11,20 @@ from lino.core.model import Model
 
 
 class Uploadable(Model):
+    """Represents an uploadable file.
 
-    """
-    Represents an uploadable file.
+    .. attribute:: file
+
+        Pointer to the file itself (a `Django FileField
+        <https://docs.djangoproject.com/en/1.8/ref/models/fields/#filefield>`_).
+
+    .. attribute:: mimetype
+
+        The `Media type <https://en.wikipedia.org/wiki/Media_type>`_
+        of the file.  See also `this thread
+        <http://stackoverflow.com/questions/643690/maximum-mimetype-length-when-storing-type-in-db>`_
+        about length of MIME type field.
+
     """
 
     # file_field_class = models.FileField
@@ -29,8 +40,7 @@ class Uploadable(Model):
         upload_to='uploads/%Y/%m')
     mimetype = models.CharField(
         _("MIME type"),
-        blank=True,
-        max_length=64, editable=False)
+        blank=True, max_length=255, editable=False)
 
     def handle_uploaded_files(self, request):
         #~ from django.core.files.base import ContentFile

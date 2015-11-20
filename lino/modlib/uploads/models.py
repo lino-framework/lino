@@ -85,7 +85,7 @@ def filename_leaf(name):
 
 
 class Upload(mixins.Uploadable, UserAuthored, Controllable):
-
+    """Represents an uploaded file."""
     class Meta:
         abstract = dd.is_abstract_model(__name__, 'Upload')
         verbose_name = _("Upload")
@@ -255,10 +255,14 @@ class AreaUploads(Uploads):
                 if m.file.name:
                     show = ar.renderer.href_button(
                         settings.SITE.build_media_url(m.file.name),
-                        _(" [show]"),  # fmt(m),
+                        # u"\u21A7",  # DOWNWARDS ARROW FROM BAR (↧)
+                        # u"\u21E8",
+                        u"\u21f2",  # SOUTH EAST ARROW TO CORNER (⇲)
+                        style="text-decoration:none;",
+                        # _(" [show]"),  # fmt(m),
                         target='_blank',
-                        icon_name=settings.SITE.build_static_url(
-                            'images/xsite/link'),
+                        # icon_name=settings.SITE.build_static_url(
+                        #     'images/xsite/link'),
                         # icon_name='page_go',
                         # style="vertical-align:-30%;",
                         title=_("Open the uploaded file in a new browser window"))
