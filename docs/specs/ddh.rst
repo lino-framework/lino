@@ -47,7 +47,7 @@ Lino Noi:
 - countries.Place :
   - PROTECT : contacts.Partner.city, countries.Place.parent
 - excerpts.Excerpt :
-  - set_on_delete : clocking.ServiceReport.printed_by, tickets.Milestone.printed_by
+  - SET_NULL : clocking.ServiceReport.printed_by, tickets.Milestone.printed_by
 - excerpts.ExcerptType :
   - PROTECT : excerpts.Excerpt.excerpt_type
 - faculties.Faculty :
