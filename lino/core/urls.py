@@ -17,17 +17,15 @@ from lino.core.utils import is_devserver
 
 import lino
 lino.startup()
+# we must explicitly call django.setup() because when running under
+# mod_wsgi this is not done automatically as with runserver (or at
+# least it seems so)
 lino.site_startup()
 
 site = settings.SITE
-
-# site.startup()
-
 urlpatterns = []
 
 database_ready.send(site)
-
-urlpatterns = []
 
 if site.site_prefix:
     prefix = site.site_prefix[1:]
