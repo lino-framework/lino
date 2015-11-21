@@ -149,6 +149,8 @@ Special topics
    /tutorials/input_mask/index
    /tutorials/gfktest/index
 
+   setup
+
 Drafts
 ======
    
