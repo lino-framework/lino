@@ -21,7 +21,7 @@ SETUP_INFO = dict(
         'django',
         'Sphinx',
         'atelier', 'unipath', 'python_dateutil',
-        'Babel', 'odfpy', 'lxml',
+        'Babel', 'odfpy>1.3', 'lxml',
         'beautifulsoup4', 'html5lib', 'reportlab==2.7', 'pisa',
         'jinja2', 'appy', 'pytidylib', 'PyYAML',
         'fuzzy',  # lino.mixins.dupable
