@@ -26,7 +26,14 @@ import os
 from os.path import join, dirname
 
 
-execfile(join(dirname(__file__), 'setup_info.py'))
+filename = join(dirname(__file__), 'setup_info.py')
+exec(compile(open(filename, "rb").read(), filename, 'exec'))
+
+# above line is equivalent to the line below, except that it works
+# also in Python 3
+
+execfile(filename)
+
 __version__ = SETUP_INFO['version']
 intersphinx_urls = dict(docs="http://www.lino-framework.org")
 srcref_url = 'https://github.com/lsaffre/lino/blob/master/%s'

@@ -890,6 +890,10 @@ class SubmitInsert(CreateRow):
         return isinstance(caller, InsertRow)
 
     def run_from_ui(self, ar, **kw):
+        ar.requesting_panel = None
+        # must set this to None, otherwise javascript button actions
+        # would try to refer the requesting panel which is going to be
+        # closed (this disturbs at least in ticket #219)
         elem = ar.create_instance_from_request()
         self.save_new_instance(ar, elem)
         ar.set_response(close_window=True)
