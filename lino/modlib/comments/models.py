@@ -22,9 +22,6 @@ from lino.api import dd, rt
 from lino import mixins
 from lino.modlib.users.mixins import ByUser, UserAuthored
 from lino.utils.xmlgen.html import E
-from lino.core.utils import gfk2lookup
-
-
 
 
 class Comment(
@@ -108,18 +105,11 @@ class Comments(dd.Table):
 class MyComments(ByUser, Comments):
     required_roles = dd.required()
     auto_fit_column_widths = True
-    #~ master_key = 'user'
-    #~ column_names = "date event_type type subject project body *"
-    #~ column_names = "date event_type type subject body *"
-    #~ column_names = "date type event_type subject body_html *"
-    #~ can_view = perms.is_authenticated
-    #~ label = _("My notes")
     order_by = ["created"]
 
 
 class CommentsByX(Comments):
     required_roles = dd.required()
-    #~ column_names = "date event_type type subject body user *"
     order_by = ["-created"]
 
 USE_ETREE = False
