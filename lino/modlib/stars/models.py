@@ -6,19 +6,13 @@
 
 """
 
-import datetime
 
 from django.db import models
-from django.conf import settings
 
 from lino.api import dd, rt, _
-
-
 from lino.core.utils import gfk2lookup
-
 from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.users.mixins import UserAuthored, ByUser
-
 from lino.core.requests import BaseRequest
 
 
@@ -34,9 +28,15 @@ class Star(UserAuthored, Controllable):
 
         The starring user (pointer to :class:lino.modlib.users.models.User`
 
+    .. attribute:: nickname
+
+        
+
     """
 
     controller_is_optional = False
+
+    nickname = models.CharField(_("Nickname"), max_length=50)
 
     class Meta:
         verbose_name = _("Star")
@@ -61,10 +61,12 @@ def get_favourite(obj, user):
 
 class Stars(dd.Table):
     model = 'stars.Star'
+    column_names = "id owner user nickname *"
 
 
 class MyStars(Stars, ByUser):
-    pass
+    column_names = "id owner nickname *"
+    order_by = ['nickname', 'id']
 
 
 class StarObject(dd.Action):
@@ -122,16 +124,24 @@ from lino.utils import join_elems
 
 
 def welcome_messages(ar):
-    """Yield messages for the welcome page. Currently not used."""
+    """Yield a message "Your stars are X, Y, ..." for the welcome page.
+
+    This message mentions all starred objects of the requesting user
+    and whose :attr:`nickname <Star.nickname>` is not empty.
+
+    """
     Star = rt.modules.stars.Star
-    qs = Star.objects.filter(user=ar.get_user())
+    qs = Star.objects.filter(user=ar.get_user()).exclude(nickname='')
     if qs.count() > 0:
         chunks = [unicode(_("Your stars are "))]
-        chunks += join_elems([ar.obj2html(obj.owner) for obj in qs])
+        chunks += join_elems([
+            ar.obj2html(obj.owner, obj.nickname or unicode(obj.owner))
+            for obj in qs])
+        chunks.append('.')
         yield E.span(*chunks)
 
 
-# dd.add_welcome_handler(welcome_messages)
+dd.add_welcome_handler(welcome_messages)
 
 
 from lino.modlib.changes.models import Change

@@ -19,14 +19,16 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("Stars")
 
-    needs_plugins = ['lino.modlib.changes']
+    needs_plugins = ['lino.modlib.changes', 'lino.modlib.office']
 
     def setup_main_menu(self, site, profile, m):
-        p = self.get_menu_group()
+        # p = self.get_menu_group()
+        p = self.site.plugins.office
         m = m.add_menu(p.app_label, p.verbose_name)
         m.add_action('stars.MyStars')
 
     def setup_explorer_menu(self, site, profile, m):
-        p = self.get_menu_group()
+        # p = self.get_menu_group()
+        p = self.site.plugins.office
         m = m.add_menu(p.app_label, p.verbose_name)
         m.add_action('stars.Stars')
