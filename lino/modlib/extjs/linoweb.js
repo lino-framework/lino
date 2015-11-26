@@ -16,6 +16,24 @@ String.prototype.toCamel = function(){
 };
 
 
+// 20151126 hack to modify Ext.EventObjectImpl.isSpecialKey() which
+// returned false for Ctrl-S when called from a keyup handler (namely
+// ComboBox.onLoad)
+
+Ext.EventObjectImpl.prototype.isSpecialKey = function(){
+    // same as original except for one line
+    var k = this.normalizeKey(this.keyCode);
+    // return (this.type == 'keypress' && this.ctrlKey) ||
+    return (this.ctrlKey) ||
+        this.isNavKeyPress() ||
+        (k == this.BACKSPACE) || 
+        (k >= 16 && k <= 20) || 
+        (k >= 44 && k <= 46);   
+};
+
+
+
+
 
 /* MonthPickerPlugin: thanks to keypoint @ sencha forum
    http://www.sencha.com/forum/showthread.php?74002-3.x-Ext.ux.MonthMenu&p=356860#post356860
@@ -2844,7 +2862,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   }
   
   ,set_current_record : function(record, after) {
-      // console.log('20150905 set_current_record', record);
+    // console.log('20150905 set_current_record', record);
     if (this.record_selector) {
         this.record_selector.clearValue();
         // e.g. InsertWrapper FormPanel doesn't have a record_selector
@@ -3067,7 +3085,11 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
               handler: function(k, e) {
                   // console.log("20151006", e.target.type, e.ctrlKey, e);
                   if(e.target.type === 'textarea' && !e.ctrlKey) {
-                      // do default behaviour (i.e. insert a newline)
+                      // We would like to restore the original default
+                      // behaviour (i.e. insert a newline), so we must
+                      // instruct the event handler to continue
+                      // handling this event. But (at least on recent
+                      // browsers) nothing seems to work (Ticket #557).
                       // console.log("20151006 default");
                       return true;
                   }
@@ -4120,7 +4142,7 @@ Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
       //~ Ext.form.ComboBox.initComponent(this);
       Lino.ComboBox.superclass.initComponent.call(this);
   },
-  setValue : function(v,record_data){
+  setValue : function(v, record_data){
       /*
       Based on feature request developed in http://extjs.net/forum/showthread.php?t=75751
       */
@@ -4417,19 +4439,19 @@ Lino.Window = Ext.extend(Ext.Window,{
 
 
 Ext.override(Ext.form.BasicForm,{
-    my_loadRecord : function(values){
+    my_loadRecord : function(record_data){
     //~ loadRecord : function(record){
-        /* Same as ExtJS's loadRecord() (setValues()), except that we 
-        forward also the record to field.setValue() so that Lino.Combobox 
-        can use it. 
+        /* Same as ExtJS's loadRecord() (setValues()), except that we
+        forward also the record_data to field.setValue(). This second
+        parameter is used by Lino.Combobox.
         */
-        //~ console.log('20120918 my_loadRecord',values)
-        if(Ext.isArray(values)){ 
-            for(var i = 0, len = values.length; i < len; i++){
-                var v = values[i];
+        //~ console.log('20120918 my_loadRecord', record_data)
+        if(Ext.isArray(record_data)){ 
+            for(var i = 0, len = record_data.length; i < len; i++){
+                var v = record_data[i];
                 var f = this.findField(v.id);
                 if(f){
-                    f.setValue(v.value,values);
+                    f.setValue(v.value, record_data);
                     if(this.trackResetOnLoad){
                         f.originalValue = f.getValue();
                     }
@@ -4437,9 +4459,9 @@ Ext.override(Ext.form.BasicForm,{
             }
         }else{ 
             var field, id;
-            for(id in values){
-                if(!Ext.isFunction(values[id]) && (field = this.findField(id))){
-                    field.setValue(values[id],values);
+            for(id in record_data){
+                if(!Ext.isFunction(record_data[id]) && (field = this.findField(id))){
+                    field.setValue(record_data[id], record_data);
                     if(this.trackResetOnLoad){
                         field.originalValue = field.getValue();
                         //~ if (field.hiddenField) {

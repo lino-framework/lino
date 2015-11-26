@@ -45,8 +45,9 @@ class Plugin(Plugin):
     textarea field) should submit the form.
 
     The default is `False`. For sites that were in production before
-    October 2015, we recomment to explain to the users that
-    :kbd:`Ctrl-S` is the preferred keyboard shortcut for submitting a
+    October 2015, we recommend to explain to the users that a simple
+    :kbd:`ENTER` no longer submits a form, and that :kbd:`Ctrl-S` is
+    the preferred keyboard shortcut for submitting a
     form. Alternatively for backwards compatibility you can set it to
     `True` using something like this::
 
@@ -56,8 +57,10 @@ class Plugin(Plugin):
                 self.plugins.extjs.configure(enter_submits_form=False)
 
 
-    This setting is read by :xfile:`linoweb.js` who adds the exotic
-    special mapping for :kbd:`ENTER` only when this is `True`.
+    When you set this to `True` :xfile:`linoweb.js` adds a special
+    mapping for :kbd:`ENTER`. The problem then is that the
+    :kbd:`ENTER` key won't work in a plain textarea field because we
+    didn't find a way to restore the default behaviour.
 
     """
     ui_label = _("Admin")
