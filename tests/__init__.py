@@ -31,6 +31,9 @@ class SpecsTests(BaseTestCase):
     def test_packages(self):
         self.run_packages_test(SETUP_INFO['packages'])
 
+    def test_memo(self):
+        self.run_simple_doctests('docs/specs/memo.rst')
+
     def test_smtpd(self):
         self.run_simple_doctests('docs/specs/smtpd.rst')
 

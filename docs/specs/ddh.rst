@@ -51,7 +51,7 @@ Lino Noi:
 - excerpts.ExcerptType :
   - PROTECT : excerpts.Excerpt.excerpt_type
 - faculties.Faculty :
-  - PROTECT : faculties.Competence.faculty, tickets.Ticket.faculty
+  - PROTECT : clocking.Session.faculty, faculties.Competence.faculty, tickets.Ticket.faculty
 - lists.List :
   - PROTECT : lists.Member.list
 - lists.ListType :

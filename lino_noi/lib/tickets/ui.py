@@ -262,7 +262,7 @@ class TicketDetail(dd.DetailLayout):
 
     general = dd.Panel("""
     general1:60 DeploymentsByTicket:20
-    comments.CommentsByController:30 clocking.SessionsByTicket:40
+    comments.CommentsByRFC:30 clocking.SessionsByTicket:40
     """, label=_("General"))
     
     general1 = """

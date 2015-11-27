@@ -93,6 +93,18 @@ class Sessions(dd.Table):
     model = 'clocking.Session'
     column_names = 'ticket user start_date start_time end_date end_time '\
                    'break_time summary duration  *'
+
+    detail_layout = """
+    ticket start_date start_time end_date end_time break_time user
+    summary:60 faculty:20 workflow_buttons
+    description
+    """
+    insert_layout = """
+    ticket
+    summary
+    session_type
+    """
+
     order_by = ['-start_date', '-start_time']
     # order_by = ['start_date', 'start_time']
     # stay_in_grid = True
@@ -116,17 +128,6 @@ class Sessions(dd.Table):
                     "user session_type ticket"
     auto_fit_column_widths = True
 
-    detail_layout = """
-    ticket start_date start_time end_date end_time break_time user
-    summary
-    description
-    """
-    insert_layout = """
-    ticket
-    summary
-    session_type
-    """
-
     @classmethod
     def get_request_queryset(self, ar):
         qs = super(Sessions, self).get_request_queryset(ar)
@@ -142,9 +143,53 @@ class Sessions(dd.Table):
 
 
 class SessionsByTicket(Sessions):
+    """
+    The "Sessions" panel in the detail of a ticket.
+
+    .. attribute:: slave_summary
+
+        This panel shows:
+
+         
+    """
     master_key = 'ticket'
     column_names = 'start_date summary start_time end_time  '\
                    'break_time duration user *'
+    slave_grid_format = 'summary'
+
+    @classmethod
+    def get_slave_summary(self, obj, ar):
+        if ar is None:
+            return ''
+        elems = []
+
+        # Active sessions:
+        active_sessions = []
+        qs = rt.modules.clocking.Session.objects.filter(ticket=obj)
+        tot = Duration()
+        for ses in qs:
+            d = ses.get_duration()
+            if d is not None:
+                tot += d
+            if ses.end_time is None:
+                txt = "{0} since {1}".format(ses.user, ses.start_time)
+                active_sessions.append(ar.obj2html(ses, txt))
+
+        elems.append(E.p(_("Total {0} hours.").format(tot)))
+
+        if len(active_sessions) > 0:
+            elems.append(E.p(
+                unicode(_("Active sessions")), ": ",
+                *join_elems(active_sessions, ', ')))
+
+        # Button for starting a session from ticket
+
+        sar = obj.start_session.request_from(ar)
+        if ar.renderer.is_interactive and sar.get_permission():
+            btn = sar.ar2button(obj)
+            elems += [E.p(btn)]
+        
+        return E.div(*elems)
 
 
 class MySessions(Sessions):
@@ -178,6 +223,8 @@ class MySessionsByDate(MySessions):
 
 
 class WorkedHours(dd.VentilatingTable):
+    """A table showing one row per day with a summary view of the sesions
+    on that day."""
     required_roles = dd.required()
     label = _("Worked hours")
     hide_zero_rows = True
@@ -194,7 +241,7 @@ class WorkedHours(dd.VentilatingTable):
             self._tickets = set()
             grand_tot = Duration()
             pv = dict(start_date=day, end_date=day)
-            pv.update(observed_event=dd.PeriodEvents.active)
+            pv.update(observed_event=dd.PeriodEvents.started)
             pv.update(user=ar.param_values.user)
             self.sar = ar.spawn(MySessionsByDate, param_values=pv)
             for ses in self.sar:
@@ -269,9 +316,9 @@ class WorkedHours(dd.VentilatingTable):
         yield w(None, _("Total"))
 
 
-def compute_invested_time(obj, pv, **spv):
+def compute_invested_time(obj, **spv):
     # spv = dict(start_date=pv.start_date, end_date=pv.end_date)
-    spv.update(observed_event=dd.PeriodEvents.active)
+    spv.update(observed_event=dd.PeriodEvents.started)
     sar = SessionsByTicket.request(master_instance=obj, param_values=spv)
     tot = Duration()
     for obj in sar:
@@ -343,7 +390,7 @@ class OtherTicketsByMilestone(Tickets, InvestedTime):
         qs = qs.exclude(id__in=explicit)
         for obj in qs:
             obj._invested_time = compute_invested_time(
-                obj, mi, start_date=mi.changes_since, end_date=end_date)
+                obj, start_date=mi.changes_since, end_date=end_date)
             yield obj
 
     @classmethod
@@ -385,7 +432,7 @@ class TicketsByReport(Tickets, InvestedTime):
         qs = super(TicketsByReport, self).get_request_queryset(ar)
         for obj in qs:
             obj._invested_time = compute_invested_time(
-                obj, mi, start_date=mi.start_date, end_date=mi.end_date)
+                obj, start_date=mi.start_date, end_date=mi.end_date)
             yield obj
 
 
@@ -410,7 +457,7 @@ class ProjectsByReport(Projects, InvestedTime):
             sar = Tickets.request(param_values=spv)
             for ticket in sar:
                 ttot = compute_invested_time(
-                    ticket, mi, start_date=mi.start_date, end_date=mi.end_date)
+                    ticket, start_date=mi.start_date, end_date=mi.end_date)
                 if ttot:
                     tot += ttot
                     tickets.append(ticket)
