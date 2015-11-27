@@ -62,6 +62,7 @@ blogs = dd.resolve_app('blogs')
 from lino.modlib.cal.mixins import daterange_text
 from lino.modlib.contacts.mixins import ContactRelated
 from lino.modlib.users.mixins import UserAuthored
+from lino.modlib.comments.mixins import RFC
 from lino.modlib.excerpts.mixins import Certifiable
 from lino.utils import join_elems
 
@@ -368,7 +369,7 @@ class SpawnTicket(dd.Action):
         ar.goto_instance(c)
 
 
-class Ticket(mixins.CreatedModified, TimeInvestment):
+class Ticket(mixins.CreatedModified, TimeInvestment, RFC):
     """A **Ticket** is a concrete question or problem formulated by a
     :attr:`reporter` (a user).
     
@@ -405,13 +406,7 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
         ticket has evolved during time, it should reflect the latest
         version.
 
-        This a formatted HTML text which can additionally contain
-        :mod:`memo <lino.utils.memo>` markup. Examples:
-
-        [url http://www.example.com]
-        [url http://www.example.com example]
-
-        [ticket 1]
+        The description can contain memo commands (see :doc:`/specs/memo`).
 
     """
 
@@ -488,6 +483,9 @@ class Ticket(mixins.CreatedModified, TimeInvestment):
         LinkTypes.triggers)
     # spawn_triggered = SpawnTicket("⚇", LinkTypes.triggers)  # "\u2687"
     # spawn_ticket = SpawnTicket("", LinkTypes.requires)  # "\u2687"
+
+    def get_rfc_description(self, ar):
+        return ar.parse_memo(self.description)
 
     def on_create(self, ar):
         # print "20150523a on_create", self.reporter_id
@@ -624,18 +622,39 @@ dd.inject_field(
         blank=True, null=True, related_name="users_by_site",
         help_text=_("")))
 
-from lino.modlib.bootstrap3.views import MEMO_PARSER
 
+@dd.receiver(dd.post_ui_build)
+def setup_memo_commands(sender=None, **kwargs):
 
-def ticket2html(s):
-    pk = int(s)
-    obj = rt.modules.tickets.Ticket.objects.get(pk=pk)
-    url = dd.plugins.bootstrap3.renderer.get_detail_url(obj)
-    text = "#{0}".format(obj.id)
-    title = obj.summary
-    return '<a href="{0}" title="{2}">{1}</a>'.format(url, text, title)
+    def ticket2html(parser, s):
+        ar = parser.context['ar']
+        pk = int(s)
+        obj = sender.site.modules.tickets.Ticket.objects.get(pk=pk)
+        text = "#{0}".format(obj.id)
+        e = ar.obj2html(obj, text, title=obj.summary)
+        return E.tostring(e)
+        # url = rnd.get_detail_url(obj)
+        # title = obj.summary
+        # return '<a href="{0}" title="{2}">{1}</a>'.format(url, text, title)
 
-MEMO_PARSER.register_command('ticket', ticket2html)
+    sender.memo_parser.register_command('ticket', ticket2html)
+    # sender.site.plugins.bootstrap3.renderer.memo_parser.register_command(
+    #     'ticket', ticket2html)
+    # sender.site.plugins.extjs.renderer.memo_parser.register_command(
+    #     'ticket', ticket2html)
+
+    # rnd = sender.site.plugins.extjs.renderer
+    
+    # def f(s):
+    #     pk = int(s)
+    #     obj = sender.modules.tickets.Ticket.objects.get(pk=pk)
+    #     url = rnd.get_detail_url(obj)
+    #     text = "#{0}".format(obj.id)
+    #     title = obj.summary
+    #     return '<a href="{0}" title="{2}">{1}</a>'.format(url, text, title)
+
+    # rnd.memo_parser.register_command('ticket', f)
+
 
 if True:  # dd.is_installed('changes'):
     """

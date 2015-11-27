@@ -150,17 +150,17 @@ class EndTicketSession(dd.Action):
 
 
 class StartTicketSession(dd.Action):
-    # label = _("Start session")
+    label = _("Start session")
     # label = u"\u262d"
-    #label = u"\u2692"
+    # label = u"\u2692"
     # label = u"\u2690"
     # label = u"\u2328"
     # label = u"\u231a\u2197"
-    label = u"↗"  # \u2197
+    # label = u"↗"  # \u2197
 
     help_text = _("Start a session on this ticket.")
     # icon_name = 'emoticon_smile'
-    show_in_workflow = True
+    show_in_workflow = False
     show_in_bbar = False
 
     def get_action_permission(self, ar, obj, state):
@@ -196,8 +196,14 @@ dd.inject_field(
 
 
 class Session(UserAuthored, StartedEnded):
-    """
-    A Session is when a user works on a given ticket.
+    """A Session is when a user works on a given ticket.
+
+    .. attribute:: faculty
+
+       The faculty that has been used during this session. On a new
+       session this defaults to the needed faculty currently specified
+       on the ticket.
+
     """
     class Meta:
         verbose_name = _("Session")
@@ -214,6 +220,9 @@ class Session(UserAuthored, StartedEnded):
     #     blank=True, null=True,
     #     verbose_name=_("Break Time"))
     break_time = dd.DurationField(_("Break Time"), blank=True)
+    faculty = dd.ForeignKey(
+        'faculties.Faculty', related_name="sessions_by_faculty",
+        blank=True, null=True)
 
     end_session = EndSession()
 
@@ -225,7 +234,17 @@ class Session(UserAuthored, StartedEnded):
                 self.end_time.strftime(settings.SITE.time_format_strftime))
         return "%s # %s" % (self._meta.verbose_name, self.pk)
 
-    def save(self, *args, **kwargs):
+    def full_clean(self, *args, **kwargs):
+        if not settings.SITE.loading_from_dump:
+            if self.start_date is None:
+                self.start_date = dd.today()
+            if self.start_time is None:
+                self.start_time = datetime.datetime.now().time()
+            if self.ticket_id is not None and self.faculty_id is None:
+                self.faculty = self.ticket.faculty
+        super(Session, self).full_clean(*args, **kwargs)
+
+    def unused_save(self, *args, **kwargs):
         if not settings.SITE.loading_from_dump:
             if self.start_date is None:
                 self.start_date = dd.today()
