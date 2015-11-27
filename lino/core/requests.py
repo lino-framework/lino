@@ -482,6 +482,13 @@ request from it.
         cb.add_choice('no', noop, _("No"))
         self.set_callback(cb)
 
+    def parse_memo(self, html, **context):
+        context.update(ar=self)
+        return settings.SITE.kernel.memo_parser.parse(html, **context)
+
+    # def parse_memo(self, html):
+    #     return self.renderer.parse_memo(html, ar=self)
+
     def render_jinja(self, template, **context):
         sar = copy(self)
         # sar.renderer = settings.SITE.kernel.html_renderer

@@ -29,9 +29,8 @@ import lino
 from lino.core import constants
 from lino.core.renderer import HtmlRenderer
 
-from lino.ad import Plugin
+from lino.api.ad import Plugin
 
-# from lino.core import actions
 from lino.core.actions import (ShowEmptyTable, ShowDetailAction,
                                InsertRow, GridEdit, SubmitDetail,
                                SubmitInsert)

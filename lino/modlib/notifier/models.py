@@ -96,6 +96,8 @@ class Notification(UserAuthored, Controllable, Created):
 
     @dd.displayfield()
     def overview(self, ar):
+        if ar is None:
+            return ''
         context = dict(
             obj=E.tostring(ar.obj2html(self.owner)),
             user=E.tostring(ar.obj2html(self.user)))

@@ -23,10 +23,10 @@ Instantiate a parser:
 
 We declare a "command handler" function `url2html` and register it:
 
->>> def url2html(s):
+>>> def url2html(parser, s):
 ...     print "[DEBUG] url2html() got %r" % s
 ...     if not s: return "XXX"
-...     url,text = s.split(None,1)
+...     url, text = s.split(None,1)
 ...     return '<a href="%s">%s</a>' % (url,text)
 >>> p.register_command('url', url2html)
 
@@ -170,14 +170,12 @@ class Parser(object):
         cmd = matchobj.group(1)
         params = matchobj.group(2)
         params = params.replace('\\\n', '')
-        h = self.commands.get(cmd, None)
-        if h is None:
+        cmdh = self.commands.get(cmd, None)
+        if cmdh is None:
             return matchobj.group(0)
         try:
-            #~ return h(params)
-            return self.format_value(h(params))
-        #~ except KeyError,e:
-        except Exception, e:
+            return self.format_value(cmdh(self, params))
+        except Exception as e:
             logger.exception(e)
             return self.handle_error(matchobj, e)
 

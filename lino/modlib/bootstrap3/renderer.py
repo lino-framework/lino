@@ -12,6 +12,8 @@ from lino.core import constants as ext_requests
 from lino.core.renderer import HtmlRenderer
 from lino.core.renderer import add_user_language
 
+# from lino.utils.memo import Parser
+
 
 class Renderer(HtmlRenderer):
 
@@ -22,6 +24,19 @@ class Renderer(HtmlRenderer):
     can_auth = False
 
     # is_interactive = True
+
+    # def __init__(self, plugin):
+    #     super(Renderer, self).__init__(plugin)
+
+    #     self.memo_parser = Parser()
+
+    #     def url2html(parser, s):
+    #         url, text = s.split(None, 1)
+    #         if not text:
+    #             text = url
+    #         return '<a href="%s">%s</a>' % (url, text)
+
+    #     self.memo_parser.register_command('url', url2html)
 
     def instance_handler(self, ar, obj, **kw):
         a = obj.get_detail_action(ar)

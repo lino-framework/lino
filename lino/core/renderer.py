@@ -87,7 +87,6 @@ class HtmlRenderer(Renderer):
 
     def __init__(self, plugin):
         self.plugin = plugin
-        # self.ui = plugin.site.ui
 
     def js2url(self, js):
         if not js:

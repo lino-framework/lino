@@ -58,11 +58,12 @@ class Comment(
         tags except some will be removed when
 
         """
+        txt = ar.parse_memo(self.short_text)
         if bleach is None:
-            chunks = [self.short_text]
+            chunks = [txt]
         else:
             chunks = [bleach.clean(
-                self.short_text, tags=self.ALLOWED_TAGS, strip=True)]
+                txt, tags=self.ALLOWED_TAGS, strip=True)]
 
         by = _("{0} by {1}").format(
             naturaltime(self.created), unicode(self.user)),
@@ -78,78 +79,4 @@ class Comment(
 dd.update_field(Comment, 'user', editable=False)
 
 
-class Comments(dd.Table):
-    required_roles = dd.required(dd.SiteStaff)
-    slave_grid_format = "summary"
-
-    model = 'comments.Comment'
-
-    insert_layout = dd.FormLayout("""
-    short_text
-    """, window_size=(40, 10))
-
-    detail_layout = """
-    id user created modified owner
-    short_text
-    more_text
-    """
-
-    #~ column_names = "id date user type event_type subject * body_html"
-    #~ column_names = "id date user event_type type project subject * body"
-    #~ hide_columns = "body"
-    #~ hidden_columns = frozenset(['body'])
-    #~ order_by = ["id"]
-    #~ label = _("Notes")
-
-
-class MyComments(ByUser, Comments):
-    required_roles = dd.required()
-    auto_fit_column_widths = True
-    order_by = ["created"]
-
-
-class CommentsByX(Comments):
-    required_roles = dd.required()
-    order_by = ["-created"]
-
-USE_ETREE = False
-
-
-class CommentsByController(CommentsByX):
-    """Shows the comments of a given database object.
-    """
-    master_key = 'owner'
-    column_names = "short_text created user *"
-    stay_in_grid = True
-
-    # @classmethod
-    # def summary_row(cls, ar, obj, **kw):
-    #     yield obj.text
-    #     yield " ("
-    #     yield ar.obj2html(obj, naturaltime(obj.created))
-    #     yield _(" by ")
-    #     yield ar.obj2html(obj.user)
-    #     yield ")"
-
-    @classmethod
-    def get_slave_summary(self, obj, ar):
-        """The :meth:`summary view <lino.core.actors.Actor.get_slave_summary>`
-        for :class:`CommentsByController`.
-
-        """
-        sar = self.request_from(ar, master_instance=obj)
-
-        html = obj.description
-        items = [o.as_li(ar) for o in sar]
-        if len(items) > 0:
-            html += u"<ul>{0}</ul>".format(''.join(items))
-
-        sar = self.insert_action.request_from(sar)
-        if ar.renderer.is_interactive and sar.get_permission():
-            btn = sar.ar2button(None, _("Write comment"), icon_name=None)
-            html += "<p>" + E.tostring(btn) + "</p>"
-        return u"""<div class="htmlText">{0}</div>""".format(html)
-            
-
-def comments_by_owner(obj):
-    return CommentsByController.request(master_instance=obj)
+from .ui import *
