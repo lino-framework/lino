@@ -53,6 +53,7 @@ from lino.core import tables
 from lino.core import constants
 from lino.core import views
 from lino.utils import class_dict_items
+from lino.utils.memo import Parser
 from lino.core.requests import ActorRequest
 from lino.core.model import Model
 from lino.core.store import Store
@@ -189,6 +190,16 @@ class Kernel(object):
         # We set `code_mtime` only after kernel_startup() because
         # codetime watches only those modules which are already
         # imported.
+
+        self.memo_parser = Parser()
+
+        def url2html(parser, s):
+            url, text = s.split(None, 1)
+            if not text:
+                text = url
+            return '<a href="%s">%s</a>' % (url, text)
+
+        self.memo_parser.register_command('url', url2html)
 
         if site.build_js_cache_on_startup is None:
             site.build_js_cache_on_startup = not (

@@ -103,8 +103,8 @@ class Percentage(Quantity):
 
 
 class Duration(Quantity):
+    """A duration, expressed in `hours:minutes`.
 
-    """
     >>> print Duration('1')
     1:00
     >>> print Duration('2.5')
@@ -155,6 +155,17 @@ class Duration(Quantity):
     10:00
     >>> print Duration(datetime.timedelta(0, minutes=10))
     0:10
+
+    A duration can be more than 24 hours, and in that case (unlike
+    :class:`datetime.datetime`) it is still represented using
+    `hhhh.mm`:
+
+    >>> print Duration(datetime.timedelta(hours=25))
+    25:00
+
+    >>> print Duration(datetime.timedelta(days=128))
+    3072:00
+
     """
 
     def __new__(cls, value="0", context=None):
@@ -163,8 +174,15 @@ class Duration(Quantity):
                 h, m = value.split(':')
                 value = Decimal(h) + Decimal(m) * DEC2HOUR
         elif isinstance(value, datetime.timedelta):
+            hours = 0
+            if value.days != 0:
+                hours += value.days * 24
+                value = datetime.timedelta(seconds=value.seconds)
             a = str(value).split(':')[:2]
-            return cls(':'.join(a))
+            hours += int(a[0])
+            minutes = int(a[1])
+            return cls('{0}:{1}'.format(hours, minutes))
+            # return cls(':'.join(a))
         self = Decimal.__new__(Duration, value, context)
         return self
 

@@ -128,7 +128,9 @@ class Ended(dd.Model):
 
 
 class StartedEnded(Started, Ended):
+    """Model mixin for things that have both a start_time and an end_time.
 
+    """
     class Meta:
         abstract = True
 
@@ -147,6 +149,7 @@ class StartedEnded(Started, Ended):
             return None
         if et < st:
             return None  # negative duration not supported
+        # print 20151127, repr(et), repr(st)
         return Duration(et - st)
 
     @dd.virtualfield(dd.QuantityField(_("Duration")))
