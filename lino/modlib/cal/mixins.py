@@ -95,7 +95,7 @@ class Started(dd.Model):
         `FOO_date` and `FOO_time` (where FOO is specified in `name` which
         must be either "start" or "end").
         """
-        if pytz is not None and is_aware(value):
+        if settings.USE_TZ and is_aware(value):
             tz = pytz.timezone(self.get_timezone())
             # dd.logger.info("20151128 set_datetime(%r, %r)", value, tz)
             value = value.astimezone(tz)
@@ -125,7 +125,7 @@ class Started(dd.Model):
             dt = datetime.datetime.combine(d, t)
         else:
             dt = datetime.datetime(d.year, d.month, d.day)
-        if pytz is not None:
+        if settings.USE_TZ:
             tz = pytz.timezone(self.get_timezone())
             # dd.logger.info("20151128 get_datetime() %r %r", dt, tz)
             dt = tz.localize(dt)
