@@ -110,6 +110,15 @@ class UserAuthored(model.Model):
                 self.user = u
         super(UserAuthored, self).on_create(ar)
 
+    def get_timezone(self):
+        """Return the author's timezone. Used by
+        :class:`lino.modlib.cal.mixins.Started`.
+
+        """
+        if self.user_id is None:
+            return settings.TIME_ZONE
+        return self.user.timezone or settings.TIME_ZONE
+
     def on_duplicate(self, ar, master):
         """The default behaviour after duplicating is to change the author to
         the user who requested the duplicate.

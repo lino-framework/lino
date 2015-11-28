@@ -13,11 +13,16 @@ Model mixins for `lino.modlib.cal`.
 from __future__ import unicode_literals
 
 import datetime
+try:
+    import pytz
+except ImportError:
+    pytz = None
 
 from django.conf import settings
 from django.db import models
 from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
+from django.utils.timezone import is_aware
 from django.contrib.contenttypes.models import ContentType
 from django.utils.encoding import force_unicode
 
@@ -80,13 +85,21 @@ class Started(dd.Model):
             self.start_date = settings.SITE.today()
         super(Started, self).save(*args, **kw)
 
+    def get_timezone(self):
+        """May get overridden to return the author's timezone."""
+        return settings.TIME_ZONE
+
     def set_datetime(self, name, value):
         """
         Given a datetime `value`, update the two corresponding fields
         `FOO_date` and `FOO_time` (where FOO is specified in `name` which
         must be either "start" or "end").
         """
-        #~ logger.info("20120119 set_datetime(%r)",value)
+        if pytz is not None and is_aware(value):
+            tz = pytz.timezone(self.get_timezone())
+            # dd.logger.info("20151128 set_datetime(%r, %r)", value, tz)
+            value = value.astimezone(tz)
+            # value = tz.localize(value)
         setattr(self, name + '_date', value.date())
         t = value.time()
         if not t:
@@ -109,9 +122,14 @@ class Started(dd.Model):
         if not d:
             return None
         if t:
-            return datetime.datetime.combine(d, t)
+            dt = datetime.datetime.combine(d, t)
         else:
-            return datetime.datetime(d.year, d.month, d.day)
+            dt = datetime.datetime(d.year, d.month, d.day)
+        if pytz is not None:
+            tz = pytz.timezone(self.get_timezone())
+            # dd.logger.info("20151128 get_datetime() %r %r", dt, tz)
+            dt = tz.localize(dt)
+        return dt
 
 
 class Ended(dd.Model):
