@@ -27,6 +27,7 @@ import datetime
 
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
 
 from lino.api import dd, rt, _
 
@@ -142,7 +143,7 @@ class Notifications(dd.Table):
     @classmethod
     def get_detail_title(self, ar, obj):
         if obj.seen is None and obj.user == ar.get_user():
-            obj.seen = datetime.datetime.now()
+            obj.seen = timezone.now()
             obj.save()
             dd.logger.info("20151115 Marked %s as seen", obj)
         return super(Notifications, self).get_detail_title(ar, obj)

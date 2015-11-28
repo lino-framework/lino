@@ -28,6 +28,30 @@ from lino.core.roles import SiteUser, SiteStaff, login_required
 from .utils import AnonymousUser
 
 
+class TimezoneHolder(models.Model):
+    """Mixin for database models which have a :attr:`timezone` field.
+
+    .. attribute:: timezone
+    
+        The timezone.
+
+    """
+    class Meta:
+        abstract = True
+
+    if settings.USE_TZ:
+        timezone = models.CharField(_("Time zone"), max_length=15, blank=True)
+    else:
+        timezone = dd.DummyField()
+
+    @dd.chooser(simple_values=True)
+    def timezone_choices(cls, partner):
+        import pytz
+        if partner and partner.country:
+            return pytz.country_timezones[partner.country.isocode]
+        return pytz.common_timezones
+
+
 class UserAuthored(model.Model):
     """Model mixin for database objects that have a `user` field which
     points to the "author" of this object. The default user is
@@ -85,6 +109,15 @@ class UserAuthored(model.Model):
             if u is not None:
                 self.user = u
         super(UserAuthored, self).on_create(ar)
+
+    def get_timezone(self):
+        """Return the author's timezone. Used by
+        :class:`lino.modlib.cal.mixins.Started`.
+
+        """
+        if self.user_id is None:
+            return settings.TIME_ZONE
+        return self.user.timezone or settings.TIME_ZONE
 
     def on_duplicate(self, ar, master):
         """The default behaviour after duplicating is to change the author to

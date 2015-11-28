@@ -21,6 +21,7 @@ from django.conf import settings
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
 
 from lino.api import dd
 from lino.core import fields
@@ -264,7 +265,7 @@ def get_master(obj):
 def log_change(type, request, master, obj, msg=''):
     Change(
         type=type,
-        time=datetime.datetime.now(),
+        time=timezone.now(),
         user=request.user,
         master=master,
         object=obj,

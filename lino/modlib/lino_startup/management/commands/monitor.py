@@ -13,13 +13,13 @@ logger = logging.getLogger(__name__)
 import os
 import errno
 import cPickle as pickle
-import datetime
 import sys
 from optparse import make_option
 from os.path import join
 
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
 from django.utils.translation import ugettext as _
 from django.utils.encoding import force_unicode
 from django.core.management import call_command
@@ -90,7 +90,7 @@ class Command(BaseCommand):
         #~ settings.SITE.startup()
 
         state = dict()
-        state.update(timestamp=datetime.datetime.now())
+        state.update(timestamp=timezone.now())
         state.update(lino_version=lino.__version__)
 
         states_file = os.path.join(settings.SITE.project_dir, 'states.pck')
