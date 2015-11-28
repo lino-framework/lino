@@ -28,6 +28,30 @@ from lino.core.roles import SiteUser, SiteStaff, login_required
 from .utils import AnonymousUser
 
 
+class TimezoneHolder(models.Model):
+    """Mixin for database models which have a :attr:`timezone` field.
+
+    .. attribute:: timezone
+    
+        The timezone.
+
+    """
+    class Meta:
+        abstract = True
+
+    if settings.USE_TZ:
+        timezone = models.CharField(_("Time zone"), max_length=15, blank=True)
+    else:
+        timezone = dd.DummyField()
+
+    @dd.chooser(simple_values=True)
+    def timezone_choices(cls, partner):
+        import pytz
+        if partner and partner.country:
+            return pytz.country_timezones[partner.country.isocode]
+        return pytz.common_timezones
+
+
 class UserAuthored(model.Model):
     """Model mixin for database objects that have a `user` field which
     points to the "author" of this object. The default user is

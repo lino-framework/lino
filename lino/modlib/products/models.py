@@ -21,6 +21,7 @@ vat = dd.resolve_app('vat')
 class ProductCat(mixins.BabelNamed):
 
     class Meta:
+        app_label = 'products'
         verbose_name = _("Product Category")
         verbose_name_plural = _("Product Categories")
         abstract = dd.is_abstract_model(__name__, 'ProductCat')
@@ -45,6 +46,7 @@ class ProductCats(dd.Table):
 class Product(mixins.BabelNamed, mixins.Referrable):
 
     class Meta:
+        app_label = 'products'
         verbose_name = _("Product")
         verbose_name_plural = _("Products")
         abstract = dd.is_abstract_model(__name__, 'Product')

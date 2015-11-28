@@ -23,7 +23,7 @@ from lino.core import actions
 from lino.mixins import CreatedModified
 
 from .choicelists import UserProfiles
-from .mixins import UserAuthored
+from .mixins import UserAuthored, TimezoneHolder
 
 
 class ChangePassword(dd.Action):
@@ -63,7 +63,7 @@ class ChangePassword(dd.Action):
         ar.success(msg, alert=True)
 
 
-class User(CreatedModified):
+class User(CreatedModified, TimezoneHolder):
     """Represents a user of this site.
 
     .. attribute:: username
@@ -89,6 +89,7 @@ class User(CreatedModified):
     """
 
     class Meta:
+        app_label = 'users'
         verbose_name = _('User')
         verbose_name_plural = _('Users')
         abstract = dd.is_abstract_model(__name__, 'User')
@@ -257,7 +258,7 @@ class UserDetail(dd.FormLayout):
     box1 = """
     username profile:20 partner
     first_name last_name initials
-    email language
+    email language timezone
     id created modified
     """
 

@@ -16,6 +16,7 @@ import datetime
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy
+from django.utils import timezone
 
 from lino.api import dd, rt
 from lino import mixins
@@ -127,7 +128,7 @@ class Note(mixins.TypedPrintable,
     time = models.TimeField(
         blank=True, null=True,
         verbose_name=_("Time"),
-        default=datetime.datetime.now)
+        default=timezone.now)
     type = dd.ForeignKey(
         'notes.NoteType',
         blank=True, null=True,

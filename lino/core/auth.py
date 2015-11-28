@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 from django.core import exceptions
 from django.utils import translation
+from django.utils.timezone import activate
 from django.conf import settings
 from django import http
 
@@ -97,6 +98,9 @@ class AuthMiddleWareBase(object):
         request.user = user
 
         user_language = user.language or settings.SITE.get_default_language()
+
+        if settings.USE_TZ:
+            activate(user.timezone or settings.TIME_ZONE)
 
         if request.method == 'GET':
             rqdata = request.GET

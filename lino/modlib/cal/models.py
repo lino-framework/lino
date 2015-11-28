@@ -18,6 +18,7 @@ from django.db.models import Q
 from django.conf import settings
 from django.core.validators import MaxValueValidator
 from django.core.validators import MinValueValidator
+from django.utils import timezone
 
 from lino import mixins
 from lino.api import dd, rt, _, pgettext
@@ -620,7 +621,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         self.event_type = ar.user.event_type or \
             settings.SITE.site_config.default_event_type
         self.start_date = settings.SITE.today()
-        self.start_time = datetime.datetime.now().time()
+        self.start_time = timezone.now().time()
         # 20130722 e.g. CreateClientEvent sets it explicitly
         if self.assigned_to is None:
             self.assigned_to = ar.subst_user

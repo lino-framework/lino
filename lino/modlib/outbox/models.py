@@ -10,11 +10,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 import os
-import datetime
 
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
 from django.core.exceptions import ValidationError
 
 
@@ -175,7 +175,7 @@ class SendMail(dd.Action):
 
         num_sent = msg.send()
 
-        elem.sent = datetime.datetime.now()
+        elem.sent = timezone.now()
         kw.update(refresh=True)
         #~ msg = "Email %s from %s has been sent to %s." % (
             #~ elem.id,elem.sender,', '.join([

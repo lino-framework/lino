@@ -38,6 +38,7 @@ import datetime
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
 
@@ -149,7 +150,7 @@ class Modified(model.Model):
         super(Modified, self).save(*args, **kwargs)
 
     def touch(self):
-        self.modified = datetime.datetime.now()
+        self.modified = timezone.now()
 
 
 class Created(model.Model):
@@ -171,7 +172,7 @@ class Created(model.Model):
 
     def save(self, *args, **kwargs):
         if self.created is None and not settings.SITE.loading_from_dump:
-            self.created = datetime.datetime.now()
+            self.created = timezone.now()
         super(Created, self).save(*args, **kwargs)
 
 

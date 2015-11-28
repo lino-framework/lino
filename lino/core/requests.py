@@ -11,13 +11,13 @@ See introduction in :doc:`/dev/ar`.
 import logging
 logger = logging.getLogger(__name__)
 
-import datetime
 from copy import copy
 
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import get_language
 from django.utils import translation
+from django.utils import timezone
 from django import http
 from django.core import exceptions
 
@@ -353,7 +353,7 @@ request from it.
             fdmy=dd.fdmy,
             iif=iif,
             pgettext=pgettext,
-            now=datetime.datetime.now(),
+            now=timezone.now(),
             requested_language=get_language())
 
         def parse(s):

@@ -5,11 +5,11 @@
 """
 
 """
-import datetime
 
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
 
 from lino.api import dd, rt
 from lino.modlib.countries.models import CountryCity
@@ -290,9 +290,9 @@ class User(Contact):
         explicitly assigning them.
         """))
     last_login = models.DateTimeField(
-        _('last login'), default=datetime.datetime.now)
+        _('last login'), default=timezone.now)
     date_joined = models.DateTimeField(
-        _('date joined'), default=datetime.datetime.now)
+        _('date joined'), default=timezone.now)
 
     def __unicode__(self):
         return self.username

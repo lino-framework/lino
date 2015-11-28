@@ -36,6 +36,7 @@ class AnonymousUser(object):
     language = None
     readonly = True
     pk = None
+    timezone = None
 
     _instance = None
 

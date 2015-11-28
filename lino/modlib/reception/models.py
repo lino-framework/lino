@@ -25,6 +25,7 @@ from django.db import models
 from django.db.models import Q
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
 
@@ -114,7 +115,7 @@ def create_prompt_event(
     event = rt.modules.cal.Event(**ekw)
     event.save()
     if now is None:
-        now = datetime.datetime.now()
+        now = timezone.now()
     rt.modules.cal.Guest(
         event=event,
         partner=partner,
@@ -157,7 +158,7 @@ class CheckinVisitor(dd.NotifyingAction):
         obj = ar.selected_rows[0]  # a cal.Guest instance
 
         def doit(ar2):
-            obj.waiting_since = datetime.datetime.now()
+            obj.waiting_since = timezone.now()
             obj.state = GuestStates.waiting
             obj.busy_since = None
             obj.save()
@@ -210,7 +211,7 @@ class ReceiveVisitor(MyVisitorAction):
 
         def ok(ar):
             obj.state = GuestStates.busy
-            obj.busy_since = datetime.datetime.now()
+            obj.busy_since = timezone.now()
 
             if not obj.event.start_time:
                 ar.info("event.start_time has been set")
@@ -240,7 +241,7 @@ Visitor leaves             X               X              X
 
 
 def checkout_guest(obj, ar):
-    obj.gone_since = datetime.datetime.now()
+    obj.gone_since = timezone.now()
     if obj.busy_since is None:
         obj.busy_since = obj.gone_since
     if not obj.event.end_time:

@@ -26,6 +26,7 @@ from django.db.utils import OperationalError, ProgrammingError
 from django.db.models.signals import post_init
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
+from django.utils import timezone
 
 
 from django.core.exceptions import ValidationError
@@ -558,7 +559,7 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
         "Used in templates"
         if self.build_time:
             return self.build_time.time()
-        return datetime.datetime.now()
+        return timezone.now()
 
     @dd.virtualfield(dd.HtmlBox(_("Preview")))
     def preview(self, ar):
