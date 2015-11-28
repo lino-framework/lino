@@ -53,6 +53,7 @@ import datetime
 
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
 
 from lino import mixins
 from lino.api import dd, rt, _
@@ -97,7 +98,7 @@ class EndSession(dd.Action):
     def run_from_ui(self, ar, **kw):
 
         def ok(ar2):
-            now = datetime.datetime.now()
+            now = timezone.now()
             for obj in ar.selected_rows:
                 obj.set_datetime('end', now)
                 # obj.end_date = dd.today()
@@ -143,7 +144,7 @@ class EndTicketSession(dd.Action):
         ses = Session.objects.get(
             user=ar.get_user(), ticket=ar.selected_rows[0],
             end_time__isnull=True)
-        ses.set_datetime('end', datetime.datetime.now())
+        ses.set_datetime('end', timezone.now())
         ses.full_clean()
         ses.save()
         ar.set_response(refresh=True)
@@ -239,7 +240,7 @@ class Session(UserAuthored, StartedEnded):
             if self.start_date is None:
                 self.start_date = dd.today()
             if self.start_time is None:
-                self.start_time = datetime.datetime.now().time()
+                self.start_time = timezone.now().time()
             if self.ticket_id is not None and self.faculty_id is None:
                 self.faculty = self.ticket.faculty
         super(Session, self).full_clean(*args, **kwargs)
@@ -249,7 +250,7 @@ class Session(UserAuthored, StartedEnded):
             if self.start_date is None:
                 self.start_date = dd.today()
             if self.start_time is None:
-                self.start_time = datetime.datetime.now().time()
+                self.start_time = timezone.now().time()
         super(Session, self).save(*args, **kwargs)
 
     def get_root_project(self):
