@@ -237,10 +237,15 @@ class Session(UserAuthored, StartedEnded):
 
     def full_clean(self, *args, **kwargs):
         if not settings.SITE.loading_from_dump:
+            if self.start_time is None:
+                self.set_datetime('start', timezone.now())
+                # value = timezone.now()
+                # if pytz:
+                #     tz = pytz.timezone(self.get_timezone())
+                #     value = value.astimezone(tz)
+                # self.start_time = value.time()
             if self.start_date is None:
                 self.start_date = dd.today()
-            if self.start_time is None:
-                self.start_time = timezone.now().time()
             if self.ticket_id is not None and self.faculty_id is None:
                 self.faculty = self.ticket.faculty
         super(Session, self).full_clean(*args, **kwargs)
