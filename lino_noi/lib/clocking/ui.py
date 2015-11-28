@@ -95,8 +95,9 @@ class Sessions(dd.Table):
                    'break_time summary duration  *'
 
     detail_layout = """
-    ticket start_date start_time end_date end_time break_time user
-    summary:60 faculty:20 workflow_buttons
+    ticket:40 user:20 faculty:20
+    start_date start_time end_date end_time break_time duration
+    summary:60 workflow_buttons:20
     description
     """
     insert_layout = """
@@ -175,7 +176,8 @@ class SessionsByTicket(Sessions):
                 txt = "{0} since {1}".format(ses.user, ses.start_time)
                 active_sessions.append(ar.obj2html(ses, txt))
 
-        elems.append(E.p(_("Total {0} hours.").format(tot)))
+        # elems.append(E.p(_("Total {0} hours.").format(tot)))
+        elems.append(E.p(_("Total %s hours.") % tot))
 
         if len(active_sessions) > 0:
             elems.append(E.p(

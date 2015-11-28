@@ -145,3 +145,9 @@ class Site(Site):
 
 # the following line should not be active in a checked-in version
 #~ DATABASES['default']['NAME'] = ':memory:'
+
+USE_TZ = True
+# TIME_ZONE = 'Europe/Brussels'
+# TIME_ZONE = 'Europe/Tallinn'
+TIME_ZONE = 'UTC'
+
