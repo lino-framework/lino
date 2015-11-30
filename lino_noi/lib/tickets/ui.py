@@ -258,12 +258,16 @@ class LinksByTicket(Links):
 
 
 class TicketDetail(dd.DetailLayout):
-    main = "general more changes.ChangesByMaster"
+    main = "general history_tab more "
 
     general = dd.Panel("""
     general1:60 DeploymentsByTicket:20
-    comments.CommentsByRFC:30 clocking.SessionsByTicket:40
+    description:30 clocking.SessionsByTicket:40
     """, label=_("General"))
+
+    history_tab = dd.Panel("""
+    comments.CommentsByRFC:40 changes.ChangesByMaster:40
+    """, label=_("History"))
     
     general1 = """
     summary:40 id:6 reporter:12
@@ -274,8 +278,7 @@ class TicketDetail(dd.DetailLayout):
     more = dd.Panel("""
     nickname:10 created modified reported_for #fixed_for ticket_type:10
     state duplicate_of planned_time priority
-    standby feedback closed
-    description
+    standby feedback closed    
     upgrade_notes:30 DuplicatesByTicket:20  #ChildrenByTicket LinksByTicket:20
     """, label=_("More"))
 
