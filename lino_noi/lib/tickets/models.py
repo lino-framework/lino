@@ -484,8 +484,8 @@ class Ticket(mixins.CreatedModified, TimeInvestment, RFC):
     # spawn_triggered = SpawnTicket("⚇", LinkTypes.triggers)  # "\u2687"
     # spawn_ticket = SpawnTicket("", LinkTypes.requires)  # "\u2687"
 
-    # def get_rfc_description(self, ar):
-    #     return ar.parse_memo(self.description)
+    def get_rfc_description(self, ar):
+        return ar.parse_memo(self.description)
 
     def on_create(self, ar):
         # print "20150523a on_create", self.reporter_id

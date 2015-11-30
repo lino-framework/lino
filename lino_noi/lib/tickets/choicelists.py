@@ -104,6 +104,10 @@ class TicketStates(dd.Workflow):
         It appears in the todo list of somebody (either the assigned
         worker, or our general todo list)
 
+    .. attribute:: sleeping
+
+        Waiting for some external event. We didn't decide what to do with it.
+
     .. attribute:: sticky
 
         Special state for permanent tickets which have no lifecycle.
@@ -148,10 +152,9 @@ add = TicketStates.add_item
 #     help_text=_("Ticket has been assigned to somebody who is assigned on it."))
 add('10', _("New"), 'new')
 add('15', _("Talk"), 'talk')
-add('20', _("Confirmed"), 'todo')
+add('20', _("ToDo"), 'todo')
 add('21', _("Sticky"), 'sticky')
-add('30', _("Sleeping"), 'sleeping',
-    help_text=_("Waiting for some external event."))
+add('30', _("Sleeping"), 'sleeping')
 # add('30', _("Callback"), 'callback',
     # required=dict(states=['new']),
     # action_name=_("Wait for feedback"),
