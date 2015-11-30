@@ -384,6 +384,7 @@ class TableRequest(ActionRequest):
         """
         ar = self
         tble.attrib.update(self.tableattrs)
+        tble.attrib.setdefault('name', self.bound_action.full_name())
 
         grid = ar.ah.list_layout.main
         columns = grid.columns
