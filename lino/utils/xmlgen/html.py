@@ -191,6 +191,7 @@ link
 map 
 menu 
 meta 
+name
 noframes 
 noscript 
 object 

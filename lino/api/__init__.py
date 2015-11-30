@@ -16,6 +16,7 @@ Common usage is to write import statements like this::
    rt
    shell
    doctest
+   selenium
 
 """
 
