@@ -21,3 +21,4 @@ specifications. One of their goal is to get tested.
    public
    ddh
    care
+   memo
