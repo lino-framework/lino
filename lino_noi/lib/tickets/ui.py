@@ -258,17 +258,17 @@ class LinksByTicket(Links):
 
 
 class TicketDetail(dd.DetailLayout):
-    main = "general history_tab more "
+    main = "general changes.ChangesByMaster more "
 
     general = dd.Panel("""
     general1:60 DeploymentsByTicket:20
-    description:30 clocking.SessionsByTicket:40
+    description:30 comments.CommentsByRFC:30 clocking.SessionsByTicket:20
     """, label=_("General"))
 
-    history_tab = dd.Panel("""
-    comments.CommentsByRFC:40 changes.ChangesByMaster:40
-    """, label=_("History"))
-    
+    # history_tab = dd.Panel("""
+    # :40
+    # """, label=_("History"))
+
     general1 = """
     summary:40 id:6 reporter:12
     site product project private
