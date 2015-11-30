@@ -11,8 +11,6 @@ This defines some helper classes like
 - the :class:`ParameterPanel` class (used
   e.g. by :class:`lino.mixins.periods.ObservedPeriod`)
 
-.. autosummary::
-
 """
 
 from __future__ import unicode_literals
