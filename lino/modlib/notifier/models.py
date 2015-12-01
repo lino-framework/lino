@@ -99,6 +99,10 @@ class Notification(UserAuthored, Controllable, Created):
     def overview(self, ar):
         if ar is None:
             return ''
+        return self.get_overview(ar)
+
+    def get_overview(self, ar):
+        # used from body.html template
         context = dict(
             obj=E.tostring(ar.obj2html(self.owner)),
             user=E.tostring(ar.obj2html(self.user)))
@@ -145,7 +149,7 @@ class Notifications(dd.Table):
         if obj.seen is None and obj.user == ar.get_user():
             obj.seen = timezone.now()
             obj.save()
-            dd.logger.info("20151115 Marked %s as seen", obj)
+            # dd.logger.info("20151115 Marked %s as seen", obj)
         return super(Notifications, self).get_detail_title(ar, obj)
 
 
