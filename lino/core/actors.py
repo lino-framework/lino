@@ -704,13 +704,6 @@ class Actor(actions.Parametrizable, Permittable):
         return self._known_values
 
     @classmethod
-    def get_actor_label(self):
-        """Compute the label of this actor.
-
-        """
-        return self._label or self.__name__
-
-    @classmethod
     def get_actor_editable(self):
         return self._editable
 
@@ -841,6 +834,13 @@ class Actor(actions.Parametrizable, Permittable):
     @classmethod
     def get_label(self):
         return self.label
+
+    @classmethod
+    def get_actor_label(self):
+        """Compute the label of this actor.
+
+        """
+        return self._label or self.__name__
 
     @classmethod
     def get_detail_title(self, ar, obj):
