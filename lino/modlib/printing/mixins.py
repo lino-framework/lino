@@ -20,6 +20,7 @@ import datetime
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.utils.timezone import make_aware
 
 from lino.api import rt
 from lino.utils.xmlgen.html import E
@@ -335,7 +336,7 @@ class ClearCacheAction(Action):
             t = datetime.datetime(
                 t.year, t.month, t.day, t.hour,
                 t.minute, t.second, elem.build_time.microsecond)
-
+            t = make_aware(t)
             if t != elem.build_time:
                 logger.info("20140313 %r != %r", t, elem.build_time)
                 return ar.confirm(
