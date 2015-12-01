@@ -426,20 +426,20 @@ class EventGenerator(UserAuthored):
         wanted = dict()
         event_type = self.update_cal_calendar()
         if event_type is None:
-            ar.debug("No event_type")
+            ar.info("No event_type")
             return wanted
         rset = self.update_cal_rset()
         #~ ar.info("20131020 rset %s",rset)
         #~ if rset and rset.every > 0 and rset.every_unit:
         if rset is None:
-            ar.info("20131020 no rset")
+            ar.info("No recurrency set")
             return wanted
         if not rset.every_unit:
-            ar.info("20131020 no every_unit")
+            ar.info("No every_unit")
             return wanted
         date = self.update_cal_from(ar)
         if not date:
-            ar.info("no start date")
+            ar.info("No start date")
             return wanted
         # ar.debug("20140310a %s", date)
         date = rset.find_start_date(date)

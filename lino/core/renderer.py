@@ -509,5 +509,7 @@ class TextRenderer(HtmlRenderer):
     def obj2html(self, ar, obj, text=None, **kwargs):
         if text is None:
             text = force_unicode(obj)
-        return "**{0}**".format(text)
+        # return "**{0}**".format(text)
+        return settings.SITE.obj2text_template.format(text)
+
 
