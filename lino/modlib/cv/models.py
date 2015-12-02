@@ -33,6 +33,7 @@ from django.utils.translation import pgettext_lazy as pgettext
 from lino.api import dd, rt
 from lino import mixins
 from lino.modlib.countries.mixins import CountryCity
+from lino.modlib.system.mixins import PeriodEvents
 
 
 from .mixins import (SectorFunction, PersonHistoryEntry,
@@ -105,9 +106,9 @@ class KnowledgesByLanguage(LanguageKnowledges):
     required_roles = dd.required(CareerUser)
 
 
-##
-## Education
-##
+#
+# Education
+#
 
 class EducationEntry(PersonHistoryEntry, CountryCity):
     """An **education entry** is when a given person has received some
@@ -216,9 +217,25 @@ class StudyTypesByLevel(StudyTypes):
     master_key = 'education_level'
 
 
-##
-## Trainings
-##
+class PeriodTable(dd.Table):
+    parameters = mixins.ObservedPeriod(
+        observed_event=PeriodEvents.field(blank=True))
+    params_layout = "start_date end_date observed_event"
+
+    @classmethod
+    def get_request_queryset(self, ar):
+        qs = super(PeriodTable, self).get_request_queryset(ar)
+
+        pv = ar.param_values
+        ce = pv.observed_event
+        if ce:
+            qs = ce.add_filter(qs, pv)
+        return qs
+
+
+#
+# Trainings
+#
 
 class Training(SectorFunction, EducationEntry):
     """A **training** is an *education entry* with more practical
@@ -252,13 +269,14 @@ class Training(SectorFunction, EducationEntry):
         return rt.modules.cv.StudyType.objects.filter(is_training=True)
 
 
-class Trainings(dd.Table):
+class Trainings(PeriodTable):
     """Base table for all tables on :class:`Training`.
 
     """
 
     model = 'cv.Training'
     order_by = "country city type".split()
+    column_names = "person start_date end_date type state sector function *"
 
     detail_layout = """
     person start_date end_date
@@ -332,13 +350,14 @@ class Study(EducationEntry):
         return rt.modules.cv.StudyType.objects.filter(is_study=True)
 
 
-class Studies(dd.Table):
+class Studies(PeriodTable):
     """The default table showing all :class:`Study` instances.
     """
 
     required_roles = dd.required(CareerStaff)
     model = 'cv.Study'
     order_by = "country city type content".split()
+    column_names = "person start_date end_date type content education_level state *"
 
     detail_layout = """
     person start_date end_date
@@ -383,7 +402,7 @@ class StudiesByPerson(HistoryByPerson, Studies):
     auto_fit_column_widths = True
 
 
-## Work Experiences
+# Work Experiences
 
 
 class Status(mixins.BabelNamed):
@@ -539,12 +558,13 @@ class Experience(PersonHistoryEntry, SectorFunction, CountryCity):
         return unicode(self.title)
 
 
-class Experiences(dd.Table):
+class Experiences(PeriodTable):
     """The default table showing all :class:`Experience` instances.
     """
     required_roles = dd.required(CareerStaff)
     model = 'cv.Experience'
     # stay_in_grid = True
+    column_names = "person start_date end_date sector function title company *"
     detail_layout = """
     person start_date end_date termination_reason
     company country city

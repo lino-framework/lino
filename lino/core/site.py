@@ -225,6 +225,15 @@ class Site(object):
 
     """
 
+    obj2text_template = "*{0}*"
+    """The format template to use when rendering a ForeignKey as plain
+    text.
+
+    Note: reSTructuredText uses *italic* and **bold**.  Changing this
+    can cause lots of trivial failures in test suites.  It is also
+    used by :mod:`lino.modlib.notifier` when generating the mail body.
+
+    """
     make_missing_dirs = True
     """
     Set this to `False` if you don't want this Site to automatically
@@ -325,7 +334,7 @@ class Site(object):
 
     ignore_model_errors = False
     """Not yet sure whether this is needed. Maybe when generating
-documentation.
+    documentation.
 
     """
 

@@ -11,7 +11,11 @@ import subprocess
 from unipath import Path
 from atelier import rstgen
 from atelier.utils import unindent
+
 from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 
 def runserver(settings_module, func):
@@ -59,6 +63,13 @@ class Album(object):
 
     def doubleclick(self, elem):
         self.actionChains.double_click(elem).perform()
+
+    def stabilize(self):
+        """wait until no more loadmask is visible"""
+        WebDriverWait(self.driver, 10).until(
+            EC.invisibility_of_element_located(
+                # (By.CLASS_NAME, "ext-el-mask-msg x-mask-loading")))
+                (By.CSS_SELECTOR, ".x-mask-loading")))
             
     def write_index(self):
         index = self.screenshot_root.child('index.rst')

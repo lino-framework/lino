@@ -676,30 +676,40 @@ request from it.
         """
         return self.renderer.get_home_url(*args, **kw)
 
-    def summary_row(self, obj, **kw):
-        return obj.summary_row(self, **kw)
+    def summary_row(self, obj, **kwargs):
+        return obj.summary_row(self, **kwargs)
 
-    def instance_handler(self, *args, **kw):
-        return self.renderer.instance_handler(self, *args, **kw)
+    def instance_handler(self, *args, **kwargs):
+        return self.renderer.instance_handler(self, *args, **kwargs)
 
-    def pk2url(self, *args, **kw):
-        return self.renderer.pk2url(self, *args, **kw)
+    def pk2url(self, *args, **kwargs):
+        return self.renderer.pk2url(self, *args, **kwargs)
 
-    def obj2html(self, *args, **kw):
-        return self.renderer.obj2html(self, *args, **kw)
+    def obj2html(self, *args, **kwargs):
+        """Return a HTML element which represents a pointer to the given
+        database object. Depending on the renderer this will be more
+        or less clickable.
 
-    def href_button(self, *args, **kw):
-        return self.renderer.href_button(*args, **kw)
+        """
+        return self.renderer.obj2html(self, *args, **kwargs)
 
-    def href_to_request(self, *args, **kw):
-        return self.renderer.href_to_request(self, *args, **kw)
+    def obj2str(self, *args, **kwargs):
+        """Return a string with a pointer to the given object.
+        """
+        return self.renderer.obj2str(self, *args, **kwargs)
 
-    def window_action_button(self, *args, **kw):
-        return self.renderer.window_action_button(self, *args, **kw)
+    def href_button(self, *args, **kwargs):
+        return self.renderer.href_button(*args, **kwargs)
 
-    def row_action_button(self, obj, ba, *args, **kw):
+    def href_to_request(self, *args, **kwargs):
+        return self.renderer.href_to_request(self, *args, **kwargs)
+
+    def window_action_button(self, *args, **kwargs):
+        return self.renderer.window_action_button(self, *args, **kwargs)
+
+    def row_action_button(self, obj, ba, *args, **kwargs):
         return self.renderer.row_action_button(
-            obj, None, ba, *args, **kw)
+            obj, None, ba, *args, **kwargs)
 
     def row_action_button_ar(self, obj, *args, **kw):
         """Return an HTML element with a button for running this action

@@ -20,8 +20,18 @@ for a Lino application.
             
   Plus the app_label of each installed plugin.
             
-            
 
+.. rst:directive:: fields_list
+
+   Render a bullet list of the fields in a given model.  The first
+   word of the content is the model. If there are any other words,
+   then these are field names.  If no field names are specified, all
+   fields of the model are included.
+
+.. rst:role:: menupath
+
+   Render the given menu command specifier as a `menuselection` role.
+            
 .. rst:directive:: actor
 
 Usage::
@@ -38,9 +48,9 @@ that Actor or Model (data elements can be fields or actions)
 
 .. rst:role:: ddref
 
-Insert a reference to the named data dictionary item.
-The visible text will be automatically in the right language
-in multilingual userdocs.
+(Deprecated) Insert a reference to the named data dictionary item.
+The visible text will be automatically in the right language in
+multilingual userdocs.
 
 """
 
@@ -49,7 +59,7 @@ from __future__ import unicode_literals, print_function
 from sphinx.util.compat import Directive
 
 
-from sphinx.roles import XRefRole
+from sphinx.roles import XRefRole, menusel_role
 from sphinx.util import ws_re
 from sphinx import addnodes
 
@@ -72,6 +82,8 @@ from atelier.utils import unindent
 from atelier import rstgen
 from lino.core.utils import full_model_name
 from lino.ad import Plugin
+from lino.utils.diag import analyzer
+from lino.core.actors import resolve_action
 
 from atelier.sphinxconf.insert_input import Py2rstDirective
 
@@ -223,14 +235,18 @@ IGNORED_ACTIONS = (actions.GridEdit, actions.SubmitDetail,
                    actions.InsertRow, actions.SubmitInsert)
 
 
-def menuselection(mi):
+def menuselection_text(mi):
     s = my_escape(unicode(mi.label).strip())
     p = mi.parent
     while p is not None:
         if p.label:
             s = my_escape(unicode(p.label).strip()) + " --> " + s
         p = p.parent
-    return ":menuselection:`%s`" % s
+    return s
+
+
+def menuselection(mi):
+    return ":menuselection:`%s`" % menuselection_text(mi)
 
 
 def actions_ul(action_list):
@@ -438,8 +454,34 @@ class ActorsOverviewDirective(Lino2rstDirective):
                 cls = settings.SITE.modules.resolve(an)
                 if not isinstance(cls, type):
                     raise Exception("%s is not an actor." % self.content[0])
-                items.append("%s : %s" % (actor_ref(cls), cls.help_text or ''))
+                desc = "**{0}** (:class:`{1} <{2}>`)".format(
+                    force_unicode(cls.label),
+                    cls.__name__,
+                    cls.__module__ + '.' + cls.__name__
+                )
+                mi = find_menu_item(cls.default_action)
+                if mi is not None:
+                    desc += _(" (Menu %s)") % menuselection(mi)
+                    #~ print(unicode(mi.label).strip())
+                if cls.help_text:
+                    desc += "  : " + force_unicode(cls.help_text).strip()
+
+                # items.append("%s : %s" % (actor_ref(cls), cls.help_text or ''))
+                items.append(desc)
             return rstgen.ul(items)
+
+
+class ShowFieldsDirective(Lino2rstDirective):
+
+    def get_rst(self):
+        with translation.override(self.language):
+            names = ' '.join(self.content).split()
+            if len(names) > 1:
+                field_names = ' '.join(names[1:])
+            else:
+                field_names = None
+            return analyzer.show_fields(
+                names[0], field_names=field_names)
 
 
 class FormDirective(Lino2rstDirective):
@@ -584,12 +626,24 @@ class ActorDirective(Lino2rstDirective):
         return [indexnode] + content
 
 
+def menupath_role(typ, rawtext, text, *args, **kwargs):
+    a = resolve_action(text)
+    mi = find_menu_item(a)
+    if mi is None:
+        raise Exception("Unknown menu descriptor %s" % text)
+    text = menuselection_text(mi)
+    rawtext = menuselection(mi)
+    return menusel_role('menuselection', rawtext, text, *args, **kwargs)
+
+
 def setup(app):
 
     app.add_directive('form', FormDirective)
     app.add_directive('actor', ActorDirective)
     app.add_directive('actors_overview', ActorsOverviewDirective)
+    app.add_directive('fields_list', ShowFieldsDirective)
     app.add_role('ddref', ddrefRole())
+    app.add_role('menupath', menupath_role)
     app.add_directive('currentlanguage', CurrentLanguage)
     app.add_directive('currentproject', CurrentProject)
     app.add_directive('django2rst', Lino2rstDirective)  # backward compat

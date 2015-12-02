@@ -99,9 +99,21 @@ class Notification(UserAuthored, Controllable, Created):
     def overview(self, ar):
         if ar is None:
             return ''
+        return self.get_overview(ar)
+
+    def get_overview(self, ar):
+        """Return the content to be displayed in the :attr:`overview` field.
+        On interactive rendererers (extjs, bootstrap3) the `obj` and
+        `user` are clickable.
+
+        This is also used from the :xfile:`notifier/body.eml` template
+        where they should just be surrounded by **double asterisks**
+        so that Thunderbird displays them bold.
+
+        """
         context = dict(
-            obj=E.tostring(ar.obj2html(self.owner)),
-            user=E.tostring(ar.obj2html(self.user)))
+            obj=ar.obj2str(self.owner),
+            user=ar.obj2str(self.user))
         return _(self.message).format(**context)
         # return E.p(
         #     ar.obj2html(self.owner), " ",
@@ -145,7 +157,7 @@ class Notifications(dd.Table):
         if obj.seen is None and obj.user == ar.get_user():
             obj.seen = timezone.now()
             obj.save()
-            dd.logger.info("20151115 Marked %s as seen", obj)
+            # dd.logger.info("20151115 Marked %s as seen", obj)
         return super(Notifications, self).get_detail_title(ar, obj)
 
 
