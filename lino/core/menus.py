@@ -330,8 +330,8 @@ class Toolbar(Menu):
 
 
 def find_menu_item(spec):
-    from lino.api import dd
-    profile = dd.modules.users.UserProfiles.get_by_value('900')
+    from lino.api import rt
+    profile = rt.modules.users.UserProfiles.get_by_value('900')
     menu = settings.SITE.get_site_menu(settings.SITE.kernel, profile)
     for mi in menu.walk_items():
         if mi.bound_action == spec:

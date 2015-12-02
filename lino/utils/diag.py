@@ -1,11 +1,15 @@
+# -*- coding: utf-8 -*-
 # Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 """Some diagnostic utilities."""
+
+from __future__ import unicode_literals
 
 # from textwrap import fill
 from atelier import rstgen
 
 from django.conf import settings
+from django.utils.encoding import force_unicode
 
 from lino.core.layouts import BaseLayout
 from lino.modlib.extjs.elems import Container, Wrapper, FieldElement
@@ -13,6 +17,7 @@ from lino.modlib.users.choicelists import UserProfiles
 from lino.core import actors
 from lino.core.utils import get_models
 from lino.core.utils import full_model_name as fmn
+from lino.api import dd
 
 
 class Analyzer(object):
@@ -97,6 +102,22 @@ class Analyzer(object):
         items = sorted(items)
         return rstgen.ul(items)
 
+    def show_fields(self, model, field_names=None, languages=None):
+        model = dd.resolve_model(model)
+        if field_names is not None:
+            field_names = dd.fields_list(model, field_names)
+        items = []
+        for f in model._meta.fields:
+            if field_names is None or f.name in field_names:
+                name = f.name
+                ref = model.__module__ + '.' + model.__name__ + '.' + name
+                verbose_name = force_unicode(f.verbose_name).strip()
+                help_text = force_unicode(f.help_text).replace('\n', ' ')
+                txt = "**{verbose_name}** (:attr:`{name} <{ref}>`) : " \
+                      "{help_text}".format(**locals())
+                items.append(txt)
+        return rstgen.ul(items)
+    
     def show_db_overview(self):
         """Return a reStructredText-formatted "database overview" report.
         Used by test cases in tested documents.
@@ -189,7 +210,7 @@ class Analyzer(object):
     
         items1 = sorted(items1)
         return rstgen.ul(items1)
-    
+
 analyzer = Analyzer()
 """This is a docstring
 """
