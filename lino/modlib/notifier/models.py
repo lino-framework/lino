@@ -102,10 +102,18 @@ class Notification(UserAuthored, Controllable, Created):
         return self.get_overview(ar)
 
     def get_overview(self, ar):
-        # used from body.html template
+        """Return the content to be displayed in the :attr:`overview` field.
+        On interactive rendererers (extjs, bootstrap3) the `obj` and
+        `user` are clickable.
+
+        This is also used from the :xfile:`notifier/body.eml` template
+        where they should just be surrounded by **double asterisks**
+        so that Thunderbird displays them bold.
+
+        """
         context = dict(
-            obj=E.tostring(ar.obj2html(self.owner)),
-            user=E.tostring(ar.obj2html(self.user)))
+            obj=ar.obj2str(self.owner),
+            user=ar.obj2str(self.user))
         return _(self.message).format(**context)
         # return E.p(
         #     ar.obj2html(self.owner), " ",

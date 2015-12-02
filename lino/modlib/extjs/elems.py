@@ -878,7 +878,6 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
         return ui.obj2html(obj)
 
     def value2html(self, ar, v, **cellattrs):
-        #~ return ar.renderer.obj2html(ar,v)
         return E.td(ar.obj2html(v), **cellattrs)
 
 

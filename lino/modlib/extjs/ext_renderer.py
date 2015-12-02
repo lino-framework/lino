@@ -370,9 +370,6 @@ class ExtRenderer(HtmlRenderer):
         uri = self.js2url(h)
         return self.href_button(uri, text, **kw)
 
-    # def build_admin_url(self, *args, **kw):
-    #     return self.plugin.build_plain_url(*args, **kw)
-
     def get_actor_url(self, actor, *args, **kw):
         return self.plugin.build_plain_url(
             "api",

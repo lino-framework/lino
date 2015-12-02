@@ -235,14 +235,16 @@ request `tar`."""
         return None
 
     def obj2html(self, ar, obj, text=None, **kwargs):
+        """Return a html representation of a pointer to the given database
+        object."""
         if text is None:
             text = (force_unicode(obj),)
         elif isinstance(text, basestring):
             text = (text,)
         url = self.instance_handler(ar, obj)
-        if url is not None:
-            return E.a(*text, href=url, **kwargs)
-        return E.em(*text)
+        if url is None:
+            return E.em(*text)
+        return E.a(*text, href=url, **kwargs)
 
     def quick_upload_buttons(self, rr):
         return '[?!]'
@@ -334,6 +336,9 @@ request `tar`."""
             else:
                 raise Exception("Cannot handle %r" % item)
         return E.div(*elems)
+
+    def obj2str(self, ar, obj, text=None, **kwargs):
+        return E.tostring(self.obj2html(ar, obj, text, **kwargs))
 
     def show_menu(self, ar, mnu, level=1):
         """
@@ -506,10 +511,12 @@ class TextRenderer(HtmlRenderer):
             else:
                 raise Exception("Cannot handle %r" % item)
 
-    def obj2html(self, ar, obj, text=None, **kwargs):
+    def obj2str(self, ar, obj, text=None, **kwargs):
+        """Used by :meth:`lino.core.requests.BaseRequest.obj2str`.
+        """
         if text is None:
             text = force_unicode(obj)
         # return "**{0}**".format(text)
-        return settings.SITE.obj2text_template.format(text)
+        return settings.SITE.obj2str_template.format(text)
 
 

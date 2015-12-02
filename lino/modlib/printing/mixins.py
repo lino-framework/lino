@@ -338,7 +338,7 @@ class ClearCacheAction(Action):
                 t.minute, t.second, elem.build_time.microsecond)
             t = make_aware(t)
             if t != elem.build_time:
-                logger.info("20140313 %r != %r", t, elem.build_time)
+                # logger.info("20140313 %r != %r", t, elem.build_time)
                 return ar.confirm(
                     doit,
                     _("This will discard all changes in the generated file."),
