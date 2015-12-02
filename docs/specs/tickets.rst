@@ -45,17 +45,17 @@ The :attr:`state <lino_noi.lib.tickets.models.Ticket.state>` of a
 ticket has one of the following values:
 
 >>> rt.show(tickets.TicketStates)
-======= ========== ===========
+======= ========== ==========
  value   name       text
-------- ---------- -----------
+------- ---------- ----------
  10      new        New
  15      talk       Talk
- 20      todo       Confirmed
+ 20      todo       ToDo
  21      sticky     Sticky
  30      sleeping   Sleeping
  50      done       Done
  60      refused    Refused
-======= ========== ===========
+======= ========== ==========
 <BLANKLINE>
 
 See :class:`lino_noi.lib.tickets.choicelists.TicketStates` for an
@@ -249,16 +249,16 @@ authenticated developer it looks like this:
 
 >>> rt.login('jean').show(tickets.TicketsBySite, welket)
 ... #doctest: +REPORT_UDIFF
-==== =========================================== ======== ======================================================================= ============= ==========
- ID   Summary                                     Closed   Workflow                                                                Reporter      Project
----- ------------------------------------------- -------- ----------------------------------------------------------------------- ------------- ----------
- 16   How to get bar from foo                     No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [☆]   luc           research
- 13   Bar cannot foo                              No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [☆]   Rolf Rompen   linö
- 10   Where can I find a Foo when bazing Bazes?   No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [☆]   marc          docs
- 7    No Foo after deleting Bar                   No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [☆]   Robin Rood    shop
- 4    Foo and bar don't baz                       No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [☆]   mathieu       docs
- 1    Föö fails to bar when baz                   No       **New** → [Sticky] [Talk] [Confirmed] [Sleeping] [Done] [Refused] [☆]   jean          linö
-==== =========================================== ======== ======================================================================= ============= ==========
+==== =========================================== ======== ================================================================== ============= ==========
+ ID   Summary                                     Closed   Workflow                                                           Reporter      Project
+---- ------------------------------------------- -------- ------------------------------------------------------------------ ------------- ----------
+ 16   How to get bar from foo                     No       **New** → [Sticky] [Talk] [ToDo] [Sleeping] [Done] [Refused] [☆]   luc           research
+ 13   Bar cannot foo                              No       **New** → [Sticky] [Talk] [ToDo] [Sleeping] [Done] [Refused] [☆]   Rolf Rompen   linö
+ 10   Where can I find a Foo when bazing Bazes?   No       **New** → [Sticky] [Talk] [ToDo] [Sleeping] [Done] [Refused] [☆]   marc          docs
+ 7    No Foo after deleting Bar                   No       **New** → [Sticky] [Talk] [ToDo] [Sleeping] [Done] [Refused] [☆]   Robin Rood    shop
+ 4    Foo and bar don't baz                       No       **New** → [Sticky] [Talk] [ToDo] [Sleeping] [Done] [Refused] [☆]   mathieu       docs
+ 1    Föö fails to bar when baz                   No       **New** → [Sticky] [Talk] [ToDo] [Sleeping] [Done] [Refused] [☆]   jean          linö
+==== =========================================== ======== ================================================================== ============= ==========
 <BLANKLINE>
 
 

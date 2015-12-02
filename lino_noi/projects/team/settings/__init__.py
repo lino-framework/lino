@@ -51,6 +51,7 @@ class Site(Site):
     project_model = 'tickets.Project'
     textfield_format = 'html'
     user_profiles_module = 'lino_noi.lib.noi.roles'
+    obj2text_template = "**{0}**"
 
     def get_installed_apps(self):
         """Implements :meth:`lino.core.site.Site.get_installed_apps` for Lino
