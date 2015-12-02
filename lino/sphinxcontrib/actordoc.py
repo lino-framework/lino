@@ -21,7 +21,7 @@ for a Lino application.
   Plus the app_label of each installed plugin.
             
 
-.. rst:directive:: show_fields
+.. rst:directive:: fields_list
 
    Render a bullet list of the fields in a given model.  The first
    word of the content is the model. If there are any other words,
@@ -32,7 +32,6 @@ for a Lino application.
 
    Render the given menu command specifier as a `menuselection` role.
             
-
 .. rst:directive:: actor
 
 Usage::
@@ -642,7 +641,7 @@ def setup(app):
     app.add_directive('form', FormDirective)
     app.add_directive('actor', ActorDirective)
     app.add_directive('actors_overview', ActorsOverviewDirective)
-    app.add_directive('show_fields', ShowFieldsDirective)
+    app.add_directive('fields_list', ShowFieldsDirective)
     app.add_role('ddref', ddrefRole())
     app.add_role('menupath', menupath_role)
     app.add_directive('currentlanguage', CurrentLanguage)
