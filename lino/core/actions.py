@@ -21,10 +21,9 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 from django.utils.encoding import force_unicode
 from django.conf import settings
-from django import http
 from django.db import models
 
-from lino import AFTER17
+from lino import AFTER17, AFTER18
 
 if AFTER17:
     from django.apps import apps
@@ -46,7 +45,6 @@ from lino.core.utils import Parametrizable, InstanceAction
 # from lino.modlib.users.choicelists import SiteUser
 from lino.utils.choosers import Chooser
 from lino.utils.xmlgen.html import E
-
 
 
 def check_for_chooser(holder, field):
@@ -130,11 +128,15 @@ def setup_params_choosers(self):
     if self.parameters:
         for k, fld in self.parameters.items():
             if isinstance(fld, models.ForeignKey):
-                fld.rel.to = resolve_model(fld.rel.to)
+                # Before Django 1.8:
+                if AFTER18:
+                    fld.rel.model = resolve_model(fld.rel.model)
+                else:
+                    fld.rel.to = resolve_model(fld.rel.to)
                 from lino.core.kernel import set_default_verbose_name
                 set_default_verbose_name(fld)
                 #~ if fld.verbose_name is None:
-                    #~ fld.verbose_name = fld.rel.to._meta.verbose_name
+                    #~ fld.verbose_name = fld.rel.model._meta.verbose_name
 
             check_for_chooser(self, fld)
 
@@ -586,6 +588,7 @@ class Action(Parametrizable, Permittable):
         """
 
         for k, pf in self.parameters.items():
+            # print 20151203, pf.name, repr(pf.rel.to)
             kw[k] = pf.get_default()
         return kw
 

@@ -32,6 +32,8 @@ from lino.core.signals import pre_merge
 from lino.core.signals import pre_add_child, pre_remove_child
 from lino.core.signals import receiver
 
+from lino.modlib.gfks.fields import GenericForeignKey, GenericForeignKeyIdField
+
 
 class ChangeTypes(dd.ChoiceList):
     """
@@ -86,16 +88,16 @@ class Change(dd.Model):
         'contenttypes.ContentType', blank=True, null=True,
         verbose_name=_("Object type"),
         related_name='changes_by_object')
-    object_id = dd.GenericForeignKeyIdField(
+    object_id = GenericForeignKeyIdField(
         object_type, blank=True, null=True)
-    object = dd.GenericForeignKey('object_type', 'object_id', _("Object"))
+    object = GenericForeignKey('object_type', 'object_id', _("Object"))
 
     master_type = models.ForeignKey(
         'contenttypes.ContentType', blank=True, null=True,
         verbose_name=_("Master type"), related_name='changes_by_master')
-    master_id = dd.GenericForeignKeyIdField(
+    master_id = GenericForeignKeyIdField(
         master_type, blank=True, null=True)
-    master = dd.GenericForeignKey('master_type', 'master_id', _("Master"))
+    master = GenericForeignKey('master_type', 'master_id', _("Master"))
 
     diff = dd.RichTextField(_("Changes"), format='plain', blank=True)
 

@@ -33,7 +33,7 @@ from django.utils.translation import pgettext_lazy as pgettext
 from lino.api import dd, rt
 from lino import mixins
 from lino.modlib.countries.mixins import CountryCity
-from lino.modlib.system.mixins import PeriodEvents
+from lino.modlib.system.choicelists import PeriodEvents
 
 
 from .mixins import (SectorFunction, PersonHistoryEntry,

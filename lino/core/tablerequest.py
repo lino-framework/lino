@@ -17,7 +17,6 @@ import json
 from django.db import models
 from django.conf import settings
 from django.db.models.query import QuerySet
-from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ObjectDoesNotExist
 
 from lino.core.utils import obj2str
@@ -189,6 +188,7 @@ class TableRequest(ActionRequest):
           <lino.core.actors.Actor.get_row_by_pk>`.
 
         """
+        from django.contrib.contenttypes.models import ContentType
         #~ logger.info("20120723 %s.parse_req()",self.actor)
         #~ rh = self.ah
         master = kw.get('master', self.actor.master)
@@ -438,15 +438,13 @@ class TableRequest(ActionRequest):
             if ar.request is None:
                 columns = None
             else:
+                data = getattr(ar.request, ar.request.method)
                 columns = [
-                    str(x) for x in ar.request.REQUEST.getlist(
-                        constants.URL_PARAM_COLUMNS)]
+                    str(x) for x in data.getlist(constants.URL_PARAM_COLUMNS)]
             if columns:
-                all_widths = ar.request.REQUEST.getlist(
-                    constants.URL_PARAM_WIDTHS)
-                hiddens = [
-                    (x == 'true') for x in ar.request.REQUEST.getlist(
-                        constants.URL_PARAM_HIDDENS)]
+                all_widths = data.getlist(constants.URL_PARAM_WIDTHS)
+                hiddens = [(x == 'true') for x in data.getlist(
+                    constants.URL_PARAM_HIDDENS)]
                 fields = []
                 widths = []
                 ah = ar.actor.get_handle()
@@ -586,6 +584,7 @@ class TableRequest(ActionRequest):
                 # if ContentType._meta.installed fails since 20141205
                 if settings.SITE.is_installed('contenttypes') \
                    and isinstance(self.master_instance, models.Model):
+                    from django.contrib.contenttypes.models import ContentType
                     mt = ContentType.objects.get_for_model(
                         self.master_instance.__class__).pk
                     bp[constants.URL_PARAM_MASTER_TYPE] = mt

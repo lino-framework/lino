@@ -24,7 +24,7 @@ from __future__ import print_function
 import logging
 logger = logging.getLogger(__name__)
 
-from lino.core.utils import gfk2lookup
+from lino.core.gfks import gfk2lookup
 from lino.api import rt
 
 from lino.modlib.gfks.mixins import Controllable

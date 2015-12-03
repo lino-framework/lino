@@ -32,7 +32,7 @@ from lino.utils import ONE_DAY
 from lino.utils.quantities import Duration
 from lino.utils.xmlgen.html import E
 
-from .utils import Recurrencies, Weekdays, AccessClasses
+from .choicelists import Recurrencies, Weekdays, AccessClasses
 
 from .workflows import EventStates
 from lino.modlib.office.roles import OfficeStaff

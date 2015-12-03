@@ -43,7 +43,7 @@ def a2class(a):
     return 'lino.%s_%s_%s' % (a.actor.app_label, a.actor._actor_name, a.name)
 
 
-#~ from django.utils.importlib import import_module
+#~ from importlib import import_module
 #~ m = import_module(settings.ROOT_URLCONF)
 #~ m.ui.make_local_files()
 

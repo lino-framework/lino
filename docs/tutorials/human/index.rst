@@ -26,7 +26,7 @@ That is, we define a single model `Person` which just inherits
 .. 
   >>> from __future__ import print_function 
   >>> from human.models import Person
-  >>> from lino.modlib.system.mixins import Genders
+  >>> from lino.modlib.system.choicelists import Genders
   >>> from django.utils import translation
 
 
@@ -37,7 +37,7 @@ The `Human` mixin defines four database fields: `first_name`,
 `middle_name`, `last_name` and `gender`.
 
 The `gender` field is a pointer to
-the :class:`lino.modlib.system.mixins.Genders` choicelist.
+the :class:`lino.modlib.system.choicelists.Genders` choicelist.
 
 All these fields may be blank (except if your application changed that
 rule using :func:`lino.core.inject.update_field`).

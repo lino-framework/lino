@@ -8,7 +8,6 @@ related to fields.
 """
 
 import logging
-from lino.utils.choosers import chooser
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +22,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
 from django.db.models.fields import NOT_PROVIDED
 
-from lino.core.utils import full_model_name
 from lino.core.utils import resolve_field
 from lino.core.utils import resolve_model
 
@@ -31,13 +29,7 @@ from lino.utils import IncompleteDate
 from lino.utils import quantities
 from lino.utils.quantities import Duration
 
-from lino import AFTER17
-if AFTER17:
-    from django.contrib.contenttypes.fields import GenericForeignKey \
-        as DjangoGenericForeignKey
-else:
-    from django.contrib.contenttypes.generic import GenericForeignKey \
-        as DjangoGenericForeignKey
+from lino import AFTER17, AFTER18
 
 
 class PasswordField(models.CharField):
@@ -197,6 +189,7 @@ class FakeField(object):
     decimal_places = None
     default = NOT_PROVIDED
     generate_reverse_relation = False  # needed when AFTER17
+    remote_field = False
 
     # required by Django 1.8:
     is_relation = False
@@ -383,9 +376,8 @@ class VirtualField(FakeField):
                                 self.model.__name__, self.name)
 
     def lino_resolve_type(self):
-        """
-        Unlike attach_to_model, this is also called on virtual
-        fields that are defined on an Actor
+        """Called on virtual fields that are defined on an Actor
+
         """
         #~ logger.info("20120903 lino_resolve_type %s.%s", actor_or_model, name)
         #~ if self.name is not None:
@@ -399,10 +391,13 @@ class VirtualField(FakeField):
         #~ self.return_type.name = self.name
         if isinstance(self.return_type, models.ForeignKey):
             f = self.return_type
-            f.rel.to = resolve_model(f.rel.to)
+            if AFTER18:
+                f.rel.model = resolve_model(f.rel.model)
+            else:
+                f.rel.to = resolve_model(f.rel.to)
             if f.verbose_name is None:
                 #~ if f.name is None:
-                f.verbose_name = f.rel.to._meta.verbose_name
+                f.verbose_name = f.rel.model._meta.verbose_name
                     #~ from lino.core.kernel import set_default_verbose_name
                     #~ set_default_verbose_name(self.return_type)
 
@@ -578,80 +573,6 @@ class MethodField(VirtualField):
         """
         m = self.get
         return m(obj, *self.args, **self.kw)
-
-
-class GenericForeignKeyIdField(models.PositiveIntegerField):
-
-    """
-    Use this instead of `models.PositiveIntegerField`
-    for fields that part of a :term:`GFK` and you want
-    Lino to render them using a Combobox.
-
-    Used by :class:`lino.modlib.gfks.mixins.Controllable`.
-    """
-
-    def __init__(self, type_field, *args, **kw):
-        self.type_field = type_field
-        models.PositiveIntegerField.__init__(self, *args, **kw)
-
-    def deconstruct(self):
-        # needed for Django 1.7
-        # https://docs.djangoproject.com/en/dev/howto/custom-model-fields/#custom-field-deconstruct-method
-
-        name, path, args, kwargs = super(
-            GenericForeignKeyIdField, self).deconstruct()
-        args = [self.type_field]
-        return name, path, args, kwargs
-
-
-class GenericForeignKey(DjangoGenericForeignKey):
-
-    """Add verbose_name and help_text to Django's GFK.  
-
-    Used by
-    :class:`lino.modlib.gfks.mixins.Controllable`.
-
-    """
-
-    def __init__(self, ct_field="content_type", fk_field="object_id",
-                 verbose_name=None, help_text=None, dont_merge=False):
-        self.verbose_name = verbose_name
-        self.help_text = help_text
-        self.dont_merge = dont_merge
-        DjangoGenericForeignKey.__init__(self, ct_field, fk_field)
-
-    def contribute_to_class(self, cls, name):
-        """Automatically set-up chooser and display field for ID field of
-        generic foreign key.
-
-        """
-
-        super(GenericForeignKey, self).contribute_to_class(cls, name)
-
-        # Chooser
-        fk_choices_name = "{fk_field}_choices".format(fk_field=self.fk_field)
-        if not hasattr(cls, fk_choices_name):
-            def fk_choices(obj, **kwargs):
-                object_type = kwargs[self.ct_field]
-                if object_type:
-                    return object_type.model_class().objects.all()
-                return []
-            field = chooser(instance_values=True)(fk_choices)
-            setattr(cls, fk_choices_name, field)
-
-        # Display
-        fk_display_name = "get_{fk_field}_display".format(
-            fk_field=self.fk_field)
-        if not hasattr(cls, fk_display_name):
-            def fk_display(obj, value):
-                ct = getattr(obj, self.ct_field)
-                if ct:
-                    try:
-                        return unicode(ct.get_object_for_this_type(pk=value))
-                    except ct.model_class().DoesNotExist:
-                        return "%s with pk %r does not exist" % (
-                            full_model_name(ct.model_class()), value)
-            setattr(cls, fk_display_name, fk_display)
 
 
 class CharField(models.CharField):

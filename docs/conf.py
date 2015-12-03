@@ -331,7 +331,7 @@ for n in """python django""".split():
     intersphinx_mapping[n] = ('http://%s.readthedocs.org/en/latest/' % n, None)
 
 
-from django.utils.importlib import import_module
+from importlib import import_module
 for n in ['atelier']:
     m = import_module(n)
     intersphinx_mapping[n] = (m.intersphinx_urls['docs'], None)

@@ -40,8 +40,6 @@ Extended Fields:
 - :class:`PercentageField <lino.core.fields.PercentageField>`
 - :class:`QuantityField <lino.core.fields.QuantityField>`
 - :class:`PriceField<lino.core.fields.PriceField>`
-- :class:`GenericForeignKey <lino.core.fields.GenericForeignKey>`
-- :class:`GenericForeignKeyIdField <lino.core.fields.GenericForeignKeyIdField>`
 - :class:`CustomField <lino.core.fields.CustomField>`
 - :class:`RecurrenceField <lino.core.fields.RecurrenceField>`
 - :class:`DummyField <lino.core.fields.DummyField>`
@@ -179,8 +177,6 @@ from lino.core.fields import Dummy, DummyField
 
 from lino.core.fields import CustomField
 from lino.core.fields import RecurrenceField
-from lino.core.fields import GenericForeignKey
-from lino.core.fields import GenericForeignKeyIdField
 from lino.core.fields import IncompleteDateField
 from lino.core.fields import DatePickerField
 from lino.core.fields import NullCharField
@@ -279,9 +275,9 @@ field2kw = settings.SITE.field2kw
 from lino.utils.mldbc.fields import BabelTextField
 from lino.utils.mldbc.fields import BabelCharField, LanguageField
 
-from lino.modlib.system.mixins import Genders, PeriodEvents, YesNo
+from lino.modlib.system.choicelists import Genders, PeriodEvents, YesNo
 
-from django.utils.importlib import import_module
+from importlib import import_module
 
 # The following are not only shortcuts, they also are a preparation to
 # encapsulate the `settings.SITE` name. It is possible that after

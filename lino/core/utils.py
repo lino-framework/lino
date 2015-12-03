@@ -10,6 +10,7 @@ This defines some helper classes like
 - the volatile :class:`InstanceAction` object
 - the :class:`ParameterPanel` class (used
   e.g. by :class:`lino.mixins.periods.ObservedPeriod`)
+- :attr:`ContentType` and `GenericForeignKey`
 
 """
 
@@ -26,13 +27,12 @@ import datetime
 from django.db import models
 from django.db.models import Q
 from django.db.models.fields import FieldDoesNotExist
-from django.utils.importlib import import_module
+from importlib import import_module
 from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.db.models.fields import NOT_PROVIDED
 from django.core import exceptions
 from django.utils.encoding import force_unicode
-#from django.contrib.contenttypes.models import ContentType
 from django.http import QueryDict
 
 from lino.core.signals import on_ui_updated
@@ -42,21 +42,8 @@ from lino import AFTER17
 from django.core.validators import (
     validate_email, ValidationError, URLValidator)
 
-if AFTER17:
-    from django.apps import apps
-    get_models = apps.get_models
-    # def get_models(*args, **kwargs):
-    #     # print "20150822 gonna populate"
-    #     # apps.populate(settings.INSTALLED_APPS)
-    #     # print "20150822 ok"
-    #     return apps.get_models(*args, **kwargs)
-
-    # not used here, but by modules importing this
-    from django.contrib.contenttypes.fields import GenericForeignKey
-else:
-    from django.db.models.loading import get_models
-    from django.contrib.contenttypes.generic import GenericForeignKey
-
+from django.apps import apps
+get_models = apps.get_models
 
 validate_url = URLValidator()
 
@@ -453,26 +440,18 @@ def resolve_field(name, app_label=None):
         app_label = l[0]
         del l[0]
     if len(l) == 2:
-        # print "models.get_model(",app_label,l[0],False,")"
-        #~ model = models.get_model(app_label,l[0],False)
-        if AFTER17:
-            model = apps.get_model(app_label, l[0])
-        else:
-            model = models.get_model(app_label, l[0])
+        model = apps.get_model(app_label, l[0])
         if model is None:
             raise FieldDoesNotExist("No model named '%s.%s'" %
                                     (app_label, l[0]))
-        fld, remote_model, direct, m2m = model._meta.get_field_by_name(l[1])
-        #~ try:
-            #~ fld, remote_model, direct, m2m = model._meta.get_field_by_name(l[1])
-        #~ except FieldDoesNotExist:
-            #~ return UnresolvedField(name)
-        assert remote_model is None or issubclass(model, remote_model), \
-            "resolve_field(%r) : remote model is %r (expected None or base of %r)" % (
-                name, remote_model, model)
-        return fld
+        return model._meta.get_field(l[1])
+        # fld, remote_model, direct, m2m = model._meta.get_field_by_name(l[1])
+        # assert remote_model is None or issubclass(model, remote_model), \
+        #     "resolve_field(%r) : remote model is %r (expected None or base of %r)" % (
+        #         name, remote_model, model)
+        # return fld
     raise FieldDoesNotExist(name)
-    #~ return UnresolvedField(name)
+    # return UnresolvedField(name)
 
 
 def navinfo(qs, elem):
@@ -799,25 +778,5 @@ def error2str(self, e):
                 for k, v in md.items()])
         return '\n'.join(e.messages)
     return unicode(e)
-
-
-def gfk2lookup(gfk, obj, **kw):
-    """Return a `dict` with the lookup keywords for the given
-    GenericForeignKey field `gfk` on the given database object `obj`.
-
-    """
-    if obj is None:
-        # 20120222 : here was only `pass`, and the two other lines
-        # were uncommented. don't remember why I commented them out.
-        # But it caused all tasks to appear in UploadsByController of
-        # an insert window for uploads.
-        kw[gfk.ct_field] = None
-        kw[gfk.fk_field] = None
-    else:
-        ContentType = settings.SITE.modules.contenttypes.ContentType
-        ct = ContentType.objects.get_for_model(obj.__class__)
-        kw[gfk.ct_field] = ct
-        kw[gfk.fk_field] = obj.pk
-    return kw
 
 

@@ -23,11 +23,9 @@ from django.utils import timezone
 from lino import mixins
 from lino.api import dd, rt, _, pgettext
 
-from .utils import (
-    DurationUnits, Recurrencies,
-    setkw, dt2kw,
-    when_text,
-    Weekdays, AccessClasses)
+from .choicelists import (
+    DurationUnits, Recurrencies, Weekdays, AccessClasses)
+from .utils import setkw, dt2kw, when_text
 
 from lino.modlib.users.mixins import UserAuthored
 from lino.modlib.postings.mixins import Postable
@@ -133,7 +131,7 @@ class Priority(mixins.BabelNamed):
         app_label = 'cal'
         verbose_name = _("Priority")
         verbose_name_plural = _('Priorities')
-    ref = models.CharField(max_length='1')
+    ref = models.CharField(max_length=1)
 
 
 class EventType(mixins.BabelNamed, mixins.Sequenced, MailableType):

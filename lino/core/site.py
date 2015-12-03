@@ -1177,7 +1177,7 @@ class Site(object):
         """
         # Called internally during `__init__` method.
 
-        from django.utils.importlib import import_module
+        from importlib import import_module
 
         requested_apps = []
         apps_modifiers = self.get_apps_modifiers()
@@ -1251,6 +1251,8 @@ class Site(object):
         if self.get_auth_method() == 'session':
             # actual_apps.insert(0, str('django.contrib.sessions'))
             install_plugin(str('django.contrib.sessions'))
+
+        # install_plugin(str('lino.modlib.database_ready'))
 
         # self.update_settings(INSTALLED_APPS=tuple(actual_apps))
         self.update_settings(
@@ -1782,7 +1784,7 @@ class Site(object):
 
         """
 
-        from django.utils.importlib import import_module
+        from importlib import import_module
         done = set()
         for p in self.installed_plugins:
             for b in p.__class__.__mro__:

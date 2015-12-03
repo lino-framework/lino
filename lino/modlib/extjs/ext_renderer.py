@@ -23,7 +23,7 @@ from django.utils.encoding import force_unicode
 
 from django.utils.translation import ugettext as _
 
-from django.contrib.contenttypes.models import ContentType
+from lino.core.gfks import ContentType
 
 import lino
 from lino.core import constants

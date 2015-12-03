@@ -62,7 +62,7 @@ class DjangoManageTestCase(DjangoTestCase, CommonTestCase):
 
     def setUp(self):
         super(DjangoManageTestCase, self).setUp()
-        database_ready.send(self)
+        # 20151203 database_ready.send(self)
 
     def check_sql_queries(self, *expected):
         """Checks whether the specified expected SQL queries match to those

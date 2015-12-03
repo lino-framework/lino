@@ -247,7 +247,7 @@ def choices_for_field(request, holder, field):
             return d
 
     elif isinstance(field, models.ForeignKey):
-        m = field.rel.to
+        m = field.rel.model
         t = m.get_default_table()
         qs = t.request(request=request).data_iterator
         # logger.info('20120710 choices_view(FK) %s --> %s', t, qs.query)

@@ -186,7 +186,7 @@ class Place(mixins.BabelNamed):
                     #~ country=country,
                     #~ type__in=cd.city_types).order_by('name')
             #~ return country.place_set.order_by('name')
-        #~ return cls.city.field.rel.to.objects.order_by('name')
+        #~ return cls.city.field.rel.model.objects.order_by('name')
 
 
 class Places(dd.Table):

@@ -166,8 +166,8 @@ class LayoutHandle(object):
             if len(explicit_specs) > 0:
                 self.hidden_elements |= set(wildcard_names)
             mk = self.layout._datasource.master_key
-            if mk and not mk in explicit_specs \
-               and not mk in self.hidden_elements:
+            if mk and mk not in explicit_specs \
+               and mk not in self.hidden_elements:
                 desc += ' ' + mk
                 self.hidden_elements.add(mk)
 
@@ -277,8 +277,8 @@ class LayoutHandle(object):
     def use_as_wildcard(self, de):
         if de.name.endswith('_ptr'):
             return False
-        if isinstance(de, VirtualField):
-            return False
+        # if isinstance(de, VirtualField):
+        #     return False
         if isinstance(self.layout, ColumnsLayout):
             if de.name == self.layout._datasource.master_key:
                 return False

@@ -23,8 +23,6 @@ database object. Lino
 
 """
 
-import datetime
-
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
@@ -32,7 +30,7 @@ from django.utils import timezone
 from lino.api import dd, rt, _
 
 from lino.core.roles import SiteStaff
-from lino.core.utils import gfk2lookup
+from lino.core.gfks import gfk2lookup
 from lino.core.requests import BaseRequest
 
 from lino.mixins import Created

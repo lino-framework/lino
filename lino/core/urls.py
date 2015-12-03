@@ -12,7 +12,7 @@ This is found by Django because :mod:`lino.projects.std.settings`
 from django.conf import settings
 from django.conf.urls import url, include
 from django.conf.urls.static import static
-from lino.core.signals import database_ready
+# from lino.core.signals import database_ready
 from lino.core.utils import is_devserver
 
 import lino
@@ -25,7 +25,7 @@ lino.site_startup()
 site = settings.SITE
 urlpatterns = []
 
-database_ready.send(site)
+# database_ready.send(site)
 
 if site.site_prefix:
     prefix = site.site_prefix[1:]

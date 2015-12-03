@@ -10,6 +10,7 @@ or :doc:`/tutorials/de_BE/index` don't.
 .. autosummary::
    :toctree:
 
+   choicelists
    mixins
    models
    tests

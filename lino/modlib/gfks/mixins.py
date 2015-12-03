@@ -12,6 +12,8 @@ from django.utils.translation import string_concat
 
 from lino.api import dd
 
+from .fields import GenericForeignKey, GenericForeignKeyIdField
+
 
 class Controllable(dd.Model):
 
@@ -63,13 +65,13 @@ class Controllable(dd.Model):
         blank=controller_is_optional, null=controller_is_optional,
         verbose_name=string_concat(owner_label, ' ', _('(type)')))
 
-    owner_id = dd.GenericForeignKeyIdField(
+    owner_id = GenericForeignKeyIdField(
         owner_type,
         editable=True,
         blank=controller_is_optional, null=controller_is_optional,
         verbose_name=string_concat(owner_label, ' ', _('(object)')))
 
-    owner = dd.GenericForeignKey(
+    owner = GenericForeignKey(
         'owner_type', 'owner_id',
         verbose_name=owner_label)
 

@@ -143,7 +143,6 @@ lino.modlib.cal
 lino.modlib.export_excel
 django.contrib.sessions
 
-
 As an application developer you won't specifiy this argument,
 then you should specify your installed apps by overriding
 :meth:`get_installed_apps <lino.core.site.Site.get_installed_apps>`.

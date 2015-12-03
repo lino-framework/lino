@@ -49,10 +49,10 @@ session.
 Since `a` and `m` are defined on the Model, we can run them directly:
 
 >>> ses.run(obj.a)
-{'message': u'Called a() on Moo object', 'success': True}
+{'message': 'Called a() on Moo object', 'success': True}
 
 >>> ses.run(obj.m)
-{'message': u'Called m() on Moo object', 'success': True}
+{'message': 'Called m() on Moo object', 'success': True}
 
 This wouldn't work for `t` and `b` since these are defined on `Moos` 
 (which is only one of many possible tables on model `Moo`):
@@ -67,10 +67,10 @@ And because they are row actions, we need to pass the instance as
 mandatory first argument:
 
 >>> ses.run(S1.t, obj)
-{'message': u'Called t() on Moo object', 'success': True}
+{'message': 'Called t() on Moo object', 'success': True}
 
 >>> ses.run(S1.b, obj)
-{'message': u'Called a() on Moo object', 'success': True}
+{'message': 'Called a() on Moo object', 'success': True}
 
   
 How to "remove" an inherited action or collected from a table

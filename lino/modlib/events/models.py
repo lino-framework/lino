@@ -50,7 +50,7 @@ class Features(dd.Table):
 class Type(mixins.BabelNamed):
     
     events_column_names = models.CharField(
-        max_length="100",
+        max_length=100,
         default="when:30 what:40 where:30")
 
     def EventsByType(self, year=None, **kw):

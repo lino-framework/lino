@@ -73,14 +73,19 @@ from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.db.utils import ProgrammingError
 
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.sessions.models import Session
-
 from lino import AFTER17
 from lino.utils import puts
 from lino.core.utils import sorted_models_list, full_model_name
 
 from lino.utils.mldbc.fields import BabelCharField, BabelTextField
+
+
+def is_pointer_to_contenttype(f):
+    if not settings.SITE.is_installed('contenttypes'):
+        return False
+    if not isinstance(f, models.ForeignKey):
+        return False
+    return f.rel.model is settings.SITE.modules.contenttypes.ContentType
 
 
 class Command(BaseCommand):
@@ -136,16 +141,16 @@ os.environ['DJANGO_SETTINGS_MODULE'] = '%s'
         self.stream.write('''
 from decimal import Decimal
 from datetime import datetime as dt
-from datetime import time,date
+from datetime import time, date
 from django.conf import settings
-from django.contrib.contenttypes.models import ContentType
+# from django.contrib.contenttypes.models import ContentType
 from lino.utils.dpy import create_mti_child
 from lino.utils.dpy import DpyLoader
 from lino.core.utils import resolve_model
         
 def new_content_type_id(m):
     if m is None: return m
-    ct = ContentType.objects.get_for_model(m)
+    ct = settings.SITE.modules.contenttypes.ContentType.objects.get_for_model(m)
     if ct is None: return None
     return ct.pk
     
@@ -161,8 +166,18 @@ def bv2kw(fieldname, values):
     return settings.SITE.babelkw(fieldname, %s)
     
 ''' % s)
-        self.models = [m for m in sorted_models_list()
-                       if not issubclass(m, (ContentType, Session))]
+        self.models = sorted_models_list()
+        
+        if settings.SITE.is_installed('contenttypes'):
+            from django.contrib.contenttypes.models import ContentType
+            self.models = [m for m in self.models
+                           if not issubclass(m, ContentType)]
+        
+        if settings.SITE.is_installed('sessions'):
+            from django.contrib.sessions.models import Session
+            self.models = [m for m in self.models
+                           if not issubclass(m, Session)]
+
         for model in self.models:
             self.stream.write('%s = resolve_model("%s")\n' % (
                 full_model_name(model, '_'), full_model_name(model)))
@@ -216,10 +231,7 @@ def bv2kw(fieldname, values):
                             self.stream.write(
                                 '    if %s is not None: %s = Decimal(%s)\n' % (
                                     f.attname, f.attname, f.attname))
-                        elif isinstance(f, models.ForeignKey) and f.rel.to is ContentType:
-                            #~ self.stream.write(
-                                #~ '    %s = ContentType.objects.get_for_model(%s).pk\n' % (
-                                #~ f.attname,f.attname))
+                        elif is_pointer_to_contenttype(f):
                             self.stream.write(
                                 '    %s = new_content_type_id(%s)\n' % (
                                     f.attname, f.attname))
@@ -313,9 +325,9 @@ if __name__ == '__main__':
             guilty = dict()
             #~ puts("hope for", [m.__name__ for m in unsorted])
             for model in unsorted:
-                deps = set([f.rel.to
+                deps = set([f.rel.model
                             for f in model._meta.fields
-                            if f.rel is not None and f.rel.to is not model and f.rel.to in unsorted])
+                            if f.rel is not None and f.rel.model is not model and f.rel.model in unsorted])
                 #~ deps += [m for m in model._meta.parents.keys()]
                 for m in sorted:
                     if m in deps:
@@ -375,7 +387,8 @@ if __name__ == '__main__':
         if isinstance(field, models.TimeField):
             d = value
             return 'time(%d,%d,%d)' % (d.hour, d.minute, d.second)
-        if isinstance(field, models.ForeignKey) and field.rel.to is ContentType:
+        if is_pointer_to_contenttype(field):
+            ContentType = settings.SITE.modules.contenttypes.ContentType
             ct = ContentType.objects.get(pk=value)
             return full_model_name(ct.model_class(), '_')
             #~ return "'"+full_model_name(ct.model_class())+"'"

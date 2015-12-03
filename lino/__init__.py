@@ -63,11 +63,13 @@ def assert_django_code(django_code):
 
 from django import VERSION
 
+AFTER17 = False
+AFTER18 = False
 if VERSION[0] == 1:
     if VERSION[1] > 6:
         AFTER17 = True
-    else:
-        AFTER17 = False
+        if VERSION[1] > 8:
+            AFTER18 = True
 else:
     raise Exception("Unsupported Django version %s" % VERSION)
 
