@@ -66,7 +66,7 @@ class LookupConverter(Converter):
 
     def __init__(self, field, lookup_field):
         Converter.__init__(self, field)
-        model = field.rel.to
+        model = field.rel.model
         if lookup_field == 'pk':
             self.lookup_field = model._meta.pk
         else:
@@ -74,7 +74,7 @@ class LookupConverter(Converter):
         #~ self.lookup_field = lookup_field
 
     def lookup(self, value, **kw):
-        model = self.field.rel.to
+        model = self.field.rel.model
         if isinstance(value, model):
             return value
         return model.lookup_or_create(self.lookup_field, value, **kw)
@@ -175,7 +175,7 @@ class ManyToManyConverter(LookupConverter):
     splitsep = None
 
     #~ def lookup(self,value):
-        #~ model = self.field.rel.to
+        #~ model = self.field.rel.model
         #~ try:
             #~ return model.objects.get(
               #~ **{self.lookup_field: value})
@@ -194,10 +194,7 @@ class ManyToManyConverter(LookupConverter):
 
 
 def make_converter(f, lookup_fields={}):
-    if AFTER17:
-        from django.contrib.contenttypes.fields import GenericForeignKey
-    else:
-        from django.contrib.contenttypes.generic import GenericForeignKey
+    from lino.core.gfks import GenericForeignKey
     
     if isinstance(f, models.ForeignKey):
         return ForeignKeyConverter(f, lookup_fields.get(f.name, "pk"))

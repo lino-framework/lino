@@ -23,15 +23,6 @@ from lino.core import actions
 from lino.core import fields
 from lino.core import signals
 from lino.core.tablerequest import TableRequest
-# from lino.core.utils import Handle
-from lino.core.utils import gfk2lookup
-# from lino.utils.xmlgen.html import E
-
-from lino import AFTER17
-if AFTER17:
-    from django.contrib.contenttypes.fields import GenericForeignKey
-else:
-    from django.contrib.contenttypes.generic import GenericForeignKey
 
 
 class InvalidRequest(Exception):
@@ -555,6 +546,7 @@ method in order to sort the rows of the queryset.
         household.
 
         """
+        from lino.core.gfks import gfk2lookup, GenericForeignKey
         master_instance = ar.master_instance
         if self.master is None:
             pass
@@ -697,13 +689,19 @@ class ButtonsTable(VirtualTable):
         return obj
 
 
-from lino.core.signals import database_ready
+# from lino.core.signals import database_ready
+from lino.core.signals import post_analyze
+from django.db.utils import OperationalError
 
 
-@signals.receiver(database_ready)
+# @signals.receiver(database_ready)
+@signals.receiver(post_analyze)
 def setup_ventilated_columns(sender, **kw):
     if actors.actors_list is not None:
         for a in actors.actors_list:
             if issubclass(a, AbstractTable):
-                a.setup_columns()
+                try:
+                    a.setup_columns()
+                except OperationalError:
+                    logger.info("Ignoring OperationalError")
     settings.SITE.resolve_virtual_fields()

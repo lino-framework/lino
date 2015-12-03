@@ -4,6 +4,10 @@
 Multilingual database content
 =============================
 
+.. how to test:
+    $ python setup.py test -s tests.DocsTests.test_mldbc
+
+
 One feature of Lino is its built-in support for :ref:`single-table
 multilingual database content <mldbc>`.  This tutorial explains what
 it is.
@@ -94,27 +98,31 @@ Here is how to install this data:
 
 .. code-block:: bash
 
-  $ python manage.py initdb_demo
+    $ python manage.py initdb_demo
+    
+The output should be::
+    
+    Operations to perform:
+      Synchronize unmigrated apps: mldbc, about, jinja, staticfiles, lino_startup, extjs, bootstrap3
+      Apply all migrations: (none)
+    Synchronizing apps without migrations:
+      Creating tables...
+        Running deferred SQL...
+    Running migrations:
+      No migrations to apply.
+    Installed 6 object(s) from 1 fixture(s)
 
+
+.. 
+    >>> from django.core.management import call_command
+    >>> call_command('initdb', 'demo', interactive=False, verbosity=0)
 
 Using the shell
 ---------------
 
-Alternatively you might do the same by opening the interactive Django
-shell::
+Now open the interactive Django shell::
 
   $ python manage.py shell
-
-And typing the following:
-
->>> from django.core.management import call_command
->>> import doctest
->>> doctest.ELLIPSIS_MARKER = '-etc-'
->>> call_command('initdb', 'demo', interactive=False) #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
--etc-Creating tables-etc-...
--etc-Installing custom SQL-etc-...
--etc-
-Installed 6 object(s) from 1 fixture(s)
 
 You can print a catalog in different languages:
 

@@ -499,6 +499,7 @@ Django creates copies of them when inheriting models.
         #~ if cls.label is None:
             #~ return cls.__name__
         #~ return _(cls.label)
+
     @classmethod
     def get_choices(cls):
         return cls.choices
@@ -682,7 +683,12 @@ class ChoiceListField(models.CharField):
         """
         return self.choicelist.choices
 
-    choices = property(_get_choices)
+    def _set_choices(self, value):
+        # if value != []:
+        #     logger.warning("Ignoring set choices {0}".format(value))
+        return
+
+    choices = property(_get_choices, _set_choices)
 
     def get_prep_value(self, value):
         #~ if self.attname == 'query_register':
@@ -692,6 +698,8 @@ class ChoiceListField(models.CharField):
         # if isinstance(value,unicode):
         #     return str(value)
         if value:
+            if callable(value):  # Django 1.9
+                value = value()
             return value.value
         return ''
         #~ return None

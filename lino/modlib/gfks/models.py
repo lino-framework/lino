@@ -24,6 +24,8 @@ from lino.api import dd, rt
 from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 
+from lino.core.utils import get_models
+
 
 class ContentTypes(dd.Table):
     """Default table for `django.contrib.ContentType`.
@@ -73,6 +75,7 @@ class ContentTypes(dd.Table):
 class HelpText(dd.Model):
     """A custom help text to be displayed for a given field."""
     class Meta:
+        app_label = 'gfks'
         verbose_name = _("Help Text")
         verbose_name_plural = _("Help Texts")
 
@@ -146,7 +149,7 @@ class BrokenGFKs(dd.VirtualTable):
     @classmethod
     def get_data_rows(self, ar):
         f = settings.SITE.kernel.get_broken_generic_related
-        for model in models.get_models(include_auto_created=True):
+        for model in get_models(include_auto_created=True):
             for obj in f(model):
                 yield obj
     

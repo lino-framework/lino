@@ -37,12 +37,6 @@ from django.core import exceptions
 from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_unicode
 from lino import AFTER17
-if AFTER17:
-    from django.contrib.contenttypes.fields import GenericForeignKey
-else:
-    from django.contrib.contenttypes.generic import GenericForeignKey
-
-
 
 from lino.utils.jsgen import py2js
 from lino.utils.quantities import parse_decimal
@@ -204,7 +198,7 @@ class RelatedMixin(object):
     def get_rel_to(self, obj):
         #~ if self.field.rel is None:
             #~ return None
-        return self.field.rel.to
+        return self.field.rel.model
 
     def full_value_from_object(self, obj, ar):
         # here we don't want the pk (stored in field's attname)
@@ -446,6 +440,7 @@ class DisabledFieldsStoreField(SpecialStoreField):
     name = 'disabled_fields'
 
     def __init__(self, store):
+        from lino.core.gfks import GenericForeignKey
         SpecialStoreField.__init__(self, store)
         self.always_disabled = set()
         for f in self.store.all_fields:
@@ -739,7 +734,7 @@ class OneToOneStoreField(RelatedMixin, StoreField):
         v = self.full_value_from_object(obj, request)
         #~ try:
             #~ v = getattr(obj,self.field.name)
-        #~ except self.field.rel.to.DoesNotExist,e:
+        #~ except self.field.rel.model.DoesNotExist,e:
             #~ v = None
         if v is None:
             return None
@@ -809,10 +804,15 @@ def create_atomizer(model, fld, name):
         return PasswordStoreField(fld, name)
     if isinstance(fld, models.OneToOneField):
         return OneToOneStoreField(fld, name)
-    if isinstance(fld, GenericForeignKey):
-        return GenericForeignKeyField(fld, name)
-    if isinstance(fld, fields.GenericForeignKeyIdField):
-        return ComboStoreField(fld, name)
+
+    if settings.SITE.is_installed('contenttypes'):
+        from lino.core.gfks import GenericForeignKey
+        if isinstance(fld, GenericForeignKey):
+            return GenericForeignKeyField(fld, name)
+        from lino.modlib.gfks.fields import GenericForeignKeyIdField
+        if isinstance(fld, GenericForeignKeyIdField):
+            return ComboStoreField(fld, name)
+
     if isinstance(fld, models.ForeignKey):
         return ForeignKeyStoreField(fld, name)
     if isinstance(fld, models.TimeField):
@@ -880,7 +880,8 @@ class ParameterStore(BaseStore):
         return l
 
     def parse_params(self, request, **kw):
-        pv = request.REQUEST.getlist(self.url_param)
+        data = getattr(request, request.method)
+        pv = data.getlist(self.url_param)
         #~ logger.info("20120221 ParameterStore.parse_params(%s) --> %s",self.url_param,pv)
 
         def parse(sf, form_value):

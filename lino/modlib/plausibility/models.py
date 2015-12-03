@@ -12,7 +12,7 @@ from __future__ import unicode_literals, print_function
 
 from django.db import models
 
-from lino.core.utils import gfk2lookup
+from lino.core.gfks import gfk2lookup
 from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.users.mixins import UserAuthored
 from lino.core.roles import SiteStaff
@@ -187,7 +187,7 @@ class AllProblems(Problems):
     :menuselection:`Explorer --> System --> Plausibility problems`.
 
     """
-    required_roles = dd.required(dd.SiteStaff)
+    required_roles = dd.required(SiteStaff)
 
 
 class ProblemsByOwner(Problems):

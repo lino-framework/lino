@@ -14,6 +14,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
+from lino import AFTER18
 from lino.core.utils import obj2str, full_model_name
 from lino.core.utils import ChangeWatcher
 
@@ -21,6 +22,7 @@ from lino.core import fields
 from lino.core import signals
 from lino.core import actions
 from lino.core.utils import error2str
+from lino.core.utils import resolve_model
 from lino.utils.xmlgen.html import E
 from lino.utils import get_class_attr
 
@@ -75,7 +77,7 @@ class Model(models.Model):
           def city_choices(cls,country):
               if country is not None:
                   return country.place_set.order_by('name')
-              return cls.city.field.rel.to.objects.order_by('name')
+              return cls.city.field.rel.model.objects.order_by('name')
 
 
     .. method:: create_FOO_choice
@@ -226,7 +228,7 @@ class Model(models.Model):
             parts = name.split('__')
             if len(parts) > 1:
                 # It's going to be a RemoteField
-                # logger.warning("20120406 RemoteField %s in %s",name,self)
+                # logger.warning("20151203 RemoteField %s in %s", name, cls)
 
                 from lino.core import store
 
@@ -236,6 +238,14 @@ class Model(models.Model):
                     if model is None:
                         raise Exception(
                             "Invalid remote field {0} for {1}".format(name, cls))
+
+                    if isinstance(model, basestring):
+                        model = resolve_model(model)
+                        # logger.warning("20151203 %s", model)
+                        # Django 1.9 no longer resolves the
+                        # rel.model of ForeignKeys on abstract
+                        # models.
+
                     # ~ 20130508 model.get_default_table().get_handle() # make sure that all atomizers of those fields get created.
                     fld = model.get_data_elem(n)
                     if fld is None:
@@ -247,7 +257,10 @@ class Model(models.Model):
                     store.get_atomizer(model, fld, fld.name)
                     field_chain.append(fld)
                     if getattr(fld, 'rel', None):
-                        model = fld.rel.to
+                        if AFTER18:
+                            model = fld.rel.model
+                        else:
+                            model = fld.rel.to
                     else:
                         model = None
 

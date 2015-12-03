@@ -122,6 +122,7 @@ lino.modlib.countries
 lino.modlib.countries.fixtures
 lino.modlib.cv
 lino.modlib.cv.fixtures
+lino.modlib.database_ready
 lino.modlib.davlink
 lino.modlib.dupable_partners
 lino.modlib.dupable_partners.fixtures

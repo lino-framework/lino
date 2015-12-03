@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 # Copyright 2009-2015 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
@@ -7,9 +8,9 @@ Performs an initialization of the database, replacing all data by default
 data (according to the specified fixtures).
 
 This command REMOVES *all existing tables* from the database (not only
-Django tables), then runs Django's `syncdb` (or `migrate`) to create
-all tables, and `loaddata` commands to load the specified fixtures for
-all applications.
+Django tables), then runs Django's `migrate` to create all tables, and
+`loaddata` commands to load the specified fixtures for all
+applications.
 
 This reimplements a simplified version of Django's `reset` command,
 without the possibility of deleting *only some* data (the thing which
@@ -23,6 +24,17 @@ hackerish and MySQL-specific DROP DATABASE and CREATE DATABASE because
 even with `constraint_checks_disabled` we had sporadic errors. See
 :blogref:`20150328`
 
+Note that Lino does not use Django's migration framework, so
+:manage:`initdb` runs Django's `migrate` command with the
+`--run-syncdb
+<https://docs.djangoproject.com/en/1.9/ref/django-admin/#django-admin-option---run-syncdb>`_
+option which "allows creating tables for apps without
+migrations".
+    
+The Django docs add that "While this isn’t recommended, the
+migrations framework is sometimes too slow on large projects with
+hundreds of models."  Yes, we go the way which is not recommended.
+
 """
 
 from __future__ import unicode_literals
@@ -34,7 +46,6 @@ from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 from django.db.utils import IntegrityError, OperationalError
-from django.core.management.sql import sql_delete, sql_flush
 from django.core.management.color import no_style
 #~ from django.core.management.sql import sql_reset
 from django.db import connections, transaction, DEFAULT_DB_ALIAS
@@ -44,7 +55,7 @@ from django.db import models
 from lino.api import dd
 
 # from lino.core.utils import app_labels
-from lino import AFTER17
+from lino import AFTER17, AFTER18
 from atelier.utils import confirm
 
 USE_SQLDELETE = True
@@ -162,6 +173,8 @@ Are you sure (y/n) ?""" % dbname):
                 pass
 
             elif USE_SQLDELETE:
+                from django.core.management.sql import sql_delete
+                # sql_delete was removed in Django 1.9
                 #~ sql_list = u'\n'.join(sql_reset(app, no_style(), conn)).encode('utf-8')
                 
                 app_list = [models.get_app(p.app_label)
@@ -198,7 +211,9 @@ Are you sure (y/n) ?""" % dbname):
 
         settings.SITE._site_config = None  # clear cached instance
 
-        if AFTER17:
+        if AFTER18:
+            call_command('migrate', '--run-syncdb', **options)
+        elif AFTER17:
             call_command('migrate', **options)
         else:
             call_command('syncdb', load_initial_data=False, **options)

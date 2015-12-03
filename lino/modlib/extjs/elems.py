@@ -16,19 +16,26 @@ logger = logging.getLogger(__name__)
 from cgi import escape
 import decimal
 
+from lino import AFTER17, AFTER18
+
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.utils.translation import string_concat
 from django.conf import settings
-from django.db.models.fields.related import SingleRelatedObjectDescriptor
-from django.db.models.fields.related import ForeignRelatedObjectsDescriptor
-from django.db.models.fields.related import ManyRelatedObjectsDescriptor
-from lino import AFTER17
-if AFTER17:
-    from django.contrib.contenttypes.fields import GenericForeignKey
-    from django.db.models.fields.related import ManyToManyRel, ManyToOneRel
+if AFTER18:
+    from django.db.models.fields.related import \
+        ReverseOneToOneDescriptor as SingleRelatedObjectDescriptor
+    from django.db.models.fields.related import \
+        ReverseManyToOneDescriptor as ForeignRelatedObjectsDescriptor
+    from django.db.models.fields.related import \
+        ManyToManyDescriptor as ManyRelatedObjectsDescriptor
 else:
-    from django.contrib.contenttypes.generic import GenericForeignKey
+    from django.db.models.fields.related import SingleRelatedObjectDescriptor
+    from django.db.models.fields.related import ForeignRelatedObjectsDescriptor
+    from django.db.models.fields.related import ManyRelatedObjectsDescriptor
+
+if AFTER17:
+    from django.db.models.fields.related import ManyToManyRel, ManyToOneRel
 from django.db.models.fields import NOT_PROVIDED
 
 from lino.core import layouts
@@ -52,6 +59,7 @@ from lino.core.layouts import (FormLayout, ParamsLayout,
 
 from lino.utils.mldbc.fields import BabelCharField, BabelTextField
 from lino.core import tables
+from lino.core.gfks import GenericForeignKey
 
 from lino.utils.xmlgen import etree
 from lino.utils.xmlgen.html import E
@@ -147,7 +155,7 @@ class GridColumn(jsgen.Component):
             def fk_renderer(fld, name):
                 # FK fields are clickable only if their target has a
                 # detail view
-                rpt = fld.rel.to.get_default_table()
+                rpt = fld.rel.model.get_default_table()
                 if rpt.detail_action is not None:
                     if rpt.detail_action.get_view_permission(
                             jsgen._for_user_profile):
@@ -849,13 +857,13 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
 
     def get_field_options(self, **kw):
         kw = super(ForeignKeyElement, self).get_field_options(**kw)
-        if isinstance(self.field.rel.to, basestring):
-            raise Exception("20130827 %s.rel.to is %r" %
-                            (self.field, self.field.rel.to))
-        pw = self.field.rel.to.preferred_foreignkey_width
+        if isinstance(self.field.rel.model, basestring):
+            raise Exception("20130827 %s.rel.model is %r" %
+                            (self.field, self.field.rel.model))
+        pw = self.field.rel.model.preferred_foreignkey_width
         if pw is not None:
             kw.setdefault('preferred_width', pw)
-        actor = self.field.rel.to.get_default_table()
+        actor = self.field.rel.model.get_default_table()
         if not isinstance(self.layout_handle.layout, layouts.ColumnsLayout):
             a1 = actor.detail_action
             a2 = actor.insert_action
@@ -2119,10 +2127,6 @@ def create_layout_element(lh, name, **kw):
             e = ManyRelatedObjectElement(lh, de, **kw)
             lh.add_store_field(e.field)
             return e
-
-        
-
-
 
     if isinstance(de, models.Field):
         if isinstance(de, (BabelCharField, BabelTextField)):

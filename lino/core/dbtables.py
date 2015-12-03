@@ -16,17 +16,13 @@ from django.utils.translation import ugettext_lazy as _
 
 from django.db import models
 from django.db.models.query import QuerySet
-from django.contrib.contenttypes.models import ContentType
 
-from lino import AFTER17
-if AFTER17:
-    from django.contrib.contenttypes.fields import GenericForeignKey
-    from django.apps import apps
-    get_models = apps.get_models
+from django.apps import apps
+get_models = apps.get_models
+if settings.SITE.is_installed('contenttypes'):
+    from django.contrib.contenttypes.models import ContentType
 else:
-    from django.contrib.contenttypes.generic import GenericForeignKey
-    from django.db.models.loading import get_models
-
+    ContentType = None
 
 from lino.core import fields
 from lino.core import actions
@@ -39,6 +35,8 @@ from lino.core.choicelists import ChoiceListField
 
 from lino.core.utils import resolve_model, get_field, UnresolvedModel
 from lino.core.tables import AbstractTable, TableRequest, VirtualTable
+from lino.core.gfks import ContentType, GenericForeignKey
+
 
 INVALID_MK = "Invalid master_key '{0}' in {1} : {2}"
 
@@ -100,11 +98,11 @@ def add_gridfilters(qs, gridfilters):
                 q = q & models.Q(**kw)
             elif isinstance(field, models.ForeignKey):
                 q = q & quick_search_filter(
-                    field.rel.to, flt['value'], field.name + "__")
+                    field.rel.model, flt['value'], field.name + "__")
                 #~ rq = models.Q()
-                #~ search_field = field.rel.to.grid_search_field
-                #~ for search_field in field.rel.to.quick_search_fields:
-                #~ search_field = getattr(field.rel.to,'grid_search_field',None)
+                #~ search_field = field.rel.model.grid_search_field
+                #~ for search_field in field.rel.model.quick_search_fields:
+                #~ search_field = getattr(field.rel.model,'grid_search_field',None)
                 #~ if search_field is not None:
                     #~ rq = rq | models.Q(**{field.name+"__%s__icontains" % search_field : flt['value']})
                 #~ q = q & rq
@@ -518,12 +516,13 @@ class Table(AbstractTable):
 
                 master_model = None
                 try:
-                    x = self.model._meta.get_field_by_name(self.master_key)
-                    fk, remote, direct, m2m = x
-                    assert direct
-                    assert not m2m
+                    fk = self.model._meta.get_field(self.master_key)
+                    # x = self.model._meta.get_field_by_name(self.master_key)
+                    # fk, remote, direct, m2m = x
+                    # assert direct
+                    # assert not m2m
                     if fk.rel is not None:
-                        master_model = fk.rel.to
+                        master_model = fk.rel.model
                     elif isinstance(fk, ChoiceListField):
                         master_model = fk.choicelist.item_class
                     elif isinstance(fk, GenericForeignKey):

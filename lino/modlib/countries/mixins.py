@@ -153,7 +153,7 @@ class CountryRegionCity(CountryCity):
         return qs
 
             #~ return country.place_set.filter(flt).order_by('name')
-        #~ return cls.city.field.rel.to.objects.order_by('name')
+        #~ return cls.city.field.rel.model.objects.order_by('name')
 
 
 class AddressLocation(CountryRegionCity):

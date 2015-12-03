@@ -62,13 +62,7 @@ to explain how to use workflows: :doc:`../workflows_tutorial/index`).
 >>> from lino.api.doctest import *
 
 >>> from django.core.management import call_command
->>> import doctest
->>> doctest.ELLIPSIS_MARKER = '-etc-'
->>> call_command('initdb_demo', interactive=False) #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
--etc-Creating tables-etc-...
--etc-Installing custom SQL-etc-...
--etc-
-Installed 191 object(s) from 6 fixture(s)
+>>> call_command('initdb_demo', interactive=False, verbosity=0)
 
 The :mod:`lino.modlib.changes` plugin records only changes made using
 the web interface.  In a virgin database are no changes:

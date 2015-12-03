@@ -22,14 +22,12 @@ from lino import AFTER17
 from django.conf import settings
 from django.db import models
 
-from django.utils.module_loading import import_by_path
+from django.utils.module_loading import import_string
 
 from django.db import IntegrityError
 from django.db.models.fields import NOT_PROVIDED
 from django.core.serializers import base
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.sessions.models import Session
 from django.utils.encoding import smart_unicode, is_protected_type, force_unicode
 from django.utils import translation
 
@@ -99,6 +97,8 @@ class Serializer(base.Serializer):
     models = None
 
     def serialize(self, queryset, **options):
+        from django.contrib.sessions.models import Session
+        from django.contrib.contenttypes.models import ContentType
         self.options = options
 
         self.stream = options.get("stream", StringIO())
@@ -205,10 +205,7 @@ def bv2kw(fieldname,values):
                             self.stream.write(
                                 '    if %s is not None: %s = Decimal(%s)\n' % (
                                     f.attname, f.attname, f.attname))
-                        elif isinstance(f, models.ForeignKey) and f.rel.to is ContentType:
-                            #~ self.stream.write(
-                                #~ '    %s = ContentType.objects.get_for_model(%s).pk\n' % (
-                                #~ f.attname,f.attname))
+                        elif isinstance(f, models.ForeignKey) and f.rel.model is ContentType:
                             self.stream.write(
                                 '    %s = new_content_type_id(%s)\n' % (
                                     f.attname, f.attname))
@@ -226,7 +223,6 @@ def bv2kw(fieldname,values):
                 continue
             if isinstance(obj, Session):
                 continue
-            #~ if isinstance(obj,Permission): continue
             if obj.__class__ != model:
                 model = obj.__class__
                 if model in all_models:
@@ -263,9 +259,9 @@ def bv2kw(fieldname,values):
             guilty = dict()
             #~ print "hope for", [m.__name__ for m in unsorted]
             for model in unsorted:
-                deps = set([f.rel.to
+                deps = set([f.rel.model
                             for f in model._meta.fields
-                            if f.rel is not None and f.rel.to is not model and f.rel.to in unsorted])
+                            if f.rel is not None and f.rel.model is not model and f.rel.model in unsorted])
                 #~ deps += [m for m in model._meta.parents.keys()]
                 for m in sorted:
                     if m in deps:
@@ -317,6 +313,7 @@ def bv2kw(fieldname,values):
         #~ })
         #~ self._current = None
     def value2string(self, obj, field):
+        from django.contrib.contenttypes.models import ContentType
         if isinstance(field, (BabelCharField, BabelTextField)):
             return repr(settings.SITE.field2args(obj, field.name))
         value = field._get_val_from_obj(obj)
@@ -333,7 +330,7 @@ def bv2kw(fieldname,values):
         if isinstance(field, models.TimeField):
             d = value
             return 'time(%d,%d,%d)' % (d.hour, d.minute, d.second)
-        if isinstance(field, models.ForeignKey) and field.rel.to is ContentType:
+        if isinstance(field, models.ForeignKey) and field.rel.model is ContentType:
             ct = ContentType.objects.get(pk=value)
             return full_model_name(ct.model_class(), '_')
             #~ return "'"+full_model_name(ct.model_class())+"'"
@@ -365,7 +362,7 @@ def bv2kw(fieldname,values):
 
     def handle_m2m_field(self, obj, field):
         if field.rel.through._meta.auto_created:
-            if self.use_natural_keys and hasattr(field.rel.to, 'natural_key'):
+            if self.use_natural_keys and hasattr(field.rel.model, 'natural_key'):
                 m2m_value = lambda value: value.natural_key()
             else:
                 m2m_value = lambda value: smart_unicode(
@@ -451,7 +448,7 @@ class FakeDeserializedObject(base.DeserializedObject):
                     # order
                     logger.warning("Failed to save %s:" % obj2str(obj))
                     raise
-            deps = [f.rel.to for f in obj._meta.fields if f.rel is not None]
+            deps = [f.rel.model for f in obj._meta.fields if f.rel is not None]
             if not deps:
                 logger.exception(e)
                 raise Exception(
@@ -759,7 +756,7 @@ def install_migrations(self, loader):
         return
 
     if self.migration_class is not None:
-        mc = import_by_path(self.migration_class)
+        mc = import_string(self.migration_class)
         migrator = mc(self, loader)
     else:
         migrator = self

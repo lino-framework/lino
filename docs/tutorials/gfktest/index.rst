@@ -98,10 +98,13 @@ True
 
 (Above syntax is because Django 1.6 returns None while 1.7+ returns True)
 
-Now deleting the member will not fail
+Now deleting the member will not fail:
 
 >>> from django.db import models
 >>> models.Model.delete(mbr)
+(1, {u'gfktest.Member': 1})
+
+Note: above line fails in Django 1.8.
 
 And it will leave the GFK-related objects in the database.
 

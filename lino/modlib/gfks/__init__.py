@@ -11,6 +11,7 @@ from the :class:`Controllable
 
     models
     mixins
+    fields
 
 """
 

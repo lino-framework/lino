@@ -2,6 +2,12 @@
 Multi-table inheritance (MTI)
 =============================
 
+
+.. how to test:
+    $ python setup.py test -s tests.DocsTests.test_mti
+
+
+
 .. currentmodule:: lino.utils.mti
 
 .. contents::

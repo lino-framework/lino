@@ -154,8 +154,8 @@ def delete_child(obj, child_model, ar=None, using=None):
         # concrete_model = child_model._meta.concrete_model
         # for ptr in six.itervalues(concrete_model._meta.parents):
         #     if ptr:
-        #         # raise Exception(repr(ptr.rel.to))
-        #         del collector.data[ptr.rel.to]
+        #         # raise Exception(repr(ptr.rel.model))
+        #         del collector.data[ptr.rel.model]
 
     else:
         collector = ChildCollector(using=using)

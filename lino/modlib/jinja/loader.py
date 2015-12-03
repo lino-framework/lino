@@ -17,12 +17,9 @@ from jinja2.exceptions import TemplateNotFound
 
 from django.conf import settings
 # from django.utils.translation import ugettext_lazy as _
-from lino import AFTER17
-if AFTER17:
-    from django.template.loaders.base import Loader as BaseLoader
-else:
-    from django.template.loader import BaseLoader
-from django.template.base import TemplateDoesNotExist
+from django.template.loaders.base import Loader as BaseLoader
+
+from django.template import TemplateDoesNotExist
 
 from lino.core import requests
 

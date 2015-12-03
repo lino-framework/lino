@@ -8,6 +8,8 @@
 import logging
 logger = logging.getLogger(__name__)
 
+from lino import AFTER18
+
 
 from django.conf import settings
 from django.utils.encoding import force_unicode
@@ -23,7 +25,7 @@ from lino.mixins.printable import BuildMethods
 
 from lino.core.roles import SiteStaff
 
-from .mixins import *
+from .choicelists import YesNo, Genders, PeriodEvents
 
 
 class BuildSiteCache(dd.Action):
@@ -105,7 +107,10 @@ def my_handler(sender, **kw):
 from lino.utils.djangotest import testcase_setup
 testcase_setup.connect(my_handler)
 dd.connection_created.connect(my_handler)
-models.signals.post_syncdb.connect(my_handler)
+if AFTER18:
+    models.signals.post_migrate.connect(my_handler)
+else:
+    models.signals.post_syncdb.connect(my_handler)
 
 
 #~ @dd.receiver(dd.database_connected)

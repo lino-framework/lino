@@ -1113,7 +1113,7 @@ class Actor(actions.Parametrizable, Permittable):
         vf.get = curry(vf.get, cls)
         #~ for k,v in self.virtual_fields.items():
             #~ if isinstance(v,models.ForeignKey):
-                #~ v.rel.to = resolve_model(v.rel.to)
+                #~ v.rel.model = resolve_model(v.rel.model)
 
     @classmethod
     def add_constant(cls, name, vf):

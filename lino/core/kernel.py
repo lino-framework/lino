@@ -38,11 +38,10 @@ from django.core import exceptions
 from django.utils.encoding import force_text
 
 from django.db import models
-from django.contrib.contenttypes.models import ContentType
 
 from django.utils.translation import ugettext_lazy as _
 
-# from lino.utils import puts
+from lino import AFTER17
 from lino.utils import codetime
 from lino.core import layouts
 from lino.core import actors
@@ -66,20 +65,21 @@ from .utils import resolve_model
 from .utils import is_devserver
 from .utils import full_model_name as fmn
 from .utils import obj2str
-from .utils import GenericForeignKey, get_models
+from .utils import get_models
 # from .utils import format_request
 from .exceptions import ChangedAPI
+from .gfks import GenericForeignKey
 
 
 def set_default_verbose_name(f):
     """If the verbose_name of a ForeignKey was not set by user code,
     Django sets it to ``field.name.replace('_', ' ')``.  We replace
-    this default value by ``f.rel.to._meta.verbose_name``.  This rule
+    this default value by ``f.rel.model._meta.verbose_name``.  This rule
     holds also for virtual FK fields.
 
     """
     if f.verbose_name == f.name.replace('_', ' '):
-        f.verbose_name = f.rel.to._meta.verbose_name
+        f.verbose_name = f.rel.model._meta.verbose_name
 
 
 CLONEABLE_ATTRS = frozenset("""ah request user subst_user
@@ -162,7 +162,7 @@ class Kernel(object):
     def __init__(self, site):
         # logger.info("20140227 Kernel.__init__() a")
 
-        # from django.utils.importlib import import_module
+        # from importlib import import_module
         # # For every plugin, Lino checks whether the package contains a
         # # module named `ui` and, if yes, imports this module. The
         # # benefit of this is that all "Lino extensions" to the models
@@ -363,7 +363,7 @@ class Kernel(object):
         #             self.modules.define(app_label, k, v)
 
         if self.user_profiles_module:
-            from django.utils.importlib import import_module
+            from importlib import import_module
             import_module(self.user_profiles_module)
         
         self.setup_choicelists()
@@ -373,7 +373,9 @@ class Kernel(object):
             if model._meta.auto_created:
                 continue  # automatic intermediate models created by
                           # ManyToManyField should not disable delete
-            for f, m in model._meta.get_fields_with_model():
+            # for f, m in model._meta.get_fields_with_model():
+            for f in model._meta.get_fields():
+                m = f.model
 
                 # Refuse nullable CharFields, but don't trigger on
                 # NullableCharField (which is a subclass of CharField).
@@ -381,17 +383,12 @@ class Kernel(object):
                 if f.__class__ is models.CharField and f.null:
                     msg = "Nullable CharField %s in %s" % (f.name, model)
                     raise Exception(msg)
-                    #~ if f.__class__ is models.CharField:
-                        #~ raise Exception(msg)
-                    #~ else:
-                        #~ logger.info(msg)
                 elif isinstance(f, models.ForeignKey):
-                    # f.rel.to = resolve_model(f.rel.to, strict=True)
-                    if isinstance(f.rel.to, basestring):
+                    if isinstance(f.rel.model, basestring):
                         raise Exception("Could not resolve target %r of "
                                         "ForeignKey '%s' in %s "
                                         "(models are %s)" %
-                                        (f.rel.to, f.name, model, models_list))
+                                        (f.rel.model, f.name, model, models_list))
                     set_default_verbose_name(f)
 
                     """
@@ -400,12 +397,12 @@ class Kernel(object):
                     JobProvider being referred only by objects that can refer
                     to a Company as well.
                     """
-                    if not hasattr(f.rel.to, '_lino_ddh'):
+                    if not hasattr(f.rel.model, '_lino_ddh'):
                         raise Exception("20150824")
-                    # f.rel.to._lino_ddh.add_fk(f.model, f)
+                    # f.rel.model._lino_ddh.add_fk(f.model, f)
                     # m = f.model._meta.concrete_model
-                    # f.rel.to._lino_ddh.add_fk(m, f)
-                    f.rel.to._lino_ddh.add_fk(m or model, f)
+                    # f.rel.model._lino_ddh.add_fk(m, f)
+                    f.rel.model._lino_ddh.add_fk(m or model, f)
 
         kernel.protect_foreignkeys(models_list)
 
@@ -514,7 +511,7 @@ class Kernel(object):
 
         for model in models_list:
             for m, fk in model._lino_ddh.fklist:
-                assert fk.rel.to is model
+                assert fk.rel.model is model
                 if fk.rel.on_delete == models.CASCADE:
                     if must_protect(m, fk, model):
                         msg = (
@@ -534,7 +531,7 @@ class Kernel(object):
                         if not fk.null:
                             msg = ("{0}.{1} has on_delete SET_NULL but "
                                    "is not nullable ")
-                            msg = msg.format(fmn(m), fk.name, fk.rel.to)
+                            msg = msg.format(fmn(m), fk.name, fk.rel.model)
                             raise Exception(msg)
 
                     else:
@@ -552,6 +549,8 @@ class Kernel(object):
         if len(self.GFK_LIST) == 0:
             return  # e.g. if contenttypes is not installed
 
+        from django.contrib.contenttypes.models import ContentType
+
         if not isinstance(obj._meta.pk, GFK_TARGETS):
             # raise Exception("20150330 %s", obj._meta.pk)
             return  # e.g. Country.iso_code is a CharField, cannot
@@ -559,8 +558,9 @@ class Kernel(object):
         obj_ct = ContentType.objects.get_for_model(obj.__class__)
         # logger.info("20150330 ok %s", obj_ct)
         for gfk in self.GFK_LIST:
-            fk_field, remote_model, direct, m2m = \
-                gfk.model._meta.get_field_by_name(gfk.fk_field)
+            fk_field = gfk.model._meta.get_field(gfk.fk_field)
+            # fk_field, remote_model, direct, m2m = \
+            #     gfk.model._meta.get_field_by_name(gfk.fk_field)
             kw = dict()
             kw[gfk.fk_field] = obj.pk
             kw[gfk.ct_field] = obj_ct
@@ -589,8 +589,9 @@ class Kernel(object):
         gfks = [f for f in self.GFK_LIST if f.model is model]
         if len(gfks):
             for gfk in gfks:
-                fk_field, remote_model, direct, m2m = \
-                    gfk.model._meta.get_field_by_name(gfk.fk_field)
+                fk_field = gfk.model._meta.get_field(gfk.fk_field)
+                # fk_field, remote_model, direct, m2m = \
+                #     gfk.model._meta.get_field_by_name(gfk.fk_field)
                 kw = {gfk.ct_field+'__isnull': False}
                 qs = model.objects.filter(**kw)
                 for obj in qs:

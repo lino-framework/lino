@@ -3,6 +3,10 @@
 The Lino Polls tutorial 
 =======================
 
+
+.. how to test:
+    $ python setup.py test -s tests.DocsTests.test_polls
+
 In this tutorial we are going to take the "Polls" application from
 Django's tutorial and turn it into a Lino application.
 
@@ -186,22 +190,23 @@ For the moment we are just going to *reinitialize* our database,
 i.e. *delete* any data you may have manually entered during the Django
 Polls tutorial and turn the database into a virgin state::
 
-    $ python manage.py initdb
+    $ python manage.py initdb_demo
 
 The output should be::
 
-      Creating tables ...
-      Installing custom SQL ...
-      Installing indexes ...
+    Operations to perform:
+      Synchronize unmigrated apps: about, jinja, staticfiles, polls, lino_startup, extjs, bootstrap3
+      Apply all migrations: (none)
+    Synchronizing apps without migrations:
+      Creating tables...
+        Running deferred SQL...
+    Running migrations:
+      No migrations to apply.
+    Installed 13 object(s) from 1 fixture(s)
 
 ..
     >>> from django.core.management import call_command
-    >>> import doctest
-    >>> doctest.ELLIPSIS_MARKER = '-etc-'
-    >>> call_command('initdb_demo', interactive=False) #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
-    -etc-Creating tables-etc-...
-    -etc-Installing custom SQL-etc-...
-    -etc-
+    >>> call_command('initdb_demo', interactive=False, verbosity=0) 
 
 
 Adding a demo fixture
@@ -245,20 +250,20 @@ We are now going to add a **demo fixture**.
 
   The output should be::
 
-      Creating tables ...
-      Installing custom SQL ...
-      Installing indexes ...
-      Installed 13 object(s) from 1 fixture(s)
+    Operations to perform:
+      Synchronize unmigrated apps: about, jinja, staticfiles, polls, lino_startup, extjs, bootstrap3
+      Apply all migrations: (none)
+    Synchronizing apps without migrations:
+      Creating tables...
+        Running deferred SQL...
+    Running migrations:
+      No migrations to apply.
+    Installed 13 object(s) from 1 fixture(s)
 
 ..
-  >>> from django.core.management import call_command
-  >>> import doctest
-  >>> doctest.ELLIPSIS_MARKER = '-etc-'
-  >>> call_command('initdb', 'demo', interactive=False) #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
-  -etc-Creating tables-etc-...
-  -etc-Installing custom SQL-etc-...
-  -etc-
-  Installed 13 object(s) from 1 fixture(s)
+    >>> from django.core.management import call_command
+    >>> call_command('initdb', 'demo', interactive=False, verbosity=0)
+
     
   
 Starting the web interface
