@@ -8,6 +8,7 @@ class Places(dd.Table):
 
 class Members(dd.Table):
     model = 'Member'
+    column_names = "id name place email *"
 
     detail_layout = """
     id name place email mti_navigator
@@ -17,6 +18,7 @@ class Members(dd.Table):
 class Customers(dd.Table):
     model = 'Customer'
 
+    column_names = "id name place email customer_remark *"
     detail_layout = """
     id name place email mti_navigator
     customer_remark
@@ -27,6 +29,7 @@ class Customers(dd.Table):
 class Suppliers(dd.Table):
     model = 'Supplier'
 
+    column_names = "id name place email supplier_remark *"
     detail_layout = """
     id name place email mti_navigator
     supplier_remark
@@ -64,6 +67,8 @@ class ActiveProducts(Products):
 
 class Offers(dd.Table):
     model = 'Offer'
+    column_names = "id supplier__name supplier__place " \
+                   "supplier__email supplier__supplier_remark *"
 
 
 class OffersBySupplier(Offers):

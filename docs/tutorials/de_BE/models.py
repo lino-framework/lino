@@ -13,6 +13,6 @@ class Expression(mixins.BabelNamed):
 
 class Expressions(dd.Table):
     model = Expression
-    #~ column_names = 'name'
+    column_names = 'id name *'
 
 

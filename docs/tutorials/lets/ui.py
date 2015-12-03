@@ -52,6 +52,7 @@ class ActiveProducts(Products):
 
 class Offers(dd.Table):
     model = 'lets.Offer'
+    column_names = "id provider product valid_until *"
 
 
 class OffersByMember(Offers):

@@ -40,6 +40,7 @@ class Type(mixins.BabelNamed):
 class Types(dd.Table):
     required_roles = dd.required(ContactsStaff)
     model = 'households.Type'
+    column_names = "id name *"
     detail_layout = """
     name
     HouseholdsByType

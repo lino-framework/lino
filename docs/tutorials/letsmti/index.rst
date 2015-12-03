@@ -5,7 +5,7 @@ A Local Exchange Trade System (MTI version)
 .. this document is part of the Lino test suite. To test only this
   document, run::
 
-   $ python setup.py test -s tests.DocsTests.test_lets
+   $ python setup.py test -s tests.DocsTests.test_letsmti
 
 
 Followup for :doc:`/tutorials/mti/index`.
