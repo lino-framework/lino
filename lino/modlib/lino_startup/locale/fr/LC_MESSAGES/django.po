@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2015-12-01 06:51+0200\n"
-"PO-Revision-Date: 2015-12-01 07:02+0300\n"
+"PO-Revision-Date: 2015-12-03 02:38+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language: fr\n"
 "Language-Team: \n"
@@ -2745,7 +2745,7 @@ msgstr "Régime de travail"
 
 #: lino/modlib/cv/models.py:415
 msgid "Work Regimes"
-msgstr "Régime de travail"
+msgstr "Régimes de travail"
 
 #: lino/modlib/cv/models.py:433
 msgid "Contract Duration"
@@ -4317,11 +4317,11 @@ msgstr ""
 
 #: lino/modlib/plausibility/choicelists.py:148
 msgid "Plausibility checker"
-msgstr ""
+msgstr "Test de données"
 
 #: lino/modlib/plausibility/choicelists.py:149
 msgid "Plausibility checkers"
-msgstr ""
+msgstr "Tests de données"
 
 #: lino/modlib/plausibility/models.py:29 lino/modlib/plausibility/models.py:72
 msgid "Check plausibility"

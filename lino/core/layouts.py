@@ -15,7 +15,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.db.models.fields import NOT_PROVIDED
 
 from lino.core import constants
-from lino.core.fields import fields_list
+from lino.core.fields import fields_list, VirtualField
 from lino.core.plugin import Plugin
 
 
@@ -276,6 +276,8 @@ class LayoutHandle(object):
 
     def use_as_wildcard(self, de):
         if de.name.endswith('_ptr'):
+            return False
+        if isinstance(de, VirtualField):
             return False
         if isinstance(self.layout, ColumnsLayout):
             if de.name == self.layout._datasource.master_key:

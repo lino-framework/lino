@@ -2,7 +2,8 @@
 # Copyright 2009-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Defines the classes `AbstractTable` and :class:`VirtualTable`.
+"""Defines the classes :class:`AbstractTable` and
+:class:`VirtualTable`.
 
 """
 
@@ -161,10 +162,9 @@ class Group(object):
 
 
 class AbstractTable(actors.Actor):
-
-    """An AbstractTable is the definition of a tabular data view,
-    usually displayed in a Grid (but it's up to the user
-    interface to decide how to implement this).
+    """An AbstractTable is the definition of a tabular data view, usually
+    displayed in a Grid (but it's up to the user interface to decide
+    how to implement this).
 
     Base class for :class:`Table <lino.core.dbtables.Table>` and
     :class:`VirtualTable <lino.core.tables.VirtualTable>`.

@@ -888,8 +888,8 @@ def wildcard_data_elems(model):
     for f in meta.many_to_many:
         yield f
     for f in meta.virtual_fields:
-        if not isinstance(f, VirtualField):
-            yield f
+        #if not isinstance(f, VirtualField):
+        yield f
     # todo: for slave in self.report.slaves
 
 

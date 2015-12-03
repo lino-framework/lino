@@ -181,7 +181,7 @@ def bv2kw(fieldname,values):
                 pm, pf = model._meta.parents.items()[0]
                 child_fields = [f for f in fields if f != pf]
                 if child_fields:
-                    attrs = ',' + ','.join([
+                    attrs = ', ' + ', '.join([
                         '%s=%s' % (f.attname, f.attname)
                         for f in child_fields])
                 else:
