@@ -35,12 +35,12 @@ The demo database contains the following data:
 
 >>> rt.show(tickets.PublicTickets)
 ... #doctest: +REPORT_UDIFF
-==================================== ======= ============= ========= =========== ==========
- Overview                             State   Ticket type   Project   Product     Priority
------------------------------------- ------- ------------- --------- ----------- ----------
- **#13 (Bar cannot foo)**             New     Bugfix        linö      Lino Cosi   0
- **#1 (Föö fails to bar when baz)**   New     Bugfix        linö      Lino Cosi   0
-==================================== ======= ============= ========= =========== ==========
+================================== ======= ============= ========= =========== ==========
+ Overview                           State   Ticket type   Project   Product     Priority
+---------------------------------- ------- ------------- --------- ----------- ----------
+ *#13 (Bar cannot foo)*             New     Bugfix        linö      Lino Cosi   0
+ *#1 (Föö fails to bar when baz)*   New     Bugfix        linö      Lino Cosi   0
+================================== ======= ============= ========= =========== ==========
 <BLANKLINE>
 
 This data is being rendered using plain bootstrap HTML:

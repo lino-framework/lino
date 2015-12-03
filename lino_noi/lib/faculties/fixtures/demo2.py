@@ -8,12 +8,6 @@ from __future__ import print_function
 import datetime
 
 from lino.api import rt, dd
-from lino.utils import Cycler
-
-from lino.core.roles import SiteAdmin
-from lino.modlib.cal.utils import DurationUnits
-from lino_noi.lib.tickets.roles import Worker
-from lino.utils.quantities import Duration
 
 
 def unused_objects():
