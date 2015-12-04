@@ -13,8 +13,6 @@ logger = logging.getLogger(__name__)
 
 from django.conf import settings
 
-from .choicelists import UserProfiles
-
 
 class AnonymousUser(object):
     """A singleton class whose instance will be assigned to the
@@ -47,6 +45,7 @@ class AnonymousUser(object):
             # multi-threaded environment:
             settings.SITE.startup()
             cls._instance = AnonymousUser()
+            from lino.modlib.users.choicelists import UserProfiles
             cls._instance.profile = UserProfiles.get_by_value(
                 settings.SITE.anonymous_user_profile, None)
             if cls._instance.profile is None:
