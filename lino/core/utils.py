@@ -48,6 +48,16 @@ get_models = apps.get_models
 validate_url = URLValidator()
 
 
+def getrqdata(request):
+
+    if request.method in ('PUT', 'DELETE'):
+        return QueryDict(request.body)
+        # note that `body` was named `raw_post_data` before Django 1.4
+        # print 20130222, rqdata
+    # rqdata = request.REQUEST
+    return getattr(request, request.method)
+
+
 def is_valid_url(s):
     """Returns `True` if the given string is a valid URL.  This calls
 Django's `URLValidator()`, but does not raise an exception.

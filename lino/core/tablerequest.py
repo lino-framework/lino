@@ -26,6 +26,7 @@ from lino.core import constants
 from lino.utils.xmlgen import html as xghtml
 from lino.utils.xmlgen.html import E
 from lino.utils import jsgen
+from lino.core.utils import getrqdata
 
 from .requests import ActionRequest
 
@@ -438,7 +439,7 @@ class TableRequest(ActionRequest):
             if ar.request is None:
                 columns = None
             else:
-                data = getattr(ar.request, ar.request.method)
+                data = getrqdata(ar.request)
                 columns = [
                     str(x) for x in data.getlist(constants.URL_PARAM_COLUMNS)]
             if columns:

@@ -18,7 +18,6 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import get_language
 from django.utils import translation
 from django.utils import timezone
-from django import http
 from django.core import exceptions
 
 from lino.core.utils import obj2unicode
@@ -27,8 +26,10 @@ from lino.core.utils import navinfo
 from lino.core.boundaction import BoundAction
 from lino.core.signals import on_ui_created, pre_ui_save
 from lino.core.utils import ChangeWatcher
+from lino.core.utils import getrqdata
 from lino.utils import AttrDict
 from lino.utils.xmlgen.html import E
+
 
 CATCHED_AJAX_EXCEPTIONS = (Warning, exceptions.ValidationError)
 
@@ -186,13 +187,7 @@ class BaseRequest(object):
         self.request = request
         self.response = dict()
         if request is not None:
-            if request.method in ('PUT', 'DELETE'):
-                rqdata = http.QueryDict(request.body)
-                # note that `body` was named `raw_post_data` before Django 1.4
-                #~ print 20130222, rqdata
-            else:
-                # rqdata = request.REQUEST
-                rqdata = getattr(request,request.method)
+            rqdata = getrqdata(request)
             kw = self.parse_req(request, rqdata, **kw)
         if parent is not None:
             for k in inheritable_attrs:

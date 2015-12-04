@@ -40,6 +40,7 @@ from lino import AFTER17
 
 from lino.utils.jsgen import py2js
 from lino.utils.quantities import parse_decimal
+from lino.core.utils import getrqdata
 
 from lino.core import constants
 
@@ -880,7 +881,7 @@ class ParameterStore(BaseStore):
         return l
 
     def parse_params(self, request, **kw):
-        data = getattr(request, request.method)
+        data = getrqdata(request)
         pv = data.getlist(self.url_param)
         #~ logger.info("20120221 ParameterStore.parse_params(%s) --> %s",self.url_param,pv)
 
