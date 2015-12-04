@@ -189,7 +189,6 @@ class TableRequest(ActionRequest):
           <lino.core.actors.Actor.get_row_by_pk>`.
 
         """
-        from django.contrib.contenttypes.models import ContentType
         #~ logger.info("20120723 %s.parse_req()",self.actor)
         #~ rh = self.ah
         master = kw.get('master', self.actor.master)
@@ -197,15 +196,17 @@ class TableRequest(ActionRequest):
 
             if not isinstance(master, type):
                 raise Exception("20150216 not a type: %r" % master)
-            if issubclass(master, models.Model) and (
-                    master is ContentType or master._meta.abstract):
-                mt = rqdata.get(constants.URL_PARAM_MASTER_TYPE)
-                try:
-                    master = kw['master'] = ContentType.objects.get(
-                        pk=mt).model_class()
-                except ContentType.DoesNotExist:
-                    pass
-                    # master is None
+            if settings.SITE.is_installed('contenttypes'):
+                from django.contrib.contenttypes.models import ContentType
+                if issubclass(master, models.Model) and (
+                        master is ContentType or master._meta.abstract):
+                    mt = rqdata.get(constants.URL_PARAM_MASTER_TYPE)
+                    try:
+                        master = kw['master'] = ContentType.objects.get(
+                            pk=mt).model_class()
+                    except ContentType.DoesNotExist:
+                        pass
+                        # master is None
 
             if 'master_instance' not in kw:
                 pk = rqdata.get(constants.URL_PARAM_MASTER_PK, None)
