@@ -32,6 +32,8 @@ logger = logging.getLogger(__name__)
 from lino.utils.instantiator import make_converter
 from lino.core import constants
 
+from lino.core.utils import getrqdata
+
 
 class BaseChooser:
     pass
@@ -160,14 +162,14 @@ class Chooser(FieldChooser):
             if tbl.master is not None:
                 master = tbl.master
             else:
-                rqdata = getattr(request, request.method)
+                rqdata = getrqdata(request)
                 mt = rqdata.get(constants.URL_PARAM_MASTER_TYPE)
                 try:
                     master = ContentType.objects.get(pk=mt).model_class()
                 except ContentType.DoesNotExist:
                     master = None
 
-            rqdata = getattr(request, request.method)
+            rqdata = getrqdata(request)
             pk = rqdata.get(constants.URL_PARAM_MASTER_PK, None)
             if pk and master:
                 try:

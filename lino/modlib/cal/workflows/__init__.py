@@ -10,7 +10,7 @@
 
     feedback
     take
-    faggio
+    voga
 
 """
 

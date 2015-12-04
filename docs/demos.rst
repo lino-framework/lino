@@ -19,7 +19,7 @@ switched off to avoid browser questions.
 .. _polly-demo: http://polly-demo.lino-framework.org
 .. _patrols-demo: http://patrols-demo.lino-framework.org
 .. _cosi-demo: http://cosi-demo.lino-framework.org
-.. _faggio-demo: http://faggio-demo.lino-framework.org
+.. _voga-demo: http://voga-demo.lino-framework.org
 .. _ylle: http://ylle.lino-framework.org
 .. _vtp2014: http://vtp2014.lino-framework.org
 .. _team: http://team.lino-framework.org/
@@ -32,7 +32,7 @@ Of general interest:
   application without authentication.
 - belref_ : Official online demo of :ref:`belref`.
 - cosi-demo_ :    Official online demo of :ref:`cosi`.
-- faggio-demo_ :  Official online demo of :ref:`faggio` à la Roger
+- voga-demo_ :  Official online demo of :ref:`voga` à la Roger
 - team_ : Official online demo of :mod:`lino_noi`.
 
 Specific to Belgium:
@@ -42,7 +42,7 @@ Specific to Belgium:
 Specific to Estonia:
 
 - ylle_       :   Online demo of :ref:`cosi` in Estonian
-- vtp2014_    :   Online demo of :ref:`faggio` in Estonian
+- vtp2014_    :   Online demo of :ref:`voga` in Estonian
 
 Experimental:
 

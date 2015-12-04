@@ -157,14 +157,17 @@ class LayoutHandle(object):
                 if spec != '*':
                     name, kwargs = self.splitdesc(spec)
                     explicit_specs.add(name)
-            wildcard_names = [de.name for de in
-                              self.layout._datasource.wildcard_data_elems()
-                              if (de.name not in explicit_specs)
-                              and self.use_as_wildcard(de)]
+            wildcard_names = []
+            for de in self.layout._datasource.wildcard_data_elems():
+                if (de.name not in explicit_specs):
+                    if self.use_as_wildcard(de):
+                        wildcard_names.append(de.name)
+                        if len(explicit_specs) or isinstance(de, VirtualField):
+                            self.hidden_elements.add(de.name)
             wildcard_str = self.layout.join_str.join(wildcard_names)
             desc = desc.replace('*', wildcard_str)
-            if len(explicit_specs) > 0:
-                self.hidden_elements |= set(wildcard_names)
+            # if len(explicit_specs) > 0:
+            #     self.hidden_elements |= set(wildcard_names)
             mk = self.layout._datasource.master_key
             if mk and mk not in explicit_specs \
                and mk not in self.hidden_elements:
