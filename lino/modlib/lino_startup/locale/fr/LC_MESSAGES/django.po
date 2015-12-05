@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2015-12-01 06:51+0200\n"
-"PO-Revision-Date: 2015-12-05 16:00+0300\n"
+"PO-Revision-Date: 2015-12-05 16:04+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language: fr\n"
 "Language-Team: \n"
@@ -694,7 +694,7 @@ msgstr ""
 
 #: lino/modlib/about/models.py:263
 msgid "Server uptime"
-msgstr ""
+msgstr "Ce serveur tourne depuis"
 
 #: lino/modlib/about/models.py:265
 msgid "Source timestamps:"
@@ -3936,6 +3936,7 @@ msgstr "vous connecter"
 #: lino/modlib/lino_startup/config/admin_main_base.html:57
 msgid "using the <b>Log in</b> button in the upper right corner."
 msgstr ""
+"en cliquant le bouton <b>Se connecter</b> dans le coin supérieur droit."
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:61
 #, python-format
