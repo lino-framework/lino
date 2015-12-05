@@ -333,8 +333,9 @@ Lino.autorefresh = function() {
 {%- endif %}
 
 Lino.show_login_window = function(on_login, username) {
-  //~ console.log('20121103 show_login_window',arguments);
+  console.log('20121103 show_login_window',arguments);
   //~ var current_window = Lino.current_window;
+  if (typeof username != 'string') username = null;
   if (Lino.login_window == null) {
     
       function do_login() { 
