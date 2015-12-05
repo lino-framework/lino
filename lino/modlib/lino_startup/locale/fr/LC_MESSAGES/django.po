@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2015-12-01 06:51+0200\n"
-"PO-Revision-Date: 2015-12-03 02:38+0300\n"
+"PO-Revision-Date: 2015-12-05 16:00+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language: fr\n"
 "Language-Team: \n"
@@ -3864,15 +3864,15 @@ msgstr ""
 
 #: lino/modlib/lino_startup/config/500.html:7
 msgid "Congratulations, you found an error in our system."
-msgstr ""
+msgstr "Félicitations, vous avez trouvé une erreur dans notre système."
 
 #: lino/modlib/lino_startup/config/500.html:8
 msgid "We apologize for the inconvenience."
-msgstr ""
+msgstr "Veuillez nous excuser pour les inconvénients."
 
 #: lino/modlib/lino_startup/config/500.html:9
 msgid "If you can reproduce this message, please tell us how you did that."
-msgstr ""
+msgstr "Si cette erreur persiste, n'hésitez pas à nous le signaler."
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:4
 msgid "Quick links:"
@@ -3903,7 +3903,7 @@ msgstr "Vos réactions sont les bienvenues par courier électronique à %s."
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:25
 msgid "We are running with simulated date set to {0}."
-msgstr ""
+msgstr "Ce site tourne avec une date simulée fixée au {0}."
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:37
 msgid "You have entered the <b>admin</b> section."
@@ -3918,12 +3918,12 @@ msgstr ""
 #: lino/modlib/lino_startup/config/admin_main_base.html:43
 #, python-format
 msgid "Welcome to the <b>%s</b> site."
-msgstr ""
+msgstr "Bienvenue sur <b>%s</b>."
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:45
 #, python-format
 msgid "We are running %(name)s version %(version)s"
-msgstr ""
+msgstr "Ce site héberge le logiciel libre  %(name)s version %(version)s"
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:54
 msgid "You will now probably want to"
