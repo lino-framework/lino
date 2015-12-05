@@ -42,6 +42,7 @@ class Comment(
     ALLOWED_TAGS = ['a', 'b', 'i', 'em']
 
     class Meta:
+        app_label = 'comments'
         abstract = dd.is_abstract_model(__name__, 'Comment')
         verbose_name = _("Comment")
         verbose_name_plural = _("Comments")

@@ -47,12 +47,12 @@ Lino Presto
 
 http://presto.lino-framework.org/
 
-.. _faggio:
+.. _voga:
 
-Lino Faggio
+Lino Voga
 ------------
 
-http://faggio.lino-framework.org/
+http://voga.lino-framework.org/
 
 .. _patrols:
 

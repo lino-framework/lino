@@ -33,6 +33,10 @@ from lino.api import dd, rt
 #~ add('100', _('Father'),'father',gender=dd.Genders.male)
 #~ add('101', _('Mother'),'mother',gender=dd.Genders.female)
 class Couple(dd.Model):
+
+    class Meta:
+        app_label = 'families'
+
     father = dd.ForeignKey('contacts.Person', blank=True,
                            null=True, related_name='couples_as_father')
     mother = dd.ForeignKey('contacts.Person', blank=True,
@@ -102,6 +106,7 @@ class CoupleField(dd.VirtualField):
 class Child(dd.Model):
 
     class Meta:
+        app_label = 'families'
         abstract = True
 
     #~ parents = dd.ForeignKey(Couple,blank=True,null=True)

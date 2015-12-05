@@ -10,9 +10,8 @@ Welcome to the project homepage of the Lino framework.
 
 .. note::
 
-  Rumma & Ko is hiring a `Lino Core Developer
-  <http://www.saffre-rumma.net/jobs/coredev.html>`_ to help Luc with
-  his work on Lino.
+  Rumma & Ko is `hiring people <http://www.saffre-rumma.net/jobs>`_ to
+  help Luc with his work on Lino.
 
 .. py2rst::
 

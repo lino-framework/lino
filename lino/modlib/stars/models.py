@@ -39,6 +39,7 @@ class Star(UserAuthored, Controllable):
     nickname = models.CharField(_("Nickname"), max_length=50, blank=True)
 
     class Meta:
+        app_label = 'stars'
         verbose_name = _("Star")
         verbose_name_plural = _("Stars")
 
