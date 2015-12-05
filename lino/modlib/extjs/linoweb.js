@@ -401,6 +401,9 @@ Lino.show_login_window = function(on_login, username) {
             fn: function() { do_login()}
           },
           items: [login_panel] });
+  } else {
+      var fld = Lino.login_window.items.first().form.findField('username');
+      fld.setValue(username);
   };
   Lino.login_window.show();
 };
