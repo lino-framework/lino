@@ -231,9 +231,9 @@ class User(CreatedModified, TimezoneHolder):
         return is_password_usable(self.password)
 
     def as_list_item(self, ar):
-        u = E.strong(self.username)
-        u = E.a(self.username, href="javascript:Lino.show_login_window()")
-        return E.li(u, ' : ',
+        url = "javascript:Lino.show_login_window(null, '{0}')".format(
+            self.username)
+        return E.li(E.a(self.username, href=url), ' : ',
                     unicode(self), ', ',
                     unicode(self.profile), ', ',
                     E.strong(settings.SITE.LANGUAGE_DICT.get(self.language)))

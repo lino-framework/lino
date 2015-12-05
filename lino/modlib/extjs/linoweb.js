@@ -332,7 +332,7 @@ Lino.autorefresh = function() {
 }
 {%- endif %}
 
-Lino.show_login_window = function(on_login) {
+Lino.show_login_window = function(on_login, username) {
   //~ console.log('20121103 show_login_window',arguments);
   //~ var current_window = Lino.current_window;
   if (Lino.login_window == null) {
@@ -376,6 +376,7 @@ Lino.show_login_window = function(on_login) {
             fieldLabel:"{{_('Username')}}", 
             id: 'username',
             name:'username', 
+            value: username, 
             autoHeight:true,
             allowBlank:false 
         },{ 
