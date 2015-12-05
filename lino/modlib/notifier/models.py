@@ -64,6 +64,7 @@ class Notification(UserAuthored, Controllable, Created):
 
     """
     class Meta:
+        app_label = 'notifier'
         verbose_name = _("Notification")
         verbose_name_plural = _("Notifications")
 

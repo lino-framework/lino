@@ -129,6 +129,7 @@ class Problem(Controllable, UserAuthored):
 
     """
     class Meta:
+        app_label = 'plausibility'
         verbose_name = _("Plausibility problem")
         verbose_name_plural = _("Plausibility problems")
         ordering = ['owner_type', 'owner_id', 'checker']

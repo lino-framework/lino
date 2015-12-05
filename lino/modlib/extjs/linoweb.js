@@ -332,9 +332,10 @@ Lino.autorefresh = function() {
 }
 {%- endif %}
 
-Lino.show_login_window = function(on_login) {
-  //~ console.log('20121103 show_login_window',arguments);
+Lino.show_login_window = function(on_login, username) {
+  console.log('20121103 show_login_window',arguments);
   //~ var current_window = Lino.current_window;
+  if (typeof username != 'string') username = null;
   if (Lino.login_window == null) {
     
       function do_login() { 
@@ -376,6 +377,7 @@ Lino.show_login_window = function(on_login) {
             fieldLabel:"{{_('Username')}}", 
             id: 'username',
             name:'username', 
+            value: username, 
             autoHeight:true,
             allowBlank:false 
         },{ 
@@ -400,6 +402,9 @@ Lino.show_login_window = function(on_login) {
             fn: function() { do_login()}
           },
           items: [login_panel] });
+  } else {
+      var fld = Lino.login_window.items.first().form.findField('username');
+      fld.setValue(username);
   };
   Lino.login_window.show();
 };

@@ -130,7 +130,7 @@ class AuthMiddleWareBase(object):
             #~ request.requesting_panel = None
             #~ return
 
-        if len(settings.SITE.languages) > 1:
+        if len(settings.SITE.languages) > 1 and user.authenticated:
 
             user_language = rqdata.get(
                 constants.URL_PARAM_USER_LANGUAGE, user_language)

@@ -231,7 +231,9 @@ class User(CreatedModified,TimezoneHolder):
         return is_password_usable(self.password)
 
     def as_list_item(self, ar):
-        return E.li(E.strong(self.username), ' : ',
+        url = "javascript:Lino.show_login_window(null, '{0}')".format(
+            self.username)
+        return E.li(E.a(self.username, href=url), ' : ',
                     unicode(self), ', ',
                     unicode(self.profile), ', ',
                     E.strong(settings.SITE.LANGUAGE_DICT.get(self.language)))
@@ -321,11 +323,10 @@ class MySettings(Users):
 
 class UsersOverview(Users):
 
-    """
-    A variant of :ddref:`users.Users` showing only active users
-    and only some fields. 
-    This is used on demo sites in :xfile:`admin_main.py` to display the 
-    list of available users.
+    """A variant of :ddref:`users.Users` showing only active users and
+    only some fields.  This is used on demo sites in
+    :xfile:`admin_main.html` to display the list of available users.
+
     """
     column_names = 'username profile language'
     exclude = dict(profile='')
