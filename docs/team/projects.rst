@@ -82,7 +82,7 @@ The :file:`~/repositories` directory is your collection of
 repositories of projects for which you are not the author, but you
 cloned a read-only copy of the development repository, as explained in
 :ref:`lino.dev.install` or the installation instructions for
-:ref:`cosi`, :ref:`welfare`, :ref:`faggio`.
+:ref:`cosi`, :ref:`welfare`, :ref:`voga`.
 
 .. xfile:: ~/projects
 
