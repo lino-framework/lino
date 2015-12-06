@@ -20,8 +20,12 @@ See also :doc:`marked_changes`.
 Development
 ===========
 
-Version 1.6.20 (in development)
+Version 1.7.0 (in development)
 ===============================
+
+- Lino no longer requires an old Django version (:ticket:`38` and :ticket:`650`)
+- Moved accounting plugins from :mod:`lino.modlib` to :ref:`cosi` (:ticket:`520`)
+- Lots of optimizations and bugfixes
 
 
 Version 1.6.19 (released :blogref:`20150901`)

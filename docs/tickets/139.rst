@@ -58,7 +58,7 @@ Current structure
     lino -> north
     lino_cosi -> lino
     lino_welfare -> lino
-    lino_faggio -> lino
+    lino_voga -> lino
     lino_patrols -> lino
     lino_sunto -> lino
 
@@ -82,7 +82,7 @@ Suggestions
         lino_erp -> lino
         lino_cosi -> lino_erp
         lino_welfare -> lino_erp
-        lino_faggio -> lino_erp
+        lino_voga -> lino_erp
 
        }
 

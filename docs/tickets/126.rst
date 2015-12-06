@@ -9,7 +9,7 @@ I got the honour to present Lino at the
 an information day about Free software in education,
 for IT managers and directors of Estonian schools.
 
-- An Estonian online demo of :ref:`faggio` at
+- An Estonian online demo of :ref:`voga` at
   http://vtp2014.lino-framework.org/
 - Some documents on paper: a flyer to hand out, and a poster to hang
   over my table.

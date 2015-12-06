@@ -231,8 +231,11 @@ class User(CreatedModified,TimezoneHolder):
         return is_password_usable(self.password)
 
     def as_list_item(self, ar):
-        url = "javascript:Lino.show_login_window(null, '{0}')".format(
-            self.username)
+        if settings.SITE.is_demo_site:
+            p = "'{0}', '{1}'".format(self.username, '1234')
+        else:
+            p = "'{0}'".format(self.username)
+        url = "javascript:Lino.show_login_window(null, {0})".format(p)
         return E.li(E.a(self.username, href=url), ' : ',
                     unicode(self), ', ',
                     unicode(self.profile), ', ',
@@ -242,7 +245,7 @@ class User(CreatedModified,TimezoneHolder):
     def get_by_username(cls, username, default=models.NOT_PROVIDED):
         """
         `User.get_by_username(x)` is equivalent to
-        `User.objects.get(username=x)` except that the text 
+        `User.objects.get(username=x)` except that the text
         of the DoesNotExist exception is more useful.
         """
         try:

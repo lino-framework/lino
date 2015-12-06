@@ -25,7 +25,7 @@ class YesNo(ChoiceList):
 
     .. django2rst::
 
-        from lino.modlib.system.mixins import YesNo
+        from lino.modlib.system.choicelists import YesNo
         rt.show(YesNo)
 
     Used e.g. to define parameter panel fields for BooleanFields::
@@ -47,7 +47,7 @@ class Genders(ChoiceList):
 
     .. django2rst::
 
-            from lino.modlib.system.mixins import Genders
+            from lino.modlib.system.choicelists import Genders
             rt.show(Genders)
 
 
@@ -94,7 +94,7 @@ class PeriodEvents(ChoiceList):
 
     .. django2rst::
 
-        from lino.modlib.system.mixins import PeriodEvents
+        from lino.modlib.system.choicelists import PeriodEvents
         rt.show(PeriodEvents)
 
     """

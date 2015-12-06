@@ -5,10 +5,7 @@
 """Defines the :class:`Site` class. For an overview see
 :doc:`/dev/site` and :doc:`/dev/plugins` .
 
-
-.. 
-
-    This document is part of the Lino test suite. You can test only
+.. This document is part of the Lino test suite. You can test only
     this document using::
 
         $ python setup.py test -s tests.CoreTests.test_site

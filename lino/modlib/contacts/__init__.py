@@ -17,8 +17,8 @@
     fixtures.demo_fr
 
 This plugin is being extended by :ref:`welfare` in
-:mod:`lino_welfare.modlib.contacts` or by :ref:`faggio` in
-:mod:`lino_faggio.modlib.contacts`.
+:mod:`lino_welfare.modlib.contacts` or by :ref:`voga` in
+:mod:`lino_voga.modlib.contacts`.
 
 
 Lino differentiates the following subclasses of Partner:

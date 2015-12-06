@@ -25,12 +25,8 @@ Welfare <http://welfare.lino-framework.org/admin/install.html>`__.
 System requirements
 ===================
 
-#.  Lino still requires **Django 1.6**, we just did not yet take the
-    time to make it work with newer versions. Any contribution is
-    welcome.
-
-#.  Lino requires **Python 2**.  Also here: we just did not yet take the
-    time to make it work with Python 3. Any contribution is welcome.
+#.  Lino requires **Python 2**.  We just did not yet take the time to
+    make it work with Python 3. Any contribution is welcome.
 
 #.  We assume you have pip_ installed. `pip` is not automatically
     bundled with Python 2, but it has become the de-facto standard.

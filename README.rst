@@ -18,7 +18,7 @@ Examples of Lino applications are
 `Lino Welfare <http://welfare.lino-framework.org>`__,
 `Lino Così <http://cosi.lino-framework.org>`__
 or
-`Lino Faggio <http://faggio.lino-framework.org>`__
+`Lino Voga <http://voga.lino-framework.org>`__
 (`more <http://lino-framework.org/about/projects.html>`__)
 
 

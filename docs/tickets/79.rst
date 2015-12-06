@@ -43,7 +43,7 @@ clearly that if somebody wants to publish a non-free Lino application,
 they must buy a commercial license for ExtJS.)
 
 There is still a last question: My own Lino applications.  Some of
-them have their own project (:ref:`welfare`, :ref:`faggio`,
+them have their own project (:ref:`welfare`, :ref:`voga`,
 :ref:`patrols`, :ref:`logos`) and can simply remain GPL. But some
 others (e.g. :ref:`polly`, :mod:`lino.projects.start`) are technically
 a part of Lino and thus will also become LGPL.  And since they are

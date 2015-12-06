@@ -52,14 +52,15 @@ class Album(object):
                 self.driver.title, title)
             sys.exit(-1)
 
-    def screenshot(self, name, caption, text=''):
+    def screenshot(self, name, caption, before='', after=''):
         filename = self.screenshot_root.child(name)
         print "Writing screenshot {0} ...".format(filename)
         if not self.driver.get_screenshot_as_file(filename):
             print "Failed to create {0}".format(filename)
             sys.exit(-1)
-        text = unindent(text)
-        self.screenshots.append((name, caption, text))
+        before = unindent(before)
+        after = unindent(after)
+        self.screenshots.append((name, caption, before, after))
 
     def doubleclick(self, elem):
         self.actionChains.double_click(elem).perform()
@@ -83,15 +84,18 @@ class Album(object):
             content += unindent(self.intro)
             content += "\n\n\n"
 
-        for name, caption, text in self.screenshots:
+        for name, caption, before, after in self.screenshots:
             content += "\n\n"
             content += rstgen.header(2, caption)
             content += """
 
-{text}
+{before}
 
 .. image:: {name}
     :alt: {caption}
+    :width: 500
+
+{after}
 
 """.format(**locals())
 

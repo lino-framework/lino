@@ -1038,7 +1038,7 @@ class Store(BaseStore):
         disabled_fields = set(self.actor.disabled_fields(instance, ar))
         changed_triggers = []
         for f in self.all_fields:
-            if not f.name in disabled_fields:
+            if f.name not in disabled_fields:
                 try:
                     if f.form2obj(ar, instance, form_values, is_new):
                         m = getattr(instance, f.name + "_changed", None)

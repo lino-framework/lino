@@ -857,7 +857,7 @@ class Actor(actions.Parametrizable, Permittable):
         for the field `field` of this actor to represent
         the choice `obj`.
         Override this if you want a customized representation.
-        For example :class:`lino_faggio.models.InvoiceItems`
+        For example :class:`lino_voga.models.InvoiceItems`
 
         """
         return obj.get_choices_text(request, self, field)
