@@ -63,7 +63,7 @@ and thus the `get_calendar` method is implemented as follows::
         if self.user is not None:
             return self.user.calendar
 
-Or in :ref:`faggio` there is one calendar per Room. Thus the
+Or in :ref:`voga` there is one calendar per Room. Thus the
 `get_calendar` method is implemented as follows::
 
     def get_calendar(self):

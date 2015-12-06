@@ -356,5 +356,5 @@ gettext_compact = True
 # print 20150701, autodoc_default_flags
 # raise 123
 
-autodoc_default_flags = ['no-imported-members']
+# autodoc_default_flags = ['no-imported-members']
 

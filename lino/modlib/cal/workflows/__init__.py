@@ -128,7 +128,7 @@ add = GuestStates.add_item
 add('10', _("Invited"), 'invited')
 
 # GuestStates will be reset by importing either feedback or
-# faggio. But the calendar module itself requires a state named
+# voga. But the calendar module itself requires a state named
 # `invited`
 
 

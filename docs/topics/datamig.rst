@@ -20,11 +20,11 @@ database structure**.  This is called database migration.
   The :xfile:`restore.py` script will automatically detect version changes and 
   apply any necessary changes to your data.
   
-For example, here is a upgrade with data migration of a :ref:`faggio`
+For example, here is a upgrade with data migration of a :ref:`voga`
 site::
   
   $ python manage.py dump2py 20130827
-  $ pip install -U lino_faggio
+  $ pip install -U lino_voga
   $ python manage.py run 20130827/restore.py 
   
 It is of course recommended to stop any other processes 

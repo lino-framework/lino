@@ -1,8 +1,8 @@
 ==============================
-#123 : Lino Faggio August 2014
+#123 : Lino Voga August 2014
 ==============================
 
-Geplante Änderungen in :ref:`faggio`.
+Geplante Änderungen in :ref:`voga`.
 
 DONE:
 

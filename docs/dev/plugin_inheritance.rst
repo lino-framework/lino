@@ -18,7 +18,7 @@ plugin from  :mod:`lino.modlib`.
 The :meth:`is_abstract_model` method
 ====================================
 
-Let's take :ref:`faggio`.  It uses Lino's standard calendar module
+Let's take :ref:`voga`.  It uses Lino's standard calendar module
 :mod:`lino.modlib.cal`, but extends the `Room` model defined there:
 
 - it adds two fields `tariff` and `calendar`
@@ -27,7 +27,7 @@ Let's take :ref:`faggio`.  It uses Lino's standard calendar module
 - it overrides the `__unicode__` method
 
 Here is the relevant application developer's code which defines the
-*Faggio* version of :class:`cal.Room <lino_faggio.cal.models.Room>`::
+*Voga* version of :class:`cal.Room <lino_voga.cal.models.Room>`::
 
     from lino.modlib.cal.models import Room
     from lino.modlib.contacts.models import ContactRelated
@@ -68,7 +68,7 @@ To solve this problem, Lino offers the :meth:`is_abstract_model
             verbose_name = _("Room")
             verbose_name_plural = _("Rooms")
 
-The trick here is that the :file:`lino_faggio/lib/cal/__init__.py` file
+The trick here is that the :file:`lino_voga/lib/cal/__init__.py` file
 now contains this information in the `extends_models` attribute::
 
 
@@ -110,7 +110,7 @@ subdirs need special attention.
 
 For `fixtures` you must create one module for every fixture of the
 parent, and import at least `objects` from the parent fixture.  For
-example the :mod:`lino_faggio.cal.fixtures` package contains a suite
+example the :mod:`lino_voga.cal.fixtures` package contains a suite
 of one-line modules, one for each module in :mod:`lino.cal.fixtures`,
 each of which with just one `import` statement like this::
 

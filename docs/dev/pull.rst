@@ -28,7 +28,7 @@ or several of the following::
 
   $ cd cosi ; git pull ; cd ..
   $ cd welfare ; git pull ; cd ..
-  $ cd faggio ; git pull ; cd ..
+  $ cd voga ; git pull ; cd ..
   $ cd eidreader ; git pull ; cd ..
   $ cd davlink ; git pull ; cd ..
   
