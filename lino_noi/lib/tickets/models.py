@@ -55,10 +55,6 @@ from lino.api import dd, rt, _, pgettext
 
 from lino.utils.xmlgen.html import E
 
-from lino.core.utils import gfk2lookup
-
-blogs = dd.resolve_app('blogs')
-
 from lino.modlib.cal.mixins import daterange_text
 from lino.modlib.contacts.mixins import ContactRelated
 from lino.modlib.users.mixins import UserAuthored

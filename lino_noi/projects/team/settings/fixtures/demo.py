@@ -27,7 +27,7 @@ from lino.api import rt, dd, _
 from lino.utils import Cycler
 
 from lino.core.roles import SiteAdmin
-from lino.modlib.cal.utils import DurationUnits
+from lino.modlib.cal.choicelists import DurationUnits
 from lino_noi.lib.tickets.roles import Worker
 from lino.utils.quantities import Duration
 
