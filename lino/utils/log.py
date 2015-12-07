@@ -205,7 +205,7 @@ production server with :setting:`DEBUG` False.
                 l.addHandler(h)
 
         except IOError as e:
-            raise Exception("Failed to create log file %s : %s" % logfile, e)
+            raise Exception("Failed to create log file %s : %s" % (logfile, e))
             # linoLogger.exception("Failed to create log file %s : %s", logfile, e)
             # linoLogger.exception(e)
 
