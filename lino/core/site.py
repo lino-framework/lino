@@ -608,15 +608,6 @@ class Site(object):
     Leave this unchanged as long as :srcref:`docs/tickets/70` is not solved.
     """
 
-    start_year = 2011
-    """An integer with the calendar year in which this site starts working.
-
-    Used e.g.  by :mod:`lino.modlib.ledger.utils` to fill the default
-    list of FixcalYears.  Or by
-    :mod:`lino.modlib.ledger.fixtures.mini` to generate demo invoices.
-
-    """
-
     time_format_extjs = 'H:i'
     """
     Format (in ExtJS syntax) to use for displaying dates to the user.

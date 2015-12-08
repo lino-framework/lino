@@ -352,7 +352,7 @@ class Actor(actions.Parametrizable, Permittable):
 
     Application developers should normally not set this attribute but
     define a :meth:`get_simple_parameters` on the model.
-    If you set this attribute yourself, then 
+    If you set this attribute yourself, then
     :meth:`get_simple_parameters` will not be called.
 
     """
