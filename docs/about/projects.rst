@@ -47,12 +47,15 @@ Lino Presto
 
 http://presto.lino-framework.org/
 
+.. _faggio:
 .. _voga:
 
 Lino Voga
 ------------
 
 http://voga.lino-framework.org/
+
+Lino Voga was named Faggio in the beginning. In 2015 we renamed it to Voga.
 
 .. _patrols:
 
