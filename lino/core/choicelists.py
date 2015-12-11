@@ -55,6 +55,7 @@ import warnings
 from django.utils.translation import ugettext_lazy as _
 from django.utils.functional import lazy
 from django.db import models
+from django.conf import settings
 
 from lino.utils import unicode_string
 
@@ -479,7 +480,7 @@ Django creates copies of them when inheriting models.
             return None
         v = cls.items_dict.get(value)
         if v is None:
-            if STRICT:
+            if settings.SITE.strict_choicelist_values:
                 raise Exception(
                     "Unresolved value %r (%s) for %s" % (
                         value, value.__class__, cls))
