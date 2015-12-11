@@ -885,6 +885,12 @@ class Site(object):
 
     """
 
+    strict_choicelist_values = True
+    """Whether invalid values in a ChoiceList should raise an exception.
+
+    This should be `True` except for exceptional situations.
+    """
+
     csv_params = dict()
     """Site-wide default parameters for CSV generation.  This must be a
     dictionary that will be used as keyword parameters to Python
