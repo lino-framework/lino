@@ -517,6 +517,6 @@ class TextRenderer(HtmlRenderer):
         if text is None:
             text = force_unicode(obj)
         # return "**{0}**".format(text)
-        return settings.SITE.obj2str_template.format(text)
+        return settings.SITE.obj2text_template.format(text)
 
 
