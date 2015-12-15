@@ -83,17 +83,18 @@ class EndSession(dd.Action):
     """To close a session means to stop working on that ticket for this time.
 
     """
-    label = _("End session")
-    help_text = _("Stop time-tracking this session.")
+    label = u"↘"  # u"\u2198"
+    # label = _("End session")
+    help_text = _("End this session.")
     # icon_name = 'emoticon_smile'
     show_in_workflow = True
     show_in_bbar = False
+    readonly = False
 
     def get_action_permission(self, ar, obj, state):
         if obj.end_time:
             return False
-        return super(EndSession,
-                     self).get_action_permission(ar, obj, state)
+        return super(EndSession, self).get_action_permission(ar, obj, state)
 
     def run_from_ui(self, ar, **kw):
 
@@ -120,9 +121,10 @@ class EndTicketSession(dd.Action):
     # label = u"\u231a\u2198"
     label = u"↘"  # u"\u2198"
     help_text = _("End the active session on this ticket.")
-    show_in_workflow = True
+    show_in_workflow = False
     show_in_bbar = False
     required_roles = dd.login_required()
+    readonly = False
     
     def get_action_permission(self, ar, obj, state):
         # u = ar.get_user()
@@ -157,12 +159,12 @@ class StartTicketSession(dd.Action):
     # label = u"\u2690"
     # label = u"\u2328"
     # label = u"\u231a\u2197"
-    # label = u"↗"  # \u2197
-
+    label = u"↗"  # \u2197
     help_text = _("Start a session on this ticket.")
     # icon_name = 'emoticon_smile'
     show_in_workflow = False
     show_in_bbar = False
+    readonly = False
 
     def get_action_permission(self, ar, obj, state):
         if obj.standby or obj.closed:

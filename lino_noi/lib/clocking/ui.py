@@ -174,7 +174,11 @@ class SessionsByTicket(Sessions):
                 tot += d
             if ses.end_time is None:
                 txt = "{0} since {1}".format(ses.user, ses.start_time)
-                active_sessions.append(ar.obj2html(ses, txt))
+                lnk = ar.obj2html(ses, txt)
+                sar = ses.end_session.request_from(ar)
+                if sar.get_permission():
+                    lnk = E.span(lnk, " ", sar.ar2button(ses))
+                active_sessions.append(lnk)
 
         # elems.append(E.p(_("Total {0} hours.").format(tot)))
         elems.append(E.p(_("Total %s hours.") % tot))
@@ -187,7 +191,8 @@ class SessionsByTicket(Sessions):
         # Button for starting a session from ticket
 
         sar = obj.start_session.request_from(ar)
-        if ar.renderer.is_interactive and sar.get_permission():
+        # if ar.renderer.is_interactive and sar.get_permission():
+        if sar.get_permission():
             btn = sar.ar2button(obj)
             elems += [E.p(btn)]
         

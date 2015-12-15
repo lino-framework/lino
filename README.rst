@@ -7,15 +7,15 @@ The Lino application used by the Lino team for managing their work on the Lino p
 Description
 -----------
 
-Lino Noi is the `Lino <http://www.lino-framework.org>`_
-application used by the Lino team for managing their work on the Lino project.
-The name comes from Italian "noi" which means "we".
+Lino Noi is a customizable ticket management and time tracking
+system to use when time is more than money.
 
-It can be called a `DevOps tool
-<https://en.wikipedia.org/wiki/DevOps>`_ in that it stresses
-communication, collaboration, integration, automation, and measurement
-of cooperation between software developers, users and other IT
-professionals.
+It is used by the `Lino <http://www.lino-framework.org/>`_ team for
+managing their work on the Lino project.
+
+Current maintainer and recommended service provider is `Rumma & Ko
+<http://www.saffre-rumma.net/about>`_.
+
 
 
 
