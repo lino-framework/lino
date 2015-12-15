@@ -366,9 +366,9 @@ class Action(Parametrizable, Permittable):
     select_rows = True
     """True if this action needs an object to act on.
 
-    True if this action should be called on a single row (ignoring
-    multiple row selection).  Set this to False if this action is a
-    list action, not a row action.
+    Set this to `False` if this action is a list action, not a row
+    action.
+
     """
 
     http_method = 'GET'
@@ -700,6 +700,8 @@ class InsertRow(TableAction):
     action_name = 'insert'
     key = keyboard.INSERT  # (ctrl=True)
     hide_virtual_fields = True
+    readonly = False
+    select_rows = False
 
     def get_action_title(self, ar):
         return _("Insert into %s") % force_unicode(ar.get_title())

@@ -162,11 +162,6 @@ class Report(EmptyTable):
     @fields.virtualfield(fields.HtmlBox())
     def body(cls, self, ar):
         return ar.story2html(self.get_story(ar))
-        # elems = tuple(ar.story2html(self.get_story(ar)))
-        # self.get_story(ar), master_instance=self))
-        # if None in elems:
-        #     return "20150703 {0}".format(elems)
-        # return E.div(*elems)
 
     @classmethod
     def as_appy_pod_xml(cls, self, apr):
