@@ -616,8 +616,13 @@ class AnswersByResponse(dd.VirtualTable):
         ht.add_header_row(*headers, **cellattrs)
         ar.master_instance = response  # must set it because
                                        # get_data_rows() needs it.
-        editable = Responses.update_action.request_from(ar).get_permission(
-            response)
+        # 20151211
+        # editable = Responses.update_action.request_from(ar).get_permission(
+        #     response)
+        sar = Responses.update_action.request_from(ar)
+        sar.selected_rows = [response]
+        editable = sar.get_permission()
+
         kv = dict(response=response)
         insert = AnswerRemarks.insert_action.request_from(
             ar, known_values=kv)
@@ -676,7 +681,9 @@ class AnswersByResponse(dd.VirtualTable):
 
         # if the response is registered, just display the choice, no
         # toggle buttons since answer cannot be toggled:
-        if not sar.get_permission(obj.response):
+        # 20151211
+        sar.selected_rows = [obj.response]
+        if not sar.get_permission():
             return unicode(obj)
 
         AnswerChoice = rt.modules.polls.AnswerChoice

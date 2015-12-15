@@ -368,17 +368,20 @@ request from it.
             self.get_row_by_pk(pk) for pk in selected_pks if pk]
         # note: ticket #523 was because the GET contained an empty pk ("&sr=")
 
-    def get_permission(self, obj=None, **kw):
+    def get_permission(self):
         """Whether this request has permission to run on the given database
         object. `obj` can be None if the action is a list action
         (whose `select_rows` is `False`).
 
         """
-        if obj is None:
-            state = None
-        else:
+        if self.bound_action.action.select_rows:
+            if len(self.selected_rows) == 0:
+                return False
+            obj = self.selected_rows[0]
             state = self.bound_action.actor.get_row_state(obj)
-        return self.bound_action.get_row_permission(self, obj, state)
+            return self.bound_action.get_row_permission(self, obj, state)
+        return self.bound_action.get_bound_action_permission(
+            self, None, None)
         
     def set_response(self, **kw):
         """Set (some part of) the response to be sent when the action request
@@ -628,7 +631,8 @@ request from it.
             # print 20150822, ar.renderer
             if issubclass(ar.actor, Report):
                 story = ar.actor.get_story(None, ar)
-                return ar.renderer.show_story(self, story, stripped=stripped)
+                return ar.renderer.show_story(
+                    self, story, header_level=header_level, stripped=stripped)
             return ar.renderer.show_table(
                 ar, column_names=column_names, header_level=header_level,
                 nosummary=nosummary, stripped=stripped)

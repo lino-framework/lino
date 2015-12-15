@@ -82,12 +82,12 @@ class QuickTest(RemoteAuthTestCase):
         self.assertEquivalent("""
 
         John is Father of *Mary* (4 years) Father of *Joseph* (5
-        years)
+        years) """, s)
 
-        Create relationship as **Father**/**Son** **Adoptive
-        father**/**Adopted son** **Foster father**/**Foster son**
-        **Husband** **Partner** **Stepfather**/**Stepson** **Brother**
-        **Cousin** **Uncle**/**Nephew** **Relative** **Other** """, s)
+        # Create relationship as **Father**/**Son** **Adoptive
+        # father**/**Adopted son** **Foster father**/**Foster son**
+        # **Husband** **Partner** **Stepfather**/**Stepson** **Brother**
+        # **Cousin** **Uncle**/**Nephew** **Relative** **Other** """, s)
 
         with translation.override('de'):
             ar = LinksByHuman.request(father)
@@ -96,13 +96,13 @@ class QuickTest(RemoteAuthTestCase):
             self.assertEquivalent("""
             
             John ist Vater von *Mary* (4 Jahre) Vater von *Joseph* (5
-            Jahre)
+            Jahre) """, s)
 
-            Beziehung erstellen als **Vater**/**Sohn**
-            **Adoptivvater**/**Adoptivsohn**
-            **Pflegevater**/**Pflegesohn** **Ehemann** **Partner**
-            **Stiefvater**/**Stiefsohn** **Bruder** **Vetter**
-            **Onkel**/**Neffe** **Verwandter** **Sonstiger** """, s)
+            # Beziehung erstellen als **Vater**/**Sohn**
+            # **Adoptivvater**/**Adoptivsohn**
+            # **Pflegevater**/**Pflegesohn** **Ehemann** **Partner**
+            # **Stiefvater**/**Stiefsohn** **Bruder** **Vetter**
+            # **Onkel**/**Neffe** **Verwandter** **Sonstiger** """, s)
 
         with translation.override('fr'):
             ar = LinksByHuman.request(father)
@@ -111,13 +111,13 @@ class QuickTest(RemoteAuthTestCase):
             self.assertEquivalent(u"""
 
             John est Père de *Mary* (4 ans) Père de *Joseph* (5
-            ans)
+            ans) """, s)
 
-            Créer lien de parenté en tant que **Père**/**Fils** **Père
-            adoptif**/**Fils adoptif** **Père nourricier**/**Fils
-            nourricier** **Mari** **Partenaire**
-            **Beau-père**/**Beau-fils** **Frère** **Cousin**
-            **Oncle**/**Nephew** **Parent** **Autre** """, s)
+            # Créer lien de parenté en tant que **Père**/**Fils** **Père
+            # adoptif**/**Fils adoptif** **Père nourricier**/**Fils
+            # nourricier** **Mari** **Partenaire**
+            # **Beau-père**/**Beau-fils** **Frère** **Cousin**
+            # **Oncle**/**Nephew** **Parent** **Autre** """, s)
 
         # Here we are just testing whether no exception is risen. The
         # ouptut itself is more thoroughly tested elsewhere.

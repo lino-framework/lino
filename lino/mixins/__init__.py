@@ -33,8 +33,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-import datetime
-
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -44,6 +42,8 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 
 from lino.core import fields
 from lino.core import model
+
+from lino.core.workflows import ChangeStateAction
 
 
 class Registrable(model.Model):
@@ -104,11 +104,17 @@ class Registrable(model.Model):
     def get_row_permission(self, ar, state, ba):
         """Only rows in an editable state may be edited.
 
+        Note that `ba` is the action being requested while
+        `ar.bound_action` is the action from which the request was
+        started.
+
         """
-        # print "20150628 Registrable.get_row_permission %s %s %s %s" \
-        #     % (self, state, ba.action, ar.bound_action.action.readonly)
-        if state and not state.editable:
-            if not ar.bound_action.action.readonly:
+        # print "20150628 Registrable.get_row_permission %s %s : %s %s" \
+        #     % (self, ba, state.editable, ba.action.readonly)
+        if state and not state.editable and not isinstance(
+                ba.action, ChangeStateAction):
+            # if not ar.bound_action.action.readonly:
+            if not ba.action.readonly:
                 return False
         return super(Registrable, self).get_row_permission(ar, state, ba)
 

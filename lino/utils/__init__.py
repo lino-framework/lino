@@ -544,6 +544,31 @@ def puts(s):
     print s
 
 
+class SumCollector(object):
+    """A dictionary of sums to be collected using an arbitrary key.
+
+    Usage example:
+
+    >>> sc = SumCollector()
+    >>> sc.collect("a", 12)
+    >>> sc.collect("b", 23)
+    >>> sc.collect("a", 34)
+    >>> sc.items()
+    [('a', 46), ('b', 23)]
+
+
+    """
+    def __init__(self):
+        self._sums = dict()
+        self.items = self._sums.items
+
+    def collect(self, k, value):
+        if k in self._sums:
+            self._sums[k] += value
+        else:
+            self._sums[k] = value
+
+
 def _test():
     import doctest
     doctest.testmod()

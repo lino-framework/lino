@@ -796,6 +796,11 @@ def create_atomizer(model, fld, name):
         return RequestStoreField(fld, delegate, name)
     if isinstance(fld, fields.VirtualField):
         delegate = create_atomizer(model, fld.return_type, fld.name)
+        if delegate is None:
+            # e.g. VirtualField with DummyField as return_type
+            return None  
+            # raise Exception("No atomizer for %s %s %s" % (
+            #     model, fld.return_type, fld.name))
         return VirtStoreField(fld, delegate, name)
     if isinstance(fld, models.FileField):
         return FileFieldStoreField(fld, name)
