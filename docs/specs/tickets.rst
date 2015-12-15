@@ -363,3 +363,11 @@ Dependencies between tickets
  1    Requires          #1 (Föö fails to bar when baz)   #2 (Bar is not always baz)
 ==== ================= ================================ ============================
 <BLANKLINE>
+
+
+Comments
+========
+
+>>> obj = tickets.Ticket.objects.get(pk=7)
+>>> rt.show(comments.CommentsByRFC, obj)
+<div class="htmlText"></div>

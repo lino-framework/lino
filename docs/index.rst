@@ -8,9 +8,8 @@ Welcome to the *Lino Noi* project homepage.
 
 .. note::
 
-  Rumma & Ko is hiring a `Lino Core Developer
-  <http://www.saffre-rumma.net/jobs/coredev.html>`_ to help Luc with
-  his work on Lino Noi.
+  Rumma & Ko is `hiring people <http://www.saffre-rumma.net/jobs>`_ to
+  help us with our work on Lino Noi.
 
 
 .. py2rst::
