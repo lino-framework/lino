@@ -480,12 +480,13 @@ class VirtualField(FakeField):
         return self.set_value_in_object(None, instance, value)
 
 
-
 def virtualfield(return_type):
     """
     Decorator to turn a method into a :class:`VirtualField`.
     """
     def decorator(fn):
+        if isinstance(return_type, DummyField):
+            return DummyField(fn)
         return VirtualField(return_type, fn)
     return decorator
 
@@ -829,8 +830,6 @@ def use_as_wildcard(de):
     if de.name.endswith('_ptr'):
         return False
     return True
-
-
 
 
 def fields_list(model, field_names):
