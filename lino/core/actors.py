@@ -1197,6 +1197,8 @@ class Actor(actions.Parametrizable, Permittable):
         a = getattr(self, name, None)
         if isinstance(a, actions.Action):
             return a
+        if isinstance(a, fields.DummyField):
+            return a
 
         #~ logger.info("20120307 lino.core.coretools.get_data_elem %r,%r",self,name)
         s = name.split('.')

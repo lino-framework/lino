@@ -49,12 +49,21 @@ validate_url = URLValidator()
 
 
 def getrqdata(request):
+    """Return the request data.
 
+    Unlike the now defunct `REQUEST
+    <https://docs.djangoproject.com/en/1.6/ref/request-response/#django.http.HttpRequest.REQUEST>`_
+    attribute, this inspects the request's `method` in order to decide
+    what to return.
+
+    """
     if request.method in ('PUT', 'DELETE'):
         return QueryDict(request.body)
         # note that `body` was named `raw_post_data` before Django 1.4
         # print 20130222, rqdata
     # rqdata = request.REQUEST
+    if request.method == 'HEAD':
+        return request.GET
     return getattr(request, request.method)
 
 

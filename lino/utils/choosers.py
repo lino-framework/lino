@@ -159,17 +159,16 @@ class Chooser(FieldChooser):
 
         # 20120202
         if tbl.master_field is not None:
+            rqdata = getrqdata(request)
             if tbl.master is not None:
                 master = tbl.master
             else:
-                rqdata = getrqdata(request)
                 mt = rqdata.get(constants.URL_PARAM_MASTER_TYPE)
                 try:
                     master = ContentType.objects.get(pk=mt).model_class()
                 except ContentType.DoesNotExist:
                     master = None
 
-            rqdata = getrqdata(request)
             pk = rqdata.get(constants.URL_PARAM_MASTER_PK, None)
             if pk and master:
                 try:
