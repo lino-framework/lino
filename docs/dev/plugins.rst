@@ -106,9 +106,10 @@ As an application developer you can specify *in your application* that
 you want to configure certain plugins by overriding the
 :meth:`lino.core.site.Site.setup_plugins` method.
 
-You do this in your application's :xfile:`settings.py`.
-
-For example::
+You should do this in your application's :xfile:`settings.py` by
+overriding the :meth:`setup_plugins
+<lino.core.site.Site.setup_plugins>` method of your Site class.  For
+example::
 
     from lino.projects.std.settings import Site
 
@@ -120,23 +121,36 @@ For example::
 
 
 As a system administrator you can override these configuration
-defaults in your project's :xfile:`settings.py` using the
-:func:`configure_plugin <lino.core.site.configure_plugin>` function.
+defaults in your project's :xfile:`settings.py` using one of the
+following methods:
 
-For example, if you want to set the :attr:`country_code
-<lino.modlib.countries.Plugin.country_code>` of
-:mod:`lino.modlib.countries` to `'DE'`::
+- by overriding the Site class as described above for application developers
+
+- using the :func:`configure_plugin <lino.core.site.configure_plugin>` function.
+
+  For example, if you want to set the :attr:`country_code
+  <lino.modlib.countries.Plugin.country_code>` of
+  :mod:`lino.modlib.countries` to `'DE'`::
 
     from lino_cosi.projects.apc.settings import *
     configure_plugin('countries', country_code='DE')
     SITE = Site(globals())
 
-Beware the pitfall: :func:`configure_plugin
-<lino.core.site.configure_plugin>` must be called *before* the
-:setting:`SITE` has been instantiated, otherwise *they will be ignored
-silently*.  (It is not easy to prevent accidental calls to *after*
-Site initialization because there are scenarios where you want to
-instantiate several `Site` objects.)
+  Beware the pitfall: :func:`configure_plugin
+  <lino.core.site.configure_plugin>` must be called *before* the
+  :setting:`SITE` has been instantiated, otherwise *they will be
+  ignored silently*.  (It is not easy to prevent accidental calls to
+  *after* Site initialization because there are scenarios where you
+  want to instantiate several `Site` objects.)
+
+- by setting the value directly after instantiation of your
+  :setting:`SITE` object.
+
+Keep in mind that you can indeed never be sure that your
+:setting:`SITE` instance is actually being used. A local system admin
+can always decide to import your :xfile:`settings.py` module and the
+reinstantiate your `Site` class another time. That's part of our game
+and we don't want it to be forbidden.
 
 Uncomplete list of configurable plugin attributes:
 

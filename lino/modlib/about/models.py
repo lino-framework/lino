@@ -262,6 +262,13 @@ class About(EmptyTable):
         value = settings.SITE.startup_time
         label = _("Server uptime")
         body.append(E.p(unicode(label), ' : ', E.b(dtfmt(value))))
+        if settings.SITE.is_demo_site:
+            s = unicode(_("This is a Lino demo site."))
+            body.append(E.p(s))
+        if settings.SITE.the_demo_date:
+            s = _("We are running with simulated date set to {0}.").format(
+                dd.fdf(settings.SITE.the_demo_date))
+            body.append(E.p(s))
         body.append(E.p(unicode(_("Source timestamps:"))))
         for src in ("lino", "lino_welfare", 'django', 'atelier'):
             label = src

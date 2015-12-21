@@ -27,11 +27,12 @@ class Duplicate(actions.Action):
     on related objects.
 
     """
-    label = _("Duplicate")
+    label = "\u2687"  # ⚇ "white circle with two dots"
+    # label = _("Duplicate")
+    # icon_name = 'arrow_divide'
     sort_index = 11
     show_in_workflow = False
     readonly = False  # like InsertRow. See docs/blog/2012/0726
-    icon_name = 'arrow_divide'
 
     def is_callable_from(self, caller):
         if isinstance(caller, actions.InsertRow):

@@ -34,22 +34,13 @@ class Plugin(object):
     :xfile:`models.py`.  This is possible because Plugins are defined
     in your app's :xfile:`__init__.py` file.
 
-    For example::
-
-        from lino import ad
-        from django.utils.translation import ugettext_lazy as _
-
-        class Plugin(ad.Plugin):
-
-            verbose_name = _("Places")
-
     Unlike Django's `AppConfig`, you *cannot* define a `Plugin` in
     your :xfile:`models.py` file, you *must* define it in your app's
     :xfile:`__init__.py`.  This limitation has the advantage of making
     certain things possible which are not possible in plain Django.
 
-    Plugins get instiantiated exactly once when the :class:`Site`
-    object instantiates (i.e. before Django settings are ready).
+    Plugins get instiantiated when the :class:`Site` object
+    instantiates (i.e. before Django settings are ready).
 
     """
 

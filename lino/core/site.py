@@ -417,8 +417,6 @@ class Site(object):
 
     project_model = None
     """
-    Deprecated because this is an obsolete pattern.
-
     Optionally set this to the <applabel.ModelName> of a model used as
     "central project" in your application.  Which concretely means that
     certain other models like notes.Note, outbox.Mail, ... have an
