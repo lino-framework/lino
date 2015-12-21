@@ -570,8 +570,8 @@ class Actor(actions.Parametrizable, Permittable):
                 return None
             except model.DoesNotExist:
                 return None
-        msg = "{0} must define a get_master_instance method"
-        msg = msg.format(self.actor)
+        msg = "{0} must override get_master_instance"
+        msg = msg.format(self)
         raise Exception(msg)
         # from lino.core import choicelists
         # if issubclass(master, choicelists.Choice):
