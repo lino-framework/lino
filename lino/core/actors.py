@@ -307,9 +307,18 @@ class Actor(actions.Parametrizable, Permittable):
     """
 
     master = None
-    """The class of the "master" for this actor.  Currently used only on
-    tables. Setting this to something else than `None` will turn the
-    table into a :term:`slave table`.
+    """The class of the "master" for this actor.
+
+    Application code usually doesn't need to specify this because it
+    is automatically set on actors whose :attr:`master_key` is
+    specified.
+
+    Setting this to something else than `None` will turn the table
+    into a :term:`slave table`.
+
+    If the :attr:`master` is something else than a database model
+    (e.g. a ChoiceList), then the actor must also define a
+    :meth:`get_master_instance` method.
 
     """
 
@@ -560,7 +569,7 @@ class Actor(actions.Parametrizable, Permittable):
 
         `ar` is the action request on this actor. `model` is the
         :attr:`master`, except if :attr:`master` is `ContentType` (in
-        which case `model` is the requested master model).
+        which case `model` is the *requested* master).
 
         """
         if issubclass(model, models.Model):
