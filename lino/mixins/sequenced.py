@@ -42,7 +42,8 @@ class MoveUp(actions.Action):
     # label = _("Up")
     # label = "\u2191" thin arrow up
     # label = "\u25b2" # triangular arrow up
-    label = "↑"  #
+    label = "\u25B2"  # ▲ Black up-pointing triangle
+    # label = "↑"  #
     custom_handler = True
     # icon_name = 'arrow_up'
     #~ icon_file = 'arrow_up.png'
@@ -79,8 +80,9 @@ class MoveDown(actions.Action):
     """
     # label = _("Down")
     label = "↓"
-    # ~ label = "\u25bc" # triangular arrow down
-    #~ label = "\u2193"
+    # label = "\u25bc" # triangular arrow down
+    # label = "\u2193"
+    label = "\u25BC"  # ▼ Black down-pointing triangle
     # icon_name = 'arrow_down'
     custom_handler = True
     #~ icon_file = 'arrow_down.png'
@@ -131,8 +133,32 @@ class DuplicateSequenced(Duplicate):
 
 
 class Sequenced(Duplicable):
-    """Abstract base class for models that have a field `seqno`
-    containing a "sequence number".
+    """Mixin for models that have a field :attr:`seqno` containing a
+    "sequence number".
+
+    .. attribute:: seqno
+
+        The sequence number of this item with its parent.
+
+    .. method:: duplicate
+
+        Create a duplicate of this object and insert the new object
+        below this one.
+
+    .. attribute:: move_up
+
+        Exchange the :attr:`seqno` of this item and the previous item.
+
+    .. attribute:: move_down
+
+        Exchange the :attr:`seqno` of this item and the next item.
+
+    .. attribute:: move_buttons
+
+        Displays buttons for certain actions on this row:
+
+        - :attr:`move_up` and :attr:`move_down`
+        - duplicate
 
     """
 
@@ -239,22 +265,22 @@ class Sequenced(Duplicable):
         self.save()
         other.save()
 
-    @fields.displayfield(_("Move"), preferred_width=5)
+    @fields.displayfield(_("Move"))
     def move_buttons(obj, ar):
-        """
-        Displays the buttons for this row and this user.
-        """
         if ar is None:
             return ''
         actor = ar.actor
         l = []
         state = None  # TODO: support a possible state?
-        for n in ('move_up', 'move_down'):
+        for n in ('move_up', 'move_down', 'duplicate'):
             ba = actor.get_action_by_name(n)
             if ba.get_bound_action_permission(ar, obj, state):
                 l.append(ar.renderer.action_button(obj, ar, ba))
                 l.append(' ')
         return E.p(*l)
+
+
+Sequenced.set_widget_options('move_buttons', width=5)
 
 
 class Hierarchical(Duplicable):
