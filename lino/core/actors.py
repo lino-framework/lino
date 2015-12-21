@@ -563,12 +563,25 @@ class Actor(actions.Parametrizable, Permittable):
         which case `model` is the requested master model).
 
         """
-        try:
-            return model.objects.get(pk=pk)
-        except ValueError:
-            return None
-        except model.DoesNotExist:
-            return None
+        if issubclass(model, models.Model):
+            try:
+                return model.objects.get(pk=pk)
+            except ValueError:
+                return None
+            except model.DoesNotExist:
+                return None
+        msg = "{0} must define a get_master_instance method"
+        msg = msg.format(self.actor)
+        raise Exception(msg)
+        # from lino.core import choicelists
+        # if issubclass(master, choicelists.Choice):
+        #     if master.choicelist is None:
+        #         kw['master_instance'] = None
+        #     else:
+        #         mi = master.choicelist.get_by_values(pk)
+        #         kw['master_instance'] = mi
+        # else:
+        #     logger.info("Invalid master %s", master)
 
     @classmethod
     def disabled_fields(cls, obj, ar):

@@ -98,7 +98,6 @@ if False:  # 20130710
             f.write(yaml.dump(self.data))
 
 
-# class TableHandle(Handle):
 class TableHandle(object):
     """
     For every table we create one "handle" per renderer.
