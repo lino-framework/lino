@@ -216,12 +216,13 @@ class TableRequest(ActionRequest):
                     pk = None
                 if pk is None:
                     kw['master_instance'] = None
-                mi = self.actor.get_master_instance(self, master, pk)
-                if mi is None:
-                    raise ObjectDoesNotExist(
-                        "Invalid master key {0} for {1}".format(
-                            pk, self.actor))
-                kw['master_instance'] = mi
+                else:
+                    mi = self.actor.get_master_instance(self, master, pk)
+                    if mi is None:
+                        raise ObjectDoesNotExist(
+                            "Invalid master key {0} for {1}".format(
+                                pk, self.actor))
+                    kw['master_instance'] = mi
 
                 # ~ print '20100212', self #, kw['master_instance']
         #~ print '20100406b', self.actor,kw
