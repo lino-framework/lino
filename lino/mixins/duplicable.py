@@ -33,6 +33,7 @@ class Duplicate(actions.Action):
     sort_index = 11
     show_in_workflow = False
     readonly = False  # like InsertRow. See docs/blog/2012/0726
+    help_text = _("Duplicate this row.")
 
     def is_callable_from(self, caller):
         if isinstance(caller, actions.InsertRow):
