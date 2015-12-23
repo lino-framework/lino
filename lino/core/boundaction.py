@@ -97,14 +97,29 @@ class BoundAction(object):
         return self.action.setup_action_request(self.actor, *args)
 
     def get_row_permission(self, ar, obj, state):
+        """Checks whether this bound action has permission to run on the given
+        database object.
+        
+        This will check requirements specified on the *actor*, which
+        by default checks those defined on the *model*, which in turn
+        checks those defined on the *action* by calling
+        :meth:`get_bound_action_permission`.
+
+        """
         #~ if self.actor is None: return False
         return self.actor.get_row_permission(obj, ar, state, self)
 
     def get_bound_action_permission(self, ar, obj, state):
-        """Checks whether this bound action has permission to run.
+        """Checks whether the bound action gives permission to run.
+
+        If this is a list action, `obj` is None.  If this is a row
+        action, then `obj` is the current row.  Note that this method
+        does not (again) call any custom permission handler defined on
+        the model.
+
 
         This is done in two steps: first we check the requirements
-        specified in `required_roles` and required_states, then (if
+        specified in `required_roles` and `required_states`, then (if
         these pass) we check any custom permissions defined on the
         action via :meth:`get_action_permission
         <lino.core.actions.Action.get_action_permission>`.

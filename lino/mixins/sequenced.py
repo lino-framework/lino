@@ -274,7 +274,7 @@ class Sequenced(Duplicable):
         state = None  # TODO: support a possible state?
         for n in ('move_up', 'move_down', 'duplicate'):
             ba = actor.get_action_by_name(n)
-            if ba.get_bound_action_permission(ar, obj, state):
+            if ba.get_row_permission(ar, obj, state):
                 l.append(ar.renderer.action_button(obj, ar, ba))
                 l.append(' ')
         return E.p(*l)
