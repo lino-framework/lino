@@ -443,6 +443,12 @@ Lino.window_history = Array();
     
 Lino.chars2width = function(cols) {  return cols * 9; }
 Lino.rows2height = function(cols) {  return cols * 20; }
+Lino.perc2width = function(perc) {  
+    // var w = Math.max(document.documentElement.clientWidth, window.innerWidth);
+    // console.log("20151226", document, window, w);
+    var w = Lino.viewport.getWidth();
+    return w * perc / 100; 
+}
 
 
 
@@ -4361,6 +4367,10 @@ Lino.Window = Ext.extend(Ext.Window,{
         config.items = config.main_item;
     }
     this.main_item = config.main_item; 
+
+    if (typeof config.width == "string" && config.width.slice(-1) == "%") {
+        config.width = Lino.perc2width(parseInt(config.width.slice(0, -1)));
+    }
     
     delete config.main_item;
     //~ delete config.params_item;
@@ -4412,7 +4422,7 @@ Lino.Window = Ext.extend(Ext.Window,{
     this.main_item.config_containing_window(config);
     
     // console.log('20150514 Lino.Window.constructor() 2');
-    Lino.Window.superclass.constructor.call(this,config);
+    Lino.Window.superclass.constructor.call(this, config);
     
     //~ console.log('20120110 Lino.Window.constructor() 3');
     

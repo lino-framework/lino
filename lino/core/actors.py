@@ -389,9 +389,21 @@ class Actor(actions.Parametrizable, Permittable):
     get_welcome_messages = None
     get_row_classes = None
     window_size = None
-    """
-    Set this to a tuple of (height, width) in pixels to have this
-    actor display in a modal non-maximized window.
+    """Set this to a tuple of `(height, width)` to have this actor
+    display in a modal non-maximized window.
+
+    - `height` must be either an integer expressing a number of rows
+      or the string "auto".  If it is auto, then the window should not
+      contain any v-flexible component.
+
+    - `width` must be either an integer expressing a number of rows
+      or a string of style "90%".
+
+      Note that a relative width will be converted to a number of
+      pixels when the window is rendered for the first time. That is,
+      if you close the window, resize your browser window and reopen
+      the same window, you will get the old size.
+
     """
 
     default_list_action_name = 'grid'
