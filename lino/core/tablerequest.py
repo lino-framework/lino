@@ -570,6 +570,9 @@ class TableRequest(ActionRequest):
         return self.actor.get_title(self)
 
     def get_status(self, **kw):
+        """Extends :meth:`lino.core.requests.ActorRequest.get_status`.
+
+        """
         kw = ActionRequest.get_status(self, **kw)
         bp = kw['base_params']
         if self.quick_search:
@@ -580,13 +583,9 @@ class TableRequest(ActionRequest):
                 if self.actor.known_values.get(k, None) != v:
                     bp[k] = v
         if self.master_instance is not None:
-            if self.master is None:
-                bp[constants.URL_PARAM_MASTER_PK] = self.master_instance
-            else:
+            if isinstance(self.master_instance, models.Model):
                 bp[constants.URL_PARAM_MASTER_PK] = self.master_instance.pk
-                # if ContentType._meta.installed fails since 20141205
-                if settings.SITE.is_installed('contenttypes') \
-                   and isinstance(self.master_instance, models.Model):
+                if settings.SITE.is_installed('contenttypes'):
                     from django.contrib.contenttypes.models import ContentType
                     mt = ContentType.objects.get_for_model(
                         self.master_instance.__class__).pk
@@ -595,6 +594,9 @@ class TableRequest(ActionRequest):
                 #     logger.warning("20141205 %s %s",
                 #                    self.master_instance,
                 #                    ContentType)
+            else:  # if self.master is None:
+                bp[constants.URL_PARAM_MASTER_PK] = self.master_instance
+            
         return kw
 
     def __repr__(self):

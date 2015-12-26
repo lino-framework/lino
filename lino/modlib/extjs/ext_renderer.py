@@ -181,7 +181,7 @@ class ExtRenderer(HtmlRenderer):
                 apv = ba.action.action_param_defaults(ar, obj)
             ps = ba.action.params_layout.params_store
             kw.update(field_values=ps.pv2dict(apv))
-        if obj is not None:
+        if isinstance(obj, models.Model):
             kw.update(record_id=obj.pk)
 
         return kw
