@@ -936,6 +936,10 @@ class ActorRequest(BaseRequest):
         return elem
 
     def get_status(self, **kw):
+        """Return a `dict` with the "status", i.e. a json representation of
+        this request.
+
+        """
         if self.actor.parameters:
             kw.update(
                 param_values=self.actor.params_layout.params_store.pv2dict(

@@ -254,13 +254,14 @@ def discover():
     logger.debug("Analyze %d slave tables...", len(slave_reports))
     for rpt in slave_reports:
         if isinstance(rpt.master, basestring):
-            raise Exception("20150216")
-        # rpt.master = resolve_model(rpt.master)
-        slaves = getattr(rpt.master, "_lino_slaves", None)
-        if slaves is None:
-            slaves = {}
-            rpt.master._lino_slaves = slaves
-        slaves[rpt.actor_id] = rpt
+            raise Exception("20150216 unresolved master")
+        if issubclass(rpt.master, models.Model):
+            # rpt.master = resolve_model(rpt.master)
+            slaves = getattr(rpt.master, "_lino_slaves", None)
+            if slaves is None:
+                slaves = {}
+                rpt.master._lino_slaves = slaves
+            slaves[rpt.actor_id] = rpt
         #~ logger.debug("20111113 %s: slave for %s",rpt.actor_id, rpt.master.__name__)
     #~ logger.debug("Assigned %d slave reports to their master.",len(slave_reports))
 
@@ -528,7 +529,9 @@ class Table(AbstractTable):
                     elif isinstance(fk, GenericForeignKey):
                         master_model = ContentType
                     else:
-                        raise Exception("Oops: {0}".format(fk))
+                        raise Exception(
+                            "Unsupported master_key {0} ({1})".format(
+                                fk, fk.__class__))
                 except models.FieldDoesNotExist:
                     for vf in self.model._meta.virtual_fields:
                         if vf.name == self.master_key:

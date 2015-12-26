@@ -181,7 +181,7 @@ class ExtRenderer(HtmlRenderer):
                 apv = ba.action.action_param_defaults(ar, obj)
             ps = ba.action.params_layout.params_store
             kw.update(field_values=ps.pv2dict(apv))
-        if obj is not None:
+        if isinstance(obj, models.Model):
             kw.update(record_id=obj.pk)
 
         return kw
@@ -1334,12 +1334,18 @@ class ExtRenderer(HtmlRenderer):
         if True:
             if ws:
                 windowConfig.update(
-                    #~ width=ws[0],
-                    width=js_code('Lino.chars2width(%d)' % ws[0]),
                     maximized=False,
                     draggable=True,
                     maximizable=True,
                     modal=True)
+                # if isinstance(ws[0], basestring) and ws[0].endswith("%"):
+                #     windowConfig.update(
+                #         width=js_code('Lino.perc2width(%s)' % ws[0][:-1]))
+                if isinstance(ws[0], basestring):
+                    windowConfig.update(width=ws[0])
+                else:
+                    windowConfig.update(
+                        width=js_code('Lino.chars2width(%d)' % ws[0]))
                 if ws[1] == 'auto':
                     windowConfig.update(autoHeight=True)
                 elif isinstance(ws[1], int):
