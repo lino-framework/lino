@@ -176,8 +176,8 @@ class ChangeStateAction(actions.Action):
     def __init__(self, target_state, required_roles=None,
                  help_text=None, **kw):
         self.target_state = target_state
-        assert not 'required' in kw
-        assert not 'required_roles' in kw
+        assert 'required' not in kw
+        assert 'required_roles' not in kw
         new_required = set(self.required_roles)
         if required_roles is not None:
             new_required |= required_roles
@@ -186,7 +186,7 @@ class ChangeStateAction(actions.Action):
             m = getattr(target_state.choicelist, 'allow_transition', None)
             if m is not None:
                 raise Exception("20150621 was allow_transition still used?!")
-                assert not 'allowed' in required_roles
+                assert 'allowed' not in required_roles
 
                 def allow(action, user, obj, state):
                     return m(obj, user, target_state)
@@ -207,8 +207,8 @@ class ChangeStateAction(actions.Action):
             self.help_text = string_concat(self.label, '. ', self.help_text)
 
     def run_from_ui(self, ar):
-        row = ar.selected_rows[0]
-        self.execute(ar, row)
+        for row in ar.selected_rows:
+            self.execute(ar, row)
         ar.set_response(refresh=True)
         ar.success()
 

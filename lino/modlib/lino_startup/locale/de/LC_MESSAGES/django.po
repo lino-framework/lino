@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-23 03:07+0200\n"
-"PO-Revision-Date: 2015-12-23 03:10+0300\n"
+"POT-Creation-Date: 2015-12-29 19:53+0200\n"
+"PO-Revision-Date: 2015-12-30 04:12+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language: de\n"
 "Language-Team: \n"
@@ -120,7 +120,7 @@ msgstr "Sind Sie sicher?"
 msgid "%(details)s of %(master)s"
 msgstr "%(details)s von %(master)s"
 
-#: lino/core/actors.py:1019
+#: lino/core/actors.py:1031
 #, python-format
 msgid "Total (%d rows)"
 msgstr "Total (%d Zeilen)"
@@ -153,7 +153,7 @@ msgstr "Bemerkung"
 msgid "%(value)r (invalid choice for %(list)s)"
 msgstr "%(value)r (ungültige Auswahl für %(list)s)"
 
-#: lino/core/dbtables.py:637
+#: lino/core/dbtables.py:640
 msgid "You have no permission to delete this row."
 msgstr "Sie haben nicht die Berechtigung, diese Zeile zu löschen."
 
@@ -177,8 +177,8 @@ msgstr ""
 "im Jahr 1980\", \"%(ex2)s\" heißt \"im Juli 1980\"oder \"%(ex3)s\" heißt "
 "\"an einem 23. Juli\"."
 
-#: lino/core/kernel.py:113 lino/modlib/extjs/linoweb.js:1534
-#: lino/modlib/extjs/linoweb.js:2810
+#: lino/core/kernel.py:113 lino/modlib/extjs/linoweb.js:1540
+#: lino/modlib/extjs/linoweb.js:2816
 msgid "Confirmation"
 msgstr "Bestätigung"
 
@@ -1166,22 +1166,22 @@ msgid "Home"
 msgstr "Startseite"
 
 #: lino/modlib/bootstrap3/views.py:117 lino/modlib/bootstrap3/views.py:196
-#: lino/modlib/extjs/linoweb.js:3412
+#: lino/modlib/extjs/linoweb.js:3418
 msgid "First page"
 msgstr "Erste Seite"
 
 #: lino/modlib/bootstrap3/views.py:118 lino/modlib/bootstrap3/views.py:198
-#: lino/modlib/extjs/linoweb.js:3414
+#: lino/modlib/extjs/linoweb.js:3420
 msgid "Previous page"
 msgstr "Vorige Seite"
 
 #: lino/modlib/bootstrap3/views.py:130 lino/modlib/bootstrap3/views.py:200
-#: lino/modlib/extjs/linoweb.js:3415
+#: lino/modlib/extjs/linoweb.js:3421
 msgid "Next page"
 msgstr "Nächste Seite"
 
 #: lino/modlib/bootstrap3/views.py:131 lino/modlib/bootstrap3/views.py:202
-#: lino/modlib/extjs/linoweb.js:3413
+#: lino/modlib/extjs/linoweb.js:3419
 msgid "Last page"
 msgstr "Letzte Seite"
 
@@ -3081,7 +3081,7 @@ msgstr ""
 msgid "Older"
 msgstr "Älter"
 
-#: lino/modlib/excerpts/models.py:873 lino/modlib/extjs/linoweb.js:2605
+#: lino/modlib/excerpts/models.py:873 lino/modlib/extjs/linoweb.js:2611
 msgid "Last"
 msgstr "Letzter"
 
@@ -3195,111 +3195,111 @@ msgstr "Anmelden"
 msgid "No data to display."
 msgstr "Keine Daten anzuzeigen."
 
-#: lino/modlib/extjs/linoweb.js:573
+#: lino/modlib/extjs/linoweb.js:579
 msgid "Show or hide the table parameters panel"
 msgstr "Parameter-Panel ein- bzw. ausblenden"
 
-#: lino/modlib/extjs/linoweb.js:685 lino/modlib/extjs/linoweb.js:721
-#: lino/modlib/extjs/linoweb.js:1748 lino/modlib/extjs/linoweb.js:2659
-#: lino/modlib/extjs/linoweb.js:3219
+#: lino/modlib/extjs/linoweb.js:691 lino/modlib/extjs/linoweb.js:727
+#: lino/modlib/extjs/linoweb.js:1754 lino/modlib/extjs/linoweb.js:2665
+#: lino/modlib/extjs/linoweb.js:3225
 msgid "Please wait..."
 msgstr "Bitte warten..."
 
-#: lino/modlib/extjs/linoweb.js:946 lino/modlib/extjs/linoweb.js:3889
+#: lino/modlib/extjs/linoweb.js:952 lino/modlib/extjs/linoweb.js:3895
 msgid "This field is disabled"
 msgstr "Dieses Feld ist deaktiviert"
 
-#: lino/modlib/extjs/linoweb.js:1046
+#: lino/modlib/extjs/linoweb.js:1052
 msgid "Enter a date in format YYYY-MM-DD (use zeroes for unknown parts)."
 msgstr "Datum im Format JJJJ-MM-TT eingeben (Nullen für unbekannte Teile)"
 
-#: lino/modlib/extjs/linoweb.js:1493
+#: lino/modlib/extjs/linoweb.js:1499
 #: lino/modlib/lino_startup/config/admin_main_base.html:80
 msgid "Show this panel in own window"
 msgstr "Dieses Panel in eigenem Fenster öffnen"
 
-#: lino/modlib/extjs/linoweb.js:1661
+#: lino/modlib/extjs/linoweb.js:1667
 #: lino/modlib/plausibility/choicelists.py:37
 msgid "Warning"
 msgstr "Warnung"
 
-#: lino/modlib/extjs/linoweb.js:1669
+#: lino/modlib/extjs/linoweb.js:1675
 msgid "Alert"
 msgstr "Alarm"
 
-#: lino/modlib/extjs/linoweb.js:2052
+#: lino/modlib/extjs/linoweb.js:2058
 msgid "Action not available on phantom record."
 msgstr "Aktion nicht verfügbar auf dem Phantom-Record."
 
-#: lino/modlib/extjs/linoweb.js:2222
+#: lino/modlib/extjs/linoweb.js:2228
 msgid "Cannot show detail for empty foreign key."
 msgstr ""
 
-#: lino/modlib/extjs/linoweb.js:2590
+#: lino/modlib/extjs/linoweb.js:2596
 msgid "Go to record"
 msgstr "Gehe zu Datensatz"
 
-#: lino/modlib/extjs/linoweb.js:2596
+#: lino/modlib/extjs/linoweb.js:2602
 msgid "First"
 msgstr "Erster"
 
-#: lino/modlib/extjs/linoweb.js:2599
+#: lino/modlib/extjs/linoweb.js:2605
 msgid "Previous"
 msgstr "Voriger"
 
-#: lino/modlib/extjs/linoweb.js:2602
+#: lino/modlib/extjs/linoweb.js:2608
 msgid "Next"
 msgstr "Nächster"
 
-#: lino/modlib/extjs/linoweb.js:2617
+#: lino/modlib/extjs/linoweb.js:2623
 msgid "Reload current record"
 msgstr "Datensatz neu laden"
 
-#: lino/modlib/extjs/linoweb.js:2812
+#: lino/modlib/extjs/linoweb.js:2818
 msgid "Save changes to current record ?"
 msgstr "Änderungen in diesem Datensatz speichern?"
 
-#: lino/modlib/extjs/linoweb.js:2870
+#: lino/modlib/extjs/linoweb.js:2876
 msgid "No more records to display. Detail window has been closed."
 msgstr "Keine weiteren Datensätze zu sehen. Detail-Fenster wird geschlossen."
 
-#: lino/modlib/extjs/linoweb.js:3363
+#: lino/modlib/extjs/linoweb.js:3369
 msgid "Quick Search"
 msgstr "Schnellsuche"
 
-#: lino/modlib/extjs/linoweb.js:3363
+#: lino/modlib/extjs/linoweb.js:3369
 msgid "Enter a text to use as quick search filter"
 msgstr "Hier Text eingeben für Schnellsuche."
 
-#: lino/modlib/extjs/linoweb.js:3391
+#: lino/modlib/extjs/linoweb.js:3397
 msgid "View"
 msgstr "Ansicht"
 
-#: lino/modlib/extjs/linoweb.js:3393
+#: lino/modlib/extjs/linoweb.js:3399
 msgid "Select another view of this report"
 msgstr "Andere Ansicht auswählen"
 
-#: lino/modlib/extjs/linoweb.js:3409
+#: lino/modlib/extjs/linoweb.js:3415
 msgid "Page"
 msgstr "Seite"
 
-#: lino/modlib/extjs/linoweb.js:3410
+#: lino/modlib/extjs/linoweb.js:3416
 msgid "of {0}"
 msgstr "von {0}"
 
-#: lino/modlib/extjs/linoweb.js:3411
+#: lino/modlib/extjs/linoweb.js:3417
 msgid "Displaying {0} - {1} of {2}"
 msgstr "Zeilen {0} bis {1} von {2}"
 
-#: lino/modlib/extjs/linoweb.js:3884
+#: lino/modlib/extjs/linoweb.js:3890
 msgid "This record is disabled"
 msgstr "Dieser Datensatz ist deaktiviert"
 
-#: lino/modlib/extjs/linoweb.js:4391
+#: lino/modlib/extjs/linoweb.js:4401
 msgid "Edit help texts for fields on this model."
 msgstr "Hilfetexte der Eingabefelder dieser Tabelle bearbeiten"
 
-#: lino/modlib/extjs/linoweb.js:4563
+#: lino/modlib/extjs/linoweb.js:4573
 msgid "Cannot show MTI child if checkbox is off."
 msgstr "Kann MTI-Kind nicht anzeigen wenn Checkbox abgeschlatet ist."
 
@@ -3318,17 +3318,16 @@ msgstr ""
 msgid "Families"
 msgstr "Verpflichtungen"
 
-#: lino/modlib/families/models.py:44 lino/modlib/households/fixtures/std.py:20
-#: lino/modlib/humanlinks/fixtures/demo.py:33
-msgid "Married"
-msgstr "Ehepartner"
+#: lino/modlib/families/models.py:44
+#, fuzzy
+msgid "Married on"
+msgstr "Ehepartner in "
 
 #: lino/modlib/families/models.py:47
 msgid "Married in"
 msgstr "Ehepartner in "
 
-#: lino/modlib/families/models.py:48 lino/modlib/households/fixtures/std.py:23
-#: lino/modlib/humanlinks/fixtures/demo.py:35
+#: lino/modlib/families/models.py:48
 msgid "Divorced"
 msgstr "Geschieden"
 
@@ -3526,6 +3525,16 @@ msgstr "%s ist"
 #: lino/modlib/households/models.py:464
 msgid "Create a household"
 msgstr "Haushalt erstellen"
+
+#: lino/modlib/households/fixtures/std.py:20
+#: lino/modlib/humanlinks/fixtures/demo.py:33
+msgid "Married couple"
+msgstr "Ehepaar"
+
+#: lino/modlib/households/fixtures/std.py:23
+#: lino/modlib/humanlinks/fixtures/demo.py:35
+msgid "Divorced couple"
+msgstr "Geschiedenes Paar"
 
 #: lino/modlib/households/fixtures/std.py:26
 msgid "Factual household"
@@ -7015,3 +7024,6 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 
 #~ msgid "Duplicate"
 #~ msgstr "Duplizieren"
+
+#~ msgid "Married"
+#~ msgstr "Ehepartner"

@@ -663,19 +663,20 @@ class Kernel(object):
         return self.render_action_response(ar)
 
     def add_callback(self, ar, *msgs):
-        """
-        Returns an "action callback" which will initiate a dialog thread
+        """Returns an "action callback" which will initiate a dialog thread
         by asking a question to the user and suspending execution until
         the user's answer arrives in a next HTTP request.
 
-        Implementation notes:
-        Calling this from an Action's
-        :meth:`run_from_ui <lino.core.actions.Action.run_from_ui>` method will
-        interrupt the execution, send the specified message back to
-        the user, adding the executables `yes` and optionally `no` to a queue
-        of pending "dialog threads".
-        The client will display the prompt and will continue this thread
-        by requesting :class:`lino.modlib.extjs3.views.Callbacks`.
+        Calling this from an Action's :meth:`run_from_ui
+        <lino.core.actions.Action.run_from_ui>` method will interrupt
+        the execution, send the specified message back to the user,
+        adding the executables `yes` and optionally `no` to a queue of
+        pending "dialog threads".
+
+        The client will display the prompt and will continue this
+        thread by requesting
+        :class:`lino.modlib.extjs3.views.Callbacks`.
+
         """
         if len(msgs) > 1:
             msg = '\n'.join([force_text(s) for s in msgs])

@@ -41,7 +41,7 @@ class Couple(dd.Model):
                            null=True, related_name='couples_as_father')
     mother = dd.ForeignKey('contacts.Person', blank=True,
                            null=True, related_name='couples_as_mother')
-    married = models.DateField(_("Married"), blank=True, null=True)
+    married = models.DateField(_("Married on"), blank=True, null=True)
     married_place = dd.ForeignKey(
         'countries.Place', 
         verbose_name=_("Married in"), blank=True, null=True)
