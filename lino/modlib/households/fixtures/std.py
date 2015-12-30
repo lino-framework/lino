@@ -17,10 +17,10 @@ from lino.api import dd, rt
 def objects():
     Type = rt.modules.households.Type
 
-    yield Type(**dd.str2kw('name', _("Married")))
+    yield Type(**dd.str2kw('name', _("Married couple")))
     # Verheiratet / Marié
 
-    yield Type(**dd.str2kw('name', _("Divorced")))
+    yield Type(**dd.str2kw('name', _("Divorced couple")))
     # Geschieden / Divorcé
 
     yield Type(**dd.str2kw('name', _("Factual household")))

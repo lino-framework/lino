@@ -613,35 +613,28 @@ class Model(models.Model):
         pass
 
     def before_state_change(self, ar, old, new):
-        """
-        Called before a state change.
-        """
+        """Called by :meth:`set_workflow_state` before a state change."""
         pass
 
     def after_state_change(self, ar, old, new):
-        """
-        Called after a state change.
-        """
+        """Called by :meth:`set_workflow_state` after a state change."""
         ar.set_response(refresh=True)
 
     def set_workflow_state(row, ar, state_field, target_state):
+        """Called by workflow actions (:class:`ChangeStateAction
+        <lino.core.workflows.ChangeStateAction>`) to perform the
+        actual state change.
 
+        """
         watcher = ChangeWatcher(row)
-
-        #~ old = row.state
         old = getattr(row, state_field.attname)
-
         target_state.choicelist.before_state_change(row, ar, old, target_state)
         row.before_state_change(ar, old, target_state)
-        #~ row.state = target_state
         setattr(row, state_field.attname, target_state)
-        #~ self.before_row_save(row,ar)
         row.save()
         target_state.choicelist.after_state_change(row, ar, old, target_state)
         row.after_state_change(ar, old, target_state)
-
         watcher.send_update(ar.request)
-
         row.after_ui_save(ar, watcher)
 
     def after_send_mail(self, mail, ar, kw):

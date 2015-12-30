@@ -276,6 +276,7 @@ request from it.
         self.renderer = other.renderer
         self.user = other.user
         self.subst_user = other.subst_user
+        self._confirm_answer = other._confirm_answer
         # self.master_instance = other.master_instance  # added 20150218
         self.requesting_panel = other.requesting_panel
 
@@ -461,15 +462,27 @@ request from it.
     def warning(self, msg, *args, **kw):
         self.append_message('warning', msg, *args, **kw)
 
-    def confirm(self, ok_func, *msgs):
-        """Execute the specified callable `ok` after the user has confirmed
-        the specified message.  All remaining positional arguments to
-        `confirm` are concatenated to a single callback message.  This
-        method then calls :meth:`callback` (see there for
-        implementation notes).
+    _confirm_answer = True
 
-        The callable may not expect any mandatory arguments
-        (this is different than for the raw callback method)
+    def set_confirm_answer(self, ans):
+        self._confirm_answer = ans
+
+    def confirm(self, ok_func, *msgs):
+        """Execute the specified callable `ok_func` after the user has
+        confirmed the specified message.
+        
+        The confirmation message may be specified as a series of
+        positional arguments which will be concatenated to a single
+        prompt.
+
+        The callable will be called with a single positional argument
+        which will be the action request that confirmed the
+        message. In a web context this will be another object than
+        this one.
+
+        In a non-interactive environment the `ok_func` function is
+        called directly (i.e. we don't ask any confirmation and act as
+        confirmation had been given).
 
         """
         cb = self.add_callback(*msgs)
@@ -479,6 +492,10 @@ request from it.
         cb.add_choice('yes', ok_func, _("Yes"))
         cb.add_choice('no', noop, _("No"))
         self.set_callback(cb)
+
+        if not self.renderer.is_interactive:
+            if self._confirm_answer:
+                ok_func(self)
 
     def parse_memo(self, html, **context):
         context.update(ar=self)

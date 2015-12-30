@@ -30,9 +30,9 @@ def objects():
     households = dd.resolve_app('households')
     if households:
         married = households.Type.objects.get(
-            **dd.str2kw('name', _("Married")))
+            **dd.str2kw('name', _("Married couple")))
         divorced = households.Type.objects.get(
-            **dd.str2kw('name', _("Divorced")))
+            **dd.str2kw('name', _("Divorced couple")))
 
     ig = InstanceGenerator()
     ig.add_instantiator(

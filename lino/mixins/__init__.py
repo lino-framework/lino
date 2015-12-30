@@ -120,9 +120,15 @@ class Registrable(model.Model):
 
     def register(self, ar):
         """Register this object.  The base implementation just sets the state
-        to "registered".  Subclasses may override this to add custom
-        behaviour.  Instead of subclassing you can also override
-        `before_state_change` or `after_state_change`.
+        to "registered".
+
+        Subclasses may override this to add custom behaviour.  Instead
+        of subclassing you can also override :meth:`set_workflow_state
+        <lino.core.model.Model.set_workflow_state>`,
+        :meth:`before_state_change
+        <lino.core.model.Model.before_state_change>` or
+        :meth:`after_state_change
+        <lino.core.model.Model.after_state_change>`.
 
         """
 
@@ -131,10 +137,16 @@ class Registrable(model.Model):
         self.set_workflow_state(ar, state_field, target_state)
 
     def deregister(self, ar):
-        """Deregister this object.  The base implementation just sets the state
-        to "draft".  Subclasses may override this to add custom
-        behaviour.  Instead of subclassing you can also override
-        `before_state_change` or `after_state_change`.
+        """Deregister this object.  The base implementation just sets the
+        state to "draft".
+
+        Subclasses may override this to add custom behaviour.  Instead
+        of subclassing you can also override :meth:`set_workflow_state
+        <lino.core.model.Model.set_workflow_state>`,
+        :meth:`before_state_change
+        <lino.core.model.Model.before_state_change>` or
+        :meth:`after_state_change
+        <lino.core.model.Model.after_state_change>`.
 
         """
 

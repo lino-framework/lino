@@ -11,9 +11,8 @@ The Households module
     doctest init:
 
     >>> from __future__ import print_function
-    >>> import os
-    >>> os.environ['DJANGO_SETTINGS_MODULE'] = \
-    ...    'lino.projects.docs.settings.demo'
+    >>> import lino
+    >>> lino.startup('lino.projects.docs.settings.demo')
     >>> from lino.api.doctest import *
 
 The :mod:`lino.modlib.households` module adds functionality for
@@ -28,12 +27,12 @@ house).
 Configuration
 =============
 
->>> rt.show(households.Types)
+>>> rt.show(households.Types)  #doctest: +REPORT_UDIFF
 ==== ==================== ========================= ====================== ==================== ==================== ===================== ====================
  ID   Designation          Designation (de)          Designation (fr)       Designation (et)     Designation (nl)     Designation (pt-br)   Designation (es)
 ---- -------------------- ------------------------- ---------------------- -------------------- -------------------- --------------------- --------------------
- 1    Married              Ehepartner                Marié                  Married              Married              Married               Married
- 2    Divorced             Geschieden                Divorcé                Divorced             Divorced             Divorced              Divorced
+ 1    Married couple       Ehepaar                   Couple marié           Married couple       Married couple       Married couple        Married couple
+ 2    Divorced couple      Geschiedenes Paar         Couple divorcé         Divorced couple      Divorced couple      Divorced couple       Divorced couple
  3    Factual household    Faktischer Haushalt       Cohabitation de fait   Factual household    Factual household    Factual household     Factual household
  4    Legal cohabitation   Legale Wohngemeinschaft   Cohabitation légale    Legal cohabitation   Legal cohabitation   Legal cohabitation    Legal cohabitation
  5    Isolated             Getrennt                  Isolé                  Isolated             Isolated             Isolated              Isolated
@@ -81,7 +80,7 @@ Mr Lars Braun is
 `☐  <javascript:Lino.households.Members.set_primary(null,31,{  })>`__Head of household in *Lars & Melba Braun-Frisch*
 `☐  <javascript:Lino.households.Members.set_primary(null,17,{  })>`__Head of household in *Lars & Pascale Braun-Adam*
 <BLANKLINE>
-Create a household : **Married** / **Divorced** / **Factual household** / **Legal cohabitation** / **Isolated** / **Other**
+Create a household : **Married couple** / **Divorced couple** / **Factual household** / **Legal cohabitation** / **Isolated** / **Other**
 
 >>> rt.show(households.MembersByPerson, p, nosummary=True)
 =========================== =================== ========= ============ ==========
