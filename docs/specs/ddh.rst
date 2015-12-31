@@ -77,5 +77,5 @@ Lino Noi:
 - uploads.UploadType :
   - PROTECT : uploads.Upload.type
 - users.User :
-  - PROTECT : changes.Change.user, clocking.Session.user, comments.Comment.user, excerpts.Excerpt.user, faculties.Competence.user, notifier.Notification.user, outbox.Mail.user, stars.Star.user, tickets.Project.assign_to, tickets.Ticket.assigned_to, tinymce.TextFieldTemplate.user, uploads.Upload.user, users.Authority.user
+  - PROTECT : changes.Change.user, clocking.ServiceReport.user, clocking.Session.user, comments.Comment.user, excerpts.Excerpt.user, faculties.Competence.user, notifier.Notification.user, outbox.Mail.user, stars.Star.user, tickets.Project.assign_to, tickets.Ticket.assigned_to, tinymce.TextFieldTemplate.user, uploads.Upload.user, users.Authority.user
 <BLANKLINE>

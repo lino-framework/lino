@@ -364,9 +364,15 @@ if False:  # works, but is not useful
     add_reporter(weekly_reporter)
 
 
-class ServiceReport(Certifiable, DatePeriod):
+class ServiceReport(UserAuthored, Certifiable, DatePeriod):
     """A **service report** is a document used in various discussions with
     a stakeholder.
+
+    .. attribute:: user
+
+        This can be empty and will then show the working time of all
+        users.
+
 
     .. attribute:: start_date
     .. attribute:: end_date

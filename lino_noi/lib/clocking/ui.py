@@ -365,9 +365,8 @@ class InvestedTime(dd.Table):
 
 
 class OtherTicketsByMilestone(Tickets, InvestedTime):
-    """Print a table with tickets the are not explicitly deployed but
-    which have been worked on and which are interesting for this
-    site.
+    """Print a table with tickets that are not explicitly deployed but
+    which have been worked on and which are interesting for this site.
 
     """
     column_names = "id my_description state invested_time"
@@ -439,7 +438,8 @@ class TicketsByReport(Tickets, InvestedTime):
         qs = super(TicketsByReport, self).get_request_queryset(ar)
         for obj in qs:
             obj._invested_time = compute_invested_time(
-                obj, start_date=mi.start_date, end_date=mi.end_date)
+                obj, start_date=mi.start_date, end_date=mi.end_date,
+                user=mi.user)
             yield obj
 
 
@@ -464,7 +464,8 @@ class ProjectsByReport(Projects, InvestedTime):
             sar = Tickets.request(param_values=spv)
             for ticket in sar:
                 ttot = compute_invested_time(
-                    ticket, start_date=mi.start_date, end_date=mi.end_date)
+                    ticket, start_date=mi.start_date, end_date=mi.end_date,
+                    user=mi.user)
                 if ttot:
                     tot += ttot
                     tickets.append(ticket)
@@ -499,10 +500,12 @@ class ServiceReports(dd.Table):
     """List of service reports."""
     model = "clocking.ServiceReport"
     detail_layout = """
-    start_date end_date interesting_for ticket_state printed
+    start_date end_date user interesting_for ticket_state printed
     TicketsByReport
     ProjectsByReport
     """
+    column_names = "start_date end_date user interesting_for "\
+                   "ticket_state printed *"
 
 
 class ReportsBySite(ServiceReports):
