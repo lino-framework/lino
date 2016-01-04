@@ -12,14 +12,11 @@ Lino's authentification middleware
 from __future__ import unicode_literals
 
 import logging
-from django.utils.timezone import activate
-from pytz import timezone
-import pytz
-
 logger = logging.getLogger(__name__)
 
 from django.core import exceptions
 from django.utils import translation
+from django.utils.timezone import activate
 from django.conf import settings
 from django import http
 
@@ -102,12 +99,8 @@ class AuthMiddleWareBase(object):
 
         user_language = user.language or settings.SITE.get_default_language()
 
-        if settings.USE_TZ and user.partner and user.partner.country:
-            country = user.partner.country
-            patner_timezone = pytz.country_timezones[country.isocode]
-            if len(patner_timezone) == 1:
-                tz = timezone(patner_timezone[0])
-                activate(tz)  # This still don't work as expected
+        if settings.USE_TZ:
+            activate(user.timezone or settings.TIME_ZONE)
 
         if request.method == 'GET':
             rqdata = request.GET
@@ -130,7 +123,7 @@ class AuthMiddleWareBase(object):
             #~ request.requesting_panel = None
             #~ return
 
-        if len(settings.SITE.languages) > 1 and user.authenticated:
+        if len(settings.SITE.languages) > 1 and (user.authenticated or isinstance(user , AnonymousUser)):
 
             user_language = rqdata.get(
                 constants.URL_PARAM_USER_LANGUAGE, user_language)
