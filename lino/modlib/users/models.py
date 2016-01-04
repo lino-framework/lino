@@ -17,14 +17,13 @@ from django.contrib.auth.hashers import (
 
 
 from lino.api import dd
-from lino.mixins.timezone import TimezoneHolder
 from lino.utils.xmlgen.html import E
 from lino.core import actions
 
 from lino.mixins import CreatedModified
 
 from .choicelists import UserProfiles
-from .mixins import UserAuthored
+from .mixins import UserAuthored, TimezoneHolder
 
 
 class ChangePassword(dd.Action):
@@ -44,7 +43,7 @@ class ChangePassword(dd.Action):
     """
 
     def run_from_ui(self, ar, **kw):
-
+        
         pv = ar.action_param_values
         if pv.new1 != pv.new2:
             ar.error("New passwords didn't match!")
@@ -64,7 +63,7 @@ class ChangePassword(dd.Action):
         ar.success(msg, alert=True)
 
 
-class User(CreatedModified,TimezoneHolder):
+class User(CreatedModified, TimezoneHolder):
     """Represents a user of this site.
 
     .. attribute:: username
@@ -90,6 +89,7 @@ class User(CreatedModified,TimezoneHolder):
     """
 
     class Meta:
+        app_label = 'users'
         verbose_name = _('User')
         verbose_name_plural = _('Users')
         abstract = dd.is_abstract_model(__name__, 'User')
