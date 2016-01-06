@@ -511,9 +511,13 @@ class ExtRenderer(HtmlRenderer):
                 yield "Lino.user = %s;" % py2js(
                     dict(id=user.id, name=unicode(user)))
 
+                def usertext(u):
+                    return "{0} {1}, {3} ({2})".format(
+                        u.last_name, u.first_name, u.username, u.profile)
+
                 if user.profile.has_required_roles([Supervisor]):
                     authorities = [
-                        (u.id, unicode(u))
+                        (u.id, usertext(u))
                         for u in settings.SITE.user_model.objects.exclude(
                             profile='').exclude(id=user.id)]
                 else:
@@ -523,7 +527,7 @@ class ExtRenderer(HtmlRenderer):
                         'user__last_name', 'user__first_name',
                         'user__username')
                     authorities = [
-                        (a.user.id, unicode(a.user)) for a in qs]
+                        (a.user.id, usertext(a.user)) for a in qs]
 
                 a = users.MySettings.default_action
                 handler = self.action_call(None, a, dict(record_id=user.pk))

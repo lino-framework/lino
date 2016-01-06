@@ -118,9 +118,10 @@ def with_user_profile(profile, func, *args, **kwargs):
     global _for_user_profile
 
     with user_profile_rlock:
+        old = _for_user_profile
         _for_user_profile = profile
         return func(*args, **kwargs)
-        _for_user_profile = None
+        _for_user_profile = old
     
 
 def get_user_profile():
