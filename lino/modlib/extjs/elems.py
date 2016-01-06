@@ -1474,9 +1474,12 @@ class Container(LayoutElement):
         return self.elements
 
     def walk(self):
+        if not self.is_visible():
+            return
         for e in self.elements:
-            for el in e.walk():
-                yield el
+            if e.is_visible():
+                for el in e.walk():
+                    yield el
         yield self
 
     def find_by_name(self, name):
@@ -1559,6 +1562,8 @@ class Wrapper(VisibleComponent):
         return self.wrapped.get_view_permission(profile)
 
     def walk(self):
+        if not self.is_visible():
+            return
         for e in self.wrapped.walk():
             yield e
         yield self

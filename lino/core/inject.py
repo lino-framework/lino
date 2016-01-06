@@ -1,4 +1,4 @@
-# Copyright 2011-2014 Luc Saffre
+# Copyright 2011-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 import logging
@@ -273,7 +273,7 @@ def update_model(model_spec, **actions):
     return do_when_prepared(todo, model_spec)
 
 
-def inject_field(model_spec, name, field, doc=None):
+def inject_field(model_spec, name, field, doc=None, active=False):
     """Add the given field to the given model.
 
     The following code::
@@ -312,6 +312,8 @@ def inject_field(model_spec, name, field, doc=None):
         else:
             model._meta._fill_fields_cache()
         fix_field_cache(model)
+        if active:
+            model.add_active_field(name)
 
     return do_when_prepared(todo, model_spec)
 

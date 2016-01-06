@@ -118,9 +118,10 @@ def with_user_profile(profile, func, *args, **kwargs):
     global _for_user_profile
 
     with user_profile_rlock:
+        old = _for_user_profile
         _for_user_profile = profile
         return func(*args, **kwargs)
-        _for_user_profile = None
+        _for_user_profile = old
     
 
 def get_user_profile():
@@ -285,12 +286,14 @@ class Component(Variable):
                 del self.value[k]
 
     def walk(self):
+        """Walk over this component and its children."""
         items = self.value['items']
         if not isinstance(items, (list, tuple)):
             items = [items]
         for i in items:
             for e in i.walk():
-                yield e
+                if e.is_visible():
+                    yield e
 
 
 class VisibleComponent(Component, Permittable):
@@ -366,7 +369,8 @@ class VisibleComponent(Component, Permittable):
         return ("  " * level) + str(self)
 
     def walk(self):
-        yield self
+        if self.is_visible():
+            yield self
 
     def debug_lines(self):
         sep = u"</td><td>"

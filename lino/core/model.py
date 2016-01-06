@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2015 Luc Saffre
+# Copyright 2009-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 "Defines the :class:`Model` class."
@@ -416,6 +416,13 @@ class Model(models.Model):
             if k in cls.__dict__:
                 raise Exception("Tried to redefine %s.%s" % (cls, k))
             setattr(cls, k, v)
+
+    @classmethod
+    def add_active_field(cls, names):
+        if isinstance(cls.active_fields, basestring):
+            cls.active_fields = frozenset(
+                fields.fields_list(cls, cls.active_fields))
+        cls.active_fields = cls.active_fields | fields.fields_list(cls, names)
 
     @classmethod
     def hide_elements(self, *names):
