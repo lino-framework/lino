@@ -285,12 +285,14 @@ class Component(Variable):
                 del self.value[k]
 
     def walk(self):
+        """Walk over this component and its children."""
         items = self.value['items']
         if not isinstance(items, (list, tuple)):
             items = [items]
         for i in items:
             for e in i.walk():
-                yield e
+                if e.is_visible():
+                    yield e
 
 
 class VisibleComponent(Component, Permittable):
@@ -366,7 +368,8 @@ class VisibleComponent(Component, Permittable):
         return ("  " * level) + str(self)
 
     def walk(self):
-        yield self
+        if self.is_visible():
+            yield self
 
     def debug_lines(self):
         sep = u"</td><td>"

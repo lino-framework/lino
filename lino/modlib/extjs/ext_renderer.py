@@ -1139,7 +1139,7 @@ class ExtRenderer(HtmlRenderer):
                 yield '    // active_fields:'
                 for name in tbl.active_fields:
                     e = dh.main.find_by_name(name)
-                    if e is not None:  # 20120715
+                    if e is not None:
                         if True:  # see actions.ValidateForm
                             f = 'function(){ this.save() }'
                         else:
