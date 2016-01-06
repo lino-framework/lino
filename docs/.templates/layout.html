@@ -1,4 +1,15 @@
 {% extends "!layout.html" %}
+
+{% block relbar1 %}
+{{relbar() }}
+{{ super() }}
+{% endblock %}
+
+{% block relbar2 %}
+{{relbar() }}
+{{ super() }}
+{% endblock %}
+
 {%- block footer %}
     <div class="footer">
     {%- if show_copyright %}

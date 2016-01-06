@@ -19,7 +19,7 @@ extlinks.update(ticket=('http://bugs.lino-framework.org/tickets/Ticket/%s', '#')
 extensions += ['lino.sphinxcontrib.logo']
 
 from django.conf import settings
-settings.SITE.title = "Lino Noi Reference Manual"
+# settings.SITE.title = "Lino Noi"
 
 intersphinx_mapping = {}
 from importlib import import_module
@@ -31,8 +31,8 @@ for n in 'atelier lino'.split():
 # ---------------------
 
 # General information about the project.
-project = settings.SITE.title
-copyright = u'2014, Luc Saffre'
+project = "Lino Noi"
+copyright = u'2014-2016, Luc Saffre'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -93,7 +93,7 @@ pygments_style = 'sphinx'
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-#html_title = u"OpenTIM Developer's Reference"
+html_title = "Lino Noi"
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #html_short_title = None
