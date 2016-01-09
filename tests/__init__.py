@@ -156,6 +156,9 @@ class DocsTests(LinoTestCase):
     def test_mldbc(self):
         self.run_django_manage_test('docs/tutorials/mldbc')
 
+    def test_belref(self):
+        self.run_django_manage_test("docs/tutorials/belref")
+
     def test_utils(self):
         self.run_simple_doctests('lino/utils/__init__.py')
 
@@ -165,6 +168,7 @@ class DocsTests(LinoTestCase):
 
     def test_integer_pk(self):
         self.run_django_manage_test("docs/tested/integer_pk")
+
 
 
 class CoreTests(TestCase):

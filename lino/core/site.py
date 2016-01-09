@@ -2934,6 +2934,8 @@ Please convert to Plugin method".format(mod, methname)
         if self.default_ui == "extjs":
             yield 'lino.modlib.extjs'
             yield 'lino.modlib.bootstrap3'
+        elif self.default_ui == "bootstrap3":
+            yield 'lino.modlib.bootstrap3'
 
         for a in self.local_apps:
             yield a

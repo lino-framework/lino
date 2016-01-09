@@ -29,7 +29,7 @@ class Site(Site):
 
     def get_installed_apps(self):
         yield super(Site, self).get_installed_apps()
-        yield 'lino.modlib.bootstrap3'
+        # yield 'lino.modlib.bootstrap3'
         #~ yield 'lino.modlib.gfks'
         #~ yield 'lino.modlib.users'
         yield 'lino.modlib.system'

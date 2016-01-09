@@ -1,9 +1,9 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2015 Luc Saffre
+# Copyright 2013-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
-The :xfile:`models` module for the :mod:`lino.projects.belref` app.
+The :xfile:`models` module for :mod:`lino.projects.belref`.
 
 """
 

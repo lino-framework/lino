@@ -77,7 +77,18 @@ def buttons2pager(buttons, title=None):
 
 
 def table2html(ar, as_main=True):
-    """This is not a docstring."""
+    """Represent the given table request as an HTML table.
+
+    `ar` is the request to be rendered, an instance of
+    :class:`lino.core.tablerequest.TableRequest`.
+
+    The returned HTML enclosed in a ``<div>`` tag and generated using
+    :mod:`lino.utils.xmlgen.html`.
+
+    If `as_main` is True, include additional elements such as a paging
+    toolbar. (This argument is currently being ignored.)
+
+    """
     as_main = True
     t = xghtml.Table()
     t.attrib.update(class_="table table-striped table-hover")
