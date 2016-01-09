@@ -25,6 +25,7 @@ import datetime
 import warnings
 import collections
 import threading
+from importlib import import_module
 from urllib import urlencode
 from lino import AFTER17
 if AFTER17:
@@ -916,8 +917,10 @@ class Site(object):
 
     """
 
-    appy_params = dict(ooPort=8100)
-    # appy_params = dict(pythonWithUnoPath='/usr/bin/python3')
+    # appy_params = dict(ooPort=8100)
+    appy_params = dict(
+        ooPort=8100, pythonWithUnoPath='/usr/bin/python3',
+        raiseOnError=True)
     """Used by :class:`lino.mixins.printable.AppyBuildMethod`.
 
     Allowed keyword arguments for `appy.pod.renderer.Render` are::
@@ -1030,9 +1033,15 @@ class Site(object):
         if settings_globals is None:
             settings_globals = {}
         self.init_before_local(settings_globals, local_apps)
-        no_local = kwargs.pop('no_local', False)
-        if not no_local:
-            self.run_djangosite_local()
+        if 'no_local' in kwargs:
+            kwargs.pop('no_local')
+            # For the moment we just silently ignore it, but soon:
+            if False:
+                raise ChangedAPI("The no_local argument is no longer needed.")
+        # no_local = kwargs.pop('no_local', False)
+        # if not no_local:
+        #     self.run_lino_site_module()
+        self.run_lino_site_module()
         self.override_settings(**kwargs)
         self.load_plugins()
         self.setup_plugins()
@@ -1135,16 +1144,22 @@ class Site(object):
             ),
         )
 
-    def run_djangosite_local(self):
-        """See :ref:`lino.djangosite_local`.
+    def run_lino_site_module(self):
+        """See :ref:`djangosite_local`.
 
         """
-        try:
-            from djangosite_local import setup_site
-        except ImportError:
-            pass
-        else:
-            setup_site(self)
+        site_module = os.environ.get('LINO_SITE_MODULE', None)
+        if site_module:
+            mod = import_module(site_module)
+            func = getattr(mod, 'setup_site', None)
+            if func:
+                func(self)
+        # try:
+        #     from djangosite_local import setup_site
+        # except ImportError:
+        #     pass
+        # else:
+        #     setup_site(self)
 
     def override_settings(self, **kwargs):
         # Called internally during `__init__` method.
@@ -1168,8 +1183,6 @@ class Site(object):
 
         """
         # Called internally during `__init__` method.
-
-        from importlib import import_module
 
         requested_apps = []
         apps_modifiers = self.get_apps_modifiers()
@@ -3215,7 +3228,7 @@ class TestSite(Site):
     """
 
     def __init__(self, *args, **kwargs):
-        kwargs.update(no_local=True)
+        # kwargs.update(no_local=True)
         g = dict(__file__=__file__)
         g.update(SECRET_KEY="20227")  # see :djangoticket:`20227`
         super(TestSite, self).__init__(g, *args, **kwargs)

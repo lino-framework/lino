@@ -171,7 +171,13 @@ One part of your cache directory are the static files.  When your
 :envvar:`LINO_CACHE_ROOT` is set, you should run Django's
 :manage:`collectstatic` command::
 
+    $ cd lino/projects/min1
     $ python manage.py collectstatic
+
+Note that you can chose an arbitrary project directory for running
+:manage:`collectstatic`, it does not need to be :mod:`min1
+<lino.projects.min1>`. That's because all Lino applications have the
+same set of staticfiles.
 
 The output should be something like this::
 
@@ -231,7 +237,7 @@ this::
     [localhost] local: python setup.py -q test
     .....................................................................
     ----------------------------------------------------------------------
-    Ran 69 tests in 52.712s
+    Ran 74 tests in 52.712s
     OK
     Done.
 

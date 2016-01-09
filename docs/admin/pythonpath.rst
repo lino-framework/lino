@@ -1,14 +1,21 @@
 The Python Path
 ===============
 
-A collection of things to know when setting up the 
-`Python Path <http://www.python.org/doc/current/install/index.html>`_
-or diagnosing problems that might be related.
+A collection of things to know when setting up the
+:envvar:`PYTHONPATH` or diagnosing related problems.
 
-See your default Python Path
-----------------------------
+What is the Python Path?
+------------------------
 
-python -c 'import sys; print sys.path'
+.. envvar:: PYTHONPATH
+
+It is an environment variable used by Python which defines the places
+from where to import Python modules. See `PYTHONPATH
+<http://www.python.org/doc/current/install/index.html>`_
+
+Here is how to see your :envvar:`PYTHONPATH`::
+
+  $ python -c 'import sys; print sys.path'
 
 
 The :xfile:`mypy` directory
@@ -28,7 +35,7 @@ your `.bashrc` (or whatever login script y use)::
   
 (Under Windows you click around to find the place 
 where you can define *environment variables* and define
-a variable `PYTHONPATH` with the value ``C:\\mypy``).
+an environment variable :envvar:`PYTHONPATH` with the value ``C:\\mypy``).
 
 The result is that any Python script in or below this directory 
 is now available as an importable Python module. 
