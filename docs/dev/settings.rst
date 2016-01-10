@@ -116,12 +116,15 @@ gets instantiated), it checks whether an environment variable
 :envvar:`LINO_SITE_MODULE` is exists.  And if it does, Lino expects it
 to be the name of a Python module, will import that module and expect
 it to define a function named ``setup_site``. And it will call that
-function, passing it the Site instance as one and only positional
+function, passing it the `Site` instance as one and only positional
 parameter.
 
 For example you can do::
 
   $ export LINO_SITE_MODULE=my_site_options
+
+When using virtual environments, you can add that line to the
+`activate` script of your virtual environment.
 
 And then create a file named :xfile:`my_site_options.py` somewhere on
 your :envvar:`PYTHONPATH` with the following content::
@@ -144,5 +147,8 @@ it was not easy to disable it quickly.
 On servers where this was used, when upgrading to a Lino version after
 20160109, you should set :envvar:`LINO_SITE_MODULE` to the string
 ``djangosite_local`` in order to maintain the old behaviour.
+
+  export LINO_SITE_MODULE=djangosite_local
+
 
 

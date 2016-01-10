@@ -253,13 +253,13 @@ class Site(object):
     """
 
     cache_dir = None
-    """This is either the same as :attr:`project_dir` or (if
+    """The directory where Lino will create temporary data for this
+    project, including the :xfile:`media` directory and the
+    :xfile:`default.db` file.
+
+    This is either the same as :attr:`project_dir` or (if
     :envvar:`LINO_CACHE_ROOT` is set), will be set to
     :envvar:`LINO_CACHE_ROOT` + :attr:`project_name`.
-
-    Lino will create temporary data for demo projects into this
-    directory. This includes the :xfile:`media` directory and the
-    :xfile:`default.db` file.
 
     """
 
@@ -1104,13 +1104,14 @@ class Site(object):
         self._startup_done = False
         self.startup_time = datetime.datetime.now()
 
-        dbname = self.cache_dir.child('default.db')
-        self.django_settings.update(DATABASES={
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': dbname
-            }
-        })
+        if self.cache_dir is not None:
+            dbname = self.cache_dir.child('default.db')
+            self.django_settings.update(DATABASES={
+                'default': {
+                    'ENGINE': 'django.db.backends.sqlite3',
+                    'NAME': dbname
+                }
+            })
 
         self.update_settings(SERIALIZATION_MODULES={
             "py": "lino.utils.dpy",
@@ -1297,19 +1298,13 @@ class Site(object):
         assert not self.help_url.endswith('/')
         # import django
         # django.setup()
-
-        if self.webdav_url is None:
-            self.webdav_url = self.site_prefix + 'media/webdav/'
-        if self.webdav_root is None:
-            self.webdav_root = join(self.cache_dir, 'media', 'webdav')
-
-        # if not self.django_settings.get('MEDIA_ROOT', False):
-            # Django's default value for MEDIA_ROOT is an empty
-            # string.  In certain test cases there might be no
-            # MEDIA_ROOT key at all.  Lino's default value for
-            # MEDIA_ROOT is ``<cache_dir>/media``.
-        self.django_settings.update(
-            MEDIA_ROOT=join(self.cache_dir, 'media'))
+        if self.cache_dir is not None:
+            if self.webdav_url is None:
+                self.webdav_url = self.site_prefix + 'media/webdav/'
+            if self.webdav_root is None:
+                self.webdav_root = join(self.cache_dir, 'media', 'webdav')
+            self.django_settings.update(
+                MEDIA_ROOT=join(self.cache_dir, 'media'))
 
         self.update_settings(ROOT_URLCONF=self.root_urlconf)
         self.update_settings(MEDIA_URL='/media/')
@@ -1435,7 +1430,9 @@ class Site(object):
                     cache_dir=self.cache_dir,
                     this=this,
                     other=other)
-                raise Exception(msg)
+                # raise Exception(msg)
+                # print(msg)
+                self.cache_dir = None
         else:
             self.makedirs_if_missing(self.cache_dir)
             stamp.write_file(this)
@@ -1571,6 +1568,10 @@ class Site(object):
         # finished `startup()`.
 
         with startup_rlock:
+
+            # if self.cache_dir is not None:
+            #     raise Exception("No cache_dir is defined. "
+            #                     "Check your LINO_CACHE_ROOT and project_name.")
 
             if self._starting_up:
                 # This is needed because Django "somehow" imports the
