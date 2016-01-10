@@ -99,37 +99,56 @@ defining your :setting:`DATABASES` setting). Compare this to a
 which contains already 82 lines of text (Django version 1.6.9).
 
 
+
 .. _djangosite_local:
 
 Site-wide default settings
 ==========================
 
-.. xfile:: djangosite_local.py
+Lino provides a hook for defining system-wide default settings. This
+concept is mostly useful on servers where many Lino sites are
+running. Actually they are not system-wide but per environment.
 
-The :xfile:`djangosite_local.py` file is a hook for defining
-system-wide default settings. This is a concept which Lino adds to
-plain Django.  It is useful on developer machines and on servers where
-many Lino sites are running
+.. envvar:: LINO_SITE_MODULE
 
-The mechanism is easy: When a :class:`lino.core.site.Site` gets
-instantiated, it will try to import an module named
-``djangosite_local``, and if that module exists and has a function
-named ``setup_site``, Lino will call that function.
+Each time a Lino process starts (when a :class:`lino.core.site.Site`
+gets instantiated), it checks whether an environment variable
+:envvar:`LINO_SITE_MODULE` is exists.  And if it does, Lino expects it
+to be the name of a Python module, will import that module and expect
+it to define a function named ``setup_site``. And it will call that
+function, passing it the `Site` instance as one and only positional
+parameter.
 
-IOW, you must create a file named :xfile:`djangosite_local.py`
-somewhere on your :doc:`Python path </admin/pythonpath>`.  The
-filename :file:`djangosite_local.py` might sound strange, but it has
-historical reasons and is currently hard-coded.
+For example you can do::
 
-Here is some example content::
+  $ export LINO_SITE_MODULE=my_site_options
 
-    """
-    Local settings to be apllied to every Lino SITE on this computer.
-    """
+When using virtual environments, you can add that line to the
+`activate` script of your virtual environment.
+
+And then create a file named :xfile:`my_site_options.py` somewhere on
+your :envvar:`PYTHONPATH` with the following content::
+
     def setup_site(self):
-
         self.update_settings(ADMINS=[("John", "john.doe@example.com")])
         self.update_settings(EMAIL_HOST="mail.provider.com")
         self.update_settings(DEBUG=True)
         self.update_settings(ALLOWED_HOSTS=['127.0.0.1'])
         self.use_java = False
+
+Historic note:
+
+.. xfile:: djangosite_local.py
+
+The :xfile:`djangosite_local.py` file was used until 20160109 as a
+hard-coded :envvar:`LINO_SITE_MODULE`. Which had the disadvantage that
+it was not easy to disable it quickly.
+
+On servers where this was used, when upgrading to a Lino version after
+20160109, you should set :envvar:`LINO_SITE_MODULE` to the string
+``djangosite_local`` in order to maintain the old behaviour.
+
+  export LINO_SITE_MODULE=djangosite_local
+
+
+

@@ -257,7 +257,10 @@ def table_body_row(*cells, **kw):
 
 
 class Table(object):
+    """A pythonic representation of a ``<table>`` with ``<head>``,
+    ``<foot>`` and ``<body>``.
 
+    """
     def __init__(self):
         self.clear()
 
@@ -294,6 +297,10 @@ class Table(object):
 
 
 class Document(object):
+    """A pythonic representation of a ``<body>`` with a ``<title>`` and
+    some ``<head>`` tags for stylesheets.
+
+    """
 
     def __init__(self, title, stylesheets=None):
         self.title = title

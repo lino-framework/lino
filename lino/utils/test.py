@@ -1,12 +1,16 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2015 Luc Saffre
+# Copyright 2013-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Defines the :class:`DocTest` and :class:`DemoTestCase` classes.
 
 """
 
-from __future__ import print_function
+from __future__ import print_function, unicode_literals
+
+# import sys
+# import codecs
+# sys.stdout = codecs.getwriter('utf8')(sys.stdout)
 
 import logging
 logger = logging.getLogger(__name__)
@@ -116,17 +120,23 @@ class DocTest(unittest.TestCase):
 
     def test_files(self):
         from django.conf import settings
-        #~ g = dict(print_=six.print_)
         g = dict()
         g.update(settings=settings)
+        # g.update(unicode_literals=unicode_literals)
+        # g.update(print_function=print_function)
+        kwargs = dict(globs=g)
+        kwargs.update(module_relative=False)
+        kwargs.update(encoding="utf-8")
+        # kwargs.update(optionflags=doctest.REPORT_ONLY_FIRST_FAILURE)
+        # kwargs.update(verbose=False)
         for n in self.doctest_files:
-            f = os.path.join(settings.SITE.project_dir, n)
-            if os.path.exists(f):
-                res = doctest.testfile(f, module_relative=False, globs=g)
+            fn = os.path.join(settings.SITE.project_dir, n)
+            if os.path.exists(fn):
+                res = doctest.testfile(fn, **kwargs)
                 if res.failed:
-                    self.fail("Failed doctest %s" % f)
+                    self.fail("Failed doctest %s" % fn)
             else:
-                self.fail("No such file: %s" % f)
+                self.fail("No such file: %s" % fn)
 
 
 class DemoTestCase(PythonTestCase, CommonTestCase):

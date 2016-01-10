@@ -148,6 +148,7 @@ Special topics
    /tutorials/pisa/index
    /tutorials/input_mask/index
    /tutorials/gfktest/index
+   /tutorials/belref/index
 
    setup
 

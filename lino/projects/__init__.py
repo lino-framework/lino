@@ -39,6 +39,8 @@ Technical
 
    lino.projects.std
    lino.projects.docs
+   lino.projects.belref
+   lino.projects.estref
 
 
 """

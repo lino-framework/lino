@@ -12,5 +12,5 @@ its dependencies) to the console::
 
 """
 
-from lino.ad import Site
+from lino.api.ad import Site
 print Site().using_text()
