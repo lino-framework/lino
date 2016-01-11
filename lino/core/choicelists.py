@@ -54,9 +54,11 @@ import warnings
 
 from django.utils.translation import ugettext_lazy as _
 from django.utils.functional import lazy
+# from django.utils.encoding import force_text
 from django.db import models
 from django.conf import settings
 
+from atelier.utils import assert_pure
 from lino.utils import unicode_string
 
 from lino.core import actions
@@ -119,6 +121,7 @@ class Choice(object):
             if self.text is None:
                 self.text = self.__class__.__name__
         else:
+            # assert_pure(text)
             self.text = text
         for k, v in kwargs.items():
             setattr(self, k, v)
@@ -157,6 +160,7 @@ class Choice(object):
         return unicode_string(self.text)
 
     def __unicode__(self):
+        # return force_text(self.text, errors="replace")
         return unicode(self.text)
 
     def as_callable(self):
