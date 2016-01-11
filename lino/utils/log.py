@@ -175,7 +175,7 @@ production server with :setting:`DEBUG` False.
     aeh.setLevel(logging.ERROR)
     for l in loggers:
         l.addHandler(aeh)
-    if not 'django' in logger_names:
+    if 'django' not in logger_names:
         djangoLogger.addHandler(aeh)
 
     if tty:

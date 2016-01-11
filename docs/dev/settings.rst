@@ -114,17 +114,13 @@ running. Actually they are not system-wide but per environment.
 Each time a Lino process starts (when a :class:`lino.core.site.Site`
 gets instantiated), it checks whether an environment variable
 :envvar:`LINO_SITE_MODULE` is exists.  And if it does, Lino expects it
-to be the name of a Python module, will import that module and expect
-it to define a function named ``setup_site``. And it will call that
-function, passing it the `Site` instance as one and only positional
-parameter.
+to be the name of a Python module, will import that module and, if it
+contains a function named ``setup_site``, will call that function,
+passing it the `Site` instance as one and only positional parameter.
 
 For example you can do::
 
   $ export LINO_SITE_MODULE=my_site_options
-
-When using virtual environments, you can add that line to the
-`activate` script of your virtual environment.
 
 And then create a file named :xfile:`my_site_options.py` somewhere on
 your :envvar:`PYTHONPATH` with the following content::
