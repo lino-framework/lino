@@ -54,6 +54,8 @@ SITE = Site(globals())
 
 DATABASES = team_db
 
+DEBUG = True
+
 # the following line should not be active in a checked-in version
 # DATABASES['default']['NAME'] = ':memory:'
 # DATABASES['default']['NAME'] = '../team/'
