@@ -30,7 +30,7 @@ class Site(Site):
     default_ui = 'bootstrap3'
     default_user = 'anonymous'
 
-    def get_installed_apps(self):
-        yield super(Site, self).get_installed_apps()
-        yield 'lino.modlib.bootstrap3'
+    # def get_installed_apps(self):
+    #     yield super(Site, self).get_installed_apps()
+    #     yield 'lino.modlib.bootstrap3'
 
