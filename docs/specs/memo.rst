@@ -10,10 +10,10 @@ Memo commands
     
     doctest init:
 
-    >>> import os
-    >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_noi.projects.team.settings.demo'
     >>> from __future__ import print_function 
     >>> from __future__ import unicode_literals
+    >>> from lino import startup
+    >>> startup('lino_noi.projects.team.settings.demo')
     >>> from lino.api.doctest import *
 
 The :attr:`description
@@ -31,6 +31,9 @@ markup. Examples:
 
 >>> rt.startup()
 >>> ses = rt.login(renderer=dd.plugins.extjs.renderer)
->>> html = """See also [ticket 1]."""
->>> print(ses.parse_memo(html))
+>>> print(ses.parse_memo("See also [ticket 1]."))
 See also <a href="javascript:Lino.tickets.Tickets.detail.run(null,{ &quot;record_id&quot;: 1 })" title="F&#246;&#246; fails to bar when baz">#1</a>.
+>>> print(ses.parse_memo("See also [url http://www.example.com]."))
+See also <a href="http://www.example.com">http://www.example.com</a>.
+>>> print(ses.parse_memo("See also [url http://www.example.com example]."))
+See also <a href="http://www.example.com">example</a>.
