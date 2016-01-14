@@ -194,9 +194,11 @@ class Kernel(object):
         self.memo_parser = Parser()
 
         def url2html(parser, s):
-            url, text = s.split(None, 1)
-            if not text:
-                text = url
+            url_text = s.split(None, 1)
+            if len(url_text) == 1:
+                url = text = url_text[0]
+            else:
+                url, text = url_text
             return '<a href="%s">%s</a>' % (url, text)
 
         self.memo_parser.register_command('url', url2html)
