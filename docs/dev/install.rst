@@ -10,6 +10,7 @@ Installing Lino
 .. _pycrypto: https://pypi.python.org/pypi/pycrypto
 .. _atelier: http://atelier.lino-framework.org/
 .. _git: http://git-scm.com/downloads
+.. _lxml: http://lxml.de/
 
 This document describes how to install Lino.  It is meant for people
 who plan to write their own Lino application.  Alternativaly you might
@@ -34,9 +35,9 @@ System requirements
 #.  We recommend to use virtualenv_ and to activate a new environment.
     On a Debian system this means something like::
 
-        $ pip install python-virtualenv
-        $ virtualenv --no-site-packages myenv
-        $ . myenv/bin/activate
+        $ sudo pip install virtualenv
+        $ virtualenv ~/virtualenvs/a
+        $ . ~/virtualenvs/a/bin/activate
 
     Note that the `--no-site-packages
     <https://virtualenv.pypa.io/en/latest/reference.html?highlight=site-packages#cmdoption--no-site-packages>`__
@@ -51,6 +52,10 @@ System requirements
 
 #.  You will need to install git_ on your computer to get the source
     files.
+
+#.  Lino requires lxml_, which has some extra requirements::
+
+      sudo apt-get build-dep lxml
 
 
 Get the sources
@@ -103,28 +108,28 @@ Notes:
 Telling your Lino version
 =========================
 
-When you want to see which version you have, you can say "hello" to
-Lino:
-
+A quick test when you want to see whether Lino is installed is to say
+"hello" to Lino:
 
 .. py2rst::
 
     self.shell_block(["python", "-m", "lino.hello"])
 
-
-The above launches Python with the `-m
+In case you didn't know: Python's `-m
 <https://docs.python.org/2/using/cmdline.html#cmdoption-m>`_
-command-line switch which basically instructs it to just import the
-specified module :mod:`lino.hello`.
+command-line switch instructs it to just *import* the specified module
+(here :mod:`lino.hello`) and then to return to the command line.
 
 Updating your copy of the Lino sources
 ======================================
 
-Since we recommend to use the development version of Lino, we also
-recommend that you update your copy of the code repository often.  The
-Lino repository changes almost every day.
+Actually the Lino version is not enough when using a developer
+installation of Lino.  The Lino codebase repository changes almost
+every day, but the version is incremented only when we do an official
+release to PyPI.
 
-In order to get the latest version, you just need to run::
+as a developer you will simply update your copy of the code repository
+often. In order to get the latest version, you just need to run::
 
   $ cd ~/repositories/lino
   $ git pull
@@ -150,14 +155,18 @@ You do this by creating an empty directory where you have write
 permission, and then set the :envvar:`LINO_CACHE_ROOT` environment
 variable to point to it.
 
-For example on a Debian system you might add the following line to
-your :xfile:`.bashrc` file::
+We recommend to create this directory below your virtual environment::
 
-    export LINO_CACHE_ROOT=/home/myname/tmp/lino_cache
+  $ cd ~/virtualenvs/a
+  $ mkdir lino_cache
 
-Don't forget to open a new terminal window after editing the file in
-order to activate these changes.  You can verify whether the variable
-is set using this command::
+And then to add the following line to your
+:file:`~/virtualenvs/a/bin/activate` script
+
+   export LINO_CACHE_ROOT=$VIRTUAL_ENV/lino_cache
+
+Don't forget to re-run the script in order to activate these changes.
+You can verify whether the variable is set using this command::
 
     $ set | grep LINO
 
@@ -174,29 +183,28 @@ One part of your cache directory are the static files.  When your
     $ cd lino/projects/min1
     $ python manage.py collectstatic
 
-Note that you can chose an arbitrary project directory for running
-:manage:`collectstatic`, it does not need to be :mod:`min1
-<lino.projects.min1>`. That's because all Lino applications have the
-same set of staticfiles.
-
 The output should be something like this::
 
     You have requested to collect static files at the destination
     location as specified in your settings:
 
-        /home/myname/tmp/lino_cache/collectstatic
+        /home/myname/virtualenvs/a/lino_cache/collectstatic
 
     This will overwrite existing files!
     Are you sure you want to do this?
 
     Type 'yes' to continue, or 'no' to cancel: yes
 
-    4688 static files copied to '/home/myname/tmp/lino_cache/collectstatic', 0 unmodified.
+    4688 static files copied to '/home/myname/virtualenvs/a/lino_cache/collectstatic', 0 unmodified.
 
+Note that you can chose an arbitrary project directory for running
+:manage:`collectstatic`, it does not need to be :mod:`min1
+<lino.projects.min1>`. That's because all Lino applications have the
+same set of staticfiles.
 
 You need to do this only for your first local Lino project because
-static files are the same for every Lino application.  There are
-exceptions to this rule, but we can ignore them for the moment.
+static files are the same for every Lino application.  (There are
+exceptions to this rule, but we can ignore them for the moment.)
 
 
 Run Lino's test suite

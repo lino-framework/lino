@@ -1,16 +1,16 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2006-2015 Luc Saffre
+# Copyright 2006-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-r""" A simple universal markup parser that expands "commands" found in
-an input string to produce a resulting output string.  Commands are in
-the form ``[KEYWORD ARGS]``.  The caller defines itself all commands,
-there are no predefined commands.
+r""" A simple markup parser that expands "commands" found in an input
+string to produce a resulting output string.  Commands are in the form
+``[KEYWORD ARGS]``.  The caller defines itself all commands, there are
+no predefined commands.
 
-This document is part of the Lino test suite. You can test only this
-document with::
+..  This document is part of the Lino test suite. You can test only
+    this document with::
 
-  $ python setup.py test -s tests.UtilsTests.test_memo
+        $ python setup.py test -s tests.UtilsTests.test_memo
 
 
 Usage example
@@ -24,7 +24,7 @@ Instantiate a parser:
 We declare a "command handler" function `url2html` and register it:
 
 >>> def url2html(parser, s):
-...     print "[DEBUG] url2html() got %r" % s
+...     print("[DEBUG] url2html() got %r" % s)
 ...     if not s: return "XXX"
 ...     url, text = s.split(None,1)
 ...     return '<a href="%s">%s</a>' % (url,text)
@@ -33,7 +33,7 @@ We declare a "command handler" function `url2html` and register it:
 The intended usage of our example handler is ``[url URL TEXT]``, where
 URL is the URL to link to, and TEXT is the label of the link:
 
->>> print p.parse('This is a [url http://xyz.com test].')
+>>> print(p.parse('This is a [url http://xyz.com test].'))
 [DEBUG] url2html() got 'http://xyz.com test'
 This is a <a href="http://xyz.com">test</a>.
 
@@ -51,50 +51,50 @@ logged to the lino logger.
 To demonstrate this, our example implementation has a bug, it doesn't
 support the case of having only an URL without TEXT:
 
->>> print p.parse('This is a [url http://xyz.com].')
+>>> print(p.parse('This is a [url http://xyz.com].'))
 [DEBUG] url2html() got 'http://xyz.com'
 This is a [ERROR need more than 1 value to unpack in '[url http://xyz.com]' at position 10-30].
 
 Newlines preceded by a backslash will be removed before the command
 handler is called:
 
->>> print p.parse('''This is [url http://xy\
-... z.com another test].''')
+>>> print(p.parse('''This is [url http://xy\
+... z.com another test].'''))
 [DEBUG] url2html() got 'http://xyz.com another test'
 This is <a href="http://xyz.com">another test</a>.
 
 The whitespace between the KEYWORD and ARGS can be any whitespace,
 including newlines:
 
->>> print p.parse('''This is a [url 
-... http://xyz.com test].''')
+>>> print(p.parse('''This is a [url
+... http://xyz.com test].'''))
 [DEBUG] url2html() got 'http://xyz.com test'
 This is a <a href="http://xyz.com">test</a>.
 
 The ARGS part is optional (it's up to the command handler to react
 accordingly, our handler function returns XXX in that case):
 
->>> print p.parse('''This is a [url] test.''')
+>>> print(p.parse('''This is a [url] test.'''))
 [DEBUG] url2html() got ''
 This is a XXX test.
 
 The ARGS part may contain pairs of square brackets:
 
->>> print p.parse('''This is a [url 
-... http://xyz.com test with [more] brackets].''')
+>>> print(p.parse('''This is a [url 
+... http://xyz.com test with [more] brackets].'''))
 [DEBUG] url2html() got 'http://xyz.com test with [more] brackets'
 This is a <a href="http://xyz.com">test with [more] brackets</a>.
 
 Fragments of text between brackets that do not match any registered
 command will be left unchanged:
 
->>> print p.parse('''This is a [1] test.''')
+>>> print(p.parse('''This is a [1] test.'''))
 This is a [1] test.
 
->>> print p.parse('''This is a [foo bar] test.''')
+>>> print(p.parse('''This is a [foo bar] test.'''))
 This is a [foo bar] test.
 
->>> print p.parse('''Text with only [opening square bracket.''')
+>>> print(p.parse('''Text with only [opening square bracket.'''))
 Text with only [opening square bracket.
 
 
@@ -104,8 +104,8 @@ Limits
 A single closing square bracket as part of ARGS will not produce the
 desired result:
 
->>> print p.parse('''This is a [url
-... http://xyz.com The character "\]"].''')
+>>> print(p.parse('''This is a [url
+... http://xyz.com The character "\]"].'''))
 [DEBUG] url2html() got 'http://xyz.com The character "\\'
 This is a <a href="http://xyz.com">The character "\</a>"].
 
@@ -119,12 +119,11 @@ The ``[=expression]`` form
 
 Instantiate a new parser with and without a context:
 
->>> print p.parse('''\
-... The answer is [=a*a*5-a].''', a=3)
+>>> print(p.parse('''\
+... The answer is [=a*a*5-a].''', a=3))
 The answer is 42.
 
-
->>> print p.parse('''<ul>[="".join(['<li>%s</li>' % (i+1) for i in range(5)])]</ul>''')
+>>> print(p.parse('''<ul>[="".join(['<li>%s</li>' % (i+1) for i in range(5)])]</ul>'''))
 <ul><li>1</li><li>2</li><li>3</li><li>4</li><li>5</li></ul>
 
 """
