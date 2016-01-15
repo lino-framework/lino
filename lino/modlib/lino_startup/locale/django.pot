@@ -1,14 +1,14 @@
 # Translations template for lino.
-# Copyright (C) 2015 ORGANIZATION
+# Copyright (C) 2016 ORGANIZATION
 # This file is distributed under the same license as the lino project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2016.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: lino 1.6.19\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-12-29 19:53+0200\n"
+"POT-Creation-Date: 2016-01-15 18:59+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,12 +38,12 @@ msgstr ""
 msgid "Insert into %s"
 msgstr ""
 
-#: lino/core/actions.py:779 lino/core/requests.py:870
+#: lino/core/actions.py:779 lino/core/requests.py:887
 #, python-format
 msgid "%s has been updated."
 msgstr ""
 
-#: lino/core/actions.py:781 lino/core/requests.py:872
+#: lino/core/actions.py:781 lino/core/requests.py:889
 #, python-format
 msgid "%s : nothing to save."
 msgstr ""
@@ -56,7 +56,7 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-#: lino/core/actions.py:866 lino/core/requests.py:867
+#: lino/core/actions.py:866 lino/core/requests.py:884
 #, python-format
 msgid "%s has been created."
 msgstr ""
@@ -121,20 +121,20 @@ msgstr ""
 msgid "Total (%d rows)"
 msgstr ""
 
-#: lino/core/choicelists.py:69
+#: lino/core/choicelists.py:71
 msgid "value"
 msgstr ""
 
-#: lino/core/choicelists.py:345
+#: lino/core/choicelists.py:349
 msgid "text"
 msgstr ""
 
-#: lino/core/choicelists.py:349 lino/modlib/about/models.py:63
+#: lino/core/choicelists.py:353 lino/modlib/about/models.py:63
 #: lino/modlib/about/models.py:103
 msgid "name"
 msgstr ""
 
-#: lino/core/choicelists.py:353 lino/modlib/addresses/models.py:59
+#: lino/core/choicelists.py:357 lino/modlib/addresses/models.py:59
 #: lino/modlib/blogs/models.py:31 lino/modlib/cal/models.py:789
 #: lino/modlib/cv/models.py:477 lino/modlib/cv/models.py:503
 #: lino/modlib/excerpts/models.py:109 lino/modlib/lists/models.py:90
@@ -144,7 +144,7 @@ msgstr ""
 msgid "Remark"
 msgstr ""
 
-#: lino/core/choicelists.py:588
+#: lino/core/choicelists.py:592
 #, python-format
 msgid "%(value)r (invalid choice for %(list)s)"
 msgstr ""
@@ -174,7 +174,7 @@ msgstr ""
 msgid "Confirmation"
 msgstr ""
 
-#: lino/core/kernel.py:617
+#: lino/core/kernel.py:619
 msgid "User abandoned"
 msgstr ""
 
@@ -265,72 +265,72 @@ msgstr ""
 msgid "Show all records in a table window"
 msgstr ""
 
-#: lino/core/requests.py:413 lino/modlib/plausibility/choicelists.py:38
+#: lino/core/requests.py:414 lino/modlib/plausibility/choicelists.py:38
 msgid "Error"
 msgstr ""
 
-#: lino/core/requests.py:435 lino/modlib/beid/mixins.py:244
+#: lino/core/requests.py:436 lino/modlib/beid/mixins.py:244
 #: lino/modlib/cv/mixins.py:24 lino/modlib/system/models.py:49
 msgid "Success"
 msgstr ""
 
-#: lino/core/requests.py:478
+#: lino/core/requests.py:491
 msgid "Aborted"
 msgstr ""
 
-#: lino/core/requests.py:479 lino/core/store.py:559
+#: lino/core/requests.py:492 lino/core/store.py:559
 #: lino/modlib/beid/mixins.py:233 lino/modlib/polls/fixtures/std.py:34
 #: lino/modlib/polls/fixtures/std.py:36 lino/modlib/system/choicelists.py:39
 msgid "Yes"
 msgstr ""
 
-#: lino/core/requests.py:480 lino/core/store.py:559
+#: lino/core/requests.py:493 lino/core/store.py:559
 #: lino/modlib/beid/mixins.py:234 lino/modlib/polls/fixtures/std.py:34
 #: lino/modlib/polls/fixtures/std.py:36 lino/modlib/system/choicelists.py:40
 msgid "No"
 msgstr ""
 
-#: lino/core/requests.py:894
+#: lino/core/requests.py:911
 msgid "the documentation"
 msgstr ""
 
-#: lino/core/requests.py:906
+#: lino/core/requests.py:923
 msgid "No data to display"
 msgstr ""
 
-#: lino/core/site.py:314 lino/modlib/changes/models.py:100
+#: lino/core/site.py:315 lino/modlib/changes/models.py:100
 msgid "Master"
 msgstr ""
 
-#: lino/core/site.py:316
+#: lino/core/site.py:317
 msgid "Reports"
 msgstr ""
 
-#: lino/core/site.py:317 lino/modlib/excerpts/models.py:660
+#: lino/core/site.py:318 lino/modlib/excerpts/models.py:660
 msgid "Configure"
 msgstr ""
 
-#: lino/core/site.py:318
+#: lino/core/site.py:319
 msgid "Explorer"
 msgstr ""
 
-#: lino/core/site.py:319
+#: lino/core/site.py:320
 msgid "Site"
 msgstr ""
 
-#: lino/core/site.py:2229 lino/modlib/languages/fixtures/few_languages.py:21
+#: lino/core/site.py:2243 lino/modlib/languages/fixtures/few_languages.py:21
 msgid "English"
 msgstr ""
 
-#: lino/core/site.py:3068
+#: lino/core/site.py:3084
 msgid "This is "
 msgstr ""
 
-#: lino/core/site.py:3077
+#: lino/core/site.py:3093
 msgid " using "
 msgstr ""
 
-#: lino/core/site.py:3122
+#: lino/core/site.py:3138
 #, python-format
 msgid "%(place)s, %(date)s"
 msgstr ""
@@ -376,15 +376,15 @@ msgstr ""
 msgid "Mark this as"
 msgstr ""
 
-#: lino/mixins/__init__.py:151
+#: lino/mixins/__init__.py:163
 msgid "Modified"
 msgstr ""
 
-#: lino/mixins/__init__.py:173 lino/mixins/__init__.py:175
+#: lino/mixins/__init__.py:185 lino/mixins/__init__.py:187
 msgid "Created"
 msgstr ""
 
-#: lino/mixins/__init__.py:273
+#: lino/mixins/__init__.py:285
 msgid "Reference"
 msgstr ""
 
@@ -1132,27 +1132,27 @@ msgstr ""
 
 #: lino/modlib/bootstrap3/views.py:47
 #: lino/modlib/bootstrap3/config/bootstrap3/base.html:21
-#: lino/modlib/extjs/ext_renderer.py:745 lino/modlib/pages/models.py:86
+#: lino/modlib/extjs/ext_renderer.py:749 lino/modlib/pages/models.py:86
 #: lino/modlib/pages/models.py:121
 msgid "Home"
 msgstr ""
 
-#: lino/modlib/bootstrap3/views.py:117 lino/modlib/bootstrap3/views.py:196
+#: lino/modlib/bootstrap3/views.py:128 lino/modlib/bootstrap3/views.py:207
 #: lino/modlib/extjs/linoweb.js:3418
 msgid "First page"
 msgstr ""
 
-#: lino/modlib/bootstrap3/views.py:118 lino/modlib/bootstrap3/views.py:198
+#: lino/modlib/bootstrap3/views.py:129 lino/modlib/bootstrap3/views.py:209
 #: lino/modlib/extjs/linoweb.js:3420
 msgid "Previous page"
 msgstr ""
 
-#: lino/modlib/bootstrap3/views.py:130 lino/modlib/bootstrap3/views.py:200
+#: lino/modlib/bootstrap3/views.py:141 lino/modlib/bootstrap3/views.py:211
 #: lino/modlib/extjs/linoweb.js:3421
 msgid "Next page"
 msgstr ""
 
-#: lino/modlib/bootstrap3/views.py:131 lino/modlib/bootstrap3/views.py:202
+#: lino/modlib/bootstrap3/views.py:142 lino/modlib/bootstrap3/views.py:213
 #: lino/modlib/extjs/linoweb.js:3419
 msgid "Last page"
 msgstr ""
@@ -3087,36 +3087,36 @@ msgstr ""
 msgid "as"
 msgstr ""
 
-#: lino/modlib/extjs/ext_renderer.py:531
+#: lino/modlib/extjs/ext_renderer.py:535
 msgid "My settings"
 msgstr ""
 
-#: lino/modlib/extjs/ext_renderer.py:541
+#: lino/modlib/extjs/ext_renderer.py:545
 msgid "Myself"
 msgstr ""
 
-#: lino/modlib/extjs/ext_renderer.py:543
+#: lino/modlib/extjs/ext_renderer.py:547
 msgid "Act as..."
 msgstr ""
 
-#: lino/modlib/extjs/ext_renderer.py:549
+#: lino/modlib/extjs/ext_renderer.py:553
 msgid "Log out"
 msgstr ""
 
-#: lino/modlib/extjs/ext_renderer.py:552 lino/modlib/users/models.py:33
+#: lino/modlib/extjs/ext_renderer.py:556 lino/modlib/users/models.py:33
 msgid "Change password"
 msgstr ""
 
-#: lino/modlib/extjs/ext_renderer.py:554
+#: lino/modlib/extjs/ext_renderer.py:558
 msgid "Forgot password"
 msgstr ""
 
-#: lino/modlib/extjs/ext_renderer.py:564 lino/modlib/extjs/linoweb.js:364
+#: lino/modlib/extjs/ext_renderer.py:568 lino/modlib/extjs/linoweb.js:364
 #: lino/modlib/extjs/linoweb.js:399
 msgid "Log in"
 msgstr ""
 
-#: lino/modlib/extjs/ext_renderer.py:1223
+#: lino/modlib/extjs/ext_renderer.py:1227
 msgid "No data to display."
 msgstr ""
 
