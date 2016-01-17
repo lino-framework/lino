@@ -79,3 +79,7 @@ class Plugin(ad.Plugin):
         return template.render(**context)
 
 
+def get_environment(**options):
+    # print 20160116, options
+    from django.conf import settings
+    return settings.SITE.plugins.jinja.renderer.jinja_env

@@ -111,11 +111,19 @@ class DjangoBuildMethod(BuildMethod):
         tpls = action.get_print_templates(self, elem)
         if len(tpls) == 0:
             raise Warning("No templates defined for %r" % elem)
+        tpls2 = []
+        for i in tpls:
+            for g in elem.get_template_groups():
+                tpls2.append(g+'/'+i)
         #~ logger.debug('make_pisa_html %s',tpls)
+        # prefix = '/'.join(elem.get_template_groups())
+        # if prefix:
+        #     prefix += '/'
+        # tpls = [prefix + tpl for tpl in tpls]
         try:
-            return select_template(tpls)
-        except TemplateDoesNotExist, e:
-            raise Warning("No template found for %s (%s)" % (e, tpls))
+            return select_template(tpls2)
+        except TemplateDoesNotExist as e:
+            raise Warning("No template found for %s (%s)" % (e, tpls2))
 
     # ,MEDIA_URL=settings.MEDIA_URL):
     def render_template(self, elem, tpl, **context):
@@ -165,7 +173,13 @@ class PisaBuildMethod(DjangoBuildMethod):
 
 
 class SimpleBuildMethod(BuildMethod):
+    """Base for build methods which use Lino's templating system
+    (:meth:`find_config_file <lino.core.site.Site.find_config_file>`).
 
+    TODO: check whether this extension to Django's templating system
+    is still needed.
+
+    """
     def get_template_leaf(self, action, elem):
 
         tpls = action.get_print_templates(self, elem)
@@ -213,7 +227,7 @@ class SimpleBuildMethod(BuildMethod):
         raise NotImplementedError
 
 
-class LatexBuildMethod(BuildMethod):
+class LatexBuildMethod(SimpleBuildMethod):
     """
     Generates `.pdf` files from `.tex` templates.
     Not actively used.
