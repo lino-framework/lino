@@ -68,6 +68,9 @@ class JinjaRenderer(HtmlRenderer):
         def as_table(action_spec):
             a = settings.SITE.modules.resolve(action_spec)
             ar = a.request(user=AnonymousUser.instance())
+            return self.as_table(ar)
+
+        def as_table2(ar):
             # 20150810
             # ar.renderer = settings.SITE.plugins.bootstrap3.renderer
             ar.renderer = self
@@ -93,7 +96,7 @@ class JinjaRenderer(HtmlRenderer):
             dtos=format_date.fds,  # obsolete
             dtosl=format_date.fdl,  # obsolete
             as_ul=as_ul,
-            as_table=as_table,
+            as_table=as_table2,
             iif=iif,
             unicode=unicode,
             len=len,

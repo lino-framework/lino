@@ -1319,13 +1319,13 @@ class Site(object):
                     STATIC_ROOT=self.cache_dir.child('static'))
         if not self.django_settings.get('STATIC_URL', False):
             self.update_settings(STATIC_URL='/static/')
-        self.update_settings(
-            TEMPLATE_LOADERS=tuple([
-                'lino.modlib.jinja.loader.Loader',
-                'django.template.loaders.filesystem.Loader',
-                'django.template.loaders.app_directories.Loader',
-                #~ 'django.template.loaders.eggs.Loader',
-            ]))
+
+        loaders = [
+            'lino.modlib.jinja.loader.Loader',
+            'django.template.loaders.filesystem.Loader',
+            'django.template.loaders.app_directories.Loader',
+            #~ 'django.template.loaders.eggs.Loader',
+        ]
 
         tcp = []
         if self.user_model == 'auth.User':  # not tested
@@ -1334,14 +1334,37 @@ class Site(object):
             tcp += ['django.contrib.auth.context_processors.auth']
 
         tcp += [
-            'django.core.context_processors.debug',
-            'django.core.context_processors.i18n',
-            'django.core.context_processors.media',
-            'django.core.context_processors.static',
-            #    'django.core.context_processors.request',
-            #~ 'django.contrib.messages.context_processors.messages',
+            'django.template.context_processors.debug',
+            'django.template.context_processors.i18n',
+            'django.template.context_processors.media',
+            'django.template.context_processors.static',
+            'django.template.context_processors.tz',
+            'django.contrib.messages.context_processors.messages',
         ]
-        self.update_settings(TEMPLATE_CONTEXT_PROCESSORS=tuple(tcp))
+        # self.update_settings(TEMPLATE_LOADERS=tuple(loaders))
+        # self.update_settings(TEMPLATE_CONTEXT_PROCESSORS=tuple(tcp))
+
+        TEMPLATES = [
+            {
+                'BACKEND': 'django.template.backends.django.DjangoTemplates',
+                'DIRS': [],
+                'APP_DIRS': True,
+                'OPTIONS': {
+                    'context_processors': tcp,
+                    # 'loaders': loaders
+                },
+            },
+        ]
+        TEMPLATES.append(
+            {
+                'BACKEND': 'django.template.backends.jinja2.Jinja2',
+                'DIRS': [],
+                'OPTIONS': {
+                    'environment': 'lino.modlib.jinja.get_environment'
+                },
+            })
+
+        self.update_settings(TEMPLATES=TEMPLATES)
 
         self.define_settings(
             MIDDLEWARE_CLASSES=tuple(self.get_middleware_classes()))
