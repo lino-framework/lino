@@ -11,13 +11,13 @@ We have Person model inherit from :class:`lino.mixins.printable.Printable`:
 
 
 We create a template:
-:srcref:`Default.pisa.html </docs/tutorials/pisa/config/Default.pisa.html>`
+:srcref:`Default.pisa.html </docs/tutorials/pisa/config/pisa/Person/Default.pisa.html>`
 
-.. literalinclude:: config/Default.pisa.html
+.. literalinclude:: config/pisa/Person/Default.pisa.html
 
 That's basically all. 
 
-:srcref:`/docs/tutorials/pisa/pisa.Person-1.pdf`
+:srcref:`docs/tutorials/pisa/pisa.Person-1.pdf`
 shows what you would see when clicking on 
 the Print button of a Person.
 

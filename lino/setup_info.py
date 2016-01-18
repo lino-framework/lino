@@ -189,6 +189,7 @@ lino.modlib.uploads
 lino.modlib.users
 lino.modlib.users.fixtures
 lino.modlib.vocbook
+lino.modlib.wkhtmltopdf
 lino.modlib.workflows
 lino.projects
 lino.projects.babel_tutorial
