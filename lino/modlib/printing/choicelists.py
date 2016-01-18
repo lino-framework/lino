@@ -132,7 +132,7 @@ class DjangoBuildMethod(BuildMethod):
             title=unicode(elem),
             MEDIA_URL=settings.MEDIA_ROOT.replace('\\', '/') + '/',
         )
-        return tpl.render(Context(context))
+        return tpl.render(context)
 
 
 class PisaBuildMethod(DjangoBuildMethod):

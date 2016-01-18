@@ -60,7 +60,7 @@ settings. Including for example :setting:`INSTALLED_APPS` and
 >>> SITE = Site(pseudoglobals, no_local=True)
 >>> sorted(pseudoglobals.keys())
 ... #doctest: +ELLIPSIS +REPORT_UDIFF +NORMALIZE_WHITESPACE
-['DATABASES', 'FIXTURE_DIRS', 'INSTALLED_APPS', 'LANGUAGES', 'LANGUAGE_CODE', 'LOCALE_PATHS', 'LOGGING', 'LOGGING_CONFIG', 'MEDIA_ROOT', 'MEDIA_URL', 'MIDDLEWARE_CLASSES', 'ROOT_URLCONF', 'SERIALIZATION_MODULES', 'STATICFILES_DIRS', 'STATIC_ROOT', 'STATIC_URL', 'TEMPLATE_CONTEXT_PROCESSORS', 'TEMPLATE_LOADERS', 'USE_L10N']
+['DATABASES', 'FIXTURE_DIRS', 'INSTALLED_APPS', 'LANGUAGES', 'LANGUAGE_CODE', 'LOCALE_PATHS', 'LOGGING', 'LOGGING_CONFIG', 'MEDIA_ROOT', 'MEDIA_URL', 'MIDDLEWARE_CLASSES', 'ROOT_URLCONF', 'SERIALIZATION_MODULES', 'STATICFILES_DIRS', 'STATIC_ROOT', 'STATIC_URL', 'TEMPLATES', 'USE_L10N']
 
 Note that Lino writes to your settings module's global namespace only
 while the Site class gets *instantiated*.  So if for some reason you
@@ -202,13 +202,18 @@ These are the Django settings which Lino will override:
  'STATICFILES_DIRS': (),
  'STATIC_ROOT': ...'),
  'STATIC_URL': '/static/',
- 'TEMPLATE_CONTEXT_PROCESSORS': ('django.core.context_processors.debug',
-                                 'django.core.context_processors.i18n',
-                                 'django.core.context_processors.media',
-                                 'django.core.context_processors.static'),
- 'TEMPLATE_LOADERS': ('lino.modlib.jinja.loader.Loader',
-                      'django.template.loaders.filesystem.Loader',
-                      'django.template.loaders.app_directories.Loader'),
+ 'TEMPLATES': [{'APP_DIRS': True,
+                'BACKEND': 'django.template.backends.django.DjangoTemplates',
+                'DIRS': [],
+                'OPTIONS': {'context_processors': ['django.template.context_processors.debug',
+                                                   'django.template.context_processors.i18n',
+                                                   'django.template.context_processors.media',
+                                                   'django.template.context_processors.static',
+                                                   'django.template.context_processors.tz',
+                                                   'django.contrib.messages.context_processors.messages']}},
+               {'BACKEND': 'django.template.backends.jinja2.Jinja2',
+                'DIRS': [],
+                'OPTIONS': {'environment': 'lino.modlib.jinja.get_environment'}}],
  '__file__': '...'}
 
 
