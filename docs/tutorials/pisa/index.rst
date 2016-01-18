@@ -17,7 +17,7 @@ We create a template:
 
 That's basically all. 
 
-:srcref:`/docs/tutorials/pisa/pisa.Person-1.pdf`
+:srcref:`docs/tutorials/pisa/pisa.Person-1.pdf`
 shows what you would see when clicking on 
 the Print button of a Person.
 
