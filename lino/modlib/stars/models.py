@@ -51,6 +51,9 @@ class Star(UserAuthored, Controllable):
         """
         return cls.objects.filter(**gfk2lookup(cls.owner, obj, **kwargs))
 
+dd.update_field(Star, 'user', verbose_name=_("User"))
+dd.update_field(Star, 'owner', verbose_name=_("Starred object"))
+
 
 def get_favourite(obj, user):
     if user.authenticated:
@@ -66,8 +69,14 @@ class Stars(dd.Table):
 
 
 class MyStars(Stars, ByUser):
-    column_names = "id owner nickname *"
+    column_names = "owner nickname *"
     order_by = ['nickname', 'id']
+
+
+class StarsByController(Stars):
+    label = _("Starred by")
+    master_key = 'owner'
+    column_names = "user *"
 
 
 class StarObject(dd.Action):

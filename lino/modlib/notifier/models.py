@@ -134,10 +134,13 @@ class Notification(UserAuthored, Controllable, Created):
         template = rt.get_template('notifier/body.eml')
         context = dict(obj=self, E=E, rt=rt, ar=sar)
         body = template.render(**context)
-        sender = ar.get_user().email or settings.SERVER_EMAIL
+        sender_email = ar.get_user().email or settings.SERVER_EMAIL
+        sender = "{0} <{1}>".format(ar.get_user(), sender_email)
         rt.send_email(
             subject, sender, body, [self.user.email])
     
+dd.update_field(Notification, 'user', verbose_name=_("User"))
+
 
 class Notifications(dd.Table):
     """Shows the gobal list of all notifications.
