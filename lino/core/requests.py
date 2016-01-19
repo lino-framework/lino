@@ -350,6 +350,7 @@ request from it.
             iif=iif,
             pgettext=pgettext,
             now=timezone.now(),
+            getattr=getattr,
             requested_language=get_language())
 
         def parse(s):

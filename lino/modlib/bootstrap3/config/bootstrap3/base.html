@@ -17,31 +17,33 @@
         &mdash;
     {% endif -%}
 
-    {% if ar.request and ar.request.path != '/' -%}
-        <a href="{{ar.get_home_url()}}">{{_("Home")}}</a>
-    {% endif -%}
-    {% if len(site.languages) > 1 -%}
-      {% for lang in site.languages -%}
-        {% if lang.django_code == requested_language -%}
-            {{lang.django_code}}
-        {% else -%} {# URL_PARAM_USER_LANGUAGE #}
-            <a href="{{ar.get_request_url(ul=lang.django_code)}}">{{lang.django_code}}</a>
+    {% if ar -%}
+        {% if ar.request and ar.request.path != '/' -%}
+            <a href="{{ar.get_home_url()}}">{{_("Home")}}</a>
         {% endif -%}
-      {% endfor -%}
-      {%- if len(site.user_interfaces) > 0 %}
-          &mdash;
-      {% endif -%}
+        {% if len(site.languages) > 1 -%}
+          {% for lang in site.languages -%}
+            {% if lang.django_code == requested_language -%}
+                {{lang.django_code}}
+            {% else -%} {# URL_PARAM_USER_LANGUAGE #}
+                <a href="{{ar.get_request_url(ul=lang.django_code)}}">{{lang.django_code}}</a>
+            {% endif -%}
+          {% endfor -%}
+          {%- if len(site.user_interfaces) > 0 %}
+              &mdash;
+          {% endif -%}
+        {% endif -%}
+        {%- if len(site.user_interfaces) > 0 -%}
+            {% for p in site.user_interfaces -%}
+                {%- if ar.renderer == p.renderer %}
+                {{p.ui_label}}
+                {%- else -%}
+                <a href="{{p.build_plain_url()}}">{{p.ui_label}}</a>
+                {% endif -%}
+            {%- endfor -%}
+        {%- endif -%}
     {% endif -%}
 
-    {%- if len(site.user_interfaces) > 0 -%}
-        {% for p in site.user_interfaces -%}
-            {%- if ar.renderer == p.renderer %}
-            {{p.ui_label}}
-            {%- else -%}
-            <a href="{{p.build_plain_url()}}">{{p.ui_label}}</a>
-            {% endif -%}
-        {%- endfor -%}
-    {%- endif -%}
 
     {% if False and site.user_model -%}
       </form>

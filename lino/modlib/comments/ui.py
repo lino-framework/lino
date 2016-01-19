@@ -78,15 +78,15 @@ class CommentsByRFC(CommentsByX):
         sar = self.request_from(ar, master_instance=obj)
 
         html = obj.get_rfc_description(ar)
+        sar = self.insert_action.request_from(sar)
+        if sar.get_permission():
+            btn = sar.ar2button(None, _("Write comment"), icon_name=None)
+            html += "<p>" + E.tostring(btn) + "</p>"
+
         items = [o.as_li(ar) for o in sar]
         if len(items) > 0:
             html += u"<ul>{0}</ul>".format(''.join(items))
 
-        sar = self.insert_action.request_from(sar)
-        # if ar.renderer.is_interactive and sar.get_permission():
-        if sar.get_permission():
-            btn = sar.ar2button(None, _("Write comment"), icon_name=None)
-            html += "<p>" + E.tostring(btn) + "</p>"
         return u"""<div class="htmlText">{0}</div>""".format(html)
 
 

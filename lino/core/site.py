@@ -3079,17 +3079,22 @@ signature as `django.core.mail.EmailMessage`.
         empty.
 
         """
-        recipients = [a for a in recipients if not '@example.com' in a]
+        if '@example.com' in sender:
+            self.logger.info(
+                "Ignoring email '%s' because sender is %s", subject, sender)
+            return
+        recipients = [a for a in recipients if '@example.com' not in a]
         if not len(recipients):
+            self.logger.info(
+                "Ignoring email '%s' because there is no recipient", subject)
             return
 
         from django.core.mail import EmailMessage
         msg = EmailMessage(subject=subject,
                            from_email=sender, body=body, to=recipients)
-        msg.send()
         self.logger.info(
-            "System note '%s' from %s has been sent to %s",
-            subject, sender, recipients)
+            "Send email '%s' from %s to %s", subject, sender, recipients)
+        msg.send()
 
     def welcome_html(self, ui=None):
         """

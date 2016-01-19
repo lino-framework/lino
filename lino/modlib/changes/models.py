@@ -175,7 +175,8 @@ class ChangesByMaster(Changes):
     """
     required_roles = dd.required()
     master_key = 'master'
-    column_names = 'time user type object diff object_type object_id'
+    # column_names = 'time user type object diff object_type object_id'
+    column_names = 'time user type object diff *'
 
 
 class WatcherSpec:
