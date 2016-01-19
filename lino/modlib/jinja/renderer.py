@@ -90,6 +90,8 @@ class JinjaRenderer(HtmlRenderer):
             # ar.renderer = settings.SITE.plugins.bootstrap3.renderer
             return E.tostring(E.ul(*[obj.as_list_item(ar) for obj in ar]))
 
+        # from lino.core.requests import BaseRequest
+
         self.jinja_env.globals.update(
             settings=settings,
             site=settings.SITE,
@@ -101,6 +103,7 @@ class JinjaRenderer(HtmlRenderer):
             unicode=unicode,
             len=len,
             E=E,
+            ar=None,
             # _=_,
             mtos=settings.SITE.decfmt,  # obsolete
             decfmt=settings.SITE.decfmt,
