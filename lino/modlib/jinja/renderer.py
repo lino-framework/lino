@@ -9,6 +9,7 @@ directories. TODO: do only one common loop for both.
 
 from os.path import join, dirname, isdir
 import cgi
+import datetime
 import jinja2
 SUBDIR_NAME = 'config'
 
@@ -105,6 +106,7 @@ class JinjaRenderer(HtmlRenderer):
             E=E,
             ar=None,
             # _=_,
+            now=datetime.datetime.now(),
             mtos=settings.SITE.decfmt,  # obsolete
             decfmt=settings.SITE.decfmt,
             fds=format_date.fds,
