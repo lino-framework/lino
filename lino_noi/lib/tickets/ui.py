@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2015 Luc Saffre
+# Copyright 2011-2016 Luc Saffre
 #
 # This file is part of Lino Noi.
 #
@@ -258,16 +258,16 @@ class LinksByTicket(Links):
 
 
 class TicketDetail(dd.DetailLayout):
-    main = "general more changes.ChangesByMaster"
+    main = "general more history_tab"
 
     general = dd.Panel("""
     general1:60 DeploymentsByTicket:20
     comments.CommentsByRFC:60 clocking.SessionsByTicket:20
     """, label=_("General"))
 
-    # history_tab = dd.Panel("""
-    # :40
-    # """, label=_("History"))
+    history_tab = dd.Panel("""
+    changes.ChangesByMaster:50 stars.StarsByController:20
+    """, label=_("History"))
 
     general1 = """
     summary:40 id:6 reporter:12
