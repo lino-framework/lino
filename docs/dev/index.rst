@@ -189,6 +189,7 @@ Other
    /tested/index
    git
    /ref/index
+   py3
 
 
 

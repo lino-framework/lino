@@ -1,4 +1,4 @@
-# Copyright 2008-2015 Luc Saffre
+# Copyright 2008-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """The standard model library included with Lino.
@@ -14,12 +14,20 @@ Lino applications.
 
     gfks
     system
-    printing
+    lino_startup
+    users
+
+Utilities
+=========
+
+.. autosummary::
+   :toctree:
+
     excerpts
     jinja
-    lino_startup
     plausibility
-    users
+    printing
+    summaries
 
 "User interfaces"
 =================
@@ -43,6 +51,7 @@ Lino applications.
     notifier
     changes
     stars
+    wkhtmltopdf
 
 "Enterprise Resources"
 ======================
