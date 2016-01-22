@@ -25,6 +25,7 @@ This is a tested document. To test it, run::
     dbfreader
     dblogger
     diag
+    djangotest
     dpy
     editing
     html2odf
@@ -45,18 +46,17 @@ This is a tested document. To test it, run::
     mti
     odsreader
     pdf
+    pythontest
     pyuca
     quantities
     ranges
     requests
     restify
-    sendchanges
     screenshots
+    sendchanges
     sqllog
     ssin
     test
-    pythontest
-    djangotest
     textfields
     ucsv
     xmlgen
