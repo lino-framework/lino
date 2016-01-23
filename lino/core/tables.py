@@ -187,6 +187,8 @@ class AbstractTable(actors.Actor):
     specifies that `name` and `owner` come first, followed by all
     other columns and finally by `date`.
 
+    See also :meth:`setup_column` and :meth:`get_column_names`.
+
     """
 
     start_at_bottom = False

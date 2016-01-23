@@ -60,8 +60,11 @@ class Summary(dd.Model):
     class Meta:
         abstract = True
 
+    # summary_period = 'yearly'
+    summary_period = 'monthly'
+
     year = models.IntegerField(_("Year"))
-    month = models.IntegerField(_("Month"), null=True)
+    month = models.IntegerField(_("Month"), null=True, blank=True)
 
     compute_results = ComputeResults()
 
@@ -69,8 +72,11 @@ class Summary(dd.Model):
     def get_summary_periods(cls):
         config = dd.plugins.summaries
         for year in range(config.start_year, config.end_year):
-            for month in range(1, 12):
-                yield year, month
+            if cls.summary_period == 'yearly':
+                yield year, None
+            else:
+                for month in range(1, 12):
+                    yield year, month
 
     @classmethod
     def get_for_period(cls, master, year, month):
