@@ -5,6 +5,7 @@
 "Defines the :class:`Model` class."
 
 from __future__ import unicode_literals
+from __future__ import print_function
 
 import logging
 logger = logging.getLogger(__name__)
@@ -948,7 +949,7 @@ action on individual instances.
   }
   
 """ % s
-        print s
+        print(s)
 
 LINO_MODEL_ATTRIBS = (
     'get_parameter_fields',
