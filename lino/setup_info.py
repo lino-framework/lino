@@ -180,6 +180,10 @@ lino.modlib.stars
 lino.modlib.statbel
 lino.modlib.statbel.countries
 lino.modlib.statbel.countries.fixtures
+lino.modlib.summaries
+lino.modlib.summaries.fixtures
+lino.modlib.summaries.management
+lino.modlib.summaries.management.commands
 lino.modlib.system
 lino.modlib.system.tests
 lino.modlib.thirds

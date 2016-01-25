@@ -20,7 +20,7 @@ import json
 import unittest
 import doctest
 
-from .pythontest import TestCase as PythonTestCase
+from lino.utils.pythontest import TestCase as PythonTestCase
 
 import collections
 HttpQuery = collections.namedtuple(

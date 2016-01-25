@@ -2,6 +2,7 @@
 How to write user documentation
 ===============================
 
+(needs revision)
 
 Lino includes a set of tools for writing comprehensive 
 multi-lingual user documentation for your Lino application.
@@ -12,26 +13,9 @@ When developing and maintaining a Lino application we suggest to
 use two distinct Sphinx document trees:
 
 - `/docs` for technical documentation (only English) 
-- `/userdocs` for user documentation (translated)
+- `/docs_xx` for user documentation (translated)
 
 See also the :ref:`atelier.sphinxext` documentation page 
 of :mod:`atelier`.
 
-
-.. rst:role:: ddref
-
-Insert a reference to the user documentation of an item of the data
-dictionary of the Lino Site associated to this doctree.
-
-This role is available only when this project has a userdocs.
-
-.. rst:directive:: actor
-
-Generate and insert user documentation for the specified actor.
-If this directive has content, this will be inserted at the beginning.
-
-
-
-
-
-
+See also :mod:`lino.sphinxcontrib.actordoc`.
