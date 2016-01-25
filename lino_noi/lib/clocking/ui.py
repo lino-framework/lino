@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2015 Luc Saffre
+# Copyright 2011-2016 Luc Saffre
 #
 # This file is part of Lino Noi.
 #
@@ -37,7 +37,7 @@ from lino.modlib.cal.utils import when_text
 
 
 from lino_noi.lib.tickets.choicelists import (TicketEvents,
-                                             ProjectEvents, ObservedEvent)
+                                              ProjectEvents, ObservedEvent)
 from lino_noi.lib.tickets.ui import Tickets, Projects
 
 
