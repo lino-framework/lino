@@ -131,11 +131,18 @@ production server with :setting:`DEBUG` False.
 
     """
 
-    if len(logging.getLogger().handlers) != 0:
+    if getattr(logging, "set_up_done", False):
         msg = "Not changing the existing logging configuration."
         # raise Exception(msg)
         logging.info(msg)
         return
+    logging.set_up_done = True
+
+    # if len(logging.getLogger().handlers) != 0:
+    #     msg = "Not changing the existing logging configuration."
+    #     # raise Exception(msg)
+    #     logging.info(msg)
+    #     return
 
     #~ logger_names = config.get('logger_names','djangosite lino')
     logger_names = config.get('logger_names', None)

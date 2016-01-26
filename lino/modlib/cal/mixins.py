@@ -445,7 +445,7 @@ class EventGenerator(UserAuthored):
         date = rset.find_start_date(date)
         # ar.debug("20140310b %s", date)
         if date is None:
-            ar.info("No available weekday.")
+            ar.info("No available start date.")
             return wanted
         until = self.update_cal_until() \
             or settings.SITE.ignore_dates_after
@@ -571,7 +571,7 @@ class RecurrenceSet(Started, Ended):
         _("Recurrency"),
         default=Recurrencies.monthly.as_callable,
         blank=True)  # iCal:DURATION
-    every = models.IntegerField(_("Repeat every"), default=0)
+    every = models.IntegerField(_("Repeat every"), default=1)
 
     monday = models.BooleanField(Weekdays.monday.text, default=False)
     tuesday = models.BooleanField(Weekdays.tuesday.text, default=False)
@@ -635,7 +635,7 @@ class RecurrenceSet(Started, Ended):
     @dd.displayfield(_("When"))
     def weekdays_text(self, ar):
         """A textual formulation of "when" the recurrence occurs. This is a
-virtual field labelled "When".
+        virtual field labelled "When".
 
         """
         weekdays = []
@@ -681,7 +681,7 @@ virtual field labelled "When".
 
     def find_start_date(self, date):
         """Find the first available date for the given date (possibly
-    including that date)
+        including that date)
 
         """
 
@@ -697,11 +697,14 @@ virtual field labelled "When".
         of this recurrence set.
 
         """
-        wd = date.isoweekday()  # Monday:1, Tuesday:2 ... Sunday:7
-        wd = Weekdays.get_by_value(str(wd))
-        rv = getattr(self, wd.name)
-        #~ logger.info('20130529 is_available_on(%s) -> %s -> %s',date,wd,rv)
-        return rv
+        if self.monday or self.tuesday or self.wednesday or self.thursday \
+           or self.friday or self.saturday or self.sunday:
+            wd = date.isoweekday()  # Monday:1, Tuesday:2 ... Sunday:7
+            wd = Weekdays.get_by_value(str(wd))
+            rv = getattr(self, wd.name)
+            #~ logger.info('20130529 is_available_on(%s) -> %s -> %s',date,wd,rv)
+            return rv
+        return True
 
 dd.update_field(RecurrenceSet, 'start_date', default=dd.today)
 

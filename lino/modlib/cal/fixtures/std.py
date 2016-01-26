@@ -14,20 +14,17 @@ from __future__ import unicode_literals
 import datetime
 from dateutil.relativedelta import relativedelta
 ONE_DAY = relativedelta(days=1)
+from dateutil.easter import easter
 
-from django.db import models
 from django.conf import settings
-from django.utils.translation import ugettext as _
 
 from lino.utils.instantiator import Instantiator
 
-from lino.api import dd
-
-cal = dd.resolve_app('cal')
+from lino.api import dd, rt, _
 
 
 def objects():
-
+    cal = rt.modules.cal
     add = Instantiator('cal.Priority', 'ref').build
     yield add('1', **dd.babel_values('name', en=u"very urgent", de=u"sehr dringend",   fr=u"très urgent", et=u"väga kiire"))
     yield add('3', **dd.babel_values('name', en=u"urgent", de=u"dringend",   fr=u"urgent", et="kiire"))
@@ -36,8 +33,6 @@ def objects():
 
     calendar = Instantiator('cal.Calendar').build
     general = calendar(**dd.str2kw('name', _("General")))
-                                    # de="Allgemein",
-                                    # fr="Général",
     yield general
     settings.SITE.site_config.site_calendar = general
     yield settings.SITE.site_config
@@ -73,9 +68,27 @@ def objects():
     yield holiday(11, 11, "Armistice with Germany", "Waffenstillstand", "Armistice")
     yield holiday(12, 25, "Christmas", "Weihnachten", "Noël", "Esimene Jõulupüha")
 
-    summer = holiday(07, 01, "Summer holidays", "Sommerferien", "Vacances d'été", "Suvevaheaeg")
+    summer = holiday(
+        07, 01,
+        "Summer holidays", "Sommerferien", "Vacances d'été", "Suvevaheaeg")
     summer.end_date = summer.start_date.replace(month=8, day=31)
     yield summer
+
+    easter1 = easter(cal.DEMO_START_YEAR)
+
+    def relative_holiday(offset, name):
+        return add(
+            every_unit=cal.Recurrencies.easter, every=1,
+            start_date=easter1+relativedelta(days=offset),
+            **dd.str2kw('name', name))
+
+    yield relative_holiday(0, _("Easter sunday"))
+    yield relative_holiday(1, _("Easter monday"))
+    yield relative_holiday(39, _("Ascension of Jesus"))
+    yield relative_holiday(50, _("Pentecost"))
+    yield relative_holiday(-2, _("Good Friday"))
+    yield relative_holiday(-46, _("Ash Wednesday"))
+    yield relative_holiday(-48, _("Rosenmontag"))
 
     ar = settings.SITE.login()
     for obj in RecurrentEvent.objects.all():
