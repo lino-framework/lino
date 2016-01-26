@@ -59,14 +59,6 @@ Certain yearly events don't have a fixed day of the year but move
 together with the Easter day.  They are also known as `moveable feasts
 <https://en.wikipedia.org/wiki/Moveable_feast_%28observance_practice%29>`_.
 
-You create them by setting :attr:`every_unit
-<lino.modlib.cal.models.RecurrentEvent.every_unit>` of the event rule
-to :attr:`easter <lino.modlib.cal.choicelists.Recurrencies.easter>`.
-
-Lino then computes the offset (number of days) your :attr:`start_date`
-and the easter date of the start year, and generates subsequent events
-by moving their date so that the offset remains the same.
-
 Let's look at one of them, Ash Wednesday::
 
 >>> ash = RecurrentEvent.objects.get(name="Ash Wednesday")
@@ -90,18 +82,29 @@ automatically all Ash Wednesdays for a range of years:
 <BLANKLINE>
 
 
->>> from dateutil.easter import easter
->>> easter(2015)
-`easter()
-<https://labix.org/python-dateutil#head-8863c4fc47132b106fcb00b9153e3ac0ab486a0d>`_
-function of `dateutil`.
-
-
 That range of years depends on some configuration variables:
 
 - :attr:`ignore_dates_before <lino.core.site.Site.ignore_dates_before>`
 - :attr:`ignore_dates_after <lino.core.site.Site.ignore_dates_after>`
 - :attr:`lino.modlib.system.SiteConfig.max_auto_events`
+
+
+Moving feast are created by setting :attr:`every_unit
+<lino.modlib.cal.models.RecurrentEvent.every_unit>` of the event rule
+to :attr:`easter <lino.modlib.cal.choicelists.Recurrencies.easter>`.
+
+Lino then computes the offset (number of days) your :attr:`start_date`
+and the easter date of the start year, and generates subsequent events
+by moving their date so that the offset remains the same.
+
+Lino uses the `easter()
+<https://labix.org/python-dateutil#head-8863c4fc47132b106fcb00b9153e3ac0ab486a0d>`_
+function of `dateutil` for getting the Easter date.
+
+>>> from dateutil.easter import easter
+>>> easter(2015)
+datetime.date(2015, 4, 5)
+
 
 
 Adding a local moving feast
