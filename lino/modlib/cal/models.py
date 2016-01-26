@@ -311,12 +311,28 @@ class Task(Component):
 
 
 class RecurrentEvent(mixins.BabelNamed, RecurrenceSet, EventGenerator):
-    """An event that recurs at intervals.
+    """A rule designed to generate a series of recurrent events.
+    
+    .. attribute:: name
+
+        See :attr:`lino.utils.mldbc.mixins.BabelNamed.name`.
+    
+    .. attribute:: every_unit
+
+        Inherited from :attr:`RecurrentSet.every_unit
+        <lino.modlib.cal.models.RecurrentSet.every_unit>`
+
+    .. attribute:: event_type
+
+
+
+    .. attribute:: description
+
     """
     class Meta:
         app_label = 'cal'
-        verbose_name = _("Recurrent Event")
-        verbose_name_plural = _("Recurrent Events")
+        verbose_name = _("Recurrent event rule")
+        verbose_name_plural = _("Recurrent event rules")
 
     event_type = models.ForeignKey('cal.EventType', blank=True, null=True)
     description = dd.RichTextField(
