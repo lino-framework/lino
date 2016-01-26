@@ -714,9 +714,12 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         return self.get_calendar()
 
     def get_print_language(self):
-        if settings.SITE.project_model is not None and self.project:
+        # if settings.SITE.project_model is not None and self.project:
+        if self.project:
             return self.project.get_print_language()
-        return self.user.language
+        if self.user:
+            return self.user.language
+        return settings.SITE.get_default_language()
 
     @classmethod
     def get_default_table(cls):

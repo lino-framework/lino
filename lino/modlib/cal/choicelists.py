@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2015 Luc Saffre
+# Copyright 2011-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -23,13 +23,10 @@ Choicelists for lino.modlib.cal
 from __future__ import unicode_literals
 
 import datetime
+from dateutil.easter import easter
 
-from dateutil.tz import tzlocal
+from lino.api import dd, _
 
-from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
-
-from lino.api import dd, rt
 
 class Weekdays(dd.ChoiceList):
     """A choicelist with the seven days of a week.
@@ -121,6 +118,9 @@ class DurationUnit(dd.Choice):
                     return orig.replace(month=m, day=day, year=year)
                 if unit.value == 'Y':
                     return orig.replace(year=orig.year + value, day=day)
+                if unit.value == 'E':
+                    offset = orig - easter(year)
+                    return easter(year+value) + offset
                 raise Exception("Invalid DurationUnit %s" % unit)
             except ValueError:
                 if day > 28:
@@ -154,9 +154,8 @@ add('Y', _('years'), 'years')
 
 
 class Recurrencies(dd.ChoiceList):
+    """List of possible choices for a 'recurrency' field.
 
-    """
-    List of possible choices for a 'recurrency' field.
     """
     verbose_name = _("Recurrency")
     item_class = DurationUnit
@@ -168,6 +167,7 @@ add('W', _('weekly'), 'weekly')
 add('M', _('monthly'), 'monthly')
 add('Y', _('yearly'), 'yearly')
 add('P', _('per weekday'), 'per_weekday')  # deprecated
+add('E', _('Relative to Easter'), 'easter')
 
 
 def amonthago():
