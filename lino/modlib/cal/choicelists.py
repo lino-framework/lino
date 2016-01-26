@@ -156,6 +156,19 @@ add('Y', _('years'), 'years')
 class Recurrencies(dd.ChoiceList):
     """List of possible choices for a 'recurrency' field.
 
+    Note that a recurrency (an item of this choicelist) is also a
+    :class:`DurationUnit`.
+
+    .. attribute:: easter
+
+        Repeat events yearly, moving them together with the Easter
+        data of that year.
+
+        Lino computes the offset (number of days) between this rule's
+        :attr:`start_date` and the Easter date of that year, and
+        generates subsequent events so that this offset remains the
+        same.
+
     """
     verbose_name = _("Recurrency")
     item_class = DurationUnit

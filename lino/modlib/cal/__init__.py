@@ -10,6 +10,7 @@
     mixins
     utils
     models
+    choicelists
     ui
     workflows
     fixtures.std

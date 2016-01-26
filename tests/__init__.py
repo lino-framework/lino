@@ -31,6 +31,11 @@ class DocsAdminTests(TestCase):
         self.run_simple_doctests('docs/admin/printing.rst')
 
 
+class SpecsTests(LinoTestCase):
+
+    def test_holidays(self):
+        self.run_simple_doctests('docs/specs/holidays.rst')
+
 class DocsTests(LinoTestCase):
 
     # python setup.py test -s tests.DocsTests.test_docs
