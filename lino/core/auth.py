@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2010-2015 Luc Saffre
+# Copyright 2010-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -97,7 +97,7 @@ class AuthMiddleWareBase(object):
 
         request.user = user
 
-        user_language = user.language or settings.SITE.get_default_language()
+        user_language = user.language  # or settings.SITE.get_default_language()
 
         if settings.USE_TZ:
             activate(user.timezone or settings.TIME_ZONE)
@@ -112,7 +112,8 @@ class AuthMiddleWareBase(object):
         else:
             # e.g. OPTIONS, HEAD
             if len(settings.SITE.languages) > 1:
-                translation.activate(user_language)
+                if user_language:
+                    translation.activate(user_language)
                 request.LANGUAGE_CODE = translation.get_language()
             #~ logger.info("20121205 on_login %r",translation.get_language())
             request.requesting_panel = None
@@ -127,7 +128,8 @@ class AuthMiddleWareBase(object):
 
             user_language = rqdata.get(
                 constants.URL_PARAM_USER_LANGUAGE, user_language)
-            translation.activate(user_language)
+            if user_language:
+                translation.activate(user_language)
             request.LANGUAGE_CODE = translation.get_language()
 
         su = rqdata.get(constants.URL_PARAM_SUBST_USER, None)

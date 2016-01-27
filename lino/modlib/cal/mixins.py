@@ -282,7 +282,7 @@ class EventGenerator(UserAuthored):
     def update_cal_until(self):
         """Return the limit date until which to generate events.  None means
         "no limit" (which de facto becomes
-        :attr:`lino.core.site.Site.ignore_dates_after`)
+        :attr:`lino.modlib.cal.Plugin.ignore_dates_after`)
 
         """
 
@@ -448,7 +448,7 @@ class EventGenerator(UserAuthored):
             ar.info("No available start date.")
             return wanted
         until = self.update_cal_until() \
-            or settings.SITE.ignore_dates_after
+            or dd.plugins.cal.ignore_dates_after
         if until is None:
             raise Exception("ignore_dates_after may not be None")
         i = 0
@@ -462,8 +462,8 @@ class EventGenerator(UserAuthored):
                     ar.info("Reached upper date limit %s", until)
                     break
                 i += 1
-                if settings.SITE.ignore_dates_before is None or \
-                   date >= settings.SITE.ignore_dates_before:
+                if dd.plugins.cal.ignore_dates_before is None or \
+                   date >= dd.plugins.cal.ignore_dates_before:
                     we = Event(
                         auto_type=i,
                         user=self.user,
@@ -500,7 +500,7 @@ class EventGenerator(UserAuthored):
         if date is None:
             return
         until = self.update_cal_until() \
-            or settings.SITE.ignore_dates_after
+            or dd.plugins.cal.ignore_dates_after
         we.start_date = date
         if self.resolve_conflicts(we, ar, rset, until) is None:
             return

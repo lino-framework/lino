@@ -4,7 +4,7 @@
 # The ElementTree toolkit is
 # Copyright (c) 1999-2004 by Fredrik Lundh
 # Modifications in this file are
-# Copyright (c) 2012-2015 Luc Saffre
+# Copyright (c) 2012-2016 Luc Saffre
 # --------------------------------------------------------------------
 
 # This document is part of the Lino test suite. To test only this
@@ -51,10 +51,15 @@ You can also do the opposite, i.e. parse HTML:
 ... title="Ein s&#252;&#223;es Beispiel">
 ... <button class="x-btn-text x-tbar-upload" type="button" />
 ... </a>''')
->>> print E.tostring_pretty(html)
+>>> print(E.tostring_pretty(html))
 <a href="foo/bar.html" title="Ein s&#252;&#223;es Beispiel">
 <button class="x-btn-text x-tbar-upload" type="button" />
 </a>
+
+
+>>> print(E.tostring(E.raw(
+...     '<ul type="disc"><li>First</li><li>Second</li></ul>')))
+<ul type="disc"><li>First</li><li>Second</li></ul>
 
 """
 

@@ -1,10 +1,10 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015 Luc Saffre.
+# Copyright 2015-2016 Luc Saffre.
 # License: BSD, see LICENSE for more details.
 """Used by :xfile:`make_screenshots.py` scripts.
 """
 
-from __future__ import unicode_literals, absolute_import
+from __future__ import unicode_literals, absolute_import, print_function
 import sys
 import subprocess
 
@@ -12,22 +12,28 @@ from unipath import Path
 from atelier import rstgen
 from atelier.utils import unindent
 
+from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
-def runserver(settings_module, func):
+def runserver(settings_module, func, driver=None):
     args = ['django-admin', 'runserver', '--noreload', '--settings',
             settings_module]
     server = subprocess.Popen(args, stdout=None, stderr=None)
 
-    # print "Started subprocess {0}".format(server.pid)
+    # print("Started subprocess {0}".format(server.pid))
+
+    if driver is None:
+        driver = webdriver.Firefox()
 
     try:
-        func()
+        driver.get("http://127.0.0.1:8000/")
+        func(driver)
     finally:
+        driver.quit()
         server.terminate()
 
 
@@ -36,31 +42,44 @@ class Album(object):
     file.
 
     """
-    def __init__(self, driver, root, title="Screenshots",
+    screenshot_root = None
+    screenshots = []
+    title = None
+    intro = None
+    ref = None
+
+    def __init__(self, driver, root=None, title="Screenshots",
                  ref=None, intro=None):
-        self.screenshot_root = Path(root)
-        self.screenshots = []
-        self.title = title
-        self.intro = intro
-        self.ref = ref
         self.driver = driver
         self.actionChains = ActionChains(driver)
 
+        if root is not None:
+            self.screenshot_root = Path(root)
+            self.screenshots = []
+            self.title = title
+            self.intro = intro
+            self.ref = ref
+
     def checktitle(self, title):
         if self.driver.title != title:
-            print "Title is {0} (expected: {1})".format(
-                self.driver.title, title)
+            print("Title is {0} (expected: {1})".format(
+                self.driver.title, title))
             sys.exit(-1)
 
     def screenshot(self, name, caption, before='', after=''):
         filename = self.screenshot_root.child(name)
-        print "Writing screenshot {0} ...".format(filename)
+        print("Writing screenshot {0} ...".format(filename))
         if not self.driver.get_screenshot_as_file(filename):
-            print "Failed to create {0}".format(filename)
+            print("Failed to create {0}".format(filename))
             sys.exit(-1)
         before = unindent(before)
         after = unindent(after)
         self.screenshots.append((name, caption, before, after))
+
+    def error(self, msg):
+        raise Exception(msg)
+        # print(msg)
+        # sys.exit(-1)
 
     def doubleclick(self, elem):
         self.actionChains.double_click(elem).perform()

@@ -997,21 +997,6 @@ class Site(object):
 
     """
 
-    ignore_dates_before = None
-    """
-    Ignore dates before the given date.  Set this to `None` if you want
-    no limit.
-    Default value is "7 days before server startup".
-
-    """
-
-    ignore_dates_after = datetime.date.today() + datetime.timedelta(days=5*365)
-    """
-    Ignore dates after the given date.  This should never be `None`.
-    Default value is approximately 5 years after server startup.
-
-    """
-
     # for internal use:
     # _welcome_actors = []
     _welcome_handlers = []
@@ -1049,6 +1034,13 @@ class Site(object):
 
         from lino.utils.config import ConfigDirCache
         self.confdirs = ConfigDirCache(self)
+
+        for k in ('ignore_dates_before', 'ignore_dates_after'):
+            if hasattr(self, k):
+                msg = "{0} is no longer a site attribute"
+                msg += " but a plugin attribute on lino.modlib.cal."
+                msg = msg.format(k)
+                raise ChangedAPI(msg)
 
     def init_before_local(self, settings_globals, local_apps):
         """If your :attr:`project_dir` contains no :xfile:`models.py`, but
@@ -1237,7 +1229,7 @@ class Site(object):
 
             for dep in p.needs_plugins:
                 k2 = dep.rsplit('.')[-1]
-                if not k2 in self.plugins:
+                if k2 not in self.plugins:
                     install_plugin(dep, needed_by=p)
                     # plugins.append(dep)
 

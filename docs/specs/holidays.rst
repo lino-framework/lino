@@ -63,6 +63,13 @@ Let's look at one of them, Ash Wednesday::
 
 >>> ash = RecurrentEvent.objects.get(name="Ash Wednesday")
 
+.. the following doesn't yet work:
+
+    >>> # screenshot(ash, 'ash.png')
+
+    followed by a .. image:: ash.png directive.
+
+
 The :mod:`lino.modlib.cal.fixtures.std` fixture generates
 automatically all Ash Wednesdays for a range of years:
 
@@ -77,21 +84,31 @@ automatically all Ash Wednesdays for a range of years:
  Wed 3/1/17    Ash Wednesday   **Suggested**
  Wed 2/14/18   Ash Wednesday   **Suggested**
  Wed 3/6/19    Ash Wednesday   **Suggested**
- Wed 2/26/20   Ash Wednesday   **Suggested**
 ============= =============== ===============
 <BLANKLINE>
 
 
 That range of years depends on some configuration variables:
 
-- :attr:`ignore_dates_before <lino.core.site.Site.ignore_dates_before>`
-- :attr:`ignore_dates_after <lino.core.site.Site.ignore_dates_after>`
+- :attr:`ignore_dates_before <lino.modlib.cal.Plugin.ignore_dates_before>`
+- :attr:`ignore_dates_after <lino.modlib.cal.Plugin.ignore_dates_after>`
 - :attr:`lino.modlib.system.SiteConfig.max_auto_events`
+- :attr:`the_demo_date <lino.core.site.Site.the_demo_date>`
 
+>>> dd.plugins.cal.ignore_dates_before
+>>> dd.plugins.cal.ignore_dates_after
+datetime.date(2019, 10, 23)
+>>> settings.SITE.site_config.max_auto_events
+72
+>>> settings.SITE.the_demo_date
+datetime.date(2014, 10, 23)
 
-Moving feast are created by setting :attr:`every_unit
-<lino.modlib.cal.models.RecurrentEvent.every_unit>` of the event rule
-to :attr:`easter <lino.modlib.cal.choicelists.Recurrencies.easter>`.
+Manually creating moving feasts
+===============================
+
+Event rules for moving feasts have their :attr:`every_unit
+<lino.modlib.cal.models.RecurrentEvent.every_unit>` field set to
+:attr:`easter <lino.modlib.cal.choicelists.Recurrencies.easter>`.
 
 Lino then computes the offset (number of days) your :attr:`start_date`
 and the easter date of the start year, and generates subsequent events
@@ -112,7 +129,7 @@ Adding a local moving feast
 
 .. verify that no events have actually been saved:
    >>> cal.Event.objects.count()
-   153
+   132
 
 We can add our own local custom holidays which depend on easter.
 
@@ -132,14 +149,14 @@ datetime.date(2016, 2, 9)
 >>> ar = rt.login()
 >>> wanted = obj.get_wanted_auto_events(ar)
 >>> len(wanted)
-5
+4
 >>> print(ar.response['info_message'])
-Generating events between 2016-02-09 and 2021-01-24.
-Reached upper date limit 2021-01-24
+Generating events between 2016-02-09 and 2019-10-23.
+Reached upper date limit 2019-10-23
 
 >>> wanted[1]
 Event(owner_type=26,start_date=2016-02-09,summary='Karneval in Kettenis',auto_type=1,event_type=1,state=<EventStates.suggested:10>)
 
 .. verify that no events have actually been saved:
    >>> cal.Event.objects.count()
-   153
+   132
