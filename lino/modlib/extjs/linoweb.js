@@ -3655,10 +3655,13 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
         //~ console.log('startEditing');
         this.startEditing(row,col);
       }
-  }
-  ,get_base_params : function() {  /* Lino.GridPanel */
+  },
+  get_base_params : function() {  /* Lino.GridPanel */
     var p = Ext.apply({}, this.store.baseParams);
     Lino.insert_subst_user(p);
+    // if (this.quick_search_field)
+    //     if (this.quick_search_field.getValue())
+    //         p.query = this.quick_search_field.getValue();
     return p;
   },
   set_base_params : function(p) {
