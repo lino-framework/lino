@@ -508,6 +508,13 @@ class EventGenerator(UserAuthored):
         ar.set_response(refresh=True)
         ar.success()
 
+    def care_about_conflicts(self, we):
+        """Whether this event generator should try to resolve cnoflicts (in
+        :meth:`resolve_conflicts`)
+
+        """
+        return True
+
     def resolve_conflicts(self, we, ar, rset, until):
         """
         Check whether given event conflicts with other events and move it
@@ -516,6 +523,8 @@ class EventGenerator(UserAuthored):
         """
     
         date = we.start_date
+        if not self.care_about_conflicts(we):
+            return date
         # ar.debug("20140310 resolve_conflicts %s", we.start_date)
         while we.has_conflicting_events():
             qs = we.get_conflicting_events()

@@ -363,6 +363,13 @@ class RecurrentEvent(mixins.BabelNamed, RecurrenceSet, EventGenerator):
     def update_cal_summary(self, i):
         return unicode(self)
 
+    def care_about_conflicts(self, we):
+        """Recurrent events don't care about conflicts. A holiday won't move
+        just because some other event has been created before on that date.
+
+        """
+        return False
+
 dd.update_field(
     RecurrentEvent, 'every_unit',
     default=Recurrencies.yearly.as_callable, blank=False, null=False)
