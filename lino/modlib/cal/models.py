@@ -179,7 +179,8 @@ class EventType(mixins.BabelNamed, mixins.Sequenced, MailableType):
         blank=True, null=True)
     event_label = dd.BabelCharField(
         _("Event label"),
-        max_length=200, blank=True)
+        max_length=200, blank=True,
+        help_text=_("Default text for summary of new events."))
     # , default=_("Calendar entry"))
     # default values for a Babelfield don't work as expected
 
