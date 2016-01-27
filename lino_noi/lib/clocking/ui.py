@@ -287,7 +287,6 @@ class WorkedHours(dd.VentilatingTable):
         pv = ar.param_values
         start_date = pv.start_date or dd.today(-7)
         end_date = pv.end_date or dd.today(7)
-        # settings.SITE.ignore_dates_after
         d = end_date
         while d > start_date:
             yield cls.Row(ar, d)
