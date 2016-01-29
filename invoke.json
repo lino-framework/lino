@@ -1,0 +1,9 @@
+{
+  "user": "luc",
+  "blogger_project": "lino",
+  "docs_rsync_dest": "luc@example.org:~/public_html/%s",
+  "sdist_dir": "/home/luc/projects/lino/docs/dl",
+  "temp_dir": "/home/luc/tmp",
+  "editor_command" : "emacsclient -n {0}",
+  "blogref_url":"luc.lino-framework.org"
+}
