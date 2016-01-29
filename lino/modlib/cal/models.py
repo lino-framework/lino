@@ -418,7 +418,8 @@ class ExtAllDayField(dd.VirtualField):
             if not obj.start_time:
                 obj.start_time = datetime.time(9, 0, 0)
             if not obj.end_time:
-                obj.end_time = datetime.time(10, 0, 0)
+                pass
+                # obj.end_time = datetime.time(10, 0, 0)
         #~ obj.save()
 
     def value_from_object(self, obj, ar):
