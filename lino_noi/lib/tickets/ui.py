@@ -327,21 +327,24 @@ class Tickets(dd.Table):
         show_assigned=dd.YesNo.field(
             blank=True,
             help_text=_("Show tickets which are assigned to somebody.")),
-        show_closed=dd.YesNo.field(
+        # show_closed=dd.YesNo.field(
+        #     blank=True,
+        #     help_text=_("Show tickets which are closed.")),
+        show_active=dd.YesNo.field(
             blank=True,
-            help_text=_("Show tickets which are closed.")),
+            help_text=_("Show tickets which are active (Talk or ToDo).")),
         has_project=dd.YesNo.field(
             blank=True,
             help_text=_("Show tickets with project assigned.")),
-        show_standby=dd.YesNo.field(
-            blank=True,
-            help_text=_("Show tickets which are in standby mode.")),
+        # show_standby=dd.YesNo.field(
+        #     blank=True,
+        #     help_text=_("Show tickets which are in standby mode.")),
         show_private=dd.YesNo.field(
             blank=True,
             help_text=_("Show tickets which are private.")))
     params_layout = """
     reporter assigned_to interesting_for project state has_project
-    show_assigned show_closed show_standby show_private \
+    show_assigned show_active #show_closed #show_standby show_private \
     start_date end_date observed_event"""
     # simple_parameters = ('reporter', 'assigned_to', 'state', 'project')
 
@@ -368,25 +371,31 @@ class Tickets(dd.Table):
                     Q(site=pv.interesting_for) |
                     Q(product__in=interests, private=False))
 
-        if pv.show_closed == dd.YesNo.no:
-            qs = qs.filter(closed=False)
-        elif pv.show_closed == dd.YesNo.yes:
-            qs = qs.filter(closed=True)
+        # if pv.show_closed == dd.YesNo.no:
+        #     qs = qs.filter(closed=False)
+        # elif pv.show_closed == dd.YesNo.yes:
+        #     qs = qs.filter(closed=True)
 
         if pv.show_assigned == dd.YesNo.no:
             qs = qs.filter(assigned_to__isnull=True)
         elif pv.show_assigned == dd.YesNo.yes:
             qs = qs.filter(assigned_to__isnull=False)
 
+        active_states = (TicketStates.todo, TicketStates.talk)
+        if pv.show_active == dd.YesNo.no:
+            qs = qs.exclude(state__in=active_states)
+        elif pv.show_assigned == dd.YesNo.yes:
+            qs = qs.filter(state__in=active_states)
+
         if pv.has_project == dd.YesNo.no:
             qs = qs.filter(project__isnull=True)
         elif pv.has_project == dd.YesNo.yes:
             qs = qs.filter(project__isnull=False)
 
-        if pv.show_standby == dd.YesNo.no:
-            qs = qs.filter(standby=False)
-        elif pv.show_standby == dd.YesNo.yes:
-            qs = qs.filter(standby=True)
+        # if pv.show_standby == dd.YesNo.no:
+        #     qs = qs.filter(standby=False)
+        # elif pv.show_standby == dd.YesNo.yes:
+        #     qs = qs.filter(standby=True)
 
         if pv.show_private == dd.YesNo.no:
             qs = qs.filter(private=False, project__private=False)
@@ -447,7 +456,8 @@ class PublicTickets(Tickets):
         kw = super(PublicTickets, self).param_defaults(ar, **kw)
         kw.update(show_assigned=dd.YesNo.no)
         kw.update(show_private=dd.YesNo.no)
-        kw.update(show_closed=dd.YesNo.no)
+        kw.update(show_active=dd.YesNo.yes)
+        # kw.update(show_closed=dd.YesNo.no)
         # kw.update(state=TicketStates.todo)
         return kw
 
@@ -527,8 +537,9 @@ class ActiveTickets(Tickets):
     @classmethod
     def param_defaults(self, ar, **kw):
         kw = super(ActiveTickets, self).param_defaults(ar, **kw)
-        kw.update(show_closed=dd.YesNo.no)
-        kw.update(show_standby=dd.YesNo.no)
+        kw.update(show_active=dd.YesNo.yes)
+        # kw.update(show_closed=dd.YesNo.no)
+        # kw.update(show_standby=dd.YesNo.no)
         return kw
 
 

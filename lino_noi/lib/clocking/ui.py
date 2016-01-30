@@ -40,6 +40,8 @@ from lino_noi.lib.tickets.choicelists import (TicketEvents,
                                               ProjectEvents, ObservedEvent)
 from lino_noi.lib.tickets.ui import Tickets, Projects
 
+MIN_DURATION = Duration('0:01')
+
 
 class TicketHasSessions(ObservedEvent):
     """Select only tickets for which there has been at least one session
@@ -253,13 +255,12 @@ class WorkedHours(dd.VentilatingTable):
             self.sar = ar.spawn(MySessionsByDate, param_values=pv)
             for ses in self.sar:
                 self._tickets.add(ses.ticket)
-                d = ses.get_duration()
-                if d is not None:
-                    grand_tot += d
-                    root = ses.get_root_project()
-                    if root is not None:
-                        tot = self._root2tot.get(root, Duration()) + d
-                        self._root2tot[root] = tot
+                d = ses.get_duration() or MIN_DURATION
+                grand_tot += d
+                root = ses.get_root_project()
+                if root is not None:
+                    tot = self._root2tot.get(root, Duration()) + d
+                    self._root2tot[root] = tot
     
             self._root2tot[None] = grand_tot
 
@@ -287,7 +288,6 @@ class WorkedHours(dd.VentilatingTable):
         pv = ar.param_values
         start_date = pv.start_date or dd.today(-7)
         end_date = pv.end_date or dd.today(7)
-        # settings.SITE.ignore_dates_after
         d = end_date
         while d > start_date:
             yield cls.Row(ar, d)

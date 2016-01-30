@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015 Luc Saffre
+# Copyright 2015-2016 Luc Saffre
 #
 # This file is part of Lino Noi.
 #
@@ -151,6 +151,7 @@ def tickets_objects():
         parent=Ticket.objects.get(pk=1),
         child=Ticket.objects.get(pk=2))
 
+
 def clockings_objects():
     # was previously in clockings
     SessionType = rt.modules.clocking.SessionType
@@ -183,7 +184,9 @@ def clockings_objects():
         if len(TICKETS) == 0:
             continue
 
-        for date in (dd.demo_date(), dd.demo_date(-1), dd.demo_date(-3)):
+        for offset in (0, -1, -3, -4):
+
+            date = dd.demo_date(offset)
             worked = Duration()
             ts = datetime.datetime.combine(date, datetime.time(9, 0, 0))
             for i in range(7):
@@ -191,11 +194,12 @@ def clockings_objects():
                     ticket=TICKETS.pop(), session_type=TYPES.pop(), user=u)
                 obj.set_datetime('start', ts)
                 d = DURATIONS.pop()
-                ts = DurationUnits.minutes.add_duration(ts, d)
-                obj.set_datetime('end', ts)
-                yield obj
                 worked += d
-                if worked > 8:
+                if offset < 0:
+                    ts = DurationUnits.minutes.add_duration(ts, d)
+                    obj.set_datetime('end', ts)
+                yield obj
+                if offset == 0 or worked > 8:
                     break
 
     ServiceReport = rt.modules.clocking.ServiceReport
