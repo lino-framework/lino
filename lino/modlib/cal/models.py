@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2015 Luc Saffre
+# Copyright 2011-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Database models for `lino.modlib.cal`.
@@ -108,7 +108,7 @@ class RemoteCalendar(mixins.Sequenced):
     def save(self, *args, **kw):
         ct = CALENDAR_DICT.get(self.type)
         ct.validate_calendar(self)
-        super(RemoteCalendar, self).save(*args, **k)
+        super(RemoteCalendar, self).save(*args, **kw)
 
 
 class Room(mixins.BabelNamed):
@@ -426,7 +426,8 @@ class ExtAllDayField(dd.VirtualField):
             if not obj.start_time:
                 obj.start_time = datetime.time(9, 0, 0)
             if not obj.end_time:
-                obj.end_time = datetime.time(10, 0, 0)
+                pass
+                # obj.end_time = datetime.time(10, 0, 0)
         #~ obj.save()
 
     def value_from_object(self, obj, ar):
@@ -503,7 +504,7 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
             return "%s %s" % (d, t)
         else:
             return d
-        
+
     def __unicode__(self):
         if self.pk:
             s = self._meta.verbose_name + " #" + str(self.pk)
@@ -768,7 +769,7 @@ class EventChecker(Checker):
     """
     verbose_name = _("Check for missing participants")
     model = Event
-    
+
     def get_plausibility_problems(self, obj, fix=False):
         if not obj.state.edit_guests:
             return

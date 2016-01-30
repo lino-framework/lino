@@ -1,19 +1,20 @@
-from atelier.tasks import *
-env.setup_from_tasks(globals(), "lino")
+from atelier.invlib import add_demo_project
+from atelier.tasks import ns, setup_from_tasks
 
-env.locale_dir = 'lino/modlib/lino_startup/locale'
-env.languages = "en de fr et nl pt-br es".split()
+ctx = setup_from_tasks(globals(), "lino")
+
+locale_dir = 'lino/modlib/lino_startup/locale'
+languages = "en de fr et nl pt-br es".split()
 # env.tolerate_sphinx_warnings = True
 
-env.add_demo_project('lino.projects.docs.settings.demo')
-env.add_demo_project('lino.projects.min1.settings.demo')
-env.add_demo_project('lino.projects.min2.settings.demo')
-env.add_demo_project('lino.projects.belref.settings.demo')
-env.add_demo_project('lino.projects.polly.settings.demo')
-env.add_demo_project('lino.projects.i18n.settings')
-env.add_demo_project('lino.projects.events.settings')
-env.add_demo_project('lino.projects.cms.settings')
+add_demo_project(ctx, 'lino.projects.docs.settings.demo')
+add_demo_project(ctx, 'lino.projects.min1.settings.demo')
+add_demo_project(ctx, 'lino.projects.min2.settings.demo')
+add_demo_project(ctx, 'lino.projects.belref.settings.demo')
+add_demo_project(ctx, 'lino.projects.polly.settings.demo')
+add_demo_project(ctx, 'lino.projects.i18n.settings')
+add_demo_project(ctx, 'lino.projects.events.settings')
+add_demo_project(ctx, 'lino.projects.cms.settings')
 
-env.revision_control_system = 'git'
-
-env.cleanable_files = ['docs/api/lino.*']
+ns.configure({'revision_control_system': 'git',
+              'cleanable_files': ['docs/api/lino.*']})
