@@ -29,8 +29,6 @@ CRL fields need to be sorted using pure ASCII sequence.
 Since this is not a database-transparent feature in Django, 
 we store these strings as their hexadecimal representation.
     """
-    # needed for to_python() to be called automatically.
-    __metaclass__ = models.SubfieldBase
 
     def __init__(self, *args, **kw):
         defaults = dict(
@@ -40,6 +38,9 @@ we store these strings as their hexadecimal representation.
         )
         defaults.update(kw)
         models.CharField.__init__(self, *args, **defaults)
+
+    def from_db_value(self, value, expression, connection, context):
+        return CRL(hex2str(value)) if value else ''
 
     def to_python(self, value):
         if not value:

@@ -628,7 +628,6 @@ class QuantityField(CharField):
     values.
 
     """
-    __metaclass__ = models.SubfieldBase
     description = _("Quantity (Decimal or Duration)")
 
     def __init__(self, *args, **kw):
@@ -638,6 +637,9 @@ class QuantityField(CharField):
 
     #~ def get_internal_type(self):
         #~ return "CharField"
+
+    def from_db_value(self, value, expression, connection, context):
+        return quantities.parse(value) if value else ''
 
     def to_python(self, value):
         """
@@ -679,6 +681,10 @@ class QuantityField(CharField):
 
 
 class DurationField(QuantityField):
+
+    def from_db_value(self, value, expression, connection, context):
+        return Duration(value) if value else None
+
     def to_python(self, value):
         if isinstance(value, Duration):
             return value
@@ -704,7 +710,6 @@ class IncompleteDateField(models.CharField):
     incomplete dates represented using
     :class:`lino.utils.format_date.IncompleteDate`.
     """
-    __metaclass__ = models.SubfieldBase
 
     default_validators = [validate_incomplete_date]
 
@@ -726,6 +731,9 @@ or "23.07.0000" means "on a 23th of July"."""))
 
     #~ def get_internal_type(self):
         #~ return "CharField"
+
+    def from_db_value(self, value, expression, connection, context):
+        return IncompleteDate.parse(value) if value else ''
 
     def to_python(self, value):
         if isinstance(value, IncompleteDate):
@@ -819,7 +827,6 @@ class RecurrenceField(models.CharField):
     """
     Deserves more documentation.
     """
-    #~ __metaclass__ = models.SubfieldBase
 
     def __init__(self, *args, **kw):
         kw.setdefault('max_length', 200)

@@ -618,8 +618,6 @@ class ChoiceListField(models.CharField):
 
     """
 
-    __metaclass__ = models.SubfieldBase
-
     empty_strings_allowed = False
 
     def __init__(self, choicelist, verbose_name=None,
@@ -672,6 +670,9 @@ class ChoiceListField(models.CharField):
 
     #~ def set_max_length(self,ml):
         #~ self.max_length = ml
+
+    def from_db_value(self, value, expression, connection, context):
+        return self.choicelist.to_python(value)
 
     def to_python(self, value):
         #~ if self.attname == 'query_register':
@@ -728,7 +729,6 @@ class MultiChoiceListField(ChoiceListField):
     A field whose value is a `list` of `Choice` instances.
     Stored in the database as a CharField using a delimiter character.
     """
-    __metaclass__ = models.SubfieldBase
     delimiter_char = ','
     max_values = 1
 
@@ -744,6 +744,9 @@ class MultiChoiceListField(ChoiceListField):
 
     #~ def set_max_length(self,ml):
         #~ self.max_length = (ml+1) * self.max_values
+
+    def from_db_value(self, value, expression, connection, context):
+        return [self.choicelist.to_python(v) for v in value.split(self.delimiter_char)]
 
     def to_python(self, value):
         if value is None:
