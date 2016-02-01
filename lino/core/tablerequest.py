@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2015 Luc Saffre
+# Copyright 2009-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Defines the `TableRequest` class.
@@ -273,11 +273,9 @@ class TableRequest(ActionRequest):
 
         sort = rqdata.get(constants.URL_PARAM_SORT, None)
         if sort:
-            #~ self.sort_column = sort
             sort_dir = rqdata.get(constants.URL_PARAM_SORTDIR, 'ASC')
             if sort_dir == 'DESC':
                 sort = '-' + sort
-                #~ self.sort_direction = 'DESC'
             kw.update(order_by=[sort])
 
         offset = rqdata.get(constants.URL_PARAM_START, None)
@@ -577,6 +575,13 @@ class TableRequest(ActionRequest):
         bp = kw['base_params']
         if self.quick_search:
             bp[constants.URL_PARAM_FILTER] = self.quick_search
+
+        if self.order_by:
+            sort = self.order_by[0]
+            if sort.startswith('-'):
+                sort = sort[1:]
+                bp[constants.URL_PARAM_SORTDIR] = 'DESC'
+            bp[constants.URL_PARAM_SORT] = sort
 
         if self.known_values:
             for k, v in self.known_values.items():

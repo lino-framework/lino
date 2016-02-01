@@ -103,6 +103,11 @@ Traceback (most recent call last):
 ...
 IllegalText: The <text:section> element does not allow text
 
+
+>>> test(E.raw('<ul type="disc"><li>First</li><li>Second</li></ul>'))
+<ul type="disc"><li>First</li><li>Second</li></ul>
+<text:list xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" text:style-name="podBulletedList"><text:list-item><text:p text:style-name="podBulletItem">First</text:p></text:list-item><text:list-item><text:p text:style-name="podBulletItem">Second</text:p></text:list-item></text:list>
+
 """
 
 import logging

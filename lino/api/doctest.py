@@ -127,3 +127,37 @@ def demo_get(username, url_base, json_fields, expected_rows, **kwargs):
     #     raise
 
 
+def screenshot(obj, filename, rstname, username='robin'):
+    """Usage example in :ref:`lino.specs.holidays`.
+
+    Problems: doesn't seem to wait long enough and
+    therefore produces a white .png file.
+
+    How to specify the filename? the current directory when doctest is
+    running is normally the project root, but that's not sure. Best
+    place would be the same directory as the rst file, but how to know
+    that name from within a tested snippet?
+
+    """
+    from lino.api.selenium import Album, runserver
+
+    assert filename.endswith('.png')
+    assert rstname.endswith('.rst')
+
+    self = dd.plugins.extjs.renderer
+    uri = self.get_detail_url(obj)
+    # ar = rt.login(username, renderer=self)
+    # h = self.instance_handler(ar, obj)
+    # uri = self.js2url(h)
+    print(uri)
+
+    def f(driver):
+        app = Album(driver)
+        driver.get("http://127.0.0.1:8000" + uri)
+        # driver.get(uri)
+        app.stabilize()
+        if not driver.get_screenshot_as_file(filename):
+            app.error("Failed to create {0}".format(filename))
+
+    runserver(settings.SETTINGS_MODULE, f)
+        

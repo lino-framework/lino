@@ -179,7 +179,8 @@ class EventType(mixins.BabelNamed, mixins.Sequenced, MailableType):
         blank=True, null=True)
     event_label = dd.BabelCharField(
         _("Event label"),
-        max_length=200, blank=True)
+        max_length=200, blank=True,
+        help_text=_("Default text for summary of new events."))
     # , default=_("Calendar entry"))
     # default values for a Babelfield don't work as expected
 
@@ -362,6 +363,13 @@ class RecurrentEvent(mixins.BabelNamed, RecurrenceSet, EventGenerator):
 
     def update_cal_summary(self, i):
         return unicode(self)
+
+    def care_about_conflicts(self, we):
+        """Recurrent events don't care about conflicts. A holiday won't move
+        just because some other event has been created before on that date.
+
+        """
+        return False
 
 dd.update_field(
     RecurrentEvent, 'every_unit',

@@ -73,9 +73,7 @@ Or in :ref:`voga` there is one calendar per Room. Thus the
 
 """
 
-from lino.api import ad
-
-from django.utils.translation import ugettext_lazy as _
+from lino.api import ad, _
 
 
 class Plugin(ad.Plugin):
@@ -84,29 +82,49 @@ class Plugin(ad.Plugin):
 
     needs_plugins = ['lino.modlib.gfks', 'lino.modlib.printing']
 
+    ignore_dates_before = None
+    """
+    Ignore dates before the given date.  Set this to `None` if you want
+    no limit.
+    Default value is "7 days before server startup".
+
+    """
+
+    ignore_dates_after = None
+    """Ignore dates after the given date.  This should never be `None`.
+    Default value is 5 years after :meth:`today
+    <lino.core.site.Site.today>`.
+
+    """
+
+    def on_init(self):
+        tod = self.site.today()
+        self.ignore_dates_after = tod.replace(year=tod.year+5)
+        # tod + datetime.timedelta(days=5*365)
+
     def setup_main_menu(self, site, profile, m):
         m = m.add_menu(self.app_label, self.verbose_name)
         m.add_action('cal.MyEvents')  # string spec to allow overriding
-        #~ m.add_separator('-')
-        #~ m  = m.add_menu("tasks",_("Tasks"))
+        # m.add_separator('-')
+        # m  = m.add_menu("tasks",_("Tasks"))
         m.add_action('cal.MyTasks')
-        #~ m.add_action(MyTasksToDo)
+        # m.add_action(MyTasksToDo)
         m.add_action('cal.MyGuests')
         m.add_action('cal.MyPresences')
 
     def setup_config_menu(self, site, profile, m):
         m = m.add_menu(self.app_label, self.verbose_name)
         m.add_action('cal.Calendars')
-        #~ m.add_action('cal.MySubscriptions')
+        # m.add_action('cal.MySubscriptions')
         m.add_action('cal.Rooms')
         m.add_action('cal.Priorities')
         m.add_action('cal.RecurrentEvents')
-        #~ m.add_action(AccessClasses)
-        #~ m.add_action(EventStatuses)
-        #~ m.add_action(TaskStatuses)
-        #~ m.add_action(EventTypes)
+        # m.add_action(AccessClasses)
+        # m.add_action(EventStatuses)
+        # m.add_action(TaskStatuses)
+        # m.add_action(EventTypes)
         m.add_action('cal.GuestRoles')
-        #~ m.add_action(GuestStatuses)
+        # m.add_action(GuestStatuses)
         m.add_action('cal.EventTypes')
         m.add_action('cal.RemoteCalendars')
 
@@ -115,10 +133,10 @@ class Plugin(ad.Plugin):
         m.add_action('cal.Tasks')
         m.add_action('cal.Guests')
         m.add_action('cal.Subscriptions')
-        #~ m.add_action(Memberships)
+        # m.add_action(Memberships)
         m.add_action('cal.EventStates')
         m.add_action('cal.GuestStates')
         m.add_action('cal.TaskStates')
-        #~ m.add_action(RecurrenceSets)
+        # m.add_action(RecurrenceSets)
 
 

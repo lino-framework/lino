@@ -6,8 +6,10 @@ Lino currently still needs Python 2. Adding support for Python 3
 (:ticket:`36`) is one of our goals for 2016. We are working on it.
 You can help us.
 
-
 First you need to create a virtualenv under Python 3.
+
+Method 1 (Hamza)
+================
 
 - Update the server::
 
@@ -29,3 +31,13 @@ First you need to create a virtualenv under Python 3.
 - Activate the new virtual environment::
 
     $ source py3/bin/activate
+
+Method 2 (Ubuntu)
+=================
+
+::
+
+    $ sudo apt-get install python3
+    $ cd ~/virtualenvs
+    $ virtualenv -p python3 py3
+    
