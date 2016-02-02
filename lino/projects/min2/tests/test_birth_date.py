@@ -23,6 +23,7 @@ from __future__ import print_function
 
 from lino.api import rt
 
+from lino.utils import IncompleteDate
 from lino.utils.xmlgen.html import E
 from lino.utils.mti import insert_child, delete_child
 from lino.utils.djangotest import RemoteAuthTestCase
@@ -57,7 +58,7 @@ class QuickTest(RemoteAuthTestCase):
             son = create(
                 Person, first_name="Joseph", last_name="Doe",
                 gender="M",
-                birth_date='2009-02-30')
+                birth_date=IncompleteDate(2009, 2, 30))
         except ValidationError:
             pass
         else:

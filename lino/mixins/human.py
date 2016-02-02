@@ -313,15 +313,13 @@ class Born(model.Model):
         """
         Return the age as a :class:`datetime.timedelta` object.
 
-        `ar` is the requesting :class:`ActionRequest` which can be `None`
-        because it is ignored.
-
         Optional keyword argument `today` should be a
         :class:`datetime.date` instance to replace the actual current
         date. This is used if you want the age at a given date in the past
         or the future.
         The default value calls :meth:`dd.Site.today`.
         """
+        # print(20160202, self.birth_date, self)
         if self.birth_date and self.birth_date.year:
             if today is None:
                 today = settings.SITE.today()

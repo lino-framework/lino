@@ -307,6 +307,19 @@ class IncompleteDate:
     >>> d.get_age(i2d(20141025))
     6
 
+    Note that IncompleteDate can store invalid dates:
+
+    >>> d = IncompleteDate(2009, 2, 30)
+    >>> d.get_age(i2d(20160202))
+    6
+
+    >>> IncompleteDate(2009, 2, 32)
+    IncompleteDate('2009-02-32')
+
+    >>> IncompleteDate(2009, 32, 123)
+    IncompleteDate('2009-32-123')
+
+
     """
 
     def __init__(self, year, month, day):

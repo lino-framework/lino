@@ -460,10 +460,10 @@ class VirtualField(FakeField):
 
     #~ def value_from_object(self,request,obj):
     def value_from_object(self, obj, ar=None):
-        """
-        Return the value of this field in the specified model instance `obj`.
-        `request` may be `None`, it's forwarded to the getter method who may
-        decide to return values depending on it.
+        """Return the value of this field in the specified model instance
+        `obj`.  `ar` may be `None`, it's forwarded to the getter
+        method who may decide to return values depending on it.
+
         """
         m = self.get
         #~ assert m.func_code.co_argcount == 2, (self.name, m.func_code.co_varnames)
@@ -729,11 +729,19 @@ Uncomplete dates are allowed, e.g.
 or "23.07.0000" means "on a 23th of July"."""))
         models.CharField.__init__(self, *args, **kw)
 
-    #~ def get_internal_type(self):
-        #~ return "CharField"
+    def deconstruct(self):
+        name, path, args, kwargs = super(IncompleteDateField, self).deconstruct()
+        del kwargs["max_length"]
+        return name, path, args, kwargs
+
+    # def get_internal_type(self):
+    #     return "CharField"
 
     def from_db_value(self, value, expression, connection, context):
         return IncompleteDate.parse(value) if value else ''
+        # if value:
+        #     return IncompleteDate.parse(value)
+        # return ''
 
     def to_python(self, value):
         if isinstance(value, IncompleteDate):
@@ -742,18 +750,21 @@ or "23.07.0000" means "on a 23th of July"."""))
             #~ return IncompleteDate(value.strftime("%Y-%m-%d"))
             #~ return IncompleteDate(d2iso(value))
             return IncompleteDate.from_date(value)
-        if value:
-            return IncompleteDate.parse(value)
-        return ''
+        # if value:
+        #     return IncompleteDate.parse(value)
+        # return ''
+        return IncompleteDate.parse(value) if value else ''
+
+    # def get_prep_value(self, value):
+    #     return str(value)
 
     def get_prep_value(self, value):
-        return str(value)
-
-    #~ def get_prep_value(self, value):
-        #~ return '"' + str(value) + '"'
-        #~ if value:
-            #~ return value.format("%04d%02d%02d")
-        #~ return ''
+        return str(value) if value else ''
+        # if value:
+        #     return str(value)
+        #     # return '"' + str(value) + '"'
+        #     #~ return value.format("%04d%02d%02d")
+        # return ''
 
     #~ def value_to_string(self, obj):
         #~ value = self._get_val_from_obj(obj)
