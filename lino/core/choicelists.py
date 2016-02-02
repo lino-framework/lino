@@ -672,6 +672,8 @@ class ChoiceListField(models.CharField):
         #~ self.max_length = ml
 
     def from_db_value(self, value, expression, connection, context):
+        if value is None:
+            return None
         return self.choicelist.to_python(value)
 
     def to_python(self, value):
