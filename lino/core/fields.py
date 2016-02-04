@@ -164,7 +164,7 @@ class NullCharField(models.CharField):  # subclass the CharField
             return value  # otherwise, return just the value
 
     def get_db_prep_value(self, value, connection, prepared=False):
-    # catches value right before sending to db
+        # catches value right before sending to db
         # if Django tries to save '' string, send the db None (NULL)
         if value == '':
             return None
@@ -638,28 +638,26 @@ class QuantityField(CharField):
     #~ def get_internal_type(self):
         #~ return "CharField"
 
-    def from_db_value(self, value, expression, connection, context):
-        return quantities.parse(value) if value else ''
-
     def to_python(self, value):
-        """
-
-        Excerpt from `Django doc
+        """Excerpt from `Django doc
         <https://docs.djangoproject.com/en/dev/howto/custom-model-fields/#django.db.models.Field.to_python>`__:
 
-            As a general rule, the method should deal gracefully with any of the following arguments:
+            As a general rule, the method should deal gracefully with
+            any of the following arguments:
 
             - An instance of the correct type (e.g., Hand in our ongoing example).
             - A string (e.g., from a deserializer).
             - Whatever the database returns for the column type you’re using.
 
-        I'd add "Any value specified for this field when instantiating a model."
+        I'd add "Any value specified for this field when instantiating
+        a model."
 
         >>> to_python(None)
         >>> to_python(30)
         >>> to_python(30L)
         >>> to_python('')
         >>> to_python(Decimal(0))
+
         """
         if isinstance(value, Decimal):
             return value
@@ -669,15 +667,16 @@ class QuantityField(CharField):
             return Decimal(value)
         return None
 
-    #~ def get_db_prep_save(self, value, connection):
-        #~ if value is None:
-            #~ return ''
-        #~ return str(value)
+    def from_db_value(self, value, expression, connection, context):
+        return quantities.parse(value) if value else None
 
+    # def get_db_prep_value(self, value, connection, prepared=False):
+    #     return str(value) if value else ''
+        
     def get_prep_value(self, value):
-        if value is None:
-            return ''
-        return str(value)
+        # if value is None:
+        #     return ''
+        return str(value) if value else ''
 
 
 class DurationField(QuantityField):
