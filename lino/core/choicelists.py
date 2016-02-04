@@ -719,9 +719,9 @@ class ChoiceListField(models.CharField):
         # if isinstance(value,unicode):
         #     return str(value)
         if value:
-            value = self.to_python(value)  # see Luc's blog 20160204
             if callable(value):  # Django 1.9
                 value = value()
+            value = self.to_python(value)  # see Luc's blog 20160204
             return value.value
         return ''
         #~ return None
