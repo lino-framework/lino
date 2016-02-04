@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2015 Luc Saffre
+# Copyright 2008-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 ur"""Defines the classes :class:`Choice` and :class:`ChoiceList`.  See
@@ -677,6 +677,10 @@ class ChoiceListField(models.CharField):
         return self.choicelist.to_python(value)
 
     def to_python(self, value):
+        """See Django's docs about `to_python()
+        <https://docs.djangoproject.com/en/1.9/ref/models/fields/#django.db.models.Field.to_python>`__.
+
+        """
         #~ if self.attname == 'query_register':
             #~ print '20120527 to_python', repr(value), '\n'
         if isinstance(value, Choice):
@@ -699,6 +703,15 @@ class ChoiceListField(models.CharField):
     choices = property(_get_choices, _set_choices)
 
     def get_prep_value(self, value):
+        """Excerpt from `Django docs
+        <https://docs.djangoproject.com/en/1.9/howto/custom-model-fields/#converting-python-objects-to-query-values>`__:
+        "If you override `to_python()
+        <https://docs.djangoproject.com/en/1.9/ref/models/fields/#django.db.models.Field.to_python>`__ you also have to override
+        `get_prep_value()
+        <https://docs.djangoproject.com/en/1.9/ref/models/fields/#django.db.models.Field.get_prep_value>`__ to
+        convert Python objects back to query values."
+
+        """
         #~ if self.attname == 'query_register':
             #~ print '20120527 get_prep_value()', repr(value)
         #~ return value.value
@@ -708,6 +721,7 @@ class ChoiceListField(models.CharField):
         if value:
             if callable(value):  # Django 1.9
                 value = value()
+            value = self.to_python(value)  # see Luc's blog 20160204
             return value.value
         return ''
         #~ return None

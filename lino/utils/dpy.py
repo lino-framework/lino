@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2015 by Luc Saffre.
+# Copyright 2009-2016 by Luc Saffre.
 # License: BSD, see file LICENSE for more details.
 
 """
@@ -21,6 +21,7 @@ from lino import AFTER17
 
 from django.conf import settings
 from django.db import models
+from django.db.models import ForeignKey
 
 from django.utils.module_loading import import_string
 
@@ -32,6 +33,7 @@ from django.utils.encoding import smart_unicode, is_protected_type, force_unicod
 from django.utils import translation
 
 from lino.utils.mldbc.fields import BabelCharField, BabelTextField
+from lino.core.choicelists import ChoiceListField
 from lino.core.utils import obj2str, sorted_models_list, full_model_name
 
 SUFFIX = '.py'
@@ -205,10 +207,16 @@ def bv2kw(fieldname,values):
                             self.stream.write(
                                 '    if %s is not None: %s = Decimal(%s)\n' % (
                                     f.attname, f.attname, f.attname))
-                        elif isinstance(f, models.ForeignKey) and f.rel.model is ContentType:
-                            self.stream.write(
-                                '    %s = new_content_type_id(%s)\n' % (
-                                    f.attname, f.attname))
+                        elif isinstance(f, ChoiceListField):
+                            lstname = 'settings.SITE.modules.{0}.{1}'.format(
+                                f.choicelist.app_label, f.choicelist.__name__)
+                            ln = '    if {0}: {0} = {1}.get_by_value({0})\n'
+                            self.stream.write(ln.format(f.attname, lstname))
+                        elif isinstance(f, ForeignKey):
+                            if f.rel.model is ContentType:
+                                self.stream.write(
+                                    '    %s = new_content_type_id(%s)\n' % (
+                                        f.attname, f.attname))
                         self.stream.write(
                             '    kw.update(%s=%s)\n' % (f.attname, f.attname))
 
@@ -330,7 +338,7 @@ def bv2kw(fieldname,values):
         if isinstance(field, models.TimeField):
             d = value
             return 'time(%d,%d,%d)' % (d.hour, d.minute, d.second)
-        if isinstance(field, models.ForeignKey) and field.rel.model is ContentType:
+        if isinstance(field, ForeignKey) and field.rel.model is ContentType:
             ct = ContentType.objects.get(pk=value)
             return full_model_name(ct.model_class(), '_')
             #~ return "'"+full_model_name(ct.model_class())+"'"
