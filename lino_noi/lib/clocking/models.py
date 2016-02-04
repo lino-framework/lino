@@ -201,6 +201,15 @@ dd.inject_field(
 class Session(UserAuthored, StartedEnded):
     """A Session is when a user works on a given ticket.
 
+    .. attribute:: start_time
+    .. attribute:: end_time
+
+    .. attribute:: break_time
+    
+       The time (in `hh:mm`) to remove from the duration resulting
+       from the difference between :attr:`start_time` and
+       :attr:`end_time`.
+
     .. attribute:: faculty
 
        The faculty that has been used during this session. On a new
@@ -269,8 +278,15 @@ class Session(UserAuthored, StartedEnded):
             return self.ticket.project.get_parental_line()[0]
 
     def get_duration(self):
+        """Return the duration in hours as a
+        :class:`lino.utils.quantities.Quantity`.  This inherits from
+        :meth:`StartedEnded
+        <lino.modlib.cal.mixins.StartedEnded.get_duration>` but
+        removes :attr:`break_time` if specified.
+
+        """
         diff = super(Session, self).get_duration()
-        if diff is not None and self.break_time is not None:
+        if diff and self.break_time:
             diff -= self.break_time
         return diff
         
