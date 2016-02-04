@@ -22,11 +22,8 @@ place**.
 In your developer blog you simply describe what you are doing. Day by
 day. Using plain English language. It is your diary.  
 
-You probably know already one example of a developer blog, namely
-Luc's developer blog at :ref:`blog`.
-
-A developer blog *does not need* to be cool, popular, easy to follow.
-It **should rather be**:
+A developer blog **does not need** to be cool, popular or easy to
+follow.  It **should rather be**:
 
 - *complete* (e.g. not forget to mention any important code
   change you did) and 
@@ -39,15 +36,23 @@ usual rules apply: don't disclose any passwords or private data.
 Respect other people's privacy.  Don't quote other author's words
 without naming them. Always reference your sources of information.
 
+
+You probably know already one example of a developer blog, namely
+`Luc's developer blog <http://luc.lino-framework.org>`_.
+
+We suggest that you start blogging like this.  You may of course use
+another system, especially if you have been blogging before.  The
+important thing is that you report about your daily work in order to
+share your experiences, your know-how, your successes, your mistakes
+and your stumblings.
+
+
 Luc's blogging system
 =====================
 
-:ref:`luc` developed his own way of blogging.  We recommend that you
-also start your own developer blog using that way.  
-
-It is free, simple and extensible.  It is based on `Sphinx
-<http://sphinx-doc.org/>`_ which is the established standard for
-Python projects. It answers well to certain requirements which we
+Luc's "developer blog" is free, simple and extensible.  It is based on
+`Sphinx <http://sphinx-doc.org/>`_ which is the established standard
+for Python projects.  It answers well to certain requirements which we
 perceive as important:
 
 - A developer uses some editor for writing code, and wants to use that
@@ -59,17 +64,13 @@ perceive as important:
 - A developer should not be locked just because there is no internet
   connection available for a few hours.
 
-We don't know whether Luc's system is better than other systems.  You
-may of course one day discover a better system, but we recommend that
-you give at least a serious try to our system.
-
 As a new new team member, once you've got used to this system, this
 can be the easiest way to ask for help in complex cases which need
 screenshots, links, sections etc.
 
-The developer blog is also part or our collaboration workflow: the
-:cmd:`fab ci` command knows where your developer blog is and generates
-a commit message which points to today's blog entry.
+The developer blog fits into our collaboration workflow: the :cmd:`fab
+ci` command knows where your developer blog is and generates a commit
+message which points to today's blog entry.
 
 "Blog" versus "Documentation tree"
 ==================================
