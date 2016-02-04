@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2015 Luc Saffre
+# Copyright 2009-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -19,9 +19,9 @@ from django.conf import settings
 
 
 try:
-    from django.template import Context, TemplateDoesNotExist
+    from django.template import TemplateDoesNotExist
 except ImportError:
-    from django.template.loader import Context, TemplateDoesNotExist
+    from django.template.loader import TemplateDoesNotExist
 
 from django.template.loader import select_template
 
@@ -215,8 +215,8 @@ class SimpleBuildMethod(BuildMethod):
         return tplfile
 
     def build(self, ar, action, elem):
-        #~ if elem is None:
-            #~ return
+        # if elem is None:
+            # return
         target = action.before_build(self, elem)
         if not target:
             return
@@ -281,6 +281,7 @@ class BuildMethods(ChoiceList):
             return cls.get_by_value(
                 settings.SITE.default_build_method)
         return cls.appyodt  # hard-coded default
+        # return cls.pisa  # hard-coded default
 
 
 add = BuildMethods.add_item_instance

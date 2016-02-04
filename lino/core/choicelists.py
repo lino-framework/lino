@@ -699,6 +699,14 @@ class ChoiceListField(models.CharField):
     choices = property(_get_choices, _set_choices)
 
     def get_prep_value(self, value):
+        """Excerpt from `Django docs
+        <https://docs.djangoproject.com/en/1.9/howto/custom-model-fields/#converting-python-objects-to-query-values>`__:
+        "If you override to_python() you also have to override
+        `get_prep_value()
+        <https://docs.djangoproject.com/en/1.9/ref/models/fields/#django.db.models.Field.get_prep_value>`_. to
+        convert Python objects back to query values."
+
+        """
         #~ if self.attname == 'query_register':
             #~ print '20120527 get_prep_value()', repr(value)
         #~ return value.value
@@ -706,6 +714,7 @@ class ChoiceListField(models.CharField):
         # if isinstance(value,unicode):
         #     return str(value)
         if value:
+            value = self.to_python(value)  # see Luc's blog 20160204
             if callable(value):  # Django 1.9
                 value = value()
             return value.value

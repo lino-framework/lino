@@ -84,10 +84,13 @@ class SiteConfig(dd.Model):
         return force_unicode(_("Site Parameters"))
 
     def update(self, **kw):
+        """Set some field of the SiteConfig object and store it to the database.
+        """
         for k, v in kw.items():
             if not hasattr(self, k):
                 raise Exception("SiteConfig has no attribute %r" % k)
             setattr(self, k, v)
+        self.full_clean()
         self.save()
 
     def save(self, *args, **kw):
