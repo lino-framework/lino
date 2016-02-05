@@ -1003,6 +1003,21 @@ class Site(object):
     _site_config = None
     _logger = None
     override_modlib_models = None
+    """A dictionary automatically filled at startup.
+    You can inspect it, but you should not modify it.
+
+    It maps model class names to the plugin which overrides them.
+
+    This dictionary is needed mainly for :meth:`is_abstract_model`.
+
+    The challenge is that we want to know exactly where every model's
+    concrete class will be defined *before* actually starting to
+    import the :xfile:`models.py` modules.  That's why we need
+    :attr:`extends_models <lino.core.plugin.Plugin.extends_models>`.
+
+    This can be tricky, see e.g. 20160205.
+
+    """
 
     def __init__(self, settings_globals=None, local_apps=[], **kwargs):
         """Every Lino application calls this once in it's
@@ -1258,9 +1273,14 @@ class Site(object):
         self.installed_plugins = tuple(plugins)
 
         if self.override_modlib_models is not None:
-            raise Exception("override_modlib_models no longer allowed")
+            raise ChangedAPI("override_modlib_models no longer allowed")
 
         self.override_modlib_models = dict()
+
+        def reg(p, pp, m):
+            name = pp.__module__ + '.' + m
+            self.override_modlib_models[name] = p
+
         for p in self.installed_plugins:
             if p.extends_models is not None:
                 for m in p.extends_models:
@@ -1268,8 +1288,23 @@ class Site(object):
                         raise Exception(
                             "extends_models in %s still uses '.'" %
                             p.app_name)
-                    name = p.extends_from().__module__ + '.' + m
-                    self.override_modlib_models[name] = p
+                    # found = False
+                    root = None
+                    # for pp in p.__class__.__bases__:
+                    for pp in p.__class__.__mro__:
+                        if issubclass(pp, Plugin) and pp not in (
+                                p.__class__, Plugin):
+                            root = pp
+                            reg(p, pp, m)
+                            # if pp.extends_models and m in pp.extends_models:
+                            #     reg(p, pp, m)
+                                # break
+                    if not root:
+                        msg = "20160205 {0} declares to extend_models {1}, but " \
+                              "cannot find parent plugin".format(p, m)
+                        raise Exception(msg)
+                    # reg(p, root, m)
+                        
         # raise Exception("20140825 %s", self.override_modlib_models)
 
         # Tried to prevent accidental calls to configure_plugin()
@@ -1718,8 +1753,9 @@ class Site(object):
         name = '.'.join(module_name.split('.')[:-1])
         name += '.' + model_name
         rv = name in self.override_modlib_models
-        # self.logger.info("20150820 is_abstract_model %s -> %s (%s)",
-        #                  name, rv, self.override_modlib_models)
+        if model_name == 'Enrolment':
+            self.logger.info("20160205 is_abstract_model %s -> %s (%s)",
+                             name, rv, self.override_modlib_models.keys())
         return rv
 
     def is_installed_model_spec(self, model_spec):
