@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2015 Luc Saffre
+# Copyright 2009-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """This defines :class:`Actor` and related classes.
@@ -1049,8 +1049,6 @@ class Actor(actions.Parametrizable, Permittable):
                 contacts = sender.modules.contacts
                 contacts.Partners.set_detail_layout(PartnerDetail())
 
-
-
         """
         return self.set_form_layout('detail_layout', *args, **kw)
 
@@ -1080,7 +1078,7 @@ class Actor(actions.Parametrizable, Permittable):
                 #     else:
                 #         setattr(self, attname, dtl)
                     return
-                if '\n' in dtl and not '\n' in existing.main:
+                if '\n' in dtl and '\n' not in existing.main:
                     name = 'general'
                 else:
                     name = 'main'

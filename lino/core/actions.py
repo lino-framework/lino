@@ -82,6 +82,7 @@ def discover_choosers():
 
 def install_layout(cls, k, layout_class, **options):
     """
+    - `cls` is the actor (a class object)
     - `k` is one of 'detail_layout', 'insert_layout', 'params_layout'
     - `layout_class`
 
@@ -101,8 +102,8 @@ def install_layout(cls, k, layout_class, **options):
         setattr(cls, k, dl)
     elif not issubclass(cls, dl._datasource):
         raise Exception(
-            "Cannot reuse %s of %r for %r" %
-            (k, dl._datasource, cls))
+            "Cannot reuse %s instance (%s of %r) for %r" %
+            (dl.__class__, k, dl._datasource, cls))
 
 
 def register_params(cls):

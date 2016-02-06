@@ -1300,7 +1300,7 @@ class Site(object):
                             #     reg(p, pp, m)
                                 # break
                     if not root:
-                        msg = "20160205 {0} declares to extend_models {1}, but " \
+                        msg = "{0} declares to extend_models {1}, but " \
                               "cannot find parent plugin".format(p, m)
                         raise Exception(msg)
                     # reg(p, root, m)
@@ -1753,9 +1753,9 @@ class Site(object):
         name = '.'.join(module_name.split('.')[:-1])
         name += '.' + model_name
         rv = name in self.override_modlib_models
-        if model_name == 'Enrolment':
-            self.logger.info("20160205 is_abstract_model %s -> %s (%s)",
-                             name, rv, self.override_modlib_models.keys())
+        # if model_name == 'Enrolment':
+        #     self.logger.info("20160205 is_abstract_model %s -> %s (%s)",
+        #                      name, rv, self.override_modlib_models.keys())
         return rv
 
     def is_installed_model_spec(self, model_spec):
