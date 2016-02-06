@@ -828,8 +828,8 @@ def set_excerpts_actions(sender, **kw):
     try:
         etypes = [(obj, obj.content_type)
                   for obj in ExcerptType.objects.all()]
-    except (OperationalError, ProgrammingError):
-        # logger.warning("Failed to set excerpts actions : %s", e)
+    except (OperationalError, ProgrammingError) as e:
+        dd.logger.debug("Failed to set excerpts actions : %s", e)
         # Happens e.g. when the database has not yet been migrated
         etypes = []
 
@@ -841,6 +841,7 @@ def set_excerpts_actions(sender, **kw):
                                # been removed
                 an = atype.get_action_name()
                 m.define_action(**{an: CreateExcerpt(atype, unicode(atype))})
+                # dd.logger.info("Added print action to %s", m)
                 # if atype.primary:
                 #     if atype.certifying:
                 #         m.define_action(

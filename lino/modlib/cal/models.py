@@ -615,6 +615,8 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         """
         #~ from django.utils.translation import ugettext as _
         s = event.summary
+        # if event.owner_id:
+        #     s += " ({0})".format(event.owner)
         if event.user is not None and event.user != ar.get_user():
             if event.access_class == AccessClasses.show_busy:
                 s = _("Busy")

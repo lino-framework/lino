@@ -248,6 +248,10 @@ class About(EmptyTable):
 
         body.append(settings.SITE.welcome_html())
 
+        if settings.SITE.languages:
+            body.append(E.p(unicode(_("Languages")) + ": " + ', '.join([
+                lng.django_code for lng in settings.SITE.languages])))
+
         #~ print "20121112 startup_time", settings.SITE.startup_time.date()
         def dtfmt(dt):
             if isinstance(dt, float):
