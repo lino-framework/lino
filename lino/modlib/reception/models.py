@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2015 Luc Saffre
+# Copyright 2013-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -241,6 +241,17 @@ Visitor leaves             X               X              X
 
 
 def checkout_guest(obj, ar):
+    """Check a guest out. This sets the :attr:`gone_since` timestamp to
+    now and the `state` to `gone`.
+
+    If :attr:`busy_since` is empty, set it to :attr:`gone_since`.
+
+    If the related event has no `end_time`, also set this.
+
+    """
+    if obj.gone_since:
+        if ar is not None:
+            ar.info("Cannot checkout_guest because gone_since is not empty.")
     obj.gone_since = timezone.now()
     if obj.busy_since is None:
         obj.busy_since = obj.gone_since
@@ -248,9 +259,11 @@ def checkout_guest(obj, ar):
         if ar is not None:
             ar.info("event.end_time has been set")
         obj.event.end_time = obj.gone_since
+        obj.event.full_clean()
         obj.event.save()
 
     obj.state = GuestStates.gone
+    obj.full_clean()
     obj.save()
 
 
