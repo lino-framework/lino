@@ -2,16 +2,27 @@
 # Copyright 2013-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-Database models for `lino.modlib.reception`.
+"""The :xfile:`models.py` file for `lino.modlib.reception`.
 
-Guest
+This injects three fields to :class:`cal.Guest
+<lino.modlib.cal.models.Guest>` and defines three new states in
+:class:`cal.GuestStates <lino.modlib.cal.models.GuestStates>`.
+
 
     state   ---action--> new state
 
     present ---checkin--> waiting
     waiting ---receive-->  busy
     busy    ---checkout--> gone
+
+
+========================== ============== ============ ============
+What                       waiting_since  busy_since   gone_since
+========================== ============== ============ ============
+Visitor checks in          X
+Agent receives the visitor X              X
+Visitor leaves             X              X            X
+========================== ============== ============ ============
 
 """
 
@@ -225,19 +236,6 @@ class ReceiveVisitor(MyVisitorAction):
                    _("%(guest)s begins consultation with %(user)s.") %
                    dict(user=obj.event.user, guest=obj.partner),
                    _("Are you sure?"))
-
-
-"""
-
-What                       waiting_since   busy_since  gone_since
-Visitor checks in          X
-Agent receives the visitor X               X
-Visitor leaves             X               X              X
-
-
-
-
-"""
 
 
 def checkout_guest(obj, ar):
