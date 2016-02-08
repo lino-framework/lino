@@ -379,7 +379,7 @@ class AbstractTable(actors.Actor):
     order_by = None
     """If specified, this must be a tuple or list of field names which
 will be passed to Django's `order_by
-<https://docs.djangoproject.com/en/1.6/ref/models/querysets/#order-by>`__
+<https://docs.djangoproject.com/en/1.9/ref/models/querysets/#order-by>`__
 method in order to sort the rows of the queryset.
 
     """
@@ -388,28 +388,30 @@ method in order to sort the rows of the queryset.
     """If specified, this must be a `models.Q` object (not a dict of
     (fieldname -> value) pairs) which will be passed to Django's
     `filter
-    <https://docs.djangoproject.com/en/1.6/ref/models/querysets/#filter>`__
+    <https://docs.djangoproject.com/en/1.9/ref/models/querysets/#filter>`__
     method.
 
-    Unlike :attr:`known_values`, this can use the full range of
-    Django's `field lookup methods
-    <https://docs.djangoproject.com/en/dev/topics/db/queries/#field-lookups>`_
-
-    Note that if the user can create rows in a filtered table, you
-    should make sure that new records satisfy your filter condition by
-    default, otherwise you can get surprising behaviour if the user
+    Note that if you allow a user to insert rows into a filtered
+    table, you should make sure that new records satisfy your filter
+    condition, otherwise you can get surprising behaviour if the user
     creates a new row.
 
     If your filter consists of simple static values on some known
-    field, then you'll prefer to use :attr:`known_values` instead of
-    :attr:`filter.`
+    field, then you might prefer to use
+    :attr:`known_values  <lino.core.actors.Actor.known_values>`
+    instead because this will add automatic behaviour.
+
+    One advantage of :attr:`filter` over
+    :attr:`known_values  <lino.core.actors.Actor.known_values>`
+    is that this can use the full range of Django's `field lookup methods
+    <https://docs.djangoproject.com/en/1.9/topics/db/queries/#field-lookups>`_
 
     """
 
     exclude = None
     """If specified, this must be dict which will be passed to Django's
     `exclude
-    <https://docs.djangoproject.com/en/1.6/ref/models/querysets/#exclude>`__
+    <https://docs.djangoproject.com/en/1.9/ref/models/querysets/#exclude>`__
     method on the queryset.
 
     """
