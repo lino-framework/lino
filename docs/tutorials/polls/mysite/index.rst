@@ -159,11 +159,18 @@ now: the :file:`ui.py` file.
 The :file:`ui.py` file
 ----------------------
 
-- :class:`dd.Table <lino.core.dbtables.Table>` is used as base class
-  for the three **Table** definitions in our application.  That's an
-  important new concept in Lino, and we'll talk about it soon in the
-  Tables_ section.
+Now please create (in the same directory as your :xfile:`models.py`) a
+file named :file:`ui.py` with the following content.
 
+.. literalinclude:: ../polls/ui.py
+
+
+This file defines three **Table** definitions for our application.
+Tables are an important new concept in Lino.  We will learn more about them
+soon in the Tables_ section.  For now just note that we defined one
+table per model (`Polls` for the `Poll` model and `Choices` for the
+`Choice` model) plus one additional table `ChoicesByPoll` which
+inherits from `Choices`.
   
   
 Changing the database structure
@@ -438,36 +445,64 @@ background (don't worry about that for the moment).
 Tables
 ------
 
-A Table is the "abstract" definition of a tabular view.
-It is not only used for the Grid Window but also to implement 
-the :guilabel:`[html]` and :guilabel:`[pdf]` views.
+When you have finished to play around with your first application, let
+us explain you a few things about that new Lino-specific concept which
+we call "tables".
 
-A Table definition has attributes like `filter` and `sort_order` which
-you know from Django's QuerySet.
+Remember that we defined 
 
-But it also has Lino-specific attributes like 
-:attr:`column_names <dd.AbstractTable.column_names>`,
-:attr:`detail_layout <lino.core.actors.Actor.detail_layout>` 
-or
-:attr:`parameters <lino.core.actors.Actor.parameters>`.
+- one table per model (`Polls` for the `Poll` model and `Choices` for
+  the `Choice` model)
 
-To define Tables, you simply need to declare their classes.
-Tables never get instantiated.
-Lino discovers and analyzes them when it initializes.
+- plus one additional table `ChoicesByPoll` which inherits from
+  `Choices`.
 
-Each Table class must have at least one class attribute 
-`model` defined. This points to the Model on which this 
-table will "work".
+For this tutorial we defined our tables in a separate :xfile:`ui.py`
+file, but that's just one way of doing it. You might as well define
+them in your :xfile:`models.py` file together with the models. The
+important thing is that they must get imported when Django loads your
+models.  To define Tables, you simply need to declare their classes.
+Lino discovers and analyzes them when it initializes.  Tables never
+get instantiated.
+
+A table is the pythonic definition of a tabular view.  As a rule of
+thumb you can say that you need one table for every grid view of your
+application. Each of them is a subclass of :class:`dd.Table
+<lino.core.dbtables.Table>`.
+
+Each table class must have at least one class attribute :attr:`model
+<lino.core.dbtables.Table.model>` defined. This points to the model on
+which this table will "work". Every row of a table represents an
+instance of its model. (This is true only for *database* tables. Lino
+also has *virtual* tables, we will talk about them in a :doc:`later
+tutorial </tutorials/vtables/index>`).
+
+A table has attributes like :attr:`filter
+<lino.core.tables.AbstractTable.filter>` and :attr:`order_by
+<lino.core.tables.AbstractTable.order_by>` which you know from Django's
+`QuerySet API
+<https://docs.djangoproject.com/en/1.9/ref/models/querysets/>`_.
+
+A table is like a grid widget, 
+it has attributes like :attr:`column_names
+<lino.core.tables.AbstractTable.column_names>` which describe how to
+display it to the user.
+
+But the table is even more than the definition of a grid widget.  It
+also has Lino-specific attributes like :attr:`detail_layout
+<lino.core.actors.Actor.detail_layout>` which tells it how to display
+a single record in a form view.
 
 There are a lot of other options for tables, 
 and a consistent overview has yet to be written.
 But you can try to work through the API docs, 
 knowing that
-:class:`dd.Table` 
+:class:`lino.core.dbtables.Table` 
 inherits from
-:class:`dd.AbstractTable` 
+:class:`lino.core.tables.AbstractTable` 
 who inherits from
 :class:`lino.core.actors.Actor`.
+
 
 Since tables are normal Python classes 
 they can use inheritance.
@@ -482,9 +517,9 @@ We also say that a slave table *depends* on its master.
 
 Lino manages this dependency almost automatically.  The application
 developer just needs to specify a class attribute :attr:`master_key
-<dd.Table.master_key>`.  This is attribute, when set, must be a string
-containing the name of a `ForeignKey` field which must exist in the
-Table's model.
+<lino.core.tables.AbstractTable.master_key>`.  This attribute, when
+set, must be a string containing the name of a `ForeignKey` field
+which must exist in the Table's model.
 
 Note that you can define more than one Table per Model.  This is a
 fundamental difference from Django's concept of the `ModelAdmin` class
