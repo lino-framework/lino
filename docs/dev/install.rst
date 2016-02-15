@@ -18,10 +18,16 @@ prefer to install one of the existing Lino applications, e.g.  `Lino
 Così <http://cosi.lino-framework.org/install/index.html>`__ of `Lino
 Welfare <http://welfare.lino-framework.org/admin/install.html>`__.
 
+This tutorial assumes you are familiar with the Linux shell at least
+for basic file operations like :cmd:`ls`, :cmd:`cp`, :cmd:`mkdir`,
+:cmd:`rmdir`, file permissions, environment variables etc. Otherwise
+we suggest to keep Mendel Cooper's `Advanced Bash-Scripting Guide
+<http://tldp.org/LDP/abs/html/>`_ under your pillow.
 
 .. contents::
     :depth: 1
     :local:
+
 
 System requirements
 ===================
@@ -36,6 +42,7 @@ System requirements
     On a Debian system this means something like::
 
         $ sudo pip install virtualenv
+        $ mkdir ~/virtualenvs
         $ virtualenv ~/virtualenvs/a
         $ . ~/virtualenvs/a/bin/activate
 
