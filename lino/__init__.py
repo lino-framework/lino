@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2002-2015 Luc Saffre
+# Copyright 2002-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """This is the main module of the Lino framework.
