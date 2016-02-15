@@ -436,7 +436,7 @@ request from it.
             if alert is True:
                 alert = _("Success")
             kw.update(alert=alert)
-        if message:
+        if message is not None:
             kw.update(message=message)
         self.set_response(**kw)
 

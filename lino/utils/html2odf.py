@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2015 Luc Saffre
+# Copyright 2011-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """This module contains mainly a utility function :func:`html2odf`
@@ -87,9 +87,7 @@ Edge case:
 <text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0">Plain string</text:p>
 
 >>> print toxml(html2odf(u"Ein schöner Text"))
-... #doctest: +NORMALIZE_WHITESPACE
-<text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0">Ein
-schÃ¶ner Text</text:p>
+<text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0">Ein schöner Text</text:p>
 
 Not yet supported
 =================
@@ -109,6 +107,8 @@ IllegalText: The <text:section> element does not allow text
 <text:list xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" text:style-name="podBulletedList"><text:list-item><text:p text:style-name="podBulletItem">First</text:p></text:list-item><text:list-item><text:p text:style-name="podBulletItem">Second</text:p></text:list-item></text:list>
 
 """
+
+from __future__ import unicode_literals
 
 import logging
 logger = logging.getLogger(__name__)
