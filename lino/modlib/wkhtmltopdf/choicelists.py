@@ -29,7 +29,7 @@ class WkBuildMethod(DjangoBuildMethod):
     templates_name = 'wk'
     default_template = 'default.wk.html'
     target_ext = '.pdf'
-    cache_name = 'wkhtmltopdf'
+    # cache_name = 'wkhtmltopdf'
 
     def build(self, ar, action, elem):
         filename = action.before_build(self, elem)
