@@ -327,6 +327,8 @@ request from it.
         from django.utils.translation import pgettext
         from lino.api import dd, rt
         from lino.utils import iif
+        from lino.utils.restify import restify
+
 
         if False:  # 20150803 why was this?  It disturbed e.g. for the bs3
                    # language selector.
@@ -351,6 +353,7 @@ request from it.
             pgettext=pgettext,
             now=timezone.now(),
             getattr=getattr,
+            restify=restify,
             requested_language=get_language())
 
         def parse(s):

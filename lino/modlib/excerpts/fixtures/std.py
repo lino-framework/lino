@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2014-2015 Luc Saffre
+# Copyright 2014-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Creates a certifying :class:`ExcerptType` instance for every model
