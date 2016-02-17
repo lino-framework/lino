@@ -24,7 +24,7 @@ SETUP_INFO = dict(
         'Babel', 'odfpy>1.3', 'lxml',
         'beautifulsoup4', 'html5lib', 'reportlab', 'pisa',
         'jinja2', 'appy', 'pytidylib', 'PyYAML',
-        'fuzzy',  # lino.mixins.dupable
+        # 'fuzzy',  # lino.mixins.dupable
         'clint',  # lino.modlib.plausibility.management.commands
         'django-localflavor',  # lino.modlib.sepa
         # 'django-iban',  # lino.modlib.sepa
