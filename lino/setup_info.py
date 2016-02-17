@@ -22,7 +22,7 @@ SETUP_INFO = dict(
         'Sphinx',
         'atelier', 'unipath', 'python_dateutil',
         'Babel', 'odfpy>1.3', 'lxml',
-        'beautifulsoup4', 'html5lib', 'reportlab==2.7', 'pisa',
+        'beautifulsoup4', 'html5lib', 'reportlab', 'pisa',
         'jinja2', 'appy', 'pytidylib', 'PyYAML',
         'fuzzy',  # lino.mixins.dupable
         'clint',  # lino.modlib.plausibility.management.commands
