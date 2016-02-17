@@ -12,6 +12,7 @@
 #   $ python setup.py test -s tests.PackagesTests
 
 from __future__ import unicode_literals
+from builtins import str
 
 SETUP_INFO = dict(
     name='lino',
