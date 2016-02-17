@@ -23,7 +23,7 @@ from multiprocessing import Process
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.utils import translation
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 from django.core.servers.basehttp import get_internal_wsgi_application

@@ -13,7 +13,7 @@ from os.path import join
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext as _
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import loading
@@ -67,11 +67,11 @@ def model_overview(model):
 
     def verbose_name(f):
         settings.SITE.set_language(None)
-        label_en = force_unicode(_(f.verbose_name))
+        label_en = force_text(_(f.verbose_name))
         babel_labels = []
         for lng in settings.SITE.languages[1:]:
             dbutils.set_language(lng.django_code)
-            label = force_unicode(_(f.verbose_name))
+            label = force_text(_(f.verbose_name))
             if label != label_en:
                 babel_labels.append(label)
         if babel_labels:
@@ -86,7 +86,7 @@ def model_overview(model):
         ]
         #~ for lng in babel.AVAILABLE_LANGUAGES:
             #~ babel.set_language(lng)
-            #~ cells.append(force_unicode(_(f.verbose_name)))
+            #~ cells.append(force_text(_(f.verbose_name)))
         #~ cells.append(f.help_text)
         return cells
     rows = [rowfmt(f) for f in model._meta.fields]
@@ -106,7 +106,7 @@ def model_overview(model):
 def rptlist(l):
     return ', '.join([
         ":ref:`%s (%s) <%s>`" % (str(rpt),
-                                 force_unicode(rpt.label), report_ref(rpt))
+                                 force_text(rpt.label), report_ref(rpt))
         for rpt in l])
 
 

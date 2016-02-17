@@ -4,12 +4,16 @@
 """Some diagnostic utilities."""
 
 from __future__ import unicode_literals
+from past.builtins import cmp
+from builtins import str
+from past.builtins import basestring
+from builtins import object
 
 # from textwrap import fill
 from atelier import rstgen
 
 from django.conf import settings
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 
 from lino.core.layouts import BaseLayout
 from lino.modlib.extjs.elems import Container, Wrapper, FieldElement
@@ -111,8 +115,8 @@ class Analyzer(object):
             if field_names is None or f.name in field_names:
                 name = f.name
                 ref = model.__module__ + '.' + model.__name__ + '.' + name
-                verbose_name = force_unicode(f.verbose_name).strip()
-                help_text = force_unicode(f.help_text).replace('\n', ' ')
+                verbose_name = force_text(f.verbose_name).strip()
+                help_text = force_text(f.help_text).replace('\n', ' ')
                 txt = "**{verbose_name}** (:attr:`{name} <{ref}>`) : " \
                       "{help_text}".format(**locals())
                 items.append(txt)
@@ -197,9 +201,9 @@ class Analyzer(object):
             return "{0}.{1}".format(fmn(mfk[0]), mfk[1].name)
 
         items1 = []
-        for target, dp in tdp.items():
+        for target, dp in list(tdp.items()):
             items2 = []
-            for dh, pl in dp.items():
+            for dh, pl in list(dp.items()):
                 items2.append(
                     "{0} : {1}".format(
                         dh.__name__, ', '.join([fk2str(mfk) for mfk in pl])))
@@ -267,11 +271,11 @@ def py2rst(self, doctestfmt=False):
         self = self.wrapped
 
     if isinstance(self, FieldElement):
-        s = "**%s** (%s)" % (unicode(self.field.verbose_name), self.field.name)
+        s = "**%s** (%s)" % (str(self.field.verbose_name), self.field.name)
     elif self.label is None:
         s = "(%s)" % self.name
     else:
-        s = "**%s** (%s)" % (unicode(self.label), self.name)
+        s = "**%s** (%s)" % (str(self.label), self.name)
     if visible_for(self) != visible_for(self.parent):
         s += " [visible for %s]" % visible_for(self)
     if isinstance(self, Container):

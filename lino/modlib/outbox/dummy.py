@@ -6,6 +6,7 @@
 The :term:`dummy module` for `outbox`, 
 used by :func:`lino.core.utils.resolve_app`.
 """
+from builtins import object
 from lino.api import dd
 
 
@@ -19,7 +20,7 @@ class MailableType(dd.Model):
     email_template = dd.DummyField()
     attach_to_email = dd.DummyField()
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
 MailsByController = dd.DummyField()

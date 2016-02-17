@@ -8,6 +8,8 @@ Database models for `lino.modlib.excerpts`.
 
 from __future__ import unicode_literals
 from __future__ import print_function
+from builtins import str
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -96,7 +98,7 @@ class ExcerptType(mixins.BabelNamed, mixins.PrintableType,
     """
     # templates_group = 'excerpts/Excerpt'
 
-    class Meta:
+    class Meta(object):
         abstract = dd.is_abstract_model(__name__, 'ExcerptType')
         verbose_name = _("Excerpt Type")
         verbose_name_plural = _("Excerpt Types")
@@ -216,7 +218,7 @@ We override everything in Excerpt to not call the class method.""")
     @classmethod
     def update_for_model(cls, model, **kw):
         obj = cls.get_for_model(model)
-        for k, v in kw.items():
+        for k, v in list(kw.items()):
             setattr(obj, k, v)
         # obj.full_clean()
         # obj.save()
@@ -423,7 +425,7 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
     # manager_level_field = 'office_level'
     allow_cascaded_delete = "owner"
 
-    class Meta:
+    class Meta(object):
         abstract = dd.is_abstract_model(__name__, 'Excerpt')
         verbose_name = _("Excerpt")
         verbose_name_plural = _("Excerpts")
@@ -482,7 +484,7 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
         return self.excerpt_type
 
     def get_mailable_subject(self):
-        return unicode(self.owner)  # .get_mailable_subject()
+        return str(self.owner)  # .get_mailable_subject()
 
     def get_template_groups(self):
         ptype = self.get_printable_type()
@@ -795,7 +797,7 @@ class ExcerptsByOwner(Excerpts):
 
     @classmethod
     def format_excerpt(self, ex):
-        return unicode(ex.excerpt_type)
+        return str(ex.excerpt_type)
 
 
 if settings.SITE.project_model is not None:
@@ -808,8 +810,8 @@ if settings.SITE.project_model is not None:
         @classmethod
         def format_excerpt(self, ex):
             if ex.owner == ex.project:
-                return unicode(ex.excerpt_type)
-            return unicode(ex.owner)
+                return str(ex.excerpt_type)
+            return str(ex.owner)
 
 
 @dd.receiver(dd.pre_analyze)
@@ -840,7 +842,7 @@ def set_excerpts_actions(sender, **kw):
                                # models that existed before but have
                                # been removed
                 an = atype.get_action_name()
-                m.define_action(**{an: CreateExcerpt(atype, unicode(atype))})
+                m.define_action(**{an: CreateExcerpt(atype, str(atype))})
                 # dd.logger.info("Added print action to %s", m)
                 # if atype.primary:
                 #     if atype.certifying:
@@ -851,7 +853,7 @@ def set_excerpts_actions(sender, **kw):
     # :class:`lino.mixins.printable.BasePrintable` or some subclass
     # thereof.
 
-    for i in Shortcuts.items():
+    for i in list(Shortcuts.items()):
 
         def f(obj, ar):
             if ar is None:

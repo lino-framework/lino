@@ -79,7 +79,7 @@ def render_node(request, node, template_name='pages/node.html', **context):
 
 
 def get_all_pages():
-    return DUMMY_PAGES.values()
+    return list(DUMMY_PAGES.values())
 
 if not settings.SITE.is_installed('pages'):
     # fill DUMMY_PAGES at import by running the std fixture

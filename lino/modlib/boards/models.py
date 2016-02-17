@@ -6,6 +6,7 @@
 
 
 from __future__ import unicode_literals
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -22,7 +23,7 @@ from .mixins import BoardDecision
 
 class Board(mixins.BabelNamed, mixins.DatePeriod):
 
-    class Meta:
+    class Meta(object):
         verbose_name = _("Board")
         verbose_name_plural = _("Boards")
 
@@ -72,7 +73,7 @@ class Member(dd.Model):
     What the person is supposed to do in this board.  Pointer to the
     :class:`ml.contacts.RoleType`.
     """
-    class Meta:
+    class Meta(object):
         verbose_name = _("Board member")
         verbose_name_plural = _("Board members")
 

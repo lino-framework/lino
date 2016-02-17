@@ -25,6 +25,8 @@
 """
 
 from __future__ import unicode_literals
+from builtins import str
+from builtins import object
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -53,7 +55,7 @@ class LanguageKnowledge(dd.Model):
     """
     Specifies how well a certain Person knows a certain Language.
     """
-    class Meta:
+    class Meta(object):
         app_label = 'cv'
         verbose_name = _("language knowledge")
         verbose_name_plural = _("language knowledges")
@@ -83,7 +85,7 @@ class LanguageKnowledge(dd.Model):
         elif self.written > '1':
             return _(u"%s (w)") % self.language
         else:
-            return unicode(self.language)
+            return str(self.language)
 
 
 class LanguageKnowledges(dd.Table):
@@ -117,7 +119,7 @@ class EducationEntry(PersonHistoryEntry, CountryCity):
     Abstract base class for :class:`Training` and :class:`Study`.
 
     """
-    class Meta:
+    class Meta(object):
         abstract = True
 
     language = dd.ForeignKey("languages.Language", blank=True, null=True)
@@ -134,7 +136,7 @@ class EducationEntry(PersonHistoryEntry, CountryCity):
 
 class StudyOrTraining(dd.Model):
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     is_study = models.BooleanField(_("Study"), default=True)
@@ -143,7 +145,7 @@ class StudyOrTraining(dd.Model):
 
 class EducationLevel(StudyOrTraining, mixins.BabelNamed, mixins.Sequenced):
 
-    class Meta:
+    class Meta(object):
         app_label = 'cv'
         verbose_name = _("Education Level")
         verbose_name_plural = _("Education Levels")
@@ -183,7 +185,7 @@ class StudyType(StudyOrTraining, mixins.BabelNamed):
         One choice from :class:`StudyRegimes`.
 
     """
-    class Meta:
+    class Meta(object):
         app_label = 'cv'
         verbose_name = _("Education Type")
         verbose_name_plural = _("Education Types")
@@ -246,7 +248,7 @@ class Training(SectorFunction, EducationEntry):
        Describes the content of this training. A free one-line text field.
 
     """
-    class Meta:
+    class Meta(object):
         app_label = 'cv'
         verbose_name = _("Training")
         verbose_name_plural = _("Trainings")
@@ -262,7 +264,7 @@ class Training(SectorFunction, EducationEntry):
         verbose_name=_("Certificates"))
 
     def __unicode__(self):
-        return unicode(self.type)
+        return str(self.type)
 
     @dd.chooser()
     def type_choices(cls):
@@ -326,7 +328,7 @@ class TrainingsByPerson(HistoryByPerson, Trainings):
 class Study(EducationEntry):
     """A **study** is an :class:`EducationEntry` at a higher school or university.
     """
-    class Meta:
+    class Meta(object):
         app_label = 'cv'
         verbose_name = _("Study")
         verbose_name_plural = _("Studies")
@@ -343,7 +345,7 @@ class Study(EducationEntry):
     # success = models.BooleanField(verbose_name=_("Success"), default=False)
 
     def __unicode__(self):
-        return unicode(self.type)
+        return str(self.type)
 
     @dd.chooser()
     def type_choices(cls):
@@ -407,7 +409,7 @@ class StudiesByPerson(HistoryByPerson, Studies):
 
 class Status(mixins.BabelNamed):
 
-    class Meta:
+    class Meta(object):
         app_label = 'cv'
         verbose_name = pgettext("work experience", "Status")
         verbose_name_plural = pgettext("work experience", 'Statuses')
@@ -428,7 +430,7 @@ class Statuses(dd.Table):
 
 class Regime(mixins.BabelNamed):
     # e.g. "38h/week"
-    class Meta:
+    class Meta(object):
         app_label = 'cv'
         verbose_name = _("Work Regime")
         verbose_name_plural = _('Work Regimes')
@@ -447,7 +449,7 @@ class Regimes(dd.Table):
 
 
 class Duration(mixins.BabelNamed):
-    class Meta:
+    class Meta(object):
         app_label = 'cv'
         verbose_name = _("Contract Duration")
         verbose_name_plural = _('Contract Durations')
@@ -467,7 +469,7 @@ class Durations(dd.Table):
 
 class Sector(mixins.BabelNamed):
 
-    class Meta:
+    class Meta(object):
         app_label = 'cv'
         verbose_name = _("Job Sector")
         verbose_name_plural = _('Job Sectors')
@@ -493,7 +495,7 @@ class Sectors(dd.Table):
 class Function(mixins.BabelNamed):
 
     """Each Job may have a Function."""
-    class Meta:
+    class Meta(object):
         app_label = 'cv'
         verbose_name = _("Job Function")
         verbose_name_plural = _('Job Functions')
@@ -532,7 +534,7 @@ class Experience(PersonHistoryEntry, SectorFunction, CountryCity):
     period in a given company.
 
     """
-    class Meta:
+    class Meta(object):
         app_label = 'cv'
         verbose_name = _("Job Experience")
         verbose_name_plural = _("Job Experiences")
@@ -555,7 +557,7 @@ class Experience(PersonHistoryEntry, SectorFunction, CountryCity):
         verbose_name=_("Termination reason"))
 
     def __unicode__(self):
-        return unicode(self.title)
+        return str(self.title)
 
 
 class Experiences(PeriodTable):

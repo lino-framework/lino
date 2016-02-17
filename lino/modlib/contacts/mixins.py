@@ -3,6 +3,7 @@
 # License: BSD (see file COPYING for details)
 """Model mixins for `lino.modlib.contacts`.
 """
+from builtins import object
 
 from django.db import models
 from django.conf import settings
@@ -60,7 +61,7 @@ class ContactRelated(dd.Model):
 
     """
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     company = models.ForeignKey(
@@ -197,7 +198,7 @@ class PartnerDocument(dd.Model):
 
     """
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     company = models.ForeignKey("contacts.Company",
@@ -257,7 +258,7 @@ class OldCompanyContact(dd.Model):
     """
     Abstract class which adds two fields `company` and `contact`.
     """
-    class Meta:
+    class Meta(object):
         abstract = True
 
     company = models.ForeignKey(

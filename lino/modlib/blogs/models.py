@@ -5,6 +5,7 @@
 """Database models for `lino.modlib.blogs`.
 
 """
+from builtins import object
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -20,7 +21,7 @@ class EntryType(mixins.BabelNamed, mixins.PrintableType):
 
     templates_group = 'blogs/Entry'
 
-    class Meta:
+    class Meta(object):
         verbose_name = _("Blog Entry Type")
         verbose_name_plural = _("Blog Entry Types")
 
@@ -59,7 +60,7 @@ class Entry(mixins.TypedPrintable,
     """
     Deserves more documentation.
     """
-    class Meta:
+    class Meta(object):
         verbose_name = _("Blog Entry")
         verbose_name_plural = _("Blog Entries")
 

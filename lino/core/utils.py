@@ -15,6 +15,11 @@ This defines some helper classes like
 """
 
 from __future__ import unicode_literals
+from __future__ import print_function
+from past.builtins import cmp
+from builtins import str
+from past.builtins import basestring
+from builtins import object
 
 
 import logging
@@ -32,7 +37,7 @@ from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.db.models.fields import NOT_PROVIDED
 from django.core import exceptions
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.http import QueryDict
 
 from lino.core.signals import on_ui_updated
@@ -144,8 +149,8 @@ def full_model_name(model, sep='.'):
 def obj2unicode(i):
     """Returns a user-friendly unicode representation of a model instance."""
     if not isinstance(i, models.Model):
-        return unicode(i)
-    return '%s "%s"' % (i._meta.verbose_name, unicode(i))
+        return str(i)
+    return '%s "%s"' % (i._meta.verbose_name, str(i))
 
 
 def obj2str(i, force_detailed=False):
@@ -154,11 +159,11 @@ def obj2str(i, force_detailed=False):
 
     """
     if not isinstance(i, models.Model):
-        if isinstance(i, long):
+        if isinstance(i, int):
             return str(i)  # AutoField is long on mysql, int on sqlite
         if isinstance(i, datetime.date):
             return i.isoformat()
-        if isinstance(i, unicode):
+        if isinstance(i, str):
             return repr(i)[1:]
         return repr(i)
     if i.pk is None:
@@ -167,8 +172,8 @@ def obj2str(i, force_detailed=False):
         if i.pk is None:
             return '(Unsaved %s instance)' % (i.__class__.__name__)
         try:
-            return u"%s #%s (%s)" % (i.__class__.__name__, str(i.pk), repr(unicode(i)))
-        except Exception, e:
+            return u"%s #%s (%s)" % (i.__class__.__name__, str(i.pk), repr(str(i)))
+        except Exception as e:
         #~ except TypeError,e:
             return "Unprintable %s(pk=%r,error=%r" % (
                 i.__class__.__name__, i.pk, e)
@@ -287,7 +292,7 @@ def babelattr(*args, **kw):
 babel_values = babelkw  # old alias for backwards compatibility
 
 
-class UnresolvedModel:
+class UnresolvedModel(object):
 
     """The object returned by :func:`resolve_model` if the specified model
     is not installed.
@@ -362,10 +367,10 @@ def resolve_model(model_spec, app_label=None, strict=False):
         if strict:
             if False:
                 from django.db.models import loading
-                print(20130219, settings.INSTALLED_APPS)
+                print((20130219, settings.INSTALLED_APPS))
                 print([full_model_name(m) for m in get_models()])
                 if len(loading.cache.postponed) > 0:
-                    print("POSTPONED:", loading.cache.postponed)
+                    print(("POSTPONED:", loading.cache.postponed))
 
             if isinstance(strict, basestring):
                 raise Exception(strict % model_spec)
@@ -693,7 +698,7 @@ class ParameterPanel(object):
         return self.fields.items(*args, **kw)
 
 
-class PseudoRequest:
+class PseudoRequest(object):
     """A Django HTTP request which isn't really one.
 
     Typical usage example::
@@ -754,7 +759,7 @@ class ChangeWatcher(object):
         set of fieldnames to be ignored.
 
         """
-        for k, old in self.original_state.iteritems():
+        for k, old in self.original_state.items():
             if k not in ignored_fields:
                 if watched_fields is None or k in watched_fields:
                     new = self.watched.__dict__.get(k, NOT_PROVIDED)
@@ -770,7 +775,7 @@ class ChangeWatcher(object):
     def is_dirty(self):
         #~ if self.is_new:
             #~ return True
-        for k, v in self.original_state.iteritems():
+        for k, v in self.original_state.items():
             if v != self.watched.__dict__.get(k, NOT_PROVIDED):
                 return True
         return False
@@ -790,12 +795,12 @@ def error2str(self, e):
         if md is not None:
             def fieldlabel(name):
                 de = self.get_data_elem(name)
-                return force_unicode(getattr(de, 'verbose_name', name))
+                return force_text(getattr(de, 'verbose_name', name))
             return '\n'.join([
                 "%s : %s" % (
                     fieldlabel(k), self.error2str(v))
-                for k, v in md.items()])
+                for k, v in list(md.items())])
         return '\n'.join(e.messages)
-    return unicode(e)
+    return str(e)
 
 

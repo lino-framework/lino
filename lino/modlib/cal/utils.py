@@ -28,7 +28,7 @@ import datetime
 from dateutil.tz import tzlocal
 
 from django.conf import settings
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 
 from lino.utils.format_date import format_date
 from lino.utils.format_date import fds
@@ -71,7 +71,7 @@ def dt2kw(dt, name, **d):
 
 
 def setkw(obj, **kw):
-    for k, v in kw.items():
+    for k, v in list(kw.items()):
         setattr(obj, k, v)
 
 
@@ -145,7 +145,7 @@ def update_auto_component(
             original_state = dict(obj.__dict__)
             if obj.user != user:
                 obj.user = user
-            summary = force_unicode(summary)
+            summary = force_text(summary)
             if obj.summary != summary:
                 obj.summary = summary
             if obj.start_date != date:

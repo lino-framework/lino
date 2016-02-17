@@ -6,6 +6,7 @@
 
 
 from __future__ import unicode_literals
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -22,7 +23,7 @@ class BoardDecision(UserAuthored):
     :class:`lino_welfare.modlib.aids.mixins.Confirmation`.
 
     """
-    class Meta:
+    class Meta(object):
         abstract = True
 
     decision_date = models.DateField(

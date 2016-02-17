@@ -55,6 +55,9 @@ new element:
 <div>a<br />b<br />c<br />d</div>
 
 """
+from builtins import str
+from past.builtins import basestring
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -66,7 +69,7 @@ from functools import partial
 from lino.utils.xmlgen import etree
 #~ from lino.utils import Warning
 from django.utils.functional import Promise
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 
 
 def pretty_print(elem):
@@ -154,7 +157,7 @@ class Namespace(object):
         pass
 
     def tostring(self, element, *args, **kw):
-        class dummy:
+        class dummy(object):
             pass
         data = []
         file = dummy()
@@ -183,7 +186,7 @@ class Namespace(object):
         #~ ns = self._element_maker._namespace
         #~ if ns is None: return kw
         xkw = dict()
-        for k, v in kw.items():
+        for k, v in list(kw.items()):
             k = getattr(self, k).args[0]  # convert iname to tagname
             xkw[self.addns(k)] = v
         return xkw
@@ -196,7 +199,7 @@ class Namespace(object):
         elem = etree.Element(tag, nsattrib)
         for item in children:
             if isinstance(item, Promise):
-                item = force_unicode(item)
+                item = force_text(item)
             if isinstance(item, dict):
                 elem.attrib.update(self.makeattribs(**item))
             elif isinstance(item, basestring):

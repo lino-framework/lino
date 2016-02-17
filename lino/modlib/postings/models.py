@@ -5,6 +5,7 @@
 """
 Database models for `lino.modlib.postings`.
 """
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -64,7 +65,7 @@ class Posting(UserAuthored, mixins.ProjectRelated, Controllable):
     """
     workflow_state_field = 'state'
 
-    class Meta:
+    class Meta(object):
         verbose_name = _("Posting")
         verbose_name_plural = _("Postings")
 

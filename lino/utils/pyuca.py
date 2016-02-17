@@ -46,9 +46,12 @@ allkeys.txt (1 MB) is available at
 
 but you can always subset this for just the characters you are dealing with.
 """
+from builtins import map
+from builtins import range
+from builtins import object
 
 
-class Trie:
+class Trie(object):
 
     def __init__(self):
         self.root = [None, {}]
@@ -70,7 +73,7 @@ class Trie:
         return (curr_node[0], remainder)
 
 
-class Collator:
+class Collator(object):
 
     def __init__(self, filename):
 
@@ -118,7 +121,7 @@ class Collator:
             value, lookup_key = self.table.find_prefix(lookup_key)
             if not value:
                 # @@@
-                raise ValueError, map(hex, lookup_key)
+                raise ValueError(list(map(hex, lookup_key)))
             collation_elements.extend(value)
 
         sort_key = []

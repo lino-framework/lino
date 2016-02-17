@@ -8,6 +8,8 @@
 """
 
 from __future__ import unicode_literals
+from builtins import str
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -374,7 +376,7 @@ class PrintableType(Model):
     Default value for `templates_group` is the model's full name.
     """
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     build_method = BuildMethods.field(blank=True, null=True)
@@ -491,7 +493,7 @@ class CachedPrintable(Duplicable, Printable):
 
     build_method = BuildMethods.field()
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     def full_clean(self, *args, **kwargs):
@@ -555,7 +557,7 @@ class TypedPrintable(CachedPrintable):
 
     type = None
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     def get_printable_type(self):

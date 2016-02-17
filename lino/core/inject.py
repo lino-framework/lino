@@ -1,3 +1,4 @@
+from past.builtins import basestring
 # Copyright 2011-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
@@ -174,7 +175,7 @@ def check_pending_injects(sender, models_list=None, **kw):
     #~ logger.info("20130212 check_pending_injects()...")
     if PENDING_INJECTS:
         msg = ''
-        for spec, funcs in PENDING_INJECTS.items():
+        for spec, funcs in list(PENDING_INJECTS.items()):
             msg += spec + ': '
             msg += ', '.join([fmt(f) for f in funcs])
             #~ msg += '\n'.join([str(dir(func)) for func in funcs])
@@ -265,7 +266,7 @@ def update_model(model_spec, **actions):
     Replace the specified attributes in the specified model.q
     """
     def todo(model):
-        for k, v in actions.items():
+        for k, v in list(actions.items()):
             if not hasattr(model, k):
                 raise Exception(
                     "%s has no attribute %s to update." % (model, k))
@@ -345,7 +346,7 @@ def update_field(model_spec, name, **kw):
             raise Exception('20120715 update_field(%s.%s) : %s' %
                             (model, fld, fld.model))
             #~ logger.warning('20120715 update_field(%s.%s) : %s',model,fld,fld.model)
-        for k, v in kw.items():
+        for k, v in list(kw.items()):
             setattr(fld, k, v)
         #~ if model.__name__ == "SiteConfig":
             #~ logger.info("20130228 updated field %s in %s",name,model)

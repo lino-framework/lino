@@ -13,13 +13,15 @@ See also:
 
 
 """
+from builtins import str
+from past.builtins import basestring
 
 import logging
 logger = logging.getLogger(__name__)
 
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.conf import settings
 from django.db import models
 
@@ -112,13 +114,13 @@ def register_params(cls):
 
     """
     if cls.parameters:
-        for k, v in cls.parameters.items():
+        for k, v in list(cls.parameters.items()):
             v.set_attributes_from_name(k)
             v.table = cls
 
         if cls.params_layout is None:
             cls.params_layout = cls._layout_class.join_str.join(
-                cls.parameters.keys())
+                list(cls.parameters.keys()))
         install_layout(cls, 'params_layout', cls._layout_class)
 
     elif cls.params_layout is not None:
@@ -127,7 +129,7 @@ def register_params(cls):
 
 def setup_params_choosers(self):
     if self.parameters:
-        for k, fld in self.parameters.items():
+        for k, fld in list(self.parameters.items()):
             if isinstance(fld, models.ForeignKey):
                 # Before Django 1.8:
                 if AFTER18:
@@ -400,7 +402,7 @@ class Action(Parametrizable, Permittable):
         #     self.show_in_bbar = False
         #     # see ticket #105
 
-        for k, v in kw.items():
+        for k, v in list(kw.items()):
             if not hasattr(self, k):
                 raise Exception("Invalid action keyword %s" % k)
             setattr(self, k, v)
@@ -495,7 +497,7 @@ class Action(Parametrizable, Permittable):
         if self.label is None:
             return "<%s %s>" % (self.__class__.__name__, self.action_name)
         return "<%s %s (%r)>" % (
-            self.__class__.__name__, self.action_name, unicode(self.label))
+            self.__class__.__name__, self.action_name, str(self.label))
 
     def unused__str__(self):
         raise Exception("20121003 Must use full_name(actor)")
@@ -538,7 +540,7 @@ class Action(Parametrizable, Permittable):
         return True
 
     def __unicode__(self):
-        return force_unicode(self.label)
+        return force_text(self.label)
 
     def get_action_permission(self, ar, obj, state):
         """Return (True or False) whether the given :class:`ActionRequest
@@ -588,7 +590,7 @@ class Action(Parametrizable, Permittable):
 
         """
 
-        for k, pf in self.parameters.items():
+        for k, pf in list(self.parameters.items()):
             # print 20151203, pf.name, repr(pf.rel.to)
             kw[k] = pf.get_default()
         return kw
@@ -705,7 +707,7 @@ class InsertRow(TableAction):
     select_rows = False
 
     def get_action_title(self, ar):
-        return _("Insert into %s") % force_unicode(ar.get_title())
+        return _("Insert into %s") % force_text(ar.get_title())
 
     def get_window_layout(self, actor):
         return actor.insert_layout or actor.detail_layout
@@ -1040,7 +1042,7 @@ class MultipleRowAction(Action):
             if not ar.response.get('success'):
                 ar.info("Aborting remaining rows")
                 break
-            ar.info("%s for %s...", unicode(self.label), unicode(obj))
+            ar.info("%s for %s...", str(self.label), str(obj))
             n += self.run_on_row(obj, ar)
             ar.set_response(refresh_all=True)
 
@@ -1073,7 +1075,7 @@ class DeleteSelected(MultipleRowAction):
     def run_from_ui(self, ar, **kw):
         objects = []
         for obj in ar.selected_rows:
-            objects.append(unicode(obj))
+            objects.append(str(obj))
             msg = ar.actor.disable_delete(obj, ar)
             if msg is not None:
                 ar.error(None, msg, alert=True)

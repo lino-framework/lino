@@ -11,6 +11,7 @@ Database models for `lino.modlib.extensible`.
 
 
 from __future__ import unicode_literals
+from builtins import str
 
 import logging
 logger = logging.getLogger(__name__)
@@ -81,7 +82,7 @@ class ExtSummaryField(dd.VirtualField):
 
     def set_value_in_object(self, request, obj, value):
         if obj.project:
-            s = unicode(obj.project)
+            s = str(obj.project)
             if value.startswith(s):
                 value = value[len(s):]
         obj.summary = value
@@ -130,7 +131,7 @@ class PanelCalendars(Calendars):
     @dd.displayfield()
     def summary(cls, self, ar):
         #~ return dd.babelattr(self,'name')
-        return unicode(self)
+        return str(self)
 
     @dd.virtualfield(models.BooleanField(_('Hidden')))
     def is_hidden(cls, self, ar):
@@ -167,7 +168,7 @@ class PanelEvents(Events):
         for t in super(PanelEvents, self).get_title_tags(ar):
             yield t
         if ar.subst_user:
-            yield unicode(ar.subst_user)
+            yield str(ar.subst_user)
 
     @classmethod
     def parse_req(self, request, rqdata, **kw):

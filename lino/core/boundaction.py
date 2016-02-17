@@ -5,6 +5,7 @@
 .. autosummary::
 
 """
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)

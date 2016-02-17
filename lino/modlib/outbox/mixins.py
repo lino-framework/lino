@@ -2,6 +2,8 @@
 # Copyright 2011-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 "Model mixins for :mod:`lino.modlib.outbox`."
+from builtins import str
+from builtins import object
 
 
 import logging
@@ -36,7 +38,7 @@ class MailableType(dd.Model):
 
     """
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     attach_to_email = models.BooleanField(
@@ -130,7 +132,7 @@ class Mailable(dd.Model):
 
     """
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     create_mail = CreateMail()
@@ -162,6 +164,6 @@ class Mailable(dd.Model):
         created.
 
         """
-        return unicode(self)
+        return str(self)
 
 

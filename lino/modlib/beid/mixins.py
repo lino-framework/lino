@@ -10,6 +10,9 @@ See unit tests in :mod:`lino_welfare.tests.test_beid`.
 .. autosummary::
 
 """
+from builtins import str
+from past.builtins import basestring
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -69,7 +72,7 @@ def get_image_path(card_number):
 
 def simulate_wrap(msg):
     if config.read_only_simulate:
-        msg = "(%s:) %s" % (unicode(_("Simulation")), msg)
+        msg = "(%s:) %s" % (str(_("Simulation")), msg)
     return msg
 
 
@@ -209,7 +212,7 @@ class BaseBeIdReadCardAction(dd.Action):
 
         if len(diffs) == 0:
             return self.goto_client_response(
-                ar, obj, _("Client %s is up-to-date") % unicode(obj))
+                ar, obj, _("Client %s is up-to-date") % str(obj))
 
         msg = _("Click OK to apply the following changes for %s") % obj
         msg = simulate_wrap(msg)
@@ -396,7 +399,7 @@ class BeIdCardHolder(dd.Model):
         Virtual field which displays the picture.
 
     """
-    class Meta:
+    class Meta(object):
         abstract = True
 
     national_id = dd.NullCharField(
@@ -512,13 +515,13 @@ class BeIdCardHolder(dd.Model):
         objects = []
         # model = holder_model()
         model = obj.__class__  # the holder
-        for fldname, new in attrs.items():
+        for fldname, new in list(attrs.items()):
             fld = get_field(model, fldname)
             old = getattr(obj, fldname)
             if old != new:
                 diffs.append(
                     "%s : %s -> %s" % (
-                        unicode(fld.verbose_name), dd.obj2str(old),
+                        str(fld.verbose_name), dd.obj2str(old),
                         dd.obj2str(new)))
                 setattr(obj, fld.name, new)
         return objects, diffs

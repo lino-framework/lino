@@ -8,6 +8,7 @@
 """
 
 from __future__ import unicode_literals
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -36,7 +37,7 @@ class TimezoneHolder(models.Model):
         The timezone.
 
     """
-    class Meta:
+    class Meta(object):
         abstract = True
 
     if settings.USE_TZ:
@@ -64,7 +65,7 @@ class UserAuthored(model.Model):
 
     """
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     manager_roles_required = login_required(SiteStaff)

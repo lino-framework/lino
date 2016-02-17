@@ -13,6 +13,7 @@ This module defines the tables
 """
 
 from __future__ import unicode_literals
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -34,7 +35,7 @@ class ListType(mixins.BabelNamed):
 
     """
 
-    class Meta:
+    class Meta(object):
         verbose_name = _("List Type")
         verbose_name_plural = _("List Types")
 
@@ -47,7 +48,7 @@ class ListTypes(dd.Table):
 
 class List(mixins.BabelNamed, mixins.Referrable):
 
-    class Meta:
+    class Meta(object):
         verbose_name = _("Partner List")
         verbose_name_plural = _("Partner Lists")
 
@@ -79,7 +80,7 @@ class Lists(dd.Table):
 
 class Member(mixins.Sequenced):
 
-    class Meta:
+    class Meta(object):
         verbose_name = _("List memberships")
         verbose_name_plural = _("List memberships")
 

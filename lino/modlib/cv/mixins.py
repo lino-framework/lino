@@ -5,6 +5,7 @@
 """
 See :mod:`ml.cv`.
 """
+from builtins import object
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -83,7 +84,7 @@ class SectorFunction(dd.Model):
     Abstract base for models that refer to a
     :class:`Sector` and a :class:`Function`.
     """
-    class Meta:
+    class Meta(object):
         abstract = True
 
     sector = dd.ForeignKey("cv.Sector", blank=True, null=True)
@@ -98,7 +99,7 @@ class SectorFunction(dd.Model):
 
 class PersonHistoryEntry(DatePeriod):
     "Base class for Study, Experience"
-    class Meta:
+    class Meta(object):
         abstract = True
 
     person = models.ForeignKey(dd.plugins.cv.person_model)

@@ -15,6 +15,8 @@ order which can be manipulated by the user using actions
 """
 
 from __future__ import unicode_literals
+from builtins import str
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -162,7 +164,7 @@ class Sequenced(Duplicable):
 
     """
 
-    class Meta:
+    class Meta(object):
         abstract = True
         ordering = ['seqno']
 
@@ -184,7 +186,7 @@ class Sequenced(Duplicable):
     """
 
     def __unicode__(self):
-        return unicode(_("Row # %s") % self.seqno)
+        return str(_("Row # %s") % self.seqno)
 
     def get_siblings(self):
         """Return a Django Queryset with all siblings of this,
@@ -288,7 +290,7 @@ class Hierarchical(Duplicable):
     "siblings".
 
     """
-    class Meta:
+    class Meta(object):
         abstract = True
 
     parent = models.ForeignKey('self',

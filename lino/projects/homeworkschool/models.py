@@ -1,3 +1,4 @@
+from builtins import object
 # Copyright 2012-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
@@ -19,7 +20,7 @@ contacts = dd.resolve_app('contacts')
 
 class School(contacts.Company):
 
-    class Meta:
+    class Meta(object):
         #~ app_label = 'school'
         verbose_name = _("School")
         verbose_name_plural = _("Schools")

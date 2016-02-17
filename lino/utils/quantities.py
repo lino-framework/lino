@@ -60,11 +60,15 @@ Exception: Invalid decimal value '1,000.50'
 
 
 """
+from __future__ import division
+from builtins import str
+from past.builtins import basestring
+from past.utils import old_div
 
 import datetime
 from decimal import Decimal
 
-DEC2HOUR = Decimal(1) / Decimal(60)
+DEC2HOUR = old_div(Decimal(1), Decimal(60))
 
 
 class Quantity(Decimal):
@@ -92,7 +96,7 @@ class Percentage(Quantity):
     def __new__(cls, value="0", context=None):
         if isinstance(value, basestring) and value.endswith('%'):
             self = Decimal.__new__(
-                Percentage, Decimal(value[:-1]) / 100, context)
+                Percentage, old_div(Decimal(value[:-1]), 100), context)
             self._value = value
             return self
         #~ raise Exception("Invalid Percentage %r" % value)
@@ -187,7 +191,7 @@ class Duration(Quantity):
         return self
 
     def __str__(self):
-        minutes = (self - int(self)) / DEC2HOUR
+        minutes = old_div((self - int(self)), DEC2HOUR)
         return '%d:%02d' % (
             int(self),
             minutes.to_integral())

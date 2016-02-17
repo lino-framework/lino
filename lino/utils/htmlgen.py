@@ -1,10 +1,12 @@
+from builtins import str
+from builtins import object
 # Copyright 2011-2012 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 import cgi
 
 from django.utils.functional import Promise
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 
 from lino.utils.restify import restify
 
@@ -17,12 +19,12 @@ def py2html(v):
     for cv in CONVERTERS:
         v = cv(v)
     if isinstance(v, Promise):
-        v = force_unicode(v)
+        v = force_text(v)
     if isinstance(v, HTML):
         return v.__html__()
     if callable(v):
         return "\n".join([ln for ln in v()])
-    return cgi.escape(unicode(v))
+    return cgi.escape(str(v))
 
 
 class HTML(object):
@@ -63,7 +65,7 @@ def TD(content):
     return "<TD>%s</TD>" % py2html(content)
 
 
-class TABLE:
+class TABLE(object):
 
     """
     Renders as a simple table.

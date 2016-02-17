@@ -5,6 +5,7 @@
 """
 
 from __future__ import unicode_literals, absolute_import, print_function
+from builtins import object
 import sys
 import subprocess
 

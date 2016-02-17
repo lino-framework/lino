@@ -5,11 +5,15 @@
 """This is used only when libtidy is not available.
 
 """
+from future import standard_library
+standard_library.install_aliases()
+from builtins import chr
+from builtins import object
 # from __future__ import print_function, unicode_literals
 from xml.sax.saxutils import quoteattr
 
-from HTMLParser import HTMLParser
-from htmlentitydefs import name2codepoint
+from html.parser import HTMLParser
+from html.entities import name2codepoint
 
 
 def attrs2xml(attrs):
@@ -121,7 +125,7 @@ class MyHTMLParser(HTMLParser):
             #~ 20121010 self.handle_data(unichr(name2codepoint[name]))
             self.handle_data("&%s;" % name)
             return
-        self.handle_data(unichr(name2codepoint[name]))
+        self.handle_data(chr(name2codepoint[name]))
 
 
 def html2xhtml(html, **options):

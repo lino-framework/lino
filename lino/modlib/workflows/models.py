@@ -4,6 +4,8 @@
 """
 Not used.
 """
+from builtins import str
+from builtins import object
 
 #~ raise Exception("Not used")
 
@@ -16,7 +18,7 @@ from django.conf import settings
 #~ from django.contrib.auth import models as auth
 #~ from django.contrib.sessions import models as sessions
 from django.contrib.contenttypes import models as contenttypes
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 
 #~ from django import forms
 from django.db import models
@@ -45,7 +47,7 @@ MODULE_LABEL = _("Workflows")
 
 
 def action_text(a):
-    return "%s (%s)" % (a.name, unicode(a.label))
+    return "%s (%s)" % (a.name, str(a.label))
 
 if settings.SITE.user_model and settings.SITE.is_installed('contenttypes'):
 

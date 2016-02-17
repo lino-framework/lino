@@ -7,6 +7,7 @@
 """
 
 from __future__ import unicode_literals
+from builtins import object
 
 
 import logging
@@ -35,7 +36,7 @@ class Concept(mixins.BabelNamed):
     """A word and its translation in different languages.
     """
 
-    class Meta:
+    class Meta(object):
         verbose_name = _("Concept")
         verbose_name_plural = _("Concepts")
 
@@ -74,7 +75,7 @@ class TopLevelConcepts(Concepts):
 
 class Link(dd.Model):
 
-    class Meta:
+    class Meta(object):
         verbose_name = _("Link")
         verbose_name_plural = _("Links")
 

@@ -7,6 +7,9 @@ Defines the :class:`ExtRenderer` class.
 """
 
 from __future__ import unicode_literals
+from __future__ import print_function
+from builtins import str
+from past.builtins import basestring
 
 import logging
 logger = logging.getLogger(__name__)
@@ -19,7 +22,7 @@ import jinja2
 from django.conf import settings
 from django.db import models
 from django.utils import translation
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 
 from django.utils.translation import ugettext as _
 
@@ -98,9 +101,9 @@ class ExtRenderer(HtmlRenderer):
     def href_to(self, ar, obj, text=None):
         h = self.instance_handler(ar, obj)
         if h is None:
-            return cgi.escape(force_unicode(obj))
+            return cgi.escape(force_text(obj))
         uri = self.js2url(h)
-        return self.href(uri, text or force_unicode(obj))
+        return self.href(uri, text or force_text(obj))
 
     def py2js_converter(self, v):
         """
@@ -116,7 +119,7 @@ class ExtRenderer(HtmlRenderer):
         if isinstance(v, models.Model):
             return v.pk
         if isinstance(v, Exception):
-            return unicode(v)
+            return str(v)
         if isinstance(v, menus.Menu):
             if v.parent is None:
                 return v.items
@@ -207,7 +210,7 @@ class ExtRenderer(HtmlRenderer):
         using a Javascript link to this action.
 
         """
-        label = unicode(label or ba.get_button_label())
+        label = str(label or ba.get_button_label())
         uri = self.js2url(self.action_call(ar, ba, status))
         return self.href_button_action(
             ba, uri, label, title or ba.action.help_text, **kw)
@@ -215,7 +218,7 @@ class ExtRenderer(HtmlRenderer):
     def put_button(self, ar, obj, text, data, **kw):
 
         put_data = dict()
-        for k, v in data.items():
+        for k, v in list(data.items()):
             fld = obj._meta.get_field(k)
             fld._lino_atomizer.value2dict(v, put_data, obj)
 
@@ -364,7 +367,7 @@ class ExtRenderer(HtmlRenderer):
 
     def obj2html(self, ar, obj, text=None, **kw):
         if not text:
-            text = unicode(obj)
+            text = str(obj)
 
         h = self.instance_handler(ar, obj)
         uri = self.js2url(h)
@@ -498,18 +501,18 @@ class ExtRenderer(HtmlRenderer):
                 if request.subst_user:
                     yield "Lino.set_subst_user(%s,%s);" % (
                         py2js(request.subst_user.id),
-                        py2js(unicode(request.subst_user)))
-                    user_text = unicode(request.user) + \
+                        py2js(str(request.subst_user)))
+                    user_text = str(request.user) + \
                         " (" + _("as") + " " + \
-                        unicode(request.subst_user) + ")"
+                        str(request.subst_user) + ")"
                 else:
                     yield "Lino.set_subst_user();"
-                    user_text = unicode(request.user)
+                    user_text = str(request.user)
 
                 user = request.user
 
                 yield "Lino.user = %s;" % py2js(
-                    dict(id=user.id, name=unicode(user)))
+                    dict(id=user.id, name=str(user)))
 
                 def usertext(u):
                     return "{0} {1}, {3} ({2})".format(
@@ -649,12 +652,12 @@ class ExtRenderer(HtmlRenderer):
         self.actors_list = [
             rpt for rpt in dbtables.master_reports
             + dbtables.slave_reports
-            + dbtables.generic_slaves.values()
+            + list(dbtables.generic_slaves.values())
             + dbtables.custom_tables
             + dbtables.frames_list]
 
         self.actors_list.extend(
-            [a for a in choicelists.CHOICELISTS.values()
+            [a for a in list(choicelists.CHOICELISTS.values())
              if settings.SITE.is_installed(a.app_label)])
 
         # don't generate JS for abstract actors
@@ -769,7 +772,7 @@ class ExtRenderer(HtmlRenderer):
 
         # Define every choicelist as a JS array:
         f.write("\n// ChoiceLists: \n")
-        for a in choicelists.CHOICELISTS.values():
+        for a in list(choicelists.CHOICELISTS.values()):
             if settings.SITE.is_installed(a.app_label):
                 #~ if issubclass(a,choicelists.ChoiceList):
                 f.write("Lino.%s = %s;\n" %
@@ -1005,7 +1008,7 @@ class ExtRenderer(HtmlRenderer):
         yield ""
         yield "Lino.%s = Ext.extend(Ext.form.FormPanel, {" % \
             dh.layout._formpanel_name
-        for k, v in dh.main.ext_options().items():
+        for k, v in list(dh.main.ext_options().items()):
             #~ if k != 'items':
             if not k in self.SUPPRESSED:
                 yield "  %s: %s," % (k, py2js(v))
@@ -1031,7 +1034,7 @@ class ExtRenderer(HtmlRenderer):
                 dh.layout._datasource, dh.layout._other_datasources)
             msg += ", main elements: %r" % dh.main.elements
             # raise Exception(msg)
-            print(20150717, msg)
+            print((20150717, msg))
         yield "    this.items = %s;" % py2js(dh.main.elements)
         yield "    this.fields = %s;" % py2js(
             [e for e in dh.main.walk()
@@ -1047,7 +1050,7 @@ class ExtRenderer(HtmlRenderer):
         yield ""
         yield "Lino.%s = Ext.extend(Lino.ActionFormPanel,{" % \
             dh.layout._formpanel_name
-        for k, v in dh.main.ext_options().items():
+        for k, v in list(dh.main.ext_options().items()):
             if k != 'items':
                 yield "  %s: %s," % (k, py2js(v))
         assert tbl.action_name is not None
@@ -1092,7 +1095,7 @@ class ExtRenderer(HtmlRenderer):
                 tbl, tbl.required_roles)
             #~ raise Exception(msg)
             logger.warning(msg)
-            print 20150717, msg
+            print(20150717, msg)
             return
 
         yield ""
@@ -1248,7 +1251,7 @@ class ExtRenderer(HtmlRenderer):
         kw.update(
             disabled_actions_index=rh.store.column_index('disabled_actions'))
 
-        for k, v in kw.items():
+        for k, v in list(kw.items()):
             yield "  %s : %s," % (k, py2js(v))
 
         yield "  initComponent : function() {"

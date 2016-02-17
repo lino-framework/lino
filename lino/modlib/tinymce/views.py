@@ -5,6 +5,7 @@
 """Views for `lino.modlib.tinymce`.
 
 """
+from builtins import str
 
 import logging
 logger = logging.getLogger(__name__)
@@ -60,9 +61,9 @@ class Templates(View):
             for obj in qs:
                 url = dd.plugins.tinymce.build_plain_url(
                     'templates',
-                    app_label, actor, pk, fldname, unicode(obj.pk))
+                    app_label, actor, pk, fldname, str(obj.pk))
                 templates.append([
-                    unicode(obj.name), url, unicode(obj.description)])
+                    str(obj.name), url, str(obj.description)])
             js = "var tinyMCETemplateList = %s;" % py2js(templates)
             return http.HttpResponse(js, content_type='text/json')
         raise http.Http404("Method %r not supported" % request.method)

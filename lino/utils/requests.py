@@ -7,9 +7,9 @@ import os
 
 def again(request, *args, **kw):
     get = request.GET.copy()
-    for k, v in kw.items():
+    for k, v in list(kw.items()):
         if v is None:  # value None means "remove this key"
-            if get.has_key(k):
+            if k in get:
                 del get[k]
         else:
             get[k] = v

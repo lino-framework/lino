@@ -25,6 +25,8 @@ ComboBox will be told to accept also new values, and the server will
 handle these cases accordingly.
 
 """
+from builtins import str
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -35,7 +37,7 @@ from lino.core import constants
 from lino.core.utils import getrqdata
 
 
-class BaseChooser:
+class BaseChooser(object):
     pass
 
 
@@ -182,7 +184,7 @@ class Chooser(FieldChooser):
                     raise Exception("There's no %s with primary key %r" %
                                     (master.__name__, pk))
 
-        for k, v in request.GET.items():
+        for k, v in list(request.GET.items()):
             kw[str(k)] = v
 
         # logger.info(
@@ -243,10 +245,10 @@ def _chooser(make, **options):
         def wrapped(*args):
             #~ print 20101220, args
             return fn(*args)
-        wrapped.context_params = fn.func_code.co_varnames[
-            1:fn.func_code.co_argcount]
+        wrapped.context_params = fn.__code__.co_varnames[
+            1:fn.__code__.co_argcount]
         #~ 20120918b wrapped.context_params = fn.func_code.co_varnames[2:fn.func_code.co_argcount]
-        for k, v in options.items():
+        for k, v in list(options.items()):
             setattr(wrapped, k, v)
         return make(wrapped)
         # return classmethod(wrapped)

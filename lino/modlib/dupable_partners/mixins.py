@@ -1,3 +1,4 @@
+from builtins import object
 # -*- coding: UTF-8 -*-
 # Copyright 2015 Luc Saffre
 # License: BSD (see file COPYING for details)
@@ -18,7 +19,7 @@ class DupablePartner(Dupable):
 
     """
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     dupable_word_model = 'dupable_partners.Word'
@@ -26,7 +27,7 @@ class DupablePartner(Dupable):
 
 class DupablePerson(DupablePartner):
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     def dupable_matches_required(self):

@@ -12,6 +12,7 @@ Adds functionality for managing foos.
     fixtures.demo
 
 """
+from builtins import str
 
 from lino import ad, _
 
@@ -36,4 +37,4 @@ class Plugin(ad.Plugin):
                 PropsByGroup,
                 params=dict(master_instance=pg),
                 #~ label=pg.name)
-                label=unicode(pg))
+                label=str(pg))

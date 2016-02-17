@@ -5,6 +5,7 @@
 Defines :class:`PrintTableAction` and
 :class:`PrintLabelsAction`
 """
+from builtins import str
 import logging
 logger = logging.getLogger(__name__)
 
@@ -75,7 +76,7 @@ class PrintTableAction(actions.Action):
     def get_context(self, ar):
         return dict(
             ar=ar,
-            title=unicode(ar.get_title()),
+            title=str(ar.get_title()),
             dtos=format_date.dtos,
             dtosl=format_date.dtosl,
             dtomy=format_date.fdmy,

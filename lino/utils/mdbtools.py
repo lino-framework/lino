@@ -39,6 +39,8 @@ which we include here to make it usable in Python 2.6 too.
 
 
 """
+from __future__ import print_function
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -108,7 +110,7 @@ except ImportError:
         return output
 
 
-class Loader:
+class Loader(object):
     mdb_file = None
     table_name = None
     model = None
@@ -131,7 +133,7 @@ class Loader:
             fd.close()
             logger.info("Extracted file %s", fn)
         reader = ucsv.UnicodeReader(open(fn, 'r'), encoding=ENCODING)
-        headers = reader.next()
+        headers = next(reader)
         if not headers == self.headers:
             raise Exception("%r != %r" % (headers, self.headers))
         n = 0
@@ -142,12 +144,12 @@ class Loader:
             n += 1
             if False:
                 if int(row['IDClient']) == 967:
-                    print row
+                    print(row)
                     raise Exception("20110609")
 
             if False:
                 if n < 10:
-                    print n, ':', row
+                    print(n, ':', row)
                 else:
                     raise Exception("20110609")
             for obj in self.row2obj(row):

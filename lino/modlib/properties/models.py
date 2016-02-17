@@ -17,6 +17,8 @@ A :class:`Property` defines the configuration of a property.
 .. autosummary::
 
 """
+from builtins import str
+from builtins import object
 
 import os
 import cgi
@@ -27,7 +29,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 
 
 from lino.core.roles import SiteStaff
@@ -85,7 +87,7 @@ class PropType(mixins.BabelNamed):
     - YesNo (no choices)
     
     """
-    class Meta:
+    class Meta(object):
         verbose_name = _("Property Type")
         verbose_name_plural = _("Property Types")
 
@@ -169,7 +171,7 @@ class PropChoice(dd.Model):
     `value` of a property choice.
 
     """
-    class Meta:
+    class Meta(object):
         verbose_name = _("Property Choice")
         verbose_name_plural = _("Property Choices")
         unique_together = ['type', 'value']
@@ -199,14 +201,14 @@ class PropGroup(mixins.BabelNamed):
     Skills, Obstacles There will be one menu entry per Group.
 
     """
-    class Meta:
+    class Meta(object):
         verbose_name = _("Property Group")
         verbose_name_plural = _("Property Groups")
 
 
 class Property(mixins.BabelNamed):
 
-    class Meta:
+    class Meta(object):
         verbose_name = _("Property")
         verbose_name_plural = _("Properties")
 
@@ -227,7 +229,7 @@ class PropertyOccurence(dd.Model):
 
     """
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     group = models.ForeignKey(PropGroup)
@@ -265,7 +267,7 @@ class PropertyOccurence(dd.Model):
             return u"Undefined %s" % self.group
         # 20111111 : call unicode() because get_text_for_value returns a
         # Promise
-        return unicode(self.property.type.get_text_for_value(self.value))
+        return str(self.property.type.get_text_for_value(self.value))
 
     #~ def __unicode__(self):
         #~ if self.property_id is None:

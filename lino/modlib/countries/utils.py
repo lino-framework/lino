@@ -12,6 +12,8 @@ Defines models
 """
 from __future__ import print_function
 from __future__ import unicode_literals
+from builtins import str
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -62,7 +64,7 @@ class EstonianAddressFormatter(AddressFormatter):
             return "%s küla" % p
         elif p.type == PlaceTypes.county:
             return "%s maakond" % p
-        return unicode(p)
+        return str(p)
 
     def get_city_lines(me, self):
         lines = []

@@ -7,6 +7,8 @@
 See also :doc:`/dev/users`
 
 """
+from builtins import str
+from builtins import object
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -88,7 +90,7 @@ class User(CreatedModified, TimezoneHolder):
 
     """
 
-    class Meta:
+    class Meta(object):
         app_label = 'users'
         verbose_name = _('User')
         verbose_name_plural = _('Users')
@@ -147,7 +149,7 @@ class User(CreatedModified, TimezoneHolder):
     @dd.displayfield(_("Name"), max_length=15)
     def name_column(self, request):
         #~ return join_words(self.last_name.upper(),self.first_name)
-        return unicode(self)
+        return str(self)
 
     if dd.is_installed('contacts'):
         def get_person(self):
@@ -202,7 +204,7 @@ class User(CreatedModified, TimezoneHolder):
 
     def get_received_mandates(self):
         #~ return [ [u.id,_("as %s")%u] for u in self.__class__.objects.all()]
-        return [[u.id, unicode(u)] for u in self.__class__.objects.all()]
+        return [[u.id, str(u)] for u in self.__class__.objects.all()]
         #~ return self.__class__.objects.all()
 
     change_password = ChangePassword()
@@ -237,8 +239,8 @@ class User(CreatedModified, TimezoneHolder):
             p = "'{0}'".format(self.username)
         url = "javascript:Lino.show_login_window(null, {0})".format(p)
         return E.li(E.a(self.username, href=url), ' : ',
-                    unicode(self), ', ',
-                    unicode(self.profile), ', ',
+                    str(self), ', ',
+                    str(self.profile), ', ',
                     E.strong(settings.SITE.LANGUAGE_DICT.get(self.language)))
 
     @classmethod
@@ -254,7 +256,7 @@ class User(CreatedModified, TimezoneHolder):
             if default is models.NOT_PROVIDED:
                 raise cls.DoesNotExist(
                     "No %s with username %r" % (
-                        unicode(cls._meta.verbose_name), username))
+                        str(cls._meta.verbose_name), username))
             return default
 
 
@@ -345,7 +347,7 @@ class Authority(UserAuthored):
     
     """
 
-    class Meta:
+    class Meta(object):
         app_label = 'users'
         verbose_name = _("Authority")
         verbose_name_plural = _("Authorities")

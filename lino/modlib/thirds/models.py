@@ -4,6 +4,8 @@
 """Database models for `lino.modlib.thirds`.
 
 """
+from builtins import str
+from builtins import object
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -17,7 +19,7 @@ from lino.modlib.gfks.mixins import Controllable
 
 class Third(mixins.Sequenced, contacts.PartnerDocument, Controllable):
 
-    class Meta:
+    class Meta(object):
         verbose_name = _("Third Party")
         verbose_name_plural = _('Third Parties')
 
@@ -25,10 +27,10 @@ class Third(mixins.Sequenced, contacts.PartnerDocument, Controllable):
 
     def summary_row(self, ar, **kw):
         #~ s = ui.href_to(self)
-        return ["(", unicode(self.seqno), ") "] + list(contacts.PartnerDocument.summary_row(self, ar, **kw))
+        return ["(", str(self.seqno), ") "] + list(contacts.PartnerDocument.summary_row(self, ar, **kw))
 
     def __unicode__(self):
-        return unicode(self.seqno)
+        return str(self.seqno)
         #~ return unicode(self.get_partner())
 
 

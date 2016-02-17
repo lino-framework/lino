@@ -6,6 +6,8 @@
 Defines the :class:`Page` model, the base of Lino's out-of-the-box CMS.
 
 """
+from builtins import str
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -64,7 +66,7 @@ class Page(mixins.Referrable, mixins.Hierarchical, mixins.Sequenced):
     Deserves more documentation.
     """
 
-    class Meta:
+    class Meta(object):
         verbose_name = _("Node")
         verbose_name_plural = _("Nodes")
 
@@ -83,7 +85,7 @@ class Page(mixins.Referrable, mixins.Hierarchical, mixins.Sequenced):
         if self.title:
             return dd.babelattr(self, 'title')
         if self.ref == 'index':
-            return unicode(_('Home'))
+            return str(_('Home'))
         if self.ref:
             return self.ref
         return str(self.id)
@@ -118,7 +120,7 @@ class Page(mixins.Referrable, mixins.Hierarchical, mixins.Sequenced):
         #~ qs = self.get_siblings()
         qs = Page.objects.filter(parent__isnull=True)
         #~ qs = self.children.all()
-        yield ('/', 'index', unicode(_('Home')))
+        yield ('/', 'index', str(_('Home')))
             #~ yield ('/downloads/', 'downloads', 'Downloads')
         #~ yield ('/about', 'about', 'About')
         #~ if qs is not None:

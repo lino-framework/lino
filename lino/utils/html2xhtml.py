@@ -6,7 +6,7 @@
 #
 #  $ python setup.py test -s tests.UtilsTests.test_tidy
 
-ur"""Defines the :func:`html2xhtml` function which converts HTML to
+"""Defines the :func:`html2xhtml` function which converts HTML to
 valid XHTML.
 
 It uses Jason Stitt's `pytidylib

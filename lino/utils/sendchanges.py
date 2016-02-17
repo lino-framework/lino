@@ -30,6 +30,7 @@ update, create, delete. It would be better to analyze the emitters at
 startup and install receivers only for the needed models and events.
 
 """
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)

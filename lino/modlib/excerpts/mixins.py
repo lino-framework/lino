@@ -9,6 +9,8 @@ This defines the :class:`Certifiable` model mixin.
 
 from __future__ import unicode_literals
 from __future__ import print_function
+from builtins import str
+from builtins import object
 
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.humanize.templatetags.humanize import naturaltime
@@ -93,7 +95,7 @@ class Certifiable(dd.Model):
       set to ``SET_NULL``.
 
     """
-    class Meta:
+    class Meta(object):
         abstract = True
 
     printed_by = dd.ForeignKey(
@@ -181,7 +183,7 @@ class Certifiable(dd.Model):
         document.
 
         """
-        return unicode(self)
+        return str(self)
 
     def get_excerpt_templates(self, bm):
         """Return either None or a list of template names."""
@@ -207,7 +209,7 @@ class ExcerptTitle(BabelNamed):
         If this is empty, then :attr:`name` is used.
 
     """
-    class Meta:
+    class Meta(object):
         abstract = True
 
     excerpt_title = dd.BabelCharField(
@@ -218,5 +220,5 @@ class ExcerptTitle(BabelNamed):
             "The title to be used when printing an excerpt."))
 
     def get_excerpt_title(self):
-        return dd.babelattr(self, 'excerpt_title') or unicode(self)
+        return dd.babelattr(self, 'excerpt_title') or str(self)
 

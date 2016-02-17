@@ -7,6 +7,7 @@ Database models for `lino.modlib.notes`.
 .. autosummary::
 
 """
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -37,7 +38,7 @@ class NoteType(mixins.BabelNamed, mixins.PrintableType, MailableType):
     """
     templates_group = 'notes/Note'
 
-    class Meta:
+    class Meta(object):
         app_label = 'notes'
         verbose_name = _("Note Type")
         verbose_name_plural = _("Note Types")
@@ -78,7 +79,7 @@ class EventType(mixins.BabelNamed):
     """
     A possible choice for :attr:`Note.event_type`.
     """
-    class Meta:
+    class Meta(object):
         app_label = 'notes'
         verbose_name = pgettext_lazy(u"notes", u"Event Type")
         verbose_name_plural = _("Event Types")
@@ -117,7 +118,7 @@ class Note(mixins.TypedPrintable,
 
     manager_roles_required = dd.login_required(OfficeStaff)
 
-    class Meta:
+    class Meta(object):
         app_label = 'notes'
         abstract = dd.is_abstract_model(__name__, 'Note')
         verbose_name = _("Note")

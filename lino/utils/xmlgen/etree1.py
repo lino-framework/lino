@@ -13,6 +13,7 @@ Note LS 20120502: doesn't work with Python 2.7
 (seems that _namespaces() came afterwards)
 
 """
+from __future__ import print_function
 
 try:
     # Try Python 2.5 and later
@@ -112,7 +113,7 @@ if __name__ == "__main__":
     # Parse XML that contains CDATA sections and convert it back into a string
     root = fromstring(sampleXml)
     xml = tostring(root)
-    print xml
+    print(xml)
 
     # The parsed and regenerated XML is the same as the sample XML string
     assert(sampleXml == xml)
@@ -124,7 +125,7 @@ if __name__ == "__main__":
     cdata = CDATA("<sender>John Smith</sender>")
     root.append(cdata)
     xml2 = tostring(root)
-    print xml2
+    print(xml2)
 
     # The generated XML is the same as the sample XML string
     assert(sampleXml == xml2)

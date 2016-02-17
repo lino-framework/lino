@@ -21,7 +21,7 @@ from django.db import models
 from django.conf import settings
 from django.utils import timezone
 from django.utils.translation import ugettext as _
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 

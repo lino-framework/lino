@@ -4,6 +4,9 @@
 """
 This defines the :class:`Table` class.
 """
+from __future__ import print_function
+from builtins import str
+from past.builtins import basestring
 
 import logging
 logger = logging.getLogger(__name__)
@@ -48,7 +51,7 @@ def base_attrs(cl):
     for b in cl.__bases__:
         for k in base_attrs(b):
             yield k
-        for k in b.__dict__.keys():
+        for k in list(b.__dict__.keys()):
             yield k
 
 
@@ -87,7 +90,7 @@ def add_gridfilters(qs, gridfilters):
     if not isinstance(qs, QuerySet):
         raise NotImplementedError('TODO: filter also simple lists')
     q = models.Q()
-    print 20150506, gridfilters
+    print(20150506, gridfilters)
     for flt in gridfilters:
         field = get_field(qs.model, flt['field'])
         flttype = flt['type']
@@ -363,7 +366,7 @@ class Table(AbstractTable):
         for u in settings.SITE.user_model.objects.filter(language=language):
             if u.profile and u.profile.name in self.screenshot_profiles and not u.profile in profiles2user:
                 profiles2user[u.profile] = u
-        for user in profiles2user.values():
+        for user in list(profiles2user.values()):
             #~ if user.profile.name != 'admin': return
             #~ yield self.default_action.request(user=user)
             # and self.default_action is not self.detail_action:
@@ -479,7 +482,7 @@ class Table(AbstractTable):
             # self.simple_parameters |= self.model.simple_parameters
 
             for b in self.model.mro():
-                for k, v in b.__dict__.items():
+                for k, v in list(b.__dict__.items()):
                     if isinstance(v, actions.Action):
                         existing_value = self.__dict__.get(k, NOT_PROVIDED)
                         if existing_value is NOT_PROVIDED:
@@ -593,7 +596,7 @@ class Table(AbstractTable):
             return
 
         if hasattr(self.model, '_lino_slaves'):
-            self._slaves = self.model._lino_slaves.values()
+            self._slaves = list(self.model._lino_slaves.values())
         else:
             self._slaves = []
 
@@ -723,7 +726,7 @@ class Table(AbstractTable):
         if rr.known_values:
             #~ logger.info("20120111 known values %r",rr.known_values)
             d = {}
-            for k, v in rr.known_values.items():
+            for k, v in list(rr.known_values.items()):
                 if v is None:
                     d[k + "__isnull"] = True
                 else:

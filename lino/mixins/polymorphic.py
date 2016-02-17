@@ -5,6 +5,8 @@
 """Defines the :class:`Polymorphic` model mixin.
 
 """
+from builtins import str
+from builtins import object
 
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
@@ -117,7 +119,7 @@ class Polymorphic(model.Model):
     :doc:`/tutorials/letsmti/index`.
 
     """
-    class Meta:
+    class Meta(object):
         abstract = True
 
     _mtinav_models = None
@@ -209,14 +211,14 @@ class Polymorphic(model.Model):
         for m in self._mtinav_models:
             item = None
             if self.__class__ is m:
-                item = [E.b(unicode(m._meta.verbose_name))]
+                item = [E.b(str(m._meta.verbose_name))]
             else:
                 obj = mti.get_child(self, m)
                 if obj is None:
                     # parent link field
                     p = m._meta.parents.get(self.__class__, None)
                     if p is not None:
-                        item = [unicode(m._meta.verbose_name)]
+                        item = [str(m._meta.verbose_name)]
                         k = InsertChild.name_prefix + m.__name__.lower()
                         ba = ar.actor.get_action_by_name(k)
                         if ba and ba.get_row_permission(ar, self, None):

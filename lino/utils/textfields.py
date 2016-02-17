@@ -12,8 +12,11 @@ Lino never really used this module.
 It was added and dropped the same day 
 for the server-side approach of :srcref:`docs/tickets/44`.
 """
+from __future__ import print_function
+from future import standard_library
+standard_library.install_aliases()
 
-from HTMLParser import HTMLParser
+from html.parser import HTMLParser
 from re import sub
 from sys import stderr
 from traceback import print_exc

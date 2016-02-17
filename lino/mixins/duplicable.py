@@ -9,6 +9,7 @@
 """
 
 from __future__ import unicode_literals
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -114,7 +115,7 @@ class Duplicable(model.Model):
     duplicable.
 
     """
-    class Meta:
+    class Meta(object):
         abstract = True
 
     duplicate = Duplicate()

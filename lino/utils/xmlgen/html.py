@@ -64,6 +64,8 @@ You can also do the opposite, i.e. parse HTML:
 """
 
 from __future__ import unicode_literals
+from builtins import str
+from builtins import object
 
 import types
 from xml.etree import ElementTree as ET
@@ -111,14 +113,14 @@ class HtmlNamespace(Namespace):
         if self.iselement(v):
             # kw.setdefault('method', 'html')
             return super(HtmlNamespace, self).tostring(v, *args, **kw)
-        return unicode(v)
+        return str(v)
 
     def to_rst(self, v, stripped=True):
         if isinstance(v, types.GeneratorType):
             return "".join([self.to_rst(x, stripped) for x in v])
         if E.iselement(v):
             return html2rst(v, stripped)
-        return unicode(v)
+        return str(v)
 
     # def raw(self, raw_html):
     #     return RAW_HTML_STRING(raw_html)

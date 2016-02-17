@@ -7,6 +7,9 @@
 """
 
 from __future__ import unicode_literals
+from builtins import str
+from builtins import range
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -80,7 +83,7 @@ class RemoteCalendar(mixins.Sequenced):
     :mod:`lino.modlib.cal.management.commands.watch_calendars`,
     and local modifications will be sent back to the remote calendar.
     """
-    class Meta:
+    class Meta(object):
         app_label = 'cal'
         abstract = dd.is_abstract_model(__name__, 'RemoteCalendar')
         verbose_name = _("Remote Calendar")
@@ -117,7 +120,7 @@ class Room(mixins.BabelNamed):
     there.  A Room is BabelNamed (has a multilingual name).
 
     """
-    class Meta:
+    class Meta(object):
         app_label = 'cal'
         abstract = dd.is_abstract_model(__name__, 'Room')
         verbose_name = _("Room")
@@ -127,7 +130,7 @@ class Room(mixins.BabelNamed):
 class Priority(mixins.BabelNamed):
 
     "The priority of a Task or Event."
-    class Meta:
+    class Meta(object):
         app_label = 'cal'
         verbose_name = _("Priority")
         verbose_name_plural = _('Priorities')
@@ -155,7 +158,7 @@ class EventType(mixins.BabelNamed, mixins.Sequenced, MailableType):
     """
     templates_group = 'cal/Event'
 
-    class Meta:
+    class Meta(object):
         app_label = 'cal'
         abstract = dd.is_abstract_model(__name__, 'EventType')
         verbose_name = _("Calendar Event Type")
@@ -200,7 +203,7 @@ class EventType(mixins.BabelNamed, mixins.Sequenced, MailableType):
 class GuestRole(mixins.BabelNamed):
     templates_group = 'cal/Guest'
 
-    class Meta:
+    class Meta(object):
         app_label = 'cal'
         verbose_name = _("Guest Role")
         verbose_name_plural = _("Guest Roles")
@@ -216,7 +219,7 @@ class Calendar(mixins.BabelNamed):
 
     COLOR_CHOICES = [i + 1 for i in range(32)]
 
-    class Meta:
+    class Meta(object):
         app_label = 'cal'
         abstract = dd.is_abstract_model(__name__, 'Calendar')
         verbose_name = _("Calendar")
@@ -242,7 +245,7 @@ class Subscription(UserAuthored):
     
     """
 
-    class Meta:
+    class Meta(object):
         app_label = 'cal'
         abstract = dd.is_abstract_model(__name__, 'Subscription')
         verbose_name = _("Subscription")
@@ -270,7 +273,7 @@ class Task(Component):
 
 
     """
-    class Meta:
+    class Meta(object):
         app_label = 'cal'
         verbose_name = _("Task")
         verbose_name_plural = _("Tasks")
@@ -330,7 +333,7 @@ class RecurrentEvent(mixins.BabelNamed, RecurrenceSet, EventGenerator):
     .. attribute:: description
 
     """
-    class Meta:
+    class Meta(object):
         app_label = 'cal'
         verbose_name = _("Recurrent event rule")
         verbose_name_plural = _("Recurrent event rules")
@@ -362,7 +365,7 @@ class RecurrentEvent(mixins.BabelNamed, RecurrenceSet, EventGenerator):
         return self.event_type
 
     def update_cal_summary(self, i):
-        return unicode(self)
+        return str(self)
 
     def care_about_conflicts(self, we):
         """Recurrent events don't care about conflicts. A holiday won't move
@@ -466,7 +469,7 @@ class Event(Component, Ended,
          all events on that day (cal.EventsByDay)
 
     """
-    class Meta:
+    class Meta(object):
         app_label = 'cal'
         abstract = dd.is_abstract_model(__name__, 'Event')
         #~ abstract = True
@@ -620,12 +623,12 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
         if event.user is not None and event.user != ar.get_user():
             if event.access_class == AccessClasses.show_busy:
                 s = _("Busy")
-            s = event.user.username + ': ' + unicode(s)
+            s = event.user.username + ': ' + str(s)
         elif settings.SITE.project_model is not None \
                 and event.project is not None:
-            s += " " + unicode(_("with")) + " " + unicode(event.project)
+            s += " " + str(_("with")) + " " + str(event.project)
         if event.state:
-            s = ("(%s) " % unicode(event.state)) + s
+            s = ("(%s) " % str(event.state)) + s
         n = event.guest_set.all().count()
         if n:
             s = ("[%d] " % n) + s
@@ -690,12 +693,12 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
 
     def get_system_note_recipients(self, request, silent):
         if self.user != request.user:
-            yield "%s <%s>" % (unicode(self.user), self.user.email)
+            yield "%s <%s>" % (str(self.user), self.user.email)
         if silent:
             return
         for g in self.guest_set.all():
             if g.partner.email:
-                yield "%s <%s>" % (unicode(g.partner), g.partner.email)
+                yield "%s <%s>" % (str(g.partner), g.partner.email)
 
     @dd.displayfield(_("When"))
     def when_text(self, ar):
@@ -799,7 +802,7 @@ class Guest(dd.Model):
 
     allow_cascaded_delete = ['event']
 
-    class Meta:
+    class Meta(object):
         app_label = 'cal'
         abstract = dd.is_abstract_model(__name__, 'Guest')
         verbose_name = _("Participant")
@@ -949,7 +952,7 @@ class UpdateUserReminders(UpdateEvents):
 
     def run_from_ui(self, ar, **kw):
         user = ar.selected_rows[0]
-        logger.info("Updating reminders for %s", unicode(user))
+        logger.info("Updating reminders for %s", str(user))
         n = update_reminders_for_user(user, ar)
         msg = _("%(num)d reminders for %(user)s have been updated."
                 ) % dict(user=user, num=n)

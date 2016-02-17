@@ -6,6 +6,7 @@
 """
 
 from __future__ import unicode_literals
+from builtins import str
 
 import logging
 logger = logging.getLogger(__name__)
@@ -61,13 +62,13 @@ class UserProfile(Choice):
         super(UserProfile, self).attach(cls)
         self.kw.setdefault('hidden_languages', cls.hidden_languages)
 
-        for k, vf in cls.virtual_fields.items():
+        for k, vf in list(cls.virtual_fields.items()):
             if vf.has_default():
                 self.kw.setdefault(k, vf.get_default())
             elif vf.return_type.blank:
                 self.kw.setdefault(k, None)
 
-        for k, v in self.kw.items():
+        for k, v in list(self.kw.items()):
             setattr(self, k, v)
 
         if self.hidden_languages is not None:

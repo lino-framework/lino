@@ -17,7 +17,7 @@ class CheckSummaries(dd.Action):
     label = _("Update all summary data")
 
     def run_from_ui(self, ar, fix=None):
-        for mm, summary_models in get_summary_models().items():
+        for mm, summary_models in list(get_summary_models().items()):
             for sm in summary_models:
                 dd.logger.info("Updating %s ...", sm._meta.verbose_name_plural)
                 for master in sm.get_summary_masters():
@@ -36,7 +36,7 @@ def set_summary_actions(sender, **kw):
     model for which there is at least one Summary
 
     """
-    for mm, summary_models in get_summary_models().items():
+    for mm, summary_models in list(get_summary_models().items()):
         mm.define_action(
             update_summaries=UpdateSummariesByMaster(mm, summary_models))
 

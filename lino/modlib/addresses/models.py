@@ -8,6 +8,7 @@ Database models of `lino.modlib.addresses`.
 
 from __future__ import unicode_literals
 from __future__ import print_function
+from builtins import object
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -43,7 +44,7 @@ class Address(AddressLocation):
 
     """
 
-    class Meta:
+    class Meta(object):
         verbose_name = _("Address")
         verbose_name_plural = _("Addresses")
 

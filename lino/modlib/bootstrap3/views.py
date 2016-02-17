@@ -5,6 +5,8 @@
 """Views for `lino.modlib.bootstrap3`.
 
 """
+from __future__ import division
+from past.utils import old_div
 
 import logging
 logger = logging.getLogger(__name__)
@@ -104,7 +106,7 @@ def table2html(ar, as_main=True):
         0      1
         5      2
         """
-        page = int(ar.offset / pglen) + 1
+        page = int(old_div(ar.offset, pglen)) + 1
 
     ar.dump2html(t, ar.sliced_data_iterator)
     if not as_main:
@@ -132,7 +134,7 @@ def table2html(ar, as_main=True):
     if next_start < ar.get_total_count():
         kw[constants.URL_PARAM_START] = next_start
         next_url = ar.get_request_url(**kw)
-        last_page = int((ar.get_total_count() - 1) / pglen)
+        last_page = int(old_div((ar.get_total_count() - 1), pglen))
         kw[constants.URL_PARAM_START] = pglen * last_page
         last_url = ar.get_request_url(**kw)
     else:

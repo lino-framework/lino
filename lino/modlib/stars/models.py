@@ -5,6 +5,8 @@
 """Database models for `lino.modlib.stars`.
 
 """
+from builtins import str
+from builtins import object
 
 
 from django.db import models
@@ -38,7 +40,7 @@ class Star(UserAuthored, Controllable):
 
     nickname = models.CharField(_("Nickname"), max_length=50, blank=True)
 
-    class Meta:
+    class Meta(object):
         app_label = 'stars'
         verbose_name = _("Star")
         verbose_name_plural = _("Stars")
@@ -143,9 +145,9 @@ def welcome_messages(ar):
     Star = rt.modules.stars.Star
     qs = Star.objects.filter(user=ar.get_user()).exclude(nickname='')
     if qs.count() > 0:
-        chunks = [unicode(_("Your stars are "))]
+        chunks = [str(_("Your stars are "))]
         chunks += join_elems([
-            ar.obj2html(obj.owner, obj.nickname or unicode(obj.owner))
+            ar.obj2html(obj.owner, obj.nickname or str(obj.owner))
             for obj in qs])
         chunks.append('.')
         yield E.span(*chunks)

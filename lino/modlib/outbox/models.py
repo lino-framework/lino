@@ -5,6 +5,8 @@
 """
 The :xfile:`models.py` module for `lino.modlib.outbox`.
 """
+from builtins import str
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -38,7 +40,7 @@ class Recipient(dd.Model):
     """
     allow_cascaded_delete = ['mail']
 
-    class Meta:
+    class Meta(object):
         verbose_name = _("Recipient")
         verbose_name_plural = _("Recipients")
     mail = models.ForeignKey('outbox.Mail')
@@ -55,7 +57,7 @@ class Recipient(dd.Model):
 
     def __unicode__(self):
         #~ return "[%s]" % unicode(self.name or self.address)
-        return unicode(self.name or self.address)
+        return str(self.name or self.address)
         #~ return "[%s]" % unicode(self.address)
 
     def full_clean(self):
@@ -146,7 +148,7 @@ class SendMail(dd.Action):
             return ar.error(_("No recipients found."))
         if len(missing_addresses):
             msg = _("There are recipients without address: ")
-            msg += ', '.join([unicode(r) for r in missing_addresses])
+            msg += ', '.join([str(r) for r in missing_addresses])
             return ar.error(msg, alert=True)
         #~ as_attachment = elem.owner.attach_to_email(rr)
         #~ body = elem.body
@@ -195,7 +197,7 @@ class SendMail(dd.Action):
 class Mail(UserAuthored, mixins.Printable,
            mixins.ProjectRelated, Controllable):
 
-    class Meta:
+    class Meta(object):
         verbose_name = _("Outgoing Mail")
         verbose_name_plural = _("Outgoing Mails")
 
@@ -243,7 +245,7 @@ class Mail(UserAuthored, mixins.Printable,
 
     def get_recipients(self, rr):
         #~ recs = []
-        recs = [unicode(r) for r in
+        recs = [str(r) for r in
                 Recipient.objects.filter(mail=self, type=RecipientTypes.to)]
         return ', '.join(recs)
     recipients = dd.VirtualField(dd.HtmlBox(_("Recipients")), get_recipients)
@@ -348,7 +350,7 @@ class Attachment(Controllable):
 
     allow_cascaded_delete = ['mail']
 
-    class Meta:
+    class Meta(object):
         verbose_name = _("Attachment")
         verbose_name_plural = _("Attachments")
 
@@ -356,8 +358,8 @@ class Attachment(Controllable):
 
     def __unicode__(self):
         if self.owner_id:
-            return unicode(self.owner)
-        return unicode(self.id)
+            return str(self.owner)
+        return str(self.id)
 
     def unused_save(self, *args, **kw):
         # see blog/2012/0929

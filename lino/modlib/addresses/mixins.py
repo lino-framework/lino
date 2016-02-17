@@ -8,6 +8,7 @@ Model mixins for `lino.modlib.addresses`.
 
 from __future__ import unicode_literals
 from __future__ import print_function
+from builtins import object
 
 from django.utils.translation import ugettext_lazy as _
 
@@ -23,7 +24,7 @@ class AddressOwner(dd.Model):
     """Base class for the "addressee" of any address.
 
     """
-    class Meta:
+    class Meta(object):
         abstract = True
 
     def get_address_by_type(self, address_type):
@@ -157,7 +158,7 @@ class AddressOwnerChecker(Checker):
                 yield (False, self.messages['multiple_primary'])
         if addr and diffs:
             diffstext = [
-                _("{0}:{1}->{2}").format(k, *v) for k, v in diffs.items()]
+                _("{0}:{1}->{2}").format(k, *v) for k, v in list(diffs.items())]
             msg = self.messages['primary_differs'].format(', '.join(diffstext))
             yield (False, msg)
 

@@ -5,6 +5,7 @@
 """
 A :term:`dummy module` for `postings`, used by 
 """
+from builtins import object
 
 from lino.api import dd
 

@@ -9,6 +9,7 @@ Database models for `lino.modlib.families`.
 
 
 from __future__ import unicode_literals
+from builtins import object
 
 from django.utils.translation import ugettext_lazy as _
 
@@ -34,7 +35,7 @@ from lino.api import dd, rt
 #~ add('101', _('Mother'),'mother',gender=dd.Genders.female)
 class Couple(dd.Model):
 
-    class Meta:
+    class Meta(object):
         app_label = 'families'
 
     father = dd.ForeignKey('contacts.Person', blank=True,
@@ -105,7 +106,7 @@ class CoupleField(dd.VirtualField):
 
 class Child(dd.Model):
 
-    class Meta:
+    class Meta(object):
         app_label = 'families'
         abstract = True
 

@@ -28,6 +28,7 @@ Additions by LS:
 """
 
 from __future__ import unicode_literals
+from builtins import object
 
 import sys
 import traceback
@@ -39,7 +40,7 @@ from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from lino.core.utils import format_request
 
 
-class AjaxExceptionResponse:
+class AjaxExceptionResponse(object):
     """The middleware class definition."""
     def process_exception(self, request, exception):
         if request.is_ajax():

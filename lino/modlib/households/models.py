@@ -6,6 +6,8 @@
 """
 
 from __future__ import unicode_literals
+from builtins import str
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -31,7 +33,7 @@ class Type(mixins.BabelNamed):
     Type of a household.
     http://www.belgium.be/fr/famille/couple/cohabitation/
     """
-    class Meta:
+    class Meta(object):
         app_label = 'households'
         verbose_name = _("Household Type")
         verbose_name_plural = _("Household Types")
@@ -52,7 +54,7 @@ class Household(contacts.Partner):
     A Household is a Partner who represents several Persons living together.
     A Household has a list of :class:`members <Member>`.
     """
-    class Meta:
+    class Meta(object):
         app_label = 'households'
         abstract = dd.is_abstract_model(__name__, 'Household')
         verbose_name = _("Household")
@@ -89,7 +91,7 @@ class Household(contacts.Partner):
     def __unicode__(self):
         # if self.type:
         #     return u"%s %s" % (self.type, self.get_full_name())
-        return unicode(self.get_full_name())
+        return str(self.get_full_name())
 
     def get_name_elems(self, ar):
         elems = []
@@ -206,7 +208,7 @@ class Member(mixins.DatePeriod):
 
     """
 
-    class Meta:
+    class Meta(object):
         app_label = 'households'
         abstract = dd.is_abstract_model(__name__, 'Member')
         verbose_name = _("Household Member")
@@ -244,7 +246,7 @@ class Member(mixins.DatePeriod):
         if self.person_id is None:
             return super(Member, self).__unicode__()
         if self.role is None:
-            return unicode(self.person)
+            return str(self.person)
         return u"%s (%s)" % (self.person, self.role)
 
     def get_address_lines(self):
@@ -348,7 +350,7 @@ class SiblingsByPerson(Members):
         # obj is the Person for which we display the household
 
         def format_item(m):
-            elems = [unicode(m.role), ': ']
+            elems = [str(m.role), ': ']
             if m.person:
                 elems += [obj.format_family_member(ar, m.person)]
                 hl = self.find_links(ar, m.person, obj)
@@ -378,7 +380,7 @@ class SiblingsByPerson(Members):
             l = types.setdefault(tt, [])
             l.append(lnk.parent)
         elems = []
-        for tt, parents in types.items():
+        for tt, parents in list(types.items()):
             if len(elems):
                 elems.append(', ')
             text = join_elems(
@@ -446,7 +448,7 @@ class MembersByPerson(Members):
         items = []
         for m in sar.data_iterator:
             
-            args = (unicode(m.role), _(" in "),
+            args = (str(m.role), _(" in "),
                     ar.obj2html(m.household))
             if m.primary:
                 items.append(E.li(E.b("\u2611 ", *args)))
@@ -471,7 +473,7 @@ class MembersByPerson(Members):
                 apv = dict(type=t, head=obj)
                 sar = ar.spawn(ba,  # master_instance=obj,
                                action_param_values=apv)
-                buttons.append(ar.href_to_request(sar, unicode(t)))
+                buttons.append(ar.href_to_request(sar, str(t)))
             elems += join_elems(buttons, sep=' / ')
         return E.div(*elems)
 

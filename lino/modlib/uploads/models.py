@@ -4,6 +4,8 @@
 """
 Database models for `lino.modlib.uploads`.
 """
+from builtins import str
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -35,7 +37,7 @@ class UploadType(mixins.BabelNamed):
         <lino.modlib.uploads.choicelists.Shortcuts>`.
 
     """
-    class Meta:
+    class Meta(object):
         abstract = dd.is_abstract_model(__name__, 'UploadType')
         verbose_name = _("Upload Type")
         verbose_name_plural = _("Upload Types")
@@ -86,7 +88,7 @@ def filename_leaf(name):
 
 class Upload(mixins.Uploadable, UserAuthored, Controllable):
     """Represents an uploaded file."""
-    class Meta:
+    class Meta(object):
         abstract = dd.is_abstract_model(__name__, 'Upload')
         verbose_name = _("Upload")
         verbose_name_plural = _("Uploads")
@@ -106,9 +108,9 @@ class Upload(mixins.Uploadable, UserAuthored, Controllable):
         elif self.file:
             s = filename_leaf(self.file.name)
         else:
-            s = unicode(self.id)
+            s = str(self.id)
         if self.type:
-            s = unicode(self.type) + ' ' + s
+            s = str(self.type) + ' ' + s
         return s
 
     @dd.chooser()
@@ -219,7 +221,7 @@ class AreaUploads(Uploads):
         """almost as unicode, but without the type
         """
         return obj.description or filename_leaf(obj.file.name) \
-            or unicode(obj.id)
+            or str(obj.id)
 
     @classmethod
     def get_slave_summary(self, obj, ar):
@@ -278,7 +280,7 @@ class AreaUploads(Uploads):
                 if btn is not None:
                     files.append(btn)
             if len(files) > 0:
-                e = E.p(unicode(ut), ': ', *join_elems(files, ', '))
+                e = E.p(str(ut), ': ', *join_elems(files, ', '))
                 types.append(e)
         # logger.info("20140430 %s", [E.tostring(e) for e in types])
         if len(types) == 0:
@@ -301,6 +303,6 @@ class UploadsByController(AreaUploads):
 
     @classmethod
     def format_upload(self, obj):
-        return unicode(obj.type)
+        return str(obj.type)
 
 

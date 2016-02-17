@@ -7,6 +7,8 @@
 """
 
 from __future__ import unicode_literals
+from builtins import str
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -61,7 +63,7 @@ def setup_rooms_workflow(sender=None, **kw):
 
 class Booking(ContactRelated, Reservation):
 
-    class Meta:
+    class Meta(object):
         abstract = dd.is_abstract_model(__name__, 'Booking')
         verbose_name = _("Booking")
         verbose_name_plural = _('Bookings')
@@ -198,7 +200,7 @@ class Bookings(dd.Table):
         for n in self.simple_param_fields:
             v = ar.param_values.get(n)
             if v:
-                yield unicode(v)
+                yield str(v)
 
 
 class BookingsByCompany(Bookings):

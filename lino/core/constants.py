@@ -3,6 +3,7 @@
 """Defines explicit code names for URL parameters
 
 """
+from builtins import str
 
 _handle_attr_name = '_lino_ui_handle'
 
@@ -144,7 +145,7 @@ A list of all names allowed as
 
 def dict2kw(d):
     newd = {}
-    for k, v in d.items():
+    for k, v in list(d.items()):
         newd[str(k)] = v
     return newd
 

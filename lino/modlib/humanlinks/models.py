@@ -9,6 +9,9 @@ Database models for `lino.modlib.humanlinks`.
 
 from __future__ import unicode_literals
 from __future__ import print_function
+from past.builtins import cmp
+from builtins import str
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -42,7 +45,7 @@ class Link(dd.Model):
         <lino.modlib.humanlinks.choicelists.LinkTypes>`.
 
     """
-    class Meta:
+    class Meta(object):
         verbose_name = _("Personal Link")
         verbose_name_plural = _("Personal Links")
 
@@ -71,7 +74,7 @@ class Link(dd.Model):
         if self.type is None:
             return super(Link, self).__unicode__()
         return _("%(child)s is %(what)s") % dict(
-            child=unicode(self.child),
+            child=str(self.child),
             what=self.type_of_parent_text())
 
     def type_of_parent_text(self):
@@ -197,7 +200,7 @@ class LinksByHuman(Links):
         items = []
         for type, other in links:
             items.append(E.li(
-                unicode(type), _(" of "),
+                str(type), _(" of "),
                 obj.format_family_member(ar, other),
                 " (%s)" % other.age
             ))

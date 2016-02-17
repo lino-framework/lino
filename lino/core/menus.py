@@ -5,6 +5,8 @@
 """
 Defines the classes :class:`MenuItem` and :class:`Menu`
 """
+from builtins import str
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -16,7 +18,7 @@ from lino.core.actors import resolve_action
 from lino.core.boundaction import BoundAction
 
 
-class MenuItem:
+class MenuItem(object):
     """A menu item. Note that this is subclassed by :class:`Menu`: a menu
     is also a menu item.
 
@@ -57,7 +59,7 @@ class MenuItem:
 
         if label is None:
             if instance is not None:
-                label = unicode(instance)
+                label = str(instance)
             elif action is not None:
                 label = action.get_button_label()
 
@@ -130,7 +132,7 @@ class MenuItem:
         Render this menu item as an rst string.
         Currently used only for writing test cases.
         """
-        return unicode(self.label)
+        return str(self.label)
 
     def has_items(menu):
         for i in menu.items:

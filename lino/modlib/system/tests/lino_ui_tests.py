@@ -19,7 +19,7 @@ from django.conf import settings
 
 
 from django.utils import translation
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.core.exceptions import ValidationError
 
 from lino.utils.djangotest import NoAuthTestCase

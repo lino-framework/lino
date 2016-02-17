@@ -11,6 +11,9 @@ Model mixins for `lino.modlib.cal`.
 """
 
 from __future__ import unicode_literals
+from builtins import str
+from builtins import range
+from builtins import object
 
 import datetime
 try:
@@ -24,7 +27,7 @@ from django.utils import translation
 from django.utils.translation import ugettext_lazy as _
 from django.utils.timezone import is_aware
 from django.contrib.contenttypes.models import ContentType
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 
 from lino import mixins
 from lino.api import dd, rt
@@ -66,7 +69,7 @@ class Started(dd.Model):
     .. attribute:: start_time
 
     """
-    class Meta:
+    class Meta(object):
         abstract = True
 
     start_date = models.DateField(
@@ -134,7 +137,7 @@ class Started(dd.Model):
 
 class Ended(dd.Model):
 
-    class Meta:
+    class Meta(object):
         abstract = True
     end_date = models.DateField(
         blank=True, null=True,
@@ -149,7 +152,7 @@ class StartedEnded(Started, Ended):
     """Model mixin for things that have both a start_time and an end_time.
 
     """
-    class Meta:
+    class Meta(object):
         abstract = True
 
     def save(self, *args, **kw):
@@ -184,7 +187,7 @@ class StartedSummaryDescription(Started):
     """
     """
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     # iCal:SUMMARY
@@ -251,7 +254,7 @@ class EventGenerator(UserAuthored):
     
     """
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     do_update_events = UpdateEvents()
@@ -349,7 +352,7 @@ class EventGenerator(UserAuthored):
             elif e.is_user_modified():
                 if e.start_date != ae.start_date:
                     subsequent = ', '.join([str(x.auto_type)
-                                           for x in wanted.values()])
+                                           for x in list(wanted.values())])
                     delta = e.start_date - ae.start_date
                     ar.debug(
                         "%d has been moved from %s to %s: "
@@ -357,7 +360,7 @@ class EventGenerator(UserAuthored):
                         % (
                             e.auto_type, ae.start_date,
                             e.start_date, subsequent, delta))
-                    for se in wanted.values():
+                    for se in list(wanted.values()):
                         ov = se.start_date
                         se.start_date += delta
                         ar.debug("%d : %s -> %s" % (
@@ -365,7 +368,7 @@ class EventGenerator(UserAuthored):
             else:
                 self.compare_auto_event(e, ae)
         # create new Events for remaining wanted
-        for ae in wanted.values():
+        for ae in list(wanted.values()):
             self.before_auto_event_save(ae)
             ae.save()
             ae.after_ui_create(ar)
@@ -374,7 +377,7 @@ class EventGenerator(UserAuthored):
 
     def compare_auto_event(self, obj, ae):
         original_state = dict(obj.__dict__)
-        summary = force_unicode(ae.summary)
+        summary = force_text(ae.summary)
         if obj.summary != summary:
             obj.summary = summary
         if obj.user != ae.user:
@@ -570,7 +573,7 @@ class RecurrenceSet(Started, Ended):
 
     """
 
-    class Meta:
+    class Meta(object):
         abstract = True
         verbose_name = _("Recurrence Set")
         verbose_name_plural = _("Recurrence Sets")
@@ -634,7 +637,7 @@ class RecurrenceSet(Started, Ended):
 
     @dd.displayfield(_("Description"))
     def what_text(self, ar):
-        return unicode(self)
+        return str(self)
 
     @dd.displayfield(_("Times"))
     def times_text(self, ar):
@@ -650,7 +653,7 @@ class RecurrenceSet(Started, Ended):
         weekdays = []
         for wd in Weekdays.objects():
             if getattr(self, wd.name):
-                weekdays.append(unicode(wd.text))
+                weekdays.append(str(wd.text))
         weekdays = ', '.join(weekdays)
         if self.every == 1:
             return _("Every %s") % weekdays
@@ -729,7 +732,7 @@ class Reservation(RecurrenceSet, EventGenerator, mixins.Registrable):
 
     """
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     room = dd.ForeignKey('cal.Room', blank=True, null=True)
@@ -780,7 +783,7 @@ class Component(StartedSummaryDescription,
     workflow_state_field = 'state'
     manager_roles_required = dd.login_required(OfficeStaff)
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     access_class = AccessClasses.field(blank=True, help_text=_("""\
@@ -823,10 +826,10 @@ Whether this is private, public or between."""))  # iCal:CLASS
             html += [_(" at "),
                      dd.strftime(self.start_time)]
         if self.state:
-            html += [' [%s]' % force_unicode(self.state)]
+            html += [' [%s]' % force_text(self.state)]
         if self.summary:
-            html += [': %s' % force_unicode(self.summary)]
-            #~ html += ui.href_to(self,force_unicode(self.summary))
+            html += [': %s' % force_text(self.summary)]
+            #~ html += ui.href_to(self,force_text(self.summary))
         #~ html += _(" on ") + dbutils.dtos(self.start_date)
         #~ if self.owner and not self.owner.__class__.__name__ in ('Person','Company'):
             #~ html += " (%s)" % reports.summary_row(self.owner,ui,rr)

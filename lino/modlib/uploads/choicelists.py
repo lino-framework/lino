@@ -86,7 +86,7 @@ def set_upload_shortcuts(sender, **kw):
     # remember that models might have been overridden.
     UploadType = sender.modules.uploads.UploadType
 
-    for i in Shortcuts.items():
+    for i in list(Shortcuts.items()):
 
         def f(obj, ar):
             if obj is None or ar is None:

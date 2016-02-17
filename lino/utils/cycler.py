@@ -35,9 +35,10 @@ None None None
 """
 
 from __future__ import unicode_literals
+from builtins import object
 
 
-class Cycler:
+class Cycler(object):
 
     def __init__(self, *args):
         """

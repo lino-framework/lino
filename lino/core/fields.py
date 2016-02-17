@@ -6,6 +6,9 @@
 related to fields.
 
 """
+from builtins import str
+from past.builtins import basestring
+from builtins import object
 
 import logging
 
@@ -274,7 +277,7 @@ class DisplayField(FakeField):
 
     def __init__(self, verbose_name=None, **kw):
         self.verbose_name = verbose_name
-        for k, v in kw.items():
+        for k, v in list(kw.items()):
             assert hasattr(self, k)
             setattr(self, k, v)
 

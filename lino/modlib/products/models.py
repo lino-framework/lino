@@ -6,6 +6,7 @@ Database models for `lino.modlib.products`.
 .. autosummary::
 
 """
+from builtins import object
 
 
 
@@ -20,7 +21,7 @@ vat = dd.resolve_app('vat')
 
 class ProductCat(mixins.BabelNamed):
 
-    class Meta:
+    class Meta(object):
         app_label = 'products'
         verbose_name = _("Product Category")
         verbose_name_plural = _("Product Categories")
@@ -45,7 +46,7 @@ class ProductCats(dd.Table):
 
 class Product(mixins.BabelNamed, mixins.Referrable):
 
-    class Meta:
+    class Meta(object):
         app_label = 'products'
         verbose_name = _("Product")
         verbose_name_plural = _("Products")

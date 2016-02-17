@@ -61,7 +61,7 @@ def objects():
         global PAGES
         #~ print 20121227, __file__, [obj['ref'] for obj in PAGES.values()]
         rv = []
-        for obj in PAGES.values():
+        for obj in list(PAGES.values()):
             yield obj
             #~ rv.append()
 

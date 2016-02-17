@@ -5,6 +5,8 @@
 """Database models for `lino.modlib.export_excel`.
 
 """
+from builtins import zip
+from builtins import object
 import os
 import datetime
 

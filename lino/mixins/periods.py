@@ -9,6 +9,7 @@ Defines classes related to date ranges.
 """
 
 from __future__ import unicode_literals
+from builtins import object
 
 import datetime
 
@@ -54,7 +55,7 @@ class DatePeriod(Model):
 
     """
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     empty_period_text = ""

@@ -9,6 +9,7 @@ Projects
 Adds tables Project and ProjectType
 
 """
+from builtins import object
 
 from django.db import models
 
@@ -19,7 +20,7 @@ from lino.modlib.users.mixins import ByUser, UserAuthored
 
 class ProjectType(mixins.BabelNamed):
 
-    class Meta:
+    class Meta(object):
         app_label = 'projects'
         verbose_name = _("Project Type")
         verbose_name_plural = _("Project Types")
@@ -36,7 +37,7 @@ class ProjectTypes(dd.Table):
 
 class Project(UserAuthored, mixins.CachedPrintable):
 
-    class Meta:
+    class Meta(object):
         app_label = 'projects'
         verbose_name = _("Project")
         verbose_name_plural = _("Projects")

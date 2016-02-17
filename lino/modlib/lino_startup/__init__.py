@@ -10,6 +10,7 @@
    management.commands
 
 """
+from __future__ import print_function
 
 # from lino.api.ad import Plugin, _
 
@@ -40,7 +41,7 @@ if AFTER17:
             try:
                 site_startup()
             except Exception as e:
-                print e
+                print(e)
                 raise
 
     default_app_config = 'lino.modlib.lino_startup.LinoConfig'

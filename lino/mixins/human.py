@@ -9,6 +9,10 @@ See test cases and examples in :doc:`/tutorials/human/index`.
 
 
 """
+from __future__ import division
+from builtins import str
+from past.utils import old_div
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -185,7 +189,7 @@ class Human(model.Model):
 
     """
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     title = models.CharField(
@@ -296,7 +300,7 @@ class Born(model.Model):
 
     """
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     birth_date = fields.IncompleteDateField(
@@ -332,8 +336,8 @@ class Born(model.Model):
     def age(self, request, today=None):
         a = self.get_exact_age(today)
         if a is None:
-            return unicode(_('unknown'))
-        s = _("%d years") % (a.days / 365)
+            return str(_('unknown'))
+        s = _("%d years") % (old_div(a.days, 365))
         if self.birth_date and self.birth_date.is_complete():
             return s
         return u"±" + s

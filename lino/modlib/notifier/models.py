@@ -22,6 +22,8 @@ database object. Lino
            :class:`BaseRequest <lino.core.requests.BaseRequest>`)
 
 """
+from builtins import str
+from builtins import object
 
 from django.db import models
 from django.conf import settings
@@ -63,7 +65,7 @@ class Notification(UserAuthored, Controllable, Created):
         A display field which returns the parsed :attr:`message`.
 
     """
-    class Meta:
+    class Meta(object):
         app_label = 'notifier'
         verbose_name = _("Notification")
         verbose_name_plural = _("Notifications")
@@ -178,9 +180,9 @@ def welcome_messages(ar):
     qs = Notification.objects.filter(user=ar.get_user(), seen__isnull=True)
     if qs.count() > 0:
         chunks = [
-            unicode(_("You have %d unseen notifications: ")) % qs.count()]
+            str(_("You have %d unseen notifications: ")) % qs.count()]
         chunks += join_elems([
-            ar.obj2html(obj, unicode(obj.owner)) for obj in qs])
+            ar.obj2html(obj, str(obj.owner)) for obj in qs])
         yield E.span(*chunks)
 
 dd.add_welcome_handler(welcome_messages)

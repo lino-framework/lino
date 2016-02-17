@@ -5,13 +5,19 @@
 """Defines the `TableRequest` class.
 
 """
+from __future__ import division
+from __future__ import print_function
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+from past.utils import old_div
 
 import logging
 logger = logging.getLogger(__name__)
 
 from types import GeneratorType
 import sys
-from StringIO import StringIO
+from io import StringIO
 import json
 
 from django.db import models
@@ -37,7 +43,7 @@ def column_header(col):
         #~ if col.label:
             #~ return join_elems(col.label.split('\n'),sep=E.br)
         #~ return [unicode(col.name)]
-    return unicode(col.label or col.name)
+    return str(col.label or col.name)
 
 
 class TableRequest(ActionRequest):
@@ -72,7 +78,7 @@ class TableRequest(ActionRequest):
             self._data_iterator = self.get_data_iterator()
         except Warning as e:
             #~ logger.info("20130809 Warning %s",e)
-            self.no_data_text = unicode(e)
+            self.no_data_text = str(e)
             self._data_iterator = []
         except Exception as e:
             if not settings.SITE.catch_layout_exceptions:
@@ -81,7 +87,7 @@ class TableRequest(ActionRequest):
             # rather often and since exception loggers usually send an
             # email to the local system admin, make sure to log each
             # exception only once.
-            self.no_data_text = unicode(e)
+            self.no_data_text = str(e)
             w = WARNINGS_LOGGED.get(str(e))
             if w is None:
                 WARNINGS_LOGGED[str(e)] = True
@@ -97,8 +103,8 @@ class TableRequest(ActionRequest):
             if self.offset is not None:
                 assert self.limit is not None
                 num = self.get_total_count()
-                max_pages = int(num / self.limit)
-                page = self.offset / self.limit
+                max_pages = int(old_div(num, self.limit))
+                page = old_div(self.offset, self.limit)
                 page = max_pages - page
                 offset = self.limit * page
                 # offset = max_offset - self.offset
@@ -112,7 +118,7 @@ class TableRequest(ActionRequest):
                 if offset == -1:
                     assert self.limit is not None
                     num = self.get_total_count()
-                    page_num = int(num / self.limit)
+                    page_num = int(old_div(num, self.limit))
                     offset = self.limit * page_num
                 self._sliced_data_iterator = self._sliced_data_iterator[
                     offset:]
@@ -248,7 +254,7 @@ class TableRequest(ActionRequest):
                                 exclude[f.field.name +
                                         "__icontains"] = filterValue
                             else:
-                                print "unknown filterOption %r" % filterOption
+                                print("unknown filterOption %r" % filterOption)
             if len(exclude):
                 kw.update(exclude=exclude)
 
@@ -584,7 +590,7 @@ class TableRequest(ActionRequest):
             bp[constants.URL_PARAM_SORT] = sort
 
         if self.known_values:
-            for k, v in self.known_values.items():
+            for k, v in list(self.known_values.items()):
                 if self.actor.known_values.get(k, None) != v:
                     bp[k] = v
         if self.master_instance is not None:

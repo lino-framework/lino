@@ -6,12 +6,14 @@ Intended for use with the django development server.
 
 
 """
+from __future__ import print_function
+from builtins import object
 
 from django.db import connection
 from django.template import Template, Context
 
 
-class SQLLogMiddleware:
+class SQLLogMiddleware(object):
 
     """
     Log all SQL statements direct to the console.
@@ -44,7 +46,7 @@ class SQLLogMiddleware:
         return response
 
 
-class SQLLogToConsoleMiddleware:
+class SQLLogToConsoleMiddleware(object):
 
     """
     Log all SQL statements to the console.
@@ -59,11 +61,11 @@ class SQLLogToConsoleMiddleware:
             time = sum([float(q['time']) for q in connection.queries])
             t = Template(
                 "{{count}} quer{{count|pluralize:\"y,ies\"}} in {{time}} seconds:\n\n{% for sql in sqllog %}[{{forloop.counter}}] {{sql.time}}s: {{sql.sql|safe}}{% if not forloop.last %}\n\n{% endif %}{% endfor %}")
-            print t.render(Context({'sqllog': connection.queries, 'count': len(connection.queries), 'time': time}))
+            print(t.render(Context({'sqllog': connection.queries, 'count': len(connection.queries), 'time': time})))
         return response
 
 
-class ShortSQLLogToConsoleMiddleware:
+class ShortSQLLogToConsoleMiddleware(object):
 
     """
     Log a summary of the SQL statements made to the console.
@@ -76,5 +78,5 @@ class ShortSQLLogToConsoleMiddleware:
             time = sum([float(q['time']) for q in connection.queries])
             t = Template(
                 "{{count}} quer{{count|pluralize:\"y,ies\"}} in {{time}} seconds")
-            print t.render(Context({'count': len(connection.queries), 'time': time}))
+            print(t.render(Context({'count': len(connection.queries), 'time': time})))
         return response

@@ -15,6 +15,8 @@ Usage example::
 If should not be used on models that have MTI children.
 
 """
+from builtins import str
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -88,7 +90,7 @@ class MergePlan(object):
             for fld, qs in fk_qs:
                 if qs.count() > 0:
                     parts.append("%d %s" %
-                                 (qs.count(), unicode(fld.model._meta.verbose_name_plural)))
+                                 (qs.count(), str(fld.model._meta.verbose_name_plural)))
             if len(parts) != 0:
                 items.append(E.li(', '.join(parts), ' ', E.b(prefix)))
 

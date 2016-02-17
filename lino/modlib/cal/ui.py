@@ -8,6 +8,7 @@ Tables for `lino.modlib.cal`.
 """
 
 from __future__ import unicode_literals
+from builtins import str
 
 import logging
 logger = logging.getLogger(__name__)
@@ -186,18 +187,18 @@ class Tasks(dd.Table):
         for t in super(Tasks, self).get_title_tags(ar):
             yield t
         if ar.param_values.start_date or ar.param_values.end_date:
-            yield unicode(_("Dates %(min)s to %(max)s") % dict(
+            yield str(_("Dates %(min)s to %(max)s") % dict(
                 min=ar.param_values.start_date or'...',
                 max=ar.param_values.end_date or '...'))
 
         if ar.param_values.state:
-            yield unicode(ar.param_values.state)
+            yield str(ar.param_values.state)
 
         # if ar.param_values.user:
         #     yield unicode(ar.param_values.user)
 
         if settings.SITE.project_model is not None and ar.param_values.project:
-            yield unicode(ar.param_values.project)
+            yield str(ar.param_values.project)
 
     @classmethod
     def apply_cell_format(self, ar, row, col, recno, td):
@@ -348,24 +349,24 @@ class Guests(dd.Table):
         for t in super(Guests, self).get_title_tags(ar):
             yield t
         if ar.param_values.start_date or ar.param_values.end_date:
-            yield unicode(_("Dates %(min)s to %(max)s") % dict(
+            yield str(_("Dates %(min)s to %(max)s") % dict(
                 min=ar.param_values.start_date or'...',
                 max=ar.param_values.end_date or '...'))
 
         if ar.param_values.event_state:
-            yield unicode(ar.param_values.event_state)
+            yield str(ar.param_values.event_state)
 
         if ar.param_values.partner:
-            yield unicode(ar.param_values.partner)
+            yield str(ar.param_values.partner)
 
         if ar.param_values.guest_state:
-            yield unicode(ar.param_values.guest_state)
+            yield str(ar.param_values.guest_state)
 
         # if ar.param_values.user:
         #     yield unicode(ar.param_values.user)
 
         if settings.SITE.project_model is not None and ar.param_values.project:
-            yield unicode(ar.param_values.project)
+            yield str(ar.param_values.project)
 
 
 class GuestsByEvent(Guests):
@@ -679,23 +680,23 @@ class Events(dd.Table):
                 pv.end_date)
 
         if pv.state:
-            yield unicode(pv.state)
+            yield str(pv.state)
 
         if pv.event_type:
-            yield unicode(pv.event_type)
+            yield str(pv.event_type)
 
         # if pv.user:
         #     yield unicode(pv.user)
 
         if pv.room:
-            yield unicode(pv.room)
+            yield str(pv.room)
 
         if settings.SITE.project_model is not None and pv.project:
-            yield unicode(pv.project)
+            yield str(pv.project)
 
         if pv.assigned_to:
-            yield unicode(self.parameters['assigned_to'].verbose_name) \
-                + ' ' + unicode(pv.assigned_to)
+            yield str(self.parameters['assigned_to'].verbose_name) \
+                + ' ' + str(pv.assigned_to)
 
     @classmethod
     def apply_cell_format(self, ar, row, col, recno, td):

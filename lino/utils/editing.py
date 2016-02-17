@@ -1,3 +1,4 @@
+from builtins import object
 # Copyright 2009 Luc Saffre
 # License: BSD (see file COPYING for details)
 
@@ -30,7 +31,7 @@ Example: when a renderer saves successfully, then it calls stop_editing(). But i
 """
 
 
-class EditingMiddleware:
+class EditingMiddleware(object):
 
     def process_request(self, request):
         request.stop_editing = False
@@ -47,7 +48,7 @@ class EditingMiddleware:
         try:
             if request.stop_editing and not request.continue_editing:
                 request.session["editing"] = None
-        except AttributeError, e:
+        except AttributeError as e:
             pass
         return response
 

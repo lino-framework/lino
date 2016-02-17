@@ -7,6 +7,8 @@ See introduction in :doc:`/dev/ar`.
 .. autosummary::
 
 """
+from builtins import str
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -34,7 +36,7 @@ from lino.utils.xmlgen.html import E
 CATCHED_AJAX_EXCEPTIONS = (Warning, exceptions.ValidationError)
 
 
-class ValidActionResponses:
+class ValidActionResponses(object):
     """These are the allowed keyword arguments for :meth:`ar.set_response
     <BaseRequest.set_response>`, and the action responses supported by
     :js:func:`Lino.handle_action_result` (defined in :xfile:`linolib.js`).
@@ -128,7 +130,7 @@ class VirtualRow(object):
         self.update(**kw)
 
     def update(self, **kw):
-        for k, v in kw.items():
+        for k, v in list(kw.items()):
             setattr(self, k, v)
 
     def get_row_permission(self, ar, state, ba):
@@ -144,7 +146,7 @@ class PhantomRow(VirtualRow):
         VirtualRow.__init__(self, **kw)
 
     def __unicode__(self):
-        return unicode(self._ar.get_action_title())
+        return str(self._ar.get_action_title())
 
 
 inheritable_attrs = frozenset(
@@ -300,7 +302,7 @@ request from it.
         """
         from lino.core.actors import resolve_action
         if isinstance(spec, ActionRequest):  # deprecated use
-            for k, v in kw.items():
+            for k, v in list(kw.items()):
                 assert hasattr(spec, k)
                 setattr(spec, k, v)
             spec.setup_from(self)
@@ -404,7 +406,7 @@ request from it.
         matter.
 
         """
-        for k in kw.keys():
+        for k in list(kw.keys()):
             if not hasattr(ValidActionResponses, k):
                 raise Exception("Unknown key %r in action response." % k)
         self.response.update(kw)
@@ -423,7 +425,7 @@ request from it.
             if hasattr(e, 'message_dict'):
                 kw.update(errors=e.message_dict)
         if message is None:
-            message = unicode(e)
+            message = str(e)
         kw.update(message=message)
         self.set_response(**kw)
 
@@ -912,7 +914,7 @@ request from it.
 
         """
         if text is None:
-            text = unicode(_("the documentation"))
+            text = str(_("the documentation"))
         url = settings.SITE.help_url
         if docname is not None:
             url = "%s/help/%s.html" % (url, docname)
@@ -1097,7 +1099,7 @@ class ActionRequest(ActorRequest):
         #~ if self.report.known_values:
         #~ d = dict(self.report.known_values)
         kv = dict()
-        for k, v in self.actor.known_values.items():
+        for k, v in list(self.actor.known_values.items()):
             kv.setdefault(k, v)
         if known_values:
             kv.update(known_values)
@@ -1108,7 +1110,7 @@ class ActionRequest(ActorRequest):
         if self.actor.parameters is not None:
             pv = self.actor.param_defaults(self)
 
-            for k in pv.keys():
+            for k in list(pv.keys()):
                 if not k in self.actor.parameters:
                     raise Exception(
                         "%s.param_defaults() returned invalid keyword %r" %
@@ -1120,7 +1122,7 @@ class ActionRequest(ActorRequest):
             # is a parameter `client_state`, we override that
             # parameter's default value.
 
-            for k, v in self.known_values.items():
+            for k, v in list(self.known_values.items()):
                 if k in pv:
                     pv[k] = v
 
@@ -1139,12 +1141,12 @@ class ActionRequest(ActorRequest):
                     if ps is not None:
                         pv.update(ps.parse_params(request))
             else:
-                for k in param_values.keys():
+                for k in list(param_values.keys()):
                     if not k in pv:
                         raise Exception(
                             "Invalid key '%s' in param_values of %s "
                             "request (possible keys are %s)" % (
-                                k, self.actor, pv.keys()))
+                                k, self.actor, list(pv.keys())))
                 pv.update(param_values)
 
             self.param_values = AttrDict(**pv)
@@ -1160,12 +1162,12 @@ class ActionRequest(ActorRequest):
 
     def set_action_param_values(self, **action_param_values):
         apv = self.action_param_values
-        for k in action_param_values.keys():
+        for k in list(action_param_values.keys()):
             if not k in apv:
                 raise Exception(
                     "Invalid key '%s' in action_param_values "
                     "of %s request (possible keys are %s)" %
-                    (k, self.actor, apv.keys()))
+                    (k, self.actor, list(apv.keys())))
         apv.update(action_param_values)
 
     def get_data_iterator(self):

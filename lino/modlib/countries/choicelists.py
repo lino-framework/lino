@@ -9,6 +9,7 @@ Choicelists for `lino.modlib.countries`.
 
 """
 from __future__ import unicode_literals
+from builtins import object
 
 
 from lino.api import dd, rt
@@ -86,7 +87,7 @@ class CountryDriver(object):
         return p and p.type and p.type in self.region_types
 
 
-class CountryDrivers:
+class CountryDrivers(object):
     BE = CountryDriver('21', '50 70')
     EE = CountryDriver('20', '50 51 52 55 61 62 70')
     DE = CountryDriver('10', '50 51 52 70')

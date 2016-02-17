@@ -5,6 +5,7 @@
 """
 Defines models for :mod:`lino.modlib.postings`.
 """
+from builtins import object
 
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import ugettext_lazy as _
@@ -66,7 +67,7 @@ class Postable(dd.Model):
     Mixin for models that provide a "Post" button.
     """
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     create_postings = CreatePostings()

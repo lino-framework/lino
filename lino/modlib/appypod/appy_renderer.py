@@ -12,6 +12,9 @@ See also :ref:`lino.admin.appy_templates`.
 """
 
 from __future__ import unicode_literals
+from __future__ import print_function
+from builtins import map
+from builtins import str
 
 import logging
 logger = logging.getLogger(__name__)
@@ -21,7 +24,7 @@ from copy import copy
 
 from appy.pod.renderer import Renderer as OriginalAppyRenderer
 
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.conf import settings
 
 import odf
@@ -153,12 +156,12 @@ class AppyRenderer(OriginalAppyRenderer):
         try:
             html = html2xhtml(html)
         except Exception as e:
-            print 20150923, e
+            print(20150923, e)
         # logger.debug("20141210 html_func() got:<<<\n%s\n>>>", html)
         # print __file__, ">>>"
         # print html
         # print "<<<", __file__
-        if isinstance(html, unicode):
+        if isinstance(html, str):
             # some sax parsers refuse unicode strings.
             # appy.pod always expects utf-8 encoding.
             # See /blog/2011/0622.
@@ -263,7 +266,7 @@ class AppyRenderer(OriginalAppyRenderer):
     def insert_table_(self, ar, column_names=None, table_width=180):
         ar.setup_from(self.ar)
         columns, headers, widths = ar.get_field_info(column_names)
-        widths = map(int, widths)
+        widths = list(map(int, widths))
         tw = sum(widths)
         # specifying relative widths doesn't seem to work (and that's
         # a pity because absolute widths requires us to know the
@@ -426,8 +429,8 @@ class AppyRenderer(OriginalAppyRenderer):
             tc = TableCell(stylename=cell_style)
             tc.addElement(text.P(
                 stylename="Table Column Header",
-                #~ text=force_unicode(fld.field.verbose_name or fld.name)))
-                text=force_unicode(h)))
+                #~ text=force_text(fld.field.verbose_name or fld.name)))
+                text=force_text(h)))
             hr.addElement(tc)
 
         sums = [fld.zero for fld in columns]
