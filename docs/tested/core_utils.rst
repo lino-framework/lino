@@ -25,7 +25,7 @@ models which are subclass of a given class.
 
 >>> from lino.mixins.duplicable import Duplicable
 >>> rt.models_by_base(Duplicable)
-[<class 'lino.modlib.cal.models.Event'>, <class 'lino.modlib.cal.models.EventType'>, <class 'lino.modlib.cal.models.RemoteCalendar'>, <class 'lino.modlib.excerpts.models.Excerpt'>, <class 'lino.modlib.notes.models.Note'>, <class 'lino.modlib.pages.models.Page'>, <class 'lino.modlib.projects.models.Project'>]
+[<class 'lino.modlib.cal.models.Event'>, <class 'lino.modlib.cal.models.EventType'>, <class 'lino.modlib.cal.models.RemoteCalendar'>, <class 'lino.modlib.countries.models.Place'>, <class 'lino.modlib.excerpts.models.Excerpt'>, <class 'lino.modlib.notes.models.Note'>, <class 'lino.modlib.pages.models.Page'>, <class 'lino.modlib.projects.models.Project'>]
 
 >>> rt.models_by_base(rt.modules.contacts.Partner)
 [<class 'lino.projects.min2.modlib.contacts.models.Company'>, <class 'lino.projects.min2.modlib.contacts.models.Partner'>, <class 'lino.projects.min2.modlib.contacts.models.Person'>, <class 'lino.modlib.households.models.Household'>]
