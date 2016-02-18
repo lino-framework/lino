@@ -1,4 +1,4 @@
-# Copyright 2015 Luc Saffre
+# Copyright 2015-2016 Luc Saffre
 #
 # This file is part of Lino Noi.
 #
@@ -29,7 +29,7 @@ Lino Noi extension of :mod:`lino.modlib.products`.
 from lino.modlib.products import Plugin
 
 
-# class Plugin(Plugin):
+class Plugin(Plugin):
     
-#     extends_models = ['Product']
+    extends_models = ['Product']
 
