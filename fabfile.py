@@ -3,7 +3,7 @@ setup_from_fabfile(globals(), 'lino')
 
 env.locale_dir = 'lino/modlib/lino_startup/locale'
 env.languages = "en de fr et nl pt-br es".split()
-# env.tolerate_sphinx_warnings = True
+env.tolerate_sphinx_warnings = True
 
 add_demo_project('lino.projects.docs.settings.demo')
 add_demo_project('lino.projects.min1.settings.demo')
