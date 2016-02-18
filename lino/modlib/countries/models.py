@@ -94,8 +94,10 @@ class Countries(dd.Table):
     name
     """
 
+from lino.mixins import Hierarchical
 
-class Place(mixins.BabelNamed):
+
+class Place(Hierarchical, mixins.BabelNamed):
     """Any kind of named geographic region (except those who have an entry
     in :class:`Country`.
 
@@ -112,20 +114,17 @@ class Place(mixins.BabelNamed):
     country = models.ForeignKey('countries.Country')
     zip_code = models.CharField(max_length=8, blank=True)
     type = PlaceTypes.field(blank=True)
-    parent = models.ForeignKey(
-        'self',
-        blank=True, null=True,
-        verbose_name=_("Part of"),
-        help_text=_("The superordinate geographic place "
-                    "of which this place is a part."))
+    # parent = models.ForeignKey(
+    #     'self',
+    #     blank=True, null=True,
+    #     verbose_name=_("Part of"),
+    #     help_text=_("The superordinate geographic place "
+    #                 "of which this place is a part."))
 
-    #~ def __unicode__(self):
-        #~ return self.name
-
-    def get_parents(self, *grandparents):
-        if self.parent_id:
-            return self.parent.get_parents(self, *grandparents)
-        return [self] + list(grandparents)
+    # def get_parents(self, *grandparents):
+    #     if self.parent_id:
+    #         return self.parent.get_parents(self, *grandparents)
+    #     return [self] + list(grandparents)
 
     @dd.chooser()
     def type_choices(cls, country):
@@ -143,9 +142,8 @@ class Place(mixins.BabelNamed):
         """
         names = [self.name]
         for lng in settings.SITE.BABEL_LANGS:
-            #~ n = getattr(self,'name_'+lng)
             n = getattr(self, 'name' + lng.suffix)
-            if n and not n in names:
+            if n and n not in names:
                 names.append(n)
                 #~ s += ' / ' + n
         if len(names) == 1:
@@ -156,7 +154,6 @@ class Place(mixins.BabelNamed):
         if True:  # TODO: attribute per type?
             s += " (%s)" % unicode(self.type)
         return s
-        #~ return unicode(self)
 
     @classmethod
     def get_cities(cls, country):
@@ -187,6 +184,11 @@ class Place(mixins.BabelNamed):
                     #~ type__in=cd.city_types).order_by('name')
             #~ return country.place_set.order_by('name')
         #~ return cls.city.field.rel.model.objects.order_by('name')
+
+dd.update_field(
+    Place, 'parent', verbose_name=_("Part of"),
+    help_text=_("The superordinate geographic place "
+                "of which this place is a part."))
 
 
 class Places(dd.Table):
