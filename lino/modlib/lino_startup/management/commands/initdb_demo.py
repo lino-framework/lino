@@ -12,6 +12,7 @@ Calls :manage:`initdb` using the application's
 Introduction see :ref:`lino.tutorial.hello`.
 
 """
+from past.builtins import basestring
 
 from django.conf import settings
 from lino.modlib.lino_startup.management.commands.initdb import Command as BaseCommand

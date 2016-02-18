@@ -6,13 +6,15 @@
 Writes a status report about this Site. 
 Used to monitor a production database. 
 """
+from future import standard_library
+standard_library.install_aliases()
 
 import logging
 logger = logging.getLogger(__name__)
 
 import os
 import errno
-import cPickle as pickle
+import pickle as pickle
 import sys
 from optparse import make_option
 from os.path import join
@@ -46,7 +48,7 @@ def diffs(old, new, prefix=''):
         if old != new:
             yield "%s : %s -> %s" % (prefix, old, new)
         return
-    keys = set(old.keys() + new.keys())
+    keys = set(list(old.keys()) + list(new.keys()))
     keys.discard('timestamp')
     #~ diffs = []
     if prefix:

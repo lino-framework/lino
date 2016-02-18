@@ -1,3 +1,4 @@
+from builtins import str
 # -*- coding: UTF-8 -*-
 # Copyright 2011 Luc Saffre
 # License: BSD (see file COPYING for details)
@@ -96,7 +97,7 @@ def model_overview(model):
     if model_reports:
         s += '\n\nMaster tables: %s\n\n' % rptlist(model_reports)
     if getattr(model, '_lino_slaves', None):
-        s += '\n\nSlave tables: %s\n\n' % rptlist(model._lino_slaves.values())
+        s += '\n\nSlave tables: %s\n\n' % rptlist(list(model._lino_slaves.values()))
         #~ s += '\n\nSlave reports: '
         #~ s += ', '.join([name for name,rpt in model._lino_slaves.items()])
         #~ s += '\n\n'
@@ -165,7 +166,7 @@ class GeneratingCommand(BaseCommand):
         tpl_filename = rt.find_config_file(tplname, self.tmpl_dir)
         if tpl_filename is None:
             raise Exception("No file %s found" % tplname)
-        if isinstance(tpl_filename, unicode):
+        if isinstance(tpl_filename, str):
             tpl_filename = tpl_filename.encode(sys.getfilesystemencoding())
         tpl_filename = os.path.abspath(tpl_filename)
         fn = join(self.output_dir, fn)
@@ -195,7 +196,7 @@ class GeneratingCommand(BaseCommand):
         #~ print 20110315, context
         tpl = CheetahTemplate(file=tpl_filename, namespaces=[context])
         #~ tpl = CheetahTemplate(file(tpl_filename).read(),namespaces=[context])
-        s = unicode(tpl)
+        s = str(tpl)
         #~ print s
         file(fn, 'w').write(s.encode('utf-8'))
         self.generated_count += 1

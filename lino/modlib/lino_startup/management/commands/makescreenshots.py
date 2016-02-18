@@ -5,6 +5,9 @@
 """
 Writes screenshots to <project_dir>/media/cache/screenshots
 """
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
 
 import logging
 logger = logging.getLogger(__name__)
@@ -155,9 +158,9 @@ class Command(BaseCommand):
         # `Django Broken pipe in Debug mode
         # <http://stackoverflow.com/questions/7912672/django-broken-pipe-in-debug-mode>`__::
         # Monkeypatch python not to print "Broken Pipe" errors to stdout.
-        import SocketServer
+        import socketserver
         from wsgiref import handlers
-        SocketServer.BaseServer.handle_error = lambda *args, **kwargs: None
+        socketserver.BaseServer.handle_error = lambda *args, **kwargs: None
         handlers.BaseHandler.log_exception = lambda *args, **kwargs: None
 
         main(force=options['force'])

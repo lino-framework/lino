@@ -42,14 +42,14 @@ def has_key(x, y):
     else:
         return y in x
 
-try:
-    import html.entities
-    import urllib.parse
-    import html.parser
-except ImportError:  # Python3
-    import html.entities as htmlentitydefs
-    import urllib.parse as urlparse
-    import html.parser as HTMLParser
+# try:
+#     import html.entities
+#     import urllib.parse
+#     import html.parser
+# except ImportError:  # Python3
+import html.entities as htmlentitydefs
+import urllib.parse as urlparse
+from html.parser import HTMLParser
 try:  # Python3
     import urllib.request as urllib
 except:
@@ -94,9 +94,9 @@ def name2cp(k):
     if k == 'apos':
         return ord("'")
     if hasattr(htmlentitydefs, "name2codepoint"):  # requires Python 2.3
-        return html.entities.name2codepoint[k]
+        return htmlentitydefs.name2codepoint[k]
     else:
-        k = html.entities.entitydefs[k]
+        k = htmlentitydefs.entitydefs[k]
         if k.startswith("&#") and k.endswith(";"):
             return int(k[2:-1])  # not in latin-1
         return ord(codecs.latin_1_decode(k)[0])
@@ -294,11 +294,10 @@ def list_numbering_start(attrs):
     else:
         return 0
 
-
-class _html2text(html.parser.HTMLParser):
+class _html2text(HTMLParser):
 
     def __init__(self, out=None, baseurl=''):
-        html.parser.HTMLParser.__init__(self)
+        HTMLParser.__init__(self)
 
         if out is None:
             self.out = self.outtextf
@@ -343,7 +342,7 @@ class _html2text(html.parser.HTMLParser):
 
     def feed(self, data):
         data = data.replace("</' + 'script>", "</ignore>")
-        html.parser.HTMLParser.feed(self, data)
+        HTMLParser.feed(self, data)
 
     def outtextf(self, s):
         self.outtextlist.append(s)
@@ -351,7 +350,7 @@ class _html2text(html.parser.HTMLParser):
             self.lastWasNL = s[-1] == '\n'
 
     def close(self):
-        html.parser.HTMLParser.close(self)
+        HTMLParser.close(self)
 
         self.pbr()
         self.o('', 0, 'end')

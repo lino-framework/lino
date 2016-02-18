@@ -4,6 +4,7 @@
 """
 Generate the local files for running :mod:`lino.ui.qx`.
 """
+from __future__ import print_function
 
 import logging
 logger = logging.getLogger(__name__)
@@ -54,7 +55,7 @@ class Command(GeneratingCommand):
     def handle(self, *args, **options):
         #~ options.update(output_dir=QXAPP_PATH)
         if args:
-            print "Warning : ignored arguments", args
+            print("Warning : ignored arguments", args)
         QXAPP_PATH = os.path.join(
             settings.QOOXDOO_PATH, 'lino_apps', settings.SITE.project_name)
         args = [QXAPP_PATH]
@@ -95,7 +96,7 @@ class Command(GeneratingCommand):
         #~ self.generate('Application',application_lines(self))
         for rpt in (dbtables.master_reports
                     + dbtables.slave_reports
-                    + dbtables.generic_slaves.values()):
+                    + list(dbtables.generic_slaves.values())):
             rh = rpt.get_handle()
             #~ js += "Ext.namespace('Lino.%s')\n" % rpt
             #~ f.write("Ext.namespace('Lino.%s')\n" % rpt)

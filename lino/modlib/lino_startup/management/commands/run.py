@@ -40,6 +40,7 @@ about how to run standalone Django scripts
 """
 
 from __future__ import unicode_literals
+from past.builtins import execfile
 
 import sys
 from django.core.management.base import BaseCommand, CommandError
