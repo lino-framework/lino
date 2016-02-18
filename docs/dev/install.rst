@@ -119,8 +119,9 @@ A quick test when you want to see whether Lino is installed is to say
 "hello" to Lino:
 
 .. py2rst::
+   :debug:
 
-    self.shell_block(["python", "-m", "lino.hello"])
+   self.shell_block(["python", "-m", "lino.hello"])
 
 In case you didn't know: Python's `-m
 <https://docs.python.org/2/using/cmdline.html#cmdoption-m>`_
