@@ -1,12 +1,9 @@
-# Copyright 2008-2015 Luc Saffre
+# Copyright 2008-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 """
 Database models for `lino.modlib.products`.
 
-.. autosummary::
-
 """
-
 
 
 from django.db import models
@@ -26,10 +23,7 @@ class ProductCat(mixins.BabelNamed):
         verbose_name_plural = _("Product Categories")
         abstract = dd.is_abstract_model(__name__, 'ProductCat')
 
-    #~ name = dd.BabelCharField(max_length=200)
     description = models.TextField(blank=True)
-    #~ def __unicode__(self):
-        #~ return self.name
 
 
 class ProductCats(dd.Table):
@@ -43,7 +37,8 @@ class ProductCats(dd.Table):
     """
 
 
-class Product(mixins.BabelNamed, mixins.Referrable):
+#class Product(mixins.BabelNamed, mixins.Referrable):
+class Product(mixins.BabelNamed):
 
     class Meta:
         app_label = 'products'
@@ -54,9 +49,9 @@ class Product(mixins.BabelNamed, mixins.Referrable):
     description = dd.BabelTextField(
         verbose_name=_("Long description"),
         blank=True, null=True)
-    cat = models.ForeignKey(ProductCat,
-                            verbose_name=_("Category"),
-                            blank=True, null=True)
+    cat = models.ForeignKey(
+        ProductCat, verbose_name=_("Category"),
+        blank=True, null=True)
 
     if vat:
         vat_class = vat.VatClasses.field(blank=True)
@@ -67,15 +62,15 @@ class Product(mixins.BabelNamed, mixins.Referrable):
 class Products(dd.Table):
     model = 'products.Product'
     order_by = ["id"]
-    column_names = "id ref name cat vat_class *"
+    column_names = "id name cat vat_class *"
 
     insert_layout = """
-    ref cat
+    cat
     name
     """
 
     detail_layout = """
-    id ref cat #sales_price vat_class
+    id cat #sales_price vat_class
     name
     description
     """
