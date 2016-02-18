@@ -1,12 +1,12 @@
 Authors
 =======
 
-Lino is written and maintained by Luc Saffre <luc.saffre@gmail.com>.
+Lino is written and maintained by Luc Saffre <luc.saffre@gmail.com>
+and Hamza Khchine <hamzakhchine@gmail.com>.
 
 Contributors:
 
 - Mahmoud Abbas <sharedup@gmail.com>
 - Flavio Gondin <flvgondin@gmail.com> (:blogref:`20130622`, :blogref:`20130623`)
 - Josef Kejzlar <joe@wpj.cz> (:blogref:`20130701`)
-- Hamza Khchine <hamzakhchine@gmail.com> (:blogref:`20150906`)
 - Sandeep Sawant <sandeepsawant22@gmail.com> (:blogref:`20150610`)
