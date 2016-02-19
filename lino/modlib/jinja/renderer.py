@@ -22,6 +22,7 @@ from lino.utils import format_date
 from lino.utils.xmlgen import html as xghtml
 from lino.utils.xmlgen.html import E
 from lino.utils.jinja import Counter
+from lino.utils import SumCollector
 from lino.core.auth import AnonymousUser
 
 from lino.core.renderer import HtmlRenderer
@@ -121,6 +122,7 @@ class JinjaRenderer(HtmlRenderer):
             rt=rt,
             escape=cgi.escape,
             Counter=Counter,
+            SumCollector=SumCollector,
             # lino=self.modules,  # experimental
             # site_config=self.site_config,
 

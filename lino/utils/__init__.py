@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2015 Luc Saffre
+# Copyright 2009-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """:mod:`lino.utils` (the top-level module) contains a few often-used
@@ -560,7 +560,14 @@ def puts(s):
 class SumCollector(object):
     """A dictionary of sums to be collected using an arbitrary key.
 
-    Usage example:
+    Usage examples:
+
+    >>> sc = SumCollector()
+    >>> sc.collect("a", 12)
+    >>> sc.collect("a", None)
+    >>> sc.collect("a", 5)
+    >>> sc.a
+    17
 
     >>> sc = SumCollector()
     >>> sc.collect("a", 12)
@@ -570,16 +577,27 @@ class SumCollector(object):
     [('a', 46), ('b', 23)]
 
 
+    This is also included in the default context used when rendering
+    Jinja templates (:mod:`lino.modlib.jinja.renderer`), which makes it a
+    more complete solution for a problem asked also elsewhere, e.g. on
+    `Stackoverflow
+    <http://stackoverflow.com/questions/7537439/how-to-increment-a-variable-on-a-for-loop-in-jinja-template>`__.
+
     """
     def __init__(self):
         self._sums = dict()
         self.items = self._sums.items
 
     def collect(self, k, value):
+        if value is None:
+            return
         if k in self._sums:
             self._sums[k] += value
         else:
             self._sums[k] = value
+
+    def __getattr__(self, k):
+        return self._sums.get(k)
 
 
 def _test():
