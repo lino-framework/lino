@@ -593,27 +593,12 @@ class SumCollector(object):
         if value is None:
             return
         if k in self._sums:
-            self._sums[k].collect(value)
+            self._sums[k] += value
         else:
-            self._sums[k] = Sum(value)
-        # return ''
+            self._sums[k] = value
 
     def __getattr__(self, k):
         return self._sums.get(k)
-
-
-class Sum(object):
-    def __init__(self, value):
-        self.value = value
-
-    def collect(self, value):
-        self.value += value
-
-    def __str__(self):
-        return str(self.value)
-
-    def __repr__(self):
-        return repr(self.value)
 
 
 def _test():
