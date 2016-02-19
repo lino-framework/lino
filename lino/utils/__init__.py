@@ -577,10 +577,10 @@ class SumCollector(object):
     [('a', 46), ('b', 23)]
 
 
-    This is also included in the default context used when rendering
-    Jinja templates (:mod:`lino.modlib.jinja.renderer`), which makes it a
-    more complete solution for a problem asked also elsewhere, e.g. on
-    `Stackoverflow
+    This is also included in the default context used by the Jinja
+    renderer (:mod:`lino.modlib.jinja`) when rendering templates,
+    which makes it a more complete solution for a problem asked also
+    elsewhere, e.g. on `Stackoverflow
     <http://stackoverflow.com/questions/7537439/how-to-increment-a-variable-on-a-for-loop-in-jinja-template>`__.
 
     """
@@ -589,15 +589,31 @@ class SumCollector(object):
         self.items = self._sums.items
 
     def collect(self, k, value):
+        """This returns an empty string """
         if value is None:
             return
         if k in self._sums:
-            self._sums[k] += value
+            self._sums[k].collect(value)
         else:
-            self._sums[k] = value
+            self._sums[k] = Sum(value)
+        # return ''
 
     def __getattr__(self, k):
         return self._sums.get(k)
+
+
+class Sum(object):
+    def __init__(self, value):
+        self.value = value
+
+    def collect(self, value):
+        self.value += value
+
+    def __str__(self):
+        return str(self.value)
+
+    def __repr__(self):
+        return repr(self.value)
 
 
 def _test():
