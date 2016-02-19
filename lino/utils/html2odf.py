@@ -92,7 +92,8 @@ Edge case:
 Not yet supported
 =================
 
-Fails if a sequence of paragraph-level items are grouped using a div:
+The following is an example for :ticket:`788`. Conversion fails if a
+sequence of paragraph-level items are grouped using a div:
 
 >>> test(E.div(E.p("Two numbered items:"),
 ...    E.ol(E.li("first"), E.li("second"))))
