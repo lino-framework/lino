@@ -1,7 +1,7 @@
-# Copyright 2014-2015 Luc Saffre
+# Copyright 2014-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""This plugins installs a series of build methods for generating
+"""This plugin installs a series of build methods for generating
 printable documents using LibreOffice.
 
 These build methods require a running LibreOffice server (see
