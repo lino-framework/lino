@@ -31,11 +31,6 @@ class DocsAdminTests(TestCase):
         self.run_simple_doctests('docs/admin/printing.rst')
 
 
-class SpecsTests(LinoTestCase):
-
-    def test_holidays(self):
-        self.run_simple_doctests('docs/specs/holidays.rst')
-
 class DocsTests(LinoTestCase):
 
     # python setup.py test -s tests.DocsTests.test_docs
@@ -53,11 +48,7 @@ class DocsTests(LinoTestCase):
     def test_setup(self):
         self.run_simple_doctests('docs/dev/setup.rst')
 
-    def test_cv(self):
-        self.run_simple_doctests('docs/tested/cv.rst')
-
-    def test_households(self):
-        self.run_simple_doctests('docs/tested/households.rst')
+    #
 
     def test_gfks(self):
         self.run_simple_doctests('docs/tested/gfks.rst')
@@ -175,7 +166,6 @@ class DocsTests(LinoTestCase):
         self.run_django_manage_test("docs/tested/integer_pk")
 
 
-
 class CoreTests(TestCase):
 
     def test_site(self):
@@ -189,7 +179,6 @@ class CoreTests(TestCase):
         args = [sys.executable]
         args += ['lino/core/site.py']
         self.run_subprocess(args)
-
 
     # TODO: implement pseudo tests for QuantityField
     # def test_fields(self):
@@ -300,5 +289,3 @@ class DumpTests(LinoTestCase):
             tmp.rmtree()
             self.run_django_admin_command_cd(p, 'dump2py', tmp)
             self.assertEqual(tmp.child('restore.py').exists(), True)
-
-from . import test_appy_pod

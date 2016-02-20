@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2015 Luc Saffre
+# Copyright 2008-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """The database models and tables for :mod:`lino.modlib.countries`.
@@ -19,7 +19,7 @@ from lino.api import dd
 from lino import mixins
 from django.utils.translation import ugettext_lazy as _
 from lino.modlib.plausibility.choicelists import Checker
-from lino.modlib.contacts.roles import ContactsUser, ContactsStaff
+from lino.modlib.office.roles import OfficeUser, OfficeStaff
 
 config = dd.plugins.countries
 
@@ -82,7 +82,7 @@ class Countries(dd.Table):
     """)
     #~ label = _("Countries")
     model = 'countries.Country'
-    required_roles = dd.login_required(ContactsUser)
+    required_roles = dd.login_required(OfficeUser)
     order_by = ["name", "isocode"]
     column_names = "name isocode *"
     detail_layout = """
@@ -200,7 +200,7 @@ class Places(dd.Table):
     """)
 
     model = 'countries.Place'
-    required_roles = dd.login_required(ContactsStaff)
+    required_roles = dd.login_required(OfficeStaff)
     order_by = "country name".split()
     column_names = "country name type zip_code parent *"
     detail_layout = """

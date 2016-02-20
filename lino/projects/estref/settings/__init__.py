@@ -26,6 +26,6 @@ class Site(Site):
         yield super(Site, self).get_installed_apps()
         yield 'lino.modlib.system'
         yield 'lino.modlib.countries'
-        yield 'lino.modlib.contacts'
+        # yield 'lino.modlib.contacts'
         yield 'lino.projects.estref'
 
