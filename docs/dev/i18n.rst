@@ -13,11 +13,10 @@ document by issuing::
 
 Doctest initialization:
 
->>> import os
->>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.min1.settings.demo'
+>>> from lino import startup
+>>> startup('lino.projects.docs.settings.demo')
 >>> from lino.api.shell import *
 
->>> from django.utils import translation
 >>> from django.utils.translation import ugettext as _
 
 If no language is activated, :func:`ugettext` just returns the English
@@ -29,6 +28,7 @@ u'January'
 In Lino we usually use the :func:`translation.override` context when
 we want to translate:
 
+>>> from django.utils import translation
 >>> with translation.override('fr'):
 ...     _("January")
 u'janvier'

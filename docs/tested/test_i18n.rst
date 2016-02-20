@@ -5,16 +5,15 @@ Code snippets for testing Lino's i18n
 ===================================================
 
 .. to run (almost) only this test:
-  $ python setup.py test -s tests.DocsTests.test_docs
 
-General stuff:
+    $ python setup.py test -s tests.DocsTests.test_docs
 
->>> import os
->>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.i18n.settings'
->>> from lino.api.shell import *
->>> from django.test import Client
->>> client = Client()
->>> ses = settings.SITE.login('robin')
+    Doctest init:
+
+    >>> from lino import startup
+    >>> startup('lino.projects.docs.settings.demo')
+    >>> from lino.api.shell import *
+    
 
 Users Overview in different languages
 =====================================
@@ -28,6 +27,7 @@ all users, we add a filter:
 
 The non-translated result is:
 
+>>> ses = settings.SITE.login('robin')
 >>> ses.show('users.UsersOverview', language='en', **kw)
 ========== =============== ==========
  Username   User Profile    Language

@@ -53,9 +53,6 @@ class DocsTests(LinoTestCase):
     def test_setup(self):
         self.run_simple_doctests('docs/dev/setup.rst')
 
-    def test_cv(self):
-        self.run_simple_doctests('docs/tested/cv.rst')
-
     def test_households(self):
         self.run_simple_doctests('docs/tested/households.rst')
 
