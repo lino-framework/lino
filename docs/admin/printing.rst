@@ -98,10 +98,6 @@ methods:
  latex     latex     LatexBuildMethod
  pisa      pisa      PisaBuildMethod
  rtf       rtf       RtfBuildMethod
- appyodt   appyodt   AppyOdtBuildMethod
- appydoc   appydoc   AppyDocBuildMethod
- appypdf   appypdf   AppyPdfBuildMethod
- appyrtf   appyrtf   AppyRtfBuildMethod
 ========= ========= ====================
 <BLANKLINE>
 

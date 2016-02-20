@@ -130,7 +130,6 @@ lino.modlib.extjs
 lino.modlib.jinja
 lino.modlib.bootstrap3
 lino.modlib.notes
-lino.modlib.appypod
 lino.modlib.printing
 lino.modlib.system
 lino.modlib.users
