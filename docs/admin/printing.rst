@@ -92,13 +92,13 @@ documents from a template.  Here is a list of all available build
 methods:
 
 >>> rt.show('printing.BuildMethods')
-========= ========= ====================
- value     name      text
---------- --------- --------------------
- latex     latex     LatexBuildMethod
- pisa      pisa      PisaBuildMethod
- rtf       rtf       RtfBuildMethod
-========= ========= ====================
+======= ======= ====================
+ value   name    text
+------- ------- --------------------
+ latex   latex   LatexBuildMethod
+ pisa    pisa    PisaBuildMethod
+ rtf     rtf     RtfBuildMethod
+======= ======= ====================
 <BLANKLINE>
 
 
