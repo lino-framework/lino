@@ -1,4 +1,0 @@
-main = 
-    site_company default_build_method
-    sales_base_account
-    sales_vat_account
