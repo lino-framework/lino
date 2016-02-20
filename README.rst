@@ -1,8 +1,3 @@
-|Travis|_
-
-.. |Travis| image:: https://api.travis-ci.org/lsaffre/lino.png?branch=master
-.. _Travis: https://travis-ci.org/lsaffre/lino
-
 ==========================
 lino README
 ==========================
