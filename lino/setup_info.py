@@ -23,8 +23,7 @@ SETUP_INFO = dict(
         'atelier', 'unipath', 'python_dateutil',
         'Babel', 'odfpy>1.3', 'lxml',
         'beautifulsoup4', 'html5lib', 'reportlab==2.7', 'pisa',
-        'jinja2', 'appy', 'pytidylib', 'PyYAML',
-        'fuzzy',  # lino.mixins.dupable
+        'jinja2', 'pytidylib', 'PyYAML',
         'clint',  # lino.modlib.plausibility.management.commands
         'django-localflavor',  # lino.modlib.sepa
         # 'django-iban',  # lino.modlib.sepa
