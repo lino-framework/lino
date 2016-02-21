@@ -6,10 +6,10 @@
 
 from lino.core.roles import UserRole, SiteUser, SiteAdmin
 
-# from lino.modlib.contacts.roles import ContactsUser, ContactsStaff
+from lino.modlib.contacts.roles import ContactsUser, ContactsStaff
 
 
-class OfficeUser(SiteUser):  # ContactsUser
+class OfficeUser(ContactsUser):
     """A user who has access to office functionality like calendar, notes
     and uploads.
 
@@ -26,7 +26,7 @@ class OfficeOperator(SiteUser):
     """
 
 
-class OfficeStaff(OfficeUser, OfficeOperator):  # ContactsStaff
+class OfficeStaff(OfficeUser, OfficeOperator,ContactsStaff):
     """A user who manages configuration of office functionality.
 
     """
