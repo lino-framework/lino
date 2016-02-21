@@ -1,4 +1,4 @@
-from lino.projects.min1.settings import *
+from lino.projects.docs.settings import *
 
 EMAIL_TEMPLATE = """\
 To: {recipients}

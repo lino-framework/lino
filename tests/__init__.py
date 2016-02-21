@@ -62,8 +62,8 @@ class DocsTests(LinoTestCase):
     def test_polly(self):
         self.run_simple_doctests("docs/tested/polly.rst")
 
-    def test_tinymce(self):
-        self.run_simple_doctests("docs/tested/tinymce.rst")
+    # def test_tinymce(self):
+    #     self.run_simple_doctests("docs/tested/tinymce.rst")
 
     def test_core_utils(self):
         self.run_simple_doctests("docs/tested/core_utils.rst")
