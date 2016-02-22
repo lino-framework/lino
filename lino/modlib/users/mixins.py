@@ -85,8 +85,8 @@ class UserAuthored(model.Model):
     <lino.core.users.choicelists.UserProfile.has_required_roles>` of
     the requesting user's profile.
 
-    Usage examples see :class:`lino.modlib.notes.models.Note` or
-    :class:`lino.modlib.cal.models.Component`.
+    Usage examples see :class:`lino_xl.lib.notes.models.Note` or
+    :class:`lino_xl.lib.cal.models.Component`.
 
     """
 
@@ -113,7 +113,7 @@ class UserAuthored(model.Model):
 
     def get_timezone(self):
         """Return the author's timezone. Used by
-        :class:`lino.modlib.cal.mixins.Started`.
+        :class:`lino_xl.lib.cal.mixins.Started`.
 
         """
         if self.user_id is None:
@@ -173,8 +173,8 @@ class My(dbtables.Table):
     """Table mixin for tables on :class:`UserAuthored`.
 
     Used by
-    :mod:`lino.modlib.excerpts` and
-    :mod:`lino.modlib.reception`.
+    :mod:`lino_xl.lib.excerpts` and
+    :mod:`lino_xl.lib.reception`.
     """
 
     @classmethod

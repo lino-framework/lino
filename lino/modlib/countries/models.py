@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2015 Luc Saffre
+# Copyright 2008-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """The database models and tables for :mod:`lino.modlib.countries`.
@@ -22,8 +22,6 @@ from lino import mixins
 from django.utils.translation import ugettext_lazy as _
 from lino.modlib.plausibility.choicelists import Checker
 from lino.modlib.contacts.roles import ContactsUser, ContactsStaff
-
-config = dd.plugins.countries
 
 from .choicelists import PlaceTypes, CountryDrivers
 

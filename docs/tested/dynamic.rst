@@ -12,8 +12,8 @@ This document collects ideas on one possible way for working around
 
 General stuff:
 
->>> import os
->>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.min2.settings.doctests'
+>>> from lino import startup
+>>> startup('lino.projects.docs.settings.doctests')
 >>> from lino.api.doctest import *
 
 

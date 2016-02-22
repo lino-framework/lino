@@ -10,8 +10,8 @@ Django 1.7 complains about clashing fields
     
     doctest init:
 
-    >>> import os
-    >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.min2.settings.doctests'
+    >>> from lino import startup
+    >>> startup('lino.projects.docs.settings.doctests')
     >>> from lino.api.doctest import *
 
 This document describes the main issue in :ticket:`38` (Make Lino run
@@ -83,7 +83,7 @@ field occurs *twice* in the list of fields:
 ...     [f.name for f in Person._meta._get_fields(reverse=False) if not isinstance(f, VirtualField)]
 ... else:
 ...     [f.name for (f, m) in Person._meta.get_fields_with_model()]
-[u'id', 'modified', 'created', 'country', 'city', 'zip_code', 'region', 'addr1', 'street_prefix', 'street', 'street_no', 'street_box', 'addr2', 'name', 'language', 'email', 'url', 'phone', 'gsm', 'fax', 'remarks', u'partner_ptr', 'title', 'first_name', 'middle_name', 'last_name', 'gender', 'birth_date']
+[u'id', 'country', 'city', 'zip_code', 'region', 'addr1', 'street_prefix', 'street', 'street_no', 'street_box', 'addr2', 'name', 'language', 'email', 'url', 'phone', 'gsm', 'fax', 'remarks', u'partner_ptr', 'title', 'first_name', 'middle_name', 'last_name', 'gender', 'birth_date']
 
 See the :meth:`._get_fields` method of
 :class:`django.db.models.options.Options` (in Django 1.7+).

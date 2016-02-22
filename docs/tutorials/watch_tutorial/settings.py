@@ -13,7 +13,7 @@ class Site(Site):
 
         yield super(Site, self).get_installed_apps()
         yield 'lino.modlib.contacts'
-        #~ yield 'lino.modlib.notes'
+        #~ yield 'lino_xl.lib.notes'
         yield 'lino.modlib.changes'
 
         yield 'watch_tutorial'

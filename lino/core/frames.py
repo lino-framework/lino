@@ -30,7 +30,7 @@ class Frame(actors.Actor):
     """Base clase for actors which open a window but, but this window is
     neither a database table nor a detail form.
 
-    Example subclass is :class:`lino.modlib.extensible.CalendarPanel`.
+    Example subclass is :class:`lino_xl.lib.extensible.CalendarPanel`.
 
     """
     _handle_class = FrameHandle

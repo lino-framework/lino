@@ -1,4 +1,4 @@
-# Copyright 2009-2015 Luc Saffre
+# Copyright 2009-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Database models for `lino.modlib.system`.
@@ -22,7 +22,7 @@ from lino.modlib.users.choicelists import UserProfiles
 from lino.api import dd
 from lino.core import actions
 
-from lino.mixins.printable import BuildMethods
+from lino.modlib.printing.choicelists import BuildMethods
 
 from lino.core.roles import SiteStaff
 

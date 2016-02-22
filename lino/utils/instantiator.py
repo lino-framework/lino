@@ -328,7 +328,7 @@ class Instantiator(object):
 
 class InstanceGenerator(object):
     """
-    Usage example see :mod:`lino.modlib.humanlinks.fixtures`.
+    Usage example see :mod:`lino_xl.lib.humanlinks.fixtures`.
     """
     def __init__(self):
         self._objects = []

@@ -1,0 +1,11 @@
+/media/dell1tb/luc/work/lino/lino/mixins/dupable.py:docstring of lino.mixins.dupable.Dupable.submit_insert:1: WARNING: Inline strong start-string without end-string.
+/media/dell1tb/luc/work/lino/lino/modlib/users/choicelists.py:docstring of lino.modlib.users.choicelists.UserProfiles.hidden_languages:1: WARNING: Inline strong start-string without end-string.
+/media/dell1tb/luc/work/lino/lino/utils/djangotest.py:docstring of lino.utils.djangotest.DjangoManageTestCase.override_djangosite_settings:1: WARNING: Inline strong start-string without end-string.
+/media/dell1tb/luc/work/lino/docs/specs/index.rst:11: WARNING: toctree contains reference to nonexisting document u'specs/holidays'
+/media/dell1tb/luc/work/lino/docs/tested/index.rst:7: WARNING: toctree contains reference to nonexisting document u'tested/households'
+/media/dell1tb/luc/work/lino/docs/about/lino_and_django.rst:60: WARNING: undefined label: xl (if the link has no caption the label must precede a section header)
+/media/dell1tb/luc/work/lino/docs/admin/excerpts.rst:7: WARNING: undefined label: xl (if the link has no caption the label must precede a section header)
+/media/dell1tb/luc/work/lino/docs/api/lino.api.doctest.rst:1: WARNING: undefined label: lino.specs.holidays (if the link has no caption the label must precede a section header)
+/media/dell1tb/luc/work/lino/lino/api/doctest.py:docstring of lino.api.doctest.screenshot:1: WARNING: undefined label: lino.specs.holidays (if the link has no caption the label must precede a section header)
+/media/dell1tb/luc/work/lino/docs/dev/ml/excerpts.rst:4: WARNING: undefined label: xl (if the link has no caption the label must precede a section header)
+/media/dell1tb/luc/work/lino/docs/dev/printing.rst:7: WARNING: undefined label: xl (if the link has no caption the label must precede a section header)

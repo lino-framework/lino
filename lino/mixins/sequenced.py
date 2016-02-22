@@ -212,7 +212,7 @@ class Sequenced(Duplicable):
                       product=self.product).order_by('seqno')
 
         Overridden e.g. in
-        :class:`lino.modlib.thirds.models.Third`
+        :class:`lino_xl.lib.thirds.models.Third`
         or
         :class:`lino_welfare.modlib.debts.models.Entry`.
 

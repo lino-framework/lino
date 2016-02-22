@@ -213,7 +213,7 @@ def my_pre_ui_build(sender, **kw):
     try:
         HelpText = rt.modules.gfks.HelpText
         for ht in HelpText.objects.filter(help_text__isnull=False):
-            #~ logger.info("20120629 %s.help_text", ht)
+            # dd.logger.info("20120629 %s.help_text", ht)
             try:
                 dd.resolve_field(str(ht)).help_text = ht.help_text
             except FieldDoesNotExist as e:

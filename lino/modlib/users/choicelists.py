@@ -26,10 +26,10 @@ class UserProfile(Choice):
     """
 
     hidden_languages = None
-    """A subset of :setting:`languages` which should be hidden in this
-    user profile.  Default value is :attr:`hidden_languages
-    <UserProfiles.hidden_languages>`.  This is used on multilingual
-    sites with more than 4 or 5 languages.
+    """A subset of :attr:`languages<lino.core.site.Site.languages>` which
+    should be hidden in this user profile.  Default value is
+    :attr:`hidden_languages<UserProfiles.hidden_languages>`.  This is
+    used on multilingual sites with more than 4 or 5 languages.
 
     """
 
@@ -119,8 +119,9 @@ class UserProfiles(ChoiceList):
     preferred_foreignkey_width = 20
 
     hidden_languages = settings.SITE.hidden_languages
-    """Default value for the :attr:`hidden_languages
-    <UserProfile.hidden_languages>` of newly attached choice item.
+    """Default value for the
+    :attr:`hidden_languages<UserProfile.hidden_languages>` of newly
+    attached choice item.
 
     """
 

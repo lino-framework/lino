@@ -1,4 +1,4 @@
-# Copyright 2015 Luc Saffre
+# Copyright 2015-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Adds printing functionality to your Lino application.
@@ -22,5 +22,5 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("Printing")
 
-    needs_plugins = ['lino.modlib.appypod']
+    # needs_plugins = ['lino_xl.lib.appypod']
 

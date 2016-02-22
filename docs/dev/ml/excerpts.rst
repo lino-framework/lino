@@ -1,4 +1,4 @@
 Exerpts
 =======
 
-Moved to :mod:`lino.modlib.excerpts`.
+Content moved to http://xl.lino-framework.org/specs/excerpts.html

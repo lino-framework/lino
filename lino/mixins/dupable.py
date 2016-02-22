@@ -119,7 +119,7 @@ class Dupable(dd.Model):
     being dupable.  In order to activate verification, you must also
     define a model which implements :class:`PhoneticWordBase` and set
     :attr:`Dupable.dupable_word_model` to point to that model.  This is
-    done by plugins like :mod:`lino.modlib.dupable_partners` or
+    done by plugins like :mod:`lino_xl.lib.dupable_partners` or
     :mod:`lino_welfare.modlib.dupable_clients`
 
     """
@@ -127,11 +127,11 @@ class Dupable(dd.Model):
         abstract = True
 
     submit_insert = CheckedSubmitInsert()
-    """A dupable model has its :attr:`submit_insert
-    <lino.core.model.Model.submit_insert>` action overridden by
-    :class:`CheckedSubmitInsert`, a extended variant of the action
-    which checks for duplicate rows and asks a user confirmation when
-    necessary.
+    """A dupable model has its
+    :attr:`submit_insert<lino.core.model.Model.submit_insert>` action
+    overridden by :class:`CheckedSubmitInsert`, a extended variant of
+    the action which checks for duplicate rows and asks a user
+    confirmation when necessary.
 
     """
 

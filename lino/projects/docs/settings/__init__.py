@@ -41,28 +41,28 @@ class Site(Site):
         yield 'lino.modlib.users'
         yield 'lino.modlib.changes'
         yield 'lino.modlib.languages'
-        # yield 'lino.modlib.countries'
-        yield 'lino.modlib.properties'
+        yield 'lino.modlib.countries'
+        # yield 'lino_xl.lib.properties'
         yield 'lino.modlib.contacts'
-        yield 'lino.modlib.addresses'
-        yield 'lino.modlib.humanlinks'  # requires Person to be Born
+        # yield 'lino_xl.lib.addresses'
+        # yield 'lino_xl.lib.humanlinks'  # requires Person to be Born
 
         yield 'lino.modlib.uploads'
-        yield 'lino.modlib.notes'
-        yield 'lino.modlib.outbox'
-        yield 'lino.modlib.cal'
-        yield 'lino.modlib.extensible'
-        yield 'lino.modlib.reception'
-        yield 'lino.modlib.excerpts'
+        # yield 'lino_xl.lib.notes'
+        # yield 'lino_xl.lib.outbox'
+        # yield 'lino_xl.lib.cal'
+        # yield 'lino_xl.lib.extensible'
+        # yield 'lino_xl.lib.reception'
+        # yield 'lino_xl.lib.excerpts'
         yield 'lino.modlib.polls'
-        yield 'lino.modlib.cv'
-        yield 'lino.modlib.boards'
-        yield 'lino.modlib.postings'
-        yield 'lino.modlib.households'
+        # yield 'lino_xl.lib.cv'
+        # yield 'lino_xl.lib.boards'
+        # yield 'lino_xl.lib.postings'
+        # yield 'lino_xl.lib.households'
 
         yield 'lino.modlib.concepts'
-        yield 'lino.modlib.pages'
-        yield 'lino.modlib.beid'
+        # yield 'lino_xl.lib.pages'
+        # yield 'lino_xl.lib.beid'
         yield 'lino.modlib.tinymce'
         yield 'lino.modlib.export_excel'
 
@@ -70,8 +70,8 @@ class Site(Site):
         super(Site, self).setup_plugins()
         self.plugins.countries.configure(country_code='BE')
 
-    def do_site_startup(self):
-        # lino.modlib.reception requires some workflow to be imported
-        from lino.modlib.cal.workflows import feedback
-        super(Site, self).do_site_startup()
+    # def do_site_startup(self):
+    #     # lino_xl.lib.reception requires some workflow to be imported
+    #     from lino_xl.lib.cal.workflows import feedback
+    #     super(Site, self).do_site_startup()
 

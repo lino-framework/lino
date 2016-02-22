@@ -1,4 +1,6 @@
-from lino.projects.min1.settings import *
+from __future__ import print_function
+
+from lino.projects.docs.settings import *
 
 EMAIL_TEMPLATE = """\
 To: {recipients}
@@ -10,12 +12,14 @@ class Site(Site):
     title = "sendchanges example"
 
     default_user = "robin"
+    user_profiles_module = None
+    # user_profiles_module = 'lino.modlib.office.roles'
 
     def send_email(self, subject, sender, body, recipients):
         # override for this test so that it does not actually send
         # anything.
         recipients = ', '.join(recipients)
-        print EMAIL_TEMPLATE.format(**locals())
+        print(EMAIL_TEMPLATE.format(**locals()))
 
     def do_site_startup(self):
 
@@ -33,6 +37,6 @@ class Site(Site):
         subscribe('john@example.com')
         subscribe('joe@example.com')
 
-SITE = Site(globals(), no_local=True)
+SITE = Site(globals())
 
 DEBUG = True

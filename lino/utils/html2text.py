@@ -4,7 +4,7 @@
 This is an almost unmodified copy of Aaron Swartz's 
 `html2text <http://www.aaronsw.com/2002/html2text/>`.
 
-Lino uses this in :mod:`lino.modlib.outbox`
+Lino uses this in :mod:`lino_xl.lib.outbox`
 for attaching a text version of a generated email.
 
 Modifications:

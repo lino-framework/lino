@@ -45,8 +45,6 @@ from lino.modlib.users.mixins import ByUser, UserAuthored
 from .utils import ResponseStates, PollStates
 from .roles import PollsUser, PollsStaff
 
-config = dd.plugins.polls
-
 NullBooleanField = models.NullBooleanField
 
 

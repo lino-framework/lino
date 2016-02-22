@@ -22,19 +22,14 @@ class LibTests(LinoTestCase):
     def test_users(self):
         self.run_simple_doctests("docs/dev/users.rst")
 
-    def test_cal_utils(self):
-        self.run_simple_doctests('lino/modlib/cal/utils.py')
+    # def test_cal_utils(self):
+    #     self.run_simple_doctests('lino_xl.lib.cal/utils.py')
 
 
 class DocsAdminTests(TestCase):
     def test_printing(self):
         self.run_simple_doctests('docs/admin/printing.rst')
 
-
-class SpecsTests(LinoTestCase):
-
-    def test_holidays(self):
-        self.run_simple_doctests('docs/specs/holidays.rst')
 
 class DocsTests(LinoTestCase):
 
@@ -53,11 +48,7 @@ class DocsTests(LinoTestCase):
     def test_setup(self):
         self.run_simple_doctests('docs/dev/setup.rst')
 
-    def test_cv(self):
-        self.run_simple_doctests('docs/tested/cv.rst')
-
-    def test_households(self):
-        self.run_simple_doctests('docs/tested/households.rst')
+    #
 
     def test_gfks(self):
         self.run_simple_doctests('docs/tested/gfks.rst')
@@ -71,9 +62,6 @@ class DocsTests(LinoTestCase):
     def test_polly(self):
         self.run_simple_doctests("docs/tested/polly.rst")
 
-    def test_tinymce(self):
-        self.run_simple_doctests("docs/tested/tinymce.rst")
-
     def test_core_utils(self):
         self.run_simple_doctests("docs/tested/core_utils.rst")
 
@@ -86,8 +74,8 @@ class DocsTests(LinoTestCase):
     def test_site(self):
         self.run_simple_doctests("docs/dev/site.rst")
 
-    def test_min1(self):
-        self.run_simple_doctests("docs/tested/min1.rst")
+    # def test_min1(self):
+    #     self.run_simple_doctests("docs/tested/min1.rst")
 
     def test_e006(self):
         self.run_simple_doctests("docs/tested/e006.rst")
@@ -175,7 +163,6 @@ class DocsTests(LinoTestCase):
         self.run_django_manage_test("docs/tested/integer_pk")
 
 
-
 class CoreTests(TestCase):
 
     def test_site(self):
@@ -190,7 +177,6 @@ class CoreTests(TestCase):
         args += ['lino/core/site.py']
         self.run_subprocess(args)
 
-
     # TODO: implement pseudo tests for QuantityField
     # def test_fields(self):
     #     self.run_simple_doctests('lino/core/fields.py')
@@ -198,11 +184,8 @@ class CoreTests(TestCase):
 
 class UtilsTests(LinoTestCase):
 
-    def test_01(self):
-        self.run_simple_doctests("""
-        lino/utils/instantiator.py
-        lino/modlib/cal/utils.py
-        """)
+    def test_instantiator(self):
+        self.run_simple_doctests("lino/utils/instantiator.py")
 
     def test_html2odf(self):
         self.run_simple_doctests('lino/utils/html2odf.py')
@@ -276,11 +259,11 @@ class ProjectsTests(LinoTestCase):
     def test_babel_tutorial(self):
         self.run_django_manage_test("lino/projects/babel_tutorial")
 
-    def test_min1(self):
-        self.run_django_manage_test("lino/projects/min1")
+    # def test_min1(self):
+    #     self.run_django_manage_test("lino/projects/min1")
 
-    def test_min2(self):
-        self.run_django_manage_test("lino/projects/min2")
+    # def test_min2(self):
+    #     self.run_django_manage_test("lino/projects/min2")
 
 
 class TestAppsTests(LinoTestCase):
@@ -300,5 +283,3 @@ class DumpTests(LinoTestCase):
             tmp.rmtree()
             self.run_django_admin_command_cd(p, 'dump2py', tmp)
             self.assertEqual(tmp.child('restore.py').exists(), True)
-
-from . import test_appy_pod

@@ -618,7 +618,7 @@ class InstanceAction(object):
         self.bound_action = actor.get_action_by_name(action.action_name)
         if self.bound_action is None:
             raise Exception("%s has not action %r" % (actor, action))
-            # Happened 20131020 from lino.modlib.beid.eid_info() :
+            # Happened 20131020 from lino_xl.lib.beid.eid_info() :
             # When `use_eid_jslib` was False, then
             # `Action.attach_to_actor` returned False.
         self.instance = instance

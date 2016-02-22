@@ -7,7 +7,7 @@ u"""A collection of tools for generating fictive people and addresses.
 This module is used by
 
 - :mod:`lino.modlib.contacts.fixtures.demo`
-- :mod:`lino.modlib.addresses.fixtures.demo2`
+- :mod:`lino_xl.lib.addresses.fixtures.demo2`
 - :mod:`garble <lino.modlib.contacts.management.commands.garble_persons>`
 - :mod:`garble <lino_welfare.modlib.pcsw.management.commands.garble>`
 

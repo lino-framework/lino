@@ -12,11 +12,8 @@ which are part of the test suite.
    min1
    integer_pk/index
    float2decimal/index
-   cv
    core_utils
-   tinymce
    dynamic
-   households
    diamond/index
    diamond2/index
    e006

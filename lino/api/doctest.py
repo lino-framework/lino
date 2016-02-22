@@ -129,7 +129,11 @@ def demo_get(username, url_base, json_fields, expected_rows, **kwargs):
 
 
 def screenshot(obj, filename, rstname, username='robin'):
-    """Usage example in :ref:`lino.specs.holidays`.
+    """Insert a screenshot of the detail window for the given database
+    object.
+
+    Usage example in the source code of
+    http://xl.lino-framework.org/specs/holidays.html.
 
     Problems: doesn't seem to wait long enough and
     therefore produces a white .png file.

@@ -102,7 +102,9 @@ class Partner(mixins.Polymorphic, AddressLocation, Addressable):
 
     remarks = models.TextField(_("Remarks"), blank=True)  # ,null=True)
 
-    print_labels = dd.PrintLabelsAction()
+    quick_search_fields = "name"
+
+    # print_labels = dd.PrintLabelsAction()
 
     def on_create(self, ar):
         self.language = ar.get_user().language

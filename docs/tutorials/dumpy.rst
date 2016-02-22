@@ -64,12 +64,11 @@ defined by the application developer in
 the :attr:`demo_fixtures <lino.core.site.Site.demo_fixtures>` setting.
 The `min1` app has the following demo fixtures:
 
->>> import os
->>> os.environ['DJANGO_SETTINGS_MODULE'] = \
-...    'lino.projects.min1.settings.demo'
+>>> from lino import startup
+>>> startup('lino.projects.docs.settings.demo')
 >>> from django.conf import settings
 >>> settings.SITE.demo_fixtures
-'std demo demo2'
+['std', 'few_countries', 'euvatrates', 'furniture', 'demo', 'demo2']
 
 So the ``initdb_demo`` command above is equivalent to::
   
