@@ -14,7 +14,7 @@ This document tests some functionality of :mod:`lino.core.utils`.
     >>> from __future__ import print_function
     >>> import os
     >>> os.environ['DJANGO_SETTINGS_MODULE'] = \
-    ...    'lino.projects.min2.settings.doctests'
+    ...    'lino.projects.docs.settings.doctests'
     >>> from lino.api.doctest import *
 
 Get installed models which are subclass of a something
@@ -25,13 +25,13 @@ models which are subclass of a given class.
 
 >>> from lino.mixins.duplicable import Duplicable
 >>> rt.models_by_base(Duplicable)
-[<class 'lino.modlib.cal.models.Event'>, <class 'lino.modlib.cal.models.EventType'>, <class 'lino.modlib.cal.models.RemoteCalendar'>, <class 'lino.modlib.countries.models.Place'>, <class 'lino.modlib.excerpts.models.Excerpt'>, <class 'lino.modlib.notes.models.Note'>, <class 'lino.modlib.pages.models.Page'>, <class 'lino.modlib.projects.models.Project'>]
+[<class 'lino.modlib.countries.models.Place'>]
 
 >>> rt.models_by_base(rt.modules.contacts.Partner)
-[<class 'lino.projects.min2.modlib.contacts.models.Company'>, <class 'lino.projects.min2.modlib.contacts.models.Partner'>, <class 'lino.projects.min2.modlib.contacts.models.Person'>, <class 'lino.modlib.households.models.Household'>]
+[<class 'lino.modlib.contacts.models.Company'>, <class 'lino.modlib.contacts.models.Partner'>, <class 'lino.modlib.contacts.models.Person'>]
 
 >>> rt.models_by_base(rt.modules.contacts.Person)
-[<class 'lino.projects.min2.modlib.contacts.models.Person'>]
+[<class 'lino.modlib.contacts.models.Person'>]
 
 .. rubric:: Getting only top-level models
 
@@ -42,8 +42,8 @@ The `toplevel_only` option is used by
 Partner, not also on Person, Company and Household...
 
 >>> rt.models_by_base(rt.modules.contacts.Partner, toplevel_only=True)
-[<class 'lino.projects.min2.modlib.contacts.models.Partner'>]
+[<class 'lino.modlib.contacts.models.Partner'>]
 
 >>> rt.models_by_base(rt.modules.contacts.Person, toplevel_only=True)
-[<class 'lino.projects.min2.modlib.contacts.models.Person'>]
+[<class 'lino.modlib.contacts.models.Person'>]
 

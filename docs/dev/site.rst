@@ -27,7 +27,7 @@ method :meth:`Site.welcome_text`.  It also defines a
 the application starts up.
 
 And then it is designed to be subclassed by the application developer
-(e.g. :class:`lino.projects.min1.settings.Site`), then imported into a
+(e.g. :class:`lino.projects.docs.settings.Site`), then imported into a
 local :xfile:`settings.py`, where a local system administrator may
 subclass it another time.
 
@@ -55,7 +55,7 @@ In other words, Lino is going to automatically set certain Django
 settings. Including for example :setting:`INSTALLED_APPS` and
 :setting:`DATABASES`.  To be precise, here are these settings:
 
->>> from lino.projects.min1.settings import Site
+>>> from lino.projects.docs.settings import Site
 >>> pseudoglobals = {}
 >>> SITE = Site(pseudoglobals, no_local=True)
 >>> sorted(pseudoglobals.keys())
@@ -118,10 +118,10 @@ system administrators in order to specify additional *local apps*
 These will go into the :setting:`INSTALLED_APPS` setting (but
 :class:`Site` will automatically add some).
 
->>> from lino.projects.min1.settings import Site
+>>> from lino.projects.docs.settings import Site
 >>> pseudoglobals = {}
->>> Site(pseudoglobals, "lino.modlib.notes")  #doctest: +ELLIPSIS
-<lino.projects.min1.settings.Site object at ...>
+>>> Site(pseudoglobals, "lino.modlib.events")  #doctest: +ELLIPSIS
+<lino.projects.docs.settings.Site object at ...>
 >>> print('\n'.join(pseudoglobals['INSTALLED_APPS']))
 lino.modlib.lino_startup
 django.contrib.staticfiles
@@ -129,19 +129,24 @@ lino.modlib.about
 lino.modlib.extjs
 lino.modlib.jinja
 lino.modlib.bootstrap3
-lino.modlib.notes
-lino.modlib.appypod
+lino.modlib.events
 lino.modlib.printing
 lino.modlib.system
 lino.modlib.users
+django.contrib.contenttypes
+lino.modlib.gfks
+lino.modlib.notifier
+lino.modlib.changes
+lino.modlib.languages
 lino.modlib.office
 lino.modlib.countries
 lino.modlib.contacts
-django.contrib.contenttypes
-lino.modlib.gfks
-lino.modlib.cal
+lino.modlib.uploads
+lino.modlib.concepts
+lino.modlib.tinymce
 lino.modlib.export_excel
 django.contrib.sessions
+
 
 As an application developer you won't specifiy this argument,
 then you should specify your installed apps by overriding

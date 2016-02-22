@@ -22,8 +22,8 @@ class LibTests(LinoTestCase):
     def test_users(self):
         self.run_simple_doctests("docs/dev/users.rst")
 
-    def test_cal_utils(self):
-        self.run_simple_doctests('lino/modlib/cal/utils.py')
+    # def test_cal_utils(self):
+    #     self.run_simple_doctests('lino/modlib/cal/utils.py')
 
 
 class DocsAdminTests(TestCase):
@@ -62,8 +62,8 @@ class DocsTests(LinoTestCase):
     def test_polly(self):
         self.run_simple_doctests("docs/tested/polly.rst")
 
-    def test_tinymce(self):
-        self.run_simple_doctests("docs/tested/tinymce.rst")
+    # def test_tinymce(self):
+    #     self.run_simple_doctests("docs/tested/tinymce.rst")
 
     def test_core_utils(self):
         self.run_simple_doctests("docs/tested/core_utils.rst")
@@ -77,8 +77,8 @@ class DocsTests(LinoTestCase):
     def test_site(self):
         self.run_simple_doctests("docs/dev/site.rst")
 
-    def test_min1(self):
-        self.run_simple_doctests("docs/tested/min1.rst")
+    # def test_min1(self):
+    #     self.run_simple_doctests("docs/tested/min1.rst")
 
     def test_e006(self):
         self.run_simple_doctests("docs/tested/e006.rst")
@@ -190,7 +190,6 @@ class UtilsTests(LinoTestCase):
     def test_01(self):
         self.run_simple_doctests("""
         lino/utils/instantiator.py
-        lino/modlib/cal/utils.py
         """)
 
     def test_html2odf(self):
@@ -265,11 +264,11 @@ class ProjectsTests(LinoTestCase):
     def test_babel_tutorial(self):
         self.run_django_manage_test("lino/projects/babel_tutorial")
 
-    def test_min1(self):
-        self.run_django_manage_test("lino/projects/min1")
+    # def test_min1(self):
+    #     self.run_django_manage_test("lino/projects/min1")
 
-    def test_min2(self):
-        self.run_django_manage_test("lino/projects/min2")
+    # def test_min2(self):
+    #     self.run_django_manage_test("lino/projects/min2")
 
 
 class TestAppsTests(LinoTestCase):

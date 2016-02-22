@@ -1,2 +1,2 @@
-from lino.projects.min1.settings import *
+from lino.projects.docs.settings import *
 SITE = Site(globals(), title="My Lino site")

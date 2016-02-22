@@ -14,9 +14,8 @@ on a database field, in a *Lino* application you should consider using
 a :class:`ChoiceList <lino.core.choicelists.ChoiceList>` instead.
 
 ..
-    >>> import os
-    >>> os.environ['DJANGO_SETTINGS_MODULE'] = \
-    ...     'lino.projects.min1.settings.doctests'
+    >>> from lino import startup
+    >>> startup('lino.projects.docs.settings.doctests')
     >>> from lino.api.doctest import *
     
 

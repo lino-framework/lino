@@ -10,10 +10,9 @@ Introduction to printable documents
 
    Initialize doctest:
 
-    >>> from __future__ import print_function
-    >>> import os
-    >>> os.environ['DJANGO_SETTINGS_MODULE'] = \
-    ...    'lino.projects.min2.settings.doctests'
+    >>> from lino import startup
+    >>> startup('lino.projects.docs.settings.doctests')
+    >>> from lino.api.shell import *
     >>> from lino.api.doctest import *
     
 
@@ -92,17 +91,13 @@ documents from a template.  Here is a list of all available build
 methods:
 
 >>> rt.show('printing.BuildMethods')
-========= ========= ====================
- value     name      text
---------- --------- --------------------
- latex     latex     LatexBuildMethod
- pisa      pisa      PisaBuildMethod
- rtf       rtf       RtfBuildMethod
- appyodt   appyodt   AppyOdtBuildMethod
- appydoc   appydoc   AppyDocBuildMethod
- appypdf   appypdf   AppyPdfBuildMethod
- appyrtf   appyrtf   AppyRtfBuildMethod
-========= ========= ====================
+======= ======= ==================
+ value   name    text
+------- ------- ------------------
+ latex   latex   LatexBuildMethod
+ pisa    pisa    PisaBuildMethod
+ rtf     rtf     RtfBuildMethod
+======= ======= ==================
 <BLANKLINE>
 
 
