@@ -39,7 +39,7 @@ This also defines a `post_save` handler on :class:`Change
 :attr:`reporter <Ticket.reporter>` and the :attr:`assigned_to
 <Ticket.assigned_to>` worker get automatically notified about any
 change. This is similar to what happens
-:mod:`lino.modlib.stars.models` (but the reporter and the assignee
+:mod:`lino_xl.lib.stars.models` (but the reporter and the assignee
 don't need to star a ticket in order to get notified.
 
 """
@@ -55,11 +55,11 @@ from lino.api import dd, rt, _, pgettext
 
 from lino.utils.xmlgen.html import E
 
-from lino.modlib.cal.mixins import daterange_text
+from lino_xl.lib.cal.mixins import daterange_text
 from lino.modlib.contacts.mixins import ContactRelated
 from lino.modlib.users.mixins import UserAuthored
 from lino.modlib.comments.mixins import RFC
-from lino.modlib.excerpts.mixins import Certifiable
+from lino_xl.lib.excerpts.mixins import Certifiable
 from lino.utils import join_elems
 
 from .choicelists import TicketEvents, TicketStates, LinkTypes

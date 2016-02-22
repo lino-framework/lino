@@ -50,7 +50,7 @@ from lino.api import dd, rt, _, pgettext
 
 from lino.utils.xmlgen.html import E
 
-from lino.modlib.cal.mixins import daterange_text
+from lino_xl.lib.cal.mixins import daterange_text
 from lino.modlib.users.mixins import My
 from lino.utils import join_elems
 

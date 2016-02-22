@@ -14,7 +14,7 @@ class Site(Site):
         """Change the default value of certain plugin settings.
 
         - :attr:`excerpts.responsible_user
-          <lino.modlib.excerpts.Plugin.responsible_user>` is set to
+          <lino_xl.lib.excerpts.Plugin.responsible_user>` is set to
           ``'jean'`` who is both senior developer and site admin in
           the demo database.
 

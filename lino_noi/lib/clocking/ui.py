@@ -33,7 +33,7 @@ from lino.utils.xmlgen.html import E, join_elems
 from lino.utils.quantities import Duration
 from lino.mixins import ObservedPeriod
 
-from lino.modlib.cal.utils import when_text
+from lino_xl.lib.cal.utils import when_text
 
 
 from lino_noi.lib.tickets.choicelists import (TicketEvents,

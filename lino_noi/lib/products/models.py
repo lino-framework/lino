@@ -22,7 +22,7 @@
 """
 
 from lino.api import dd
-from lino.modlib.products.models import *
+from lino_xl.lib.products.models import *
 from lino.mixins import Referrable
 
 
