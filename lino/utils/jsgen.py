@@ -69,6 +69,8 @@ And yet another example (`/blog/2012/0208`)...
 """
 
 from __future__ import unicode_literals
+from builtins import str
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -83,7 +85,7 @@ import threading
 from django.conf import settings
 import json
 from django.utils.functional import Promise
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.db.models.fields import NOT_PROVIDED
 
 from lino.utils import IncompleteDate
@@ -100,7 +102,7 @@ CONVERTERS = []
 
 
 def dict2js(d):
-    return ", ".join(["%s: %s" % (k, py2js(v)) for k, v in d.items()])
+    return ", ".join(["%s: %s" % (k, py2js(v)) for k, v in list(d.items())])
 
 
 def register_converter(func):
@@ -144,7 +146,7 @@ def id2js(s):
     return s.replace('.', '_')
 
 
-class js_code:
+class js_code(object):
 
     "A string that py2js will represent as is, not between quotes."
 
@@ -395,7 +397,7 @@ def declare_vars(v):
                 yield ln
         return
     if isinstance(v, dict):
-        for sub in v.values():
+        for sub in list(v.values()):
             for ln in declare_vars(sub):
                 yield ln
         return
@@ -403,7 +405,7 @@ def declare_vars(v):
             _for_user_profile):
         return
     if isinstance(v, Component):
-        for sub in v.ext_options().values():
+        for sub in list(v.ext_options().values()):
             for ln in declare_vars(sub):
                 yield ln
         # DON'T return
@@ -441,8 +443,8 @@ def py2js(v):
             #~ raise Exception("20120121b %r is of type %s" % (v,type(v)))
         #~ return v
     if isinstance(v, Promise):
-        #~ v = force_unicode(v)
-        return json.dumps(force_unicode(v))
+        #~ v = force_text(v)
+        return json.dumps(force_text(v))
 
     if isinstance(v, types.GeneratorType):
         return "".join([py2js(x) for x in v])
@@ -470,7 +472,7 @@ def py2js(v):
 
     if isinstance(v, dict):  # ) is types.DictType:
         return "{ %s }" % ", ".join([
-            "%s: %s" % (py2js(k), py2js(v)) for k, v in v.items()
+            "%s: %s" % (py2js(k), py2js(v)) for k, v in list(v.items())
             if (not isinstance(v, VisibleComponent))
             or v.get_view_permission(_for_user_profile)
         ])
@@ -479,7 +481,7 @@ def py2js(v):
         return str(v).lower()
     if isinstance(v, Quantity):
         return '"%s"' % v
-    if isinstance(v, (int, long, decimal.Decimal, fractions.Fraction)):
+    if isinstance(v, (int, decimal.Decimal, fractions.Fraction)):
         return str(v)
     if isinstance(v, IncompleteDate):
         return '"%s"' % v.strftime(settings.SITE.date_format_strftime)

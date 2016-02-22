@@ -8,6 +8,8 @@
 
 """
 from __future__ import unicode_literals
+from builtins import str
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -32,7 +34,7 @@ class Country(mixins.BabelNamed):
     """A "country" or "nation".
     """
 
-    class Meta:
+    class Meta(object):
         verbose_name = _("Country")
         verbose_name_plural = _("Countries")
         abstract = dd.is_abstract_model(__name__, 'Country')
@@ -61,7 +63,7 @@ class Country(mixins.BabelNamed):
         cd = getattr(CountryDrivers, self.isocode, None)
         if cd is not None:
             return cd.region_types + cd.city_types
-        return PlaceTypes.items()
+        return list(PlaceTypes.items())
 
     @classmethod
     def get_actual_countries(cls):
@@ -100,7 +102,7 @@ class Place(Hierarchical, mixins.BabelNamed):
     in :class:`Country`.
 
     """
-    class Meta:
+    class Meta(object):
         verbose_name = _("Place")
         verbose_name_plural = _("Places")
         abstract = dd.is_abstract_model(__name__, 'Place')
@@ -150,7 +152,7 @@ class Place(Hierarchical, mixins.BabelNamed):
             s = ' / '.join(names)
             # s = "%s (%s)" % (names[0], ', '.join(names[1:]))
         if True:  # TODO: attribute per type?
-            s += " (%s)" % unicode(self.type)
+            s += " (%s)" % str(self.type)
         return s
 
     @classmethod
@@ -168,7 +170,7 @@ class Place(Hierarchical, mixins.BabelNamed):
             types += cd.city_types
             #~ flt = flt & models.Q(type__in=cd.city_types)
         else:
-            types += [v for v in PlaceTypes.items() if v.value >= '50']
+            types += [v for v in list(PlaceTypes.items()) if v.value >= '50']
             #~ flt = flt & models.Q(type__gte=PlaceTypes.get_by_value('50'))
         flt = flt & models.Q(type__in=types)
         #~ flt = flt | models.Q(type=PlaceTypes.blank_item)

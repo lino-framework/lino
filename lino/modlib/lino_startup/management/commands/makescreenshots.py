@@ -5,6 +5,9 @@
 """
 Writes screenshots to <project_dir>/media/cache/screenshots
 """
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
 
 import logging
 logger = logging.getLogger(__name__)
@@ -23,7 +26,7 @@ from multiprocessing import Process
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.utils import translation
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 from django.core.servers.basehttp import get_internal_wsgi_application
@@ -155,9 +158,9 @@ class Command(BaseCommand):
         # `Django Broken pipe in Debug mode
         # <http://stackoverflow.com/questions/7912672/django-broken-pipe-in-debug-mode>`__::
         # Monkeypatch python not to print "Broken Pipe" errors to stdout.
-        import SocketServer
+        import socketserver
         from wsgiref import handlers
-        SocketServer.BaseServer.handle_error = lambda *args, **kwargs: None
+        socketserver.BaseServer.handle_error = lambda *args, **kwargs: None
         handlers.BaseHandler.log_exception = lambda *args, **kwargs: None
 
         main(force=options['force'])

@@ -1,10 +1,12 @@
 """Database models for `lino.modlib.print_pisa`.
 
 """
+from future import standard_library
+standard_library.install_aliases()
 
 import logging
 import os
-import cStringIO
+import io
 from django.conf import settings
 from ho import pisa
 from lino.core.web import extend_context
@@ -51,11 +53,11 @@ class PrintTableActionPisa(PrintTableAction):
         with open(output_file + '.html', "w") as file:
             file.write(html)
 
-        result = cStringIO.StringIO()
+        result = io.StringIO()
         h = logging.FileHandler(output_file + '.log', 'w')
         pisa.log.addHandler(h)
         pdf = pisa.pisaDocument(
-            cStringIO.StringIO(html), result, encoding='utf-8')
+            io.StringIO(html), result, encoding='utf-8')
         pisa.log.removeHandler(h)
         h.close()
 

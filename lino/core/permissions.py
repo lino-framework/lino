@@ -4,6 +4,8 @@
 """Core tools of Lino's permission system.
 
 """
+from past.builtins import basestring
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)

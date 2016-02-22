@@ -77,6 +77,7 @@ welcome.
 See also :srcref:`docs/tickets/15`
 
 """
+from past.builtins import basestring
 
 import os
 import sys

@@ -9,6 +9,9 @@ The biggest part of this module should actually be moved to
 """
 
 from __future__ import print_function
+from builtins import str
+from past.builtins import basestring
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -97,7 +100,7 @@ def py2html(obj, name):
         obj = obj()
     if getattr(obj, '__iter__', False):
         obj = list(obj)
-    return escape(unicode(obj))
+    return escape(str(obj))
 
 
 class GridColumn(jsgen.Component):
@@ -244,7 +247,7 @@ class LayoutElement(VisibleComponent):
         #~ name = layout_handle.layout._actor_name + '_' + name
         assert isinstance(layout_handle, layouts.LayoutHandle)
         opts = layout_handle.layout._element_options.get(name, {})
-        for k, v in opts.items():
+        for k, v in list(opts.items()):
             if not hasattr(self, k):
                 raise Exception("%s has no attribute %s" % (self, k))
             setattr(self, k, v)
@@ -482,11 +485,11 @@ class FieldElement(LayoutElement):
 
     def as_plain_html(self, ar, obj):
         value = self.value_from_object(obj, ar)
-        text = unicode(value)
+        text = str(value)
         if not text:
             text = " "
         #~ yield E.p(unicode(elem.field.verbose_name),':',E.br(),E.b(text))
-        yield E.label(unicode(self.field.verbose_name))
+        yield E.label(str(self.field.verbose_name))
         yield E.input(type="text", value=text)
         #~ if self.field.help_text:
             #~ yield E.span(unicode(text),class_="help-block")
@@ -673,11 +676,11 @@ class TextFieldElement(FieldElement):
 
     def as_plain_html(self, ar, obj):
         value = self.field.value_from_object(obj)
-        text = unicode(value)
+        text = str(value)
         if not text:
             text = " "
         #~ yield E.p(unicode(elem.field.verbose_name),':',E.br(),E.b(text))
-        yield E.label(unicode(self.field.verbose_name))
+        yield E.label(str(self.field.verbose_name))
         yield E.textarea(text, rows=str(self.preferred_height))
 
     def value2html(self, ar, v, **cellattrs):
@@ -1245,7 +1248,7 @@ class BooleanFieldElement(BooleanMixin, FieldElement):
     def get_field_options(self, **kw):
         kw = FieldElement.get_field_options(self, **kw)
         if not isinstance(self.layout_handle.layout, layouts.ColumnsLayout):
-            if kw.has_key('fieldLabel'):
+            if 'fieldLabel' in kw:
                 del kw['fieldLabel']
             #~ kw.update(hideLabel=True)
 
@@ -1297,7 +1300,7 @@ class SingleRelatedObjectElement(DisplayElement):
         self.relobj = relobj
         self.editable = False
         kw.update(
-            label=unicode(getattr(relobj.model._meta, 'verbose_name', None))
+            label=str(getattr(relobj.model._meta, 'verbose_name', None))
             or relobj.var_name)
         #~ DisplayElement.__init__(self,lh,relobj.field,**kw)
 
@@ -2220,7 +2223,7 @@ def create_layout_element(lh, name, **kw):
         # VirtualTables don't have a model
         model = getattr(lh.rh.actor, 'model', None)
         if getattr(model, '_lino_slaves', None):
-            l += [str(rpt) for rpt in model._lino_slaves.values()]
+            l += [str(rpt) for rpt in list(model._lino_slaves.values())]
         msg += " Possible names are %s." % ', '.join(l)
     else:
         msg = "Unknown element '%s' (%r) referred in layout <%s>." % (
@@ -2240,9 +2243,9 @@ def create_vurt_element(lh, name, vf, **kw):
 def create_meth_element(lh, name, meth, rt, **kw):
     rt.name = name
     rt._return_type_for_method = meth
-    if meth.func_code.co_argcount < 2:
+    if meth.__code__.co_argcount < 2:
         raise Exception("Method %s has %d arguments (must have at least 2)" %
-                        (meth, meth.func_code.co_argcount))
+                        (meth, meth.__code__.co_argcount))
     return create_field_element(lh, rt, **kw)
 
 

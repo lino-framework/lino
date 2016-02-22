@@ -12,6 +12,10 @@ http://www.the-oasis.net/clipper-12.html#ss12.4
 
 http://www.clicketyclick.dk/databases/xbase/format/
 """
+from __future__ import print_function
+from builtins import hex
+from builtins import str
+from builtins import object
 
 import datetime
 from dateutil import parser as dateparser
@@ -48,7 +52,7 @@ def unpack_int_rev(number):
 
 def hex_analyze(number):
     for ch in number:
-        print "%s\t%s\t%d" % (hex(ord(ch)), ch, ord(ch))
+        print("%s\t%s\t%d" % (hex(ord(ch)), ch, ord(ch)))
 
 # def sort_by_key(list,key_func):
 # for ix in range(len(list)):
@@ -64,7 +68,7 @@ def hex_analyze(number):
 # --- A class for the entire file
 
 
-class DBFFile:
+class DBFFile(object):
 
     "Represents a single DBF file."
 
@@ -185,7 +189,7 @@ class DBFFile:
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         rec = self.get_next_record()
         if rec is None:
             raise StopIteration
@@ -198,11 +202,11 @@ class DBFFile:
         return l
 
 
-class NOTGIVEN:
+class NOTGIVEN(object):
     pass
 
 
-class DBFRecord:
+class DBFRecord(object):
 
     def __init__(self, dbf, values, deleted):
         self._recno = dbf.recno
@@ -227,7 +231,7 @@ class DBFRecord:
             if default is NOTGIVEN:
                 raise AttributeError(
                     "No field named %r in %s" %
-                    (name, self._values.keys()))
+                    (name, list(self._values.keys())))
             return default
 
     def get(self, *args, **kw):
@@ -239,7 +243,7 @@ class DBFRecord:
 # --- A class for a single field
 
 
-class DBFField:
+class DBFField(object):
 
     "Represents a field in a DBF file."
 
@@ -314,7 +318,7 @@ class DBFField:
 # --- A class that represents a block file
 
 
-class FPTFile:
+class FPTFile(object):
 
     "Represents an FPT block file"
 
@@ -345,7 +349,7 @@ class FPTFile:
         return data
 
 
-class DBTFile:
+class DBTFile(object):
 
     "Represents a DBT block file"
 
@@ -391,7 +395,7 @@ class DBTFile:
 #     primary key
 
 
-class DBFHash:
+class DBFHash(object):
 
     def __init__(self, file, key):
         self.file = DBFFile(file)
@@ -412,13 +416,13 @@ class DBFHash:
 
 
 def display_info(f):
-    print f.get_version()
-    print f.get_record_count()
-    print f.get_record_len()
+    print(f.get_version())
+    print(f.get_record_count())
+    print(f.get_record_len())
 
     for field in f.get_fields():
-        print "%s: %s (%d)" % (field.get_name(), field.get_type_name(),
-                               field.get_len())
+        print("%s: %s (%d)" % (field.get_name(), field.get_type_name(),
+                               field.get_len()))
 
 
 def make_html(f, out=sys.stdout, skiptypes="MOP"):

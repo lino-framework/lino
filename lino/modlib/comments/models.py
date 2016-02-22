@@ -4,6 +4,8 @@
 """Database models for `lino.modlib.comments`.
 
 """
+from builtins import str
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -41,7 +43,7 @@ class Comment(
 
     ALLOWED_TAGS = ['a', 'b', 'i', 'em']
 
-    class Meta:
+    class Meta(object):
         app_label = 'comments'
         abstract = dd.is_abstract_model(__name__, 'Comment')
         verbose_name = _("Comment")
@@ -67,7 +69,7 @@ class Comment(
                 txt, tags=self.ALLOWED_TAGS, strip=True)]
 
         by = _("{0} by {1}").format(
-            naturaltime(self.created), unicode(self.user)),
+            naturaltime(self.created), str(self.user)),
         chunks += [
             " (", E.tostring(ar.obj2html(self, by)), ")"
         ]

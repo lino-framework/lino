@@ -5,6 +5,8 @@
 """
 
 from __future__ import unicode_literals
+from past.builtins import cmp
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -15,7 +17,7 @@ from django.db import models
 from .utils import full_model_name as fmn
 
 
-class DisableDeleteHandler():
+class DisableDeleteHandler(object):
     """A helper object used to find out whether a known object can be
     deleted or not.
 

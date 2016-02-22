@@ -7,6 +7,7 @@ instructed there).
 :func:`latex_body` deduced from :func:`html_body`.
 
 """
+from __future__ import print_function
 
 #~ import traceback
 from docutils import core, io, nodes, utils
@@ -273,8 +274,8 @@ def rst2odt(input_string, source_path=None, destination_path=None,
         writer=MyWriter(),
         reader=Reader(),
         settings_overrides=overrides)
-    print 20120311, parts.keys()
-    print 20120311, parts['content']
+    print(20120311, list(parts.keys()))
+    print(20120311, parts['content'])
     raise Exception("20120311")
     fragment = parts['whole']
     fragment = parts['html_body']
@@ -405,6 +406,6 @@ A table:
 
 
 """
-    print rst2odt(test)
+    print(rst2odt(test))
     #~ print restify(test)
     #~ print latex_body(test)

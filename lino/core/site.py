@@ -17,6 +17,12 @@
     >>> lino.startup('lino.projects.docs.settings')
 
 """
+from future import standard_library
+standard_library.install_aliases()
+from builtins import map
+from builtins import str
+from past.builtins import basestring
+# from builtins import object
 
 import os
 from os.path import normpath, dirname, join, isdir, relpath, exists
@@ -26,7 +32,7 @@ import warnings
 import collections
 import threading
 from importlib import import_module
-from urllib import urlencode
+from urllib.parse import urlencode
 from lino import AFTER17
 if AFTER17:
     from django.apps import AppConfig
@@ -101,7 +107,7 @@ def configure_plugin(app_label, **kwargs):
 
 
 # from django.db.models.fields import NOT_PROVIDED
-class NOT_PROVIDED:
+class NOT_PROVIDED(object):
     pass
 
 
@@ -1177,7 +1183,7 @@ class Site(object):
 
         #~ logger.info("20130404 lino.site.Site.override_defaults")
 
-        for k, v in kwargs.items():
+        for k, v in list(kwargs.items()):
             if not hasattr(self, k):
                 raise Exception("%s has no attribute %s" % (self.__class__, k))
             setattr(self, k, v)
@@ -1218,7 +1224,7 @@ class Site(object):
         if apps_modifiers:
             raise Exception(
                 "Invalid app_label '{0}' in your get_apps_modifiers!".format(
-                    apps_modifiers.keys()[0]))
+                    list(apps_modifiers.keys())[0]))
 
         # actual_apps = []
         plugins = []
@@ -1597,7 +1603,7 @@ class Site(object):
 
         """
         if False:
-            for name in kwargs.keys():
+            for name in list(kwargs.keys()):
                 if name in self.django_settings:
                     raise Exception(
                         "Tried to define existing Django setting %s" % name)
@@ -1924,7 +1930,7 @@ class Site(object):
         `datetime.date` instance).  See `/blog/2010/1130`.
 
         """
-        ymd = tuple(reversed(map(int, s.split('.'))))
+        ymd = tuple(reversed(list(map(int, s.split('.')))))
         assert len(ymd) == 3
         return ymd
         #~ return datetime.date(*ymd)
@@ -1934,7 +1940,7 @@ class Site(object):
         :attr:`time_format_extjs` into a `datetime.time` instance.
 
         """
-        hms = map(int, s.split(':'))
+        hms = list(map(int, s.split(':')))
         return datetime.time(*hms)
 
     def parse_datetime(self, s):
@@ -1948,8 +1954,8 @@ class Site(object):
         s2 = s.split('T')
         if len(s2) != 2:
             raise Exception("Invalid datetime string %r" % s)
-        ymd = map(int, s2[0].split('-'))
-        hms = map(int, s2[1].split(':'))
+        ymd = list(map(int, s2[0].split('-')))
+        hms = list(map(int, s2[1].split(':')))
         return datetime.datetime(*(ymd + hms))
         #~ d = datetime.date(*self.parse_date(s[0]))
         #~ return datetime.combine(d,t)
@@ -2424,9 +2430,9 @@ class Site(object):
 
         """
         from django.utils import translation
-        for simple, info in self.language_dict.items():
+        for simple, info in list(self.language_dict.items()):
             with translation.override(simple):
-                kw[name + info.suffix] = unicode(txt)
+                kw[name + info.suffix] = str(txt)
         return kw
 
     def babelkw(self, name, **kw):
@@ -2466,7 +2472,7 @@ class Site(object):
         
         """
         d = dict()
-        for simple, info in self.language_dict.items():
+        for simple, info in list(self.language_dict.items()):
             v = kw.get(simple, None)
             if v is not None:
                 d[name + info.suffix] = v
@@ -3196,7 +3202,7 @@ signature as `django.core.mail.EmailMessage`.
         from lino.utils.format_date import fdl
         if sc and sc.city:
             return _("%(place)s, %(date)s") % dict(
-                place=unicode(sc.city.name), date=fdl(today))
+                place=str(sc.city.name), date=fdl(today))
         return fdl(today)
 
     def get_admin_main_items(self, ar):

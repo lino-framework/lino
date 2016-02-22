@@ -4,6 +4,11 @@ http://code.activestate.com/recipes/496882/
 Author: Michael Palmer 13 Jul 2006
 a regex-based JavaScript code compression kludge
 '''
+from __future__ import division
+from __future__ import print_function
+from builtins import range
+from builtins import object
+from past.utils import old_div
 import re
 
 
@@ -101,7 +106,7 @@ class JSCompressor(object):
 
         if self.measureCompression:
             lengthAfter = float(len(script))
-            squeezedBy = int(100 * (1 - lengthAfter / lengthBefore))
+            squeezedBy = int(100 * (1 - old_div(lengthAfter, lengthBefore)))
             script += '\n// squeezed out %s%%\n' % squeezedBy
 
         return script
@@ -134,9 +139,9 @@ if __name__ == '__main__':
     '''
 
     for x in range(1, 3):
-        print '\ncompression level', x, ':\n--------------'
+        print('\ncompression level', x, ':\n--------------')
         c = JSCompressor(compressionLevel=x, measureCompression=True)
         cpr = c.compress(script)
-        print cpr
-        print 'length', len(cpr)
+        print(cpr)
+        print('length', len(cpr))
 # end of http://code.activestate.com/recipes/496882/ }}}

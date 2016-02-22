@@ -1,3 +1,4 @@
+from builtins import object
 # Copyright 2010-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
@@ -29,7 +30,7 @@ class Uploadable(Model):
 
     # file_field_class = models.FileField
 
-    class Meta:
+    class Meta(object):
         abstract = True
         # verbose_name = _("upload")
         # verbose_name_plural = _("uploads")

@@ -6,6 +6,7 @@
 The :term:`dummy module` for `contacts`, 
 used by :func:`lino.core.utils.resolve_app`.
 """
+from builtins import object
 
 
 class Partner(object):

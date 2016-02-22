@@ -7,6 +7,7 @@
 """
 
 from __future__ import unicode_literals
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -27,7 +28,7 @@ class BabelNamed(model.Model):
     
     """
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     name = BabelCharField(max_length=200, verbose_name=_("Designation"))

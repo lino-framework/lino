@@ -7,6 +7,7 @@
 
 """
 from __future__ import unicode_literals
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -53,7 +54,7 @@ class AnonymousUser(object):
                     "Invalid value %r for `SITE.anonymous_user_profile`. "
                     "Must be one of %s" % (
                         settings.SITE.anonymous_user_profile,
-                        [i.value for i in UserProfiles.items()]))
+                        [i.value for i in list(UserProfiles.items())]))
         return cls._instance
 
     def __str__(self):

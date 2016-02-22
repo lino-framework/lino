@@ -28,6 +28,8 @@ Parameter panels:
 """
 
 from __future__ import unicode_literals
+from builtins import str
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -62,7 +64,7 @@ class Registrable(model.Model):
         Every state must have an extra attribute "editable".
 
     """
-    class Meta:
+    class Meta(object):
         abstract = True
 
     workflow_state_field = 'state'
@@ -157,7 +159,7 @@ class Registrable(model.Model):
 
 class Modified(model.Model):
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     modified = models.DateTimeField(_("Modified"), editable=False)
@@ -179,7 +181,7 @@ class Created(model.Model):
         The timestame when this object was created.
 
     """
-    class Meta:
+    class Meta(object):
         abstract = True
 
     created = models.DateTimeField(_("Created"), editable=False)
@@ -204,7 +206,7 @@ class CreatedModified(Created, Modified):
 
     """
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
 
@@ -222,7 +224,7 @@ class ProjectRelated(model.Model):
 
     """
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     if settings.SITE.project_model:
@@ -277,7 +279,7 @@ class Referrable(model.Model):
     """
     Mixin for things that have a unique `ref` field and a `get_by_ref` method.
     """
-    class Meta:
+    class Meta(object):
         abstract = True
 
     ref_max_length = 40
@@ -294,7 +296,7 @@ class Referrable(model.Model):
         except cls.DoesNotExist:
             if default is models.NOT_PROVIDED:
                 raise cls.DoesNotExist(
-                    "No %s with reference %r" % (unicode(cls._meta.verbose_name), ref))
+                    "No %s with reference %r" % (str(cls._meta.verbose_name), ref))
             return default
 
     #~ def __unicode__(self):

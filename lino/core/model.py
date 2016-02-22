@@ -6,6 +6,9 @@
 
 from __future__ import unicode_literals
 from __future__ import print_function
+from builtins import str
+from past.builtins import basestring
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -92,7 +95,7 @@ class Model(models.Model):
 
     """
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     allow_cascaded_delete = frozenset()
@@ -207,7 +210,7 @@ class Model(models.Model):
     _widget_options = {}
 
     def as_list_item(self, ar):
-        return E.li(unicode(self))
+        return E.li(str(self))
 
     @classmethod
     def get_param_elem(model, name):
@@ -309,7 +312,7 @@ class Model(models.Model):
 
         Usage example is :class:`lino.modlib.countries.models.Place`.
         """
-        return unicode(self)
+        return str(self)
 
     def disable_delete(self, ar=None):
         """Decide whether this database object may be deleted.  Return `None`
@@ -414,7 +417,7 @@ class Model(models.Model):
         action to :class: `lino.modlib.users.models.User`.
 
         """
-        for k, v in kw.items():
+        for k, v in list(kw.items()):
             if k in cls.__dict__:
                 raise Exception("Tried to redefine %s.%s" % (cls, k))
             setattr(cls, k, v)
@@ -581,7 +584,7 @@ class Model(models.Model):
         setattr(obj, lookup_field.name, value)
         try:
             obj.full_clean()
-        except ValidationError, e:
+        except ValidationError as e:
             raise ValidationError("Failed to auto_create %s : %s" %
                                   (obj2str(obj), e))
         obj.save()
@@ -684,7 +687,7 @@ class Model(models.Model):
             state = actor.get_row_state(obj)
             if state is not None:
                 #~ l.append(E.b(unicode(state),style="vertical-align:middle;"))
-                l.append(E.b(unicode(state)))
+                l.append(E.b(str(state)))
                 #~ l.append(u" » ")
                 #~ l.append(u" \u25b8 ")
                 #~ l.append(u" \u2192 ")

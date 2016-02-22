@@ -91,6 +91,16 @@ This is another test
 Third test
 
 """
+from __future__ import division
+from __future__ import print_function
+from builtins import chr
+from builtins import hex
+from builtins import next
+from builtins import map
+from builtins import str
+from builtins import range
+from builtins import object
+from past.utils import old_div
 
 #~ import logging
 #~ logger = logging.getLogger(__name__)
@@ -125,7 +135,7 @@ def join_words(*words):
     Remove any empty item (None or ''), call unicode on each and
     join the remaining word using a single space.
     """
-    return ' '.join([unicode(x) for x in words if x])
+    return ' '.join([str(x) for x in words if x])
 
 
 def join_elems(elems, sep=' '):
@@ -172,7 +182,7 @@ def get_class_attr(cl, name):
 def class_dict_items(cl, exclude=None):
     if exclude is None:
         exclude = set()
-    for k, v in cl.__dict__.items():
+    for k, v in list(cl.__dict__.items()):
         if not k in exclude:
             yield k, v
             exclude.add(k)
@@ -205,7 +215,7 @@ def call_on_bases(cls, name, *args, **kw):
         m = getattr(cls, name, None)
         # getattr will also return the classmethod defined on a base class,
         # which has already been called.
-        if m is not None and m.im_class is cls:
+        if m is not None and m.__self__.__class__ is cls:
             m(cls, *args, **kw)
 
     """Note: the following algorithm worked in Python 2.7 but not in 2.6,
@@ -234,7 +244,7 @@ def hex2str(value):
     if len(value) % 2 != 0:
         raise Exception("hex2str got value %r" % value)
     r = ''
-    for i in range(len(value) / 2):
+    for i in range(old_div(len(value), 2)):
         s = value[i * 2:i * 2 + 2]
         h = int(s, 16)
         r += chr(h)
@@ -243,10 +253,10 @@ def hex2str(value):
 # http://snippets.dzone.com/posts/show/2375
 curry = lambda func, *args, **kw:\
     lambda *p, **n:\
-    func(*args + p, **dict(kw.items() + n.items()))
+    func(*args + p, **dict(list(kw.items()) + list(n.items())))
 
 
-class IncompleteDate:
+class IncompleteDate(object):
 
     """
     Naive representation of a potentially incomplete gregorian date.
@@ -332,7 +342,7 @@ class IncompleteDate:
             s = s[1:]
         else:
             bc = False
-        y, m, d = map(int, s.split('-'))
+        y, m, d = list(map(int, s.split('-')))
         if bc:
             y = - y
         return cls(y, m, d)
@@ -423,7 +433,7 @@ def moneyfmt(value, places=2, curr='', sep=',', dp='.',
     q = Decimal(10) ** -places      # 2 places --> '0.01'
     sign, digits, exp = value.quantize(q).as_tuple()
     result = []
-    digits = map(str, digits)
+    digits = list(map(str, digits))
     build, next = result.append, digits.pop
     if sign:
         build(trailneg)
@@ -452,7 +462,7 @@ def unicode_string(x):
     Because the message of an Exception may not be a unicode string.
 
     """
-    return unicode(x).encode(sys.getdefaultencoding(), 'backslashreplace')
+    return str(x).encode(sys.getdefaultencoding(), 'backslashreplace')
     # Python 2.6.6 said "Error in formatting: encode() takes no keyword arguments"
     #~ return unicode(x).encode(errors='backslashreplace')
 
@@ -554,7 +564,7 @@ def puts(s):
     """
     # if isinstance(s, unicode):
     #     print s.encode(locale.getpreferredencoding())
-    print s
+    print(s)
 
 
 class SumCollector(object):

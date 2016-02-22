@@ -1,3 +1,4 @@
+from builtins import object
 from lino.api import dd
 from lino import mixins
 from django.utils.translation import ugettext_lazy as _
@@ -19,7 +20,7 @@ class Product(mixins.BabelNamed):
 
     category = Categories.field(blank=True, null=True)
 
-    class Meta:
+    class Meta(object):
         verbose_name = 'Product'
         verbose_name_plural = 'Products'
 

@@ -25,6 +25,8 @@ Other usages:
 """
 
 from __future__ import unicode_literals
+from builtins import str
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -35,7 +37,7 @@ from django.conf import settings
 from django.db import models
 from django.core import exceptions
 from django.utils.translation import ugettext_lazy as _
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from lino import AFTER17
 
 from lino.utils.jsgen import py2js
@@ -126,7 +128,7 @@ class StoreField(object):
         #~ """
         #~ Add the necessary :term:`odfpy` element(s) to the containing element `tc`.
         #~ """
-        #~ params.update(text=force_unicode(v))
+        #~ params.update(text=force_text(v))
         #~ tc.addElement(odf.text.P(**params))
 
     def parse_form_value(self, v, obj):
@@ -188,7 +190,7 @@ class StoreField(object):
         Return a plain textual representation as a unicode string
         of the given value `v`.   Note that `v` might be `None`.
         """
-        return force_unicode(v)
+        return force_text(v)
 
 
 class RelatedMixin(object):
@@ -255,7 +257,7 @@ class ComboStoreField(StoreField):
                 return (v, ch.get_text_for_value(v, obj))
         for i in self.field.choices:
             if i[0] == v:
-                return (v, unicode(i[1]))
+                return (v, str(i[1]))
         return (v, _("%r (invalid choice)") % v)
 
 
@@ -274,7 +276,7 @@ class ForeignKeyStoreField(RelatedMixin, ComboStoreField):
         if v is None:
             return (None, None)
         else:
-            return (v.pk, unicode(v))
+            return (v.pk, str(v))
 
     def parse_form_value(self, v, obj):
         """Convert the form field value (expected to contain a primary key)
@@ -556,7 +558,7 @@ class BooleanStoreField(StoreField):
         return constants.parse_boolean(v)
 
     def format_value(self, ar, v):
-        return force_unicode(iif(v, _("Yes"), _("No")))
+        return force_text(iif(v, _("Yes"), _("No")))
 
 
 class DisplayStoreField(StoreField):
@@ -571,9 +573,9 @@ class GenericForeignKeyField(DisplayStoreField):
         if v is None:
             return ''
         if ar is None:
-            return unicode(v)
+            return str(v)
         if ar.renderer is None:
-            return unicode(v)
+            return str(v)
         return ar.obj2html(v)
 
 
@@ -685,15 +687,15 @@ class MethodStoreField(StoreField):
 
     def full_value_from_object(self, obj, request):
         unbound_meth = self.field._return_type_for_method
-        assert unbound_meth.func_code.co_argcount >= 2, (self.name,
-                                                         unbound_meth.func_code.co_varnames)
+        assert unbound_meth.__code__.co_argcount >= 2, (self.name,
+                                                         unbound_meth.__code__.co_varnames)
         #~ print self.field.name
         return unbound_meth(obj, request)
 
     def value_from_object(self, obj, request):
         unbound_meth = self.field._return_type_for_method
-        assert unbound_meth.func_code.co_argcount >= 2, (self.name,
-                                                         unbound_meth.func_code.co_varnames)
+        assert unbound_meth.__code__.co_argcount >= 2, (self.name,
+                                                         unbound_meth.__code__.co_varnames)
         #~ print self.field.name
         return unbound_meth(obj, request)
 

@@ -4,13 +4,14 @@
 """Database models for `lino.modlib.comments`.
 
 """
+from builtins import object
 
 from lino.api import dd
 
 
 class RFC(dd.Model):
     """A request for comment. Every database model of an application """
-    class Meta:
+    class Meta(object):
         abstract = True
 
     def get_rfc_description(self, ar):

@@ -103,10 +103,13 @@ Functions
 ---------
 
 """
+from __future__ import division
+from builtins import str
+from past.utils import old_div
 
 
 from django.core.exceptions import ValidationError
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 
 from lino.modlib.system.choicelists import Genders
@@ -190,8 +193,8 @@ def new_format_ssin(s):
         return ''
     if len(s) != 11:
         raise Exception(
-            force_unicode(_('Invalid SSIN %s : ') % s)
-            + force_unicode(_('A raw SSIN must have 11 positions')))
+            force_text(_('Invalid SSIN %s : ') % s)
+            + force_text(_('A raw SSIN must have 11 positions')))
     return s[:2] + '.' + s[2:4] + '.' + s[4:6] + '-' + s[6:9] + '.' + s[9:]
 
 
@@ -218,15 +221,15 @@ def format_ssin(raw_ssin):
         return ''
     if len(raw_ssin) != 11:
         raise ValidationError(
-            force_unicode(_('Invalid SSIN %s : ') % raw_ssin)
-            + force_unicode(_('A raw SSIN must have 11 positions')))
+            force_text(_('Invalid SSIN %s : ') % raw_ssin)
+            + force_text(_('A raw SSIN must have 11 positions')))
     bd = raw_ssin[:6]
     sn = raw_ssin[6:9]
     cd = raw_ssin[9:]
 
     def is_ok(xtest):
         xtest = int(xtest)
-        xtest = abs((xtest - 97 * (int(xtest / 97))) - 97)
+        xtest = abs((xtest - 97 * (int(old_div(xtest, 97)))) - 97)
         if xtest == 0:
             xtest = 97
         return int(cd) == xtest
@@ -236,8 +239,8 @@ def format_ssin(raw_ssin):
     if is_ok('2' + bd + sn):
         return bd + ' ' + sn + YEAR2000 + cd
     raise ValidationError(
-        force_unicode(_('Invalid SSIN %s : ') % raw_ssin)
-        + force_unicode(_('Could not recognize checkdigit')))
+        force_text(_('Invalid SSIN %s : ') % raw_ssin)
+        + force_text(_('Could not recognize checkdigit')))
 
 format_niss = format_ssin
 
@@ -252,8 +255,8 @@ def ssin_validator(ssin):
         return ''
     if len(ssin) != 13:
         raise ValidationError(
-            force_unicode(_('Invalid SSIN %s : ') % ssin)
-            + force_unicode(_('A formatted SSIN must have 13 positions'))
+            force_text(_('Invalid SSIN %s : ') % ssin)
+            + force_text(_('A formatted SSIN must have 13 positions'))
         )
     xtest = ssin[:6] + ssin[7:10]
     if ssin[10] == "=":
@@ -261,15 +264,15 @@ def ssin_validator(ssin):
         xtest = "2" + xtest
     try:
         xtest = int(xtest)
-    except ValueError, e:
+    except ValueError as e:
         raise ValidationError(_('Invalid SSIN %s : ') % ssin + str(e))
-    xtest = abs((xtest - 97 * (int(xtest / 97))) - 97)
+    xtest = abs((xtest - 97 * (int(old_div(xtest, 97)))) - 97)
     if xtest == 0:
         xtest = 97
     found = int(ssin[11:13])
     if xtest != found:
         raise ValidationError(
-            force_unicode(_("Invalid SSIN %s :") % ssin)
+            force_text(_("Invalid SSIN %s :") % ssin)
             + _("Check digit is %(found)d but should be %(expected)d") % dict(
                 expected=xtest, found=found)
         )

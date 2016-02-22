@@ -107,6 +107,7 @@ Article 3.
 '''
 
 from __future__ import print_function
+from builtins import object
 
 
 class Counter(object):

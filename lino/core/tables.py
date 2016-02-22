@@ -6,6 +6,9 @@
 :class:`VirtualTable`.
 
 """
+from __future__ import print_function
+from builtins import str
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -498,7 +501,7 @@ method in order to sort the rows of the queryset.
 
     @classmethod
     def wildcard_data_elems(self):
-        for cc in self.virtual_fields.values():
+        for cc in list(self.virtual_fields.values()):
             yield cc
         #~ return []
 
@@ -629,7 +632,7 @@ method in order to sort the rows of the queryset.
         kw = ar.response
         msg = kw.get('message')
         if msg:
-            print msg
+            print(msg)
         url = kw.get('open_url') or kw.get('open_davlink_url')
         if url:
             os.startfile(url)
@@ -658,7 +661,7 @@ class VentilatingTable(VirtualTable):
 
     @fields.virtualfield(models.CharField(_("Description"), max_length=30))
     def description(self, obj, ar):
-        return unicode(obj)
+        return str(obj)
 
     @classmethod
     def setup_columns(self):

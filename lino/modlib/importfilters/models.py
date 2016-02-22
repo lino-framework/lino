@@ -4,6 +4,8 @@
 """Database models for `lino.modlib.importfilter`.
 
 """
+from builtins import str
+from builtins import object
 
 
 import logging
@@ -13,7 +15,7 @@ logger = logging.getLogger(__name__)
 from django.conf import settings
 from django.contrib.contenttypes import models as contenttypes
 from django.contrib.contenttypes.models import ContentType
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 
 
 from django.db import models
@@ -50,7 +52,7 @@ class Filters(dd.Table):
 
 class Item(mixins.Sequenced):
 
-    class Meta:
+    class Meta(object):
         verbose_name = _("Import Filter Item")
         verbose_name_plural = _("Import Filter Items")
 
@@ -112,7 +114,7 @@ class Import(dd.VirtualTable):
         flt = ar.param_values.filter
         for item in flt.item_set.all():
             kw[item.field] = getattr(obj, item.field)
-        return unicode(kw)
+        return str(kw)
 
     @dd.displayfield(_("obj2unicode"))
     def obj2unicode(cls, obj, ar):

@@ -9,6 +9,8 @@ These include :class:`CountryCity`, :class:`CountryRegionCity` and
 
 """
 from __future__ import unicode_literals
+from builtins import str
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -39,7 +41,7 @@ class CountryCity(dd.Model):
 
 
     """
-    class Meta:
+    class Meta(object):
         abstract = True
 
     country = dd.ForeignKey(
@@ -115,7 +117,7 @@ class CountryRegionCity(CountryCity):
         related_name="%(app_label)s_%(class)s_set_by_region")
         #~ related_name='regions')
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     @dd.chooser()
@@ -172,7 +174,7 @@ class AddressLocation(CountryRegionCity):
         one-line string.
 
     """
-    class Meta:
+    class Meta(object):
         abstract = True
 
     addr1 = models.CharField(
@@ -227,7 +229,7 @@ class AddressLocation(CountryRegionCity):
             kodu = dd.plugins.countries.get_my_country()
             if kodu is None or self.country != kodu:
                 # (if self.country != sender's country)
-                yield unicode(self.country)
+                yield str(self.country)
 
         #~ logger.debug('%s : as_address() -> %r',self,lines)
 

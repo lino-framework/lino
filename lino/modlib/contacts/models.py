@@ -22,6 +22,8 @@
 
 
 from __future__ import unicode_literals
+from builtins import str
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -82,7 +84,7 @@ class Partner(mixins.Polymorphic, AddressLocation, Addressable):
     preferred_foreignkey_width = 20
     # preferred width for ForeignKey fields to a Partner
 
-    class Meta:
+    class Meta(object):
         app_label = 'contacts'  # avoid RemovedInDjango19Warning
         abstract = dd.is_abstract_model(__name__, 'Partner')
         verbose_name = _("Partner")
@@ -149,7 +151,7 @@ but e.g. :class:`Human` overrides this.
     @dd.displayfield(_("Name"))
     def name_column(self, request):
         #~ return join_words(self.last_name.upper(),self.first_name)
-        return unicode(self)
+        return str(self)
 
     def get_partner_instance(self):
         return self  # compatibility with lino.modlib.partners
@@ -164,7 +166,7 @@ but e.g. :class:`Human` overrides this.
             return elems
         buttons = self.get_mti_buttons(ar)
         # buttons = join_elems(buttons, ', ')
-        elems.append(E.p(unicode(_("See as ")), *buttons,
+        elems.append(E.p(str(_("See as ")), *buttons,
                          style="font-size:8px;text-align:right;padding:3pt;"))
         elems += self.get_name_elems(ar)
         elems.append(E.br())
@@ -253,7 +255,7 @@ class Person(Human, Born, Partner):
     See also :ref:`lino.tutorial.human`.
 
     """
-    class Meta:
+    class Meta(object):
         app_label = 'contacts'
         abstract = dd.is_abstract_model(__name__, 'Person')
         verbose_name = _("Person")
@@ -271,7 +273,7 @@ class Person(Human, Born, Partner):
         if name:
             self.name = name
         else:
-            for k, v in name2kw(self.name).items():
+            for k, v in list(name2kw(self.name).items()):
                 setattr(self, k, v)
             # self.last_name = self.name
         super(Person, self).full_clean(*args, **kw)
@@ -319,7 +321,7 @@ class CompanyType(mixins.BabelNamed):
     """A type of organization. Used by :attr:`Company.type` field.
 
     """
-    class Meta:
+    class Meta(object):
         app_label = 'contacts'  # avoid RemovedInDjango19Warning
         abstract = dd.is_abstract_model(__name__, 'CompanyType')
         verbose_name = _("Organization type")
@@ -346,7 +348,7 @@ class Company(Partner):
     Pointer to the :class:`CompanyType`.
 
     """
-    class Meta:
+    class Meta(object):
         abstract = dd.is_abstract_model(__name__, 'Company')
         app_label = 'contacts'
         verbose_name = _("Organization")
@@ -425,7 +427,7 @@ class RoleType(mixins.BabelNamed):
     document templates for contracts.
 
     """
-    class Meta:
+    class Meta(object):
         app_label = 'contacts'  # avoid RemovedInDjango19Warning
         abstract = dd.is_abstract_model(__name__, 'RoleType')
         verbose_name = _("Function")
@@ -446,7 +448,7 @@ class Role(dd.Model, Addressable):
     
     """
 
-    class Meta:
+    class Meta(object):
         app_label = 'contacts'  # avoid RemovedInDjango19Warning
         abstract = dd.is_abstract_model(__name__, 'Role')
         verbose_name = _("Contact Person")
@@ -465,7 +467,7 @@ class Role(dd.Model, Addressable):
         if self.person_id is None:
             return super(Role, self).__unicode__()
         if self.type is None:
-            return unicode(self.person)
+            return str(self.person)
         return u"%s (%s)" % (self.person, self.type)
 
     def address_person_lines(self):

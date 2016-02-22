@@ -5,6 +5,8 @@
 :class:`State` and :class:`Workflow`, :class:`ChangeStateAction`.
 
 """
+from builtins import str
+from past.builtins import basestring
 
 import logging
 logger = logging.getLogger(__name__)
@@ -145,7 +147,7 @@ class Workflow(choicelists.ChoiceList):
     def override_transition(cls, **kw):
         """
         """
-        for name, cl in kw.items():
+        for name, cl in list(kw.items()):
             found = False
             for i, a in enumerate(cls.workflow_actions):
                 if a.action_name == name:

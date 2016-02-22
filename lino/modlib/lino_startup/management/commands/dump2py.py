@@ -58,6 +58,7 @@ SEE ALSO
 """
 
 from __future__ import unicode_literals
+from builtins import str
 
 import logging
 logger = logging.getLogger(__name__)
@@ -223,7 +224,7 @@ def bv2kw(fieldname, values):
                     msg = "%s : model._meta.parents is %r" % (
                         model, model._meta.parents)
                     raise Exception(msg)
-                pm, pf = model._meta.parents.items()[0]
+                pm, pf = list(model._meta.parents.items())[0]
                 child_fields = [f for f in fields if f != pf]
                 if child_fields:
                     attrs = ',' + ','.join([
@@ -372,7 +373,7 @@ if __name__ == '__main__':
             msg += "- " + '\n- '.join([
                 full_model_name(m) + ' (depends on %s)' % ", ".join([
                     full_model_name(d) for d in deps])
-                for m, deps in guilty.items()])
+                for m, deps in list(guilty.items())])
             if False:
                 # we don't write them to the .py file because they are
                 # in random order which would cause false ddt to fail
@@ -412,7 +413,7 @@ if __name__ == '__main__':
             #~ return 'i2d(%4d%02d%02d)' % (d.year,d.month,d.day)
         if isinstance(value, (float, Decimal)):
             return repr(str(value))
-        if isinstance(value, (int, long)):
+        if isinstance(value, int):
             return str(value)
         return repr(field.value_to_string(obj))
 

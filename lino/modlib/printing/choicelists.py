@@ -8,12 +8,15 @@ Choicelists for `lino.modlib.printing`.
 """
 
 from __future__ import unicode_literals
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
 
 import logging
 logger = logging.getLogger(__name__)
 
 import os
-import cStringIO
+import io
 
 from django.conf import settings
 
@@ -132,7 +135,7 @@ class DjangoBuildMethod(BuildMethod):
     def render_template(self, elem, tpl, **context):
         context.update(
             instance=elem,
-            title=unicode(elem),
+            title=str(elem),
             MEDIA_URL=settings.MEDIA_ROOT.replace('\\', '/') + '/',
         )
         return tpl.render(context)
@@ -160,11 +163,11 @@ class PisaBuildMethod(DjangoBuildMethod):
         html = html.encode("utf-8")
         file(filename + '.html', 'w').write(html)
 
-        result = cStringIO.StringIO()
+        result = io.StringIO()
         h = logging.FileHandler(filename + '.log', 'w')
         pisa.log.addHandler(h)
         pdf = pisa.pisaDocument(
-            cStringIO.StringIO(html), result, encoding='utf-8')
+            io.StringIO(html), result, encoding='utf-8')
         pisa.log.removeHandler(h)
         h.close()
         fd = file(filename, 'wb')
@@ -196,7 +199,7 @@ class SimpleBuildMethod(BuildMethod):
             raise Warning(
                 "Invalid template '%s' configured for %s '%s' "
                 "(expected filename ending with '%s')." %
-                (tpl_leaf, elem.__class__.__name__, unicode(elem),
+                (tpl_leaf, elem.__class__.__name__, str(elem),
                  self.template_ext))
 
         lang = elem.get_print_language() \
@@ -258,7 +261,7 @@ class RtfBuildMethod(SimpleBuildMethod):
         t = pyratemp.Template(filename=tpl)
         try:
             result = t(**context)
-        except pyratemp.TemplateRenderError, e:
+        except pyratemp.TemplateRenderError as e:
             raise Exception(u"%s in %s" % (e, tpl))
         fd = file(target, 'wb')
         fd.write(result)

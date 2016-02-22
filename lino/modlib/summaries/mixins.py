@@ -7,6 +7,8 @@
 """
 
 from __future__ import unicode_literals
+from builtins import range
+from builtins import object
 
 from django.db import models
 
@@ -57,7 +59,7 @@ class UpdateSummariesByMaster(dd.Action):
 
 class Summary(dd.Model):
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     # summary_period = 'yearly'

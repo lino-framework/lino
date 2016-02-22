@@ -3,6 +3,8 @@
 # License: BSD (see file COPYING for details)
 """Defines the :class:`MediaFile` class.
 """
+from builtins import str
+from builtins import object
 
 import os
 

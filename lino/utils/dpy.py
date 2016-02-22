@@ -8,12 +8,18 @@ Documented in :ref:`dpy`.
 """
 
 from __future__ import unicode_literals
+from __future__ import print_function
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+from past.builtins import basestring
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
 
 
-from StringIO import StringIO
+from io import StringIO
 import os
 import imp
 from decimal import Decimal
@@ -29,7 +35,7 @@ from django.db import IntegrityError
 from django.db.models.fields import NOT_PROVIDED
 from django.core.serializers import base
 from django.core.exceptions import ValidationError, ObjectDoesNotExist
-from django.utils.encoding import smart_unicode, is_protected_type, force_unicode
+from django.utils.encoding import smart_text, is_protected_type, force_text
 from django.utils import translation
 
 from lino.utils.mldbc.fields import BabelCharField, BabelTextField
@@ -180,7 +186,7 @@ def bv2kw(fieldname,values):
                     msg = "%s : model._meta.parents is %r" % (
                         model, model._meta.parents)
                     raise Exception(msg)
-                pm, pf = model._meta.parents.items()[0]
+                pm, pf = list(model._meta.parents.items())[0]
                 child_fields = [f for f in fields if f != pf]
                 if child_fields:
                     attrs = ', ' + ', '.join([
@@ -299,7 +305,7 @@ def bv2kw(fieldname,values):
             msg = "There are %d models with circular dependencies :\n" % len(
                 unsorted)
             msg += "- " + '\n- '.join([
-                full_model_name(m) + ' (depends on %s)' % ", ".join([full_model_name(d) for d in deps]) for m, deps in guilty.items()])
+                full_model_name(m) + ' (depends on %s)' % ", ".join([full_model_name(d) for d in deps]) for m, deps in list(guilty.items())])
             for ln in msg.splitlines():
                 self.stream.write('\n    # %s' % ln)
             logger.info(msg)
@@ -315,8 +321,8 @@ def bv2kw(fieldname,values):
         #~ self._current = {}
     #~ def end_object(self, obj):
         #~ self.objects.append({
-            #~ "model"  : smart_unicode(obj._meta),
-            #~ "pk"     : smart_unicode(obj._get_pk_val(), strings_only=True),
+            #~ "model"  : smart_text(obj._meta),
+            #~ "pk"     : smart_text(obj._get_pk_val(), strings_only=True),
             #~ "fields" : self._current
         #~ })
         #~ self._current = None
@@ -349,7 +355,7 @@ def bv2kw(fieldname,values):
             #~ return 'i2d(%4d%02d%02d)' % (d.year,d.month,d.day)
         if isinstance(value, (float, Decimal)):
             return repr(str(value))
-        if isinstance(value, (int, long)):
+        if isinstance(value, int):
             return str(value)
         return repr(field.value_to_string(obj))
 
@@ -364,7 +370,7 @@ def bv2kw(fieldname,values):
                     related = related._get_pk_val()
                 else:
                     # Related to remote object via other field
-                    related = smart_unicode(
+                    related = smart_text(
                         getattr(related, field.rel.field_name), strings_only=True)
         self._current[field.name] = related
 
@@ -373,7 +379,7 @@ def bv2kw(fieldname,values):
             if self.use_natural_keys and hasattr(field.rel.model, 'natural_key'):
                 m2m_value = lambda value: value.natural_key()
             else:
-                m2m_value = lambda value: smart_unicode(
+                m2m_value = lambda value: smart_text(
                     value._get_pk_val(), strings_only=True)
             self._current[field.name] = [m2m_value(related)
                                          for related in getattr(obj, field.name).iterator()]
@@ -388,7 +394,7 @@ if SUPPORT_EMPTY_FIXTURES:
 
     class DummyDeserializedObject(base.DeserializedObject):
 
-        class FakeObject:
+        class FakeObject(object):
             _meta = AttrDict(db_table='')
         object = FakeObject()
 
@@ -449,7 +455,7 @@ class FakeDeserializedObject(base.DeserializedObject):
         #~ except ObjectDoesNotExist,e:
         #~ except (ValidationError,ObjectDoesNotExist), e:
         #~ except (ValidationError,ObjectDoesNotExist,IntegrityError), e:
-        except Exception, e:
+        except Exception as e:
             if True:
                 if not settings.SITE.loading_from_dump:
                     # hand-written fixtures are expected to yield in savable
@@ -468,7 +474,7 @@ class FakeDeserializedObject(base.DeserializedObject):
             #~ raise Exception("Failed to save %s. Abandoned." % obj2str(obj))
 
 
-class FlushDeferredObjects:
+class FlushDeferredObjects(object):
 
     """
     Indicator class object.
@@ -498,8 +504,8 @@ class LoaderBase(object):
         """
         while self.saved and self.save_later:
             try_again = []
-            for msg_objlist in self.save_later.values():
-                for objlist in msg_objlist.values():
+            for msg_objlist in list(self.save_later.values()):
+                for objlist in list(msg_objlist.values()):
                     try_again += objlist
             logger.info("Trying to save %d deferred objects.",
                         len(try_again))
@@ -535,7 +541,7 @@ class LoaderBase(object):
         self.count_objects += 1
 
     def register_failure(self, obj, e):
-        msg = force_unicode(e)
+        msg = force_text(e)
         d = self.save_later.setdefault(obj.object.__class__, {})
         l = d.setdefault(msg, [])
         if len(l) == 0:
@@ -574,8 +580,8 @@ data."""
         if self.save_later:
             count = 0
             s = ''
-            for model, msg_objects in self.save_later.items():
-                for msg, objects in msg_objects.items():
+            for model, msg_objects in list(self.save_later.items()):
+                for msg, objects in list(msg_objects.items()):
                     if False:  # detailed content of the first object
                         s += "\n- %s %s (%d object(s), e.g. %s)" % (
                             full_model_name(model), msg, len(objects),
@@ -583,7 +589,7 @@ data."""
                     else:  # pk of all objects
                         s += "\n- %s %s (%d object(s) with primary key %s)" % (
                             full_model_name(model), msg, len(objects),
-                            ', '.join([unicode(o.object.pk) for o in objects]))
+                            ', '.join([str(o.object.pk) for o in objects]))
                     count += len(objects)
 
             msg = "Abandoning with %d unsaved instances:%s" % (count, s)
@@ -630,12 +636,12 @@ class DpyDeserializer(LoaderBase):
         if False:
             parts = fp.name.split(os.sep)
             #~ parts = os.path.split(fp.name)
-            print parts
+            print(parts)
             #~ fqname = parts[-1]
             fqname = '.'.join([p for p in parts if not ':' in p])
             assert fqname.endswith(SUFFIX)
             fqname = fqname[:-len(SUFFIX)]
-            print fqname
+            print(fqname)
         desc = (SUFFIX, 'r', imp.PY_SOURCE)
         logger.info("Loading %s...", fp.name)
 

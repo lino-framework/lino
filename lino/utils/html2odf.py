@@ -110,11 +110,15 @@ IllegalText: The <text:section> element does not allow text
 """
 
 from __future__ import unicode_literals
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+from past.builtins import basestring
 
 import logging
 logger = logging.getLogger(__name__)
 
-from StringIO import StringIO
+from io import StringIO
 
 
 def toxml(node):

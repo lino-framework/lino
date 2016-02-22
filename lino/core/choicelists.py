@@ -2,7 +2,8 @@
 # Copyright 2008-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-ur"""Defines the classes :class:`Choice` and :class:`ChoiceList`.  See
+"""
+Defines the classes :class:`Choice` and :class:`ChoiceList`.  See
 :doc:`/dev/choicelists`.
 
 
@@ -35,7 +36,7 @@ ChoiceListField
 Example on how to use a ChoiceList in your model::
 
   from django.db import models
-  from lino_xl.lib.properties.models import HowWell
+  from lino.modlib.properties.models import HowWell
   
   class KnownLanguage(models.Model):
       spoken = HowWell.field(verbose_name=_("spoken"))
@@ -43,11 +44,16 @@ Example on how to use a ChoiceList in your model::
 
 Every user-defined subclass of ChoiceList is also
 automatically available as a property value in
-:mod:`lino_xl.lib.properties`.
-
+:mod:`lino.modlib.properties`.
 """
 
+from past.builtins import cmp
+from builtins import str
+from past.builtins import basestring
+from builtins import object
+
 import logging
+from future.utils import with_metaclass
 logger = logging.getLogger(__name__)
 
 import warnings
@@ -57,7 +63,6 @@ from django.utils.functional import lazy
 # from django.utils.encoding import force_text
 from django.db import models
 from django.conf import settings
-from django.db.models.fields import NOT_PROVIDED
 
 from atelier.utils import assert_pure
 from lino.utils import unicode_string
@@ -124,11 +129,11 @@ class Choice(object):
         else:
             # assert_pure(text)
             self.text = text
-        for k, v in kwargs.items():
+        for k, v in list(kwargs.items()):
             setattr(self, k, v)
 
     def update(self, **kwargs):
-        for k, v in kwargs.items():
+        for k, v in list(kwargs.items()):
             if not hasattr(self, k):
                 raise Exception("%s has no attribute `%s`" % (self, k))
             setattr(self, k, v)
@@ -162,7 +167,7 @@ class Choice(object):
 
     def __unicode__(self):
         # return force_text(self.text, errors="replace")
-        return unicode(self.text)
+        return str(self.text)
 
     def as_callable(self):
         """Return this as a callable so it can be used as `default` of a
@@ -222,7 +227,7 @@ def get_choicelist(i):
 def choicelist_choices():
     """Return a list of all choicelists defined for this application."""
     l = []
-    for k, v in CHOICELISTS.items():
+    for k, v in list(CHOICELISTS.items()):
         if v.verbose_name_plural is None:
             text = v.__name__
         else:
@@ -266,12 +271,11 @@ class ChoiceListMeta(actors.ActorMetaClass):
 #~ choicelist_column_fields['name'] = fields.VirtualField(models.CharField())
 
 
-class ChoiceList(tables.AbstractTable):
+class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
 
     """
     User-defined choice lists must inherit from this base class.
     """
-    __metaclass__ = ChoiceListMeta
 
     workflow_actions = []
 
@@ -304,9 +308,8 @@ class ChoiceList(tables.AbstractTable):
     """
 
     preferred_width = None
-    """Preferred width (in characters) used by database fields
-    :class:`ChoiceListField <lino.core.fields.ChoiceListField>` for
-    this list.
+    """Preferred width (in characters) used by :class:`fields
+    <lino.core.fields.ChoiceListField>` that refer to this list.
 
     If this is `None`, then Lino calculates the value at startup,
     taking the length of the longest choice text.  The hard-coded
@@ -362,7 +365,7 @@ class ChoiceList(tables.AbstractTable):
 
     @classmethod
     def get_data_rows(self, ar=None):
-        return self.items()
+        return list(self.items())
 
     @classmethod
     def get_actor_label(self):
@@ -377,7 +380,7 @@ class ChoiceList(tables.AbstractTable):
         """
         """
         # remove previously defined choices from class dict:
-        for ci in cls.items_dict.values():
+        for ci in list(cls.items_dict.values()):
             if ci.name:
                 delattr(cls, ci.name)
         cls.items_dict = {}
@@ -428,7 +431,7 @@ class ChoiceList(tables.AbstractTable):
             pw = 4
             for i in cls.get_list_items():
                 dt = cls.display_text(i)
-                pw = max(pw, len(unicode(dt)))
+                pw = max(pw, len(str(dt)))
             cls.preferred_width = pw
 
     @classmethod
@@ -532,15 +535,15 @@ Django creates copies of them when inheriting models.
     def display_text(cls, bc):
         """Override this to customize the display text of choices.
         :class:`lino.modlib.users.choicelists.UserGroups` and
-        :class:`lino_xl.lib.cv.models.CefLevel` used to do this before
+        :class:`lino.modlib.cv.models.CefLevel` used to do this before
         we had the :attr:`ChoiceList.show_values` option.
 
         """
         if cls.show_values:
             def fn(bc):
-                return u"%s (%s)" % (bc.value, unicode(bc))
-            return lazy(fn, unicode)(bc)
-        return lazy(unicode, unicode)(bc)
+                return u"%s (%s)" % (bc.value, str(bc))
+            return lazy(fn, str)(bc)
+        return lazy(str, str)(bc)
 
     @classmethod
     def get_by_name(self, name, *args):
@@ -553,21 +556,26 @@ Django creates copies of them when inheriting models.
             return None
 
     @classmethod
-    def get_by_value(self, value, default=NOT_PROVIDED):
+    def get_by_value(self, value, *args):
         """Return the item (a :class:`Choice` instance) corresponding to the
         specified `value`.
 
         """
         if not isinstance(value, basestring):
             raise Exception("%r is not a string" % value)
-        if default is NOT_PROVIDED:
-            return self.items_dict[value]
-        return self.items_dict.get(value, default)
+        #~ print "get_text_for_value"
+        #~ return self.items_dict.get(value, None)
+        #~ return self.items_dict.get(value)
+        return self.items_dict.get(value, *args)
+
+    #~ @classmethod
+    #~ def items(self):
+        #~ return [choice[0] for choice in self.choices]
 
     @classmethod
     def filter(self, **fkw):
         def f(item):
-            for k, v in fkw.items():
+            for k, v in list(fkw.items()):
                 if getattr(item, k) != v:
                     return False
             return True

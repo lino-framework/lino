@@ -5,6 +5,7 @@
 """Defines the :class:`Language` model.
 
 """
+from builtins import object
 
 
 from django.db import models
@@ -18,7 +19,7 @@ from lino.modlib.office.roles import OfficeUser
 
 class Language(mixins.BabelNamed):
 
-    class Meta:
+    class Meta(object):
         verbose_name = _("Language")
         verbose_name_plural = _("Languages")
         ordering = ['name']

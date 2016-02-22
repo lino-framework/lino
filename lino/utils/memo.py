@@ -127,6 +127,8 @@ The answer is 42.
 <ul><li>1</li><li>2</li><li>3</li><li>4</li><li>5</li></ul>
 
 """
+from builtins import str
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -156,14 +158,14 @@ class Parser(object):
         expr = matchobj.group(1)
         try:
             return self.format_value(eval(expr, self.context))
-        except Exception, e:
+        except Exception as e:
             logger.exception(e)
             return self.handle_error(matchobj, e)
 
     def format_value(self, v):
         if etree.iselement(v):
-            return unicode(etree.tostring(v))
-        return unicode(v)
+            return str(etree.tostring(v))
+        return str(v)
 
     def cmd_match(self, matchobj):
         cmd = matchobj.group(1)

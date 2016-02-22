@@ -27,6 +27,9 @@ instance thereof.
 """
 
 from __future__ import unicode_literals
+from builtins import map
+from builtins import str
+from builtins import object
 
 from django.conf import settings
 from django.db import models
@@ -55,7 +58,7 @@ class CheckedSubmitInsert(SubmitInsert):
             msg = _("There are %d similar %s:") % (
                 len(qs), obj._meta.verbose_name_plural)
             for other in qs:
-                msg += '<br/>\n' + unicode(other)
+                msg += '<br/>\n' + str(other)
 
             msg += '<br/>\n'
             msg += _("Are you sure you want to create a new "
@@ -78,7 +81,7 @@ class PhoneticWordBase(dd.Model):
     of `PhoneticWordBase`.
 
     """
-    class Meta:
+    class Meta(object):
         abstract = True
 
     allow_cascaded_delete = ['owner']
@@ -120,7 +123,7 @@ class Dupable(dd.Model):
     :mod:`lino_welfare.modlib.dupable_clients`
 
     """
-    class Meta:
+    class Meta(object):
         abstract = True
 
     submit_insert = CheckedSubmitInsert()
@@ -193,7 +196,7 @@ class Dupable(dd.Model):
     def get_dupable_words(self, s):
         for c in '-,/&+':
             s = s.replace(c, ' ')
-        return map(self.dupable_word_model.reduce_word, s.split())
+        return list(map(self.dupable_word_model.reduce_word, s.split()))
 
     def find_similar_instances(self, limit=None, **kwargs):
         """Return a queryset or yield a list of similar objects.

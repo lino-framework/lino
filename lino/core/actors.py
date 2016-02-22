@@ -8,8 +8,12 @@ See :doc:`/dev/actors`.
 
 
 """
+from past.builtins import cmp
+from builtins import str
+from past.builtins import basestring
 
 import logging
+from future.utils import with_metaclass
 logger = logging.getLogger(__name__)
 
 from django.db import models
@@ -174,7 +178,7 @@ class ActorMetaClass(type):
                 cls.virtual_fields.update(bd)
 
         if True:  # (20130817) tried to move this to a later moment
-            for k, v in classDict.items():
+            for k, v in list(classDict.items()):
                 cls.register_class_attribute(k, v)
 
         #~ if classname == 'Tasks':
@@ -217,7 +221,7 @@ class ActorMetaClass(type):
         return cls.get_actor_editable()
 
 
-class Actor(actions.Parametrizable, Permittable):
+class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizable, Permittable), {}))):
     """The base class for all actors.  Subclassed by :class:`AbstractTable
     <lino.core.tables.AbstractTable>`, :class:`Table
     <lino.core.dbtables.Table>`, :class:`ChoiceList
@@ -278,7 +282,6 @@ class Actor(actions.Parametrizable, Permittable):
         :xfile:`admin_main.html`).
 
     """
-    __metaclass__ = ActorMetaClass
 
     required_roles = set([SiteUser])
     """See :attr:`lino.core.permissions.Permittable.required_roles`"""
@@ -839,7 +842,7 @@ class Actor(actions.Parametrizable, Permittable):
 
         # bind all my actions, including those inherited from parent actors:
         for b in cls.mro():
-            for k, v in b.__dict__.items():
+            for k, v in list(b.__dict__.items()):
                 # Allow disabling inherited actions by setting them to
                 # None in subclass.
                 v = cls.__dict__.get(k, v)
@@ -882,7 +885,7 @@ class Actor(actions.Parametrizable, Permittable):
         window on a given row of this actor.
 
         """
-        return unicode(obj)
+        return str(obj)
 
     @classmethod
     def get_choices_text(self, obj, request, field):
@@ -940,8 +943,8 @@ class Actor(actions.Parametrizable, Permittable):
         for k in self.simple_parameters:
             v = getattr(ar.param_values, k)
             if v:
-                yield unicode(self.parameters[k].verbose_name) \
-                    + ' ' + unicode(v)
+                yield str(self.parameters[k].verbose_name) \
+                    + ' ' + str(v)
 
     @classmethod
     def setup_request(self, ar):
@@ -1028,7 +1031,7 @@ class Actor(actions.Parametrizable, Permittable):
         """
         Return the text to display on the totals row.
         """
-        return unicode(_("Total (%d rows)") % ar.get_total_count())
+        return str(_("Total (%d rows)") % ar.get_total_count())
 
     @classmethod
     def set_detail_layout(self, *args, **kw):
@@ -1100,7 +1103,7 @@ class Actor(actions.Parametrizable, Permittable):
                             raise NotImplementedError(
                                 "Cannot replace existing %s with added panels %s" % (existing, existing._added_panels))
                         dtl.main += ' ' + \
-                            (' '.join(existing._added_panels.keys()))
+                            (' '.join(list(existing._added_panels.keys())))
                         #~ logger.info('20120914 %s',dtl.main)
                         dtl._added_panels.update(existing._added_panels)
                     dtl._element_options.update(existing._element_options)
@@ -1193,7 +1196,7 @@ class Actor(actions.Parametrizable, Permittable):
 
     @classmethod
     def get_url_action_names(self):
-        return self.actions.keys()
+        return list(self.actions.keys())
 
     @classmethod
     def get_toolbar_actions(self, cf):
@@ -1284,7 +1287,7 @@ class Actor(actions.Parametrizable, Permittable):
 
 
         """
-        for k, pf in self.parameters.items():
+        for k, pf in list(self.parameters.items()):
             # if not isinstance(pf, fields.DummyField):
             kw[k] = pf.get_default()
         return kw

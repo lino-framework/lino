@@ -4,6 +4,7 @@
 """Database models for `lino.modlib.system`.
 
 """
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -12,7 +13,7 @@ from lino import AFTER18
 
 
 from django.conf import settings
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -69,7 +70,7 @@ class SiteConfig(dd.Model):
 
     """
 
-    class Meta:
+    class Meta(object):
         abstract = dd.is_abstract_model(__name__, 'SiteConfig')
         verbose_name = _("Site configuration")
 
@@ -81,12 +82,12 @@ class SiteConfig(dd.Model):
         blank=True, null=True)
 
     def __unicode__(self):
-        return force_unicode(_("Site Parameters"))
+        return force_text(_("Site Parameters"))
 
     def update(self, **kw):
         """Set some field of the SiteConfig object and store it to the database.
         """
-        for k, v in kw.items():
+        for k, v in list(kw.items()):
             if not hasattr(self, k):
                 raise Exception("SiteConfig has no attribute %r" % k)
             setattr(self, k, v)

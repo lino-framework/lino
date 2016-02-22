@@ -20,6 +20,8 @@ responding person for a given Question of the Poll.
 See also :doc:`/tested/polly`.
 
 """
+from builtins import str
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -48,7 +50,7 @@ NullBooleanField = models.NullBooleanField
 
 class ChoiceSet(mixins.BabelNamed):
 
-    class Meta:
+    class Meta(object):
         app_label = 'polls'
         verbose_name = _("Choice Set")
         verbose_name_plural = _("Choice Sets")
@@ -65,7 +67,7 @@ class ChoiceSets(dd.Table):
 
 class Choice(mixins.BabelNamed, mixins.Sequenced):
 
-    class Meta:
+    class Meta(object):
         app_label = 'polls'
         verbose_name = _("Choice")
         verbose_name_plural = _("Choices")
@@ -95,7 +97,7 @@ class ChoicesBySet(Choices):
 
 class Poll(UserAuthored, mixins.CreatedModified, Referrable):
     """A series of questions."""
-    class Meta:
+    class Meta(object):
         app_label = 'polls'
         abstract = dd.is_abstract_model(__name__, 'Poll')
         verbose_name = _("Poll")
@@ -168,7 +170,7 @@ def get_poll_result(self):
     for cs in ChoiceSet.objects.all():
         questions = self.questions.filter(choiceset=cs)
         if questions.count() > 0:
-            yield E.h2(unicode(cs))
+            yield E.h2(str(cs))
             for question in questions:
                 yield E.p(question.text)
 
@@ -218,7 +220,7 @@ class Question(mixins.Sequenced):
 .. attribute:: number
 
     """
-    class Meta:
+    class Meta(object):
         app_label = 'polls'
         verbose_name = _("Question")
         verbose_name_plural = _("Questions")
@@ -323,7 +325,7 @@ class ToggleChoice(dd.Action):
 
 class Response(UserAuthored, mixins.Registrable):
 
-    class Meta:
+    class Meta(object):
         app_label = 'polls'
         verbose_name = _("Response")
         verbose_name_plural = _("Responses")
@@ -426,7 +428,7 @@ class ResponsesByPartner(Responses):
         for poll in visible_polls:
             iar = self.insert_action.request_from(
                 ar, obj, known_values=dict(poll=poll))
-            elems = [unicode(poll), ' : ']
+            elems = [str(poll), ' : ']
             responses = polls_responses.get(poll.pk, [])
             elems += join_elems(
                 [ar.obj2html(r, dd.fds(r.date))
@@ -440,7 +442,7 @@ class ResponsesByPartner(Responses):
 
 class AnswerChoice(dd.Model):
 
-    class Meta:
+    class Meta(object):
         app_label = 'polls'
         verbose_name = _("Answer Choice")
         verbose_name_plural = _("Answer Choices")
@@ -465,7 +467,7 @@ class AnswerChoices(dd.Table):
 
 class AnswerRemark(dd.Model):
 
-    class Meta:
+    class Meta(object):
         app_label = 'polls'
         verbose_name = _("Answer Remark")
         verbose_name_plural = _("Answer Remarks")
@@ -477,7 +479,7 @@ class AnswerRemark(dd.Model):
 
     def __unicode__(self):
         # return _("Remark for {0}").format(self.question)
-        return unicode(self.question)
+        return str(self.question)
 
 
 class AnswerRemarks(dd.Table):
@@ -530,8 +532,8 @@ class AnswersByResponseRow(object):
 
     def __unicode__(self):
         if self.choices.count() == 0:
-            return unicode(_("N/A"))
-        return ', '.join([unicode(ac.choice) for ac in self.choices])
+            return str(_("N/A"))
+        return ', '.join([str(ac.choice) for ac in self.choices])
 
 
 class AnswerRemarkField(dd.VirtualField):
@@ -652,7 +654,7 @@ class AnswersByResponse(dd.VirtualTable):
                         
                 else:
                     other_answer = AnswersByResponseRow(r, answer.question)
-                    items = [unicode(other_answer)]
+                    items = [str(other_answer)]
                     if other_answer.remark.remark:
                         items += [E.br(), answer.remark.remark]
                 cells.append(E.p(*items))
@@ -682,12 +684,12 @@ class AnswersByResponse(dd.VirtualTable):
         # 20151211
         sar.selected_rows = [obj.response]
         if not sar.get_permission():
-            return unicode(obj)
+            return str(obj)
 
         AnswerChoice = rt.modules.polls.AnswerChoice
         for c in cs.choices.all():
             pv.update(choice=c)
-            text = unicode(c)
+            text = str(c)
             qs = AnswerChoice.objects.filter(
                 response=obj.response, **pv)
             if qs.count() == 1:
@@ -758,8 +760,8 @@ class AnswersByQuestionRow(object):
 
     def __unicode__(self):
         if self.choices.count() == 0:
-            return unicode(_("N/A"))
-        return ', '.join([unicode(ac.choice) for ac in self.choices])
+            return str(_("N/A"))
+        return ', '.join([str(ac.choice) for ac in self.choices])
 
 
 class AnswersByQuestion(dd.VirtualTable):
@@ -791,7 +793,7 @@ instances.
 
     @dd.displayfield(_("Answer"))
     def answer(self, obj, ar):
-        return unicode(obj)
+        return str(obj)
 
 
 class PollResult(Questions):
@@ -820,7 +822,7 @@ class PollResult(Questions):
     def a1(self, obj, ar):
         cs = obj.get_choiceset()
         if cs is not None:
-            c = iter(cs.choices.all()).next()
+            c = next(iter(cs.choices.all()))
             #~ return Answer.objects.filter(question=obj,choice=c)
             return AnswerChoices.request(
                 known_values=dict(question=obj, choice=c))

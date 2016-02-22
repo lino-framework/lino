@@ -6,6 +6,8 @@
 Defines some utilities to inspect the running Python code.
 
 """
+from builtins import str
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -23,7 +25,7 @@ def codefiles(pattern='*'):
     """
     #~ exp = re.compile(pattern, flags)
 
-    for name, mod in sys.modules.items():
+    for name, mod in list(sys.modules.items()):
         #~ if name == 'lino.extjs' and pattern == '*':
             #~ logger.info("20130801 %r -> %r", name,mod.__file__)
         if fnmatch.fnmatch(name, pattern):

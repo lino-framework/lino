@@ -12,6 +12,7 @@ Added by LS:
 - support for templates containing non-ascii data
 
 """
+from __future__ import print_function
 import subprocess
 from subprocess import call, PIPE
 #from os import remove, rename
@@ -68,8 +69,8 @@ def process_latex(template, context={}, outtype='pdf', outfile=None):
 
 def pdflatex(outfile, outtype='pdf'):
     dirname, filename = os.path.split(outfile)
-    print "dirname:", dirname
-    print "filename:", filename
+    print("dirname:", dirname)
+    print("filename:", filename)
     subprocess.check_call(
         ['pdflatex', '-interaction=nonstopmode',
          '-output-format', outtype,

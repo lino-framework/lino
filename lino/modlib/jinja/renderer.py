@@ -102,7 +102,7 @@ class JinjaRenderer(HtmlRenderer):
             as_ul=as_ul,
             as_table=as_table2,
             iif=iif,
-            unicode=unicode,
+            str=str,
             len=len,
             E=E,
             ar=None,

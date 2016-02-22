@@ -12,6 +12,14 @@ Modifications:
 - set `UNICODE_SNOB` to 1
 
 """
+from __future__ import division
+from future import standard_library
+standard_library.install_aliases()
+from builtins import chr
+from builtins import str
+from builtins import range
+from builtins import object
+from past.utils import old_div
 __version__ = "3.1"
 __author__ = "Aaron Swartz (me@aaronsw.com)"
 __copyright__ = "(C) 2004-2008 Aaron Swartz. GNU GPL 3."
@@ -30,22 +38,22 @@ except NameError:
 
 def has_key(x, y):
     if hasattr(x, 'has_key'):
-        return x.has_key(y)
+        return y in x
     else:
         return y in x
 
-try:
-    import htmlentitydefs
-    import urlparse
-    import HTMLParser
-except ImportError:  # Python3
-    import html.entities as htmlentitydefs
-    import urllib.parse as urlparse
-    import html.parser as HTMLParser
+# try:
+#     import html.entities
+#     import urllib.parse
+#     import html.parser
+# except ImportError:  # Python3
+import html.entities as htmlentitydefs
+import urllib.parse as urlparse
+from html.parser import HTMLParser
 try:  # Python3
     import urllib.request as urllib
 except:
-    import urllib
+    import urllib.request, urllib.parse, urllib.error
 import optparse
 import re
 import sys
@@ -105,7 +113,7 @@ unifiable = {'rsquo': "'", 'lsquo': "'", 'rdquo': '"', 'ldquo': '"',
 
 unifiable_n = {}
 
-for k in unifiable.keys():
+for k in list(unifiable.keys()):
     unifiable_n[name2cp(k)] = unifiable[k]
 
 
@@ -115,17 +123,17 @@ def charref(name):
     else:
         c = int(name)
 
-    if not UNICODE_SNOB and c in unifiable_n.keys():
+    if not UNICODE_SNOB and c in list(unifiable_n.keys()):
         return unifiable_n[c]
     else:
         try:
-            return unichr(c)
+            return chr(c)
         except NameError:  # Python3
             return chr(c)
 
 
 def entityref(c):
-    if not UNICODE_SNOB and c in unifiable.keys():
+    if not UNICODE_SNOB and c in list(unifiable.keys()):
         return unifiable[c]
     else:
         try:
@@ -134,7 +142,7 @@ def entityref(c):
             return "&" + c + ';'
         else:
             try:
-                return unichr(name2cp(c))
+                return chr(name2cp(c))
             except NameError:  # Python3
                 return chr(name2cp(c))
 
@@ -246,7 +254,7 @@ def google_nest_count(style):
     """calculate the nesting count of google doc lists"""
     nest_count = 0
     if 'margin-left' in style:
-        nest_count = int(style['margin-left'][:-2]) / GOOGLE_LIST_INDENT
+        nest_count = old_div(int(style['margin-left'][:-2]), GOOGLE_LIST_INDENT)
     return nest_count
 
 
@@ -286,11 +294,10 @@ def list_numbering_start(attrs):
     else:
         return 0
 
-
-class _html2text(HTMLParser.HTMLParser):
+class _html2text(HTMLParser):
 
     def __init__(self, out=None, baseurl=''):
-        HTMLParser.HTMLParser.__init__(self)
+        HTMLParser.__init__(self)
 
         if out is None:
             self.out = self.outtextf
@@ -299,7 +306,7 @@ class _html2text(HTMLParser.HTMLParser):
         # empty list to store output characters before they are  "joined"
         self.outtextlist = []
         try:
-            self.outtext = unicode()
+            self.outtext = str()
         except NameError:  # Python3
             self.outtext = str()
         self.quiet = 0
@@ -335,7 +342,7 @@ class _html2text(HTMLParser.HTMLParser):
 
     def feed(self, data):
         data = data.replace("</' + 'script>", "</ignore>")
-        HTMLParser.HTMLParser.feed(self, data)
+        HTMLParser.feed(self, data)
 
     def outtextf(self, s):
         self.outtextlist.append(s)
@@ -343,7 +350,7 @@ class _html2text(HTMLParser.HTMLParser):
             self.lastWasNL = s[-1] == '\n'
 
     def close(self):
-        HTMLParser.HTMLParser.close(self)
+        HTMLParser.close(self)
 
         self.pbr()
         self.o('', 0, 'end')
@@ -741,7 +748,7 @@ class _html2text(HTMLParser.HTMLParser):
                 for link in self.a:
                     if self.outcount > link['outcount']:
                         self.out("   [" + str(link['count']) + "]: " +
-                                 urlparse.urljoin(self.baseurl, link['href']))
+                                 urllib.parse.urljoin(self.baseurl, link['href']))
                         if has_key(link, 'title'):
                             self.out(" (" + link['title'] + ")")
                         self.out("\n")
@@ -755,7 +762,7 @@ class _html2text(HTMLParser.HTMLParser):
                 self.a = newa
 
             if self.abbr_list and force == "end":
-                for abbr, definition in self.abbr_list.items():
+                for abbr, definition in list(self.abbr_list.items()):
                     self.out("  *[" + abbr + "]: " + definition + "\n")
 
             self.p_p = 0
@@ -794,7 +801,7 @@ def html2text(html, baseurl=''):
     return optwrap(html2text_file(html, None, baseurl))
 
 
-class Storage:
+class Storage(object):
     pass
 options = Storage()
 options.google_doc = False
@@ -841,7 +848,7 @@ if __name__ == "__main__":
 
         if file_.startswith('http://') or file_.startswith('https://'):
             baseurl = file_
-            j = urllib.urlopen(baseurl)
+            j = urllib.request.urlopen(baseurl)
             text = j.read()
             if encoding is None:
                 try:

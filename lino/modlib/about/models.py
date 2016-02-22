@@ -5,6 +5,9 @@
 Database models for `lino.modlib.about`.
 
 """
+from past.builtins import cmp
+from builtins import str
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -54,7 +57,7 @@ class Models(dd.VirtualTable):
 
     @classmethod
     def summary_row(cls, ar, obj, **kw):
-        return [unicode(obj._meta.verbose_name_plural)]
+        return [str(obj._meta.verbose_name_plural)]
 
     @dd.displayfield(_("app_label"))
     def app(self, obj, ar):
@@ -106,12 +109,12 @@ class FieldsByModel(dd.VirtualTable):
 
     @dd.displayfield(_("verbose name"))
     def verbose_name(self, fld, ar):
-        return unicode(fld.vebose_name)
+        return str(fld.vebose_name)
 
     @dd.displayfield(_("help text"))
     def help_text_column(self, obj, ar):
         #~ return obj.__doc__
-        return restify(unicode(obj.help_text))
+        return restify(str(obj.help_text))
 
 
 class Inspected(object):
@@ -148,7 +151,7 @@ class Inspector(dd.VirtualTable):
             return settings
         try:
             o = eval('settings.' + name)
-        except Exception, e:
+        except Exception as e:
             o = e
         return o
 
@@ -175,7 +178,7 @@ class Inspector(dd.VirtualTable):
                     types.UnboundMethodType,
                     types.UnboundMethodType,
                     types.BuiltinMethodType,
-                    types.BuiltinFunctionType,
+                    types.BuiltinFunctionType
                 )):
                     return False
                 return True
@@ -186,10 +189,10 @@ class Inspector(dd.VirtualTable):
                 k = "[" + str(i) + "]"
                 yield Inspected(o, '', k, v)
         elif isinstance(o, AttrDict):
-            for k, v in o.items():
+            for k, v in list(o.items()):
                 yield Inspected(o, '.', k, v)
         elif isinstance(o, dict):
-            for k, v in o.items():
+            for k, v in list(o.items()):
                 k = "[" + repr(k) + "]"
                 yield Inspected(o, '', k, v)
         else:
@@ -220,7 +223,7 @@ class Inspector(dd.VirtualTable):
 
     @dd.displayfield(_("Value"))
     def i_value(self, obj, ar):
-        return cgi.escape(unicode(obj.value))
+        return cgi.escape(str(obj.value))
 
     @dd.displayfield(_("Type"))
     def i_type(self, obj, ar):
@@ -249,7 +252,7 @@ class About(EmptyTable):
         body.append(settings.SITE.welcome_html())
 
         if settings.SITE.languages:
-            body.append(E.p(unicode(_("Languages")) + ": " + ', '.join([
+            body.append(E.p(str(_("Languages")) + ": " + ', '.join([
                 lng.django_code for lng in settings.SITE.languages])))
 
         #~ print "20121112 startup_time", settings.SITE.startup_time.date()
@@ -257,7 +260,7 @@ class About(EmptyTable):
             if isinstance(dt, float):
                 dt = datetime.datetime.fromtimestamp(dt)
                 #~ raise ValueError("Expected float, go %r" % dt)
-            return unicode(_("%(date)s at %(time)s")) % dict(
+            return str(_("%(date)s at %(time)s")) % dict(
                 date=dd.fdf(dt.date()),
                 time=dt.time())
 
@@ -265,15 +268,15 @@ class About(EmptyTable):
         times = []
         value = settings.SITE.startup_time
         label = _("Server uptime")
-        body.append(E.p(unicode(label), ' : ', E.b(dtfmt(value))))
+        body.append(E.p(str(label), ' : ', E.b(dtfmt(value))))
         if settings.SITE.is_demo_site:
-            s = unicode(_("This is a Lino demo site."))
+            s = str(_("This is a Lino demo site."))
             body.append(E.p(s))
         if settings.SITE.the_demo_date:
             s = _("We are running with simulated date set to {0}.").format(
                 dd.fdf(settings.SITE.the_demo_date))
             body.append(E.p(s))
-        body.append(E.p(unicode(_("Source timestamps:"))))
+        body.append(E.p(str(_("Source timestamps:"))))
         for src in ("lino", "lino_welfare", 'django', 'atelier'):
             label = src
             value = codetime('%s.*' % src)
@@ -284,7 +287,7 @@ class About(EmptyTable):
             return cmp(b[1], a[1])
         times.sort(mycmp)
         for label, value in times:
-            items.append(E.li(unicode(label), ' : ', E.b(dtfmt(value))))
+            items.append(E.li(str(label), ' : ', E.b(dtfmt(value))))
         body.append(E.ul(*items))
         return E.div(*body, class_='htmlText')
 

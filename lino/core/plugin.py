@@ -7,11 +7,14 @@ See :doc:`/dev/plugins` before reading this.
 
 
 """
+from future import standard_library
+standard_library.install_aliases()
+from builtins import object
 
 import os
 from os.path import exists, join, dirname, isdir, abspath
 
-from urllib import urlencode
+from urllib.parse import urlencode
 import inspect
 
 
@@ -172,7 +175,7 @@ class Plugin(object):
         have a corresponding attribute.
 
         """
-        for k, v in kw.items():
+        for k, v in list(kw.items()):
             if not hasattr(self, k):
                 raise Exception("%s has no attribute %s" % (self, k))
             setattr(self, k, v)

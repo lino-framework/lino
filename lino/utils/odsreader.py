@@ -39,6 +39,9 @@ Robin Rood from London
 
 
 """
+from builtins import str
+from builtins import range
+from builtins import object
 import logging
 # ~ logging.basicConfig(level='DEBUG') # uncomment this when debugging
 logger = logging.getLogger(__name__)
@@ -74,7 +77,7 @@ class SimpleOdsReader(object):
     """
 
     def __init__(self, **kw):
-        for k, v in kw.items():
+        for k, v in list(kw.items()):
             setattr(self, k, v)
 
     def cells2row(self, cells):
@@ -88,7 +91,7 @@ class SimpleOdsReader(object):
         """
         Yields the data rows found in this .ods file.
         """
-        doc = opendocument.load(unicode(self.filename))
+        doc = opendocument.load(str(self.filename))
         logger.debug("Reading %s", self.filename)
         if self.column_names is None:
             self.column_names = self.headers
@@ -103,7 +106,7 @@ class SimpleOdsReader(object):
                     content = ''
                     for p in cell.getElementsByType(P):
                         for n in p.childNodes:
-                            content += unicode(n.data)
+                            content += str(n.data)
                     content = content.strip()
                     repeat = cell.getAttribute("numbercolumnsrepeated")
                     if repeat:

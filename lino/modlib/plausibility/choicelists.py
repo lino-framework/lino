@@ -10,6 +10,8 @@ Choicelists for `lino.modlib.plausibility`.
 """
 
 from __future__ import unicode_literals, print_function
+from builtins import str
+from past.builtins import basestring
 
 from django.utils import translation
 from lino.core.gfks import gfk2lookup
@@ -92,7 +94,7 @@ class Checker(dd.Choice):
         todo = []
         for fixable, msg in self.get_plausibility_problems(obj, fix):
             if fixable:
-                msg = u"(\u2605) " + unicode(msg)
+                msg = u"(\u2605) " + str(msg)
             if fixable and fix:
                 done.append(msg)
             else:
@@ -104,7 +106,7 @@ class Checker(dd.Choice):
             else:
                 lang = user.language
             with translation.override(lang):
-                msg = '\n'.join([unicode(s) for s in todo])
+                msg = '\n'.join([str(s) for s in todo])
             prb = Problem(owner=obj, message=msg, checker=self, user=user)
             prb.full_clean()
             prb.save()

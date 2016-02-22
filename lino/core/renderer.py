@@ -7,6 +7,9 @@ Defines :class:`HtmlRenderer` and :class:`TextRenderer`.
 
 from __future__ import unicode_literals
 from __future__ import print_function
+from builtins import str
+from past.builtins import basestring
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -15,7 +18,7 @@ from cgi import escape
 from atelier import rstgen
 
 from django.conf import settings
-from django.utils.encoding import force_unicode
+from django.utils.encoding import force_text
 
 from django.utils.translation import ugettext as _
 from django.utils.translation import get_language
@@ -60,7 +63,7 @@ def add_user_language(kw, ar):
             #~ request.LANGUAGE_CODE = translation.get_language()
 
 
-class NOT_GIVEN:
+class NOT_GIVEN(object):
     pass
 
 
@@ -165,7 +168,7 @@ request `tar`."""
             kw.update(target=target)
         if title:
             # Remember that Python 2.6 doesn't like if title is a Promise
-            kw.update(title=unicode(title))
+            kw.update(title=str(title))
             #~ return xghtml.E.a(text,href=url,title=title)
         if not isinstance(text, (tuple, list)):
             text = (text,)
@@ -238,7 +241,7 @@ request `tar`."""
         """Return a html representation of a pointer to the given database
         object."""
         if text is None:
-            text = (force_unicode(obj),)
+            text = (force_text(obj),)
         elif isinstance(text, basestring):
             text = (text,)
         url = self.instance_handler(ar, obj)
@@ -301,7 +304,7 @@ request `tar`."""
         """
         Return a HTML chunk for a button that will execute this action.
         """
-        label = unicode(label or ba.get_button_label())
+        label = str(label or ba.get_button_label())
         url = self.js2url(self.action_call(request, ba, after_show))
         #~ logger.info('20121002 window_action_button %s %r',a,unicode(label))
         return self.href_button_action(ba, url, label,
@@ -371,10 +374,10 @@ request `tar`."""
         if level == 2:
             cl = 'dropdown'
             menu_title = E.a(
-                unicode(mnu.label), E.b(' ', class_="caret"), href="#",
+                str(mnu.label), E.b(' ', class_="caret"), href="#",
                 class_='dropdown-toggle', data_toggle="dropdown")
         elif level == 3:
-            menu_title = E.a(unicode(mnu.label), href="#")
+            menu_title = E.a(str(mnu.label), href="#")
             cl = 'dropdown-submenu'
         else:
             raise Exception("Menu with more than three levels")
@@ -402,7 +405,7 @@ class TextRenderer(HtmlRenderer):
         """Used by :meth:`show_menu`."""
 
         if not isinstance(mnu, Menu):
-            return unicode(mnu.label)
+            return str(mnu.label)
 
         has_submenus = False
         for i in mnu.items:
@@ -412,11 +415,11 @@ class TextRenderer(HtmlRenderer):
         if has_submenus:
             s = rstgen.ul(items).strip() + '\n'
             if mnu.label is not None:
-                s = unicode(mnu.label) + ' :\n\n' + s
+                s = str(mnu.label) + ' :\n\n' + s
         else:
             s = ', '.join(items)
             if mnu.label is not None:
-                s = unicode(mnu.label) + ' : ' + s
+                s = str(mnu.label) + ' : ' + s
         return s
 
     def show_menu(self, ar, mnu, stripped=True, level=1):
@@ -465,7 +468,7 @@ class TextRenderer(HtmlRenderer):
             recno += 1
             rows.append([x for x in ar.row2text(fields, row, sums)])
         if len(rows) == 0:
-            s = unicode(ar.no_data_text)
+            s = str(ar.no_data_text)
             if not stripped:
                 s = "\n" + s + "\n"
             return s
@@ -515,7 +518,7 @@ class TextRenderer(HtmlRenderer):
         """Used by :meth:`lino.core.requests.BaseRequest.obj2str`.
         """
         if text is None:
-            text = force_unicode(obj)
+            text = force_text(obj)
         # return "**{0}**".format(text)
         return settings.SITE.obj2text_template.format(text)
 

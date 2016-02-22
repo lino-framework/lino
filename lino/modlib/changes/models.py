@@ -10,6 +10,8 @@ menu entry to the `Explorer` menu.
 See also :ref:`lino.tutorial.watch`.
 
 """
+from past.builtins import basestring
+from builtins import object
 
 import logging
 
@@ -71,7 +73,7 @@ class Change(dd.Model):
     
     """
 
-    class Meta:
+    class Meta(object):
         verbose_name = _("Change")
         verbose_name_plural = _("Changes")
 
@@ -179,7 +181,7 @@ class ChangesByMaster(Changes):
     column_names = 'time user type object diff *'
 
 
-class WatcherSpec:
+class WatcherSpec(object):
     def __init__(self, ignored_fields, get_master):
         self.ignored_fields = ignored_fields
         self.get_master = get_master

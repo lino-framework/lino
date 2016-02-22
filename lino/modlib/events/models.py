@@ -7,6 +7,7 @@ The :xfile:`models.py` module of :mod:`lino.modlib.events`.
 """
 
 from __future__ import unicode_literals
+from builtins import str
 
 from django.db import models
 from django.conf import settings
@@ -24,7 +25,7 @@ def sepjoin(items, sep=', '):
     for i in items:
         if len(rv):
             rv.append(sep)
-        rv.append(unicode(i))
+        rv.append(str(i))
     return rv
 
 
@@ -82,7 +83,7 @@ class Stage(mixins.Sequenced):
     city = dd.ForeignKey('countries.Place', related_name="stages")
 
     def __unicode__(self):
-        return unicode(self.city)
+        return str(self.city)
 
     def get_siblings(self):
         return self.event.stages.order_by('seqno')
@@ -122,7 +123,7 @@ class Events(dd.Table):
     @dd.displayfield(string_concat(_("Where"), "?"))
     def where(self, obj, ar):
         if obj.place is not None:
-            return E.p(unicode(obj.place), ' ', E.b(unicode(obj.place.city)))
+            return E.p(str(obj.place), ' ', E.b(str(obj.place.city)))
         # remember: "von Ans nach Eupen und nicht andersrum"
         return E.p(*sepjoin(obj.stages.order_by('seqno'), ' -- '))
 
@@ -130,7 +131,7 @@ class Events(dd.Table):
     def what(self, obj, ar):
         chunks = []
         if obj.name:
-            chunks += [E.b(unicode(obj)), E.br()]
+            chunks += [E.b(str(obj)), E.br()]
         chunks += sepjoin(obj.features.all())
         #~ if obj.url:
             #~ chunks += [E.br(),E.a(_("More"),href=obj.url)]

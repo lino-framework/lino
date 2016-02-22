@@ -20,6 +20,9 @@ null,{ &quot;record_id&quot;: 6 })">Gast #6 ("Termin #51")</a>'
 
 from __future__ import unicode_literals
 from __future__ import print_function
+from builtins import str
+from past.builtins import basestring
+from builtins import object
 
 
 import re
@@ -215,7 +218,7 @@ def make_converter(f, lookup_fields={}):
         return ChoiceConverter(f)
 
 
-class Instantiator:
+class Instantiator(object):
     """A utility class to make python fixtures more compact. See
     :ref:`tutorial.instantiator`.
 
@@ -303,7 +306,7 @@ class Instantiator:
                 kw[self.fields[i].name] = v
             #~ i += 1
         #~ kw.update(self.default_values)
-        for k, v in self.default_values.items():
+        for k, v in list(self.default_values.items()):
             kw.setdefault(k, v)
         for c in self.converters:
             kw = c.convert(**kw)
@@ -317,7 +320,7 @@ class Instantiator:
         instance.full_clean()
         if m2m:
             instance.save()
-            for k, v in m2m.items():
+            for k, v in list(m2m.items()):
                 queryset = getattr(instance, k)
                 queryset.add(*v)
         return instance

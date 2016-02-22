@@ -4,6 +4,7 @@
 """Defines built-in user roles. See :mod:`lino.core.permissions`.
 
 """
+from builtins import object
 
 
 class UserRole(object):

@@ -9,9 +9,10 @@ This defines the :class:`Hotkey` class and some keystrokes.
 The system is not yet heavily used.
 
 """
+from builtins import object
 
 
-class Hotkey:
+class Hotkey(object):
     "Represents a combination of keystrokes."
     keycode = None
     shift = False
@@ -20,7 +21,7 @@ class Hotkey:
     inheritable = ('keycode', 'shift', 'ctrl', 'alt')
 
     def __init__(self, **kw):
-        for k, v in kw.items():
+        for k, v in list(kw.items()):
             setattr(self, k, v)
 
     def __call__(self, **kw):

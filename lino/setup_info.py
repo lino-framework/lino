@@ -12,6 +12,7 @@
 #   $ python setup.py test -s tests.PackagesTests
 
 from __future__ import unicode_literals
+from builtins import str
 
 SETUP_INFO = dict(
     name='lino',
@@ -22,8 +23,9 @@ SETUP_INFO = dict(
         'Sphinx',
         'atelier', 'unipath', 'python_dateutil',
         'Babel', 'odfpy>1.3', 'lxml',
-        'beautifulsoup4', 'html5lib', 'reportlab==2.7', 'pisa',
-        'jinja2', 'pytidylib', 'PyYAML',
+        'beautifulsoup4', 'html5lib', 'reportlab', 'pisa',
+        'jinja2', 'appy', 'pytidylib', 'PyYAML',
+        # 'fuzzy',  # lino.mixins.dupable
         'clint',  # lino.modlib.plausibility.management.commands
         'django-localflavor',  # lino.modlib.sepa
         # 'django-iban',  # lino.modlib.sepa
@@ -94,8 +96,19 @@ lino.history
 lino.mixins
 lino.modlib
 lino.modlib.about
+lino.modlib.addresses
+lino.modlib.addresses.fixtures
+lino.modlib.appypod
 lino.modlib.awesomeuploader
+lino.modlib.beid
+lino.modlib.blogs
+lino.modlib.boards
 lino.modlib.bootstrap3
+lino.modlib.cal
+lino.modlib.cal.fixtures
+lino.modlib.cal.management
+lino.modlib.cal.management.commands
+lino.modlib.cal.workflows
 lino.modlib.changes
 lino.modlib.comments
 lino.modlib.concepts
@@ -107,35 +120,64 @@ lino.modlib.gfks
 lino.modlib.gfks.fixtures
 lino.modlib.countries
 lino.modlib.countries.fixtures
+lino.modlib.cv
+lino.modlib.cv.fixtures
 lino.modlib.database_ready
 lino.modlib.davlink
+lino.modlib.dupable_partners
+lino.modlib.dupable_partners.fixtures
 lino.modlib.eid_jslib
 lino.modlib.eid_jslib.beid
 lino.modlib.events
 lino.modlib.events.fixtures
 lino.modlib.events.tests
+lino.modlib.excerpts
+lino.modlib.excerpts.fixtures
 lino.modlib.export_excel
+lino.modlib.extensible
 lino.modlib.extjs
 lino.modlib.jinja
+lino.modlib.families
+lino.modlib.households
+lino.modlib.households.fixtures
+lino.modlib.humanlinks
+lino.modlib.humanlinks.fixtures
 lino.modlib.importfilters
 lino.modlib.languages
 lino.modlib.languages.fixtures
 lino.modlib.lino_startup
 lino.modlib.lino_startup.management
 lino.modlib.lino_startup.management.commands
+lino.modlib.lists
+lino.modlib.lists.fixtures
+lino.modlib.notes
+lino.modlib.notes.fixtures
 lino.modlib.office
+lino.modlib.outbox
+lino.modlib.outbox.fixtures
+lino.modlib.pages
+lino.modlib.pages.fixtures
 lino.modlib.plausibility
 lino.modlib.plausibility.fixtures
 lino.modlib.plausibility.management
 lino.modlib.plausibility.management.commands
 lino.modlib.polls
 lino.modlib.polls.fixtures
+lino.modlib.postings
 lino.modlib.print_pisa
 lino.modlib.printing
+lino.modlib.products
+lino.modlib.products.fixtures
+lino.modlib.projects
+lino.modlib.properties
+lino.modlib.properties.fixtures
+lino.modlib.reception
+lino.modlib.rooms
 lino.modlib.smtpd
 lino.modlib.smtpd.management
 lino.modlib.smtpd.management.commands
 lino.modlib.notifier
+lino.modlib.stars
 lino.modlib.statbel
 lino.modlib.statbel.countries
 lino.modlib.statbel.countries.fixtures
@@ -145,6 +187,7 @@ lino.modlib.summaries.management
 lino.modlib.summaries.management.commands
 lino.modlib.system
 lino.modlib.system.tests
+lino.modlib.thirds
 lino.modlib.tinymce
 lino.modlib.tinymce.fixtures
 lino.modlib.uploads
@@ -152,18 +195,38 @@ lino.modlib.users
 lino.modlib.users.fixtures
 lino.modlib.vocbook
 lino.modlib.wkhtmltopdf
+lino.modlib.workflows
 lino.projects
 lino.projects.babel_tutorial
 lino.projects.babel_tutorial.fixtures
 lino.projects.belref
 lino.projects.belref.fixtures
 lino.projects.belref.settings
+lino.projects.cms
+lino.projects.cms.fixtures
+lino.projects.cms.tests
+lino.projects.crl
+lino.projects.crl.fixtures
 lino.projects.docs
 lino.projects.docs.settings
 lino.projects.estref
 lino.projects.estref.settings
 lino.projects.estref.tests
 lino.projects.events
+lino.projects.homeworkschool
+lino.projects.homeworkschool.fixtures
+lino.projects.homeworkschool.settings
+lino.projects.i18n
+lino.projects.igen
+lino.projects.igen.tests
+lino.projects.min1
+lino.projects.min1.settings
+lino.projects.min2
+lino.projects.min2.modlib
+lino.projects.min2.modlib.contacts
+lino.projects.min2.modlib.contacts.fixtures
+lino.projects.min2.settings
+lino.projects.min2.tests
 lino.projects.polly
 lino.projects.polly.settings
 lino.projects.polly.tests
@@ -217,9 +280,9 @@ def add_package_data(package, *patterns):
     return l
 
 add_package_data('lino', 'config/*.odt')
-add_package_data('lino_xl.lib.cal', 'config/*.odt')
-add_package_data('lino_xl.lib.notes', 'config/notes/Note/*.odt')
-add_package_data('lino_xl.lib.outbox', 'config/outbox/Mail/*.odt')
+add_package_data('lino.modlib.cal', 'config/*.odt')
+add_package_data('lino.modlib.notes', 'config/notes/Note/*.odt')
+add_package_data('lino.modlib.outbox', 'config/outbox/Mail/*.odt')
 add_package_data('lino.modlib.languages.fixtures', '*.tab')
 
 l = add_package_data('lino.modlib.lino_startup')

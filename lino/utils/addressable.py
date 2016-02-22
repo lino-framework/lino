@@ -11,6 +11,7 @@ $ python setup.py test -s tests.UtilsTests.test_addressable
 """
 
 from __future__ import print_function
+from builtins import object
 
 from lino.utils.xmlgen.html import E, lines2p
 

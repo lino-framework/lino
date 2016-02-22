@@ -3,6 +3,9 @@
 # License: BSD (see file COPYING for details)
 
 from __future__ import unicode_literals
+from builtins import str
+from past.builtins import basestring
+from builtins import object
 
 """This defines the :class:`Kernel` class.
 
@@ -236,7 +239,7 @@ class Kernel(object):
             if ui is None:
                 raise Exception(
                     "Invalid value %r for `default_ui` (must be one of %s)"
-                    % (self.site.default_ui, self.site.plugins.keys()))
+                    % (self.site.default_ui, list(self.site.plugins.keys())))
             ui.url_prefix = None
         else:
             for p in self.site.installed_plugins:
@@ -295,7 +298,7 @@ class Kernel(object):
         self.setup_model_spec(self, 'user_model')
         self.setup_model_spec(self, 'project_model')
 
-        for app_name_model, p in self.override_modlib_models.items():
+        for app_name_model, p in list(self.override_modlib_models.items()):
             # app_name_model is the full installed app module name +
             # the model name. It certainly contains at least one dot.
             m = '.'.join(app_name_model.split('.')[-2:])
@@ -638,7 +641,7 @@ class Kernel(object):
         if cb is None:
             ar = ActorRequest(request, renderer=self.default_renderer)
             logger.debug("No callback %r in %r" % (
-                thread_id, self.pending_threads.keys()))
+                thread_id, list(self.pending_threads.keys())))
             ar.error("Unknown callback %r" % thread_id)
             return self.render_action_response(ar)
 
@@ -732,7 +735,7 @@ class Kernel(object):
             # logger.info("20150127 run_action %r", e)
             ar.error(ar.ah.actor.error2str(e), alert=True)
         except Warning as e:
-            ar.error(unicode(e), alert=True)
+            ar.error(str(e), alert=True)
 
         return self.render_action_response(ar)
 

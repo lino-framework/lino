@@ -8,8 +8,12 @@ Work in progress.
 See :srcref:`docs/tickets/92`.
 
 """
+from builtins import str
+from past.builtins import basestring
+from builtins import object
 
 import logging
+from future.utils import with_metaclass
 #~ logging.basicConfig(filename='example.log',level=logging.DEBUG)
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -59,7 +63,7 @@ if USE_XHTML2ODT:
         def render(self, context):
             self.open()
             tpl = CheetahTemplate(self.xml['content'], namespaces=[context])
-            nc = unicode(tpl)  # .encode('utf-8')
+            nc = str(tpl)  # .encode('utf-8')
             if nc.startswith('<?xml version'):
                 #~ nc = nc.replace('<?xml version="1.0" encoding="UTF-8"?>','')
                 nc = nc.split('\n', 1)[1]
@@ -91,9 +95,7 @@ class LanguageMeta(type):
         return cls
 
 
-class Language(object):
-    __metaclass__ = LanguageMeta
-
+class Language(with_metaclass(LanguageMeta, object)):
     @classmethod
     def add_wordtype(cls, wt):
         cls.wordTypes.append(wt)
@@ -196,7 +198,7 @@ class Word(object):
         return self.partner
 
 
-class Column:
+class Column(object):
     label = ''
 
     def __init__(self, label):
@@ -298,7 +300,7 @@ def sort_by_fr(a, b):
     #~ return locale.strcoll(S(a.fr),S(b.fr))
 
 
-class Section:
+class Section(object):
 
     def __init__(self, book, parent,
                  title=None, intro=None,
@@ -715,7 +717,7 @@ class MemoParser(memo.Parser):
         #~ return E.a(text,href=url)
 
 
-class Book:
+class Book(object):
 
     def __init__(self, from_language, to_language,
                  title=None, input_template=None,

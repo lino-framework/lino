@@ -3,6 +3,7 @@
 # License: BSD (see file COPYING for details)
 """Extended fields for use with `lino.modlib.gfks`.
 """
+from builtins import str
 
 from django.db import models
 
@@ -56,7 +57,7 @@ class GenericForeignKey(DjangoGenericForeignKey):
                 ct = getattr(obj, self.ct_field)
                 if ct:
                     try:
-                        return unicode(ct.get_object_for_this_type(pk=value))
+                        return str(ct.get_object_for_this_type(pk=value))
                     except ct.model_class().DoesNotExist:
                         return "%s with pk %r does not exist" % (
                             full_model_name(ct.model_class()), value)

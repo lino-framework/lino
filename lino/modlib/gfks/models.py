@@ -10,6 +10,8 @@ See also unit test :doc:`/dev/gfks`.
 .. autosummary::
 
 """
+from builtins import str
+from builtins import object
 
 
 from django.contrib.contenttypes.models import ContentType, models
@@ -62,7 +64,7 @@ class ContentTypes(dd.Table):
                     #~ logger.info("20120205 adding(%r)",cl)
                     ct = ContentType.objects.get_for_model(cl)
                     chunks.append(
-                        ar.obj2html(ct, unicode(cl._meta.verbose_name)))
+                        ar.obj2html(ct, str(cl._meta.verbose_name)))
         #~ add(obj.model_class())
         cl = obj.model_class()
         # e.g. if database is nor synchronized
@@ -74,7 +76,7 @@ class ContentTypes(dd.Table):
 
 class HelpText(dd.Model):
     """A custom help text to be displayed for a given field."""
-    class Meta:
+    class Meta(object):
         app_label = 'gfks'
         verbose_name = _("Help Text")
         verbose_name_plural = _("Help Texts")
@@ -116,12 +118,12 @@ class HelpText(dd.Model):
         m = self.content_type.model_class()
         de = m.get_default_table().get_data_elem(self.field)
         if isinstance(de, models.Field):
-            return "%s (%s)" % (unicode(de.verbose_name),
-                                unicode(_("database field")))
+            return "%s (%s)" % (str(de.verbose_name),
+                                str(_("database field")))
         if isinstance(de, dd.VirtualField):
-            return unicode(de.return_type.verbose_name)
+            return str(de.return_type.verbose_name)
         if isinstance(de, dd.Action):
-            return unicode(de.label)
+            return str(de.label)
         return str(de)
 
 
@@ -213,7 +215,7 @@ def my_pre_ui_build(sender, **kw):
         for ht in HelpText.objects.filter(help_text__isnull=False):
             # dd.logger.info("20120629 %s.help_text", ht)
             try:
-                dd.resolve_field(unicode(ht)).help_text = ht.help_text
+                dd.resolve_field(str(ht)).help_text = ht.help_text
             except FieldDoesNotExist as e:
                 #~ logger.debug("No help texts : %s",e)
                 pass

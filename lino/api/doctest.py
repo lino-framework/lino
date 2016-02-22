@@ -3,6 +3,7 @@
 # License: BSD (see file COPYING for details)
 
 """A selection of names to be used in tested documents."""
+from __future__ import print_function
 
 
 from lino import AFTER17
@@ -77,7 +78,7 @@ def check_json_result(response, expected_keys=None, msg=''):
     if expected_keys is not None:
         if set(result.keys()) != set(expected_keys.split()):
             raise Exception("'{0}' != '{1}'".format(
-                ' '.join(result.keys()), expected_keys))
+                ' '.join(list(result.keys())), expected_keys))
     return result
 
 

@@ -4,6 +4,7 @@
 """Database models for `lino.modlib.system`.
 
 """
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -24,7 +25,7 @@ class TextFieldTemplate(UserAuthored):
 
     """
 
-    class Meta:
+    class Meta(object):
         verbose_name = _("Text Field Template")
         verbose_name_plural = _("Text Field Templates")
 

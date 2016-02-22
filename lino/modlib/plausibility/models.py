@@ -9,6 +9,7 @@ Database models for `lino.modlib.plausibility`.
 """
 
 from __future__ import unicode_literals, print_function
+from builtins import object
 
 from django.db import models
 
@@ -128,7 +129,7 @@ class Problem(Controllable, UserAuthored):
        method of the :attr:`checker`.
 
     """
-    class Meta:
+    class Meta(object):
         app_label = 'plausibility'
         verbose_name = _("Plausibility problem")
         verbose_name_plural = _("Plausibility problems")
@@ -246,7 +247,7 @@ def set_plausibility_actions(sender, **kw):
     model for which there is at least one Checker
 
     """
-    for m in get_checkable_models().keys():
+    for m in list(get_checkable_models().keys()):
         assert m is not Problem
         m.define_action(check_plausibility=UpdateProblemsByController(m))
         m.define_action(fix_problems=FixProblemsByController(m))

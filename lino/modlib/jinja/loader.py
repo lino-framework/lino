@@ -8,6 +8,7 @@
 
 from __future__ import unicode_literals
 from __future__ import print_function
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -24,7 +25,7 @@ from django.template import TemplateDoesNotExist
 from lino.core import requests
 
 
-class DjangoJinjaTemplate:
+class DjangoJinjaTemplate(object):
 
     """
     used e.g. to render :srcref:`/lino/lino/config/500.html`

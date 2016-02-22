@@ -1,3 +1,4 @@
+from builtins import object
 # -*- coding: UTF-8 -*-
 # Copyright 2010-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
@@ -56,7 +57,7 @@ class Controllable(dd.Model):
 
     """
 
-    class Meta:
+    class Meta(object):
         abstract = True
 
     owner_type = dd.ForeignKey(

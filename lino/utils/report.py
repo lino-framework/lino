@@ -6,6 +6,7 @@
 
 
 """
+from builtins import str
 
 from django.conf import settings
 
@@ -36,7 +37,7 @@ class EmptyTableRow(VirtualRow, Printable):
         VirtualRow.__init__(self, **kw)
 
     def __unicode__(self):
-        return unicode(self._table.label)
+        return str(self._table.label)
 
     def get_print_language(self):
         # same as Model.get_print_language
@@ -154,9 +155,9 @@ class Report(EmptyTable):
         if cls.report_items is None:
             raise Exception("{0} has no report_items".format(cls))
         for A in cls.report_items:
-            yield E.h2(unicode(A.label))
+            yield E.h2(str(A.label))
             if A.help_text:
-                yield E.p(unicode(A.help_text))
+                yield E.p(str(A.help_text))
             yield A
 
     @fields.virtualfield(fields.HtmlBox())

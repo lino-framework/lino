@@ -10,6 +10,8 @@ Lino's authentification middleware
 """
 
 from __future__ import unicode_literals
+from past.builtins import basestring
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -33,7 +35,7 @@ class AuthMiddleWareBase(object):
     # Singleton instance
     _instance = None
 
-    class NOT_NEEDED:
+    class NOT_NEEDED(object):
         pass
 
     def __init__(self):

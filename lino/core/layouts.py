@@ -6,6 +6,9 @@
 """
 
 from __future__ import unicode_literals
+from builtins import str
+from past.builtins import basestring
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -33,7 +36,7 @@ def DEBUG_LAYOUTS(lo):
     return False
 
 
-class DummyPanel:
+class DummyPanel(object):
     """A layout panel which does not exist in the current configuration
     but might exist as a real panel in some other configuration.
 
@@ -110,7 +113,7 @@ class LayoutHandle(object):
         self.height = self.main.height
 
         self.layout.setup_handle(self)
-        for k, v in self.layout._labels.items():
+        for k, v in list(self.layout._labels.items()):
             if not k in self._names:
                 raise Exception(
                     "%s has no attribute %r (layout.main is %r)" %
@@ -358,7 +361,7 @@ class BaseLayout(object):
             raise Exception(
                 "Cannot instantiate %s without `main`." % self.__class__)
         self.set_datasource(datasource)
-        for k, v in kw.items():
+        for k, v in list(kw.items()):
             #~ if not hasattr(self,k):
                 #~ raise Exception("Got unexpected keyword %s=%r" % (k,v))
             setattr(self, k, v)
@@ -399,7 +402,7 @@ class BaseLayout(object):
         """Update the template of one or more panels.
 
         """
-        for k, v in kw.items():
+        for k, v in list(kw.items()):
             if DEBUG_LAYOUTS(self):
                 msg = """\
 In %s, updating attribute %r:

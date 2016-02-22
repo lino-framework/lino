@@ -7,8 +7,12 @@ YAML serializer.
 
 Requires PyYaml (http://pyyaml.org/), but that's checked for in __init__.
 """
+from future import standard_library
+standard_library.install_aliases()
+from builtins import str
+from past.builtins import basestring
 
-from StringIO import StringIO
+from io import StringIO
 import yaml
 
 try:
@@ -88,7 +92,7 @@ def Deserializer(stream_or_string, **options):
 
     model_builder = None
     for values in yaml.load_all(stream):
-        if values.has_key('model'):
+        if 'model' in values:
             modelspec = values.pop('model')
             #model_class = eval(modelspec)
             app, model = modelspec.split(".")
