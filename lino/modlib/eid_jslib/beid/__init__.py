@@ -19,7 +19,7 @@ import os
 import base64
 
 
-from lino.modlib.beid import Plugin as BeIdPlugin
+from lino_xl.lib.beid import Plugin as BeIdPlugin
 
 
 class Plugin(BeIdPlugin):  # was: use_eid_jslib

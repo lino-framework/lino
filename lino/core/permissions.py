@@ -135,7 +135,7 @@ def make_permission_handler(*args, **kw):
         models that have a field `user` which is supposed to contain
         the author.  Usually a subclass of
         :class:`lino.modlib.users.mixins.UserAuthored`, but
-        e.g. :class:`lino.modlib.cal.models.Guest` defines a property
+        e.g. :class:`lino_xl.lib.cal.models.Guest` defines a property
         `user` because it has no own `user` field).
 
     """

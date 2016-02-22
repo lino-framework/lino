@@ -35,7 +35,7 @@ ChoiceListField
 Example on how to use a ChoiceList in your model::
 
   from django.db import models
-  from lino.modlib.properties.models import HowWell
+  from lino_xl.lib.properties.models import HowWell
   
   class KnownLanguage(models.Model):
       spoken = HowWell.field(verbose_name=_("spoken"))
@@ -43,7 +43,7 @@ Example on how to use a ChoiceList in your model::
 
 Every user-defined subclass of ChoiceList is also
 automatically available as a property value in
-:mod:`lino.modlib.properties`.
+:mod:`lino_xl.lib.properties`.
 
 """
 
@@ -57,6 +57,7 @@ from django.utils.functional import lazy
 # from django.utils.encoding import force_text
 from django.db import models
 from django.conf import settings
+from django.db.models.fields import NOT_PROVIDED
 
 from atelier.utils import assert_pure
 from lino.utils import unicode_string
@@ -303,8 +304,9 @@ class ChoiceList(tables.AbstractTable):
     """
 
     preferred_width = None
-    """Preferred width (in characters) used by :class:`fields
-    <lino.core.fields.ChoiceListField>` that refer to this list.
+    """Preferred width (in characters) used by database fields
+    :class:`ChoiceListField <lino.core.fields.ChoiceListField>` for
+    this list.
 
     If this is `None`, then Lino calculates the value at startup,
     taking the length of the longest choice text.  The hard-coded
@@ -530,7 +532,7 @@ Django creates copies of them when inheriting models.
     def display_text(cls, bc):
         """Override this to customize the display text of choices.
         :class:`lino.modlib.users.choicelists.UserGroups` and
-        :class:`lino.modlib.cv.models.CefLevel` used to do this before
+        :class:`lino_xl.lib.cv.models.CefLevel` used to do this before
         we had the :attr:`ChoiceList.show_values` option.
 
         """
@@ -551,21 +553,16 @@ Django creates copies of them when inheriting models.
             return None
 
     @classmethod
-    def get_by_value(self, value, *args):
+    def get_by_value(self, value, default=NOT_PROVIDED):
         """Return the item (a :class:`Choice` instance) corresponding to the
         specified `value`.
 
         """
         if not isinstance(value, basestring):
             raise Exception("%r is not a string" % value)
-        #~ print "get_text_for_value"
-        #~ return self.items_dict.get(value, None)
-        #~ return self.items_dict.get(value)
-        return self.items_dict.get(value, *args)
-
-    #~ @classmethod
-    #~ def items(self):
-        #~ return [choice[0] for choice in self.choices]
+        if default is NOT_PROVIDED:
+            return self.items_dict[value]
+        return self.items_dict.get(value, default)
 
     @classmethod
     def filter(self, **fkw):

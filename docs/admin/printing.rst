@@ -16,6 +16,10 @@ Introduction to printable documents
     >>> from lino.api.doctest import *
     
 
+In a web application that runs on a public server, "printing" rather
+consists in producing a printable document and then show it in the
+client's browser.
+
 Lino comes with a selection of ready-to-use mechanisms for generating
 **printable documents** using different types of **templates**.  This
 section introduces the basic concepts.

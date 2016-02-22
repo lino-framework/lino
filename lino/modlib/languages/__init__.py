@@ -4,9 +4,9 @@
 """Defines a list of languages (the :class:`Language
 <lino.modlib.langguages.models.Language>` model).
 
-It is used by :mod:`lino.modlib.cv`, whose :class:`LanguageKnowledge
-<lino.modlib.cv.models.LanguageKnowledge>` and :class:`Schooling
-<lino.modlib.cv.models.Schooling>` models have a `language` field
+It is used by :mod:`lino_xl.lib.cv`, whose :class:`LanguageKnowledge
+<lino_xl.lib.cv.models.LanguageKnowledge>` and :class:`Schooling
+<lino_xl.lib.cv.models.Schooling>` models have a `language` field
 which points to this the :class:`Language
 <lino.modlib.langguages.models.Language>` model.
 

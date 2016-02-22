@@ -360,7 +360,7 @@ class AbstractTable(actors.Actor):
     - `'summary'` to render a summary in a HtmlBoxPanel.
     - `'html'` to render plain html a HtmlBoxPanel.
 
-    Example: :class:`lino.modlib.households.models.SiblingsByPerson`.
+    Example: :class:`lino_xl.lib.households.models.SiblingsByPerson`.
 
     """
 
@@ -542,7 +542,7 @@ method in order to sort the rows of the queryset.
         Detail of a Session we want to display a table of related blog
         entries.
 
-        :class:`lino.modlib.households.models.SiblingsByPerson`
+        :class:`lino_xl.lib.households.models.SiblingsByPerson`
         Household members are not directly linked to a Person, but
         usually a Person is member of exactly one household, and in
         the Detail of a Person we want to display the members of that

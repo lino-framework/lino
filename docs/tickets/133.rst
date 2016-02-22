@@ -21,17 +21,17 @@ DONE:
     dieser Meldung.  This link is a first usage example of the new
     function :meth:`rt.ar.get_help_url`.
 
-#. Zusammenfassung :class:`"Auszüge" <lino.modlib.excerpts.ExcerptsByProject>`
+#. Zusammenfassung `"Auszüge" <lino_xl.lib.excerpts.ExcerptsByProject>`
    ist jetzt intuitiv übersichtlicher: Gruppieren pro Datum.
    Fehlgeschlagene Auszüge (mit leerem Feld `build_date`) an erster
    Stelle erwähnen.
 
-#.  Man kann jetzt Filter-Parameter setzen im Panel :class:`"Auszüge"
-    <lino.modlib.excerpts.ExcerptsByProject>` eines Klienten (wenn im eigenen
+#.  Man kann jetzt Filter-Parameter setzen im Panel `"Auszüge"
+    <lino_xl.lib.excerpts.ExcerptsByProject>` eines Klienten (wenn im eigenen
     Fenster geöffnet). Nach Dokumentart, nach Datumsbereich, nach
     Benutzer.
  
-#.  Feld :class:`"Auszüge" <lino.modlib.excerpts.ExcerptsByProject>` im Reiter
+#.  Feld `"Auszüge" <lino_xl.lib.excerpts.ExcerptsByProject>` im Reiter
     "Historie" wurde noch nicht automatisch aktualisiert nach einem
     Ausdruck.
 

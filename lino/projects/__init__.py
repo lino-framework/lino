@@ -15,22 +15,12 @@ Poorly documented examples at different development states:
 .. autosummary::
    :toctree:
 
-   lino.projects.std
-   lino.projects.min1
-   lino.projects.min2
-   lino.projects.cms
-   lino.projects.crl
    lino.projects.events
-   lino.projects.homeworkschool
-   lino.projects.igen
 
 Examples covered by a tutorial:
 
 - :mod:`lino.projects.babel_tutorial` ---
   See :ref:`mldbc_tutorial`
-
-- :mod:`lino.projects.i18n` ---
-  See :ref:`lino.tested.i18n`
 
 Technical
 

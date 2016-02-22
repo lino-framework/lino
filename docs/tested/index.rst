@@ -13,9 +13,7 @@ which are part of the test suite.
    integer_pk/index
    float2decimal/index
    core_utils
-   tinymce
    dynamic
-   households
    diamond/index
    diamond2/index
    e006

@@ -217,9 +217,9 @@ def add_package_data(package, *patterns):
     return l
 
 add_package_data('lino', 'config/*.odt')
-add_package_data('lino.modlib.cal', 'config/*.odt')
-add_package_data('lino.modlib.notes', 'config/notes/Note/*.odt')
-add_package_data('lino.modlib.outbox', 'config/outbox/Mail/*.odt')
+add_package_data('lino_xl.lib.cal', 'config/*.odt')
+add_package_data('lino_xl.lib.notes', 'config/notes/Note/*.odt')
+add_package_data('lino_xl.lib.outbox', 'config/outbox/Mail/*.odt')
 add_package_data('lino.modlib.languages.fixtures', '*.tab')
 
 l = add_package_data('lino.modlib.lino_startup')

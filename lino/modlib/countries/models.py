@@ -19,9 +19,7 @@ from lino.api import dd
 from lino import mixins
 from django.utils.translation import ugettext_lazy as _
 from lino.modlib.plausibility.choicelists import Checker
-from lino.modlib.office.roles import OfficeUser, OfficeStaff
-
-config = dd.plugins.countries
+from lino.modlib.contacts.roles import ContactsUser, ContactsStaff
 
 from .choicelists import PlaceTypes, CountryDrivers
 
@@ -82,7 +80,7 @@ class Countries(dd.Table):
     """)
     #~ label = _("Countries")
     model = 'countries.Country'
-    required_roles = dd.login_required(OfficeUser)
+    required_roles = dd.login_required(ContactsUser)
     order_by = ["name", "isocode"]
     column_names = "name isocode *"
     detail_layout = """
@@ -200,7 +198,7 @@ class Places(dd.Table):
     """)
 
     model = 'countries.Place'
-    required_roles = dd.login_required(OfficeStaff)
+    required_roles = dd.login_required(ContactsStaff)
     order_by = "country name".split()
     column_names = "country name type zip_code parent *"
     detail_layout = """

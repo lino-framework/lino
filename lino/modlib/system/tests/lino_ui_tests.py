@@ -33,7 +33,7 @@ class NoAuthTest(NoAuthTestCase):
         Try wether the index page loads.
         """
         if settings.SITE.is_installed('pages'):
-            from lino.modlib.pages.fixtures import std
+            from lino_xl.lib.pages.fixtures import std
             from lino.utils import dpy
             dpy.load_fixture_from_module(std)
             #~ d = load_fixture(std)

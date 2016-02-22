@@ -100,6 +100,8 @@ class Partner(mixins.Polymorphic, AddressLocation, Addressable):
 
     remarks = models.TextField(_("Remarks"), blank=True)  # ,null=True)
 
+    quick_search_fields = "name"
+
     # print_labels = dd.PrintLabelsAction()
 
     def on_create(self, ar):

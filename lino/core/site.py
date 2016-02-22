@@ -134,9 +134,9 @@ class Site(object):
     """
 
     auto_fit_column_widths = True
-    """The default value for the :attr:`auto_fit_column_widths
-    <lino.core.tables.Table.auto_fit_column_widths>` of tables in this
-    application.
+    """The default value for the
+    :attr:`auto_fit_column_widths<lino.core.tables.AbstractTable.auto_fit_column_widths>`
+    of tables in this application.
 
     """
 
@@ -337,8 +337,7 @@ class Site(object):
     """
 
     loading_from_dump = False
-    """Whether the process is currently loading data from a :ref:`Python
-    dump <dpy>`.
+    """Whether the process is currently loading data from a Python dump.
 
     When loading from a python dump, application code should not
     generate certain automatic data because that data is also part of
@@ -379,7 +378,7 @@ class Site(object):
     Temporary setting, see :ref:`polymorphism`.
     """
 
-    # three constants used by lino.modlib.workflows:
+    # three constants used by lino_xl.lib.workflows:
     max_state_value_length = 20
     max_action_name_length = 50
     max_actor_name_length = 100
@@ -487,7 +486,7 @@ class Site(object):
 
     propvalue_max_length = 200
     """
-    Used by :mod:`lino.modlib.properties`.
+    Used by :mod:`lino_xl.lib.properties`.
     """
 
     show_internal_field_names = True
@@ -544,7 +543,7 @@ class Site(object):
     """
     A site-wide option to disable everything that needs Java.  Note that
     it is up to the apps which include Java applications to respect this
-    setting. Usage example is :mod:`lino.modlib.beid`.
+    setting. Usage example is :mod:`lino_xl.lib.beid`.
 
     """
 
@@ -563,7 +562,9 @@ class Site(object):
     """
 
     # default_build_method = "appypdf"
-    default_build_method = "appyodt"
+    # default_build_method = "appyodt"
+    # default_build_method = "wkhtmltopdf"
+    default_build_method = None
     """The default build method to use when rendering printable documents.
 
     This is the last default value, used only when
@@ -772,9 +773,9 @@ class Site(object):
     """
 
     config_id = 1
-    """The primary key of the one and only :class:`SiteConfig
-    <lino.modlib.system.models.SiteConfig>` instance of this
-    :class:`Site`. Default value is 1.
+    """The primary key of the one and only
+    :class:`SiteConfig<lino.modlib.system.models.SiteConfig>` instance
+    of this :class:`Site`. Default value is 1.
 
     This is Lino's equivalent of Django's :setting:`SITE_ID` setting.
     Lino applications don't need ``django.contrib.sites`` (`The "sites"
@@ -785,9 +786,10 @@ class Site(object):
     """
 
     preview_limit = 15
-    """Default value for the :attr:`preview_limit
-    <lino.core.tables.AbstractTable.preview_limit>` parameter of all
-    tables who don't specify their own one.  Default value is 15.
+    """Default value for the
+    :attr:`preview_limit<lino.core.tables.AbstractTable.preview_limit>`
+    parameter of all tables who don't specify their own one.  Default
+    value is 15.
 
     """
 
@@ -797,7 +799,7 @@ class Site(object):
 
     Default value is ``'extjs'`` (which points to
     :mod:`lino.modlib.extjs`). Other candidates are
-    :mod:`lino.modlib.pages` and
+    :mod:`lino_xl.lib.pages` and
     :mod:`lino.modlib.bootstrap3`.
 
     Another possibility is to set it to `None`. In that case you will
@@ -1053,7 +1055,7 @@ class Site(object):
         for k in ('ignore_dates_before', 'ignore_dates_after'):
             if hasattr(self, k):
                 msg = "{0} is no longer a site attribute"
-                msg += " but a plugin attribute on lino.modlib.cal."
+                msg += " but a plugin attribute on lino_xl.lib.cal."
                 msg = msg.format(k)
                 raise ChangedAPI(msg)
 
@@ -1480,9 +1482,11 @@ class Site(object):
                     cache_dir=self.cache_dir,
                     this=this,
                     other=other)
-                # raise Exception(msg)
-                # print(msg)
-                self.cache_dir = None
+                if True:
+                    raise Exception(msg)
+                else:
+                    # print(msg)
+                    self.cache_dir = None
         else:
             self.makedirs_if_missing(self.cache_dir)
             stamp.write_file(this)

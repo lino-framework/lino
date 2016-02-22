@@ -47,7 +47,7 @@ class BuildMethod(Choice):
     template_ext = None
     templates_name = None
     cache_name = 'cache'
-    default_template = ''  # overridden by lino.modlib.appypod
+    default_template = ''  # overridden by lino_xl.lib.appypod
 
     use_webdav = False
     """Whether this build method results is an editable file.  For
@@ -124,6 +124,9 @@ class DjangoBuildMethod(BuildMethod):
             return select_template(tpls2)
         except TemplateDoesNotExist as e:
             raise Warning("No template found for %s (%s)" % (e, tpls2))
+        except Exception as e:
+            raise Exception(
+                "Error while loading template for %s : %s" % (tpls2, e))
 
     # ,MEDIA_URL=settings.MEDIA_URL):
     def render_template(self, elem, tpl, **context):
@@ -274,14 +277,19 @@ class BuildMethods(ChoiceList):
 
     @classmethod
     def get_system_default(cls):
+        """Return the default build method to be used when really no default
+        build method has been defined anywhere, even not in
+        :attr:`default_build_method
+        <lino.core.site.Site.default_build_method>`.
+
+        """
         sc = settings.SITE.site_config
-        if sc.default_build_method is not None:
+        if sc.default_build_method:
             return sc.default_build_method
         if settings.SITE.default_build_method:
             return cls.get_by_value(
                 settings.SITE.default_build_method)
-        return cls.appyodt  # hard-coded default
-        # return cls.pisa  # hard-coded default
+        return cls.pisa  # hard-coded default
 
 
 add = BuildMethods.add_item_instance

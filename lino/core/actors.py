@@ -948,12 +948,12 @@ class Actor(actions.Parametrizable, Permittable):
         """Customized versions may e.g. set `master_instance` before calling
         super().
 
-        Used e.g. by :class:`lino.modlib.outbox.models.MyOutbox` or
+        Used e.g. by :class:`lino_xl.lib.outbox.models.MyOutbox` or
         :class:`lino.modlib.users.mixins.ByUser`.
 
         Other usages are more hackerish:
 
-        - :class:`lino.modlib.households.models.SiblingsByPerson`
+        - :class:`lino_xl.lib.households.models.SiblingsByPerson`
         - :class:`lino_welfare.modlib.cal.models.EventsByClient`
         - :class:`lino_welfare.pcsw.models.Home`,
         - :class:`lino.modlib.users.models.MySettings`.

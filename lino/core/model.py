@@ -110,7 +110,7 @@ class Model(models.Model):
     Example: Lino should not refuse to delete a Mail just because it
     has some Recipient.  When deleting a Mail, Lino should also delete
     its Recipients.  That's why
-    :class:`lino.modlib.outbox.models.Recipient` has
+    :class:`lino_xl.lib.outbox.models.Recipient` has
     ``allow_cascaded_delete = 'mail'``.
     
     This is also used by :class:`lino.mixins.duplicable.Duplicate` to
@@ -148,23 +148,23 @@ class Model(models.Model):
     """
 
     active_fields = frozenset()
-    """If specified, this is the default value for :attr:`active_fields
-    <lino.core.tables.AbstractTable.active_fields>` of every `Table`
-    on this model.
+    """If specified, this is the default value for
+    :attr:`active_fields<lino.core.tables.AbstractTable.active_fields>`
+    of every `Table` on this model.
 
     """
 
     hidden_columns = frozenset()
-    """If specified, this is the default value for :attr:`hidden_columns
-    <lino.core.tables.AbstractTable.hidden_columns>` of every `Table`
-    on this model.
+    """If specified, this is the default value for
+    :attr:`hidden_columns<lino.core.tables.AbstractTable.hidden_columns>`
+    of every `Table` on this model.
 
     """
 
     hidden_elements = frozenset()
-    """If specified, this is the default value for :attr:`hidden_elements
-    <lino.core.tables.AbstractTable.hidden_elements>` of every `Table`
-    on this model.
+    """If specified, this is the default value for
+    :attr:`hidden_elements<lino.core.tables.AbstractTable.hidden_elements>`
+    of every `Table` on this model.
 
     """
 
@@ -186,8 +186,9 @@ class Model(models.Model):
 
     workflow_state_field = None
     """If this is set on a Model, then it will be used as default value
-    for :attr:`lino.core.table.Table.workflow_state_field` on all
-    tables based on this Model.
+    for
+    :attr:`workflow_state_field<lino.core.table.Table.workflow_state_field>`
+    of all tables based on this Model.
 
     """
 
@@ -409,7 +410,7 @@ class Model(models.Model):
         Adds one or several actions to this model.
         Actions must be specified using keyword arguments.
 
-        Used e.g. by :mod:`lino.modlib.cal` to add the `UpdateReminders`
+        Used e.g. by :mod:`lino_xl.lib.cal` to add the `UpdateReminders`
         action to :class: `lino.modlib.users.models.User`.
 
         """
@@ -438,7 +439,7 @@ class Model(models.Model):
 
     def on_create(self, ar):
         """
-        Used e.g. by :class:`lino.modlib.notes.models.Note`.
+        Used e.g. by :class:`lino_xl.lib.notes.models.Note`.
         on_create gets the action request as argument.
         Didn't yet find out how to do that using a standard Django signal.
 
@@ -464,7 +465,7 @@ class Model(models.Model):
         Deprecated.  Use the :data:`pre_ui_save
         <lino.core.signals.pre_ui_save>` signal instead.
 
-        Example in :class:`lino.modlib.cal.models_event.Event` to mark
+        Example in :class:`lino_xl.lib.cal.models_event.Event` to mark
         the event as user modified by setting a default state.
 
         """
@@ -648,7 +649,7 @@ class Model(models.Model):
     def after_send_mail(self, mail, ar, kw):
         """
         Called when an outbox email controlled by self has been sent
-        (i.e. when the :class:`lino.modlib.outbox.models.SendMail`
+        (i.e. when the :class:`lino_xl.lib.outbox.models.SendMail`
         action has successfully completed).
         """
         pass
@@ -714,11 +715,11 @@ class Model(models.Model):
                 return self
 
     def get_system_note_type(self, request):
-        """Used when :mod:`lino.modlib.notes` is installed. Expected to return
+        """Used when :mod:`lino_xl.lib.notes` is installed. Expected to return
         either `None` (the default) or an existing :class:`NoteType
-        <lino.modlib.notes.models.NoteType>` instance. If this is not
+        <lino_xl.lib.notes.models.NoteType>` instance. If this is not
         `None`, then the system note will also be stored in the
-        database as a :class:`lino.modlib.notes.models.Note`.
+        database as a :class:`lino_xl.lib.notes.models.Note`.
 
         """
         return None
@@ -782,7 +783,7 @@ class Model(models.Model):
             return a
 
     def is_attestable(self):
-        """Override this to disable the :class:`lino.modlib.excerpts.CreateExcerpt`
+        """Override this to disable the :class:`lino_xl.lib.excerpts.CreateExcerpt`
 action on individual instances.
 
         """
@@ -800,7 +801,7 @@ action on individual instances.
 
     def get_body_template(self):
         """Return the name of the body template to use when rendering this
-        object in a printable excerpt (:mod:`lino.modlib.excerpts`).
+        object in a printable excerpt (:mod:`lino_xl.lib.excerpts`).
         An empty string means that Lino should use the default value
         defined on the ExcerptType.
 
@@ -817,7 +818,7 @@ action on individual instances.
     def get_excerpt_options(self, ar, **kw):
         """Set additional fields of newly created excerpts from this.  Called
         from
-        :class:`lino.modlib.excerpts.models.ExcerptType.get_or_create_excerpt`.
+        :class:`lino_xl.lib.excerpts.models.ExcerptType.get_or_create_excerpt`.
 
         """
         return kw
@@ -880,7 +881,7 @@ action on individual instances.
         """Adds a series of names to the context used when rendering printable
         documents. See :doc:`/user/templates_api`.
 
-        :class:`lino.modlib.notes.models.Note` extends this.
+        :class:`lino_xl.lib.notes.models.Note` extends this.
 
         """
         # same as lino.utils.report.EmptyTableRow.get_printable_context

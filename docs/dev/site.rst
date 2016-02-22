@@ -142,6 +142,7 @@ lino.modlib.office
 lino.modlib.countries
 lino.modlib.contacts
 lino.modlib.uploads
+lino.modlib.polls
 lino.modlib.concepts
 lino.modlib.tinymce
 lino.modlib.export_excel
