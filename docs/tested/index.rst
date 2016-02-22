@@ -14,7 +14,6 @@ which are part of the test suite.
    float2decimal/index
    core_utils
    dynamic
-   households
    diamond/index
    diamond2/index
    e006

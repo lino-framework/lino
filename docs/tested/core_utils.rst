@@ -25,7 +25,7 @@ models which are subclass of a given class.
 
 >>> from lino.mixins.duplicable import Duplicable
 >>> rt.models_by_base(Duplicable)
-[<class 'lino.modlib.countries.models.Place'>]
+[<class 'lino.modlib.countries.models.Place'>, <class 'lino.modlib.polls.models.Choice'>, <class 'lino.modlib.polls.models.Question'>]
 
 >>> rt.models_by_base(rt.modules.contacts.Partner)
 [<class 'lino.modlib.contacts.models.Company'>, <class 'lino.modlib.contacts.models.Partner'>, <class 'lino.modlib.contacts.models.Person'>]

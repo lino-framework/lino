@@ -29,7 +29,7 @@ This document tests this functionality.
   - PROTECT : contacts.Company.type
 - contacts.Partner :
   - CASCADE : contacts.Company.partner_ptr, contacts.Person.partner_ptr
-  - PROTECT : users.User.partner
+  - PROTECT : polls.Response.partner, users.User.partner
 - contacts.Person :
   - PROTECT : contacts.Role.person
 - contacts.RoleType :
@@ -40,8 +40,19 @@ This document tests this functionality.
   - PROTECT : contacts.Partner.country, countries.Place.country
 - countries.Place :
   - PROTECT : contacts.Partner.city, countries.Place.parent
+- polls.Choice :
+  - PROTECT : polls.AnswerChoice.choice
+- polls.ChoiceSet :
+  - PROTECT : polls.Choice.choiceset, polls.Poll.default_choiceset, polls.Question.choiceset
+- polls.Poll :
+  - CASCADE : polls.Question.poll
+  - PROTECT : polls.Response.poll
+- polls.Question :
+  - PROTECT : polls.AnswerChoice.question, polls.AnswerRemark.question
+- polls.Response :
+  - PROTECT : polls.AnswerChoice.response, polls.AnswerRemark.response
 - uploads.UploadType :
   - PROTECT : uploads.Upload.type
 - users.User :
-  - PROTECT : changes.Change.user, notifier.Notification.user, tinymce.TextFieldTemplate.user, uploads.Upload.user, users.Authority.user
+  - PROTECT : changes.Change.user, notifier.Notification.user, polls.Poll.user, polls.Response.user, tinymce.TextFieldTemplate.user, uploads.Upload.user, users.Authority.user
 <BLANKLINE>

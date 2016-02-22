@@ -23,7 +23,7 @@ class LibTests(LinoTestCase):
         self.run_simple_doctests("docs/dev/users.rst")
 
     # def test_cal_utils(self):
-    #     self.run_simple_doctests('lino/modlib/cal/utils.py')
+    #     self.run_simple_doctests('lino_xl.lib.cal/utils.py')
 
 
 class DocsAdminTests(TestCase):

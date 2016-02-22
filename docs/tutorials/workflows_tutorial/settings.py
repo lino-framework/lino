@@ -20,7 +20,7 @@ class Site(Site):
         
         yield 'lino.modlib.countries'
         yield 'lino.modlib.contacts'
-        #~ yield 'lino.modlib.notes'
+        #~ yield 'lino_xl.lib.notes'
         
         yield 'workflows_tutorial'
         

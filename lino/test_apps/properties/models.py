@@ -1,5 +1,5 @@
 """
-Module `lino.modlib.properties`
+Module `lino_xl.lib.properties`
 -------------------------------
 
 Imagine that we are doing a study about alimentary habits. We observe a 
@@ -111,7 +111,7 @@ Query by property:
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
-from lino.modlib.properties import models as properties
+from lino_xl.lib.properties import models as properties
 
 
 class Person(models.Model):

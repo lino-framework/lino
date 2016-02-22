@@ -72,7 +72,7 @@ DONE:
   ... **und bis zum** ...
 
 - :attr:`welfare.aids.AidType.body_template` überwirkt das
-  gleichnamige Feld :class:`lino.modlib.excerpts.ExcerptType`.
+  gleichnamige Feld `lino_xl.lib.excerpts.ExcerptType`.
 
 - Wenn man auf einem Beschluss auf "Bescheinigung erstellen" klickt,
   soll das Dialogfenster nicht nochmal nach dem Klienten und dem

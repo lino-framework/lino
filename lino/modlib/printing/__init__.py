@@ -22,5 +22,5 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("Printing")
 
-    # needs_plugins = ['lino.modlib.appypod']
+    # needs_plugins = ['lino_xl.lib.appypod']
 

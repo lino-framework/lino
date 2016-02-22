@@ -23,7 +23,6 @@ Utilities
 .. autosummary::
    :toctree:
 
-    excerpts
     jinja
     plausibility
     printing
@@ -46,11 +45,9 @@ Utilities
 
     about
     export_excel
-    extensible
     tinymce
     notifier
     changes
-    stars
     wkhtmltopdf
 
 "Enterprise Resources"
@@ -59,45 +56,21 @@ Utilities
 .. autosummary::
    :toctree:
 
-    addresses
-    appypod
-    awesomeuploader
-    beid
-    blogs
-    boards
-    cal
     comments
     concepts
     contacts
     countries
-    cv
     davlink
-    dupable_partners
     eid_jslib
     events
-    families
-    households
-    humanlinks
     importfilters
     languages
-    lists
-    notes
     office
-    outbox
-    pages
     polls
-    postings
     print_pisa
-    products
-    projects
-    properties
-    reception
-    rooms
     smtpd
-    thirds
     uploads
     vocbook
-    workflows
 
 
 Differentiator packages

@@ -29,9 +29,8 @@ class DjangoManageTestCase(DjangoTestCase, CommonTestCase):
     longMessage = True  # see unittest. used for check_json_result
 
     override_djangosite_settings = dict()
-    """If specified, this is a dict of :class:`Site
-    <lino.core.site.Site>` attributes to override before running the
-    test.
+    """If specified, this is a dict of :class:`Site<lino.core.site.Site>`
+    attributes to override before running the test.
 
     """
 

@@ -20,11 +20,11 @@ if False:
     CMS = blogger.ticket("cms", "Lino as a CMS", """
   Managing Plain Web Content.
   First proof of concept of 
-  :mod:`lino.modlib.pages`
+  :mod:`lino_xl.lib.pages`
   """)
 
     CHANGES = blogger.ticket("lino.dev", "Documenting code changes", """
-  Now that the :mod:`lino.modlib.pages` has passed the proof of 
+  Now that the :mod:`lino_xl.lib.pages` has passed the proof of 
   concept phase I started a new attempt to make it easier to 
   write code change reports, and to find them back when needed.
   The current blog system isn't bad, but it has several disadvantages:

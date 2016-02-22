@@ -57,8 +57,8 @@ will try to explain my decisions here.
 - Actions, Choosers, ChoiceLists, Workflows, multi-lingual database
   content, generating printable documents, ...
 
-- Higher level solutions : :mod:`lino.modlib.changes`,
-  :mod:`lino.modlib.excerpts`, ...
+- Higher level solutions for common features like
+  :mod:`lino.modlib.changes`, `lino_xl.lib.excerpts`, ...
 
 
 .. rubric:: Footnotes

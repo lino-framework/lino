@@ -413,11 +413,11 @@ class Printable(object):
         The action used to print this object.
         This is an instance of
         :class:`DirectPrintAction` or :class:`CachedPrintAction` by
-        default.  And if :mod:`lino.modlib.excerpts` is installed,
+        default.  And if :mod:`lino_xl.lib.excerpts` is installed,
         then :func:`set_excerpts_actions
-        <lino.modlib.excerpts.set_excerpts_actions>` possibly replaces
+        <lino_xl.lib.excerpts.set_excerpts_actions>` possibly replaces
         :attr:`do_print` by a
-        :class:`lino.modlib.excerpts.CreateExcerpt` instance.
+        :class:`lino_xl.lib.excerpts.CreateExcerpt` instance.
 
     .. attribute:: edit_template
 
@@ -451,6 +451,12 @@ class Printable(object):
         return BuildMethods.get_system_default()
 
     def get_build_method(self):
+        """Return the build method to use when printing this object.
+
+        This is expected to rather raise an exception than return
+        `None`.
+
+        """
         # TypedPrintable  overrides this
         return self.get_default_build_method()
 

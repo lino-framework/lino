@@ -1,2 +1,2 @@
 # backwards compatibility:
-from lino.modlib.appypod.mixins import PrintTableAction
+from lino_xl.lib.appypod.mixins import PrintTableAction

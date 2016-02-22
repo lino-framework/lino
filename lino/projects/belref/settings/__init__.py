@@ -35,10 +35,10 @@ class Site(Site):
         yield 'lino.modlib.system'
         yield 'lino.modlib.statbel.countries'
         #~ yield 'lino.modlib.contacts'
-        #~ yield 'lino.modlib.outbox'
-        #~ yield 'lino.modlib.blogs'
+        #~ yield 'lino_xl.lib.outbox'
+        #~ yield 'lino_xl.lib.blogs'
         #~ yield 'lino.modlib.tickets'
-        #~ yield 'lino.modlib.pages'
+        #~ yield 'lino_xl.lib.pages'
         yield 'lino.modlib.concepts'
         yield 'lino.projects.belref'
 

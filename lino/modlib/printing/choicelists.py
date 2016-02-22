@@ -47,7 +47,7 @@ class BuildMethod(Choice):
     template_ext = None
     templates_name = None
     cache_name = 'cache'
-    default_template = ''  # overridden by lino.modlib.appypod
+    default_template = ''  # overridden by lino_xl.lib.appypod
 
     use_webdav = False
     """Whether this build method results is an editable file.  For
@@ -124,6 +124,9 @@ class DjangoBuildMethod(BuildMethod):
             return select_template(tpls2)
         except TemplateDoesNotExist as e:
             raise Warning("No template found for %s (%s)" % (e, tpls2))
+        except Exception as e:
+            raise Exception(
+                "Error while loading template for %s : %s" % (tpls2, e))
 
     # ,MEDIA_URL=settings.MEDIA_URL):
     def render_template(self, elem, tpl, **context):

@@ -251,7 +251,7 @@ class Action(Parametrizable, Permittable):
     """
 
     extjs_main_panel = None
-    """Used by :mod:`lino.modlib.extensible` and
+    """Used by :mod:`lino_xl.lib.extensible` and
     :mod:`lino.modlib.awesome_uploader`.
 
     Example::
@@ -338,11 +338,11 @@ class Action(Parametrizable, Permittable):
     and the context menu.
 
     For example the :class:`CheckinVisitor
-    <lino.modlib.reception.models.CheckinVisitor>`,
+    <lino_xl.lib.reception.models.CheckinVisitor>`,
     :class:`ReceiveVisitor
-    <lino.modlib.reception.models.ReceiveVisitor>` and
+    <lino_xl.lib.reception.models.ReceiveVisitor>` and
     :class:`CheckoutVisitor
-    <lino.modlib.reception.models.CheckoutVisitor>` actions have this
+    <lino_xl.lib.reception.models.CheckoutVisitor>` actions have this
     attribute explicitly set to `False` because otherwise they would be
     visible in the toolbar.
 
