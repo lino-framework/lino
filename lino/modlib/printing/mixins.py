@@ -489,7 +489,7 @@ class CachedPrintable(Duplicable, Printable):
     build_time = models.DateTimeField(
         _("build time"), null=True, editable=False)
 
-    build_method = BuildMethods.field()
+    build_method = BuildMethods.field(blank=True, null=True)
 
     class Meta:
         abstract = True
@@ -508,6 +508,9 @@ class CachedPrintable(Duplicable, Printable):
         if self.build_time:
             return self.build_method.get_target_name(
                 self.do_print, self)
+
+    def get_build_method(self):
+        return self.build_method or self.get_default_build_method()
 
     def get_target_url(self):
         return self.build_method.get_target_url(
@@ -573,10 +576,10 @@ class TypedPrintable(CachedPrintable):
             return ptype.build_method
         return super(TypedPrintable, self).get_default_build_method()
 
-    def get_build_method(self):
-        if not self.build_method:
-            return self.get_default_build_method()
-        return self.build_method
+    # def get_build_method(self):
+    #     if not self.build_method:
+    #         return self.get_default_build_method()
+    #     return self.build_method
         # ptype = self.get_printable_type()
         # if ptype and ptype.build_method:
         #     return ptype.build_method

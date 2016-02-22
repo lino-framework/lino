@@ -563,7 +563,8 @@ class Site(object):
     """
 
     # default_build_method = "appypdf"
-    default_build_method = "appyodt"
+    # default_build_method = "appyodt"
+    default_build_method = "wkhtmltopdf"
     """The default build method to use when rendering printable documents.
 
     This is the last default value, used only when
@@ -1480,9 +1481,11 @@ class Site(object):
                     cache_dir=self.cache_dir,
                     this=this,
                     other=other)
-                # raise Exception(msg)
-                # print(msg)
-                self.cache_dir = None
+                if True:
+                    raise Exception(msg)
+                else:
+                    # print(msg)
+                    self.cache_dir = None
         else:
             self.makedirs_if_missing(self.cache_dir)
             stamp.write_file(this)
