@@ -17,10 +17,11 @@
     >>> lino.startup('lino.projects.docs.settings')
 
 """
+from __future__ import unicode_literals
 from future import standard_library
 standard_library.install_aliases()
 from builtins import map
-from builtins import str
+# from builtins import str
 from past.builtins import basestring
 # from builtins import object
 

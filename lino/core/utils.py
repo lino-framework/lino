@@ -243,7 +243,8 @@ def models_by_base(base, toplevel_only=False):
 
     def f(a, b):
         return cmp(full_model_name(a), full_model_name(b))
-    found.sort(f)
+    from functools import cmp_to_key
+    found.sort(key=cmp_to_key(f))
     return found
 
 

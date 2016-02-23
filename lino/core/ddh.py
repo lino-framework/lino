@@ -53,7 +53,8 @@ class DisableDeleteHandler(object):
         def f(a, b):
             return cmp(
                 fmn(a[0])+'.'+a[1].name, fmn(b[0])+'.'+b[1].name)
-        self.fklist.sort(f)
+        from functools import cmp_to_key
+        self.fklist.sort(key=cmp_to_key(f))
 
     def __str__(self):
         s = ','.join([m.__name__ + '.' + fk.name for m, fk in self.fklist])

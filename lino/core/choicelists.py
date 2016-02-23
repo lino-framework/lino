@@ -46,9 +46,9 @@ Every user-defined subclass of ChoiceList is also
 automatically available as a property value in
 :mod:`lino.modlib.properties`.
 """
-
+from __future__ import unicode_literals
 from past.builtins import cmp
-from builtins import str
+# from builtins import str
 from past.builtins import basestring
 from builtins import object
 
