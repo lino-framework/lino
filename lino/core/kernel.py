@@ -327,14 +327,17 @@ class Kernel(object):
                 model.allow_cascaded_delete = frozenset(
                     fields.fields_list(model, model.allow_cascaded_delete))
 
-            qsf = model.__dict__.get('quick_search_fields', None)
-            # never inherit from concrete parent model.
+            qsf = model.quick_search_fields
+            # Attention when inheriting this from from parent model.
+            # qsf = model.__dict__.get('quick_search_fields', None)
             if qsf is None:
                 fields_list = []
                 for field in model._meta.fields:
                     if isinstance(field, models.CharField):
                         fields_list.append(field.name)
                 model.quick_search_fields = frozenset(fields_list)
+            elif isinstance(qsf, frozenset):
+                pass
             elif isinstance(qsf, basestring):
                 model.quick_search_fields = frozenset(
                     fields.fields_list(model, model.quick_search_fields))

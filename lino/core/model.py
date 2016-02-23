@@ -135,12 +135,18 @@ class Model(models.Model):
     """
 
     quick_search_fields = None
-    """Explicitly specify the fields to be included in quick search.
+    """Explicitly specify the fields to be included in queries with a
+    quick search value.
 
-    If this is None, Lino searches the query text in all CharFields.
+    In your model declarations this should be either `None` or a
+    `string` containing a space-separated list of field names.
 
-    This should be either None or a string with a space-separated list
-    of field names.
+    This is being resolved during server startup into a frozenset of
+    field names. If it is `None`, Lino builds a list of all CharFields
+    on the model.
+
+    If you want to not inherit this field from a parent using standard
+    MRO, then you must set that field explictly to `None`.
 
     This is also used when a gridfilter has been set on a foreign key
     column which points to this model.
