@@ -53,8 +53,7 @@ PARTNER_NUMBERS_START_AT = 100  # used for generating demo data and tests
 
 
 class Partner(mixins.Polymorphic, AddressLocation, Addressable):
-    """
-    A Partner is any physical or moral person for which you want to
+    """A Partner is any physical or moral person for which you want to
     keep contact data (address, phone numbers, ...).
 
     A :class:`Partner` can act as the recipient of a sales invoice, as
@@ -68,15 +67,14 @@ class Partner(mixins.Polymorphic, AddressLocation, Addressable):
 
     .. attribute:: name
 
-    The full name of this partner. Used for alphabetic
-    sorting. Subclasses may fill this field automatically, e.g. saving
-    a :class:`Person` will automatically set her `name` field to
-    "last_name, first_name".
+        The full name of this partner. Used for alphabetic
+        sorting. Subclasses may hide this field and fill it
+        automatically, e.g. saving a :class:`Person` will
+        automatically set her `name` field to "last_name, first_name".
 
     .. attribute:: email
 
-    The primary email address.
-
+        The primary email address.
 
     """
     preferred_foreignkey_width = 20
