@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 # Copyright 2009-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
@@ -68,6 +69,14 @@ class SiteConfig(dd.Model):
         If this field is empty, Lino uses the value found in
         :attr:`lino.core.site.Site.default_build_method`.
 
+    .. attribute:: simulate_today
+
+        A constant user-defined date to be substituted as current
+        system date.
+
+        This should be empty except in situations such as *a
+        posteriori* data entry in a prototype.
+
     """
 
     class Meta(object):
@@ -80,6 +89,9 @@ class SiteConfig(dd.Model):
     default_build_method = BuildMethods.field(
         verbose_name=_("Default build method"),
         blank=True, null=True)
+
+    simulate_today = models.DateField(
+        _("Simulated date"), blank=True, null=True)
 
     def __unicode__(self):
         return force_text(_("Site Parameters"))

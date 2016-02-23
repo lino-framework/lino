@@ -173,11 +173,9 @@ class Site(object):
     """
 
     the_demo_date = None
-    """
-    Specify a fixed date instead of the process startup time to be
-    used by :meth:`demo_date`. For example the :ref:`welfare` test
-    suite has a fixed demo date because certain tests for generating
-    events rely on a fixed date.
+    """A hard-coded constant date to be used as reference by :meth:`today`
+    and :meth:`demo_date`. For example many demo databases have this
+    set because certain tests rely on a constant reference date.
 
     """
 
@@ -1855,21 +1853,23 @@ class Site(object):
         done = set()
         for p in self.installed_plugins:
             for b in p.__class__.__mro__:
-                if not b in (object, Plugin):
-                    if not b.__module__ in done:
+                if b not in (object, Plugin):
+                    if b.__module__ not in done:
                         done.add(b.__module__)
                         parent = import_module(b.__module__)
                         func(b.__module__, parent, *args, **kw)
-            if not p.app_name in done:
+            if p.app_name not in done:
                 func(p.app_name, p.app_module, *args, **kw)
 
     def demo_date(self, *args, **kwargs):
         """
+        Deprecated. Should be replaced by :meth:`today`.
         Compute a date using :func:`atelier.utils.date_offset` based on
         the process startup time (or :attr:`the_demo_date` if this is
         set).
 
         Used in Python fixtures and unit tests.
+
 
         """
         base = self.the_demo_date or self.startup_time.date()
@@ -1888,7 +1888,11 @@ class Site(object):
         age of people would otherwise change.
 
         """
-        base = self.the_demo_date or datetime.date.today()
+        if self.site_config is not None:
+            base = self.site_config.simulate_today \
+                or self.the_demo_date or datetime.date.today()
+        else:
+            base = self.the_demo_date or datetime.date.today()
         return date_offset(base, *args, **kwargs)
 
     def welcome_text(self):
@@ -2767,7 +2771,7 @@ site. :manage:`diag` is a command-line shortcut to this.
         This is always `None` when :mod:`lino.modlib.system` is not installed.
 
         """
-        if not 'system' in self.modules:
+        if 'system' not in self.modules:
             return None
 
         if self._site_config is None:

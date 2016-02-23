@@ -157,7 +157,8 @@ class Uploads(dd.Table):
         upload_type=models.ForeignKey(
             'uploads.UploadType', blank=True, null=True))
     params_layout = "start_date end_date user upload_type"
-    simple_param_fields = ['user']
+
+    # simple_parameters = ['user']
 
     @classmethod
     def get_request_queryset(cls, ar):
