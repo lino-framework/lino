@@ -22,7 +22,7 @@ SETUP_INFO = dict(
         'Sphinx',
         'atelier', 'unipath', 'python_dateutil',
         'Babel', 'odfpy>1.3', 'lxml',
-        'beautifulsoup4', 'html5lib', 'reportlab==2.7', 'pisa',
+        'beautifulsoup4', 'html5lib', 'reportlab', 'pisa',
         'jinja2', 'pytidylib', 'PyYAML',
         'clint',  # lino.modlib.plausibility.management.commands
         'django-localflavor',  # lino.modlib.sepa
