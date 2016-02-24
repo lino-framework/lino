@@ -13,6 +13,7 @@ See also :srcref:`docs/tickets/108`.
 """
 
 from __future__ import unicode_literals
+from builtins import filter
 
 
 from django.db import models
@@ -81,20 +82,20 @@ for ln in COMPANY_TYPES_TEXT.splitlines():
         if len(a) != 4:
             raise Exception("Line %r has %d fields (expected 4)" % len(a))
         d = dict()
-        for index, i in LANGS.items():
+        for index, i in list(LANGS.items()):
             kw = parse(a[i])
             if index == 0:
                 d.update(kw)
             else:
-                for k, v in kw.items():
+                for k, v in list(kw.items()):
                     d[k + settings.SITE.languages[index].suffix] = v
 
         def not_empty(x):
             return x
         #~ print d
-        if d.has_key('name'):
+        if 'name' in d:
             # if there's at least one non-empty value
-            if filter(not_empty, d.values()):
+            if list(filter(not_empty, list(d.values()))):
                 COMPANY_TYPES.append(d)
 
 
