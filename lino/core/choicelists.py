@@ -47,8 +47,9 @@ automatically available as a property value in
 :mod:`lino.modlib.properties`.
 """
 from __future__ import unicode_literals
+from django.utils.encoding import python_2_unicode_compatible
 from past.builtins import cmp
-# from builtins import str
+from builtins import str ,bytes
 from past.builtins import basestring
 from builtins import object
 
@@ -77,7 +78,7 @@ STRICT = True
 VALUE_FIELD = models.CharField(_("value"), max_length=20)
 VALUE_FIELD.attname = 'value'
 
-
+@python_2_unicode_compatible
 class Choice(object):
     """A constant value whose unicode representation depends on the
     current language at runtime.  Every item of a :class:`ChoiceList`
@@ -162,12 +163,12 @@ class Choice(object):
 
     def __str__(self):
         if self.name:
-            return self.name
-        return unicode_string(self.text)
-
-    def __unicode__(self):
-        # return force_text(self.text, errors="replace")
+            return str(self.name)
         return str(self.text)
+
+    # def __unicode__(self):
+        # return force_text(self.text, errors="replace")
+        # return str(self.text)
 
     def as_callable(self):
         """Return this as a callable so it can be used as `default` of a
@@ -431,7 +432,7 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
             pw = 4
             for i in cls.get_list_items():
                 dt = cls.display_text(i)
-                pw = max(pw, len(str(dt)))
+                pw = max(pw, len(dt))
             cls.preferred_width = pw
 
     @classmethod
@@ -539,11 +540,12 @@ Django creates copies of them when inheriting models.
         we had the :attr:`ChoiceList.show_values` option.
 
         """
-        if cls.show_values:
+        if cls.show_values or True:
             def fn(bc):
-                return u"%s (%s)" % (bc.value, str(bc))
-            return lazy(fn, str)(bc)
-        return lazy(str, str)(bc)
+                # return "%s (%s)" % (bc.value, str(bc))
+                return "{0} ({1})".format(bc.value, bc)
+            return lazy(fn, bytes)(bc)
+        return lazy(bytes, bytes)(bc)
 
     @classmethod
     def get_by_name(self, name, *args):

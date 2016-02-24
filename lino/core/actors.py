@@ -853,7 +853,9 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
         def f(a, b):
             return cmp(a.action.sort_index, b.action.sort_index)
-        cls._actions_list.sort(f)
+        # cls._actions_list.sort(f)
+        from functools import cmp_to_key
+        cls._actions_list.sort(key=cmp_to_key(f))
         cls._actions_list = tuple(cls._actions_list)
 
     @classmethod
