@@ -63,6 +63,7 @@ This is a tested document. To test it, run::
 
 
 >>> from lino.utils import *
+>>> from __future__ import print_function
 
 :func:`str2hex` and :func:`hex2str`
 -----------------------------------
@@ -81,18 +82,19 @@ This is a tested document. To test it, run::
 :func:`join_words`
 ------------------
 
->>> print join_words('This','is','a','test')
+>>> print (join_words('This','is','a','test'))
 This is a test
 
->>> print join_words('This','is','','another','test')
+>>> print (join_words('This','is','','another','test'))
 This is another test
 
->>> print join_words(None,None,None,'Third','test')
+>>> print (join_words(None,None,None,'Third','test'))
 Third test
 
 """
 from __future__ import division
 from __future__ import print_function
+from __future__ import unicode_literals
 from builtins import chr
 from builtins import hex
 from builtins import next
@@ -262,26 +264,26 @@ class IncompleteDate(object):
     Naive representation of a potentially incomplete gregorian date.
 
     Once upon a time in the year 2011:
-    >>> print IncompleteDate(2011, 0, 0).strftime("%d.%m.%Y")
+    >>> print (IncompleteDate(2011, 0, 0).strftime("%d.%m.%Y"))
     00.00.2011
 
-    >>> print IncompleteDate(1532, 0, 0)
+    >>> print (IncompleteDate(1532, 0, 0))
     1532-00-00
-    >>> print IncompleteDate(1990, 0, 1)
+    >>> print (IncompleteDate(1990, 0, 1))
     1990-00-01
-    >>> print IncompleteDate(0, 6, 1)
+    >>> print (IncompleteDate(0, 6, 1))
     0000-06-01
 
     W.A. Mozart's birth date:
 
-    >>> print IncompleteDate(1756, 1, 27)
+    >>> print (IncompleteDate(1756, 1, 27))
     1756-01-27
 
     Christ's birth date:
 
-    >>> print IncompleteDate(-7, 12, 25)
+    >>> print (IncompleteDate(-7, 12, 25))
     -7-12-25
-    >>> print IncompleteDate(-7, 12, 25).strftime("%d.%m.%Y")
+    >>> print (IncompleteDate(-7, 12, 25).strftime("%d.%m.%Y"))
     25.12.-7
 
     Note that you cannot convert all incomplete dates
@@ -298,11 +300,11 @@ class IncompleteDate(object):
     An IncompleteDate is allowed to be complete:
 
     >>> d = IncompleteDate.parse('2011-11-19')
-    >>> print d
+    >>> print (d)
     2011-11-19
     >>> d.is_complete()
     True
-    >>> print repr(d.as_date())
+    >>> print (repr(d.as_date()))
     datetime.date(2011, 11, 19)
 
     >>> d = IncompleteDate.parse('2008-03-24')
@@ -493,7 +495,7 @@ def workdays(start, end):
     ...     a = i2d(start)
     ...     b = i2d(end)
     ...     if workdays(a,b) != expected:
-    ...        print "Got %d instead of %d for (%s,%s)" % (workdays(a,b),expected,a,b)
+    ...        print ("Got %d instead of %d for (%s,%s)" % (workdays(a,b),expected,a,b))
 
     """
     #~ for d in range(start,end,ONE_DAY):
