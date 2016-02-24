@@ -7,8 +7,6 @@ env.tolerate_sphinx_warnings = False
 
 add_demo_project('lino.projects.docs.settings.demo')
 add_demo_project('lino.projects.belref.settings.demo')
-add_demo_project('lino.projects.polly.settings.demo')
-# add_demo_project('lino.projects.i18n.settings')
 add_demo_project('lino.projects.events.settings')
 
 env.revision_control_system = 'git'
