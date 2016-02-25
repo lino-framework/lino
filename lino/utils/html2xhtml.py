@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-# Copyright 2011-2015 Luc Saffre
+# Copyright 2011-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 # How to test this document:
 #
 #  $ python setup.py test -s tests.UtilsTests.test_tidy
 
-"""Defines the :func:`html2xhtml` function which converts HTML to
+r"""Defines the :func:`html2xhtml` function which converts HTML to
 valid XHTML.
 
 It uses Jason Stitt's `pytidylib

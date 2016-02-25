@@ -161,14 +161,15 @@ class Choice(object):
             return "<%s.%s:%s>" % (
                 self.choicelist.__name__, self.name, self.value)
 
-    def __str__(self):
-        if self.name:
-            return str(self.name)
-        return str(self.text)
+    # def __str__(self):
+    #     if self.name:
+    #         return str(self.name)
+    #     return str(self.text)
 
-    # def __unicode__(self):
+    def __str__(self):
         # return force_text(self.text, errors="replace")
         # return str(self.text)
+        return str(self.text)
 
     def as_callable(self):
         """Return this as a callable so it can be used as `default` of a

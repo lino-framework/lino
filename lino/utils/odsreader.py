@@ -1,8 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2013 Luc Saffre
+# Copyright 2012-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-ur""" OdsReader uses odfpy to extract data from an .ods document
+r""" OdsReader uses odfpy to extract data from an .ods document
 (OpenOffice.org spreadsheet).
 
 Thanks to Marco Conti and gtr for their blog post `Read an ODS file
@@ -24,11 +24,11 @@ and prints a line of text for each row of data.
 
 >>> class Sample(OdsReader):
 ...     filename = srcpath('odsreader_sample.ods')
-...     headers = [u"N°", u"Prénom", u"Last name", u"Country", u"City", u"Language"]
+...     headers = ["N°", "Prénom", "Last name", "Country", "City", "Language"]
 ...     column_names = 'no first_name last_name country city language'.split()
 ...    
 >>> for row in Sample().rows():
-...     print "%(first_name)s %(last_name)s from %(city)s" % row
+...     print( "%(first_name)s %(last_name)s from %(city)s" % row)
 Rudi Rutté from Eupen
 Romain Raffault from Liège
 Rando Roosi from Tallinn
@@ -39,6 +39,7 @@ Robin Rood from London
 
 
 """
+from __future__ import print_function, unicode_literals
 from builtins import str
 from builtins import range
 from builtins import object
@@ -91,7 +92,7 @@ class SimpleOdsReader(object):
         """
         Yields the data rows found in this .ods file.
         """
-        doc = opendocument.load(str(self.filename))
+        doc = opendocument.load(self.filename)
         logger.debug("Reading %s", self.filename)
         if self.column_names is None:
             self.column_names = self.headers
