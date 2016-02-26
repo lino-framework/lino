@@ -38,6 +38,7 @@ language.
 .. currentmodule:: lino.core.site
 
 >>> from __future__ import print_function
+>>> from __future__ import unicode_literals
 >>> from django.utils import translation
 >>> from lino.core.site import TestSite as Site
 
@@ -58,8 +59,7 @@ certain things which apply also to "real" Sites.
 
 >>> SITE = Site(languages="de-ch de-be")
 >>> print(SITE.languages)  #doctest: +NORMALIZE_WHITESPACE
-(LanguageInfo(django_code='de-ch', name='de_CH', index=0, suffix=''),
- LanguageInfo(django_code='de-be', name='de_BE', index=1, suffix='_de_BE'))
+(LanguageInfo(django_code='de-ch', name='de_CH', index=0, suffix=''), LanguageInfo(django_code='de-be', name='de_BE', index=1, suffix='_de_BE'))
 
 If we have more than one locale of a same language *on a same Site*
 (e.g. 'en-us' and 'en-gb') then it is not allowed to specify just
@@ -73,7 +73,7 @@ If we have more than one locale of a same language *on a same Site*
  LanguageInfo(django_code='de-be', name='de_BE', index=2, suffix='_de_BE'),
  LanguageInfo(django_code='de', name='de', index=3, suffix='_de'))
 
->>> site.language_dict.keys()
+>>> list(site.language_dict)
 ['fr', 'de_BE', 'de', 'en_US', 'en']
 
 >>> site.language_dict['de']

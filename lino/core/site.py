@@ -2241,7 +2241,7 @@ class Site(object):
         languages = []
         for i, django_code in enumerate(self.languages):
             assert_django_code(django_code)
-            name = to_locale(django_code)
+            name = str(to_locale(django_code))
             if name in self.language_dict:
                 raise Exception("Duplicate name %s for language code %r"
                                 % (name, django_code))
@@ -2258,7 +2258,7 @@ class Site(object):
             if '-' in info.django_code:
                 base, loc = info.django_code.split('-')
                 if not base in self.language_dict:
-                    self.language_dict[base] = info
+                    self.language_dict[str(base)] = info
 
                     # replace the complicated info by a simplified one
                     #~ newinfo = LanguageInfo(info.django_code,base,info.index,info.suffix)
