@@ -56,7 +56,7 @@ class Analyzer(object):
         l = list(window_actions.values())
 
         def f(a, b):
-            return cmp(a.full_name(), b.full_name())
+            return cmp(str(a.full_name()), str(b.full_name()))
         self.window_actions = list(sorted(l, f))
         self.custom_actions = list(sorted(self.custom_actions, f))
     
