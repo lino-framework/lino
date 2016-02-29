@@ -66,9 +66,9 @@ Here is our data:
 [<Person: Alfred>, <Person: Bert>, <Person: Claude>, <Person: Dirk>]
 
 >>> Restaurant.objects.all()
-[Restaurant #1 (u'#1 (name=First, owners=Alfred, Bert, cooks=Claude, Dirk)')]
+[Restaurant #1 ('#1 (name=First, owners=Alfred, Bert, cooks=Claude, Dirk)')]
 >>> Place.objects.all()
-[Place #1 (u'#1 (name=First, owners=Alfred, Bert)')]
+[Place #1 ('#1 (name=First, owners=Alfred, Bert)')]
 
 
 The :func:`delete_child` function
@@ -97,7 +97,7 @@ calling the :func:`delete_child` function:
 The Place still exists, but no longer as a Restaurant:
 
 >>> Place.objects.get(pk=1)
-Place #1 (u'#1 (name=First, owners=Alfred, Bert)')
+Place #1 ('#1 (name=First, owners=Alfred, Bert)')
 
 >>> Restaurant.objects.get(pk=1)
 Traceback (most recent call last):
@@ -119,7 +119,7 @@ Let's first create a simple Place #2 with a single owner.
 >>> obj.owners.add(Person.objects.get(pk=2))
 >>> obj.save()
 >>> obj
-Place #2 (u'#2 (name=Second, owners=Bert)')
+Place #2 ('#2 (name=Second, owners=Bert)')
 
 Now this Place becomes a Restaurant and hires 2 cooks:
 
@@ -127,7 +127,7 @@ Now this Place becomes a Restaurant and hires 2 cooks:
 >>> for i in 3, 4:
 ...     obj.cooks.add(Person.objects.get(pk=i))
 >>> obj
-Restaurant #2 (u'#2 (name=Second, owners=Bert, cooks=Claude, Dirk)')
+Restaurant #2 ('#2 (name=Second, owners=Bert, cooks=Claude, Dirk)')
 
 If you try to promote a Person to a Restaurant, you'll get an exception:
 
@@ -135,7 +135,7 @@ If you try to promote a Person to a Restaurant, you'll get an exception:
 >>> insert_child(person, Restaurant).save()
 Traceback (most recent call last):
 ...
-ValidationError: [u'A Person cannot be parent for a Restaurant']
+ValidationError: ['A Person cannot be parent for a Restaurant']
 
 
 The :class:`EnableChild` virtual field 
@@ -148,15 +148,15 @@ used by Lino, and thus is Lino-specific.
 After the above examples our database looks like this:
 
 >>> Place.objects.all()
-[Place #1 (u'#1 (name=First, owners=Alfred, Bert)'), Place #2 (u'#2 (name=Second, owners=Bert)')]
+[Place #1 ('#1 (name=First, owners=Alfred, Bert)'), Place #2 ('#2 (name=Second, owners=Bert)')]
 >>> Restaurant.objects.all()
-[Restaurant #2 (u'#2 (name=Second, owners=Bert, cooks=Claude, Dirk)')]
+[Restaurant #2 ('#2 (name=Second, owners=Bert, cooks=Claude, Dirk)')]
 
 Let's take Place #1 and look at it.
 
 >>> obj = Place.objects.get(pk=1)
 >>> obj
-Place #1 (u'#1 (name=First, owners=Alfred, Bert)')
+Place #1 ('#1 (name=First, owners=Alfred, Bert)')
 
 How to see whether a given Place is a Restaurant?
 
@@ -168,7 +168,7 @@ How to see whether a given Place is a Restaurant?
 Let's promote First (currently a simple Place) to a Restaurant:
 
 >>> insert_child(obj, Restaurant)
-Restaurant #1 (u'#1 (name=First, owners=Alfred, Bert, cooks=)')
+Restaurant #1 ('#1 (name=First, owners=Alfred, Bert, cooks=)')
 
 
 And Second stops being a Restaurant:
@@ -189,7 +189,7 @@ close and later reopen:
 >>> bert = Person.objects.get(pk=2)
 >>> second = Place.objects.get(pk=2)
 >>> insert_child(second, Restaurant)
-Restaurant #2 (u'#2 (name=Second, owners=Bert, cooks=)')
+Restaurant #2 ('#2 (name=Second, owners=Bert, cooks=)')
 
 Now we can see this place again as a Restaurant
 
@@ -199,7 +199,7 @@ And engage for example a new cook:
 
 >>> second.cooks.add(bert)
 >>> second
-Restaurant #2 (u'#2 (name=Second, owners=Bert, cooks=Bert)')
+Restaurant #2 ('#2 (name=Second, owners=Bert, cooks=Bert)')
 
 
 
@@ -274,7 +274,7 @@ record*?  That's why :func:`create_mti_child` was written for.
 >>> obj.owners.add(Person.objects.get(pk=2))
 >>> obj.save()
 >>> obj
-Place #3 (u'#3 (name=Third, owners=Bert)')
+Place #3 ('#3 (name=Third, owners=Bert)')
 
 >>> from lino.utils.dpy import create_mti_child
 >>> obj = create_mti_child(Place, 3, Restaurant)
@@ -296,7 +296,7 @@ To test whether :func:`create_mti_child` did her job,
 we must re-read an instance:
 
 >>> Restaurant.objects.get(pk=3)
-Restaurant #3 (u'#3 (name=Third, owners=Bert, cooks=)')
+Restaurant #3 ('#3 (name=Third, owners=Bert, cooks=)')
 
 Note that 
 :func:`create_mti_child` doesn't allow to also change the `name`
