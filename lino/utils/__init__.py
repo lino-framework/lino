@@ -62,8 +62,18 @@ This is a tested document. To test it, run::
     xmlgen
 
 
->>> from lino.utils import *
 >>> from __future__ import print_function
+>>> from __future__ import unicode_literals
+>>> from lino.utils import *
+>>> from builtins import chr
+>>> from builtins import hex
+>>> from builtins import next
+>>> from builtins import map
+>>> from builtins import str
+>>> from builtins import range
+>>> from builtins import object
+
+
 
 :func:`str2hex` and :func:`hex2str`
 -----------------------------------
@@ -92,22 +102,11 @@ This is another test
 Third test
 
 """
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
-from builtins import chr
-from builtins import hex
-from builtins import next
-from builtins import map
-from builtins import str
-from builtins import range
-from builtins import object
-from past.utils import old_div
 
 #~ import logging
 #~ logger = logging.getLogger(__name__)
-
-
+from builtins import str
+from past.utils import old_div
 import sys
 import datetime
 import re
@@ -585,7 +584,8 @@ class SumCollector(object):
     >>> sc.collect("a", 12)
     >>> sc.collect("b", 23)
     >>> sc.collect("a", 34)
-    >>> sc.items()
+    >>> from future.utils import iteritems
+    >>> sorted(list(iteritems(sc)))
     [('a', 46), ('b', 23)]
 
 
