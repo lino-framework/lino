@@ -77,7 +77,7 @@ javascript:Lino.polls.Responses.toggle_choice("ext-comp-1351",2,{ "fv": [ 9, 17 
 The 2 is the id of the Response we are acting on:
 
 >>> polls.Response.objects.get(pk=2)
-Response #2 (u"Rolf Rompen's response to Participant feedback")
+Response #2 ("Rolf Rompen's response to Participant feedback")
 
 
 "fv" stands for "field values". 
@@ -87,9 +87,9 @@ The 9 is the id of a `polls.Question`,
 the 17 is the id of a `polls.Choice`.
 
 >>> polls.Question.objects.get(pk=9)
-Question #9 (u'1) There was enough to eat.')
+Question #9 ('1) There was enough to eat.')
 
 >>> polls.Choice.objects.get(pk=17)
-Choice #17 (u'1')
+Choice #17 ('1')
 
 
