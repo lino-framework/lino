@@ -12,7 +12,7 @@
         $ python lino/core/site.py
 
     doctest init:
-
+    >>> from __future__ import unicode_literals
     >>> import lino
     >>> lino.startup('lino.projects.docs.settings')
 
@@ -2258,7 +2258,7 @@ class Site(object):
             if '-' in info.django_code:
                 base, loc = info.django_code.split('-')
                 if not base in self.language_dict:
-                    self.language_dict[str(base)] = info
+                    self.language_dict[base] = info
 
                     # replace the complicated info by a simplified one
                     #~ newinfo = LanguageInfo(info.django_code,base,info.index,info.suffix)
@@ -2446,7 +2446,6 @@ class Site(object):
         BabelField `name` and a set of hard-coded values.
 
         You have some hard-coded multilingual content in a fixture:
-
         >>> from lino.core.site import TestSite as Site
         >>> kw = dict(de="Hallo", en="Hello", fr="Salut")
 
@@ -2637,6 +2636,7 @@ given object `obj`. The dict will have one key for each
 
         Examples:
 
+        >>> from __future__ import unicode_literals
         >>> from django.utils import translation
         >>> from lino.core.site import TestSite as Site
         >>> from atelier.utils import AttrDict
