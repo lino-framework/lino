@@ -127,7 +127,7 @@ class Poll(UserAuthored, mixins.CreatedModified, Referrable):
 
     workflow_state_field = 'state'
 
-    def __unicode__(self):
+    def __str__(self):
         return self.ref or self.title
 
     def after_ui_save(self, ar, cw):
@@ -321,7 +321,7 @@ class ToggleChoice(dd.Action):
                 "Oops, %s returned %d rows." % (qs.query, qs.count()))
         ar.success(refresh=True)
         # dd.logger.info("20140930 %s", obj)
-            
+
 
 class Response(UserAuthored, mixins.Registrable):
 
@@ -343,7 +343,7 @@ class Response(UserAuthored, mixins.Registrable):
     def poll_choices(cls):
         return Poll.objects.filter(state=PollStates.published)
 
-    def __unicode__(self):
+    def __str__(self):
         if self.partner is None:
             return _("%(user)s's response to %(poll)s") % dict(
                 user=self.user, poll=self.poll)
@@ -423,7 +423,7 @@ class ResponsesByPartner(Responses):
         polls_responses = {}
         for resp in qs:
             polls_responses.setdefault(resp.poll.pk, []).append(resp)
-            
+
         items = []
         for poll in visible_polls:
             iar = self.insert_action.request_from(
@@ -505,7 +505,7 @@ class AllAnswerRemarks(AnswerRemarks):
 class AnswersByResponseRow(object):
     """Volatile object to represent the one and only answer to a given
     question in a given response.
-    
+
     Used by :class:`AnswersByResponse` whose rows are instances of
     this.
 
@@ -651,7 +651,7 @@ class AnswersByResponse(dd.VirtualTable):
                         # sar = RemarksByAnswer.request_from(ar, answer)
                         # btn = sar.insert_button(_("Remark"), icon_name=None)
                         items += [" (", btn, ")"]
-                        
+
                 else:
                     other_answer = AnswersByResponseRow(r, answer.question)
                     items = [str(other_answer)]
@@ -659,7 +659,7 @@ class AnswersByResponse(dd.VirtualTable):
                         items += [E.br(), answer.remark.remark]
                 cells.append(E.p(*items))
             ht.add_body_row(*cells, **cellattrs)
-        
+
         return E.div(ht.as_element(), class_="htmlText")
 
     @dd.displayfield(_("My answer"))
