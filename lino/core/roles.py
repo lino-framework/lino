@@ -28,6 +28,17 @@ class UserRole(object):
                 return False
         return True
 
+    @classmethod
+    def get_user_profiles(cls):
+        """Yield a series of all user profiles on this site which satisfy this
+        role.
+
+        """
+        from lino.modlib.users.choicelists import UserProfiles
+        for p in UserProfiles.items():
+            if p.has_required_roles([cls]):
+                yield p
+
 
 class SiteUser(UserRole):
     """Every authenticated user has this role."""

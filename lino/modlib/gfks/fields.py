@@ -66,12 +66,15 @@ class GenericForeignKey(DjangoGenericForeignKey):
 
 class GenericForeignKeyIdField(models.PositiveIntegerField):
 
-    """
-    Use this instead of `models.PositiveIntegerField`
-    for fields that part of a :term:`GFK` and you want
-    Lino to render them using a Combobox.
+    """Use this instead of `models.PositiveIntegerField` for fields that
+    are part of a :term:`GFK` and you want Lino to render them using a
+    Combobox.
 
     Used by :class:`lino.modlib.gfks.mixins.Controllable`.
+
+    Note: `type_field` is a mandatory argument, but you can specify
+    anything because it is being ignored.
+
     """
 
     def __init__(self, type_field, *args, **kw):
