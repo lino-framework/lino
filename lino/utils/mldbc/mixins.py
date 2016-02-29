@@ -19,8 +19,9 @@ from django.utils.translation import ugettext_lazy as _
 from lino.core import model
 
 from .fields import BabelCharField
+from django.utils.encoding import python_2_unicode_compatible
 
-
+@python_2_unicode_compatible
 class BabelNamed(model.Model):
 
     """Mixin for models that have a babel field `name` (labelled
@@ -33,7 +34,7 @@ class BabelNamed(model.Model):
 
     name = BabelCharField(max_length=200, verbose_name=_("Designation"))
 
-    def __unicode__(self):
+    def __str__(self):
         return settings.SITE.babelattr(self, 'name')
 
 
