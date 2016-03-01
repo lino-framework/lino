@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2010-2015 Luc Saffre
+# Copyright 2010-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 
@@ -51,8 +51,8 @@ class Controllable(dd.Model):
     subclasses. """
 
     controller_is_optional = True
-    """Whether the controller is optional (i.e. whether the :attr:`owner`
-    field may be NULL)
+    """Deprecated. This is (and always was) being ignored. Use
+    :meth:`update_controller` instead.
 
     """
 
@@ -62,18 +62,32 @@ class Controllable(dd.Model):
     owner_type = dd.ForeignKey(
         ContentType,
         editable=True,
-        blank=controller_is_optional, null=controller_is_optional,
+        blank=True, null=True,
         verbose_name=string_concat(owner_label, ' ', _('(type)')))
 
     owner_id = GenericForeignKeyIdField(
         owner_type,
         editable=True,
-        blank=controller_is_optional, null=controller_is_optional,
+        blank=True, null=True,
         verbose_name=string_concat(owner_label, ' ', _('(object)')))
 
     owner = GenericForeignKey(
         'owner_type', 'owner_id',
         verbose_name=owner_label)
+
+    @classmethod
+    def update_controller_field(cls, **kwargs):
+        """This can be used to make the controller optional (i.e. whether the
+        :attr:`owner` field may be NULL). Example::
+
+            class MyModel(Controllable):
+                ....
+
+            MyModel.update_controller_field(blank=False, null=False)
+
+        """
+        dd.update_field(cls, 'owner_id', **kwargs)
+        dd.update_field(cls, 'owner_type', **kwargs)
 
     def update_owned_instance(self, controllable):
         """If this (acting as a controller) is itself controlled, forward the
