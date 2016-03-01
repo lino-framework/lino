@@ -10,6 +10,7 @@ I wrote it mainly to solve ticket :srcref:`docs/tickets/22`.
 
 
 """
+from builtins import str
 import logging
 logger = logging.getLogger(__name__)
 
@@ -189,8 +190,8 @@ def insert_child(obj, child_model, full_clean=False, **attrs):
             #~ obj.__class__.__name__)
     parent_link_field = child_model._meta.parents.get(obj.__class__, None)
     if parent_link_field is None:
-        raise ValidationError("A %s cannot be parent for a %s" % (
-            obj.__class__.__name__, child_model.__name__))
+        raise ValidationError(str("A %s cannot be parent for a %s" % (
+            obj.__class__.__name__, child_model.__name__)))
     attrs[parent_link_field.name] = obj
     # ~ for pm,pf in child_model._meta.parents.items(): # pm : parent model, pf : parent link field
         #~ attrs[pf.name] = obj

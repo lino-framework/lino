@@ -2426,12 +2426,13 @@ class Site(object):
 
         >>> from django.utils.translation import ugettext_lazy as _
         >>> from lino.core.site import TestSite as Site
+        >>> from atelier.utils import dict_py2
         >>> site = Site(languages='de fr es')
-        >>> site.str2kw('name', _("January"))
-        {'name_fr': u'janvier', 'name': u'Januar', 'name_es': u'Enero'}
+        >>> dict_py2(site.str2kw('name', _("January")))
+        {'name_fr': 'janvier', 'name': 'Januar', 'name_es': 'Enero'}
         >>> site = Site(languages='fr de es')
-        >>> site.str2kw('name', _("January"))
-        {'name_de': u'Januar', 'name': u'janvier', 'name_es': u'Enero'}
+        >>> dict_py2(site.str2kw('name', _("January")))
+        {'name_de': 'Januar', 'name': 'janvier', 'name_es': 'Enero'}
 
         """
         from django.utils import translation
@@ -2447,30 +2448,31 @@ class Site(object):
 
         You have some hard-coded multilingual content in a fixture:
         >>> from lino.core.site import TestSite as Site
+        >>> from atelier.utils import dict_py2
         >>> kw = dict(de="Hallo", en="Hello", fr="Salut")
 
         The field names where this info gets stored depends on the
         Site's `languages` distribution.
         
-        >>> Site(languages="de-be en").babelkw('name',**kw)
+        >>> dict_py2(Site(languages="de-be en").babelkw('name',**kw))
         {'name_en': 'Hello', 'name': 'Hallo'}
         
-        >>> Site(languages="en de-be").babelkw('name',**kw)
+        >>> dict_py2(Site(languages="en de-be").babelkw('name',**kw))
         {'name_de_BE': 'Hallo', 'name': 'Hello'}
         
-        >>> Site(languages="en-gb de").babelkw('name',**kw)
+        >>> dict_py2(Site(languages="en-gb de").babelkw('name',**kw))
         {'name_de': 'Hallo', 'name': 'Hello'}
         
-        >>> Site(languages="en").babelkw('name',**kw)
+        >>> dict_py2(Site(languages="en").babelkw('name',**kw))
         {'name': 'Hello'}
         
-        >>> Site(languages="de-be en").babelkw('name',de="Hallo",en="Hello")
+        >>> dict_py2(Site(languages="de-be en").babelkw('name',de="Hallo",en="Hello"))
         {'name_en': 'Hello', 'name': 'Hallo'}
 
         In the following example `babelkw` attributes the 
         keyword `de` to the *first* language variant:
         
-        >>> Site(languages="de-ch de-be").babelkw('name',**kw)
+        >>> dict_py2(Site(languages="de-ch de-be").babelkw('name',**kw))
         {'name': 'Hallo'}
         
         
@@ -2502,6 +2504,7 @@ given object `obj`. The dict will have one key for each
 
         >>> from lino.core.site import TestSite as Site
         >>> from atelier.utils import AttrDict
+        >>> from atelier.utils import dict_py2
         >>> def testit(site_languages):
         ...     site = Site(languages=site_languages)
         ...     obj = AttrDict(site.babelkw(
@@ -2510,11 +2513,11 @@ given object `obj`. The dict will have one key for each
 
 
         >>> site, obj = testit('de en')
-        >>> site.field2kw(obj, 'name')
+        >>> dict_py2(site.field2kw(obj, 'name'))
         {'de': 'Hallo', 'en': 'Hello'}
 
         >>> site, obj = testit('fr et')
-        >>> site.field2kw(obj, 'name')
+        >>> dict_py2(site.field2kw(obj, 'name'))
         {'fr': 'Salut'}
 
         """
@@ -2554,19 +2557,19 @@ given object `obj`. The dict will have one key for each
         >>> site = Site(languages="de en")
         >>> tr = site.babelitem
         >>> with translation.override('de'):
-        ...    tr(**kw)
-        'Hallo'
+        ...    print(tr(**kw))
+        Hallo
 
         >>> with translation.override('en'):
-        ...    tr(**kw)
-        'Hello'
+        ...    print(tr(**kw))
+        Hello
 
         If the current language is not found in the specified `values`,
         then it returns the site's default language:
 
         >>> with translation.override('jp'):
-        ...    tr(en="Hello", de="Hallo", fr="Salut")
-        'Hallo'
+        ...    print(tr(en="Hello", de="Hallo", fr="Salut"))
+        Hallo
 
         Testing detail: default language should be "de" in our example, but
         we are playing here with more than one Site instance while Django
@@ -2578,12 +2581,12 @@ given object `obj`. The dict will have one key for each
         doesn'n matter:
 
         >>> with translation.override('jp'):
-        ...    tr("Tere", de="Hallo", fr="Salut")
-        'Tere'
+        ...    print(tr("Tere", de="Hallo", fr="Salut"))
+        Tere
 
         >>> with translation.override('de'):
-        ...     tr("Tere", de="Hallo", fr="Salut")
-        'Hallo'
+        ...     print(tr("Tere", de="Hallo", fr="Salut"))
+        Hallo
 
         You may not specify more than one default value:
 
@@ -2649,12 +2652,12 @@ given object `obj`. The dict will have one key for each
 
         >>> site,obj = testit('de en')
         >>> with translation.override('de'):
-        ...     site.babelattr(obj,'name')
-        'Hallo'
+        ...     print(site.babelattr(obj,'name'))
+        Hallo
 
         >>> with translation.override('en'):
-        ...     site.babelattr(obj,'name')
-        'Hello'
+        ...     print(site.babelattr(obj,'name'))
+        Hello
 
         If the object has no translation for a given language, return
         the site's default language.  Two possible cases:
@@ -2664,14 +2667,14 @@ given object `obj`. The dict will have one key for each
 
         >>> site,obj = testit('en es')
         >>> with translation.override('es'):
-        ...     site.babelattr(obj, 'name')
-        'Hello'
+        ...     print(site.babelattr(obj, 'name'))
+        Hello
 
         Or a language has been activated which doesn't exist on the site:
 
         >>> with translation.override('fr'):
-        ...     site.babelattr(obj, 'name')
-        'Hello'
+        ...     print(site.babelattr(obj, 'name'))
+        Hello
 
 
         """
@@ -3232,23 +3235,23 @@ signature as `django.core.mail.EmailMessage`.
         >>> self = Site()
         >>> self.decimal_group_separator
         u'\xa0'
-        >>> self.decimal_separator
-        ','
+        >>> print(self.decimal_separator)
+        ,
 
         >>> x = Decimal(1234)
         >>> self.decfmt(x)
         u'1\xa0234,00'
 
-        >>> self.decfmt(x, sep=".")
-        '1.234,00'
+        >>> print(self.decfmt(x, sep="."))
+        1.234,00
 
         >>> self.decimal_group_separator = '.'
-        >>> self.decfmt(x)
-        '1.234,00'
+        >>> print(self.decfmt(x))
+        1.234,00
         
         >>> self.decimal_group_separator = "oops"
-        >>> self.decfmt(x)
-        '1oops234,00'
+        >>> print(self.decfmt(x))
+        1oops234,00
         
 
         """
