@@ -178,11 +178,12 @@ These are the Django settings which Lino will override:
 
 >>> from django.utils import translation
 >>> from lino.core.site import TestSite as Site
+>>> from atelier.utils import dict_py2
 >>> from pprint import pprint
->>> pprint(Site().django_settings)
+>>> pprint(dict_py2(Site().django_settings))
 ... #doctest: +ELLIPSIS +REPORT_UDIFF +NORMALIZE_WHITESPACE
 {'DATABASES': {'default': {'ENGINE': 'django.db.backends.sqlite3',
-                           'NAME': .../default.db')}},
+                           'NAME': '.../default.db'}},
  'FIXTURE_DIRS': (),
  'INSTALLED_APPS': ('lino.modlib.lino_startup',
                     'django.contrib.staticfiles',

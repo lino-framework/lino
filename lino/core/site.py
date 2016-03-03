@@ -2241,7 +2241,7 @@ class Site(object):
         languages = []
         for i, django_code in enumerate(self.languages):
             assert_django_code(django_code)
-            name = str(to_locale(django_code))
+            name = (to_locale(django_code))
             if name in self.language_dict:
                 raise Exception("Duplicate name %s for language code %r"
                                 % (name, django_code))
@@ -2249,7 +2249,7 @@ class Site(object):
                 suffix = ''
             else:
                 suffix = '_' + name
-            info = LanguageInfo(django_code, name, i, str(suffix))
+            info = LanguageInfo(django_code, str(name), i, str(suffix))
             self.language_dict[name] = info
             languages.append(info)
 

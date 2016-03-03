@@ -84,7 +84,7 @@ Here is how to select all men:
 
 >>> rt.modules.contacts.Person.objects.filter(gender=Genders.male)
 ... # doctest: +ELLIPSIS
-[Person #114 (u'Mr Hans Altenberg'), Person #112 (u'Mr Andreas Arens'), ...]
+[Person #114 ('Mr Hans Altenberg'), Person #112 ('Mr Andreas Arens'), ...]
 
 
 A ChoiceList has an `objects` method (not attribute) which returns an
@@ -119,7 +119,7 @@ Calling `unicode` of a choice is (usually) the same as calling unicode
 on its `text` attribute:
 
 >>> [unicode(g) for g in Genders.objects()]
-[u'Male', u'Female']
+['Male', 'Female']
 >>> [unicode(g.text) for g in Genders.objects()]
 [u'Male', u'Female']
 
@@ -130,15 +130,15 @@ The text of a choice depends on the current user language.
 
 >>> with translation.override('fr'):
 ...     [unicode(g) for g in Genders.objects()]
-[u'Masculin', u'F\xe9minin']
+['Masculin', 'F\xe9minin']
 
 >>> with translation.override('de'):
 ...     [unicode(g) for g in Genders.objects()]
-[u'M\xe4nnlich', u'Weiblich']
+['M\xe4nnlich', 'Weiblich']
 
 >>> with translation.override('et'):
 ...     [unicode(g) for g in Genders.objects()]
-[u'Mees', u'Naine']
+['Mees', 'Naine']
 
 
 

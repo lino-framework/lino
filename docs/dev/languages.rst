@@ -41,6 +41,7 @@ language.
 >>> from __future__ import unicode_literals
 >>> from django.utils import translation
 >>> from lino.core.site import TestSite as Site
+>>> from atelier.utils import list_py2
 
 
 Application code usually specifies :attr:`Site.languages` as a single
@@ -73,7 +74,7 @@ If we have more than one locale of a same language *on a same Site*
  LanguageInfo(django_code='de-be', name='de_BE', index=2, suffix='_de_BE'),
  LanguageInfo(django_code='de', name='de', index=3, suffix='_de'))
 
->>> list(site.language_dict)
+>>> list_py2(list(site.language_dict))
 ['fr', 'de_BE', 'de', 'en_US', 'en']
 
 >>> site.language_dict['de']
