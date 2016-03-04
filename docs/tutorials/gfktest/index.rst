@@ -12,7 +12,7 @@ A tested example of GFK fields
    Or:
 
      $ cd docs/tutorials/gfktest
-     $ python manage.py test
+     $ python manage.py test_gfk
 
 
 This tutorial project illustrates some aspects of :doc:`/dev/gfks`.
@@ -147,5 +147,5 @@ Tested twice
 This tutorial project is tested twice.  Most things which we tested in
 the present document are also being tested in a plain unittest module:
 
-.. literalinclude:: test.py
+.. literalinclude:: test_gfk.py
 

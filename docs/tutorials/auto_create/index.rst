@@ -33,7 +33,7 @@ Manually create a Tag:
 A first call to `lookup_or_create`:
 
 >>> Tag.lookup_or_create("name","Foo")
-Tag #1 (u'Foo')
+Tag #1 ('Foo')
 
 The signal was not emitted here because the Foo tag existed before.
 
@@ -41,6 +41,6 @@ The signal was not emitted here because the Foo tag existed before.
 My auto_create handler was called with Bar
 Bar
 >>> print Tag.objects.all()
-[Tag #1 (u'Foo'), Tag #2 (u'Bar')]
+[Tag #1 ('Foo'), Tag #2 ('Bar')]
 
 Voilà, that's all for the moment.

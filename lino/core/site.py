@@ -39,7 +39,7 @@ if AFTER17:
     from django.apps import AppConfig
 
 from unipath import Path
-from atelier.utils import AttrDict, date_offset
+from atelier.utils import AttrDict, date_offset ,tuple_py2
 from atelier import rstgen
 
 from django.utils.translation import ugettext_lazy as _
@@ -2249,7 +2249,7 @@ class Site(object):
                 suffix = ''
             else:
                 suffix = '_' + name
-            info = LanguageInfo(django_code, str(name), i, str(suffix))
+            info = LanguageInfo(str(django_code), str(name), i, str(suffix))
             self.language_dict[name] = info
             languages.append(info)
 
@@ -2397,7 +2397,7 @@ class Site(object):
                 li = self.get_language_info(k)
                 if li is None:
                     raise Exception("Unknown language code %r (must be one of %s)" % (
-                        k, [li.name for li in self.languages]))
+                        str(k), [li.name for li in self.languages]))
                 rv.append(li)
             else:
                 assert k in self.languages
@@ -2613,6 +2613,8 @@ given object `obj`. The dict will have one key for each
                 return args[0]
             default_value = args[0]
             return values.get(info.name, default_value)
+        args = tuple_py2(args)
+        print(type(args))
         raise ValueError("%(values)s is more than 1 default value." %
                          dict(values=args))
 

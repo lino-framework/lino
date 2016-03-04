@@ -4,8 +4,8 @@ Instructions for translators
 
 ..
   >>> from lino.api.shell import *
-  >>> print(settings.SITE.languages)
-  (LanguageInfo(django_code=u'en', name='en', index=0, suffix=''), LanguageInfo(django_code=u'es', name='es', index=1, suffix='_es'))
+  >>> settings.SITE.languages
+  (LanguageInfo(django_code='en', name='en', index=0, suffix=''), LanguageInfo(django_code='es', name='es', index=1, suffix='_es'))
 
 
 Here is how your can help translating Lino into your own language.

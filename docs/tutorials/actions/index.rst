@@ -79,42 +79,42 @@ How to "remove" an inherited action or collected from a table
 Here are the actions on Moos:
 
 >>> pprint([ba.action for ba in Moos.get_actions()])
-[<ShowAsHtml show_as_html (u'HTML')>,
+[<ShowAsHtml show_as_html ('HTML')>,
  <SaveRow grid_put>,
- <CreateRow grid_post (u'grid_post')>,
- <SubmitInsert submit_insert (u'Create')>,
- <DeleteSelected delete_selected (u'Delete')>,
+ <CreateRow grid_post ('grid_post')>,
+ <SubmitInsert submit_insert ('Create')>,
+ <DeleteSelected delete_selected ('Delete')>,
  <GridEdit grid>,
- <A a (u'a')>,
- <A b (u'a')>,
- <Action m (u'm')>,
- <Action t (u't')>]
+ <A a ('a')>,
+ <A b ('a')>,
+ <Action m ('m')>,
+ <Action t ('t')>]
 
 A subclass inherits all actions from her parent.
 When I define a second table `S1(Moos)`, then `S1` will have 
 both actions `m` and `t`:
 
 >>> pprint([ba.action for ba in S1.get_actions()])
-[<ShowAsHtml show_as_html (u'HTML')>,
+[<ShowAsHtml show_as_html ('HTML')>,
  <SaveRow grid_put>,
- <CreateRow grid_post (u'grid_post')>,
- <SubmitInsert submit_insert (u'Create')>,
- <DeleteSelected delete_selected (u'Delete')>,
+ <CreateRow grid_post ('grid_post')>,
+ <SubmitInsert submit_insert ('Create')>,
+ <DeleteSelected delete_selected ('Delete')>,
  <GridEdit grid>,
- <A a (u'a')>,
- <Action m (u'm')>,
- <A b (u'a')>,
- <Action t (u't')>]
+ <A a ('a')>,
+ <Action m ('m')>,
+ <A b ('a')>,
+ <Action t ('t')>]
 
 S2 does not have these actions because we "removed" them by overriding
 them with None:
 
 >>> pprint([ba.action for ba in S2.get_actions()])
-[<ShowAsHtml show_as_html (u'HTML')>,
+[<ShowAsHtml show_as_html ('HTML')>,
  <SaveRow grid_put>,
- <CreateRow grid_post (u'grid_post')>,
- <SubmitInsert submit_insert (u'Create')>,
- <DeleteSelected delete_selected (u'Delete')>,
+ <CreateRow grid_post ('grid_post')>,
+ <SubmitInsert submit_insert ('Create')>,
+ <DeleteSelected delete_selected ('Delete')>,
  <GridEdit grid>]
 
 
