@@ -306,10 +306,13 @@ class DBFField:
             except ValueError:
                 return 0
         elif self.field_type == "D":
+            data = data.strip()
+            if not data:
+                return None
             try:
                 return dateparser.parse(data)
             except ValueError as e:
-                raise Exception("Invalid date value %r (%s)" % (data, e))
+                raise ValueError("Invalid date value %r (%s)" % (data, e))
             # ~ return data # string "YYYYMMDD", use the time module or mxDateTime
         else:
             raise NotImplementedError("Unknown data type " + self.field_type)
