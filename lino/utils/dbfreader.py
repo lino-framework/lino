@@ -1,4 +1,4 @@
-# Copyright 2003-2009, 2014 Luc Saffre
+# Copyright 2003-2009-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 # Based on original work by Lars Garshol
