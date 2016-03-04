@@ -287,6 +287,14 @@ class Referrable(model.Model):
                                blank=True, null=True,
                                unique=True)
 
+    def on_duplicate(self, ar, master):
+        """After duplicating we must change the :attr:`ref`.
+
+        """
+        if self.ref:
+            self.ref += '(DUP)'
+        super(Referrable, self).on_duplicate(ar, master)
+
     @classmethod
     def get_by_ref(cls, ref, default=models.NOT_PROVIDED):
         try:
