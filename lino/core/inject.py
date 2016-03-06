@@ -1,4 +1,3 @@
-from past.builtins import basestring
 # Copyright 2011-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
@@ -342,10 +341,10 @@ def update_field(model_spec, name, **kw):
         except FieldDoesNotExist:
             logger.warning("Cannot update unresolved field %s.%s", model, name)
             return
-        if fld.model != model:
-            raise Exception('20120715 update_field(%s.%s) : %s' %
-                            (model, fld, fld.model))
-            #~ logger.warning('20120715 update_field(%s.%s) : %s',model,fld,fld.model)
+        # if fld.model != model:
+        #     raise Exception('20120715 update_field(%s.%s) : %s' %
+        #                     (model, fld, fld.model))
+        #     logger.warning('update_field(%s.%s) : %s', model, fld, fld.model)
         for k, v in list(kw.items()):
             setattr(fld, k, v)
         #~ if model.__name__ == "SiteConfig":
