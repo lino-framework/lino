@@ -124,7 +124,7 @@ def with_user_profile(profile, func, *args, **kwargs):
         _for_user_profile = profile
         return func(*args, **kwargs)
         _for_user_profile = old
-    
+
 
 def get_user_profile():
     return _for_user_profile
@@ -444,7 +444,7 @@ def py2js(v):
         #~ return v
     if isinstance(v, Promise):
         #~ v = force_text(v)
-        return json.dumps(force_text(v))
+        return json.dumps(force_text(v.encode('utf8')))
 
     if isinstance(v, types.GeneratorType):
         return "".join([py2js(x) for x in v])

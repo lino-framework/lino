@@ -163,11 +163,11 @@ class PisaBuildMethod(DjangoBuildMethod):
         html = html.encode("utf-8")
         file(filename + '.html', 'w').write(html)
 
-        result = io.StringIO()
+        result = io.BytesIO()
         h = logging.FileHandler(filename + '.log', 'w')
         pisa.log.addHandler(h)
         pdf = pisa.pisaDocument(
-            io.StringIO(html), result, encoding='utf-8')
+            io.BytesIO(html), result, encoding='utf-8')
         pisa.log.removeHandler(h)
         h.close()
         fd = file(filename, 'wb')
