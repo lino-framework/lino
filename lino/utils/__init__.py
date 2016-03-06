@@ -598,7 +598,6 @@ class SumCollector(object):
     """
     def __init__(self):
         self._sums = dict()
-        self.items = self._sums.items
 
     def collect(self, k, value):
         """This returns an empty string """
@@ -611,6 +610,15 @@ class SumCollector(object):
 
     def __getattr__(self, k):
         return self._sums.get(k)
+
+    def items(self, *args, **kwargs):
+        return self._sums.items(*args, **kwargs)
+
+    def __str__(self):
+        return str(self._sums)
+
+    def __repr__(self):
+        return repr(self._sums)
 
 
 def _test():

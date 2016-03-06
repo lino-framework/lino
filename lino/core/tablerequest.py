@@ -23,7 +23,7 @@ import json
 from django.db import models
 from django.conf import settings
 from django.db.models.query import QuerySet
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, SuspiciousOperation
 
 from lino.core.utils import obj2str
 from lino.core.utils import format_request
@@ -284,13 +284,18 @@ class TableRequest(ActionRequest):
                 sort = '-' + sort
             kw.update(order_by=[sort])
 
-        offset = rqdata.get(constants.URL_PARAM_START, None)
-        if offset:
-            kw.update(offset=int(offset))
-        #~ limit = rqdata.get(constants.URL_PARAM_LIMIT,None)
-        limit = rqdata.get(constants.URL_PARAM_LIMIT, self.actor.preview_limit)
-        if limit:
-            kw.update(limit=int(limit))
+        try:
+            offset = rqdata.get(constants.URL_PARAM_START, None)
+            if offset:
+                kw.update(offset=int(offset))
+            limit = rqdata.get(
+                constants.URL_PARAM_LIMIT, self.actor.preview_limit)
+            if limit:
+                kw.update(limit=int(limit))
+        except ValueError:
+            # Example: invalid literal for int() with base 10:
+            # 'fdpkvcnrfdybhur'
+            raise SuspiciousOperation("Invalid value for limit or offset")
 
         return self.actor.parse_req(request, rqdata, **kw)
 

@@ -1,4 +1,4 @@
-# Copyright 2003-2009, 2014 Luc Saffre
+# Copyright 2003-2009-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 # Based on original work by Lars Garshol
@@ -310,7 +310,13 @@ class DBFField(object):
             except ValueError:
                 return 0
         elif self.field_type == "D":
-            return dateparser.parse(data)
+            data = data.strip()
+            if not data:
+                return None
+            try:
+                return dateparser.parse(data)
+            except ValueError as e:
+                raise ValueError("Invalid date value %r (%s)" % (data, e))
             # ~ return data # string "YYYYMMDD", use the time module or mxDateTime
         else:
             raise NotImplementedError("Unknown data type " + self.field_type)
