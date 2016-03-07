@@ -64,9 +64,9 @@ from lino.utils.xmlgen.html import E
 from lino.utils.quantities import Duration
 
 from lino.mixins.periods import DatePeriod
-from lino.modlib.cal.mixins import StartedEnded
+from lino_xl.lib.cal.mixins import StartedEnded
 from lino.modlib.users.mixins import UserAuthored
-from lino.modlib.excerpts.mixins import Certifiable
+from lino_xl.lib.excerpts.mixins import Certifiable
 from lino_noi.lib.tickets.choicelists import TicketStates
 
 
@@ -281,7 +281,7 @@ class Session(UserAuthored, StartedEnded):
         """Return the duration in hours as a
         :class:`lino.utils.quantities.Quantity`.  This inherits from
         :meth:`StartedEnded
-        <lino.modlib.cal.mixins.StartedEnded.get_duration>` but
+        <lino_xl.lib.cal.mixins.StartedEnded.get_duration>` but
         removes :attr:`break_time` if specified.
 
         """

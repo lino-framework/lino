@@ -2,7 +2,7 @@
 # Copyright 2014-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 """
-Database models for `lino.modlib.humanlinks`.
+Database models for `lino_xl.lib.humanlinks`.
 
 .. autosummary::
 

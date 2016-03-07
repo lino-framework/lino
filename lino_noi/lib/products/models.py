@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015 Luc Saffre
+# Copyright 2015-2016 Luc Saffre
 #
 # This file is part of Lino Noi.
 #
@@ -22,7 +22,17 @@
 """
 
 from lino.api import dd
-from lino.modlib.products.models import *
+from lino_xl.lib.products.models import *
+from lino.mixins import Referrable
+
+
+class Product(Product, Referrable):
+
+    class Meta(Product.Meta):
+        app_label = 'products'
+        abstract = dd.is_abstract_model(__name__, 'Product')
+
+
 
 
 class ProductDetail(dd.DetailLayout):

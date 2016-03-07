@@ -1,4 +1,4 @@
-# Copyright 2015 Luc Saffre
+# Copyright 2015-2016 Luc Saffre
 #
 # This file is part of Lino Noi.
 #
@@ -17,7 +17,7 @@
 # <http://www.gnu.org/licenses/>.
 
 """
-Lino Noi extension of :mod:`lino.modlib.products`.
+Lino Noi extension of :mod:`lino_xl.lib.products`.
 
 .. autosummary::
    :toctree:
@@ -26,10 +26,10 @@ Lino Noi extension of :mod:`lino.modlib.products`.
 
 """
 
-from lino.modlib.products import Plugin
+from lino_xl.lib.products import Plugin
 
 
-# class Plugin(Plugin):
+class Plugin(Plugin):
     
-#     extends_models = ['Product']
+    extends_models = ['Product']
 

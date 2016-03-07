@@ -53,6 +53,8 @@ class Site(Site):
     user_profiles_module = 'lino_noi.lib.noi.roles'
     obj2text_template = "**{0}**"
 
+    default_build_method = 'appyodt'
+
     def get_installed_apps(self):
         """Implements :meth:`lino.core.site.Site.get_installed_apps` for Lino
         Noi.
@@ -65,7 +67,7 @@ class Site(Site):
         # yield 'lino.modlib.system'
         yield 'lino_noi.lib.users'
         yield 'lino_noi.lib.contacts'
-        # yield 'lino.modlib.cal'
+        # yield 'lino_xl.lib.cal'
         yield 'lino_noi.lib.products'
 
         yield 'lino_noi.lib.tickets'
@@ -75,13 +77,15 @@ class Site(Site):
         # "Tickets", not "Clocking".
         yield 'lino_noi.lib.faculties'
         yield 'lino_noi.lib.clocking'
-        yield 'lino.modlib.lists'
+        yield 'lino_xl.lib.lists'
 
         # yield 'lino.modlib.uploads'
-        # yield 'lino.modlib.excerpts'
+        # yield 'lino_xl.lib.excerpts'
         yield 'lino.modlib.export_excel'
         yield 'lino.modlib.tinymce'
         yield 'lino.modlib.smtpd'
+        yield 'lino_xl.lib.appypod'
+        yield 'lino.modlib.wkhtmltopdf'
 
         # yield 'lino.modlib.awesomeuploader'
 
