@@ -19,12 +19,15 @@ only the source code.
 Version 1.7.0 (in development)
 ===============================
 
-- Lino no longer requires an old Django version (:ticket:`38` and :ticket:`650`)
+Important changes which caused a minor version bump:
+
 - Lino no longer requires an old Python version (:ticket:`36`)
-- Moved "Extension Library" plugins from :mod:`lino.modlib` to
-  :ref:`xl` (:ticket:`356`)
+- Lino no longer requires an old Django version (:ticket:`38` and :ticket:`650`)
+- Moved "enterprise" plugins from :mod:`lino.modlib` to :ref:`xl`
+  (:ticket:`356`)
 - Moved "Accounting" plugins from :mod:`lino.modlib` to :ref:`cosi`
   (:ticket:`520`)
+
 - Lots of optimizations and bugfixes
 
 
