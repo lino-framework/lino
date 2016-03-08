@@ -310,8 +310,9 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
     """
 
     preferred_width = None
-    """Preferred width (in characters) used by :class:`fields
-    <lino.core.fields.ChoiceListField>` that refer to this list.
+    """Preferred width (in characters) used by
+    :class:`fields<lino.core.fields.ChoiceListField>` that refer to
+    this list.
 
     If this is `None`, then Lino calculates the value at startup,
     taking the length of the longest choice text.  The hard-coded
