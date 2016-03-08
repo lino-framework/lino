@@ -15,7 +15,7 @@ from __future__ import unicode_literals
 
 SETUP_INFO = dict(
     name='lino',
-    version='1.6.19',  # released 20150901
+    version='1.7.0',
     install_requires=[
         # 'django<1.7',
         'django',
@@ -53,6 +53,7 @@ SETUP_INFO = dict(
     classifiers="""\
   Programming Language :: Python
   Programming Language :: Python :: 2
+  Programming Language :: Python :: 3
   Development Status :: 5 - Production/Stable
   Environment :: Web Environment
   Framework :: Django
@@ -215,9 +216,9 @@ def add_package_data(package, *patterns):
     return l
 
 add_package_data('lino', 'config/*.odt')
-add_package_data('lino_xl.lib.cal', 'config/*.odt')
-add_package_data('lino_xl.lib.notes', 'config/notes/Note/*.odt')
-add_package_data('lino_xl.lib.outbox', 'config/outbox/Mail/*.odt')
+#add_package_data('lino_xl.lib.cal', 'config/*.odt')
+#add_package_data('lino_xl.lib.notes', 'config/notes/Note/*.odt')
+#add_package_data('lino_xl.lib.outbox', 'config/outbox/Mail/*.odt')
 add_package_data('lino.modlib.languages.fixtures', '*.tab')
 
 l = add_package_data('lino.modlib.lino_startup')

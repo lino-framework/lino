@@ -4,27 +4,30 @@
 Changes in Lino
 ===============
 
-I try to give here a summary of the things which system administrators 
-should know when upgrading.
-See the author's :ref:`Developer Blog <blog>`
-to get detailed news.
-The final truth about what's going on is only 
-the source code.
-See also :doc:`marked_changes`.
+On this page I try to give a summary of the things which system
+administrators should know when upgrading.  If you want more detailed
+news, please consult the author's :ref:`Developer Blog <blog>`.  See
+also :doc:`marked_changes`.  The final truth about what's going on is
+only the source code.
 
 .. toctree::
     :hidden:
 
     marked_changes
 
-Development
-===========
 
 Version 1.7.0 (in development)
 ===============================
 
+Important changes which caused a minor version bump:
+
+- Lino no longer requires an old Python version (:ticket:`36`)
 - Lino no longer requires an old Django version (:ticket:`38` and :ticket:`650`)
-- Moved accounting plugins from :mod:`lino.modlib` to :ref:`cosi` (:ticket:`520`)
+- Moved "enterprise" plugins from :mod:`lino.modlib` to :ref:`xl`
+  (:ticket:`356`)
+- Moved "Accounting" plugins from :mod:`lino.modlib` to :ref:`cosi`
+  (:ticket:`520`)
+
 - Lots of optimizations and bugfixes
 
 
