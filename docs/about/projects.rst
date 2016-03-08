@@ -83,3 +83,14 @@ https://github.com/ManuelWeidmann/lino-sunto
 
 
 
+.. _xl:
+
+Lino Extensions Library
+=======================
+
+Most of above projects require the **Lino Extensions Library**, a
+collection of plugins which are not part of the core because they add
+a given set of solutions for "Enterprise" style applications.
+
+http://xl.lino-framework.org/
+
