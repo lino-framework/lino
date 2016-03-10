@@ -137,7 +137,7 @@ class User(CreatedModified, TimezoneHolder):
 
         partner = dd.DummyField()
 
-    def __str__(self):
+    def __unicode__(self):
         return self.get_full_name()
 
     def get_full_name(self):
