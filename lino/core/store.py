@@ -260,7 +260,7 @@ class ComboStoreField(StoreField):
                 try:
                     return (v, str(i[1]))
                 except UnicodeError as e:
-                    raise UnicodeError("20160311")
+                    raise UnicodeError("20160311 {0} : {1}".format(self, e))
         return (v, _("%r (invalid choice)") % v)
 
 
