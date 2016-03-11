@@ -56,6 +56,7 @@ add('A', _("Add child"), 'add_child')
 add('M', _("Merge"), 'merge')
 
 
+@dd.python_2_unicode_compatible
 class Change(dd.Model):
     """A registered change in the database.
 
@@ -103,7 +104,7 @@ class Change(dd.Model):
 
     diff = dd.RichTextField(_("Changes"), format='plain', blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         # ~ return "#%s - %s" % (self.id,self.time)
         return "#%s" % self.id
 

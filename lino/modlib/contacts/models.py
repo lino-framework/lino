@@ -54,6 +54,7 @@ from lino.mixins.human import name2kw, Human, Born
 PARTNER_NUMBERS_START_AT = 100  # used for generating demo data and tests
 
 
+@dd.python_2_unicode_compatible
 class Partner(mixins.Polymorphic, AddressLocation, Addressable):
     """A Partner is any physical or moral person for which you want to
     keep contact data (address, phone numbers, ...).
@@ -129,7 +130,7 @@ class Partner(mixins.Polymorphic, AddressLocation, Addressable):
         #~ logger.info("20120327 Partner.save(%s,%s)",args,kw)
         super(Partner, self).save(*args, **kw)
 
-    def __unicode__(self):
+    def __str__(self):
         #~ return self.name
         return self.get_full_name()
 
@@ -437,7 +438,7 @@ class RoleTypes(dd.Table):
     model = 'contacts.RoleType'
 
 
-#~ class Contact(dd.Model):
+@dd.python_2_unicode_compatible
 class Role(dd.Model, Addressable):
 
     """A Contact (historical model name :class:`Role`) is a
@@ -461,9 +462,9 @@ class Role(dd.Model, Addressable):
     company = models.ForeignKey(
         "contacts.Company", related_name='rolesbycompany')
 
-    def __unicode__(self):
+    def __str__(self):
         if self.person_id is None:
-            return super(Role, self).__unicode__()
+            return super(Role, self).__str__()
         if self.type is None:
             return str(self.person)
         return u"%s (%s)" % (self.person, self.type)
@@ -480,7 +481,7 @@ class Role(dd.Model, Addressable):
             return self.company.address_location_lines()
         if self.person_id:
             return self.person.address_location_lines()
-        return super(Role, self).__unicode__()
+        return super(Role, self).__str__()
 
     def get_print_language(self):
         if self.company_id:

@@ -49,13 +49,17 @@ def get_doctype(cl):
     return None
 
 
+from django.utils.encoding import python_2_unicode_compatible
+
+
+@python_2_unicode_compatible
 class Journal(models.Model):
 
     id = models.CharField(max_length=4, primary_key=True)
     name = models.CharField(max_length=100)
     doctype = models.IntegerField()  # choices=DOCTYPE_CHOICES)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.id
 
     def get_doc_model(self):
@@ -88,6 +92,7 @@ def DocumentRef(**kw):
     return models.IntegerField(**kw)
 
 
+@python_2_unicode_compatible
 class JournaledAbstractDocument(AbstractDocument):
 
     journal = JournalRef()
@@ -108,7 +113,7 @@ class JournaledAbstractDocument(AbstractDocument):
         doctype = get_doctype(cls)
         return Journal.objects.filter(doctype=doctype).order_by('pos')
 
-    def __unicode__(self):
+    def __str__(self):
         if self.id is None:
             return "(Unsaved %s document (journal=%r,number=%r))" % (
                 self.__class__, self.journal, self.number)

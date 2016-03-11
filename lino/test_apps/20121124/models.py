@@ -69,19 +69,22 @@ The same exception comes when I use Django development trunk revision 17942.
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import python_2_unicode_compatible
 
 
+@python_2_unicode_compatible
 class Ticket(models.Model):
     name = models.CharField(max_length=200)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
+@dd.python_2_unicode_compatible
 class Session(models.Model):
     ticket = models.ForeignKey(Ticket, related_name="sessions")
     time = models.TimeField()
     price = models.DecimalField(max_digits=5, decimal_places=2)
 
-    def __unicode__(self):
+    def __str__(self):
         return "at %s" % self.time

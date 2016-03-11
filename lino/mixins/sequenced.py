@@ -134,6 +134,10 @@ class DuplicateSequenced(Duplicate):
         return super(DuplicateSequenced, self).run_from_code(ar, **kw)
 
 
+from django.utils.encoding import python_2_unicode_compatible
+
+
+@python_2_unicode_compatible
 class Sequenced(Duplicable):
     """Mixin for models that have a field :attr:`seqno` containing a
     "sequence number".
@@ -185,7 +189,7 @@ class Sequenced(Duplicable):
 
     """
 
-    def __unicode__(self):
+    def __str__(self):
         return str(_("Row # %s") % self.seqno)
 
     def get_siblings(self):

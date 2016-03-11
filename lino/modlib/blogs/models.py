@@ -17,6 +17,7 @@ from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.users.mixins import ByUser, UserAuthored
 
 
+@dd.python_2_unicode_compatible
 class EntryType(mixins.BabelNamed, mixins.PrintableType):
 
     templates_group = 'blogs/Entry'
@@ -31,7 +32,7 @@ class EntryType(mixins.BabelNamed, mixins.PrintableType):
         default=False)
     remark = models.TextField(verbose_name=_("Remark"), blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -52,6 +53,7 @@ class EntryTypes(dd.Table):
     """
 
 
+@dd.python_2_unicode_compatible
 class Entry(mixins.TypedPrintable,
             mixins.CreatedModified,
             UserAuthored,
@@ -70,7 +72,7 @@ class Entry(mixins.TypedPrintable,
     title = models.CharField(_("Heading"), max_length=200, blank=True)
     body = dd.RichTextField(_("Body"), blank=True, format='html')
 
-    def __unicode__(self):
+    def __str__(self):
         return u'%s #%s' % (self._meta.verbose_name, self.pk)
 
 

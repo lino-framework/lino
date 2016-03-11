@@ -20,6 +20,7 @@ from lino.core.roles import SiteStaff
 from .choicelists import AddressTypes, DataSources
 
 
+@dd.python_2_unicode_compatible
 class Address(AddressLocation):
     """Inherits fields from
     :class:`lino.modlib.countries.CountryRegionCity` (country, region,
@@ -69,7 +70,7 @@ class Address(AddressLocation):
 
     allow_cascaded_delete = ['partner']
 
-    def __unicode__(self):
+    def __str__(self):
         return self.address_location(', ')
 
     def after_ui_save(self, ar, cw):

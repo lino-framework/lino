@@ -33,6 +33,8 @@ from lino.api import dd, rt
 #~ add = LinkTypes.add_item
 #~ add('100', _('Father'),'father',gender=dd.Genders.male)
 #~ add('101', _('Mother'),'mother',gender=dd.Genders.female)
+
+@dd.python_2_unicode_compatible
 class Couple(dd.Model):
 
     class Meta(object):
@@ -48,7 +50,7 @@ class Couple(dd.Model):
         verbose_name=_("Married in"), blank=True, null=True)
     divorced = models.DateField(_("Divorced"), blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return "%s & %s" % (self.father or "?", self.mother or "?")
 
 

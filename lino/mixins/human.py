@@ -151,6 +151,10 @@ def get_salutation(gender, nominative=False):
     return pgettext("indirect salutation", "Mr")
 
 
+from django.utils.encoding import python_2_unicode_compatible
+
+
+@python_2_unicode_compatible
 class Human(model.Model):
     """Base class for all models that represent a human.
 
@@ -229,7 +233,7 @@ class Human(model.Model):
             return f
         return u or m
 
-    def __unicode__(self):
+    def __str__(self):
         return self.get_full_name(nominative=True)
 
     def get_salutation(self, **salutation_options):

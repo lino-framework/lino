@@ -370,6 +370,7 @@ class BodyTemplateContentField(dd.VirtualField):
 ##
 
 
+@dd.python_2_unicode_compatible
 class Excerpt(mixins.TypedPrintable, UserAuthored,
               Controllable, mixins.ProjectRelated,
               ContactRelated, Mailable, Postable):
@@ -473,7 +474,7 @@ class Excerpt(mixins.TypedPrintable, UserAuthored,
             rv |= self.PRINTABLE_FIELDS
         return rv
 
-    def __unicode__(self):
+    def __str__(self):
         if self.build_time:
             return naturaltime(self.build_time)
             # return _("%(owner)s (printed %(time)s)") % dict(

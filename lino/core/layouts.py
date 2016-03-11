@@ -295,7 +295,7 @@ class LayoutHandle(object):
         # precedence over those defined in the datasource.
 
         # if not name in ('__str__', '__unicode__', 'name', 'label'):
-        if not name in ('name', 'label'):
+        if name not in ('name', 'label'):
             value = getattr(self.layout, name, NOT_PROVIDED)
             # if name == 'ledger':
             #     logger.info("20150610 'ledger' in instance of %s is %r",

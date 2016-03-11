@@ -61,6 +61,7 @@ def setup_rooms_workflow(sender=None, **kw):
         icon_name='cross')
 
 
+@dd.python_2_unicode_compatible
 class Booking(ContactRelated, Reservation):
 
     class Meta(object):
@@ -75,7 +76,7 @@ class Booking(ContactRelated, Reservation):
     event_type = dd.ForeignKey('cal.EventType', null=True, blank=True,
         help_text=_("""The Event Type to which events will be generated."""))
 
-    def __unicode__(self):
+    def __str__(self):
         return u"%s #%s (%s)" % (self._meta.verbose_name, self.pk, self.room)
 
     def update_cal_from(self, ar):

@@ -18,6 +18,7 @@ from lino.modlib.office.roles import OfficeUser
 from lino.api import dd
 
 
+@dd.python_2_unicode_compatible
 class TextFieldTemplate(UserAuthored):
 
     """A reusable block of text that can be selected from a text editor to
@@ -40,7 +41,7 @@ class TextFieldTemplate(UserAuthored):
     text = dd.RichTextField(_("Template Text"),
                             blank=True, null=True, format='html')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 

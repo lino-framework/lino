@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2015 Luc Saffre
+# Copyright 2012-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Defines the model mixin :class:`BabelNamed`.
@@ -9,17 +9,14 @@
 from __future__ import unicode_literals
 from builtins import object
 
-import logging
-logger = logging.getLogger(__name__)
-
 from django.conf import settings
-
 from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import python_2_unicode_compatible
 
 from lino.core import model
 
 from .fields import BabelCharField
-from django.utils.encoding import python_2_unicode_compatible
+
 
 @python_2_unicode_compatible
 class BabelNamed(model.Model):

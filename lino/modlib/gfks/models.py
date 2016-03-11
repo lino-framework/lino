@@ -74,6 +74,7 @@ class ContentTypes(dd.Table):
         return E.p(*join_elems(chunks, sep=', '))
 
 
+@dd.python_2_unicode_compatible
 class HelpText(dd.Model):
     """A custom help text to be displayed for a given field."""
     class Meta(object):
@@ -88,7 +89,7 @@ class HelpText(dd.Model):
     help_text = dd.RichTextField(_("HelpText"),
                                  blank=True, null=True, format='plain')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.content_type.app_label + '.' \
             + self.content_type.model + '.' + self.field
 

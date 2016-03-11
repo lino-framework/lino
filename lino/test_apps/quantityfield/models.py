@@ -38,16 +38,17 @@ from __future__ import unicode_literals
 
 
 from django.db import models
-from lino.api import dd, rt
+from lino.api import dd
 
 
+@dd.python_2_unicode_compatible
 class Item(dd.Model):
     name = models.CharField(max_length=50)
     qty = dd.QuantityField(default='1')
     discount = dd.QuantityField()
     price = dd.PriceField()
 
-    def __unicode__(self):
+    def __str__(self):
         if self.discount is None:
             return "%s x %s at %s = %s EUR" % (self.qty, self.name, self.price, self.total())
         else:

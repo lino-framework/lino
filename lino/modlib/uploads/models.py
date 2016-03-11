@@ -86,6 +86,7 @@ def filename_leaf(name):
     return name
 
 
+@dd.python_2_unicode_compatible
 class Upload(mixins.Uploadable, UserAuthored, Controllable):
     """Represents an uploaded file."""
     class Meta(object):
@@ -102,7 +103,7 @@ class Upload(mixins.Uploadable, UserAuthored, Controllable):
     description = models.CharField(
         _("Description"), max_length=200, blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         if self.description:
             s = self.description
         elif self.file:
