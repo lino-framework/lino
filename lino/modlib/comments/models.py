@@ -20,12 +20,13 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 
 from lino.modlib.gfks.mixins import Controllable
 
-from lino.api import dd, rt
+from lino.api import dd
 from lino import mixins
 from lino.modlib.users.mixins import ByUser, UserAuthored
 from lino.utils.xmlgen.html import E
 
 
+@dd.python_2_unicode_compatible
 class Comment(
         mixins.CreatedModified,
         UserAuthored,
@@ -52,7 +53,7 @@ class Comment(
     short_text = dd.RichTextField(_("Short text"))
     more_text = dd.RichTextField(_("More text"), blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return u'%s #%s' % (self._meta.verbose_name, self.pk)
 
     def as_li(self, ar):

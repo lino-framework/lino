@@ -24,11 +24,12 @@ from lino.utils.restify import doc2rst
 DUMMY_PAGES = {}
 
 
+@dd.python_2_unicode_compatible
 class DummyPage(AttrDict):
     raw_html = False
     #~ special = False
 
-    def __unicode__(self):
+    def __str__(self):
         return u'%s %s' % (self._meta.verbose_name, self.ref)
 
     def get_sidebar_html(self, request):

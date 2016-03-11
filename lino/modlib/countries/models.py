@@ -133,7 +133,6 @@ class Place(Hierarchical, mixins.BabelNamed):
             return [(i, t) for i, t in PlaceTypes.choices if i in allowed]
         return PlaceTypes.choices
 
-    # def __unicode__(self):
     def get_choices_text(self, request, actor, field):
         """
         Extends the default behaviour (which would simply diplay this

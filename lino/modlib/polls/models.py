@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2015 Luc Saffre
+# Copyright 2013-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 """Database models for `lino.modlib.polls`.
 
@@ -95,6 +95,7 @@ class ChoicesBySet(Choices):
     required_roles = dd.required()
 
 
+@dd.python_2_unicode_compatible
 class Poll(UserAuthored, mixins.CreatedModified, Referrable):
     """A series of questions."""
     class Meta(object):
@@ -214,10 +215,11 @@ class MyPolls(ByUser, Polls):
     column_names = 'ref title state *'
 
 
+@dd.python_2_unicode_compatible
 class Question(mixins.Sequenced):
     """A question of a poll.
 
-.. attribute:: number
+    .. attribute:: number
 
     """
     class Meta(object):
@@ -240,7 +242,7 @@ class Question(mixins.Sequenced):
 
     NUMBERED_TITLE_FORMAT = "%s) %s"
 
-    def __unicode__(self):
+    def __str__(self):
         #~ return self.text[:40].strip() + ' ...'
         if self.number:
             return self.NUMBERED_TITLE_FORMAT % (self.number, self.title)
@@ -323,6 +325,7 @@ class ToggleChoice(dd.Action):
         # dd.logger.info("20140930 %s", obj)
 
 
+@dd.python_2_unicode_compatible
 class Response(UserAuthored, mixins.Registrable):
 
     class Meta(object):
@@ -465,6 +468,7 @@ class AnswerChoices(dd.Table):
     model = 'polls.AnswerChoice'
 
 
+@dd.python_2_unicode_compatible
 class AnswerRemark(dd.Model):
 
     class Meta(object):
@@ -477,7 +481,7 @@ class AnswerRemark(dd.Model):
     question = models.ForeignKey('polls.Question')
     remark = models.TextField(_("My remark"), blank=True)
 
-    def __unicode__(self):
+    def __str__(self):
         # return _("Remark for {0}").format(self.question)
         return str(self.question)
 
@@ -502,6 +506,7 @@ class AllAnswerRemarks(AnswerRemarks):
     required_roles = dd.required(PollsStaff)
 
 
+@dd.python_2_unicode_compatible
 class AnswersByResponseRow(object):
     """Volatile object to represent the one and only answer to a given
     question in a given response.
@@ -530,7 +535,7 @@ class AnswersByResponseRow(object):
         for k in self.FORWARD_TO_QUESTION:
             setattr(self, k, getattr(question, k))
 
-    def __unicode__(self):
+    def __str__(self):
         if self.choices.count() == 0:
             return str(_("N/A"))
         return ', '.join([str(ac.choice) for ac in self.choices])
@@ -735,6 +740,7 @@ class AnswersByResponse(dd.VirtualTable):
         return E.span(txt, **attrs)
 
 
+@dd.python_2_unicode_compatible
 class AnswersByQuestionRow(object):
     """Volatile object to represent a row of :class:`AnswersByQuestion`.
 
@@ -758,7 +764,7 @@ class AnswersByQuestionRow(object):
         for k in self.FORWARD_TO_RESPONSE:
             setattr(self, k, getattr(question, k))
 
-    def __unicode__(self):
+    def __str__(self):
         if self.choices.count() == 0:
             return str(_("N/A"))
         return ', '.join([str(ac.choice) for ac in self.choices])

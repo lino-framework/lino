@@ -17,6 +17,7 @@ from lino.modlib.contacts import models as contacts
 from lino.modlib.gfks.mixins import Controllable
 
 
+@dd.python_2_unicode_compatible
 class Third(mixins.Sequenced, contacts.PartnerDocument, Controllable):
 
     class Meta(object):
@@ -29,7 +30,7 @@ class Third(mixins.Sequenced, contacts.PartnerDocument, Controllable):
         #~ s = ui.href_to(self)
         return ["(", str(self.seqno), ") "] + list(contacts.PartnerDocument.summary_row(self, ar, **kw))
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.seqno)
         #~ return unicode(self.get_partner())
 

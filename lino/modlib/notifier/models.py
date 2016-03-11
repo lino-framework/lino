@@ -43,6 +43,7 @@ from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 
 
+@dd.python_2_unicode_compatible
 class Notification(UserAuthored, Controllable, Created):
     """A **notification** object represents the fact that a given user has
     been notified about a given database object.
@@ -73,7 +74,7 @@ class Notification(UserAuthored, Controllable, Created):
     seen = models.DateTimeField(_("seen"), null=True, editable=False)
     message = models.TextField(_("Message"), editable=False)
 
-    def __unicode__(self):
+    def __str__(self):
         return _("About {0}").format(self.owner)
         # return self.message
         # return _("Notify {0} about change on {1}").format(

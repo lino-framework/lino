@@ -27,10 +27,14 @@ With revision 11066, the following doctest fails::
 from django.db import models
 
 
+from django.utils.encoding import python_2_unicode_compatible
+
+
+@python_2_unicode_compatible
 class Place(models.Model):
     name = models.CharField(max_length=50)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 

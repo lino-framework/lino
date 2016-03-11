@@ -57,6 +57,7 @@ class SiteConfigManager(models.Manager):
         return settings.SITE.site_config
 
 
+@dd.python_2_unicode_compatible
 class SiteConfig(dd.Model):
     """This model should have exactly one instance,
     used to store persistent global site parameters.
@@ -93,7 +94,7 @@ class SiteConfig(dd.Model):
     simulate_today = models.DateField(
         _("Simulated date"), blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return force_text(_("Site Parameters"))
 
     def update(self, **kw):

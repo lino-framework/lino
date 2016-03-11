@@ -33,7 +33,7 @@ class HowWell(dd.ChoiceList):
     "not at all", "a bit", "moderate", "quite well" and "very well"
     
     which are stored in the database as '0' to '4',
-    and whose `__unicode__()` returns their translated text.
+    and whose `__str__()` returns their translated text.
 
     """
     verbose_name = _("How well?")

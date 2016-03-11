@@ -149,6 +149,10 @@ def make_params_layout_handle(self, ui):
         settings.SITE.kernel.default_ui)
 
 
+from django.utils.encoding import python_2_unicode_compatible
+
+
+@python_2_unicode_compatible
 class Action(Parametrizable, Permittable):
     """
     Abstract base class for all actions.
@@ -539,7 +543,7 @@ class Action(Parametrizable, Permittable):
         # setup_params_choosers(self.__class__)
         return True
 
-    def __unicode__(self):
+    def __str__(self):
         return force_text(self.label)
 
     def get_action_permission(self, ar, obj, state):

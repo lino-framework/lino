@@ -28,3 +28,5 @@ warnings_linkcheck.txt
 docs/api/lino.*
 docs/tutorials/pisa/pisa.Person-1.pdf
 .coverage
+.coverage.*
+

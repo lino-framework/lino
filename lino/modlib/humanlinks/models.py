@@ -28,6 +28,7 @@ from .choicelists import LinkTypes
 config = dd.plugins.humanlinks
 
 
+@dd.python_2_unicode_compatible
 class Link(dd.Model):
     """A link between two persons.
 
@@ -70,9 +71,9 @@ class Link(dd.Model):
         # print('20140204 type_as_child', self.type)
         return self.type.as_child(self.child)
 
-    def __unicode__(self):
+    def __str__(self):
         if self.type is None:
-            return super(Link, self).__unicode__()
+            return super(Link, self).__str__()
         return _("%(child)s is %(what)s") % dict(
             child=str(self.child),
             what=self.type_of_parent_text())
