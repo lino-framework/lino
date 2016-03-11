@@ -54,6 +54,7 @@ from builtins import str
 from past.builtins import basestring
 from builtins import object
 from future.utils import with_metaclass
+import six
 
 import logging
 logger = logging.getLogger(__name__)
@@ -540,13 +541,22 @@ Django creates copies of them when inheriting models.
         :class:`lino.modlib.cv.models.CefLevel` used to do this before
         we had the :attr:`ChoiceList.show_values` option.
 
+        This must be lazy (because the result are also used to build
+        the `choices` attribute of ChoiceListFields on this
+        choicelist.
+
+        Note that Django's `lazy` function has a list of
+        "resultclasses" which are used "so that the automatic forcing
+        of the lazy evaluation code is triggered".
+
         """
         if cls.show_values or True:
+            # return "{0} ({1})".format(bc.value, bc)
             def fn(bc):
                 # return "%s (%s)" % (bc.value, str(bc))
                 return "{0} ({1})".format(bc.value, bc)
-            return lazy(fn, str)(bc)
-        return lazy(str, str)(bc)
+            return lazy(fn, str, six.text_type)(bc)
+        return lazy(str, str, six.text_type)(bc)
 
     @classmethod
     def get_by_name(self, name, *args):
@@ -600,8 +610,6 @@ Django creates copies of them when inheriting models.
             return _("%(value)r (invalid choice for %(list)s)") % dict(
                 list=self.__name__, value=value)
         return self.display_text(bc)
-    #~ def __unicode__(self):
-        # ~ return unicode(self.stored_name) # babel_get(self.names)
 
 
 class ChoiceListField(models.CharField):
