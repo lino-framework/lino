@@ -49,25 +49,23 @@ automatically available as a property value in
 from __future__ import unicode_literals
 from django.utils.encoding import python_2_unicode_compatible
 from past.builtins import cmp
-from builtins import str ,bytes
+from builtins import str
+# from builtins import bytes
 from past.builtins import basestring
 from builtins import object
+from future.utils import with_metaclass
 
 import logging
-from future.utils import with_metaclass
 logger = logging.getLogger(__name__)
 
 import warnings
 
 from django.utils.translation import ugettext_lazy as _
 from django.utils.functional import lazy
-# from django.utils.encoding import force_text
 from django.db import models
 from django.conf import settings
 
 from atelier.utils import assert_pure
-from lino.utils import unicode_string
-
 from lino.core import actions
 from lino.core import actors
 from lino.core import tables
@@ -77,6 +75,7 @@ from lino.core import fields
 STRICT = True
 VALUE_FIELD = models.CharField(_("value"), max_length=20)
 VALUE_FIELD.attname = 'value'
+
 
 @python_2_unicode_compatible
 class Choice(object):
@@ -168,7 +167,7 @@ class Choice(object):
 
     def __str__(self):
         # return force_text(self.text, errors="replace")
-        # return str(self.text)
+        # return self.text
         return str(self.text)
 
     def as_callable(self):
@@ -546,8 +545,8 @@ Django creates copies of them when inheriting models.
             def fn(bc):
                 # return "%s (%s)" % (bc.value, str(bc))
                 return "{0} ({1})".format(bc.value, bc)
-            return lazy(fn, bytes)(bc)
-        return lazy(bytes, bytes)(bc)
+            return lazy(fn, str)(bc)
+        return lazy(str, str)(bc)
 
     @classmethod
     def get_by_name(self, name, *args):
