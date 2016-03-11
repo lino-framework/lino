@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2015 Luc Saffre
+# Copyright 2009-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 """
 See introduction in :doc:`/dev/ar`.
@@ -139,13 +139,17 @@ class VirtualRow(object):
         return False
 
 
+from django.utils.encoding import python_2_unicode_compatible
+
+
+@python_2_unicode_compatible
 class PhantomRow(VirtualRow):
 
     def __init__(self, request, **kw):
         self._ar = request
         VirtualRow.__init__(self, **kw)
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self._ar.get_action_title())
 
 

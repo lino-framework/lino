@@ -24,6 +24,10 @@ from lino.mixins.printable import (Printable, DirectPrintAction)
 from lino.utils.xmlgen.html import E
 
 
+from django.utils.encoding import python_2_unicode_compatible
+
+
+@python_2_unicode_compatible
 class EmptyTableRow(VirtualRow, Printable):
     """
     Base class for virtual rows of an :class:`EmptyTable`.
@@ -36,7 +40,7 @@ class EmptyTableRow(VirtualRow, Printable):
         self._table = table
         VirtualRow.__init__(self, **kw)
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self._table.label)
 
     def get_print_language(self):

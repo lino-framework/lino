@@ -257,7 +257,10 @@ class ComboStoreField(StoreField):
                 return (v, ch.get_text_for_value(v, obj))
         for i in self.field.choices:
             if i[0] == v:
-                return (v, str(i[1]))
+                try:
+                    return (v, str(i[1]))
+                except UnicodeError as e:
+                    raise UnicodeError("20160311")
         return (v, _("%r (invalid choice)") % v)
 
 

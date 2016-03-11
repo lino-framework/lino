@@ -182,6 +182,7 @@ class StartedEnded(Started, Ended):
     #     return datetime.time(self.get_duration())
 
 
+@dd.python_2_unicode_compatible
 class StartedSummaryDescription(Started):
 
     """
@@ -198,7 +199,7 @@ class StartedSummaryDescription(Started):
         format='plain')
         # format='html')
 
-    def __unicode__(self):
+    def __str__(self):
         return self._meta.verbose_name + " #" + str(self.pk)
 
     def summary_row(self, ar, **kw):

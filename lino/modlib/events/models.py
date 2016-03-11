@@ -78,11 +78,12 @@ class Event(mixins.BabelNamed):
     url = models.URLField(blank=True)
 
 
+@dd.python_2_unicode_compatible
 class Stage(mixins.Sequenced):
     event = dd.ForeignKey('events.Event', related_name="stages")
     city = dd.ForeignKey('countries.Place', related_name="stages")
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.city)
 
     def get_siblings(self):

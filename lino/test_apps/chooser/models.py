@@ -112,21 +112,27 @@ MENU = [
 ]
 
 
+from django.utils.encoding import python_2_unicode_compatible
+
+
+@python_2_unicode_compatible
 class Country(dd.Model):
     name = models.CharField(max_length=20)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
+@python_2_unicode_compatible
 class City(dd.Model):
     name = models.CharField(max_length=20)
     country = models.ForeignKey(Country)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
+@python_2_unicode_compatible
 class Contact(dd.Model):
     name = models.CharField(max_length=20)
     country = models.ForeignKey(Country)
@@ -135,7 +141,7 @@ class Contact(dd.Model):
         max_length=2, choices=YEAR_IN_SCHOOL_CHOICES)
     food = models.CharField(max_length=20)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     @classmethod

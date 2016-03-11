@@ -10,6 +10,8 @@ See also :doc:`/dev/users`
 from builtins import str
 from builtins import object
 
+from django.utils.encoding import python_2_unicode_compatible
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
@@ -65,6 +67,7 @@ class ChangePassword(dd.Action):
         ar.success(msg, alert=True)
 
 
+@python_2_unicode_compatible
 class User(CreatedModified, TimezoneHolder):
     """Represents a user of this site.
 
@@ -137,7 +140,7 @@ class User(CreatedModified, TimezoneHolder):
 
         partner = dd.DummyField()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.get_full_name()
 
     def get_full_name(self):

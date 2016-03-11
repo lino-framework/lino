@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2015 Luc Saffre
+# Copyright 2011-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -126,6 +126,7 @@ Shortcut to the main Lino logger.
 # logger.info("20140227 dd.py a")
 
 from django.conf import settings
+from django.utils.encoding import python_2_unicode_compatible
 
 from lino.core.tables import VirtualTable
 

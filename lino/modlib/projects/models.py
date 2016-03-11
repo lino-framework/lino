@@ -35,6 +35,7 @@ class ProjectTypes(dd.Table):
 #
 
 
+@dd.python_2_unicode_compatible
 class Project(UserAuthored, mixins.CachedPrintable):
 
     class Meta(object):
@@ -48,7 +49,7 @@ class Project(UserAuthored, mixins.CachedPrintable):
     stopped = models.DateField(blank=True, null=True)
     text = models.TextField(blank=True, null=True)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 #~ class ProjectDetail(layouts.FormLayout):

@@ -71,6 +71,10 @@ class CheckedSubmitInsert(SubmitInsert):
             ok(ar)
 
 
+from django.utils.encoding import python_2_unicode_compatible
+
+
+@python_2_unicode_compatible
 class PhoneticWordBase(dd.Model):
     """Base class for the table of phonetic words of a given dupable
     model. For every (non-abstract) dupable model there must be a
@@ -88,7 +92,7 @@ class PhoneticWordBase(dd.Model):
 
     word = models.CharField(max_length=100)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.word
 
     @classmethod
