@@ -536,14 +536,17 @@ Django creates copies of them when inheriting models.
 
     @classmethod
     def display_text(cls, bc):
-        """Override this to customize the display text of choices.
+        """Return the text to be used for representing the given choice
+        instance `bc` to the user.
+
+        Override this to customize the display text of choices.
         :class:`lino.modlib.users.choicelists.UserGroups` and
         :class:`lino.modlib.cv.models.CefLevel` used to do this before
         we had the :attr:`ChoiceList.show_values` option.
 
-        This must be lazy (because the result are also used to build
-        the `choices` attribute of ChoiceListFields on this
-        choicelist.
+        This must be lazyly translatable because the result are also
+        used to build the `choices` attribute of ChoiceListFields on
+        this choicelist.
 
         Note that Django's `lazy` function has a list of
         "resultclasses" which are used "so that the automatic forcing
@@ -551,7 +554,10 @@ Django creates copies of them when inheriting models.
 
         """
         if cls.show_values or True:
-            # return "{0} ({1})".format(bc.value, bc)
+            # if unicodeerror:
+            # assert_pure(str(bc))
+            str(bc)
+
             def fn(bc):
                 # return "%s (%s)" % (bc.value, str(bc))
                 return "{0} ({1})".format(bc.value, bc)
