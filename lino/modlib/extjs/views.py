@@ -312,7 +312,7 @@ class Choices(View):
     def get(self, request, app_label=None, rptname=None, fldname=None, **kw):
         """
         Return a JSON object with two attributes `count` and `rows`,
-        where `rows` is a list of `(display_text,value)` tuples.
+        where `rows` is a list of `(display_text, value)` tuples.
         Used by ComboBoxes or similar widgets.
         If `fldname` is not specified, returns the choices for
         the `record_selector` widget.
