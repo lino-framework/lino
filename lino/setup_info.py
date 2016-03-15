@@ -12,7 +12,9 @@
 #   $ python setup.py test -s tests.PackagesTests
 
 from __future__ import unicode_literals
-import six
+import sys
+PY2 = sys.version_info[0] == 2
+PY3 = sys.version_info[0] == 3
 
 SETUP_INFO = dict(
     name='lino',
@@ -70,7 +72,7 @@ SETUP_INFO = dict(
   Topic :: Office/Business
   Topic :: Software Development :: Libraries :: Application Frameworks""".splitlines())
 
-if six.PY2:
+if PY2:
     SETUP_INFO['install_requires'].append('reportlab<2.7')
 else:
     SETUP_INFO['install_requires'].append('reportlab')
