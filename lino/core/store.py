@@ -1,4 +1,4 @@
-# Copyright 2009-2015 Luc Saffre
+# Copyright 2009-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 """Defines the "store" and its "fields" .
 
@@ -25,6 +25,8 @@ Other usages:
 """
 
 from __future__ import unicode_literals
+# import six
+# str = six.text_type
 from builtins import str
 from builtins import object
 

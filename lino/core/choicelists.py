@@ -49,10 +49,9 @@ automatically available as a property value in
 from __future__ import unicode_literals
 from django.utils.encoding import python_2_unicode_compatible
 from past.builtins import cmp
-from builtins import str
-# from builtins import bytes
 from past.builtins import basestring
 from builtins import object
+from builtins import str
 from future.utils import with_metaclass
 import six
 
@@ -553,10 +552,10 @@ Django creates copies of them when inheriting models.
         of the lazy evaluation code is triggered".
 
         """
-        if cls.show_values or True:
+        if cls.show_values:
             # if unicodeerror:
             # assert_pure(str(bc))
-            str(bc)
+            # str(bc)
 
             def fn(bc):
                 # return "%s (%s)" % (bc.value, str(bc))

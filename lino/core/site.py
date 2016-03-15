@@ -21,10 +21,11 @@ from __future__ import unicode_literals
 from future import standard_library
 standard_library.install_aliases()
 from builtins import map
+import six
+# str = six.text_type
 from builtins import str
 # from past.builtins import basestring
 # from builtins import object
-import six
 
 import os
 from os.path import normpath, dirname, join, isdir, relpath, exists
