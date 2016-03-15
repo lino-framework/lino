@@ -21,8 +21,10 @@ from __future__ import unicode_literals
 from future import standard_library
 standard_library.install_aliases()
 from builtins import map
-# from builtins import str
-from past.builtins import basestring
+import six
+# str = six.text_type
+from builtins import str
+# from past.builtins import basestring
 # from builtins import object
 
 import os
@@ -1076,7 +1078,7 @@ class Site(object):
         lino_noi.projects.team.
 
         """
-        if isinstance(local_apps, basestring):
+        if isinstance(local_apps, six.string_types):
             local_apps = [local_apps]
         if not isinstance(settings_globals, dict):
             raise Exception("""
@@ -1085,7 +1087,7 @@ class Site(object):
             and not %r
             """ % (self.__class__.__name__, settings_globals))
 
-        if isinstance(local_apps, basestring):
+        if isinstance(local_apps, six.string_types):
             local_apps = [local_apps]
         self.local_apps = local_apps
 
@@ -1206,12 +1208,12 @@ class Site(object):
             raise Exception("Replace hidden_apps by get_apps_modifiers()")
 
         def add(x):
-            if isinstance(x, basestring):
+            if isinstance(x, six.string_types):
                 app_label = x.split('.')[-1]
                 x = apps_modifiers.pop(app_label, x)
                 if x:
                     # convert unicode to string
-                    requested_apps.append(str(x))
+                    requested_apps.append(six.binary_type(x))
             else:
                 # if it's not a string, then it's an iterable of strings
                 for xi in x:
@@ -1809,7 +1811,7 @@ class Site(object):
 
         """
         spec = getattr(obj, name)
-        if spec and isinstance(spec, basestring):
+        if spec and isinstance(spec, six.string_types):
             if not self.is_installed_model_spec(spec):
                 setattr(obj, name, None)
                 return
@@ -2228,7 +2230,7 @@ class Site(object):
             #~ self.languages = (info,)
             #~ self.language_dict[info.name] = info
         else:
-            if isinstance(self.languages, basestring):
+            if isinstance(self.languages, six.string_types):
                 self.languages = self.languages.split()
             #~ lc = [x for x in self.django_settings.get('LANGUAGES' if x[0] in languages]
             #~ lc = language_choices(*self.languages)
@@ -2390,10 +2392,10 @@ class Site(object):
         
         """
         rv = []
-        if isinstance(languages, basestring):
+        if isinstance(languages, six.string_types):
             languages = languages.split()
         for k in languages:
-            if isinstance(k, basestring):
+            if isinstance(k, six.string_types):
                 li = self.get_language_info(k)
                 if li is None:
                     raise Exception("Unknown language code %r (must be one of %s)" % (

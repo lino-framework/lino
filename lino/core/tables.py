@@ -7,6 +7,8 @@
 
 """
 from __future__ import print_function
+# import six
+# str = six.text_type
 from builtins import str
 from builtins import object
 

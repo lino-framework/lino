@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2015 Luc Saffre
+# Copyright 2013-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 """
 This defines the :class:`MergeAction` class.
@@ -15,6 +15,8 @@ Usage example::
 If should not be used on models that have MTI children.
 
 """
+# import six
+# str = six.text_type
 from builtins import str
 from builtins import object
 

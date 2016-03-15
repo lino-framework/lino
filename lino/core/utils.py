@@ -1,4 +1,4 @@
-# Copyright 2010-2015 Luc Saffre
+# Copyright 2010-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 """A collection of utilities which require Django settings to be
 importable.
@@ -17,6 +17,8 @@ This defines some helper classes like
 from __future__ import unicode_literals
 from __future__ import print_function
 from past.builtins import cmp
+# import six
+# str = six.text_type
 from builtins import str
 from past.builtins import basestring
 from builtins import object

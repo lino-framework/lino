@@ -6,6 +6,9 @@ This defines the :class:`Table` class.
 """
 from __future__ import print_function
 from builtins import str
+# import six
+# str = six.text_type
+
 from past.builtins import basestring
 
 import logging

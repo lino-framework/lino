@@ -1,8 +1,10 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2015 Luc Saffre
+# Copyright 2009-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 from __future__ import unicode_literals
+# import six
+# str = six.text_type
 from builtins import str
 from past.builtins import basestring
 from builtins import object

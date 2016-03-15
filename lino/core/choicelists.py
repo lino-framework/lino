@@ -49,11 +49,11 @@ automatically available as a property value in
 from __future__ import unicode_literals
 from django.utils.encoding import python_2_unicode_compatible
 from past.builtins import cmp
-from builtins import str
-# from builtins import bytes
 from past.builtins import basestring
 from builtins import object
+from builtins import str
 from future.utils import with_metaclass
+import six
 
 import logging
 logger = logging.getLogger(__name__)
@@ -535,18 +535,33 @@ Django creates copies of them when inheriting models.
 
     @classmethod
     def display_text(cls, bc):
-        """Override this to customize the display text of choices.
+        """Return the text to be used for representing the given choice
+        instance `bc` to the user.
+
+        Override this to customize the display text of choices.
         :class:`lino.modlib.users.choicelists.UserGroups` and
         :class:`lino.modlib.cv.models.CefLevel` used to do this before
         we had the :attr:`ChoiceList.show_values` option.
 
+        This must be lazyly translatable because the result are also
+        used to build the `choices` attribute of ChoiceListFields on
+        this choicelist.
+
+        Note that Django's `lazy` function has a list of
+        "resultclasses" which are used "so that the automatic forcing
+        of the lazy evaluation code is triggered".
+
         """
-        if cls.show_values or True:
+        if cls.show_values:
+            # if unicodeerror:
+            # assert_pure(str(bc))
+            # str(bc)
+
             def fn(bc):
                 # return "%s (%s)" % (bc.value, str(bc))
                 return "{0} ({1})".format(bc.value, bc)
-            return lazy(fn, str)(bc)
-        return lazy(str, str)(bc)
+            return lazy(fn, str, six.text_type)(bc)
+        return lazy(str, str, six.text_type)(bc)
 
     @classmethod
     def get_by_name(self, name, *args):
@@ -600,8 +615,6 @@ Django creates copies of them when inheriting models.
             return _("%(value)r (invalid choice for %(list)s)") % dict(
                 list=self.__name__, value=value)
         return self.display_text(bc)
-    #~ def __unicode__(self):
-        # ~ return unicode(self.stored_name) # babel_get(self.names)
 
 
 class ChoiceListField(models.CharField):
