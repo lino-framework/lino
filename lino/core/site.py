@@ -1700,7 +1700,7 @@ class Site(object):
                     from django.db.models import loading
                     m = loading.load_app(p.app_name, False)
 
-                self.modules.define(p.app_label, m)
+                self.modules.define(unicode(p.app_label), m)
 
             for p in self.installed_plugins:
                 p.on_site_startup(self)
