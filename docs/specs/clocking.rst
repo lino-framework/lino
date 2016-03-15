@@ -138,8 +138,8 @@ started some days ago.
     ...     qs = tickets.Project.objects.filter(tickets_by_project__sessions_by_ticket__user=u).distinct()
     ...     if qs.count() > 1:
     ...         print u.username, "worked on", qs
-    jean worked on [Project #2 (u't\xe9am'), Project #5 (u'shop')]
-    luc worked on [Project #1 (u'lin\xf6'), Project #2 (u't\xe9am')]
+    jean worked on [Project #2 ('t\xe9am'), Project #5 ('shop')]
+    luc worked on [Project #1 ('lin\xf6'), Project #2 ('t\xe9am')]
 
 Render this table to HTML in order to reproduce :ticket:`523`:
 
@@ -192,7 +192,7 @@ base for writing invoices.
 <BuildMethods.appyodt:appyodt>
 
 >>> obj.interesting_for
-Site #1 (u'welket')
+Site #1 ('welket')
 
 >>> rt.show(clocking.TicketsByReport, obj)
 ... #doctest: -REPORT_UDIFF

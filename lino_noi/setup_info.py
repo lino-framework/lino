@@ -102,6 +102,6 @@ def add_package_data(package, *patterns):
     l.extend(patterns)
     return l
 
-l = add_package_data('lino_noi')
+l = add_package_data('lino_noi.lib.noi')
 for lng in 'de fr'.split():
     l.append('locale/%s/LC_MESSAGES/*.mo' % lng)
