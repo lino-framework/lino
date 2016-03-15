@@ -12,6 +12,7 @@
 #   $ python setup.py test -s tests.PackagesTests
 
 from __future__ import unicode_literals
+import six
 
 SETUP_INFO = dict(
     name='lino',
@@ -22,7 +23,7 @@ SETUP_INFO = dict(
         'Sphinx',
         'atelier', 'unipath', 'python_dateutil',
         'Babel', 'odfpy>1.3', 'lxml',
-        'beautifulsoup4', 'html5lib', 'reportlab', 'pisa',
+        'beautifulsoup4', 'html5lib', 'pisa',
         'jinja2', 'pytidylib', 'PyYAML',
         'clint',  # lino.modlib.plausibility.management.commands
         'django-localflavor',  # lino.modlib.sepa
@@ -68,6 +69,11 @@ SETUP_INFO = dict(
   Topic :: Home Automation
   Topic :: Office/Business
   Topic :: Software Development :: Libraries :: Application Frameworks""".splitlines())
+
+if six.PY2:
+    SETUP_INFO['install_requires'].append('reportlab<2.7')
+else:
+    SETUP_INFO['install_requires'].append('reportlab')
 
 SETUP_INFO.update(long_description="""\
 Lino is a high-level framework for writing desktop-like customized
