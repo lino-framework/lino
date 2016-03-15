@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2015 Luc Saffre
+# Copyright 2009-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """This defines the :class:`Action` class and the :func:`action`
@@ -15,6 +15,7 @@ See also:
 """
 from builtins import str
 from past.builtins import basestring
+# import six
 
 import logging
 logger = logging.getLogger(__name__)
@@ -544,7 +545,8 @@ class Action(Parametrizable, Permittable):
         return True
 
     def __str__(self):
-        return force_text(self.label)
+        # return force_text(self.label)
+        return str(self.label)
 
     def get_action_permission(self, ar, obj, state):
         """Return (True or False) whether the given :class:`ActionRequest

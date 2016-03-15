@@ -58,6 +58,7 @@ new element:
 from builtins import str
 from past.builtins import basestring
 from builtins import object
+import six
 
 import logging
 logger = logging.getLogger(__name__)
@@ -88,6 +89,25 @@ def pretty_print(elem):
 def prettify(s):
     return s.replace('><', '>\n<')
 
+
+def compatstr(s):
+    """The `python-future <http://python-future.org/>`__ package
+    introduces a special helper class `newstr` which simulates, under
+    Python 2, the behaviour of Python 3 strings.  But
+    `xml.etree.ElementTree
+    <https://docs.python.org/2/library/xml.etree.elementtree.html>`__
+    in Python 2 doesn't know about `python-future` and produces
+    invalid XML when you feed it with such a string.
+
+    So this function converts any `newstr` back to a real newstr.
+
+    TODO: Not yet tested under Python 3. At the best it is just
+    unefficient.
+
+    """
+    if isinstance(s, str):
+        return six.text_type(s)
+    return s
 
 RESERVED_WORDS = frozenset("""
 and       del       from      not       while
@@ -188,7 +208,7 @@ class Namespace(object):
         xkw = dict()
         for k, v in list(kw.items()):
             k = getattr(self, k).args[0]  # convert iname to tagname
-            xkw[self.addns(k)] = v
+            xkw[self.addns(compatstr(k))] = compatstr(v)
         return xkw
 
     def create_element(self, tag, *children, **attrib):

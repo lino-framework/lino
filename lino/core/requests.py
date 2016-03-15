@@ -7,8 +7,9 @@ See introduction in :doc:`/dev/ar`.
 .. autosummary::
 
 """
-from builtins import str
+# from builtins import str
 from builtins import object
+import six
 
 import logging
 logger = logging.getLogger(__name__)
@@ -150,7 +151,7 @@ class PhantomRow(VirtualRow):
         VirtualRow.__init__(self, **kw)
 
     def __str__(self):
-        return str(self._ar.get_action_title())
+        return six.text_type(self._ar.get_action_title())
 
 
 inheritable_attrs = frozenset(
@@ -429,7 +430,7 @@ request from it.
             if hasattr(e, 'message_dict'):
                 kw.update(errors=e.message_dict)
         if message is None:
-            message = str(e)
+            message = six.text_type(e)
         kw.update(message=message)
         self.set_response(**kw)
 
@@ -918,7 +919,7 @@ request from it.
 
         """
         if text is None:
-            text = str(_("the documentation"))
+            text = six.text_type(_("the documentation"))
         url = settings.SITE.help_url
         if docname is not None:
             url = "%s/help/%s.html" % (url, docname)
@@ -1178,7 +1179,7 @@ class ActionRequest(ActorRequest):
         raise NotImplementedError
 
     def get_base_filename(self):
-        return str(self.actor)
+        return six.text_type(self.actor)
         #~ s = self.get_title()
         #~ return s.encode('us-ascii','replace')
 

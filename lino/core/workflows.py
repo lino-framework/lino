@@ -1,11 +1,14 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2015 Luc Saffre
+# Copyright 2012-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 """Defines the classes used for generating workflows:
 :class:`State` and :class:`Workflow`, :class:`ChangeStateAction`.
 
 """
 from builtins import str
+# import six
+# str = six.text_type
+
 from past.builtins import basestring
 
 import logging

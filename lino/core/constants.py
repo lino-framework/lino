@@ -1,8 +1,10 @@
-# Copyright 2009-2015 Luc Saffre
+# Copyright 2009-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 """Defines explicit code names for URL parameters
 
 """
+# import six
+# str = six.text_type
 from builtins import str
 
 _handle_attr_name = '_lino_ui_handle'

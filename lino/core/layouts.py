@@ -6,6 +6,8 @@
 """
 
 from __future__ import unicode_literals
+# import six
+# str = six.text_type
 from builtins import str
 from past.builtins import basestring
 from builtins import object

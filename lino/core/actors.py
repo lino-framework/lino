@@ -10,6 +10,8 @@ See :doc:`/dev/actors`.
 """
 from past.builtins import cmp
 from builtins import str
+# import six
+# str = six.text_type
 from past.builtins import basestring
 
 import logging

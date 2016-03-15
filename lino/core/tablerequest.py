@@ -9,8 +9,9 @@ from __future__ import division
 from __future__ import print_function
 from future import standard_library
 standard_library.install_aliases()
-from builtins import str
+# from builtins import str
 from past.utils import old_div
+import six
 
 import logging
 logger = logging.getLogger(__name__)
@@ -43,7 +44,7 @@ def column_header(col):
         #~ if col.label:
             #~ return join_elems(col.label.split('\n'),sep=E.br)
         #~ return [unicode(col.name)]
-    return str(col.label or col.name)
+    return six.text_type(col.label or col.name)
 
 
 class TableRequest(ActionRequest):
@@ -78,7 +79,7 @@ class TableRequest(ActionRequest):
             self._data_iterator = self.get_data_iterator()
         except Warning as e:
             #~ logger.info("20130809 Warning %s",e)
-            self.no_data_text = str(e)
+            self.no_data_text = six.text_type(e)
             self._data_iterator = []
         except Exception as e:
             if not settings.SITE.catch_layout_exceptions:
@@ -87,10 +88,10 @@ class TableRequest(ActionRequest):
             # rather often and since exception loggers usually send an
             # email to the local system admin, make sure to log each
             # exception only once.
-            self.no_data_text = str(e)
-            w = WARNINGS_LOGGED.get(str(e))
+            self.no_data_text = six.text_type(e)
+            w = WARNINGS_LOGGED.get(six.text_type(e))
             if w is None:
-                WARNINGS_LOGGED[str(e)] = True
+                WARNINGS_LOGGED[six.text_type(e)] = True
                 raise
                 # logger.exception(e)
             self._data_iterator = []
@@ -411,7 +412,7 @@ class TableRequest(ActionRequest):
         #~ hr = tble.add_header_row(*headers,**self.cellattrs)
         if cellwidths:
             for i, td in enumerate(headers):
-                td.attrib.update(width=str(cellwidths[i]))
+                td.attrib.update(width=six.text_type(cellwidths[i]))
         tble.head.append(xghtml.E.tr(*headers))
         #~ print 20120623, ar.actor
         recno = 0
@@ -452,7 +453,8 @@ class TableRequest(ActionRequest):
             else:
                 data = getrqdata(ar.request)
                 columns = [
-                    str(x) for x in data.getlist(constants.URL_PARAM_COLUMNS)]
+                    six.text_type(x) for x in
+                    data.getlist(constants.URL_PARAM_COLUMNS)]
             if columns:
                 all_widths = data.getlist(constants.URL_PARAM_WIDTHS)
                 hiddens = [(x == 'true') for x in data.getlist(

@@ -7,6 +7,8 @@ Defines :class:`HtmlRenderer` and :class:`TextRenderer`.
 
 from __future__ import unicode_literals
 from __future__ import print_function
+# import six
+# str = six.text_type
 from builtins import str
 from past.builtins import basestring
 from builtins import object
