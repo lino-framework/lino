@@ -381,12 +381,15 @@ dd.update_field(
 
 
 class UpdateGuests(dd.MultipleRowAction):
-    """Decide whether it is time to add Guest instances for this event,
-    and if yes, call :meth:`suggest_guests` to instantiate them.
+    """Update the list of guests (participants) for this event.
 
-    - No guests must be added when loading from dump
     - The Event must be in a state which allows editing the guests
-    - If there are already at least one guest, no guests will be added
+
+    - Call :meth:`suggest_guests<lino.modlib.cal.models.Event.suggest_guests>`
+      to get a list of partners who should participate.
+
+    - For each of theses partners: if there is already a
+      participation, do nother.  Otherwise create a participation.
 
     """
 
@@ -395,6 +398,7 @@ class UpdateGuests(dd.MultipleRowAction):
 
     def run_on_row(self, obj, ar):
         if settings.SITE.loading_from_dump:
+            raise Exception("That should no longer happen since 20160317.")
             return 0
         if not obj.state.edit_guests:
             ar.info("not state.edit_guests")
@@ -595,13 +599,13 @@ Indicates that this Event shouldn't prevent other Events at the same time."""))
     def is_user_modified(self):
         return self.state != EventStates.suggested
 
-    def after_ui_create(self, ar):
-        super(Event, self).after_ui_create(ar)
-        self.update_guests.run_from_code(ar)
+    # def after_ui_create(self, ar):
+    #     super(Event, self).after_ui_create(ar)
+    #     self.update_guests.run_from_code(ar)
 
-    def after_ui_save(self, ar, cw):
-        super(Event, self).after_ui_save(ar, cw)
-        self.update_guests.run_from_code(ar)
+    # def after_ui_save(self, ar, cw):
+    #     super(Event, self).after_ui_save(ar, cw)
+    #     self.update_guests.run_from_code(ar)
 
     def suggest_guests(self):
         """Yield the list of Guest instances to be added to this Event.  This

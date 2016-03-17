@@ -1212,8 +1212,7 @@ class Site(object):
                 app_label = x.split('.')[-1]
                 x = apps_modifiers.pop(app_label, x)
                 if x:
-                    # convert unicode to string
-                    requested_apps.append(six.binary_type(x))
+                    requested_apps.append(x)
             else:
                 # if it's not a string, then it's an iterable of strings
                 for xi in x:
@@ -1232,6 +1231,9 @@ class Site(object):
         self.plugins = AttrDict()
 
         def install_plugin(app_name, needed_by=None):
+            # Django does not accept newstr, and we don't want to see
+            # ``u'applabel'`` in doctests.
+            app_name = six.binary_type(app_name)
             app_mod = import_module(app_name)
 
             # Can an `__init__.py` file explicitly set ``Plugin =
@@ -1700,7 +1702,7 @@ class Site(object):
                     from django.db.models import loading
                     m = loading.load_app(p.app_name, False)
 
-                self.modules.define(unicode(p.app_label), m)
+                self.modules.define(six.text_type(p.app_label), m)
 
             for p in self.installed_plugins:
                 p.on_site_startup(self)

@@ -219,7 +219,7 @@ class RelatedMixin(object):
 
 
 class ComboStoreField(StoreField):
-
+    """An atomizer for all kinds of fields which use a ComboBox."""
     list_values_count = 2
 
     def as_js(self, name):
@@ -259,7 +259,8 @@ class ComboStoreField(StoreField):
                 return (v, ch.get_text_for_value(v, obj))
         for i in self.field.choices:
             if i[0] == v:
-                return (v, i[1].encode('utf8'))
+                # return (v, i[1].encode('utf8'))
+                return (v, i[1])
         return (v, _("%r (invalid choice)") % v)
 
 
