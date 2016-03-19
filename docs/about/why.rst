@@ -1,6 +1,8 @@
-======================
+========
+Why Lino
+========
+
 Lino is for you, if...
-======================
 
 - you have a concrete need for a customized database application
 - you want a stable and sustainable solution
@@ -10,3 +12,6 @@ Lino is for you, if...
 - you agree that the software created by our common efforts is being
   published as open source under a free license and can be used by
   others.
+
+
+See also :doc:`art`.
