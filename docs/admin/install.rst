@@ -1,3 +1,5 @@
+.. _lino.admin.install:
+
 ====================================================
 Installing a Lino application on a production server
 ====================================================
@@ -27,11 +29,7 @@ libapache2-mod-wsgi
     This will automatically install Apache 
     (packages apache2 apache2-doc apache2-mpm-prefork libexpat1...)
     
-ssl-cert       
-    
-    If you want to run a https server.
-    
-python-virtualenv
+python-dev python-pip python-virtualenv
 
     If you host more than one Lino application, then you should 
     use Ian Bicking's virtualenv tool.
@@ -41,6 +39,17 @@ tinymce
 
     If :attr:`lino.Lino.use_tinymce` is `True` (probably yes),
     then Lino's ExtJS UI uses the TinyMCE WYSIWYG text editor.
+    
+mysqldb-server
+mariadb-server
+
+    Needed if you plan to use Django's MySQL backend.
+    See :doc:`install_mysql`.
+
+
+ssl-cert
+    
+    If you want to run a https server.
     
 
 Install Lino
@@ -87,13 +96,7 @@ mysql-python
     Needed if you plan to use Django's MySQL backend.
     See :doc:`install_mysql`.
 
-    
-mdbtools
 
-  If you want to import data from a legacy `.mdb` file
-
-
-  
 
 Create a local Lino project
 ---------------------------
