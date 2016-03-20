@@ -58,6 +58,9 @@ class SpecsTests(BaseTestCase):
     def test_as_pdf(self):
         self.run_simple_doctests('docs/specs/as_pdf.rst')
 
+    def test_db(self):
+        self.run_simple_doctests('docs/specs/db.rst')
+
 
 class ProjectsTests(BaseTestCase):
     """Run tests on the demo projects.
