@@ -699,7 +699,7 @@ class ButtonsTable(VirtualTable):
 
 # from lino.core.signals import database_ready
 from lino.core.signals import post_analyze
-from django.db.utils import OperationalError
+from django.db.utils import DatabaseError
 
 
 # @signals.receiver(database_ready)
@@ -710,6 +710,6 @@ def setup_ventilated_columns(sender, **kw):
             if issubclass(a, AbstractTable):
                 try:
                     a.setup_columns()
-                except OperationalError:
+                except DatabaseError:
                     logger.info("Ignoring OperationalError")
     settings.SITE.resolve_virtual_fields()

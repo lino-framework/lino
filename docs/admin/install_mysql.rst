@@ -17,12 +17,10 @@ Installation
 ============
 
 To install mysql on your site::
-
-    $ sudo aptitude install mysql-server python-mysqldb
-    
-Or if your site is to run within a virtualenv::
-    
-    $ sudo aptitude install mysql-server libmysqlclient-dev python-dev
+   
+    $ sudo apt-get install mariadb-server
+    $ sudo apt-get install libmysqlclient-dev
+    $ sudo apt-get install python-dev
     $ pip install MySQL-python
 
 Users

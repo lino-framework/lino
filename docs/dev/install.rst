@@ -15,7 +15,7 @@ Installing Lino
 This document describes how to install Lino.  It is meant for people
 who plan to write their own Lino application.  Alternativaly you might
 prefer to install one of the existing Lino applications, e.g.  `Lino
-Così <http://cosi.lino-framework.org/install/index.html>`__ of `Lino
+Così <http://cosi.lino-framework.org/install/index.html>`__ or `Lino
 Welfare <http://welfare.lino-framework.org/admin/install.html>`__.
 
 This tutorial assumes you are familiar with the Linux shell at least
@@ -32,8 +32,10 @@ we suggest to keep Mendel Cooper's `Advanced Bash-Scripting Guide
 System requirements
 ===================
 
-#.  Lino requires **Python 2**.  We just did not yet take the time to
-    make it work with Python 3. Any contribution is welcome.
+#.  Lino theoretically works under **Python 3**, but we currently
+    still recommend **Python 2**.  If you just want it to work, then
+    choose Py2. Otherwise give it a try under Python 3 and report our
+    experience.
 
 #.  We assume you have pip_ installed. `pip` is not automatically
     bundled with Python 2, but it has become the de-facto standard.
