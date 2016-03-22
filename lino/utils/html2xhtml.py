@@ -14,7 +14,7 @@ It uses Jason Stitt's `pytidylib
 module. This module requires the `HTML Tidy library
 <http://tidy.sourceforge.net/>`__ to be installed on the system::
 
-    $ sudo aptitude install tidy
+    $ sudo apt-get install tidy
 
 Some examples:
 

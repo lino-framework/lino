@@ -1,8 +1,7 @@
-# Copyright 2009-2015 Luc Saffre
+# Copyright 2009-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 """
 
-.. autosummary::
 
 
 """
@@ -20,7 +19,9 @@ from lino.core.actions import ShowEmptyTable
 from lino.core import actions
 from lino.core import fields
 
-from lino.mixins.printable import (Printable, DirectPrintAction)
+from lino.modlib.printing.mixins import Printable
+from lino.modlib.printing.mixins import DirectPrintAction
+from lino.modlib.printing.choicelists import SimpleBuildMethod
 from lino.utils.xmlgen.html import E
 
 
@@ -55,7 +56,21 @@ class EmptyTableRow(VirtualRow, Printable):
         return kw
 
     def get_template_groups(self):
-        return [self._table.app_label + '/' + self._table.__name__]
+        return self._table.get_template_groups()
+
+    def get_print_templates(self, *args):
+        """Overrides
+        :meth:`lino.modlib.printing.mixins.Printable.get_print_templates`
+
+        """
+        return self._table.get_print_templates(*args)
+
+    # def get_build_method(self):
+    #     return self._table.get_build_method()
+
+    def get_build_options(self, bm, **opts):
+        # header_center
+        return self._table.get_build_options(bm, **opts)
 
     def filename_root(self):
         return self._table.app_label + '.' + self._table.__name__
@@ -96,6 +111,19 @@ class EmptyTable(Frame):
         return ShowEmptyTable()
 
     @classmethod
+    def get_template_groups(self):
+        return [self.app_label + '/' + self.__name__]
+
+    @classmethod
+    def get_print_templates(self, bm, action):
+        """Called from EmptyTableRow. """
+        return [bm.get_default_template(self)]
+
+    @classmethod
+    def get_build_options(self, bm, **opts):
+        return opts
+
+    @classmethod
     def create_instance(self, ar, **kw):
         if self.parameters:
             kw.update(ar.param_values)
@@ -126,12 +154,15 @@ class ReportRequest(ActionRequest):
 
         # return '\n'.join(ar.story2rst(
         #     ar.actor.get_story(self, ar), **kwargs))
-        
+
 
 class Report(EmptyTable):
     """A special kind of :class:`EmptyTable` used to create complex
-    "reports". A report is a series of tables combined into a single
-    printable and previewable document.
+    "reports". A report is a series of headings, paragraphs and tables
+    combined into a single printable and previewable document.
+
+    When subclassing this, application code must either define
+    :attr:`report_items` or implement an alternative :meth:`get_story`.
 
     """
 
@@ -140,6 +171,7 @@ class Report(EmptyTable):
     do_print = DirectPrintAction()
 
     report_items = None
+    """ """
 
     @classmethod
     def request(self, **kw):
@@ -148,6 +180,28 @@ class Report(EmptyTable):
         """
         kw.update(actor=self)
         return ReportRequest(**kw)
+
+    @classmethod
+    def get_template_groups(self):
+        return ['report', self.app_label + '/' + self.__name__]
+
+    # @classmethod
+    # def get_print_templates(self, bm, action):
+    #     """Called from EmptyTableRow.
+    #     Overrides
+    #     :meth:`lino.modlib.printing.mixins.Printable.get_print_templates`
+
+    #     """
+    #     if isinstance(bm, SimpleBuildMethod):
+    #         return ['Report'+bm.template_ext]
+    #         return [bm.get_default_template(self)]
+    #     return ['Report'+bm.template_ext, bm.get_default_template(self)]
+
+    @classmethod
+    def get_build_options(self, bm, **opts):
+        if bm.templates_name == 'wk':
+            opts['footer-left'] = "<p>Footer [page]</p>"
+        return opts
 
     @classmethod
     def get_story(cls, self, ar):

@@ -259,14 +259,10 @@ this::
     Done.
 
 
-Congratulations if you got the test suite to pass.
+Congratulations if you got the test suite to pass!
 
-As your next step, we now suggest to :doc:`/tutorials/hello/index`.
+- As your next step, we now suggest to :doc:`/tutorials/hello/index`.
 
-
-Install LibreOffice if necessary
-================================
-
-Most Lino applications (:ref:`cosi`, :ref:`noi`, :ref:`welfare` use
-:mod:`lino.modlib.appypod` for printing and therefore require
-:ref:`admin.oood`.
+- Many Lino applications use :ref:`xl`, so please also check
+  `Installing Lino XL
+  <http://xl.lino-framework.org/install/index.html>`__
