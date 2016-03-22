@@ -201,7 +201,7 @@ if dd.is_installed('changes'):
         def get_request_queryset(cls, ar):
             mi = ar.master_instance
             if mi is None:
-                return cls.model.objects.null()
+                return cls.model.objects.none()
             return cls.model.objects.filter(
                 time__gte=mi.created,
                 **gfk2lookup(cls.model.master, mi.owner))
