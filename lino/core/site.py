@@ -2483,10 +2483,10 @@ class Site(object):
         
         """
         d = dict()
-        for simple, info in list(self.language_dict.items()):
+        for simple, info in self.language_dict.items():
             v = kw.get(simple, None)
             if v is not None:
-                d[name + info.suffix] = v
+                d[name + info.suffix] = six.text_type(v)
         return d
 
     def args2kw(self, name, *args):
