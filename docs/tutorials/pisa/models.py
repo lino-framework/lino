@@ -1,7 +1,8 @@
-from lino import mixins
+from lino.mixins import Human
+from lino.modlib.printing.mixins import Printable
 
 
-class Person(mixins.Human, mixins.Printable):
+class Person(Human, Printable):
     pass
 
 

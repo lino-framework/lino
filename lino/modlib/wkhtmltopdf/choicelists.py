@@ -13,6 +13,8 @@ logger = logging.getLogger(__name__)
 
 import os
 
+from tempfile import NamedTemporaryFile
+
 from django.conf import settings
 from django.utils import translation
 
@@ -42,15 +44,19 @@ class WkBuildMethod(DjangoBuildMethod):
 
         lang = str(elem.get_print_language()
                    or settings.SITE.DEFAULT_LANGUAGE.django_code)
-        logger.info("wkhtmltopdf render %s -> %s (%r)", tpl, filename, lang)
-
         with translation.override(lang):
+            cmd_options = elem.get_build_options(self)
+            logger.info(
+                "wkhtmltopdf render %s -> %s (%r, %s)",
+                tpl, filename, lang, cmd_options)
 
             context = elem.get_printable_context(ar)
-            html = render_pdf_from_template(tpl, htpl, ftpl, context)
+            html = render_pdf_from_template(
+                tpl, htpl, ftpl, context, cmd_options)
             # html = html.encode("utf-8")
             file(filename, 'w').write(html)
             return os.path.getmtime(filename)
 
 add = BuildMethods.add_item_instance
 add(WkBuildMethod('wkhtmltopdf'))
+

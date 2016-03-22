@@ -316,9 +316,9 @@ class Referrable(model.Model):
 
 
 
-from lino.modlib.printing.mixins import (
-    Printable, PrintableType, CachedPrintable, TypedPrintable,
-    DirectPrintAction, CachedPrintAction)
+# from lino.modlib.printing.mixins import (
+#     Printable, PrintableType, CachedPrintable, TypedPrintable,
+#     DirectPrintAction, CachedPrintAction)
 
 from lino.mixins.duplicable import Duplicable, Duplicate
 from lino.mixins.sequenced import Sequenced, Hierarchical

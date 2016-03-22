@@ -218,8 +218,11 @@ class BaseRequest(object):
               current_project=None,
               selected_pks=None,
               master_instance=None,
+              limit=None,
               requesting_panel=None,
               renderer=None):
+        """If a `limit` is specified, this is ignored silently.
+        """
         self.requesting_panel = requesting_panel
         self.master_instance = master_instance
         if user is None:
@@ -603,6 +606,7 @@ request from it.
         """Convert a story into a stream of HTML elements.
 
         """
+        # return self.renderer.show_story(self, story, *args, **kwargs)
         return settings.SITE.kernel.html_renderer.show_story(
             self, story, *args, **kwargs)
 
