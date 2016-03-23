@@ -228,3 +228,13 @@ class Report(EmptyTable):
             self.get_story(apr.ar), master_instance=self))
         return str('').join(chunks)  # must be utf8 encoded
 
+    @classmethod
+    def to_rst(self, ar, column_names=None, **kwargs):
+        raise Exception("To be replaced by rt.show()")
+        # obj = self.create_instance(ar)
+        # return """\
+        # .. raw:: html
+        
+        #    %s
+        # """ % E.tostring(obj.body).replace('\n', ' ')
+

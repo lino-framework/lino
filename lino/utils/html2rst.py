@@ -120,7 +120,7 @@ def html2rst(e, stripped=False):
             rst = ''
         else:
             rst += '**'
-    elif e.tag == 'em':
+    elif e.tag == 'em' or e.tag == 'i':
         if rst == '*':
             rst = ''
         else:
