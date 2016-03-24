@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2015 Luc Saffre.
+# Copyright 2008-2016 Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """This defines the :class:`Plugin` class.
