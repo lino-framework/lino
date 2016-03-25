@@ -200,7 +200,7 @@ from lino.core.fields import CharField
 # from lino_xl.lib.appypod.mixins import PrintLabelsAction
 
 from lino.core.utils import babelkw
-from lino.core.utils import babelattr
+# from lino.core.utils import babelattr
 from lino.core.utils import babel_values  # alias for babelkw for backward compat
 
 from lino.utils.choosers import chooser, action_chooser
@@ -304,6 +304,7 @@ build_media_url = settings.SITE.build_media_url
 build_static_url = settings.SITE.build_static_url
 get_default_language = settings.SITE.get_default_language
 resolve_languages = settings.SITE.resolve_languages
+babelattr = settings.SITE.babelattr
 
 apps = plugins = settings.SITE.plugins
 # `apps` is an alias for `plugins`. We recommend plugins since `apps`

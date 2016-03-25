@@ -1,4 +1,4 @@
-# Copyright 2010-2015 Luc Saffre
+# Copyright 2010-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 """A collection of utilities which require Django settings to be
 importable.

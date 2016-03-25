@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2008-2015 Luc Saffre
+# Copyright 2008-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 """
 
@@ -21,6 +21,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
+from django.utils.encoding import python_2_unicode_compatible
 from django.conf import settings
 
 from lino.utils import join_words
@@ -149,9 +150,6 @@ def get_salutation(gender, nominative=False):
     if nominative:
         return pgettext("nominative salutation", "Mr")
     return pgettext("indirect salutation", "Mr")
-
-
-from django.utils.encoding import python_2_unicode_compatible
 
 
 @python_2_unicode_compatible
