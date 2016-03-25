@@ -19,3 +19,4 @@ docs/api
 
 .idea
 .coverage
+.eggs
