@@ -30,7 +30,9 @@ url
 
 Insert a link to an external web page. The first argument is the URL
 (mandatory). If no other argument is given, the URL is used as
-text. Otherwise the remaining text is used as the link text
+text. Otherwise the remaining text is used as the link text.
+
+The link will always open in a new window (``target="_blank"``)
 
 Usage examples:
 
@@ -38,10 +40,10 @@ Usage examples:
 - ``[url http://www.example.com example]``
 
 ..  test:
-    >>> print(ses.parse_memo("See also [url http://www.example.com]."))
-    See also <a href="http://www.example.com">http://www.example.com</a>.
-    >>> print(ses.parse_memo("See also [url http://www.example.com example]."))
-    See also <a href="http://www.example.com">example</a>.
+    >>> print(ses.parse_memo("See [url http://www.example.com]."))
+    See <a href="http://www.example.com" target="_blank">http://www.example.com</a>.
+    >>> print(ses.parse_memo("See [url http://www.example.com example]."))
+    See <a href="http://www.example.com" target="_blank">example</a>.
 
 
 ticket
