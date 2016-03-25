@@ -204,7 +204,7 @@ class Kernel(object):
                 url = text = url_text[0]
             else:
                 url, text = url_text
-            return '<a href="%s">%s</a>' % (url, text)
+            return '<a href="%s" target="_blank">%s</a>' % (url, text)
 
         self.memo_parser.register_command('url', url2html)
 
