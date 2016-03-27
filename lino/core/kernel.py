@@ -666,7 +666,10 @@ class Kernel(object):
                 if self.site.log_each_action_request and not a.readonly:
                     logger.info("run_callback {0} {1} {2}".format(
                         thread_id, cb.message, c.name))
-                c.func(ar)
+                try:
+                    c.func(ar)
+                except Warning as e:
+                    ar.error(str(e), alert=True)
                 return self.render_action_response(ar)
 
         ar.error("Invalid button %r for callback" % (button_id, thread_id))
