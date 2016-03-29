@@ -1,7 +1,22 @@
-=====================================
-Features, design goals  & limitations
-=====================================
+=========================
+Features and design goals
+=========================
     
+Design goals
+------------
+
+- Lino applications are intuitive and easy-to-understand for the end user.
+  (see :doc:`values`)
+- sustainable application development
+- agile programming
+- rapid prototyping 
+- libraries of reusable code
+- short release cycles
+- maintainable code
+- stable 
+
+.. _lino.features:
+
 Features
 --------
 
@@ -29,7 +44,7 @@ Lino then adds its own features to the above:
   application developers don't waste their time writing html templates
   or css.
 
-- :ref:`layouts`:
+- :ref:`Layouts <layouts>`:
   use the Python language not only
   for designing your *models* but also your *forms*.
   
@@ -49,45 +64,35 @@ Lino then adds its own features to the above:
   
 - Other features include extensions to handle :ref:`polymorphism`.
   
-- And last but not least, Lino includes :mod:`ml`, a collection of
-  reusable Django apps designed for Lino applications.
+- And last but not least, Lino includes :mod:`lino_modlib`, a
+  collection of reusable Django apps designed for Lino applications.
 
 
-Design goals
+.. _lino.think_python:
+
+Think Python
 ------------
 
+When using Lino, you should understand a fundamental design choice of
+the Lino framework:
 
-- Lino applications are intuitive and easy-to-understand for the end user.
-  (see :doc:`values`)
-- sustainable application development
-- agile programming
-- rapid prototyping 
-- libraries of reusable code
-- short release cycles
-- maintainable code
-- stable 
+We believe that database structure, screen layouts and business logic
+should be written in *Python*, not in *XML*. That is, they should be
+done by the programmer, not by the end-users.
 
+Python is a powerful and well-known parser, why should we throw away a
+subset of its features by introducing yet another textual description
+language?  The main reason why other frameworks do this is that it
+enables them to have non-programmers do the database design and screen
+layouts. Which is a pseudo-advantage.
 
-Limitations
------------
+Lino is here because we believe that database design and screen layout
+should *not* be delegated to people who don't *think in Python*.
 
-- Lino does not even *try* to be very easy to learn. There are other
-  frameworks who try to deliver quick visible results. With Lino it
-  may take a day or two before you fall in love with it, but your love
-  will last longer.
+This does not explude usage of templates when meaningful. 
 
-- Lino has no "visual GUI editor" because one of it's powerful
-  features are :ref:`layouts` whose purpose is to describe user
-  interfaces programmatically in the Python language.  We don't
-  believe that a visual GUI editor is a good thing when it comes to
-  maintaining complex database applications in a sustainable way. Rob
-  Galanakis explains a similar opinion in `GeoCities and the Qt
-  Designer
-  <http://www.robg3d.com/2014/08/geocities-and-the-qt-designer/>`_
-
-- Lino is not well documented. This is a disadvantage of using a young
-  framework with a small community. But we are working on it. Give
-  your feedback, tell us where you got stuck, help us to grow!
-
+A missing piece here are features like user-defined views
+(:ticket:`848`) because end-users of course sometimes want (and should
+have a possibility) to save a given grid layout.
 
 

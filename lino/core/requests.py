@@ -1120,7 +1120,7 @@ class ActionRequest(ActorRequest):
             pv = self.actor.param_defaults(self)
 
             for k in list(pv.keys()):
-                if not k in self.actor.parameters:
+                if k not in self.actor.parameters:
                     raise Exception(
                         "%s.param_defaults() returned invalid keyword %r" %
                         (self.actor, k))
@@ -1143,21 +1143,26 @@ class ActionRequest(ActorRequest):
             if self.actor.master_key is not None:
                 if self.actor.master_key in pv:
                     pv[self.actor.master_key] = self.master_instance
-
             if param_values is None:
                 if request is not None:
                     ps = self.actor.params_layout.params_store
+                    # print('20160329 requests.py', ps, self.actor.parameters)
                     if ps is not None:
                         pv.update(ps.parse_params(request))
+                    else:
+                        raise Exception(
+                            "20160329 params_layout {0} has no params_store "
+                            "in {1!r}".format(
+                                self.actor.params_layout, self.actor))
             else:
                 for k in list(param_values.keys()):
-                    if not k in pv:
+                    if k not in pv:
                         raise Exception(
                             "Invalid key '%s' in param_values of %s "
                             "request (possible keys are %s)" % (
                                 k, self.actor, list(pv.keys())))
                 pv.update(param_values)
-
+            # print("20160329 ok", pv)
             self.param_values = AttrDict(**pv)
         action = self.bound_action.action
         if action.parameters is not None:
@@ -1172,7 +1177,7 @@ class ActionRequest(ActorRequest):
     def set_action_param_values(self, **action_param_values):
         apv = self.action_param_values
         for k in list(action_param_values.keys()):
-            if not k in apv:
+            if k not in apv:
                 raise Exception(
                     "Invalid key '%s' in action_param_values "
                     "of %s request (possible keys are %s)" %

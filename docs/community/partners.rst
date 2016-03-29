@@ -1,8 +1,8 @@
-========
-Partners
-========
+=============
+Lino Partners
+=============
 
-The following organizations are promoters of the Lino project and
+The following organizations are promoters of the Lino framework and
 offer professional consultance for Lino applications:
 
 - `Rumma & Ko OÜ <http://saffre-rumma.net>`_ (:ref:`luc`)

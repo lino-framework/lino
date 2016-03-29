@@ -713,6 +713,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         """Called internally at site startup. Don't override.
 
         """
+        # if str(cls) == 'courses.Pupils':
+        #     print("20160329 class_init")
         if hasattr(cls, 'required'):
             raise ChangedAPI(
                 "{0} must convert `required` to `required_roles`".format(cls))
@@ -939,7 +941,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     @classmethod
     def get_title_tags(self, ar):
-        """Return a list of translatable strings to be added to the base part
+        """Yield a list of translatable strings to be added to the base part
         of the title. This is called by :meth:`get_title` to construct
         the actual title.
 

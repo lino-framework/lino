@@ -669,25 +669,8 @@ class Table(AbstractTable):
         return super(Table, self).get_data_elem(name)
 
     @classmethod
-    def get_queryset(self, ar):
-        """
-        Return an iterable over the items processed by this table.
-        Override this to use e.g. select_related() or to return a list.
-
-        Return a customized default queryset
-    
-        Example::
-
-          def get_queryset(self):
-              return self.model.objects.select_related('country', 'city')
-
-
-        """
-        return self.model.objects.all()
-
-    @classmethod
     def get_request_queryset(self, rr):
-        """Build a Queryset for the specified request on this table.
+        """Build a Queryset for the specified ActionRequest on this table.
 
         Upon first call, this will also lazily install Table.queryset
         which will be reused on every subsequent call.
@@ -702,7 +685,10 @@ class Table(AbstractTable):
           yeld objects will be stored in a tuple.
 
         """
+        # print("20160329 dbtables.py get_request_queryset({})".format(
+        #     rr.param_values))
         qs = self.get_queryset(rr)
+        # print("20160329 {}".format(qs.query))
         if qs is None:
             return self.model.objects.none()
         kw = self.get_filter_kw(rr)
@@ -756,6 +742,30 @@ class Table(AbstractTable):
             logger.info("%s %s", self.debug_sql, qs.query)
         return qs
 
+    @classmethod
+    def get_queryset(self, ar):
+        """
+        Return an iterable over the items processed by this table.
+        Override this to use e.g. select_related() or to return a list.
+
+        Return a customized default queryset
+    
+        Example::
+
+          def get_queryset(self):
+              return self.model.objects.select_related('country', 'city')
+
+
+        """
+        return self.model.get_request_queryset(ar)
+
+    @classmethod
+    def get_title_tags(self, ar):
+        for t in super(Table, self).get_title_tags(ar):
+            yield t
+        for t in self.model.get_title_tags(ar):
+            yield t
+        
     @classmethod
     def create_instance(self, ar, **kw):
         """

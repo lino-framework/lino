@@ -14,4 +14,4 @@ Lino is for you, if...
   others.
 
 
-See also :doc:`art`.
+See also :doc:`features` and :doc:`art`.

@@ -196,7 +196,7 @@ class TableRequest(ActionRequest):
           <lino.core.actors.Actor.get_row_by_pk>`.
 
         """
-        #~ logger.info("20120723 %s.parse_req()",self.actor)
+        # logger.info("20120723 %s.parse_req() %s", self.actor, rqdata)
         #~ rh = self.ah
         master = kw.get('master', self.actor.master)
         if master is not None:

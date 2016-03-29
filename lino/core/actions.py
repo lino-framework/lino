@@ -90,6 +90,8 @@ def install_layout(cls, k, layout_class, **options):
     - `layout_class`
 
     """
+    # if str(cls) == 'courses.Pupils':
+    #     print("20160329 install_layout", k, layout_class)
     dl = cls.__dict__.get(k, None)
     if dl is None:  # and not cls._class_init_done:
         dl = getattr(cls, k)

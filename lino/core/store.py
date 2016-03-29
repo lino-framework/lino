@@ -25,6 +25,7 @@ Other usages:
 """
 
 from __future__ import unicode_literals
+from __future__ import print_function
 # import six
 # str = six.text_type
 from builtins import str
@@ -892,6 +893,8 @@ class ParameterStore(BaseStore):
 
     def parse_params(self, request, **kw):
         data = getrqdata(request)
+        # print(20160329, data)
+        # assert 'pv' in data
         pv = data.getlist(self.url_param)
         #~ logger.info("20120221 ParameterStore.parse_params(%s) --> %s",self.url_param,pv)
 
@@ -914,6 +917,7 @@ class ParameterStore(BaseStore):
                         self, len(self.param_fields), len(pv), pv))
             for i, f in enumerate(self.param_fields):
                 kw[f.field.name] = parse(f, pv[i])
+        # print(20160329, kw)
         return kw
 
 
