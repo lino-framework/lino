@@ -1183,7 +1183,7 @@ class DisplayElement(FieldElement):
 
     def value2html(self, ar, v, **cellattrs):
         try:
-            if v.tag == 'div':
+            if E.iselement(v) and v.tag == 'div':
                 return E.td(*[child for child in v], **cellattrs)
             return E.td(v, **cellattrs)
         except Exception as e:

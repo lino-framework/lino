@@ -118,7 +118,7 @@ class HtmlNamespace(Namespace):
     def to_rst(self, v, stripped=True):
         if isinstance(v, types.GeneratorType):
             return "".join([self.to_rst(x, stripped) for x in v])
-        if E.iselement(v):
+        if self.iselement(v):
             return html2rst(v, stripped)
         return str(v)
 
