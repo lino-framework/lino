@@ -11,10 +11,8 @@ Ticket management
     
     doctest init:
 
-    >>> import os
-    >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_noi.projects.team.settings.demo'
-    >>> from __future__ import print_function 
-    >>> from __future__ import unicode_literals
+    >>> import lino
+    >>> lino.startup('lino_noi.projects.team.settings.demo')
     >>> from lino.api.doctest import *
 
 
@@ -83,16 +81,15 @@ So a **project** is something for which somebody is possibly willing
 to pay money.
 
 >>> rt.show(tickets.Projects)
-==================== =============== ======== ============== =========
- Reference            Name            Parent   Project Type   Private
--------------------- --------------- -------- -------------- ---------
- linö                 Framewörk                               No
- téam                 Téam                                    Yes
- docs                 Documentatión                           No
- research             Research                                No
- shop                 Shop                                    No
- **Total (5 rows)**                                           **1**
-==================== =============== ======== ============== =========
+=========== =============== ======== ============== =========
+ Reference   Name            Parent   Project Type   Private
+----------- --------------- -------- -------------- ---------
+ linö        Framewörk                               No
+ téam        Téam                                    Yes
+ docs        Documentatión                           No
+ research    Research                                No
+ shop        Shop                                    No
+=========== =============== ======== ============== =========
 <BLANKLINE>
 
 Developers can start working on tickets without specifying a project
