@@ -419,7 +419,6 @@ def is_hidden_babel_field(fld):
 
 
 class FieldElement(LayoutElement):
-
     """
     Base class for all Widgets on some filed-like data element.
     """
@@ -1198,11 +1197,18 @@ class DisplayElement(FieldElement):
 
 
 class BooleanMixin(object):
+    """A common base for :class:`BooleanDisplayElement` and
+    :class:`BooleanFieldElement`.
 
-    def format_sum(self, ar, sums, i):
+    """
+    def unused_format_sum(self, ar, sums, i):
         return E.b(str(sums[i]))
 
-    def value2num(self, v):
+    def unused_value2num(self, v):
+        """TODO: Should booelan fields sum like a numeric field with value 1
+        when True and 0 when False?
+
+        """
         if v:
             return 1
         return 0

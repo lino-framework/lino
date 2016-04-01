@@ -389,7 +389,8 @@ class TableRequest(ActionRequest):
             return E.div(E.h2(self.actor.label), e)
         return e
 
-    def dump2html(self, tble, data_iterator, column_names=None):
+    def dump2html(self, tble, data_iterator, column_names=None,
+                  hide_sums=None):
         """
         Render this table into an existing
         :class:`lino.utils.xmlgen.html.Table` instance.
@@ -427,7 +428,10 @@ class TableRequest(ActionRequest):
             tble.clear()
             tble.body.append(ar.no_data_text)
 
-        if not ar.actor.hide_sums:
+        if hide_sums is None:
+            hide_sums = ar.actor.hide_sums
+
+        if not hide_sums:
             has_sum = False
             for i in sums:
                 if i:
