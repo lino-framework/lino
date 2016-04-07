@@ -86,11 +86,24 @@ class Album(object):
         self.actionChains.double_click(elem).perform()
 
     def stabilize(self):
-        """wait until no more loadmask is visible"""
+        """Wait until the screen has become stable.  This measn that the
+        browser has processed all Javascript, including ExtJS.onReady,
+        that all AJAX requests have finised.
+
+        This is not trivial to detect, but fortunately we need to
+        check it only for Lino screens. Technically we wait until
+
+        - a ``<div id="body">`` element must be present
+        - no more loadmask is visible
+
+        """
         WebDriverWait(self.driver, 10).until(
             EC.invisibility_of_element_located(
                 # (By.CLASS_NAME, "ext-el-mask-msg x-mask-loading")))
                 (By.CSS_SELECTOR, ".x-mask-loading")))
+        WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located(
+                (By.ID, "body")))
             
     def write_index(self):
         index = self.screenshot_root.child('index.rst')

@@ -59,7 +59,8 @@ is another test.</text:p>
 <text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"><text:span
 text:style-name="Strong Emphasis">This</text:span> is another test.</text:p>
 
->>> test(E.ul(E.li("First item"),E.li("Second item"))) #doctest: +NORMALIZE_WHITESPACE
+>>> test(E.ul(E.li("First item"),E.li("Second item")))
+... #doctest: +NORMALIZE_WHITESPACE
 <ul><li>First item</li><li>Second item</li></ul>
 <text:list xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" 
 text:style-name="podBulletedList"><text:list-item><text:p 
@@ -67,19 +68,24 @@ text:style-name="podBulletItem">First item</text:p></text:list-item><text:list-i
 text:style-name="podBulletItem">Second item</text:p></text:list-item></text:list>
 
 N.B.: the above chunk is obviously not correct since Writer doesn't display it.
-(How can I debug a generated odt file? 
+(How can I debug a generated odt file?
 I mean if my content.xml is syntactically valid but Writer ...)
 Idea: validate it against the ODF specification using lxml
 
+Here is another HTML fragment which doesn't yield a valid result:
+
+>>> print(toxml(html2odf(E.raw('<td><div><p><b>Bold</b></p></div></td>'))))
+<text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"/>
 
 
-:func:`html2odf` converts bold text to a span with a 
-style named "Strong Emphasis". That's currently a hard-coded name, and the 
-caller must make sure that a style of that name is defined in the 
-document.
+
+
+
+:func:`html2odf` converts bold text to a span with a style named
+"Strong Emphasis". That's currently a hard-coded name, and the caller
+must make sure that a style of that name is defined in the document.
 
 The text formats `<i>` and `<em>` are converted to a style "Emphasis".
-
 
 Edge case:
 

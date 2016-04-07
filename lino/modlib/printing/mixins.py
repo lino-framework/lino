@@ -462,7 +462,7 @@ class Printable(object):
         # TypedPrintable  overrides this
         return self.get_default_build_method()
 
-    def get_build_options(self, **opts):
+    def get_build_options(self, bm, **opts):
         # header_center
         return opts
 

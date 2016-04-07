@@ -3061,21 +3061,21 @@ Please convert to Plugin method".format(mod, methname)
     def buildurl(self, *args, **kw):
         url = self.site_prefix + ("/".join(args))
         if len(kw):
-            url += "?" + urlencode(kw)
+            url += "?" + urlencode(kw, True)
         return url
 
     def build_media_url(self, *args, **kw):
         from django.conf import settings
         url = settings.MEDIA_URL + ("/".join(args))
         if len(kw):
-            url += "?" + urlencode(kw)
+            url += "?" + urlencode(kw, True)
         return url
 
     def build_static_url(self, *args, **kw):
         from django.conf import settings
         url = settings.STATIC_URL + ("/".join(args))
         if len(kw):
-            url += "?" + urlencode(kw)
+            url += "?" + urlencode(kw, True)
         return url
 
     def get_system_note_recipients(self, request, obj, silent):

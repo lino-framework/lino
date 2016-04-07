@@ -860,6 +860,26 @@ action on individual instances.
         d.update(options)
 
     @classmethod
+    def get_widget_options(self, name, **options):
+        options.update(self._widget_options.get(name, {}))
+        return options
+
+    def get_printable_context(self, ar=None, **kw):
+
+        """Adds a series of names to the context used when rendering printable
+        documents. See :doc:`/user/templates_api`.
+
+        :class:`lino_xl.lib.notes.models.Note` extends this.
+
+        """
+        # same as lino.utils.report.EmptyTableRow.get_printable_context
+        if ar is not None:
+            kw = ar.get_printable_context(**kw)
+        kw.update(this=self)  # preferred in new templates
+        kw.update(language=self.get_print_language())
+        return kw
+
+    @classmethod
     def get_parameter_fields(cls, **fields):
         """Inheritable hook for defining parameters.
         Called once per actor at site startup.
@@ -883,24 +903,12 @@ action on individual instances.
         return set([])
 
     @classmethod
-    def get_widget_options(self, name, **options):
-        options.update(self._widget_options.get(name, {}))
-        return options
+    def get_request_queryset(cls, ar):
+        return cls.objects.all()
 
-    def get_printable_context(self, ar=None, **kw):
-
-        """Adds a series of names to the context used when rendering printable
-        documents. See :doc:`/user/templates_api`.
-
-        :class:`lino_xl.lib.notes.models.Note` extends this.
-
-        """
-        # same as lino.utils.report.EmptyTableRow.get_printable_context
-        if ar is not None:
-            kw = ar.get_printable_context(**kw)
-        kw.update(this=self)  # preferred in new templates
-        kw.update(language=self.get_print_language())
-        return kw
+    @classmethod
+    def get_title_tags(self, ar):
+        return []
 
     @classmethod
     def django2lino(cls, model):
@@ -991,6 +999,8 @@ LINO_MODEL_ATTRIBS = (
     'hidden_columns',
     'hidden_elements',
     'get_simple_parameters',
+    'get_request_queryset',
+    'get_title_tags',
     'get_default_table',
     'get_template_group',
     'get_related_project',

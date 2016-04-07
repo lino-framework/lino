@@ -684,6 +684,9 @@ class ExtRenderer(HtmlRenderer):
                 fl._other_datasources.add(res)
                 # if str(res).startswith('newcomers.AvailableCoaches'):
                 #     logger.info("20150716 %s also needed by %s", fl, res)
+                # if str(res) == 'courses.Pupils':
+                #     print("20160329 ext_renderer.py {2}: {0} != {1}".format(
+                #         fl._datasource, res, fl))
 
             if False:
                 try:
@@ -693,15 +696,16 @@ class ExtRenderer(HtmlRenderer):
                     raise Exception("Could not define %s for %r: %s" % (
                         formpanel_name, res, e))
 
-                    
                 # lh.main.loosen_requirements(res)
                 for e in lh.main.walk():
                     e.loosen_requirements(res)
 
-            if not fl in collector:
+            if fl not in collector:
                 fl._formpanel_name = formpanel_name
                 fl._url = res.actor_url()
                 collector.add(fl)
+                # if str(res) == 'courses.Pupils':
+                #     print("20160329 ext_renderer.py collected {}".format(fl))
 
         for res in self.actors_list:
             add(res, self.form_panels, res.detail_layout,

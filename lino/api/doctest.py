@@ -87,7 +87,7 @@ def demo_get(username, url_base, json_fields, expected_rows, **kwargs):
     case = HttpQuery(username, url_base, json_fields,
                      expected_rows, kwargs)
     url = settings.SITE.buildurl(case.url_base, **case.kwargs)
-
+    # print(20160329, url)
     if True:
         msg = 'Using remote authentication, but no user credentials found.'
         try:

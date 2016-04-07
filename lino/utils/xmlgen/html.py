@@ -118,7 +118,7 @@ class HtmlNamespace(Namespace):
     def to_rst(self, v, stripped=True):
         if isinstance(v, types.GeneratorType):
             return "".join([self.to_rst(x, stripped) for x in v])
-        if E.iselement(v):
+        if self.iselement(v):
             return html2rst(v, stripped)
         return str(v)
 
@@ -126,12 +126,21 @@ class HtmlNamespace(Namespace):
     #     return RAW_HTML_STRING(raw_html)
 
     def raw(self, raw_html):
-        """Parses the given string into an HTML Element."""
+        """Parses the given string into an HTML Element.
+
+        It the string contains a a single top-level element, then this
+        element is returned. Otherwise return thewrapping ``body``
+        element.
+
+        """
         # print 20151008, raw_html
 
         # the lxml parser wraps `<html><body>...</body></html>` around
         # the snippet, but we don't want it.
-        return HTML(raw_html)[0][0]
+        root = HTML(raw_html)[0]
+        if len(root) == 1:
+            return root[0]
+        return root
         # try:
         #     return self.fromstring(raw_html, parser=CreateParser())
         # except ET.ParseError as e:

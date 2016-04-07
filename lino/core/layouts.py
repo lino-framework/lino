@@ -116,7 +116,7 @@ class LayoutHandle(object):
 
         self.layout.setup_handle(self)
         for k, v in list(self.layout._labels.items()):
-            if not k in self._names:
+            if k not in self._names:
                 raise Exception(
                     "%s has no attribute %r (layout.main is %r)" %
                     (self, k, layout.main))
@@ -516,6 +516,8 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
         # we do not want any inherited handle
         h = self.__dict__.get(hname, None)
         if h is None:
+            # if str(self._datasource) == 'courses.Pupils':
+            # print("20160329 layouts.py make handle", self._datasource)
             h = LayoutHandle(self, ui)
             setattr(self, hname, h)
         return h
@@ -605,6 +607,8 @@ class ParamsLayout(BaseLayout):
         return self._datasource.get_param_elem(name)
 
     def setup_handle(self, lh):
+        # if str(self._datasource) == 'courses.Pupils':
+        #     print("20160329 setup_handle")
         from lino.core.store import ParameterStore
         self.params_store = ParameterStore(lh, self.url_param_name)
 

@@ -116,6 +116,10 @@ class Plugin(Plugin):
         self.renderer = ExtRenderer(self)
         kernel.extjs_renderer = self.renderer
 
+        # added 20160329
+        for fl in self.renderer.param_panels:
+            fl.get_layout_handle(self)
+
         # logger.info("20140227 extjs.Plugin.on_ui_init() b")
 
     def get_row_edit_lines(self, e, panel):

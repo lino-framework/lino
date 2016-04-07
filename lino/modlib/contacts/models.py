@@ -227,7 +227,9 @@ class Partners(dd.Table):
 
     @classmethod
     def get_queryset(self, ar):
-        return self.model.objects.select_related('country', 'city')
+        qs = super(Partners, self).get_queryset(ar)
+        return qs.select_related('country', 'city')
+        # return self.model.objects.select_related('country', 'city')
 
 
 #~ class AllPartners(Partners):
