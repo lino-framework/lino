@@ -3556,7 +3556,13 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
         //~ this.grid_panel.on('render',this.load.createDelegate(this,options))
         //~ return;
     //~ }
-    
+    // Ticket 802
+    if (this.store.lastOptions != undefined){
+        var params = {};
+        params.limit = this.store.lastOptions.params.limit;
+        params.start = this.store.lastOptions.params.start;
+        options.params = params;
+    }
     this.store.load(options);
   },
   
