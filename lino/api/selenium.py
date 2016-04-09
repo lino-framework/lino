@@ -85,6 +85,9 @@ class Album(object):
     def doubleclick(self, elem):
         self.actionChains.double_click(elem).perform()
 
+    def hover(self, elem):
+        self.actionChains.move_to_element(elem).perform()
+
     def stabilize(self):
         """Wait until the screen has become stable.  This measn that the
         browser has processed all Javascript, including ExtJS.onReady,

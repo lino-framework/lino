@@ -347,13 +347,13 @@ class EventGenerator(UserAuthored):
                 # there is an unwanted event in the database
                 if not e.is_user_modified():
                     e.delete()
-                #~ else:
-                    #~ e.auto_type = None
-                    #~ e.save()
+                # else:
+                    # e.auto_type = None
+                    # e.save()
             elif e.is_user_modified():
                 if e.start_date != ae.start_date:
                     subsequent = ', '.join([str(x.auto_type)
-                                           for x in list(wanted.values())])
+                                           for x in wanted.values()])
                     delta = e.start_date - ae.start_date
                     ar.debug(
                         "%d has been moved from %s to %s: "
@@ -361,7 +361,7 @@ class EventGenerator(UserAuthored):
                         % (
                             e.auto_type, ae.start_date,
                             e.start_date, subsequent, delta))
-                    for se in list(wanted.values()):
+                    for se in wanted.values():
                         ov = se.start_date
                         se.start_date += delta
                         ar.debug("%d : %s -> %s" % (
@@ -532,8 +532,7 @@ class EventGenerator(UserAuthored):
         # ar.debug("20140310 resolve_conflicts %s", we.start_date)
         while we.has_conflicting_events():
             qs = we.get_conflicting_events()
-            # ar.debug("20140310 %s conflicts with %s. ", we,
-            #          we.get_conflicting_events())
+            ar.debug("%s conflicts with %s. ", we, qs)
             date = rset.get_next_alt_date(ar, date)
             if date is None or date > until:
                 ar.debug(
