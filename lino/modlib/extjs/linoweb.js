@@ -782,7 +782,7 @@ Lino.close_window = function(status_update, norestore) {
     //~ if (status_update) Ext.apply(ww.status,status_update);
     if(!norestore) {
         if (status_update) status_update(ww);
-        ww.window.main_item.set_status(ww.status);
+        ww.window.main_item.set_status(ww.status , cw.id);
     }
     Lino.current_window = ww.window;
   } else {
@@ -3486,7 +3486,11 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
   get_status : function(){
     var st = { base_params : this.get_base_params()};
     if (!this.hide_top_toolbar) {
-        st.current_page = this.getTopToolbar().current;
+        // #866
+        var totalLength = this.getStore().totalLength;
+        if (this.getStore().lastOptions != undefined && this.getStore().lastOptions.params != undefined){
+            st.current_page = Math.round(this.getStore().lastOptions.params.start / totalLength ) + 1 ;
+        }
     }
     st.param_values = this.status_param_values;
     //~ console.log("20120213 GridPanel.get_status",st);
