@@ -427,7 +427,7 @@ request from it.
         kw.update(success=False)
         kw.update(alert=_("Error"))  # added 20140304
         if isinstance(e, Exception):
-            if True:  # useful when debugging, but otherwise rather disturbing
+            if False:  # useful when debugging, but otherwise rather disturbing
                 logger.exception(e)
             if hasattr(e, 'message_dict'):
                 kw.update(errors=e.message_dict)
