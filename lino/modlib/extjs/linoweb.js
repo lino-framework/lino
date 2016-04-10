@@ -2112,6 +2112,7 @@ Lino.row_action_handler = function(actionName, hm, pp) {
         // console.log('20140930 row_action_handler 2', panel);
         panel = Ext.getCmp(panel);
         if (panel == undefined) {
+          console.log("20160410 Invalid panel spec.", actionName, hm, pp);
           Lino.notify("Invalid panel spec.");
           return;
         }
