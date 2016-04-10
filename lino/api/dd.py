@@ -96,7 +96,6 @@ Actions:
 - :class:`MergeAction <lino.core.merge.MergeAction>`
 - :class:`ShowSlaveTable <lino.core.actions.ShowSlaveTable>`
 - :class:`PrintTableAction <lino.utils.appy_pod.PrintTableAction>`
-- :class:`PrintLabelsAction <lino.utils.appy_pod.PrintLabelsAction>`
 
 Permissions:
 
@@ -197,7 +196,6 @@ from lino.core.fields import ForeignKey
 from lino.core.fields import CharField
 
 # from lino_xl.lib.appypod.mixins import PrintTableAction
-# from lino_xl.lib.appypod.mixins import PrintLabelsAction
 
 from lino.core.utils import babelkw
 # from lino.core.utils import babelattr

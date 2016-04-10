@@ -55,7 +55,7 @@ class List(mixins.BabelNamed, mixins.Referrable):
     list_type = dd.ForeignKey('lists.ListType', blank=True, null=True)
     remarks = models.TextField(_("Remarks"), blank=True)
 
-    print_labels = dd.PrintLabelsAction()
+    # print_labels = PrintLabelsAction()
 
 
 class Lists(dd.Table):

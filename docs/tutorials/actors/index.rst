@@ -18,7 +18,6 @@ Here is the :xfile:`models.py` file we will use for this tutorial:
   
 Some setup for doctest:
   
->>> from __future__ import print_function
 >>> from lino.api.shell import *
 >>> globals().update(actors.__dict__)
 

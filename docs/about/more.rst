@@ -22,5 +22,4 @@ More about Lino
    faq
    compared
    why_extjs
-   ui
 

@@ -17,6 +17,8 @@ from builtins import object
 import logging
 logger = logging.getLogger(__name__)
 
+import datetime
+
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
@@ -46,7 +48,6 @@ def strip_name_prefix(s):
         if s.startswith(p):
             s = s[len(p):]
     return s
-
 
 
 def name2kw(s, last_name_first=True):
@@ -286,6 +287,29 @@ class Human(model.Model):
             text = other.first_name + ' ' + other.last_name.upper()
         return ar.obj2html(other, text)
 
+    @classmethod
+    def get_parameter_fields(cls, **fields):
+        fields.update(
+            gender=Genders.field(
+                blank=True, help_text=_(
+                    "Show only persons with the given gender.")))
+        return super(Human, cls).get_parameter_fields(**fields)
+
+    @classmethod
+    def get_request_queryset(cls, ar):
+        # print("20160329 Human.get_request_queryset")
+        qs = super(Human, cls).get_request_queryset(ar)
+        if ar.param_values.gender:
+            qs = qs.filter(gender__exact=ar.param_values.gender)
+        return qs
+
+    @classmethod
+    def get_title_tags(cls, ar):
+        for t in super(Human, cls).get_title_tags(ar):
+            yield t
+        if ar.param_values.gender:
+            yield str(ar.param_values.gender)
+
 
 class Born(model.Model):
     """
@@ -343,3 +367,45 @@ class Born(model.Model):
         if self.birth_date and self.birth_date.is_complete():
             return s
         return u"±" + s
+
+    @classmethod
+    def get_parameter_fields(cls, **fields):
+        fields.update(
+            aged_from=models.IntegerField(
+                _("Aged from"), blank=True, null=True,
+                help_text=_("Select only persons aged at least "
+                            "the given number of years.")),
+            aged_to=models.IntegerField(
+                _("Aged to"), blank=True, null=True,
+                help_text=_("Select only persons aged at most "
+                            "the given number of years.")))
+        return super(Born, cls).get_parameter_fields(**fields)
+
+    @classmethod
+    def get_request_queryset(cls, ar):
+        qs = super(Born, cls).get_request_queryset(ar)
+        pv = ar.param_values
+
+        today = settings.SITE.today()
+
+        if pv.aged_from:
+            min_date = today - \
+                datetime.timedelta(days=pv.aged_from * 365)
+            qs = qs.filter(birth_date__lte=min_date.strftime("%Y-%m-%d"))
+
+        if pv.aged_to:
+            max_date = today - \
+                datetime.timedelta(days=pv.aged_to * 365)
+            qs = qs.filter(birth_date__gte=max_date.strftime("%Y-%m-%d"))
+
+        return qs
+
+    @classmethod
+    def get_title_tags(self, ar):
+        for t in super(Born, self).get_title_tags(ar):
+            yield t
+        pv = ar.param_values
+        if pv.aged_from or pv.aged_to:
+            yield str(_("Aged %(min)s to %(max)s") % dict(
+                min=pv.aged_from or '...',
+                max=pv.aged_to or '...'))
