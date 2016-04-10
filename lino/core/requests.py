@@ -435,9 +435,9 @@ request from it.
         if message is None:
             try:
                 message = six.text_type(e)
-            except UnicodeDecodeError as e:
+            except UnicodeDecodeError as e2:
                 logger.exception(e)
-                message = repr(e)
+                message = repr(e2)
         kw.update(message=message)
         self.set_response(**kw)
 
