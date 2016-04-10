@@ -3,7 +3,7 @@
 # License: BSD (see file COPYING for details)
 
 from __future__ import unicode_literals
-# import six
+import six
 # str = six.text_type
 # from builtins import str
 from past.builtins import basestring
@@ -669,7 +669,7 @@ class Kernel(object):
                 try:
                     c.func(ar)
                 except Warning as e:
-                    ar.error(str(e), alert=True)
+                    ar.error(six.text_type(e), alert=True)
                 return self.render_action_response(ar)
 
         ar.error("Invalid button %r for callback" % (button_id, thread_id))
@@ -743,7 +743,7 @@ class Kernel(object):
             # logger.info("20150127 run_action %r", e)
             ar.error(ar.ah.actor.error2str(e), alert=True)
         except Warning as e:
-            ar.error(str(e), alert=True)
+            ar.error(six.text_type(e), alert=True)
 
         return self.render_action_response(ar)
 
