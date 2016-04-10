@@ -426,18 +426,16 @@ request from it.
         """
         kw.update(success=False)
         kw.update(alert=_("Error"))  # added 20140304
-        #~ if e is not None:
         if isinstance(e, Exception):
-            if False:  # useful when debugging, but otherwise rather disturbing
+            if True:  # useful when debugging, but otherwise rather disturbing
                 logger.exception(e)
             if hasattr(e, 'message_dict'):
                 kw.update(errors=e.message_dict)
         if message is None:
             try:
                 message = six.text_type(e)
-            except UnicodeDecodeError as e2:
-                logger.exception(e)
-                message = repr(e2)
+            except UnicodeDecodeError as e:
+                message = repr(e)
         kw.update(message=message)
         self.set_response(**kw)
 
