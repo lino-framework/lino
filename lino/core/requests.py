@@ -433,7 +433,11 @@ request from it.
             if hasattr(e, 'message_dict'):
                 kw.update(errors=e.message_dict)
         if message is None:
-            message = six.text_type(e)
+            try:
+                message = six.text_type(e)
+            except UnicodeDecodeError as e:
+                logger.exception(e)
+                message = repr(e)
         kw.update(message=message)
         self.set_response(**kw)
 
