@@ -182,6 +182,12 @@ class CoreTests(TestCase):
     #     self.run_simple_doctests('lino/core/fields.py')
 
 
+class SpecsTests(TestCase):
+
+    def test_html(self):
+        self.run_simple_doctests('docs/specs/html.rst')
+
+
 class UtilsTests(LinoTestCase):
 
     def test_instantiator(self):
