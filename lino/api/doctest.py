@@ -86,7 +86,9 @@ def demo_get(username, url_base, json_fields, expected_rows, **kwargs):
     from django.conf import settings
     case = HttpQuery(username, url_base, json_fields,
                      expected_rows, kwargs)
-    url = settings.SITE.buildurl(case.url_base, **case.kwargs)
+    # Django test client does not like future pseudo-unicode strings
+    # See #870
+    url = str(settings.SITE.buildurl(case.url_base, **case.kwargs))
     # print(20160329, url)
     if True:
         msg = 'Using remote authentication, but no user credentials found.'
@@ -99,13 +101,13 @@ def demo_get(username, url_base, json_fields, expected_rows, **kwargs):
             #~ if str(e) != msg:
                     #~ raise Exception("Expected %r but got %r" % (msg,str(e)))
 
-    response = test_client.get(url, REMOTE_USER='foo')
+    response = test_client.get(url, REMOTE_USER=str('foo'))
     if response.status_code != 403:
         raise Exception(
             "Status code %s other than 403 for anonymous on GET %s" % (
                 response.status_code, url))
 
-    response = test_client.get(url, REMOTE_USER=case.username)
+    response = test_client.get(url, REMOTE_USER=str(case.username))
     # try:
     if True:
         user = settings.SITE.user_model.objects.get(

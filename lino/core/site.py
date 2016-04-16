@@ -1485,13 +1485,16 @@ class Site(object):
                         ok = True
                         break
             if not ok:
+                # Can happen e.g. when `python -m lino.hello` is
+                # called.  in certain conditions.
                 msg = ("Cannot use {cache_dir} for {this} "
-                       "because it is used for {other}.")
+                       "because it is used for {other}. (Settings {settings})")
                 msg = msg.format(
                     cache_dir=self.cache_dir,
                     this=this,
+                    settings=self.django_settings.get('SETTINGS_MODULE'),
                     other=other)
-                if True:
+                if False:
                     raise Exception(msg)
                 else:
                     # print(msg)
