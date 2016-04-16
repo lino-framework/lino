@@ -30,7 +30,9 @@
 
 import os
 
-execfile(os.path.join(os.path.dirname(__file__), 'setup_info.py'))
+filename = os.path.join(os.path.dirname(__file__), 'setup_info.py')
+exec(compile(open(filename, "rb").read(), filename, 'exec'))
+
 __version__ = SETUP_INFO['version']
 
 intersphinx_urls = dict(docs="http://noi.lino-framework.org")

@@ -1,0 +1,22 @@
+tolerate_sphinx_warnings: false
+blogref_url: http://luc.lino-framework.org
+revision_control_system: git
+locale_dir: lino_noi/lib/noi/locale
+
+cleanable_files:
+ - docs/api/lino_noi.*
+
+demo_projects:
+    - lino_noi.projects.team.settings.demo
+    - lino_noi.projects.bs3.settings.demo
+    - lino_noi.projects.care.settings.demo
+
+
+# caution: ``bs3`` uses the same database file as the first. And then,
+# bs3 has :attr:`default_user<lino.core.site.Site.default_user>` set
+# to 'anonymous'. Which causes it to deactivate both authentication
+# and sessions.
+# no longer used:
+# lino_noi.projects.public.settings.demo
+
+
