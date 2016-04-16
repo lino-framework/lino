@@ -366,7 +366,8 @@ class ExtRenderer(HtmlRenderer):
                 return self.action_call(ar, a, dict(record_id=obj.pk))
 
     def obj2html(self, ar, obj, text=None, **kw):
-        if not text:
+        # if not text: # Note that html elements are logical False.
+        if text is None:
             text = str(obj)
 
         h = self.instance_handler(ar, obj)

@@ -244,7 +244,7 @@ request `tar`."""
         object."""
         if text is None:
             text = (force_text(obj),)
-        elif isinstance(text, basestring):
+        elif isinstance(text, basestring) or E.iselement(text):
             text = (text,)
         url = self.instance_handler(ar, obj)
         if url is None:

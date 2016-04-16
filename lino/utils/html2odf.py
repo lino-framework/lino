@@ -41,6 +41,12 @@ test.</text:p>
 <text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"><text:span
 text:style-name="Strong Emphasis">This</text:span> is another test.</text:p>
 
+>>> test(E.p(E.strong("This")," is another test."))
+... #doctest: +NORMALIZE_WHITESPACE
+<p><strong>This</strong> is another test.</p>
+<text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"><text:span 
+text:style-name="Strong Emphasis">This</text:span> is another test.</text:p>
+
 >>> test(E.p(E.i("This")," is another test."))
 ... #doctest: +NORMALIZE_WHITESPACE
 <p><i>This</i> is another test.</p>
@@ -174,7 +180,7 @@ def html2odf(e, ct=None, **ctargs):
 
     text_container = None
 
-    if e.tag == 'b':
+    if e.tag in ('b', 'strong'):
         #~ oe = text.Span(stylename='Bold Text')
         oe = text.Span(stylename='Strong Emphasis')
     elif e.tag == 'a':
