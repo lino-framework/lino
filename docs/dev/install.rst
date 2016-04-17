@@ -189,7 +189,7 @@ One part of your cache directory are the static files.  When your
 :envvar:`LINO_CACHE_ROOT` is set, you should run Django's
 :manage:`collectstatic` command::
 
-    $ cd lino/projects/min1
+    $ cd lino/projects/polly
     $ python manage.py collectstatic
 
 The output should be something like this::
@@ -207,8 +207,8 @@ The output should be something like this::
     4688 static files copied to '/home/myname/virtualenvs/a/lino_cache/collectstatic', 0 unmodified.
 
 Note that you can chose an arbitrary project directory for running
-:manage:`collectstatic`, it does not need to be :mod:`min1
-<lino.projects.min1>`. That's because all Lino applications have the
+:manage:`collectstatic`, it does not need to be :mod:`polly
+<lino.projects.polly>`. That's because all Lino applications have the
 same set of staticfiles.
 
 You need to do this only for your first local Lino project because
