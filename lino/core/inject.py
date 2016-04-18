@@ -2,6 +2,9 @@
 # License: BSD (see file COPYING for details)
 
 import logging
+
+from six import string_types
+
 logger = logging.getLogger(__name__)
 
 import inspect
@@ -221,7 +224,7 @@ def do_when_prepared(todo, *model_specs):
             # e.g. inject_field during autodoc when user_model is None
             continue
 
-        if isinstance(model_spec, basestring):
+        if isinstance(model_spec, string_types):
             k = model_spec
             model = PREPARED_MODELS.get(k, None)
             if model is None:
