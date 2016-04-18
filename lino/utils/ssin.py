@@ -2,7 +2,7 @@
 # Copyright 2008-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-ur""" Utilities for manipulating *Belgian national identification
+r""" Utilities for manipulating *Belgian national identification
 numbers*.
 
 Belgians call their national identification number **INSZ**
@@ -66,7 +66,7 @@ Here is the SSIN of a person with incomplete birth date:
 
 >>> from lino.utils import IncompleteDate
 >>> n = generate_ssin(IncompleteDate(1995, 0, 0), Genders.male, 153)
->>> print n
+>>> print (n)
 950000 153-96
 >>> ssin_validator(n)
 
@@ -105,6 +105,8 @@ Functions
 """
 from __future__ import division
 from builtins import str
+
+from django.utils import six
 from past.utils import old_div
 
 
@@ -134,7 +136,7 @@ def generate_ssin(birth_date, gender, seq=None):
     >>> import datetime
 
     >>> n = generate_ssin(datetime.date(1968, 6, 1), Genders.male, 53)
-    >>> print n
+    >>> print (n)
     680601 053-29
     >>> ssin_validator(n)
 
@@ -142,7 +144,7 @@ def generate_ssin(birth_date, gender, seq=None):
     the gender.  For boys it is 1, for girls 2.
 
     >>> n = generate_ssin(datetime.date(2002, 4, 5),Genders.female)
-    >>> print n
+    >>> print (n)
     020405 002=44
     >>> ssin_validator(n)
 
@@ -255,7 +257,7 @@ def ssin_validator(ssin):
         return ''
     if len(ssin) != 13:
         raise ValidationError(
-            force_text(_('Invalid SSIN %s : ') % ssin)
+            force_text(_('Invalid SSIN %s : ') % (ssin))
             + force_text(_('A formatted SSIN must have 13 positions'))
         )
     xtest = ssin[:6] + ssin[7:10]
