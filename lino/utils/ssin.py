@@ -54,7 +54,7 @@ the user language.
 >>> import lino
 >>> lino.startup('lino.projects.min1.settings')
 
->>> ssin_validator('123')
+>>> ssin_validator('123') #doctest: +NORMALIZE_WHITESPACE +IGNORE_EXCEPTION_DETAIL +ELLIPSIS
 Traceback (most recent call last):
 ...
 ValidationError: [u'Invalid SSIN 123 : A formatted SSIN must have 13 positions']
