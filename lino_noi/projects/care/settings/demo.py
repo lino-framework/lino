@@ -4,11 +4,11 @@ from ..settings import *
 
 
 class Site(Site):
-    """Defines and instantiates a demo version of Lino Noi."""
+    """Defines and instantiates a demo version of Lino Care."""
 
     the_demo_date = datetime.date(2015, 5, 23)
 
-    languages = "en de fr"
+    languages = "de en fr"
 
     def setup_plugins(self):
         """Change the default value of certain plugin settings.
@@ -24,6 +24,7 @@ class Site(Site):
 
 
 SITE = Site(globals())
+DEBUG = True
 
 # the following line should not be active in a checked-in version
-#~ DATABASES['default']['NAME'] = ':memory:'
+# DATABASES['default']['NAME'] = ':memory:'

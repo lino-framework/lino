@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015 Luc Saffre
+# Copyright 2015-2016 Luc Saffre
 #
 # This file is part of Lino Noi.
 #
@@ -24,6 +24,8 @@ introduction.
    :toctree:
 
    settings
+   roles
+   lib
 
 """
 

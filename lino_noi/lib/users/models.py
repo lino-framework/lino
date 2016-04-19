@@ -62,6 +62,7 @@ class UserDetail(UserDetail):
     tickets.TicketsByReporter faculties.CompetencesByUser
     """, label=_("Tickets"))
 
+Users.detail_layout = UserDetail()
 
-def site_setup(site):
-    site.modules.users.Users.set_detail_layout(UserDetail())
+# def site_setup(site):
+#     site.modules.users.Users.set_detail_layout(UserDetail())

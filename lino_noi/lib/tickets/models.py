@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2015 Luc Saffre
+# Copyright 2011-2016 Luc Saffre
 #
 # This file is part of Lino Noi.
 #
@@ -107,6 +107,7 @@ class ProjectType(mixins.BabelNamed):
     """The type of a :class:`Project`."""
 
     class Meta:
+        app_label = 'tickets'
         verbose_name = _("Project Type")
         verbose_name_plural = _('Project Types')
 
@@ -115,6 +116,7 @@ class TicketType(mixins.BabelNamed):
     """The type of a :class:`Ticket`."""
 
     class Meta:
+        app_label = 'tickets'
         verbose_name = _("Ticket type")
         verbose_name_plural = _('Ticket types')
 
@@ -140,6 +142,7 @@ class Project(TimeInvestment, mixins.Hierarchical, mixins.Referrable,
 
     """
     class Meta:
+        app_label = 'tickets'
         verbose_name = _("Project")
         verbose_name_plural = _('Projects')
 
@@ -174,6 +177,7 @@ class Project(TimeInvestment, mixins.Hierarchical, mixins.Referrable,
 
 class Site(dd.Model):
     class Meta:
+        app_label = 'tickets'
         verbose_name = _("Site")
         verbose_name_plural = _('Sites')
 
@@ -193,6 +197,7 @@ class Milestone(Certifiable):  # mixins.Referrable):
 
     """
     class Meta:
+        app_label = 'tickets'
         verbose_name = _("Milestone")
         verbose_name_plural = _('Milestones')
 
@@ -228,6 +233,7 @@ class Milestone(Certifiable):  # mixins.Referrable):
 class Link(dd.Model):
 
     class Meta:
+        app_label = 'tickets'
         verbose_name = _("Dependency")
         verbose_name_plural = _("Dependencies")
 
@@ -411,6 +417,7 @@ class Ticket(mixins.CreatedModified, TimeInvestment, RFC):
     workflow_state_field = 'state'
 
     class Meta:
+        app_label = 'tickets'
         verbose_name = _("Ticket")
         verbose_name_plural = _('Tickets')
 
@@ -559,6 +566,7 @@ class Interest(dd.Model):
 
     """
     class Meta:
+        app_label = 'tickets'
         verbose_name = _("Interest")
         verbose_name_plural = _('Interests')
 
@@ -585,6 +593,7 @@ class Deployment(dd.Model):
 
     """
     class Meta:
+        app_label = 'tickets'
         verbose_name = _("Deployment")
         verbose_name_plural = _('Deployments')
 
