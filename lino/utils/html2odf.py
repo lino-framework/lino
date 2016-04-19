@@ -26,8 +26,8 @@ Usage examples:
 
 >>> from lino.utils.xmlgen.html import E
 >>> def test(e):
-...     print E.tostring(e)
-...     print toxml(html2odf(e))
+...     print (E.tostring(e))
+...     print (toxml(html2odf(e)))
 >>> test(E.p("This is a ", E.b("first"), " test."))
 ... #doctest: +NORMALIZE_WHITESPACE
 <p>This is a <b>first</b> test.</p>
@@ -95,10 +95,10 @@ The text formats `<i>` and `<em>` are converted to a style "Emphasis".
 
 Edge case:
 
->>> print toxml(html2odf("Plain string"))
+>>> print (toxml(html2odf("Plain string")))
 <text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0">Plain string</text:p>
 
->>> print toxml(html2odf(u"Ein schöner Text"))
+>>> print (toxml(html2odf(u"Ein schöner Text")))
 <text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0">Ein schöner Text</text:p>
 
 Not yet supported
@@ -109,7 +109,7 @@ sequence of paragraph-level items are grouped using a div:
 
 >>> test(E.div(E.p("Two numbered items:"),
 ...    E.ol(E.li("first"), E.li("second"))))
-... #doctest: +NORMALIZE_WHITESPACE
+... #doctest: +NORMALIZE_WHITESPACE +IGNORE_EXCEPTION_DETAIL +ELLIPSIS
 Traceback (most recent call last):
 ...
 IllegalText: The <text:section> element does not allow text

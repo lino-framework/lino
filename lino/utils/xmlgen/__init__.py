@@ -185,7 +185,7 @@ class Namespace(object):
         if self.targetNamespace is not None:
             kw.setdefault('default_namespace', self.targetNamespace)
         etree.ElementTree(element).write(file, *args, **kw)
-        return b"".join(data)
+        return b"".join(data).decode("utf-8")
 
     def tostring_pretty(self, *args, **kw):
         #~ kw.setdefault('xml_declaration',False)
