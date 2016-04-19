@@ -59,7 +59,7 @@ SEE ALSO
 
 from __future__ import unicode_literals
 from builtins import str
-
+from io import open
 import logging
 logger = logging.getLogger(__name__)
 
@@ -270,7 +270,8 @@ def main():
             filename = '%s.py' % model._meta.db_table
             filename = os.path.join(self.output_dir, filename)
             # puts("Writing {0}...".format(filename))
-            stream = file(filename, 'wt')
+            # stream = file(filename, 'wt')
+            stream = open(filename, 'wt')
             stream.write('# -*- coding: UTF-8 -*-\n')
             qs = model.objects.all()
             try:

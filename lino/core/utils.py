@@ -216,7 +216,8 @@ def sorted_models_list():
 
     def fn(a, b):
         return cmp(full_model_name(a), full_model_name(b))
-    models_list.sort(fn)
+    from functools import cmp_to_key
+    models_list.sort(key=cmp_to_key(fn))
     return models_list
 
 
