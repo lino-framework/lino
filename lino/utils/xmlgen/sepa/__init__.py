@@ -23,7 +23,7 @@ Usage:
 ...     E.Grpg("MIXD") ,
 ...     E.InitgPty(E.Nm(u"ÖSHZ Nispert")) )
 ...   )
->>> print E.tostring_pretty(x)
+>>> print (E.tostring_pretty(x))
 <pain.001.001.02 xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.02">
 <GrpHdr>
 <MsgId>SAL63023CP20130621022043</MsgId>
