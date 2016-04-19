@@ -24,7 +24,7 @@ Generating HTML
 >>> txt = "foo"
 >>> txt = E.b(txt)
 >>> if not txt:
-...    print "oops"
+...    print ("oops")
 oops
 >>> ar = rt.login('robin', renderer=settings.SITE.kernel.default_renderer)
 >>> obj = ar.user
