@@ -16,25 +16,26 @@ Useful when generating demo fixtures.
 >>> s = ""
 >>> for i in range(10):
 ...     s += c.pop()
->>> print s
+>>> print (s)
 abcabcabca
 
 An empty Cycler or a Cycler on an empty list will endlessly pop None values:
 
 >>> c = Cycler()
->>> print c.pop(), c.pop(), c.pop()
+>>> print (c.pop(), c.pop(), c.pop())
 None None None
 
 >>> c = Cycler([])
->>> print c.pop(), c.pop(), c.pop()
+>>> print (c.pop(), c.pop(), c.pop())
 None None None
 
 >>> c = Cycler(None)
->>> print c.pop(), c.pop(), c.pop()
+>>> print (c.pop(), c.pop(), c.pop())
 None None None
 """
 
 from __future__ import unicode_literals
+from __future__ import print_function
 from builtins import object
 
 

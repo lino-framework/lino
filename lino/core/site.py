@@ -1233,7 +1233,7 @@ class Site(object):
         def install_plugin(app_name, needed_by=None):
             # Django does not accept newstr, and we don't want to see
             # ``u'applabel'`` in doctests.
-            app_name = six.binary_type(app_name)
+            app_name = six.text_type(app_name)
             app_mod = import_module(app_name)
 
             # Can an `__init__.py` file explicitly set ``Plugin =

@@ -13,40 +13,40 @@ Usage examples:
 
 >>> from lino.utils.xmlgen.html import E
 >>> e = E.p("This is a ", E.b("first"), " test.")
->>> print html2rst(e, True)
+>>> print (html2rst(e, True))
 This is a **first** test.
 <BLANKLINE>
 
 >>> e = E.p(E.b("This")," is another test.")
->>> print html2rst(e, True)
+>>> print (html2rst(e, True))
 **This** is another test.
 <BLANKLINE>
 
 >>> e = E.p(E.b("This")," is ",E.em("another")," test.")
->>> print html2rst(e, True)
+>>> print (html2rst(e, True))
 **This** is *another* test.
 <BLANKLINE>
 
 >>> url = "http://example.com"
 >>> e = E.p(E.b("This")," is ",E.a("a link",href=url),".")
->>> print html2rst(e, True)
+>>> print (html2rst(e, True))
 **This** is `a link <http://example.com>`__.
 <BLANKLINE>
 
 >>> e = E.p("An empty bold text:",E.b(""))
->>> print html2rst(e, True)
+>>> print (html2rst(e, True))
 An empty bold text:
 <BLANKLINE>
 
 >>> e = E.ul(E.li("First"), E.li("Second"))
->>> print html2rst(e, True)
+>>> print (html2rst(e, True))
 <BLANKLINE>
 First
 Second
 <BLANKLINE>
 
 >>> e = E.h1("A header")
->>> print html2rst(e, True)
+>>> print (html2rst(e, True))
 ========
 A header
 ========
@@ -55,13 +55,13 @@ A header
 For images we render the ``alt`` text between brackets:
 
 >>> e = E.img(src="http://example.com/images/1.jpg", alt="1")
->>> print html2rst(e, True)
+>>> print (html2rst(e, True))
 [img 1]
 
 If there is no ``alt`` text, render the content of ``src``:
 
 >>> e = E.img(src="http://example.com/images/1.jpg")
->>> print html2rst(e, True)
+>>> print (html2rst(e, True))
 [img http://example.com/images/1.jpg]
 
 
@@ -159,7 +159,7 @@ A table containing elementtree HTML:
   >>> from lino.utils.xmlgen.html import E
   >>> headers = [E.p("A ", E.b("formatted"), " header"), "A plain header"]
   >>> rows = [[1,2], [3,4]]
-  >>> print RstTable(headers).to_rst(rows)
+  >>> print (RstTable(headers).to_rst(rows))
   ======================== ================
    A **formatted** header   A plain header
   ------------------------ ----------------

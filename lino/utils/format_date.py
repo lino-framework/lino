@@ -37,7 +37,7 @@ the conversion).
 The major advantage over using `date_format` from
 `django.utils.formats` is that Babel offers a "full" format:
 
->>> today = datetime.date(2013,01,18)
+>>> today = datetime.date(2013,1,18)
 
 >>> print(format_date(today,'full'))
 Friday, January 18, 2013

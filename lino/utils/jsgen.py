@@ -20,14 +20,14 @@ Example:
 >>> d = dict(main=main,wc=[1,2,3])
 
 >>> for ln in declare_vars(d):
-...   print ln
+...   print (ln)
 var fld11 = { "fieldLabel": "Field 1", "xtype": "textfield" };
 var fld22 = { "fieldLabel": "Field 2", "xtype": "textfield" };
 var fld33 = { "fieldLabel": "Field 3", "xtype": "textfield" };
-var p14 = { "items": [ fld22, fld33 ], "xtype": "panel", "title": "Panel" };
+var p14 = { "items": [ fld22, fld33 ], "title": "Panel", "xtype": "panel" };
 
->>> print py2js(d)
-{ "main": { "items": [ fld11, p14 ], "xtype": "form", "title": "Main" }, "wc": [ 1, 2, 3 ] }
+>>> print (py2js(d))
+{ "main": { "items": [ fld11, p14 ], "title": "Main", "xtype": "form" }, "wc": [ 1, 2, 3 ] }
   
 Another example...
 
@@ -35,7 +35,7 @@ Another example...
 ...     yield js_line("hello = function() {")
 ...     yield js_line("console.log(%s)" % py2js("Hello, " + name + "!"))
 ...     yield js_line("}")
->>> print py2js(onReady("World"))
+>>> print (py2js(onReady("World")))
 hello = function() {
 console.log("Hello, World!")
 }
@@ -44,27 +44,20 @@ console.log("Hello, World!")
 And yet another example (`/blog/2012/0208`)...
 
 >>> chunk = '<a href="javascript:alert({&quot;record_id&quot;: 122 })">Test</a>'
->>> print py2js(chunk)
+>>> print (py2js(chunk))
 "<a href=\"javascript:alert({&quot;record_id&quot;: 122 })\">Test</a>"
 
 >>> data_record = dict(
 ...   title="Upload \"Aufenthaltserlaubnis\"",
 ...   data=dict(owner=chunk))
->>> print py2js(data_record)
+>>> print (py2js(data_record))
 { "data": { "owner": "<a href=\"javascript:alert({&quot;record_id&quot;: 122 })\">Test</a>" }, "title": "Upload \"Aufenthaltserlaubnis\"" }
 >>> response = dict(
 ...   message="Upload \"Aufenthaltserlaubnis\" wurde erstellt.",
 ...   success=True,
 ...   data_record=data_record)
->>> print py2js(response) #doctest: +NORMALIZE_WHITESPACE
-{ "message": "Upload \"Aufenthaltserlaubnis\" wurde erstellt.", "success": true, 
-  "data_record": { 
-    "data": { 
-      "owner": "<a href=\"javascript:alert({&quot;record_id&quot;: 122 })\">Test</a>" 
-    }, 
-    "title": "Upload \"Aufenthaltserlaubnis\"" 
-  } 
-}
+>>> print (py2js(response)) #doctest: +NORMALIZE_WHITESPACE
+{ "data_record": { "data": { "owner": "<a href=\"javascript:alert({&quot;record_id&quot;: 122 })\">Test</a>" }, "title": "Upload \"Aufenthaltserlaubnis\"" }, "message": "Upload \"Aufenthaltserlaubnis\" wurde erstellt.", "success": true }
 
 """
 
@@ -472,7 +465,7 @@ def py2js(v):
 
     if isinstance(v, dict):  # ) is types.DictType:
         return "{ %s }" % ", ".join([
-            "%s: %s" % (py2js(k), py2js(v)) for k, v in list(v.items())
+            "%s: %s" % (py2js(k), py2js(v)) for k, v in list(sorted(v.items()))
             if (not isinstance(v, VisibleComponent))
             or v.get_view_permission(_for_user_profile)
         ])

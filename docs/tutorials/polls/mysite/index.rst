@@ -114,7 +114,8 @@ If you are curious:
 
     >>> from pprint import pprint
     >>> from django.conf import settings
-    >>> pprint(settings.INSTALLED_APPS)
+    >>> from atelier.utils import tuple_py2
+    >>> pprint(tuple_py2(settings.INSTALLED_APPS))
     ('lino.modlib.lino_startup',
      'django.contrib.staticfiles',
      'lino.modlib.about',
