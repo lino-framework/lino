@@ -11,6 +11,8 @@ from os.path import join, dirname, isdir
 import cgi
 import datetime
 import jinja2
+from django.utils import six
+
 SUBDIR_NAME = 'config'
 
 from django.conf import settings
@@ -129,7 +131,7 @@ class JinjaRenderer(HtmlRenderer):
         )
 
         def translate(s):
-            return ugettext(s.decode('utf8'))
+            return ugettext(six.text_type(s))
         self.jinja_env.globals.update(_=translate)
 
         def ptranslate(ctx, s):
