@@ -20,12 +20,12 @@ if hasattr(etree, '_serialize_xml'):
 
     _original_serialize_xml = etree._serialize_xml
 
-    def _serialize_xml(write, elem, *args):
+    def _serialize_xml(write, elem, *args, **kwargs):
         if elem.tag == '![CDATA[':
             write("\n<%s%s]]>\n" % (
                 elem.tag, elem.text))
             return
-        return _original_serialize_xml(write, elem, *args)
+        return _original_serialize_xml(write, elem, *args, **kwargs)
     etree._serialize_xml = etree._serialize['xml'] = _serialize_xml
 
     register_namespace = etree.register_namespace
