@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2015 Luc Saffre
+# Copyright 2009-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 r"""A framework for generating Javascript from Python.
@@ -442,7 +442,6 @@ def py2js(v):
     if isinstance(v, types.GeneratorType):
         return "".join([py2js(x) for x in v])
     if etree.iselement(v):
-    #~ if isinstance(v,etree.Element):
         return json.dumps(etree.tostring(v))
 
     #~ if type(v) is types.GeneratorType:
@@ -464,15 +463,19 @@ def py2js(v):
         return "[ %s ]" % ", ".join(elems)
 
     if isinstance(v, dict):
-        try:
-            return "{ %s }" % ", ".join(
-                ["%s: %s" % (py2js(k), py2js(i))
-                 for k, i in sorted(v.items())
-                 if (not isinstance(v, VisibleComponent))
-                 or v.get_view_permission(_for_user_profile)])
-        except TypeError as e:
-            raise TypeError("Failed to sort {0} : {1}".format(
-                v, e))
+        # 20160423: removed "sorted(v.items())" because it caused
+        # TypeError when the dictionary contained a mixture of unicode
+        # and future.types.newstr objects.
+        return "{ %s }" % ", ".join(
+            ["%s: %s" % (py2js(k), py2js(i))
+             for k, i in v.items()
+             if (not isinstance(v, VisibleComponent))
+             or v.get_view_permission(_for_user_profile)])
+        # try:
+        #     ...
+        # except TypeError as e:
+        #     raise TypeError("Failed to sort {0} : {1}".format(
+        #         v, e))
 
     if isinstance(v, bool):  # types.BooleanType:
         return str(v).lower()
