@@ -82,7 +82,9 @@ def check_json_result(response, expected_keys=None, msg=''):
     return result
 
 
-def demo_get(username, url_base, json_fields, expected_rows, **kwargs):
+def demo_get(
+        username, url_base, json_fields,
+        expected_rows=None, **kwargs):
     from django.conf import settings
     case = HttpQuery(username, url_base, json_fields,
                      expected_rows, kwargs)

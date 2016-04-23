@@ -463,12 +463,16 @@ def py2js(v):
                  or x.get_view_permission(_for_user_profile)]
         return "[ %s ]" % ", ".join(elems)
 
-    if isinstance(v, dict):  # ) is types.DictType:
-        return "{ %s }" % ", ".join([
-            "%s: %s" % (py2js(k), py2js(v)) for k, v in list(sorted(v.items()))
-            if (not isinstance(v, VisibleComponent))
-            or v.get_view_permission(_for_user_profile)
-        ])
+    if isinstance(v, dict):
+        try:
+            return "{ %s }" % ", ".join(
+                ["%s: %s" % (py2js(k), py2js(i))
+                 for k, i in sorted(v.items())
+                 if (not isinstance(v, VisibleComponent))
+                 or v.get_view_permission(_for_user_profile)])
+        except TypeError as e:
+            raise TypeError("Failed to sort {0} : {1}".format(
+                v, e))
 
     if isinstance(v, bool):  # types.BooleanType:
         return str(v).lower()
