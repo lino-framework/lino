@@ -20,9 +20,11 @@
 
 from __future__ import unicode_literals
 
-from lino.api import rt
+from lino.api import rt, _
 from lino.utils.cycler import Cycler
 from lino_noi.lib.tickets.choicelists import TicketStates
+
+from lino.api.dd import str2kw
 
 STATES = Cycler(TicketStates.objects())
 
@@ -43,6 +45,11 @@ def S(name, **kw):
     return rt.modules.tickets.Site(**kw)
 
 
+def P(name, **kw):
+    kw.update(**str2kw('name', name))
+    return rt.modules.products.Product(**kw)
+
+
 def T(reporter, summary, **kw):
     kw.update(
         summary=summary,
@@ -51,14 +58,34 @@ def T(reporter, summary, **kw):
     return rt.modules.tickets.Ticket(**kw)
 
 
+def competence(user, faculty, **kw):
+    kw.update(
+        user=rt.modules.users.User.objects.get(username=user))
+    kw.update(faculty=faculty)
+    return rt.modules.faculties.Competence(**kw)
+
+
 def objects():
     yield U("anna")
     yield U("berta")
     yield U("christina")
     yield U("dora")
+
     yield S("Bei mir zu Hause")
     yield S("AZ Ephata")
     yield S("Eupen")
+
+    ProductCat = rt.modules.products.ProductCat
+    lng = ProductCat(**str2kw('name', _("Languages")))
+    yield lng
+
+    fr = P(_("French"), cat=lng)
+    yield fr
+
+    de = P(_("German"), cat=lng)
+    yield de
+
+    yield P(_("English"), cat=lng)
 
     yield F("Französischunterricht", "Cours de francais")
     yield F("Deutschunterricht", "Cours d'allemand")
@@ -70,9 +97,11 @@ def objects():
     yield F("Fahrdienst", "Voiture")
     yield F("Botengänge", "Commissions")
     yield F("Babysitting", "Garde enfant")
-    yield F("Gesellschafter für Senioren", "Rencontres personnes agées")
+    yield F("Gesellschafter für Senioren",
+            "Rencontres personnes agées")
     yield F("Hunde spazierenführen", "Chiens")
-    yield F("Übersetzungsarbeiten", "Traductions")
+    traduire = F("Übersetzungsarbeiten", "Traductions")
+    yield traduire
     yield F("Briefe beantworten", "Répondre au courrier")
 
     yield T("berta", "Mein Wasserhahn tropft, wer kann mir helfen?")
@@ -92,4 +121,8 @@ def objects():
     yield T("anna",
             "Wer fährt für mich nach Aachen Pampers kaufen?",
             description="Ich darf selber nicht über die Grenze.")
+
+    yield competence('anna', traduire, product=fr)
+    yield competence('berta', traduire, product=fr)
+    yield competence('berta', traduire, product=de)
 

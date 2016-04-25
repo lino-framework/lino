@@ -40,8 +40,8 @@ This document describes the database structure.
  countries.Place             countries.Places             8         78
  excerpts.Excerpt            excerpts.Excerpts            12        2
  excerpts.ExcerptType        excerpts.ExcerptTypes        17        2
- faculties.Competence        faculties.Competences        5         18
- faculties.Faculty           faculties.Faculties          5         8
+ faculties.Competence        faculties.Competences        6         18
+ faculties.Faculty           faculties.Faculties          8         8
  gfks.HelpText               gfks.HelpTexts               4         1
  lists.List                  lists.Lists                  7         8
  lists.ListType              lists.ListTypes              4         3
