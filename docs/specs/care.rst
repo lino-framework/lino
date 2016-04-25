@@ -4,34 +4,37 @@
 The "Care" variant of Lino Noi
 ==============================
 
-Implementation notes
-====================
+.. How to test only this document:
 
-The "Care" project is currently in a very early stage. We are still
-thinking about whether at all to implement it (1) as a variant of Lino
-Noi or (b) by writing a new application from scratch. Hamza and Luc
-are keeping an eye but not actively working on approach (1) while
-Sandeep (with Luc's help) is working on approach (2).
+    $ python setup.py test -s tests.SpecsTests.test_care
+    
+    doctest init:
+
+    >>> from lino import startup
+    >>> startup('lino_noi.projects.care.settings.doctests')
+    >>> from lino.api.doctest import *
+
+
 
 Overview
 ========
 
-The site owner is an organization which cares for people and helps
-people to care for each other.  These people might be old people,
+Lino Care is a variant of Lino Noi specialized for organizations which
+help people to care for each other.  These people might be old people,
 orphans, immigrants, disabled, addicts, or just "normal" people
 (i.e. without any "handicap") because also normal people might want to
 help each other.
 
-- The site has a list of **care recipients**. A care recipient can
-   "call for help" by "opening a ticket". This is similar to the known
-   ticketing systems of a softare project. A different context, but a
-   similar database structure.
+- There is no difference between **care recipients** and **care
+  providers**.  Both are stored as *system users*.  Any user can "call
+  for help" by "opening a ticket". This is similar to the known
+  ticketing systems of a softare project. A different context, but a
+  similar database structure.
 
-- The site also has a list of **care providers**. Care providers enter
-  information about their **competences** and their **availability**.
+  Users can also enter information about their **competences** and
+  their **availability**.
 
-  Both care recipients and providers are stored as *system
-  users*. This does not mean that these people actually have access to
+  This does not mean that these people actually have access to
   the Lino site. It is possible that some "**manager**" does the job of
   entering the information into Lino.
 
@@ -87,3 +90,67 @@ the Care project.
 
   These user roles are defined in :mod:`lino_noi.projects.care.roles`
 
+>>> rt.show('faculties.Faculties')
+======================= ============================= ================== ============================ ========== ==================
+ Referenz                Bezeichnung                   Bezeichnung (en)   Bezeichnung (fr)             Affinity   Produktkategorie
+----------------------- ----------------------------- ------------------ ---------------------------- ---------- ------------------
+                         Analysis                                                                      100
+                         Babysitting                                      Garde enfant                 100
+                         Botengänge                                       Commissions                  100
+                         Briefe beantworten                               Répondre au courrier         100
+                         Code changes                                                                  100
+                         Configuration                                                                 100
+                         Deutschunterricht                                Cours d'allemand             100
+                         Documentation                                                                 100
+                         Enhancement                                                                   100
+                         Fahrdienst                                       Voiture                      100
+                         Französischunterricht                            Cours de francais            100
+                         Friseur                                          Coiffure                     100
+                         Gartenarbeiten                                   Travaux de jardin            100
+                         Gesellschafter für Senioren                      Rencontres personnes agées   100
+                         Gitarrenunterricht                               Cours de guitare             100
+                         Hunde spazierenführen                            Chiens                       100
+                         Matheunterricht                                  Cours de maths               100
+                         Nähen                                            Couture                      100
+                         Offer                                                                         100
+                         Optimization                                                                  100
+                         Testing                                                                       100
+                         Übersetzungsarbeiten                             Traductions                  100
+ **Total (22 Zeilen)**                                                                                 **2200**
+======================= ============================= ================== ============================ ========== ==================
+<BLANKLINE>
+
+>>> rt.show('faculties.Competences')
+==== ========== ====================== ========== =============
+ ID   Benutzer   Faculty                Affinity   Produkt
+---- ---------- ---------------------- ---------- -------------
+ 1    anna       Übersetzungsarbeiten   100        Französisch
+ 2    berta      Übersetzungsarbeiten   100        Französisch
+ 3    berta      Übersetzungsarbeiten   100        Deutsch
+                                        **300**
+==== ========== ====================== ========== =============
+<BLANKLINE>
+
+>>> rt.show('products.Products')
+========== ============= ================== ================== ===========
+ Referenz   Bezeichnung   Bezeichnung (en)   Bezeichnung (fr)   Kategorie
+---------- ------------- ------------------ ------------------ -----------
+            Französisch   French             Français           Sprachen
+            Deutsch       German             Allemand           Sprachen
+            Englisch      English            Anglais            Sprachen
+========== ============= ================== ================== ===========
+<BLANKLINE>
+
+
+>>> rt.show('tickets.Tickets')
+==== =========================================================================================== =============== =========== =========
+ ID   Summary                                                                                     Arbeitsablauf   Reporter    Projekt
+---- ------------------------------------------------------------------------------------------- --------------- ----------- ---------
+ 6    Wer fährt für mich nach Aachen Pampers kaufen?                                              **Erledigt**    anna
+ 5    Wer kann meine Abschlussarbeit korrekturlesen?                                              **Sleeping**    dora
+ 4    Wer hilft meinem Sohn sich auf die Mathearbeit am 21.05. vorzubereiten? 5. Schuljahr PDS.   **Sticky**      berta
+ 3    Wer kommt meinem Sohn Klavierunterricht geben?                                              **ToDo**        dora
+ 2    Mein Rasen muss gemäht werden. Donnerstags oder Samstags                                    **Talk**        christina
+ 1    Mein Wasserhahn tropft, wer kann mir helfen?                                                **Neu**         berta
+==== =========================================================================================== =============== =========== =========
+<BLANKLINE>

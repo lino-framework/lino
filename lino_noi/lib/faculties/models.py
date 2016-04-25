@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2015 Luc Saffre
+# Copyright 2011-2016 Luc Saffre
 #
 # This file is part of Lino Noi.
 #
@@ -26,16 +26,18 @@ import logging
 from lino_noi.lib.tickets.models import *
 
 logger = logging.getLogger(__name__)
-from lino import mixins
+
 from django.utils.translation import ugettext_lazy as _
 from lino.api import dd
-import decimal
+from lino.mixins import Hierarchical, Sequenced, Referrable
+from lino.utils.mldbc.mixins import BabelNamed
+
 from lino.modlib.users.mixins import UserAuthored
 
-MAX_WEIGHT = decimal.Decimal('10')
+MAX_WEIGHT = 100
 
 
-class Faculty(mixins.BabelNamed):
+class Faculty(BabelNamed, Hierarchical, Referrable):
     """A Faculty (Fachbereich) is a conceptual (not organizational)
     department of this PCSW.  Each Newcomer will be assigned to one
     and only one Faculty, based on his/her needs.
@@ -46,13 +48,15 @@ class Faculty(mixins.BabelNamed):
         verbose_name = _("Faculty")
         verbose_name_plural = _("Faculties")
 
-    # ~ body = dd.BabelTextField(_("Body"),blank=True,format='html')
-    weight = models.IntegerField(
-        _("Work effort"),  # Arbeitsaufwand
-        default=MAX_WEIGHT,
-        help_text=u"""\
-Wieviel Aufwand ein Neuantrag in diesem Fachbereich allgemein verursacht
-(0 = gar kein Aufwand, %d = maximaler Aufwand).""" % MAX_WEIGHT)
+    affinity = models.IntegerField(
+        _("Affinity"), blank=True, default=MAX_WEIGHT,
+        help_text=_(
+            "How much workers enjoy to get a new ticket "
+            "in this faculty."
+            "A number between -{0} and +{0}.").format(MAX_WEIGHT))
+
+    product_cat = models.ForeignKey(
+        'products.ProductCat', blank=True, null=True)
 
 
 class Competence(UserAuthored, mixins.Sequenced):
@@ -67,16 +71,27 @@ class Competence(UserAuthored, mixins.Sequenced):
         verbose_name_plural = _("Competences")
 
     faculty = models.ForeignKey('faculties.Faculty')
-    weight = models.IntegerField(
-        _("Work effort"),  # Arbeitsaufwand
-        blank=True,
-        help_text=u"""\
-Wieviel Aufwand mir persönlich ein Neuantrag in diesem Fachbereich verursacht
-(0 = gar kein Aufwand, %d = maximaler Aufwand).""" % MAX_WEIGHT)
+    affinity = models.IntegerField(
+        _("Affinity"), blank=True, default=MAX_WEIGHT,
+        help_text=_(
+            "How much this user likes to get a new ticket "
+            "in this faculty."
+            "A number between -{0} and +{0}.").format(MAX_WEIGHT))
+    product = models.ForeignKey(
+        'products.Product', blank=True, null=True)
+
+    @dd.chooser()
+    def product_choices(cls, faculty):
+        Product = rt.modules.products.Product
+        if not faculty or not faculty.product_cat:
+            return Product.objects.none()
+        return Product.objects.filter(cat=faculty.product_cat)
+
+
 
     def full_clean(self, *args, **kw):
-        if self.weight is None:
-            self.weight = self.faculty.weight
+        if self.affinity is None:
+            self.affinity = self.faculty.affinity
         super(Competence, self).full_clean(*args, **kw)
 
     def __unicode__(self):
@@ -85,9 +100,8 @@ Wieviel Aufwand mir persönlich ein Neuantrag in diesem Fachbereich verursacht
 
 dd.update_field(Competence, 'user', verbose_name=_("User"))
 
-dd.inject_field('tickets.Ticket',
-                'faculty',
-                models.ForeignKey("faculties.Faculty",
-                                  blank=True, null=True))
+dd.inject_field(
+    'tickets.Ticket', 'faculty',
+    dd.ForeignKey("faculties.Faculty", blank=True, null=True))
 
 from .ui import *

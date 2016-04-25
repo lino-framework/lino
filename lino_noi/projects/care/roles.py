@@ -28,41 +28,30 @@ from lino.modlib.users.choicelists import UserProfiles
 from django.utils.translation import ugettext_lazy as _
 
 
-class CareRecipient(OfficeUser):
-    """A **care recipient** can "call for help" by opening a ticket.
-
+class CareUser(OfficeUser):
+    """
     """
     pass
 
 
-class CareProvider(CareRecipient, Worker):
-    """A **care provider** can offer help to other users.
-
+class Manager(CareUser, Worker, Triager):
     """
-    pass
-
-
-class Manager(CareProvider, Triager):
-    """
-
     """
     pass
 
 
 class SiteAdmin(Manager, SiteAdmin, OfficeStaff):
-    """Like a developer, plus site admin and staff"""
     pass
 
 
-EndUser = CareRecipient
-Developer = CareProvider
+EndUser = CareUser
+Developer = CareUser
 
 
 UserProfiles.clear()
 add = UserProfiles.add_item
 add('000', _("Anonymous"),        UserRole, 'anonymous',
     readonly=True, authenticated=False)
-add('100', _("Care recipient"), CareRecipient, 'recipient')
-add('400', _("Care provider"), CareProvider, 'provider')
-add('490', _("Manager"), Manager, 'manager')
+add('100', _("User"), CareUser, 'user')
+add('500', _("Manager"), Manager, 'manager')
 add('900', _("Administrator"),    SiteAdmin, 'admin')

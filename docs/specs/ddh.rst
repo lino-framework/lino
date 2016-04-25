@@ -51,7 +51,7 @@ Lino Noi:
 - excerpts.ExcerptType :
   - PROTECT : excerpts.Excerpt.excerpt_type
 - faculties.Faculty :
-  - PROTECT : clocking.Session.faculty, faculties.Competence.faculty, tickets.Ticket.faculty
+  - PROTECT : clocking.Session.faculty, faculties.Competence.faculty, faculties.Faculty.parent, tickets.Ticket.faculty
 - lists.List :
   - PROTECT : lists.Member.list
 - lists.ListType :
@@ -59,9 +59,9 @@ Lino Noi:
 - outbox.Mail :
   - CASCADE : outbox.Attachment.mail, outbox.Recipient.mail
 - products.Product :
-  - PROTECT : tickets.Interest.product, tickets.Ticket.product
+  - PROTECT : faculties.Competence.product, tickets.Interest.product, tickets.Ticket.product
 - products.ProductCat :
-  - PROTECT : products.Product.cat
+  - PROTECT : faculties.Faculty.product_cat, products.Product.cat
 - tickets.Milestone :
   - PROTECT : tickets.Deployment.milestone, tickets.Ticket.reported_for
 - tickets.Project :

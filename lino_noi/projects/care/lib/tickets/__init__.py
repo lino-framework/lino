@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015-2016 Luc Saffre
+# Copyright 2016 Luc Saffre
 #
 # This file is part of Lino Noi.
 #
@@ -17,19 +17,14 @@
 # License along with Lino Noi.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-"""A collection of concrete example projects which can be used eithter
-out of the box or as a base for derivated work.
-
-After running :cmd:`fab initdb` in the :ref:`noi` repository, you can
-run :manage:`runserver` in both demo projects: `team` uses the normal
-"editable" user interface and `bs3` the readonly user interface.
-
+"""Fixtures specific for Lino Care.
 
 .. autosummary::
    :toctree:
 
-   team
-   bs3
-   care
+   fixtures.demo
+
 
 """
+
+from lino_noi.lib.tickets import *

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2014-2015 Luc Saffre
+# Copyright 2014-2016 Luc Saffre
 #
 # This file is part of Lino Noi.
 #
@@ -26,6 +26,7 @@
    doctests
    www
    memory
+   fixtures
 
 
 
@@ -39,11 +40,20 @@ from lino_noi.projects.team.settings import *
 
 class Site(Site):
 
-    verbose_name = "Lino Noi (Care)"
+    verbose_name = "Lino Care"
 
     demo_fixtures = ['std', 'demo', 'demo2']
     user_profiles_module = 'lino_noi.projects.care.roles'
 
+    def get_apps_modifiers(self, **kw):
+        kw = super(Site, self).get_apps_modifiers(**kw)
+        # remove whole plugin:
+        # kw.update(products=None)
+        # kw.update(clocking=None)
+        # alternative implementations:
+        kw.update(tickets='lino_noi.projects.care.lib.tickets')
+        return kw
+
 
 # the following line should not be active in a checked-in version
-#~ DATABASES['default']['NAME'] = ':memory:'
+# DATABASES['default']['NAME'] = ':memory:'
