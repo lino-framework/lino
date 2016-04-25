@@ -8,6 +8,6 @@ class Site(Site):
 
 SITE = Site(globals())
 
-#~ DEBUG=True
+# DEBUG=True
 # the following line should always be commented out in a checked-in version
-#~ DATABASES['default']['NAME'] = ':memory:'
+# DATABASES['default']['NAME'] = ':memory:'

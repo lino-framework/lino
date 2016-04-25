@@ -439,7 +439,7 @@ class FieldElement(LayoutElement):
         self.field = field
         self.editable = field.editable  # and not field.primary_key
 
-        if not 'listeners' in kw:
+        if 'listeners' not in kw:
             if not isinstance(layout_handle.layout, layouts.ColumnsLayout):
                 add_help_text(
                     kw, self.field.help_text, self.field.verbose_name,

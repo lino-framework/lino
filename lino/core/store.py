@@ -89,7 +89,7 @@ class StoreField(object):
 
     def __init__(self, field, name, **options):
         self.field = field
-        self.name = name
+        self.name = str(name)  # TypeError 20160425
         self.options = options
 
     def as_js(self, name):
@@ -107,9 +107,9 @@ class StoreField(object):
         return "%s '%s'" % (self.__class__.__name__, self.name)
 
     def column_names(self):
-        #~ if not self.options.has_key('name'):
-            #~ raise Exception("20130719 %s has no option 'name'" % self)
-        #~ yield self.options['name']
+        # if not self.options.has_key('name'):
+            # raise Exception("20130719 %s has no option 'name'" % self)
+        # yield self.options['name']
         yield self.name
 
     def value_from_object(self, obj, ar):
@@ -125,22 +125,22 @@ class StoreField(object):
         return l.append(v)
 
     def value2dict(self, v, d, row):
-        d[self.name] = v
+        d[str(self.name)] = v
 
-    #~ def value2odt(self,ar,v,tc,**params):
-        #~ """
-        #~ Add the necessary :term:`odfpy` element(s) to the containing element `tc`.
-        #~ """
-        #~ params.update(text=force_text(v))
-        #~ tc.addElement(odf.text.P(**params))
+    # def value2odt(self,ar,v,tc,**params):
+        # """
+        # Add the necessary :term:`odfpy` element(s) to the containing element `tc`.
+        # """
+        # params.update(text=force_text(v))
+        # tc.addElement(odf.text.P(**params))
 
     def parse_form_value(self, v, obj):
-        #~ if v == '' and not self.field.empty_strings_allowed:
-            #~ return None
+        # if v == '' and not self.field.empty_strings_allowed:
+            # return None
         return self.field.to_python(v)
 
     def extract_form_data(self, post_data):
-        #~ logger.info("20130128 StoreField.extract_form_data %s",self.name)
+        # logger.info("20130128 StoreField.extract_form_data %s",self.name)
         return post_data.get(self.name, None)
 
     def form2obj(self, ar, instance, post_data, is_new):
@@ -150,13 +150,13 @@ class StoreField(object):
         - sales.Invoice.number may be blank
         """
         v = self.extract_form_data(post_data)
-        #~ logger.info("20130128 %s.form2obj() %s = %r",self.__class__.__name__,self.name,v)
+        # logger.info("20130128 %s.form2obj() %s = %r",self.__class__.__name__,self.name,v)
         if v is None:
             # means that the field wasn't part of the submitted form. don't
             # touch it.
             return
         if v == '':
-            #~ print 20130125, self.field.empty_strings_allowed, self.field.name, self.form2obj_default
+            # print 20130125, self.field.empty_strings_allowed, self.field.name, self.form2obj_default
             if self.field.empty_strings_allowed:
                 v = self.parse_form_value(v, instance)
 
@@ -183,7 +183,7 @@ class StoreField(object):
 
     def set_value_in_object(self, ar, instance, v):
         old_value = self.value_from_object(instance, ar.request)
-        #~ old_value = getattr(instance,self.field.attname)
+        # old_value = getattr(instance,self.field.attname)
         if old_value != v:
             setattr(instance, self.name, v)
             return True
@@ -202,8 +202,8 @@ class RelatedMixin(object):
 
     """
     def get_rel_to(self, obj):
-        #~ if self.field.rel is None:
-            #~ return None
+        # if self.field.rel is None:
+            # return None
         return self.field.rel.model
 
     def full_value_from_object(self, obj, ar):
@@ -211,7 +211,7 @@ class RelatedMixin(object):
         # but the full object this field refers to
         relto_model = self.get_rel_to(obj)
         if not relto_model:
-            #~ logger.warning("%s get_rel_to returned None",self.field)
+            # logger.warning("%s get_rel_to returned None",self.field)
             return None
         try:
             return getattr(obj, self.name)
@@ -225,33 +225,33 @@ class ComboStoreField(StoreField):
 
     def as_js(self, name):
         s = StoreField.as_js(self, name)
-        #~ s += "," + repr(self.field.name+constants.CHOICES_HIDDEN_SUFFIX)
+        # s += "," + repr(self.field.name+constants.CHOICES_HIDDEN_SUFFIX)
         s += ", '%s'" % (name + constants.CHOICES_HIDDEN_SUFFIX)
         return s
 
     def column_names(self):
-        #~ yield self.options['name']
-        #~ yield self.options['name'] + constants.CHOICES_HIDDEN_SUFFIX
+        # yield self.options['name']
+        # yield self.options['name'] + constants.CHOICES_HIDDEN_SUFFIX
         yield self.name
         yield self.name + constants.CHOICES_HIDDEN_SUFFIX
 
     def extract_form_data(self, post_data):
-        #~ logger.info("20130128 ComboStoreField.extract_form_data %s",self.name)
+        # logger.info("20130128 ComboStoreField.extract_form_data %s",self.name)
         return post_data.get(self.name + constants.CHOICES_HIDDEN_SUFFIX, None)
 
-    #~ def obj2list(self,request,obj):
+    # def obj2list(self,request,obj):
     def value2list(self, ar, v, l, row):
         value, text = self.get_value_text(v, row)
         l += [text, value]
 
-    #~ def obj2dict(self,request,obj,d):
+    # def obj2dict(self,request,obj,d):
     def value2dict(self, v, d, row):
         value, text = self.get_value_text(v, row)
-        d[self.name] = text
-        d[self.name + constants.CHOICES_HIDDEN_SUFFIX] = value
+        d[str(self.name)] = text
+        d[str(self.name + constants.CHOICES_HIDDEN_SUFFIX)] = value
 
     def get_value_text(self, v, obj):
-        #~ v = self.full_value_from_object(None,obj)
+        # v = self.full_value_from_object(None,obj)
         if v is None or v == '':
             return (None, None)
         if obj is not None:
@@ -267,16 +267,16 @@ class ComboStoreField(StoreField):
 
 class ForeignKeyStoreField(RelatedMixin, ComboStoreField):
     """An atomizer used for all ForeignKey fields."""
-    #~ def cell_html(self,req,row):
-        #~ obj = self.full_value_from_object(req,row)
-        #~ if obj is None:
-            #~ return ''
-        #~ return req.ui.obj2html(obj)
+    # def cell_html(self,req,row):
+        # obj = self.full_value_from_object(req,row)
+        # if obj is None:
+            # return ''
+        # return req.ui.obj2html(obj)
 
     def get_value_text(self, v, obj):
-        #~ v = self.full_value_from_object(None,obj)
-        #~ if isinstance(v,basestring):
-            #~ logger.info("20120109 %s -> %s -> %r",obj,self,v)
+        # v = self.full_value_from_object(None,obj)
+        # if isinstance(v,basestring):
+            # logger.info("20120109 %s -> %s -> %r",obj,self,v)
         if v is None:
             return (None, None)
         else:
@@ -297,7 +297,7 @@ class ForeignKeyStoreField(RelatedMixin, ComboStoreField):
         """
         relto_model = self.get_rel_to(obj)
         if not relto_model:
-            #~ logger.info("20111209 get_value_text: no relto_model")
+            # logger.info("20111209 get_value_text: no relto_model")
             return
         try:
             return relto_model.objects.get(pk=v)
@@ -313,13 +313,13 @@ class ForeignKeyStoreField(RelatedMixin, ComboStoreField):
         return None
 
 
-#~ class LinkedForeignKeyField(ForeignKeyStoreField):
+# class LinkedForeignKeyField(ForeignKeyStoreField):
 
-    #~ def get_rel_to(self,obj):
-        #~ ct = self.field.get_content_type(obj)
-        #~ if ct is None:
-            #~ return None
-        #~ return ct.model_class()
+    # def get_rel_to(self,obj):
+        # ct = self.field.get_content_type(obj)
+        # if ct is None:
+            # return None
+        # return ct.model_class()
 
 
 class VirtStoreField(StoreField):
@@ -331,19 +331,19 @@ class VirtStoreField(StoreField):
         self.column_names = delegate.column_names
         self.list_values_count = delegate.list_values_count
         self.form2obj_default = delegate.form2obj_default
-        #~ 20130130 self.value2num = delegate.value2num
-        #~ 20130130 self.value2html = delegate.value2html
+        # 20130130 self.value2num = delegate.value2num
+        # 20130130 self.value2html = delegate.value2html
         self.value2list = delegate.value2list
         self.value2dict = delegate.value2dict
         self.format_value = delegate.format_value
-        #~ 20130130 self.format_sum = delegate.format_sum
-        #~ 20130130 self.sum2html = delegate.sum2html
-        #~ self.form2obj = delegate.form2obj
+        # 20130130 self.format_sum = delegate.format_sum
+        # 20130130 self.sum2html = delegate.sum2html
+        # self.form2obj = delegate.form2obj
         # as long as http://code.djangoproject.com/ticket/15497 is open:
         self.parse_form_value = delegate.parse_form_value
         self.set_value_in_object = vf.set_value_in_object
-        #~ 20130130 self.apply_cell_format = delegate.apply_cell_format
-        #~ self.value_from_object = vf.value_from_object
+        # 20130130 self.apply_cell_format = delegate.apply_cell_format
+        # self.value_from_object = vf.value_from_object
 
         self.delegate = delegate
 
@@ -373,7 +373,7 @@ class RequestStoreField(StoreField):
     def __init__(self, vf, delegate, name):
         self.vf = vf
         StoreField.__init__(self, vf.return_type, name)
-        #~ self.editable = False
+        # self.editable = False
         self.as_js = delegate.as_js
         self.column_names = delegate.column_names
         self.list_values_count = delegate.list_values_count
@@ -385,22 +385,22 @@ class RequestStoreField(StoreField):
         return l.append(self.format_value(ar, v))
 
     def value2dict(self, v, d, row):
-        d[self.name] = self.format_value(None, v)
-        #~ d[self.options['name']] = self.format_value(ui,v)
-        #~ d[self.field.name] = v
+        d[str(self.name)] = self.format_value(None, v)
+        # d[self.options['name']] = self.format_value(ui,v)
+        # d[self.field.name] = v
 
     def format_value(self, ar, v):
         if v is None:
             return ''
         return str(v.get_total_count())
 
-    #~ def sum2html(self,ar,sums,i,**cellattrs):
-        #~ cellattrs.update(align="right")
-        #~ return super(RequestStoreField,self).sum2html(ar,sums,i,**cellattrs)
+    # def sum2html(self,ar,sums,i,**cellattrs):
+        # cellattrs.update(align="right")
+        # return super(RequestStoreField,self).sum2html(ar,sums,i,**cellattrs)
 
-    #~ def value2odt(self,ar,v,tc,**params):
-        #~ params.update(text=self.format_value(ar,v))
-        #~ tc.addElement(odf.text.P(**params))
+    # def value2odt(self,ar,v,tc,**params):
+        # params.update(text=self.format_value(ar,v))
+        # tc.addElement(odf.text.P(**params))
 
 
 class PasswordStoreField(StoreField):
@@ -426,8 +426,8 @@ class SpecialStoreField(StoreField):
 
     def form2obj(self, ar, instance, post_data, is_new):
         pass
-        #~ raise NotImplementedError
-        #~ return instance
+        # raise NotImplementedError
+        # return instance
 
 
 class DisabledFieldsStoreField(SpecialStoreField):
@@ -444,7 +444,7 @@ class DisabledFieldsStoreField(SpecialStoreField):
       (a displayfield) must *not* have the 'disabled' css class -
 
     """
-    name = 'disabled_fields'
+    name = str('disabled_fields')
 
     def __init__(self, store):
         from lino.core.gfks import GenericForeignKey
@@ -457,7 +457,7 @@ class DisabledFieldsStoreField(SpecialStoreField):
                         if not isinstance(
                                 f.vf.return_type, fields.DisplayField):
                             self.always_disabled.add(f.name)
-                            #~ print "20121010 always disabled:", f
+                            # print "20121010 always disabled:", f
                 elif not isinstance(f.field, GenericForeignKey):
                     if not f.field.editable:
                         self.always_disabled.add(f.name)
@@ -466,10 +466,10 @@ class DisabledFieldsStoreField(SpecialStoreField):
         d = dict()
         for name in self.store.actor.disabled_fields(obj, ar):
             if name is not None:
-                d[name] = True
+                d[str(name)] = True
 
         for name in self.always_disabled:
-            d[name] = True
+            d[str(name)] = True
 
         # disable the primary key field of a saved instance. Note that
         # pk might be set also on an unsaved instance and that
@@ -477,7 +477,7 @@ class DisabledFieldsStoreField(SpecialStoreField):
         if ar.bound_action.action.disable_primary_key \
            and self.store.pk is not None:
             for pk in self.store.primary_keys:
-                d[pk.attname] = True
+                d[str(pk.attname)] = True
             # if self.store.pk.attname is None:
             #     raise Exception('20130322b')
             # d[self.store.pk.attname] = True
@@ -496,24 +496,24 @@ class DisabledActionsStoreField(SpecialStoreField):
 
     """
     """
-    name = 'disabled_actions'
+    name = str('disabled_actions')
 
     def full_value_from_object(self, obj, ar):
         return self.store.actor.disabled_actions(ar, obj)
 
 
-#~ class RecnoStoreField(SpecialStoreField):
-    #~ name = 'recno'
-    #~ def full_value_from_object(self,request,obj):
-        #~ return
+# class RecnoStoreField(SpecialStoreField):
+    # name = 'recno'
+    # def full_value_from_object(self,request,obj):
+        # return
 
 class RowClassStoreField(SpecialStoreField):
-    name = 'row_class'
+    name = str('row_class')
 
     def full_value_from_object(self, obj, ar):
         return ' '.join([ar.renderer.row_classes_map.get(s, '')
                          for s in self.store.actor.get_row_classes(obj, ar)])
-        #~ return ar.renderer.row_classes_map.get('x-grid3-row-%s' % s
+        # return ar.renderer.row_classes_map.get('x-grid3-row-%s' % s
 
 
 class DisableEditingStoreField(SpecialStoreField):
@@ -523,12 +523,12 @@ class DisableEditingStoreField(SpecialStoreField):
     method on that row.
     New feature since `/blog/2011/0830`
     """
-    name = 'disable_editing'
+    name = str('disable_editing')
 
     def full_value_from_object(self, obj, ar):
         actor = self.store.actor
         if actor.update_action is None:
-            #~ print 20120601, self.store.actor, "update_action is None"
+            # print 20120601, self.store.actor, "update_action is None"
             return True  # disable editing if there's no update_action
         v = actor.get_row_permission(
             obj, ar, actor.get_row_state(obj), actor.update_action)
@@ -551,7 +551,7 @@ class BooleanStoreField(StoreField):
         StoreField.__init__(self, field, name, **kw)
         if not field.editable:
             def full_value_from_object(self, obj, ar):
-                #~ return self.value2html(ar,self.field.value_from_object(obj))
+                # return self.value2html(ar,self.field.value_from_object(obj))
                 return self.format_value(ar, self.field.value_from_object(obj))
             self.full_value_from_object = curry(full_value_from_object, self)
 
@@ -573,7 +573,7 @@ class GenericForeignKeyField(DisplayStoreField):
 
     def full_value_from_object(self, obj, ar):
         v = getattr(obj, self.name, None)
-        #~ logger.info("20130611 full_value_from_object() %s",v)
+        # logger.info("20130611 full_value_from_object() %s",v)
         if v is None:
             return ''
         if ar is None:
@@ -584,25 +584,25 @@ class GenericForeignKeyField(DisplayStoreField):
 
 
 class DecimalStoreField(StoreField):
-    #~ def __init__(self,field,name,**kw):
-        #~ kw['type'] = 'float'
-        #~ StoreField.__init__(self,field,name,**kw)
+    # def __init__(self,field,name,**kw):
+        # kw['type'] = 'float'
+        # StoreField.__init__(self,field,name,**kw)
 
     def parse_form_value(self, v, obj):
         return parse_decimal(v)
 
-    #~ def value2num(self,v):
+    # def value2num(self,v):
         # ~ # print "20120426 %s value2num(%s)" % (self,v)
-        #~ return v
+        # return v
 
     def format_value(self, ar, v):
         if not v:
             return ''
         return settings.SITE.decfmt(v, places=self.field.decimal_places)
 
-    #~ def value2html(self,ar,v,**cellattrs):
-        #~ cellattrs.update(align="right")
-        #~ return E.td(self.format_value(ar,v),**cellattrs)
+    # def value2html(self,ar,v,**cellattrs):
+        # cellattrs.update(align="right")
+        # return E.td(self.format_value(ar,v),**cellattrs)
 
 
 class IntegerStoreField(StoreField):
@@ -624,7 +624,7 @@ class AutoStoreField(StoreField):
         StoreField.__init__(self, field, name, **kw)
 
     def form2obj(self, ar, obj, post_data, is_new):
-        #~ logger.info("20121022 AutoStoreField.form2obj(%r)",ar.bound_action.full_name())
+        # logger.info("20121022 AutoStoreField.form2obj(%r)",ar.bound_action.full_name())
         if isinstance(ar.bound_action.action, actions.InsertRow):
             return super(AutoStoreField, self).form2obj(
                 ar, obj, post_data, is_new)
@@ -658,7 +658,7 @@ class IncompleteDateStoreField(StoreField):
     def parse_form_value(self, v, obj):
         if v:
             v = IncompleteDate(*settings.SITE.parse_date(v))
-            #~ v = datetime.date(*settings.SITE.parse_date(v))
+            # v = datetime.date(*settings.SITE.parse_date(v))
         return v
 
 
@@ -693,65 +693,65 @@ class MethodStoreField(StoreField):
         unbound_meth = self.field._return_type_for_method
         assert unbound_meth.__code__.co_argcount >= 2, (self.name,
                                                          unbound_meth.__code__.co_varnames)
-        #~ print self.field.name
+        # print self.field.name
         return unbound_meth(obj, request)
 
     def value_from_object(self, obj, request):
         unbound_meth = self.field._return_type_for_method
         assert unbound_meth.__code__.co_argcount >= 2, (self.name,
                                                          unbound_meth.__code__.co_varnames)
-        #~ print self.field.name
+        # print self.field.name
         return unbound_meth(obj, request)
 
-    #~ def obj2list(self,request,obj):
-        #~ return [self.value_from_object(request,obj)]
+    # def obj2list(self,request,obj):
+        # return [self.value_from_object(request,obj)]
 
-    #~ def obj2dict(self,request,obj,d):
+    # def obj2dict(self,request,obj,d):
         #  logger.debug('MethodStoreField.obj2dict() %s',self.field.name)
-        #~ d[self.field.name] = self.value_from_object(request,obj)
+        # d[self.field.name] = self.value_from_object(request,obj)
 
-    #~ def get_from_form(self,instance,post_data):
-        #~ pass
+    # def get_from_form(self,instance,post_data):
+        # pass
 
     def form2obj(self, request, instance, post_data, is_new):
         pass
-        #~ return instance
+        # return instance
         #raise Exception("Cannot update a virtual field")
 
-#~ class ComputedColumnField(StoreField):
+# class ComputedColumnField(StoreField):
 
-    #~ def value_from_object(self,ar,obj):
-        #~ m = self.field.func
+    # def value_from_object(self,ar,obj):
+        # m = self.field.func
         # ~ # assert m.func_code.co_argcount >= 2, (self.field.name, m.func_code.co_varnames)
         # ~ # print self.field.name
-        #~ return m(obj,ar)[0]
+        # return m(obj,ar)[0]
 
-    #~ def form2obj(self,request,instance,post_data,is_new):
-        #~ pass
+    # def form2obj(self,request,instance,post_data,is_new):
+        # pass
 
 
-#~ class SlaveSummaryField(MethodStoreField):
-    #~ def obj2dict(self,request,obj,d):
-        #~ meth = getattr(obj,self.field.name)
+# class SlaveSummaryField(MethodStoreField):
+    # def obj2dict(self,request,obj,d):
+        # meth = getattr(obj,self.field.name)
         # ~ #logger.debug('MethodStoreField.obj2dict() %s',self.field.name)
-        #~ d[self.field.name] = self.slave_report.()
+        # d[self.field.name] = self.slave_report.()
 class OneToOneStoreField(RelatedMixin, StoreField):
 
     def value_from_object(self, obj, request):
         v = self.full_value_from_object(obj, request)
-        #~ try:
-            #~ v = getattr(obj,self.field.name)
-        #~ except self.field.rel.model.DoesNotExist,e:
-            #~ v = None
+        # try:
+            # v = getattr(obj,self.field.name)
+        # except self.field.rel.model.DoesNotExist,e:
+            # v = None
         if v is None:
             return None
         return v.pk
 
-    #~ def obj2list(self,request,obj):
-        #~ return [self.value_from_object(request,obj)]
+    # def obj2list(self,request,obj):
+        # return [self.value_from_object(request,obj)]
 
-    #~ def obj2dict(self,request,obj,d):
-        #~ d[self.field.name] = self.value_from_object(request,obj)
+    # def obj2dict(self,request,obj,d):
+        # d[self.field.name] = self.value_from_object(request,obj)
 
 
 def get_atomizer(model, fld, name):
@@ -804,7 +804,7 @@ def create_atomizer(model, fld, name):
         delegate = create_atomizer(model, fld.return_type, fld.name)
         if delegate is None:
             # e.g. VirtualField with DummyField as return_type
-            return None  
+            return None
             # raise Exception("No atomizer for %s %s %s" % (
             #     model, fld.return_type, fld.name))
         return VirtStoreField(fld, delegate, name)
@@ -841,7 +841,7 @@ def create_atomizer(model, fld, name):
         return DecimalStoreField(fld, name)
     if isinstance(fld, models.AutoField):
         return AutoStoreField(fld, name)
-        #~ kw.update(type='int')
+        # kw.update(type='int')
     if isinstance(fld, models.SmallIntegerField):
         return IntegerStoreField(fld, name)
     if isinstance(fld, fields.DisplayField):
@@ -896,7 +896,7 @@ class ParameterStore(BaseStore):
         # print(20160329, data)
         # assert 'pv' in data
         pv = data.getlist(self.url_param)
-        #~ logger.info("20120221 ParameterStore.parse_params(%s) --> %s",self.url_param,pv)
+        # logger.info("20120221 ParameterStore.parse_params(%s) --> %s",self.url_param,pv)
 
         def parse(sf, form_value):
             if form_value == '' and not sf.field.empty_strings_allowed:
@@ -971,7 +971,7 @@ class Store(BaseStore):
                 """
                 if (fld.field.__class__ is self.pk.__class__) \
                    and fld.field == self.pk:
-                    #~ self.pk = fld.field
+                    # self.pk = fld.field
                     found = True
                     break
                 self.pk_index += fld.list_values_count
@@ -981,8 +981,8 @@ class Store(BaseStore):
 
         del self.df2sf
 
-        #~ if not issubclass(rh.report,dbtables.Table):
-            #~ addfield(RecnoStoreField(self))
+        # if not issubclass(rh.report,dbtables.Table):
+            # addfield(RecnoStoreField(self))
 
         if rh.actor.editable:  # condition added 20131017
 
@@ -1034,14 +1034,14 @@ class Store(BaseStore):
         sf = get_atomizer(self.actor, df, df.name)
         if sf is None:  # dummy fields
             return
-        if not sf in self.all_fields:
+        if sf not in self.all_fields:
             self.all_fields.append(sf)
 
-        #~ sf = self.df2sf.get(df,None)
-        #~ if sf is None:
-            #~ sf = self.create_atomizer(df,df.name)
-            #~ self.all_fields.append(sf)
-            #~ self.df2sf[df] = sf
+        # sf = self.df2sf.get(df,None)
+        # if sf is None:
+            # sf = self.create_atomizer(df,df.name)
+            # self.all_fields.append(sf)
+            # self.df2sf[df] = sf
         fields.append(sf)
 
     def form2obj(self, ar, form_values, instance, is_new):
@@ -1090,31 +1090,31 @@ class Store(BaseStore):
         Was used to write definition of Ext.ensible.cal.CalendarMappings
         and Ext.ensible.cal.EventMappings 
         """
-        #~ logger.info("20111214 column_names: %s",list(self.column_names()))
+        # logger.info("20111214 column_names: %s",list(self.column_names()))
         return list(self.column_names()).index(name)
 
     def row2list(self, request, row):
-        #~ assert isinstance(request,dbtables.AbstractTableRequest)
-        #~ if not isinstance(request,dbtables.ListActionRequest):
-            #~ raise Exception()
-        #~ logger.info("20120107 Store %s row2list(%s)", self.report.model, dd.obj2str(row))
+        # assert isinstance(request,dbtables.AbstractTableRequest)
+        # if not isinstance(request,dbtables.ListActionRequest):
+            # raise Exception()
+        # logger.info("20120107 Store %s row2list(%s)", self.report.model, dd.obj2str(row))
         l = []
         if isinstance(row, PhantomRow):
             for fld in self.list_fields:
                 fld.value2list(request, None, l, row)
-        #~ elif isinstance(row,actions.VirtualRow):
-            #~ for fld in self.list_fields:
-                #~ fld.value2list(request,None,l,row)
+        # elif isinstance(row,actions.VirtualRow):
+            # for fld in self.list_fields:
+                # fld.value2list(request,None,l,row)
         else:
             for fld in self.list_fields:
                 v = fld.full_value_from_object(row, request)
                 fld.value2list(request, v, l, row)
-        #~ logger.info("20130611 Store row2list() --> %r", l)
+        # logger.info("20130611 Store row2list() --> %r", l)
         return l
 
     def row2dict(self, ar, row, fields=None, **d):
-        #~ assert isinstance(ar,dbtables.AbstractTableRequest)
-        #~ logger.info("20111209 Store.row2dict(%s)", dd.obj2str(row))
+        # assert isinstance(ar,dbtables.AbstractTableRequest)
+        # logger.info("20111209 Store.row2dict(%s)", dd.obj2str(row))
         if fields is None:
             fields = self.detail_fields
         for fld in fields:
@@ -1124,12 +1124,12 @@ class Store(BaseStore):
             # logger.info("20140429 Store.row2dict %s -> %s", fld, v)
         return d
 
-    #~ def row2odt(self,request,fields,row,sums):
-        #~ for i,fld in enumerate(fields):
-            #~ if fld.field is not None:
-                #~ v = fld.full_value_from_object(request,row)
-                #~ if v is None:
-                    #~ yield ''
-                #~ else:
-                    #~ sums[i] += fld.value2num(v)
-                    #~ yield fld.value2odt(request,v)
+    # def row2odt(self,request,fields,row,sums):
+        # for i,fld in enumerate(fields):
+            # if fld.field is not None:
+                # v = fld.full_value_from_object(request,row)
+                # if v is None:
+                    # yield ''
+                # else:
+                    # sums[i] += fld.value2num(v)
+                    # yield fld.value2odt(request,v)

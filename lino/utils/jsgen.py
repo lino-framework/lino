@@ -4,29 +4,27 @@
 
 r"""A framework for generating Javascript from Python.
 
-.. autosummary::
-
 Example:
 
 >>> class TextField(Component):
 ...    declare_type = DECLARE_VAR
 >>> class Panel(Component):
 ...    declare_type = DECLARE_VAR
->>> fld1 = TextField(fieldLabel="Field 1",name='fld1',xtype='textfield')
->>> fld2 = TextField(fieldLabel="Field 2",name='fld2',xtype='textfield')
->>> fld3 = TextField(fieldLabel="Field 3",name='fld3',xtype='textfield')
->>> p1 = Panel(title="Panel",name='p1',xtype='panel',items=[fld2,fld3])
->>> main = Component(title="Main",name='main',xtype='form',items=[fld1,p1])
->>> d = dict(main=main,wc=[1,2,3])
+>>> fld1 = TextField(fieldLabel="Field 1", name='fld1', xtype='textfield')
+>>> fld2 = TextField(fieldLabel="Field 2", name='fld2', xtype='textfield')
+>>> fld3 = TextField(fieldLabel="Field 3", name='fld3', xtype='textfield')
+>>> p1 = Panel(title="Panel",name='p1', xtype='panel', items=[fld2, fld3])
+>>> main = Component(title="Main", name='main', xtype='form', items=[fld1, p1])
+>>> d = dict(main=main, wc=[1, 2, 3])
 
 >>> for ln in declare_vars(d):
-...   print (ln)
+...   print(ln)
 var fld11 = { "fieldLabel": "Field 1", "xtype": "textfield" };
 var fld22 = { "fieldLabel": "Field 2", "xtype": "textfield" };
 var fld33 = { "fieldLabel": "Field 3", "xtype": "textfield" };
 var p14 = { "items": [ fld22, fld33 ], "title": "Panel", "xtype": "panel" };
 
->>> print (py2js(d))
+>>> print(py2js(d))
 { "main": { "items": [ fld11, p14 ], "title": "Main", "xtype": "form" }, "wc": [ 1, 2, 3 ] }
   
 Another example...
@@ -35,7 +33,7 @@ Another example...
 ...     yield js_line("hello = function() {")
 ...     yield js_line("console.log(%s)" % py2js("Hello, " + name + "!"))
 ...     yield js_line("}")
->>> print (py2js(onReady("World")))
+>>> print(py2js(onReady("World")))
 hello = function() {
 console.log("Hello, World!")
 }
@@ -44,19 +42,19 @@ console.log("Hello, World!")
 And yet another example (`/blog/2012/0208`)...
 
 >>> chunk = '<a href="javascript:alert({&quot;record_id&quot;: 122 })">Test</a>'
->>> print (py2js(chunk))
+>>> print(py2js(chunk))
 "<a href=\"javascript:alert({&quot;record_id&quot;: 122 })\">Test</a>"
 
 >>> data_record = dict(
 ...   title="Upload \"Aufenthaltserlaubnis\"",
 ...   data=dict(owner=chunk))
->>> print (py2js(data_record))
+>>> print(py2js(data_record))
 { "data": { "owner": "<a href=\"javascript:alert({&quot;record_id&quot;: 122 })\">Test</a>" }, "title": "Upload \"Aufenthaltserlaubnis\"" }
 >>> response = dict(
 ...   message="Upload \"Aufenthaltserlaubnis\" wurde erstellt.",
 ...   success=True,
 ...   data_record=data_record)
->>> print (py2js(response)) #doctest: +NORMALIZE_WHITESPACE
+>>> print(py2js(response)) #doctest: +NORMALIZE_WHITESPACE
 { "data_record": { "data": { "owner": "<a href=\"javascript:alert({&quot;record_id&quot;: 122 })\">Test</a>" }, "title": "Upload \"Aufenthaltserlaubnis\"" }, "message": "Upload \"Aufenthaltserlaubnis\" wurde erstellt.", "success": true }
 
 """
@@ -145,8 +143,8 @@ class js_code(object):
 
     def __init__(self, s):
         self.s = s
-    #~ def __repr__(self):
-        #~ return self.s
+    # def __repr__(self):
+        # return self.s
 
 
 def js_line(s, *args):
@@ -171,19 +169,19 @@ class Value(object):
     def subvars(self):
         return []
 
-    #~ def js_before_body(self):
-        #~ for v in self.subvars():
-            #~ for ln in v.js_before_body():
-                #~ yield ln
+    # def js_before_body(self):
+        # for v in self.subvars():
+            # for ln in v.js_before_body():
+                # yield ln
     def js_body(self):
         for v in self.subvars():
             for ln in v.js_body():
                 yield ln
 
-    #~ def js_after_body(self):
-        #~ for v in self.subvars():
-            #~ for ln in v.js_after_body():
-                #~ yield ln
+    # def js_after_body(self):
+        # for v in self.subvars():
+            # for ln in v.js_after_body():
+                # yield ln
 
     def as_ext(self):
         return self.value_template % py2js(self.value)
@@ -205,23 +203,24 @@ class Variable(Value):
         if name is None:
             self.ext_name = "var%s%d" % (self.ext_suffix, VARIABLE_COUNTER)
         else:
+            name = str(name)
             self.ext_name = "%s%s%d" % (
                 id2js(name), self.ext_suffix, VARIABLE_COUNTER)
         Value.__init__(self, value)
-        #~ assert self.declare_type != DECLARE_INLINE
+        # assert self.declare_type != DECLARE_INLINE
 
         self.name = name
-        #~ if name is None:
-            #~ assert self.declare_type == DECLARE_INLINE
+        # if name is None:
+            # assert self.declare_type == DECLARE_INLINE
             # ~ #self.name = "unnamed %s" % self.__class__.__name__
-        #~ else:
-            #~ self.name = name
-            #~ self.ext_name = id2js(name) + self.ext_suffix
-        #~ self.ext_name = id2js(name) + self.ext_suffix
+        # else:
+            # self.name = name
+            # self.ext_name = id2js(name) + self.ext_suffix
+        # self.ext_name = id2js(name) + self.ext_suffix
 
     def __str__(self):
-        #~ if self.ext_name is None: raise Exception("20120920"+str(self.name))
-        #~ assert self.ext_name is not None
+        # if self.ext_name is None: raise Exception("20120920"+str(self.name))
+        # assert self.ext_name is not None
         return self.ext_name
 
     def js_declare(self):
@@ -240,8 +239,8 @@ class Variable(Value):
             yield "this.%s = %s;" % (self.ext_name, value)
         yield "// end js_declare %s" % self
 
-    #~ def js_column_lines(self):
-        #~ return []
+    # def js_column_lines(self):
+        # return []
 
     def as_ext(self):
         if self.declare_type == DECLARE_INLINE:
@@ -301,7 +300,7 @@ class VisibleComponent(Component, Permittable):
     preferred_width = 10
     preferred_height = 1
     # help_text = None
-    #flex = None
+    # flex = None
     hidden = False
 
     def __init__(self, name, **kw):
@@ -330,7 +329,7 @@ class VisibleComponent(Component, Permittable):
               required_roles=NOT_PROVIDED,
               **kw):
         self.value.update(kw)
-        #~ Component.__init__(self,name,**kw)
+        # Component.__init__(self,name,**kw)
         if preferred_width is not None:
             self.preferred_width = preferred_width
         if width is not None:
@@ -403,14 +402,14 @@ def declare_vars(v):
                 yield ln
         # DON'T return
     elif isinstance(v, Value):
-        #~ 20120616 if not v.is_visible(): return
-        #~ ok = True
+        # 20120616 if not v.is_visible(): return
+        # ok = True
         for ln in declare_vars(v.value):
             yield ln
         # DON'T return
 
     if isinstance(v, Variable):
-        #~ 20120616 if not v.is_visible(): return
+        # 20120616 if not v.is_visible(): return
         if v.declare_type == DECLARE_VAR:
             yield "var %s = %s;" % (v.ext_name, v.js_value())
         elif v.declare_type == DECLARE_THIS:
@@ -421,22 +420,22 @@ def py2js(v):
     """Note that None values are rendered as ``null`` (not ``undefined``.
 
     """
-    #~ assert _for_user_profile is not None
-    #~ logger.debug("py2js(%r)",v)
+    # assert _for_user_profile is not None
+    # logger.debug("py2js(%r)",v)
     for cv in CONVERTERS:
         v = cv(v)
 
-    #~ if isinstance(v,LanguageInfo):
-        #~ return v.django_code
+    # if isinstance(v,LanguageInfo):
+        # return v.django_code
 
     if isinstance(v, Value):
         return v.as_ext()
-        #~ v = v.as_ext()
-        #~ if not isinstance(v, basestring):
-            #~ raise Exception("20120121b %r is of type %s" % (v,type(v)))
-        #~ return v
+        # v = v.as_ext()
+        # if not isinstance(v, basestring):
+            # raise Exception("20120121b %r is of type %s" % (v,type(v)))
+        # return v
     if isinstance(v, Promise):
-        #~ v = force_text(v)
+        # v = force_text(v)
         return json.dumps(force_text(v.encode('utf8')))
 
     if isinstance(v, types.GeneratorType):
@@ -444,17 +443,17 @@ def py2js(v):
     if etree.iselement(v):
         return json.dumps(etree.tostring(v))
 
-    #~ if type(v) is types.GeneratorType:
-        #~ raise Exception("Please don't call the generator function yourself")
-        #~ return "\n".join([ln for ln in v])
+    # if type(v) is types.GeneratorType:
+        # raise Exception("Please don't call the generator function yourself")
+        # return "\n".join([ln for ln in v])
     if callable(v):
-        #~ print 20120114, repr(v)
-        #~ raise Exception("Please call the function yourself")
+        # print 20120114, repr(v)
+        # raise Exception("Please call the function yourself")
         return "\n".join([ln for ln in v()])
     if isinstance(v, js_code):
         return str(v.s)  # v.s might be a unicode
     if v is None:
-        #~ return 'undefined'
+        # return 'undefined'
         return 'null'
     if isinstance(v, (list, tuple)):  # (types.ListType, types.TupleType):
         elems = [py2js(x) for x in v
@@ -466,16 +465,15 @@ def py2js(v):
         # 20160423: removed "sorted(v.items())" because it caused
         # TypeError when the dictionary contained a mixture of unicode
         # and future.types.newstr objects.
+        try:
+            items = [
+                i for i in sorted(v.items())
+                if (not isinstance(v, VisibleComponent))
+                or v.get_view_permission(_for_user_profile)]
+        except TypeError as e:
+            raise TypeError("Failed to sort {0} : {1}".format(v, e))
         return "{ %s }" % ", ".join(
-            ["%s: %s" % (py2js(k), py2js(i))
-             for k, i in v.items()
-             if (not isinstance(v, VisibleComponent))
-             or v.get_view_permission(_for_user_profile)])
-        # try:
-        #     ...
-        # except TypeError as e:
-        #     raise TypeError("Failed to sort {0} : {1}".format(
-        #         v, e))
+            ["%s: %s" % (py2js(k), py2js(i)) for k, i in items])
 
     if isinstance(v, bool):  # types.BooleanType:
         return str(v).lower()
@@ -500,14 +498,14 @@ def py2js(v):
     # return json.encoder.encode_basestring(v)
     # print repr(v)
     # http://docs.djangoproject.com/en/dev/topics/serialization/
-    #~ if not isinstance(v, (str,unicode)):
-        #~ raise Exception("20120121 %r is of type %s" % (v,type(v)))
+    # if not isinstance(v, (str,unicode)):
+        # raise Exception("20120121 %r is of type %s" % (v,type(v)))
     return json.dumps(v)
     # try:
     #     return json.dumps(v)
     # except TypeError as e:
     #     raise TypeError("%r : %s" % (v, e))
-    # ~ return json.dumps(v,cls=DjangoJSONEncoder) # http://code.djangoproject.com/ticket/3324
+    # return json.dumps(v,cls=DjangoJSONEncoder) # http://code.djangoproject.com/ticket/3324
 
 
 def _test():
