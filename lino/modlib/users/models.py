@@ -23,6 +23,7 @@ from django.contrib.auth.hashers import (
 from lino.api import dd
 from lino.utils.xmlgen.html import E
 from lino.core import actions
+from lino.core.fields import NullCharField
 
 from lino.mixins import CreatedModified
 
@@ -73,7 +74,8 @@ class User(CreatedModified, TimezoneHolder):
 
     .. attribute:: username
     
-        The primary key.
+        Must be unique.
+        Leaving this empty means that the user cannot log in.
 
     .. attribute:: profile
 
@@ -109,10 +111,11 @@ class User(CreatedModified, TimezoneHolder):
     See also :attr:`lino.modlib.users.utils.AnonymousUser.authenticated`.
     """
 
-    username = models.CharField(
-        _('Username'), max_length=30,
-        unique=True,
-        help_text=_("""Required. Must be unique."""))
+    username = NullCharField(
+        _('Username'), max_length=30, unique=True,
+        help_text=_(
+            "Must be unique. "
+            "Leaving this empty means that the user cannot log in."))
 
     password = models.CharField(_('Password'), max_length=128)
 

@@ -95,6 +95,9 @@ class DocsTests(LinoTestCase):
     def test_sendchanges(self):
         self.run_django_manage_test('docs/tutorials/sendchanges')
 
+    def test_myroles(self):
+        self.run_django_manage_test('docs/tutorials/myroles')
+
     def test_mti(self):
         self.run_django_manage_test('docs/tutorials/mti')
 
@@ -186,7 +189,6 @@ class SpecsTests(TestCase):
 
     def test_html(self):
         self.run_simple_doctests('docs/specs/html.rst')
-
 
 class UtilsTests(LinoTestCase):
 

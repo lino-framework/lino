@@ -161,6 +161,7 @@ Drafts
    /tutorials/tested_docs/index
    startup
    perms
+   /tutorials/myroles/index
    workflows
    pull
    translate/index
