@@ -1044,6 +1044,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         """Update the :attr:`detail_layout` of this actor, or create a new
         layout if there wasn't one before.
 
+        This is maybe deprecated. See :ticket:`526`.
+
         The first argument can be either a string or a
         :class:`FormLayout <lino.core.layouts.FormLayout>` instance.
         If it is a string, it will replace the currently defined
