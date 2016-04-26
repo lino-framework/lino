@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2014-2015 Luc Saffre
+# Copyright 2014-2016 Luc Saffre
 #
 # This file is part of Lino Noi.
 #
@@ -22,7 +22,8 @@ SETUP_INFO = dict(
     version='0.0.2',  # since 20150918
     install_requires=['lino', 'xlwt'],
     test_suite='tests',
-    description="The Lino application used by the Lino team for managing their work on the Lino project",
+    description=("The Lino application used by the Lino team for "
+                 "managing their work on the Lino project"),
     long_description="""Lino Noi is a customizable ticket management and time tracking
 system to use when time is more than money.
 
@@ -73,9 +74,12 @@ SETUP_INFO.update(packages=[
     'lino_noi.projects.bs3.tests',
     'lino_noi.projects',
     'lino_noi.projects.team',
-    'lino_noi.projects.team.settings',
     'lino_noi.projects.team.tests',
+    'lino_noi.projects.team.settings',
     'lino_noi.projects.team.settings.fixtures',
+    'lino_noi.projects.team.lib',
+    'lino_noi.projects.team.lib.tickets',
+    'lino_noi.projects.team.lib.tickets.fixtures',
     'lino_noi.projects.public',
     'lino_noi.projects.care',
     'lino_noi.projects.care.settings',

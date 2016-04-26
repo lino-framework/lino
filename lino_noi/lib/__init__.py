@@ -28,5 +28,6 @@
     users
     clocking
     tickets
+    faculties
 
 """
