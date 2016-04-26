@@ -21,12 +21,16 @@ class OfficeOperator(SiteUser):
     for himself).
 
     Currently an office operator can create their own notes and
-    uploads but no calendar entries.
+    uploads, but no calendar entries.
+
+    For example the `lino_xl.lib.cal.ui.OverdueAppointments` table
+    requires :class:`OfficeStaff` and is *not* available for
+    :class:`OfficeOperator`.
 
     """
 
 
-class OfficeStaff(OfficeUser, OfficeOperator,ContactsStaff):
+class OfficeStaff(OfficeUser, OfficeOperator, ContactsStaff):
     """A user who manages configuration of office functionality.
 
     """
