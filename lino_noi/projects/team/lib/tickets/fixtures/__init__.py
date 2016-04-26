@@ -22,10 +22,7 @@
 .. autosummary::
    :toctree:
 
-   models
-   fixtures.demo
+   std
 
 
 """
-
-from lino_noi.lib.tickets import *

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2014-2015 Luc Saffre
+# Copyright 2014-2016 Luc Saffre
 #
 # This file is part of Lino Noi.
 #
@@ -22,9 +22,9 @@
 .. autosummary::
    :toctree:
 
-   public
    doctests
    demo
+   www
 
 
 
@@ -70,7 +70,7 @@ class Site(Site):
         # yield 'lino_xl.lib.cal'
         yield 'lino_noi.lib.products'
 
-        yield 'lino_noi.lib.tickets'
+        yield 'lino_noi.projects.team.lib.tickets'
         # We explicitly yield 'tickets', although it would be
         # automatically added by 'clocking', because we want
         # :meth:`lino.core.plugin.Plugin.get_menu_group` to return

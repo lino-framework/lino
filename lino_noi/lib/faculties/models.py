@@ -18,8 +18,6 @@
 # <http://www.gnu.org/licenses/>.
 """Database models for :mod:`lino_noi.lib.faculties`.
 
-Defines the models :class:`Broker`, :class:`Faculty` and
-:class:`Competence`.
 """
 
 import logging
@@ -38,9 +36,9 @@ MAX_WEIGHT = 100
 
 
 class Faculty(BabelNamed, Hierarchical, Referrable):
-    """A Faculty (Fachbereich) is a conceptual (not organizational)
-    department of this PCSW.  Each Newcomer will be assigned to one
-    and only one Faculty, based on his/her needs.
+    """A **faculty** is a "knowledge" or "competence" which can be
+    required in order to work on some ticket, and which users can have
+    or not.
 
     """
 
@@ -59,16 +57,22 @@ class Faculty(BabelNamed, Hierarchical, Referrable):
         'products.ProductCat', blank=True, null=True)
 
 
-class Competence(UserAuthored, mixins.Sequenced):
-    """
-    A competence is when a given user is declared to be competent
-    in a given faculty.
+class Competence(UserAuthored, Sequenced):
+    """A **competence** is when a given *user* is declared to be competent
+    in a given *faculty*.
+
+    .. attribute:: user
+    .. attribute:: faculty
+    .. attribute:: affinity
+    .. attribute:: product
+
     """
 
     class Meta:
         # ~ abstract = True
         verbose_name = _("Competence")
         verbose_name_plural = _("Competences")
+        unique_together = ['user', 'faculty', 'product']
 
     faculty = models.ForeignKey('faculties.Faculty')
     affinity = models.IntegerField(
@@ -86,8 +90,6 @@ class Competence(UserAuthored, mixins.Sequenced):
         if not faculty or not faculty.product_cat:
             return Product.objects.none()
         return Product.objects.filter(cat=faculty.product_cat)
-
-
 
     def full_clean(self, *args, **kw):
         if self.affinity is None:

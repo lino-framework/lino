@@ -17,15 +17,14 @@
 # License along with Lino Noi.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-"""Fixtures specific for Lino Care.
+"""Fixtures specific for the Team variant of Lino Noi.
 
 .. autosummary::
    :toctree:
 
-   models
-   fixtures.demo
+   tickets
 
 
 """
 
-from lino_noi.lib.tickets import *
+# from lino_noi.lib.tickets import *

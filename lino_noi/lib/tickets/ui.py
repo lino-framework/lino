@@ -295,10 +295,11 @@ class Tickets(dd.Table):
     column_names = 'id summary:50 #feedback #standby closed ' \
                    'workflow_buttons:30 reporter:10 project:10 *'
     detail_layout = TicketDetail()
-    insert_layout = """
-    reporter #product
+    insert_layout = dd.InsertLayout("""
+    # reporter #product
     summary
-    """
+    description
+    """, window_size=(70, 20))
 
     detail_html_template = "tickets/Ticket/detail.html"
 

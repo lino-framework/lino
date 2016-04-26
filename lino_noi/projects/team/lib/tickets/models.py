@@ -16,16 +16,26 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with Lino Noi.  If not, see
 # <http://www.gnu.org/licenses/>.
+"""Database models specific for the Team variant of Lino Noi.
 
-"""Fixtures specific for Lino Care.
-
-.. autosummary::
-   :toctree:
-
-   models
-   fixtures.demo
-
+Defines a customized :class:`TicketDetail`.
 
 """
 
-from lino_noi.lib.tickets import *
+from lino_noi.lib.tickets.models import *
+from lino.api import _
+
+
+class TicketDetail(TicketDetail):
+    """Customized detail_lyout for Tickets.  Replaces `waiting_for` by
+    `faculties`
+
+    """
+
+    general1 = """
+    summary:40 id:6 reporter:12
+    site product project private
+    workflow_buttons:30 assigned_to:20 faculty:20
+    """
+
+Tickets.detail_layout = TicketDetail()

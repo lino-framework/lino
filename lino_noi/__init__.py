@@ -36,5 +36,5 @@ exec(compile(open(filename, "rb").read(), filename, 'exec'))
 __version__ = SETUP_INFO['version']
 
 intersphinx_urls = dict(docs="http://noi.lino-framework.org")
-srcref_url = 'https://github.com/lsaffre/lino-noi/blob/master/%s'
+srcref_url = 'https://github.com/lsaffre/noi/blob/master/%s'
 

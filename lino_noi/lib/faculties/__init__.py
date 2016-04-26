@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2015 Luc Saffre
+# Copyright 2011-2016 Luc Saffre
 #
 # This file is part of Lino Noi.
 #
@@ -17,7 +17,8 @@
 # License along with Lino Noi.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-"""The :mod:`lino_noi.lib.faculties` package add "Competences" and "Faculties" to tickets.
+"""Adds the notions of "competences" and "faculties" to your ticket
+management.
 
 .. autosummary::
    :toctree:
@@ -35,7 +36,6 @@ class Plugin(ad.Plugin):
     verbose_name = _("Faculties")
 
     needs_plugins = ['lino_noi.lib.tickets']
-
 
     def setup_main_menu(self, site, profile, m):
         mgt = site.plugins.tickets
