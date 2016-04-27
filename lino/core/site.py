@@ -1231,6 +1231,7 @@ class Site(object):
         self.plugins = AttrDict()
 
         def install_plugin(app_name, needed_by=None):
+            # print("20160427 install_plugin()", app_name)
             # Django does not accept newstr, and we don't want to see
             # ``u'applabel'`` in doctests.
             app_name = six.text_type(app_name)

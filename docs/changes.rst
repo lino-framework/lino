@@ -16,8 +16,14 @@ only the source code.
     marked_changes
 
 
-Version 1.7.0 (in development)
-===============================
+Version 1.7.1 (in development)
+============================================
+
+- Added `lino.modlib.printing.mixins.CachedPrintableChecker` which
+  checks for missing cache files.  :blogref:`20160427`
+
+Version 1.7.0 (released :blogref:`20160426`)
+============================================
 
 Important changes which caused a minor version bump:
 
@@ -29,6 +35,10 @@ Important changes which caused a minor version bump:
   (:ticket:`520`)
 
 - Lots of optimizations and bugfixes
+
+- The :attr:`username <lino.modlib.users.models.User.username>` of a
+  user is now nullable (can be empty). :blogref:`20160425`.
+
 
 
 Version 1.6.19 (released :blogref:`20150901`)
