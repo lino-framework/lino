@@ -172,7 +172,8 @@ class Sequenced(Duplicable):
         abstract = True
         ordering = ['seqno']
 
-    seqno = models.IntegerField(_("Seq.No."), blank=True, null=False)
+    # seqno = models.IntegerField(_("Seq.No."), blank=True, null=False)
+    seqno = models.IntegerField(_("No."), blank=True, null=False)
 
     duplicate = DuplicateSequenced()
     """The :class:`DuplicateSequenced` action for this object.
