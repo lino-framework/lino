@@ -111,10 +111,10 @@ class Competence(UserAuthored, Sequenced):
     def full_clean(self, *args, **kw):
         if self.affinity is None:
             self.affinity = self.faculty.affinity
-        if self.faculty.product_cat:
-            if not self.product:
-                raise ValidationError(
-                    "A {0} competence needs a {1} as option")
+        # if self.faculty.product_cat:
+        #     if not self.product:
+        #         raise ValidationError(
+        #             "A {0} competence needs a {1} as option")
         super(Competence, self).full_clean(*args, **kw)
 
     def __unicode__(self):
