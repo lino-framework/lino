@@ -50,22 +50,36 @@ class UnassignedTickets(Tickets):
 
 class Faculties(dd.Table):
     model = 'faculties.Faculty'
-    column_names = 'ref name affinity product_cat *'
-    order_by = ["ref", "name"]
+    # order_by = ["ref", "name"]
     detail_layout = """
-    id ref affinity product_cat
-    name
+    id name
+    parent product_cat affinity
     FacultiesByParent CompetencesByFaculty
     """
     insert_layout = """
-    ref affinity product_cat
+    # ref affinity product_cat
     name
+    parent
     """
+
+
+class AllFaculties(Faculties):
+    label = _("Faculties (all)")
+    column_names = 'ref name affinity product_cat parent *'
+    order_by = ["parent", "seqno"]
+
+
+class TopLevelFaculties(Faculties):
+    label = _("Faculties (tree)")
+    order_by = ["seqno"]
+    column_names = 'seqno name children_summary parent *'
+    filter = models.Q(parent__isnull=True)
+    variable_row_height = True
 
 
 class FacultiesByParent(Faculties):
     master_key = 'parent'
-    column_names = 'ref name affinity product_cat *'
+    column_names = 'seqno name affinity product_cat *'
     order_by = ["ref"]
     
 

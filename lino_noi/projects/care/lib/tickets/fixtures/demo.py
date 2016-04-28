@@ -87,10 +87,12 @@ def objects():
 
     yield P(_("English"), cat=lng)
 
-    yield F("Französischunterricht", "Cours de francais")
-    yield F("Deutschunterricht", "Cours d'allemand")
-    yield F("Matheunterricht", "Cours de maths")
-    yield F("Gitarrenunterricht", "Cours de guitare")
+    edu = F("Unterricht", "Cours")
+    yield edu
+    yield F("Französischunterricht", "Cours de francais", parent=edu)
+    yield F("Deutschunterricht", "Cours d'allemand", parent=edu)
+    yield F("Matheunterricht", "Cours de maths", parent=edu)
+    yield F("Gitarrenunterricht", "Cours de guitare", parent=edu)
     yield F("Nähen", "Couture")
     yield F("Friseur", "Coiffure")
     yield F("Gartenarbeiten", "Travaux de jardin")
@@ -100,7 +102,7 @@ def objects():
     yield F("Gesellschafter für Senioren",
             "Rencontres personnes agées")
     yield F("Hunde spazierenführen", "Chiens")
-    traduire = F("Übersetzungsarbeiten", "Traductions")
+    traduire = F("Übersetzungsarbeiten", "Traductions", product_cat=lng)
     yield traduire
     yield F("Briefe beantworten", "Répondre au courrier")
 
