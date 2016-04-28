@@ -26,6 +26,7 @@ from django.utils.timezone import make_aware
 
 from lino.api import rt
 from lino.utils.xmlgen.html import E
+from lino.modlib.plausibility.choicelists import Checker
 
 davlink = settings.SITE.plugins.get('davlink', None)
 has_davlink = davlink is not None and settings.SITE.use_java
@@ -135,7 +136,7 @@ class DirectPrintAction(BasePrintAction):
 
     def run_from_ui(self, ar, **kw):
         elem = ar.selected_rows[0]
-        bm = elem.get_build_method()
+        bm = self.build_method or elem.get_build_method()
         bm.build(ar, self, elem)
         mf = bm.get_target(self, elem)
         # if ar.request is not None and bm.use_webdav and has_davlink:
@@ -605,3 +606,32 @@ class TypedPrintable(CachedPrintable):
         if ptype.template:
             return [ptype.template]
         return [bm.get_default_template(self)]
+
+
+class CachedPrintableChecker(Checker):
+    """Checks for missing cache files on all objects which inherit
+    :class:`CachedPrintable`.
+
+    When a CachedPrintable has a non-empty :attr:`build_time
+    <CachedPrintable.build_time>` field, this means that the target
+    file has been built. If the file no longer exists, we set
+    :attr:`build_time <CachedPrintable.build_time>` to `None`.
+
+    """
+    model = CachedPrintable
+    verbose_name = _("Check for missing target files")
+    
+    def get_plausibility_problems(self, obj, fix=False):
+        if obj.build_time is not None:
+            t = obj.get_cache_mtime()
+            if t is None:
+                msg = _("Seems to have been built ({bt}), "
+                        "but cache file is missing .")
+                params = dict(bt=obj.build_time)
+                yield (True, msg.format(**params))
+                if fix:
+                    obj.build_time = None
+                    obj.full_clean()
+                    obj.save()
+
+CachedPrintableChecker.activate()
