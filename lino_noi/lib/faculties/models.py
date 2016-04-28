@@ -25,6 +25,7 @@ from lino_noi.lib.tickets.models import *
 
 logger = logging.getLogger(__name__)
 
+from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from lino.api import dd
 from lino.mixins import Hierarchical, Sequenced, Referrable
