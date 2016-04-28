@@ -35,7 +35,7 @@ from lino.modlib.users.mixins import UserAuthored
 MAX_WEIGHT = 100
 
 
-class Faculty(BabelNamed, Hierarchical, Referrable):
+class Faculty(BabelNamed, Hierarchical, Sequenced, Referrable):
     """A **faculty** is a "knowledge" or "competence" which can be
     required in order to work on some ticket, and which users can have
     or not.
@@ -54,7 +54,20 @@ class Faculty(BabelNamed, Hierarchical, Referrable):
             "A number between -{0} and +{0}.").format(MAX_WEIGHT))
 
     product_cat = models.ForeignKey(
-        'products.ProductCat', blank=True, null=True)
+        'products.ProductCat', blank=True, null=True,
+        verbose_name=_("Options category"),
+        help_text=_("The category of products to use for "
+                    "specifying additional options."))
+
+    @dd.displayfield(_("Child faculties"))
+    def children_summary(self, ar):
+        if ar is None:
+            return ''
+        elems = [ar.obj2html(ch) for ch in self.children.all()]
+        elems = join_elems(elems, sep=', ')
+        return E.p(*elems)
+
+dd.update_field(Faculty, 'parent', verbose_name=_("Parent faculty"))
 
 
 class Competence(UserAuthored, Sequenced):
@@ -82,7 +95,10 @@ class Competence(UserAuthored, Sequenced):
             "in this faculty."
             "A number between -{0} and +{0}.").format(MAX_WEIGHT))
     product = models.ForeignKey(
-        'products.Product', blank=True, null=True)
+        'products.Product', blank=True, null=True,
+        verbose_name=_("Option"),
+        help_text=_("Some faculties can require additional "
+                    "options for a competence."))
 
     @dd.chooser()
     def product_choices(cls, faculty):
@@ -94,6 +110,10 @@ class Competence(UserAuthored, Sequenced):
     def full_clean(self, *args, **kw):
         if self.affinity is None:
             self.affinity = self.faculty.affinity
+        if self.faculty.product_cat:
+            if not self.product:
+                raise ValidationError(
+                    "A {0} competence needs a {1} as option")
         super(Competence, self).full_clean(*args, **kw)
 
     def __unicode__(self):
