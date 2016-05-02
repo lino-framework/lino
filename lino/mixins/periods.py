@@ -1,20 +1,19 @@
-# Copyright 2014-2015 Luc Saffre
+# Copyright 2014-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
 Defines classes related to date ranges.
-
-.. autosummary::
 
 """
 
 from __future__ import unicode_literals
 from builtins import object
 
-import datetime
-
 import logging
 logger = logging.getLogger(__name__)
+
+import datetime
+import collections
 
 from django.db import models
 from django.conf import settings
@@ -29,6 +28,20 @@ from lino.utils.format_date import fdl
 from lino.utils.ranges import isrange
 from lino.utils.format_date import fds
 from lino.core.utils import ParameterPanel
+
+DatePeriodValue = collections.namedtuple(
+    'DatePeriodValue', ('start_date', 'end_date'))
+"""
+A named tuple with the following fields:
+
+.. attribute:: start_date
+
+    The start date
+
+.. attribute:: end_date
+
+    The end date
+"""
 
 
 def rangefmt(r):
@@ -51,7 +64,7 @@ class DatePeriod(Model):
     end are date fields.
 
     Designed for usage with
-    :class:`lino.modlib.system.mixins.PeriodEvents`.
+    :class:`lino.modlib.system.choicelists.PeriodEvents`.
 
     """
 

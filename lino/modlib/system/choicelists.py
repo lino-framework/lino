@@ -1,9 +1,9 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2015 Luc Saffre
+# Copyright 2011-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
-Miscellaneous mixins for `lino.modlib.system`.
+Choicelists included with `lino.modlib.system`.
 
 """
 
@@ -16,7 +16,7 @@ from django.db.models import Q
 
 from lino.core.choicelists import ChoiceList, Choice
 
-from lino.utils import AttrDict
+# from lino.utils import AttrDict
 
 
 class YesNo(ChoiceList):
@@ -63,34 +63,51 @@ add('F', _("Female"), 'female')
 
 
 class PeriodEvent(Choice):
-
+    """Every item of :class:`PeriodEvents` is an instance of this."""
     def add_filter(self, qs, obj):
+        """Add a filter to the given Django queryset. The given `obj` must be
+        either a `datetime.date` object or must have two attributes
+        `start_date` and `end_date`. The easiest ways is to have it an
+        instance of :class:`DatePeriod
+        <lino.mixins.periods.DatePeriod>` or :class:`DatePeriodValue
+        <lino.mixins.periods.DatePeriodValue>`.
 
+        """
+        from lino.mixins.periods import DatePeriodValue
         if isinstance(obj, datetime.date):
-            obj = AttrDict(start_date=obj, end_date=obj)
+            # obj = AttrDict(start_date=obj, end_date=obj)
+            obj = DatePeriodValue(obj, obj)
 
-        if obj.start_date is None or obj.end_date is None:
+        if self.name == 'active':
+            if obj.end_date:
+                qs = qs.filter(Q(start_date__isnull=True) |
+                               Q(start_date__lte=obj.end_date))
+            if obj.start_date:
+                qs = qs.filter(Q(end_date__isnull=True) |
+                               Q(end_date__gte=obj.start_date))
             return qs
 
+        # if obj.start_date is None or obj.end_date is None:
+        #     return qs
         if self.name == 'started':
-            qs = qs.filter(start_date__gte=obj.start_date)
-            qs = qs.filter(start_date__lte=obj.end_date)
+            qs = qs.filter(start_date__isnull=False)
+            if obj.start_date:
+                qs = qs.filter(start_date__gte=obj.start_date)
+            if obj.end_date:
+                qs = qs.filter(start_date__lte=obj.end_date)
         elif self.name == 'ended':
             qs = qs.filter(end_date__isnull=False)
-            qs = qs.filter(end_date__gte=obj.start_date)
-            qs = qs.filter(end_date__lte=obj.end_date)
-        elif self.name == 'active':
-            qs = qs.filter(Q(start_date__isnull=True) |
-                           Q(start_date__lte=obj.end_date))
-            qs = qs.filter(Q(end_date__isnull=True) |
-                           Q(end_date__gte=obj.start_date))
+            if obj.start_date:
+                qs = qs.filter(end_date__gte=obj.start_date)
+            if obj.end_date:
+                qs = qs.filter(end_date__lte=obj.end_date)
         return qs
 
 
 class PeriodEvents(ChoiceList):
     """The list of things you can observe on a
-    :class:`DatePeriod`. The default list has the following
-    choices:
+    :class:`lino.mixins.periods.DatePeriod`. The default list has the
+    following choices:
 
     .. django2rst::
 
