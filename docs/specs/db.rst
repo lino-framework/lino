@@ -41,7 +41,7 @@ This document describes the database structure.
  excerpts.Excerpt            excerpts.Excerpts            12        2
  excerpts.ExcerptType        excerpts.ExcerptTypes        17        2
  faculties.Competence        faculties.Competences        6         18
- faculties.Faculty           faculties.Faculties          8         8
+ faculties.Faculty           faculties.Faculties          9         8
  gfks.HelpText               gfks.HelpTexts               4         1
  lists.List                  lists.Lists                  7         8
  lists.ListType              lists.ListTypes              4         3
@@ -99,13 +99,13 @@ users.UserProfiles.admin:900
   - Places : Countries, Places
   - Contacts : Organization types, Functions, List Types
   - Office : Upload Types, Excerpt Types, My Text Field Templates
-  - Tickets : Project Types, Ticket types, Faculties, Competences
+  - Tickets : Project Types, Ticket types, Faculties (tree), Competences
   - Clocking : Session Types
 - Explorer :
   - System : content types, Authorities, User Profiles, Notifications, Changes
   - Contacts : Contact Persons, List memberships
   - Office : Stars, Uploads, Upload Areas, Outgoing Mails, Attachments, Excerpts, Comments, Text Field Templates
   - Tickets : Milestones, Dependencies, Interests, Deployments
-  - Faculties : Faculties, Competences
+  - Faculties : Faculties (all), Competences
   - Clocking : Sessions
 - Site : About
