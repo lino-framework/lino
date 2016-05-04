@@ -614,8 +614,21 @@ class CachedPrintableChecker(Checker):
 
     When a CachedPrintable has a non-empty :attr:`build_time
     <CachedPrintable.build_time>` field, this means that the target
-    file has been built. If the file no longer exists, we set
-    :attr:`build_time <CachedPrintable.build_time>` to `None`.
+    file has been built.  That file might no longer exists for several
+    reasons:
+
+    - it has really beeen removed from the cache directory.
+
+    - we are working in a copy of the database, using a different
+      cache directory.
+
+    - the computed name of the file has changed due to a change in
+      configuration or code.
+
+    An easy quick "fix" would be to set `build_time` to None, but this
+    is not automatic because in cases of realy data loss a system
+    admin might want to have at least that timestamp in order to
+    search for the lost file.
 
     """
     model = CachedPrintable
@@ -628,10 +641,10 @@ class CachedPrintableChecker(Checker):
                 msg = _("Seems to have been built ({bt}), "
                         "but cache file is missing .")
                 params = dict(bt=obj.build_time)
-                yield (True, msg.format(**params))
-                if fix:
-                    obj.build_time = None
-                    obj.full_clean()
-                    obj.save()
+                yield (False, msg.format(**params))
+                # if fix:
+                #     obj.build_time = None
+                #     obj.full_clean()
+                #     obj.save()
 
 CachedPrintableChecker.activate()
