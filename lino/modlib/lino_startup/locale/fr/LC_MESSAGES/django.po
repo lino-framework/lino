@@ -5,18 +5,19 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version:  \n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2016-04-28 22:15+0300\n"
-"PO-Revision-Date: 2016-01-20 14:16+0300\n"
+"PO-Revision-Date: 2016-05-02 11:10+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language: fr\n"
 "Language-Team: \n"
-"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.2.0\n"
+"X-Generator: Poedit 1.5.4\n"
 
 #: lino/core/actions.py:662
 msgid "Detail"
@@ -236,10 +237,11 @@ msgstr ""
 
 #: lino/core/model.py:408
 #, python-format
-msgid "Cannot delete %(model)s %(self)s because %(count)d %(refs)s refer to it."
+msgid ""
+"Cannot delete %(model)s %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
-"Impossible de supprimer %(model)s %(self)s parce que %(count)d  %(refs)s "
-"y font référence."
+"Impossible de supprimer %(model)s %(self)s parce que %(count)d  %(refs)s y "
+"font référence."
 
 #: lino/core/model.py:689
 msgid "Workflow"
@@ -449,8 +451,7 @@ msgstr "Allocution"
 
 #: lino/mixins/human.py:201
 msgid ""
-"Text to print between salutation and name as part of the first address "
-"line."
+"Text to print between salutation and name as part of the first address line."
 msgstr ""
 
 #: lino/mixins/human.py:206 lino/modlib/users/models.py:128
@@ -621,7 +622,7 @@ msgstr ""
 #: lino/mixins/sequenced.py:176 lino/modlib/countries/mixins.py:195
 #: lino/modlib/polls/models.py:234
 msgid "No."
-msgstr "No"
+msgstr "N°"
 
 #: lino/mixins/sequenced.py:194
 #, python-format
@@ -863,8 +864,7 @@ msgid ""
 "There is more than one client with national id %(national_id)s in our "
 "database."
 msgstr ""
-"Il y a plus d'un client avec NN %(national_id)s dans notre base de "
-"données."
+"Il y a plus d'un client avec NN %(national_id)s dans notre base de données."
 
 #: lino/modlib/beid/mixins.py:304 lino/modlib/beid/mixins.py:316
 #, fuzzy, python-format
@@ -879,8 +879,8 @@ msgstr "D'accord pour créer nouveau bénéficiaire %s?"
 #: lino/modlib/beid/mixins.py:323
 #, python-format
 msgid ""
-"Cannot create new client because there is already a person named %s in "
-"our database."
+"Cannot create new client because there is already a person named %s in our "
+"database."
 msgstr "Il y a déjà une personne nommée %s dans notre base de données."
 
 #: lino/modlib/beid/mixins.py:327 lino/modlib/beid/mixins.py:334
@@ -890,8 +890,8 @@ msgstr "Oups!"
 #: lino/modlib/beid/mixins.py:330
 #, python-format
 msgid ""
-"Cannot create new client because there is more than one person named %s "
-"in our database."
+"Cannot create new client because there is more than one person named %s in "
+"our database."
 msgstr "Il y a plus d'une personne nommée %s dans notre base de données."
 
 #: lino/modlib/beid/mixins.py:353
@@ -1346,8 +1346,7 @@ msgstr ""
 msgid ""
 "The organisation who runs this site.\n"
 "        This is used e.g. as sender in documents.\n"
-"        Or, newly created partners inherit the country of the site owner."
-"\n"
+"        Or, newly created partners inherit the country of the site owner.\n"
 "        "
 msgstr ""
 
@@ -1355,7 +1354,8 @@ msgstr ""
 msgid "Places"
 msgstr "Endroits"
 
-#: lino/modlib/countries/__init__.py:31 lino/modlib/countries/choicelists.py:55
+#: lino/modlib/countries/__init__.py:31
+#: lino/modlib/countries/choicelists.py:55
 #, fuzzy
 msgid "County"
 msgstr "Pays"
@@ -1983,7 +1983,8 @@ msgstr ""
 msgid "Show this panel in own window"
 msgstr "Montrer ce panneau dans une fenêtre à part."
 
-#: lino/modlib/extjs/linoweb.js:1667 lino/modlib/plausibility/choicelists.py:39
+#: lino/modlib/extjs/linoweb.js:1667
+#: lino/modlib/plausibility/choicelists.py:39
 msgid "Warning"
 msgstr "Avertissement"
 
@@ -2223,11 +2224,11 @@ msgstr "Membres de ménage"
 
 #: lino/modlib/households/models.py:230
 msgid ""
-"Whether this is the primary household of this person. Checking this field"
-" will automatically disable any other primary memberships."
+"Whether this is the primary household of this person. Checking this field "
+"will automatically disable any other primary memberships."
 msgstr ""
-"Marque ceci comme ménage primaire de cette personne. Activer cette case "
-"va la désactiver pour les autres ménages."
+"Marque ceci comme ménage primaire de cette personne. Activer cette case va "
+"la désactiver pour les autres ménages."
 
 #: lino/modlib/households/models.py:266
 msgid "Make this the primary household."
@@ -2428,12 +2429,13 @@ msgid ""
 "Try also the other <a href=\"http://lino-framework.org/demos.html\">demo "
 "sites</a>."
 msgstr ""
-"Essayez également les autres <a href=\"http://lino-"
-"framework.org/demos.html\">sites de démonstration</a>."
+"Essayez également les autres <a href=\"http://lino-framework.org/demos.html"
+"\">sites de démonstration</a>."
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:23
 #, python-format
-msgid "Your feedback is welcome to %s or directly to the person who invited you."
+msgid ""
+"Your feedback is welcome to %s or directly to the person who invited you."
 msgstr "Vos réactions sont les bienvenues par courier électronique à %s."
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:37
@@ -2442,8 +2444,8 @@ msgstr ""
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:38
 msgid ""
-"Unlike the <a href=\"/\">web content section</a> there is now a GUI menu "
-"bar in the upper part of the screen."
+"Unlike the <a href=\"/\">web content section</a> there is now a GUI menu bar "
+"in the upper part of the screen."
 msgstr ""
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:43
@@ -2466,7 +2468,8 @@ msgstr "vous connecter"
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:57
 msgid "using the <b>Log in</b> button in the upper right corner."
-msgstr "en cliquant le bouton <b>Se connecter</b> dans le coin supérieur droit."
+msgstr ""
+"en cliquant le bouton <b>Se connecter</b> dans le coin supérieur droit."
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:61
 #, python-format
@@ -2616,8 +2619,8 @@ msgstr ""
 
 #: lino/modlib/outbox/mixins.py:57
 msgid ""
-"The name of the file to be used as template when creating an email from a"
-" mailable of this type."
+"The name of the file to be used as template when creating an email from a "
+"mailable of this type."
 msgstr ""
 
 #: lino/modlib/outbox/mixins.py:74
@@ -2745,7 +2748,8 @@ msgstr "Tests de données"
 msgid "Check plausibility"
 msgstr "Vérifier les données"
 
-#: lino/modlib/plausibility/models.py:57 lino/modlib/plausibility/models.py:101
+#: lino/modlib/plausibility/models.py:57
+#: lino/modlib/plausibility/models.py:101
 msgid "Fix plausibility problems"
 msgstr "Réparer les problèmes de données"
 
@@ -3087,12 +3091,12 @@ msgstr "Méthode de construction"
 #: lino/modlib/printing/mixins.py:104
 #, python-format
 msgid ""
-"Your printable document (filename %(doc)s) should now open in a new "
-"browser window. If it doesn't, please consult %(help)s or ask your system"
-" administrator."
+"Your printable document (filename %(doc)s) should now open in a new browser "
+"window. If it doesn't, please consult %(help)s or ask your system "
+"administrator."
 msgstr ""
-"Votre document imprimable (fichier %(doc)s) devrait maintenant apparaître"
-" dans une nouvelle fenêtre. Sinon consultez %(help)s ou demandez votre  "
+"Votre document imprimable (fichier %(doc)s) devrait maintenant apparaître "
+"dans une nouvelle fenêtre. Sinon consultez %(help)s ou demandez votre  "
 "administrateur système."
 
 #: lino/modlib/printing/mixins.py:191
@@ -3112,8 +3116,8 @@ msgstr "Modifier le modèle d'impression"
 
 #: lino/modlib/printing/mixins.py:289
 msgid ""
-"Before you can edit this template we must create a local copy on the "
-"server. This will exclude the template from future updates."
+"Before you can edit this template we must create a local copy on the server. "
+"This will exclude the template from future updates."
 msgstr ""
 
 #: lino/modlib/printing/mixins.py:310
@@ -3264,7 +3268,8 @@ msgid "Expected Guests"
 msgstr "Visiteurs attendus"
 
 #: lino/modlib/reception/models.py:346
-msgid "Consult this table when checking in a partner who     has an appointment."
+msgid ""
+"Consult this table when checking in a partner who     has an appointment."
 msgstr ""
 
 #: lino/modlib/reception/models.py:374
@@ -3688,8 +3693,8 @@ msgstr ""
 
 #: lino/modlib/users/models.py:124
 msgid ""
-"Users with an empty `profile` field are considered inactive and cannot "
-"log in."
+"Users with an empty `profile` field are considered inactive and cannot log "
+"in."
 msgstr ""
 
 #: lino/modlib/users/models.py:127
@@ -5027,20 +5032,8 @@ msgstr ""
 #~ msgid "Read from eID"
 #~ msgstr "Lu depuis carte d'identité"
 
-#~ msgid "Appy POD"
-#~ msgstr ""
-
-#~ msgid "Table (landscape)"
-#~ msgstr ""
-
-#~ msgid "Show this table as a pdf document"
-#~ msgstr ""
-
 #~ msgid "Labels"
 #~ msgstr "a eu lieu"
-
-#~ msgid "Generate mailing labels for these recipients"
-#~ msgstr ""
 
 #~ msgid "eID card type"
 #~ msgstr "Type de carte eID"
@@ -5050,36 +5043,6 @@ msgstr ""
 
 #~ msgid "Belgian citizen"
 #~ msgstr "Citoyen belge"
-
-#~ msgid "Kids card (< 12 year)"
-#~ msgstr ""
-
-#~ msgid "Foreigner card A"
-#~ msgstr ""
-
-#~ msgid "Foreigner card B"
-#~ msgstr ""
-
-#~ msgid "Foreigner card C"
-#~ msgstr ""
-
-#~ msgid "Foreigner card D"
-#~ msgstr ""
-
-#~ msgid "Foreigner card E"
-#~ msgstr ""
-
-#~ msgid "Foreigner card E+"
-#~ msgstr ""
-
-#~ msgid "Foreigner card F"
-#~ msgstr ""
-
-#~ msgid "Foreigner card F+"
-#~ msgstr ""
-
-#~ msgid "Blog"
-#~ msgstr ""
 
 #~ msgid "Weekday"
 #~ msgstr "Jour"
@@ -5147,9 +5110,6 @@ msgstr ""
 #~ msgid "per weekday"
 #~ msgstr "Jour"
 
-#~ msgid "Relative to Easter"
-#~ msgstr ""
-
 #~ msgid "Access Class"
 #~ msgstr "Classe d'accès"
 
@@ -5174,20 +5134,8 @@ msgstr ""
 #~ msgid "Easter monday"
 #~ msgstr "Fils  nourricier"
 
-#~ msgid "Ascension of Jesus"
-#~ msgstr ""
-
-#~ msgid "Pentecost"
-#~ msgstr ""
-
-#~ msgid "Good Friday"
-#~ msgstr ""
-
 #~ msgid "Ash Wednesday"
 #~ msgstr "Mercredi"
-
-#~ msgid "Rosenmontag"
-#~ msgstr ""
 
 #~ msgid "Task states"
 #~ msgstr "heures"
@@ -5201,20 +5149,11 @@ msgstr ""
 #~ msgid "Event states"
 #~ msgstr "Mes rendez-vous aujourd'hui"
 
-#~ msgid "The possible states of a calendar event."
-#~ msgstr ""
-
-#~ msgid "Edit guests list"
-#~ msgstr ""
-
 #~ msgid "Fixed"
 #~ msgstr "Communiqué"
 
 #~ msgid "Suggested"
 #~ msgstr "Proposé"
-
-#~ msgid "Automatically suggested. Default state of an automatic event."
-#~ msgstr ""
 
 #~ msgid "Visit"
 #~ msgstr "Version"
@@ -5230,9 +5169,6 @@ msgstr ""
 
 #~ msgid "Guest states"
 #~ msgstr "heures"
-
-#~ msgid "Afterwards"
-#~ msgstr ""
 
 #~ msgid "Invited"
 #~ msgstr "Invité"
@@ -5258,23 +5194,11 @@ msgstr ""
 #~ msgid "Reject this invitation."
 #~ msgstr "Rejeter cette invitation."
 
-#~ msgid "%(guest)s cannot accept invitation %(day)s at %(time)s"
-#~ msgstr ""
-
 #~ msgid "Accept"
 #~ msgstr "Accepter"
 
 #~ msgid "Accept this invitation."
 #~ msgstr "Accepter cette invitation."
-
-#~ msgid "%(guest)s confirmed invitation %(day)s at %(time)s"
-#~ msgstr ""
-
-#~ msgid "Mark this guest as present."
-#~ msgstr ""
-
-#~ msgid "Mark this guest as absent."
-#~ msgstr ""
 
 #~ msgid "Reset"
 #~ msgstr "Réinitialiser"
@@ -5286,7 +5210,8 @@ msgstr ""
 #~ msgstr "Le rendez-vous a eu lieu."
 
 #~ msgid "Mark this as published. All participants have been informed."
-#~ msgstr "Marquer l'évènement comme planifié. Les participants ont été informés."
+#~ msgstr ""
+#~ "Marquer l'évènement comme planifié. Les participants ont été informés."
 
 #~ msgid "Take"
 #~ msgstr "Accepter"
@@ -5297,17 +5222,8 @@ msgstr ""
 #~ msgid "Event took place."
 #~ msgstr "L'évènement est terminé."
 
-#~ msgid "Reset to initial state."
-#~ msgstr ""
-
 #~ msgid "Career"
 #~ msgstr "Parcours"
-
-#~ msgid "CV user"
-#~ msgstr ""
-
-#~ msgid "CV staff"
-#~ msgstr ""
 
 #~ msgid "Prequalifying"
 #~ msgstr "Préqualification"
@@ -5356,21 +5272,6 @@ msgstr ""
 
 #~ msgid "Part-time"
 #~ msgstr "Temps partiel"
-
-#~ msgid "Dupable partners"
-#~ msgstr ""
-
-#~ msgid "Excerpt shortcut"
-#~ msgstr ""
-
-#~ msgid "Excerpt shortcuts"
-#~ msgstr ""
-
-#~ msgid "Please see the attached file."
-#~ msgstr ""
-
-#~ msgid "Subject:"
-#~ msgstr ""
 
 #~ msgid "Sender:"
 #~ msgstr "expéditeur"
@@ -5504,9 +5405,6 @@ msgstr ""
 #~ msgid "Aunt"
 #~ msgstr "Tante"
 
-#~ msgid "Nephew"
-#~ msgstr ""
-
 #~ msgid "Niece"
 #~ msgstr "Nièce"
 
@@ -5516,32 +5414,11 @@ msgstr ""
 #~ msgid "Mailing list"
 #~ msgstr "Salle d'attente"
 
-#~ msgid "Discussion group"
-#~ msgstr ""
-
 #~ msgid "Flags"
 #~ msgstr "Page suivante"
 
 #~ msgid "Announcements"
 #~ msgstr "Inscriptions"
-
-#~ msgid "Weekly newsletter"
-#~ msgstr ""
-
-#~ msgid "General discussion"
-#~ msgstr ""
-
-#~ msgid "Beginners forum"
-#~ msgstr ""
-
-#~ msgid "Developers forum"
-#~ msgstr ""
-
-#~ msgid "PyCon 2014"
-#~ msgstr ""
-
-#~ msgid "Free Software Day 2014"
-#~ msgstr ""
 
 #~ msgid "Special note type"
 #~ msgstr "Type de note"
@@ -5555,59 +5432,20 @@ msgstr ""
 #~ msgid "Ideas"
 #~ msgstr "jours"
 
-#~ msgid "Feedback after first working day"
-#~ msgstr ""
-
 #~ msgid "More ideas"
 #~ msgstr "Séries de cours"
-
-#~ msgid "Tried to explain"
-#~ msgstr ""
 
 #~ msgid "Appointment with RCycle"
 #~ msgstr "Rendez-vous aujourd'hui"
 
-#~ msgid "Apologized via SMS"
-#~ msgstr ""
-
 #~ msgid "Default"
 #~ msgstr "valeur par défault"
-
-#~ msgid "Recipient Type"
-#~ msgstr ""
-
-#~ msgid "to"
-#~ msgstr ""
-
-#~ msgid "cc"
-#~ msgstr ""
-
-#~ msgid "bcc"
-#~ msgstr ""
 
 #~ msgid "Pages"
 #~ msgstr "Page suivante"
 
 #~ msgid "Properties"
 #~ msgstr "Propriétés"
-
-#~ msgid "Do you like?"
-#~ msgstr ""
-
-#~ msgid "certainly not"
-#~ msgstr ""
-
-#~ msgid "rather not"
-#~ msgstr ""
-
-#~ msgid "normally"
-#~ msgstr ""
-
-#~ msgid "quite much"
-#~ msgstr ""
-
-#~ msgid "very much"
-#~ msgstr ""
 
 #~ msgid "Property Type"
 #~ msgstr "Type de propriété"
@@ -5645,12 +5483,6 @@ msgstr ""
 #~ msgid "Reception"
 #~ msgstr "Réception"
 
-#~ msgid "Label"
-#~ msgstr ""
-
-#~ msgid "Miscellaneous"
-#~ msgstr ""
-
 #~ msgid "Organisation"
 #~ msgstr "Confirmation"
 
@@ -5678,14 +5510,8 @@ msgstr ""
 #~ msgid " on "
 #~ msgstr " le "
 
-#~ msgid "Move down"
-#~ msgstr ""
-
 #~ msgid "Update Events"
 #~ msgstr "Générer les évènements"
-
-#~ msgid "Recurrence Set"
-#~ msgstr ""
 
 #~ msgid "Recurrence Sets"
 #~ msgstr "Dates de récurrence"
@@ -5726,12 +5552,6 @@ msgstr ""
 #~ msgid "Remote Calendars"
 #~ msgstr "Calendrier par défaut"
 
-#~ msgid "URL template"
-#~ msgstr ""
-
-#~ msgid "read-only"
-#~ msgstr ""
-
 #~ msgid "Room"
 #~ msgstr "Local"
 
@@ -5759,20 +5579,11 @@ msgstr ""
 #~ msgid "Locks the user"
 #~ msgstr "Bloque l'utilisateur"
 
-#~ msgid ""
-#~ msgstr ""
-
 #~ msgid "Event label"
 #~ msgstr "Intitulé d'une entrée"
 
 #~ msgid "Default text for summary of new events."
 #~ msgstr "Le calendrier par défaut pour vos rendez-vous et tâches."
-
-#~ msgid "Simultaneous events"
-#~ msgstr ""
-
-#~ msgid "How many conflicting events should be tolerated."
-#~ msgstr ""
 
 #~ msgid "Guest Role"
 #~ msgstr "Rôle de participant"
@@ -5791,9 +5602,6 @@ msgstr ""
 
 #~ msgid "Subscriptions"
 #~ msgstr "Abonnements"
-
-#~ msgid "The calendar you want to subscribe to."
-#~ msgstr ""
 
 #~ msgid "hidden"
 #~ msgstr "caché"
@@ -5835,26 +5643,14 @@ msgstr ""
 #~ msgid "all day"
 #~ msgstr "journée entière"
 
-#~ msgid "Unsaved %s"
-#~ msgstr ""
-
 #~ msgid "with"
 #~ msgstr "avec"
-
-#~ msgid "Link URL"
-#~ msgstr ""
 
 #~ msgid "Reminder"
 #~ msgstr "Rappel"
 
 #~ msgid "Responsible user"
 #~ msgstr "Utilisateur responsable"
-
-#~ msgid "Check for missing participants"
-#~ msgstr ""
-
-#~ msgid "No participants although {0} suggestions exist."
-#~ msgstr ""
 
 #~ msgid "Participant"
 #~ msgstr "Confirmation"
@@ -5871,9 +5667,6 @@ msgstr ""
 #~ msgid "Default access class"
 #~ msgstr "Classe d'accès par défaut"
 
-#~ msgid "The default access class for your calendar events and tasks."
-#~ msgstr ""
-
 #~ msgid "Default Event Type"
 #~ msgstr "Type d'évènement par défault"
 
@@ -5889,68 +5682,26 @@ msgstr ""
 #~ msgid "The default calendar of this site."
 #~ msgstr "Le calendrier par défaut pour vos rendez-vous et tâches."
 
-#~ msgid "Max automatic events"
-#~ msgstr ""
-
-#~ msgid "Maximum number of automatic events to be generated."
-#~ msgstr ""
-
-#~ msgid "%(num)d reminders for %(user)s have been updated."
-#~ msgstr ""
-
-#~ msgid "List of rooms where calendar events can happen."
-#~ msgstr ""
-
-#~ msgid "List of possible priorities of calendar events."
-#~ msgstr ""
-
-#~ msgid "A calendar task is something you need to do."
-#~ msgstr ""
-
 #~ msgid "Managed by"
 #~ msgstr "Traité par"
 
 #~ msgid "Only rows managed by this user."
 #~ msgstr "%d rendez-vous vous ont été attribués"
 
-#~ msgid "Only rows having this state."
-#~ msgstr ""
-
 #~ msgid "My tasks"
 #~ msgstr "Mes tâches"
-
-#~ msgid "Table of all my tasks."
-#~ msgstr ""
-
-#~ msgid "The role of a guest expresses what the partner is going to do there."
-#~ msgstr ""
-
-#~ msgid "A guest is a partner invited to an event. "
-#~ msgstr ""
 
 #~ msgid "Event state"
 #~ msgstr "Mes rendez-vous aujourd'hui"
 
-#~ msgid "Only rows having this event state."
-#~ msgstr ""
-
 #~ msgid "Guest state"
 #~ msgstr "heures"
-
-#~ msgid "Only rows having this guest state."
-#~ msgstr ""
 
 #~ msgid "Presences"
 #~ msgstr "Présences"
 
 #~ msgid "My presences"
 #~ msgstr "Mes présences"
-
-#~ msgid "My pending invitations"
-#~ msgstr ""
-
-#~ msgid "Received invitations which I must accept or reject."
-#~ msgstr ""
 
 #~ msgid "My guests"
 #~ msgstr "Mes visiteurs"
@@ -5960,9 +5711,6 @@ msgstr ""
 
 #~ msgid "Pending"
 #~ msgstr "En attente"
-
-#~ msgid "A List of calendar entries. Each entry is called an event."
-#~ msgstr ""
 
 #~ msgid "Only events assigned to this user."
 #~ msgstr "%d rendez-vous vous ont été attribués"
@@ -5978,9 +5726,6 @@ msgstr ""
 
 #~ msgid "My appointments"
 #~ msgstr "Mes rendez-vous"
-
-#~ msgid "Table of my appointments."
-#~ msgstr ""
 
 #~ msgid "My appointments today"
 #~ msgstr "Mes rendez-vous aujourd'hui"
@@ -6003,14 +5748,8 @@ msgstr ""
 #~ msgid "Print cache file has been cleared."
 #~ msgstr "%s a été créé"
 
-#~ msgid "Going to clear the print cache file of %s"
-#~ msgstr ""
-
 #~ msgid "Excerpt title"
 #~ msgstr "Type d'extrait"
-
-#~ msgid "The title to be used when printing an excerpt."
-#~ msgstr ""
 
 #~ msgid "Excerpt Type"
 #~ msgstr "Type d'extrait"
@@ -6021,38 +5760,14 @@ msgstr ""
 #~ msgid "Certifying"
 #~ msgstr "Communiqué"
 
-#~ msgid "Whether an excerpt of this type is a unique printout."
-#~ msgstr ""
-
 #~ msgid "Body template"
 #~ msgstr "Modèle"
 
 #~ msgid "The model that can issue printouts of this type."
 #~ msgstr "Céer courrier"
 
-#~ msgid "Backward compatible"
-#~ msgstr ""
-
 #~ msgid "Print recipient"
 #~ msgstr "Destinataire"
-
-#~ msgid "Whether to print a recipient field in document."
-#~ msgstr ""
-
-#~ msgid "Print directly"
-#~ msgstr ""
-
-#~ msgid "Cannot set %(c)s without %(p)s"
-#~ msgstr ""
-
-#~ msgid "Cannot set %(c)s for non.certifiable model %(m)s"
-#~ msgstr ""
-
-#~ msgid "Create an excerpt in order to print this data record."
-#~ msgstr ""
-
-#~ msgid "Excerpt type \"%s\" has no body_template"
-#~ msgstr ""
 
 #~ msgid "Excerpt"
 #~ msgstr "Extrait"
@@ -6069,17 +5784,8 @@ msgstr ""
 #~ msgid "Certifying excerpts"
 #~ msgstr "Communiqué"
 
-#~ msgid "History of excerpts based on this data record."
-#~ msgstr ""
-
-#~ msgid "Existing excerpts"
-#~ msgstr ""
-
 #~ msgid "not printed"
 #~ msgstr "non imprimé"
-
-#~ msgid "Last week"
-#~ msgstr ""
 
 #~ msgid "Older"
 #~ msgstr "Rôle"
@@ -6087,21 +5793,5 @@ msgstr ""
 #~ msgid "All"
 #~ msgstr "journée entière"
 
-#~ msgid "Product Category"
-#~ msgstr ""
-
-#~ msgid "Product Categories"
-#~ msgstr ""
-
-#~ msgid "Product"
-#~ msgstr ""
-
-#~ msgid "Products"
-#~ msgstr ""
-
 #~ msgid "Long description"
 #~ msgstr "Description"
-
-#~ msgid "Required. Must be unique."
-#~ msgstr ""
-
