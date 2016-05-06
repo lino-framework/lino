@@ -24,7 +24,7 @@ The main plugin for Lino Noi.
    :toctree:
 
     models
-   fixtures.linotickets
+    fixtures.linotickets
 
 """
 
