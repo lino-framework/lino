@@ -31,5 +31,5 @@ class ShowAsHtml(dd.Action):
         url = dd.plugins.bootstrap3.renderer.get_request_url(ar)
         ar.success(open_url=url)
 
-if settings.SITE.default_ui != 'bootstrap3':
+if settings.SITE.default_ui != 'lino.modlib.bootstrap3':
     AbstractTable.show_as_html = ShowAsHtml()

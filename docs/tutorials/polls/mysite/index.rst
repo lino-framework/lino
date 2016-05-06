@@ -119,9 +119,9 @@ If you are curious:
     ('lino.modlib.lino_startup',
      'django.contrib.staticfiles',
      'lino.modlib.about',
-     'lino.modlib.extjs',
      'lino.modlib.jinja',
      'lino.modlib.bootstrap3',
+     'lino.modlib.extjs',
      'polls')
 
     At the moment you don't need to worry about those additional "system"

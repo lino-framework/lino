@@ -236,14 +236,7 @@ class Kernel(object):
             p.on_ui_init(self)
 
         ui = None
-        if self.site.default_ui is not None:
-            ui = self.site.plugins.resolve(self.site.default_ui)
-            if ui is None:
-                raise Exception(
-                    "Invalid value %r for `default_ui` (must be one of %s)"
-                    % (self.site.default_ui, list(self.site.plugins.keys())))
-            ui.url_prefix = None
-        else:
+        if self.site.default_ui is None:
             for p in self.site.installed_plugins:
                 if p.ui_handle_attr_name is not None:
                     ui = p
@@ -251,13 +244,25 @@ class Kernel(object):
             # if ui is None:
             #     raise Exception("No user interface in {0}".format(
             #         [u.app_name for u in self.site.installed_plugins]))
+
+        else:
+            for p in self.site.installed_plugins:
+                if p.app_name == self.site.default_ui:
+                    ui = p
+            if ui is None:
+                raise Exception(
+                    "Invalid value %r for `default_ui` "
+                    "(must be None or the name of an installed plugin)"
+                    % self.site.default_ui)
+            ui.url_prefix = None
+
         if ui is not None:
             self.default_renderer = ui.renderer
             self.default_ui = ui
 
         post_ui_build.send(self)
 
-        if self.default_ui is not None:
+        if ui is not None:
 
             # trigger creation of params_layout.params_store
             for res in actors.actors_list:

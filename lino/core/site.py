@@ -800,18 +800,17 @@ class Site(object):
 
     """
 
-    default_ui = 'extjs'
-    """The `app_label` of the plugin which is to be used as default user
-    interface on this :class:`Site`.
+    default_ui = 'lino.modlib.extjs'
+    """The full Python name of the plugin which is to be used as default
+    user interface on this :class:`Site`.
 
-    Default value is ``'extjs'`` (which points to
-    :mod:`lino.modlib.extjs`). Other candidates are
-    :mod:`lino_xl.lib.pages` and
-    :mod:`lino.modlib.bootstrap3`.
+    Default value is :mod:`lino.modlib.extjs`. Other candidates are
+    :mod:`lino.modlib.bootstrap3`, :mod:`lino_xl.lib.pages` and
+    :mod:`lino_extjs6.extjs` .
 
     Another possibility is to set it to `None`. In that case you will
     probably also set :attr:`root_urlconf` to a custom URL dispatcher.
-    Usage example see :mod:`lino.projects.cms`.
+    Usage example for this see :mod:`lino.projects.cms`.
 
     """
 
@@ -1237,18 +1236,26 @@ class Site(object):
             app_name = six.text_type(app_name)
             app_mod = import_module(app_name)
 
+            # print "Loading plugin", app_name
+            k = app_name.rsplit('.')[-1]
+            if k in self.plugins:
+                other = self.plugins[k]
+                if other.app_name == app_name:
+                    # If a plugin is installed more than once, only
+                    # the first one counts and all others are ignored
+                    # silently. Happens e.g. in Lino Noi where
+                    # lino_noi.lib.noi is both a required plugin and
+                    # the default_ui.
+                    return
+                raise Exception("Tried to install %r where %r "
+                                "is already installed." % (
+                                    app_name, other.app_name))
+
             # Can an `__init__.py` file explicitly set ``Plugin =
             # None``? Is that feature being used?
             app_class = getattr(app_mod, 'Plugin', None)
             if app_class is None:
                 app_class = Plugin
-            # print "Loading plugin", app_name
-            k = app_name.rsplit('.')[-1]
-            if k in self.plugins:
-                txt = self.plugins[k]
-                raise Exception("Tried to install '%s' where '%s' "
-                                "is already installed." % (
-                                    app_name, txt))
             p = app_class(self, k, app_name, app_mod, needed_by)
             cfg = PLUGIN_CONFIGS.pop(k, None)
             if cfg:
@@ -3021,15 +3028,17 @@ Please convert to Plugin method".format(mod, methname)
         """
 
         if self.django_admin_prefix:
-            yield 'django.contrib.admin'
+            yield 'django.contrib.admin'  # not tested
+
         yield 'django.contrib.staticfiles'
         yield 'lino.modlib.about'
 
-        if self.default_ui == "extjs":
-            yield 'lino.modlib.extjs'
-            yield 'lino.modlib.bootstrap3'
-        elif self.default_ui == "bootstrap3":
-            yield 'lino.modlib.bootstrap3'
+        yield self.default_ui
+        # if self.default_ui == "extjs":
+        #     yield 'lino.modlib.extjs'
+        #     yield 'lino.modlib.bootstrap3'
+        # elif self.default_ui == "bootstrap3":
+        #     yield 'lino.modlib.bootstrap3'
 
         for a in self.local_apps:
             yield a

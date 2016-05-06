@@ -626,9 +626,9 @@ class CachedPrintableChecker(Checker):
       configuration or code.
 
     An easy quick "fix" would be to set `build_time` to None, but this
-    is not automatic because in cases of realy data loss a system
-    admin might want to have at least that timestamp in order to
-    search for the lost file.
+    is not automatic because in cases of real data loss a system admin
+    might want to have at least that timestamp in order to search for
+    the lost file.
 
     """
     model = CachedPrintable
