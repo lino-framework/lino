@@ -21,7 +21,7 @@ class Site(Site):
     demo_fixtures = 'demo all_countries be inscodes'
 
     #~ admin_prefix = 'admin'
-    default_ui = 'bootstrap3'
+    default_ui = 'lino.modlib.bootstrap3'
 
     #~ anonymous_user_profile =
 

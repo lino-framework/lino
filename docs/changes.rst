@@ -19,8 +19,12 @@ only the source code.
 Version 1.7.1 (in development)
 ============================================
 
-- Added `lino.modlib.printing.mixins.CachedPrintableChecker` which
-  checks for missing cache files.  :blogref:`20160427`
+- :attr:`lino.core.site.Site.default_ui` is now the
+  full Python name, not just the app_label. (:blogref:`20160506`)
+
+- Added `CachedPrintableChecker
+  <lino.modlib.printing.mixins.CachedPrintableChecker>` which checks
+  for missing cache files (:blogref:`20160427`, :blogref:`20160504`).
 
 Version 1.7.0 (released :blogref:`20160426`)
 ============================================

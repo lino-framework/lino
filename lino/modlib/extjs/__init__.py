@@ -40,6 +40,8 @@ class Plugin(Plugin):
 
     """
 
+    needs_plugins = ['lino.modlib.bootstrap3']
+
     enter_submits_form = False
     """Whether the :kbd:`ENTER` key (or :kbd:`CTRL+ENTER` when in a
     textarea field) should submit the form.

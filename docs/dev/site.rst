@@ -126,9 +126,9 @@ These will go into the :setting:`INSTALLED_APPS` setting (but
 lino.modlib.lino_startup
 django.contrib.staticfiles
 lino.modlib.about
-lino.modlib.extjs
 lino.modlib.jinja
 lino.modlib.bootstrap3
+lino.modlib.extjs
 lino.modlib.events
 lino.modlib.printing
 lino.modlib.system
@@ -188,9 +188,9 @@ These are the Django settings which Lino will override:
  'INSTALLED_APPS': ('lino.modlib.lino_startup',
                     'django.contrib.staticfiles',
                     'lino.modlib.about',
-                    'lino.modlib.extjs',
                     'lino.modlib.jinja',
-                    'lino.modlib.bootstrap3'),
+                    'lino.modlib.bootstrap3',
+                    'lino.modlib.extjs'),
  'LANGUAGES': [],
  'LOCALE_PATHS': (),
  'LOGGING': {'disable_existing_loggers': 'True',
