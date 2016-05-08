@@ -5,18 +5,19 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version:  lino\n"
+"Project-Id-Version: lino\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-04-28 22:15+0300\n"
-"PO-Revision-Date: 2016-01-26 21:07+0300\n"
+"PO-Revision-Date: 2016-05-08 18:44+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language: de\n"
 "Language-Team: \n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.2.0\n"
+"X-Generator: Poedit 1.5.4\n"
 
 #: lino/core/actions.py:662
 msgid "Detail"
@@ -167,9 +168,9 @@ msgid ""
 "\"00.07.1980\" means \"in July 1980\"\n"
 "or \"23.07.0000\" means \"on a 23th of July\"."
 msgstr ""
-"Unkomplette Datumsangaben sind erlaubt, z.B. \"%(ex1)s\" heißt "
-"\"irgendwann im Jahr 1980\", \"%(ex2)s\" heißt \"im Juli 1980\"oder "
-"\"%(ex3)s\" heißt \"an einem 23. Juli\"."
+"Unkomplette Datumsangaben sind erlaubt, z.B. \"%(ex1)s\" heißt \"irgendwann "
+"im Jahr 1980\", \"%(ex2)s\" heißt \"im Juli 1980\"oder \"%(ex3)s\" heißt "
+"\"an einem 23. Juli\"."
 
 #: lino/core/kernel.py:118 lino/modlib/extjs/linoweb.js:1540
 #: lino/modlib/extjs/linoweb.js:2817
@@ -211,7 +212,8 @@ msgstr "%s wird gelöscht"
 #: lino/core/merge.py:103
 #, python-format
 msgid "Are you sure you want to merge %(this)s into %(merge_to)s?"
-msgstr "Sind Sie sicher, dass Sie %(this)s nach %(merge_to)s fusionieren wollen?"
+msgstr ""
+"Sind Sie sicher, dass Sie %(this)s nach %(merge_to)s fusionieren wollen?"
 
 #: lino/core/merge.py:135
 #, python-format
@@ -240,7 +242,8 @@ msgstr "Auch vergängliche verknüpfte Objekte überweisen"
 
 #: lino/core/model.py:408
 #, python-format
-msgid "Cannot delete %(model)s %(self)s because %(count)d %(refs)s refer to it."
+msgid ""
+"Cannot delete %(model)s %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
 "Kann %(model)s %(self)s nicht löschen weil %(count)d %(refs)s darauf "
 "verweisen."
@@ -451,8 +454,7 @@ msgstr "Titel"
 
 #: lino/mixins/human.py:201
 msgid ""
-"Text to print between salutation and name as part of the first address "
-"line."
+"Text to print between salutation and name as part of the first address line."
 msgstr ""
 
 #: lino/mixins/human.py:206 lino/modlib/users/models.py:128
@@ -502,27 +504,25 @@ msgid "%d years"
 msgstr "%d Jahre"
 
 #: lino/mixins/human.py:375
-#, fuzzy
 msgid "Aged from"
-msgstr "gültig von"
+msgstr "Alter von"
 
 #: lino/mixins/human.py:376
 msgid "Select only persons aged at least the given number of years."
 msgstr ""
 
 #: lino/mixins/human.py:379
-#, fuzzy
 msgid "Aged to"
-msgstr "Zugewiesen zu"
+msgstr "Alter bis"
 
 #: lino/mixins/human.py:380
 msgid "Select only persons aged at most the given number of years."
 msgstr ""
 
 #: lino/mixins/human.py:409
-#, fuzzy, python-format
+#, python-format
 msgid "Aged %(min)s to %(max)s"
-msgstr "Daten von %(min)s bis %(max)s"
+msgstr "Alter von %(min)s bis %(max)s"
 
 #: lino/mixins/periods.py:63
 msgid "Start date"
@@ -880,11 +880,11 @@ msgstr "Neuen Klienten %s anlegen : Sind Sie sicher?"
 #: lino/modlib/beid/mixins.py:323
 #, fuzzy, python-format
 msgid ""
-"Cannot create new client because there is already a person named %s in "
-"our database."
+"Cannot create new client because there is already a person named %s in our "
+"database."
 msgstr ""
-"Wir haben mehr als einen Klienten mit Namen %(first_name)s %(last_name)s "
-"in unserer Datenbank."
+"Wir haben mehr als einen Klienten mit Namen %(first_name)s %(last_name)s in "
+"unserer Datenbank."
 
 #: lino/modlib/beid/mixins.py:327 lino/modlib/beid/mixins.py:334
 msgid "Oops!"
@@ -893,11 +893,11 @@ msgstr "Upps!"
 #: lino/modlib/beid/mixins.py:330
 #, fuzzy, python-format
 msgid ""
-"Cannot create new client because there is more than one person named %s "
-"in our database."
+"Cannot create new client because there is more than one person named %s in "
+"our database."
 msgstr ""
-"Wir haben mehr als einen Klienten mit Namen %(first_name)s %(last_name)s "
-"in unserer Datenbank."
+"Wir haben mehr als einen Klienten mit Namen %(first_name)s %(last_name)s in "
+"unserer Datenbank."
 
 #: lino/modlib/beid/mixins.py:353
 msgid "Update card holder data from eID card"
@@ -1342,8 +1342,7 @@ msgstr "Site-Besitzer"
 msgid ""
 "The organisation who runs this site.\n"
 "        This is used e.g. as sender in documents.\n"
-"        Or, newly created partners inherit the country of the site owner."
-"\n"
+"        Or, newly created partners inherit the country of the site owner.\n"
 "        "
 msgstr ""
 
@@ -1351,7 +1350,8 @@ msgstr ""
 msgid "Places"
 msgstr "Orte"
 
-#: lino/modlib/countries/__init__.py:31 lino/modlib/countries/choicelists.py:55
+#: lino/modlib/countries/__init__.py:31
+#: lino/modlib/countries/choicelists.py:55
 msgid "County"
 msgstr "Regierungsbezirk"
 
@@ -1972,7 +1972,8 @@ msgstr "Datum im Format JJJJ-MM-TT eingeben (Nullen für unbekannte Teile)"
 msgid "Show this panel in own window"
 msgstr "Dieses Panel in eigenem Fenster öffnen"
 
-#: lino/modlib/extjs/linoweb.js:1667 lino/modlib/plausibility/choicelists.py:39
+#: lino/modlib/extjs/linoweb.js:1667
+#: lino/modlib/plausibility/choicelists.py:39
 msgid "Warning"
 msgstr "Warnung"
 
@@ -2202,8 +2203,8 @@ msgstr "Mitglieder"
 
 #: lino/modlib/households/models.py:230
 msgid ""
-"Whether this is the primary household of this person. Checking this field"
-" will automatically disable any other primary memberships."
+"Whether this is the primary household of this person. Checking this field "
+"will automatically disable any other primary memberships."
 msgstr ""
 
 #: lino/modlib/households/models.py:266
@@ -2380,7 +2381,8 @@ msgstr ""
 
 #: lino/modlib/lino_startup/config/500.html:7
 msgid "Congratulations, you found an error in our system."
-msgstr "Herzlichen Glückwunsch, Sie haben einen Fehler in unserem System gefunden."
+msgstr ""
+"Herzlichen Glückwunsch, Sie haben einen Fehler in unserem System gefunden."
 
 #: lino/modlib/lino_startup/config/500.html:8
 msgid "We apologize for the inconvenience."
@@ -2406,12 +2408,13 @@ msgid ""
 "Try also the other <a href=\"http://lino-framework.org/demos.html\">demo "
 "sites</a>."
 msgstr ""
-"Probieren Sie auch die anderen <a href=\"http://lino-"
-"framework.org/demos.html\">Online-Demos</a> aus."
+"Probieren Sie auch die anderen <a href=\"http://lino-framework.org/demos.html"
+"\">Online-Demos</a> aus."
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:23
 #, python-format
-msgid "Your feedback is welcome to %s or directly to the person who invited you."
+msgid ""
+"Your feedback is welcome to %s or directly to the person who invited you."
 msgstr "Fragen und Verbesserungsvorschläge sind willkommen per E-Mail an %s."
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:37
@@ -2420,8 +2423,8 @@ msgstr ""
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:38
 msgid ""
-"Unlike the <a href=\"/\">web content section</a> there is now a GUI menu "
-"bar in the upper part of the screen."
+"Unlike the <a href=\"/\">web content section</a> there is now a GUI menu bar "
+"in the upper part of the screen."
 msgstr ""
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:43
@@ -2588,8 +2591,8 @@ msgstr "E-Mail-Vorlage"
 
 #: lino/modlib/outbox/mixins.py:57
 msgid ""
-"The name of the file to be used as template when creating an email from a"
-" mailable of this type."
+"The name of the file to be used as template when creating an email from a "
+"mailable of this type."
 msgstr ""
 
 #: lino/modlib/outbox/mixins.py:74
@@ -2718,7 +2721,8 @@ msgstr "Datentests"
 msgid "Check plausibility"
 msgstr "Datenkontrolle durchführen"
 
-#: lino/modlib/plausibility/models.py:57 lino/modlib/plausibility/models.py:101
+#: lino/modlib/plausibility/models.py:57
+#: lino/modlib/plausibility/models.py:101
 msgid "Fix plausibility problems"
 msgstr "Datenprobleme reparieren"
 
@@ -3074,9 +3078,9 @@ msgstr "Konstruktionsmethode"
 #: lino/modlib/printing/mixins.py:104
 #, python-format
 msgid ""
-"Your printable document (filename %(doc)s) should now open in a new "
-"browser window. If it doesn't, please consult %(help)s or ask your system"
-" administrator."
+"Your printable document (filename %(doc)s) should now open in a new browser "
+"window. If it doesn't, please consult %(help)s or ask your system "
+"administrator."
 msgstr ""
 "Das druckbare Dokument (Datei %(doc)s) müsste sich jetzt in einem neuen "
 "Browserfenster öffnen. Andernfalls bitte  %(help)s konsultieren oder den "
@@ -3099,8 +3103,8 @@ msgstr "Vorlage bearbeiten"
 
 #: lino/modlib/printing/mixins.py:289
 msgid ""
-"Before you can edit this template we must create a local copy on the "
-"server. This will exclude the template from future updates."
+"Before you can edit this template we must create a local copy on the server. "
+"This will exclude the template from future updates."
 msgstr ""
 
 #: lino/modlib/printing/mixins.py:310
@@ -3114,7 +3118,8 @@ msgstr "Der Cache für %s wurde geleert."
 
 #: lino/modlib/printing/mixins.py:348
 msgid "This will discard all changes in the generated file."
-msgstr "Dadurch gehen alle manuellen Änderungen im generierten Dokument verloren."
+msgstr ""
+"Dadurch gehen alle manuellen Änderungen im generierten Dokument verloren."
 
 #: lino/modlib/printing/mixins.py:384
 msgid "Template"
@@ -3252,7 +3257,8 @@ msgid "Expected Guests"
 msgstr "Erwartete Besucher"
 
 #: lino/modlib/reception/models.py:346
-msgid "Consult this table when checking in a partner who     has an appointment."
+msgid ""
+"Consult this table when checking in a partner who     has an appointment."
 msgstr ""
 
 #: lino/modlib/reception/models.py:374
@@ -3681,8 +3687,8 @@ msgstr ""
 
 #: lino/modlib/users/models.py:124
 msgid ""
-"Users with an empty `profile` field are considered inactive and cannot "
-"log in."
+"Users with an empty `profile` field are considered inactive and cannot log "
+"in."
 msgstr ""
 
 #: lino/modlib/users/models.py:127
@@ -5476,9 +5482,6 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 #~ msgid "Read from eID"
 #~ msgstr "Eingelesen von eID-Karte"
 
-#~ msgid "Appy POD"
-#~ msgstr ""
-
 #~ msgid "Table (landscape)"
 #~ msgstr "Tabelle (Querformat)"
 
@@ -5487,9 +5490,6 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 
 #~ msgid "Labels"
 #~ msgstr "Etiketten"
-
-#~ msgid "Generate mailing labels for these recipients"
-#~ msgstr ""
 
 #~ msgid "eID card type"
 #~ msgstr "eID-Kartenart"
@@ -5502,9 +5502,6 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 
 #~ msgid "Kids card (< 12 year)"
 #~ msgstr "Kind unter 12 Jahren"
-
-#~ msgid "Foreigner card A"
-#~ msgstr ""
 
 #~ msgid "Foreigner card B"
 #~ msgstr "B (Bescheinigung der Eintragung im Ausländerregister)"
@@ -5526,9 +5523,6 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 
 #~ msgid "Foreigner card F+"
 #~ msgstr "F+"
-
-#~ msgid "Blog"
-#~ msgstr ""
 
 #~ msgid "Weekday"
 #~ msgstr "Wochentag"
@@ -5623,20 +5617,8 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 #~ msgid "Easter monday"
 #~ msgstr "Pflegesohn"
 
-#~ msgid "Ascension of Jesus"
-#~ msgstr ""
-
-#~ msgid "Pentecost"
-#~ msgstr ""
-
-#~ msgid "Good Friday"
-#~ msgstr ""
-
 #~ msgid "Ash Wednesday"
 #~ msgstr "Mittwoch"
-
-#~ msgid "Rosenmontag"
-#~ msgstr ""
 
 #~ msgid "Task states"
 #~ msgstr "Aufgaben-Zustände"
@@ -5653,17 +5635,11 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 #~ msgid "The possible states of a calendar event."
 #~ msgstr "Alle meine Termine"
 
-#~ msgid "Edit guests list"
-#~ msgstr ""
-
 #~ msgid "Fixed"
 #~ msgstr "Mitgeteilt"
 
 #~ msgid "Suggested"
 #~ msgstr "Vorgeschlagen"
-
-#~ msgid "Automatically suggested. Default state of an automatic event."
-#~ msgstr ""
 
 #~ msgid "Visit"
 #~ msgstr "Visite"
@@ -5679,9 +5655,6 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 
 #~ msgid "Guest states"
 #~ msgstr "Gast-Zustände"
-
-#~ msgid "Afterwards"
-#~ msgstr ""
 
 #~ msgid "Invited"
 #~ msgstr "Eingeladen"
@@ -5719,12 +5692,6 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 #~ msgid "%(guest)s confirmed invitation %(day)s at %(time)s"
 #~ msgstr "%(guest)s sagt Termin am %(day)s um %(time)s ab"
 
-#~ msgid "Mark this guest as present."
-#~ msgstr ""
-
-#~ msgid "Mark this guest as absent."
-#~ msgstr ""
-
 #~ msgid "Reset"
 #~ msgstr "Rücksetzen"
 
@@ -5733,9 +5700,6 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 
 #~ msgid "The event took place."
 #~ msgstr "Der Termin hat stattgefunden"
-
-#~ msgid "Mark this as published. All participants have been informed."
-#~ msgstr ""
 
 #~ msgid "Take"
 #~ msgstr "Annehmen"
@@ -5746,17 +5710,8 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 #~ msgid "Event took place."
 #~ msgstr "Der Termin hat stattgefunden"
 
-#~ msgid "Reset to initial state."
-#~ msgstr ""
-
 #~ msgid "Career"
 #~ msgstr "Lebenslauf"
-
-#~ msgid "CV user"
-#~ msgstr ""
-
-#~ msgid "CV staff"
-#~ msgstr ""
 
 #~ msgid "Prequalifying"
 #~ msgstr "Bescheinigend"
@@ -5764,17 +5719,11 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 #~ msgid "Qualifying"
 #~ msgstr "Bescheinigend"
 
-#~ msgid "Alpha"
-#~ msgstr ""
-
 #~ msgid "Unlimited duration"
 #~ msgstr "Unbeschränkte Dauer"
 
 #~ msgid "Limited duration"
 #~ msgstr "Beschränkte Dauer"
-
-#~ msgid "Clearly defined job"
-#~ msgstr ""
 
 #~ msgid "Replacement"
 #~ msgstr "Ersatz"
@@ -5797,26 +5746,11 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 #~ msgid "Student"
 #~ msgstr "Student"
 
-#~ msgid "Laboratory"
-#~ msgstr ""
-
 #~ msgid "Full-time"
 #~ msgstr "Vollzeit"
 
 #~ msgid "Part-time"
 #~ msgstr "Teilzeit"
-
-#~ msgid "Dupable partners"
-#~ msgstr ""
-
-#~ msgid "Excerpt shortcut"
-#~ msgstr ""
-
-#~ msgid "Excerpt shortcuts"
-#~ msgstr ""
-
-#~ msgid "Please see the attached file."
-#~ msgstr ""
 
 #~ msgid "Subject:"
 #~ msgstr "Betreff"
@@ -5965,32 +5899,11 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 #~ msgid "Mailing list"
 #~ msgstr "Wartende Besucher"
 
-#~ msgid "Discussion group"
-#~ msgstr ""
-
 #~ msgid "Flags"
 #~ msgstr "Löhne und Gehälter"
 
 #~ msgid "Announcements"
 #~ msgstr "Bewegungen"
-
-#~ msgid "Weekly newsletter"
-#~ msgstr ""
-
-#~ msgid "General discussion"
-#~ msgstr ""
-
-#~ msgid "Beginners forum"
-#~ msgstr ""
-
-#~ msgid "Developers forum"
-#~ msgstr ""
-
-#~ msgid "PyCon 2014"
-#~ msgstr ""
-
-#~ msgid "Free Software Day 2014"
-#~ msgstr ""
 
 #~ msgid "Special note type"
 #~ msgstr "Datenbankmodell"
@@ -5998,26 +5911,14 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 #~ msgid "Special note types"
 #~ msgstr "Datenbankmodelle"
 
-#~ msgid "Get acquaintaned"
-#~ msgstr ""
-
 #~ msgid "Ideas"
 #~ msgstr "Tage"
-
-#~ msgid "Feedback after first working day"
-#~ msgstr ""
 
 #~ msgid "More ideas"
 #~ msgstr "Kursserien"
 
-#~ msgid "Tried to explain"
-#~ msgstr ""
-
 #~ msgid "Appointment with RCycle"
 #~ msgstr "Termine heute"
-
-#~ msgid "Apologized via SMS"
-#~ msgstr ""
 
 #~ msgid "Default"
 #~ msgstr "Standardwert"
@@ -6039,9 +5940,6 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 
 #~ msgid "Properties"
 #~ msgstr "Eigenschaften"
-
-#~ msgid "Do you like?"
-#~ msgstr ""
 
 #~ msgid "certainly not"
 #~ msgstr "bloß nicht"
@@ -6096,9 +5994,6 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 
 #~ msgid "Label"
 #~ msgstr "Ort"
-
-#~ msgid "Miscellaneous"
-#~ msgstr ""
 
 #~ msgid "Organisation"
 #~ msgstr "Organisation"
@@ -6199,29 +6094,11 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 #~ msgid "Calendar Event Types"
 #~ msgstr "Kalendereintragsarten"
 
-#~ msgid "Event is an appointment"
-#~ msgstr ""
-
-#~ msgid "Locks all rooms"
-#~ msgstr ""
-
-#~ msgid "Locks the user"
-#~ msgstr ""
-
-#~ msgid ""
-#~ msgstr ""
-
 #~ msgid "Event label"
 #~ msgstr "Bezeichnung Termin"
 
 #~ msgid "Default text for summary of new events."
 #~ msgstr "Standard-Kalender"
-
-#~ msgid "Simultaneous events"
-#~ msgstr ""
-
-#~ msgid "How many conflicting events should be tolerated."
-#~ msgstr ""
 
 #~ msgid "Guest Role"
 #~ msgstr "Gastrolle"
@@ -6240,9 +6117,6 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 
 #~ msgid "Subscriptions"
 #~ msgstr "Abonnements"
-
-#~ msgid "The calendar you want to subscribe to."
-#~ msgstr ""
 
 #~ msgid "hidden"
 #~ msgstr "versteckt"
@@ -6284,26 +6158,14 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 #~ msgid "all day"
 #~ msgstr "ganztags"
 
-#~ msgid "Unsaved %s"
-#~ msgstr ""
-
 #~ msgid "with"
 #~ msgstr "mit"
-
-#~ msgid "Link URL"
-#~ msgstr ""
 
 #~ msgid "Reminder"
 #~ msgstr "Erinnerung"
 
 #~ msgid "Responsible user"
 #~ msgstr "Verantwortlicher"
-
-#~ msgid "Check for missing participants"
-#~ msgstr ""
-
-#~ msgid "No participants although {0} suggestions exist."
-#~ msgstr ""
 
 #~ msgid "Participant"
 #~ msgstr "Teilnehmer"
@@ -6329,20 +6191,8 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 #~ msgid "The default event type for your calendar events."
 #~ msgstr "Die standardmäßige Zugriffsklasse für Ihre Termine und Aufgaben"
 
-#~ msgid "The default type of events on this site."
-#~ msgstr ""
-
 #~ msgid "Site Calendar"
 #~ msgstr "Standard-Kalender"
-
-#~ msgid "The default calendar of this site."
-#~ msgstr ""
-
-#~ msgid "Max automatic events"
-#~ msgstr ""
-
-#~ msgid "Maximum number of automatic events to be generated."
-#~ msgstr ""
 
 #~ msgid "%(num)d reminders for %(user)s have been updated."
 #~ msgstr "%(num)d Erinnerungen für %(user)s wurden aktualisiert."
@@ -6350,20 +6200,11 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 #~ msgid "List of rooms where calendar events can happen."
 #~ msgstr "Alle meine Termine"
 
-#~ msgid "List of possible priorities of calendar events."
-#~ msgstr ""
-
-#~ msgid "A calendar task is something you need to do."
-#~ msgstr ""
-
 #~ msgid "Managed by"
 #~ msgstr "Verwaltet durch"
 
 #~ msgid "Only rows managed by this user."
 #~ msgstr "%d zugewiesene Termine"
-
-#~ msgid "Only rows having this state."
-#~ msgstr ""
 
 #~ msgid "My tasks"
 #~ msgstr "Meine Aufgaben"
@@ -6371,35 +6212,17 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 #~ msgid "Table of all my tasks."
 #~ msgstr "Alle meine Aufgaben"
 
-#~ msgid "The role of a guest expresses what the partner is going to do there."
-#~ msgstr ""
-
-#~ msgid "A guest is a partner invited to an event. "
-#~ msgstr ""
-
 #~ msgid "Event state"
 #~ msgstr "Zustand Termin"
 
-#~ msgid "Only rows having this event state."
-#~ msgstr ""
-
 #~ msgid "Guest state"
 #~ msgstr "Zustand Gast"
-
-#~ msgid "Only rows having this guest state."
-#~ msgstr ""
 
 #~ msgid "Presences"
 #~ msgstr "Anwesenheiten"
 
 #~ msgid "My presences"
 #~ msgstr "Meine Anwesenheiten"
-
-#~ msgid "My pending invitations"
-#~ msgstr ""
-
-#~ msgid "Received invitations which I must accept or reject."
-#~ msgstr ""
 
 #~ msgid "My guests"
 #~ msgstr "Meine Gäste"
@@ -6409,9 +6232,6 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 
 #~ msgid "Pending"
 #~ msgstr "Überschrift"
-
-#~ msgid "A List of calendar entries. Each entry is called an event."
-#~ msgstr ""
 
 #~ msgid "Only events assigned to this user."
 #~ msgstr "%d zugewiesene Termine"
@@ -6452,14 +6272,8 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 #~ msgid "Print cache file has been cleared."
 #~ msgstr "Dokument %s wurde generiert."
 
-#~ msgid "Going to clear the print cache file of %s"
-#~ msgstr ""
-
 #~ msgid "Excerpt title"
 #~ msgstr "Auszugsart"
-
-#~ msgid "The title to be used when printing an excerpt."
-#~ msgstr ""
 
 #~ msgid "Excerpt Type"
 #~ msgstr "Auszugsart"
@@ -6471,7 +6285,8 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 #~ msgstr "Bescheinigend"
 
 #~ msgid "Whether an excerpt of this type is a unique printout."
-#~ msgstr "Ob Auszüge dieser Art als einmalige Ausdrucke behandelt werden sollen."
+#~ msgstr ""
+#~ "Ob Auszüge dieser Art als einmalige Ausdrucke behandelt werden sollen."
 
 #~ msgid "Body template"
 #~ msgstr "Textkörper-Vorlage"
@@ -6479,29 +6294,11 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 #~ msgid "The model that can issue printouts of this type."
 #~ msgstr "per E-Mail"
 
-#~ msgid "Backward compatible"
-#~ msgstr ""
-
 #~ msgid "Print recipient"
 #~ msgstr "Empfänger drucken"
 
-#~ msgid "Whether to print a recipient field in document."
-#~ msgstr ""
-
-#~ msgid "Print directly"
-#~ msgstr ""
-
-#~ msgid "Cannot set %(c)s without %(p)s"
-#~ msgstr ""
-
-#~ msgid "Cannot set %(c)s for non.certifiable model %(m)s"
-#~ msgstr ""
-
 #~ msgid "Create an excerpt in order to print this data record."
 #~ msgstr "Auszug von diesem Datensatz erstellen zwecks Ausdruck."
-
-#~ msgid "Excerpt type \"%s\" has no body_template"
-#~ msgstr ""
 
 #~ msgid "Excerpt"
 #~ msgstr "Auszug"
@@ -6527,9 +6324,6 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 #~ msgid "not printed"
 #~ msgstr "Unausgedruckt"
 
-#~ msgid "Last week"
-#~ msgstr ""
-
 #~ msgid "Older"
 #~ msgstr "Älter"
 
@@ -6550,7 +6344,3 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 
 #~ msgid "Long description"
 #~ msgstr "Abonnement"
-
-#~ msgid "Required. Must be unique."
-#~ msgstr ""
-
