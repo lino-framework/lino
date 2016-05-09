@@ -78,51 +78,83 @@ Lino team (and other teams who work similarily), the
 :mod:`lino_noi.projects.care` project might be a cool application for
 the Care project.  
 
-- And the site has a list of **faculties** (or however one might call
-  the "needed services or things" which will make the connection
-  recipient and provider. 
 
-  Their actual name can be locally configured
-  by setting the verbose_name and verbose_name_plural options of
-  `faculties.Faculty`.
+Users
+=====
+
+These user roles are defined in :mod:`lino_noi.projects.care.roles`
+
+>>> rt.show('users.UserProfiles')
+====== =========== ===========
+ Wert   name        Text
+------ ----------- -----------
+ 000    anonymous   Anonym
+ 100    user        Benutzer
+ 500    manager     Manager
+ 900    admin       Verwalter
+====== =========== ===========
+<BLANKLINE>
+
+>>> rt.show('users.Users')
+============== ================ ========= ==============
+ Benutzername   Benutzerprofil   Vorname   Familienname
+-------------- ---------------- --------- --------------
+ anna           Benutzer
+ berta          Benutzer
+ christina      Benutzer
+ dora           Benutzer
+ robin          Verwalter        Robin     Rood
+ rolf           Verwalter        Rolf      Rompen
+ romain         Verwalter        Romain    Raffault
+============== ================ ========= ==============
+<BLANKLINE>
 
 
 
-  These user roles are defined in :mod:`lino_noi.projects.care.roles`
+Faculties
+=========
+
+She site has a list of **faculties** (or however one might call
+the "needed services or things" which will make the connection
+recipient and provider of help.
+
+Their actual name can be locally configured by setting the
+verbose_name and verbose_name_plural options of `faculties.Faculty`.
 
 >>> rt.show('faculties.Faculties')
-======================= ============================= ================== ============================ ========== ==================
- Referenz                Bezeichnung                   Bezeichnung (en)   Bezeichnung (fr)             Affinity   Produktkategorie
------------------------ ----------------------------- ------------------ ---------------------------- ---------- ------------------
-                         Analysis                                                                      100
-                         Babysitting                                      Garde enfant                 100
-                         Botengänge                                       Commissions                  100
-                         Briefe beantworten                               Répondre au courrier         100
-                         Code changes                                                                  100
-                         Configuration                                                                 100
-                         Deutschunterricht                                Cours d'allemand             100
-                         Documentation                                                                 100
-                         Enhancement                                                                   100
-                         Fahrdienst                                       Voiture                      100
-                         Französischunterricht                            Cours de francais            100
-                         Friseur                                          Coiffure                     100
-                         Gartenarbeiten                                   Travaux de jardin            100
-                         Gesellschafter für Senioren                      Rencontres personnes agées   100
-                         Gitarrenunterricht                               Cours de guitare             100
-                         Hunde spazierenführen                            Chiens                       100
-                         Matheunterricht                                  Cours de maths               100
-                         Nähen                                            Couture                      100
-                         Offer                                                                         100
-                         Optimization                                                                  100
-                         Testing                                                                       100
-                         Übersetzungsarbeiten                             Traductions                  100
- **Total (22 Zeilen)**                                                                                 **2200**
-======================= ============================= ================== ============================ ========== ==================
+==== ========== ========= ========================= ============================= ================== ============================ ========== ====================
+ ID   Referenz   Nr.       Übergeordnete Fähigkeit   Bezeichnung                   Bezeichnung (en)   Bezeichnung (fr)             Affinity   Optionen-Kategorie
+---- ---------- --------- ------------------------- ----------------------------- ------------------ ---------------------------- ---------- --------------------
+ 1               1                                   Analysis                                                                      100
+ 2               2                                   Code changes                                                                  100
+ 3               3                                   Documentation                                                                 100
+ 4               4                                   Testing                                                                       100
+ 5               5                                   Configuration                                                                 100
+ 6               6                                   Enhancement                                                                   100
+ 7               7                                   Optimization                                                                  100
+ 8               8                                   Offer                                                                         100
+ 9               9                                   Unterricht                                       Cours                        100
+ 10              1         Unterricht                Französischunterricht                            Cours de francais            100
+ 11              2         Unterricht                Deutschunterricht                                Cours d'allemand             100
+ 12              3         Unterricht                Matheunterricht                                  Cours de maths               100
+ 13              4         Unterricht                Gitarrenunterricht                               Cours de guitare             100
+ 14              10                                  Nähen                                            Couture                      100
+ 15              11                                  Friseur                                          Coiffure                     100
+ 16              12                                  Gartenarbeiten                                   Travaux de jardin            100
+ 17              13                                  Fahrdienst                                       Voiture                      100
+ 18              14                                  Botengänge                                       Commissions                  100
+ 19              15                                  Babysitting                                      Garde enfant                 100
+ 20              16                                  Gesellschafter für Senioren                      Rencontres personnes agées   100
+ 21              17                                  Hunde spazierenführen                            Chiens                       100
+ 22              18                                  Übersetzungsarbeiten                             Traductions                  100        Sprachen
+ 23              19                                  Briefe beantworten                               Répondre au courrier         100
+                 **200**                                                                                                           **2300**
+==== ========== ========= ========================= ============================= ================== ============================ ========== ====================
 <BLANKLINE>
 
 >>> rt.show('faculties.Competences')
 ==== ========== ====================== ========== =============
- ID   Benutzer   Faculty                Affinity   Produkt
+ ID   Benutzer   Fähigkeit              Affinity   Option
 ---- ---------- ---------------------- ---------- -------------
  1    anna       Übersetzungsarbeiten   100        Französisch
  2    berta      Übersetzungsarbeiten   100        Französisch
@@ -144,7 +176,7 @@ the Care project.
 
 >>> rt.show('tickets.Tickets')
 ==== =========================================================================================== =============== =========== =========
- ID   Summary                                                                                     Arbeitsablauf   Reporter    Projekt
+ ID   Summary                                                                                     Arbeitsablauf   Anfrager    Projekt
 ---- ------------------------------------------------------------------------------------------- --------------- ----------- ---------
  6    Wer fährt für mich nach Aachen Pampers kaufen?                                              **Erledigt**    anna
  5    Wer kann meine Abschlussarbeit korrekturlesen?                                              **Sleeping**    dora

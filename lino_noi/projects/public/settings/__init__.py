@@ -31,7 +31,7 @@ class Site(Site):
 
     # root_urlconf = 'lino_noi.urls'
     # default_ui = None
-    default_ui = 'noi'
+    default_ui = 'lino_noi.lib.noi'
 
     def get_installed_apps(self):
         yield super(Site, self).get_installed_apps()

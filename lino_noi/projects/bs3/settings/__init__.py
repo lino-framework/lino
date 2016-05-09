@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015 Luc Saffre
+# Copyright 2015-2016 Luc Saffre
 #
 # This file is part of Lino Noi.
 #
@@ -27,7 +27,7 @@ from lino_noi.projects.team.settings.demo import *
 
 class Site(Site):
 
-    default_ui = 'bootstrap3'
+    default_ui = 'lino.modlib.bootstrap3'
     default_user = 'anonymous'
 
     # def get_installed_apps(self):
