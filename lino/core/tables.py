@@ -538,12 +538,19 @@ method in order to sort the rows of the queryset.
 
     @classmethod
     def get_filter_kw(self, ar, **kw):
-        """
-        Return a dict with the "master keywords" for this table
+        """Return a dict with the "master keywords" for this table
         and a given `master_instance`.
+        
+        For example, if you have two models :class:`Book` and
+        :class:`Author`, and a foreign key :attr:`Book.author` which
+        points to the author of the book, and a table `BooksByAuthor`
+        having `master_key` set to ``'author'``, then `get_filter_kw`
+        would return a dict `{'author': <PK>}` where PK is the primary
+        key of the action request's :attr:`master_instance
+        <lino.core.requests.BaseRequest.master_instance>`.
 
-        :class:`lino.modlib.tickets.models.EntriesBySession`
-        Blog Entries are not directly linked to a Session, but in the
+        :class:`lino_noi.lib.tickets.models.EntriesBySession` Blog
+        Entries are not directly linked to a Session, but in the
         Detail of a Session we want to display a table of related blog
         entries.
 
