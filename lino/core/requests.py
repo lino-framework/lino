@@ -174,6 +174,10 @@ class BaseRequest(object):
     bound_action = None
     known_values = {}
     master_instance = None
+    """The database object which acts as master. This is `None` for master
+    requests.
+
+    """
 
     tableattrs = dict(cellspacing="3px", bgcolor="#ffffff", width="100%")
     # ~ cellattrs = dict(align="center",valign="middle",bgcolor="#eeeeee")

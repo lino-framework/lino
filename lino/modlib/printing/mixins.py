@@ -441,11 +441,14 @@ class Printable(object):
             + '-' + str(self.pk)
 
     def get_print_templates(self, bm, action):
-        """
-        Return a list of filenames of templates for the specified
+        """Return a list of filenames of templates for the specified
         build method.  Returning an empty list means that this item is
         not printable.  For subclasses of :class:`SimpleBuildMethod`
         the returned list may not contain more than 1 element.
+
+        The default method calls
+        :meth:`BuildMethod.get_default_template` and returns this as a
+        list with one item.
 
         """
         return [bm.get_default_template(self)]
