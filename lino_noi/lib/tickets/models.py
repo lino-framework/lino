@@ -685,8 +685,8 @@ if True:  # dd.is_installed('changes'):
         collect(ticket.assigned_to)
         collect(ticket.reporter)
         ar = BaseRequest(user=self.user)
+        msg = "%s worked on {obj}" % self.user
         for user in others:
-            msg = "%s worked on {obj}" % self.user
             notify(ar, self.master, user, msg)
 
 
