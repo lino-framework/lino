@@ -1,9 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2015 by Luc Saffre.
+# Copyright 2009-2016 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
-"""
-Date formatting functions
+"""Date formatting functions
 -------------------------
 
 To run the Lino test suite on this module::
@@ -13,18 +12,22 @@ To run the Lino test suite on this module::
 This module provides shortcuts to `python-babel`'s `date formatting
 functions <http://babel.pocoo.org/docs/dates/>`_.
 
+Note that if you ask just for English, then we change Babel's default
+localization (US) to UK because US date format is just silly for
+non-americans (no further comment).
+
 >>> from lino import startup
 >>> startup('lino.projects.min1.settings')
 >>> import datetime
->>> d = datetime.date(2013,8,26)
+>>> d = datetime.date(2013, 8, 26)
 >>> print(fds(d)) # short
-8/26/13
+26/08/2013
 >>> print(fdm(d)) # medium
-Aug 26, 2013
+26 Aug 2013
 >>> print(fdl(d)) # long
-August 26, 2013
+26 August 2013
 >>> print(fdf(d)) # full
-Monday, August 26, 2013
+Monday, 26 August 2013
 >>> print(fdmy(d)) # full
 August 2013
 
@@ -40,7 +43,7 @@ The major advantage over using `date_format` from
 >>> today = datetime.date(2013,1,18)
 
 >>> print(format_date(today,'full'))
-Friday, January 18, 2013
+Friday, 18 January 2013
 
 >>> with translation.override('fr'):
 ...    print(format_date(today,'full'))
@@ -59,6 +62,23 @@ reede, 18. jaanuar 2013
 >>> with translation.override('nl'):
 ...    print(format_date(today,'full'))
 vrijdag 18 januari 2013
+
+
+>>> with translation.override('de'):
+...    print(fds(today))
+18.01.13
+>>> with translation.override('fr'):
+...    print(fds(today))
+18/01/2013
+>>> with translation.override('en_US'):
+...    print(fds(today))
+1/18/13
+>>> with translation.override('en'):
+...    print(fds(today))
+18/01/2013
+>>> with translation.override('en_UK'):
+...    print(fds(today))
+18/01/2013
 
 
 >>> print(fds('')) # empty string is tolerated
@@ -115,7 +135,10 @@ def format_date(d, format='medium'):
     lng = translation.get_language()
     if lng is None:  # occured during syncdb
         lng = settings.SITE.languages[0].django_code
-    return babel_format_date(d, format=format, locale=to_locale(lng))
+    loc = to_locale(lng)
+    if loc == 'en':
+        loc = 'en_UK'  # I hate US date format
+    return babel_format_date(d, format=format, locale=loc)
 
 
 def fdf(d):

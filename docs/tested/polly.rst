@@ -29,7 +29,7 @@ lino.projects.polly.settings.doctests
 Rolf Rompen's response to Participant feedback
 
 >>> rt.login(obj.user.username).show(polls.AnswersByResponse, obj)
-Question 10/23/14 
+Question 23/10/2014 
 <BLANKLINE>
 1) There was enough to eat. **1** **2** **3** **4** **5** (**Remark**)
 <BLANKLINE>
