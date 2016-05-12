@@ -879,6 +879,13 @@ action on individual instances.
         kw.update(language=self.get_print_language())
         return kw
 
+    def before_printable_build(self, bm):
+        pass
+
+    def filename_root(self):
+        return self._meta.app_label + '.' + self.__class__.__name__ \
+            + '-' + str(self.pk)
+
     @classmethod
     def get_parameter_fields(cls, **fields):
         """Inheritable hook for defining parameters.

@@ -39,19 +39,8 @@ except ImportError:
 
 
 class BuildMethod(Choice):
-
-    """Base class for all build methods.  A build method encapsulates the
-    process of generating a "printable document" that inserts data
-    from the database into a template, using a given combination of a
-    template parser and post-processor.
-
-    """
     target_ext = None
-    template_ext = None
-    templates_name = None
     cache_name = 'cache'
-    default_template = ''  # overridden by lino_xl.lib.appypod
-
     use_webdav = False
     """Whether this build method results is an editable file.  For
     example, `.odt` files are considered editable while `.pdf` files
@@ -69,11 +58,9 @@ class BuildMethod(Choice):
 
     """
 
-    def __init__(self, name, **kwargs):
+    def __init__(self, name=None, **kwargs):
         super(BuildMethod, self).__init__(
             name, self.__class__.__name__, name, **kwargs)
-        if self.templates_name is None:
-            self.templates_name = self.name
 
     def get_target(self, action, elem):
         "used by `get_target_name`"
@@ -87,6 +74,30 @@ class BuildMethod(Choice):
     def get_target_name(self, action, elem):
         return self.get_target(action, elem).name
 
+    def get_target_url(self, action, elem):
+        return self.get_target(action, elem).url
+
+    def build(self, ar, action, elem):
+        raise NotImplementedError
+
+
+class TemplatedBuildMethod(BuildMethod):
+
+    """Base class for all build methods.  A build method encapsulates the
+    process of generating a "printable document" that inserts data
+    from the database into a template, using a given combination of a
+    template parser and post-processor.
+
+    """
+    template_ext = None
+    templates_name = None
+    default_template = ''  # overridden by lino_xl.lib.appypod
+
+    def __init__(self, *args, **kwargs):
+        super(TemplatedBuildMethod, self).__init__(*args, **kwargs)
+        if self.templates_name is None:
+            self.templates_name = self.name
+
     def get_default_template(self, obj):
         """Theoretically it is possible to write build methods which override
         this.
@@ -97,14 +108,8 @@ class BuildMethod(Choice):
         return 'Default' + self.template_ext
         # return dd.plugins.printing.get_default_template(self, obj)
 
-    def get_target_url(self, action, elem):
-        return self.get_target(action, elem).url
 
-    def build(self, ar, action, elem):
-        raise NotImplementedError
-
-
-class DjangoBuildMethod(BuildMethod):
+class DjangoBuildMethod(TemplatedBuildMethod):
 
     """
     Using Django's templating engine.
@@ -178,7 +183,7 @@ class PisaBuildMethod(DjangoBuildMethod):
         return os.path.getmtime(filename)
 
 
-class SimpleBuildMethod(BuildMethod):
+class SimpleBuildMethod(TemplatedBuildMethod):
     """Base for build methods which use Lino's templating system
     (:meth:`find_config_file <lino.core.site.Site.find_config_file>`).
 
