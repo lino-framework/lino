@@ -50,7 +50,7 @@ This document describes the database structure.
  outbox.Attachment           outbox.Attachments           4         0
  outbox.Mail                 outbox.Mails                 9         0
  outbox.Recipient            outbox.Recipients            6         0
- products.Product            products.Products            9         4
+ products.Product            products.Products            10        4
  products.ProductCat         products.ProductCats         5         0
  stars.Star                  stars.Stars                  5         0
  system.SiteConfig           system.SiteConfigs           5         0
