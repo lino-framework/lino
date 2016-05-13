@@ -65,6 +65,11 @@ class BasePrintAction(Action):
     sort_index = 50
     url_action_name = 'print'
     label = _('Print')
+    build_method = None
+
+    def __init__(self, build_method=None, label=None, **kwargs):
+        super(BasePrintAction, self).__init__(label, **kwargs)
+        self.build_method = build_method
 
     def attach_to_actor(self, actor, name):
         if not dbutils.resolve_app('system'):
@@ -115,6 +120,14 @@ class BasePrintAction(Action):
         ar.success(**kw)
         return
 
+    def run_from_ui(self, ar, **kw):
+        elem = ar.selected_rows[0]
+        bm = self.build_method or elem.get_build_method()
+        bm.build(ar, self, elem)
+        mf = bm.get_target(self, elem)
+        leaf = mf.parts[-1]
+        self.notify_done(ar, bm, leaf, mf.url, **kw)
+
 
 class DirectPrintAction(BasePrintAction):
     """Print using a hard-coded template and no cache.
@@ -124,8 +137,8 @@ class DirectPrintAction(BasePrintAction):
     icon_name = 'printer'
 
     def __init__(self, label=None, tplname=None, build_method=None, **kw):
-        super(DirectPrintAction, self).__init__(label, **kw)
-        self.build_method = build_method
+        super(DirectPrintAction, self).__init__(
+            build_method, label, **kw)
         self.tplname = tplname
 
     def get_print_templates(self, bm, obj):
@@ -133,20 +146,6 @@ class DirectPrintAction(BasePrintAction):
         if self.tplname:
             return [self.tplname + bm.template_ext]
         return obj.get_print_templates(bm, self)
-
-    def run_from_ui(self, ar, **kw):
-        elem = ar.selected_rows[0]
-        bm = self.build_method or elem.get_build_method()
-        bm.build(ar, self, elem)
-        mf = bm.get_target(self, elem)
-        # if ar.request is not None and bm.use_webdav and has_davlink:
-        #     url = ar.request.build_absolute_uri(url)
-        #     kw.update(open_davlink_url=url)
-        # else:
-        #     kw.update(open_url=url)
-        # ar.success(**kw)
-        leaf = mf.parts[-1]
-        self.notify_done(ar, bm, leaf, mf.url, **kw)
 
 
 class CachedPrintAction(BasePrintAction):
@@ -430,15 +429,8 @@ class Printable(object):
 
     edit_template = EditTemplate()
 
-    def before_printable_build(self, bm):
-        pass
-
     def get_template_groups(self):
         return [self.__class__.get_template_group()]
-
-    def filename_root(self):
-        return self._meta.app_label + '.' + self.__class__.__name__ \
-            + '-' + str(self.pk)
 
     def get_print_templates(self, bm, action):
         """Return a list of filenames of templates for the specified

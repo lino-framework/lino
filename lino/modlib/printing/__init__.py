@@ -11,6 +11,8 @@ See :doc:`/admin/printing`.
     choicelists
     mixins
     models
+    utils
+
 """
 
 from lino.api import ad

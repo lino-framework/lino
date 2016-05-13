@@ -2,6 +2,10 @@
 Template designer API
 =====================
 
+.. How to test just this file:
+
+   $ python -m doctest docs/user/templates_api.rst
+
 TODO: This is just a start and far from being complete...
 
 
@@ -72,8 +76,8 @@ TODO: This is just a start and far from being complete...
 
 .. initialization for doctest
 
-    >>> import os
-    >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino.projects.docs.settings.demo'
+    >>> from lino import startup
+    >>> startup('lino.projects.docs.settings.demo')
     >>> from lino.api.shell import *
     >>> from lino.utils.format_date import fds, fdm, fdl, fdf
     >>> import datetime
@@ -89,10 +93,10 @@ Lino includes shortcuts to `python-babel`'s
 
 >>> d = datetime.date(2013,8,26)
 >>> print(fds(d)) # short
-8/26/13
+26/08/2013
 >>> print(fdm(d)) # medium
-Aug 26, 2013
+26 Aug 2013
 >>> print(fdl(d)) # long
-August 26, 2013
+26 August 2013
 >>> print(fdf(d)) # full
-Monday, August 26, 2013
+Monday, 26 August 2013

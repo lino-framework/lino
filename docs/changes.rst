@@ -19,6 +19,11 @@ only the source code.
 Version 1.7.1 (in development)
 ============================================
 
+- :class:`CustomBuildMethod
+  <lino.modlib.printing.utils.CustomBuildMethod>` : a new style of
+  build method for printables which have a target file to be
+  generated, but don't use any template. (:blogref:`20160512`)
+
 - :attr:`lino.core.site.Site.default_ui` is now the
   full Python name, not just the app_label. (:blogref:`20160506`)
 
