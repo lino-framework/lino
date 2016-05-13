@@ -67,7 +67,7 @@ class PeriodEvent(Choice):
     def add_filter(self, qs, obj):
         """Add a filter to the given Django queryset. The given `obj` must be
         either a `datetime.date` object or must have two attributes
-        `start_date` and `end_date`. The easiest ways is to have it an
+        `start_date` and `end_date`. The easiest way is to have it an
         instance of :class:`DatePeriod
         <lino.mixins.periods.DatePeriod>` or :class:`DatePeriodValue
         <lino.mixins.periods.DatePeriodValue>`.
