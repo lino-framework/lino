@@ -295,15 +295,15 @@ users of that site.
 
 >>> welket = tickets.Site.objects.get(name="welket")
 >>> rt.show(tickets.MilestonesBySite, welket)
-... #doctest: +REPORT_UDIFF
-======= ============== ========= ======== ====
- Label   Expected for   Reached   Closed   ID
-------- -------------- --------- -------- ----
-         5/15/15        5/15/15   No       7
-         5/11/15        5/11/15   No       5
-         5/7/15         5/7/15    No       3
-         5/3/15         5/3/15    No       1
-======= ============== ========= ======== ====
+... #doctest: -REPORT_UDIFF
+======= ============== ============ ======== ====
+ Label   Expected for   Reached      Closed   ID
+------- -------------- ------------ -------- ----
+         15/05/2015     15/05/2015   No       7
+         11/05/2015     11/05/2015   No       5
+         07/05/2015     07/05/2015   No       3
+         03/05/2015     03/05/2015   No       1
+======= ============== ============ ======== ====
 <BLANKLINE>
 
 
