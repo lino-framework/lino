@@ -44,6 +44,12 @@ class EmptyTableRow(VirtualRow, Printable):
     def __str__(self):
         return str(self._table.label)
 
+    def before_printable_build(self, bm):
+        pass
+
+    def filename_root(self):
+        return self._meta.app_label + '.' + self.__class__.__name__
+
     def get_print_language(self):
         # same as Model.get_print_language
         return settings.SITE.DEFAULT_LANGUAGE.django_code
