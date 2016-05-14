@@ -22,8 +22,7 @@ Overview
 Lino Care is a variant of Lino Noi specialized for organizations which
 help people to care for each other.  These people might be old people,
 orphans, immigrants, disabled, addicts, or just "normal" people
-(i.e. without any "handicap") because also normal people might want to
-help each other.
+without any "handicap".
 
 - There is no difference between **care recipients** and **care
   providers**.  Both are stored as *system users*.  Any user can "call
