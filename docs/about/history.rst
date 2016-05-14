@@ -1,7 +1,7 @@
 History
 =======
 
-:ref:`luc`, the author of Lino, is also the author of :term:`TIM`, a
+Luc Saffre, the author of Lino, is also the author of :term:`TIM`, a
 DOS-based framework for writing database applications for small
 enterprises.  Lino is a successor for TIM.  TIM is over 20 years old,
 but Luc continues to live from maintaining it and giving professional
@@ -10,10 +10,10 @@ ranging from the independant craftsman who writes 50 invoices per year
 to the government agency with 30 users and hundreds of documents per
 day.
 
-Luc has been working on writing a successor for TIM **since the early 1990s**.
-He has done and dropped projects in C++, PHP and Java. 
-In `August 2013 <https://sourceforge.net/p/lino/news/>`_ 
-he published a first version of Lino on Sourceforge.
+Luc has been working on writing a successor for TIM **since the early
+1990s**.  He has done and dropped projects in C++, PHP and Java.  In
+`August 2013 <https://sourceforge.net/p/lino/news/>`_ he published a
+first version of Lino on Sourceforge.
 
 Since **August 2004** he's mostly working in Python. 
 In **March 2009** he discovered :term:`Django` whose database model and application 

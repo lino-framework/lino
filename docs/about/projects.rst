@@ -24,19 +24,27 @@ maintained by the same author:
 Lino Welfare
 ------------
 
-http://welfare.lino-framework.org/
+See `Lino Welfare <http://welfare.lino-framework.org/>`_
 
 .. _noi:
 
 Lino Noi
 --------
 
-http://noi.lino-framework.org/
+See http://noi.lino-framework.org/
+
+.. _care:
+
+Lino Care
+---------
+
+See `The "Care" variant of Lino Noi <http://noi.lino-framework.org/specs/care.html>`_
+
 
 .. _cosi:
 
-Lino Così 
-------------
+Lino Così
+---------
 
 http://cosi.lino-framework.org/
 
@@ -53,9 +61,7 @@ http://presto.lino-framework.org/
 Lino Voga
 ------------
 
-http://voga.lino-framework.org/
-
-Lino Voga was named Faggio in the beginning. In 2015 we renamed it to Voga.
+See http://voga.lino-framework.org/
 
 .. _patrols:
 
@@ -79,8 +85,6 @@ Lino Sunto
 Lino Sunto is the first free (GPL) Lino application developed by
 somebody else than the author. It is hosted at    
 https://github.com/ManuelWeidmann/lino-sunto
-
-
 
 
 .. _xl:

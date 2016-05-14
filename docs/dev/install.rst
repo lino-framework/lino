@@ -7,6 +7,7 @@ Installing Lino
 .. _pip: http://www.pip-installer.org/en/latest/
 .. _virtualenv: https://pypi.python.org/pypi/virtualenv
 .. _fabric: http://www.fabfile.org/
+.. _invoke: http://www.pyinvoke.org/
 .. _pycrypto: https://pypi.python.org/pypi/pycrypto
 .. _atelier: http://atelier.lino-framework.org/
 .. _git: http://git-scm.com/downloads
@@ -52,10 +53,11 @@ System requirements
     <https://virtualenv.pypa.io/en/latest/reference.html?highlight=site-packages#cmdoption--no-site-packages>`__
     option is needed only if your virtualenv is older than X.
     
-#.  You will need the **Python header files** on your system because
-    Lino requires fabric_ which in turn requires pycrypto_ which is an
-    `extension module <https://docs.python.org/2/c-api/intro.html>`_. On a
-    Debian system this means something like::
+#.  (Maybe obsolete:) You will need the **Python header files** on
+    your system because Lino requires fabric_ which in turn requires
+    pycrypto_ which is an `extension module
+    <https://docs.python.org/2/c-api/intro.html>`_. On a Debian system
+    this means something like::
 
         $ sudo apt-get install python-dev
 
@@ -231,23 +233,23 @@ The easiest way to initialize the demo databases is to run the
 :cmd:`fab initdb` command::
 
     $ cd ~/repositories/lino
-    $ fab initdb
+    $ inv initdb
 
-The ``fab`` command has been installed on your system (more precisely:
-into your Python environment) by the fabric_ package, which itself has
+The ``inv`` command has been installed on your system (more precisely:
+into your Python environment) by the invoke_ package, which itself has
 been required by atelier_, which is another Python package developed
-by :ref:`luc`.
+by Luc.
 
-The ``fab`` command is a kind of Make tool which works by looking for
-a file named :xfile:`fabfile.py`. The Lino repository contains such a
+The ``inv`` command is a kind of Make tool which works by looking for
+a file named :xfile:`invoke.yaml`. The Lino repository contains such a
 file, and this file uses :mod:`atelier.fablib`, which defines a whole
 series of tasks like `initdb` and `test`.
 
 And here we go for the test suite itself::
 
-    $ fab test
+    $ inv test
 
-The :cmd:`fab test` command is a short for ``python setup.py test``
+The :cmd:`inv test` command is a short for ``python setup.py test``
 which simply runs the test suite.  The output should be something like
 this::
 

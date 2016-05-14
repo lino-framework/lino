@@ -7,7 +7,7 @@ How to get Lino
    Welcome to the :doc:`/dev/index` page.
 
 #. You choose somebody whom you trust and delegate this work to them.
-   Find a list of candidates at the :doc:`/community/partners` page.
+   We suggest that you start to search at http://saffre-rumma.net
 
   
 
