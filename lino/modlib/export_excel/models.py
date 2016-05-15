@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2014-2015 Josef Kejzlar, Luc Saffre
+# Copyright 2014-2016 Josef Kejzlar, Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Database models for `lino.modlib.export_excel`.
@@ -8,14 +8,14 @@
 from builtins import zip
 from builtins import object
 import os
-import datetime
 
 from django.conf import settings
 from lino.core import actions
 from lino.core.tables import AbstractTable
 from lino.utils.media import TmpMediaFile
 from django.utils.translation import ugettext_lazy as _
-import xlwt
+from openpyxl import Workbook
+from openpyxl.styles import Font
 
 
 class TableRenderer(object):
@@ -77,46 +77,27 @@ def sheet_name(s):
 
 
 class ExcelRenderer(TableRenderer):
-    default_style = xlwt.XFStyle()
-
-    date_style = xlwt.XFStyle()
-    date_style.num_format_str = 'yyyy-mm-dd'
-
-    datetime_style = xlwt.XFStyle()
-    datetime_style.num_format_str = 'yyyy-mm-dd h:mm:ss'
-
-    time_style = xlwt.XFStyle()
-    time_style.num_format_str = 'h:mm:ss'
-
     def render(self):
-        workbook = xlwt.Workbook(encoding='utf-8')
+        workbook = Workbook(guess_types=True)
+        sheet = workbook.active
+        sheet.title = sheet_name(self.title)
 
-        sheet = workbook.add_sheet(sheet_name(self.title))
-
-        header_style = xlwt.easyxf("font: bold on;")
+        bold_font = Font(name='Calibri', size=11, bold=True, )
         for c, column in enumerate(self.columns):
-            sheet.write(0, c, self.column_name, header_style)
-            sheet.col(c).width = min(256 * self.column_width / 7, 65535)
+            sheet.cell(row=1, column=c + 1).value = str(self.column_name)
+            sheet.cell(row=1, column=c + 1).font = bold_font
+            # sheet.col(c).width = min(256 * self.column_width / 7, 65535)
             # 256 == 1 character width, max width=65535
 
         for c, column in enumerate(self.columns):
             for r, row in enumerate(self.rows, start=1):
                 try:
-                    value = self.value
-                    style = self.default_style
-
-                    if isinstance(value, datetime.date):
-                        style = self.date_style
-
-                    if isinstance(value, datetime.datetime):
-                        style = self.datetime_style
-
-                    if isinstance(value, datetime.time):
-                        style = self.time_style
-
-                    sheet.write(r, c, value, style=style)
+                    if type(self.value) == bool:
+                        sheet.cell(row=r + 1, column=c + 1).value = self.value and 1 or 0
+                    else:
+                        sheet.cell(row=r + 1, column=c + 1).value = self.value
                 except Exception:
-                    sheet.write(r, c, self.value_as_text)
+                    sheet.cell(row=r + 1, column=c + 1).value = self.value_as_text
 
         return workbook
 
@@ -135,7 +116,7 @@ class ExportExcelAction(actions.Action):
 
     def run_from_ui(self, ar, **kw):
         # Prepare tmp file
-        mf = TmpMediaFile(ar, 'xls')
+        mf = TmpMediaFile(ar, 'xlsx')
         settings.SITE.makedirs_if_missing(os.path.dirname(mf.name))
 
         # Render
@@ -148,5 +129,6 @@ class ExportExcelAction(actions.Action):
     def render(self, ar, file):
         workbook = ExcelRenderer(ar).render()
         workbook.save(file)
+
 
 AbstractTable.export_excel = ExportExcelAction()
