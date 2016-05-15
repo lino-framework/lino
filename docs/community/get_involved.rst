@@ -4,10 +4,10 @@ Get involved
 
 Below are some profiles of people we would happily welcome.
 
-- **ICT managers** and **DevOps** -- Show the :ref:`demos` to
-  other users of your employer and analyze whether they need a Lino
-  application.  Your advantage is that you get free consultation for
-  planning your project.
+- **ICT managers** -- Show the :ref:`demos` to other users of your
+  employer and analyze whether they need a Lino application.  Your
+  advantage is that you get free consultation for planning your
+  project.
   
 - **Python Developers** -- 
   *Newcomers* learn :doc:`how to write your own Lino
@@ -19,20 +19,20 @@ Below are some profiles of people we would happily welcome.
   <http://www.saffre-rumma.net/jobs/coredev.html>`_ or `senior
   developer <http://www.saffre-rumma.net/jobs/coredev.html>`_.
 
-- **Internet hosting providers** -- Add one of the :ref:`lino.projects` to
-  your shared host offers.  Your advantage is that you get free
-  support for integrating Lino into your system.
+- **Internet hosting providers** -- Add one of the
+  :ref:`lino.projects` to your shared host offers.  Your advantage is
+  that you get free support for integrating Lino into your system.
 
-- **Vendors of software solutions** -- Consider whether Lino is the right
-  product for one of your customers.  Your advantage is that you get
-  free support with becoming a professional `Lino Consultant
+- **Vendors of software solutions** -- Consider whether Lino is the
+  right product for one of your customers.  Your advantage is that you
+  get free support with becoming a professional `Lino Consultant
   <http://www.saffre-rumma.net/jobs/consultant.html>`_.
 
-- Business project managers --
+- **Project managers** --
   Help us to find or found organizations that offer
   professional Lino support and hosting.
 
-- Friends --
+- **Friends** --
   Follow what's going on and tell us your opinion about Lino. 
   Tell other people the advantages of Lino.
   

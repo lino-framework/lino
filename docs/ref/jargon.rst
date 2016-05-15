@@ -46,12 +46,3 @@ Lino application developer
 A Lino application developer is a Python programmer who uses Lino while 
 writing his own application.
 
-.. _lf:
-
-lino-framework.org
-------------------
-
-`lino-framework.org` is currently Lino's primary domain. 
-It is hosted in collaboration with 
-`Active Systems OÜ <http://active.ee>`_.
-
