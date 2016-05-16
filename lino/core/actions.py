@@ -176,6 +176,13 @@ class Action(Parametrizable, Permittable):
 
     """
 
+    keep_user_values = False
+    """Whether the parameter window should keep its values between
+    different calls. If this is True, Lino does not fill any default
+    values and leaves those from a previous call.
+
+    """
+
     icon_name = None
     """The class name of an icon to be used for this action when rendered
     as toolbar button.
@@ -450,10 +457,13 @@ class Action(Parametrizable, Permittable):
 
     def get_status(self, ar, **kw):
         if self.parameters is not None:
-            defaults = kw.get('field_values', {})
-            pv = self.params_layout.params_store.pv2dict(
-                ar.action_param_values, **defaults)
-            kw.update(field_values=pv)
+            if self.keep_user_values:
+                kw.update(field_values={})
+            else:
+                defaults = kw.get('field_values', {})
+                pv = self.params_layout.params_store.pv2dict(
+                    ar.action_param_values, **defaults)
+                kw.update(field_values=pv)
         return kw
 
     def get_chooser_for_field(self, fieldname):

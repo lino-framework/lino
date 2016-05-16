@@ -875,7 +875,8 @@ action on individual instances.
         # same as lino.utils.report.EmptyTableRow.get_printable_context
         if ar is not None:
             kw = ar.get_printable_context(**kw)
-        kw.update(this=self)  # preferred in new templates
+        kw.update(this=self)  # for backward compatibility
+        kw.update(obj=self)  # preferred in new templates
         kw.update(language=self.get_print_language())
         return kw
 

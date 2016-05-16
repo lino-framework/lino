@@ -9,9 +9,10 @@ See :doc:`/admin/printing`.
    :toctree:
 
     choicelists
+    actions
+    utils
     mixins
     models
-    utils
 
 """
 

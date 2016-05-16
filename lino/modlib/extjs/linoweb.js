@@ -2477,7 +2477,8 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel, {
       return Lino.fields2array(this.fields);
   }
   ,set_field_values : function(pv) {
-      //~ console.log('20120203 MainPanel.set_param_values', pv);
+      // console.log('20160516 MainPanel.set_param_values', pv);
+      // if Action.keep_user_values, we receive an empty dict ({})
       this.status_field_values = pv;
       if (pv) {
           this.form.my_loadRecord(pv);
