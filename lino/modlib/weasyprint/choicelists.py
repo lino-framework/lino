@@ -18,10 +18,6 @@ from django.utils import translation
 
 from lino.modlib.printing.choicelists import DjangoBuildMethod, BuildMethods
 
-from weasyprint import HTML
-
-from wkhtmltopdf.utils import render_to_temporary_file
-
 
 class WeasyBuildMethod(DjangoBuildMethod):
     """
@@ -33,6 +29,7 @@ class WeasyBuildMethod(DjangoBuildMethod):
     target_ext = '.pdf'
 
     def build(self, ar, action, elem):
+        from weasyprint import HTML
         filename = action.before_build(self, elem)
         if filename is None:
             return
