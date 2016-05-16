@@ -1,9 +1,9 @@
-from builtins import object
 # -*- coding: UTF-8 -*-
 # Copyright 2010-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 
+from builtins import object
 from django.contrib.contenttypes.models import *
 
 from django.conf import settings
