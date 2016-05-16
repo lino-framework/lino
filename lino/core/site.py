@@ -12,9 +12,8 @@
         $ python lino/core/site.py
 
     doctest init:
-    >>> from __future__ import unicode_literals
     >>> import lino
-    >>> lino.startup('lino.projects.docs.settings')
+    >>> lino.startup('lino.projects.std.settings_test')
 
 """
 from __future__ import unicode_literals
@@ -1119,7 +1118,9 @@ class Site(object):
         self._startup_done = False
         self.startup_time = datetime.datetime.now()
 
-        if self.cache_dir is not None:
+        if self.cache_dir is None:
+            pass  # raise Exception("20160516 No cache_dir")
+        else:
             dbname = self.cache_dir.child('default.db')
             self.django_settings.update(DATABASES={
                 'default': {
@@ -1502,7 +1503,7 @@ class Site(object):
                     this=this,
                     settings=self.django_settings.get('SETTINGS_MODULE'),
                     other=other)
-                if False:
+                if True:
                     raise Exception(msg)
                 else:
                     # print(msg)

@@ -1,4 +1,0 @@
-#6 : igen demo is broken
-========================
-
-It says `AssertionError: journals.DocumentsByJournal has .fk_name but .model is None`.

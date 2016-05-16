@@ -17,7 +17,7 @@ localization (US) to UK because US date format is just silly for
 non-americans (no further comment).
 
 >>> from lino import startup
->>> startup('lino.projects.min1.settings')
+>>> startup()
 >>> import datetime
 >>> d = datetime.date(2013, 8, 26)
 >>> print(fds(d)) # short

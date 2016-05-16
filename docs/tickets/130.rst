@@ -1,6 +1,0 @@
-=======================================================
-#130 : Sozialsekretariat Oktober 2014 (Bescheinigungen)
-=======================================================
-
-Oops, this was a duplicate of :doc:`122`.
-
