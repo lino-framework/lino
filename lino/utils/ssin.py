@@ -5,6 +5,9 @@
 r""" Utilities for manipulating *Belgian national identification
 numbers*.
 
+.. test only this doc:
+   $ python setup.py test -s tests.UtilsTests.test_ssin
+
 Belgians call their national identification number **INSZ**
 ("identificatienummer van de sociale zekerheid) in Dutch, **NISS**
 ("No. d'identification de Sécurité Sociale") in French or **INSS**
@@ -41,6 +44,11 @@ persons born the same day (odd numbers for men and even numbers for
 women), and ``97`` is a check digit (remainder of previous digits
 divided by 97).
 
+.. doctest init:
+
+    >>> import lino
+    >>> lino.startup('lino.projects.std.settings_test')
+
 
 Validation
 ----------
@@ -50,9 +58,6 @@ There are two validator functions, :func:`is_valid_ssin` and
 returns True or False while the other raises a ValidationError to be
 used in Django forms.  The message of this ValidationError depends on
 the user language.
-
->>> import lino
->>> lino.startup('lino.projects.min1.settings')
 
 >>> ssin_validator('123') #doctest: +NORMALIZE_WHITESPACE +IGNORE_EXCEPTION_DETAIL +ELLIPSIS
 Traceback (most recent call last):

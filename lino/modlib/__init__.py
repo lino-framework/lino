@@ -49,6 +49,7 @@ Utilities
     notifier
     changes
     wkhtmltopdf
+    weasyprint
 
 "Enterprise Resources"
 ======================

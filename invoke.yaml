@@ -3,12 +3,4 @@
 blogref_url: http://luc.lino-framework.org
 revision_control_system: git
 locale_dir: lino/modlib/lino_startup/locale
-
-cleanable_files:
- - docs/api/lino.*
-
-demo_projects:
-    - lino.projects.docs.settings.demo
-    - lino.projects.belref.settings.demo
-    - lino.projects.polly.settings.demo
-    - lino.projects.events.settings
+doc_trees: []

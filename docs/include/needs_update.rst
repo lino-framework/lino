@@ -1,1 +1,0 @@
-.. warning:: This document needs updating.

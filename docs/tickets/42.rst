@@ -1,5 +1,0 @@
-#42 [closed]: Wysiwyg Editor
-----------------------------
-
-Lino uses the tinymce editor, and currently this seems satisfying.
-

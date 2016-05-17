@@ -178,7 +178,7 @@ class ExtRenderer(HtmlRenderer):
 
     def get_action_status(self, ar, ba, obj, **kw):
         kw.update(ar.get_status())
-        if ba.action.parameters:
+        if ba.action.parameters and not ba.action.keep_user_values:
             apv = ar.action_param_values
             if apv is None:
                 apv = ba.action.action_param_defaults(ar, obj)

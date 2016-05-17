@@ -25,8 +25,44 @@ Simple example::
 
 """
 
-from .choicelists import BuildMethod
-from .mixins import BasePrintAction
+from .choicelists import BuildMethod, BuildMethods
+from .actions import BasePrintAction
+
+
+class PrintableObject(object):
+    
+    def get_template_groups(self):
+        return [self.__class__.get_template_group()]
+
+    def get_print_templates(self, bm, action):
+        """Return a list of filenames of templates for the specified
+        build method.  Returning an empty list means that this item is
+        not printable.  For subclasses of :class:`SimpleBuildMethod`
+        the returned list may not contain more than 1 element.
+
+        The default method calls
+        :meth:`BuildMethod.get_default_template` and returns this as a
+        list with one item.
+
+        """
+        return [bm.get_default_template(self)]
+
+    def get_default_build_method(self):
+        return BuildMethods.get_system_default()
+
+    def get_build_method(self):
+        """Return the build method to use when printing this object.
+
+        This is expected to rather raise an exception than return
+        `None`.
+
+        """
+        # TypedPrintable  overrides this
+        return self.get_default_build_method()
+
+    def get_build_options(self, bm, **opts):
+        # header_center
+        return opts
 
 
 class CustomBuildMethod(BuildMethod):

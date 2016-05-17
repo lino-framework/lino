@@ -173,6 +173,21 @@ class Yearly(ObservedPeriod):
         return D(D.today().year, 12, 31)
 
 
+class Monthly(ObservedPeriod):
+
+    """An :class:`ObservedPeriod` which defaults to the current month.
+
+    """
+
+    def get_default_start_date(self):
+        D = datetime.date
+        return D(D.today().year, D.today().month, 1)
+
+    def get_default_end_date(self):
+        D = datetime.date
+        return D(D.today().year, D.today().month, 31)
+
+
 class Today(ParameterPanel):
     """:class:`lino.core.param_panel.ParameterPanel` with a field `today`
 which defaults to today."""

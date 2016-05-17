@@ -1,6 +1,0 @@
-=========================================
-#31 : The :mod:`lino.modlib.users` module
-=========================================
-
-Content moved to :doc:`/dev/users`.
-

@@ -58,25 +58,20 @@ def base_attrs(cl):
             yield k
 
 
-def add_quick_search_filter(qs, search_text):
-    if not isinstance(qs, QuerySet):
-        # TODO: filter also simple lists
-        return qs
-    return qs.filter(quick_search_filter(qs.model, search_text))
-
-
 def quick_search_filter(model, search_text, prefix=''):
     #~ logger.info("20130425 quick_search_filter(%s,%r)",model,search_text)
     q = models.Q()
-    for fn in model.quick_search_fields:
-        kw = {prefix + fn + "__icontains": search_text}
-        q = q | models.Q(**kw)
 
-    if search_text.isdigit():
+    if search_text.isdigit() and not search_text.startswith('0'):
         for field in model._meta.fields:
             if isinstance(field, (models.IntegerField, models.AutoField)):
                 kw = {prefix + field.name: int(search_text)}
                 q = q | models.Q(**kw)
+    else:
+        for fn in model.quick_search_fields:
+            kw = {prefix + fn + "__icontains": search_text}
+            q = q | models.Q(**kw)
+
     return q
 
 
@@ -93,7 +88,7 @@ def add_gridfilters(qs, gridfilters):
     if not isinstance(qs, QuerySet):
         raise NotImplementedError('TODO: filter also simple lists')
     q = models.Q()
-    print(20150506, gridfilters)
+    # print(20150506, gridfilters)
     for flt in gridfilters:
         field = get_field(qs.model, flt['field'])
         flttype = flt['type']
@@ -335,6 +330,14 @@ class Table(AbstractTable):
     Handler for uploaded files.
     Same remarks as for :attr:`lino.core.actors.Actor.disabled_fields`.
     """
+
+    @classmethod
+    def add_quick_search_filter(cls, qs, search_text):
+        """Add a filter to the given queryset `qs` in order to apply a quick
+        search for the given `search_text`.
+
+        """
+        return qs.filter(quick_search_filter(qs.model, search_text))
 
     @classmethod
     def get_chooser_for_field(self, fieldname):
@@ -728,7 +731,7 @@ class Table(AbstractTable):
             # TODO: use Q object instead of dict
 
         if rr.quick_search is not None:
-            qs = add_quick_search_filter(qs, rr.quick_search)
+            qs = self.add_quick_search_filter(qs, rr.quick_search)
         if rr.gridfilters is not None:
             qs = add_gridfilters(qs, rr.gridfilters)
         extra = rr.extra or self.extra

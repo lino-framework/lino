@@ -2,7 +2,7 @@
 # Copyright 2002-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""This is the main module of the Lino framework.
+"""The :mod:`lino` package contains the core of the Lino framework.
 
 .. autosummary::
    :toctree:

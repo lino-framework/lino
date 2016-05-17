@@ -1,9 +1,0 @@
-:state: contrib
-:module: lino
-
-#102 : More user-friendly file uploading
-========================================
-
-This makes sense only when :doc:`101` has been solved.
-
-
