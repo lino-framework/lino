@@ -26,7 +26,6 @@ Content
 
    install/index
    guide/index
-   team/index
    specs/index
    api/index
    todo
