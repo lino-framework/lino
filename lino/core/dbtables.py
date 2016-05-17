@@ -333,9 +333,10 @@ class Table(AbstractTable):
 
     @classmethod
     def add_quick_search_filter(cls, qs, search_text):
-        if not isinstance(qs, QuerySet):
-            # TODO: filter also simple lists
-            return qs
+        """Add a filter to the given queryset `qs` in order to apply a quick
+        search for the given `search_text`.
+
+        """
         return qs.filter(quick_search_filter(qs.model, search_text))
 
     @classmethod

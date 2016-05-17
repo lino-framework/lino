@@ -646,6 +646,14 @@ method in order to sort the rows of the queryset.
         if url:
             os.startfile(url)
 
+    @classmethod
+    def add_quick_search_filter(cls, data, search_text):
+        """Add a filter to the given data iterator in order to apply a quick
+        search for the given `search_text`.
+
+        """
+        return data
+
 
 class VirtualTable(AbstractTable):
     """
