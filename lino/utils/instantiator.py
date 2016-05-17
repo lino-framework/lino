@@ -74,7 +74,7 @@ class LookupConverter(Converter):
             self.lookup_field = model._meta.pk
         else:
             self.lookup_field = model._meta.get_field(lookup_field)
-        #~ self.lookup_field = lookup_field
+        # self.lookup_field = lookup_field
 
     def lookup(self, value, **kw):
         model = self.field.rel.model
@@ -82,17 +82,17 @@ class LookupConverter(Converter):
             return value
         return model.lookup_or_create(self.lookup_field, value, **kw)
 
-        #~ if isinstance(self.lookup_field,babel.BabelCharField):
-            #~ flt  = babel.lookup_filter(self.lookup_field.name,value,**kw)
-        #~ else:
-            #~ kw[self.lookup_field.name] = value
-            #~ flt = models.Q(**kw)
-        #~ try:
-            #~ return model.objects.get(flt)
-        #~ except MultipleObjectsReturned,e:
-            #~ raise model.MultipleObjectsReturned("%s.objects lookup(%r) : %s" % (model.__name__,value,e))
-        #~ except model.DoesNotExist,e:
-            #~ raise model.DoesNotExist("%s.objects lookup(%r) : %s" % (model.__name__,value,e))
+        # if isinstance(self.lookup_field,babel.BabelCharField):
+            # flt  = babel.lookup_filter(self.lookup_field.name,value,**kw)
+        # else:
+            # kw[self.lookup_field.name] = value
+            # flt = models.Q(**kw)
+        # try:
+            # return model.objects.get(flt)
+        # except MultipleObjectsReturned,e:
+            # raise model.MultipleObjectsReturned("%s.objects lookup(%r) : %s" % (model.__name__,value,e))
+        # except model.DoesNotExist,e:
+            # raise model.DoesNotExist("%s.objects lookup(%r) : %s" % (model.__name__,value,e))
 
 
 class DateConverter(Converter):
@@ -111,7 +111,9 @@ class DateConverter(Converter):
 
 class ChoiceConverter(Converter):
 
-    """Converter for :class:`ChoiceListField <lino.core.choicelists.ChoiceListField>`.
+    """Converter for :class:`ChoiceListField
+    <lino.core.choicelists.ChoiceListField>`.
+
     """
 
     def convert(self, **kw):
@@ -145,7 +147,7 @@ class ForeignKeyConverter(LookupConverter):
             else:
                 value = self.lookup(value)
             kw[self.field.name] = value
-            #~ logger.info("20111213 %s %s -> %r", self.field.name,self.__class__,value)
+            # logger.info("20111213 %s %s -> %r", self.field.name,self.__class__,value)
         return kw
 
 
@@ -177,14 +179,14 @@ class ManyToManyConverter(LookupConverter):
     """Converter for ManyToMany fields."""
     splitsep = None
 
-    #~ def lookup(self,value):
-        #~ model = self.field.rel.model
-        #~ try:
-            #~ return model.objects.get(
-              #~ **{self.lookup_field: value})
-        #~ except model.DoesNotExist,e:
-            #~ raise DataError("%s.objects.get(%r) : %s" % (
-              #~ model.__name__,value,e))
+    # def lookup(self,value):
+        # model = self.field.rel.model
+        # try:
+            # return model.objects.get(
+              # **{self.lookup_field: value})
+        # except model.DoesNotExist,e:
+            # raise DataError("%s.objects.get(%r) : %s" % (
+              # model.__name__,value,e))
 
     def convert(self, **kw):
         values = kw.get(self.field.name)
@@ -203,8 +205,8 @@ def make_converter(f, lookup_fields={}):
         return ForeignKeyConverter(f, lookup_fields.get(f.name, "pk"))
     if isinstance(f, GenericForeignKey):
         return GenericForeignKeyConverter(f)
-    #~ if isinstance(f,fields.LinkedForeignKey):
-        #~ return LinkedForeignKeyConverter(f,lookup_fields.get(f.name,"pk"))
+    # if isinstance(f,fields.LinkedForeignKey):
+        # return LinkedForeignKeyConverter(f,lookup_fields.get(f.name,"pk"))
     if isinstance(f, models.ManyToManyField):
         return ManyToManyConverter(f, lookup_fields.get(f.name, "pk"))
     if isinstance(f, models.DateField):
@@ -213,8 +215,8 @@ def make_converter(f, lookup_fields={}):
         return DecimalConverter(f)
     from lino.core import choicelists
     if isinstance(f, choicelists.ChoiceListField):
-        #~ if f.name == 'p_book':
-            #~ print "20131012 b", f
+        # if f.name == 'p_book':
+            # print "20131012 b", f
         return ChoiceConverter(f)
 
 
@@ -227,7 +229,7 @@ class Instantiator(object):
     """
 
     def __init__(self, model, fieldnames=None, converter_classes={}, **kw):
-        #~ self.model = resolve_model(model,strict=True)
+        # self.model = resolve_model(model,strict=True)
         self.model = resolve_model(model)
         if isinstance(self.model, UnresolvedModel):
             raise Exception("Instantiator on unresolved model %s", model)
@@ -236,9 +238,9 @@ class Instantiator(object):
                 pass
             self.build = noop
             return
-        #~ if self.model._meta.pk is None:
-            #~ raise Exception("Model %r is not installed (_meta.pk is None)." % self.model)
-        #~ if type(fieldnames) == str:
+        # if self.model._meta.pk is None:
+            # raise Exception("Model %r is not installed (_meta.pk is None)." % self.model)
+        # if type(fieldnames) == str:
         if isinstance(fieldnames, basestring):
             fieldnames = fieldnames.split()
         self.default_values = kw
@@ -269,8 +271,8 @@ class Instantiator(object):
                 cv = make_converter(f, lookup_fields)
             if cv is not None:
                 self.converters.append(cv)
-        #~ for f in model_class._meta.many_to_many:
-            #~ print "foo", f.name
+        # for f in model_class._meta.many_to_many:
+            # print "foo", f.name
 
     def is_active(self):
 
@@ -295,7 +297,7 @@ class Instantiator(object):
 
         """
         # logger.debug("Instantiator.build(%s,%r,%r)",self.model_class._meta.db_table,values,kw)
-        #~ i = 0
+        # i = 0
         kw['_m2m'] = {}
         for i, v in enumerate(values):
             if isinstance(v, basestring):
@@ -304,16 +306,16 @@ class Instantiator(object):
                     kw[self.fields[i].name] = v
             else:
                 kw[self.fields[i].name] = v
-            #~ i += 1
-        #~ kw.update(self.default_values)
+            # i += 1
+        # kw.update(self.default_values)
         for k, v in list(self.default_values.items()):
             kw.setdefault(k, v)
         for c in self.converters:
             kw = c.convert(**kw)
-        #~ if self.model.__name__ == 'Company':
-            #~ print 20130212, __file__, kw
-            #~ logger.info("20130212 field_cache for %s (%s)",self.model,
-              #~ ' '.join([f.name for f in self.model._meta._field_name_cache]))
+        # if self.model.__name__ == 'Company':
+            # print 20130212, __file__, kw
+            # logger.info("20130212 field_cache for %s (%s)",self.model,
+              # ' '.join([f.name for f in self.model._meta._field_name_cache]))
 
         m2m = kw.pop("_m2m")
         instance = self.model(**kw)
@@ -354,9 +356,9 @@ class InstanceGenerator(object):
 
 
 def create_and_get(model, **kw):
-    """
-    Instantiate, full_clean, save 
-    and read back from database (the latter to avoid certain Django side effects)
+    """Instantiate, full_clean, save and read back from database (the
+    latter to avoid certain Django side effects)
+
     """
     model = resolve_model(model)
     o = model(**kw)

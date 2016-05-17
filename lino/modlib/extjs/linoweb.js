@@ -2462,15 +2462,23 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel, {
   
   ,before_row_edit : function(record) {}
   ,add_field_values : function (p) { // similar to add_param_values()
-      //~ 20121023 
-      if (this.form.isDirty()) {
-        p.{{constants.URL_PARAM_FIELD_VALUES}} = this.get_field_values();
-      }else{
-        if (this.status_field_values) 
-          p.{{constants.URL_PARAM_FIELD_VALUES}} = Lino.fields2array(this.fields,this.status_field_values);
-      }
-      //~ if (!this.form.isDirty()) return;
-      //~ p.$constants.URL_PARAM_FIELD_VALUES = this.get_field_values();
+      /* LS 20160517 : Until now Lino tested whether the form is
+       dirty, and if not, submitted only the values which had been set
+       by set_status. But now status_field_values can be empty because
+       Action.keep_user_values is True. In that case we must submit
+       the current values even if the form is not dirty.  I don't
+       remember why we had this feature of not submitting unmodified
+       field values, so I remove this feature for now. */
+      p.{{constants.URL_PARAM_FIELD_VALUES}} = this.get_field_values();
+      // if (this.form.isDirty()) {
+      //   p.{{constants.URL_PARAM_FIELD_VALUES}} = this.get_field_values();
+      // }else{
+      //   // console.log("20160517 add_param_values not dirty, status_field_values",
+      //   //             this.status_field_values);
+      //   if (this.status_field_values) 
+      //     p.{{constants.URL_PARAM_FIELD_VALUES}} = Lino.fields2array(
+      //         this.fields, this.status_field_values);
+      // }
       //~ console.log("20120203 add_param_values added pv",pv,"to",p);
   }
   ,get_field_values : function() {
@@ -2506,8 +2514,8 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel, {
 });
 
     
-Lino.fields2array = function(fields,values) {
-    //~ console.log('20130605 fields2array gonna loop on', fields,values);
+Lino.fields2array = function(fields, values) {
+    // console.log('20160517 fields2array gonna loop on', fields, values);
     var pv = Array(fields.length);
     for(var i=0; i < fields.length;i++) {
         var f = fields[i]
@@ -2521,6 +2529,7 @@ Lino.fields2array = function(fields,values) {
             pv[i] = v; // f.getValue(); 
         }
     }
+    // console.log('20160517 fields2array returns', pv);
     return pv;
 }
 
