@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2014-2016 Josef Kejzlar, Luc Saffre
+# Copyright 2014-2016 Josef Kejzlar, Luc Saffre, Hamza Khchine
 # License: BSD (see file COPYING for details)
 
 """Database models for `lino.modlib.export_excel`.
@@ -14,8 +14,6 @@ from lino.core import actions
 from lino.core.tables import AbstractTable
 from lino.utils.media import TmpMediaFile
 from django.utils.translation import ugettext_lazy as _
-from openpyxl import Workbook
-from openpyxl.styles import Font
 
 
 class TableRenderer(object):
@@ -78,6 +76,18 @@ def sheet_name(s):
 
 class ExcelRenderer(TableRenderer):
     def render(self):
+        # local import to avoid the following traceback:
+        # Error in sys.exitfunc:
+        # Traceback (most recent call last):
+        #   File "/usr/lib/python2.7/atexit.py", line 24, in _run_exitfuncs
+        #     func(*targs, **kargs)
+        #   File "/openpyxl/writer/write_only.py", line 38, in _openpyxl_shutdown
+        #     for path in ALL_TEMP_FILES:
+        # TypeError: 'NoneType' object is not iterable
+
+        from openpyxl import Workbook
+        from openpyxl.styles import Font
+
         workbook = Workbook(guess_types=True)
         sheet = workbook.active
         sheet.title = sheet_name(self.title)

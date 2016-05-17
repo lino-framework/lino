@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2015 Luc Saffre
+# Copyright 2009-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -49,7 +49,6 @@ from lino.utils import dblogger
 from lino.core import auth
 
 from lino.core import actions
-from lino.core import dbtables
 
 from lino.core.views import requested_actor, action_request
 from lino.core.views import json_response, json_response_kw
@@ -263,10 +262,10 @@ def choices_for_field(request, holder, field):
     return (qs, row2dict)
 
 
-def choices_response(request, qs, row2dict, emptyValue):
+def choices_response(actor, request, qs, row2dict, emptyValue):
     quick_search = request.GET.get(constants.URL_PARAM_FILTER, None)
     if quick_search is not None:
-        qs = dbtables.add_quick_search_filter(qs, quick_search)
+        qs = actor.add_quick_search_filter(qs, quick_search)
 
     count = len(qs)
 
@@ -303,7 +302,7 @@ class ActionParamChoices(View):
             emptyValue = '<br/>'
         else:
             emptyValue = None
-        return choices_response(request, qs, row2dict, emptyValue)
+        return choices_response(actor, request, qs, row2dict, emptyValue)
 
 
 class Choices(View):
@@ -349,7 +348,7 @@ class Choices(View):
                 emptyValue = '<br/>'
             qs, row2dict = choices_for_field(request, rpt, field)
 
-        return choices_response(request, qs, row2dict, emptyValue)
+        return choices_response(rpt, request, qs, row2dict, emptyValue)
 
 
 class Restful(View):
