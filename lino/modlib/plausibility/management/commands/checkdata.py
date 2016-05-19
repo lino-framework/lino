@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015 by Luc Saffre.
+# Copyright 2015-2016 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 """Defines the :manage:`checkdata` management command:
 
@@ -23,7 +23,7 @@ from optparse import make_option
 from clint.textui import puts, progress
 
 from django.utils import translation
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 
 from lino.modlib.plausibility.choicelists import Checkers
 from lino.modlib.plausibility.models import get_checkable_models
@@ -35,6 +35,8 @@ def check_plausibility(args=[], fix=True):
     """Called by :manage:`check_plausibility`. See there."""
     Problem = rt.modules.plausibility.Problem
     mc = get_checkable_models(*args)
+    if len(mc) == 0 and len(args) > 0:
+        raise CommandError("No checker matches {0}".format(args))
     with translation.override('en'):
         for m, checkers in mc.items():
             ct = rt.modules.contenttypes.ContentType.objects.get_for_model(m)
@@ -83,7 +85,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if options['list']:
-            Checkers.show()
+            rt.show(Checkers, column_names="value text")
         else:
             rt.startup()
             check_plausibility(args=args, fix=options['fix'])
