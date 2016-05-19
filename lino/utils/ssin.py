@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2015 Luc Saffre
+# Copyright 2008-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 r""" Utilities for manipulating *Belgian national identification
@@ -235,7 +235,10 @@ def format_ssin(raw_ssin):
     cd = raw_ssin[9:]
 
     def is_ok(xtest):
-        xtest = int(xtest)
+        try:
+            xtest = int(xtest)
+        except ValueError:
+            return False
         xtest = abs((xtest - 97 * (int(old_div(xtest, 97)))) - 97)
         if xtest == 0:
             xtest = 97
