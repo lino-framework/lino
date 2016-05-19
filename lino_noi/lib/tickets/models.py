@@ -390,6 +390,11 @@ class Ticket(mixins.CreatedModified, TimeInvestment, RFC):
         If this field is empty and :attr:`project` is not empty, then
         default value is taken from :attr:`Project.assign_to`.
 
+    .. attribute:: state
+
+        The state of this ticket. See :class:`TicketStates
+        <lino_noi.lib.tickets.choicelists.TicketStates>`
+
     .. attribute:: waiting_for
 
         An unformatted one-line text which describes what this ticket
@@ -409,6 +414,34 @@ class Ticket(mixins.CreatedModified, TimeInvestment, RFC):
         version.
 
         The description can contain memo commands (see :doc:`/specs/memo`).
+
+    .. attribute:: duplicate_of
+
+        A pointer to the ticket which is the cause of this ticket.
+
+        A ticket with a non-empty :attr:`duplicate_of` field can be
+        called a "duplicate".  The number of a duplicate is
+        theoretically higher than the number of the ticket it
+        duplicates.
+
+        The :attr:`state` of a duplicate does not automatically become
+        that of the duplicated ticket.  Each ticket continues to have
+        its own state. Example: Some long time ago, with Mathieu, we
+        agreed that ticket #100 can go to *Sleeping*. Now Aurélie
+        reported the same problem again as #904. This means that we
+        should talk about it. And even before talking with her, I'd
+        like to have a look at the code in order to estimate whether
+        it is difficult or not, so I set the state of #904 to ToDo.
+
+        Wouldn't it be preferrable to replace the :attr:`duplicate_of
+        field by a :class:`LinkType
+        <lino_noi.lib.tickets.choicelists.LinkTypes>` called
+        "Duplicated/Duplicated by"?  No. We had this before and
+        preferred the field, because a field is at least one click
+        less, and because we *want* users to define a clear hiearchy
+        with a clear root ticket. You can have a group of tickets
+        which are all direct or indirect duplicates of this "root of
+        all other problems".
 
     """
 
