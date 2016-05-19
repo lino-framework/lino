@@ -151,11 +151,11 @@ class Checkers(dd.ChoiceList):
     item_class = Checker
     max_length = 250
     # e.g. "lino_welfare.modlib.pcsw.models.ClientCoachingsChecker"
-    column_names = "name text"
+    column_names = "value text"
     show_values = False
 
     detail_layout = """
-    value name text
+    value text
     plausibility.ProblemsByChecker
     """
 
