@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015 Luc Saffre
+# Copyright 2015-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """A selection of names to be used in tested documents."""
@@ -170,3 +170,30 @@ def screenshot(obj, filename, rstname, username='robin'):
 
     runserver(settings.SETTINGS_MODULE, f)
         
+
+def show_menu_path(spec, language=None):
+    from lino.core.menus import find_menu_item
+    from lino.sphinxcontrib.actordoc import menuselection_text
+
+    # profile = ar.get_user().profile
+    # menu = settings.SITE.get_site_menu(settings.SITE.kernel, profile)
+    # mi = menu.find_item(spec)
+    mi = find_menu_item(spec)
+
+    if mi is None:
+        raise Exception("Invalid spec {0}".format(spec))
+
+    def doit():
+        print(menuselection_text(mi))
+
+    if language:
+        with translation.override(language):
+            return doit()
+    return doit()
+
+    # items = [mi]
+    # p = mi.parent
+    # while p:
+    #     items.insert(0, p)
+    #     p = p.parent
+    # return " --> ".join([i.label for i in items])
