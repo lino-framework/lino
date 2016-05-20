@@ -1,10 +1,8 @@
-# Copyright 2015 Luc Saffre
+# Copyright 2015-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
 Choicelists for `lino.modlib.plausibility`.
-
-.. autosummary::
 
 
 """
@@ -50,7 +48,8 @@ class Checker(dd.Choice):
     help_text = None
 
     def __init__(self):
-        value = self.__module__ + '.' + self.__class__.__name__
+        # value = self.__module__ + '.' + self.__class__.__name__
+        value = self.__module__.split('.')[-2] + '.' + self.__class__.__name__
         # if isinstance(self.model, basestring):
         #     value = self.model + '.' + self.__class__.__name__
         # else:
@@ -152,11 +151,11 @@ class Checkers(dd.ChoiceList):
     item_class = Checker
     max_length = 250
     # e.g. "lino_welfare.modlib.pcsw.models.ClientCoachingsChecker"
-    column_names = "name text"
+    column_names = "value text"
     show_values = False
 
     detail_layout = """
-    value name text
+    value text
     plausibility.ProblemsByChecker
     """
 

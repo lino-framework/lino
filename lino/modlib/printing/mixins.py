@@ -176,7 +176,7 @@ class CachedPrintable(Duplicable, Printable):
 
     def get_target_name(self):
         if self.build_time:
-            return self.build_method.get_target_name(
+            return self.get_build_method().get_target_name(
                 self.do_print, self)
 
     def get_build_method(self):
