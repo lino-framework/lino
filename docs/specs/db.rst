@@ -58,7 +58,7 @@ This document describes the database structure.
  tickets.Interest            tickets.Interests            3         6
  tickets.Link                tickets.Links                4         1
  tickets.Milestone           tickets.Milestones           9         8
- tickets.Project             tickets.Projects             15        5
+ tickets.Project             tickets.Projects             17        5
  tickets.ProjectType         tickets.ProjectTypes         4         0
  tickets.Site                tickets.Sites                4         3
  tickets.Ticket              tickets.Tickets              26        16

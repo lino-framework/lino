@@ -102,6 +102,7 @@ class Site(Site):
         # yield self.modules.tickets.ActiveTickets
         # yield self.modules.tickets.InterestingTickets
         yield self.modules.tickets.PublicTickets
+        yield self.modules.tickets.ActiveProjects
 
     def setup_quicklinks(self, ar, tb):
         super(Site, self).setup_quicklinks(ar, tb)

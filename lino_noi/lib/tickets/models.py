@@ -127,7 +127,8 @@ class TicketType(mixins.BabelNamed):
         #~ verbose_name_plural = _('Repositories')
 
 
-class Project(TimeInvestment, mixins.Hierarchical, mixins.Referrable,
+class Project(mixins.DatePeriod, TimeInvestment,
+              mixins.Hierarchical, mixins.Referrable,
               ContactRelated):
     """A **project** is something on which several users work together.
 
@@ -163,6 +164,24 @@ class Project(TimeInvestment, mixins.Hierarchical, mixins.Referrable,
 
     def __unicode__(self):
         return self.ref or self.name
+
+    @dd.displayfield(_("Activity overview"))
+    def activity_overview(self, ar):
+        if ar is None:
+            return ''
+        TicketsByProject = rt.modules.tickets.TicketsByProject
+        elems = []
+        for tst in (TicketStates.objects()):
+            pv = dict(state=tst)
+            sar = ar.spawn(
+                TicketsByProject, master_instance=self, param_values=pv)
+            num = sar.get_total_count()
+            if num > 0:
+                elems += [
+                    "{0}: ".format(tst.text),
+                    sar.ar2button(label=str(num))]
+        return E.p(*elems)
+
 
     # def save(self, *args, **kwargs):
     #     root = self.parent

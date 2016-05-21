@@ -14,7 +14,8 @@ from __future__ import print_function
 
 from django.utils.translation import string_concat
 
-from lino.mixins.periods import ObservedEvent
+from lino.modlib.system.choicelists import (
+    ObservedEvent, PeriodStarted, PeriodActive, PeriodEnded)
 
 from lino.api import dd, _
 
@@ -77,7 +78,11 @@ class ProjectEvents(dd.ChoiceList):
     verbose_name = _("Observed event")
     verbose_name_plural = _("Observed events")
     
+ProjectEvents.add_item_instance(PeriodStarted('started'))
+ProjectEvents.add_item_instance(PeriodActive('active'))
+ProjectEvents.add_item_instance(PeriodEnded('ended'))
 ProjectEvents.add_item_instance(TicketEventModified('modified'))
+
 
 
 class TicketStates(dd.Workflow):

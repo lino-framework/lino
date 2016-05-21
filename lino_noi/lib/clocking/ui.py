@@ -31,7 +31,9 @@ from lino.api import dd, rt, _
 from lino.utils import ONE_DAY
 from lino.utils.xmlgen.html import E, join_elems
 from lino.utils.quantities import Duration
-from lino.mixins import ObservedPeriod
+from lino.modlib.system.choicelists import ObservedEvent
+from lino.mixins.periods import ObservedPeriod
+
 
 from lino_xl.lib.cal.utils import when_text
 

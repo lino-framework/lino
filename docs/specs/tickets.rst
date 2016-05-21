@@ -102,12 +102,12 @@ assigned to a project:
 >>> pv = dict(has_project=dd.YesNo.no)
 >>> rt.show(tickets.Tickets, param_values=pv)
 ... #doctest: +REPORT_UDIFF
-==== =================== ======== ========== ================= =========
- ID   Summary             Closed   Workflow   Reporter          Project
----- ------------------- -------- ---------- ----------------- ---------
- 5    Cannot create Foo   No       **New**    Romain Raffault
- 3    Baz sucks           No       **New**    marc
-==== =================== ======== ========== ================= =========
+==== =================== ======== ============== ================= =========
+ ID   Summary             Closed   Workflow       Reporter          Project
+---- ------------------- -------- -------------- ----------------- ---------
+ 5    Cannot create Foo   No       **Sleeping**   Romain Raffault
+ 3    Baz sucks           No       **ToDo**       marc
+==== =================== ======== ============== ================= =========
 <BLANKLINE>
 
 
@@ -228,16 +228,16 @@ can see all local tickets for a given site object:
 >>> welket = tickets.Site.objects.get(name="welket")
 >>> rt.show(tickets.TicketsBySite, welket)
 ... #doctest: +REPORT_UDIFF
-==== =========================================== ======== ========== ============= ==========
- ID   Summary                                     Closed   Workflow   Reporter      Project
----- ------------------------------------------- -------- ---------- ------------- ----------
- 16   How to get bar from foo                     No       **New**    luc           research
- 13   Bar cannot foo                              No       **New**    Rolf Rompen   linö
- 10   Where can I find a Foo when bazing Bazes?   No       **New**    marc          docs
- 7    No Foo after deleting Bar                   No       **New**    Robin Rood    shop
- 4    Foo and bar don't baz                       No       **New**    mathieu       docs
- 1    Föö fails to bar when baz                   No       **New**    jean          linö
-==== =========================================== ======== ========== ============= ==========
+==== =========================================== ======== ============= ============= ==========
+ ID   Summary                                     Closed   Workflow      Reporter      Project
+---- ------------------------------------------- -------- ------------- ------------- ----------
+ 16   How to get bar from foo                     No       **Talk**      luc           research
+ 13   Bar cannot foo                              No       **Done**      Rolf Rompen   linö
+ 10   Where can I find a Foo when bazing Bazes?   No       **ToDo**      marc          docs
+ 7    No Foo after deleting Bar                   No       **Refused**   Robin Rood    shop
+ 4    Foo and bar don't baz                       No       **Sticky**    mathieu       docs
+ 1    Föö fails to bar when baz                   No       **New**       jean          linö
+==== =========================================== ======== ============= ============= ==========
 <BLANKLINE>
 
 Note that the above table shows no state change actions in the
@@ -249,11 +249,11 @@ authenticated developer it looks like this:
 ==== =========================================== ======== ================================================================== ============= ==========
  ID   Summary                                     Closed   Workflow                                                           Reporter      Project
 ---- ------------------------------------------- -------- ------------------------------------------------------------------ ------------- ----------
- 16   How to get bar from foo                     No       **New** → [Sticky] [Talk] [ToDo] [Sleeping] [Done] [Refused] [☆]   luc           research
- 13   Bar cannot foo                              No       **New** → [Sticky] [Talk] [ToDo] [Sleeping] [Done] [Refused] [☆]   Rolf Rompen   linö
- 10   Where can I find a Foo when bazing Bazes?   No       **New** → [Sticky] [Talk] [ToDo] [Sleeping] [Done] [Refused] [☆]   marc          docs
- 7    No Foo after deleting Bar                   No       **New** → [Sticky] [Talk] [ToDo] [Sleeping] [Done] [Refused] [☆]   Robin Rood    shop
- 4    Foo and bar don't baz                       No       **New** → [Sticky] [Talk] [ToDo] [Sleeping] [Done] [Refused] [☆]   mathieu       docs
+ 16   How to get bar from foo                     No       **Talk** → [ToDo] [Sleeping] [Done] [Refused] [☆]                  luc           research
+ 13   Bar cannot foo                              No       **Done** → [☆]                                                     Rolf Rompen   linö
+ 10   Where can I find a Foo when bazing Bazes?   No       **ToDo** → [Talk] [Sleeping] [Done] [Refused] [☆]                  marc          docs
+ 7    No Foo after deleting Bar                   No       **Refused** → [☆]                                                  Robin Rood    shop
+ 4    Foo and bar don't baz                       No       **Sticky** → [☆]                                                   mathieu       docs
  1    Föö fails to bar when baz                   No       **New** → [Sticky] [Talk] [ToDo] [Sleeping] [Done] [Refused] [☆]   jean          linö
 ==== =========================================== ======== ================================================================== ============= ==========
 <BLANKLINE>

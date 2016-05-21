@@ -24,7 +24,7 @@ from __future__ import print_function
 import datetime
 
 from lino.api import rt, dd, _
-from lino.utils import Cycler
+from lino.utils import Cycler, i2d
 
 from lino.core.roles import SiteAdmin
 from lino_xl.lib.cal.choicelists import DurationUnits
@@ -96,14 +96,25 @@ def tickets_objects():
         yield Milestone(site=SITES.pop(), expected=d, reached=d)
     yield Milestone(site=SITES.pop(), expected=dd.today())
 
-    yield Project(name="Framewörk", ref="linö", private=False)
-    yield Project(name="Téam", ref="téam")
-    yield Project(name="Documentatión", ref="docs", private=False)
-    yield Project(name="Research", ref="research", private=False)
-    yield Project(name="Shop", ref="shop", private=False)
+    yield Project(
+        name="Framewörk", ref="linö", private=False,
+        start_date=i2d(20090101))
+    yield Project(
+        name="Téam", ref="téam", start_date=i2d(20100101))
+    yield Project(
+        name="Documentatión", ref="docs", private=False,
+        start_date=i2d(20090101))
+    yield Project(
+        name="Research", ref="research", private=False,
+        start_date=i2d(19980101))
+    yield Project(
+        name="Shop", ref="shop", private=False,
+        start_date=i2d(20120201), end_date=i2d(20120630))
 
     PROJECTS = Cycler(Project.objects.all())
     SITES = Cycler(Site.objects.all())
+    TicketStates = rt.modules.tickets.TicketStates
+    TSTATES = Cycler(TicketStates.objects())
 
     def ticket(summary, **kwargs):
         site = SITES.pop()
@@ -111,6 +122,7 @@ def tickets_objects():
             ticket_type=TYPES.pop(), summary=summary,
             reporter=USERS.pop(),
             site=site,
+            state=TSTATES.pop(),
             product=PRODUCTS.pop())
             
         if False:
@@ -157,7 +169,6 @@ def clockings_objects():
     SessionType = rt.modules.clocking.SessionType
     Session = rt.modules.clocking.Session
     Ticket = rt.modules.tickets.Ticket
-    # TicketStates = rt.modules.tickets.TicketStates
     User = rt.modules.users.User
     UserProfiles = rt.modules.users.UserProfiles
     # devs = (UserProfiles.developer, UserProfiles.senior)
