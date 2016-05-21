@@ -10,8 +10,8 @@ Work time tracking
     
     doctest init:
 
-    >>> import os
-    >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_noi.projects.team.settings.doctests'
+    >>> from lino import startup
+    >>> startup('lino_noi.projects.team.settings.doctests')
     >>> from lino.api.doctest import *
 
 
@@ -197,19 +197,19 @@ Site #1 ('welket')
 
 >>> rt.show(clocking.TicketsByReport, obj)
 ... #doctest: -REPORT_UDIFF
-==== ============================================================================================================== ======= ===========
- ID   Description                                                                                                    State   Time
----- -------------------------------------------------------------------------------------------------------------- ------- -----------
- 4    Foo and bar don't baz. Site: welket. Reporter: mathieu. Project: docs. Product: Lino Welfare                   New     0:12
- 7    No Foo after deleting Bar. Site: welket. Reporter: Robin Rood. Project: shop. Product: Lino Core               New     2:18
- 8    Is there any Bar in Foo?. Site: welsch. Reporter: jean. Project: linö. Product: Lino Welfare                   New     3:29
- 10   Where can I find a Foo when bazing Bazes?. Site: welket. Reporter: marc. Project: docs. Product: Lino Faggio   New     6:11
- 11   Class-based Foos and Bars?. Site: welsch. Reporter: mathieu. Project: research. Product: Lino Core             New     0:10
- 12   Foo cannot bar. Site: pypi. Reporter: Romain Raffault. Project: shop. Product: Lino Welfare                    New     1:30
- 15   Bars have no foo. Site: pypi. Reporter: jean. Project: docs. Product: Lino Core                                New     0:05
- 16   How to get bar from foo. Site: welket. Reporter: luc. Project: research. Product: Lino Welfare                 New     2:02
-                                                                                                                             **15:57**
-==== ============================================================================================================== ======= ===========
+==== ============================================================================================================== ========== ===========
+ ID   Description                                                                                                    State      Time
+---- -------------------------------------------------------------------------------------------------------------- ---------- -----------
+ 4    Foo and bar don't baz. Site: welket. Reporter: mathieu. Project: docs. Product: Lino Welfare                   Sticky     0:12
+ 7    No Foo after deleting Bar. Site: welket. Reporter: Robin Rood. Project: shop. Product: Lino Core               Refused    2:18
+ 8    Is there any Bar in Foo?. Site: welsch. Reporter: jean. Project: linö. Product: Lino Welfare                   New        3:29
+ 10   Where can I find a Foo when bazing Bazes?. Site: welket. Reporter: marc. Project: docs. Product: Lino Faggio   ToDo       6:11
+ 11   Class-based Foos and Bars?. Site: welsch. Reporter: mathieu. Project: research. Product: Lino Core             Sticky     0:10
+ 12   Foo cannot bar. Site: pypi. Reporter: Romain Raffault. Project: shop. Product: Lino Welfare                    Sleeping   1:30
+ 15   Bars have no foo. Site: pypi. Reporter: jean. Project: docs. Product: Lino Core                                New        0:05
+ 16   How to get bar from foo. Site: welket. Reporter: luc. Project: research. Product: Lino Welfare                 Talk       2:02
+                                                                                                                                **15:57**
+==== ============================================================================================================== ========== ===========
 <BLANKLINE>
 
 

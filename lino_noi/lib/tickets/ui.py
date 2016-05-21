@@ -91,7 +91,7 @@ class ProjectDetail(dd.FormLayout):
     # """, label=_("Tickets"))
 
     history = dd.Panel("""
-    srcref_url_template changeset_url_template
+    start_date end_date srcref_url_template changeset_url_template
     #MilestonesByProject
     TicketsByProject
     """, label=_("Timeline"))
@@ -131,6 +131,24 @@ class Projects(dd.Table):
         return qs
 
 
+class ActiveProjects(Projects):
+    """Show a list of active projects.
+
+    For an example, see :ref:`noi.specs.projects`.
+
+    """
+    column_names = 'ref name start_date activity_overview *'
+    required_roles = dd.required(dd.SiteStaff)
+
+    @classmethod
+    def param_defaults(self, ar, **kw):
+        kw = super(ActiveProjects, self).param_defaults(ar, **kw)
+        kw.update(start_date=dd.demo_date())
+        kw.update(end_date=dd.demo_date())
+        kw.update(observed_event=ProjectEvents.active)
+        return kw
+
+    
 class ProjectsByParent(Projects):
     master_key = 'parent'
     label = _("Subprojects")
@@ -426,8 +444,13 @@ class DuplicatesByTicket(Tickets):
     column_names = "id summary *"
 
 
-# class UnassignedTickets(Tickets):
-#     column_names = "summary project reporter *"
+class UnassignedTickets(Tickets):
+    column_names = "summary project reporter *"
+    label = _("Unassigned Tickets")
+
+    @classmethod
+    def get_queryset(self, ar):
+        return self.model.objects.filter(assigned_to=None)
 
 
 class TicketsByProject(Tickets):

@@ -17,13 +17,28 @@
 # License along with Lino Noi.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-from __future__ import unicode_literals
-from __future__ import print_function
+"""Clocking specific for the Team variant of Lino Noi.
 
-from lino.api import rt, dd
+.. autosummary::
+   :toctree:
+
+   models
+   fixtures
 
 
-def objects():
-    SessionType = rt.modules.clocking.SessionType
-    yield SessionType(id=1, name="Default")
+"""
+
+from lino_noi.lib.clocking import *
+
+
+class Plugin(Plugin):
+
+    ticket_model = 'tickets.Ticket'
+
+    needs_plugins = ['lino_noi.projects.team.lib.tickets']
+
+    def setup_reports_menu(self, site, profile, m):
+        p = self.get_menu_group()
+        m = m.add_menu(p.app_label, p.verbose_name)
+        m.add_action('clocking.ServiceReports')
 

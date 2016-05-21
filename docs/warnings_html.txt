@@ -1,0 +1,11 @@
+WARNING: intersphinx inventory u'http://www.lino-framework.org/objects.inv' not fetchable due to <class 'urllib2.URLError'>: <urlopen error [Errno -2] Name or service not known>
+WARNING: intersphinx inventory u'http://atelier.lino-framework.org/objects.inv' not fetchable due to <class 'urllib2.URLError'>: <urlopen error [Errno -2] Name or service not known>
+/media/dell1tb/luc/work/noi/docs/install/index.rst:6: WARNING: undefined label: lino.dev.install (if the link has no caption the label must precede a section header)
+/media/dell1tb/luc/work/noi/docs/install/index.rst:19: WARNING: undefined label: lino.tutorial.hello (if the link has no caption the label must precede a section header)
+include/tested.rst:3: WARNING: undefined label: tested_docs (if the link has no caption the label must precede a section header)
+/media/dell1tb/luc/work/noi/docs/team/builddocs.rst:8: WARNING: undefined label: lino.dev.install (if the link has no caption the label must precede a section header)
+/media/dell1tb/luc/work/noi/docs/team/projects.rst:53: WARNING: undefined label: lino.dev.install (if the link has no caption the label must precede a section header)
+/media/dell1tb/luc/work/noi/docs/team/projects.rst:81: WARNING: undefined label: lino.dev.install (if the link has no caption the label must precede a section header)
+/media/dell1tb/luc/work/noi/docs/team/projects.rst:81: WARNING: undefined label: cosi (if the link has no caption the label must precede a section header)
+/media/dell1tb/luc/work/noi/docs/team/projects.rst:81: WARNING: undefined label: welfare (if the link has no caption the label must precede a section header)
+/media/dell1tb/luc/work/noi/docs/team/projects.rst:81: WARNING: undefined label: voga (if the link has no caption the label must precede a section header)

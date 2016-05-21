@@ -71,12 +71,8 @@ class Site(Site):
         yield 'lino_noi.lib.products'
 
         yield 'lino_noi.projects.team.lib.tickets'
-        # We explicitly yield 'tickets', although it would be
-        # automatically added by 'clocking', because we want
-        # :meth:`lino.core.plugin.Plugin.get_menu_group` to return
-        # "Tickets", not "Clocking".
         yield 'lino_noi.lib.faculties'
-        yield 'lino_noi.lib.clocking'
+        yield 'lino_noi.projects.team.lib.clocking'
         yield 'lino_xl.lib.lists'
 
         # yield 'lino.modlib.uploads'
@@ -102,6 +98,7 @@ class Site(Site):
         # yield self.modules.tickets.ActiveTickets
         # yield self.modules.tickets.InterestingTickets
         yield self.modules.tickets.PublicTickets
+        yield self.modules.tickets.ActiveProjects
 
     def setup_quicklinks(self, ar, tb):
         super(Site, self).setup_quicklinks(ar, tb)

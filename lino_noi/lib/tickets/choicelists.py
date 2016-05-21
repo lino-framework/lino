@@ -14,7 +14,8 @@ from __future__ import print_function
 
 from django.utils.translation import string_concat
 
-from lino.mixins.periods import ObservedEvent
+from lino.modlib.system.choicelists import (
+    ObservedEvent, PeriodStarted, PeriodActive, PeriodEnded)
 
 from lino.api import dd, _
 
@@ -77,7 +78,11 @@ class ProjectEvents(dd.ChoiceList):
     verbose_name = _("Observed event")
     verbose_name_plural = _("Observed events")
     
+ProjectEvents.add_item_instance(PeriodStarted('started'))
+ProjectEvents.add_item_instance(PeriodActive('active'))
+ProjectEvents.add_item_instance(PeriodEnded('ended'))
 ProjectEvents.add_item_instance(TicketEventModified('modified'))
+
 
 
 class TicketStates(dd.Workflow):
@@ -104,9 +109,19 @@ class TicketStates(dd.Workflow):
         It appears in the todo list of somebody (either the assigned
         worker, or our general todo list)
 
+    .. attribute:: testing
+
+        The ticket is theoretically done, but we want to confirm this
+        somehow, and it is not clear who (reporter, assignee or even
+        some third user) should do the next step. If it is clear that
+        the reporter should do the testing, then you should rather set
+        the ticket to :attr:`talk`. If it is clear that you (the
+        assignee) must test it, then leave the ticket at :attr:`todo`.
+
     .. attribute:: sleeping
 
-        Waiting for some external event. We didn't decide what to do with it.
+        Waiting for some external event. We didn't decide what to do
+        with it.
 
     .. attribute:: sticky
 

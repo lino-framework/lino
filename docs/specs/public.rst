@@ -10,12 +10,8 @@ Public read-only interface
     
     doctest init:
 
-    >>> from __future__ import print_function 
-    >>> from __future__ import unicode_literals
     >>> from lino import startup
     >>> startup('lino_noi.projects.bs3.settings.demo')
-    >>> # import os
-    >>> # os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_noi.projects.bs3.settings.demo'
     >>> from lino.api.doctest import *
 
 
@@ -38,7 +34,7 @@ The demo database contains the following data:
 ================================== ======= ============= ========= =========== ==========
  Overview                           State   Ticket type   Project   Product     Priority
 ---------------------------------- ------- ------------- --------- ----------- ----------
- *#13 (Bar cannot foo)*             New     Bugfix        linö      Lino Cosi   0
+ *#13 (Bar cannot foo)*             Done    Bugfix        linö      Lino Cosi   0
  *#1 (Föö fails to bar when baz)*   New     Bugfix        linö      Lino Cosi   0
 ================================== ======= ============= ========= =========== ==========
 <BLANKLINE>
@@ -67,7 +63,7 @@ This data is being rendered using plain bootstrap HTML:
 >>> soup = BeautifulSoup(res.content)
 >>> print(soup.get_text(' ', strip=True))
 ... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF +ELLIPSIS
-Tickets Home en de fr Tickets Active tickets Tickets Unassigned Tickets Site About #7 (No Foo after deleting Bar) << < > >> State: New
+Tickets Home en de fr Tickets Active tickets Tickets Unassigned Tickets Site About #7 (No Foo after deleting Bar) << < > >> State: Refused
 <BLANKLINE>
 <BLANKLINE>
 (last update ...) Reported by: Robin Rood ... Product: Lino Core Site: welket This is Lino Noi ...
