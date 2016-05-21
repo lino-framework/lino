@@ -17,13 +17,13 @@
 # License along with Lino Noi.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-from __future__ import unicode_literals
-from __future__ import print_function
+"""Fixtures specific for the Team variant of Lino Noi .
 
-from lino.api import rt, dd
+.. autosummary::
+   :toctree:
+
+   std
+   demo
 
 
-def objects():
-    SessionType = rt.modules.clocking.SessionType
-    yield SessionType(id=1, name="Default")
-
+"""

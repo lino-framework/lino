@@ -9,21 +9,19 @@ customers or other users) and registering the **time** needed by
 developers (or other users) to work on these tickets. It is then
 possible to publish **service reports**.
 
-.. How to test only this document:
+.. How to test just this document:
 
     $ python setup.py test -s tests.SpecsTests.test_general
     
     doctest init:
 
-    >>> import os
-    >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'lino_noi.projects.team.settings.demo'
-    >>> from __future__ import print_function 
-    >>> from __future__ import unicode_literals
+    >>> from lino import startup
+    >>> startup('lino_noi.projects.team.settings.demo')
     >>> from lino.api.doctest import *
 
 
 Lino Noi uses both :mod:`lino_noi.lib.tickets` (Ticket management) and
-:mod:`lino_noi.lib.clocking` (Development time tracking).
+:mod:`lino_noi.lib.clocking` (Worktime tracking).
 
 
 .. contents::
@@ -33,15 +31,28 @@ Lino Noi uses both :mod:`lino_noi.lib.tickets` (Ticket management) and
 Tickets versus Clocking
 =======================
 
-Note that :mod:`lino_noi.lib.clocking` depends on
-:mod:`lino_noi.lib.tickets` and not vice-versa.  A time tracking system
-makes no sense if you don't have a ticketing system.  Lino Noi uses
-them both, but some other applicaton might use only :mod:`tickets
-<lino_noi.lib.tickets>` without wanting to manage :mod:`clocking
-<lino_noi.lib.clocking>`.
+Note that :mod:`lino_noi.lib.clocking` and :mod:`lino_noi.lib.tickets`
+are independent modules which might be reused by other applicaton.
+Lino Noi uses them both and extends the "library" versions:
+
+- :mod:`lino_noi.projects.team.lib.clocking` 
+- :mod:`lino_noi.projects.team.lib.tickets` 
+
+>>> dd.plugins.clocking
+lino_noi.projects.team.lib.clocking
+
+>>> dd.plugins.tickets
+lino_noi.projects.team.lib.tickets
+
+For example, a service report is part of the clocking plugin, but the
+current implementation is defined in
+:class:`lino_noi.projects.team.lib.clocking.models.ServiceReport` (not
+in :mod:`lino_noi.lib.clocking`) because it makes sense only if you
+have both clocking and tickets.
+
 
 >>> dd.plugins.clocking.needs_plugins
-['lino_noi.lib.tickets']
+['lino_noi.projects.team.lib.tickets']
 
 >>> dd.plugins.tickets.needs_plugins
 ['lino_xl.lib.stars', 'lino_xl.lib.excerpts', 'lino.modlib.comments', 'lino.modlib.changes']

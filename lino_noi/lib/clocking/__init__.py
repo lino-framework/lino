@@ -36,7 +36,9 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("Clocking")
 
-    needs_plugins = ['lino_noi.lib.tickets']
+    needs_plugins = ['lino_noi.projects.team.lib.tickets']
+
+    ticket_model = 'tickets.Ticket'
 
     def setup_main_menu(self, site, profile, m):
         p = self.get_menu_group()
@@ -44,11 +46,6 @@ class Plugin(ad.Plugin):
         m.add_action('clocking.MySessions')
         # m.add_action('clocking.MySessionsByDate')
         # m.add_action('clocking.WorkedHours')
-
-    def setup_reports_menu(self, site, profile, m):
-        p = self.get_menu_group()
-        m = m.add_menu(p.app_label, p.verbose_name)
-        m.add_action('clocking.ServiceReports')
 
     def setup_config_menu(self, site, profile, m):
         p = self.get_menu_group()

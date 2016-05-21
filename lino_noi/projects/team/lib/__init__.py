@@ -23,6 +23,7 @@
    :toctree:
 
    tickets
+   clocking
 
 
 """
