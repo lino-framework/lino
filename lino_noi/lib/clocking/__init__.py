@@ -36,9 +36,9 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("Clocking")
 
-    needs_plugins = ['lino_noi.projects.team.lib.tickets']
+    # needs_plugins = ['lino_noi.projects.team.lib.tickets']
 
-    ticket_model = 'tickets.Ticket'
+    ticket_model = 'contacts.Partner'
 
     def setup_main_menu(self, site, profile, m):
         p = self.get_menu_group()

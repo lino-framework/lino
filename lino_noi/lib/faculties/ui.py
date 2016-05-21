@@ -19,33 +19,10 @@
 
 from __future__ import unicode_literals
 
-from lino_noi.lib.tickets.ui import *
-from lino.api import dd, _
+from django.db import models
+
+from lino.api import dd, rt, _
 from lino.modlib.users.mixins import ByUser
-
-
-# class TicketDetail(TicketDetail):
-
-#     # Replace waiting_for by faculties
-#     general1 = """
-#     summary:40 id:6 reporter:12
-#     site product project private
-#     workflow_buttons:30 assigned_to:20 faculty:20
-#     """
-
-# Tickets.detail_layout = TicketDetail()
-
-# def site_setup(site):
-#     site.modules.tickets.Tickets.set_detail_layout(TicketDetail())
-
-
-class UnassignedTickets(Tickets):
-    column_names = "summary project reporter *"
-    label = _("Unassigned Tickets")
-
-    @classmethod
-    def get_queryset(self, ar):
-        return self.model.objects.filter(assigned_to=None)
 
 
 class Faculties(dd.Table):
@@ -106,27 +83,28 @@ class CompetencesByFaculty(Competences):
 class MyCompetences(ByUser, CompetencesByUser):
     pass
 
+if dd.is_installed('tickets'):
 
-class AssignableWorkersByTicket(dd.Table):
-    model = 'faculties.Competence'
-    master = 'tickets.Ticket'
-    column_names = 'user affinity *'
-    label = _("Assignable workers")
+    class AssignableWorkersByTicket(dd.Table):
+        model = 'faculties.Competence'
+        master = 'tickets.Ticket'
+        column_names = 'user affinity *'
+        label = _("Assignable workers")
 
-    @classmethod
-    def get_request_queryset(self, ar):
-        ticket = ar.master_instance
-        if ticket is None:
-            return rt.modules.tickets.Ticket.objects.none()
-        
-        # TODO: build a list of courses, then show events by course
-        qs = super(
-            AssignableWorkersByTicket, self).get_request_queryset(ar)
+        @classmethod
+        def get_request_queryset(self, ar):
+            ticket = ar.master_instance
+            if ticket is None:
+                return rt.modules.users.User.objects.none()
 
-        if ticket.product:
-            qs = qs.filter(product=ticket.product)
-        if ticket.faculty:
-            faculties = ticket.faculty.whole_clan()
-            qs = qs.filter(faculty__in=faculties)
-        return qs
+            # TODO: build a list of courses, then show events by course
+            qs = super(
+                AssignableWorkersByTicket, self).get_request_queryset(ar)
+
+            if ticket.product:
+                qs = qs.filter(product=ticket.product)
+            if ticket.faculty:
+                faculties = ticket.faculty.whole_clan()
+                qs = qs.filter(faculty__in=faculties)
+            return qs
 

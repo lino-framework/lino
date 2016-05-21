@@ -444,8 +444,13 @@ class DuplicatesByTicket(Tickets):
     column_names = "id summary *"
 
 
-# class UnassignedTickets(Tickets):
-#     column_names = "summary project reporter *"
+class UnassignedTickets(Tickets):
+    column_names = "summary project reporter *"
+    label = _("Unassigned Tickets")
+
+    @classmethod
+    def get_queryset(self, ar):
+        return self.model.objects.filter(assigned_to=None)
 
 
 class TicketsByProject(Tickets):

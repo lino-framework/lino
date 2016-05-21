@@ -21,7 +21,6 @@
 
 """
 
-from lino.api import dd
 from lino_xl.lib.products.models import *
 from lino.mixins import Referrable
 
@@ -31,8 +30,6 @@ class Product(Product, Referrable):
     class Meta(Product.Meta):
         app_label = 'products'
         abstract = dd.is_abstract_model(__name__, 'Product')
-
-
 
 
 class ProductDetail(dd.DetailLayout):

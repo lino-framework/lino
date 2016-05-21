@@ -21,13 +21,14 @@
 """
 
 import logging
-from lino_noi.lib.tickets.models import *
+# from lino_noi.lib.tickets.models import *
+
+from lino.api import dd, _
 
 logger = logging.getLogger(__name__)
 
-from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext_lazy as _
-from lino.api import dd
+# from django.core.exceptions import ValidationError
+from django.db import models
 from lino.mixins import Hierarchical, Sequenced, Referrable
 from lino.utils.mldbc.mixins import BabelNamed
 
@@ -54,7 +55,7 @@ class Faculty(BabelNamed, Hierarchical, Sequenced, Referrable):
             "in this faculty."
             "A number between -{0} and +{0}.").format(MAX_WEIGHT))
 
-    product_cat = models.ForeignKey(
+    product_cat = dd.ForeignKey(
         'products.ProductCat', blank=True, null=True,
         verbose_name=_("Options category"),
         help_text=_("The category of products to use for "
@@ -88,14 +89,14 @@ class Competence(UserAuthored, Sequenced):
         verbose_name_plural = _("Competences")
         unique_together = ['user', 'faculty', 'product']
 
-    faculty = models.ForeignKey('faculties.Faculty')
+    faculty = dd.ForeignKey('faculties.Faculty')
     affinity = models.IntegerField(
         _("Affinity"), blank=True, default=MAX_WEIGHT,
         help_text=_(
             "How much this user likes to get a new ticket "
             "in this faculty."
             "A number between -{0} and +{0}.").format(MAX_WEIGHT))
-    product = models.ForeignKey(
+    product = dd.ForeignKey(
         'products.Product', blank=True, null=True,
         verbose_name=_("Option"),
         help_text=_("Some faculties can require additional "
@@ -123,8 +124,9 @@ class Competence(UserAuthored, Sequenced):
 
 dd.update_field(Competence, 'user', verbose_name=_("User"))
 
-dd.inject_field(
-    'tickets.Ticket', 'faculty',
-    dd.ForeignKey("faculties.Faculty", blank=True, null=True))
+if dd.is_installed('tickets'):
+    dd.inject_field(
+        'tickets.Ticket', 'faculty',
+        dd.ForeignKey("faculties.Faculty", blank=True, null=True))
 
 from .ui import *

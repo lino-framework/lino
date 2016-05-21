@@ -35,19 +35,19 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("Faculties")
 
-    needs_plugins = ['lino_noi.lib.tickets']
+    # needs_plugins = ['lino_noi.lib.tickets']
 
-    def setup_main_menu(self, site, profile, m):
-        mgt = site.plugins.tickets
-        m = m.add_menu(mgt.app_label, mgt.verbose_name)
-        m.add_action('faculties.UnassignedTickets')
+    # def setup_main_menu(self, site, profile, m):
+    #     mg = self.get_menu_group()
+    #     m = m.add_menu(mg.app_label, mg.verbose_name)
+    #     m.add_action('tickets.UnassignedTickets')
         # m = m.add_menu(self.app_label, self.verbose_name)
         # m.add_action('faculties.Faculties')
         # m.add_action('faculties.Competences')
 
     def setup_config_menu(self, site, profile, m):
-        mgt = site.plugins.tickets
-        m = m.add_menu(mgt.app_label, mgt.verbose_name)
+        mg = self.get_menu_group()
+        m = m.add_menu(mg.app_label, mg.verbose_name)
         m.add_action('faculties.TopLevelFaculties')
         m.add_action('faculties.Competences')
 

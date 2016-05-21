@@ -713,7 +713,7 @@ def setup_memo_commands(sender=None, **kwargs):
     # rnd.memo_parser.register_command('ticket', f)
 
 
-if True:  # dd.is_installed('changes'):
+if dd.is_installed('changes'):
     """
     """
 

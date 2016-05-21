@@ -30,7 +30,12 @@
 
 from lino_noi.lib.clocking import *
 
+
 class Plugin(Plugin):
+
+    ticket_model = 'tickets.Ticket'
+
+    needs_plugins = ['lino_noi.projects.team.lib.tickets']
 
     def setup_reports_menu(self, site, profile, m):
         p = self.get_menu_group()
