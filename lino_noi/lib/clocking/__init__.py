@@ -16,7 +16,6 @@
 # License along with Lino Noi.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-
 """
 Adds functionality for managing worktime clocking.
 
@@ -39,6 +38,10 @@ class Plugin(ad.Plugin):
     # needs_plugins = ['lino_noi.projects.team.lib.tickets']
 
     ticket_model = 'contacts.Partner'
+
+    def on_site_startup(self, site):
+        from lino.core.utils import resolve_model
+        self.ticket_model = resolve_model(self.ticket_model)
 
     def setup_main_menu(self, site, profile, m):
         p = self.get_menu_group()
