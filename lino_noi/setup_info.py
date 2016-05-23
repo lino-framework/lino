@@ -66,7 +66,6 @@ SETUP_INFO.update(packages=[
     'lino_noi.lib.faculties.fixtures',
     'lino_noi.lib.clocking',
     'lino_noi.lib.clocking.fixtures',
-    'lino_noi.lib.products',
     'lino_noi.lib.users',
     'lino_noi.lib.users.fixtures',
     'lino_noi.projects.bs3',
