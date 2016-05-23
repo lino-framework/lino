@@ -25,10 +25,10 @@ from django.db.models.query import QuerySet
 
 from django.apps import apps
 get_models = apps.get_models
-if settings.SITE.is_installed('contenttypes'):
-    from django.contrib.contenttypes.models import ContentType
-else:
-    ContentType = None
+# if settings.SITE.is_installed('contenttypes'):
+#     from django.contrib.contenttypes.models import ContentType
+# else:
+#     ContentType = None
 
 from lino.core import fields
 from lino.core import actions
