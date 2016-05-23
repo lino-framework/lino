@@ -15,6 +15,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from copy import copy
+from cgi import escape
 
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -424,9 +425,20 @@ request from it.
         self.response.update(kw)
             
     def error(self, e=None, message=None, **kw):
-        """
-        Shortcut to :meth:`set_response` used to set an error response.
-        The first argument should be either an exception object or a message.
+        """Shortcut to :meth:`set_response` used to set an error response.
+
+        The first argument should be either an exception object or a
+        text with a message.
+
+        If a message is not explicitly given, Lino escapes any
+        characters with a special meaning in HTML. For example::
+
+            NotImplementedError: <dl> inside <text:p>
+    
+        will be converted to::
+    
+            NotImplementedError: &lt;dl&gt; inside &lt;text:p&gt;
+
         """
         kw.update(success=False)
         kw.update(alert=_("Error"))  # added 20140304
@@ -440,6 +452,7 @@ request from it.
                 message = six.text_type(e)
             except UnicodeDecodeError as e:
                 message = repr(e)
+            message = escape(message)
         kw.update(message=message)
         self.set_response(**kw)
 

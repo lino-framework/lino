@@ -119,6 +119,13 @@ IllegalText: The <text:section> element does not allow text
 <ul type="disc"><li>First</li><li>Second</li></ul>
 <text:list xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" text:style-name="podBulletedList"><text:list-item><text:p text:style-name="podBulletItem">First</text:p></text:list-item><text:list-item><text:p text:style-name="podBulletItem">Second</text:p></text:list-item></text:list>
 
+
+>>> test(E.p(E.dl(E.dt("Foo"), E.dl("A foobar without bar."))))
+Traceback (most recent call last):
+...
+NotImplementedError: <dl> inside <text:p>
+
+
 """
 
 from __future__ import unicode_literals

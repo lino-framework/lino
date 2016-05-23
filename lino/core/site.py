@@ -1118,16 +1118,10 @@ class Site(object):
         self._startup_done = False
         self.startup_time = datetime.datetime.now()
 
-        if self.cache_dir is None:
-            pass  # raise Exception("20160516 No cache_dir")
-        else:
-            dbname = self.cache_dir.child('default.db')
-            self.django_settings.update(DATABASES={
-                'default': {
-                    'ENGINE': 'django.db.backends.sqlite3',
-                    'NAME': dbname
-                }
-            })
+        db = self.get_database_settings()
+
+        if db is not None:
+            self.django_settings.update(DATABASES=db)
 
         self.update_settings(SERIALIZATION_MODULES={
             "py": "lino.utils.dpy",
@@ -1160,6 +1154,44 @@ class Site(object):
                 disable_existing_loggers=True,  # Django >= 1.5
             ),
         )
+
+    def get_database_settings(self):
+        """Return a dict to be set as the :setting:`DATABASE` setting.
+        
+        The default behaviour uses SQLiite on a file named
+        :xfile:`default.db` in the :attr:`cache_dir`, and in
+        ``:memory:`` when :attr:`cache_dir` is `None`.
+
+        And alternative might be for example::
+
+            def get_database_settings(self):
+                return {
+                    'default': {
+                        'ENGINE': 'django.db.backends.mysql',
+                        'NAME': 'test_' + self.project_name,
+                        'USER': 'django',
+                        'PASSWORD': os.environ['MYSQL_PASSWORD'],
+                        'HOST': 'localhost',                  
+                        'PORT': 3306,
+                        'OPTIONS': {
+                           "init_command": "SET storage_engine=MyISAM",
+                        }
+                    }
+                }
+
+        
+
+        """
+        if self.cache_dir is None:
+            pass  # raise Exception("20160516 No cache_dir")
+        else:
+            dbname = self.cache_dir.child('default.db')
+            return {
+                'default': {
+                    'ENGINE': 'django.db.backends.sqlite3',
+                    'NAME': dbname
+                }
+            }
 
     def run_lino_site_module(self):
         """See :ref:`djangosite_local`.

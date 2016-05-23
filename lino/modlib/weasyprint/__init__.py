@@ -3,7 +3,13 @@
 
 """This plugins installs a build method for generating printable
 documents using `weasyprint
-<http://weasyprint.readthedocs.io>`__
+<http://weasyprint.readthedocs.io>`__.
+
+In order to use this, you must (1) add it to your
+:meth:`get_installed_apps` and (2) run ``pip install weasyprint`` in
+your Python environment.
+
+
 
 .. autosummary::
    :toctree:
