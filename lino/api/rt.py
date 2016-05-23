@@ -9,9 +9,13 @@ You may *import* it at the global namespace of a :xfile:`models.py`
 file, but you can *use* most of it only when the :func:`startup`
 function has been called.
 
-.. attribute:: modules
+.. attribute:: plugins
 
-    Shortcut to :attr:`lino.core.site.Site.modules`
+    Shortcut to :attr:`lino.core.site.Site.plugins`
+
+.. attribute:: models
+
+    Shortcut to :attr:`lino.core.site.Site.models`
 
 """
 
@@ -19,7 +23,8 @@ from django.conf import settings
 
 from lino.core.utils import models_by_base
 
-modules = settings.SITE.modules
+models = settings.SITE.modules
+modules = settings.SITE.modules  # deprecated
 
 login = settings.SITE.login
 startup = settings.SITE.startup

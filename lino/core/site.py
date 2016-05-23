@@ -119,16 +119,33 @@ class Site(object):
     administrators.  Your :setting:`SITE` setting is expected to
     contain an instance of a subclass of this.
 
+    .. attribute:: plugins
+
+        An :class:`AttrDict` object with one entry for each installed
+        app, mapping the `app_label` of every plugin to the
+        corresponding :class:`lino.core.plugin.Plugin` instance.
+
+        This attribute is automatically filled by Lino and available as
+        :attr:`dd.plugins <lino.api.dd>` already before Django starts to
+        import :xfile:`models.py` modules.
+
+
     .. attribute:: modules
+
+        Old name for :attr:`models`.  Deprecated.
+
+    .. attribute:: models
 
         An :class:`AttrDict <atelier.utils.AttrDict>` which maps every
         installed `app_label` to the corresponding :xfile:`models.py`
         module object.
 
-        This is also available as the shortcut :attr:`rt.modules
-        <lino.api.rt.modules>`.
+        This is also available as the shortcut :attr:`rt.models
+        <lino.api.rt.models>`.
 
         See :doc:`/dev/plugins`
+
+
 
     .. attribute:: LANGUAGE_CHOICES
     
@@ -305,17 +322,8 @@ class Site(object):
     """
 
     plugins = None
-    """An :class:`AttrDict` object with one entry for each installed app,
-    mapping the `app_label` of every plugin to the corresponding
-    :class:`lino.core.plugin.Plugin` instance.
 
-    This attribute is automatically filled by Lino and available as
-    :attr:`dd.plugins <lino.api.dd>` already before Django starts to
-    import :xfile:`models.py` modules.
-
-    """
-
-    modules = AttrDict()
+    modules = models = AttrDict()
 
     top_level_menus = [
         ("master", _("Master")),
@@ -1746,7 +1754,7 @@ class Site(object):
                     from django.db.models import loading
                     m = loading.load_app(p.app_name, False)
 
-                self.modules.define(six.text_type(p.app_label), m)
+                self.models.define(six.text_type(p.app_label), m)
 
             for p in self.installed_plugins:
                 p.on_site_startup(self)
@@ -2091,7 +2099,7 @@ class Site(object):
             def setup_actions(self):
                 super(Site, self).setup_actions()
                 from lino.core.merge import MergeAction
-                partners = self.modules.contacts
+                partners = self.models.contacts
                 for m in (partners.Person, partners.Organisation):
                     m.define_action(merge_row=MergeAction(m))
 
@@ -2106,14 +2114,14 @@ class Site(object):
             def setup_layouts(self):
                 super(Site, self).setup_layouts()
 
-                self.modules.system.SiteConfigs.set_detail_layout("""
+                self.models.system.SiteConfigs.set_detail_layout("""
                 site_company next_partner_id:10
                 default_build_method
                 clients_account   sales_account     sales_vat_account
                 suppliers_account purchases_account purchases_vat_account
                 """)
 
-                self.modules.accounts.Accounts.set_detail_layout("""
+                self.models.accounts.Accounts.set_detail_layout("""
                 ref:10 name id:5
                 seqno group type clearable
                 ledger.MovementsByAccount
@@ -2826,7 +2834,7 @@ site. :manage:`diag` is a command-line shortcut to this.
         This is always `None` when :mod:`lino.modlib.system` is not installed.
 
         """
-        if 'system' not in self.modules:
+        if 'system' not in self.models:
             return None
 
         if self._site_config is None:
@@ -2836,7 +2844,7 @@ site. :manage:`diag` is a command-line shortcut to this.
             #~ from lino.core.utils import obj2str
             #~ from lino.utils import dblogger as logger
             #~ SiteConfig = resolve_model('system.SiteConfig')
-            SiteConfig = self.modules.system.SiteConfig
+            SiteConfig = self.models.system.SiteConfig
             #~ from .models import SiteConfig
             #~ from django.db.utils import DatabaseError
             try:
@@ -3160,7 +3168,7 @@ Please convert to Plugin method".format(mod, methname)
         # self.logger.info("20121016 add_system_note() '%s'",subject)
 
         if self.is_installed('notes'):
-            notes = self.modules.notes
+            notes = self.models.notes
             notes.add_system_note(request, owner, subject, body)
         sender = request.user.email or self.django_settings['SERVER_EMAIL']
         if not sender or '@example.com' in sender:
