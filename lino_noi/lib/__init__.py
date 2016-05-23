@@ -24,7 +24,6 @@
 
     contacts
     noi
-    products
     users
     clocking
     tickets

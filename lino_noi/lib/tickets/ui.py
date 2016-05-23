@@ -104,10 +104,10 @@ class Projects(dd.Table):
     parameters = mixins.ObservedPeriod(
         observed_event=ProjectEvents.field(blank=True),
         interesting_for=dd.ForeignKey(
-            'tickets.Site',
+            'contacts.Partner',
             verbose_name=_("Interesting for"),
             blank=True, null=True,
-            help_text=_("Only project interesting for this site.")))
+            help_text=_("Only projects interesting for this partner.")))
     params_layout = """interesting_for start_date end_date observed_event"""
 
     @classmethod
@@ -120,13 +120,13 @@ class Projects(dd.Table):
 
         if pv.interesting_for:
             qs = qs.filter(
-                Q(tickets_by_project__site=pv.interesting_for) |
-                Q(tickets_by_project__site__isnull=True))
-            interests = pv.interesting_for.interests_by_site.values(
-                'product')
+                Q(tickets_by_project__site__partner=pv.interesting_for) |
+                Q(tickets_by_project__site__partner__isnull=True))
+            interests = pv.interesting_for.interests_by_partner.values(
+                'topic')
             if len(interests) > 0:
                 qs = qs.filter(
-                    tickets_by_project__product__in=interests,
+                    tickets_by_project__topic__in=interests,
                     tickets_by_project__private=False)
         return qs
 
@@ -289,7 +289,7 @@ class TicketDetail(dd.DetailLayout):
 
     general1 = """
     summary:40 id:6 reporter:12
-    site product project private
+    site topic project private
     workflow_buttons assigned_to waiting_for
     """
 
@@ -334,10 +334,10 @@ class Tickets(dd.Table):
             blank=True, null=True,
             help_text=_("Only tickets assigned to this user.")),
         interesting_for=dd.ForeignKey(
-            'tickets.Site',
+            'contacts.Partner',
             verbose_name=_("Interesting for"),
             blank=True, null=True,
-            help_text=_("Only tickets interesting for this site.")),
+            help_text=_("Only tickets interesting for this partner.")),
         project=dd.ForeignKey(
             'tickets.Project',
             blank=True, null=True),
@@ -383,12 +383,12 @@ class Tickets(dd.Table):
 
         if pv.interesting_for:
 
-            interests = pv.interesting_for.interests_by_site.values(
-                'product')
+            interests = pv.interesting_for.interests_by_partner.values(
+                'topic')
             if len(interests) > 0:
                 qs = qs.filter(
-                    Q(site=pv.interesting_for) |
-                    Q(product__in=interests, private=False))
+                    Q(site__partner=pv.interesting_for) |
+                    Q(topic__in=interests, private=False))
 
         # if pv.show_closed == dd.YesNo.no:
         #     qs = qs.filter(closed=False)
@@ -455,7 +455,7 @@ class UnassignedTickets(Tickets):
 
 class TicketsByProject(Tickets):
     master_key = 'project'
-    column_names = ("overview:50 product:10 reporter:10 state "
+    column_names = ("overview:50 topic:10 reporter:10 state "
                     "closed planned_time *")
 
 
@@ -464,15 +464,15 @@ class TicketsByType(Tickets):
     column_names = "summary state closed  *"
 
 
-class TicketsByProduct(Tickets):
-    master_key = 'product'
+class TicketsByTopic(Tickets):
+    master_key = 'topic'
     column_names = "summary state closed  *"
 
 
 class PublicTickets(Tickets):
     label = _("Unassigned tickets")
     order_by = ["-priority", "-id"]
-    column_names = 'overview:50 state:10 ticket_type:10 project:10 product:10 priority:3 *'
+    column_names = 'overview:50 state:10 ticket_type:10 project:10 topic:10 priority:3 *'
     filter = models.Q(assigned_to=None)
 
     @classmethod
@@ -496,7 +496,7 @@ class TicketsToTriage(Tickets):
     label = _("Tickets to triage")
     button_label = _("Triage")
     order_by = ["-id"]
-    column_names = 'overview:50 product:10 reporter:10 project:10 ' \
+    column_names = 'overview:50 topic:10 reporter:10 project:10 ' \
                    'assigned_to:10 ticket_type:10 workflow_buttons:40 *'
 
     @classmethod
@@ -555,7 +555,7 @@ class ActiveTickets(Tickets):
     label = _("Active tickets")
     order_by = ["-id"]
     # order_by = ["-modified", "id"]
-    column_names = 'overview:50 product:10 reporter:10 project:10 ' \
+    column_names = 'overview:50 topic:10 reporter:10 project:10 ' \
                    'assigned_to:10 ticket_type:10 workflow_buttons:40 *'
 
     @classmethod
@@ -617,30 +617,13 @@ class Sites(dd.Table):
     detail_layout = """
     id name partner
     remark
-    InterestsBySite TicketsBySite MilestonesBySite
+    #InterestsBySite TicketsBySite MilestonesBySite
     """
 
 
 class SitesByPartner(Sites):
     master_key = 'partner'
     column_names = "name remark *"
-
-
-class Interests(dd.Table):
-    model = 'tickets.Interest'
-    column_names = "site product *"
-
-
-class InterestsBySite(Interests):
-    master_key = 'site'
-    order_by = ["product"]
-    column_names = 'product *'
-
-
-class InterestsByProduct(Interests):
-    master_key = 'product'
-    order_by = ["site"]
-    column_names = 'site *'
 
 
 class TicketsBySite(Tickets):
@@ -651,7 +634,7 @@ class TicketsBySite(Tickets):
     def param_defaults(self, ar, **kw):
         mi = ar.master_instance
         kw = super(TicketsBySite, self).param_defaults(ar, **kw)
-        kw.update(interesting_for=mi)
+        kw.update(interesting_for=mi.partner)
         kw.update(end_date=dd.today())
         kw.update(observed_event=TicketEvents.todo)
         return kw
@@ -683,8 +666,9 @@ class MyKnownProblems(Tickets):
     def param_defaults(self, ar, **kw):
         u = ar.get_user()
         kw = super(MyKnownProblems, self).param_defaults(ar, **kw)
-        kw.update(interesting_for=u.user_site)
-        kw.update(end_date=dd.today())
+        if u.user_site:
+            kw.update(interesting_for=u.user_site.partner)
+        kw.update(end_date=dd.demo_date())
         kw.update(observed_event=TicketEvents.todo)
         return kw
 

@@ -38,9 +38,9 @@ This also defines a `post_save` handler on :class:`Change
 <lino.modlib.changes.models.Change>` so that the ticket
 :attr:`reporter <Ticket.reporter>` and the :attr:`assigned_to
 <Ticket.assigned_to>` worker get automatically notified about any
-change. This is similar to what happens
-:mod:`lino_xl.lib.stars.models` (but the reporter and the assignee
-don't need to star a ticket in order to get notified.
+change.  This is similar to what happens in
+:mod:`lino_xl.lib.stars.models`, except that the reporter and the
+assignee don't need to star a ticket in order to get notified.
 
 """
 
@@ -477,7 +477,7 @@ class Ticket(mixins.CreatedModified, TimeInvestment, RFC):
         'tickets.Project', blank=True, null=True,
         related_name="tickets_by_project")
     site = dd.ForeignKey('tickets.Site', blank=True, null=True)
-    product = dd.ForeignKey('products.Product', blank=True, null=True)
+    topic = dd.ForeignKey('topics.Topic', blank=True, null=True)
     nickname = models.CharField(_("Nickname"), max_length=50, blank=True)
     summary = models.CharField(
         pgettext("Ticket", "Summary"), max_length=200,
@@ -610,27 +610,6 @@ class Ticket(mixins.CreatedModified, TimeInvestment, RFC):
         # return E.span(ar.obj2html(self), ' ', self.summary)
 
 # dd.update_field(Ticket, 'user', verbose_name=_("Reporter"))
-
-
-class Interest(dd.Model):
-    """An **interest** is the fact that a given site is interested in the
-    tickets related to a given product.
-
-    """
-    class Meta:
-        app_label = 'tickets'
-        verbose_name = _("Interest")
-        verbose_name_plural = _('Interests')
-
-    product = dd.ForeignKey(
-        'products.Product',
-        related_name='interests_by_product')
-
-    site = dd.ForeignKey(
-        'tickets.Site',
-        related_name='interests_by_site')
-
-# dd.update_field(Interest, 'user', verbose_name=_("User"))
 
 
 class Deployment(dd.Model):

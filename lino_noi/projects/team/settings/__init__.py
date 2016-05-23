@@ -68,12 +68,13 @@ class Site(Site):
         yield 'lino_noi.lib.users'
         yield 'lino_noi.lib.contacts'
         # yield 'lino_xl.lib.cal'
-        yield 'lino_noi.lib.products'
+        # yield 'lino_noi.lib.products'
 
         yield 'lino_noi.projects.team.lib.tickets'
         yield 'lino_noi.lib.faculties'
         yield 'lino_noi.projects.team.lib.clocking'
         yield 'lino_xl.lib.lists'
+        yield 'lino_xl.lib.topics'
 
         # yield 'lino.modlib.uploads'
         # yield 'lino_xl.lib.excerpts'

@@ -30,11 +30,11 @@ class Faculties(dd.Table):
     # order_by = ["ref", "name"]
     detail_layout = """
     id name
-    parent product_cat affinity
+    parent topic_group affinity
     FacultiesByParent CompetencesByFaculty
     """
     insert_layout = """
-    # ref affinity product_cat
+    # ref affinity topic_group
     name
     parent
     """
@@ -42,7 +42,7 @@ class Faculties(dd.Table):
 
 class AllFaculties(Faculties):
     label = _("Faculties (all)")
-    column_names = 'ref name affinity product_cat parent *'
+    column_names = 'ref name affinity topic_group parent *'
     order_by = ["parent", "seqno"]
 
 
@@ -56,27 +56,27 @@ class TopLevelFaculties(Faculties):
 
 class FacultiesByParent(Faculties):
     master_key = 'parent'
-    column_names = 'seqno name affinity product_cat *'
+    column_names = 'seqno name affinity topic_group *'
     order_by = ["ref"]
     
 
 class Competences(dd.Table):
     # required_roles = dd.required(SocialStaff)
     model = 'faculties.Competence'
-    column_names = 'id user faculty affinity product *'
+    column_names = 'id user faculty affinity topic *'
     order_by = ["id"]
 
 
 class CompetencesByUser(Competences):
     required_roles = dd.required()
     master_key = 'user'
-    column_names = 'seqno faculty affinity product *'
+    column_names = 'seqno faculty affinity topic *'
     order_by = ["seqno"]
 
 
 class CompetencesByFaculty(Competences):
     master_key = 'faculty'
-    column_names = 'user affinity product *'
+    column_names = 'user affinity topic *'
     order_by = ["user"]
 
 
@@ -101,8 +101,8 @@ if dd.is_installed('tickets'):
             qs = super(
                 AssignableWorkersByTicket, self).get_request_queryset(ar)
 
-            if ticket.product:
-                qs = qs.filter(product=ticket.product)
+            if ticket.topic:
+                qs = qs.filter(topic=ticket.topic)
             if ticket.faculty:
                 faculties = ticket.faculty.whole_clan()
                 qs = qs.filter(faculty__in=faculties)

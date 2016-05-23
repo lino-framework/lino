@@ -269,9 +269,9 @@ class InvestedTime(dd.Table):
         if obj.project is not None:
             lst.append(tpl.format(
                 unicode(_("Project")), unicode(obj.project)))
-        if obj.product is not None:
+        if obj.topic is not None:
             lst.append(tpl.format(
-                unicode(_("Product")), unicode(obj.product)))
+                unicode(_("Topic")), unicode(obj.topic)))
         return E.p(*join_elems(lst, '. '))
 
 

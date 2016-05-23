@@ -41,11 +41,11 @@ def objects():
 def tickets_objects():
     # was previously in tickets
     User = rt.modules.users.User
-    # Company = rt.modules.contacts.Company
-    Product = rt.modules.products.Product
+    Partner = rt.modules.contacts.Partner
+    Topic = rt.modules.topics.Topic
     TT = rt.modules.tickets.TicketType
     Ticket = rt.modules.tickets.Ticket
-    Interest = rt.modules.tickets.Interest
+    Interest = rt.modules.topics.Interest
     Milestone = rt.modules.tickets.Milestone
     Project = rt.modules.tickets.Project
     Site = rt.modules.tickets.Site
@@ -67,28 +67,22 @@ def tickets_objects():
 
     TYPES = Cycler(TT.objects.all())
 
-    yield Product(name="Lino Core", ref="linõ")
-    yield Product(name="Lino Welfare", ref="welfäre")
-    yield Product(name="Lino Cosi", ref="così")
-    yield Product(name="Lino Faggio", ref="faggiö")
+    yield Topic(name="Lino Core", ref="linõ")
+    yield Topic(name="Lino Welfare", ref="welfäre")
+    yield Topic(name="Lino Cosi", ref="così")
+    yield Topic(name="Lino Faggio", ref="faggiö")
 
-    PRODUCTS = Cycler(Product.objects.all())
+    TOPICS = Cycler(Topic.objects.all())
 
-    # kettenis = Company(name="ÖSHZ Kettenis")
-    # yield kettenis
-    # schaerbeek = Company(name="CPAS de Schaerbeek")
-    # yield schaerbeek
+    for name in "welket welsch pypi".split():
 
-    # yield Site(name="welket", partner=kettenis)
-    # yield Site(name="welsch", partner=schaerbeek)
+        obj = Partner(name=name)
+        yield obj
+        yield Site(name=name, partner=obj)
 
-    yield Site(name="welket")
-    yield Site(name="welsch")
-    yield Site(name="pypi")
-
-    for u in Site.objects.exclude(name="pypi"):
+    for u in Partner.objects.exclude(name="pypi"):
         for i in range(3):
-            yield Interest(site=u, product=PRODUCTS.pop())
+            yield Interest(partner=u, topic=TOPICS.pop())
 
     SITES = Cycler(Site.objects.exclude(name="pypi"))
     for i in range(7):
@@ -123,7 +117,7 @@ def tickets_objects():
             reporter=USERS.pop(),
             site=site,
             state=TSTATES.pop(),
-            product=PRODUCTS.pop())
+            topic=TOPICS.pop())
             
         if False:
             kwargs.update(project=PROJECTS.pop())
@@ -214,7 +208,7 @@ def clockings_objects():
                     break
 
     ServiceReport = rt.modules.clocking.ServiceReport
-    Site = rt.modules.tickets.Site
+    Site = rt.modules.contacts.Partner
     welket = Site.objects.get(name="welket")
     yield ServiceReport(
         start_date=dd.today(-90), interesting_for=welket)

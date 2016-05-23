@@ -35,7 +35,7 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("Faculties")
 
-    # needs_plugins = ['lino_noi.lib.tickets']
+    needs_plugins = ['lino_xl.lib.topics']
 
     # def setup_main_menu(self, site, profile, m):
     #     mg = self.get_menu_group()

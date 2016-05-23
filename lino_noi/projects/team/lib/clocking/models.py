@@ -25,85 +25,6 @@ from lino_noi.lib.clocking.models import *
 from lino.api import _
 
 
-class EndTicketSession(dd.Action):
-    # label = _("End session")
-    # label = u"\u231a\u2198"
-    # label = u"↘"  # u"\u2198"
-    label = u"◉"  # FISHEYE (U+25C9)
-    help_text = _("End the active session on this ticket.")
-    show_in_workflow = False
-    show_in_bbar = False
-    required_roles = dd.login_required()
-    readonly = False
-    
-    def get_action_permission(self, ar, obj, state):
-        # u = ar.get_user()
-        # if not u.profile.has_required_roles([SiteUser]):
-        #     # avoid query with AnonymousUser
-        #     return False
-        if not super(EndTicketSession, self).get_action_permission(
-                ar, obj, state):
-            return False
-        Session = rt.modules.clocking.Session
-        qs = Session.objects.filter(
-            user=ar.get_user(), ticket=obj, end_time__isnull=True)
-        if qs.count() == 0:
-            return False
-        return True
-
-    def run_from_ui(self, ar, **kw):
-        Session = rt.modules.clocking.Session
-        ses = Session.objects.get(
-            user=ar.get_user(), ticket=ar.selected_rows[0],
-            end_time__isnull=True)
-        ses.set_datetime('end', timezone.now())
-        ses.full_clean()
-        ses.save()
-        ar.set_response(refresh=True)
-
-
-class StartTicketSession(dd.Action):
-    # label = _("Start session")
-    # label = u"\u262d"
-    # label = u"\u2692"
-    # label = u"\u2690"
-    # label = u"\u2328"
-    # label = u"\u231a\u2197"
-    # label = u"↗"  # \u2197
-    label = u"▶"  # BLACK RIGHT-POINTING TRIANGLE (U+25B6)
-    help_text = _("Start a session on this ticket.")
-    # icon_name = 'emoticon_smile'
-    show_in_workflow = False
-    show_in_bbar = False
-    readonly = False
-
-    def get_action_permission(self, ar, obj, state):
-        if obj.standby or obj.closed:
-            return False
-        u = ar.get_user()
-        if not u.profile.has_required_roles([SiteUser]):
-            # avoid query with AnonymousUser
-            return False
-        Session = rt.modules.clocking.Session
-        qs = Session.objects.filter(
-            user=u, ticket=obj, end_time__isnull=True)
-        if qs.count():
-            return False
-        return super(StartTicketSession, self).get_action_permission(
-            ar, obj, state)
-
-    def run_from_ui(self, ar, **kw):
-        me = ar.get_user()
-        obj = ar.selected_rows[0]
-
-        ses = rt.modules.clocking.Session(ticket=obj, user=me)
-        ses.full_clean()
-        ses.save()
-        ar.set_response(refresh=True)
-
-
-dd.inject_action("tickets.Ticket", start_session=StartTicketSession())
-dd.inject_action("tickets.Ticket", end_session=EndTicketSession())
 dd.inject_field(
     "users.User", 'open_session_on_new_ticket',
     models.BooleanField(_("Open session on new ticket"), default=False))
@@ -133,10 +54,10 @@ class ServiceReport(UserAuthored, Certifiable, DatePeriod):
         verbose_name_plural = _("Service Reports")
 
     interesting_for = dd.ForeignKey(
-        'tickets.Site',
+        'contacts.Partner',
         verbose_name=_("Interesting for"),
         blank=True, null=True,
-        help_text=_("Only tickets interesting for this site."))
+        help_text=_("Only tickets interesting for this partner."))
 
     ticket_state = TicketStates.field(
         null=True, blank=True,
@@ -153,4 +74,6 @@ class ServiceReport(UserAuthored, Certifiable, DatePeriod):
             pv.update(state=self.ticket_state)
         return pv
         
+
+
 from .ui import *

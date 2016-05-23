@@ -55,8 +55,8 @@ class Faculty(BabelNamed, Hierarchical, Sequenced, Referrable):
             "in this faculty."
             "A number between -{0} and +{0}.").format(MAX_WEIGHT))
 
-    product_cat = dd.ForeignKey(
-        'products.ProductCat', blank=True, null=True,
+    topic_group = dd.ForeignKey(
+        'topics.TopicGroup', blank=True, null=True,
         verbose_name=_("Options category"),
         help_text=_("The category of products to use for "
                     "specifying additional options."))
@@ -87,7 +87,7 @@ class Competence(UserAuthored, Sequenced):
         # ~ abstract = True
         verbose_name = _("Competence")
         verbose_name_plural = _("Competences")
-        unique_together = ['user', 'faculty', 'product']
+        unique_together = ['user', 'faculty', 'topic']
 
     faculty = dd.ForeignKey('faculties.Faculty')
     affinity = models.IntegerField(
@@ -96,18 +96,18 @@ class Competence(UserAuthored, Sequenced):
             "How much this user likes to get a new ticket "
             "in this faculty."
             "A number between -{0} and +{0}.").format(MAX_WEIGHT))
-    product = dd.ForeignKey(
-        'products.Product', blank=True, null=True,
+    topic = dd.ForeignKey(
+        'topics.Topic', blank=True, null=True,
         verbose_name=_("Option"),
         help_text=_("Some faculties can require additional "
                     "options for a competence."))
 
     @dd.chooser()
-    def product_choices(cls, faculty):
-        Product = rt.modules.products.Product
-        if not faculty or not faculty.product_cat:
-            return Product.objects.none()
-        return Product.objects.filter(cat=faculty.product_cat)
+    def topic_choices(cls, faculty):
+        Topic = rt.modules.topics.Topic
+        if not faculty or not faculty.topic_group:
+            return Topic.objects.none()
+        return Topic.objects.filter(topic_group=faculty.topic_group)
 
     def full_clean(self, *args, **kw):
         if self.affinity is None:

@@ -20,7 +20,8 @@ specifications. One of their goal is to get tested.
    as_pdf
    public
    ddh
-   care
    memo
    db
    projects
+   std
+   care

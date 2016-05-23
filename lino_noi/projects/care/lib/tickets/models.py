@@ -14,7 +14,7 @@ class TicketDetail(TicketDetail):
 
     general1 = """
     summary:40 id:6
-    reporter:12 faculty product assigned_to
+    reporter:12 faculty topic assigned_to
     site project private workflow_buttons
     """
 

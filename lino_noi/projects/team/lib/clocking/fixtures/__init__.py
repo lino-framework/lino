@@ -23,7 +23,6 @@
    :toctree:
 
    std
-   demo
 
 
 """
