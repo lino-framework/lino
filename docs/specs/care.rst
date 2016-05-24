@@ -162,14 +162,14 @@ verbose_name and verbose_name_plural options of `faculties.Faculty`.
 ==== ========== ====================== ========== =============
 <BLANKLINE>
 
->>> rt.show('products.Products')
-========== ============= ================== ================== ===========
- Referenz   Bezeichnung   Bezeichnung (en)   Bezeichnung (fr)   Kategorie
----------- ------------- ------------------ ------------------ -----------
+>>> rt.show('topics.Topics')
+========== ============= ================== ================== =============
+ Referenz   Bezeichnung   Bezeichnung (en)   Bezeichnung (fr)   Topic group
+---------- ------------- ------------------ ------------------ -------------
             Französisch   French             Français           Sprachen
             Deutsch       German             Allemand           Sprachen
             Englisch      English            Anglais            Sprachen
-========== ============= ================== ================== ===========
+========== ============= ================== ================== =============
 <BLANKLINE>
 
 

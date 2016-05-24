@@ -19,7 +19,7 @@ This document describes the database structure.
 >>> from lino.utils.diag import analyzer
 >>> print(analyzer.show_db_overview())
 ... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
-33 apps: lino_startup, staticfiles, about, jinja, bootstrap3, extjs, printing, system, contenttypes, gfks, users, office, countries, contacts, xl, products, notifier, changes, stars, uploads, outbox, excerpts, comments, tickets, faculties, clocking, lists, export_excel, tinymce, smtpd, appypod, wkhtmltopdf, noi.
+33 apps: lino_startup, staticfiles, about, jinja, bootstrap3, extjs, printing, system, contenttypes, gfks, users, office, countries, contacts, notifier, changes, stars, uploads, outbox, xl, excerpts, comments, tickets, topics, faculties, clocking, lists, export_excel, tinymce, smtpd, appypod, wkhtmltopdf, noi.
 44 models:
 =========================== ============================ ========= =======
  Name                        Default table                #fields   #rows
@@ -31,7 +31,7 @@ This document describes the database structure.
  comments.Comment            comments.Comments            8         0
  contacts.Company            contacts.Companies           22        0
  contacts.CompanyType        contacts.CompanyTypes        7         0
- contacts.Partner            contacts.Partners            19        0
+ contacts.Partner            contacts.Partners            19        3
  contacts.Person             contacts.Persons             26        0
  contacts.Role               contacts.Roles               4         0
  contacts.RoleType           contacts.RoleTypes           4         0
@@ -50,12 +50,9 @@ This document describes the database structure.
  outbox.Attachment           outbox.Attachments           4         0
  outbox.Mail                 outbox.Mails                 9         0
  outbox.Recipient            outbox.Recipients            6         0
- products.Product            products.Products            10        4
- products.ProductCat         products.ProductCats         5         0
  stars.Star                  stars.Stars                  5         0
- system.SiteConfig           system.SiteConfigs           5         0
+ system.SiteConfig           system.SiteConfigs           5         1
  tickets.Deployment          tickets.Deployments          4         0
- tickets.Interest            tickets.Interests            3         6
  tickets.Link                tickets.Links                4         1
  tickets.Milestone           tickets.Milestones           9         8
  tickets.Project             tickets.Projects             17        5
@@ -64,6 +61,9 @@ This document describes the database structure.
  tickets.Ticket              tickets.Tickets              26        16
  tickets.TicketType          tickets.TicketTypes          4         3
  tinymce.TextFieldTemplate   tinymce.TextFieldTemplates   5         2
+ topics.Interest             topics.Interests             3         6
+ topics.Topic                topics.Topics                9         4
+ topics.TopicGroup           topics.TopicGroups           5         0
  uploads.Upload              uploads.Uploads              9         0
  uploads.UploadType          uploads.UploadTypes          8         0
  users.Authority             users.Authorities            3         0
@@ -86,8 +86,7 @@ users.UserProfiles.admin:900
 
 >>> ses.show_menu()
 ... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
-- Contacts : Persons, Organizations, Partners, Partner Lists
-- Products : Products, Product Categories
+- Contacts : Persons, Organizations, Partners, Topics, Partner Lists
 - Office : My Stars, My Uploads, My Outbox, My Excerpts, My Comments
 - Tickets : Projects, Sites, Active tickets, Tickets, My known problems, Unassigned Tickets
 - Clocking : Sessions
@@ -97,15 +96,16 @@ users.UserProfiles.admin:900
 - Configure :
   - System : Site Parameters, Help Texts, Users
   - Places : Countries, Places
-  - Contacts : Organization types, Functions, List Types
+  - Contacts : Organization types, Functions, Topic groups, List Types
   - Office : Upload Types, Excerpt Types, My Text Field Templates
-  - Tickets : Project Types, Ticket types, Faculties (tree), Competences
+  - Tickets : Project Types, Ticket types
+  - Faculties : Faculties (tree), Competences
   - Clocking : Session Types
 - Explorer :
   - System : content types, Authorities, User Profiles, Notifications, Changes
-  - Contacts : Contact Persons, List memberships
+  - Contacts : Contact Persons, Interests, List memberships
   - Office : Stars, Uploads, Upload Areas, Outgoing Mails, Attachments, Excerpts, Comments, Text Field Templates
-  - Tickets : Milestones, Dependencies, Interests, Deployments
+  - Tickets : Milestones, Dependencies, Deployments
   - Faculties : Faculties (all), Competences
   - Clocking : Sessions
 - Site : About

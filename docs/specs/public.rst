@@ -32,7 +32,7 @@ The demo database contains the following data:
 >>> rt.show(tickets.PublicTickets)
 ... #doctest: +REPORT_UDIFF
 ================================== ======= ============= ========= =========== ==========
- Overview                           State   Ticket type   Project   Product     Priority
+ Overview                           State   Ticket type   Project   Topic       Priority
 ---------------------------------- ------- ------------- --------- ----------- ----------
  *#13 (Bar cannot foo)*             Done    Bugfix        linö      Lino Cosi   0
  *#1 (Föö fails to bar when baz)*   New     Bugfix        linö      Lino Cosi   0
@@ -66,5 +66,5 @@ This data is being rendered using plain bootstrap HTML:
 Tickets Home en de fr Tickets Active tickets Tickets Unassigned Tickets Site About #7 (No Foo after deleting Bar) << < > >> State: Refused
 <BLANKLINE>
 <BLANKLINE>
-(last update ...) Reported by: Robin Rood ... Product: Lino Core Site: welket This is Lino Noi ...
+(last update ...) Reported by: Robin Rood ... Topic: Lino Core Site: welket This is Lino Noi ...
 

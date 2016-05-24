@@ -35,7 +35,7 @@ Lino Noi:
   - PROTECT : contacts.Company.type
 - contacts.Partner :
   - CASCADE : contacts.Company.partner_ptr, contacts.Person.partner_ptr
-  - PROTECT : lists.Member.partner, outbox.Recipient.partner, tickets.Site.partner, users.User.partner
+  - PROTECT : clocking.ServiceReport.interesting_for, lists.Member.partner, outbox.Recipient.partner, tickets.Site.partner, topics.Interest.partner, users.User.partner
 - contacts.Person :
   - PROTECT : contacts.Role.person, excerpts.Excerpt.contact_person, tickets.Project.contact_person
 - contacts.RoleType :
@@ -58,10 +58,6 @@ Lino Noi:
   - PROTECT : lists.List.list_type
 - outbox.Mail :
   - CASCADE : outbox.Attachment.mail, outbox.Recipient.mail
-- products.Product :
-  - PROTECT : faculties.Competence.product, tickets.Interest.product, tickets.Ticket.product
-- products.ProductCat :
-  - PROTECT : faculties.Faculty.product_cat, products.Product.cat
 - tickets.Milestone :
   - PROTECT : tickets.Deployment.milestone, tickets.Ticket.reported_for
 - tickets.Project :
@@ -69,11 +65,15 @@ Lino Noi:
 - tickets.ProjectType :
   - PROTECT : tickets.Project.type
 - tickets.Site :
-  - PROTECT : clocking.ServiceReport.interesting_for, tickets.Interest.site, tickets.Milestone.site, tickets.Ticket.site, users.User.user_site
+  - PROTECT : tickets.Milestone.site, tickets.Ticket.site, users.User.user_site
 - tickets.Ticket :
   - PROTECT : clocking.Session.ticket, tickets.Deployment.ticket, tickets.Link.parent, tickets.Ticket.duplicate_of
 - tickets.TicketType :
   - PROTECT : tickets.Ticket.ticket_type
+- topics.Topic :
+  - PROTECT : faculties.Competence.topic, tickets.Ticket.topic, topics.Interest.topic
+- topics.TopicGroup :
+  - PROTECT : faculties.Faculty.topic_group, topics.Topic.topic_group
 - uploads.UploadType :
   - PROTECT : uploads.Upload.type
 - users.User :

@@ -11,8 +11,8 @@
 {% if obj.standby %} (standby){% endif %}
 (last update {{obj.modified}})
 <br/><b>Reported by:</b> {{obj.reporter}} {{obj.created}}
-{% if obj.product %}
-<br/><b>Product:</b> {{E.tostring(ar.obj2html(obj.product))}}
+{% if obj.topic %}
+<br/><b>Topic:</b> {{E.tostring(ar.obj2html(obj.topic))}}
 {% endif %}
 {% if obj.site %}
 <br/><b>Site:</b> {{E.tostring(ar.obj2html(obj.site))}}

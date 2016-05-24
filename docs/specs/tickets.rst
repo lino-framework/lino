@@ -184,27 +184,61 @@ There are 5 private and 11 public tickets in the demo database.
 
 
 
-Products
+Topics
 ========
 
-The :attr:`product <lino_noi.lib.tickets.models.Ticket.product>` of a
-ticket is what Trac calls "component". Products are a "customer-side"
+The :attr:`topic <lino_noi.lib.tickets.models.Ticket.topic>` of a
+ticket is what Trac calls "component". Topics are a "customer-side"
 classification of the different components which are being developed
 by the team that uses a given Lino Noi site.
 
 There are 4 producs in the demo database.
 
->>> rt.show(products.Products)
-=========== ============== ================== ================== ==========
- Reference   Designation    Designation (de)   Designation (fr)   Category
------------ -------------- ------------------ ------------------ ----------
+>>> rt.show(topics.Topics)
+=========== ============== ================== ================== =============
+ Reference   Designation    Designation (de)   Designation (fr)   Topic group
+----------- -------------- ------------------ ------------------ -------------
  linõ        Lino Core
  welfäre     Lino Welfare
  così        Lino Cosi
  faggiö      Lino Faggio
-=========== ============== ================== ================== ==========
+=========== ============== ================== ================== =============
 <BLANKLINE>
   
+
+Interests
+=========
+
+Every partner can have its list of "interests". They will get notified
+about changes in these topics even when they did not report the
+ticket.
+
+
+>>> obj = contacts.Partner.objects.get(name="welket")
+>>> rt.show(topics.InterestsByPartner, obj)
+... #doctest: +REPORT_UDIFF
+==============
+ Topic
+--------------
+ Lino Core
+ Lino Welfare
+ Lino Cosi
+==============
+<BLANKLINE>
+
+>>> obj = topics.Topic.objects.get(ref="welfäre")
+>>> rt.show(topics.InterestsByTopic, obj)
+... #doctest: +REPORT_UDIFF
+=========
+ Partner
+---------
+ welket
+ welsch
+=========
+<BLANKLINE>
+
+
+
 
 Sites
 =====
@@ -215,9 +249,9 @@ Lino Noi has a list of all sites for which we do support:
 ============= ========= ======== ====
  Designation   Partner   Remark   ID
 ------------- --------- -------- ----
- pypi                             3
- welket                           1
- welsch                           2
+ pypi          pypi               3
+ welket        welket             1
+ welsch        welsch             2
 ============= ========= ======== ====
 <BLANKLINE>
 
@@ -257,29 +291,6 @@ authenticated developer it looks like this:
  1    Föö fails to bar when baz                   No       **New** → [Sticky] [Talk] [ToDo] [Sleeping] [Done] [Refused] [☆]   jean          linö
 ==== =========================================== ======== ================================================================== ============= ==========
 <BLANKLINE>
-
-
-Interests
-=========
-
-Every site can have its list of "interests". That is a list of the
-products that are being used on that site. They will get notified
-about changes in these products even when they did not report the
-ticket.
-
-
->>> welket = tickets.Site.objects.get(name="welket")
->>> rt.show(tickets.InterestsBySite, welket)
-... #doctest: +REPORT_UDIFF
-==============
- Product
---------------
- Lino Core
- Lino Welfare
- Lino Cosi
-==============
-<BLANKLINE>
-
 
 
 Milestones

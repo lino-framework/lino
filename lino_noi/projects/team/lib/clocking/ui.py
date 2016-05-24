@@ -148,7 +148,7 @@ class OtherTicketsByMilestone(Tickets, InvestedTime):
         spv = dict()
         end_date = mi.reached or mi.expected or dd.today()
         spv.update(start_date=mi.changes_since, end_date=end_date)
-        spv.update(interesting_for=mi.site)
+        spv.update(interesting_for=mi.site.partner)
         spv.update(observed_event=TicketEvents.clocking)
         ar.param_values.update(spv)
 
@@ -271,7 +271,7 @@ class ServiceReports(dd.Table):
                    "ticket_state printed *"
 
 
-class ReportsBySite(ServiceReports):
+class ReportsByPartner(ServiceReports):
     """List of service reports issued for a given site."""
     master_key = 'interesting_for'
 
@@ -280,6 +280,7 @@ class ReportsBySite(ServiceReports):
 def my_setup_columns(sender, **kw):
     WorkedHours.setup_columns()
     settings.SITE.kernel.must_build_site_cache()
+
 
 @dd.receiver(dd.post_save, sender=Ticket)
 def on_ticket_create(sender, instance=None, created=False, **kwargs):

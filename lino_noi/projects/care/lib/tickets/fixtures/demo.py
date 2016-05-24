@@ -47,7 +47,7 @@ def S(name, **kw):
 
 def P(name, **kw):
     kw.update(**str2kw('name', name))
-    return rt.modules.products.Product(**kw)
+    return rt.modules.topics.Topic(**kw)
 
 
 def T(reporter, summary, **kw):
@@ -75,17 +75,17 @@ def objects():
     yield S("AZ Ephata")
     yield S("Eupen")
 
-    ProductCat = rt.modules.products.ProductCat
-    lng = ProductCat(**str2kw('name', _("Languages")))
+    TopicGroup = rt.modules.topics.TopicGroup
+    lng = TopicGroup(**str2kw('name', _("Languages")))
     yield lng
 
-    fr = P(_("French"), cat=lng)
+    fr = P(_("French"), topic_group=lng)
     yield fr
 
-    de = P(_("German"), cat=lng)
+    de = P(_("German"), topic_group=lng)
     yield de
 
-    yield P(_("English"), cat=lng)
+    yield P(_("English"), topic_group=lng)
 
     edu = F("Unterricht", "Cours")
     yield edu
@@ -102,7 +102,7 @@ def objects():
     yield F("Gesellschafter für Senioren",
             "Rencontres personnes agées")
     yield F("Hunde spazierenführen", "Chiens")
-    traduire = F("Übersetzungsarbeiten", "Traductions", product_cat=lng)
+    traduire = F("Übersetzungsarbeiten", "Traductions", topic_group=lng)
     yield traduire
     yield F("Briefe beantworten", "Répondre au courrier")
 
@@ -124,7 +124,7 @@ def objects():
             "Wer fährt für mich nach Aachen Pampers kaufen?",
             description="Ich darf selber nicht über die Grenze.")
 
-    yield competence('anna', traduire, product=fr)
-    yield competence('berta', traduire, product=fr)
-    yield competence('berta', traduire, product=de)
+    yield competence('anna', traduire, topic=fr)
+    yield competence('berta', traduire, topic=fr)
+    yield competence('berta', traduire, topic=de)
 
