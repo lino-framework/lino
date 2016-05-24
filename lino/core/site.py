@@ -1278,10 +1278,10 @@ class Site(object):
         self.plugins = AttrDict()
 
         def install_plugin(app_name, needed_by=None):
-            # print("20160427 install_plugin()", app_name)
             # Django does not accept newstr, and we don't want to see
             # ``u'applabel'`` in doctests.
             app_name = six.text_type(app_name)
+            # print("20160524 install_plugin(%r)" % app_name)
             app_mod = import_module(app_name)
 
             # print "Loading plugin", app_name
@@ -1344,41 +1344,60 @@ class Site(object):
 
         self.override_modlib_models = dict()
 
-        def reg(p, pp, m):
-            name = pp.__module__ + '.' + m
-            self.override_modlib_models[name] = p
+        # def reg(p, pp, m):
+        #     name = pp.__module__ + '.' + m
+        #     self.override_modlib_models[name] = p
 
-        for p in self.installed_plugins:
-            if p.extends_models is not None:
-                for m in p.extends_models:
+        def plugin_parents(pc):
+            for pp in pc.__mro__:
+                if issubclass(pp, Plugin):
+                    # if pp not in (Plugin, p.__class__):
+                    if pp is not Plugin:
+                        yield pp
+
+        def reg(pc):
+            # If plugin p extends some models, then tell all parent
+            # plugins to make their definition of each model abstract.
+            extends_models = pc.__dict__.get('extends_models')
+            if extends_models is not None:
+                for m in extends_models:
                     if "." in m:
                         raise Exception(
-                            "extends_models in %s still uses '.'" %
-                            p.app_name)
-                    # found = False
-                    root = None
-                    # for pp in p.__class__.__bases__:
-                    for pp in p.__class__.__mro__:
-                        if issubclass(pp, Plugin) and pp not in (
-                                p.__class__, Plugin):
-                            root = pp
-                            reg(p, pp, m)
-                            # if pp.extends_models and m in pp.extends_models:
-                            #     reg(p, pp, m)
-                                # break
-                    if not root:
-                        msg = "{0} declares to extend_models {1}, but " \
-                              "cannot find parent plugin".format(p, m)
-                        raise Exception(msg)
-                    # reg(p, root, m)
+                            "extends_models in %s still uses '.'" % pc)
+                    for pp in plugin_parents(pc):
+                        if pp is pc:
+                            continue
+                        name = pp.__module__ + '.' + m
+                        self.override_modlib_models[name] = pc
+                        # if m == "Company":
+                        #     print("20160524 tell %s that %s extends %s" % (
+                        #         pp, p.app_name, m))
+
+            for pp in plugin_parents(pc):
+                if pp is pc:
+                    continue
+                reg(pp)
+
+
+            # msg = "{0} declares to extend_models {1}, but " \
+            #       "cannot find parent plugin".format(p, m)
+            # raise Exception(msg)
+
+        for p in self.installed_plugins:
+            reg(p.__class__)
+            # for pp in plugin_parents(p.__class__):
+            #     if p.app_label == 'contacts':
+            #         print("20160524c %s" % pp)
+            #     reg(p.__class__)
+
+        # for m, p in self.override_modlib_models.items():
+        #     print("20160524 %s : %s" % (m, p))
 
         self.installed_plugin_modules = set()
         for p in self.installed_plugins:
-            self.installed_plugin_modules.add(p.__module__)
-            for pp in p.__class__.__mro__:
-                if issubclass(pp, Plugin) and pp not in (
-                        p.__class__, Plugin):
-                    self.installed_plugin_modules.add(pp.__module__)
+            # self.installed_plugin_modules.add(p.__module__)
+            for pp in plugin_parents(p.__class__):
+                self.installed_plugin_modules.add(pp.__module__)
 
         # print("20160524 %s", self.installed_plugin_modules)
                         
@@ -1838,11 +1857,13 @@ class Site(object):
         if not rv:
             if app_name not in self.installed_plugin_modules:
                 return True
-        # if model_name.endswith('Session'):
+        # if model_name.endswith('Company'):
         #     self.logger.info(
-        #         "20160524 is_abstract_model(%s) -> %s (%s, %s)",
-        #         model_name, rv, self.override_modlib_models.keys(),
-        #         os.getenv('DJANGO_SETTINGS_MODULE'))
+        #         "20160524 is_abstract_model(%s) -> %s", model_name, rv)
+            # self.logger.info(
+            #     "20160524 is_abstract_model(%s) -> %s (%s, %s)",
+            #     model_name, rv, self.override_modlib_models.keys(),
+            #     os.getenv('DJANGO_SETTINGS_MODULE'))
         return rv
 
     def is_installed_model_spec(self, model_spec):
