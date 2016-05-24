@@ -1018,12 +1018,11 @@ class Site(object):
     _site_config = None
     _logger = None
     override_modlib_models = None
-    """A dictionary automatically filled at startup.
-    You can inspect it, but you should not modify it.
+    """A dictionary which maps model class names to the plugin which
+    overrides them.
 
-    It maps model class names to the plugin which overrides them.
-
-    This dictionary is needed mainly for :meth:`is_abstract_model`.
+    This is automatically filled at startup.  You can inspect it, but
+    you should not modify it.  Needed for :meth:`is_abstract_model`.
 
     The challenge is that we want to know exactly where every model's
     concrete class will be defined *before* actually starting to
@@ -1031,6 +1030,14 @@ class Site(object):
     :attr:`extends_models <lino.core.plugin.Plugin.extends_models>`.
 
     This can be tricky, see e.g. 20160205.
+
+    """
+
+    installed_plugin_modules = None
+    """A set of the full Python paths of all imported plugin modules. Not
+    just the plugin modules themselves but also those they inherit
+    from. This is used internally by :meth:`is_abstract_model`.  Don't
+    modify.
 
     """
 
@@ -1364,6 +1371,16 @@ class Site(object):
                               "cannot find parent plugin".format(p, m)
                         raise Exception(msg)
                     # reg(p, root, m)
+
+        self.installed_plugin_modules = set()
+        for p in self.installed_plugins:
+            self.installed_plugin_modules.add(p.__module__)
+            for pp in p.__class__.__mro__:
+                if issubclass(pp, Plugin) and pp not in (
+                        p.__class__, Plugin):
+                    self.installed_plugin_modules.add(pp.__module__)
+
+        # print("20160524 %s", self.installed_plugin_modules)
                         
         # raise Exception("20140825 %s", self.override_modlib_models)
 
@@ -1815,12 +1832,17 @@ class Site(object):
         See :doc:`/dev/plugin_inheritance`.
 
         """
-        name = '.'.join(module_name.split('.')[:-1])
-        name += '.' + model_name
-        rv = name in self.override_modlib_models
-        # if model_name == 'Enrolment':
-        #     self.logger.info("20160205 is_abstract_model %s -> %s (%s)",
-        #                      name, rv, self.override_modlib_models.keys())
+        app_name = '.'.join(module_name.split('.')[:-1])
+        model_name = app_name + '.' + model_name
+        rv = model_name in self.override_modlib_models
+        if not rv:
+            if app_name not in self.installed_plugin_modules:
+                return True
+        # if model_name.endswith('Session'):
+        #     self.logger.info(
+        #         "20160524 is_abstract_model(%s) -> %s (%s, %s)",
+        #         model_name, rv, self.override_modlib_models.keys(),
+        #         os.getenv('DJANGO_SETTINGS_MODULE'))
         return rv
 
     def is_installed_model_spec(self, model_spec):
