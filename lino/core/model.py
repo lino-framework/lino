@@ -613,16 +613,19 @@ class Model(models.Model):
 
         `ar` is the action request that asked to duplicate.
 
-        If `master` is not None, then this is a cascaded duplicate initiated
-        be a :meth:`duplicate` on the specified `master`.
+        If `master` is not None, then this is a cascaded duplicate
+        initiated be a :meth:`duplicate` on the specified `master`.
 
-        Note that on the master (i.e. when `master` is None), this is
-        called *after* having saved the new object for a first time,
-        and for related objects (`master` is not `None`) it is called
-        *before* saving the object.  But even when an overridden
-        :meth:`on_duplicate` method modifies a master, you don't need
-        to :meth:`save` because Lino checks for modifications and
-        saves the master a second time when needed.
+        Note that this is called *before* saving the object for the
+        first time.
+
+        Obsolete: On the master (i.e. when `master` is `None`), this
+        is called *after* having saved the new object for a first
+        time, and for related objects (`master` is not `None`) it is
+        called *before* saving the object.  But even when an
+        overridden :meth:`on_duplicate` method modifies a master, you
+        don't need to :meth:`save` because Lino checks for
+        modifications and saves the master a second time when needed.
 
         Note also that "related objects" means only those which point
         to the master using a FK which is listed in

@@ -27,11 +27,14 @@ if settings.SITE.is_installed('contenttypes'):
     from django.contrib.contenttypes.fields import GenericForeignKey \
         as DjangoGenericForeignKey
 
+    from django.contrib.contenttypes.fields import GenericRelation
+
     def is_foreignkey(fld):
         return isinstance(fld, (ForeignKey, DjangoGenericForeignKey))
 else:
     ContentType = UnresolvedModel
     GenericForeignKey = UnresolvedField
+    GenericRelation = UnresolvedField
 
     def is_foreignkey(fld):
         return isinstance(fld, ForeignKey)

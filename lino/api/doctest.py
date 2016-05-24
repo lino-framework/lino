@@ -197,3 +197,13 @@ def show_menu_path(spec, language=None):
     #     items.insert(0, p)
     #     p = p.parent
     # return " --> ".join([i.label for i in items])
+
+
+def noblanklines(s):
+    """Remove blank lines from output. This is used to increase
+    readability when some expected output would otherweise contain
+    disturbing `<BLANKLINE>` which are not relevant to the test
+    itself.
+
+    """
+    return '\n'.join([ln for ln in s.splitlines() if ln.strip()])

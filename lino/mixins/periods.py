@@ -13,7 +13,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 import datetime
-import collections
 
 from django.db import models
 from django.conf import settings
@@ -23,39 +22,13 @@ from django.core.exceptions import ValidationError
 
 from lino.api import dd
 from lino.core.model import Model
-from lino.core.choicelists import Choice
-from lino.utils.format_date import fdl
+from lino.utils.format_date import fdl, fds
 from lino.utils.ranges import isrange
-from lino.utils.format_date import fds
 from lino.core.utils import ParameterPanel
-
-DatePeriodValue = collections.namedtuple(
-    'DatePeriodValue', ('start_date', 'end_date'))
-"""
-A named tuple with the following fields:
-
-.. attribute:: start_date
-
-    The start date
-
-.. attribute:: end_date
-
-    The end date
-"""
 
 
 def rangefmt(r):
     return fds(r[0]) + '...' + fds(r[1])
-
-
-class ObservedEvent(Choice):
-    """Base class for choices of "observed event"-style choicelists."""
-
-    def __init__(self, value, **kwargs):
-        super(ObservedEvent, self).__init__(value, name=value, **kwargs)
-
-    def add_filter(self, qs, pv):
-        return qs
 
 
 class DatePeriod(Model):

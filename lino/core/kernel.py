@@ -413,7 +413,9 @@ class Kernel(object):
                     to a Company as well.
                     """
                     if not hasattr(f.rel.model, '_lino_ddh'):
-                        raise Exception("20150824")
+                        msg = "20150824 {1} (needed by {0}) "\
+                              "has no _lino_ddh"
+                        raise Exception(msg.format(f.rel, f.rel.model))
                     # f.rel.model._lino_ddh.add_fk(f.model, f)
                     # m = f.model._meta.concrete_model
                     # f.rel.model._lino_ddh.add_fk(m, f)

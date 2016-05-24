@@ -19,6 +19,7 @@ This is a tested document. To test it, run::
     choosers
     code
     config
+    dates
     demonames
     daemoncommand
     dataserializer

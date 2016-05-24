@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2010-2015 Luc Saffre
+# Copyright 2010-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """This package contains Model mixins, some of which are heavily used
@@ -290,11 +290,12 @@ class Referrable(model.Model):
                                unique=True)
 
     def on_duplicate(self, ar, master):
-        """After duplicating we must change the :attr:`ref`.
+        """Before saving a duplicated object for the first time, we must
+        change the :attr:`ref` in order to avoid an IntegrityError.
 
         """
         if self.ref:
-            self.ref += '(DUP)'
+            self.ref += ' (DUP)'
         super(Referrable, self).on_duplicate(ar, master)
 
     @classmethod
