@@ -35,12 +35,15 @@ from functools import wraps
 
 def override(globals_dict):
     def override_decorator(func):
-        @wraps(func)
-        def wrapper(name):
-            if func.__name__ not in globals_dict:
-                raise Exception("Cannot override {}".format(func))
-            globals_dict[func.__name__] = func
-        return wrapper
+        if func.__name__ not in globals_dict:
+            raise Exception("Cannot override {}".format(func))
+        globals_dict[func.__name__] = func
+        # @wraps(func)
+        # def wrapper(name):
+        #     if func.__name__ not in globals_dict:
+        #         raise Exception("Cannot override {}".format(func))
+        #     globals_dict[func.__name__] = func
+        # return wrapper
     return override_decorator
 
 
