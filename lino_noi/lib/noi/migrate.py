@@ -63,7 +63,7 @@ class Migrator(Migrator):
         faculties_Competence = rt.models.faculties.Competence
         faculties_Faculty = rt.models.faculties.Faculty
         tickets_Site = rt.models.tickets.Site
-        tickets_Interest = rt.models.tickets.Interest
+        tickets_Interest = rt.models.topics.Interest
         Partner = rt.models.contacts.Partner
 
         @override(globals_dict)
