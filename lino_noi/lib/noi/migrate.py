@@ -122,7 +122,7 @@ class Migrator(Migrator):
             kw.update(planned_time=planned_time)
             kw.update(project_id=project_id)
             kw.update(site_id=site_id)
-            kw.update(product_id=product_id)
+            kw.update(topic_id=product_id)
             kw.update(nickname=nickname)
             kw.update(summary=summary)
             kw.update(description=description)
