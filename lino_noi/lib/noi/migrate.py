@@ -106,7 +106,7 @@ class Migrator(Migrator):
             kw.update(ref=ref)
             if name is not None: kw.update(bv2kw('name',name))
             if description is not None: kw.update(bv2kw('description',description))
-            kw.update(cat_id=cat_id)
+            kw.update(topic_group_id=cat_id)
             return products_Product(**kw)
 
         @override(globals_dict)
