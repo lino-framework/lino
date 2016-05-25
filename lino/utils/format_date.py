@@ -92,9 +92,6 @@ Exception: Not a date: u'2014-10-12'
 
 from __future__ import unicode_literals, print_function
 
-import logging
-logger = logging.getLogger(__name__)
-
 import datetime
 from babel.dates import format_date as babel_format_date
 
@@ -141,7 +138,6 @@ def format_date(d, format='medium'):
     loc = to_locale(lng)
     if loc == 'en':
         loc = 'en_UK'  # I hate US date format
-    logger.info("20160525 format_date %s (loc=%s)", d, loc)
     return babel_format_date(d, format=format, locale=loc)
 
 
