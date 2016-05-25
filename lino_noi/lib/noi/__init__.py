@@ -25,6 +25,7 @@ The main plugin for Lino Noi.
 
     models
     fixtures.linotickets
+    migrate
 
 """
 
