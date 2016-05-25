@@ -174,6 +174,24 @@ class FakeDeserializedObject(base.DeserializedObject):
             # raise Exception("Failed to save %s. Abandoned." % obj2str(obj))
 
 
+class Serializer(base.Serializer):
+    """Serializes a QuerySet to a py stream.
+
+    Usage: ``manage.py dumpdata --format py``
+
+    DEPRECATED. The problem with this approach is that a serializer
+    creates -by definition- one single file. And Python needs
+    -understandably- to load a module completely into memory before it
+    can be executed.  Use :manage:`dump2py` instead.
+
+    """
+
+    internal_use_only = False
+
+    def serialize(self, queryset, **options):
+        raise NotImplementedError("Don't use dumpdata but `dump2py`")
+
+
 class FlushDeferredObjects(object):
 
     """
