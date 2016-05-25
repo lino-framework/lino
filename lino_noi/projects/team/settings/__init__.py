@@ -39,7 +39,7 @@ from lino.projects.std.settings import *
 class Site(Site):
 
     verbose_name = "Lino Noi"
-    version = '0.0.1'
+    version = '1.0.1'
 
     url = "http://noi.lino-framework.org/"
     server_url = "http://team.lino-framework.org/"
@@ -54,6 +54,7 @@ class Site(Site):
     obj2text_template = "**{0}**"
 
     default_build_method = 'appyodt'
+    migration_class = 'lino_noi.lib.noi.migrate.Migrator'
 
     def get_installed_apps(self):
         """Implements :meth:`lino.core.site.Site.get_installed_apps` for Lino
