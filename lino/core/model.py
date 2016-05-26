@@ -600,6 +600,29 @@ class Model(models.Model):
         return obj
 
     @classmethod
+    def quick_search_filter(model, search_text, prefix=''):
+        """Return the filter expression to apply when a quick search text is
+        specified.
+
+        """
+        # logger.info("20130425 quick_search_filter(%s,%r)",model,search_text)
+        q = models.Q()
+
+        if search_text.isdigit() and not search_text.startswith('0'):
+            for field in model._meta.fields:
+                if isinstance(field, (models.IntegerField, models.AutoField)):
+                    kw = {prefix + field.name: int(search_text)}
+                    q = q | models.Q(**kw)
+        else:
+            for fn in model.quick_search_fields:
+                kw = {prefix + fn + "__icontains": search_text}
+                q = q | models.Q(**kw)
+
+        return q
+
+
+
+    @classmethod
     def setup_table(cls, t):
         """Called during site startup once on each Table that uses this
         model. Note that this is a class method.
@@ -1022,6 +1045,7 @@ LINO_MODEL_ATTRIBS = (
     'on_analyze',
     'disable_delete',
     'lookup_or_create',
+    'quick_search_filter',
     'on_duplicate',
     'on_create',
     'error2str',
