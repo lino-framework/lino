@@ -458,7 +458,7 @@ request from it.
 
     def success(self, message=None, alert=None, **kw):
         """Tell the client to consider the action as successful. This is the
-        same as :meth:`BaseRequest.set_response` with `success=True`.
+        same as :meth:`set_response` with `success=True`.
 
         First argument should be a textual message.
 
@@ -469,7 +469,14 @@ request from it.
                 alert = _("Success")
             kw.update(alert=alert)
         if message is not None:
-            kw.update(message=message)
+            if 'message' in self.response and alert is None:
+                # ignore alert-less messages when there is already a
+                # message set. For example
+                # finan.FinancialVoucherItem.parter_changed with more
+                # than 1 suggestion.
+                pass
+            else:
+                kw.update(message=message)
         self.set_response(**kw)
 
     def append_message(self, level, msg, *args, **kw):
@@ -483,21 +490,27 @@ request from it.
             self.response[k] = msg
         else:
             self.response[k] = old + '\n' + msg
-        #~ return self.success(*args,**kw)
+        # return self.success(*args,**kw)
 
     def debug(self, msg, *args, **kw):
         if settings.SITE.verbose_client_info_message:
             self.append_message('info', msg, *args, **kw)
 
     def info(self, msg, *args, **kw):
+        # deprecated?
         self.append_message('info', msg, *args, **kw)
 
     def warning(self, msg, *args, **kw):
+        # deprecated?
         self.append_message('warning', msg, *args, **kw)
 
     _confirm_answer = True
 
     def set_confirm_answer(self, ans):
+        """Set a "No" answer for following confirm in a non-interactive
+        renderer.
+
+        """
         self._confirm_answer = ans
 
     def confirm(self, ok_func, *msgs):

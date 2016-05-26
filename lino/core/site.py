@@ -40,7 +40,7 @@ if AFTER17:
     from django.apps import AppConfig
 
 from unipath import Path
-from atelier.utils import AttrDict, date_offset ,tuple_py2
+from atelier.utils import AttrDict, date_offset, tuple_py2
 from atelier import rstgen
 
 from django.utils.translation import ugettext_lazy as _
@@ -2090,7 +2090,7 @@ class Site(object):
         plugin.
 
         """
-        # self.logger.info("20140227 lino_site.Site.do_site_startup() a")
+        self.logger.info("20160526 %s do_site_startup() a", self.__class__)
 
         self.user_interfaces = tuple([
             p for p in self.installed_plugins if p.ui_label is not None])
@@ -2101,7 +2101,7 @@ class Site(object):
         self.kernel = Kernel(self)
         # self.ui = self.kernel  # internal backwards compat
 
-        # self.logger.info("20140227 lino_site.Site.do_site_startup() b")
+        self.logger.info("20160526 %s do_site_startup() b", self.__class__)
 
     def find_config_file(self, *args, **kwargs):
         return self.confdirs.find_config_file(*args, **kwargs)
@@ -2714,7 +2714,7 @@ given object `obj`. The dict will have one key for each
             default_value = args[0]
             return values.get(info.name, default_value)
         args = tuple_py2(args)
-        print(type(args))
+        # print(type(args))
         raise ValueError("%(values)s is more than 1 default value." %
                          dict(values=args))
 
