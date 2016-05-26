@@ -272,8 +272,8 @@ class ProjectRelated(model.Model):
 
 
 class Referrable(model.Model):
-    """Mixin for things that have a unique `ref` field and a `get_by_ref`
-    method.
+    """Mixin for things that have a unique :attr:`ref` field and a
+    `get_by_ref` method.
 
     .. attribute:: ref
 
@@ -315,7 +315,7 @@ class Referrable(model.Model):
         """Overrides the default beaviour defined in
         :meth:`lino.core.model.Model.quick_search_filter`. For
         Referrable objects, when quick-searching for a text containing
-        only digits, the user usually means the :ref:`ref` and *not*
+        only digits, the user usually means the :attr:`ref` and *not*
         the primary key.
 
         """
