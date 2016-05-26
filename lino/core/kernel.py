@@ -702,7 +702,7 @@ class Kernel(object):
             msg = '\n'.join([force_text(s) for s in msgs])
         else:
             msg = msgs[0]
-        logger.info("20160526 add_callback(%s)", msg)
+        # logger.info("20160526 add_callback(%s)", msg)
         return Callback(ar, msg)
 
     def set_callback(self, ar, cb):
@@ -710,8 +710,8 @@ class Kernel(object):
         """
         h = hash(cb)
         self.pending_threads[h] = cb
-        logger.info("20160526 Stored %r in %r" % (
-            h, self.pending_threads))
+        # logger.info("20160526 Stored %r in %r" % (
+        #     h, self.pending_threads))
 
         buttons = dict()
         for c in cb.choices:

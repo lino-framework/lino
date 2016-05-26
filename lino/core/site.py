@@ -2090,7 +2090,7 @@ class Site(object):
         plugin.
 
         """
-        self.logger.info("20160526 %s do_site_startup() a", self.__class__)
+        # self.logger.info("20160526 %s do_site_startup() a", self.__class__)
 
         self.user_interfaces = tuple([
             p for p in self.installed_plugins if p.ui_label is not None])
@@ -2101,7 +2101,7 @@ class Site(object):
         self.kernel = Kernel(self)
         # self.ui = self.kernel  # internal backwards compat
 
-        self.logger.info("20160526 %s do_site_startup() b", self.__class__)
+        # self.logger.info("20160526 %s do_site_startup() b", self.__class__)
 
     def find_config_file(self, *args, **kwargs):
         return self.confdirs.find_config_file(*args, **kwargs)
