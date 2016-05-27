@@ -18,6 +18,8 @@ from django.utils import translation
 
 from lino.modlib.printing.choicelists import DjangoBuildMethod, BuildMethods
 
+from weasyprint import HTML
+
 
 class WeasyBuildMethod(DjangoBuildMethod):
     """
@@ -26,10 +28,9 @@ class WeasyBuildMethod(DjangoBuildMethod):
     template_ext = '.weasy.html'
     templates_name = 'weasy'
     default_template = 'default.weasy.html'
-    target_ext = '.pdf'
+    target_ext = '.html'
 
     def build(self, ar, action, elem):
-        from weasyprint import HTML
         filename = action.before_build(self, elem)
         if filename is None:
             return
@@ -40,20 +41,29 @@ class WeasyBuildMethod(DjangoBuildMethod):
         with translation.override(lang):
             cmd_options = elem.get_build_options(self)
             logger.info(
-                "weasyprint render %s -> %s (%r, %s)",
-                tpl, filename, lang, cmd_options)
+                "%s render %s -> %s (%r, %s)",
+                self.name, tpl, filename, lang, cmd_options)
 
             context = elem.get_printable_context(ar)
-            # html = render_to_temporary_file(tpl, context)
             html = tpl.render(context)
-            pdf = HTML(string=html)
-            pdf.write_pdf(filename)
-            # html = render_pdf_from_template(
-            #     tpl, htpl, ftpl, context, cmd_options)
-            # html = html.encode("utf-8")
-            # file(filename, 'w').write(html)
+            self.html2file(html, filename)
             return os.path.getmtime(filename)
 
+    def html2file(self, html, filename):
+        html = html.encode("utf-8")
+        file(filename, 'w').write(html)
+
+
+class WeasyPdfBuildMethod(WeasyBuildMethod):
+
+    target_ext = '.pdf'
+
+    def html2file(self, html, filename):
+        pdf = HTML(string=html)
+        pdf.write_pdf(filename)
+
+
 add = BuildMethods.add_item_instance
-add(WeasyBuildMethod('weasy'))
+add(WeasyBuildMethod('weasy2html'))
+add(WeasyPdfBuildMethod('weasy2pdf'))
 
