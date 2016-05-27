@@ -87,11 +87,18 @@ class User(CreatedModified, TimezoneHolder):
 
     .. attribute:: partner
 
-        Pointer to the :class:`lino.modlib.contacts.models.Partner`
-        instance related to this user.
+        Pointer to the :class:`Partner
+        <lino.modlib.contacts.models.Partner>` instance related to
+        this user.
 
         This is a DummyField when :mod:`lino.modlib.contacts` is not
         installed.
+
+    .. attribute:: person
+
+        A virtual read-only field which returns the :class:`Person
+        <lino.modlib.contacts.models.Person>` MTI child corresponding
+        to the :attr:`partner` (if it exists) and otherwise `None`.
 
     """
 

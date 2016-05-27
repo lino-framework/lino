@@ -60,6 +60,10 @@ class BuildMethod(Choice):
     """
 
     def __init__(self, name=None, **kwargs):
+        # For build methods, `Choice.name` and `Choice.value` are the
+        # same.
+        if name is None:
+            name = self.name
         super(BuildMethod, self).__init__(
             name, self.__class__.__name__, name, **kwargs)
 
