@@ -86,7 +86,7 @@ users.UserProfiles.admin:900
 
 >>> ses.show_menu()
 ... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
-- Contacts : Persons, Organizations, Partners, Topics, Partner Lists
+- Contacts : Persons, Organizations, Partners, Partner Lists
 - Office : My Stars, My Uploads, My Outbox, My Excerpts, My Comments
 - Tickets : Projects, Sites, Active tickets, Tickets, My known problems, Unassigned Tickets
 - Clocking : Sessions
@@ -96,7 +96,7 @@ users.UserProfiles.admin:900
 - Configure :
   - System : Site Parameters, Help Texts, Users
   - Places : Countries, Places
-  - Contacts : Organization types, Functions, Topic groups, List Types
+  - Contacts : Organization types, Functions, Topics, Topic groups, List Types
   - Office : Upload Types, Excerpt Types, My Text Field Templates
   - Tickets : Project Types, Ticket types
   - Faculties : Faculties (tree), Competences

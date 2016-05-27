@@ -226,7 +226,7 @@ class Session(UserAuthored, StartedEnded):
         app_label = 'clocking'
         verbose_name = _("Session")
         verbose_name_plural = _('Sessions')
-        abstract = dd.is_abstract_model(__name__, 'Clocking')
+        abstract = dd.is_abstract_model(__name__, 'Session')
 
     ticket = dd.ForeignKey(
         dd.plugins.clocking.ticket_model,
