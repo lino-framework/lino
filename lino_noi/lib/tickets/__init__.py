@@ -40,7 +40,7 @@ class Plugin(ad.Plugin):
 
     needs_plugins = [
         'lino_xl.lib.stars', 'lino_xl.lib.excerpts',
-        'lino.modlib.comments', 'lino.modlib.changes']
+        'lino.modlib.comments', 'lino.modlib.changes', 'lino_noi.lib.noi']
 
     def setup_main_menu(self, site, profile, m):
         p = self.get_menu_group()

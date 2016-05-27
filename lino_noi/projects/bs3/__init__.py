@@ -30,3 +30,5 @@ http://bugs.lino-framework.org/ uses a subclass of this.
    settings.demo
 
 """
+
+raise Exception("Still used?")
