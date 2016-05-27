@@ -58,23 +58,6 @@ def base_attrs(cl):
             yield k
 
 
-def quick_search_filter(model, search_text, prefix=''):
-    #~ logger.info("20130425 quick_search_filter(%s,%r)",model,search_text)
-    q = models.Q()
-
-    if search_text.isdigit() and not search_text.startswith('0'):
-        for field in model._meta.fields:
-            if isinstance(field, (models.IntegerField, models.AutoField)):
-                kw = {prefix + field.name: int(search_text)}
-                q = q | models.Q(**kw)
-    else:
-        for fn in model.quick_search_fields:
-            kw = {prefix + fn + "__icontains": search_text}
-            q = q | models.Q(**kw)
-
-    return q
-
-
 def add_gridfilters(qs, gridfilters):
     """
     Converts a `filter` request in the format used by :extux:`Ext.ux.grid.GridFilters` into a
@@ -98,8 +81,8 @@ def add_gridfilters(qs, gridfilters):
                 kw[field.name + "__icontains"] = flt['value']
                 q = q & models.Q(**kw)
             elif isinstance(field, models.ForeignKey):
-                q = q & quick_search_filter(
-                    field.rel.model, flt['value'], field.name + "__")
+                q = q & field.rel.model.quick_search_filter(
+                    flt['value'], field.name + "__")
                 #~ rq = models.Q()
                 #~ search_field = field.rel.model.grid_search_field
                 #~ for search_field in field.rel.model.quick_search_fields:
@@ -337,7 +320,7 @@ class Table(AbstractTable):
         search for the given `search_text`.
 
         """
-        return qs.filter(quick_search_filter(qs.model, search_text))
+        return qs.filter(qs.model.quick_search_filter(search_text))
 
     @classmethod
     def get_chooser_for_field(self, fieldname):
