@@ -3062,7 +3062,7 @@ Please convert to Plugin method".format(mod, methname)
     #     """
     #     return None
 
-    def get_main_html(self, request):
+    def get_main_html(self, request, **context):
         """Return a chunk of html to be displayed in the main area of the
         admin index.  This is being called only if
         :meth:`get_main_action` returns `None`.  The default
@@ -3070,7 +3070,7 @@ Please convert to Plugin method".format(mod, methname)
 
         """
         return self.plugins.jinja.render_from_request(
-            request, 'admin_main.html')
+            request, 'admin_main.html', **context)
 
     def get_welcome_messages(self, ar):
         """

@@ -252,7 +252,7 @@ class Index(View):
         assert ui.renderer is not None
         context = dict(
             title=settings.SITE.title,
-            main=settings.SITE.get_main_html(request),
+            main=settings.SITE.get_main_html(request, extjs=ui),
         )
         if settings.SITE.user_model is None:
             user = auth.AnonymousUser.instance()
