@@ -10,7 +10,7 @@ class Site(Site):
 
     languages = "en de fr"
 
-    # default_ui = 'lino_extjs6.extjs'
+    # default_ui = 'lino_extjs6.extjs6'
 
     # def get_apps_modifiers(self, **kw):
     #     kw = super(Site, self).get_apps_modifiers(**kw)
