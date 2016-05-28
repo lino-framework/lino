@@ -5,7 +5,7 @@
         {% for mi in settings.SITE.get_quicklinks(ar).items %}
         [{{E.tostring(ar.window_action_button(mi.bound_action,icon_name=None))}}]
         {% endfor %}
-        {% if settings.SITE.plugins.extjs.autorefresh_seconds %}
+        {% if extjs.autorefresh_seconds %}
         <a href="javascript:Lino.autorefresh();">autorefresh</a>
         {% endif %}
         <a href="javascript:Lino.viewport.refresh();">refresh</a>

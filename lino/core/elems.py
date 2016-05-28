@@ -6,4 +6,6 @@
 from those classes here.
 
 """
+raise Exception("20160528")
+
 from lino.modlib.extjs.elems import create_layout_panel, create_layout_element

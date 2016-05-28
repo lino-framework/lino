@@ -1,4 +1,4 @@
-# Copyright 2012-2015 Luc Saffre
+# Copyright 2012-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -12,20 +12,15 @@ from builtins import object
 import logging
 logger = logging.getLogger(__name__)
 
-import os
 import cgi
-import inspect
 import types
 import datetime
-
-from textwrap import fill
 
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django.conf import settings
 
 
-from lino.modlib.extjs.elems import Panel
 from lino.utils.report import EmptyTable
 from lino.utils import AttrDict
 
@@ -37,8 +32,8 @@ from lino.api import dd
 
 class Models(dd.VirtualTable):
     label = _("Models")
-    #~ column_defaults = dict(width=8)
-    #~ column_names = "app name verbose_name docstring rows"
+    # column_defaults = dict(width=8)
+    # column_names = "app name verbose_name docstring rows"
     column_names = "app name docstring rows detail_action"
     detail_layout = """
     app name docstring rows
@@ -49,10 +44,10 @@ class Models(dd.VirtualTable):
 
     @classmethod
     def get_data_rows(self, ar):
-        #~ profile = ar.get_user().profile
+        # profile = ar.get_user().profile
         for model in models.get_models():
             if True:
-                #~ print model
+                # print model
                 yield model
 
     @classmethod
@@ -67,21 +62,21 @@ class Models(dd.VirtualTable):
     def name(self, obj, ar):
         return obj.__name__
 
-    #~ @dd.displayfield(_("Detail Action"))
+    # @dd.displayfield(_("Detail Action"))
     @dd.displayfield()
     def detail_action(self, obj, ar):
         if obj.get_default_table().detail_action is None:
             return ''
         return obj.get_default_table().detail_action.full_name()
 
-    #~ @dd.displayfield(_("verbose name"))
-    #~ def vebose_name(self,obj,ar):
-        #~ return unicode(obj._meta.vebose_name)
+    # @dd.displayfield(_("verbose name"))
+    # def vebose_name(self,obj,ar):
+        # return unicode(obj._meta.vebose_name)
 
     @dd.displayfield(_("docstring"))
     def docstring(self, obj, ar):
         return obj.__doc__
-        #~ return restify(unicode(obj.__doc__))
+        # return restify(unicode(obj.__doc__))
 
     @dd.requestfield(_("Rows"))
     def rows(self, obj, ar):
@@ -92,8 +87,8 @@ class Models(dd.VirtualTable):
 
 class FieldsByModel(dd.VirtualTable):
     label = _("Fields")
-    #~ master_key = "model"
-    #~ master = Models
+    # master_key = "model"
+    # master = Models
     column_names = "name verbose_name help_text_column"
 
     @classmethod
@@ -113,7 +108,7 @@ class FieldsByModel(dd.VirtualTable):
 
     @dd.displayfield(_("help text"))
     def help_text_column(self, obj, ar):
-        #~ return obj.__doc__
+        # return obj.__doc__
         return restify(str(obj.help_text))
 
 
@@ -141,12 +136,12 @@ class Inspector(dd.VirtualTable):
         show_callables=models.BooleanField(_("show callables"), default=False)
     )
     params_layout = 'inspected show_callables'
-    #~ editable = False
-    #~ slave_grid_format = 'html'
+    # editable = False
+    # slave_grid_format = 'html'
 
     @classmethod
     def get_inspected(self, name):
-        #~ ctx = dict(settings=settings,lino=lino)
+        # ctx = dict(settings=settings,lino=lino)
         if not name:
             return settings
         try:
@@ -155,17 +150,10 @@ class Inspector(dd.VirtualTable):
             o = e
         return o
 
-        #~ o = settings
-        #~ try:
-            #~ for ch in name.split('.'):
-                #~ o = getattr(o,ch)
-        #~ except Exception,e:
-            #~ o = e
-        #~ return o
 
     @classmethod
     def get_data_rows(self, ar):
-        #~ logger.info("20120210 %s, %s",ar.quick_search,ar.param_values.inspected)
+        # logger.info("20120210 %s, %s",ar.quick_search,ar.param_values.inspected)
 
         if ar.param_values.show_callables:
             def flt(v):
@@ -198,15 +186,16 @@ class Inspector(dd.VirtualTable):
         else:
             for k in dir(o):
                 if not k.startswith('__'):
-                    if not ar.quick_search or (ar.quick_search.lower() in k.lower()):
+                    if not ar.quick_search or (
+                            ar.quick_search.lower() in k.lower()):
                         v = getattr(o, k)
                         if flt(v):
-                        #~ if not inspect.isbuiltin(v) and not inspect.ismethod(v):
-                            #~ if ar.param_values.show_callables or not inspect.isfunction(v):
-                            #~ if isinstance(v,types.FunctionType ar.param_values.show_callables or not callable(v):
+                        # if not inspect.isbuiltin(v) and not inspect.ismethod(v):
+                        #     if ar.param_values.show_callables or not inspect.isfunction(v):
+                        #     if isinstance(v,types.FunctionType ar.param_values.show_callables or not callable(v):
                             yield Inspected(o, '.', k, v)
-        #~ for k,v in o.__dict__.items():
-            #~ yield Inspected(o,k,v)
+        # for k,v in o.__dict__.items():
+            # yield Inspected(o,k,v)
 
     @dd.displayfield(_("Name"))
     def i_name(self, obj, ar):
@@ -216,10 +205,10 @@ class Inspector(dd.VirtualTable):
                       obj.prefix + obj.name)
         else:
             pv.update(inspected=obj.name)
-        #~ newreq = ar.spawn(ar.ui,user=ar.user,renderer=ar.renderer,param_values=pv)
+        # newreq = ar.spawn(ar.ui,user=ar.user,renderer=ar.renderer,param_values=pv)
         newreq = ar.spawn(param_values=pv)
         return ar.href_to_request(newreq, obj.name)
-        #~ return obj.name
+        # return obj.name
 
     @dd.displayfield(_("Value"))
     def i_value(self, obj, ar):
@@ -255,11 +244,11 @@ class About(EmptyTable):
             body.append(E.p(str(_("Languages")) + ": " + ', '.join([
                 lng.django_code for lng in settings.SITE.languages])))
 
-        #~ print "20121112 startup_time", settings.SITE.startup_time.date()
+        # print "20121112 startup_time", settings.SITE.startup_time.date()
         def dtfmt(dt):
             if isinstance(dt, float):
                 dt = datetime.datetime.fromtimestamp(dt)
-                #~ raise ValueError("Expected float, go %r" % dt)
+                # raise ValueError("Expected float, go %r" % dt)
             return str(_("%(date)s at %(time)s")) % dict(
                 date=dd.fdf(dt.date()),
                 time=dt.time())

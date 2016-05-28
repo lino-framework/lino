@@ -34,7 +34,7 @@ from lino.core.menus import Menu, MenuItem
 # from lino.utils.xmlgen.html import _html2rst as html2rst
 # from lino.utils.xmlgen.html import html2rst
 
-from . import elems
+# from . import elems
 
 if False:
     from lino.utils.jscompressor import JSCompressor
@@ -255,10 +255,12 @@ request `tar`."""
         return '[?!]'
 
     def create_layout_element(self, *args, **kw):
-        return elems.create_layout_element(*args, **kw)
+        return settings.SITE.kernel.widgets.create_layout_element(
+            *args, **kw)
 
     def create_layout_panel(self, *args, **kw):
-        return elems.create_layout_panel(*args, **kw)
+        return settings.SITE.kernel.widgets.create_layout_panel(
+            *args, **kw)
 
     # def insert_button(self, ar, text, known_values={}, **options):
     #     return '[?!]'
