@@ -2,7 +2,7 @@
 # Copyright 2009-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-r"""A framework for generating Javascript from Python.
+r"""Utilities for generating Javascript from Python.
 
 Example:
 
@@ -70,24 +70,18 @@ import types
 import datetime
 import decimal
 import fractions
-import threading
 
 
 from django.conf import settings
 import json
 from django.utils.functional import Promise
 from django.utils.encoding import force_text
-from django.db.models.fields import NOT_PROVIDED
 
 from lino.utils import IncompleteDate
 from lino.utils.quantities import Quantity
 from lino.utils.xmlgen import etree
-from lino.utils import curry
-from lino.core.permissions import Permittable
-from lino.core.permissions import make_view_permission_handler
+from lino.core.widgets import Widget
 
-
-user_profile_rlock = threading.RLock()
 
 CONVERTERS = []
 
@@ -98,33 +92,6 @@ def dict2js(d):
 
 def register_converter(func):
     CONVERTERS.append(func)
-
-_for_user_profile = None
-
-
-def with_user_profile(profile, func, *args, **kwargs):
-    """Run the given callable `func` with the given user profile `profile`
-    activated. Optional args and kwargs are forwarded to the callable,
-    and the return value is returned.
-
-    """
-    global _for_user_profile
-
-    with user_profile_rlock:
-        old = _for_user_profile
-        _for_user_profile = profile
-        return func(*args, **kwargs)
-        _for_user_profile = old
-
-
-def get_user_profile():
-    return _for_user_profile
-
-# def set_user_profile(up):
-#     global _for_user_profile
-#     _for_user_profile = up
-
-# set_for_user_profile = set_user_profile
 
 
 def key2js(s):
@@ -169,19 +136,10 @@ class Value(object):
     def subvars(self):
         return []
 
-    # def js_before_body(self):
-        # for v in self.subvars():
-            # for ln in v.js_before_body():
-                # yield ln
     def js_body(self):
         for v in self.subvars():
             for ln in v.js_body():
                 yield ln
-
-    # def js_after_body(self):
-        # for v in self.subvars():
-            # for ln in v.js_after_body():
-                # yield ln
 
     def as_ext(self):
         return self.value_template % py2js(self.value)
@@ -206,21 +164,10 @@ class Variable(Value):
             name = str(name)
             self.ext_name = "%s%s%d" % (
                 id2js(name), self.ext_suffix, VARIABLE_COUNTER)
-        Value.__init__(self, value)
-        # assert self.declare_type != DECLARE_INLINE
-
         self.name = name
-        # if name is None:
-            # assert self.declare_type == DECLARE_INLINE
-            # ~ #self.name = "unnamed %s" % self.__class__.__name__
-        # else:
-            # self.name = name
-            # self.ext_name = id2js(name) + self.ext_suffix
-        # self.ext_name = id2js(name) + self.ext_suffix
+        Value.__init__(self, value)
 
     def __str__(self):
-        # if self.ext_name is None: raise Exception("20120920"+str(self.name))
-        # assert self.ext_name is not None
         return self.ext_name
 
     def js_declare(self):
@@ -239,9 +186,6 @@ class Variable(Value):
             yield "this.%s = %s;" % (self.ext_name, value)
         yield "// end js_declare %s" % self
 
-    # def js_column_lines(self):
-        # return []
-
     def as_ext(self):
         if self.declare_type == DECLARE_INLINE:
             return self.js_value()
@@ -254,13 +198,12 @@ class Variable(Value):
 
 
 class Component(Variable):
-    """A Component is a Variable whose value is a dict of otpions.
-    Deserves more documentation.
+    """A Component is a Variable whose value is a dict of options.
 
     """
 
     def __init__(self, name=None, **options):
-        # note that we remove the "**" from options ;-)
+        # note that we remove the "**" from options
         Variable.__init__(self, name, options)
 
     def js_value(self):
@@ -290,62 +233,17 @@ class Component(Variable):
                     yield e
 
 
-class VisibleComponent(Component, Permittable):
+class VisibleComponent(Component, Widget):  # , Permittable):
     """A visible component
     """
-    vflex = False
-    hflex = True
-    width = None
-    height = None
-    preferred_width = 10
-    preferred_height = 1
-    # help_text = None
-    # flex = None
-    hidden = False
 
-    def __init__(self, name, **kw):
-        Component.__init__(self, name)
-        self.setup(**kw)
-        # install `allow_read` permission handler:
-        self.install_permission_handler()
+    def __init__(self, lh, name, **kw):
+        Component.__init__(self, self.name, **kw)
+        Widget.__init__(self, lh, name, **kw)
 
-    def install_permission_handler(self):
-        self.allow_read = curry(make_view_permission_handler(
-            self, True,
-            self.debug_permissions,
-            self.required_roles), self)
-
-    def is_visible(self):
-        if self.hidden:
-            return False
-        return self.get_view_permission(_for_user_profile)
-
-    def get_view_permission(self, profile):
-        return self.allow_read(profile)
-
-    def setup(self, width=None, height=None, label=None,
-              preferred_width=None,
-              # help_text=None,
-              required_roles=NOT_PROVIDED,
-              **kw):
-        self.value.update(kw)
-        # Component.__init__(self,name,**kw)
-        if preferred_width is not None:
-            self.preferred_width = preferred_width
-        if width is not None:
-            self.width = width
-        if height is not None:
-            self.height = height
-        if label is not None:
-            self.label = label
-        if required_roles is not NOT_PROVIDED:
-            if not isinstance(required_roles, set):
-                raise Exception(
-                    "20150628 %s has required_roles %s" % (
-                        self, required_roles))
-            self.required_roles = required_roles
-        # if help_text is not None:
-        #     self.help_text = help_text
+    def setup(self, **kwargs):
+        ignored = Widget.setup(self, **kwargs)
+        self.value.update(ignored)
 
     def __str__(self):
         "This shows how elements are specified"
@@ -356,25 +254,23 @@ class VisibleComponent(Component, Permittable):
             return name + ":%d" % self.width
         return name + ":%dx%d" % (self.width, self.height)
 
-    def unused__repr__(self):
-        return str(self)
-
-    def pprint(self, level=0):
-        return ("  " * level) + str(self)
-
     def walk(self):
         if self.is_visible():
             yield self
 
-    def debug_lines(self):
-        sep = u"</td><td>"
-        cols = """ext_name name parent label __class__.__name__
-        elements js_value
-        label_align vertical width preferred_width height
-        preferred_height vflex""".split()
-        yield '<tr><td>' + sep.join(cols) + '</td></tr>'
-        for e in self.walk():
-            yield '<tr><td>' + sep.join([py2html(e, n) for n in cols]) + '</td></tr>'
+    def pprint(self, level=0):
+        return ("  " * level) + str(self)
+
+    # def debug_lines(self):
+    #     sep = u"</td><td>"
+    #     cols = """ext_name name parent label __class__.__name__
+    #     elements js_value
+    #     label_align vertical width preferred_width height
+    #     preferred_height vflex""".split()
+    #     yield '<tr><td>' + sep.join(cols) + '</td></tr>'
+    #     for e in self.walk():
+    #         yield '<tr><td>' + sep.join(
+    #             [py2html(e, n) for n in cols]) + '</td></tr>'
 
 
 def declare_vars(v):
@@ -393,9 +289,12 @@ def declare_vars(v):
             for ln in declare_vars(sub):
                 yield ln
         return
-    if isinstance(v, VisibleComponent) and not v.get_view_permission(
-            _for_user_profile):
+    if isinstance(v, Widget) and not v.is_permitted():
         return
+
+    # if isinstance(v, VisibleComponent) and not v.get_view_permission(
+    #         _for_user_profile):
+    #     return
     if isinstance(v, Component):
         for sub in list(v.ext_options().values()):
             for ln in declare_vars(sub):
@@ -430,12 +329,7 @@ def py2js(v):
 
     if isinstance(v, Value):
         return v.as_ext()
-        # v = v.as_ext()
-        # if not isinstance(v, basestring):
-            # raise Exception("20120121b %r is of type %s" % (v,type(v)))
-        # return v
     if isinstance(v, Promise):
-        # v = force_text(v)
         return json.dumps(force_text(v.encode('utf8')))
 
     if isinstance(v, types.GeneratorType):
@@ -443,9 +337,6 @@ def py2js(v):
     if etree.iselement(v):
         return json.dumps(etree.tostring(v))
 
-    # if type(v) is types.GeneratorType:
-        # raise Exception("Please don't call the generator function yourself")
-        # return "\n".join([ln for ln in v])
     if callable(v):
         # print 20120114, repr(v)
         # raise Exception("Please call the function yourself")
@@ -457,8 +348,7 @@ def py2js(v):
         return 'null'
     if isinstance(v, (list, tuple)):  # (types.ListType, types.TupleType):
         elems = [py2js(x) for x in v
-                 if (not isinstance(x, VisibleComponent))
-                 or x.get_view_permission(_for_user_profile)]
+                 if (not isinstance(x, Widget)) or x.is_permitted()]
         return "[ %s ]" % ", ".join(elems)
 
     if isinstance(v, dict):
@@ -468,8 +358,7 @@ def py2js(v):
         try:
             items = [
                 i for i in sorted(v.items())
-                if (not isinstance(v, VisibleComponent))
-                or v.get_view_permission(_for_user_profile)]
+                if (not isinstance(i, Widget)) or i.is_permitted()]
         except TypeError as e:
             raise TypeError("Failed to sort {0} : {1}".format(v, e))
         return "{ %s }" % ", ".join(

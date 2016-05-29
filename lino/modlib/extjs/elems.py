@@ -4,7 +4,7 @@
 """Defines "layout elements" (widgets).
 
 The biggest part of this module should actually be moved to
-:mod:`lino.core.elems`.
+:mod:`lino.core.widgets`.
 
 """
 
@@ -38,7 +38,6 @@ else:
     from django.db.models.fields.related import ManyRelatedObjectsDescriptor
 
 
-
 if AFTER17:
     from django.db.models.fields.related import ManyToManyRel, ManyToOneRel
 from django.db.models.fields import NOT_PROVIDED
@@ -47,28 +46,31 @@ from lino.core import layouts
 from lino.core import fields
 from lino.core.actions import Permittable
 from lino.core import constants
-from lino.core.gfks import GenericRelation
 
 from lino.utils.ranges import constrain
 from lino.utils import jsgen
 from lino.utils import mti
 from lino.core import choicelists
 from lino.utils.jsgen import py2js, js_code
-from lino.utils.html2xhtml import html2xhtml
 
-from lino.utils import join_elems
 from lino.core.actors import qs2summary
 
 from lino.core.layouts import (FormLayout, ParamsLayout,
-                               ColumnsLayout, ActionParamsLayout,
-                               DummyPanel)
+                               ColumnsLayout, ActionParamsLayout)
 
-from lino.utils.mldbc.fields import BabelCharField, BabelTextField
 from lino.core import tables
 from lino.core.gfks import GenericForeignKey
 
 from lino.utils.xmlgen import etree
 from lino.utils.xmlgen.html import E
+
+from lino.core.widgets import (
+    GridWidget, ConstantWidget,
+    FieldWidget, CharFieldWidget, TextFieldWidget, ForeignKeyWidget,
+    NumberFieldWidget, QuantityFieldWidget)
+from lino.core.widgets import is_hidden_babel_field, get_user_profile
+from lino.core.widgets import WidgetFactory
+
 
 EXT_CHAR_WIDTH = 9
 EXT_CHAR_HEIGHT = 22
@@ -152,7 +154,7 @@ class GridColumn(jsgen.Component):
                 else:
                     ttt = ''
                 if self.editor.field.help_text and \
-                   not "<" in self.editor.field.help_text:
+                   "<" not in self.editor.field.help_text:
                     # GridColumn tooltips don't support html
                     ttt = string_concat(ttt, self.editor.field.help_text)
                 if ttt:
@@ -164,7 +166,7 @@ class GridColumn(jsgen.Component):
                 rpt = fld.rel.model.get_default_table()
                 if rpt.detail_action is not None:
                     if rpt.detail_action.get_view_permission(
-                            jsgen._for_user_profile):
+                            get_user_profile()):
                         return "Lino.fk_renderer('%s','Lino.%s')" % (
                             name + constants.CHOICES_HIDDEN_SUFFIX,
                             rpt.detail_action.full_name())
@@ -231,11 +233,7 @@ class LayoutElement(VisibleComponent):
     # data_type = None
     filter_type = None
     gridfilters_settings = None
-    parent = None  # will be set by Container
 
-    label = None
-    label_width = 0
-    editable = False
     sortable = False
     xtype = None  # set by subclasses
     # grid_column_template = "new Ext.grid.Column(%s)"
@@ -245,8 +243,8 @@ class LayoutElement(VisibleComponent):
     refers_to_ww = False
 
     def __init__(self, layout_handle, name, **kw):
-        #logger.debug("LayoutElement.__init__(%r,%r)", layout_handle.layout,name)
-        #self.parent = parent
+        # logger.debug("LayoutElement.__init__(%r,%r)", layout_handle.layout,name)
+        # self.parent = parent
         # name = layout_handle.layout._actor_name + '_' + name
         assert isinstance(layout_handle, layouts.LayoutHandle)
         opts = layout_handle.layout._element_options.get(name, {})
@@ -255,58 +253,8 @@ class LayoutElement(VisibleComponent):
                 raise Exception("%s has no attribute %s" % (self, k))
             setattr(self, k, v)
 
-        # new since 20121130. theoretically better
-        if 'required_roles' in kw:
-            assert isinstance(kw['required_roles'], set)
-        else:
-            required = set()
-            # required |= layout_handle.layout._datasource.required_roles
-            required |= self.required_roles
-            kw.update(required_roles=required)
-
-        VisibleComponent.__init__(self, name, **kw)
-        # if opts:
-            # print "20120525 apply _element_options", opts, 'to', self.__class__, self
-        self.layout_handle = layout_handle
-        # if layout_handle is not None:
-        # layout_handle.setup_element(self)
-        # if str(self.layout_handle.layout._datasource) == 'lino.Home':
-            # logger.info("20120927 LayoutElement.__init__ %r required is %s, kw was %s, opts was %s",
-              # self,self.required,kw,opts)
-
-    # def submit_fields(self):
-        # return []
-
-    def add_requirements(self, *args):
-        super(LayoutElement, self).add_requirements(*args)
-        self.install_permission_handler()
-
-    def unused_loosen_requirements(self, actor):
-        """Retain only those requirements of `self` which are
-        also in `actor`.
-
-        For example an InsertFormPanel has initially the requirements
-        of the actor who defines it. That actor may not be visible to
-        the current user.  But the panel may be used by other actors
-        which are visible because they have less requirements.
-
-        """
-        if self.layout_handle.layout._datasource == actor:
-            return  # nothing to loosen
-
-        s1 = self.required_roles
-        self.required_roles = self.required_roles & actor.required_roles
-        # NB: don't change above line to the shorter syntax:
-        # self.required_roles &= actor.required_roles
-        # Because then the following wouldn't work:
-        loosened = s1 != self.required_roles
-
-        if loosened:
-            # tpl = "20150716 loosened requirements of {0} from {1}"
-            # msg = tpl.format(self, actor)
-            # #logger.info(msg)
-            # raise Exception(msg)
-            self.install_permission_handler()
+        VisibleComponent.__init__(self, layout_handle, name, **kw)
+        # self.layout_handle = layout_handle
 
     def __repr__(self):
         return "<%s %s in %s>" % (
@@ -320,18 +268,6 @@ class LayoutElement(VisibleComponent):
 
     def get_column_options(self, **kw):
         return kw
-
-    def set_parent(self, parent):
-        # if self.parent is not None:
-            # raise Exception("%s : parent is already %s, cannot set it to %s" % (self,self.parent,parent))
-        self.parent = parent
-        # if isinstance(parent,FieldSetPanel):
-            # self.label = None
-            # self.update(label = None)
-        if self.label:
-            if isinstance(parent, Panel):
-                if parent.label_align == layouts.LABEL_ALIGN_LEFT:
-                    self.preferred_width += len(self.label)
 
     def ext_options(self, **kw):
         if self.hidden:
@@ -355,16 +291,12 @@ class LayoutElement(VisibleComponent):
         kw = VisibleComponent.ext_options(self, **kw)
         return kw
 
-    def as_plain_html(self, ar, obj):
-        yield E.p("cannot handle %s" % self.__class__)
 
-
-class ConstantElement(LayoutElement):
+class ConstantElement(LayoutElement, ConstantWidget):
     declare_type = jsgen.DECLARE_INLINE
-    #declare_type = jsgen.DECLARE_THIS
+    # declare_type = jsgen.DECLARE_THIS
     # declare_type = jsgen.DECLARE_VAR
     xtype = 'label'
-    vflex = True
 
     def __init__(self, lh, fld, **kw):
         # kw.update(html=fld.text_fn(lh.layout._datasource,lh.ui))
@@ -385,7 +317,7 @@ class ConstantElement(LayoutElement):
 
 class Spacer(LayoutElement):
     declare_type = jsgen.DECLARE_INLINE
-    #xtype = 'label'
+    # xtype = 'label'
     value_template = "new Ext.Spacer(%s)"
 
 
@@ -408,20 +340,7 @@ def add_help_text(kw, help_text, title, datasource, fieldname):
             ))
 
 
-def is_hidden_babel_field(fld):
-    lng = getattr(fld, '_babel_language', None)
-    if lng is None:
-        return False
-    if jsgen._for_user_profile is None:
-        return False
-    if jsgen._for_user_profile.hidden_languages is None:
-        return False
-    if lng in jsgen._for_user_profile.hidden_languages:
-        return True
-    return False
-
-
-class FieldElement(LayoutElement):
+class FieldElement(LayoutElement, FieldWidget):
     """
     Base class for all Widgets on some filed-like data element.
     """
@@ -431,82 +350,22 @@ class FieldElement(LayoutElement):
     stored = True
     filter_type = None  # 'auto'
     active_change_event = 'change'
-    #declaration_order = 3
+    # declaration_order = 3
     # ext_suffix = "_field"
     zero = 0
 
     def __init__(self, layout_handle, field, **kw):
-        if not getattr(field, 'name', None):
-            raise Exception("Field '%s' in %s has no name!" %
-                            (field, layout_handle))
-        self.field = field
-        self.editable = field.editable  # and not field.primary_key
-
         if 'listeners' not in kw:
             if not isinstance(layout_handle.layout, layouts.ColumnsLayout):
                 add_help_text(
-                    kw, self.field.help_text, self.field.verbose_name,
-                    layout_handle.layout._datasource, self.field.name)
-
-        # http://www.rowlands-bcs.com/extjs/tips/tooltips-form-fields
-        # if self.field.__doc__:
-            # kw.update(toolTipText=self.field.__doc__)
-        # label = field.verbose_name
-        # if not self.field.blank:
-            # label = string_concat('<b>',label,'</b>')
-            # label = string_concat(label,' [*]')
-        # kw.update(style=dict(padding=DEFAULT_PADDING))
-        # kw.update(style=dict(marginLeft=DEFAULT_PADDING))
-        # kw.update(style='padding: 10px')
-        # logger.info("20120931 %s %s",layout_handle,field.name)
-        kw.setdefault('label', field.verbose_name)
-
-        # kw.setdefault('label',string_concat('<b>',field.verbose_name,'</b>'))
-        # kw.setdefault('label',
-          # ~ string_concat('<span class="ttdef"><a class="tooltip" href="#">',
-            # field.verbose_name,
-            # '<span class="classic">This is a test...</span></a></span>'))
-        # kw.setdefault('label',
-          # ~ string_concat('<div class="ttdef"><a class="tooltip" href="#">',
-            # field.verbose_name,
-            # '<span class="classic">This is a test...</span></a></div>'))
-
-        self.add_default_value(kw)
+                    kw, field.help_text, field.verbose_name,
+                    layout_handle.layout._datasource, field.name)
 
         LayoutElement.__init__(self, layout_handle, field.name, **kw)
+        FieldWidget.__init__(self, layout_handle, field, **kw)
 
         # if self.field.__class__.__name__ == "DcAmountField":
             # print 20130911, self.field, self.editable
-
-    def value_from_object(self, obj, ar):
-        """
-        Wrapper around Django's `value_from_object`.
-        But for virtual fields it also forwards the action request `ar`.
-        """
-        return self.field.value_from_object(obj)
-
-    def as_plain_html(self, ar, obj):
-        value = self.value_from_object(obj, ar)
-        text = str(value)
-        if not text:
-            text = " "
-        # yield E.p(unicode(elem.field.verbose_name),':',E.br(),E.b(text))
-        yield E.label(str(self.field.verbose_name))
-        yield E.input(type="text", value=text)
-        # if self.field.help_text:
-            # yield E.span(unicode(text),class_="help-block")
-        # yield E.p(unicode(elem.field.verbose_name),':',E.br(),E.b(text))
-
-    def cell_html(self, ui, row):
-        return getattr(row, self.field.name)
-
-    def add_default_value(self, kw):
-        if self.field.has_default():
-            dv = self.field.default
-            if callable(dv):
-                return
-                # dv = dv()
-            kw.update(value=dv)
 
     def get_column_options(self, **kw):
         # raise "get_column_options() %s" % self.__class__
@@ -580,63 +439,16 @@ class FieldElement(LayoutElement):
     def apply_cell_format(self, e):
         pass
 
-    def value2html(self, ar, v, **cellattrs):
-        """Return an etree element representing of the given value.  The
-        possible return values may be:
 
-        - an xml.etree.ElementTree.Element
-
-        The default implementation returns an HTML element obtained
-        from :meth:`format_value`.
-
-        """
-        if self.field.primary_key:
-            url = ar.renderer.pk2url(ar, v)
-            if url is not None:
-                return E.td(E.a(self.format_value(
-                    ar, v), href=url), **cellattrs)
-        return E.td(self.format_value(ar, v), **cellattrs)
-
-    def format_value(self, ar, v):
-        return self.field._lino_atomizer.format_value(ar, v)
-
-    def sum2html(self, ar, sums, i, **cellattrs):
-        return E.td(self.format_sum(ar, sums, i), **cellattrs)
-
-    def format_sum(self, ar, sums, i):
-        """Return a string or an html element which expresses a sum of this
-        column.
-
-        :ar: the action request
-        :sums: a list of sum values for all columns of this `ar`
-        :i: the index of this field in `sums`
-
-        """
-        if i == 0:
-            return E.b(ar.get_sum_text())
-        if sums[i]:
-            return E.b(self.format_value(ar, sums[i]))
-        return ''
-
-    def value2num(self, v):
-        # print "20120426 %s value2num(%s)" % (self,v)
-        return 0
-
-
-class TextFieldElement(FieldElement):
+class TextFieldElement(TextFieldWidget, FieldElement):
     # xtype = 'textarea'
     filter_type = 'string'
     gridfilters_settings = dict(type='string')
-    vflex = True
     value_template = "new Ext.form.TextArea(%s)"
     xtype = None
-    #width = 60
-    preferred_width = 60
-    preferred_height = 5
-    #collapsible = True
+    # collapsible = True
     separate_window = False
     active_child = False
-    format = 'plain'
 
     def __init__(self, layout_handle, field, **kw):
         self.format = getattr(field, 'textfield_format', None) \
@@ -676,34 +488,13 @@ class TextFieldElement(FieldElement):
                     self.format, field.model.__name__, field.name))
         FieldElement.__init__(self, layout_handle, field, **kw)
 
-    def as_plain_html(self, ar, obj):
-        value = self.field.value_from_object(obj)
-        text = str(value)
-        if not text:
-            text = " "
-        # yield E.p(unicode(elem.field.verbose_name),':',E.br(),E.b(text))
-        yield E.label(str(self.field.verbose_name))
-        yield E.textarea(text, rows=str(self.preferred_height))
 
-    def value2html(self, ar, v, **cellattrs):
-        if self.format == 'html' and v:
-            v = html2xhtml(v)
-            top = E.fromstring(v)
-        else:
-            top = self.format_value(ar, v)
-        return E.td(top, **cellattrs)
-
-
-class CharFieldElement(FieldElement):
+class CharFieldElement(FieldElement, CharFieldWidget):
     filter_type = 'string'
     gridfilters_settings = dict(type='string')
     value_template = "new Ext.form.TextField(%s)"
     sortable = True
     xtype = None
-
-    def __init__(self, *args, **kw):
-        FieldElement.__init__(self, *args, **kw)
-        self.preferred_width = 1 + min(20, max(3, self.field.max_length or 0))
 
     def get_field_options(self, **kw):
         kw = FieldElement.get_field_options(self, **kw)
@@ -733,7 +524,6 @@ class PasswordFieldElement(CharFieldElement):
         kw = super(PasswordFieldElement, self).get_field_options(**kw)
         kw.update(inputType='password')
         return kw
-
 
 
 class FileFieldElement(CharFieldElement):
@@ -856,9 +646,12 @@ def action_name(a):
     return 'Lino.' + a.full_name()
 
 
-class ForeignKeyElement(ComplexRemoteComboFieldElement):
+class ForeignKeyElement(ComplexRemoteComboFieldElement, ForeignKeyWidget):
 
-    preferred_width = 20
+    def __init__(self, layout_handle, field, **kw):
+        ComplexRemoteComboFieldElement.__init__(
+            self, layout_handle, field, **kw)
+        ForeignKeyWidget.__init__(self, layout_handle, field, **kw)
 
     def get_field_options(self, **kw):
         kw = super(ForeignKeyElement, self).get_field_options(**kw)
@@ -883,15 +676,6 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
             kw.update(emptyText=_('Select a %s...') %
                       actor.model._meta.verbose_name)
         return kw
-
-    def cell_html(self, ui, row):
-        obj = getattr(row, self.field.name)
-        if obj is None:
-            return ''
-        return ui.obj2html(obj)
-
-    def value2html(self, ar, v, **cellattrs):
-        return E.td(ar.obj2html(v), **cellattrs)
 
 
 class TimeFieldElement(FieldElement):
@@ -1002,7 +786,7 @@ class IncompleteDateFieldElement(CharFieldElement):
         return kw
 
 
-class NumberFieldElement(FieldElement):
+class NumberFieldElement(FieldElement, NumberFieldWidget):
 
     """
     Base class for integers, decimals, RequestField,...
@@ -1013,25 +797,6 @@ class NumberFieldElement(FieldElement):
     sortable = True
     grid_column_template = "new Lino.NullNumberColumn(%s)"
     number_format = '0'
-
-    def apply_cell_format(self, e):
-        # e.set('align','right')
-        e.attrib.update(align='right')
-        # logger.info("20130119 apply_cell_format %s",etree.tostring(e))
-
-    def format_sum(self, ar, sums, i):
-        return E.b(self.format_value(ar, sums[i]))
-
-    def value2num(self, v):
-        return v
-
-    # def apply_cell_format(self,e):
-        # e.set('align','right')
-
-    def sum2html(self, ar, sums, i, **cellattrs):
-        cellattrs.update(align="right")
-        return super(NumberFieldElement, self).sum2html(
-            ar, sums, i, **cellattrs)
 
     # 20130119b
     # def value2html(self,ar,v,**cellattrs):
@@ -1144,7 +909,7 @@ class DecimalFieldElement(NumberFieldElement):
         return kw
 
 
-class QuantityFieldElement(CharFieldElement):
+class QuantityFieldElement(CharFieldElement, QuantityFieldWidget):
     
     def get_column_options(self, **kw):
         # print 20130125, self.field.name
@@ -1155,8 +920,6 @@ class QuantityFieldElement(CharFieldElement):
         # ~ kw.update(renderer=js_code('Lino.nullnumbercolumn_renderer')) # 20130125
         return kw
 
-    def value2num(self, v):
-        return v
 
 
 class DisplayElement(FieldElement):
@@ -1208,7 +971,7 @@ class BooleanMixin(object):
         return E.b(str(sums[i]))
 
     def unused_value2num(self, v):
-        """TODO: Should booelan fields sum like a numeric field with value 1
+        """TODO: Should boolean fields sum like a numeric field with value 1
         when True and 0 when False?
 
         """
@@ -1556,7 +1319,7 @@ class Wrapper(VisibleComponent):
             kw.update(autoHeight=True)
         kw.update(labelAlign=e.parent.label_align)
         kw.update(items=e, xtype='panel')
-        VisibleComponent.__init__(self, e.name + "_ct", **kw)
+        VisibleComponent.__init__(self, None, e.name + "_ct", **kw)
         self.wrapped = e
         for n in ('width', 'height', 'preferred_width', 'preferred_height',
                   # 'loosen_requirements'
@@ -1787,7 +1550,8 @@ class Panel(Container):
         return d
 
 
-class GridElement(Container):
+
+class GridElement(GridWidget, Container):
     """Represents a Lino.GridPanel, i.e. the widget used to represent a
     table or a slave table.
 
@@ -1798,9 +1562,7 @@ class GridElement(Container):
     # value_template = "new Ext.grid.GridPanel(%s)"
     value_template = "new Lino.GridPanel(%s)"
     ext_suffix = "_grid"
-    vflex = True
     xtype = None
-    preferred_height = 5
     refers_to_ww = True
 
     def __init__(self, layout_handle, name, rpt, *columns, **kw):
@@ -1862,32 +1624,6 @@ class GridElement(Container):
         kw = LayoutElement.ext_options(self, **kw)
         return kw
 
-    def headers2html(self, ar, columns, headers, **cellattrs):
-        assert len(headers) == len(columns)
-        for i, e in enumerate(columns):
-            txt = headers[i]
-            # print 20131015, txt
-            txt = join_elems(txt.split('\n'), sep=E.br)
-            if ar.renderer.is_interactive:  # and ar.master_instance is None:
-                # print 20130527, ar.order_by
-                if e.sortable and ar.order_by != [e.name]:
-                    kw = {constants.URL_PARAM_SORT: e.name}
-                    url = ar.renderer.get_request_url(ar, **kw)
-                    if url is not None:
-                        txt = [E.a(*txt, href=url)]
-
-            # logger.info("20130119 headers2html %s %s",fields,headers)
-            th = E.th(*txt, **cellattrs)
-            # th = E.th(txt,**cellattrs)
-            e.apply_cell_format(th)
-            yield th
-
-    def as_plain_html(self, ar, obj):
-        from lino.modlib.bootstrap3.views import table2html
-        sar = ar.spawn(self.actor.default_action, master_instance=obj)
-        yield table2html(sar, as_main=(self.name == "main"))
-        # yield sar.as_bootstrap_html(as_main=(self.name == "main"))
-
 
 class DetailMainPanel(Panel):
     xtype = None
@@ -1945,328 +1681,215 @@ class TabPanel(Panel):
         Container.__init__(self, layout_handle, name, *elems, **kw)
 
 
-_FIELD2ELEM = (
-    # (dd.Constant, ConstantElement),
-    (fields.RecurrenceField, RecurrenceElement),
-    (fields.HtmlBox, HtmlBoxElement),
-    # (dd.QuickAction, QuickActionElement),
-    # (dd.RequestField, RequestFieldElement),
-    (fields.DisplayField, DisplayElement),
-    (fields.QuantityField, QuantityFieldElement),
-    (fields.IncompleteDateField, IncompleteDateFieldElement),
-    # (dd.LinkedForeignKey, LinkedForeignKeyElement),
-    (models.URLField, URLFieldElement),
-    (models.FileField, FileFieldElement),
-    (models.EmailField, CharFieldElement),
-    # (dd.HtmlTextField, HtmlTextFieldElement),
-    # (dd.RichTextField, RichTextFieldElement),
-    (models.TextField, TextFieldElement),  # also dd.RichTextField
-    (fields.PasswordField, PasswordFieldElement),
-    (models.CharField, CharFieldElement),
-    (fields.MonthField, MonthFieldElement),
-    (models.DateTimeField, DateTimeFieldElement),
-    (fields.DatePickerField, DatePickerFieldElement),
-    (models.DateField, DateFieldElement),
-    (models.TimeField, TimeFieldElement),
-    (models.IntegerField, IntegerFieldElement),
-    (models.DecimalField, DecimalFieldElement),
-    (models.AutoField, AutoFieldElement),
-    (models.BooleanField, BooleanFieldElement),
-    # TODO: Lino currently renders NullBooleanField like BooleanField
-    (models.NullBooleanField, BooleanFieldElement),
-    # (models.ManyToManyField, M2mGridElement),
-    (models.ForeignKey, ForeignKeyElement),
-)
-
 TRIGGER_BUTTON_WIDTH = 3
 
 
-def field2elem(layout_handle, field, **kw):
-    holder = layout_handle.layout.get_chooser_holder()
-    ch = holder.get_chooser_for_field(field.name)
-    if ch:
-        if ch.can_create_choice or not ch.force_selection:
-            kw.update(forceSelection=False)
-        if ch.simple_values:
-            return SimpleRemoteComboFieldElement(layout_handle, field, **kw)
-        else:
-            if isinstance(field, models.OneToOneField):
-                return GenericForeignKeyElement(layout_handle, field, **kw)
-            if isinstance(field, models.ForeignKey):
-                return ForeignKeyElement(layout_handle, field, **kw)
-            else:
-                return ComplexRemoteComboFieldElement(
+def boolean_widget(lh, field, **kwargs):
+    if not field.editable:
+        return BooleanDisplayElement(lh, field, **kwargs)
+    return BooleanFieldElement(lh, field, **kwargs)
+
+
+class WidgetFactory(WidgetFactory):
+
+    _FIELD2ELEM = (
+        # (dd.Constant, ConstantElement),
+        (fields.RecurrenceField, RecurrenceElement),
+        (fields.HtmlBox, HtmlBoxElement),
+        # (dd.QuickAction, QuickActionElement),
+        # (dd.RequestField, RequestFieldElement),
+        (fields.DisplayField, DisplayElement),
+        (fields.QuantityField, QuantityFieldElement),
+        (fields.IncompleteDateField, IncompleteDateFieldElement),
+        # (dd.LinkedForeignKey, LinkedForeignKeyElement),
+        (models.URLField, URLFieldElement),
+        (models.FileField, FileFieldElement),
+        (models.EmailField, CharFieldElement),
+        # (dd.HtmlTextField, HtmlTextFieldElement),
+        # (dd.RichTextField, RichTextFieldElement),
+        (models.TextField, TextFieldElement),  # also dd.RichTextField
+        (fields.PasswordField, PasswordFieldElement),
+        (models.CharField, CharFieldElement),
+        (fields.MonthField, MonthFieldElement),
+        (models.DateTimeField, DateTimeFieldElement),
+        (fields.DatePickerField, DatePickerFieldElement),
+        (models.DateField, DateFieldElement),
+        (models.TimeField, TimeFieldElement),
+        (models.IntegerField, IntegerFieldElement),
+        (models.DecimalField, DecimalFieldElement),
+        (models.AutoField, AutoFieldElement),
+        (models.BooleanField, boolean_widget),
+        # TODO: Lino currently renders NullBooleanField like BooleanField
+        (models.NullBooleanField, boolean_widget),
+        # (models.ManyToManyField, M2mGridElement),
+        (models.ForeignKey, ForeignKeyElement),
+    )
+
+    def field2elem(self, layout_handle, field, **kw):
+        holder = layout_handle.layout.get_chooser_holder()
+        ch = holder.get_chooser_for_field(field.name)
+        if ch:
+            if ch.can_create_choice or not ch.force_selection:
+                kw.update(forceSelection=False)
+            if ch.simple_values:
+                return SimpleRemoteComboFieldElement(
                     layout_handle, field, **kw)
-    if field.choices:
-        if isinstance(field, choicelists.ChoiceListField):
-            if field.choicelist.preferred_width is None:
-                msg = "{0} has no preferred_width. Is the plugin installed?"
-                msg = msg.format(field.choicelist)
-                raise Exception(msg)
-            kw.setdefault(
-                'preferred_width',
-                field.choicelist.preferred_width + TRIGGER_BUTTON_WIDTH)
-            kw.update(forceSelection=field.force_selection)
-            return ChoiceListFieldElement(layout_handle, field, **kw)
-        else:
-            kw.setdefault('preferred_width', 20)
-            return ChoicesFieldElement(layout_handle, field, **kw)
+            else:
+                if isinstance(field, models.OneToOneField):
+                    return GenericForeignKeyElement(layout_handle, field, **kw)
+                if isinstance(field, models.ForeignKey):
+                    return ForeignKeyElement(layout_handle, field, **kw)
+                else:
+                    return ComplexRemoteComboFieldElement(
+                        layout_handle, field, **kw)
+        if field.choices:
+            if isinstance(field, choicelists.ChoiceListField):
+                if field.choicelist.preferred_width is None:
+                    msg = "{0} has no preferred_width. Is the plugin installed?"
+                    msg = msg.format(field.choicelist)
+                    raise Exception(msg)
+                kw.setdefault(
+                    'preferred_width',
+                    field.choicelist.preferred_width + TRIGGER_BUTTON_WIDTH)
+                kw.update(forceSelection=field.force_selection)
+                return ChoiceListFieldElement(layout_handle, field, **kw)
+            else:
+                kw.setdefault('preferred_width', 20)
+                return ChoicesFieldElement(layout_handle, field, **kw)
 
-    if isinstance(field, fields.RequestField):
-        return RequestFieldElement(layout_handle, field, **kw)
+        if isinstance(field, fields.RequestField):
+            return RequestFieldElement(layout_handle, field, **kw)
 
-    selector_field = field
-    if isinstance(field, fields.RemoteField):
-        selector_field = field.field
-    if isinstance(selector_field, fields.VirtualField):
-        selector_field = selector_field.return_type
-    # remember the case of RemoteField to VirtualField
+        return super(WidgetFactory, self).field2elem(
+            layout_handle, field, **kw)
 
-    if isinstance(selector_field, fields.CustomField):
-        e = selector_field.create_layout_elem(layout_handle, field, **kw)
-        if e is not None:
-            return e
+    def create_layout_panel(self, lh, name, vertical, elems, **kwargs):
+        """
+        This also must translate ui-agnostic parameters
+        like `label_align` to their ExtJS equivalent `labelAlign`.
+        """
+        pkw = dict()
+        pkw.update(labelAlign=kwargs.pop('label_align', 'top'))
+        pkw.update(hideCheckBoxLabels=kwargs.pop('hideCheckBoxLabels', True))
+        pkw.update(label=kwargs.pop('label', None))
+        pkw.update(width=kwargs.pop('width', None))
+        pkw.update(height=kwargs.pop('height', None))
+        # pkw.update(help_text=kwargs.pop('help_text', None))
+        v = kwargs.pop('required_roles', NOT_PROVIDED)
+        if v is not NOT_PROVIDED:
+            pkw.update(required_roles=v)
+        if kwargs:
+            raise Exception("Unknown panel attributes %r for %s" % (
+                kwargs, lh))
+        if name == 'main':
+            return self.create_main_panel(lh, name, vertical, *elems, **pkw)
+        return Panel(lh, name, vertical, *elems, **pkw)
 
-    if isinstance(selector_field, models.BooleanField) and not field.editable:
-        return BooleanDisplayElement(layout_handle, field, **kw)
-
-    for df, cl in _FIELD2ELEM:
-        if isinstance(selector_field, df):
-            return cl(layout_handle, field, **kw)
-    if isinstance(field, fields.VirtualField):
-        raise NotImplementedError(
-            "No LayoutElement for VirtualField %s on %s in %s" % (
-                field.name, field.return_type.__class__,
-                layout_handle.layout))
-    if isinstance(field, fields.RemoteField):
-        raise NotImplementedError(
-            "No LayoutElement for RemoteField %s to %s" % (
-                field.name, field.field.__class__))
-    raise NotImplementedError(
-        "No LayoutElement for %s (%s) in %s" % (
-            field.name, field.__class__, layout_handle.layout))
-
-
-def create_layout_panel(lh, name, vertical, elems, **kwargs):
-    """
-    This also must translate ui-agnostic parameters
-    like `label_align` to their ExtJS equivalent `labelAlign`.
-    """
-    pkw = dict()
-    pkw.update(labelAlign=kwargs.pop('label_align', 'top'))
-    pkw.update(hideCheckBoxLabels=kwargs.pop('hideCheckBoxLabels', True))
-    pkw.update(label=kwargs.pop('label', None))
-    pkw.update(width=kwargs.pop('width', None))
-    pkw.update(height=kwargs.pop('height', None))
-    # pkw.update(help_text=kwargs.pop('help_text', None))
-    v = kwargs.pop('required_roles', NOT_PROVIDED)
-    if v is not NOT_PROVIDED:
-        pkw.update(required_roles=v)
-    if kwargs:
-        raise Exception("Unknown panel attributes %r for %s" % (kwargs, lh))
-    if name == 'main':
+    def create_main_panel(self, lh, name, vertical, *elems, **pkw):
         if isinstance(lh.layout, ColumnsLayout):
-            e = GridElement(
-                lh, name, lh.layout._datasource, *elems, **pkw)
+            return GridElement(lh, name, lh.layout._datasource, *elems, **pkw)
         elif isinstance(lh.layout, ActionParamsLayout):
-            e = ActionParamsPanel(lh, name, vertical, *elems, **pkw)
+            return ActionParamsPanel(lh, name, vertical, *elems, **pkw)
         elif isinstance(lh.layout, ParamsLayout):
-            e = ParamsPanel(lh, name, vertical, *elems, **pkw)
+            return ParamsPanel(lh, name, vertical, *elems, **pkw)
         elif isinstance(lh.layout, FormLayout):
             if len(elems) == 1 or vertical:
-                e = DetailMainPanel(
-                    lh, name, vertical, *elems, **pkw)
+                return DetailMainPanel(lh, name, vertical, *elems, **pkw)
             else:
-                e = TabPanel(lh, name, *elems, **pkw)
-        else:
-            raise Exception("No element class for layout %r" % lh.layout)
-        return e
-    return Panel(lh, name, vertical, *elems, **pkw)
+                return TabPanel(lh, name, *elems, **pkw)
+        raise Exception("No element class for layout %r" % lh.layout)
 
+    def create_other_widget(self, de, lh, name, **kw):
 
-def create_layout_element(lh, name, **kw):
-    """
-    Create a layout element from the named data element.
-    """
+        # widget = super(WidgetFactory, self).create_widget(
+        #     de, lh, name, **kw)
+        # if widget is not None:
+        #     return widget
 
-    if settings.SITE.catch_layout_exceptions:
-        try:
-            de = lh.get_data_elem(name)
-        except Exception as e:
-            # logger.exception(e) removed 20130422 because it caused
-            # disturbing output when running tests
-            de = None
-            name += " (" + str(e) + ")"
-    else:
-        de = lh.get_data_elem(name)
+        if isinstance(de, fields.Constant):
+            return ConstantElement(lh, de, **kw)
 
-    if de is None:
-        # If the plugin has been hidden, we want the element to simply
-        # disappear, similar as if the user had no view permission.
-        s = name.split('.')
-        if len(s) == 2:
-            if settings.SITE.is_hidden_app(s[0]):
-                return None
-        # ctx = (lh.layout.__class__, name, ', '.join(dir(lh.layout)))
-        # raise Exception(
-        #     "Instance of %s has no data element '%s' (names are %s)" % ctx)
-        raise Exception("{0} has no data element '{1}'".format(
-            lh.layout, name))
+        if isinstance(de, SingleRelatedObjectDescriptor):
+            return SingleRelatedObjectElement(lh, de.related, **kw)
 
-    if isinstance(de, type) and issubclass(de, fields.Dummy):
-        return None
-
-    if isinstance(de, DummyPanel):
-        return None
-
-    if isinstance(de, GenericRelation):
-        return None
-
-    if isinstance(de, fields.DummyField):
-        lh.add_store_field(de)
-        return None
-
-    if isinstance(de, fields.Constant):
-        return ConstantElement(lh, de, **kw)
-
-    if isinstance(de, fields.RemoteField):
-        return create_field_element(lh, de, **kw)
-
-    if isinstance(de, SingleRelatedObjectDescriptor):
-        return SingleRelatedObjectElement(lh, de.related, **kw)
-
-    if isinstance(de, (
-            ManyRelatedObjectsDescriptor, ForeignRelatedObjectsDescriptor)):
-        e = ManyRelatedObjectElement(lh, de.related, **kw)
-        lh.add_store_field(e.field)
-        return e
-
-    if isinstance(de, models.ManyToManyField):
-        e = ManyToManyElement(lh, de.related, **kw)
-        lh.add_store_field(e.field)
-        return e
-
-    if AFTER17:
-        if isinstance(de, (ManyToManyRel, ManyToOneRel)):
-            e = ManyRelatedObjectElement(lh, de, **kw)
+        if isinstance(de, (
+                ManyRelatedObjectsDescriptor,
+                ForeignRelatedObjectsDescriptor)):
+            e = ManyRelatedObjectElement(lh, de.related, **kw)
             lh.add_store_field(e.field)
             return e
 
-    if isinstance(de, models.Field):
-        if isinstance(de, (BabelCharField, BabelTextField)):
-            if len(settings.SITE.BABEL_LANGS) > 0:
-                elems = [create_field_element(lh, de, **kw)]
-                for lang in settings.SITE.BABEL_LANGS:
-                    bf = lh.get_data_elem(name + lang.suffix)
-                    elems.append(create_field_element(lh, bf, **kw))
-                return elems
-        return create_field_element(lh, de, **kw)
+        if isinstance(de, models.ManyToManyField):
+            e = ManyToManyElement(lh, de.related, **kw)
+            lh.add_store_field(e.field)
+            return e
 
-    if isinstance(de, GenericForeignKey):
-        # create a horizontal panel with 2 comboboxes
-        de.primary_key = False  # for ext_store.Store()
-        lh.add_store_field(de)
-        return GenericForeignKeyElement(lh, de, **kw)
-
-    if isinstance(de, type) and issubclass(de, tables.AbstractTable):
-        # The data element refers to a slave table. Slave tables make
-        # no sense in an insert window because the master does not yet
-        # exist.
-        kw.update(master_panel=js_code("this"))
-        
-        if isinstance(lh.layout, FormLayout):
-            # When a table is specified in the layout of a
-            # DetailWindow, then it will be rendered as a panel that
-            # displays a "summary" of that table. The panel will have
-            # a tool button to "open that table in its own
-            # window". The format of that summary is defined by the
-            # `slave_grid_format` of the table. `slave_grid_format` is
-            # a string with one of the following values:
-
-            kw.update(tools=[
-                js_code("Lino.show_in_own_window_button(Lino.%s)" %
-                      de.default_action.full_name())])
-            if de.slave_grid_format == 'grid':
-                kw.update(hide_top_toolbar=True)
-                if de.preview_limit is not None:
-                    kw.update(preview_limit=de.preview_limit)
-                return GridElement(lh, name, de, **kw)
-
-            elif de.slave_grid_format == 'html':
-                if de.editable:
-                    a = de.insert_action
-                    if a is not None:
-                        kw.update(ls_insert_handler=js_code("Lino.%s" %
-                                  a.full_name()))
-                        kw.update(ls_bbar_actions=[
-                            settings.SITE.plugins.extjs.renderer.a2btn(a)])
-                field = fields.HtmlBox(verbose_name=de.label)
-                field.name = de.__name__
-                field.help_text = de.help_text
-                field._return_type_for_method = de.slave_as_html_meth()
-                lh.add_store_field(field)
-                e = HtmlBoxElement(lh, field, **kw)
-                e.add_requirements(*de.required_roles)
+        if AFTER17:
+            if isinstance(de, (ManyToManyRel, ManyToOneRel)):
+                e = ManyRelatedObjectElement(lh, de, **kw)
+                lh.add_store_field(e.field)
                 return e
 
-            elif de.slave_grid_format == 'summary':
+        if isinstance(de, GenericForeignKey):
+            # create a horizontal panel with 2 comboboxes
+            de.primary_key = False  # for ext_store.Store()
+            lh.add_store_field(de)
+            return GenericForeignKeyElement(lh, de, **kw)
+
+        if isinstance(de, type) and issubclass(de, tables.AbstractTable):
+            # The data element refers to a slave table. Slave tables make
+            # no sense in an insert window because the master does not yet
+            # exist.
+            kw.update(master_panel=js_code("this"))
+
+            if isinstance(lh.layout, FormLayout):
+                # When a table is specified in the layout of a
+                # DetailWindow, then it will be rendered as a panel that
+                # displays a "summary" of that table. The panel will have
+                # a tool button to "open that table in its own
+                # window". The format of that summary is defined by the
+                # `slave_grid_format` of the table. `slave_grid_format` is
+                # a string with one of the following values:
+
+                kw.update(tools=[
+                    js_code("Lino.show_in_own_window_button(Lino.%s)" %
+                          de.default_action.full_name())])
+                if de.slave_grid_format == 'grid':
+                    kw.update(hide_top_toolbar=True)
+                    if de.preview_limit is not None:
+                        kw.update(preview_limit=de.preview_limit)
+                    return GridElement(lh, name, de, **kw)
+
+                elif de.slave_grid_format == 'html':
+                    if de.editable:
+                        a = de.insert_action
+                        if a is not None:
+                            kw.update(ls_insert_handler=js_code("Lino.%s" %
+                                      a.full_name()))
+                            kw.update(ls_bbar_actions=[
+                                settings.SITE.plugins.extjs.renderer.a2btn(a)])
+                    field = fields.HtmlBox(verbose_name=de.label)
+                    field.name = de.__name__
+                    field.help_text = de.help_text
+                    field._return_type_for_method = de.slave_as_html_meth()
+                    lh.add_store_field(field)
+                    e = HtmlBoxElement(lh, field, **kw)
+                    e.add_requirements(*de.required_roles)
+                    return e
+
+                elif de.slave_grid_format == 'summary':
+                    e = SlaveSummaryPanel(lh, de, **kw)
+                    lh.add_store_field(e.field)
+                    return e
+                else:
+                    raise Exception(
+                        "Invalid slave_grid_format %r" % de.slave_grid_format)
+
+            else:
                 e = SlaveSummaryPanel(lh, de, **kw)
                 lh.add_store_field(e.field)
                 return e
-            else:
-                raise Exception(
-                    "Invalid slave_grid_format %r" % de.slave_grid_format)
 
-        else:
-            e = SlaveSummaryPanel(lh, de, **kw)
-            lh.add_store_field(e.field)
-            return e
+        return super(WidgetFactory, self).create_other_widget(
+            de, lh, name, **kw)
 
-    if isinstance(de, fields.VirtualField):
-        return create_vurt_element(lh, name, de, **kw)
-
-    if callable(de):
-        rt = getattr(de, 'return_type', None)
-        if rt is not None:
-            return create_meth_element(lh, name, de, rt, **kw)
-
-    # Now we tried everything. Build an error message.
-
-    if hasattr(lh, 'rh'):
-        msg = "Unknown element '%s' (%r) referred in layout <%s of %s>." % (
-            name, de, lh.layout, lh.rh.actor)
-        l = [wde.name for wde in lh.rh.actor.wildcard_data_elems()]
-        # VirtualTables don't have a model
-        model = getattr(lh.rh.actor, 'model', None)
-        if getattr(model, '_lino_slaves', None):
-            l += [str(rpt) for rpt in list(model._lino_slaves.values())]
-        msg += " Possible names are %s." % ', '.join(l)
-    else:
-        msg = "Unknown element '%s' (%r) referred in layout <%s>." % (
-            name, de, lh.layout)
-        # if de is not None:
-        #     msg += " Cannot handle %r" % de
-    raise KeyError(msg)
-
-
-def create_vurt_element(lh, name, vf, **kw):
-    e = create_field_element(lh, vf, **kw)
-    if not vf.is_enabled(lh):
-        e.editable = False
-    return e
-
-
-def create_meth_element(lh, name, meth, rt, **kw):
-    rt.name = name
-    rt._return_type_for_method = meth
-    if meth.__code__.co_argcount < 2:
-        raise Exception("Method %s has %d arguments (must have at least 2)" %
-                        (meth, meth.__code__.co_argcount))
-    return create_field_element(lh, rt, **kw)
-
-
-def create_field_element(lh, field, **kw):
-    e = field2elem(lh, field, **kw)
-    assert e.field is not None, "e.field is None for %s.%s" % (lh.layout, kw)
-    lh.add_store_field(e.field)
-    return e

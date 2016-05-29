@@ -2099,6 +2099,7 @@ class Site(object):
 
         from lino.core.kernel import Kernel
         self.kernel = Kernel(self)
+        self.kernel.kernel_startup(self)
         # self.ui = self.kernel  # internal backwards compat
 
         # self.logger.info("20160526 %s do_site_startup() b", self.__class__)

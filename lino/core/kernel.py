@@ -46,7 +46,6 @@ from django.db import models
 
 from django.utils.translation import ugettext_lazy as _
 
-from lino import AFTER17
 from lino.utils import codetime
 from lino.core import layouts
 from lino.core import actors
@@ -64,6 +63,8 @@ from lino.core.store import Store
 from lino.core.renderer import HtmlRenderer, TextRenderer
 from lino.core.signals import (pre_ui_build, post_ui_build,
                                pre_analyze, post_analyze)
+
+from .widgets import WidgetFactory
 from .plugin import Plugin
 from .ddh import DisableDeleteHandler
 from .utils import resolve_model
@@ -190,7 +191,234 @@ class Kernel(object):
         self.pending_threads = {}
         self.site = site
         self.GFK_LIST = []
-        self.kernel_startup(site)
+        self.widgets = WidgetFactory()
+
+        # self.kernel_startup(site)
+        # logger.info("20140227 Kernel.__init__() done")
+
+    def kernel_startup(self, site):
+        """This is a part of a Lino site startup.  The Django Model
+        definitions are done, now Lino analyzes them and does certain
+        actions:
+
+        - Verify that there are no more pending injects Install a
+          :class:`DisableDeleteHandler
+          <lino.core.ddh.DisableDeleteHandler>` for each Model into
+          `_lino_ddh`.
+
+        - Install :class:`lino.core.model.Model` attributes and
+          methods into Models that don't inherit from it.
+
+        """
+        if len(sys.argv) == 0:
+            process_name = 'WSGI'
+        else:
+            process_name = ' '.join(sys.argv)
+
+        logger.info("Started %s (using %s) --> PID %s",
+                    process_name, settings.SETTINGS_MODULE, os.getpid())
+        # puts(site.welcome_text())
+
+        def goodbye():
+            logger.info("Done %s (PID %s)", process_name, os.getpid())
+        atexit.register(goodbye)
+
+        models_list = get_models(include_auto_created=True)
+        # this also triggers django.db.models.loading.cache._populate()
+
+        site.setup_model_spec(site, 'user_model')
+        site.setup_model_spec(site, 'project_model')
+
+        for app_name_model, p in list(site.override_modlib_models.items()):
+            # app_name_model is the full installed app module name +
+            # the model name. It certainly contains at least one dot.
+            m = '.'.join(app_name_model.split('.')[-2:])
+            resolve_model(
+                m,
+                strict="%s plugin tries to extend unresolved model '%%s'" %
+                p.__class__.__module__)
+
+        for model in models_list:
+            #~ print 20130216, model
+            #~ fix_field_cache(model)
+
+            # if hasattr(model, '_lino_ddh'):
+            if '_lino_ddh' in model.__dict__:
+                raise Exception("20150831 %s", model)
+            model._lino_ddh = DisableDeleteHandler(model)
+
+            Model.django2lino(model)
+
+            if isinstance(model.hidden_columns, basestring):
+                model.hidden_columns = frozenset(
+                    fields.fields_list(model, model.hidden_columns))
+
+            if isinstance(model.active_fields, basestring):
+                model.active_fields = frozenset(
+                    fields.fields_list(model, model.active_fields))
+
+            if isinstance(model.allow_cascaded_delete, basestring):
+                model.allow_cascaded_delete = frozenset(
+                    fields.fields_list(model, model.allow_cascaded_delete))
+
+            qsf = model.quick_search_fields
+            # Attention when inheriting this from from parent model.
+            # qsf = model.__dict__.get('quick_search_fields', None)
+            if qsf is None:
+                fields_list = []
+                for field in model._meta.fields:
+                    if isinstance(field, models.CharField):
+                        fields_list.append(field.name)
+                model.quick_search_fields = frozenset(fields_list)
+            elif isinstance(qsf, frozenset):
+                pass
+            elif isinstance(qsf, basestring):
+                model.quick_search_fields = frozenset(
+                    fields.fields_list(model, model.quick_search_fields))
+            else:
+                raise ChangedAPI(
+                    "{0}.quick_search_fields must be None or a string "
+                    "of space-separated field names (not {1})".format(
+                        model, qsf))
+
+            if model._meta.abstract:
+                raise Exception("Tiens?")
+
+            # site.modules.define(model._meta.app_label, model.__name__, model)
+
+            for f in model._meta.virtual_fields:
+                if isinstance(f, GenericForeignKey):
+                    self.GFK_LIST.append(f)
+
+        # vip_classes = (layouts.BaseLayout, fields.Dummy)
+        # for a in models.get_apps():
+        #     app_label = a.__name__.split('.')[-2]
+
+        #     for k, v in a.__dict__.items():
+        #         if isinstance(v, type) and issubclass(v, vip_classes):
+        #             site.modules.define(app_label, k, v)
+
+        #         if k.startswith('setup_'):
+        #             site.modules.define(app_label, k, v)
+
+        if site.user_profiles_module:
+            from importlib import import_module
+            import_module(site.user_profiles_module)
+        
+        site.setup_choicelists()
+        site.setup_workflows()
+
+        for model in models_list:
+            if model._meta.auto_created:
+                continue  # automatic intermediate models created by
+                          # ManyToManyField should not disable delete
+            # for f, m in model._meta.get_fields_with_model():
+            for f in model._meta.get_fields():
+                m = f.model
+
+                # Refuse nullable CharFields, but don't trigger on
+                # NullableCharField (which is a subclass of CharField).
+
+                if f.__class__ is models.CharField and f.null:
+                    msg = "Nullable CharField %s in %s" % (f.name, model)
+                    raise Exception(msg)
+                elif isinstance(f, models.ForeignKey):
+                    if isinstance(f.rel.model, basestring):
+                        raise Exception("Could not resolve target %r of "
+                                        "ForeignKey '%s' in %s "
+                                        "(models are %s)" %
+                                        (f.rel.model, f.name, model, models_list))
+                    set_default_verbose_name(f)
+
+                    """
+                    If JobProvider is an MTI child of Company,
+                    then mti.delete_child(JobProvider) must not fail on a
+                    JobProvider being referred only by objects that can refer
+                    to a Company as well.
+                    """
+                    if not hasattr(f.rel.model, '_lino_ddh'):
+                        msg = "20150824 {1} (needed by {0}) "\
+                              "has no _lino_ddh"
+                        raise Exception(msg.format(f.rel, f.rel.model))
+                    # f.rel.model._lino_ddh.add_fk(f.model, f)
+                    # m = f.model._meta.concrete_model
+                    # f.rel.model._lino_ddh.add_fk(m, f)
+                    f.rel.model._lino_ddh.add_fk(m or model, f)
+
+        self.protect_foreignkeys(models_list)
+
+        for p in site.installed_plugins:
+            if isinstance(p, Plugin):
+                p.before_analyze()
+
+        # logger.info("20150429 Gonna send pre_analyze signal")
+        pre_analyze.send(site, models_list=models_list)
+        # logger.info("20150429 pre_analyze signal done")
+        # MergeActions are defined in pre_analyze.
+        # And MergeAction needs the info in _lino_ddh to correctly find
+        # keep_volatiles
+
+        site.setup_actions()
+
+        for model in models_list:
+
+            """Virtual fields declared on the model must have been attached
+            before calling Model.site_setup(), e.g. because
+            pcsw.Person.site_setup() declares `is_client` as imported
+            field.
+
+            """
+
+            model.on_analyze(site)
+
+            for k, v in class_dict_items(model):
+                if isinstance(v, fields.VirtualField):
+                    v.attach_to_model(model, k)
+
+        #~ logger.info("20130817 attached model vfs")
+
+        actors.discover()
+
+        logger.debug("actors.initialize()")
+        for a in actors.actors_list:
+            a.class_init()
+
+        dbtables.discover()
+        #~ choosers.discover()
+        actions.discover_choosers()
+
+        for a in actors.actors_list:
+            a.on_analyze(site)
+
+        post_analyze.send(site, models_list=models_list)
+
+        if False:
+            logger.info("Languages: %s. %d apps, %d models, %s actors.",
+                        ', '.join([li.django_code for li in site.languages]),
+                        len(site.modules),
+                        len(models_list),
+                        len(actors.actors_list))
+
+        #~ logger.info(settings.INSTALLED_APPS)
+
+        site.setup_layouts()
+
+        site.on_each_app('site_setup')  # deprecated
+
+        # Actor.after_site_setup() is called after the apps'
+        # site_setup().  Example: pcsw.site_setup() adds a detail to
+        # properties.Properties, the base class for
+        # properties.PropsByGroup.  The latter would not install a
+        # `detail_action` during her after_site_setup() and also would
+        # never get it later.
+
+        for a in actors.actors_list:
+            a.after_site_setup(site)
+
+        #~ site.on_site_startup()
+
+        site.resolve_virtual_fields()
+
         self.code_mtime = codetime()
         # We set `code_mtime` only after kernel_startup() because
         # codetime watches only those modules which are already
@@ -270,231 +498,6 @@ class Kernel(object):
                     if ba.action.params_layout is not None:
                         ba.action.params_layout.get_layout_handle(
                             self.default_ui)
-        # logger.info("20140227 Kernel.__init__() done")
-
-    def kernel_startup(kernel, self):
-        """This is a part of a Lino site startup.  The Django Model
-        definitions are done, now Lino analyzes them and does certain
-        actions:
-
-        - Verify that there are no more pending injects Install a
-          :class:`DisableDeleteHandler
-          <lino.core.ddh.DisableDeleteHandler>` for each Model into
-          `_lino_ddh`.
-
-        - Install :class:`lino.core.model.Model` attributes and
-          methods into Models that don't inherit from it.
-
-        """
-        if len(sys.argv) == 0:
-            process_name = 'WSGI'
-        else:
-            process_name = ' '.join(sys.argv)
-
-        logger.info("Started %s (using %s) --> PID %s",
-                    process_name, settings.SETTINGS_MODULE, os.getpid())
-        # puts(self.welcome_text())
-
-        def goodbye():
-            logger.info("Done %s (PID %s)", process_name, os.getpid())
-        atexit.register(goodbye)
-
-        models_list = get_models(include_auto_created=True)
-        # this also triggers django.db.models.loading.cache._populate()
-
-        self.setup_model_spec(self, 'user_model')
-        self.setup_model_spec(self, 'project_model')
-
-        for app_name_model, p in list(self.override_modlib_models.items()):
-            # app_name_model is the full installed app module name +
-            # the model name. It certainly contains at least one dot.
-            m = '.'.join(app_name_model.split('.')[-2:])
-            resolve_model(
-                m,
-                strict="%s plugin tries to extend unresolved model '%%s'" %
-                p.__class__.__module__)
-
-        for model in models_list:
-            #~ print 20130216, model
-            #~ fix_field_cache(model)
-
-            # if hasattr(model, '_lino_ddh'):
-            if '_lino_ddh' in model.__dict__:
-                raise Exception("20150831 %s", model)
-            model._lino_ddh = DisableDeleteHandler(model)
-
-            Model.django2lino(model)
-
-            if isinstance(model.hidden_columns, basestring):
-                model.hidden_columns = frozenset(
-                    fields.fields_list(model, model.hidden_columns))
-
-            if isinstance(model.active_fields, basestring):
-                model.active_fields = frozenset(
-                    fields.fields_list(model, model.active_fields))
-
-            if isinstance(model.allow_cascaded_delete, basestring):
-                model.allow_cascaded_delete = frozenset(
-                    fields.fields_list(model, model.allow_cascaded_delete))
-
-            qsf = model.quick_search_fields
-            # Attention when inheriting this from from parent model.
-            # qsf = model.__dict__.get('quick_search_fields', None)
-            if qsf is None:
-                fields_list = []
-                for field in model._meta.fields:
-                    if isinstance(field, models.CharField):
-                        fields_list.append(field.name)
-                model.quick_search_fields = frozenset(fields_list)
-            elif isinstance(qsf, frozenset):
-                pass
-            elif isinstance(qsf, basestring):
-                model.quick_search_fields = frozenset(
-                    fields.fields_list(model, model.quick_search_fields))
-            else:
-                raise ChangedAPI(
-                    "{0}.quick_search_fields must be None or a string "
-                    "of space-separated field names (not {1})".format(
-                        model, qsf))
-
-            if model._meta.abstract:
-                raise Exception("Tiens?")
-
-            # self.modules.define(model._meta.app_label, model.__name__, model)
-
-            for f in model._meta.virtual_fields:
-                if isinstance(f, GenericForeignKey):
-                    kernel.GFK_LIST.append(f)
-
-        # vip_classes = (layouts.BaseLayout, fields.Dummy)
-        # for a in models.get_apps():
-        #     app_label = a.__name__.split('.')[-2]
-
-        #     for k, v in a.__dict__.items():
-        #         if isinstance(v, type) and issubclass(v, vip_classes):
-        #             self.modules.define(app_label, k, v)
-
-        #         if k.startswith('setup_'):
-        #             self.modules.define(app_label, k, v)
-
-        if self.user_profiles_module:
-            from importlib import import_module
-            import_module(self.user_profiles_module)
-        
-        self.setup_choicelists()
-        self.setup_workflows()
-
-        for model in models_list:
-            if model._meta.auto_created:
-                continue  # automatic intermediate models created by
-                          # ManyToManyField should not disable delete
-            # for f, m in model._meta.get_fields_with_model():
-            for f in model._meta.get_fields():
-                m = f.model
-
-                # Refuse nullable CharFields, but don't trigger on
-                # NullableCharField (which is a subclass of CharField).
-
-                if f.__class__ is models.CharField and f.null:
-                    msg = "Nullable CharField %s in %s" % (f.name, model)
-                    raise Exception(msg)
-                elif isinstance(f, models.ForeignKey):
-                    if isinstance(f.rel.model, basestring):
-                        raise Exception("Could not resolve target %r of "
-                                        "ForeignKey '%s' in %s "
-                                        "(models are %s)" %
-                                        (f.rel.model, f.name, model, models_list))
-                    set_default_verbose_name(f)
-
-                    """
-                    If JobProvider is an MTI child of Company,
-                    then mti.delete_child(JobProvider) must not fail on a
-                    JobProvider being referred only by objects that can refer
-                    to a Company as well.
-                    """
-                    if not hasattr(f.rel.model, '_lino_ddh'):
-                        msg = "20150824 {1} (needed by {0}) "\
-                              "has no _lino_ddh"
-                        raise Exception(msg.format(f.rel, f.rel.model))
-                    # f.rel.model._lino_ddh.add_fk(f.model, f)
-                    # m = f.model._meta.concrete_model
-                    # f.rel.model._lino_ddh.add_fk(m, f)
-                    f.rel.model._lino_ddh.add_fk(m or model, f)
-
-        kernel.protect_foreignkeys(models_list)
-
-        for p in self.installed_plugins:
-            if isinstance(p, Plugin):
-                p.before_analyze()
-
-        # logger.info("20150429 Gonna send pre_analyze signal")
-        pre_analyze.send(self, models_list=models_list)
-        # logger.info("20150429 pre_analyze signal done")
-        # MergeActions are defined in pre_analyze.
-        # And MergeAction needs the info in _lino_ddh to correctly find
-        # keep_volatiles
-
-        self.setup_actions()
-
-        for model in models_list:
-
-            """Virtual fields declared on the model must have been attached
-            before calling Model.site_setup(), e.g. because
-            pcsw.Person.site_setup() declares `is_client` as imported
-            field.
-
-            """
-
-            model.on_analyze(self)
-
-            for k, v in class_dict_items(model):
-                if isinstance(v, fields.VirtualField):
-                    v.attach_to_model(model, k)
-
-        #~ logger.info("20130817 attached model vfs")
-
-        actors.discover()
-
-        logger.debug("actors.initialize()")
-        for a in actors.actors_list:
-            a.class_init()
-
-        dbtables.discover()
-        #~ choosers.discover()
-        actions.discover_choosers()
-
-        for a in actors.actors_list:
-            a.on_analyze(self)
-
-        post_analyze.send(self, models_list=models_list)
-
-        if False:
-            logger.info("Languages: %s. %d apps, %d models, %s actors.",
-                        ', '.join([li.django_code for li in self.languages]),
-                        len(self.modules),
-                        len(models_list),
-                        len(actors.actors_list))
-
-        #~ logger.info(settings.INSTALLED_APPS)
-
-        self.setup_layouts()
-
-        self.on_each_app('site_setup')  # deprecated
-
-        # Actor.after_site_setup() is called after the apps'
-        # site_setup().  Example: pcsw.site_setup() adds a detail to
-        # properties.Properties, the base class for
-        # properties.PropsByGroup.  The latter would not install a
-        # `detail_action` during her after_site_setup() and also would
-        # never get it later.
-
-        for a in actors.actors_list:
-            a.after_site_setup(self)
-
-        #~ self.on_site_startup()
-
-        self.resolve_virtual_fields()
-
         #~ logger.info("20130827 startup_site done")
 
     def protect_foreignkeys(self, models_list):

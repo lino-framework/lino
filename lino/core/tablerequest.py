@@ -396,11 +396,14 @@ class TableRequest(ActionRequest):
         :class:`lino.utils.xmlgen.html.Table` instance.
 
         """
+        from lino.core.widgets import GridWidget
         ar = self
         tble.attrib.update(self.tableattrs)
         tble.attrib.setdefault('name', self.bound_action.full_name())
 
         grid = ar.ah.list_layout.main
+        if not isinstance(grid, GridWidget):
+            raise Exception("20160529 %r is not a GridElement", grid)
         columns = grid.columns
         fields, headers, cellwidths = ar.get_field_info(column_names)
         columns = fields
@@ -450,6 +453,9 @@ class TableRequest(ActionRequest):
         <lino.core.actors.Actor.override_column_headers>` method.
 
         """
+        from lino.core.widgets import with_user_profile
+        from lino.core.layouts import ColumnsLayout
+
         def getit():
 
             if ar.request is None:
@@ -480,7 +486,6 @@ class TableRequest(ActionRequest):
                         widths.append(int(all_widths[i]))
             else:
                 if column_names:
-                    from lino.core.layouts import ColumnsLayout
                     ll = ColumnsLayout(column_names, datasource=ar.actor)
                     lh = ll.get_layout_handle(settings.SITE.kernel.default_ui)
                     columns = lh.main.columns
@@ -492,7 +497,10 @@ class TableRequest(ActionRequest):
                 # render them so that babelfields in hidden_languages
                 # get hidden:
                 for e in columns:
-                    e.value = e.ext_options()
+                    try:
+                        e.value = e.ext_options()
+                    except AttributeError as ex:
+                        raise AttributeError("20160529 %s : %s" % (e, ex))
                 #
                 columns = [e for e in columns if not
                            e.value.get('hidden', False)]
@@ -521,7 +529,7 @@ class TableRequest(ActionRequest):
         if u is None:
             return getit()
         else:
-            return jsgen.with_user_profile(u.profile, getit)
+            return with_user_profile(u.profile, getit)
 
     def row2html(self, recno, columns, row, sums, **cellattrs):
         has_numeric_value = False
