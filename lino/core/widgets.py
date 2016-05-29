@@ -619,10 +619,7 @@ class WidgetFactory(object):
             s = name.split('.')
             if len(s) == 2:
                 if settings.SITE.is_hidden_app(s[0]):
-                    return (de, None)
-            # ctx = (lh.layout.__class__, name, ', '.join(dir(lh.layout)))
-            # raise Exception(
-            #     "Instance of %s has no data element '%s' (names are %s)" % ctx)
+                    return None
             raise Exception("{0} has no data element '{1}'".format(
                 lh.layout, name))
         return de
@@ -655,6 +652,9 @@ class WidgetFactory(object):
         Create a layout element from the named data element.
         """
         de = self.get_data_elem(lh, name)
+
+        if de is None:
+            return None
 
         return self.create_widget(de, lh, name)
 

@@ -238,8 +238,9 @@ class VisibleComponent(Component, Widget):  # , Permittable):
     """
 
     def __init__(self, lh, name, **kw):
-        Component.__init__(self, self.name, **kw)
-        Widget.__init__(self, lh, name, **kw)
+        Component.__init__(self, self.name)
+        Widget.__init__(self, lh, name)
+        self.setup(**kw)
 
     def setup(self, **kwargs):
         ignored = Widget.setup(self, **kwargs)

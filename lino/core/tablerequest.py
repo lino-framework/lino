@@ -402,8 +402,8 @@ class TableRequest(ActionRequest):
         tble.attrib.setdefault('name', self.bound_action.full_name())
 
         grid = ar.ah.list_layout.main
-        if not isinstance(grid, GridWidget):
-            raise Exception("20160529 %r is not a GridElement", grid)
+        # if not isinstance(grid, GridWidget):
+        #     raise Exception("20160529 %r is not a GridElement", grid)
         columns = grid.columns
         fields, headers, cellwidths = ar.get_field_info(column_names)
         columns = fields
@@ -497,10 +497,11 @@ class TableRequest(ActionRequest):
                 # render them so that babelfields in hidden_languages
                 # get hidden:
                 for e in columns:
-                    try:
-                        e.value = e.ext_options()
-                    except AttributeError as ex:
-                        raise AttributeError("20160529 %s : %s" % (e, ex))
+                    e.value = e.ext_options()
+                    # try:
+                    #     e.value = e.ext_options()
+                    # except AttributeError as ex:
+                    #     raise AttributeError("20160529 %s : %s" % (e, ex))
                 #
                 columns = [e for e in columns if not
                            e.value.get('hidden', False)]

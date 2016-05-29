@@ -212,8 +212,8 @@ class ExtRenderer(HtmlRenderer):
         using a Javascript link to this action.
 
         """
-        settings.SITE.logger.info(
-            "20160529 window_action_button %s", ba)
+        # settings.SITE.logger.info(
+        #     "20160529 window_action_button %s", ba)
         label = str(label or ba.get_button_label())
         uri = self.js2url(self.action_call(ar, ba, status))
         return self.href_button_action(
