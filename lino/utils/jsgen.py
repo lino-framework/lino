@@ -238,7 +238,7 @@ class VisibleComponent(Component, Widget):  # , Permittable):
     """
 
     def __init__(self, lh, name, **kw):
-        Component.__init__(self, self.name)
+        Component.__init__(self, name)
         Widget.__init__(self, lh, name)
         self.setup(**kw)
 

@@ -3290,6 +3290,7 @@ signature as `django.core.mail.EmailMessage`.
         :class:`BaseRequest <lino.core.requests.BaseRequest>` object.
 
         """
+        from lino.core import requests
         self.startup()
         User = self.user_model
         if User and username:
@@ -3301,8 +3302,7 @@ signature as `django.core.mail.EmailMessage`.
         # if not 'renderer' in kw:
         #     kw.update(renderer=self.ui.text_renderer)
 
-        from lino.core import requests
-        import lino.core.urls  # hack: trigger ui instantiation
+        # import lino.core.urls  # hack: trigger ui instantiation
         return requests.BaseRequest(**kw)
 
     def get_letter_date_text(self, today=None):

@@ -396,18 +396,17 @@ class TableRequest(ActionRequest):
         :class:`lino.utils.xmlgen.html.Table` instance.
 
         """
-        from lino.core.widgets import GridWidget
         ar = self
         tble.attrib.update(self.tableattrs)
         tble.attrib.setdefault('name', self.bound_action.full_name())
 
         grid = ar.ah.list_layout.main
+        # from lino.core.widgets import GridWidget
         # if not isinstance(grid, GridWidget):
         #     raise Exception("20160529 %r is not a GridElement", grid)
         columns = grid.columns
         fields, headers, cellwidths = ar.get_field_info(column_names)
         columns = fields
-        #~ print 20130330, cellwidths
 
         headers = [
             x for x in grid.headers2html(
@@ -492,7 +491,9 @@ class TableRequest(ActionRequest):
                     columns = [e for e in columns if not e.hidden]
                 else:
                     ah = ar.actor.get_request_handle(ar)
+                    
                     columns = ah.list_layout.main.columns
+                    # print(20160530, ah, columns, ah.list_layout.main)
 
                 # render them so that babelfields in hidden_languages
                 # get hidden:
@@ -557,9 +558,11 @@ class TableRequest(ActionRequest):
         `fields` and collecting sums into `sums`.
 
         """
+        # print(20160530, fields)
         for i, fld in enumerate(fields):
             if fld.field is not None:
                 sf = get_atomizer(row.__class__, fld.field, fld.field.name)
+                # print(20160530, fld.field.name, sf)
                 if False:
                     try:
                         getter = sf.full_value_from_object

@@ -55,6 +55,29 @@ get_models = apps.get_models
 validate_url = URLValidator()
 
 
+def comma():
+    return ', '
+
+
+def qs2summary(ar, objects, separator=comma, max_items=5, **kw):
+    """Render a collection of objects as a single paragraph.
+
+    :param max_items: don't include more than the specified number of items.
+
+    """
+    elems = []
+    n = 0
+    for i in objects:
+        if n:
+            elems.append(separator())
+        n += 1
+        elems += list(ar.summary_row(i, **kw))
+        if n >= max_items:
+            elems += [separator(), '...']
+            break
+    return E.p(*elems)
+
+
 def getrqdata(request):
     """Return the request data.
 

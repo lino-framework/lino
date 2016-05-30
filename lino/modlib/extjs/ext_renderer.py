@@ -66,6 +66,8 @@ from lino.modlib.users.choicelists import UserProfiles
 if settings.SITE.user_model:
     from lino.modlib.users import models as users
 
+from lino.modlib.extjs.elems import WidgetFactory
+
 
 def prepare_label(mi):
     return mi.label
@@ -90,6 +92,8 @@ class ExtRenderer(HtmlRenderer):
 
     def __init__(self, plugin):
         HtmlRenderer.__init__(self, plugin)
+        self.widgets = WidgetFactory()
+
         jsgen.register_converter(self.py2js_converter)
 
         for s in 'green blue red yellow'.split():
@@ -882,12 +886,10 @@ class ExtRenderer(HtmlRenderer):
         return env.get_template('linoweb.js')
 
     def create_layout_element(self, *args, **kw):
-        return settings.SITE.kernel.widgets.create_layout_element(
-            *args, **kw)
+        return self.widgets.create_layout_element(*args, **kw)
 
     def create_layout_panel(self, *args, **kw):
-        return settings.SITE.kernel.widgets.create_layout_panel(
-            *args, **kw)
+        return self.widgets.create_layout_panel(*args, **kw)
 
     def toolbar(self, action_list):
         """

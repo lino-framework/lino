@@ -51,7 +51,8 @@ def get_template(*args, **kw):
 
 def show(*args, **kw):
     """Calls :meth:`show <lino.core.requests.BaseRequest.show>` on a
-    temporary anonymous session (created using :meth:`Site.login`).
+    temporary anonymous session (created using
+    :meth:`rt.login <lino.core.site.Site.login>`).
 
     """
     return login().show(*args, **kw)

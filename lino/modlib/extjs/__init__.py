@@ -120,9 +120,6 @@ class Plugin(Plugin):
         self.renderer = ExtRenderer(self)
         kernel.extjs_renderer = self.renderer
 
-        from .elems import WidgetFactory
-        kernel.widgets = WidgetFactory()
-
         # added 20160329
         for fl in self.renderer.param_panels:
             fl.get_layout_handle(self)

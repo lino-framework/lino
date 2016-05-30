@@ -449,8 +449,6 @@ class Kernel(object):
 
         pre_ui_build.send(self)
 
-        self.html_renderer = HtmlRenderer(self)
-        self.text_renderer = TextRenderer(self)
         self.reserved_names = [getattr(constants, n)
                                for n in constants.URL_PARAMS]
 
@@ -459,6 +457,10 @@ class Kernel(object):
             if n in names:
                 raise Exception("Duplicate reserved name %r" % n)
             names.add(n)
+
+        # 20160530
+        # self.html_renderer = HtmlRenderer(self)
+        # self.text_renderer = TextRenderer(self)
 
         for p in site.installed_plugins:
             p.on_ui_init(self)
@@ -487,6 +489,10 @@ class Kernel(object):
         if ui is not None:
             self.default_renderer = ui.renderer
             self.default_ui = ui
+
+        # 20160530
+        self.html_renderer = HtmlRenderer(ui)
+        self.text_renderer = TextRenderer(ui)
 
         post_ui_build.send(self)
 

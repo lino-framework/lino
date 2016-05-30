@@ -25,13 +25,14 @@ from django.utils.translation import ugettext_lazy as _
 from lino.core import fields
 from lino.core import actions
 from lino.core import layouts
-from lino.core.utils import resolve_model
 from lino.core.requests import ActionRequest
 from lino.core.boundaction import BoundAction
 from lino.core.exceptions import ChangedAPI
 from lino.core.constants import _handle_attr_name
 from lino.core.permissions import add_requirements, Permittable
+from lino.core.utils import resolve_model
 from lino.core.utils import error2str
+from lino.core.utils import qs2summary
 from lino.utils import curry, AttrDict
 from lino.utils.xmlgen.html import E
 
@@ -73,30 +74,6 @@ def register_actor(a):
         actors_list.remove(old)
     actors_list.append(a)
     return a
-
-
-def comma():
-    return ', '
-
-
-def qs2summary(ar, objects, separator=comma, max_items=5, **kw):
-    """Render a collection of objects as a single paragraph.
-
-    :param max_items: don't include more than the specified number of items.
-
-    """
-    elems = []
-    n = 0
-    for i in objects:
-        if n:
-            elems.append(separator())
-        n += 1
-        elems += list(ar.summary_row(i, **kw))
-        if n >= max_items:
-            elems += [separator(), '...']
-            break
-    return E.p(*elems)
-
 
 #~ class ClassProperty(property):
     #~ def __get__(self, cls, owner):

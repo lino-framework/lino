@@ -31,9 +31,11 @@ from lino.core import fields
 from lino.core.gfks import GenericRelation
 from lino.core.gfks import GenericForeignKey
 from lino.core.layouts import DummyPanel
-from lino.core.permissions import Permittable
 from lino.core.layouts import (FormLayout, ParamsLayout,
                                ColumnsLayout, ActionParamsLayout)
+from lino.core.utils import qs2summary
+from lino.core.permissions import Permittable
+from lino.core.permissions import make_view_permission_handler
 
 from lino.utils import join_elems
 from lino.utils import curry
@@ -41,7 +43,6 @@ from lino.utils.mldbc.fields import BabelCharField, BabelTextField
 from lino.utils.ranges import constrain
 from lino.utils.xmlgen.html import E
 from lino.utils.html2xhtml import html2xhtml
-from lino.core.permissions import make_view_permission_handler
 
 user_profile_rlock = threading.RLock()
 _for_user_profile = None
@@ -104,8 +105,6 @@ class Widget(Permittable):
             required |= self.required_roles
             kwargs.update(required_roles=required)
 
-        # install `allow_read` permission handler:
-        self.install_permission_handler()
         self.setup(**kwargs)
 
     def __repr__(self):
@@ -141,9 +140,11 @@ class Widget(Permittable):
             self.required_roles = required_roles
         # if help_text is not None:
         #     self.help_text = help_text
+        self.install_permission_handler()
         return ignored
 
     def install_permission_handler(self):
+        # install `allow_read` permission handler:
         self.allow_read = curry(make_view_permission_handler(
             self, True,
             self.debug_permissions,
@@ -167,7 +168,7 @@ class Widget(Permittable):
     def set_parent(self, parent):
         self.parent = parent
         if self.label:
-            if isinstance(parent, Panel):
+            if isinstance(parent, PanelWidget):
                 if parent.label_align == layouts.LABEL_ALIGN_LEFT:
                     self.preferred_width += len(self.label)
 
@@ -208,29 +209,130 @@ class Widget(Permittable):
     def as_plain_html(self, ar, obj):
         yield E.p("cannot handle %s" % self.__class__)
 
+    def apply_cell_format(self, e):
+        pass
 
-class Panel(Widget):
+
+class ContainerWidget(Widget):
+    vertical = False
+    label_align = layouts.LABEL_ALIGN_TOP
+
     def __init__(self, lh, name, vertical, *widgets, **kwargs):
         self.vertical = vertical
-        # self.widgets = widgets
-        self.widgets = self.columns = widgets
-        super(Panel, self).__init__(lh, name, **kwargs)
+        self.widgets = widgets
+        Widget.__init__(self, lh, name, **kwargs)
+        for e in widgets:
+            if not isinstance(e, Widget):
+                raise Exception("%r is not a Widget" % e)
+            e.set_parent(self)
+
+    def get_view_permission(self, profile):
+        """A Panel which doesn't contain a single visible element becomes
+        itself hidden.
+
+        """
+        # if the Panel itself is invisble, no need to loop through the
+        # children
+        if not super(ContainerWidget, self).get_view_permission(profile):
+            return False
+        for e in self.widgets:
+            if (not isinstance(e, Permittable)) or \
+               e.get_view_permission(profile):
+                # one visible child is enough, no need to continue loop
+                return True
+        # logger.info("20120925 not a single visible element in %s of %s",self,self.layout_handle)
+        return False
+
+    def as_plain_html(self, ar, obj):
+        children = []
+        for e in self.widgets:
+            for chunk in e.as_plain_html(ar, obj):
+                children.append(chunk)
+        if self.vertical:
+            # for ch in children:
+                # yield ch
+            yield E.fieldset(*children)
+        else:
+            # if len(children) > 1:
+                # span = 'span' + str(12 / len(children))
+                # children = [E.div(ch,class_=span) for ch in children]
+                # yield E.div(*children,class_="row-fluid")
+            # else:
+                # yield children[0]
+
+            # for ch in children:
+                # yield E.fieldset(ch)
+                # yield ch
+            # tr = E.tr(*[E.td(ch) for ch in children])
+            tr = []
+            for e in self.widgets:
+                cell = E.td(*tuple(e.as_plain_html(ar, obj)))
+                tr.append(cell)
+            yield E.table(E.tr(*tr))
 
 
-class DetailMainPanel(Panel):
+class PanelWidget(ContainerWidget):
+    """A vertical Panel is vflex if and only if at least one of its
+    children is vflex.  A horizontal Panel is vflex if and only if
+    *all* its children are vflex (if vflex and non-vflex elements are
+    together in a hbox, then the vflex elements will get the height of
+    the highest non-vflex element).
+
+    """
+    def __init__(self, lh, name, vertical, *widgets, **kwargs):
+        ContainerWidget.__init__(
+            self, lh, name, vertical, *widgets, **kwargs)
+
+        self.vflex = not vertical
+        for e in widgets:
+            if self.vertical:
+                if e.vflex:
+                    self.vflex = True
+            else:
+                if not e.vflex:
+                    self.vflex = False
+
+        w = h = 0
+        has_height = False  # 20120210
+        for e in widgets:
+            ew = e.width or e.preferred_width
+            eh = e.height or e.preferred_height
+            if self.vertical:
+                # h += e.flex
+                h += eh
+                w = max(w, ew)
+            else:
+                if e.height:
+                    has_height = True
+                # w += e.flex
+                w += ew
+                h = max(h, eh)
+        if has_height:
+            self.height = h
+            self.vflex = True
+        else:
+            self.preferred_height = h
+        self.preferred_width = w
+        assert self.preferred_height > 0, "%s : preferred_height is 0" % self
+        assert self.preferred_width > 0, "%s : preferred_width is 0" % self
+
+
+class DetailMainPanelWidget(PanelWidget):
     pass
 
 
-class ParamsPanel(Panel):
+class ParamsPanelWidget(PanelWidget):
     pass
 
 
-class ActionParamsPanel(Panel):
+class ActionParamsPanelWidget(PanelWidget):
     pass
 
 
-class TabPanel(Panel):
-    pass
+class TabPanelWidget(ContainerWidget):
+    def __init__(self, lh, name, *elems, **kw):
+        # insert the `vertical` argument
+        ContainerWidget.__init__(self, lh, name, False, *elems, **kw)
 
 
 class ConstantWidget(Widget):
@@ -253,17 +355,14 @@ class FieldWidget(Widget):
     active_change_event = 'change'
     zero = 0
 
-    def __init__(self, layout_handle, field, **kw):
+    def __init__(self, lh, field, **kw):
         if not getattr(field, 'name', None):
-            raise Exception("Field '%s' in %s has no name!" %
-                            (field, layout_handle))
+            raise Exception("Field '%s' in %s has no name!" % (field, lh))
         self.field = field
         self.editable = field.editable  # and not field.primary_key
-
         kw.setdefault('label', field.verbose_name)
         self.add_default_value(kw)
-
-        Widget.__init__(self, layout_handle, field.name, **kw)
+        Widget.__init__(self, lh, field.name, **kw)
 
     def add_default_value(self, kw):
         if self.field.has_default():
@@ -367,14 +466,31 @@ class TextFieldWidget(FieldWidget):
 
 class DisplayWidget(FieldWidget):
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, lh, field, **kwargs):
         kwargs.setdefault('value', '<br/>')  # see blog/2012/0527
-        kwargs.update(always_enabled=True)
-        FieldWidget.__init__(self, *args, **kwargs)
+        FieldWidget.__init__(self, lh, field, **kwargs)
         self.preferred_height = self.field.preferred_height
         self.preferred_width = self.field.preferred_width
         if self.field.max_length:
             self.preferred_width = self.field.max_length
+
+    def value_from_object(self, obj, ar):
+        return self.field.value_from_object(obj, ar)
+
+    def value2html(self, ar, v, **cellattrs):
+        try:
+            if E.iselement(v) and v.tag == 'div':
+                return E.td(*[child for child in v], **cellattrs)
+            return E.td(v, **cellattrs)
+        except Exception as e:
+            settings.SITE.logger.error(e)
+            return E.td(str(e), **cellattrs)
+
+    def format_value(self, ar, v):
+        from lino.utils.xmlgen.html import html2rst
+        if E.iselement(v):
+            return html2rst(v)
+        return self.field._lino_atomizer.format_value(ar, v)
 
 
 class RecurrenceWidget(DisplayWidget):
@@ -395,13 +511,41 @@ class ForeignKeyWidget(FieldWidget):
 
 
 class GenericForeignKeyWidget(DisplayWidget):
+    """
+    A :class:`DisplayWidget` for a :term:`GFK` field.
+    """
 
-    def __init__(self, layout_handle, field, **kw):
+    def __init__(self, lh, field, **kw):
         self.field = field
         self.editable = False
         kw.update(label=getattr(field, 'verbose_name', None) or field.name)
-        # kw.update(label=field.verbose_name)
-        Widget.__init__(self, layout_handle, field.name, **kw)
+        FieldWidget.__init__(self, lh, field, **kw)
+
+    def add_default_value(self, kw):
+        pass
+
+
+class SingleRelatedObjectWidget(DisplayWidget):
+    def __init__(self, lh, relobj, **kw):
+        """
+        :lh: the LayoutHandle
+        :relobj: the RelatedObject instance
+        """
+        # print(20130202, relobj.parent_model, relobj.model, relobj.field)
+        self.relobj = relobj
+        self.editable = False
+        kw.update(
+            label=str(getattr(relobj.model._meta, 'verbose_name', None))
+            or relobj.var_name)
+        # DisplayElement.__init__(self,lh,relobj.field,**kw)
+
+        # ~ kw.setdefault('value','<br/>') # see blog/2012/0527
+        # kw.update(always_enabled=True)
+        FieldWidget.__init__(self, lh, relobj.field, **kw)
+        # self.preferred_height = self.field.preferred_height
+        # self.preferred_width = self.field.preferred_width
+        # if self.field.max_length:
+            # self.preferred_width = self.field.max_length
 
     def add_default_value(self, kw):
         pass
@@ -412,7 +556,7 @@ class HtmlBoxWidget(DisplayWidget):
     vflex = True
 
 
-class SlaveSummaryPanel(HtmlBoxWidget):
+class SlaveSummaryWidget(HtmlBoxWidget):
     """The panel used to display a slave table whose `slave_grid_format`
 is 'summary'.
 
@@ -422,10 +566,39 @@ is 'summary'.
         fld = fields.VirtualField(box, actor.get_slave_summary)
         fld.name = actor.__name__
         fld.lino_resolve_type()
-        super(SlaveSummaryPanel, self).__init__(lh, fld, **kw)
+        super(SlaveSummaryWidget, self).__init__(lh, fld, **kw)
 
 
-class GridWidget(Panel):
+class ManyRelatedObjectWidget(HtmlBoxWidget):
+
+    def __init__(self, lh, relobj, **kw):
+        name = relobj.field.rel.related_name
+
+        def f(obj, ar):
+            return qs2summary(ar, getattr(obj, name).all())
+
+        box = fields.HtmlBox(name)
+        fld = fields.VirtualField(box, f)
+        fld.name = name
+        fld.lino_resolve_type()
+        super(ManyRelatedObjectWidget, self).__init__(lh, fld, **kw)
+
+
+class ManyToManyWidget(HtmlBoxWidget):
+    def __init__(self, lh, relobj, **kw):
+        name = relobj.field.name
+
+        def f(obj, ar):
+            return qs2summary(ar, getattr(obj, name).all())
+
+        box = fields.HtmlBox(relobj.field.verbose_name)
+        fld = fields.VirtualField(box, f)
+        fld.name = name
+        fld.lino_resolve_type()
+        super(ManyToManyWidget, self).__init__(lh, fld, **kw)
+
+
+class GridWidget(ContainerWidget):
     vflex = True
     xtype = None
     preferred_height = 5
@@ -444,9 +617,18 @@ class GridWidget(Panel):
         self.preferred_width = constrain(w, 10, 120)
         self.columns = columns
 
-        kw.setdefault('label', rpt.label)
+        super(GridWidget, self).__init__(
+            layout_handle, name, True, *columns, **kw)
 
-        super(GridWidget, self).__init__(layout_handle, name, True, **kw)
+    def setup(self, **kw):
+        kw.setdefault('label', self.actor.label)
+        return super(GridWidget, self).setup(**kw)
+
+    def get_view_permission(self, profile):
+        # skip Container parent:
+        if not super(ContainerWidget, self).get_view_permission(profile):
+            return False
+        return self.actor.default_action.get_view_permission(profile)
 
     def headers2html(self, ar, columns, headers, **cellattrs):
         assert len(headers) == len(columns)
@@ -549,6 +731,43 @@ class IntegerFieldWidget(NumberFieldWidget):
     preferred_width = 5
 
 
+class RequestFieldWidget(IntegerFieldWidget):
+    def value2num(self, v):
+        # logger.info("20131114 value2num %s",v)
+        return v.get_total_count()
+
+    def value_from_object(self, obj, ar):
+        # logger.info("20131114 value_from_object %s",v)
+        return self.field.value_from_object(obj, ar)
+
+    def value2html(self, ar, v, **cellattrs):
+        # logger.info("20121116 value2html(%s)", v)
+        n = v.get_total_count()
+        if n == 0:
+            return E.td(**cellattrs)
+        url = ar.renderer.request_handler(v)
+        if url is None:
+            return E.td(str(n), **cellattrs)
+        return E.td(E.a(str(n), href='javascript:'+url), **cellattrs)
+
+    def format_value(self, ar, v):
+        # logger.info("20121116 format_value(%s)", v)
+        # raise Exception("20130131 %s" % v)
+        if v is None:
+            raise Exception("Got None value for %s" % self)
+        n = v.get_total_count()
+        if True:
+            if n == 0:
+                return ''
+        # if n == 12:
+            # logger.info("20120914 format_value(%s) --> %s",v,n)
+        return ar.href_to_request(v, str(n))
+
+    def format_sum(self, ar, sums, i):
+        # return self.format_value(ar,sums[i])
+        return E.b(str(sums[i]))
+
+
 class AutoFieldWidget(NumberFieldWidget):
     preferred_width = 5
 
@@ -629,14 +848,14 @@ class WidgetFactory(object):
             return GridWidget(
                 lh, name, lh.layout._datasource, *elems, **pkw)
         elif isinstance(lh.layout, ActionParamsLayout):
-            return ActionParamsPanel(lh, name, vertical, *elems, **pkw)
+            return ActionParamsPanelWidget(lh, name, vertical, *elems, **pkw)
         elif isinstance(lh.layout, ParamsLayout):
-            return ParamsPanel(lh, name, vertical, *elems, **pkw)
+            return ParamsPanelWidget(lh, name, vertical, *elems, **pkw)
         elif isinstance(lh.layout, FormLayout):
             if len(elems) == 1 or vertical:
-                return DetailMainPanel(lh, name, vertical, *elems, **pkw)
+                return DetailMainPanelWidget(lh, name, vertical, *elems, **pkw)
             else:
-                return TabPanel(lh, name, *elems, **pkw)
+                return TabPanelWidget(lh, name, *elems, **pkw)
         raise Exception("No element class for layout %r" % lh.layout)
 
         # return Panel(lh, name, vertical, *widgets, **kwargs)
@@ -645,7 +864,7 @@ class WidgetFactory(object):
         if name == 'main':
             return self.create_main_panel(
                 lh, name, vertical, *elems, **kwargs)
-        return Panel(lh, name, vertical, *elems, **kwargs)
+        return PanelWidget(lh, name, vertical, *elems, **kwargs)
 
     def create_layout_element(self, lh, name, **kw):
         """
@@ -704,22 +923,17 @@ class WidgetFactory(object):
             return ConstantWidget(lh, de, **kw)
 
         if isinstance(de, SingleRelatedObjectDescriptor):
-            return Widget(lh, de.related, **kw)
+            return SingleRelatedObjectWidget(lh, de.related, **kw)
 
         if isinstance(de, (
                 ManyRelatedObjectsDescriptor,
                 ForeignRelatedObjectsDescriptor)):
-            e = Widget(lh, de.related, **kw)
-            lh.add_store_field(e.field)
-            return e
-
-        if isinstance(de, models.ManyToManyField):
-            e = Widget(lh, de.related, **kw)
+            e = ManyRelatedObjectWidget(lh, de.related, **kw)
             lh.add_store_field(e.field)
             return e
 
         if isinstance(de, (ManyToManyRel, ManyToOneRel)):
-            e = Widget(lh, de, **kw)
+            e = ManyRelatedObjectWidget(lh, de, **kw)
             lh.add_store_field(e.field)
             return e
 
@@ -754,7 +968,7 @@ class WidgetFactory(object):
                     return e
 
                 elif de.slave_grid_format == 'summary':
-                    e = SlaveSummaryPanel(lh, de, **kw)
+                    e = SlaveSummaryWidget(lh, de, **kw)
                     lh.add_store_field(e.field)
                     return e
                 else:
@@ -762,7 +976,7 @@ class WidgetFactory(object):
                         "Invalid slave_grid_format %r" % de.slave_grid_format)
 
             else:
-                e = SlaveSummaryPanel(lh, de, **kw)
+                e = SlaveSummaryWidget(lh, de, **kw)
                 lh.add_store_field(e.field)
                 return e
 
@@ -785,6 +999,11 @@ class WidgetFactory(object):
         raise KeyError(msg)
 
     def field2elem(self, lh, field, **kwargs):
+
+        if isinstance(field, models.ManyToManyField):
+            e = ManyToManyWidget(lh, field.related, **kwargs)
+            lh.add_store_field(e.field)
+            return e
 
         selector_field = field
         if isinstance(field, fields.RemoteField):
