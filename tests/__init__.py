@@ -26,10 +26,13 @@ class BaseTestCase(TestCase):
     django_settings_module = 'lino_noi.settings.test'
 
 
-class SpecsTests(BaseTestCase):
+class PackagesTests(BaseTestCase):
 
     def test_packages(self):
         self.run_packages_test(SETUP_INFO['packages'])
+
+
+class SpecsTests(BaseTestCase):
 
     def test_memo(self):
         self.run_simple_doctests('docs/specs/memo.rst')
@@ -58,6 +61,9 @@ class SpecsTests(BaseTestCase):
     def test_public(self):
         self.run_simple_doctests('docs/specs/public.rst')
 
+    def test_bs3(self):
+        self.run_simple_doctests('docs/specs/bs3.rst')
+
     def test_clocking(self):
         self.run_simple_doctests('docs/specs/clocking.rst')
 
@@ -79,6 +85,6 @@ class ProjectsTests(BaseTestCase):
         self.run_django_manage_test('lino_noi/projects/team')
 
     def test_teamadm(self):
-        self.run_django_manage_test('lino_noi/projects/public')
+        self.run_django_manage_test('lino_noi/projects/bs3')
 
 

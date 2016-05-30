@@ -17,10 +17,14 @@
 # License along with Lino Noi.  If not, see
 # <http://www.gnu.org/licenses/>.
 
+# How to test just this module:
+#   $ python setup.py test -s tests.PackagesTests
+#
+
 SETUP_INFO = dict(
     name='lino-noi',
     version='0.0.2',  # since 20150918
-    install_requires=['lino', 'xlwt'],
+    install_requires=['lino_xl', 'xlwt'],
     test_suite='tests',
     description=("The Lino application used by the Lino team for "
                  "managing their work on the Lino project"),
@@ -68,6 +72,7 @@ SETUP_INFO.update(packages=[
     'lino_noi.lib.faculties.fixtures',
     'lino_noi.lib.clocking',
     'lino_noi.lib.clocking.fixtures',
+    'lino_noi.lib.public',
     'lino_noi.lib.users',
     'lino_noi.lib.users.fixtures',
     'lino_noi.projects.bs3',
