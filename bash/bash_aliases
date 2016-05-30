@@ -1,0 +1,25 @@
+# Copyright 2016 Luc Saffre
+# License: BSD (see file COPYING for details)
+# Suggested bash aliases for Lino team members
+
+alias x='exit'
+alias a='. env/bin/activate'
+
+function pywhich() {
+    python -c "import $1; print $1.__file__"
+}
+
+function e() {
+    $EDITOR $*
+}
+
+
+function go() {
+    if [ -d ~/mypy/prod_sites/$1 ] ; then
+        cd ~/mypy/prod_sites/$1;
+        return;
+    fi
+    if [ -d ~/repositories/$1 ] ; then
+        cd ~/repositories/$@;
+    fi
+}

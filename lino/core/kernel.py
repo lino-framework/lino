@@ -413,7 +413,9 @@ class Kernel(object):
                     to a Company as well.
                     """
                     if not hasattr(f.rel.model, '_lino_ddh'):
-                        raise Exception("20150824")
+                        msg = "20150824 {1} (needed by {0}) "\
+                              "has no _lino_ddh"
+                        raise Exception(msg.format(f.rel, f.rel.model))
                     # f.rel.model._lino_ddh.add_fk(f.model, f)
                     # m = f.model._meta.concrete_model
                     # f.rel.model._lino_ddh.add_fk(m, f)
@@ -681,8 +683,8 @@ class Kernel(object):
         return self.render_action_response(ar)
 
     def add_callback(self, ar, *msgs):
-        """Returns an "action callback" which will initiate a dialog thread
-        by asking a question to the user and suspending execution until
+        """Returns an *action callback* which will initiate a dialog thread by
+        asking a question to the user and suspending execution until
         the user's answer arrives in a next HTTP request.
 
         Calling this from an Action's :meth:`run_from_ui
@@ -700,7 +702,7 @@ class Kernel(object):
             msg = '\n'.join([force_text(s) for s in msgs])
         else:
             msg = msgs[0]
-
+        # logger.info("20160526 add_callback(%s)", msg)
         return Callback(ar, msg)
 
     def set_callback(self, ar, cb):
@@ -708,7 +710,7 @@ class Kernel(object):
         """
         h = hash(cb)
         self.pending_threads[h] = cb
-        # logger.info("20131212 Stored %r in %r" % (
+        # logger.info("20160526 Stored %r in %r" % (
         #     h, self.pending_threads))
 
         buttons = dict()

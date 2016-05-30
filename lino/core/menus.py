@@ -91,6 +91,12 @@ class MenuItem(object):
     def walk_items(self):
         yield self
 
+    def find_item(self, spec):
+        bound_action = resolve_action(spec)
+        for mi in self.walk_items():
+            if mi.bound_action == bound_action:
+                return mi
+
     def __repr__(self):
         s = self.__class__.__name__ + "("
         attrs = []
@@ -334,11 +340,8 @@ class Toolbar(Menu):
     pass
 
 
-def find_menu_item(spec):
+def find_menu_item(bound_action):
     from lino.api import rt
     profile = rt.modules.users.UserProfiles.get_by_value('900')
     menu = settings.SITE.get_site_menu(settings.SITE.kernel, profile)
-    for mi in menu.walk_items():
-        if mi.bound_action == spec:
-            return mi
-    return None
+    return menu.find_item(bound_action)

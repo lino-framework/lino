@@ -479,7 +479,8 @@ class ExtRenderer(HtmlRenderer):
             items=dashboard,
         )
         if not on_ready:
-            dashboard.update(html=site.get_main_html(request))
+            dashboard.update(html=site.get_main_html(
+                request, extjs=self.plugin))
 
         win = dict(
             layout='fit',

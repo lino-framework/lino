@@ -34,6 +34,8 @@ from __future__ import print_function
 from lino.api.ad import Plugin
 from django.utils.translation import ugettext_lazy as _
 
+# raise Exception("20160528")
+
 
 class Plugin(Plugin):
     """Extends :class:`lino.core.plugin.Plugin`.
@@ -117,6 +119,9 @@ class Plugin(Plugin):
         from .ext_renderer import ExtRenderer
         self.renderer = ExtRenderer(self)
         kernel.extjs_renderer = self.renderer
+
+        from . import elems
+        kernel.widgets = elems
 
         # added 20160329
         for fl in self.renderer.param_panels:

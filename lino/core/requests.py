@@ -15,6 +15,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from copy import copy
+from cgi import escape
 
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -424,9 +425,20 @@ request from it.
         self.response.update(kw)
             
     def error(self, e=None, message=None, **kw):
-        """
-        Shortcut to :meth:`set_response` used to set an error response.
-        The first argument should be either an exception object or a message.
+        """Shortcut to :meth:`set_response` used to set an error response.
+
+        The first argument should be either an exception object or a
+        text with a message.
+
+        If a message is not explicitly given, Lino escapes any
+        characters with a special meaning in HTML. For example::
+
+            NotImplementedError: <dl> inside <text:p>
+    
+        will be converted to::
+    
+            NotImplementedError: &lt;dl&gt; inside &lt;text:p&gt;
+
         """
         kw.update(success=False)
         kw.update(alert=_("Error"))  # added 20140304
@@ -440,12 +452,13 @@ request from it.
                 message = six.text_type(e)
             except UnicodeDecodeError as e:
                 message = repr(e)
+            message = escape(message)
         kw.update(message=message)
         self.set_response(**kw)
 
     def success(self, message=None, alert=None, **kw):
         """Tell the client to consider the action as successful. This is the
-        same as :meth:`BaseRequest.set_response` with `success=True`.
+        same as :meth:`set_response` with `success=True`.
 
         First argument should be a textual message.
 
@@ -456,7 +469,14 @@ request from it.
                 alert = _("Success")
             kw.update(alert=alert)
         if message is not None:
-            kw.update(message=message)
+            if 'message' in self.response and alert is None:
+                # ignore alert-less messages when there is already a
+                # message set. For example
+                # finan.FinancialVoucherItem.parter_changed with more
+                # than 1 suggestion.
+                pass
+            else:
+                kw.update(message=message)
         self.set_response(**kw)
 
     def append_message(self, level, msg, *args, **kw):
@@ -470,21 +490,27 @@ request from it.
             self.response[k] = msg
         else:
             self.response[k] = old + '\n' + msg
-        #~ return self.success(*args,**kw)
+        # return self.success(*args,**kw)
 
     def debug(self, msg, *args, **kw):
         if settings.SITE.verbose_client_info_message:
             self.append_message('info', msg, *args, **kw)
 
     def info(self, msg, *args, **kw):
+        # deprecated?
         self.append_message('info', msg, *args, **kw)
 
     def warning(self, msg, *args, **kw):
+        # deprecated?
         self.append_message('warning', msg, *args, **kw)
 
     _confirm_answer = True
 
     def set_confirm_answer(self, ans):
+        """Set a "No" answer for following confirm in a non-interactive
+        renderer.
+
+        """
         self._confirm_answer = ans
 
     def confirm(self, ok_func, *msgs):

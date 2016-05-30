@@ -10,6 +10,7 @@ Database models for `lino.modlib.plausibility`.
 
 from __future__ import unicode_literals, print_function
 from builtins import object
+from collections import OrderedDict
 
 from django.db import models
 
@@ -254,16 +255,21 @@ def set_plausibility_actions(sender, **kw):
 
 
 def get_checkable_models(*args):
-    """Return a `dict` mapping each model which has at least one checker
-    to a list of these checkers.
+    """Return an `OrderedDict` mapping each model which has at least one
+    checker to a list of these checkers.
+
+    The dict is ordered to avoid that checkers run in a random order.
 
     """
-    if len(args):
-        selection = [getattr(Checkers, arg) for arg in args]
-    else:
-        selection = Checkers.objects()
-    checkable_models = dict()
-    for chk in selection:
+    checkable_models = OrderedDict()
+    for chk in Checkers.objects():
+        if len(args):
+            skip = True
+            for arg in args:
+                if arg in chk.value:
+                    skip = False
+            if skip:
+                continue
         for m in rt.models_by_base(chk.model, toplevel_only=True):
             lst = checkable_models.setdefault(m, [])
             lst.append(chk)

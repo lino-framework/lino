@@ -40,7 +40,7 @@ if AFTER17:
     from django.apps import AppConfig
 
 from unipath import Path
-from atelier.utils import AttrDict, date_offset ,tuple_py2
+from atelier.utils import AttrDict, date_offset, tuple_py2
 from atelier import rstgen
 
 from django.utils.translation import ugettext_lazy as _
@@ -119,16 +119,33 @@ class Site(object):
     administrators.  Your :setting:`SITE` setting is expected to
     contain an instance of a subclass of this.
 
+    .. attribute:: plugins
+
+        An :class:`AttrDict` object with one entry for each installed
+        app, mapping the `app_label` of every plugin to the
+        corresponding :class:`lino.core.plugin.Plugin` instance.
+
+        This attribute is automatically filled by Lino and available as
+        :attr:`dd.plugins <lino.api.dd>` already before Django starts to
+        import :xfile:`models.py` modules.
+
+
     .. attribute:: modules
+
+        Old name for :attr:`models`.  Deprecated.
+
+    .. attribute:: models
 
         An :class:`AttrDict <atelier.utils.AttrDict>` which maps every
         installed `app_label` to the corresponding :xfile:`models.py`
         module object.
 
-        This is also available as the shortcut :attr:`rt.modules
-        <lino.api.rt.modules>`.
+        This is also available as the shortcut :attr:`rt.models
+        <lino.api.rt.models>`.
 
         See :doc:`/dev/plugins`
+
+
 
     .. attribute:: LANGUAGE_CHOICES
     
@@ -305,17 +322,8 @@ class Site(object):
     """
 
     plugins = None
-    """An :class:`AttrDict` object with one entry for each installed app,
-    mapping the `app_label` of every plugin to the corresponding
-    :class:`lino.core.plugin.Plugin` instance.
 
-    This attribute is automatically filled by Lino and available as
-    :attr:`dd.plugins <lino.api.dd>` already before Django starts to
-    import :xfile:`models.py` modules.
-
-    """
-
-    modules = AttrDict()
+    modules = models = AttrDict()
 
     top_level_menus = [
         ("master", _("Master")),
@@ -1010,12 +1018,11 @@ class Site(object):
     _site_config = None
     _logger = None
     override_modlib_models = None
-    """A dictionary automatically filled at startup.
-    You can inspect it, but you should not modify it.
+    """A dictionary which maps model class names to the plugin which
+    overrides them.
 
-    It maps model class names to the plugin which overrides them.
-
-    This dictionary is needed mainly for :meth:`is_abstract_model`.
+    This is automatically filled at startup.  You can inspect it, but
+    you should not modify it.  Needed for :meth:`is_abstract_model`.
 
     The challenge is that we want to know exactly where every model's
     concrete class will be defined *before* actually starting to
@@ -1023,6 +1030,14 @@ class Site(object):
     :attr:`extends_models <lino.core.plugin.Plugin.extends_models>`.
 
     This can be tricky, see e.g. 20160205.
+
+    """
+
+    installed_plugin_modules = None
+    """A set of the full Python paths of all imported plugin modules. Not
+    just the plugin modules themselves but also those they inherit
+    from. This is used internally by :meth:`is_abstract_model`.  Don't
+    modify.
 
     """
 
@@ -1118,16 +1133,10 @@ class Site(object):
         self._startup_done = False
         self.startup_time = datetime.datetime.now()
 
-        if self.cache_dir is None:
-            pass  # raise Exception("20160516 No cache_dir")
-        else:
-            dbname = self.cache_dir.child('default.db')
-            self.django_settings.update(DATABASES={
-                'default': {
-                    'ENGINE': 'django.db.backends.sqlite3',
-                    'NAME': dbname
-                }
-            })
+        db = self.get_database_settings()
+
+        if db is not None:
+            self.django_settings.update(DATABASES=db)
 
         self.update_settings(SERIALIZATION_MODULES={
             "py": "lino.utils.dpy",
@@ -1160,6 +1169,44 @@ class Site(object):
                 disable_existing_loggers=True,  # Django >= 1.5
             ),
         )
+
+    def get_database_settings(self):
+        """Return a dict to be set as the :setting:`DATABASE` setting.
+        
+        The default behaviour uses SQLiite on a file named
+        :xfile:`default.db` in the :attr:`cache_dir`, and in
+        ``:memory:`` when :attr:`cache_dir` is `None`.
+
+        And alternative might be for example::
+
+            def get_database_settings(self):
+                return {
+                    'default': {
+                        'ENGINE': 'django.db.backends.mysql',
+                        'NAME': 'test_' + self.project_name,
+                        'USER': 'django',
+                        'PASSWORD': os.environ['MYSQL_PASSWORD'],
+                        'HOST': 'localhost',                  
+                        'PORT': 3306,
+                        'OPTIONS': {
+                           "init_command": "SET storage_engine=MyISAM",
+                        }
+                    }
+                }
+
+        
+
+        """
+        if self.cache_dir is None:
+            pass  # raise Exception("20160516 No cache_dir")
+        else:
+            dbname = self.cache_dir.child('default.db')
+            return {
+                'default': {
+                    'ENGINE': 'django.db.backends.sqlite3',
+                    'NAME': dbname
+                }
+            }
 
     def run_lino_site_module(self):
         """See :ref:`djangosite_local`.
@@ -1231,10 +1278,10 @@ class Site(object):
         self.plugins = AttrDict()
 
         def install_plugin(app_name, needed_by=None):
-            # print("20160427 install_plugin()", app_name)
             # Django does not accept newstr, and we don't want to see
             # ``u'applabel'`` in doctests.
             app_name = six.text_type(app_name)
+            # print("20160524 install_plugin(%r)" % app_name)
             app_mod = import_module(app_name)
 
             # print "Loading plugin", app_name
@@ -1297,33 +1344,62 @@ class Site(object):
 
         self.override_modlib_models = dict()
 
-        def reg(p, pp, m):
-            name = pp.__module__ + '.' + m
-            self.override_modlib_models[name] = p
+        # def reg(p, pp, m):
+        #     name = pp.__module__ + '.' + m
+        #     self.override_modlib_models[name] = p
 
-        for p in self.installed_plugins:
-            if p.extends_models is not None:
-                for m in p.extends_models:
+        def plugin_parents(pc):
+            for pp in pc.__mro__:
+                if issubclass(pp, Plugin):
+                    # if pp not in (Plugin, p.__class__):
+                    if pp is not Plugin:
+                        yield pp
+
+        def reg(pc):
+            # If plugin p extends some models, then tell all parent
+            # plugins to make their definition of each model abstract.
+            extends_models = pc.__dict__.get('extends_models')
+            if extends_models is not None:
+                for m in extends_models:
                     if "." in m:
                         raise Exception(
-                            "extends_models in %s still uses '.'" %
-                            p.app_name)
-                    # found = False
-                    root = None
-                    # for pp in p.__class__.__bases__:
-                    for pp in p.__class__.__mro__:
-                        if issubclass(pp, Plugin) and pp not in (
-                                p.__class__, Plugin):
-                            root = pp
-                            reg(p, pp, m)
-                            # if pp.extends_models and m in pp.extends_models:
-                            #     reg(p, pp, m)
-                                # break
-                    if not root:
-                        msg = "{0} declares to extend_models {1}, but " \
-                              "cannot find parent plugin".format(p, m)
-                        raise Exception(msg)
-                    # reg(p, root, m)
+                            "extends_models in %s still uses '.'" % pc)
+                    for pp in plugin_parents(pc):
+                        if pp is pc:
+                            continue
+                        name = pp.__module__ + '.' + m
+                        self.override_modlib_models[name] = pc
+                        # if m == "Company":
+                        #     print("20160524 tell %s that %s extends %s" % (
+                        #         pp, p.app_name, m))
+
+            for pp in plugin_parents(pc):
+                if pp is pc:
+                    continue
+                reg(pp)
+
+
+            # msg = "{0} declares to extend_models {1}, but " \
+            #       "cannot find parent plugin".format(p, m)
+            # raise Exception(msg)
+
+        for p in self.installed_plugins:
+            reg(p.__class__)
+            # for pp in plugin_parents(p.__class__):
+            #     if p.app_label == 'contacts':
+            #         print("20160524c %s" % pp)
+            #     reg(p.__class__)
+
+        # for m, p in self.override_modlib_models.items():
+        #     print("20160524 %s : %s" % (m, p))
+
+        self.installed_plugin_modules = set()
+        for p in self.installed_plugins:
+            # self.installed_plugin_modules.add(p.__module__)
+            for pp in plugin_parents(p.__class__):
+                self.installed_plugin_modules.add(pp.__module__)
+
+        # print("20160524 %s", self.installed_plugin_modules)
                         
         # raise Exception("20140825 %s", self.override_modlib_models)
 
@@ -1714,7 +1790,7 @@ class Site(object):
                     from django.db.models import loading
                     m = loading.load_app(p.app_name, False)
 
-                self.modules.define(six.text_type(p.app_label), m)
+                self.models.define(six.text_type(p.app_label), m)
 
             for p in self.installed_plugins:
                 p.on_site_startup(self)
@@ -1775,12 +1851,19 @@ class Site(object):
         See :doc:`/dev/plugin_inheritance`.
 
         """
-        name = '.'.join(module_name.split('.')[:-1])
-        name += '.' + model_name
-        rv = name in self.override_modlib_models
-        # if model_name == 'Enrolment':
-        #     self.logger.info("20160205 is_abstract_model %s -> %s (%s)",
-        #                      name, rv, self.override_modlib_models.keys())
+        app_name = '.'.join(module_name.split('.')[:-1])
+        model_name = app_name + '.' + model_name
+        rv = model_name in self.override_modlib_models
+        if not rv:
+            if app_name not in self.installed_plugin_modules:
+                return True
+        # if model_name.endswith('Company'):
+        #     self.logger.info(
+        #         "20160524 is_abstract_model(%s) -> %s", model_name, rv)
+            # self.logger.info(
+            #     "20160524 is_abstract_model(%s) -> %s (%s, %s)",
+            #     model_name, rv, self.override_modlib_models.keys(),
+            #     os.getenv('DJANGO_SETTINGS_MODULE'))
         return rv
 
     def is_installed_model_spec(self, model_spec):
@@ -2007,7 +2090,7 @@ class Site(object):
         plugin.
 
         """
-        # self.logger.info("20140227 lino_site.Site.do_site_startup() a")
+        # self.logger.info("20160526 %s do_site_startup() a", self.__class__)
 
         self.user_interfaces = tuple([
             p for p in self.installed_plugins if p.ui_label is not None])
@@ -2018,7 +2101,7 @@ class Site(object):
         self.kernel = Kernel(self)
         # self.ui = self.kernel  # internal backwards compat
 
-        # self.logger.info("20140227 lino_site.Site.do_site_startup() b")
+        # self.logger.info("20160526 %s do_site_startup() b", self.__class__)
 
     def find_config_file(self, *args, **kwargs):
         return self.confdirs.find_config_file(*args, **kwargs)
@@ -2059,7 +2142,7 @@ class Site(object):
             def setup_actions(self):
                 super(Site, self).setup_actions()
                 from lino.core.merge import MergeAction
-                partners = self.modules.contacts
+                partners = self.models.contacts
                 for m in (partners.Person, partners.Organisation):
                     m.define_action(merge_row=MergeAction(m))
 
@@ -2074,14 +2157,14 @@ class Site(object):
             def setup_layouts(self):
                 super(Site, self).setup_layouts()
 
-                self.modules.system.SiteConfigs.set_detail_layout("""
+                self.models.system.SiteConfigs.set_detail_layout("""
                 site_company next_partner_id:10
                 default_build_method
                 clients_account   sales_account     sales_vat_account
                 suppliers_account purchases_account purchases_vat_account
                 """)
 
-                self.modules.accounts.Accounts.set_detail_layout("""
+                self.models.accounts.Accounts.set_detail_layout("""
                 ref:10 name id:5
                 seqno group type clearable
                 ledger.MovementsByAccount
@@ -2631,7 +2714,7 @@ given object `obj`. The dict will have one key for each
             default_value = args[0]
             return values.get(info.name, default_value)
         args = tuple_py2(args)
-        print(type(args))
+        # print(type(args))
         raise ValueError("%(values)s is more than 1 default value." %
                          dict(values=args))
 
@@ -2794,7 +2877,7 @@ site. :manage:`diag` is a command-line shortcut to this.
         This is always `None` when :mod:`lino.modlib.system` is not installed.
 
         """
-        if 'system' not in self.modules:
+        if 'system' not in self.models:
             return None
 
         if self._site_config is None:
@@ -2804,7 +2887,7 @@ site. :manage:`diag` is a command-line shortcut to this.
             #~ from lino.core.utils import obj2str
             #~ from lino.utils import dblogger as logger
             #~ SiteConfig = resolve_model('system.SiteConfig')
-            SiteConfig = self.modules.system.SiteConfig
+            SiteConfig = self.models.system.SiteConfig
             #~ from .models import SiteConfig
             #~ from django.db.utils import DatabaseError
             try:
@@ -2979,7 +3062,7 @@ Please convert to Plugin method".format(mod, methname)
     #     """
     #     return None
 
-    def get_main_html(self, request):
+    def get_main_html(self, request, **context):
         """Return a chunk of html to be displayed in the main area of the
         admin index.  This is being called only if
         :meth:`get_main_action` returns `None`.  The default
@@ -2987,7 +3070,7 @@ Please convert to Plugin method".format(mod, methname)
 
         """
         return self.plugins.jinja.render_from_request(
-            request, 'admin_main.html')
+            request, 'admin_main.html', **context)
 
     def get_welcome_messages(self, ar):
         """
@@ -3128,7 +3211,7 @@ Please convert to Plugin method".format(mod, methname)
         # self.logger.info("20121016 add_system_note() '%s'",subject)
 
         if self.is_installed('notes'):
-            notes = self.modules.notes
+            notes = self.models.notes
             notes.add_system_note(request, owner, subject, body)
         sender = request.user.email or self.django_settings['SERVER_EMAIL']
         if not sender or '@example.com' in sender:

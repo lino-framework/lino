@@ -1,10 +1,9 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2010-2015 Luc Saffre
+# Copyright 2010-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """This package contains Model mixins, some of which are heavily used
-by :mod:`lino.modlib`. None of them is mandatory for a Lino
-application.
+by applications, but None of them is mandatory for a Lino application.
 
 .. autosummary::
    :toctree:
@@ -22,8 +21,6 @@ Parameter panels:
 - :class:`ObservedPeriod <lino.mixins.periods.ObservedPeriod>`
 - :class:`Yearly <lino.mixins.periods.Yearly>`
 - :class:`Today <lino.mixins.periods.Today>`
-
-  
 
 """
 
@@ -90,13 +87,13 @@ class Registrable(model.Model):
 
         """
         return []
-        #~ yield 'date'
+        # yield 'date'
 
     @classmethod
     def on_analyze(cls, site):
         super(Registrable, cls).on_analyze(site)
         cls._registrable_fields = set(cls.get_registrable_fields(site))
-        #~ logger.info("20130128 %s %s",cls,cls._registrable_fields)
+        # logger.info("20130128 %s %s",cls,cls._registrable_fields)
 
     def disabled_fields(self, ar):
         if not self.state.editable:
@@ -240,13 +237,12 @@ class ProjectRelated(model.Model):
         if settings.SITE.project_model:
             return self.project
 
-    #~ def summary_row(self,ui,rr,**kw):
     def summary_row(self, ar, **kw):
         s = [ar.obj2html(self)]
         if settings.SITE.project_model:
-            #~ if self.project and not dd.has_fk(rr,'project'):
+            # if self.project and not dd.has_fk(rr,'project'):
             if self.project:
-                #~ s += " (" + ui.obj2html(self.project) + ")"
+                # s += " (" + ui.obj2html(self.project) + ")"
                 s += [" (", ar.obj2html(self.project), ")"]
         return s
 
@@ -276,13 +272,19 @@ class ProjectRelated(model.Model):
 
 
 class Referrable(model.Model):
-    """
-    Mixin for things that have a unique `ref` field and a `get_by_ref` method.
+    """Mixin for things that have a unique :attr:`ref` field and a
+    `get_by_ref` method.
+
+    .. attribute:: ref
+
+        The reference.
+
     """
     class Meta(object):
         abstract = True
 
     ref_max_length = 40
+    """The maximum length of the :attr:`ref` field."""
 
     ref = fields.NullCharField(_("Reference"),
                                max_length=ref_max_length,
@@ -290,11 +292,12 @@ class Referrable(model.Model):
                                unique=True)
 
     def on_duplicate(self, ar, master):
-        """After duplicating we must change the :attr:`ref`.
+        """Before saving a duplicated object for the first time, we must
+        change the :attr:`ref` in order to avoid an IntegrityError.
 
         """
         if self.ref:
-            self.ref += '(DUP)'
+            self.ref += ' (DUP)'
         super(Referrable, self).on_duplicate(ar, master)
 
     @classmethod
@@ -307,13 +310,26 @@ class Referrable(model.Model):
                     "No %s with reference %r" % (str(cls._meta.verbose_name), ref))
             return default
 
-    #~ def __unicode__(self):
-        #~ return self.ref or unicode(_('(Root)'))
+    @classmethod
+    def quick_search_filter(cls, search_text, prefix=''):
+        """Overrides the default beaviour defined in
+        :meth:`lino.core.model.Model.quick_search_filter`. For
+        Referrable objects, when quick-searching for a text containing
+        only digits, the user usually means the :attr:`ref` and *not*
+        the primary key.
+
+        """
+        if search_text.isdigit():
+            return models.Q(**{prefix+'ref__icontains': search_text})
+        return super(Referrable, cls).quick_search_filter(
+            search_text, prefix='')
+
+    # def __unicode__(self):
+    #     return self.ref or unicode(_('(Root)'))
 
     # def __unicode__(self):
     #     return super(Referrable, self).__unicode__() + " (" + self.ref + ")"
         # return unicode(super(Referrable, self)) + " (" + self.ref + ")"
-
 
 
 # from lino.modlib.printing.mixins import (

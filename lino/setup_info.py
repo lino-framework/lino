@@ -90,6 +90,9 @@ Examples of Lino applications are
 or
 `Lino Voga <http://voga.lino-framework.org>`__
 (`more <http://lino-framework.org/about/projects.html>`__)
+
+The central project homepage is http://www.lino-framework.org
+
 """)
 
 SETUP_INFO.update(packages=[str(n) for n in """

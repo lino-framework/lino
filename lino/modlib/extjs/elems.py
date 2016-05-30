@@ -37,6 +37,8 @@ else:
     from django.db.models.fields.related import ForeignRelatedObjectsDescriptor
     from django.db.models.fields.related import ManyRelatedObjectsDescriptor
 
+
+
 if AFTER17:
     from django.db.models.fields.related import ManyToManyRel, ManyToOneRel
 from django.db.models.fields import NOT_PROVIDED
@@ -45,6 +47,7 @@ from lino.core import layouts
 from lino.core import fields
 from lino.core.actions import Permittable
 from lino.core import constants
+from lino.core.gfks import GenericRelation
 
 from lino.utils.ranges import constrain
 from lino.utils import jsgen
@@ -2115,6 +2118,9 @@ def create_layout_element(lh, name, **kw):
         return None
 
     if isinstance(de, DummyPanel):
+        return None
+
+    if isinstance(de, GenericRelation):
         return None
 
     if isinstance(de, fields.DummyField):
