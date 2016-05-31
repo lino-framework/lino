@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015 Luc Saffre
+# Copyright 2015-2016 Luc Saffre
 #
 # This file is part of Lino Noi.
 #
@@ -17,10 +17,13 @@
 # License along with Lino Noi.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-"""Settings for providing readonly public access to the site. This
-does not use :mod:`lino.modlib.extjs` but a traditional
-Django user interface using the hand-written URLConf module
-:mod:`lino_noi.urls`.
+"""The :xfile:`settings.py` modules for this variant.
+
+.. autosummary::
+   :toctree:
+
+   demo
+   doctests
 
 """
 
@@ -29,11 +32,10 @@ from lino_noi.projects.team.settings.demo import *
 
 class Site(Site):
 
-    # root_urlconf = 'lino_noi.urls'
-    # default_ui = None
-    default_ui = 'lino_noi.lib.noi'
+    default_ui = 'lino_noi.lib.public'
+    default_user = 'anonymous'
 
-    def get_installed_apps(self):
-        yield super(Site, self).get_installed_apps()
-        yield 'lino.modlib.bootstrap3'
+    # def get_installed_apps(self):
+    #     yield super(Site, self).get_installed_apps()
+    #     yield 'lino.modlib.bootstrap3'
 

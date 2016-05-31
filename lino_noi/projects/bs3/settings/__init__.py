@@ -17,10 +17,20 @@
 # License along with Lino Noi.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-"""Settings for providing readonly public access to the site. This
-does not use :mod:`lino.modlib.extjs` but :mod:`lino.modlib.bootstrap3`.
+"""The :xfile:`settings.py` modules for this variant.
+
+It has :attr:`default_user<lino.core.site.Site.default_user>` set to
+'anonymous'. Which causes it to deactivate both authentication and
+sessions.
+
+.. autosummary::
+   :toctree:
+
+   demo
+   doctests
 
 """
+
 
 from lino_noi.projects.team.settings.demo import *
 
@@ -29,8 +39,4 @@ class Site(Site):
 
     default_ui = 'lino.modlib.bootstrap3'
     default_user = 'anonymous'
-
-    # def get_installed_apps(self):
-    #     yield super(Site, self).get_installed_apps()
-    #     yield 'lino.modlib.bootstrap3'
 

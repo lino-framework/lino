@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015 Luc Saffre
+# Copyright 2015-2016 Luc Saffre
 #
 # This file is part of Lino Noi.
 #
@@ -17,16 +17,13 @@
 # License along with Lino Noi.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-"""This is the readonly "view" of the team database.
-
-The public ticket database of the Lino team at
-http://bugs.lino-framework.org/ uses a subclass of this.
-
-
+"""See :ref:`noi.specs.bs3`.
 
 .. autosummary::
    :toctree:
 
-   settings.demo
+   settings
+   tests
 
 """
+

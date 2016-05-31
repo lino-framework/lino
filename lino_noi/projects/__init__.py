@@ -20,9 +20,13 @@
 """A collection of concrete example projects which can be used eithter
 out of the box or as a base for derivated work.
 
-After running :cmd:`fab initdb` in the :ref:`noi` repository, you can
-run :manage:`runserver` in both demo projects: `team` uses the normal
-"editable" user interface and `bs3` the readonly user interface.
+After running :cmd:`inv initdb` in the :ref:`noi` repository, you can
+run :manage:`runserver` in these demo projects.
+
+
+- `team` is the normal "editable" user interface
+- `public` and and `bs3` are readonly user interfaces to `team`
+- `care` is a demo of :ref:`care`.
 
 
 .. autosummary::
@@ -30,6 +34,7 @@ run :manage:`runserver` in both demo projects: `team` uses the normal
 
    team
    bs3
+   public
    care
 
 """

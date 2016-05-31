@@ -35,7 +35,7 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("Clocking")
 
-    # needs_plugins = ['lino_noi.projects.team.lib.tickets']
+    needs_plugins = ['lino_noi.lib.noi']
 
     ticket_model = 'contacts.Partner'
 

@@ -17,7 +17,9 @@
 # License along with Lino Noi.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
+"""Shows :ref:`noi` as a ticket management system
+for software developer teams.
+
 .. autosummary::
    :toctree:
 
@@ -25,3 +27,4 @@
    lib
 
 """
+

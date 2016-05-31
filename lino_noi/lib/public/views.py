@@ -33,7 +33,7 @@ from lino.api import dd
 def render_from_request(request, template_name, **context):
     template = dd.plugins.jinja.renderer.jinja_env.get_template(template_name)
     ar = BaseRequest(
-        renderer=dd.plugins.noi.renderer,
+        renderer=dd.plugins.public.renderer,
         request=request)
     context = ar.get_printable_context(**context)
     return template.render(**context)

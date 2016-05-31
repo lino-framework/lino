@@ -23,7 +23,9 @@ class Site(Site):
         self.plugins.excerpts.configure(responsible_user='jean')
 
 
+team_db = DATABASES
+
 SITE = Site(globals())
 
-# the following line should not be active in a checked-in version
-#~ DATABASES['default']['NAME'] = ':memory:'
+DATABASES = team_db
+
