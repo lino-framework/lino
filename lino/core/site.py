@@ -2099,6 +2099,7 @@ class Site(object):
 
         from lino.core.kernel import Kernel
         self.kernel = Kernel(self)
+        self.kernel.kernel_startup(self)
         # self.ui = self.kernel  # internal backwards compat
 
         # self.logger.info("20160526 %s do_site_startup() b", self.__class__)
@@ -3289,6 +3290,7 @@ signature as `django.core.mail.EmailMessage`.
         :class:`BaseRequest <lino.core.requests.BaseRequest>` object.
 
         """
+        from lino.core import requests
         self.startup()
         User = self.user_model
         if User and username:
@@ -3300,8 +3302,7 @@ signature as `django.core.mail.EmailMessage`.
         # if not 'renderer' in kw:
         #     kw.update(renderer=self.ui.text_renderer)
 
-        from lino.core import requests
-        import lino.core.urls  # hack: trigger ui instantiation
+        # import lino.core.urls  # hack: trigger ui instantiation
         return requests.BaseRequest(**kw)
 
     def get_letter_date_text(self, today=None):

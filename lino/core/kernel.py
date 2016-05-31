@@ -46,7 +46,6 @@ from django.db import models
 
 from django.utils.translation import ugettext_lazy as _
 
-from lino import AFTER17
 from lino.utils import codetime
 from lino.core import layouts
 from lino.core import actors
@@ -64,6 +63,8 @@ from lino.core.store import Store
 from lino.core.renderer import HtmlRenderer, TextRenderer
 from lino.core.signals import (pre_ui_build, post_ui_build,
                                pre_analyze, post_analyze)
+
+from .widgets import WidgetFactory
 from .plugin import Plugin
 from .ddh import DisableDeleteHandler
 from .utils import resolve_model
@@ -190,89 +191,12 @@ class Kernel(object):
         self.pending_threads = {}
         self.site = site
         self.GFK_LIST = []
-        self.kernel_startup(site)
-        self.code_mtime = codetime()
-        # We set `code_mtime` only after kernel_startup() because
-        # codetime watches only those modules which are already
-        # imported.
+        self.widgets = WidgetFactory()
 
-        self.memo_parser = Parser()
-
-        def url2html(parser, s):
-            url_text = s.split(None, 1)
-            if len(url_text) == 1:
-                url = text = url_text[0]
-            else:
-                url, text = url_text
-            return '<a href="%s" target="_blank">%s</a>' % (url, text)
-
-        self.memo_parser.register_command('url', url2html)
-
-        if site.build_js_cache_on_startup is None:
-            site.build_js_cache_on_startup = not (
-                settings.DEBUG or is_devserver())
-
-        # web.site_setup(site)
-
-        for a in actors.actors_list:
-            if a.get_welcome_messages is not None:
-                # site._welcome_actors.append(a)
-                site.add_welcome_handler(a.get_welcome_messages)
-
-        pre_ui_build.send(self)
-
-        self.html_renderer = HtmlRenderer(self)
-        self.text_renderer = TextRenderer(self)
-        self.reserved_names = [getattr(constants, n)
-                               for n in constants.URL_PARAMS]
-
-        names = set()
-        for n in self.reserved_names:
-            if n in names:
-                raise Exception("Duplicate reserved name %r" % n)
-            names.add(n)
-
-        for p in site.installed_plugins:
-            p.on_ui_init(self)
-
-        ui = None
-        if self.site.default_ui is None:
-            for p in self.site.installed_plugins:
-                if p.ui_handle_attr_name is not None:
-                    ui = p
-                    break
-            # if ui is None:
-            #     raise Exception("No user interface in {0}".format(
-            #         [u.app_name for u in self.site.installed_plugins]))
-
-        else:
-            for p in self.site.installed_plugins:
-                if p.app_name == self.site.default_ui:
-                    ui = p
-            if ui is None:
-                raise Exception(
-                    "Invalid value %r for `default_ui` "
-                    "(must be None or the name of an installed plugin)"
-                    % self.site.default_ui)
-            ui.url_prefix = None
-
-        if ui is not None:
-            self.default_renderer = ui.renderer
-            self.default_ui = ui
-
-        post_ui_build.send(self)
-
-        if ui is not None:
-
-            # trigger creation of params_layout.params_store
-            for res in actors.actors_list:
-                for ba in res.get_actions():
-                    if ba.action.params_layout is not None:
-                        ba.action.params_layout.get_layout_handle(
-                            self.default_ui)
+        # self.kernel_startup(site)
         # logger.info("20140227 Kernel.__init__() done")
 
-    def kernel_startup(kernel, self):
+    def kernel_startup(self, site):
         """This is a part of a Lino site startup.  The Django Model
         definitions are done, now Lino analyzes them and does certain
         actions:
@@ -293,7 +217,7 @@ class Kernel(object):
 
         logger.info("Started %s (using %s) --> PID %s",
                     process_name, settings.SETTINGS_MODULE, os.getpid())
-        # puts(self.welcome_text())
+        # puts(site.welcome_text())
 
         def goodbye():
             logger.info("Done %s (PID %s)", process_name, os.getpid())
@@ -302,10 +226,10 @@ class Kernel(object):
         models_list = get_models(include_auto_created=True)
         # this also triggers django.db.models.loading.cache._populate()
 
-        self.setup_model_spec(self, 'user_model')
-        self.setup_model_spec(self, 'project_model')
+        site.setup_model_spec(site, 'user_model')
+        site.setup_model_spec(site, 'project_model')
 
-        for app_name_model, p in list(self.override_modlib_models.items()):
+        for app_name_model, p in list(site.override_modlib_models.items()):
             # app_name_model is the full installed app module name +
             # the model name. It certainly contains at least one dot.
             m = '.'.join(app_name_model.split('.')[-2:])
@@ -360,11 +284,11 @@ class Kernel(object):
             if model._meta.abstract:
                 raise Exception("Tiens?")
 
-            # self.modules.define(model._meta.app_label, model.__name__, model)
+            # site.modules.define(model._meta.app_label, model.__name__, model)
 
             for f in model._meta.virtual_fields:
                 if isinstance(f, GenericForeignKey):
-                    kernel.GFK_LIST.append(f)
+                    self.GFK_LIST.append(f)
 
         # vip_classes = (layouts.BaseLayout, fields.Dummy)
         # for a in models.get_apps():
@@ -372,17 +296,17 @@ class Kernel(object):
 
         #     for k, v in a.__dict__.items():
         #         if isinstance(v, type) and issubclass(v, vip_classes):
-        #             self.modules.define(app_label, k, v)
+        #             site.modules.define(app_label, k, v)
 
         #         if k.startswith('setup_'):
-        #             self.modules.define(app_label, k, v)
+        #             site.modules.define(app_label, k, v)
 
-        if self.user_profiles_module:
+        if site.user_profiles_module:
             from importlib import import_module
-            import_module(self.user_profiles_module)
+            import_module(site.user_profiles_module)
         
-        self.setup_choicelists()
-        self.setup_workflows()
+        site.setup_choicelists()
+        site.setup_workflows()
 
         for model in models_list:
             if model._meta.auto_created:
@@ -421,20 +345,20 @@ class Kernel(object):
                     # f.rel.model._lino_ddh.add_fk(m, f)
                     f.rel.model._lino_ddh.add_fk(m or model, f)
 
-        kernel.protect_foreignkeys(models_list)
+        self.protect_foreignkeys(models_list)
 
-        for p in self.installed_plugins:
+        for p in site.installed_plugins:
             if isinstance(p, Plugin):
                 p.before_analyze()
 
         # logger.info("20150429 Gonna send pre_analyze signal")
-        pre_analyze.send(self, models_list=models_list)
+        pre_analyze.send(site, models_list=models_list)
         # logger.info("20150429 pre_analyze signal done")
         # MergeActions are defined in pre_analyze.
         # And MergeAction needs the info in _lino_ddh to correctly find
         # keep_volatiles
 
-        self.setup_actions()
+        site.setup_actions()
 
         for model in models_list:
 
@@ -445,7 +369,7 @@ class Kernel(object):
 
             """
 
-            model.on_analyze(self)
+            model.on_analyze(site)
 
             for k, v in class_dict_items(model):
                 if isinstance(v, fields.VirtualField):
@@ -464,22 +388,22 @@ class Kernel(object):
         actions.discover_choosers()
 
         for a in actors.actors_list:
-            a.on_analyze(self)
+            a.on_analyze(site)
 
-        post_analyze.send(self, models_list=models_list)
+        post_analyze.send(site, models_list=models_list)
 
         if False:
             logger.info("Languages: %s. %d apps, %d models, %s actors.",
-                        ', '.join([li.django_code for li in self.languages]),
-                        len(self.modules),
+                        ', '.join([li.django_code for li in site.languages]),
+                        len(site.modules),
                         len(models_list),
                         len(actors.actors_list))
 
         #~ logger.info(settings.INSTALLED_APPS)
 
-        self.setup_layouts()
+        site.setup_layouts()
 
-        self.on_each_app('site_setup')  # deprecated
+        site.on_each_app('site_setup')  # deprecated
 
         # Actor.after_site_setup() is called after the apps'
         # site_setup().  Example: pcsw.site_setup() adds a detail to
@@ -489,12 +413,97 @@ class Kernel(object):
         # never get it later.
 
         for a in actors.actors_list:
-            a.after_site_setup(self)
+            a.after_site_setup(site)
 
-        #~ self.on_site_startup()
+        #~ site.on_site_startup()
 
-        self.resolve_virtual_fields()
+        site.resolve_virtual_fields()
 
+        self.code_mtime = codetime()
+        # We set `code_mtime` only after kernel_startup() because
+        # codetime watches only those modules which are already
+        # imported.
+
+        self.memo_parser = Parser()
+
+        def url2html(parser, s):
+            url_text = s.split(None, 1)
+            if len(url_text) == 1:
+                url = text = url_text[0]
+            else:
+                url, text = url_text
+            return '<a href="%s" target="_blank">%s</a>' % (url, text)
+
+        self.memo_parser.register_command('url', url2html)
+
+        if site.build_js_cache_on_startup is None:
+            site.build_js_cache_on_startup = not (
+                settings.DEBUG or is_devserver())
+
+        # web.site_setup(site)
+
+        for a in actors.actors_list:
+            if a.get_welcome_messages is not None:
+                # site._welcome_actors.append(a)
+                site.add_welcome_handler(a.get_welcome_messages)
+
+        pre_ui_build.send(self)
+
+        self.reserved_names = [getattr(constants, n)
+                               for n in constants.URL_PARAMS]
+
+        names = set()
+        for n in self.reserved_names:
+            if n in names:
+                raise Exception("Duplicate reserved name %r" % n)
+            names.add(n)
+
+        # 20160530
+        # self.html_renderer = HtmlRenderer(self)
+        # self.text_renderer = TextRenderer(self)
+
+        for p in site.installed_plugins:
+            p.on_ui_init(self)
+
+        ui = None
+        if self.site.default_ui is None:
+            for p in self.site.installed_plugins:
+                if p.ui_handle_attr_name is not None:
+                    ui = p
+                    break
+            # if ui is None:
+            #     raise Exception("No user interface in {0}".format(
+            #         [u.app_name for u in self.site.installed_plugins]))
+
+        else:
+            for p in self.site.installed_plugins:
+                if p.app_name == self.site.default_ui:
+                    ui = p
+            if ui is None:
+                raise Exception(
+                    "Invalid value %r for `default_ui` "
+                    "(must be None or the name of an installed plugin)"
+                    % self.site.default_ui)
+            ui.url_prefix = None
+
+        if ui is not None:
+            self.default_renderer = ui.renderer
+            self.default_ui = ui
+
+        # 20160530
+        self.html_renderer = HtmlRenderer(ui)
+        self.text_renderer = TextRenderer(ui)
+
+        post_ui_build.send(self)
+
+        if ui is not None:
+
+            # trigger creation of params_layout.params_store
+            for res in actors.actors_list:
+                for ba in res.get_actions():
+                    if ba.action.params_layout is not None:
+                        ba.action.params_layout.get_layout_handle(
+                            self.default_ui)
         #~ logger.info("20130827 startup_site done")
 
     def protect_foreignkeys(self, models_list):

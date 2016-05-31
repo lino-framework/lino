@@ -72,10 +72,13 @@ class Plugin(ad.Plugin):
             # renderer=settings.SITE.plugins.jinja.renderer,
             renderer=self.site.kernel.default_renderer,
             request=request)
+        # self.site.logger.info(
+        #     "20160529 render_from_request() %s",
+        #     self.site.kernel.default_renderer)
+
         context = ar.get_printable_context(**context)
         context.update(ar=ar)
-        template = self.renderer.jinja_env.get_template(
-            template_name)
+        template = self.renderer.jinja_env.get_template(template_name)
         return template.render(**context)
 
 

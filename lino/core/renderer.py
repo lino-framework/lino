@@ -25,7 +25,6 @@ from django.utils.encoding import force_text
 from django.utils.translation import ugettext as _
 from django.utils.translation import get_language
 
-
 from lino.utils.html2rst import RstTable
 from lino.utils import isiterable
 from lino.utils.xmlgen.html import E
@@ -33,6 +32,8 @@ from lino.core import constants
 from lino.core.menus import Menu, MenuItem
 # from lino.utils.xmlgen.html import _html2rst as html2rst
 # from lino.utils.xmlgen.html import html2rst
+from lino.core.widgets import WidgetFactory
+from .plugin import Plugin
 
 # from . import elems
 
@@ -79,6 +80,12 @@ class Renderer(object):
     # not_implemented_js = "alert('Not implemented')"
     not_implemented_js = None
 
+    def __init__(self, plugin):
+        if not isinstance(plugin, Plugin):
+            raise Exception("{} is not a Plugin".format(plugin))
+        self.plugin = plugin
+        self.widgets = WidgetFactory()
+
     def ar2js(self, ar, obj, **status):
         """Return the Javascript code which would run this `ar` on the
         client.
@@ -89,9 +96,6 @@ class Renderer(object):
 
 class HtmlRenderer(Renderer):
     row_classes_map = {}
-
-    def __init__(self, plugin):
-        self.plugin = plugin
 
     def js2url(self, js):
         if not js:
