@@ -228,7 +228,7 @@ def choices_for_field(request, holder, field):
                     obj, request, field)
                 d[constants.CHOICES_VALUE_FIELD] = obj.pk
                 return d
-        else:  # values are (value,text) tuples
+        else:  # values are (value, text) tuples
             def row2dict(obj, d):
                 d[constants.CHOICES_TEXT_FIELD] = str(obj[1])
                 d[constants.CHOICES_VALUE_FIELD] = obj[0]
@@ -265,9 +265,10 @@ def choices_for_field(request, holder, field):
 
 def choices_response(actor, request, qs, row2dict, emptyValue):
     quick_search = request.GET.get(constants.URL_PARAM_FILTER, None)
-    if quick_search is not None:
-        qs = actor.add_quick_search_filter(qs, quick_search)
-
+    if quick_search and isinstance(qs, models.QuerySet):
+        qs = qs.filter(qs.model.quick_search_filter(quick_search))
+        # qs = qs.model.add_quick_search_filter(qs, quick_search)
+        # qs = actor.add_quick_search_filter(qs, quick_search)
     count = len(qs)
 
     offset = request.GET.get(constants.URL_PARAM_START, None)
@@ -280,7 +281,12 @@ def choices_response(actor, request, qs, row2dict, emptyValue):
         qs = qs[:int(limit)]
 
     rows = [row2dict(row, {}) for row in qs]
-    if emptyValue is not None:  # 20121203
+    if quick_search and isinstance(qs, list):
+        txt = quick_search.lower()
+        rows = [row for row in rows
+                if txt in row[constants.CHOICES_TEXT_FIELD].lower()]
+
+    if emptyValue and not quick_search:
         empty = dict()
         empty[constants.CHOICES_TEXT_FIELD] = emptyValue
         empty[constants.CHOICES_VALUE_FIELD] = None
@@ -308,7 +314,6 @@ class ActionParamChoices(View):
 
 class Choices(View):
 
-    #~ def choices_view(self,request,app_label=None,rptname=None,fldname=None,**kw):
     def get(self, request, app_label=None, rptname=None, fldname=None, **kw):
         """
         Return a JSON object with two attributes `count` and `rows`,
@@ -335,17 +340,14 @@ class Choices(View):
                 d[constants.CHOICES_VALUE_FIELD] = obj.pk
                 return d
         else:
-            """
-            NOTE: if you define a *parameter* with the same name
-            as some existing *data element* name, then the parameter
-            will override the data element. At least here in choices view.
-            """
-            #~ field = find_field(rpt.model,fldname)
+            # NOTE: if you define a *parameter* with the same name as
+            # some existing *data element* name, then the parameter
+            # will override the data element here in choices view.
             field = rpt.get_param_elem(fldname)
             if field is None:
                 field = rpt.get_data_elem(fldname)
             if field.blank:
-                #~ logger.info("views.Choices: %r is blank",field)
+                # logger.info("views.Choices: %r is blank",field)
                 emptyValue = '<br/>'
             qs, row2dict = choices_for_field(request, rpt, field)
 

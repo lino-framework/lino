@@ -588,6 +588,7 @@ class TableRequest(ActionRequest):
                     yield fld.format_value(self, v)
 
     def sums2html(self, columns, sums, **cellattrs):
+        sums = {fld.name: sums[i] for i, fld in enumerate(columns)}
         return [fld.sum2html(self, sums, i, **cellattrs)
                 for i, fld in enumerate(columns)]
 

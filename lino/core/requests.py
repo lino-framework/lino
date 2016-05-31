@@ -1034,8 +1034,8 @@ class ActorRequest(BaseRequest):
     def summary_row(self, *args, **kw):
         return self.actor.summary_row(self, *args, **kw)
 
-    def get_sum_text(self):
-        return self.actor.get_sum_text(self)
+    def get_sum_text(self, sums):
+        return self.actor.get_sum_text(self, sums)
 
     def get_row_by_pk(self, pk):
         return self.actor.get_row_by_pk(self, pk)

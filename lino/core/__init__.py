@@ -37,6 +37,7 @@ The ``lino.core`` package
     urls
     utils
     views
+    widgets
     workflows
 
 
