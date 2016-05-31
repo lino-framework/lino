@@ -20,6 +20,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
 from django.core.exceptions import ValidationError
 
+from atelier.utils import last_day_of_month
+
 from lino.api import dd
 from lino.core.model import Model
 from lino.utils.format_date import fdl, fds
@@ -153,22 +155,22 @@ class Monthly(ObservedPeriod):
     """
 
     def get_default_start_date(self):
-        D = datetime.date
-        return D(D.today().year, D.today().month, 1)
+        return dd.today().replace(day=1)
 
     def get_default_end_date(self):
-        D = datetime.date
-        return D(D.today().year, D.today().month, 31)
+        return last_day_of_month(dd.today())
 
 
 class Today(ParameterPanel):
-    """:class:`lino.core.param_panel.ParameterPanel` with a field `today`
-which defaults to today."""
+    """A :class:`ParameterPanel <lino.core.param_panel.ParameterPanel>`
+    with a field `today` which defaults to today.
+
+    """
     def __init__(self, verbose_name=_("Situation on"), **kw):
         kw.update(
             today=models.DateField(
                 verbose_name, blank=True, null=True,
-                default=settings.SITE.today,
+                default=dd.today,
                 help_text=_("Date of observation")),
         )
         super(Today, self).__init__(**kw)
