@@ -7,7 +7,7 @@ See introduction in :doc:`/dev/ar`.
 .. autosummary::
 
 """
-# from builtins import str
+from builtins import str
 from builtins import object
 import six
 
@@ -365,6 +365,8 @@ request from it.
             fdf=dd.fdf,
             fdmy=dd.fdmy,
             iif=iif,
+            unicode=str,  # backwards-compatibility. In new template
+                          # you should prefer `str`.
             pgettext=pgettext,
             now=timezone.now(),
             getattr=getattr,
