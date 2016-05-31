@@ -230,6 +230,10 @@ class LayoutHandle(object):
         self._names[name] = e
         return e
 
+    def __getitem__(self, name):
+        return self._names[name]
+        
+
     def create_element(self, desc_name):
         #~ logger.debug("create_element(%r)", desc_name)
         name, options = self.splitdesc(desc_name)

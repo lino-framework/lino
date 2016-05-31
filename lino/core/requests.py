@@ -692,7 +692,7 @@ request from it.
         ar = self.spawn(spec, **kwargs)
 
         def doit():
-            # print 20160323, ar.renderer
+            # print 20160530, ar.renderer
             if issubclass(ar.actor, Report):
                 story = ar.actor.get_story(None, ar)
                 return ar.renderer.show_story(
@@ -768,6 +768,8 @@ request from it.
         return self.renderer.href_to_request(self, *args, **kwargs)
 
     def window_action_button(self, *args, **kwargs):
+        # settings.SITE.logger.info(
+        #     "20160529 window_action_button %s %s", args, self.renderer)
         return self.renderer.window_action_button(self, *args, **kwargs)
 
     def row_action_button(self, obj, ba, *args, **kwargs):

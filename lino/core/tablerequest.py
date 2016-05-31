@@ -401,10 +401,12 @@ class TableRequest(ActionRequest):
         tble.attrib.setdefault('name', self.bound_action.full_name())
 
         grid = ar.ah.list_layout.main
+        # from lino.core.widgets import GridWidget
+        # if not isinstance(grid, GridWidget):
+        #     raise Exception("20160529 %r is not a GridElement", grid)
         columns = grid.columns
         fields, headers, cellwidths = ar.get_field_info(column_names)
         columns = fields
-        #~ print 20130330, cellwidths
 
         headers = [
             x for x in grid.headers2html(
@@ -450,6 +452,9 @@ class TableRequest(ActionRequest):
         <lino.core.actors.Actor.override_column_headers>` method.
 
         """
+        from lino.core.widgets import with_user_profile
+        from lino.core.layouts import ColumnsLayout
+
         def getit():
 
             if ar.request is None:
@@ -480,19 +485,24 @@ class TableRequest(ActionRequest):
                         widths.append(int(all_widths[i]))
             else:
                 if column_names:
-                    from lino.core.layouts import ColumnsLayout
                     ll = ColumnsLayout(column_names, datasource=ar.actor)
                     lh = ll.get_layout_handle(settings.SITE.kernel.default_ui)
                     columns = lh.main.columns
                     columns = [e for e in columns if not e.hidden]
                 else:
                     ah = ar.actor.get_request_handle(ar)
+                    
                     columns = ah.list_layout.main.columns
+                    # print(20160530, ah, columns, ah.list_layout.main)
 
                 # render them so that babelfields in hidden_languages
                 # get hidden:
                 for e in columns:
                     e.value = e.ext_options()
+                    # try:
+                    #     e.value = e.ext_options()
+                    # except AttributeError as ex:
+                    #     raise AttributeError("20160529 %s : %s" % (e, ex))
                 #
                 columns = [e for e in columns if not
                            e.value.get('hidden', False)]
@@ -521,7 +531,7 @@ class TableRequest(ActionRequest):
         if u is None:
             return getit()
         else:
-            return jsgen.with_user_profile(u.profile, getit)
+            return with_user_profile(u.profile, getit)
 
     def row2html(self, recno, columns, row, sums, **cellattrs):
         has_numeric_value = False
@@ -548,9 +558,11 @@ class TableRequest(ActionRequest):
         `fields` and collecting sums into `sums`.
 
         """
+        # print(20160530, fields)
         for i, fld in enumerate(fields):
             if fld.field is not None:
                 sf = get_atomizer(row.__class__, fld.field, fld.field.name)
+                # print(20160530, fld.field.name, sf)
                 if False:
                     try:
                         getter = sf.full_value_from_object

@@ -45,6 +45,7 @@ from lino.core.signals import on_ui_created, pre_ui_delete, pre_ui_save
 from lino.core.utils import ChangeWatcher
 from lino.core.permissions import Permittable
 from lino.core.utils import Parametrizable, InstanceAction
+from lino.core.widgets import get_user_profile
 # from lino.modlib.users.choicelists import SiteUser
 from lino.utils.choosers import Chooser
 from lino.utils.xmlgen.html import E
@@ -1155,7 +1156,7 @@ def action(*args, **kw):
 def get_view_permission(e):
     from lino.utils import jsgen
     if isinstance(e, Permittable) and not e.get_view_permission(
-            jsgen._for_user_profile):
+            get_user_profile()):
         return False
     # e.g. pcsw.ClientDetail has a tab "Other", visible only to system
     # admins but the "Other" contains a GridElement RolesByPerson
@@ -1164,7 +1165,7 @@ def get_view_permission(e):
     parent = e.parent
     while parent is not None:
         if isinstance(parent, Permittable) and not parent.get_view_permission(
-                jsgen._for_user_profile):
+                get_user_profile()):
             return False  # bug 3 (bcss_summary) blog/2012/0927
         parent = parent.parent
     return True
