@@ -412,6 +412,9 @@ class FieldWidget(Widget):
         return self.field._lino_atomizer.format_value(ar, v)
 
     def sum2html(self, ar, sums, i, **cellattrs):
+        """Return a `<td>` element to be used in the total footer row.
+
+        """
         return E.td(self.format_sum(ar, sums, i), **cellattrs)
 
     def format_sum(self, ar, sums, i):
@@ -419,14 +422,14 @@ class FieldWidget(Widget):
         column.
 
         :ar: the action request
-        :sums: a list of sum values for all columns of this `ar`
+        :sums: a dict of sum values for all columns of this `ar`
         :i: the index of this field in `sums`
 
         """
-        if i == 0:
-            return E.b(ar.get_sum_text())
-        if sums[i]:
-            return E.b(self.format_value(ar, sums[i]))
+        if i == ar.actor.sum_text_column:
+            return E.b(ar.get_sum_text(sums))
+        if sums[self.name]:
+            return E.b(self.format_value(ar, sums[self.name]))
         return ''
 
     def value2num(self, v):
@@ -713,7 +716,7 @@ class NumberFieldWidget(FieldWidget):
         # logger.info("20130119 apply_cell_format %s",etree.tostring(e))
 
     def format_sum(self, ar, sums, i):
-        return E.b(self.format_value(ar, sums[i]))
+        return E.b(self.format_value(ar, sums[self.name]))
 
     def value2num(self, v):
         return v
@@ -765,7 +768,7 @@ class RequestFieldWidget(IntegerFieldWidget):
 
     def format_sum(self, ar, sums, i):
         # return self.format_value(ar,sums[i])
-        return E.b(str(sums[i]))
+        return E.b(str(sums[self.name]))
 
 
 class AutoFieldWidget(NumberFieldWidget):

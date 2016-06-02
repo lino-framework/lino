@@ -2,7 +2,9 @@
 # Copyright 2015-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""A selection of names to be used in tested documents."""
+"""A selection of names to be used in tested documents.
+"""
+
 from __future__ import print_function
 
 
@@ -207,3 +209,12 @@ def noblanklines(s):
 
     """
     return '\n'.join([ln for ln in s.splitlines() if ln.strip()])
+
+
+def show_choices(username, url):
+    """Print the choices returned via web client."""
+    response = test_client.get(url, REMOTE_USER=username)
+    result = json.loads(response.content)
+    for r in result['rows']:
+        print(r['text'])
+        # print(r['value'], r['text'])

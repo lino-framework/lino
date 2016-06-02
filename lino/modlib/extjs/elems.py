@@ -468,8 +468,9 @@ class TextFieldElement(TextFieldWidget, FieldElement):
                 kw.update(containing_panel=js_code("this"))
                 # kw.update(title=unicode(field.verbose_name)) 20111111
                 kw.update(title=field.verbose_name)
-                return LayoutElement.__init__(
-                    self, layout_handle, field.name, **kw)
+                LayoutElement.__init__(self, layout_handle, field.name)
+                FieldWidget.__init__(self, layout_handle, field, **kw)
+                return
             else:
                 self.value_template = "new Ext.form.HtmlEditor(%s)"
                 if settings.SITE.use_vinylfox:
@@ -486,7 +487,9 @@ class TextFieldElement(TextFieldWidget, FieldElement):
             raise Exception(
                 "Invalid textfield format %r for field %s.%s" % (
                     self.format, field.model.__name__, field.name))
-        FieldElement.__init__(self, layout_handle, field, **kw)
+        FieldElement.__init__(self, layout_handle, field)
+        TextFieldWidget.__init__(self, layout_handle, field)
+        self.setup(**kw)
 
 
 class CharFieldElement(FieldElement, CharFieldWidget):
