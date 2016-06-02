@@ -267,8 +267,6 @@ def choices_response(actor, request, qs, row2dict, emptyValue):
     quick_search = request.GET.get(constants.URL_PARAM_FILTER, None)
     if quick_search and isinstance(qs, models.QuerySet):
         qs = qs.filter(qs.model.quick_search_filter(quick_search))
-        # qs = qs.model.add_quick_search_filter(qs, quick_search)
-        # qs = actor.add_quick_search_filter(qs, quick_search)
     count = len(qs)
 
     offset = request.GET.get(constants.URL_PARAM_START, None)
@@ -281,6 +279,7 @@ def choices_response(actor, request, qs, row2dict, emptyValue):
         qs = qs[:int(limit)]
 
     rows = [row2dict(row, {}) for row in qs]
+
     if quick_search and isinstance(qs, list):
         txt = quick_search.lower()
         rows = [row for row in rows

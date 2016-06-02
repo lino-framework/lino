@@ -64,7 +64,7 @@ from lino.core.renderer import HtmlRenderer, TextRenderer
 from lino.core.signals import (pre_ui_build, post_ui_build,
                                pre_analyze, post_analyze)
 
-from .widgets import WidgetFactory
+# from .widgets import WidgetFactory
 from .plugin import Plugin
 from .ddh import DisableDeleteHandler
 from .utils import resolve_model
@@ -191,7 +191,7 @@ class Kernel(object):
         self.pending_threads = {}
         self.site = site
         self.GFK_LIST = []
-        self.widgets = WidgetFactory()
+        # self.widgets = WidgetFactory()
 
         # self.kernel_startup(site)
         # logger.info("20140227 Kernel.__init__() done")
