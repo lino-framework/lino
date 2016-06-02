@@ -65,7 +65,7 @@ from lino.core.widgets import (
     NumberFieldWidget, QuantityFieldWidget,
     AutoFieldWidget, RequestFieldWidget, DisplayWidget,
     GenericForeignKeyWidget, HtmlBoxWidget,
-    ContainerWidget, PanelWidget, TabPanelWidget,
+    WrapperWidget, ContainerWidget, PanelWidget, TabPanelWidget,
     DetailMainPanelWidget, ParamsPanelWidget, ActionParamsPanelWidget,
     SlaveSummaryWidget,
     ManyRelatedObjectWidget, ManyToManyWidget, SingleRelatedObjectWidget)
@@ -1042,7 +1042,7 @@ class HtmlBoxElement(HtmlBoxWidget, DisplayElement):
         return kw
 
 
-class Wrapper(VisibleComponent):
+class Wrapper(WrapperWidget, VisibleComponent):
 
     """
     """
@@ -1054,24 +1054,14 @@ class Wrapper(VisibleComponent):
             kw.update(autoHeight=True)
         kw.update(labelAlign=e.parent.label_align)
         kw.update(items=e, xtype='panel')
-        VisibleComponent.__init__(self, None, e.name + "_ct", **kw)
-        self.wrapped = e
-        for n in ('width', 'height', 'preferred_width', 'preferred_height',
-                  # 'loosen_requirements'
-                  'vflex'):
-            setattr(self, n, getattr(e, n))
-
+        WrapperWidget.__init__(self, e)
+        VisibleComponent.__init__(self, None, self.name)
+        self.setup(**kw)
         if e.vflex:
             e.update(anchor=FULLWIDTH + ' ' + FULLHEIGHT)
         else:
             e.update(anchor=FULLWIDTH)
             e.update(autoHeight=True)  # 20130924
-
-    def is_visible(self):
-        return self.wrapped.is_visible()
-
-    def get_view_permission(self, profile):
-        return self.wrapped.get_view_permission(profile)
 
     def walk(self):
         if not self.is_visible():
@@ -1079,10 +1069,6 @@ class Wrapper(VisibleComponent):
         for e in self.wrapped.walk():
             yield e
         yield self
-
-    def as_plain_html(self, ar, obj):
-        for chunk in self.wrapped.as_plain_html(ar, obj):
-            yield chunk
 
     def ext_options(self, **kw):
         kw = super(Wrapper, self).ext_options(**kw)

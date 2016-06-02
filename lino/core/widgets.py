@@ -94,18 +94,17 @@ class Widget(Permittable):
     label_width = 0
     parent = None  # will be set by Container
 
-    def __init__(self, layout_handle, name, **kwargs):
+    # def __init__(self, layout_handle, name, **kwargs):
+    def __init__(self, layout_handle, name, label=None, required_roles=None):
+        # assert not kwargs
         self.layout_handle = layout_handle
         self.name = name
-        # new since 20121130. theoretically better
-        if 'required_roles' in kwargs:
-            assert isinstance(kwargs['required_roles'], set)
+        if required_roles is None:
+            required_roles = set()
+            required_roles |= self.required_roles
         else:
-            required = set()
-            required |= self.required_roles
-            kwargs.update(required_roles=required)
-
-        self.setup(**kwargs)
+            assert isinstance(required_roles, set)
+        self.required_roles = required_roles
 
     def __repr__(self):
         return "{0} {2} in {1}".format(
@@ -211,6 +210,26 @@ class Widget(Permittable):
 
     def apply_cell_format(self, e):
         pass
+
+
+class WrapperWidget(Widget):
+    def __init__(self, wrapped):
+        self.wrapped = wrapped
+        Widget.__init__(self, None, wrapped.name + "_ct")
+        for n in ('width', 'height', 'preferred_width', 'preferred_height',
+                  # 'loosen_requirements'
+                  'vflex'):
+            setattr(self, n, getattr(wrapped, n))
+
+    def is_visible(self):
+        return self.wrapped.is_visible()
+
+    def get_view_permission(self, profile):
+        return self.wrapped.get_view_permission(profile)
+
+    def as_plain_html(self, ar, obj):
+        for chunk in self.wrapped.as_plain_html(ar, obj):
+            yield chunk
 
 
 class ContainerWidget(Widget):
