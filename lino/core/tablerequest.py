@@ -452,7 +452,7 @@ class TableRequest(ActionRequest):
         <lino.core.actors.Actor.override_column_headers>` method.
 
         """
-        from lino.core.widgets import with_user_profile
+        from lino.utils.jsgen import with_user_profile
         from lino.core.layouts import ColumnsLayout
 
         def getit():
@@ -588,6 +588,7 @@ class TableRequest(ActionRequest):
                     yield fld.format_value(self, v)
 
     def sums2html(self, columns, sums, **cellattrs):
+        sums = {fld.name: sums[i] for i, fld in enumerate(columns)}
         return [fld.sum2html(self, sums, i, **cellattrs)
                 for i, fld in enumerate(columns)]
 

@@ -7,7 +7,7 @@ See introduction in :doc:`/dev/ar`.
 .. autosummary::
 
 """
-# from builtins import str
+from builtins import str
 from builtins import object
 import six
 
@@ -365,6 +365,8 @@ request from it.
             fdf=dd.fdf,
             fdmy=dd.fdmy,
             iif=iif,
+            unicode=str,  # backwards-compatibility. In new template
+                          # you should prefer `str`.
             pgettext=pgettext,
             now=timezone.now(),
             getattr=getattr,
@@ -1034,8 +1036,8 @@ class ActorRequest(BaseRequest):
     def summary_row(self, *args, **kw):
         return self.actor.summary_row(self, *args, **kw)
 
-    def get_sum_text(self):
-        return self.actor.get_sum_text(self)
+    def get_sum_text(self, sums):
+        return self.actor.get_sum_text(self, sums)
 
     def get_row_by_pk(self, pk):
         return self.actor.get_row_by_pk(self, pk)
