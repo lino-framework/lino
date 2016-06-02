@@ -713,7 +713,7 @@ class Table(AbstractTable):
             qs = qs.exclude(**self.exclude)
             # TODO: use Q object instead of dict
 
-        if rr.quick_search is not None:
+        if rr.quick_search:
             qs = self.add_quick_search_filter(qs, rr.quick_search)
         if rr.gridfilters is not None:
             qs = add_gridfilters(qs, rr.gridfilters)

@@ -125,6 +125,9 @@ class LayoutHandle(object):
     def __str__(self):
         return "%s for %s" % (self.__class__.__name__, self.layout)
 
+    def __getitem__(self, name):
+        return self._names[name]
+
     def add_store_field(self, field):
         self._store_fields.append(field)
 

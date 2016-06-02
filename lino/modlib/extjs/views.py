@@ -265,8 +265,8 @@ def choices_for_field(request, holder, field):
 
 def choices_response(actor, request, qs, row2dict, emptyValue):
     quick_search = request.GET.get(constants.URL_PARAM_FILTER, None)
-    if quick_search is not None:
-        qs = actor.add_quick_search_filter(qs, quick_search)
+    if quick_search and isinstance(qs, models.QuerySet):
+        qs = qs.filter(qs.model.quick_search_filter(quick_search))
 
     count = len(qs)
 
@@ -280,7 +280,13 @@ def choices_response(actor, request, qs, row2dict, emptyValue):
         qs = qs[:int(limit)]
 
     rows = [row2dict(row, {}) for row in qs]
-    if emptyValue is not None:  # 20121203
+
+    if quick_search and isinstance(qs, list):
+        txt = quick_search.lower()
+        rows = [row for row in rows
+                if txt in row[constants.CHOICES_TEXT_FIELD].lower()]
+
+    if emptyValue and not quick_search:
         empty = dict()
         empty[constants.CHOICES_TEXT_FIELD] = emptyValue
         empty[constants.CHOICES_VALUE_FIELD] = None

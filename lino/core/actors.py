@@ -517,6 +517,12 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     Set this to `True` to prevent Lino from generating useless
     JavaScript if this is just an abstract base class to be inherited
     by other actors.
+
+    """
+    sum_text_column = 0
+    """The index of the column which should hold the text to display on
+    the totals row (returned by :meth:`get_sum_text`).
+
     """
 
     @classmethod
@@ -1033,7 +1039,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         return kwargs
 
     @classmethod
-    def get_sum_text(self, ar):
+    def get_sum_text(self, ar, sums):
         """
         Return the text to display on the totals row.
         """

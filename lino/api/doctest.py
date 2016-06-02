@@ -207,3 +207,12 @@ def noblanklines(s):
 
     """
     return '\n'.join([ln for ln in s.splitlines() if ln.strip()])
+
+
+def show_choices(username, url):
+    """Print the choices returned via web client."""
+    response = test_client.get(url, REMOTE_USER=username)
+    result = json.loads(response.content)
+    for r in result['rows']:
+        print(r['text'])
+        # print(r['value'], r['text'])
