@@ -452,7 +452,7 @@ class TableRequest(ActionRequest):
         <lino.core.actors.Actor.override_column_headers>` method.
 
         """
-        from lino.core.widgets import with_user_profile
+        from lino.utils.jsgen import with_user_profile
         from lino.core.layouts import ColumnsLayout
 
         def getit():
