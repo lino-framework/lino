@@ -613,9 +613,9 @@ class FieldElement(LayoutElement):
 
         """
         if i == 0:
-            return E.b(ar.get_sum_text())
-        if sums[i]:
-            return E.b(self.format_value(ar, sums[i]))
+            return E.b(ar.get_sum_text(sums))
+        if sums[self.name]:
+            return E.b(self.format_value(ar, sums[self.name]))
         return ''
 
     def value2num(self, v):
@@ -1020,7 +1020,7 @@ class NumberFieldElement(FieldElement):
         # logger.info("20130119 apply_cell_format %s",etree.tostring(e))
 
     def format_sum(self, ar, sums, i):
-        return E.b(self.format_value(ar, sums[i]))
+        return E.b(self.format_value(ar, sums[self.name]))
 
     def value2num(self, v):
         return v
@@ -1107,7 +1107,7 @@ class RequestFieldElement(IntegerFieldElement):
 
     def format_sum(self, ar, sums, i):
         # return self.format_value(ar,sums[i])
-        return E.b(str(sums[i]))
+        return E.b(str(sums[self.name]))
 
 
 class DecimalFieldElement(NumberFieldElement):
@@ -1205,7 +1205,7 @@ class BooleanMixin(object):
 
     """
     def unused_format_sum(self, ar, sums, i):
-        return E.b(str(sums[i]))
+        return E.b(str(sums[self.name]))
 
     def unused_value2num(self, v):
         """TODO: Should booelan fields sum like a numeric field with value 1
