@@ -612,7 +612,7 @@ class FieldElement(LayoutElement):
         :i: the index of this field in `sums`
 
         """
-        if i == 0:
+        if i == ar.actor.sum_text_column:
             return E.b(ar.get_sum_text(sums))
         if sums[self.name]:
             return E.b(self.format_value(ar, sums[self.name]))
