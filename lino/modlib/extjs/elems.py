@@ -65,7 +65,7 @@ from lino.core.widgets import (
     NumberFieldWidget, QuantityFieldWidget,
     AutoFieldWidget, RequestFieldWidget, DisplayWidget,
     GenericForeignKeyWidget, HtmlBoxWidget,
-    WrapperWidget, ContainerWidget, PanelWidget, TabPanelWidget,
+    ContainerWidget, PanelWidget, TabPanelWidget,
     DetailMainPanelWidget, ParamsPanelWidget, ActionParamsPanelWidget,
     SlaveSummaryWidget,
     ManyRelatedObjectWidget, ManyToManyWidget, SingleRelatedObjectWidget)
@@ -365,10 +365,19 @@ class FieldElement(LayoutElement, FieldWidget):
                     kw, field.help_text, field.verbose_name,
                     layout_handle.layout._datasource, field.name)
 
+        self.add_default_value(kw)
         self.setup(**kw)
 
         # if self.field.__class__.__name__ == "DcAmountField":
             # print 20130911, self.field, self.editable
+
+    def add_default_value(self, kw):
+        if self.field.has_default():
+            dv = self.field.default
+            if callable(dv):
+                return
+                # dv = dv()
+            kw.update(value=dv)
 
     def get_column_options(self, **kw):
         # raise "get_column_options() %s" % self.__class__
@@ -998,13 +1007,17 @@ class SingleRelatedObjectElement(SingleRelatedObjectWidget, DisplayElement):
     i.e. the other side of a `OneToOneField`.
 
     """
-    pass
+    def add_default_value(self, kw):
+        pass
 
 
 class GenericForeignKeyElement(GenericForeignKeyWidget, DisplayElement):
     def __init__(self, lh, field, **kw):
         DisplayElement.__init__(self, lh, field)
         GenericForeignKeyWidget.__init__(self, lh, field)
+
+    def add_default_value(self, kw):
+        pass
 
 
 class RecurrenceElement(DisplayElement):
@@ -1042,21 +1055,26 @@ class HtmlBoxElement(HtmlBoxWidget, DisplayElement):
         return kw
 
 
-class Wrapper(WrapperWidget, VisibleComponent):
+class Wrapper(VisibleComponent):
 
     """
     """
     # label = None
 
     def __init__(self, e, **kw):
+        self.wrapped = e
+
         kw.update(layout='form')
         if not isinstance(e, TextFieldElement):
             kw.update(autoHeight=True)
         kw.update(labelAlign=e.parent.label_align)
         kw.update(items=e, xtype='panel')
-        WrapperWidget.__init__(self, e)
-        VisibleComponent.__init__(self, None, self.name)
+        VisibleComponent.__init__(self, None, e.name + "_ct")
         self.setup(**kw)
+        for n in ('width', 'height', 'preferred_width', 'preferred_height',
+                  # 'loosen_requirements'
+                  'vflex'):
+            setattr(self, n, getattr(wrapped, n))
         if e.vflex:
             e.update(anchor=FULLWIDTH + ' ' + FULLHEIGHT)
         else:

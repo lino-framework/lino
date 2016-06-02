@@ -212,24 +212,24 @@ class Widget(Permittable):
         pass
 
 
-class WrapperWidget(Widget):
-    def __init__(self, wrapped):
-        self.wrapped = wrapped
-        Widget.__init__(self, None, wrapped.name + "_ct")
-        for n in ('width', 'height', 'preferred_width', 'preferred_height',
-                  # 'loosen_requirements'
-                  'vflex'):
-            setattr(self, n, getattr(wrapped, n))
+# class WrapperWidget(Widget):
+#     def __init__(self, wrapped):
+#         self.wrapped = wrapped
+#         Widget.__init__(self, None, wrapped.name + "_ct")
+#         for n in ('width', 'height', 'preferred_width', 'preferred_height',
+#                   # 'loosen_requirements'
+#                   'vflex'):
+#             setattr(self, n, getattr(wrapped, n))
 
-    def is_visible(self):
-        return self.wrapped.is_visible()
+#     def is_visible(self):
+#         return self.wrapped.is_visible()
 
-    def get_view_permission(self, profile):
-        return self.wrapped.get_view_permission(profile)
+#     def get_view_permission(self, profile):
+#         return self.wrapped.get_view_permission(profile)
 
-    def as_plain_html(self, ar, obj):
-        for chunk in self.wrapped.as_plain_html(ar, obj):
-            yield chunk
+#     def as_plain_html(self, ar, obj):
+#         for chunk in self.wrapped.as_plain_html(ar, obj):
+#             yield chunk
 
 
 class ContainerWidget(Widget):
@@ -380,16 +380,7 @@ class FieldWidget(Widget):
         self.field = field
         self.editable = field.editable  # and not field.primary_key
         kw.setdefault('label', field.verbose_name)
-        self.add_default_value(kw)
         Widget.__init__(self, lh, field.name, **kw)
-
-    def add_default_value(self, kw):
-        if self.field.has_default():
-            dv = self.field.default
-            if callable(dv):
-                return
-                # dv = dv()
-            kw.update(value=dv)
 
     def value_from_object(self, obj, ar):
         """
@@ -543,9 +534,6 @@ class GenericForeignKeyWidget(DisplayWidget):
         kw.update(label=getattr(field, 'verbose_name', None) or field.name)
         FieldWidget.__init__(self, lh, field, **kw)
 
-    def add_default_value(self, kw):
-        pass
-
 
 class SingleRelatedObjectWidget(DisplayWidget):
     def __init__(self, lh, relobj, **kw):
@@ -568,9 +556,6 @@ class SingleRelatedObjectWidget(DisplayWidget):
         # self.preferred_width = self.field.preferred_width
         # if self.field.max_length:
             # self.preferred_width = self.field.max_length
-
-    def add_default_value(self, kw):
-        pass
 
 
 class HtmlBoxWidget(DisplayWidget):

@@ -33,8 +33,8 @@ LABEL_ALIGN_RIGHT = 'right'
 
 
 def DEBUG_LAYOUTS(lo):
-    #~ if lo._table.__name__ == 'Users':
-        #~ return True
+    # if lo._table.__name__ == 'Users':
+        # return True
     return False
 
 
@@ -63,7 +63,7 @@ class Panel(object):
     """
 
     def __init__(self, desc, label=None, **options):
-        assert not 'required' in options
+        assert 'required' not in options
         self.desc = desc
         if label is not None:
             options.update(label=label)
@@ -76,14 +76,14 @@ class Panel(object):
         """
         self.desc = self.desc.replace(*args, **kw)
 
-    #~ def remove_element(self,*args):
-        #~ """
-        #~ Removes specified element names from this Panel's `main` template.
-        #~ """
-        #~ for name in args:
-            #~ if not name in self.desc:
-                #~ raise Exception("Panel has no element '%s'" % name)
-            #~ self.desc = self.desc.replace(name,'')
+    # def remove_element(self,*args):
+        # """
+        # Removes specified element names from this Panel's `main` template.
+        # """
+        # for name in args:
+            # if not name in self.desc:
+                # raise Exception("Panel has no element '%s'" % name)
+            # self.desc = self.desc.replace(name,'')
 
 
 class LayoutHandle(object):
@@ -232,10 +232,9 @@ class LayoutHandle(object):
 
     def __getitem__(self, name):
         return self._names[name]
-        
 
     def create_element(self, desc_name):
-        #~ logger.debug("create_element(%r)", desc_name)
+        # logger.debug("create_element(%r)", desc_name)
         name, options = self.splitdesc(desc_name)
         if name in self._names:
             raise Exception(
@@ -354,22 +353,22 @@ class BaseLayout(object):
         """
         datasource is either an actor or an action.
         """
-        self._labels = self.override_labels()
+        self._labels = dict()
         self._added_panels = dict()
         self._other_datasources = set()
-        #~ self._window_size = window_size
+        # self._window_size = window_size
         self.hidden_elements = hidden_elements or set()
         self._element_options = dict()
         if main is not None:
             self.main = main
-        #~ elif not hasattr(self,'main'):
+        # elif not hasattr(self,'main'):
         elif self.main is None:
             raise Exception(
                 "Cannot instantiate %s without `main`." % self.__class__)
         self.set_datasource(datasource)
         for k, v in list(kw.items()):
-            #~ if not hasattr(self,k):
-                #~ raise Exception("Got unexpected keyword %s=%r" % (k,v))
+            # if not hasattr(self,k):
+                # raise Exception("Got unexpected keyword %s=%r" % (k,v))
             setattr(self, k, v)
 
     def set_datasource(self, ds):
@@ -379,14 +378,11 @@ class BaseLayout(object):
                 self.hidden_elements = set(fields_list(
                     ds, self.hidden_elements))
             self.hidden_elements = self.hidden_elements | ds.hidden_elements
-            #~ if str(ds).endswith('Partners'):
-                #~ print "20130124 set_datasource ", self,self.hidden_elements
+            # if str(ds).endswith('Partners'):
+                # print "20130124 set_datasource ", self,self.hidden_elements
 
     def get_chooser_holder(self):
         return self._datasource
-
-    def override_labels(self):
-        return dict()
 
     def get_data_elem(self, name):
         return self._datasource.get_data_elem(name)
@@ -408,7 +404,7 @@ class BaseLayout(object):
         """Update the template of one or more panels.
 
         """
-        for k, v in list(kw.items()):
+        for k, v in kw.items():
             if DEBUG_LAYOUTS(self):
                 msg = """\
 In %s, updating attribute %r:
@@ -431,14 +427,14 @@ In %s, updating attribute %r:
         - `label` an optional label
         - any further keyword are passed as options to the new panel
         """
-        #~ if hasattr(self,'_extjs3_handle'):
-            #~ raise Exception("Cannot update for layout after UI has been set up.")
+        # if hasattr(self,'_extjs3_handle'):
+            # raise Exception("Cannot update for layout after UI has been set up.")
         if '\n' in name:
             raise Exception("name may not contain any newline")
         if ' ' in name:
             raise Exception("name may not contain any whitespace")
-        #~ if getattr(self,name,None) is not None:
-            #~ raise Exception("name %r already defined in %s" % (name,self))
+        # if getattr(self,name,None) is not None:
+            # raise Exception("name %r already defined in %s" % (name,self))
         self._add_panel(name, tpl, label, options)
 
     def _add_panel(self, name, tpl, label, options):
@@ -472,9 +468,9 @@ Adding panel %r to %s ---:
         - `tpl` the template string
         - `label` an optional label
         """
-        #~ print "20120526 add_detail_tab", self, name
-        #~ if hasattr(self,'_extjs3_handle'):
-            #~ raise Exception("Cannot update form layout after UI has been set up.")
+        # print "20120526 add_detail_tab", self, name
+        # if hasattr(self,'_extjs3_handle'):
+            # raise Exception("Cannot update form layout after UI has been set up.")
         if '\n' in name:
             raise Exception("name may not contain any newline")
         if ' ' in name:
@@ -497,16 +493,8 @@ New 'main' panel is %r"""
                 msg = """\
 add_tabpanel() on %s horizontal 'main' panel %r."""
                 logger.info(msg, self, self.main)
-        #~ if tpl is not None:
+        # if tpl is not None:
         self._add_panel(name, tpl, label, options)
-            #~ self._add_panel(name,tpl)
-            #~ setattr(self,name,tpl)
-            # ~ self._added_panels[name] = tpl # 20120914c
-        #~ if label is not None:
-            #~ self._labels[name] = label
-        #~ self._element_options[name] = options
-        #~ if kw:
-            #~ print 20120525, self, self.detail_layout._element_options
 
     def get_layout_handle(self, ui):
         """
@@ -522,6 +510,7 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
         if h is None:
             # if str(self._datasource) == 'courses.Pupils':
             # print("20160329 layouts.py make handle", self._datasource)
+            self.compile_layout()
             h = LayoutHandle(self, ui)
             setattr(self, hname, h)
         return h
