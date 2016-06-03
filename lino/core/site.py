@@ -807,8 +807,8 @@ class Site(object):
 
     """
 
-    default_ui = 'lino_extjs6.extjs6'
-    # default_ui = 'lino.modlib.extjs'
+    # default_ui = 'lino_extjs6.extjs6'
+    default_ui = 'lino.modlib.extjs'
     """The full Python name of the plugin which is to be used as default
     user interface on this :class:`Site`.
 
