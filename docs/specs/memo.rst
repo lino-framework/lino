@@ -15,8 +15,6 @@ Memo commands
     >>> from lino import startup
     >>> startup('lino_noi.projects.team.settings.demo')
     >>> from lino.api.doctest import *
-    >>> rt.startup()
-    >>> ses = rt.login(renderer=dd.plugins.extjs.renderer)
 
 The :attr:`description
 <lino_noi.lib.tickets.models.Ticket.description>` of a ticket is a
@@ -40,6 +38,7 @@ Usage examples:
 - ``[url http://www.example.com example]``
 
 ..  test:
+    >>> ses = rt.login()
     >>> print(ses.parse_memo("See [url http://www.example.com]."))
     See <a href="http://www.example.com" target="_blank">http://www.example.com</a>.
     >>> print(ses.parse_memo("See [url http://www.example.com example]."))
@@ -54,10 +53,11 @@ Refer to a ticket. Usage example:
   See ``[ticket 1]``.
 
 Note that the current renderer decides how to render the link. For
-example, the default user interface :mod:`lino.modlib.extjs` will
-render it like this:
+example, the default user interface :mod:`lino.modlib.extjs` (or
+:mod:`lino_extjs6.extjs6`, depending on our :attr:`default_ui
+<lino.core.site.Site.default_ui>` setting) will render it like this:
 
->>> ses = rt.login(renderer=dd.plugins.extjs.renderer)
+>>> ses = rt.login(renderer=settings.SITE.kernel.default_ui.renderer)
 >>> print(ses.parse_memo("See [ticket 1]."))
 See <a href="javascript:Lino.tickets.Tickets.detail.run(null,{ &quot;record_id&quot;: 1 })" title="F&#246;&#246; fails to bar when baz">#1</a>.
 
