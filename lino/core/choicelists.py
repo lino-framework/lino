@@ -70,6 +70,7 @@ from lino.core import actions
 from lino.core import actors
 from lino.core import tables
 from lino.core import fields
+from lino.core.exceptions import UnresolvedChoice
 
 
 STRICT = True
@@ -492,8 +493,10 @@ Django creates copies of them when inheriting models.
         v = cls.items_dict.get(value)
         if v is None:
             if settings.SITE.strict_choicelist_values:
-                raise Exception(
-                    "Unresolved value %r (%s) for %s" % (
+                raise UnresolvedChoice(
+                    "Unresolved value %r (%s) for %s (set "
+                    "Site.strict_choicelist_values to False "
+                    "to ignore this)" % (
                         value, value.__class__, cls))
             else:
                 return UnresolvedValue(cls, value)

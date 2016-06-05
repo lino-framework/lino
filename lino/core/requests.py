@@ -1181,6 +1181,10 @@ class ActionRequest(ActorRequest):
                     pv[self.actor.master_key] = self.master_instance
             if param_values is None:
                 if request is not None:
+                    # call get_layout_handle to make sure that
+                    # params_store has been created:
+                    self.actor.params_layout.get_layout_handle(
+                        self.renderer.plugin)
                     ps = self.actor.params_layout.params_store
                     # print('20160329 requests.py', ps, self.actor.parameters)
                     if ps is not None:

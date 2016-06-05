@@ -41,7 +41,7 @@ class UpdateSummary(dd.Action):
 class UpdateSummariesByMaster(dd.Action):
     """
     """
-    icon_name = 'bell'
+    icon_name = 'lightning'
     label = _("Update summary data for this object")
 
     def __init__(self, master_model, summary_models):
