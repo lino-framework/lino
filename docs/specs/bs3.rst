@@ -28,9 +28,17 @@ This does not use :mod:`lino.modlib.extjs` at all.
 .. contents::
   :local:
 
+.. The following was used to reproduce :ticket:`960`:
+
+    >>> res = test_client.get('/tickets/Ticket/13')
+    >>> res.status_code
+    200
+
+
 
 Unassigned tickets
 ==================
+
 
 The demo database contains the following data:
 
