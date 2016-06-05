@@ -17,8 +17,8 @@
 # License along with Lino Noi.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-"""
-The main plugin for Lino Noi.
+"""An experimental plugin which provides a customized public vire for
+Lino Noi. Not used in reality.
 
 .. autosummary::
    :toctree:
