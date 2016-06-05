@@ -15,14 +15,12 @@ Experimental interface to Team using Bootstrap and self-made URLs
     >>> from lino.api.doctest import *
 
 This document describes the :mod:`lino_noi.projects.public` variant of
-:ref:`noi`.
-
-This variant provides readonly anonymous access to the data of
+:ref:`noi` which provides readonly anonymous access to the data of
 :mod:`lino_noi.projects.team` using the :mod:`lino_noi.lib.public`
 user interface.
 
-The :mod:`lino_noi.lib.public` user interface. is yet another way of
-providing read-only anonymous access.  But it is experimental.  But
+The :mod:`lino_noi.lib.public` user interface is yet another way of
+providing read-only anonymous access.  But it is experimental,
 currently we recommend :ref:`noi.specs.bs3`
 
 
@@ -69,7 +67,7 @@ The home page:
 >>> soup = BeautifulSoup(res.content)
 >>> print(soup.get_text(' ', strip=True))
 ... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF +ELLIPSIS
-Home en de fr #13 (Bar cannot foo) State: Done  
+Home en de fr #13 Bar cannot foo State: Done  
 <BLANKLINE>
 <BLANKLINE>
 (last update ...) Reported by: Rolf Rompen ... Topic: Lino Cosi Linking to [ticket 1] and to
