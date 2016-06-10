@@ -25,10 +25,6 @@ from django.db.models.query import QuerySet
 
 from django.apps import apps
 get_models = apps.get_models
-# if settings.SITE.is_installed('contenttypes'):
-#     from django.contrib.contenttypes.models import ContentType
-# else:
-#     ContentType = None
 
 from lino.core import fields
 from lino.core import actions
@@ -48,9 +44,9 @@ INVALID_MK = "Invalid master_key '{0}' in {1} : {2}"
 
 
 def base_attrs(cl):
-    #~ if cl is Table or len(cl.__bases__) == 0:
-        #~ return
-    #~ myattrs = set(cl.__dict__.keys())
+    # if cl is Table or len(cl.__bases__) == 0:
+        # return
+    # myattrs = set(cl.__dict__.keys())
     for b in cl.__bases__:
         for k in base_attrs(b):
             yield k
@@ -59,19 +55,20 @@ def base_attrs(cl):
 
 
 def add_gridfilters(qs, gridfilters):
-    """
-    Converts a `filter` request in the format used by :extux:`Ext.ux.grid.GridFilters` into a
-    `Django field lookup <http://docs.djangoproject.com/en/1.2/ref/models/querysets/#field-lookups>`_
+    """Converts a `filter` request in the format used by
+    :extux:`Ext.ux.grid.GridFilters` into a `Django field lookup
+    <http://docs.djangoproject.com/en/1.2/ref/models/querysets/#field-lookups>`_
     on a :class:`django.db.models.query.QuerySet`.
 
     :param qs: the queryset to be modified.
-    :param gridfilters: a list of dictionaries, each having 3 keys `field`, `type` and `value`.
+    :param gridfilters: a list of dictionaries, each having 3 keys
+                        `field`, `type` and `value`.
 
     """
     if not isinstance(qs, QuerySet):
         raise NotImplementedError('TODO: filter also simple lists')
     q = models.Q()
-    # print(20150506, gridfilters)
+    # print(20160610, gridfilters)
     for flt in gridfilters:
         field = get_field(qs.model, flt['field'])
         flttype = flt['type']
@@ -81,15 +78,17 @@ def add_gridfilters(qs, gridfilters):
                 kw[field.name + "__icontains"] = flt['value']
                 q = q & models.Q(**kw)
             elif isinstance(field, models.ForeignKey):
-                q = q & field.rel.model.quick_search_filter(
+                qf = field.rel.model.quick_search_filter(
                     flt['value'], field.name + "__")
-                #~ rq = models.Q()
-                #~ search_field = field.rel.model.grid_search_field
-                #~ for search_field in field.rel.model.quick_search_fields:
-                #~ search_field = getattr(field.rel.model,'grid_search_field',None)
-                #~ if search_field is not None:
-                    #~ rq = rq | models.Q(**{field.name+"__%s__icontains" % search_field : flt['value']})
-                #~ q = q & rq
+                # print(20160610, qf)
+                q = q & qf
+                # rq = models.Q()
+                # search_field = field.rel.model.grid_search_field
+                # for search_field in field.rel.model.quick_search_fields:
+                # search_field = getattr(field.rel.model,'grid_search_field',None)
+                # if search_field is not None:
+                    # rq = rq | models.Q(**{field.name+"__%s__icontains" % search_field : flt['value']})
+                # q = q & rq
             else:
                 raise NotImplementedError(repr(flt))
         elif flttype == 'numeric':
@@ -104,13 +103,13 @@ def add_gridfilters(qs, gridfilters):
             q = q & models.Q(**kw)
         elif flttype == 'date':
             v = datetime.date(*settings.SITE.parse_date(flt['value']))
-            #~ v = parse_js_date(flt['value'],field.name)
+            # v = parse_js_date(flt['value'],field.name)
             cmp = str(flt['comparison'])
             if cmp == 'eq':
                 cmp = 'exact'
             kw[field.name + "__" + cmp] = v
             q = q & models.Q(**kw)
-            #~ print kw
+            # print kw
         else:
             raise NotImplementedError(repr(flt))
     return qs.filter(q)
@@ -119,10 +118,10 @@ def add_gridfilters(qs, gridfilters):
 def rc_name(rptclass):
     return rptclass.app_label + '.' + rptclass.__name__
 
-#~ def de_verbose_name(de):
-    #~ if isinstance(de,models.Field):
-        #~ return de.verbose_name
-    #~ return de.name
+# def de_verbose_name(de):
+    # if isinstance(de,models.Field):
+        # return de.verbose_name
+    # return de.name
 
 
 # TODO : move these global variables to a better place
@@ -131,9 +130,9 @@ slave_reports = []
 generic_slaves = {}
 frames_list = []
 custom_tables = []
-#~ rptname_choices = []
+# rptname_choices = []
 
-#~ config_dirs = []
+# config_dirs = []
 
 
 def register_frame(frm):
@@ -149,46 +148,46 @@ def is_candidate(T):
 
 
 def register_report(rpt):
-    #~ logger.debug("20120103 register_report %s", rpt.actor_id)
+    # logger.debug("20120103 register_report %s", rpt.actor_id)
 
     if issubclass(rpt, Table) and rpt.model is None:
-        #~ logger.debug("20111113 %s is an abstract report", rpt)
+        # logger.debug("20111113 %s is an abstract report", rpt)
         return
 
-    #~ for name,v in rpt.__dict__.items():
-    #~ for name in rpt.__class__.__dict__.keys():
-    #~ for name in dir(rpt):
-        #~ v = getattr(rpt,name)
-        #~ if isinstance(v,Group):
-            #~ v.name = name
-            #~ v.add_to_table(rpt)
-            #~ rpt.custom_groups = rpt.custom_groups + [v]
-        #~ if isinstance(v,ComputedColumn):
-            #~ v.name = name
-            #~ v.add_to_table(rpt)
-            #~ d = dict()
-            #~ d.update(rpt.computed_columns)
-            #~ d[name] = v
-            #~ rpt.computed_columns = d
+    # for name,v in rpt.__dict__.items():
+    # for name in rpt.__class__.__dict__.keys():
+    # for name in dir(rpt):
+        # v = getattr(rpt,name)
+        # if isinstance(v,Group):
+            # v.name = name
+            # v.add_to_table(rpt)
+            # rpt.custom_groups = rpt.custom_groups + [v]
+        # if isinstance(v,ComputedColumn):
+            # v.name = name
+            # v.add_to_table(rpt)
+            # d = dict()
+            # d.update(rpt.computed_columns)
+            # d[name] = v
+            # rpt.computed_columns = d
 
-    #~ if rpt.model._meta.abstract:
+    # if rpt.model._meta.abstract:
 
-    #~ rptname_choices.append((rpt.actor_id, rpt.get_label()))
-    #~ rptname_choices.append(rpt.actor_id)
+    # rptname_choices.append((rpt.actor_id, rpt.get_label()))
+    # rptname_choices.append(rpt.actor_id)
     
     if issubclass(rpt, Table):
         if rpt.master is None:
             if not rpt.model._meta.abstract:
-                #~ logger.debug("20120102 register %s : master report", rpt.actor_id)
+                # logger.debug("20120102 register %s : master report", rpt.actor_id)
                 master_reports.append(rpt)
             if not '_lino_default_table' in rpt.model.__dict__:
                 if is_candidate(rpt):
                     rpt.model._lino_default_table = rpt
         elif rpt.master is ContentType:
-            #~ logger.debug("register %s : generic slave for %r", rpt.actor_id, rpt.master_key)
+            # logger.debug("register %s : generic slave for %r", rpt.actor_id, rpt.master_key)
             generic_slaves[rpt.actor_id] = rpt
         else:
-            #~ logger.debug("20120102 register %s : slave for %r", rpt.actor_id, rpt.master_key)
+            # logger.debug("20120102 register %s : slave for %r", rpt.actor_id, rpt.master_key)
             slave_reports.append(rpt)
     elif issubclass(rpt, VirtualTable):
         custom_tables.append(rpt)
@@ -209,7 +208,7 @@ def discover():
     """
 
     logger.debug("Analyzing Tables...")
-    #~ logger.debug("20111113 Register Table actors...")
+    # logger.debug("20111113 Register Table actors...")
     for rpt in actors.actors_list:
         if issubclass(rpt, Table) and rpt is not Table:
             register_report(rpt)
@@ -224,15 +223,15 @@ def discover():
         # Not getattr but __dict__.get because of the mixins.Listings
         # trick.
         rpt = model.__dict__.get('_lino_default_table', None)
-        #~ rpt = getattr(model,'_lino_default_table',None)
-        #~ logger.debug('20111113 %s._lino_default_table = %s',model,rpt)
+        # rpt = getattr(model,'_lino_default_table',None)
+        # logger.debug('20111113 %s._lino_default_table = %s',model,rpt)
         if rpt is None:
             rpt = table_factory(model)
             if rpt is None:
                 raise Exception("table_factory() failed for %r." % model)
             register_report(rpt)
             rpt.class_init()
-            #~ rpt.collect_actions()
+            # rpt.collect_actions()
             model._lino_default_table = rpt
 
     logger.debug("Analyze %d slave tables...", len(slave_reports))
@@ -246,10 +245,10 @@ def discover():
                 slaves = {}
                 rpt.master._lino_slaves = slaves
             slaves[rpt.actor_id] = rpt
-        #~ logger.debug("20111113 %s: slave for %s",rpt.actor_id, rpt.master.__name__)
-    #~ logger.debug("Assigned %d slave reports to their master.",len(slave_reports))
+        # logger.debug("20111113 %s: slave for %s",rpt.actor_id, rpt.master.__name__)
+    # logger.debug("Assigned %d slave reports to their master.",len(slave_reports))
 
-    #~ logger.debug("reports.setup() done")
+    # logger.debug("reports.setup() done")
 
 
 def has_fk(rr, name):
@@ -258,7 +257,7 @@ def has_fk(rr, name):
     return False
 
 
-#~ def model2report(m):
+# def model2report(m):
 def model2actor(m):
     def f(table, *args):
         return m(*args)
@@ -356,15 +355,15 @@ class Table(AbstractTable):
             if u.profile and u.profile.name in self.screenshot_profiles and not u.profile in profiles2user:
                 profiles2user[u.profile] = u
         for user in list(profiles2user.values()):
-            #~ if user.profile.name != 'admin': return
-            #~ yield self.default_action.request(user=user)
+            # if user.profile.name != 'admin': return
+            # yield self.default_action.request(user=user)
             # and self.default_action is not self.detail_action:
             if self.detail_action:
                 yield self.detail_action.request(user=user)
 
-    #~ @classmethod
-    #~ def elem_filename_root(cls,elem):
-        #~ return elem._meta.app_label + '.' + elem.__class__.__name__ + '-' + str(elem.pk)
+    # @classmethod
+    # def elem_filename_root(cls,elem):
+        # return elem._meta.app_label + '.' + elem.__class__.__name__ + '-' + str(elem.pk)
     @classmethod
     def get_detail_sets(self):
         """
@@ -385,12 +384,12 @@ class Table(AbstractTable):
         for s in super(Table, self).get_detail_sets():
             yield s
 
-    #~ @classmethod
-    #~ def find_field(cls,model,name):
-        #~ for vf in cls.model._meta.virtual_fields:
-            #~ if vf.name == name:
-                #~ return vf
-        #~ return cls.model._meta.get_field(name)
+    # @classmethod
+    # def find_field(cls,model,name):
+        # for vf in cls.model._meta.virtual_fields:
+            # if vf.name == name:
+                # return vf
+        # return cls.model._meta.get_field(name)
 
     @classmethod
     def get_widget_options(cls, name, **options):
@@ -419,17 +418,17 @@ class Table(AbstractTable):
         d = dict()
         if obj is not None:
             state = self.get_row_state(obj)
-            #~ u = ar.get_user()
+            # u = ar.get_user()
             for ba in self.get_actions(ar.bound_action.action):
                 if ba.action.action_name:
                     if ba.action.show_in_bbar and not self.get_row_permission(obj, ar, state, ba):
-                    #~ if ba.action.show_in_bbar and not obj.get_row_permission(u,state,ba.action):
-                    #~ if a.show_in_bbar and not a.get_action_permission(ar.get_user(),obj,state):
+                    # if ba.action.show_in_bbar and not obj.get_row_permission(u,state,ba.action):
+                    # if a.show_in_bbar and not a.get_action_permission(ar.get_user(),obj,state):
                         d[ba.action.action_name] = True
-                #~ if ba.action.action_name == 'do_clear_cache':
-                    #~ logger.info("20121127 %s %s", obj, d)
-            #~ if obj.__class__.__name__ == 'Note':
-                #~ logger.info("20120920 %s %s %r", obj, d,obj.__class__.get_row_permission)
+                # if ba.action.action_name == 'do_clear_cache':
+                    # logger.info("20121127 %s %s", obj, d)
+            # if obj.__class__.__name__ == 'Note':
+                # logger.info("20120920 %s %s %r", obj, d,obj.__class__.get_row_permission)
         return d
 
     @classmethod
@@ -443,7 +442,7 @@ class Table(AbstractTable):
     @classmethod
     def get_actor_label(self):
         if self.model is None:
-            #~ return self._label or self.__name__
+            # return self._label or self.__name__
             return super(Table, self).get_actor_label()
         return self._label or self.model._meta.verbose_name_plural
 
@@ -479,7 +478,7 @@ class Table(AbstractTable):
                         else:
                             if existing_value is None:  # 20130820
                                 pass
-                                #~ logger.info("%s disables model action '%s'",self,k)
+                                # logger.info("%s disables model action '%s'",self,k)
                             else:
                                 if not isinstance(
                                         existing_value, actions.Action):
@@ -494,16 +493,16 @@ class Table(AbstractTable):
 
             for name in (  # 'disabled_fields',
                 'handle_uploaded_files',
-                #~ 'get_row_permission',
-                #~ 'disable_editing',
+                # 'get_row_permission',
+                # 'disable_editing',
             ):
                 if getattr(self, name) is None:
                     m = getattr(self.model, name, None)
                     if m is not None:
-                        #~ logger.debug('20120731 Install model method %s from %r to %r',name,self.model,self)
+                        # logger.debug('20120731 Install model method %s from %r to %r',name,self.model,self)
                         setattr(self, name, model2actor(m))
-                        #~ 'dictproxy' object does not support item assignment:
-                        #~ self.__dict__[name] = model2actor(m)
+                        # 'dictproxy' object does not support item assignment:
+                        # self.__dict__[name] = model2actor(m)
 
             if self.master_key:
 
@@ -580,7 +579,7 @@ class Table(AbstractTable):
     def do_setup(self):
 
         super(Table, self).do_setup()
-        #~ AbstractTable.do_setup(self)
+        # AbstractTable.do_setup(self)
         if self.model is None:
             return
 
@@ -598,7 +597,7 @@ class Table(AbstractTable):
         if self.model is None \
             or self.model is Model \
                 or self.model._meta.abstract:
-            #~ logger.info('20120621 %s : no real table',h)
+            # logger.info('20120621 %s : no real table',h)
             return True
         return self.abstract
 
@@ -623,12 +622,12 @@ class Table(AbstractTable):
         to be deleted by action request `ar`,
         or a string with a message explaining why, if not.
         """
-        #~ logger.info("20130225 dbtables.disable_delete")
+        # logger.info("20130225 dbtables.disable_delete")
         if self.delete_action is None:
             return "No delete_action"
         if not self.get_row_permission(obj, ar, self.get_row_state(obj), self.delete_action):
-            #~ print "20130222 ar is %r" % ar
-            #~ logger.info("20130225 dbtables.disable_delete no permission")
+            # print "20130222 ar is %r" % ar
+            # logger.info("20130225 dbtables.disable_delete no permission")
             return _("You have no permission to delete this row.")
         return obj.disable_delete(ar)
 
@@ -639,7 +638,7 @@ class Table(AbstractTable):
         :class:`remote fields <lino.core.fields.RemoteField>`
         in a layout template.
         """
-        #~ cc = AbstractTable.get_data_elem(self,name)
+        # cc = AbstractTable.get_data_elem(self,name)
 
         if self.model is not None:
             if not isinstance(self.model, type) or not issubclass(
@@ -685,7 +684,7 @@ class Table(AbstractTable):
 
         if rr.exclude:
             qs = qs.exclude(**rr.exclude)
-            #~ qs = qs.exclude(rr.exclude)
+            # qs = qs.exclude(rr.exclude)
 
         for k in self.simple_parameters:
             v = getattr(rr.param_values, k)
@@ -699,13 +698,13 @@ class Table(AbstractTable):
             qs = qs.filter(rr.filter)
 
         if rr.known_values:
-            #~ logger.info("20120111 known values %r",rr.known_values)
+            # logger.info("20120111 known values %r",rr.known_values)
             d = {}
             for k, v in list(rr.known_values.items()):
                 if v is None:
                     d[k + "__isnull"] = True
                 else:
-                    #~ d[k+"__exact"] = v
+                    # d[k+"__exact"] = v
                     d[k] = v
                 qs = qs.filter(**d)
 
@@ -722,7 +721,7 @@ class Table(AbstractTable):
             qs = qs.extra(**extra)
         order_by = rr.order_by or self.order_by
         if order_by:
-            #~ logger.info("20120122 order_by %s",order_by)
+            # logger.info("20120122 order_by %s",order_by)
             qs = qs.order_by(*order_by)
         if self.debug_sql:
             logger.info("%s %s", self.debug_sql, qs.query)
@@ -758,16 +757,16 @@ class Table(AbstractTable):
         Create a model instance using the specified keyword args,
         calling also :meth:`lino.core.model.Model.on_create`.
         """
-        #~ print 20120630, "Actor.create_instance", kw
+        # print 20120630, "Actor.create_instance", kw
         instance = self.model(**kw)
         instance.on_create(ar)
         return instance
 
 
-    #~ @classmethod
-    #~ def ajax_update(self,request):
-        #~ print request.POST
-        #~ return HttpResponse("1", mimetype='text/x-json')
+    # @classmethod
+    # def ajax_update(self,request):
+        # print request.POST
+        # return HttpResponse("1", mimetype='text/x-json')
 
 
 def table_factory(model):
@@ -776,16 +775,16 @@ def table_factory(model):
     This is used during kernel setup to create default tables for
     models who have no Table.
     """
-    #~ logger.info('table_factory(%s)',model.__name__)
+    # logger.info('table_factory(%s)',model.__name__)
     bases = (Table,)
     for b in model.__bases__:
         rpt = getattr(b, '_lino_default_table', None)
         if rpt is not None:
             if issubclass(model, rpt.model):
-            #~ if issubclass(rpt.model,model):
+            # if issubclass(rpt.model,model):
                 bases = (rpt,)
-                #~ bases = (rpt.__class__,)
-    #~ logger.info('table_factory(%s) : bases is %s',model.__name__,bases)
+                # bases = (rpt.__class__,)
+    # logger.info('table_factory(%s) : bases is %s',model.__name__,bases)
     app_label = model._meta.app_label
     name = model.__name__ + "Table"
     cls = type(name, bases, dict(model=model, app_label=app_label))

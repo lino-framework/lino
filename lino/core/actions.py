@@ -166,8 +166,15 @@ class Action(Parametrizable, Permittable):
     _layout_class = layouts.ActionParamsLayout
 
     label = None
+    """The label of this action. A short descriptive text in user
+    language.
+
     """
-    The text to appear on the button.
+
+    button_text = None
+    """The text to appear on buttons for this action. If this is not
+    defined, the :attr:`label` is used.
+
     """
     debug_permissions = False
     save_action_name = None
@@ -426,7 +433,7 @@ class Action(Parametrizable, Permittable):
             self.custom_handler = True
 
         if self.icon_name:
-            if not self.icon_name in constants.ICON_NAMES:
+            if self.icon_name not in constants.ICON_NAMES:
                 raise Exception(
                     "Unkonwn icon_name '{0}'".format(self.icon_name))
 

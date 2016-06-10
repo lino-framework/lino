@@ -283,7 +283,7 @@ request `tar`."""
         Return a HTML fragment that displays a button-like link
         which runs the bound action `ba` when clicked.
         """
-        label = label or ba.action.label
+        label = label or ba.action.button_text or ba.action.label
         js = self.action_call_on_instance(obj, ar, ba, request_kwargs)
         uri = self.js2url(js)
         return self.href_button_action(
@@ -297,7 +297,7 @@ request `tar`."""
         which runs the action request `ar` when clicked.
         """
         ba = ar.bound_action
-        label = label or ba.action.label
+        label = label or ba.action.button_text or ba.action.label
         js = self.action_call_on_instance(obj, ar, ba)
         uri = self.js2url(js)
         return self.href_button_action(
@@ -316,8 +316,7 @@ request `tar`."""
                                        title or ba.action.help_text, **kw)
 
     def action_button(self, obj, ar, ba, label=None, **kw):
-        if not label:
-            label = ba.action.label
+        label = label or ba.action.button_text or ba.action.label
         return "[%s]" % label
 
     def show_story(self, ar, story, stripped=True, **kwargs):

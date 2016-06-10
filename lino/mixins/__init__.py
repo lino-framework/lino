@@ -312,7 +312,7 @@ class Referrable(model.Model):
 
     @classmethod
     def quick_search_filter(cls, search_text, prefix=''):
-        """Overrides the default beaviour defined in
+        """Overrides the default behaviour defined in
         :meth:`lino.core.model.Model.quick_search_filter`. For
         Referrable objects, when quick-searching for a text containing
         only digits, the user usually means the :attr:`ref` and *not*

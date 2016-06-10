@@ -36,6 +36,10 @@ class State(choicelists.Choice):
 
     """
 
+    button_text = None
+    """The text to appear on any button representing this state.
+    """
+
     def add_transition(self, label=None,
                        help_text=None,
                        notify=False,

@@ -953,7 +953,7 @@ class ExtRenderer(HtmlRenderer):
         if a.icon_name:
             kw.update(iconCls='x-tbar-' + a.icon_name)
         else:
-            kw.update(text=a.label)
+            kw.update(text=a.button_text or a.label)
         kw.update(
             #~ name=a.name,
             menu_item_text=a.label,
