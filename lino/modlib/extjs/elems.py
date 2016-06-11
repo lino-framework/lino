@@ -118,7 +118,6 @@ class GridColumn(jsgen.Component):
         if editor.grid_column_template is not None:
             self.value_template = editor.grid_column_template
         kw.update(sortable=True)
-        kw.update(autoSizeColumn=True)
         kw.update(colIndex=index)
         if editor.hidden:
             kw.update(hidden=True)
