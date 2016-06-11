@@ -605,7 +605,9 @@ class Model(models.Model):
         specified.
 
         """
-        # logger.info("20130425 quick_search_filter(%s,%r)",model,search_text)
+        # logger.info(
+        #     "20160610 quick_search_filter(%s, %r, %r)",
+        #     model, search_text, prefix)
         q = models.Q()
 
         if search_text.isdigit() and not search_text.startswith('0'):
@@ -619,8 +621,6 @@ class Model(models.Model):
                 q = q | models.Q(**kw)
 
         return q
-
-
 
     @classmethod
     def setup_table(cls, t):
@@ -721,7 +721,10 @@ class Model(models.Model):
             state = actor.get_row_state(obj)
             if state is not None:
                 #~ l.append(E.b(unicode(state),style="vertical-align:middle;"))
-                l.append(E.b(str(state)))
+                if state.button_text:
+                    l.append(E.b(state.button_text))
+                else:
+                    l.append(E.b(str(state)))
                 #~ l.append(u" » ")
                 #~ l.append(u" \u25b8 ")
                 #~ l.append(u" \u2192 ")

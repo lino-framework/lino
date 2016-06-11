@@ -58,7 +58,8 @@ class UpdateSummariesByMaster(dd.Action):
 
 
 class Summary(dd.Model):
-
+    """Base class for all "summary data" models.
+    """
     class Meta(object):
         abstract = True
 
@@ -93,6 +94,14 @@ class Summary(dd.Model):
 
     @classmethod
     def get_summary_master_model(cls):
+        raise NotImplementedError()
+
+    def get_summary_collectors(self):
+        """This should yield a sequence of ``(collector, qs)`` tuples, where
+        `collector` is a callable and `qs` a queryset. Lino will call
+        `collector` for each obj in `qs`.
+
+        """
         raise NotImplementedError()
 
     @classmethod

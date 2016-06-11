@@ -72,9 +72,9 @@ class Duplicate(actions.Action):
                     # causes Django to consider this an unsaved instance
                     setattr(new, f.name, None)
 
+        new.on_duplicate(ar, None)
         new.save(force_insert=True)
         cw = ChangeWatcher(new)
-        new.on_duplicate(ar, None)
         if cw.is_dirty():
             new.full_clean()
             new.save()

@@ -218,6 +218,11 @@ class EditTemplate(BasePrintAction):
     label = _('Edit Print Template')
     required_roles = set([SiteStaff])
 
+    def attach_to_actor(self, actor, name):
+        if not settings.SITE.is_installed('davlink'):
+            return False
+        return super(EditTemplate, self).attach_to_actor(actor, name)
+
     def run_from_ui(self, ar, **kw):
 
         lcd = settings.SITE.confdirs.LOCAL_CONFIG_DIR
