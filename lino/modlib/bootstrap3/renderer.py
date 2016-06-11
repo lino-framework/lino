@@ -23,11 +23,12 @@ class Renderer(HtmlRenderer):
     """
 
     can_auth = False
-
     # is_interactive = True
 
     # def __init__(self, plugin):
-    #     super(Renderer, self).__init__(plugin)
+    #     Renderer.__init__(self, plugin)
+    #     for a in plugin.site.actors_list:
+    #         a.get_handle()
 
     #     self.memo_parser = Parser()
 

@@ -270,9 +270,10 @@ def get_checkable_models(*args):
                     skip = False
             if skip:
                 continue
-        for m in rt.models_by_base(chk.model, toplevel_only=True):
+        for m in chk.get_checkable_models():
             lst = checkable_models.setdefault(m, [])
             lst.append(chk)
     return checkable_models
+
 
 

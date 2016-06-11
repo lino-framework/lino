@@ -44,7 +44,14 @@ class Checker(dd.Choice):
     """
     verbose_name = None
     severity = None
+
     model = None
+    """The model to be checked. This may be an abstract model.  It can
+    also be None, but then you must define your own
+    :meth:`get_checkable_models` method.
+
+    """
+
     help_text = None
 
     def __init__(self):
@@ -71,6 +78,13 @@ class Checker(dd.Choice):
         """
         self = cls()
         Checkers.add_item_instance(self)
+
+    def get_checkable_models(self):
+        """Return a list of the models to check.
+
+        The default implementation expects :attr:`model` to be set.
+        """
+        return rt.models_by_base(self.model, toplevel_only=True)
 
     def resolve_model(self, site):
         if isinstance(self.model, basestring):

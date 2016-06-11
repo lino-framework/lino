@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2015 Luc Saffre
+# Copyright 2009-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -780,7 +780,6 @@ class ExtRenderer(HtmlRenderer):
         f.write("\n// ChoiceLists: \n")
         for a in list(choicelists.CHOICELISTS.values()):
             if settings.SITE.is_installed(a.app_label):
-                #~ if issubclass(a,choicelists.ChoiceList):
                 f.write("Lino.%s = %s;\n" %
                         (a.actor_id, py2js(a.get_choices())))
 
@@ -805,14 +804,12 @@ class ExtRenderer(HtmlRenderer):
         for fl in self.param_panels:
             lh = fl.get_layout_handle(self.plugin)
             if must_render(lh, profile):
-            # if lh.main.get_view_permission(profile):
                 for ln in self.js_render_ParamsPanelSubclass(lh):
                     f.write(ln + '\n')
 
         for fl in self.action_param_panels:
             lh = fl.get_layout_handle(self.plugin)
             if must_render(lh, profile):
-            # if lh.main.get_view_permission(profile):
                 for ln in self.js_render_ActionFormPanelSubclass(lh):
                     f.write(ln + '\n')
 
@@ -821,7 +818,6 @@ class ExtRenderer(HtmlRenderer):
         for fl in self.form_panels:
             lh = fl.get_layout_handle(self.plugin)
             if must_render(lh, profile):
-            # if lh.main.get_view_permission(profile):
                 for ln in self.js_render_FormPanelSubclass(lh):
                     f.write(ln + '\n')
 
@@ -830,7 +826,7 @@ class ExtRenderer(HtmlRenderer):
             rh = rpt.get_handle()
             for ba in rpt.get_actions():
                 if ba.action.parameters:
-                    if not ba.action in actions_written:
+                    if ba.action not in actions_written:
                         actions_written.add(ba.action)
                         for ln in self.js_render_window_action(
                                 rh, ba, profile):
@@ -957,7 +953,7 @@ class ExtRenderer(HtmlRenderer):
         if a.icon_name:
             kw.update(iconCls='x-tbar-' + a.icon_name)
         else:
-            kw.update(text=a.label)
+            kw.update(text=a.button_text or a.label)
         kw.update(
             #~ name=a.name,
             menu_item_text=a.label,

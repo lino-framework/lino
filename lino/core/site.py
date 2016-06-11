@@ -807,13 +807,14 @@ class Site(object):
 
     """
 
+    # default_ui = 'lino_extjs6.extjs6'
     default_ui = 'lino.modlib.extjs'
     """The full Python name of the plugin which is to be used as default
     user interface on this :class:`Site`.
 
     Default value is :mod:`lino.modlib.extjs`. Other candidates are
     :mod:`lino.modlib.bootstrap3`, :mod:`lino_xl.lib.pages` and
-    :mod:`lino_extjs6.extjs` .
+    :mod:`lino_extjs6.extjs6` .
 
     Another possibility is to set it to `None`. In that case you will
     probably also set :attr:`root_urlconf` to a custom URL dispatcher.
