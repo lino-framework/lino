@@ -47,10 +47,9 @@ from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 from django.db.utils import IntegrityError, OperationalError
 from django.core.management.color import no_style
-#~ from django.core.management.sql import sql_reset
+# ~ from django.core.management.sql import sql_reset
 from django.db import connections, transaction, DEFAULT_DB_ALIAS
 from django.db import models
-
 
 from lino.api import dd
 
@@ -73,17 +72,14 @@ class Command(BaseCommand):
 
     args = "fixture [fixture ...]"
 
-    option_list = BaseCommand.option_list + (
-        make_option(
-            '--noinput', action='store_false',
-            dest='interactive', default=True,
-            help='Do not prompt for input of any kind.'),
-        make_option(
-            '--database', action='store', dest='database',
-            default=DEFAULT_DB_ALIAS,
-            help='Nominates a database to reset. '
-            'Defaults to the "default" database.'),
-    )
+    def add_arguments(self, parser):
+        parser.add_argument('--noinput', action='store_false',
+                            dest='interactive', default=True,
+                            help='Do not prompt for input of any kind.'),
+        parser.add_argument('--database', action='store', dest='database',
+                            default=DEFAULT_DB_ALIAS,
+                            help='Nominates a database to reset. '
+                                 'Defaults to the "default" database.')
 
     def try_sql(self, conn, sql_list):
         hope = False
@@ -111,15 +107,15 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        #~ from lino.core.kernel import analyze_models
-        #~ analyze_models()
+        # ~ from lino.core.kernel import analyze_models
+        # ~ analyze_models()
 
-        #~ from lino.utils import dblogger
+        # ~ from lino.utils import dblogger
 
-        #~ if not dblogger.logger.isEnabledFor(logging.INFO):
-            #~ raise CommandError("System logger must be enabled for INFO")
-        #~ dblogger.info(settings.SITE.welcome_text())
-        #~ dblogger.info("FIXTURE_DIRS is %s",settings.FIXTURE_DIRS)
+        # ~ if not dblogger.logger.isEnabledFor(logging.INFO):
+        # ~ raise CommandError("System logger must be enabled for INFO")
+        # ~ dblogger.info(settings.SITE.welcome_text())
+        # ~ dblogger.info("FIXTURE_DIRS is %s",settings.FIXTURE_DIRS)
         if settings.SITE.readonly:
             dd.logger.info(
                 "Skipped `initdb` on readonly site '%s'.",
@@ -175,8 +171,8 @@ Are you sure (y/n) ?""" % dbname):
             elif USE_SQLDELETE:
                 from django.core.management.sql import sql_delete
                 # sql_delete was removed in Django 1.9
-                #~ sql_list = u'\n'.join(sql_reset(app, no_style(), conn)).encode('utf-8')
-                
+                # ~ sql_list = u'\n'.join(sql_reset(app, no_style(), conn)).encode('utf-8')
+
                 app_list = [models.get_app(p.app_label)
                             for p in settings.SITE.installed_plugins]
                 for app in app_list:
@@ -184,7 +180,7 @@ Are you sure (y/n) ?""" % dbname):
                     sql_list.extend(sql_delete(app, no_style(), conn))
                     # print app_label, ':', sql_list
 
-            #~ print sql_list
+            # ~ print sql_list
 
             if len(sql_list):
                 with conn.constraint_checks_disabled():
@@ -195,17 +191,17 @@ Are you sure (y/n) ?""" % dbname):
                     while len(pending):
                         pending = self.try_sql(conn, pending)
 
-                # conn.disable_constraint_checking()
-                # try:
-                #     cursor = conn.cursor()
-                #     pending = self.try_sql(cursor, sql_list)
-                #     while len(pending):
-                #         pending = self.try_sql(cursor, pending)
+                        # conn.disable_constraint_checking()
+                        # try:
+                        #     cursor = conn.cursor()
+                        #     pending = self.try_sql(cursor, sql_list)
+                        #     while len(pending):
+                        #         pending = self.try_sql(cursor, pending)
 
-                # except Exception:
-                #     transaction.rollback_unless_managed(using=using)
-                #     raise
-                # conn.enable_constraint_checking()
+                        # except Exception:
+                        #     transaction.rollback_unless_managed(using=using)
+                        #     raise
+                        # conn.enable_constraint_checking()
 
             transaction.commit_unless_managed()
 
@@ -221,6 +217,6 @@ Are you sure (y/n) ?""" % dbname):
         if len(args):
             call_command('loaddata', *args, **options)
 
-        #~ dblogger.info("Lino initdb done %s on database %s.", args, dbname)
+            # ~ dblogger.info("Lino initdb done %s on database %s.", args, dbname)
 
-#~ print 20120426, 'ok'
+# ~ print 20120426, 'ok'
