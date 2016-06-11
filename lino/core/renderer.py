@@ -155,12 +155,12 @@ request `tar`."""
         """
         if icon_name is NOT_GIVEN:
             icon_name = ba.action.icon_name
-        if not 'style' in kw:
+        if 'style' not in kw:
             if icon_name is None:
-                kw.update(style="text-decoration:none")  # Experimental. Added
+                kw.update(style="text-decoration:none")
+                # Experimental. Added 20150430
             else:
                 kw.update(style="vertical-align:-30%;")
-                                                 # 20150430
         return self.href_button(url, text, title, icon_name=icon_name, **kw)
 
     def href_button(
@@ -283,7 +283,7 @@ request `tar`."""
         Return a HTML fragment that displays a button-like link
         which runs the bound action `ba` when clicked.
         """
-        label = label or ba.action.button_text or ba.action.label
+        label = label or ba.get_button_label()
         js = self.action_call_on_instance(obj, ar, ba, request_kwargs)
         uri = self.js2url(js)
         return self.href_button_action(
@@ -297,7 +297,7 @@ request `tar`."""
         which runs the action request `ar` when clicked.
         """
         ba = ar.bound_action
-        label = label or ba.action.button_text or ba.action.label
+        label = label or ba.get_button_label()
         js = self.action_call_on_instance(obj, ar, ba)
         uri = self.js2url(js)
         return self.href_button_action(
@@ -309,14 +309,14 @@ request `tar`."""
         """
         Return a HTML chunk for a button that will execute this action.
         """
-        label = str(label or ba.get_button_label())
+        label = label or ba.get_button_label()
         url = self.js2url(self.action_call(request, ba, after_show))
         #~ logger.info('20121002 window_action_button %s %r',a,unicode(label))
-        return self.href_button_action(ba, url, label,
+        return self.href_button_action(ba, url, str(label),
                                        title or ba.action.help_text, **kw)
 
     def action_button(self, obj, ar, ba, label=None, **kw):
-        label = label or ba.action.button_text or ba.action.label
+        label = label or ba.get_button_label()
         return "[%s]" % label
 
     def show_story(self, ar, story, stripped=True, **kwargs):

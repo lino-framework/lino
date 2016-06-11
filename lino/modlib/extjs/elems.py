@@ -115,8 +115,6 @@ class GridColumn(jsgen.Component):
 
     def __init__(self, layout_handle, index, editor, **kw):
         self.editor = editor
-        if editor.grid_column_template is not None:
-            self.value_template = editor.grid_column_template
         kw.update(sortable=True)
         kw.update(colIndex=index)
         if editor.hidden:
@@ -238,8 +236,6 @@ class LayoutElement(VisibleComponent):
     editable = False
     sortable = False
     xtype = None  # set by subclasses
-    # grid_column_template = "new Ext.grid.Column(%s)"
-    grid_column_template = None
     collapsible = False
     active_child = True
     refers_to_ww = False
@@ -942,7 +938,6 @@ class DateFieldElement(FieldElement):
     gridfilters_settings = dict(
         type='date', dateFormat=settings.SITE.date_format_extjs)
     # todo: DateFieldElement.preferred_width should be computed from Report.date_format
-    # grid_column_template = "new Ext.grid.DateColumn(%s)"
 
     # def __init__(self,layout_handle,field,**kw):
         # ~ if False: # getattr(field,'picker',False):
@@ -1011,7 +1006,6 @@ class NumberFieldElement(FieldElement):
     gridfilters_settings = dict(type='numeric')
     value_template = "new Ext.form.NumberField(%s)"
     sortable = True
-    grid_column_template = "new Lino.NullNumberColumn(%s)"
     number_format = '0'
 
     def apply_cell_format(self, e):
@@ -1235,7 +1229,6 @@ class BooleanFieldElement(BooleanMixin, FieldElement):
     # data_type = 'boolean'
     filter_type = 'boolean'
     gridfilters_settings = dict(type='boolean')
-    # grid_column_template = "new Ext.grid.BooleanColumn(%s)"
     # def __init__(self,*args,**kw):
         # FieldElement.__init__(self,*args,**kw)
     # active_change_event = 'check'

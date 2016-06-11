@@ -721,10 +721,11 @@ class Model(models.Model):
             state = actor.get_row_state(obj)
             if state is not None:
                 #~ l.append(E.b(unicode(state),style="vertical-align:middle;"))
-                if state.button_text:
-                    l.append(E.b(state.button_text))
-                else:
-                    l.append(E.b(str(state)))
+                # if state.button_text:
+                #     l.append(E.b(state.button_text))
+                # else:
+                #     l.append(E.b(str(state)))
+                l.append(E.b(str(state)))
                 #~ l.append(u" » ")
                 #~ l.append(u" \u25b8 ")
                 #~ l.append(u" \u2192 ")

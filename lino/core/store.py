@@ -156,7 +156,8 @@ class StoreField(object):
             # touch it.
             return
         if v == '':
-            # print 20130125, self.field.empty_strings_allowed, self.field.name, self.form2obj_default
+            # print(20160611, self.field.empty_strings_allowed,
+            #       self.field.name, self.form2obj_default)
             if self.field.empty_strings_allowed:
                 v = self.parse_form_value(v, instance)
 
@@ -169,6 +170,7 @@ class StoreField(object):
                 # may be empty) but don't do this for other cases.
             else:
                 v = self.form2obj_default
+            # print("20160611 {0} = {1}".format(self.field.name, v))
         else:
             v = self.parse_form_value(v, instance)
         if not is_new and self.field.primary_key and instance.pk is not None:
@@ -609,6 +611,7 @@ class IntegerStoreField(StoreField):
 
     def __init__(self, field, name, **kw):
         kw['type'] = 'int'
+        kw['useNull'] = True
         StoreField.__init__(self, field, name, **kw)
 
 

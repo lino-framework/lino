@@ -17,6 +17,7 @@ logger = logging.getLogger(__name__)
 from django.utils.functional import Promise
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
+from django.db import models
 
 from lino.core import actions
 from lino.core import choicelists
@@ -49,9 +50,13 @@ class State(choicelists.Choice):
                        debug_permissions=None,
                        required_states=None,
                        required_roles=None):
-        """Declare or create a `ChangeStateAction` which makes the object
-        enter this state.  `label` can be either a string or a
-        subclass of :class:`ChangeStateAction`.
+        """Declare a `ChangeStateAction` which makes an object enter this
+        state.
+
+        `label` can be a string, a subclass of
+        :class:`ChangeStateAction` or `None`. If it is `None`, then
+        the state's :attr:`button_text` or :attr:`text
+        <lino.core.choicelists.Choice.text>` will be used as label.
 
         You can specify an explicit `name` in order to allow replacing
         the transition action later by another action.
@@ -103,7 +108,7 @@ class State(choicelists.Choice):
             else:
                 cl = ChangeStateAction
             if label is None:
-                label = self.text
+                label = self.button_text or self.text
             a = cl(self, required_roles, label=label, **kw)
             if debug_permissions:
                 a.debug_permissions = debug_permissions
@@ -124,6 +129,7 @@ class Workflow(choicelists.ChoiceList):
 
     verbose_name = _("State")
     verbose_name_plural = _("States")
+    button_text = models.CharField(_("Symbol"), blank=True)
 
     @classmethod
     def on_analyze(cls, site):
