@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2015 by Luc Saffre.
+# Copyright 2009-2016 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """.. management_command:: initdb
@@ -40,7 +40,6 @@ hundreds of models."  Yes, we go the way which is not recommended.
 from __future__ import unicode_literals
 
 import os
-from optparse import make_option
 
 from django.conf import settings
 from django.core.management import call_command
@@ -53,7 +52,6 @@ from django.db import models
 
 from lino.api import dd
 
-# from lino.core.utils import app_labels
 from lino import AFTER17, AFTER18
 from atelier.utils import confirm
 
@@ -191,18 +189,6 @@ Are you sure (y/n) ?""" % dbname):
                     while len(pending):
                         pending = self.try_sql(conn, pending)
 
-                        # conn.disable_constraint_checking()
-                        # try:
-                        #     cursor = conn.cursor()
-                        #     pending = self.try_sql(cursor, sql_list)
-                        #     while len(pending):
-                        #         pending = self.try_sql(cursor, pending)
-
-                        # except Exception:
-                        #     transaction.rollback_unless_managed(using=using)
-                        #     raise
-                        # conn.enable_constraint_checking()
-
             transaction.commit_unless_managed()
 
         settings.SITE._site_config = None  # clear cached instance
@@ -217,6 +203,5 @@ Are you sure (y/n) ?""" % dbname):
         if len(args):
             call_command('loaddata', *args, **options)
 
-            # ~ dblogger.info("Lino initdb done %s on database %s.", args, dbname)
+            # dblogger.info("Lino initdb done %s on database %s.", args, dbname)
 
-# ~ print 20120426, 'ok'
