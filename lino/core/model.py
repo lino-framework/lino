@@ -158,6 +158,12 @@ class Model(models.Model):
 
     """
 
+    quick_search_fields_digit = None
+    """Same as :attr:`quick_search_fields`, but this list is used when the
+    search text contains only digits (and does not start with '0').
+
+    """
+
     active_fields = frozenset()
     """If specified, this is the default value for
     :attr:`active_fields<lino.core.tables.AbstractTable.active_fields>`
@@ -611,15 +617,13 @@ class Model(models.Model):
         q = models.Q()
 
         if search_text.isdigit() and not search_text.startswith('0'):
-            for field in model._meta.fields:
-                if isinstance(field, (models.IntegerField, models.AutoField)):
-                    kw = {prefix + field.name: int(search_text)}
-                    q = q | models.Q(**kw)
+            for fn in model.quick_search_fields_digit:
+                kw = {prefix + fn: int(search_text)}
+                q = q | models.Q(**kw)
         else:
             for fn in model.quick_search_fields:
                 kw = {prefix + fn + "__icontains": search_text}
                 q = q | models.Q(**kw)
-
         return q
 
     @classmethod
@@ -1045,6 +1049,7 @@ LINO_MODEL_ATTRIBS = (
     'get_system_note_recipients',
     'get_system_note_type',
     'quick_search_fields',
+    'quick_search_fields_digit',
     'change_watcher_spec',
     'on_analyze',
     'disable_delete',

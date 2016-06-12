@@ -281,6 +281,25 @@ class Kernel(object):
                     "of space-separated field names (not {1})".format(
                         model, qsf))
 
+            qsf = model.quick_search_fields_digit
+            if qsf is None:
+                fields_list = []
+                for field in model._meta.fields:
+                    if isinstance(field, (
+                            models.IntegerField, models.AutoField)):
+                        fields_list.append(field.name)
+                model.quick_search_fields_digit = frozenset(fields_list)
+            elif isinstance(qsf, frozenset):
+                pass
+            elif isinstance(qsf, basestring):
+                model.quick_search_fields_digit = frozenset(
+                    fields.fields_list(model, model.quick_search_fields_digit))
+            else:
+                raise Exception(
+                    "{0}.quick_search_fields_digit must be None or a string "
+                    "of space-separated field names (not {1})".format(
+                        model, qsf))
+
             if model._meta.abstract:
                 raise Exception("Tiens?")
 

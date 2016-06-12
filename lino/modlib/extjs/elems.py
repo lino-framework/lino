@@ -1035,7 +1035,8 @@ class NumberFieldElement(FieldElement):
     def get_column_options(self, **kw):
         kw = FieldElement.get_column_options(self, **kw)
         # kw.update(xtype='numbercolumn')
-        # kw.update(align='right')
+        kw.update(align='right')
+
         # if settings.SITE.decimal_group_separator:
             # fmt = '0' + settings.SITE.decimal_group_separator + '000'
         # else:
