@@ -37,3 +37,19 @@ Active projects
  research    Research        01/01/1998   Talk: **1**Sticky: **1**Done: **1**
 =========== =============== ============ =====================================
 <BLANKLINE>
+
+
+Choosing a project
+==================
+
+>>> base = '/choices/tickets/Tickets/project'
+>>> show_choices("robin", base + '?query=')
+<br/>
+linö
+téam
+docs
+research
+shop
+
+>>> show_choices("robin", base + '?query=frame')
+linö

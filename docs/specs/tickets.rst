@@ -192,7 +192,7 @@ ticket is what Trac calls "component". Topics are a "customer-side"
 classification of the different components which are being developed
 by the team that uses a given Lino Noi site.
 
-There are 4 producs in the demo database.
+There are 4 topics in the demo database.
 
 >>> rt.show(topics.Topics)
 =========== ============== ================== ================== =============
@@ -201,9 +201,28 @@ There are 4 producs in the demo database.
  linõ        Lino Core
  welfäre     Lino Welfare
  così        Lino Cosi
- faggiö      Lino Faggio
+ faggio      Lino Voga
 =========== ============== ================== ================== =============
 <BLANKLINE>
+
+
+When choosing a topic, the search text looks in both the reference and
+the designation:
+
+>>> base = '/choices/tickets/Tickets/topic'
+>>> show_choices("robin", base + '?query=')
+<br/>
+Lino Core
+Lino Welfare
+Lino Cosi
+Lino Voga
+
+>>> show_choices("robin", base + '?query=faggio')
+Lino Voga
+
+>>> show_choices("robin", base + '?query=voga')
+Lino Voga
+
   
 
 Interests

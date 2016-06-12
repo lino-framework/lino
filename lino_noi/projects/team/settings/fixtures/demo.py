@@ -70,7 +70,8 @@ def tickets_objects():
     yield Topic(name="Lino Core", ref="linõ")
     yield Topic(name="Lino Welfare", ref="welfäre")
     yield Topic(name="Lino Cosi", ref="così")
-    yield Topic(name="Lino Faggio", ref="faggiö")
+    yield Topic(name="Lino Voga", ref="faggio")
+    # ref differs from name
 
     TOPICS = Cycler(Topic.objects.all())
 
