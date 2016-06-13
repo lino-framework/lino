@@ -15,6 +15,8 @@
     fixtures.demo
     fixtures.demo_ee
     fixtures.demo_fr
+    management.commands.garble_persons
+
 
 This plugin is being extended by :ref:`welfare` in
 :mod:`lino_welfare.modlib.contacts` or by :ref:`voga` in

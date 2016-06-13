@@ -504,7 +504,7 @@ class Action(Parametrizable, Permittable):
         if self is actor.default_action.action:
             return actor.label
         else:
-            return self.label
+            return self.button_text or self.label
             # since 20140923 return u"%s %s" % (self.label, actor.label)
 
     def full_name(self, actor):

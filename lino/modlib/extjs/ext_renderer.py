@@ -190,8 +190,7 @@ class ExtRenderer(HtmlRenderer):
         return kw
 
     def action_button(self, obj, ar, ba, label=None, **kw):
-        if not label:
-            label = ba.action.label
+        label = label or ba.get_button_label()
         if ba.action.parameters and not ba.action.no_params_window:
             st = self.get_action_status(ar, ba, obj)
             return self.window_action_button(

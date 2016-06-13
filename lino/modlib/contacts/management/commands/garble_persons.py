@@ -1,10 +1,11 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2014 Luc Saffre
+# Copyright 2009-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
+""".. management_command:: garble_persons
 
-Garbles person names in the database so that it may be used for a demo.
+Garbles person names in the database so that it may be used for a
+demo.
 
 """
 
@@ -16,7 +17,6 @@ from django.core.management.base import BaseCommand, CommandError
 from lino.utils import dblogger
 from lino.utils import Cycler, join_words
 
-from lino import mixins
 from lino.api import dd, rt
 
 

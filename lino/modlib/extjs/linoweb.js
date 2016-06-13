@@ -1907,7 +1907,8 @@ Lino.NullNumberColumn = Ext.extend(Ext.grid.Column, {
     align : 'right', 
     format : '{{settings.SITE.default_number_format_extjs}}', 
     renderer : function(value, metaData, record, rowIndex, colIndex, store) {
-        //~ console.log(20130128,"NullNumberColumn.renderer",value);
+        // if( colIndex == 3)
+        //     console.log(20130128,"NullNumberColumn.renderer",value);
         if (value === null) return '';
         return Ext.util.Format.number(value, this.format);
     }

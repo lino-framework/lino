@@ -44,7 +44,7 @@ class Checker(dd.Choice):
     """
     verbose_name = None
     severity = None
-
+    self = None
     model = None
     """The model to be checked. This may be an abstract model.  It can
     also be None, but then you must define your own
@@ -76,8 +76,10 @@ class Checker(dd.Choice):
         to the :class:`Checkers` choicelist.
 
         """
-        self = cls()
-        Checkers.add_item_instance(self)
+        if cls.self is not None:
+            raise Exception("Duplicate call to {0}.activate()".format(cls))
+        cls.self = cls()
+        Checkers.add_item_instance(cls.self)
 
     def get_checkable_models(self):
         """Return a list of the models to check.
