@@ -192,7 +192,7 @@ ticket is what Trac calls "component". Topics are a "customer-side"
 classification of the different components which are being developed
 by the team that uses a given Lino Noi site.
 
-There are 4 producs in the demo database.
+There are 4 topics in the demo database.
 
 >>> rt.show(topics.Topics)
 =========== ============== ================== ================== =============
@@ -201,9 +201,37 @@ There are 4 producs in the demo database.
  linõ        Lino Core
  welfäre     Lino Welfare
  così        Lino Cosi
- faggiö      Lino Faggio
+ faggio      Lino Voga
 =========== ============== ================== ================== =============
 <BLANKLINE>
+
+
+When choosing a topic, the search text looks in both the reference and
+the designation:
+
+>>> base = '/choices/tickets/Tickets/topic'
+>>> show_choices("robin", base + '?query=')
+<br/>
+Lino Core
+Lino Welfare
+Lino Cosi
+Lino Voga
+
+Note that we have a topic whose `ref` is different from `name`, and
+that the search works in both fields:
+
+>>> obj = topics.Topic.get_by_ref('faggio')
+>>> print(obj.ref)
+faggio
+>>> print(obj.name)
+Lino Voga
+
+>>> show_choices("robin", base + '?query=fag')
+Lino Voga
+
+>>> show_choices("robin", base + '?query=voga')
+Lino Voga
+
   
 
 Interests
@@ -256,7 +284,7 @@ Lino Noi has a list of all sites for which we do support:
 <BLANKLINE>
 
 A ticket may or may not be "local", i.e. specific to a given site.
-When a ticket is site-specific, we simply assign the `site` field. We
+When a ticket is site-specific, we simply assign the `site` field.  We
 can see all local tickets for a given site object:
 
 >>> welket = tickets.Site.objects.get(name="welket")
