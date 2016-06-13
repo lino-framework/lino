@@ -571,7 +571,7 @@ class Action(Parametrizable, Permittable):
     def get_action_permission(self, ar, obj, state):
         """Return (True or False) whether the given :class:`ActionRequest
         <lino.core.requests.BaseRequest>` `ar` should get permission
-        to execute on the given Model instance `obj` (which is in the
+        to run on the given Model instance `obj` (which is in the
         given `state`).
 
         Derived Action classes may override this to add vetos.

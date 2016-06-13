@@ -22,7 +22,9 @@ from lino.utils import i2d
 from lino.utils.xmlgen.html import E
 from lino.utils.diag import analyzer
 
+from atelier.rstgen import table
 from atelier.rstgen import attrtable
+from atelier.utils import unindent
 
 test_client = Client()
 # naming it simply "client" caused conflict with a
@@ -218,3 +220,17 @@ def show_choices(username, url):
     for r in result['rows']:
         print(r['text'])
         # print(r['value'], r['text'])
+
+
+def show_fields(model, fieldnames):
+    """Print an overview description of the specified fields of the
+    specified model.
+
+    """
+    cells = []
+    cols = ["Internal name", "Verbose name", "Help text"]
+    for n in fieldnames.split():
+        fld = rt.models.system.SiteConfig._meta.get_field(n)
+        cells.append([n, fld.verbose_name, unindent(fld.help_text)])
+
+    print(table(cols, cells).strip())
