@@ -1,8 +1,8 @@
 .. _noi.specs.tickets:
 
-=================
-Ticket management
-=================
+=============================
+Ticket management in Lino Noi
+=============================
 
 
 .. How to test only this document:
