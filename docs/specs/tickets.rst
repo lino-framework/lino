@@ -217,7 +217,16 @@ Lino Welfare
 Lino Cosi
 Lino Voga
 
->>> show_choices("robin", base + '?query=faggio')
+Note that we have a topic whose `ref` is different from `name`, and
+that the search works in both fields:
+
+>>> obj = topics.Topic.get_by_ref('faggio')
+>>> print(obj.ref)
+faggio
+>>> print(obj.name)
+Lino Voga
+
+>>> show_choices("robin", base + '?query=fag')
 Lino Voga
 
 >>> show_choices("robin", base + '?query=voga')
@@ -275,7 +284,7 @@ Lino Noi has a list of all sites for which we do support:
 <BLANKLINE>
 
 A ticket may or may not be "local", i.e. specific to a given site.
-When a ticket is site-specific, we simply assign the `site` field. We
+When a ticket is site-specific, we simply assign the `site` field.  We
 can see all local tickets for a given site object:
 
 >>> welket = tickets.Site.objects.get(name="welket")
