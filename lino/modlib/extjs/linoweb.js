@@ -3499,9 +3499,8 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
     var st = { base_params : this.get_base_params()};
     if (!this.hide_top_toolbar) {
         // #866
-        var totalLength = this.getStore().totalLength;
         if (this.getStore().lastOptions != undefined && this.getStore().lastOptions.params != undefined){
-            st.current_page = Math.round(this.getStore().lastOptions.params.start / totalLength ) + 1 ;
+            st.current_page = Math.round(this.getStore().lastOptions.params.start / this.getStore().lastOptions.params.limit ) + 1 ;
         }
     }
     st.param_values = this.status_param_values;
