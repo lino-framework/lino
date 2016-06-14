@@ -1,12 +1,15 @@
 # Copyright 2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Installs a framework for defining summary tables.
+"""Installs a framework for defining summary tables using the
+:class:`Summary <lino.modlib.summaries.mixins.Summary>` model mixin
+and the :manage:`checksummaries` command.
 
 .. autosummary::
    :toctree:
 
     mixins
+    management.commands.checksummaries
 
 """
 
@@ -16,13 +19,14 @@ from lino.api import ad, _
 class Plugin(ad.Plugin):
     """See :doc:`/dev/plugins`.
 
-    .. attribute:: start_year
-    .. attribute:: end_year
-
     """
     verbose_name = _("Summaries")
+
     start_year = None
+    """The first year for which summaries should be computed."""
+
     end_year = None
+    """The last year for which summaries should be computed."""
 
     def on_init(self):
         if self.end_year is None:
