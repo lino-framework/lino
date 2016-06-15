@@ -176,6 +176,7 @@ class Action(Parametrizable, Permittable):
     defined, the :attr:`label` is used.
 
     """
+
     debug_permissions = False
     save_action_name = None
     disable_primary_key = True
@@ -946,7 +947,7 @@ class ShowSlaveTable(Action):
 
     """
     TABLE2ACTION_ATTRS = ('help_text', 'icon_name', 'label',
-                          'sort_index', 'required_roles')
+                          'sort_index', 'required_roles', 'button_text')
     show_in_bbar = True
 
     def __init__(self, slave_table, **kw):
@@ -965,7 +966,7 @@ class ShowSlaveTable(Action):
                 raise Exception("No table named %s" % self.slave_table)
             self.slave_table = T
         for k in self.TABLE2ACTION_ATTRS:
-            if not k in self.explicit_attribs:
+            if k not in self.explicit_attribs:
                 setattr(self, k, getattr(self.slave_table, k))
         return super(ShowSlaveTable, self).attach_to_actor(actor, name)
 

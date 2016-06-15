@@ -20,6 +20,11 @@ e.g. welfare.jobs.NewJobsOverview needs
   overflow: visible;
 }
 
+.x-grid3-cell-inner {
+  white-space: normal;
+  overflow:hidden;
+}
+
 .x-grid3-hd-inner {
   white-space: normal; 
 }

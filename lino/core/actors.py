@@ -456,6 +456,12 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     :attr:`label` as title.
     """
 
+    button_text = None
+    """The text to appear on buttons of a ShowSlaveTable action for this
+    actor.
+
+    """
+
     label = None
 
     default_action = None
