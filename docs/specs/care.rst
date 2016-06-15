@@ -163,13 +163,13 @@ verbose_name and verbose_name_plural options of `faculties.Faculty`.
 <BLANKLINE>
 
 >>> rt.show('topics.Topics')
-========== ============= ================== ================== =============
- Referenz   Bezeichnung   Bezeichnung (en)   Bezeichnung (fr)   Topic group
----------- ------------- ------------------ ------------------ -------------
+========== ============= ================== ================== ==============
+ Referenz   Bezeichnung   Bezeichnung (en)   Bezeichnung (fr)   Themengruppe
+---------- ------------- ------------------ ------------------ --------------
             Französisch   French             Français           Sprachen
             Deutsch       German             Allemand           Sprachen
             Englisch      English            Anglais            Sprachen
-========== ============= ================== ================== =============
+========== ============= ================== ================== ==============
 <BLANKLINE>
 
 
