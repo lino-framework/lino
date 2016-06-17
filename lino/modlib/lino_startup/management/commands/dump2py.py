@@ -93,20 +93,20 @@ class Command(BaseCommand):
     tmpl_dir = ''
     args = "output_dir"
 
-    option_list = BaseCommand.option_list + (
-        make_option('--noinput', action='store_false',
-                    dest='interactive', default=True,
-                    help='Do not prompt for input of any kind.'),
-        make_option('--tolerate', action='store_true',
-                    dest='tolerate', default=False,
-                    help='Tolerate database errors.'),
+    def add_arguments(self, parser):
+        parser.add_argument('--noinput', action='store_false',
+                            dest='interactive', default=True,
+                            help='Do not prompt for input of any kind.'),
+        parser.add_argument('--tolerate', action='store_true',
+                            dest='tolerate', default=False,
+                            help='Tolerate database errors.')
+
         #~ make_option('--quick', action='store_true',
         #~ dest='quick', default=False,
         #~ help='Do not call full_clean() method on restored instances.'),
         #~ make_option('--overwrite', action='store_true',
         #~ dest='overwrite', default=False,
         #~ help='Overwrite existing files.'),
-    )
 
     def write_files(self):
         puts("Writing {0}...".format(self.main_file))

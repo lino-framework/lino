@@ -19,7 +19,6 @@ from lino.utils import Cycler, join_words
 
 from lino.api import dd, rt
 
-
 from lino.utils import confirm
 
 from lino.utils import demonames as demo
@@ -36,7 +35,6 @@ class Distribution(object):
 
 
 class BelgianDistribution(Distribution):
-
     def get_last_names(self):
         yield demo.LAST_NAMES_BELGIUM
         yield demo.LAST_NAMES_MUSLIM
@@ -63,7 +61,6 @@ class BelgianDistribution(Distribution):
 
 
 class EstonianDistribution(Distribution):
-
     def __init__(self):
         super(EstonianDistribution, self).__init__()
         Country = rt.modules.countries.Country
@@ -108,16 +105,13 @@ class Command(BaseCommand):
     help = "Garbles person names in the database so that it "
     "may be used for a demo."
 
-    option_list = BaseCommand.option_list + (
-        make_option(
-            '--noinput', action='store_false',
-            dest='interactive', default=True,
-            help='Do not prompt for input of any kind.'),
-        make_option(
-            '--distribution', action='store',
-            dest='distribution', default='BE',
-            help='Distribution to use. Available dists are BE and EE.'),
-    )
+    def add_arguments(self, parser):
+        parser.add_argument('--noinput', action='store_false',
+                            dest='interactive', default=True,
+                            help='Do not prompt for input of any kind.'),
+        parser.add_argument('--distribution', action='store',
+                            dest='distribution', default='BE',
+                            help='Distribution to use. Available dists are BE and EE.')
 
     def handle(self, *args, **options):
 
@@ -134,9 +128,9 @@ class Command(BaseCommand):
             if k == 'EE':
                 return EstonianDistribution()
             raise CommandError("Invalid distribution key %r." % k)
-        
+
         dist = build_dist(options.get('distribution'))
-        
+
         User = dd.resolve_model(settings.SITE.user_model)
         Person = rt.modules.contacts.Person
 
@@ -156,4 +150,3 @@ class Command(BaseCommand):
                 dist.before_save(p)
                 p.save()
                 dblogger.info(p.get_address(', '))
-

@@ -18,21 +18,18 @@ class Command(BaseCommand):
     help = __doc__
     args = "action_spec [args ...]"
 
-    option_list = BaseCommand.option_list + (
-        make_option(
-            '-u', '--username', action='store', dest='username',
-            default=None,
-            help='The username to act as. Default is `None`.'),
-        make_option(
-            '-l', '--language', action='store', dest='language',
-            help="The language to use. "
-            "Default is the site's default language."),
-    )
+    def add_arguments(self, parser):
+        parser.add_argument('-u', '--username', action='store', dest='username',
+                            default=None,
+                            help='The username to act as. Default is `None`.'),
+        parser.add_argument('-l', '--language', action='store', dest='language',
+                            help="The language to use. "
+                                 "Default is the site's default language.")
 
     def handle(self, *args, **options):
         if len(args) == 0:
             raise CommandError("I need at least one argument.")
-        #~ settings.SITE.startup()
+        # ~ settings.SITE.startup()
         spec = args[0]
 
         username = options['username']

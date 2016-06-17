@@ -72,16 +72,13 @@ class Command(BaseCommand):
 
     """
 
-    option_list = BaseCommand.option_list + (
-        make_option(
-            '-l', '--list', action='store_true', dest='list',
-            default=False,
-            help="Don't check, just show a list of available checkers."),
-        make_option(
-            '-f', '--fix', action='store_true', dest='fix',
-            default=False,
-            help="Fix any repairable problems."),
-    )
+    def add_arguments(self, parser):
+        parser.add_argument('-l', '--list', action='store_true', dest='list',
+                            default=False,
+                            help="Don't check, just show a list of available checkers."),
+        parser.add_argument('-f', '--fix', action='store_true', dest='fix',
+                            default=False,
+                            help="Fix any repairable problems.")
 
     def handle(self, *args, **options):
         if options['list']:
