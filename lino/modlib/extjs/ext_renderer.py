@@ -1235,6 +1235,14 @@ class ExtRenderer(HtmlRenderer):
             vc.update(forceFit=True)
         if rh.actor.variable_row_height:
             vc.update(cellTpl=js_code("Lino.auto_height_cell_template"))
+        if rh.actor.row_height != 1:
+            kw.update(row_height=rh.actor.row_height)
+            tpl = """new Ext.Template(
+'<td class="x-grid3-col x-grid3-cell x-grid3-td-{id} {css}" style="{style}" tabIndex="0" {cellAttr}>',
+'<div class="x-grid3-cell-inner x-grid3-col-{id}" unselectable="on" style="height:%dpx" {attr}>{value}</div>',
+'</td>')""" % (rh.actor.row_height * 11)
+            vc.update(cellTpl=js_code(tpl))
+
         kw.update(viewConfig=vc)
 
         if not rh.actor.editable:

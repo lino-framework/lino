@@ -453,7 +453,7 @@ Lino.perc2width = function(perc) {
 
 
 Lino.MainPanel = {
-  is_home_page : false,
+  is_home_page: false,
   setting_param_values : false,
   config_containing_window : function(wincfg) { }
   ,init_containing_window : function(win) { }
@@ -3227,6 +3227,8 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
   autoHeight: false,
   params_panel_hidden : false,
   preview_limit : undefined, 
+  // fake_row_content: '<br>',
+  row_height: 1,
   //~ loadMask: true,
   //~ viewConfig: {
           //~ getRowClass: Lino.getRowClass,
@@ -3607,36 +3609,32 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
     //~ console.log('getResizeEl.getHeight() is',this.getResizeEl().getHeight());
     //~ console.log('getLayoutTarget().getHeight() is',this.getLayoutTarget().getHeight());
       
-    //~ var rowHeight = 52; // experimental value
-    var row = this.view.getRow(0);
-    if (row) {
-      //~ console.log('20120213 yes');
-      var rowHeight = Ext.get(row).getHeight();
-    } else {
-        //~ var rowHeight = this.getFrameHeight();
-        //~ var rowHeight = 10; // reasonably smallest approximative value
-        //~ There is no data yet. Construct a fake row and get its height
-        var Element = Ext.Element;
-        var gv = this.view;
-        var fakeBody = new Element(Element.fly(gv.scroller).child('div.x-grid3-body'));
-        var rowTemplate = gv.templates.row;
-        var cellTemplate = gv.templates.cell;
-        var tstyle  = 'width:' + gv.getGridInnerWidth() + 'px;';
-        var cells = cellTemplate.apply({value:'&#160;'});
-        var markup = rowTemplate.apply({
-                tstyle: tstyle,
-                cols  : 1,
-                cells : cells,
-                alt   : ''
-            });        
-        fakeBody.dom.innerHTML = gv.templates.body.apply({rows: markup});
-        var row = fakeBody.dom.childNodes[0];
-        var rowHeight = Ext.get(row).getHeight();
-    }
+    var rowHeight = this.row_height * 11;
+    // experimental value 11 same as in ext_renderer.py
+
+    // var Element = Ext.Element;
+    // var gv = this.view;
+    // var fakeBody = new Element(Element.fly(gv.scroller).child('div.x-grid3-body'));
+    // var rowTemplate = gv.templates.row;
+    // var cellTemplate = gv.templates.cell;
+    // var tstyle  = 'width:' + gv.getGridInnerWidth() + 'px;';
+    //   console.log("20160615", this.fake_row_content);
+    // var cells = cellTemplate.apply({value:this.fake_row_content});
+    // var markup = rowTemplate.apply({
+    //         tstyle: tstyle,
+    //         cols  : 1,
+    //         cells : cells,
+    //         alt   : ''
+    //     });        
+    // fakeBody.dom.innerHTML = gv.templates.body.apply({rows: markup});
+    // var row = fakeBody.dom.childNodes[0];
+    // var rowHeight = Ext.get(row).getHeight();
+
     //~ console.log('rowHeight is ',rowHeight,this,caller);
     //~ this.getView().syncScroll();
     //~ this.getView().initTemplates();
     var height = this.getView().scroller.getHeight();
+
     //~ console.log('getView().scroller.getHeight() is',this.getView().scroller.getHeight());
     //~ console.log('getInnerHeight() - getFrameHeight() is',
       //~ this.getInnerHeight(), '-',

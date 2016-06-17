@@ -212,8 +212,9 @@ class ChangeStateAction(actions.Action):
             if help_text is None:
                 # help_text = string_format(
                 #     _("Mark this as {0}"), target_state.text)
-                help_text = string_concat(
-                    _("Mark this as"), ' ', target_state.text)
+                # help_text = string_concat(
+                #     _("Mark this as"), ' ', target_state.text)
+                help_text = target_state.text
             kw.update(help_text=help_text)
 
         super(ChangeStateAction, self).__init__(**kw)

@@ -270,6 +270,12 @@ class AbstractTable(actors.Actor):
 
     """
 
+    row_height = 1
+    """
+    Number of text rows per data row.
+
+    """
+    
     variable_row_height = False
     """
     Set this to `True` if you want each row to get the height that it
