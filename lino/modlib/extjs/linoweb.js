@@ -3609,26 +3609,33 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
     //~ console.log('getResizeEl.getHeight() is',this.getResizeEl().getHeight());
     //~ console.log('getLayoutTarget().getHeight() is',this.getLayoutTarget().getHeight());
       
-    var rowHeight = this.row_height * 11;
-    // experimental value 11 same as in ext_renderer.py
+    // var rowHeight = this.row_height * 11; experimental value 11
+    // same as in ext_renderer.py that's not enough because it is the
+    // height of one text line. But here we need the outer height of a
+    // grid row containing that many text lines.
 
-    // var Element = Ext.Element;
-    // var gv = this.view;
-    // var fakeBody = new Element(Element.fly(gv.scroller).child('div.x-grid3-body'));
-    // var rowTemplate = gv.templates.row;
-    // var cellTemplate = gv.templates.cell;
-    // var tstyle  = 'width:' + gv.getGridInnerWidth() + 'px;';
-    //   console.log("20160615", this.fake_row_content);
-    // var cells = cellTemplate.apply({value:this.fake_row_content});
-    // var markup = rowTemplate.apply({
-    //         tstyle: tstyle,
-    //         cols  : 1,
-    //         cells : cells,
-    //         alt   : ''
-    //     });        
-    // fakeBody.dom.innerHTML = gv.templates.body.apply({rows: markup});
-    // var row = fakeBody.dom.childNodes[0];
-    // var rowHeight = Ext.get(row).getHeight();
+    var row_content = '&nbsp;'
+    for (var i = 0; i < this.row_height;i++) {
+        row_content += '<br>';
+    }
+
+    var Element = Ext.Element;
+    var gv = this.view;
+    var fakeBody = new Element(Element.fly(gv.scroller).child('div.x-grid3-body'));
+    var rowTemplate = gv.templates.row;
+    var cellTemplate = gv.templates.cell;
+    var tstyle  = 'width:' + gv.getGridInnerWidth() + 'px;';
+    // console.log("20160615", this.fake_row_content);
+    var cells = cellTemplate.apply({value:row_content});
+    var markup = rowTemplate.apply({
+            tstyle: tstyle,
+            cols  : 1,
+            cells : cells,
+            alt   : ''
+        });        
+    fakeBody.dom.innerHTML = gv.templates.body.apply({rows: markup});
+    var row = fakeBody.dom.childNodes[0];
+    var rowHeight = Ext.get(row).getHeight();
 
     //~ console.log('rowHeight is ',rowHeight,this,caller);
     //~ this.getView().syncScroll();
