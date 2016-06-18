@@ -230,7 +230,7 @@ def show_fields(model, fieldnames):
     cells = []
     cols = ["Internal name", "Verbose name", "Help text"]
     for n in fieldnames.split():
-        fld = rt.models.system.SiteConfig._meta.get_field(n)
+        fld = model._meta.get_field(n)
         cells.append([n, fld.verbose_name, unindent(fld.help_text)])
 
     print(table(cols, cells).strip())
