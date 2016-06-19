@@ -5,6 +5,7 @@
 """Database models for `lino.modlib.export_excel`.
 
 """
+from builtins import str
 from builtins import zip
 from builtins import object
 import os
@@ -48,7 +49,8 @@ class TableRenderer(object):
 
     @property
     def value(self):
-        return self.column[0].field._lino_atomizer.full_value_from_object(self.row, self.ar)
+        return self.column[0].field._lino_atomizer.full_value_from_object(
+            self.row, self.ar)
 
     @property
     def value_as_text(self):
