@@ -24,7 +24,7 @@
 SETUP_INFO = dict(
     name='lino-noi',
     version='0.0.2',  # since 20150918
-    install_requires=['lino_xl', 'xlwt'],
+    install_requires=['lino_xl'],
     test_suite='tests',
     description=("The Lino application used by the Lino team for "
                  "managing their work on the Lino project"),
