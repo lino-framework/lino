@@ -509,6 +509,7 @@ class RolesByCompany(Roles):
 
 
 class RolesByPerson(Roles):
+    """Shows all roles of a person."""
     required_roles = dd.required(ContactsUser)
     #~ required_user_level = None
     label = _("Contact for")
