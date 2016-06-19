@@ -174,14 +174,14 @@ verbose_name and verbose_name_plural options of `faculties.Faculty`.
 
 
 >>> rt.show('tickets.Tickets')
-==== =========================================================================================== =============== =========== =========
- ID   Summary                                                                                     Arbeitsablauf   Anfrager    Projekt
----- ------------------------------------------------------------------------------------------- --------------- ----------- ---------
- 6    Wer fährt für mich nach Aachen Pampers kaufen?                                              **Erledigt**    anna
- 5    Wer kann meine Abschlussarbeit korrekturlesen?                                              **Sleeping**    dora
- 4    Wer hilft meinem Sohn sich auf die Mathearbeit am 21.05. vorzubereiten? 5. Schuljahr PDS.   **Sticky**      berta
- 3    Wer kommt meinem Sohn Klavierunterricht geben?                                              **ToDo**        dora
- 2    Mein Rasen muss gemäht werden. Donnerstags oder Samstags                                    **Talk**        christina
- 1    Mein Wasserhahn tropft, wer kann mir helfen?                                                **Neu**         berta
-==== =========================================================================================== =============== =========== =========
+==== =========================================================================================== ======= =============== =========== =========
+ ID   Summary                                                                                     Thema   Arbeitsablauf   Anfrager    Projekt
+---- ------------------------------------------------------------------------------------------- ------- --------------- ----------- ---------
+ 6    Wer fährt für mich nach Aachen Pampers kaufen?                                                      **Erledigt**    anna
+ 5    Wer kann meine Abschlussarbeit korrekturlesen?                                                      **Sleeping**    dora
+ 4    Wer hilft meinem Sohn sich auf die Mathearbeit am 21.05. vorzubereiten? 5. Schuljahr PDS.           **Sticky**      berta
+ 3    Wer kommt meinem Sohn Klavierunterricht geben?                                                      **ToDo**        dora
+ 2    Mein Rasen muss gemäht werden. Donnerstags oder Samstags                                            **Talk**        christina
+ 1    Mein Wasserhahn tropft, wer kann mir helfen?                                                        **Neu**         berta
+==== =========================================================================================== ======= =============== =========== =========
 <BLANKLINE>

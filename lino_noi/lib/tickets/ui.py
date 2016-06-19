@@ -301,7 +301,7 @@ class TicketDetail(dd.DetailLayout):
     more1 = """
     #nickname:10 created modified reported_for #fixed_for ticket_type:10
     state duplicate_of planned_time priority
-    standby feedback closed
+    # standby feedback closed
     """
 
 
@@ -310,7 +310,7 @@ class Tickets(dd.Table):
     required_roles = set()  # also for anonymous
     model = 'tickets.Ticket'
     order_by = ["-id"]
-    column_names = 'id summary:50 #feedback #standby closed ' \
+    column_names = 'id summary:50 #feedback #standby #closed topic ' \
                    'workflow_buttons:30 reporter:10 project:10 *'
     detail_layout = TicketDetail()
     insert_layout = dd.InsertLayout("""
