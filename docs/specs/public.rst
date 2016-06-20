@@ -71,4 +71,4 @@ Home en de fr #13 Bar cannot foo State: Done
 <BLANKLINE>
 <BLANKLINE>
 (last update ...) Reported by: Rolf Rompen ... Topic: Lino Cosi Linking to [ticket 1] and to
- [url http://luc.lino-framework.org/blog/2015/0923.html blog]. This is Lino Noi 1.0.1 using Lino 1.7.0, Django 1.9.6, Python 2.7.6, Babel 2.2.0, Jinja 2.8, Sphinx 1.4a1, python-dateutil 2.5.2, OdfPy ODFPY/1.3.2, docutils 0.12, suds 0.4, PyYaml 3.11, Appy 0.9.2 (2015/04/30 15:00), Bootstrap 3.3.4, TinyMCE 3.5.11, Ext.ux.TinyMCE 0.8.4
+ [url http://luc.lino-framework.org/blog/2015/0923.html blog]. This is Lino Noi 1.0.1 using ...
