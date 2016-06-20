@@ -1042,6 +1042,8 @@ class Site(object):
 
     """
 
+    _help_texts = dict()
+
     def __init__(self, settings_globals=None, local_apps=[], **kwargs):
         """Every Lino application calls this once in it's
         :file:`settings.py` file.
@@ -1079,6 +1081,14 @@ class Site(object):
                 msg += " but a plugin attribute on lino_xl.lib.cal."
                 msg = msg.format(k)
                 raise ChangedAPI(msg)
+
+        for p in self.installed_plugins:
+            mn = p.app_name + '.help_texts'
+            try:
+                m = import_module(mn)
+                self._help_texts.update(m.help_texts)
+            except ImportError:
+                pass
 
     def init_before_local(self, settings_globals, local_apps):
         """If your :attr:`project_dir` contains no :xfile:`models.py`, but
@@ -1409,6 +1419,21 @@ class Site(object):
 
         # global PLUGIN_CONFIGS
         # PLUGIN_CONFIGS = None
+
+    def install_sphinx_help_text(self, fld):
+        if fld.help_text:
+            # print("20160620 {} has already a help_text".format(fld))
+            return
+        for m in fld.model.mro():
+            k = m.__module__ + '.' + m.__name__ + '.' + fld.name
+            txt = self._help_texts.get(k, None)
+            if txt is None:
+                pass
+                # print("20160620 {} no help_text found using {}".format(fld, k))
+            else:
+                # print("20160620 {} help_text found using {}".format(fld, k))
+                fld.help_text = txt
+                return
 
     def setup_plugins(self):
         """This method is called exactly once during site startup, after

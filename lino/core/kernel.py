@@ -333,6 +333,8 @@ class Kernel(object):
                           # ManyToManyField should not disable delete
             # for f, m in model._meta.get_fields_with_model():
             for f in model._meta.get_fields():
+                if hasattr(f, 'help_text'):
+                    site.install_sphinx_help_text(f)
                 m = f.model
 
                 # Refuse nullable CharFields, but don't trigger on
