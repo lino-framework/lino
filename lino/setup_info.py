@@ -18,7 +18,7 @@ PY3 = sys.version_info[0] == 3
 
 SETUP_INFO = dict(
     name='lino',
-    version='1.7.0',
+    version='1.7.2',
     install_requires=[
         # 'django<1.7',
         'django',
@@ -30,7 +30,7 @@ SETUP_INFO = dict(
         'clint',  # lino.modlib.plausibility.management.commands
         'django-localflavor',  # lino.modlib.sepa
         # 'django-iban',  # lino.modlib.sepa
-        'xlwt', 'xlrd'],
+        'openpyxl'],
     tests_require=[],
     # pisa has a bug which makes it complain that "Reportlab Version
     # 2.1+ is needed!" when reportlab 3 is installed.

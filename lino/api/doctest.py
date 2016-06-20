@@ -7,6 +7,8 @@
 
 from __future__ import print_function
 
+import six
+from builtins import str
 
 from lino import AFTER17
 if AFTER17:
@@ -94,7 +96,7 @@ def demo_get(
                      expected_rows, kwargs)
     # Django test client does not like future pseudo-unicode strings
     # See #870
-    url = str(settings.SITE.buildurl(case.url_base, **case.kwargs))
+    url = six.text_type(settings.SITE.buildurl(case.url_base, **case.kwargs))
     # print(20160329, url)
     if True:
         msg = 'Using remote authentication, but no user credentials found.'
@@ -107,7 +109,7 @@ def demo_get(
             #~ if str(e) != msg:
                     #~ raise Exception("Expected %r but got %r" % (msg,str(e)))
 
-    response = test_client.get(url, REMOTE_USER=str('foo'))
+    response = test_client.get(url, REMOTE_USER=six.text_type('foo'))
     if response.status_code != 403:
         raise Exception(
             "Status code %s other than 403 for anonymous on GET %s" % (
