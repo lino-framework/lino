@@ -50,8 +50,7 @@ def traverse_ddh_fklist(model, ignore_mti_parents=True):
             for (m, fk) in ddh.fklist:
                 if ignore_mti_parents and isinstance(fk, models.OneToOneField):
                     pass
-                    # logger.info("20160621 ignore OneToOneField %s",
-                                fk)
+                    # logger.info("20160621 ignore OneToOneField %s", fk)
                 else:
                     # logger.info("20160621 yield %s (%s)",
                     #             fk, fk.__class__)
