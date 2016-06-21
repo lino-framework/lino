@@ -70,14 +70,29 @@ class Partner(mixins.Polymorphic, AddressLocation, Addressable):
 
     .. attribute:: name
 
-        The full name of this partner. Used for alphabetic
-        sorting. Subclasses may hide this field and fill it
-        automatically, e.g. saving a :class:`Person` will
-        automatically set her `name` field to "last_name, first_name".
+        The full name of this partner. Used for alphabetic sorting.
+        Subclasses may hide this field and fill it automatically,
+        e.g. saving a :class:`Person` will automatically set her
+        `name` field to "last_name, first_name".
 
     .. attribute:: email
 
         The primary email address.
+
+    .. attribute:: phone
+
+        The primary phone number.  Note that Lino does not ignore
+        formatting characters in phone numbers when searching.  For
+        example, if you enter "087/12.34.56" as a phone number, then a
+        search for phone number containing "1234" will *not* find it.
+
+    .. attribute:: gsm
+
+        The primary mobile phone number.
+
+    .. attribute:: language
+
+        The language to use when communicating with this partner.
 
     """
     preferred_foreignkey_width = 20
@@ -446,6 +461,18 @@ class Role(dd.Model, Addressable):
     """A Contact (historical model name :class:`Role`) is a
     :class:`Person` who has a given role (:class:`ContactType`) in a
     given :class:`Company`.
+
+    .. attribute:: company
+
+        The company where this person has a role.
+
+    .. attribute:: type
+
+        The role of this person in this company.
+    
+    .. attribute:: person
+
+        The person having this role in this company.
     
     """
 

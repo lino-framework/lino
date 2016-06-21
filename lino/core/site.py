@@ -1082,13 +1082,7 @@ class Site(object):
                 msg = msg.format(k)
                 raise ChangedAPI(msg)
 
-        for p in self.installed_plugins:
-            mn = p.app_name + '.help_texts'
-            try:
-                m = import_module(mn)
-                self._help_texts.update(m.help_texts)
-            except ImportError:
-                pass
+        self.load_help_texts()
 
     def init_before_local(self, settings_globals, local_apps):
         """If your :attr:`project_dir` contains no :xfile:`models.py`, but
@@ -1420,7 +1414,21 @@ class Site(object):
         # global PLUGIN_CONFIGS
         # PLUGIN_CONFIGS = None
 
-    def install_sphinx_help_text(self, fld):
+    def load_help_texts(self):
+        """Collect :xfile:`help_texts.py` files"""
+        for p in self.installed_plugins:
+            mn = p.app_name + '.help_texts'
+            try:
+                m = import_module(mn)
+                self._help_texts.update(m.help_texts)
+            except ImportError:
+                pass
+
+    def install_help_text(self, fld):
+        """Install a `help_text` from collected :xfile:`help_texts.py` for
+this field.
+
+        """
         if fld.help_text:
             # print("20160620 {} has already a help_text".format(fld))
             return
