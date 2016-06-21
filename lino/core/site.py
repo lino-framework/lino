@@ -1424,16 +1424,20 @@ class Site(object):
             except ImportError:
                 pass
 
-    def install_help_text(self, fld):
+    def install_help_text(self, fld, attrname):
         """Install a `help_text` from collected :xfile:`help_texts.py` for
 this field.
 
         """
+        if not hasattr(fld, 'help_text'):  # some fields don't have
+            return
         if fld.help_text:
             # print("20160620 {} has already a help_text".format(fld))
             return
         for m in fld.model.mro():
-            k = m.__module__ + '.' + m.__name__ + '.' + fld.name
+            k = m.__module__ + '.' + m.__name__
+            if attrname:
+                k += '.' + attrname
             txt = self._help_texts.get(k, None)
             if txt is None:
                 pass
