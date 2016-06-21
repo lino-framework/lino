@@ -1,14 +1,50 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2016 Luc Saffre
 # License: BSD (see file COPYING for details)
-"""Defines a `Sphinx builder
+'''Defines a `Sphinx builder
 <http://www.sphinx-doc.org/en/stable/extdev/builderapi.html#sphinx.builders.Builder>`__
 which generates a single file named :xfile:`help_texts.py` containing
 object descriptions to be installed as the `help_text` attribute of
 database fields.
 
-The first paragraph of the content of every :rst:dir:`class` and
-:rst:dir:`attribute` directive.
+Without help_text builder::
+
+    class MyModel(dd.Model):
+        """MyModel is an important example."""
+
+        universe = models.CharField(_("First field"),
+            blank=True, max_length=100, help_text=_("""
+    The first field contains an optional answer to the
+    question about life, the universe and everything.
+    """))
+
+With help_text builder::
+
+    class MyModel(dd.Model):
+        """MyModel is an important example.
+
+        .. attribute:: universe
+
+            The first field contains an optional answer to the
+            question about life, the universe and everything.
+
+        """
+
+        universe = models.CharField(_("First field"),
+            blank=True, max_length=100)
+
+Advantages:
+
+- As an application developer you don't need to worry about Python
+  syntax consideration when editing your help text
+
+- Same source is used for both the API and the UI.
+
+Note that only the *first* paragraph of the content of every
+:rst:dir:`class` and :rst:dir:`attribute` directive is taken as help
+text.
+
+Note also that any formatting is removed.
 
 
 The :xfile:`help_texts.py` file
@@ -50,6 +86,49 @@ Copy the result to the right place, e.g.::
 Internals
 =========
 
+This builder traverses the doctree in order to find `object
+descriptions
+<http://www.sphinx-doc.org/en/stable/extdev/nodes.html>`_, i.e.  text
+nodes defined by Sphinx and inserted e.g. by the :rst:dir:`class` and
+:rst:dir:`attribute` directives (which have been inserted by autodoc
+and autosummary).
+
+Example of a class description::
+
+    <desc desctype="class" domain="py" noindex="False" objtype="class">
+        <desc_signature class="" first="False" fullname="Plan" ids="..." module="..." names="...">
+        <desc_annotation>class </desc_annotation>
+            <desc_addname>lino_cosi.lib.invoicing.models.</desc_addname>
+            <desc_name>Plan</desc_name>
+            <desc_parameterlist>
+                <desc_parameter>*args</desc_parameter>
+                <desc_parameter>**kwargs</desc_parameter>
+            </desc_parameterlist>
+        </desc_signature>
+        <desc_content>
+            <paragraph>Bases: <reference internal="False" reftitle="(in Lino v1.7)" refuri="http://www.lino-framework.org/api/lino.modlib.users.mixins.html#lino.modlib.users.mixins.UserAuthored"><literal classes="xref py py-class">lino.modlib.users.mixins.UserAuthored</literal></reference>
+            </paragraph>
+            <paragraph>An <strong>invoicing plan</strong> is a rather temporary database object which represents the plan of a given user to have Lino generate a series of invoices.
+            </paragraph>
+            <index entries="..."/>
+        <desc desctype="attribute" objtype="attribute">
+            <desc_signature class="Plan" first="False" fullname="Plan.user" ids="..." module="..." names="...">
+                <desc_name>user</desc_name>
+            </desc_signature>
+      <desc_content/>
+    </desc>
+    <desc desctype="attribute" ... objtype="attribute">
+        <desc_signature class="Plan" first="False" fullname="Plan.journal" ids="..." module="..." names="...">
+            <desc_name>journal</desc_name>
+        </desc_signature>
+        <desc_content>
+            <paragraph>The journal where to create invoices.  When this field is
+            empty, you can fill the plan with suggestions but cannot
+            execute the plan.</paragraph>
+        </desc_content>
+    </desc>
+    ...
+
 Example of a field description::
 
     <desc desctype="attribute" domain="py" noindex="False" objtype="attribute">
@@ -68,30 +147,7 @@ Example of a field description::
       </desc_content>
     </desc>
 
-Example of a class description::
-
-    <desc desctype="class" domain="py" noindex="False" objtype="class">
-      <desc_signature class="" first="False" fullname="Plan" ids="lino_cosi.lib.invoicing.models.Plan" module="lino_cosi.lib.invoicing.models" names="lino_cosi.lib.invoicing.models.Plan">
-        <desc_annotation>class </desc_annotation>
-        <desc_addname>lino_cosi.lib.invoicing.models.</desc_addname>
-        <desc_name>Plan</desc_name>
-        <desc_parameterlist>
-            <desc_parameter>*args</desc_parameter>
-            <desc_parameter>**kwargs</desc_parameter>
-        </desc_parameterlist>
-      </desc_signature>
-      <desc_content>
-        <paragraph>Bases: <reference internal="False" reftitle="(in Lino v1.7)" refuri="http://www.lino-framework.org/api/lino.modlib.users.mixins.html#lino.modlib.users.mixins.UserAuthored"><literal classes="xref py py-class">lino.modlib.users.mixins.UserAuthored</literal></reference>
-        </paragraph>
-        <paragraph>An <strong>invoicing plan</strong> is a rather temporary database object which represents the plan of a given user to have Lino generate a series of invoices.
-        </paragraph>
-        <index entries="[('single', u'user (lino_cosi.lib.invoicing.models.Plan attribute)', u'lino_cosi.lib.invoicing.models.Plan.user', '', None)]"/>
-        <desc desctype="attribute" domain="py" noindex="False" objtype="attribute"><desc_signature class="Plan" first="False" fullname="Plan.user" ids="lino_cosi.lib.invoicing.models.Plan.user" module="lino_cosi.lib.invoicing.models" names="lino_cosi.lib.invoicing.models.Plan.user"><desc_name>user</desc_name></desc_signature><desc_content/></desc><index entries="[('single', u'journal (lino_cosi.lib.invoicing.models.Plan attribute)', u'lino_cosi.lib.invoicing.models.Plan.journal', '', None)]"/><desc desctype="attribute" domain="py" noindex="False" objtype="attribute"><desc_signature class="Plan" first="False" fullname="Plan.journal" ids="lino_cosi.lib.invoicing.models.Plan.journal" module="lino_cosi.lib.invoicing.models" names="lino_cosi.lib.invoicing.models.Plan.journal"><desc_name>journal</desc_name></desc_signature><desc_content><paragraph>The journal where to create invoices.  When this field is
-    empty, you can fill the plan with suggestions but cannot
-    execute the plan.</paragraph></desc_content></desc><index entries="[('single', u'max_date (lino_cosi.lib.invoicing.models.Plan attribute)', u'lino_cosi.lib.invoicing.models.Plan.max_date', '', None)]"/><desc desctype="attribute" domain="py" noindex="False" objtype="attribute"><desc_signature class="Plan" first="False" fullname="Plan.max_date" ids="lino_cosi.lib.invoicing.models.Plan.max_date" module="lino_cosi.lib.invoicing.models" names="lino_cosi.lib.invoicing.models.Plan.max_date"><desc_name>max_date</desc_name></desc_signature><desc_content/></desc><index entries="[('single', u'today (lino_cosi.lib.invoicing.models.Plan attribute)', u'lino_cosi.lib.invoicing.models.Plan.today', '', None)]"/><desc desctype="attribute" domain="py" noindex="False" objtype="attribute"><desc_signature class="Plan" first="False" fullname="Plan.today" ids="lino_cosi.lib.invoicing.models.Plan.today" module="lino_cosi.lib.invoicing.models" names="lino_cosi.lib.invoicing.models.Plan.today"><desc_name>today</desc_name></desc_signature><desc_content/></desc><index entries="[('single', u'partner (lino_cosi.lib.invoicing.models.Plan attribute)', u'lino_cosi.lib.invoicing.models.Plan.partner', '', None)]"/><desc desctype="attribute" domain="py" noindex="False" objtype="attribute"><desc_signature class="Plan" first="False" fullname=
-    ...
-
-"""
+'''
 
 from __future__ import print_function
 from __future__ import unicode_literals
@@ -179,8 +235,9 @@ class HelpTextBuidler(Builder):
             d[fn] = content
 
     def get_outdated_docs(self):
-        for docname in self.env.found_docs:
-            yield docname
+        return self.env.found_docs
+        # for docname in self.env.found_docs:
+        #     yield docname
 
     def prepare_writing(self, docnames):
         pass
