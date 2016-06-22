@@ -37,6 +37,7 @@ import sys
 import time
 import codecs
 import atexit
+from importlib import import_module
 
 from django.conf import settings
 from django.core import exceptions
@@ -321,11 +322,13 @@ class Kernel(object):
         #             site.modules.define(app_label, k, v)
 
         if site.user_profiles_module:
-            from importlib import import_module
             import_module(site.user_profiles_module)
         
         site.setup_choicelists()
-        site.setup_workflows()
+        # site.setup_workflows()
+
+        if site.workflows_module:
+            import_module(site.workflows_module)
 
         for model in models_list:
             if model._meta.auto_created:

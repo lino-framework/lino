@@ -462,6 +462,11 @@ class Site(object):
 
     """
 
+    workflows_module = None
+    """The full Python path of the **workflows module** to be used on
+    this site.
+    """
+    
     user_profiles_module = None
     """The full Python path of the **user profiles module** to be used on
     this site.
@@ -2170,8 +2175,10 @@ this field.
         """
         self.setup_user_profiles()
 
-    def setup_workflows(self):
-        self.on_each_app('setup_workflows')
+    # def setup_workflows(self):
+    #     """Deprecated. Define a :attr:`workflows_module` instead.
+    #     """
+    #     self.on_each_app('setup_workflows')
 
     def setup_actions(self):
         """Hook for subclasses to add or modify actions.
