@@ -39,5 +39,9 @@ class CompanyDetail(CompanyDetail):
     """, label=_("Tickets"))
 
 
-def site_setup(site):
-    site.modules.contacts.Companies.set_detail_layout(CompanyDetail())
+# @dd.receiver(dd.post_analyze)
+# def my_details(sender, **kw):
+#     contacts = sender.models.contacts
+#     contacts.Companies.set_detail_layout(contacts.CompanyDetail())
+
+Companies.set_detail_layout(CompanyDetail())

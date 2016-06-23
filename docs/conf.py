@@ -146,3 +146,4 @@ html_use_opensearch = ''
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'noi'
 
+from lino.sphinxcontrib.help_text_builder import setup
