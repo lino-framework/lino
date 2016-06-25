@@ -971,7 +971,7 @@ action on individual instances.
                 #~ logger.info("20121127 Install default %s for %s",k,model)
 
     @classmethod
-    def print_subclasses_graph(self):
+    def get_subclasses_graph(self):
         """
         Returns an internationalized `graphviz` directive representing
         the polymorphic forms of this model.
@@ -1007,7 +1007,7 @@ action on individual instances.
             ['    "%s" -> "%s"' % (
                 p._meta.verbose_name, c._meta.verbose_name)
              for p, c in pairs])
-        s = """
+        return """
 
 .. graphviz::
    
@@ -1016,7 +1016,10 @@ action on individual instances.
   }
   
 """ % s
-        print(s)
+
+    @classmethod
+    def print_subclasses_graph(self):
+        print(self.get_subclasses_graph())
 
 LINO_MODEL_ATTRIBS = (
     'get_parameter_fields',

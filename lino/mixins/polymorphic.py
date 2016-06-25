@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2015 Luc Saffre
+# Copyright 2009-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Defines the :class:`Polymorphic` model mixin.
@@ -106,9 +106,9 @@ class Polymorphic(model.Model):
     person and an employee at the same time.
 
     Note that not every usage of Multiple Table Inheritance means
-    polymorphism. For example `lino_cosi.lib.ledger.Voucher` has a
-    pointer to the journal which knows which specialization to use.  A
-    given voucher has always exactly one specialization.
+    polymorphism. For example `lino_cosi.lib.ledger.models.Voucher`
+    has a pointer to the journal which knows which specialization to
+    use, so a given voucher has always exactly one specialization.
 
     .. attribute:: mti_navigator
 
