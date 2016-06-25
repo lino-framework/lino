@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2015 Luc Saffre
+# Copyright 2008-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Database models for `lino.modlib.contacts`.
@@ -43,10 +43,12 @@ from lino.modlib.countries.mixins import AddressLocation
 
 from lino.utils.xmlgen.html import E
 from lino.utils.addressable import Addressable
+from lino.mixins.periods import ObservedPeriod
 
 
 from .mixins import ContactRelated, PartnerDocument, OldCompanyContact
 from .roles import ContactsUser, ContactsStaff
+from .choicelists import PartnerEvents
 
 from lino.mixins.human import name2kw, Human, Born
 
@@ -154,10 +156,10 @@ class Partner(mixins.Polymorphic, AddressLocation, Addressable):
         yield self.get_full_name()
 
     def get_full_name(self, *args, **kw):
-        """\
-Returns a one-line string representing this Partner.
-The default returns simply the `name` field, ignoring any parameters,
-but e.g. :class:`Human` overrides this.
+        """Return a one-line string representing this Partner.  The default
+        returns simply the `name` field, ignoring any parameters, but
+        e.g. :class:`Human` overrides this.
+
         """
         return self.name
     full_name = property(get_full_name)
@@ -196,6 +198,34 @@ but e.g. :class:`Human` overrides this.
 
     def get_print_language(self):
         return self.language
+
+    @classmethod
+    def get_parameter_fields(cls, **fields):
+        fields.update(
+            observed_event=PartnerEvents.field(
+                blank=True,
+                help_text=_("Extended filter criteria")))
+        fields = super(Partner, cls).get_parameter_fields(**fields)
+        return ObservedPeriod(**fields)
+
+    @classmethod
+    def get_request_queryset(self, ar):
+        qs = super(Partner, self).get_request_queryset(ar)
+
+        pv = ar.param_values
+        oe = pv.observed_event
+        if oe:
+            qs = oe.add_filter(qs, pv)
+        return qs
+
+    @classmethod
+    def get_title_tags(self, ar):
+        for t in super(Partner, self).get_title_tags(ar):
+            yield t
+        pv = ar.param_values
+
+        if pv.observed_event:
+            yield unicode(pv.observed_event)
 
 
 class PartnerDetail(dd.DetailLayout):
