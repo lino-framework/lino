@@ -152,7 +152,15 @@ class ActiveProjects(Projects):
 class ProjectsByParent(Projects):
     master_key = 'parent'
     label = _("Subprojects")
-    column_names = "ref name *"
+    column_names = "ref name children_summary *"
+
+
+class TopLevelProjects(Projects):
+    label = _("Projects (tree)")
+    order_by = ["seqno"]
+    column_names = 'seqno name children_summary parent *'
+    filter = models.Q(parent__isnull=True)
+    variable_row_height = True
 
 
 class ProjectsByType(Projects):

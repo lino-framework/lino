@@ -64,13 +64,6 @@ class Faculty(BabelNamed, Hierarchical, Sequenced, Referrable):
         help_text=_("The category of products to use for "
                     "specifying additional options."))
 
-    @dd.displayfield(_("Child faculties"))
-    def children_summary(self, ar):
-        if ar is None:
-            return ''
-        elems = [ar.obj2html(ch) for ch in self.children.all()]
-        elems = join_elems(elems, sep=', ')
-        return E.p(*elems)
 
 dd.update_field(Faculty, 'parent', verbose_name=_("Parent faculty"))
 
