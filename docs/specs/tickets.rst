@@ -92,6 +92,20 @@ to pay money.
 =========== =============== ======== ============== =========
 <BLANKLINE>
 
+
+>>> rt.show(tickets.TopLevelProjects)
+=========== =============== ======== ==========
+ Reference   Name            Parent   Children
+----------- --------------- -------- ----------
+ docs        Documentatión
+ linö        Framewörk
+ research    Research
+ shop        Shop
+ téam        Téam
+=========== =============== ======== ==========
+<BLANKLINE>
+
+
 Developers can start working on tickets without specifying a project
 (i.e. without knowing who is going to pay for their work).  
 
