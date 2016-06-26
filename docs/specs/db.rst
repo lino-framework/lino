@@ -98,7 +98,7 @@ users.UserProfiles.admin:900
   - Places : Countries, Places
   - Contacts : Organization types, Functions, Topics, Topic groups, List Types
   - Office : Upload Types, Excerpt Types, My Text Field Templates
-  - Tickets : Project Types, Ticket types
+  - Tickets : Projects (tree), Project Types, Ticket types
   - Faculties : Faculties (tree), Competences
   - Clocking : Session Types
 - Explorer :
