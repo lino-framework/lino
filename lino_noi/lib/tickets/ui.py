@@ -464,17 +464,17 @@ class UnassignedTickets(Tickets):
 class TicketsByProject(Tickets):
     master_key = 'project'
     column_names = ("overview:50 topic:10 reporter:10 state "
-                    "closed planned_time *")
+                    "planned_time *")
 
 
 class TicketsByType(Tickets):
     master_key = 'ticket_type'
-    column_names = "summary state closed  *"
+    column_names = "summary state  *"
 
 
 class TicketsByTopic(Tickets):
     master_key = 'topic'
-    column_names = "summary state closed  *"
+    column_names = "summary state  *"
 
 
 class PublicTickets(Tickets):

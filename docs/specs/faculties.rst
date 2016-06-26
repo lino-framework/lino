@@ -30,9 +30,9 @@ has does more usage of them.
 
 >>> rt.show(faculties.TopLevelFaculties)
 ... #doctest: +REPORT_UDIFF
-======== =============== ================== ================== ================= ================
- No.      Designation     Designation (de)   Designation (fr)   Child faculties   Parent faculty
--------- --------------- ------------------ ------------------ ----------------- ----------------
+======== =============== ================== ================== ========== ================
+ No.      Designation     Designation (de)   Designation (fr)   Children   Parent faculty
+-------- --------------- ------------------ ------------------ ---------- ----------------
  1        Analysis        Analysis           Analysis
  2        Code changes    Code changes       Code changes
  3        Documentation   Documentation      Documentation
@@ -42,7 +42,7 @@ has does more usage of them.
  7        Optimization    Optimization       Optimization
  8        Offer           Offer              Offer
  **36**
-======== =============== ================== ================== ================= ================
+======== =============== ================== ================== ========== ================
 <BLANKLINE>
 
 
