@@ -304,7 +304,7 @@ class Hierarchical(Duplicable):
                                null=True, blank=True,
                                related_name='children')
 
-    @fields.displayfield(_("Child faculties"))
+    @fields.displayfield(_("Children"))
     def children_summary(self, ar):
         if ar is None:
             return ''
