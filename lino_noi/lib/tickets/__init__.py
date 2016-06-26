@@ -57,6 +57,7 @@ class Plugin(ad.Plugin):
     def setup_config_menu(self, site, profile, m):
         p = self.get_menu_group()
         m = m.add_menu(p.app_label, p.verbose_name)
+        m.add_action('tickets.TopLevelProjects')
         m.add_action('tickets.ProjectTypes')
         m.add_action('tickets.TicketTypes')
 
