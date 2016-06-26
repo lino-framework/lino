@@ -45,7 +45,7 @@ def S(name, **kw):
     return rt.modules.tickets.Site(**kw)
 
 
-def P(name, **kw):
+def Topic(name, **kw):
     kw.update(**str2kw('name', name))
     return rt.modules.topics.Topic(**kw)
 
@@ -68,7 +68,7 @@ def competence(user, faculty, **kw):
 def objects():
     yield U("anna")
     yield U("berta")
-    yield U("christina")
+    yield U("christa")
     yield U("dora")
 
     yield S("Bei mir zu Hause")
@@ -78,26 +78,43 @@ def objects():
     TopicGroup = rt.modules.topics.TopicGroup
     lng = TopicGroup(**str2kw('name', _("Languages")))
     yield lng
-
-    fr = P(_("French"), topic_group=lng)
+    fr = Topic(_("French"), topic_group=lng)
     yield fr
-
-    de = P(_("German"), topic_group=lng)
+    de = Topic(_("German"), topic_group=lng)
     yield de
+    yield Topic(_("English"), topic_group=lng)
 
-    yield P(_("English"), topic_group=lng)
+    # music = TopicGroup(**str2kw('name', _("Music")))
+    # yield music
+    # piano = Topic(_("Piano"), topic_group=music)
+    # yield piano
+    # guitar = Topic(_("Guitar"), topic_group=music)
+    # yield guitar
 
     edu = F("Unterricht", "Cours")
     yield edu
     yield F("Französischunterricht", "Cours de francais", parent=edu)
     yield F("Deutschunterricht", "Cours d'allemand", parent=edu)
-    yield F("Matheunterricht", "Cours de maths", parent=edu)
-    yield F("Gitarrenunterricht", "Cours de guitare", parent=edu)
-    yield F("Nähen", "Couture")
-    yield F("Friseur", "Coiffure")
-    yield F("Gartenarbeiten", "Travaux de jardin")
+    math = F("Matheunterricht", "Cours de maths", parent=edu)
+    yield math
+    guitar = F("Gitarrenunterricht", "Cours de guitare", parent=edu)
+    yield guitar
+    piano = F("Klavierunterricht", "Cours de piano", parent=edu)
+    yield piano
+
+    home = F("Haus und Garten", "Maison et jardin")
+    yield home
+
+    yield F("Nähen", "Couture", parent=home)
+    garden = yield F("Gartenarbeiten", "Travaux de jardin", parent=home)
+    yield garden
+    handwerk = yield F("Handwerksarbeiten", "Travaux de réparation", parent=home)
+    yield handwerk
+
     yield F("Fahrdienst", "Voiture")
-    yield F("Botengänge", "Commissions")
+    commissions = F("Botengänge", "Commissions")
+    yield commissions
+    yield F("Friseur", "Coiffure")
     yield F("Babysitting", "Garde enfant")
     yield F("Gesellschafter für Senioren",
             "Rencontres personnes agées")
@@ -106,14 +123,16 @@ def objects():
     yield traduire
     yield F("Briefe beantworten", "Répondre au courrier")
 
-    yield T("berta", "Mein Wasserhahn tropft, wer kann mir helfen?")
-    yield T("christina",
+    yield T("berta", "Mein Wasserhahn tropft, wer kann mir helfen?",
+            faculty=handwerk)
+    yield T("christa",
             "Mein Rasen muss gemäht werden. Donnerstags oder Samstags")
     yield T("dora",
-            "Wer kommt meinem Sohn Klavierunterricht geben?")
+            "Wer kommt meinem Sohn Klavierunterricht geben?",
+            faculty=piano)
     yield T("berta",
             "Wer hilft meinem Sohn sich auf die Mathearbeit am "
-            "21.05. vorzubereiten? 5. Schuljahr PDS.")
+            "21.05. vorzubereiten? 5. Schuljahr PDS.", faculty=math)
     yield T("dora",
             "Wer kann meine Abschlussarbeit korrekturlesen?",
             description="Für 5. Jahr RSI zum Thema \"Das "
@@ -122,7 +141,8 @@ def objects():
             "werden.")
     yield T("anna",
             "Wer fährt für mich nach Aachen Pampers kaufen?",
-            description="Ich darf selber nicht über die Grenze.")
+            description="Ich darf selber nicht über die Grenze.",
+            faculty=commissions)
 
     yield competence('anna', traduire, topic=fr)
     yield competence('berta', traduire, topic=fr)

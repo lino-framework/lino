@@ -310,8 +310,8 @@ class Tickets(dd.Table):
     required_roles = set()  # also for anonymous
     model = 'tickets.Ticket'
     order_by = ["-id"]
-    column_names = 'id summary:50 #feedback #standby #closed topic ' \
-                   'workflow_buttons:30 reporter:10 project:10 *'
+    column_names = 'id summary:50 reporter:10 topic faculty ' \
+                   'workflow_buttons:30 project:10 *'
     detail_layout = TicketDetail()
     insert_layout = dd.InsertLayout("""
     # reporter #product

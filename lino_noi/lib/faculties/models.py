@@ -25,6 +25,9 @@ import logging
 
 from lino.api import dd, _
 
+# from lino.utils import join_elems
+from lino.utils.xmlgen.html import E, join_elems
+
 logger = logging.getLogger(__name__)
 
 # from django.core.exceptions import ValidationError

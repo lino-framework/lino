@@ -218,18 +218,30 @@ def clockings_objects():
 def faculties_objects():
     "was previously in faculties.fixtures.demo2"
 
-    Analysis = rt.modules.faculties.Faculty.objects.get(name="Analysis")
-    Code_changes = rt.modules.faculties.Faculty.objects.get(name="Code changes")
-    Documentation = rt.modules.faculties.Faculty.objects.get(name="Documentation")
-    Testing = rt.modules.faculties.Faculty.objects.get(name="Testing")
-    Configuration = rt.modules.faculties.Faculty.objects.get(name="Configuration")
-
+    Faculty = rt.modules.faculties.Faculty
     Competence = rt.modules.faculties.Competence
-    Rolf = rt.modules.users.User.objects.get(first_name="Rolf")
-    Romain = rt.modules.users.User.objects.get(first_name="Romain")
-    mathieu = rt.modules.users.User.objects.get(username="mathieu")
-    Robin = rt.modules.users.User.objects.get(first_name="Robin")
-    luc = rt.modules.users.User.objects.get(username="luc")
+    User = rt.modules.users.User
+
+    yield Faculty(**dd.str2kw('name', 'Analysis'))
+    yield Faculty(**dd.str2kw('name', 'Code changes'))
+    yield Faculty(**dd.str2kw('name', 'Documentation'))
+    yield Faculty(**dd.str2kw('name', 'Testing'))
+    yield Faculty(**dd.str2kw('name', 'Configuration'))
+    yield Faculty(**dd.str2kw('name', 'Enhancement'))
+    yield Faculty(**dd.str2kw('name', 'Optimization'))
+    yield Faculty(**dd.str2kw('name', 'Offer'))
+
+    Analysis = Faculty.objects.get(name="Analysis")
+    Code_changes = Faculty.objects.get(name="Code changes")
+    Documentation = Faculty.objects.get(name="Documentation")
+    Testing = Faculty.objects.get(name="Testing")
+    Configuration = Faculty.objects.get(name="Configuration")
+
+    Rolf = User.objects.get(first_name="Rolf")
+    Romain = User.objects.get(first_name="Romain")
+    mathieu = User.objects.get(username="mathieu")
+    Robin = User.objects.get(first_name="Robin")
+    luc = User.objects.get(username="luc")
 
     yield Competence(faculty=Analysis, user=Rolf)
     yield Competence(faculty=Analysis, user=Robin, affinity=23)

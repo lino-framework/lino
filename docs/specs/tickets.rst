@@ -102,12 +102,12 @@ assigned to a project:
 >>> pv = dict(has_project=dd.YesNo.no)
 >>> rt.show(tickets.Tickets, param_values=pv)
 ... #doctest: +REPORT_UDIFF
-==== =================== =========== ============== ================= =========
- ID   Summary             Topic       Workflow       Reporter          Project
----- ------------------- ----------- -------------- ----------------- ---------
- 5    Cannot create Foo   Lino Cosi   **Sleeping**   Romain Raffault
- 3    Baz sucks           Lino Core   **ToDo**       marc
-==== =================== =========== ============== ================= =========
+==== =================== ================= =========== ========= ============== =========
+ ID   Summary             Reporter          Topic       Faculty   Workflow       Project
+---- ------------------- ----------------- ----------- --------- -------------- ---------
+ 5    Cannot create Foo   Romain Raffault   Lino Cosi             **Sleeping**
+ 3    Baz sucks           marc              Lino Core             **ToDo**
+==== =================== ================= =========== ========= ============== =========
 <BLANKLINE>
 
 
@@ -290,16 +290,16 @@ can see all local tickets for a given site object:
 >>> welket = tickets.Site.objects.get(name="welket")
 >>> rt.show(tickets.TicketsBySite, welket)
 ... #doctest: +REPORT_UDIFF
-==== =========================================== ============== ============= ============= ==========
- ID   Summary                                     Topic          Workflow      Reporter      Project
----- ------------------------------------------- -------------- ------------- ------------- ----------
- 16   How to get bar from foo                     Lino Welfare   **Talk**      luc           research
- 13   Bar cannot foo                              Lino Cosi      **Done**      Rolf Rompen   linö
- 10   Where can I find a Foo when bazing Bazes?   Lino Voga      **ToDo**      marc          docs
- 7    No Foo after deleting Bar                   Lino Core      **Refused**   Robin Rood    shop
- 4    Foo and bar don't baz                       Lino Welfare   **Sticky**    mathieu       docs
- 1    Föö fails to bar when baz                   Lino Cosi      **New**       jean          linö
-==== =========================================== ============== ============= ============= ==========
+==== =========================================== ============= ============== =============== ============= ==========
+ ID   Summary                                     Reporter      Topic          Faculty         Workflow      Project
+---- ------------------------------------------- ------------- -------------- --------------- ------------- ----------
+ 16   How to get bar from foo                     luc           Lino Welfare                   **Talk**      research
+ 13   Bar cannot foo                              Rolf Rompen   Lino Cosi      Documentation   **Done**      linö
+ 10   Where can I find a Foo when bazing Bazes?   marc          Lino Voga                      **ToDo**      docs
+ 7    No Foo after deleting Bar                   Robin Rood    Lino Core                      **Refused**   shop
+ 4    Foo and bar don't baz                       mathieu       Lino Welfare                   **Sticky**    docs
+ 1    Föö fails to bar when baz                   jean          Lino Cosi                      **New**       linö
+==== =========================================== ============= ============== =============== ============= ==========
 <BLANKLINE>
 
 Note that the above table shows no state change actions in the
@@ -308,16 +308,16 @@ authenticated developer it looks like this:
 
 >>> rt.login('jean').show(tickets.TicketsBySite, welket)
 ... #doctest: +REPORT_UDIFF
-==== =========================================== ============== ================================================================== ============= ==========
- ID   Summary                                     Topic          Workflow                                                           Reporter      Project
----- ------------------------------------------- -------------- ------------------------------------------------------------------ ------------- ----------
- 16   How to get bar from foo                     Lino Welfare   **Talk** → [ToDo] [Sleeping] [Done] [Refused] [☆]                  luc           research
- 13   Bar cannot foo                              Lino Cosi      **Done** → [☆]                                                     Rolf Rompen   linö
- 10   Where can I find a Foo when bazing Bazes?   Lino Voga      **ToDo** → [Talk] [Sleeping] [Done] [Refused] [☆]                  marc          docs
- 7    No Foo after deleting Bar                   Lino Core      **Refused** → [☆]                                                  Robin Rood    shop
- 4    Foo and bar don't baz                       Lino Welfare   **Sticky** → [☆]                                                   mathieu       docs
- 1    Föö fails to bar when baz                   Lino Cosi      **New** → [Sticky] [Talk] [ToDo] [Sleeping] [Done] [Refused] [☆]   jean          linö
-==== =========================================== ============== ================================================================== ============= ==========
+==== =========================================== ============= ============== =============== ================================================================== ==========
+ ID   Summary                                     Reporter      Topic          Faculty         Workflow                                                           Project
+---- ------------------------------------------- ------------- -------------- --------------- ------------------------------------------------------------------ ----------
+ 16   How to get bar from foo                     luc           Lino Welfare                   **Talk** → [ToDo] [Sleeping] [Done] [Refused] [☆]                  research
+ 13   Bar cannot foo                              Rolf Rompen   Lino Cosi      Documentation   **Done** → [☆]                                                     linö
+ 10   Where can I find a Foo when bazing Bazes?   marc          Lino Voga                      **ToDo** → [Talk] [Sleeping] [Done] [Refused] [☆]                  docs
+ 7    No Foo after deleting Bar                   Robin Rood    Lino Core                      **Refused** → [☆]                                                  shop
+ 4    Foo and bar don't baz                       mathieu       Lino Welfare                   **Sticky** → [☆]                                                   docs
+ 1    Föö fails to bar when baz                   jean          Lino Cosi                      **New** → [Sticky] [Talk] [ToDo] [Sleeping] [Done] [Refused] [☆]   linö
+==== =========================================== ============= ============== =============== ================================================================== ==========
 <BLANKLINE>
 
 
