@@ -64,7 +64,7 @@ from lino.utils.quantities import Duration
 from lino_xl.lib.cal.mixins import StartedEnded
 from lino.modlib.users.mixins import UserAuthored
 
-from .actions import EndSession, PrintActivityReport
+from .actions import EndSession, PrintActivityReport, EndTicketSession
 
 
 class SessionType(mixins.BabelNamed):
