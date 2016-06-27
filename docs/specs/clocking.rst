@@ -83,18 +83,18 @@ working hours.
 
 >>> rt.login('jean').show(clocking.WorkedHours)
 ... #doctest: -REPORT_UDIFF
-============================ ====== ====== ========== ========== ========== ==========
- Description                  docs   linö   research   shop       téam       Total
----------------------------- ------ ------ ---------- ---------- ---------- ----------
- **Sat 23/05/2015** (*#2*)                                        0:01       0:01
- **Fri 22/05/2015** (*#7*)                             2:18                  2:18
- **Thu 21/05/2015**                                                          0:00
- **Wed 20/05/2015** (*#12*)                            1:30                  1:30
- **Tue 19/05/2015** (*#2*)                                        0:10       0:10
- **Mon 18/05/2015**                                                          0:00
- **Sun 17/05/2015**                                                          0:00
- **Total (7 rows)**                                    **3:48**   **0:11**   **3:59**
-============================ ====== ====== ========== ========== ========== ==========
+============================ ========== ========== ==========
+ Description                  linö       shop       Total
+---------------------------- ---------- ---------- ----------
+ **Sat 23/05/2015** (*#2*)    0:01                  0:01
+ **Fri 22/05/2015** (*#7*)               2:18       2:18
+ **Thu 21/05/2015**                                 0:00
+ **Wed 20/05/2015** (*#12*)              1:30       1:30
+ **Tue 19/05/2015** (*#2*)    0:10                  0:10
+ **Mon 18/05/2015**                                 0:00
+ **Sun 17/05/2015**                                 0:00
+ **Total (7 rows)**           **0:11**   **3:48**   **3:59**
+============================ ========== ========== ==========
 <BLANKLINE>
 
 
@@ -160,7 +160,8 @@ base for writing invoices.
 
 >>> obj = clocking.ServiceReport.objects.get(pk=1)
 >>> obj.printed_by.build_method
-<BuildMethods.appyodt:appyodt>
+<BuildMethods.weasy2html:weasy2html>
+
 
 >>> obj.interesting_for
 Partner #100 ('welket')
@@ -183,14 +184,35 @@ Partner #100 ('welket')
 <BLANKLINE>
 
 
+The :class:`ProjectsByReport
+<lino_noi.projects.team.lib.clocking.ui.ProjectsByReport>`
+table lists all projects and the time invested.
+
 >>> rt.show(clocking.ProjectsByReport, obj)
-==================== =============== ==================== ===========
- Reference            Name            Tickets              Time
--------------------- --------------- -------------------- -----------
- docs                 Documentatión   *#15*, *#10*, *#4*   6:28
- linö                 Framewörk       *#8*                 3:29
- research             Research        *#16*, *#11*         2:12
- shop                 Shop            *#12*, *#7*          3:48
- **Total (4 rows)**                                        **15:57**
-==================== =============== ==================== ===========
+==================== =============== ======== ==================== =========== ============
+ Reference            Name            Parent   Tickets              Time        Total time
+-------------------- --------------- -------- -------------------- ----------- ------------
+ docs                 Documentatión   linö     *#15*, *#10*, *#4*   6:28        8:40
+ linö                 Framewörk                *#8*                 3:29        12:09
+ research             Research        docs     *#16*, *#11*         2:12        2:12
+ shop                 Shop                     *#12*, *#7*          3:48        3:48
+ **Total (4 rows)**                                                 **15:57**
+==================== =============== ======== ==================== =========== ============
 <BLANKLINE>
+
+
+Note our tree structure (which is currently not very visible)::
+
+  - linö
+    - docs
+      - research
+    - téam
+  - shop
+
+
+The `Total time` column in this table is the `Time` invested for this
+project and the sum of times invested in all of its children.
+
+The `Total time` for "linö" in above table is **12:09**, which is the
+sum of **3:29** (direct time of linö) + **6:28** (time of docs) +
+**2:12** (time of research).

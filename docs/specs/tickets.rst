@@ -85,24 +85,21 @@ to pay money.
  Reference   Name            Parent   Project Type   Private
 ----------- --------------- -------- -------------- ---------
  linö        Framewörk                               No
- téam        Téam                                    Yes
- docs        Documentatión                           No
- research    Research                                No
+ téam        Téam            linö                    Yes
+ docs        Documentatión   linö                    No
+ research    Research        docs                    No
  shop        Shop                                    No
 =========== =============== ======== ============== =========
 <BLANKLINE>
 
 
 >>> rt.show(tickets.TopLevelProjects)
-=========== =============== ======== ==========
- Reference   Name            Parent   Children
------------ --------------- -------- ----------
- docs        Documentatión
- linö        Framewörk
- research    Research
+=========== =========== ======== ================
+ Reference   Name        Parent   Children
+----------- ----------- -------- ----------------
+ linö        Framewörk            *téam*, *docs*
  shop        Shop
- téam        Téam
-=========== =============== ======== ==========
+=========== =========== ======== ================
 <BLANKLINE>
 
 

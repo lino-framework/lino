@@ -19,6 +19,8 @@
 
 """Clocking specific for the Team variant of Lino Noi.
 
+See :ref:`noi.specs.clocking`.
+
 .. autosummary::
    :toctree:
 
@@ -41,4 +43,4 @@ class Plugin(Plugin):
         p = self.get_menu_group()
         m = m.add_menu(p.app_label, p.verbose_name)
         m.add_action('clocking.ServiceReports')
-
+        # m.add_action('clocking.MySessions', action='print_activity_report')

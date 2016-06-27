@@ -82,6 +82,7 @@ class Site(Site):
         yield 'lino.modlib.export_excel'
         yield 'lino.modlib.tinymce'
         yield 'lino.modlib.smtpd'
+        yield 'lino.modlib.weasyprint'
         yield 'lino_xl.lib.appypod'
         yield 'lino.modlib.wkhtmltopdf'
 

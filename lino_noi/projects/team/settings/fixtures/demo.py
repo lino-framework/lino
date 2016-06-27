@@ -91,17 +91,19 @@ def tickets_objects():
         yield Milestone(site=SITES.pop(), expected=d, reached=d)
     yield Milestone(site=SITES.pop(), expected=dd.today())
 
-    yield Project(
+    prj1 = Project(
         name="Framewörk", ref="linö", private=False,
         start_date=i2d(20090101))
+    yield prj1
     yield Project(
-        name="Téam", ref="téam", start_date=i2d(20100101))
-    yield Project(
+        name="Téam", ref="téam", start_date=i2d(20100101), parent=prj1)
+    prj2 = Project(
         name="Documentatión", ref="docs", private=False,
-        start_date=i2d(20090101))
+        start_date=i2d(20090101), parent=prj1)
+    yield prj2
     yield Project(
         name="Research", ref="research", private=False,
-        start_date=i2d(19980101))
+        start_date=i2d(19980101), parent=prj2)
     yield Project(
         name="Shop", ref="shop", private=False,
         start_date=i2d(20120201), end_date=i2d(20120630))

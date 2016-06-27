@@ -159,7 +159,7 @@ verbose_name and verbose_name_plural options of `faculties.Faculty`.
 >>> rt.show(faculties.TopLevelFaculties)
 ... #doctest: +REPORT_UDIFF
 ======== ============================= ================== ============================ ============================================================================================================ =========================
- Nr.      Bezeichnung                   Bezeichnung (en)   Bezeichnung (fr)             Unterfähigkeiten                                                                                             Übergeordnete Fähigkeit
+ Nr.      Bezeichnung                   Bezeichnung (en)   Bezeichnung (fr)             Kinder                                                                                                       Übergeordnete Fähigkeit
 -------- ----------------------------- ------------------ ---------------------------- ------------------------------------------------------------------------------------------------------------ -------------------------
  1        Unterricht                                       Cours                        *Französischunterricht*, *Deutschunterricht*, *Matheunterricht*, *Gitarrenunterricht*, *Klavierunterricht*
  2        Haus und Garten                                  Maison et jardin             *Nähen*, *Gartenarbeiten*, *Handwerksarbeiten*

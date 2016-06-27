@@ -49,7 +49,7 @@ Extreme case of a session:
 
 """
 
-import datetime
+# import datetime
 
 from django.conf import settings
 from django.db import models
@@ -58,16 +58,13 @@ from django.utils import timezone
 from lino import mixins
 from lino.api import dd, rt, _
 
-from lino.core.roles import SiteUser
-
 from lino.utils.xmlgen.html import E
 from lino.utils.quantities import Duration
 
-from lino.mixins.periods import DatePeriod
 from lino_xl.lib.cal.mixins import StartedEnded
 from lino.modlib.users.mixins import UserAuthored
-from lino_xl.lib.excerpts.mixins import Certifiable
-from lino_noi.lib.tickets.choicelists import TicketStates
+
+from .actions import EndSession, PrintActivityReport
 
 
 class SessionType(mixins.BabelNamed):
@@ -78,129 +75,6 @@ class SessionType(mixins.BabelNamed):
         app_label = 'clocking'
         verbose_name = _("Session Type")
         verbose_name_plural = _('Session Types')
-
-
-class EndSession(dd.Action):
-    """To close a session means to stop working on that ticket for this time.
-
-    """
-    label = u"◉"  # FISHEYE (U+25C9)
-    # label = u"↘"  # u"\u2198"
-    # label = _("End session")
-    help_text = _("End this session.")
-    # icon_name = 'emoticon_smile'
-    show_in_workflow = True
-    show_in_bbar = False
-    readonly = False
-
-    def get_action_permission(self, ar, obj, state):
-        if obj.end_time:
-            return False
-        return super(EndSession, self).get_action_permission(ar, obj, state)
-
-    def run_from_ui(self, ar, **kw):
-
-        def ok(ar2):
-            now = timezone.now()
-            for obj in ar.selected_rows:
-                obj.set_datetime('end', now)
-                # obj.end_date = dd.today()
-                # obj.end_time = now.time()
-                obj.save()
-                obj.ticket.touch()
-                obj.ticket.save()
-                ar2.set_response(refresh=True)
-
-        if True:
-            ok(ar)
-        else:
-            msg = _("Close {0} sessions.").format(len(ar.selected_rows))
-            ar.confirm(ok, msg, _("Are you sure?"))
-
-
-class EndTicketSession(dd.Action):
-    # label = _("End session")
-    # label = u"\u231a\u2198"
-    # label = u"↘"  # u"\u2198"
-    label = u"◉"  # FISHEYE (U+25C9)
-    help_text = _("End the active session on this ticket.")
-    show_in_workflow = False
-    show_in_bbar = False
-    required_roles = dd.login_required()
-    readonly = False
-    
-    def get_action_permission(self, ar, obj, state):
-        # u = ar.get_user()
-        # if not u.profile.has_required_roles([SiteUser]):
-        #     # avoid query with AnonymousUser
-        #     return False
-        if not super(EndTicketSession, self).get_action_permission(
-                ar, obj, state):
-            return False
-        Session = rt.modules.clocking.Session
-        qs = Session.objects.filter(
-            user=ar.get_user(), ticket=obj, end_time__isnull=True)
-        if qs.count() == 0:
-            return False
-        return True
-
-    def run_from_ui(self, ar, **kw):
-        Session = rt.modules.clocking.Session
-        ses = Session.objects.get(
-            user=ar.get_user(), ticket=ar.selected_rows[0],
-            end_time__isnull=True)
-        ses.set_datetime('end', timezone.now())
-        ses.full_clean()
-        ses.save()
-        ar.set_response(refresh=True)
-
-
-class StartTicketSession(dd.Action):
-    # label = _("Start session")
-    # label = u"\u262d"
-    # label = u"\u2692"
-    # label = u"\u2690"
-    # label = u"\u2328"
-    # label = u"\u231a\u2197"
-    # label = u"↗"  # \u2197
-    label = u"▶"  # BLACK RIGHT-POINTING TRIANGLE (U+25B6)
-    help_text = _("Start a session on this ticket.")
-    # icon_name = 'emoticon_smile'
-    show_in_workflow = False
-    show_in_bbar = False
-    readonly = False
-
-    def get_action_permission(self, ar, obj, state):
-        if obj.standby or obj.closed:
-            return False
-        u = ar.get_user()
-        if not u.profile.has_required_roles([SiteUser]):
-            # avoid query with AnonymousUser
-            return False
-        Session = rt.modules.clocking.Session
-        qs = Session.objects.filter(
-            user=u, ticket=obj, end_time__isnull=True)
-        if qs.count():
-            return False
-        return super(StartTicketSession, self).get_action_permission(
-            ar, obj, state)
-
-    def run_from_ui(self, ar, **kw):
-        me = ar.get_user()
-        obj = ar.selected_rows[0]
-
-        ses = rt.modules.clocking.Session(ticket=obj, user=me)
-        ses.full_clean()
-        ses.save()
-        ar.set_response(refresh=True)
-
-
-dd.inject_action(
-    dd.plugins.clocking.ticket_model,
-    start_session=StartTicketSession())
-dd.inject_action(
-    dd.plugins.clocking.ticket_model,
-    end_session=EndTicketSession())
 
 
 class Session(UserAuthored, StartedEnded):
@@ -247,6 +121,7 @@ class Session(UserAuthored, StartedEnded):
         blank=True, null=True)
 
     end_session = EndSession()
+    # print_activity_report = PrintActivityReport()
 
     def __unicode__(self):
         if self.start_time and self.end_time:
@@ -361,7 +236,6 @@ if False:  # works, but is not useful
                     prj = prj.parent
             projects = d2p.setdefault(ses.start_date, dict())
             duration = projects.setdefault(prj, Duration())
-            #datetime.timedelta())
             duration += ses.get_duration()
             projects[prj] = duration
 
