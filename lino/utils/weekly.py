@@ -1,8 +1,10 @@
-from builtins import range
 # -*- coding: UTF-8 -*-
-# Copyright 2015 Luc Saffre
+# Copyright 2015-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
+raise Exception("20160627 Is still being used somewhere?")
+
+from builtins import range
 import datetime
 
 from lino.api import dd
@@ -16,7 +18,7 @@ REPORTERS = []
 
 
 def add_reporter(r):
-    assert not r in REPORTERS
+    assert r not in REPORTERS
     REPORTERS.append(r)
 
 

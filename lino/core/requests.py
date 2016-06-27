@@ -180,11 +180,6 @@ class BaseRequest(object):
 
     """
 
-    tableattrs = dict(cellspacing="3px", bgcolor="#ffffff", width="100%")
-    # ~ cellattrs = dict(align="center",valign="middle",bgcolor="#eeeeee")
-    cellattrs = dict(align="left", valign="top", bgcolor="#eeeeee")
-    # ~ cellattrs = dict(align="left",valign="top",bgcolor="#d0def0")
-
     request = None
     """The incoming Django HttpRequest object which caused this action
     request.
@@ -287,8 +282,10 @@ request from it.
         """
         if not self.must_execute():
             return
-            #~ raise Exception("Request %r was already executed" % other)
+            # raise Exception("Request %r was already executed" % other)
         self.renderer = other.renderer
+        # self.cellattrs = other.cellattrs
+        # self.tableattrs = other.tableattrs
         self.user = other.user
         self.subst_user = other.subst_user
         self._confirm_answer = other._confirm_answer
@@ -315,6 +312,7 @@ request from it.
         """
         from lino.core.actors import resolve_action
         if isinstance(spec, ActionRequest):  # deprecated use
+            # raise Exception("20160627 Deprecated")
             for k, v in list(kw.items()):
                 assert hasattr(spec, k)
                 setattr(spec, k, v)

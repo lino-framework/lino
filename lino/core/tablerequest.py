@@ -397,7 +397,7 @@ class TableRequest(ActionRequest):
 
         """
         ar = self
-        tble.attrib.update(self.tableattrs)
+        tble.attrib.update(self.renderer.tableattrs)
         tble.attrib.setdefault('name', self.bound_action.full_name())
 
         grid = ar.ah.list_layout.main
@@ -410,9 +410,8 @@ class TableRequest(ActionRequest):
 
         headers = [
             x for x in grid.headers2html(
-                self, columns, headers, **self.cellattrs)]
+                self, columns, headers, **self.renderer.cellattrs)]
         sums = [fld.zero for fld in columns]
-        #~ hr = tble.add_header_row(*headers,**self.cellattrs)
         if cellwidths:
             for i, td in enumerate(headers):
                 td.attrib.update(width=six.text_type(cellwidths[i]))
@@ -420,10 +419,10 @@ class TableRequest(ActionRequest):
         #~ print 20120623, ar.actor
         recno = 0
         for obj in data_iterator:
-            cells = ar.row2html(recno, columns, obj, sums, **self.cellattrs)
+            cells = ar.row2html(
+                recno, columns, obj, sums, **self.renderer.cellattrs)
             if cells is not None:
                 recno += 1
-                #~ ar.actor.apply_row_format(tr,recno)
                 tble.body.append(xghtml.E.tr(*cells))
 
         if recno == 0:
@@ -440,7 +439,7 @@ class TableRequest(ActionRequest):
                     has_sum = True
                     break
             if has_sum:
-                cells = ar.sums2html(columns, sums, **self.cellattrs)
+                cells = ar.sums2html(columns, sums, **self.renderer.cellattrs)
                 tble.body.append(xghtml.E.tr(*cells))
 
     def get_field_info(ar, column_names=None):

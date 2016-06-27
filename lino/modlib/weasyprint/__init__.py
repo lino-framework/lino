@@ -36,3 +36,18 @@ class Plugin(ad.Plugin):
     "See :doc:`/dev/plugins`."
     verbose_name = _("WeasyPrint")
 
+    # def on_ui_init(self, kernel):
+    #     """
+    #     This is being called from
+    #     :meth:`lino.core.kernel.Kernel.kernel_startup`.
+
+    #     Lino has an automatic and currently not configurable method
+    #     for building Jinja's template loader. It looks for
+    #     a "config" subfolder in the following places:
+
+    #     - the project directory :attr:`lino.core.site.Site.project_dir`
+    #     - the directories of each installed app
+
+    #     """
+    #     from .renderer import WeasyRenderer
+    #     self.renderer = WeasyRenderer(self)
