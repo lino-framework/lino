@@ -458,14 +458,16 @@ def get_field(model, name):
     model.
 
     """
-    for vf in model._meta.virtual_fields:
-        if vf.name == name:
-            return vf
-    fld, remote_model, direct, m2m = model._meta.get_field_by_name(name)
-    # see blog/2011/0525
-    #~ if remote_model is not None:
-        #~ raise Exception("get_field(%r,%r) got a remote model ?!" % (model,name))
-    return fld
+    # for vf in model._meta.virtual_fields:
+    #     if vf.name == name:
+    #         return vf
+    return model._meta.get_field(name)
+
+    # RemovedInDjango110Warning: 'get_field_by_name is an unofficial
+    # API that has been deprecated. You may be able to replace it with
+    # 'get_field()'
+    # fld, remote_model, direct, m2m = model._meta.get_field_by_name(name)
+    # return fld
 
 
 class UnresolvedField(object):
