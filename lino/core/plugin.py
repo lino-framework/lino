@@ -86,6 +86,37 @@ class Plugin(object):
 
     """
 
+    disables_plugins = []
+    """A list of strings with names of plugins to **not** install even
+    though they are yeld by :meth:`get_installed_apps
+    <lino.core.site.Site.get_installed_apps>`. This is applied as an
+    additional plugin filter even after :meth:`get_apps_modifiers
+    <lino.core.site.Site.get_apps_modifiers>`.
+
+    The plugin names can be either the full name or just the
+    app_label.
+
+    This list is allowed to contain names of plugins which are not
+    installed at all.
+
+    Usage example: The :mod:`lino.modlib.tinymce` works only with
+    ExtJS 3, and we currently believe that we will never need it in
+    ExtJS 6.  When switching back and forth between
+    :mod:`lino.modlib.extjs` and :mod:`lino_extjs6.extjs6`, we had to
+    remove it explicitly by also defining a :meth:`get_apps_modifiers
+    <lino.core.site.Site.get_apps_modifiers>` method::
+
+        def get_apps_modifiers(self, **kw):
+            kw = super(Site, self).get_apps_modifiers(**kw)
+            kw.update(tinymce=None)
+            return kw
+
+    Now :mod:`lino_extjs6.extjs6` has :attr:`disables_plugins` set to
+    ``['tinymce']`` and we no longer need above code because Lino now
+    removes it automatically when ExtJS 6 is being used.
+
+    """
+
     ui_label = None
 
     ui_handle_attr_name = None

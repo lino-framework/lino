@@ -1262,7 +1262,7 @@ class Site(object):
         apps_modifiers = self.get_apps_modifiers()
 
         if hasattr(self, 'hidden_apps'):
-            raise Exception("Replace hidden_apps by get_apps_modifiers()")
+            raise ChangedAPI("Replace hidden_apps by get_apps_modifiers()")
 
         def add(x):
             if isinstance(x, six.string_types):
@@ -1285,6 +1285,7 @@ class Site(object):
 
         # actual_apps = []
         plugins = []
+        disabled_plugins = set()
         self.plugins = AttrDict()
 
         def install_plugin(app_name, needed_by=None):
@@ -1328,6 +1329,8 @@ class Site(object):
             # actual_apps.append(app_name)
             plugins.append(p)
             self.plugins.define(k, p)
+            for dp in p.disables_plugins:
+                disabled_plugins.add(dp)
 
         # lino_startup is always the first plugin:
         install_plugin(str('lino.modlib.lino_startup'))
@@ -1343,6 +1346,12 @@ class Site(object):
             install_plugin(str('django.contrib.sessions'))
 
         # install_plugin(str('lino.modlib.database_ready'))
+
+        for p in plugins:
+            if p.app_label in disabled_plugins \
+               or p.app_name in disabled_plugins:
+                plugins.remove(p)
+                del self.plugins[p]
 
         # self.update_settings(INSTALLED_APPS=tuple(actual_apps))
         self.update_settings(
