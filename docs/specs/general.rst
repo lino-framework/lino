@@ -127,3 +127,33 @@ Users
 ========== ================== ==========
 <BLANKLINE>
 
+
+Countries
+=========
+
+>>> rt.show(countries.Countries)
+============================= ================================ ================================= ==========
+ Designation                   Designation (de)                 Designation (fr)                  ISO code
+----------------------------- -------------------------------- --------------------------------- ----------
+ Belgium                       Belgien                          Belgique                          BE
+ Congo (Democratic Republic)   Kongo (Demokratische Republik)   Congo (République democratique)   CD
+ Estonia                       Estland                          Estonie                           EE
+ France                        Frankreich                       France                            FR
+ Germany                       Deutschland                      Allemagne                         DE
+ Maroc                         Marokko                          Maroc                             MA
+ Netherlands                   Niederlande                      Pays-Bas                          NL
+ Russia                        Russland                         Russie                            RU
+============================= ================================ ================================= ==========
+<BLANKLINE>
+
+
+The following test should actually run without an exception, but it
+continues to say the following traceback. Why?
+
+>>> json_fields = 'count rows title success no_data_text param_values'
+>>> kwargs = dict(fmt='json', limit=10, start=0)
+>>> demo_get('robin', 'api/countries/Countries', json_fields, 9, **kwargs)
+Traceback (most recent call last):
+...
+Exception: Response status (GET /api/countries/Countries?start=0&fmt=json&limit=10 for user Robin Rood) was 403 instead of 200
+
