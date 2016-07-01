@@ -1351,7 +1351,7 @@ class Site(object):
             if p.app_label in disabled_plugins \
                or p.app_name in disabled_plugins:
                 plugins.remove(p)
-                del self.plugins[p]
+                del self.plugins[p.app_label]
 
         # self.update_settings(INSTALLED_APPS=tuple(actual_apps))
         self.update_settings(

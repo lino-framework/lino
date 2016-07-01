@@ -44,6 +44,8 @@ def gfk2lookup(gfk, obj, **kw):
     """Return a `dict` with the lookup keywords for the given
     GenericForeignKey field `gfk` on the given database object `obj`.
 
+    See also :ref:`book.specs.gfks`.
+
     """
     if obj is None:
         # 20120222 : here was only `pass`, and the two other lines
@@ -55,6 +57,8 @@ def gfk2lookup(gfk, obj, **kw):
     else:
         ct = ContentType.objects.get_for_model(obj.__class__)
         kw[gfk.ct_field] = ct
+        if not isinstance(obj.pk, int):
+            return kw
         kw[gfk.fk_field] = obj.pk
     return kw
 
