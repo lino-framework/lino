@@ -109,3 +109,14 @@ users.UserProfiles.admin:900
   - Faculties : Faculties (all), Competences
   - Clocking : Sessions
 - Site : About
+
+
+
+20160702
+========
+
+>>> 'cour'.isdigit()
+False
+>>> 'ref' in rt.models.topics.Topic.quick_search_fields
+True
+
