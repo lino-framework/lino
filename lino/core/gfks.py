@@ -57,7 +57,7 @@ def gfk2lookup(gfk, obj, **kw):
     else:
         ct = ContentType.objects.get_for_model(obj.__class__)
         kw[gfk.ct_field] = ct
-        if not isinstance(obj.pk, int):
+        if not isinstance(obj.pk, (int, long)):
             return kw
         kw[gfk.fk_field] = obj.pk
     return kw
