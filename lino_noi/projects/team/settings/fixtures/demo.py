@@ -40,24 +40,24 @@ def objects():
 
 def tickets_objects():
     # was previously in tickets
-    User = rt.modules.users.User
-    Partner = rt.modules.contacts.Partner
-    Topic = rt.modules.topics.Topic
-    TT = rt.modules.tickets.TicketType
-    Ticket = rt.modules.tickets.Ticket
-    Interest = rt.modules.topics.Interest
-    Milestone = rt.modules.tickets.Milestone
-    Project = rt.modules.tickets.Project
-    Site = rt.modules.tickets.Site
-    Link = rt.modules.tickets.Link
-    LinkTypes = rt.modules.tickets.LinkTypes
+    User = rt.models.users.User
+    Partner = rt.models.contacts.Partner
+    Topic = rt.models.topics.Topic
+    TT = rt.models.tickets.TicketType
+    Ticket = rt.models.tickets.Ticket
+    Interest = rt.models.topics.Interest
+    Milestone = rt.models.tickets.Milestone
+    Project = rt.models.tickets.Project
+    Site = rt.models.tickets.Site
+    Link = rt.models.tickets.Link
+    LinkTypes = rt.models.tickets.LinkTypes
 
-    cons = rt.modules.users.UserProfiles.consultant
-    dev = rt.modules.users.UserProfiles.developer
+    cons = rt.models.users.UserProfiles.consultant
+    dev = rt.models.users.UserProfiles.developer
     yield User(username="mathieu", profile=cons)
     yield User(username="marc", profile=cons)
     yield User(username="luc", profile=dev)
-    yield User(username="jean", profile=rt.modules.users.UserProfiles.senior)
+    yield User(username="jean", profile=rt.models.users.UserProfiles.senior)
 
     USERS = Cycler(User.objects.all())
 
@@ -91,24 +91,26 @@ def tickets_objects():
         yield Milestone(site=SITES.pop(), expected=d, reached=d)
     yield Milestone(site=SITES.pop(), expected=dd.today())
 
-    yield Project(
+    prj1 = Project(
         name="Framewörk", ref="linö", private=False,
         start_date=i2d(20090101))
+    yield prj1
     yield Project(
-        name="Téam", ref="téam", start_date=i2d(20100101))
-    yield Project(
+        name="Téam", ref="téam", start_date=i2d(20100101), parent=prj1)
+    prj2 = Project(
         name="Documentatión", ref="docs", private=False,
-        start_date=i2d(20090101))
+        start_date=i2d(20090101), parent=prj1)
+    yield prj2
     yield Project(
         name="Research", ref="research", private=False,
-        start_date=i2d(19980101))
+        start_date=i2d(19980101), parent=prj2)
     yield Project(
         name="Shop", ref="shop", private=False,
         start_date=i2d(20120201), end_date=i2d(20120630))
 
     PROJECTS = Cycler(Project.objects.all())
     SITES = Cycler(Site.objects.all())
-    TicketStates = rt.modules.tickets.TicketStates
+    TicketStates = rt.models.tickets.TicketStates
     TSTATES = Cycler(TicketStates.objects())
 
     def ticket(summary, **kwargs):
@@ -161,11 +163,11 @@ def tickets_objects():
 
 def clockings_objects():
     # was previously in clockings
-    SessionType = rt.modules.clocking.SessionType
-    Session = rt.modules.clocking.Session
-    Ticket = rt.modules.tickets.Ticket
-    User = rt.modules.users.User
-    UserProfiles = rt.modules.users.UserProfiles
+    SessionType = rt.models.clocking.SessionType
+    Session = rt.models.clocking.Session
+    Ticket = rt.models.tickets.Ticket
+    User = rt.models.users.User
+    UserProfiles = rt.models.users.UserProfiles
     # devs = (UserProfiles.developer, UserProfiles.senior)
     devs = [p for p in UserProfiles.items()
             if p.has_required_roles([Worker])
@@ -208,8 +210,8 @@ def clockings_objects():
                 if offset == 0 or worked > 8:
                     break
 
-    ServiceReport = rt.modules.clocking.ServiceReport
-    Site = rt.modules.contacts.Partner
+    ServiceReport = rt.models.clocking.ServiceReport
+    Site = rt.models.contacts.Partner
     welket = Site.objects.get(name="welket")
     yield ServiceReport(
         start_date=dd.today(-90), interesting_for=welket)
@@ -218,54 +220,70 @@ def clockings_objects():
 def faculties_objects():
     "was previously in faculties.fixtures.demo2"
 
-    Analysis = rt.modules.faculties.Faculty.objects.get(name="Analysis")
-    Code_changes = rt.modules.faculties.Faculty.objects.get(name="Code changes")
-    Documentation = rt.modules.faculties.Faculty.objects.get(name="Documentation")
-    Testing = rt.modules.faculties.Faculty.objects.get(name="Testing")
-    Configuration = rt.modules.faculties.Faculty.objects.get(name="Configuration")
+    Faculty = rt.models.faculties.Faculty
+    Competence = rt.models.faculties.Competence
+    User = rt.models.users.User
 
-    Competence = rt.modules.faculties.Competence
-    Rolf = rt.modules.users.User.objects.get(first_name="Rolf")
-    Romain = rt.modules.users.User.objects.get(first_name="Romain")
-    mathieu = rt.modules.users.User.objects.get(username="mathieu")
-    Robin = rt.modules.users.User.objects.get(first_name="Robin")
-    luc = rt.modules.users.User.objects.get(username="luc")
+    yield Faculty(**dd.str2kw('name', 'Analysis'))
+    yield Faculty(**dd.str2kw('name', 'Code changes'))
+    yield Faculty(**dd.str2kw('name', 'Documentation'))
+    yield Faculty(**dd.str2kw('name', 'Testing'))
+    yield Faculty(**dd.str2kw('name', 'Configuration'))
+    yield Faculty(**dd.str2kw('name', 'Enhancement'))
+    yield Faculty(**dd.str2kw('name', 'Optimization'))
+    yield Faculty(**dd.str2kw('name', 'Offer'))
 
-    yield Competence(faculty=Analysis, user=Rolf)
+    Analysis = Faculty.objects.get(name="Analysis")
+    Code_changes = Faculty.objects.get(name="Code changes")
+    Documentation = Faculty.objects.get(name="Documentation")
+    Testing = Faculty.objects.get(name="Testing")
+    Configuration = Faculty.objects.get(name="Configuration")
+
+    mathieu = User.objects.get(username="mathieu")
+    Robin = User.objects.get(first_name="Robin")
+    luc = User.objects.get(username="luc")
+
+    if dd.get_language_info('de'):
+        Rolf = User.objects.get(first_name="Rolf")
+        yield Competence(faculty=Analysis, user=Rolf)
+        yield Competence(faculty=Code_changes, user=Rolf, affinity=70)
+        yield Competence(faculty=Documentation, user=Rolf, affinity=71)
+        yield Competence(faculty=Testing, user=Rolf, affinity=42)
+        yield Competence(faculty=Configuration, user=Rolf, affinity=62)
+
+    if dd.get_language_info('fr'):
+        Romain = User.objects.get(first_name="Romain")
+        yield Competence(faculty=Code_changes, user=Romain, affinity=76)
+        yield Competence(faculty=Documentation, user=Romain, affinity=92)
+        yield Competence(faculty=Testing, user=Romain, affinity=98)
+        yield Competence(faculty=Configuration, user=Romain, affinity=68)
+
     yield Competence(faculty=Analysis, user=Robin, affinity=23)
     yield Competence(faculty=Analysis, user=luc, affinity=120)
 
     yield Competence(faculty=Code_changes, user=luc, affinity=150)
-    yield Competence(faculty=Code_changes, user=Rolf, affinity=70)
-    yield Competence(faculty=Code_changes, user=Romain, affinity=76)
 
     yield Competence(faculty=Documentation, user=luc, affinity=75)
     yield Competence(faculty=Documentation, user=mathieu, affinity=46)
-    yield Competence(faculty=Documentation, user=Romain, affinity=92)
-    yield Competence(faculty=Documentation, user=Rolf, affinity=71)
 
     yield Competence(faculty=Testing, user=Robin, affinity=65)
     yield Competence(faculty=Testing, user=mathieu, affinity=42)
-    yield Competence(faculty=Testing, user=Romain, affinity=98)
-    yield Competence(faculty=Testing, user=Rolf, affinity=42)
 
     yield Competence(faculty=Configuration, user=luc, affinity=46)
-    yield Competence(faculty=Configuration, user=Rolf, affinity=62)
-    yield Competence(faculty=Configuration, user=Romain, affinity=68)
     yield Competence(faculty=Configuration, user=mathieu, affinity=92)
 
-    Bar_cannot_foo = rt.modules.tickets.Ticket.objects.get(summary='Bar cannot foo')
+    Bar_cannot_foo = rt.models.tickets.Ticket.objects.get(summary='Bar cannot foo')
     Bar_cannot_foo.faculty = Documentation
     Bar_cannot_foo.save()
 
-    Sell_bar_in_baz = rt.modules.tickets.Ticket.objects.get(summary='Sell bar in baz')
+    Sell_bar_in_baz = rt.models.tickets.Ticket.objects.get(summary='Sell bar in baz')
     Sell_bar_in_baz.faculty = Analysis
     Sell_bar_in_baz.save()
 
-    Foo_cannot_bar = rt.modules.tickets.Ticket.objects.get(summary='Foo cannot bar')
+    Foo_cannot_bar = rt.models.tickets.Ticket.objects.get(summary='Foo cannot bar')
     Foo_cannot_bar.faculty = Code_changes
     Foo_cannot_bar.save()
 
-    Foo_never_matches_Bar = rt.modules.tickets.Ticket.objects.get(summary='Foo never matches Bar')
+    Foo_never_matches_Bar = rt.models.tickets.Ticket.objects.get(summary='Foo never matches Bar')
     Foo_never_matches_Bar.faculty = Testing
     Foo_never_matches_Bar.save()

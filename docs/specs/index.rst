@@ -15,6 +15,7 @@ specifications. One of their goal is to get tested.
    general
    tickets
    clocking
+   faculties
    smtpd
    hosts
    as_pdf

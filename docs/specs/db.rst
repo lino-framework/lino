@@ -19,7 +19,7 @@ This document describes the database structure.
 >>> from lino.utils.diag import analyzer
 >>> print(analyzer.show_db_overview())
 ... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
-33 apps: lino_startup, staticfiles, about, jinja, bootstrap3, extjs, printing, system, contenttypes, gfks, users, office, countries, contacts, notifier, changes, stars, uploads, outbox, xl, excerpts, comments, noi, tickets, topics, faculties, clocking, lists, export_excel, tinymce, smtpd, appypod, wkhtmltopdf.
+34 apps: lino_startup, staticfiles, about, jinja, bootstrap3, extjs, printing, system, contenttypes, gfks, users, office, countries, contacts, notifier, changes, stars, uploads, outbox, xl, excerpts, comments, noi, tickets, topics, faculties, clocking, lists, export_excel, tinymce, smtpd, weasyprint, appypod, wkhtmltopdf.
 44 models:
 =========================== ============================ ========= =======
  Name                        Default table                #fields   #rows
@@ -88,7 +88,7 @@ users.UserProfiles.admin:900
 ... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
 - Contacts : Persons, Organizations, Partners, Partner Lists
 - Office : My Stars, My Uploads, My Outbox, My Excerpts, My Comments
-- Tickets : Projects, Sites, Active tickets, Tickets, My known problems, Unassigned Tickets
+- Tickets : Projects, Sites, Active tickets, Tickets, My known problems, Unassigned Tickets, Active projects
 - Clocking : Sessions
 - Reports :
   - System : Broken GFKs
@@ -98,7 +98,7 @@ users.UserProfiles.admin:900
   - Places : Countries, Places
   - Contacts : Organization types, Functions, Topics, Topic groups, List Types
   - Office : Upload Types, Excerpt Types, My Text Field Templates
-  - Tickets : Project Types, Ticket types
+  - Tickets : Projects (tree), Project Types, Ticket types
   - Faculties : Faculties (tree), Competences
   - Clocking : Session Types
 - Explorer :
@@ -109,3 +109,14 @@ users.UserProfiles.admin:900
   - Faculties : Faculties (all), Competences
   - Clocking : Sessions
 - Site : About
+
+
+
+20160702
+========
+
+>>> 'cour'.isdigit()
+False
+>>> 'ref' in rt.models.topics.Topic.quick_search_fields
+True
+

@@ -82,6 +82,7 @@ class Site(Site):
         yield 'lino.modlib.export_excel'
         yield 'lino.modlib.tinymce'
         yield 'lino.modlib.smtpd'
+        yield 'lino.modlib.weasyprint'
         yield 'lino_xl.lib.appypod'
         yield 'lino.modlib.wkhtmltopdf'
 
@@ -99,8 +100,9 @@ class Site(Site):
         # yield self.modules.tickets.MyTickets
         # yield self.modules.tickets.ActiveTickets
         # yield self.modules.tickets.InterestingTickets
-        yield self.modules.tickets.PublicTickets
-        yield self.modules.tickets.ActiveProjects
+        if not ar.get_user().authenticated:
+            yield self.modules.tickets.PublicTickets
+        # yield self.modules.tickets.ActiveProjects
 
     def setup_quicklinks(self, ar, tb):
         super(Site, self).setup_quicklinks(ar, tb)

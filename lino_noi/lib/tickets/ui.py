@@ -137,6 +137,7 @@ class ActiveProjects(Projects):
     For an example, see :ref:`noi.specs.projects`.
 
     """
+    label = _("Active projects")
     column_names = 'ref name start_date activity_overview *'
     required_roles = dd.required(dd.SiteStaff)
 
@@ -152,7 +153,15 @@ class ActiveProjects(Projects):
 class ProjectsByParent(Projects):
     master_key = 'parent'
     label = _("Subprojects")
-    column_names = "ref name *"
+    column_names = "ref name children_summary *"
+
+
+class TopLevelProjects(Projects):
+    label = _("Projects (tree)")
+    order_by = ["ref"]
+    column_names = 'ref name parent children_summary *'
+    filter = models.Q(parent__isnull=True)
+    variable_row_height = True
 
 
 class ProjectsByType(Projects):
@@ -310,8 +319,8 @@ class Tickets(dd.Table):
     required_roles = set()  # also for anonymous
     model = 'tickets.Ticket'
     order_by = ["-id"]
-    column_names = 'id summary:50 #feedback #standby #closed topic ' \
-                   'workflow_buttons:30 reporter:10 project:10 *'
+    column_names = 'id summary:50 reporter:10 topic faculty ' \
+                   'workflow_buttons:30 project:10 *'
     detail_layout = TicketDetail()
     insert_layout = dd.InsertLayout("""
     # reporter #product
@@ -456,17 +465,17 @@ class UnassignedTickets(Tickets):
 class TicketsByProject(Tickets):
     master_key = 'project'
     column_names = ("overview:50 topic:10 reporter:10 state "
-                    "closed planned_time *")
+                    "planned_time *")
 
 
 class TicketsByType(Tickets):
     master_key = 'ticket_type'
-    column_names = "summary state closed  *"
+    column_names = "summary state  *"
 
 
 class TicketsByTopic(Tickets):
     master_key = 'topic'
-    column_names = "summary state closed  *"
+    column_names = "summary state  *"
 
 
 class PublicTickets(Tickets):

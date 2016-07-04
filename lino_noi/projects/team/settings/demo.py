@@ -12,11 +12,6 @@ class Site(Site):
 
     # default_ui = 'lino_extjs6.extjs6'
 
-    # def get_apps_modifiers(self, **kw):
-    #     kw = super(Site, self).get_apps_modifiers(**kw)
-    #     kw.update(tinymce=None)
-    #     return kw
-
     def setup_plugins(self):
         """Change the default value of certain plugin settings.
 
@@ -45,3 +40,4 @@ DEBUG = True
 
 # the following line should not be active in a checked-in version
 #~ DATABASES['default']['NAME'] = ':memory:'
+

@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU Affero General Public
 # License along with Lino Noi.  If not, see
 # <http://www.gnu.org/licenses/>.
-"""User interface for lino_noi.projects.team.lib.clocking.
+"""User interface for this plugin.
 
 
 """
@@ -32,7 +32,6 @@ from lino_noi.lib.tickets.models import Ticket
 MySessionsByDate.column_names = (
     'start_time end_time break_time duration summary ticket '
     'ticket__project workflow_buttons *')
-
 
 
 class WorkedHours(dd.VentilatingTable):
@@ -207,9 +206,11 @@ class TicketsByReport(Tickets, InvestedTime):
 
 
 class ProjectsByReport(Projects, InvestedTime):
-    """The list of projects mentioned in a service report."""
+    """The list of projects mentioned in a service report.
+    
+    """
     master = 'clocking.ServiceReport'
-    column_names = "ref name active_tickets invested_time"
+    column_names = "ref name parent active_tickets invested_time total_time"
     order_by = ['ref']
 
     @classmethod
@@ -234,21 +235,44 @@ class ProjectsByReport(Projects, InvestedTime):
                     tickets.append(ticket)
             return tot, tickets
 
+        projects_list = []
+        children_time = {}
+
         qs = super(ProjectsByReport, self).get_request_queryset(ar)
         for prj in qs:
             tot, tickets = worked_time(project=prj)
+            prj._tickets = tickets
+            prj._invested_time = tot
+            projects_list.append(prj)
             if tot:
-                prj._tickets = tickets
-                prj._invested_time = tot
-                yield prj
+                p = prj.parent
+                while p is not None:
+                    cht = children_time.get(p.id, Duration())
+                    children_time[p.id] = cht + tot
+                    p = p.parent
 
-        # add an unsaved project for the tickets without project:
+        # compute children_time for each project
+        for prj in projects_list:
+            prj._children_time = children_time.get(prj.id, Duration())
+            # p = prj.parent
+            # ct = Duration()
+            # while p is not None:
+            #     ct += children_time.get(p.id, Duration())
+
+        # remove projects that have no time at all
+        def f(prj):
+            return prj._invested_time or prj._children_time
+        projects_list = filter(f, projects_list)
+
+        # add an unsaved Project for the tickets without project:
         tot, tickets = worked_time(has_project=dd.YesNo.no)
         if tot:
             prj = rt.modules.tickets.Project(name="(no project)")
             prj._tickets = tickets
             prj._invested_time = tot
-            yield prj
+            prj._children_time = Duration()
+            projects_list.append(prj)
+        return projects_list
 
     @dd.displayfield(_("Tickets"))
     def active_tickets(cls, obj, ar):
@@ -258,15 +282,20 @@ class ProjectsByReport(Projects, InvestedTime):
                 ticket, text="#%d" % ticket.id, title=unicode(ticket)))
         return E.p(*join_elems(lst, ', '))
 
+    @dd.displayfield(_("Total time"))
+    def total_time(cls, obj, ar):
+        tt = obj._invested_time + obj._children_time
+        return E.p(str(tt))
+
 
 class ServiceReports(dd.Table):
     """List of service reports."""
     model = "clocking.ServiceReport"
-    detail_layout = """
-    start_date end_date user interesting_for ticket_state printed
-    TicketsByReport
-    ProjectsByReport
-    """
+    # detail_layout = """
+    # start_date end_date user interesting_for ticket_state printed
+    # TicketsByReport
+    # ProjectsByReport
+    # """
     column_names = "start_date end_date user interesting_for "\
                    "ticket_state printed *"
 

@@ -1,4 +1,4 @@
-# Copyright 2008-2015 Luc Saffre
+# Copyright 2008-2016 Luc Saffre
 #
 # This file is part of Lino Noi.
 #
@@ -23,6 +23,7 @@ Adds functionality for managing worktime clocking.
    :toctree:
 
     models
+    actions
     ui
 
 """
