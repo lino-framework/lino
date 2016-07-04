@@ -137,6 +137,7 @@ class ActiveProjects(Projects):
     For an example, see :ref:`noi.specs.projects`.
 
     """
+    label = _("Active projects")
     column_names = 'ref name start_date activity_overview *'
     required_roles = dd.required(dd.SiteStaff)
 

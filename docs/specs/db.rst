@@ -88,7 +88,7 @@ users.UserProfiles.admin:900
 ... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
 - Contacts : Persons, Organizations, Partners, Partner Lists
 - Office : My Stars, My Uploads, My Outbox, My Excerpts, My Comments
-- Tickets : Projects, Sites, Active tickets, Tickets, My known problems, Unassigned Tickets
+- Tickets : Projects, Sites, Active tickets, Tickets, My known problems, Unassigned Tickets, Active projects
 - Clocking : Sessions
 - Reports :
   - System : Broken GFKs
