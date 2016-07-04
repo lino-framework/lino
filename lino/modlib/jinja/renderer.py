@@ -1,4 +1,4 @@
-# Copyright 2015 Luc Saffre
+# Copyright 2015-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -33,6 +33,10 @@ from lino.api import rt
 
 
 class JinjaRenderer(HtmlRenderer):
+
+    tableattrs = dict()
+    cellattrs = dict()
+
     def __init__(self, *args, **kwargs):
         super(JinjaRenderer, self).__init__(*args, **kwargs)
 
@@ -140,7 +144,7 @@ class JinjaRenderer(HtmlRenderer):
 
         #~ print __file__, 20121231, self.jinja_env.list_templates('.html')
 
-    def show_table(self, *args, **kwargs):
-        e = super(JinjaRenderer, self).show_table(*args, **kwargs)
-        return E.tostring(e)
+    # def show_table(self, *args, **kwargs):
+    #     e = super(JinjaRenderer, self).show_table(*args, **kwargs)
+    #     return E.tostring(e)
 

@@ -5,8 +5,6 @@
 
 See test cases and examples in :doc:`/tutorials/human/index`.
 
-.. autosummary::
-
 
 """
 from __future__ import division
@@ -164,9 +162,9 @@ class Human(model.Model):
 
         If given, the content of this field comes always *between*
         salutation and name.  It does not handle special cases like
-        titles which replace the salutation ("Br.", "Sr.") or which must
-        come at another position of the full name (e.g. "Cardinal", "Graf"
-        before the last name).
+        titles which replace the salutation ("Br.", "Sr.") or which
+        must come at another position of the full name
+        (e.g. "Cardinal", "Graf" before the last name).
 
         External links: `linguee.de
         <http://www.linguee.de/englisch-deutsch/uebersetzung/mr.+dr..html>`__
@@ -187,8 +185,10 @@ class Human(model.Model):
 
     .. attribute:: gender
 
-        The sex of this person (male or female).  Possible values are
-        defined in :class:`lino.modlib.lino.choicelists.Genders`.
+        The sex of this person (male or female).
+
+        Possible values are defined in
+        :class:`lino.modlib.lino.choicelists.Genders`.
 
     """
 
@@ -197,22 +197,16 @@ class Human(model.Model):
 
     title = models.CharField(
         pgettext("(of a human)", "Title"),
-        max_length=200, blank=True,
-        help_text=_(
-            "Text to print between salutation and name as part "
-            "of the first address line."))
+        max_length=200, blank=True)
 
     first_name = models.CharField(
-        _('First name'), max_length=200, blank=True,
-        help_text=_("First or given name."))
+        _('First name'), max_length=200, blank=True)
 
     middle_name = models.CharField(
-        _("Middle name"), max_length=200, blank=True,
-        help_text=_("Space-separated list of all middle names."))
+        _("Middle name"), max_length=200, blank=True)
 
     last_name = models.CharField(
-        _('Last name'), max_length=200, blank=True,
-        help_text=_("Last name (family name)."))
+        _('Last name'), max_length=200, blank=True)
 
     gender = Genders.field(blank=True)
 
@@ -242,7 +236,7 @@ class Human(model.Model):
 
     def get_full_name(
             self, salutation=True, upper=None, **salutation_options):
-        """Returns a one-line string composed of salutation,
+        """Returns a one-line string composed of salutation, :attr:`title`,
         :attr:`first_name` and :attr:`last_name`.
 
         The optional keyword argument `salutation` can be set to

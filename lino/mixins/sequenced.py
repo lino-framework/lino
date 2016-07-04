@@ -31,6 +31,7 @@ from lino.core import fields
 from lino.core.utils import navinfo
 from lino.utils.xmlgen.html import E
 from lino.utils import AttrDict
+from lino.utils import join_elems
 
 from .duplicable import Duplicable, Duplicate
 
@@ -302,6 +303,14 @@ class Hierarchical(Duplicable):
                                verbose_name=_("Parent"),
                                null=True, blank=True,
                                related_name='children')
+
+    @fields.displayfield(_("Children"))
+    def children_summary(self, ar):
+        if ar is None:
+            return ''
+        elems = [ar.obj2html(ch) for ch in self.children.all()]
+        elems = join_elems(elems, sep=', ')
+        return E.p(*elems)
 
     def get_siblings(self):
         if self.parent:

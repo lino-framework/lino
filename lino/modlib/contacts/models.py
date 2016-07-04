@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2015 Luc Saffre
+# Copyright 2008-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Database models for `lino.modlib.contacts`.
@@ -43,10 +43,12 @@ from lino.modlib.countries.mixins import AddressLocation
 
 from lino.utils.xmlgen.html import E
 from lino.utils.addressable import Addressable
+from lino.mixins.periods import ObservedPeriod
 
 
 from .mixins import ContactRelated, PartnerDocument, OldCompanyContact
 from .roles import ContactsUser, ContactsStaff
+from .choicelists import PartnerEvents
 
 from lino.mixins.human import name2kw, Human, Born
 
@@ -70,14 +72,29 @@ class Partner(mixins.Polymorphic, AddressLocation, Addressable):
 
     .. attribute:: name
 
-        The full name of this partner. Used for alphabetic
-        sorting. Subclasses may hide this field and fill it
-        automatically, e.g. saving a :class:`Person` will
-        automatically set her `name` field to "last_name, first_name".
+        The full name of this partner. Used for alphabetic sorting.
+        Subclasses may hide this field and fill it automatically,
+        e.g. saving a :class:`Person` will automatically set her
+        `name` field to "last_name, first_name".
 
     .. attribute:: email
 
         The primary email address.
+
+    .. attribute:: phone
+
+        The primary phone number.  Note that Lino does not ignore
+        formatting characters in phone numbers when searching.  For
+        example, if you enter "087/12.34.56" as a phone number, then a
+        search for phone number containing "1234" will *not* find it.
+
+    .. attribute:: gsm
+
+        The primary mobile phone number.
+
+    .. attribute:: language
+
+        The language to use when communicating with this partner.
 
     """
     preferred_foreignkey_width = 20
@@ -139,10 +156,10 @@ class Partner(mixins.Polymorphic, AddressLocation, Addressable):
         yield self.get_full_name()
 
     def get_full_name(self, *args, **kw):
-        """\
-Returns a one-line string representing this Partner.
-The default returns simply the `name` field, ignoring any parameters,
-but e.g. :class:`Human` overrides this.
+        """Return a one-line string representing this Partner.  The default
+        returns simply the `name` field, ignoring any parameters, but
+        e.g. :class:`Human` overrides this.
+
         """
         return self.name
     full_name = property(get_full_name)
@@ -181,6 +198,34 @@ but e.g. :class:`Human` overrides this.
 
     def get_print_language(self):
         return self.language
+
+    @classmethod
+    def get_parameter_fields(cls, **fields):
+        fields.update(
+            observed_event=PartnerEvents.field(
+                blank=True,
+                help_text=_("Extended filter criteria")))
+        fields = super(Partner, cls).get_parameter_fields(**fields)
+        return ObservedPeriod(**fields)
+
+    @classmethod
+    def get_request_queryset(self, ar):
+        qs = super(Partner, self).get_request_queryset(ar)
+
+        pv = ar.param_values
+        oe = pv.observed_event
+        if oe:
+            qs = oe.add_filter(qs, pv)
+        return qs
+
+    @classmethod
+    def get_title_tags(self, ar):
+        for t in super(Partner, self).get_title_tags(ar):
+            yield t
+        pv = ar.param_values
+
+        if pv.observed_event:
+            yield unicode(pv.observed_event)
 
 
 class PartnerDetail(dd.DetailLayout):
@@ -446,6 +491,18 @@ class Role(dd.Model, Addressable):
     """A Contact (historical model name :class:`Role`) is a
     :class:`Person` who has a given role (:class:`ContactType`) in a
     given :class:`Company`.
+
+    .. attribute:: company
+
+        The company where this person has a role.
+
+    .. attribute:: type
+
+        The role of this person in this company.
+    
+    .. attribute:: person
+
+        The person having this role in this company.
     
     """
 

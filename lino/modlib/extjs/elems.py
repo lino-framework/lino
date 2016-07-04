@@ -1194,25 +1194,7 @@ class DisplayElement(FieldElement):
         return self.field._lino_atomizer.format_value(ar, v)
 
 
-class BooleanMixin(object):
-    """A common base for :class:`BooleanDisplayElement` and
-    :class:`BooleanFieldElement`.
-
-    """
-    def unused_format_sum(self, ar, sums, i):
-        return E.b(str(sums[self.name]))
-
-    def unused_value2num(self, v):
-        """TODO: Should booelan fields sum like a numeric field with value 1
-        when True and 0 when False?
-
-        """
-        if v:
-            return 1
-        return 0
-
-
-class BooleanDisplayElement(BooleanMixin, DisplayElement):
+class BooleanDisplayElement(DisplayElement):
     preferred_width = 20
     preferred_height = 1
 
@@ -1223,7 +1205,7 @@ class BooleanDisplayElement(BooleanMixin, DisplayElement):
         FieldElement.__init__(self, *args, **kw)
 
 
-class BooleanFieldElement(BooleanMixin, FieldElement):
+class BooleanFieldElement(FieldElement):
 
     value_template = "new Ext.form.Checkbox(%s)"
     # xtype = 'checkbox'

@@ -167,7 +167,7 @@ production server with :setting:`DEBUG` False.
     level = getattr(logging, config.get('level', 'notset').upper())
     if isinstance(logger_names, basestring):
         logger_names = logger_names.split()
-    #~ print "20130418 configure loggers", logger_names, config
+    # print "20130418 configure loggers", logger_names, config
     loggers = [logging.getLogger(n) for n in logger_names]
 
     # for l in loggers:

@@ -462,6 +462,11 @@ class Site(object):
 
     """
 
+    workflows_module = None
+    """The full Python path of the **workflows module** to be used on
+    this site.
+    """
+    
     user_profiles_module = None
     """The full Python path of the **user profiles module** to be used on
     this site.
@@ -1042,6 +1047,8 @@ class Site(object):
 
     """
 
+    _help_texts = dict()
+
     def __init__(self, settings_globals=None, local_apps=[], **kwargs):
         """Every Lino application calls this once in it's
         :file:`settings.py` file.
@@ -1079,6 +1086,8 @@ class Site(object):
                 msg += " but a plugin attribute on lino_xl.lib.cal."
                 msg = msg.format(k)
                 raise ChangedAPI(msg)
+
+        self.load_help_texts()
 
     def init_before_local(self, settings_globals, local_apps):
         """If your :attr:`project_dir` contains no :xfile:`models.py`, but
@@ -1253,7 +1262,7 @@ class Site(object):
         apps_modifiers = self.get_apps_modifiers()
 
         if hasattr(self, 'hidden_apps'):
-            raise Exception("Replace hidden_apps by get_apps_modifiers()")
+            raise ChangedAPI("Replace hidden_apps by get_apps_modifiers()")
 
         def add(x):
             if isinstance(x, six.string_types):
@@ -1276,6 +1285,7 @@ class Site(object):
 
         # actual_apps = []
         plugins = []
+        disabled_plugins = set()
         self.plugins = AttrDict()
 
         def install_plugin(app_name, needed_by=None):
@@ -1319,6 +1329,8 @@ class Site(object):
             # actual_apps.append(app_name)
             plugins.append(p)
             self.plugins.define(k, p)
+            for dp in p.disables_plugins:
+                disabled_plugins.add(dp)
 
         # lino_startup is always the first plugin:
         install_plugin(str('lino.modlib.lino_startup'))
@@ -1334,6 +1346,12 @@ class Site(object):
             install_plugin(str('django.contrib.sessions'))
 
         # install_plugin(str('lino.modlib.database_ready'))
+
+        for p in plugins:
+            if p.app_label in disabled_plugins \
+               or p.app_name in disabled_plugins:
+                plugins.remove(p)
+                del self.plugins[p.app_label]
 
         # self.update_settings(INSTALLED_APPS=tuple(actual_apps))
         self.update_settings(
@@ -1409,6 +1427,39 @@ class Site(object):
 
         # global PLUGIN_CONFIGS
         # PLUGIN_CONFIGS = None
+
+    def load_help_texts(self):
+        """Collect :xfile:`help_texts.py` files"""
+        for p in self.installed_plugins:
+            mn = p.app_name + '.help_texts'
+            try:
+                m = import_module(mn)
+                self._help_texts.update(m.help_texts)
+            except ImportError:
+                pass
+
+    def install_help_text(self, fld, attrname):
+        """Install a `help_text` from collected :xfile:`help_texts.py` for
+this field.
+
+        """
+        if not hasattr(fld, 'help_text'):  # some fields don't have
+            return
+        if fld.help_text:
+            # print("20160620 {} has already a help_text".format(fld))
+            return
+        for m in fld.model.mro():
+            k = m.__module__ + '.' + m.__name__
+            if attrname:
+                k += '.' + attrname
+            txt = self._help_texts.get(k, None)
+            if txt is None:
+                pass
+                # print("20160620 {} no help_text found using {}".format(fld, k))
+            else:
+                # print("20160620 {} help_text found using {}".format(fld, k))
+                fld.help_text = txt
+                return
 
     def setup_plugins(self):
         """This method is called exactly once during site startup, after
@@ -2133,8 +2184,10 @@ class Site(object):
         """
         self.setup_user_profiles()
 
-    def setup_workflows(self):
-        self.on_each_app('setup_workflows')
+    # def setup_workflows(self):
+    #     """Deprecated. Define a :attr:`workflows_module` instead.
+    #     """
+    #     self.on_each_app('setup_workflows')
 
     def setup_actions(self):
         """Hook for subclasses to add or modify actions.

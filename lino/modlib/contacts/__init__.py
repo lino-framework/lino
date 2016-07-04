@@ -1,4 +1,4 @@
-# Copyright 2008-2015 Luc Saffre
+# Copyright 2008-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Adds functionality for managing contacts.
@@ -7,6 +7,7 @@
    :toctree:
 
     roles
+    choicelists
     models
     utils
     mixins
@@ -21,11 +22,6 @@
 This plugin is being extended by :ref:`welfare` in
 :mod:`lino_welfare.modlib.contacts` or by :ref:`voga` in
 :mod:`lino_voga.modlib.contacts`.
-
-
-Lino differentiates the following subclasses of Partner:
-
-.. django2rst:: contacts.Partner.print_subclasses_graph()
 
 
 The default database comes with the following list of

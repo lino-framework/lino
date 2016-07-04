@@ -939,7 +939,7 @@ class CustomField(object):
 
 class ImportedFields(object):
     """
-    Model mixin to easily declare "imported fields"
+    Model mixin to easily declare "imported fields".
     """
     _imported_fields = set()
 

@@ -80,6 +80,9 @@ class Renderer(object):
     # not_implemented_js = "alert('Not implemented')"
     not_implemented_js = None
 
+    tableattrs = dict(cellspacing="3px", bgcolor="#ffffff", width="100%")
+    cellattrs = dict(align="left", valign="top", bgcolor="#eeeeee")
+
     def __init__(self, plugin):
         if not isinstance(plugin, Plugin):
             raise Exception("{} is not a Plugin".format(plugin))

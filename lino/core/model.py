@@ -971,7 +971,7 @@ action on individual instances.
                 #~ logger.info("20121127 Install default %s for %s",k,model)
 
     @classmethod
-    def print_subclasses_graph(self):
+    def get_subclasses_graph(self):
         """
         Returns an internationalized `graphviz` directive representing
         the polymorphic forms of this model.
@@ -986,23 +986,28 @@ action on individual instances.
         """
         from lino.api import rt
         pairs = []
+        collected = set()
 
-        def collect(m):
-            for c in rt.models_by_base(m):
-                #~ if c is not m and (m in c.__bases__):
-                #~ if c is not m:
-                if c is not m and m in c.__bases__:
-                    ok = True
-                    #~ for cb in c.__bases__:
-                        #~ if cb in m.mro():
-                            #~ ok = False
-                    if ok:
-                        pairs.append(
-                            (m._meta.verbose_name, c._meta.verbose_name))
+        def collect(p):
+            for c in rt.models_by_base(p):
+                # if c is not p and (p in c.__bases__):
+                # if c is not m and p in c.__bases__:
+                if c is not p:
+                    # ok = True
+                    # for cb in c.__bases__:
+                    #     if cb in p.mro():
+                    #         ok = False
+                    # if ok:
+                    if c not in collected:
+                        pairs.append((p, c))
+                        collected.add(c)
                     collect(c)
         collect(self)
-        s = '\n'.join(['    "%s" -> "%s"' % x for x in pairs])
-        s = """
+        s = '\n'.join(
+            ['    "%s" -> "%s"' % (
+                p._meta.verbose_name, c._meta.verbose_name)
+             for p, c in pairs])
+        return """
 
 .. graphviz::
    
@@ -1011,7 +1016,10 @@ action on individual instances.
   }
   
 """ % s
-        print(s)
+
+    @classmethod
+    def print_subclasses_graph(self):
+        print(self.get_subclasses_graph())
 
 LINO_MODEL_ATTRIBS = (
     'get_parameter_fields',

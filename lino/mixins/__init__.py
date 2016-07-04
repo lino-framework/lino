@@ -321,8 +321,7 @@ class Referrable(model.Model):
         """
         if search_text.isdigit():
             return models.Q(**{prefix+'ref__icontains': search_text})
-        return super(Referrable, cls).quick_search_filter(
-            search_text, prefix='')
+        return super(Referrable, cls).quick_search_filter(search_text, prefix)
 
     # def __unicode__(self):
     #     return self.ref or unicode(_('(Root)'))
