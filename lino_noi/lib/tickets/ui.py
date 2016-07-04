@@ -332,6 +332,7 @@ class Tickets(dd.Table):
 
     parameters = mixins.ObservedPeriod(
         observed_event=TicketEvents.field(blank=True),
+        topic=dd.ForeignKey('topics.Topic', blank=True,),
         reporter=dd.ForeignKey(
             settings.SITE.user_model,
             verbose_name=_("Reporter"),
@@ -373,13 +374,13 @@ class Tickets(dd.Table):
     params_layout = """
     reporter assigned_to interesting_for project state has_project
     show_assigned show_active #show_closed #show_standby show_private \
-    start_date end_date observed_event"""
+    start_date end_date observed_event topic"""
     # simple_parameters = ('reporter', 'assigned_to', 'state', 'project')
 
     @classmethod
     def get_simple_parameters(cls):
         s = super(Tickets, cls).get_simple_parameters()
-        s |= set(('reporter', 'assigned_to', 'state', 'project'))
+        s |= set(('reporter', 'assigned_to', 'state', 'project' ,'topic'))
         return s
 
     @classmethod
