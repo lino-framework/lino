@@ -63,7 +63,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 import os
-from optparse import make_option
 from decimal import Decimal
 
 from clint.textui import progress
@@ -73,7 +72,6 @@ from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.db.utils import ProgrammingError
 
-from lino import AFTER17
 from lino.utils import puts
 from lino.core.utils import sorted_models_list, full_model_name
 from lino.core.choicelists import ChoiceListField
@@ -100,32 +98,29 @@ class Command(BaseCommand):
         parser.add_argument('--tolerate', action='store_true',
                             dest='tolerate', default=False,
                             help='Tolerate database errors.')
-
+        parser.add_argument('--overwrite', action='store_true',
+                            dest='overwrite', default=False,
+                            help='Overwrite existing files.'),
         #~ make_option('--quick', action='store_true',
         #~ dest='quick', default=False,
         #~ help='Do not call full_clean() method on restored instances.'),
-        #~ make_option('--overwrite', action='store_true',
-        #~ dest='overwrite', default=False,
-        #~ help='Overwrite existing files.'),
 
     def write_files(self):
         puts("Writing {0}...".format(self.main_file))
         self.stream = open(self.main_file, 'wt')
         current_version = settings.SITE.version
 
-        self.stream.write("""\
+        self.stream.write('''\
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-""")
 
-        self.stream.write('''\
-"""
-This is a Python dump created using %s.
-''' % settings.SITE.using_text())
+# This is a Python dump created using %s.
+# DJANGO_SETTINGS_MODULE was %r, TIME_ZONE was %r.
 
-        #~ self.stream.write(settings.SITE.welcome_text())
+''' % (settings.SITE.using_text(), settings.SETTINGS_MODULE,
+       settings.TIME_ZONE))
+
         self.stream.write('''
-"""
 from __future__ import unicode_literals
 
 import logging
@@ -133,25 +128,29 @@ logger = logging.getLogger('%s')
 import os
 
 ''' % __name__)
-        if False:
-            self.stream.write("""
-os.environ['DJANGO_SETTINGS_MODULE'] = '%s'
-""" % settings.SETTINGS_MODULE)
 
         self.stream.write('SOURCE_VERSION = %r\n' % str(current_version))
         self.stream.write('''
 from decimal import Decimal
-from datetime import datetime as dt
+from datetime import datetime
 from datetime import time, date
 from django.conf import settings
+from django.utils.timezone import make_aware
 # from django.contrib.contenttypes.models import ContentType
 from lino.utils.dpy import create_mti_child
 from lino.utils.dpy import DpyLoader
 from lino.core.utils import resolve_model
+
+if settings.USE_TZ:
+    def dt(*args):
+        return make_aware(datetime(*args))
+else:
+    def dt(*args):
+        return datetime(*args)
         
 def new_content_type_id(m):
     if m is None: return m
-    ct = settings.SITE.modules.contenttypes.ContentType.objects.get_for_model(m)
+    ct = settings.SITE.models.contenttypes.ContentType.objects.get_for_model(m)
     if ct is None: return None
     return ct.pk
     
@@ -186,12 +185,8 @@ def bv2kw(fieldname, values):
         self.models = self.sort_models(self.models)
         self.stream.write('\n')
         for model in self.models:
-            if AFTER17:
-                fields = [f for f in model._meta.get_fields()
-                          if f.concrete and f.model is model]
-            else:
-                fields = [f for f,
-                          m in model._meta.get_fields_with_model() if m is None]
+            fields = [f for f in model._meta.get_fields()
+                      if f.concrete and f.model is model]
             for f in fields:
                 if getattr(f, 'auto_now_add', False):
                     raise Exception("%s.%s.auto_now_add is True : values will be lost!" % (
@@ -255,11 +250,10 @@ def bv2kw(fieldname, values):
 
         self.stream.write("""
 
-def main():
+def main(args):
     loader = DpyLoader(globals())
     from django.core.management import call_command
-    # call_command('initdb', interactive=False)
-    call_command('initdb')
+    call_command('initdb', interactive=args.interactive)
     os.chdir(os.path.dirname(__file__))
     loader.initialize()
 
@@ -278,13 +272,8 @@ def main():
                     'logger.info("Loading %d objects to table %s...")\n' % (
                         qs.count(), model._meta.db_table))
 
-                if AFTER17:
-                    fields = [f for f in model._meta.get_fields()
-                              if f.concrete and f.model is model]
-                else:
-                    fields = [
-                        f for f, m in model._meta.get_fields_with_model()
-                        if m is None]
+                fields = [f for f in model._meta.get_fields()
+                          if f.concrete and f.model is model]
                 fields = [
                     f for f in fields
                     if not getattr(f, '_lino_babel_field', False)]
@@ -320,7 +309,14 @@ def main():
         #     '    logger.info("Loaded %d objects",loader.count_objects)\n')
         self.stream.write("""
 if __name__ == '__main__':
-    main()
+    import argparse
+    parser = argparse.ArgumentParser(description='Restore the data.')
+    parser.add_argument('--noinput', dest='interactive',
+        action='store_false', default=True,
+        help="Don't ask for confirmation before flushing the database.")
+
+    args = parser.parse_args()
+    main(args)
 """)
         #~ self.stream.write('\nsettings.SITE.load_from_file(globals())\n')
         self.stream.close()
@@ -420,16 +416,23 @@ if __name__ == '__main__':
     def handle(self, *args, **options):
         if len(args) != 1:
             raise CommandError("No output_dir specified.")
-
+            # print("No output_dir specified.")
+            # sys.exit(-1)
+        # import lino
+        # lino.startup()
         self.output_dir = os.path.abspath(args[0])
         self.main_file = os.path.join(self.output_dir, 'restore.py')
         self.count_objects = 0
         if os.path.exists(self.output_dir):
-            raise CommandError(
-                "Specified output_dir %s already exists. "
-                "Delete it yourself if you dare!" % self.output_dir)
-
-        os.makedirs(self.output_dir)
+            if options['overwrite']:
+                pass
+                # TODO: remove all files?
+            else:
+                raise CommandError(
+                    "Specified output_dir %s already exists. "
+                    "Delete it yourself if you dare!" % self.output_dir)
+        else:
+            os.makedirs(self.output_dir)
 
         self.options = options
 

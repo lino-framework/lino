@@ -43,12 +43,36 @@ from __future__ import unicode_literals
 from past.builtins import execfile
 
 import sys
+import argparse
+
 from django.core.management.base import BaseCommand, CommandError
 
 
 class Command(BaseCommand):
-    help = __doc__
+    # help = __doc__
     args = "scriptname [args ...]"
+
+    def add_arguments(self, parser):
+        parser.add_argument('filename', nargs=argparse.REMAINDER,
+                            help='The script to run.')
+        parser.description = """Execute a standalone Python script after
+        having set up the Django environment."""
+
+    # def run_from_argv(self, argv):
+    #     # print("run_from_argv({})".format(argv))
+    #     i = argv.index('run')
+    #     # argv, self.argv2 = argv[:i+2], argv[i+1:]
+    #     # msg = "{}, {}".format(argv, self.argv2)
+    #     # raise Exception(msg)
+    #     return super(Command, self).run_from_argv(argv[:i+2])
+
+    # def create_parser(self, prog_name, subcommand):
+    #     msg = "create_parser(prog_name:{}, subcommand:{})".format(
+    #         prog_name, subcommand)
+    #     raise Exception(msg)
+    #     return super(Command, self).create_parser(prog_name, subcommand)
+
+    requires_system_checks = False
 
     def handle(self, *args, **options):
         if len(args) == 0:

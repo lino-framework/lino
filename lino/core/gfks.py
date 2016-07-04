@@ -58,6 +58,7 @@ def gfk2lookup(gfk, obj, **kw):
         ct = ContentType.objects.get_for_model(obj.__class__)
         kw[gfk.ct_field] = ct
         if not isinstance(obj.pk, (int, long)):
+            # IntegerField gives `long` when using MySQL
             return kw
         kw[gfk.fk_field] = obj.pk
     return kw

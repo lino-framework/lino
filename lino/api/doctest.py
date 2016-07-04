@@ -236,3 +236,5 @@ def show_fields(model, fieldnames):
         cells.append([n, fld.verbose_name, unindent(fld.help_text)])
 
     print(table(cols, cells).strip())
+
+
