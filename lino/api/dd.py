@@ -301,6 +301,7 @@ add_welcome_handler = settings.SITE.add_welcome_handler
 build_media_url = settings.SITE.build_media_url
 build_static_url = settings.SITE.build_static_url
 get_default_language = settings.SITE.get_default_language
+get_language_info = settings.SITE.get_language_info
 resolve_languages = settings.SITE.resolve_languages
 babelattr = settings.SITE.babelattr
 
