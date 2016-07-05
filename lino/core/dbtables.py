@@ -68,7 +68,7 @@ def add_gridfilters(qs, gridfilters):
     if not isinstance(qs, QuerySet):
         raise NotImplementedError('TODO: filter also simple lists')
     q = models.Q()
-    logger.info("20160610 %s", gridfilters)
+    # logger.info("20160610 %s", gridfilters)
     # raise Exception("20160610 %s" % gridfilters)
     for flt in gridfilters:
         field = get_field(qs.model, flt['field'])
@@ -81,7 +81,7 @@ def add_gridfilters(qs, gridfilters):
             elif isinstance(field, models.ForeignKey):
                 qf = field.rel.model.quick_search_filter(
                     flt['value'], prefix=field.name + "__")
-                logger.info("20160610 %s %s", field.rel.model, qf)
+                # logger.info("20160610 %s %s", field.rel.model, qf)
                 q = q & qf
                 # rq = models.Q()
                 # search_field = field.rel.model.grid_search_field

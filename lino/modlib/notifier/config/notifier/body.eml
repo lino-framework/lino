@@ -1,12 +1,14 @@
-Dear {{obj.user.get_full_name()}},
+<body>
+<p>Dear {{obj.user.get_full_name()}},</p>
 
-this is to notify you about {{obj.owner}}:
+<p>this is to notify you that {{obj.subject}}:</p>
 
-{{obj.get_overview(ar)}}
+{{obj.body}}
 
-Any subsequent notifications about {{obj.owner}} are suspended until 
-you view this notification in the Lino web interface. Please visit 
+<p>Any subsequent notifications about {{obj.owner}} are suspended until 
+you view this notification in the Lino web interface. Please visit </p>
 
-  {{rt.settings.SITE.server_url}} 
+  <a href="{{rt.settings.SITE.server_url}}">{{rt.settings.SITE.server_url}}</a>
 
-and follow your welcome messages.
+<p>and follow your welcome messages.</p>
+</body>

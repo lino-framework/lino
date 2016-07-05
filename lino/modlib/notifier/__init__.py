@@ -1,4 +1,4 @@
-# Copyright 2008-2015 Luc Saffre
+# Copyright 2008-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Adds functionality for managing notifications.
@@ -7,6 +7,8 @@
    :toctree:
 
     models
+    mixins
+    utils
 
 """
 
