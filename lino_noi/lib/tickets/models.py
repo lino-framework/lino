@@ -59,6 +59,7 @@ from lino_xl.lib.cal.mixins import daterange_text
 from lino.modlib.contacts.mixins import ContactRelated
 from lino.modlib.users.mixins import UserAuthored
 from lino.modlib.comments.mixins import RFC
+from lino.modlib.notifier.mixins import Observable
 from lino_xl.lib.excerpts.mixins import Certifiable
 from lino.utils import join_elems
 
@@ -390,7 +391,7 @@ class SpawnTicket(dd.Action):
         ar.goto_instance(c)
 
 
-class Ticket(mixins.CreatedModified, TimeInvestment, RFC):
+class Ticket(mixins.CreatedModified, TimeInvestment, RFC, Observable):
     """A **Ticket** is a concrete question or problem formulated by a
     :attr:`reporter` (a user).
     
@@ -609,6 +610,18 @@ class Ticket(mixins.CreatedModified, TimeInvestment, RFC):
         return ar.obj2html(self)
         # return E.span(ar.obj2html(self), ' ', self.summary)
 
+    def get_notify_observers(self):
+        yield self.assigned_to
+        yield self.reporter
+        for star in rt.models.stars.Star.for_obj(self):
+            yield star.user
+
+    def get_notify_body(self, ar):
+        return E.tostring(E.p(
+            _("{user} worked on [ticket {t}]").format(
+                user=ar.get_user(), t=self.id)))
+
+
 # dd.update_field(Ticket, 'user', verbose_name=_("Reporter"))
 
 
@@ -690,35 +703,6 @@ def setup_memo_commands(sender=None, **kwargs):
     #     return '<a href="{0}" title="{2}">{1}</a>'.format(url, text, title)
 
     # rnd.memo_parser.register_command('ticket', f)
-
-
-if dd.is_installed('changes'):
-    """
-    """
-
-    from lino.modlib.changes.models import Change
-    from django.db.models.signals import post_save
-    from lino.core.requests import BaseRequest
-
-    @dd.receiver(post_save, sender=Change)
-    def notify_handler(sender, instance=None, **kwargs):
-        self = instance  # a Change object
-        if not isinstance(self.master, Ticket):
-            return
-        ticket = self.master
-        notify = rt.modules.notifier.Notification.notify
-        others = []
-
-        def collect(user):
-            if user and user != self.user and user.email:
-                others.append(user)
-
-        collect(ticket.assigned_to)
-        collect(ticket.reporter)
-        ar = BaseRequest(user=self.user)
-        msg = "%s worked on {obj}" % self.user
-        for user in others:
-            notify(ar, self.master, user, msg)
 
 
 from .ui import *

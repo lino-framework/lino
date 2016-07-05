@@ -246,6 +246,7 @@ Lino Voga
 >>> show_choices("robin", base + '?query=voga')
 Lino Voga
 
+
 Interests
 =========
 
