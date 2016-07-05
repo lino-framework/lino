@@ -51,6 +51,7 @@ from lino.core.plugin import Plugin
 
 from lino import assert_django_code, DJANGO_DEFAULT_LANGUAGE
 from lino.utils.xmlgen.html import E
+from lino.utils.html2text import html2text
 from lino.core.exceptions import ChangedAPI
 # from .roles import SiteUser
 
@@ -3283,6 +3284,8 @@ signature as `django.core.mail.EmailMessage`.
         removed. Does nothing if the resulting list of recipients is
         empty.
 
+        If `body` starts with "<", then it is considered to be HTML.
+
         """
         if '@example.com' in sender:
             self.logger.info(
@@ -3294,12 +3297,26 @@ signature as `django.core.mail.EmailMessage`.
                 "Ignoring email '%s' because there is no recipient", subject)
             return
 
-        from django.core.mail import EmailMessage
-        msg = EmailMessage(subject=subject,
-                           from_email=sender, body=body, to=recipients)
         self.logger.info(
             "Send email '%s' from %s to %s", subject, sender, recipients)
-        msg.send()
+
+        from django.core.mail import send_mail
+        kw = {}
+        if body.startswith('<'):
+            kw['html_message'] = body
+            body = html2text(body)
+        send_mail(subject, body, sender, recipients, **kw)
+
+        # msg = EmailMessage(subject=subject,
+        #                    from_email=sender, body=body, to=recipients)
+
+        # from django.core.mail import EmailMessage
+        
+        # msg = EmailMessage(subject=subject,
+        #                    from_email=sender, body=body, to=recipients)
+        # self.logger.info(
+        #     "Send email '%s' from %s to %s", subject, sender, recipients)
+        # msg.send()
 
     def welcome_html(self, ui=None):
         """

@@ -53,7 +53,7 @@ class Controllable(dd.Model):
 
     controller_is_optional = True
     """Deprecated. This is (and always was) being ignored. Use
-    :meth:`update_controller` instead.
+    :meth:`update_controller_field` instead.
 
     """
 

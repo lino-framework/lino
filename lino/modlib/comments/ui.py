@@ -88,6 +88,7 @@ class CommentsByRFC(CommentsByX):
             html += u"<ul>{0}</ul>".format(''.join(items))
 
         return u"""<div class="htmlText">{0}</div>""".format(html)
+        # return html
 
 
 def comments_by_owner(obj):

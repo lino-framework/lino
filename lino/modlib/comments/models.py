@@ -19,30 +19,34 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
 from lino.modlib.gfks.mixins import Controllable
+from lino.modlib.notifier.mixins import Observable
 
 from lino.api import dd
 from lino import mixins
-from lino.modlib.users.mixins import ByUser, UserAuthored
+from lino.modlib.users.mixins import UserAuthored
 from lino.utils.xmlgen.html import E
 
 
 @dd.python_2_unicode_compatible
 class Comment(
         mixins.CreatedModified,
-        UserAuthored,
-        # mixins.Hierarchical,
-        Controllable):
+        UserAuthored, Controllable, Observable):
     """A **comment** is a short text which some user writes about some
-    other database object.
+    other database object. It has no recipient.
 
     .. attribute:: short_text
 
         A short "abstract" of your comment. This should not be more
         than one paragraph.
 
+    .. attribute:: ALLOWED_TAGS
+
+        A list of tag names which are to *remain* in HTML comments if
+        bleaching is active.
+
     """
 
-    ALLOWED_TAGS = ['a', 'b', 'i', 'em']
+    ALLOWED_TAGS = ['a', 'b', 'i', 'em', 'ul', 'ol', 'li']
 
     class Meta(object):
         app_label = 'comments'
@@ -55,6 +59,18 @@ class Comment(
 
     def __str__(self):
         return u'%s #%s' % (self._meta.verbose_name, self.pk)
+
+    def get_notify_observers(self):
+        if isinstance(self.owner, Observable):
+            for u in self.owner.get_notify_observers():
+                yield u
+
+    def get_notify_subject(self, ar):
+        return _("{user} commented on {obj}").format(
+            user=ar.get_user(), obj=self.owner)
+
+    def get_notify_body(self, ar):
+        return self.short_text + '\n<p>\n' + self.more_text
 
     def as_li(self, ar):
         """Return this comment as a list item. If `bleach

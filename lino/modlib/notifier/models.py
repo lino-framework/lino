@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2015 Luc Saffre
+# Copyright 2011-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Database models for `lino.modlib.notifier`.
@@ -38,12 +38,20 @@ from lino.core.requests import BaseRequest
 from lino.mixins import Created
 from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.users.mixins import UserAuthored, My
+from .utils import body_subject_to_elems
 
 from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 
+from datetime import timedelta
+try:
+    import schedule
+except ImportError as e:
+    dd.logger.warning("schedule not installed (%s)", e)
+    schedule = False
 
-@dd.python_2_unicode_compatible
+
+# @dd.python_2_unicode_compatible
 class Notification(UserAuthored, Controllable, Created):
     """A **notification** object represents the fact that a given user has
     been notified about a given database object.
@@ -52,19 +60,14 @@ class Notification(UserAuthored, Controllable, Created):
     (and to skip creation in case that user has already been notified
     about that object)
 
-    .. attribute:: message
+    .. attribute:: subject
+    .. attribute:: body
+    .. attribute:: user
+    .. attribute:: owner
+    .. attribute:: created
+    .. attribute:: sent
+    .. attribute:: seen
     
-        The message to display. This should be a plain string which
-        will be formatted (using standard string format) using the
-        following context:
-
-        :obj:  the object attached to this notification
-        :user: the user who caused this notification
-
-    .. attribute:: overview
-
-        A display field which returns the parsed :attr:`message`.
-
     """
     class Meta(object):
         app_label = 'notifier'
@@ -72,30 +75,33 @@ class Notification(UserAuthored, Controllable, Created):
         verbose_name_plural = _("Notifications")
 
     seen = models.DateTimeField(_("seen"), null=True, editable=False)
-    message = models.TextField(_("Message"), editable=False)
+    sent = models.DateTimeField(_("sent"), null=True, editable=False)
+    # message = models.TextField(_("Message"), editable=False)
+    subject = models.CharField(_("Subject"), max_length=250, editable=False)
+    body = models.TextField(_("Body"), editable=False)
 
-    def __str__(self):
-        return _("About {0}").format(self.owner)
+    # def __str__(self):
+    #     return _("About {0}").format(self.owner)
         # return self.message
         # return _("Notify {0} about change on {1}").format(
         #     self.user, self.owner)
 
     @classmethod
-    def notify(cls, ar, owner, user, message):
+    def notify(cls, ar, user, owner=None, **kwargs):
         """Create a notification unless that user has already been notified
         about that object.
 
+        Does not send an email because that might skiw down response
+        time.
 
         """
         fltkw = gfk2lookup(cls.owner, owner)
         qs = cls.objects.filter(
             user=user, seen__isnull=True, **fltkw)
         if not qs.exists():
-            # create a notification object and send email
-            obj = cls(user=user, owner=owner, message=message)
+            obj = cls(user=user, owner=owner, **kwargs)
             obj.full_clean()
             obj.save()
-            obj.send_email(ar)
 
     @dd.displayfield()
     def overview(self, ar):
@@ -113,49 +119,65 @@ class Notification(UserAuthored, Controllable, Created):
         so that Thunderbird displays them bold.
 
         """
-        context = dict(
-            obj=ar.obj2str(self.owner),
-            user=ar.obj2str(self.user))
-        return _(self.message).format(**context)
+        elems = body_subject_to_elems(ar, self.subject, self.body)
+        return E.div(*elems)
+        # context = dict(
+        #     obj=ar.obj2str(self.owner),
+        #     user=ar.obj2str(self.user))
+        # return _(self.message).format(**context)
         # return E.p(
         #     ar.obj2html(self.owner), " ",
         #     _("was modified by {0}").format(self.user))
 
-    @dd.action()
-    def send_email(self, ar):
+    def send_email(self):
+        """"""
         if not self.user.email:
             dd.logger.info("User %s has no email address", self.user)
             return
         # dd.logger.info("20151116 %s %s", ar.bound_action, ar.actor)
         # ar = ar.spawn_request(renderer=dd.plugins.bootstrap3.renderer)
-        sar = BaseRequest(
-            # user=self.user, renderer=dd.plugins.bootstrap3.renderer)
-            user=self.user, renderer=settings.SITE.kernel.text_renderer)
-        tpl = dd.plugins.notifier.email_subject_template
-        subject = tpl.format(obj=self)
-        subject = settings.EMAIL_SUBJECT_PREFIX + subject
+        # sar = BaseRequest(
+        #     # user=self.user, renderer=dd.plugins.bootstrap3.renderer)
+        #     user=self.user, renderer=settings.SITE.kernel.text_renderer)
+        # tpl = dd.plugins.notifier.email_subject_template
+        # subject = tpl.format(obj=self)
+        subject = settings.EMAIL_SUBJECT_PREFIX + self.subject
+        # template = rt.get_template('notifier/body.eml')
+        # context = dict(obj=self, E=E, rt=rt, ar=sar)
+        # body = template.render(**context)
+
         template = rt.get_template('notifier/body.eml')
-        context = dict(obj=self, E=E, rt=rt, ar=sar)
+        context = dict(obj=self, E=E, rt=rt)
         body = template.render(**context)
-        sender_email = ar.get_user().email or settings.SERVER_EMAIL
-        sender = "{0} <{1}>".format(ar.get_user(), sender_email)
-        rt.send_email(
-            subject, sender, body, [self.user.email])
+
+        sender = settings.SERVER_EMAIL
+        rt.send_email(subject, sender, body, [self.user.email])
+        self.sent = timezone.now()
+        self.save()
     
-dd.update_field(Notification, 'user', verbose_name=_("User"))
+    @dd.action()
+    def do_send_email(self, ar):
+        self.send_email()
+
+dd.update_field(Notification, 'user',
+                verbose_name=_("Recipient"), editable=False)
+Notification.update_controller_field(null=True, blank=True)
 
 
 class Notifications(dd.Table):
-    """Shows the gobal list of all notifications.
-
-    """
+    "Base for all tables of notifications."
     model = 'notifier.Notification'
-    column_names = "created overview user seen *"
+    column_names = "created subject user seen sent *"
 
-    detail_layout = """
+    detail_layout = dd.DetailLayout("""
+    created user seen sent
     overview
-    notifier.ChangesByNotification
-    """
+    """, window_size=(50, 15))
+
+    # detail_layout = """
+    # overview
+    # notifier.ChangesByNotification
+    # """
 
     @classmethod
     def get_detail_title(self, ar, obj):
@@ -167,6 +189,9 @@ class Notifications(dd.Table):
 
 
 class AllNotifications(Notifications):
+    """The gobal list of all notifications.
+
+    """
     required_roles = dd.required(SiteStaff)
 
 
@@ -177,19 +202,56 @@ class MyNotifications(My, Notifications):
 def welcome_messages(ar):
     """Yield messages for the welcome page."""
 
-    Notification = rt.modules.notifier.Notification
+    Notification = rt.models.notifier.Notification
     qs = Notification.objects.filter(user=ar.get_user(), seen__isnull=True)
     if qs.count() > 0:
         chunks = [
             str(_("You have %d unseen notifications: ")) % qs.count()]
         chunks += join_elems([
-            ar.obj2html(obj, str(obj.owner)) for obj in qs])
+            ar.obj2html(obj, obj.subject) for obj in qs])
         yield E.span(*chunks)
 
 dd.add_welcome_handler(welcome_messages)
 
 
-if dd.is_installed('changes'):
+if schedule:
+
+    def send_pending_emails():
+        Notification = rt.models.notifier.Notification
+        qs = Notification.objects.filter(sent__isnull=True)
+        if qs.count() > 0:
+            dd.logger.info(
+                "Send out emails for %d notifications.", qs.count())
+            for obj in qs:
+                obj.send_email()
+        else:
+            dd.logger.info("No unsent notifications.")
+
+    if settings.EMAIL_HOST and not settings.EMAIL_HOST.endswith('example.com'):
+        dd.logger.info(
+            "Send pending notifications via %s", settings.EMAIL_HOST)
+        schedule.every(10).seconds.do(send_pending_emails)
+    else:
+        dd.logger.info(
+            "Won't send pending notifications because EMAIL_HOST is empty")
+
+    def clear_seen_notifications():
+        remove_after = 24
+        Notification = rt.models.notifier.Notification
+        qs = Notification.objects.filter(
+            seen__isnull=False,
+            seen_lt=timezone.now()-timedelta(hours=remove_after))
+        if qs.count() > 0:
+            dd.logger.info(
+                "Removing %d notifications older than %d hours.",
+                qs.count(), remove_after)
+            qs.delete()
+
+    schedule.every().day.do(clear_seen_notifications)
+
+
+
+if False:  # dd.is_installed('changes'):
 
     from lino.modlib.changes.models import ChangesByMaster
 
