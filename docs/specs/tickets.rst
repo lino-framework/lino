@@ -217,6 +217,9 @@ There are 4 topics in the demo database.
 <BLANKLINE>
 
 
+Choosing a topic
+================
+
 When choosing a topic, the search text looks in both the reference and
 the designation:
 
@@ -242,8 +245,6 @@ Lino Voga
 
 >>> show_choices("robin", base + '?query=voga')
 Lino Voga
-
-  
 
 Interests
 =========
@@ -276,6 +277,25 @@ ticket.
 =========
 <BLANKLINE>
 
+
+
+Filtering tickets by topic
+==========================
+
+>>> pv = dict(topic=rt.models.topics.Topic.get_by_ref("così"))
+>>> rt.show(tickets.Tickets, param_values=pv)
+... #doctest: +REPORT_UDIFF
+==== =========================== ================= =========== =============== ============== =========
+ ID   Summary                     Reporter          Topic       Faculty         Workflow       Project
+---- --------------------------- ----------------- ----------- --------------- -------------- ---------
+ 13   Bar cannot foo              Rolf Rompen       Lino Cosi   Documentation   **Done**       linö
+ 9    Foo never matches Bar       luc               Lino Cosi   Testing         **Talk**       téam
+ 5    Cannot create Foo           Romain Raffault   Lino Cosi                   **Sleeping**
+ 1    Föö fails to bar when baz   jean              Lino Cosi                   **New**        linö
+==== =========================== ================= =========== =============== ============== =========
+<BLANKLINE>
+
+ 
 
 
 
