@@ -2,7 +2,10 @@
 # Copyright 2016 Luc Saffre
 # License: BSD, see file LICENSE for more details.
 
-""".. management_command:: linod
+"""This defines the :manage:`linod` management command.
+
+
+.. management_command:: linod
 
 Starts a daemon that runs scheduled background tasks.
 
