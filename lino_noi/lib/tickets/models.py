@@ -56,7 +56,7 @@ from lino.api import dd, rt, _, pgettext
 from lino.utils.xmlgen.html import E
 
 from lino_xl.lib.cal.mixins import daterange_text
-from lino.modlib.contacts.mixins import ContactRelated
+from lino_xl.lib.contacts.mixins import ContactRelated
 from lino.modlib.users.mixins import UserAuthored
 from lino.modlib.comments.mixins import RFC
 from lino.modlib.notify.mixins import Observable

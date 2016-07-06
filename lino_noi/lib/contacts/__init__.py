@@ -17,7 +17,7 @@
 # <http://www.gnu.org/licenses/>.
 
 """
-Lino Noi extension of :mod:`lino.modlib.contacts`.
+Lino Noi extension of :mod:`lino_xl.lib.contacts`.
 
 .. autosummary::
    :toctree:
@@ -26,7 +26,7 @@ Lino Noi extension of :mod:`lino.modlib.contacts`.
 
 """
 
-from lino.modlib.contacts import Plugin
+from lino_xl.lib.contacts import Plugin
 
 
 # class Plugin(Plugin):

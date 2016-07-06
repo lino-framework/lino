@@ -23,7 +23,7 @@
 
 from lino.api import dd, _
 
-from lino.modlib.contacts.models import *
+from lino_xl.lib.contacts.models import *
 
 
 class CompanyDetail(CompanyDetail):
