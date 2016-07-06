@@ -3,7 +3,7 @@
 # License: BSD (see file COPYING for details)
 
 """Used by :class:`PrintLabelsAction` and
-:mod:`lino.modlib.contacts`.
+:mod:`lino_xl.lib.contacts`.
 
 $ python setup.py test -s tests.UtilsTests.test_addressable
 

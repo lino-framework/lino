@@ -324,7 +324,7 @@ class Model(models.Model):
 
         The default behavious is to simply return `unicode(self)`.
 
-        Usage example is :class:`lino.modlib.countries.models.Place`.
+        Usage example is :class:`lino_xl.lib.countries.models.Place`.
         """
         return str(self)
 

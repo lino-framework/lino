@@ -100,7 +100,7 @@ class Polymorphic(model.Model):
     """Mixin for models that use Multiple Table Inheritance to implement
     polymorphism.
 
-    Subclassed e.g. by :class:`lino.modlib.contacts.models.Partner`:
+    Subclassed e.g. by :class:`lino_xl.lib.contacts.models.Partner`:
     the recipient of an invoice can be a person, a company, a client,
     a job provider, an employee..., and a given partner can be both a
     person and an employee at the same time.

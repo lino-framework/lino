@@ -6,7 +6,7 @@
 
 from lino.core.roles import UserRole, SiteUser, SiteAdmin
 
-from lino.modlib.contacts.roles import ContactsUser, ContactsStaff
+from lino_xl.lib.contacts.roles import ContactsUser, ContactsStaff
 
 
 class OfficeUser(ContactsUser):

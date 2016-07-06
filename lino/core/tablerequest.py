@@ -191,7 +191,7 @@ class TableRequest(ActionRequest):
         - `master` is some abstract model
 
         - `master` is not a subclass of Model, e.g.
-          :class:`lino.modlib.polls.models.AnswersByResponse`, a
+          :class:`lino_xl.lib.polls.models.AnswersByResponse`, a
           virtual table which defines :meth:`get_row_by_pk
           <lino.core.actors.Actor.get_row_by_pk>`.
 

@@ -91,9 +91,6 @@ class UtilsTests(LinoTestCase):
     def test_ranges(self):
         self.run_simple_doctests('lino/utils/ranges.py')
 
-    def test_contacts_utils(self):
-        self.run_simple_doctests('lino/modlib/contacts/utils.py')
-
     def test_addressable(self):
         self.run_simple_doctests('lino/utils/addressable.py')
 

@@ -15,7 +15,7 @@ are attached to a given model.
 
 Examples of plausibility problems are:
 
-- :class:`lino.modlib.countries.models.PlaceChecker`
+- :class:`lino_xl.lib.countries.models.PlaceChecker`
 - :class:`lino_xl.lib.beid.mixins.BeIdCardHolderChecker`
 - :class:`lino_xl.lib.addresses.mixins.AddressOwnerChecker`
 - :class:`lino.mixins.dupable.DupableChecker`

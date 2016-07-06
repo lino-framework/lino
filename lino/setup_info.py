@@ -108,22 +108,10 @@ lino.modlib.awesomeuploader
 lino.modlib.bootstrap3
 lino.modlib.changes
 lino.modlib.comments
-lino.modlib.concepts
-lino.modlib.contacts
-lino.modlib.contacts.fixtures
-lino.modlib.contacts.management
-lino.modlib.contacts.management.commands
 lino.modlib.gfks
 lino.modlib.gfks.fixtures
-lino.modlib.countries
-lino.modlib.countries.fixtures
 lino.modlib.database_ready
 lino.modlib.davlink
-lino.modlib.eid_jslib
-lino.modlib.eid_jslib.beid
-lino.modlib.events
-lino.modlib.events.fixtures
-lino.modlib.events.tests
 lino.modlib.export_excel
 lino.modlib.extjs
 lino.modlib.jinja
@@ -138,8 +126,6 @@ lino.modlib.plausibility
 lino.modlib.plausibility.fixtures
 lino.modlib.plausibility.management
 lino.modlib.plausibility.management.commands
-lino.modlib.polls
-lino.modlib.polls.fixtures
 lino.modlib.print_pisa
 lino.modlib.printing
 lino.modlib.smtpd
@@ -147,9 +133,6 @@ lino.modlib.smtpd.management
 lino.modlib.smtpd.management.commands
 lino.modlib.notify
 lino.modlib.notify.fixtures
-lino.modlib.statbel
-lino.modlib.statbel.countries
-lino.modlib.statbel.countries.fixtures
 lino.modlib.summaries
 lino.modlib.summaries.fixtures
 lino.modlib.summaries.management
@@ -202,9 +185,6 @@ def add_package_data(package, *patterns):
     return l
 
 add_package_data('lino', 'config/*.odt')
-#add_package_data('lino_xl.lib.cal', 'config/*.odt')
-#add_package_data('lino_xl.lib.notes', 'config/notes/Note/*.odt')
-#add_package_data('lino_xl.lib.outbox', 'config/outbox/Mail/*.odt')
 add_package_data('lino.modlib.languages.fixtures', '*.tab')
 
 l = add_package_data('lino.modlib.lino_startup')

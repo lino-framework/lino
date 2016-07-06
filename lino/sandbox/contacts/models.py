@@ -12,7 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 
 from lino.api import dd, rt
-from lino.modlib.countries.models import CountryCity
+from lino_xl.lib.countries.models import CountryCity
 from lino.models import get_site_config
 from lino.utils.choicelists import Gender
 from lino.utils import join_words
