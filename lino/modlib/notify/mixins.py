@@ -51,7 +51,7 @@ class Observable(dd.Model):
             owner = self.get_notify_owner(ar)
             dd.logger.info(
                 "Notify %s users that %s", len(others), subject)
-            notify = rt.models.notifier.Notification.notify
+            notify = rt.models.notify.Notification.notify
             for user in others:
                 notify(ar, user, owner, subject=subject, body=body)
 

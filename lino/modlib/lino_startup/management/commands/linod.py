@@ -4,7 +4,6 @@
 
 """This defines the :manage:`linod` management command.
 
-
 .. management_command:: linod
 
 Starts a daemon that runs scheduled background tasks.
@@ -13,6 +12,11 @@ On a development machine you simply run this in a separate
 terminal. On a production server this should be installed as a service
 (starting a new process every 10 seconds would probably cause a big
 server load).
+
+Before using this command you must manually install the `schedule
+<https://github.com/dbader/schedule>`__ package::
+
+  $ pip install schedule
 
 """
 

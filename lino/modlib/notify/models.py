@@ -2,13 +2,13 @@
 # Copyright 2011-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Database models for `lino.modlib.notifier`.
+"""Database models for this plugin.
 
 A notification is a message to be sent to a given user about a given
 database object. Lino
 
 
-.. xfile:: notifier/body.eml
+.. xfile:: notify/body.eml
 
     The Jinja template to use for generating the body of the
     notification email.
@@ -70,7 +70,7 @@ class Notification(UserAuthored, Controllable, Created):
     
     """
     class Meta(object):
-        app_label = 'notifier'
+        app_label = 'notify'
         verbose_name = _("Notification")
         verbose_name_plural = _("Notifications")
 
@@ -114,7 +114,7 @@ class Notification(UserAuthored, Controllable, Created):
         On interactive rendererers (extjs, bootstrap3) the `obj` and
         `user` are clickable.
 
-        This is also used from the :xfile:`notifier/body.eml` template
+        This is also used from the :xfile:`notify/body.eml` template
         where they should just be surrounded by **double asterisks**
         so that Thunderbird displays them bold.
 
@@ -139,14 +139,14 @@ class Notification(UserAuthored, Controllable, Created):
         # sar = BaseRequest(
         #     # user=self.user, renderer=dd.plugins.bootstrap3.renderer)
         #     user=self.user, renderer=settings.SITE.kernel.text_renderer)
-        # tpl = dd.plugins.notifier.email_subject_template
+        # tpl = dd.plugins.notify.email_subject_template
         # subject = tpl.format(obj=self)
         subject = settings.EMAIL_SUBJECT_PREFIX + self.subject
-        # template = rt.get_template('notifier/body.eml')
+        # template = rt.get_template('notify/body.eml')
         # context = dict(obj=self, E=E, rt=rt, ar=sar)
         # body = template.render(**context)
 
-        template = rt.get_template('notifier/body.eml')
+        template = rt.get_template('notify/body.eml')
         context = dict(obj=self, E=E, rt=rt)
         body = template.render(**context)
 
@@ -166,7 +166,7 @@ Notification.update_controller_field(null=True, blank=True)
 
 class Notifications(dd.Table):
     "Base for all tables of notifications."
-    model = 'notifier.Notification'
+    model = 'notify.Notification'
     column_names = "created subject user seen sent *"
 
     detail_layout = dd.DetailLayout("""
@@ -176,7 +176,7 @@ class Notifications(dd.Table):
 
     # detail_layout = """
     # overview
-    # notifier.ChangesByNotification
+    # notify.ChangesByNotification
     # """
 
     @classmethod
@@ -202,7 +202,7 @@ class MyNotifications(My, Notifications):
 def welcome_messages(ar):
     """Yield messages for the welcome page."""
 
-    Notification = rt.models.notifier.Notification
+    Notification = rt.models.notify.Notification
     qs = Notification.objects.filter(user=ar.get_user(), seen__isnull=True)
     if qs.count() > 0:
         chunks = [
@@ -217,7 +217,7 @@ dd.add_welcome_handler(welcome_messages)
 if schedule:
 
     def send_pending_emails():
-        Notification = rt.models.notifier.Notification
+        Notification = rt.models.notify.Notification
         qs = Notification.objects.filter(sent__isnull=True)
         if qs.count() > 0:
             dd.logger.info(
@@ -237,7 +237,7 @@ if schedule:
 
     def clear_seen_notifications():
         remove_after = 24
-        Notification = rt.models.notifier.Notification
+        Notification = rt.models.notify.Notification
         qs = Notification.objects.filter(
             seen__isnull=False,
             seen_lt=timezone.now()-timedelta(hours=remove_after))
@@ -257,7 +257,7 @@ if False:  # dd.is_installed('changes'):
 
     class ChangesByNotification(ChangesByMaster):
 
-        master = 'notifier.Notification'
+        master = 'notify.Notification'
 
         @classmethod
         def get_request_queryset(cls, ar):

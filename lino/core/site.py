@@ -243,7 +243,7 @@ class Site(object):
     server_url = None
     """The "official" URL used by "normal" users when accessing this Lino
     site. This is used by templates such as the email sent by
-    :class:`lino.modlib.notifier.Notification`
+    :class:`lino.modlib.notify.Notification`
 
     """
 
@@ -253,7 +253,7 @@ class Site(object):
 
     Note: reSTructuredText uses *italic* and **bold**.  Changing this
     can cause lots of trivial failures in test suites.  It is also
-    used by :mod:`lino.modlib.notifier` when generating the mail body.
+    used by :mod:`lino.modlib.notify` when generating the mail body.
 
     """
     make_missing_dirs = True

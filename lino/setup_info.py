@@ -145,7 +145,8 @@ lino.modlib.printing
 lino.modlib.smtpd
 lino.modlib.smtpd.management
 lino.modlib.smtpd.management.commands
-lino.modlib.notifier
+lino.modlib.notify
+lino.modlib.notify.fixtures
 lino.modlib.statbel
 lino.modlib.statbel.countries
 lino.modlib.statbel.countries.fixtures

@@ -46,7 +46,7 @@ Utilities
     about
     export_excel
     tinymce
-    notifier
+    notify
     changes
     wkhtmltopdf
     weasyprint

@@ -10,7 +10,7 @@ def body_subject_to_elems(ar, title, description):
     """Convert the given `title` and `description` to a list of HTML
     elements.
 
-    Used by `lino.modlib.notifier` and by `lino_cosi.lib.sales`
+    Used by `lino.modlib.notify` and by `lino_cosi.lib.sales`
 
     """
     if description:
