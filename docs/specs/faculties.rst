@@ -52,25 +52,24 @@ has does more usage of them.
  ID   User              Faculty         Affinity   Option
 ---- ----------------- --------------- ---------- --------
  1    Rolf Rompen       Analysis        100
- 2    Robin Rood        Analysis        23
- 3    luc               Analysis        120
- 4    luc               Code changes    150
- 5    Rolf Rompen       Code changes    70
+ 2    Rolf Rompen       Code changes    70
+ 3    Rolf Rompen       Documentation   71
+ 4    Rolf Rompen       Testing         42
+ 5    Rolf Rompen       Configuration   62
  6    Romain Raffault   Code changes    76
- 7    luc               Documentation   75
- 8    mathieu           Documentation   46
- 9    Romain Raffault   Documentation   92
- 10   Rolf Rompen       Documentation   71
- 11   Robin Rood        Testing         65
- 12   mathieu           Testing         42
- 13   Romain Raffault   Testing         98
- 14   Rolf Rompen       Testing         42
- 15   luc               Configuration   46
- 16   Rolf Rompen       Configuration   62
- 17   Romain Raffault   Configuration   68
+ 7    Romain Raffault   Documentation   92
+ 8    Romain Raffault   Testing         98
+ 9    Romain Raffault   Configuration   68
+ 10   Robin Rood        Analysis        23
+ 11   luc               Analysis        120
+ 12   luc               Code changes    150
+ 13   luc               Documentation   75
+ 14   mathieu           Documentation   46
+ 15   Robin Rood        Testing         65
+ 16   mathieu           Testing         42
+ 17   luc               Configuration   46
  18   mathieu           Configuration   92
                                         **1338**
 ==== ================= =============== ========== ========
 <BLANKLINE>
-
 
