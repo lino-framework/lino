@@ -71,7 +71,7 @@ from django.db import models
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.db.utils import ProgrammingError
-from django.utils.timezone import make_naive
+from django.utils.timezone import make_aware
 
 from lino.utils import puts
 from lino.core.utils import sorted_models_list, full_model_name
@@ -392,7 +392,7 @@ if __name__ == '__main__':
         #~ if value is None or value is NOT_PROVIDED:
             return 'None'
         if isinstance(field, models.DateTimeField):
-            d = make_naive(value)
+            d = make_aware(value)
             return 'dt(%d,%d,%d,%d,%d,%d)' % (
                 d.year, d.month, d.day, d.hour, d.minute, d.second)
         if isinstance(field, models.TimeField):
