@@ -1,14 +1,15 @@
 #!/bin/bash
 #
-# watch_tim daemon startup script
+# Lino daemon startup script
 #
 # Author: Luc Saffre
+# Create adapted copy of this in your /etc/init.d
 #
 
-MYPROJECT="myproject"
-PROJECT_DIR="/usr/local/django/$MYPROJECT"
-EXEC="$PROJECT_DIR/watch_tim/run"
-PID="$PROJECT_DIR/watch_tim/pid"
+PROJECT="myproject"
+PROJECT_DIR="/path/to/$PROJECT"
+EXEC="$PROJECT_DIR/linod/run"
+PID="$PROJECT_DIR/linod/pid"
 
 set -e
 
