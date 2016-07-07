@@ -20,6 +20,8 @@ Before using this command you must manually install the `schedule
 
 """
 
+from __future__ import print_function
+
 import time
 import schedule
 
@@ -29,17 +31,21 @@ from lino.utils.daemoncommand import DaemonCommand
 
 class Command(DaemonCommand):
 
-    # stdout = '/var/log/lino/watch_tim.log'
-    # stdout = os.path.join(settings.PROJECT_DIR, "watch_tim","stdout.log")
-    # stderr = '/var/log/lino/watch_tim.errors.log'
-    # os.path.join(settings.PROJECT_DIR, "watch_tim","errors.log")
-    # pidfile = os.path.join(settings.PROJECT_DIR, "watch_tim","pid")
-    # pidfile = '/var/run/watch_tim.pid' # os.path.j
-
     # preserve_loggers = (logger,dblogger.logger)
     preserve_loggers = [dblogger.logger]
 
+    def add_arguments(self, parser):
+        super(Command, self).add_arguments(parser)
+        parser.add_argument(
+            '--list', '-l', action='store_true',
+            dest='list_jobs', default=False,
+            help="List all jobs to stdout")
+
     def handle(self, *args, **options):
+        if options['list_jobs']:
+            for i, job in enumerate(schedule.jobs):
+                print(i, job)
+            return
         while True:
             schedule.run_pending()
             time.sleep(1)

@@ -236,6 +236,9 @@ if schedule:
             "Won't send pending notifications because EMAIL_HOST is empty")
 
     def clear_seen_notifications():
+        """Delete notifications older than 24 hours that have been seen.
+
+        """
         remove_after = 24
         Notification = rt.models.notify.Notification
         qs = Notification.objects.filter(
@@ -248,28 +251,5 @@ if schedule:
             qs.delete()
 
     schedule.every().day.do(clear_seen_notifications)
-
-
-
-if False:  # dd.is_installed('changes'):
-
-    from lino.modlib.changes.models import ChangesByMaster
-
-    class ChangesByNotification(ChangesByMaster):
-
-        master = 'notify.Notification'
-
-        @classmethod
-        def get_request_queryset(cls, ar):
-            mi = ar.master_instance
-            if mi is None:
-                return cls.model.objects.none()
-            return cls.model.objects.filter(
-                time__gte=mi.created,
-                **gfk2lookup(cls.model.master, mi.owner))
-
-else:
-
-    ChangesByNotification = None
 
 
