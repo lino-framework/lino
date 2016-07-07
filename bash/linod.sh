@@ -8,7 +8,7 @@
 
 PROJECT="myproject"
 PROJECT_DIR="/path/to/$PROJECT"
-EXEC="$PROJECT_DIR/linod/run"
+EXEC="$PROJECT_DIR/linod/run_linod.sh"
 PID="$PROJECT_DIR/linod/pid"
 
 set -e

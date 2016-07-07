@@ -224,8 +224,8 @@ if schedule:
                 "Send out emails for %d notifications.", qs.count())
             for obj in qs:
                 obj.send_email()
-        else:
-            dd.logger.info("No unsent notifications.")
+        # else:
+        #     dd.logger.info("No unsent notifications.")
 
     if settings.EMAIL_HOST and not settings.EMAIL_HOST.endswith('example.com'):
         dd.logger.info(
