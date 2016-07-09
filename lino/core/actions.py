@@ -225,7 +225,7 @@ class Action(Parametrizable, Permittable):
 
     Setting this attribute to `True` means that the calling code must
     explicitly set all parameter values.  Usage example is the
-    :attr:`lino.modlib.polls.models.AnswersByResponse.answer_buttons`
+    :attr:`lino_xl.lib.polls.models.AnswersByResponse.answer_buttons`
     virtual field.
 
     """

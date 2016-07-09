@@ -12,6 +12,7 @@
     monitor
     run
     show
+    linod
 
 
 

@@ -176,7 +176,7 @@ class Plugin(object):
 
         :site:       The :class:`Site` instance
         :app_label:  e.g. "contacts"
-        :app_name:   e.g. "lino.modlib.contacts"
+        :app_name:   e.g. "lino_xl.lib.contacts"
         :app_module: The module object corresponding to the
                      :xfile:`__init__.py` file.
 

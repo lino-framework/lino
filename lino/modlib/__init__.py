@@ -46,7 +46,7 @@ Utilities
     about
     export_excel
     tinymce
-    notifier
+    notify
     changes
     wkhtmltopdf
     weasyprint
@@ -58,28 +58,14 @@ Utilities
    :toctree:
 
     comments
-    concepts
-    contacts
-    countries
     davlink
-    eid_jslib
-    events
     importfilters
     languages
     office
-    polls
     print_pisa
     smtpd
     uploads
     vocbook
 
-
-Differentiator packages
-=======================
-
-.. autosummary::
-   :toctree:
-
-    statbel
 
 """

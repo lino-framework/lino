@@ -19,7 +19,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
 from lino.modlib.gfks.mixins import Controllable
-from lino.modlib.notifier.mixins import Observable
+from lino.modlib.notify.mixins import Observable
 
 from lino.api import dd
 from lino import mixins

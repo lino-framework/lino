@@ -13,15 +13,16 @@ logger = logging.getLogger(__name__)
 
 import os
 
-from tempfile import NamedTemporaryFile
-
 from django.conf import settings
 from django.utils import translation
 
 from lino.modlib.printing.choicelists import DjangoBuildMethod, BuildMethods
 
 
-from wkhtmltopdf.utils import render_pdf_from_template
+try:
+    from wkhtmltopdf.utils import render_pdf_from_template
+except ImportError:
+    render_pdf_from_template = None
 
 
 class WkBuildMethod(DjangoBuildMethod):
@@ -35,6 +36,10 @@ class WkBuildMethod(DjangoBuildMethod):
     # cache_name = 'wkhtmltopdf'
 
     def build(self, ar, action, elem):
+        if render_pdf_from_template is None:
+            raise Warning(
+                "wkhtmltopdf build fails because django-wkhtmltopdf "
+                "is not installed.")
         filename = action.before_build(self, elem)
         if filename is None:
             return

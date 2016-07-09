@@ -243,7 +243,7 @@ class Site(object):
     server_url = None
     """The "official" URL used by "normal" users when accessing this Lino
     site. This is used by templates such as the email sent by
-    :class:`lino.modlib.notifier.Notification`
+    :class:`lino.modlib.notify.Notification`
 
     """
 
@@ -253,7 +253,7 @@ class Site(object):
 
     Note: reSTructuredText uses *italic* and **bold**.  Changing this
     can cause lots of trivial failures in test suites.  It is also
-    used by :mod:`lino.modlib.notifier` when generating the mail body.
+    used by :mod:`lino.modlib.notify` when generating the mail body.
 
     """
     make_missing_dirs = True
@@ -408,14 +408,14 @@ class Site(object):
     allow_duplicate_cities = False
     """In a default configuration (when :attr:`allow_duplicate_cities` is
     False), Lino declares a UNIQUE clause for :class:`Places
-    <lino.modlib.countries.models.Places>` to make sure that your
+    <lino_xl.lib.countries.models.Places>` to make sure that your
     database never contains duplicate cities.  This behaviour mighr
     disturb e.g. when importing legacy data that did not have this
     restriction.  Set it to True to remove the UNIQUE clause.
     
     Changing this setting might affect your database structure and
     thus require a :doc:`/topics/datamig` if your application uses
-    :mod:`lino.modlib.countries`.
+    :mod:`lino_xl.lib.countries`.
 
     """
 

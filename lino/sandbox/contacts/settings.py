@@ -42,7 +42,7 @@ SITE = Site(globals())
 
 INSTALLED_APPS = (
     #~ 'django.contrib.contenttypes',
-    'lino.modlib.countries',
+    'lino_xl.lib.countries',
     'lino',
     'lino.sandbox.contacts',
 )
