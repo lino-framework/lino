@@ -86,11 +86,14 @@ vrijdag 18 januari 2013
 >>> print(fds('2014-10-12')) # not tolerated
 Traceback (most recent call last):
   ...
-Exception: Not a date: u'2014-10-12'
+Exception: Not a date: '2014-10-12'
 
 """
 
 from __future__ import unicode_literals, print_function
+from builtins import str
+from builtins import repr
+import six
 
 import datetime
 from babel.dates import format_date as babel_format_date
@@ -131,7 +134,9 @@ def format_date(d, format='medium'):
     if isinstance(d, IncompleteDate):
         d = d.as_date()
     if not isinstance(d, datetime.date):
-        raise Exception("Not a date: {0!r}".format(d))
+        if isinstance(d, six.text_type):
+            d = str(d)  # remove the "u" in Python 2
+        raise Exception(str("Not a date: {0!r}").format(d))
     lng = translation.get_language()
     if lng is None:  # occured during syncdb
         lng = settings.SITE.languages[0].django_code

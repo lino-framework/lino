@@ -16,7 +16,7 @@
     >>> lino.startup('lino.projects.std.settings_test')
 
 """
-from __future__ import unicode_literals
+from __future__ import unicode_literals, print_function
 from future import standard_library
 standard_library.install_aliases()
 from builtins import map
@@ -288,14 +288,19 @@ class Site(object):
     """
 
     project_dir = None
-    """Full path to your local project directory.  Local subclasses should
-    not override this variable.
-    
-    Lino sets this to the directory of the :xfile:`settings.py` file
-    (or however your :envvar:`DJANGO_SETTINGS_MODULE` is named).
+    """Full path to your local project directory.
 
-    If it countains a :xfile:`config` directory, this will be added to
-    the config search path.
+    Lino automatically sets this to the directory of the
+    :xfile:`settings.py` file (or however your
+    :envvar:`DJANGO_SETTINGS_MODULE` is named).
+    It is recommended to not override this variable.
+
+    Note that when using a *settings package*, :attr:`project_dir`
+    points to the :file:`settings` subdir of what we would intuitively
+    consider the project directory.
+
+    If the :attr:`project_dir` contains a :xfile:`config` directory,
+    this will be added to the config search path.
 
     """
 
@@ -2518,7 +2523,7 @@ this field.
         and 'en-gb'), the simple code 'en' yields that first variant:
         
         >>> site = Site(languages="en-us en-gb")
-        >>> print site.get_language_info('en')
+        >>> print(site.get_language_info('en'))
         LanguageInfo(django_code='en-us', name='en_US', index=0, suffix='')
 
         """
@@ -2581,13 +2586,13 @@ this field.
 
         >>> from django.utils.translation import ugettext_lazy as _
         >>> from lino.core.site import TestSite as Site
-        >>> from atelier.utils import dict_py2
         >>> site = Site(languages='de fr es')
-        >>> dict_py2(site.str2kw('name', _("January")))
-        {'name_fr': 'janvier', 'name': 'Januar', 'name_es': 'Enero'}
+        >>> site.str2kw('name', _("January")) == {'name_fr': 'janvier', 'name': 'Januar', 'name_es': 'Enero'}
+        True
         >>> site = Site(languages='fr de es')
-        >>> dict_py2(site.str2kw('name', _("January")))
-        {'name_de': 'Januar', 'name': 'janvier', 'name_es': 'Enero'}
+        >>> site.str2kw('name', _("January")) == {'name_de': 'Januar', 'name': 'janvier', 'name_es': 'Enero'}
+        True
+        
 
         """
         from django.utils import translation
@@ -2604,32 +2609,31 @@ this field.
 
         You have some hard-coded multilingual content in a fixture:
         >>> from lino.core.site import TestSite as Site
-        >>> from atelier.utils import dict_py2
         >>> kw = dict(de="Hallo", en="Hello", fr="Salut")
 
         The field names where this info gets stored depends on the
         Site's `languages` distribution.
         
-        >>> dict_py2(Site(languages="de-be en").babelkw('name',**kw))
-        {'name_en': 'Hello', 'name': 'Hallo'}
+        >>> Site(languages="de-be en").babelkw('name',**kw) == {'name_en': 'Hello', 'name': 'Hallo'}
+        True
         
-        >>> dict_py2(Site(languages="en de-be").babelkw('name',**kw))
-        {'name_de_BE': 'Hallo', 'name': 'Hello'}
+        >>> Site(languages="en de-be").babelkw('name',**kw) == {'name_de_BE': 'Hallo', 'name': 'Hello'}
+        True
         
-        >>> dict_py2(Site(languages="en-gb de").babelkw('name',**kw))
-        {'name_de': 'Hallo', 'name': 'Hello'}
+        >>> Site(languages="en-gb de").babelkw('name',**kw) == {'name_de': 'Hallo', 'name': 'Hello'}
+        True
         
-        >>> dict_py2(Site(languages="en").babelkw('name',**kw))
-        {'name': 'Hello'}
+        >>> Site(languages="en").babelkw('name',**kw) == {'name': 'Hello'}
+        True
         
-        >>> dict_py2(Site(languages="de-be en").babelkw('name',de="Hallo",en="Hello"))
-        {'name_en': 'Hello', 'name': 'Hallo'}
+        >>> Site(languages="de-be en").babelkw('name',de="Hallo",en="Hello") == {'name_en': 'Hello', 'name': 'Hallo'}
+        True
 
         In the following example `babelkw` attributes the 
         keyword `de` to the *first* language variant:
         
-        >>> dict_py2(Site(languages="de-ch de-be").babelkw('name',**kw))
-        {'name': 'Hallo'}
+        >>> Site(languages="de-ch de-be").babelkw('name',**kw) == {'name': 'Hallo'}
+        True
         
         
         """
@@ -2660,7 +2664,6 @@ given object `obj`. The dict will have one key for each
 
         >>> from lino.core.site import TestSite as Site
         >>> from atelier.utils import AttrDict
-        >>> from atelier.utils import dict_py2
         >>> def testit(site_languages):
         ...     site = Site(languages=site_languages)
         ...     obj = AttrDict(site.babelkw(
@@ -2669,15 +2672,15 @@ given object `obj`. The dict will have one key for each
 
 
         >>> site, obj = testit('de en')
-        >>> dict_py2(site.field2kw(obj, 'name'))
-        {'de': 'Hallo', 'en': 'Hello'}
+        >>> site.field2kw(obj, 'name') == {'de': 'Hallo', 'en': 'Hello'}
+        True
 
         >>> site, obj = testit('fr et')
-        >>> dict_py2(site.field2kw(obj, 'name'))
-        {'fr': 'Salut'}
+        >>> site.field2kw(obj, 'name') == {'fr': 'Salut'}
+        True
 
         """
-        #~ d = { self.DEFAULT_LANGUAGE.name : getattr(obj,name) }
+        # d = { self.DEFAULT_LANGUAGE.name : getattr(obj,name) }
         for lng in self.languages:
             v = getattr(obj, name + lng.suffix, None)
             if v:
@@ -3401,7 +3404,7 @@ signature as `django.core.mail.EmailMessage`.
         return []
 
     def decfmt(self, v, places=2, **kw):
-        r""" Format a Decimal value using :func:`lino.utils.moneyfmt`, but
+        """ Format a Decimal value using :func:`lino.utils.moneyfmt`, but
         applying the site settings
         :attr:`lino.Lino.decimal_group_separator` and
         :attr:`lino.Lino.decimal_separator`.
@@ -3409,14 +3412,14 @@ signature as `django.core.mail.EmailMessage`.
         >>> from lino.core.site import TestSite as Site
         >>> from decimal import Decimal
         >>> self = Site()
-        >>> self.decimal_group_separator
-        u'\xa0'
+        >>> print(self.decimal_group_separator)
+        \xa0
         >>> print(self.decimal_separator)
         ,
 
         >>> x = Decimal(1234)
-        >>> self.decfmt(x)
-        u'1\xa0234,00'
+        >>> print(self.decfmt(x))
+        1\xa0234,00
 
         >>> print(self.decfmt(x, sep="."))
         1.234,00

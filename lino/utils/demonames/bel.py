@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2014 Luc Saffre
+# Copyright 2012-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 # $ python setup.py test -s tests.UtilsTests.test_demonames
@@ -4941,8 +4941,13 @@ Weserstraße
 def streets_of_eupen():
     r"""Yield an almost complete list of street names in Eupen.
 
-    >>> list(streets_of_eupen())[:5]
-    [u'Aachener Stra\xdfe', u'Akazienweg', u'Alter Malmedyer Weg', u'Am Bahndamm', u'Am Berg']
+    >>> for s in list(streets_of_eupen())[:5]:
+    ...     print(s)
+    Aachener Straße
+    Akazienweg
+    Alter Malmedyer Weg
+    Am Bahndamm
+    Am Berg
 
     """
     for ln in STREETS_OF_EUPEN.splitlines():
@@ -4952,10 +4957,16 @@ def streets_of_eupen():
 
 
 def streets_of_liege():
-    r"""Yield an almost complete list of street names in Liège.
+    """Yield an almost complete list of street names in Liège.
 
-    >>> list(streets_of_liege())[:5]
-    [u'Place du 20-Ao\xfbt', u"Rue de l'Abattoir", u'Rue des Abeilles', u'Rue des Acacias', u"Rue de l'Acad\xe9mie"]
+    >>> for s in list(streets_of_liege())[:5]:
+    ...     print(s)
+    Place du 20-Août
+    Rue de l'Abattoir
+    Rue des Abeilles
+    Rue des Acacias
+    Rue de l'Académie
+
 
     """
     for ln in STREETS_OF_LIEGE.splitlines():
