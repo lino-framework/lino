@@ -26,7 +26,7 @@ This module is used because a :ref:`noi` Site has
 """
 
 from django.conf import settings
-from lino.api import rt
+from lino.api import dd, rt
 from lino.utils.dpy import Migrator, override
 
 
@@ -51,7 +51,7 @@ class Migrator(Migrator):
         tickets_Site = rt.models.tickets.Site
         tickets_Interest = rt.models.topics.Interest
         tickets_Ticket = rt.models.tickets.Ticket
-        Partner = rt.models.contacts.Partner
+        Partner = dd.resolve_model('contacts.Partner')
 
         @override(globals_dict)
         def create_tickets_site(id, partner_id, name, remark):
