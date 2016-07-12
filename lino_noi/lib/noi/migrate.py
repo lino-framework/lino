@@ -147,4 +147,23 @@ class Migrator(Migrator):
             kw.update(topic_group_id=product_cat_id)
             return faculties_Faculty(**kw)
 
-        return '1.0.1'
+        return '0.0.2'
+
+    def migrate_from_0_0_2(self, globals_dict):
+
+        bv2kw = globals_dict['bv2kw']
+        faculties_Faculty = rt.models.faculties.Faculty
+
+        @override(globals_dict)
+        def create_faculties_faculty(id, ref, seqno, parent_id, name, affinity, product_cat_id):
+            kw = dict()
+            kw.update(id=id)
+            # kw.update(ref=ref)
+            kw.update(seqno=seqno)
+            kw.update(parent_id=parent_id)
+            if name is not None: kw.update(bv2kw('name',name))
+            kw.update(affinity=affinity)
+            kw.update(product_cat_id=product_cat_id)
+            return faculties_Faculty(**kw)
+
+        return '0.0.3'
