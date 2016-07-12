@@ -163,7 +163,7 @@ class Migrator(Migrator):
             kw.update(parent_id=parent_id)
             if name is not None: kw.update(bv2kw('name',name))
             kw.update(affinity=affinity)
-            kw.update(product_cat_id=product_cat_id)
+            # kw.update(product_cat_id=product_cat_id)
             return faculties_Faculty(**kw)
 
         return '0.0.3'
