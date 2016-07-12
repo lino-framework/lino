@@ -51,7 +51,7 @@ class Migrator(Migrator):
         tickets_Site = rt.models.tickets.Site
         tickets_Interest = rt.models.topics.Interest
         tickets_Ticket = rt.models.tickets.Ticket
-        Partner = dd.resolve_model('contacts.Partner')
+        Partner = dd.resolve_model(dd.plugins.topics.partner_model)
 
         @override(globals_dict)
         def create_tickets_site(id, partner_id, name, remark):
