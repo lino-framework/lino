@@ -10,7 +10,7 @@ class Site(Site):
 
     languages = "de en fr"
 
-    def setup_plugins(self):
+    def unused_setup_plugins(self):
         """Change the default value of certain plugin settings.
 
         - :attr:`excerpts.responsible_user
@@ -20,7 +20,8 @@ class Site(Site):
 
         """
         super(Site, self).setup_plugins()
-        self.plugins.excerpts.configure(responsible_user='robin')
+        if self.is_installed('excerpts'):
+            self.plugins.excerpts.configure(responsible_user='robin')
 
 
 SITE = Site(globals())

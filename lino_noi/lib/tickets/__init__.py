@@ -40,14 +40,14 @@ class Plugin(ad.Plugin):
 
     needs_plugins = [
         'lino_xl.lib.stars', 'lino_xl.lib.excerpts',
-        'lino.modlib.comments', 'lino.modlib.changes', 'lino_noi.lib.noi']
+        'lino_xl.lib.topics',
+        'lino.modlib.comments', 'lino.modlib.changes',
+        'lino_noi.lib.noi']
 
     def setup_main_menu(self, site, profile, m):
         p = self.get_menu_group()
         m = m.add_menu(p.app_label, p.verbose_name)
         # m.add_action('tickets.MyInterests')
-        m.add_action('tickets.Projects')
-        m.add_action('tickets.Sites')
         # m.add_action('tickets.MyOwnedTickets')
         m.add_action('tickets.ActiveTickets')
         m.add_action('tickets.Tickets')
@@ -58,9 +58,11 @@ class Plugin(ad.Plugin):
     def setup_config_menu(self, site, profile, m):
         p = self.get_menu_group()
         m = m.add_menu(p.app_label, p.verbose_name)
+        m.add_action('tickets.Projects')
         m.add_action('tickets.TopLevelProjects')
         m.add_action('tickets.ProjectTypes')
         m.add_action('tickets.TicketTypes')
+        m.add_action('tickets.Sites')
 
     def setup_explorer_menu(self, site, profile, m):
         p = self.get_menu_group()

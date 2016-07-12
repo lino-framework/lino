@@ -27,6 +27,7 @@ from lino.api import _
 
 from lino_noi.lib.tickets.models import Project
 from lino_noi.lib.tickets.models import Ticket
+from lino_noi.lib.tickets.roles import Worker
 
 
 MySessionsByDate.column_names = (
@@ -290,6 +291,8 @@ class ProjectsByReport(Projects, InvestedTime):
 
 class ServiceReports(dd.Table):
     """List of service reports."""
+    required_roles = dd.required(Worker)
+
     model = "clocking.ServiceReport"
     # detail_layout = """
     # start_date end_date user interesting_for ticket_state printed
@@ -298,6 +301,9 @@ class ServiceReports(dd.Table):
     # """
     column_names = "start_date end_date user interesting_for "\
                    "ticket_state printed *"
+
+    params_panel_hidden = True
+    
 
 
 class ReportsByPartner(ServiceReports):

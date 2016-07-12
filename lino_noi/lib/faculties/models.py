@@ -40,10 +40,11 @@ from lino.modlib.users.mixins import UserAuthored
 MAX_WEIGHT = 100
 
 
-class Faculty(BabelNamed, Hierarchical, Sequenced, Referrable):
-    """A **faculty** is a "knowledge" or "competence" which can be
-    required in order to work on some ticket, and which users can have
-    or not.
+# class Faculty(BabelNamed, Hierarchical, Sequenced, Referrable):
+class Faculty(BabelNamed, Hierarchical, Sequenced):
+    """A **faculty** is a knowledge or ability which can be required in
+    order to work e.g. on some ticket, and which individual users can
+    have or not.
 
     """
 
@@ -61,7 +62,7 @@ class Faculty(BabelNamed, Hierarchical, Sequenced, Referrable):
     topic_group = dd.ForeignKey(
         'topics.TopicGroup', blank=True, null=True,
         verbose_name=_("Options category"),
-        help_text=_("The category of products to use for "
+        help_text=_("The topic group to use for "
                     "specifying additional options."))
 
 

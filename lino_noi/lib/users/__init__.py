@@ -1,4 +1,4 @@
-# Copyright 2015 Luc Saffre
+# Copyright 2015-2016 Luc Saffre
 #
 # This file is part of Lino Noi.
 #
@@ -31,7 +31,8 @@ Lino Noi extension of :mod:`lino.modlib.users`.
 from lino.modlib.users import Plugin
 
 
-# class Plugin(Plugin):
+class Plugin(Plugin):
+    needs_plugins = ['lino_xl.lib.countries']
     
-#     extends_models = ['User']
+    extends_models = ['User']
 

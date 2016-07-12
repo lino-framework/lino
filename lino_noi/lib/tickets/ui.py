@@ -625,7 +625,7 @@ class Sites(dd.Table):
     """
 
     detail_layout = """
-    id name partner
+    id name partner responsible_user
     remark
     #InterestsBySite TicketsBySite MilestonesBySite
     """
@@ -657,6 +657,7 @@ class MyKnownProblems(Tickets):
     """
     required_roles = dd.login_required()
     label = _("My known problems")
+    abstract = not dd.is_installed('contacts')
 
     # @classmethod
     # def get_master_instance(self, ar, model, pk):

@@ -32,35 +32,72 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino.api import dd
 
+from lino_xl.lib.countries.mixins import AddressLocation
+from lino.utils.addressable import Addressable
+from lino_xl.lib.contacts.mixins import Contactable
+
 from lino.modlib.users.models import *
 
 from lino.modlib.office.roles import OfficeUser
 
 
+class User(User, Contactable, AddressLocation, Addressable):
+
+    class Meta(User.Meta):
+        app_label = 'users'
+        abstract = dd.is_abstract_model(__name__, 'User')
+
+
 class UserDetail(UserDetail):
     """Layout of User Detail in Lino Welfare."""
 
-    main = "general tickets"
+    main = "general contact"
 
-    cal_left = """
-    event_type access_class
-    cal.SubscriptionsByUser
+    general = dd.Panel("""
+    box1
+    remarks:40 users.AuthoritiesGiven:20
+    """, label=_("General"))
+
+    # tickets = dd.Panel("""
+    # tickets.TicketsByReporter 
+    # """, label=_("Tickets"))
+
+    box1 = """
+    username profile:20 partner
+    open_session_on_new_ticket user_site
+    language timezone
+    id created modified
     """
+
+    # cal_left = """
+    # event_type access_class
+    # cal.SubscriptionsByUser
+    # """
 
     # cal = dd.Panel("""
     # cal_left:30 cal.TasksByUser:60
     # """, label=dd.plugins.cal.verbose_name,
     #                required_roles=dd.login_required(OfficeUser))
 
-    general = dd.Panel("""
-    box1
-    remarks:40 AuthoritiesGiven:20
-    """, label=_("General"))
+    contact = dd.Panel("""
+    address_box info_box
+    topics.InterestsByPartner faculties.CompetencesByUser
+    """, label=_("Contact"))
 
-    tickets = dd.Panel("""
-    open_session_on_new_ticket user_site #current_project
-    tickets.TicketsByReporter faculties.CompetencesByUser
-    """, label=_("Tickets"))
+    info_box = """
+    email:40
+    url
+    phone
+    gsm fax
+    """
+    address_box = """
+    first_name last_name initials
+    country region city zip_code:10
+    addr1
+    street_prefix street:25 street_no street_box
+    # addr2
+    """
+
 
 Users.detail_layout = UserDetail()
 

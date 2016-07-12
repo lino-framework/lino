@@ -49,10 +49,9 @@ class Plugin(ad.Plugin):
         mg = self.get_menu_group()
         m = m.add_menu(mg.app_label, mg.verbose_name)
         m.add_action('faculties.TopLevelFaculties')
-        m.add_action('faculties.Competences')
+        m.add_action('faculties.AllFaculties')
 
     def setup_explorer_menu(self, site, profile, m):
         p = self.get_menu_group()
         m = m.add_menu(p.app_label, p.verbose_name)
-        m.add_action('faculties.AllFaculties')
         m.add_action('faculties.Competences')

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2014-2015 Luc Saffre
+# Copyright 2014-2016 Luc Saffre
 #
 # This file is part of Lino Noi.
 #
@@ -27,14 +27,6 @@ from email.parser import Parser
 
 from lino.api import dd
 from lino.modlib.smtpd.signals import mail_received
-
-
-@dd.receiver(dd.post_analyze)
-def my_details(sender, **kw):
-    sender.modules.system.SiteConfigs.set_detail_layout("""
-    site_company next_partner_id:10
-    default_build_method
-    """)
 
 
 @dd.receiver(mail_received)

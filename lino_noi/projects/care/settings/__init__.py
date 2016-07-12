@@ -45,11 +45,23 @@ class Site(Site):
     demo_fixtures = ['std', 'demo', 'demo2']
     user_profiles_module = 'lino_noi.projects.care.roles'
 
+    def setup_plugins(self):
+        super(Site, self).setup_plugins()
+        self.plugins.topics.partner_model = 'users.User'
+        # self.plugins.lists.partner_model = 'users.User'
+        self.plugins.countries.configure(hide_region=True)
+
     def get_apps_modifiers(self, **kw):
         kw = super(Site, self).get_apps_modifiers(**kw)
+
         # remove whole plugin:
         # kw.update(products=None)
         # kw.update(clocking=None)
+        kw.update(contacts=None)
+        kw.update(lists=None)
+        kw.update(outbox=None)
+        # kw.update(excerpts=None)
+
         # alternative implementations:
         kw.update(tickets='lino_noi.projects.care.lib.tickets')
         return kw

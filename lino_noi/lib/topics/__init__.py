@@ -1,5 +1,4 @@
-# -*- coding: UTF-8 -*-
-# Copyright 2015 Luc Saffre
+# Copyright 2015-2016 Luc Saffre
 #
 # This file is part of Lino Noi.
 #
@@ -17,17 +16,20 @@
 # License along with Lino Noi.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-"""Extended and specific plugins for Lino Noi.
+"""
+Lino Noi extension of :mod:`lino_xl.lib.topics`.
 
 .. autosummary::
    :toctree:
 
-    contacts
-    noi
-    users
-    clocking
-    tickets
-    topics
-    faculties
+    models
 
 """
+
+from lino_xl.lib.topics import Plugin
+
+
+# class Plugin(Plugin):
+    
+#     extends_models = ['Company']
+

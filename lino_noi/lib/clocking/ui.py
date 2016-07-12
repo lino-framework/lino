@@ -41,6 +41,7 @@ from lino_xl.lib.cal.utils import when_text
 from lino_noi.lib.tickets.choicelists import (TicketEvents,
                                               ProjectEvents, ObservedEvent)
 from lino_noi.lib.tickets.ui import Tickets, Projects
+from lino_noi.lib.tickets.roles import Worker
 
 MIN_DURATION = Duration('0:01')
 
@@ -94,6 +95,7 @@ class SessionTypes(dd.Table):
 
 
 class Sessions(dd.Table):
+    required_roles = dd.required(Worker)
     model = 'clocking.Session'
     column_names = 'ticket user start_date start_time end_date end_time '\
                    'break_time summary duration  *'
