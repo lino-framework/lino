@@ -55,7 +55,7 @@ from lino.utils.html2text import html2text
 from lino.core.exceptions import ChangedAPI
 # from .roles import SiteUser
 
-startup_rlock = threading.RLock()  # Lock() or RLock()?
+startup_rlock = threading.Lock()  # Lock() or RLock()?
 
 LanguageInfo = collections.namedtuple(
     'LanguageInfo', ('django_code', 'name', 'index', 'suffix'))
@@ -925,9 +925,9 @@ class Site(object):
     
     Possible keys include:
     
-    - encoding : 
+    - encoding :
       the charset to use when responding to a CSV request.
-      See 
+      See
       http://docs.python.org/library/codecs.html#standard-encodings
       for a list of available values.
       
@@ -937,10 +937,25 @@ class Site(object):
 
     """
 
+    logger_filename = 'system.log'
+    """The name of Lino's main logger file, created in
+    :meth:`setup_logging`.
+
+    .. xfile:: system.log
+    
+        The default name of Lino's main logger file is
+        :xfile:`system.log` for historical reasons.
+
+        If you don't like that name, then replace it by something else
+        and tell us how you named it. We are still discussing about a
+        good successor. Candidates are :xfile:`main.log` and
+        :xfile:`lino.log`.
+
+    """
     auto_configure_logger_names = 'atelier lino'
     """
     A string with a space-separated list of logger names to be
-    automatically configured. See :mod:`lino.utils.log`.
+    automatically configured. See :meth:`setup_logging`.
 
     """
 
@@ -1066,17 +1081,15 @@ class Site(object):
         """
         # self.logger.info("20140226 Site.__init__() a %s", self)
         #~ print "20130404 ok?"
-        if settings_globals is None:
-            settings_globals = {}
-        self.init_before_local(settings_globals, local_apps)
         if 'no_local' in kwargs:
             kwargs.pop('no_local')
             # For the moment we just silently ignore it, but soon:
             if False:
                 raise ChangedAPI("The no_local argument is no longer needed.")
-        # no_local = kwargs.pop('no_local', False)
-        # if not no_local:
-        #     self.run_lino_site_module()
+        if settings_globals is None:
+            settings_globals = {}
+        self.init_before_local(settings_globals, local_apps)
+        self.setup_logging()
         self.run_lino_site_module()
         self.override_settings(**kwargs)
         self.load_plugins()
@@ -1172,19 +1185,83 @@ class Site(object):
         i = modname.rfind('.')
         if i != -1:
             modname = modname[:i]
-        self.is_local_project_dir = not modname in self.local_apps
+        self.is_local_project_dir = modname not in self.local_apps
 
         self.VIRTUAL_FIELDS = []
 
-        self.update_settings(
-            LOGGING_CONFIG='lino.utils.log.configure',
-            LOGGING=dict(
-                filename=None,
-                level='INFO',
-                logger_names=self.auto_configure_logger_names,
-                disable_existing_loggers=True,  # Django >= 1.5
-            ),
-        )
+    def setup_logging(self):
+        """Modifies the :data:`DEFAULT_LOGGING
+        <django.utils.log.DEFAULT_LOGGING>` dictionary *before* Django
+        passes it to the `logging.config.dictConfig
+        <https://docs.python.org/3/library/logging.config.html#logging.config.dictConfig>`__
+        function.
+
+        It is designed to work with the :setting:`LOGGING` and
+        :setting:`LOGGER_CONFIG` settings unmodified.
+
+        It does the following modifications:
+
+        - Define a *default logger configuration* which is initially
+          the same as the one used by Django::
+
+            {
+                'handlers': ['console', 'mail_admins'],
+                'level': 'INFO',
+            }
+
+        - If the :attr:`project_dir` has a subdirectory named ``log``,
+          and if :attr:`logger_filename` is not empty, add a handler
+          named ``file`` and a formatter named ``verbose``, and add
+          that handler to the default logger configuration.
+
+        - Apply the default logger configuration to every logger name
+          in :attr:`auto_configure_logger_names`.
+
+        It does nothing at all if :attr:`auto_configure_logger_names`
+        is set to `None` or empty.
+
+        See also Django's doc about `Logging
+        <https://docs.djangoproject.com/en/1.9/topics/logging/>`__.
+
+        """
+        if not self.auto_configure_logger_names:
+            return
+
+        from django.utils.log import DEFAULT_LOGGING
+        d = DEFAULT_LOGGING
+
+        loggercfg = {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'INFO',
+        }
+
+        handlers = d.setdefault('handlers', {})
+        if self.logger_filename and 'file' not in handlers:
+            logdir = self.project_dir.child('log')
+            if logdir.isdir():
+                formatters = d.setdefault('formatters', {})
+                formatters.setdefault('verbose', dict(
+                    format='%(asctime)s %(levelname)s '
+                    '%(module)s : %(message)s',
+                    datefmt='%Y%m-%d %H:%M:%S'))
+                handlers['file'] = {
+                    'level': 'INFO',
+                    'class': 'logging.FileHandler',
+                    'filename': logdir.child(self.logger_filename),
+                    'encoding': 'UTF-8',
+                    'formatter': 'verbose',
+                }
+                loggercfg['handlers'].append('file')
+
+        for name in self.auto_configure_logger_names.split():
+            # if name not in d['loggers']:
+            d['loggers'][name] = loggercfg
+
+        # self.update_settings(LOGGING=d)
+        # from pprint import pprint
+        # pprint(d)
+        # import yaml
+        # print(yaml.dump(d))
 
     def get_database_settings(self):
         """Return a dict to be set as the :setting:`DATABASE` setting.

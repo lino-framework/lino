@@ -1,13 +1,16 @@
 # Copyright 2010-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Provides the default logging configuration interface shipped with
+"""
+**No longer used since :blogref:`20160712`.**
+
+Provides the default logging configuration interface shipped with
 Lino applications for out-of-the-box usage in typical situations.
     
 It defines a function :func:`configure` which will be called by Django
 when you have your :setting:`LOGGING_CONFIG` set to
 ``'lino.utils.log.configure'`` (the default value set when you
-instantiate a :class:`lino.site.Site`)
+instantiate a :class:`lino.core.site.Site`)
 
 In order to disable Lino's system, you can either set
 :setting:`LOGGING_CONFIG` to your own value, you configure logging
@@ -77,6 +80,7 @@ welcome.
 See also :srcref:`docs/tickets/15`
 
 """
+from __future__ import print_function
 from past.builtins import basestring
 
 import os
@@ -131,15 +135,36 @@ not specified in `loggers`).  Because that's rather necessary on a
 production server with :setting:`DEBUG` False.
 
     """
+    from django.apps import apps
+    # from django.conf import settings
+    msg = "20160711 %s / %s" % (config, apps.apps_ready)
+    
+    # msg = "20160711 %s / %s" % (config, logging._handlerList)
+    # raise Exception(msg)
+    print(msg)
 
-    if getattr(logging, "set_up_done", False):
+    if not apps.models_ready:
         msg = "Not changing the existing logging configuration."
         # raise Exception(msg)
         logging.info(msg)
         return
-    logging.set_up_done = True
 
-    # if len(logging.getLogger().handlers) != 0:
+    # if getattr(logging, "set_up_done", False):
+    #     msg = "Not changing the existing logging configuration."
+    #     # raise Exception(msg)
+    #     logging.info(msg)
+    #     return
+    # logging.set_up_done = True
+
+    # if configure.has_been_called:
+    #     msg = "Not changing the existing logging configuration."
+    #     # raise Exception(msg)
+    #     logging.info(msg)
+    #     return
+    # configure.has_been_called = True
+
+    # if len(logging.root.handlers) != 0:
+    # if len(logging._handlerList) != 0:
     #     msg = "Not changing the existing logging configuration."
     #     # raise Exception(msg)
     #     logging.info(msg)
@@ -219,3 +244,6 @@ production server with :setting:`DEBUG` False.
 
 
     #~ linoLogger.info("20120408 linoLogger.handlers: %s", linoLogger.handlers)
+
+
+# configure.has_been_called = False

@@ -1,4 +1,4 @@
-# Copyright 2009-2015 Luc Saffre
+# Copyright 2009-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """This defines Lino default settings. You include this (directly or
@@ -10,6 +10,7 @@ indirectly) into your local :xfile:`settings.py` using::
 
 
 from lino.api.ad import Site, configure_plugin, _
+
 
 def TIM2LINO_LOCAL(alias, obj):
     """Hook for local special treatment on instances that have been
@@ -75,6 +76,7 @@ DATABASES = {
 SECRET_KEY = "20227"  # see :djangoticket:`20227`
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+
 
 # disable migrations:
 # MIGRATION_MODULES = dict(contenttypes='lino.fake_migrations', sessions='lino.fake_migrations')

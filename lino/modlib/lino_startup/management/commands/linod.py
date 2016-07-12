@@ -6,15 +6,14 @@
 
 .. management_command:: linod
 
-Starts a daemon that runs scheduled background tasks.
+Starts a long-running process that runs scheduled background tasks.
 
 On a development machine you simply run this in a separate
-terminal. On a production server this should be installed as a service
-(starting a new process every 10 seconds would probably cause a big
-server load).
+terminal. On a production server we recommend to run this via supervisor.
 
-Before using this command you must manually install the `schedule
-<https://github.com/dbader/schedule>`__ package::
+This command requires the `schedule
+<https://github.com/dbader/schedule>`__ package which you must install
+manually::
 
   $ pip install schedule
 
@@ -25,26 +24,29 @@ from __future__ import print_function
 import time
 import schedule
 
-from lino.utils import dblogger
-from lino.utils.daemoncommand import DaemonCommand
+from django.core.management.base import BaseCommand
+
+from lino.api import dd
 
 
-class Command(DaemonCommand):
-
-    # preserve_loggers = (logger,dblogger.logger)
-    preserve_loggers = [dblogger.logger]
+class Command(BaseCommand):
 
     def add_arguments(self, parser):
         super(Command, self).add_arguments(parser)
         parser.add_argument(
             '--list', '-l', action='store_true',
             dest='list_jobs', default=False,
-            help="List all jobs to stdout")
+            help="Just list the jobs, don't run them.")
 
     def handle(self, *args, **options):
+        n = len(schedule.jobs)
+        if n == 0:
+            dd.logger.info("This site has no scheduled jobs.")
+            return
+        dd.logger.info("%d scheduled jobs:", n)
+        for i, job in enumerate(schedule.jobs, 1):
+            dd.logger.info("[%d] %s", i, job)
         if options['list_jobs']:
-            for i, job in enumerate(schedule.jobs):
-                print(i, job)
             return
         while True:
             schedule.run_pending()
