@@ -153,6 +153,7 @@ class Migrator(Migrator):
 
         bv2kw = globals_dict['bv2kw']
         faculties_Faculty = rt.models.faculties.Faculty
+        tickets_Site = rt.models.tickets.Site
 
         @override(globals_dict)
         def create_faculties_faculty(id, ref, seqno, parent_id, name, affinity, product_cat_id):
@@ -165,5 +166,14 @@ class Migrator(Migrator):
             kw.update(affinity=affinity)
             # kw.update(product_cat_id=product_cat_id)
             return faculties_Faculty(**kw)
+
+        @override(globals_dict)
+        def create_tickets_site(id, partner_id, name, remark):
+            kw = dict()
+            kw.update(id=id)
+            # kw.update(partner_id=partner_id)
+            kw.update(name=name)
+            kw.update(remark=remark)
+            return tickets_Site(**kw)
 
         return '0.0.3'
