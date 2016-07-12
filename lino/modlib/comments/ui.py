@@ -48,7 +48,8 @@ class Comments(dd.Table):
 class MyComments(ByUser, Comments):
     required_roles = dd.required()
     auto_fit_column_widths = True
-    order_by = ["created"]
+    order_by = ["modified"]
+    column_names = "modified short_text owner *"
 
 
 class CommentsByX(Comments):

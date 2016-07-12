@@ -1361,11 +1361,6 @@ class Site(object):
         for x in self.get_installed_apps():
             add(x)
 
-        if apps_modifiers:
-            raise Exception(
-                "Invalid app_label '{0}' in your get_apps_modifiers!".format(
-                    list(apps_modifiers.keys())[0]))
-
         # actual_apps = []
         plugins = []
         disabled_plugins = set()
@@ -1380,6 +1375,13 @@ class Site(object):
 
             # print "Loading plugin", app_name
             k = app_name.rsplit('.')[-1]
+            x = apps_modifiers.pop(k, 42)
+            if x is None:
+                return
+            elif x == 42:
+                pass
+            else:
+                raise Exception("20160712")
             if k in self.plugins:
                 other = self.plugins[k]
                 if other.app_name == app_name:
@@ -1420,6 +1422,11 @@ class Site(object):
 
         for app_name in requested_apps:
             install_plugin(app_name)
+
+        if apps_modifiers:
+            raise Exception(
+                "Invalid app_label '{0}' in your get_apps_modifiers!".format(
+                    list(apps_modifiers.keys())[0]))
 
         # The return value of get_auth_method() may depend on a
         # plugin, so if needed we must add the django.contrib.sessions
@@ -1546,7 +1553,8 @@ this field.
 
     def setup_plugins(self):
         """This method is called exactly once during site startup, after
-        :meth:`load_plugins` and before models are being populated.
+        :meth:`load_plugins` but before populating the models
+        registry.
 
         """
         pass

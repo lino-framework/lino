@@ -149,8 +149,9 @@ class GridColumn(jsgen.Component):
                                         self.editor.field.name)
                 else:
                     ttt = ''
-                if self.editor.field.help_text and \
-                   not "<" in self.editor.field.help_text:
+                if self.editor.field.help_text \
+                   and "<" not in self.editor.field.help_text:
+                    # and '"' not in self.editor.field.help_text
                     # GridColumn tooltips don't support html
                     ttt = string_concat(ttt, self.editor.field.help_text)
                 if ttt:
@@ -651,6 +652,7 @@ class TextFieldElement(FieldElement):
                 # kw.update(master_panel=js_code("this"))
                 kw.update(containing_panel=js_code("this"))
                 # kw.update(title=unicode(field.verbose_name)) 20111111
+                kw.update(label=field.verbose_name)
                 kw.update(title=field.verbose_name)
                 return LayoutElement.__init__(
                     self, layout_handle, field.name, **kw)
@@ -1718,6 +1720,8 @@ class Panel(Container):
             if not isinstance(e, FieldElement):
                 return e
             if e.label is None:
+                return e
+            if e.hidden:
                 return e
             if isinstance(e, HtmlBoxElement):
                 return e
