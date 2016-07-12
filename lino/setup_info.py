@@ -18,7 +18,7 @@ PY3 = sys.version_info[0] == 3
 
 SETUP_INFO = dict(
     name='lino',
-    version='1.7.2',
+    version='1.7.3',
     install_requires=[
         # 'django<1.7',
         'django',
