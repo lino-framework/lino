@@ -23,7 +23,7 @@
 
 SETUP_INFO = dict(
     name='lino-noi',
-    version='0.0.2',  # since 20150918
+    version='0.0.3',  # since 20160712
     install_requires=['lino_xl'],
     test_suite='tests',
     description=("The Lino application used by the Lino team for "
