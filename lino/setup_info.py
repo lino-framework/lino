@@ -18,7 +18,7 @@ PY3 = sys.version_info[0] == 3
 
 SETUP_INFO = dict(
     name='lino',
-    version='1.7.3',
+    version='1.7.4',
     install_requires=[
         # 'django<1.7',
         'django',
@@ -184,8 +184,9 @@ def add_package_data(package, *patterns):
     l.extend(patterns)
     return l
 
-add_package_data('lino', 'config/*.odt')
+add_package_data('lino.modlib.printing', 'config/report/Default.odt')
 add_package_data('lino.modlib.languages.fixtures', '*.tab')
+add_package_data('lino.modlib.notify', 'config/notify/*.eml')
 
 l = add_package_data('lino.modlib.lino_startup')
 for lng in 'de fr et nl'.split():
