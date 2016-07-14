@@ -228,11 +228,11 @@ if schedule:
         #     dd.logger.info("No unsent notifications.")
 
     if settings.EMAIL_HOST and not settings.EMAIL_HOST.endswith('example.com'):
-        dd.logger.info(
+        dd.logger.debug(
             "Send pending notifications via %s", settings.EMAIL_HOST)
         schedule.every(10).seconds.do(send_pending_emails)
     else:
-        dd.logger.info(
+        dd.logger.debug(
             "Won't send pending notifications because EMAIL_HOST is empty")
 
     def clear_seen_notifications():

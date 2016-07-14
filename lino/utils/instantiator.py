@@ -1,4 +1,4 @@
-# Copyright 2009-2014 Luc Saffre
+# Copyright 2009-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Defines the :class:`Instantiator` class and some other utilities
@@ -6,15 +6,16 @@ used for generating database objects in :ref:`python fixtures <dpy>`.
 
 Example values:
 
+>>> import json
 >>> s = '<a href="javascript:Lino.pcsw.Clients.detail.run(\
 null,{ &quot;record_id&quot;: 116 })">BASTIAENSEN Laurent (116)</a>'
->>> GFK_HACK.match(s).groups()
-(u'pcsw.Clients', u'116')
+>>> print(json.dumps(GFK_HACK.match(s).groups()))
+["pcsw.Clients", "116"]
 
 >>> s = '<a href="javascript:Lino.cal.Guests.detail.run(\
 null,{ &quot;record_id&quot;: 6 })">Gast #6 ("Termin #51")</a>'
->>> GFK_HACK.match(s).groups()
-(u'cal.Guests', u'6')
+>>> print(json.dumps(GFK_HACK.match(s).groups()))
+["cal.Guests", "6"]
 
 """
 

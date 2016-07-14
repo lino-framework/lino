@@ -18,7 +18,7 @@ PY3 = sys.version_info[0] == 3
 
 SETUP_INFO = dict(
     name='lino',
-    version='1.7.2',
+    version='1.7.5',
     install_requires=[
         # 'django<1.7',
         'django',
@@ -45,7 +45,7 @@ SETUP_INFO = dict(
     description="A framework for writing desktop-like web applications "
     "using Django and ExtJS",
     license='BSD License',
-    include_package_data=True,
+    # include_package_data=True,
     zip_safe=False,
     obsoletes=['djangosite', 'north'],
     author='Luc Saffre',
@@ -181,11 +181,13 @@ SETUP_INFO.update(package_data=dict())
 def add_package_data(package, *patterns):
     package = str(package)
     l = SETUP_INFO['package_data'].setdefault(package, [])
-    l.extend(patterns)
+    l += [str(x) for x in patterns]
+    # l.extend(patterns)
     return l
 
-add_package_data('lino', 'config/*.odt')
+add_package_data('lino.modlib.printing', 'config/report/Default.odt')
 add_package_data('lino.modlib.languages.fixtures', '*.tab')
+add_package_data('lino.modlib.notify', 'config/notify/*.eml')
 
 l = add_package_data('lino.modlib.lino_startup')
 for lng in 'de fr et nl'.split():

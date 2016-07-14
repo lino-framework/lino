@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2015 Luc Saffre
+# Copyright 2012-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -16,6 +16,7 @@ import os
 import sys
 import time
 import fnmatch
+from atelier import rstgen
 
 
 def codefiles(pattern='*'):
@@ -65,7 +66,9 @@ def codetime(*args, **kw):
 
 def is_start_of_docstring(line):
     for delim in '"""', "'''":
-        if line.startswith(delim) or line.startswith('u' + delim) or line.startswith('r' + delim) or line.startswith('ru' + delim):
+        if line.startswith(delim) or line.startswith('u' + delim) \
+           or line.startswith('r' + delim) \
+           or line.startswith('ru' + delim):
             return delim
 
 
@@ -118,9 +121,6 @@ class SourceFile(object):
         #~ self.count_code, count_total, count_blank, count_doc
 
 
-from lino.utils import rstgen
-
-
 def analyze_rst(*packages):
     """
     Example:
@@ -130,7 +130,8 @@ def analyze_rst(*packages):
       
     """
     fields = 'count_code count_doc count_comment count_total'.split()
-    headers = ["name", "code lines", "doc lines", "comment lines", "total lines"] 
+    headers = ["name", "code lines", "doc lines",
+               "comment lines", "total lines"]
     rows = []
 
     total_sums = [0] * len(fields)
@@ -145,6 +146,7 @@ def analyze_rst(*packages):
             total_sums[i] += sums[i]
     rows.append(['total'] + [str(n) for n in total_sums])
     return rstgen.table(headers, rows)
+
 
 if __name__ == "__main__":
     import doctest

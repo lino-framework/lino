@@ -22,10 +22,12 @@
 from __future__ import unicode_literals
 from __future__ import absolute_import
 
+import logging
+logger = logging.getLogger(__name__)
+
 import sys
 import os
 from os.path import join, dirname
-
 
 filename = join(dirname(__file__), 'setup_info.py')
 exec(compile(open(filename, "rb").read(), filename, 'exec'))
@@ -80,8 +82,8 @@ def startup(settings_module=None):
     :mod:`lino.modlib.lino_startup`), but this trick no longer worked
     after 1.7.
 
-    This is called automatically when a process is invoked by a
-    *management command*.
+    This is called automatically when a process is invoked by an
+    *admin command*.
 
     For testable documents you need to call it manually using e.g.:
 
@@ -95,7 +97,8 @@ def startup(settings_module=None):
     >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'my.project.settings'
 
     """
-    #print "startup"
+    # print("20160711 startup")
+    # logger.info("20160711 startup")
     if settings_module:
         import os
         os.environ['DJANGO_SETTINGS_MODULE'] = settings_module
@@ -103,7 +106,8 @@ def startup(settings_module=None):
     if AFTER17:
         import django
         django.setup()
-    #print "startup done"
+    # print("20160711 startup done")
+    # logger.info("20160711 startup done")
 
 
 def site_startup():

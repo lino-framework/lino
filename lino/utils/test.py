@@ -87,7 +87,7 @@ class CommonTestCase(unittest.TestCase):
             self.fail(msg)
 
     def request_PUT(self, url, data, **kw):
-        """Sends a PUT request using Djangos test client, overriding the
+        """Sends a PUT request using Django's test client, overriding the
         `content_type` keyword.  This is how ExtJS grids behave by
         default.
 

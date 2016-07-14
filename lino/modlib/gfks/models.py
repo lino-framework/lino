@@ -209,8 +209,10 @@ class BrokenGFKsByModel(BrokenGFKs):
         return True
 
 
-@dd.receiver(dd.pre_ui_build)
-def my_pre_ui_build(sender, **kw):
+if False:  # disabled 20160712
+
+  @dd.receiver(dd.pre_ui_build)
+  def my_pre_ui_build(sender, **kw):
     try:
         HelpText = rt.modules.gfks.HelpText
         for ht in HelpText.objects.filter(help_text__isnull=False):
@@ -225,7 +227,7 @@ def my_pre_ui_build(sender, **kw):
         pass
 
 
-# cause `fab mm` to generate translatable strings from Django's
+# cause `inv mm` to generate translatable strings from Django's
 # original module since those translations are not loaded.
 _("content type")
 _("content types")

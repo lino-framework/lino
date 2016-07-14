@@ -16,7 +16,7 @@
     >>> lino.startup('lino.projects.std.settings_test')
 
 """
-from __future__ import unicode_literals
+from __future__ import unicode_literals, print_function
 from future import standard_library
 standard_library.install_aliases()
 from builtins import map
@@ -55,7 +55,7 @@ from lino.utils.html2text import html2text
 from lino.core.exceptions import ChangedAPI
 # from .roles import SiteUser
 
-startup_rlock = threading.RLock()  # Lock() or RLock()?
+startup_rlock = threading.Lock()  # Lock() or RLock()?
 
 LanguageInfo = collections.namedtuple(
     'LanguageInfo', ('django_code', 'name', 'index', 'suffix'))
@@ -288,14 +288,19 @@ class Site(object):
     """
 
     project_dir = None
-    """Full path to your local project directory.  Local subclasses should
-    not override this variable.
-    
-    Lino sets this to the directory of the :xfile:`settings.py` file
-    (or however your :envvar:`DJANGO_SETTINGS_MODULE` is named).
+    """Full path to your local project directory.
 
-    If it countains a :xfile:`config` directory, this will be added to
-    the config search path.
+    Lino automatically sets this to the directory of the
+    :xfile:`settings.py` file (or however your
+    :envvar:`DJANGO_SETTINGS_MODULE` is named).
+    It is recommended to not override this variable.
+
+    Note that when using a *settings package*, :attr:`project_dir`
+    points to the :file:`settings` subdir of what we would intuitively
+    consider the project directory.
+
+    If the :attr:`project_dir` contains a :xfile:`config` directory,
+    this will be added to the config search path.
 
     """
 
@@ -920,9 +925,9 @@ class Site(object):
     
     Possible keys include:
     
-    - encoding : 
+    - encoding :
       the charset to use when responding to a CSV request.
-      See 
+      See
       http://docs.python.org/library/codecs.html#standard-encodings
       for a list of available values.
       
@@ -932,10 +937,25 @@ class Site(object):
 
     """
 
+    logger_filename = 'system.log'
+    """The name of Lino's main logger file, created in
+    :meth:`setup_logging`.
+
+    .. xfile:: system.log
+    
+        The default name of Lino's main logger file is
+        :xfile:`system.log` for historical reasons.
+
+        If you don't like that name, then replace it by something else
+        and tell us how you named it. We are still discussing about a
+        good successor. Candidates are :xfile:`main.log` and
+        :xfile:`lino.log`.
+
+    """
     auto_configure_logger_names = 'atelier lino'
     """
     A string with a space-separated list of logger names to be
-    automatically configured. See :mod:`lino.utils.log`.
+    automatically configured. See :meth:`setup_logging`.
 
     """
 
@@ -1061,17 +1081,15 @@ class Site(object):
         """
         # self.logger.info("20140226 Site.__init__() a %s", self)
         #~ print "20130404 ok?"
-        if settings_globals is None:
-            settings_globals = {}
-        self.init_before_local(settings_globals, local_apps)
         if 'no_local' in kwargs:
             kwargs.pop('no_local')
             # For the moment we just silently ignore it, but soon:
             if False:
                 raise ChangedAPI("The no_local argument is no longer needed.")
-        # no_local = kwargs.pop('no_local', False)
-        # if not no_local:
-        #     self.run_lino_site_module()
+        if settings_globals is None:
+            settings_globals = {}
+        self.init_before_local(settings_globals, local_apps)
+        self.setup_logging()
         self.run_lino_site_module()
         self.override_settings(**kwargs)
         self.load_plugins()
@@ -1167,19 +1185,83 @@ class Site(object):
         i = modname.rfind('.')
         if i != -1:
             modname = modname[:i]
-        self.is_local_project_dir = not modname in self.local_apps
+        self.is_local_project_dir = modname not in self.local_apps
 
         self.VIRTUAL_FIELDS = []
 
-        self.update_settings(
-            LOGGING_CONFIG='lino.utils.log.configure',
-            LOGGING=dict(
-                filename=None,
-                level='INFO',
-                logger_names=self.auto_configure_logger_names,
-                disable_existing_loggers=True,  # Django >= 1.5
-            ),
-        )
+    def setup_logging(self):
+        """Modifies the :data:`DEFAULT_LOGGING
+        <django.utils.log.DEFAULT_LOGGING>` dictionary *before* Django
+        passes it to the `logging.config.dictConfig
+        <https://docs.python.org/3/library/logging.config.html#logging.config.dictConfig>`__
+        function.
+
+        It is designed to work with the :setting:`LOGGING` and
+        :setting:`LOGGER_CONFIG` settings unmodified.
+
+        It does the following modifications:
+
+        - Define a *default logger configuration* which is initially
+          the same as the one used by Django::
+
+            {
+                'handlers': ['console', 'mail_admins'],
+                'level': 'INFO',
+            }
+
+        - If the :attr:`project_dir` has a subdirectory named ``log``,
+          and if :attr:`logger_filename` is not empty, add a handler
+          named ``file`` and a formatter named ``verbose``, and add
+          that handler to the default logger configuration.
+
+        - Apply the default logger configuration to every logger name
+          in :attr:`auto_configure_logger_names`.
+
+        It does nothing at all if :attr:`auto_configure_logger_names`
+        is set to `None` or empty.
+
+        See also Django's doc about `Logging
+        <https://docs.djangoproject.com/en/1.9/topics/logging/>`__.
+
+        """
+        if not self.auto_configure_logger_names:
+            return
+
+        from django.utils.log import DEFAULT_LOGGING
+        d = DEFAULT_LOGGING
+
+        loggercfg = {
+            'handlers': ['console', 'mail_admins'],
+            'level': 'INFO',
+        }
+
+        handlers = d.setdefault('handlers', {})
+        if self.logger_filename and 'file' not in handlers:
+            logdir = self.project_dir.child('log')
+            if logdir.isdir():
+                formatters = d.setdefault('formatters', {})
+                formatters.setdefault('verbose', dict(
+                    format='%(asctime)s %(levelname)s '
+                    '%(module)s : %(message)s',
+                    datefmt='%Y%m-%d %H:%M:%S'))
+                handlers['file'] = {
+                    'level': 'INFO',
+                    'class': 'logging.FileHandler',
+                    'filename': logdir.child(self.logger_filename),
+                    'encoding': 'UTF-8',
+                    'formatter': 'verbose',
+                }
+                loggercfg['handlers'].append('file')
+
+        for name in self.auto_configure_logger_names.split():
+            # if name not in d['loggers']:
+            d['loggers'][name] = loggercfg
+
+        # self.update_settings(LOGGING=d)
+        # from pprint import pprint
+        # pprint(d)
+        # import yaml
+        # print(yaml.dump(d))
 
     def get_database_settings(self):
         """Return a dict to be set as the :setting:`DATABASE` setting.
@@ -1279,11 +1361,6 @@ class Site(object):
         for x in self.get_installed_apps():
             add(x)
 
-        if apps_modifiers:
-            raise Exception(
-                "Invalid app_label '{0}' in your get_apps_modifiers!".format(
-                    list(apps_modifiers.keys())[0]))
-
         # actual_apps = []
         plugins = []
         disabled_plugins = set()
@@ -1298,6 +1375,13 @@ class Site(object):
 
             # print "Loading plugin", app_name
             k = app_name.rsplit('.')[-1]
+            x = apps_modifiers.pop(k, 42)
+            if x is None:
+                return
+            elif x == 42:
+                pass
+            else:
+                raise Exception("20160712")
             if k in self.plugins:
                 other = self.plugins[k]
                 if other.app_name == app_name:
@@ -1338,6 +1422,11 @@ class Site(object):
 
         for app_name in requested_apps:
             install_plugin(app_name)
+
+        if apps_modifiers:
+            raise Exception(
+                "Invalid app_label '{0}' in your get_apps_modifiers!".format(
+                    list(apps_modifiers.keys())[0]))
 
         # The return value of get_auth_method() may depend on a
         # plugin, so if needed we must add the django.contrib.sessions
@@ -1464,7 +1553,8 @@ this field.
 
     def setup_plugins(self):
         """This method is called exactly once during site startup, after
-        :meth:`load_plugins` and before models are being populated.
+        :meth:`load_plugins` but before populating the models
+        registry.
 
         """
         pass
@@ -2518,7 +2608,7 @@ this field.
         and 'en-gb'), the simple code 'en' yields that first variant:
         
         >>> site = Site(languages="en-us en-gb")
-        >>> print site.get_language_info('en')
+        >>> print(site.get_language_info('en'))
         LanguageInfo(django_code='en-us', name='en_US', index=0, suffix='')
 
         """
@@ -2581,13 +2671,13 @@ this field.
 
         >>> from django.utils.translation import ugettext_lazy as _
         >>> from lino.core.site import TestSite as Site
-        >>> from atelier.utils import dict_py2
         >>> site = Site(languages='de fr es')
-        >>> dict_py2(site.str2kw('name', _("January")))
-        {'name_fr': 'janvier', 'name': 'Januar', 'name_es': 'Enero'}
+        >>> site.str2kw('name', _("January")) == {'name_fr': 'janvier', 'name': 'Januar', 'name_es': 'Enero'}
+        True
         >>> site = Site(languages='fr de es')
-        >>> dict_py2(site.str2kw('name', _("January")))
-        {'name_de': 'Januar', 'name': 'janvier', 'name_es': 'Enero'}
+        >>> site.str2kw('name', _("January")) == {'name_de': 'Januar', 'name': 'janvier', 'name_es': 'Enero'}
+        True
+        
 
         """
         from django.utils import translation
@@ -2604,32 +2694,31 @@ this field.
 
         You have some hard-coded multilingual content in a fixture:
         >>> from lino.core.site import TestSite as Site
-        >>> from atelier.utils import dict_py2
         >>> kw = dict(de="Hallo", en="Hello", fr="Salut")
 
         The field names where this info gets stored depends on the
         Site's `languages` distribution.
         
-        >>> dict_py2(Site(languages="de-be en").babelkw('name',**kw))
-        {'name_en': 'Hello', 'name': 'Hallo'}
+        >>> Site(languages="de-be en").babelkw('name',**kw) == {'name_en': 'Hello', 'name': 'Hallo'}
+        True
         
-        >>> dict_py2(Site(languages="en de-be").babelkw('name',**kw))
-        {'name_de_BE': 'Hallo', 'name': 'Hello'}
+        >>> Site(languages="en de-be").babelkw('name',**kw) == {'name_de_BE': 'Hallo', 'name': 'Hello'}
+        True
         
-        >>> dict_py2(Site(languages="en-gb de").babelkw('name',**kw))
-        {'name_de': 'Hallo', 'name': 'Hello'}
+        >>> Site(languages="en-gb de").babelkw('name',**kw) == {'name_de': 'Hallo', 'name': 'Hello'}
+        True
         
-        >>> dict_py2(Site(languages="en").babelkw('name',**kw))
-        {'name': 'Hello'}
+        >>> Site(languages="en").babelkw('name',**kw) == {'name': 'Hello'}
+        True
         
-        >>> dict_py2(Site(languages="de-be en").babelkw('name',de="Hallo",en="Hello"))
-        {'name_en': 'Hello', 'name': 'Hallo'}
+        >>> Site(languages="de-be en").babelkw('name',de="Hallo",en="Hello") == {'name_en': 'Hello', 'name': 'Hallo'}
+        True
 
         In the following example `babelkw` attributes the 
         keyword `de` to the *first* language variant:
         
-        >>> dict_py2(Site(languages="de-ch de-be").babelkw('name',**kw))
-        {'name': 'Hallo'}
+        >>> Site(languages="de-ch de-be").babelkw('name',**kw) == {'name': 'Hallo'}
+        True
         
         
         """
@@ -2660,7 +2749,6 @@ given object `obj`. The dict will have one key for each
 
         >>> from lino.core.site import TestSite as Site
         >>> from atelier.utils import AttrDict
-        >>> from atelier.utils import dict_py2
         >>> def testit(site_languages):
         ...     site = Site(languages=site_languages)
         ...     obj = AttrDict(site.babelkw(
@@ -2669,15 +2757,15 @@ given object `obj`. The dict will have one key for each
 
 
         >>> site, obj = testit('de en')
-        >>> dict_py2(site.field2kw(obj, 'name'))
-        {'de': 'Hallo', 'en': 'Hello'}
+        >>> site.field2kw(obj, 'name') == {'de': 'Hallo', 'en': 'Hello'}
+        True
 
         >>> site, obj = testit('fr et')
-        >>> dict_py2(site.field2kw(obj, 'name'))
-        {'fr': 'Salut'}
+        >>> site.field2kw(obj, 'name') == {'fr': 'Salut'}
+        True
 
         """
-        #~ d = { self.DEFAULT_LANGUAGE.name : getattr(obj,name) }
+        # d = { self.DEFAULT_LANGUAGE.name : getattr(obj,name) }
         for lng in self.languages:
             v = getattr(obj, name + lng.suffix, None)
             if v:
@@ -3401,7 +3489,7 @@ signature as `django.core.mail.EmailMessage`.
         return []
 
     def decfmt(self, v, places=2, **kw):
-        r""" Format a Decimal value using :func:`lino.utils.moneyfmt`, but
+        """ Format a Decimal value using :func:`lino.utils.moneyfmt`, but
         applying the site settings
         :attr:`lino.Lino.decimal_group_separator` and
         :attr:`lino.Lino.decimal_separator`.
@@ -3409,14 +3497,14 @@ signature as `django.core.mail.EmailMessage`.
         >>> from lino.core.site import TestSite as Site
         >>> from decimal import Decimal
         >>> self = Site()
-        >>> self.decimal_group_separator
-        u'\xa0'
+        >>> print(self.decimal_group_separator)
+        \xa0
         >>> print(self.decimal_separator)
         ,
 
         >>> x = Decimal(1234)
-        >>> self.decfmt(x)
-        u'1\xa0234,00'
+        >>> print(self.decfmt(x))
+        1\xa0234,00
 
         >>> print(self.decfmt(x, sep="."))
         1.234,00

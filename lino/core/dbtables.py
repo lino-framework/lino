@@ -239,6 +239,13 @@ def discover():
     for rpt in slave_reports:
         if isinstance(rpt.master, basestring):
             raise Exception("20150216 unresolved master")
+        if isinstance(rpt.master, UnresolvedModel):
+            continue
+        if not isinstance(rpt.master, type):
+            raise Exception(
+                "20160712 invalid master {!r} in {}".format(
+                    rpt.master, rpt))
+            
         if issubclass(rpt.master, models.Model):
             # rpt.master = resolve_model(rpt.master)
             slaves = getattr(rpt.master, "_lino_slaves", None)

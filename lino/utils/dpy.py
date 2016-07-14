@@ -21,8 +21,10 @@ logger = logging.getLogger(__name__)
 
 from io import StringIO
 import os
+from os.path import dirname
 import imp
 from decimal import Decimal
+from unipath import Path
 from lino import AFTER17
 
 from django.conf import settings
@@ -339,6 +341,16 @@ class DpyLoader(LoaderBase):
 class DpyDeserializer(LoaderBase):
     """The Django deserializer for :ref:`dpy`.
 
+    Note that this deserializer explicitly ignores fixtures whose
+    source file is located in the current directory because i the case
+    of `.py` files this can lead to side effects when importing them.
+    See e.g. :ticket:`1029`.  We consider it an odd behaviour of
+    Django to search for fixtures also in the current directory (and
+    not, as `documented
+    <https://docs.djangoproject.com/en/1.9/howto/initial-data/#where-django-finds-fixture-files>`__,
+    in the `fixtures` subdirs of plugins and the optional
+    :setting:`FIXTURE_DIRS`).
+
     """
 
     def deserialize(self, fp, **options):
@@ -346,20 +358,27 @@ class DpyDeserializer(LoaderBase):
         if isinstance(fp, basestring):
             raise NotImplementedError
 
+        # ignore fixtures in current directory.
+        p1 = Path(fp.name).parent.absolute().resolve()
+        p2 = Path(os.getcwd()).absolute().resolve()
+        if p1 == p2:
+            return
+
         translation.activate(settings.SITE.get_default_language())
 
         # self.count += 1
-        fqname = 'lino.dpy_tmp_%s' % hash(self)
+        fqname = 'lino.dpy_tmp_%s' % abs(hash(fp.name))
 
         if False:
             parts = fp.name.split(os.sep)
             # parts = os.path.split(fp.name)
             print(parts)
             # fqname = parts[-1]
-            fqname = '.'.join([p for p in parts if not ':' in p])
+            fqname = '.'.join([p for p in parts if ':' not in p])
             assert fqname.endswith(SUFFIX)
             fqname = fqname[:-len(SUFFIX)]
             print(fqname)
+
         desc = (SUFFIX, 'r', imp.PY_SOURCE)
         logger.info("Loading %s...", fp.name)
 
