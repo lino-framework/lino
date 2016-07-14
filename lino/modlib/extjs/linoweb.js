@@ -1334,15 +1334,16 @@ Ext.override(Ext.grid.CellSelectionModel, {
             case e.LEFT:
                 newCell = walk(r, c - 1, -1);
                 break;
-            case e.F2:
-                if (!e.hasModifier()) {
-                    if (g.isEditor && !g.editing) {
-                        g.startEditing(r, c);
-                        e.stopEvent();
-                        return;
-                    }
-                    break;
-                }
+            // #1045
+            // case e.F2:
+            //     if (!e.hasModifier()) {
+            //         if (g.isEditor && !g.editing) {
+            //             g.startEditing(r, c);
+            //             e.stopEvent();
+            //             return;
+            //         }
+            //         break;
+            //     }
             case e.INSERT:
                 if (!e.hasModifier()) {
                     if (g.ls_insert_handler && !g.editing) {
@@ -1368,7 +1369,7 @@ Ext.override(Ext.grid.CellSelectionModel, {
                 break;
 
             default:
-                g.handle_key_event(e);
+                g.handle_key_event(e,r, c);
                 
         }
         
@@ -3259,12 +3260,21 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
     //~ win.on('show',this.refresh,this);
   }
 
-  ,handle_key_event : function(e) { 
+  ,handle_key_event : function(e,r, c) {
     // console.log("20140514 handle_key_event", e, this.keyhandlers);
     var h = this.keyhandlers[e.keyCode];
     if (h) {
       h(this);
       e.stopEvent();
+    }
+        else {
+        if (!e.hasModifier()) {
+                    if (this.isEditor ) {
+                        this.startEditing(r, c);
+                        e.stopEvent();
+                        return;
+                    }
+                }
     }
   }
   
