@@ -205,13 +205,20 @@ still may want to report it.
 def tickets_workflows(sender=None, **kw):
     """
     """
-    TicketStates.sticky.add_transition(required_states="new")
-    TicketStates.talk.add_transition(required_states="new todo")
-    TicketStates.todo.add_transition(required_states="new talk")
+    TicketStates.sticky.add_transition(
+        required_states="new")
+    TicketStates.talk.add_transition(
+        required_states="new todo ready")
+    TicketStates.todo.add_transition(
+        required_states="new talk ready")
     # TicketStates.cancelled.add_transition(states="todo new callback")
     # TicketStates.new.add_transition(states="todo callback fixed tested")
-    TicketStates.sleeping.add_transition(required_states="todo new talk")
-    TicketStates.done.add_transition(required_states="todo new talk sleeping")
+    TicketStates.sleeping.add_transition(
+        required_states="todo new talk")
+    TicketStates.ready.add_transition(
+        required_states="todo new talk")
+    TicketStates.done.add_transition(
+        required_states="todo ready talk sleeping")
     TicketStates.refused.add_transition(
         required_states="todo new talk sleeping")
 
