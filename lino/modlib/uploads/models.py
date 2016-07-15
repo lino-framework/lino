@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2015 Luc Saffre
+# Copyright 2008-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 """
 Database models for `lino.modlib.uploads`.
@@ -88,7 +88,24 @@ def filename_leaf(name):
 
 @dd.python_2_unicode_compatible
 class Upload(mixins.Uploadable, UserAuthored, Controllable):
-    """Represents an uploaded file."""
+    """Represents an uploaded file.
+
+    .. attribute:: file
+
+        Pointer to the uploaded file. See
+        :attr:`lino.mixins.uploadable.Uploadable.file`
+
+    .. attribute:: description
+
+        A short description entered manually by the user.
+
+    .. attribute:: description_link
+
+        Almost the same as :attr:`description`, but if :attr:`file` is
+        not empty, the text is clickable, and clicking on it opens the
+        uploaded file in a new browser window.
+
+    """
     class Meta(object):
         abstract = dd.is_abstract_model(__name__, 'Upload')
         verbose_name = _("Upload")
@@ -114,10 +131,24 @@ class Upload(mixins.Uploadable, UserAuthored, Controllable):
             s = str(self.type) + ' ' + s
         return s
 
+    @dd.displayfield(_("Description"))
+    def description_link(self, ar):
+        if ar is None:
+            return ''
+        if self.description:
+            s = self.description
+        elif self.file:
+            s = filename_leaf(self.file.name)
+        elif self.type:
+            s = str(self.type)
+        else:
+            s = str(self.id)
+        return self.get_file_button(s)
+
     @dd.chooser()
     def type_choices(self, upload_area):
         M = dd.resolve_model('uploads.UploadType')
-        logger.info("20140430 type_choices %s", upload_area)
+        # logger.info("20140430 type_choices %s", upload_area)
         if upload_area is None:
             return M.objects.all()
         return M.objects.filter(upload_area=upload_area)

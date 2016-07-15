@@ -99,7 +99,7 @@ class Command(BaseCommand):
         parser.add_argument('--tolerate', action='store_true',
                             dest='tolerate', default=False,
                             help='Tolerate database errors.')
-        parser.add_argument('--overwrite', action='store_true',
+        parser.add_argument('-o', '--overwrite', action='store_true',
                             dest='overwrite', default=False,
                             help='Overwrite existing files.'),
         #~ make_option('--quick', action='store_true',

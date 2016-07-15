@@ -1,18 +1,22 @@
-from builtins import object
-# Copyright 2010-2015 Luc Saffre
+# Copyright 2010-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
+"""Defines the :class:`Uploadable` mixin.
+"""
 
+from builtins import object
 import logging
 logger = logging.getLogger(__name__)
 
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
+from django.conf import settings
 
 from lino.core.model import Model
+from lino.utils.xmlgen.html import E
 
 
 class Uploadable(Model):
-    """Represents an uploadable file.
+    """Mixin for objects that represent an uploadable file.
 
     .. attribute:: file
 
@@ -83,3 +87,12 @@ class Uploadable(Model):
         # see Django FileDescriptor.__get__()
 
         logger.info("Wrote uploaded file %s", ff.path)
+
+    def get_file_button(self, text=None):
+        if text is None:
+            text = str(self)
+        if self.file.name:
+            url = settings.SITE.build_media_url(self.file.name)
+            return E.a(text, href=url, target="_blank")
+        return text
+

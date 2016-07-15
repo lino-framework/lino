@@ -733,7 +733,6 @@ class PasswordFieldElement(CharFieldElement):
         return kw
 
 
-
 class FileFieldElement(CharFieldElement):
     # xtype = 'fileuploadfield'
     # value_template = "new Lino.FileField(%s)"
