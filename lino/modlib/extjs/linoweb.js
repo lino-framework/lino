@@ -1265,7 +1265,7 @@ Ext.override(Ext.grid.CellSelectionModel, {
             return;
         }
 
-        cell = s.cell;  
+        cell = s.cell;
         r = cell[0];    
         c = cell[1];    
         

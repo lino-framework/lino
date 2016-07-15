@@ -123,6 +123,8 @@ class Plugin(object):
     """Currently implemented by :mod:`lino.modlib.extjs`,
     :mod:`lino.modlib.bootstrap3`."""
 
+    menu_group = None
+
     media_base_url = None
     """
     Remote URL base for media files.
@@ -318,5 +320,7 @@ class Plugin(object):
         Returns a :class:`Plugin` instance.
 
         """
+        if self.menu_group:
+            return self.site.plugins.get(self.menu_group)
         return self.needed_by or self
 
