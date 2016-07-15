@@ -625,7 +625,7 @@ class Sites(dd.Table):
     """
 
     detail_layout = """
-    id name partner responsible_user
+    id name partner #responsible_user
     remark
     #InterestsBySite TicketsBySite MilestonesBySite
     """

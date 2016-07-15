@@ -23,7 +23,7 @@ Overview
 False
 
 >>> dd.plugins.topics
-lino_xl.lib.topics (needed_by=lino_noi.lib.faculties)
+lino_noi.lib.topics
 
 >>> dd.plugins.tickets
 lino_noi.projects.team.lib.tickets

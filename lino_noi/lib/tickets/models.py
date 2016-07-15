@@ -202,9 +202,9 @@ class Site(dd.Model):
         verbose_name_plural = _('Sites')
 
     partner = dd.ForeignKey('contacts.Partner', blank=True, null=True)
-    responsible_user = dd.ForeignKey(
-        'users.User', verbose_name=_("Responsible"),
-        blank=True, null=True)
+    # responsible_user = dd.ForeignKey(
+    #     'users.User', verbose_name=_("Responsible"),
+    #     blank=True, null=True)
     name = models.CharField(_("Designation"), max_length=200)
     remark = models.CharField(_("Remark"), max_length=200, blank=True)
 

@@ -73,6 +73,7 @@ SETUP_INFO.update(packages=[
     'lino_noi.lib.clocking.fixtures',
     'lino_noi.lib.public',
     'lino_noi.lib.users',
+    'lino_noi.lib.topics',
     'lino_noi.lib.users.fixtures',
     'lino_noi.projects.bs3',
     'lino_noi.projects.bs3.settings',

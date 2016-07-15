@@ -130,29 +130,29 @@ verbose_name and verbose_name_plural options of `faculties.Faculty`.
 
 >>> rt.show(faculties.AllFaculties)
 ... #doctest: +REPORT_UDIFF
-======================= ============================= ================== ============================ ========== ==================== =========================
- Referenz                Bezeichnung                   Bezeichnung (en)   Bezeichnung (fr)             Affinity   Optionen-Kategorie   Übergeordnete Fähigkeit
------------------------ ----------------------------- ------------------ ---------------------------- ---------- -------------------- -------------------------
-                         Unterricht                                       Cours                        100
-                         Haus und Garten                                  Maison et jardin             100
-                         Fahrdienst                                       Voiture                      100
-                         Botengänge                                       Commissions                  100
-                         Friseur                                          Coiffure                     100
-                         Babysitting                                      Garde enfant                 100
-                         Gesellschafter für Senioren                      Rencontres personnes agées   100
-                         Hunde spazierenführen                            Chiens                       100
-                         Übersetzungsarbeiten                             Traductions                  100        Sprachen
-                         Briefe beantworten                               Répondre au courrier         100
-                         Französischunterricht                            Cours de francais            100                             Unterricht
-                         Deutschunterricht                                Cours d'allemand             100                             Unterricht
-                         Matheunterricht                                  Cours de maths               100                             Unterricht
-                         Gitarrenunterricht                               Cours de guitare             100                             Unterricht
-                         Klavierunterricht                                Cours de piano               100                             Unterricht
-                         Nähen                                            Couture                      100                             Haus und Garten
-                         Gartenarbeiten                                   Travaux de jardin            100                             Haus und Garten
-                         Handwerksarbeiten                                Travaux de réparation        100                             Haus und Garten
- **Total (18 Zeilen)**                                                                                 **1800**
-======================= ============================= ================== ============================ ========== ==================== =========================
+============================= ================== ============================ ========== ==================== =========================
+ Bezeichnung                   Bezeichnung (en)   Bezeichnung (fr)             Affinity   Optionen-Kategorie   Übergeordnete Fähigkeit
+----------------------------- ------------------ ---------------------------- ---------- -------------------- -------------------------
+ Babysitting                                      Garde enfant                 100
+ Botengänge                                       Commissions                  100
+ Briefe beantworten                               Répondre au courrier         100
+ Deutschunterricht                                Cours d'allemand             100                             Unterricht
+ Fahrdienst                                       Voiture                      100
+ Französischunterricht                            Cours de francais            100                             Unterricht
+ Friseur                                          Coiffure                     100
+ Gartenarbeiten                                   Travaux de jardin            100                             Haus und Garten
+ Gesellschafter für Senioren                      Rencontres personnes agées   100
+ Gitarrenunterricht                               Cours de guitare             100                             Unterricht
+ Handwerksarbeiten                                Travaux de réparation        100                             Haus und Garten
+ Haus und Garten                                  Maison et jardin             100
+ Hunde spazierenführen                            Chiens                       100
+ Klavierunterricht                                Cours de piano               100                             Unterricht
+ Matheunterricht                                  Cours de maths               100                             Unterricht
+ Nähen                                            Couture                      100                             Haus und Garten
+ Unterricht                                       Cours                        100
+ Übersetzungsarbeiten                             Traductions                  100        Sprachen
+ **Total (18 Zeilen)**                                                         **1800**
+============================= ================== ============================ ========== ==================== =========================
 <BLANKLINE>
 
 
@@ -201,16 +201,16 @@ verbose_name and verbose_name_plural options of `faculties.Faculty`.
 
 
 >>> rt.show('tickets.Tickets')
-==== =========================================================================================== ========== ======= =================== =============== =========
- ID   Summary                                                                                     Anfrager   Thema   Fähigkeit           Arbeitsablauf   Projekt
----- ------------------------------------------------------------------------------------------- ---------- ------- ------------------- --------------- ---------
+==== =========================================================================================== ========== ======= =================== ================ =========
+ ID   Zusammenfassung                                                                             Anfrager   Thema   Fähigkeit           Arbeitsablauf    Projekt
+---- ------------------------------------------------------------------------------------------- ---------- ------- ------------------- ---------------- ---------
  6    Wer fährt für mich nach Aachen Pampers kaufen?                                              anna               Botengänge          **Erledigt**
- 5    Wer kann meine Abschlussarbeit korrekturlesen?                                              dora                                   **Sleeping**
+ 5    Wer kann meine Abschlussarbeit korrekturlesen?                                              dora                                   **Schläft**
  4    Wer hilft meinem Sohn sich auf die Mathearbeit am 21.05. vorzubereiten? 5. Schuljahr PDS.   berta              Matheunterricht     **Sticky**
- 3    Wer kommt meinem Sohn Klavierunterricht geben?                                              dora               Klavierunterricht   **ToDo**
- 2    Mein Rasen muss gemäht werden. Donnerstags oder Samstags                                    christa                                **Talk**
+ 3    Wer kommt meinem Sohn Klavierunterricht geben?                                              dora               Klavierunterricht   **ZuTun**
+ 2    Mein Rasen muss gemäht werden. Donnerstags oder Samstags                                    christa                                **Besprechen**
  1    Mein Wasserhahn tropft, wer kann mir helfen?                                                berta                                  **Neu**
-==== =========================================================================================== ========== ======= =================== =============== =========
+==== =========================================================================================== ========== ======= =================== ================ =========
 <BLANKLINE>
 
 

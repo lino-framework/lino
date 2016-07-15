@@ -19,7 +19,7 @@ This document describes the database structure.
 >>> from lino.utils.diag import analyzer
 >>> print(analyzer.show_db_overview())
 ... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
-34 apps: lino_startup, staticfiles, about, jinja, bootstrap3, extjs, printing, system, contenttypes, gfks, users, office, countries, contacts, notify, changes, stars, uploads, outbox, xl, excerpts, comments, noi, tickets, topics, faculties, clocking, lists, export_excel, tinymce, smtpd, weasyprint, appypod, wkhtmltopdf.
+34 apps: lino_startup, staticfiles, about, jinja, bootstrap3, extjs, printing, system, contenttypes, gfks, users, office, countries, contacts, topics, notify, changes, stars, uploads, outbox, xl, excerpts, comments, noi, tickets, faculties, clocking, lists, export_excel, tinymce, smtpd, weasyprint, appypod, wkhtmltopdf.
 44 models:
 =========================== ============================ ========= =======
  Name                        Default table                #fields   #rows
@@ -41,7 +41,7 @@ This document describes the database structure.
  excerpts.Excerpt            excerpts.Excerpts            12        2
  excerpts.ExcerptType        excerpts.ExcerptTypes        17        2
  faculties.Competence        faculties.Competences        6         18
- faculties.Faculty           faculties.Faculties          9         8
+ faculties.Faculty           faculties.Faculties          8         8
  gfks.HelpText               gfks.HelpTexts               4         1
  lists.List                  lists.Lists                  7         8
  lists.ListType              lists.ListTypes              4         3
@@ -88,7 +88,7 @@ users.UserProfiles.admin:900
 ... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
 - Contacts : Persons, Organizations, Partners, Partner Lists
 - Office : My Stars, My Uploads, My Outbox, My Excerpts, My Comments
-- Tickets : Projects, Sites, Active tickets, Tickets, My known problems, Unassigned Tickets, Active projects
+- Tickets : Active tickets, Tickets, My known problems, Unassigned Tickets, Active projects
 - Clocking : Sessions
 - Reports :
   - System : Broken GFKs
@@ -98,15 +98,15 @@ users.UserProfiles.admin:900
   - Places : Countries, Places
   - Contacts : Organization types, Functions, Topics, Topic groups, List Types
   - Office : Upload Types, Excerpt Types, My Text Field Templates
-  - Tickets : Projects (tree), Project Types, Ticket types
-  - Faculties : Faculties (tree), Competences
+  - Tickets : Projects, Projects (tree), Project Types, Ticket types, Sites
+  - Faculties : Faculties (tree), Faculties (all)
   - Clocking : Session Types
 - Explorer :
   - System : content types, Authorities, User Profiles, Notifications, Changes
   - Contacts : Contact Persons, Interests, List memberships
   - Office : Stars, Uploads, Upload Areas, Outgoing Mails, Attachments, Excerpts, Comments, Text Field Templates
   - Tickets : Milestones, Dependencies, Deployments
-  - Faculties : Faculties (all), Competences
+  - Faculties : Competences
   - Clocking : Sessions
 - Site : About
 

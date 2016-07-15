@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2014-2015 Luc Saffre
+# Copyright 2014-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 """
 Database models for `lino_xl.lib.humanlinks`.
@@ -82,7 +82,6 @@ ProjectEvents.add_item_instance(PeriodStarted('started'))
 ProjectEvents.add_item_instance(PeriodActive('active'))
 ProjectEvents.add_item_instance(PeriodEnded('ended'))
 ProjectEvents.add_item_instance(TicketEventModified('modified'))
-
 
 
 class TicketStates(dd.Workflow):
@@ -174,9 +173,8 @@ add('30', _("Sleeping"), 'sleeping')
     # required=dict(states=['new']),
     # action_name=_("Wait for feedback"),
     # help_text=_("Waiting for feedback from partner."))
-# add('40', _("Fixed"), 'fixed',
-#     # required=dict(states=['todo']),
-#     help_text=_("Has been fixed. Waiting to be tested."))
+add('40', _("Ready"), 'ready',
+    help_text=_("Has been fixed. Ready for release. Waiting to be tested."))
 add('50', _("Done"), 'done')
 # add('50', _("Tested"), 'tested',
 #     # required=dict(states=['fixed']),

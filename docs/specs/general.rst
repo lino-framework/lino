@@ -55,7 +55,7 @@ have both clocking and tickets.
 ['lino_noi.projects.team.lib.tickets']
 
 >>> dd.plugins.tickets.needs_plugins
-['lino_xl.lib.stars', 'lino_xl.lib.excerpts', 'lino.modlib.comments', 'lino.modlib.changes', 'lino_noi.lib.noi']
+['lino_xl.lib.stars', 'lino_xl.lib.excerpts', 'lino_xl.lib.topics', 'lino.modlib.comments', 'lino.modlib.changes', 'lino_noi.lib.noi']
 
 See also :attr:`needs_plugins <lino.core.plugin.Plugin.needs_plugins>`.
 
