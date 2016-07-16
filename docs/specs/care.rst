@@ -204,7 +204,7 @@ verbose_name and verbose_name_plural options of `faculties.Faculty`.
 ==== =========================================================================================== ========== ======= =================== ================ =========
  ID   Zusammenfassung                                                                             Anfrager   Thema   Fähigkeit           Arbeitsablauf    Projekt
 ---- ------------------------------------------------------------------------------------------- ---------- ------- ------------------- ---------------- ---------
- 6    Wer fährt für mich nach Aachen Pampers kaufen?                                              anna               Botengänge          **Erledigt**
+ 6    Wer fährt für mich nach Aachen Pampers kaufen?                                              anna               Botengänge          **Bereit**
  5    Wer kann meine Abschlussarbeit korrekturlesen?                                              dora                                   **Schläft**
  4    Wer hilft meinem Sohn sich auf die Mathearbeit am 21.05. vorzubereiten? 5. Schuljahr PDS.   berta              Matheunterricht     **Sticky**
  3    Wer kommt meinem Sohn Klavierunterricht geben?                                              dora               Klavierunterricht   **ZuTun**

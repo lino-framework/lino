@@ -36,12 +36,12 @@ The demo database contains the following data:
 
 >>> rt.show(tickets.PublicTickets)
 ... #doctest: +REPORT_UDIFF
-================================== ======= ============= ========= =========== ==========
- Overview                           State   Ticket type   Project   Topic       Priority
----------------------------------- ------- ------------- --------- ----------- ----------
- *#13 (Bar cannot foo)*             Done    Bugfix        linö      Lino Cosi   0
- *#1 (Föö fails to bar when baz)*   New     Bugfix        linö      Lino Cosi   0
-================================== ======= ============= ========= =========== ==========
+================================== ========== ============= ========= =========== ==========
+ Overview                           State      Ticket type   Project   Topic       Priority
+---------------------------------- ---------- ------------- --------- ----------- ----------
+ *#13 (Bar cannot foo)*             Sleeping   Bugfix        linö      Lino Cosi   0
+ *#1 (Föö fails to bar when baz)*   New        Bugfix        linö      Lino Cosi   0
+================================== ========== ============= ========= =========== ==========
 <BLANKLINE>
 
 The home page:
@@ -67,7 +67,7 @@ The home page:
 >>> soup = BeautifulSoup(res.content)
 >>> print(soup.get_text(' ', strip=True))
 ... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF +ELLIPSIS
-Home en de fr #13 Bar cannot foo State: Done  
+Home en de fr #13 Bar cannot foo State: Sleeping
 <BLANKLINE>
 <BLANKLINE>
 (last update ...) Reported by: Rolf Rompen ... Topic: Lino Cosi Linking to [ticket 1] and to

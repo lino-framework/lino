@@ -43,13 +43,13 @@ Unassigned tickets
 The demo database contains the following data:
 
 >>> rt.show(tickets.PublicTickets)
-... #doctest: +REPORT_UDIFF
-================================== ======= ============= ========= =========== ==========
- Overview                           State   Ticket type   Project   Topic       Priority
----------------------------------- ------- ------------- --------- ----------- ----------
- *#13 (Bar cannot foo)*             Done    Bugfix        linö      Lino Cosi   0
- *#1 (Föö fails to bar when baz)*   New     Bugfix        linö      Lino Cosi   0
-================================== ======= ============= ========= =========== ==========
+... #doctest: -REPORT_UDIFF
+================================== ========== ============= ========= =========== ==========
+ Overview                           State      Ticket type   Project   Topic       Priority
+---------------------------------- ---------- ------------- --------- ----------- ----------
+ *#13 (Bar cannot foo)*             Sleeping   Bugfix        linö      Lino Cosi   0
+ *#1 (Föö fails to bar when baz)*   New        Bugfix        linö      Lino Cosi   0
+================================== ========== ============= ========= =========== ==========
 <BLANKLINE>
 
 
@@ -83,7 +83,7 @@ This data is being rendered using plain bootstrap HTML:
 
 >>> print(soup.get_text(' ', strip=True))
 ... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF +ELLIPSIS
-Tickets Home en de fr Tickets Active tickets Tickets Unassigned Tickets Site About #13 (Bar cannot foo) << < > >> State: Done  
+Tickets Home en de fr Tickets Active tickets Tickets Unassigned Tickets Site About #13 (Bar cannot foo) << < > >> State: Sleeping
 <BLANKLINE>
 <BLANKLINE>
 (last update ...) Reported by: Rolf Rompen ... Topic: Lino Cosi Site: welket Linking to #1 and to blog . This is Lino Noi 1.0.1 using ...
