@@ -44,6 +44,9 @@ class UtilsTests(LinoTestCase):
     def test_instantiator(self):
         self.run_simple_doctests("lino/utils/instantiator.py")
 
+    def test_dates(self):
+        self.run_simple_doctests("lino/utils/dates.py")
+
     def test_html2odf(self):
         self.run_simple_doctests('lino/utils/html2odf.py')
 
