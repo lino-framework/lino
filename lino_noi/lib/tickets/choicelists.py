@@ -218,7 +218,7 @@ def tickets_workflows(sender=None, **kw):
     TicketStates.ready.add_transition(
         required_states="todo new")
     TicketStates.done.add_transition(
-        required_states="todo ready sleeping")
+        required_states="new todo ready sleeping")
     TicketStates.refused.add_transition(
         required_states="todo new talk sleeping")
 

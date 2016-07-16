@@ -34,6 +34,9 @@ class PackagesTests(BaseTestCase):
 
 class SpecsTests(BaseTestCase):
 
+    def test_export_excel(self):
+        self.run_simple_doctests('docs/specs/export_excel.rst')
+
     def test_memo(self):
         self.run_simple_doctests('docs/specs/memo.rst')
 

@@ -27,3 +27,4 @@ specifications. One of their goal is to get tested.
    care
    public
    bs3
+   export_excel
