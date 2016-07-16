@@ -7,6 +7,7 @@
 
 from __future__ import unicode_literals, print_function
 
+from django.conf import settings
 from lino.api import dd, rt, _
 
 from .mixins import UpdateSummariesByMaster, Summary
@@ -30,7 +31,7 @@ dd.inject_action('system.SiteConfig', check_summaries=CheckSummaries())
 
 @dd.receiver(dd.pre_analyze)
 def set_summary_actions(sender, **kw):
-    """Installs the `update_summaries` action (an instance of
+    """Installs the `check_summaries` action (an instance of
     :class:`UpdateSummariesByMaster
     <lino.modlib.summaries.mixins.UpdateSummariesByMaster>`) on every
     model for which there is at least one Summary
@@ -38,7 +39,7 @@ def set_summary_actions(sender, **kw):
     """
     for mm, summary_models in list(get_summary_models().items()):
         mm.define_action(
-            update_summaries=UpdateSummariesByMaster(mm, summary_models))
+            check_summaries=UpdateSummariesByMaster(mm, summary_models))
 
 
 def get_summary_models():
@@ -53,3 +54,7 @@ def get_summary_models():
         lst.append(sm)
     return summary_masters
 
+
+@dd.schedule_daily
+def check_summaries():
+    rt.login().run(settings.SITE.site_config.check_summaries)

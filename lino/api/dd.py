@@ -324,3 +324,27 @@ Required = required = login_required
 
 # logger.info("20140227 dd.py b %s", site)
 
+
+try:
+    import schedule
+except ImportError as e:
+    logger.warning("schedule not installed (%s)", e)
+    schedule = False
+
+
+def schedule_often(func):
+    """Schedule the given function to be run "often" (i.e. every 10
+    seconds).
+    """
+    if schedule:
+        schedule.every(10).seconds.do(func)
+    return func
+
+
+def schedule_daily(func):
+    """Schedule the given function to be run "daily" (i.e. every day).
+    """
+    if schedule:
+        schedule.every().day.do(func)
+    return func
+    

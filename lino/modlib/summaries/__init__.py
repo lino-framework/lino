@@ -5,6 +5,9 @@
 :class:`Summary <lino.modlib.summaries.mixins.Summary>` model mixin
 and the :manage:`checksummaries` command.
 
+Usage example: :mod:`lino_welfare.modlib.esf`.
+
+
 .. autosummary::
    :toctree:
 

@@ -2,7 +2,7 @@
 # Copyright 2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Model mixins for summaries
+"""Model mixins for summaries.
 
 """
 
@@ -74,7 +74,7 @@ class Summary(dd.Model):
     @classmethod
     def get_summary_periods(cls):
         config = dd.plugins.summaries
-        for year in range(config.start_year, config.end_year):
+        for year in range(config.start_year, config.end_year+1):
             if cls.summary_period == 'yearly':
                 yield year, None
             else:
@@ -86,6 +86,8 @@ class Summary(dd.Model):
         qs = cls.objects.filter(master=master, year=year, month=month)
         count = qs.count()
         if count > 1:
+            # Theoretically this should never happen. There cannot be
+            # more than one object for a given master and period.
             qs.delete()
             count = 0
         if count == 0:
@@ -99,7 +101,8 @@ class Summary(dd.Model):
     def get_summary_collectors(self):
         """This should yield a sequence of ``(collector, qs)`` tuples, where
         `collector` is a callable and `qs` a queryset. Lino will call
-        `collector` for each obj in `qs`.
+        `collector` for each `obj` in `qs`. The collector is
+        responsible for updating that object.
 
         """
         raise NotImplementedError()
@@ -114,10 +117,14 @@ class Summary(dd.Model):
             obj = cls.get_for_period(master, year, month)
             obj.compute_summary_values()
                 
+    def reset_summary_data(self):
+        pass
+
     def get_summary_querysets(self):
         return []
 
     def compute_summary_values(self):
+        self.reset_summary_data()
         for collector, qs in self.get_summary_collectors():
             for obj in qs:
                 collector(obj)
@@ -130,3 +137,5 @@ class Summary(dd.Model):
         if self.month is not None:
             kwargs[fldname+'__month'] = self.month
         return qs.filter(**kwargs)
+
+

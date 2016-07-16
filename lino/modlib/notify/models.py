@@ -44,11 +44,6 @@ from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 
 from datetime import timedelta
-try:
-    import schedule
-except ImportError as e:
-    dd.logger.warning("schedule not installed (%s)", e)
-    schedule = False
 
 
 # @dd.python_2_unicode_compatible
@@ -214,42 +209,38 @@ def welcome_messages(ar):
 dd.add_welcome_handler(welcome_messages)
 
 
-if schedule:
-
-    def send_pending_emails():
-        Notification = rt.models.notify.Notification
-        qs = Notification.objects.filter(sent__isnull=True)
-        if qs.count() > 0:
-            dd.logger.info(
-                "Send out emails for %d notifications.", qs.count())
-            for obj in qs:
-                obj.send_email()
-        # else:
-        #     dd.logger.info("No unsent notifications.")
-
-    if settings.EMAIL_HOST and not settings.EMAIL_HOST.endswith('example.com'):
+@dd.schedule_often
+def send_pending_emails():
+    h = settings.EMAIL_HOST
+    if not h or h.endswith('example.com'):
         dd.logger.debug(
-            "Send pending notifications via %s", settings.EMAIL_HOST)
-        schedule.every(10).seconds.do(send_pending_emails)
+            "Won't send pending notifications because EMAIL_HOST is %r",
+            h)
+        return
+    Notification = rt.models.notify.Notification
+    qs = Notification.objects.filter(sent__isnull=True)
+    if qs.count() > 0:
+        dd.logger.info(
+            "Send out emails for %d notifications.", qs.count())
+        for obj in qs:
+            obj.send_email()
     else:
-        dd.logger.debug(
-            "Won't send pending notifications because EMAIL_HOST is empty")
+        dd.logger.debug("No unsent notifications.")
 
-    def clear_seen_notifications():
-        """Delete notifications older than 24 hours that have been seen.
 
-        """
-        remove_after = 24
-        Notification = rt.models.notify.Notification
-        qs = Notification.objects.filter(
-            seen__isnull=False,
-            seen_lt=timezone.now()-timedelta(hours=remove_after))
-        if qs.count() > 0:
-            dd.logger.info(
-                "Removing %d notifications older than %d hours.",
-                qs.count(), remove_after)
-            qs.delete()
+@dd.schedule_daily
+def clear_seen_notifications():
+    """Delete notifications older than 24 hours that have been seen.
 
-    schedule.every().day.do(clear_seen_notifications)
-
+    """
+    remove_after = 24
+    Notification = rt.models.notify.Notification
+    qs = Notification.objects.filter(
+        seen__isnull=False,
+        seen_lt=timezone.now()-timedelta(hours=remove_after))
+    if qs.count() > 0:
+        dd.logger.info(
+            "Removing %d notifications older than %d hours.",
+            qs.count(), remove_after)
+        qs.delete()
 

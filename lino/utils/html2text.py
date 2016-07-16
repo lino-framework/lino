@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """html2text: Turn HTML into equivalent Markdown-structured text.
 
-This is an almost unmodified copy of Aaron Swartz's 
+This is an almost unmodified copy of Aaron Swartz's
 `html2text <http://www.aaronsw.com/2002/html2text/>`.
 
 Lino uses this in :mod:`lino_xl.lib.outbox`
