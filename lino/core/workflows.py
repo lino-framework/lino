@@ -90,7 +90,7 @@ class State(choicelists.Choice):
                 raise Exception(
                     "Cannot specify requirements when using your own class")
             if notify:
-                raise Exception(
+                raise NotImplementedError(
                     "Cannot specify notify=True when using your own class")
             if debug_permissions:
                 raise Exception(
@@ -104,6 +104,9 @@ class State(choicelists.Choice):
             if required_states:
                 kw.update(required_states=required_states)
             if notify:
+                raise NotImplementedError(
+                    "Since 20160718 you must write your own action "
+                    "class if you want it to be notifying.")
                 cl = NotifyingChangeStateAction
             else:
                 cl = ChangeStateAction
@@ -234,6 +237,3 @@ class ChangeStateAction(actions.Action):
             ar.actor.workflow_state_field,
             self.target_state)
 
-
-class NotifyingChangeStateAction(ChangeStateAction, actions.NotifyingAction):
-    pass

@@ -92,7 +92,6 @@ Actions:
 
 - :class:`Action <lino.core.actions.Action>`
 - :class:`ChangeStateAction <lino.core.workflows.ChangeStateAction>`
-- :class:`NotifyingAction <lino.core.actions.NotifyingAction>`
 - :class:`MergeAction <lino.core.merge.MergeAction>`
 - :class:`ShowSlaveTable <lino.core.actions.ShowSlaveTable>`
 - :class:`PrintTableAction <lino.utils.appy_pod.PrintTableAction>`
@@ -165,7 +164,6 @@ from lino.core.actions import SubmitDetail, SubmitInsert
 
 from lino.core.choicelists import ChoiceList, Choice
 from lino.core.workflows import State, Workflow, ChangeStateAction
-from lino.core.actions import NotifyingAction
 
 
 from lino.core.fields import fields_list, ImportedFields

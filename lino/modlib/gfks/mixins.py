@@ -47,9 +47,12 @@ class Controllable(dd.Model):
     """
     # Translators: will also be concatenated with '(type)' '(object)'
     owner_label = _('Controlled by')
-    """The labels (`verbose_name`) of the fields `owned_type`, `owned_id`
+    """Deprecated. This is (and always was) being ignored. Use
+    :meth:`update_controller_field` instead.
+    The labels (`verbose_name`) of the fields `owned_type`, `owned_id`
     and `owned` are derived from this attribute which may be overridden by
-    subclasses. """
+    subclasses.
+    """
 
     controller_is_optional = True
     """Deprecated. This is (and always was) being ignored. Use
@@ -77,17 +80,34 @@ class Controllable(dd.Model):
         verbose_name=owner_label)
 
     @classmethod
-    def update_controller_field(cls, **kwargs):
-        """This can be used to make the controller optional (i.e. whether the
-        :attr:`owner` field may be NULL). Example::
+    def update_controller_field(cls, verbose_name=None, **kwargs):
+        """Update attributes of the :attr:`owner` field and its underlying
+        fields :attr:`owner_id` and :attr:`owner_type`.
+
+        This can be used to make the controller optional (i.e. specify
+        whether the :attr:`owner` field may be NULL). Example::
 
             class MyModel(Controllable):
                 ....
 
             MyModel.update_controller_field(blank=False, null=False)
 
+        When `verbose_name` is specified, all three fields will be
+        updated, appending " (object)" and " (type)" to
+        :attr:`owner_id` and :attr:`owner_type` respectively.
+
         """
+        
+        if verbose_name is not None:
+            dd.update_field(cls, 'owner', verbose_name=verbose_name)
+            kwargs.update(
+                verbose_name=string_concat(
+                    verbose_name, ' ', _('(object)')))
         dd.update_field(cls, 'owner_id', **kwargs)
+        if verbose_name is not None:
+            kwargs.update(
+                verbose_name=string_concat(
+                    verbose_name, ' ', _('(type)')))
         dd.update_field(cls, 'owner_type', **kwargs)
 
     def update_owned_instance(self, controllable):

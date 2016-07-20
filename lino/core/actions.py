@@ -963,7 +963,10 @@ class ShowSlaveTable(Action):
         if isinstance(self.slave_table, basestring):
             T = settings.SITE.modules.resolve(self.slave_table)
             if T is None:
-                raise Exception("No table named %s" % self.slave_table)
+                msg = "Invalid action {} on actor {!r}: "\
+                      "no table named {}".format(
+                          name, actor, self.slave_table)
+                raise Exception(msg)
             self.slave_table = T
         for k in self.TABLE2ACTION_ATTRS:
             if k not in self.explicit_attribs:
@@ -975,80 +978,6 @@ class ShowSlaveTable(Action):
         sar = ar.spawn(self.slave_table, master_instance=obj)
         js = ar.renderer.request_handler(sar)
         ar.set_response(eval_js=js)
-
-
-class NotifyingAction(Action):
-    """An action with a generic dialog window of three fields "Summary",
-    "Description" and a checkbox "Don't send email notification". The
-    default implementation calls the request's :meth:`add_system_note
-    <lino.core.requests.BaseRequest.add_system_note>` method.
-
-    Screenshot of a notifying action:
-
-    .. image:: /images/screenshots/reception.CheckinVisitor.png
-        :scale: 50
-
-    Dialog fields:
-
-    .. attribute:: subject
-    .. attribute:: body
-    .. attribute:: silent
-
-    """
-    custom_handler = True
-
-    parameters = dict(
-        notify_subject=models.CharField(
-            _("Summary"), blank=True, max_length=200),
-        notify_body=fields.RichTextField(_("Description"), blank=True),
-        notify_silent=models.BooleanField(
-            _("Don't send email notification"), default=False),
-    )
-
-    params_layout = layouts.Panel("""
-    notify_subject
-    notify_body
-    notify_silent
-    """, window_size=(50, 15))
-
-    def get_notify_subject(self, ar, obj):
-        """
-        Return the default value of the `notify_subject` field.
-        """
-        return None
-
-    def get_notify_body(self, ar, obj):
-        """
-        Return the default value of the `notify_body` field.
-        """
-        return None
-
-    def action_param_defaults(self, ar, obj, **kw):
-        kw = super(NotifyingAction, self).action_param_defaults(ar, obj, **kw)
-        if obj is not None:
-            s = self.get_notify_subject(ar, obj)
-            if s is not None:
-                kw.update(notify_subject=s)
-            s = self.get_notify_body(ar, obj)
-            if s is not None:
-                kw.update(notify_body=s)
-        return kw
-
-    def run_from_ui(self, ar, **kw):
-        obj = ar.selected_rows[0]
-        ar.set_response(message=ar.action_param_values.notify_subject)
-        ar.set_response(refresh=True)
-        ar.set_response(success=True)
-        self.add_system_note(ar, obj)
-
-    def add_system_note(self, ar, owner, **kw):
-        #~ body = _("""%(user)s executed the following action:\n%(body)s
-        #~ """) % dict(user=ar.get_user(),body=body)
-        ar.add_system_note(
-            owner,
-            ar.action_param_values.notify_subject,
-            ar.action_param_values.notify_body,
-            ar.action_param_values.notify_silent, **kw)
 
 
 class MultipleRowAction(Action):

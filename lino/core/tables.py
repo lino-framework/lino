@@ -534,15 +534,6 @@ method in order to sort the rows of the queryset.
         #~ return "Grid Config has been saved to %s" % filename
 
     @classmethod
-    def get_create_kw(self, ar, **kw):
-        """Deprecated.  This additional wrapper was used by
-        `lino.modlib.links` which anyway never worked.  We will soon
-        throw it away and call get_filter_kw directly instead.
-
-        """
-        return self.get_filter_kw(ar, **kw)
-
-    @classmethod
     def get_filter_kw(self, ar, **kw):
         """Return a dict with the "master keywords" for this table
         and a given `master_instance`.

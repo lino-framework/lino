@@ -92,7 +92,6 @@ Exception: Not a date: '2014-10-12'
 
 from __future__ import unicode_literals, print_function
 from builtins import str
-from builtins import repr
 import six
 
 import datetime

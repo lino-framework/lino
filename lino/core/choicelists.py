@@ -172,15 +172,16 @@ class Choice(object):
         return str(self.text)
 
     def as_callable(self):
-        """Return this as a callable so it can be used as `default` of a
-        field. A Choice object may not be callable itself because
-        Django 1.9 would misunderstand it.
+        """Use this when you want to specify some named default choice of
+        this list as a default value *without* removing the
+        possibility to clear and re-populate the list after the field
+        definition.
+
+        A Choice object may not be callable itself because Django 1.9
+        would misunderstand it.
 
         """
-        return self
-        # def f():
-        #     return self
-        # return f
+        return self.choicelist.get_by_name(self.name)
 
     # def __call__(self):
     #     """Make it callable so it can be used as `default` of a field."""

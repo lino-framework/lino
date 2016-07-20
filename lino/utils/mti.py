@@ -1,4 +1,4 @@
-# Copyright 2009-2015 Luc Saffre
+# Copyright 2009-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 from django.db import models
 from django.db import router
+# from django.db.models.deletion import Collector
 from django.db.models.deletion import Collector, DO_NOTHING
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
@@ -28,13 +29,12 @@ from lino import AFTER17
 
 
 class ChildCollector(Collector):
-
     """
     A Collector that does not delete the MTI parents.
     """
 
     def collect(self, objs, source=None, nullable=False, collect_related=True,
-        source_attr=None, reverse_dependency=False):
+                source_attr=None, reverse_dependency=False):
         # modified copy of django.db.models.deletion.Collector.collect()
         # changes:
         # DOES NOT Recursively collect concrete model's parent models.
@@ -72,45 +72,6 @@ class ChildCollector(Collector):
                                  nullable=True)
 
 
-class OldChildCollector(Collector):
-    # version which worked for Django 1.5
-    def collect(self, objs, source=None, nullable=False, collect_related=True,
-                source_attr=None, collect_parents=True):
-        # modified copy from original Django code
-        new_objs = self.add(objs, source, nullable)
-        if not new_objs:
-            return
-        model = new_objs[0].__class__
-
-        if collect_related:
-            #~ for m,related in model._meta.get_all_related_objects_with_model(include_hidden=True):
-            for related in model._meta.get_all_related_objects(include_hidden=True, local_only=True):
-                field = related.field
-                if related.model._meta.auto_created:
-                    # Django 1.5.x:
-                    self.add_batch(related.model, field, new_objs)
-                else:
-                    sub_objs = self.related_objects(related, new_objs)
-                    #~ print 20130828, related.model._meta.concrete_model
-                    if not sub_objs:
-                        continue
-                    field.rel.on_delete(self, field, sub_objs, self.using)
-
-            # TODO This entire block is only needed as a special case
-            # to support cascade-deletes for GenericRelation. It
-            # should be removed/fixed when the ORM gains a proper
-            # abstraction for virtual or composite fields, and GFKs
-            # are reworked to fit into that.
-            for relation in model._meta.many_to_many:
-                if not relation.rel.through:
-                    sub_objs = relation.bulk_related_objects(
-                        new_objs, self.using)
-                    self.collect(sub_objs,
-                                 source=model,
-                                 source_attr=relation.rel.related_name,
-                                 nullable=True)
-
-
 def get_child(obj, child_model):
     if obj.pk is not None:
         try:
@@ -142,6 +103,11 @@ def delete_child(obj, child_model, ar=None, using=None):
     if msg:
         raise ValidationError(msg)
     # logger.debug(u"Delete child %s from %s",child_model.__name__,obj)
+
+    # 20160720 TODO: Django has added the keep_parents argument, and
+    # we should use this before Django 1.10 but this still seems to
+    # delete objects that are related to parents. So we sill cannot
+    # use it.
     if True:
         collector = ChildCollector(using=using)
         collector.collect([child])
@@ -159,9 +125,9 @@ def delete_child(obj, child_model, ar=None, using=None):
         #         del collector.data[ptr.rel.model]
 
     else:
-        collector = ChildCollector(using=using)
+        collector = Collector(using=using)
         collector.collect([child], source=obj.__class__,
-                          nullable=True, collect_parents=False)
+                          nullable=True, keep_parents=True)
     collector.delete()
 
     #~ setattr(obj,child_model.__name__.lower(),None)

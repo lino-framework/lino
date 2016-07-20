@@ -64,6 +64,7 @@ from lino.modlib.users.choicelists import UserProfiles
 if settings.SITE.user_model:
     from lino.modlib.users import models as users
 
+ONE_CHAR_LABEL = "\u00A0{}\u00A0"
 
 def prepare_label(mi):
     return mi.label
@@ -189,8 +190,11 @@ class ExtRenderer(HtmlRenderer):
 
         return kw
 
+
     def action_button(self, obj, ar, ba, label=None, **kw):
         label = label or ba.get_button_label()
+        if len(label) == 1:
+            label = ONE_CHAR_LABEL.format(label)
         if ba.action.parameters and not ba.action.no_params_window:
             st = self.get_action_status(ar, ba, obj)
             return self.window_action_button(
@@ -952,7 +956,10 @@ class ExtRenderer(HtmlRenderer):
         if a.icon_name:
             kw.update(iconCls='x-tbar-' + a.icon_name)
         else:
-            kw.update(text=a.button_text or a.label)
+            txt = a.button_text or a.label
+            if len(txt) == 1:
+                txt = ONE_CHAR_LABEL.format(txt)
+            kw.update(text=txt)
         kw.update(
             #~ name=a.name,
             menu_item_text=a.label,
