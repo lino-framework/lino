@@ -59,7 +59,7 @@ from lino_xl.lib.cal.mixins import daterange_text
 from lino_xl.lib.contacts.mixins import ContactRelated
 from lino.modlib.users.mixins import UserAuthored
 from lino.modlib.comments.mixins import RFC
-from lino.modlib.notify.mixins import Observable
+from lino.modlib.notify.mixins import ChangeObservable
 from lino_xl.lib.excerpts.mixins import Certifiable
 from lino.utils import join_elems
 
@@ -198,8 +198,8 @@ class Project(mixins.DatePeriod, TimeInvestment,
 class Site(dd.Model):
     class Meta:
         app_label = 'tickets'
-        verbose_name = _("Site")
-        verbose_name_plural = _('Sites')
+        verbose_name = pgettext("Ticketing", "Site")
+        verbose_name_plural = pgettext("Ticketing", "Sites")
 
     partner = dd.ForeignKey('contacts.Partner', blank=True, null=True)
     # responsible_user = dd.ForeignKey(
@@ -394,7 +394,7 @@ class SpawnTicket(dd.Action):
         ar.goto_instance(c)
 
 
-class Ticket(mixins.CreatedModified, TimeInvestment, RFC, Observable):
+class Ticket(mixins.CreatedModified, TimeInvestment, RFC, ChangeObservable):
     """A **Ticket** is a concrete question or problem formulated by a
     :attr:`reporter` (a user).
     
@@ -476,6 +476,7 @@ class Ticket(mixins.CreatedModified, TimeInvestment, RFC, Observable):
         app_label = 'tickets'
         verbose_name = _("Ticket")
         verbose_name_plural = _('Tickets')
+        abstract = dd.is_abstract_model(__name__, 'Ticket')
 
     project = dd.ForeignKey(
         'tickets.Project', blank=True, null=True,

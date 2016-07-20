@@ -480,7 +480,7 @@ class TicketsByTopic(Tickets):
 
 
 class PublicTickets(Tickets):
-    label = _("Unassigned tickets")
+    label = _("Public tickets")
     order_by = ["-priority", "-id"]
     column_names = 'overview:50 state:10 ticket_type:10 project:10 topic:10 priority:3 *'
     filter = models.Q(assigned_to=None)
@@ -593,7 +593,7 @@ class ActiveTickets(Tickets):
 
 
 class TicketsFixed(Tickets):
-    label = _("Tickets Fixed")
+    label = _("Fixed tickets")
     master_key = 'fixed_for'
     column_names = "id summary reporter *"
     editable = False

@@ -145,12 +145,13 @@ class StartTicketSession(dd.Action):
         ar.set_response(refresh=True)
 
 
-dd.inject_action(
-    dd.plugins.clocking.ticket_model,
-    start_session=StartTicketSession())
-dd.inject_action(
-    dd.plugins.clocking.ticket_model,
-    end_session=EndTicketSession())
+if dd.is_installed('clocking'):  # Sphinx autodoc
+    dd.inject_action(
+        dd.plugins.clocking.ticket_model,
+        start_session=StartTicketSession())
+    dd.inject_action(
+        dd.plugins.clocking.ticket_model,
+        end_session=EndTicketSession())
 
 
 class PrintActivityReport(DirectPrintAction):

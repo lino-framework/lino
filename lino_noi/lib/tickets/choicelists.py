@@ -214,13 +214,13 @@ def tickets_workflows(sender=None, **kw):
     # TicketStates.cancelled.add_transition(states="todo new callback")
     # TicketStates.new.add_transition(states="todo callback fixed tested")
     TicketStates.sleeping.add_transition(
-        required_states="todo new talk")
+        required_states="talk todo new talk")
     TicketStates.ready.add_transition(
-        required_states="todo new")
+        required_states="talk todo new")
     TicketStates.done.add_transition(
-        required_states="new todo ready sleeping")
+        required_states="new talk todo ready sleeping")
     TicketStates.refused.add_transition(
-        required_states="todo new talk sleeping")
+        required_states="todo talk new talk sleeping")
 
     TicketStates.favorite_states = (TicketStates.sticky, )
     TicketStates.work_states = (TicketStates.todo, TicketStates.new)

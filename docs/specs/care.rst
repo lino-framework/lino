@@ -217,3 +217,31 @@ verbose_name and verbose_name_plural options of `faculties.Faculty`.
 TODO: show how the choices for Ticket.assigned_to depend on faculty
 and topic.
 
+
+In :ref:`care` we don't call them "tickets" but "pleas" (German
+"Bitten").
+
+>>> rt.login('rolf').show_menu()
+... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
+- Büro : Meine Benachrichtigungen, Meine Favoriten, Meine Auszüge, Meine Kommentare
+- Bitten : Aktive Bitten, Bitten, Nicht zugewiesene Bitten, Aktive Projekte
+- Arbeitszeit : Sitzungen
+- Berichte :
+  - System : Broken GFKs
+  - Arbeitszeit : Dienstleistungsberichte
+- Konfigurierung :
+  - System : Site-Parameter, Hilfetexte, Benutzer
+  - Orte : Länder, Orte
+  - Benutzer : Themen, Themengruppen
+  - Büro : Auszugsarten, Meine Einfügetexte
+  - Bitten : Projekte, Projekte (Hierarchie), Project Types, Ticket types, Sites
+  - Fähigkeiten : Fähigkeiten (Hierarchie), Fähigkeiten (alle)
+  - Arbeitszeit : Session Types
+- Explorer :
+  - System : Datenbankmodelle, Vollmachten, Benutzerprofile, Benachrichtigungen, Änderungen
+  - Benutzer : Interessen
+  - Büro : Favoriten, Auszüge, Kommentare, Einfügetexte
+  - Bitten : Milestones, Dependencies, Deployments
+  - Fähigkeiten : Kompetenzen
+  - Arbeitszeit : Sitzungen
+- Site : Info

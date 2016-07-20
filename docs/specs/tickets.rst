@@ -345,7 +345,7 @@ authenticated developer it looks like this:
 ---- ------------------------------------------- ------------- -------------- --------------- ------------------------------------------------------------------------------ ----------
  16   How to get bar from foo                     luc           Lino Welfare                   **Refused** → [▶] [☆]                                                          research
  13   Bar cannot foo                              Rolf Rompen   Lino Cosi      Documentation   **Sleeping** → [Done] [Refused] [▶] [☆]                                        linö
- 10   Where can I find a Foo when bazing Bazes?   marc          Lino Voga                      **Talk** → [ToDo] [Sleeping] [Refused] [▶] [☆]                                 docs
+ 10   Where can I find a Foo when bazing Bazes?   marc          Lino Voga                      **Talk** → [ToDo] [Sleeping] [Ready] [Done] [Refused] [▶] [☆]                  docs
  7    No Foo after deleting Bar                   Robin Rood    Lino Core                      **Done** → [▶] [☆]                                                             shop
  4    Foo and bar don't baz                       mathieu       Lino Welfare                   **Sticky** → [▶] [☆]                                                           docs
  1    Föö fails to bar when baz                   jean          Lino Cosi                      **New** → [Sticky] [Talk] [ToDo] [Sleeping] [Ready] [Done] [Refused] [▶] [☆]   linö

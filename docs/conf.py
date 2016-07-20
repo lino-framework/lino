@@ -13,6 +13,7 @@ extlinks = {}
 
 from atelier.sphinxconf import configure
 configure(globals(), 'lino_noi.projects.team.settings.doctests')
+# configure(globals(), 'lino_book.projects.min1.settings.doctests')
 
 extlinks.update(ticket=('http://bugs.lino-framework.org/tickets/Ticket/%s', '#'))
 
@@ -40,7 +41,9 @@ copyright = u'2014-2016, Luc Saffre'
 # built documents.
 #
 # The full version, including alpha/beta/rc tags.
-release = settings.SITE.version
+import lino_noi
+# release = settings.SITE.version
+release = lino_noi.__version__
 
 # The short X.Y version.
 version = '.'.join(release.split('.')[:2])
