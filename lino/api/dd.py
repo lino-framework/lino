@@ -343,6 +343,7 @@ def schedule_daily(func):
     """Schedule the given function to be run "daily" (i.e. every day).
     """
     if schedule:
-        schedule.every().day.do(func)
+        # schedule.every(10).seconds.do(func)
+        schedule.every().day.at("20:00").do(func)
     return func
     

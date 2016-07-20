@@ -1,4 +1,4 @@
-# Copyright 2015 Luc Saffre
+# Copyright 2015-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -13,6 +13,7 @@ from builtins import object
 from collections import OrderedDict
 
 from django.db import models
+from django.utils import translation
 
 from lino.core.gfks import gfk2lookup
 from lino.modlib.gfks.mixins import Controllable
@@ -276,4 +277,43 @@ def get_checkable_models(*args):
     return checkable_models
 
 
+def check_plausibility(args=[], fix=True):
+    """Called by :manage:`checkdata`. See there."""
+    Problem = rt.modules.plausibility.Problem
+    mc = get_checkable_models(*args)
+    if len(mc) == 0 and len(args) > 0:
+        raise Exception("No checker matches {0}".format(args))
+    final_sums = [0, 0, 0]
+    with translation.override('en'):
+        for m, checkers in mc.items():
+            ct = rt.modules.contenttypes.ContentType.objects.get_for_model(m)
+            Problem.objects.filter(owner_type=ct).delete()
+            name = unicode(m._meta.verbose_name_plural)
+            qs = m.objects.all()
+            msg = "Running {0} data checkers on {1} {2}...".format(
+                len(checkers), qs.count(), name)
+            dd.logger.debug(msg)
+            sums = [0, 0, name]
+            for obj in qs:
+                for chk in checkers:
+                    todo, done = chk.update_problems(obj, False, fix)
+                    sums[0] += len(todo)
+                    sums[1] += len(done)
+            if sums[0] or sums[1]:
+                msg = "Found {0} and fixed {1} data problems in {2}."
+                dd.logger.info(msg.format(*sums))
+            else:
+                dd.logger.debug(
+                    "No data problems found in {0}.".format(name))
+            final_sums[0] += 1
+            final_sums[1] += sums[0]
+            final_sums[2] += sums[1]
+    msg = "Done %d checkers, found %d and fixed %d problems."
+    dd.logger.info(msg, *final_sums)
 
+
+@dd.schedule_daily
+def checkdata():
+    """Run all data checkers."""
+    check_plausibility()
+    # rt.login().run(settings.SITE.site_config.run_checkdata)

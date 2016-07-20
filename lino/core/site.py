@@ -952,7 +952,7 @@ class Site(object):
         :xfile:`lino.log`.
 
     """
-    auto_configure_logger_names = 'atelier lino'
+    auto_configure_logger_names = 'schedule atelier django lino'
     """
     A string with a space-separated list of logger names to be
     automatically configured. See :meth:`setup_logging`.
@@ -1084,8 +1084,8 @@ class Site(object):
         if 'no_local' in kwargs:
             kwargs.pop('no_local')
             # For the moment we just silently ignore it, but soon:
-            if False:
-                raise ChangedAPI("The no_local argument is no longer needed.")
+            # if False:
+            raise ChangedAPI("The no_local argument is no longer needed.")
         if settings_globals is None:
             settings_globals = {}
         self.init_before_local(settings_globals, local_apps)
@@ -1195,6 +1195,8 @@ class Site(object):
         passes it to the `logging.config.dictConfig
         <https://docs.python.org/3/library/logging.config.html#logging.config.dictConfig>`__
         function.
+
+        Note that this is called *before* any plugins are loaded.
 
         It is designed to work with the :setting:`LOGGING` and
         :setting:`LOGGER_CONFIG` settings unmodified.

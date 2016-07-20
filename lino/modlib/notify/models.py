@@ -321,7 +321,7 @@ def clear_seen_notifications():
     Notification = rt.models.notify.Notification
     qs = Notification.objects.filter(
         seen__isnull=False,
-        seen_lt=timezone.now()-timedelta(hours=remove_after))
+        seen__lt=timezone.now()-timedelta(hours=remove_after))
     if qs.count() > 0:
         dd.logger.info(
             "Removing %d notifications older than %d hours.",

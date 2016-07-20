@@ -56,5 +56,5 @@ def get_summary_models():
 
 
 @dd.schedule_daily
-def check_summaries():
+def checksummaries():
     rt.login().run(settings.SITE.site_config.check_summaries)
