@@ -384,7 +384,8 @@ if __name__ == '__main__':
         if isinstance(field, (BabelCharField, BabelTextField)):
             #~ return repr([repr(x) for x in dbutils.field2args(obj,field.name)])
             return repr(settings.SITE.field2args(obj, field.name))
-        value = field._get_val_from_obj(obj)
+        # value = field._get_val_from_obj(obj)
+        value = field.value_from_object(obj)
         # Protected types (i.e., primitives like None, numbers, dates,
         # and Decimals) are passed through as is. All other values are
         # converted to string first.

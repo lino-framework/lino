@@ -1239,9 +1239,10 @@ class Site(object):
         }
 
         handlers = d.setdefault('handlers', {})
-        console = handlers.setdefault('console', {})
-        console['stream'] = sys.stdout
-        # console['level'] = level
+        if False:
+            console = handlers.setdefault('console', {})
+            console['stream'] = sys.stdout
+            # console['level'] = level
         if self.logger_filename and 'file' not in handlers:
             logdir = self.project_dir.child('log')
             if logdir.isdir():
