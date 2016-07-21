@@ -436,6 +436,12 @@ Dependencies between tickets
 Comments
 ========
 
+Currently the demo database contains no comments...
+
+>>> rt.show(comments.Comments)
+No data to display
+
+
 >>> obj = tickets.Ticket.objects.get(pk=7)
 >>> rt.show(comments.CommentsByRFC, obj)
-<div class="htmlText"></div>
+<BLANKLINE>
