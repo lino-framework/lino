@@ -115,7 +115,7 @@ class Session(UserAuthored, Started, Ended):
     # break_time = models.TimeField(
     #     blank=True, null=True,
     #     verbose_name=_("Break Time"))
-    break_time = dd.DurationField(_("Break Time"), blank=True)
+    break_time = dd.DurationField(_("Break Time"), blank=True, null=True)
     faculty = dd.ForeignKey(
         'faculties.Faculty', related_name="sessions_by_faculty",
         blank=True, null=True)
