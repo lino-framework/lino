@@ -27,6 +27,7 @@ from builtins import str
 # from builtins import object
 
 import os
+import sys
 from os.path import normpath, dirname, join, isdir, relpath, exists
 import inspect
 import datetime
@@ -661,18 +662,12 @@ class Site(object):
 
     """
 
-    tinymce_base_url = "http://www.tinymce.com/js/tinymce/jscripts/tiny_mce/"
-    "Replaced by :attr:`lino.modlib.tinymce.Plugin.media_base_url`."
-
     jasmine_root = None
     """Path to the Jasmine root directory.  Only used on a development
     server if the `media` directory has no symbolic link to the
     Jasmine root directory and only if :attr:`use_jasmine` is True.
 
     """
-
-    # tinymce_root = None
-    # "Replaced by :attr:`lino.modlib.tinymce.Plugin.media_root`."
 
     default_user = None
     """Username of the user to be used for all incoming requests.  Setting
@@ -1203,6 +1198,10 @@ class Site(object):
 
         It does the following modifications:
 
+        - configure the console handler to write to stdout instead of
+          Django's default
+          stderr. http://codeinthehole.com/writing/console-logging-to-stdout-in-django/
+
         - Define a *default logger configuration* which is initially
           the same as the one used by Django::
 
@@ -1232,12 +1231,17 @@ class Site(object):
         from django.utils.log import DEFAULT_LOGGING
         d = DEFAULT_LOGGING
 
+        level = os.environ.get('LINO_LOGLEVEL', 'INFO')
+
         loggercfg = {
             'handlers': ['console', 'mail_admins'],
-            'level': 'INFO',
+            'level': level,
         }
 
         handlers = d.setdefault('handlers', {})
+        console = handlers.setdefault('console', {})
+        console['stream'] = sys.stdout
+        # console['level'] = level
         if self.logger_filename and 'file' not in handlers:
             logdir = self.project_dir.child('log')
             if logdir.isdir():
@@ -1247,7 +1251,7 @@ class Site(object):
                     '%(module)s : %(message)s',
                     datefmt='%Y%m-%d %H:%M:%S'))
                 handlers['file'] = {
-                    'level': 'INFO',
+                    'level': level,
                     'class': 'logging.FileHandler',
                     'filename': logdir.child(self.logger_filename),
                     'encoding': 'UTF-8',
