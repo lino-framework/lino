@@ -571,6 +571,7 @@ class TableRequest(ActionRequest):
                     v = getter(row, self)
                     
                 if v is None:
+                # if not v:
                     yield ''
                 else:
                     sums[i] += fld.value2num(v)
