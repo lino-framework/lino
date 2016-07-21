@@ -312,8 +312,8 @@ def check_plausibility(args=[], fix=True):
     dd.logger.info(msg, *final_sums)
 
 
-@dd.schedule_daily
+@dd.schedule_daily()
 def checkdata():
     """Run all data checkers."""
-    check_plausibility()
+    check_plausibility(fix=False)
     # rt.login().run(settings.SITE.site_config.run_checkdata)

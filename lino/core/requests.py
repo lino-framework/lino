@@ -753,6 +753,11 @@ request from it.
         """
         return self.renderer.obj2str(self, *args, **kwargs)
 
+    def html_text(self, *args, **kwargs):
+        """
+        """
+        return self.renderer.html_text(*args, **kwargs)
+
     def href_button(self, *args, **kwargs):
         return self.renderer.href_button(*args, **kwargs)
 

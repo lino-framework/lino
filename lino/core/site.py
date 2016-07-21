@@ -36,9 +36,7 @@ import collections
 import threading
 from importlib import import_module
 from urllib.parse import urlencode
-from lino import AFTER17
-if AFTER17:
-    from django.apps import AppConfig
+from django.apps import AppConfig
 
 from unipath import Path
 from atelier.utils import AttrDict, date_offset, tuple_py2
@@ -1918,27 +1916,23 @@ this field.
 
             for p in self.installed_plugins:
                 # m = loading.load_app(p.app_name, False)
-                if AFTER17:
-                    # In Django17+ we cannot say can_postpone=False,
-                    # and we don't need to, because anyway we used it
-                    # just for our hack in `lino.models`
-                    # load_app(app_name) is deprecated
-                    # from django.apps import apps
-                    # m = apps.load_app(p.app_name)
-                    try:
-                        from django.apps import apps
-                        app_config = AppConfig.create(p.app_name)
-                        app_config.import_models(
-                            apps.all_models[app_config.label])
-                        apps.app_configs[app_config.label] = app_config
-                        apps.clear_cache()
-                        m = app_config.models_module
-                    except ImportError:
-                        self.logger.debug("No module {0}.models", p.app_name)
-                        # print(rrrr)
-                else:
-                    from django.db.models import loading
-                    m = loading.load_app(p.app_name, False)
+                # In Django17+ we cannot say can_postpone=False,
+                # and we don't need to, because anyway we used it
+                # just for our hack in `lino.models`
+                # load_app(app_name) is deprecated
+                # from django.apps import apps
+                # m = apps.load_app(p.app_name)
+                try:
+                    from django.apps import apps
+                    app_config = AppConfig.create(p.app_name)
+                    app_config.import_models(
+                        apps.all_models[app_config.label])
+                    apps.app_configs[app_config.label] = app_config
+                    apps.clear_cache()
+                    m = app_config.models_module
+                except ImportError:
+                    self.logger.debug("No module {0}.models", p.app_name)
+                    # print(rrrr)
 
                 self.models.define(six.text_type(p.app_label), m)
 
@@ -2075,12 +2069,8 @@ this field.
         historical reasons but will disappear one day.
 
         """
-        if AFTER17:
-            from django.apps import apps
-            apps = [a.models_module for a in apps.get_app_configs()]
-        else:
-            from django.db.models import loading
-            apps = loading.get_apps()
+        from django.apps import apps
+        apps = [a.models_module for a in apps.get_app_configs()]
         for mod in apps:
             meth = getattr(mod, methname, None)
             if meth is not None:
@@ -3119,12 +3109,8 @@ site. :manage:`diag` is a command-line shortcut to this.
 
 
         """
-        if AFTER17:
-            from django.apps import apps
-            apps = [a.models_module for a in apps.get_app_configs()]
-        else:
-            from django.db.models import loading
-            apps = loading.get_apps()
+        from django.apps import apps
+        apps = [a.models_module for a in apps.get_app_configs()]
 
         for k, label in self.top_level_menus:
             methname = "setup_{0}_menu".format(k)

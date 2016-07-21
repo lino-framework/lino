@@ -61,3 +61,8 @@ def show(*args, **kw):
 def send_email(*args, **kw):
     "Shortcut to :meth:`lino.core.site.Site.send_email`."
     return settings.SITE.send_email(*args, **kw)
+
+
+def html_text(*args, **kw):
+    return settings.SITE.kernel.default_renderer.html_text(
+        *args, **kw)

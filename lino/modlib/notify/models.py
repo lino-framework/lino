@@ -293,7 +293,7 @@ class MyNotifications(My, Notifications):
 # dd.add_welcome_handler(welcome_messages)
 
 
-@dd.schedule_often
+@dd.schedule_often()
 def send_pending_emails():
     h = settings.EMAIL_HOST
     if not h or h.endswith('example.com'):
@@ -312,7 +312,7 @@ def send_pending_emails():
         dd.logger.debug("No unsent notifications.")
 
 
-@dd.schedule_daily
+@dd.schedule_daily()
 def clear_seen_notifications():
     """Delete notifications older than 24 hours that have been seen.
 

@@ -10,6 +10,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 from builtins import str
 from past.builtins import basestring
+import six
 
 import logging
 logger = logging.getLogger(__name__)
@@ -432,6 +433,20 @@ class ExtRenderer(HtmlRenderer):
                 "Lino.quicktip_renderer(%s,%s)" % (py2js('Foo'), py2js(help_text)))
             ))
         return d
+
+    def html_text(self, html):
+        """
+        """
+        if isinstance(html, six.text_type):
+            return '<div class="htmlText">{0}</div>'.format(html)
+        if not E.iselement(html):
+            raise Exception("{!r} is not an element".format(html))
+        if html.tag in ('div', 'span'):
+            html.attrib['class'] = 'htmlText'
+            return html
+        return E.div(html, class_='htmlText')
+        # # is a list or tuple of ET elements
+        # return E.div(*html, class_='htmlText')
 
     def html_page(self, request, *args, **kw):
         """Return a string with the index page.  Content is mostly in the
