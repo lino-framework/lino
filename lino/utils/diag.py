@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2012-2015 Luc Saffre
+# Copyright 2012-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 """Some diagnostic utilities."""
 
@@ -19,6 +19,7 @@ from lino.core.layouts import BaseLayout
 from lino.modlib.extjs.elems import Container, Wrapper, FieldElement
 from lino.modlib.users.choicelists import UserProfiles
 from lino.core import actors
+from lino.core import actions
 from lino.core.utils import get_models
 from lino.core.utils import full_model_name as fmn
 from lino.api import dd
@@ -46,7 +47,7 @@ class Analyzer(object):
                             # <BoundAction(plausibility.Checkers,
                             # <ShowDetailAction detail (u'Detail')>)>
 
-                        if not wl in window_actions:
+                        if wl not in window_actions:
                             # lh = wl.get_layout_handle(ui)
                             # for e in lh.main.walk():
                             #     e.loosen_requirements(a)
@@ -79,6 +80,18 @@ class Analyzer(object):
                     ba.full_name(), visible_for(ba)))
 
         return rstgen.ul(items)
+    
+    def show_dialog_actions(self, doctestfmt=False):
+        self.analyze()
+        items = []
+        for ba in analyzer.custom_actions + analyzer.window_actions:
+            if ba.action.parameters:
+                items.append(
+                    "{0} : {1}".format(
+                        ba.full_name(),
+                        py2rst(ba.action, doctestfmt)))
+
+        print(rstgen.ul(items))
     
     def show_action_permissions(self, *classes):
         self.analyze()
@@ -254,7 +267,7 @@ def layout_fields(ba):
 def py2rst(self, doctestfmt=False):
     """Render any Python object as reStructuredText.
 
-    Where "any" actually means a layout or a layout element.
+    Where "any" currently means a layout or a layout element.
     :class:`lino.core.layouts.BaseLayout`
     :mod:`lino.modlib.extjs.elems`
 
@@ -263,6 +276,15 @@ def py2rst(self, doctestfmt=False):
     reStructuredText but is more doctest-friendly.
 
     """
+    if isinstance(self, actions.Action):
+        s = str(self)
+        if self.params_layout:
+            lh = self.params_layout.get_layout_handle(
+                settings.SITE.kernel.default_ui)
+            s += '\n'
+            s += py2rst(lh.main, doctestfmt)
+        return s
+
     if isinstance(self, BaseLayout):
         lh = self.get_layout_handle(settings.SITE.kernel.default_ui)
         return py2rst(lh.main, doctestfmt)
