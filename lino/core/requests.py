@@ -619,14 +619,6 @@ request from it.
         """
         return self.subst_user or self.user
 
-    def add_system_note(self, owner, subject, body, silent):
-        """Calls the Site's :meth:`emit_system_note
-        <lino.core.site.Site.emit_system_note>` method.
-
-        """
-        settings.SITE.emit_system_note(
-            self.request, owner, subject, body, silent)
-
     def run(self, thing, *args, **kw):
         """The first parameter `thing` may be an :class:`InstanceAction
         <lino.core.utils.InstanceAction>` or a Model instance.
@@ -760,6 +752,11 @@ request from it.
         """Return a string with a pointer to the given object.
         """
         return self.renderer.obj2str(self, *args, **kwargs)
+
+    def html_text(self, *args, **kwargs):
+        """
+        """
+        return self.renderer.html_text(*args, **kwargs)
 
     def href_button(self, *args, **kwargs):
         return self.renderer.href_button(*args, **kwargs)

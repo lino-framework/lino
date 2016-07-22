@@ -58,11 +58,11 @@ def show(*args, **kw):
     return login().show(*args, **kw)
 
 
-def emit_system_note(*args, **kw):
-    "Shortcut to :meth:`lino.core.site.Site.emit_system_note`."
-    return settings.SITE.emit_system_note(*args, **kw)
-
-
 def send_email(*args, **kw):
     "Shortcut to :meth:`lino.core.site.Site.send_email`."
     return settings.SITE.send_email(*args, **kw)
+
+
+def html_text(*args, **kw):
+    return settings.SITE.kernel.default_renderer.html_text(
+        *args, **kw)

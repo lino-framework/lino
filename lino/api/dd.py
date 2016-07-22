@@ -92,7 +92,6 @@ Actions:
 
 - :class:`Action <lino.core.actions.Action>`
 - :class:`ChangeStateAction <lino.core.workflows.ChangeStateAction>`
-- :class:`NotifyingAction <lino.core.actions.NotifyingAction>`
 - :class:`MergeAction <lino.core.merge.MergeAction>`
 - :class:`ShowSlaveTable <lino.core.actions.ShowSlaveTable>`
 - :class:`PrintTableAction <lino.utils.appy_pod.PrintTableAction>`
@@ -165,7 +164,6 @@ from lino.core.actions import SubmitDetail, SubmitInsert
 
 from lino.core.choicelists import ChoiceList, Choice
 from lino.core.workflows import State, Workflow, ChangeStateAction
-from lino.core.actions import NotifyingAction
 
 
 from lino.core.fields import fields_list, ImportedFields
@@ -332,19 +330,30 @@ except ImportError as e:
     schedule = False
 
 
-def schedule_often(func):
-    """Schedule the given function to be run "often" (i.e. every 10
-    seconds).
+def schedule_often(every=10):
+    """Decorator which schedules the given function to be run "often"
+    (default every 10 seconds).
+
+    See :ref:`dev.linod`.
+
     """
-    if schedule:
-        schedule.every(10).seconds.do(func)
-    return func
+    def decorator(func):
+        if schedule:
+            schedule.every(every).seconds.do(func)
+        return func
+    return decorator
 
 
-def schedule_daily(func):
-    """Schedule the given function to be run "daily" (i.e. every day).
+def schedule_daily(at="20:00"):
+    """Decorator which schedules the given function to be run "daily"
+    (by default at 20:00).
+
+    See :ref:`dev.linod`.
     """
-    if schedule:
-        schedule.every().day.do(func)
-    return func
+    def decorator(func):
+        if schedule:
+            # schedule.every(10).seconds.do(func)
+            schedule.every().day.at(at).do(func)
+        return func
+    return decorator
     

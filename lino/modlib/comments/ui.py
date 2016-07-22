@@ -88,8 +88,8 @@ class CommentsByRFC(CommentsByX):
         if len(items) > 0:
             html += u"<ul>{0}</ul>".format(''.join(items))
 
-        return u"""<div class="htmlText">{0}</div>""".format(html)
-        # return html
+        # return u"""<div class="htmlText">{0}</div>""".format(html)
+        return ar.html_text(html)
 
 
 def comments_by_owner(obj):

@@ -27,7 +27,7 @@ from lino.utils import AttrDict
 from lino.utils.code import codetime, codefiles, SourceFile
 from lino.utils.xmlgen.html import E
 
-from lino.api import dd
+from lino.api import rt, dd
 
 
 class Models(dd.VirtualTable):
@@ -278,14 +278,14 @@ class About(EmptyTable):
         for label, value in times:
             items.append(E.li(str(label), ' : ', E.b(dtfmt(value))))
         body.append(E.ul(*items))
-        return E.div(*body, class_='htmlText')
+        # return E.div(*body, class_='htmlText')
+        return rt.html_text(E.div(*body))
 
     @dd.displayfield(_("Server status"))
     def server_status(cls, obj, ar):
-        body = []
-        body.append(E.p(_("%s pending threads") %
-                    len(settings.SITE.kernel.pending_threads)))
-        return E.div(*body, class_='htmlText')
+        return rt.html_text(
+            E.p(_("%s pending threads") %
+                len(settings.SITE.kernel.pending_threads)))
 
 
 class SourceFiles(dd.VirtualTable):

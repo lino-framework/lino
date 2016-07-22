@@ -112,6 +112,9 @@ class HtmlRenderer(Renderer):
     def show_table(self, *args, **kwargs):
         return E.tostring(self.table2story(*args, **kwargs))
 
+    def html_text(self, html):
+        return html
+
     def table2story(self, ar, nosummary=False, stripped=True, **kw):
         """Returns a HTML element representing the given action request as a
         table. See :meth:`ar.show <lino.core.request.BaseRequest.show>`.

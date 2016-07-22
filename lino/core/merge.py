@@ -33,6 +33,7 @@ from lino.core.signals import pre_merge
 from lino.core.utils import full_model_name
 from lino.core.roles import SiteStaff
 from lino.utils.xmlgen.html import E
+from lino.api import rt
 
 
 def traverse_ddh_fklist(model, ignore_mti_parents=True):
@@ -231,7 +232,8 @@ class MergePlan(object):
                 "%(this)s into %(merge_to)s?") % dict(
                     this=self.obj, merge_to=self.merge_to)
         if len(items) != 0:
-            return E.div(E.p(msg), E.ul(*items), class_="htmlText")
+            # return E.div(E.p(msg), E.ul(*items), class_="htmlText")
+            return rt.html_text(E.div(E.p(msg), E.ul(*items)))
         return msg
 
     def execute(self, **kw):

@@ -110,11 +110,13 @@ class WebIndexTestCase(DjangoManageTestCase):
 
 
 class RemoteAuthTestCase(DjangoManageTestCase):
+    """Base class for tests that use remote http authentication.  We
+    override the :meth:`__call__` method in order to simulate
+    `remote_user_header <lino.core.site.Site.remote_user_header>`
+    being set to ``'REMOTE_USER'``.
 
+    """
     def __call__(self, *args, **kw):
-        # these tests use remote http authentication, so we override the run()
-        # method to simulate
-        #~ settings.SITE.remote_user_header = 'REMOTE_USER'
         settings.SITE.override_defaults(remote_user_header='REMOTE_USER')
         mysettings = dict()
         for k in ('MIDDLEWARE_CLASSES',):

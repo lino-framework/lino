@@ -759,27 +759,6 @@ class Model(models.Model):
             if isinstance(self, settings.SITE.project_model):
                 return self
 
-    def get_system_note_type(self, request):
-        """Used when :mod:`lino_xl.lib.notes` is installed. Expected to return
-        either `None` (the default) or an existing :class:`NoteType
-        <lino_xl.lib.notes.models.NoteType>` instance. If this is not
-        `None`, then the system note will also be stored in the
-        database as a :class:`lino_xl.lib.notes.models.Note`.
-
-        """
-        return None
-
-    def get_system_note_recipients(self, request, silent):
-        """
-        Return a list of email recipients for a system note on this
-        object. Used by :meth:`rt.ar.add_system_note`.
-
-        Every recipient must be a string with a valid email recipient like
-        "john@example.com" or "John Doe <john@example.com>".
-        """
-
-        return []
-
     def to_html(self, **kw):
         import lino.ui.urls  # hack: trigger ui instantiation
         actor = self.get_default_table()
@@ -1054,8 +1033,6 @@ LINO_MODEL_ATTRIBS = (
     'get_default_table',
     'get_template_group',
     'get_related_project',
-    'get_system_note_recipients',
-    'get_system_note_type',
     'quick_search_fields',
     'quick_search_fields_digit',
     'change_watcher_spec',

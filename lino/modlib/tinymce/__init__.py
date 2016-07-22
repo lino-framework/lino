@@ -1,10 +1,9 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015 Luc Saffre
+# Copyright 2015-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Adds usage of the TinyMCE editor instead of Ext.form.HtmlEditor for
-RichTextFields.  See also :attr:`tinymce_root`.  See
-`/blog/2011/0523`.  (formerly `use_tinymce`).
+HTML text fields (:class:lino.core.fields.RichTextField`).
 
 """
 

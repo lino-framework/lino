@@ -27,6 +27,7 @@ from builtins import str
 # from builtins import object
 
 import os
+import sys
 from os.path import normpath, dirname, join, isdir, relpath, exists
 import inspect
 import datetime
@@ -35,9 +36,7 @@ import collections
 import threading
 from importlib import import_module
 from urllib.parse import urlencode
-from lino import AFTER17
-if AFTER17:
-    from django.apps import AppConfig
+from django.apps import AppConfig
 
 from unipath import Path
 from atelier.utils import AttrDict, date_offset, tuple_py2
@@ -661,18 +660,12 @@ class Site(object):
 
     """
 
-    tinymce_base_url = "http://www.tinymce.com/js/tinymce/jscripts/tiny_mce/"
-    "Replaced by :attr:`lino.modlib.tinymce.Plugin.media_base_url`."
-
     jasmine_root = None
     """Path to the Jasmine root directory.  Only used on a development
     server if the `media` directory has no symbolic link to the
     Jasmine root directory and only if :attr:`use_jasmine` is True.
 
     """
-
-    # tinymce_root = None
-    # "Replaced by :attr:`lino.modlib.tinymce.Plugin.media_root`."
 
     default_user = None
     """Username of the user to be used for all incoming requests.  Setting
@@ -952,7 +945,7 @@ class Site(object):
         :xfile:`lino.log`.
 
     """
-    auto_configure_logger_names = 'atelier lino'
+    auto_configure_logger_names = 'schedule atelier django lino'
     """
     A string with a space-separated list of logger names to be
     automatically configured. See :meth:`setup_logging`.
@@ -1084,8 +1077,8 @@ class Site(object):
         if 'no_local' in kwargs:
             kwargs.pop('no_local')
             # For the moment we just silently ignore it, but soon:
-            if False:
-                raise ChangedAPI("The no_local argument is no longer needed.")
+            # if False:
+            raise ChangedAPI("The no_local argument is no longer needed.")
         if settings_globals is None:
             settings_globals = {}
         self.init_before_local(settings_globals, local_apps)
@@ -1196,10 +1189,16 @@ class Site(object):
         <https://docs.python.org/3/library/logging.config.html#logging.config.dictConfig>`__
         function.
 
+        Note that this is called *before* any plugins are loaded.
+
         It is designed to work with the :setting:`LOGGING` and
         :setting:`LOGGER_CONFIG` settings unmodified.
 
         It does the following modifications:
+
+        - configure the console handler to write to stdout instead of
+          Django's default
+          stderr. http://codeinthehole.com/writing/console-logging-to-stdout-in-django/
 
         - Define a *default logger configuration* which is initially
           the same as the one used by Django::
@@ -1230,12 +1229,18 @@ class Site(object):
         from django.utils.log import DEFAULT_LOGGING
         d = DEFAULT_LOGGING
 
+        level = os.environ.get('LINO_LOGLEVEL', 'INFO')
+
         loggercfg = {
             'handlers': ['console', 'mail_admins'],
-            'level': 'INFO',
+            'level': level,
         }
 
         handlers = d.setdefault('handlers', {})
+        if False:
+            console = handlers.setdefault('console', {})
+            console['stream'] = sys.stdout
+            # console['level'] = level
         if self.logger_filename and 'file' not in handlers:
             logdir = self.project_dir.child('log')
             if logdir.isdir():
@@ -1245,7 +1250,7 @@ class Site(object):
                     '%(module)s : %(message)s',
                     datefmt='%Y%m-%d %H:%M:%S'))
                 handlers['file'] = {
-                    'level': 'INFO',
+                    'level': level,
                     'class': 'logging.FileHandler',
                     'filename': logdir.child(self.logger_filename),
                     'encoding': 'UTF-8',
@@ -1911,27 +1916,23 @@ this field.
 
             for p in self.installed_plugins:
                 # m = loading.load_app(p.app_name, False)
-                if AFTER17:
-                    # In Django17+ we cannot say can_postpone=False,
-                    # and we don't need to, because anyway we used it
-                    # just for our hack in `lino.models`
-                    # load_app(app_name) is deprecated
-                    # from django.apps import apps
-                    # m = apps.load_app(p.app_name)
-                    try:
-                        from django.apps import apps
-                        app_config = AppConfig.create(p.app_name)
-                        app_config.import_models(
-                            apps.all_models[app_config.label])
-                        apps.app_configs[app_config.label] = app_config
-                        apps.clear_cache()
-                        m = app_config.models_module
-                    except ImportError:
-                        self.logger.debug("No module {0}.models", p.app_name)
-                        # print(rrrr)
-                else:
-                    from django.db.models import loading
-                    m = loading.load_app(p.app_name, False)
+                # In Django17+ we cannot say can_postpone=False,
+                # and we don't need to, because anyway we used it
+                # just for our hack in `lino.models`
+                # load_app(app_name) is deprecated
+                # from django.apps import apps
+                # m = apps.load_app(p.app_name)
+                try:
+                    from django.apps import apps
+                    app_config = AppConfig.create(p.app_name)
+                    app_config.import_models(
+                        apps.all_models[app_config.label])
+                    apps.app_configs[app_config.label] = app_config
+                    apps.clear_cache()
+                    m = app_config.models_module
+                except ImportError:
+                    self.logger.debug("No module {0}.models", p.app_name)
+                    # print(rrrr)
 
                 self.models.define(six.text_type(p.app_label), m)
 
@@ -2068,12 +2069,8 @@ this field.
         historical reasons but will disappear one day.
 
         """
-        if AFTER17:
-            from django.apps import apps
-            apps = [a.models_module for a in apps.get_app_configs()]
-        else:
-            from django.db.models import loading
-            apps = loading.get_apps()
+        from django.apps import apps
+        apps = [a.models_module for a in apps.get_app_configs()]
         for mod in apps:
             meth = getattr(mod, methname, None)
             if meth is not None:
@@ -3010,10 +3007,10 @@ site. :manage:`diag` is a command-line shortcut to this.
 
     @property
     def site_config(self):
-        """
-        This property holds a cached version of the one and only
-        :class:`ml.system.SiteConfig` row that holds site-wide
-        database-stored and web-editable Site configuration parameters.
+        """This property holds a cached version of the one and only
+        :class:`SiteConfig <lino.modlib.system.models.SiteConfig>` row
+        that holds site-wide database-stored and web-editable Site
+        configuration parameters.
 
         If no instance exists (which happens in a virgin database), we
         create it using default values from :attr:`site_config_defaults`.
@@ -3112,12 +3109,8 @@ site. :manage:`diag` is a command-line shortcut to this.
 
 
         """
-        if AFTER17:
-            from django.apps import apps
-            apps = [a.models_module for a in apps.get_app_configs()]
-        else:
-            from django.db.models import loading
-            apps = loading.get_apps()
+        from django.apps import apps
+        apps = [a.models_module for a in apps.get_app_configs()]
 
         for k, label in self.top_level_menus:
             methname = "setup_{0}_menu".format(k)
@@ -3318,50 +3311,6 @@ Please convert to Plugin method".format(mod, methname)
         if len(kw):
             url += "?" + urlencode(kw, True)
         return url
-
-    def get_system_note_recipients(self, request, obj, silent):
-        """Return or yield a list of recipients
-        (i.e. strings like "John Doe  <john@example.com>" )
-        to be notified by email about a system note issued
-        by action request `ar` about the object instance `obj`.
-
-        Default behaviour is to simply forward it to the `obj`'s
-        :meth:`get_system_note_recipients
-        <lino.core.model.Model.get_system_note_recipients>`, but here
-        is a hook to define local exceptions to the application
-        specific default rules.
-
-        """
-        return obj.get_system_note_recipients(request, silent)
-
-    def emit_system_note(self, request, owner, subject, body, silent):
-        """Send a *system note* about the given model instance `owner` with
-        the given `subject` and `body` .
-
-        A **system note** is a text message attached to a given
-        database object (`owner`) which is stored and propagated
-        through a series of customizable and configurable channels.
-
-        The text part consists basically of a subject and a body, both
-        usually generated by the application and possibly edited by
-        the user (e.g. in the dialog window of a
-        :class:`NotifyingAction <lino.core.actions.NotifyingAction>`).
-
-        This method will build the list of email recipients by calling
-        the locally configurable :meth:`get_system_note_recipients`
-        method and send an email to each of these recipients.
-
-        """
-        # self.logger.info("20121016 add_system_note() '%s'",subject)
-
-        if self.is_installed('notes'):
-            notes = self.models.notes
-            notes.add_system_note(request, owner, subject, body)
-        sender = request.user.email or self.django_settings['SERVER_EMAIL']
-        if not sender or '@example.com' in sender:
-            return
-        recipients = self.get_system_note_recipients(request, owner, silent)
-        self.send_email(subject, sender, body, recipients)
 
     def send_email(self, subject, sender, body, recipients):
         """Send an email message with the specified arguments (the same

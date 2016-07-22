@@ -343,14 +343,9 @@ class TableRequest(ActionRequest):
 
         ActionRequest.setup(self, **kw)
 
-        # 20120519 : outbox.MyOutbox had no phantom record when called
-        # from menu.  When called by permalink it had. Because
-        # get_create_kw was called before Actor.setup_request() which
-        # sets the master_instance.
-
         self.actor.setup_request(self)
 
-        self.create_kw = self.actor.get_create_kw(self)
+        self.create_kw = self.actor.get_filter_kw(self)
 
         if offset is not None:
             self.offset = offset
@@ -576,6 +571,7 @@ class TableRequest(ActionRequest):
                     v = getter(row, self)
                     
                 if v is None:
+                # if not v:
                     yield ''
                 else:
                     sums[i] += fld.value2num(v)

@@ -55,6 +55,6 @@ def get_summary_models():
     return summary_masters
 
 
-@dd.schedule_daily
-def check_summaries():
+@dd.schedule_daily()
+def checksummaries():
     rt.login().run(settings.SITE.site_config.check_summaries)

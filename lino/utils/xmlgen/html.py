@@ -61,6 +61,19 @@ You can also do the opposite, i.e. parse HTML:
 ...     '<ul type="disc"><li>First</li><li>Second</li></ul>')))
 <ul type="disc"><li>First</li><li>Second</li></ul>
 
+>>> html = E.div(E.p("First"), E.p("Second"))
+>>> print(E.tostring_pretty(html))
+<div>
+<p>First</p>
+<p>Second</p>
+</div>
+>>> html.attrib['class'] = 'htmlText'
+>>> print(E.tostring_pretty(html))
+<div class="htmlText">
+<p>First</p>
+<p>Second</p>
+</div>
+
 """
 
 from __future__ import unicode_literals

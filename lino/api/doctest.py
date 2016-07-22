@@ -10,10 +10,8 @@ from __future__ import print_function
 import six
 from builtins import str
 
-from lino import AFTER17
-if AFTER17:
-    import django
-    django.setup()
+import django
+django.setup()
 from lino.api.shell import *
 from django.utils import translation
 from django.test import Client
@@ -23,6 +21,7 @@ from lino.utils import AttrDict
 from lino.utils import i2d
 from lino.utils.xmlgen.html import E
 from lino.utils.diag import analyzer
+from lino.utils import diag
 
 from atelier.rstgen import table
 from atelier.rstgen import attrtable
@@ -218,23 +217,56 @@ def noblanklines(s):
 def show_choices(username, url):
     """Print the choices returned via web client."""
     response = test_client.get(url, REMOTE_USER=username)
+    if response.status_code != 200:
+        raise Exception(
+            "Response status ({0}) was {1} instead of 200".format(
+                url, response.status_code))
+
     result = json.loads(response.content)
     for r in result['rows']:
         print(r['text'])
         # print(r['value'], r['text'])
 
+from django.db.models import Model
+from lino.core.actions import Action
+from lino.core.tables import AbstractTable
+from lino.core.boundaction import BoundAction
 
-def show_fields(model, fieldnames):
+
+def show_fields(model, fieldnames=None):
     """Print an overview description of the specified fields of the
     specified model.
 
     """
     cells = []
     cols = ["Internal name", "Verbose name", "Help text"]
-    for n in fieldnames.split():
-        fld = model._meta.get_field(n)
+    if isinstance(model, BoundAction):
+        get_field = model.action.parameters.get
+        if fieldnames is None:
+            fieldnames = model.action.params_layout
+    elif isinstance(model, Action):
+        get_field = model.parameters.get
+        if fieldnames is None:
+            fieldnames = model.params_layout.main
+    elif issubclass(model, Model):
+        get_field = model._meta.get_field
+    elif issubclass(model, AbstractTable):
+        get_field = model.parameters.get
+        if fieldnames is None:
+            fieldnames = model.params_layout
+    if isinstance(fieldnames, six.string_types):
+        fieldnames = fieldnames.split()
+    for n in fieldnames:
+        fld = get_field(n)
         cells.append([n, fld.verbose_name, unindent(fld.help_text)])
 
     print(table(cols, cells).strip())
 
+
+def py2rst(x):
+    return diag.py2rst(x, True)
+
+
+def show_dialog_actions():
+    return analyzer.show_dialog_actions(True)
 

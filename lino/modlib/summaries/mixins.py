@@ -26,16 +26,16 @@ class ComputeResults(dd.Action):
         ar.success(refresh=True)
 
 
-class UpdateSummary(dd.Action):
-    icon_name = 'bell'
-    label = _("Update summary")
-    sort_index = 90
+# class UpdateSummary(dd.Action):
+#     icon_name = 'bell'
+#     label = _("Update summary")
+#     sort_index = 90
 
-    def run_from_ui(self, ar):
-        # print(20150327, ar.selected_rows)
-        for obj in ar.selected_rows:
-            obj.update_
-        ar.set_response(refresh_all=True)
+#     def run_from_ui(self, ar):
+#         # print(20150327, ar.selected_rows)
+#         for obj in ar.selected_rows:
+#             obj.update_
+#         ar.set_response(refresh_all=True)
 
 
 class UpdateSummariesByMaster(dd.Action):
@@ -70,6 +70,10 @@ class Summary(dd.Model):
     month = models.IntegerField(_("Month"), null=True, blank=True)
 
     compute_results = ComputeResults()
+
+    # def __init__(self, *args, **kwargs):
+    #     self.reset_summary_data()
+    #     super(Summary, self). __init__(*args, **kwargs)
 
     @classmethod
     def get_summary_periods(cls):

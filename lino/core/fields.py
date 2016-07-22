@@ -29,6 +29,7 @@ from django.db.models.fields import NOT_PROVIDED
 
 from lino.core.utils import resolve_field
 from lino.core.utils import resolve_model
+from lino.core.exceptions import ChangedAPI
 
 from lino.utils import IncompleteDate
 from lino.utils import quantities
@@ -625,12 +626,10 @@ class QuantityField(CharField):
     <lino.utils.quantities.Duration>` values.
 
     Implemented as a CharField (sorting or filter ranges may not work
-    as expected)
+    as expected).
 
-    QuantityFields are implemented as CharFields and
-    therefore should *not* be declared `null=True`.
-    But if `blank=True`, empty strings are converted to `None`
-    values.
+    When you set `blank=True`, then you should declare `null=True` as
+    well.
 
     """
     description = _("Quantity (Decimal or Duration)")
@@ -638,6 +637,10 @@ class QuantityField(CharField):
     def __init__(self, *args, **kw):
         kw.setdefault('max_length', 6)
         models.Field.__init__(self, *args, **kw)
+        if self.blank and not self.null:
+            raise ChangedAPI(
+                "When `blank` is True, `null` must be True as well.")
+            
         #~ models.CharField.__init__(self,*args,**kw)
 
     #~ def get_internal_type(self):
@@ -673,7 +676,7 @@ class QuantityField(CharField):
         return None
 
     def from_db_value(self, value, expression, connection, context):
-        return quantities.parse(value) if value else None
+        return quantities.parse(value) if value else self.get_default()
 
     # def get_db_prep_value(self, value, connection, prepared=False):
     #     return str(value) if value else ''
@@ -685,9 +688,15 @@ class QuantityField(CharField):
 
 
 class DurationField(QuantityField):
+    """A field that stores :class:`Duration
+    <lino.utils.quantities.Duration>` values as CHAR.
 
+    Note that you cannot use SUM or AVG agregators on these fields
+    since the database does not know how to calculate sums from them.
+
+    """
     def from_db_value(self, value, expression, connection, context):
-        return Duration(value) if value else None
+        return Duration(value) if value else self.get_default()
 
     def to_python(self, value):
         if isinstance(value, Duration):
@@ -742,7 +751,7 @@ or "23.07.0000" means "on a 23th of July"."""))
     #     return "CharField"
 
     def from_db_value(self, value, expression, connection, context):
-        return IncompleteDate.parse(value) if value else ''
+        return IncompleteDate.parse(value) if value else self.get_default()
         # if value:
         #     return IncompleteDate.parse(value)
         # return ''

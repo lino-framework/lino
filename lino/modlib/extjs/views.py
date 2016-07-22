@@ -204,9 +204,11 @@ class Callbacks(View):
 
 
 def choices_for_field(request, holder, field):
-    # Return the choices for the given field and the given web request
-    # (whose requesting holder is given as `holder`).
-    # holder is either a Model, an Actor or an Action.
+    """Return the choices for the given field and the given web request
+    (whose requesting holder is given as `holder`).  holder is either
+    a Model, an Actor or an Action.
+
+    """
     # model = holder.get_chooser_model()
     chooser = holder.get_chooser_for_field(field.name)
     # logger.info('20140822 choices_for_field(%s.%s) --> %s',
@@ -314,12 +316,14 @@ class ActionParamChoices(View):
 class Choices(View):
 
     def get(self, request, app_label=None, rptname=None, fldname=None, **kw):
-        """
-        Return a JSON object with two attributes `count` and `rows`,
-        where `rows` is a list of `(display_text, value)` tuples.
-        Used by ComboBoxes or similar widgets.
-        If `fldname` is not specified, returns the choices for
-        the `record_selector` widget.
+        """If `fldname` is specified, return a JSON object with two
+        attributes `count` and `rows`, where `rows` is a list of
+        `(display_text, value)` tuples.  Used by ComboBoxes or similar
+        widgets.
+
+        If `fldname` is not specified, returns the choices for the
+        `record_selector` widget.
+
         """
         rpt = requested_actor(app_label, rptname)
         emptyValue = None

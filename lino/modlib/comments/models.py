@@ -19,7 +19,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
 from lino.modlib.gfks.mixins import Controllable
-from lino.modlib.notify.mixins import Observable
+from lino.modlib.notify.mixins import ChangeObservable
 
 from lino.api import dd
 from lino import mixins
@@ -30,7 +30,7 @@ from lino.utils.xmlgen.html import E
 @dd.python_2_unicode_compatible
 class Comment(
         mixins.CreatedModified,
-        UserAuthored, Controllable, Observable):
+        UserAuthored, Controllable, ChangeObservable):
     """A **comment** is a short text which some user writes about some
     other database object. It has no recipient.
 
@@ -61,7 +61,7 @@ class Comment(
         return u'%s #%s' % (self._meta.verbose_name, self.pk)
 
     def get_notify_observers(self):
-        if isinstance(self.owner, Observable):
+        if isinstance(self.owner, ChangeObservable):
             for u in self.owner.get_notify_observers():
                 yield u
 
@@ -71,6 +71,9 @@ class Comment(
 
     def get_notify_body(self, ar):
         return self.short_text + '\n<p>\n' + self.more_text
+
+    def get_notify_owner(self, ar):
+        return self.owner
 
     def as_li(self, ar):
         """Return this comment as a list item. If `bleach
