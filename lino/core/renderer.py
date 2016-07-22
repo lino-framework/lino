@@ -113,6 +113,13 @@ class HtmlRenderer(Renderer):
         return E.tostring(self.table2story(*args, **kwargs))
 
     def html_text(self, html):
+        """Render a chunk of HTML text.
+
+        This does nothing, it just returns the given chunk of
+        HTML. Except on ExtJS, where it wraps the chunk into an
+        additional ``<div class="htmlText"></div>`` tag.
+
+        """
         return html
 
     def table2story(self, ar, nosummary=False, stripped=True, **kw):
