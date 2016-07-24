@@ -290,6 +290,7 @@ def main(args):
                 stream.write('\n')
                 stream.write('loader.flush_deferred_objects()\n')
             except DatabaseError as e:
+                self.database_errors += 1
                 if not self.options['tolerate']:
                     raise
                 stream.write('\n')
@@ -446,8 +447,8 @@ if __name__ == '__main__':
         self.write_files()
         logger.info("Wrote %s objects to %s and siblings." % (
             self.count_objects, self.main_file))
-        if len(self.database_errors):
+        if self.database_errors:
             raise CommandError(
                 "There were %d database errors. "
                 "The dump in %s is not complete.",
-                len(self.database_errors), self.output_dir)
+                self.database_errors, self.output_dir)
