@@ -19,6 +19,13 @@ extlinks.update(ticket=('http://bugs.lino-framework.org/tickets/Ticket/%s', '#')
 
 extensions += ['lino.sphinxcontrib.logo']
 
+extensions += ['lino.sphinxcontrib.help_text_builder']
+help_texts_builder_targets = {
+    'lino_noi.': 'lino_noi.lib.noi'
+}
+
+
+
 from django.conf import settings
 # settings.SITE.title = "Lino Noi"
 
@@ -149,4 +156,3 @@ html_use_opensearch = ''
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'noi'
 
-from lino.sphinxcontrib.help_text_builder import setup
