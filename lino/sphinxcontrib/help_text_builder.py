@@ -182,9 +182,11 @@ from importlib import import_module
 
 from unipath import Path
 
-useless_docstrings = set(['.VentilatingTable', '.My', '.ByUser',
-                          '.Table', '.AbstractTable', '.VirtualTable',
-                          '.Actor'])
+useless_starts = set(['lino.core'])
+useless_endings = set(['.My', '.ByUser'])
+# useless_endings = set(['.VentilatingTable', '.My', '.ByUser',
+#                        '.Table', '.AbstractTable', '.VirtualTable',
+#                        '.Actor'])
 
 
 def node2html(node):
@@ -276,7 +278,10 @@ class HelpTextBuilder(Builder):
             self.sig2dict(name, content)
 
     def sig2dict(self, name, value):
-        for e in useless_docstrings:
+        for e in useless_starts:
+            if name.startswith(e):
+                return
+        for e in useless_endings:
             if name.endswith(e):
                 return
         for root, d in self.name2dict.items():
