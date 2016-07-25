@@ -34,7 +34,7 @@ their site."""),
     'lino_noi.lib.clocking.ui.SessionsByTicket.model' : _("""alias of Session"""),
     'lino_noi.lib.clocking.ui.SessionsByTicket.slave_summary' : _("""This panel shows:"""),
     'lino_noi.lib.tickets.models.Ticket.state' : _("""The state of this ticket. See TicketStates"""),
-    'lino_noi.lib.noi.migrate.Migrator' : _("""The standard migrator for Lino Noi."""),
+    'lino_noi.lib.noi.migrate.Migrator' : _("""The standard migrator for noi."""),
     'lino_noi.lib.tickets.models.Ticket.reporter' : _("""The user who is reported this ticket."""),
     'lino_noi.lib.tickets.Plugin' : _("""See lino.core.plugin.Plugin."""),
     'lino_noi.lib.tickets.models.TimeInvestment.private' : _("""Whether this investment is private, i.e. should not be
