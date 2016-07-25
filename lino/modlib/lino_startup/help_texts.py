@@ -44,7 +44,7 @@ a database object is modified."""),
 system date."""),
     'lino.modlib.printing.choicelists.PisaBuildMethod' : _("""Generates .pdf files from .html templates.
 Requires pisa.
-Usage example see Printing using Pisa."""),
+Usage example see /tutorials/pisa/index."""),
     'lino.modlib.plausibility.models.Problem' : _("""Represents a detected plausibility problem."""),
     'lino.modlib.notify.models.Notification' : _("""A notification object represents the fact that a given user has
 been notified about a given database object."""),
@@ -56,7 +56,7 @@ start_date and end_date which default to empty."""),
     'lino.modlib.uploads.models.MyUploads' : _("""Shows only my Uploads (i.e. those whose author is current user)."""),
     'lino.modlib.extjs.elems.SingleRelatedObjectElement' : _("""The widget used to render a SingleRelatedObjectDescriptor,
 i.e. the other side of a OneToOneField."""),
-    'lino.modlib.system.Plugin' : _("""See Introduction to plugins."""),
+    'lino.modlib.system.Plugin' : _("""See /dev/plugins."""),
     'lino.api.doctest.HttpQuery.expected_rows' : _("""Alias for field number 3"""),
     'lino.mixins.uploadable.Uploadable' : _("""Mixin for objects that represent an uploadable file."""),
     'lino.mixins.dupable.PhoneticWordBase' : _("""Base class for the table of phonetic words of a given dupable
@@ -77,7 +77,7 @@ document and builds is only when it doesn't yet exist."""),
 <lino.core.roles.UserRole> or some subclass thereof."""),
     'lino.modlib.plausibility.models.Problem.user' : _("""The user reponsible
 for fixing this problem."""),
-    'lino.modlib.changes.Plugin' : _("""See Introduction to plugins."""),
+    'lino.modlib.changes.Plugin' : _("""See /dev/plugins."""),
     'lino.utils.djangotest.WebIndexTestCase' : _("""Designed to be just imported. No subclassing needed."""),
     'lino.modlib.extjs.elems.SlaveSummaryPanel' : _("""The panel used to display a slave table whose slave_grid_format
 is 'summary'."""),
@@ -85,12 +85,12 @@ is 'summary'."""),
     'lino.modlib.extjs.elems.GridElement' : _("""Represents a Lino.GridPanel, i.e. the widget used to represent a
 table or a slave table."""),
     'lino.modlib.uploads.models.Uploads' : _("""Shows all Uploads"""),
-    'lino.modlib.tinymce.Plugin' : _("""See Introduction to plugins."""),
+    'lino.modlib.tinymce.Plugin' : _("""See /dev/plugins."""),
     'lino.utils.dates.DatePeriodValue.end_date' : _("""The end date"""),
     'lino.modlib.uploads.models.Uploads.model' : _("""alias of Upload"""),
     'lino.utils.addressable.Addressable' : _("""Mixin to encapsulate the generating of "traditional" ("snail") mail
 addresses."""),
-    'lino.modlib.plausibility.Plugin' : _("""See Introduction to plugins."""),
+    'lino.modlib.plausibility.Plugin' : _("""See /dev/plugins."""),
     'lino.api.rt.plugins' : _("""Shortcut to lino.core.site.Site.plugins"""),
     'lino.modlib.printing.choicelists.LatexBuildMethod' : _("""Generates .pdf files from .tex templates.
 Not actively used."""),
@@ -107,7 +107,7 @@ Application code sees this instance as settings.SITE.site_config."""),
     'lino.utils.test.HttpQuery.url_base' : _("""Alias for field number 1"""),
     'lino.modlib.changes.models.Changes' : _("""The default table for Change."""),
     'lino.utils.instantiator.Instantiator' : _("""A utility class to make python fixtures more compact. See
-The Instantiator class."""),
+tutorial.instantiator."""),
     'lino.modlib.extjs.elems.ParamsPanel' : _("""The optional Panel for parameters of a Table.
 JS part stored in Lino.GridPanel.params_panel."""),
     'lino.utils.ajax.AjaxExceptionResponse' : _("""The middleware class definition."""),
@@ -152,7 +152,7 @@ A pointer to lino.modlib.users.models.User."""),
 a confirmation if there is a possible duplicate record."""),
     'lino.utils.xmlgen.cbss.HealthInsuranceRequest' : _("""A request to the HealthInsurance BCSS service.
 Net yet used in practice."""),
-    'lino.modlib.export_excel.Plugin' : _("""See Introduction to plugins."""),
+    'lino.modlib.export_excel.Plugin' : _("""See /dev/plugins."""),
     'lino.mixins.Referrable.ref_max_length' : _("""The maximum length of the ref field."""),
     'lino.modlib.uploads.models.UploadType' : _("""The type of an upload."""),
     'lino.modlib.extjs.views.Restful' : _("""Used to collaborate with a restful Ext.data.Store."""),
@@ -268,10 +268,10 @@ confirmation when necessary."""),
     'lino.modlib.extjs.elems.DisplayElement' : _("""ExtJS element to be used for DisplayFields."""),
     'lino.api.doctest.HttpQuery.username' : _("""Alias for field number 0"""),
     'lino.utils.instantiator.ChoiceConverter' : _("""Converter for ChoiceListField."""),
-    'lino.modlib.about.Plugin' : _("""See Introduction to plugins."""),
+    'lino.modlib.about.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.tinymce.Plugin.document_domain' : _("""When serving static files from a different subdomain, TinyMCE needs
 to know about this. Typical usage is to specify this in your
-djangosite_local.py file (The djangosite_local module):"""),
+djangosite_local.py file (lino.djangosite_local):"""),
     'lino.modlib.summaries.Plugin.end_year' : _("""The last year for which summaries should be computed."""),
     'lino.utils.code.SourceFile' : _("""Counts the number of code lines in a given Python source file."""),
     'lino.mixins.sequenced.Hierarchical' : _("""Abstract model mixin for things that have a "parent" and
@@ -279,12 +279,12 @@ djangosite_local.py file (The djangosite_local module):"""),
     'lino.modlib.extjs.elems.IncompleteDateFieldElement' : _("""Widget for lino.core.fields.IncompleteDate fields."""),
     'lino.utils.test.DocTest' : _("""Looks for a file "index.rst" in your project_dir and (if it exists)
 runs doctest on it."""),
-    'lino.modlib.languages.Plugin' : _("""See Introduction to plugins."""),
+    'lino.modlib.languages.Plugin' : _("""See /dev/plugins."""),
     'lino.utils.daemoncommand.DaemonCommand' : _("""If you have an existing Django management command, just rename
 it's handle method to handle_daemon and inherit from this
 instead of django.core.management.base.BaseCommand."""),
     'lino.utils.test.HttpQuery.json_fields' : _("""Alias for field number 2"""),
-    'lino.modlib.summaries.Plugin' : _("""See Introduction to plugins."""),
+    'lino.modlib.summaries.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.bootstrap3.views.List' : _("""Render a list of records."""),
     'lino.modlib.extjs.elems.HtmlBoxElement' : _("""Element that renders to a Lino.HtmlBoxPanel."""),
     'lino.modlib.tinymce.Plugin.window_height' : _("""The initial height of the window to use when editing in own
@@ -304,7 +304,7 @@ Default is False since currently this is not really useful."""),
     'lino.mixins.human.Born.age' : _("""Virtual field displaying the age in years."""),
     'lino.modlib.printing.mixins.CachedPrintableChecker.model' : _("""alias of CachedPrintable"""),
     'lino.modlib.uploads.models.UploadTypes.model' : _("""alias of UploadType"""),
-    'lino.modlib.gfks.Plugin' : _("""See Introduction to plugins."""),
+    'lino.modlib.gfks.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.gfks.mixins.Controllable' : _("""Mixin for models that are "controllable" by another database object."""),
     'lino.modlib.users.models.User' : _("""Represents a user of this site."""),
     'lino.modlib.users.models.UsersOverview' : _("""A variant of Users showing only active users and
@@ -316,7 +316,7 @@ field and a virtual field "Age"."""),
     'lino.modlib.uploads.choicelists.Shortcut' : _("""Represents a shortcut field."""),
     'lino.utils.dbfreader.FPTFile' : _("""Represents an FPT block file"""),
     'lino.utils.dbfreader.DBFField' : _("""Represents a field in a DBF file."""),
-    'lino.modlib.uploads.Plugin' : _("""See Introduction to plugins."""),
+    'lino.modlib.uploads.Plugin' : _("""See /dev/plugins."""),
     'lino.api.rt.models' : _("""Shortcut to lino.core.site.Site.models"""),
     'lino.utils.jsgen.VisibleComponent' : _("""A visible component"""),
     'lino.modlib.plausibility.models.Problems' : _("""The base table for Problem objects."""),
@@ -324,7 +324,7 @@ field and a virtual field "Age"."""),
     'lino.utils.dataserializer.FakeDeserializedObject' : _("""loaddata requires DeserializedObject instances, 
 but this Deserializer does not bypass pre_save/save methods."""),
     'lino.modlib.uploads.models.UploadTypes' : _("""The table with all existing upload types."""),
-    'lino.modlib.smtpd.Plugin' : _("""See Introduction to plugins."""),
+    'lino.modlib.smtpd.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.changes.models.Change.object' : _("""The database object which has been modified."""),
     'lino.utils.dpy.FakeDeserializedObject' : _("""Imitates DeserializedObject required by loaddata."""),
     'lino.modlib.plausibility.models.AllProblems' : _("""Show all plausibility problems."""),
@@ -361,13 +361,13 @@ hidden_languages of newly
 attached choice item."""),
     'lino.modlib.printing.mixins.PrintableType.templates_group' : _("""Default value for templates_group is the model's full name."""),
     'lino.utils.test.HttpQuery.kwargs' : _("""Alias for field number 4"""),
-    'lino.modlib.comments.Plugin' : _("""See Introduction to plugins."""),
-    'lino.modlib.users.Plugin' : _("""See Introduction to plugins."""),
+    'lino.modlib.comments.Plugin' : _("""See /dev/plugins."""),
+    'lino.modlib.users.Plugin' : _("""See /dev/plugins."""),
     'lino.mixins.human.Human' : _("""Base class for all models that represent a human."""),
     'lino.modlib.printing.actions.DirectPrintAction' : _("""Print using a hard-coded template and without cache."""),
     'lino.api.selenium.Album' : _("""Generates one directory of screenshots images and their index.rst
 file."""),
-    'lino.modlib.jinja.Plugin' : _("""See Introduction to plugins."""),
+    'lino.modlib.jinja.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.system.models.SiteConfigs' : _("""The table used to present the SiteConfig row in a Detail form.
 See also lino.Lino.get_site_config().
 Deserves more documentation."""),
@@ -387,7 +387,7 @@ this document."""),
     'lino.modlib.office.roles.OfficeStaff' : _("""A user who manages configuration of office functionality."""),
     'lino.utils.mldbc.fields.BabelTextField' : _("""Define a variable number of clones of the "master" field,
 one for each language .
-See Multilingual database content."""),
+See mldbc."""),
     'lino.utils.media.MediaFile.name' : _("""return the filename on the server"""),
     'lino.utils.mti.EnableChild' : _("""Rendered as a checkbox that indicates whether an mti child of the
 given model exists."""),
@@ -453,7 +453,7 @@ dynamicaly add a blank choice to the the choicelist."""),
 this problem."""),
     'lino.utils.mldbc.fields.BabelCharField' : _("""Define a variable number of CharField database fields, one for
 each language of your lino.core.site.Site.languages.  See
-Multilingual database content."""),
+mldbc."""),
     'lino.modlib.tinymce.Plugin.media_name' : _("""Lino currently includes three versions of TinyMCE, but for
 production sites we still use the eldest version 3.4.8."""),
     'lino.modlib.plausibility.choicelists.Checker.model' : _("""The model to be checked. This may be an abstract model.  It can
@@ -476,21 +476,21 @@ users' work."""),
 process of generating a "printable document" that inserts data
 from the database into a template, using a given combination of a
 template parser and post-processor."""),
-    'lino.modlib.weasyprint.Plugin' : _("""See Introduction to plugins."""),
-    'lino.modlib.printing.Plugin' : _("""See Introduction to plugins."""),
+    'lino.modlib.weasyprint.Plugin' : _("""See /dev/plugins."""),
+    'lino.modlib.printing.Plugin' : _("""See /dev/plugins."""),
     'lino.utils.media.MediaFile.url' : _("""return the url that points to file on the server"""),
     'lino.modlib.comments.models.Comment' : _("""A comment is a short text which some user writes about some
 other database object. It has no recipient."""),
     'lino.modlib.users.utils.AnonymousUser.authenticated' : _("""This is always False.
 See also lino.modlib.users.models.User.authenticated."""),
     'lino.utils.test.HttpQuery.username' : _("""Alias for field number 0"""),
-    'lino.modlib.office.Plugin' : _("""See Introduction to plugins."""),
+    'lino.modlib.office.Plugin' : _("""See /dev/plugins."""),
     'lino.mixins.periods.Yearly' : _("""An ObservedPeriod for which start_date defaults to Jan
 1st and end_date to Dec 31 of the current year."""),
     'lino.modlib.users.models.User.username' : _("""Must be unique.
 Leaving this empty means that the user cannot log in."""),
     'lino.utils.dpy.Migrator' : _("""The SITE's Migrator class is instantiated by install_migrations."""),
-    'lino.modlib.print_pisa.Plugin' : _("""See Introduction to plugins."""),
+    'lino.modlib.print_pisa.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.plausibility.models.MyProblems.model' : _("""alias of Problem"""),
     'lino.modlib.printing.mixins.TypedPrintable' : _("""A CachedPrintable that uses a "Type" for deciding which
 template to use on a given instance."""),
@@ -501,7 +501,7 @@ remote_user_header <lino.core.site.Site.remote_user_header>
 being set to 'REMOTE_USER'."""),
     'lino.utils.sqllog.ShortSQLLogToConsoleMiddleware' : _("""Log a summary of the SQL statements made to the console.
 Intended for use with the django development server."""),
-    'lino.modlib.wkhtmltopdf.Plugin' : _("""See Introduction to plugins."""),
+    'lino.modlib.wkhtmltopdf.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.users.mixins.AutoUser' : _("""alias of UserAuthored"""),
     'lino.utils.xmlgen.html.HtmlNamespace' : _("""The HTML namespace.
 This is instantiated as E."""),
@@ -510,7 +510,7 @@ attributes to override before running the test."""),
     'lino.utils.mldbc.fields.LanguageField' : _("""A field that lets the user select a language from the available
 lino.core.site.Site.languages."""),
     'lino.utils.sendchanges.Emitter' : _("""The object returned by register()."""),
-    'lino.utils.dpy.DpyDeserializer' : _("""The Django deserializer for The Python serializer."""),
+    'lino.utils.dpy.DpyDeserializer' : _("""The Django deserializer for dpy."""),
     'lino.utils.instantiator.ForeignKeyConverter' : _("""Converter for ForeignKey fields."""),
     'lino.utils.config.ConfigDir' : _("""A directory that may contain configuration files."""),
     'lino.modlib.printing.choicelists.SimpleBuildMethod' : _("""Base for build methods which use Lino's templating system
@@ -527,7 +527,7 @@ user who will be attributed to plausibility problems for which
 no specific responible could be designated (returned by the
 checker's get_responsible_user
 method)."""),
-    'lino.modlib.davlink.Plugin' : _("""See Introduction to plugins."""),
+    'lino.modlib.davlink.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.plausibility.choicelists.Checker' : _("""Base class for the choices of Checkers."""),
     'lino.modlib.weasyprint.choicelists.WeasyBuildMethod' : _("""The base class for both build methods."""),
     'lino.utils.mti.ChildCollector' : _("""A Collector that does not delete the MTI parents."""),
@@ -540,7 +540,7 @@ some <head> tags for stylesheets."""),
 polymorphism."""),
     'lino.modlib.users.models.ChangePassword' : _("""Dialog action to change the password of a user."""),
     'lino.modlib.system.choicelists.ObservedEvent' : _("""Base class for choices of "observed event"-style choicelists."""),
-    'lino.modlib.importfilters.Plugin' : _("""See Introduction to plugins."""),
+    'lino.modlib.importfilters.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.uploads.models.Upload.description_link' : _("""Almost the same as description, but if file is
 not empty, the text is clickable, and clicking on it opens the
 uploaded file in a new browser window."""),
