@@ -277,7 +277,7 @@ class Referrable(model.Model):
 
     .. attribute:: ref
 
-        The reference.
+        The reference. This must be either empty or unique.
 
     """
     class Meta(object):

@@ -17,6 +17,12 @@ Usage: cd to your project directory and say::
 This will create a python dump of your database to the directory
 `TARGET`.
 
+
+Note that you might theoretically use Django's :manage:`dumpdata`
+command for writing a Python fixture, but this possibility is currently
+deactivated because a huge database would create a huge Python module
+which might not fit into memory.
+
 Options:
 
 - `--noinput` : Do not prompt for user input of any kind.

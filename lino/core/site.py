@@ -1079,6 +1079,7 @@ class Site(object):
             # For the moment we just silently ignore it, but soon:
             # if False:
             raise ChangedAPI("The no_local argument is no longer needed.")
+
         if settings_globals is None:
             settings_globals = {}
         self.init_before_local(settings_globals, local_apps)
@@ -1529,30 +1530,48 @@ class Site(object):
             mn = p.app_name + '.help_texts'
             try:
                 m = import_module(mn)
+                # print("20160725 Loading help texts from", mn)
                 self._help_texts.update(m.help_texts)
             except ImportError:
                 pass
 
-    def install_help_text(self, fld, attrname):
+    def install_help_text(self, fld, cls=None, attrname=None):
         """Install a `help_text` from collected :xfile:`help_texts.py` for
 this field.
 
         """
-        if not hasattr(fld, 'help_text'):  # some fields don't have
+        if not hasattr(fld, 'help_text'):  # e.g. virtual fields don't
+                                           # have a help_text attribute
+            # print("20160725 {!r} has no help_text".format(fld))
             return
         if fld.help_text:
             # print("20160620 {} has already a help_text".format(fld))
             return
-        for m in fld.model.mro():
+        if cls is None:
+            cls = fld
+        # if isinstance(fld, type):
+        #     cls = fld
+        # else:
+        #     cls = fld.model
+        for m in cls.mro():
+            # useless = ['lino.core', 'lino.mixins']
+            # if m.__module__.startswith(useless):
+            #     continue
+            # if m in self.unhelpful_classes:
+            #     continue
             k = m.__module__ + '.' + m.__name__
             if attrname:
                 k += '.' + attrname
             txt = self._help_texts.get(k, None)
             if txt is None:
                 pass
-                # print("20160620 {} no help_text found using {}".format(fld, k))
+                # if k.endswith('My..user'):
+                #     print("20160725 {}.{} : no help_text using {!r}".format(
+                #         cls, attrname, k))
             else:
-                # print("20160620 {} help_text found using {}".format(fld, k))
+                # if k.endswith('My.user'):
+                #     print("20160725 {}.{}.help_text found using {}".format(
+                #         cls, attrname, k))
                 fld.help_text = txt
                 return
 

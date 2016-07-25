@@ -170,11 +170,18 @@ AutoUser = UserAuthored  # old name for backwards compatibility
 
 
 class My(dbtables.Table):
-    """Table mixin for tables on :class:`UserAuthored`.
+    """Mixin for tables on :class:`UserAuthored` which sets the requesting
+    user as default value for the :attr:`user` parameter.
+
+    .. attribute:: user
+
+        Show only objects whose author is the given user.
+
 
     Used by
     :mod:`lino_xl.lib.excerpts` and
     :mod:`lino_xl.lib.reception`.
+
     """
 
     @classmethod
@@ -192,7 +199,7 @@ class My(dbtables.Table):
 
 
 class ByUser(dbtables.Table):
-    """Base table which fills the master instance from the web request.
+    """Mixin for slave tables whose master is the requesting user.
 
     """
     master_key = 'user'
