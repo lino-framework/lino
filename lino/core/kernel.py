@@ -336,7 +336,7 @@ class Kernel(object):
                           # ManyToManyField should not disable delete
             # for f, m in model._meta.get_fields_with_model():
             for f in model._meta.get_fields():
-                site.install_help_text(f, f.name)
+                site.install_help_text(f, model, f.name)
                 m = f.model
 
                 # Refuse nullable CharFields, but don't trigger on
@@ -523,9 +523,16 @@ class Kernel(object):
 
             # trigger creation of params_layout.params_store
             for res in actors.actors_list:
+                site.install_help_text(res)
+                if res.parameters is not None:
+                    for name, fld in res.parameters.items():
+                        site.install_help_text(fld, res, name)
+
                 for ba in res.get_actions():
                     # site.install_help_text(
                     #     ba.action.__class__, ba.action.action_name)
+                    site.install_help_text(
+                        res, res, ba.action.action_name)
                 
                     if ba.action.params_layout is not None:
                         ba.action.params_layout.get_layout_handle(

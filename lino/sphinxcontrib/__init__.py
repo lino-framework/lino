@@ -9,6 +9,6 @@
 
    logo
    actordoc
-   help_text_builder
+   help_texts_extractor
 
 """

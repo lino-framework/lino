@@ -17,12 +17,18 @@ Usage: cd to your project directory and say::
 This will create a python dump of your database to the directory
 `TARGET`.
 
+
+Note that you might theoretically use Django's :manage:`dumpdata`
+command for writing a Python fixture, but this possibility is currently
+deactivated because a huge database would create a huge Python module
+which might not fit into memory.
+
 Options:
 
 - `--noinput` : Do not prompt for user input of any kind.
 
-- `--tolerate` : Tolerate database errors. This can help to make a
-  snapshot of a database which is not (fully) synced with the
+- `--tolerate` : Tolerate database errors. This can help making a
+  partial snapshot of a database which is not (fully) synced with the
   application code.
 
 
@@ -70,7 +76,7 @@ from clint.textui import progress
 from django.db import models
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-from django.db.utils import ProgrammingError
+from django.db.utils import DatabaseError
 from django.utils.timezone import make_naive, is_aware
 
 from lino.utils import puts
@@ -289,7 +295,8 @@ def main(args):
                         ','.join([self.value2string(obj, f) for f in fields])))
                 stream.write('\n')
                 stream.write('loader.flush_deferred_objects()\n')
-            except ProgrammingError as e:
+            except DatabaseError as e:
+                self.database_errors += 1
                 if not self.options['tolerate']:
                     raise
                 stream.write('\n')
@@ -326,8 +333,8 @@ if __name__ == '__main__':
         sorted = []
         hope = True
         """
-        20121120 if we convert the list to a set, we gain some performance 
-        for the ``in`` tests, but we obtain a random sorting order for all 
+        20121120 if we convert the list to a set, we gain some performance
+        for the ``in`` tests, but we obtain a random sorting order for all
         independent models, making the double dump test less evident.
         """
         #~ 20121120 unsorted = set(unsorted)
@@ -428,6 +435,7 @@ if __name__ == '__main__':
         self.output_dir = os.path.abspath(args[0])
         self.main_file = os.path.join(self.output_dir, 'restore.py')
         self.count_objects = 0
+        self.database_errors = 0
         if os.path.exists(self.output_dir):
             if options['overwrite']:
                 pass
@@ -445,3 +453,8 @@ if __name__ == '__main__':
         self.write_files()
         logger.info("Wrote %s objects to %s and siblings." % (
             self.count_objects, self.main_file))
+        if self.database_errors:
+            raise CommandError(
+                "There were %d database errors. "
+                "The dump in %s is not complete.",
+                self.database_errors, self.output_dir)

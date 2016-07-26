@@ -12,6 +12,16 @@ Django tables), then runs Django's `migrate` to create all tables, and
 `loaddata` commands to load the specified fixtures for all
 applications.
 
+This is functionally equivalent to running Django's :manage:`flush`
+command followed by :manage:`loaddata`, but the command-line options
+are a bit different and :manage:`initdb` it is more efficient in when
+using SQLite.
+
+See also :ref:`lino.dev.initdb`.
+
+History
+=======
+
 This reimplements a simplified version of Django's `reset` command,
 without the possibility of deleting *only some* data (the thing which
 caused so big problems that Django 1.3. decided to `deprecate this
