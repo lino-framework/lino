@@ -614,7 +614,7 @@ class Ticket(mixins.CreatedModified, TimeInvestment, RFC, ChangeObservable):
         return ar.obj2html(self)
         # return E.span(ar.obj2html(self), ' ', self.summary)
 
-    def get_notify_observers(self):
+    def get_change_observers(self):
         yield self.assigned_to
         yield self.reporter
         for star in rt.models.stars.Star.for_obj(self):
