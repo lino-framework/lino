@@ -1,4 +1,4 @@
-# Copyright 2014-2015 Luc Saffre
+# Copyright 2014-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """This module is a shortcut to miscellaneous functions and classes which
@@ -24,7 +24,9 @@ from django.conf import settings
 from lino.core.utils import models_by_base
 
 models = settings.SITE.modules
-modules = settings.SITE.modules  # deprecated
+modules = settings.SITE.modules  # deprecated alias
+
+actors = settings.SITE.actors
 
 login = settings.SITE.login
 startup = settings.SITE.startup
@@ -35,6 +37,7 @@ find_config_files = settings.SITE.confdirs.find_config_files
 find_template_config_files = settings.SITE.confdirs.find_template_config_files
 makedirs_if_missing = settings.SITE.makedirs_if_missing
 relpath = settings.SITE.relpath
+get_actors_module = settings.SITE.get_actors_module
 # get_settings_subdirs = settings.SITE.get_settings_subdirs
 # is_local_project_dir = settings.SITE.is_local_project_dir
 

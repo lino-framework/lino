@@ -224,6 +224,8 @@ class Kernel(object):
             logger.info("Done %s (PID %s)", process_name, os.getpid())
         atexit.register(goodbye)
 
+        site.load_actors()
+
         models_list = get_models(include_auto_created=True)
         # this also triggers django.db.models.loading.cache._populate()
 

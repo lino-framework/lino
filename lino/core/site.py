@@ -138,14 +138,20 @@ class Site(object):
 
         An :class:`AttrDict <atelier.utils.AttrDict>` which maps every
         installed `app_label` to the corresponding :xfile:`models.py`
-        module object.
+        module.
 
         This is also available as the shortcut :attr:`rt.models
         <lino.api.rt.models>`.
 
         See :doc:`/dev/plugins`
 
+    .. attribute:: actors
 
+        An :class:`AttrDict <atelier.utils.AttrDict>` which maps every
+        installed `app_label` to the corresponding actors module.
+
+        This is also available as the shortcut :attr:`rt.actors
+        <lino.api.rt.actors>`.
 
     .. attribute:: LANGUAGE_CHOICES
     
@@ -826,6 +832,20 @@ class Site(object):
 
     """
 
+    design_name = 'desktop'
+    """The name of the design to use. This should be one of 'desktop' or
+'mobile'.
+
+    For every plugin, Lino will try to import a "design module" and
+    store this module as an item :attr:`actors`.
+
+    E.g. the plugin name +
+
+      design_name = 'mobile'
+
+    """
+
+
     root_urlconf = 'lino.core.urls'
     """The value to be attribute to :setting:`ROOT_URLCONF` when this
     :class:`Site` instantiates.
@@ -1061,8 +1081,6 @@ class Site(object):
 
     """
 
-    _help_texts = dict()
-
     def __init__(self, settings_globals=None, local_apps=[], **kwargs):
         """Every Lino application calls this once in it's
         :file:`settings.py` file.
@@ -1079,6 +1097,9 @@ class Site(object):
             # For the moment we just silently ignore it, but soon:
             # if False:
             raise ChangedAPI("The no_local argument is no longer needed.")
+
+        self._help_texts = dict()
+        self.actors = AttrDict()
 
         if settings_globals is None:
             settings_globals = {}
@@ -1525,7 +1546,7 @@ class Site(object):
         # PLUGIN_CONFIGS = None
 
     def load_help_texts(self):
-        """Collect :xfile:`help_texts.py` files"""
+        """Collect :xfile:`help_texts.py` modules"""
         for p in self.installed_plugins:
             mn = p.app_name + '.help_texts'
             try:
@@ -1534,6 +1555,28 @@ class Site(object):
                 self._help_texts.update(m.help_texts)
             except ImportError:
                 pass
+
+    def load_actors(self):
+        """Collect :xfile:`actors.py` modules"""
+        for p in self.installed_plugins:
+            mn = p.app_name + '.' + self.design_name
+            try:
+                # print("20160725 Loading actors from", mn)
+                self.actors[p.app_label] = import_module(mn)
+            except ImportError:
+                pass
+
+    def get_actors_module(self, name):
+        """Return the actors module for the plugin named `name`. If that
+        plugin has no actors module, return the models module.
+        
+        This is for backwards compatibility (and might become
+        deprecated in a far future) because until :blogref:`20160727`
+        the actors of a plugin were always defined in the models
+        module.
+
+        """
+        return self.actors.get(name, None) or self.models.get(name, None)
 
     def install_help_text(self, fld, cls=None, attrname=None):
         """Install a `help_text` from collected :xfile:`help_texts.py` for
