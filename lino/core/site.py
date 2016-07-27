@@ -833,18 +833,16 @@ class Site(object):
     """
 
     design_name = 'desktop'
-    """The name of the design to use. This should be one of 'desktop' or
-'mobile'.
+    """The name of the design to use. The default value is
+    ``'desktop'``. The value should be one of ``'desktop'`` or
+    ``'mobile'``.
 
-    For every plugin, Lino will try to import a "design module" and
-    store this module as an item :attr:`actors`.
-
-    E.g. the plugin name +
-
-      design_name = 'mobile'
+    For every plugin, Lino will try to import a "design module".
+    E.g. if :attr:`design_name` is ``'desktop'``, then the design
+    module for a plugin ``'foo.bar'`` is ``'foo.bar.desktop'``.  If
+    such a module exists, Lino stores it as ``rt.actors.bar``.
 
     """
-
 
     root_urlconf = 'lino.core.urls'
     """The value to be attribute to :setting:`ROOT_URLCONF` when this

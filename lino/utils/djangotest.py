@@ -15,6 +15,7 @@ from django.conf import settings
 from django.test import TestCase as DjangoTestCase
 from django.test import Client
 from django.db import connection, reset_queries
+from django.utils import translation
 
 from lino.core.signals import testcase_setup, database_ready
 
@@ -53,6 +54,11 @@ class DjangoManageTestCase(DjangoTestCase, CommonTestCase):
         if self.override_djangosite_settings:
             settings.SITE.override_defaults(
                 **self.override_djangosite_settings)
+        # Make sure that every test runs with the same language.
+        # Without this it is possible that some other language may
+        # have been activated by previous tests:
+        if settings.LANGUAGE_CODE:
+            translation.activate(settings.LANGUAGE_CODE)
         testcase_setup.send(self)
         return super(DjangoManageTestCase, self).__call__(*args, **kw)
 
