@@ -1291,10 +1291,12 @@ class Site(object):
             d['loggers'][name] = loggercfg
 
         # set schedule logger level to WARNING
-        d['loggers']['schedule'] = {
-            'handers': loggercfg['handlers'],
-            'level': 'WARNING',
-        }
+        # TODO: find a more elegant way to do this.
+        if 'schedule' in d['loggers']:
+            d['loggers']['schedule'] = {
+                'handers': loggercfg['handlers'],
+                'level': 'WARNING',
+            }
 
         # self.update_settings(LOGGING=d)
         # from pprint import pprint

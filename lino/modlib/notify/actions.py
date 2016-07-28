@@ -81,13 +81,15 @@ class NotifyingAction(actions.Action):
         ar.set_response(refresh=True)
         ar.set_response(success=True)
         if not ar.action_param_values.notify_silent:
-            self.emit_notification(ar)
+            obj = ar.selected_rows[0]
+            owner = self.get_notify_owner(obj)
+            self.emit_notification(ar, owner)
 
-    def emit_notification(self, ar, **kw):
+    def emit_notification(self, ar, owner, **kw):
         # body = _("""%(user)s executed the following action:\n%(body)s
         # """) % dict(user=ar.get_user(),body=body)
-        obj = ar.selected_rows[0]
-        owner = self.get_notify_owner(obj)
+        # obj = ar.selected_rows[0]
+        # owner = self.get_notify_owner(obj)
         recipients = self.get_notify_recipients(ar, owner)
         rt.models.notify.Notification.emit_notification(
             ar, owner,
