@@ -23,6 +23,7 @@ from __future__ import print_function
 
 import time
 import schedule
+import logging
 
 from django.core.management.base import BaseCommand
 
@@ -39,6 +40,11 @@ class Command(BaseCommand):
             help="Just list the jobs, don't run them.")
 
     def handle(self, *args, **options):
+        # For the schedule logger we set level to WARNING because
+        # otherwise it would log a message every 10 seconds when
+        # running an "often" job.
+        logging.getLogger('schedule').setLevel(logging.WARNING)
+
         n = len(schedule.jobs)
         if n == 0:
             dd.logger.info("This site has no scheduled jobs.")

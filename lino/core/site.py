@@ -1223,9 +1223,10 @@ class Site(object):
 
         It does the following modifications:
 
-        - configure the console handler to write to stdout instead of
-          Django's default
-          stderr. http://codeinthehole.com/writing/console-logging-to-stdout-in-django/
+        - (does not) configure the console handler to write to stdout
+          instead of Django's default stderr (as explained `here
+          <http://codeinthehole.com/writing/console-logging-to-stdout-in-django/>`__)
+          because that breaks testing.
 
         - Define a *default logger configuration* which is initially
           the same as the one used by Django::
