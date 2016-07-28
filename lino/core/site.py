@@ -1290,6 +1290,12 @@ class Site(object):
             # if name not in d['loggers']:
             d['loggers'][name] = loggercfg
 
+        # set schedule logger level to WARNING
+        d['loggers']['schedule'] = {
+            'handers': loggercfg['handlers'],
+            'level': 'WARNING',
+        }
+
         # self.update_settings(LOGGING=d)
         # from pprint import pprint
         # pprint(d)

@@ -28,12 +28,12 @@ import schedule
 # otherwise it would log a message every 10 seconds when
 # running an "often" job. We must do this after Django's
 # logger configuration.
-import logging
+# import logging
 # logging.getLogger('schedule').setLevel(logging.WARNING)
 
 from django.core.management.base import BaseCommand
-import lino
-from lino.api import dd, rt
+# import lino
+from lino.api import dd
 
 
 class Command(BaseCommand):
@@ -46,10 +46,10 @@ class Command(BaseCommand):
             help="Just list the jobs, don't run them.")
 
     def handle(self, *args, **options):
-        lino.startup()
-        lino.site_startup()
-        # rt.startup()
-        schedule.logger.setLevel(logging.WARNING)
+        # lino.startup()
+        # lino.site_startup()
+        # # rt.startup()
+        # schedule.logger.setLevel(logging.WARNING)
         n = len(schedule.jobs)
         if n == 0:
             dd.logger.info("This site has no scheduled jobs.")
