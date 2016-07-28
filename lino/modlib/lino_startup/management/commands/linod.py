@@ -32,7 +32,7 @@ import logging
 # logging.getLogger('schedule').setLevel(logging.WARNING)
 
 from django.core.management.base import BaseCommand
-
+import lino
 from lino.api import dd, rt
 
 
@@ -46,7 +46,9 @@ class Command(BaseCommand):
             help="Just list the jobs, don't run them.")
 
     def handle(self, *args, **options):
-        rt.startup()
+        lino.startup()
+        lino.site_startup()
+        # rt.startup()
         schedule.logger.setLevel(logging.WARNING)
         n = len(schedule.jobs)
         if n == 0:
