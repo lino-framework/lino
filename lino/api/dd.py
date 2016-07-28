@@ -322,7 +322,11 @@ Required = required = login_required
 
 # logger.info("20140227 dd.py b %s", site)
 
+# For the schedule logger we set level to WARNING because otherwise it
+# would log a message every 10 seconds when running an "often" job. We
+# must do this before importing schedule for the first time (?)
 
+logging.getLogger('schedule').setLevel(logging.WARNING)
 try:
     import schedule
 except ImportError as e:
