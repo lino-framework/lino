@@ -28,6 +28,7 @@ class ChangeObservable(dd.Model):
             E.p("TODO: include a summary of the modifications.")))
 
     def get_notify_owner(self, ar):
+        """E.g. comments.Comment overrides this. """
         return self
 
     def get_change_observers(self):
