@@ -322,11 +322,10 @@ Required = required = login_required
 
 # logger.info("20140227 dd.py b %s", site)
 
-
 try:
     import schedule
 except ImportError as e:
-    logger.warning("schedule not installed (%s)", e)
+    # logger.info("schedule not installed (%s)", e)
     schedule = False
 
 

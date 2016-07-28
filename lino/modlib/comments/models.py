@@ -60,9 +60,9 @@ class Comment(
     def __str__(self):
         return u'%s #%s' % (self._meta.verbose_name, self.pk)
 
-    def get_notify_observers(self):
+    def get_change_observers(self):
         if isinstance(self.owner, ChangeObservable):
-            for u in self.owner.get_notify_observers():
+            for u in self.owner.get_change_observers():
                 yield u
 
     def get_notify_subject(self, ar):

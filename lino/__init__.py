@@ -112,7 +112,7 @@ def startup(settings_module=None):
 
 def site_startup():
     """Called from `lino.models` before Django 1.7"""
-    #print "site_startup"
+    # print "site_startup"
     from django.conf import settings
     if False:
         settings.SITE.startup()
@@ -121,8 +121,8 @@ def site_startup():
             settings.SITE.startup()
         except ImportError as e:
             import traceback
-            #~ traceback.print_exc(e)
-            #~ sys.exit(-1)
+            # traceback.print_exc(e)
+            # sys.exit(-1)
             raise Exception("ImportError during startup:\n" +
                             traceback.format_exc(e))
 

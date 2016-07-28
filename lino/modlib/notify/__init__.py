@@ -7,6 +7,7 @@
    :toctree:
 
     models
+    actions
     mixins
     utils
 

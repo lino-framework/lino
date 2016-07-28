@@ -105,6 +105,22 @@ class Notification(UserAuthored, Controllable, Created):
         #     self.user, self.owner)
 
     @classmethod
+    def emit_notification(cls, ar, owner, subject, body, recipients):
+        """Create one notification for every recipient."""
+        # dd.logger.info("20160717 %s emit_notifications()", self)
+        others = set()
+        for user in recipients:
+            if user and user != ar.user:
+                others.add(user)
+
+        if len(others):
+            dd.logger.info(
+                "Notify %s users that %s", len(others), subject)
+            for user in others:
+                cls.create_notification(
+                    ar, user, owner, subject=subject, body=body)
+
+    @classmethod
     def create_notification(cls, ar, user, owner=None, **kwargs):
         """Create a notification unless that user has already been notified
         about that object.

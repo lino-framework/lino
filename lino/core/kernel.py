@@ -2,13 +2,6 @@
 # Copyright 2009-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-from __future__ import unicode_literals
-# import six
-# str = six.text_type
-# from builtins import str
-from past.builtins import basestring
-from builtins import object
-
 """This defines the :class:`Kernel` class.
 
 The "kernel" of a Lino site is (like `SITE` itself) a "de facto
@@ -16,16 +9,23 @@ singleton", available to application code as ``SITE.kernel`` (and its
 alias for backwards compatibility: ``SITE.ui``).
 
 The kernel is instantiated at the end of the startup process, when the
-:settings`SITE` has been instantiated and models have been loaded.  It
+:setting:`SITE` has been instantiated and models have been loaded.  It
 encapsulates a bunch of functionality which becomes available only
 then.
 
-TODO: Rename "kernel" to something else.  Because "kernel" suggests
+TODO: Rename "kernel" to "environment".  Because "kernel" suggests
 something which is loaded *in first place*. That's not true for Lino's
-"kernel".
+"kernel".  it should be renamed to :mod:`lino.core.env` (for
+"environment") because it represents the runtime environment of a Lino
+application.
 
 """
-
+from __future__ import unicode_literals
+# import six
+# str = six.text_type
+# from builtins import str
+from past.builtins import basestring
+from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
@@ -194,7 +194,7 @@ class Kernel(object):
         self.GFK_LIST = []
         # self.widgets = WidgetFactory()
 
-        # self.kernel_startup(site)
+        self.kernel_startup(site)
         # logger.info("20140227 Kernel.__init__() done")
 
     def kernel_startup(self, site):
@@ -309,6 +309,8 @@ class Kernel(object):
             for f in model._meta.virtual_fields:
                 if isinstance(f, GenericForeignKey):
                     self.GFK_LIST.append(f)
+
+        site.load_actors()
 
         # vip_classes = (layouts.BaseLayout, fields.Dummy)
         # for a in models.get_apps():

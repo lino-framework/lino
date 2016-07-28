@@ -1241,17 +1241,17 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
         #~ logger.info("20120307 lino.core.coretools.get_data_elem %r,%r",self,name)
         s = name.split('.')
+        # site = settings.SITE
         if len(s) == 1:
-            #~ app_label = model._meta.app_label
-            m = settings.SITE.modules[self.app_label]
+            m = settings.SITE.actors.get(self.app_label)
             if m is None:
-                raise Exception("No module %s" % self.app_label)
-                return None
+                raise Exception("No plugin %s" % self.app_label)
+                # return None
             rpt = getattr(m, name, None)
             # if rpt is None and name != name.lower():
             #     raise Exception("20140920 No %s in %s" % (name, m))
         elif len(s) == 2:
-            m = settings.SITE.modules.get(s[0], None)
+            m = settings.SITE.actors.get(s[0])
             if m is None:
                 # return fields.DummyField()
                 # 20130422 Yes it was a nice idea to silently
@@ -1377,9 +1377,8 @@ def resolve_action(spec, action=None):
     givenspec = spec
 
     if isinstance(spec, basestring):
-        spec = settings.SITE.modules.resolve(spec)
-        #~ if a is None:
-            #~ raise Exception("Could not resolve action specifier %r" % spec)
+        site = settings.SITE
+        spec = site.actors.resolve(spec) or site.models.resolve(spec)
 
     if isinstance(spec, BoundAction):
         return spec

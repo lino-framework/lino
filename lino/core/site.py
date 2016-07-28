@@ -138,14 +138,25 @@ class Site(object):
 
         An :class:`AttrDict <atelier.utils.AttrDict>` which maps every
         installed `app_label` to the corresponding :xfile:`models.py`
-        module object.
+        module.
 
         This is also available as the shortcut :attr:`rt.models
         <lino.api.rt.models>`.
 
         See :doc:`/dev/plugins`
 
+    .. attribute:: actors
 
+        An :class:`AttrDict <atelier.utils.AttrDict>` which maps every
+        installed `app_label` to the corresponding *actors module*.
+
+        If a plugin has no actors module, then this points to the
+        models module (for backwards compatibility because until
+        :blogref:`20160727` the actors of a plugin were always defined
+        in the models module).
+
+        This is also available as the shortcut :attr:`rt.actors
+        <lino.api.rt.actors>`.
 
     .. attribute:: LANGUAGE_CHOICES
     
@@ -328,7 +339,7 @@ class Site(object):
 
     plugins = None
 
-    modules = models = AttrDict()
+    modules = models = None
 
     top_level_menus = [
         ("master", _("Master")),
@@ -826,6 +837,18 @@ class Site(object):
 
     """
 
+    design_name = 'desktop'
+    """The name of the design to use. The default value is
+    ``'desktop'``. The value should be one of ``'desktop'`` or
+    ``'mobile'``.
+
+    For every plugin, Lino will try to import a "design module".
+    E.g. if :attr:`design_name` is ``'desktop'``, then the design
+    module for a plugin ``'foo.bar'`` is ``'foo.bar.desktop'``.  If
+    such a module exists, Lino stores it as ``rt.actors.bar``.
+
+    """
+
     root_urlconf = 'lino.core.urls'
     """The value to be attribute to :setting:`ROOT_URLCONF` when this
     :class:`Site` instantiates.
@@ -1061,8 +1084,6 @@ class Site(object):
 
     """
 
-    _help_texts = dict()
-
     def __init__(self, settings_globals=None, local_apps=[], **kwargs):
         """Every Lino application calls this once in it's
         :file:`settings.py` file.
@@ -1079,6 +1100,11 @@ class Site(object):
             # For the moment we just silently ignore it, but soon:
             # if False:
             raise ChangedAPI("The no_local argument is no longer needed.")
+
+        self._help_texts = dict()
+        self.plugins = AttrDict()
+        self.modules = self.models = AttrDict()
+        self.actors = AttrDict()
 
         if settings_globals is None:
             settings_globals = {}
@@ -1197,9 +1223,10 @@ class Site(object):
 
         It does the following modifications:
 
-        - configure the console handler to write to stdout instead of
-          Django's default
-          stderr. http://codeinthehole.com/writing/console-logging-to-stdout-in-django/
+        - (does not) configure the console handler to write to stdout
+          instead of Django's default stderr (as explained `here
+          <http://codeinthehole.com/writing/console-logging-to-stdout-in-django/>`__)
+          because that breaks testing.
 
         - Define a *default logger configuration* which is initially
           the same as the one used by Django::
@@ -1370,7 +1397,6 @@ class Site(object):
         # actual_apps = []
         plugins = []
         disabled_plugins = set()
-        self.plugins = AttrDict()
 
         def install_plugin(app_name, needed_by=None):
             # Django does not accept newstr, and we don't want to see
@@ -1525,13 +1551,23 @@ class Site(object):
         # PLUGIN_CONFIGS = None
 
     def load_help_texts(self):
-        """Collect :xfile:`help_texts.py` files"""
+        """Collect :xfile:`help_texts.py` modules"""
         for p in self.installed_plugins:
             mn = p.app_name + '.help_texts'
             try:
                 m = import_module(mn)
                 # print("20160725 Loading help texts from", mn)
                 self._help_texts.update(m.help_texts)
+            except ImportError:
+                pass
+
+    def load_actors(self):
+        """Collect :xfile:`actors.py` modules"""
+        for p in self.installed_plugins:
+            mn = p.app_name + '.' + self.design_name
+            try:
+                # print("20160725 Loading actors from", mn)
+                self.actors[p.app_label] = import_module(mn)
             except ImportError:
                 pass
 
@@ -1915,23 +1951,6 @@ this field.
             from lino.core.signals import pre_startup, post_startup
 
             pre_startup.send(self)
-            # lino_startup = False
-            # for index , plugin in enumerate(self.installed_plugins):
-            #     if 'lino_startup' in plugin.app_name:
-            #         lino_startup = plugin
-            #         del plugin
-
-            # if lino_startup:
-            #     badguy = list(self.installed_plugins)
-            #     badguy.append(lino_startup)
-            #     # badguy = tuple(badguy)
-            #     self.installed_plugins = tuple(badguy)
-
-            # from django.conf import settings
-            # import django
-            #
-            # if not settings.INSTALLED_APPS:
-            #     django.setup()
 
             for p in self.installed_plugins:
                 # m = loading.load_app(p.app_name, False)
@@ -1957,6 +1976,10 @@ this field.
 
             for p in self.installed_plugins:
                 p.on_site_startup(self)
+
+            for k, v in self.models.items():
+                self.actors.setdefault(k, v)
+
             self.do_site_startup()
             # self.logger.info("20140227 Site.do_site_startup() done")
             post_startup.send(self)
@@ -2249,6 +2272,7 @@ this field.
         plugin.
 
         """
+
         # self.logger.info("20160526 %s do_site_startup() a", self.__class__)
 
         self.user_interfaces = tuple([
@@ -2258,7 +2282,7 @@ this field.
 
         from lino.core.kernel import Kernel
         self.kernel = Kernel(self)
-        self.kernel.kernel_startup(self)
+        # self.kernel.kernel_startup(self)
         # self.ui = self.kernel  # internal backwards compat
 
         # self.logger.info("20160526 %s do_site_startup() b", self.__class__)
