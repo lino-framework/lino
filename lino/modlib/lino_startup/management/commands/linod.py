@@ -22,7 +22,6 @@ manually::
 from __future__ import print_function
 
 import time
-import schedule
 import logging
 
 from django.core.management.base import BaseCommand
@@ -44,6 +43,7 @@ class Command(BaseCommand):
         # otherwise it would log a message every 10 seconds when
         # running an "often" job.
         logging.getLogger('schedule').setLevel(logging.WARNING)
+        import schedule
 
         n = len(schedule.jobs)
         if n == 0:
