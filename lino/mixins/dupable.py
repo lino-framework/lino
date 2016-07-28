@@ -97,8 +97,10 @@ class PhoneticWordBase(dd.Model):
 
     @classmethod
     def on_analyze(cls, site):
-        import fuzzy
-        cls._fuzzy_DMetaphone = fuzzy.DMetaphone()
+        import metaphone as fuzzy
+        cls._fuzzy_DMetaphone = fuzzy.doublemetaphone
+        # import fuzzy
+        # cls._fuzzy_DMetaphone = fuzzy.DMetaphone()
 
     @classmethod
     def reduce_word(cls, s):
