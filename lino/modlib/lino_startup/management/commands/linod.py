@@ -9,11 +9,12 @@
 Starts a long-running process that runs scheduled background tasks.
 
 On a development machine you simply run this in a separate
-terminal. On a production server we recommend to run this via supervisor.
+terminal. On a production server we recommend to run this as a daemon
+via Supervisor as described in :ref:`admin.linod`.
 
-This command requires the `schedule
-<https://github.com/dbader/schedule>`__ package which you must install
-manually::
+Independently of whether it is being run as a daemon or not, this
+command requires the `schedule <https://github.com/dbader/schedule>`__
+package which you must install manually::
 
   $ pip install schedule
 
