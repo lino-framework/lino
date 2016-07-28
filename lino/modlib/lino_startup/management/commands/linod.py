@@ -38,6 +38,15 @@ class Command(BaseCommand):
             help="Just list the jobs, don't run them.")
 
     def handle(self, *args, **options):
+
+        # For the schedule logger we set level to WARNING because
+        # otherwise it would log a message every 10 seconds when
+        # running an "often" job. We must do this after Django's
+        # logger configuration.
+
+        import logging
+        logging.getLogger('schedule').setLevel(logging.WARNING)
+
         n = len(dd.schedule.jobs)
         if n == 0:
             dd.logger.info("This site has no scheduled jobs.")

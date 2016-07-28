@@ -2273,14 +2273,6 @@ this field.
 
         """
 
-        # For the schedule logger we set level to WARNING because
-        # otherwise it would log a message every 10 seconds when
-        # running an "often" job. We must do this after Django's
-        # logger configuration.
-
-        import logging
-        logging.getLogger('schedule').setLevel(logging.WARNING)
-
         # self.logger.info("20160526 %s do_site_startup() a", self.__class__)
 
         self.user_interfaces = tuple([
