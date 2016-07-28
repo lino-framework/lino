@@ -1,4 +1,4 @@
-# Copyright 2011-2015 Luc Saffre
+# Copyright 2011-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 """Database models for `lino.modlib.users`.
 
@@ -157,11 +157,11 @@ class User(CreatedModified, TimezoneHolder):
         "Returns the first_name plus the last_name, with a space in between."
         if not self.first_name and not self.last_name:
             return self.username
-        return u'%s %s' % (self.first_name.strip(), self.last_name.strip())
+        return u'{} {}'.format(self.first_name, self.last_name).strip()
 
     @dd.displayfield(_("Name"), max_length=15)
     def name_column(self, request):
-        #~ return join_words(self.last_name.upper(),self.first_name)
+        # return join_words(self.last_name.upper(),self.first_name)
         return str(self)
 
     if dd.is_installed('contacts'):

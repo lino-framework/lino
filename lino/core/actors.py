@@ -1243,7 +1243,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         s = name.split('.')
         # site = settings.SITE
         if len(s) == 1:
-            m = settings.SITE.get_actors_module(self.app_label)
+            m = settings.SITE.actors.get(self.app_label)
             if m is None:
                 raise Exception("No plugin %s" % self.app_label)
                 # return None
@@ -1251,7 +1251,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
             # if rpt is None and name != name.lower():
             #     raise Exception("20140920 No %s in %s" % (name, m))
         elif len(s) == 2:
-            m = settings.SITE.get_actors_module(s[0])
+            m = settings.SITE.actors.get(s[0])
             if m is None:
                 # return fields.DummyField()
                 # 20130422 Yes it was a nice idea to silently

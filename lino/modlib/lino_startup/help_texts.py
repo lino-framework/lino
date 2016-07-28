@@ -36,8 +36,8 @@ were yeld by the checker."""),
     'lino.modlib.tinymce.Plugin.window_buttons1' : _("""The first row of toolbar buttons when editing in own window."""),
     'lino.modlib.changes.models.Change.master' : _("""The database object which acts as "master"."""),
     'lino.modlib.uploads.models.MyUploads.model' : _("""alias of Upload"""),
-    'lino.modlib.notify.mixins.ChangeObservable' : _("""An Observable which automatically emits notifications when
-a database object is modified."""),
+    'lino.modlib.notify.mixins.ChangeObservable' : _("""Mixin for models which can "emit notifications" and define a list
+"observers" to be notified when an instance is modified."""),
     'lino.utils.jsgen.js_code' : _("""A string that py2js will represent as is, not between quotes."""),
     'lino.modlib.notify.Plugin' : _("""See lino.core.plugin.Plugin."""),
     'lino.modlib.system.models.SiteConfig.simulate_today' : _("""A constant user-defined date to be substituted as current
@@ -168,6 +168,8 @@ should not get closed."""),
     'lino.modlib.gfks.models.BrokenGFKs' : _("""Shows all database objects (model instances) who have a broken
 GeneriForeignKey field."""),
     'lino.api.doctest.HttpQuery.json_fields' : _("""Alias for field number 2"""),
+    'lino.modlib.notify.actions.NotifyingAction' : _("""An action with a generic dialog window of three fields "Summary",
+"Description" and a checkbox "Don't send email notification"."""),
     'lino.modlib.extjs.elems.Panel' : _("""A vertical Panel is vflex if and only if at least one of its
 children is vflex.  A horizontal Panel is vflex if and only if
 all its children are vflex (if vflex and non-vflex elements are
@@ -336,8 +338,6 @@ automatically set to the requesting user."""),
     'lino.modlib.office.roles.SiteAdmin' : _("""A user with all permissions."""),
     'lino.modlib.uploads.models.Upload.file' : _("""Pointer to the uploaded file. See
 lino.mixins.uploadable.Uploadable.file"""),
-    'lino.modlib.notify.mixins.Observable' : _("""Mixin for models which can "emit notifications" and define a list
-"observers" to be notified when a notification is emitted."""),
     'lino.api.doctest.HttpQuery.kwargs' : _("""Alias for field number 4"""),
     'lino.mixins.human.Human.full_name' : _("""Returns a one-line string composed of salutation, title,
 first_name and last_name."""),

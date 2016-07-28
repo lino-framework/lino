@@ -46,7 +46,7 @@ def requested_actor(app_label, actor):
     either directly or (if specified name is a model) that
     model's default table.
     """
-    x = settings.SITE.get_actors_module(app_label)
+    x = settings.SITE.actors.get(app_label)
     # x = getattr(settings.SITE.modules, app_label, None)
     if x is None:
         raise http.Http404("There's no app_label %r here" % app_label)

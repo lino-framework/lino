@@ -37,7 +37,6 @@ find_config_files = settings.SITE.confdirs.find_config_files
 find_template_config_files = settings.SITE.confdirs.find_template_config_files
 makedirs_if_missing = settings.SITE.makedirs_if_missing
 relpath = settings.SITE.relpath
-get_actors_module = settings.SITE.get_actors_module
 # get_settings_subdirs = settings.SITE.get_settings_subdirs
 # is_local_project_dir = settings.SITE.is_local_project_dir
 

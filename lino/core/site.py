@@ -148,7 +148,12 @@ class Site(object):
     .. attribute:: actors
 
         An :class:`AttrDict <atelier.utils.AttrDict>` which maps every
-        installed `app_label` to the corresponding actors module.
+        installed `app_label` to the corresponding *actors module*.
+
+        If a plugin has no actors module, then this points to the
+        models module (for backwards compatibility because until
+        :blogref:`20160727` the actors of a plugin were always defined
+        in the models module).
 
         This is also available as the shortcut :attr:`rt.actors
         <lino.api.rt.actors>`.
@@ -334,7 +339,7 @@ class Site(object):
 
     plugins = None
 
-    modules = models = AttrDict()
+    modules = models = None
 
     top_level_menus = [
         ("master", _("Master")),
@@ -1097,6 +1102,8 @@ class Site(object):
             raise ChangedAPI("The no_local argument is no longer needed.")
 
         self._help_texts = dict()
+        self.plugins = AttrDict()
+        self.modules = self.models = AttrDict()
         self.actors = AttrDict()
 
         if settings_globals is None:
@@ -1389,7 +1396,6 @@ class Site(object):
         # actual_apps = []
         plugins = []
         disabled_plugins = set()
-        self.plugins = AttrDict()
 
         def install_plugin(app_name, needed_by=None):
             # Django does not accept newstr, and we don't want to see
@@ -1563,18 +1569,6 @@ class Site(object):
                 self.actors[p.app_label] = import_module(mn)
             except ImportError:
                 pass
-
-    def get_actors_module(self, name):
-        """Return the actors module for the plugin named `name`. If that
-        plugin has no actors module, return the models module.
-        
-        This is for backwards compatibility (and might become
-        deprecated in a far future) because until :blogref:`20160727`
-        the actors of a plugin were always defined in the models
-        module.
-
-        """
-        return self.actors.get(name, None) or self.models.get(name, None)
 
     def install_help_text(self, fld, cls=None, attrname=None):
         """Install a `help_text` from collected :xfile:`help_texts.py` for
@@ -1956,23 +1950,6 @@ this field.
             from lino.core.signals import pre_startup, post_startup
 
             pre_startup.send(self)
-            # lino_startup = False
-            # for index , plugin in enumerate(self.installed_plugins):
-            #     if 'lino_startup' in plugin.app_name:
-            #         lino_startup = plugin
-            #         del plugin
-
-            # if lino_startup:
-            #     badguy = list(self.installed_plugins)
-            #     badguy.append(lino_startup)
-            #     # badguy = tuple(badguy)
-            #     self.installed_plugins = tuple(badguy)
-
-            # from django.conf import settings
-            # import django
-            #
-            # if not settings.INSTALLED_APPS:
-            #     django.setup()
 
             for p in self.installed_plugins:
                 # m = loading.load_app(p.app_name, False)
@@ -1998,6 +1975,11 @@ this field.
 
             for p in self.installed_plugins:
                 p.on_site_startup(self)
+
+
+            for k, v in self.models.items():
+                self.actors.setdefault(k, v)
+
             self.do_site_startup()
             # self.logger.info("20140227 Site.do_site_startup() done")
             post_startup.send(self)
@@ -2299,7 +2281,7 @@ this field.
 
         from lino.core.kernel import Kernel
         self.kernel = Kernel(self)
-        self.kernel.kernel_startup(self)
+        # self.kernel.kernel_startup(self)
         # self.ui = self.kernel  # internal backwards compat
 
         # self.logger.info("20160526 %s do_site_startup() b", self.__class__)
