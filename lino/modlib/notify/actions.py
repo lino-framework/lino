@@ -44,7 +44,8 @@ class NotifyingAction(actions.Action):
     notify_silent
     """, window_size=(50, 15))
 
-    def get_notify_owner(self, obj):
+    def get_notify_owner(self, ar, obj):
+        """"""
         return obj
 
     def get_notify_subject(self, ar, obj):
@@ -82,7 +83,7 @@ class NotifyingAction(actions.Action):
         ar.set_response(success=True)
         if not ar.action_param_values.notify_silent:
             obj = ar.selected_rows[0]
-            owner = self.get_notify_owner(obj)
+            owner = self.get_notify_owner(ar, obj)
             self.emit_notification(ar, owner)
 
     def emit_notification(self, ar, owner, **kw):
