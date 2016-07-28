@@ -22,6 +22,16 @@ manually::
 from __future__ import print_function
 
 import time
+import schedule
+
+# For the schedule logger we set level to WARNING because
+# otherwise it would log a message every 10 seconds when
+# running an "often" job. We must do this after Django's
+# logger configuration.
+import logging
+schedule.logger.setLevel(logging.WARNING)
+# logging.getLogger('schedule').setLevel(logging.WARNING)
+
 
 from django.core.management.base import BaseCommand
 
@@ -39,24 +49,16 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        # For the schedule logger we set level to WARNING because
-        # otherwise it would log a message every 10 seconds when
-        # running an "often" job. We must do this after Django's
-        # logger configuration.
-
-        import logging
-        logging.getLogger('schedule').setLevel(logging.WARNING)
-
-        n = len(dd.schedule.jobs)
+        n = len(schedule.jobs)
         if n == 0:
             dd.logger.info("This site has no scheduled jobs.")
             return
         dd.logger.info("%d scheduled jobs:", n)
-        for i, job in enumerate(dd.schedule.jobs, 1):
+        for i, job in enumerate(schedule.jobs, 1):
             dd.logger.info("[%d] %s", i, job)
         if options['list_jobs']:
             return
         while True:
-            dd.schedule.run_pending()
+            schedule.run_pending()
             time.sleep(1)
 
