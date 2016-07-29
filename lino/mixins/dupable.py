@@ -97,17 +97,19 @@ class PhoneticWordBase(dd.Model):
 
     @classmethod
     def on_analyze(cls, site):
-        import metaphone as fuzzy
-        cls._fuzzy_DMetaphone = fuzzy.doublemetaphone
+        pass
+        # import metaphone as fuzzy
+        # cls._fuzzy_DMetaphone = fuzzy.doublemetaphone()
         # import fuzzy
         # cls._fuzzy_DMetaphone = fuzzy.DMetaphone()
 
     @classmethod
     def reduce_word(cls, s):
         from metaphone.word import Word
+        import metaphone as fuzzy
         # fuzzy.DMetaphone does not work with unicode strings, see
         # https://bitbucket.org/yougov/fuzzy/issue/2/fuzzy-support-for-unicode-strings-with
-        dm = cls._fuzzy_DMetaphone(Word(s.encode('utf8')))
+        dm = fuzzy.doublemetaphone(s.encode('utf8'))
         dms = dm[0] or dm[1]
         if dms is None:
             return ''
