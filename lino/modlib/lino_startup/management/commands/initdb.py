@@ -17,6 +17,11 @@ command followed by :manage:`loaddata`, but the command-line options
 are a bit different and :manage:`initdb` it is more efficient in when
 using SQLite.
 
+This also adds a `warning filter
+<https://docs.python.org/2/library/warnings.html#warning-filter>`__ to
+ignore Django's warnings about empty fixtures. (See
+:djangoticket:`18213`).
+
 See also :ref:`lino.dev.initdb`.
 
 History
@@ -39,8 +44,7 @@ Note that Lino does not use Django's migration framework, so
 `--run-syncdb
 <https://docs.djangoproject.com/en/1.9/ref/django-admin/#django-admin-option---run-syncdb>`_
 option which "allows creating tables for apps without
-migrations".
-    
+migrations".    
 The Django docs add that "While this isn’t recommended, the
 migrations framework is sometimes too slow on large projects with
 hundreds of models."  Yes, we go the way which is not recommended.
@@ -50,6 +54,12 @@ hundreds of models."  Yes, we go the way which is not recommended.
 from __future__ import unicode_literals
 
 import os
+
+import warnings
+warnings.filterwarnings(
+    "ignore", "No fixture named '.*' found.",
+    UserWarning, "django.core.management.commands.loaddata")
+
 
 from django.conf import settings
 from django.core.management import call_command
@@ -205,10 +215,8 @@ Are you sure (y/n) ?""" % dbname):
 
         if AFTER18:
             call_command('migrate', '--run-syncdb', **options)
-        elif AFTER17:
-            call_command('migrate', **options)
         else:
-            call_command('syncdb', load_initial_data=False, **options)
+            call_command('migrate', **options)
 
         if len(args):
             call_command('loaddata', *args, **options)
