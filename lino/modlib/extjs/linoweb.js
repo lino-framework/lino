@@ -3259,12 +3259,12 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
     //~ win.on('show',this.refresh,this);
   }
 
-  ,handle_key_event : function(e) { 
+  ,handle_key_event : function(e) {
     // console.log("20140514 handle_key_event", e, this.keyhandlers);
     var h = this.keyhandlers[e.keyCode];
     if (h) {
-      h(this);
-      e.stopEvent();
+        h(this);
+        e.stopEvent();
     }
   }
   
