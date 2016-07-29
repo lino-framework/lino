@@ -31,7 +31,7 @@ SETUP_INFO = dict(
         'django-localflavor',  # lino.modlib.sepa
         # 'django-iban',  # lino.modlib.sepa
         'openpyxl',
-        'appy',
+        'appy==0.9.3',
         'weasyprint',
         'django-wkhtmltopdf'],
     tests_require=[],
