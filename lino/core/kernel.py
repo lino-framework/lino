@@ -211,18 +211,18 @@ class Kernel(object):
           methods into Models that don't inherit from it.
 
         """
-        if len(sys.argv) == 0:
-            process_name = 'WSGI'
-        else:
-            process_name = ' '.join(sys.argv)
+        if site.history_aware_logging:
+            if len(sys.argv) == 0:
+                process_name = 'WSGI'
+            else:
+                process_name = ' '.join(sys.argv)
 
-        logger.info("Started %s (using %s) --> PID %s",
-                    process_name, settings.SETTINGS_MODULE, os.getpid())
-        # puts(site.welcome_text())
+            logger.info("Started %s (using %s) --> PID %s",
+                        process_name, settings.SETTINGS_MODULE, os.getpid())
 
-        def goodbye():
-            logger.info("Done %s (PID %s)", process_name, os.getpid())
-        atexit.register(goodbye)
+            def goodbye():
+                logger.info("Done %s (PID %s)", process_name, os.getpid())
+            atexit.register(goodbye)
 
         models_list = get_models(include_auto_created=True)
         # this also triggers django.db.models.loading.cache._populate()

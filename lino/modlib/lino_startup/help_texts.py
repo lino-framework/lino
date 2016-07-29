@@ -34,6 +34,7 @@ were yeld by the checker."""),
     'lino.modlib.tinymce.Plugin.window_buttons3' : _("""The third row of toolbar buttons when editing in own window."""),
     'lino.modlib.tinymce.Plugin.window_buttons2' : _("""The second row of toolbar buttons when editing in own window."""),
     'lino.modlib.tinymce.Plugin.window_buttons1' : _("""The first row of toolbar buttons when editing in own window."""),
+    'lino.utils.xmlgen.cbss.IdentifyPersonRequest' : _("""A request for identifying a person or validating a person's identity"""),
     'lino.modlib.changes.models.Change.master' : _("""The database object which acts as "master"."""),
     'lino.modlib.uploads.models.MyUploads.model' : _("""alias of Upload"""),
     'lino.modlib.notify.mixins.ChangeObservable' : _("""Mixin for models which can "emit notifications" and define a list
@@ -381,7 +382,6 @@ plain HTML."""),
     'lino.mixins.periods.Today' : _("""A ParameterPanel
 with a field today which defaults to today."""),
     'lino.mixins.periods.Monthly' : _("""An ObservedPeriod which defaults to the current month."""),
-    'lino.modlib.plausibility.choicelists.Checkers' : _("""The list of plausibility problem types known by this application."""),
     'lino.sphinxcontrib.actordoc.CurrentLanguage' : _("""Tell Sphinx to switch to the specified language until the end of
 this document."""),
     'lino.modlib.office.roles.OfficeStaff' : _("""A user who manages configuration of office functionality."""),
@@ -535,12 +535,13 @@ method)."""),
 some <head> tags for stylesheets."""),
     'lino.modlib.printing.choicelists.BuildMethods' : _("""The choicelist of build methods offered on this site."""),
     'lino.sphinxcontrib.actordoc.Lino2rstDirective' : _("""Defines the lino2rst directive."""),
-    'lino.utils.xmlgen.cbss.IdentifyPersonRequest' : _("""A request for identifying a person or validating a person's identity"""),
+    'lino.modlib.plausibility.choicelists.Checkers' : _("""The list of plausibility problem types known by this application."""),
     'lino.mixins.polymorphic.Polymorphic' : _("""Mixin for models that use Multiple Table Inheritance to implement
 polymorphism."""),
     'lino.modlib.users.models.ChangePassword' : _("""Dialog action to change the password of a user."""),
     'lino.modlib.system.choicelists.ObservedEvent' : _("""Base class for choices of "observed event"-style choicelists."""),
     'lino.modlib.importfilters.Plugin' : _("""See /dev/plugins."""),
+    'lino.api.rt.actors' : _("""Shortcut to lino.core.site.Site.actors"""),
     'lino.modlib.uploads.models.Upload.description_link' : _("""Almost the same as description, but if file is
 not empty, the text is clickable, and clicking on it opens the
 uploaded file in a new browser window."""),

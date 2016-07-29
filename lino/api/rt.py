@@ -17,6 +17,10 @@ function has been called.
 
     Shortcut to :attr:`lino.core.site.Site.models`
 
+.. attribute:: actors
+
+    Shortcut to :attr:`lino.core.site.Site.actors`
+
 """
 
 from django.conf import settings
