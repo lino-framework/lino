@@ -774,24 +774,24 @@ class Model(models.Model):
         return self
 
     def get_detail_action(self, ar):
-        """Return the detail action to use for this object with the given
-        action request.
+        """Return the detail action to use for this object.
 
         If `self` has a special attribute `_detail_action` defined,
         return this.  This magic is used by
         :meth:`Menu.add_instance_action
         <lino.core.menus.Menu.add_instance_action>`.
 
-        If the action requests's actor can be used for this object,
+        `ar` is the action request who asks to see a detail.
+        If the action requests's actor can be used for this model,
         then use its `detail_action`. Otherwise use the
-        `detail_action` of this object's default table.
+        `detail_action` of this model's default table.
 
         Return `None` if no detail action is defined, or if the
         request has no view permission.
 
-        Once upon a time we wanted that e.g. for a `pcsw.Client` the
-        detail_action depends on the user profile.  This feature is
-        currently not used.
+        Usage example: :class:`courses.Course
+        <lino_xl.lib.courses.models.Course>` overrides this to return
+        the detail_action depending on the CourseArea.
 
         """
         a = getattr(self, '_detail_action', None)
