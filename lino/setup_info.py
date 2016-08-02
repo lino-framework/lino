@@ -21,16 +21,20 @@ SETUP_INFO = dict(
     version='1.7.5',
     install_requires=[
         # 'django<1.7',
-        'django',
+        'django<1.10',
         'Sphinx',
         'atelier', 'unipath', 'python_dateutil',
         'Babel', 'odfpy>1.3', 'lxml',
-        'beautifulsoup4', 'html5lib', 'pisa',
+        'beautifulsoup4', 'html5lib',
+        'pisa',
         'jinja2', 'pytidylib', 'PyYAML',
         'clint',  # lino.modlib.plausibility.management.commands
         'django-localflavor',  # lino.modlib.sepa
         # 'django-iban',  # lino.modlib.sepa
-        'openpyxl', 'weasyprint'],
+        'openpyxl',
+        'appy==0.9.3',
+        'weasyprint',
+        'django-wkhtmltopdf'],
     tests_require=[],
     # pisa has a bug which makes it complain that "Reportlab Version
     # 2.1+ is needed!" when reportlab 3 is installed.
