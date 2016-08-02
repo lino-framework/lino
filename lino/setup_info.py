@@ -21,7 +21,7 @@ SETUP_INFO = dict(
     version='1.7.5',
     install_requires=[
         # 'django<1.7',
-        'django',
+        'django<1.10',
         'Sphinx',
         'atelier', 'unipath', 'python_dateutil',
         'Babel', 'odfpy>1.3', 'lxml',
