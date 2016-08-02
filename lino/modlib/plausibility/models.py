@@ -195,6 +195,9 @@ class AllProblems(Problems):
 
 
 class ProblemsByOwner(Problems):
+    """Show data problems related to this database object.
+
+    """
     master_key = 'owner'
     column_names = "message checker user #fixable *"
 
@@ -253,6 +256,13 @@ def set_plausibility_actions(sender, **kw):
         assert m is not Problem
         m.define_action(check_plausibility=UpdateProblemsByController(m))
         m.define_action(fix_problems=FixProblemsByController(m))
+        if False:
+            # don't add it automatically because appdev might prefer
+            # to show it in a detail_layout:
+            m.define_action(show_problems=dd.ShowSlaveTable(
+                ProblemsByOwner,
+                icon_name = 'bell', combo_group = "plausibility"))
+
 
 
 def get_checkable_models(*args):

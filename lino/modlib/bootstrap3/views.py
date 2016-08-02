@@ -250,9 +250,11 @@ class Index(View):
     def get(self, request, *args, **kw):
         ui = dd.plugins.bootstrap3
         assert ui.renderer is not None
+        main = settings.SITE.get_main_html(request, extjs=ui)
+        main = ui.renderer.html_text(main)
         context = dict(
             title=settings.SITE.title,
-            main=settings.SITE.get_main_html(request, extjs=ui),
+            main=main,
         )
         if settings.SITE.user_model is None:
             user = auth.AnonymousUser.instance()

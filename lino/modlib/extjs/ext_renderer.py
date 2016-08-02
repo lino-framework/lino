@@ -435,7 +435,12 @@ class ExtRenderer(HtmlRenderer):
         return d
 
     def html_text(self, html):
-        """
+        """Wrpt the given html fragment into a ``<div class="htmlText">``
+        which specifies that this fragment contains simple html text
+        inside an ExtJS component.  This is required because ExtJS
+        does a lot of CSS magic which neutralizes the "usual" effects
+        of most html tags.
+
         """
         if isinstance(html, six.text_type):
             return '<div class="htmlText">{0}</div>'.format(html)
@@ -497,8 +502,9 @@ class ExtRenderer(HtmlRenderer):
             items=dashboard,
         )
         if not on_ready:
-            dashboard.update(html=site.get_main_html(
-                request, extjs=self.plugin))
+            html = site.get_main_html(request, extjs=self.plugin)
+            html = self.html_text(html)
+            dashboard.update(html=html)
 
         win = dict(
             layout='fit',
