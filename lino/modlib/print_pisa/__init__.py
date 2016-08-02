@@ -1,7 +1,10 @@
 # Copyright 2014-2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""This app installs a button to "print" any table into PDf using
+"""Deprecated. We recommend to use :mod:`lino_xl.lib.appypod`
+instead.
+
+This plugin installs a button to "print" any table into PDf using
 Pisa.
 
 To use it, simply add the following line to your

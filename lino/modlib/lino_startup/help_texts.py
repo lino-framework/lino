@@ -19,8 +19,7 @@ This field is labelled About."""),
     'lino.utils.dpy.FlushDeferredObjects' : _("""Indicator class object.
 Fixture may yield a FlushDeferredObjects
 to indicate that all deferred objects should get saved before going on."""),
-    'lino.modlib.system.choicelists.PeriodEvents' : _("""The list of things you can observe on a
-lino.mixins.periods.DatePeriod."""),
+    'lino.modlib.plausibility.models.ProblemsByOwner' : _("""Show data problems related to this database object."""),
     'lino.modlib.bootstrap3.views.Index' : _("""Render the main page."""),
     'lino.modlib.printing.actions.ClearCacheAction' : _("""Defines the Clear cache button on a Printable record."""),
     'lino.modlib.plausibility.models.FixProblemsByController' : _("""Update plausibility problems, repairing those which are
@@ -80,6 +79,8 @@ document and builds is only when it doesn't yet exist."""),
 for fixing this problem."""),
     'lino.modlib.changes.Plugin' : _("""See /dev/plugins."""),
     'lino.utils.djangotest.WebIndexTestCase' : _("""Designed to be just imported. No subclassing needed."""),
+    'lino.modlib.system.choicelists.PeriodEvents' : _("""The list of things you can observe on a
+lino.mixins.periods.DatePeriod."""),
     'lino.modlib.extjs.elems.SlaveSummaryPanel' : _("""The panel used to display a slave table whose slave_grid_format
 is 'summary'."""),
     'lino.utils.diag.Analyzer' : _("""The class of the lino.utils.diag.analyzer object."""),
@@ -112,6 +113,7 @@ tutorial.instantiator."""),
     'lino.modlib.extjs.elems.ParamsPanel' : _("""The optional Panel for parameters of a Table.
 JS part stored in Lino.GridPanel.params_panel."""),
     'lino.utils.ajax.AjaxExceptionResponse' : _("""The middleware class definition."""),
+    'lino.modlib.plausibility.models.ProblemsByOwner.model' : _("""alias of Problem"""),
     'lino.utils.addressable.TestAddress' : _("""Used only for testing."""),
     'lino.utils.djangotest.DjangoManageTestCase.defining_module' : _("""When you decorate your subclass of TestCase, you must also specify:"""),
     'lino.modlib.gfks.mixins.Controllable.controller_is_optional' : _("""Deprecated. This is (and always was) being ignored. Use

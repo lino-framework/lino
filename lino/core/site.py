@@ -992,7 +992,7 @@ class Site(object):
     # appy_params = dict(ooPort=8100)
     appy_params = dict(
         ooPort=8100, pythonWithUnoPath='/usr/bin/python3',
-        raiseOnError=True)
+        raiseOnError=False)
     """Used by :class:`lino.mixins.printable.AppyBuildMethod`.
 
     Allowed keyword arguments for `appy.pod.renderer.Render` are::

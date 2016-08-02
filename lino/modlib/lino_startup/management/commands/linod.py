@@ -23,7 +23,11 @@ package which you must install manually::
 from __future__ import print_function
 
 import time
-import schedule
+try:
+    import schedule
+except ImportError:
+    pass  # ignore it here so that autodoc can work without requiring
+          # schedule.
 
 # For the schedule logger we set level to WARNING because
 # otherwise it would log a message every 10 seconds when
