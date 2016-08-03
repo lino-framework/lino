@@ -94,7 +94,6 @@ Actions:
 - :class:`ChangeStateAction <lino.core.workflows.ChangeStateAction>`
 - :class:`MergeAction <lino.core.merge.MergeAction>`
 - :class:`ShowSlaveTable <lino.core.actions.ShowSlaveTable>`
-- :class:`PrintTableAction <lino.utils.appy_pod.PrintTableAction>`
 
 Permissions:
 

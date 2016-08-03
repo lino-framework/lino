@@ -242,7 +242,7 @@ class Action(Parametrizable, Permittable):
     ===== =================================
     value action
     ===== =================================
-    -1    :class:`as_pdf <lino.utils.appy_pod.PrintTableAction>`
+    -1    :class:`as_pdf <lino_xl.lib.appypod.PrintTableAction>`
     10    :class:`InsertRow`, :class:`SubmitDetail`
     11    :attr:`duplicate <lino.mixins.duplicable.Duplicable.duplicate>`
     20    :class:`detail <ShowDetailAction>`

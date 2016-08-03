@@ -62,7 +62,6 @@ Utilities
     importfilters
     languages
     office
-    print_pisa
     smtpd
     uploads
     vocbook

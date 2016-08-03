@@ -855,7 +855,7 @@ class Book(object):
         #~ from appy.pod.renderer import Renderer
         from lino.utils import iif
         #~ from lino.utils.appy_pod import setup_renderer
-        from lino.utils.appy_pod import Renderer
+        from lino_xl.lib.appypod.appy_renderer import Renderer
         assert os.path.abspath(self.input_template) != os.path.abspath(target)
         if os.path.exists(target):
             os.remove(target)

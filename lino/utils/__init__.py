@@ -15,7 +15,6 @@ This is a tested document. To test it, run::
 
     addressable
     ajax
-    appy_pod
     choosers
     code
     config
