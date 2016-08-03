@@ -492,7 +492,6 @@ See also lino.modlib.users.models.User.authenticated."""),
     'lino.modlib.users.models.User.username' : _("""Must be unique.
 Leaving this empty means that the user cannot log in."""),
     'lino.utils.dpy.Migrator' : _("""The SITE's Migrator class is instantiated by install_migrations."""),
-    'lino.modlib.print_pisa.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.plausibility.models.MyProblems.model' : _("""alias of Problem"""),
     'lino.modlib.printing.mixins.TypedPrintable' : _("""A CachedPrintable that uses a "Type" for deciding which
 template to use on a given instance."""),

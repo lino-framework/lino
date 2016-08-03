@@ -32,7 +32,6 @@ SETUP_INFO = dict(
         'django-localflavor',  # lino.modlib.sepa
         # 'django-iban',  # lino.modlib.sepa
         'openpyxl',
-        'appy==0.9.3',
         'weasyprint',
         'django-wkhtmltopdf'],
     tests_require=[],
@@ -130,7 +129,6 @@ lino.modlib.plausibility
 lino.modlib.plausibility.fixtures
 lino.modlib.plausibility.management
 lino.modlib.plausibility.management.commands
-lino.modlib.print_pisa
 lino.modlib.printing
 lino.modlib.smtpd
 lino.modlib.smtpd.management

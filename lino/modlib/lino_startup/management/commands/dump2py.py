@@ -121,11 +121,10 @@ class Command(BaseCommand):
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
-# This is a Python dump created using %s.
+# This is a Python dump created using dump2py.
 # DJANGO_SETTINGS_MODULE was %r, TIME_ZONE was %r.
 
-''' % (settings.SITE.using_text(), settings.SETTINGS_MODULE,
-       settings.TIME_ZONE))
+''' % (settings.SETTINGS_MODULE, settings.TIME_ZONE))
 
         self.stream.write('''
 from __future__ import unicode_literals
