@@ -550,14 +550,6 @@ request from it.
     # def parse_memo(self, html):
     #     return self.renderer.parse_memo(html, ar=self)
 
-    def render_jinja(self, template, **context):
-        sar = copy(self)
-        # sar.renderer = settings.SITE.kernel.html_renderer
-        sar.renderer = settings.SITE.plugins.jinja.renderer
-        context.update(ar=sar)
-        # self.renderer = settings.SITE.plugins.bootstrap3.renderer
-        return template.render(**context)
-
     def set_callback(self, *args, **kw):
         return settings.SITE.kernel.set_callback(self, *args, **kw)
 

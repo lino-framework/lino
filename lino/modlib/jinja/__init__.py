@@ -11,7 +11,7 @@
 
 """
 
-
+from copy import copy
 from lino.api import ad, _
 
 
@@ -60,11 +60,9 @@ class Plugin(ad.Plugin):
         return self.renderer.jinja_env.list_templates(extensions=[ext])
 
     def render_from_request(self, request, template_name, **context):
-        """Adds some more context names.
-
-        Replaces ar.renderer is not a HtmlRenderer but the Site's
-        default_renderer.
-
+        """Render the named Jinja template, replacing ar.renderer by the
+        Site's default renderer.
+        Adds some more context names.
         """
         from lino.core import requests
         context.update(request=request)
@@ -80,9 +78,22 @@ class Plugin(ad.Plugin):
         context.update(ar=ar)
         template = self.renderer.jinja_env.get_template(template_name)
         return template.render(**context)
+    
+    def render_jinja(self, ar, tplname, context):
+        """Render the named Jinja template, replacing ar.renderer by the
+        Jinja renderer.
+
+        """
+        tpl = self.renderer.jinja_env.get_template(tplname)
+        sar = copy(ar)
+        sar.renderer = self.renderer
+        context.update(ar=sar)
+        return tpl.render(**context)
 
 
 def get_environment(**options):
     # print 20160116, options
     from django.conf import settings
     return settings.SITE.plugins.jinja.renderer.jinja_env
+
+
