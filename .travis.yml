@@ -1,0 +1,8 @@
+language: python
+python:
+  - "2.7"
+# command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
+install: pip install -U setuptools ; pip install -r requirements.txt ; pip install .
+# command to run tests, e.g. python setup.py test
+script:  export LINO_CACHE_ROOT=$TRAVIS_BUILD_DIR/lino_cache ; mkdir $LINO_CACHE_ROOT; inv initdb test
+
