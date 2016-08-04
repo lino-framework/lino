@@ -59,6 +59,9 @@ import warnings
 warnings.filterwarnings(
     "ignore", "No fixture named '.*' found.",
     UserWarning, "django.core.management.commands.loaddata")
+warnings.filterwarnings(
+    "ignore", "No fixture data found for *",
+    RuntimeWarning, "django.core.management.commands.loaddata")
 
 
 from django.conf import settings
