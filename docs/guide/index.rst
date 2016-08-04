@@ -36,11 +36,6 @@ Opening a new ticket
   Click the :guilabel:`Create` button or press :kbd:`ENTER` to confirm
   the insert window.
 
-Beware the pitfall: After creating the ticket, click the "Save" button
-once (or type Ctrl-S) in order to avoid :ticket:`219` ("Lino sends
-second POST when clicking StartSession on newly created
-record"). Sorry for this bug.
-
 When you create a ticket, Lino automatically also creates a new
 session on that ticket which starts at current time.  (If it doesn't,
 then go to your user preferences and check the :guilabel:`Open session
