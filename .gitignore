@@ -20,7 +20,7 @@ lino/sandbox/*/media
 docs/media
 docs/dl/*
 lino.egg-info
-.build
+.build/
 htmlcov
 warnings_linkcheck.txt
 .DS_Store
@@ -29,4 +29,5 @@ docs/api/lino.*
 docs/tutorials/pisa/pisa.Person-1.pdf
 .coverage
 .coverage.*
+.eggs/
 
