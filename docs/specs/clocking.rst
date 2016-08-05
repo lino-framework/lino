@@ -108,7 +108,7 @@ started some days ago.
     >>> for u in users.User.objects.all():
     ...     qs = tickets.Project.objects.filter(tickets_by_project__sessions_by_ticket__user=u).distinct()
     ...     if qs.count() > 1:
-    ...         print u.username, "worked on", qs
+    ...         print u.username, "worked on", [o for o in qs]
     jean worked on [Project #2 ('t\xe9am'), Project #5 ('shop')]
     luc worked on [Project #1 ('lin\xf6'), Project #2 ('t\xe9am')]
 
