@@ -51,9 +51,20 @@ class ChildCollector(Collector):
         model = new_objs[0].__class__
 
         if collect_related:
-            for related in model._meta.get_all_related_objects(
-                    include_hidden=True, include_proxy_eq=True,
-                    local_only=True):
+
+            related_objects = [
+                f for f in model._meta.get_fields(include_hidden=True)
+                if (f.one_to_many or f.one_to_one)
+                and f.auto_created and not f.concrete
+                and f.model is model  ## local_only
+            ]
+
+            # Before Django 1.10 we had:
+            # related_objects = model._meta.get_all_related_objects(
+            #         include_hidden=True, include_proxy_eq=True,
+            #         local_only=True)
+            
+            for related in related_objects:
                 field = related.field
                 if field.rel.on_delete == DO_NOTHING:
                     continue

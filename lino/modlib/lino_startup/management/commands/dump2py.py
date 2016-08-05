@@ -70,6 +70,7 @@ logger = logging.getLogger(__name__)
 
 import os
 from decimal import Decimal
+import argparse
 
 from clint.textui import progress
 
@@ -95,10 +96,13 @@ def is_pointer_to_contenttype(f):
 
 
 class Command(BaseCommand):
-    tmpl_dir = ''
-    args = "output_dir"
+    # tmpl_dir = ''
+    # args = "output_dir"
 
     def add_arguments(self, parser):
+        parser.add_argument(
+            'output_dir',
+            help='The directory where to write output files.')
         parser.add_argument('--noinput', action='store_false',
                             dest='interactive', default=True,
                             help='Do not prompt for input of any kind.'),
@@ -425,13 +429,15 @@ if __name__ == '__main__':
         return repr(field.value_to_string(obj))
 
     def handle(self, *args, **options):
-        if len(args) != 1:
-            raise CommandError("No output_dir specified.")
+        # if len(args) != 1:
+        #     raise CommandError("No output_dir specified.")
             # print("No output_dir specified.")
             # sys.exit(-1)
         # import lino
         # lino.startup()
-        self.output_dir = os.path.abspath(args[0])
+        output_dir = options['output_dir']
+        self.output_dir = os.path.abspath(output_dir)
+        # self.output_dir = os.path.abspath(args[0])
         self.main_file = os.path.join(self.output_dir, 'restore.py')
         self.count_objects = 0
         self.database_errors = 0

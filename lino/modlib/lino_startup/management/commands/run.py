@@ -50,7 +50,7 @@ from django.core.management.base import BaseCommand, CommandError
 
 class Command(BaseCommand):
     # help = __doc__
-    args = "scriptname [args ...]"
+    # args = "filename [args ...]"
 
     def add_arguments(self, parser):
         parser.add_argument('filename', nargs=argparse.REMAINDER,
@@ -75,9 +75,13 @@ class Command(BaseCommand):
     requires_system_checks = False
 
     def handle(self, *args, **options):
-        if len(args) == 0:
-            raise CommandError("I need at least one argument.")
-        fn = args[0]
+        if True:  # Django 1.10
+            fn = options['filename'][0]
+        else:
+            if len(args) == 0:
+                raise CommandError("I need at least one argument.")
+            fn = args[0]
+        # fn = filename[0]
         sys.argv = sys.argv[2:]
         globals()['__name__'] = '__main__'
         globals()['__file__'] = fn

@@ -20,8 +20,8 @@ SETUP_INFO = dict(
     name='lino',
     version='1.7.5',
     install_requires=[
-        # 'django<1.7',
         'django<1.10',
+        # 'django',
         'Sphinx',
         'atelier', 'unipath', 'python_dateutil',
         'Babel', 'odfpy>1.3', 'lxml',
