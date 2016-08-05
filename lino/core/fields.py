@@ -203,6 +203,10 @@ class FakeField(object):
     auto_created = False
     column = None
     empty_values = set([None, ''])
+    
+    # required by Django 1.10:
+    one_to_many = False
+    one_to_one = False    
 
     def is_enabled(self, lh):
         """
