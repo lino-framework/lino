@@ -2,24 +2,26 @@
 # License: BSD (see file COPYING for details)
 
 """This plugins installs two build methods for generating
-:doc:`printable documents </admin/printing>`.
+:doc:`printable documents </admin/printing>` using `weasyprint
+<http://weasyprint.org/>`__.
 
-Both methods have the same input template, whose ending must be
-:xfile:`.weasy.html`.
+Applications which use this plugin must also add `'weasyprint'` to
+their :ref:`install_requires`.  They should also add `'cairocffi<0.7'`
+(see :ticket:`1119`). Or install it using pip::
 
-Both methods then render the input template through Jinja with the
-standard context variables (defined by :meth:`get_printable_context
-<lino.core.model.Model.get_printable_context>`.
+  $ pip install 'cairocffi<0.7' weasyprint
 
-The base build method :class:`WeasyBuildMethod
+The build methods defined by this plugin have the same input template,
+whose ending must be :xfile:`.weasy.html`.  Both methods then render
+the input template through Jinja with the standard context variables
+(defined by :meth:`get_printable_context
+<lino.core.model.Model.get_printable_context>`.  The base build method
+:class:`WeasyBuildMethod
 <lino.modlib.weasyprint.choicelists.WeasyBuildMethod>` then returns
 this HTML output "as is", the other method runs `weasyprint
 <http://weasyprint.readthedocs.io>`__ over the HTML file to convert it
 to a :file:`.pdf` file.
 
-In order to use this functionality, you must (1) add it to your
-:meth:`get_installed_apps` and (2) run ``pip install weasyprint`` in
-your Python environment.
 
 .. autosummary::
    :toctree:
