@@ -28,6 +28,8 @@ class Plugin(ad.Plugin):
     "See :doc:`/dev/plugins`."
     verbose_name = _("Users")
 
+    needs_plugins = ['lino.modlib.system']
+
     def on_init(self):
         super(Plugin, self).on_init()
         self.site.set_user_model('users.User')
