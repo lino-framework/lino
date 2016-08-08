@@ -367,6 +367,10 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
     def remark(cls, choice, ar):
         return choice.remark
 
+    @fields.displayfield(_("Type"))
+    def type(cls, choice, ar):
+        return choice.__class__.__name__
+
     @classmethod
     def get_data_rows(self, ar=None):
         return list(self.items())
