@@ -372,7 +372,10 @@ request from it.
             requested_language=get_language())
 
         def parse(s):
-            # return settings.SITE.jinja_env.from_string(s).render(**kw)
+            # Jinja doesn't like a name 'self' in the context which
+            # might exist there in a backwards-compatible appypod
+            # template:
+            kw.pop('self')
             return dd.plugins.jinja.renderer.jinja_env.from_string(
                 s).render(**kw)
         kw.update(parse=parse)
