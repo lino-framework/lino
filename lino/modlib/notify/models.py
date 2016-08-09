@@ -166,7 +166,9 @@ class Notification(UserAuthored, Controllable, Created):
     def send_email(self):
         """"""
         if not self.user.email:
-            dd.logger.info("User %s has no email address", self.user)
+            # debug level because we don't want to see this message
+            # every 10 seconds:
+            dd.logger.debug("User %s has no email address", self.user)
             return
         # dd.logger.info("20151116 %s %s", ar.bound_action, ar.actor)
         # ar = ar.spawn_request(renderer=dd.plugins.bootstrap3.renderer)
