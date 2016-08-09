@@ -3396,7 +3396,7 @@ signature as `django.core.mail.EmailMessage`.
 
         """
         if '@example.com' in sender:
-            self.logger.info(
+            self.logger.debug(
                 "Ignoring email '%s' because sender is %s", subject, sender)
             return
         recipients = [a for a in recipients if '@example.com' not in a]

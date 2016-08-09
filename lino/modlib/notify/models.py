@@ -322,7 +322,7 @@ def send_pending_emails():
     Notification = rt.models.notify.Notification
     qs = Notification.objects.filter(sent__isnull=True)
     if qs.count() > 0:
-        dd.logger.info(
+        dd.logger.debug(
             "Send out emails for %d notifications.", qs.count())
         for obj in qs:
             obj.send_email()
