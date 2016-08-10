@@ -17,7 +17,7 @@
 # <http://www.gnu.org/licenses/>.
 
 """
-Adds functionality for managing tickets.
+Adds functionality for managing "milestones" and "deployments".
 
 .. autosummary::
    :toctree:
@@ -37,15 +37,15 @@ class Plugin(ad.Plugin):
 
     needs_plugins = ['lino_noi.lib.tickets']
 
-    def setup_main_menu(self, site, profile, m):
-        p = self.get_menu_group()
-        m = m.add_menu(p.app_label, p.verbose_name)
-        # m.add_action('tickets.Tickets')
+    # def setup_main_menu(self, site, profile, m):
+    #     p = self.get_menu_group()
+    #     m = m.add_menu(p.app_label, p.verbose_name)
+    #     # m.add_action('tickets.Tickets')
 
-    def setup_config_menu(self, site, profile, m):
-        p = self.get_menu_group()
-        m = m.add_menu(p.app_label, p.verbose_name)
-        # m.add_action('tickets.Projects')
+    # def setup_config_menu(self, site, profile, m):
+    #     p = self.get_menu_group()
+    #     m = m.add_menu(p.app_label, p.verbose_name)
+    #     # m.add_action('tickets.Projects')
 
     def setup_explorer_menu(self, site, profile, m):
         p = self.get_menu_group()
