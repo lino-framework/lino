@@ -19,5 +19,5 @@ Lino Noi has a recmail command which starts an SMTP server.
 >>> ses = rt.login("robin")
 
 >>> print(settings.SITE.welcome_text())  #doctest: +ELLIPSIS
-This is Lino Noi 1.0.1 using ...
+This is Lino Noi ... using ...
 

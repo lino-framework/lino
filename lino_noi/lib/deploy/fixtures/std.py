@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2015 Luc Saffre
+# Copyright 2015-2016 Luc Saffre
 #
 # This file is part of Lino Noi.
 #
@@ -17,16 +17,21 @@
 # License along with Lino Noi.  If not, see
 # <http://www.gnu.org/licenses/>.
 
+"""
+Installs a primary certifiable ExcerptType for Milestone.
 
-from django.utils.translation import ugettext_lazy as _
-from lino.api import dd, rt
+"""
+
+from lino.api import rt, dd
 
 
-class DependencyTypes(dd.ChoiceList):
-    verbose_name = _("Dependency type")
-add = DependencyTypes.add_item
-add('10', _("Requires"), 'requires')
-add('20', _("Callback"), 'callback')
-add('30', _("Duplicate"), 'duplicate')
+def objects():
+    Milestone = rt.models.deploy.Milestone
+    ExcerptType = rt.modules.excerpts.ExcerptType
 
-    
+    kw = dict(
+        body_template='default.body.html',
+        print_recipient=False,
+        primary=True, certifying=True)
+    kw.update(dd.str2kw('name', Milestone._meta.verbose_name))
+    yield ExcerptType.update_for_model(Milestone, **kw)

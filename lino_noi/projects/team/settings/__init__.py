@@ -39,7 +39,7 @@ from lino.projects.std.settings import *
 class Site(Site):
 
     verbose_name = "Lino Noi"
-    version = '1.0.1'
+    version = '1.0.2'
 
     url = "http://noi.lino-framework.org/"
     server_url = "http://team.lino-framework.org/"
@@ -74,6 +74,7 @@ class Site(Site):
         yield 'lino_noi.lib.topics'
         yield 'lino_noi.projects.team.lib.tickets'
         yield 'lino_noi.lib.faculties'
+        yield 'lino_noi.lib.deploy'
         yield 'lino_noi.projects.team.lib.clocking'
         yield 'lino_xl.lib.lists'
 

@@ -17,7 +17,7 @@
 # License along with Lino Noi.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-"""This module adds models for Projects, Milestones, Tickets & Co.
+"""This module adds models for Projects, Tickets & Co.
 
 A **Project** is something into which somebody (the `partner`) invests
 time, energy and money.  The partner can be either external or the
@@ -27,18 +27,11 @@ runner of the site.  Projects form a tree: each Project can have a
 Projects are handled by their *name* while Tickets are handled by
 their *number*.
 
-A **Milestone** is a named step of evolution of a Project.  For
-software projects we usually call them a "release" and they are named
-by a version number.
-
-
 .. rubric:: Change notifications
 
-This also defines a `post_save` handler on :class:`Change
-<lino.modlib.changes.models.Change>` so that the ticket
-:attr:`reporter <Ticket.reporter>` and the :attr:`assigned_to
-<Ticket.assigned_to>` worker get automatically notified about any
-change.  This is similar to what happens in
+The ticket :attr:`reporter <Ticket.reporter>` and the
+:attr:`assigned_to <Ticket.assigned_to>` worker get automatically
+notified about any change.  This is similar to what happens in
 :mod:`lino_xl.lib.stars.models`, except that the reporter and the
 assignee don't need to star a ticket in order to get notified.
 
@@ -210,47 +203,6 @@ class Site(dd.Model):
 
     def __unicode__(self):
         return self.name
-
-
-class Milestone(Certifiable):  # mixins.Referrable):
-    """
-    .. attribute:: closed
-
-       Closed milestones are hidden in most lists.
-
-    """
-    class Meta:
-        app_label = 'tickets'
-        verbose_name = _("Milestone")
-        verbose_name_plural = _('Milestones')
-
-    # project = dd.ForeignKey(
-    #     'tickets.Project',
-    #     related_name='milestones_by_project')
-    site = dd.ForeignKey(
-        'tickets.Site',
-        related_name='milestones_by_site', blank=True, null=True)
-    label = models.CharField(_("Label"), max_length=20, blank=True)
-    expected = models.DateField(_("Expected for"), blank=True, null=True)
-    reached = models.DateField(_("Reached"), blank=True, null=True)
-    description = dd.RichTextField(_("Description"), blank=True)
-    changes_since = models.DateField(
-        _("Changes since"), blank=True, null=True,
-        help_text=_("In printed document include a list of "
-                    "other changes since this date"))
-    closed = models.BooleanField(_("Closed"), default=False)
-
-    #~ def __unicode__(self):
-        #~ return self.label
-
-    def __unicode__(self):
-        label = self.label
-        if not label:
-            if self.reached:
-                label = self.reached.isoformat()
-            else:
-                label = "#{0}".format(self.id)
-        return "{0}:{1}".format(self.site, label)
 
 
 class Link(dd.Model):
@@ -495,13 +447,13 @@ class Ticket(mixins.CreatedModified, TimeInvestment, RFC, ChangeObservable):
         'self', blank=True, null=True, verbose_name=_("Duplicate of"))
 
     reported_for = dd.ForeignKey(
-        'tickets.Milestone',
+        'deploy.Milestone',
         related_name='tickets_reported',
         verbose_name='Reported for',
         blank=True, null=True,
         help_text=_("Milestone for which this ticket has been reported."))
     fixed_for = dd.ForeignKey(  # no longer used since 20150814
-        'tickets.Milestone',
+        'deploy.Milestone',
         related_name='tickets_fixed',
         verbose_name='Fixed for',
         blank=True, null=True,
@@ -567,6 +519,8 @@ class Ticket(mixins.CreatedModified, TimeInvestment, RFC, ChangeObservable):
         as default value.
 
         """
+        if self.id and self.duplicate_of_id == self.id:
+            self.duplicate_of = None
         # print "20150523b on_create", self.reporter
         super(Ticket, self).full_clean()
         me = self.reporter
@@ -627,36 +581,6 @@ class Ticket(mixins.CreatedModified, TimeInvestment, RFC, ChangeObservable):
 
 
 # dd.update_field(Ticket, 'user', verbose_name=_("Reporter"))
-
-
-class Deployment(dd.Model):
-    """A **deployment** is the fact that a given ticket is being fixed (or
-    installed or activated) by a given milestone (to a given site).
-
-    Deployments are visible to the user either by ticket or by milestone.
-
-    .. attribute:: milestone
-
-       The milestone (and site) of this deployment.
-
-    """
-    class Meta:
-        app_label = 'tickets'
-        verbose_name = _("Deployment")
-        verbose_name_plural = _('Deployments')
-
-    ticket = dd.ForeignKey('tickets.Ticket')
-    milestone = dd.ForeignKey('tickets.Milestone')
-    # remark = dd.RichTextField(_("Remark"), blank=True, format="plain")
-    remark = models.CharField(_("Remark"), blank=True, max_length=250)
-
-    @dd.chooser()
-    def milestone_choices(cls, ticket):
-        # if not ticket:
-        #     return []
-        # if ticket.site:
-        #     return ticket.site.milestones_by_site.all()
-        return rt.modules.tickets.Milestone.objects.order_by('label')
 
 
 if False:  # removed current_project field because it caused circular

@@ -130,29 +130,29 @@ verbose_name and verbose_name_plural options of `faculties.Faculty`.
 
 >>> rt.show(faculties.AllFaculties)
 ... #doctest: +REPORT_UDIFF
-============================= ================== ============================ ========== ==================== =========================
- Bezeichnung                   Bezeichnung (en)   Bezeichnung (fr)             Affinity   Optionen-Kategorie   Übergeordnete Fähigkeit
------------------------------ ------------------ ---------------------------- ---------- -------------------- -------------------------
+============================= ================== ============================ =========== ==================== =========================
+ Bezeichnung                   Bezeichnung (en)   Bezeichnung (fr)             Affinität   Optionen-Kategorie   Übergeordnete Fähigkeit
+----------------------------- ------------------ ---------------------------- ----------- -------------------- -------------------------
  Babysitting                                      Garde enfant                 100
  Botengänge                                       Commissions                  100
  Briefe beantworten                               Répondre au courrier         100
- Deutschunterricht                                Cours d'allemand             100                             Unterricht
+ Deutschunterricht                                Cours d'allemand             100                              Unterricht
  Fahrdienst                                       Voiture                      100
- Französischunterricht                            Cours de francais            100                             Unterricht
+ Französischunterricht                            Cours de francais            100                              Unterricht
  Friseur                                          Coiffure                     100
- Gartenarbeiten                                   Travaux de jardin            100                             Haus und Garten
+ Gartenarbeiten                                   Travaux de jardin            100                              Haus und Garten
  Gesellschafter für Senioren                      Rencontres personnes agées   100
- Gitarrenunterricht                               Cours de guitare             100                             Unterricht
- Handwerksarbeiten                                Travaux de réparation        100                             Haus und Garten
+ Gitarrenunterricht                               Cours de guitare             100                              Unterricht
+ Handwerksarbeiten                                Travaux de réparation        100                              Haus und Garten
  Haus und Garten                                  Maison et jardin             100
  Hunde spazierenführen                            Chiens                       100
- Klavierunterricht                                Cours de piano               100                             Unterricht
- Matheunterricht                                  Cours de maths               100                             Unterricht
- Nähen                                            Couture                      100                             Haus und Garten
+ Klavierunterricht                                Cours de piano               100                              Unterricht
+ Matheunterricht                                  Cours de maths               100                              Unterricht
+ Nähen                                            Couture                      100                              Haus und Garten
  Unterricht                                       Cours                        100
- Übersetzungsarbeiten                             Traductions                  100        Sprachen
+ Übersetzungsarbeiten                             Traductions                  100         Sprachen
  **Total (18 Zeilen)**                                                         **1800**
-============================= ================== ============================ ========== ==================== =========================
+============================= ================== ============================ =========== ==================== =========================
 <BLANKLINE>
 
 
@@ -179,14 +179,14 @@ verbose_name and verbose_name_plural options of `faculties.Faculty`.
 
 
 >>> rt.show('faculties.Competences')
-==== ========== ====================== ========== =============
- ID   Benutzer   Fähigkeit              Affinity   Option
----- ---------- ---------------------- ---------- -------------
- 1    anna       Übersetzungsarbeiten   100        Französisch
- 2    berta      Übersetzungsarbeiten   100        Französisch
- 3    berta      Übersetzungsarbeiten   100        Deutsch
+==== ========== ====================== =========== =============
+ ID   Benutzer   Fähigkeit              Affinität   Option
+---- ---------- ---------------------- ----------- -------------
+ 1    anna       Übersetzungsarbeiten   100         Französisch
+ 2    berta      Übersetzungsarbeiten   100         Französisch
+ 3    berta      Übersetzungsarbeiten   100         Deutsch
                                         **300**
-==== ========== ====================== ========== =============
+==== ========== ====================== =========== =============
 <BLANKLINE>
 
 >>> rt.show('topics.Topics')
@@ -234,14 +234,14 @@ In :ref:`care` we don't call them "tickets" but "pleas" (German
   - Orte : Länder, Orte
   - Benutzer : Themen, Themengruppen
   - Büro : Auszugsarten, Meine Einfügetexte
-  - Bitten : Projekte, Projekte (Hierarchie), Project Types, Ticket types, Sites
+  - Bitten : Projekte, Projekte (Hierarchie), Project Types, Ticket types, Umfelder
   - Fähigkeiten : Fähigkeiten (Hierarchie), Fähigkeiten (alle)
   - Arbeitszeit : Session Types
 - Explorer :
   - System : Datenbankmodelle, Vollmachten, Benutzerprofile, Benachrichtigungen, Änderungen
   - Benutzer : Interessen
   - Büro : Favoriten, Auszüge, Kommentare, Einfügetexte
-  - Bitten : Milestones, Dependencies, Deployments
+  - Bitten : Verknüpfungen
   - Fähigkeiten : Kompetenzen
   - Arbeitszeit : Sitzungen
 - Site : Info

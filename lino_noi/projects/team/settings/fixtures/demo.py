@@ -46,7 +46,7 @@ def tickets_objects():
     TT = rt.models.tickets.TicketType
     Ticket = rt.models.tickets.Ticket
     Interest = rt.models.topics.Interest
-    Milestone = rt.models.tickets.Milestone
+    Milestone = rt.models.deploy.Milestone
     Project = rt.models.tickets.Project
     Site = rt.models.tickets.Site
     Link = rt.models.tickets.Link

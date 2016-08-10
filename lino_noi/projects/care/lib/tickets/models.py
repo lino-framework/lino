@@ -16,9 +16,13 @@ UnassignedTickets._label = _("Unassigned pleas")
 PublicTickets._label = _("Public pleas")
 TicketsToTriage._label = _("Pleas to triage")
 TicketsToTalk._label = _("Pleas to talk")
+TicketsToDo._label = _("Pleas to to")
 TicketsFixed._label = _("Fixed pleas")
 TicketsReported._label = _("Introduced pleas")
 TicketsByReporter._label = _("Introduced pleas")
+
+dd.update_field(
+    'tickets.Ticket', 'upgrade_notes', verbose_name=_("Solution"))
 
 
 class TicketDetail(TicketDetail):
@@ -34,6 +38,18 @@ class TicketDetail(TicketDetail):
     reporter:12 faculty topic assigned_to
     site project private workflow_buttons
     """
+
+    more = dd.Panel("""
+    more1
+    description:40 upgrade_notes:20 LinksByTicket:20
+    """, label=_("More"))
+
+    more1 = """
+    created modified ticket_type:10
+    state priority
+    # standby feedback closed
+    """
+
 
 
 Tickets.detail_layout = TicketDetail()

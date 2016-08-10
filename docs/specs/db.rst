@@ -19,7 +19,7 @@ This document describes the database structure.
 >>> from lino.utils.diag import analyzer
 >>> print(analyzer.show_db_overview())
 ... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
-34 apps: lino_startup, staticfiles, about, jinja, bootstrap3, extjs, printing, system, contenttypes, gfks, users, office, countries, contacts, topics, notify, changes, stars, uploads, outbox, xl, excerpts, comments, noi, tickets, faculties, clocking, lists, export_excel, tinymce, smtpd, weasyprint, appypod, wkhtmltopdf.
+35 apps: lino_startup, staticfiles, about, jinja, bootstrap3, extjs, printing, system, contenttypes, gfks, users, office, countries, contacts, topics, notify, changes, stars, uploads, outbox, xl, excerpts, comments, noi, tickets, faculties, deploy, clocking, lists, export_excel, tinymce, smtpd, weasyprint, appypod, wkhtmltopdf.
 44 models:
 =========================== ============================ ========= =======
  Name                        Default table                #fields   #rows
@@ -38,6 +38,8 @@ This document describes the database structure.
  contenttypes.ContentType    gfks.ContentTypes            3         45
  countries.Country           countries.Countries          6         8
  countries.Place             countries.Places             8         78
+ deploy.Deployment           deploy.Deployments           4         0
+ deploy.Milestone            deploy.Milestones            9         8
  excerpts.Excerpt            excerpts.Excerpts            12        2
  excerpts.ExcerptType        excerpts.ExcerptTypes        17        2
  faculties.Competence        faculties.Competences        6         18
@@ -52,9 +54,7 @@ This document describes the database structure.
  outbox.Recipient            outbox.Recipients            6         0
  stars.Star                  stars.Stars                  5         0
  system.SiteConfig           system.SiteConfigs           5         1
- tickets.Deployment          tickets.Deployments          4         0
  tickets.Link                tickets.Links                4         1
- tickets.Milestone           tickets.Milestones           9         8
  tickets.Project             tickets.Projects             17        5
  tickets.ProjectType         tickets.ProjectTypes         4         0
  tickets.Site                tickets.Sites                4         3
@@ -105,8 +105,9 @@ users.UserProfiles.admin:900
   - System : content types, Authorities, User Profiles, Notifications, Changes
   - Contacts : Contact Persons, Interests, List memberships
   - Office : Stars, Uploads, Upload Areas, Outgoing Mails, Attachments, Excerpts, Comments, Text Field Templates
-  - Tickets : Milestones, Dependencies, Deployments
+  - Tickets : Dependencies
   - Faculties : Competences
+  - Deploy : Milestones, Deployments    
   - Clocking : Sessions
 - Site : About
 

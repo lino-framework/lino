@@ -44,8 +44,10 @@ Lino Noi:
   - PROTECT : contacts.Partner.country, countries.Place.country
 - countries.Place :
   - PROTECT : contacts.Partner.city, countries.Place.parent
+- deploy.Milestone :
+  - PROTECT : deploy.Deployment.milestone, tickets.Ticket.reported_for
 - excerpts.Excerpt :
-  - SET_NULL : clocking.ServiceReport.printed_by, tickets.Milestone.printed_by
+  - SET_NULL : clocking.ServiceReport.printed_by, deploy.Milestone.printed_by
 - excerpts.ExcerptType :
   - PROTECT : excerpts.Excerpt.excerpt_type
 - faculties.Faculty :
@@ -56,16 +58,14 @@ Lino Noi:
   - PROTECT : lists.List.list_type
 - outbox.Mail :
   - CASCADE : outbox.Attachment.mail, outbox.Recipient.mail
-- tickets.Milestone :
-  - PROTECT : tickets.Deployment.milestone, tickets.Ticket.reported_for
 - tickets.Project :
   - PROTECT : excerpts.Excerpt.project, outbox.Mail.project, tickets.Project.parent, tickets.Ticket.project
 - tickets.ProjectType :
   - PROTECT : tickets.Project.type
 - tickets.Site :
-  - PROTECT : tickets.Milestone.site, tickets.Ticket.site, users.User.user_site
+  - PROTECT : deploy.Milestone.site, tickets.Ticket.site, users.User.user_site
 - tickets.Ticket :
-  - PROTECT : clocking.Session.ticket, tickets.Deployment.ticket, tickets.Link.parent, tickets.Ticket.duplicate_of
+  - PROTECT : clocking.Session.ticket, deploy.Deployment.ticket, tickets.Link.parent, tickets.Ticket.duplicate_of
 - tickets.TicketType :
   - PROTECT : tickets.Ticket.ticket_type
 - topics.Topic :

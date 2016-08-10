@@ -31,6 +31,11 @@ class TicketDetail(TicketDetail):
     `faculties`
 
     """
+    
+    general = dd.Panel("""
+    general1:60 deploy.DeploymentsByTicket:20
+    comments.CommentsByRFC:60 clocking.SessionsByTicket:20
+    """, label=_("General"))
 
     general1 = """
     summary:40 id:6 reporter:12
@@ -39,6 +44,13 @@ class TicketDetail(TicketDetail):
     """
 
 Tickets.detail_layout = TicketDetail()
+
+Sites.detail_layout = """
+id name partner #responsible_user
+remark
+#InterestsBySite TicketsBySite deploy.MilestonesBySite
+"""
+
 
 
 @dd.receiver(dd.post_analyze)

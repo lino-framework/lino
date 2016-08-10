@@ -26,7 +26,7 @@ def makeuser(username):
 
 def objects():
     Project = rt.modules.tickets.Project
-    Milestone = rt.modules.tickets.Milestone
+    Milestone = rt.models.deploy.Milestone
     Ticket = rt.modules.tickets.Ticket
     User = rt.modules.users.User
     TicketStates = rt.modules.tickets.TicketStates

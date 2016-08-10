@@ -29,6 +29,9 @@ from django.conf import settings
 from lino.api import dd, rt
 from lino.utils.dpy import Migrator, override
 
+def noop(*args):
+    return None
+
 
 class Migrator(Migrator):
     "The standard migrator for :ref:`noi`."
@@ -177,3 +180,18 @@ class Migrator(Migrator):
             return tickets_Site(**kw)
 
         return '0.0.3'
+
+    def migrate_from_1_0_1(self, globals_dict):
+        """Move Deployment and Milestone from 'tickets' to new plugin
+        'deploy'.
+
+        """
+        if settings.is_installed('deploy'):
+            globals_dict.update(
+                tickets_Deployment=rt.models.deploy.Deployment)
+            globals_dict.update(
+                tickets_Milestone=rt.models.deploy.Milestone)
+        else:
+            globals_dict.update(create_tickets_deployment=noop)
+            globals_dict.update(create_tickets_milestone=noop)
+        return '1.0.2'

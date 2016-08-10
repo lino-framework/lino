@@ -22,11 +22,8 @@ Adds functionality for managing tickets.
 .. autosummary::
    :toctree:
 
-    roles
     models
-    ui
-    choicelists
-
+    desktop
 
 """
 
@@ -36,36 +33,22 @@ from lino.api import ad, _
 class Plugin(ad.Plugin):
     "See :class:`lino.core.plugin.Plugin`."
 
-    verbose_name = _("Tickets")
+    verbose_name = _("Deploy")
 
-    needs_plugins = [
-        'lino_xl.lib.stars', 'lino_xl.lib.excerpts',
-        'lino_xl.lib.topics',
-        'lino.modlib.comments', 'lino.modlib.changes',
-        'lino_noi.lib.noi']
+    needs_plugins = ['lino_noi.lib.tickets']
 
     def setup_main_menu(self, site, profile, m):
         p = self.get_menu_group()
         m = m.add_menu(p.app_label, p.verbose_name)
-        # m.add_action('tickets.MyInterests')
-        # m.add_action('tickets.MyOwnedTickets')
-        m.add_action('tickets.ActiveTickets')
-        m.add_action('tickets.Tickets')
-        m.add_action('tickets.MyKnownProblems')
-        m.add_action('tickets.UnassignedTickets')
-        m.add_action('tickets.ActiveProjects')
+        # m.add_action('tickets.Tickets')
 
     def setup_config_menu(self, site, profile, m):
         p = self.get_menu_group()
         m = m.add_menu(p.app_label, p.verbose_name)
-        m.add_action('tickets.Projects')
-        m.add_action('tickets.TopLevelProjects')
-        m.add_action('tickets.ProjectTypes')
-        m.add_action('tickets.TicketTypes')
-        m.add_action('tickets.Sites')
+        # m.add_action('tickets.Projects')
 
     def setup_explorer_menu(self, site, profile, m):
         p = self.get_menu_group()
         m = m.add_menu(p.app_label, p.verbose_name)
-        # m.add_action('tickets.Projects')
-        m.add_action('tickets.Links')
+        m.add_action('deploy.Milestones')
+        m.add_action('deploy.Deployments')

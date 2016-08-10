@@ -18,7 +18,7 @@
 # <http://www.gnu.org/licenses/>.
 
 
-"""This module adds models for Projects, Milestones, Tickets & Co.
+"""Database models for this plugin.
 
 A **Project** is something into which somebody (the `partner`) invests
 time, energy and money.  The partner can be either external or the
@@ -32,10 +32,6 @@ projects.
 
 Projects are handled by their *name* while Tickets are handled by
 their *number*.
-
-A **Milestone** is a named step of evolution of a Project.  For
-software projects we usually call them a "release" and they are named
-by a version number.
 
 """
 
@@ -288,7 +284,7 @@ class TicketDetail(dd.DetailLayout):
     main = "general more history_tab"
 
     general = dd.Panel("""
-    general1:60 DeploymentsByTicket:20
+    general1
     comments.CommentsByRFC:60 clocking.SessionsByTicket:20
     """, label=_("General"))
 
@@ -315,7 +311,14 @@ class TicketDetail(dd.DetailLayout):
 
 
 class Tickets(dd.Table):
-    """Global list of all tickets."""
+    """Global list of all tickets.
+
+    .. attribute:: site
+
+        Select a site if you want to see only tickets for this site.
+
+
+    """
     required_roles = set()  # also for anonymous
     model = 'tickets.Ticket'
     order_by = ["-id"]
@@ -333,6 +336,7 @@ class Tickets(dd.Table):
     parameters = mixins.ObservedPeriod(
         observed_event=TicketEvents.field(blank=True),
         topic=dd.ForeignKey('topics.Topic', blank=True,),
+        site=dd.ForeignKey('tickets.Site', blank=True,),
         reporter=dd.ForeignKey(
             settings.SITE.user_model,
             verbose_name=_("Reporter"),
@@ -372,7 +376,7 @@ class Tickets(dd.Table):
             blank=True,
             help_text=_("Show tickets which are private.")))
     params_layout = """
-    reporter assigned_to interesting_for project state has_project
+    reporter assigned_to interesting_for site project state has_project
     show_assigned show_active #show_closed #show_standby show_private \
     start_date end_date observed_event topic"""
     # simple_parameters = ('reporter', 'assigned_to', 'state', 'project')
@@ -380,7 +384,8 @@ class Tickets(dd.Table):
     @classmethod
     def get_simple_parameters(cls):
         s = super(Tickets, cls).get_simple_parameters()
-        s |= set(('reporter', 'assigned_to', 'state', 'project' ,'topic'))
+        s |= set(('reporter', 'assigned_to',
+                  'state', 'project' ,'topic', 'site'))
         return s
 
     @classmethod
@@ -515,16 +520,7 @@ class TicketsToTriage(Tickets):
         kw.update(state=TicketStates.new)
         return kw
 
-    @classmethod
-    def get_welcome_messages(cls, ar, **kw):
-        if not ar.get_user().profile.has_required_roles([Triager]):
-            return
-        sar = ar.spawn(cls)
-        count = sar.get_total_count()
-        if count > 0:
-            msg = _("You have {0} tickets to triage.")
-            msg = msg.format(count)
-            yield ar.href_to_request(sar, msg)
+    welcome_message_when_count = 0
 
 
 class TicketsToTalk(Tickets):
@@ -627,7 +623,7 @@ class Sites(dd.Table):
     detail_layout = """
     id name partner #responsible_user
     remark
-    #InterestsBySite TicketsBySite MilestonesBySite
+    TicketsBySite
     """
 
 
@@ -693,78 +689,3 @@ class MyKnownProblems(Tickets):
             yield ar.href_to_request(sar, msg)
 
 
-class Milestones(dd.Table):
-    """
-    .. attribute:: show_closed
-    """
-    order_by = ['-id']
-    # order_by = ['label', '-id']
-    model = 'tickets.Milestone'
-    detail_layout = """
-    site id label expected reached changes_since printed closed
-    description
-    #TicketsFixed
-    TicketsReported DeploymentsByMilestone
-    #clocking.OtherTicketsByMilestone
-    """
-    insert_layout = dd.InsertLayout("""
-    site label
-    description
-    """, window_size=(50, 15))
-
-    parameters = mixins.ObservedPeriod(
-        show_closed=dd.YesNo.field(
-            blank=True, default=dd.YesNo.no.as_callable,
-            help_text=_("Show milestons which are closed.")))
-
-    params_layout = "start_date end_date show_closed"
-
-    @classmethod
-    def get_request_queryset(self, ar):
-        qs = super(Milestones, self).get_request_queryset(ar)
-        pv = ar.param_values
-        if pv.show_closed == dd.YesNo.no:
-            qs = qs.filter(closed=False)
-        elif pv.show_closed == dd.YesNo.yes:
-            qs = qs.filter(closed=True)
-        return qs
-
-
-class MilestonesBySite(Milestones):
-    order_by = ['-label', '-id']
-    master_key = 'site'
-    column_names = "label expected reached closed id *"
-
-
-class Deployments(dd.Table):
-    model = 'tickets.Deployment'
-    parameters = mixins.ObservedPeriod(
-        show_closed=dd.YesNo.field(
-            blank=True, default=dd.YesNo.no.as_callable,
-            help_text=_("Show deployments on closed milestones.")))
-
-    params_layout = "start_date end_date show_closed"
-
-    @classmethod
-    def get_request_queryset(self, ar):
-        qs = super(Deployments, self).get_request_queryset(ar)
-        pv = ar.param_values
-        if pv.show_closed == dd.YesNo.no:
-            qs = qs.filter(milestone__closed=False)
-        elif pv.show_closed == dd.YesNo.yes:
-            qs = qs.filter(milestone__closed=True)
-        return qs
-
-
-class DeploymentsByMilestone(Deployments):
-    label = _("Deployed tickets")
-    order_by = ['-ticket__id']
-    master_key = 'milestone'
-    column_names = "ticket:30 ticket__state:10 remark:30 *"
-
-
-class DeploymentsByTicket(Deployments):
-    order_by = ['-milestone__reached']
-    master_key = 'ticket'
-    # column_names = "milestone__reached milestone  remark *"
-    column_names = "milestone  remark *"

@@ -365,7 +365,7 @@ version. It just means that you release some changed software to the
 users of that site.
 
 >>> welket = tickets.Site.objects.get(name="welket")
->>> rt.show(tickets.MilestonesBySite, welket)
+>>> rt.show(rt.actors.deploy.MilestonesBySite, welket)
 ... #doctest: -REPORT_UDIFF
 ======= ============== ============ ======== ====
  Label   Expected for   Reached      Closed   ID
@@ -386,7 +386,7 @@ are being fixed when this milestone is reached.
 
 The demo database currently does not have any deployments:
 
->>> rt.show(tickets.Deployments)
+>>> rt.show(rt.actors.deploy.Deployments)
 No data to display
 
 
@@ -396,8 +396,8 @@ Release notes
 Lino Noi has an excerpt type for printing a milestone.  This is used
 to produce *release notes*.
 
->>> obj = tickets.Milestone.objects.get(pk=7)
->>> rt.show(tickets.DeploymentsByMilestone, obj)
+>>> obj = deploy.Milestone.objects.get(pk=7)
+>>> rt.show(rt.actors.deploy.DeploymentsByMilestone, obj)
 No data to display
 
 >>> rt.show(clocking.OtherTicketsByMilestone, obj)

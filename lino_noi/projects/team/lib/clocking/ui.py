@@ -133,7 +133,7 @@ class OtherTicketsByMilestone(Tickets, InvestedTime):
 
     """
     column_names = "id my_description state invested_time"
-    master = 'tickets.Milestone'
+    master = 'deploy.Milestone'
     label = _("Other tickets")
     
     @classmethod
@@ -154,7 +154,7 @@ class OtherTicketsByMilestone(Tickets, InvestedTime):
 
         qs = super(OtherTicketsByMilestone, self).get_request_queryset(ar)
 
-        explicit = rt.modules.tickets.Deployment.objects.filter(
+        explicit = rt.models.deploy.Deployment.objects.filter(
             milestone=mi).values_list('ticket_id', flat=True)
         qs = qs.exclude(id__in=explicit)
         for obj in qs:
