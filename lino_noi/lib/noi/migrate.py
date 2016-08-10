@@ -186,7 +186,7 @@ class Migrator(Migrator):
         'deploy'.
 
         """
-        if settings.is_installed('deploy'):
+        if settings.SITE.is_installed('deploy'):
             globals_dict.update(
                 tickets_Deployment=rt.models.deploy.Deployment)
             globals_dict.update(
