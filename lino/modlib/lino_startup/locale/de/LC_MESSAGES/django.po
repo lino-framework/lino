@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-20 00:03+0300\n"
-"PO-Revision-Date: 2016-07-20 00:05+0300\n"
+"POT-Creation-Date: 2016-08-10 05:16+0300\n"
+"PO-Revision-Date: 2016-08-10 05:23+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language: de\n"
 "Language-Team: \n"
@@ -16,8 +16,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.2.0\n"
-"X-Generator: Poedit 1.5.4\n"
+"Generated-By: Babel 2.3.4\n"
+"X-Generator: Poedit 1.8.7.1\n"
 
 #: lino/core/actions.py:681
 msgid "Detail"
@@ -27,7 +27,7 @@ msgstr ""
 msgid "Open a detail window on this record"
 msgstr "Detail-Fenster auf diesem Datensatz öffnen"
 
-#: lino/core/actions.py:721 lino/core/renderer.py:210
+#: lino/core/actions.py:721 lino/core/renderer.py:220
 msgid "New"
 msgstr "Neu"
 
@@ -97,12 +97,12 @@ msgstr ""
 msgid "Are you sure ?"
 msgstr "Sind Sie sicher?"
 
-#: lino/core/actors.py:314
+#: lino/core/actors.py:319
 #, python-format
 msgid "%(details)s of %(master)s"
 msgstr "%(details)s von %(master)s"
 
-#: lino/core/actors.py:1036
+#: lino/core/actors.py:1041
 #, python-format
 msgid "Total (%d rows)"
 msgstr "Total (%d Zeilen)"
@@ -111,37 +111,41 @@ msgstr "Total (%d Zeilen)"
 msgid "value"
 msgstr "Wert"
 
-#: lino/core/choicelists.py:357
+#: lino/core/choicelists.py:358
 msgid "text"
 msgstr "Text"
 
-#: lino/core/choicelists.py:361 lino/modlib/about/models.py:61
+#: lino/core/choicelists.py:362 lino/modlib/about/models.py:61
 #: lino/modlib/about/models.py:101
 msgid "name"
 msgstr ""
 
-#: lino/core/choicelists.py:365
+#: lino/core/choicelists.py:366
 msgid "Remark"
 msgstr "Bemerkung"
 
-#: lino/core/choicelists.py:618
+#: lino/core/choicelists.py:370 lino/modlib/about/models.py:217
+msgid "Type"
+msgstr "Art"
+
+#: lino/core/choicelists.py:623
 #, python-format
 msgid "%(value)r (invalid choice for %(list)s)"
 msgstr "%(value)r (ungültige Auswahl für %(list)s)"
 
-#: lino/core/dbtables.py:639
+#: lino/core/dbtables.py:645
 msgid "You have no permission to delete this row."
 msgstr "Sie haben nicht die Berechtigung, diese Zeile zu löschen."
 
-#: lino/core/fields.py:636
+#: lino/core/fields.py:639
 msgid "Quantity (Decimal or Duration)"
 msgstr "Menge (Zahl oder Dauer)"
 
-#: lino/core/fields.py:708
+#: lino/core/fields.py:721
 msgid "Invalid date"
 msgstr "Ungültiges Datum"
 
-#: lino/core/fields.py:729
+#: lino/core/fields.py:742
 #, fuzzy
 msgid ""
 "Uncomplete dates are allowed, e.g. \n"
@@ -149,16 +153,24 @@ msgid ""
 "\"00.07.1980\" means \"in July 1980\"\n"
 "or \"23.07.0000\" means \"on a 23th of July\"."
 msgstr ""
-"Unkomplette Datumsangaben sind erlaubt, z.B. \"%(ex1)s\" heißt \"irgendwann "
-"im Jahr 1980\", \"%(ex2)s\" heißt \"im Juli 1980\"oder \"%(ex3)s\" heißt "
-"\"an einem 23. Juli\"."
+"Unkomplette Datumsangaben sind erlaubt, z.B. \"%(ex1)s\" heißt \"irgendwann im "
+"Jahr 1980\", \"%(ex2)s\" heißt \"im Juli 1980\"oder \"%(ex3)s\" heißt \"an einem "
+"23. Juli\"."
 
-#: lino/core/kernel.py:120 lino/modlib/extjs/linoweb.js:1540
+#: lino/core/kernel.py:121 lino/modlib/extjs/linoweb.js:1540
 #: lino/modlib/extjs/linoweb.js:2828
 msgid "Confirmation"
 msgstr "Bestätigung"
 
-#: lino/core/kernel.py:669
+#: lino/core/kernel.py:482
+msgid "You have "
+msgstr "Du hast "
+
+#: lino/core/kernel.py:483
+msgid "{0} items in {1}"
+msgstr "{0} Einträge in {1}"
+
+#: lino/core/kernel.py:693
 msgid "User abandoned"
 msgstr ""
 
@@ -166,74 +178,72 @@ msgstr ""
 msgid "General"
 msgstr "Allgemein"
 
-#: lino/core/merge.py:66
+#: lino/core/merge.py:67
 msgid "Merge this object into another object of same class."
 msgstr "Dieses Objekt in ein anderes Objekt der gleichen Klasse fusionieren."
 
-#: lino/core/merge.py:67 lino/modlib/changes/models.py:56
+#: lino/core/merge.py:68 lino/modlib/changes/models.py:56
 msgid "Merge"
 msgstr "Fusionieren"
 
-#: lino/core/merge.py:79
+#: lino/core/merge.py:80
 msgid "into..."
 msgstr "nach..."
 
-#: lino/core/merge.py:80
+#: lino/core/merge.py:81
 msgid "Reason"
 msgstr "Begründung"
 
-#: lino/core/merge.py:125
+#: lino/core/merge.py:126
 msgid "Also reassign volatile related objects"
 msgstr "Auch vergängliche verknüpfte Objekte überweisen"
 
-#: lino/core/merge.py:168
+#: lino/core/merge.py:169
 msgid "You must specify a merge target."
 msgstr ""
 
-#: lino/core/merge.py:170
+#: lino/core/merge.py:171
 msgid "Cannot merge an instance to itself."
 msgstr "Kann Datensatz nicht mit sich selbst fusionieren."
 
-#: lino/core/merge.py:194
+#: lino/core/merge.py:195
 #, python-format
 msgid "Merge %(origin)s into %(target)s"
 msgstr "Fusioniere %(origin)s nach %(target)s"
 
-#: lino/core/merge.py:226
+#: lino/core/merge.py:227
 msgid "will be deleted."
 msgstr "wird gelöscht"
 
-#: lino/core/merge.py:227
+#: lino/core/merge.py:228
 msgid "will get reassigned."
 msgstr "wird überwiesen."
 
-#: lino/core/merge.py:229
+#: lino/core/merge.py:230
 #, python-format
 msgid "%s will be deleted"
 msgstr "%s wird gelöscht"
 
-#: lino/core/merge.py:230
+#: lino/core/merge.py:231
 #, python-format
 msgid "Are you sure you want to merge %(this)s into %(merge_to)s?"
-msgstr ""
-"Sind Sie sicher, dass Sie %(this)s nach %(merge_to)s fusionieren wollen?"
+msgstr "Sind Sie sicher, dass Sie %(this)s nach %(merge_to)s fusionieren wollen?"
 
-#: lino/core/merge.py:264
+#: lino/core/merge.py:266
 #, python-format
 msgid "Merged %(this)s into %(merge_to)s. Updated %(updated)d related rows."
 msgstr ""
 
 #: lino/core/model.py:414
 #, python-format
-msgid ""
-"Cannot delete %(model)s %(self)s because %(count)d %(refs)s refer to it."
+msgid "Cannot delete %(model)s %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
-"Kann %(model)s %(self)s nicht löschen weil %(count)d %(refs)s darauf "
-"verweisen."
+"Kann %(model)s %(self)s nicht löschen weil %(count)d %(refs)s darauf verweisen."
 
-#: lino/core/model.py:713 lino/core/tables.py:685
-#: lino/modlib/importfilters/models.py:111 lino/modlib/tinymce/models.py:34
-#: lino/modlib/uploads/models.py:121 lino/modlib/uploads/models.py:134
+#: lino/core/model.py:713 lino/core/tables.py:676
+#: lino/modlib/importfilters/models.py:111 lino/modlib/notify/actions.py:36
+#: lino/modlib/tinymce/models.py:34 lino/modlib/uploads/models.py:121
+#: lino/modlib/uploads/models.py:134
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -241,40 +251,40 @@ msgstr "Beschreibung"
 msgid "Workflow"
 msgstr "Arbeitsablauf"
 
-#: lino/core/renderer.py:223
+#: lino/core/renderer.py:233
 msgid "Show Last"
 msgstr "Letzten zeigen"
 
-#: lino/core/renderer.py:225
+#: lino/core/renderer.py:235
 msgid "Show the last record in a detail window"
 msgstr "Den letzten datensatz in Detail-Fenster anzeigen"
 
-#: lino/core/renderer.py:232
+#: lino/core/renderer.py:242
 msgid "Show All"
 msgstr "Alle zeigen"
 
-#: lino/core/renderer.py:234
+#: lino/core/renderer.py:244
 msgid "Show all records in a table window"
 msgstr "Datensätze in einem Tabellenfenster anzeigen"
 
-#: lino/core/requests.py:444 lino/modlib/plausibility/choicelists.py:38
+#: lino/core/requests.py:447 lino/modlib/plausibility/choicelists.py:38
 msgid "Error"
 msgstr "Fehler"
 
-#: lino/core/requests.py:469 lino/modlib/system/models.py:51
+#: lino/core/requests.py:472 lino/modlib/system/models.py:51
 msgid "Success"
 msgstr "Erfolgreich abgeschlossen"
 
-#: lino/core/requests.py:537
+#: lino/core/requests.py:540
 msgid "Aborted"
 msgstr "Abgebrochen"
 
-#: lino/core/requests.py:538 lino/core/store.py:567
+#: lino/core/requests.py:541 lino/core/store.py:567
 #: lino/modlib/system/choicelists.py:41
 msgid "Yes"
 msgstr "Ja"
 
-#: lino/core/requests.py:539 lino/core/store.py:567
+#: lino/core/requests.py:542 lino/core/store.py:567
 #: lino/modlib/system/choicelists.py:42
 msgid "No"
 msgstr "Nein"
@@ -287,39 +297,39 @@ msgstr "die Dokumentation"
 msgid "No data to display"
 msgstr "Keine Daten anzuzeigen"
 
-#: lino/core/site.py:335 lino/modlib/changes/models.py:103
+#: lino/core/site.py:364 lino/modlib/changes/models.py:103
 msgid "Master"
 msgstr "Stammdaten"
 
-#: lino/core/site.py:337
+#: lino/core/site.py:366
 msgid "Reports"
 msgstr "Berichte"
 
-#: lino/core/site.py:338
+#: lino/core/site.py:367
 msgid "Configure"
 msgstr "Konfigurierung"
 
-#: lino/core/site.py:339
+#: lino/core/site.py:368
 msgid "Explorer"
 msgstr ""
 
-#: lino/core/site.py:340
+#: lino/core/site.py:369
 msgid "Site"
 msgstr "Site"
 
-#: lino/core/site.py:2554 lino/modlib/languages/fixtures/few_languages.py:21
+#: lino/core/site.py:2622 lino/modlib/languages/fixtures/few_languages.py:21
 msgid "English"
 msgstr ""
 
-#: lino/core/site.py:3378
+#: lino/core/site.py:3442
 msgid "This is "
 msgstr "Dies ist "
 
-#: lino/core/site.py:3387
+#: lino/core/site.py:3451
 msgid " using "
 msgstr " unter "
 
-#: lino/core/site.py:3432
+#: lino/core/site.py:3496
 #, python-format
 msgid "%(place)s, %(date)s"
 msgstr "%(place)s, den %(date)s"
@@ -339,7 +349,7 @@ msgstr "%r (ungültige Auswahl)"
 msgid "Invalid value for this field (%s)."
 msgstr ""
 
-#: lino/core/tables.py:716
+#: lino/core/tables.py:707
 msgid "Button"
 msgstr ""
 
@@ -388,23 +398,23 @@ msgstr ""
 "Sind Sie sicher, dass Sie  einen neuen Datensatz für %(model)s %(name)s "
 "erstellen möchten?"
 
-#: lino/mixins/dupable.py:193
+#: lino/mixins/dupable.py:198
 msgid "Must update phonetic words."
 msgstr "Phonetische Wörter müssen aktualisiert werden."
 
-#: lino/mixins/dupable.py:241
+#: lino/mixins/dupable.py:246
 msgid "Check for missing phonetic words"
 msgstr "Sind die phonetischen Wörter aktualisiert?"
 
-#: lino/mixins/dupable.py:280
+#: lino/mixins/dupable.py:285
 msgid "Similar record"
 msgstr "Ähnlicher Datensatz"
 
-#: lino/mixins/dupable.py:293
+#: lino/mixins/dupable.py:298
 msgid "Phonetic words: {0}"
 msgstr "Phonetische Wörter: {0}"
 
-#: lino/mixins/duplicable.py:37
+#: lino/mixins/duplicable.py:37 lino/modlib/lino_startup/help_texts.py:145
 msgid "Duplicate this row."
 msgstr "Diese Zeile duplizieren (verdoppeln)."
 
@@ -662,11 +672,7 @@ msgstr "Name"
 msgid "Value"
 msgstr "Wert"
 
-#: lino/modlib/about/models.py:217
-msgid "Type"
-msgstr "Art"
-
-#: lino/modlib/about/models.py:227 lino/modlib/notify/models.py:196
+#: lino/modlib/about/models.py:227 lino/modlib/notify/models.py:214
 msgid "About"
 msgstr "Info"
 
@@ -702,11 +708,11 @@ msgstr "Simuliertes Tagesdatum {0}."
 msgid "Source timestamps:"
 msgstr "Quellcode-Zeitstempel (%s)"
 
-#: lino/modlib/about/models.py:283
+#: lino/modlib/about/models.py:284
 msgid "Server status"
 msgstr "Server-Status"
 
-#: lino/modlib/about/models.py:286
+#: lino/modlib/about/models.py:287
 #, python-format
 msgid "%s pending threads"
 msgstr ""
@@ -745,9 +751,8 @@ msgstr ""
 msgid "Show this table in Bootstrap3 interface"
 msgstr "Tabelle als HTML anzeigen"
 
-#: lino/modlib/bootstrap3/views.py:49
 #: lino/modlib/bootstrap3/config/bootstrap3/base.html:22
-#: lino/modlib/extjs/ext_renderer.py:761
+#: lino/modlib/bootstrap3/views.py:49 lino/modlib/extjs/ext_renderer.py:782
 msgid "Home"
 msgstr "Startseite"
 
@@ -878,50 +883,50 @@ msgstr "%s auswählen..."
 msgid "show"
 msgstr "zeigen"
 
-#: lino/modlib/extjs/ext_renderer.py:244
+#: lino/modlib/extjs/ext_renderer.py:245
 #, fuzzy
 msgid "Insert"
 msgstr "Benutzer"
 
-#: lino/modlib/extjs/ext_renderer.py:249
+#: lino/modlib/extjs/ext_renderer.py:250
 #, fuzzy
 msgid "Manage"
 msgstr "Manager"
 
-#: lino/modlib/extjs/ext_renderer.py:511
+#: lino/modlib/extjs/ext_renderer.py:532
 msgid "as"
 msgstr "als"
 
-#: lino/modlib/extjs/ext_renderer.py:543
+#: lino/modlib/extjs/ext_renderer.py:564
 msgid "My settings"
 msgstr "Meine Einstellungen"
 
-#: lino/modlib/extjs/ext_renderer.py:553
+#: lino/modlib/extjs/ext_renderer.py:574
 msgid "Myself"
 msgstr "ich selbst"
 
-#: lino/modlib/extjs/ext_renderer.py:555
+#: lino/modlib/extjs/ext_renderer.py:576
 msgid "Act as..."
 msgstr "Arbeiten als..."
 
-#: lino/modlib/extjs/ext_renderer.py:561
+#: lino/modlib/extjs/ext_renderer.py:582
 msgid "Log out"
 msgstr "Abmelden"
 
-#: lino/modlib/extjs/ext_renderer.py:564 lino/modlib/users/models.py:38
+#: lino/modlib/extjs/ext_renderer.py:585 lino/modlib/users/models.py:38
 msgid "Change password"
 msgstr "Passwort ändern"
 
-#: lino/modlib/extjs/ext_renderer.py:566
+#: lino/modlib/extjs/ext_renderer.py:587
 msgid "Forgot password"
 msgstr "Passwort vergessen"
 
-#: lino/modlib/extjs/ext_renderer.py:576 lino/modlib/extjs/linoweb.js:364
+#: lino/modlib/extjs/ext_renderer.py:597 lino/modlib/extjs/linoweb.js:364
 #: lino/modlib/extjs/linoweb.js:399
 msgid "Log in"
 msgstr "Anmelden"
 
-#: lino/modlib/extjs/ext_renderer.py:1238
+#: lino/modlib/extjs/ext_renderer.py:1259
 msgid "No data to display."
 msgstr "Keine Daten anzuzeigen."
 
@@ -956,8 +961,7 @@ msgstr "Datum im Format JJJJ-MM-TT eingeben (Nullen für unbekannte Teile)"
 msgid "Show this panel in own window"
 msgstr "Dieses Panel in eigenem Fenster öffnen"
 
-#: lino/modlib/extjs/linoweb.js:1667
-#: lino/modlib/plausibility/choicelists.py:37
+#: lino/modlib/extjs/linoweb.js:1667 lino/modlib/plausibility/choicelists.py:37
 msgid "Warning"
 msgstr "Warnung"
 
@@ -1050,12 +1054,12 @@ msgstr "Kann MTI-Kind nicht anzeigen wenn Checkbox abgeschlatet ist."
 msgid "Failed to delete %(record)s : %(error)s."
 msgstr "Fehler beim Löschen von %(record)s : %(error)s."
 
-#: lino/modlib/extjs/views.py:612
+#: lino/modlib/extjs/views.py:618
 #, python-format
 msgid "List contains more than %d rows"
 msgstr "Liste enthält mehr als %d Zeilen"
 
-#: lino/modlib/extjs/views.py:657
+#: lino/modlib/extjs/views.py:663
 #, python-format
 msgid "Error while saving GC for %(table)s: %(error)s"
 msgstr ""
@@ -1113,7 +1117,7 @@ msgstr ""
 msgid "Database object"
 msgstr "Datenobjekt"
 
-#: lino/modlib/gfks/models.py:163 lino/modlib/plausibility/models.py:143
+#: lino/modlib/gfks/models.py:163 lino/modlib/plausibility/models.py:144
 msgid "Message"
 msgstr "Meldung"
 
@@ -1195,6 +1199,1663 @@ msgstr ""
 msgid "Estonian"
 msgstr "Estnisch"
 
+#: lino/modlib/lino_startup/help_texts.py:6
+msgid "An HTML renderer that uses the ExtJS Javascript toolkit."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:7
+msgid ""
+"Adds a row action \"Duplicate\" which duplicates (creates a clone\n"
+"of) the object it was called on."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:9
+msgid ""
+"An Authority is when a User gives another User the right to \"represent him\" "
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:10
+#: lino/modlib/lino_startup/help_texts.py:432
+#: lino/modlib/lino_startup/help_texts.py:453
+msgid "alias of Change"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:11
+msgid ""
+"This is always True.\n"
+"See also lino.modlib.users.utils.AnonymousUser.authenticated."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:13
+msgid "Display a clickable list of all MTI parents, i.e. base models"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:14
+#: lino/modlib/lino_startup/help_texts.py:244
+#, fuzzy
+msgid "alias of Notification"
+msgstr "Benachrichtigung"
+
+#: lino/modlib/lino_startup/help_texts.py:15
+msgid "Base for all tables of notifications."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:16
+msgid "The component that generates the JS of a grid column."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:17
+msgid ""
+"The database object this message is about.\n"
+"This field is labelled About."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:19
+msgid ""
+"Indicator class object.\n"
+"Fixture may yield a FlushDeferredObjects\n"
+"to indicate that all deferred objects should get saved before going on."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:22
+msgid "Show data problems related to this database object."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:23
+msgid "Render the main page."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:24
+msgid "Defines the Clear cache button on a Printable record."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:25
+msgid ""
+"Update plausibility problems, repairing those which are\n"
+"automatically fixable."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:27
+msgid "alias of SiteConfig"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:28
+msgid ""
+"Use this instead of models.PositiveIntegerField for fields that\n"
+"are part of a GFK and you want Lino to render them using a\n"
+"Combobox."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:31
+msgid ""
+"The message text. This is a concatenation of all messages that\n"
+"were yeld by the checker."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:33
+msgid "The third row of toolbar buttons when editing in own window."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:34
+msgid "The second row of toolbar buttons when editing in own window."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:35
+msgid "The first row of toolbar buttons when editing in own window."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:36
+msgid "A request for identifying a person or validating a person's identity"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:37
+msgid "The database object which acts as \"master\"."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:38
+#: lino/modlib/lino_startup/help_texts.py:92
+#: lino/modlib/lino_startup/help_texts.py:358
+msgid "alias of Upload"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:39
+msgid ""
+"Mixin for models which can \"emit notifications\" and define a list\n"
+"\"observers\" to be notified when an instance is modified."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:41
+msgid "A string that py2js will represent as is, not between quotes."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:42
+msgid "See lino.core.plugin.Plugin."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:43
+msgid ""
+"A constant user-defined date to be substituted as current\n"
+"system date."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:45
+msgid ""
+"Generates .pdf files from .html templates.\n"
+"Requires pisa.\n"
+"Usage example see /tutorials/pisa/index."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:48
+#, fuzzy
+msgid "Represents a detected plausibility problem."
+msgstr "Datenprobleme reparieren"
+
+#: lino/modlib/lino_startup/help_texts.py:49
+msgid ""
+"A notification object represents the fact that a given user has\n"
+"been notified about a given database object."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:51
+msgid "Instantiated by restore.py."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:52
+msgid "alias of Shortcut"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:53
+msgid ""
+"lino.core.param_panel.ParameterPanel with two fields\n"
+"start_date and end_date which default to empty."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:55
+msgid "The reference. This must be either empty or unique."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:56
+msgid "Shows only my Uploads (i.e. those whose author is current user)."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:57
+msgid ""
+"The widget used to render a SingleRelatedObjectDescriptor,\n"
+"i.e. the other side of a OneToOneField."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:59
+#: lino/modlib/lino_startup/help_texts.py:80
+#: lino/modlib/lino_startup/help_texts.py:90
+#: lino/modlib/lino_startup/help_texts.py:95
+#: lino/modlib/lino_startup/help_texts.py:158
+#: lino/modlib/lino_startup/help_texts.py:276
+#: lino/modlib/lino_startup/help_texts.py:287
+#: lino/modlib/lino_startup/help_texts.py:292
+#: lino/modlib/lino_startup/help_texts.py:312
+#: lino/modlib/lino_startup/help_texts.py:324
+#: lino/modlib/lino_startup/help_texts.py:332
+#: lino/modlib/lino_startup/help_texts.py:367
+#: lino/modlib/lino_startup/help_texts.py:368
+#: lino/modlib/lino_startup/help_texts.py:373
+#: lino/modlib/lino_startup/help_texts.py:481
+#: lino/modlib/lino_startup/help_texts.py:482
+#: lino/modlib/lino_startup/help_texts.py:489
+#: lino/modlib/lino_startup/help_texts.py:505
+#: lino/modlib/lino_startup/help_texts.py:531
+#: lino/modlib/lino_startup/help_texts.py:544
+msgid "See /dev/plugins."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:60
+#: lino/modlib/lino_startup/help_texts.py:340
+msgid "Alias for field number 3"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:61
+msgid "Mixin for objects that represent an uploadable file."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:62
+msgid ""
+"Base class for the table of phonetic words of a given dupable\n"
+"model. For every (non-abstract) dupable model there must be a\n"
+"subclass of PhoneticWordBase.\n"
+"The subclass must define a field\n"
+"owner which points to the Dupable, and the Dupable's\n"
+"dupable_word_model must point to its subclass\n"
+"of PhoneticWordBase."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:69
+msgid "The default build method to use when rendering printable documents."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:70
+msgid ""
+"Mixin for things that have a unique ref field and a\n"
+"get_by_ref method."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:72
+msgid "The toolbar buttons when editing a field inside a detail form."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:73
+msgid "Using Django's templating engine."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:74
+msgid ""
+"A print action which uses a cache for the generated printable\n"
+"document and builds is only when it doesn't yet exist."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:76
+msgid ""
+"The role of users having this profile. This is an instance of\n"
+"<lino.core.roles.UserRole> or some subclass thereof."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:78
+msgid ""
+"The user reponsible\n"
+"for fixing this problem."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:81
+msgid "Designed to be just imported. No subclassing needed."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:82
+msgid ""
+"The list of things you can observe on a\n"
+"lino.mixins.periods.DatePeriod."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:84
+msgid ""
+"The panel used to display a slave table whose slave_grid_format\n"
+"is 'summary'."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:86
+msgid "The class of the lino.utils.diag.analyzer object."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:87
+msgid ""
+"Represents a Lino.GridPanel, i.e. the widget used to represent a\n"
+"table or a slave table."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:89
+msgid "Shows all Uploads"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:91
+#, fuzzy
+msgid "The end date"
+msgstr "Enddatum"
+
+#: lino/modlib/lino_startup/help_texts.py:93
+msgid ""
+"Mixin to encapsulate the generating of \"traditional\" (\"snail\") mail\n"
+"addresses."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:96
+msgid "Shortcut to lino.core.site.Site.plugins"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:97
+msgid ""
+"Generates .pdf files from .tex templates.\n"
+"Not actively used."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:99
+msgid "Show only objects whose author is the given user."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:100
+msgid ""
+"The list of upload shortcut fields which have been declared on this\n"
+"Site.  See add_shortcut()."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:102
+msgid ""
+"Duplicate the selected row. This will call\n"
+"lino.core.model.Model.on_duplicate() on the new object and\n"
+"on related objects."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:105
+msgid ""
+"This model should have exactly one instance,\n"
+"used to store persistent global site parameters.\n"
+"Application code sees this instance as settings.SITE.site_config."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:108
+msgid "The optional Panel for parameters of an Action."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:109
+#: lino/modlib/lino_startup/help_texts.py:519
+msgid "Alias for field number 1"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:110
+msgid "The default table for Change."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:111
+msgid ""
+"A utility class to make python fixtures more compact. See\n"
+"tutorial.instantiator."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:113
+msgid ""
+"The optional Panel for parameters of a Table.\n"
+"JS part stored in Lino.GridPanel.params_panel."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:115
+msgid "The middleware class definition."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:116
+#: lino/modlib/lino_startup/help_texts.py:246
+#: lino/modlib/lino_startup/help_texts.py:251
+#: lino/modlib/lino_startup/help_texts.py:407
+#: lino/modlib/lino_startup/help_texts.py:495
+#, fuzzy
+msgid "alias of Problem"
+msgstr "Datenproblem"
+
+#: lino/modlib/lino_startup/help_texts.py:117
+msgid "Used only for testing."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:118
+msgid "When you decorate your subclass of TestCase, you must also specify:"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:119
+msgid ""
+"Deprecated. This is (and always was) being ignored. Use\n"
+"update_controller_field() instead."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:121
+msgid ""
+"A virtual field which defines buttons for switching between the\n"
+"different views."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:123
+msgid "used e.g. to render /lino/lino/config/500.html"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:124
+msgid "Base class for all Widgets on some filed-like data element."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:125
+msgid "alias of User"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:126
+msgid "The URL from where to include the ExtJS library files."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:127
+msgid ""
+"The name of a CharField on this model which holds the full-text\n"
+"description that is being tested for duplicates."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:129
+msgid "A property which calls get_address_html()."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:130
+msgid ""
+"A singleton class whose instance will be assigned to the\n"
+"user attribute of anonymous incoming requests, similar to\n"
+"Django's approach."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:133
+msgid ""
+"Optional pointer to a virtual upload shortcut field.  If\n"
+"this is not empty, then the given shortcut field will manage\n"
+"uploads of this type.  See also Shortcuts."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:136
+msgid ""
+"Like SimpleOdsReader, but each row is converted to \n"
+"an lino.utils.AttrDict. This requires you to specifiy, \n"
+"besides the SimpleOdsReader.headers attrribute, \n"
+"another list of pure ASCII strings which must be valid Python \n"
+"attribute names."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:141
+msgid "The list of user profiles available on this site."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:142
+msgid ""
+"Used to define tests that are to be run directly in the demo\n"
+"database, without using the Django test runner (i.e. without\n"
+"creating a temporary test database)."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:146
+msgid ""
+"Number of seconds to wait between two refreshes when autorefresh is\n"
+"activated. Default is 60. Set this to 0 in order to deactivate\n"
+"the autorefresh button."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:149
+msgid "Base class for all user profiles."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:150
+msgid "Serializes a QuerySet to a py stream."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:151
+msgid ""
+"The author of this object.\n"
+"A pointer to lino.modlib.users.models.User."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:153
+msgid "The profile of a user is what defines her or his permissions."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:154
+msgid ""
+"Like the standard lino.core.actions.SubmitInsert, but adds\n"
+"a confirmation if there is a possible duplicate record."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:156
+msgid ""
+"A request to the HealthInsurance BCSS service.\n"
+"Net yet used in practice."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:159
+msgid "The maximum length of the ref field."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:160
+msgid "The type of an upload."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:161
+msgid "Used to collaborate with a restful Ext.data.Store."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:162
+msgid ""
+"Move current row one downwards. This action is available on any\n"
+"Sequenced object as Sequenced.move_down."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:164
+msgid "Represents a counter. Usage see"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:165
+msgid ""
+"The loggers to preserve. If not None, this should be a list of\n"
+"loggers (logging.Logger instances) whose file handles\n"
+"should not get closed."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:168
+msgid "Converter for ManyToMany fields."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:169
+msgid "Displays buttons for certain actions on this row:"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:170
+msgid "alias of RemoteAuthTestCase"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:171
+msgid ""
+"Shows all database objects (model instances) who have a broken\n"
+"GeneriForeignKey field."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:173
+#: lino/modlib/lino_startup/help_texts.py:291
+msgid "Alias for field number 2"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:174
+msgid ""
+"An action with a generic dialog window of three fields \"Summary\",\n"
+"\"Description\" and a checkbox \"Don't send email notification\"."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:176
+msgid ""
+"A vertical Panel is vflex if and only if at least one of its\n"
+"children is vflex.  A horizontal Panel is vflex if and only if\n"
+"all its children are vflex (if vflex and non-vflex elements are\n"
+"together in a hbox, then the vflex elements will get the height of\n"
+"the highest non-vflex element)."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:181
+msgid "Checks for the following repairable problem:"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:182
+msgid ""
+"A list of tag names which are to remain in HTML comments if\n"
+"bleaching is active."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:184
+msgid "Represents a single DBF file."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:185
+msgid ""
+"Slave Table showing the direct changes related to the current\n"
+"object."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:187
+msgid ""
+"An XML namespace.  Base class for\n"
+"lino.utils.xmlgen.html.HtmlNamespace and the namespaces\n"
+"defined in lino.utils.xmlgen.intervat."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:190
+msgid "Adds two timestamp fields created and modified."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:191
+msgid ""
+"Updates the table of plausibility problems for a given database\n"
+"object, also removing those messages which no longer exist. This\n"
+"action does not change anything else in the database."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:194
+msgid "A duration, expressed in hours:minutes."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:195
+msgid ""
+"Slave Table showing the changes related to the current object,\n"
+"including those applied to \"child\" objects."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:197
+msgid ""
+"Rebuild the site cache.\n"
+"This action is available on About."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:199
+msgid ""
+"Path to the ExtJS root directory.  Only used when\n"
+"media_base_url is None, and when the media directory has\n"
+"no symbolic link named extjs pointing to the ExtJS root\n"
+"directory."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:203
+msgid ""
+"This view is being used when remote_user_header is\n"
+"empty (and user_model not).\n"
+"lino.core.auth.SessionUserMiddleware"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:206
+msgid ""
+"Tell Sphinx to switch to the specified project until the end of\n"
+"this document."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:208
+msgid ""
+"Base class to anything that may be \"registered\" and \"deregistered\"\n"
+"(e.g. Invoices, Vouchers, Declarations, Reservations,...).\n"
+"\"Registered\" in general means \"this object has been taken account of\".\n"
+"Registered objects are not editable."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:212
+msgid "Base class for integers, decimals, RequestField,..."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:213
+msgid "Usage example see lino_xl.lib.humanlinks.fixtures."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:214
+msgid "A property which calls get_address()."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:215
+msgid "For example CourseToXls."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:216
+#: lino/modlib/lino_startup/help_texts.py:224
+#, fuzzy
+msgid "alias of Checker"
+msgstr "Datentest"
+
+#: lino/modlib/lino_startup/help_texts.py:217
+msgid "The last name, also known as family name."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:218
+msgid ""
+"A request to the PerformInvestigation BCSS service.\n"
+"Net yet used in practice."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:220
+msgid "Adds some extensions to the Django TestCase."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:221
+msgid "The sequence number of this item with its parent."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:222
+msgid ""
+"Display information about this web site.  This defines the window\n"
+"which opens via the menu command Site ‣ About."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:225
+msgid ""
+"The list of possible choices for the type field\n"
+"of a Change."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:227
+msgid ""
+"Edit the print template, i.e. the file specified by\n"
+"Printable.get_print_templates()."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:229
+msgid ""
+"Abstract base class. For each .ods file you are probably creating a\n"
+"subclass of this."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:231
+msgid ""
+"A virtual read-only field which returns the Person MTI child corresponding\n"
+"to the partner (if it exists) and otherwise None."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:233
+msgid ""
+"A CSV writer which will write rows to CSV file \"f\",\n"
+"which is encoded in the given encoding."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:235
+msgid "Exchange the seqno of this item and the previous item."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:236
+msgid "Mixin for models which have a field created"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:237
+msgid "alias of Dupable"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:238
+msgid "Iterator that reads an encoded stream and reencodes the input to UTF-8"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:239
+msgid "The sex of this person (male or female)."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:240
+msgid ""
+"Mixin for models that have a field seqno containing a\n"
+"\"sequence number\"."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:242
+msgid ""
+"A user who manages office functionality for other users (but not\n"
+"for himself)."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:245
+msgid "Base class for models that can be \"dupable\"."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:247
+msgid ""
+"A chooser holds information about the possible choices of a\n"
+"field."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:249
+msgid "Renders as a simple table."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:250
+#, fuzzy
+msgid "Show the plausibility problems by checker."
+msgstr "Datenprobleme reparieren"
+
+#: lino/modlib/lino_startup/help_texts.py:252
+msgid ""
+"A user who has access to office functionality like calendar, notes\n"
+"and uploads."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:254
+#, fuzzy
+msgid "alias of Model"
+msgstr "Datenbankfeld"
+
+#: lino/modlib/lino_startup/help_texts.py:255
+msgid "A custom help text to be displayed for a given field."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:256
+msgid "Extends lino.core.plugin.Plugin."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:257
+msgid ""
+"A short \"abstract\" of your comment. This should not be more\n"
+"than one paragraph."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:259
+msgid ""
+"The DJANGO_SETTINGS_MODULE to set for each subprocess\n"
+"launched by this test case."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:261
+msgid "A choicelist with two values \"Yes\" and \"No\"."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:262
+msgid ""
+"Log all SQL statements to the console.\n"
+"Intended for use with the django development server."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:264
+msgid "The first name, also known as given name."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:265
+msgid "alias of UserProfile"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:266
+msgid ""
+"A pythonic representation of a <table> with <head>,\n"
+"<foot> and <body>."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:268
+msgid ""
+"A dupable model has its\n"
+"submit_insert action\n"
+"overridden by CheckedSubmitInsert, a extended variant of\n"
+"the action which checks for duplicate rows and asks a user\n"
+"confirmation when necessary."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:273
+msgid "ExtJS element to be used for DisplayFields."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:274
+#: lino/modlib/lino_startup/help_texts.py:488
+msgid "Alias for field number 0"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:275
+msgid "Converter for ChoiceListField."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:277
+msgid ""
+"When serving static files from a different subdomain, TinyMCE needs\n"
+"to know about this. Typical usage is to specify this in your\n"
+"djangosite_local.py file (lino.djangosite_local):"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:280
+msgid "The last year for which summaries should be computed."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:281
+msgid "Counts the number of code lines in a given Python source file."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:282
+msgid ""
+"Abstract model mixin for things that have a \"parent\" and\n"
+"\"siblings\"."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:284
+msgid "Widget for lino.core.fields.IncompleteDate fields."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:285
+msgid ""
+"Looks for a file \"index.rst\" in your project_dir and (if it exists)\n"
+"runs doctest on it."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:288
+msgid ""
+"If you have an existing Django management command, just rename\n"
+"it's handle method to handle_daemon and inherit from this\n"
+"instead of django.core.management.base.BaseCommand."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:293
+msgid "Render a list of records."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:294
+msgid "Element that renders to a Lino.HtmlBoxPanel."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:295
+msgid ""
+"The initial height of the window to use when editing in own\n"
+"window."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:297
+msgid "The name of the file to be used as template."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:298
+msgid "Base class for the individual services."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:299
+msgid ""
+"The action used to print this object.\n"
+"This is an instance of\n"
+"DirectPrintAction or CachedPrintAction by\n"
+"default.  And if lino_xl.lib.excerpts is installed,\n"
+"then set_excerpts_actions possibly replaces\n"
+"do_print by a\n"
+"lino_xl.lib.excerpts.CreateExcerpt instance."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:306
+msgid ""
+"Whether to use a status bar to display certain messages to the user.\n"
+"Default is False since currently this is not really useful."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:308
+msgid "The first year for which summaries should be computed."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:309
+msgid "Virtual field displaying the age in years."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:310
+msgid "alias of CachedPrintable"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:311
+msgid "alias of UploadType"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:313
+msgid "Mixin for models that are \"controllable\" by another database object."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:314
+msgid "Represents a user of this site."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:315
+msgid ""
+"A variant of Users showing only active users and\n"
+"only some fields.  This is used on demo sites in\n"
+"admin_main.html to display the list of available users."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:318
+msgid ""
+"Abstract base class that adds a birth_date\n"
+"field and a virtual field \"Age\"."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:320
+#, fuzzy
+msgid "The start date"
+msgstr "Beginnt am"
+
+#: lino/modlib/lino_startup/help_texts.py:321
+msgid "Represents a shortcut field."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:322
+msgid "Represents an FPT block file"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:323
+msgid "Represents a field in a DBF file."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:325
+msgid "Shortcut to lino.core.site.Site.models"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:326
+msgid "A visible component"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:327
+msgid "The base table for Problem objects."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:328
+#, fuzzy
+msgid "A user who can see plausibility problems."
+msgstr "Datenprobleme reparieren"
+
+#: lino/modlib/lino_startup/help_texts.py:329
+msgid ""
+"loaddata requires DeserializedObject instances, \n"
+"but this Deserializer does not bypass pre_save/save methods."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:331
+msgid "The table with all existing upload types."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:333
+msgid "The database object which has been modified."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:334
+msgid "Imitates DeserializedObject required by loaddata."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:335
+#, fuzzy
+msgid "Show all plausibility problems."
+msgstr "Datenprobleme reparieren"
+
+#: lino/modlib/lino_startup/help_texts.py:336
+msgid "Base class for all \"Print\" actions."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:337
+msgid ""
+"Model mixin for database objects that have a user field which\n"
+"points to the \"author\" of this object. The default user is\n"
+"automatically set to the requesting user."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:341
+msgid "A user with all permissions."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:342
+msgid ""
+"Pointer to the uploaded file. See\n"
+"lino.mixins.uploadable.Uploadable.file"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:344
+#: lino/modlib/lino_startup/help_texts.py:366
+msgid "Alias for field number 4"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:345
+msgid ""
+"Returns a one-line string composed of salutation, title,\n"
+"first_name and last_name."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:347
+msgid ""
+"An optional name prefix like \"Dr.\" or \"PhD\", used to specify a\n"
+"professional position or academic qualification."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:349
+msgid ""
+"A subset of languages which\n"
+"should be hidden in this user profile.  Default value is\n"
+"hidden_languages.  This is\n"
+"used on multilingual sites with more than 4 or 5 languages."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:353
+msgid ""
+"Base class for Layout Elements that can contain other Layout Elements:\n"
+"Panel,\n"
+"TabPanel,\n"
+"FormPanel,\n"
+"GridPanel"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:359
+msgid "The timestame when this object was created."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:360
+msgid ""
+"Represents a file on the server below MEDIA_ROOT with\n"
+"two properties name and url."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:362
+msgid ""
+"Default value for the\n"
+"hidden_languages of newly\n"
+"attached choice item."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:365
+msgid "Default value for templates_group is the model's full name."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:369
+msgid "Base class for all models that represent a human."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:370
+msgid "Print using a hard-coded template and without cache."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:371
+msgid ""
+"Generates one directory of screenshots images and their index.rst\n"
+"file."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:374
+msgid ""
+"The table used to present the SiteConfig row in a Detail form.\n"
+"See also lino.Lino.get_site_config().\n"
+"Deserves more documentation."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:377
+msgid ""
+"Defines the two possible choices \"male\" and \"female\"\n"
+"for the gender of a person."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:379
+msgid ""
+"Renders the input template and returns the unmodified output as\n"
+"plain HTML."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:381
+msgid "Default table for django.contrib.ContentType."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:382
+msgid "The full path name of the .ods file to be read."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:383
+msgid "Log all SQL statements direct to the console."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:384
+msgid ""
+"A ParameterPanel\n"
+"with a field today which defaults to today."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:386
+msgid "An ObservedPeriod which defaults to the current month."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:387
+msgid ""
+"Tell Sphinx to switch to the specified language until the end of\n"
+"this document."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:389
+msgid "A user who manages configuration of office functionality."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:390
+msgid ""
+"Define a variable number of clones of the \"master\" field,\n"
+"one for each language .\n"
+"See mldbc."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:393
+msgid "return the filename on the server"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:394
+msgid ""
+"Rendered as a checkbox that indicates whether an mti child of the\n"
+"given model exists."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:396
+msgid ""
+"Pointer to the Partner instance related to\n"
+"this user."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:398
+msgid "Exchange the seqno of this item and the next item."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:399
+msgid ""
+"Shows a simplistic \"inspector\" which once helped me for debugging.\n"
+"Needs more work to become seriously useful..."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:401
+msgid ""
+"A Converter for ForeignKey and ManyToManyField. \n"
+"If the lookup_field is a BabelField, then it tries all available languages."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:403
+msgid "Naive representation of a potentially incomplete gregorian date."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:404
+msgid "Whether users with this profile get only write-proteced access."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:405
+msgid ""
+"Mixin for models that have a babel field name (labelled\n"
+"\"Description\" by default) for each language."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:408
+msgid ""
+"The WebServiceConnector namespace used for wrapping \"classical\" CBSS services."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:409
+msgid ""
+"Mixin for models whose instances have a \"print\" action (i.e. for\n"
+"which Lino can generate a printable document)."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:411
+msgid ""
+"Checks for missing cache files on all objects which inherit\n"
+"CachedPrintable."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:413
+#, fuzzy
+msgid "Render a single record."
+msgstr "Neuen Datensatz erstellen"
+
+#: lino/modlib/lino_startup/help_texts.py:414
+#, fuzzy
+msgid "Shows the plausibility problems assigned to this user."
+msgstr "Meine Datenkontrollliste"
+
+#: lino/modlib/lino_startup/help_texts.py:415
+msgid ""
+"Like WeasyBuildMethod, but the rendered HTML is then\n"
+"passed through weasyprint which converts from HTML to PDF."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:417
+msgid "A short description entered manually by the user."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:418
+msgid "A dictionary of sums to be collected using an arbitrary key."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:419
+msgid ""
+"The Media type\n"
+"of the file.  See also this thread\n"
+"about length of MIME type field."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:422
+msgid ""
+"A list of unicode strings, one for each column in the file.  The\n"
+"headers specified here must match exactly those found in the .ods\n"
+"file."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:425
+msgid "The files to be tested."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:426
+msgid "Mixin for database models which have a timezone field."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:427
+msgid ""
+"A pointer to an item of\n"
+"lino.modlib.printing.choicelists.BuildMethods."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:429
+msgid "An IncompleteDateField."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:430
+msgid ""
+"Timestamp of the built target file. Contains None\n"
+"if no build hasn't been called yet."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:433
+msgid "Represents an uploaded file."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:434
+msgid "Add verbose_name and help_text to Django's GFK."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:435
+msgid "Represents a DBT block file"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:436
+msgid ""
+"A CSV reader which will iterate over lines in the CSV file \"f\",\n"
+"which is encoded in the given encoding."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:438
+msgid "A registered change in the database."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:439
+msgid "The SSDN namespace used for wrapping \"classical\" CBSS services."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:440
+msgid "Similar to PlainIndex"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:441
+msgid ""
+"The ChoiceList of the state field must have at least two items\n"
+"named \"draft\" and \"registered\".\n"
+"There may be additional states.\n"
+"Every state must have an extra attribute \"editable\"."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:445
+msgid ""
+"Move current row one upwards. This action is available on any\n"
+"Sequenced object as Sequenced.move_up."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:447
+msgid ""
+"Like ChoicesFieldElement, but we use the fact that\n"
+"choicelists are actors to define them once and refer to them.\n"
+"Special case are choicelist fields with blank=True: these must\n"
+"dynamicaly add a blank choice to the the choicelist."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:451
+msgid "Shows the other objects who are similar to this one."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:452
+msgid "Base class for all \"summary data\" models."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:454
+msgid ""
+"The Checker which reported\n"
+"this problem."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:456
+msgid ""
+"Define a variable number of CharField database fields, one for\n"
+"each language of your lino.core.site.Site.languages.  See\n"
+"mldbc."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:459
+msgid ""
+"Lino currently includes three versions of TinyMCE, but for\n"
+"production sites we still use the eldest version 3.4.8."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:461
+msgid ""
+"The model to be checked. This may be an abstract model.  It can\n"
+"also be None, but then you must define your own\n"
+"get_checkable_models() method."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:464
+msgid ""
+"Generates .rtf files from .rtf templates.\n"
+"Not actively used."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:466
+msgid ""
+"Full name of the model used to hold dupable words for instances of\n"
+"this model.  Applications can specify a string which will be\n"
+"resolved at startup to the model's class object."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:469
+msgid "An extended django.test.TestCase."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:470
+msgid "A  HTML render that uses Bootstrap3."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:471
+msgid "A DisplayElement specially adapted to a GFK field."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:472
+msgid ""
+"Mixin for Models that generate a unique external file at a\n"
+"determined place when being printed."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:474
+msgid "A space-separated list of all middle names."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:475
+msgid ""
+"The list of required roles for getting permission to edit other\n"
+"users' work."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:477
+msgid ""
+"Base class for all build methods.  A build method encapsulates the\n"
+"process of generating a \"printable document\" that inserts data\n"
+"from the database into a template, using a given combination of a\n"
+"template parser and post-processor."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:483
+msgid "return the url that points to file on the server"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:484
+msgid ""
+"A comment is a short text which some user writes about some\n"
+"other database object. It has no recipient."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:486
+msgid ""
+"This is always False.\n"
+"See also lino.modlib.users.models.User.authenticated."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:490
+msgid ""
+"An ObservedPeriod for which start_date defaults to Jan\n"
+"1st and end_date to Dec 31 of the current year."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:492
+msgid ""
+"Must be unique.\n"
+"Leaving this empty means that the user cannot log in."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:494
+msgid "The SITE's Migrator class is instantiated by install_migrations."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:496
+msgid ""
+"A CachedPrintable that uses a \"Type\" for deciding which\n"
+"template to use on a given instance."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:498
+msgid "Pointer to the file itself (a Django FileField)."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:499
+msgid ""
+"Base class for tests that use remote http authentication.  We\n"
+"override the __call__() method in order to simulate\n"
+"remote_user_header <lino.core.site.Site.remote_user_header>\n"
+"being set to 'REMOTE_USER'."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:503
+msgid ""
+"Log a summary of the SQL statements made to the console.\n"
+"Intended for use with the django development server."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:506
+msgid "alias of UserAuthored"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:507
+msgid ""
+"The HTML namespace.\n"
+"This is instantiated as E."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:509
+msgid ""
+"If specified, this is a dict of Site\n"
+"attributes to override before running the test."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:511
+msgid ""
+"A field that lets the user select a language from the available\n"
+"lino.core.site.Site.languages."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:513
+msgid "The object returned by register()."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:514
+msgid "The Django deserializer for dpy."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:515
+msgid "Converter for ForeignKey fields."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:516
+msgid "A directory that may contain configuration files."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:517
+msgid ""
+"Base for build methods which use Lino's templating system\n"
+"(find_config_file)."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:520
+msgid "The gobal list of all notifications."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:521
+msgid "Converter for GenericForeignKey fields."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:522
+msgid ""
+"Mixin for Models that are automatically related to a \"project\".  A\n"
+"project means here \"the central most important thing that is used\n"
+"to classify most other things\"."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:525
+msgid ""
+"The username\n"
+"of the main plausibility responsible, i.e. a designated\n"
+"user who will be attributed to plausibility problems for which\n"
+"no specific responible could be designated (returned by the\n"
+"checker's get_responsible_user\n"
+"method)."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:532
+msgid "Base class for the choices of Checkers."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:533
+msgid "The base class for both build methods."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:534
+msgid "A Collector that does not delete the MTI parents."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:535
+msgid ""
+"A pythonic representation of a <body> with a <title> and\n"
+"some <head> tags for stylesheets."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:537
+msgid "The choicelist of build methods offered on this site."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:538
+msgid "Defines the lino2rst directive."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:539
+msgid "The list of plausibility problem types known by this application."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:540
+msgid ""
+"Mixin for models that use Multiple Table Inheritance to implement\n"
+"polymorphism."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:542
+msgid "Dialog action to change the password of a user."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:543
+msgid "Base class for choices of \"observed event\"-style choicelists."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:545
+msgid "Shortcut to lino.core.site.Site.actors"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:546
+msgid ""
+"Almost the same as description, but if file is\n"
+"not empty, the text is clickable, and clicking on it opens the\n"
+"uploaded file in a new browser window."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:549
+msgid ""
+"A Component is a Variable whose value is a dict of otpions.\n"
+"Deserves more documentation."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:551
+#, fuzzy
+msgid "The timezone."
+msgstr "Site-Besitzer"
+
+#: lino/modlib/lino_startup/help_texts.py:552
+msgid ""
+"A model mixin for models which represent a period whose start and\n"
+"end are date fields."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:554
+msgid ""
+"Whether the ENTER key (or CTRL+ENTER when in a\n"
+"textarea field) should submit the form."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:556
+msgid ""
+"The initial width of the window to use when editing in own\n"
+"window."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:558
+msgid "Suppress surrounding DIV tag. Used by restify()."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:559
+msgid "A named tuple with the following fields:"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:560
+msgid ""
+"An extended atelier.test.TestCase to be run using\n"
+"setup.py in the root of a project which may contain\n"
+"several Django projects."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:563
+msgid ""
+"Base class for models that specify the\n"
+"TypedPrintable.type."
+msgstr ""
+
 #: lino/modlib/lino_startup/config/403.html:3
 #: lino/modlib/lino_startup/config/403.html:7
 msgid "Permission denied"
@@ -1224,8 +2885,7 @@ msgstr ""
 
 #: lino/modlib/lino_startup/config/500.html:7
 msgid "Congratulations, you found an error in our system."
-msgstr ""
-"Herzlichen Glückwunsch, Sie haben einen Fehler in unserem System gefunden."
+msgstr "Herzlichen Glückwunsch, Sie haben einen Fehler in unserem System gefunden."
 
 #: lino/modlib/lino_startup/config/500.html:8
 msgid "We apologize for the inconvenience."
@@ -1234,8 +2894,8 @@ msgstr "Wir bitten um Verständnis."
 #: lino/modlib/lino_startup/config/500.html:9
 msgid "If you can reproduce this message, please tell us how you did that."
 msgstr ""
-"Bitte informieren sie uns über das Problem falls Sie diese Meldung "
-"reproduzieren können."
+"Bitte informieren sie uns über das Problem falls Sie diese Meldung reproduzieren "
+"können."
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:4
 msgid "Quick links:"
@@ -1248,16 +2908,15 @@ msgstr "Hallo %(first_name)s!"
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:22
 msgid ""
-"Try also the other <a href=\"http://lino-framework.org/demos.html\">demo "
-"sites</a>."
+"Try also the other <a href=\"http://lino-framework.org/demos.html\">demo sites</"
+"a>."
 msgstr ""
 "Probieren Sie auch die anderen <a href=\"http://lino-framework.org/demos.html"
 "\">Online-Demos</a> aus."
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:23
 #, python-format
-msgid ""
-"Your feedback is welcome to %s or directly to the person who invited you."
+msgid "Your feedback is welcome to %s or directly to the person who invited you."
 msgstr "Fragen und Verbesserungsvorschläge sind willkommen per E-Mail an %s."
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:37
@@ -1266,8 +2925,8 @@ msgstr ""
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:38
 msgid ""
-"Unlike the <a href=\"/\">web content section</a> there is now a GUI menu bar "
-"in the upper part of the screen."
+"Unlike the <a href=\"/\">web content section</a> there is now a GUI menu bar in "
+"the upper part of the screen."
 msgstr ""
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:43
@@ -1301,20 +2960,30 @@ msgstr "Diese Demo-Anwendung hat %d Benutzer:"
 msgid "The password is the same for all of them: \"1234\"."
 msgstr "Das Passwort ist für alle Benutzer gleich: \"1234\"."
 
-#: lino/modlib/notify/__init__.py:22 lino/modlib/notify/models.py:93
+#: lino/modlib/notify/__init__.py:23 lino/modlib/notify/models.py:93
 msgid "Notifications"
 msgstr "Benachrichtigungen"
 
-#: lino/modlib/notify/mixins.py:52
+#: lino/modlib/notify/actions.py:35
+#, fuzzy
+msgid "Summary"
+msgstr "Kurzbeschreibung"
+
+#: lino/modlib/notify/actions.py:38
+#, fuzzy, python-format
+msgid "Don't send email notification"
+msgstr "Du hast %d ungesichtete Benachrichtigungen."
+
+#: lino/modlib/notify/mixins.py:21
 msgid "{user} modified {obj}"
 msgstr "{user} hat {obj} bearbeitet"
 
-#: lino/modlib/notify/mixins.py:57
+#: lino/modlib/notify/mixins.py:26
 #, fuzzy
 msgid "{user} modified "
 msgstr "Bearbeitet"
 
-#: lino/modlib/notify/models.py:51 lino/modlib/notify/models.py:213
+#: lino/modlib/notify/models.py:51 lino/modlib/notify/models.py:231
 msgid "Seen"
 msgstr "Gesichtet"
 
@@ -1338,15 +3007,15 @@ msgstr "Betreff"
 msgid "Body"
 msgstr "Inhalt"
 
-#: lino/modlib/notify/models.py:176
+#: lino/modlib/notify/models.py:194
 msgid "Send e-mail"
 msgstr "E-Mail schicken"
 
-#: lino/modlib/notify/models.py:194
+#: lino/modlib/notify/models.py:212
 msgid "Recipient"
 msgstr "Empfänger"
 
-#: lino/modlib/notify/models.py:277
+#: lino/modlib/notify/models.py:295
 #, python-format
 msgid "You have %d unseen notifications."
 msgstr "Du hast %d ungesichtete Benachrichtigungen."
@@ -1409,52 +3078,42 @@ msgstr "Datentest"
 msgid "Plausibility checkers"
 msgstr "Datentests"
 
-#: lino/modlib/plausibility/models.py:31 lino/modlib/plausibility/models.py:74
+#: lino/modlib/plausibility/models.py:32 lino/modlib/plausibility/models.py:75
 msgid "Check plausibility"
 msgstr "Datenkontrolle durchführen"
 
-#: lino/modlib/plausibility/models.py:58
-#: lino/modlib/plausibility/models.py:102
+#: lino/modlib/plausibility/models.py:59 lino/modlib/plausibility/models.py:103
 msgid "Fix plausibility problems"
 msgstr "Datenprobleme reparieren"
 
-#: lino/modlib/plausibility/models.py:135
+#: lino/modlib/plausibility/models.py:136
 msgid "Plausibility problem"
 msgstr "Datenproblem"
 
-#: lino/modlib/plausibility/models.py:136
+#: lino/modlib/plausibility/models.py:137
 msgid "Plausibility problems"
 msgstr "Datenprobleme"
 
-#: lino/modlib/plausibility/models.py:150
-#: lino/modlib/plausibility/models.py:166
+#: lino/modlib/plausibility/models.py:151 lino/modlib/plausibility/models.py:167
 msgid "Responsible"
 msgstr "Verantwortlicher"
 
-#: lino/modlib/plausibility/models.py:167
+#: lino/modlib/plausibility/models.py:168
 msgid "Only problems for this responsible."
 msgstr "Nur Probleme für diesen Verantwortlichen."
 
-#: lino/modlib/plausibility/models.py:169
+#: lino/modlib/plausibility/models.py:170
 #, fuzzy
 msgid "Only problems by this checker."
 msgstr "%d zugewiesene Termine"
 
-#: lino/modlib/plausibility/models.py:227
+#: lino/modlib/plausibility/models.py:231
 msgid "Plausibility problems assigned to me"
 msgstr "Meine Datenkontrollliste"
 
-#: lino/modlib/plausibility/models.py:240
+#: lino/modlib/plausibility/models.py:244
 msgid "There are {0} plausibility problems assigned to you."
 msgstr "Du hast {0} offene Datenkontrollen."
-
-#: lino/modlib/print_pisa/__init__.py:21
-msgid "Print table using Pisa"
-msgstr ""
-
-#: lino/modlib/print_pisa/models.py:73
-msgid "Table (portrait)"
-msgstr "Tabelle (Hochformat)"
 
 #: lino/modlib/printing/__init__.py:26
 #, fuzzy
@@ -1469,8 +3128,7 @@ msgstr "Drucken"
 #, python-format
 msgid ""
 "Your printable document (filename %(doc)s) should now open in a new browser "
-"window. If it doesn't, please consult %(help)s or ask your system "
-"administrator."
+"window. If it doesn't, please consult %(help)s or ask your system administrator."
 msgstr ""
 "Das druckbare Dokument (Datei %(doc)s) müsste sich jetzt in einem neuen "
 "Browserfenster öffnen. Andernfalls bitte  %(help)s konsultieren oder den "
@@ -1507,8 +3165,7 @@ msgstr "Der Cache für %s wurde geleert."
 
 #: lino/modlib/printing/actions.py:335
 msgid "This will discard all changes in the generated file."
-msgstr ""
-"Dadurch gehen alle manuellen Änderungen im generierten Dokument verloren."
+msgstr "Dadurch gehen alle manuellen Änderungen im generierten Dokument verloren."
 
 #: lino/modlib/printing/choicelists.py:291
 msgid "Build method"
@@ -1542,10 +3199,6 @@ msgstr "Kurzbeschreibung"
 
 #: lino/modlib/summaries/mixins.py:19
 msgid "Compute results"
-msgstr ""
-
-#: lino/modlib/summaries/mixins.py:31
-msgid "Update summary"
 msgstr ""
 
 #: lino/modlib/summaries/mixins.py:45
@@ -1751,12 +3404,12 @@ msgstr "Site-Besitzer"
 msgid "Author"
 msgstr "Autor"
 
-#: lino/modlib/users/mixins.py:185 lino/modlib/users/mixins.py:207
+#: lino/modlib/users/mixins.py:192 lino/modlib/users/mixins.py:214
 #, python-format
 msgid "My %s"
 msgstr "Meine %s"
 
-#: lino/modlib/users/mixins.py:200
+#: lino/modlib/users/mixins.py:207
 #, fuzzy, python-format
 msgid "%(details)s"
 msgstr "%(details)s von %(master)s"
@@ -1787,8 +3440,7 @@ msgstr ""
 
 #: lino/modlib/users/models.py:131
 msgid ""
-"Users with an empty `profile` field are considered inactive and cannot log "
-"in."
+"Users with an empty `profile` field are considered inactive and cannot log in."
 msgstr ""
 
 #: lino/modlib/users/models.py:134
@@ -1827,7 +3479,7 @@ msgstr "Erteilte Vollmachten"
 msgid "Authorities taken"
 msgstr "Erhaltene Vollmachten"
 
-#: lino/modlib/weasyprint/__init__.py:37
+#: lino/modlib/weasyprint/__init__.py:39
 msgid "WeasyPrint"
 msgstr ""
 
@@ -1905,7 +3557,7 @@ msgstr "%(actor)s (Ansicht in %(app)s)"
 msgid "%s (view)"
 msgstr "%s (Ansicht)"
 
-#: lino/utils/mti.py:217
+#: lino/utils/mti.py:194
 #, python-format
 msgid "Problem while inserting %(child)s child of %(parent)s: %(message)s"
 msgstr ""
@@ -1949,3535 +3601,3 @@ msgstr "Ungültige belgische NR-Nummer %s :"
 #, python-format
 msgid "Check digit is %(found)d but should be %(expected)d"
 msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
-
-#~ msgid "Invoiceable partners"
-#~ msgstr "Fakturierbare Partner"
-
-#~ msgid "My received invitations"
-#~ msgstr "Meine erhaltenen Einladungen"
-
-#~ msgid "%d tasks to do"
-#~ msgstr "%d Aufgaben zu erledigen"
-
-#~ msgid "Lesson %d"
-#~ msgstr "Lektion %d"
-
-#~ msgid "Ready to print"
-#~ msgstr "Bereit für Ausdruck"
-
-#~ msgid "Quick appointment"
-#~ msgstr "Soforttermin"
-
-#~ msgid "Birth"
-#~ msgstr "mit"
-
-#~ msgid "number"
-#~ msgstr "Nummer"
-
-#~ msgid "%(partner)s has stopped waiting for %(user)s"
-#~ msgstr "%(partner)s wartet nicht mehr auf  %(user)s"
-
-#~ msgid "Hi, "
-#~ msgstr "Hallo, "
-
-#~ msgid "Create visit"
-#~ msgstr "Visite erstellen"
-
-#~ msgid "My Waiting Guests"
-#~ msgstr "Meine wartenden Besucher"
-
-#~ msgid "Expert"
-#~ msgstr "Experte"
-
-#~ msgid "My "
-#~ msgstr "Meine "
-
-#~ msgid "Purchases account"
-#~ msgstr "Konto für Einkäufe"
-
-#~ msgid "Unclear events"
-#~ msgstr "Unklare Termine"
-
-#~ msgid "My unclear events"
-#~ msgstr "Meine unklaren Termine"
-
-#~ msgid "%d unclear events approaching."
-#~ msgstr "%d unklare anstehende Termine"
-
-#~ msgid "Scheduled"
-#~ msgstr "Geplant"
-
-#~ msgid "Reschedule"
-#~ msgstr "Verschieben"
-
-#~ msgid "VAT exempt"
-#~ msgstr "Befreit von MWSt."
-
-#~ msgid "Prices include VAT"
-#~ msgstr "Preis inkl. MWSt."
-
-#~ msgid "Whether prices includes VAT or not."
-#~ msgstr "Ob Stückpreise sich inkl. MWSt. verstehen."
-
-#~ msgid "My notes"
-#~ msgstr "Meine Notizen"
-
-#~ msgid "Slave tables of %s"
-#~ msgstr "Untertabellen von  %s"
-
-#~ msgid "Update Reminders"
-#~ msgstr "Erinnerungen aktualisieren"
-
-#~ msgid "Event/Note"
-#~ msgstr "Ereignis/Notiz"
-
-#~ msgid "Events/Notes"
-#~ msgstr "Ereignisse/Notizen"
-
-#~ msgid "Matched by"
-#~ msgstr "Verwaltet durch"
-
-#~ msgid "An error report has been sent to the system administrator."
-#~ msgstr "Ein Fehlerbericht wurde an den Systemverwalter geschickt."
-
-#~ msgid "Received"
-#~ msgstr "Empfangen"
-
-#~ msgid "%(guest)s leaves without being received."
-#~ msgstr "%(guest)s hat das Zentrum verlassen."
-
-#~ msgid "Tariff"
-#~ msgstr "Tarif"
-
-#~ msgid "~Calendar"
-#~ msgstr "Kalender"
-
-#~ msgid "Missed reminders"
-#~ msgstr "Verpasste Erinnerungen"
-
-#~ msgid "Holiday"
-#~ msgstr "Feiertag"
-
-#~ msgid "The default type for recurring calendar events."
-#~ msgstr "Die standardmäßige Zugriffsklasse für Ihre Termine und Aufgaben"
-
-#~ msgid "Contract"
-#~ msgstr "Vertrag"
-
-#~ msgid "Contracts"
-#~ msgstr "Verträge"
-
-#~ msgid "Team view"
-#~ msgstr "Team-Ansicht"
-
-#~ msgid "Register this object."
-#~ msgstr "Dieses Objekt registrieren."
-
-#~ msgid "Deregister this object."
-#~ msgstr "Diesen Datensatz entregistrieren."
-
-#~ msgid "Introduction"
-#~ msgstr "Einleitung"
-
-#~ msgid "National Day"
-#~ msgstr "Nationalfeiertag"
-
-#~ msgid "All Souls' Day"
-#~ msgstr "Allerseelen"
-
-#~ msgid "All Saints' Day"
-#~ msgstr "Allerheiligen"
-
-#~ msgid "Christmas"
-#~ msgstr "Weihnachten"
-
-#~ msgid "company type"
-#~ msgstr "Organisationsart"
-
-#~ msgid "company types"
-#~ msgstr "Organisationsarten"
-
-#~ msgid "Companies"
-#~ msgstr "Organisationen"
-
-#~ msgid "Due"
-#~ msgstr "Fällig"
-
-#~ msgid "title"
-#~ msgstr "Anrede"
-
-#~ msgid "Undo"
-#~ msgstr "Sonntag"
-
-#~ msgid "Table of my events per day."
-#~ msgstr "Meine Termine pro Tag"
-
-#~ msgid "My events today"
-#~ msgstr "Meine Termine heute"
-
-#~ msgid "a Lino application to make Belgian accounting simple."
-#~ msgstr "eine Lino-Anwendung, um belgische Buchführung einfach zu machen."
-
-#~ msgid "Group Type"
-#~ msgstr "Gruppenart"
-
-#~ msgid "Group Types"
-#~ msgstr "Gruppenarten"
-
-#~ msgid "Group"
-#~ msgstr "Gruppe"
-
-#~ msgid "Groups"
-#~ msgstr "Gruppen"
-
-#~ msgid "Sales Rule"
-#~ msgstr "Verkaufsregel"
-
-#~ msgid "Sales Rules"
-#~ msgstr "Verkaufsregeln"
-
-#~ msgid "The company that runs this site"
-#~ msgstr "Firma, die diesen Site betreibt"
-
-#~ msgid "Create attestation"
-#~ msgstr "Bescheinigung erstellen"
-
-#~ msgid "Managed"
-#~ msgstr "Manager"
-
-#~ msgid "Link type"
-#~ msgstr "Verweisart"
-
-#~ msgid "Natural parency"
-#~ msgstr "Natürliche Eltern-Kind"
-
-#~ msgid "Adoptive parency"
-#~ msgstr "Adoption"
-
-#~ msgid "Template file: %s "
-#~ msgstr "Druckvorlage: %s "
-
-#~ msgid "Teacher type"
-#~ msgstr "Lehrerart"
-
-#~ msgid "Teacher types"
-#~ msgstr "Lehrerarten"
-
-#~ msgid "Teacher"
-#~ msgstr "Lehrer"
-
-#~ msgid "Teachers"
-#~ msgstr "Lehrer"
-
-#~ msgid "Pupil type"
-#~ msgstr "Schülerart"
-
-#~ msgid "Pupil types"
-#~ msgstr "Schülerarten"
-
-#~ msgid "Pupil"
-#~ msgstr "Schüler"
-
-#~ msgid "Pupils"
-#~ msgstr "Schüler"
-
-#~ msgid "is a teacher"
-#~ msgstr "Ist ein Kursleiter"
-
-#~ msgid "Whether this Person is also a Teacher."
-#~ msgstr "Ob dieser Partner auch eine Person ist."
-
-#~ msgid "is a pupil"
-#~ msgstr "ist ein Schüler"
-
-#~ msgid "Whether this Person is also a Pupil."
-#~ msgstr "Ob dieser Partner auch eine Person ist."
-
-#~ msgid "upload"
-#~ msgstr "Upload"
-
-#~ msgid "uploads"
-#~ msgstr "Uploads"
-
-#~ msgid "Create an attestation from this"
-#~ msgstr "per E-Mail"
-
-#~ msgid "Attest"
-#~ msgstr "Zustände"
-
-#~ msgid "Parency link"
-#~ msgstr "Verwandschaft"
-
-#~ msgid "valid until"
-#~ msgstr "gültig bis"
-
-#~ msgid "%s expires"
-#~ msgstr "%s läuft aus"
-
-#~ msgid "Teams"
-#~ msgstr "Jahre"
-
-#~ msgid "Membership"
-#~ msgstr "Team-Mitglied"
-
-#~ msgid "Property group"
-#~ msgstr "Eigenschaftsgruppe"
-
-#~ msgid "Create without detail"
-#~ msgstr "Erstellen ohne Detail"
-
-#~ msgid "Don't open a detail window on the new record"
-#~ msgstr "Nach Erstellen des Datensatzes kein Detail-Fenster öffnen"
-
-#~ msgid "Create a printout from this"
-#~ msgstr "per E-Mail"
-
-#~ msgid "Create Printout"
-#~ msgstr "eher nicht"
-
-#~ msgid "Badges"
-#~ msgstr "Löhne und Gehälter"
-
-#~ msgid "Badge"
-#~ msgstr "Seite"
-
-#~ msgid "Badge Award"
-#~ msgstr "Passwort ändern"
-
-#~ msgid "Holder"
-#~ msgstr "Rolle"
-
-#~ msgid "Select this value"
-#~ msgstr "Diesen Datensatz löschen"
-
-#~ msgid "Account type"
-#~ msgstr "Kontenart"
-
-#~ msgid "Account types"
-#~ msgstr "Kontenarten"
-
-#~ msgid "Savings"
-#~ msgstr "Sparkonto"
-
-#~ msgid "Deposits"
-#~ msgstr "Berichte"
-
-#~ msgid "Printout Type"
-#~ msgstr "Ausdruckart"
-
-#~ msgid "Printout Types"
-#~ msgstr "Ausdruckarten"
-
-#~ msgid "Printout"
-#~ msgstr "Ausdruck"
-
-#~ msgid "Printouts"
-#~ msgstr "Ausdrucke"
-
-#~ msgid "Household Role"
-#~ msgstr "Rolle in Haushalt"
-
-#~ msgid "Household Roles"
-#~ msgstr "Rollen in Haushalt"
-
-#~ msgid "name-giving"
-#~ msgstr "namensgebend"
-
-#~ msgid "Member of"
-#~ msgstr "Mitglied von"
-
-#~ msgid "~Links"
-#~ msgstr "Verweise"
-
-#~ msgid "Dependent Person"
-#~ msgstr "Beziehung"
-
-#~ msgid "Dependent Persons"
-#~ msgstr "Beziehungen"
-
-#~ msgid "Parents"
-#~ msgstr "Übergeordnete Begriffe"
-
-#~ msgid "Dependent persons"
-#~ msgstr "Beziehungen"
-
-#~ msgid "Save Grid Configuration"
-#~ msgstr "Tabellenkonfiguration speichern"
-
-#~ msgid "Child of head"
-#~ msgstr "Kind des Vorstands"
-
-#~ msgid "Child of partner"
-#~ msgstr "Kind des Partners"
-
-#~ msgid " as "
-#~ msgstr " als "
-
-#~ msgid "%(c)s is %(t)s of %(p)s"
-#~ msgstr "%(c)s ist %(t)s von %(p)s"
-
-#~ msgid "Attestation Type"
-#~ msgstr "Auszugsart"
-
-#~ msgid "Attestation Types"
-#~ msgstr "Auszugsarten"
-
-#~ msgid "Attestations"
-#~ msgstr "Auszüge"
-
-#~ msgid "Upcoming reminders"
-#~ msgstr "Ausblick"
-
-#~ msgid "Past reminders"
-#~ msgstr "Rückblick"
-
-#~ msgid "Delete {0} rows. Are you sure?"
-#~ msgstr "Es werden {0} Datensätze gelöscht. Sind Sie sicher?"
-
-#~ msgid "Career related uploads"
-#~ msgstr "Uploads Lebenslauf"
-
-#~ msgid "Medical uploads"
-#~ msgstr "Medizinische Uploads"
-
-#~ msgid "Certificate"
-#~ msgstr "Zertifiziert"
-
-#~ msgid "Skip dialog"
-#~ msgstr "ohne Dialog"
-
-#~ msgid "Certificate has been deleted."
-#~ msgstr "%s wurde aktualisiert."
-
-#~ msgid "Create Excerpt"
-#~ msgstr "Auszug erstellen"
-
-#~ msgid "Farest future"
-#~ msgstr "Präfektur"
-
-#~ msgid "Export this table to a .csv file"
-#~ msgstr "Diese Tabelle in eine .csv-Datei exportieren"
-
-#~ msgid "Excerpts history"
-#~ msgstr "Auszüge"
-
-#~ msgid "a Lino application for startup projects."
-#~ msgstr "eine Lino-Anwendung, um belgische Buchführung einfach zu machen."
-
-#~ msgid "Printedness has been undone."
-#~ msgstr "Dokument %s wurde generiert."
-
-#~ msgid "Print this data record."
-#~ msgstr "Diesen Datensatz löschen"
-
-#~ msgid "You have"
-#~ msgstr "Du hast"
-
-#~ msgid "%d events assigned."
-#~ msgstr "%d zugewiesene Termine"
-
-#~ msgid "%d invitations are waiting for your answer."
-#~ msgstr "%d unbeantwortete Einladungen zu Versammlungen"
-
-#~ msgid "Certified"
-#~ msgstr "Zertifiziert"
-
-#~ msgctxt "calendar event action"
-#~ msgid "Cancel"
-#~ msgstr "Stornieren"
-
-#~ msgid "Welcome"
-#~ msgstr "Willkommen"
-
-#~ msgid "Hi, %(user)s!"
-#~ msgstr "Hallo %(user)s!"
-
-#~ msgid "Congratulatons: you have no warnings."
-#~ msgstr "Glückwunsch: du hast keine Warnungen."
-
-#~ msgid "Bank account"
-#~ msgstr "Bankkonto "
-
-#~ msgid "Assign"
-#~ msgstr "Zuweisen"
-
-#~ msgid "Company type"
-#~ msgstr "Organisationsart"
-
-#~ msgid "List Members"
-#~ msgstr "Listenmitglieder"
-
-#~ msgid "Other uploads"
-#~ msgstr "Sonstige Uploads"
-
-#~ msgid "certainly not...very much"
-#~ msgstr "bloß nicht ... sehr gerne"
-
-#~ msgid "not at all...very well"
-#~ msgstr "gar nicht ... sehr gut"
-
-#~ msgid "Attestation"
-#~ msgstr "Bescheinigung"
-
-#~ msgid "%s has been built."
-#~ msgstr "%s wurde generiert."
-
-#~ msgid "Reused %s from cache."
-#~ msgstr "Datei %s aus Cache wiederverwendet."
-
-#~ msgid "No excerpts."
-#~ msgstr "Keine Auszüge."
-
-#~ msgid "%d adults"
-#~ msgstr "%d Erwachsene"
-
-#~ msgid "%d adults and %d children"
-#~ msgstr "%d Erwachsene und %d Kind(er)"
-
-#~ msgid "Guests"
-#~ msgstr "Gäste"
-
-#~ msgid "Organisation type"
-#~ msgstr "Organisationsart"
-
-#~ msgid "Organisation types"
-#~ msgstr "Organisationsarten"
-
-#~ msgid "The next automatic id for Person or Organisation"
-#~ msgstr "Nächste Partnernummer"
-
-#~ msgid "The partner that runs this site"
-#~ msgstr "Firma, die diesen Site betreibt"
-
-#~ msgid "As %s you have no permission to run this action."
-#~ msgstr "Als %s haben Sie nicht die Berechtigung, diese Aktion auszuführen."
-
-#~ msgid "Presence"
-#~ msgstr "Anwesenheit"
-
-#~ msgid "My pending presences"
-#~ msgstr "Meine Anwesenheiten"
-
-#~ msgid "Participation"
-#~ msgstr "Teilnahmegebühr"
-
-#~ msgid "Participations"
-#~ msgstr "Teilnahmegebühr"
-
-#~ msgid "study or education"
-#~ msgstr "Ausbildung oder Studium"
-
-#~ msgid "Studies & education"
-#~ msgstr "Ausbildungen und Studien"
-
-#~ msgid "Table of my tasks marked 'to do'."
-#~ msgstr "Meine zu erledigenden Aufgaben."
-
-#~ msgid "To-do list"
-#~ msgstr "To-Do-Liste"
-
-#~ msgctxt "cal"
-#~ msgid "Started"
-#~ msgstr "Begonnen"
-
-#~ msgid "Ended"
-#~ msgstr "Beendet"
-
-#~ msgid "Code Changes"
-#~ msgstr "Änderungen"
-
-#~ msgid "Optimizations"
-#~ msgstr "Bestätigung"
-
-#~ msgid "Module"
-#~ msgstr "Rolle"
-
-#~ msgid "VAT rate"
-#~ msgstr "MWSt-Satz"
-
-#~ msgid "VAT rates"
-#~ msgstr "MWSt-Sätze"
-
-#~ msgid "is Person"
-#~ msgstr "ist eine Person"
-
-#~ msgid "Whether this Partner is a Person."
-#~ msgstr "Ob dieser Partner auch eine Person ist."
-
-#~ msgid "is Company"
-#~ msgstr "ist eine Organisation"
-
-#~ msgid "Whether this Partner is a Company."
-#~ msgstr "Ob dieser Partner auch eine Organisation ist."
-
-#~ msgid "is Household"
-#~ msgstr "ist ein Haushalt"
-
-#~ msgid "is private"
-#~ msgstr "Privat"
-
-#~ msgid "My events"
-#~ msgstr "Meine Termine"
-
-#~ msgid "%(user)s's %(what)s"
-#~ msgstr "%(date)s um %(time)s"
-
-#~ msgid "Primary key"
-#~ msgstr "Primär"
-
-#~ msgctxt "date range"
-#~ msgid "until"
-#~ msgstr "bis"
-
-#~ msgid "Appointment"
-#~ msgstr "Termin"
-
-#~ msgid "eID sheet"
-#~ msgstr "eID-Inhalt"
-
-#~ msgid "Repairable"
-#~ msgstr "Lettrierend"
-
-#~ msgid "My open tickets"
-#~ msgstr "Anwesenheiten"
-
-#~ msgid "Training Type"
-#~ msgstr "Ausbildungsart"
-
-#~ msgid "Training Types"
-#~ msgstr "Ausbildungsarten"
-
-#~ msgid "Study Type"
-#~ msgstr "Studienart"
-
-#~ msgid "Study Types"
-#~ msgstr "Studienarten"
-
-#~ msgid "Fixable"
-#~ msgstr "Reparierbar"
-
-#~ msgid "No plausibility problems found in {0}."
-#~ msgstr "Keine Datenprobleme gefunden in {0}."
-
-#~ msgid "Event Type"
-#~ msgstr "Ereignisart"
-
-#~ msgid "Calendar entry"
-#~ msgstr "Kalendereintrag"
-
-#~ msgid "You are busy in "
-#~ msgstr "Du bist beschäftigt mit "
-
-#~ msgid "Save changes to text ?"
-#~ msgstr "Änderungen im Text speichern?"
-
-#~ msgid "Edit text in own window"
-#~ msgstr "Text in eigenem Fenster bearbeiten"
-
-#~ msgid "Vote"
-#~ msgstr "Notiz"
-
-#~ msgid "Votes"
-#~ msgstr "Notizen"
-
-#~ msgid "Tickets assigned to me"
-#~ msgstr "%d zugewiesene Termine"
-
-#~ msgid "Assigned"
-#~ msgstr "Zugewiesen zu"
-
-#~ msgid "Active"
-#~ msgstr "Aktiv"
-
-#~ msgid "Tested"
-#~ msgstr "Vorgeschlagen"
-
-#~ msgid "Has been fixed and tested."
-#~ msgstr "%s wurde aktualisiert."
-
-#~ msgid "See also"
-#~ msgstr "Ansicht als "
-
-#~ msgid "Referred by"
-#~ msgstr "Vertreten durch"
-
-#~ msgid "Waiting for feedback"
-#~ msgstr "Meine Warteschlange"
-
-#~ msgid "Opened"
-#~ msgstr "Neu öffnen"
-
-#~ msgid "Up"
-#~ msgstr "Rauf"
-
-#~ msgid "Down"
-#~ msgstr "Runter"
-
-#~ msgid "all"
-#~ msgstr "Alle"
-
-#~ msgid "nobody"
-#~ msgstr "Inhalt"
-
-#~ msgid "Course Line"
-#~ msgstr "Kursserie"
-
-#~ msgid "Course Lines"
-#~ msgstr "Kursserien"
-
-#~ msgid "Submitted"
-#~ msgstr "Eingereicht"
-
-#~ msgid "Submit"
-#~ msgstr "Eingereicht"
-
-#~ msgid "Oops."
-#~ msgstr "Räume"
-
-#~ msgid "Paid"
-#~ msgstr "Bezahlt"
-
-#~ msgid "Signed"
-#~ msgstr "Unterschrieben"
-
-#~ msgid "User Levels"
-#~ msgstr "Benutzer-Levels"
-
-#~ msgid "Short name"
-#~ msgstr "Familienname"
-
-#~ msgid "Guest"
-#~ msgstr "Gast"
-
-#~ msgid "Manager"
-#~ msgstr "Manager"
-
-#~ msgid "User Group"
-#~ msgstr "Benutzergruppe"
-
-#~ msgid "User Groups"
-#~ msgstr "Benutzergruppen"
-
-#~ msgid "The matched movement."
-#~ msgstr "Lettrierte Bewegungen zeigen"
-
-#~ msgid "Roles"
-#~ msgstr "Rollen"
-
-#~ msgid "Receivables"
-#~ msgstr "Empfangen"
-
-#~ msgid "Customers"
-#~ msgstr "Einkünfte"
-
-#~ msgid "Suppliers"
-#~ msgstr "Duplizieren"
-
-#~ msgid "Financial institutes"
-#~ msgstr "Jahresbericht"
-
-#~ msgid "Current transactions"
-#~ msgstr "Periodische Termine"
-
-#~ msgid "Mietkaution"
-#~ msgstr "Postsendung"
-
-#~ msgid "Revenues"
-#~ msgstr "Anwesenheiten"
-
-#~ msgid "KBC"
-#~ msgstr "Blindkopie an"
-
-#~ msgid "Invested time"
-#~ msgstr "Druckdatum"
-
-#~ msgid "Only rows authored by this user."
-#~ msgstr "%d zugewiesene Termine"
-
-#~ msgid "Deployment"
-#~ msgstr "Ersatz"
-
-#~ msgid "Senior Developer"
-#~ msgstr "Benutzer-Level"
-
-#~ msgid "Datasource"
-#~ msgstr "Datenquelle"
-
-#~ msgid "Viewable for"
-#~ msgstr "Fakturierbar"
-
-#~ msgid "Accounting"
-#~ msgstr "Buchhaltung"
-
-#~ msgid "Account Chart"
-#~ msgstr "Kontenplan"
-
-#~ msgid "Account Charts"
-#~ msgstr "Kontenpläne"
-
-#~ msgid "Financial statement"
-#~ msgstr "Jahresbericht"
-
-#~ msgid "Balance sheet"
-#~ msgstr "Bilanz"
-
-#~ msgid "Profit & Loss statement"
-#~ msgstr "Gewinn-/Verlustrechnung"
-
-#~ msgid "Assets"
-#~ msgstr "Vermögen"
-
-#~ msgid "Liabilities"
-#~ msgstr "Verpflichtungen"
-
-#~ msgid "Capital"
-#~ msgstr "Kapital"
-
-#~ msgid "Incomes"
-#~ msgstr "Einkünfte"
-
-#~ msgid "Expenses"
-#~ msgstr "Ausgaben"
-
-#~ msgid "Bank accounts"
-#~ msgstr "Bankkonten"
-
-#~ msgid "Account Type"
-#~ msgstr "Kontenart"
-
-#~ msgid "Sheet"
-#~ msgstr "eID-Inhalt"
-
-#~ msgid "Credit"
-#~ msgstr "Kredit"
-
-#~ msgid "Account Group"
-#~ msgstr "Kontengruppe"
-
-#~ msgid "Account Groups"
-#~ msgstr "Kontengruppen"
-
-#~ msgid "Account"
-#~ msgstr "Konto"
-
-#~ msgid "Accounts"
-#~ msgstr "Konten"
-
-#~ msgid "Invoicing Mode"
-#~ msgstr "Fakturationsmodus"
-
-#~ msgid "Invoicing Modes"
-#~ msgstr "Fakturationsmodi"
-
-#~ msgid "Create invoice"
-#~ msgstr "Rechnung erstellen"
-
-#~ msgid "%d invoices have been created."
-#~ msgstr "%d Rechnungen wurden erstellt."
-
-#~ msgid "This will create %d invoices."
-#~ msgstr "Hiermit werden %d Rechnungen erstellt."
-
-#~ msgid "Invoiceable"
-#~ msgstr "Fakturierbar"
-
-#~ msgid "Voucher item"
-#~ msgstr "Belegszeile"
-
-#~ msgid "Voucher items"
-#~ msgstr "Belegszeilen"
-
-#~ msgid "Invoicings"
-#~ msgstr "Fakturierungen"
-
-#~ msgid "This will create and print %d invoice(s)."
-#~ msgstr "Hiermit werden %d Rechnungen erstellt und gedruckt."
-
-#~ msgid "Invoices to create"
-#~ msgstr "Zu fakturieren"
-
-#~ msgid "First date"
-#~ msgstr "Erstes Datum"
-
-#~ msgid "Last date"
-#~ msgstr "Letztes Datum"
-
-#~ msgid "Amount"
-#~ msgstr "Betrag"
-
-#~ msgid "Invoiceables"
-#~ msgstr "Fakturierbare"
-
-#~ msgid "Actions"
-#~ msgstr "Aktionen"
-
-#~ msgid "Clocking"
-#~ msgstr "Buchung"
-
-#~ msgid "Session Types"
-#~ msgstr "Sitzungsarten"
-
-#~ msgid "End session"
-#~ msgstr "Revisionsnummer"
-
-#~ msgid "Session"
-#~ msgstr "Revisionsnummer"
-
-#~ msgid "Sessions"
-#~ msgstr "Sekunden"
-
-#~ msgid "Break Time"
-#~ msgstr "Fällig um"
-
-#~ msgid "You are busy with "
-#~ msgstr "Du bist beschäftigt mit "
-
-#~ msgid "Service Reports"
-#~ msgstr "Provinz"
-
-#~ msgid "Only tickets interesting for this site."
-#~ msgstr "%d zugewiesene Termine"
-
-#~ msgid "Only tickets in this state."
-#~ msgstr "%d zugewiesene Termine"
-
-#~ msgid "Has been worked on"
-#~ msgstr "%s wurde erstellt."
-
-#~ msgid "Total"
-#~ msgstr "Summen"
-
-#~ msgid "Reporter"
-#~ msgstr "Berichte"
-
-#~ msgid "Courses"
-#~ msgstr "Kurse"
-
-#~ msgid "Enrolment states"
-#~ msgstr "Einschreibungs-Zustände"
-
-#~ msgid "invoiceable"
-#~ msgstr "Fakturierbar"
-
-#~ msgid "Uses a place"
-#~ msgstr "Besetzt einen Platz"
-
-#~ msgid "Requested"
-#~ msgstr "Angefragt"
-
-#~ msgid "Confirmed"
-#~ msgstr "Bestätigt"
-
-#~ msgid "Course area"
-#~ msgstr "Zustand Kurs"
-
-#~ msgid "Start Time"
-#~ msgstr "Beginnt um"
-
-#~ msgid "Topic"
-#~ msgstr "Thema"
-
-#~ msgid "Topics"
-#~ msgstr "Themen"
-
-#~ msgctxt "plural form"
-#~ msgid "Course series"
-#~ msgstr "Kursserien"
-
-#~ msgid "Participation fee"
-#~ msgstr "Teilnahmegebühr"
-
-#~ msgid "Default guest role for particpants of events."
-#~ msgstr "Standard-Kalender"
-
-#~ msgid "Options category"
-#~ msgstr "Kategorie für Optionen"
-
-#~ msgid "Fees category"
-#~ msgstr "Kategorie für Teilnahmegebühren"
-
-#~ msgid "Course"
-#~ msgstr "Kurs"
-
-#~ msgid "Instructor"
-#~ msgstr "Verwalter"
-
-#~ msgid "Places"
-#~ msgstr "Orte"
-
-#~ msgid "Enrolments until"
-#~ msgstr "Einschreibung möglich bis"
-
-#~ msgid "Available places"
-#~ msgstr "Freie Plätze"
-
-#~ msgid "Unlimited"
-#~ msgstr "Unbeschränkt"
-
-#~ msgid "Enrolments"
-#~ msgstr "Einschreibungen"
-
-#~ msgid "in %s"
-#~ msgstr "in %s"
-
-#~ msgid "Draft courses"
-#~ msgstr "Kurse in Bearbeitung"
-
-#~ msgid "Active courses"
-#~ msgstr "Aktive Kurse"
-
-#~ msgid "Enrolment option"
-#~ msgstr "Einschreibungsoption"
-
-#~ msgid "Enrolment options"
-#~ msgstr "Einschreibungsoptionen"
-
-#~ msgid "Enrolment"
-#~ msgstr "Einschreibung"
-
-#~ msgid "Date of request"
-#~ msgstr "Datum der Anfrage"
-
-#~ msgid "Confirmation details"
-#~ msgstr "Details Bestätigung"
-
-#~ msgid "No places left in %s"
-#~ msgstr "Keine Plätze mehr frei in %s"
-
-#~ msgid "Course state"
-#~ msgstr "Zustand Kurs"
-
-#~ msgid "Participants only"
-#~ msgstr "Nur Teilnehmer"
-
-#~ msgid "Also "
-#~ msgstr "Auch"
-
-#~ msgid "Confirm all"
-#~ msgstr "Alle bestätigen"
-
-#~ msgid "Pending requested enrolments"
-#~ msgstr "Offene Einschreibungsanfragen"
-
-#~ msgid "Pending confirmed enrolments"
-#~ msgstr "Auszustellende Teilnahmebescheinigungen"
-
-#~ msgid "Suggested courses"
-#~ msgstr "Kursvorschläge"
-
-#~ msgid "%(details)s for %(master)s"
-#~ msgstr "%(details)s für %(master)s"
-
-#~ msgid "Enrol"
-#~ msgstr "Einschreiben"
-
-#~ msgid "Show enrolment"
-#~ msgstr "Einschreibung zeigen"
-
-#~ msgid "Certify"
-#~ msgstr "Zertifizieren"
-
-#~ msgid "Confirm"
-#~ msgstr "Bestätigen"
-
-#~ msgid "Cannot confirm %(pupil)s : %(message)s"
-#~ msgstr "Einschreibung %(pupil)s kann nicht bestätigt werden: %(message)s"
-
-#~ msgid "Sales base"
-#~ msgstr "Basis Verkauf"
-
-#~ msgid "Sales VAT"
-#~ msgstr "MwSt. Verkauf"
-
-#~ msgid "Purchases base"
-#~ msgstr "Basis Einkauf"
-
-#~ msgid "Purchases VAT"
-#~ msgstr "MwSt. Einkauf"
-
-#~ msgid "Ware"
-#~ msgstr "Drucken"
-
-#~ msgid "Services"
-#~ msgstr "Provinz"
-
-#~ msgid "VAT Period"
-#~ msgstr "MwSt.-Periode"
-
-#~ msgid "VAT Periods"
-#~ msgstr "MwSt.-Perioden"
-
-#~ msgid "First Quarter (January-March)"
-#~ msgstr "Erstes Quartal (Januar-März)"
-
-#~ msgid "Second Quarter (April-June)"
-#~ msgstr "Zweites Quartal (April-Juni)"
-
-#~ msgid "Third Quarter (July-August)"
-#~ msgstr "Drittes Quartal (Julil-August)"
-
-#~ msgid "Fourth Quarter (September-December)"
-#~ msgstr "Viertes Quartal (September-Dezember)"
-
-#~ msgid "VAT declaration"
-#~ msgstr "MwSt.-Erklärung"
-
-#~ msgid "VAT declarations"
-#~ msgstr "MwSt.-Erklärungen"
-
-#~ msgid "Financial"
-#~ msgstr "Finanzjournale"
-
-#~ msgid "Item"
-#~ msgstr "Site"
-
-#~ msgid "Items"
-#~ msgstr "Minuten"
-
-#~ msgid "Grouper"
-#~ msgstr "Eigenschaft"
-
-#~ msgid "Groupers"
-#~ msgstr "Eigenschaften"
-
-#~ msgid "Journal Entry"
-#~ msgstr "Diverse Buchung"
-
-#~ msgid "Journal Entries"
-#~ msgstr "Diverse Buchungen"
-
-#~ msgid "Payment Order"
-#~ msgstr "Zahlungsauftrag"
-
-#~ msgid "Payment Orders"
-#~ msgstr "Zahlungsaufträge"
-
-#~ msgid "Execution date"
-#~ msgstr "Ausführungsdatum"
-
-#~ msgid "Bank Statement"
-#~ msgstr "Kontoauszug"
-
-#~ msgid "Bank Statements"
-#~ msgstr "Kontoauszüge"
-
-#~ msgid "Old balance"
-#~ msgstr "Alter Saldo"
-
-#~ msgid "New balance"
-#~ msgstr "Neuer Saldo"
-
-#~ msgid "Income"
-#~ msgstr "Eingang"
-
-#~ msgid "Expense"
-#~ msgstr "Ausgabe"
-
-#~ msgid "Ledger"
-#~ msgstr "Buchhaltung"
-
-#~ msgid "Fill"
-#~ msgstr "Füllen"
-
-#~ msgid "%d items have been added to %s."
-#~ msgstr "%(num)d Erinnerungen für %(user)s wurden aktualisiert."
-
-#~ msgid "Suggestions"
-#~ msgstr "Vorschläge"
-
-#~ msgid "BIC"
-#~ msgstr "Blindkopie an"
-
-#~ msgid "Your reference"
-#~ msgstr "Ihr Zeichen"
-
-#~ msgid "Sales"
-#~ msgstr "Verkauf"
-
-#~ msgid "Purchases"
-#~ msgstr "Einkauf"
-
-#~ msgid "Wages"
-#~ msgstr "Löhne und Gehälter"
-
-#~ msgid "Fiscal Year"
-#~ msgstr "Geschäftsjahr"
-
-#~ msgid "Fiscal Years"
-#~ msgstr "Geschäftsjahre"
-
-#~ msgid "Voucher type"
-#~ msgstr "Belegart"
-
-#~ msgid "Voucher types"
-#~ msgstr "Belegarten"
-
-#~ msgid "Trade type"
-#~ msgstr "Handelsart"
-
-#~ msgid "Trade types"
-#~ msgstr "Handelsarten"
-
-#~ msgid "Clearings"
-#~ msgstr "Warnung"
-
-#~ msgid "The movement to be matched."
-#~ msgstr "Der Termin hat stattgefunden"
-
-#~ msgid "Journals"
-#~ msgstr "Journale"
-
-#~ msgid "Payment Term"
-#~ msgstr "Zahlungsbedingung"
-
-#~ msgid "Payment Terms"
-#~ msgstr "Zahlungsbedingungen"
-
-#~ msgid "Voucher"
-#~ msgstr "Beleg"
-
-#~ msgid "Vouchers"
-#~ msgstr "Belege"
-
-#~ msgid "Movement"
-#~ msgstr "Bewegung"
-
-#~ msgid "Movements"
-#~ msgstr "Bewegungen"
-
-#~ msgid "Satisfied"
-#~ msgstr "Befriedigt"
-
-#~ msgid "Match rules"
-#~ msgstr "Befriedigungsregeln"
-
-#~ msgid "Clearable"
-#~ msgstr "Lettrierend"
-
-#~ msgid "Debts"
-#~ msgstr "Schulden"
-
-#~ msgid "Date until"
-#~ msgstr "Datum bis"
-
-#~ msgid "Payments"
-#~ msgstr "Zahlungen"
-
-#~ msgid "Balance"
-#~ msgstr "Saldo"
-
-#~ msgid "General Accounts Balances"
-#~ msgstr "Saldenliste Generalkonten"
-
-#~ msgid "Client Accounts Balances"
-#~ msgstr "Saldenliste Kunden"
-
-#~ msgid "Supplier Accounts Balances"
-#~ msgstr "Saldenliste Lieferanten"
-
-#~ msgid "Debtors"
-#~ msgstr "Schuldner"
-
-#~ msgid "Creditors"
-#~ msgstr "Gläubiger"
-
-#~ msgid "Situation"
-#~ msgstr "Postsendung"
-
-#~ msgid "Activity Report"
-#~ msgstr "Tätigkeitsbericht"
-
-#~ msgid "Show cleared movements"
-#~ msgstr "Lettrierte Bewegungen zeigen"
-
-#~ msgid "Sales invoices"
-#~ msgstr "Verkaufsrechnungen"
-
-#~ msgid "Purchase invoices"
-#~ msgstr "Einkaufsrechnungen"
-
-#~ msgid "Cash"
-#~ msgstr "Kasse"
-
-#~ msgid "Miscellaneous Journal Entries"
-#~ msgstr "Diverse Buchungen"
-
-#~ msgid "using one of these names."
-#~ msgstr "unter Verwendung eines dieser Namen."
-
-#~ msgid "Sales price"
-#~ msgstr "Verkaufspreis"
-
-#~ msgid "Sales Base account"
-#~ msgstr "Konto für Basisbetrag Verkäufe"
-
-#~ msgid "Sales VAT account"
-#~ msgstr "Konto für MwSt.-Betrag Verkäufe"
-
-#~ msgid "Clients account"
-#~ msgstr "Konto für Kunden"
-
-#~ msgid "Wages account"
-#~ msgstr "Konto für MWSt-Betrag Verkäufe"
-
-#~ msgid "Clearings account"
-#~ msgstr "Konto für Kunden"
-
-#~ msgid "Invoicing address"
-#~ msgstr "Fakturationsadresse"
-
-#~ msgid "Shipping Mode"
-#~ msgstr "Lieferart"
-
-#~ msgid "Shipping Modes"
-#~ msgstr "Lieferarten"
-
-#~ msgid "Subject line"
-#~ msgstr "Betreff"
-
-#~ msgid "Invoice"
-#~ msgstr "Rechnung"
-
-#~ msgid "Invoices"
-#~ msgstr "Rechnungen"
-
-#~ msgid "Date of payment"
-#~ msgstr "Zahlungsziel"
-
-#~ msgid "Payment terms"
-#~ msgstr "Zahlungsbedingungen"
-
-#~ msgid "Talk"
-#~ msgstr "Summen"
-
-#~ msgid "Refused"
-#~ msgstr "Angefragt"
-
-#~ msgid "Dependency type"
-#~ msgstr "Verwandschaftsart"
-
-#~ msgid "Dependency types"
-#~ msgstr "Verwandschaftsart"
-
-#~ msgid "Required by"
-#~ msgstr "Vertreten durch"
-
-#~ msgid "Triggered by"
-#~ msgstr "Vertreten durch"
-
-#~ msgid "Deployed by"
-#~ msgstr "Upload-Art"
-
-#~ msgid "Planned time"
-#~ msgstr "Druckdatum"
-
-#~ msgid "Ticket type"
-#~ msgstr "Datenbankmodell"
-
-#~ msgid "Ticket types"
-#~ msgstr "Datenbankmodelle"
-
-#~ msgid "Assign tickets to"
-#~ msgstr "Zugewiesen zu"
-
-#~ msgid "Sites"
-#~ msgstr "Minuten"
-
-#~ msgid "Expected for"
-#~ msgstr "Abgesagt"
-
-#~ msgid "Reached"
-#~ msgstr "Erstellt"
-
-#~ msgid "Ticket"
-#~ msgstr "Nächster"
-
-#~ msgid "Summary"
-#~ msgstr "Kurzbeschreibung"
-
-#~ msgid "Duplicate of"
-#~ msgstr "Duplizieren"
-
-#~ msgid "Deadline"
-#~ msgstr "Überschrift"
-
-#~ msgid "Overview"
-#~ msgstr "Dienstleistung"
-
-#~ msgid "Interest"
-#~ msgstr "Minuten"
-
-#~ msgid "Interests"
-#~ msgstr "Minuten"
-
-#~ msgid "Current project"
-#~ msgstr "Periodischer Termin"
-
-#~ msgid "Only project interesting for this site."
-#~ msgstr "%d zugewiesene Termine"
-
-#~ msgid "Subprojects"
-#~ msgstr "Betreff"
-
-#~ msgid "Planning"
-#~ msgstr "Warnung"
-
-#~ msgid "Only rows reporter by this user."
-#~ msgstr "%d zugewiesene Termine"
-
-#~ msgid "Only tickets assigned to this user."
-#~ msgstr "%d zugewiesene Termine"
-
-#~ msgid "Duplicates"
-#~ msgstr "Duplizieren"
-
-#~ msgid "Unassigned tickets"
-#~ msgstr "Anwesenheiten"
-
-#~ msgid "Triage"
-#~ msgstr "Dorf"
-
-#~ msgid "{0} new tickets."
-#~ msgstr "Anwesenheiten"
-
-#~ msgid "Active tickets"
-#~ msgstr "Anwesenheiten"
-
-#~ msgid "Interesting tickets"
-#~ msgstr "Anwesenheiten"
-
-#~ msgid "Reported tickets"
-#~ msgstr "Anwesenheiten"
-
-#~ msgid "Reported tickets "
-#~ msgstr "Anwesenheiten"
-
-#~ msgid "Enhancement"
-#~ msgstr "Ersatz"
-
-#~ msgid "VAT"
-#~ msgstr "MwSt."
-
-#~ msgid "VAT Class"
-#~ msgstr "MwSt.-Klasse"
-
-#~ msgid "VAT Classes"
-#~ msgstr "MwSt.-Klassen"
-
-#~ msgid "Exempt"
-#~ msgstr "Befreit von MwSt."
-
-#~ msgid "Reduced"
-#~ msgstr "Ermäßigter MwSt.-Satz"
-
-#~ msgid "Normal"
-#~ msgstr "Normaler MwSt-Satz"
-
-#~ msgid "VAT regime"
-#~ msgstr "MwSt.-Regime"
-
-#~ msgid "VAT regimes"
-#~ msgstr "MwSt.-Regimes"
-
-#~ msgid "Private person"
-#~ msgstr "Privatperson"
-
-#~ msgid "Subject to VAT"
-#~ msgstr "MwSt.-pflichtig"
-
-#~ msgid "Co-contractor"
-#~ msgstr "Vertragspartner"
-
-#~ msgid "Intra-community"
-#~ msgstr "Innergemeinschaftlich"
-
-#~ msgid "Outside EU"
-#~ msgstr "Außerhalb EU"
-
-#~ msgid "Total incl. VAT"
-#~ msgstr "Total inkl. MwSt."
-
-#~ msgid "Total excl. VAT"
-#~ msgstr "Total zzgl. MwSt."
-
-#~ msgid "Unit price"
-#~ msgstr "Stückpreis"
-
-#~ msgid "Quantity"
-#~ msgstr "Menge"
-
-#~ msgid "Purchases Base account"
-#~ msgstr "Basis Einkauf"
-
-#~ msgid "Purchases VAT account"
-#~ msgstr "MwSt. Einkauf"
-
-#~ msgid "Suppliers account"
-#~ msgstr "Konto für Lieferanten"
-
-#~ msgid "VAT rule"
-#~ msgstr "MwSt.-Regel"
-
-#~ msgid "VAT rules"
-#~ msgstr "MwSt-Regeln"
-
-#~ msgid "Editable amount"
-#~ msgstr "Betrag änderbar"
-
-#~ msgid "VAT vouchers"
-#~ msgstr "MwSt.-Belege"
-
-#~ msgid "VAT-less invoicing"
-#~ msgstr "Verkaufsrechnungen"
-
-#~ msgid "Partner vouchers"
-#~ msgstr "Partner-Belege"
-
-#~ msgid "Project vouchers"
-#~ msgstr "MWSt-Belege"
-
-#~ msgid "Hoster"
-#~ msgstr "Schwester"
-
-#~ msgid "Senior"
-#~ msgstr "Benutzer"
-
-#~ msgid "Text"
-#~ msgstr "Text"
-
-#~ msgid "Orders"
-#~ msgstr "Mehr"
-
-#~ msgid "Inactive"
-#~ msgstr "Inaktiv"
-
-#~ msgid "Order"
-#~ msgstr "Mehr"
-
-#~ msgid "Discount"
-#~ msgstr "Ermäßigung"
-
-#~ msgid "Totals"
-#~ msgstr "Summen"
-
-#~ msgid "Header"
-#~ msgstr "Kopfdaten"
-
-#~ msgid " [show]"
-#~ msgstr "zeigen"
-
-#~ msgid "Duplicate"
-#~ msgstr "Duplizieren"
-
-#~ msgid "Married"
-#~ msgstr "Ehepartner"
-
-#~ msgid "Recurrent Event"
-#~ msgstr "Periodischer Termin"
-
-#~ msgid "living at"
-#~ msgstr "wohnhaft"
-
-#~ msgid "Address type"
-#~ msgstr "Adressenart"
-
-#~ msgid "Address types"
-#~ msgstr "Adressenarten"
-
-#~ msgid "Official address"
-#~ msgstr "Offizielle Adresse"
-
-#~ msgid "Unverified address"
-#~ msgstr "Ungeprüfte Adresse"
-
-#~ msgid "Declared address"
-#~ msgstr "Deklarierte Addresse"
-
-#~ msgid "Reference address"
-#~ msgstr "Referenzadresse"
-
-#~ msgid "Obsolete"
-#~ msgstr "Konsole"
-
-#~ msgctxt "female"
-#~ msgid "Other"
-#~ msgstr "Sonstige"
-
-#~ msgid "Data source"
-#~ msgstr "Datenquelle"
-
-#~ msgid "Data sources"
-#~ msgstr "Datenquellen"
-
-#~ msgid "Manually entered"
-#~ msgstr "Manuell eingegeben"
-
-#~ msgid "Read from eID"
-#~ msgstr "Eingelesen von eID-Karte"
-
-#~ msgid "Table (landscape)"
-#~ msgstr "Tabelle (Querformat)"
-
-#~ msgid "Show this table as a pdf document"
-#~ msgstr "Diese Tabelle in eine .pdf-Datei exportieren"
-
-#~ msgid "Labels"
-#~ msgstr "Etiketten"
-
-#~ msgid "eID card type"
-#~ msgstr "eID-Kartenart"
-
-#~ msgid "eID card types"
-#~ msgstr "eID-Kartenarten"
-
-#~ msgid "Belgian citizen"
-#~ msgstr "Belgischer Staatsbürger"
-
-#~ msgid "Kids card (< 12 year)"
-#~ msgstr "Kind unter 12 Jahren"
-
-#~ msgid "Foreigner card B"
-#~ msgstr "B (Bescheinigung der Eintragung im Ausländerregister)"
-
-#~ msgid "Foreigner card C"
-#~ msgstr "C (Personalausweis für Ausländer)"
-
-#~ msgid "Foreigner card D"
-#~ msgstr "D (Daueraufenthalt - EG)"
-
-#~ msgid "Foreigner card E"
-#~ msgstr "E (Anmeldebescheinigung)"
-
-#~ msgid "Foreigner card E+"
-#~ msgstr "E+"
-
-#~ msgid "Foreigner card F"
-#~ msgstr "F (Aufenthaltskarte für Familienangehörige eines Unionsbürgers)"
-
-#~ msgid "Foreigner card F+"
-#~ msgstr "F+"
-
-#~ msgid "Weekday"
-#~ msgstr "Wochentag"
-
-#~ msgid "Monday"
-#~ msgstr "Montag"
-
-#~ msgid "Tuesday"
-#~ msgstr "Dienstag"
-
-#~ msgid "Wednesday"
-#~ msgstr "Mittwoch"
-
-#~ msgid "Thursday"
-#~ msgstr "Donnerstag"
-
-#~ msgid "Friday"
-#~ msgstr "Freitag"
-
-#~ msgid "Saturday"
-#~ msgstr "Samstag"
-
-#~ msgid "Sunday"
-#~ msgstr "Sonntag"
-
-#~ msgid "Duration Unit"
-#~ msgstr "Dauer (Einheit)"
-
-#~ msgid "seconds"
-#~ msgstr "Sekunden"
-
-#~ msgid "minutes"
-#~ msgstr "Minuten"
-
-#~ msgid "hours"
-#~ msgstr "Stunden"
-
-#~ msgid "days"
-#~ msgstr "Tage"
-
-#~ msgid "weeks"
-#~ msgstr "Wochen"
-
-#~ msgid "months"
-#~ msgstr "Monate"
-
-#~ msgid "years"
-#~ msgstr "Jahre"
-
-#~ msgid "once"
-#~ msgstr "einmalig"
-
-#~ msgid "daily"
-#~ msgstr "täglich"
-
-#~ msgid "weekly"
-#~ msgstr "wöchentlich"
-
-#~ msgid "monthly"
-#~ msgstr "monatlich"
-
-#~ msgid "yearly"
-#~ msgstr "jährlich"
-
-#~ msgid "per weekday"
-#~ msgstr "pro Wochentag"
-
-#~ msgid "Relative to Easter"
-#~ msgstr "Beweglich mit Ostern"
-
-#~ msgid "Access Class"
-#~ msgstr "Zugriffsklasse"
-
-#~ msgid "Private"
-#~ msgstr "Privat"
-
-#~ msgid "Show busy"
-#~ msgstr "halb öffentlich (\"Beschäftigt\")"
-
-#~ msgid "Public"
-#~ msgstr "Öffentlich"
-
-#~ msgid "Holidays"
-#~ msgstr "Feiertage"
-
-#~ msgid "Meeting"
-#~ msgstr "Versammlung"
-
-#~ msgid "Easter sunday"
-#~ msgstr "Pflegesohn"
-
-#~ msgid "Easter monday"
-#~ msgstr "Pflegesohn"
-
-#~ msgid "Ash Wednesday"
-#~ msgstr "Mittwoch"
-
-#~ msgid "Task states"
-#~ msgstr "Aufgaben-Zustände"
-
-#~ msgid "To do"
-#~ msgstr "Zu tun"
-
-#~ msgid "Done"
-#~ msgstr "Erledigt"
-
-#~ msgid "Event states"
-#~ msgstr "Termin-Zustände"
-
-#~ msgid "The possible states of a calendar event."
-#~ msgstr "Alle meine Termine"
-
-#~ msgid "Fixed"
-#~ msgstr "Mitgeteilt"
-
-#~ msgid "Suggested"
-#~ msgstr "Vorgeschlagen"
-
-#~ msgid "Visit"
-#~ msgstr "Visite"
-
-#~ msgid "Rescheduled"
-#~ msgstr "Verschoben"
-
-#~ msgid "Took place"
-#~ msgstr "Stattgefunden"
-
-#~ msgid "Omitted"
-#~ msgstr "Eingereicht"
-
-#~ msgid "Guest states"
-#~ msgstr "Gast-Zustände"
-
-#~ msgid "Invited"
-#~ msgstr "Eingeladen"
-
-#~ msgid "Accepted"
-#~ msgstr "Zugesagt"
-
-#~ msgid "Rejected"
-#~ msgstr "Abgesagt"
-
-#~ msgid "Present"
-#~ msgstr "Anwesend"
-
-#~ msgid "Absent"
-#~ msgstr "Abwesend"
-
-#~ msgid "Excused"
-#~ msgstr "Entschuldigt"
-
-#~ msgid "Reject"
-#~ msgstr "Absagen"
-
-#~ msgid "Reject this invitation."
-#~ msgstr "Diese Einladung absagen"
-
-#~ msgid "%(guest)s cannot accept invitation %(day)s at %(time)s"
-#~ msgstr "%(guest)s sagt Termin am %(day)s um %(time)s ab"
-
-#~ msgid "Accept"
-#~ msgstr "Zusagen"
-
-#~ msgid "Accept this invitation."
-#~ msgstr "Diese Einladung absagen"
-
-#~ msgid "%(guest)s confirmed invitation %(day)s at %(time)s"
-#~ msgstr "%(guest)s sagt Termin am %(day)s um %(time)s ab"
-
-#~ msgid "Reset"
-#~ msgstr "Rücksetzen"
-
-#~ msgid "Close meeting"
-#~ msgstr "Versammlung beenden"
-
-#~ msgid "The event took place."
-#~ msgstr "Der Termin hat stattgefunden"
-
-#~ msgid "Take"
-#~ msgstr "Annehmen"
-
-#~ msgid "Take responsibility for this event."
-#~ msgstr "Verantwortung für diesen Termin übernehmen."
-
-#~ msgid "Event took place."
-#~ msgstr "Der Termin hat stattgefunden"
-
-#~ msgid "Career"
-#~ msgstr "Lebenslauf"
-
-#~ msgid "Prequalifying"
-#~ msgstr "Bescheinigend"
-
-#~ msgid "Qualifying"
-#~ msgstr "Bescheinigend"
-
-#~ msgid "Unlimited duration"
-#~ msgstr "Unbeschränkte Dauer"
-
-#~ msgid "Limited duration"
-#~ msgstr "Beschränkte Dauer"
-
-#~ msgid "Replacement"
-#~ msgstr "Ersatz"
-
-#~ msgid "Interim"
-#~ msgstr "Schwester"
-
-#~ msgid "Worker"
-#~ msgstr "Arbeiter"
-
-#~ msgid "Employee"
-#~ msgstr "Angestellter"
-
-#~ msgid "Freelancer"
-#~ msgstr "Selbstständiger"
-
-#~ msgid "Voluntary"
-#~ msgstr "Ehrenamtlicher"
-
-#~ msgid "Student"
-#~ msgstr "Student"
-
-#~ msgid "Full-time"
-#~ msgstr "Vollzeit"
-
-#~ msgid "Part-time"
-#~ msgstr "Teilzeit"
-
-#~ msgid "Subject:"
-#~ msgstr "Betreff"
-
-#~ msgid "Sender:"
-#~ msgstr "Absender"
-
-#~ msgid "Families"
-#~ msgstr "Verpflichtungen"
-
-#~ msgid "Household member roles"
-#~ msgstr "Haushaltsmitgliedsrollen"
-
-#~ msgid "Spouse"
-#~ msgstr "Ehepartner"
-
-#~ msgid "Cohabitant"
-#~ msgstr "Mitbewohner"
-
-#~ msgctxt "female"
-#~ msgid "Relative"
-#~ msgstr "Verwandte"
-
-#~ msgid "Adopted child"
-#~ msgstr "Adoptivkind"
-
-#~ msgid "Married couple"
-#~ msgstr "Ehepaar"
-
-#~ msgid "Divorced couple"
-#~ msgstr "Geschiedenes Paar"
-
-#~ msgid "Factual household"
-#~ msgstr "Faktischer Haushalt"
-
-#~ msgid "Legal cohabitation"
-#~ msgstr "Legale Wohngemeinschaft"
-
-#~ msgid "Isolated"
-#~ msgstr "Getrennt"
-
-#~ msgid "Parency links"
-#~ msgstr "Verwandschaften"
-
-#~ msgid "Parency type"
-#~ msgstr "Verwandschaftsart"
-
-#~ msgid "Parency types"
-#~ msgstr "Verwandschaftsarten"
-
-#~ msgid "Son"
-#~ msgstr "Sohn"
-
-#~ msgid "Daughter"
-#~ msgstr "Tochter"
-
-#~ msgid "Adoptive father"
-#~ msgstr "Adoptivvater"
-
-#~ msgid "Adoptive mother"
-#~ msgstr "Adoptivmutter"
-
-#~ msgid "Adopted son"
-#~ msgstr "Adoptivsohn"
-
-#~ msgid "Adopted daughter"
-#~ msgstr "Adoptivtochter"
-
-#~ msgid "Grandfather"
-#~ msgstr "Großvater"
-
-#~ msgid "Grandmother"
-#~ msgstr "Großmutter"
-
-#~ msgid "Grandson"
-#~ msgstr "Enkel"
-
-#~ msgid "Granddaughter"
-#~ msgstr "Enkelin"
-
-#~ msgid "Husband"
-#~ msgstr "Ehemann"
-
-#~ msgid "Wife"
-#~ msgstr "Ehefrau"
-
-#~ msgctxt "female"
-#~ msgid "Friend"
-#~ msgstr "Freundin"
-
-#~ msgid "Partner"
-#~ msgstr "Partner"
-
-#~ msgid "Stepfather"
-#~ msgstr "Stiefvater"
-
-#~ msgid "Stepmother"
-#~ msgstr "Stiefmutter"
-
-#~ msgid "Stepson"
-#~ msgstr "Stiefsohn"
-
-#~ msgid "Stepdaughter"
-#~ msgstr "Stieftochter"
-
-#~ msgid "Foster father"
-#~ msgstr "Pflegevater"
-
-#~ msgid "Foster mother"
-#~ msgstr "Pflegemutter"
-
-#~ msgid "Foster son"
-#~ msgstr "Pflegesohn"
-
-#~ msgid "Foster daughter"
-#~ msgstr "Pflegetochter"
-
-#~ msgctxt "male"
-#~ msgid "Brother"
-#~ msgstr "Bruder"
-
-#~ msgctxt "female"
-#~ msgid "Sister"
-#~ msgstr "Schwester"
-
-#~ msgctxt "female"
-#~ msgid "Cousin"
-#~ msgstr "Kusine"
-
-#~ msgid "Uncle"
-#~ msgstr "Onkel"
-
-#~ msgid "Aunt"
-#~ msgstr "Tante"
-
-#~ msgid "Nephew"
-#~ msgstr "Neffe"
-
-#~ msgid "Niece"
-#~ msgstr "Nichte"
-
-#~ msgid "Lists"
-#~ msgstr "Listen"
-
-#~ msgid "Mailing list"
-#~ msgstr "Wartende Besucher"
-
-#~ msgid "Flags"
-#~ msgstr "Löhne und Gehälter"
-
-#~ msgid "Announcements"
-#~ msgstr "Bewegungen"
-
-#~ msgid "Special note type"
-#~ msgstr "Datenbankmodell"
-
-#~ msgid "Special note types"
-#~ msgstr "Datenbankmodelle"
-
-#~ msgid "Ideas"
-#~ msgstr "Tage"
-
-#~ msgid "More ideas"
-#~ msgstr "Kursserien"
-
-#~ msgid "Appointment with RCycle"
-#~ msgstr "Termine heute"
-
-#~ msgid "Default"
-#~ msgstr "Standardwert"
-
-#~ msgid "Recipient Type"
-#~ msgstr "Empfängerart"
-
-#~ msgid "to"
-#~ msgstr "Empfänger"
-
-#~ msgid "cc"
-#~ msgstr "Kopie an"
-
-#~ msgid "bcc"
-#~ msgstr "Blindkopie an"
-
-#~ msgid "Pages"
-#~ msgstr "Löhne und Gehälter"
-
-#~ msgid "Properties"
-#~ msgstr "Eigenschaften"
-
-#~ msgid "certainly not"
-#~ msgstr "bloß nicht"
-
-#~ msgid "rather not"
-#~ msgstr "eher nicht"
-
-#~ msgid "normally"
-#~ msgstr "normal"
-
-#~ msgid "quite much"
-#~ msgstr "gerne"
-
-#~ msgid "very much"
-#~ msgstr "sehr gerne"
-
-#~ msgid "Property Type"
-#~ msgstr "Eigenschafts-Datentyp"
-
-#~ msgid "Property Types"
-#~ msgstr "Eigenschafts-Datentypen"
-
-#~ msgid "Choices List"
-#~ msgstr "Auswahliste"
-
-#~ msgid "default value"
-#~ msgstr "Standardwert"
-
-#~ msgid "Limit to choices"
-#~ msgstr "Beschränken auf Auswahl"
-
-#~ msgid "Multiple choices"
-#~ msgstr "Mehrfachauswahl"
-
-#~ msgid "Property Choice"
-#~ msgstr "Auswahlmöglichkeit"
-
-#~ msgid "Property Choices"
-#~ msgstr "Auswahlmöglichkeiten"
-
-#~ msgid "Property Group"
-#~ msgstr "Eigenschaftsgruppe"
-
-#~ msgid "Property Groups"
-#~ msgstr "Eigenschaftsgruppen"
-
-#~ msgid "Property"
-#~ msgstr "Eigenschaft"
-
-#~ msgid "Reception"
-#~ msgstr "Empfang"
-
-#~ msgid "Label"
-#~ msgstr "Ort"
-
-#~ msgid "Organisation"
-#~ msgstr "Organisation"
-
-#~ msgid "Organisations"
-#~ msgstr "Organisationen"
-
-#~ msgid "VAT id"
-#~ msgstr "MwSt.-Nr."
-
-#~ msgid "Seq.No."
-#~ msgstr "Seq.-Nr."
-
-#~ msgid "Start time"
-#~ msgstr "Beginnt um"
-
-#~ msgid "End Date"
-#~ msgstr "Endet am"
-
-#~ msgid "End Time"
-#~ msgstr "Endet um"
-
-#~ msgid "Duration"
-#~ msgstr "Postsendung"
-
-#~ msgid " on "
-#~ msgstr " am "
-
-#~ msgid "Move down"
-#~ msgstr "Nach unten"
-
-#~ msgid "Update Events"
-#~ msgstr "Termine aktualisieren"
-
-#~ msgid "Recurrence Set"
-#~ msgstr "Wiederholungsserie"
-
-#~ msgid "Recurrence Sets"
-#~ msgstr "Wiederholungsserien"
-
-#~ msgid "Recurrency"
-#~ msgstr "Wiederholung"
-
-#~ msgid "Repeat every"
-#~ msgstr "... alle"
-
-#~ msgid "Number of events"
-#~ msgstr "Anzahl Termine"
-
-#~ msgid "Times"
-#~ msgstr "Uhrzeiten"
-
-#~ msgid "Every %s"
-#~ msgstr " %ss"
-
-#~ msgid "Every %snd %s"
-#~ msgstr "Jeden %s. %s"
-
-#~ msgid "Generate events until"
-#~ msgstr "Termine generieren bis"
-
-#~ msgid "Whether this is private, public or between."
-#~ msgstr "Ob dieser Termin  privat, öffentlich oder halb öffentlich ist"
-
-#~ msgid "Revision"
-#~ msgstr "Revisionsnummer"
-
-#~ msgid " at "
-#~ msgstr " um "
-
-#~ msgid "Remote Calendar"
-#~ msgstr "Externer Kalender"
-
-#~ msgid "Remote Calendars"
-#~ msgstr "Externe Kalender"
-
-#~ msgid "URL template"
-#~ msgstr "URL-Vorlage"
-
-#~ msgid "read-only"
-#~ msgstr "schreibgeschützt"
-
-#~ msgid "Room"
-#~ msgstr "Raum"
-
-#~ msgid "Rooms"
-#~ msgstr "Räume"
-
-#~ msgid "Priority"
-#~ msgstr "Priorität"
-
-#~ msgid "Priorities"
-#~ msgstr "Prioritäten"
-
-#~ msgid "Calendar Event Type"
-#~ msgstr "Kalendereintragsart"
-
-#~ msgid "Calendar Event Types"
-#~ msgstr "Kalendereintragsarten"
-
-#~ msgid "Event label"
-#~ msgstr "Bezeichnung Termin"
-
-#~ msgid "Default text for summary of new events."
-#~ msgstr "Standard-Kalender"
-
-#~ msgid "Guest Role"
-#~ msgstr "Gastrolle"
-
-#~ msgid "Guest Roles"
-#~ msgstr "Gastrollen"
-
-#~ msgid "Calendars"
-#~ msgstr "Kalenderliste"
-
-#~ msgid "color"
-#~ msgstr "Farbe"
-
-#~ msgid "Subscription"
-#~ msgstr "Abonnement"
-
-#~ msgid "Subscriptions"
-#~ msgstr "Abonnements"
-
-#~ msgid "hidden"
-#~ msgstr "versteckt"
-
-#~ msgid "Task"
-#~ msgstr "Aufgabe"
-
-#~ msgid "Tasks"
-#~ msgstr "Aufgaben"
-
-#~ msgid "Due date"
-#~ msgstr "Zahlungsziel"
-
-#~ msgid "Due time"
-#~ msgstr "Fällig um"
-
-#~ msgid "Duration value"
-#~ msgstr "Dauer (Anzahl)"
-
-#~ msgid "Recurrent event rule"
-#~ msgstr "Periodische Terminregel"
-
-#~ msgid "Recurrent event rules"
-#~ msgstr "Periodische Terminregeln"
-
-#~ msgid "Update Guests"
-#~ msgstr "Teilnehmer aktualisieren"
-
-#~ msgid "Event"
-#~ msgstr "Termin"
-
-#~ msgid "Events"
-#~ msgstr "Termine"
-
-#~ msgid "Transparent"
-#~ msgstr "nicht blockierend"
-
-#~ msgid "all day"
-#~ msgstr "ganztags"
-
-#~ msgid "with"
-#~ msgstr "mit"
-
-#~ msgid "Reminder"
-#~ msgstr "Erinnerung"
-
-#~ msgid "Responsible user"
-#~ msgstr "Verantwortlicher"
-
-#~ msgid "Participant"
-#~ msgstr "Teilnehmer"
-
-#~ msgid "Participants"
-#~ msgstr "Teilnehmer"
-
-#~ msgid "Role"
-#~ msgstr "Rolle"
-
-#~ msgid "due date reached"
-#~ msgstr "Fälligkeitsdatum erreicht"
-
-#~ msgid "Default access class"
-#~ msgstr "Standardmäßige Zugriffsklasse"
-
-#~ msgid "The default access class for your calendar events and tasks."
-#~ msgstr "Die standardmäßige Zugriffsklasse für Ihre Termine und Aufgaben"
-
-#~ msgid "Default Event Type"
-#~ msgstr "Standardwert"
-
-#~ msgid "The default event type for your calendar events."
-#~ msgstr "Die standardmäßige Zugriffsklasse für Ihre Termine und Aufgaben"
-
-#~ msgid "Site Calendar"
-#~ msgstr "Standard-Kalender"
-
-#~ msgid "%(num)d reminders for %(user)s have been updated."
-#~ msgstr "%(num)d Erinnerungen für %(user)s wurden aktualisiert."
-
-#~ msgid "List of rooms where calendar events can happen."
-#~ msgstr "Alle meine Termine"
-
-#~ msgid "Managed by"
-#~ msgstr "Verwaltet durch"
-
-#~ msgid "Only rows managed by this user."
-#~ msgstr "%d zugewiesene Termine"
-
-#~ msgid "My tasks"
-#~ msgstr "Meine Aufgaben"
-
-#~ msgid "Table of all my tasks."
-#~ msgstr "Alle meine Aufgaben"
-
-#~ msgid "Event state"
-#~ msgstr "Zustand Termin"
-
-#~ msgid "Guest state"
-#~ msgstr "Zustand Gast"
-
-#~ msgid "Presences"
-#~ msgstr "Anwesenheiten"
-
-#~ msgid "My presences"
-#~ msgstr "Meine Anwesenheiten"
-
-#~ msgid "My guests"
-#~ msgstr "Meine Gäste"
-
-#~ msgid "Okay"
-#~ msgstr "Montag"
-
-#~ msgid "Pending"
-#~ msgstr "Überschrift"
-
-#~ msgid "Only events assigned to this user."
-#~ msgstr "%d zugewiesene Termine"
-
-#~ msgid "Appointments today"
-#~ msgstr "Termine heute"
-
-#~ msgid "Today"
-#~ msgstr "Heute"
-
-#~ msgid "Show all calendar events of the same day."
-#~ msgstr "Alle meine Termine"
-
-#~ msgid "My appointments"
-#~ msgstr "Meine Termine"
-
-#~ msgid "Table of my appointments."
-#~ msgstr "Alle meine Termine"
-
-#~ msgid "My appointments today"
-#~ msgstr "Meine Termine heute"
-
-#~ msgid "Events assigned to me"
-#~ msgstr "%d zugewiesene Termine"
-
-#~ msgid "Table of events assigned to me."
-#~ msgstr "Alle vorgeschlagenen Termine"
-
-#~ msgid "%d events have been assigned to you."
-#~ msgstr "%(num)d Erinnerungen für %(user)s wurden aktualisiert."
-
-#~ msgid "Clear print cache"
-#~ msgstr "Cache löschen"
-
-#~ msgid "Oops, the print cache was already cleared."
-#~ msgstr "Dokument %s wurde generiert."
-
-#~ msgid "Print cache file has been cleared."
-#~ msgstr "Dokument %s wurde generiert."
-
-#~ msgid "Excerpt title"
-#~ msgstr "Auszugsart"
-
-#~ msgid "Excerpt Type"
-#~ msgstr "Auszugsart"
-
-#~ msgid "Excerpt Types"
-#~ msgstr "Auszugsarten"
-
-#~ msgid "Certifying"
-#~ msgstr "Bescheinigend"
-
-#~ msgid "Body template"
-#~ msgstr "Textkörper-Vorlage"
-
-#~ msgid "The model that can issue printouts of this type."
-#~ msgstr "per E-Mail"
-
-#~ msgid "Print recipient"
-#~ msgstr "Empfänger drucken"
-
-#~ msgid "Create an excerpt in order to print this data record."
-#~ msgstr "Auszug von diesem Datensatz erstellen zwecks Ausdruck."
-
-#~ msgid "Excerpt"
-#~ msgstr "Auszug"
-
-#~ msgid "Excerpts"
-#~ msgstr "Auszüge"
-
-#~ msgid "Unprinted %s #%s"
-#~ msgstr "Ungedruckter %s #%d"
-
-#~ msgid "Preview"
-#~ msgstr "Vorschau"
-
-#~ msgid "Certifying excerpts"
-#~ msgstr "Bestehende Auszüge"
-
-#~ msgid "History of excerpts based on this data record."
-#~ msgstr "Historie der Auszüge, die von diesem Datensatz erstellt wurden."
-
-#~ msgid "Existing excerpts"
-#~ msgstr "Bestehende Auszüge"
-
-#~ msgid "not printed"
-#~ msgstr "Unausgedruckt"
-
-#~ msgid "Older"
-#~ msgstr "Älter"
-
-#~ msgid "All"
-#~ msgstr "Alle"
-
-#~ msgid "Product Category"
-#~ msgstr "Produktkategorie"
-
-#~ msgid "Product Categories"
-#~ msgstr "Produktkategorien"
-
-#~ msgid "Product"
-#~ msgstr "Produkt"
-
-#~ msgid "Products"
-#~ msgstr "Produkte"
-
-#~ msgid "Long description"
-#~ msgstr "Abonnement"
-
-#~ msgid "Mark this as"
-#~ msgstr "Markieren als %s"
-
-#~ msgid "First or given name."
-#~ msgstr "Vorname"
-
-#~ msgid "Manage addresses"
-#~ msgstr "Adressen verwalten"
-
-#~ msgid "Check for missing or non-primary address records"
-#~ msgstr "Adressen prüfen"
-
-#~ msgid "Owner with address, but no address record."
-#~ msgstr " Adressenangabe im Partner, aber keine Adresse."
-
-#~ msgid "Unique address is not marked primary."
-#~ msgstr "Adresse ist nicht als primär markiert."
-
-#~ msgid "Multiple addresses, but none is primary."
-#~ msgstr "Mehrere Adressen, aber keine primäre."
-
-#~ msgid "Multiple primary addresses."
-#~ msgstr "Mehrere primäre Adressen."
-
-#~ msgid "Primary address differs from owner address ({0})."
-#~ msgstr "Primäre Adresse anders als im Partner ({0})."
-
-#~ msgid "Address"
-#~ msgstr "Adresse"
-
-#~ msgid "Addresses"
-#~ msgstr "Adressen"
-
-#~ msgid "Primary"
-#~ msgstr "Primär"
-
-#~ msgid "Simulation"
-#~ msgstr "Postsendung"
-
-#~ msgid "Read eID card"
-#~ msgstr "eID-Karte einlesen"
-
-#~ msgid "Sorry, I cannot handle that case: %s"
-#~ msgstr "Sorry, damit komme ich nicht klar: %s"
-
-#~ msgid "Client %s is up-to-date"
-#~ msgstr "Angaben zu Klient %s sind aktuell"
-
-#~ msgid "Click OK to apply the following changes for %s"
-#~ msgstr "OK um die folgenden Änderungen für Klient %s einzulesen"
-
-#~ msgid "%s has been saved."
-#~ msgstr "%s wurde gespeichert."
-
-#~ msgid "Find or create card holder from eID card"
-#~ msgstr "eID-Karte lesen und Karteninhaber finden oder erstellen"
-
-#~ msgid "New client %s has been created"
-#~ msgstr "Neuer Klient %s wurde erstellt."
-
-#~ msgid "Create new client %s : Are you sure?"
-#~ msgstr "Neuen Klienten %s anlegen : Sind Sie sicher?"
-
-#~ msgid "Oops!"
-#~ msgstr "Upps!"
-
-#~ msgid "Update card holder data from eID card"
-#~ msgstr "eID-Karte lesen und diesen Karteninhaber aktualisieren"
-
-#~ msgid "National IDs %s and %s don't match "
-#~ msgstr "NR-Nummer %s und %s stimmen nicht überein"
-
-#~ msgid "National ID"
-#~ msgstr "NR-Nummer"
-
-#~ msgid "Nationality"
-#~ msgstr "Staatsangehörigkeit"
-
-#~ msgid "eID card number"
-#~ msgstr "eID-Kartennummer"
-
-#~ msgid "ID card valid from"
-#~ msgstr "ID-Karte gültig von"
-
-#~ msgid "eID card issuer"
-#~ msgstr "eID-Karte ausgestellt durch"
-
-#~ msgid "noble condition"
-#~ msgstr "Adelstitel"
-
-#~ msgid "The eventual noble condition of this person."
-#~ msgstr "Eventueller Adelstitel"
-
-#~ msgid "eID card"
-#~ msgstr "eID-Karte"
-
-#~ msgid "Card no."
-#~ msgstr "Karte Nr."
-
-#~ msgid "issued by"
-#~ msgstr "ausgestellt durch"
-
-#~ msgid "valid from"
-#~ msgstr "gültig von"
-
-#~ msgid "Must read eID card!"
-#~ msgstr "Muss eID-Karte einlesen!"
-
-#~ msgid "Blog Entry Types"
-#~ msgstr "Blog-Eintrags-Arten"
-
-#~ msgid "important"
-#~ msgstr "wichtig"
-
-#~ msgid "Blog Entries"
-#~ msgstr "Blog-Einträge"
-
-#~ msgid "Heading"
-#~ msgstr "Überschrift"
-
-#~ msgid "Decided"
-#~ msgstr "Beschlossen"
-
-#~ msgid "Board"
-#~ msgstr "Gremium"
-
-#~ msgid "Works since"
-#~ msgstr "Arbeitet seit"
-
-#~ msgid "Worked until"
-#~ msgstr "Hat gearbeitet bis"
-
-#~ msgid "Board member"
-#~ msgstr "Gremienmitglied"
-
-#~ msgid "Board members"
-#~ msgstr "Gremienmitglieder"
-
-#~ msgid "Concepts"
-#~ msgstr "Begriffe"
-
-#~ msgid "Link Type"
-#~ msgstr "Verweisart"
-
-#~ msgid "Link Types"
-#~ msgstr "Verweisart"
-
-#~ msgid "Obsoletes"
-#~ msgstr "Konsole"
-
-#~ msgid "Concept"
-#~ msgstr "Begriff"
-
-#~ msgid "Abbreviation"
-#~ msgstr "Abkürzung"
-
-#~ msgid "Jargon domain"
-#~ msgstr "Jargon-Fachbereich"
-
-#~ msgid "Top-level concepts"
-#~ msgstr "Oberbegriffe"
-
-#~ msgid "Link"
-#~ msgstr "Verweise"
-
-#~ msgid "Links"
-#~ msgstr "Verweise"
-
-#~ msgid "Contacts"
-#~ msgstr "Kontakte"
-
-#~ msgid "Company"
-#~ msgstr "Organisation"
-
-#~ msgid "represented by"
-#~ msgstr "Vertreten durch"
-
-#~ msgid "represented as"
-#~ msgstr "in seiner Eigenschaft als"
-
-#~ msgid "Partners"
-#~ msgstr "Partner"
-
-#~ msgid "E-Mail"
-#~ msgstr "E-Mail"
-
-#~ msgid "URL"
-#~ msgstr "URL"
-
-#~ msgid "Phone"
-#~ msgstr "Telefon"
-
-#~ msgid "GSM"
-#~ msgstr "GSM"
-
-#~ msgid "Fax"
-#~ msgstr "Fax"
-
-#~ msgid "Contact"
-#~ msgstr "Kontakt"
-
-#~ msgid "Person"
-#~ msgstr "Person"
-
-#~ msgid "Persons"
-#~ msgstr "Personen"
-
-#~ msgid "Organization type"
-#~ msgstr "Organisationsart"
-
-#~ msgid "Organization types"
-#~ msgstr "Organisationsarten"
-
-#~ msgid "Organization"
-#~ msgstr "Organisation"
-
-#~ msgid "Organizations"
-#~ msgstr "Organisationen"
-
-#~ msgid "Name prefix"
-#~ msgstr "Präfix Straße"
-
-#~ msgid "Function"
-#~ msgstr "Funktion"
-
-#~ msgid "Functions"
-#~ msgstr "Funktionen"
-
-#~ msgid "Contact Person"
-#~ msgstr "Kontaktperson"
-
-#~ msgid "Contact Persons"
-#~ msgstr "Kontaktpersonen"
-
-#~ msgid "Contact Role"
-#~ msgstr "Funktion"
-
-#~ msgid "Contact persons"
-#~ msgstr "Kontaktpersonen"
-
-#~ msgid "Contact for"
-#~ msgstr "Kontaktperson für"
-
-#~ msgid "Next partner id"
-#~ msgstr "Nächste Partnernummer"
-
-#~ msgid "The next automatic id for any new partner."
-#~ msgstr "Nächste Partnernummer"
-
-#~ msgid "Site owner"
-#~ msgstr "Site-Besitzer"
-
-#~ msgid "County"
-#~ msgstr "Regierungsbezirk"
-
-#~ msgid "Place Type"
-#~ msgstr "Ortsart"
-
-#~ msgid "Member State"
-#~ msgstr "Bundesland"
-
-#~ msgid "Community"
-#~ msgstr "Gemeinschaft"
-
-#~ msgid "Territory"
-#~ msgstr "Territorium"
-
-#~ msgid "Province"
-#~ msgstr "Provinz"
-
-#~ msgid "Shire"
-#~ msgstr "Grafschaft"
-
-#~ msgid "Subregion"
-#~ msgstr "Unterregion"
-
-#~ msgid "Department"
-#~ msgstr "Departement"
-
-#~ msgid "Arrondissement"
-#~ msgstr "Arrondissement"
-
-#~ msgid "Prefecture"
-#~ msgstr "Präfektur"
-
-#~ msgid "District"
-#~ msgstr "Distrikt"
-
-#~ msgid "Sector"
-#~ msgstr "Sektor"
-
-#~ msgid "City"
-#~ msgstr "Stadt"
-
-#~ msgid "Town"
-#~ msgstr "Kleinstadt"
-
-#~ msgid "Municipality"
-#~ msgstr "Gemeinde"
-
-#~ msgid "Parish"
-#~ msgstr "Pfarre"
-
-#~ msgid "Township"
-#~ msgstr "Stadtteil"
-
-#~ msgid "Quarter"
-#~ msgstr "Viertel"
-
-#~ msgid "Borough"
-#~ msgstr "Ortschaft"
-
-#~ msgid "Small borough"
-#~ msgstr "Kleine Ortschaft"
-
-#~ msgid "Village"
-#~ msgstr "Dorf"
-
-#~ msgid "Zip code"
-#~ msgstr "Postleitzahl"
-
-#~ msgid "Address line before street"
-#~ msgstr "Adresszeile vor Straße"
-
-#~ msgid "Street prefix"
-#~ msgstr "Präfix Straße"
-
-#~ msgid "Street"
-#~ msgstr "Straße"
-
-#~ msgid "Name of street, without house number."
-#~ msgstr "Name der Straße, ohne Hausnummer"
-
-#~ msgid "House number."
-#~ msgstr "Hausnummer"
-
-#~ msgid "Box"
-#~ msgstr "Box"
-
-#~ msgid "Address line after street"
-#~ msgstr "Adresszeile nach Straße"
-
-#~ msgid "Address line to print below street line."
-#~ msgstr "Adresszeile nach Straße"
-
-#~ msgid "Country"
-#~ msgstr "Land"
-
-#~ msgid "Countries"
-#~ msgstr "Länder"
-
-#~ msgid "ISO code"
-#~ msgstr "ISO-Code"
-
-#~ msgid "ISO-3 code"
-#~ msgstr "ISO3-Code"
-
-#~ msgid "Place"
-#~ msgstr "Ort"
-
-#~ msgid "Part of"
-#~ msgstr "Teil von"
-
-#~ msgid "Subdivisions"
-#~ msgstr "Unterteilungen"
-
-#~ msgid "%(details)s in %(master)s"
-#~ msgstr "%(details)s in %(master)s"
-
-#~ msgid "Name contains only digits."
-#~ msgstr "Name enthält lediglich Ziffern."
-
-#~ msgid "Estonia"
-#~ msgstr "Estland"
-
-#~ msgid "Belgium"
-#~ msgstr "Belgien"
-
-#~ msgid "Germany"
-#~ msgstr "Deutschland"
-
-#~ msgid "France"
-#~ msgstr "Frankreich"
-
-#~ msgid "Netherlands"
-#~ msgstr "Niederlande"
-
-#~ msgid "Maroc"
-#~ msgstr "Marokko"
-
-#~ msgid "Russia"
-#~ msgstr "Russland"
-
-#~ msgid "Congo (Democratic Republic)"
-#~ msgstr "Kongo (Demokratische Republik)"
-
-#~ msgid "Failure"
-#~ msgstr "Abbruch"
-
-#~ msgid "Ongoing"
-#~ msgstr "in Gang"
-
-#~ msgid "How well?"
-#~ msgstr "Wie gut?"
-
-#~ msgid "not at all"
-#~ msgstr "gar nicht"
-
-#~ msgid "a bit"
-#~ msgstr "ein bisschen"
-
-#~ msgid "moderate"
-#~ msgstr "mittelmäßig"
-
-#~ msgid "quite well"
-#~ msgstr "gut"
-
-#~ msgid "very well"
-#~ msgstr "sehr gut"
-
-#~ msgid "CEF level"
-#~ msgstr "CEF-Kategorie"
-
-#~ msgid "CEF levels"
-#~ msgstr "CEF-Kategorien"
-
-#~ msgid "basic language skills"
-#~ msgstr "Elementare Sprachverwendung"
-
-#~ msgid "independent use of language"
-#~ msgstr "Selbstständige Sprachverwendung"
-
-#~ msgid "proficient use of language"
-#~ msgstr "Exzellente Sprachverwendung"
-
-#~ msgid "language knowledge"
-#~ msgstr "Sprachkenntnis"
-
-#~ msgid "language knowledges"
-#~ msgstr "Sprachkenntnisse"
-
-#~ msgid "Spoken"
-#~ msgstr "Wort"
-
-#~ msgid "Written"
-#~ msgstr "Schrift"
-
-#~ msgid "Spoken (passively)"
-#~ msgstr "Wort (passiv)"
-
-#~ msgid "Written (passively)"
-#~ msgstr "Schrift (passiv)"
-
-#~ msgid "native language"
-#~ msgstr "Muttersprache"
-
-#~ msgid "%s (s/w)"
-#~ msgstr "%s (W/S)"
-
-#~ msgid "%s (s)"
-#~ msgstr "%s (W)"
-
-#~ msgid "%s (w)"
-#~ msgstr "%s (S)"
-
-#~ msgid "Establishment"
-#~ msgstr "Einrichtung"
-
-#~ msgid "Study"
-#~ msgstr "Studium"
-
-#~ msgid "Training"
-#~ msgstr "Ausbildung"
-
-#~ msgid "Education Level"
-#~ msgstr "Akademischer Grad"
-
-#~ msgid "Education Levels"
-#~ msgstr "Akademische Grade"
-
-#~ msgid "Education Type"
-#~ msgstr "Bildungsart"
-
-#~ msgid "Education Types"
-#~ msgstr "Bildungsarten"
-
-#~ msgid "Trainings"
-#~ msgstr "Ausbildungen"
-
-#~ msgid "Training content"
-#~ msgstr "Ausbildungsinhalt"
-
-#~ msgid "Certificates"
-#~ msgstr "Diplome"
-
-#~ msgid "Studies"
-#~ msgstr "Studien"
-
-#~ msgid "Study content"
-#~ msgstr "Ausbildungsinhalt"
-
-#~ msgctxt "work experience"
-#~ msgid "Status"
-#~ msgstr "Status"
-
-#~ msgctxt "work experience"
-#~ msgid "Statuses"
-#~ msgstr "Statuus"
-
-#~ msgid "Work Regime"
-#~ msgstr "Arbeitsregime"
-
-#~ msgid "Work Regimes"
-#~ msgstr "Arbeitsregimes"
-
-#~ msgid "Contract Duration"
-#~ msgstr "Vertragsdauer"
-
-#~ msgid "Contract Durations"
-#~ msgstr "Vertragsdauern"
-
-#~ msgid "Job Sector"
-#~ msgstr "Sektor"
-
-#~ msgid "Job Sectors"
-#~ msgstr "Sektoren"
-
-#~ msgid "Job Function"
-#~ msgstr "Funktion"
-
-#~ msgid "Job Functions"
-#~ msgstr "Funktionen"
-
-#~ msgid "Job Experience"
-#~ msgstr "Berufserfahrung"
-
-#~ msgid "Job Experiences"
-#~ msgstr "Berufserfahrungen"
-
-#~ msgid "company"
-#~ msgstr "Firma"
-
-#~ msgid "job title"
-#~ msgstr "Bezeichnung"
-
-#~ msgid "Termination reason"
-#~ msgstr "Beendigungsgrund"
-
-#~ msgid "Phonetic word"
-#~ msgstr "Phonetisches Wort"
-
-#~ msgid "Phonetic words"
-#~ msgstr "Phonetische Wörter"
-
-#~ msgid "Similar partners"
-#~ msgstr "Ähnliche Partner"
-
-#~ msgid "Date"
-#~ msgstr "Datum"
-
-#~ msgid "When"
-#~ msgstr "Wann"
-
-#~ msgid "Where"
-#~ msgstr "Wo"
-
-#~ msgid "What"
-#~ msgstr "Was"
-
-#~ msgid "Calendar"
-#~ msgstr "Kalender"
-
-#~ msgid "Hidden"
-#~ msgstr "Versteckt"
-
-#~ msgid "Start"
-#~ msgstr "Beginn"
-
-#~ msgid "End"
-#~ msgstr "Ende"
-
-#~ msgid "Married on"
-#~ msgstr "Ehepartner in "
-
-#~ msgid "Married in"
-#~ msgstr "Ehepartner in "
-
-#~ msgid "Divorced"
-#~ msgstr "Geschieden"
-
-#~ msgid "Father"
-#~ msgstr "Vater"
-
-#~ msgid "Mother"
-#~ msgstr "Mutter"
-
-#~ msgid "Family"
-#~ msgstr "Familie"
-
-#~ msgid "Household Type"
-#~ msgstr "Haushaltsart"
-
-#~ msgid "Household Types"
-#~ msgstr "Haushaltsarten"
-
-#~ msgid "Household"
-#~ msgstr "Haushalt"
-
-#~ msgid "Households"
-#~ msgstr "Haushalte"
-
-#~ msgid "Household Member"
-#~ msgstr "Mitglied"
-
-#~ msgid "Household Members"
-#~ msgstr "Mitglieder"
-
-#~ msgid "Make this the primary household."
-#~ msgstr "Diesen Haushalt als primär markieren."
-
-#~ msgid "Household composition"
-#~ msgstr "Haushaltszusammensetzung"
-
-#~ msgid "%s is not member of any household"
-#~ msgstr "%s ist in keinem Haushalt"
-
-#~ msgid "%s is member of multiple households"
-#~ msgstr "%s ist in mehreren Haushalten zugleich"
-
-#~ msgid " and "
-#~ msgstr " und "
-
-#~ msgid " of "
-#~ msgstr " von "
-
-#~ msgid "Create Household"
-#~ msgstr "Haushalt erstellen"
-
-#~ msgid "Head of household"
-#~ msgstr "Vorstand"
-
-#~ msgid "Household has been created"
-#~ msgstr "Haushalt wurde erstellt."
-
-#~ msgid "Household memberships"
-#~ msgstr "Mitgliedschaft in Haushalten"
-
-#~ msgid " in "
-#~ msgstr " in "
-
-#~ msgid "%s is"
-#~ msgstr "%s ist"
-
-#~ msgid "Create a household"
-#~ msgstr "Haushalt erstellen"
-
-#~ msgid "Personal Link"
-#~ msgstr "Verwandtschaftsbeziehung"
-
-#~ msgid "Personal Links"
-#~ msgstr "Verwandtschaftsbeziehungen"
-
-#~ msgid "Child"
-#~ msgstr "Kind"
-
-#~ msgid "%(child)s is %(what)s"
-#~ msgstr "%(child)s ist %(what)s"
-
-#~ msgid "%(type)s of %(parent)s"
-#~ msgstr "%(type)s von %(parent)s"
-
-#~ msgid "Human Links"
-#~ msgstr "Beziehungen"
-
-#~ msgid "No relationships."
-#~ msgstr "Keine Beziehungen"
-
-#~ msgid "Create relationship as "
-#~ msgstr "Beziehung erstellen als "
-
-#~ msgid "List Type"
-#~ msgstr "Listenart"
-
-#~ msgid "List Types"
-#~ msgstr "Listenarten"
-
-#~ msgid "Partner List"
-#~ msgstr "Partnerliste"
-
-#~ msgid "Partner Lists"
-#~ msgstr "Partnerlisten"
-
-#~ msgid "List memberships"
-#~ msgstr "Team-Mitglieder"
-
-#~ msgid "Note Type"
-#~ msgstr "Notizart"
-
-#~ msgid "Note Types"
-#~ msgstr "Notizarten"
-
-#~ msgid "Event Types"
-#~ msgstr "Ereignisarten"
-
-#~ msgid "Notes"
-#~ msgstr "Notizen"
-
-#~ msgid "Time"
-#~ msgstr "Fällig um"
-
-#~ msgid "Note Type (Content)"
-#~ msgstr "Notizart (Inhalt)"
-
-#~ msgid "Event Type (Form)"
-#~ msgstr "Ereignisart (Form)"
-
-#~ msgid "Recipient (Organization)"
-#~ msgstr "Empfänger (Organisation)"
-
-#~ msgid "Recipient (Person)"
-#~ msgstr "Empfänger (Person)"
-
-#~ msgid "About {0}"
-#~ msgstr "von {0}"
-
-#~ msgid "Attach to email"
-#~ msgstr "als Anhang per E-Mail"
-
-#~ msgid "Email template"
-#~ msgstr "E-Mail-Vorlage"
-
-#~ msgid "Create an email from this"
-#~ msgstr "per E-Mail"
-
-#~ msgid "Create email"
-#~ msgstr "per E-Mail"
-
-#~ msgid "Recipients"
-#~ msgstr "Empfänger"
-
-#~ msgid "Send email"
-#~ msgstr "E-Mail senden"
-
-#~ msgid "No recipients found."
-#~ msgstr "Empfänger"
-
-#~ msgid "Email %(id)s from %(sender)s has been sent to %(num)d recipients."
-#~ msgstr "Email %(id)s von %(sender)s wurde verschickt an %(num)d Empfänger."
-
-#~ msgid "Outgoing Mail"
-#~ msgstr "E-Mail-Ausgang"
-
-#~ msgid "Outgoing Mails"
-#~ msgstr "E-Mail-Ausgänge"
-
-#~ msgid "My Outbox"
-#~ msgstr "Mein E-Mail-Ausgang"
-
-#~ msgid "Outbox"
-#~ msgstr "E-Mail-Ausgang"
-
-#~ msgid "Attachment"
-#~ msgstr "Anhang"
-
-#~ msgid "Attachments"
-#~ msgstr "Anhänge"
-
-#~ msgid "Sender"
-#~ msgstr "Absender"
-
-#~ msgid "Node"
-#~ msgstr "Modell"
-
-#~ msgid "Nodes"
-#~ msgstr "Einkünfte"
-
-#~ msgctxt "polls"
-#~ msgid "Title"
-#~ msgstr "Titel"
-
-#~ msgid "Polls"
-#~ msgstr "Rollen"
-
-#~ msgid "Polls user"
-#~ msgstr "Ehepartner"
-
-#~ msgid "Choice Set"
-#~ msgstr "Auswahliste"
-
-#~ msgid "Choice Sets"
-#~ msgstr "Auswahliste"
-
-#~ msgid "Choice"
-#~ msgstr "Rechnung"
-
-#~ msgid "Choices"
-#~ msgstr "Rechnungen"
-
-#~ msgid "Details"
-#~ msgstr "täglich"
-
-#~ msgid "Default Choiceset"
-#~ msgstr "Mehrfachauswahl"
-
-#~ msgid "Allow multiple choices"
-#~ msgstr "Mehrfachauswahl"
-
-#~ msgid "Result"
-#~ msgstr "Anwesend"
-
-#~ msgid "Results"
-#~ msgstr "Gäste"
-
-#~ msgid "Question"
-#~ msgstr "Vorschläge"
-
-#~ msgid "Questions"
-#~ msgstr "Vorschläge"
-
-#~ msgid "Response"
-#~ msgstr "Personen"
-
-#~ msgid "Responses"
-#~ msgstr "Anwesenheiten"
-
-#~ msgid "%(user)s's response to %(poll)s"
-#~ msgstr "%(date)s um %(time)s"
-
-#~ msgid "More"
-#~ msgstr "Mehr"
-
-#~ msgid "Answer Choices"
-#~ msgstr "Auswahlmöglichkeiten"
-
-#~ msgid "Answer Remark"
-#~ msgstr "Bemerkung"
-
-#~ msgid "Answer Remarks"
-#~ msgstr "Bemerkung"
-
-#~ msgid "My remark"
-#~ msgstr "Bemerkung"
-
-#~ msgid "Answers"
-#~ msgstr "Antworten"
-
-#~ msgid "Answer"
-#~ msgstr "Antwort"
-
-#~ msgid "#Answers"
-#~ msgstr "Partner"
-
-#~ msgid "Poll States"
-#~ msgstr "Termin-Zustände"
-
-#~ msgid "Draft"
-#~ msgstr "Entwurf"
-
-#~ msgid "Published"
-#~ msgstr "Veröffentlicht"
-
-#~ msgid "Publish"
-#~ msgstr "Veröffentlicht"
-
-#~ msgid "Close"
-#~ msgstr "Farbe"
-
-#~ msgid "Reopen"
-#~ msgstr "Neu öffnen"
-
-#~ msgid "Response States"
-#~ msgstr "Gast-Zustände"
-
-#~ msgid "Registered"
-#~ msgstr "Registriert"
-
-#~ msgid "Register"
-#~ msgstr "Registrieren"
-
-#~ msgid "Deregister"
-#~ msgstr "Entregistrieren"
-
-#~ msgid "Maybe"
-#~ msgstr "Ort"
-
-#~ msgid "Create posting"
-#~ msgstr "per Post"
-
-#~ msgid "Going to create %(num)d postings for %(elem)s"
-#~ msgstr "Hierdurch werden %(num)d Postsendung(en) %(elem)s erstellt"
-
-#~ msgid "Open"
-#~ msgstr "In Bearbeitung"
-
-#~ msgid "Ready"
-#~ msgstr "Bereit"
-
-#~ msgid "Printed"
-#~ msgstr "Ausgedruckt"
-
-#~ msgid "Sent"
-#~ msgstr "Versendet"
-
-#~ msgid "Returned"
-#~ msgstr "Retour"
-
-#~ msgid "Print this posting"
-#~ msgstr "per Post"
-
-#~ msgid "Posting"
-#~ msgstr "Postsendung"
-
-#~ msgid "Postings"
-#~ msgstr "Postsendungen"
-
-#~ msgid "Postings ready to print"
-#~ msgstr "Bereit für Ausdruck"
-
-#~ msgid "%d postings are ready to print."
-#~ msgstr "%d Postsendungen bereit für Ausdruck"
-
-#~ msgid "Postings printed"
-#~ msgstr "Gedruckte Postsendungen"
-
-#~ msgid "Postings sent"
-#~ msgstr "Ausgegangene Postsendungen"
-
-#~ msgid "Project Type"
-#~ msgstr "Eigenschafts-Datentyp"
-
-#~ msgid "Project Types"
-#~ msgstr "Eigenschafts-Datentypen"
-
-#~ msgid "Project"
-#~ msgstr "Projekt"
-
-#~ msgid "Projects"
-#~ msgstr "Produkte"
-
-#~ msgid "Waiting"
-#~ msgstr "Wartet"
-
-#~ msgid "Busy"
-#~ msgstr "Beschäftigt"
-
-#~ msgid "Gone"
-#~ msgstr "Gegangen"
-
-#~ msgid "Waiting since"
-#~ msgstr "Wartet seit"
-
-#~ msgid "Waiting until"
-#~ msgstr "Hat gewartet bis"
-
-#~ msgid "Present until"
-#~ msgstr "Anwesend bis"
-
-#~ msgid "Default type for prompt events"
-#~ msgstr "Standard-Kalender"
-
-#~ msgid "Checkin"
-#~ msgstr "Einchecken"
-
-#~ msgid "%(partner)s has started waiting for %(user)s"
-#~ msgstr "%(partner)s wartet seit jetzt auf %(user)s"
-
-#~ msgid "Receive"
-#~ msgstr "Empfangen"
-
-#~ msgid "Visitor was received by agent"
-#~ msgstr "Besucher ist im Gespräch mit Begleiter"
-
-#~ msgid "%(guest)s begins consultation with %(user)s."
-#~ msgstr "%(guest)s beginnt Einzelgespräch bei %(user)s."
-
-#~ msgid "Checkout"
-#~ msgstr "Auschecken"
-
-#~ msgid "Visitor left the centre"
-#~ msgstr "Besucher hat Zentrum verlassen."
-
-#~ msgid "%(guest)s leaves after meeting with %(user)s."
-#~ msgstr "%(guest)s verlässt Treffen mit %(user)s."
-
-#~ msgid "Appointments"
-#~ msgstr "Termine"
-
-#~ msgid "Expected Guests"
-#~ msgstr "Erwartete Besucher"
-
-#~ msgid "Received Visitors"
-#~ msgstr "Empfangene Besucher"
-
-#~ msgid "Since"
-#~ msgstr "Seit"
-
-#~ msgid "Busy visitors"
-#~ msgstr "Beschäftigte Besucher"
-
-#~ msgid "Waiting visitors"
-#~ msgstr "Wartende Besucher"
-
-#~ msgid "Position"
-#~ msgstr "Postsendung"
-
-#~ msgid "Gone visitors"
-#~ msgstr "Gegangene Besucher"
-
-#~ msgid "Visitors waiting for me"
-#~ msgstr "Meine Warteschlange"
-
-#~ msgid "Visitors busy with me"
-#~ msgstr "Meine beschäftigten Besucher"
-
-#~ msgid "My gone visitors"
-#~ msgstr "Meine gegangenen Besucher"
-
-#~ msgid "Option"
-#~ msgstr "Postsendung"
-
-#~ msgid "Cancelled"
-#~ msgstr "Storniert"
-
-#~ msgid "Booking"
-#~ msgstr "Buchung"
-
-#~ msgid "Bookings"
-#~ msgstr "Buchungen"
-
-#~ msgid "Contact person"
-#~ msgstr "Kontaktperson"
-
-#~ msgid "Organizer"
-#~ msgstr "Veranstalter"
-
-#~ msgid "Star"
-#~ msgstr "Beginn"
-
-#~ msgid "Stars"
-#~ msgstr "Beginnt"
-
-#~ msgid "Starred object"
-#~ msgstr "Datenobjekt"
-
-#~ msgid "Starred by"
-#~ msgstr "ausgestellt durch"
-
-#~ msgid "Star this database object."
-#~ msgstr "Datenobjekt"
-
-#~ msgid "Unstar this database object."
-#~ msgstr "Datenobjekt"
-
-#~ msgid "Your stars are "
-#~ msgstr "Zustand Kurs"
-
-#~ msgid "INS code"
-#~ msgstr "Postleitzahl"
-
-#~ msgid "Third Party"
-#~ msgstr "Drittpartner"
-
-#~ msgid "Third Parties"
-#~ msgstr "Drittpartner"
-
-#~ msgid "Workflows"
-#~ msgstr "Arbeitsabläufe"
-
-#~ msgid "Actor"
-#~ msgstr "Ansicht"
-
-#~ msgid "owned only"
-#~ msgstr "schreibgeschützt"
-
-#~ msgid "Category"
-#~ msgstr "Kategorie"
-
-#~ msgid "Categories"
-#~ msgstr "Kategorien"
-
-#~ msgid "Service"
-#~ msgstr "Dienstleistung"
-
-#~ msgid "Accessories"
-#~ msgstr "Zubehör"
-
-#~ msgid "Price"
-#~ msgstr "Preis"
-
-#~ msgid "Under construction"
-#~ msgstr "Hier wird gearbeitet"
-
-#~ msgid "Belgian Reference"
-#~ msgstr "Ihr Zeichen"
-
-#~ msgid "Estonian Reference"
-#~ msgstr "Ihr Zeichen"
-
-#~ msgid "School"
-#~ msgstr "Schule"
-
-#~ msgid "Schools"
-#~ msgstr "Schulen"
-
-#~ msgid "a Lino application to make surveys and polls."
-#~ msgstr "eine Lino-Anwendung, um belgische Buchführung einfach zu machen."
-
-#~ msgid "Don't send email notification"
-#~ msgstr "Keine Benachrichtigung per E-Mail schicken"

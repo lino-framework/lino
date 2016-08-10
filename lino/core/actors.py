@@ -223,6 +223,11 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         instances created in this Table will automatically have these
         values set.
 
+    .. attribute:: welcome_message_when_count
+
+       Set this to an integer (e.g. 0) to tell Lino to make a generic
+       welcome message "You have X items in Y".
+
     The following class methods are `None` in the default
     implementation. Subclass can define them.
 
@@ -266,8 +271,14 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     """See :attr:`lino.core.permissions.Permittable.required_roles`"""
 
     model = None
-    """
-    Set this on
+    """The model on which this table iterates.
+
+    The application programmer can specify either the model class
+    itself or a string of type ``'app.Model'``.
+
+    This should be `None` on all tables which are not subclass of
+    :class:`lino.core.dbtables.Table`.
+
     """
 
     actions = None
@@ -367,7 +378,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     actor as a table html page.
 
     """
-
+    welcome_message_when_count = None
     get_welcome_messages = None
     get_row_classes = None
     window_size = None

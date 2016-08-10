@@ -1795,7 +1795,9 @@ class GridElement(Container):
         if len(columns) == 0:
             self.rh = rpt.get_handle()
             if not hasattr(self.rh, 'list_layout'):
-                raise Exception("%s has no list_layout" % self.rh)
+                raise Exception(
+                    "Handle for {0} (model {1}) has no list_layout".format(
+                        rpt, rpt.model))
             columns = self.rh.list_layout.main.columns
             # columns = self.rh.list_layout._main.elements
         w = 0

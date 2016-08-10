@@ -58,6 +58,7 @@ from lino.core import constants
 from lino.core import views
 from lino.utils import class_dict_items
 from lino.utils.memo import Parser
+from lino.utils.xmlgen.html import E
 from lino.core.requests import ActorRequest
 from lino.core.model import Model
 from lino.core.store import Store
@@ -469,8 +470,22 @@ class Kernel(object):
 
         for a in actors.actors_list:
             if a.get_welcome_messages is not None:
-                # site._welcome_actors.append(a)
                 site.add_welcome_handler(a.get_welcome_messages)
+            if a.welcome_message_when_count is not None:
+                
+                cls = a
+                
+                def get_welcome_messages(ar):
+                    sar = ar.spawn(cls)
+                    num = sar.get_total_count()
+                    if num > cls.welcome_message_when_count:
+                        chunks = [unicode(_("You have "))]
+                        txt = _("{0} items in {1}").format(num, cls.label)
+                        chunks.append(ar.href_to_request(sar, txt))
+                        chunks.append('.')
+                        yield E.span(*chunks)                
+               
+                site.add_welcome_handler(get_welcome_messages)
 
         pre_ui_build.send(self)
 
