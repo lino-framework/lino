@@ -317,6 +317,22 @@ class Tickets(dd.Table):
 
         Select a site if you want to see only tickets for this site.
 
+    .. attribute:: show_private
+
+        Show only (or hide) tickets that are marked private.
+
+    .. attribute:: show_active
+
+        Show only (or hide) tickets which are active (i.e. state is Talk
+        or ToDo).
+
+    .. attribute:: show_assigned
+
+        Show only (or hide) tickets which are assigned to somebody.
+
+    .. attribute:: has_project
+
+        Show only (or hide) tickets which have a project assigned.
 
     """
     required_roles = set()  # also for anonymous
@@ -357,24 +373,11 @@ class Tickets(dd.Table):
             blank=True, null=True),
         state=TicketStates.field(
             blank=True, help_text=_("Only rows having this state.")),
-        show_assigned=dd.YesNo.field(
-            blank=True,
-            help_text=_("Show tickets which are assigned to somebody.")),
-        # show_closed=dd.YesNo.field(
-        #     blank=True,
-        #     help_text=_("Show tickets which are closed.")),
-        show_active=dd.YesNo.field(
-            blank=True,
-            help_text=_("Show tickets which are active (Talk or ToDo).")),
-        has_project=dd.YesNo.field(
-            blank=True,
-            help_text=_("Show tickets with project assigned.")),
-        # show_standby=dd.YesNo.field(
-        #     blank=True,
-        #     help_text=_("Show tickets which are in standby mode.")),
-        show_private=dd.YesNo.field(
-            blank=True,
-            help_text=_("Show tickets which are private.")))
+        show_assigned=dd.YesNo.field(_("Assigned"), blank=True),
+        show_active=dd.YesNo.field(_("Active"), blank=True),
+        has_project=dd.YesNo.field(_("Has project"), blank=True),
+        show_private=dd.YesNo.field(_("Private"), blank=True))
+
     params_layout = """
     reporter assigned_to interesting_for site project state has_project
     show_assigned show_active #show_closed #show_standby show_private \
@@ -415,7 +418,11 @@ class Tickets(dd.Table):
         elif pv.show_assigned == dd.YesNo.yes:
             qs = qs.filter(assigned_to__isnull=False)
 
-        active_states = (TicketStates.todo, TicketStates.talk)
+
+        active_states = TicketStates.filter(active=True)
+        # active_states = (
+        #     TicketStates.todo, TicketStates.talk, TicketStates.ready)
+        # print 20160810, active_states
         if pv.show_active == dd.YesNo.no:
             qs = qs.exclude(state__in=active_states)
         elif pv.show_assigned == dd.YesNo.yes:

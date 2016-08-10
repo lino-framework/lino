@@ -13,6 +13,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 from django.utils.translation import string_concat
+from django.db import models
 
 from lino.modlib.system.choicelists import (
     ObservedEvent, PeriodStarted, PeriodActive, PeriodEnded)
@@ -84,6 +85,10 @@ ProjectEvents.add_item_instance(PeriodEnded('ended'))
 ProjectEvents.add_item_instance(TicketEventModified('modified'))
 
 
+class TicketState(dd.State):
+    active = False
+
+   
 class TicketStates(dd.Workflow):
 
     """The state of a ticket (new, open, closed, ...)
@@ -137,26 +142,10 @@ class TicketStates(dd.Workflow):
         It has been decided that we won't fix this ticket.
 
     """
-    #~ label = _("Ticket State")
-
-    # @classmethod
-    # def allow_state_active(cls, self, user):
-    #     if not self.reported:
-    #         return False
-    #     return True
-
-    # @classmethod
-    # def allow_state_assigned(cls, self, user):
-    #     if not self.user:
-    #         return False
-    #     return True
-
-    # @classmethod
-    # def allow_state_fixed(cls, self, user):
-    #     if not self.fixed:
-    #         return False
-    #     return True
-
+    item_class = TicketState
+    column_names = "value name text active"
+    active = models.BooleanField(_("Active"), default=False)
+    
 
 add = TicketStates.add_item
 
@@ -165,8 +154,8 @@ add = TicketStates.add_item
 #     action_name=_("Start"),
 #     help_text=_("Ticket has been assigned to somebody who is assigned on it."))
 add('10', _("New"), 'new')
-add('15', _("Talk"), 'talk')
-add('20', _("ToDo"), 'todo')
+add('15', _("Talk"), 'talk', active=True)
+add('20', _("ToDo"), 'todo', active=True)
 add('21', _("Sticky"), 'sticky')
 add('30', _("Sleeping"), 'sleeping')
 # add('30', _("Callback"), 'callback',
@@ -174,7 +163,9 @@ add('30', _("Sleeping"), 'sleeping')
     # action_name=_("Wait for feedback"),
     # help_text=_("Waiting for feedback from partner."))
 add('40', _("Ready"), 'ready',
-    help_text=_("Has been fixed. Ready for release. Waiting to be tested."))
+    help_text=_(
+        "Has been fixed. Ready for release. Waiting to be tested."),
+    active=True)
 add('50', _("Done"), 'done')
 # add('50', _("Tested"), 'tested',
 #     # required=dict(states=['fixed']),
