@@ -1605,8 +1605,12 @@ this field.
             # print("20160725 {!r} has no help_text".format(fld))
             return
         if fld.help_text:
-            # print("20160620 {} has already a help_text".format(fld))
+            # if attrname == 'show_assigned':
+            #     print("20160620 {} on {} has already a help_text {}".format(
+            #         attrname, cls, fld.help_text))
             return
+        # if attrname == 'show_assigned':
+        #     print(20160810, cls)
         if cls is None:
             cls = fld
         # if isinstance(fld, type):

@@ -469,6 +469,12 @@ class Kernel(object):
         # web.site_setup(site)
 
         for a in actors.actors_list:
+            
+            site.install_help_text(a)
+            if a.parameters is not None:
+                for name, fld in a.parameters.items():
+                    site.install_help_text(fld, a, name)
+            
             if a.get_welcome_messages is not None:
                 site.add_welcome_handler(a.get_welcome_messages)
             if a.welcome_message_when_count is not None:
@@ -540,10 +546,6 @@ class Kernel(object):
 
             # trigger creation of params_layout.params_store
             for res in actors.actors_list:
-                site.install_help_text(res)
-                if res.parameters is not None:
-                    for name, fld in res.parameters.items():
-                        site.install_help_text(fld, res, name)
 
                 for ba in res.get_actions():
                     # site.install_help_text(
