@@ -43,22 +43,29 @@ The :attr:`state <lino_noi.lib.tickets.models.Ticket.state>` of a
 ticket has one of the following values:
 
 >>> rt.show(tickets.TicketStates)
-======= ========== ==========
- value   name       text
-------- ---------- ----------
- 10      new        New
- 15      talk       Talk
- 20      todo       ToDo
- 21      sticky     Sticky
- 30      sleeping   Sleeping
- 40      ready      Ready
- 50      done       Done
- 60      refused    Refused
-======= ========== ==========
+======= ========== ========== ========
+ value   name       text       Active
+------- ---------- ---------- --------
+ 10      new        New        No
+ 15      talk       Talk       Yes
+ 20      todo       ToDo       Yes
+ 21      sticky     Sticky     No
+ 30      sleeping   Sleeping   No
+ 40      ready      Ready      Yes
+ 50      done       Done       No
+ 60      refused    Refused    No
+======= ========== ========== ========
 <BLANKLINE>
+
 
 See :class:`lino_noi.lib.tickets.choicelists.TicketStates` for an
 overview of these.
+
+You can see this table using :menuselection:`Explorer --> Tickets -->
+States`.
+
+.. >>> show_menu_path(tickets.TicketStates)
+   Explorer --> Tickets --> States
 
 Note that a ticket also has a checkbox for marking it as :attr:`closed
 <lino_noi.lib.tickets.models.Ticket.closed>`.  This means that a ticket
@@ -445,3 +452,44 @@ No data to display
 >>> obj = tickets.Ticket.objects.get(pk=7)
 >>> rt.show(comments.CommentsByRFC, obj)
 <BLANKLINE>
+
+
+Filtering tickets
+=================
+
+
+>>> show_fields(tickets.Tickets)
++-----------------+-----------------+------------------------------------------------------------------+
+| Internal name   | Verbose name    | Help text                                                        |
++=================+=================+==================================================================+
+| reporter        | Reporter        | Only rows reporter by this user.                                 |
++-----------------+-----------------+------------------------------------------------------------------+
+| assigned_to     | Assigned to     | Only tickets assigned to this user.                              |
++-----------------+-----------------+------------------------------------------------------------------+
+| interesting_for | Interesting for | Only tickets interesting for this partner.                       |
++-----------------+-----------------+------------------------------------------------------------------+
+| site            | Site            | Select a site if you want to see only tickets for this site.     |
++-----------------+-----------------+------------------------------------------------------------------+
+| project         | Project         |                                                                  |
++-----------------+-----------------+------------------------------------------------------------------+
+| state           | State           | Only rows having this state.                                     |
++-----------------+-----------------+------------------------------------------------------------------+
+| has_project     | Has project     | Show only (or hide) tickets which have a project assigned.       |
++-----------------+-----------------+------------------------------------------------------------------+
+| show_assigned   | Assigned        | Show only (or hide) tickets which are assigned to somebody.      |
++-----------------+-----------------+------------------------------------------------------------------+
+| show_active     | Active          | Show only (or hide) tickets which are active (i.e. state is Talk |
+|                 |                 | or ToDo).                                                        |
++-----------------+-----------------+------------------------------------------------------------------+
+| show_private    | Private         | Show only (or hide) tickets that are marked private.             |
++-----------------+-----------------+------------------------------------------------------------------+
+| start_date      | Period from     | Start date of observed period                                    |
++-----------------+-----------------+------------------------------------------------------------------+
+| end_date        | until           | End date of observed period                                      |
++-----------------+-----------------+------------------------------------------------------------------+
+| observed_event  | Observed event  |                                                                  |
++-----------------+-----------------+------------------------------------------------------------------+
+| topic           | Topic           |                                                                  |
++-----------------+-----------------+------------------------------------------------------------------+
+
+

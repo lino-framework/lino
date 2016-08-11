@@ -241,7 +241,7 @@ In :ref:`care` we don't call them "tickets" but "pleas" (German
   - System : Datenbankmodelle, Vollmachten, Benutzerprofile, Benachrichtigungen, Änderungen
   - Benutzer : Interessen
   - Büro : Favoriten, Auszüge, Kommentare, Einfügetexte
-  - Bitten : Verknüpfungen
+  - Bitten : Verknüpfungen, Zustände
   - Fähigkeiten : Kompetenzen
   - Arbeitszeit : Sitzungen
 - Site : Info

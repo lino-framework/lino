@@ -105,7 +105,7 @@ users.UserProfiles.admin:900
   - System : content types, Authorities, User Profiles, Notifications, Changes
   - Contacts : Contact Persons, Interests, List memberships
   - Office : Stars, Uploads, Upload Areas, Outgoing Mails, Attachments, Excerpts, Comments, Text Field Templates
-  - Tickets : Dependencies
+  - Tickets : Dependencies, States
   - Faculties : Competences
   - Deploy : Milestones, Deployments    
   - Clocking : Sessions
