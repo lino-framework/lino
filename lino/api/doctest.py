@@ -253,12 +253,13 @@ def show_fields(model, fieldnames=None):
     elif issubclass(model, AbstractTable):
         get_field = model.parameters.get
         if fieldnames is None:
-            fieldnames = model.params_layout
+            fieldnames = model.params_layout.main
     if isinstance(fieldnames, six.string_types):
         fieldnames = fieldnames.split()
     for n in fieldnames:
         fld = get_field(n)
-        cells.append([n, fld.verbose_name, unindent(fld.help_text)])
+        if fld is not None:
+            cells.append([n, fld.verbose_name, unindent(fld.help_text)])
 
     print(table(cols, cells).strip())
 

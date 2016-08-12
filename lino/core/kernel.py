@@ -58,6 +58,7 @@ from lino.core import constants
 from lino.core import views
 from lino.utils import class_dict_items
 from lino.utils.memo import Parser
+from lino.utils.xmlgen.html import E
 from lino.core.requests import ActorRequest
 from lino.core.model import Model
 from lino.core.store import Store
@@ -468,9 +469,29 @@ class Kernel(object):
         # web.site_setup(site)
 
         for a in actors.actors_list:
+            
+            site.install_help_text(a)
+            if a.parameters is not None:
+                for name, fld in a.parameters.items():
+                    site.install_help_text(fld, a, name)
+            
             if a.get_welcome_messages is not None:
-                # site._welcome_actors.append(a)
                 site.add_welcome_handler(a.get_welcome_messages)
+            if a.welcome_message_when_count is not None:
+                
+                cls = a
+                
+                def get_welcome_messages(ar):
+                    sar = ar.spawn(cls)
+                    num = sar.get_total_count()
+                    if num > cls.welcome_message_when_count:
+                        chunks = [unicode(_("You have "))]
+                        txt = _("{0} items in {1}").format(num, cls.label)
+                        chunks.append(ar.href_to_request(sar, txt))
+                        chunks.append('.')
+                        yield E.span(*chunks)                
+               
+                site.add_welcome_handler(get_welcome_messages)
 
         pre_ui_build.send(self)
 
@@ -525,10 +546,6 @@ class Kernel(object):
 
             # trigger creation of params_layout.params_store
             for res in actors.actors_list:
-                site.install_help_text(res)
-                if res.parameters is not None:
-                    for name, fld in res.parameters.items():
-                        site.install_help_text(fld, res, name)
 
                 for ba in res.get_actions():
                     # site.install_help_text(

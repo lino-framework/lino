@@ -290,7 +290,7 @@ class Table(AbstractTable):
     """
     
     model = None
-    """The model on which this table iterates.
+    """See :attr:`lino.core.actors.AbstractTable.model`
 
     """
 
@@ -458,7 +458,13 @@ class Table(AbstractTable):
     def class_init(self):
 
         if self.model is not None:
-            self.model = resolve_model(self.model, self.app_label)
+            model = resolve_model(self.model, self.app_label)
+            if isinstance(model, UnresolvedModel):
+                # if settings.SITE.is_installed(self.app_label):
+                raise Exception(
+                    "Invalid model {} on table {}".format(
+                        self.model, self))
+            self.model = model
 
         if isinstance(self.model, UnresolvedModel):
             self.model = None
