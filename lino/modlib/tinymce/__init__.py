@@ -45,7 +45,7 @@ class Plugin(ad.Plugin):
     document_domain = None
     """When serving static files from a different subdomain, TinyMCE needs
     to know about this. Typical usage is to specify this in your
-    :file:`djangosite_local.py` file (:ref:`lino.djangosite_local`)::
+    :xfile:`lino_local.py` file::
 
         def setup_site(self):
             ...

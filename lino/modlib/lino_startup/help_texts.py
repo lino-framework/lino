@@ -276,7 +276,7 @@ confirmation when necessary."""),
     'lino.modlib.about.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.tinymce.Plugin.document_domain' : _("""When serving static files from a different subdomain, TinyMCE needs
 to know about this. Typical usage is to specify this in your
-djangosite_local.py file (lino.djangosite_local):"""),
+lino_local.py file:"""),
     'lino.modlib.summaries.Plugin.end_year' : _("""The last year for which summaries should be computed."""),
     'lino.utils.code.SourceFile' : _("""Counts the number of code lines in a given Python source file."""),
     'lino.mixins.sequenced.Hierarchical' : _("""Abstract model mixin for things that have a "parent" and
