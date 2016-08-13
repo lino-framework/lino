@@ -8,7 +8,7 @@ Rymarczyk, hosted at
 <https://code.google.com/p/awesomeuploader/source/checkout>.
 
 Example configuration in a :xfile:`settings.py` file or
-a :ref:`djangosite_local` module::
+a :xfile:`lino_local.py` file::
 
     ad.configure_plugin(
         'awesomeuploader',

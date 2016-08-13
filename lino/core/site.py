@@ -1359,7 +1359,7 @@ class Site(object):
             }
 
     def run_lino_site_module(self):
-        """See :ref:`djangosite_local`.
+        """See :ref:`lino.site_module`.
 
         """
         site_module = os.environ.get('LINO_SITE_MODULE', None)
@@ -1907,8 +1907,7 @@ this field.
             return True
 
     def update_settings(self, **kw):
-        """This may be called from within a :doc:`djangosite_local.setup_site
-        </admin/djangosite_local>` function.
+        """This may be called from within a :xfile:`lino_local.py`.
 
         """
         self.django_settings.update(**kw)
