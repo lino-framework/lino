@@ -21,16 +21,18 @@
 """Defines user roles for the Care variant of Lino Noi."""
 
 
-from lino.core.roles import UserRole, SiteAdmin, SiteUser
+from lino.core.roles import UserRole, SiteAdmin
 from lino.modlib.office.roles import OfficeStaff
+from lino.modlib.users.roles import Helper
 # from lino.modlib.office.roles import OfficeStaff, OfficeUser
-from lino_noi.lib.tickets.roles import Worker, Triager
+from lino_noi.lib.tickets.roles import Triager
+from lino_noi.lib.clocking.roles import Worker
 from lino.modlib.users.choicelists import UserProfiles
 from django.utils.translation import ugettext_lazy as _
 
 
 #class CareUser(OfficeUser):
-class CareUser(SiteUser):
+class CareUser(Helper):
     """
     """
     pass

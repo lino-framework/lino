@@ -97,7 +97,7 @@ A **senior** is a developer who additionaly can triage tickets.
 
 Here is a list of user profiles of those who can work on tickets:
 
->>> from lino_noi.lib.tickets.roles import Worker
+>>> from lino_noi.lib.clocking.roles import Worker
 >>> UserProfiles = rt.modules.users.UserProfiles
 >>> [p.name for p in UserProfiles.items()
 ...     if p.has_required_roles([Worker])]

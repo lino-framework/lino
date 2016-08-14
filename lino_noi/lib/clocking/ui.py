@@ -41,7 +41,7 @@ from lino_xl.lib.cal.utils import when_text
 from lino_noi.lib.tickets.choicelists import (TicketEvents,
                                               ProjectEvents, ObservedEvent)
 from lino_noi.lib.tickets.ui import Tickets, Projects
-from lino_noi.lib.tickets.roles import Worker
+from .roles import Worker
 
 MIN_DURATION = Duration('0:01')
 

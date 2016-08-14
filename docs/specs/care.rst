@@ -98,10 +98,11 @@ These user roles are defined in :mod:`lino_noi.projects.care.roles`
 ============== ================ ========= ==============
  Benutzername   Benutzerprofil   Vorname   Familienname
 -------------- ---------------- --------- --------------
- anna           Benutzer
+ axel           Benutzer
  berta          Benutzer
  christa        Benutzer
  dora           Benutzer
+ eric           Benutzer
  robin          Verwalter        Robin     Rood
  rolf           Verwalter        Rolf      Rompen
  romain         Verwalter        Romain    Raffault
@@ -142,50 +143,54 @@ verbose_name and verbose_name_plural options of `faculties.Faculty`.
  Friseur                                          Coiffure                     100
  Gartenarbeiten                                   Travaux de jardin            100                              Haus und Garten
  Gesellschafter für Senioren                      Rencontres personnes agées   100
- Gitarrenunterricht                               Cours de guitare             100                              Unterricht
+ Gitarrenunterricht                               Cours de guitare             100                              Musik
  Handwerksarbeiten                                Travaux de réparation        100                              Haus und Garten
  Haus und Garten                                  Maison et jardin             100
  Hunde spazierenführen                            Chiens                       100
- Klavierunterricht                                Cours de piano               100                              Unterricht
+ Klavierunterricht                                Cours de piano               100                              Musik
  Matheunterricht                                  Cours de maths               100                              Unterricht
+ Musik                                            Musique                      100
  Nähen                                            Couture                      100                              Haus und Garten
  Unterricht                                       Cours                        100
  Übersetzungsarbeiten                             Traductions                  100         Sprachen
- **Total (18 Zeilen)**                                                         **1800**
+ **Total (19 Zeilen)**                                                         **1900**
 ============================= ================== ============================ =========== ==================== =========================
 <BLANKLINE>
 
 
 >>> rt.show(faculties.TopLevelFaculties)
 ... #doctest: +REPORT_UDIFF
-======== ============================= ================== ============================ ============================================================================================================ =========================
- Nr.      Bezeichnung                   Bezeichnung (en)   Bezeichnung (fr)             Kinder                                                                                                       Übergeordnete Fähigkeit
--------- ----------------------------- ------------------ ---------------------------- ------------------------------------------------------------------------------------------------------------ -------------------------
- 1        Unterricht                                       Cours                        *Französischunterricht*, *Deutschunterricht*, *Matheunterricht*, *Gitarrenunterricht*, *Klavierunterricht*
- 2        Haus und Garten                                  Maison et jardin             *Nähen*, *Gartenarbeiten*, *Handwerksarbeiten*
- 3        Fahrdienst                                       Voiture
- 4        Botengänge                                       Commissions
- 5        Friseur                                          Coiffure
- 6        Babysitting                                      Garde enfant
- 7        Gesellschafter für Senioren                      Rencontres personnes agées
- 8        Hunde spazierenführen                            Chiens
- 9        Übersetzungsarbeiten                             Traductions
- 10       Briefe beantworten                               Répondre au courrier
- **55**
-======== ============================= ================== ============================ ============================================================================================================ =========================
+======== ============================= ================== ============================ ================================================================= =========================
+ Nr.      Bezeichnung                   Bezeichnung (en)   Bezeichnung (fr)             Kinder                                                            Übergeordnete Fähigkeit
+-------- ----------------------------- ------------------ ---------------------------- ----------------------------------------------------------------- -------------------------
+ 1        Unterricht                                       Cours                        *Französischunterricht*, *Deutschunterricht*, *Matheunterricht*
+ 2        Musik                                            Musique                      *Gitarrenunterricht*, *Klavierunterricht*
+ 3        Haus und Garten                                  Maison et jardin             *Nähen*, *Gartenarbeiten*, *Handwerksarbeiten*
+ 4        Fahrdienst                                       Voiture
+ 5        Botengänge                                       Commissions
+ 6        Friseur                                          Coiffure
+ 7        Babysitting                                      Garde enfant
+ 8        Gesellschafter für Senioren                      Rencontres personnes agées
+ 9        Hunde spazierenführen                            Chiens
+ 10       Übersetzungsarbeiten                             Traductions
+ 11       Briefe beantworten                               Répondre au courrier
+ **66**
+======== ============================= ================== ============================ ================================================================= =========================
 <BLANKLINE>
-
-
 
 
 >>> rt.show('faculties.Competences')
 ==== ========== ====================== =========== =============
  ID   Benutzer   Fähigkeit              Affinität   Option
 ---- ---------- ---------------------- ----------- -------------
- 1    anna       Übersetzungsarbeiten   100         Französisch
+ 1    axel       Übersetzungsarbeiten   100         Französisch
  2    berta      Übersetzungsarbeiten   100         Französisch
  3    berta      Übersetzungsarbeiten   100         Deutsch
-                                        **300**
+ 4    axel       Botengänge             100
+ 5    axel       Handwerksarbeiten      100
+ 6    christa    Klavierunterricht      100
+ 7    eric       Gitarrenunterricht     100
+                                        **700**
 ==== ========== ====================== =========== =============
 <BLANKLINE>
 
@@ -201,16 +206,18 @@ verbose_name and verbose_name_plural options of `faculties.Faculty`.
 
 
 >>> rt.show('tickets.Tickets')
-==== =========================================================================================== ========== ======= =================== ================ =========
- ID   Zusammenfassung                                                                             Anfrager   Thema   Fähigkeit           Arbeitsablauf    Projekt
----- ------------------------------------------------------------------------------------------- ---------- ------- ------------------- ---------------- ---------
- 6    Wer fährt für mich nach Aachen Pampers kaufen?                                              anna               Botengänge          **Bereit**
- 5    Wer kann meine Abschlussarbeit korrekturlesen?                                              dora                                   **Schläft**
- 4    Wer hilft meinem Sohn sich auf die Mathearbeit am 21.05. vorzubereiten? 5. Schuljahr PDS.   berta              Matheunterricht     **Sticky**
- 3    Wer kommt meinem Sohn Klavierunterricht geben?                                              dora               Klavierunterricht   **ZuTun**
- 2    Mein Rasen muss gemäht werden. Donnerstags oder Samstags                                    christa                                **Besprechen**
- 1    Mein Wasserhahn tropft, wer kann mir helfen?                                                berta                                  **Neu**
-==== =========================================================================================== ========== ======= =================== ================ =========
+==== =========================================================================================== ========== ======= ==================== ================ =========
+ ID   Zusammenfassung                                                                             Anfrager   Thema   Fähigkeit            Arbeitsablauf    Projekt
+---- ------------------------------------------------------------------------------------------- ---------- ------- -------------------- ---------------- ---------
+ 8    Wer fährt für mich nach Aachen Pampers kaufen?                                              axel               Botengänge           **Verweigert**
+ 7    Wer kann meine Abschlussarbeit korrekturlesen?                                              dora                                    **Erledigt**
+ 6    Wer hilft meinem Sohn sich auf die Mathearbeit am 21.05. vorzubereiten? 5. Schuljahr PDS.   berta              Matheunterricht      **Bereit**
+ 5    Wer macht Musik auf meinem Geburtstag am 12.12.2012 ?                                       axel               Musik                **Schläft**
+ 4    Wer kann meiner Tochter Gitarreunterricht geben?                                            axel               Gitarrenunterricht   **Sticky**
+ 3    Wer kann meinem Sohn Klavierunterricht geben?                                               dora               Klavierunterricht    **ZuTun**
+ 2    Mein Rasen muss gemäht werden. Donnerstags oder Samstags                                    christa                                 **Besprechen**
+ 1    Mein Wasserhahn tropft, wer kann mir helfen?                                                berta              Handwerksarbeiten    **Neu**
+==== =========================================================================================== ========== ======= ==================== ================ =========
 <BLANKLINE>
 
 
@@ -227,7 +234,7 @@ In :ref:`care` we don't call them "tickets" but "pleas" (German
 >>> rt.login('rolf').show_menu()
 ... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
 - Büro : Meine Benachrichtigungen, Meine Favoriten, Meine Auszüge, Meine Kommentare
-- Bitten : Aktive Bitten, Bitten, Nicht zugewiesene Bitten, Wo ich helfen kann, Aktive Projekte
+- Bitten : Meine Bitten, Wo ich helfen kann, Aktive Bitten, Bitten, Nicht zugewiesene Bitten, Aktive Projekte
 - Arbeitszeit : Sitzungen
 - Berichte :
   - System : Broken GFKs
@@ -255,11 +262,17 @@ In :ref:`care` we don't call them "tickets" but "pleas" (German
 >>> rt.login('berta').show_menu()
 ... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
 - Büro : Meine Benachrichtigungen, Meine Favoriten, Meine Kommentare
-- Bitten : Wo ich helfen kann
+- Bitten : Meine Bitten, Wo ich helfen kann
 - Site : Info
   
->>> rt.login('berta').show(tickets.SuggestedTickets)
+>>> rt.login('christa').show(tickets.SuggestedTickets)
 ... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
-Keine Daten anzuzeigen
+============================================================== ========== ======= =================== ===================
+ Overview                                                       Anfrager   Thema   Fähigkeit           Arbeitsablauf
+-------------------------------------------------------------- ---------- ------- ------------------- -------------------
+ *#5 (Wer macht Musik auf meinem Geburtstag am 12.12.2012 ?)*   axel               Musik               **Schläft** → [☆]
+ *#3 (Wer kann meinem Sohn Klavierunterricht geben?)*           dora               Klavierunterricht   **ZuTun** → [☆]
+============================================================== ========== ======= =================== ===================
+<BLANKLINE>
 
 

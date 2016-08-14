@@ -50,14 +50,14 @@ from lino.utils.xmlgen.html import E
 
 from lino_xl.lib.cal.mixins import daterange_text
 from lino_xl.lib.contacts.mixins import ContactRelated
-from lino.modlib.users.mixins import UserAuthored
+from lino.modlib.users.mixins import UserAuthored, Assignable
 from lino.modlib.comments.mixins import RFC
 from lino.modlib.notify.mixins import ChangeObservable
 from lino_xl.lib.excerpts.mixins import Certifiable
 from lino.utils import join_elems
 
 from .choicelists import TicketEvents, TicketStates, LinkTypes
-from .roles import Worker
+from .roles import Triager
 
 
 class TimeInvestment(dd.Model):
@@ -346,7 +346,8 @@ class SpawnTicket(dd.Action):
         ar.goto_instance(c)
 
 
-class Ticket(mixins.CreatedModified, TimeInvestment, RFC, ChangeObservable):
+class Ticket(mixins.CreatedModified, Assignable, TimeInvestment, RFC,
+             ChangeObservable):
     """A **Ticket** is a concrete question or problem formulated by a
     :attr:`reporter` (a user).
     
@@ -356,7 +357,7 @@ class Ticket(mixins.CreatedModified, TimeInvestment, RFC, ChangeObservable):
 
     .. attribute:: reporter
 
-        The user who is reported this ticket.
+        The user who reported this ticket.
 
     .. attribute:: assigned_to
 
@@ -423,6 +424,7 @@ class Ticket(mixins.CreatedModified, TimeInvestment, RFC, ChangeObservable):
     quick_search_fields = "summary description"
 
     workflow_state_field = 'state'
+    author_field_name = 'reporter'
 
     class Meta:
         app_label = 'tickets'
@@ -458,12 +460,13 @@ class Ticket(mixins.CreatedModified, TimeInvestment, RFC, ChangeObservable):
         verbose_name='Fixed for',
         blank=True, null=True,
         help_text=_("The milestone for which this ticket has been fixed."))
-    assigned_to = dd.ForeignKey(
-        settings.SITE.user_model,
-        verbose_name=_("Assigned to"),
-        related_name="assigned_tickets",
-        blank=True, null=True,
-        help_text=_("The user who works on this ticket."))
+    # assigned_to = dd.ForeignKey(
+    #     settings.SITE.user_model,
+    #     verbose_name=_("Assigned to"),
+    #     related_name="assigned_tickets",
+    #     blank=True, null=True,
+    #     help_text=_("The user who works on this ticket."))
+
     reporter = dd.ForeignKey(
         settings.SITE.user_model,
         verbose_name=_("Reporter"),
@@ -507,7 +510,7 @@ class Ticket(mixins.CreatedModified, TimeInvestment, RFC, ChangeObservable):
             if self.reporter_id is None:
                 self.reporter = me
             if self.assigned_to_id is None:
-                if me.profile.has_required_roles([Worker]):
+                if me.profile.has_required_roles([Triager]):
                     self.assigned_to = me
         if self.reporter_id and self.reporter.user_site:
             self.site = self.reporter.user_site

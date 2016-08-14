@@ -70,6 +70,7 @@ worker, or our general todo list)"""),
 faculties"""),
     'lino_noi.lib.tickets.models.Ticket.assigned_to' : _("""The user who is working on this ticket."""),
     'lino_noi.lib.tickets.choicelists.TicketStates.sticky' : _("""Special state for permanent tickets which have no lifecycle."""),
+    'lino_noi.lib.clocking.roles.Worker' : _("""A user who is candidate for working on a ticket."""),
     'lino_noi.lib.deploy.Plugin' : _("""See lino.core.plugin.Plugin."""),
     'lino_noi.lib.tickets.choicelists.TicketStates.new' : _("""Somebody reported this ticket, but there was no response so
 far.
@@ -88,8 +89,7 @@ equivalent to those having their state set to new."""),
     'lino_noi.lib.tickets.ui.Tickets.show_private' : _("""Show only (or hide) tickets that are marked private."""),
     'lino_noi.lib.tickets.models.TimeInvestment.planned_time' : _("""The time (in hours) we plan to work on this project or ticket."""),
     'lino_noi.lib.tickets.ui.Tickets.show_assigned' : _("""Show only (or hide) tickets which are assigned to somebody."""),
-    'lino_noi.lib.tickets.models.Ticket.reporter' : _("""The user who is reported this ticket."""),
-    'lino_noi.lib.tickets.roles.Worker' : _("""A user who is candidate for working on a ticket."""),
+    'lino_noi.lib.tickets.models.Ticket.reporter' : _("""The user who reported this ticket."""),
     'lino_noi.lib.tickets.models.Ticket.upgrade_notes' : _("""A formatted text field meant for writing instructions for the
 hoster's site administrator when doing an upgrade where this
 ticket is being deployed."""),

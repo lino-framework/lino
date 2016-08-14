@@ -27,7 +27,7 @@ from lino.api import _
 
 from lino_noi.lib.tickets.models import Project
 from lino_noi.lib.tickets.models import Ticket
-from lino_noi.lib.tickets.roles import Worker
+from lino_noi.lib.clocking.roles import Worker
 
 
 MySessionsByDate.column_names = (

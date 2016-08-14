@@ -28,7 +28,7 @@ from lino.utils import Cycler, i2d
 
 from lino.core.roles import SiteAdmin
 from lino_xl.lib.cal.choicelists import DurationUnits
-from lino_noi.lib.tickets.roles import Worker
+from lino_noi.lib.clocking.roles import Worker
 from lino.utils.quantities import Duration
 
 

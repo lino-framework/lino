@@ -66,10 +66,11 @@ def competence(user, faculty, **kw):
 
 
 def objects():
-    yield U("anna")
+    yield U("axel")
     yield U("berta")
     yield U("christa")
     yield U("dora")
+    yield U("eric")
 
     yield S("Bei mir zu Hause")
     yield S("AZ Ephata")
@@ -97,18 +98,21 @@ def objects():
     yield F("Deutschunterricht", "Cours d'allemand", parent=edu)
     math = F("Matheunterricht", "Cours de maths", parent=edu)
     yield math
-    guitar = F("Gitarrenunterricht", "Cours de guitare", parent=edu)
+    
+    music = F("Musik", "Musique")
+    yield music
+    guitar = F("Gitarrenunterricht", "Cours de guitare", parent=music)
     yield guitar
-    piano = F("Klavierunterricht", "Cours de piano", parent=edu)
+    piano = F("Klavierunterricht", "Cours de piano", parent=music)
     yield piano
 
     home = F("Haus und Garten", "Maison et jardin")
     yield home
 
     yield F("Nähen", "Couture", parent=home)
-    garden = yield F("Gartenarbeiten", "Travaux de jardin", parent=home)
+    garden = F("Gartenarbeiten", "Travaux de jardin", parent=home)
     yield garden
-    handwerk = yield F("Handwerksarbeiten", "Travaux de réparation", parent=home)
+    handwerk = F("Handwerksarbeiten", "Travaux de réparation", parent=home)
     yield handwerk
 
     yield F("Fahrdienst", "Voiture")
@@ -128,8 +132,14 @@ def objects():
     yield T("christa",
             "Mein Rasen muss gemäht werden. Donnerstags oder Samstags")
     yield T("dora",
-            "Wer kommt meinem Sohn Klavierunterricht geben?",
+            "Wer kann meinem Sohn Klavierunterricht geben?",
             faculty=piano)
+    yield T("axel",
+            "Wer kann meiner Tochter Gitarreunterricht geben?",
+            faculty=guitar)
+    yield T("axel",
+            "Wer macht Musik auf meinem Geburtstag am 12.12.2012 ?",
+            faculty=music)
     yield T("berta",
             "Wer hilft meinem Sohn sich auf die Mathearbeit am "
             "21.05. vorzubereiten? 5. Schuljahr PDS.", faculty=math)
@@ -139,12 +149,16 @@ def objects():
             "Liebesleben der Kängurus\"  "
             "Muss am 21.05. eingereicht "
             "werden.")
-    yield T("anna",
+    yield T("axel",
             "Wer fährt für mich nach Aachen Pampers kaufen?",
             description="Ich darf selber nicht über die Grenze.",
             faculty=commissions)
 
-    yield competence('anna', traduire, topic=fr)
+    yield competence('axel', traduire, topic=fr)
     yield competence('berta', traduire, topic=fr)
     yield competence('berta', traduire, topic=de)
+    yield competence('axel', commissions)
+    yield competence('axel', handwerk)
+    yield competence('christa', piano)
+    yield competence('eric', guitar)
 

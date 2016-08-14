@@ -24,6 +24,7 @@ Adds functionality for managing worktime clocking.
 
     models
     actions
+    roles
     ui
 
 """

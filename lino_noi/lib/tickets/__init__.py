@@ -47,13 +47,13 @@ class Plugin(ad.Plugin):
     def setup_main_menu(self, site, profile, m):
         p = self.get_menu_group()
         m = m.add_menu(p.app_label, p.verbose_name)
-        # m.add_action('tickets.MyInterests')
+        m.add_action('tickets.MyTickets')
+        m.add_action('tickets.SuggestedTickets')
         # m.add_action('tickets.MyOwnedTickets')
         m.add_action('tickets.ActiveTickets')
         m.add_action('tickets.AllTickets')
         # m.add_action('tickets.MyKnownProblems')
         m.add_action('tickets.UnassignedTickets')
-        m.add_action('tickets.SuggestedTickets')
         m.add_action('tickets.ActiveProjects')
 
     def setup_config_menu(self, site, profile, m):

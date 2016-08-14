@@ -28,6 +28,7 @@ from lino.api import dd, rt, _
 from lino.mixins.periods import Monthly
 from lino.modlib.printing.mixins import DirectPrintAction
 from lino.core.roles import SiteUser
+from .roles import Worker
 
 
 class EndSession(dd.Action):
@@ -76,7 +77,7 @@ class EndTicketSession(dd.Action):
     help_text = _("End the active session on this ticket.")
     show_in_workflow = True
     show_in_bbar = False
-    required_roles = dd.login_required()
+    required_roles = dd.required(Worker)
     readonly = False
     
     def get_action_permission(self, ar, obj, state):
@@ -119,14 +120,15 @@ class StartTicketSession(dd.Action):
     show_in_workflow = True
     show_in_bbar = False
     readonly = False
+    required_roles = dd.required(Worker)
 
     def get_action_permission(self, ar, obj, state):
         if obj.standby or obj.closed:
             return False
         u = ar.get_user()
-        if not u.profile.has_required_roles([SiteUser]):
+        # if not u.profile.has_required_roles([SiteUser]):
             # avoid query with AnonymousUser
-            return False
+            # return False
         Session = rt.modules.clocking.Session
         qs = Session.objects.filter(
             user=u, ticket=obj, end_time__isnull=True)

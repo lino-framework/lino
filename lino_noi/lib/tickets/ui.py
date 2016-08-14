@@ -413,8 +413,10 @@ class Tickets(dd.Table):
             qs = pv.observed_event.add_filter(qs, pv)
 
         if pv.feasable_by:
-            faculties = rt.models.faculties.Faculty.objects.filter(
-                competence__user=pv.feasable_by)
+            faculties = set()
+            for fac in rt.models.faculties.Faculty.objects.filter(
+                competence__user=pv.feasable_by):
+                faculties |= set(fac.get_parental_line())
             qs = qs.filter(Q(faculty__in=faculties))
             
         if pv.interesting_for:
@@ -489,9 +491,11 @@ class DuplicatesByTicket(Tickets):
 class SuggestedTickets(Tickets):
     required_roles = dd.login_required()
     label = _("Where I can help")
+    column_names = 'overview:50 reporter:10 topic faculty ' \
+                   'workflow_buttons:30 *'
     params_panel_hidden = True
     params_layout = """
-    reporter site project state
+    reporter feasable_by site project state
     start_date end_date observed_event topic"""
     
     @classmethod
@@ -700,6 +704,10 @@ class TicketsBySite(Tickets):
         kw.update(end_date=dd.today())
         kw.update(observed_event=TicketEvents.todo)
         return kw
+
+class MyTickets(My, Tickets):
+    required_roles = dd.login_required()
+
 
 
 # class MyKnownProblems(Tickets):

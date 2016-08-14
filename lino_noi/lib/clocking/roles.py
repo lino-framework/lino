@@ -16,16 +16,14 @@
 # License along with Lino Noi.  If not, see
 # <http://www.gnu.org/licenses/>.
 
-"""User roles for `lino_noi.lib.tickets`.
+"""User roles for this plugin.
 
 """
 
 from lino.core.roles import SiteUser
 
 
-class Triager(SiteUser):
-    """A user who is responsible for triaging new tickets.
+class Worker(SiteUser):
+    """A user who is candidate for working on a ticket.
 
     """
-
-
