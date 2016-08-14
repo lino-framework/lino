@@ -56,6 +56,7 @@ from .roles import Triager
 
 
 class ProjectTypes(dd.Table):
+    required_roles = dd.required(dd.SiteStaff)
     model = 'tickets.ProjectType'
     column_names = 'name *'
     detail_layout = """id name
@@ -64,6 +65,7 @@ class ProjectTypes(dd.Table):
 
 
 class TicketTypes(dd.Table):
+    required_roles = dd.required(dd.SiteStaff)
     model = 'tickets.TicketType'
     column_names = 'name *'
     detail_layout = """id name
@@ -127,6 +129,9 @@ class Projects(dd.Table):
         return qs
 
 
+class AllProjects(Projects):
+    required_roles = dd.required(dd.SiteStaff)
+    
 class ActiveProjects(Projects):
     """Show a list of active projects.
 
@@ -154,6 +159,7 @@ class ProjectsByParent(Projects):
 
 class TopLevelProjects(Projects):
     label = _("Projects (tree)")
+    required_roles = dd.required(dd.SiteStaff)
     order_by = ["ref"]
     column_names = 'ref name parent children_summary *'
     filter = models.Q(parent__isnull=True)
@@ -334,6 +340,10 @@ class Tickets(dd.Table):
 
         Show only (or hide) tickets which have a project assigned.
 
+    .. attribute:: feasable_by
+
+        Show only tickets for which I am competent.
+
     """
     required_roles = set()  # also for anonymous
     model = 'tickets.Ticket'
@@ -363,6 +373,9 @@ class Tickets(dd.Table):
             verbose_name=_("Assigned to"),
             blank=True, null=True,
             help_text=_("Only tickets assigned to this user.")),
+        feasable_by=dd.ForeignKey(
+            settings.SITE.user_model,
+            verbose_name=_("Feasable by"), blank=True, null=True),
         interesting_for=dd.ForeignKey(
             'contacts.Partner',
             verbose_name=_("Interesting for"),
@@ -381,7 +394,7 @@ class Tickets(dd.Table):
     params_layout = """
     reporter assigned_to interesting_for site project state has_project
     show_assigned show_active #show_closed #show_standby show_private \
-    start_date end_date observed_event topic"""
+    start_date end_date observed_event topic feasable_by"""
     # simple_parameters = ('reporter', 'assigned_to', 'state', 'project')
 
     @classmethod
@@ -399,6 +412,11 @@ class Tickets(dd.Table):
         if pv.observed_event:
             qs = pv.observed_event.add_filter(qs, pv)
 
+        if pv.feasable_by:
+            faculties = rt.models.faculties.Faculty.objects.filter(
+                competence__user=pv.feasable_by)
+            qs = qs.filter(Q(faculty__in=faculties))
+            
         if pv.interesting_for:
 
             interests = pv.interesting_for.interests_by_partner.values(
@@ -455,6 +473,8 @@ class Tickets(dd.Table):
                 pv.start_date,
                 pv.end_date)
 
+class AllTickets(Tickets):
+    required_roles = dd.login_required(dd.SiteStaff)
 
 class DuplicatesByTicket(Tickets):
     """Shows the tickets which are marked as duplicates of this
@@ -466,9 +486,30 @@ class DuplicatesByTicket(Tickets):
     column_names = "id summary *"
 
 
+class SuggestedTickets(Tickets):
+    required_roles = dd.login_required()
+    label = _("Where I can help")
+    params_panel_hidden = True
+    params_layout = """
+    reporter site project state
+    start_date end_date observed_event topic"""
+    
+    @classmethod
+    def param_defaults(self, ar, **kw):
+        kw = super(SuggestedTickets, self).param_defaults(ar, **kw)
+        kw.update(show_assigned=dd.YesNo.no)
+        kw.update(show_active=dd.YesNo.yes)
+        kw.update(feasable_by=ar.get_user())
+        return kw
+
+
+    
+
+
 class UnassignedTickets(Tickets):
     column_names = "summary project reporter *"
     label = _("Unassigned Tickets")
+    required_roles = dd.login_required(Triager)
 
     @classmethod
     def get_queryset(self, ar):
@@ -477,6 +518,7 @@ class UnassignedTickets(Tickets):
 
 class TicketsByProject(Tickets):
     master_key = 'project'
+    required_roles = dd.login_required(Triager)
     column_names = ("overview:50 topic:10 reporter:10 state "
                     "planned_time *")
 
@@ -532,6 +574,7 @@ class TicketsToTriage(Tickets):
 
 class TicketsToTalk(Tickets):
     label = _("Tickets to talk")
+    required_roles = dd.login_required(Triager)
     order_by = ["-priority", "-deadline", "-id"]
     # order_by = ["-id"]
     column_names = "overview:50  priority #deadline waiting_for " \
@@ -549,6 +592,7 @@ class TicketsToDo(Tickets):
     state "confirmed".
 
     """
+    required_roles = dd.login_required()
     label = _("Tickets to do")
     order_by = ["-priority", "-deadline", "-id"]
     column_names = 'overview:50 priority #deadline waiting_for ' \
@@ -563,9 +607,12 @@ class TicketsToDo(Tickets):
 
 
 class ActiveTickets(Tickets):
-    help_text = _("Active tickets are those which are neither "
-                  "closed nor in standby mode.")
+    """Active tickets are those which are neither closed nor in standby
+    mode.
+
+    """
     label = _("Active tickets")
+    required_roles = dd.login_required(Triager)
     order_by = ["-id"]
     # order_by = ["-modified", "id"]
     column_names = 'overview:50 topic:10 reporter:10 project:10 ' \
@@ -633,6 +680,8 @@ class Sites(dd.Table):
     TicketsBySite
     """
 
+class AllSites(Sites):
+    required_roles = dd.required(dd.SiteStaff)
 
 class SitesByPartner(Sites):
     master_key = 'partner'
@@ -653,46 +702,46 @@ class TicketsBySite(Tickets):
         return kw
 
 
-class MyKnownProblems(Tickets):
-    """For users whose `user_site` is set, show the known problems on
-    their site.
+# class MyKnownProblems(Tickets):
+#     """For users whose `user_site` is set, show the known problems on
+#     their site.
 
-    """
-    required_roles = dd.login_required()
-    label = _("My known problems")
-    abstract = not dd.is_installed('contacts')
+#     """
+#     required_roles = dd.login_required()
+#     label = _("My known problems")
+#     abstract = not dd.is_installed('contacts')
 
-    # @classmethod
-    # def get_master_instance(self, ar, model, pk):
-    #     u = ar.get_user()
-    #     return u.user_site
+#     # @classmethod
+#     # def get_master_instance(self, ar, model, pk):
+#     #     u = ar.get_user()
+#     #     return u.user_site
         
-    @classmethod
-    def get_request_queryset(self, ar):
-        u = ar.get_user()
-        # print "20150910", u.user_site
-        if not u.user_site:
-            ar.no_data_text = _("Only for users whose `user_site` is set.")
-            return self.model.objects.none()
-        return super(MyKnownProblems, self).get_request_queryset(ar)
+#     @classmethod
+#     def get_request_queryset(self, ar):
+#         u = ar.get_user()
+#         # print "20150910", u.user_site
+#         if not u.user_site:
+#             ar.no_data_text = _("Only for users whose `user_site` is set.")
+#             return self.model.objects.none()
+#         return super(MyKnownProblems, self).get_request_queryset(ar)
 
-    @classmethod
-    def param_defaults(self, ar, **kw):
-        u = ar.get_user()
-        kw = super(MyKnownProblems, self).param_defaults(ar, **kw)
-        if u.user_site:
-            kw.update(interesting_for=u.user_site.partner)
-        kw.update(end_date=dd.demo_date())
-        kw.update(observed_event=TicketEvents.todo)
-        return kw
+#     @classmethod
+#     def param_defaults(self, ar, **kw):
+#         u = ar.get_user()
+#         kw = super(MyKnownProblems, self).param_defaults(ar, **kw)
+#         if u.user_site:
+#             kw.update(interesting_for=u.user_site.partner)
+#         kw.update(end_date=dd.demo_date())
+#         kw.update(observed_event=TicketEvents.todo)
+#         return kw
 
-    @classmethod
-    def get_welcome_messages(cls, ar, **kw):
-        sar = ar.spawn(cls)
-        count = sar.get_total_count()
-        if count > 0:
-            msg = _("There are {0} known problems for {1}.")
-            msg = msg.format(count, ar.get_user().user_site)
-            yield ar.href_to_request(sar, msg)
+#     @classmethod
+#     def get_welcome_messages(cls, ar, **kw):
+#         sar = ar.spawn(cls)
+#         count = sar.get_total_count()
+#         if count > 0:
+#             msg = _("There are {0} known problems for {1}.")
+#             msg = msg.format(count, ar.get_user().user_site)
+#             yield ar.href_to_request(sar, msg)
 
 

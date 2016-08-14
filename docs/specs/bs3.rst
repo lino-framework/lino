@@ -61,7 +61,7 @@ This data is being rendered using plain bootstrap HTML:
 >>> soup = BeautifulSoup(res.content)
 >>> links = soup.find_all('a')
 >>> len(links)
-29
+25
 >>> print(links[0].get('href'))
 /?ul=de
 >>> print(links[1].get('href'))
@@ -77,13 +77,13 @@ This data is being rendered using plain bootstrap HTML:
 
 >>> links = soup.find_all('a')
 >>> len(links)
-31
+27
 >>> print(links[0].get('href'))
 /?ul=en
 
 >>> print(soup.get_text(' ', strip=True))
 ... #doctest: +NORMALIZE_WHITESPACE +REPORT_UDIFF +ELLIPSIS
-Tickets Home en de fr Tickets Active tickets Tickets Unassigned Tickets Site About #13 (Bar cannot foo) << < > >> State: Sleeping
+Tickets Home en de fr Site About #13 (Bar cannot foo) << < > >> State: Sleeping
 <BLANKLINE>
 <BLANKLINE>
 (last update ...) Reported by: Rolf Rompen ... Topic: Lino Cosi Site: welket Linking to #1 and to blog . This is Lino Noi ... using ...

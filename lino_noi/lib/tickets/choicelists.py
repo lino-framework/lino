@@ -145,6 +145,7 @@ class TicketStates(dd.Workflow):
     item_class = TicketState
     column_names = "value name text active"
     active = models.BooleanField(_("Active"), default=False)
+    required_roles = dd.required(dd.SiteStaff)
     
 
 add = TicketStates.add_item

@@ -98,7 +98,7 @@ class Site(Site):
 
     def get_admin_main_items(self, ar):
         yield self.modules.clocking.WorkedHours
-        # yield self.modules.tickets.MyTickets
+        yield self.modules.tickets.SuggestedTickets
         # yield self.modules.tickets.ActiveTickets
         # yield self.modules.tickets.InterestingTickets
         if not ar.get_user().authenticated:
@@ -111,7 +111,7 @@ class Site(Site):
         tb.add_action(self.modules.tickets.TicketsToTriage)
         tb.add_action(self.modules.tickets.TicketsToTalk)
         tb.add_action(self.modules.tickets.TicketsToDo)
-        tb.add_action(self.modules.tickets.Tickets)
+        tb.add_action(self.modules.tickets.AllTickets)
 
     def unused_do_site_startup(self):
         """Defines an emitter to send notification emails about changes in

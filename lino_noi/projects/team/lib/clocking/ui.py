@@ -38,7 +38,7 @@ MySessionsByDate.column_names = (
 class WorkedHours(dd.VentilatingTable):
     """A table showing one row per day with a summary view of the sesions
     on that day."""
-    required_roles = dd.required()
+    required_roles = dd.required(Worker)
     label = _("Worked hours")
     hide_zero_rows = True
     parameters = ObservedPeriod(

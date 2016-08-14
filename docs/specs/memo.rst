@@ -57,7 +57,8 @@ example, the default user interface :mod:`lino.modlib.extjs` (or
 :mod:`lino_extjs6.extjs6`, depending on our :attr:`default_ui
 <lino.core.site.Site.default_ui>` setting) will render it like this:
 
->>> ses = rt.login(renderer=settings.SITE.kernel.default_ui.renderer)
+>>> ses = rt.login('robin',
+...     renderer=settings.SITE.kernel.default_ui.renderer)
 >>> print(ses.parse_memo("See [ticket 1]."))
 See <a href="javascript:Lino.tickets.Tickets.detail.run(null,{ &quot;record_id&quot;: 1 })" title="F&#246;&#246; fails to bar when baz">#1</a>.
 

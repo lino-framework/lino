@@ -90,6 +90,7 @@ ProjectEvents.add_item_instance(ProjectHasSessions("clocking"))
 
 
 class SessionTypes(dd.Table):
+    required_roles = dd.required(dd.SiteStaff)
     model = 'clocking.SessionType'
     column_names = 'name *'
 

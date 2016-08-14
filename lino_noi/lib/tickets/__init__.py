@@ -50,19 +50,20 @@ class Plugin(ad.Plugin):
         # m.add_action('tickets.MyInterests')
         # m.add_action('tickets.MyOwnedTickets')
         m.add_action('tickets.ActiveTickets')
-        m.add_action('tickets.Tickets')
-        m.add_action('tickets.MyKnownProblems')
+        m.add_action('tickets.AllTickets')
+        # m.add_action('tickets.MyKnownProblems')
         m.add_action('tickets.UnassignedTickets')
+        m.add_action('tickets.SuggestedTickets')
         m.add_action('tickets.ActiveProjects')
 
     def setup_config_menu(self, site, profile, m):
         p = self.get_menu_group()
         m = m.add_menu(p.app_label, p.verbose_name)
-        m.add_action('tickets.Projects')
+        m.add_action('tickets.AllProjects')
         m.add_action('tickets.TopLevelProjects')
         m.add_action('tickets.ProjectTypes')
         m.add_action('tickets.TicketTypes')
-        m.add_action('tickets.Sites')
+        m.add_action('tickets.AllSites')
 
     def setup_explorer_menu(self, site, profile, m):
         p = self.get_menu_group()

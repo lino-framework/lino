@@ -217,6 +217,9 @@ verbose_name and verbose_name_plural options of `faculties.Faculty`.
 TODO: show how the choices for Ticket.assigned_to depend on faculty
 and topic.
 
+The main menu
+=============
+
 
 In :ref:`care` we don't call them "tickets" but "pleas" (German
 "Bitten").
@@ -224,7 +227,7 @@ In :ref:`care` we don't call them "tickets" but "pleas" (German
 >>> rt.login('rolf').show_menu()
 ... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
 - Büro : Meine Benachrichtigungen, Meine Favoriten, Meine Auszüge, Meine Kommentare
-- Bitten : Aktive Bitten, Bitten, Nicht zugewiesene Bitten, Aktive Projekte
+- Bitten : Aktive Bitten, Bitten, Nicht zugewiesene Bitten, Wo ich helfen kann, Aktive Projekte
 - Arbeitszeit : Sitzungen
 - Berichte :
   - System : Broken GFKs
@@ -245,3 +248,18 @@ In :ref:`care` we don't call them "tickets" but "pleas" (German
   - Fähigkeiten : Kompetenzen
   - Arbeitszeit : Sitzungen
 - Site : Info
+
+
+**Simple** users have a very limited functionality:
+
+>>> rt.login('berta').show_menu()
+... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
+- Büro : Meine Benachrichtigungen, Meine Favoriten, Meine Kommentare
+- Bitten : Wo ich helfen kann
+- Site : Info
+  
+>>> rt.login('berta').show(tickets.SuggestedTickets)
+... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
+Keine Daten anzuzeigen
+
+

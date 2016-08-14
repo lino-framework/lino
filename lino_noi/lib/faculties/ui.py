@@ -42,12 +42,14 @@ class Faculties(dd.Table):
 
 class AllFaculties(Faculties):
     label = _("Faculties (all)")
+    required_roles = dd.required(dd.SiteStaff)
     column_names = 'name affinity topic_group parent *'
     order_by = ["name"]
 
 
 class TopLevelFaculties(Faculties):
     label = _("Faculties (tree)")
+    required_roles = dd.required(dd.SiteStaff)
     order_by = ["seqno"]
     column_names = 'seqno name children_summary parent *'
     filter = models.Q(parent__isnull=True)
@@ -55,6 +57,7 @@ class TopLevelFaculties(Faculties):
 
 
 class FacultiesByParent(Faculties):
+    label = _("Child faculties")
     master_key = 'parent'
     column_names = 'seqno name affinity topic_group *'
     order_by = ["seqno"]
@@ -63,6 +66,7 @@ class FacultiesByParent(Faculties):
     
 
 class Competences(dd.Table):
+    required_roles = dd.required(dd.SiteStaff)
     # required_roles = dd.required(SocialStaff)
     model = 'faculties.Competence'
     column_names = 'id user faculty affinity topic *'
@@ -88,25 +92,31 @@ class MyCompetences(ByUser, CompetencesByUser):
 if dd.is_installed('tickets'):
 
     class AssignableWorkersByTicket(dd.Table):
-        model = 'faculties.Competence'
+        model = 'users.User'
+        # model = 'faculties.Competence'
         master = 'tickets.Ticket'
-        column_names = 'user affinity *'
+        column_names = 'username #faculties_competence_set_by_user__affinity *'
         label = _("Assignable workers")
 
         @classmethod
         def get_request_queryset(self, ar):
             ticket = ar.master_instance
             if ticket is None:
-                return rt.modules.users.User.objects.none()
+                return rt.models.users.User.objects.none()
 
-            # TODO: build a list of courses, then show events by course
-            qs = super(
-                AssignableWorkersByTicket, self).get_request_queryset(ar)
+            # rt.models.faculties.Competence.objects.filter(
+            #     faculty=ticket.faculty)
+            qs = rt.models.users.User.objects.all()
+            # qs = super(
+            #     AssignableWorkersByTicket, self).get_request_queryset(ar)
 
             if ticket.topic:
-                qs = qs.filter(topic=ticket.topic)
+                qs = qs.filter(
+                    faculties_competence_set_by_user__topic=ticket.topic)
             if ticket.faculty:
                 faculties = ticket.faculty.whole_clan()
-                qs = qs.filter(faculty__in=faculties)
+                qs = qs.filter(
+                    faculties_competence_set_by_user__faculty__in=faculties)
+            qs = qs.order_by('faculties_competence_set_by_user__affinity')
             return qs
 

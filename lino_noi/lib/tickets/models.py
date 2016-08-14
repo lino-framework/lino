@@ -606,7 +606,7 @@ def setup_memo_commands(sender=None, **kwargs):
     def ticket2html(parser, s):
         ar = parser.context['ar']
         pk = int(s)
-        obj = sender.site.modules.tickets.Ticket.objects.get(pk=pk)
+        obj = sender.site.models.tickets.Ticket.objects.get(pk=pk)
         text = "#{0}".format(obj.id)
         e = ar.obj2html(obj, text, title=obj.summary)
         return E.tostring(e)

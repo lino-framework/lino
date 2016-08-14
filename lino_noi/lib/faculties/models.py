@@ -81,7 +81,6 @@ class Competence(UserAuthored, Sequenced):
     """
 
     class Meta:
-        # ~ abstract = True
         verbose_name = _("Competence")
         verbose_name_plural = _("Competences")
         unique_together = ['user', 'faculty', 'topic']
