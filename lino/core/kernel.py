@@ -483,6 +483,8 @@ class Kernel(object):
                 
                 def get_welcome_messages(ar):
                     sar = ar.spawn(cls)
+                    if not sar.get_permission():
+                        return
                     num = sar.get_total_count()
                     if num > cls.welcome_message_when_count:
                         chunks = [unicode(_("You have "))]
