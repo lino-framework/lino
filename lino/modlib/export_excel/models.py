@@ -64,7 +64,7 @@ def ar2workbook(ar, column_names=None):
                 value = str(value)
             elif E.iselement(value):
                 value = E.to_rst(value)
-                dd.logger.info("20160716 %s", value)
+                # dd.logger.info("20160716 %s", value)
             elif isinstance(value, Promise):
                 value = str(value)
             elif isinstance(value, Model):

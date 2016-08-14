@@ -13,6 +13,17 @@ e.g.  :mod:`lino.projects.min1` and :mod:`lino.projects.min2`.
 from django.utils.translation import ugettext_lazy as _
 from lino.core.roles import UserRole, SiteUser, SiteAdmin
 
+class Helper(SiteUser):
+    """Somebody who can help others by running :class:`AssignToMe`
+    action.
+
+    """
+
+class AuthorshipTaker(SiteUser):
+    """Somebody who can help others by running :class:`TakeAuthorship`
+    action.
+
+    """
 
 from .choicelists import UserProfiles
 

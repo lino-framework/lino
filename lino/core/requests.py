@@ -398,6 +398,7 @@ request from it.
 
         """
         if self.bound_action.action.select_rows:
+            # raise Exception("20160814 {}".format(self.bound_action))
             if len(self.selected_rows) == 0:
                 return False
             obj = self.selected_rows[0]
