@@ -596,8 +596,8 @@ class TicketsToDo(Tickets):
     state "confirmed".
 
     """
-    required_roles = dd.login_required()
     label = _("Tickets to do")
+    required_roles = dd.login_required()
     order_by = ["-priority", "-deadline", "-id"]
     column_names = 'overview:50 priority #deadline waiting_for ' \
                    'workflow_buttons:40 *'
@@ -629,6 +629,13 @@ class ActiveTickets(Tickets):
         # kw.update(show_closed=dd.YesNo.no)
         # kw.update(show_standby=dd.YesNo.no)
         return kw
+
+
+class MyTickets(My, Tickets):
+    required_roles = dd.login_required()
+    order_by = ["-priority", "-deadline", "-id"]
+    column_names = 'overview:50 priority #deadline ' \
+                   'workflow_buttons:40 *'
 
 
 # class InterestingTickets(ActiveTickets):
@@ -704,10 +711,6 @@ class TicketsBySite(Tickets):
         kw.update(end_date=dd.today())
         kw.update(observed_event=TicketEvents.todo)
         return kw
-
-class MyTickets(My, Tickets):
-    required_roles = dd.login_required()
-
 
 
 # class MyKnownProblems(Tickets):

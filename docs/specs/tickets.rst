@@ -201,6 +201,20 @@ There are 5 private and 11 public tickets in the demo database.
 >>> tickets.Ticket.objects.filter(private=False).count()
 11
 
+My tickets
+==========
+
+>>> rt.login('jean').show(tickets.MyTickets)
+... #doctest: +REPORT_UDIFF
+================================== ========== ==============================================================================
+ Overview                           Priority   Workflow
+---------------------------------- ---------- ------------------------------------------------------------------------------
+ *#15 (Bars have no foo)*           0          **Done** → [▶] [☆]
+ *#8 (Is there any Bar in Foo?)*    0          **Refused** → [▶] [☆]
+ *#1 (Föö fails to bar when baz)*   0          **New** → [Sticky] [Talk] [ToDo] [Sleeping] [Ready] [Done] [Refused] [▶] [☆]
+================================== ========== ==============================================================================
+<BLANKLINE>
+
 
 
 Topics
