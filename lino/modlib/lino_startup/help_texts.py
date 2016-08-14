@@ -30,6 +30,7 @@ are part of a GFK and you want Lino to render them using a
 Combobox."""),
     'lino.modlib.plausibility.models.Problem.message' : _("""The message text. This is a concatenation of all messages that
 were yeld by the checker."""),
+    'lino.modlib.users.mixins.AssignToMe' : _("""Set yourself as assigned user (Assignable.assigned_to)."""),
     'lino.modlib.tinymce.Plugin.window_buttons3' : _("""The third row of toolbar buttons when editing in own window."""),
     'lino.modlib.tinymce.Plugin.window_buttons2' : _("""The second row of toolbar buttons when editing in own window."""),
     'lino.modlib.tinymce.Plugin.window_buttons1' : _("""The first row of toolbar buttons when editing in own window."""),
@@ -130,6 +131,8 @@ description that is being tested for duplicates."""),
     'lino.modlib.users.utils.AnonymousUser' : _("""A singleton class whose instance will be assigned to the
 user attribute of anonymous incoming requests, similar to
 Django's approach."""),
+    'lino.modlib.users.mixins.Assignable' : _("""This field is usually empty.  Setting it to another user means
+"I am not fully responsible for this item"."""),
     'lino.modlib.uploads.models.UploadType.shortcut' : _("""Optional pointer to a virtual upload shortcut field.  If
 this is not empty, then the given shortcut field will manage
 uploads of this type.  See also Shortcuts."""),
@@ -188,6 +191,8 @@ object."""),
 lino.utils.xmlgen.html.HtmlNamespace and the namespaces
 defined in lino.utils.xmlgen.intervat."""),
     'lino.mixins.CreatedModified' : _("""Adds two timestamp fields created and modified."""),
+    'lino.modlib.users.roles.AuthorshipTaker' : _("""Somebody who can help others by running TakeAuthorship
+action."""),
     'lino.modlib.plausibility.models.UpdateProblemsByController' : _("""Updates the table of plausibility problems for a given database
 object, also removing those messages which no longer exist. This
 action does not change anything else in the database."""),
@@ -219,6 +224,8 @@ Registered objects are not editable."""),
 Net yet used in practice."""),
     'lino.utils.djangotest.DjangoManageTestCase' : _("""Adds some extensions to the Django TestCase."""),
     'lino.mixins.sequenced.Sequenced.seqno' : _("""The sequence number of this item with its parent."""),
+    'lino.modlib.users.roles.Helper' : _("""Somebody who can help others by running AssignToMe
+action."""),
     'lino.modlib.about.models.About' : _("""Display information about this web site.  This defines the window
 which opens via the menu command Site ‣ About."""),
     'lino.modlib.plausibility.choicelists.Checkers.item_class' : _("""alias of Checker"""),
@@ -312,6 +319,8 @@ Default is False since currently this is not really useful."""),
     'lino.modlib.gfks.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.gfks.mixins.Controllable' : _("""Mixin for models that are "controllable" by another database object."""),
     'lino.modlib.users.models.User' : _("""Represents a user of this site."""),
+    'lino.modlib.users.mixins.TakeAuthorship' : _("""You declare to become the fully responsible user for this database
+object."""),
     'lino.modlib.users.models.UsersOverview' : _("""A variant of Users showing only active users and
 only some fields.  This is used on demo sites in
 admin_main.html to display the list of available users."""),
@@ -322,7 +331,7 @@ field and a virtual field "Age"."""),
     'lino.utils.dbfreader.FPTFile' : _("""Represents an FPT block file"""),
     'lino.utils.dbfreader.DBFField' : _("""Represents a field in a DBF file."""),
     'lino.modlib.uploads.Plugin' : _("""See /dev/plugins."""),
-    'lino.api.rt.models' : _("""Shortcut to lino.core.site.Site.models"""),
+    'lino.utils.dpy.FakeDeserializedObject' : _("""Imitates DeserializedObject required by loaddata."""),
     'lino.utils.jsgen.VisibleComponent' : _("""A visible component"""),
     'lino.modlib.plausibility.models.Problems' : _("""The base table for Problem objects."""),
     'lino.modlib.plausibility.roles.PlausibilityUser' : _("""A user who can see plausibility problems."""),
@@ -331,7 +340,7 @@ but this Deserializer does not bypass pre_save/save methods."""),
     'lino.modlib.uploads.models.UploadTypes' : _("""The table with all existing upload types."""),
     'lino.modlib.smtpd.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.changes.models.Change.object' : _("""The database object which has been modified."""),
-    'lino.utils.dpy.FakeDeserializedObject' : _("""Imitates DeserializedObject required by loaddata."""),
+    'lino.api.rt.models' : _("""Shortcut to lino.core.site.Site.models"""),
     'lino.modlib.plausibility.models.AllProblems' : _("""Show all plausibility problems."""),
     'lino.modlib.printing.actions.BasePrintAction' : _("""Base class for all "Print" actions."""),
     'lino.modlib.users.mixins.UserAuthored' : _("""Model mixin for database objects that have a user field which
@@ -463,6 +472,7 @@ also be None, but then you must define your own
 get_checkable_models() method."""),
     'lino.modlib.printing.choicelists.RtfBuildMethod' : _("""Generates .rtf files from .rtf templates.
 Not actively used."""),
+    'lino.modlib.users.mixins.Authored.author_field_name' : _("""The name of the field which defines the author of this object."""),
     'lino.mixins.dupable.Dupable.dupable_word_model' : _("""Full name of the model used to hold dupable words for instances of
 this model.  Applications can specify a string which will be
 resolved at startup to the model's class object."""),
@@ -472,8 +482,6 @@ resolved at startup to the model's class object."""),
     'lino.modlib.printing.mixins.CachedPrintable' : _("""Mixin for Models that generate a unique external file at a
 determined place when being printed."""),
     'lino.mixins.human.Human.middle_name' : _("""A space-separated list of all middle names."""),
-    'lino.modlib.users.mixins.UserAuthored.manager_roles_required' : _("""The list of required roles for getting permission to edit other
-users' work."""),
     'lino.modlib.printing.choicelists.TemplatedBuildMethod' : _("""Base class for all build methods.  A build method encapsulates the
 process of generating a "printable document" that inserts data
 from the database into a template, using a given combination of a
@@ -492,6 +500,8 @@ See also lino.modlib.users.models.User.authenticated."""),
     'lino.modlib.users.models.User.username' : _("""Must be unique.
 Leaving this empty means that the user cannot log in."""),
     'lino.utils.dpy.Migrator' : _("""The SITE's Migrator class is instantiated by install_migrations."""),
+    'lino.modlib.users.mixins.Authored.manager_roles_required' : _("""The list of required roles for getting permission to edit other
+users' work."""),
     'lino.modlib.plausibility.models.MyProblems.model' : _("""alias of Problem"""),
     'lino.modlib.printing.mixins.TypedPrintable' : _("""A CachedPrintable that uses a "Type" for deciding which
 template to use on a given instance."""),

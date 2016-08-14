@@ -1,4 +1,5 @@
-# Copyright 2011-2015 Luc Saffre
+# -*- coding: UTF-8 -*-
+# Copyright 2011-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Model mixins for :mod:`lino.modlib.users`.
@@ -27,6 +28,7 @@ from lino.core import dbtables
 from lino.core.roles import SiteUser, SiteStaff, login_required
 
 from .utils import AnonymousUser
+from .roles import Helper, AuthorshipTaker
 
 
 class TimezoneHolder(models.Model):
@@ -53,21 +55,18 @@ class TimezoneHolder(models.Model):
         return pytz.common_timezones
 
 
-class UserAuthored(model.Model):
-    """Model mixin for database objects that have a `user` field which
-    points to the "author" of this object. The default user is
-    automatically set to the requesting user.
+class Authored(model.Model):
+    """
+    .. attribute:: author_field_name
 
-    .. attribute:: user
-
-        The author of this object.
-        A pointer to :class:`lino.modlib.users.models.User`.
+        The name of the field which defines the author of this object.
 
     """
-
     class Meta(object):
         abstract = True
 
+    author_field_name = None
+    
     manager_roles_required = login_required(SiteStaff)
     """The list of required roles for getting permission to edit other
     users' work.
@@ -90,7 +89,76 @@ class UserAuthored(model.Model):
 
     """
 
+    def get_author(self):
+        return getattr(self, self.author_field_name)
+    
+    def set_author(self, user):
+        setattr(self, self.author_field_name, user)
+        
+    def on_duplicate(self, ar, master):
+        """The default behaviour after duplicating is to change the author to
+        the user who requested the duplicate.
+
+        """
+        if ar.user is not None:
+            self.set_author(ar.user)
+        super(Authored, self).on_duplicate(ar, master)
+
+    def get_row_permission(self, ar, state, ba):
+        """Only "managers" can edit other users' work.
+
+        See also :attr:`manager_roles_required`.
+
+        """
+        if not super(Authored, self).get_row_permission(ar, state, ba):
+            return False
+        user = ar.get_user()
+        if self.get_author() != ar.user \
+           and (ar.subst_user is None or self.get_author() != ar.subst_user) \
+           and not user.profile.has_required_roles(
+               self.manager_roles_required):
+            return ba.action.readonly
+        return True
+
+    @classmethod
+    def on_analyze(cls, site):
+        if hasattr(cls, 'manager_level_field'):
+            raise ChangedAPI("{0} has a manager_level_field".format(cls))
+        super(Authored, cls).on_analyze(site)
+
+    @classmethod
+    def get_parameter_fields(cls, **fields):
+        """Adds the :attr:`user` filter parameter field."""
+        fields.setdefault(
+            cls.author_field_name, models.ForeignKey(
+                'users.User', verbose_name=_("Author"),
+                blank=True, null=True))
+        return super(Authored, cls).get_parameter_fields(**fields)
+
+    @classmethod
+    def get_simple_parameters(cls):
+        s = super(Authored, cls).get_simple_parameters()
+        s.add(cls.author_field_name)
+        return s
+
+    
+class UserAuthored(Authored):
+    """Model mixin for database objects that have a `user` field which
+    points to the "author" of this object. The default user is
+    automatically set to the requesting user.
+
+    .. attribute:: user
+
+        The author of this object.
+        A pointer to :class:`lino.modlib.users.models.User`.
+
+    """
+
+    class Meta(object):
+        abstract = True
+
     workflow_owner_field = 'user'
+    author_field_name = 'user'    
     user = dd.ForeignKey(
         'users.User',
         verbose_name=_("Author"),
@@ -120,57 +188,12 @@ class UserAuthored(model.Model):
             return settings.TIME_ZONE
         return self.user.timezone or settings.TIME_ZONE
 
-    def on_duplicate(self, ar, master):
-        """The default behaviour after duplicating is to change the author to
-        the user who requested the duplicate.
-
-        """
-        if ar.user is not None:
-            self.user = ar.user
-        super(UserAuthored, self).on_duplicate(ar, master)
-
-    def get_row_permission(self, ar, state, ba):
-        """Only "managers" or "editors" can edit other users' work.
-
-        See also :attr:`manager_roles_required`.
-
-        """
-        if not super(UserAuthored, self).get_row_permission(ar, state, ba):
-            return False
-        user = ar.get_user()
-        if self.user != ar.user \
-           and (ar.subst_user is None or self.user != ar.subst_user) \
-           and not user.profile.has_required_roles(
-               self.manager_roles_required):
-            return ba.action.readonly
-        return True
-
-    @classmethod
-    def on_analyze(cls, site):
-        if hasattr(cls, 'manager_level_field'):
-            raise ChangedAPI("{0} has a manager_level_field".format(cls))
-        super(UserAuthored, cls).on_analyze(site)
-
-    @classmethod
-    def get_parameter_fields(cls, **fields):
-        """Adds the :attr:`user` filter parameter field."""
-        fields.setdefault(
-            'user', models.ForeignKey(
-                'users.User', verbose_name=_("Author"),
-                blank=True, null=True))
-        return super(UserAuthored, cls).get_parameter_fields(**fields)
-
-    @classmethod
-    def get_simple_parameters(cls):
-        s = super(UserAuthored, cls).get_simple_parameters()
-        s.add('user')
-        return s
 
 AutoUser = UserAuthored  # old name for backwards compatibility
 
 
 class My(dbtables.Table):
-    """Mixin for tables on :class:`UserAuthored` which sets the requesting
+    """Mixin for tables on :class:`Authored` which sets the requesting
     user as default value for the :attr:`user` parameter.
 
     .. attribute:: user
@@ -194,7 +217,8 @@ class My(dbtables.Table):
     @classmethod
     def param_defaults(self, ar, **kw):
         kw = super(My, self).param_defaults(ar, **kw)
-        kw.update(user=ar.get_user())
+        # kw.update(user=ar.get_user())
+        kw[self.model.author_field_name] = ar.get_user()
         return kw
 
 
@@ -246,3 +270,112 @@ class AuthorAction(actions.Action):
             return self.readonly
         return super(
             AuthorAction, self).get_action_permission(ar, obj, state)
+
+   
+class AssignToMe(dd.Action):
+    """Set yourself as assigned user (:attr:`Assignable.assigned_to`).
+
+    """
+    label = _("Assign to me")
+    show_in_workflow = True
+    readonly = False
+    required_roles = dd.required(Helper)
+
+    # button_text = u"\u2698"  # FLOWER (⚘)
+    # button_text = u"\u26d1"  # ⛑
+    button_text = u"\u261D"  # ☝
+    
+    help_text = _("You become assigned to this.")
+
+    def run_from_ui(self, ar, **kw):
+        obj = ar.selected_rows[0]
+
+        def ok(ar):
+            obj.assigned_to = ar.get_user()
+            obj.save()
+            ar.set_response(refresh=True)
+
+        ar.confirm(ok, self.help_text, _("Are you sure?"))
+
+
+class TakeAuthorship(dd.Action):
+    """You declare to become the fully responsible user for this database
+    object.
+
+    Accordingly, this action is available only when you are not
+    already fully responsible. You are fully responsible when (1)
+    :attr:`Assignable.user` is set to *you* **and** (2)
+    :attr:`Event.assigned_to` is *not empty*.
+
+    Basically anybody can take any event, even if it is not assigned
+    to them.
+
+    New since 20160814 : I think that the Take action has never been
+    really used. The original use case is when a user creates an
+    apointment for their colleague: that colleague goes to assigned_to
+    and is invited to "take" the appointment which has been agreed for
+    him.
+
+    """
+    label = _("Take")
+    show_in_workflow = True
+    
+    # This action modifies the object, but we don't tell Lino about it
+    # because we want that even non-manager users can run it on
+    # objects authored by others.
+    # readonly = False
+    
+    required_roles = dd.required(AuthorshipTaker)
+
+    button_text = u"\u2691"
+    help_text = _("Take responsibility for this entry.")
+
+    def get_action_permission(self, ar, obj, state):
+        # new since 20160814
+        if obj.assigned_to != ar.get_user():
+            return False
+        # if obj.get_author() == ar.get_user():
+        #     if obj.assigned_to is None:
+        #         return False
+        # elif obj.assigned_to != ar.get_user():
+        #     return False
+        return super(TakeAuthorship,
+                     self).get_action_permission(ar, obj, state)
+
+    def run_from_ui(self, ar, **kw):
+        obj = ar.selected_rows[0]
+        # obj is an Assignable
+
+        def ok(ar):
+            obj.set_author(ar.get_user())
+            # obj.user = ar.get_user()
+            obj.assigned_to = None
+            #~ kw = super(TakeAuthorship,self).run(obj,ar,**kw)
+            obj.save()
+            ar.set_response(refresh=True)
+
+        ar.confirm(ok, self.help_text, _("Are you sure?"))
+
+
+class Assignable(Authored):
+    """.. attribute:: assigned_to
+
+        This field is usually empty.  Setting it to another user means
+        "I am not fully responsible for this item".
+
+        This field is cleared when somebody calls
+        :class:`TakeAuthorship` on the object.
+
+    """
+
+    class Meta(object):
+        abstract = True
+
+    assigned_to = dd.ForeignKey(
+        settings.SITE.user_model,
+        verbose_name=_("Assigned to"),
+        related_name="%(app_label)s_%(class)s_set_assigned",
+        blank=True, null=True)
+
+    take = TakeAuthorship()
+    assign_to_me = AssignToMe()

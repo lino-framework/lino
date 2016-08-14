@@ -646,6 +646,7 @@ class GridEdit(TableAction):
     show_in_workflow = False
     opens_a_window = True
     action_name = 'grid'
+    select_rows = False
 
     def is_callable_from(self, caller):
         return False

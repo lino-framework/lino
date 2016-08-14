@@ -136,9 +136,9 @@ class BoundAction(object):
         """
         if not self._allow(ar.get_user(), obj, state):
             return False
-        return self.action.get_action_permission(ar, obj, state)
-        # if not self.action.get_action_permission(ar, obj, state):
-        #     return False
+        if not self.action.get_action_permission(ar, obj, state):
+            return False
+        return True
         # return self._allow(ar.get_user(), obj, state)
 
     def get_view_permission(self, profile):
