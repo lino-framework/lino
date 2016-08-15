@@ -194,18 +194,21 @@ AutoUser = UserAuthored  # old name for backwards compatibility
 
 class My(dbtables.Table):
     """Mixin for tables on :class:`Authored` which sets the requesting
-    user as default value for the :attr:`user` parameter.
+    user as default value for the :attr:`author` filter parameter.
 
-    .. attribute:: user
-
-        Show only objects whose author is the given user.
-
+    If the model does not inherit from :class:`Authored`, then it must
+    define a parameter field for selecting the author and a model
+    attribute :attr:`author_field_name` with the name of that
+    parameter field.  This feature is used by
+    :class:`lino_xl.lib.reception.models.MyWaitingVisitors`.
 
     Used by
     :mod:`lino_xl.lib.excerpts` and
     :mod:`lino_xl.lib.reception`.
 
     """
+
+    # author_field_name = None
 
     @classmethod
     def get_actor_label(self):
@@ -218,6 +221,8 @@ class My(dbtables.Table):
     def param_defaults(self, ar, **kw):
         kw = super(My, self).param_defaults(ar, **kw)
         # kw.update(user=ar.get_user())
+        # k = self.author_field_name or self.model.author_field_name
+        # kw[k] = ar.get_user()
         kw[self.model.author_field_name] = ar.get_user()
         return kw
 
@@ -278,7 +283,7 @@ class AssignToMe(dd.Action):
     """
     label = _("Assign to me")
     show_in_workflow = True
-    readonly = False
+    # readonly = False
     required_roles = dd.required(Helper)
 
     # button_text = u"\u2698"  # FLOWER (⚘)

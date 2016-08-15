@@ -18,11 +18,12 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 
 from lino.api import dd
 from lino.modlib.users.mixins import ByUser
+from lino.modlib.office.roles import OfficeStaff, OfficeUser
 from lino.utils.xmlgen.html import E
 
 
 class Comments(dd.Table):
-    required_roles = dd.required(dd.SiteStaff)
+    required_roles = dd.required(OfficeStaff)
     slave_grid_format = "summary"
 
     model = 'comments.Comment'
@@ -46,14 +47,14 @@ class Comments(dd.Table):
 
 
 class MyComments(ByUser, Comments):
-    required_roles = dd.required()
+    required_roles = dd.required(OfficeUser)
     auto_fit_column_widths = True
     order_by = ["modified"]
     column_names = "modified short_text owner *"
 
 
 class CommentsByX(Comments):
-    required_roles = dd.required()
+    required_roles = dd.required(OfficeUser)
     order_by = ["-created"]
 
 USE_ETREE = False

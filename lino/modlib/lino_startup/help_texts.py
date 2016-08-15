@@ -97,7 +97,6 @@ addresses."""),
     'lino.api.rt.plugins' : _("""Shortcut to lino.core.site.Site.plugins"""),
     'lino.modlib.printing.choicelists.LatexBuildMethod' : _("""Generates .pdf files from .tex templates.
 Not actively used."""),
-    'lino.modlib.users.mixins.My.user' : _("""Show only objects whose author is the given user."""),
     'lino.modlib.uploads.choicelists.Shortcuts' : _("""The list of upload shortcut fields which have been declared on this
 Site.  See add_shortcut()."""),
     'lino.mixins.duplicable.Duplicate' : _("""Duplicate the selected row. This will call

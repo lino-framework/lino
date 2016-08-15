@@ -39,6 +39,7 @@ from lino.core.requests import BaseRequest
 from lino.mixins import Created, ObservedPeriod
 from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.users.mixins import UserAuthored, My
+from lino.modlib.office.roles import OfficeStaff, OfficeUser
 from .utils import body_subject_to_elems
 
 from lino.utils.xmlgen.html import E
@@ -271,12 +272,12 @@ class AllNotifications(Notifications):
     """The gobal list of all notifications.
 
     """
-    required_roles = dd.required(SiteStaff)
+    required_roles = dd.required(dd.SiteAdmin)
 
 
 class MyNotifications(My, Notifications):
     # label = _("My notifications")
-    required_roles = dd.required()
+    required_roles = dd.required(OfficeUser)
     column_names = "created subject owner sent workflow_buttons *"
     order_by = ['created']
     # filter = models.Q(seen__isnull=True)
