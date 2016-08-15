@@ -283,7 +283,7 @@ class AssignToMe(dd.Action):
     """
     label = _("Assign to me")
     show_in_workflow = True
-    readonly = False
+    # readonly = False
     required_roles = dd.required(Helper)
 
     # button_text = u"\u2698"  # FLOWER (⚘)
