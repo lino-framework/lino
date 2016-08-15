@@ -49,6 +49,7 @@ class Plugin(ad.Plugin):
         m = m.add_menu(p.app_label, p.verbose_name)
         m.add_action('tickets.MyTickets')
         m.add_action('tickets.SuggestedTickets')
+        m.add_action('tickets.TicketsToDo')
         # m.add_action('tickets.MyOwnedTickets')
         m.add_action('tickets.ActiveTickets')
         m.add_action('tickets.AllTickets')

@@ -107,7 +107,7 @@ class Site(Site):
 
     def setup_quicklinks(self, ar, tb):
         super(Site, self).setup_quicklinks(ar, tb)
-
+        tb.add_action(self.modules.tickets.MyTickets)
         tb.add_action(self.modules.tickets.TicketsToTriage)
         tb.add_action(self.modules.tickets.TicketsToTalk)
         tb.add_action(self.modules.tickets.TicketsToDo)
@@ -147,6 +147,8 @@ class Site(Site):
 
         wc(self.modules.tickets.Ticket)
         wc(self.modules.comments.Comment, master_key='owner')
+        if self.is_installed('extjs'):
+            self.plugins.extjs.autorefresh_seconds = 0
 
 
 # the following line should not be active in a checked-in version
