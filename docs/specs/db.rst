@@ -88,7 +88,7 @@ users.UserProfiles.admin:900
 ... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
 - Contacts : Persons, Organizations, Partners, Partner Lists
 - Office : My Notifications, My Stars, My Uploads, My Outbox, My Excerpts, My Comments
-- Tickets :  My Tickets, Where I can help, Active tickets, Tickets, Unassigned Tickets, Active projects
+- Tickets :  My Tickets, Where I can help, Tickets to do, Active tickets, Tickets, Unassigned Tickets, Active projects
 - Clocking : Sessions
 - Reports :
   - System : Broken GFKs
@@ -107,7 +107,7 @@ users.UserProfiles.admin:900
   - Office : Stars, Uploads, Upload Areas, Outgoing Mails, Attachments, Excerpts, Comments, Text Field Templates
   - Tickets : Dependencies, States
   - Faculties : Competences
-  - Deploy : Milestones, Deployments    
+  - Deploy : Milestones, Deployments
   - Clocking : Sessions
 - Site : About
 

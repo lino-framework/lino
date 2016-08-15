@@ -637,8 +637,8 @@ class ActiveTickets(Tickets):
 class MyTickets(My, Tickets):
     """Show the tickets reported by me."""
     required_roles = dd.login_required()
-    order_by = ["-priority", "-deadline", "-id"]
-    column_names = 'overview:50 priority deadline ' \
+    order_by = ["-id"]
+    column_names = 'overview:50 faculty topic ' \
                    'workflow_buttons:40 *'
     params_layout = """
     reporter site project state 
