@@ -272,7 +272,7 @@ class AllNotifications(Notifications):
     """The gobal list of all notifications.
 
     """
-    required_roles = dd.required(OfficeStaff)
+    required_roles = dd.required(dd.SiteAdmin)
 
 
 class MyNotifications(My, Notifications):
