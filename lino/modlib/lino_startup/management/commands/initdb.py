@@ -63,7 +63,6 @@ warnings.filterwarnings(
     "ignore", "No fixture data found for *",
     RuntimeWarning, "django.core.management.commands.loaddata")
 
-
 from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
@@ -94,6 +93,7 @@ class Command(BaseCommand):
     args = "fixture [fixture ...]"
 
     def add_arguments(self, parser):
+        parser.add_argument('args', nargs='+', help='the fixture to use', )
         parser.add_argument('--noinput', action='store_false',
                             dest='interactive', default=True,
                             help='Do not prompt for input of any kind.'),
@@ -225,4 +225,3 @@ Are you sure (y/n) ?""" % dbname):
             call_command('loaddata', *args, **options)
 
             # dblogger.info("Lino initdb done %s on database %s.", args, dbname)
-
