@@ -1,6 +1,0 @@
-# tolerate_sphinx_warnings: true
-# blogger_project: blog
-blogref_url: http://luc.lino-framework.org
-revision_control_system: git
-locale_dir: lino/modlib/lino_startup/locale
-doc_trees: []
