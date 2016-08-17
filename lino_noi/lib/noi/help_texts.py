@@ -25,6 +25,7 @@ what to do with it."""),
     'lino_noi.lib.tickets.choicelists.LinkTypes.deploys' : _("""The parent ticket is a deployment which deploys the child ticket."""),
     'lino_noi.lib.faculties.Plugin' : _("""See lino.core.plugin.Plugin."""),
     'lino_noi.lib.clocking.ui.SessionsByTicket' : _("""The "Sessions" panel in the detail of a ticket."""),
+    'lino_noi.lib.tickets.ui.MyTickets' : _("""Show the tickets reported by me."""),
     'lino_noi.lib.tickets.models.Ticket' : _("""A Ticket is a concrete question or problem formulated by a
 reporter (a user)."""),
     'lino_noi.lib.tickets.models.TimeInvestment.private' : _("""Whether this investment is private, i.e. should not be
@@ -60,8 +61,9 @@ users."""),
     'lino_noi.lib.deploy.desktop.Milestones.model' : _("""alias of Milestone"""),
     'lino_noi.lib.tickets.models.Project' : _("""A project is something on which several users work together."""),
     'lino_noi.lib.clocking.ui.SessionsByTicket.master' : _("""alias of Ticket"""),
-    'lino_noi.projects.team.lib.clocking.models.ServiceReport' : _("""A service report is a document used in various discussions with
-a stakeholder."""),
+    'lino_noi.lib.tickets.choicelists.TicketStates.new' : _("""Somebody reported this ticket, but there was no response so
+far.
+The ticket needs to be triaged."""),
     'lino_noi.lib.users.models.UserDetail' : _("""Layout of User Detail in Lino Welfare."""),
     'lino_noi.lib.tickets.choicelists.TicketStates.todo' : _("""The ticket is confirmed and we are working on it.
 It appears in the todo list of somebody (either the assigned
@@ -72,9 +74,8 @@ faculties"""),
     'lino_noi.lib.tickets.choicelists.TicketStates.sticky' : _("""Special state for permanent tickets which have no lifecycle."""),
     'lino_noi.lib.clocking.roles.Worker' : _("""A user who is candidate for working on a ticket."""),
     'lino_noi.lib.deploy.Plugin' : _("""See lino.core.plugin.Plugin."""),
-    'lino_noi.lib.tickets.choicelists.TicketStates.new' : _("""Somebody reported this ticket, but there was no response so
-far.
-The ticket needs to be triaged."""),
+    'lino_noi.projects.team.lib.clocking.models.ServiceReport' : _("""A service report is a document used in various discussions with
+a stakeholder."""),
     'lino_noi.lib.noi.roles.EndUser' : _("""An end user is somebody who uses our software and may report
 tickets, but won't work on them."""),
     'lino_noi.lib.tickets.models.Ticket.state' : _("""The state of this ticket. See TicketStates"""),
@@ -96,6 +97,7 @@ ticket is being deployed."""),
     'lino_noi.lib.deploy.models.Milestone.closed' : _("""Closed milestones are hidden in most lists."""),
     'lino_noi.lib.tickets.ui.Tickets' : _("""Global list of all tickets."""),
     'lino_noi.lib.tickets.ui.Tickets.feasable_by' : _("""Show only tickets for which I am competent."""),
+    'lino_noi.lib.tickets.ui.MyTickets.model' : _("""alias of Ticket"""),
     'lino_noi.lib.noi.roles.Consultant' : _("""A consultant is somebody who may both report tickets and work
 on them."""),
     'lino_noi.lib.faculties.models.Competence' : _("""A competence is when a given user is declared to be competent
