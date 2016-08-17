@@ -88,12 +88,12 @@ http://thingsilearned.com/2009/05/10/drop-database-command-for-django-manager/
 
 
 class Command(BaseCommand):
-    help = __doc__
+    """Flush the database and load the specified fixtures.
 
-    args = "fixture [fixture ...]"
+    """
 
     def add_arguments(self, parser):
-        parser.add_argument('args', nargs='+', help='the fixture to use', )
+        parser.add_argument('fixtures', nargs='*', help='the fixtures to load')
         parser.add_argument('--noinput', action='store_false',
                             dest='interactive', default=True,
                             help='Do not prompt for input of any kind.'),
@@ -128,15 +128,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        # ~ from lino.core.kernel import analyze_models
-        # ~ analyze_models()
-
-        # ~ from lino.utils import dblogger
-
-        # ~ if not dblogger.logger.isEnabledFor(logging.INFO):
-        # ~ raise CommandError("System logger must be enabled for INFO")
-        # ~ dblogger.info(settings.SITE.welcome_text())
-        # ~ dblogger.info("FIXTURE_DIRS is %s",settings.FIXTURE_DIRS)
         if settings.SITE.readonly:
             dd.logger.info(
                 "Skipped `initdb` on readonly site '%s'.",
@@ -150,11 +141,17 @@ class Command(BaseCommand):
             if not confirm("""We are going to flush your database (%s).
 Are you sure (y/n) ?""" % dbname):
                 raise CommandError("User abort.")
+            
+        fixtures = options.get('fixtures', args)
+
+        # print(20160817, fixtures, options)
 
         options.update(interactive=False)
+        
         # the following log message was useful on Travis 20150104
-        dd.logger.info(
-            "`initdb %s` started on database %s.", ' '.join(args), dbname)
+        if options.get('verbosity', 1) > 0:
+            dd.logger.info(
+                "`initdb %s` started on database %s.", ' '.join(fixtures), dbname)
 
         if engine == 'django.db.backends.sqlite3':
             if dbname != ':memory:' and os.path.isfile(dbname):
@@ -221,7 +218,7 @@ Are you sure (y/n) ?""" % dbname):
         else:
             call_command('migrate', **options)
 
-        if len(args):
-            call_command('loaddata', *args, **options)
+        if len(fixtures):
+            call_command('loaddata', *fixtures, **options)
 
             # dblogger.info("Lino initdb done %s on database %s.", args, dbname)

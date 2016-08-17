@@ -21,23 +21,18 @@ from lino.modlib.lino_startup.management.commands.initdb import CommandError
 
 
 class Command(BaseCommand):
-    help = __doc__
-
-    def add_arguments(self, parser):
-        parser.add_argument('--noinput', action='store_false',
-                            dest='interactive', default=True,
-                            help='Do not prompt for input of any kind.'),
-        parser.add_argument('--database', action='store', dest='database',
-                            default=DEFAULT_DB_ALIAS,
-                            help='Nominates a database to reset. '
-                                 'Defaults to the "default" database.')
+    """Flushes the database and loads the default demo fixtures.
+    """
 
     def handle(self, *args, **options):
-        if len(args) > 0:
+        fixtures = options.get('fixtures', args)
+        if len(fixtures) > 0:
             raise CommandError(
-                "This command takes no arguments (got %r)" % args)
+                "This command takes no arguments (got %r)" % fixtures)
 
         args = settings.SITE.demo_fixtures
         if isinstance(args, basestring):
             args = args.split()
-        super(Command, self).handle(*args, **options)
+        options['fixtures'] = args
+        # super(Command, self).handle(*args, **options)
+        super(Command, self).handle(**options)

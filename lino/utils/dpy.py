@@ -295,7 +295,7 @@ data."""
             logger.info("Running after_load handler %s", h.__doc__)
             h(self)
 
-        logger.info("Loaded %d objects", self.count_objects)
+        # logger.info("Loaded %d objects", self.count_objects)
     
         if self.save_later:
             count = 0
@@ -380,7 +380,8 @@ class DpyDeserializer(LoaderBase):
             print(fqname)
 
         desc = (SUFFIX, 'r', imp.PY_SOURCE)
-        logger.info("Loading %s...", fp.name)
+        # logger.info("20160817 %s...", options)
+        # logger.info("Loading %s...", fp.name)
 
         module = imp.load_module(fqname, fp, fp.name, desc)
         # module = __import__(filename)
