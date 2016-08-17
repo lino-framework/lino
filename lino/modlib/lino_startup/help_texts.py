@@ -290,6 +290,7 @@ lino_local.py file:"""),
     'lino.modlib.extjs.elems.IncompleteDateFieldElement' : _("""Widget for lino.core.fields.IncompleteDate fields."""),
     'lino.utils.test.DocTest' : _("""Looks for a file "index.rst" in your project_dir and (if it exists)
 runs doctest on it."""),
+    'lino.modlib.lino_startup.management.commands.initdb_demo.Command' : _("""Flushes the database and loads the default demo fixtures."""),
     'lino.modlib.languages.Plugin' : _("""See /dev/plugins."""),
     'lino.utils.daemoncommand.DaemonCommand' : _("""If you have an existing Django management command, just rename
 it's handle method to handle_daemon and inherit from this
@@ -327,6 +328,7 @@ admin_main.html to display the list of available users."""),
 field and a virtual field "Age"."""),
     'lino.utils.dates.DatePeriodValue.start_date' : _("""The start date"""),
     'lino.modlib.uploads.choicelists.Shortcut' : _("""Represents a shortcut field."""),
+    'lino.modlib.lino_startup.management.commands.initdb.Command' : _("""Flush the database and load the specified fixtures."""),
     'lino.utils.dbfreader.FPTFile' : _("""Represents an FPT block file"""),
     'lino.utils.dbfreader.DBFField' : _("""Represents a field in a DBF file."""),
     'lino.modlib.uploads.Plugin' : _("""See /dev/plugins."""),

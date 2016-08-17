@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2014-2015 Luc Saffre
+# Copyright 2014-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Defines the :class:`Dupable` model mixin and related functionality
@@ -105,7 +105,7 @@ class PhoneticWordBase(dd.Model):
 
     @classmethod
     def reduce_word(cls, s):
-        from metaphone.word import Word
+        # from metaphone.word import Word
         import metaphone as fuzzy
         # fuzzy.DMetaphone does not work with unicode strings, see
         # https://bitbucket.org/yougov/fuzzy/issue/2/fuzzy-support-for-unicode-strings-with
