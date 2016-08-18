@@ -1,28 +1,32 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2014-2015 Luc Saffre
+# Copyright 2014-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Defines the :class:`Dupable` model mixin and related functionality
-to assist users in finding duplicate database records.
+to assist users in finding unwanted duplicate database records.
 
-The current implementation uses a helper table with "phonetic words"
-and the `Double Metaphone
-<https://en.wikipedia.org/wiki/Metaphone#Double_Metaphone>`_ of the
-detection phonetic algorithm (from the `fuzzy
-<https://pypi.python.org/pypi/Fuzzy>`_ module).  Read also Doug
-Hellmann about `Using Fuzzy Matching to Search by Sound with Python
-<http://www.informit.com/articles/article.aspx?p=1848528>`_
-(2012-03-22).
-
-Note about the name: to dupe *somebody* means "to make a dupe of;
-deceive; delude; trick." (`reference.com
-<http://dictionary.reference.com/browse/dupe>`_), while to dupe
+Don't mix up this module with :mod:`lino.mixins.duplicable`.  Models
+are "duplicable" if users may *want* to duplicate some instance
+thereof, while "dupable" implies that the duplicates are
+*unwanted*. To dupe *somebody* means "to make a dupe of; deceive;
+delude; trick."  (`reference.com
+<http://dictionary.reference.com/browse/dupe>`_), and to dupe
 *something* means to duplicate it (eventually in order to cheat
 somebody e.g. by making a cheap copy of a valuable object).
 
-Don't mix up this module with :mod:`lino.mixins.duplicable`.  Models
-are "duplicable" if users --sometimes-- *want* to duplicate some
-instance thereof.
+This requires the `metafone
+<https://pypi.python.org/pypi/Metafone/0.5>`__ package (a successor of
+`fuzzy <https://pypi.python.org/pypi/Fuzzy>`__ which isn't yet ported
+to Python 3).  Applications that use this mixin must themselves add
+`metafone` to their :ref:`install_requires`.
+
+The current implementation uses a helper table with "phonetic words"
+and the `Double Metaphone
+<https://en.wikipedia.org/wiki/Metaphone#Double_Metaphone>`_
+algorithm.  Read also Doug Hellmann about `Using Fuzzy Matching to
+Search by Sound with Python
+<http://www.informit.com/articles/article.aspx?p=1848528>`_
+(2012-03-22).
 
 """
 
@@ -105,11 +109,12 @@ class PhoneticWordBase(dd.Model):
 
     @classmethod
     def reduce_word(cls, s):
-        from metaphone.word import Word
+        # from metaphone.word import Word
         import metaphone as fuzzy
         # fuzzy.DMetaphone does not work with unicode strings, see
         # https://bitbucket.org/yougov/fuzzy/issue/2/fuzzy-support-for-unicode-strings-with
-        dm = fuzzy.doublemetaphone(s.encode('utf8'))
+        # dm = fuzzy.doublemetaphone(s.encode('utf8'))
+        dm = fuzzy.doublemetaphone(s)
         dms = dm[0] or dm[1]
         if dms is None:
             return ''
