@@ -507,3 +507,27 @@ Filtering tickets
 +-----------------+-----------------+------------------------------------------------------------------+
 | feasable_by     | Feasable by     | Show only tickets for which I am competent.                      |
 +-----------------+-----------------+------------------------------------------------------------------+
+
+>>> rt.login('robin').show(rt.actors.tickets.Tickets)
+... #doctest: +REPORT_UDIFF
+==== =========================================== ================= ============== =============== ============================================================================== ==========
+ ID   Summary                                     Reporter          Topic          Faculty         Workflow                                                                       Project
+---- ------------------------------------------- ----------------- -------------- --------------- ------------------------------------------------------------------------------ ----------
+ 16   How to get bar from foo                     luc               Lino Welfare                   **Refused** → [▶] [☆]                                                          research
+ 15   Bars have no foo                            jean              Lino Core                      **Done** → [▶] [☆]                                                             docs
+ 14   Bar cannot baz                              Robin Rood        Lino Voga                      **Ready** → [Talk] [ToDo] [Done] [▶] [☆]                                       téam
+ 13   Bar cannot foo                              Rolf Rompen       Lino Cosi      Documentation   **Sleeping** → [Done] [Refused] [▶] [☆]                                        linö
+ 12   Foo cannot bar                              Romain Raffault   Lino Welfare   Code changes    **Sticky** → [▶] [☆]                                                           shop
+ 11   Class-based Foos and Bars?                  mathieu           Lino Core                      **ToDo** → [Talk] [Sleeping] [Ready] [Done] [Refused] [▶] [☆]                  research
+ 10   Where can I find a Foo when bazing Bazes?   marc              Lino Voga                      **Talk** → [ToDo] [Sleeping] [Ready] [Done] [Refused] [▶] [☆]                  docs
+ 9    Foo never matches Bar                       luc               Lino Cosi      Testing         **New** → [Sticky] [Talk] [ToDo] [Sleeping] [Ready] [Done] [Refused] [▶] [☆]   téam
+ 8    Is there any Bar in Foo?                    jean              Lino Welfare                   **Refused** → [▶] [☆]                                                          linö
+ 7    No Foo after deleting Bar                   Robin Rood        Lino Core                      **Done** → [▶] [☆]                                                             shop
+ 6    Sell bar in baz                             Rolf Rompen       Lino Voga      Analysis        **Ready** → [Talk] [ToDo] [Done] [▶] [☆]                                       research
+ 5    Cannot create Foo                           Romain Raffault   Lino Cosi                      **Sleeping** → [Done] [Refused] [▶] [☆]
+ 4    Foo and bar don't baz                       mathieu           Lino Welfare                   **Sticky** → [▶] [☆]                                                           docs
+ 3    Baz sucks                                   marc              Lino Core                      **ToDo** → [Talk] [Sleeping] [Ready] [Done] [Refused] [▶] [☆]
+ 2    Bar is not always baz                       luc               Lino Voga                      **Talk** → [ToDo] [Sleeping] [Ready] [Done] [Refused] [▶] [☆]                  téam
+ 1    Föö fails to bar when baz                   jean              Lino Cosi                      **New** → [Sticky] [Talk] [ToDo] [Sleeping] [Ready] [Done] [Refused] [▶] [☆]   linö
+==== =========================================== ================= ============== =============== ============================================================================== ==========
+<BLANKLINE>
