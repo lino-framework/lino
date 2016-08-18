@@ -646,7 +646,8 @@ class Site(object):
 
     demo_email = 'demo@example.com'
 
-    demo_fixtures = ['std', 'demo', 'demo2']
+    # demo_fixtures = ['std', 'demo', 'demo2']
+    demo_fixtures = []
     """
     The list of fixtures to be loaded by the :manage:`initdb_demo`
     command.
