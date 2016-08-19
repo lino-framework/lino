@@ -7,7 +7,7 @@
 from lino.core.roles import UserRole, SiteUser, SiteAdmin
 
 from lino_xl.lib.contacts.roles import ContactsUser, ContactsStaff
-from lino.modlib.users.roles import AuthorshipTaker
+# from lino.modlib.users.roles import AuthorshipTaker
 
 
 class OfficeUser(ContactsUser):
@@ -16,7 +16,8 @@ class OfficeUser(ContactsUser):
 
     """
 
-class OfficeOperator(AuthorshipTaker):
+# class OfficeOperator(AuthorshipTaker):
+class OfficeOperator(SiteUser):
     """A user who manages office functionality for other users (but not
     for himself).
 

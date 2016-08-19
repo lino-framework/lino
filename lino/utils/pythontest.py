@@ -93,6 +93,8 @@ class TestCase(TestCase):
         self.run_subprocess(args, **kw)
 
     def run_django_admin_command_cd(self, cwd, *cmdargs, **kw):
+        """Run `django-admin.py CMD` in the given directory.
+        """
         kw.update(cwd=cwd)
         args = ["python", "manage.py"]
         args += cmdargs
