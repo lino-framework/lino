@@ -1,10 +1,10 @@
-global-include *.txt *.py *.bat *.js *.css *.html \
+global-include *.txt *.rst *.js *.css *.html \
   *.diff *.ico *.jpg *.png \
-  *.csv *.xml *.tab \
+  *.xml *.tab \
   *.odt \
   *.wsdl \
   *.xsd \
-  *.po *.mo Makefile
+  *.mo
 include bash/*
 prune docs
 prune rtlib
