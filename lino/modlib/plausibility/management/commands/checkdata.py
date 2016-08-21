@@ -21,6 +21,7 @@ from __future__ import unicode_literals, print_function
 
 from django.core.management.base import BaseCommand, CommandError
 
+from atelier.utils import list_py2
 from lino.modlib.plausibility.choicelists import Checkers
 from lino.modlib.plausibility.models import check_plausibility
 
@@ -41,6 +42,7 @@ class Command(BaseCommand):
     """
 
     def add_arguments(self, parser):
+        parser.add_argument('checkers', nargs='*', help='the checkers to run')
         parser.add_argument(
             '-l', '--list', action='store_true', dest='list',
             default=False,
@@ -51,6 +53,9 @@ class Command(BaseCommand):
             help="Fix any repairable problems.")
 
     def handle(self, *args, **options):
+        app = options.get('checkers', args)
+        if app:
+            args += tuple(list_py2(app))
         if options['list']:
             rt.show(Checkers, column_names="value text")
         else:
