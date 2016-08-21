@@ -2123,7 +2123,8 @@ def create_layout_element(lh, name, **kw):
         return e
 
     if isinstance(de, models.ManyToManyField):
-        e = ManyToManyElement(lh, de.related, **kw)
+        # Replacing related by remote_field to supports Django 1.9.9 and 1.10
+        e = ManyToManyElement(lh, de.remote_field, **kw)
         lh.add_store_field(e.field)
         return e
 
