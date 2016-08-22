@@ -1,12 +1,11 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2015 Luc Saffre
+# Copyright 2013-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Used by :class:`PrintLabelsAction` and
+"""Used by :class:`lino_xl.lib.appypod.mixins.PrintLabelsAction` and
 :mod:`lino_xl.lib.contacts`.
 
 $ python setup.py test -s tests.UtilsTests.test_addressable
-
 
 """
 
