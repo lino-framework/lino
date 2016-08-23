@@ -1,7 +1,10 @@
 ==========================
 lino README
 ==========================
-[![Documentation Status](https://readthedocs.org/projects/lino/badge/?version=latest)](http://lino.readthedocs.io/en/latest/?badge=latest)
+
+.. image:: https://readthedocs.org/projects/lino/badge/?version=latest
+:target: http://lino.readthedocs.io/en/latest/?badge=latest
+:alt: Documentation Status
 
 A framework for writing desktop-like web applications using Django and ExtJS
 
