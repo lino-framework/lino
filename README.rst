@@ -2,9 +2,7 @@
 lino README
 ==========================
 
-.. image:: https://readthedocs.org/projects/lino/badge/?version=latest
-:target: http://lino.readthedocs.io/en/latest/?badge=latest
-:alt: Documentation Status
+|docs|
 
 A framework for writing desktop-like web applications using Django and ExtJS
 
@@ -26,3 +24,8 @@ or
 
 
 Read more on http://www.lino-framework.org
+
+.. |docs| image:: https://readthedocs.org/projects/lino/badge/?version=latest
+    :alt: Documentation Status
+    :scale: 100%
+    :target: http://lino.readthedocs.io/en/latest/?badge=latest
