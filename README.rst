@@ -1,13 +1,10 @@
-==========================
-lino README
-==========================
+====================
+The ``lino`` package
+====================
+
+
 
 |docs| |coverage| |build| |pypi_v| |pypi_license|
-
-A framework for writing desktop-like web applications using Django and ExtJS
-
-Description
------------
 
 Lino is a high-level framework for writing desktop-like customized
 database applications based on `Django <https://www.djangoproject.com/>`_
@@ -22,8 +19,7 @@ or
 `Lino Voga <http://voga.lino-framework.org>`__
 (`more <http://lino-framework.org/about/projects.html>`__)
 
-
-Read more on http://www.lino-framework.org
+The central project homepage is http://www.lino-framework.org
 
 .. |docs| image:: https://readthedocs.org/projects/lino/badge/?version=latest
     :alt: Documentation Status
@@ -41,3 +37,5 @@ Read more on http://www.lino-framework.org
 
 .. |pypi_license| image:: https://img.shields.io/pypi/l/lino.svg
     :target: https://pypi.python.org/pypi/lino/
+
+
