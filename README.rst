@@ -3,7 +3,10 @@ lino README
 ==========================
 
 |docs|
-[![Coverage Status](https://coveralls.io/repos/github/khchine5/lino/badge.svg?branch=master)](https://coveralls.io/github/khchine5/lino?branch=master)
+
+.. image:: https://coveralls.io/repos/github/khchine5/lino/badge.svg?branch=master
+:target: https://coveralls.io/github/khchine5/lino?branch=master
+
 
 A framework for writing desktop-like web applications using Django and ExtJS
 
