@@ -30,7 +30,7 @@ Read more on http://www.lino-framework.org
     :scale: 100%
     :target: http://lino.readthedocs.io/en/latest/?badge=latest
 
-.. |coverage| image:: https://coveralls.io/repos/github/khchine5/lino/badge.svg?branch=master
+.. |coverage| image:: https://coveralls.io/repos/github/lino-framework/lino/badge.svg?branch=master
     :target: https://coveralls.io/github/lino-framework/lino?branch=master
 
 .. |build| image:: https://travis-ci.org/lino-framework/lino.svg?branch=master
