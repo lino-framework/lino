@@ -79,6 +79,8 @@ else:
     SETUP_INFO['install_requires'].append('reportlab')
 
 SETUP_INFO.update(long_description="""\
+|docs| |coverage| |build| |pypi_v| |pypi_license|
+
 Lino is a high-level framework for writing desktop-like customized
 database applications based on `Django <https://www.djangoproject.com/>`_
 and `Sencha ExtJS <http://www.sencha.com/products/extjs/>`_.
@@ -93,6 +95,23 @@ or
 (`more <http://lino-framework.org/about/projects.html>`__)
 
 The central project homepage is http://www.lino-framework.org
+
+.. |docs| image:: https://readthedocs.org/projects/lino/badge/?version=latest
+    :alt: Documentation Status
+    :scale: 100%
+    :target: http://lino.readthedocs.io/en/latest/?badge=latest
+
+.. |coverage| image:: https://coveralls.io/repos/github/lino-framework/lino/badge.svg?branch=master
+    :target: https://coveralls.io/github/lino-framework/lino?branch=master
+
+.. |build| image:: https://travis-ci.org/lino-framework/lino.svg?branch=master
+    :target: https://travis-ci.org/lino-framework/lino?branch=master
+
+.. |pypi_v| image:: https://img.shields.io/pypi/v/lino.svg
+    :target: https://pypi.python.org/pypi/lino/
+
+.. |pypi_license| image:: https://img.shields.io/pypi/l/lino.svg
+    :target: https://pypi.python.org/pypi/lino/
 
 """)
 
