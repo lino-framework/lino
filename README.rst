@@ -31,7 +31,7 @@ Read more on http://www.lino-framework.org
     :target: http://lino.readthedocs.io/en/latest/?badge=latest
 
 .. |coverage| image:: https://coveralls.io/repos/github/khchine5/lino/badge.svg?branch=master
-    :target: https://coveralls.io/github/khchine5/lino?branch=master
+    :target: https://coveralls.io/github/lino-framework/lino?branch=master
 
 .. |build| image:: https://travis-ci.org/lino-framework/lino.svg?branch=master
     :target: https://travis-ci.org/lino-framework/lino?branch=master
