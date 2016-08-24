@@ -2,8 +2,7 @@
 lino README
 ==========================
 
-|docs| |coverage| |build|
-
+|docs| |coverage| |build| |pypi_v|
 
 A framework for writing desktop-like web applications using Django and ExtJS
 
@@ -35,4 +34,7 @@ Read more on http://www.lino-framework.org
     :target: https://coveralls.io/github/khchine5/lino?branch=master
 
 .. |build| image:: https://travis-ci.org/lino-framework/lino.svg?branch=master
-    :target: https://travis-ci.org/lino-framework/lino
+    :target: https://travis-ci.org/lino-framework/lino?branch=master
+
+.. |pypi_v| image:: https://img.shields.io/pypi/v/lino.svg
+    :target: https://pypi.python.org/pypi/lino/
