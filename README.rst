@@ -2,7 +2,7 @@
 lino README
 ==========================
 
-|docs||coverage|
+|docs| |coverage|
 
 A framework for writing desktop-like web applications using Django and ExtJS
 
