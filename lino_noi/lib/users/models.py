@@ -122,7 +122,7 @@ class UserDetail(UserDetail):
     email:40
     url
     phone
-    gsm fax
+    gsm
     """
     address_box = """
     first_name last_name initials
