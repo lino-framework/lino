@@ -2890,7 +2890,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   }
   
   ,set_current_record : function(record, after) {
-    // console.log('20150905 set_current_record', record);
+    console.log('20160825 set_current_record', record);
     if (this.record_selector) {
         this.record_selector.clearValue();
         // e.g. InsertWrapper FormPanel doesn't have a record_selector
@@ -2905,7 +2905,11 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       if (da) {
           //~ console.log('20120528 disabled_actions =',da,this.getBottomToolbar());
           //~ 20121016 this.getBottomToolbar().items.each(function(item,index,length){
-          var tb = this.getTopToolbar();
+          if(this.hide_top_toolbar) {
+              var tb = this.getBottomToolbar();
+          } else {
+              var tb = this.getTopToolbar();
+          }
           if (tb) tb.items.each(function(item,index,length){
               //~ console.log('20120528 ',item.itemId,'-->',da[item.itemId]);
               if (da[item.itemId]) item.disable(); else item.enable();

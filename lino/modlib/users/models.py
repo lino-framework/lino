@@ -24,6 +24,7 @@ from lino.api import dd
 from lino.utils.xmlgen.html import E
 from lino.core import actions
 from lino.core.fields import NullCharField
+from lino.core.roles import SiteAdmin
 
 from lino.mixins import CreatedModified
 
@@ -46,6 +47,15 @@ class ChangePassword(dd.Action):
     new1
     new2
     """
+
+    def get_action_permission(self, ar, obj, state):
+        user = ar.get_user()
+        # print("20160825", obj, user)
+        if obj != user and \
+           not user.profile.has_required_roles([SiteAdmin]):
+            return False
+        return super(
+            ChangePassword, self).get_action_permission(ar, obj, state)
 
     def run_from_ui(self, ar, **kw):
         
@@ -183,7 +193,7 @@ class User(CreatedModified, TimezoneHolder):
         if not ba.action.readonly:
             user = ar.get_user()
             if user != self:
-                if not isinstance(user.profile.role, dd.SiteAdmin):
+                if not isinstance(user.profile.role, SiteAdmin):
                     return False
         return super(User, self).get_row_permission(ar, state, ba)
         #~ return False
@@ -194,7 +204,7 @@ class User(CreatedModified, TimezoneHolder):
         See also :meth:`Users.get_row_permission`.
         """
         rv = super(User, self).disabled_fields(ar)
-        if not isinstance(ar.get_user().profile.role, dd.SiteAdmin):
+        if not isinstance(ar.get_user().profile.role, SiteAdmin):
             rv.add('profile')
         return rv
 
@@ -303,7 +313,7 @@ class UserInsert(dd.FormLayout):
 class Users(dd.Table):
     help_text = _("""Shows the list of all users on this site.""")
     #~ debug_actions  = True
-    required_roles = dd.required(dd.SiteAdmin)
+    required_roles = dd.required(SiteAdmin)
     model = 'users.User'
     #~ order_by = "last_name first_name".split()
     order_by = ["username"]
@@ -383,7 +393,7 @@ class Authority(UserAuthored):
 
 
 class Authorities(dd.Table):
-    required_roles = dd.required(dd.SiteAdmin)
+    required_roles = dd.required(SiteAdmin)
     model = Authority
 
 
