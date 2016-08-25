@@ -598,7 +598,7 @@ if False:  # removed current_project field because it caused circular
 dd.inject_field(
     'users.User', 'user_site',
     dd.ForeignKey(
-        'tickets.Site', verbose_name=_("Site"),
+        'tickets.Site', # verbose_name=_("Site"),
         blank=True, null=True, related_name="users_by_site",
         help_text=_("")))
 
