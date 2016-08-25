@@ -59,22 +59,6 @@ class TicketEventModified(ObservedEvent):
 TicketEvents.add_item_instance(TicketEventModified('modified'))
 
 
-class TicketEventToDo(ObservedEvent):
-    text = _("To do")
-
-    def add_filter(self, qs, pv):
-        if pv.start_date:
-            pass
-        if pv.end_date:
-            qs = qs.exclude(
-                deployment__milestone__reached__lte=combine(
-                    pv.end_date, T24))
-        return qs
-
-
-TicketEvents.add_item_instance(TicketEventToDo('todo'))
-
-
 class ProjectEvents(dd.ChoiceList):
     verbose_name = _("Observed event")
     verbose_name_plural = _("Observed events")

@@ -106,3 +106,26 @@ class Deployment(dd.Model):
         #     return ticket.site.milestones_by_site.all()
         return rt.models.deploy.Milestone.objects.order_by('label')
 
+
+
+from lino.modlib.system.choicelists import (ObservedEvent)
+from lino_noi.lib.tickets.choicelists import TicketEvents, T24, combine
+
+
+class TicketEventToDo(ObservedEvent):
+    text = _("To do")
+
+    def add_filter(self, qs, pv):
+        if pv.start_date:
+            pass
+        if pv.end_date:
+            qs = qs.exclude(
+                deployment__milestone__reached__lte=combine(
+                    pv.end_date, T24))
+        return qs
+
+
+TicketEvents.add_item_instance(TicketEventToDo('todo'))
+
+
+    

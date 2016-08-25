@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
-from lino.api import dd
+from lino.api import dd, rt
 
 from lino_xl.lib.countries.mixins import AddressLocation
 from lino.utils.addressable import Addressable
@@ -41,12 +41,46 @@ from lino.modlib.users.models import *
 from lino.modlib.office.roles import OfficeUser
 
 
+# @python_2_unicode_compatible
 class User(User, Contactable, AddressLocation, Addressable):
+
+    """
+    .. attribute:: callme_mode
+
+        Others can call me
+
+    """
 
     class Meta(User.Meta):
         app_label = 'users'
         abstract = dd.is_abstract_model(__name__, 'User')
 
+    callme_mode = models.BooleanField(_('Call me'), default=True)
+
+    def get_detail_action(self, ar):
+        a = super(User, self).get_detail_action(ar)
+        if a is not None:
+            return a
+        if self.callme_mode:
+            return rt.actors.users.OtherUsers.detail_action
+        
+    @dd.htmlbox(_("About me"))
+    def about_me(self, ar):
+        return self.remarks
+        
+    # def get_default_table(self, ar):
+    #     tbl = super(User, self).get_default_table(ar)
+    #     return rt.actors.users.OtherUsers
+    
+    # def __str__(self):
+    #     s = self.get_full_name()
+    #     if self.callme_mode:
+    #         if self.tel:
+    #             s += " ({})".format(self.tel)
+    #     return s
+
+
+dd.update_field('users.User', 'remarks', verbose_name=_("About me"))
 
 class UserDetail(UserDetail):
     """Layout of User Detail in Lino Welfare."""
@@ -100,6 +134,18 @@ class UserDetail(UserDetail):
 
 
 Users.detail_layout = UserDetail()
+
+
+class OtherUsers(Users):
+    hide_top_toolbar = True
+    use_as_default_table = False
+    editable = False
+    required_roles = dd.required()
+    detail_layout = dd.DetailLayout("""
+    first_name last_name city user_site
+    phone gsm
+    about_me
+    """, window_size=(60, 15))
 
 # def site_setup(site):
 #     site.modules.users.Users.set_detail_layout(UserDetail())
