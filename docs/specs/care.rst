@@ -269,7 +269,7 @@ In :ref:`care` we don't call them "tickets" but "pleas" (German
 ================================================================= =========== ======= =========================================================================
  Overview                                                          Fähigkeit   Thema   Arbeitsablauf
 ----------------------------------------------------------------- ----------- ------- -------------------------------------------------------------------------
- *#2 (Mein Rasen muss gemäht werden. Donnerstags oder Samstags)*                       **Besprechen** → [ZuTun] [Schläft] [Bereit] [Erledigt] [Verweigert] [☝]
+ *#2 (Mein Rasen muss gemäht werden. Donnerstags oder Samstags)*                       **Besprechen** → [ZuTun] [Schläft] [Bereit] [Erledigt] [Verweigert] [✋]
 ================================================================= =========== ======= =========================================================================
 <BLANKLINE>
 
@@ -279,8 +279,8 @@ In :ref:`care` we don't call them "tickets" but "pleas" (German
 ============================================================== ========== ======= =================== ===================
  Overview                                                       Anfrager   Thema   Fähigkeit           Arbeitsablauf
 -------------------------------------------------------------- ---------- ------- ------------------- -------------------
- *#5 (Wer macht Musik auf meinem Geburtstag am 12.12.2012 ?)*   axel               Musik               **Schläft** → [☝]
- *#3 (Wer kann meinem Sohn Klavierunterricht geben?)*           dora               Klavierunterricht   **ZuTun** → [☝]
+ *#5 (Wer macht Musik auf meinem Geburtstag am 12.12.2012 ?)*   axel               Musik               **Schläft** → [✋]
+ *#3 (Wer kann meinem Sohn Klavierunterricht geben?)*           dora               Klavierunterricht   **ZuTun** → [✋]
 ============================================================== ========== ======= =================== ===================
 <BLANKLINE>
 
