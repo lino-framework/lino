@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 # Copyright 2011-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 """Database models for `lino.modlib.users`.
@@ -20,7 +21,7 @@ from django.contrib.auth.hashers import (
     check_password, make_password, is_password_usable)
 
 
-from lino.api import dd
+from lino.api import dd, rt
 from lino.utils.xmlgen.html import E
 from lino.core import actions
 from lino.core.fields import NullCharField
@@ -31,12 +32,36 @@ from lino.mixins import CreatedModified
 from .choicelists import UserProfiles
 from .mixins import UserAuthored, TimezoneHolder
 
+class SendWelcomeMail(dd.Action):
+    """Send a welcome mail to this user."""
+    label = _("Welcome mail")
+    show_in_bbar = True
+    show_in_workflow = False
+    button_text = u"\u2709"  # ✉
+    
+    def run_from_ui(self, ar, **kw):
+
+        done_for = []
+        for obj in ar.selected_rows:
+            obj.send_welcome_email()
+            done_for.append(str(obj))
+
+        msg = _("Welcome mail has been sent to {}.").format(
+            ', '.join(done_for))
+        ar.success(msg, alert=True)
+
+
 
 class ChangePassword(dd.Action):
-    """Dialog action to change the password of a user.
+    """Change the password of this user.
 
     """
+    # button_text = u"\u205C"  # DOTTED CROSS (⁜)
+    # button_text = u"\u2042"  # ASTERISM (⁂)
+    button_text = u"\u2731" # 'HEAVY ASTERISK' (✱)
+    # icon_name = "disk"
     label = _("Change password")
+    
     parameters = dict(
         current=dd.PasswordField(_("Current password"), blank=True),
         new1=dd.PasswordField(_("New password"), blank=True),
@@ -63,18 +88,19 @@ class ChangePassword(dd.Action):
         if pv.new1 != pv.new2:
             ar.error("New passwords didn't match!")
             return
-        count = 0
+        done_for = []
         for obj in ar.selected_rows:
             if not obj.has_usable_password() \
                or obj.check_password(pv.current):
                 obj.set_password(pv.new1)
                 obj.full_clean()
                 obj.save()
-                count += 1
+                done_for.append(str(obj))
             else:
                 ar.info("Incorrect current password for %s." % obj)
 
-        msg = _("New password has been set for %d users.") % count
+        msg = _("New password has been set for {}.").format(
+            ', '.join(done_for))
         ar.success(msg, alert=True)
 
 
@@ -282,6 +308,30 @@ class User(CreatedModified, TimezoneHolder):
                         str(cls._meta.verbose_name), username))
             return default
 
+    # @dd.action(label=_("Send e-mail"),
+    #            show_in_bbar=True, show_in_workflow=False,
+    #            button_text="✉")  # u"\u2709"
+    # def do_send_email(self, ar):
+    #     self.send_welcome_email()
+
+    def send_welcome_email(self):
+        """"""
+        if not self.email:
+            # debug level because we don't want to see this message
+            # every 10 seconds:
+            dd.logger.debug("User %s has no email address", self)
+            return
+        subject = settings.EMAIL_SUBJECT_PREFIX + str(_("Welcome"))
+
+        template = rt.get_template('users/welcome_email.eml')
+        context = dict(obj=self, E=E, rt=rt)
+        body = template.render(**context)
+
+        sender = settings.SERVER_EMAIL
+        rt.send_email(subject, sender, body, [self.email])
+    
+        
+    do_send_email = SendWelcomeMail()
 
 class UserDetail(dd.FormLayout):
 

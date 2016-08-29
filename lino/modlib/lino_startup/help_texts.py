@@ -30,7 +30,7 @@ are part of a GFK and you want Lino to render them using a
 Combobox."""),
     'lino.modlib.plausibility.models.Problem.message' : _("""The message text. This is a concatenation of all messages that
 were yeld by the checker."""),
-    'lino.modlib.users.mixins.AssignToMe' : _("""Set yourself as assigned user (Assignable.assigned_to)."""),
+    'lino.modlib.users.mixins.AssignToMe' : _("""Set yourself as assigned user."""),
     'lino.modlib.tinymce.Plugin.window_buttons3' : _("""The third row of toolbar buttons when editing in own window."""),
     'lino.modlib.tinymce.Plugin.window_buttons2' : _("""The second row of toolbar buttons when editing in own window."""),
     'lino.modlib.tinymce.Plugin.window_buttons1' : _("""The first row of toolbar buttons when editing in own window."""),
@@ -144,6 +144,7 @@ attribute names."""),
     'lino.utils.test.DemoTestCase' : _("""Used to define tests that are to be run directly in the demo
 database, without using the Django test runner (i.e. without
 creating a temporary test database)."""),
+    'lino.modlib.notify.models.MyNotifications' : _("""Shows notifications emitted to you."""),
     'lino.mixins.sequenced.DuplicateSequenced' : _("""Duplicate this row."""),
     'lino.modlib.extjs.Plugin.autorefresh_seconds' : _("""Number of seconds to wait between two refreshes when autorefresh is
 activated. Default is 60. Set this to 0 in order to deactivate
@@ -340,6 +341,7 @@ field and a virtual field "Age"."""),
 but this Deserializer does not bypass pre_save/save methods."""),
     'lino.modlib.uploads.models.UploadTypes' : _("""The table with all existing upload types."""),
     'lino.modlib.smtpd.Plugin' : _("""See /dev/plugins."""),
+    'lino.modlib.notify.models.MyNotifications.model' : _("""alias of Notification"""),
     'lino.modlib.changes.models.Change.object' : _("""The database object which has been modified."""),
     'lino.api.rt.models' : _("""Shortcut to lino.core.site.Site.models"""),
     'lino.modlib.plausibility.models.AllProblems' : _("""Show all plausibility problems."""),
@@ -471,6 +473,7 @@ production sites we still use the eldest version 3.4.8."""),
     'lino.modlib.plausibility.choicelists.Checker.model' : _("""The model to be checked. This may be an abstract model.  It can
 also be None, but then you must define your own
 get_checkable_models() method."""),
+    'lino.modlib.users.models.SendWelcomeMail' : _("""Send a welcome mail to this user."""),
     'lino.modlib.printing.choicelists.RtfBuildMethod' : _("""Generates .rtf files from .rtf templates.
 Not actively used."""),
     'lino.modlib.users.mixins.Authored.author_field_name' : _("""The name of the field which defines the author of this object."""),
@@ -550,7 +553,7 @@ some <head> tags for stylesheets."""),
     'lino.modlib.plausibility.choicelists.Checkers' : _("""The list of plausibility problem types known by this application."""),
     'lino.mixins.polymorphic.Polymorphic' : _("""Mixin for models that use Multiple Table Inheritance to implement
 polymorphism."""),
-    'lino.modlib.users.models.ChangePassword' : _("""Dialog action to change the password of a user."""),
+    'lino.modlib.users.models.ChangePassword' : _("""Change the password of this user."""),
     'lino.modlib.system.choicelists.ObservedEvent' : _("""Base class for choices of "observed event"-style choicelists."""),
     'lino.modlib.importfilters.Plugin' : _("""See /dev/plugins."""),
     'lino.api.rt.actors' : _("""Shortcut to lino.core.site.Site.actors"""),

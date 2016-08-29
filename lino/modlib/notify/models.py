@@ -214,6 +214,10 @@ dd.update_field(Notification, 'user',
 Notification.update_controller_field(
     null=True, blank=True, verbose_name=_("About"))
 
+dd.inject_field(
+    'users.User', 'notifyme_mode',
+    models.BooleanField(_('Notify me'), default=True))
+
 
 class Notifications(dd.Table):
     "Base for all tables of notifications."
@@ -328,13 +332,14 @@ def send_pending_emails():
         return
     Notification = rt.models.notify.Notification
     qs = Notification.objects.filter(sent__isnull=True)
+    qs = qs.filter(user__notifyme_mode=True)
     if qs.count() > 0:
         dd.logger.debug(
             "Send out emails for %d notifications.", qs.count())
         for obj in qs:
             obj.send_email()
     else:
-        dd.logger.debug("No unsent notifications.")
+        dd.logger.debug("No notifications to send.")
 
 
 @dd.schedule_daily()
