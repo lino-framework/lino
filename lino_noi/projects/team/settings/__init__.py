@@ -97,13 +97,14 @@ class Site(Site):
         return kw
 
     def get_admin_main_items(self, ar):
-        yield self.modules.clocking.WorkedHours
-        yield self.modules.tickets.SuggestedTickets
-        # yield self.modules.tickets.ActiveTickets
-        # yield self.modules.tickets.InterestingTickets
+        yield self.actors.clocking.WorkedHours
+        yield self.actors.tickets.TicketsToDo
+        yield self.actors.tickets.SuggestedTickets
+        # yield self.actors.tickets.ActiveTickets
+        # yield self.actors.tickets.InterestingTickets
         if not ar.get_user().authenticated:
-            yield self.modules.tickets.PublicTickets
-        # yield self.modules.tickets.ActiveProjects
+            yield self.actors.tickets.PublicTickets
+        # yield self.actors.tickets.ActiveProjects
 
     def setup_quicklinks(self, ar, tb):
         super(Site, self).setup_quicklinks(ar, tb)

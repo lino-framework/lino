@@ -261,27 +261,32 @@ In :ref:`care` we don't call them "tickets" but "pleas" (German
 
 >>> rt.login('berta').show_menu()
 ... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
+- Büro : Meine Benachrichtigungen, Meine Favoriten, Meine Auszüge, Meine Kommentare
 - Bitten : Meine Bitten, Wo ich helfen kann, Zu tun
+- Konfigurierung :
+ - Orte : Länder
+ - Büro : Meine Einfügetexte
 - Site : Info
+ 
   
 >>> rt.login('christa').show(tickets.MyTickets)
 ... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
-================================================================= =========== ======= =========================================================================
+================================================================= =========== ======= =============================================================================
  Overview                                                          Fähigkeit   Thema   Arbeitsablauf
------------------------------------------------------------------ ----------- ------- -------------------------------------------------------------------------
- *#2 (Mein Rasen muss gemäht werden. Donnerstags oder Samstags)*                       **Besprechen** → [ZuTun] [Schläft] [Bereit] [Erledigt] [Verweigert] [✋]
-================================================================= =========== ======= =========================================================================
+----------------------------------------------------------------- ----------- ------- -----------------------------------------------------------------------------
+ *#2 (Mein Rasen muss gemäht werden. Donnerstags oder Samstags)*                       **Besprechen** → [ZuTun] [Schläft] [Bereit] [Erledigt] [Verweigert] [✋] [☆]
+================================================================= =========== ======= =============================================================================
 <BLANKLINE>
 
 
 >>> rt.login('christa').show(tickets.SuggestedTickets)
 ... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
-============================================================== ========== ======= =================== ===================
+============================================================== ========== ======= =================== =======================
  Overview                                                       Anfrager   Thema   Fähigkeit           Arbeitsablauf
--------------------------------------------------------------- ---------- ------- ------------------- -------------------
- *#5 (Wer macht Musik auf meinem Geburtstag am 12.12.2012 ?)*   axel               Musik               **Schläft** → [✋]
- *#3 (Wer kann meinem Sohn Klavierunterricht geben?)*           dora               Klavierunterricht   **ZuTun** → [✋]
-============================================================== ========== ======= =================== ===================
+-------------------------------------------------------------- ---------- ------- ------------------- -----------------------
+ *#5 (Wer macht Musik auf meinem Geburtstag am 12.12.2012 ?)*   axel               Musik               **Schläft** → [✋] [☆]
+ *#3 (Wer kann meinem Sohn Klavierunterricht geben?)*           dora               Klavierunterricht   **ZuTun** → [✋] [☆]
+============================================================== ========== ======= =================== =======================
 <BLANKLINE>
 
 

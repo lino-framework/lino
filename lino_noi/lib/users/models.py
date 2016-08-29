@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015 Luc Saffre
+# Copyright 2015-2016 Luc Saffre
 #
 # This file is part of Lino Noi.
 #
@@ -39,6 +39,7 @@ from lino_xl.lib.contacts.mixins import Contactable
 from lino.modlib.users.models import *
 
 from lino.modlib.office.roles import OfficeUser
+from lino_noi.lib.clocking.roles import Worker
 
 
 # @python_2_unicode_compatible
@@ -83,24 +84,28 @@ class User(User, Contactable, AddressLocation, Addressable):
 dd.update_field('users.User', 'remarks', verbose_name=_("About me"))
 
 class UserDetail(UserDetail):
-    """Layout of User Detail in Lino Welfare."""
+    """Layout of User Detail in Lino Noi."""
 
     main = "general contact"
 
     general = dd.Panel("""
-    box1
+    box1:45 clocking:15
     remarks:40 users.AuthoritiesGiven:20
     """, label=_("General"))
+
+    clocking = dd.Panel("""
+    open_session_on_new_ticket
+    timezone
+    """, label=_("Clocking"), required_roles=dd.required(Worker))
 
     # tickets = dd.Panel("""
     # tickets.TicketsByReporter 
     # """, label=_("Tickets"))
 
     box1 = """
-    username profile:20 partner
-    open_session_on_new_ticket user_site
-    language timezone
-    id created modified
+    username profile:20 partner user_site
+    language id created modified
+    callme_mode notifyme_mode
     """
 
     # cal_left = """
@@ -120,15 +125,15 @@ class UserDetail(UserDetail):
 
     info_box = """
     email:40
-    url
+    # url
     phone
     gsm
     """
     address_box = """
-    first_name last_name initials
+    first_name last_name #initials
     country region city zip_code:10
-    addr1
-    street_prefix street:25 street_no street_box
+    #addr1
+    #street_prefix street:25 street_no #street_box
     # addr2
     """
 
