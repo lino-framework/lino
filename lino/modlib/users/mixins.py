@@ -278,7 +278,10 @@ class AuthorAction(actions.Action):
 
    
 class AssignToMe(dd.Action):
-    """Set yourself as assigned user (:attr:`Assignable.assigned_to`).
+    """Set yourself as assigned user.
+
+    This will ask for confirmation and then set
+    :attr:`Assignable.assigned_to`.
 
     """
     label = _("Assign to me")
@@ -288,9 +291,10 @@ class AssignToMe(dd.Action):
 
     # button_text = u"\u2698"  # FLOWER (⚘)
     # button_text = u"\u26d1"  # ⛑
-    button_text = u"\u261D"  # ☝
+    # button_text = u"\u261D"  # ☝
+    button_text = u"\u270B"  # ✋
     
-    help_text = _("You become assigned to this.")
+    # help_text = _("You become assigned to this.")
 
     def run_from_ui(self, ar, **kw):
         obj = ar.selected_rows[0]

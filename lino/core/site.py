@@ -1601,19 +1601,26 @@ class Site(object):
 this field.
 
         """
-        if not hasattr(fld, 'help_text'):  # e.g. virtual fields don't
-                                           # have a help_text attribute
-            # print("20160725 {!r} has no help_text".format(fld))
-            return
-        if fld.help_text:
-            # if attrname == 'show_assigned':
-            #     print("20160620 {} on {} has already a help_text {}".format(
-            #         attrname, cls, fld.help_text))
-            return
-        # if attrname == 'show_assigned':
-        #     print(20160810, cls)
         if cls is None:
             cls = fld
+        # debug = False
+        # from lino.core.actions import Action
+        # if isinstance(fld, Action) and fld.__class__.__name__ == 'ChangePassword':        
+        #     debug = True
+        # if isinstance(fld, type) and fld.__name__ == 'ChangePassword':        
+        # # if isinstance(fld, Action) and fld.__class__.__name__ == 'ChangePassword':
+        #     debug = True
+        if not hasattr(fld, 'help_text'):  # e.g. virtual fields don't
+                                           # have a help_text attribute
+            # if debug:
+            #     print("20160725 {!r} has no help_text".format(fld))
+            return
+        if fld.help_text:
+            # if debug:
+            #     print("20160829 {} on {} has already a help_text {}".format(attrname, cls, fld.help_text))
+            return
+        # if debug:
+        #     print(20160829, cls)
         # if isinstance(fld, type):
         #     cls = fld
         # else:
@@ -1630,11 +1637,11 @@ this field.
             txt = self._help_texts.get(k, None)
             if txt is None:
                 pass
-                # if k.endswith('My..user'):
+                # if debug:
                 #     print("20160725 {}.{} : no help_text using {!r}".format(
                 #         cls, attrname, k))
             else:
-                # if k.endswith('My.user'):
+                # if debug:
                 #     print("20160725 {}.{}.help_text found using {}".format(
                 #         cls, attrname, k))
                 fld.help_text = txt

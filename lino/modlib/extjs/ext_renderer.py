@@ -65,7 +65,9 @@ from lino.modlib.users.choicelists import UserProfiles
 if settings.SITE.user_model:
     from lino.modlib.users import models as users
 
-ONE_CHAR_LABEL = "\u00A0{}\u00A0"
+# ONE_CHAR_LABEL = "\u00A0{}\u00A0"
+# ONE_CHAR_LABEL = "<font size=\"4\">\u00A0{}\u00A0</font>"
+ONE_CHAR_LABEL = " <font size=\"4\">{}</font>"
 
 def prepare_label(mi):
     return mi.label
@@ -191,11 +193,11 @@ class ExtRenderer(HtmlRenderer):
 
         return kw
 
-
     def action_button(self, obj, ar, ba, label=None, **kw):
         label = label or ba.get_button_label()
         if len(label) == 1:
-            label = ONE_CHAR_LABEL.format(label)
+            label = "\u00A0{}\u00A0".format(label)
+            # label = ONE_CHAR_LABEL.format(label)
         if ba.action.parameters and not ba.action.no_params_window:
             st = self.get_action_status(ar, ba, obj)
             return self.window_action_button(
@@ -430,7 +432,8 @@ class ExtRenderer(HtmlRenderer):
             d.update(iconCls='x-tbar-' + mi.bound_action.action.icon_name)
         if settings.SITE.use_quicktips and help_text:
             d.update(listeners=dict(render=js_code(
-                "Lino.quicktip_renderer(%s,%s)" % (py2js('Foo'), py2js(help_text)))
+                "Lino.quicktip_renderer(%s,%s)" % (
+                    py2js('Foo'), py2js(help_text)))
             ))
         return d
 
@@ -912,9 +915,6 @@ class ExtRenderer(HtmlRenderer):
         combo_map = dict()
         for ba in action_list:
 
-            # if ba.actor.__name__ == 'AttestationsByProject':
-            #     logger.info("20140401 toolbar() %r", ba.action)
-            
             if ba.action.show_in_bbar and ba.get_view_permission(profile):
                 if ba.action.combo_group is None:
                     buttons.append(self.a2btn(ba))
@@ -980,6 +980,7 @@ class ExtRenderer(HtmlRenderer):
             txt = a.button_text or a.label
             if len(txt) == 1:
                 txt = ONE_CHAR_LABEL.format(txt)
+                
             kw.update(text=txt)
         kw.update(
             #~ name=a.name,
@@ -992,7 +993,20 @@ class ExtRenderer(HtmlRenderer):
         if a.key:
             kw.update(keycode=a.key.keycode)
         if a.help_text:
-            kw.update(tooltip=a.help_text)
+            # if a.__class__.__name__ in ('ChangePassword', 'SubmitDetail'):
+            #     logger.info("20160829 a2btn() %r %r", a, str(a.help_text))
+            
+            # A tooltip becomes visible only on buttons with an
+            # iconCls. On a button which has only text we must use
+            # Lino.quicktip_renderer. But I didn't find out why this
+            # doesn't seem to work.
+            if a.icon_name:
+                kw.update(tooltip=a.help_text)
+            elif settings.SITE.use_quicktips:
+                kw.update(listeners=dict(render=js_code(
+                    "Lino.quicktip_renderer('a2btn',%s)" %
+                    py2js(a.help_text))
+                ))
         elif a.icon_name:
             kw.update(tooltip=a.label)
         return kw

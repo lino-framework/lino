@@ -539,7 +539,7 @@ class FieldElement(LayoutElement):
 
         # When used as editor of an EditorGridPanel, don't set the
         # name attribute because it is not needed for grids and might
-        # conflict with fields of a surronding detail form. See ticket
+        # conflict with fields of a surrounding detail form. See ticket
         # #38 (`/blog/2011/0408`).  Also don't set a label then.
         if not isinstance(self.layout_handle.layout, layouts.ColumnsLayout):
             kw.update(name=self.field.name)
@@ -2193,6 +2193,7 @@ def create_layout_element(lh, name, **kw):
 
             elif de.slave_grid_format == 'summary':
                 e = SlaveSummaryPanel(lh, de, **kw)
+                e.add_requirements(*de.required_roles)
                 lh.add_store_field(e.field)
                 return e
             else:

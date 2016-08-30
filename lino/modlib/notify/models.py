@@ -214,6 +214,10 @@ dd.update_field(Notification, 'user',
 Notification.update_controller_field(
     null=True, blank=True, verbose_name=_("About"))
 
+dd.inject_field(
+    'users.User', 'notifyme_mode',
+    models.BooleanField(_('Notify me'), default=True))
+
 
 class Notifications(dd.Table):
     "Base for all tables of notifications."
@@ -276,6 +280,7 @@ class AllNotifications(Notifications):
 
 
 class MyNotifications(My, Notifications):
+    """Shows notifications emitted to you."""
     # label = _("My notifications")
     required_roles = dd.required(OfficeUser)
     column_names = "created subject owner sent workflow_buttons *"
@@ -290,7 +295,12 @@ class MyNotifications(My, Notifications):
 
     @classmethod
     def get_welcome_messages(cls, ar, **kw):
+        """Emits the :message:`You have %d unseen notifications.` message.
+
+        """
         sar = ar.spawn(cls)
+        if not sar.get_permission():
+            return
         count = sar.get_total_count()
         if count > 0:
             msg = _("You have %d unseen notifications.") % count
@@ -322,25 +332,30 @@ def send_pending_emails():
         return
     Notification = rt.models.notify.Notification
     qs = Notification.objects.filter(sent__isnull=True)
+    qs = qs.filter(user__notifyme_mode=True)
     if qs.count() > 0:
         dd.logger.debug(
             "Send out emails for %d notifications.", qs.count())
         for obj in qs:
             obj.send_email()
     else:
-        dd.logger.debug("No unsent notifications.")
+        dd.logger.debug("No notifications to send.")
 
 
 @dd.schedule_daily()
 def clear_seen_notifications():
-    """Delete notifications older than 24 hours that have been seen.
+    """Daily task which deletes notifications older than 24 hours. 
+
+    Currently it deletes *all* notifications, regardless of whether
+    they have been seen or not.  TODO: make this configurable.
 
     """
     remove_after = 24
     Notification = rt.models.notify.Notification
     qs = Notification.objects.filter(
-        seen__isnull=False,
         seen__lt=timezone.now()-timedelta(hours=remove_after))
+    if False:  # TODO: make this configurable
+        qs = qs.filter(seen__isnull=False)
     if qs.count() > 0:
         dd.logger.info(
             "Removing %d notifications older than %d hours.",

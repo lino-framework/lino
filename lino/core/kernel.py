@@ -474,6 +474,13 @@ class Kernel(object):
             if a.parameters is not None:
                 for name, fld in a.parameters.items():
                     site.install_help_text(fld, a, name)
+
+            for ba in a.get_actions():
+                # site.install_help_text(
+                #     ba.action.__class__, ba.action.action_name)
+                # site.install_help_text(ba.action, a, ba.action.action_name)
+                # site.install_help_text(ba.action, ba.action.__class__)
+                site.install_help_text(ba.action.__class__)
             
             if a.get_welcome_messages is not None:
                 site.add_welcome_handler(a.get_welcome_messages)
@@ -550,13 +557,7 @@ class Kernel(object):
 
             # trigger creation of params_layout.params_store
             for res in actors.actors_list:
-
                 for ba in res.get_actions():
-                    # site.install_help_text(
-                    #     ba.action.__class__, ba.action.action_name)
-                    site.install_help_text(
-                        res, res, ba.action.action_name)
-                
                     if ba.action.params_layout is not None:
                         ba.action.params_layout.get_layout_handle(
                             self.default_ui)

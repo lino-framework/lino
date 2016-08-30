@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 # Copyright 2011-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 """Database models for `lino.modlib.users`.
@@ -20,22 +21,47 @@ from django.contrib.auth.hashers import (
     check_password, make_password, is_password_usable)
 
 
-from lino.api import dd
+from lino.api import dd, rt
 from lino.utils.xmlgen.html import E
 from lino.core import actions
 from lino.core.fields import NullCharField
+from lino.core.roles import SiteAdmin
 
 from lino.mixins import CreatedModified
 
 from .choicelists import UserProfiles
 from .mixins import UserAuthored, TimezoneHolder
 
+class SendWelcomeMail(dd.Action):
+    """Send a welcome mail to this user."""
+    label = _("Welcome mail")
+    show_in_bbar = True
+    show_in_workflow = False
+    button_text = u"\u2709"  # ✉
+    
+    def run_from_ui(self, ar, **kw):
+
+        done_for = []
+        for obj in ar.selected_rows:
+            obj.send_welcome_email()
+            done_for.append(str(obj))
+
+        msg = _("Welcome mail has been sent to {}.").format(
+            ', '.join(done_for))
+        ar.success(msg, alert=True)
+
+
 
 class ChangePassword(dd.Action):
-    """Dialog action to change the password of a user.
+    """Change the password of this user.
 
     """
+    # button_text = u"\u205C"  # DOTTED CROSS (⁜)
+    # button_text = u"\u2042"  # ASTERISM (⁂)
+    button_text = u"\u2731" # 'HEAVY ASTERISK' (✱)
+    # icon_name = "disk"
     label = _("Change password")
+    
     parameters = dict(
         current=dd.PasswordField(_("Current password"), blank=True),
         new1=dd.PasswordField(_("New password"), blank=True),
@@ -47,24 +73,34 @@ class ChangePassword(dd.Action):
     new2
     """
 
+    def get_action_permission(self, ar, obj, state):
+        user = ar.get_user()
+        # print("20160825", obj, user)
+        if obj != user and \
+           not user.profile.has_required_roles([SiteAdmin]):
+            return False
+        return super(
+            ChangePassword, self).get_action_permission(ar, obj, state)
+
     def run_from_ui(self, ar, **kw):
         
         pv = ar.action_param_values
         if pv.new1 != pv.new2:
             ar.error("New passwords didn't match!")
             return
-        count = 0
+        done_for = []
         for obj in ar.selected_rows:
             if not obj.has_usable_password() \
                or obj.check_password(pv.current):
                 obj.set_password(pv.new1)
                 obj.full_clean()
                 obj.save()
-                count += 1
+                done_for.append(str(obj))
             else:
                 ar.info("Incorrect current password for %s." % obj)
 
-        msg = _("New password has been set for %d users.") % count
+        msg = _("New password has been set for {}.").format(
+            ', '.join(done_for))
         ar.success(msg, alert=True)
 
 
@@ -183,7 +219,7 @@ class User(CreatedModified, TimezoneHolder):
         if not ba.action.readonly:
             user = ar.get_user()
             if user != self:
-                if not isinstance(user.profile.role, dd.SiteAdmin):
+                if not isinstance(user.profile.role, SiteAdmin):
                     return False
         return super(User, self).get_row_permission(ar, state, ba)
         #~ return False
@@ -194,7 +230,7 @@ class User(CreatedModified, TimezoneHolder):
         See also :meth:`Users.get_row_permission`.
         """
         rv = super(User, self).disabled_fields(ar)
-        if not isinstance(ar.get_user().profile.role, dd.SiteAdmin):
+        if not isinstance(ar.get_user().profile.role, SiteAdmin):
             rv.add('profile')
         return rv
 
@@ -272,6 +308,30 @@ class User(CreatedModified, TimezoneHolder):
                         str(cls._meta.verbose_name), username))
             return default
 
+    # @dd.action(label=_("Send e-mail"),
+    #            show_in_bbar=True, show_in_workflow=False,
+    #            button_text="✉")  # u"\u2709"
+    # def do_send_email(self, ar):
+    #     self.send_welcome_email()
+
+    def send_welcome_email(self):
+        """"""
+        if not self.email:
+            # debug level because we don't want to see this message
+            # every 10 seconds:
+            dd.logger.debug("User %s has no email address", self)
+            return
+        subject = settings.EMAIL_SUBJECT_PREFIX + str(_("Welcome"))
+
+        template = rt.get_template('users/welcome_email.eml')
+        context = dict(obj=self, E=E, rt=rt)
+        body = template.render(**context)
+
+        sender = settings.SERVER_EMAIL
+        rt.send_email(subject, sender, body, [self.email])
+    
+        
+    do_send_email = SendWelcomeMail()
 
 class UserDetail(dd.FormLayout):
 
@@ -303,7 +363,7 @@ class UserInsert(dd.FormLayout):
 class Users(dd.Table):
     help_text = _("""Shows the list of all users on this site.""")
     #~ debug_actions  = True
-    required_roles = dd.required(dd.SiteAdmin)
+    required_roles = dd.required(SiteAdmin)
     model = 'users.User'
     #~ order_by = "last_name first_name".split()
     order_by = ["username"]
@@ -383,7 +443,7 @@ class Authority(UserAuthored):
 
 
 class Authorities(dd.Table):
-    required_roles = dd.required(dd.SiteAdmin)
+    required_roles = dd.required(SiteAdmin)
     model = Authority
 
 

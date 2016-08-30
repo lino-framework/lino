@@ -1,0 +1,8 @@
+<body>
+<p>Dear {{obj.get_full_name()}},</p>
+
+<p>Welcome to the
+<a href="{{rt.settings.SITE.server_url}}">{{rt.settings.SITE.server_url}}</a>
+</p>
+
+</body>
