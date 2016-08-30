@@ -294,3 +294,31 @@ In :ref:`care` we don't call them "tickets" but "pleas" (German
 ... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF
 Keine Daten anzuzeigen
 
+
+Rating tickets
+==============
+
+>>> base = '/choices/tickets/Tickets/rating'
+>>> show_choices("robin", base + '?query=')
+<br/>
+Excellent
+Good
+OK
+Suboptimal
+Bad
+
+>>> show_choices("rolf", base + '?query=')
+<br/>
+Ausgezeichnet
+Gut
+OK
+Suboptimal
+Schlecht
+
+>>> show_choices("romain", base + '?query=')
+<br/>
+Excellent
+Bien
+Suffisant
+Insuffisant
+Mauvais

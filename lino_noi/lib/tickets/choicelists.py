@@ -262,3 +262,18 @@ add('40', 'obsoletes', _("Obsoletes"), _("Obsoleted by"))
 # add('50', 'duplicates', _("Duplicates"), _("Duplicate of"))
 
 # LinkTypes.addable_types = [LinkTypes.requires, LinkTypes.duplicates]
+
+
+class Ratings(dd.ChoiceList):
+    verbose_name = _("Rating")
+    verbose_name_plural = _("Ratings")
+
+    
+add = Ratings.add_item
+add('50', _("Excellent"))
+add('40', _("Good"))
+add('30', _("OK"))
+add('20', _("Suboptimal"))
+add('10', _("Bad"))
+
+

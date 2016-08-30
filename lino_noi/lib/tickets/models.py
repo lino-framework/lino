@@ -56,7 +56,7 @@ from lino.modlib.notify.mixins import ChangeObservable
 from lino_xl.lib.excerpts.mixins import Certifiable
 from lino.utils import join_elems
 
-from .choicelists import TicketEvents, TicketStates, LinkTypes
+from .choicelists import TicketEvents, TicketStates, LinkTypes, Ratings
 from .roles import Triager
 
 
@@ -474,6 +474,7 @@ class Ticket(mixins.CreatedModified, Assignable, TimeInvestment, RFC,
         help_text=_("The user who reported this ticket."))
     state = TicketStates.field(
         default=TicketStates.new.as_callable)
+    rating = Ratings.field(blank=True)
     waiting_for = models.CharField(
         _("Waiting for"), max_length=200,
         blank=True,

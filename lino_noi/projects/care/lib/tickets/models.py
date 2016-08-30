@@ -34,9 +34,9 @@ class TicketDetail(TicketDetail):
     """, label=_("General"))
 
     general1 = """
-    summary:40 id:6
+    summary:40 id:6 deadline
     reporter:12 faculty topic assigned_to
-    deadline site project #private workflow_buttons
+    site project workflow_buttons rating
     """
 
     more = dd.Panel("""

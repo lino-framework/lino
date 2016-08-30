@@ -58,7 +58,7 @@ This document describes the database structure.
  tickets.Project             tickets.Projects             17        5
  tickets.ProjectType         tickets.ProjectTypes         4         0
  tickets.Site                tickets.Sites                4         3
- tickets.Ticket              tickets.Tickets              26        16
+ tickets.Ticket              tickets.Tickets              27        16
  tickets.TicketType          tickets.TicketTypes          4         3
  tinymce.TextFieldTemplate   tinymce.TextFieldTemplates   5         2
  topics.Interest             topics.Interests             3         6
