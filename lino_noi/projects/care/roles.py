@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015 Luc Saffre
+# Copyright 2015-2016 Luc Saffre
 #
 # This file is part of Lino Noi.
 #
@@ -33,23 +33,29 @@ from django.utils.translation import ugettext_lazy as _
 
 #class CareUser(Helper):
 class CareUser(Helper, OfficeUser):
-    """
-    """
-    pass
+    """A **simple user** is a person who can log into the application in
+    order to manage their own pleas and competences and potentially
+    can respond to other user's pleas.
 
-
-class Manager(CareUser, Worker, Triager):
-    """
     """
     pass
 
 
-class SiteAdmin(Manager, SiteAdmin, OfficeStaff):
+class Connector(CareUser, Worker, Triager):
+    """A **connector** is a person who knows other persons and who
+    introduces pleas on their behalf.
+
+    """
     pass
 
 
-EndUser = CareUser
-Developer = CareUser
+class SiteAdmin(Connector, SiteAdmin, OfficeStaff):
+    """A **site administrator** can create new users."""
+    pass
+
+
+#EndUser = CareUser
+#Developer = CareUser
 
 
 UserProfiles.clear()
@@ -57,5 +63,5 @@ add = UserProfiles.add_item
 add('000', _("Anonymous"),        UserRole, 'anonymous',
     readonly=True, authenticated=False)
 add('100', _("User"), CareUser, 'user')
-add('500', _("Manager"), Manager, 'manager')
+add('500', _("Connector"), Connector, 'connector')
 add('900', _("Administrator"),    SiteAdmin, 'admin')

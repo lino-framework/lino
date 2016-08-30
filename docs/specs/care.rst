@@ -89,10 +89,11 @@ These user roles are defined in :mod:`lino_noi.projects.care.roles`
 ------ ----------- -----------
  000    anonymous   Anonym
  100    user        Benutzer
- 500    manager     Manager
+ 500    connector   Connector
  900    admin       Verwalter
 ====== =========== ===========
 <BLANKLINE>
+
 
 >>> rt.show('users.Users')
 ============== ================ ========= ==============
