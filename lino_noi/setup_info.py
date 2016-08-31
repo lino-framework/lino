@@ -24,7 +24,7 @@
 SETUP_INFO = dict(
     name='lino-noi',
     version='0.0.3',  # since 20160712
-    install_requires=['lino_xl'],
+    install_requires=['lino-xl'],
     test_suite='tests',
     description=("The Lino application used by the Lino team for "
                  "managing their work on the Lino project"),
@@ -110,14 +110,15 @@ SETUP_INFO.update(message_extractors={
     ],
 })
 
-SETUP_INFO.update(package_data=dict())
+SETUP_INFO.update(include_package_data=True, zip_safe=False)
+# SETUP_INFO.update(package_data=dict())
 
 
-def add_package_data(package, *patterns):
-    l = SETUP_INFO['package_data'].setdefault(package, [])
-    l.extend(patterns)
-    return l
+# def add_package_data(package, *patterns):
+#     l = SETUP_INFO['package_data'].setdefault(package, [])
+#     l.extend(patterns)
+#     return l
 
-l = add_package_data('lino_noi.lib.noi')
-for lng in 'de fr'.split():
-    l.append('locale/%s/LC_MESSAGES/*.mo' % lng)
+# l = add_package_data('lino_noi.lib.noi')
+# for lng in 'de fr'.split():
+#     l.append('locale/%s/LC_MESSAGES/*.mo' % lng)
