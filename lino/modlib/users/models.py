@@ -90,7 +90,8 @@ class ChangePassword(dd.Action):
             return
         done_for = []
         for obj in ar.selected_rows:
-            if not obj.has_usable_password() \
+            if ar.get_user().profile.has_required_roles([SiteAdmin]) \
+               or not obj.has_usable_password() \
                or obj.check_password(pv.current):
                 obj.set_password(pv.new1)
                 obj.full_clean()
