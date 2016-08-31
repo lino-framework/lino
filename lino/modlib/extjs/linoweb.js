@@ -1852,12 +1852,14 @@ Ext.QuickTips.init();
     //~ dismissDelay: 0,
 //~ });
   
-Lino.quicktip_renderer = function(title,body) {
+Lino.quicktip_renderer = function(title, body) {
   return function(c) {
     //~ if (c instanceof Ext.Panel) var t = c.bwrap; else // 20130129
-    if (c instanceof Ext.Panel) var t = c.header; else // 20130129
-    var t = c.getEl();
-    //~ console.log(20130129,t,title,body);
+      if (c instanceof Ext.Panel)
+          var t = c.header;
+      else // 20130129
+          var t = c.getEl();
+    // if (title == 'a2btn') console.log(20160829, c, t, body);
     //~ t.dismissDelay = 0;
     Ext.QuickTips.register({
       target: t,
@@ -2571,6 +2573,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     var actions = Lino.build_buttons(this, this.ls_bbar_actions);
     if (actions) {
         this.bbar = actions.bbar;
+        console.log("20160829 tooltip", actions.bbar);
     //~ } else {
         //~ this.bbar = [];
     }
@@ -2890,7 +2893,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
   }
   
   ,set_current_record : function(record, after) {
-    // console.log('20150905 set_current_record', record);
+    // console.log('20160825 set_current_record', record);
     if (this.record_selector) {
         this.record_selector.clearValue();
         // e.g. InsertWrapper FormPanel doesn't have a record_selector
@@ -2905,7 +2908,11 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       if (da) {
           //~ console.log('20120528 disabled_actions =',da,this.getBottomToolbar());
           //~ 20121016 this.getBottomToolbar().items.each(function(item,index,length){
-          var tb = this.getTopToolbar();
+          if(this.hide_top_toolbar) {
+              var tb = this.getBottomToolbar();
+          } else {
+              var tb = this.getTopToolbar();
+          }
           if (tb) tb.items.each(function(item,index,length){
               //~ console.log('20120528 ',item.itemId,'-->',da[item.itemId]);
               if (da[item.itemId]) item.disable(); else item.enable();

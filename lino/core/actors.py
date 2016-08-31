@@ -265,6 +265,9 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         message>` (messages to be displayed in the welcome block of
         :xfile:`admin_main.html`).
 
+        Note that this handler will be called independently of whether
+        the user has permission to view the actor or not.
+
     """
 
     required_roles = set([SiteUser])

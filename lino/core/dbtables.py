@@ -488,6 +488,8 @@ class Table(AbstractTable):
                     if isinstance(v, actions.Action):
                         existing_value = self.__dict__.get(k, NOT_PROVIDED)
                         if existing_value is NOT_PROVIDED:
+                            # settings.SITE.install_help_text(
+                            #     v, v.__class__)
                             setattr(self, k, v)
                         else:
                             if existing_value is None:  # 20130820

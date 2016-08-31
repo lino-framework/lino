@@ -239,6 +239,8 @@ class MyProblems(Problems):
     @classmethod
     def get_welcome_messages(cls, ar, **kw):
         sar = ar.spawn(cls)
+        if not sar.get_permission():
+            return
         count = sar.get_total_count()
         if count > 0:
             msg = _("There are {0} plausibility problems assigned to you.")
