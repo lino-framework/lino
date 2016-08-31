@@ -101,6 +101,10 @@ class Command(BaseCommand):
                             default=DEFAULT_DB_ALIAS,
                             help='Nominates a database to reset. '
                                  'Defaults to the "default" database.')
+        parser.add_argument(
+            '--noreload', action='store_false', dest='use_reloader', default=True,
+            help='Tells Django to NOT use the auto-reloader.',
+        )
 
     def try_sql(self, conn, sql_list):
         hope = False
