@@ -31,10 +31,12 @@ reporter (a user)."""),
     'lino_noi.lib.tickets.models.TimeInvestment.private' : _("""Whether this investment is private, i.e. should not be
 publicly visible anywhere."""),
     'lino_noi.lib.tickets.choicelists.TicketStates' : _("""The state of a ticket (new, open, closed, ...)"""),
-    'lino_noi.projects.care.roles.EndUser' : _("""alias of CareUser"""),
     'lino_noi.lib.tickets.choicelists.LinkTypes.requires' : _("""The parent ticket requires the child ticket."""),
     'lino_noi.projects.public.settings.demo.Site' : _("""Defines and instantiates a demo version of Lino Noi."""),
+    'lino_noi.projects.care.roles.SiteAdmin' : _("""A site administrator can create new users."""),
     'lino_noi.lib.clocking.actions.PrintActivityReport' : _("""Print an activity report."""),
+    'lino_noi.projects.care.roles.Connector' : _("""A connector is a person who knows other persons and who
+introduces pleas on their behalf."""),
     'lino_noi.lib.tickets.ui.ActiveProjects' : _("""Show a list of active projects."""),
     'lino_noi.lib.tickets.models.Ticket.description' : _("""A complete and concise description of the ticket. This should
 describe in more detail what this ticket is about. If the
@@ -47,7 +49,6 @@ not change anymore."""),
 session this defaults to the needed faculty currently specified
 on the ticket."""),
     'lino_noi.lib.clocking.ui.SessionsByTicket.slave_summary' : _("""This panel shows:"""),
-    'lino_noi.projects.care.roles.Developer' : _("""alias of CareUser"""),
     'lino_noi.lib.tickets.models.TimeInvestment' : _("""Model mixin for things which represent a time investment.  This
 currently just defines a group of three fields:"""),
     'lino_noi.lib.clocking.ui.TicketHasSessions' : _("""Select only tickets for which there has been at least one session
@@ -64,7 +65,7 @@ users."""),
     'lino_noi.lib.tickets.choicelists.TicketStates.new' : _("""Somebody reported this ticket, but there was no response so
 far.
 The ticket needs to be triaged."""),
-    'lino_noi.lib.users.models.UserDetail' : _("""Layout of User Detail in Lino Welfare."""),
+    'lino_noi.lib.users.models.UserDetail' : _("""Layout of User Detail in Lino Noi."""),
     'lino_noi.lib.tickets.choicelists.TicketStates.todo' : _("""The ticket is confirmed and we are working on it.
 It appears in the todo list of somebody (either the assigned
 worker, or our general todo list)"""),
@@ -85,6 +86,9 @@ is waiting for."""),
     'lino_noi.lib.noi.roles.Senior' : _("""A senior developer is a developer who is additionally
 responsible for triaging tickets"""),
     'lino_noi.lib.tickets.models.TicketType' : _("""The type of a Ticket."""),
+    'lino_noi.projects.care.roles.SimpleUser' : _("""A simple user is a person who can log into the application in
+order to manage their own pleas and competences and potentially
+can respond to other user's pleas."""),
     'lino_noi.lib.tickets.ui.TicketsToTriage' : _("""List of tickets that need to be triaged.  Currently this is
 equivalent to those having their state set to new."""),
     'lino_noi.lib.tickets.ui.Tickets.show_private' : _("""Show only (or hide) tickets that are marked private."""),
