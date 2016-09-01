@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2014-2015 Luc Saffre
+# Copyright 2014-2016 Luc Saffre
 #
 # This file is part of Lino Noi.
 #
@@ -28,10 +28,9 @@
 
 """
 
-import os
-
-filename = os.path.join(os.path.dirname(__file__), 'setup_info.py')
-exec(compile(open(filename, "rb").read(), filename, 'exec'))
+from past.builtins import execfile
+from os.path import join, dirname
+execfile(join(dirname(__file__), 'setup_info.py'))
 
 __version__ = SETUP_INFO['version']
 

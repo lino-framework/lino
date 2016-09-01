@@ -1,6 +1,5 @@
 from setuptools import setup
-filename = 'lino_noi/setup_info.py'
-exec(compile(open(filename, "rb").read(), filename, 'exec'))
-
+from past.builtins import execfile
+execfile('lino_noi/setup_info.py')
 if __name__ == '__main__':
     setup(**SETUP_INFO)
