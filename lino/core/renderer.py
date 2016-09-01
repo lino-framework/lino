@@ -136,7 +136,12 @@ class HtmlRenderer(Renderer):
         return ar.table2xhtml(**kw)
 
     def action_call(self, request, bound_action, status):
-        return None
+        """Returns the action name. This is not a valid link, but it's
+        important to differentiate between clickable and non-clickable
+        :meth:`obj2html` calls.
+
+        """
+        return str(bound_action.action)
 
     def action_call_on_instance(self, obj, ar, ba, request_kwargs={}, **st):
         """Return a string with Javascript code that would run the given
@@ -252,8 +257,17 @@ request `tar`."""
         return settings.SITE.kernel.default_ui.build_plain_url(*args, **kw)
 
     def instance_handler(self, ar, obj):
-        "Overridden by :mod:`lino.modlib.extjs.ext_renderer`"
-        return None
+        a = obj.get_detail_action(ar)
+        
+        if a is not None:
+            if ar is None:
+                return self.action_call(None, a, dict(record_id=obj.pk))
+            if a.get_bound_action_permission(ar, obj, None):
+                return self.action_call(ar, a, dict(record_id=obj.pk))
+
+    # def instance_handler(self, ar, obj):
+    #     "Overridden by :mod:`lino.modlib.extjs.ext_renderer`"
+    #     return None
 
     def obj2html(self, ar, obj, text=None, **kwargs):
         """Return a html representation of a pointer to the given database

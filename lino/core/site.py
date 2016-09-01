@@ -285,6 +285,7 @@ class Site(object):
     used by :mod:`lino.modlib.notify` when generating the mail body.
 
     """
+    
     make_missing_dirs = True
     """
     Set this to `False` if you don't want this Site to automatically
