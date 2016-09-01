@@ -79,7 +79,8 @@ document and builds is only when it doesn't yet exist."""),
     'lino.modlib.plausibility.models.Problem.user' : _("""The user reponsible
 for fixing this problem."""),
     'lino.modlib.changes.Plugin' : _("""See /dev/plugins."""),
-    'lino.utils.djangotest.WebIndexTestCase' : _("""Designed to be just imported. No subclassing needed."""),
+    'lino.modlib.printing.mixins.Printable' : _("""Mixin for models whose instances have a "print" action (i.e. for
+which Lino can generate a printable document)."""),
     'lino.modlib.system.choicelists.PeriodEvents' : _("""The list of things you can observe on a
 lino.mixins.periods.DatePeriod."""),
     'lino.modlib.extjs.elems.SlaveSummaryPanel' : _("""The panel used to display a slave table whose slave_grid_format
@@ -160,6 +161,8 @@ a confirmation if there is a possible duplicate record."""),
 Net yet used in practice."""),
     'lino.modlib.export_excel.Plugin' : _("""See /dev/plugins."""),
     'lino.mixins.Referrable.ref_max_length' : _("""The maximum length of the ref field."""),
+    'lino.modlib.users.models.ChangePassword.new1' : _("""The new password."""),
+    'lino.modlib.users.models.ChangePassword.new2' : _("""The new password a second time. Both passwords must match."""),
     'lino.modlib.uploads.models.UploadType' : _("""The type of an upload."""),
     'lino.modlib.extjs.views.Restful' : _("""Used to collaborate with a restful Ext.data.Store."""),
     'lino.mixins.sequenced.MoveDown' : _("""Move current row one downwards. This action is available on any
@@ -418,8 +421,7 @@ If the lookup_field is a BabelField, then it tries all available languages."""),
 "Description" by default) for each language."""),
     'lino.modlib.plausibility.models.ProblemsByChecker.model' : _("""alias of Problem"""),
     'lino.utils.xmlgen.cbss.WebServiceConnector' : _("""The WebServiceConnector namespace used for wrapping "classical" CBSS services."""),
-    'lino.modlib.printing.mixins.Printable' : _("""Mixin for models whose instances have a "print" action (i.e. for
-which Lino can generate a printable document)."""),
+    'lino.utils.djangotest.WebIndexTestCase' : _("""Designed to be just imported. No subclassing needed."""),
     'lino.modlib.printing.mixins.CachedPrintableChecker' : _("""Checks for missing cache files on all objects which inherit
 CachedPrintable."""),
     'lino.modlib.bootstrap3.views.Element' : _("""Render a single record."""),
@@ -442,6 +444,8 @@ lino.modlib.printing.choicelists.BuildMethods."""),
     'lino.modlib.printing.mixins.CachedPrintable.build_time' : _("""Timestamp of the built target file. Contains None
 if no build hasn't been called yet."""),
     'lino.modlib.changes.models.ChangesByMaster.model' : _("""alias of Change"""),
+    'lino.modlib.users.models.ChangePassword.current' : _("""The current password. Leave empty if the user has no password
+yet. And SiteAdmin users don't need to specify this at all."""),
     'lino.modlib.uploads.models.Upload' : _("""Represents an uploaded file."""),
     'lino.modlib.gfks.fields.GenericForeignKey' : _("""Add verbose_name and help_text to Django's GFK."""),
     'lino.utils.dbfreader.DBTFile' : _("""Represents a DBT block file"""),
