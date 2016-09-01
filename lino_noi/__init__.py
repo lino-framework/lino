@@ -28,9 +28,9 @@
 
 """
 
-from past.builtins import execfile
 from os.path import join, dirname
-execfile(join(dirname(__file__), 'setup_info.py'))
+fn = join(dirname(__file__), 'setup_info.py')
+exec(compile(open(fn, "rb").read(), fn, 'exec'))
 
 __version__ = SETUP_INFO['version']
 
