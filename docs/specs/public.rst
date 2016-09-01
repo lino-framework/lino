@@ -36,12 +36,12 @@ The demo database contains the following data:
 
 >>> rt.show(tickets.PublicTickets)
 ... #doctest: +REPORT_UDIFF
-================================== ========== ============= ========= =========== ==========
- Overview                           State      Ticket type   Project   Topic       Priority
----------------------------------- ---------- ------------- --------- ----------- ----------
- *#13 (Bar cannot foo)*             Sleeping   Bugfix        linö      Lino Cosi   0
- *#1 (Föö fails to bar when baz)*   New        Bugfix        linö      Lino Cosi   0
-================================== ========== ============= ========= =========== ==========
+============================================= ========== ============= ========= =========== ==========
+ Overview                                      State      Ticket type   Project   Topic       Priority
+--------------------------------------------- ---------- ------------- --------- ----------- ----------
+ `#13 (Bar cannot foo) <Detail>`__             Sleeping   Bugfix        linö      Lino Cosi   0
+ `#1 (Föö fails to bar when baz) <Detail>`__   New        Bugfix        linö      Lino Cosi   0
+============================================= ========== ============= ========= =========== ==========
 <BLANKLINE>
 
 The home page:

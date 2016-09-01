@@ -73,4 +73,4 @@ Or the plain text renderer will render:
 
 >>> ses = rt.login()
 >>> print(ses.parse_memo("See [ticket 1]."))
-See <em>#1</em>.
+See <a href="Detail" title="F&#246;&#246; fails to bar when baz">#1</a>.
