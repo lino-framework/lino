@@ -236,7 +236,7 @@ def choicelist_choices():
         else:
             text = v.verbose_name_plural
         l.append((k, text))
-    l.sort(lambda a, b: cmp(a[0], b[0]))
+    l.sort(cmp=lambda a, b: cmp(a[0], b[0]))
     return l
 
 
