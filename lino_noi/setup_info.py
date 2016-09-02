@@ -26,6 +26,7 @@ SETUP_INFO = dict(
     version='0.0.3',  # since 20160712
     install_requires=['lino-xl'],
     test_suite='tests',
+    tests_require=['pytest'],
     description=("The Lino application used by the Lino team for "
                  "managing their work on the Lino project"),
     long_description="""Lino Noi is a customizable ticket management and time tracking
