@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2015 Luc Saffre
+# Copyright 2009-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """This defines the :class:`ConfigDirCache` which Lino instantiates
@@ -31,6 +31,7 @@ from os.path import join, abspath, dirname, isdir
 import sys
 import codecs
 from fnmatch import fnmatch
+import six
 
 fs_encoding = sys.getfilesystemencoding() or sys.getdefaultencoding()
 
@@ -65,7 +66,9 @@ class ConfigDirCache(object):
         config_dirs = []
 
         for pth in site.get_settings_subdirs(SUBDIR_NAME):
-            config_dirs.append(ConfigDir(pth.decode(fs_encoding), False))
+            if six.PY2:
+                pth = pth.decode(fs_encoding)
+            config_dirs.append(ConfigDir(pth, False))
 
         def add_config_dir(name, mod):
             pth = join(dirname(mod.__file__), SUBDIR_NAME)
