@@ -10,7 +10,8 @@ from lino_xl.lib.contacts.roles import ContactsUser, ContactsStaff
 # from lino.modlib.users.roles import AuthorshipTaker
 
 
-class OfficeUser(ContactsUser):
+# class OfficeUser(ContactsUser):
+class OfficeUser(SiteUser):
     """A user who has access to office functionality like calendar, notes
     and uploads.
 

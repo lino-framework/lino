@@ -265,7 +265,7 @@ def inject_action(model_spec, **actions):
 
 def update_model(model_spec, **actions):
     """
-    Replace the specified attributes in the specified model.q
+    Replace the specified attributes in the specified model.
     """
     def todo(model):
         for k, v in list(actions.items()):

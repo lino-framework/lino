@@ -243,11 +243,11 @@ def _chooser(make, **options):
     #~ options.setdefault('quick_insert_field',None)
     def chooser_decorator(fn):
         def wrapped(*args):
-            #~ print 20101220, args
             return fn(*args)
-        wrapped.context_params = fn.__code__.co_varnames[
-            1:fn.__code__.co_argcount]
-        #~ 20120918b wrapped.context_params = fn.func_code.co_varnames[2:fn.func_code.co_argcount]
+        cp = options.pop(
+            'context_params',
+            fn.__code__.co_varnames[1:fn.__code__.co_argcount])
+        wrapped.context_params = cp
         for k, v in list(options.items()):
             setattr(wrapped, k, v)
         return make(wrapped)

@@ -34,7 +34,6 @@ SETUP_INFO = dict(
         'openpyxl',
         'weasyprint',
         'django-wkhtmltopdf'],
-    tests_require=[],
     # pisa has a bug which makes it complain that "Reportlab Version
     # 2.1+ is needed!" when reportlab 3 is installed.
     # So we install reportlab 2.7 (the latest 2.x version)

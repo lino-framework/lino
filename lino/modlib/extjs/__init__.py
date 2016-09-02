@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2015 Luc Saffre
+# Copyright 2009-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Adds the default Lino user interface based on ExtJS.
@@ -151,8 +151,8 @@ class Plugin(Plugin):
                         constants.URL_PARAM_MASTER_TYPE)
                 else:
                     yield (
-                        "%s.setContextValue(%r, record ? record."
-                        "data[%r] : undefined);" % (
+                        "%s.setContextValue('%s', record ? record."
+                        "data['%s'] : undefined);" % (
                             e.as_ext(), f.name, form_field_name(f)))
 
     def get_css_includes(self, site):

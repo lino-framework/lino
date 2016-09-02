@@ -250,6 +250,7 @@ def visible_for(ba):
     if len(visible) == 0:
         return "nobody"
     # if len(hidden) < len(visible):
+    # if len(hidden) <= 3:
     #     return "all except %s" % ', '.join(hidden)
     return ' '.join(visible)
 

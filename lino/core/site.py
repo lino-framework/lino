@@ -285,6 +285,7 @@ class Site(object):
     used by :mod:`lino.modlib.notify` when generating the mail body.
 
     """
+    
     make_missing_dirs = True
     """
     Set this to `False` if you don't want this Site to automatically
@@ -993,7 +994,7 @@ class Site(object):
     # appy_params = dict(ooPort=8100)
     appy_params = dict(
         ooPort=8100, pythonWithUnoPath='/usr/bin/python3',
-        raiseOnError=False)
+        raiseOnError=True)
     """Used by :class:`lino.mixins.printable.AppyBuildMethod`.
 
     Allowed keyword arguments for `appy.pod.renderer.Render` are::

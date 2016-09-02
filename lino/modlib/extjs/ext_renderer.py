@@ -1040,7 +1040,7 @@ class ExtRenderer(HtmlRenderer):
                         #~ varname = varname_field(f)
                         #~ on_render.append("%s.on('change',Lino.chooser_handler(%s,%r));" % (varname,e.ext_name,f.name))
                         on_render.append(
-                            "%s.on('change',Lino.chooser_handler(%s,%r));" % (
+                            "%s.on('change',Lino.chooser_handler(%s,'%s'));" % (
                                 el.as_ext(), e.as_ext(), f.name))
         return on_render
 

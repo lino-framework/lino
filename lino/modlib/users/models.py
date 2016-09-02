@@ -55,6 +55,19 @@ class SendWelcomeMail(dd.Action):
 class ChangePassword(dd.Action):
     """Change the password of this user.
 
+    .. attribute:: current
+
+        The current password. Leave empty if the user has no password
+        yet. And SiteAdmin users don't need to specify this at all.
+
+    .. attribute:: new1
+
+        The new password.
+
+    .. attribute:: new2
+
+        The new password a second time. Both passwords must match.
+
     """
     # button_text = u"\u205C"  # DOTTED CROSS (⁜)
     # button_text = u"\u2042"  # ASTERISM (⁂)
@@ -90,7 +103,8 @@ class ChangePassword(dd.Action):
             return
         done_for = []
         for obj in ar.selected_rows:
-            if not obj.has_usable_password() \
+            if ar.get_user().profile.has_required_roles([SiteAdmin]) \
+               or not obj.has_usable_password() \
                or obj.check_password(pv.current):
                 obj.set_password(pv.new1)
                 obj.full_clean()

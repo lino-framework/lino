@@ -423,12 +423,17 @@ class Model(models.Model):
 
     @classmethod
     def define_action(cls, **kw):
-        """
-        Adds one or several actions to this model.
-        Actions must be specified using keyword arguments.
+        """Adds one or several actions or other class attributes to this
+        model.
+        
+        Attributes must be specified using keyword arguments, the
+        specified keys must not yet exist on the model.
 
-        Used e.g. by :mod:`lino_xl.lib.cal` to add the `UpdateReminders`
+        Used e.g. in :mod:`lino_xl.lib.cal` to add the `UpdateReminders`
         action to :class: `lino.modlib.users.models.User`.
+
+        Or in :mod:`lino_cosi.lib.invoicing.models` for defining a
+        custom chooser.
 
         """
         for k, v in list(kw.items()):

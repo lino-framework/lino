@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2015 Luc Saffre
+# Copyright 2008-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 """Extended fields for use with `lino.modlib.gfks`.
 """
@@ -41,12 +41,16 @@ class GenericForeignKey(DjangoGenericForeignKey):
         # Chooser
         fk_choices_name = "{fk_field}_choices".format(fk_field=self.fk_field)
         if not hasattr(cls, fk_choices_name):
-            def fk_choices(obj, **kwargs):
-                object_type = kwargs[self.ct_field]
+            def fk_choices(obj, *args):
+                # print 20160830, obj, args
+                object_type = args[0]
                 if object_type:
                     return object_type.model_class().objects.all()
                 return []
-            field = chooser(instance_values=True)(fk_choices)
+            field = chooser(
+                instance_values=True,
+                context_params=[self.ct_field])(fk_choices)
+            # field.context_params = [self.fk_field]
             setattr(cls, fk_choices_name, field)
 
         # Display

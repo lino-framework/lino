@@ -6,7 +6,6 @@ global-include *.txt *.rst *.js *.css *.html \
   *.xsd \
   *.mo
 include bash/*
-prune docs
 prune rtlib
 prune lino/sandbox
 prune screenshots
