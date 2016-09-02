@@ -528,6 +528,9 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     """
 
+    def __init__(self, *args, **kw):
+        raise Exception("Actors should never get instantiated")
+
     @classmethod
     def apply_cell_format(self, ar, row, col, recno, td):
         """

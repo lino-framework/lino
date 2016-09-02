@@ -446,9 +446,6 @@ method in order to sort the rows of the queryset.
     view.
     """
 
-    def __init__(self, *args, **kw):
-        raise NotImplementedError("20120104")
-
     @classmethod
     def spawn(cls, suffix, **kw):
         kw['app_label'] = cls.app_label
