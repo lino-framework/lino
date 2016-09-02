@@ -16,6 +16,7 @@ from lino.core.tables import AbstractTable
 from lino.utils.media import TmpMediaFile
 from lino.utils.xmlgen.html import E
 from lino.utils.quantities import Duration
+from lino.core.choicelists import Choice
 from lino.api import dd
 
 from django.utils.translation import ugettext_lazy as _
@@ -60,7 +61,7 @@ def ar2workbook(ar, column_names=None):
             value = sf.full_value_from_object(row, ar)
             if type(value) == bool:
                 value = value and 1 or 0
-            elif isinstance(value, Duration):
+            elif isinstance(value, (Duration, Choice)):
                 value = str(value)
             elif E.iselement(value):
                 value = E.to_rst(value)
