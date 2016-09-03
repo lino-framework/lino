@@ -237,11 +237,7 @@ def choicelist_choices():
             text = v.verbose_name_plural
         l.append((k, text))
 
-    def f(a, b):
-        return cmp(a[0], b[0])
-
-    from functools import cmp_to_key
-    l.sort(key=cmp_to_key(f))
+    l.sort(key=lambda x: x[0])
     return l
 
 
