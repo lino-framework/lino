@@ -64,7 +64,6 @@ Utilities
     office
     smtpd
     uploads
-    vocbook
 
 
 """

@@ -162,7 +162,6 @@ lino.modlib.tinymce.fixtures
 lino.modlib.uploads
 lino.modlib.users
 lino.modlib.users.fixtures
-lino.modlib.vocbook
 lino.modlib.weasyprint
 lino.modlib.wkhtmltopdf
 lino.projects
