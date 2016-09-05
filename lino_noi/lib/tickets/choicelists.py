@@ -115,11 +115,15 @@ class TicketStates(dd.Workflow):
 
         Special state for permanent tickets which have no lifecycle.
 
+    .. attribute:: ready
+
+        The ticket is basically :attr:`done`, but some detail still
+        needs to be done by the :attr:`reporter` (e.g. testing,
+        confirmation, documentation,..)
+
     .. attribute:: done
 
-        The ticket is basically done. If it is not also marked as
-        closed, then something else still needs to be done
-        (e.g. testing, confirmation, documentation,..)
+        The ticket has been done.
 
     .. attribute:: refused
 
