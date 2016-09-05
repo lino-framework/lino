@@ -30,24 +30,31 @@ from lino.modlib.printing.mixins import DirectPrintAction
 from lino.core.roles import SiteUser
 from .roles import Worker
 
-
 class EndSession(dd.Action):
-    """To close a session means to stop working on that ticket for this time.
+    """Close a given session, i.e. stop working on that ticket for this
+    time.  Common base for :class:`EndThisSession` and
+    :class:`EndTicketSession`.
 
     """
-    label = u"◉"  # FISHEYE (U+25C9)
+    label = u"■"  # BLACK SQUARE (U+25A0)
+    # label = u"◉"  # FISHEYE (U+25C9)
     # label = u"↘"  # u"\u2198"
     # label = _("End session")
-    help_text = _("End this session.")
-    # icon_name = 'emoticon_smile'
+    # label = u"\u231a\u2198"
     show_in_workflow = True
     show_in_bbar = False
     readonly = False
+    required_roles = dd.required(Worker)
+
+class EndThisSession(EndSession):
+    """Close this session, i.e. stop working on that ticket for this time.
+
+    """
 
     def get_action_permission(self, ar, obj, state):
         if obj.end_time:
             return False
-        return super(EndSession, self).get_action_permission(ar, obj, state)
+        return super(EndThisSession, self).get_action_permission(ar, obj, state)
 
     def run_from_ui(self, ar, **kw):
 
@@ -69,16 +76,9 @@ class EndSession(dd.Action):
             ar.confirm(ok, msg, _("Are you sure?"))
 
 
-class EndTicketSession(dd.Action):
-    # label = _("End session")
-    # label = u"\u231a\u2198"
-    # label = u"↘"  # u"\u2198"
-    label = u"◉"  # FISHEYE (U+25C9)
-    help_text = _("End the active session on this ticket.")
-    show_in_workflow = True
-    show_in_bbar = False
-    required_roles = dd.required(Worker)
-    readonly = False
+class EndTicketSession(EndSession):
+    """End your running session on this ticket. 
+    """
     
     def get_action_permission(self, ar, obj, state):
         # u = ar.get_user()

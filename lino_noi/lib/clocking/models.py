@@ -18,34 +18,7 @@
 # <http://www.gnu.org/licenses/>.
 
 
-"""Database models for `lino_noi.lib.clocking`.
-
-A **Session** is when a user works during a given lapse of time on a
-given Ticket.
-
-All the sessions related to a given project represent the time
-invested into that Project.
-
-Extreme case of a session:
-
-- I start to work on an existing ticket #1 at 9:23.  A customer phones
-  at 10:17 with a question. Created #2.  That call is interrupted
-  several times (by the customer himself).  During the first
-  interruption another customer calls, with another problem (ticket
-  #3) which we solve together within 5 minutes.  During the second
-  interruption of #2 (which lasts 7 minutes) I make a coffee break.
-
-  During the third interruption I continue to analyze the customer's
-  problem.  When ticket #2 is solved, I decided that it's not worth to
-  keep track of each interruption and that the overall session time
-  for this ticket can be estimated to 0:40.
-
-  ::
-
-    Ticket start end    Pause  Duration
-    #1     9:23  13:12  0:45
-    #2     10:17 11:12  0:12       0:43
-    #3     10:23 10:28             0:05
+"""Database models for this plugin.
 
 """
 
@@ -64,7 +37,7 @@ from lino.utils.quantities import Duration
 from lino_xl.lib.cal.mixins import Started, Ended
 from lino.modlib.users.mixins import UserAuthored
 
-from .actions import EndSession, PrintActivityReport, EndTicketSession
+from .actions import EndThisSession, PrintActivityReport, EndTicketSession
 
 
 class SessionType(mixins.BabelNamed):
@@ -78,7 +51,30 @@ class SessionType(mixins.BabelNamed):
 
 
 class Session(UserAuthored, Started, Ended):
-    """A Session is when a user works on a given ticket.
+    """A **Session** is when a user works during a given lapse of time on
+    a given Ticket.
+
+    Extreme case of a session:
+
+    - I start to work on an existing ticket #1 at 9:23.  A customer phones
+      at 10:17 with a question. Created #2.  That call is interrupted
+      several times (by the customer himself).  During the first
+      interruption another customer calls, with another problem (ticket
+      #3) which we solve together within 5 minutes.  During the second
+      interruption of #2 (which lasts 7 minutes) I make a coffee break.
+
+      During the third interruption I continue to analyze the
+      customer's problem.  When ticket #2 is solved, I decided that
+      it's not worth to keep track of each interruption and that the
+      overall session time for this ticket can be estimated to 0:40.
+
+      ::
+
+        Ticket start end    Pause  Duration
+        #1      9:23 13:12  0:45
+        #2     10:17 11:12  0:12       0:43
+        #3     10:23 10:28             0:05
+
 
     .. attribute:: start_time
     .. attribute:: end_time
@@ -120,7 +116,7 @@ class Session(UserAuthored, Started, Ended):
         'faculties.Faculty', related_name="sessions_by_faculty",
         blank=True, null=True)
 
-    end_session = EndSession()
+    end_session = EndThisSession()
     # print_activity_report = PrintActivityReport()
 
     def __unicode__(self):

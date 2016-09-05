@@ -127,7 +127,7 @@ class TicketStates(dd.Workflow):
 
     """
     item_class = TicketState
-    column_names = "value name text active"
+    column_names = "value name text button_text active"
     active = models.BooleanField(_("Active"), default=False)
     required_roles = dd.required(dd.SiteStaff)
     
@@ -138,26 +138,36 @@ add = TicketStates.add_item
 #     required=dict(states=['', 'active']),
 #     action_name=_("Start"),
 #     help_text=_("Ticket has been assigned to somebody who is assigned on it."))
-add('10', _("New"), 'new')
-add('15', _("Talk"), 'talk', active=True)
-add('20', _("ToDo"), 'todo', active=True)
-add('21', _("Sticky"), 'sticky')
-add('30', _("Sleeping"), 'sleeping')
+add('10', _("New"), 'new',
+    button_text=u"📥")  # INBOX TRAY (U+1F4E5)
+add('15', _("Talk"), 'talk', active=True,
+    button_text=u"🗪")  # TWO SPEECH BUBBLES (U+1F5EA)
+add('20', _("ToDo"), 'todo', active=True,
+    button_text=u"🐜")  # ANT (U+1F41C)
+add('21', _("Sticky"), 'sticky',
+    button_text=u"📌")  # PUSHPIN (U+1F4CC)
+add('30', _("Sleeping"), 'sleeping',
+    # button_text=u"🐌")  # SNAIL (U+1F40C)
+    button_text=u"🕸")  # SPIDER WEB (U+1F578)	
 # add('30', _("Callback"), 'callback',
     # required=dict(states=['new']),
     # action_name=_("Wait for feedback"),
     # help_text=_("Waiting for feedback from partner."))
 add('40', _("Ready"), 'ready',
-    help_text=_(
-        "Has been fixed. Ready for release. Waiting to be tested."),
-    active=True)
-add('50', _("Done"), 'done')
+    # help_text=_(
+    #     "Has been fixed. Ready for release. Waiting to be tested."),
+    active=True,
+    button_text="\u2610")  # BALLOT BOX
+add('50', _("Done"), 'done',
+    button_text="\u2611")  # BALLOT BOX WITH CHECK
+
 # add('50', _("Tested"), 'tested',
 #     # required=dict(states=['fixed']),
 #     help_text=_("Has been fixed and tested."))
 add('60', _("Refused"), 'refused',
     # required=dict(states="tested new todo callback"),
-    help_text=_("It has been decided that we won't fix this ticket."))
+    # help_text=_("It has been decided that we won't fix this ticket."))
+    button_text=u"🗑")  # WASTEBASKET (U+1F5D1)
 # add('90', _("Cancelled"), 'cancelled',
 #     # required=dict(states=['new todo waiting']),
 #     help_text=_("Has been cancelled for some reason."))
