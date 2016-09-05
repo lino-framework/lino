@@ -103,8 +103,8 @@ And in French (not yet fully translated):
 
 Note that a ticket also has a checkbox for marking it as :attr:`closed
 <lino_noi.lib.tickets.models.Ticket.closed>`.  This means that a ticket
-can be marked as "closed" in any of above states.  We are not sure
-whether this is a cool feature (#372).
+can be marked as "closed" in any of above states.  We don't use this for the moment and are not sure
+whether this is a cool feature (:ticket:`372`).
 
 - :attr:`standby <lino_noi.lib.tickets.models.Ticket.standby>` 
 
