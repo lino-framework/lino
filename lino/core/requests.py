@@ -375,7 +375,7 @@ request from it.
             # Jinja doesn't like a name 'self' in the context which
             # might exist there in a backwards-compatible appypod
             # template:
-            kw.pop('self')
+            kw.pop('self', None)
             return dd.plugins.jinja.renderer.jinja_env.from_string(
                 s).render(**kw)
         kw.update(parse=parse)
