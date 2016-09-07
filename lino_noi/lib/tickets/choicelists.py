@@ -291,10 +291,11 @@ class Ratings(dd.ChoiceList):
 
     
 add = Ratings.add_item
-add('50', _("Excellent"))
-add('40', _("Good"))
-add('30', _("OK"))
-add('20', _("Suboptimal"))
-add('10', _("Bad"))
+add('10', _("Very good"))
+add('20', _("Good"))
+add('30', _("Satisfying"))
+add('40', _("Deficient"))
+add('50', _("Insufficient"))
+add('90', _("Unratable"))
 
 

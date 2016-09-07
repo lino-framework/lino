@@ -84,14 +84,14 @@ Users
 These user roles are defined in :mod:`lino_noi.projects.care.roles`
 
 >>> rt.show('users.UserProfiles')
-====== =========== ===========
+====== =========== ============
  Wert   name        Text
------- ----------- -----------
+------ ----------- ------------
  000    anonymous   Anonym
  100    user        Benutzer
- 500    connector   Connector
+ 500    connector   Vermittler
  900    admin       Verwalter
-====== =========== ===========
+====== =========== ============
 <BLANKLINE>
 
 
@@ -300,30 +300,33 @@ Pleas (Tickets)
 Keine Daten anzuzeigen
 
 
-Rating tickets
-==============
+Rating a ticket
+===============
 
 >>> base = '/choices/tickets/Tickets/rating'
 >>> show_choices("robin", base + '?query=')
 <br/>
-Excellent
+Very good
 Good
-OK
-Suboptimal
-Bad
+Satisfying
+Deficient
+Insufficient
+Unratable
 
 >>> show_choices("rolf", base + '?query=')
 <br/>
-Ausgezeichnet
+Sehr gut
 Gut
-OK
-Suboptimal
-Schlecht
+Ausreichend
+Mangelhaft
+Ungenügend
+Nicht bewertbar
 
 >>> show_choices("romain", base + '?query=')
 <br/>
-Excellent
+Très bien
 Bien
-Suffisant
+Satisfaisant
+Médiocre
 Insuffisant
-Mauvais
+Nicht bewertbar
