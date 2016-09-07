@@ -316,6 +316,12 @@ class Action(Parametrizable, Permittable):
     Used internally.
     """
 
+    editable = True
+    """
+    Whether the parameter fields should be editable.
+    Setting this to False seems nonsense.
+    """
+    
     readonly = True
     """Whether this action is readonly, i.e. does not change any data.
 

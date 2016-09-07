@@ -677,7 +677,10 @@ request from it.
         if master_instance is not None:
             kwargs.update(master_instance=master_instance)
 
-        ar = self.spawn(spec, **kwargs)
+        if isinstance(spec, BaseRequest):
+            ar = spec
+        else:
+            ar = self.spawn(spec, **kwargs)
 
         def doit():
             # print 20160530, ar.renderer
@@ -698,7 +701,7 @@ request from it.
         """Show the main menu for the requesting user using the requested
         renderer.
 
-        This is uses in tested docs.
+        This is used in tested docs.
 
         :language: explicitly select another language than that
                    specified in the requesting user's :attr:`language

@@ -1037,6 +1037,9 @@ class Store(BaseStore):
         sf = get_atomizer(self.actor, df, df.name)
         if sf is None:  # dummy fields
             return
+        # if not self.rh.actor.editable and isinstance(sf, ForeignKeyStoreField):
+        #     sf = StoreField(df, df.name)
+        #     raise Exception(20160907)
         if sf not in self.all_fields:
             self.all_fields.append(sf)
 
