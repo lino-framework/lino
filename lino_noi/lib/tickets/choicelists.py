@@ -125,7 +125,7 @@ class TicketStates(dd.Workflow):
 
         The ticket has been done.
 
-    .. attribute:: refused
+    .. attribute:: cancelled
 
         It has been decided that we won't fix this ticket.
 
@@ -168,7 +168,8 @@ add('50', _("Done"), 'done',
 # add('50', _("Tested"), 'tested',
 #     # required=dict(states=['fixed']),
 #     help_text=_("Has been fixed and tested."))
-add('60', _("Refused"), 'refused',
+# add('60', _("Refused"), 'refused',
+add('60', _("Cancelled"), 'cancelled',
     # required=dict(states="tested new todo callback"),
     # help_text=_("It has been decided that we won't fix this ticket."))
     button_text=u"🗑")  # WASTEBASKET (U+1F5D1)
@@ -180,6 +181,12 @@ add('60', _("Refused"), 'refused',
 that we don't want to talk about this ticket anymore.  Refused makes
 sense for tickets which had been asked by a partner. In that case we
 still may want to report it.
+
+Also remember this thought: Should we add a new ticket state "dropped"
+or "withdrawn" ("Verworfen", "Widerrufen") to indicate that the
+*reporter* decided to cancel their plea? This is different from
+"refused".  --> Solution seems to rename "refused" to "cancelled"
+because this is a more general term.
 
 """
 
@@ -209,7 +216,7 @@ def tickets_workflows(sender=None, **kw):
         required_states="talk todo new")
     TicketStates.done.add_transition(
         required_states="new talk todo ready sleeping")
-    TicketStates.refused.add_transition(
+    TicketStates.cancelled.add_transition(
         required_states="todo talk new talk sleeping")
 
     TicketStates.favorite_states = (TicketStates.sticky, )
@@ -219,7 +226,7 @@ def tickets_workflows(sender=None, **kw):
     # not used:
     # TicketStates.idle_states = (
     #     TicketStates.fixed, TicketStates.tested,
-    #     TicketStates.callback, TicketStates.refused)
+    #     TicketStates.callback, TicketStates.cancelled)
 
 
 class LinkType(dd.Choice):

@@ -43,18 +43,18 @@ The :attr:`state <lino_noi.lib.tickets.models.Ticket.state>` of a
 ticket has one of the following values:
 
 >>> rt.show(tickets.TicketStates)
-======= ========== ========== ======== ========
- value   name       text       Symbol   Active
-------- ---------- ---------- -------- --------
- 10      new        New        📥        No
- 15      talk       Talk       🗪        Yes
- 20      todo       ToDo       🐜        Yes
- 21      sticky     Sticky     📌        No
- 30      sleeping   Sleeping   🕸        No
- 40      ready      Ready      ☐        Yes
- 50      done       Done       ☑        No
- 60      refused    Refused    🗑        No
-======= ========== ========== ======== ========
+======= =========== =========== ======== ========
+ value   name        text        Symbol   Active
+------- ----------- ----------- -------- --------
+ 10      new         New         📥        No
+ 15      talk        Talk        🗪        Yes
+ 20      todo        ToDo        🐜        Yes
+ 21      sticky      Sticky      📌        No
+ 30      sleeping    Sleeping    🕸        No
+ 40      ready       Ready       ☐        Yes
+ 50      done        Done        ☑        No
+ 60      cancelled   Cancelled   🗑        No
+======= =========== =========== ======== ========
 <BLANKLINE>
 
 You can see this table in your web interface using
@@ -69,35 +69,35 @@ information about every state.
 Above table in German:
 
 >>> rt.show(tickets.TicketStates, language="de")
-====== ========== ============ ======== ========
- Wert   name       Text         Symbol   Aktive
------- ---------- ------------ -------- --------
- 10     new        Neu          📥        Nein
- 15     talk       Besprechen   🗪        Ja
- 20     todo       ZuTun        🐜        Ja
- 21     sticky     Sticky       📌        Nein
- 30     sleeping   Schläft      🕸        Nein
- 40     ready      Bereit       ☐        Ja
- 50     done       Erledigt     ☑        Nein
- 60     refused    Verweigert   🗑        Nein
-====== ========== ============ ======== ========
+====== =========== ============ ======== ========
+ Wert   name        Text         Symbol   Aktive
+------ ----------- ------------ -------- --------
+ 10     new         Neu          📥        Nein
+ 15     talk        Besprechen   🗪        Ja
+ 20     todo        ZuTun        🐜        Ja
+ 21     sticky      Sticky       📌        Nein
+ 30     sleeping    Schläft      🕸        Nein
+ 40     ready       Bereit       ☐        Ja
+ 50     done        Erledigt     ☑        Nein
+ 60     cancelled   Storniert    🗑        Nein
+====== =========== ============ ======== ========
 <BLANKLINE>
 
 And in French (not yet fully translated):
 
 >>> rt.show(tickets.TicketStates, language="fr")
-======= ========== =========== ======== ========
- value   name       text        Symbol   Active
-------- ---------- ----------- -------- --------
- 10      new        Nouveau     📥        Non
- 15      talk       Talk        🗪        Oui
- 20      todo       ToDo        🐜        Oui
- 21      sticky     Sticky      📌        Non
- 30      sleeping   Sleeping    🕸        Non
- 40      ready      Ready       ☐        Oui
- 50      done       accomplie   ☑        Non
- 60      refused    Refused     🗑        Non
-======= ========== =========== ======== ========
+======= =========== =========== ======== ========
+ value   name        text        Symbol   Active
+------- ----------- ----------- -------- --------
+ 10      new         Nouveau     📥        Non
+ 15      talk        Talk        🗪        Oui
+ 20      todo        ToDo        🐜        Oui
+ 21      sticky      Sticky      📌        Non
+ 30      sleeping    Sleeping    🕸        Non
+ 40      ready       Ready       ☐        Oui
+ 50      done        accomplie   ☑        Non
+ 60      cancelled   Annulé      🗑        Non
+======= =========== =========== ======== ========
 <BLANKLINE>
 
 
@@ -244,7 +244,7 @@ My tickets
  Overview                                      Faculty   Topic          Workflow
 --------------------------------------------- --------- -------------- -----------------------------------------------
  `#15 (Bars have no foo) <Detail>`__                     Lino Core      **Done** → [▶] [☆]
- `#8 (Is there any Bar in Foo?) <Detail>`__              Lino Welfare   **Refused** → [▶] [☆]
+ `#8 (Is there any Bar in Foo?) <Detail>`__              Lino Welfare   **Cancelled** → [▶] [☆]
  `#1 (Föö fails to bar when baz) <Detail>`__             Lino Cosi      **New** → [📌] [🗪] [🐜] [🕸] [☐] [☑] [🗑] [▶] [☆]
 ============================================= ========= ============== ===============================================
 <BLANKLINE>
@@ -376,16 +376,16 @@ can see all local tickets for a given site object:
 >>> welket = tickets.Site.objects.get(name="welket")
 >>> rt.show(tickets.TicketsBySite, welket)
 ... #doctest: +REPORT_UDIFF
-==== =========================================== ============= ============== =============== ============== ==========
- ID   Summary                                     Reporter      Topic          Faculty         Workflow       Project
----- ------------------------------------------- ------------- -------------- --------------- -------------- ----------
- 16   How to get bar from foo                     luc           Lino Welfare                   **Refused**    research
- 13   Bar cannot foo                              Rolf Rompen   Lino Cosi      Documentation   **Sleeping**   linö
- 10   Where can I find a Foo when bazing Bazes?   marc          Lino Voga                      **Talk**       docs
- 7    No Foo after deleting Bar                   Robin Rood    Lino Core                      **Done**       shop
- 4    Foo and bar don't baz                       mathieu       Lino Welfare                   **Sticky**     docs
- 1    Föö fails to bar when baz                   jean          Lino Cosi                      **New**        linö
-==== =========================================== ============= ============== =============== ============== ==========
+==== =========================================== ============= ============== =============== =============== ==========
+ ID   Summary                                     Reporter      Topic          Faculty         Workflow        Project
+---- ------------------------------------------- ------------- -------------- --------------- --------------- ----------
+ 16   How to get bar from foo                     luc           Lino Welfare                   **Cancelled**   research
+ 13   Bar cannot foo                              Rolf Rompen   Lino Cosi      Documentation   **Sleeping**    linö
+ 10   Where can I find a Foo when bazing Bazes?   marc          Lino Voga                      **Talk**        docs
+ 7    No Foo after deleting Bar                   Robin Rood    Lino Core                      **Done**        shop
+ 4    Foo and bar don't baz                       mathieu       Lino Welfare                   **Sticky**      docs
+ 1    Föö fails to bar when baz                   jean          Lino Cosi                      **New**         linö
+==== =========================================== ============= ============== =============== =============== ==========
 <BLANKLINE>
 
 Note that the above table shows no state change actions in the
@@ -397,7 +397,7 @@ authenticated developer it looks like this:
 ==== =========================================== ============= ============== =============== =============================================== ==========
  ID   Summary                                     Reporter      Topic          Faculty         Workflow                                        Project
 ---- ------------------------------------------- ------------- -------------- --------------- ----------------------------------------------- ----------
- 16   How to get bar from foo                     luc           Lino Welfare                   **Refused** → [☆]                               research
+ 16   How to get bar from foo                     luc           Lino Welfare                   **Cancelled** → [☆]                             research
  13   Bar cannot foo                              Rolf Rompen   Lino Cosi      Documentation   **Sleeping** → [☆]                              linö
  10   Where can I find a Foo when bazing Bazes?   marc          Lino Voga                      **Talk** → [☆]                                  docs
  7    No Foo after deleting Bar                   Robin Rood    Lino Core                      **Done** → [☆]                                  shop
@@ -546,7 +546,7 @@ Filtering tickets
 ==== =========================================== ================= ============== =============== =============================================== ==========
  ID   Summary                                     Reporter          Topic          Faculty         Workflow                                        Project
 ---- ------------------------------------------- ----------------- -------------- --------------- ----------------------------------------------- ----------
- 16   How to get bar from foo                     luc               Lino Welfare                   **Refused** → [▶] [☆]                           research
+ 16   How to get bar from foo                     luc               Lino Welfare                   **Cancelled** → [▶] [☆]                         research
  15   Bars have no foo                            jean              Lino Core                      **Done** → [▶] [☆]                              docs
  14   Bar cannot baz                              Robin Rood        Lino Voga                      **Ready** → [🗪] [🐜] [☑] [▶] [☆]                 téam
  13   Bar cannot foo                              Rolf Rompen       Lino Cosi      Documentation   **Sleeping** → [☑] [🗑] [▶] [☆]                  linö
@@ -554,7 +554,7 @@ Filtering tickets
  11   Class-based Foos and Bars?                  mathieu           Lino Core                      **ToDo** → [🗪] [🕸] [☐] [☑] [🗑] [▶] [☆]          research
  10   Where can I find a Foo when bazing Bazes?   marc              Lino Voga                      **Talk** → [🐜] [🕸] [☐] [☑] [🗑] [▶] [☆]          docs
  9    Foo never matches Bar                       luc               Lino Cosi      Testing         **New** → [📌] [🗪] [🐜] [🕸] [☐] [☑] [🗑] [▶] [☆]   téam
- 8    Is there any Bar in Foo?                    jean              Lino Welfare                   **Refused** → [▶] [☆]                           linö
+ 8    Is there any Bar in Foo?                    jean              Lino Welfare                   **Cancelled** → [▶] [☆]                         linö
  7    No Foo after deleting Bar                   Robin Rood        Lino Core                      **Done** → [▶] [☆]                              shop
  6    Sell bar in baz                             Rolf Rompen       Lino Voga      Analysis        **Ready** → [🗪] [🐜] [☑] [▶] [☆]                 research
  5    Cannot create Foo                           Romain Raffault   Lino Cosi                      **Sleeping** → [☑] [🗑] [▶] [☆]

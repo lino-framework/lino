@@ -419,6 +419,13 @@ class Ticket(mixins.CreatedModified, Assignable, TimeInvestment, RFC,
         which are all direct or indirect duplicates of this "root of
         all other problems".
 
+    .. attribute:: deadline
+
+        Specify that the ticket must be done for a given date.
+
+        TODO: Triagers should have a table of tickets having this
+        field non-empty and are still in an active state.
+
     """
 
     quick_search_fields = "summary description"
