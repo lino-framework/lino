@@ -2253,6 +2253,10 @@ def create_meth_element(lh, name, meth, rt, **kw):
 
 def create_field_element(lh, field, **kw):
     e = field2elem(lh, field, **kw)
+    # if not lh.layout.editable and isinstance(e, ForeignKeyElement):
+    #     raise Exception(20160907)
+    #     return CharFieldElement(lh, field, **kw)   
+    
     assert e.field is not None, "e.field is None for %s.%s" % (lh.layout, kw)
     lh.add_store_field(e.field)
     return e

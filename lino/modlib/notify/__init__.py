@@ -11,6 +11,25 @@
     mixins
     utils
 
+Templates used by this plugin
+=============================
+
+.. xfile:: notify/body.eml
+
+    A Jinja template used for generating the body of the email when
+    sending a notification per email to its recipient.
+
+    Available context variables:
+
+    - ``obj`` -- The :class:`Notification
+      <lino.modlib.notify.models.Notification>` instance being sent.
+
+    - ``E`` -- The html namespace :mod:`lino.utils.xmlgen.html`
+
+    - ``rt`` -- The runtime API :mod:`lino.api.rt`
+
+    - ``ar`` -- The action request which caused the notification. a
+      :class:`BaseRequest <lino.core.requests.BaseRequest>` instance.
 
 """
 

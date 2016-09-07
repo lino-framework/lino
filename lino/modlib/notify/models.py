@@ -4,23 +4,6 @@
 
 """Database models for this plugin.
 
-A notification is a message to be sent to a given user about a given
-database object. Lino
-
-
-.. xfile:: notify/body.eml
-
-    The Jinja template to use for generating the body of the
-    notification email.
-
-    Available context variables:
-
-    :obj:  The :class:`Notification` object
-    :E:    The html namespace :mod:`lino.utils.xmlgen.html`
-    :rt:   The runtime API :mod:`lino.api.rt`
-    :ar:   The action request which caused the notification. a
-           :class:`BaseRequest <lino.core.requests.BaseRequest>`)
-
 """
 from __future__ import unicode_literals
 from builtins import str
@@ -68,8 +51,8 @@ class MarkSeen(dd.Action):
 
 # @dd.python_2_unicode_compatible
 class Notification(UserAuthored, Controllable, Created):
-    """A **notification** object represents the fact that a given user has
-    been notified about a given database object.
+    """A **notification** is a message to a given user about a given
+    database object.
     
     Use the class method :meth:`create_notification` to create a new
     notification (and to skip creation in case that user has already
@@ -78,6 +61,13 @@ class Notification(UserAuthored, Controllable, Created):
     .. attribute:: subject
     .. attribute:: body
     .. attribute:: user
+
+        The recipient (mandatory).
+
+    .. attribute:: from_user
+
+        The sender (optional).
+
     .. attribute:: owner
  
        The database object this message is about.
@@ -104,6 +94,9 @@ class Notification(UserAuthored, Controllable, Created):
         # return self.message
         # return _("Notify {0} about change on {1}").format(
         #     self.user, self.owner)
+
+    from_user = dd.ForeignKey(
+        'users.User', verbose_name=_("From"), blank=True, null=True)
 
     @classmethod
     def emit_notification(cls, ar, owner, subject, body, recipients):
@@ -283,7 +276,8 @@ class MyNotifications(My, Notifications):
     """Shows notifications emitted to you."""
     # label = _("My notifications")
     required_roles = dd.required(OfficeUser)
-    column_names = "created subject owner sent workflow_buttons *"
+    # column_names = "created subject owner sent workflow_buttons *"
+    column_names = "overview workflow_buttons *"
     order_by = ['created']
     # filter = models.Q(seen__isnull=True)
 
@@ -294,8 +288,11 @@ class MyNotifications(My, Notifications):
         return kw
 
     @classmethod
-    def get_welcome_messages(cls, ar, **kw):
+    def unused_get_welcome_messages(cls, ar, **kw):
         """Emits the :message:`You have %d unseen notifications.` message.
+
+        This is no longer used, applications should rather yield this
+        table at the beginning of :meth:`get_admin_main_items`.
 
         """
         sar = ar.spawn(cls)

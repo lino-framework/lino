@@ -375,7 +375,7 @@ request from it.
             # Jinja doesn't like a name 'self' in the context which
             # might exist there in a backwards-compatible appypod
             # template:
-            kw.pop('self')
+            kw.pop('self', None)
             return dd.plugins.jinja.renderer.jinja_env.from_string(
                 s).render(**kw)
         kw.update(parse=parse)
@@ -677,7 +677,10 @@ request from it.
         if master_instance is not None:
             kwargs.update(master_instance=master_instance)
 
-        ar = self.spawn(spec, **kwargs)
+        if isinstance(spec, BaseRequest):
+            ar = spec
+        else:
+            ar = self.spawn(spec, **kwargs)
 
         def doit():
             # print 20160530, ar.renderer
@@ -698,7 +701,7 @@ request from it.
         """Show the main menu for the requesting user using the requested
         renderer.
 
-        This is uses in tested docs.
+        This is used in tested docs.
 
         :language: explicitly select another language than that
                    specified in the requesting user's :attr:`language

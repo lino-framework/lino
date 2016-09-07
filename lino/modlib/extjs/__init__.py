@@ -136,6 +136,8 @@ class Plugin(Plugin):
         elif isinstance(e, HtmlBoxElement):
             yield "%s.refresh();" % e.as_ext()
         elif isinstance(e, FieldElement):
+            if not panel.layout_handle.layout.editable:
+                return
             holder = panel.layout_handle.layout.get_chooser_holder()
             chooser = holder.get_chooser_for_field(e.field.name)
             if not chooser:

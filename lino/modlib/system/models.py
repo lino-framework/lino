@@ -78,6 +78,15 @@ class SiteConfig(dd.Model):
         This should be empty except in situations such as *a
         posteriori* data entry in a prototype.
 
+    .. attribute:: site_company
+
+        The organisation who runs this site.  This is used e.g. when
+        printing your address in certain documents or reports.  Or
+        newly created partners inherit the country of the site owner.
+
+        If no plugin named 'contacts' is intalled, then this is a
+        dummy field which always contains `None`.
+
     """
 
     class Meta(object):
@@ -93,6 +102,13 @@ class SiteConfig(dd.Model):
 
     simulate_today = models.DateField(
         _("Simulated date"), blank=True, null=True)
+
+    site_company = dd.ForeignKey(
+        "contacts.Company",
+        blank=True, null=True,
+        verbose_name=_("Site owner"),
+        related_name='site_company_sites')
+    
 
     def __str__(self):
         return force_text(_("Site Parameters"))

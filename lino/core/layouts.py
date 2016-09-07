@@ -346,6 +346,11 @@ class BaseLayout(object):
 
     """
 
+    editable = True
+    """Lino sets this to False for layouts on a non-editable actor.
+
+    """
+    
     main = None
 
     def __init__(self, main=None, datasource=None,
@@ -378,6 +383,7 @@ class BaseLayout(object):
                 self.hidden_elements = set(fields_list(
                     ds, self.hidden_elements))
             self.hidden_elements = self.hidden_elements | ds.hidden_elements
+            self.editable = ds.editable
             #~ if str(ds).endswith('Partners'):
                 #~ print "20130124 set_datasource ", self,self.hidden_elements
 

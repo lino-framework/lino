@@ -53,7 +53,17 @@ class Plugin(ad.Plugin):
             configure_plugin('tinymce', document_domain="mydomain.com")
 
     Currently when using this, **you must also manually change** your
-    static `tiny_mce_popup.js` file after each `collectstatic`.
+    static :xfile:`tiny_mce_popup.js` file after each `collectstatic`.
+
+    .. xfile:: tiny_mce_popup.js
+
+    The factory version of that file contains::
+
+        // Uncomment and change this document.domain value if you are loading the script cross subdomains
+        // document.domain = 'moxiecode.com';
+
+    Uncomment and set the ``document.domain`` to the same value as
+    your :attr:`document_domain`.
 
     """
 
