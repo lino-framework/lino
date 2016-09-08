@@ -62,11 +62,7 @@ class Notification(UserAuthored, Controllable, Created):
     .. attribute:: body
     .. attribute:: user
 
-        The recipient (mandatory).
-
-    .. attribute:: from_user
-
-        The sender (optional).
+        The recipient.
 
     .. attribute:: owner
  
@@ -94,9 +90,6 @@ class Notification(UserAuthored, Controllable, Created):
         # return self.message
         # return _("Notify {0} about change on {1}").format(
         #     self.user, self.owner)
-
-    from_user = dd.ForeignKey(
-        'users.User', verbose_name=_("From"), blank=True, null=True)
 
     @classmethod
     def emit_notification(cls, ar, owner, subject, body, recipients):
@@ -131,7 +124,17 @@ class Notification(UserAuthored, Controllable, Created):
             obj.full_clean()
             obj.save()
 
-    @dd.displayfield()
+    @dd.displayfield(_("Subject"))
+    def subject_more(self, ar):
+        if ar is None:
+            return ''
+        elems = [self.subject]
+        if self.body:
+            elems.append(' ')
+            elems.append(ar.obj2html(self, _("(more)")))
+        return E.div(*elems)
+
+    @dd.displayfield(_("Overview"))
     def overview(self, ar):
         if ar is None:
             return ''
@@ -277,7 +280,7 @@ class MyNotifications(My, Notifications):
     # label = _("My notifications")
     required_roles = dd.required(OfficeUser)
     # column_names = "created subject owner sent workflow_buttons *"
-    column_names = "overview workflow_buttons *"
+    column_names = "subject_more workflow_buttons *"
     order_by = ['created']
     # filter = models.Q(seen__isnull=True)
 
