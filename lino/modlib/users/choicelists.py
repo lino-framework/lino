@@ -111,8 +111,8 @@ class UserProfiles(ChoiceList):
     """
     required_roles = dd.login_required(SiteAdmin)
     item_class = UserProfile
-    verbose_name = _("User Profile")
-    verbose_name_plural = _("User Profiles")
+    verbose_name = _("User type")
+    verbose_name_plural = _("User types")
     show_values = True
     max_length = 20
 

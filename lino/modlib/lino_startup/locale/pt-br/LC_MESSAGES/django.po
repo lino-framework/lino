@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-07 16:30+0300\n"
+"POT-Creation-Date: 2016-09-08 05:44+0300\n"
 "PO-Revision-Date: 2013-06-15 18:57-0300\n"
 "Last-Translator: Flavio Gondin <flvgondin@gmail.com>\n"
 "Language: pt_BR\n"
@@ -18,79 +18,79 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
 
-#: lino/core/actions.py:682
+#: lino/core/actions.py:688
 msgid "Detail"
 msgstr "Détail"
 
-#: lino/core/actions.py:683
+#: lino/core/actions.py:689
 msgid "Open a detail window on this record"
 msgstr "Abrir formulário de detalhe deste registro"
 
-#: lino/core/actions.py:722 lino/core/renderer.py:225
+#: lino/core/actions.py:728 lino/core/renderer.py:225
 msgid "New"
 msgstr "Nouveau"
 
-#: lino/core/actions.py:729
+#: lino/core/actions.py:735
 msgid "Insert a new record"
 msgstr "Incluir um novo registro"
 
-#: lino/core/actions.py:738
+#: lino/core/actions.py:744
 #, python-format
 msgid "Insert into %s"
 msgstr "Incluir em %s"
 
-#: lino/core/actions.py:810 lino/core/requests.py:932
+#: lino/core/actions.py:816 lino/core/requests.py:932
 #, fuzzy, python-format
 msgid "%s has been updated."
 msgstr "Enregistrement %s a été mis à jour."
 
-#: lino/core/actions.py:812 lino/core/requests.py:934
+#: lino/core/actions.py:818 lino/core/requests.py:934
 #, python-format
 msgid "%s : nothing to save."
 msgstr "%s : nada a gravar."
 
-#: lino/core/actions.py:859
+#: lino/core/actions.py:865
 msgid "Save changes in this form"
 msgstr "Gravar as alterações no registro"
 
-#: lino/core/actions.py:860
+#: lino/core/actions.py:866
 msgid "Save"
 msgstr "Enregistrer"
 
-#: lino/core/actions.py:897 lino/core/requests.py:929
+#: lino/core/actions.py:903 lino/core/requests.py:929
 #, python-format
 msgid "%s has been created."
 msgstr "%s a été créé"
 
-#: lino/core/actions.py:921 lino/modlib/changes/models.py:51
+#: lino/core/actions.py:927 lino/modlib/changes/models.py:51
 msgid "Create"
 msgstr "Incluir"
 
-#: lino/core/actions.py:923
+#: lino/core/actions.py:929
 msgid "Create the record and open a detail window on it"
 msgstr ""
 
-#: lino/core/actions.py:1006
+#: lino/core/actions.py:1012
 #, fuzzy, python-format
 msgid "%d row(s) have been updated."
 msgstr "Enregistrement %s a été mis à jour."
 
-#: lino/core/actions.py:1019
+#: lino/core/actions.py:1025
 msgid "Delete this record"
 msgstr "Excluir este registro"
 
-#: lino/core/actions.py:1027 lino/modlib/changes/models.py:53
+#: lino/core/actions.py:1033 lino/modlib/changes/models.py:53
 msgid "Delete"
 msgstr "Supprimer"
 
-#: lino/core/actions.py:1056
+#: lino/core/actions.py:1062
 #, python-format
 msgid ""
 "You are about to delete %(num)d %(type)s:\n"
 "%(targets)s"
 msgstr ""
 
-#: lino/core/actions.py:1059
+#: lino/core/actions.py:1065
 #, fuzzy
 msgid "Are you sure ?"
 msgstr "Etes-vous certain ?"
@@ -169,7 +169,7 @@ msgstr ""
 msgid "User abandoned"
 msgstr ""
 
-#: lino/core/layouts.py:487
+#: lino/core/layouts.py:493
 msgid "General"
 msgstr "Général"
 
@@ -346,7 +346,7 @@ msgstr "La clé primaire %r existante ne peut être modifiée"
 msgid "%r (invalid choice)"
 msgstr "%r (choix non valide)"
 
-#: lino/core/store.py:1072
+#: lino/core/store.py:1075
 #, python-format
 msgid "Invalid value for this field (%s)."
 msgstr "Valor inválido para este campo (%s)."
@@ -685,7 +685,7 @@ msgstr ""
 msgid "Value"
 msgstr "Valeur"
 
-#: lino/modlib/about/models.py:227 lino/modlib/notify/models.py:208
+#: lino/modlib/about/models.py:227 lino/modlib/notify/models.py:201
 msgid "About"
 msgstr "à propos"
 
@@ -3044,7 +3044,7 @@ msgstr ""
 msgid "Show this table in own window"
 msgstr "Mostrar esta tabela em html plano"
 
-#: lino/modlib/notify/__init__.py:42 lino/modlib/notify/models.py:84
+#: lino/modlib/notify/__init__.py:42 lino/modlib/notify/models.py:80
 #, fuzzy
 msgid "Notifications"
 msgstr "Confirmação"
@@ -3067,52 +3067,47 @@ msgstr ""
 msgid "{user} modified "
 msgstr "Modificado em"
 
-#: lino/modlib/notify/models.py:35 lino/modlib/notify/models.py:229
+#: lino/modlib/notify/models.py:35 lino/modlib/notify/models.py:222
 #, fuzzy
 msgid "Seen"
 msgstr "Réouvrir"
 
-#: lino/modlib/notify/models.py:83
+#: lino/modlib/notify/models.py:79
 #, fuzzy
 msgid "Notification"
 msgstr "Confirmação"
 
-#: lino/modlib/notify/models.py:86
+#: lino/modlib/notify/models.py:82
 #, fuzzy
 msgid "seen"
 msgstr "Réouvrir"
 
-#: lino/modlib/notify/models.py:87
+#: lino/modlib/notify/models.py:83
 #, fuzzy
 msgid "sent"
 msgstr "Réouvrir"
 
-#: lino/modlib/notify/models.py:89
+#: lino/modlib/notify/models.py:85
 msgid "Subject"
 msgstr ""
 
-#: lino/modlib/notify/models.py:90
+#: lino/modlib/notify/models.py:86
 msgid "Body"
 msgstr ""
 
-#: lino/modlib/notify/models.py:99
-#, fuzzy, python-format
-msgid "From"
-msgstr "lien"
-
-#: lino/modlib/notify/models.py:188
+#: lino/modlib/notify/models.py:181
 msgid "Send e-mail"
 msgstr ""
 
-#: lino/modlib/notify/models.py:206
+#: lino/modlib/notify/models.py:199
 msgid "Recipient"
 msgstr "Destinataire"
 
-#: lino/modlib/notify/models.py:212
+#: lino/modlib/notify/models.py:205
 msgid "Notify me"
 msgstr ""
 
-#: lino/modlib/notify/models.py:303
+#: lino/modlib/notify/models.py:296
 #, python-format
 msgid "You have %d unseen notifications."
 msgstr ""
@@ -3496,12 +3491,14 @@ msgid "Users"
 msgstr "Usuários"
 
 #: lino/modlib/users/choicelists.py:114
-msgid "User Profile"
-msgstr "Perfil do usuário"
+#, fuzzy
+msgid "User type"
+msgstr "Type d'organisation"
 
 #: lino/modlib/users/choicelists.py:115
-msgid "User Profiles"
-msgstr ""
+#, fuzzy
+msgid "User types"
+msgstr "Type d'organisation"
 
 #: lino/modlib/users/mixins.py:46
 msgid "Time zone"
@@ -4534,7 +4531,7 @@ msgstr ""
 #~ msgstr "Type de société"
 
 #~ msgid "From"
-#~ msgstr ""
+#~ msgstr "lien"
 
 #~ msgid "Until"
 #~ msgstr ""
@@ -8512,15 +8509,15 @@ msgstr ""
 #~ msgid "Show only objects whose author is the given user."
 #~ msgstr ""
 
-#~ msgid ""
-#~ "When serving static files from a different subdomain, TinyMCE needs\n"
-#~ "to know about this. Typical usage is to specify this in your\n"
-#~ "djangosite_local.py file (lino.djangosite_local):"
-#~ msgstr ""
-
 #~ msgid "Dialog action to change the password of a user."
 #~ msgstr ""
 
 #~ msgid "New password has been set for %d users."
+#~ msgstr ""
+
+#~ msgid "User Profile"
+#~ msgstr "Perfil do usuário"
+
+#~ msgid "User Profiles"
 #~ msgstr ""
 
