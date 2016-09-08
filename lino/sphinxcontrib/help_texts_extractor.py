@@ -172,6 +172,8 @@ Example of a field description::
 from __future__ import print_function
 from __future__ import unicode_literals
 
+from collections import OrderedDict
+
 import six
 
 from docutils import nodes
@@ -211,7 +213,7 @@ class HelpTextExtractor(object):
             # if not htf.exists():
             #     raise Exception("No such file: {}".format(htf))
             self.name2file[root] = htf
-            self.name2dict[root] = {}
+            self.name2dict[root] = OrderedDict()
             
         print("Collecting help texts for {}".format(
             ' '.join(self.name2file.values())))
