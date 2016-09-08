@@ -190,7 +190,7 @@ class Links(dd.Table):
 class LinksByTicket(Links):
 
     label = _("Dependencies")
-    required_roles = dd.required()
+    required_roles = dd.required(Triager)
     master = 'tickets.Ticket'
     column_names = 'parent type_as_parent:10 child'
     slave_grid_format = 'summary'

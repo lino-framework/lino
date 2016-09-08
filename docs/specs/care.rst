@@ -96,18 +96,18 @@ These user roles are defined in :mod:`lino_noi.projects.care.roles`
 
 
 >>> rt.show('users.Users')
-============== ================ ========= ==============
- Benutzername   Benutzerprofil   Vorname   Familienname
--------------- ---------------- --------- --------------
+============== ============= ========= ==============
+ Benutzername   Benutzerart   Vorname   Familienname
+-------------- ------------- --------- --------------
  axel           Benutzer
  berta          Benutzer
  christa        Benutzer
  dora           Benutzer
  eric           Benutzer
- robin          Verwalter        Robin     Rood
- rolf           Verwalter        Rolf      Rompen
- romain         Verwalter        Romain    Raffault
-============== ================ ========= ==============
+ robin          Verwalter     Robin     Rood
+ rolf           Verwalter     Rolf      Rompen
+ romain         Verwalter     Romain    Raffault
+============== ============= ========= ==============
 <BLANKLINE>
 
 
@@ -249,7 +249,7 @@ In :ref:`care` we don't call them "tickets" but "pleas" (German
   - Fähigkeiten : Fähigkeiten (Hierarchie), Fähigkeiten (alle)
   - Arbeitszeit : Session Types
 - Explorer :
-  - System : Datenbankmodelle, Vollmachten, Benutzerprofile, Benachrichtigungen, Änderungen
+  - System : Datenbankmodelle, Vollmachten, Benutzerarten, Benachrichtigungen, Änderungen
   - Benutzer : Interessen
   - Büro : Favoriten, Auszüge, Kommentare, Einfügetexte
   - Bitten : Verknüpfungen, Zustände

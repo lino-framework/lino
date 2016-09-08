@@ -60,8 +60,8 @@ have both clocking and tickets.
 See also :attr:`needs_plugins <lino.core.plugin.Plugin.needs_plugins>`.
 
 
-User profiles
-=============
+User types
+==========
 
 A default Lino Noi site has the following user profiles:
 
@@ -115,7 +115,7 @@ Users
 
 >>> rt.show(users.UsersOverview)
 ========== ================== ==========
- Username   User Profile       Language
+ Username   User type          Language
 ---------- ------------------ ----------
  jean       Senior developer   en
  luc        Developer          en

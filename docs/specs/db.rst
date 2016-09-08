@@ -48,7 +48,7 @@ This document describes the database structure.
  lists.List                  lists.Lists                  7         8
  lists.ListType              lists.ListTypes              4         3
  lists.Member                lists.Members                5         0
- notify.Notification         notify.Notifications         10        3
+ notify.Notification         notify.Notifications         9         3
  outbox.Attachment           outbox.Attachments           4         0
  outbox.Mail                 outbox.Mails                 9         0
  outbox.Recipient            outbox.Recipients            6         0
@@ -102,7 +102,7 @@ users.UserProfiles.admin:900
   - Faculties : Faculties (tree), Faculties (all)
   - Clocking : Session Types
 - Explorer :
-  - System : content types, Authorities, User Profiles, Notifications, Changes
+  - System : content types, Authorities, User types, Notifications, Changes
   - Contacts : Contact Persons, Interests, List memberships
   - Office : Stars, Uploads, Upload Areas, Outgoing Mails, Attachments, Excerpts, Comments, Text Field Templates
   - Tickets : Dependencies, States
