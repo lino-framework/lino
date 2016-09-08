@@ -1,4 +1,4 @@
-# Copyright 2009-2015 Luc Saffre
+# Copyright 2009-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """See :doc:`/dev/layouts`.
@@ -185,8 +185,10 @@ class LayoutHandle(object):
         if "\n" in desc:
             # it's a vertical box
             vertical = True
-            """To get a hbox, the template string may not contain any newline.
-            """
+            
+            # To get a hbox, the template string must not contain any
+            # newline.
+
             elems = []
             i = 0
             for x in desc.splitlines():
@@ -372,8 +374,13 @@ class BaseLayout(object):
                 "Cannot instantiate %s without `main`." % self.__class__)
         self.set_datasource(datasource)
         for k, v in list(kw.items()):
-            #~ if not hasattr(self,k):
-                #~ raise Exception("Got unexpected keyword %s=%r" % (k,v))
+            
+            # The following test is deactivated because it is possible
+            # to dynamically define subpanels on a panel,
+            # e.g. MergeAction.keep_volatiles
+            
+            # if not hasattr(self, k):
+            #     raise Exception("Got unexpected keyword %s=%r" % (k,v))
             setattr(self, k, v)
 
     def set_datasource(self, ds):

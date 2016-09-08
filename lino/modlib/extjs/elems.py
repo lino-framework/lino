@@ -267,9 +267,14 @@ class LayoutElement(VisibleComponent):
         self.layout_handle = layout_handle
         # if layout_handle is not None:
         # layout_handle.setup_element(self)
-        # if str(self.layout_handle.layout._datasource) == 'lino.Home':
-            # logger.info("20120927 LayoutElement.__init__ %r required is %s, kw was %s, opts was %s",
-              # self,self.required,kw,opts)
+        # if isinstance(layout_handle.layout, FormLayout):
+        # if self.name.startswith('history_tab'):
+        # if isinstance(self, TabPanel):
+            # if isinstance(self, TabPanel):  # self.required_roles:
+            # self.name == 'history_tab':
+            # logger.info(
+            #     "20160908 LayoutElement %r required_roles %r, kw was %r, opts was %r",
+            #   self, self.required_roles, kw, opts)
 
     # def submit_fields(self):
         # return []

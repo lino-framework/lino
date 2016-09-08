@@ -306,10 +306,15 @@ class VisibleComponent(Component, Permittable):
     def __init__(self, name, **kw):
         Component.__init__(self, name)
         self.setup(**kw)
-        # install `allow_read` permission handler:
-        self.install_permission_handler()
+        # self.install_permission_handler()
 
     def install_permission_handler(self):
+        """Define the `allow_read` handler used by
+        :meth:`get_view_permission`.  This must be done only once, but
+        after having configured :attr:`debug_permissions` and
+        :attr:`required_roles`.
+
+        """
         self.allow_read = curry(make_view_permission_handler(
             self, True,
             self.debug_permissions,
@@ -346,6 +351,7 @@ class VisibleComponent(Component, Permittable):
             self.required_roles = required_roles
         # if help_text is not None:
         #     self.help_text = help_text
+        self.install_permission_handler()
 
     def __str__(self):
         "This shows how elements are specified"
