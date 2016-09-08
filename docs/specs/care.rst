@@ -338,30 +338,24 @@ The detail layout of a ticket
 Here is a textual description of the fields and their layout used in
 the detail window of a ticket.
 
-.. py2rst::
-    from lino.api.doctest import *
-    from lino.utils.diag import py2rst
-    print(py2rst(tickets.Tickets.detail_layout))
-
-..
-    >>> from lino.utils.diag import py2rst
-    >>> print(py2rst(tickets.Tickets.detail_layout, True))
-    ... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF -SKIP
-    (main) [visible for all]:
-    - **Général** (general):
-      - (general_1):
-        - (general1):
-          - (general1_1): **Zusammenfassung** (summary), **ID** (id), **Deadline** (deadline)
-          - (general1_2): **Anfrager** (reporter), **Fähigkeit** (faculty), **Thema** (topic), **Attribué à** (assigned_to)
-          - (general1_3): **Umfeld** (site), **État** (workflow_buttons), **Bewertung** (rating)
-        - **Zuweisbare Arbeiter** (faculties.AssignableWorkersByTicket) [visible for connector admin]
-      - (general_2) [visible for user connector admin]: **Kommentare** (CommentsByRFC), **Sitzungen** (SessionsByTicket) [visible for connector admin]
-    - **History** (history_tab_1) [visible for connector admin]:
-      - **Änderungen** (changes.ChangesByMaster) [visible for user connector admin]
-      - **Beobachtet durch** (stars.StarsByController) [visible for user connector admin]
-    - **Mehr** (more):
-      - (more1):
-        - (more1_1): **Créé** (created), **Modifié** (modified), **Ticket type** (ticket_type)
-        - (more1_2): **État** (state), **Priorité** (priority), **Projekt** (project)
-      - (more_2): **Description** (description), **Lösung** (upgrade_notes), **Verknüpfungen** (LinksByTicket) [visible for connector admin]
-    <BLANKLINE>
+>>> from lino.utils.diag import py2rst
+>>> print(py2rst(tickets.Tickets.detail_layout, True))
+... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF -SKIP
+(main) [visible for all]:
+- **Général** (general):
+  - (general_1):
+    - (general1):
+      - (general1_1): **Zusammenfassung** (summary), **ID** (id), **Deadline** (deadline)
+      - (general1_2): **Anfrager** (reporter), **Fähigkeit** (faculty), **Thema** (topic), **Attribué à** (assigned_to)
+      - (general1_3): **Umfeld** (site), **État** (workflow_buttons), **Bewertung** (rating)
+    - **Zuweisbare Arbeiter** (faculties.AssignableWorkersByTicket) [visible for connector admin]
+  - (general_2): **Description** (description), **Kommentare** (CommentsByRFC) [visible for user connector admin], **Sitzungen** (SessionsByTicket) [visible for connector admin]
+- **History** (history_tab_1) [visible for connector admin]:
+  - **Änderungen** (changes.ChangesByMaster) [visible for user connector admin]
+  - **Beobachtet durch** (stars.StarsByController) [visible for user connector admin]
+- **Mehr** (more) [visible for connector admin]:
+  - (more1) [visible for all]:
+    - (more1_1): **Créé** (created), **Modifié** (modified), **Ticket type** (ticket_type)
+    - (more1_2): **État** (state), **Priorité** (priority), **Projekt** (project)
+  - (more_2) [visible for all]: **Lösung** (upgrade_notes), **Verknüpfungen** (LinksByTicket) [visible for connector admin]
+<BLANKLINE>

@@ -34,7 +34,7 @@ class TicketDetail(TicketDetail):
     
     general = dd.Panel("""
     general1:60 deploy.DeploymentsByTicket:20
-    comments.CommentsByRFC:60 clocking.SessionsByTicket:20
+    description:30 comments.CommentsByRFC:30 clocking.SessionsByTicket:20
     """, label=_("General"))
 
     general1 = """
@@ -42,6 +42,11 @@ class TicketDetail(TicketDetail):
     site topic project private
     workflow_buttons:30 assigned_to:20 faculty:20
     """
+
+    more = dd.Panel("""
+    more1 DuplicatesByTicket:20
+    upgrade_notes:20 LinksByTicket:20
+    """, label=_("More"))
 
 Tickets.detail_layout = TicketDetail()
 

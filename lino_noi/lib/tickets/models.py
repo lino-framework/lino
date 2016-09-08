@@ -507,8 +507,8 @@ class Ticket(mixins.CreatedModified, Assignable, TimeInvestment, RFC,
     # spawn_triggered = SpawnTicket("⚇", LinkTypes.triggers)  # "\u2687"
     # spawn_ticket = SpawnTicket("", LinkTypes.requires)  # "\u2687"
 
-    def get_rfc_description(self, ar):
-        return ar.parse_memo(self.description)
+    # def get_rfc_description(self, ar):
+    #     return ar.parse_memo(self.description)
 
     def on_create(self, ar):
         # print "20150523a on_create", self.reporter_id
@@ -548,6 +548,9 @@ class Ticket(mixins.CreatedModified, Assignable, TimeInvestment, RFC,
         rv = super(Ticket, self).disabled_fields(ar)
         if self.project and not self.project.private:
             rv.add('private')
+        if not ar.get_user().profile.has_required_roles([Triager]):
+            rv.add('assigned_to')
+            rv.add('reporter')            
         return rv
 
     # def get_choices_text(self, request, actor, field):

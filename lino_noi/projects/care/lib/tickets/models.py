@@ -30,7 +30,7 @@ class TicketDetail(TicketDetail):
 
     general = dd.Panel("""
     general1:60 faculties.AssignableWorkersByTicket:20
-    comments.CommentsByRFC:60 clocking.SessionsByTicket:20
+    description:30 comments.CommentsByRFC:30 clocking.SessionsByTicket:20
     """, label=_("General"))
 
     general1 = """
@@ -45,8 +45,8 @@ class TicketDetail(TicketDetail):
 
     more = dd.Panel("""
     more1
-    description:40 upgrade_notes:20 LinksByTicket:20
-    """, label=_("More"))
+    upgrade_notes:20 LinksByTicket:20
+    """, label=_("More"), required_roles=dd.login_required(Triager))
 
     more1 = """
     created modified ticket_type:10

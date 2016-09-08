@@ -573,32 +573,26 @@ The detail layout of a ticket
 Here is a textual description of the fields and their layout used in
 the detail window of a ticket.
 
-.. py2rst::
-    from lino.api.doctest import *
-    from lino.utils.diag import py2rst
-    print(py2rst(tickets.Tickets.detail_layout))
-
-..
-    >>> from lino.utils.diag import py2rst
-    >>> print(py2rst(tickets.Tickets.detail_layout, True))
-    ... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF -SKIP
-    (main) [visible for all]:
-    - **General** (general):
-      - (general_1):
-        - (general1):
-          - (general1_1): **Summary** (summary), **ID** (id), **Reporter** (reporter)
-          - (general1_2): **Site** (site), **Topic** (topic), **Project** (project), **Private** (private)
-          - (general1_3): **Workflow** (workflow_buttons), **Assigned to** (assigned_to), **Faculty** (faculty)
-        - **Deployments** (deploy.DeploymentsByTicket) [visible for user consultant hoster developer senior admin]
-      - (general_2) [visible for user consultant hoster developer senior admin]: **Comments** (CommentsByRFC), **Sessions** (SessionsByTicket) [visible for consultant hoster developer senior admin]
-    - **More** (more):
-      - (more_1):
-        - (more1):
-          - (more1_1): **Created** (created), **Modified** (modified), **Reported for** (reported_for), **Ticket type** (ticket_type)
-          - (more1_2): **State** (state), **Duplicate of** (duplicate_of), **Planned time** (planned_time), **Priority** (priority)
-        - **Duplicates** (DuplicatesByTicket)
-      - (more_2): **Description** (description), **Upgrade notes** (upgrade_notes), **Dependencies** (LinksByTicket) [visible for senior admin]
-    - **History** (history_tab_1) [visible for senior admin]:
-      - **Changes** (changes.ChangesByMaster) [visible for user consultant hoster developer senior admin]
-      - **Starred by** (stars.StarsByController) [visible for user consultant hoster developer senior admin]
-    <BLANKLINE>
+>>> from lino.utils.diag import py2rst
+>>> print(py2rst(tickets.Tickets.detail_layout, True))
+... #doctest: +ELLIPSIS +NORMALIZE_WHITESPACE +REPORT_UDIFF -SKIP
+(main) [visible for all]:
+- **General** (general):
+  - (general_1):
+    - (general1):
+      - (general1_1): **Summary** (summary), **ID** (id), **Reporter** (reporter)
+      - (general1_2): **Site** (site), **Topic** (topic), **Project** (project), **Private** (private)
+      - (general1_3): **Workflow** (workflow_buttons), **Assigned to** (assigned_to), **Faculty** (faculty)
+    - **Deployments** (deploy.DeploymentsByTicket) [visible for user consultant hoster developer senior admin]
+  - (general_2): **Description** (description), **Comments** (CommentsByRFC) [visible for user consultant hoster developer senior admin], **Sessions** (SessionsByTicket) [visible for consultant hoster developer senior admin]
+- **More** (more):
+  - (more_1):
+    - (more1):
+      - (more1_1): **Created** (created), **Modified** (modified), **Reported for** (reported_for), **Ticket type** (ticket_type)
+      - (more1_2): **State** (state), **Duplicate of** (duplicate_of), **Planned time** (planned_time), **Priority** (priority)
+    - **Duplicates** (DuplicatesByTicket)
+  - (more_2): **Upgrade notes** (upgrade_notes), **Dependencies** (LinksByTicket) [visible for senior admin]
+- **History** (history_tab_1) [visible for senior admin]:
+  - **Changes** (changes.ChangesByMaster) [visible for user consultant hoster developer senior admin]
+  - **Starred by** (stars.StarsByController) [visible for user consultant hoster developer senior admin]
+<BLANKLINE>
