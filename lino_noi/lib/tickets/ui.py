@@ -296,7 +296,7 @@ class TicketDetail(dd.DetailLayout):
 
     history_tab = dd.Panel("""
     changes.ChangesByMaster:50 stars.StarsByController:20
-    """, label=_("History"))
+    """, label=_("History"), required_roles=dd.login_required(Triager))
 
     general1 = """
     summary:40 id:6 reporter:12

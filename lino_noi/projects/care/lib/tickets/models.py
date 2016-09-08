@@ -26,7 +26,7 @@ dd.update_field(
 
 
 class TicketDetail(TicketDetail):
-    main = "general more history_tab"
+    main = "general history_tab more"
 
     general = dd.Panel("""
     general1:60 faculties.AssignableWorkersByTicket:20
@@ -36,8 +36,12 @@ class TicketDetail(TicketDetail):
     general1 = """
     summary:40 id:6 deadline
     reporter:12 faculty topic assigned_to
-    site project workflow_buttons rating
+    site workflow_buttons rating
     """
+
+    history_tab = dd.Panel("""
+    changes.ChangesByMaster:50 stars.StarsByController:20
+    """, label=_("History"), required_roles=dd.login_required(Triager))
 
     more = dd.Panel("""
     more1
@@ -46,7 +50,7 @@ class TicketDetail(TicketDetail):
 
     more1 = """
     created modified ticket_type:10
-    state priority
+    state priority project
     # standby feedback closed
     """
 

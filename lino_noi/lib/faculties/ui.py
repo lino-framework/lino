@@ -23,7 +23,7 @@ from django.db import models
 
 from lino.api import dd, rt, _
 from lino.modlib.users.mixins import ByUser
-
+from lino_noi.lib.tickets.roles import Triager
 
 class Faculties(dd.Table):
     model = 'faculties.Faculty'
@@ -97,6 +97,7 @@ if dd.is_installed('tickets'):
         master = 'tickets.Ticket'
         column_names = 'username #faculties_competence_set_by_user__affinity *'
         label = _("Assignable workers")
+        required_roles = dd.login_required(Triager)
 
         @classmethod
         def get_request_queryset(self, ar):
