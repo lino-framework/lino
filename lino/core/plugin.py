@@ -124,6 +124,10 @@ class Plugin(object):
     :mod:`lino.modlib.bootstrap3`."""
 
     menu_group = None
+    """The name of another plugin to be used as menu group.
+
+    See :meth:`get_menu_group`.
+    """
 
     media_base_url = None
     """
@@ -311,16 +315,20 @@ class Plugin(object):
         return self.site.buildurl(*args, **kw)
 
     def get_menu_group(self):
-        """Return the plugin into whose menu this plugin wants to be inserted.
-        If this plugin was automatically installed because some other
-        plugin needs it, return that other plugin. Otherwise return
-        this plugin.
+        """Return the plugin into whose menu this plugin should add its menu
+        commands.
+
+        If this plugin defines a :attr:`menu_group`, return the named
+        plugin. Otherwise, if this plugin was automatically installed
+        because some other plugin needs it, return that other
+        plugin. Otherwise return this plugin.
 
         Used by :mod:`lino.modlib.languages`.
         Returns a :class:`Plugin` instance.
 
         """
         if self.menu_group:
-            return self.site.plugins.get(self.menu_group)
+            if self.menu_group in self.site.plugins:
+                return self.site.plugins.get(self.menu_group)
         return self.needed_by or self
 

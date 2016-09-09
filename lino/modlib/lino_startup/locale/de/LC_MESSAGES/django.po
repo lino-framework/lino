@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-09-09 03:51+0300\n"
-"PO-Revision-Date: 2016-09-09 03:55+0300\n"
+"PO-Revision-Date: 2016-09-09 04:24+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language: de\n"
 "Language-Team: \n"
@@ -3051,7 +3051,7 @@ msgstr "Kurzbeschreibung"
 
 #: lino/modlib/notify/actions.py:38
 msgid "Don't send email notification"
-msgstr "Du hast %d ungelesene Benachrichtigungen."
+msgstr "Keine Benachrichtigung schicken"
 
 #: lino/modlib/notify/mixins.py:21
 msgid "{user} modified {obj}"
