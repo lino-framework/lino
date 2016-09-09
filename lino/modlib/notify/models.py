@@ -234,7 +234,8 @@ Notification.update_controller_field(
 
 dd.inject_field(
     'users.User', 'notifyme_mode',
-    models.BooleanField(_('Notify me'), default=True))
+    models.BooleanField(
+        _('Send notifications via e-mail'), default=True))
 
 
 class Notifications(dd.Table):

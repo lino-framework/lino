@@ -38,7 +38,14 @@ class SendWelcomeMail(dd.Action):
     show_in_bbar = True
     show_in_workflow = False
     button_text = u"\u2709"  # ✉
+    required_roles = dd.required(SiteAdmin)
     
+    def get_action_permission(self, ar, obj, state):
+        if obj == ar.get_user():
+            return False
+        return super(
+            SendWelcomeMail, self).get_action_permission(ar, obj, state)
+
     def run_from_ui(self, ar, **kw):
 
         done_for = []
