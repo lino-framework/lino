@@ -243,14 +243,14 @@ In :ref:`care` we don't call them "tickets" but "pleas" (German
 - Konfigurierung :
   - System : Site-Parameter, Hilfetexte, Benutzer
   - Orte : Länder, Orte
-  - Benutzer : Themen, Themengruppen
+  - Themen : Themen, Themengruppen
   - Büro : Auszugsarten, Meine Einfügetexte
   - Bitten : Projekte, Projekte (Hierarchie), Project Types, Ticket types, Umfelder
   - Fähigkeiten : Fähigkeiten (Hierarchie), Fähigkeiten (alle)
   - Arbeitszeit : Session Types
 - Explorer :
   - System : Datenbankmodelle, Vollmachten, Benutzerarten, Benachrichtigungen, Änderungen
-  - Benutzer : Interessen
+  - Themen : Interessen
   - Büro : Favoriten, Auszüge, Kommentare, Einfügetexte
   - Bitten : Verknüpfungen, Zustände
   - Fähigkeiten : Kompetenzen
@@ -358,4 +358,20 @@ the detail window of a ticket.
     - (more1_1): **Créé** (created), **Modifié** (modified), **Ticket type** (ticket_type)
     - (more1_2): **État** (state), **Priorité** (priority), **Projekt** (project)
   - (more_2) [visible for all]: **Lösung** (upgrade_notes), **Verknüpfungen** (LinksByTicket) [visible for connector admin]
+<BLANKLINE>
+
+
+Topic groups
+============
+
+
+>>> show_menu_path(topics.TopicGroups, language='en')
+Configure --> Topics --> Topic groups
+
+>>> rt.show(topics.TopicGroups)
+==== ============= ================== ================== =============
+ ID   Désignation   Désignation (en)   Désignation (fr)   Description
+---- ------------- ------------------ ------------------ -------------
+ 1    Sprachen      Languages          Langues
+==== ============= ================== ================== =============
 <BLANKLINE>

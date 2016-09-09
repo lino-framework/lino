@@ -47,8 +47,8 @@ class Site(Site):
 
     def setup_plugins(self):
         super(Site, self).setup_plugins()
-        self.plugins.topics.partner_model = 'users.User'
-        self.plugins.topics.menu_group = 'users'
+        self.plugins.topics.configure(
+            partner_model='users.User', menu_group=None)
         # self.plugins.lists.partner_model = 'users.User'
         self.plugins.countries.configure(hide_region=True)
 

@@ -35,7 +35,12 @@ by the team that uses a given Lino Noi site.
 
 There are 4 topics in the demo database.
 
->>> rt.show(topics.Topics)
+>>> show_menu_path(topics.AllTopics)
+Configure --> Contacts --> Topics
+
+
+
+>>> rt.show(topics.AllTopics)
 =========== ============== ================== ================== =============
  Reference   Designation    Designation (de)   Designation (fr)   Topic group
 ----------- -------------- ------------------ ------------------ -------------
@@ -128,11 +133,11 @@ Filtering tickets by topic
  
 
 
-Configuration
-=============
+Topic groups
+============
 
->>> show_menu_path(topics.AllTopics)
-Configure --> Contacts --> Topics
+>>> rt.show(topics.TopicGroups)
+No data to display
 
->>> show_menu_path(topics.AllTopics, language="de")
-Konfigurierung --> Kontakte --> Themen
+>>> show_menu_path(topics.TopicGroups)
+Configure --> Contacts --> Topic groups

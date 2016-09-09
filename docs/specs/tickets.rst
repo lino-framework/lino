@@ -496,5 +496,3 @@ the detail window of a ticket.
 
 
 
-
-topics.AllTopics
