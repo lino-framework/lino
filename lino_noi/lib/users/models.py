@@ -48,7 +48,7 @@ class User(User, Contactable, AddressLocation, Addressable):
     """
     .. attribute:: callme_mode
 
-        Others can call me
+        Whether other users can see my contact data.
 
     """
 
@@ -56,7 +56,8 @@ class User(User, Contactable, AddressLocation, Addressable):
         app_label = 'users'
         abstract = dd.is_abstract_model(__name__, 'User')
 
-    callme_mode = models.BooleanField(_('Call me'), default=True)
+    callme_mode = models.BooleanField(
+        _('Others may contact me'), default=True)
 
     def get_detail_action(self, ar):
         a = super(User, self).get_detail_action(ar)
