@@ -209,6 +209,7 @@ GeneriForeignKey field."""),
 "Description" and a checkbox "Don't send email notification"."""),
     'lino.modlib.notify.mixins.ChangeObservable' : _("""Mixin for models which can "emit notifications" and define a list
 "observers" to be notified when an instance is modified."""),
+    'lino.modlib.notify.models.ClearSeen' : _("""Mark this notification as not yet seen."""),
     'lino.modlib.notify.models.Notification' : _("""A notification is a message to a given user about a given
 database object."""),
     'lino.modlib.notify.models.Notification.user' : _("""The recipient."""),
