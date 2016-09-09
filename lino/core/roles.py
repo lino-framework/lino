@@ -1,4 +1,4 @@
-# Copyright 2011-2015 Luc Saffre
+# Copyright 2011-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Defines built-in user roles. See :mod:`lino.core.permissions`.
@@ -14,7 +14,8 @@ class UserRole(object):
     """
 
     def has_required_roles(self, required_roles):
-        """Return `True` if this role satisfies the specified roles.
+        """Return `True` if this user role satisfies the specified required
+roles.
 
         The specified arguments are the set of role requirements
         (class objects).  This role (an instance) must satisfy *every*
@@ -84,6 +85,18 @@ def check_role(rr, actor):
 
 
 def check_required_roles(required_roles, actor):
+    """Check whether the given value is a valid required_roles
+    specification.
+
+    - it must be iterable
+
+    - every element must be either a subclass of :class:`UserRole` or
+      an iterable thereof.
+
+    - if an element is an iterable, then it may not be empty. Only the
+      top-level iterable may be empty.
+
+    """
     for rr in required_roles:
         if isinstance(rr, (tuple, list)):
             if len(rr) == 0:

@@ -5,19 +5,18 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
+"Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-08 05:44+0300\n"
+"POT-Creation-Date: 2016-09-09 03:51+0300\n"
 "PO-Revision-Date: 2016-09-08 06:45+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language: et\n"
 "Language-Team: et\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
-"X-Generator: Poedit 1.8.7.1\n"
 
 #: lino/core/actions.py:688
 msgid "Detail"
@@ -169,7 +168,7 @@ msgstr ""
 msgid "User abandoned"
 msgstr ""
 
-#: lino/core/layouts.py:493
+#: lino/core/layouts.py:500
 msgid "General"
 msgstr "Üld"
 
@@ -408,7 +407,7 @@ msgstr "Kontaktiliigid"
 msgid "Phonetic words: {0}"
 msgstr ""
 
-#: lino/mixins/duplicable.py:37 lino/modlib/lino_startup/help_texts.py:149
+#: lino/mixins/duplicable.py:37 lino/modlib/lino_startup/help_texts.py:93
 msgid "Duplicate this row."
 msgstr ""
 
@@ -441,7 +440,7 @@ msgctxt "(of a human)"
 msgid "Title"
 msgstr "Prefiks"
 
-#: lino/mixins/human.py:203 lino/modlib/users/models.py:185
+#: lino/mixins/human.py:203 lino/modlib/users/models.py:192
 msgid "First name"
 msgstr "Eesnimi"
 
@@ -449,7 +448,7 @@ msgstr "Eesnimi"
 msgid "Middle name"
 msgstr ""
 
-#: lino/mixins/human.py:209 lino/modlib/users/models.py:186
+#: lino/mixins/human.py:209 lino/modlib/users/models.py:193
 msgid "Last name"
 msgstr "Perenimi"
 
@@ -660,7 +659,7 @@ msgid "show callables"
 msgstr ""
 
 #: lino/modlib/about/models.py:200 lino/modlib/importfilters/models.py:35
-#: lino/modlib/users/models.py:212
+#: lino/modlib/users/models.py:219
 msgid "Name"
 msgstr "Nimi"
 
@@ -668,7 +667,7 @@ msgstr "Nimi"
 msgid "Value"
 msgstr ""
 
-#: lino/modlib/about/models.py:227 lino/modlib/notify/models.py:201
+#: lino/modlib/about/models.py:227 lino/modlib/notify/models.py:233
 msgid "About"
 msgstr ""
 
@@ -863,12 +862,12 @@ msgstr ""
 msgid "Admin"
 msgstr ""
 
-#: lino/modlib/extjs/elems.py:880
+#: lino/modlib/extjs/elems.py:885
 #, python-format
 msgid "Select a %s..."
 msgstr "Vali mõni %s..."
 
-#: lino/modlib/extjs/elems.py:1253 lino/modlib/uploads/choicelists.py:118
+#: lino/modlib/extjs/elems.py:1258 lino/modlib/uploads/choicelists.py:118
 msgid "show"
 msgstr ""
 
@@ -901,7 +900,7 @@ msgstr "Tööta teise kasutajana"
 msgid "Log out"
 msgstr "Logi välja"
 
-#: lino/modlib/extjs/ext_renderer.py:588 lino/modlib/users/models.py:76
+#: lino/modlib/extjs/ext_renderer.py:588 lino/modlib/users/models.py:83
 msgid "Change password"
 msgstr "Muuda salasõna"
 
@@ -918,11 +917,11 @@ msgstr "Logi sisse"
 msgid "No data to display."
 msgstr ""
 
-#: lino/modlib/extjs/linoweb.js:378 lino/modlib/users/models.py:172
+#: lino/modlib/extjs/linoweb.js:378 lino/modlib/users/models.py:179
 msgid "Username"
 msgstr "Kasutajanimi"
 
-#: lino/modlib/extjs/linoweb.js:385 lino/modlib/users/models.py:177
+#: lino/modlib/extjs/linoweb.js:385 lino/modlib/users/models.py:184
 msgid "Password"
 msgstr ""
 
@@ -1184,227 +1183,105 @@ msgid "Estonian"
 msgstr "Isikud"
 
 #: lino/modlib/lino_startup/help_texts.py:6
-msgid "An HTML renderer that uses the ExtJS Javascript toolkit."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:7
-msgid ""
-"Adds a row action \"Duplicate\" which duplicates (creates a clone\n"
-"of) the object it was called on."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:9
-msgid ""
-"An Authority is when a User gives another User the right to \"represent him\" "
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:10
-#: lino/modlib/lino_startup/help_texts.py:446
-#: lino/modlib/lino_startup/help_texts.py:469
-msgid "alias of Change"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:11
-msgid ""
-"This is always True.\n"
-"See also lino.modlib.users.utils.AnonymousUser.authenticated."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:13
-msgid "Display a clickable list of all MTI parents, i.e. base models"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:14
-#: lino/modlib/lino_startup/help_texts.py:254
-#: lino/modlib/lino_startup/help_texts.py:347
-#, fuzzy
-msgid "alias of Notification"
-msgstr "Nimetus"
-
-#: lino/modlib/lino_startup/help_texts.py:15
-msgid "Base for all tables of notifications."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:16
-msgid "The component that generates the JS of a grid column."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:17
-msgid ""
-"The database object this message is about.\n"
-"This field is labelled About."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:19
-msgid ""
-"Indicator class object.\n"
-"Fixture may yield a FlushDeferredObjects\n"
-"to indicate that all deferred objects should get saved before going on."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:22
-msgid "Show data problems related to this database object."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:23
-msgid "Render the main page."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:24
-msgid "Defines the Clear cache button on a Printable record."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:25
-msgid ""
-"Update plausibility problems, repairing those which are\n"
-"automatically fixable."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:27
-msgid "alias of SiteConfig"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:28
-msgid ""
-"Use this instead of models.PositiveIntegerField for fields that\n"
-"are part of a GFK and you want Lino to render them using a\n"
-"Combobox."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:31
-msgid ""
-"The message text. This is a concatenation of all messages that\n"
-"were yeld by the checker."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:33
-msgid "Set yourself as assigned user."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:34
-msgid "The third row of toolbar buttons when editing in own window."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:35
-msgid "The second row of toolbar buttons when editing in own window."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:36
-msgid "The first row of toolbar buttons when editing in own window."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:37
-msgid "A request for identifying a person or validating a person's identity"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:38
-msgid "The database object which acts as \"master\"."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:39
-#: lino/modlib/lino_startup/help_texts.py:94
-#: lino/modlib/lino_startup/help_texts.py:373
-msgid "alias of Upload"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:40
-msgid ""
-"Mixin for models which can \"emit notifications\" and define a list\n"
-"\"observers\" to be notified when an instance is modified."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:42
-msgid "A string that py2js will represent as is, not between quotes."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:43
-msgid "See lino.core.plugin.Plugin."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:44
-msgid ""
-"A constant user-defined date to be substituted as current\n"
-"system date."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:46
-msgid ""
-"Generates .pdf files from .html templates.\n"
-"Requires pisa.\n"
-"Usage example see /tutorials/pisa/index."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:49
-msgid "Represents a detected plausibility problem."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:50
-msgid ""
-"A notification object represents the fact that a given user has\n"
-"been notified about a given database object."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:52
-msgid "Instantiated by restore.py."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:53
-msgid "alias of Shortcut"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:54
-msgid ""
-"lino.core.param_panel.ParameterPanel with two fields\n"
-"start_date and end_date which default to empty."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:56
-msgid "The reference. This must be either empty or unique."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:57
-msgid "Shows only my Uploads (i.e. those whose author is current user)."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:58
-msgid ""
-"The widget used to render a SingleRelatedObjectDescriptor,\n"
-"i.e. the other side of a OneToOneField."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:60
-#: lino/modlib/lino_startup/help_texts.py:81
-#: lino/modlib/lino_startup/help_texts.py:92
-#: lino/modlib/lino_startup/help_texts.py:97
-#: lino/modlib/lino_startup/help_texts.py:162
-#: lino/modlib/lino_startup/help_texts.py:286
-#: lino/modlib/lino_startup/help_texts.py:298
-#: lino/modlib/lino_startup/help_texts.py:303
-#: lino/modlib/lino_startup/help_texts.py:323
-#: lino/modlib/lino_startup/help_texts.py:338
-#: lino/modlib/lino_startup/help_texts.py:346
-#: lino/modlib/lino_startup/help_texts.py:382
-#: lino/modlib/lino_startup/help_texts.py:383
-#: lino/modlib/lino_startup/help_texts.py:388
-#: lino/modlib/lino_startup/help_texts.py:497
-#: lino/modlib/lino_startup/help_texts.py:498
-#: lino/modlib/lino_startup/help_texts.py:505
-#: lino/modlib/lino_startup/help_texts.py:523
-#: lino/modlib/lino_startup/help_texts.py:549
-#: lino/modlib/lino_startup/help_texts.py:562
-msgid "See /dev/plugins."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:61
-#: lino/modlib/lino_startup/help_texts.py:355
+#: lino/modlib/lino_startup/help_texts.py:554
 msgid "Alias for field number 3"
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:62
-msgid "Mixin for objects that represent an uploadable file."
+#: lino/modlib/lino_startup/help_texts.py:7
+#: lino/modlib/lino_startup/help_texts.py:555
+msgid "Alias for field number 2"
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:63
+#: lino/modlib/lino_startup/help_texts.py:8
+#: lino/modlib/lino_startup/help_texts.py:556
+msgid "Alias for field number 4"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:9
+#: lino/modlib/lino_startup/help_texts.py:557
+msgid "Alias for field number 1"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:10
+#: lino/modlib/lino_startup/help_texts.py:558
+msgid "Alias for field number 0"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:11
+msgid "Shortcut to lino.core.site.Site.plugins"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:12
+msgid "Shortcut to lino.core.site.Site.models"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:13
+msgid "Shortcut to lino.core.site.Site.actors"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:14
+msgid ""
+"Generates one directory of screenshots images and their index.rst\n"
+"file."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:16
+msgid ""
+"Base class to anything that may be \"registered\" and \"deregistered\"\n"
+"(e.g. Invoices, Vouchers, Declarations, Reservations,...).\n"
+"\"Registered\" in general means \"this object has been taken account "
+"of\".\n"
+"Registered objects are not editable."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:20
+msgid ""
+"The ChoiceList of the state field must have at least two items\n"
+"named \"draft\" and \"registered\".\n"
+"There may be additional states.\n"
+"Every state must have an extra attribute \"editable\"."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:24
+msgid "Mixin for models which have a field created"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:25
+msgid "The timestame when this object was created."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:26
+msgid "Adds two timestamp fields created and modified."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:27
+msgid ""
+"Mixin for Models that are automatically related to a \"project\".  A\n"
+"project means here \"the central most important thing that is used\n"
+"to classify most other things\"."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:30
+msgid ""
+"Mixin for things that have a unique ref field and a\n"
+"get_by_ref method."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:32
+msgid "The reference. This must be either empty or unique."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:33
+msgid "The maximum length of the ref field."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:34
+msgid ""
+"Like the standard lino.core.actions.SubmitInsert, but adds\n"
+"a confirmation if there is a possible duplicate record."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:36
 msgid ""
 "Base class for the table of phonetic words of a given dupable\n"
 "model. For every (non-abstract) dupable model there must be a\n"
@@ -1415,630 +1292,11 @@ msgid ""
 "of PhoneticWordBase."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:70
-msgid "The default build method to use when rendering printable documents."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:71
-msgid ""
-"Mixin for things that have a unique ref field and a\n"
-"get_by_ref method."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:73
-msgid "The toolbar buttons when editing a field inside a detail form."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:74
-msgid "Using Django's templating engine."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:75
-msgid ""
-"A print action which uses a cache for the generated printable\n"
-"document and builds is only when it doesn't yet exist."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:77
-msgid ""
-"The role of users having this profile. This is an instance of\n"
-"<lino.core.roles.UserRole> or some subclass thereof."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:79
-msgid ""
-"The user reponsible\n"
-"for fixing this problem."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:82
-msgid ""
-"Mixin for models whose instances have a \"print\" action (i.e. for\n"
-"which Lino can generate a printable document)."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:84
-msgid ""
-"The list of things you can observe on a\n"
-"lino.mixins.periods.DatePeriod."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:86
-msgid ""
-"The panel used to display a slave table whose slave_grid_format\n"
-"is 'summary'."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:88
-msgid "The class of the lino.utils.diag.analyzer object."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:89
-msgid ""
-"Represents a Lino.GridPanel, i.e. the widget used to represent a\n"
-"table or a slave table."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:91
-msgid "Shows all Uploads"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:93
-#, fuzzy
-msgid "The end date"
-msgstr "Lõpeb (päev)"
-
-#: lino/modlib/lino_startup/help_texts.py:95
-msgid ""
-"Mixin to encapsulate the generating of \"traditional\" (\"snail\") mail\n"
-"addresses."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:98
-msgid "Shortcut to lino.core.site.Site.plugins"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:99
-msgid ""
-"Generates .pdf files from .tex templates.\n"
-"Not actively used."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:101
-msgid ""
-"The list of upload shortcut fields which have been declared on this\n"
-"Site.  See add_shortcut()."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:103
-msgid ""
-"Duplicate the selected row. This will call\n"
-"lino.core.model.Model.on_duplicate() on the new object and\n"
-"on related objects."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:106
-msgid ""
-"This model should have exactly one instance,\n"
-"used to store persistent global site parameters.\n"
-"Application code sees this instance as settings.SITE.site_config."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:109
-msgid "The optional Panel for parameters of an Action."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:110
-#: lino/modlib/lino_startup/help_texts.py:537
-msgid "Alias for field number 1"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:111
-msgid "The default table for Change."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:112
-msgid ""
-"A utility class to make python fixtures more compact. See\n"
-"tutorial.instantiator."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:114
-msgid ""
-"The optional Panel for parameters of a Table.\n"
-"JS part stored in Lino.GridPanel.params_panel."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:116
-msgid "The middleware class definition."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:117
-#: lino/modlib/lino_startup/help_texts.py:256
-#: lino/modlib/lino_startup/help_texts.py:261
-#: lino/modlib/lino_startup/help_texts.py:422
-#: lino/modlib/lino_startup/help_texts.py:513
-msgid "alias of Problem"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:118
-msgid "Used only for testing."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:119
-msgid "When you decorate your subclass of TestCase, you must also specify:"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:120
-msgid ""
-"Deprecated. This is (and always was) being ignored. Use\n"
-"update_controller_field() instead."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:122
-msgid ""
-"A virtual field which defines buttons for switching between the\n"
-"different views."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:124
-msgid "used e.g. to render /lino/lino/config/500.html"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:125
-msgid "Base class for all Widgets on some filed-like data element."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:126
-msgid "alias of User"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:127
-msgid "The URL from where to include the ExtJS library files."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:128
-msgid ""
-"The name of a CharField on this model which holds the full-text\n"
-"description that is being tested for duplicates."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:130
-msgid "A property which calls get_address_html()."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:131
-msgid ""
-"A singleton class whose instance will be assigned to the\n"
-"user attribute of anonymous incoming requests, similar to\n"
-"Django's approach."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:134
-msgid ""
-"This field is usually empty.  Setting it to another user means\n"
-"\"I am not fully responsible for this item\"."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:136
-msgid ""
-"Optional pointer to a virtual upload shortcut field.  If\n"
-"this is not empty, then the given shortcut field will manage\n"
-"uploads of this type.  See also Shortcuts."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:139
-msgid ""
-"Like SimpleOdsReader, but each row is converted to \n"
-"an lino.utils.AttrDict. This requires you to specifiy, \n"
-"besides the SimpleOdsReader.headers attrribute, \n"
-"another list of pure ASCII strings which must be valid Python \n"
-"attribute names."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:144
-msgid "The list of user profiles available on this site."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:145
-msgid ""
-"Used to define tests that are to be run directly in the demo\n"
-"database, without using the Django test runner (i.e. without\n"
-"creating a temporary test database)."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:148
-msgid "Shows notifications emitted to you."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:150
-msgid ""
-"Number of seconds to wait between two refreshes when autorefresh is\n"
-"activated. Default is 60. Set this to 0 in order to deactivate\n"
-"the autorefresh button."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:153
-msgid "Base class for all user profiles."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:154
-msgid "Serializes a QuerySet to a py stream."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:155
-msgid ""
-"The author of this object.\n"
-"A pointer to lino.modlib.users.models.User."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:157
-msgid "The profile of a user is what defines her or his permissions."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:158
-msgid ""
-"Like the standard lino.core.actions.SubmitInsert, but adds\n"
-"a confirmation if there is a possible duplicate record."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:160
-msgid ""
-"A request to the HealthInsurance BCSS service.\n"
-"Net yet used in practice."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:163
-msgid "The maximum length of the ref field."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:164
-#, fuzzy
-msgid "The new password."
-msgstr "Muuda salasõna"
-
-#: lino/modlib/lino_startup/help_texts.py:165
-msgid "The new password a second time. Both passwords must match."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:166
-msgid "The type of an upload."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:167
-msgid "Used to collaborate with a restful Ext.data.Store."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:168
-msgid ""
-"Move current row one downwards. This action is available on any\n"
-"Sequenced object as Sequenced.move_down."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:170
-msgid "Represents a counter. Usage see"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:171
-msgid ""
-"The loggers to preserve. If not None, this should be a list of\n"
-"loggers (logging.Logger instances) whose file handles\n"
-"should not get closed."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:174
-msgid "Converter for ManyToMany fields."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:175
-msgid "Displays buttons for certain actions on this row:"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:176
-msgid "alias of RemoteAuthTestCase"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:177
-msgid ""
-"Shows all database objects (model instances) who have a broken\n"
-"GeneriForeignKey field."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:179
-#: lino/modlib/lino_startup/help_texts.py:302
-msgid "Alias for field number 2"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:180
-msgid ""
-"An action with a generic dialog window of three fields \"Summary\",\n"
-"\"Description\" and a checkbox \"Don't send email notification\"."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:182
-msgid ""
-"A vertical Panel is vflex if and only if at least one of its\n"
-"children is vflex.  A horizontal Panel is vflex if and only if\n"
-"all its children are vflex (if vflex and non-vflex elements are\n"
-"together in a hbox, then the vflex elements will get the height of\n"
-"the highest non-vflex element)."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:187
-msgid "Checks for the following repairable problem:"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:188
-msgid ""
-"A list of tag names which are to remain in HTML comments if\n"
-"bleaching is active."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:190
-msgid "Represents a single DBF file."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:191
-msgid ""
-"Slave Table showing the direct changes related to the current\n"
-"object."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:193
-msgid ""
-"An XML namespace.  Base class for\n"
-"lino.utils.xmlgen.html.HtmlNamespace and the namespaces\n"
-"defined in lino.utils.xmlgen.intervat."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:196
-msgid "Adds two timestamp fields created and modified."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:197
-msgid ""
-"Somebody who can help others by running TakeAuthorship\n"
-"action."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:199
-msgid ""
-"Updates the table of plausibility problems for a given database\n"
-"object, also removing those messages which no longer exist. This\n"
-"action does not change anything else in the database."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:202
-msgid "A duration, expressed in hours:minutes."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:203
-msgid ""
-"Slave Table showing the changes related to the current object,\n"
-"including those applied to \"child\" objects."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:205
-msgid ""
-"Rebuild the site cache.\n"
-"This action is available on About."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:207
-msgid ""
-"Path to the ExtJS root directory.  Only used when\n"
-"media_base_url is None, and when the media directory has\n"
-"no symbolic link named extjs pointing to the ExtJS root\n"
-"directory."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:211
-msgid ""
-"This view is being used when remote_user_header is\n"
-"empty (and user_model not).\n"
-"lino.core.auth.SessionUserMiddleware"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:214
-msgid ""
-"Tell Sphinx to switch to the specified project until the end of\n"
-"this document."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:216
-msgid ""
-"Base class to anything that may be \"registered\" and \"deregistered\"\n"
-"(e.g. Invoices, Vouchers, Declarations, Reservations,...).\n"
-"\"Registered\" in general means \"this object has been taken account of\".\n"
-"Registered objects are not editable."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:220
-msgid "Base class for integers, decimals, RequestField,..."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:221
-msgid "Usage example see lino_xl.lib.humanlinks.fixtures."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:222
-msgid "A property which calls get_address()."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:223
-msgid "For example CourseToXls."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:224
-#: lino/modlib/lino_startup/help_texts.py:234
-msgid "alias of Checker"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:225
-msgid "The last name, also known as family name."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:226
-msgid ""
-"A request to the PerformInvestigation BCSS service.\n"
-"Net yet used in practice."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:228
-msgid "Adds some extensions to the Django TestCase."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:229
-msgid "The sequence number of this item with its parent."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:230
-msgid ""
-"Somebody who can help others by running AssignToMe\n"
-"action."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:232
-msgid ""
-"Display information about this web site.  This defines the window\n"
-"which opens via the menu command Site ‣ About."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:235
-msgid ""
-"The list of possible choices for the type field\n"
-"of a Change."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:237
-msgid ""
-"Edit the print template, i.e. the file specified by\n"
-"Printable.get_print_templates()."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:239
-msgid ""
-"Abstract base class. For each .ods file you are probably creating a\n"
-"subclass of this."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:241
-msgid ""
-"A virtual read-only field which returns the Person MTI child corresponding\n"
-"to the partner (if it exists) and otherwise None."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:243
-msgid ""
-"A CSV writer which will write rows to CSV file \"f\",\n"
-"which is encoded in the given encoding."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:245
-msgid "Exchange the seqno of this item and the previous item."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:246
-msgid "Mixin for models which have a field created"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:247
-msgid "alias of Dupable"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:248
-msgid "Iterator that reads an encoded stream and reencodes the input to UTF-8"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:249
-msgid "The sex of this person (male or female)."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:250
-msgid ""
-"Mixin for models that have a field seqno containing a\n"
-"\"sequence number\"."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:252
-msgid ""
-"A user who manages office functionality for other users (but not\n"
-"for himself)."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:255
+#: lino/modlib/lino_startup/help_texts.py:43
 msgid "Base class for models that can be \"dupable\"."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:257
-msgid ""
-"A chooser holds information about the possible choices of a\n"
-"field."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:259
-msgid "Renders as a simple table."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:260
-msgid "Show the plausibility problems by checker."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:262
-msgid ""
-"A user who has access to office functionality like calendar, notes\n"
-"and uploads."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:264
-msgid "alias of Model"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:265
-msgid "A custom help text to be displayed for a given field."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:266
-msgid "Extends lino.core.plugin.Plugin."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:267
-msgid ""
-"A short \"abstract\" of your comment. This should not be more\n"
-"than one paragraph."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:269
-msgid ""
-"The DJANGO_SETTINGS_MODULE to set for each subprocess\n"
-"launched by this test case."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:271
-msgid "A choicelist with two values \"Yes\" and \"No\"."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:272
-msgid ""
-"Log all SQL statements to the console.\n"
-"Intended for use with the django development server."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:274
-msgid "The first name, also known as given name."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:275
-msgid "alias of UserProfile"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:276
-msgid ""
-"A pythonic representation of a <table> with <head>,\n"
-"<foot> and <body>."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:278
+#: lino/modlib/lino_startup/help_texts.py:44
 msgid ""
 "A dupable model has its\n"
 "submit_insert action\n"
@@ -2047,84 +1305,749 @@ msgid ""
 "confirmation when necessary."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:283
-msgid "ExtJS element to be used for DisplayFields."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:284
-#: lino/modlib/lino_startup/help_texts.py:504
-msgid "Alias for field number 0"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:285
-msgid "Converter for ChoiceListField."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:287
+#: lino/modlib/lino_startup/help_texts.py:49
 msgid ""
-"When serving static files from a different subdomain, TinyMCE needs\n"
-"to know about this. Typical usage is to specify this in your\n"
-"lino_local.py file:"
+"The name of a CharField on this model which holds the full-text\n"
+"description that is being tested for duplicates."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:290
-msgid "The last year for which summaries should be computed."
+#: lino/modlib/lino_startup/help_texts.py:51
+msgid ""
+"Full name of the model used to hold dupable words for instances of\n"
+"this model.  Applications can specify a string which will be\n"
+"resolved at startup to the model's class object."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:291
-msgid "Counts the number of code lines in a given Python source file."
+#: lino/modlib/lino_startup/help_texts.py:54
+msgid "Checks for the following repairable problem:"
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:292
+#: lino/modlib/lino_startup/help_texts.py:55
+msgid "alias of Dupable"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:56
+msgid "Shows the other objects who are similar to this one."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:57
+msgid "alias of Model"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:58
+msgid ""
+"Duplicate the selected row. This will call\n"
+"lino.core.model.Model.on_duplicate() on the new object and\n"
+"on related objects."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:61
+msgid ""
+"Adds a row action \"Duplicate\" which duplicates (creates a clone\n"
+"of) the object it was called on."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:63
+msgid "Base class for all models that represent a human."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:64
+msgid ""
+"An optional name prefix like \"Dr.\" or \"PhD\", used to specify a\n"
+"professional position or academic qualification."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:66
+msgid "The first name, also known as given name."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:67
+msgid "The last name, also known as family name."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:68
+msgid "A space-separated list of all middle names."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:69
+msgid "The sex of this person (male or female)."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:70
+msgid ""
+"Returns a one-line string composed of salutation, title,\n"
+"first_name and last_name."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:72
+msgid ""
+"Abstract base class that adds a birth_date\n"
+"field and a virtual field \"Age\"."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:74
+msgid "An IncompleteDateField."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:75
+msgid "Virtual field displaying the age in years."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:76
+msgid ""
+"A model mixin for models which represent a period whose start and\n"
+"end are date fields."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:78
+msgid ""
+"lino.core.param_panel.ParameterPanel with two fields\n"
+"start_date and end_date which default to empty."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:80
+msgid ""
+"An ObservedPeriod for which start_date defaults to Jan\n"
+"1st and end_date to Dec 31 of the current year."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:82
+msgid "An ObservedPeriod which defaults to the current month."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:83
+msgid ""
+"A ParameterPanel\n"
+"with a field today which defaults to today."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:85
+msgid ""
+"Mixin for models that use Multiple Table Inheritance to implement\n"
+"polymorphism."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:87
+msgid ""
+"A virtual field which defines buttons for switching between the\n"
+"different views."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:89
+msgid ""
+"Move current row one upwards. This action is available on any\n"
+"Sequenced object as Sequenced.move_up."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:91
+msgid ""
+"Move current row one downwards. This action is available on any\n"
+"Sequenced object as Sequenced.move_down."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:94
+msgid ""
+"Mixin for models that have a field seqno containing a\n"
+"\"sequence number\"."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:96
+msgid "The sequence number of this item with its parent."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:97
+msgid "Exchange the seqno of this item and the previous item."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:98
+msgid "Exchange the seqno of this item and the next item."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:99
+msgid "Displays buttons for certain actions on this row:"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:100
 msgid ""
 "Abstract model mixin for things that have a \"parent\" and\n"
 "\"siblings\"."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:294
-msgid "Widget for lino.core.fields.IncompleteDate fields."
+#: lino/modlib/lino_startup/help_texts.py:102
+msgid "Mixin for objects that represent an uploadable file."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:295
+#: lino/modlib/lino_startup/help_texts.py:103
+msgid "Pointer to the file itself (a Django FileField)."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:104
 msgid ""
-"Looks for a file \"index.rst\" in your project_dir and (if it exists)\n"
-"runs doctest on it."
+"The Media type\n"
+"of the file.  See also this thread\n"
+"about length of MIME type field."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:297
-msgid "Flushes the database and loads the default demo fixtures."
+#: lino/modlib/lino_startup/help_texts.py:107
+#: lino/modlib/lino_startup/help_texts.py:116
+#: lino/modlib/lino_startup/help_texts.py:130
+#: lino/modlib/lino_startup/help_texts.py:137
+#: lino/modlib/lino_startup/help_texts.py:138
+#: lino/modlib/lino_startup/help_texts.py:188
+#: lino/modlib/lino_startup/help_texts.py:201
+#: lino/modlib/lino_startup/help_texts.py:202
+#: lino/modlib/lino_startup/help_texts.py:204
+#: lino/modlib/lino_startup/help_texts.py:224
+#: lino/modlib/lino_startup/help_texts.py:231
+#: lino/modlib/lino_startup/help_texts.py:268
+#: lino/modlib/lino_startup/help_texts.py:316
+#: lino/modlib/lino_startup/help_texts.py:317
+#: lino/modlib/lino_startup/help_texts.py:321
+#: lino/modlib/lino_startup/help_texts.py:343
+#: lino/modlib/lino_startup/help_texts.py:357
+#: lino/modlib/lino_startup/help_texts.py:380
+#: lino/modlib/lino_startup/help_texts.py:440
+#: lino/modlib/lino_startup/help_texts.py:446
+msgid "See /dev/plugins."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:299
+#: lino/modlib/lino_startup/help_texts.py:108
 msgid ""
-"If you have an existing Django management command, just rename\n"
-"it's handle method to handle_daemon and inherit from this\n"
-"instead of django.core.management.base.BaseCommand."
+"Shows a simplistic \"inspector\" which once helped me for debugging.\n"
+"Needs more work to become seriously useful..."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:304
+#: lino/modlib/lino_startup/help_texts.py:110
+msgid ""
+"Display information about this web site.  This defines the window\n"
+"which opens via the menu command Site ‣ About."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:112
+msgid "A  HTML render that uses Bootstrap3."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:113
 msgid "Render a list of records."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:305
+#: lino/modlib/lino_startup/help_texts.py:114
+msgid "Render a single record."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:115
+msgid "Render the main page."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:117
+msgid ""
+"The list of possible choices for the type field\n"
+"of a Change."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:119
+msgid "A registered change in the database."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:120
+msgid "The database object which acts as \"master\"."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:121
+msgid "The database object which has been modified."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:122
+msgid "The default table for Change."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:123
+#: lino/modlib/lino_startup/help_texts.py:126
+#: lino/modlib/lino_startup/help_texts.py:129
+msgid "alias of Change"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:124
+msgid ""
+"Slave Table showing the direct changes related to the current\n"
+"object."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:127
+msgid ""
+"Slave Table showing the changes related to the current object,\n"
+"including those applied to \"child\" objects."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:131
+msgid ""
+"A comment is a short text which some user writes about some\n"
+"other database object. It has no recipient."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:133
+msgid ""
+"A short \"abstract\" of your comment. This should not be more\n"
+"than one paragraph."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:135
+msgid ""
+"A list of tag names which are to remain in HTML comments if\n"
+"bleaching is active."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:139
+msgid "Extends lino.core.plugin.Plugin."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:140
+msgid ""
+"Whether the ENTER key (or CTRL+ENTER when in a\n"
+"textarea field) should submit the form."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:142
+msgid ""
+"Whether to use a status bar to display certain messages to the user.\n"
+"Default is False since currently this is not really useful."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:144
+msgid "The URL from where to include the ExtJS library files."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:145
+msgid ""
+"Number of seconds to wait between two refreshes when autorefresh is\n"
+"activated. Default is 60. Set this to 0 in order to deactivate\n"
+"the autorefresh button."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:148
+msgid ""
+"Path to the ExtJS root directory.  Only used when\n"
+"media_base_url is None, and when the media directory has\n"
+"no symbolic link named extjs pointing to the ExtJS root\n"
+"directory."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:152
+msgid "The component that generates the JS of a grid column."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:153
+msgid "Base class for all Widgets on some filed-like data element."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:154
+msgid ""
+"Like ChoicesFieldElement, but we use the fact that\n"
+"choicelists are actors to define them once and refer to them.\n"
+"Special case are choicelist fields with blank=True: these must\n"
+"dynamicaly add a blank choice to the the choicelist."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:158
+msgid "Widget for lino.core.fields.IncompleteDate fields."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:159
+msgid "Base class for integers, decimals, RequestField,..."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:160
+msgid "ExtJS element to be used for DisplayFields."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:161
+msgid ""
+"The widget used to render a SingleRelatedObjectDescriptor,\n"
+"i.e. the other side of a OneToOneField."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:163
+msgid "A DisplayElement specially adapted to a GFK field."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:164
 msgid "Element that renders to a Lino.HtmlBoxPanel."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:306
+#: lino/modlib/lino_startup/help_texts.py:165
 msgid ""
-"The initial height of the window to use when editing in own\n"
-"window."
+"The panel used to display a slave table whose slave_grid_format\n"
+"is 'summary'."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:308
+#: lino/modlib/lino_startup/help_texts.py:167
+msgid ""
+"Base class for Layout Elements that can contain other Layout Elements:\n"
+"Panel,\n"
+"TabPanel,\n"
+"FormPanel,\n"
+"GridPanel"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:172
+msgid ""
+"A vertical Panel is vflex if and only if at least one of its\n"
+"children is vflex.  A horizontal Panel is vflex if and only if\n"
+"all its children are vflex (if vflex and non-vflex elements are\n"
+"together in a hbox, then the vflex elements will get the height of\n"
+"the highest non-vflex element)."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:177
+msgid ""
+"Represents a Lino.GridPanel, i.e. the widget used to represent a\n"
+"table or a slave table."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:179
+msgid ""
+"The optional Panel for parameters of a Table.\n"
+"JS part stored in Lino.GridPanel.params_panel."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:181
+msgid "The optional Panel for parameters of an Action."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:182
+msgid "An HTML renderer that uses the ExtJS Javascript toolkit."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:183
+msgid "Similar to PlainIndex"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:184
+msgid ""
+"This view is being used when remote_user_header is\n"
+"empty (and user_model not).\n"
+"lino.core.auth.SessionUserMiddleware"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:187
+msgid "Used to collaborate with a restful Ext.data.Store."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:189
+msgid "Add verbose_name and help_text to Django's GFK."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:190
+msgid ""
+"Use this instead of models.PositiveIntegerField for fields that\n"
+"are part of a GFK and you want Lino to render them using a\n"
+"Combobox."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:193
+msgid "Mixin for models that are \"controllable\" by another database object."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:194
+msgid ""
+"Deprecated. This is (and always was) being ignored. Use\n"
+"update_controller_field() instead."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:196
+msgid "Default table for django.contrib.ContentType."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:197
+msgid "Display a clickable list of all MTI parents, i.e. base models"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:198
+msgid "A custom help text to be displayed for a given field."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:199
+msgid ""
+"Shows all database objects (model instances) who have a broken\n"
+"GeneriForeignKey field."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:203
+msgid "used e.g. to render /lino/lino/config/500.html"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:205
+msgid "Flush the database and load the specified fixtures."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:206
+msgid "Flushes the database and loads the default demo fixtures."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:207
+msgid "See lino.core.plugin.Plugin."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:208
+msgid ""
+"An action with a generic dialog window of three fields \"Summary\",\n"
+"\"Description\" and a checkbox \"Don't send email notification\"."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:210
+msgid ""
+"Mixin for models which can \"emit notifications\" and define a list\n"
+"\"observers\" to be notified when an instance is modified."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:212
+msgid "Mark this notification as not yet seen."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:213
+msgid ""
+"A notification is a message to a given user about a given\n"
+"database object."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:215
+msgid "The recipient."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:216
+msgid ""
+"The database object this message is about.\n"
+"This field is labelled About."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:218
+msgid "Base for all tables of notifications."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:219
+#: lino/modlib/lino_startup/help_texts.py:221
+#: lino/modlib/lino_startup/help_texts.py:223
+#, fuzzy
+msgid "alias of Notification"
+msgstr "Nimetus"
+
+#: lino/modlib/lino_startup/help_texts.py:220
+msgid "The gobal list of all notifications."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:222
+msgid "Shows notifications emitted to you."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:225
+msgid ""
+"A user who has access to office functionality like calendar, notes\n"
+"and uploads."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:227
+msgid ""
+"A user who manages office functionality for other users (but not\n"
+"for himself)."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:229
+msgid "A user who manages configuration of office functionality."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:230
+msgid "A user with all permissions."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:232
+msgid ""
+"The username\n"
+"of the main plausibility responsible, i.e. a designated\n"
+"user who will be attributed to plausibility problems for which\n"
+"no specific responible could be designated (returned by the\n"
+"checker's get_responsible_user\n"
+"method)."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:238
+msgid "Base class for the choices of Checkers."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:239
+msgid ""
+"The model to be checked. This may be an abstract model.  It can\n"
+"also be None, but then you must define your own\n"
+"get_checkable_models() method."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:242
+msgid "The list of plausibility problem types known by this application."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:243
+#: lino/modlib/lino_startup/help_texts.py:263
+msgid "alias of Checker"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:244
+msgid ""
+"Updates the table of plausibility problems for a given database\n"
+"object, also removing those messages which no longer exist. This\n"
+"action does not change anything else in the database."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:247
+msgid ""
+"Update plausibility problems, repairing those which are\n"
+"automatically fixable."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:249
+msgid "Represents a detected plausibility problem."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:250
+msgid ""
+"The Checker which reported\n"
+"this problem."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:252
+msgid ""
+"The message text. This is a concatenation of all messages that\n"
+"were yeld by the checker."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:254
+msgid ""
+"The user reponsible\n"
+"for fixing this problem."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:256
+msgid "The base table for Problem objects."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:257
+#: lino/modlib/lino_startup/help_texts.py:259
+#: lino/modlib/lino_startup/help_texts.py:261
+#: lino/modlib/lino_startup/help_texts.py:264
+#: lino/modlib/lino_startup/help_texts.py:266
+msgid "alias of Problem"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:258
+msgid "Show all plausibility problems."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:260
+msgid "Show data problems related to this database object."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:262
+msgid "Show the plausibility problems by checker."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:265
+msgid "Shows the plausibility problems assigned to this user."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:267
+msgid "A user who can see plausibility problems."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:269
+msgid "Base class for all \"Print\" actions."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:270
+msgid "Print using a hard-coded template and without cache."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:271
+msgid ""
+"A print action which uses a cache for the generated printable\n"
+"document and builds is only when it doesn't yet exist."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:273
+msgid ""
+"Edit the print template, i.e. the file specified by\n"
+"Printable.get_print_templates()."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:275
+msgid "Defines the Clear cache button on a Printable record."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:276
+msgid ""
+"Base class for all build methods.  A build method encapsulates the\n"
+"process of generating a \"printable document\" that inserts data\n"
+"from the database into a template, using a given combination of a\n"
+"template parser and post-processor."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:280
+msgid "Using Django's templating engine."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:281
+msgid ""
+"Generates .pdf files from .html templates.\n"
+"Requires pisa.\n"
+"Usage example see /tutorials/pisa/index."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:284
+msgid ""
+"Base for build methods which use Lino's templating system\n"
+"(find_config_file)."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:286
+msgid ""
+"Generates .pdf files from .tex templates.\n"
+"Not actively used."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:288
+msgid ""
+"Generates .rtf files from .rtf templates.\n"
+"Not actively used."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:290
+msgid "The choicelist of build methods offered on this site."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:291
+msgid ""
+"Base class for models that specify the\n"
+"TypedPrintable.type."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:293
+msgid ""
+"A pointer to an item of\n"
+"lino.modlib.printing.choicelists.BuildMethods."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:295
 msgid "The name of the file to be used as template."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:309
-msgid "Base class for the individual services."
+#: lino/modlib/lino_startup/help_texts.py:296
+msgid "Default value for templates_group is the model's full name."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:310
+#: lino/modlib/lino_startup/help_texts.py:297
+msgid ""
+"Mixin for models whose instances have a \"print\" action (i.e. for\n"
+"which Lino can generate a printable document)."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:299
 msgid ""
 "The action used to print this object.\n"
 "This is an instance of\n"
@@ -2135,153 +2058,225 @@ msgid ""
 "lino_xl.lib.excerpts.CreateExcerpt instance."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:317
+#: lino/modlib/lino_startup/help_texts.py:306
 msgid ""
-"Whether to use a status bar to display certain messages to the user.\n"
-"Default is False since currently this is not really useful."
+"Mixin for Models that generate a unique external file at a\n"
+"determined place when being printed."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:319
-msgid "The first year for which summaries should be computed."
+#: lino/modlib/lino_startup/help_texts.py:308
+msgid ""
+"Timestamp of the built target file. Contains None\n"
+"if no build hasn't been called yet."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:320
-msgid "Virtual field displaying the age in years."
+#: lino/modlib/lino_startup/help_texts.py:310
+msgid ""
+"A CachedPrintable that uses a \"Type\" for deciding which\n"
+"template to use on a given instance."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:321
+#: lino/modlib/lino_startup/help_texts.py:312
+msgid ""
+"Checks for missing cache files on all objects which inherit\n"
+"CachedPrintable."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:314
 msgid "alias of CachedPrintable"
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:322
-msgid "alias of UploadType"
+#: lino/modlib/lino_startup/help_texts.py:315
+msgid "For example CourseToXls."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:324
-msgid "Mixin for models that are \"controllable\" by another database object."
+#: lino/modlib/lino_startup/help_texts.py:318
+msgid "The first year for which summaries should be computed."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:319
+msgid "The last year for which summaries should be computed."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:320
+msgid "Base class for all \"summary data\" models."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:322
+msgid "A choicelist with two values \"Yes\" and \"No\"."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:323
+msgid ""
+"Defines the two possible choices \"male\" and \"female\"\n"
+"for the gender of a person."
 msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:325
-msgid "Represents a user of this site."
+msgid "Base class for choices of \"observed event\"-style choicelists."
 msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:326
 msgid ""
-"You declare to become the fully responsible user for this database\n"
-"object."
+"The list of things you can observe on a\n"
+"lino.mixins.periods.DatePeriod."
 msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:328
 msgid ""
-"A variant of Users showing only active users and\n"
-"only some fields.  This is used on demo sites in\n"
-"admin_main.html to display the list of available users."
+"Rebuild the site cache.\n"
+"This action is available on About."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:331
+#: lino/modlib/lino_startup/help_texts.py:330
 msgid ""
-"Abstract base class that adds a birth_date\n"
-"field and a virtual field \"Age\"."
+"This model should have exactly one instance,\n"
+"used to store persistent global site parameters.\n"
+"Application code sees this instance as settings.SITE.site_config."
 msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:333
-#, fuzzy
-msgid "The start date"
-msgstr "Algab (päev)"
-
-#: lino/modlib/lino_startup/help_texts.py:334
-msgid "Represents a shortcut field."
+msgid "The default build method to use when rendering printable documents."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:335
-msgid "Flush the database and load the specified fixtures."
+#: lino/modlib/lino_startup/help_texts.py:334
+msgid ""
+"A constant user-defined date to be substituted as current\n"
+"system date."
 msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:336
-msgid "Represents an FPT block file"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:337
-msgid "Represents a field in a DBF file."
+msgid ""
+"The organisation who runs this site.  This is used e.g. when\n"
+"printing your address in certain documents or reports.  Or\n"
+"newly created partners inherit the country of the site owner."
 msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:339
-msgid "Imitates DeserializedObject required by loaddata."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:340
-msgid "A visible component"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:341
-msgid "The base table for Problem objects."
+msgid ""
+"The table used to present the SiteConfig row in a Detail form.\n"
+"See also lino.Lino.get_site_config().\n"
+"Deserves more documentation."
 msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:342
-msgid "A user who can see plausibility problems."
+msgid "alias of SiteConfig"
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:343
+#: lino/modlib/lino_startup/help_texts.py:344
 msgid ""
-"loaddata requires DeserializedObject instances, \n"
-"but this Deserializer does not bypass pre_save/save methods."
+"When serving static files from a different subdomain, TinyMCE needs\n"
+"to know about this. Typical usage is to specify this in your\n"
+"lino_local.py file:"
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:345
-msgid "The table with all existing upload types."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:348
-msgid "The database object which has been modified."
+#: lino/modlib/lino_startup/help_texts.py:347
+msgid ""
+"The initial width of the window to use when editing in own\n"
+"window."
 msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:349
-msgid "Shortcut to lino.core.site.Site.models"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:350
-msgid "Show all plausibility problems."
+msgid ""
+"The initial height of the window to use when editing in own\n"
+"window."
 msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:351
-msgid "Base class for all \"Print\" actions."
+msgid "The toolbar buttons when editing a field inside a detail form."
 msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:352
+msgid "The first row of toolbar buttons when editing in own window."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:353
+msgid "The second row of toolbar buttons when editing in own window."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:354
+msgid "The third row of toolbar buttons when editing in own window."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:355
 msgid ""
-"Model mixin for database objects that have a user field which\n"
-"points to the \"author\" of this object. The default user is\n"
-"automatically set to the requesting user."
+"Lino currently includes three versions of TinyMCE, but for\n"
+"production sites we still use the eldest version 3.4.8."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:356
-msgid "A user with all permissions."
+#: lino/modlib/lino_startup/help_texts.py:358
+msgid "Represents a shortcut field."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:357
+#: lino/modlib/lino_startup/help_texts.py:359
+msgid ""
+"The list of upload shortcut fields which have been declared on this\n"
+"Site.  See add_shortcut()."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:361
+msgid "alias of Shortcut"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:362
+msgid "The type of an upload."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:363
+msgid ""
+"Optional pointer to a virtual upload shortcut field.  If\n"
+"this is not empty, then the given shortcut field will manage\n"
+"uploads of this type.  See also Shortcuts."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:366
+msgid "The table with all existing upload types."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:367
+msgid "alias of UploadType"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:368
+msgid "Represents an uploaded file."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:369
 msgid ""
 "Pointer to the uploaded file. See\n"
 "lino.mixins.uploadable.Uploadable.file"
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:359
+#: lino/modlib/lino_startup/help_texts.py:371
+msgid "A short description entered manually by the user."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:372
+msgid ""
+"Almost the same as description, but if file is\n"
+"not empty, the text is clickable, and clicking on it opens the\n"
+"uploaded file in a new browser window."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:375
+msgid "Shows all Uploads"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:376
+#: lino/modlib/lino_startup/help_texts.py:378
+#: lino/modlib/lino_startup/help_texts.py:379
+msgid "alias of Upload"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:377
+msgid "Shows only my Uploads (i.e. those whose author is current user)."
+msgstr ""
+
 #: lino/modlib/lino_startup/help_texts.py:381
-msgid "Alias for field number 4"
+msgid "Base class for all user profiles."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:360
-msgid ""
-"Returns a one-line string composed of salutation, title,\n"
-"first_name and last_name."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:362
-msgid ""
-"An optional name prefix like \"Dr.\" or \"PhD\", used to specify a\n"
-"professional position or academic qualification."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:364
+#: lino/modlib/lino_startup/help_texts.py:382
 msgid ""
 "A subset of languages which\n"
 "should be hidden in this user profile.  Default value is\n"
@@ -2289,421 +2284,329 @@ msgid ""
 "used on multilingual sites with more than 4 or 5 languages."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:368
+#: lino/modlib/lino_startup/help_texts.py:386
 msgid ""
-"Base class for Layout Elements that can contain other Layout Elements:\n"
-"Panel,\n"
-"TabPanel,\n"
-"FormPanel,\n"
-"GridPanel"
+"The role of users having this profile. This is an instance of\n"
+"<lino.core.roles.UserRole> or some subclass thereof."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:374
-msgid "The timestame when this object was created."
+#: lino/modlib/lino_startup/help_texts.py:388
+msgid "Whether users with this profile get only write-proteced access."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:375
-msgid ""
-"Represents a file on the server below MEDIA_ROOT with\n"
-"two properties name and url."
+#: lino/modlib/lino_startup/help_texts.py:389
+msgid "The list of user profiles available on this site."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:377
+#: lino/modlib/lino_startup/help_texts.py:390
+msgid "alias of UserProfile"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:391
 msgid ""
 "Default value for the\n"
 "hidden_languages of newly\n"
 "attached choice item."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:380
-msgid "Default value for templates_group is the model's full name."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:384
-msgid "Base class for all models that represent a human."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:385
-msgid "Print using a hard-coded template and without cache."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:386
-msgid ""
-"Generates one directory of screenshots images and their index.rst\n"
-"file."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:389
-msgid ""
-"The table used to present the SiteConfig row in a Detail form.\n"
-"See also lino.Lino.get_site_config().\n"
-"Deserves more documentation."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:392
-msgid ""
-"Defines the two possible choices \"male\" and \"female\"\n"
-"for the gender of a person."
-msgstr ""
-
 #: lino/modlib/lino_startup/help_texts.py:394
-msgid ""
-"Renders the input template and returns the unmodified output as\n"
-"plain HTML."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:396
-msgid "Default table for django.contrib.ContentType."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:397
-msgid "The full path name of the .ods file to be read."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:398
-msgid "Log all SQL statements direct to the console."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:399
-msgid ""
-"A ParameterPanel\n"
-"with a field today which defaults to today."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:401
-msgid "An ObservedPeriod which defaults to the current month."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:402
-msgid ""
-"Tell Sphinx to switch to the specified language until the end of\n"
-"this document."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:404
-msgid "A user who manages configuration of office functionality."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:405
-msgid ""
-"Define a variable number of clones of the \"master\" field,\n"
-"one for each language .\n"
-"See mldbc."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:408
-msgid "return the filename on the server"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:409
-msgid ""
-"Rendered as a checkbox that indicates whether an mti child of the\n"
-"given model exists."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:411
-msgid ""
-"Pointer to the Partner instance related to\n"
-"this user."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:413
-msgid "Exchange the seqno of this item and the next item."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:414
-msgid ""
-"Shows a simplistic \"inspector\" which once helped me for debugging.\n"
-"Needs more work to become seriously useful..."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:416
-msgid ""
-"A Converter for ForeignKey and ManyToManyField. \n"
-"If the lookup_field is a BabelField, then it tries all available languages."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:418
-msgid "Naive representation of a potentially incomplete gregorian date."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:419
-msgid "Whether users with this profile get only write-proteced access."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:420
-msgid ""
-"Mixin for models that have a babel field name (labelled\n"
-"\"Description\" by default) for each language."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:423
-msgid ""
-"The WebServiceConnector namespace used for wrapping \"classical\" CBSS services."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:424
-msgid "Designed to be just imported. No subclassing needed."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:425
-msgid ""
-"Checks for missing cache files on all objects which inherit\n"
-"CachedPrintable."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:427
-msgid "Render a single record."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:428
-msgid "Shows the plausibility problems assigned to this user."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:429
-msgid ""
-"Like WeasyBuildMethod, but the rendered HTML is then\n"
-"passed through weasyprint which converts from HTML to PDF."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:431
-msgid "A short description entered manually by the user."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:432
-msgid "A dictionary of sums to be collected using an arbitrary key."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:433
-msgid ""
-"The Media type\n"
-"of the file.  See also this thread\n"
-"about length of MIME type field."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:436
-msgid ""
-"A list of unicode strings, one for each column in the file.  The\n"
-"headers specified here must match exactly those found in the .ods\n"
-"file."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:439
-msgid "The files to be tested."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:440
 msgid "Mixin for database models which have a timezone field."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:441
-msgid ""
-"A pointer to an item of\n"
-"lino.modlib.printing.choicelists.BuildMethods."
+#: lino/modlib/lino_startup/help_texts.py:395
+msgid "The timezone."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:443
-msgid "An IncompleteDateField."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:444
-msgid ""
-"Timestamp of the built target file. Contains None\n"
-"if no build hasn't been called yet."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:447
-msgid ""
-"The current password. Leave empty if the user has no password\n"
-"yet. And SiteAdmin users don't need to specify this at all."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:449
-msgid "Represents an uploaded file."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:450
-msgid "Add verbose_name and help_text to Django's GFK."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:451
-msgid "Represents a DBT block file"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:452
-msgid ""
-"A CSV reader which will iterate over lines in the CSV file \"f\",\n"
-"which is encoded in the given encoding."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:454
-msgid "A registered change in the database."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:455
-msgid "The SSDN namespace used for wrapping \"classical\" CBSS services."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:456
-msgid "Similar to PlainIndex"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:457
-msgid ""
-"The ChoiceList of the state field must have at least two items\n"
-"named \"draft\" and \"registered\".\n"
-"There may be additional states.\n"
-"Every state must have an extra attribute \"editable\"."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:461
-msgid ""
-"Move current row one upwards. This action is available on any\n"
-"Sequenced object as Sequenced.move_up."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:463
-msgid ""
-"Like ChoicesFieldElement, but we use the fact that\n"
-"choicelists are actors to define them once and refer to them.\n"
-"Special case are choicelist fields with blank=True: these must\n"
-"dynamicaly add a blank choice to the the choicelist."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:467
-msgid "Shows the other objects who are similar to this one."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:468
-msgid "Base class for all \"summary data\" models."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:470
-msgid ""
-"The Checker which reported\n"
-"this problem."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:472
-msgid ""
-"Define a variable number of CharField database fields, one for\n"
-"each language of your lino.core.site.Site.languages.  See\n"
-"mldbc."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:475
-msgid ""
-"Lino currently includes three versions of TinyMCE, but for\n"
-"production sites we still use the eldest version 3.4.8."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:477
-msgid ""
-"The model to be checked. This may be an abstract model.  It can\n"
-"also be None, but then you must define your own\n"
-"get_checkable_models() method."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:480
-msgid "Send a welcome mail to this user."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:481
-msgid ""
-"Generates .rtf files from .rtf templates.\n"
-"Not actively used."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:483
+#: lino/modlib/lino_startup/help_texts.py:396
 msgid "The name of the field which defines the author of this object."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:484
-msgid ""
-"Full name of the model used to hold dupable words for instances of\n"
-"this model.  Applications can specify a string which will be\n"
-"resolved at startup to the model's class object."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:487
-msgid "An extended django.test.TestCase."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:488
-msgid "A  HTML render that uses Bootstrap3."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:489
-msgid "A DisplayElement specially adapted to a GFK field."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:490
-msgid ""
-"Mixin for Models that generate a unique external file at a\n"
-"determined place when being printed."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:492
-msgid "A space-separated list of all middle names."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:493
-msgid ""
-"Base class for all build methods.  A build method encapsulates the\n"
-"process of generating a \"printable document\" that inserts data\n"
-"from the database into a template, using a given combination of a\n"
-"template parser and post-processor."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:499
-msgid "return the url that points to file on the server"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:500
-msgid ""
-"A comment is a short text which some user writes about some\n"
-"other database object. It has no recipient."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:502
-msgid ""
-"This is always False.\n"
-"See also lino.modlib.users.models.User.authenticated."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:506
-msgid ""
-"An ObservedPeriod for which start_date defaults to Jan\n"
-"1st and end_date to Dec 31 of the current year."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:508
-msgid ""
-"Must be unique.\n"
-"Leaving this empty means that the user cannot log in."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:510
-msgid "The SITE's Migrator class is instantiated by install_migrations."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:511
+#: lino/modlib/lino_startup/help_texts.py:397
 msgid ""
 "The list of required roles for getting permission to edit other\n"
 "users' work."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:514
+#: lino/modlib/lino_startup/help_texts.py:399
 msgid ""
-"A CachedPrintable that uses a \"Type\" for deciding which\n"
-"template to use on a given instance."
+"Model mixin for database objects that have a user field which\n"
+"points to the \"author\" of this object. The default user is\n"
+"automatically set to the requesting user."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:516
-msgid "Pointer to the file itself (a Django FileField)."
+#: lino/modlib/lino_startup/help_texts.py:402
+msgid ""
+"The author of this object.\n"
+"A pointer to lino.modlib.users.models.User."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:517
+#: lino/modlib/lino_startup/help_texts.py:404
+msgid "alias of UserAuthored"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:405
+msgid "Set yourself as assigned user."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:406
+msgid ""
+"You declare to become the fully responsible user for this database\n"
+"object."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:408
+msgid ""
+"This field is usually empty.  Setting it to another user means\n"
+"\"I am not fully responsible for this item\"."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:410
+msgid "Send a welcome mail to this user."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:411
+msgid "Change the password of this user."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:412
+msgid ""
+"The current password. Leave empty if the user has no password\n"
+"yet. And SiteAdmin users don't need to specify this at all."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:414
+#, fuzzy
+msgid "The new password."
+msgstr "Muuda salasõna"
+
+#: lino/modlib/lino_startup/help_texts.py:415
+msgid "The new password a second time. Both passwords must match."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:416
+msgid "Represents a user of this site."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:417
+msgid ""
+"Must be unique.\n"
+"Leaving this empty means that the user cannot log in."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:419
+msgid "The profile of a user is what defines her or his permissions."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:420
+msgid ""
+"Pointer to the Partner instance related to\n"
+"this user."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:422
+msgid ""
+"A virtual read-only field which returns the Person MTI child "
+"corresponding\n"
+"to the partner (if it exists) and otherwise None."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:424
+msgid ""
+"This is always True.\n"
+"See also lino.modlib.users.utils.AnonymousUser.authenticated."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:426
+msgid ""
+"A variant of Users showing only active users and\n"
+"only some fields.  This is used on demo sites in\n"
+"admin_main.html to display the list of available users."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:429
+msgid "alias of User"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:430
+msgid ""
+"An Authority is when a User gives another User the right to \"represent "
+"him\" "
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:431
+msgid ""
+"Somebody who can help others by running AssignToMe\n"
+"action."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:433
+msgid ""
+"Somebody who can help others by running TakeAuthorship\n"
+"action."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:435
+msgid ""
+"A singleton class whose instance will be assigned to the\n"
+"user attribute of anonymous incoming requests, similar to\n"
+"Django's approach."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:438
+msgid ""
+"This is always False.\n"
+"See also lino.modlib.users.models.User.authenticated."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:441
+msgid "The base class for both build methods."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:442
+msgid ""
+"Like WeasyBuildMethod, but the rendered HTML is then\n"
+"passed through weasyprint which converts from HTML to PDF."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:444
+msgid ""
+"Renders the input template and returns the unmodified output as\n"
+"plain HTML."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:447
+msgid ""
+"Tell Sphinx to switch to the specified language until the end of\n"
+"this document."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:449
+msgid ""
+"Tell Sphinx to switch to the specified project until the end of\n"
+"this document."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:451
+msgid "Defines the lino2rst directive."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:452
+msgid "Naive representation of a potentially incomplete gregorian date."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:453
+msgid "A dictionary of sums to be collected using an arbitrary key."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:454
+msgid ""
+"Mixin to encapsulate the generating of \"traditional\" (\"snail\") mail\n"
+"addresses."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:456
+msgid "A property which calls get_address()."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:457
+msgid "A property which calls get_address_html()."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:458
+msgid "Used only for testing."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:459
+msgid "The middleware class definition."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:460
+msgid ""
+"A chooser holds information about the possible choices of a\n"
+"field."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:462
+msgid "Counts the number of code lines in a given Python source file."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:463
+msgid "A directory that may contain configuration files."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:464
+msgid ""
+"If you have an existing Django management command, just rename\n"
+"it's handle method to handle_daemon and inherit from this\n"
+"instead of django.core.management.base.BaseCommand."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:467
+msgid ""
+"The loggers to preserve. If not None, this should be a list of\n"
+"loggers (logging.Logger instances) whose file handles\n"
+"should not get closed."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:470
+msgid ""
+"loaddata requires DeserializedObject instances, \n"
+"but this Deserializer does not bypass pre_save/save methods."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:472
+msgid "A named tuple with the following fields:"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:473
+#, fuzzy
+msgid "The start date"
+msgstr "Algab (päev)"
+
+#: lino/modlib/lino_startup/help_texts.py:474
+#, fuzzy
+msgid "The end date"
+msgstr "Lõpeb (päev)"
+
+#: lino/modlib/lino_startup/help_texts.py:475
+msgid "Represents a single DBF file."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:476
+msgid "Represents a field in a DBF file."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:477
+msgid "Represents an FPT block file"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:478
+msgid "Represents a DBT block file"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:479
+msgid "The class of the lino.utils.diag.analyzer object."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:480
+msgid "Adds some extensions to the Django TestCase."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:481
+msgid ""
+"If specified, this is a dict of Site\n"
+"attributes to override before running the test."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:483
+msgid "When you decorate your subclass of TestCase, you must also specify:"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:484
+msgid "Designed to be just imported. No subclassing needed."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:485
 msgid ""
 "Base class for tests that use remote http authentication.  We\n"
 "override the __call__() method in order to simulate\n"
@@ -2711,183 +2614,299 @@ msgid ""
 "being set to 'REMOTE_USER'."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:521
+#: lino/modlib/lino_startup/help_texts.py:489
+msgid "alias of RemoteAuthTestCase"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:490
+msgid "Imitates DeserializedObject required by loaddata."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:491
+msgid "Serializes a QuerySet to a py stream."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:492
 msgid ""
-"Log a summary of the SQL statements made to the console.\n"
-"Intended for use with the django development server."
+"Indicator class object.\n"
+"Fixture may yield a FlushDeferredObjects\n"
+"to indicate that all deferred objects should get saved before going on."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:524
-msgid "alias of UserAuthored"
+#: lino/modlib/lino_startup/help_texts.py:495
+msgid "Instantiated by restore.py."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:525
-msgid ""
-"The HTML namespace.\n"
-"This is instantiated as E."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:527
-msgid ""
-"If specified, this is a dict of Site\n"
-"attributes to override before running the test."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:529
-msgid ""
-"A field that lets the user select a language from the available\n"
-"lino.core.site.Site.languages."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:531
-msgid "The object returned by register()."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:532
+#: lino/modlib/lino_startup/help_texts.py:496
 msgid "The Django deserializer for dpy."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:533
+#: lino/modlib/lino_startup/help_texts.py:497
+msgid "The SITE's Migrator class is instantiated by install_migrations."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:498
+msgid "Renders as a simple table."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:499
+msgid ""
+"A Converter for ForeignKey and ManyToManyField. \n"
+"If the lookup_field is a BabelField, then it tries all available "
+"languages."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:501
+msgid "Converter for ChoiceListField."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:502
 msgid "Converter for ForeignKey fields."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:534
-msgid "A directory that may contain configuration files."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:535
-msgid ""
-"Base for build methods which use Lino's templating system\n"
-"(find_config_file)."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:538
-msgid "The gobal list of all notifications."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:539
+#: lino/modlib/lino_startup/help_texts.py:503
 msgid "Converter for GenericForeignKey fields."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:540
+#: lino/modlib/lino_startup/help_texts.py:504
+msgid "Converter for ManyToMany fields."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:505
 msgid ""
-"Mixin for Models that are automatically related to a \"project\".  A\n"
-"project means here \"the central most important thing that is used\n"
-"to classify most other things\"."
+"A utility class to make python fixtures more compact. See\n"
+"tutorial.instantiator."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:543
-msgid ""
-"The username\n"
-"of the main plausibility responsible, i.e. a designated\n"
-"user who will be attributed to plausibility problems for which\n"
-"no specific responible could be designated (returned by the\n"
-"checker's get_responsible_user\n"
-"method)."
+#: lino/modlib/lino_startup/help_texts.py:507
+msgid "Usage example see lino_xl.lib.humanlinks.fixtures."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:550
-msgid "Base class for the choices of Checkers."
+#: lino/modlib/lino_startup/help_texts.py:508
+msgid "Represents a counter. Usage see"
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:551
-msgid "The base class for both build methods."
+#: lino/modlib/lino_startup/help_texts.py:509
+msgid "A string that py2js will represent as is, not between quotes."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:552
-msgid "A Collector that does not delete the MTI parents."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:553
-msgid ""
-"A pythonic representation of a <body> with a <title> and\n"
-"some <head> tags for stylesheets."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:555
-msgid "The choicelist of build methods offered on this site."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:556
-msgid "Defines the lino2rst directive."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:557
-msgid "The list of plausibility problem types known by this application."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:558
-msgid ""
-"Mixin for models that use Multiple Table Inheritance to implement\n"
-"polymorphism."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:560
-msgid "Change the password of this user."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:561
-msgid "Base class for choices of \"observed event\"-style choicelists."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:563
-msgid "Shortcut to lino.core.site.Site.actors"
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:564
-msgid ""
-"Almost the same as description, but if file is\n"
-"not empty, the text is clickable, and clicking on it opens the\n"
-"uploaded file in a new browser window."
-msgstr ""
-
-#: lino/modlib/lino_startup/help_texts.py:567
+#: lino/modlib/lino_startup/help_texts.py:510
 msgid ""
 "A Component is a Variable whose value is a dict of otpions.\n"
 "Deserves more documentation."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:569
-msgid "The timezone."
+#: lino/modlib/lino_startup/help_texts.py:512
+msgid "A visible component"
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:570
+#: lino/modlib/lino_startup/help_texts.py:513
 msgid ""
-"A model mixin for models which represent a period whose start and\n"
-"end are date fields."
+"Represents a file on the server below MEDIA_ROOT with\n"
+"two properties name and url."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:572
+#: lino/modlib/lino_startup/help_texts.py:515
+msgid "return the filename on the server"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:516
+msgid "return the url that points to file on the server"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:517
 msgid ""
-"Whether the ENTER key (or CTRL+ENTER when in a\n"
-"textarea field) should submit the form."
+"Define a variable number of CharField database fields, one for\n"
+"each language of your lino.core.site.Site.languages.  See\n"
+"mldbc."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:574
+#: lino/modlib/lino_startup/help_texts.py:520
 msgid ""
-"The initial width of the window to use when editing in own\n"
-"window."
+"Define a variable number of clones of the \"master\" field,\n"
+"one for each language .\n"
+"See mldbc."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:576
-msgid "Suppress surrounding DIV tag. Used by restify()."
+#: lino/modlib/lino_startup/help_texts.py:523
+msgid ""
+"A field that lets the user select a language from the available\n"
+"lino.core.site.Site.languages."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:577
-msgid "A named tuple with the following fields:"
+#: lino/modlib/lino_startup/help_texts.py:525
+msgid ""
+"Mixin for models that have a babel field name (labelled\n"
+"\"Description\" by default) for each language."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:578
+#: lino/modlib/lino_startup/help_texts.py:527
+msgid "A Collector that does not delete the MTI parents."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:528
+msgid ""
+"Rendered as a checkbox that indicates whether an mti child of the\n"
+"given model exists."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:530
+msgid ""
+"Abstract base class. For each .ods file you are probably creating a\n"
+"subclass of this."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:532
+msgid "The full path name of the .ods file to be read."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:533
+msgid ""
+"A list of unicode strings, one for each column in the file.  The\n"
+"headers specified here must match exactly those found in the .ods\n"
+"file."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:536
+msgid ""
+"Like SimpleOdsReader, but each row is converted to \n"
+"an lino.utils.AttrDict. This requires you to specifiy, \n"
+"besides the SimpleOdsReader.headers attrribute, \n"
+"another list of pure ASCII strings which must be valid Python \n"
+"attribute names."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:541
 msgid ""
 "An extended atelier.test.TestCase to be run using\n"
 "setup.py in the root of a project which may contain\n"
 "several Django projects."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:581
+#: lino/modlib/lino_startup/help_texts.py:544
 msgid ""
-"Base class for models that specify the\n"
-"TypedPrintable.type."
+"The DJANGO_SETTINGS_MODULE to set for each subprocess\n"
+"launched by this test case."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:546
+msgid "A duration, expressed in hours:minutes."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:547
+msgid "Suppress surrounding DIV tag. Used by restify()."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:548
+msgid "The object returned by register()."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:549
+msgid "Log all SQL statements direct to the console."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:550
+msgid ""
+"Log all SQL statements to the console.\n"
+"Intended for use with the django development server."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:552
+msgid ""
+"Log a summary of the SQL statements made to the console.\n"
+"Intended for use with the django development server."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:559
+msgid "An extended django.test.TestCase."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:560
+msgid ""
+"Looks for a file \"index.rst\" in your project_dir and (if it exists)\n"
+"runs doctest on it."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:562
+msgid "The files to be tested."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:563
+msgid ""
+"Used to define tests that are to be run directly in the demo\n"
+"database, without using the Django test runner (i.e. without\n"
+"creating a temporary test database)."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:566
+msgid "Iterator that reads an encoded stream and reencodes the input to UTF-8"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:567
+msgid ""
+"A CSV reader which will iterate over lines in the CSV file \"f\",\n"
+"which is encoded in the given encoding."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:569
+msgid ""
+"A CSV writer which will write rows to CSV file \"f\",\n"
+"which is encoded in the given encoding."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:571
+msgid ""
+"An XML namespace.  Base class for\n"
+"lino.utils.xmlgen.html.HtmlNamespace and the namespaces\n"
+"defined in lino.utils.xmlgen.intervat."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:574
+msgid ""
+"The WebServiceConnector namespace used for wrapping \"classical\" CBSS "
+"services."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:575
+msgid "The SSDN namespace used for wrapping \"classical\" CBSS services."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:576
+msgid "Base class for the individual services."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:577
+msgid "A request for identifying a person or validating a person's identity"
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:578
+msgid ""
+"A request to the PerformInvestigation BCSS service.\n"
+"Net yet used in practice."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:580
+msgid ""
+"A request to the HealthInsurance BCSS service.\n"
+"Net yet used in practice."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:582
+msgid ""
+"The HTML namespace.\n"
+"This is instantiated as E."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:584
+msgid ""
+"A pythonic representation of a <table> with <head>,\n"
+"<foot> and <body>."
+msgstr ""
+
+#: lino/modlib/lino_startup/help_texts.py:586
+msgid ""
+"A pythonic representation of a <body> with a <title> and\n"
+"some <head> tags for stylesheets."
 msgstr ""
 
 #: lino/modlib/lino_startup/config/403.html:3
@@ -2939,10 +2958,11 @@ msgstr "Tere, %(first_name)s!"
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:22
 msgid ""
-"Try also the other <a href=\"http://lino-framework.org/demos.html\">demo sites</"
-"a>."
+"Try also the other <a href=\"http://lino-framework.org/demos.html\">demo "
+"sites</a>."
 msgstr ""
-"Vaata ka teisi <a href=\"http://lino-framework.org/demos.html\">demo saite</a>."
+"Vaata ka teisi <a href=\"http://lino-framework.org/demos.html\">demo "
+"saite</a>."
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:23
 #, python-format
@@ -2955,8 +2975,8 @@ msgstr ""
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:38
 msgid ""
-"Unlike the <a href=\"/\">web content section</a> there is now a GUI menu bar in "
-"the upper part of the screen."
+"Unlike the <a href=\"/\">web content section</a> there is now a GUI menu "
+"bar in the upper part of the screen."
 msgstr ""
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:43
@@ -2990,11 +3010,11 @@ msgstr "Sellel saidil on %d kasutajat:"
 msgid "The password is the same for all of them: \"1234\"."
 msgstr "Parooliks on neil kõikidel \"1234\"."
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:83
+#: lino/modlib/lino_startup/config/admin_main_base.html:82
 msgid "Show this table in own window"
 msgstr ""
 
-#: lino/modlib/notify/__init__.py:42 lino/modlib/notify/models.py:80
+#: lino/modlib/notify/__init__.py:42 lino/modlib/notify/models.py:100
 #, fuzzy
 msgid "Notifications"
 msgstr "Teenused"
@@ -3017,47 +3037,63 @@ msgstr ""
 msgid "{user} modified "
 msgstr "Muudatud"
 
-#: lino/modlib/notify/models.py:35 lino/modlib/notify/models.py:222
-#, fuzzy
-msgid "Seen"
-msgstr "Puudus"
+#: lino/modlib/notify/models.py:35
+msgid "Mark as seen"
+msgstr ""
 
-#: lino/modlib/notify/models.py:79
+#: lino/modlib/notify/models.py:55
+msgid "Clear seen"
+msgstr ""
+
+#: lino/modlib/notify/models.py:99
 #, fuzzy
 msgid "Notification"
 msgstr "Nimetus"
 
-#: lino/modlib/notify/models.py:82
+#: lino/modlib/notify/models.py:102
 #, fuzzy
 msgid "seen"
 msgstr "Puudus"
 
-#: lino/modlib/notify/models.py:83
+#: lino/modlib/notify/models.py:103
 #, fuzzy
 msgid "sent"
 msgstr "Puudus"
 
-#: lino/modlib/notify/models.py:85
+#: lino/modlib/notify/models.py:105 lino/modlib/notify/models.py:147
 msgid "Subject"
 msgstr "Teema"
 
-#: lino/modlib/notify/models.py:86
+#: lino/modlib/notify/models.py:106
 msgid "Body"
 msgstr ""
 
-#: lino/modlib/notify/models.py:181
+#: lino/modlib/notify/models.py:154
+msgid "(more)"
+msgstr ""
+
+#: lino/modlib/notify/models.py:158
+msgid "Overview"
+msgstr ""
+
+#: lino/modlib/notify/models.py:212
 msgid "Send e-mail"
 msgstr ""
 
-#: lino/modlib/notify/models.py:199
+#: lino/modlib/notify/models.py:231
 msgid "Recipient"
 msgstr ""
 
-#: lino/modlib/notify/models.py:205
-msgid "Notify me"
+#: lino/modlib/notify/models.py:238
+msgid "Send notifications via e-mail"
 msgstr ""
 
-#: lino/modlib/notify/models.py:296
+#: lino/modlib/notify/models.py:255
+#, fuzzy
+msgid "Seen"
+msgstr "Puudus"
+
+#: lino/modlib/notify/models.py:333
 #, python-format
 msgid "You have %d unseen notifications."
 msgstr ""
@@ -3072,7 +3108,7 @@ msgid "Anonymous"
 msgstr "Anonüümne"
 
 #: lino/modlib/office/roles.py:51 lino/modlib/users/choicelists.py:130
-#: lino/modlib/users/models.py:157 lino/modlib/users/roles.py:34
+#: lino/modlib/users/models.py:164 lino/modlib/users/roles.py:34
 msgid "User"
 msgstr "Kasutaja"
 
@@ -3135,7 +3171,8 @@ msgstr ""
 msgid "Plausibility problems"
 msgstr ""
 
-#: lino/modlib/plausibility/models.py:151 lino/modlib/plausibility/models.py:167
+#: lino/modlib/plausibility/models.py:151
+#: lino/modlib/plausibility/models.py:167
 #, fuzzy
 msgid "Responsible"
 msgstr "Isikud"
@@ -3168,8 +3205,9 @@ msgstr "Trüki"
 #: lino/modlib/printing/actions.py:86
 #, python-format
 msgid ""
-"Your printable document (filename %(doc)s) should now open in a new browser "
-"window. If it doesn't, please consult %(help)s or ask your system administrator."
+"Your printable document (filename %(doc)s) should now open in a new "
+"browser window. If it doesn't, please consult %(help)s or ask your system"
+" administrator."
 msgstr ""
 
 #: lino/modlib/printing/actions.py:173
@@ -3189,8 +3227,8 @@ msgstr ""
 
 #: lino/modlib/printing/actions.py:276
 msgid ""
-"Before you can edit this template we must create a local copy on the server. "
-"This will exclude the template from future updates."
+"Before you can edit this template we must create a local copy on the "
+"server. This will exclude the template from future updates."
 msgstr ""
 
 #: lino/modlib/printing/actions.py:297
@@ -3424,7 +3462,7 @@ msgstr ""
 msgid "Uploaded by"
 msgstr ""
 
-#: lino/modlib/users/__init__.py:29 lino/modlib/users/models.py:158
+#: lino/modlib/users/__init__.py:29 lino/modlib/users/models.py:165
 msgid "Users"
 msgstr ""
 
@@ -3475,72 +3513,73 @@ msgstr ""
 msgid "Welcome mail"
 msgstr ""
 
-#: lino/modlib/users/models.py:49
+#: lino/modlib/users/models.py:56
 msgid "Welcome mail has been sent to {}."
 msgstr ""
 
-#: lino/modlib/users/models.py:79
+#: lino/modlib/users/models.py:86
 msgid "Current password"
 msgstr ""
 
-#: lino/modlib/users/models.py:80
+#: lino/modlib/users/models.py:87
 msgid "New password"
 msgstr ""
 
-#: lino/modlib/users/models.py:81
+#: lino/modlib/users/models.py:88
 msgid "New password again"
 msgstr ""
 
-#: lino/modlib/users/models.py:116
+#: lino/modlib/users/models.py:123
 msgid "New password has been set for {}."
 msgstr ""
 
-#: lino/modlib/users/models.py:173
+#: lino/modlib/users/models.py:180
 msgid "Must be unique. Leaving this empty means that the user cannot log in."
 msgstr ""
 
-#: lino/modlib/users/models.py:181
+#: lino/modlib/users/models.py:188
 msgid ""
-"Users with an empty `profile` field are considered inactive and cannot log in."
+"Users with an empty `profile` field are considered inactive and cannot "
+"log in."
 msgstr ""
 
-#: lino/modlib/users/models.py:184
+#: lino/modlib/users/models.py:191
 msgid "Initials"
 msgstr ""
 
-#: lino/modlib/users/models.py:187
+#: lino/modlib/users/models.py:194
 msgid "e-mail address"
 msgstr ""
 
-#: lino/modlib/users/models.py:189
+#: lino/modlib/users/models.py:196
 msgid "Remarks"
 msgstr "Märkused"
 
-#: lino/modlib/users/models.py:338
+#: lino/modlib/users/models.py:345
 msgid "Welcome"
 msgstr ""
 
-#: lino/modlib/users/models.py:378
+#: lino/modlib/users/models.py:385
 msgid "Shows the list of all users on this site."
 msgstr ""
 
-#: lino/modlib/users/models.py:439
+#: lino/modlib/users/models.py:446
 msgid "Authority"
 msgstr ""
 
-#: lino/modlib/users/models.py:440
+#: lino/modlib/users/models.py:447
 msgid "Authorities"
 msgstr ""
 
-#: lino/modlib/users/models.py:446
+#: lino/modlib/users/models.py:453
 msgid "The user who gets authority to act in your name."
 msgstr ""
 
-#: lino/modlib/users/models.py:467
+#: lino/modlib/users/models.py:474
 msgid "Authorities given"
 msgstr ""
 
-#: lino/modlib/users/models.py:475
+#: lino/modlib/users/models.py:482
 msgid "Authorities taken"
 msgstr ""
 
@@ -3666,3 +3705,12 @@ msgstr ""
 #, python-format
 msgid "Check digit is %(found)d but should be %(expected)d"
 msgstr ""
+
+#~ msgid ""
+#~ "A notification object represents the fact that a given user has\n"
+#~ "been notified about a given database object."
+#~ msgstr ""
+
+#~ msgid "Notify me"
+#~ msgstr ""
+

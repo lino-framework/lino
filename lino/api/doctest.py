@@ -180,15 +180,13 @@ def show_menu_path(spec, language=None):
     from lino.core.menus import find_menu_item
     from lino.sphinxcontrib.actordoc import menuselection_text
 
-    # profile = ar.get_user().profile
-    # menu = settings.SITE.get_site_menu(settings.SITE.kernel, profile)
-    # mi = menu.find_item(spec)
-    mi = find_menu_item(spec)
-
-    if mi is None:
-        raise Exception("Invalid spec {0}".format(spec))
-
     def doit():
+        # profile = ar.get_user().profile
+        # menu = settings.SITE.get_site_menu(settings.SITE.kernel, profile)
+        # mi = menu.find_item(spec)
+        mi = find_menu_item(spec)
+        if mi is None:
+            raise Exception("Invalid spec {0}".format(spec))
         print(menuselection_text(mi))
 
     if language:

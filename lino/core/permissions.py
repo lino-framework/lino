@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2015 Luc Saffre.
+# Copyright 2011-2016 Luc Saffre.
 # License: BSD, see LICENSE for more details.
 """Core tools of Lino's permission system.
 

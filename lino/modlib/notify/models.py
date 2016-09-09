@@ -32,10 +32,11 @@ from datetime import timedelta
 
 
 class MarkSeen(dd.Action):
-    label = _("Seen")
+    label = _("Mark as seen")
     show_in_bbar = False
     show_in_workflow = True
     button_text = "✓"  # u"\u2713"
+    # button_text = u"\u2611"  # BALLOT BOX WITH CHECK
 
     def get_action_permission(self, ar, obj, state):
         if obj.seen:
@@ -45,6 +46,25 @@ class MarkSeen(dd.Action):
     def run_from_ui(self, ar):
         for obj in ar.selected_rows:
             obj.seen = timezone.now()
+            obj.save()
+        ar.success(refresh_all=True)
+        
+
+class ClearSeen(dd.Action):
+    """Mark this notification as not yet seen."""
+    label = _("Clear seen")
+    show_in_bbar = False
+    show_in_workflow = True
+    # button_text = u"\u2610"  # BALLOT BOX
+
+    def get_action_permission(self, ar, obj, state):
+        if not obj.seen:
+            return False
+        return super(ClearSeen, self).get_action_permission(ar, obj, state)
+
+    def run_from_ui(self, ar):
+        for obj in ar.selected_rows:
+            obj.seen = None
             obj.save()
         ar.success(refresh_all=True)
         
@@ -132,7 +152,8 @@ class Notification(UserAuthored, Controllable, Created):
         if self.body:
             elems.append(' ')
             elems.append(ar.obj2html(self, _("(more)")))
-        return E.div(*elems)
+        # print 20160908, elems
+        return E.p(*elems)
 
     @dd.displayfield(_("Overview"))
     def overview(self, ar):
@@ -203,6 +224,7 @@ class Notification(UserAuthored, Controllable, Created):
     #     ar.success(refresh_all=True)
 
     mark_seen = MarkSeen()
+    clear_seen = ClearSeen()
 
 
 dd.update_field(Notification, 'user',
@@ -212,7 +234,8 @@ Notification.update_controller_field(
 
 dd.inject_field(
     'users.User', 'notifyme_mode',
-    models.BooleanField(_('Notify me'), default=True))
+    models.BooleanField(
+        _('Send notifications via e-mail'), default=True))
 
 
 class Notifications(dd.Table):
@@ -260,7 +283,11 @@ class Notifications(dd.Table):
             yield unicode(pv.show_seen)
 
     @classmethod
-    def get_detail_title(self, ar, obj):
+    def unused_get_detail_title(self, ar, obj):
+        """This was used to set `seen` automatically when a detail was
+        shown.
+
+        """
         if obj.seen is None and obj.user == ar.get_user():
             obj.seen = timezone.now()
             obj.save()
