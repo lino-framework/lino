@@ -155,6 +155,9 @@ def tickets_objects():
     yield ticket("Bars have no foo", project=PROJECTS.pop())
     yield ticket("How to get bar from foo", project=PROJECTS.pop())
 
+    for i in range(100):
+        yield ticket("Ticket {}".format(i), project=PROJECTS.pop())
+    
     yield Link(
         type=LinkTypes.requires,
         parent=Ticket.objects.get(pk=1),
