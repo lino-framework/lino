@@ -599,6 +599,10 @@ request from it.
     def must_execute(self):
         return True
 
+    def get_total_count(self):
+        """TableRequest overrides this to return the number of rows."""
+        return -1
+    
     def get_data_value(self, obj, name):
         """Return the value of the virtual field `name` for this action
         request on the given object `obj`.
