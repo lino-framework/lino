@@ -38,7 +38,7 @@ def process_message(sender=None, peer=None, mailfrom=None,
     print('Message addressed from:', mailfrom)
     print('Message addressed to  :', rcpttos)
     print('Message length        :', len(data))
-    msg = Parser().parsestr(data))
+    msg = Parser().parsestr(data)
     print('To: %s' % msg['to'])
     print('From: %s' % msg['from'])
     print('Subject: %s' % msg['subject'])
