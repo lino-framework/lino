@@ -24,6 +24,8 @@ TicketsByReporter._label = _("Introduced pleas")
 dd.update_field(
     'tickets.Ticket', 'upgrade_notes', verbose_name=_("Solution"))
 
+dd.update_field(
+    'tickets.Ticket', 'state', default=TicketStates.todo.as_callable)
 
 class TicketDetail(TicketDetail):
     main = "general history_tab more"

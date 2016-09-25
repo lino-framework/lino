@@ -28,11 +28,8 @@ from lino.api import dd, _
 # from lino.utils import join_elems
 from lino.utils.xmlgen.html import E, join_elems
 
-logger = logging.getLogger(__name__)
-
-# from django.core.exceptions import ValidationError
 from django.db import models
-from lino.mixins import Hierarchical, Sequenced, Referrable
+from lino.mixins import Hierarchical, Sequenced
 from lino.utils.mldbc.mixins import BabelNamed
 
 from lino.modlib.users.mixins import UserAuthored
@@ -79,6 +76,8 @@ class Competence(UserAuthored, Sequenced):
     .. attribute:: product
 
     """
+    
+    allow_cascaded_delete = "user"
 
     class Meta:
         verbose_name = _("Competence")

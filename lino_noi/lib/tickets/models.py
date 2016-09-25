@@ -373,8 +373,8 @@ class Ticket(mixins.CreatedModified, Assignable, TimeInvestment, RFC,
 
     .. attribute:: waiting_for
 
-        An unformatted one-line text which describes what this ticket
-        is waiting for.
+        What to do next. An unformatted one-line text which describes
+        what this ticket is waiting for.
 
     .. attribute:: upgrade_notes
 
@@ -477,15 +477,12 @@ class Ticket(mixins.CreatedModified, Assignable, TimeInvestment, RFC,
     reporter = dd.ForeignKey(
         settings.SITE.user_model,
         verbose_name=_("Reporter"),
-        related_name="reported_tickets",
-        help_text=_("The user who reported this ticket."))
+        related_name="reported_tickets")
     state = TicketStates.field(
         default=TicketStates.new.as_callable)
     rating = Ratings.field(blank=True)
     waiting_for = models.CharField(
-        _("Waiting for"), max_length=200,
-        blank=True,
-        help_text=_("What to do next."))
+        _("Waiting for"), max_length=200, blank=True)
 
     deadline = models.DateField(
         verbose_name=_("Deadline"),
@@ -497,8 +494,7 @@ class Ticket(mixins.CreatedModified, Assignable, TimeInvestment, RFC,
 
     # deprecated fields:
     feedback = models.BooleanField(
-        _("Feedback"), default=False,
-        help_text=_("Ticket is waiting for feedback from somebody else."))
+        _("Feedback"), default=False)
     standby = models.BooleanField(_("Standby"), default=False)
 
     spawn_triggered = SpawnTicket(

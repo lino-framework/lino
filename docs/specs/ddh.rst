@@ -75,5 +75,30 @@ Lino Noi:
 - uploads.UploadType :
   - PROTECT : uploads.Upload.type
 - users.User :
-  - PROTECT : changes.Change.user, clocking.ServiceReport.user, clocking.Session.user, comments.Comment.user, excerpts.Excerpt.user, faculties.Competence.user, notify.Notification.user, outbox.Mail.user, stars.Star.user, tickets.Project.assign_to, tickets.Ticket.assigned_to, tinymce.TextFieldTemplate.user, uploads.Upload.user, users.Authority.user
+  - CASCADE : faculties.Competence.user
+  - PROTECT : changes.Change.user, clocking.ServiceReport.user, clocking.Session.user, comments.Comment.user, excerpts.Excerpt.user, notify.Notification.user, outbox.Mail.user, stars.Star.user, tickets.Project.assign_to, tickets.Ticket.assigned_to, tinymce.TextFieldTemplate.user, uploads.Upload.user, users.Authority.user
 <BLANKLINE>
+
+
+:ticket:`1183`: tickets.Ticket.reporter is not listed below "-
+users.User : - PROTECT : ..." in the output of
+analyzer.show_foreign_keys(). Trying to find out why:
+
+
+>>> for (model, fk) in rt.models.users.User._lino_ddh.fklist:
+...     #print(model, fk.name)
+...     print(fk)
+changes.Change.user
+clocking.ServiceReport.user
+clocking.Session.user
+comments.Comment.user
+excerpts.Excerpt.user
+faculties.Competence.user
+notify.Notification.user
+outbox.Mail.user
+stars.Star.user
+tickets.Project.assign_to
+tickets.Ticket.assigned_to
+tinymce.TextFieldTemplate.user
+uploads.Upload.user
+users.Authority.user

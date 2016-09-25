@@ -115,7 +115,8 @@ if dd.is_installed('tickets'):
                 qs = qs.filter(
                     faculties_competence_set_by_user__topic=ticket.topic)
             if ticket.faculty:
-                faculties = ticket.faculty.whole_clan()
+                # faculties = ticket.faculty.whole_clan()
+                faculties = ticket.faculty.get_parental_line()
                 qs = qs.filter(
                     faculties_competence_set_by_user__faculty__in=faculties)
             qs = qs.order_by('faculties_competence_set_by_user__affinity')

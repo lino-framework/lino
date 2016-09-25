@@ -137,7 +137,7 @@ mode."""),
     'lino_noi.lib.tickets.ui.ActiveTickets.model' : _("""alias of Ticket"""),
     'lino_noi.lib.tickets.ui.MyTickets' : _("""Show the tickets reported by me."""),
     'lino_noi.lib.tickets.ui.MyTickets.model' : _("""alias of Ticket"""),
-    'lino_noi.lib.users.models.User.callme_mode' : _("""Others can call me"""),
+    'lino_noi.lib.users.models.User.callme_mode' : _("""Whether other users can see my contact data."""),
     'lino_noi.lib.users.models.UserDetail' : _("""Layout of User Detail in Lino Noi."""),
     'lino_noi.projects.bs3.settings.demo.Site' : _("""Defines and instantiates a demo version of Lino Noi."""),
     'lino_noi.projects.care.roles.SimpleUser' : _("""A simple user is a person who can log into the application in

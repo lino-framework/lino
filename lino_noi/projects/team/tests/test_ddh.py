@@ -72,7 +72,26 @@ class DDHTests(RemoteAuthTestCase):
         obj.delete()
 
         obj = createit()
-        Star(owner=obj, user=robin).save()
+
+        if False:
+            try:
+                robin.delete()
+                self.fail("Expected veto")
+            except Warning as e:
+                self.assertEqual(
+                    str(e), "Cannot delete User robin "
+                    "because 1 Tickets refer to it.")
+
+        
+        create(Star, owner=obj, user=robin)
+        
+        try:
+            robin.delete()
+            self.fail("Expected veto")
+        except Warning as e:
+            self.assertEqual(
+                str(e), "Cannot delete User robin "
+                "because 1 Stars refer to it.")
 
         self.assertEqual(Star.objects.count(), 1)
         self.assertEqual(Ticket.objects.count(), 1)
