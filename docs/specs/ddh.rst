@@ -39,13 +39,13 @@ Lino Noi:
 - contacts.RoleType :
   - PROTECT : contacts.Role.type, excerpts.Excerpt.contact_role, tickets.Project.contact_role
 - contenttypes.ContentType :
-  - PROTECT : changes.Change.object_type, comments.Comment.owner_type, excerpts.Excerpt.owner_type, excerpts.ExcerptType.content_type, gfks.HelpText.content_type, notify.Notification.owner_type, outbox.Attachment.owner_type, outbox.Mail.owner_type, stars.Star.owner_type, uploads.Upload.owner_type
+  - PROTECT : changes.Change.master_type, changes.Change.object_type, comments.Comment.owner_type, excerpts.Excerpt.owner_type, excerpts.ExcerptType.content_type, gfks.HelpText.content_type, notify.Notification.owner_type, outbox.Attachment.owner_type, outbox.Mail.owner_type, stars.Star.owner_type, uploads.Upload.owner_type
 - countries.Country :
   - PROTECT : contacts.Partner.country, countries.Place.country
 - countries.Place :
-  - PROTECT : contacts.Partner.city, countries.Place.parent
+  - PROTECT : contacts.Partner.city, contacts.Partner.region, countries.Place.parent
 - deploy.Milestone :
-  - PROTECT : deploy.Deployment.milestone, tickets.Ticket.reported_for
+  - PROTECT : deploy.Deployment.milestone, tickets.Ticket.fixed_for, tickets.Ticket.reported_for
 - excerpts.Excerpt :
   - SET_NULL : clocking.ServiceReport.printed_by, deploy.Milestone.printed_by
 - excerpts.ExcerptType :
@@ -65,7 +65,7 @@ Lino Noi:
 - tickets.Site :
   - PROTECT : deploy.Milestone.site, tickets.Ticket.site, users.User.user_site
 - tickets.Ticket :
-  - PROTECT : clocking.Session.ticket, deploy.Deployment.ticket, tickets.Link.parent, tickets.Ticket.duplicate_of
+  - PROTECT : clocking.Session.ticket, deploy.Deployment.ticket, tickets.Link.child, tickets.Link.parent, tickets.Ticket.duplicate_of
 - tickets.TicketType :
   - PROTECT : tickets.Ticket.ticket_type
 - topics.Topic :
@@ -76,29 +76,7 @@ Lino Noi:
   - PROTECT : uploads.Upload.type
 - users.User :
   - CASCADE : faculties.Competence.user
-  - PROTECT : changes.Change.user, clocking.ServiceReport.user, clocking.Session.user, comments.Comment.user, excerpts.Excerpt.user, notify.Notification.user, outbox.Mail.user, stars.Star.user, tickets.Project.assign_to, tickets.Ticket.assigned_to, tinymce.TextFieldTemplate.user, uploads.Upload.user, users.Authority.user
+  - PROTECT : changes.Change.user, clocking.ServiceReport.user, clocking.Session.user, comments.Comment.user, excerpts.Excerpt.user, notify.Notification.user, outbox.Mail.user, stars.Star.user, tickets.Project.assign_to, tickets.Ticket.assigned_to, tickets.Ticket.reporter, tinymce.TextFieldTemplate.user, uploads.Upload.user, users.Authority.authorized, users.Authority.user
 <BLANKLINE>
 
 
-:ticket:`1183`: tickets.Ticket.reporter is not listed below "-
-users.User : - PROTECT : ..." in the output of
-analyzer.show_foreign_keys(). Trying to find out why:
-
-
->>> for (model, fk) in rt.models.users.User._lino_ddh.fklist:
-...     #print(model, fk.name)
-...     print(fk)
-changes.Change.user
-clocking.ServiceReport.user
-clocking.Session.user
-comments.Comment.user
-excerpts.Excerpt.user
-faculties.Competence.user
-notify.Notification.user
-outbox.Mail.user
-stars.Star.user
-tickets.Project.assign_to
-tickets.Ticket.assigned_to
-tinymce.TextFieldTemplate.user
-uploads.Upload.user
-users.Authority.user

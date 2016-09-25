@@ -99,8 +99,8 @@ reporter (a user)."""),
     'lino_noi.lib.tickets.models.Ticket.reporter' : _("""The user who reported this ticket."""),
     'lino_noi.lib.tickets.models.Ticket.assigned_to' : _("""The user who is working on this ticket."""),
     'lino_noi.lib.tickets.models.Ticket.state' : _("""The state of this ticket. See TicketStates"""),
-    'lino_noi.lib.tickets.models.Ticket.waiting_for' : _("""An unformatted one-line text which describes what this ticket
-is waiting for."""),
+    'lino_noi.lib.tickets.models.Ticket.waiting_for' : _("""What to do next. An unformatted one-line text which describes
+what this ticket is waiting for."""),
     'lino_noi.lib.tickets.models.Ticket.upgrade_notes' : _("""A formatted text field meant for writing instructions for the
 hoster's site administrator when doing an upgrade where this
 ticket is being deployed."""),
