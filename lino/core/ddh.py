@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2015 Luc Saffre
+# Copyright 2009-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 """Defines the :class:`DisableDeleteHandler` class.
 """
@@ -45,7 +45,7 @@ class DisableDeleteHandler(object):
         # fields defined on a parent model.
 
         for m, fld in self.fklist:
-            if model is m:
+            if model is m and fld.name == fk.name:
                 # avoid duplicate entries caused by MTI children
                 return
         self.fklist.append((model, fk))
