@@ -41,7 +41,12 @@ def ar2workbook(ar, column_names=None):
     #     for path in ALL_TEMP_FILES:
     # TypeError: 'NoneType' object is not iterable
 
-    workbook = Workbook(guess_types=True)
+    # workbook = Workbook(guess_types=True)
+    
+    # removed `guess_types=True` because it caused trouble in openpyxl
+    # 3.4.0 and because I don't know whether it is needed.
+    
+    workbook = Workbook()
     sheet = workbook.active
     sheet.title = sheet_name(ar.get_title())
 
