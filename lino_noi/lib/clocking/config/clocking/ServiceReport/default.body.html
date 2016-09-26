@@ -1,0 +1,13 @@
+Service report 
+{% if obj.interesting_for %}
+for {{obj.interesting_for}}.
+{% endif %}
+
+Period from {{fdl(obj.start_date)}} 
+{% if obj.end_date %}
+to {{fdl(obj.end_date)}}
+{% endif %}
+
+{{ar.show(rt.modules.clocking.TicketsByReport, obj, header_level=2)}}
+{{ar.show(rt.modules.clocking.ProjectsByReport, obj, header_level=2)}}
+
