@@ -142,6 +142,10 @@ class MergeAction(actions.Action):
         Implements :meth:`lino.core.actions.Action.run_from_ui`.
         """
         obj = ar.selected_rows[0]
+
+        if ar.action_param_values.merge_to is None:
+            raise Warning(_("You must specify a merge target."))
+        
         mp = MergePlan(obj, ar.action_param_values.merge_to,
                        ar.action_param_values)
         msg = mp.build_confirmation_message()
@@ -159,14 +163,12 @@ class MergeAction(actions.Action):
 
 
 class MergePlan(object):
-    """A volatile object which represents what is going to happen after
-    the user confirms to merge two objects.
+    """A volatile object which represents what is going to happen if we
+    merge two objects.
 
     """
 
     def __init__(self, obj, merge_to, keep_volatiles={}):
-        if merge_to is None:
-            raise Warning(_("You must specify a merge target."))
         if merge_to == obj:
             raise Warning(_("Cannot merge an instance to itself."))
         self.obj = obj
@@ -176,6 +178,7 @@ class MergePlan(object):
     def analyze(self):
         self.volatiles = []
         self.related = []
+        self.generic_related = []
         # logger.info("20160621 ddh.fklist is %s", self.obj._lino_ddh.fklist)
         for m, fk in traverse_ddh_fklist(self.obj.__class__):
             qs = m.objects.filter(**{fk.name: self.obj})
@@ -184,7 +187,6 @@ class MergePlan(object):
                 self.volatiles.append((fk, qs))
             else:
                 self.related.append((fk, qs))
-        self.generic_related = []
         for gfk, fk, qs in settings.SITE.kernel.get_generic_related(self.obj):
             if not getattr(gfk, 'dont_merge', False):
                 self.generic_related.append((gfk, qs))
