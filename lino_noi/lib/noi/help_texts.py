@@ -110,6 +110,8 @@ ticket has evolved during time, it should reflect the latest
 version."""),
     'lino_noi.lib.tickets.models.Ticket.duplicate_of' : _("""A pointer to the ticket which is the cause of this ticket."""),
     'lino_noi.lib.tickets.models.Ticket.deadline' : _("""Specify that the ticket must be done for a given date."""),
+    'lino_noi.lib.tickets.models.Ticket.priority' : _("""How urgent this ticket is. This should be a value between 0
+and 100."""),
     'lino_noi.lib.tickets.roles.Triager' : _("""A user who is responsible for triaging new tickets."""),
     'lino_noi.lib.tickets.ui.ActiveProjects' : _("""Show a list of active projects."""),
     'lino_noi.lib.tickets.ui.ActiveProjects.model' : _("""alias of Project"""),
