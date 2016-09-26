@@ -426,6 +426,11 @@ class Ticket(mixins.CreatedModified, Assignable, TimeInvestment, RFC,
         TODO: Triagers should have a table of tickets having this
         field non-empty and are still in an active state.
 
+    .. attribute:: priority
+
+        How urgent this ticket is. This should be a value between 0
+        and 100.
+
     """
 
     quick_search_fields = "summary description"
@@ -488,9 +493,7 @@ class Ticket(mixins.CreatedModified, Assignable, TimeInvestment, RFC,
         verbose_name=_("Deadline"),
         blank=True, null=True)
 
-    priority = models.SmallIntegerField(
-        _("Priority"), default=0,
-        help_text=_("Value between 0 and 100."))
+    priority = models.SmallIntegerField(_("Priority"), default=100)
 
     # deprecated fields:
     feedback = models.BooleanField(
