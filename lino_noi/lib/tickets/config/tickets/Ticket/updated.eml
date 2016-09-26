@@ -1,0 +1,4 @@
+User {{request.user}} has saved these updates:
+{% for field, oldvalue, newvalue in updates %}
+{{field}} : {{oldvalue}} --> {{newvalue}}
+{% endfor %}
