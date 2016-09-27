@@ -49,11 +49,13 @@ message is inserted into the result.  The whole traceback is being
 logged to the lino logger.
 
 To demonstrate this, our example implementation has a bug, it doesn't
-support the case of having only an URL without TEXT:
+support the case of having only an URL without TEXT (we use an
+ellipsis because the error message varies with Python versions):
 
->>> print(p.parse('This is a [url http://xyz.com].'))
+>>> print(p.parse('This is a [url http://xyz.com].'))  #doctest: +ELLIPSIS
 [DEBUG] url2html() got 'http://xyz.com'
-This is a [ERROR need more than 1 value to unpack in '[url http://xyz.com]' at position 10-30].
+This is a [ERROR ... in '[url http://xyz.com]' at position 10-30].
+
 
 Newlines preceded by a backslash will be removed before the command
 handler is called:
