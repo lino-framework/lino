@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-09 03:51+0300\n"
-"PO-Revision-Date: 2016-09-09 04:24+0300\n"
+"POT-Creation-Date: 2016-09-26 13:09+0300\n"
+"PO-Revision-Date: 2016-09-26 13:11+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language: de\n"
 "Language-Team: \n"
@@ -40,12 +40,12 @@ msgstr "Neuen Datensatz erstellen"
 msgid "Insert into %s"
 msgstr "Einfügen in %s"
 
-#: lino/core/actions.py:816 lino/core/requests.py:932
+#: lino/core/actions.py:816 lino/core/requests.py:936
 #, python-format
 msgid "%s has been updated."
 msgstr "%s wurde aktualisiert."
 
-#: lino/core/actions.py:818 lino/core/requests.py:934
+#: lino/core/actions.py:818 lino/core/requests.py:938
 #, python-format
 msgid "%s : nothing to save."
 msgstr "%s : nichts zu speichern."
@@ -58,7 +58,7 @@ msgstr "Änderungen in diesem Formular speichern"
 msgid "Save"
 msgstr "Speichern"
 
-#: lino/core/actions.py:903 lino/core/requests.py:929
+#: lino/core/actions.py:903 lino/core/requests.py:933
 #, python-format
 msgid "%s has been created."
 msgstr "%s wurde erstellt."
@@ -198,38 +198,38 @@ msgstr "Begründung"
 msgid "Also reassign volatile related objects"
 msgstr "Auch vergängliche verknüpfte Objekte überweisen"
 
-#: lino/core/merge.py:169
+#: lino/core/merge.py:147
 msgid "You must specify a merge target."
 msgstr ""
 
-#: lino/core/merge.py:171
+#: lino/core/merge.py:173
 msgid "Cannot merge an instance to itself."
 msgstr "Kann Datensatz nicht mit sich selbst fusionieren."
 
-#: lino/core/merge.py:195
+#: lino/core/merge.py:197
 #, python-format
 msgid "Merge %(origin)s into %(target)s"
 msgstr "Fusioniere %(origin)s nach %(target)s"
 
-#: lino/core/merge.py:227
+#: lino/core/merge.py:229
 msgid "will be deleted."
 msgstr "wird gelöscht"
 
-#: lino/core/merge.py:228
+#: lino/core/merge.py:230
 msgid "will get reassigned."
 msgstr "wird überwiesen."
 
-#: lino/core/merge.py:230
+#: lino/core/merge.py:232
 #, python-format
 msgid "%s will be deleted"
 msgstr "%s wird gelöscht"
 
-#: lino/core/merge.py:231
+#: lino/core/merge.py:233
 #, python-format
 msgid "Are you sure you want to merge %(this)s into %(merge_to)s?"
 msgstr "Sind Sie sicher, dass Sie %(this)s nach %(merge_to)s fusionieren wollen?"
 
-#: lino/core/merge.py:266
+#: lino/core/merge.py:268
 #, python-format
 msgid "Merged %(this)s into %(merge_to)s. Updated %(updated)d related rows."
 msgstr ""
@@ -289,11 +289,11 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nein"
 
-#: lino/core/requests.py:956
+#: lino/core/requests.py:960
 msgid "the documentation"
 msgstr "die Dokumentation"
 
-#: lino/core/requests.py:968
+#: lino/core/requests.py:972
 msgid "No data to display"
 msgstr "Keine Daten anzuzeigen"
 
@@ -860,11 +860,11 @@ msgstr ""
 msgid "Export to Excel xls format"
 msgstr ""
 
-#: lino/modlib/export_excel/models.py:79
+#: lino/modlib/export_excel/models.py:84
 msgid "Export to .xls"
 msgstr ""
 
-#: lino/modlib/export_excel/models.py:80
+#: lino/modlib/export_excel/models.py:85
 #, fuzzy
 msgid "Export this table as an .xls document"
 msgstr "Diese Tabelle in eine .pdf-Datei exportieren"
@@ -2372,7 +2372,7 @@ msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:405
 msgid "Set yourself as assigned user."
-msgstr ""
+msgstr "Hiermit werden Sie als verantwortlich zugewiesen."
 
 #: lino/modlib/lino_startup/help_texts.py:406
 msgid ""
@@ -3091,7 +3091,7 @@ msgid "Body"
 msgstr "Inhalt"
 
 #: lino/modlib/notify/models.py:154
-#, fuzzy, python-format
+#, fuzzy
 msgid "(more)"
 msgstr "%s (Modell)"
 
