@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino 1.6.14\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-09-09 03:51+0300\n"
+"POT-Creation-Date: 2016-09-26 13:09+0300\n"
 "PO-Revision-Date: 2014-06-06 11:29+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language: es\n"
@@ -39,12 +39,12 @@ msgstr ""
 msgid "Insert into %s"
 msgstr ""
 
-#: lino/core/actions.py:816 lino/core/requests.py:932
+#: lino/core/actions.py:816 lino/core/requests.py:936
 #, python-format
 msgid "%s has been updated."
 msgstr ""
 
-#: lino/core/actions.py:818 lino/core/requests.py:934
+#: lino/core/actions.py:818 lino/core/requests.py:938
 #, python-format
 msgid "%s : nothing to save."
 msgstr ""
@@ -57,7 +57,7 @@ msgstr ""
 msgid "Save"
 msgstr ""
 
-#: lino/core/actions.py:903 lino/core/requests.py:929
+#: lino/core/actions.py:903 lino/core/requests.py:933
 #, python-format
 msgid "%s has been created."
 msgstr ""
@@ -191,38 +191,38 @@ msgstr ""
 msgid "Also reassign volatile related objects"
 msgstr ""
 
-#: lino/core/merge.py:169
+#: lino/core/merge.py:147
 msgid "You must specify a merge target."
 msgstr ""
 
-#: lino/core/merge.py:171
+#: lino/core/merge.py:173
 msgid "Cannot merge an instance to itself."
 msgstr ""
 
-#: lino/core/merge.py:195
+#: lino/core/merge.py:197
 #, python-format
 msgid "Merge %(origin)s into %(target)s"
 msgstr ""
 
-#: lino/core/merge.py:227
+#: lino/core/merge.py:229
 msgid "will be deleted."
 msgstr ""
 
-#: lino/core/merge.py:228
+#: lino/core/merge.py:230
 msgid "will get reassigned."
 msgstr ""
 
-#: lino/core/merge.py:230
+#: lino/core/merge.py:232
 #, python-format
 msgid "%s will be deleted"
 msgstr ""
 
-#: lino/core/merge.py:231
+#: lino/core/merge.py:233
 #, python-format
 msgid "Are you sure you want to merge %(this)s into %(merge_to)s?"
 msgstr ""
 
-#: lino/core/merge.py:266
+#: lino/core/merge.py:268
 #, python-format
 msgid "Merged %(this)s into %(merge_to)s. Updated %(updated)d related rows."
 msgstr ""
@@ -281,11 +281,11 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: lino/core/requests.py:956
+#: lino/core/requests.py:960
 msgid "the documentation"
 msgstr ""
 
-#: lino/core/requests.py:968
+#: lino/core/requests.py:972
 msgid "No data to display"
 msgstr ""
 
@@ -844,11 +844,11 @@ msgstr ""
 msgid "Export to Excel xls format"
 msgstr ""
 
-#: lino/modlib/export_excel/models.py:79
+#: lino/modlib/export_excel/models.py:84
 msgid "Export to .xls"
 msgstr ""
 
-#: lino/modlib/export_excel/models.py:80
+#: lino/modlib/export_excel/models.py:85
 msgid "Export this table as an .xls document"
 msgstr ""
 
@@ -7853,11 +7853,6 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "User Profiles"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "A notification object represents the fact that a given user has\n"
-#~ "been notified about a given database object."
 #~ msgstr ""
 
 #~ msgid "Notify me"
