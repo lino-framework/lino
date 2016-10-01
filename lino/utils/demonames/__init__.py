@@ -7,9 +7,16 @@ u"""A collection of tools for generating fictive people and addresses.
 This module is used by
 
 - :mod:`lino_xl.lib.contacts.fixtures.demo`
+
 - :mod:`lino_xl.lib.addresses.fixtures.demo2`
-- :mod:`garble <lino_xl.lib.contacts.management.commands.garble_persons>`
+
+- :mod:`garble_persons
+  <lino_xl.lib.contacts.management.commands.garble_persons>`
+
 - :mod:`garble <lino_welfare.modlib.pcsw.management.commands.garble>`
+
+- :xfile:`garble_tx25.py` in
+  :mod:`lino_welfare.modlib.cbss.fixtures.cbss_demo`
 
 .. autosummary::
    :toctree:

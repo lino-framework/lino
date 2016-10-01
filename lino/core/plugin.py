@@ -19,31 +19,27 @@ import inspect
 
 
 class Plugin(object):
-    """The base class for all plugins.
+    """The base class for all plugin descriptors.
 
     For an introduction, see :doc:`/dev/plugins`.
 
-    A :class:`Plugin` is an optional descriptor for an app which gets
-    defined and configured before Django models start to load.
-    Lino creates one :class:`Plugin` instance for every installed app.
+    Plugin descriptors get defined and configured before Django models
+    start to load.  Lino creates one :class:`Plugin` instance for
+    every installed plugin and makes it globally available in
+    :attr:`dd.plugins.FOO <lino.core.site.Site.plugins>` (where `FOO`
+    is the `app_label` of the plugin).
 
     The :class:`Plugin` class is comparable to Django's `AppConfig
     <https://docs.djangoproject.com/en/1.7/ref/applications/>`_ class
     which has been added in version 1.7., but there is at least one
-    fundamental difference: in Lino the :class:`Plugin` instances for
-    all installed apps are available (in :attr:`dd.plugins
-    <lino.core.site.Site.plugins>`) when the :xfile:`settings.py` file
-    has been loaded and *before* Django starts to load the first
-    :xfile:`models.py`.  This is possible because Plugins are defined
-    in your app's :xfile:`__init__.py` file.
-
-    Unlike Django's `AppConfig`, you *cannot* define a `Plugin` in
-    your :xfile:`models.py` file, you *must* define it in your app's
-    :xfile:`__init__.py`.  This limitation has the advantage of making
-    certain things possible which are not possible in plain Django.
-
-    Plugins get instiantiated when the :class:`Site` object
-    instantiates (i.e. before Django settings are ready).
+    important difference: in Lino the :class:`Plugin` instances for
+    all installed plugins are available (in :attr:`dd.plugins
+    <lino.core.site.Site.plugins>`) *before* Django starts to load the
+    first :xfile:`models.py`.  This is possible because Plugins are
+    defined in :xfile:`__init__.py` files of your plugins. As a
+    consequence, unlike Django's `AppConfig`, you *cannot* define a
+    `Plugin` in your :xfile:`models.py` file, you *must* define it in
+    your plugins's :xfile:`__init__.py`.
 
     """
 

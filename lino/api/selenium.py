@@ -29,13 +29,14 @@ def runserver(settings_module, func, driver=None):
 
     if driver is None:
         driver = webdriver.Firefox()
+        # driver = webdriver.Chrome('chromium-browser')
 
     try:
         driver.get("http://127.0.0.1:8000/")
         func(driver)
     finally:
-        driver.quit()
         server.terminate()
+        driver.quit()
 
 
 class Album(object):

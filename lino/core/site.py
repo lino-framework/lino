@@ -1653,6 +1653,8 @@ this field.
         :meth:`load_plugins` but before populating the models
         registry.
 
+        See :ref:`dev.plugins`.
+
         """
         pass
 
