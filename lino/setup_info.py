@@ -16,34 +16,32 @@ import sys
 PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3
 
+
+install_requires = [
+    'django<1.10',
+    # 'django',
+    'Sphinx',
+    'atelier', 'unipath', 'python_dateutil',
+    'Babel', 'odfpy>1.3', 'lxml',
+    'beautifulsoup4', 'html5lib',  # 'html5lib==1.0b8',
+    'pisa',
+    'jinja2', 'pytidylib', 'PyYAML',
+    'clint',  # lino.modlib.plausibility.management.commands
+    'django-localflavor',  # lino.modlib.sepa
+    # 'django-iban',  # lino.modlib.sepa
+    'openpyxl',
+    'weasyprint', 'cairocffi',  # 'cairocffi<0.7',
+    'django-wkhtmltopdf']
+
+if PY2:
+    install_requires.append('reportlab<2.7')
+else:
+    install_requires.append('reportlab')
+
 SETUP_INFO = dict(
     name='lino',
     version='1.7.6',
-    install_requires=[
-        'django<1.10',
-        # 'django',
-        'Sphinx',
-        'atelier', 'unipath', 'python_dateutil',
-        'Babel', 'odfpy>1.3', 'lxml',
-        'beautifulsoup4', 'html5lib==1.0b8',
-        'pisa',
-        'jinja2', 'pytidylib', 'PyYAML',
-        'clint',  # lino.modlib.plausibility.management.commands
-        'django-localflavor',  # lino.modlib.sepa
-        # 'django-iban',  # lino.modlib.sepa
-        'openpyxl',
-        'weasyprint', 'cairocffi<0.7',
-        'django-wkhtmltopdf'],
-    # pisa has a bug which makes it complain that "Reportlab Version
-    # 2.1+ is needed!" when reportlab 3 is installed.
-    # So we install reportlab 2.7 (the latest 2.x version)
-
-    # beautifulsoup4, html5lib, reportlab and pisa are actually needed
-    # only when you want to run the test suite, not for normal
-    # operation.  Despite this they must be specified in
-    # `install_requires`, not in `tests_require`, because the doctests
-    # are run in the environment specified by `install_requires`.
-
+    install_requires=install_requires,
     description="A framework for writing desktop-like web applications "
     "using Django and ExtJS",
     license='BSD License',
@@ -52,30 +50,7 @@ SETUP_INFO = dict(
     author_email='luc.saffre@gmail.com',
     url="http://www.lino-framework.org",
     #~ test_suite = 'lino.test_apps',
-    test_suite='tests',
-    classifiers="""\
-  Programming Language :: Python
-  Programming Language :: Python :: 2
-  Programming Language :: Python :: 3
-  Development Status :: 5 - Production/Stable
-  Environment :: Web Environment
-  Framework :: Django
-  Intended Audience :: Developers
-  Intended Audience :: System Administrators
-  License :: OSI Approved :: BSD License
-  Natural Language :: English
-  Natural Language :: French
-  Natural Language :: German
-  Operating System :: OS Independent
-  Topic :: Database :: Front-Ends
-  Topic :: Home Automation
-  Topic :: Office/Business
-  Topic :: Software Development :: Libraries :: Application Frameworks""".splitlines())
-
-if PY2:
-    SETUP_INFO['install_requires'].append('reportlab<2.7')
-else:
-    SETUP_INFO['install_requires'].append('reportlab')
+    test_suite='tests')
 
 SETUP_INFO.update(long_description="""
 
@@ -116,6 +91,25 @@ or
 The central project homepage is http://www.lino-framework.org
 
 """)
+
+SETUP_INFO.update(classifiers="""\
+  Programming Language :: Python
+  Programming Language :: Python :: 2
+  Programming Language :: Python :: 3
+  Development Status :: 5 - Production/Stable
+  Environment :: Web Environment
+  Framework :: Django
+  Intended Audience :: Developers
+  Intended Audience :: System Administrators
+  License :: OSI Approved :: BSD License
+  Natural Language :: English
+  Natural Language :: French
+  Natural Language :: German
+  Operating System :: OS Independent
+  Topic :: Database :: Front-Ends
+  Topic :: Home Automation
+  Topic :: Office/Business
+  Topic :: Software Development :: Libraries :: Application Frameworks""".splitlines())
 
 SETUP_INFO.update(packages=[str(n) for n in """
 lino
