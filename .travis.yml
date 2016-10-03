@@ -12,14 +12,14 @@ env:
 install:
   - pip install -U setuptools
   - pip install Django==$DJANGO
-  - pip install coveralls
-  - pip install .
+  - # pip install coveralls
+  - pip install -e .
 # command to run tests, e.g. python setup.py test
 script:
   - export LINO_CACHE_ROOT=$TRAVIS_BUILD_DIR/lino_cache
   - mkdir $LINO_CACHE_ROOT
-  - coverage run --source=lino setup.py test
+  - # coverage run --source=lino setup.py test
   - inv initdb test
 
 after_success:
-  coveralls
+  # coveralls
