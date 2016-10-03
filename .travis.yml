@@ -13,7 +13,8 @@ install:
   - pip install -U setuptools
   - pip install Django==$DJANGO
   - # pip install coveralls
-  - pip install .
+  - pip install -r requirements.txt
+  - pip install -e .
 # command to run tests, e.g. python setup.py test
 script:
   - export LINO_CACHE_ROOT=$TRAVIS_BUILD_DIR/lino_cache
