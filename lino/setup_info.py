@@ -32,7 +32,7 @@ SETUP_INFO = dict(
         'django-localflavor',  # lino.modlib.sepa
         # 'django-iban',  # lino.modlib.sepa
         'openpyxl',
-        'weasyprint',
+        'weasyprint', 'cairocffi<0.7',
         'django-wkhtmltopdf'],
     # pisa has a bug which makes it complain that "Reportlab Version
     # 2.1+ is needed!" when reportlab 3 is installed.

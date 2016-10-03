@@ -814,27 +814,27 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         default_action = cls.get_default_action()
 
         if default_action is not None:
-            cls.default_action = cls.bind_action(default_action)
+            cls.default_action = cls._bind_action(default_action)
 
         if cls.detail_layout:
             if default_action and isinstance(
                     default_action, actions.ShowDetailAction):
-                cls.detail_action = cls.bind_action(default_action)
+                cls.detail_action = cls._bind_action(default_action)
             else:
-                cls.detail_action = cls.bind_action(actions.ShowDetailAction())
+                cls.detail_action = cls._bind_action(actions.ShowDetailAction())
             if cls.editable:
-                cls.submit_detail = cls.bind_action(actions.SubmitDetail())
+                cls.submit_detail = cls._bind_action(actions.SubmitDetail())
 
         if cls.editable:
             if cls.allow_create:
-                # cls.create_action = cls.bind_action(actions.SubmitInsert())
+                # cls.create_action = cls._bind_action(actions.SubmitInsert())
                 if cls.detail_action and not cls.hide_top_toolbar:
-                    cls.insert_action = cls.bind_action(actions.InsertRow())
+                    cls.insert_action = cls._bind_action(actions.InsertRow())
             if not cls.hide_top_toolbar:
-                cls.delete_action = cls.bind_action(actions.DeleteSelected())
-            cls.update_action = cls.bind_action(actions.SaveRow())
+                cls.delete_action = cls._bind_action(actions.DeleteSelected())
+            cls.update_action = cls._bind_action(actions.SaveRow())
             if cls.detail_layout:
-                cls.validate_form = cls.bind_action(actions.ValidateForm())
+                cls.validate_form = cls._bind_action(actions.ValidateForm())
 
         if isinstance(cls.workflow_owner_field, basestring):
             cls.workflow_owner_field = cls.get_data_elem(
@@ -865,17 +865,14 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                 if isinstance(v, actions.Action):
                     if not k in cls.actions:
                         if v.attach_to_actor(cls, k):
-                            cls.bind_action(v)
+                            cls._bind_action(v)
 
-        def f(a, b):
-            return cmp(a.action.sort_index, b.action.sort_index)
-        # cls._actions_list.sort(f)
-        from functools import cmp_to_key
-        cls._actions_list.sort(key=cmp_to_key(f))
-        cls._actions_list = tuple(cls._actions_list)
+        cls._actions_list.sort(key=lambda a: a.action.sort_index)
+        # cls._actions_list = tuple(cls._actions_list)
 
     @classmethod
-    def bind_action(self, a):
+    def _bind_action(self, a):
+        # internal use during _collect_actions()
         ba = BoundAction(self, a)
         if a.action_name is not None:
             self.actions.define(a.action_name, ba)

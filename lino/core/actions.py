@@ -231,9 +231,8 @@ class Action(Parametrizable, Permittable):
     """
 
     sort_index = 90
-    """
-    Determins the sort order in which the actions will be presented to
-    the user.
+    """Determines the sort order in which the actions will be presented
+    to the user.
 
     List actions are negative and come first.
 
@@ -252,6 +251,7 @@ class Action(Parametrizable, Permittable):
     51    :class:`Clear Cache <lino.mixins.printable.ClearCacheAction>`
     60    :class:`ShowSlaveTable`
     90    default for all custom row actions
+    200   default for all workflow actions (:class:`ChangeStateAction <lino.core.workflows.ChangeStateAction>`)
     ===== =================================
 
     """
@@ -330,20 +330,28 @@ class Action(Parametrizable, Permittable):
     :attr:`log_each_action_request
     <lino.core.site.Site.log_each_action_request>` is set to `True`.
     
-    Note that Lino actually does not check whether it is true. When a
-    readonly action actually does modify the database, Lino won't
-    "notice" it.
+    Note that when a readonly action actually *does* modify the
+    database, Lino won't "notice" it.
 
     Discussion
     
     Maybe we should change the name `readonly` to `modifying` or
     `writing` (and set the default value `False`).  Because for the
     application developer that looks more natural.  Or --maybe better
-    but probably even more consequences-- the default value should be
-    `False`.  Because being readonly, for actions, is a kind of
-    "privilege": they don't get logged, they also exists for readonly
-    users.  It would be more "secure" when the developer must be
-    explicit when granting that privilege.
+    but probably with even more consequences-- the default value
+    should be `False`.  Because being readonly, for actions, is a kind
+    of "privilege": they don't get logged, they also exists for
+    readonly users...  It would be more "secure" when the developer
+    must explicitly "say something" it when granting that privilege.
+
+    Another subtlety is the fact that this attribute is used by
+    :class:`lino.modlib.users.mixins.UserAuthored`.  For example the
+    :class:`StartTicketSession
+    <lino_noi.lib.clocking.actions.StartTicketSession>` action in
+    :ref:`noi` is declared "readonly" because we want Workers who are
+    not Triagers to see this action even if they are not the author
+    (reporter) of a ticket. In this use case the name should rather be
+    `requires_authorship`.
 
     """
 

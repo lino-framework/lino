@@ -32,6 +32,8 @@ from lino.core.utils import resolve_model
 from lino.utils.xmlgen.html import E
 from lino.utils import get_class_attr
 
+from .workflows import ChangeStateAction
+
 
 class Model(models.Model):
     """Lino adds a series of features to Django's `Model
@@ -728,7 +730,11 @@ class Model(models.Model):
         if ar is not None:
             actor = ar.actor
             state = actor.get_row_state(obj)
-            if state is not None:
+            sep = ''
+            show = True  # whether to show the state
+            
+            def show_state():
+                l.append(sep)
                 #~ l.append(E.b(unicode(state),style="vertical-align:middle;"))
                 # if state.button_text:
                 #     l.append(E.b(state.button_text))
@@ -739,18 +745,19 @@ class Model(models.Model):
                 #~ l.append(u" \u25b8 ")
                 #~ l.append(u" \u2192 ")
                 #~ sep = u" \u25b8 "
-                sep = u" \u2192 "
-            else:
-                # logger.info('20150602 no state for %s in %s (%s)',
-                #             obj, actor, actor.model)
-                sep = ''
 
             for ba in actor.get_actions():
                 if ba.action.show_in_workflow:
                     if actor.get_row_permission(obj, ar, state, ba):
+                        if show and isinstance(ba.action, ChangeStateAction):
+                            show_state()
+                            sep = u" \u2192 "
+                            show = False
                         l.append(sep)
                         l.append(ar.action_button(ba, obj))
                         sep = ' '
+            if state and show:
+                show_state()
         return E.span(*l)
 
     def error2str(self, e):

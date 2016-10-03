@@ -78,7 +78,7 @@ class State(choicelists.Choice):
             kw.update(help_text=help_text)
         if icon_name is not None:
             kw.update(icon_name=icon_name)
-        kw.update(sort_index=10 + i)
+        kw.update(sort_index=200 + i)
         if label is not None and not isinstance(label, (basestring, Promise)):
             # it's a subclass of ChangeStateAction
             assert isinstance(label, type)
@@ -190,6 +190,7 @@ class ChangeStateAction(actions.Action):
     show_in_bbar = False
     show_in_workflow = True
     readonly = False
+    # sort_index = 200
 
     def __init__(self, target_state, required_roles=None,
                  help_text=None, **kw):
