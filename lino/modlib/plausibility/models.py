@@ -9,6 +9,7 @@ Database models for `lino.modlib.plausibility`.
 """
 
 from __future__ import unicode_literals, print_function
+import six
 from builtins import object
 from collections import OrderedDict
 
@@ -300,7 +301,7 @@ def check_plausibility(args=[], fix=True):
         for m, checkers in mc.items():
             ct = rt.modules.contenttypes.ContentType.objects.get_for_model(m)
             Problem.objects.filter(owner_type=ct).delete()
-            name = unicode(m._meta.verbose_name_plural)
+            name = six.text_type(m._meta.verbose_name_plural)
             qs = m.objects.all()
             msg = "Running {0} data checkers on {1} {2}...".format(
                 len(checkers), qs.count(), name)
