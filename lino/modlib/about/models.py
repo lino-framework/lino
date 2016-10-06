@@ -272,9 +272,7 @@ class About(EmptyTable):
             if value is not None:
                 times.append((label, value))
 
-        def mycmp(a, b):
-            return cmp(b[1], a[1])
-        times.sort(mycmp)
+        times.sort(key=lambda x: x[1])
         for label, value in times:
             items.append(E.li(str(label), ' : ', E.b(dtfmt(value))))
         body.append(E.ul(*items))

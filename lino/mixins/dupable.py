@@ -31,6 +31,7 @@ Search by Sound with Python
 """
 
 from __future__ import unicode_literals
+import six
 from builtins import map
 from builtins import str
 from builtins import object
@@ -118,7 +119,9 @@ class PhoneticWordBase(dd.Model):
         dms = dm[0] or dm[1]
         if dms is None:
             return ''
-        return dms.decode('utf8')
+        if isinstance(dms, six.binary_type):
+            dms = dms.decode('utf8')
+        return dms
 
 
 class Dupable(dd.Model):
