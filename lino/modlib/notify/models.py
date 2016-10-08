@@ -205,7 +205,6 @@ class Notification(UserAuthored, Controllable, Created):
         body = template.render(**context)
 
         sender = settings.SERVER_EMAIL
-        dd.logger.info("20161008 %s %r %r %r", self.pk, subject, sender, body)
         rt.send_email(subject, sender, body, [self.user.email])
         self.sent = timezone.now()
         self.save()
