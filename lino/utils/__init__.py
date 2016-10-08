@@ -29,7 +29,6 @@ This is a tested document. To test it, run::
     dpy
     editing
     html2odf
-    html2text
     html2xhtml
     mytidylib
     htmlgen

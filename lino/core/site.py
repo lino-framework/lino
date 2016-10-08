@@ -50,9 +50,20 @@ from lino.core.plugin import Plugin
 
 from lino import assert_django_code, DJANGO_DEFAULT_LANGUAGE
 from lino.utils.xmlgen.html import E
-from lino.utils.html2text import html2text
+# from lino.utils.html2text import html2text
+# from html2text import html2text
 from lino.core.exceptions import ChangedAPI
 # from .roles import SiteUser
+
+from html2text import HTML2Text
+
+def html2text(html):
+    text_maker = HTML2Text()
+    text_maker.unicode_snob = True
+    return text_maker.handle(html)
+
+
+
 
 startup_rlock = threading.Lock()  # Lock() or RLock()?
 
