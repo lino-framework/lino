@@ -3438,7 +3438,7 @@ signature as `django.core.mail.EmailMessage`.
         if body.startswith('<'):
             kw['html_message'] = body
             body = html2text(body)
-        self.logger.info("20161008b %r %r %r %r", subject, sender, recipients, body)
+        # self.logger.info("20161008b %r %r %r %r", subject, sender, recipients, body)
         send_mail(subject, body, sender, recipients, **kw)
 
         # msg = EmailMessage(subject=subject,
