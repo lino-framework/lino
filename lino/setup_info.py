@@ -29,7 +29,7 @@ install_requires = [
     'clint',  # lino.modlib.plausibility.management.commands
     'django-localflavor',  # lino.modlib.sepa
     # 'django-iban',  # lino.modlib.sepa
-    'openpyxl',
+    'openpyxl', 'html2text',
     'weasyprint', 'cairocffi',  # 'cairocffi<0.7',
     'django-wkhtmltopdf']
 

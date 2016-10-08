@@ -50,9 +50,20 @@ from lino.core.plugin import Plugin
 
 from lino import assert_django_code, DJANGO_DEFAULT_LANGUAGE
 from lino.utils.xmlgen.html import E
-from lino.utils.html2text import html2text
+# from lino.utils.html2text import html2text
+# from html2text import html2text
 from lino.core.exceptions import ChangedAPI
 # from .roles import SiteUser
+
+from html2text import HTML2Text
+
+def html2text(html):
+    text_maker = HTML2Text()
+    text_maker.unicode_snob = True
+    return text_maker.handle(html)
+
+
+
 
 startup_rlock = threading.Lock()  # Lock() or RLock()?
 
@@ -3427,6 +3438,7 @@ signature as `django.core.mail.EmailMessage`.
         if body.startswith('<'):
             kw['html_message'] = body
             body = html2text(body)
+        # self.logger.info("20161008b %r %r %r %r", subject, sender, recipients, body)
         send_mail(subject, body, sender, recipients, **kw)
 
         # msg = EmailMessage(subject=subject,
