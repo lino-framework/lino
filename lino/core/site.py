@@ -514,28 +514,28 @@ class Site(object):
     this site.
     """
     
-    user_profiles_module = None
+    user_types_module = None
     """The full Python path of the **user profiles module** to be used on
     this site.
 
     This must be set if you want to enable permission control based on
     user roles defined in :attr:`Permittable.required_roles
     <lino.core.permissions.Permittable.required_roles>` and
-    :attr:`UserProfile.role
-    <lino.modlib.users.choicelists.UserProfile.role>`.
+    :attr:`UserType.role
+    <lino.modlib.users.choicelists.UserType.role>`.
 
     Default value is `None`, meaning that role-based permission
     control is inactive: every user can see everything.
 
     If set, Lino will import this module during site startup. It is
     expected to define application-specific user roles (if necessary)
-    and to fill the :class:`UserProfiles
-    <lino.modlib.users.choicelists.UserProfiles>` choicelist.
+    and to fill the :class:`UserTypes
+    <lino.modlib.users.choicelists.UserTypes>` choicelist.
 
     For example::
 
         class Site(Site):
-            user_profiles_module = 'lino.modlib.users.roles'
+            user_types_module = 'lino.modlib.users.roles'
 
     Examples of such user profiles modules are
     :mod:`lino.modlib.users.roles` and
@@ -723,7 +723,7 @@ class Site(object):
 
     """
 
-    anonymous_user_profile = '000'
+    anonymous_user_type = '000'
     """The user profile to be assigned to the anonymous user
 (:class:`AnonymousUser <lino.modlib.users.utils.AnonymousUser>`).
 
@@ -2347,7 +2347,7 @@ this field.
         return self.confdirs.find_template_config_files(*args, **kwargs)
 
     def setup_user_profiles(self):
-        """Deprecated. Use :attr:`user_profiles_module` instead.
+        """Deprecated. Use :attr:`user_types_module` instead.
 
         """
         pass
@@ -2709,7 +2709,7 @@ this field.
 
     def resolve_languages(self, languages):
         """
-        This is used by `UserProfile`.
+        This is used by `UserType`.
         
         Examples:
         
@@ -3170,7 +3170,7 @@ site. :manage:`diag` is a command-line shortcut to this.
 
     def get_site_menu(self, ui, profile):
         """
-        Return this site's main menu for the given UserProfile.
+        Return this site's main menu for the given UserType.
         Must be a :class:`lino.core.menus.Toolbar` instance.
         Applications usually should not need to override this.
         """

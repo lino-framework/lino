@@ -25,13 +25,13 @@ logger = logging.getLogger(__name__)
 
 
 from django.conf import settings
-from lino.modlib.users.choicelists import UserProfiles
+from lino.modlib.users.choicelists import UserTypes
 
 
 def root_user(lang, **kw):
-    # ~ kw.update(profile='900') # UserProfiles.admin)
-    #~ print 20130219, UserProfiles.items()
-    kw.update(profile=UserProfiles.admin)
+    # ~ kw.update(profile='900') # UserTypes.admin)
+    #~ print 20130219, UserTypes.items()
+    kw.update(profile=UserTypes.admin)
     kw.update(email=settings.SITE.demo_email)  # 'root@example.com'
     lang = lang.django_code
     kw.update(language=lang)

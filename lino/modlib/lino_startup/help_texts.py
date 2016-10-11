@@ -378,17 +378,17 @@ uploaded file in a new browser window."""),
     'lino.modlib.uploads.models.MyUploads.model' : _("""alias of Upload"""),
     'lino.modlib.uploads.models.UploadsByController.model' : _("""alias of Upload"""),
     'lino.modlib.users.Plugin' : _("""See /dev/plugins."""),
-    'lino.modlib.users.choicelists.UserProfile' : _("""Base class for all user profiles."""),
-    'lino.modlib.users.choicelists.UserProfile.hidden_languages' : _("""A subset of languages which
+    'lino.modlib.users.choicelists.UserType' : _("""Base class for all user profiles."""),
+    'lino.modlib.users.choicelists.UserType.hidden_languages' : _("""A subset of languages which
 should be hidden in this user profile.  Default value is
 hidden_languages.  This is
 used on multilingual sites with more than 4 or 5 languages."""),
-    'lino.modlib.users.choicelists.UserProfile.role' : _("""The role of users having this profile. This is an instance of
+    'lino.modlib.users.choicelists.UserType.role' : _("""The role of users having this profile. This is an instance of
 <lino.core.roles.UserRole> or some subclass thereof."""),
-    'lino.modlib.users.choicelists.UserProfile.readonly' : _("""Whether users with this profile get only write-proteced access."""),
-    'lino.modlib.users.choicelists.UserProfiles' : _("""The list of user profiles available on this site."""),
-    'lino.modlib.users.choicelists.UserProfiles.item_class' : _("""alias of UserProfile"""),
-    'lino.modlib.users.choicelists.UserProfiles.hidden_languages' : _("""Default value for the
+    'lino.modlib.users.choicelists.UserType.readonly' : _("""Whether users with this profile get only write-proteced access."""),
+    'lino.modlib.users.choicelists.UserTypes' : _("""The list of user profiles available on this site."""),
+    'lino.modlib.users.choicelists.UserTypes.item_class' : _("""alias of UserType"""),
+    'lino.modlib.users.choicelists.UserTypes.hidden_languages' : _("""Default value for the
 hidden_languages of newly
 attached choice item."""),
     'lino.modlib.users.mixins.TimezoneHolder' : _("""Mixin for database models which have a timezone field."""),

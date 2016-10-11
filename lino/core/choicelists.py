@@ -528,7 +528,7 @@ Django creates copies of them when inheriting models.
     #~ @classmethod
     #~ def get_choices(cls):
         #~ """
-        #~ We must make it dynamic since e.g. UserProfiles can change after
+        #~ We must make it dynamic since e.g. UserTypes can change after
         #~ the fields have been created.
 
         #~ https://docs.djangoproject.com/en/dev/ref/models/fields/

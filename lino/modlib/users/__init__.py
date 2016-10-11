@@ -43,6 +43,6 @@ class Plugin(ad.Plugin):
         g = site.plugins.system
         m = m.add_menu(g.app_label, g.verbose_name)
         m.add_action('users.Authorities')
-        m.add_action('users.UserProfiles')
+        m.add_action('users.UserTypes')
 
 

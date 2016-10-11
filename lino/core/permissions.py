@@ -40,8 +40,8 @@ class Permittable(object):
     actor is available only for authenticated users.
 
     Note that this is being ignored when
-    :attr:`user_profiles_module
-    <lino.core.site.Site.user_profiles_module>` is empty.
+    :attr:`user_types_module
+    <lino.core.site.Site.user_types_module>` is empty.
 
     Examples of recommended ways for specifying this attribute::
 
@@ -165,7 +165,7 @@ def make_view_permission_handler_(
 
     check_required_roles(required_roles, actor)
 
-    if settings.SITE.user_profiles_module:
+    if settings.SITE.user_types_module:
         def allow(action, profile):
             # print str(actor)
             # if str(actor.actor) == "tickets.PublicTickets":
@@ -219,7 +219,7 @@ def make_permission_handler_(
             #~ user_level,user_groups,states,allow,owner,auth])
 
     if allow is None:
-        if settings.SITE.user_profiles_module:
+        if settings.SITE.user_types_module:
             def allow(action, user, obj, state):
                 # print 20150828, action, required_roles
                 return user.profile.has_required_roles(required_roles)
