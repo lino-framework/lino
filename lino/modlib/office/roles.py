@@ -43,10 +43,10 @@ class SiteAdmin(SiteAdmin, OfficeStaff):
     pass
 
 from django.utils.translation import ugettext_lazy as _
-from lino.modlib.users.choicelists import UserProfiles
+from lino.modlib.users.choicelists import UserTypes
 
-UserProfiles.clear()
-add = UserProfiles.add_item
+UserTypes.clear()
+add = UserTypes.add_item
 add('000', _("Anonymous"), UserRole, name='anonymous', readonly=True)
 add('100', _("User"), OfficeUser, name='user')
 add('900', _("Administrator"), SiteAdmin, name='admin')

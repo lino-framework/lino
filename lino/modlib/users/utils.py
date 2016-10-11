@@ -20,7 +20,7 @@ class AnonymousUser(object):
     :attr:`user` attribute of anonymous incoming requests, similar to
     Django's approach.
 
-    See also :attr:`lino.core.site.Site.anonymous_user_profile`.
+    See also :attr:`lino.core.site.Site.anonymous_user_type`.
 
     """
     authenticated = False
@@ -42,19 +42,19 @@ class AnonymousUser(object):
     @classmethod
     def instance(cls):
         if cls._instance is None:
-            # Call startup() to fill UserProfiles also in a
+            # Call startup() to fill UserTypes also in a
             # multi-threaded environment:
             settings.SITE.startup()
             cls._instance = AnonymousUser()
-            from lino.modlib.users.choicelists import UserProfiles
-            cls._instance.profile = UserProfiles.get_by_value(
-                settings.SITE.anonymous_user_profile, None)
+            from lino.modlib.users.choicelists import UserTypes
+            cls._instance.profile = UserTypes.get_by_value(
+                settings.SITE.anonymous_user_type, None)
             if cls._instance.profile is None:
                 raise Exception(
-                    "Invalid value %r for `SITE.anonymous_user_profile`. "
+                    "Invalid value %r for `SITE.anonymous_user_type`. "
                     "Must be one of %s" % (
-                        settings.SITE.anonymous_user_profile,
-                        [i.value for i in list(UserProfiles.items())]))
+                        settings.SITE.anonymous_user_type,
+                        [i.value for i in list(UserTypes.items())]))
         return cls._instance
 
     def __str__(self):

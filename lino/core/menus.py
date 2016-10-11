@@ -344,6 +344,6 @@ class Toolbar(Menu):
 
 def find_menu_item(bound_action):
     from lino.api import rt
-    profile = rt.modules.users.UserProfiles.get_by_value('900')
+    profile = rt.modules.users.UserTypes.get_by_value('900')
     menu = settings.SITE.get_site_menu(settings.SITE.kernel, profile)
     return menu.find_item(bound_action)

@@ -81,7 +81,7 @@ class Authored(model.Model):
     this behaviour (i.e. everybody can edit the work of other users).
 
     This is going to be passed to :meth:`has_required_roles
-    <lino.core.users.choicelists.UserProfile.has_required_roles>` of
+    <lino.core.users.choicelists.UserType.has_required_roles>` of
     the requesting user's profile.
 
     Usage examples see :class:`lino_xl.lib.notes.models.Note` or

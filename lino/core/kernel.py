@@ -324,8 +324,8 @@ class Kernel(object):
         #         if k.startswith('setup_'):
         #             site.modules.define(app_label, k, v)
 
-        if site.user_profiles_module:
-            import_module(site.user_profiles_module)
+        if site.user_types_module:
+            import_module(site.user_types_module)
         
         site.setup_choicelists()
         # site.setup_workflows()

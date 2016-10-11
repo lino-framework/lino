@@ -558,7 +558,7 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
     def to_rst(self, profile=None, name=None):
         lh = self.get_layout_handle(settings.SITE.kernel.default_ui)
         # if profile is None:
-        #     profile = UserProfiles.admin
+        #     profile = UserTypes.admin
         if name is None:
             e = lh.main
         else:

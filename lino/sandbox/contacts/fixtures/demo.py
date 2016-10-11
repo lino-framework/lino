@@ -318,7 +318,7 @@ Weserstraße
         return User(person=p, company=rumma, **kw)
 
     #~ yield user("Alice","Imedemaal",is_superuser=True)
-    yield user("Alice", "Imedemaal", profile=UserProfiles.admin)
+    yield user("Alice", "Imedemaal", profile=UserTypes.admin)
     yield user("Bert", "Sesamestreet")
     yield user("Charles", "Braun")
     dblogger.info("Done contacts demo fixture")

@@ -29,7 +29,7 @@ from lino.core.roles import SiteAdmin
 
 from lino.mixins import CreatedModified
 
-from .choicelists import UserProfiles
+from .choicelists import UserTypes
 from .mixins import UserAuthored, TimezoneHolder
 
 class SendWelcomeMail(dd.Action):
@@ -183,7 +183,7 @@ class User(CreatedModified, TimezoneHolder):
 
     password = models.CharField(_('Password'), max_length=128)
 
-    profile = UserProfiles.field(
+    profile = UserTypes.field(
         blank=True,
         help_text=_("Users with an empty `profile` field are considered "
                     "inactive and cannot log in."))
@@ -456,7 +456,7 @@ class Authority(UserAuthored):
     def authorized_choices(cls, user):
         qs = settings.SITE.user_model.objects.exclude(
             profile=None)
-            #~ profile=UserProfiles.blank_item) 20120829
+            #~ profile=UserTypes.blank_item) 20120829
         if user is not None:
             qs = qs.exclude(id=user.id)
             #~ .exclude(level__gte=UserLevels.admin)

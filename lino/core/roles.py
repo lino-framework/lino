@@ -1,7 +1,7 @@
 # Copyright 2011-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Defines built-in user roles. See :mod:`lino.core.permissions`.
+"""Defines built-in user roles. See :ref:`permissions`.
 
 """
 from builtins import object
@@ -35,8 +35,8 @@ roles.
         role.
 
         """
-        from lino.modlib.users.choicelists import UserProfiles
-        for p in UserProfiles.items():
+        from lino.modlib.users.choicelists import UserTypes
+        for p in UserTypes.items():
             if p.has_required_roles([cls]):
                 yield p
 
@@ -70,7 +70,7 @@ class SiteAdmin(SiteStaff, Supervisor):
 
 def login_required(*args):
     """An API shortcut available in :mod:`lino.api.dd`. See
-    :meth:`lino.modlib.users.choicelists.UserProfile.has_required_role`
+    :meth:`lino.modlib.users.choicelists.UserType.has_required_role`
 
     """
     if len(args):

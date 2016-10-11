@@ -47,7 +47,7 @@ class AuthMiddleWareBase(object):
         raise NotImplementedError
 
     def process_request(self, request):
-        # first request will trigger site startup to load UserProfiles
+        # first request will trigger site startup to load UserTypes
         # settings.SITE.startup()
 
         user = self.get_user_from_request(request)

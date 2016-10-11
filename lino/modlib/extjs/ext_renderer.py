@@ -60,7 +60,7 @@ else:
 
 from . import elems as ext_elems
 
-from lino.modlib.users.choicelists import UserProfiles
+from lino.modlib.users.choicelists import UserTypes
 
 if settings.SITE.user_model:
     from lino.modlib.users import models as users
@@ -648,7 +648,7 @@ class ExtRenderer(HtmlRenderer):
             count = 0
             for lng in settings.SITE.languages:
                 with translation.override(lng.django_code):
-                    for profile in UserProfiles.objects():
+                    for profile in UserTypes.objects():
                         count += jsgen.with_user_profile(
                             profile, self.build_js_cache, force)
             logger.info("%d lino*.js files have been built in %s seconds.",
