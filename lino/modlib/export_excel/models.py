@@ -14,6 +14,7 @@ from django.utils.functional import Promise
 from lino.core import actions
 from lino.core.tables import AbstractTable
 from lino.utils.media import TmpMediaFile
+from lino.utils import IncompleteDate
 from lino.utils.xmlgen.html import E
 from lino.utils.quantities import Duration
 from lino.core.choicelists import Choice
@@ -73,6 +74,11 @@ def ar2workbook(ar, column_names=None):
                 # dd.logger.info("20160716 %s", value)
             elif isinstance(value, Promise):
                 value = str(value)
+            elif isinstance(value, IncompleteDate):
+                if value.is_complete():
+                    value = value.as_date()
+                else:
+                    value = str(value)
             elif isinstance(value, Model):
                 value = str(value)
             sheet.cell(row=r + 1, column=c + 1).value = value
