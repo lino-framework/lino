@@ -341,7 +341,11 @@ request from it.
         from lino.api import dd, rt
         from lino.utils import iif
         from lino.utils.restify import restify
+        from django.db import models
 
+        # needed e.g. for polls tutorial
+        for n in ('Count', 'Sum', 'Max', 'Min', 'Avg', 'F'):
+            kw[n] = getattr(models, n)
 
         if False:  # 20150803 why was this?  It disturbed e.g. for the bs3
                    # language selector.
