@@ -6,10 +6,10 @@ This defines the :class:`Table` class.
 """
 from __future__ import print_function
 from builtins import str
-# import six
+import six
 # str = six.text_type
 
-from past.builtins import basestring
+# from past.builtins import basestring
 
 import logging
 logger = logging.getLogger(__name__)
@@ -237,7 +237,7 @@ def discover():
 
     logger.debug("Analyze %d slave tables...", len(slave_reports))
     for rpt in slave_reports:
-        if isinstance(rpt.master, basestring):
+        if isinstance(rpt.master, six.string_types):
             raise Exception("20150216 unresolved master")
         if isinstance(rpt.master, UnresolvedModel):
             continue
@@ -470,12 +470,12 @@ class Table(AbstractTable):
             self.model = None
 
         if self.model is not None:
-            if isinstance(self.hidden_columns, basestring):
+            if isinstance(self.hidden_columns, six.string_types):
                 self.hidden_columns = frozenset(
                     fields.fields_list(self.model, self.hidden_columns))
             self.hidden_columns |= self.model.hidden_columns
 
-            if isinstance(self.active_fields, basestring):
+            if isinstance(self.active_fields, six.string_types):
                 self.active_fields = frozenset(
                     fields.fields_list(self.model, self.active_fields))
             self.active_fields |= self.model.active_fields
