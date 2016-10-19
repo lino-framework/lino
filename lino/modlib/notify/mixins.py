@@ -17,14 +17,17 @@ class ChangeObservable(dd.Model):
     class Meta(object):
         abstract = True
 
+    def get_notify_message(self, ar):
+        return (self.get_notify_subject(ar), self.get_notify_body(ar))
+    
     def get_notify_subject(self, ar):
         return _("{user} modified {obj}").format(
             user=ar.get_user(), obj=self)
 
     def get_notify_body(self, ar):
-        return E.tostring(E.p(
-            _("{user} modified ").format(user=ar.get_user()),
-            ar.obj2html(self),
+        return E.tostring(E.div(
+            E.p(_("{user} modified ").format(user=ar.get_user()),
+                ar.obj2html(self)),
             E.p("TODO: include a summary of the modifications.")))
 
     def get_notify_owner(self, ar):
@@ -46,10 +49,11 @@ class ChangeObservable(dd.Model):
 
         super(ChangeObservable, self).after_ui_save(ar, cw)
 
-        subject = self.get_notify_subject(ar)
-        body = self.get_notify_body(ar)
+        msg = self.get_notify_message(ar)
+        if not msg:
+            return
+        subject, body = msg
         owner = self.get_notify_owner(ar)
-        # self.emit_notification(ar, owner, subject, body)
         emit = rt.models.notify.Notification.emit_notification
         emit(ar, owner, subject, body, self.get_change_observers())
 
