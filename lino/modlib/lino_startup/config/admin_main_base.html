@@ -1,4 +1,7 @@
 <div style="margin:5px">
+  
+{{ before_welcome }}
+            
 {% if request.user.authenticated %}
     {% block hello_user %}
         <p>{{_("Quick links:")}}
@@ -71,9 +74,12 @@
   {% endblock %}
 {% endif %}
 
+{{ after_welcome }}
+            
 {% block admin_main_items %}
 {% for T in settings.SITE.get_admin_main_items(ar) %}
 {% if E.iselement(T) %}{{E.tostring(T)}}{% else %}
+{% if T is string %}{{T}}{% else %}
 {% if T.default_action.get_view_permission(ar.get_user().profile) %}
 {% set sar = ar.spawn(T, limit=T.preview_limit) %}
 {% if sar.get_total_count() %}
@@ -82,6 +88,7 @@
     title=_("Show this table in own window")))}}
 </h2>
 {{E.tostring(ar.show(sar))}}
+{% endif %}
 {% endif %}
 {% endif %}
 {% endif %}

@@ -9,7 +9,6 @@ Defines the :class:`ExtRenderer` class.
 from __future__ import unicode_literals
 from __future__ import print_function
 from builtins import str
-from past.builtins import basestring
 import six
 
 import logging
@@ -445,7 +444,7 @@ class ExtRenderer(HtmlRenderer):
         of most html tags.
 
         """
-        if isinstance(html, six.text_type):
+        if isinstance(html, six.string_types):
             return '<div class="htmlText">{0}</div>'.format(html)
         if not E.iselement(html):
             raise Exception("{!r} is not an element".format(html))
@@ -1399,7 +1398,7 @@ class ExtRenderer(HtmlRenderer):
                 # if isinstance(ws[0], basestring) and ws[0].endswith("%"):
                 #     windowConfig.update(
                 #         width=js_code('Lino.perc2width(%s)' % ws[0][:-1]))
-                if isinstance(ws[0], basestring):
+                if isinstance(ws[0], six.string_types):
                     windowConfig.update(width=ws[0])
                 else:
                     windowConfig.update(
