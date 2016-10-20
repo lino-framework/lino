@@ -8,11 +8,6 @@
 import logging
 logger = logging.getLogger(__name__)
 
-try:
-    import bleach
-except ImportError:
-    bleach = None
-
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.humanize.templatetags.humanize import naturaltime
 

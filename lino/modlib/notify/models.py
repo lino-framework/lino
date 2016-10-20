@@ -23,7 +23,7 @@ from lino.mixins import Created, ObservedPeriod
 from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.users.mixins import UserAuthored, My
 from lino.modlib.office.roles import OfficeStaff, OfficeUser
-from .utils import body_subject_to_elems
+from lino.mixins.bleached import body_subject_to_elems
 
 from lino.utils.xmlgen.html import E
 from lino.utils import join_elems

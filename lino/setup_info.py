@@ -124,6 +124,7 @@ lino.modlib.awesomeuploader
 lino.modlib.bootstrap3
 lino.modlib.changes
 lino.modlib.comments
+lino.modlib.comments.fixtures
 lino.modlib.gfks
 lino.modlib.gfks.fixtures
 lino.modlib.database_ready

@@ -73,6 +73,13 @@ first_name and last_name."""),
 field and a virtual field "Age"."""),
     'lino.mixins.human.Born.birth_date' : _("""An IncompleteDateField."""),
     'lino.mixins.human.Born.age' : _("""Virtual field displaying the age in years."""),
+    'lino.mixins.periods.CombinedDateTime' : _("""Mixin for models which have at least one couple of date and time
+fields which form a kind of editable timestamp field."""),
+    'lino.mixins.periods.Started' : _("""Mixin for models with two fields start_date and
+start_time"""),
+    'lino.mixins.periods.Ended' : _("""Mixin for models with two fields end_date and
+end_time
+Models inheriting from this must also inherit from Started."""),
     'lino.mixins.periods.DatePeriod' : _("""A model mixin for models which represent a period whose start and
 end are date fields."""),
     'lino.mixins.periods.ObservedPeriod' : _("""lino.core.param_panel.ParameterPanel with two fields
@@ -128,12 +135,11 @@ object."""),
 including those applied to "child" objects."""),
     'lino.modlib.changes.models.ChangesByMaster.model' : _("""alias of Change"""),
     'lino.modlib.comments.Plugin' : _("""See /dev/plugins."""),
+    'lino.modlib.comments.mixins.RFC' : _("""A request for comment. Every database model of an application"""),
     'lino.modlib.comments.models.Comment' : _("""A comment is a short text which some user writes about some
 other database object. It has no recipient."""),
     'lino.modlib.comments.models.Comment.short_text' : _("""A short "abstract" of your comment. This should not be more
 than one paragraph."""),
-    'lino.modlib.comments.models.Comment.ALLOWED_TAGS' : _("""A list of tag names which are to remain in HTML comments if
-bleaching is active."""),
     'lino.modlib.davlink.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.export_excel.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.extjs.Plugin' : _("""Extends lino.core.plugin.Plugin."""),

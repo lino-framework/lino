@@ -10,27 +10,20 @@ from builtins import object
 import logging
 logger = logging.getLogger(__name__)
 
-try:
-    import bleach
-except ImportError:
-    bleach = None
-
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
+from lino.api import dd
+from lino.mixins import CreatedModified
+from lino.modlib.users.mixins import UserAuthored
 from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.notify.mixins import ChangeObservable
-
-from lino.api import dd
-from lino import mixins
-from lino.modlib.users.mixins import UserAuthored
 from lino.utils.xmlgen.html import E
-
+from lino.mixins.bleached import Bleached
 
 @dd.python_2_unicode_compatible
-class Comment(
-        mixins.CreatedModified,
-        UserAuthored, Controllable, ChangeObservable):
+class Comment(CreatedModified, UserAuthored, Controllable,
+              ChangeObservable, Bleached):
     """A **comment** is a short text which some user writes about some
     other database object. It has no recipient.
 
@@ -39,15 +32,10 @@ class Comment(
         A short "abstract" of your comment. This should not be more
         than one paragraph.
 
-    .. attribute:: ALLOWED_TAGS
-
-        A list of tag names which are to *remain* in HTML comments if
-        bleaching is active.
-
     """
-
-    ALLOWED_TAGS = ['a', 'b', 'i', 'em', 'ul', 'ol', 'li']
-
+    
+    # ALLOWED_TAGS = ['a', 'b', 'i', 'em', 'ul', 'ol', 'li']
+    
     class Meta(object):
         app_label = 'comments'
         abstract = dd.is_abstract_model(__name__, 'Comment')
@@ -76,18 +64,10 @@ class Comment(
         return self.owner
 
     def as_li(self, ar):
-        """Return this comment as a list item. If `bleach
-        <http://bleach.readthedocs.org/en/latest/>`_ is installed, all
-        tags except some will be removed when
+        """Return this comment as a list item. 
 
         """
-        txt = ar.parse_memo(self.short_text)
-        if bleach is None:
-            chunks = [txt]
-        else:
-            chunks = [bleach.clean(
-                txt, tags=self.ALLOWED_TAGS, strip=True)]
-
+        chunks = [ar.parse_memo(self.short_text)]
         by = _("{0} by {1}").format(
             naturaltime(self.created), str(self.user)),
         chunks += [

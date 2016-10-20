@@ -1,11 +1,13 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012 Luc Saffre
+# Copyright 2012-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 u"""
 Tools for generating `Open Document 
 <http://lists.oasis-open.org/archives/tc-announce/201201/msg00001.html>`_ 
 files and chunks thereof.
+
+Not actively used.
 
 It uses :term:`lxml` and a copy of the original RelaxNG schema
 (:srcref:`/lino/utils/xmlgen/odf/relaxng/OpenDocument-v1.2-os-schema.rng`)
@@ -193,9 +195,9 @@ class Text(xg.Namespace):
     def setup_namespace(self):
         self.define_names("""
         p style-name
-        """)
+        """.split())
 
-text = Text('text', "urn:oasis:names:tc:opendocument:xmlns:text:1.0")
+text = Text('text', prefix="urn:oasis:names:tc:opendocument:xmlns:text:1.0")
 #~ text = xg.Namespace('text',"urn:oasis:names:tc:opendocument:xmlns:text:1.0")
 
 
@@ -214,8 +216,8 @@ class Table(xg.Namespace):
         table-columns
         table-column
         table-column-group
-        """)
-table = Table('table', "urn:oasis:names:tc:opendocument:xmlns:table:1.0")
+        """.split())
+table = Table('table', prefix="urn:oasis:names:tc:opendocument:xmlns:table:1.0")
 
 
 class Style(xg.Namespace):
@@ -233,8 +235,8 @@ class Style(xg.Namespace):
         table-cell-properties
         table-row-properties
         column-width
-        """)
-style = Style('style', "urn:oasis:names:tc:opendocument:xmlns:style:1.0")
+        """.split())
+style = Style('style', prefix="urn:oasis:names:tc:opendocument:xmlns:style:1.0")
 
 
 class FO(xg.Namespace):
@@ -248,8 +250,8 @@ class FO(xg.Namespace):
         padding-left padding-right padding-top padding-bottom
         font-weight
         background-color
-        """)
-fo = FO('fo', "urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0")
+        """.split())
+fo = FO('fo', prefix="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0")
 
 
 class Office(xg.Namespace):
@@ -260,9 +262,9 @@ class Office(xg.Namespace):
         document body text 
         version mimetype
         value-type
-        """)
+        """.split())
 
-office = Office('office', "urn:oasis:names:tc:opendocument:xmlns:office:1.0")
+office = Office('office', prefix="urn:oasis:names:tc:opendocument:xmlns:office:1.0")
 
 table.value_type = office.value_type
 
