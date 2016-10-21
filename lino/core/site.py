@@ -3192,8 +3192,8 @@ site. :manage:`diag` is a command-line shortcut to this.
     def setup_menu(self, profile, main):
         """Set up the application's menu structure.
 
-        The default implementation uses a system of predefined
-        top-level items that are filled by the different installed
+        The default implementation uses a system of *predefined
+        top-level items* that are filled by the different installed
         plugins.
 
         - `setup_master_menu`
@@ -3203,6 +3203,9 @@ site. :manage:`diag` is a command-line shortcut to this.
         - `setup_explorer_menu`
         - `setup_site_menu`
 
+        These predefined top-level items ("Master", "Main", "Reports",
+        "Configuration"... are themselves configurable in
+        :attr:`top_level_menus`)
 
         """
         from django.apps import apps

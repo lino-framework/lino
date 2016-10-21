@@ -250,14 +250,14 @@ class About(EmptyTable):
                 dt = datetime.datetime.fromtimestamp(dt)
                 # raise ValueError("Expected float, go %r" % dt)
             return str(_("%(date)s at %(time)s")) % dict(
-                date=dd.fdf(dt.date()),
-                time=dt.time())
+                date=dd.fds(dt.date()),
+                time=settings.SITE.strftime(dt.time()))
 
-        items = []
-        times = []
         value = settings.SITE.startup_time
         label = _("Server uptime")
-        body.append(E.p(str(label), ' : ', E.b(dtfmt(value))))
+        body.append(E.p(
+            str(label), ' : ', E.b(dtfmt(value)),
+            ' ({})'.format(settings.TIME_ZONE)))
         if settings.SITE.is_demo_site:
             s = str(_("This is a Lino demo site."))
             body.append(E.p(s))
@@ -265,8 +265,14 @@ class About(EmptyTable):
             s = _("We are running with simulated date set to {0}.").format(
                 dd.fdf(settings.SITE.the_demo_date))
             body.append(E.p(s))
+            
         body.append(E.p(str(_("Source timestamps:"))))
-        for src in ("lino", "lino_welfare", 'django', 'atelier'):
+        items = []
+        times = []
+        packages = set(['lino', 'django', 'atelier'])
+        for p in settings.SITE.installed_plugins:
+            packages.add(p.app_name.split('.')[0])
+        for src in packages:
             label = src
             value = codetime('%s.*' % src)
             if value is not None:

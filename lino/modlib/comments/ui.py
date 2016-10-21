@@ -8,11 +8,6 @@
 import logging
 logger = logging.getLogger(__name__)
 
-try:
-    import bleach
-except ImportError:
-    bleach = None
-
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
@@ -89,7 +84,6 @@ class CommentsByRFC(CommentsByX):
         if len(items) > 0:
             html += u"<ul>{0}</ul>".format(''.join(items))
 
-        # return u"""<div class="htmlText">{0}</div>""".format(html)
         return ar.html_text(html)
 
 

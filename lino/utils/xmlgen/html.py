@@ -14,6 +14,10 @@
 
 """Defines an ElementTree Builder for generating HTML documents.
 
+.. data:: E
+
+    The global ElementTree Builder object.
+
 Usage:
 
 >>> from lino.utils.xmlgen.html import E
@@ -160,7 +164,7 @@ class HtmlNamespace(Namespace):
         #     raise Exception("ParseError {0} in {1}".format(e, raw_html))
 
 
-E = HtmlNamespace(None, """
+E = HtmlNamespace(None, set("""
 a
 abbr
 acronym
@@ -274,7 +278,7 @@ rows
 data-toggle
 tabindex
 placeholder
-""")
+""".split()))
 
 
 def table_header_row(*headers, **kw):

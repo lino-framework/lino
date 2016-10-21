@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015 Luc Saffre
+# Copyright 2015-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 """Database models for `lino.modlib.comments`.
 
@@ -22,7 +22,7 @@ class RFC(dd.Model):
         It must be a string and not an etree element. That's because
         it usually includes the content of RichTextField. If the API
         required an element, it would require us to parse this content
-        just in order to generate HTML from it)
+        just in order to generate HTML from it.
 
         """
         return ''

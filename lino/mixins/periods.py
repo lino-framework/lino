@@ -14,11 +14,18 @@ logger = logging.getLogger(__name__)
 
 import datetime
 
+try:
+    import pytz
+except ImportError:
+    pytz = None
+
+
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
 from django.core.exceptions import ValidationError
+from django.utils.timezone import is_aware
 
 from atelier.utils import last_day_of_month
 
@@ -27,10 +34,140 @@ from lino.core.model import Model
 from lino.utils.format_date import fdl, fds
 from lino.utils.ranges import isrange
 from lino.core.utils import ParameterPanel
+from lino.utils.quantities import Duration
 
 
 def rangefmt(r):
     return fds(r[0]) + '...' + fds(r[1])
+
+
+
+class CombinedDateTime(dd.Model):
+    """Mixin for models which have at least one couple of date and time
+    fields which form a kind of editable timestamp field.
+
+    """
+    class Meta:
+        abstract = True
+
+    def get_timezone(self):
+        """May get overridden to return the author's timezone."""
+        return settings.TIME_ZONE
+
+    def set_datetime(self, name, value):
+        """
+        Given a datetime `value`, update the two corresponding fields
+        `FOO_date` and `FOO_time` (where FOO is specified in `name` which
+        must be either "start" or "end").
+        """
+        if settings.USE_TZ and is_aware(value):
+            tz = pytz.timezone(self.get_timezone())
+            # dd.logger.info("20151128 set_datetime(%r, %r)", value, tz)
+            value = value.astimezone(tz)
+            # value = tz.localize(value)
+        setattr(self, name + '_date', value.date())
+        t = value.time()
+        if not t:
+            t = None
+        setattr(self, name + '_time', t)
+
+    def get_datetime(self, name, altname=None):
+        """
+        Return a `datetime` value from the two corresponding
+        date and time fields.
+
+        `name` can be 'start' or 'end'.
+        """
+        d = getattr(self, name + '_date')
+        t = getattr(self, name + '_time')
+        if not d and altname is not None:
+            d = getattr(self, altname + '_date')
+            if not t and altname is not None:
+                t = getattr(self, altname + '_time')
+        if not d:
+            return None
+        if t:
+            dt = datetime.datetime.combine(d, t)
+        else:
+            dt = datetime.datetime(d.year, d.month, d.day)
+        if settings.USE_TZ:
+            tz = pytz.timezone(self.get_timezone())
+            # dd.logger.info("20151128 get_datetime() %r %r", dt, tz)
+            dt = tz.localize(dt)
+        return dt
+
+
+class Started(CombinedDateTime):
+    """Mixin for models with two fields :attr:`start_date` and
+    :attr:`start_time`
+
+    .. attribute:: start_date
+    .. attribute:: start_time
+
+    """
+    class Meta:
+        abstract = True
+
+    start_date = models.DateField(
+        blank=True, null=True,
+        verbose_name=_("Start date"))  # iCal:DTSTART
+    start_time = models.TimeField(
+        blank=True, null=True,
+        verbose_name=_("Start time"))  # iCal:DTSTART
+    #~ start = dd.FieldSet(_("Start"),'start_date start_time')
+
+    def save(self, *args, **kw):
+        """
+        Fills default value "today" to start_date
+        """
+        if not self.start_date:
+            self.start_date = settings.SITE.today()
+        super(Started, self).save(*args, **kw)
+
+class Ended(CombinedDateTime):
+    """Mixin for models with two fields :attr:`end_date` and
+    :attr:`end_time`
+    Models inheriting from this must also inherit from Started.
+
+    .. attribute:: end_date
+    .. attribute:: end_time
+
+    """
+    class Meta:
+        abstract = True
+        
+    end_date = models.DateField(
+        blank=True, null=True,
+        verbose_name=_("End Date"))
+    end_time = models.TimeField(
+        blank=True, null=True,
+        verbose_name=_("End Time"))
+
+    def get_duration(self):
+
+        if not self.start_date:
+            return None
+        if not self.start_time:
+            return None
+        if not self.end_time:
+            return None
+
+        ed = self.end_date or self.start_date
+
+        st = datetime.datetime.combine(self.start_date, self.start_time)
+        et = datetime.datetime.combine(ed, self.end_time)
+
+        if et < st:
+            return None  # negative duration not supported
+        # print 20151127, repr(et), repr(st)
+        return Duration(et - st)
+
+    @dd.virtualfield(dd.QuantityField(_("Duration")))
+    def duration(self, ar):
+        return self.get_duration()
+
+
+
 
 
 class DatePeriod(Model):

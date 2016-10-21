@@ -254,7 +254,7 @@ def format(v):
 #~ soap = SOAP('soap')
 SOAP = Namespace(
     "http://schemas.xmlsoap.org/soap/envelope/",
-    names="Body Envelope Header", prefix="soap")
+    names="Body Envelope Header".split(), prefix="soap")
 
 
 class WebServiceConnector(Namespace):
@@ -266,7 +266,7 @@ class WebServiceConnector(Namespace):
     prefix = 'wsc'
 
     def setup_namespace(self):
-        self.define_names("xmlString")
+        self.define_names("xmlString".split())
 
     def soap_request(self, s):
         #~ xg.set_default_namespace(bcss)
@@ -295,7 +295,7 @@ class SSDNns(Namespace):
     Message
     Reference
     TimeRequest
-    """
+    """.split()
 
 SSDN = SSDNns()
 
@@ -310,7 +310,7 @@ class Common(Namespace):
         OrgUnit
         MatrixID
         MatrixSubID
-        """)
+        """.split())
 
     def authorized_user(common,
                         UserID=None,
@@ -488,7 +488,7 @@ class IdentifyPersonRequest(SSDNService):
         SISCardNumber
         IdentityCardNumber
         PersonData 
-        """)
+        """.split())
 
     def build_request(ipr,
                       national_id='',
@@ -569,7 +569,7 @@ class PerformInvestigationRequest(SSDNService):
         CitizenGroup
         AddressHistoryGroup
         WaitRegisterGroup
-        """)
+        """.split())
 
     def build_request(self, ssin, family='1', citizen='1', address='1', wait='1'):
         root = self.PerformInvestigationRequest(
@@ -598,7 +598,7 @@ class ManageAccessRequest(SSDNService):
     Sector
     QueryRegister
     ProofOfAuthentication
-    """
+    """.split()
 
 
 class HealthInsuranceRequest(SSDNService):
@@ -619,7 +619,7 @@ class HealthInsuranceRequest(SSDNService):
         Period
         StartDate
         EndDate
-        """)
+        """.split())
 
 
 IPR = IdentifyPersonRequest()

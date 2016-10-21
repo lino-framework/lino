@@ -17,7 +17,7 @@
 
 
 >>> E = Namespace('http://my.ns',
-...    "bar baz bar-o-baz foo-bar class def")
+...    "bar baz bar-o-baz foo-bar class def".split())
 
 >>> bob = E.bar_o_baz()
 >>> baz = E.add_child(bob, 'baz', class_='first')
@@ -30,7 +30,7 @@
 
 The following reproduces a pifall. Here is the initial code:
 
->>> E = Namespace(None, "div br")
+>>> E = Namespace(None, "div br".split())
 >>> bob = E.div("a", E.br(), "b", E. br(), "c", E.br(), "d")
 >>> print E.tostring(bob)
 <div>a<br />b<br />c<br />d</div>
@@ -66,7 +66,7 @@ logger = logging.getLogger(__name__)
 
 import datetime
 from functools import partial
-
+from lino.core.exceptions import ChangedAPI
 from lino.utils.xmlgen import etree
 #~ from lino.utils import Warning
 from django.utils.functional import Promise
@@ -237,7 +237,10 @@ class Namespace(object):
         return elem
 
     def define_names(self, names):
-        for tag in names.split():
+        if isinstance(names, six.string_types):
+            raise ChangedAPI("{} must now call itself split().".format(
+                self))
+        for tag in names:
             iname = tag.replace("-", "_")
             iname = iname.replace(".", "_")
             #~ if iname in ('class','for','in','def'):
