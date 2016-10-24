@@ -21,7 +21,7 @@ application.
 
 """
 from __future__ import unicode_literals
-# import six
+import six
 # str = six.text_type
 # from builtins import str
 from past.builtins import basestring
@@ -496,7 +496,7 @@ class Kernel(object):
                         return
                     num = sar.get_total_count()
                     if num > cls.welcome_message_when_count:
-                        chunks = [unicode(_("You have "))]
+                        chunks = [six.text_type(_("You have "))]
                         txt = _("{0} items in {1}").format(num, cls.label)
                         chunks.append(ar.href_to_request(sar, txt))
                         chunks.append('.')
