@@ -447,7 +447,7 @@ def py2js(v):
     if isinstance(v, types.GeneratorType):
         return "".join([py2js(x) for x in v])
     if etree.iselement(v):
-        return json.dumps(etree.tostring(v))
+        return json.dumps(force_text(etree.tostring(v)))
 
     # if type(v) is types.GeneratorType:
         # raise Exception("Please don't call the generator function yourself")
