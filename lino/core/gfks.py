@@ -16,6 +16,7 @@ This defines some helper classes like
 
 from __future__ import unicode_literals
 
+import six
 from django.conf import settings
 from django.db.models import ForeignKey
 
@@ -57,7 +58,7 @@ def gfk2lookup(gfk, obj, **kw):
     else:
         ct = ContentType.objects.get_for_model(obj.__class__)
         kw[gfk.ct_field] = ct
-        if not isinstance(obj.pk, (int, long)):
+        if not isinstance(obj.pk, (int, six.PY2 and long)):
             # IntegerField gives `long` when using MySQL
             return kw
         kw[gfk.fk_field] = obj.pk
