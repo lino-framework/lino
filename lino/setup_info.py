@@ -22,7 +22,7 @@ install_requires = [
     # 'django',
     'Sphinx',
     'atelier', 'unipath', 'python_dateutil',
-    'Babel', 'odfpy>1.3', 'lxml',
+    'Babel', 'lxml',
     'beautifulsoup4', 'html5lib',  # 'html5lib==1.0b8',
     'pisa',
     'jinja2', 'pytidylib', 'PyYAML',
@@ -117,6 +117,7 @@ lino.api
 lino.core
 lino.fake_migrations
 lino.history
+lino.invlib
 lino.mixins
 lino.modlib
 lino.modlib.about

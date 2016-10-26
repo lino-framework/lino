@@ -1,5 +1,5 @@
 # from atelier.invlib import add_demo_project
-from atelier.tasks import ns
+from lino.invlib.ns import ns
 
 ns.setup_from_tasks(
     globals(), "lino",
