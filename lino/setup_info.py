@@ -117,6 +117,7 @@ lino.api
 lino.core
 lino.fake_migrations
 lino.history
+lino.invlib
 lino.mixins
 lino.modlib
 lino.modlib.about
