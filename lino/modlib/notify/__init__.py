@@ -41,7 +41,7 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("Notifications")
 
-    needs_plugins = ['lino.modlib.users', 'lino.modlib.gfks']
+    needs_plugins = ['lino.modlib.users', 'lino.modlib.gfks', 'channels']
 
     # email_subject_template = "Notification about {obj.owner}"
     # """The template used to build the subject lino of notification emails.
@@ -60,4 +60,23 @@ class Plugin(ad.Plugin):
         p = site.plugins.system
         m = m.add_menu(p.app_label, p.verbose_name)
         m.add_action('notify.AllNotifications')
+
+    def get_head_lines(self, site, request):
+        yield """
+    <script type="text/javascript">
+    Ext.onReady(function() {
+        // Note that the path doesn't matter for routing; any WebSocket
+        // connection gets bumped over to WebSocket consumers
+        socket = new WebSocket("ws://" + window.location.host + "/notify/");
+        socket.onmessage = function(e) {
+            alert(e.data);
+        }
+        socket.onopen = function() {
+            socket.send("hello world");
+        }
+        // Call onopen directly if socket is already open
+        if (socket.readyState == WebSocket.OPEN) socket.onopen();
+    }); // end of onReady()"
+    </script>
+        """
 

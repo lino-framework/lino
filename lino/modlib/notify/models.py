@@ -8,6 +8,7 @@
 from __future__ import unicode_literals
 # from builtins import str
 from builtins import object
+import json
 
 from django.db import models
 from django.conf import settings
@@ -29,6 +30,9 @@ from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 
 from datetime import timedelta
+
+from channels import Group
+GROUP_NAME = "notify"
 
 
 class MarkSeen(dd.Action):
@@ -226,7 +230,29 @@ class Notification(UserAuthored, Controllable, Created):
     mark_seen = MarkSeen()
     clear_seen = ClearSeen()
 
+    def save(self, *args, **kwargs):
+        """
+        Hooking send_notification into the save of the object as I'm not
+        the biggest fan of signals.
+        """
+        result = super(Notification, self).save(*args, **kwargs)
 
+        notification = {
+            "id": self.id,
+            "html": self.body,
+            "created": self.created.strftime("%a %d %b %Y %H:%M"),
+        }
+        # Encode and send that message to the whole channels Group for our
+        # liveblog. Note how you can send to a channel or Group from any part
+        # of Django, not just inside a consumer.
+        Group(GROUP_NAME).send({
+            # WebSocket text frame, with JSON content
+            "text": json.dumps(notification),
+        })
+        
+        return result
+
+    
 dd.update_field(Notification, 'user',
                 verbose_name=_("Recipient"), editable=False)
 Notification.update_controller_field(
