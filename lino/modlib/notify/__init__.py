@@ -67,7 +67,8 @@ class Plugin(ad.Plugin):
     Ext.onReady(function() {
         // Note that the path doesn't matter for routing; any WebSocket
         // connection gets bumped over to WebSocket consumers
-        socket = new WebSocket("ws://" + window.location.host + "/notify/");
+        var l = window.location;
+        socket = new WebSocket(((l.protocol === "https:") ? "wss://" : "ws://") + l.host + "/notify/");
         socket.onmessage = function(e) {
             alert(e.data);
         }
