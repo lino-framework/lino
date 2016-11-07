@@ -62,22 +62,27 @@ class Plugin(ad.Plugin):
         m.add_action('notify.AllNotifications')
 
     def get_head_lines(self, site, request):
-        yield """
+        user_name = "anony"
+        if request.user.authenticated:
+            user_name = request.user.username
+
+        js_to_add = """
     <script type="text/javascript">
     Ext.onReady(function() {
         // Note that the path doesn't matter for routing; any WebSocket
         // connection gets bumped over to WebSocket consumers
         var l = window.location;
-        socket = new WebSocket(((l.protocol === "https:") ? "wss://" : "ws://") + l.host + "/notify/");
+        socket = new WebSocket(((l.protocol === "https:") ? "wss://" : "ws://") + l.host + "/");
         socket.onmessage = function(e) {
             alert(e.data);
         }
         socket.onopen = function() {
-            socket.send("hello world");
+            socket.send("%s");
         }
         // Call onopen directly if socket is already open
         if (socket.readyState == WebSocket.OPEN) socket.onopen();
     }); // end of onReady()"
     </script>
-        """
+        """ % (user_name)
+        yield js_to_add
 
