@@ -245,7 +245,7 @@ class Notification(UserAuthored, Controllable, Created):
         # Encode and send that message to the whole channels Group for our
         # liveblog. Note how you can send to a channel or Group from any part
         # of Django, not just inside a consumer.
-        Group(GROUP_NAME).send({
+        Group(self.user.username).send({
             # WebSocket text frame, with JSON content
             "text": json.dumps(notification),
         })
