@@ -31,11 +31,6 @@ from lino.utils import join_elems
 
 from datetime import timedelta
 
-from channels import Group
-
-GROUP_NAME = "notify"
-
-
 class MarkSeen(dd.Action):
     label = _("Mark as seen")
     show_in_bbar = False
@@ -151,7 +146,8 @@ class Notification(UserAuthored, Controllable, Created):
             obj = cls(user=user, owner=owner, **kwargs)
             obj.full_clean()
             obj.save()
-            obj.send_browser_notification(user)
+            if dd.plugins.notify.use_websockets:
+                obj.send_browser_notification(user)
 
     @dd.displayfield(_("Subject"))
     def subject_more(self, ar):
@@ -251,6 +247,7 @@ class Notification(UserAuthored, Controllable, Created):
         # Encode and send that message to the whole channels Group for our
         # liveblog. Note how you can send to a channel or Group from any part
         # of Django, not just inside a consumer.
+        from channels import Group
         Group(user.username).send({
             # WebSocket text frame, with JSON content
             "text": json.dumps(notification_for_js_alert),

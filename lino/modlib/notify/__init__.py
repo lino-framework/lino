@@ -39,9 +39,15 @@ from lino.api import ad, _
 class Plugin(ad.Plugin):
     "See :class:`lino.core.plugin.Plugin`."
 
+    use_websockets = True
+    """Set this to False in order to deactivate use of websockets and
+    channels.
+
+    """
+
     verbose_name = _("Notifications")
 
-    needs_plugins = ['lino.modlib.users', 'lino.modlib.gfks', 'channels', 'django.contrib.auth']
+    needs_plugins = ['lino.modlib.users', 'lino.modlib.gfks', 'channels']
 
     site_js_snippets = ['js/reconnecting-websocket.min.js']
     # media_base_url = "http://ext.ensible.com/deploy/1.0.2/"
@@ -66,6 +72,8 @@ class Plugin(ad.Plugin):
         m.add_action('notify.AllNotifications')
 
     def get_head_lines(self, site, request):
+        if not self.use_websockets:
+            return
         user_name = "anony"
         if request.user.authenticated:
             user_name = request.user.username
@@ -94,6 +102,7 @@ class Plugin(ad.Plugin):
                 console.log(err.message);
             }
         }
+        if (false) {
         socket.onopen = function() {
             socket.send(JSON.stringify({
                             "command": "user_connect",
@@ -102,6 +111,7 @@ class Plugin(ad.Plugin):
         }
         // Call onopen directly if socket is already open
         if (socket.readyState == WebSocket.OPEN) socket.onopen();
+        }
     }); // end of onReady()"
     </script>
         """ % (user_name)
