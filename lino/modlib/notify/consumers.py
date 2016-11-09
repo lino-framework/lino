@@ -19,19 +19,23 @@ BACKEND_SESSION_KEY = '_auth_user_backend'
 HASH_SESSION_KEY = '_auth_user_hash'
 REDIRECT_FIELD_NAME = 'next'
 
+
 def load_backend(path):
     return import_string(path)()
+
 
 def get_user_model():
     # from lino.api import rt
     # rt.models.users.User
     return settings.SITE.user_model
 
+
 # adapted copy of django.contrib.auth.models
 def _get_user_session_key(request):
     # This value in the session is always serialized to a string, so we need
     # to convert it back to Python whenever we access it.
     return get_user_model()._meta.pk.to_python(request.session[SESSION_KEY])
+
 
 # adapted copy of django.contrib.auth.models
 def get_user(request):
@@ -51,7 +55,7 @@ def get_user(request):
             user = backend.get_user(user_id)
             # Verify the session
             if ('django.contrib.auth.middleware.SessionAuthenticationMiddleware'
-                    in settings.MIDDLEWARE_CLASSES and hasattr(user, 'get_session_auth_hash')):
+                in settings.MIDDLEWARE_CLASSES and hasattr(user, 'get_session_auth_hash')):
                 session_hash = request.session.get(HASH_SESSION_KEY)
                 session_hash_verified = session_hash and constant_time_compare(
                     session_hash,
@@ -70,8 +74,8 @@ def transfer_user(from_session, to_session):
     Transfers user from HTTP session to channel session.
     """
     if BACKEND_SESSION_KEY in from_session and \
-       SESSION_KEY in from_session and \
-       HASH_SESSION_KEY in from_session:
+                    SESSION_KEY in from_session and \
+                    HASH_SESSION_KEY in from_session:
         to_session[BACKEND_SESSION_KEY] = from_session[BACKEND_SESSION_KEY]
         to_session[SESSION_KEY] = from_session[SESSION_KEY]
         to_session[HASH_SESSION_KEY] = from_session[HASH_SESSION_KEY]
@@ -83,6 +87,7 @@ def channel_session_user(func):
     Presents a message.user attribute obtained from a user ID in the channel
     session, rather than in the http_session. Turns on channel session implicitly.
     """
+
     @channel_session
     @functools.wraps(func)
     def inner(message, *args, **kwargs):
@@ -96,10 +101,11 @@ def channel_session_user(func):
         # a "session" attribute (later on, perhaps refactor contrib.auth to
         # pass around session rather than request)
         else:
-            fake_request = type("FakeRequest", (object, ), {"session": message.channel_session})
+            fake_request = type("FakeRequest", (object,), {"session": message.channel_session})
             message.user = get_user(fake_request)
         # Run the consumer
         return func(message, *args, **kwargs)
+
     return inner
 
 
@@ -114,6 +120,7 @@ def http_session_user(func):
     If the user does not have a session cookie set, both "session"
     and "user" will be None.
     """
+
     @http_session
     @functools.wraps(func)
     def inner(message, *args, **kwargs):
@@ -127,10 +134,11 @@ def http_session_user(func):
         # a "session" attribute (later on, perhaps refactor contrib.auth to
         # pass around session rather than request)
         else:
-            fake_request = type("FakeRequest", (object, ), {"session": message.http_session})
+            fake_request = type("FakeRequest", (object,), {"session": message.http_session})
             message.user = get_user(fake_request)
         # Run the consumer
         return func(message, *args, **kwargs)
+
     return inner
 
 
@@ -141,6 +149,7 @@ def channel_session_user_from_http(func):
     channel-based sessions, and returns the user as message.user as well.
     Useful for things that consume e.g. websocket.connect
     """
+
     @http_session_user
     @channel_session
     @functools.wraps(func)
@@ -148,8 +157,8 @@ def channel_session_user_from_http(func):
         if message.http_session is not None:
             transfer_user(message.http_session, message.channel_session)
         return func(message, *args, **kwargs)
-    return inner
 
+    return inner
 
 
 # This decorator copies the user from the HTTP session (only available in
@@ -182,6 +191,7 @@ def set_notification_as_seen(message):
 def user_connected(message):
     username = message['username']
     Group(username).add(message.reply_channel)
-    message.reply_channel.send({
-        "text": username,
-    })
+    # Not need any more
+    # message.reply_channel.send({
+    #     "text": username,
+    # })
