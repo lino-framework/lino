@@ -32,6 +32,7 @@ from lino.utils import join_elems
 from datetime import timedelta
 
 from channels import Group
+
 GROUP_NAME = "notify"
 
 
@@ -40,6 +41,7 @@ class MarkSeen(dd.Action):
     show_in_bbar = False
     show_in_workflow = True
     button_text = "✓"  # u"\u2713"
+
     # button_text = u"\u2611"  # BALLOT BOX WITH CHECK
 
     def get_action_permission(self, ar, obj, state):
@@ -52,13 +54,14 @@ class MarkSeen(dd.Action):
             obj.seen = timezone.now()
             obj.save()
         ar.success(refresh_all=True)
-        
+
 
 class ClearSeen(dd.Action):
     """Mark this notification as not yet seen."""
     label = _("Clear seen")
     show_in_bbar = False
     show_in_workflow = True
+
     # button_text = u"\u2610"  # BALLOT BOX
 
     def get_action_permission(self, ar, obj, state):
@@ -71,7 +74,7 @@ class ClearSeen(dd.Action):
             obj.seen = None
             obj.save()
         ar.success(refresh_all=True)
-        
+
 
 # @dd.python_2_unicode_compatible
 class Notification(UserAuthored, Controllable, Created):
@@ -98,6 +101,7 @@ class Notification(UserAuthored, Controllable, Created):
     .. attribute:: seen
 
     """
+
     class Meta(object):
         app_label = 'notify'
         verbose_name = _("Notification")
@@ -111,9 +115,9 @@ class Notification(UserAuthored, Controllable, Created):
 
     # def __str__(self):
     #     return _("About {0}").format(self.owner)
-        # return self.message
-        # return _("Notify {0} about change on {1}").format(
-        #     self.user, self.owner)
+    # return self.message
+    # return _("Notify {0} about change on {1}").format(
+    #     self.user, self.owner)
 
     @classmethod
     def emit_notification(cls, ar, owner, subject, body, recipients):
@@ -147,6 +151,7 @@ class Notification(UserAuthored, Controllable, Created):
             obj = cls(user=user, owner=owner, **kwargs)
             obj.full_clean()
             obj.save()
+            obj.send_browser_notification(user)
 
     @dd.displayfield(_("Subject"))
     def subject_more(self, ar):
@@ -212,7 +217,7 @@ class Notification(UserAuthored, Controllable, Created):
         rt.send_email(subject, sender, body, [self.user.email])
         self.sent = timezone.now()
         self.save()
-    
+
     @dd.action(label=_("Send e-mail"),
                show_in_bbar=False, show_in_workflow=True,
                button_text="✉")  # u"\u2709"
@@ -230,29 +235,30 @@ class Notification(UserAuthored, Controllable, Created):
     mark_seen = MarkSeen()
     clear_seen = ClearSeen()
 
-    def save(self, *args, **kwargs):
+    def send_browser_notification(self, user):
         """
-        Hooking send_notification into the save of the object as I'm not
-        the biggest fan of signals.
+        Send_notification to the user's browser
         """
-        result = super(Notification, self).save(*args, **kwargs)
 
         notification = {
             "id": self.id,
             "html": self.body,
             "created": self.created.strftime("%a %d %b %Y %H:%M"),
         }
+
+        notification_for_js_alert = self.body
+
         # Encode and send that message to the whole channels Group for our
         # liveblog. Note how you can send to a channel or Group from any part
         # of Django, not just inside a consumer.
-        Group(self.user.username).send({
+        Group(user.username).send({
             # WebSocket text frame, with JSON content
-            "text": json.dumps(notification),
+            "text": json.dumps(notification_for_js_alert),
         })
-        
-        return result
 
-    
+        return
+
+
 dd.update_field(Notification, 'user',
                 verbose_name=_("Recipient"), editable=False)
 Notification.update_controller_field(
@@ -335,6 +341,7 @@ class MyNotifications(My, Notifications):
     # column_names = "created subject owner sent workflow_buttons *"
     column_names = "subject_more workflow_buttons *"
     order_by = ['created']
+
     # filter = models.Q(seen__isnull=True)
 
     @classmethod
@@ -406,7 +413,7 @@ def clear_seen_notifications():
     remove_after = 24
     Notification = rt.models.notify.Notification
     qs = Notification.objects.filter(
-        seen__lt=timezone.now()-timedelta(hours=remove_after))
+        seen__lt=timezone.now() - timedelta(hours=remove_after))
     if False:  # TODO: make this configurable
         qs = qs.filter(seen__isnull=False)
     if qs.count() > 0:
@@ -414,4 +421,3 @@ def clear_seen_notifications():
             "Removing %d notifications older than %d hours.",
             qs.count(), remove_after)
         qs.delete()
-

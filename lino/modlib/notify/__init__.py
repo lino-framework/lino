@@ -41,7 +41,11 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("Notifications")
 
-    needs_plugins = ['lino.modlib.users', 'lino.modlib.gfks', 'channels']
+    needs_plugins = ['lino.modlib.users', 'lino.modlib.gfks', 'channels', 'django.contrib.auth']
+
+    site_js_snippets = ['js/reconnecting-websocket.min.js']
+    # media_base_url = "http://ext.ensible.com/deploy/1.0.2/"
+    media_name = 'js'
 
     # email_subject_template = "Notification about {obj.owner}"
     # """The template used to build the subject lino of notification emails.
@@ -71,13 +75,30 @@ class Plugin(ad.Plugin):
     Ext.onReady(function() {
         // Note that the path doesn't matter for routing; any WebSocket
         // connection gets bumped over to WebSocket consumers
-        var l = window.location;
-        socket = new WebSocket(((l.protocol === "https:") ? "wss://" : "ws://") + l.host + "/");
+        var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+        var ws_path = ws_scheme + '://' + window.location.host + "/websocket/";
+        console.log("Connecting to " + ws_path);
+        var socket = new ReconnectingWebSocket(ws_path);
         socket.onmessage = function(e) {
             alert(e.data);
+            try {
+                var json_data = JSON.parse(e.data);
+                if ( Number.isInteger(JSON.parse(e.data)["id"])){
+                    socket.send(JSON.stringify({
+                                    "command": "seen",
+                                    "notification_id": JSON.parse(e.data)["id"],
+                                }));
+                            }
+                }
+            catch(err) {
+                console.log(err.message);
+            }
         }
         socket.onopen = function() {
-            socket.send("%s");
+            socket.send(JSON.stringify({
+                            "command": "user_connect",
+                            "username": "%s",
+                        }));
         }
         // Call onopen directly if socket is already open
         if (socket.readyState == WebSocket.OPEN) socket.onopen();
@@ -85,4 +106,3 @@ class Plugin(ad.Plugin):
     </script>
         """ % (user_name)
         yield js_to_add
-
