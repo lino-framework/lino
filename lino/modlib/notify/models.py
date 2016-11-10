@@ -244,11 +244,10 @@ class Notification(UserAuthored, Controllable, Created):
 
         notification = {
             "id": self.id,
-            "html": self.body,
+            "body": self.body,
             "created": self.created.strftime("%a %d %b %Y %H:%M"),
         }
 
-        notification_for_js_alert = self.body
 
         # Encode and send that message to the whole channels Group for our
         # liveblog. Note how you can send to a channel or Group from any part
@@ -256,7 +255,7 @@ class Notification(UserAuthored, Controllable, Created):
         from channels import Group
         Group(user.username).send({
             # WebSocket text frame, with JSON content
-            "text": json.dumps(notification_for_js_alert),
+            "text": json.dumps(notification),
         })
 
         return
