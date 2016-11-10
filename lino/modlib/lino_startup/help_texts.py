@@ -211,10 +211,12 @@ GeneriForeignKey field."""),
     'lino.modlib.lino_startup.management.commands.initdb.Command' : _("""Flush the database and load the specified fixtures."""),
     'lino.modlib.lino_startup.management.commands.initdb_demo.Command' : _("""Flushes the database and loads the default demo fixtures."""),
     'lino.modlib.notify.Plugin' : _("""See lino.core.plugin.Plugin."""),
+    'lino.modlib.notify.Plugin.use_websockets' : _("""Set this to False in order to deactivate use of websockets and
+channels."""),
     'lino.modlib.notify.actions.NotifyingAction' : _("""An action with a generic dialog window of three fields "Summary",
 "Description" and a checkbox "Don't send email notification"."""),
-    'lino.modlib.notify.mixins.ChangeObservable' : _("""Mixin for models which can "emit notifications" and define a list
-"observers" to be notified when an instance is modified."""),
+    'lino.modlib.notify.mixins.ChangeObservable' : _("""Mixin for models which can emit notifications to a list of
+"observers" when an instance is modified."""),
     'lino.modlib.notify.models.ClearSeen' : _("""Mark this notification as not yet seen."""),
     'lino.modlib.notify.models.Notification' : _("""A notification is a message to a given user about a given
 database object."""),
