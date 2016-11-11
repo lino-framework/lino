@@ -42,7 +42,6 @@ from lino.core import layouts
 from lino.core import fields
 from lino.core import keyboard
 from lino.core.signals import on_ui_created, pre_ui_delete, pre_ui_save
-from lino.core.utils import ChangeWatcher
 from lino.core.permissions import Permittable
 from lino.core.utils import Parametrizable, InstanceAction
 from lino.utils.jsgen import get_user_profile
@@ -50,6 +49,7 @@ from lino.utils.jsgen import get_user_profile
 from lino.utils.choosers import Chooser
 from lino.utils.xmlgen.html import E
 
+from .diff import ChangeWatcher
 
 def check_for_chooser(holder, field):
     # holder is either a Model, an Actor or an Action.

@@ -23,10 +23,6 @@ from builtins import str
 from past.builtins import basestring
 from builtins import object
 
-
-import logging
-logger = logging.getLogger(__name__)
-
 import sys
 import datetime
 # import yaml
@@ -37,12 +33,10 @@ from django.db.models.fields import FieldDoesNotExist
 from importlib import import_module
 from django.utils.translation import ugettext as _
 from django.conf import settings
-from django.db.models.fields import NOT_PROVIDED
 from django.core import exceptions
 from django.utils.encoding import force_text
 from django.http import QueryDict
 
-from lino.core.signals import on_ui_updated
 from lino.utils.xmlgen.html import E
 from lino import AFTER17
 
@@ -732,7 +726,7 @@ class PseudoRequest(object):
 
     Typical usage example::
 
-        from lino.core.utils import PseudoRequest, ChangeWatcher
+        from lino.core.diff import PseudoRequest, ChangeWatcher
 
         REQUEST = PseudoRequest("robin")
 
@@ -756,63 +750,6 @@ class PseudoRequest(object):
                     username=self.username)
         return self._user
     user = property(get_user)
-
-
-class ChangeWatcher(object):
-    """Lightweight volatile object to watch changes on a database object.
-
-    This is used e.g. by the :data:`on_ui_updated
-    <lino.core.signals.on_ui_updated>` signal.
-
-    .. attribute:: watched
-
-        The model instance which has been changed and caused the signal.
-
-    .. attribute:: original_state
-
-        a `dict` containing (fieldname --> value) before the change.
-
-    """
-
-    watched = None
-
-    def __init__(self, watched):
-        self.original_state = dict(watched.__dict__)
-        self.watched = watched
-        #~ self.is_new = is_new
-        #~ self.request
-
-    def get_updates(self, ignored_fields=frozenset(), watched_fields=None):
-        """Yield a list of (fieldname, oldvalue, newvalue) tuples for each
-        modified field. Optional argument `ignored_fields` can be a
-        set of fieldnames to be ignored.
-
-        """
-        for k, old in self.original_state.items():
-            if k not in ignored_fields:
-                if watched_fields is None or k in watched_fields:
-                    new = self.watched.__dict__.get(k, NOT_PROVIDED)
-                    if old != new:
-                        yield k, old, new
-
-    def has_changed(self, fieldname):
-        old = self.original_state[fieldname]
-        if old != self.watched.__dict__.get(fieldname, NOT_PROVIDED):
-            return True
-        return False
-        
-    def is_dirty(self):
-        #~ if self.is_new:
-            #~ return True
-        for k, v in self.original_state.items():
-            if v != self.watched.__dict__.get(k, NOT_PROVIDED):
-                return True
-        return False
-
-    def send_update(self, request):
-        #~ print "ChangeWatcher.send_update()", self.watched
-        on_ui_updated.send(
-            sender=self.watched.__class__, watcher=self, request=request)
 
 
 def error2str(self, e):
