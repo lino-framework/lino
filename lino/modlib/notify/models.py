@@ -116,11 +116,17 @@ class Notification(UserAuthored, Controllable, Created):
 
     @classmethod
     def emit_notification(cls, ar, owner, subject, body, recipients):
-        """Create one notification for every recipient."""
+        """Create one notification for every recipient.
+
+        Note that the changing user does not get notified about their
+        own changes, except when working as another user.
+
+        """
         # dd.logger.info("20160717 %s emit_notifications()", self)
         others = set()
+        me = ar.get_user()
         for user in recipients:
-            if user and user != ar.user:
+            if user and user != me:
                 others.add(user)
 
         if len(others):

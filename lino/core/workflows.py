@@ -226,6 +226,14 @@ class ChangeStateAction(actions.Action):
         if self.icon_name:
             self.help_text = string_concat(self.label, '. ', self.help_text)
 
+    def get_action_permission(self, ar, obj, state):
+        if not super(ChangeStateAction, self).get_action_permission(ar, obj, state):
+            return False
+        if state.value == self.target_state.value:
+            return False
+        return True
+
+
     def run_from_ui(self, ar):
         for row in ar.selected_rows:
             self.execute(ar, row)

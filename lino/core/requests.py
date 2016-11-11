@@ -29,7 +29,7 @@ from lino.core import constants
 from lino.core.utils import navinfo
 from lino.core.boundaction import BoundAction
 from lino.core.signals import on_ui_created, pre_ui_save
-from lino.core.utils import ChangeWatcher
+from lino.core.diff import ChangeWatcher
 from lino.core.utils import getrqdata
 from lino.utils import AttrDict
 from lino.utils.xmlgen.html import E
