@@ -86,8 +86,6 @@ class Plugin(ad.Plugin):
         if request.user.authenticated:
             user_name = request.user.username
 
-        site_title = site.verbose_name
-
         js_to_add = """
     <script type="text/javascript">
     Ext.onReady(function() {
@@ -102,19 +100,19 @@ class Plugin(ad.Plugin):
         onDenied = console.log("onDenied");
         // Ask for permission if it's not already granted
         Push.Permission.request(onGranted,onDenied);
-        var site_title = "%s" ;
         socket.onmessage = function(e) {
             try {
                 var json_data = JSON.parse(e.data);
-                Push.create(site_title, {
+                Push.create(json_data['subject'], {
                     body: json_data['body'],
-                    icon: 'img/lino-logo.png',
+                    icon: '/static/img/lino-logo.png',
                     onClick: function () {
                         window.focus();
+                        Lino.viewport.refresh();
                         this.close();
                     }
                 });
-                if ( Number.isInteger(JSON.parse(e.data)["id"])){
+                if (false && Number.isInteger(JSON.parse(e.data)["id"])){
                     socket.send(JSON.stringify({
                                     "command": "seen",
                                     "notification_id": JSON.parse(e.data)["id"],
@@ -137,5 +135,5 @@ class Plugin(ad.Plugin):
         }
     }); // end of onReady()"
     </script>
-        """ % (site_title, user_name)
+        """ % (user_name)
         yield js_to_add
