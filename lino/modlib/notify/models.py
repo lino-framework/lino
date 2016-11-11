@@ -19,6 +19,7 @@ from lino.api import dd, rt, _
 from lino.core.roles import SiteStaff
 from lino.core.gfks import gfk2lookup
 from lino.core.requests import BaseRequest
+from lino.core.site import html2text
 
 from lino.mixins import Created, ObservedPeriod
 from lino.modlib.gfks.mixins import Controllable
@@ -162,7 +163,8 @@ class Notification(UserAuthored, Controllable, Created):
         elems = [self.subject]
         if self.body:
             elems.append(' ')
-            elems.append(ar.obj2html(self, _("(more)")))
+            # elems.append(ar.obj2html(self, _("(more)")))
+            elems.append(E.raw(self.body))
         # print 20160908, elems
         return E.p(*elems)
 
@@ -244,7 +246,8 @@ class Notification(UserAuthored, Controllable, Created):
 
         notification = {
             "id": self.id,
-            "body": self.body,
+            "subject": self.subject,
+            "body": html2text(self.body),
             "created": self.created.strftime("%a %d %b %Y %H:%M"),
         }
 
@@ -277,10 +280,10 @@ class Notifications(dd.Table):
     model = 'notify.Notification'
     column_names = "created subject user seen sent *"
 
-    detail_layout = dd.DetailLayout("""
-    created user seen sent owner
-    overview
-    """, window_size=(50, 15))
+    # detail_layout = dd.DetailLayout("""
+    # created user seen sent owner
+    # overview
+    # """, window_size=(50, 15))
 
     parameters = ObservedPeriod(
         user=dd.ForeignKey(
