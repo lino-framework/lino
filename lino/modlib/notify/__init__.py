@@ -64,7 +64,10 @@ class Plugin(ad.Plugin):
     def get_js_includes(self, settings, language):
         if self.use_websockets:
             yield self.build_lib_url('reconnecting-websocket/reconnecting-websocket.min.js')
-            yield self.build_lib_url(('push.js/push.min.js'))
+            if settings.DEBUG:
+                yield self.build_lib_url(('push.js/push.min.js'))
+            else:
+                yield self.build_lib_url(('push.js/push.js'))
 
     def setup_main_menu(self, site, profile, m):
         p = site.plugins.office
