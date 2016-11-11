@@ -47,13 +47,10 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("Notifications")
 
-    needs_plugins = ['lino.modlib.users', 'lino.modlib.gfks', 'channels']
+    needs_plugins = ['lino.modlib.users', 'lino.modlib.gfks']
+    if use_websockets:
+        needs_plugins.append('channels')
 
-    site_js_snippets = ['js/reconnecting-websocket.min.js']
-    # Thanks to Joe Walnes , the auther of reconnecting-websocket.min.js under the MIT license
-    # For more info see here : https://github.com/joewalnes/reconnecting-websocket
-
-    # media_base_url = "http://ext.ensible.com/deploy/1.0.2/"
     media_name = 'js'
 
     # email_subject_template = "Notification about {obj.owner}"
@@ -63,6 +60,11 @@ class Plugin(ad.Plugin):
     #       <lino.modlib.notify.models.Notification>` object.
 
     # """
+
+    def get_js_includes(self, settings, language):
+        if self.use_websockets:
+            yield self.build_lib_url('reconnecting-websocket/reconnecting-websocket.min.js')
+            yield self.build_lib_url(('push.js/push.min.js'))
 
     def setup_main_menu(self, site, profile, m):
         p = site.plugins.office
@@ -81,6 +83,8 @@ class Plugin(ad.Plugin):
         if request.user.authenticated:
             user_name = request.user.username
 
+        site_title = site.verbose_name
+
         js_to_add = """
     <script type="text/javascript">
     Ext.onReady(function() {
@@ -90,10 +94,23 @@ class Plugin(ad.Plugin):
         var ws_path = ws_scheme + '://' + window.location.host + "/websocket/";
         console.log("Connecting to " + ws_path);
         var socket = new ReconnectingWebSocket(ws_path);
+
+        onGranted = console.log("onGranted");
+        onDenied = console.log("onDenied");
+        // Ask for permission if it's not already granted
+        Push.Permission.request(onGranted,onDenied);
+        var site_title = "%s" ;
         socket.onmessage = function(e) {
             try {
                 var json_data = JSON.parse(e.data);
-                alert(json_data["body"]);
+                Push.create(site_title, {
+                    body: json_data['body'],
+                    icon: 'img/lino-logo.png',
+                    onClick: function () {
+                        window.focus();
+                        this.close();
+                    }
+                });
                 if ( Number.isInteger(JSON.parse(e.data)["id"])){
                     socket.send(JSON.stringify({
                                     "command": "seen",
@@ -117,5 +134,5 @@ class Plugin(ad.Plugin):
         }
     }); // end of onReady()"
     </script>
-        """ % (user_name)
+        """ % (site_title, user_name)
         yield js_to_add
