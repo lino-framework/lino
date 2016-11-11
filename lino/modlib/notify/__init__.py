@@ -50,6 +50,9 @@ class Plugin(ad.Plugin):
     needs_plugins = ['lino.modlib.users', 'lino.modlib.gfks', 'channels']
 
     site_js_snippets = ['js/reconnecting-websocket.min.js']
+    # Thanks to Joe Walnes , the auther of reconnecting-websocket.min.js under the MIT license
+    # For more info see here : https://github.com/joewalnes/reconnecting-websocket
+
     # media_base_url = "http://ext.ensible.com/deploy/1.0.2/"
     media_name = 'js'
 
@@ -88,9 +91,9 @@ class Plugin(ad.Plugin):
         console.log("Connecting to " + ws_path);
         var socket = new ReconnectingWebSocket(ws_path);
         socket.onmessage = function(e) {
-            alert(e.data);
             try {
                 var json_data = JSON.parse(e.data);
+                alert(json_data["body"]);
                 if ( Number.isInteger(JSON.parse(e.data)["id"])){
                     socket.send(JSON.stringify({
                                     "command": "seen",
@@ -102,15 +105,15 @@ class Plugin(ad.Plugin):
                 console.log(err.message);
             }
         }
-        if (false) {
+        // Call onopen directly if socket is already open
+        if (socket.readyState == WebSocket.OPEN) socket.onopen();
+        else {
         socket.onopen = function() {
             socket.send(JSON.stringify({
                             "command": "user_connect",
                             "username": "%s",
                         }));
         }
-        // Call onopen directly if socket is already open
-        if (socket.readyState == WebSocket.OPEN) socket.onopen();
         }
     }); // end of onReady()"
     </script>

@@ -22,7 +22,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino import AFTER18
 from lino.core.utils import obj2str, full_model_name
-from lino.core.utils import ChangeWatcher
+from lino.core.diff import ChangeWatcher
 
 from lino.core import fields
 from lino.core import signals
