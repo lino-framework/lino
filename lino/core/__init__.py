@@ -14,6 +14,7 @@ The ``lino.core`` package
     dbtables
     dbutils
     ddh
+    diff
     exceptions
     fields
     frames

@@ -3442,8 +3442,10 @@ signature as `django.core.mail.EmailMessage`.
             kw['html_message'] = body
             body = html2text(body)
         # self.logger.info("20161008b %r %r %r %r", subject, sender, recipients, body)
-        send_mail(subject, body, sender, recipients, **kw)
-
+        try:
+            send_mail(subject, body, sender, recipients, **kw)
+        except Exception as e:
+            self.logger.warning("send_mail() failed : %s", e)
         # msg = EmailMessage(subject=subject,
         #                    from_email=sender, body=body, to=recipients)
 

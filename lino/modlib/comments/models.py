@@ -57,7 +57,7 @@ class Comment(CreatedModified, UserAuthored, Controllable,
         return _("{user} commented on {obj}").format(
             user=ar.get_user(), obj=self.owner)
 
-    def get_notify_body(self, ar):
+    def get_notify_body(self, ar, cw):
         return self.short_text + '\n<p>\n' + self.more_text
 
     def get_notify_owner(self, ar):

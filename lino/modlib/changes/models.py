@@ -1,4 +1,4 @@
-# Copyright 2012-2015 Luc Saffre
+# Copyright 2012-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Database models for `lino.modlib.changes`.
@@ -14,7 +14,6 @@ from past.builtins import basestring
 from builtins import object
 
 import logging
-
 logger = logging.getLogger(__name__)
 
 import datetime
@@ -27,6 +26,7 @@ from django.utils import timezone
 
 from lino.api import dd
 from lino.core import fields
+from lino.utils.xmlgen.html import E
 
 from lino.core.roles import SiteStaff
 from lino.core.signals import pre_ui_delete, on_ui_created, on_ui_updated
@@ -289,16 +289,25 @@ def on_update(sender=None, watcher=None, request=None, **kw):
         return
 
     cs = watcher.watched.change_watcher_spec
-    changes = []
-    for k, old, new in watcher.get_updates(cs.ignored_fields):
-        changes.append("%s : %s --> %s" %
-                       (k, dd.obj2str(old), dd.obj2str(new)))
-    if len(changes) == 0:
-        msg = '(no changes)'
-    elif len(changes) == 1:
-        msg = changes[0]
+    if False:  # html version
+        changes = list(watcher.get_updates_html(cs.ignored_fields))
+        if len(changes) == 0:
+            msg = '(no changes)'
+        elif len(changes) == 1:
+            msg = E.tostring(changes[0])
+        else:
+            msg = E.tostring(E.ul(*changes))
     else:
-        msg = '- ' + ('\n- '.join(changes))
+        changes = []
+        for k, old, new in watcher.get_updates(cs.ignored_fields):
+            changes.append("%s : %s --> %s" %
+                           (k, dd.obj2str(old), dd.obj2str(new)))
+        if len(changes) == 0:
+            msg = '(no changes)'
+        elif len(changes) == 1:
+            msg = changes[0]
+        else:
+            msg = '- ' + ('\n- '.join(changes))
     log_change(ChangeTypes.update, request, master, watcher.watched, msg)
 
 
