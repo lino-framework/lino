@@ -47,13 +47,10 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("Notifications")
 
-    needs_plugins = ['lino.modlib.users', 'lino.modlib.gfks', 'channels']
+    needs_plugins = ['lino.modlib.users', 'lino.modlib.gfks']
+    if use_websockets:
+        needs_plugins.append('channels')
 
-    site_js_snippets = ['js/reconnecting-websocket.min.js']
-    # Thanks to Joe Walnes , the auther of reconnecting-websocket.min.js under the MIT license
-    # For more info see here : https://github.com/joewalnes/reconnecting-websocket
-
-    # media_base_url = "http://ext.ensible.com/deploy/1.0.2/"
     media_name = 'js'
 
     # email_subject_template = "Notification about {obj.owner}"
@@ -63,6 +60,14 @@ class Plugin(ad.Plugin):
     #       <lino.modlib.notify.models.Notification>` object.
 
     # """
+
+    def get_js_includes(self, settings, language):
+        if self.use_websockets:
+            yield self.build_lib_url('reconnecting-websocket/reconnecting-websocket.min.js')
+            if settings.DEBUG:
+                yield self.build_lib_url(('push.js/push.min.js'))
+            else:
+                yield self.build_lib_url(('push.js/push.js'))
 
     def setup_main_menu(self, site, profile, m):
         p = site.plugins.office
@@ -90,11 +95,24 @@ class Plugin(ad.Plugin):
         var ws_path = ws_scheme + '://' + window.location.host + "/websocket/";
         console.log("Connecting to " + ws_path);
         var socket = new ReconnectingWebSocket(ws_path);
+
+        onGranted = console.log("onGranted");
+        onDenied = console.log("onDenied");
+        // Ask for permission if it's not already granted
+        Push.Permission.request(onGranted,onDenied);
         socket.onmessage = function(e) {
             try {
                 var json_data = JSON.parse(e.data);
-                alert(json_data["body"]);
-                if ( Number.isInteger(JSON.parse(e.data)["id"])){
+                Push.create(json_data['subject'], {
+                    body: json_data['body'],
+                    icon: '/static/img/lino-logo.png',
+                    onClick: function () {
+                        window.focus();
+                        Lino.viewport.refresh();
+                        this.close();
+                    }
+                });
+                if (false && Number.isInteger(JSON.parse(e.data)["id"])){
                     socket.send(JSON.stringify({
                                     "command": "seen",
                                     "notification_id": JSON.parse(e.data)["id"],
