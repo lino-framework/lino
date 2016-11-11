@@ -19,6 +19,7 @@ from lino.api import dd, rt, _
 from lino.core.roles import SiteStaff
 from lino.core.gfks import gfk2lookup
 from lino.core.requests import BaseRequest
+from lino.core.site import html2text
 
 from lino.mixins import Created, ObservedPeriod
 from lino.modlib.gfks.mixins import Controllable
@@ -245,7 +246,8 @@ class Notification(UserAuthored, Controllable, Created):
 
         notification = {
             "id": self.id,
-            "body": self.body,
+            "subject": self.subject,
+            "body": html2text(self.body),
             "created": self.created.strftime("%a %d %b %Y %H:%M"),
         }
 
