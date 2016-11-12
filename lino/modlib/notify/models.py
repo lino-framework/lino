@@ -32,7 +32,6 @@ from lino.utils import join_elems
 
 from datetime import timedelta
 
-
 class MarkSeen(dd.Action):
     label = _("Mark as seen")
     show_in_bbar = False
@@ -251,6 +250,7 @@ class Message(UserAuthored, Controllable, Created):
             "body": html2text(self.body),
             "created": self.created.strftime("%a %d %b %Y %H:%M"),
         }
+
 
         # Encode and send that message to the whole channels Group for our
         # liveblog. Note how you can send to a channel or Group from any part
