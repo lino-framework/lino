@@ -2,9 +2,9 @@
 # Copyright 2009-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-#~ Note that this module may not have a docstring because any
-#~ global variable defined here will override the global
-#~ namespace of lino/__init__.py who includes it with execfile.
+# ~ Note that this module may not have a docstring because any
+# ~ global variable defined here will override the global
+# ~ namespace of lino/__init__.py who includes it with execfile.
 
 # This module is part of the Lino test suite.
 # To test only this module:
@@ -13,13 +13,12 @@
 
 from __future__ import unicode_literals
 import sys
+
 PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3
 
-
 install_requires = [
     'django<1.10',
-    # 'django',
     'Sphinx',
     'atelier', 'unipath', 'python_dateutil',
     'Babel', 'lxml',
@@ -31,6 +30,7 @@ install_requires = [
     # 'django-iban',  # lino.modlib.sepa
     'openpyxl', 'html2text',
     'weasyprint', 'cairocffi',  # 'cairocffi<0.7',
+    'schedule'
     'django-wkhtmltopdf']
 
 if PY2:
@@ -43,13 +43,13 @@ SETUP_INFO = dict(
     version='1.7.6',
     install_requires=install_requires,
     description="A framework for writing desktop-like web applications "
-    "using Django and ExtJS",
+                "using Django and ExtJS",
     license='BSD License',
     obsoletes=['djangosite', 'north'],
     author='Luc Saffre',
     author_email='luc.saffre@gmail.com',
     url="http://www.lino-framework.org",
-    #~ test_suite = 'lino.test_apps',
+    # ~ test_suite = 'lino.test_apps',
     test_suite='tests')
 
 SETUP_INFO.update(long_description="""
@@ -179,15 +179,15 @@ lino.utils.xmlgen.sepa
 
 SETUP_INFO.update(message_extractors={
     'lino': [
-        ('**/sandbox/**',        'ignore', None),
-        ('**/cache/**',          'ignore', None),
-        ('**.py',                'python', None),
-        ('**/linoweb.js',        'jinja2', None),
-        #~ ('**.js',                'javascript', None),
+        ('**/sandbox/**', 'ignore', None),
+        ('**/cache/**', 'ignore', None),
+        ('**.py', 'python', None),
+        ('**/linoweb.js', 'jinja2', None),
+        # ~ ('**.js',                'javascript', None),
         ('**/config/**.html', 'jinja2', None),
-        #~ ('**/templates/**.txt',  'genshi', {
-        #~ 'template_class': 'genshi.template:TextTemplate'
-        #~ })
+        # ~ ('**/templates/**.txt',  'genshi', {
+        # ~ 'template_class': 'genshi.template:TextTemplate'
+        # ~ })
     ],
 })
 
