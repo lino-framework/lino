@@ -32,6 +32,7 @@ from lino.utils import join_elems
 
 from datetime import timedelta
 
+
 class MarkSeen(dd.Action):
     label = _("Mark as seen")
     show_in_bbar = False
@@ -53,7 +54,7 @@ class MarkSeen(dd.Action):
 
 
 class ClearSeen(dd.Action):
-    """Mark this notification as not yet seen."""
+    """Mark this message as not yet seen."""
     label = _("Clear seen")
     show_in_bbar = False
     show_in_workflow = True
@@ -73,12 +74,12 @@ class ClearSeen(dd.Action):
 
 
 # @dd.python_2_unicode_compatible
-class Notification(UserAuthored, Controllable, Created):
-    """A **notification** is a message to a given user about a given
+class Message(UserAuthored, Controllable, Created):
+    """A **Message** is a message to a given user about a given
     database object.
     
-    Use the class method :meth:`create_notification` to create a new
-    notification (and to skip creation in case that user has already
+    Use the class method :meth:`create_message` to create a new
+    message (and to skip creation in case that user has already
     been notified about that owner)
 
     .. attribute:: subject
@@ -100,8 +101,8 @@ class Notification(UserAuthored, Controllable, Created):
 
     class Meta(object):
         app_label = 'notify'
-        verbose_name = _("Notification")
-        verbose_name_plural = _("Notifications")
+        verbose_name = _("Message")
+        verbose_name_plural = _("Messages")
 
     seen = models.DateTimeField(_("seen"), null=True, editable=False)
     sent = models.DateTimeField(_("sent"), null=True, editable=False)
@@ -116,14 +117,14 @@ class Notification(UserAuthored, Controllable, Created):
     #     self.user, self.owner)
 
     @classmethod
-    def emit_notification(cls, ar, owner, subject, body, recipients):
-        """Create one notification for every recipient.
+    def emit_message(cls, ar, owner, subject, body, recipients):
+        """Create one message for every recipient.
 
         Note that the changing user does not get notified about their
         own changes, except when working as another user.
 
         """
-        # dd.logger.info("20160717 %s emit_notifications()", self)
+        # dd.logger.info("20160717 %s emit_messages()", self)
         others = set()
         me = ar.get_user()
         for user in recipients:
@@ -134,12 +135,12 @@ class Notification(UserAuthored, Controllable, Created):
             dd.logger.info(
                 "Notify %s users that %s", len(others), subject)
             for user in others:
-                cls.create_notification(
+                cls.create_message(
                     ar, user, owner, subject=subject, body=body)
 
     @classmethod
-    def create_notification(cls, ar, user, owner=None, **kwargs):
-        """Create a notification unless that user has already been notified
+    def create_message(cls, ar, user, owner=None, **kwargs):
+        """Create a message unless that user has already been notified
         about that object.
 
         Does not send an email because that might skiw down response
@@ -154,7 +155,7 @@ class Notification(UserAuthored, Controllable, Created):
             obj.full_clean()
             obj.save()
             if dd.plugins.notify.use_websockets:
-                obj.send_browser_notification(user)
+                obj.send_browser_message(user)
 
     @dd.displayfield(_("Subject"))
     def subject_more(self, ar):
@@ -239,18 +240,17 @@ class Notification(UserAuthored, Controllable, Created):
     mark_seen = MarkSeen()
     clear_seen = ClearSeen()
 
-    def send_browser_notification(self, user):
+    def send_browser_message(self, user):
         """
-        Send_notification to the user's browser
+        Send_message to the user's browser
         """
 
-        notification = {
+        message = {
             "id": self.id,
             "subject": self.subject,
             "body": html2text(self.body),
             "created": self.created.strftime("%a %d %b %Y %H:%M"),
         }
-
 
         # Encode and send that message to the whole channels Group for our
         # liveblog. Note how you can send to a channel or Group from any part
@@ -258,26 +258,26 @@ class Notification(UserAuthored, Controllable, Created):
         from channels import Group
         Group(user.username).send({
             # WebSocket text frame, with JSON content
-            "text": json.dumps(notification),
+            "text": json.dumps(message),
         })
 
         return
 
 
-dd.update_field(Notification, 'user',
+dd.update_field(Message, 'user',
                 verbose_name=_("Recipient"), editable=False)
-Notification.update_controller_field(
+Message.update_controller_field(
     null=True, blank=True, verbose_name=_("About"))
 
 dd.inject_field(
     'users.User', 'notifyme_mode',
     models.BooleanField(
-        _('Send notifications via e-mail'), default=True))
+        _('Send messages via e-mail'), default=True))
 
 
-class Notifications(dd.Table):
-    "Base for all tables of notifications."
-    model = 'notify.Notification'
+class Messages(dd.Table):
+    "Base for all tables of messages."
+    model = 'notify.Message'
     column_names = "created subject user seen sent *"
 
     # detail_layout = dd.DetailLayout("""
@@ -296,13 +296,13 @@ class Notifications(dd.Table):
 
     @classmethod
     def get_simple_parameters(cls):
-        s = super(Notifications, cls).get_simple_parameters()
+        s = super(Messages, cls).get_simple_parameters()
         s.add('user')
         return s
 
     @classmethod
     def get_request_queryset(self, ar):
-        qs = super(Notifications, self).get_request_queryset(ar)
+        qs = super(Messages, self).get_request_queryset(ar)
         pv = ar.param_values
 
         if pv.show_seen == dd.YesNo.yes:
@@ -313,7 +313,7 @@ class Notifications(dd.Table):
 
     @classmethod
     def get_title_tags(self, ar):
-        for t in super(Notifications, self).get_title_tags(ar):
+        for t in super(Messages, self).get_title_tags(ar):
             yield t
         pv = ar.param_values
         if pv.show_seen:
@@ -329,19 +329,19 @@ class Notifications(dd.Table):
             obj.seen = timezone.now()
             obj.save()
             # dd.logger.info("20151115 Marked %s as seen", obj)
-        return super(Notifications, self).get_detail_title(ar, obj)
+        return super(Messages, self).get_detail_title(ar, obj)
 
 
-class AllNotifications(Notifications):
-    """The gobal list of all notifications.
+class AllMessages(Messages):
+    """The gobal list of all messages.
 
     """
     required_roles = dd.required(dd.SiteAdmin)
 
 
-class MyNotifications(My, Notifications):
-    """Shows notifications emitted to you."""
-    # label = _("My notifications")
+class MyMessages(My, Messages):
+    """Shows messages emitted to you."""
+    # label = _("My messages")
     required_roles = dd.required(OfficeUser)
     # column_names = "created subject owner sent workflow_buttons *"
     column_names = "subject_more workflow_buttons *"
@@ -351,13 +351,13 @@ class MyNotifications(My, Notifications):
 
     @classmethod
     def param_defaults(self, ar, **kw):
-        kw = super(MyNotifications, self).param_defaults(ar, **kw)
+        kw = super(MyMessages, self).param_defaults(ar, **kw)
         kw.update(show_seen=dd.YesNo.no)
         return kw
 
     @classmethod
     def unused_get_welcome_messages(cls, ar, **kw):
-        """Emits the :message:`You have %d unseen notifications.` message.
+        """Emits the :message:`You have %d unseen messages.` message.
 
         This is no longer used, applications should rather yield this
         table at the beginning of :meth:`get_admin_main_items`.
@@ -368,18 +368,18 @@ class MyNotifications(My, Notifications):
             return
         count = sar.get_total_count()
         if count > 0:
-            msg = _("You have %d unseen notifications.") % count
+            msg = _("You have %d unseen messages.") % count
             yield ar.href_to_request(sar, msg)
 
 
 # def welcome_messages(ar):
 #     """Yield messages for the welcome page."""
 
-#     Notification = rt.models.notify.Notification
-#     qs = Notification.objects.filter(user=ar.get_user(), seen__isnull=True)
+#     Message = rt.models.notify.Message
+#     qs = Message.objects.filter(user=ar.get_user(), seen__isnull=True)
 #     if qs.count() > 0:
 #         chunks = [
-#             str(_("You have %d unseen notifications: ")) % qs.count()]
+#             str(_("You have %d unseen messages: ")) % qs.count()]
 #         chunks += join_elems([
 #             ar.obj2html(obj, obj.subject) for obj in qs])
 #         yield E.span(*chunks)
@@ -387,42 +387,42 @@ class MyNotifications(My, Notifications):
 # dd.add_welcome_handler(welcome_messages)
 
 
-@dd.schedule_often()
+@dd.schedule_daily()
 def send_pending_emails():
     h = settings.EMAIL_HOST
     if not h or h.endswith('example.com'):
         dd.logger.debug(
-            "Won't send pending notifications because EMAIL_HOST is %r",
+            "Won't send pending messages because EMAIL_HOST is %r",
             h)
         return
-    Notification = rt.models.notify.Notification
-    qs = Notification.objects.filter(sent__isnull=True)
+    Message = rt.models.notify.Message
+    qs = Message.objects.filter(sent__isnull=True)
     qs = qs.filter(user__notifyme_mode=True)
     if qs.count() > 0:
         dd.logger.debug(
-            "Send out emails for %d notifications.", qs.count())
+            "Send out emails for %d messages.", qs.count())
         for obj in qs:
             obj.send_email()
     else:
-        dd.logger.debug("No notifications to send.")
+        dd.logger.debug("No messages to send.")
 
 
 @dd.schedule_daily()
-def clear_seen_notifications():
-    """Daily task which deletes notifications older than 24 hours. 
+def clear_seen_messages():
+    """Daily task which deletes messages older than 24 hours.
 
-    Currently it deletes *all* notifications, regardless of whether
+    Currently it deletes *all* messages, regardless of whether
     they have been seen or not.  TODO: make this configurable.
 
     """
     remove_after = 24
-    Notification = rt.models.notify.Notification
-    qs = Notification.objects.filter(
+    Message = rt.models.notify.Message
+    qs = Message.objects.filter(
         seen__lt=timezone.now() - timedelta(hours=remove_after))
     if False:  # TODO: make this configurable
         qs = qs.filter(seen__isnull=False)
     if qs.count() > 0:
         dd.logger.info(
-            "Removing %d notifications older than %d hours.",
+            "Removing %d messages older than %d hours.",
             qs.count(), remove_after)
         qs.delete()

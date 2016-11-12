@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.utils.module_loading import import_string
 from django.utils.crypto import constant_time_compare
 
-from lino.modlib.notify.models import Notification
+from lino.modlib.notify.models import Message
 from lino.modlib.users.utils import AnonymousUser
 
 # copied from django.contrib.auth.models
@@ -181,10 +181,10 @@ def ws_receive(message):
 
 @channel_session_user
 def set_notification_as_seen(message):
-    notification_id = message['notification_id']
-    notif = Notification.objects.get(pk=notification_id)
-    notif.seen = timezone.now()
-    notif.save()
+    message_id = message['message_id']
+    message = Message.objects.get(pk=message_id )
+    message.seen = timezone.now()
+    message.save()
 
 
 @channel_session_user
