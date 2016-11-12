@@ -30,7 +30,7 @@ install_requires = [
     # 'django-iban',  # lino.modlib.sepa
     'openpyxl', 'html2text',
     'weasyprint', 'cairocffi',  # 'cairocffi<0.7',
-    'schedule'
+    'schedule',
     'django-wkhtmltopdf']
 
 if PY2:
