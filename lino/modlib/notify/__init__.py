@@ -85,6 +85,7 @@ class Plugin(ad.Plugin):
         user_name = "anony"
         if request.user.authenticated:
             user_name = request.user.username
+        site_title = site.title
 
         js_to_add = """
     <script type="text/javascript">
@@ -103,7 +104,7 @@ class Plugin(ad.Plugin):
         socket.onmessage = function(e) {
             try {
                 var json_data = JSON.parse(e.data);
-                Push.create(json_data['subject'], {
+                Push.create( %s , {
                     body: json_data['body'],
                     icon: '/static/img/lino-logo.png',
                     onClick: function () {
@@ -135,5 +136,5 @@ class Plugin(ad.Plugin):
         }
     }); // end of onReady()"
     </script>
-        """ % (user_name)
+        """ % (site_title, user_name)
         yield js_to_add
