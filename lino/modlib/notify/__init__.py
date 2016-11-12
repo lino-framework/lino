@@ -1,7 +1,7 @@
 # Copyright 2008-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Adds functionality for managing notifications.
+"""Adds functionality for managing messages.
 
 .. autosummary::
    :toctree:
@@ -17,18 +17,18 @@ Templates used by this plugin
 .. xfile:: notify/body.eml
 
     A Jinja template used for generating the body of the email when
-    sending a notification per email to its recipient.
+    sending a message per email to its recipient.
 
     Available context variables:
 
-    - ``obj`` -- The :class:`Notification
-      <lino.modlib.notify.models.Notification>` instance being sent.
+    - ``obj`` -- The :class:`Message
+      <lino.modlib.notify.models.Message>` instance being sent.
 
     - ``E`` -- The html namespace :mod:`lino.utils.xmlgen.html`
 
     - ``rt`` -- The runtime API :mod:`lino.api.rt`
 
-    - ``ar`` -- The action request which caused the notification. a
+    - ``ar`` -- The action request which caused the message. a
       :class:`BaseRequest <lino.core.requests.BaseRequest>` instance.
 
 """
@@ -45,7 +45,7 @@ class Plugin(ad.Plugin):
 
     """
 
-    verbose_name = _("Notifications")
+    verbose_name = _("Messages")
 
     needs_plugins = ['lino.modlib.users', 'lino.modlib.gfks']
     if use_websockets:
@@ -53,11 +53,11 @@ class Plugin(ad.Plugin):
 
     media_name = 'js'
 
-    # email_subject_template = "Notification about {obj.owner}"
-    # """The template used to build the subject lino of notification emails.
+    # email_subject_template = "Message about {obj.owner}"
+    # """The template used to build the subject lino of message emails.
 
-    # :obj: is the :class:`Notification
-    #       <lino.modlib.notify.models.Notification>` object.
+    # :obj: is the :class:`Message
+    #       <lino.modlib.notify.models.Message>` object.
 
     # """
 
@@ -72,12 +72,12 @@ class Plugin(ad.Plugin):
     def setup_main_menu(self, site, profile, m):
         p = site.plugins.office
         m = m.add_menu(p.app_label, p.verbose_name)
-        m.add_action('notify.MyNotifications')
+        m.add_action('notify.MyMessages')
 
     def setup_explorer_menu(self, site, profile, m):
         p = site.plugins.system
         m = m.add_menu(p.app_label, p.verbose_name)
-        m.add_action('notify.AllNotifications')
+        m.add_action('notify.AllMessages')
 
     def get_head_lines(self, site, request):
         if not self.use_websockets:
@@ -85,6 +85,7 @@ class Plugin(ad.Plugin):
         user_name = "anony"
         if request.user.authenticated:
             user_name = request.user.username
+        site_title = site.title
 
         js_to_add = """
     <script type="text/javascript">
@@ -103,7 +104,7 @@ class Plugin(ad.Plugin):
         socket.onmessage = function(e) {
             try {
                 var json_data = JSON.parse(e.data);
-                Push.create(json_data['subject'], {
+                Push.create( %s , {
                     body: json_data['body'],
                     icon: '/static/img/lino-logo.png',
                     onClick: function () {
@@ -115,7 +116,7 @@ class Plugin(ad.Plugin):
                 if (false && Number.isInteger(JSON.parse(e.data)["id"])){
                     socket.send(JSON.stringify({
                                     "command": "seen",
-                                    "notification_id": JSON.parse(e.data)["id"],
+                                    "message_id": JSON.parse(e.data)["id"],
                                 }));
                             }
                 }
@@ -135,5 +136,5 @@ class Plugin(ad.Plugin):
         }
     }); // end of onReady()"
     </script>
-        """ % (user_name)
+        """ % (site_title, user_name)
         yield js_to_add
