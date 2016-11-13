@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 from django.db import models
@@ -14,7 +15,7 @@ from lino.core import actions
 
 class NotifyingAction(actions.Action):
     """An action with a generic dialog window of three fields "Summary",
-    "Description" and a checkbox "Don't send email notification".
+    "Description" and a checkbox "Don't send email message".
 
     Screenshot of a notifying action:
 
@@ -35,7 +36,7 @@ class NotifyingAction(actions.Action):
             _("Summary"), blank=True, max_length=200),
         notify_body=fields.RichTextField(_("Description"), blank=True),
         notify_silent=models.BooleanField(
-            _("Don't send email notification"), default=False),
+            _("Don't send email message"), default=False),
     )
 
     params_layout = layouts.Panel("""
@@ -84,17 +85,15 @@ class NotifyingAction(actions.Action):
         if not ar.action_param_values.notify_silent:
             obj = ar.selected_rows[0]
             owner = self.get_notify_owner(ar, obj)
-            self.emit_notification(ar, owner)
+            self.emit_message(ar, owner)
 
-    def emit_notification(self, ar, owner, **kw):
+    def emit_message(self, ar, owner, **kw):
         # body = _("""%(user)s executed the following action:\n%(body)s
         # """) % dict(user=ar.get_user(),body=body)
         # obj = ar.selected_rows[0]
         # owner = self.get_notify_owner(obj)
         recipients = self.get_notify_recipients(ar, owner)
-        rt.models.notify.Notification.emit_notification(
+        rt.models.notify.Message.emit_message(
             ar, owner,
             ar.action_param_values.notify_subject,
             ar.action_param_values.notify_body, recipients)
-
-

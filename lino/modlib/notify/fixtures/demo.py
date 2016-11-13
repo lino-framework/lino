@@ -7,7 +7,7 @@ def objects():
     ar = rt.login('robin')
     now = datetime.datetime.combine(dd.today(), i2t(548))
     for u in rt.models.users.User.objects.all():
-        yield rt.models.notify.Notification.create_notification(
+        yield rt.models.notify.Message.create_message(
             ar, u, subject="Database initialized",
             created=now,
             body="Hello world", sent=now)
