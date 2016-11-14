@@ -80,6 +80,7 @@ class Plugin(ad.Plugin):
         m.add_action('notify.AllMessages')
 
     def get_head_lines(self, site, request):
+        from lino.utils.jsgen import py2js
         if not self.use_websockets:
             return
         user_name = "anony"
@@ -136,5 +137,5 @@ class Plugin(ad.Plugin):
         }
     }); // end of onReady()"
     </script>
-        """ % (site_title, user_name)
+        """ % (py2js(site_title), user_name)
         yield js_to_add
