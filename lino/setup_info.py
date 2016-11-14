@@ -22,7 +22,9 @@ install_requires = [
     'Sphinx',
     'atelier', 'unipath', 'python_dateutil',
     'Babel', 'lxml',
-    'beautifulsoup4', 'html5lib',  # 'html5lib==1.0b8',
+    'beautifulsoup4',
+    'html5lib==0.999999999',  # required by bleach
+    # 'html5lib',
     'pisa',
     'jinja2', 'pytidylib', 'PyYAML',
     'clint',  # lino.modlib.plausibility.management.commands

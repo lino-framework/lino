@@ -223,15 +223,15 @@ channels."""),
     'lino.modlib.notify.mixins.ChangeObservable': _("""Mixin for models which can emit notifications to a list of
 "observers" when an instance is modified."""),
     'lino.modlib.notify.models.ClearSeen': _("""Mark this notification as not yet seen."""),
-    'lino.modlib.notify.models.Notification': _("""A notification is a message to a given user about a given
+    'lino.modlib.notify.models.Message': _("""A notification is a message to a given user about a given
 database object."""),
-    'lino.modlib.notify.models.Notification.user': _("""The recipient."""),
-    'lino.modlib.notify.models.Notification.owner': _("""The database object this message is about.
+    'lino.modlib.notify.models.Message.user': _("""The recipient."""),
+    'lino.modlib.notify.models.Message.owner': _("""The database object this message is about.
 This field is labelled About."""),
-    'lino.modlib.notify.models.Notifications': _("""Base for all tables of notifications."""),
-    'lino.modlib.notify.models.Notifications.model': _("""alias of Notification"""),
-    'lino.modlib.notify.models.AllNotifications': _("""The gobal list of all notifications."""),
-    'lino.modlib.notify.models.AllNotifications.model': _("""alias of Notification"""),
+    'lino.modlib.notify.models.Messages': _("""Base for all tables of notifications."""),
+    'lino.modlib.notify.models.Messages.model': _("""alias of Message"""),
+    'lino.modlib.notify.models.AllMessages': _("""The gobal list of all notifications."""),
+    'lino.modlib.notify.models.AllMessages.model': _("""alias of Message"""),
     'lino.modlib.notify.models.MyMessages': _("""Shows messages emitted to you."""),
     'lino.modlib.notify.models.MyMessages.model': _("""alias of Message"""),
     'lino.modlib.office.Plugin': _("""See /dev/plugins."""),

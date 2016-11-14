@@ -36,7 +36,7 @@ class NotifyingAction(actions.Action):
             _("Summary"), blank=True, max_length=200),
         notify_body=fields.RichTextField(_("Description"), blank=True),
         notify_silent=models.BooleanField(
-            _("Don't send email message"), default=False),
+            _("Don't notify others"), default=False),
     )
 
     params_layout = layouts.Panel("""
