@@ -88,3 +88,6 @@ CHANNEL_LAYERS={
         "ROUTING": "lino.modlib.notify.routing.channel_routing",
     },
 }
+
+# 20161114
+ALLOWED_HOSTS = ['testserver', 'localhost', '127.0.0.1', '::1']
