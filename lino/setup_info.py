@@ -24,7 +24,8 @@ install_requires = [
     'Babel', 'lxml',
     'beautifulsoup4',
     'bleach',
-    'html5lib==0.9999999',  # version 7x9 (not 9x9) required by bleach
+    'html5lib==1.0b8',  # version 7x9 (not 9x9) required by bleach
+    # 'html5lib==0.9999999',  # version 7x9 (not 9x9) required by bleach
     'pisa',
     'jinja2', 'pytidylib', 'PyYAML',
     'clint',  # lino.modlib.plausibility.management.commands
