@@ -34,6 +34,12 @@ Templates used by this plugin
 """
 
 from lino.api import ad, _
+from django.conf import settings
+
+try:
+    import redis
+except:
+    redis = False
 
 
 class Plugin(ad.Plugin):
@@ -50,6 +56,20 @@ class Plugin(ad.Plugin):
     needs_plugins = ['lino.modlib.users', 'lino.modlib.gfks']
     if use_websockets:
         needs_plugins.append('channels')
+        settings.CHANNEL_LAYERS = {
+            "default": {
+                "BACKEND": "asgiref.inmemory.ChannelLayer",
+                "ROUTING": "lino.modlib.notify.routing.channel_routing",
+            },
+        }
+        if redis:
+            rs = redis.Redis("localhost")
+            try:
+                response = rs.client_list()
+                settings.CHANNEL_LAYERS['default']['BACKEND'] = "asgi_redis.RedisChannelLayer"
+                settings.CHANNEL_LAYERS['default']['CONFIG'] = {"hosts": [("localhost", 6379)], }
+            except redis.ConnectionError:
+                pass
 
     media_name = 'js'
 
