@@ -81,7 +81,7 @@ TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 # disable migrations:
 # MIGRATION_MODULES = dict(contenttypes='lino.fake_migrations', sessions='lino.fake_migrations')
 
-# will be used only if lino.modlib.notify and lino.modlib.notify.use_websockets is True is installed
+# will be used only if lino.modlib.notify is installed and lino.modlib.notify.use_websockets is True
 CHANNEL_LAYERS={
     "default": {
         # "BACKEND": "asgiref.inmemory.ChannelLayer",
