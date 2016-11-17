@@ -96,14 +96,16 @@ class Bleached(Model):
     @classmethod
     def on_analyze(self, site):
         if not bleach:
-            raise Exception(
-                "This site requires bleach. Run `pip install -U bleach`.")
+            site.logger.warning(
+                "%s not beeing bleached because `bleach` is broken "
+                "or not installed.", self)
 
     def save(self, *args, **kwargs):
-        for k in self.bleached_fields:
-            setattr(self, k, bleach.clean(
-                getattr(self, k),
-                tags=self.ALLOWED_TAGS, strip=True))
+        if bleach:
+            for k in self.bleached_fields:
+                setattr(self, k, bleach.clean(
+                    getattr(self, k),
+                    tags=self.ALLOWED_TAGS, strip=True))
         super(Bleached, self).save(*args, **kwargs)
 
 

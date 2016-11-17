@@ -283,7 +283,7 @@ class Site(object):
     server_url = None
     """The "official" URL used by "normal" users when accessing this Lino
     site. This is used by templates such as the email sent by
-    :class:`lino.modlib.notify.Notification`
+    :class:`lino.modlib.notify.Message`
 
     """
 

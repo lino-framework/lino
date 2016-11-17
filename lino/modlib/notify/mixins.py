@@ -66,8 +66,8 @@ class ChangeObservable(dd.Model):
         """
         return []
 
-    # def emit_notification(self, ar, owner, subject, body):
-    #     return super(ChangeObservable, self).emit_notification(
+    # def emit_message(self, ar, owner, subject, body):
+    #     return super(ChangeObservable, self).emit_message(
     #         ar, owner, subject, body, self.get_notify_observers())
 
     def after_ui_save(self, ar, cw):
@@ -79,5 +79,5 @@ class ChangeObservable(dd.Model):
             return
         subject, body = msg
         owner = self.get_notify_owner(ar)
-        rt.models.notify.Message.emit_notification(
+        rt.models.notify.Message.emit_message(
             ar, owner, subject, body, self.get_change_observers())

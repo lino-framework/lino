@@ -22,14 +22,17 @@ install_requires = [
     'Sphinx',
     'atelier', 'unipath', 'python_dateutil',
     'Babel', 'lxml',
-    'beautifulsoup4', 'html5lib',  # 'html5lib==1.0b8',
+    'beautifulsoup4',
     'pisa',
     'jinja2', 'pytidylib', 'PyYAML',
     'clint',  # lino.modlib.plausibility.management.commands
     'django-localflavor',  # lino.modlib.sepa
     # 'django-iban',  # lino.modlib.sepa
     'openpyxl', 'html2text',
-    'weasyprint', 'cairocffi',  # 'cairocffi<0.7',
+    'weasyprint',
+    # 'cairocffi',  # 'cairocffi<0.7',
+    # 'bleach',
+    # 'html5lib',  # version 7x9 (not 9x9) required by bleach
     'schedule',
     'django-wkhtmltopdf']
 
