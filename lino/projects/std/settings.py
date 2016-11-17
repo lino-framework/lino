@@ -8,7 +8,6 @@ indirectly) into your local :xfile:`settings.py` using::
 
 """
 
-
 from lino.api.ad import Site, configure_plugin, _
 
 
@@ -30,27 +29,25 @@ DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 DEBUG_PROPAGATE_EXCEPTIONS = DEBUG
 
-
 ADMINS = [
     # ('Your Name', 'your_email@domain.com'),
 ]
 
 MANAGERS = ADMINS
 
-
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
 # although not all choices may be avilable on all operating systems.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-#~ TIME_ZONE = 'Europe/Brussels'
+# ~ TIME_ZONE = 'Europe/Brussels'
 TIME_ZONE = None
 # TIME_ZONE = 'America/Chicago'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-#~ LANGUAGE_CODE = 'de-BE'
-#~ LANGUAGE_CODE = 'fr-BE'
+# ~ LANGUAGE_CODE = 'de-BE'
+# ~ LANGUAGE_CODE = 'fr-BE'
 
 # ~ SITE_ID = 1 # see also fill.py
 
@@ -59,7 +56,7 @@ TIME_ZONE = None
 USE_I18N = True
 
 EMAIL_HOST = "mail.example.com"
-#EMAIL_PORT = ""
+# EMAIL_PORT = ""
 
 DATABASES = {
     'default': {
@@ -77,21 +74,10 @@ SECRET_KEY = "20227"  # see :djangoticket:`20227`
 
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
-
 # disable migrations:
 # MIGRATION_MODULES = dict(contenttypes='lino.fake_migrations', sessions='lino.fake_migrations')
 
-# will be used only if lino.modlib.notify is installed and lino.modlib.notify.use_websockets is True
-CHANNEL_LAYERS={
-    "default": {
-        # "BACKEND": "asgiref.inmemory.ChannelLayer",
-        "BACKEND": "asgi_redis.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [("localhost", 6379)],
-        },
-        "ROUTING": "lino.modlib.notify.routing.channel_routing",
-    },
-}
+
 
 # 20161114
 ALLOWED_HOSTS = ['testserver', 'localhost', '127.0.0.1', '::1']
