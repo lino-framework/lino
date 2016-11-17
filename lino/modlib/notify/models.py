@@ -32,6 +32,7 @@ from lino.utils import join_elems
 
 from datetime import timedelta
 
+
 class MarkSeen(dd.Action):
     label = _("Mark as seen")
     show_in_bbar = False
@@ -251,7 +252,6 @@ class Message(UserAuthored, Controllable, Created):
             "created": self.created.strftime("%a %d %b %Y %H:%M"),
         }
 
-
         # Encode and send that message to the whole channels Group for our
         # liveblog. Note how you can send to a channel or Group from any part
         # of Django, not just inside a consumer.
@@ -386,8 +386,16 @@ class MyMessages(My, Messages):
 
 # dd.add_welcome_handler(welcome_messages)
 
+if dd.plugins.notify.use_websockets:
+    @dd.schedule_daily()
+    def send_pending_emails_daily():
+        send_pending_emails()
+else:
+    @dd.schedule_often(every=10)
+    def send_pending_emails_often():
+        send_pending_emails()
 
-@dd.schedule_daily()
+
 def send_pending_emails():
     h = settings.EMAIL_HOST
     if not h or h.endswith('example.com'):
