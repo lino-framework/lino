@@ -34,7 +34,7 @@ Templates used by this plugin
 """
 
 from lino.api import ad, _
-from django.conf import settings
+# from django.conf import settings
 
 try:
     import redis
@@ -56,20 +56,6 @@ class Plugin(ad.Plugin):
     needs_plugins = ['lino.modlib.users', 'lino.modlib.gfks']
     if use_websockets:
         needs_plugins.append('channels')
-        settings.CHANNEL_LAYERS = {
-            "default": {
-                "BACKEND": "asgiref.inmemory.ChannelLayer",
-                "ROUTING": "lino.modlib.notify.routing.channel_routing",
-            },
-        }
-        if redis:
-            rs = redis.Redis("localhost")
-            try:
-                response = rs.client_list()
-                settings.CHANNEL_LAYERS['default']['BACKEND'] = "asgi_redis.RedisChannelLayer"
-                settings.CHANNEL_LAYERS['default']['CONFIG'] = {"hosts": [("localhost", 6379)], }
-            except redis.ConnectionError:
-                pass
 
     media_name = 'js'
 
@@ -80,6 +66,25 @@ class Plugin(ad.Plugin):
     #       <lino.modlib.notify.models.Message>` object.
 
     # """
+
+    def on_init(self):
+        if self.use_websockets:
+            sd = self.site.django_settings  # the dict which will be
+                                            # used to create settings
+            sd['CHANNEL_LAYERS'] = {
+                "default": {
+                    "BACKEND": "asgiref.inmemory.ChannelLayer",
+                    "ROUTING": "lino.modlib.notify.routing.channel_routing",
+                },
+            }
+            if redis:
+                rs = redis.Redis("localhost")
+                try:
+                    response = rs.client_list()
+                    sd['CHANNEL_LAYERS']['default']['BACKEND'] = "asgi_redis.RedisChannelLayer"
+                    sd['CHANNEL_LAYERS']['default']['CONFIG'] = {"hosts": [("localhost", 6379)], }
+                except redis.ConnectionError:
+                    pass
 
     def get_js_includes(self, settings, language):
         if self.use_websockets:
