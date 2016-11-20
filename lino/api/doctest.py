@@ -17,15 +17,23 @@ from django.utils import translation
 from django.test import Client
 import json
 from bs4 import BeautifulSoup
+
+from atelier.rstgen import table
+from atelier import rstgen
+from atelier.rstgen import attrtable
+from atelier.utils import unindent
+
 from lino.utils import AttrDict
 from lino.utils import i2d
 from lino.utils.xmlgen.html import E
 from lino.utils.diag import analyzer
 from lino.utils import diag
+from lino.core import actors
+from lino.core.menus import find_menu_item
+from lino.sphinxcontrib.actordoc import menuselection_text
 
-from atelier.rstgen import table
-from atelier.rstgen import attrtable
-from atelier.utils import unindent
+from lino.core.menus import Menu
+from lino.core.actions import GridEdit
 
 test_client = Client()
 # naming it simply "client" caused conflict with a
@@ -88,7 +96,7 @@ def check_json_result(response, expected_keys=None, msg=''):
 
 
 def demo_get(
-        username, url_base, json_fields,
+        username, url_base, json_fields=None,
         expected_rows=None, **kwargs):
     from django.conf import settings
     case = HttpQuery(username, url_base, json_fields,
@@ -177,8 +185,6 @@ def screenshot(obj, filename, rstname, username='robin'):
         
 
 def show_menu_path(spec, language=None):
-    from lino.core.menus import find_menu_item
-    from lino.sphinxcontrib.actordoc import menuselection_text
 
     def doit():
         # profile = ar.get_user().profile
@@ -269,3 +275,37 @@ def py2rst(x):
 def show_dialog_actions():
     return analyzer.show_dialog_actions(True)
 
+
+def walk_menu_items(username, severe=False):
+    """Walk through all menu items which run a :class:`GridEdit
+    <lino.core.actions.GridEdit>` action, showing how many data rows
+    the grid contains.
+
+    """
+    ar = settings.SITE.login(username)
+    with translation.override(ar.user.language):
+        mnu = settings.SITE.get_site_menu(None, ar.user.profile)
+        items = []
+        for mi in mnu.walk_items():
+          if mi.bound_action:
+            if isinstance(mi.bound_action.action, GridEdit):
+                mt = mi.bound_action.actor
+                url = 'api/{}/{}'.format(mt.app_label, mt.__name__)
+                url = six.text_type(settings.SITE.buildurl(url, fmt='json'))
+
+                item = menuselection_text(mi) + " : "
+                try:
+                    response = test_client.get(url, REMOTE_USER=str(username))
+                    result = check_json_result(
+                        response, None,
+                        "GET %s for user %s" % (url, username))
+                    item += str(result['count'])
+                except Exception as e:
+                    if severe:
+                        raise
+                    else:
+                        item += str(e)
+                items.append(item)
+
+        s = rstgen.ul(items)
+        print(s)

@@ -228,11 +228,7 @@ class Analyzer(object):
         items1 = sorted(items1)
         return rstgen.ul(items1)
 
-analyzer = Analyzer()
-"""This is a docstring
-"""
-
-
+    
 def visible_for(ba):
     """Shows a list of user profiles for which this action is visible."""
     if ba is None:
@@ -317,5 +313,10 @@ def py2rst(self, doctestfmt=False):
                 s += ": " + ', '.join(children)
                 
     return s
+
+
+analyzer = Analyzer()
+"""This is a docstring
+"""
 
 
