@@ -77,8 +77,10 @@ class ChangeWatcher(object):
             if new:
                 new = f.rel.to.objects.get(pk=new)
         elif isinstance(f, ChoiceListField):
-            old = f.choicelist.get_by_value(old)
-            new = f.choicelist.get_by_value(new)
+            if old:
+                old = f.choicelist.get_by_value(old)
+            if new:
+                new = f.choicelist.get_by_value(new)
         else:
             old = obj2str(old)
             new = obj2str(new)
