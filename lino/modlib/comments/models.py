@@ -53,12 +53,13 @@ class Comment(CreatedModified, UserAuthored, Controllable,
             for u in self.owner.get_change_observers():
                 yield u
 
-    def get_notify_subject(self, ar):
-        return _("{user} commented on {obj}").format(
+    def get_notify_message(self, ar, cw):
+        s = _("{user} commented on {obj}:").format(
             user=ar.get_user(), obj=self.owner)
-
-    def get_notify_body(self, ar, cw):
-        return self.short_text + '\n<p>\n' + self.more_text
+        s += self.short_text
+        if False:
+            s += '\n<p>\n' + self.more_text
+        return s
 
     def get_notify_owner(self, ar):
         return self.owner

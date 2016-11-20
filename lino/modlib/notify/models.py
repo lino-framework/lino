@@ -15,6 +15,7 @@ from django.conf import settings
 from django.utils import timezone
 
 from lino.api import dd, rt, _
+from lino.api import pgettext
 
 from lino.core.roles import SiteStaff
 from lino.core.gfks import gfk2lookup
@@ -31,6 +32,8 @@ from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 
 from datetime import timedelta
+
+from .choicelists import MessageTypes
 
 
 class MarkSeen(dd.Action):
@@ -73,7 +76,7 @@ class ClearSeen(dd.Action):
         ar.success(refresh_all=True)
 
 
-# @dd.python_2_unicode_compatible
+@dd.python_2_unicode_compatible
 class Message(UserAuthored, Controllable, Created):
     """A **Message** is a message to a given user about a given
     database object.
@@ -104,24 +107,30 @@ class Message(UserAuthored, Controllable, Created):
         verbose_name = _("Message")
         verbose_name_plural = _("Messages")
 
+    message_type = MessageTypes.field()
+    
     seen = models.DateTimeField(_("seen"), null=True, editable=False)
     sent = models.DateTimeField(_("sent"), null=True, editable=False)
     # message = models.TextField(_("Message"), editable=False)
+    
+    # no longer used:
     subject = models.CharField(_("Subject"), max_length=250, editable=False)
-    body = models.TextField(_("Body"), editable=False)
+    body = dd.RichTextField(_("Body"), editable=False, format='html')
 
-    # def __str__(self):
-    #     return _("About {0}").format(self.owner)
+    def __str__(self):
+        return "{} #{}".format(self.message_type, self.id)
+
+        # return _("About {0}").format(self.owner)
     # return self.message
     # return _("Notify {0} about change on {1}").format(
     #     self.user, self.owner)
 
     @classmethod
-    def emit_message(cls, ar, owner, subject, body, recipients):
+    def emit_message(cls, ar, owner, message_type, body, recipients):
         """Create one message for every recipient.
 
-        Note that the changing user does not get notified about their
-        own changes, except when working as another user.
+        The changing user does not get notified about their own
+        changes, except when working as another user.
 
         """
         # dd.logger.info("20160717 %s emit_messages()", self)
@@ -132,19 +141,17 @@ class Message(UserAuthored, Controllable, Created):
                 others.add(user)
 
         if len(others):
+            subject = "{} by {}".format(message_type, me)
             dd.logger.info(
-                "Notify %s users that %s", len(others), subject)
+                "Notify %s users about %s", len(others), subject)
             for user in others:
                 cls.create_message(
-                    ar, user, owner, subject=subject, body=body)
+                    user, owner, body=body, message_type=message_type)
 
     @classmethod
-    def create_message(cls, ar, user, owner=None, **kwargs):
+    def create_message(cls, user, owner=None, **kwargs):
         """Create a message unless that user has already been notified
         about that object.
-
-        Does not send an email because that might skiw down response
-        time.
 
         """
         fltkw = gfk2lookup(cls.owner, owner)
@@ -157,45 +164,45 @@ class Message(UserAuthored, Controllable, Created):
             if dd.plugins.notify.use_websockets:
                 obj.send_browser_message(user)
 
-    @dd.displayfield(_("Subject"))
-    def subject_more(self, ar):
-        if ar is None:
-            return ''
-        elems = [self.subject]
-        if self.body:
-            elems.append(' ')
-            # elems.append(ar.obj2html(self, _("(more)")))
-            elems.append(E.raw(self.body))
-        # print 20160908, elems
-        return E.p(*elems)
+    # @dd.displayfield(_("Subject"))
+    # def subject_more(self, ar):
+    #     if ar is None:
+    #         return ''
+    #     elems = [self.subject]
+    #     if self.body:
+    #         elems.append(' ')
+    #         # elems.append(ar.obj2html(self, _("(more)")))
+    #         elems.append(E.raw(self.body))
+    #     # print 20160908, elems
+    #     return E.p(*elems)
 
-    @dd.displayfield(_("Overview"))
-    def overview(self, ar):
-        if ar is None:
-            return ''
-        return self.get_overview(ar)
+    # @dd.displayfield(_("Overview"))
+    # def overview(self, ar):
+    #     if ar is None:
+    #         return ''
+    #     return self.get_overview(ar)
 
-    def get_overview(self, ar):
-        """Return the content to be displayed in the :attr:`overview` field.
-        On interactive rendererers (extjs, bootstrap3) the `obj` and
-        `user` are clickable.
+    # def get_overview(self, ar):
+    #     """Return the content to be displayed in the :attr:`overview` field.
+    #     On interactive rendererers (extjs, bootstrap3) the `obj` and
+    #     `user` are clickable.
 
-        This is also used from the :xfile:`notify/body.eml` template
-        where they should just be surrounded by **double asterisks**
-        so that Thunderbird displays them bold.
+    #     This is also used from the :xfile:`notify/body.eml` template
+    #     where they should just be surrounded by **double asterisks**
+    #     so that Thunderbird displays them bold.
 
-        """
-        elems = body_subject_to_elems(ar, self.subject, self.body)
-        return E.div(*elems)
-        # context = dict(
-        #     obj=ar.obj2str(self.owner),
-        #     user=ar.obj2str(self.user))
-        # return _(self.message).format(**context)
-        # return E.p(
-        #     ar.obj2html(self.owner), " ",
-        #     _("was modified by {0}").format(self.user))
+    #     """
+    #     elems = body_subject_to_elems(ar, self.subject, self.body)
+    #     return E.div(*elems)
+    #     # context = dict(
+    #     #     obj=ar.obj2str(self.owner),
+    #     #     user=ar.obj2str(self.user))
+    #     # return _(self.message).format(**context)
+    #     # return E.p(
+    #     #     ar.obj2html(self.owner), " ",
+    #     #     _("was modified by {0}").format(self.user))
 
-    def send_email(self):
+    def send_individual_email(self):
         """"""
         if not self.user.email:
             # debug level because we don't want to see this message
@@ -209,12 +216,17 @@ class Message(UserAuthored, Controllable, Created):
         #     user=self.user, renderer=settings.SITE.kernel.text_renderer)
         # tpl = dd.plugins.notify.email_subject_template
         # subject = tpl.format(obj=self)
-        subject = settings.EMAIL_SUBJECT_PREFIX + self.subject
+        if self.owner is None:
+            subject = str(self)
+        else:
+            subject = pgettext("notification", "{} in {}").format(
+                self.message_type, self.owner)
+        subject = settings.EMAIL_SUBJECT_PREFIX + subject
         # template = rt.get_template('notify/body.eml')
         # context = dict(obj=self, E=E, rt=rt, ar=sar)
         # body = template.render(**context)
 
-        template = rt.get_template('notify/body.eml')
+        template = rt.get_template('notify/individual.eml')
         context = dict(obj=self, E=E, rt=rt)
         body = template.render(**context)
 
@@ -223,11 +235,12 @@ class Message(UserAuthored, Controllable, Created):
         self.sent = timezone.now()
         self.save()
 
+    # for testing, set show_in_workflow to True:
     @dd.action(label=_("Send e-mail"),
-               show_in_bbar=False, show_in_workflow=True,
+               show_in_bbar=False, show_in_workflow=False,
                button_text="✉")  # u"\u2709"
     def do_send_email(self, ar):
-        self.send_email()
+        self.send_individual_email()
 
     # @dd.action(label=_("Seen"),
     #            show_in_bbar=False, show_in_workflow=True,
@@ -247,7 +260,7 @@ class Message(UserAuthored, Controllable, Created):
 
         message = {
             "id": self.id,
-            "subject": self.subject,
+            "subject": str(self),
             "body": html2text(self.body),
             "created": self.created.strftime("%a %d %b %Y %H:%M"),
         }
@@ -278,7 +291,7 @@ dd.inject_field(
 class Messages(dd.Table):
     "Base for all tables of messages."
     model = 'notify.Message'
-    column_names = "created subject user seen sent *"
+    column_names = "created body user seen sent *"
 
     # detail_layout = dd.DetailLayout("""
     # created user seen sent owner
@@ -344,7 +357,7 @@ class MyMessages(My, Messages):
     # label = _("My messages")
     required_roles = dd.required(OfficeUser)
     # column_names = "created subject owner sent workflow_buttons *"
-    column_names = "subject_more workflow_buttons *"
+    column_names = "body created message_type workflow_buttons *"
     order_by = ['created']
 
     # filter = models.Q(seen__isnull=True)
@@ -386,33 +399,70 @@ class MyMessages(My, Messages):
 
 # dd.add_welcome_handler(welcome_messages)
 
-if dd.plugins.notify.use_websockets:
+
+def send_summary_email(user, messages):
+    """"""
+    if not user.email:
+        # debug level because we don't want to see this message
+        # every 10 seconds:
+        dd.logger.debug("User %s has no email address", user)
+        return
+    # dd.logger.info("20151116 %s %s", ar.bound_action, ar.actor)
+    # ar = ar.spawn_request(renderer=dd.plugins.bootstrap3.renderer)
+    # sar = BaseRequest(
+    #     # user=self.user, renderer=dd.plugins.bootstrap3.renderer)
+    #     user=self.user, renderer=settings.SITE.kernel.text_renderer)
+    # tpl = dd.plugins.notify.email_subject_template
+    # subject = tpl.format(obj=self)
+    subject = _("{} unseen notifications").format(len(messages))
+    subject = settings.EMAIL_SUBJECT_PREFIX + subject
+
+    template = rt.get_template('notify/summary.eml')
+    context = dict(user=user, E=E, rt=rt, messages=messages)
+    body = template.render(**context)
+
+    sender = settings.SERVER_EMAIL
+    rt.send_email(subject, sender, body, [user.email])
+    for msg in messages:
+        msg.sent = timezone.now()
+        msg.save()
+
+
+h = settings.EMAIL_HOST
+if not h or h.endswith('example.com'):
+    dd.logger.debug(
+        "Won't send pending messages because EMAIL_HOST is %r",
+        h)
+elif dd.plugins.notify.use_websockets:
     @dd.schedule_daily()
     def send_pending_emails_daily():
-        send_pending_emails()
+        Message = rt.models.notify.Message
+        qs = Message.objects.filter(sent__isnull=True)
+        qs = qs.filter(user__notifyme_mode=True).order_by('user')
+        if qs.count() > 0:
+            users = dict()
+            for obj in qs:
+                lst = users.setdefault(obj.user, [])
+                lst.append(obj)
+            dd.logger.debug(
+                "Send out summary emails for %d users.", len(users))
+            for user, lst in users.items():
+                send_summary_email(user, lst)
+        else:
+            dd.logger.debug("No messages to send.")
 else:
     @dd.schedule_often(every=10)
     def send_pending_emails_often():
-        send_pending_emails()
-
-
-def send_pending_emails():
-    h = settings.EMAIL_HOST
-    if not h or h.endswith('example.com'):
-        dd.logger.debug(
-            "Won't send pending messages because EMAIL_HOST is %r",
-            h)
-        return
-    Message = rt.models.notify.Message
-    qs = Message.objects.filter(sent__isnull=True)
-    qs = qs.filter(user__notifyme_mode=True)
-    if qs.count() > 0:
-        dd.logger.debug(
-            "Send out emails for %d messages.", qs.count())
-        for obj in qs:
-            obj.send_email()
-    else:
-        dd.logger.debug("No messages to send.")
+        Message = rt.models.notify.Message
+        qs = Message.objects.filter(sent__isnull=True)
+        qs = qs.filter(user__notifyme_mode=True)
+        if qs.count() > 0:
+            dd.logger.debug(
+                "Send out emails for %d messages.", qs.count())
+            for obj in qs:
+                obj.send_individual_email()
+        else:
+            dd.logger.debug("No messages to send.")
 
 
 @dd.schedule_daily()
