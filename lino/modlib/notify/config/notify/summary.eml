@@ -1,0 +1,10 @@
+<body>
+{{_("Dear")}} {{user}},
+{{_("You have {} unseen notifications").format(len(messages))}}
+{% for msg in messages%}
+<div>
+<H3>{{msg}}</H3>
+{{msg.body}}
+</div>
+{% endfor %}
+<body>
