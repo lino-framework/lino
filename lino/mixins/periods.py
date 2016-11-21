@@ -144,7 +144,7 @@ class Ended(CombinedDateTime):
         verbose_name=_("End Time"))
 
     def get_duration(self):
-
+        """Return the duration in hours."""
         if not self.start_date:
             return None
         if not self.start_time:

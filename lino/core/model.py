@@ -723,7 +723,7 @@ class Model(models.Model):
             return ''
         return ar.obj2html(self)
 
-    @fields.displayfield(_("Workflow"))
+    @fields.displayfield(_("Actions"))
     def workflow_buttons(obj, ar):
         #~ logger.info('20120930 workflow_buttons %r', obj)
         l = []
