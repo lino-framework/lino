@@ -66,9 +66,13 @@ from lino.core.layouts import (FormLayout, ParamsLayout,
 from lino.utils.mldbc.fields import BabelCharField, BabelTextField
 from lino.core import tables
 from lino.core.gfks import GenericForeignKey
+from lino.utils.format_date import fds
 
 from lino.utils.xmlgen import etree
 from lino.utils.xmlgen.html import E
+
+from lino.core.site import html2text
+from lino.utils.xmlgen.html import html2rst
 
 EXT_CHAR_WIDTH = 9
 EXT_CHAR_HEIGHT = 22
@@ -691,11 +695,19 @@ class TextFieldElement(FieldElement):
     def value2html(self, ar, v, **cellattrs):
         if self.format == 'html' and v:
             v = html2xhtml(v)
-            top = E.fromstring(v)
+            # v = v.decode('utf-8')
+            # top = E.fromstring(v)
+            top = E.raw(v)
         else:
             top = self.format_value(ar, v)
         return E.td(top, **cellattrs)
 
+    def format_value(self, ar, v):  # new since 20161120
+        if self.format == 'html' and v:
+            if etree.iselement(v):
+                return html2rst(v)
+            return html2text(v)
+        return super(TextFieldElement, self).format_value(ar, v)
 
 class CharFieldElement(FieldElement):
     filter_type = 'string'
@@ -919,6 +931,14 @@ class DateTimeFieldElement(FieldElement):
         else:
             kw.update(value="<br>")
         FieldElement.__init__(self, layout_handle, field, **kw)
+
+    def value2html(self, ar, v, **cellattrs):
+        if v is None:
+            v = ''
+        else:
+            v = fds(v) + " " + v.strftime(
+                settings.SITE.time_format_strftime)
+        return E.td((v), **cellattrs)
 
 
 class DatePickerFieldElement(FieldElement):
@@ -1194,7 +1214,6 @@ class DisplayElement(FieldElement):
             return E.td(str(e), **cellattrs)
 
     def format_value(self, ar, v):
-        from lino.utils.xmlgen.html import html2rst
         if etree.iselement(v):
             return html2rst(v)
         return self.field._lino_atomizer.format_value(ar, v)

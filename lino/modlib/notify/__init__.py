@@ -10,6 +10,7 @@
     actions
     mixins
     utils
+    fixtures.demo2
 
 Templates used by this plugin
 =============================

@@ -1,0 +1,14 @@
+<body>
+<p>{{obj.user.get_full_name()}},</p>
+
+{{obj.body}}
+
+{% if obj.owner %}
+<p>{{_("Subsequent changes to {obj} will not be notified "
+    "until you visit {url} and mark this notification "
+    "as seen.").format(
+    url=settings.SITE.server_url or "Lino",
+    obj=obj.owner)}}</p>
+{% endif %}
+
+</body>
