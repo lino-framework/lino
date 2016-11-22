@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-11-20 17:02+0100\n"
+"POT-Creation-Date: 2016-11-22 04:31+0100\n"
 "PO-Revision-Date: 2016-09-08 06:45+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language: et\n"
@@ -242,8 +242,9 @@ msgid "Description"
 msgstr "Kirjeldus"
 
 #: lino/core/model.py:726
-msgid "Workflow"
-msgstr ""
+#, fuzzy
+msgid "Actions"
+msgstr "Nimetus"
 
 #: lino/core/renderer.py:238
 msgid "Show Last"
@@ -882,12 +883,12 @@ msgstr ""
 msgid "Admin"
 msgstr ""
 
-#: lino/modlib/extjs/elems.py:888
+#: lino/modlib/extjs/elems.py:897
 #, python-format
 msgid "Select a %s..."
 msgstr "Vali mõni %s..."
 
-#: lino/modlib/extjs/elems.py:1269 lino/modlib/uploads/choicelists.py:118
+#: lino/modlib/extjs/elems.py:1277 lino/modlib/uploads/choicelists.py:118
 msgid "show"
 msgstr ""
 
@@ -3828,4 +3829,7 @@ msgstr ""
 
 #~ msgid "{user} modified"
 #~ msgstr "Muudatud"
+
+#~ msgid "Workflow"
+#~ msgstr ""
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-11-20 17:02+0100\n"
+"POT-Creation-Date: 2016-11-22 04:31+0100\n"
 "PO-Revision-Date: 2013-06-15 18:57-0300\n"
 "Last-Translator: Flavio Gondin <flvgondin@gmail.com>\n"
 "Language: pt_BR\n"
@@ -246,8 +246,9 @@ msgid "Description"
 msgstr "Description"
 
 #: lino/core/model.py:726
-msgid "Workflow"
-msgstr ""
+#, fuzzy
+msgid "Actions"
+msgstr "Fonction"
 
 #: lino/core/renderer.py:238
 #, fuzzy
@@ -912,12 +913,12 @@ msgstr "Mostrar esta tabela como um documento pdf"
 msgid "Admin"
 msgstr "Langue"
 
-#: lino/modlib/extjs/elems.py:888
+#: lino/modlib/extjs/elems.py:897
 #, python-format
 msgid "Select a %s..."
 msgstr "Escolher %s..."
 
-#: lino/modlib/extjs/elems.py:1269 lino/modlib/uploads/choicelists.py:118
+#: lino/modlib/extjs/elems.py:1277 lino/modlib/uploads/choicelists.py:118
 msgid "show"
 msgstr "montrer"
 
@@ -8664,4 +8665,7 @@ msgstr ""
 
 #~ msgid "{user} modified"
 #~ msgstr "Modificado em"
+
+#~ msgid "Workflow"
+#~ msgstr ""
 

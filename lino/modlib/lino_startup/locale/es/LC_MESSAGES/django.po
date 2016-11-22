@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino 1.6.14\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-11-20 17:02+0100\n"
+"POT-Creation-Date: 2016-11-22 04:31+0100\n"
 "PO-Revision-Date: 2014-06-06 11:29+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language: es\n"
@@ -240,7 +240,7 @@ msgid "Description"
 msgstr ""
 
 #: lino/core/model.py:726
-msgid "Workflow"
+msgid "Actions"
 msgstr ""
 
 #: lino/core/renderer.py:238
@@ -872,12 +872,12 @@ msgstr ""
 msgid "Admin"
 msgstr ""
 
-#: lino/modlib/extjs/elems.py:888
+#: lino/modlib/extjs/elems.py:897
 #, python-format
 msgid "Select a %s..."
 msgstr ""
 
-#: lino/modlib/extjs/elems.py:1269 lino/modlib/uploads/choicelists.py:118
+#: lino/modlib/extjs/elems.py:1277 lino/modlib/uploads/choicelists.py:118
 msgid "show"
 msgstr ""
 
@@ -7964,5 +7964,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "{user} modified"
+#~ msgstr ""
+
+#~ msgid "Workflow"
 #~ msgstr ""
 

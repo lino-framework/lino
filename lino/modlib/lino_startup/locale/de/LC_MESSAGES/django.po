@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-11-20 17:02+0100\n"
-"PO-Revision-Date: 2016-11-20 17:02+0100\n"
+"POT-Creation-Date: 2016-11-22 04:31+0100\n"
+"PO-Revision-Date: 2016-11-22 04:31+0100\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language: de\n"
 "Language-Team: \n"
@@ -248,8 +248,8 @@ msgid "Description"
 msgstr "Beschreibung"
 
 #: lino/core/model.py:726
-msgid "Workflow"
-msgstr "Arbeitsablauf"
+msgid "Actions"
+msgstr "Aktionen"
 
 #: lino/core/renderer.py:238
 msgid "Show Last"
@@ -895,12 +895,12 @@ msgstr "Diese Tabelle in eine .pdf-Datei exportieren"
 msgid "Admin"
 msgstr "Überschrift"
 
-#: lino/modlib/extjs/elems.py:888
+#: lino/modlib/extjs/elems.py:897
 #, python-format
 msgid "Select a %s..."
 msgstr "%s auswählen..."
 
-#: lino/modlib/extjs/elems.py:1269 lino/modlib/uploads/choicelists.py:118
+#: lino/modlib/extjs/elems.py:1277 lino/modlib/uploads/choicelists.py:118
 msgid "show"
 msgstr "zeigen"
 
@@ -3813,3 +3813,6 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 
 #~ msgid "{user} modified"
 #~ msgstr "Bearbeitet"
+
+#~ msgid "Workflow"
+#~ msgstr "Arbeitsablauf"

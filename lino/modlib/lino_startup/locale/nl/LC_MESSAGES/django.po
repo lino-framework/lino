@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-11-20 17:02+0100\n"
+"POT-Creation-Date: 2016-11-22 04:31+0100\n"
 "PO-Revision-Date: 2014-02-05 09:34+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language: nl\n"
@@ -245,8 +245,9 @@ msgid "Description"
 msgstr "Omschrijving"
 
 #: lino/core/model.py:726
-msgid "Workflow"
-msgstr "Arbeitsablauf"
+#, fuzzy
+msgid "Actions"
+msgstr "Omschrijving"
 
 #: lino/core/renderer.py:238
 msgid "Show Last"
@@ -914,12 +915,12 @@ msgstr ""
 msgid "Admin"
 msgstr "Änderung"
 
-#: lino/modlib/extjs/elems.py:888
+#: lino/modlib/extjs/elems.py:897
 #, python-format
 msgid "Select a %s..."
 msgstr "%s auswählen..."
 
-#: lino/modlib/extjs/elems.py:1269 lino/modlib/uploads/choicelists.py:118
+#: lino/modlib/extjs/elems.py:1277 lino/modlib/uploads/choicelists.py:118
 msgid "show"
 msgstr "zeigen"
 
@@ -8363,4 +8364,7 @@ msgstr ""
 
 #~ msgid "{user} modified"
 #~ msgstr "Bearbeitet"
+
+#~ msgid "Workflow"
+#~ msgstr "Arbeitsablauf"
 
