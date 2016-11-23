@@ -93,8 +93,17 @@ class Message(UserAuthored, Controllable, Created):
 
     .. attribute:: owner
  
-       The database object this message is about.
-       This field is labelled `About`.
+       The database object which controls this message. 
+
+       This may be `None`, which means that the message has no
+       controller. When a notification is controlled, then the
+       recipient will receive only the first message for that
+       object. Any following message is ignored until the recipient
+       has "confirmed" the first message. Typical use case are the
+       messages emitted by :class:`ChangeObservable`: you don't want
+       to get 10 mails just because a collegue makes 10 small
+       modifications when authoring the text field of a
+       ChangeObservable object.
 
     .. attribute:: created
     .. attribute:: sent
@@ -279,8 +288,8 @@ class Message(UserAuthored, Controllable, Created):
 
 dd.update_field(Message, 'user',
                 verbose_name=_("Recipient"), editable=False)
-Message.update_controller_field(
-    null=True, blank=True, verbose_name=_("About"))
+# Message.update_controller_field(
+#     null=True, blank=True, verbose_name=_("About"))
 
 dd.inject_field(
     'users.User', 'notifyme_mode',

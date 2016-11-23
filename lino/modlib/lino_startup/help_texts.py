@@ -213,16 +213,16 @@ GeneriForeignKey field."""),
     'lino.modlib.notify.Plugin' : _("""See lino.core.plugin.Plugin."""),
     'lino.modlib.notify.Plugin.use_websockets' : _("""Set this to False in order to deactivate use of websockets and
 channels."""),
-    'lino.modlib.notify.actions.NotifyingAction' : _("""An action with a generic dialog window of three fields "Summary",
-"Description" and a checkbox "Don't send email message"."""),
+    'lino.modlib.notify.actions.NotifyingAction' : _("""An action which pops up a dialog window of three fields "Summary",
+"Description" and a checkbox "Don't notify others" to optionally
+suppress notification."""),
     'lino.modlib.notify.mixins.ChangeObservable' : _("""Mixin for models which can emit notifications to a list of
 "observers" when an instance is modified."""),
     'lino.modlib.notify.models.ClearSeen' : _("""Mark this message as not yet seen."""),
     'lino.modlib.notify.models.Message' : _("""A Message is a message to a given user about a given
 database object."""),
     'lino.modlib.notify.models.Message.user' : _("""The recipient."""),
-    'lino.modlib.notify.models.Message.owner' : _("""The database object this message is about.
-This field is labelled About."""),
+    'lino.modlib.notify.models.Message.owner' : _("""The database object which controls this message."""),
     'lino.modlib.notify.models.Messages' : _("""Base for all tables of messages."""),
     'lino.modlib.notify.models.Messages.model' : _("""alias of Message"""),
     'lino.modlib.notify.models.AllMessages' : _("""The gobal list of all messages."""),
