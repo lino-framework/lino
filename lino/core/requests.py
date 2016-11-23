@@ -771,6 +771,10 @@ request from it.
     def href_to_request(self, *args, **kwargs):
         return self.renderer.href_to_request(self, *args, **kwargs)
 
+    def menu_item_button(self, *args, **kwargs):
+        """Forwards to :meth:`lino.core.renderer.`"""
+        return self.renderer.menu_item_button(self, *args, **kwargs)
+
     def window_action_button(self, *args, **kwargs):
         # settings.SITE.logger.info(
         #     "20160529 window_action_button %s %s", args, self.renderer)

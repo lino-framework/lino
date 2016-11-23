@@ -330,14 +330,29 @@ request `tar`."""
         return self.href_button_action(
             ba, uri, label, title or ba.action.help_text, **kw)
 
+    def menu_item_button(self, ar, mi, label=None, icon_name=None, **kwargs):
+        """Render the given menu item `mi` as an action button.
+
+        Returns a HTML tree element.
+        Currently supports only window actions.
+
+        """
+        label = label or mi.label or mi.bound_action.get_button_label()
+        return self.window_action_button(
+            ar, mi.bound_action, label=label,
+            icon_name=icon_name, **kwargs)
+
     def window_action_button(
-            self, request, ba,
+            self, ar, ba,
             after_show={}, label=None, title=None, **kw):
         """
-        Return a HTML chunk for a button that will execute this action.
+        Render the given bound action `ba` as an action button.
+
+        Returns a HTML tree element.
+
         """
         label = label or ba.get_button_label()
-        url = self.js2url(self.action_call(request, ba, after_show))
+        url = self.js2url(self.action_call(ar, ba, after_show))
         #~ logger.info('20121002 window_action_button %s %r',a,unicode(label))
         return self.href_button_action(ba, url, str(label),
                                        title or ba.action.help_text, **kw)

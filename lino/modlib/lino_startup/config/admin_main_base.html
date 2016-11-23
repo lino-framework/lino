@@ -6,7 +6,7 @@
     {% block hello_user %}
         <p>{{_("Quick links:")}}
         {% for mi in settings.SITE.get_quicklinks(ar).items %}
-        [{{E.tostring(ar.window_action_button(mi.bound_action,icon_name=None))}}]
+        [{{E.tostring(ar.menu_item_button(mi))}}]
         {% endfor %}
         {% if extjs.autorefresh_seconds %}
         <a href="javascript:Lino.autorefresh();">autorefresh</a>
