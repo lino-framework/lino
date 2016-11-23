@@ -1,11 +1,11 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2016 Luc Saffre
 # License: BSD (see file COPYING for details)
-'''Defines a `Sphinx builder
-<http://www.sphinx-doc.org/en/stable/extdev/builderapi.html#sphinx.builders.Builder>`__
-which generates :xfile:`help_texts.py` files containing
-object descriptions to be installed as the `help_text` attribute of
-Django database fields.
+'''Causes a :xfile:`help_texts.py` file to be generated after each complete built of the doctree. 
+
+The :xfile:`help_texts.py` file contains object descriptions to be
+installed as the `help_text` attribute of certain UI widgets (actions,
+database fields, ...)
 
 Overview
 ========
@@ -59,9 +59,9 @@ The :xfile:`help_texts.py` file
 
 .. xfile:: help_texts.py
 
-When a Lino :class:`Site <lino.core.Site>` initializes, it looks for a
-file named :xfile:`help_texts.py` in every plugin directory.  If such
-a file exists, Lino imports it and expects it to contain a
+When a Lino :class:`Site <lino.core.site.Site>` initializes, it looks
+for a file named :xfile:`help_texts.py` in every plugin directory.  If
+such a file exists, Lino imports it and expects it to contain a
 :class:`dict` of the form::
 
     from lino.api import _
