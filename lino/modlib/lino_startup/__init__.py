@@ -1,8 +1,28 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015 Luc Saffre
+# Copyright 2015-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
+"""This is the base plugin for all Lino applications, it is being
+aadded automatically. It defines no models, but some system templates,
+django admin commands, translation messages and the core
+:xfile:`help_texts.py` file.
+
+Template files
+==============
+
+.. xfile:: admin_main_base.html
+.. xfile:: admin_main.html
+
+This is the template used to generate the inner content of the home
+page. It is split into two files
+:srcref:`admin_main.html<lino/modlib/lino_startup/config/admin_main.html>`
+and
+:srcref:`admin_main_base.html<lino/modlib/lino_startup/config/admin_main_base.html>`.
+
+Submodules
+==========
+
+
 .. autosummary::
    :toctree:
 

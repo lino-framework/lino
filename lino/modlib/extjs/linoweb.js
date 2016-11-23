@@ -507,7 +507,7 @@ Lino.MainPanel = {
   ,get_record_url : function(record_id) {
       var url = '{{extjs.build_plain_url("api")}}' + this.ls_url
       //~ var url = this.containing_window.config.url_data; // ls_url;
-      url += '/' + (record_id === undefined ? '-99999' : String(record_id));
+      url += '/' + (record_id === undefined ? this.default_record_id : String(record_id));
       //~ if (record_id !== undefined) url += '/' + String(record_id);
       //~ url += '/' + String(record_id);
       return url;
@@ -2228,7 +2228,7 @@ Lino.show_fk_detail = function(combo,detail_action,insert_action) {
     if (pk) {
         detail_action.run(null,{record_id: pk})
       } else {
-        insert_action.run(null,{record_id:-99999});
+        insert_action.run(null);
         //~ Lino.notify("{{_('Cannot show detail for empty foreign key.')}}");
       }
 };
@@ -2237,7 +2237,7 @@ Lino.show_insert = function(panel,btn) {
   var bp = panel.get_base_params();
   //~ console.log('20120125 Lino.show_insert',bp)
   //~ panel.ls_insert_handler.run(null,{record_id:-99999,base_params:bp});
-  panel.ls_insert_handler.run(panel.getId(),{record_id:-99999,base_params:bp});
+  panel.ls_insert_handler.run(panel.getId(),{base_params:bp});
 };
 
 {% if settings.SITE.use_gridfilters %}
@@ -2494,7 +2494,7 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel, {
     // var panel = this.get_containing_window().main_item;
     // console.log("20131004 on_ok",this,panel,arguments);
     var actionName = this.action_name;
-    var pk = this.record_id;
+    var pk = this.record_id || this.default_record_id;
     if (pk == undefined && this.base_params) { pk = this.base_params.mk; }
     if (pk == undefined && panel) {
         pk = panel.get_current_record().id;
@@ -2840,13 +2840,16 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       //     this, [status.data_record]).defer(100);
       this.set_current_record(status.data_record);
       //~ return;
-    } else if (status.record_id != undefined) { 
-      /* possible values include 0 and null, 0 being a valid record id, 
-      null the equivalent of undefined
-      */
-      this.load_record_id(status.record_id);
     } else {
-      this.set_current_record(undefined);
+        var record_id = status.record_id || this.default_record_id;
+        if (record_id != undefined) { 
+          /* possible values include 0 and null, 0 being a valid record id, 
+          null the equivalent of undefined
+          */
+          this.load_record_id(record_id);
+        } else {
+            this.set_current_record(undefined);
+        }
     }
     // this.init_focus()
   }

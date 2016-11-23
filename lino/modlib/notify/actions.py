@@ -14,8 +14,9 @@ from lino.core import actions
 
 
 class NotifyingAction(actions.Action):
-    """An action with a generic dialog window of three fields "Summary",
-    "Description" and a checkbox "Don't send email message".
+    """An action which pops up a dialog window of three fields "Summary",
+    "Description" and a checkbox "Don't notify others" to optionally
+    suppress notification.
 
     Screenshot of a notifying action:
 
@@ -46,8 +47,13 @@ class NotifyingAction(actions.Action):
     """, window_size=(50, 15))
 
     def get_notify_owner(self, ar, obj):
-        """"""
-        return obj
+        """Expected to return the :attr:`owner
+        lino.modlib.notify.models.Message.owner>` of the message.
+
+        The default returns `None`.
+
+        """
+        return None
 
     def get_notify_subject(self, ar, obj):
         """

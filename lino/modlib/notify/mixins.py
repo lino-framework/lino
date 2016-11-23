@@ -17,19 +17,6 @@ class ChangeObservable(dd.Model):
         abstract = True
 
     def get_notify_message(self, ar, cw):
-    #     subject = self.get_notify_subject(ar)
-    #     if not subject:
-    #         return
-    #     body = self.get_notify_body(ar, cw)
-    #     if not body:
-    #         return
-    #     return (subject, body)
-
-    # def get_notify_subject(self, ar):
-    #     return _("{user} modified {obj}").format(
-    #         user=ar.get_user(), obj=self)
-
-    # def get_notify_body(self, ar, cw):
         if cw is None:
             return
         items = list(cw.get_updates_html())
