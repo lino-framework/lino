@@ -8,13 +8,12 @@ tasks and configuration settings.
 Tasks
 =====
 
-.. command:: inv initdb
+.. command:: inv prep
 
-    Runs :manage:`initdb_demo` on every demo project
-    :attr:`config.demo_projects`.
+    Prepare a test run. This currently just runs :manage:`initdb_demo`
+    on every demo project :attr:`config.demo_projects`.
 
-    Note: Don't mix up :cmd:`inv initdb` (the invoke command) with
-    :manage:`initdb` (the django-admin command).
+    Note: Don't mix up :manage:`initdb_demo` with :manage:`initdb`.
 
 
 

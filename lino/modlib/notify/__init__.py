@@ -14,7 +14,7 @@ which is usually part of the items in admin main view. This table also
 provides actions for marking messages as seen.
 
 In addition, notification messages are sent via email to the user
-according to his :attr:`notifyme_mode` field.
+according to his :attr:`mail_mode` field.
 
 The emitter of a notification message is currently not stored. That
 is, you cannot currently request to see a list of all messages emitted

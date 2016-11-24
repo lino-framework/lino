@@ -225,7 +225,6 @@ request `tar`."""
             btn = sar.ar2button(None, _("New"))
             buttons.append(btn)
             buttons.append(' ')
-                #~ after_show = ar.get_status()
         n = ar.get_total_count()
         #~ print 20120702, [o for o in ar]
         if n > 0:
@@ -338,13 +337,15 @@ request `tar`."""
 
         """
         label = label or mi.label or mi.bound_action.get_button_label()
+        if mi.instance is not None:
+            kwargs.update(status=dict(record_id=mi.instance.pk))
         return self.window_action_button(
             ar, mi.bound_action, label=label,
             icon_name=icon_name, **kwargs)
 
     def window_action_button(
             self, ar, ba,
-            after_show={}, label=None, title=None, **kw):
+            status={}, label=None, title=None, **kw):
         """
         Render the given bound action `ba` as an action button.
 
@@ -352,7 +353,7 @@ request `tar`."""
 
         """
         label = label or ba.get_button_label()
-        url = self.js2url(self.action_call(ar, ba, after_show))
+        url = self.js2url(self.action_call(ar, ba, status))
         #~ logger.info('20121002 window_action_button %s %r',a,unicode(label))
         return self.href_button_action(ba, url, str(label),
                                        title or ba.action.help_text, **kw)

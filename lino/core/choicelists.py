@@ -666,7 +666,8 @@ class ChoiceListField(models.CharField):
         )
         defaults.update(kw)
         kw.update(kw)
-        #~ models.SmallIntegerField.__init__(self,*args, **defaults)
+        if not 'help_text' in kw and choicelist.__doc__:
+            kw['help_text'] = choicelist.__doc__.split('\n\n')[0]
         models.CharField.__init__(self, verbose_name, **defaults)
 
     # def contribute_to_class(self, cls, name):

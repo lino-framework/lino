@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-11-22 04:31+0100\n"
-"PO-Revision-Date: 2016-11-22 04:31+0100\n"
+"PO-Revision-Date: 2016-11-24 16:32+0100\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language: de\n"
 "Language-Team: \n"
@@ -3570,9 +3570,8 @@ msgid "User types"
 msgstr "Benutzerarten"
 
 #: lino/modlib/users/mixins.py:46
-#, fuzzy
 msgid "Time zone"
-msgstr "Site-Besitzer"
+msgstr "Zeitzone"
 
 #: lino/modlib/users/mixins.py:134 lino/modlib/users/mixins.py:164
 msgid "Author"
