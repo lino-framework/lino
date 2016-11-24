@@ -1,7 +1,24 @@
 # Copyright 2008-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Adds functionality for managing messages.
+"""Adds functionality for managing notification messages.
+
+A **notification message** is a message to be sent as quickly as
+possible to its recipient (a system user).
+
+If :attr:`use_websockets` is `True` and the user is online, then he
+will see it as a desktop notification.
+
+Unseen notfication messages are displayed by the `MyMessages` table
+which is usually part of the items in admin main view. This table also
+provides actions for marking messages as seen.
+
+In addition, notification messages are sent via email to the user
+according to his :attr:`mail_mode` field.
+
+The emitter of a notification message is currently not stored. That
+is, you cannot currently request to see a list of all messages emitted
+by your system activity.
 
 .. autosummary::
    :toctree:

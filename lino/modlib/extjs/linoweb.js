@@ -2796,8 +2796,9 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       var st = {
         base_params: this.get_base_params(),
         // data_record : this.get_current_record()
-        }
-      st.record_id = this.get_current_record().id;
+      }
+      var rec = this.get_current_record();
+      if (rec) st.record_id = rec.id;
       // 20140917 : get_status must not store the whole data_record
       // because that would prevent the form to actually reload
       // when set_status is called after a child window closed.

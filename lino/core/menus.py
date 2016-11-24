@@ -243,15 +243,18 @@ class Menu(MenuItem):
 
     def add_instance_action(self, obj, **kw):
         """Add an action which displays the given database object instance in
-        a detail form for editing.  Used e.g. for the
-        :class:`lino.modlib.system.models.SiteConfig` object.
+        a detail form for editing.
+
+        Used e.g. for the :menuselection`Configure --> System --> Site
+        configuration` command.  Or for the :guilabel:`[My settings]`
+        quicklink in :ref:`care`.
 
         """
         kw.update(instance=obj)
-        da = kw.get('action', None)
-        if da is None:
-            da = obj.get_default_table().detail_action
-            kw.update(action=da)
+        ba = kw.get('action', None)
+        if ba is None:
+            ba = obj.get_default_table().detail_action
+            kw.update(action=ba)
         return self.add_item_instance(MenuItem(**kw))
 
     def add_item(self, name, label, **kw):
@@ -286,7 +289,6 @@ class Menu(MenuItem):
         if mi.bound_action is not None:
             if mi.bound_action.actor.abstract:
                 return
-            #~ if not mi.bound_action.actor.get_view_permission(self.user):
             if not mi.bound_action.get_view_permission(self.user_profile):
                 return
             #~ logger.info("20130129 _add_item %s for %s",mi.label,self.user_profile)

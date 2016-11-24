@@ -33,7 +33,7 @@ from lino.utils import join_elems
 
 from datetime import timedelta
 
-from .choicelists import MessageTypes
+from .choicelists import MessageTypes, MailModes
 
 
 class MarkSeen(dd.Action):
@@ -293,8 +293,15 @@ dd.update_field(Message, 'user',
 
 dd.inject_field(
     'users.User', 'notifyme_mode',
-    models.BooleanField(
-        _('Send messages via e-mail'), default=True))
+    dd.DummyField())
+    # models.BooleanField(
+    #     _('Send messages via e-mail'), default=True))
+
+dd.inject_field(
+    'users.User', 'mail_mode',
+    MailModes.field(
+        _('Email notification mode'),
+        default=MailModes.immediately.as_callable))
 
 
 class Messages(dd.Table):
@@ -442,29 +449,31 @@ if not h or h.endswith('example.com'):
     dd.logger.debug(
         "Won't send pending messages because EMAIL_HOST is %r",
         h)
-elif dd.plugins.notify.use_websockets:
+    
+if True:
+    
     @dd.schedule_daily()
     def send_pending_emails_daily():
         Message = rt.models.notify.Message
         qs = Message.objects.filter(sent__isnull=True)
-        qs = qs.filter(user__notifyme_mode=True).order_by('user')
+        qs = qs.filter(user__mail_mode=MailModes.daily).order_by('user')
         if qs.count() > 0:
             users = dict()
             for obj in qs:
                 lst = users.setdefault(obj.user, [])
                 lst.append(obj)
             dd.logger.debug(
-                "Send out summary emails for %d users.", len(users))
+                "Send out daily summaries for %d users.", len(users))
             for user, lst in users.items():
                 send_summary_email(user, lst)
         else:
             dd.logger.debug("No messages to send.")
-else:
+            
     @dd.schedule_often(every=10)
     def send_pending_emails_often():
         Message = rt.models.notify.Message
         qs = Message.objects.filter(sent__isnull=True)
-        qs = qs.filter(user__notifyme_mode=True)
+        qs = qs.filter(user__mail_mode=MailModes.immediately)
         if qs.count() > 0:
             dd.logger.debug(
                 "Send out emails for %d messages.", qs.count())

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-11-22 04:31+0100\n"
-"PO-Revision-Date: 2016-11-22 04:31+0100\n"
+"POT-Creation-Date: 2016-11-24 20:25+0100\n"
+"PO-Revision-Date: 2016-11-24 20:29+0100\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language: de\n"
 "Language-Team: \n"
@@ -40,12 +40,12 @@ msgstr "Neuen Datensatz erstellen"
 msgid "Insert into %s"
 msgstr "Einfügen in %s"
 
-#: lino/core/actions.py:824 lino/core/requests.py:940
+#: lino/core/actions.py:824 lino/core/requests.py:944
 #, python-format
 msgid "%s has been updated."
 msgstr "%s wurde aktualisiert."
 
-#: lino/core/actions.py:826 lino/core/requests.py:942
+#: lino/core/actions.py:826 lino/core/requests.py:946
 #, python-format
 msgid "%s : nothing to save."
 msgstr "%s : nichts zu speichern."
@@ -58,7 +58,7 @@ msgstr "Änderungen in diesem Formular speichern"
 msgid "Save"
 msgstr "Speichern"
 
-#: lino/core/actions.py:911 lino/core/requests.py:937
+#: lino/core/actions.py:911 lino/core/requests.py:941
 #, python-format
 msgid "%s has been created."
 msgstr "%s wurde erstellt."
@@ -158,7 +158,7 @@ msgstr ""
 "23. Juli\"."
 
 #: lino/core/kernel.py:121 lino/modlib/extjs/linoweb.js:1540
-#: lino/modlib/extjs/linoweb.js:2831
+#: lino/modlib/extjs/linoweb.js:2835
 msgid "Confirmation"
 msgstr "Bestätigung"
 
@@ -241,7 +241,7 @@ msgstr ""
 "Kann %(model)s %(self)s nicht löschen weil %(count)d %(refs)s darauf verweisen."
 
 #: lino/core/model.py:720 lino/core/tables.py:673
-#: lino/modlib/importfilters/models.py:111 lino/modlib/notify/actions.py:37
+#: lino/modlib/importfilters/models.py:111 lino/modlib/notify/actions.py:38
 #: lino/modlib/tinymce/models.py:34 lino/modlib/uploads/models.py:121
 #: lino/modlib/uploads/models.py:134
 msgid "Description"
@@ -251,19 +251,19 @@ msgstr "Beschreibung"
 msgid "Actions"
 msgstr "Aktionen"
 
-#: lino/core/renderer.py:238
+#: lino/core/renderer.py:237
 msgid "Show Last"
 msgstr "Letzten zeigen"
 
-#: lino/core/renderer.py:240
+#: lino/core/renderer.py:239
 msgid "Show the last record in a detail window"
 msgstr "Den letzten datensatz in Detail-Fenster anzeigen"
 
-#: lino/core/renderer.py:247
+#: lino/core/renderer.py:246
 msgid "Show All"
 msgstr "Alle zeigen"
 
-#: lino/core/renderer.py:249
+#: lino/core/renderer.py:248
 msgid "Show all records in a table window"
 msgstr "Datensätze in einem Tabellenfenster anzeigen"
 
@@ -289,11 +289,11 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nein"
 
-#: lino/core/requests.py:964
+#: lino/core/requests.py:968
 msgid "the documentation"
 msgstr "die Dokumentation"
 
-#: lino/core/requests.py:976
+#: lino/core/requests.py:980
 msgid "No data to display"
 msgstr "Keine Daten anzuzeigen"
 
@@ -692,7 +692,7 @@ msgstr "Name"
 msgid "Value"
 msgstr "Wert"
 
-#: lino/modlib/about/models.py:227 lino/modlib/notify/models.py:283
+#: lino/modlib/about/models.py:227
 msgid "About"
 msgstr "Info"
 
@@ -777,22 +777,22 @@ msgid "Home"
 msgstr "Startseite"
 
 #: lino/modlib/bootstrap3/views.py:130 lino/modlib/bootstrap3/views.py:209
-#: lino/modlib/extjs/linoweb.js:3439
+#: lino/modlib/extjs/linoweb.js:3443
 msgid "First page"
 msgstr "Erste Seite"
 
 #: lino/modlib/bootstrap3/views.py:131 lino/modlib/bootstrap3/views.py:211
-#: lino/modlib/extjs/linoweb.js:3441
+#: lino/modlib/extjs/linoweb.js:3445
 msgid "Previous page"
 msgstr "Vorige Seite"
 
 #: lino/modlib/bootstrap3/views.py:143 lino/modlib/bootstrap3/views.py:213
-#: lino/modlib/extjs/linoweb.js:3442
+#: lino/modlib/extjs/linoweb.js:3446
 msgid "Next page"
 msgstr "Nächste Seite"
 
 #: lino/modlib/bootstrap3/views.py:144 lino/modlib/bootstrap3/views.py:215
-#: lino/modlib/extjs/linoweb.js:3440
+#: lino/modlib/extjs/linoweb.js:3444
 msgid "Last page"
 msgstr "Letzte Seite"
 
@@ -947,7 +947,7 @@ msgstr "Passwort vergessen"
 msgid "Log in"
 msgstr "Anmelden"
 
-#: lino/modlib/extjs/ext_renderer.py:1272
+#: lino/modlib/extjs/ext_renderer.py:1274
 msgid "No data to display."
 msgstr "Keine Daten anzuzeigen."
 
@@ -965,11 +965,11 @@ msgstr "Parameter-Panel ein- bzw. ausblenden"
 
 #: lino/modlib/extjs/linoweb.js:691 lino/modlib/extjs/linoweb.js:727
 #: lino/modlib/extjs/linoweb.js:1754 lino/modlib/extjs/linoweb.js:2680
-#: lino/modlib/extjs/linoweb.js:3246
+#: lino/modlib/extjs/linoweb.js:3250
 msgid "Please wait..."
 msgstr "Bitte warten..."
 
-#: lino/modlib/extjs/linoweb.js:952 lino/modlib/extjs/linoweb.js:3931
+#: lino/modlib/extjs/linoweb.js:952 lino/modlib/extjs/linoweb.js:3935
 msgid "This field is disabled"
 msgstr "Dieses Feld ist deaktiviert"
 
@@ -1021,51 +1021,51 @@ msgstr "Letzter"
 msgid "Reload current record"
 msgstr "Datensatz neu laden"
 
-#: lino/modlib/extjs/linoweb.js:2833
+#: lino/modlib/extjs/linoweb.js:2837
 msgid "Save changes to current record ?"
 msgstr "Änderungen in diesem Datensatz speichern?"
 
-#: lino/modlib/extjs/linoweb.js:2891
+#: lino/modlib/extjs/linoweb.js:2895
 msgid "No more records to display. Detail window has been closed."
 msgstr "Keine weiteren Datensätze zu sehen. Detail-Fenster wird geschlossen."
 
-#: lino/modlib/extjs/linoweb.js:3390
+#: lino/modlib/extjs/linoweb.js:3394
 msgid "Quick Search"
 msgstr "Schnellsuche"
 
-#: lino/modlib/extjs/linoweb.js:3390
+#: lino/modlib/extjs/linoweb.js:3394
 msgid "Enter a text to use as quick search filter"
 msgstr "Hier Text eingeben für Schnellsuche."
 
-#: lino/modlib/extjs/linoweb.js:3418
+#: lino/modlib/extjs/linoweb.js:3422
 msgid "View"
 msgstr "Ansicht"
 
-#: lino/modlib/extjs/linoweb.js:3420
+#: lino/modlib/extjs/linoweb.js:3424
 msgid "Select another view of this report"
 msgstr "Andere Ansicht auswählen"
 
-#: lino/modlib/extjs/linoweb.js:3436
+#: lino/modlib/extjs/linoweb.js:3440
 msgid "Page"
 msgstr "Seite"
 
-#: lino/modlib/extjs/linoweb.js:3437
+#: lino/modlib/extjs/linoweb.js:3441
 msgid "of {0}"
 msgstr "von {0}"
 
-#: lino/modlib/extjs/linoweb.js:3438
+#: lino/modlib/extjs/linoweb.js:3442
 msgid "Displaying {0} - {1} of {2}"
 msgstr "Zeilen {0} bis {1} von {2}"
 
-#: lino/modlib/extjs/linoweb.js:3926
+#: lino/modlib/extjs/linoweb.js:3930
 msgid "This record is disabled"
 msgstr "Dieser Datensatz ist deaktiviert"
 
-#: lino/modlib/extjs/linoweb.js:4437
+#: lino/modlib/extjs/linoweb.js:4441
 msgid "Edit help texts for fields on this model."
 msgstr "Hilfetexte der Eingabefelder dieser Tabelle bearbeiten"
 
-#: lino/modlib/extjs/linoweb.js:4609
+#: lino/modlib/extjs/linoweb.js:4613
 msgid "Cannot show MTI child if checkbox is off."
 msgstr "Kann MTI-Kind nicht anzeigen wenn Checkbox abgeschlatet ist."
 
@@ -1137,7 +1137,7 @@ msgstr ""
 msgid "Database object"
 msgstr "Datenobjekt"
 
-#: lino/modlib/gfks/models.py:163 lino/modlib/notify/models.py:107
+#: lino/modlib/gfks/models.py:163 lino/modlib/notify/models.py:116
 #: lino/modlib/plausibility/models.py:145
 msgid "Message"
 msgstr "Meldung"
@@ -1852,35 +1852,34 @@ msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:216
 msgid ""
-"An action with a generic dialog window of three fields \"Summary\",\n"
-"\"Description\" and a checkbox \"Don't send email message\"."
+"An action which pops up a dialog window of three fields \"Summary\",\n"
+"\"Description\" and a checkbox \"Don't notify others\" to optionally\n"
+"suppress notification."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:218
+#: lino/modlib/lino_startup/help_texts.py:219
 msgid ""
 "Mixin for models which can emit notifications to a list of\n"
 "\"observers\" when an instance is modified."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:220
+#: lino/modlib/lino_startup/help_texts.py:221
 msgid "Mark this message as not yet seen."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:221
+#: lino/modlib/lino_startup/help_texts.py:222
 msgid ""
 "A Message is a message to a given user about a given\n"
 "database object."
 msgstr ""
 
-#: lino/modlib/lino_startup/help_texts.py:223
+#: lino/modlib/lino_startup/help_texts.py:224
 #, fuzzy
 msgid "The recipient."
 msgstr "Empfänger"
 
-#: lino/modlib/lino_startup/help_texts.py:224
-msgid ""
-"The database object this message is about.\n"
-"This field is labelled About."
+#: lino/modlib/lino_startup/help_texts.py:225
+msgid "The database object which controls this message."
 msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:226
@@ -3086,17 +3085,17 @@ msgstr "Das Passwort ist für alle Benutzer gleich: \"1234\"."
 msgid "Show this table in own window"
 msgstr "Dieses Panel in eigenem Fenster öffnen"
 
-#: lino/modlib/notify/__init__.py:55 lino/modlib/notify/models.py:108
+#: lino/modlib/notify/__init__.py:72 lino/modlib/notify/models.py:117
 #, fuzzy
 msgid "Messages"
 msgstr "Meldung"
 
-#: lino/modlib/notify/actions.py:36
+#: lino/modlib/notify/actions.py:37
 #, fuzzy
 msgid "Summary"
 msgstr "Kurzbeschreibung"
 
-#: lino/modlib/notify/actions.py:39
+#: lino/modlib/notify/actions.py:40
 msgid "Don't notify others"
 msgstr "Keine Mitteilung an andere"
 
@@ -3119,11 +3118,35 @@ msgctxt "message type"
 msgid "Change"
 msgstr "Änderung"
 
-#: lino/modlib/notify/mixins.py:40
+#: lino/modlib/notify/choicelists.py:56 lino/modlib/notify/models.py:303
+msgid "Email notification mode"
+msgstr "Benachrichtigungen per E-Mail"
+
+#: lino/modlib/notify/choicelists.py:57
+msgid "Email notification modes"
+msgstr "E-Mail-Benachrichtigungsmodi"
+
+#: lino/modlib/notify/choicelists.py:60
+msgid "Never"
+msgstr "Nie"
+
+#: lino/modlib/notify/choicelists.py:61
+msgid "Immediately"
+msgstr "Sofort"
+
+#: lino/modlib/notify/choicelists.py:62
+msgid "Daily"
+msgstr "Täglich"
+
+#: lino/modlib/notify/choicelists.py:63
+msgid "Weekly"
+msgstr "Wöchentlich"
+
+#: lino/modlib/notify/mixins.py:27
 msgid "has been modified by {user}"
 msgstr "wurde bearbeitet durch {user}"
 
-#: lino/modlib/notify/mixins.py:45
+#: lino/modlib/notify/mixins.py:32
 msgid ""
 "Subsequent changes to {obj} will not be notified until you visit {url} and mark "
 "this notification as seen."
@@ -3137,50 +3160,45 @@ msgstr "Als gelesen markieren"
 msgid "Clear seen"
 msgstr "Als ungelesen markieren"
 
-#: lino/modlib/notify/models.py:112
+#: lino/modlib/notify/models.py:121
 msgid "seen"
 msgstr "gelesen"
 
-#: lino/modlib/notify/models.py:113
+#: lino/modlib/notify/models.py:122
 msgid "sent"
 msgstr "verschickt"
 
-#: lino/modlib/notify/models.py:117
+#: lino/modlib/notify/models.py:126
 msgid "Subject"
 msgstr "Betreff"
 
-#: lino/modlib/notify/models.py:118
+#: lino/modlib/notify/models.py:127
 msgid "Body"
 msgstr "Inhalt"
 
-#: lino/modlib/notify/models.py:222
+#: lino/modlib/notify/models.py:231
 msgctxt "notification"
 msgid "{} in {}"
 msgstr "{} in {}"
 
-#: lino/modlib/notify/models.py:239
+#: lino/modlib/notify/models.py:248
 msgid "Send e-mail"
 msgstr "E-Mail schicken"
 
-#: lino/modlib/notify/models.py:281
+#: lino/modlib/notify/models.py:290
 msgid "Recipient"
 msgstr "Empfänger"
 
-#: lino/modlib/notify/models.py:288
-#, fuzzy
-msgid "Send messages via e-mail"
-msgstr "Benachrichtigungen per E-Mail schicken"
-
-#: lino/modlib/notify/models.py:305
+#: lino/modlib/notify/models.py:321
 msgid "Seen"
 msgstr "Gelesen"
 
-#: lino/modlib/notify/models.py:384
+#: lino/modlib/notify/models.py:400
 #, python-format
 msgid "You have %d unseen messages."
 msgstr "Du hast %d ungelesene Benachrichtigungen."
 
-#: lino/modlib/notify/models.py:417
+#: lino/modlib/notify/models.py:433
 msgid "{} unseen notifications"
 msgstr ""
 
@@ -3570,9 +3588,8 @@ msgid "User types"
 msgstr "Benutzerarten"
 
 #: lino/modlib/users/mixins.py:46
-#, fuzzy
 msgid "Time zone"
-msgstr "Site-Besitzer"
+msgstr "Zeitzone"
 
 #: lino/modlib/users/mixins.py:134 lino/modlib/users/mixins.py:164
 msgid "Author"
@@ -3816,3 +3833,6 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 
 #~ msgid "Workflow"
 #~ msgstr "Arbeitsablauf"
+
+#~ msgid "Send messages via e-mail"
+#~ msgstr "Benachrichtigungen per E-Mail schicken"

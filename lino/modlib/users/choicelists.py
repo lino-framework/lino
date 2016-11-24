@@ -134,3 +134,5 @@ add = UserTypes.add_item
 add('000', _("Anonymous"), UserRole, name='anonymous', readonly=True)
 add('100', _("User"), SiteUser, name='user')
 add('900', _("Administrator"), SiteAdmin, name='admin')
+
+

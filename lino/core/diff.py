@@ -64,6 +64,8 @@ class ChangeWatcher(object):
     def get_change_desc_html(self, f, old, new):
         from lino.core.choicelists import ChoiceListField
         if isinstance(f, models.TextField):
+            old = old or ''
+            new = new or ''
             return E.li(
                 E.b(f.verbose_name), " : ",
                 E.pre('\n'.join(difflib.unified_diff(

@@ -39,7 +39,8 @@ def run_in_demo_projects(ctx, admin_cmd, *more, **args):
             cmd = " ".join(args)
             ctx.run(cmd, pty=True)
 
-@task(name='initdb')
+
+@task(name='prep')
 def initdb_demo(ctx, cov=False):
     """Run `manage.py initdb_demo` on every demo project."""
     if cov:

@@ -46,3 +46,18 @@ add('300', _("Action"), 'action')
 # add('300', _("Warning"), 'warning')
 # add('400', _("Note"), 'note')
 # add('900', _("Notification"), 'notification')
+
+
+
+class MailModes(dd.ChoiceList):
+    """How the system should send email notifications to a user.
+
+    """
+    verbose_name = _("Email notification mode")
+    verbose_name_plural = _("Email notification modes")
+    
+add = MailModes.add_item
+add('never', _("Never"), 'never')
+add('immediately', _("Immediately"), 'immediately')
+add('daily', _("Daily"), 'daily')
+add('weekly', _("Weekly"), 'weekly')

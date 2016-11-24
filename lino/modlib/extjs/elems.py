@@ -769,7 +769,7 @@ class FileFieldElement(CharFieldElement):
 
 class ComboFieldElement(FieldElement):
     # value_template = "new Ext.form.ComboBox(%s)"
-    sortable = True
+    # sortable = True
     xtype = None
     filter_type = 'string'
     gridfilters_settings = dict(type='string')
@@ -2023,6 +2023,7 @@ def field2elem(layout_handle, field, **kw):
     selector_field = field
     if isinstance(field, fields.RemoteField):
         selector_field = field.field
+        kw.update(sortable=False)
     if isinstance(selector_field, fields.VirtualField):
         selector_field = selector_field.return_type
     # remember the case of RemoteField to VirtualField
