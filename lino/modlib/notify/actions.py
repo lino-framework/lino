@@ -46,15 +46,6 @@ class NotifyingAction(actions.Action):
     notify_silent
     """, window_size=(50, 15))
 
-    def get_notify_owner(self, ar, obj):
-        """Expected to return the :attr:`owner
-        lino.modlib.notify.models.Message.owner>` of the message.
-
-        The default returns `None`.
-
-        """
-        return None
-
     def get_notify_subject(self, ar, obj):
         """
         Return the default value of the `notify_subject` field.
@@ -66,12 +57,6 @@ class NotifyingAction(actions.Action):
         Return the default value of the `notify_body` field.
         """
         return None
-
-    def get_notify_recipients(self, ar, owner):
-        """Yield a list of users to be notified.
-
-        """
-        return []
 
     def action_param_defaults(self, ar, obj, **kw):
         kw = super(NotifyingAction, self).action_param_defaults(ar, obj, **kw)
@@ -89,18 +74,37 @@ class NotifyingAction(actions.Action):
         ar.set_response(refresh=True)
         ar.set_response(success=True)
         if not ar.action_param_values.notify_silent:
-            obj = ar.selected_rows[0]
-            owner = self.get_notify_owner(ar, obj)
-            self.emit_message(ar, owner)
+            for obj in ar.selected_rows:
+                self.emit_message(ar, obj)
 
-    def emit_message(self, ar, owner, **kw):
-        # body = _("""%(user)s executed the following action:\n%(body)s
-        # """) % dict(user=ar.get_user(),body=body)
-        # obj = ar.selected_rows[0]
-        # owner = self.get_notify_owner(obj)
-        recipients = self.get_notify_recipients(ar, owner)
+    def emit_message(self, ar, obj, **kw):
+        owner = self.get_notify_owner(ar, obj)
+        recipients = self.get_notify_recipients(ar, obj)
         mt = rt.models.notify.MessageTypes.action
+        pv = ar.action_param_values
+        msg = pv.notify_subject + "\n" + pv.notify_body
         rt.models.notify.Message.emit_message(
-            ar, owner, mt,
-            ar.action_param_values.notify_subject + "\n" +
-            ar.action_param_values.notify_body, recipients)
+            ar, owner, mt, msg, recipients)
+
+    def get_notify_owner(self, ar, obj):
+        """Expected to return the :attr:`owner
+        lino.modlib.notify.models.Message.owner>` of the message.
+
+        The default returns `None`.
+
+        `ar` is the action request, `obj` the object on which the
+        action is running,
+
+        """
+        return None
+
+    def get_notify_recipients(self, ar, obj):
+        """Yield a list of users to be notified.
+
+        `ar` is the action request, `obj` the object on which the
+        action is running, 
+
+        """
+        return []
+
+        
