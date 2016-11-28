@@ -1,11 +1,8 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2011-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
-"""Database models for `lino.modlib.users`.
+"""Database models for this plugin.
 
-.. autosummary::
-
-See also :doc:`/dev/dashboard`
 
 """
 from builtins import object

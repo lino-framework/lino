@@ -38,7 +38,11 @@ class DashboardItem(Permittable):
         """Return a HTML string """
 
 class ActorItem(DashboardItem):
+    """The only one that's being used.
 
+    See :mod:`lino_xl.lib.blogs` as a usage example.
+
+    """
     def __init__(self, actor, header_level=2):
         self.actor = actor
         self.header_level = header_level
@@ -66,7 +70,7 @@ class ActorItem(DashboardItem):
             
 
 class CustomItem(DashboardItem):
-        
+    """Won't work. Not used and not tested."""
     def __init__(self, name, func, *args, **kwargs):
         self.func = func
         self.args = args

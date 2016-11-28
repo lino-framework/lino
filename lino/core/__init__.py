@@ -11,6 +11,7 @@ The ``lino.core`` package
     boundaction
     choicelists
     constants
+    dashboard
     dbtables
     dbutils
     ddh
@@ -36,6 +37,7 @@ The ``lino.core`` package
     tables
     tablerequest
     urls
+    userprefs
     utils
     views
     workflows

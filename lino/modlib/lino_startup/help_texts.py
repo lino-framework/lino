@@ -93,10 +93,8 @@ with a field today which defaults to today."""),
 polymorphism."""),
     'lino.mixins.polymorphic.Polymorphic.mti_navigator' : _("""A virtual field which defines buttons for switching between the
 different views."""),
-    'lino.mixins.sequenced.MoveUp' : _("""Move current row one upwards. This action is available on any
-Sequenced object as Sequenced.move_up."""),
-    'lino.mixins.sequenced.MoveDown' : _("""Move current row one downwards. This action is available on any
-Sequenced object as Sequenced.move_down."""),
+    'lino.mixins.sequenced.MoveUp' : _("""Move this row one row upwards."""),
+    'lino.mixins.sequenced.MoveDown' : _("""Move this row one row downwards."""),
     'lino.mixins.sequenced.DuplicateSequenced' : _("""Duplicate this row."""),
     'lino.mixins.sequenced.Sequenced' : _("""Mixin for models that have a field seqno containing a
 "sequence number"."""),
@@ -104,6 +102,8 @@ Sequenced object as Sequenced.move_down."""),
     'lino.mixins.sequenced.Sequenced.move_up' : _("""Exchange the seqno of this item and the previous item."""),
     'lino.mixins.sequenced.Sequenced.move_down' : _("""Exchange the seqno of this item and the next item."""),
     'lino.mixins.sequenced.Sequenced.move_buttons' : _("""Displays buttons for certain actions on this row:"""),
+    'lino.mixins.sequenced.Sequenced.move_action_names' : _("""The names of the actions to display in the move_buttons
+column."""),
     'lino.mixins.sequenced.Hierarchical' : _("""Abstract model mixin for things that have a "parent" and
 "siblings"."""),
     'lino.mixins.uploadable.Uploadable' : _("""Mixin for objects that represent an uploadable file."""),
@@ -140,6 +140,8 @@ including those applied to "child" objects."""),
 other database object. It has no recipient."""),
     'lino.modlib.comments.models.Comment.short_text' : _("""A short "abstract" of your comment. This should not be more
 than one paragraph."""),
+    'lino.modlib.dashboard.Plugin' : _("""See /dev/plugins."""),
+    'lino.modlib.dashboard.models.UpdateWidgets' : _("""Create or update the widgets for this user."""),
     'lino.modlib.davlink.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.export_excel.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.extjs.Plugin' : _("""Extends lino.core.plugin.Plugin."""),
@@ -211,8 +213,6 @@ GeneriForeignKey field."""),
     'lino.modlib.lino_startup.management.commands.initdb.Command' : _("""Flush the database and load the specified fixtures."""),
     'lino.modlib.lino_startup.management.commands.initdb_demo.Command' : _("""Flushes the database and loads the default demo fixtures."""),
     'lino.modlib.notify.Plugin' : _("""See lino.core.plugin.Plugin."""),
-    'lino.modlib.notify.Plugin.use_websockets' : _("""Set this to False in order to deactivate use of websockets and
-channels."""),
     'lino.modlib.notify.actions.NotifyingAction' : _("""An action which pops up a dialog window of three fields "Summary",
 "Description" and a checkbox "Don't notify others" to optionally
 suppress notification."""),
@@ -222,8 +222,8 @@ of a Message."""),
     'lino.modlib.notify.mixins.ChangeObservable' : _("""Mixin for models which can emit notifications to a list of
 "observers" when an instance is modified."""),
     'lino.modlib.notify.models.ClearSeen' : _("""Mark this message as not yet seen."""),
-    'lino.modlib.notify.models.Message' : _("""A Message is a message to a given user about a given
-database object."""),
+    'lino.modlib.notify.models.Message' : _("""A Notification message is a instant message sent by the
+application to a given user."""),
     'lino.modlib.notify.models.Message.user' : _("""The recipient."""),
     'lino.modlib.notify.models.Message.owner' : _("""The database object which controls this message."""),
     'lino.modlib.notify.models.Messages' : _("""Base for all tables of messages."""),
