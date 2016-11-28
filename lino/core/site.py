@@ -52,6 +52,7 @@ from lino import assert_django_code, DJANGO_DEFAULT_LANGUAGE
 from lino.utils.xmlgen.html import E
 # from lino.utils.html2text import html2text
 # from html2text import html2text
+from lino.core.userprefs import UserPrefs
 from lino.core.exceptions import ChangedAPI
 # from .roles import SiteUser
 
@@ -61,7 +62,6 @@ def html2text(html):
     text_maker = HTML2Text()
     text_maker.unicode_snob = True
     return text_maker.handle(html)
-
 
 
 
@@ -605,6 +605,12 @@ class Site(object):
 
     """
 
+    use_websockets = True
+    """Set this to False in order to deactivate use of websockets and
+    channels.
+
+    """
+
     use_java = True
     """
     A site-wide option to disable everything that needs Java.  Note that
@@ -1087,6 +1093,7 @@ class Site(object):
     _welcome_handlers = []
     _site_config = None
     _logger = None
+    
     override_modlib_models = None
     """A dictionary which maps model class names to the plugin which
     overrides them.
@@ -1330,6 +1337,7 @@ class Site(object):
         # self.update_settings(LOGGING=d)
         # from pprint import pprint
         # pprint(d)
+        # print("20161126 Site %s " % d['loggers'].keys())
         # import yaml
         # print(yaml.dump(d))
 
@@ -2734,8 +2742,9 @@ this field.
             if isinstance(k, six.string_types):
                 li = self.get_language_info(k)
                 if li is None:
-                    raise Exception("Unknown language code %r (must be one of %s)" % (
-                        str(k), [li.name for li in self.languages]))
+                    raise Exception(
+                        "Unknown language code %r (must be one of %s)" % (
+                            str(k), [i.name for i in self.languages]))
                 rv.append(li)
             else:
                 assert k in self.languages
@@ -3529,12 +3538,17 @@ signature as `django.core.mail.EmailMessage`.
         return fdl(today)
 
     def get_admin_main_items(self, ar):
-        """Expected to yield a sequence of "items" to be rendered on the home
-        page (:xfile:`admin_main.html`).
+        """Expected to yield a sequence of items to be rendered on the
+        dashboard. home page (:xfile:`admin_main.html`).
 
-        Every item is expected to be a :class:`dd.Table` or a
-        :class:`dd.VirtualTable`. These tables are rendered in that order,
-        with a limit of :attr:`dd.AbstractTable.preview_limit` rows.
+        Every item is expected to be either an instance of
+        :class:`lino.core.dashboard.DashboardItem`, or a
+        :class:`lino.core.actors.Actor`. 
+
+        The items are rendered in that order,
+
+        Tables are shown with a limit of
+        :attr:`lino.core.tables.AbstractTable.preview_limit` rows.
 
         """
         return []

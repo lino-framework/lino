@@ -50,6 +50,7 @@ Utilities
     changes
     wkhtmltopdf
     weasyprint
+    dashboard
 
 "Enterprise Resources"
 ======================

@@ -1,4 +1,4 @@
-# Copyright 2011-2015 Luc Saffre
+# Copyright 2011-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Utilities for :mod:`lino.modlib.users`.
@@ -9,10 +9,8 @@
 from __future__ import unicode_literals
 from builtins import object
 
-import logging
-logger = logging.getLogger(__name__)
-
 from django.conf import settings
+from lino.core import userprefs
 
 
 class AnonymousUser(object):
@@ -64,3 +62,11 @@ class AnonymousUser(object):
         # 20131022 AttributeError at /api/outbox/MyOutbox : 'AnonymousUser'
         # object has no attribute 'get_typed_instance'
         return self
+    
+    def get_preferences(self):
+        """Return the preferences of this user. The returned object is a
+        :class:`lino.core.userprefs.UserPrefs` object.
+
+        """
+        return userprefs.reg.get(self)
+    

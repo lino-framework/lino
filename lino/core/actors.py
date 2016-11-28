@@ -446,6 +446,12 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     If this is False, then then Actor won't have no insert_action.
     """
 
+    hide_headers = False
+    """Set this to True in order to hide the column headers.
+
+    This is ignored when the table is rendered in an ExtJS grid.
+    """
+
     hide_top_toolbar = False
     """
     Whether a Detail Window should have navigation buttons, a "New"

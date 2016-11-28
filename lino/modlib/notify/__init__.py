@@ -6,8 +6,8 @@
 A **notification message** is a message to be sent as quickly as
 possible to its recipient (a system user).
 
-If :attr:`use_websockets` is `True` and the user is online, then he
-will see it as a desktop notification.
+If :attr:`lino.core.site.Site.use_websockets` is `True` and the user
+is online, then he will see it as a desktop notification.
 
 Unseen notfication messages are displayed by the `MyMessages` table
 which is usually part of the items in admin main view. This table also
@@ -24,6 +24,7 @@ by your system activity.
    :toctree:
 
     models
+    choicelists
     actions
     mixins
     utils
@@ -63,17 +64,9 @@ except:
 class Plugin(ad.Plugin):
     "See :class:`lino.core.plugin.Plugin`."
 
-    use_websockets = True
-    """Set this to False in order to deactivate use of websockets and
-    channels.
-
-    """
-
     verbose_name = _("Messages")
 
     needs_plugins = ['lino.modlib.users', 'lino.modlib.gfks']
-    if use_websockets:
-        needs_plugins.append('channels')
 
     media_name = 'js'
 
@@ -86,7 +79,9 @@ class Plugin(ad.Plugin):
     # """
 
     def on_init(self):
-        if self.use_websockets:
+        if self.site.use_websockets:
+            self.needs_plugins.append('channels')
+            
             sd = self.site.django_settings  # the dict which will be
                                             # used to create settings
             sd['CHANNEL_LAYERS'] = {
@@ -105,7 +100,7 @@ class Plugin(ad.Plugin):
                     pass
 
     def get_js_includes(self, settings, language):
-        if self.use_websockets:
+        if self.site.use_websockets:
             yield self.build_lib_url('reconnecting-websocket/reconnecting-websocket.min.js')
             if settings.DEBUG:
                 yield self.build_lib_url(('push.js/push.min.js'))
@@ -124,7 +119,7 @@ class Plugin(ad.Plugin):
 
     def get_head_lines(self, site, request):
         from lino.utils.jsgen import py2js
-        if not self.use_websockets:
+        if not self.site.use_websockets:
             return
         user_name = "anony"
         if request.user.authenticated:

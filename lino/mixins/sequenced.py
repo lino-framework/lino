@@ -37,8 +37,10 @@ from .duplicable import Duplicable, Duplicate
 
 
 class MoveUp(actions.Action):
-    """Move current row one upwards. This action is available on any
-:class:`Sequenced` object as :attr:`Sequenced.move_up`.
+    """Move this row one row upwards.
+
+    This action is available on any :class:`Sequenced` object as
+    :attr:`Sequenced.move_up`.
 
     """
 
@@ -50,7 +52,6 @@ class MoveUp(actions.Action):
     custom_handler = True
     # icon_name = 'arrow_up'
     #~ icon_file = 'arrow_up.png'
-    help_text = _("Move this row one row upwards")
     readonly = False
 
     def get_action_permission(self, ar, obj, state):
@@ -58,27 +59,27 @@ class MoveUp(actions.Action):
             return False
         if not super(MoveUp, self).get_action_permission(ar, obj, state):
             return False
-        #~ logger.info("20130927 %r", ar.data_iterator.__class__)
         if ar.data_iterator.count() == 0:
             return False
         if ar.data_iterator[0] == obj:
             return False
+        # print("20161128", obj.seqno, ar.data_iterator.count())
         return True
 
     def run_from_ui(self, ar, **kw):
         obj = ar.selected_rows[0]
         obj.swap_seqno(ar, -1)
-        #~ obj.move_up()
         kw = dict()
-        #~ kw.update(refresh=True)
         kw.update(refresh_all=True)
         kw.update(message=_("Moved up."))
         ar.success(**kw)
 
 
 class MoveDown(actions.Action):
-    """Move current row one downwards. This action is available on any
-:class:`Sequenced` object as :attr:`Sequenced.move_down`.
+    """Move this row one row downwards.
+
+    This action is available on any :class:`Sequenced` object as
+    :attr:`Sequenced.move_down`.
 
     """
     # label = _("Down")
@@ -89,7 +90,6 @@ class MoveDown(actions.Action):
     # icon_name = 'arrow_down'
     custom_handler = True
     #~ icon_file = 'arrow_down.png'
-    help_text = _("Move this row one row downwards")
     readonly = False
 
     def get_action_permission(self, ar, obj, state):
@@ -169,6 +169,15 @@ class Sequenced(Duplicable):
 
     """
 
+    move_action_names = ('move_up', 'move_down', 'duplicate')
+    """The names of the actions to display in the `move_buttons`
+    column.
+
+    Overridded by :class:`lino.modlib.notify.models.Widget` where the
+    duplicate button would be irritating.
+
+    """
+
     class Meta(object):
         abstract = True
         ordering = ['seqno']
@@ -195,15 +204,16 @@ class Sequenced(Duplicable):
         return str(_("Row # %s") % self.seqno)
 
     def get_siblings(self):
-        """Return a Django Queryset with all siblings of this,
-        or `None` if this is a root element which cannot have any siblings.
+        """Return a Django Queryset with all siblings of this, or `None` if
+        this is a root element which cannot have any siblings.
 
         Siblings are all objects that belong to a same sequence.
         This is needed for automatic management of the `seqno` field.
 
         The queryset will of course include `self`.
-        The default implementation uses a global sequencing
-        by returning all objects of `self`'s model.
+
+        The default implementation uses a global sequencing by
+        returning all objects of `self`'s model.
 
         A common case for overriding this method is when numbering
         restarts for each master.  For example if you have a master
@@ -280,7 +290,7 @@ class Sequenced(Duplicable):
         actor = ar.actor
         l = []
         state = None  # TODO: support a possible state?
-        for n in ('move_up', 'move_down', 'duplicate'):
+        for n in obj.move_action_names:
             ba = actor.get_action_by_name(n)
             if ba.get_row_permission(ar, obj, state):
                 l.append(ar.renderer.action_button(obj, ar, ba))

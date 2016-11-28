@@ -81,7 +81,7 @@ class Permittable(object):
         return add_requirements(self, *args)
 
     def get_view_permission(self, profile):
-        raise NotImplementedError()
+        return True
 
 
 def add_requirements(obj, *args):
@@ -284,5 +284,4 @@ def make_permission_handler_(
                 allowed_states, user.username, obj2str(obj), state, v)
             return v
     return allow
-
 

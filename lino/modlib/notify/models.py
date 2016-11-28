@@ -28,6 +28,7 @@ from lino.modlib.users.mixins import UserAuthored, My
 from lino.modlib.office.roles import OfficeStaff, OfficeUser
 from lino.mixins.bleached import body_subject_to_elems
 
+from lino.utils.format_date import fds
 from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 
@@ -36,6 +37,26 @@ from datetime import timedelta
 from .choicelists import MessageTypes, MailModes
 
 
+class MarkAllSeen(dd.Action):
+    select_rows = False
+    http_method = 'POST'
+    
+    label = _("Mark all as seen")
+    
+    def run_from_ui(self, ar):
+        qs = rt.models.notify.Message.objects.filter(
+            user=ar.get_user(), seen__isnull=True)
+        def ok(ar):
+            for obj in qs:
+                obj.seen = timezone.now()
+                obj.save()
+            ar.success(refresh_all=True)
+            
+        ar.confirm(
+            ok,
+            _("Mark {} notifications as seen.").format(qs.count()),
+            _("Are you sure?"))
+        
 class MarkSeen(dd.Action):
     label = _("Mark as seen")
     show_in_bbar = False
@@ -78,9 +99,9 @@ class ClearSeen(dd.Action):
 
 @dd.python_2_unicode_compatible
 class Message(UserAuthored, Controllable, Created):
-    """A **Message** is a message to a given user about a given
-    database object.
-    
+    """A **Notification message** is a instant message sent by the
+    application to a given user.
+
     Use the class method :meth:`create_message` to create a new
     message (and to skip creation in case that user has already
     been notified about that owner)
@@ -113,8 +134,8 @@ class Message(UserAuthored, Controllable, Created):
 
     class Meta(object):
         app_label = 'notify'
-        verbose_name = _("Message")
-        verbose_name_plural = _("Messages")
+        verbose_name = _("Notification message")
+        verbose_name_plural = _("Notification messages")
 
     message_type = MessageTypes.field()
     
@@ -170,7 +191,7 @@ class Message(UserAuthored, Controllable, Created):
             obj = cls(user=user, owner=owner, **kwargs)
             obj.full_clean()
             obj.save()
-            if dd.plugins.notify.use_websockets:
+            if settings.SITE.use_websockets:
                 obj.send_browser_message(user)
 
     # @dd.displayfield(_("Subject"))
@@ -259,6 +280,7 @@ class Message(UserAuthored, Controllable, Created):
     #     self.save()
     #     ar.success(refresh_all=True)
 
+    mark_all_seen = MarkAllSeen()
     mark_seen = MarkSeen()
     clear_seen = ClearSeen()
 
@@ -375,7 +397,29 @@ class MyMessages(My, Messages):
     # column_names = "created subject owner sent workflow_buttons *"
     column_names = "body created message_type workflow_buttons *"
     order_by = ['created']
+    # hide_headers = True
+    slave_grid_format = 'summary'
 
+    @classmethod
+    def get_slave_summary(cls, mi, ar):
+        qs = rt.models.notify.Message.objects.filter(
+            user=ar.get_user()).order_by('created')
+        # mark_all = rt.models.notify.MyMessages.get_action_by_name(
+        #     'mark_all_seen')
+        # html = E.tostring(ar.action_button(mark_all, None))
+        # TODO: make action_button() work with list actions
+        html = ''
+        ba = rt.models.notify.MyMessages.get_action_by_name('mark_seen')
+        def fmt(obj):
+            s = E.tostring(ar.action_button(ba, obj)) 
+            s += fds(obj.created) + " " + obj.created.strftime(
+                settings.SITE.time_format_strftime) + " "
+            s += obj.body
+            return "<li>{}</li>".format(s)
+        items = []
+        for obj in qs:
+            items.append(fmt(obj))
+        return html + "<ul>{}</ul>".format(''.join(items))
     # filter = models.Q(seen__isnull=True)
 
     @classmethod

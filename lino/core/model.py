@@ -44,8 +44,8 @@ class Model(models.Model):
 
     .. attribute:: workflow_buttons
 
-        A virtual field that displays the workflow buttons for this
-        row and the given action request.
+        A virtual field that displays the workflow actions for this
+        row.
 
     .. method:: full_clean
 
@@ -95,7 +95,6 @@ class Model(models.Model):
         chooser will be a "learning" chooser.  That is, users can
         enter text into the combobox, and Lino will create a new
         database object from it.
-
 
     """
 

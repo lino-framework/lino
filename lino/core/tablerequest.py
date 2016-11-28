@@ -403,14 +403,15 @@ class TableRequest(ActionRequest):
         fields, headers, cellwidths = ar.get_field_info(column_names)
         columns = fields
 
-        headers = [
-            x for x in grid.headers2html(
-                self, columns, headers, **self.renderer.cellattrs)]
         sums = [fld.zero for fld in columns]
-        if cellwidths:
-            for i, td in enumerate(headers):
-                td.attrib.update(width=six.text_type(cellwidths[i]))
-        tble.head.append(xghtml.E.tr(*headers))
+        if not self.ah.actor.hide_headers:
+            headers = [
+                x for x in grid.headers2html(
+                    self, columns, headers, **self.renderer.cellattrs)]
+            if cellwidths:
+                for i, td in enumerate(headers):
+                    td.attrib.update(width=six.text_type(cellwidths[i]))
+            tble.head.append(xghtml.E.tr(*headers))
         #~ print 20120623, ar.actor
         recno = 0
         for obj in data_iterator:

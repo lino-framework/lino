@@ -216,6 +216,9 @@ channels."""),
     'lino.modlib.notify.actions.NotifyingAction' : _("""An action which pops up a dialog window of three fields "Summary",
 "Description" and a checkbox "Don't notify others" to optionally
 suppress notification."""),
+    'lino.modlib.notify.choicelists.MessageTypes' : _("""The list of possible choices for the message_type field
+of a Message."""),
+    'lino.modlib.notify.choicelists.MailModes' : _("""How the system should send email notifications to a user."""),
     'lino.modlib.notify.mixins.ChangeObservable' : _("""Mixin for models which can emit notifications to a list of
 "observers" when an instance is modified."""),
     'lino.modlib.notify.models.ClearSeen' : _("""Mark this message as not yet seen."""),
@@ -435,7 +438,11 @@ See also lino.modlib.users.utils.AnonymousUser.authenticated."""),
 only some fields.  This is used on demo sites in
 admin_main.html to display the list of available users."""),
     'lino.modlib.users.models.UsersOverview.model' : _("""alias of User"""),
-    'lino.modlib.users.models.Authority' : _("""An Authority is when a User gives another User the right to "represent him" """),
+    'lino.modlib.users.models.Authority' : _("""An Authority is when a user gives another user the right to
+"represent" them."""),
+    'lino.modlib.users.models.Authority.user' : _("""The user who gives the right of representation. author of this
+authority"""),
+    'lino.modlib.users.models.Authority.authorized' : _("""The user who gets the right to represent the author"""),
     'lino.modlib.users.roles.Helper' : _("""Somebody who can help others by running AssignToMe
 action."""),
     'lino.modlib.users.roles.AuthorshipTaker' : _("""Somebody who can help others by running TakeAuthorship
