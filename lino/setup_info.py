@@ -2,9 +2,9 @@
 # Copyright 2009-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-# ~ Note that this module may not have a docstring because any
-# ~ global variable defined here will override the global
-# ~ namespace of lino/__init__.py who includes it with execfile.
+# Note that this module may not have a docstring because any
+# global variable defined here will override the global
+# namespace of lino/__init__.py who includes it with execfile.
 
 # This module is part of the Lino test suite.
 # To test only this module:
@@ -129,12 +129,13 @@ lino.modlib.bootstrap3
 lino.modlib.changes
 lino.modlib.comments
 lino.modlib.comments.fixtures
-lino.modlib.gfks
-lino.modlib.gfks.fixtures
+lino.modlib.dashboard
 lino.modlib.database_ready
 lino.modlib.davlink
 lino.modlib.export_excel
 lino.modlib.extjs
+lino.modlib.gfks
+lino.modlib.gfks.fixtures
 lino.modlib.jinja
 lino.modlib.importfilters
 lino.modlib.languages
