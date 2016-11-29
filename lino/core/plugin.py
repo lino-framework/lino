@@ -328,3 +328,9 @@ class Plugin(object):
                 return self.site.plugins.get(self.menu_group)
         return self.needed_by or self
 
+    def setup_user_prefs(self, up):
+        """Called when a :class:`lino.core.userprefs.UserPrefs` get
+        instantiated.
+
+        """
+        pass

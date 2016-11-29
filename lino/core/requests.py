@@ -686,6 +686,7 @@ request from it.
             kwargs.update(master_instance=master_instance)
 
         if isinstance(spec, BaseRequest):
+            assert not kwargs
             ar = spec
         else:
             ar = self.spawn(spec, **kwargs)

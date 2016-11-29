@@ -24,8 +24,10 @@ from django.contrib.auth.hashers import (
 from lino.api import dd, rt
 from lino.utils.xmlgen.html import E
 from lino.core import actions
+from lino.core import userprefs
 from lino.core.fields import NullCharField
 from lino.core.roles import SiteAdmin
+
 
 from lino.mixins import CreatedModified
 
@@ -329,6 +331,13 @@ class User(CreatedModified, TimezoneHolder):
                         str(cls._meta.verbose_name), username))
             return default
 
+    def get_preferences(self):
+        """Return the preferences of this user. The returned object is a
+        :class:`lino.core.userprefs.UserPrefs` object.
+
+        """
+        return userprefs.reg.get(self)
+    
     # @dd.action(label=_("Send e-mail"),
     #            show_in_bbar=True, show_in_workflow=False,
     #            button_text="✉")  # u"\u2709"
@@ -432,13 +441,18 @@ class UsersOverview(Users):
 
 
 class Authority(UserAuthored):
-
-    """
-    An Authority is when a User gives another User the right to "represent him"
+    """An Authority is when a user gives another user the right to
+    "represent" them.
    
-    :user: points to the user who gives the right of representation. author of this Authority
-    :authorized: points to the user who gets the right to represent the author
-    
+    .. attribute:: user
+
+        The user who gives the right of representation. author of this
+        authority
+
+    .. attribute:: authorized 
+
+        The user who gets the right to represent the author
+
     """
 
     class Meta(object):
@@ -446,7 +460,6 @@ class Authority(UserAuthored):
         verbose_name = _("Authority")
         verbose_name_plural = _("Authorities")
 
-    #~ quick_search_fields = ('user__username','user__first_name','user__last_name')
 
     authorized = models.ForeignKey(
         settings.SITE.user_model,
@@ -465,7 +478,7 @@ class Authority(UserAuthored):
 
 class Authorities(dd.Table):
     required_roles = dd.required(SiteAdmin)
-    model = Authority
+    model = 'users.Authority'
 
 
 class AuthoritiesGiven(Authorities):
@@ -482,3 +495,5 @@ class AuthoritiesTaken(Authorities):
     label = _("Authorities taken")
     column_names = 'user'
     auto_fit_column_widths = True
+
+

@@ -77,22 +77,9 @@
 {{ after_welcome }}
             
 {% block admin_main_items %}
-{% for T in settings.SITE.get_admin_main_items(ar) %}
-{% if E.iselement(T) %}{{E.tostring(T)}}{% else %}
-{% if T is string %}{{T}}{% else %}
-{% if T.default_action.get_view_permission(ar.get_user().profile) %}
-{% set sar = ar.spawn(T, limit=T.preview_limit) %}
-{% if sar.get_total_count() %}
-<h2>{{T.label}} {{E.tostring(ar.window_action_button(T.default_action,
-    label="🗗", style="text-decoration:none; font-size:80%;",
-    title=_("Show this table in own window")))}}
-</h2>
-{{E.tostring(ar.show(sar))}}
-{% endif %}
-{% endif %}
-{% endif %}
-{% endif %}
-{% endfor %}
+{% for i in ar.get_user().get_preferences().dashboard_items -%}
+{{ i.render(ar) }}
+{%- endfor %}
 {% endblock %}
 
 </div>

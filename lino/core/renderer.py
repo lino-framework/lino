@@ -130,7 +130,8 @@ class HtmlRenderer(Renderer):
         this has no meaning.
 
         """
-        if ar.actor.master is not None and not nosummary:
+        # if ar.actor.master is not None and not nosummary:
+        if not nosummary:
             if ar.actor.slave_grid_format == 'summary':
                 return ar.actor.get_slave_summary(ar.master_instance, ar)
         return ar.table2xhtml(**kw)
