@@ -2,11 +2,24 @@
 # Copyright 2015-2016 Luc Saffre.
 # License: BSD, see LICENSE for more details.
 """Used by :xfile:`make_screenshots.py` scripts.
+
+`Introducing the Selenium-WebDriver API by Example
+<http://www.seleniumhq.org/docs/03_webdriver.jsp#introducing-the-selenium-webdriver-api-by-example>`__
+
+`INVOKE_SERVER` does not work anymore. It seems that
+:meth:`driver.get` does not wait if the server is just starting up and
+therefore not even yet responding to connection requests. The only
+workaround for this is currently to run the webserver process in a
+different terminal.
+
 """
 
 from __future__ import unicode_literals, absolute_import, print_function
 from builtins import object
+import os
 import sys
+import time
+from threading import Thread
 import subprocess
 
 from unipath import Path
@@ -16,28 +29,45 @@ from atelier.utils import unindent
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.command import Command
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+INVOKE_SERVER = False
 
 def runserver(settings_module, func, driver=None):
-    args = ['django-admin', 'runserver', '--noreload', '--settings',
-            settings_module]
-    server = subprocess.Popen(args, stdout=None, stderr=None)
-
-    # print("Started subprocess {0}".format(server.pid))
 
     if driver is None:
         driver = webdriver.Firefox()
         # driver = webdriver.Chrome('chromium-browser')
 
-    try:
-        driver.get("http://127.0.0.1:8000/")
-        func(driver)
-    finally:
-        server.terminate()
-        driver.quit()
+    if INVOKE_SERVER:
+        env = dict()
+        if False:
+            env.update(LINO_BUILD_CACHE_ON_STARTUP='yes')
+        env.update(os.environ)
+        args = ['django-admin', 'runserver', '--noreload', '--settings',
+                settings_module]
+        server = subprocess.Popen(args, stdout=None, stderr=None, env=env)
 
+        # driver.implicitly_wait(10) # seconds
+        # time.sleep(10)
+        # startup_time = 1
+        # print("Sleeping {} seconds while server wakes up...".format(startup_time))
+        # time.sleep(startup_time)
+    try:
+        url = "http://127.0.0.1:8000/"
+        # driver.execute(Command.GET, {'url': url})
+        driver.get(url)
+        func(driver)
+    except Exception as e:
+        print(e)
+
+    if INVOKE_SERVER:
+        server.terminate()
+        
+    driver.quit()
+    
 
 class Album(object):
     """Generates one directory of screenshots images and their `index.rst`
