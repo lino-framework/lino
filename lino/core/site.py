@@ -585,6 +585,11 @@ class Site(object):
     :func:`lino.core.utils.is_devserver` returns True or
     setting:`DEBUG` is set.
 
+    .. envvar:: LINO_BUILD_CACHE_ON_STARTUP
+
+        If a variable of that name is set, then Lino will override the
+        code value and set :attr:`build_js_cache_on_startup` to True.
+
     """
 
     keep_erroneous_cache_files = False
@@ -606,8 +611,17 @@ class Site(object):
     """
 
     use_websockets = True
-    """Set this to False in order to deactivate use of websockets and
-    channels.
+    """Set this to `False` in order to deactivate use of websockets and
+    channels.  
+
+    This setting is currently used only by :mod:`lino.modlib.notify`,
+    so its setting is ignored if your application doesn't use that
+    plugin.
+
+    If you use :mod:`lino.modlib.notify` and leave this setting at
+    True, then you will need to install `django-channels`::
+
+        pip install channels
 
     """
 

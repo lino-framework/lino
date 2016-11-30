@@ -462,6 +462,8 @@ class Kernel(object):
 
         self.memo_parser.register_command('url', url2html)
 
+        if 'LINO_BUILD_CACHE_ON_STARTUP' in os.environ:
+            site.build_js_cache_on_startup = True
         if site.build_js_cache_on_startup is None:
             site.build_js_cache_on_startup = not (
                 settings.DEBUG or is_devserver())
