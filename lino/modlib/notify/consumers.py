@@ -10,7 +10,6 @@ from django.utils import timezone
 from django.utils.module_loading import import_string
 from django.utils.crypto import constant_time_compare
 
-from lino.modlib.notify.models import Message
 from lino.modlib.users.utils import AnonymousUser
 
 # copied from django.contrib.auth.models
@@ -18,6 +17,8 @@ SESSION_KEY = '_auth_user_id'
 BACKEND_SESSION_KEY = '_auth_user_backend'
 HASH_SESSION_KEY = '_auth_user_hash'
 REDIRECT_FIELD_NAME = 'next'
+
+PUBLIC_GROUP = 'all_users_channel'
 
 
 def load_backend(path):
@@ -166,7 +167,11 @@ def channel_session_user_from_http(func):
 # in all consumers with the same reply_channel, so all three here)
 @channel_session_user_from_http
 def ws_connect(message):
-    pass
+    Group(PUBLIC_GROUP).add(message.reply_channel)
+
+@channel_session_user_from_http
+def ws_disconnect(message):
+    Group(PUBLIC_GROUP).discard(message.reply_channel)
 
 
 def ws_receive(message):
@@ -182,7 +187,8 @@ def ws_receive(message):
 @channel_session_user
 def set_notification_as_seen(message):
     message_id = message['message_id']
-    message = Message.objects.get(pk=message_id )
+    from lino.modlib.notify.models import Message
+    message = Message.objects.get(pk=message_id)
     message.seen = timezone.now()
     message.save()
 

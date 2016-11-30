@@ -1,5 +1,5 @@
 from channels.routing import route, include
-from .consumers import ws_receive, ws_connect, set_notification_as_seen, user_connected
+from .consumers import ws_receive, ws_connect,ws_disconnect, user_connected
 
 
 # There's no path matching on these routes; we just rely on the matching
@@ -8,6 +8,8 @@ from .consumers import ws_receive, ws_connect, set_notification_as_seen, user_co
 websocket_routing = [
     # Called when WebSockets connect
     route("websocket.connect", ws_connect),
+    # Called when WebSockets disconnect
+    route("websocket.disconnect", ws_disconnect),
     # Called when WebSockets get sent a data frame
     route("websocket.receive", ws_receive),
 ]
@@ -18,7 +20,7 @@ custom_routing = [
     # Handling different chat commands (websocket.receive is decoded and put
     # onto this channel) - routed on the "command" attribute of the decoded
     # message.
-    route("notify.receive", set_notification_as_seen, command="^seen", ),
+    # route("notify.receive", set_notification_as_seen, command="^seen", ),
     route("notify.receive", user_connected, command="^user_connect", ),
 ]
 
