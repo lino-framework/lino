@@ -534,6 +534,12 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     """
 
+    preview_limit = None
+    """For non-table actors this is always `None`, otherwise see
+    :attr:`lino.core.tables.AbstractTable.preview_limit`.
+
+    """
+    
     def __init__(self, *args, **kw):
         raise Exception("Actors should never get instantiated")
 
