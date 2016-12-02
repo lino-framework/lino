@@ -2291,6 +2291,90 @@ Lino.FieldBoxMixin = {
   }
 };
 
+Ext.override(Ext.form.HtmlEditor, {
+    fixKeys : function(){
+        if(Ext.isIE){
+            return function(e){
+                var k = e.getKey(),
+                    doc = this.getDoc(),
+                        r;
+                if(k == e.TAB){
+                    e.stopEvent();
+                    r = doc.selection.createRange();
+                    if(r){
+                        r.collapse(true);
+                        r.pasteHTML('&nbsp;&nbsp;&nbsp;&nbsp;');
+                        this.deferFocus();
+                    }
+                }else if(k == e.ENTER){
+                    r = doc.selection.createRange();
+                    if(r){
+                        var target = r.parentElement();
+                        if(!target || target.tagName.toLowerCase() != 'li'){
+                            e.stopEvent();
+                            r.pasteHTML('<br />');
+                            r.collapse(false);
+                            r.select();
+                        }
+                    }
+                }
+            };
+        }else if(Ext.isOpera){
+            return function(e){
+                var k = e.getKey();
+                if(k == e.TAB){
+                    e.stopEvent();
+                    this.win.focus();
+                    this.execCmd('InsertHTML','&nbsp;&nbsp;&nbsp;&nbsp;');
+                    this.deferFocus();
+                }
+            };
+        }else if(Ext.isWebKit){
+            // HKC : this is probably our most used case.
+            return function(e){
+                var k = e.getKey();
+                if(k == e.TAB){
+                    e.stopEvent();
+                    this.execCmd('InsertText','\t');
+                    this.deferFocus();
+                }else if(k == e.ENTER){
+                    e.stopEvent();
+                    this.execCmd('InsertHtml','<br /><br />');
+                    this.deferFocus();
+                }
+             //   HKC
+               else if (k == e.S && e.ctrlKey){
+                    e.stopEvent();
+                    e.preventDefault();
+                    //this.getWin.fireEvent('keyup');
+                    // this.fireKey(e);
+                    console.log('HTMLEditor is saving...');
+                }
+             };
+        }
+    }(),
+    // bubbleEvents : ['keypress']
+    // initComponent : function() {
+    //     Ext.form.HtmlEditor.superclass.initComponent.call(this);
+    //     this.addEvents('submit');
+    // },
+    // submit : function (event) {
+    //     console.log("rrrrr");
+    // },
+    // initEditor : function() {
+    //     Ext.form.HtmlEditor.superclass.initEditor.call(this);
+    //     if (Ext.isGecko) {
+    //         Ext.EventManager.on(this, 'keypress', this.fireSubmit, this);
+    //     }
+    //     if (Ext.isIE || Ext.isWebKit || Ext.isOpera) {
+    //         Ext.EventManager.on(this, 'keydown', this.fireSubmit,
+    //             this);
+    //     }
+    // },
+    fireSubmit : function(e) {
+        console.log("fireSubmit ...");
+    }
+});
 
 
 Lino.HtmlBoxPanel = Ext.extend(Ext.Panel, Lino.PanelMixin);
@@ -3143,7 +3227,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
           key: 's', ctrl: true, 
              stopEvent: true, handler: this.on_ok, scope:this });
   }
-  
+
 });
 
 

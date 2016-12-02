@@ -24,6 +24,7 @@ from lino.core.site import html2text
 
 from lino.mixins import Created, ObservedPeriod
 from lino.modlib.gfks.mixins import Controllable
+from lino.modlib.notify.consumers import PUBLIC_GROUP
 from lino.modlib.users.mixins import UserAuthored, My
 from lino.modlib.office.roles import OfficeStaff, OfficeUser
 from lino.mixins.bleached import body_subject_to_elems
@@ -40,23 +41,25 @@ from .choicelists import MessageTypes, MailModes
 class MarkAllSeen(dd.Action):
     select_rows = False
     http_method = 'POST'
-    
+
     label = _("Mark all as seen")
-    
+
     def run_from_ui(self, ar):
         qs = rt.models.notify.Message.objects.filter(
             user=ar.get_user(), seen__isnull=True)
+
         def ok(ar):
             for obj in qs:
                 obj.seen = timezone.now()
                 obj.save()
             ar.success(refresh_all=True)
-            
+
         ar.confirm(
             ok,
             _("Mark {} notifications as seen.").format(qs.count()),
             _("Are you sure?"))
-        
+
+
 class MarkSeen(dd.Action):
     label = _("Mark as seen")
     show_in_bbar = False
@@ -138,11 +141,11 @@ class Message(UserAuthored, Controllable, Created):
         verbose_name_plural = _("Notification messages")
 
     message_type = MessageTypes.field()
-    
+
     seen = models.DateTimeField(_("seen"), null=True, editable=False)
     sent = models.DateTimeField(_("sent"), null=True, editable=False)
     # message = models.TextField(_("Message"), editable=False)
-    
+
     # no longer used:
     subject = models.CharField(_("Subject"), max_length=250, editable=False)
     body = dd.RichTextField(_("Body"), editable=False, format='html')
@@ -151,6 +154,7 @@ class Message(UserAuthored, Controllable, Created):
         return "{} #{}".format(self.message_type, self.id)
 
         # return _("About {0}").format(self.owner)
+
     # return self.message
     # return _("Notify {0} about change on {1}").format(
     #     self.user, self.owner)
@@ -284,6 +288,29 @@ class Message(UserAuthored, Controllable, Created):
     mark_seen = MarkSeen()
     clear_seen = ClearSeen()
 
+    def send_browser_message_for_all_users(self, user):
+        """
+        Send_message to all connected users
+        """
+
+        message = {
+            "id": self.id,
+            "subject": str(self),
+            "body": html2text(self.body),
+            "created": self.created.strftime("%a %d %b %Y %H:%M"),
+        }
+
+        # Encode and send that message to the whole channels Group for our
+        # liveblog. Note how you can send to a channel or Group from any part
+        # of Django, not just inside a consumer.
+        from channels import Group
+        Group(PUBLIC_GROUP).send({
+            # WebSocket text frame, with JSON content
+            "text": json.dumps(message),
+        })
+
+        return
+
     def send_browser_message(self, user):
         """
         Send_message to the user's browser
@@ -316,8 +343,8 @@ dd.update_field(Message, 'user',
 dd.inject_field(
     'users.User', 'notifyme_mode',
     dd.DummyField())
-    # models.BooleanField(
-    #     _('Send messages via e-mail'), default=True))
+# models.BooleanField(
+#     _('Send messages via e-mail'), default=True))
 
 dd.inject_field(
     'users.User', 'mail_mode',
@@ -410,16 +437,19 @@ class MyMessages(My, Messages):
         # TODO: make action_button() work with list actions
         html = ''
         ba = rt.models.notify.MyMessages.get_action_by_name('mark_seen')
+
         def fmt(obj):
-            s = E.tostring(ar.action_button(ba, obj)) 
+            s = E.tostring(ar.action_button(ba, obj))
             s += fds(obj.created) + " " + obj.created.strftime(
                 settings.SITE.time_format_strftime) + " "
             s += obj.body
             return "<li>{}</li>".format(s)
+
         items = []
         for obj in qs:
             items.append(fmt(obj))
         return html + "<ul>{}</ul>".format(''.join(items))
+
     # filter = models.Q(seen__isnull=True)
 
     @classmethod
@@ -493,9 +523,9 @@ if not h or h.endswith('example.com'):
     dd.logger.debug(
         "Won't send pending messages because EMAIL_HOST is %r",
         h)
-    
+
 if True:
-    
+
     @dd.schedule_daily()
     def send_pending_emails_daily():
         Message = rt.models.notify.Message
@@ -512,7 +542,8 @@ if True:
                 send_summary_email(user, lst)
         else:
             dd.logger.debug("No messages to send.")
-            
+
+
     @dd.schedule_often(every=10)
     def send_pending_emails_often():
         Message = rt.models.notify.Message
