@@ -1,12 +1,16 @@
-from future import standard_library
-standard_library.install_aliases()
-from builtins import str
-from builtins import object
+# from future import standard_library
+# standard_library.install_aliases()
+# from builtins import str
+# from builtins import object
 # Copied from http://docs.python.org/library/csv.html
 
 import csv
 import codecs
 import io
+
+import six
+from builtins import object
+# from builtins import str
 
 
 class UTF8Recoder(object):
@@ -38,7 +42,7 @@ class UnicodeReader(object):
 
     def __next__(self):
         row = next(self.reader)
-        return [str(s, "utf-8") for s in row]
+        return [six.text_type(s, "utf-8") for s in row]
 
     def __iter__(self):
         return self

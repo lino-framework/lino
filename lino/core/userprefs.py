@@ -57,7 +57,7 @@ class UserPrefs(object):
         self.dashboard_items = get_available_items(self.user)
         for p in settings.SITE.installed_plugins:
             p.setup_user_prefs(self)
-        settings.SITE.logger.info(
+        settings.SITE.logger.debug(
             "User preferences for %s have been initialized.", self.user)
         
     def invalidate(self):

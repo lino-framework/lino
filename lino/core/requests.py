@@ -4,11 +4,8 @@
 """
 See introduction in :doc:`/dev/ar`.
 
-.. autosummary::
-
 """
 from builtins import str
-from builtins import object
 import six
 
 import logging

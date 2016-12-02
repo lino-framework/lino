@@ -130,3 +130,7 @@ def site_startup():
 # deprecated use, only for backwards compat:
 from django.utils.translation import ugettext_lazy as _
 
+import warnings
+warnings.filterwarnings(
+    "error", "DateTimeField .* received a naive datetime (.*) while time zone support is active.",
+    RuntimeWarning, "django.db.models.fields")

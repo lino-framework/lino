@@ -8,9 +8,10 @@ Choicelists for `lino.modlib.printing`.
 """
 
 from __future__ import unicode_literals
-from future import standard_library
-standard_library.install_aliases()
+# from future import standard_library
+# standard_library.install_aliases()
 from builtins import str
+import six
 
 import logging
 logger = logging.getLogger(__name__)

@@ -5,10 +5,10 @@
 """This is used only when libtidy is not available.
 
 """
-from future import standard_library
-standard_library.install_aliases()
+# from future import standard_library
+# standard_library.install_aliases()
 from builtins import chr
-from builtins import object
+# from builtins import object
 # from __future__ import print_function, unicode_literals
 from xml.sax.saxutils import quoteattr
 

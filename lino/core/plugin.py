@@ -7,14 +7,15 @@ See :doc:`/dev/plugins` before reading this.
 
 
 """
-from future import standard_library
-standard_library.install_aliases()
-from builtins import object
+# from future import standard_library
+# standard_library.install_aliases()
+# from builtins import object
 
 import os
 from os.path import exists, join, dirname, isdir, abspath
 
-from urllib.parse import urlencode
+# from urllib.parse import urlencode
+from six.moves.urllib.parse import urlencode
 import inspect
 
 

@@ -116,11 +116,14 @@ def demo_get(
             #~ if str(e) != msg:
                     #~ raise Exception("Expected %r but got %r" % (msg,str(e)))
 
-    response = test_client.get(url, REMOTE_USER=six.text_type('foo'))
-    if response.status_code != 403:
-        raise Exception(
-            "Status code %s other than 403 for anonymous on GET %s" % (
-                response.status_code, url))
+    if False:
+        # removed 20161202 because (1) it was relatively useless and
+        # (2) caused a PermissionDenied warning
+        response = test_client.get(url, REMOTE_USER=six.text_type('foo'))
+        if response.status_code != 403:
+            raise Exception(
+                "Status code %s other than 403 for anonymous on GET %s" % (
+                    response.status_code, url))
 
     response = test_client.get(url, REMOTE_USER=str(case.username))
     # try:
@@ -295,7 +298,7 @@ def walk_menu_items(username, severe=False):
 
                 item = menuselection_text(mi) + " : "
                 try:
-                    response = test_client.get(url, REMOTE_USER=str(username))
+                    response = test_client.get(url, REMOTE_USER=six.text_type(username))
                     result = check_json_result(
                         response, None,
                         "GET %s for user %s" % (url, username))

@@ -7,10 +7,9 @@ YAML serializer.
 
 Requires PyYaml (http://pyyaml.org/), but that's checked for in __init__.
 """
-from future import standard_library
-standard_library.install_aliases()
+# from future import standard_library
+# standard_library.install_aliases()
 from builtins import str
-from past.builtins import basestring
 
 from io import StringIO
 import yaml
@@ -85,7 +84,7 @@ def Deserializer(stream_or_string, **options):
     """
     Deserialize a stream or string of YAML data.
     """
-    if isinstance(stream_or_string, basestring):
+    if isinstance(stream_or_string, six.string_types):
         stream = StringIO(stream_or_string)
     else:
         stream = stream_or_string

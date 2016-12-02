@@ -10,9 +10,9 @@ See :doc:`/dev/actors`.
 """
 from six import string_types
 from builtins import str
+from future.utils import with_metaclass
 
 import logging
-from future.utils import with_metaclass
 logger = logging.getLogger(__name__)
 
 from django.db import models

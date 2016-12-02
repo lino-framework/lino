@@ -8,10 +8,10 @@ directories. TODO: do only one common loop for both.
 """
 
 from os.path import join, dirname, isdir
+from builtins import str
 import cgi
 import datetime
 import jinja2
-from django.utils import six
 
 SUBDIR_NAME = 'config'
 
@@ -135,7 +135,7 @@ class JinjaRenderer(HtmlRenderer):
         )
 
         def translate(s):
-            return ugettext(six.text_type(s))
+            return ugettext(str(s))
         self.jinja_env.globals.update(_=translate)
 
         def ptranslate(ctx, s):

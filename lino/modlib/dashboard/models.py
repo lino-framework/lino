@@ -79,7 +79,7 @@ class Widget(UserAuthored, Sequenced):
 class Widgets(dd.Table):
     model = 'dashboard.Widget'
 
-class AllWidgets(dd.Table):
+class AllWidgets(Widgets):
     label = _("All dashboard widgets")
     required_roles = dd.required(SiteAdmin)
     column_names = 'id user seqno move_buttons title visible *'

@@ -13,8 +13,8 @@ See also:
 
 
 """
+import six
 from builtins import str
-from past.builtins import basestring
 
 import logging
 logger = logging.getLogger(__name__)
@@ -96,7 +96,7 @@ def install_layout(cls, k, layout_class, **options):
         dl = getattr(cls, k)
     if dl is None:
         return
-    if isinstance(dl, basestring):
+    if isinstance(dl, six.string_types):
         setattr(cls, k, layout_class(dl, cls, **options))
     elif isinstance(dl, layouts.Panel):
         options.update(dl.options)
@@ -973,7 +973,7 @@ class ShowSlaveTable(Action):
         return self._label or self.slave_table.label
 
     def attach_to_actor(self, actor, name):
-        if isinstance(self.slave_table, basestring):
+        if isinstance(self.slave_table, six.string_types):
             T = settings.SITE.modules.resolve(self.slave_table)
             if T is None:
                 msg = "Invalid action {} on actor {!r}: "\

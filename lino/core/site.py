@@ -17,8 +17,8 @@
 
 """
 from __future__ import unicode_literals, print_function
-from future import standard_library
-standard_library.install_aliases()
+# from future import standard_library
+# standard_library.install_aliases()
 from builtins import map
 import six
 # str = six.text_type
@@ -35,7 +35,7 @@ import warnings
 import collections
 import threading
 from importlib import import_module
-from urllib.parse import urlencode
+from six.moves.urllib.parse import urlencode
 from django.apps import AppConfig
 
 from unipath import Path
