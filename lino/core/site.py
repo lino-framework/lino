@@ -1313,7 +1313,7 @@ class Site(object):
         }
 
         handlers = d.setdefault('handlers', {})
-        if False:
+        if True:
             console = handlers.setdefault('console', {})
             console['stream'] = sys.stdout
             # console['level'] = level
