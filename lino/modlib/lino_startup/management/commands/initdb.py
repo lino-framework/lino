@@ -170,6 +170,11 @@ Are you sure (y/n) ?""" % dbname):
             # "no database selected" since Django would try to
             # continue on the dropped database:
             del connections[using]
+            
+            # now reconnect and set foreign_key_checks to 0
+            conn = connections[using]
+            cursor = conn.cursor()
+            cursor.execute("set foreign_key_checks=0;")
         else:
             raise Exception("Not tested for %r" % engine)
             sql_list = []

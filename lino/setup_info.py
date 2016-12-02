@@ -43,7 +43,8 @@ else:
 
 SETUP_INFO = dict(
     name='lino',
-    version='1.7.6',
+    # version='1.7.6',
+    version='2016.12.0',
     install_requires=install_requires,
     description="A framework for writing desktop-like web applications "
                 "using Django and ExtJS",

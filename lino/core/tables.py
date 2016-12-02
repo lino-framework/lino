@@ -248,15 +248,14 @@ class AbstractTable(actors.Actor):
     """
 
     preview_limit = settings.SITE.preview_limit
-    """
-    The maximum number of rows to fetch when this table is being
+    """The maximum number of rows to fetch when this table is being
     displayed in "preview mode", i.e. (1) as a slave table in a detail
     window or (2) as an item of the :xfile:`admin_main.html` returned
     by :meth:`lino.core.site.Site.get_admin_main_items`.
 
     The default value for this is the :attr:`preview_limit
-    <ad.Site.preview_limit>` class attribute of your
-    :class:`Site <ad.Site>`, which itself has a hard-coded
+    <lino.core.site.Site.preview_limit>` class attribute of your
+    :class:`Site <lino.core.site.Site>`, which itself has a hard-coded
     default value of 15 and which you can override in your
     :xfile:`settings.py`.
     
@@ -266,7 +265,6 @@ class AbstractTable(actors.Actor):
     of performance if there are many rows).
     
     Test case and description in the tested docs of :ref:`cosi`.
-    
 
     """
 
