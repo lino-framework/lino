@@ -15,7 +15,6 @@ See also:
 """
 from builtins import str
 from past.builtins import basestring
-# import six
 
 import logging
 logger = logging.getLogger(__name__)
@@ -45,7 +44,6 @@ from lino.core.signals import on_ui_created, pre_ui_delete, pre_ui_save
 from lino.core.permissions import Permittable
 from lino.core.utils import Parametrizable, InstanceAction
 from lino.utils.jsgen import get_user_profile
-# from lino.modlib.users.choicelists import SiteUser
 from lino.utils.choosers import Chooser
 from lino.utils.xmlgen.html import E
 

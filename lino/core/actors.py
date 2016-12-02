@@ -8,11 +8,8 @@ See :doc:`/dev/actors`.
 
 
 """
-from past.builtins import cmp
+from six import string_types
 from builtins import str
-# import six
-# str = six.text_type
-from past.builtins import basestring
 
 import logging
 from future.utils import with_metaclass
@@ -528,12 +525,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     """
 
-    sum_text_column = 0
-    """The index of the column which should hold the text to display on
-    the totals row (returned by :meth:`get_sum_text`).
-
-    """
-
     preview_limit = None
     """For non-table actors this is always `None`, otherwise see
     :attr:`lino.core.tables.AbstractTable.preview_limit`.
@@ -743,7 +734,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
             raise ChangedAPI(
                 "{0} must convert `required` to `required_roles`".format(cls))
         master = getattr(cls, 'master', None)
-        if isinstance(master, basestring):
+        if isinstance(master, string_types):
             cls.master = resolve_model(master)
 
         actions.install_layout(cls, 'detail_layout', layouts.DetailLayout)
@@ -848,11 +839,11 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
             if cls.detail_layout:
                 cls.validate_form = cls._bind_action(actions.ValidateForm())
 
-        if isinstance(cls.workflow_owner_field, basestring):
+        if isinstance(cls.workflow_owner_field, string_types):
             cls.workflow_owner_field = cls.get_data_elem(
                 cls.workflow_owner_field)
 
-        #~ if isinstance(cls.workflow_state_field,basestring):
+        #~ if isinstance(cls.workflow_state_field,string_types):
             #~ fld = cls.get_data_elem(cls.workflow_state_field)
             # ~ if fld is not None: # e.g. cal.Component
                 #~ cls.workflow_state_field = fld
@@ -860,7 +851,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                     #~ print 20120709, cls,name,a
                     #~ setattr(cls,name,a)
 
-        if isinstance(cls.workflow_state_field, basestring):
+        if isinstance(cls.workflow_state_field, string_types):
             cls.workflow_state_field = cls.get_data_elem(
                 cls.workflow_state_field)
             #~ note that fld may be None e.g. cal.Component
@@ -1100,11 +1091,11 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     def set_form_layout(self, attname, dtl=None, **kw):
         if dtl is not None:
             existing = getattr(self, attname)  # 20120914c
-            if isinstance(dtl, basestring):
+            if isinstance(dtl, string_types):
                 if existing is None:
                     setattr(self, attname, layouts.FormLayout(
                         dtl, self, **kw))
-                # if existing is None or isinstance(existing, basestring):
+                # if existing is None or isinstance(existing, string_types):
                 #     if kw:
                 #         setattr(self, attname, layouts.FormLayout(
                 #             dtl, self, **kw))
@@ -1123,7 +1114,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                 assert isinstance(dtl, layouts.FormLayout)
                 assert dtl._datasource is None
                 # added for 20120914c but it wasn't the problem
-                if existing and not isinstance(existing, basestring):
+                if existing and not isinstance(existing, string_types):
                     if not isinstance(dtl, existing.__class__):
                         raise Exception(
                             "Cannot replace existing %s %r by %r" % (
@@ -1402,7 +1393,7 @@ def resolve_action(spec, action=None):
     """
     givenspec = spec
 
-    if isinstance(spec, basestring):
+    if isinstance(spec, string_types):
         site = settings.SITE
         spec = site.actors.resolve(spec) or site.models.resolve(spec)
 
