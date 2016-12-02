@@ -1314,8 +1314,11 @@ class Site(object):
 
         handlers = d.setdefault('handlers', {})
         if True:
+            # We override Django'sdefault config: write to stdout (not
+            # stderr) and remove the 'require_debug_true' filter.
             console = handlers.setdefault('console', {})
             console['stream'] = sys.stdout
+            console['filters'] = []
             # console['level'] = level
         if self.logger_filename and 'file' not in handlers:
             logdir = self.project_dir.child('log')
