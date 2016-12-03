@@ -16,12 +16,9 @@ This defines some helper classes like
 
 from __future__ import unicode_literals
 from __future__ import print_function
-from past.builtins import cmp
-# import six
-# str = six.text_type
+import six
+# from builtins import object
 from builtins import str
-from past.builtins import basestring
-from builtins import object
 
 import sys
 import datetime
@@ -191,7 +188,9 @@ def obj2str(i, force_detailed=False):
         if i.pk is None:
             return '(Unsaved %s instance)' % (i.__class__.__name__)
         try:
-            return u"%s #%s (%s)" % (i.__class__.__name__, str(i.pk), repr(str(i)))
+            return u"%s #%s (%s)" % (
+                i.__class__.__name__, str(i.pk),
+                repr(str(i)))
         except Exception as e:
         #~ except TypeError,e:
             return "Unprintable %s(pk=%r,error=%r" % (
@@ -231,10 +230,7 @@ def sorted_models_list():
     # trigger django.db.models.loading.cache._populate()
     models_list = get_models()
 
-    def fn(a, b):
-        return cmp(full_model_name(a), full_model_name(b))
-    from functools import cmp_to_key
-    models_list.sort(key=cmp_to_key(fn))
+    models_list.sort(key=lambda a: full_model_name(a))
     return models_list
 
 
@@ -261,10 +257,7 @@ def models_by_base(base, toplevel_only=False):
             if add:
                 found.append(m)
 
-    def f(a, b):
-        return cmp(full_model_name(a), full_model_name(b))
-    from functools import cmp_to_key
-    found.sort(key=cmp_to_key(f))
+    found.sort(key=lambda m: full_model_name(m))
     return found
 
 
@@ -367,7 +360,7 @@ def resolve_model(model_spec, app_label=None, strict=False):
 
     """
     # ~ models.get_apps() # trigger django.db.models.loading.cache._populate()
-    if isinstance(model_spec, basestring):
+    if isinstance(model_spec, six.string_types):
         if '.' in model_spec:
             app_label, model_name = model_spec.split(".")
         else:
@@ -393,7 +386,7 @@ def resolve_model(model_spec, app_label=None, strict=False):
                 if len(loading.cache.postponed) > 0:
                     print(("POSTPONED:", loading.cache.postponed))
 
-            if isinstance(strict, basestring):
+            if isinstance(strict, six.string_types):
                 raise Exception(strict % model_spec)
             raise ImportError(
                 "resolve_model(%r,app_label=%r) found %r "

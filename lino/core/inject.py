@@ -342,7 +342,9 @@ def update_field(model_spec, name, **kw):
             fld = model._meta.get_field(name)
             #~ fld = model._meta.get_field_by_name(name)[0]
         except FieldDoesNotExist:
-            logger.warning("Cannot update unresolved field %s.%s", model, name)
+            msg = "Cannot update unresolved field %s.%s", model, name
+            raise Exception(msg)
+            logger.warning(msg)
             return
         # if fld.model != model:
         #     raise Exception('20120715 update_field(%s.%s) : %s' %

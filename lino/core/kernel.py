@@ -881,7 +881,7 @@ class Kernel(object):
                 logger.debug("%s (%s) is up to date.", fn, time.ctime(mtime))
                 return 0
 
-        logger.info("Building %s ...", fn)
+        logger.debug("Building %s ...", fn)
         self.site.makedirs_if_missing(dirname(fn))
         f = codecs.open(fn, 'w', encoding='utf-8')
         try:

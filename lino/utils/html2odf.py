@@ -129,10 +129,11 @@ NotImplementedError: <dl> inside <text:p>
 """
 
 from __future__ import unicode_literals
-from future import standard_library
-standard_library.install_aliases()
+# from future import standard_library
+# standard_library.install_aliases()
 from builtins import str
-from past.builtins import basestring
+import six
+# from past.builtins import basestring
 
 import logging
 logger = logging.getLogger(__name__)
@@ -173,7 +174,7 @@ def html2odf(e, ct=None, **ctargs):
             #~ oe = text.P(**ctargs)
             #~ logger.info("20130201 %s",E.tostring(e))
             #~ raise NotImplementedError("<%s> without container" % e.tag)
-    if isinstance(e, basestring):
+    if isinstance(e, six.string_types):
         ct.addText(e)
         #~ oe = text.Span()
         #~ oe.addText(e)

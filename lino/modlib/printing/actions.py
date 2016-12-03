@@ -7,7 +7,8 @@
 """
 
 from __future__ import unicode_literals
-from builtins import str
+# from builtins import str
+import six
 
 import logging
 logger = logging.getLogger(__name__)
@@ -101,7 +102,7 @@ class BasePrintAction(Action):
         elem = ar.selected_rows[0]
         if self.build_method is None:
             bm = elem.get_build_method()
-        elif isinstance(self.build_method, str):
+        elif isinstance(self.build_method, six.string_types):
             bm = BuildMethods.get_by_value(self.build_method)
         else:
             bm = self.build_method

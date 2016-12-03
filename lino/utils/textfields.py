@@ -13,8 +13,8 @@ It was added and dropped the same day
 for the server-side approach of :srcref:`docs/tickets/44`.
 """
 from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
+# from future import standard_library
+# standard_library.install_aliases()
 
 from html.parser import HTMLParser
 from re import sub
