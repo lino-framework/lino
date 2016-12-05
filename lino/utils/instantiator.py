@@ -360,7 +360,7 @@ def create(model, **kw):
     """Instantiate, full_clean, save and return a database object.
 
     """
-    model = resolve_model(model)
+    # model = resolve_model(model)
     o = model(**kw)
     o.full_clean()
     o.save()
