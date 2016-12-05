@@ -17,7 +17,9 @@ import os
 import datetime
 
 from django.db import models
+from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.utils.timezone import make_aware
 
 from lino.api import rt
 from lino.modlib.plausibility.choicelists import Checker
@@ -209,7 +211,12 @@ class CachedPrintable(Duplicable, Printable):
         t = bm.build(ar, elem.__class__.do_print, elem)
         if t is None:
             raise Exception("%s : build() returned None?!")
-        elem.build_time = datetime.datetime.fromtimestamp(t)
+        # t is a file timestamp as returned by os.path.getmtime()
+        # expressend as the number of seconds since the epoch.
+        t = datetime.datetime.fromtimestamp(t)
+        if settings.USE_TZ:
+            t = make_aware(t)
+        elem.build_time = t
         elem.save()
 
 
