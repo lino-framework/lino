@@ -223,6 +223,9 @@ class ChangeStateAction(actions.Action):
 
         super(ChangeStateAction, self).__init__(**kw)
         #~ logger.info('20120930 ChangeStateAction %s %s', actor,target_state)
+        if self.button_text is None:
+            self.button_text = target_state.button_text
+
         if self.icon_name:
             self.help_text = string_concat(self.label, '. ', self.help_text)
 
