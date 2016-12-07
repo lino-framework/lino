@@ -180,6 +180,20 @@ class Choice(object):
         A Choice object may not be callable itself because Django 1.9
         would misunderstand it.
 
+        Deprecated since 20161207.  We recommend using
+        :meth:`as_callable
+        <lino.core.choicelists.ChoiceList.as_callable>` on the
+        :class:`ChoiceList`. Instead of saying::
+
+            state = MyStates.field(default=MyStates.foo.as_callable)
+
+        we now recommend saying::
+
+            state = MyStates.field(default=MyStates.as_callable('foo'))
+
+        The advantage is that the code defining the choicelist does
+        not need to define a default list of items.
+
         """
         return self.choicelist.get_by_name(self.name)
 
@@ -253,7 +267,7 @@ class ChoiceListMeta(actors.ActorMetaClass):
         """
         if 'label' in classDict:
             raise Exception("label replaced by verbose_name_plural")
-        classDict.setdefault('max_length', 1)
+        classDict.setdefault('max_length', 10)
         cls = actors.ActorMetaClass.__new__(meta, classname, bases, classDict)
 
         cls.items_dict = {}
@@ -279,6 +293,11 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
 
     """
     User-defined choice lists must inherit from this base class.
+
+    .. attribute:: max_length
+
+        The default `max_length` for fields using this choicelist.
+
     """
 
     workflow_actions = []
@@ -290,6 +309,18 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
 
     auto_fit_column_widths = True
 
+    default_value = None
+    """A string with the name of a choice to be used as default value for
+    fields using this list.
+
+    Note that this specifies the *default* default value for *all*
+    :class:`ChoiceListField <lino.core.choicelists.ChoiceListField>`
+    of this choicelist.  The disadvantage is that when somebody *does
+    not* want your default value, then they must explicitly specify
+    `default=''` when defining a field on your choicelist.
+
+    """
+    
     preferred_foreignkey_width = 20
     """
     Default preferred with for ChoiceList fields to this list.
@@ -595,6 +626,18 @@ Django creates copies of them when inheriting models.
         #~ return self.items_dict.get(value)
         return self.items_dict.get(value, *args)
 
+    @classmethod
+    def as_callable(self, name):
+        """Use this when you want to specify some named default choice of
+        this list as a default value *without* removing the
+        possibility to clear and re-populate the list after the field
+        definition.
+
+        """
+        def f():
+            return self.get_by_name(name)
+        return f
+
     #~ @classmethod
     #~ def items(self):
         #~ return [choice[0] for choice in self.choices]
@@ -657,17 +700,16 @@ class ChoiceListField(models.CharField):
         self.choicelist = choicelist
         self.force_selection = force_selection
         defaults = dict(
-            #~ choices=KNOWLEDGE_CHOICES,
-            #~ choices=choicelist.get_choices(),
-            max_length=choicelist.max_length,
-            # ~ blank=choicelist.blank,  # null=True,
-            #~ validators=[validate_knowledge],
-            #~ limit_to_choices=True,
-        )
+            max_length=choicelist.max_length)
+        if choicelist.default_value:
+            defaults.update(
+                default=choicelist.as_callable(choicelist.default_value))
+        if not 'help_text' in kw:
+            # inherited docstrings won't be helpful here.
+            doc = choicelist.__dict__['__doc__']
+            if doc:
+                kw['help_text'] = choicelist.__doc__.split('\n\n')[0]
         defaults.update(kw)
-        kw.update(kw)
-        if not 'help_text' in kw and choicelist.__doc__:
-            kw['help_text'] = choicelist.__doc__.split('\n\n')[0]
         models.CharField.__init__(self, verbose_name, **defaults)
 
     # def contribute_to_class(self, cls, name):

@@ -633,6 +633,16 @@ class Site(object):
 
     """
 
+    use_new_unicode_symbols = False
+    """Whether to use "new" unicode symbols (e.g. from the `Miscellaneous
+    Symbols and Pictographs
+    <https://en.wikipedia.org/wiki/Miscellaneous_Symbols_and_Pictographs>`__
+    block) which are not yet implemented in all fonts.
+
+    Currently used by :mod:`lino_noi.lib.noi.workflows`
+
+    """
+    
     use_experimental_features = False
     """Whether to include "experimental features".
     """
