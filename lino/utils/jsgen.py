@@ -480,14 +480,14 @@ def py2js(v):
         # the dictionary contained a mixture of unicode and
         # future.types.newstr objects.
         def sortkey(x):
-            if isinstance(x, newstr):
-                return six.text_type(x)
-            return x
+            if isinstance(x[0], newstr):
+                return six.text_type(x[0])
+            return x[0]
         items = sorted(items, key=sortkey)
         # try:
         #     items = sorted(items, key=sortkey)
         # except TypeError as e:
-        #     raise TypeError("Failed to sort {0} : {1}".format(v, e))
+        #     raise TypeError("Failed to sort {0!r} : {1}".format(items, e))
         return "{ %s }" % ", ".join(
             ["%s: %s" % (py2js(k), py2js(i)) for k, i in items])
 
