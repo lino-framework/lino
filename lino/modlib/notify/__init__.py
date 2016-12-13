@@ -53,6 +53,7 @@ Templates used by this plugin
 """
 
 from lino.api import ad, _
+
 # from django.conf import settings
 
 try:
@@ -81,9 +82,10 @@ class Plugin(ad.Plugin):
     def on_init(self):
         if self.site.use_websockets:
             self.needs_plugins.append('channels')
-            
-            sd = self.site.django_settings  # the dict which will be
-                                            # used to create settings
+
+            sd = self.site.django_settings
+            # the dict which will be
+            # used to create settings
             sd['CHANNEL_LAYERS'] = {
                 "default": {
                     "BACKEND": "asgiref.inmemory.ChannelLayer",
@@ -132,7 +134,7 @@ class Plugin(ad.Plugin):
         // Note that the path doesn't matter for routing; any WebSocket
         // connection gets bumped over to WebSocket consumers
         var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-        var ws_path = ws_scheme + '://' + window.location.host + "/websocket/";
+        var ws_path = ws_scheme + '://' + window.location.host + ":8443/websocket/";
         console.log("Connecting to " + ws_path);
         var socket = new ReconnectingWebSocket(ws_path);
 
