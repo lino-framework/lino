@@ -17,6 +17,16 @@ class ChangeObservable(dd.Model):
         abstract = True
 
     def get_notify_message(self, ar, cw):
+        """Returns the text of the notification message to emit.
+
+        The default implementation returns a message of style
+        "{object} has been modified by {user}" followed by a summary
+        of the changes.  
+
+        Application code can override this. Returning None or an empty
+        string means to suppress notification.
+
+        """
         if cw is None:
             return
         items = list(cw.get_updates_html())
@@ -38,10 +48,15 @@ class ChangeObservable(dd.Model):
         return E.tostring(E.div(*elems))
 
     def get_notify_owner(self, ar):
-        """Return the owner (the target database object) of the notification
-        to create.
+        """Return the owner (the database object we are talking about) of the
+        notification to emit. When a user has already an unseen
+        notification about a given owner, then Lino ignores all
+        subsequent notifications with that owner.
 
-        For example comments.Comment overrides this.
+        For example
+        :class:`lino_welfare.modlib.pcsw.coaching.Coaching` returns
+        the coaching's client as owner in order to avoid multiple
+        messages.
 
         """
         return self

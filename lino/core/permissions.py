@@ -246,12 +246,13 @@ def make_permission_handler_(
         if isinstance(allowed_states, basestring):
             allowed_states = allowed_states.split()
         for n in allowed_states:
-            if n is not None:
-                if n == '_':
-                    n = None
-                else:
-                    n = lst.get_by_name(n)
-            ns.append(n)
+            if n not in lst.removed_names:
+                if n is not None:
+                    if n == '_':
+                        n = None
+                    else:
+                        n = lst.get_by_name(n)
+                ns.append(n)
         allowed_states = frozenset(ns)
         allow2 = allow
 

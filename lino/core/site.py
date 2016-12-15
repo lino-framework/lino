@@ -63,6 +63,13 @@ def html2text(html):
     text_maker.unicode_snob = True
     return text_maker.handle(html)
 
+PRINT_EMAIL = """send email
+Sender: {sender}
+To: {recipients}
+Subject: {subject}
+
+{body}
+"""
 
 
 startup_rlock = threading.Lock()  # Lock() or RLock()?
@@ -3462,7 +3469,11 @@ signature as `django.core.mail.EmailMessage`.
         if '@example.com' in sender:
             self.logger.debug(
                 "Ignoring email '%s' because sender is %s", subject, sender)
+            print(PRINT_EMAIL.format(
+                subject=subject, sender=sender, body=body,
+                recipients=', '.join(recipients)))
             return
+
         recipients = [a for a in recipients if '@example.com' not in a]
         if not len(recipients):
             self.logger.info(

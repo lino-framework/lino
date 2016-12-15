@@ -88,6 +88,7 @@ class Choice(object):
     choicelist = None
     remark = None
     pk = None
+    
     value = None
     """(a string) The value to use e.g. when this choice is being
                 stored in a database."""
@@ -105,6 +106,7 @@ class Choice(object):
     accessible as a class attribute on its choicelists
 
     """
+
 
     def __init__(self, value, text=None, name=None, **kwargs):
         """Create a new :class:`Choice` instance.
@@ -141,6 +143,13 @@ class Choice(object):
 
     def attach(self, choicelist):
         self.choicelist = choicelist
+
+    def remove(self):
+        """Remove this choice from its list.
+
+        Usage example see 
+        """
+        self.choicelist.remove_item(self)
 
     def __len__(self):
         return len(self.value)
@@ -363,6 +372,8 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
 
     pk = True  # added 20150218.
 
+    removed_names = frozenset()
+
     @classmethod
     def get_default_action(cls):
         return actions.GridEdit()
@@ -423,9 +434,26 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
         for ci in list(cls.items_dict.values()):
             if ci.name:
                 delattr(cls, ci.name)
+        cls.removed_names = frozenset()
         cls.items_dict = {}
-        cls.choices = []
         cls.choices = []  # remove blank_item from choices
+
+    @classmethod
+    def remove_item(cls, i):
+        """Remove the specified item from this list. Called by 
+        :meth:`Choice.remove`.
+        """
+        del cls.items_dict[i.value]
+        if i.name:
+            cls.removed_names |= frozenset([i.name])
+            # print(20161215, cls.removed_names)
+            delattr(cls, i.name)
+        for n, el in enumerate(cls.choices):
+            if el[0] == i:
+                del cls.choices[n]
+        for n, a in enumerate(cls.workflow_actions):
+            if a.target_state == i:
+                del cls.workflow_actions[n]
 
     @classmethod
     def setup_field(cls, fld):
