@@ -1151,8 +1151,6 @@ class ExtRenderer(HtmlRenderer):
             yield "  content_type: %s," % py2js(ContentType.objects.get_for_model(tbl.model).pk)
         if not tbl.editable:
             yield "  disable_editing: true,"
-        if dh.layout._formpanel_name.endswith('.InsertFormPanel'):
-            yield "  default_record_id: -99999,"
         yield "  initComponent : function() {"
         # 20140503 yield "    var containing_panel = this;"
         # yield "// user profile: %s" % jsgen._for_user_profile
@@ -1226,6 +1224,9 @@ class ExtRenderer(HtmlRenderer):
         yield "  ls_url: %s," % py2js(rpt.actor_url())
         if action.action != rpt.default_action.action:
             yield "  action_name: %s," % py2js(action.action.action_name)
+        if isinstance(action.action, InsertRow):
+            yield "  default_record_id: -99999,"
+            
         yield "  initComponent : function() {"
         a = rpt.detail_action
         if a:

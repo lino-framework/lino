@@ -3,8 +3,6 @@
 # License: BSD (see file COPYING for details)
 """Database models for `lino.modlib.users`.
 
-.. autosummary::
-
 See also :doc:`/dev/users`
 
 """
@@ -431,9 +429,9 @@ class MySettings(Users):
 
 class UsersOverview(Users):
 
-    """A variant of :ddref:`users.Users` showing only active users and
-    only some fields.  This is used on demo sites in
-    :xfile:`admin_main.html` to display the list of available users.
+    """A variant of :class:`Users` showing only active users and only some
+    fields.  This is used on demo sites in :xfile:`admin_main.html` to
+    display the list of available users.
 
     """
     column_names = 'username profile language'
