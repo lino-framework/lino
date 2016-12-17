@@ -886,7 +886,7 @@ request from it.
         """
         rh = ar.ah
         rec = ar.elem2rec1(rh, elem, **rec)
-        if ar.actor.hide_top_toolbar:
+        if ar.actor.hide_top_toolbar or ar.bound_action.action.hide_top_toolbar:
             rec.update(title=ar.get_detail_title(elem))
         else:
             #~ print(ar.get_title())

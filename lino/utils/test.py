@@ -37,6 +37,8 @@ class CommonTestCase(unittest.TestCase):
         """Create the given database object, run :meth:`full_clean` and
         :meth:`save`, return the object.
 
+        Deprecated. Use :func:`lino.utils.instantiator.create` instead.
+
         """
         obj = model(**values)
         obj.full_clean()

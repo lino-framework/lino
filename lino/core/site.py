@@ -63,6 +63,13 @@ def html2text(html):
     text_maker.unicode_snob = True
     return text_maker.handle(html)
 
+PRINT_EMAIL = """send email
+Sender: {sender}
+To: {recipients}
+Subject: {subject}
+
+{body}
+"""
 
 
 startup_rlock = threading.Lock()  # Lock() or RLock()?
@@ -633,6 +640,16 @@ class Site(object):
 
     """
 
+    use_new_unicode_symbols = False
+    """Whether to use "new" unicode symbols (e.g. from the `Miscellaneous
+    Symbols and Pictographs
+    <https://en.wikipedia.org/wiki/Miscellaneous_Symbols_and_Pictographs>`__
+    block) which are not yet implemented in all fonts.
+
+    Currently used by :mod:`lino_noi.lib.noi.workflows`
+
+    """
+    
     use_experimental_features = False
     """Whether to include "experimental features".
     """
@@ -3452,7 +3469,11 @@ signature as `django.core.mail.EmailMessage`.
         if '@example.com' in sender:
             self.logger.debug(
                 "Ignoring email '%s' because sender is %s", subject, sender)
+            print(PRINT_EMAIL.format(
+                subject=subject, sender=sender, body=body,
+                recipients=', '.join(recipients)))
             return
+
         recipients = [a for a in recipients if '@example.com' not in a]
         if not len(recipients):
             self.logger.info(

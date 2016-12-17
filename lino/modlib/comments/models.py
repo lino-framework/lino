@@ -56,13 +56,13 @@ class Comment(CreatedModified, UserAuthored, Controllable,
     def get_notify_message(self, ar, cw):
         s = _("{user} commented on {obj}:").format(
             user=ar.get_user(), obj=self.owner)
-        s += self.short_text
+        s += ' ' + self.short_text
         if False:
             s += '\n<p>\n' + self.more_text
         return s
 
-    def get_notify_owner(self, ar):
-        return self.owner
+    # def get_notify_owner(self, ar):
+    #     return self.owner
 
     def as_li(self, ar):
         """Return this comment as a list item. 

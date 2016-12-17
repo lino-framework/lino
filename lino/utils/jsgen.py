@@ -62,6 +62,8 @@ And yet another example (`/blog/2012/0208`)...
 from __future__ import unicode_literals
 from builtins import str
 from builtins import object
+from future.types import newstr
+import six
 
 import logging
 logger = logging.getLogger(__name__)
@@ -126,11 +128,10 @@ def get_user_profile():
 
 # set_for_user_profile = set_user_profile
 
-
-def key2js(s):
-    if isinstance(s, str):
-        return s
-    return json.dumps(s)  # ,cls=DjangoJSONEncoder)
+# def key2js(s):
+#     if isinstance(s, str):
+#         return s
+#     return json.dumps(s)  # ,cls=DjangoJSONEncoder)
 
 
 def id2js(s):
@@ -468,16 +469,25 @@ def py2js(v):
         return "[ %s ]" % ", ".join(elems)
 
     if isinstance(v, dict):
-        # 20160423: removed "sorted(v.items())" because it caused
-        # TypeError when the dictionary contained a mixture of unicode
-        # and future.types.newstr objects.
-        try:
-            items = [
-                i for i in sorted(v.items())
-                if (not isinstance(v, VisibleComponent))
-                or v.get_view_permission(_for_user_profile)]
-        except TypeError as e:
-            raise TypeError("Failed to sort {0} : {1}".format(v, e))
+        items = [
+            # i for i in sorted(v.items(), key=lambda x: str(x))
+            # i for i in sorted(v.items())
+            i for i in v.items()
+            if (not isinstance(v, VisibleComponent))
+            or v.get_view_permission(_for_user_profile)]
+        
+        # "sorted(v.items())" without sortkey caused TypeError when
+        # the dictionary contained a mixture of unicode and
+        # future.types.newstr objects.
+        def sortkey(x):
+            if isinstance(x[0], newstr):
+                return six.text_type(x[0])
+            return x[0]
+        items = sorted(items, key=sortkey)
+        # try:
+        #     items = sorted(items, key=sortkey)
+        # except TypeError as e:
+        #     raise TypeError("Failed to sort {0!r} : {1}".format(items, e))
         return "{ %s }" % ", ".join(
             ["%s: %s" % (py2js(k), py2js(i)) for k, i in items])
 

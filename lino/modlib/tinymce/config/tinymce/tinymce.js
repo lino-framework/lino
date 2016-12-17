@@ -211,7 +211,7 @@ Lino.RichTextPanel = Ext.extend(Lino.RichTextPanel,{
     this.editor = new Ext.ux.TinyMCE(editorConfig);
     var t = this;
     function save_cmd() { 
-        console.log("20150902 save_cmd()", arguments);            
+        // console.log("20150902 save_cmd()", arguments);            
         var cw = t.get_containing_window();
         if (cw) {
             cw.main_item.save();
@@ -249,11 +249,16 @@ Lino.RichTextPanel = Ext.extend(Lino.RichTextPanel,{
     Lino.RichTextPanel.superclass.constructor.call(this, config);
     // console.log('20150520d Lino.RichTextPanel.initComponent', this);
   },
+  getValue : function(v) {
+      return this.editor.getValue(v);
+  },
   refresh : function(unused) { 
       this.refresh_with_after();
   },
   /* RichTextPanel */
   refresh_with_after : function(after) {
+    // when called from the dashboard:    
+    if (!this.containing_panel.get_current_record) { return; }
     var record = this.containing_panel.get_current_record();
     // console.log('20140504 RichTextPanel.refresh()',
     //             this.title,record.title, record);
