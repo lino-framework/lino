@@ -389,6 +389,12 @@ uploaded file in a new browser window."""),
     'lino.modlib.uploads.models.MyUploads.model' : _("""alias of Upload"""),
     'lino.modlib.uploads.models.UploadsByController.model' : _("""alias of Upload"""),
     'lino.modlib.users.Plugin' : _("""See /dev/plugins."""),
+    'lino.modlib.users.actions.SendWelcomeMail' : _("""Send a welcome mail to this user."""),
+    'lino.modlib.users.actions.ChangePassword' : _("""Change the password of this user."""),
+    'lino.modlib.users.actions.ChangePassword.current' : _("""The current password. Leave empty if the user has no password
+yet. And SiteAdmin users don't need to specify this at all."""),
+    'lino.modlib.users.actions.ChangePassword.new1' : _("""The new password."""),
+    'lino.modlib.users.actions.ChangePassword.new2' : _("""The new password a second time. Both passwords must match."""),
     'lino.modlib.users.choicelists.UserType' : _("""Base class for all user profiles."""),
     'lino.modlib.users.choicelists.UserType.hidden_languages' : _("""A subset of languages which
 should be hidden in this user profile.  Default value is
