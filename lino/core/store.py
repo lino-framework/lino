@@ -528,14 +528,15 @@ class DisableEditingStoreField(SpecialStoreField):
     name = str('disable_editing')
 
     def full_value_from_object(self, obj, ar):
+        # import pdb; pdb.set_trace()
         actor = self.store.actor
         if actor.update_action is None:
             # print 20120601, self.store.actor, "update_action is None"
             return True  # disable editing if there's no update_action
         v = actor.get_row_permission(
             obj, ar, actor.get_row_state(obj), actor.update_action)
-        # if str(actor).startswith('aids.'):
-        #     logger.info("20141128 store.py %s %s value=%s",
+        # if str(actor).endswith('.RegisterNewUser'):
+        #     logger.info("20161216 store.py %s %s value=%s",
         #                 actor, actor.update_action, v)
         return not v
 

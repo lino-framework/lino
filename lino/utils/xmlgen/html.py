@@ -154,7 +154,10 @@ class HtmlNamespace(Namespace):
 
         # the lxml parser wraps `<html><body>...</body></html>` around
         # the snippet, but we don't want it.
-        root = HTML(raw_html)[0]
+        try:
+            root = HTML(raw_html)[0]
+        except Exception as e:
+            return E.p("Invalid HTML ({}) in {}".format(e, raw_html))
         if len(root) == 1:
             return root[0]
         return root

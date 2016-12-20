@@ -1,4 +1,4 @@
-# Copyright 2011-2015 Luc Saffre
+# Copyright 2011-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Lino's :mod:`lino.modlib.users` is Lino's replacement for Django's
@@ -15,6 +15,8 @@ Lino's core even if it is not among the installed apps.
     roles
     models
     choicelists
+    actions
+    desktop
     fixtures.demo
     fixtures.demo_users
     fixtures.demo2
@@ -37,7 +39,7 @@ class Plugin(ad.Plugin):
     def setup_config_menu(self, site, profile, m):
         g = site.plugins.system
         m = m.add_menu(g.app_label, g.verbose_name)
-        m.add_action('users.Users')
+        m.add_action('users.AllUsers')
 
     def setup_explorer_menu(self, site, profile, m):
         g = site.plugins.system

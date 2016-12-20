@@ -135,7 +135,7 @@ class Model(models.Model):
     grid_post = actions.CreateRow()
     submit_insert = actions.SubmitInsert()
     """This is the action represented by the "Create" button of an Insert
-    window. See :mod:`lino.modlib.dedupe` for an example of how to
+    window. See :mod:`lino.mixins.dupable` for an example of how to
     override it.
 
     """
@@ -461,10 +461,15 @@ class Model(models.Model):
         self.hidden_elements = self.hidden_elements | set(names)
 
     def on_create(self, ar):
-        """
+        """Override this to set default values that depend on the request.
+
+        The difference with Django's `pre_init
+        <https://docs.djangoproject.com/en/1.10/ref/signals/#pre-init>`__
+        and `post_init
+        <https://docs.djangoproject.com/en/1.10/ref/signals/#post-init>`__
+        signals is that here you get the action request as argument.
+
         Used e.g. by :class:`lino_xl.lib.notes.models.Note`.
-        on_create gets the action request as argument.
-        Didn't yet find out how to do that using a standard Django signal.
 
         """
         pass
@@ -724,13 +729,13 @@ class Model(models.Model):
 
     @fields.displayfield(_("Actions"))
     def workflow_buttons(obj, ar):
-        #~ logger.info('20120930 workflow_buttons %r', obj)
         l = []
         if ar is not None:
             actor = ar.actor
             state = actor.get_row_state(obj)
             sep = ''
             show = True  # whether to show the state
+            # logger.info('20161219 workflow_buttons %r', state)
             
             def show_state():
                 l.append(sep)

@@ -381,7 +381,7 @@ class DpyDeserializer(LoaderBase):
 
         desc = (SUFFIX, 'r', imp.PY_SOURCE)
         # logger.info("20160817 %s...", options)
-        # logger.info("Loading %s...", fp.name)
+        logger.info("Loading data from %s", fp.name)
 
         module = imp.load_module(fqname, fp, fp.name, desc)
         # module = __import__(filename)
