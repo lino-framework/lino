@@ -54,19 +54,20 @@ class ActorItem(DashboardItem):
     def render(self, ar):
         T = self.actor
         sar = ar.spawn(T, limit=T.preview_limit)
-        if sar.get_total_count():
-            if self.header_level is None:
-                s = ''
-            else:
-                s = E.tostring(E.h2(
-                    T.label, ' ', ar.window_action_button(
-                        T.default_action,
-                        label="🗗",
-                        style="text-decoration:none; font-size:80%;",
-                        title=_("Show this table in own window"))))
+        if not sar.get_total_count():
+            return ''
+        if self.header_level is None:
+            s = ''
+        else:
+            s = E.tostring(E.h2(
+                T.label, ' ', ar.window_action_button(
+                    T.default_action,
+                    label="🗗",
+                    style="text-decoration:none; font-size:80%;",
+                    title=_("Show this table in own window"))))
 
-            s += E.tostring(ar.show(sar))
-            return s
+        s += E.tostring(ar.show(sar))
+        return s
             
 
 class CustomItem(DashboardItem):
