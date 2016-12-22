@@ -431,6 +431,7 @@ class MyMessages(My, Messages):
     def get_slave_summary(cls, mi, ar):
         qs = rt.models.notify.Message.objects.filter(
             user=ar.get_user()).order_by('created')
+        qs = qs.filter(seen__isnull=True)
         # mark_all = rt.models.notify.MyMessages.get_action_by_name(
         #     'mark_all_seen')
         # html = E.tostring(ar.action_button(mark_all, None))
