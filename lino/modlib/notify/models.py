@@ -529,7 +529,7 @@ class MyMessages(My, Messages):
 
 @dd.schedule_often(every=10)
 def send_pending_emails_often():
-    rt.models.notify.Message.send_summary_emails(MailModes.immediately)
+    rt.models.notify.Message.send_summary_emails(MailModes.often)
 
 @dd.schedule_daily()
 def send_pending_emails_daily():
