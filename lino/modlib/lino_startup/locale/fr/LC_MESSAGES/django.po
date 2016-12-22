@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2016-12-20 16:40+0200\n"
-"PO-Revision-Date: 2016-12-20 16:41+0200\n"
+"POT-Creation-Date: 2016-12-22 05:12+0200\n"
+"PO-Revision-Date: 2016-12-22 05:13+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language: fr\n"
 "Language-Team: \n"
@@ -133,7 +133,7 @@ msgstr ""
 msgid "%(value)r (invalid choice for %(list)s)"
 msgstr "%(value)r (choix non valable pour %(list)s)"
 
-#: lino/core/dashboard.py:66
+#: lino/core/dashboard.py:67
 msgid "Show this table in own window"
 msgstr "Montrer ce panneau dans une fenêtre à part."
 
@@ -3311,7 +3311,7 @@ msgstr "La base de données a été initialisée."
 
 #: lino/modlib/office/__init__.py:18
 msgid "Office"
-msgstr ""
+msgstr "Bureau"
 
 #: lino/modlib/office/roles.py:50 lino/modlib/users/choicelists.py:129
 #: lino/modlib/users/roles.py:33

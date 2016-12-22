@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-12-20 16:40+0200\n"
+"POT-Creation-Date: 2016-12-22 05:12+0200\n"
 "PO-Revision-Date: 2013-06-15 18:57-0300\n"
 "Last-Translator: Flavio Gondin <flvgondin@gmail.com>\n"
 "Language: pt_BR\n"
@@ -131,7 +131,7 @@ msgstr ""
 msgid "%(value)r (invalid choice for %(list)s)"
 msgstr "%(value)r (choix non valable pour %(list)s)"
 
-#: lino/core/dashboard.py:66
+#: lino/core/dashboard.py:67
 #, fuzzy
 msgid "Show this table in own window"
 msgstr "Mostrar esta tabela em html plano"
@@ -8777,38 +8777,6 @@ msgstr ""
 #~ msgid "All dasboard widgets"
 #~ msgstr ""
 
-#~ msgid ""
-#~ "Move current row one upwards. This action is available on any\n"
-#~ "Sequenced object as Sequenced.move_up."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Move current row one downwards. This action is available on any\n"
-#~ "Sequenced object as Sequenced.move_down."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Set this to False in order to deactivate use of websockets and\n"
-#~ "channels."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "A Message is a message to a given user about a given\n"
-#~ "database object."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "A variant of Users showing only active users and\n"
-#~ "only some fields.  This is used on demo sites in\n"
-#~ "admin_main.html to display the list of available users."
-#~ msgstr ""
-
 #~ msgid "Hi, %(first_name)s!"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Users with an empty `profile` field "
-#~ "are considered inactive and cannot log"
-#~ " in."
 #~ msgstr ""
 
