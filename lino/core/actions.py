@@ -907,7 +907,7 @@ class CreateRow(Action):
         elem.save(force_insert=True)
         # yes, `on_ui_created` comes *after* save()
         on_ui_created.send(elem, request=ar.request)
-        elem.after_ui_create(ar)
+        # elem.after_ui_create(ar)
         elem.after_ui_save(ar, None)
         ar.success(_("%s has been created.") % obj2unicode(elem))
 

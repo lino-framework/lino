@@ -28,23 +28,20 @@ class ChangeObservable(dd.Model):
 
         """
         if cw is None:
-            return
-        items = list(cw.get_updates_html())
-        if len(items) == 0:
-            return
-        elems = [E.p(
-            ar.obj2html(self),
-            ' ', _("has been modified by {user}").format(
-                user=ar.get_user()),
-            ":")]
-        elems.append(E.ul(*items))
-        if False:
-            elems.append(E.p(_(
-                "Subsequent changes to {obj} will not be notified "
-                "until you visit {url} and mark this notification "
-                "as seen.").format(
-                url=settings.SITE.server_url or "Lino",
-                obj=self.get_notify_owner(ar))))
+            elems = [E.p(
+                ar.obj2html(self),
+                ' ', _("has been created by {user}").format(
+                    user=ar.get_user()))]
+        else:
+            items = list(cw.get_updates_html())
+            if len(items) == 0:
+                return
+            elems = [E.p(
+                ar.obj2html(self),
+                ' ', _("has been modified by {user}").format(
+                    user=ar.get_user()),
+                ":")]
+            elems.append(E.ul(*items))
         return E.tostring(E.div(*elems))
 
     def get_notify_owner(self, ar):
@@ -62,8 +59,8 @@ class ChangeObservable(dd.Model):
         return self
 
     def get_change_observers(self):
-        """Return or yield a list of users who are observing changes on this
-        object.
+        """Return or yield a list of `(user, mail_mode)` tuples who are
+        observing changes on this object.
 
         Should be implemented in subclasses. The default
         implementation returns an empty list, i.e. nobody gets
@@ -71,10 +68,6 @@ class ChangeObservable(dd.Model):
 
         """
         return []
-
-    # def emit_message(self, ar, owner, subject, body):
-    #     return super(ChangeObservable, self).emit_message(
-    #         ar, owner, subject, body, self.get_notify_observers())
 
     def after_ui_save(self, ar, cw):
 
@@ -85,6 +78,6 @@ class ChangeObservable(dd.Model):
             return
         # subject, body = msg
         owner = self.get_notify_owner(ar)
-        mt = rt.models.notify.MessageTypes.change
+        mt = rt.actors.notify.MessageTypes.change
         rt.models.notify.Message.emit_message(
             ar, owner, mt, msg, self.get_change_observers())

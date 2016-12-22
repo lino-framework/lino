@@ -50,10 +50,15 @@ class Comment(CreatedModified, UserAuthored, Controllable,
 
     def get_change_observers(self):
         if isinstance(self.owner, ChangeObservable):
-            for u in self.owner.get_change_observers():
-                yield u
+            obs = self.owner
+        else:
+            obs = super(Comment, self)
+        for u in obs.get_change_observers():
+            yield u
 
     def get_notify_message(self, ar, cw):
+        if cw is not None:
+            return super(Comment, self).get_notify_message(ar, cw)
         s = _("{user} commented on {obj}:").format(
             user=ar.get_user(), obj=self.owner)
         s += ' ' + self.short_text
