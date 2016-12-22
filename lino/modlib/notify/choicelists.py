@@ -58,6 +58,7 @@ class MailModes(dd.ChoiceList):
     
 add = MailModes.add_item
 add('never', _("Never"), 'never')
-add('immediately', _("Immediately"), 'immediately')
+add('immediately', _("Immediately"), 'immediately')  # obsolete
+add('often', _("Often"), 'often')
 add('daily', _("Daily"), 'daily')
-add('weekly', _("Weekly"), 'weekly')
+add('weekly', _("Weekly"), 'weekly')  # not yet implemented
