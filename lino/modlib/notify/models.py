@@ -380,7 +380,7 @@ dd.inject_field(
     'users.User', 'mail_mode',
     MailModes.field(
         _('Email notification mode'),
-        default=MailModes.immediately.as_callable))
+        default=MailModes.often.as_callable))
 
 
 class Messages(dd.Table):
