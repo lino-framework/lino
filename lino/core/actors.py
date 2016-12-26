@@ -223,7 +223,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     .. attribute:: welcome_message_when_count
 
        Set this to an integer (e.g. 0) to tell Lino to make a generic
-       welcome message "You have X items in Y".
+       welcome message "You have X items in Y" when the number of rows
+       in this table is *greater than* the given integer.
 
     The following class methods are `None` in the default
     implementation. Subclass can define them.
@@ -352,10 +353,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     simple_parameters = None
     """A set of names of filter parameters which are handled automatically.
 
-    Application developers should normally not set this attribute but
-    define a :meth:`get_simple_parameters` on the model.
-    If you set this attribute yourself, then
-    :meth:`get_simple_parameters` will not be called.
+    Application developers do not set this attribute but define a
+    :meth:`get_simple_parameters` on the model.
 
     """
 
@@ -832,7 +831,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
             if cls.allow_create:
                 # cls.create_action = cls._bind_action(actions.SubmitInsert())
                 if cls.detail_action and not cls.hide_top_toolbar:
-                    cls.insert_action = cls._bind_action(actions.InsertRow())
+                    cls.insert_action = cls._bind_action(
+                        cls.get_insert_action())
             if not cls.hide_top_toolbar:
                 cls.delete_action = cls._bind_action(actions.DeleteSelected())
             cls.update_action = cls._bind_action(actions.SaveRow())
@@ -885,6 +885,10 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     @classmethod
     def get_default_action(cls):
         pass
+
+    @classmethod
+    def get_insert_action(cls):
+        return actions.InsertRow()
 
     @classmethod
     def get_label(self):

@@ -220,8 +220,8 @@ class Report(EmptyTable):
             raise Exception("{0} has no report_items".format(cls))
         for A in cls.report_items:
             yield E.h2(str(A.label))
-            if A.help_text:
-                yield E.p(str(A.help_text))
+            # if A.help_text:
+            #     yield E.p(str(A.help_text))
             yield A
 
     @fields.virtualfield(fields.HtmlBox())

@@ -96,7 +96,7 @@ class Bleached(Model):
     @classmethod
     def on_analyze(self, site):
         if not bleach:
-            site.logger.warning(
+            site.logger.debug(
                 "%s not being bleached because `bleach` is broken "
                 "or not installed.", self)
 

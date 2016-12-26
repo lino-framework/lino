@@ -135,7 +135,7 @@ class Model(models.Model):
     grid_post = actions.CreateRow()
     submit_insert = actions.SubmitInsert()
     """This is the action represented by the "Create" button of an Insert
-    window. See :mod:`lino.modlib.dedupe` for an example of how to
+    window. See :mod:`lino.mixins.dupable` for an example of how to
     override it.
 
     """
@@ -461,21 +461,16 @@ class Model(models.Model):
         self.hidden_elements = self.hidden_elements | set(names)
 
     def on_create(self, ar):
-        """
+        """Override this to set default values that depend on the request.
+
+        The difference with Django's `pre_init
+        <https://docs.djangoproject.com/en/1.10/ref/signals/#pre-init>`__
+        and `post_init
+        <https://docs.djangoproject.com/en/1.10/ref/signals/#post-init>`__
+        signals is that (1) you override the method instead of binding
+        a signal and (2) you get the action request as argument.
+
         Used e.g. by :class:`lino_xl.lib.notes.models.Note`.
-        on_create gets the action request as argument.
-        Didn't yet find out how to do that using a standard Django signal.
-
-        """
-        pass
-
-    def after_ui_create(self, ar):
-        """Like :meth:`after_ui_save`, but only on a **new** instance.
-
-        Usage example: the :class:`households.Household
-        <lino_welfare.modlib.households.models.Household>` model in
-        :ref:`welfare` overrides this in order to call its `populate`
-        method.
 
         """
         pass
@@ -488,8 +483,8 @@ class Model(models.Model):
         Deprecated.  Use the :data:`pre_ui_save
         <lino.core.signals.pre_ui_save>` signal instead.
 
-        Example in :class:`lino_xl.lib.cal.models_event.Event` to mark
-        the event as user modified by setting a default state.
+        Example in :class:`lino_xl.lib.cal.models.Event` to mark the
+        event as user modified by setting a default state.
 
         """
         pass
@@ -505,8 +500,8 @@ class Model(models.Model):
             cw: the :class:`ChangeWatcher` object, or `None` if this is
                 a new instance.
         
-        Called after a PUT or POST on this row,
-        and after the row has been saved.
+        Called after a PUT or POST on this row, and after the row has
+        been saved.
         
         Used by
         :class:`lino_welfare.modlib.debts.models.Budget`
@@ -516,13 +511,17 @@ class Model(models.Model):
         or by
         :class:`lino_welfare.modlib.jobs.models.Contract`
         :class:`lino_welfare.modlib.pcsw.models.Coaching`
-        :class:`lino.modlib.vat.models.Vat`
+        :class:`lino.modlib.vat.models.Vat`.
+        Or :class:`lino_welfare.modlib.households.models.Household`
+        overrides this in order to call its `populate` method.
 
         """
         pass
 
+
+
     def get_row_permission(self, ar, state, ba):
-        """Returns True or False whether this row instance gives permission
+        """Returns True or False whether this database object gives permission
         to the ActionRequest `ar` to run the specified action.
 
         """
@@ -724,13 +723,13 @@ class Model(models.Model):
 
     @fields.displayfield(_("Actions"))
     def workflow_buttons(obj, ar):
-        #~ logger.info('20120930 workflow_buttons %r', obj)
         l = []
         if ar is not None:
             actor = ar.actor
             state = actor.get_row_state(obj)
             sep = ''
             show = True  # whether to show the state
+            # logger.info('20161219 workflow_buttons %r', state)
             
             def show_state():
                 l.append(sep)
@@ -1025,7 +1024,6 @@ LINO_MODEL_ATTRIBS = (
     'get_data_elem',
     'get_param_elem',
     'after_ui_save',
-    'after_ui_create',
     'preferred_foreignkey_width',
     'before_ui_save',
     'allow_cascaded_delete',

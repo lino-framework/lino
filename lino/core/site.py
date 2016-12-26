@@ -33,10 +33,8 @@ import inspect
 import datetime
 import warnings
 import collections
-import threading
 from importlib import import_module
 from six.moves.urllib.parse import urlencode
-from django.apps import AppConfig
 
 from unipath import Path
 from atelier.utils import AttrDict, date_offset, tuple_py2
@@ -58,6 +56,8 @@ from lino.core.exceptions import ChangedAPI
 
 from html2text import HTML2Text
 
+# _INSTANCES = []
+
 def html2text(html):
     text_maker = HTML2Text()
     text_maker.unicode_snob = True
@@ -71,8 +71,6 @@ Subject: {subject}
 {body}
 """
 
-
-startup_rlock = threading.Lock()  # Lock() or RLock()?
 
 LanguageInfo = collections.namedtuple(
     'LanguageInfo', ('django_code', 'name', 'index', 'suffix'))
@@ -236,6 +234,8 @@ class Site(object):
     TODO: Replace this setting by an aproach using an second logger
     `lino.archive`. Also tidy up usage of
     :mod:`lino.utils.dblogger`. To be meditated.
+
+    See also :ref:`lino.logging`.
 
     """
 
@@ -1025,11 +1025,7 @@ class Site(object):
     logger_filename = 'lino.log'
     """The name of Lino's main log file, created in :meth:`setup_logging`.
 
-    .. xfile:: lino.log
-    .. xfile:: system.log
-    
-        The name of Lino's main logger file Default value is
-        :xfile:`lino.log`. Until 20160729 it was :xfile:`system.log`.
+    See also :ref:`lino.logging`.
 
     """
     auto_configure_logger_names = 'schedule atelier django lino'
@@ -1120,11 +1116,10 @@ class Site(object):
     """
 
     # for internal use:
-    # _welcome_actors = []
-    _welcome_handlers = []
     _site_config = None
     _logger = None
-    
+    _starting_up = False
+
     override_modlib_models = None
     """A dictionary which maps model class names to the plugin which
     overrides them.
@@ -1158,6 +1153,11 @@ class Site(object):
         :xfile:`settings.py`.
 
         """
+
+        # if len(_INSTANCES):
+        #     raise Exception("20161219")
+        #     # happens e.g. during sphinx-build
+        # _INSTANCES.append(self)
         # self.logger.info("20140226 Site.__init__() a %s", self)
         #~ print "20130404 ok?"
         if 'no_local' in kwargs:
@@ -1166,9 +1166,11 @@ class Site(object):
             # if False:
             raise ChangedAPI("The no_local argument is no longer needed.")
 
+        self._welcome_handlers = []
         self._help_texts = dict()
         self.plugins = AttrDict()
-        self.modules = self.models = AttrDict()
+        self.models = AttrDict()
+        self.modules = self.models  # backwards compat
         self.actors = AttrDict()
 
         if settings_globals is None:
@@ -1312,6 +1314,8 @@ class Site(object):
         It does nothing at all if :attr:`auto_configure_logger_names`
         is set to `None` or empty.
 
+        See also :ref:`lino.logging`.
+
         See also Django's doc about `Logging
         <https://docs.djangoproject.com/en/1.9/topics/logging/>`__.
 
@@ -1322,7 +1326,7 @@ class Site(object):
         from django.utils.log import DEFAULT_LOGGING
         d = DEFAULT_LOGGING
 
-        level = os.environ.get('LINO_LOGLEVEL', 'INFO')
+        level = os.environ.get('LINO_LOGLEVEL') or 'INFO'
 
         loggercfg = {
             'handlers': ['console', 'mail_admins'],
@@ -1331,12 +1335,12 @@ class Site(object):
 
         handlers = d.setdefault('handlers', {})
         if True:
-            # We override Django'sdefault config: write to stdout (not
+            # We override Django's default config: write to stdout (not
             # stderr) and remove the 'require_debug_true' filter.
             console = handlers.setdefault('console', {})
             console['stream'] = sys.stdout
             console['filters'] = []
-            # console['level'] = level
+            console['level'] = level
         if self.logger_filename and 'file' not in handlers:
             logdir = self.project_dir.child('log')
             if logdir.isdir():
@@ -1348,7 +1352,8 @@ class Site(object):
                     '%(module)s : %(message)s',
                     datefmt='%Y%m-%d %H:%M:%S'))
                 handlers['file'] = {
-                    'level': level,
+                    # 'level': level,
+                    'level': 'INFO',
                     'class': 'logging.FileHandler',
                     'filename': logdir.child(self.logger_filename),
                     'encoding': 'UTF-8',
@@ -1367,6 +1372,11 @@ class Site(object):
                 'handers': loggercfg['handlers'],
                 'level': 'WARNING',
             }
+
+        dblogger = d['loggers'].setdefault('django.db.backends', {})
+        dblogger['propagate'] = False
+        dblogger['level'] = 'WARNING'
+
 
         # self.update_settings(LOGGING=d)
         # from pprint import pprint
@@ -1641,14 +1651,26 @@ class Site(object):
                 pass
 
     def load_actors(self):
-        """Collect :xfile:`actors.py` modules"""
+        """Collect :xfile:`desktop.py` modules.  
+
+        Note the situation when a :xfile:`desktop.py` module exists
+        but causes itself an ImportError because it contains a
+        programming mistake. In that case we want the traceback to
+        occur, not to silently do as if no :xfile:`desktop.py` module
+        existed.
+
+        """
         for p in self.installed_plugins:
             mn = p.app_name + '.' + self.design_name
-            try:
-                # print("20160725 Loading actors from", mn)
+            fn = join(
+                dirname(p.app_module.__file__), self.design_name + '.py')
+            if exists(fn):
                 self.actors[p.app_label] = import_module(mn)
-            except ImportError:
-                pass
+            # try:
+            #     # print("20160725 Loading actors from", mn)
+            #     self.actors[p.app_label] = import_module(mn)
+            # except ImportError:
+            #     pass
 
     def install_help_text(self, fld, cls=None, attrname=None):
         """Install a `help_text` from collected :xfile:`help_texts.py` for
@@ -1994,88 +2016,19 @@ this field.
                         "Tried to define existing Django setting %s" % name)
         self.django_settings.update(kwargs)
 
-    _starting_up = False
-
     def startup(self):
         """Start up this Site.
 
-        You probably don't want to override this method since it is
-        designed to be called potentially several times in case your
-        code wants to make sure that it was called.
+        You probably don't want to override this method since it might
+        be called several times.  e.g. under mod_wsgi: another thread
+        has started and not yet finished `startup()`.
 
-        This is called exactly once when Django has has populated it's model
-        cache.
+        If you want to run custom code on
+        site startup, override :meth:`do_site_startup`.
 
         """
-
-        # This code can run several times at once when running
-        # e.g. under mod_wsgi: another thread has started and not yet
-        # finished `startup()`.
-
-        with startup_rlock:
-
-            # if self.cache_dir is not None:
-            #     raise Exception("No cache_dir is defined. "
-            #                     "Check your LINO_CACHE_ROOT and project_name.")
-
-            if self._starting_up:
-                # This is needed because Django "somehow" imports the
-                # settings module twice. The phenomen is not fully
-                # explained, but without this test we had the startup
-                # code being run twice, which caused various error
-                # messages (e.g. Duplicate label in workflow setup)
-                return
-
-            if self._startup_done:
-                # self.logger.info("20140227 Lino startup already done")
-                return
-
-            self._starting_up = True
-
-            # print "20151010 Site.startup()"
-
-            # if AFTER17:
-            #     print "20151010 Site.startup() gonna call django.setup"
-            #     import django
-            #     django.setup()
-
-            from lino.core.signals import pre_startup, post_startup
-
-            pre_startup.send(self)
-
-            for p in self.installed_plugins:
-                # m = loading.load_app(p.app_name, False)
-                # In Django17+ we cannot say can_postpone=False,
-                # and we don't need to, because anyway we used it
-                # just for our hack in `lino.models`
-                # load_app(app_name) is deprecated
-                # from django.apps import apps
-                # m = apps.load_app(p.app_name)
-                try:
-                    from django.apps import apps
-                    app_config = AppConfig.create(p.app_name)
-                    app_config.import_models(
-                        apps.all_models[app_config.label])
-                    apps.app_configs[app_config.label] = app_config
-                    apps.clear_cache()
-                    m = app_config.models_module
-                except ImportError:
-                    self.logger.debug("No module {0}.models", p.app_name)
-                    # print(rrrr)
-
-                self.models.define(six.text_type(p.app_label), m)
-
-            for p in self.installed_plugins:
-                p.on_site_startup(self)
-
-            for k, v in self.models.items():
-                self.actors.setdefault(k, v)
-
-            self.do_site_startup()
-            # self.logger.info("20140227 Site.do_site_startup() done")
-            post_startup.send(self)
-
-            self._startup_done = True
+        from lino.core.kernel import site_startup
+        site_startup(self)
 
     @property
     def logger(self):
@@ -2361,24 +2314,12 @@ this field.
 
         TODO: rename this to `on_startup`?
 
-        If you override it, don't forget to call the super method
-        which calls :meth:`on_site_startup
-        <lino.core.plugin.Plugin.on_site_startup>` for each installed
-        plugin.
+        If you override it, don't forget to call the super method.
 
         """
 
         # self.logger.info("20160526 %s do_site_startup() a", self.__class__)
 
-        self.user_interfaces = tuple([
-            p for p in self.installed_plugins if p.ui_label is not None])
-
-        # self.logger.info("20150428 user_interfaces %s", self.user_interfaces)
-
-        from lino.core.kernel import Kernel
-        self.kernel = Kernel(self)
-        # self.kernel.kernel_startup(self)
-        # self.ui = self.kernel  # internal backwards compat
 
         # self.logger.info("20160526 %s do_site_startup() b", self.__class__)
 
@@ -3341,6 +3282,12 @@ Please convert to Plugin method".format(mod, methname)
     #     """
     #     return None
 
+    def __deepcopy__(self):
+        raise Exception("Who is copying me?!")
+
+    def __copy__(self):
+        raise Exception("Who is copying me?!")
+
     def get_main_html(self, request, **context):
         """Return a chunk of html to be displayed in the main area of the
         admin index.  This is being called only if
@@ -3365,7 +3312,7 @@ Please convert to Plugin method".format(mod, methname)
         #     for msg in a.get_welcome_messages(ar):
         #         yield msg
 
-    def add_welcome_handler(self, func):
+    def add_welcome_handler(self, func, actor=None, msg=None):
         """Add the given callable as a "welcome handler".  Lino will call
         every welcome handler for every incoming request, passing them
         a :class:`BaseRequest <lino.core.requests.BaseRequest>`
@@ -3375,6 +3322,9 @@ Please convert to Plugin method".format(mod, methname)
         or a :class:`E.span <lino.utils.xmlgen.html.E>` element.
 
         """
+        # print(
+        #     "20161219 add_welcome_handler {} {} {}".format(
+        #         actor, msg, func))
         self._welcome_handlers.append(func)
 
     def get_installed_apps(self):

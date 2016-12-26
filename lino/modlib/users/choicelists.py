@@ -1,4 +1,4 @@
-# Copyright 2011-2015 Luc Saffre
+# Copyright 2011-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Defines the choicelists for :mod:`lino.modlib.users`.
@@ -8,17 +8,12 @@
 from __future__ import unicode_literals
 from builtins import str
 
-import logging
-logger = logging.getLogger(__name__)
-
-from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
-from django.db import models
 
 from lino.core.choicelists import ChoiceList, Choice
 from lino.core.roles import UserRole, SiteUser, SiteAdmin
 
-from lino.api import dd
+from lino.api import dd, _
 
 
 class UserType(Choice):
@@ -134,5 +129,6 @@ add = UserTypes.add_item
 add('000', _("Anonymous"), UserRole, name='anonymous', readonly=True)
 add('100', _("User"), SiteUser, name='user')
 add('900', _("Administrator"), SiteAdmin, name='admin')
+
 
 

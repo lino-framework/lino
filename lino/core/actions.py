@@ -733,12 +733,15 @@ class InsertRow(TableAction):
 
     label = _("New")
     icon_name = 'add'  # if action rendered as toolbar button
+    # button_text = "❏"  # 274F Lower right drop-shadowed white square
+    # button_text = "⊕"  # 2295 circled plus
+    help_text = _("Insert a new record")
+    
     show_in_workflow = False
     opens_a_window = True
     hide_navigator = True
     sort_index = 10
     hide_top_toolbar = True
-    help_text = _("Insert a new record")
     # required_roles = set([SiteUser])
     action_name = 'insert'
     key = keyboard.INSERT  # (ctrl=True)
@@ -904,7 +907,7 @@ class CreateRow(Action):
         elem.save(force_insert=True)
         # yes, `on_ui_created` comes *after* save()
         on_ui_created.send(elem, request=ar.request)
-        elem.after_ui_create(ar)
+        # elem.after_ui_create(ar)
         elem.after_ui_save(ar, None)
         ar.success(_("%s has been created.") % obj2unicode(elem))
 

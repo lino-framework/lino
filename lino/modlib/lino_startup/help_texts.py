@@ -389,6 +389,12 @@ uploaded file in a new browser window."""),
     'lino.modlib.uploads.models.MyUploads.model' : _("""alias of Upload"""),
     'lino.modlib.uploads.models.UploadsByController.model' : _("""alias of Upload"""),
     'lino.modlib.users.Plugin' : _("""See /dev/plugins."""),
+    'lino.modlib.users.actions.SendWelcomeMail' : _("""Send a welcome mail to this user."""),
+    'lino.modlib.users.actions.ChangePassword' : _("""Change the password of this user."""),
+    'lino.modlib.users.actions.ChangePassword.current' : _("""The current password. Leave empty if the user has no password
+yet. And SiteAdmin users don't need to specify this at all."""),
+    'lino.modlib.users.actions.ChangePassword.new1' : _("""The new password."""),
+    'lino.modlib.users.actions.ChangePassword.new2' : _("""The new password a second time. Both passwords must match."""),
     'lino.modlib.users.choicelists.UserType' : _("""Base class for all user profiles."""),
     'lino.modlib.users.choicelists.UserType.hidden_languages' : _("""A subset of languages which
 should be hidden in this user profile.  Default value is
@@ -402,6 +408,14 @@ used on multilingual sites with more than 4 or 5 languages."""),
     'lino.modlib.users.choicelists.UserTypes.hidden_languages' : _("""Default value for the
 hidden_languages of newly
 attached choice item."""),
+    'lino.modlib.users.desktop.Users' : _("""Base class for all user tables."""),
+    'lino.modlib.users.desktop.Users.model' : _("""alias of User"""),
+    'lino.modlib.users.desktop.AllUsers' : _("""Shows the list of all users on this site."""),
+    'lino.modlib.users.desktop.AllUsers.model' : _("""alias of User"""),
+    'lino.modlib.users.desktop.UsersOverview' : _("""A variant of Users showing only active users and only some
+fields.  This is used on demo sites in admin_main.html to
+display the list of available users."""),
+    'lino.modlib.users.desktop.UsersOverview.model' : _("""alias of User"""),
     'lino.modlib.users.mixins.TimezoneHolder' : _("""Mixin for database models which have a timezone field."""),
     'lino.modlib.users.mixins.TimezoneHolder.timezone' : _("""The timezone."""),
     'lino.modlib.users.mixins.Authored.author_field_name' : _("""The name of the field which defines the author of this object."""),
@@ -418,12 +432,6 @@ A pointer to lino.modlib.users.models.User."""),
 object."""),
     'lino.modlib.users.mixins.Assignable' : _("""This field is usually empty.  Setting it to another user means
 "I am not fully responsible for this item"."""),
-    'lino.modlib.users.models.SendWelcomeMail' : _("""Send a welcome mail to this user."""),
-    'lino.modlib.users.models.ChangePassword' : _("""Change the password of this user."""),
-    'lino.modlib.users.models.ChangePassword.current' : _("""The current password. Leave empty if the user has no password
-yet. And SiteAdmin users don't need to specify this at all."""),
-    'lino.modlib.users.models.ChangePassword.new1' : _("""The new password."""),
-    'lino.modlib.users.models.ChangePassword.new2' : _("""The new password a second time. Both passwords must match."""),
     'lino.modlib.users.models.User' : _("""Represents a user of this site."""),
     'lino.modlib.users.models.User.username' : _("""Must be unique.
 Leaving this empty means that the user cannot log in."""),
@@ -434,10 +442,6 @@ this user."""),
 to the partner (if it exists) and otherwise None."""),
     'lino.modlib.users.models.User.authenticated' : _("""This is always True.
 See also lino.modlib.users.utils.AnonymousUser.authenticated."""),
-    'lino.modlib.users.models.UsersOverview' : _("""A variant of Users showing only active users and
-only some fields.  This is used on demo sites in
-admin_main.html to display the list of available users."""),
-    'lino.modlib.users.models.UsersOverview.model' : _("""alias of User"""),
     'lino.modlib.users.models.Authority' : _("""An Authority is when a user gives another user the right to
 "represent" them."""),
     'lino.modlib.users.models.Authority.user' : _("""The user who gives the right of representation. author of this

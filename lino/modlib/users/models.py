@@ -21,7 +21,6 @@ from django.contrib.auth.hashers import (
 
 from lino.api import dd, rt
 from lino.utils.xmlgen.html import E
-from lino.core import actions
 from lino.core import userprefs
 from lino.core.fields import NullCharField
 from lino.core.roles import SiteAdmin
@@ -31,99 +30,7 @@ from lino.mixins import CreatedModified
 
 from .choicelists import UserTypes
 from .mixins import UserAuthored, TimezoneHolder
-
-class SendWelcomeMail(dd.Action):
-    """Send a welcome mail to this user."""
-    label = _("Welcome mail")
-    show_in_bbar = True
-    show_in_workflow = False
-    button_text = u"\u2709"  # ✉
-    required_roles = dd.required(SiteAdmin)
-    
-    def get_action_permission(self, ar, obj, state):
-        if obj == ar.get_user():
-            return False
-        return super(
-            SendWelcomeMail, self).get_action_permission(ar, obj, state)
-
-    def run_from_ui(self, ar, **kw):
-
-        done_for = []
-        for obj in ar.selected_rows:
-            obj.send_welcome_email()
-            done_for.append(str(obj))
-
-        msg = _("Welcome mail has been sent to {}.").format(
-            ', '.join(done_for))
-        ar.success(msg, alert=True)
-
-
-
-class ChangePassword(dd.Action):
-    """Change the password of this user.
-
-    .. attribute:: current
-
-        The current password. Leave empty if the user has no password
-        yet. And SiteAdmin users don't need to specify this at all.
-
-    .. attribute:: new1
-
-        The new password.
-
-    .. attribute:: new2
-
-        The new password a second time. Both passwords must match.
-
-    """
-    # button_text = u"\u205C"  # DOTTED CROSS (⁜)
-    # button_text = u"\u2042"  # ASTERISM (⁂)
-    button_text = u"\u2731" # 'HEAVY ASTERISK' (✱)
-    # icon_name = "disk"
-    label = _("Change password")
-    
-    parameters = dict(
-        current=dd.PasswordField(_("Current password"), blank=True),
-        new1=dd.PasswordField(_("New password"), blank=True),
-        new2=dd.PasswordField(_("New password again"), blank=True)
-    )
-    params_layout = """
-    current
-    new1
-    new2
-    """
-
-    def get_action_permission(self, ar, obj, state):
-        user = ar.get_user()
-        # print("20160825", obj, user)
-        if obj != user and \
-           not user.profile.has_required_roles([SiteAdmin]):
-            return False
-        return super(
-            ChangePassword, self).get_action_permission(ar, obj, state)
-
-    def run_from_ui(self, ar, **kw):
-        
-        pv = ar.action_param_values
-        if pv.new1 != pv.new2:
-            ar.error("New passwords didn't match!")
-            return
-        done_for = []
-        for obj in ar.selected_rows:
-            if ar.get_user().profile.has_required_roles([SiteAdmin]) \
-               or not obj.has_usable_password() \
-               or obj.check_password(pv.current):
-                obj.set_password(pv.new1)
-                obj.full_clean()
-                obj.save()
-                done_for.append(str(obj))
-            else:
-                ar.info("Incorrect current password for %s." % obj)
-
-        msg = _("New password has been set for {}.").format(
-            ', '.join(done_for))
-        ar.success(msg, alert=True)
-
+from .actions import ChangePassword, SendWelcomeMail
 
 @python_2_unicode_compatible
 class User(CreatedModified, TimezoneHolder):
@@ -183,10 +90,7 @@ class User(CreatedModified, TimezoneHolder):
 
     password = models.CharField(_('Password'), max_length=128)
 
-    profile = UserTypes.field(
-        blank=True,
-        help_text=_("Users with an empty `profile` field are considered "
-                    "inactive and cannot log in."))
+    profile = UserTypes.field(blank=True)
 
     initials = models.CharField(_('Initials'), max_length=10, blank=True)
     first_name = models.CharField(_('First name'), max_length=30, blank=True)
@@ -231,17 +135,26 @@ class User(CreatedModified, TimezoneHolder):
 
     person = property(get_person)
 
+    def is_editable_by_all(self):
+        return False
+    
     def get_row_permission(self, ar, state, ba):
-        """
-        Only system managers may edit other users.
+        """Only system managers may edit other users.
         See also :meth:`User.disabled_fields`.
+
+        One exception is when AnonymousUser is not readonly. This
+        means that we want to enable online registration. In this case
+        everybody can modify an unsaved user.
+
         """
         #~ print 20120621, self, user, state, action
+        # import pdb ; pdb.set_trace()
         if not ba.action.readonly:
             user = ar.get_user()
             if user != self:
                 if not isinstance(user.profile.role, SiteAdmin):
-                    return False
+                    if not self.is_editable_by_all():
+                        return False
         return super(User, self).get_row_permission(ar, state, ba)
         #~ return False
 
@@ -361,83 +274,6 @@ class User(CreatedModified, TimezoneHolder):
         
     do_send_email = SendWelcomeMail()
 
-class UserDetail(dd.FormLayout):
-
-    box1 = """
-    username profile:20 partner
-    first_name last_name initials
-    email language timezone
-    id created modified
-    """
-
-    main = """
-    box1 #MembershipsByUser:20
-    remarks:40 AuthoritiesGiven:20
-    """
-
-
-class UserInsert(dd.FormLayout):
-
-    window_size = (60, 'auto')
-
-    main = """
-    username email
-    first_name last_name
-    partner
-    language profile
-    """
-
-
-class Users(dd.Table):
-    help_text = _("""Shows the list of all users on this site.""")
-    #~ debug_actions  = True
-    required_roles = dd.required(SiteAdmin)
-    model = 'users.User'
-    #~ order_by = "last_name first_name".split()
-    order_by = ["username"]
-    active_fields = 'partner'
-
-    #~ column_names = 'username first_name last_name is_active is_staff is_expert is_superuser *'
-    column_names = 'username profile first_name last_name *'
-    detail_layout = UserDetail()
-    insert_layout = UserInsert()
-
-    #~ @classmethod
-    #~ def get_row_permission(cls,action,user,obj):
-        #~ """
-        #~ Only system managers may edit other users.
-        #~ See also :meth:`User.disabled_fields`.
-        #~ """
-        #~ if not super(Users,cls).get_row_permission(action,user,obj):
-            #~ return False
-        #~ if user.level >= UserLevel.manager: return True
-        #~ if action.readonly: return True
-        #~ if user is not None and user == obj: return True
-        #~ return False
-
-
-class MySettings(Users):
-    use_as_default_table = False
-    hide_top_toolbar = True
-    required_roles = dd.required()
-    default_list_action_name = 'detail'
-
-    @classmethod
-    def get_default_action(cls):
-        return actions.ShowDetailAction()
-
-
-class UsersOverview(Users):
-
-    """A variant of :class:`Users` showing only active users and only some
-    fields.  This is used on demo sites in :xfile:`admin_main.html` to
-    display the list of available users.
-
-    """
-    column_names = 'username profile language'
-    exclude = dict(profile='')
-
-
 class Authority(UserAuthored):
     """An Authority is when a user gives another user the right to
     "represent" them.
@@ -472,26 +308,5 @@ class Authority(UserAuthored):
             qs = qs.exclude(id=user.id)
             #~ .exclude(level__gte=UserLevels.admin)
         return qs
-
-
-class Authorities(dd.Table):
-    required_roles = dd.required(SiteAdmin)
-    model = 'users.Authority'
-
-
-class AuthoritiesGiven(Authorities):
-    required_roles = dd.required()
-    master_key = 'user'
-    label = _("Authorities given")
-    column_names = 'authorized'
-    auto_fit_column_widths = True
-
-
-class AuthoritiesTaken(Authorities):
-    required_roles = dd.required()
-    master_key = 'authorized'
-    label = _("Authorities taken")
-    column_names = 'user'
-    auto_fit_column_widths = True
 
 

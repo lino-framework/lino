@@ -3,7 +3,7 @@
 {{_("You have {} unseen notifications").format(len(messages))}}
 {% for msg in messages%}
 <div>
-<H3>{{msg}}</H3>
+<H3>{{fds(msg.created.date())}} {{msg.created.time().strftime('%H:%M')}}</H3>
 {{msg.body}}
 </div>
 {% endfor %}

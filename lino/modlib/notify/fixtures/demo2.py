@@ -23,4 +23,5 @@ def objects():
         with translation.override(u.language):
             yield rt.models.notify.Message.create_message(
                 u, body=_("The database has been initialized."),
-                created=now, message_type=mt, sent=now)
+                mail_mode=u.mail_mode, created=now, message_type=mt,
+                sent=now)

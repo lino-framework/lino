@@ -28,6 +28,8 @@ from django.utils.translation import ugettext as _
 
 from lino.core.gfks import ContentType
 
+from lino.api import rt
+
 import lino
 from lino.core import constants
 from lino.core.renderer import HtmlRenderer
@@ -61,8 +63,8 @@ from . import elems as ext_elems
 
 from lino.modlib.users.choicelists import UserTypes
 
-if settings.SITE.user_model:
-    from lino.modlib.users import models as users
+# if settings.SITE.user_model:
+#     from lino.modlib.users import models as users
 
 # ONE_CHAR_LABEL = "\u00A0{}\u00A0"
 # ONE_CHAR_LABEL = "<font size=\"4\">\u00A0{}\u00A0</font>"
@@ -520,12 +522,16 @@ class ExtRenderer(HtmlRenderer):
         return win
 
     def html_page_user(self, request, site):
+        """Build the "user menu", i.e. the menu in the top right corner.
 
-        # TODO: move the following to lino.modlib.users?
+        TODO: move this to :mod:`lino.modlib.users`.
+
+        """
         if settings.SITE.user_model is not None:
 
+            # users = settings.SITE.actors.users
+            
             if request.user.profile.has_required_roles([SiteUser]):
-
                 if request.subst_user:
                     yield "Lino.set_subst_user(%s,%s);" % (
                         py2js(request.subst_user.id),
@@ -552,7 +558,7 @@ class ExtRenderer(HtmlRenderer):
                         for u in settings.SITE.user_model.objects.exclude(
                             profile='').exclude(id=user.id)]
                 else:
-                    qs = users.Authority.objects.filter(
+                    qs = rt.models.users.Authority.objects.filter(
                         authorized=user).exclude(user__profile='')
                     qs = qs.order_by(
                         'user__last_name', 'user__first_name',
@@ -560,7 +566,7 @@ class ExtRenderer(HtmlRenderer):
                     authorities = [
                         (a.user.id, usertext(a.user)) for a in qs]
 
-                a = users.MySettings.default_action
+                a = rt.actors.users.MySettings.default_action
                 handler = self.action_call(None, a, dict(record_id=user.pk))
                 handler = "function(){%s}" % handler
                 mysettings = dict(text=_("My settings"),

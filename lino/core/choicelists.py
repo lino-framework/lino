@@ -732,11 +732,11 @@ class ChoiceListField(models.CharField):
         if choicelist.default_value:
             defaults.update(
                 default=choicelist.as_callable(choicelist.default_value))
-        if not 'help_text' in kw:
-            # inherited docstrings won't be helpful here.
-            doc = choicelist.__dict__['__doc__']
-            if doc:
-                kw['help_text'] = choicelist.__doc__.split('\n\n')[0]
+        # if not 'help_text' in kw:
+        #     # inherited docstrings won't be helpful here.
+        #     doc = choicelist.__dict__['__doc__']
+        #     if doc:
+        #         kw['help_text'] = choicelist.__doc__.split('\n\n')[0]
         defaults.update(kw)
         models.CharField.__init__(self, verbose_name, **defaults)
 

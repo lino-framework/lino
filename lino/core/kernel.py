@@ -20,7 +20,7 @@ something which is loaded *in first place*. That's not true for Lino's
 application.
 
 """
-from __future__ import unicode_literals
+from __future__ import unicode_literals, print_function
 import six
 # str = six.text_type
 # from builtins import str
@@ -37,8 +37,12 @@ import sys
 import time
 import codecs
 import atexit
+import threading
 from importlib import import_module
 
+
+from django.apps import AppConfig
+from django.apps import apps
 from django.conf import settings
 from django.core import exceptions
 from django.utils.encoding import force_text
@@ -64,6 +68,7 @@ from lino.core.model import Model
 from lino.core.store import Store
 from lino.core.renderer import HtmlRenderer, TextRenderer
 from lino.core.signals import (pre_ui_build, post_ui_build,
+                               pre_startup, post_startup,
                                pre_analyze, post_analyze)
 
 # from .widgets import WidgetFactory
@@ -77,6 +82,12 @@ from .utils import get_models
 # from .utils import format_request
 from .exceptions import ChangedAPI
 from .gfks import GenericForeignKey
+
+
+
+startup_rlock = threading.RLock()  # Lock() or RLock()?
+
+
 
 
 def set_default_verbose_name(f):
@@ -212,6 +223,7 @@ class Kernel(object):
           methods into Models that don't inherit from it.
 
         """
+        # logger.info("20161219 kernel_startup")
         if site.history_aware_logging:
             if len(sys.argv) == 0:
                 process_name = 'WSGI'
@@ -484,28 +496,6 @@ class Kernel(object):
                 # site.install_help_text(ba.action, ba.action.__class__)
                 site.install_help_text(ba.action.__class__)
             
-            if a.get_welcome_messages is not None:
-                site.add_welcome_handler(a.get_welcome_messages)
-            if a.welcome_message_when_count is not None:
-                
-                cls = a
-                
-                def get_welcome_messages(ar):
-                    sar = ar.spawn(cls)
-                    # if not cls.get_view_permission(ar.get_user().profile):
-                    if not sar.get_permission():
-                        # raise Exception(20160814)
-                        return
-                    num = sar.get_total_count()
-                    if num > cls.welcome_message_when_count:
-                        chunks = [six.text_type(_("You have "))]
-                        txt = _("{0} items in {1}").format(num, cls.label)
-                        chunks.append(ar.href_to_request(sar, txt))
-                        chunks.append('.')
-                        yield E.span(*chunks)                
-               
-                site.add_welcome_handler(get_welcome_messages)
-
         pre_ui_build.send(self)
 
         self.reserved_names = [getattr(constants, n)
@@ -553,6 +543,33 @@ class Kernel(object):
         self.html_renderer = HtmlRenderer(ui)
         self.text_renderer = TextRenderer(ui)
 
+        for a in actors.actors_list:
+            
+            if a.get_welcome_messages is not None:
+                site.add_welcome_handler(
+                    a.get_welcome_messages, a, "get_welcome_messages")
+            if a.welcome_message_when_count is not None:
+                
+                def handler(cls):
+                
+                    def get_welcome_messages(ar):
+                        sar = ar.spawn(cls)
+                        # if not cls.get_view_permission(ar.get_user().profile):
+                        if not sar.get_permission():
+                            # raise Exception(20160814)
+                            return
+                        num = sar.get_total_count()
+                        if num > cls.welcome_message_when_count:
+                            chunks = [six.text_type(_("You have "))]
+                            txt = _("{0} items in {1}").format(num, cls.label)
+                            chunks.append(ar.href_to_request(sar, txt))
+                            chunks.append('.')
+                            yield E.span(*chunks)
+                    return get_welcome_messages
+               
+                site.add_welcome_handler(
+                    handler(a), a, 'welcome_message_when_count')
+
         post_ui_build.send(self)
 
         if ui is not None:
@@ -563,7 +580,7 @@ class Kernel(object):
                     if ba.action.params_layout is not None:
                         ba.action.params_layout.get_layout_handle(
                             self.default_ui)
-        #~ logger.info("20130827 startup_site done")
+        # logger.info("20161219 kernel_startup done")
 
     def protect_foreignkeys(self, models_list):
         """Change `on_delete` from CASCADE (Django's default value) to PROTECT
@@ -881,7 +898,13 @@ class Kernel(object):
                 logger.debug("%s (%s) is up to date.", fn, time.ctime(mtime))
                 return 0
 
+        # The following message is important to see in a developer
+        # console because the process takes some time and when
+        # developing you are watching at such messages. OTOH it should
+        # not be shown when running unit tests because its occurence
+        # is not (easily) predictable.
         logger.debug("Building %s ...", fn)
+        
         self.site.makedirs_if_missing(dirname(fn))
         f = codecs.open(fn, 'w', encoding='utf-8')
         try:
@@ -897,3 +920,90 @@ class Kernel(object):
 
     # def setup_static_link(self, urlpatterns, short_name,
     #                       attr_name=None, source=None):
+
+    
+def site_startup(self):    
+    """This is being imported and called from
+    :meth:`lino.core.site.Site.startup`. It is implemented here in
+    order to avoid local imports.
+
+    """
+    with startup_rlock:
+
+        # if self.cache_dir is not None:
+        #     raise Exception("No cache_dir is defined. "
+        #                     "Check your LINO_CACHE_ROOT and project_name.")
+
+        if self._starting_up:
+            # This is needed because Django imports the
+            # settings module twice. The phenomen is not fully
+            # explained, but without this test we had the startup
+            # code being run twice, which caused various error
+            # messages (e.g. Duplicate label in workflow setup)
+
+            # print("20161219 starting up (pid:%s)" % os.getpid())
+            
+            return
+
+        if self._startup_done:
+            # print("20161219 startup already done (pid:%s)" % os.getpid())
+            return
+
+        self._starting_up = True
+
+        # print(
+        #     "20161219 Site.startup() %s (pid:%s)" % (self, os.getpid()))
+        
+        # print "20151010 Site.startup()"
+
+        # if AFTER17:
+        #     print "20151010 Site.startup() gonna call django.setup"
+        #     import django
+        #     django.setup()
+
+
+        pre_startup.send(self)
+
+        for p in self.installed_plugins:
+            # m = loading.load_app(p.app_name, False)
+            # In Django17+ we cannot say can_postpone=False,
+            # and we don't need to, because anyway we used it
+            # just for our hack in `lino.models`
+            # load_app(app_name) is deprecated
+            # from django.apps import apps
+            # m = apps.load_app(p.app_name)
+            try:
+                app_config = AppConfig.create(p.app_name)
+                app_config.import_models(
+                    apps.all_models[app_config.label])
+                apps.app_configs[app_config.label] = app_config
+                apps.clear_cache()
+                m = app_config.models_module
+            except ImportError:
+                logger.debug("No module {0}.models", p.app_name)
+                # print(rrrr)
+
+            self.models.define(six.text_type(p.app_label), m)
+
+        for p in self.installed_plugins:
+            p.on_site_startup(self)
+
+        for k, v in self.models.items():
+            self.actors.setdefault(k, v)
+
+        self.user_interfaces = tuple([
+            p for p in self.installed_plugins if p.ui_label is not None])
+
+        # logger.info("20150428 user_interfaces %s", self.user_interfaces)
+
+        # from lino.core.kernel import Kernel
+        self.kernel = Kernel(self)
+        # self.kernel.kernel_startup(self)
+        # self.ui = self.kernel  # internal backwards compat
+
+        self.do_site_startup()
+
+        # print("20161219 Site.startup() done")
+        post_startup.send(self)
+        self._startup_done = True
+    

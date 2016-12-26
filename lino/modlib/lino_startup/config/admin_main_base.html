@@ -13,7 +13,7 @@
         {% endif %}
         <a href="javascript:Lino.viewport.refresh();">refresh</a>
         </p>
-        <p>{{_("Hi, %(first_name)s!") % dict(first_name=ar.get_user().first_name)}}
+        <p>{{_("Hi, %(user)s!") % dict(user=ar.get_user())}}
         {% for msg in settings.SITE.get_welcome_messages(ar) %}
             {{ E.tostring(msg) }}
         {% endfor %}
@@ -58,11 +58,17 @@
         <a href="#" 
            onclick="javascript:Lino.show_login_window()">{{_("log in")}}</a>
       {{_("using the <b>Log in</b> button in the upper right corner.")}}
+        {% if not request.user.profile.readonly %}
+        {{_("Or {} as a new user.").format(
+          E.tostring(ar.window_action_button(
+            site.actors.users.RegisterUsers.insert_action,
+            label=_("register"), icon_name=None)))}}
+        {% endif %}
       </p>
         {% if site.is_demo_site %}
             <p>
             {{_("This demo site has %d users:") % 
-            site.modules.users.UsersOverview.request().get_total_count()}}
+            site.actors.users.UsersOverview.request().get_total_count()}}
             </p>
             {{as_ul('users.UsersOverview')}}
             <p>
