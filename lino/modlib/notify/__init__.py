@@ -103,7 +103,7 @@ class Plugin(ad.Plugin):
 
     def get_js_includes(self, settings, language):
         if self.site.use_websockets:
-            yield self.build_lib_url('reconnecting-websocket/reconnecting-websocket.min.js')
+            yield self.build_lib_url('robust-websocket/robust-websocket.js')
             if settings.DEBUG:
                 yield self.build_lib_url(('push.js/push.min.js'))
             else:
@@ -126,7 +126,7 @@ class Plugin(ad.Plugin):
         user_name = "anony"
         if request.user.authenticated:
             user_name = request.user.username
-        site_title = site.title
+        site_title = site.title or 'Lino-framework'
 
         js_to_add = """
     <script type="text/javascript">
@@ -134,9 +134,9 @@ class Plugin(ad.Plugin):
         // Note that the path doesn't matter for routing; any WebSocket
         // connection gets bumped over to WebSocket consumers
         var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-        var ws_path = ws_scheme + '://' + window.location.host + ":8443/websocket/";
+        var ws_path = ws_scheme + '://' + window.location.host + "/lino";
         console.log("Connecting to " + ws_path);
-        var socket = new ReconnectingWebSocket(ws_path);
+        var socket = new RobustWebSocket(ws_path);
 
         onGranted = console.log("onGranted");
         onDenied = console.log("onDenied");

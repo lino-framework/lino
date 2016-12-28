@@ -354,7 +354,7 @@ class Message(UserAuthored, Controllable, Created):
         }
 
         # Encode and send that message to the whole channels Group for our
-        # liveblog. Note how you can send to a channel or Group from any part
+        # Websocket. Note how you can send to a channel or Group from any part
         # of Django, not just inside a consumer.
         from channels import Group
         Group(user.username).send({
