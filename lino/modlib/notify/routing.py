@@ -1,6 +1,5 @@
 from channels.routing import route, include
-from .consumers import ws_receive, ws_connect,ws_disconnect, user_connected
-
+from .consumers import ws_receive, ws_connect, ws_disconnect, user_connected
 
 # There's no path matching on these routes; we just rely on the matching
 # from the top-level routing. We _could_ path match here if we wanted.
@@ -26,7 +25,7 @@ custom_routing = [
 
 channel_routing = [
     # Include sub-routing from an app.
-    include(websocket_routing, path=r"^/websocket"),
+    include(websocket_routing, path=r"^/lino"),
 
     # Custom handler for message sending (see Room.send_message).
     # Can't go in the include above as it's not got a `path` attribute to match on.
