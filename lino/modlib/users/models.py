@@ -10,14 +10,10 @@ from builtins import str
 from builtins import object
 
 from django.utils.encoding import python_2_unicode_compatible
-
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
-
-from django.contrib.auth.hashers import (
-    check_password, make_password, is_password_usable)
-
+from django.contrib.auth.base_user import AbstractBaseUser
 
 from lino.api import dd, rt
 from lino.utils.xmlgen.html import E
@@ -25,15 +21,15 @@ from lino.core import userprefs
 from lino.core.fields import NullCharField
 from lino.core.roles import SiteAdmin
 
-
 from lino.mixins import CreatedModified
 
 from .choicelists import UserTypes
 from .mixins import UserAuthored, TimezoneHolder
 from .actions import ChangePassword, SendWelcomeMail
 
+
 @python_2_unicode_compatible
-class User(CreatedModified, TimezoneHolder):
+class User(AbstractBaseUser, CreatedModified, TimezoneHolder):
     """Represents a user of this site.
 
     .. attribute:: username
@@ -64,6 +60,10 @@ class User(CreatedModified, TimezoneHolder):
         <lino_xl.lib.contacts.models.Person>` MTI child corresponding
         to the :attr:`partner` (if it exists) and otherwise `None`.
 
+    .. attribute:: last_login
+
+        Not used in Lino.
+    
     """
 
     class Meta(object):
@@ -72,6 +72,8 @@ class User(CreatedModified, TimezoneHolder):
         verbose_name_plural = _('Users')
         abstract = dd.is_abstract_model(__name__, 'User')
         ordering = ['last_name', 'first_name', 'username']
+
+    USERNAME_FIELD = 'username'
 
     preferred_foreignkey_width = 15
 
@@ -87,8 +89,6 @@ class User(CreatedModified, TimezoneHolder):
         help_text=_(
             "Must be unique. "
             "Leaving this empty means that the user cannot log in."))
-
-    password = models.CharField(_('Password'), max_length=128)
 
     profile = UserTypes.field(blank=True)
 
@@ -191,29 +191,6 @@ class User(CreatedModified, TimezoneHolder):
         #~ return self.__class__.objects.all()
 
     change_password = ChangePassword()
-
-    # the following methods are unchanged copies from Django's User
-    # model
-
-    def set_password(self, raw_password):
-        self.password = make_password(raw_password)
-
-    def check_password(self, raw_password):
-        """
-        Returns a boolean of whether the raw_password was correct. Handles
-        hashing formats behind the scenes.
-        """
-        def setter(raw_password):
-            self.set_password(raw_password)
-            self.save()
-        return check_password(raw_password, self.password, setter)
-
-    def set_unusable_password(self):
-        # Sets a value that will never be a valid hash
-        self.password = make_password(None)
-
-    def has_usable_password(self):
-        return is_password_usable(self.password)
 
     def as_list_item(self, ar):
         if settings.SITE.is_demo_site:

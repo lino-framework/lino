@@ -17,6 +17,8 @@ Lino's core even if it is not among the installed apps.
     choicelists
     actions
     desktop
+    forms
+    views
     fixtures.demo
     fixtures.demo_users
     fixtures.demo2

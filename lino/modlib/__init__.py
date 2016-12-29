@@ -47,6 +47,7 @@ Utilities
     export_excel
     tinymce
     notify
+    restful
     changes
     wkhtmltopdf
     weasyprint

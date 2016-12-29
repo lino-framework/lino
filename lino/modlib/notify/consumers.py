@@ -1,3 +1,4 @@
+
 import functools
 import json
 
@@ -5,68 +6,13 @@ from channels import Channel
 from channels import Group
 from channels.sessions import channel_session, http_session
 # from channels.auth import channel_session_user, channel_session_user_from_http
-from django.conf import settings
 from django.utils import timezone
-from django.utils.module_loading import import_string
-from django.utils.crypto import constant_time_compare
 
 from lino.modlib.users.utils import AnonymousUser
-
-# copied from django.contrib.auth.models
-SESSION_KEY = '_auth_user_id'
-BACKEND_SESSION_KEY = '_auth_user_backend'
-HASH_SESSION_KEY = '_auth_user_hash'
-REDIRECT_FIELD_NAME = 'next'
+from lino.modlib.users.utils import get_user
+from lino.modlib.users.utils import BACKEND_SESSION_KEY, SESSION_KEY, HASH_SESSION_KEY
 
 PUBLIC_GROUP = 'all_users_channel'
-
-
-def load_backend(path):
-    return import_string(path)()
-
-
-def get_user_model():
-    # from lino.api import rt
-    # rt.models.users.User
-    return settings.SITE.user_model
-
-
-# adapted copy of django.contrib.auth.models
-def _get_user_session_key(request):
-    # This value in the session is always serialized to a string, so we need
-    # to convert it back to Python whenever we access it.
-    return get_user_model()._meta.pk.to_python(request.session[SESSION_KEY])
-
-
-# adapted copy of django.contrib.auth.models
-def get_user(request):
-    """
-    Returns the user model instance associated with the given request session.
-    If no user is retrieved an instance of `AnonymousUser` is returned.
-    """
-    user = None
-    try:
-        user_id = _get_user_session_key(request)
-        backend_path = request.session[BACKEND_SESSION_KEY]
-    except KeyError:
-        pass
-    else:
-        if backend_path in settings.AUTHENTICATION_BACKENDS:
-            backend = load_backend(backend_path)
-            user = backend.get_user(user_id)
-            # Verify the session
-            if ('django.contrib.auth.middleware.SessionAuthenticationMiddleware'
-                in settings.MIDDLEWARE_CLASSES and hasattr(user, 'get_session_auth_hash')):
-                session_hash = request.session.get(HASH_SESSION_KEY)
-                session_hash_verified = session_hash and constant_time_compare(
-                    session_hash,
-                    user.get_session_auth_hash()
-                )
-                if not session_hash_verified:
-                    request.session.flush()
-                    user = None
-
-    return user or AnonymousUser()
 
 
 # adapted copy from channels.auth
