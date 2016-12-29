@@ -143,6 +143,7 @@ def set_notification_as_seen(message):
 def user_connected(message):
     username = message['username']
     Group(username).add(message.reply_channel)
+    print (username ,"is connected")
     # Not need any more
     # message.reply_channel.send({
     #     "text": username,
