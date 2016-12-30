@@ -150,6 +150,7 @@ lino.modlib.plausibility.fixtures
 lino.modlib.plausibility.management
 lino.modlib.plausibility.management.commands
 lino.modlib.printing
+lino.modlib.restful
 lino.modlib.smtpd
 lino.modlib.smtpd.management
 lino.modlib.smtpd.management.commands

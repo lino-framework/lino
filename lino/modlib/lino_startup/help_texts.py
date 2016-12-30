@@ -324,6 +324,7 @@ template to use on a given instance."""),
 CachedPrintable."""),
     'lino.modlib.printing.mixins.CachedPrintableChecker.model' : _("""alias of CachedPrintable"""),
     'lino.modlib.printing.utils.CustomBuildMethod' : _("""For example CourseToXls."""),
+    'lino.modlib.restful.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.smtpd.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.summaries.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.summaries.Plugin.start_year' : _("""The first year for which summaries should be computed."""),
@@ -416,6 +417,15 @@ attached choice item."""),
 fields.  This is used on demo sites in admin_main.html to
 display the list of available users."""),
     'lino.modlib.users.desktop.UsersOverview.model' : _("""alias of User"""),
+    'lino.modlib.users.forms.UserCreationForm' : _("""A form that creates a user, with no privileges, from the given username and
+password."""),
+    'lino.modlib.users.forms.AuthenticationForm' : _("""Base class for authenticating users. Extend this to get a form that accepts
+username/password logins."""),
+    'lino.modlib.users.forms.SetPasswordForm' : _("""A form that lets a user change set their password without entering the old
+password"""),
+    'lino.modlib.users.forms.PasswordChangeForm' : _("""A form that lets a user change their password by entering their old
+password."""),
+    'lino.modlib.users.forms.AdminPasswordChangeForm' : _("""A form used to change the password of a user in the admin interface."""),
     'lino.modlib.users.mixins.TimezoneHolder' : _("""Mixin for database models which have a timezone field."""),
     'lino.modlib.users.mixins.TimezoneHolder.timezone' : _("""The timezone."""),
     'lino.modlib.users.mixins.Authored.author_field_name' : _("""The name of the field which defines the author of this object."""),

@@ -356,7 +356,7 @@ class InstanceGenerator(object):
         return rv
 
 
-def create(model, **kw):
+def create_row(model, **kw):
     """Instantiate, full_clean, save and return a database object.
 
     """
@@ -365,6 +365,8 @@ def create(model, **kw):
     o.full_clean()
     o.save()
     return o
+
+create = create_row  # backwards-compat
 
 def create_and_get(model, **kw):
     """Create and then read back from database (the latter to avoid

@@ -187,6 +187,7 @@ class FakeField(object):
     primary_key = False
     editable = False
     name = None
+    serialize = False
     #~ verbose_name = None
     help_text = None
     preferred_width = 30
