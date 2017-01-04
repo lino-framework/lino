@@ -204,9 +204,9 @@ class Model(models.Model):
 
     workflow_state_field = None
     """If this is set on a Model, then it will be used as default value
-    for
-    :attr:`workflow_state_field<lino.core.table.Table.workflow_state_field>`
-    of all tables based on this Model.
+    for :attr:`workflow_state_field
+    <lino.core.table.Table.workflow_state_field>` of all tables based
+    on this Model.
 
     """
 
@@ -726,6 +726,7 @@ class Model(models.Model):
         l = []
         if ar is not None:
             actor = ar.actor
+            # print(20170102, actor)
             state = actor.get_row_state(obj)
             sep = ''
             show = True  # whether to show the state
@@ -745,6 +746,7 @@ class Model(models.Model):
                 #~ sep = u" \u25b8 "
 
             for ba in actor.get_actions():
+                assert ba.actor == actor  # 20170102
                 if ba.action.show_in_workflow:
                     if actor.get_row_permission(obj, ar, state, ba):
                         if show and isinstance(ba.action, ChangeStateAction):

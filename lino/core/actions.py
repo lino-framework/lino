@@ -562,7 +562,6 @@ class Action(Parametrizable, Permittable):
         """
         # if not actor.editable and not self.readonly:
         #     return False
-
         if self.defining_actor is not None:
             # already defined in another actor
             return True
@@ -625,7 +624,10 @@ class Action(Parametrizable, Permittable):
         on an action it is a instance method.
 
         Note that this method is not called for actions which are rendered
-        in a toolbar (:srcref:`docs/tickets/105`)
+        in a toolbar (:ticket:`1336`).
+
+        Usage examples:
+        :class:`lino.modlib.users.actions.SendWelcomeMail`
 
         """
 

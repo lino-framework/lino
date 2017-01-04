@@ -390,6 +390,7 @@ uploaded file in a new browser window."""),
     'lino.modlib.uploads.models.MyUploads.model' : _("""alias of Upload"""),
     'lino.modlib.uploads.models.UploadsByController.model' : _("""alias of Upload"""),
     'lino.modlib.users.Plugin' : _("""See /dev/plugins."""),
+    'lino.modlib.users.Plugin.online_registration' : _("""Whether this site offers online registration of new users."""),
     'lino.modlib.users.actions.SendWelcomeMail' : _("""Send a welcome mail to this user."""),
     'lino.modlib.users.actions.ChangePassword' : _("""Change the password of this user."""),
     'lino.modlib.users.actions.ChangePassword.current' : _("""The current password. Leave empty if the user has no password
@@ -397,13 +398,13 @@ yet. And SiteAdmin users don't need to specify this at all."""),
     'lino.modlib.users.actions.ChangePassword.new1' : _("""The new password."""),
     'lino.modlib.users.actions.ChangePassword.new2' : _("""The new password a second time. Both passwords must match."""),
     'lino.modlib.users.choicelists.UserType' : _("""Base class for all user profiles."""),
-    'lino.modlib.users.choicelists.UserType.hidden_languages' : _("""A subset of languages which
-should be hidden in this user profile.  Default value is
-hidden_languages.  This is
-used on multilingual sites with more than 4 or 5 languages."""),
-    'lino.modlib.users.choicelists.UserType.role' : _("""The role of users having this profile. This is an instance of
+    'lino.modlib.users.choicelists.UserType.role' : _("""The role of users having this type. This is an instance of
 <lino.core.roles.UserRole> or some subclass thereof."""),
-    'lino.modlib.users.choicelists.UserType.readonly' : _("""Whether users with this profile get only write-proteced access."""),
+    'lino.modlib.users.choicelists.UserType.readonly' : _("""Whether users of this type get only write-proteced access."""),
+    'lino.modlib.users.choicelists.UserType.hidden_languages' : _("""A subset of languages
+which should be hidden for users of this type.  Default value
+is hidden_languages.  This
+is used on multilingual sites with more than 4 or 5 languages."""),
     'lino.modlib.users.choicelists.UserTypes' : _("""The list of user profiles available on this site."""),
     'lino.modlib.users.choicelists.UserTypes.item_class' : _("""alias of UserType"""),
     'lino.modlib.users.choicelists.UserTypes.hidden_languages' : _("""Default value for the
@@ -450,6 +451,7 @@ Leaving this empty means that the user cannot log in."""),
 this user."""),
     'lino.modlib.users.models.User.person' : _("""A virtual read-only field which returns the Person MTI child corresponding
 to the partner (if it exists) and otherwise None."""),
+    'lino.modlib.users.models.User.last_login' : _("""Not used in Lino."""),
     'lino.modlib.users.models.User.authenticated' : _("""This is always True.
 See also lino.modlib.users.utils.AnonymousUser.authenticated."""),
     'lino.modlib.users.models.Authority' : _("""An Authority is when a user gives another user the right to

@@ -29,10 +29,19 @@ from lino.api import ad, _
 
 
 class Plugin(ad.Plugin):
-    "See :doc:`/dev/plugins`."
+    """See :doc:`/dev/plugins`.
+
+    .. attribute:: online_registration
+
+        Whether this site offers :ref:`online registration
+        <online_registration>` of new users.
+
+    """
     verbose_name = _("Users")
 
     needs_plugins = ['lino.modlib.system']
+
+    online_registration = False
 
     def on_init(self):
         super(Plugin, self).on_init()

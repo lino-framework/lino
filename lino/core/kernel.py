@@ -422,6 +422,28 @@ class Kernel(object):
             a.class_init()
 
         dbtables.discover()
+
+        # Create default tables. Every model for which there is no
+        # table at all, will now get an automatically created default
+        # table.  This includes automatic models created by
+        # ManyToManyField.
+        for model in models_list:
+            # Not getattr but __dict__.get because of the mixins.Listings
+            # trick:
+            rpt = model.__dict__.get('_lino_default_table', None)
+            # rpt = getattr(model,'_lino_default_table',None)
+            # logger.debug('20111113 %s._lino_default_table = %s',model,rpt)
+            if rpt is None:
+                rpt = dbtables.table_factory(model)
+                if rpt is None:
+                    raise Exception("table_factory() failed for %r." % model)
+                # print ("20170104 No table for {}, created default table.".format(model))
+                dbtables.register_report(rpt)
+                rpt.class_init()
+                # rpt.collect_actions()
+                model._lino_default_table = rpt
+
+        
         #~ choosers.discover()
         actions.discover_choosers()
 
@@ -443,15 +465,27 @@ class Kernel(object):
 
         site.on_each_app('site_setup')  # deprecated
 
-        # Actor.after_site_setup() is called after the apps'
+        # Actor.after_site_setup() is called after the plugins's
         # site_setup().  Example: pcsw.site_setup() adds a detail to
         # properties.Properties, the base class for
         # properties.PropsByGroup.  The latter would not install a
         # `detail_action` during her after_site_setup() and also would
         # never get it later.
+        
+        # In a first loop we run it on actors who are being used as
+        # default tables for a model. Because the defining_actor of
+        # model actions will be the first actor to which they get
+        # attached.
 
+        later = []
         for a in actors.actors_list:
+            if a.model and a == a.model.get_default_table():
+                a.after_site_setup(site)
+            else:
+                later.append(a)
+        for a in later:
             a.after_site_setup(site)
+                
 
         #~ site.on_site_startup()
 

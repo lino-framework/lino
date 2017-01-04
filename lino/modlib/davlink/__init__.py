@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2014-2015 Luc Saffre
+# Copyright 2014-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Adds actions for editing printable documents on a server with
@@ -60,3 +60,8 @@ class Plugin(ad.Plugin):
 
     def jnlp_file_parts(self):
         return ('cache', self.media_name + '.jnlp')
+    
+    def setup_quicklinks(self, ar, tb):
+        if self.site.use_java:
+            tb.add_action('davlink.Toolbar', 'reset_davlink')
+

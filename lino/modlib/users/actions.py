@@ -10,39 +10,82 @@ from builtins import object
 from django.utils.encoding import python_2_unicode_compatible
 
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
-
-from lino.api import dd, rt
+from lino.api import dd, rt, _
 from lino.core.roles import SiteAdmin
 
 
 class SendWelcomeMail(dd.Action):
     """Send a welcome mail to this user."""
     label = _("Welcome mail")
-    show_in_bbar = True
-    show_in_workflow = False
+    if False:  # #1336
+        show_in_bbar = True
+        show_in_workflow = False
+    else:
+        show_in_bbar = False
+        show_in_workflow = True
     button_text = u"\u2709"  # ✉
     required_roles = dd.required(SiteAdmin)
     parameters = dict(
         email=models.EmailField(_('e-mail address')),
-        verification_code=models.CharField(
-            _("Verification code"), max_length=50))
+        subject=models.CharField(_('Subject'), max_length=250),
+        #body_text=dd.RichTextField(_('Body text'), format='html'),
+    )
+    # params_layout = dd.Panel("""email
+    # subject
+    # body_text""", window_size=(60, 15))
+
+    # params_layout = dd.Panel("""
+    # email
+    # subject
+    # welcome_email_body""", window_size=(60, 15))
+
+    params_layout = """
+    email
+    subject
+    """
     
+    def action_param_defaults(self, ar, obj, **kw):
+        kw = super(SendWelcomeMail, self).action_param_defaults(
+            ar, obj, **kw)
+        if obj is not None:
+            kw.update(email=obj.email)
+        kw.update(subject=_("Welcome on {site}").format(
+            site=settings.SITE.title or settings.SITE.verbose_name))
+        # template = rt.get_template('users/welcome_email.eml')
+        # context = dict(obj=obj, E=E, rt=rt)
+        # body = template.render(**context)
+        # body = E.fromstring(body)
+        # kw.update(body_text=body)
+        return kw
     
     def get_action_permission(self, ar, obj, state):
-        if obj == ar.get_user():
+        user = ar.get_user()
+        if not obj.email:
+            return False
+        if not user.profile.has_required_roles([SiteAdmin]):
             return False
         return super(
             SendWelcomeMail, self).get_action_permission(ar, obj, state)
 
     def run_from_ui(self, ar, **kw):
 
+        sender = settings.SERVER_EMAIL
         done_for = []
-        for obj in ar.selected_rows:
-            obj.send_welcome_email()
-            done_for.append(str(obj))
+        assert len(ar.selected_rows) == 1
+        obj = ar.selected_rows[0]
+        subject = ar.action_param_values.subject
+        email = ar.action_param_values.email
+        # body = ar.action_param_values.body_text
+        # body = "<body>" + body + "</body>"
+        email = "{} <{}>".format(obj, email)
+        
+        body = obj.get_welcome_email_body(ar)
+        print(20170102, obj, email, body)
+        # send_welcome_email(obj)
+        rt.send_email(subject, sender, body, [email])
+        done_for.append(email)
 
         msg = _("Welcome mail has been sent to {}.").format(
             ', '.join(done_for))

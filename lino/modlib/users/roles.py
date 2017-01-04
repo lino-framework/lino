@@ -1,4 +1,4 @@
-# Copyright 2015 Luc Saffre
+# Copyright 2015-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Defines a default set of user profiles "Anonymous", "User" and
@@ -28,7 +28,8 @@ class AuthorshipTaker(SiteUser):
 from .choicelists import UserTypes
 
 
-UserTypes.clear()
+UserTypes.clear()  # e.g. Sphinx autodoc might import other user types
+                   # modules.
 add = UserTypes.add_item
 add('000', _("Anonymous"), UserRole, name='anonymous', readonly=True)
 add('100', _("User"), SiteUser, name='user')

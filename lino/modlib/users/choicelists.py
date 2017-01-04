@@ -11,7 +11,7 @@ from builtins import str
 from django.conf import settings
 
 from lino.core.choicelists import ChoiceList, Choice
-from lino.core.roles import UserRole, SiteUser, SiteAdmin
+from lino.core.roles import SiteAdmin
 
 from lino.api import dd, _
 
@@ -19,27 +19,30 @@ from lino.api import dd, _
 class UserType(Choice):
     """Base class for all user profiles.
 
+    .. attribute:: role
+
+        The role of users having this type. This is an instance of
+        :class:`<lino.core.roles.UserRole>` or some subclass thereof.
+
+    .. attribute:: readonly
+
+        Whether users of this type get only write-proteced access.
+
+    .. attribute:: hidden_languages
+
+        A subset of :attr:`languages<lino.core.site.Site.languages>`
+        which should be hidden for users of this type.  Default value
+        is :attr:`hidden_languages<UserTypes.hidden_languages>`.  This
+        is used on multilingual sites with more than 4 or 5 languages.
+
     """
 
+    role = None
     hidden_languages = None
-    """A subset of :attr:`languages<lino.core.site.Site.languages>` which
-    should be hidden in this user profile.  Default value is
-    :attr:`hidden_languages<UserTypes.hidden_languages>`.  This is
-    used on multilingual sites with more than 4 or 5 languages.
-
-    """
-
     readonly = False
-    """Whether users with this profile get only write-proteced access."""
 
     # authenticated = True
     # """Whether users with this profile should be considered authenticated."""
-
-    role = None
-    """The role of users having this profile. This is an instance of
-    :class:`<lino.core.roles.UserRole>` or some subclass thereof.
-
-    """
 
     def __init__(self, value, text, role_class,
                  name=None,  # authenticated=True,
@@ -51,7 +54,6 @@ class UserType(Choice):
         super(UserType, self).__init__(value, text, name)
         self.role = role_class()
         self.readonly = readonly
-        # self.authenticated = authenticated
         self.kw = kw
 
     def attach(self, cls):
@@ -104,6 +106,14 @@ class UserTypes(ChoiceList):
     You can see the user profiles available in your application via
     :menuselection:`Explorer --> System --> User Profiles`.
 
+    Every site should define at least three named user types:
+
+    .. attribute:: anonymous
+
+    .. attribute:: user
+
+    .. attribute:: admin
+
     """
     required_roles = dd.login_required(SiteAdmin)
     item_class = UserType
@@ -124,11 +134,10 @@ class UserTypes(ChoiceList):
 
     """
 
-
-add = UserTypes.add_item
-add('000', _("Anonymous"), UserRole, name='anonymous', readonly=True)
-add('100', _("User"), SiteUser, name='user')
-add('900', _("Administrator"), SiteAdmin, name='admin')
+# add = UserTypes.add_item
+# add('000', _("Anonymous"), UserRole, 'anonymous', readonly=True)
+# add('100', _("User"), SiteUser, 'user')
+# add('900', _("Administrator"), SiteAdmin, 'admin')
 
 
 

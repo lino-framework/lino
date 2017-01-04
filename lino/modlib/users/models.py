@@ -11,11 +11,10 @@ from builtins import object
 
 from django.utils.encoding import python_2_unicode_compatible
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.contrib.auth.base_user import AbstractBaseUser
 
-from lino.api import dd, rt
+from lino.api import dd, rt, _
 from lino.utils.xmlgen.html import E
 from lino.core import userprefs
 from lino.core.fields import NullCharField
@@ -111,6 +110,8 @@ class User(AbstractBaseUser, CreatedModified, TimezoneHolder):
 
         partner = dd.DummyField()
 
+    change_password = ChangePassword()
+
     def __str__(self):
         return self.get_full_name()
 
@@ -190,8 +191,17 @@ class User(AbstractBaseUser, CreatedModified, TimezoneHolder):
         return [[u.id, str(u)] for u in self.__class__.objects.all()]
         #~ return self.__class__.objects.all()
 
-    change_password = ChangePassword()
+    # @dd.htmlbox(_("Welcome"))
+    # def welcome_email_body(self, ar):
+    #     # return join_words(self.last_name.upper(),self.first_name)
+    #     return self.get_welcome_email_body(ar)
 
+    def get_welcome_email_body(self, ar):
+        template = rt.get_template('users/welcome_email.eml')
+        context = self.get_printable_context(ar)
+        # dict(obj=self, E=E, rt=rt)
+        return template.render(**context)
+        
     def as_list_item(self, ar):
         if settings.SITE.is_demo_site:
             p = "'{0}', '{1}'".format(self.username, '1234')
@@ -232,24 +242,7 @@ class User(AbstractBaseUser, CreatedModified, TimezoneHolder):
     # def do_send_email(self, ar):
     #     self.send_welcome_email()
 
-    def send_welcome_email(self):
-        """"""
-        if not self.email:
-            # debug level because we don't want to see this message
-            # every 10 seconds:
-            dd.logger.debug("User %s has no email address", self)
-            return
-        subject = settings.EMAIL_SUBJECT_PREFIX + str(_("Welcome"))
-
-        template = rt.get_template('users/welcome_email.eml')
-        context = dict(obj=self, E=E, rt=rt)
-        body = template.render(**context)
-
-        sender = settings.SERVER_EMAIL
-        rt.send_email(subject, sender, body, [self.email])
-    
-        
-    do_send_email = SendWelcomeMail()
+    # send_email = SendWelcomeMail()
 
 class Authority(UserAuthored):
     """An Authority is when a user gives another user the right to

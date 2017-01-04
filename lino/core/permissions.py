@@ -173,18 +173,19 @@ def make_view_permission_handler_(
             # if action.action_name == "export_excel":
             #     print 20150828, profile.role, required_roles
             return profile.has_required_roles(required_roles)
+        
+        if not readonly:
+            allow3 = allow
+
+            def allow(action, profile):
+                if not allow3(action, profile):
+                    return False
+                if profile.readonly:
+                    return False
+                return True
+
     else:
         def allow(action, profile):
-            return True
-
-    if not readonly:
-        allow3 = allow
-
-        def allow(action, profile):
-            if not allow3(action, profile):
-                return False
-            if profile.readonly:
-                return False
             return True
 
     if debug_permissions:  # False:

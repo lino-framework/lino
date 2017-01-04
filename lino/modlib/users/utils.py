@@ -48,14 +48,16 @@ class AnonymousUser(object):
             settings.SITE.startup()
             cls._instance = AnonymousUser()
             from lino.modlib.users.choicelists import UserTypes
-            cls._instance.profile = UserTypes.get_by_value(
-                settings.SITE.anonymous_user_type, None)
-            if cls._instance.profile is None:
-                raise Exception(
-                    "Invalid value %r for `SITE.anonymous_user_type`. "
-                    "Must be one of %s" % (
-                        settings.SITE.anonymous_user_type,
-                        [i.value for i in list(UserTypes.items())]))
+            cls._instance.profile = UserTypes.get_by_name(
+                'anonymous', None)
+            # cls._instance.profile = UserTypes.get_by_value(
+            #     settings.SITE.anonymous_user_type, None)
+            # if cls._instance.profile is None:
+            #     raise Exception(
+            #         "Invalid value %r for `SITE.anonymous_user_type`. "
+            #         "Must be one of %s" % (
+            #             settings.SITE.anonymous_user_type,
+            #             [i.value for i in list(UserTypes.items())]))
         return cls._instance
 
     def __str__(self):

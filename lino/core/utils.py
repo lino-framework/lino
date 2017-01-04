@@ -127,6 +127,8 @@ def is_devserver():
 
     """
     #~ print 20130315, sys.argv[1]
+    if sys.argv[0] == 'daphne':
+       return True
     return len(sys.argv) > 1 and sys.argv[1] in (
         'runserver', 'testserver', 'test', "makescreenshots")
 
