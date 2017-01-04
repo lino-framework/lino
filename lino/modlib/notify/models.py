@@ -172,8 +172,9 @@ class Message(UserAuthored, Controllable, Created):
         others = set()
         me = ar.get_user()
         for user, mm in recipients:
-            if user and user != me:
-                others.add((user, mm))
+            if user:
+                if user != me or me.notify_myself:
+                    others.add((user, mm))
 
         if len(others):
             # subject = "{} by {}".format(message_type, me)
@@ -371,10 +372,9 @@ dd.update_field(Message, 'user',
 #     null=True, blank=True, verbose_name=_("About"))
 
 dd.inject_field(
-    'users.User', 'notifyme_mode',
-    dd.DummyField())
-# models.BooleanField(
-#     _('Send messages via e-mail'), default=True))
+    'users.User', 'notify_myself',
+    models.BooleanField(
+        _('Notify myself'), default=False))
 
 dd.inject_field(
     'users.User', 'mail_mode',
