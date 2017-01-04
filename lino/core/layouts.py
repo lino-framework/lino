@@ -620,7 +620,10 @@ class ParamsLayout(BaseLayout):
     params_store = None
 
     def get_data_elem(self, name):
-        return self._datasource.get_param_elem(name)
+        de = self._datasource.get_param_elem(name)
+        if de is None:
+            de = self._datasource.get_data_elem(name)
+        return de
 
     def setup_handle(self, lh):
         # if str(self._datasource) == 'courses.Pupils':

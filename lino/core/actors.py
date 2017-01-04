@@ -267,7 +267,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         the user has permission to view the actor or not.
 
     """
-
     required_roles = set([SiteUser])
     """See :attr:`lino.core.permissions.Permittable.required_roles`"""
 

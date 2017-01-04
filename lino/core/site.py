@@ -522,8 +522,10 @@ class Site(object):
     """
     
     user_types_module = None
-    """The full Python path of the **user profiles module** to be used on
-    this site.
+    """The name of the **user profiles module** to be used on this site.
+
+    Default value is `None`, meaning that permission control is
+    inactive: everything is permitted.
 
     This must be set if you want to enable permission control based on
     user roles defined in :attr:`Permittable.required_roles
@@ -531,12 +533,9 @@ class Site(object):
     :attr:`UserType.role
     <lino.modlib.users.choicelists.UserType.role>`.
 
-    Default value is `None`, meaning that role-based permission
-    control is inactive: every user can see everything.
-
-    If set, Lino will import this module during site startup. It is
-    expected to define application-specific user roles (if necessary)
-    and to fill the :class:`UserTypes
+    If set, Lino will import the named module during site startup. It
+    is expected to define application-specific user roles (if
+    necessary) and to fill the :class:`UserTypes
     <lino.modlib.users.choicelists.UserTypes>` choicelist.
 
     For example::
@@ -546,7 +545,7 @@ class Site(object):
 
     Examples of such user profiles modules are
     :mod:`lino.modlib.users.roles` and
-    :mod:`lino.projects.presto.roles`.
+    :mod:`lino_noi.projects.noi.roles`.
 
     """
 
@@ -760,11 +759,11 @@ class Site(object):
 
     """
 
-    anonymous_user_type = '000'
-    """The user profile to be assigned to the anonymous user
-(:class:`AnonymousUser <lino.modlib.users.utils.AnonymousUser>`).
+#     anonymous_user_type = '000'
+#     """The user profile to be assigned to the anonymous user
+# (:class:`AnonymousUser <lino.modlib.users.utils.AnonymousUser>`).
 
-    """
+#     """
 
     remote_user_header = None
     """The name of the header (set by the web server) that Lino should

@@ -1,4 +1,4 @@
-# Copyright 2009-2016 Luc Saffre
+# Copyright 2009-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -218,22 +218,25 @@ def discover():
         if issubclass(rpt, frames.Frame) and rpt is not frames.Frame:
             register_frame(rpt)
 
-    logger.debug("Instantiate model tables...")
-    for model in get_models():
-
-        # Not getattr but __dict__.get because of the mixins.Listings
-        # trick.
-        rpt = model.__dict__.get('_lino_default_table', None)
-        # rpt = getattr(model,'_lino_default_table',None)
-        # logger.debug('20111113 %s._lino_default_table = %s',model,rpt)
-        if rpt is None:
-            rpt = table_factory(model)
-            if rpt is None:
-                raise Exception("table_factory() failed for %r." % model)
-            register_report(rpt)
-            rpt.class_init()
-            # rpt.collect_actions()
-            model._lino_default_table = rpt
+    # logger.debug("Create default tables...")
+    # for model in get_models():
+    #     # Note that automatic models (created by ManyToManyField with
+    #     # a `through`) do not yet exist here.
+        
+    #     # Not getattr but __dict__.get because of the mixins.Listings
+    #     # trick:
+    #     rpt = model.__dict__.get('_lino_default_table', None)
+    #     # rpt = getattr(model,'_lino_default_table',None)
+    #     # logger.debug('20111113 %s._lino_default_table = %s',model,rpt)
+    #     if rpt is None:
+    #         rpt = table_factory(model)
+    #         if rpt is None:
+    #             raise Exception("table_factory() failed for %r." % model)
+    #         # print ("20170104 No table for {}, created default table.".format(model))
+    #         register_report(rpt)
+    #         rpt.class_init()
+    #         # rpt.collect_actions()
+    #         model._lino_default_table = rpt
 
     logger.debug("Analyze %d slave tables...", len(slave_reports))
     for rpt in slave_reports:

@@ -895,10 +895,11 @@ class ExtRenderer(HtmlRenderer):
 
     def lino_js_parts(self):
         profile = jsgen.get_user_profile()
-        # return ('genjs',
-        return ('cache', 'js',
-                'lino_' + profile.value + '_'
-                + translation.get_language() + '.js')
+        filename = 'lino_'
+        if profile is not None:
+            filename += profile.value + '_'
+        filename += translation.get_language() + '.js'
+        return ('cache', 'js', filename)
 
     def linolib_template(self):
         env = jinja2.Environment(loader=jinja2.FileSystemLoader(
@@ -1106,6 +1107,8 @@ class ExtRenderer(HtmlRenderer):
         yield "  action_name: '%s'," % tbl.action_name
         yield "  ls_url: %s," % py2js(dh.layout._url)
         yield "  window_title: %s," % py2js(tbl.label)
+        # if not tbl.select_rows:
+        #     yield "  default_record_id: -99999,"
 
         yield "  before_row_edit : function(record) {"
         for ln in self.before_row_edit(dh.main):

@@ -2500,8 +2500,10 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel, {
         pk = panel.get_current_record().id;
     }
     if (pk == undefined) {
-        Lino.alert("Sorry, dialog action without base_params.mk");
-        return;
+        // 20170101 VerifyUser action
+        pk = '-99998';
+        // Lino.alert("Sorry, dialog action without base_params.mk");
+        // return;
     }
     var self = this;
     // function on_success() { self.get_containing_window().close(); };

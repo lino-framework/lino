@@ -10,7 +10,7 @@ from lino.core import actions
 from lino.core.roles import SiteAdmin
 
 from .choicelists import UserTypes
-
+from .actions import SendWelcomeMail
 
 class UserDetail(dd.DetailLayout):
 
@@ -71,9 +71,11 @@ class Users(dd.Table):
         #~ return False
 
 
+
 class AllUsers(Users):
     """Shows the list of all users on this site."""
     required_roles = dd.required(SiteAdmin)
+    send_welcome_email = SendWelcomeMail()
 
 class UsersOverview(Users):
 

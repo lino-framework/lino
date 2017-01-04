@@ -58,10 +58,10 @@
         <a href="#" 
            onclick="javascript:Lino.show_login_window()">{{_("log in")}}</a>
       {{_("using the <b>Log in</b> button in the upper right corner.")}}
-        {% if not request.user.profile.readonly %}
+        {% if site.plugins.users.online_registration and not request.user.profile.readonly %}
         {{_("Or {} as a new user.").format(
           E.tostring(ar.window_action_button(
-            site.actors.users.RegisterUsers.insert_action,
+            site.actors.users.Register.insert_action,
             label=_("register"), icon_name=None)))}}
         {% endif %}
       </p>
