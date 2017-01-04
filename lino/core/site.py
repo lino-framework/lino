@@ -639,6 +639,12 @@ class Site(object):
 
     """
 
+    use_silk_icons = False  # temporarily
+    """Whether to use the `silk icons library
+    <http://www.famfamfam.com/lab/icons/silk/>`__.
+
+    """
+    
     use_new_unicode_symbols = False
     """Whether to use "new" unicode symbols (e.g. from the `Miscellaneous
     Symbols and Pictographs
