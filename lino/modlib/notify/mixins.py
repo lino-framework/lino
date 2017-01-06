@@ -73,9 +73,10 @@ class ChangeObservable(dd.Model):
 
         super(ChangeObservable, self).after_ui_save(ar, cw)
 
-        msg = self.get_notify_message(ar, cw)
-        if not msg:
-            return
+        def msg(user, mm):
+            return self.get_notify_message(ar, cw)
+        # if not msg:
+        #     return
         # subject, body = msg
         owner = self.get_notify_owner(ar)
         mt = rt.actors.notify.MessageTypes.change

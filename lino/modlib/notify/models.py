@@ -159,10 +159,11 @@ class Message(UserAuthored, Controllable, Created):
     #     self.user, self.owner)
 
     @classmethod
-    def emit_message(cls, ar, owner, message_type, body, recipients):
+    def emit_message(cls, ar, owner, message_type, body_func, recipients):
         """Create one database object for every recipient.
 
         `recipients` is a list of `(user, mail_mode)` tuples.
+        `body_func` is a callable to be called for each recipient.
 
         The changing user does not get notified about their own
         changes, except when working as another user.
@@ -181,9 +182,12 @@ class Message(UserAuthored, Controllable, Created):
             # dd.logger.info(
             #     "Notify %s users about %s", len(others), subject)
             for user, mm in others:
-                cls.create_message(
-                    user, owner, body=body,
-                    mail_mode=mm, message_type=message_type)
+                with dd.translation.override(user.language):
+                    body = body_func(user, mm)
+                    if body:
+                        cls.create_message(
+                            user, owner, body=body,
+                            mail_mode=mm, message_type=message_type)
 
     @classmethod
     def create_message(cls, user, owner=None, **kwargs):

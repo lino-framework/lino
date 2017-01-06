@@ -82,7 +82,8 @@ class NotifyingAction(actions.Action):
         recipients = self.get_notify_recipients(ar, obj)
         mt = rt.models.notify.MessageTypes.action
         pv = ar.action_param_values
-        msg = pv.notify_subject + "\n" + pv.notify_body
+        def msg(user, mm):
+            return pv.notify_subject + "\n" + pv.notify_body
         rt.models.notify.Message.emit_message(
             ar, owner, mt, msg, recipients)
 
