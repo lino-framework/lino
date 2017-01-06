@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2015 Luc Saffre
+# Copyright 2013-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 """Database models for `lino.modlib.comments`.
 
@@ -12,7 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
 from lino.api import dd
-from lino.modlib.users.mixins import ByUser
+from lino.modlib.users.mixins import My
 from lino.modlib.office.roles import OfficeStaff, OfficeUser
 from lino.utils.xmlgen.html import E
 
@@ -41,7 +41,7 @@ class Comments(dd.Table):
     #~ label = _("Notes")
 
 
-class MyComments(ByUser, Comments):
+class MyComments(My, Comments):
     required_roles = dd.required(OfficeUser)
     auto_fit_column_widths = True
     order_by = ["modified"]

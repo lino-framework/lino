@@ -77,6 +77,8 @@ class TableRequest(ActionRequest):
         """
         try:
             self._data_iterator = self.get_data_iterator()
+            if self._data_iterator is None:
+                raise Exception("No data iterator for {}".format(self))
         except Warning as e:
             #~ logger.info("20130809 Warning %s",e)
             self.no_data_text = six.text_type(e)

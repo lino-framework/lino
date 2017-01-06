@@ -429,7 +429,8 @@ password."""),
     'lino.modlib.users.forms.AdminPasswordChangeForm' : _("""A form used to change the password of a user in the admin interface."""),
     'lino.modlib.users.mixins.TimezoneHolder' : _("""Mixin for database models which have a timezone field."""),
     'lino.modlib.users.mixins.TimezoneHolder.timezone' : _("""The timezone."""),
-    'lino.modlib.users.mixins.Authored.author_field_name' : _("""The name of the field which defines the author of this object."""),
+    'lino.modlib.users.mixins.Authored' : _("""No longer user. The name of the field that defines the author
+of this object."""),
     'lino.modlib.users.mixins.Authored.manager_roles_required' : _("""The list of required roles for getting permission to edit other
 users' work."""),
     'lino.modlib.users.mixins.UserAuthored' : _("""Model mixin for database objects that have a user field which
