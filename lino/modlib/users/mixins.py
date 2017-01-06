@@ -56,16 +56,16 @@ class TimezoneHolder(models.Model):
 
 
 class Authored(model.Model):
-    """
-    .. attribute:: author_field_name
+    """.. attribute:: author_field_name
 
-        The name of the field which defines the author of this object.
+        No longer user. The name of the field that defines the author
+        of this object.
 
     """
     class Meta(object):
         abstract = True
 
-    author_field_name = None
+    # author_field_name = None
     
     manager_roles_required = login_required(SiteStaff)
     """The list of required roles for getting permission to edit other
@@ -90,11 +90,12 @@ class Authored(model.Model):
     """
 
     def get_author(self):
-        return getattr(self, self.author_field_name)
+        return self.user
+        # return getattr(self, self.author_field_name)
     
     def set_author(self, user):
-        setattr(self, self.author_field_name, user)
-        
+        raise NotImplementedError()
+    
     def on_duplicate(self, ar, master):
         """The default behaviour after duplicating is to change the author to
         the user who requested the duplicate.
@@ -129,16 +130,17 @@ class Authored(model.Model):
     @classmethod
     def get_parameter_fields(cls, **fields):
         """Adds the :attr:`user` filter parameter field."""
+        fld = cls._meta.get_field('user')
         fields.setdefault(
-            cls.author_field_name, models.ForeignKey(
-                'users.User', verbose_name=_("Author"),
+            'user', models.ForeignKey(
+                'users.User', verbose_name=fld.verbose_name,
                 blank=True, null=True))
         return super(Authored, cls).get_parameter_fields(**fields)
 
     @classmethod
     def get_simple_parameters(cls):
         s = super(Authored, cls).get_simple_parameters()
-        s.add(cls.author_field_name)
+        s.add('user')  # cls.author_field_name)
         return s
 
     
@@ -158,13 +160,17 @@ class UserAuthored(Authored):
         abstract = True
 
     workflow_owner_field = 'user'
-    author_field_name = 'user'    
+    # author_field_name = 'user'    
     user = dd.ForeignKey(
         'users.User',
         verbose_name=_("Author"),
         related_name="%(app_label)s_%(class)s_set_by_user",
         blank=True, null=True)
 
+    def set_author(self, user):
+        self.user = user
+        # setattr(self, self.author_field_name, user)
+        
     def on_create(self, ar):
         """
         Adds the requesting user to the `user` field.
@@ -196,10 +202,9 @@ class My(dbtables.Table):
     """Mixin for tables on :class:`Authored` which sets the requesting
     user as default value for the :attr:`author` filter parameter.
 
-    If the model does not inherit from :class:`Authored`, then it must
-    define a parameter field for selecting the author and a model
-    attribute :attr:`author_field_name` with the name of that
-    parameter field.  This feature is used by
+    If the table's model does *not* inherit from :class:`Authored`,
+    then it must define a parameter field named 'user' and a model
+    attribute `user`.  This feature is used by
     :class:`lino_xl.lib.reception.models.MyWaitingVisitors`.
 
     Used by
@@ -207,8 +212,6 @@ class My(dbtables.Table):
     :mod:`lino_xl.lib.reception`.
 
     """
-
-    # author_field_name = None
 
     @classmethod
     def get_actor_label(self):
@@ -223,58 +226,62 @@ class My(dbtables.Table):
         # kw.update(user=ar.get_user())
         # k = self.author_field_name or self.model.author_field_name
         # kw[k] = ar.get_user()
-        kw[self.model.author_field_name] = ar.get_user()
+        # kw[self.model.author_field_name] = ar.get_user()
+        kw['user'] = ar.get_user()
         return kw
 
 
-class ByUser(dbtables.Table):
-    """Mixin for slave tables whose master is the requesting user.
+# class ByUser(dbtables.Table):
+#     """Deprecated mixin for slave tables whose master is the requesting
+#     user.
 
-    """
-    master_key = 'user'
-    #~ details_of_master_template = _("%(details)s of %(master)s")
-    details_of_master_template = _("%(details)s")
+#     """
+#     master_key = 'user'
+#     #~ details_of_master_template = _("%(details)s of %(master)s")
+#     details_of_master_template = _("%(details)s")
 
-    @classmethod
-    def get_actor_label(self):
-        if self.model is None:
-            return self._label or self.__name__
-        return self._label or \
-            _("My %s") % self.model._meta.verbose_name_plural
+#     @classmethod
+#     def get_actor_label(self):
+#         if self.model is None:
+#             return self._label or self.__name__
+#         return self._label or \
+#             _("My %s") % self.model._meta.verbose_name_plural
 
-    @classmethod
-    def setup_request(self, ar):
-        #~ logger.info("ByUser.setup_request")
-        if ar.master_instance is None:
-            u = ar.get_user()
-            if not isinstance(u, AnonymousUser):
-                ar.master_instance = u
-        super(ByUser, self).setup_request(ar)
+#     @classmethod
+#     def setup_request(self, ar):
+#         #~ logger.info("ByUser.setup_request")
+#         if ar.master_instance is None:
+#             u = ar.get_user()
+#             if not isinstance(u, AnonymousUser):
+#                 ar.master_instance = u
+#         super(ByUser, self).setup_request(ar)
 
-    @classmethod
-    def get_view_permission(self, profile):
-        if not profile.has_required_roles([SiteUser]):
-            return False
-        return super(ByUser, self).get_view_permission(profile)
+#     @classmethod
+#     def get_view_permission(self, profile):
+#         if not profile.has_required_roles([SiteUser]):
+#             return False
+#         return super(ByUser, self).get_view_permission(profile)
 
-if settings.SITE.user_model is None:
+# if settings.SITE.user_model is None:
 
-    # dummy Table for userless sites
-    ByUser = dbtables.Table
+#     # dummy Table for userless sites
+#     ByUser = dbtables.Table
 
 
-class AuthorAction(actions.Action):
-    """
-    """
-    manager_roles_required = login_required(SiteStaff)
+# class AuthorAction(actions.Action):
+#     """Mixin for actions that are reserved to the author of the database
+#     object.
 
-    def get_action_permission(self, ar, obj, state):
-        user = ar.get_user()
-        if obj.user != user and \
-           not user.profile.has_required_roles(self.manager_roles_required):
-            return self.readonly
-        return super(
-            AuthorAction, self).get_action_permission(ar, obj, state)
+#     """
+#     manager_roles_required = login_required(SiteStaff)
+
+#     def get_action_permission(self, ar, obj, state):
+#         user = ar.get_user()
+#         if obj.user != user and \
+#            not user.profile.has_required_roles(self.manager_roles_required):
+#             return self.readonly
+#         return super(
+#             AuthorAction, self).get_action_permission(ar, obj, state)
 
    
 class AssignToMe(dd.Action):

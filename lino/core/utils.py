@@ -27,6 +27,7 @@ import datetime
 from django.db import models
 from django.db.models import Q
 from django.db.models.fields import FieldDoesNotExist
+from django.utils.functional import lazy
 from importlib import import_module
 from django.utils.translation import ugettext as _
 from django.conf import settings
@@ -765,3 +766,11 @@ def error2str(self, e):
     return str(e)
 
 
+def lazy_format(tpl, *args, **kwargs):
+    """See :ref:`book.specs.i18n`.
+
+    """
+    def f():
+        return tpl.format(*args, **kwargs)
+    return lazy(f, six.text_type)()
+    

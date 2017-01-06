@@ -1,4 +1,4 @@
-# Copyright 2009-2015 Luc Saffre
+# Copyright 2009-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Database models for `lino.modlib.system`.
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from lino.modlib.users.mixins import UserAuthored, ByUser
+from lino.modlib.users.mixins import UserAuthored, My
 from lino.modlib.office.roles import OfficeUser
 from lino.api import dd
 
@@ -60,5 +60,5 @@ class TextFieldTemplates(dd.Table):
     """
 
 
-class MyTextFieldTemplates(TextFieldTemplates, ByUser):
+class MyTextFieldTemplates(My, TextFieldTemplates):
     required_roles = dd.required(OfficeUser)
