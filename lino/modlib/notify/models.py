@@ -498,7 +498,7 @@ class MyMessages(My, Messages):
         """Emits the :message:`You have %d unseen messages.` message.
 
         This is no longer used, applications should rather yield this
-        table at the beginning of :meth:`get_admin_main_items`.
+        table at the beginning of :meth:`get_dashboard_items`.
 
         """
         sar = ar.spawn(cls)

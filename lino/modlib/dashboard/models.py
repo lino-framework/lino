@@ -61,7 +61,7 @@ class Widget(UserAuthored, Sequenced):
     @dd.chooser(simple_values=True)
     def item_name_choices(cls, user):
         return [i.name for i in
-                settings.SITE.get_admin_main_items(user)]
+                settings.SITE.get_dashboard_items(user)]
 
     def __str__(self):
         return self.item_name

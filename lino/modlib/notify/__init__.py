@@ -179,3 +179,11 @@ class Plugin(ad.Plugin):
     </script>
         """ % (py2js(site_title), user_name)
         yield js_to_add
+
+    def get_dashboard_items(self, user):
+        if user.authenticated:
+            # yield ActorItem(
+            #     self.actors.notify.MyMessages, header_level=None)
+            yield self.site.actors.notify.MyMessages
+        
+        

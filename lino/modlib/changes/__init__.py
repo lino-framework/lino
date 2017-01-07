@@ -1,4 +1,4 @@
-# Copyright 2012-2015 Luc Saffre
+# Copyright 2012-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Adds functionality for recording database changes into a database
@@ -19,7 +19,7 @@ class Plugin(ad.Plugin):
     verbose_name = _("Changes")
 
     needs_plugins = [
-        'lino.modlib.notify', 'lino.modlib.users', 'lino.modlib.gfks']
+        'lino.modlib.users', 'lino.modlib.gfks']
 
     def setup_explorer_menu(config, site, profile, m):
         menu_group = site.plugins.system

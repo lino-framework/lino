@@ -3088,11 +3088,28 @@ site. :manage:`diag` is a command-line shortcut to this.
                 #~ s = unicode(self.site_config.site_company) + " / "  + s
         #~ return ''
 
-    def setup_main_menu(self):
+    # def setup_main_menu(self):
+    #     """
+    #     To be implemented by applications.
+    #     """
+    #     pass
+
+    def get_dashboard_items(self, user):
+        """Expected to yield a sequence of items to be rendered on the
+        dashboard (:xfile:`admin_main.html`).
+
+        The default implementation calls :meth:`get_dashboard_items
+        <lino.core.plugin.Plugin.get_dashboard_items>` on every
+        installed plugin and yields all items.
+
+        The items will be rendered in that order, except if
+        :mod:`lino.modlib.dashboard` is installed to enable per-user
+        customized dashboard.
+
         """
-        To be implemented by applications.
-        """
-        pass
+        for p in self.installed_plugins:
+            for i in p.get_dashboard_items(user):
+                yield i
 
     @property
     def site_config(self):
@@ -3211,7 +3228,7 @@ site. :manage:`diag` is a command-line shortcut to this.
                 if hasattr(mod, methname):
                     msg = "{0} still has a function {1}(). \
 Please convert to Plugin method".format(mod, methname)
-                    raise Exception(msg)
+                    raise ChangedAPI(msg)
 
             if label is None:
                 menu = main
@@ -3533,22 +3550,6 @@ signature as `django.core.mail.EmailMessage`.
             return _("%(place)s, %(date)s") % dict(
                 place=str(sc.city.name), date=fdl(today))
         return fdl(today)
-
-    def get_admin_main_items(self, ar):
-        """Expected to yield a sequence of items to be rendered on the
-        dashboard. home page (:xfile:`admin_main.html`).
-
-        Every item is expected to be either an instance of
-        :class:`lino.core.dashboard.DashboardItem`, or a
-        :class:`lino.core.actors.Actor`. 
-
-        The items are rendered in that order,
-
-        Tables are shown with a limit of
-        :attr:`lino.core.tables.AbstractTable.preview_limit` rows.
-
-        """
-        return []
 
     def decfmt(self, v, places=2, **kw):
         """ Format a Decimal value using :func:`lino.utils.moneyfmt`, but
