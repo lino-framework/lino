@@ -3178,6 +3178,14 @@ site. :manage:`diag` is a command-line shortcut to this.
         self.setup_quicklinks(ar, m)
         return m
 
+    def setup_quicklinks(self, ar, m):
+        """Override this in application-specific (or even local)
+        :xfile:`settings.py` files to define a series of *quick links*
+        to appear below the main menu bar.
+
+        """
+        self.on_each_app('setup_quicklinks', ar, m)
+
     def get_site_menu(self, ui, profile):
         """
         Return this site's main menu for the given UserType.
@@ -3189,15 +3197,6 @@ site. :manage:`diag` is a command-line shortcut to this.
         self.setup_menu(profile, main)
         main.compress()
         return main
-
-    def setup_quicklinks(self, ar, m):
-        """
-        Override this
-        in application-specific (or even local) :xfile:`settings.py` files
-        to define a series of *quick links* to appear below the main menu bar.
-        Example see :meth:`lino.projects.pcsw.settings.Site.setup_quicklinks`.
-        """
-        self.on_each_app('setup_quicklinks', ar, m)
 
     def setup_menu(self, profile, main):
         """Set up the application's menu structure.
