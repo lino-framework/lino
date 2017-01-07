@@ -32,7 +32,7 @@ def get_available_items(user):
 
     """
     lst = []
-    for i in settings.SITE.get_admin_main_items(user):
+    for i in settings.SITE.get_dashboard_items(user):
         if isinstance(i, type) and issubclass(i, Actor):
             i = ActorItem(i)
         elif not isinstance(i, DashboardItem):

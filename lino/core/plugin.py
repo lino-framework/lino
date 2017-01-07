@@ -335,3 +335,19 @@ class Plugin(object):
 
         """
         pass
+    
+    def get_dashboard_items(self, user):
+        """Return or yield a sequence of items to be rendered on the
+        dashboard.
+
+        Called by :meth:`lino.core.site.Site.get_dashboard_items`.
+
+        Every item is expected to be either an instance of
+        :class:`lino.core.dashboard.DashboardItem`, or a
+        :class:`lino.core.actors.Actor`. 
+
+        Tables are shown with a limit of
+        :attr:`lino.core.tables.AbstractTable.preview_limit` rows.
+
+        """
+        return []
