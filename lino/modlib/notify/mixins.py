@@ -70,7 +70,7 @@ class ChangeObservable(dd.Model):
         return []
 
     def after_ui_save(self, ar, cw):
-
+        """Emits notification about the change to every watcher."""
         super(ChangeObservable, self).after_ui_save(ar, cw)
 
         def msg(user, mm):
