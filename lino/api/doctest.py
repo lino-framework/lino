@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015-2016 Luc Saffre
+# Copyright 2015-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """A selection of names to be used in tested documents.
@@ -283,15 +283,14 @@ def show_dialog_actions():
     return analyzer.show_dialog_actions(True)
 
 
-def walk_menu_items(username, severe=False):
+def walk_menu_items(username=None, severe=False):
     """Walk through all menu items which run a :class:`GridEdit
     <lino.core.actions.GridEdit>` action, showing how many data rows
     the grid contains.
 
     """
-    ar = settings.SITE.login(username)
-    with translation.override(ar.user.language):
-        mnu = settings.SITE.get_site_menu(None, ar.user.profile)
+    def doit(user_type):
+        mnu = settings.SITE.get_site_menu(None, user_type)
         items = []
         for mi in mnu.walk_items():
           if mi.bound_action:
@@ -316,3 +315,12 @@ def walk_menu_items(username, severe=False):
 
         s = rstgen.ul(items)
         print(s)
+
+    if settings.SITE.user_types_module:
+        ar = settings.SITE.login(username)
+        with translation.override(ar.user.language):
+            doit(ar.user.profile)
+    else:
+        doit(None)
+        
+        
