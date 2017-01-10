@@ -264,7 +264,7 @@ def make_permission_handler_(
                 return True
             return state in allowed_states
 
-    if not readonly:
+    if settings.SITE.user_types_module and not readonly:
         allow3 = allow
 
         def allow(action, user, obj, state):

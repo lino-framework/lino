@@ -787,6 +787,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         :attr:`allow_create` is True.
 
         """
+        if not settings.SITE.user_types_module:
+            return True
         if ar.get_user().profile.readonly:
             return False
         return True
