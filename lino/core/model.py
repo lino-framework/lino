@@ -749,13 +749,13 @@ class Model(models.Model):
     def workflow_buttons(self, ar):
         if ar is None:
             return ''
-        return self.get_workflow_buttons(ar, ar.actor.get_row_state(self))
+        return self.get_workflow_buttons(ar)
     
-    def get_workflow_buttons(obj, ar, state):
+    def get_workflow_buttons(obj, ar):
         l = []
         actor = ar.actor
         # print(20170102, actor)
-        # state = actor.get_row_state(obj)
+        state = actor.get_row_state(obj)
         sep = ''
         show = True  # whether to show the state
         # logger.info('20161219 workflow_buttons %r', state)
