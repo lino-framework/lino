@@ -747,7 +747,7 @@ class Model(models.Model):
 
     @fields.displayfield(_("Actions"))
     def workflow_buttons(self, ar):
-        if ar is not None:
+        if ar is None:
             return ''
         return self.get_workflow_buttons(ar)
     
