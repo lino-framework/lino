@@ -6,7 +6,7 @@
 
 from __future__ import unicode_literals
 from __future__ import print_function
-# import six
+import six
 # str = six.text_type
 from builtins import str
 from past.builtins import basestring
@@ -44,8 +44,15 @@ class Model(models.Model):
 
     .. attribute:: workflow_buttons
 
-        A virtual field that displays the workflow actions for this
-        row.
+        A virtual field that displays the **workflow actions** for
+        this row.  This is a compact but intuitive representation of
+        the current workflow state, together with a series of
+        clickable actions.
+
+    .. attribute:: overview
+
+        The **overview** of a database object is a fragment of HTML
+        describing this object in a concise and user-friendly way.
 
     .. method:: full_clean
 
@@ -554,12 +561,29 @@ class Model(models.Model):
         """
         return []
 
+    @fields.displayfield()
+    def overview(self, ar):
+        if ar is None:
+            return ''
+        return E.div(*self.get_overview_elems(ar))
+
     def get_overview_elems(self, ar):
+        """This is expected to return a list of HTML elements to be wrapped
+        into a `<DIV>`.
+
+        """
         return []
 
     @classmethod
-    def on_analyze(self, site):
-        pass
+    def on_analyze(cls, site):
+        
+        if isinstance(cls.workflow_owner_field, six.string_types):
+            cls.workflow_owner_field = cls.get_data_elem(
+                cls.workflow_owner_field)
+        if isinstance(cls.workflow_state_field, six.string_types):
+            cls.workflow_state_field = cls.get_data_elem(
+                cls.workflow_state_field)
+        
 
     @classmethod
     def lookup_or_create(model, lookup_field, value, **known_values):
@@ -722,42 +746,46 @@ class Model(models.Model):
         return ar.obj2html(self)
 
     @fields.displayfield(_("Actions"))
-    def workflow_buttons(obj, ar):
+    def workflow_buttons(self, ar):
+        if ar is None:
+            return ''
+        return self.get_workflow_buttons(ar, ar.actor.get_row_state(self))
+    
+    def get_workflow_buttons(obj, ar, state):
         l = []
-        if ar is not None:
-            actor = ar.actor
-            # print(20170102, actor)
-            state = actor.get_row_state(obj)
-            sep = ''
-            show = True  # whether to show the state
-            # logger.info('20161219 workflow_buttons %r', state)
-            
-            def show_state():
-                l.append(sep)
-                #~ l.append(E.b(unicode(state),style="vertical-align:middle;"))
-                # if state.button_text:
-                #     l.append(E.b(state.button_text))
-                # else:
-                #     l.append(E.b(str(state)))
-                l.append(E.b(str(state)))
-                #~ l.append(u" » ")
-                #~ l.append(u" \u25b8 ")
-                #~ l.append(u" \u2192 ")
-                #~ sep = u" \u25b8 "
+        actor = ar.actor
+        # print(20170102, actor)
+        # state = actor.get_row_state(obj)
+        sep = ''
+        show = True  # whether to show the state
+        # logger.info('20161219 workflow_buttons %r', state)
 
-            for ba in actor.get_actions():
-                assert ba.actor == actor  # 20170102
-                if ba.action.show_in_workflow:
-                    if actor.get_row_permission(obj, ar, state, ba):
-                        if show and isinstance(ba.action, ChangeStateAction):
-                            show_state()
-                            sep = u" \u2192 "
-                            show = False
-                        l.append(sep)
-                        l.append(ar.action_button(ba, obj))
-                        sep = ' '
-            if state and show:
-                show_state()
+        def show_state():
+            l.append(sep)
+            #~ l.append(E.b(unicode(state),style="vertical-align:middle;"))
+            # if state.button_text:
+            #     l.append(E.b(state.button_text))
+            # else:
+            #     l.append(E.b(str(state)))
+            l.append(E.b(str(state)))
+            #~ l.append(u" » ")
+            #~ l.append(u" \u25b8 ")
+            #~ l.append(u" \u2192 ")
+            #~ sep = u" \u25b8 "
+
+        for ba in actor.get_actions():
+            assert ba.actor == actor  # 20170102
+            if ba.action.show_in_workflow:
+                if actor.get_row_permission(obj, ar, state, ba):
+                    if show and isinstance(ba.action, ChangeStateAction):
+                        show_state()
+                        sep = u" \u2192 "
+                        show = False
+                    l.append(sep)
+                    l.append(ar.action_button(ba, obj))
+                    sep = ' '
+        if state and show:
+            show_state()
         return E.span(*l)
 
     def error2str(self, e):

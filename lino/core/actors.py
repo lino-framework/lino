@@ -454,10 +454,10 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     a Detail Window to specify only the current element without
     prefixing the Tables's title.
     
-    This option is True in
+    This option is `True` in
     :class:`lino.models.SiteConfigs`,
     :class:`lino_welfare.pcsw.models.Home`,
-    :class:`lino.modlib.users.models.Mysettings`.
+    :class:`lino.modlib.users.desktop.MySettings`.
 
     """
     _label = None
@@ -843,19 +843,11 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         if isinstance(cls.workflow_owner_field, string_types):
             cls.workflow_owner_field = cls.get_data_elem(
                 cls.workflow_owner_field)
-
-        #~ if isinstance(cls.workflow_state_field,string_types):
-            #~ fld = cls.get_data_elem(cls.workflow_state_field)
-            # ~ if fld is not None: # e.g. cal.Component
-                #~ cls.workflow_state_field = fld
-                #~ for name,a in cls.get_state_actions():
-                    #~ print 20120709, cls,name,a
-                    #~ setattr(cls,name,a)
-
         if isinstance(cls.workflow_state_field, string_types):
             cls.workflow_state_field = cls.get_data_elem(
                 cls.workflow_state_field)
-            #~ note that fld may be None e.g. cal.Component
+            
+        # note that the fld may be None e.g. cal.Component
         if cls.workflow_state_field is not None:
             for a in cls.workflow_state_field.choicelist.workflow_actions:
                 setattr(cls, a.action_name, a)

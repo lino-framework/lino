@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2010-2016 Luc Saffre
+# Copyright 2010-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """This package contains Model mixins, some of which are heavily used
@@ -131,7 +131,8 @@ class Registrable(model.Model):
 
         """
 
-        state_field = self._meta.get_field(self.workflow_state_field)
+        # state_field = self._meta.get_field(self.workflow_state_field)
+        state_field = self.workflow_state_field
         target_state = state_field.choicelist.registered
         self.set_workflow_state(ar, state_field, target_state)
 
@@ -149,7 +150,8 @@ class Registrable(model.Model):
 
         """
 
-        state_field = self._meta.get_field(self.workflow_state_field)
+        # state_field = self._meta.get_field(self.workflow_state_field)
+        state_field = self.workflow_state_field
         target_state = state_field.choicelist.draft
         self.set_workflow_state(ar, state_field, target_state)
 
