@@ -575,7 +575,7 @@ def clear_seen_messages():
     remove_after = 24
     Message = rt.models.notify.Message
     qs = Message.objects.filter(
-        seen__lt=timezone.now() - timedelta(hours=remove_after))
+        created__lt=timezone.now() - timedelta(hours=remove_after))
     if False:  # TODO: make this configurable
         qs = qs.filter(seen__isnull=False)
     if qs.count() > 0:
