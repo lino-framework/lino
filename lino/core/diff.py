@@ -57,7 +57,7 @@ class ChangeWatcher(object):
         for k, o, n in self.get_updates(*args, **kwargs):
             f = self.watched._meta.get_field(k)
             html = self.get_change_desc_html(f, o, n)
-            if html:
+            if html is not None and len(html):
                 yield html
             # yield "{0} : {1}".format(k, desc)
 

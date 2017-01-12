@@ -4,7 +4,7 @@
 {% for msg in messages%}
 <div>
 <H3>{{fds(msg.created.date())}} {{msg.created.time().strftime('%H:%M')}}</H3>
-{{msg.body}}
+{{ar.parse_memo(msg.body)}}
 </div>
 {% endfor %}
 <body>
