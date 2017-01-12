@@ -60,7 +60,7 @@ class Comment(CreatedModified, UserAuthored, Controllable,
         if cw is not None:
             return super(Comment, self).get_notify_message(ar, cw)
         s = _("{user} commented on {obj}:").format(
-            user=ar.get_user(), obj=self.owner)
+            user=ar.get_user(), obj=ar.obj2memo(self.owner))
         s += ' ' + self.short_text
         if False:
             s += '\n<p>\n' + self.more_text
