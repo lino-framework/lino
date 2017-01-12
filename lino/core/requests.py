@@ -552,6 +552,13 @@ request from it.
         context.update(ar=self)
         return settings.SITE.kernel.memo_parser.parse(html, **context)
 
+    def obj2memo(self, *args, **kwargs):
+        """Calls the site's parser's :meth:`obj2memo
+        <lino.utils.memo.Parser.obj2memo>` method.
+
+        """
+        return settings.SITE.kernel.memo_parser.obj2memo(*args, **kwargs)
+
     # def parse_memo(self, html):
     #     return self.renderer.parse_memo(html, ar=self)
 

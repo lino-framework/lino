@@ -170,9 +170,14 @@ class Parser(object):
     def __init__(self, **context):
         self.commands = dict()
         self.context = context
+        self.renderers = dict()
 
     def register_command(self, cmd, func):
         self.commands[cmd] = func
+
+    def register_renderer(self, cl, func):
+        assert not cl in self.renderers
+        self.renderers[cl] = func
 
     def eval_match(self, matchobj):
         expr = matchobj.group(1)
@@ -218,6 +223,18 @@ class Parser(object):
             s = EVAL_REGEX.sub(self.eval_match, s)
         return s
 
+    def obj2memo(self, obj, **options):
+        """Render the given database object as memo markup.
+
+        This works only for objects for which there is a renderer.
+        Renderers are defined by :meth:`register_renderer`.
+
+        """
+        h = self.renderers.get(obj.__class__)
+        if h is None:
+            return "*{}*".format(obj)
+        return h(obj, **options)
+        
 
 def _test():
     import doctest

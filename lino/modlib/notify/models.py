@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2016 Luc Saffre
+# Copyright 2011-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Database models for this plugin.
@@ -13,13 +13,14 @@ import json
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
+from django.utils import translation
 
 from lino.api import dd, rt, _
 from lino.api import pgettext
 
-from lino.core.roles import SiteStaff
+#from lino.core.roles import SiteStaff
 from lino.core.gfks import gfk2lookup
-from lino.core.requests import BaseRequest
+#from lino.core.requests import BaseRequest
 from lino.core.site import html2text
 
 from lino.mixins import Created, ObservedPeriod
@@ -299,11 +300,16 @@ class Message(UserAuthored, Controllable, Created):
 
     @classmethod
     def send_summary_emails(cls, mm):
+        """Send summary emails for all pending notifications with the given
+        mail_mode `mm`.
+
+        """
         qs = cls.objects.filter(sent__isnull=True)
         qs = qs.exclude(user__email='')
         qs = qs.filter(mail_mode=mm).order_by('user')
         if qs.count() == 0:
             return
+        ar = rt.login()
         sender = settings.SERVER_EMAIL
         template = rt.get_template('notify/summary.eml')
         users = dict()
@@ -313,14 +319,16 @@ class Message(UserAuthored, Controllable, Created):
         dd.logger.debug(
             "Send out %s summaries for %d users.", mm, len(users))
         for user, messages in users.items():
-            subject = _("{} notifications").format(len(messages))
-            subject = settings.EMAIL_SUBJECT_PREFIX + subject
-            context = dict(user=user, E=E, rt=rt, messages=messages)
-            body = template.render(**context)
-            rt.send_email(subject, sender, body, [user.email])
-            for msg in messages:
-                msg.sent = timezone.now()
-                msg.save()
+            with translation.override(user.language):
+                subject = _("{} notifications").format(len(messages))
+                subject = settings.EMAIL_SUBJECT_PREFIX + subject
+                context = dict(ar=ar, user=user, E=E, rt=rt, messages=messages)
+                body = template.render(**context)
+                # dd.logger.debug("20170112 %s", body)
+                rt.send_email(subject, sender, body, [user.email])
+                for msg in messages:
+                    msg.sent = timezone.now()
+                    msg.save()
 
 
     def send_browser_message_for_all_users(self, user):
@@ -460,6 +468,8 @@ class MyMessages(My, Messages):
     order_by = ['created']
     # hide_headers = True
     slave_grid_format = 'summary'
+    # slave_grid_format = 'list'
+    # slave_grid_format = 'grid'
 
     @classmethod
     def get_slave_summary(cls, mi, ar):
@@ -477,7 +487,8 @@ class MyMessages(My, Messages):
             s = E.tostring(ar.action_button(ba, obj))
             s += fds(obj.created) + " " + obj.created.strftime(
                 settings.SITE.time_format_strftime) + " "
-            s += obj.body
+            s += ar.parse_memo(obj.body)
+            # s += obj.body
             return "<li>{}</li>".format(s)
 
         items = []

@@ -29,7 +29,7 @@ class ChangeObservable(dd.Model):
         """
         if cw is None:
             elems = [E.p(
-                ar.obj2html(self),
+                ar.obj2memo(self),
                 ' ', _("has been created by {user}").format(
                     user=ar.get_user()))]
         else:
@@ -37,7 +37,7 @@ class ChangeObservable(dd.Model):
             if len(items) == 0:
                 return
             elems = [E.p(
-                ar.obj2html(self),
+                ar.obj2memo(self),
                 ' ', _("has been modified by {user}").format(
                     user=ar.get_user()),
                 ":")]
