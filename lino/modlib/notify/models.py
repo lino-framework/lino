@@ -310,6 +310,7 @@ class Message(UserAuthored, Controllable, Created):
         if qs.count() == 0:
             return
         ar = rt.login()
+        context = ar.get_printable_context()
         sender = settings.SERVER_EMAIL
         template = rt.get_template('notify/summary.eml')
         users = dict()
@@ -322,7 +323,7 @@ class Message(UserAuthored, Controllable, Created):
             with translation.override(user.language):
                 subject = _("{} notifications").format(len(messages))
                 subject = settings.EMAIL_SUBJECT_PREFIX + subject
-                context = dict(ar=ar, user=user, E=E, rt=rt, messages=messages)
+                context.update(user=user, messages=messages)
                 body = template.render(**context)
                 # dd.logger.debug("20170112 %s", body)
                 rt.send_email(subject, sender, body, [user.email])

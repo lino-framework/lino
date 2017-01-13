@@ -232,7 +232,7 @@ class Parser(object):
         """
         h = self.renderers.get(obj.__class__)
         if h is None:
-            return "*{}*".format(obj)
+            return "**{}**".format(obj)
         return h(obj, **options)
         
 
