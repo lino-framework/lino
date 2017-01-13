@@ -1,19 +1,14 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2015 Luc Saffre
+# Copyright 2012-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 
 from __future__ import unicode_literals
 from builtins import str
 
-import logging
-logger = logging.getLogger(__name__)
-
 from lino.core import constants as ext_requests
 from lino.core.renderer import HtmlRenderer
 from lino.core.renderer import add_user_language
-
-# from lino.utils.memo import Parser
 
 
 class Renderer(HtmlRenderer):
@@ -23,24 +18,8 @@ class Renderer(HtmlRenderer):
     """
 
     can_auth = False
-    # is_interactive = True
 
-    # def __init__(self, plugin):
-    #     Renderer.__init__(self, plugin)
-    #     for a in plugin.site.actors_list:
-    #         a.get_handle()
-
-    #     self.memo_parser = Parser()
-
-    #     def url2html(parser, s):
-    #         url, text = s.split(None, 1)
-    #         if not text:
-    #             text = url
-    #         return '<a href="%s">%s</a>' % (url, text)
-
-    #     self.memo_parser.register_command('url', url2html)
-
-    def instance_handler(self, ar, obj, **kw):
+    def obj2url(self, ar, obj, **kw):
         a = obj.get_detail_action(ar)
         if a is not None:
             if ar is None or a.get_bound_action_permission(ar, obj, None):
@@ -96,6 +75,3 @@ class Renderer(HtmlRenderer):
         ar = bound_action.request()
         return self.get_request_url(ar)
 
-    def js2url(self, js):
-        """There is no Javascript here."""
-        return js

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2016 Luc Saffre
+# Copyright 2009-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -312,29 +312,6 @@ class Menu(MenuItem):
         for mi in self.items:
             for i in mi.walk_items():
                 yield i
-
-    #~ def unused_sort_items(self,front=None,back=None):
-        #~ new_items = []
-        #~ if front:
-            #~ for name in front.split():
-                #~ new_items.append(self.findItem(name))
-        #~ back_items = []
-        #~ if back:
-            #~ for name in back.split():
-                #~ back_items.append(self.findItem(name))
-        #~ for i in self.get_items():
-            #~ if not i in new_items + back_items:
-                #~ new_items.append(i)
-        #~ self.items = new_items + back_items
-        #~ self.items_dict = {}
-        #~ for i in self.items:
-            #~ self.items_dict[i.name] = i
-
-    def as_bootstrap_html(self, renderer, request, level=1):
-        raise Exception("20150824 moved to TextRenderer.show_menu")
-
-    def as_rst(self, ar, level=1):
-        raise Exception("20150824 moved to TextRenderer.show_menu")
 
 
 class Toolbar(Menu):

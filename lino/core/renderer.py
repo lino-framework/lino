@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2016 Luc Saffre
+# Copyright 2009-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 """
 Defines :class:`HtmlRenderer` and :class:`TextRenderer`.
@@ -20,6 +20,7 @@ from cgi import escape
 from atelier import rstgen
 
 from django.conf import settings
+from django.db import models
 from django.utils.encoding import force_text
 
 from django.utils.translation import ugettext as _
@@ -27,6 +28,7 @@ from django.utils.translation import get_language
 
 from lino.utils.html2rst import RstTable
 from lino.utils import isiterable
+from lino.utils.jsgen import py2js
 from lino.utils.xmlgen.html import E
 from lino.core import constants
 from lino.core.menus import Menu, MenuItem
@@ -48,14 +50,27 @@ else:
 def add_user_language(kw, ar):
     if len(settings.SITE.languages) == 1:
         return
-    u = ar.get_user()
     lang = get_language()
+    
+    # We set 'ul' only when it is not the default language. But 
+
+    # print('20170113 add_user_language', lang, ar.request.LANGUAGE_CODE)
+    
+    if False:
+        # set it aways because it seems that it is rather difficult to
+        # verify which will be the default language.
+        kw.setdefault(constants.URL_PARAM_USER_LANGUAGE, lang)
+        return
+    u = ar.get_user()
+    # print("20170113 add_user_language", u, lang)
     #~ print 2013115, [li.django_code for li in settings.SITE.languages], settings.SITE.get_default_language(), lang, u.language
     if u and u.language and lang != u.language:
         kw.setdefault(constants.URL_PARAM_USER_LANGUAGE, lang)
     #~ elif lang != settings.SITE.DEFAULT_LANGUAGE.django_code:
     elif lang != settings.SITE.get_default_language():
         kw.setdefault(constants.URL_PARAM_USER_LANGUAGE, lang)
+        
+    # print("20170113 add_user_language", ar, kw, lang, u.language, settings.SITE.get_default_language())
 
 
     #~ if len(settings.SITE.languages) > 1:
@@ -100,12 +115,9 @@ class HtmlRenderer(Renderer):
     row_classes_map = {}
 
     def js2url(self, js):
-        if not js:
-            return None
-        js = escape(js)
-        # js = js.replace('"', '&quot;')
-        return 'javascript:' + js
-
+        """There is no Javascript here."""
+        return js
+    
     def href(self, url, text):
         return E.a(text, href=url)
 
@@ -136,13 +148,13 @@ class HtmlRenderer(Renderer):
                 return ar.actor.get_slave_summary(ar.master_instance, ar)
         return ar.table2xhtml(**kw)
 
-    def action_call(self, request, bound_action, status):
+    def action_call(self, ar, ba, status):
         """Returns the action name. This is not a valid link, but it's
         important to differentiate between clickable and non-clickable
         :meth:`obj2html` calls.
 
         """
-        return str(bound_action.action)
+        return str(ba.action)
 
     def action_call_on_instance(self, obj, ar, ba, request_kwargs={}, **st):
         """Return a string with Javascript code that would run the given
@@ -159,6 +171,13 @@ class HtmlRenderer(Renderer):
         """
         return self.not_implemented_js
         
+    def href_to(self, ar, obj, text=None):
+        h = self.obj2url(ar, obj)
+        if h is None:
+            return escape(force_text(obj))
+        uri = self.js2url(h)
+        return self.href(uri, text or force_text(obj))
+
     def href_to_request(self, sar, tar, text=None, **kw):
         """Return a string with an URL which would run the given target
 request `tar`."""
@@ -182,14 +201,19 @@ request `tar`."""
                 kw.update(style="vertical-align:-30%;")
         return self.href_button(url, text, title, icon_name=icon_name, **kw)
 
-    def href_button(
-            self, url, text, title=None, target=None, icon_name=None, **kw):
-        """
-        Returns an etree object of a "button-like" ``<a href>`` tag.
+    def href_button(self, url, text, title=None, icon_name=None, **kw):
+        """Returns an etree object of a ``<a href>`` tag to the given URL
+        `url`. 
+
+        `url` is what goes into the `href` part. If `url` is `None`,
+        then we return just a ``<b>`` tag.
+
+        `text` is what goes between the ``<a>`` and the ``</a>``. This
+        can be either a string or a tuple (or list) of strings (or
+        etree elements).
+
         """
         # logger.info('20121002 href_button %s', unicode(text))
-        if target:
-            kw.update(target=target)
         if title:
             # Remember that Python 2.6 doesn't like if title is a Promise
             kw.update(title=str(title))
@@ -257,29 +281,32 @@ request `tar`."""
         return settings.SITE.kernel.default_ui.build_plain_url(*args, **kw)
 
     def instance_handler(self, ar, obj):
+        """Return a string of Javascript code which would open a detail window
+        on the given database object.
+
+        """
         a = obj.get_detail_action(ar)
         
         if a is not None:
-            if ar is None:
-                return self.action_call(None, a, dict(record_id=obj.pk))
-            if a.get_bound_action_permission(ar, obj, None):
+            if ar is None or a.get_bound_action_permission(ar, obj, None):
                 return self.action_call(ar, a, dict(record_id=obj.pk))
 
-    # def instance_handler(self, ar, obj):
-    #     "Overridden by :mod:`lino.modlib.extjs.ext_renderer`"
-    #     return None
+    def obj2url(self, ar, obj):
+        return self.js2url(self.instance_handler(ar, obj))
 
     def obj2html(self, ar, obj, text=None, **kwargs):
         """Return a html representation of a pointer to the given database
-        object."""
+        object.
+
+        """
         if text is None:
             text = (force_text(obj),)
         elif isinstance(text, basestring) or E.iselement(text):
             text = (text,)
-        url = self.instance_handler(ar, obj)
+        url = self.obj2url(ar, obj)
         if url is None:
             return E.em(*text)
-        return E.a(*text, href=url, **kwargs)
+        return self.href_button(url, text, **kwargs)
 
     def quick_upload_buttons(self, rr):
         return '[?!]'
@@ -399,13 +426,13 @@ request `tar`."""
         if not isinstance(mnu, Menu):
             assert isinstance(mnu, MenuItem)
             if mnu.bound_action:
-                sr = mnu.bound_action.actor.request(
+                sar = mnu.bound_action.actor.request(
                     action=mnu.bound_action,
                     user=ar.user, subst_user=ar.subst_user,
                     requesting_panel=ar.requesting_panel,
                     renderer=self, **mnu.params)
-
-                url = sr.get_request_url()
+                # print("20170113", sar)
+                url = sar.get_request_url()
             else:
                 url = mnu.href
             assert mnu.label is not None
@@ -434,6 +461,76 @@ request `tar`."""
             E.ul(*items, class_='dropdown-menu'),
             class_=cl)
 
+    def goto_instance(self, ar, obj, **kw):
+        pass
+
+class JsRenderer(HtmlRenderer):
+    
+    def goto_instance(self, ar, obj, **kw):
+        """
+        Ask the client to display a :term:`detail window` on the given
+        record. The client might ignore this if Lino does not know a
+        detail window.
+
+        This is a utility wrapper around :meth:`set_response` which sets
+        either `data_record` or a `record_id`.
+
+        Usually `data_record`, except if it is a `file upload
+        <https://docs.djangoproject.com/en/dev/topics/http/file-uploads/>`_
+        where some mysterious decoding problems (:blogref:`20120209`)
+        force us to return a `record_id` which has the same visible
+        result but using an additional GET.
+
+        If the calling window is a detail on the same table, then it
+        should simply get updated to the given record. Otherwise open a
+        new detail window.
+
+        """
+        js = self.instance_handler(ar, obj)
+        kw.update(eval_js=js)
+        ar.set_response(**kw)
+
+    def js2url(self, js):
+        if not js:
+            return None
+        js = escape(js)
+        return 'javascript:' + js
+
+    def get_action_status(self, ar, ba, obj, **kw):
+        kw.update(ar.get_status())
+        if ba.action.parameters and not ba.action.keep_user_values:
+            apv = ar.action_param_values
+            if apv is None:
+                apv = ba.action.action_param_defaults(ar, obj)
+            ps = ba.action.params_layout.params_store
+            kw.update(field_values=ps.pv2dict(apv))
+        if isinstance(obj, models.Model):
+            kw.update(record_id=obj.pk)
+
+        return kw
+
+    def ar2js(self, ar, obj, **status):
+        """Implements :meth:`lino.core.renderer.HtmlRenderer.ar2js`.
+
+        """
+        rp = ar.requesting_panel
+        ba = ar.bound_action
+
+        if ba.action.is_window_action():
+            # Window actions have been generated by
+            # js_render_window_action(), so we just call its `run(`)
+            # method:
+            status.update(self.get_action_status(ar, ba, obj))
+            return "Lino.%s.run(%s,%s)" % (
+                ba.full_name(), py2js(rp), py2js(status))
+
+        # It's a custom ajax action generated by
+        # js_render_custom_action().
+
+        # 20140429 `ar` is now None, see :ref:`welfare.tested.integ`
+        params = self.get_action_params(ar, ba, obj)
+        return "Lino.%s(%s,%s,%s)" % (
+            ba.full_name(), py2js(rp), py2js(obj.pk), py2js(params))
 
 class TextRenderer(HtmlRenderer):
     """The renderer used when rendering to .rst files and console output.

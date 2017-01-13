@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2016 Luc Saffre
+# Copyright 2009-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 """
 See introduction in :doc:`/dev/ar`.
@@ -568,29 +568,8 @@ request from it.
     def add_callback(self, *args, **kw):
         return settings.SITE.kernel.add_callback(self, *args, **kw)
 
-    def goto_instance(self, obj, **kw):
-        """
-        Ask the client to display a :term:`detail window` on the given
-        record. The client might ignore this if Lino does not know a
-        detail window.
-
-        This is a utility wrapper around :meth:`set_response` which sets
-        either `data_record` or a `record_id`.
-
-        Usually `data_record`, except if it is a `file upload
-        <https://docs.djangoproject.com/en/dev/topics/http/file-uploads/>`_
-        where some mysterious decoding problems (:blogref:`20120209`)
-        force us to return a `record_id` which has the same visible
-        result but using an additional GET.
-
-        If the calling window is a detail on the same table, then it
-        should simply get updated to the given record. Otherwise open a
-        new detail window.
-
-        """
-        js = self.instance_handler(obj)
-        kw.update(eval_js=js)
-        self.set_response(**kw)
+    def goto_instance(self, *args, **kwargs):
+        return self.renderer.goto_instance(self, *args, **kwargs)
 
     def close_window(self, **kw):
         """Ask client to close the current window. This is the same as
@@ -745,9 +724,6 @@ request from it.
 
     def summary_row(self, obj, **kwargs):
         return obj.summary_row(self, **kwargs)
-
-    def instance_handler(self, *args, **kwargs):
-        return self.renderer.instance_handler(self, *args, **kwargs)
 
     def pk2url(self, *args, **kwargs):
         return self.renderer.pk2url(self, *args, **kwargs)

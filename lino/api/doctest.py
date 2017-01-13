@@ -171,9 +171,6 @@ def screenshot(obj, filename, rstname, username='robin'):
 
     self = dd.plugins.extjs.renderer
     uri = self.get_detail_url(obj)
-    # ar = rt.login(username, renderer=self)
-    # h = self.instance_handler(ar, obj)
-    # uri = self.js2url(h)
     print(uri)
 
     def f(driver):
