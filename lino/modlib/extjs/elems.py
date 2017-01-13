@@ -587,17 +587,14 @@ class FieldElement(LayoutElement):
         pass
 
     def value2html(self, ar, v, **cellattrs):
-        """Return an etree element representing of the given value.  The
-        possible return values may be:
-
-        - an xml.etree.ElementTree.Element
+        """Return a `<td>` html etree element representing the given value.
 
         The default implementation returns an HTML element obtained
         from :meth:`format_value`.
 
         """
         if self.field.primary_key:
-            url = ar.renderer.pk2url(ar, v)
+            url = ar.renderer.get_detail_url(ar.actor, v)
             if url is not None:
                 return E.td(E.a(self.format_value(
                     ar, v), href=url), **cellattrs)

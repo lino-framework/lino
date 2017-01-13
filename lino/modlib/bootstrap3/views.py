@@ -202,6 +202,7 @@ class Element(View):
 
                 ni = navinfo(ar.data_iterator, elem)
                 if ni:
+                    # m = elem.__class__
                     buttons = []
                     #~ buttons.append( ('*',_("Home"), '/' ))
 
