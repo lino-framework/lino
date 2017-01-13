@@ -170,7 +170,8 @@ def screenshot(obj, filename, rstname, username='robin'):
     assert rstname.endswith('.rst')
 
     self = dd.plugins.extjs.renderer
-    uri = self.get_detail_url(obj)
+    ba = obj.get_detail_action()
+    uri = self.get_detail_url(ba.actor, obj.pk)
     print(uri)
 
     def f(driver):

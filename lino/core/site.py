@@ -287,7 +287,8 @@ class Site(object):
     Used e.g. in a :menuselection:`Site --> About` dialog box.
     """
 
-    server_url = None
+    # server_url = None
+    server_url = "http://127.0.0.1:8000/"
     """The "official" URL used by "normal" users when accessing this Lino
     site. This is used by templates such as the email sent by
     :class:`lino.modlib.notify.Message`

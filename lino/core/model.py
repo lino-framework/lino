@@ -814,20 +814,21 @@ class Model(models.Model):
         return self
 
     def get_detail_action(self, ar):
-        """Return the detail action to use for this object.
-
-        If `self` has a special attribute `_detail_action` defined,
-        return this.  This magic is used by
-        :meth:`Menu.add_instance_action
-        <lino.core.menus.Menu.add_instance_action>`.
+        """Return the (bound) detail action to use for showing this object in
+        a detail window.  Return `None` when no detail form exists or
+        the requesting user has no permission to see it.
 
         `ar` is the action request who asks to see a detail.
         If the action requests's actor can be used for this model,
         then use its `detail_action`. Otherwise use the
         `detail_action` of this model's default table.
 
-        Return `None` if no detail action is defined, or if the
-        request has no view permission.
+        When `ar` is `None`, the permission check is bypassed.
+
+        If `self` has a special attribute `_detail_action` defined,
+        return this.  This magic is used by
+        :meth:`Menu.add_instance_action
+        <lino.core.menus.Menu.add_instance_action>`.
 
         Usage example: :class:`courses.Course
         <lino_xl.lib.courses.models.Course>` overrides this to return

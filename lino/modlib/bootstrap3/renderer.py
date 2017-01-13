@@ -20,24 +20,25 @@ class Renderer(HtmlRenderer):
     can_auth = False
 
     def obj2url(self, ar, obj, **kw):
-        a = obj.get_detail_action(ar)
-        if a is not None:
-            if ar is None or a.get_bound_action_permission(ar, obj, None):
-                add_user_language(kw, ar)
-                return self.get_detail_url(obj, **kw)
+        ba = obj.get_detail_action(ar)
+        if ba is not None:
+            # no need to check again:
+            # if ar is None or a.get_bound_action_permission(ar, obj, None):
+            add_user_language(kw, ar)
+            return self.get_detail_url(ba.actor, obj.pk, **kw)
 
-    def get_detail_url(self, obj, *args, **kw):
+    def get_detail_url(self, actor, pk, *args, **kw):
         return self.plugin.build_plain_url(
-            obj._meta.app_label,
-            obj.__class__.__name__,
-            str(obj.pk), *args, **kw)
+            actor.app_label,
+            actor.__name__,
+            str(pk), *args, **kw)
 
-    def pk2url(self, ar, pk, **kw):
-        if pk is not None:
-            return self.plugin.build_plain_url(
-                ar.actor.model._meta.app_label,
-                ar.actor.model.__name__,
-                str(pk), **kw)
+    # def pk2url(self, model, pk, **kw):
+    #     """Overrides :meth:`lino.core.renderer.Renderer.pk2url`.
+    #     """
+    #     if pk is not None:
+    #         return self.plugin.build_plain_url(
+    #             model._meta.app_label, model.__name__, str(pk), **kw)
 
     def get_home_url(self, *args, **kw):
         return self.plugin.build_plain_url(*args, **kw)

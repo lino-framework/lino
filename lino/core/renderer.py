@@ -98,9 +98,9 @@ class Renderer(object):
     tableattrs = dict(cellspacing="3px", bgcolor="#ffffff", width="100%")
     cellattrs = dict(align="left", valign="top", bgcolor="#eeeeee")
 
-    def __init__(self, plugin):
-        if not isinstance(plugin, Plugin):
-            raise Exception("{} is not a Plugin".format(plugin))
+    def __init__(self, plugin=None):
+        # if not isinstance(plugin, Plugin):
+        #     raise Exception("{} is not a Plugin".format(plugin))
         self.plugin = plugin
 
     def ar2js(self, ar, obj, **status):
@@ -109,6 +109,17 @@ class Renderer(object):
 
         """
         return self.not_implemented_js
+
+    # def get_detail_action(self, ar, obj):
+        # a = obj.get_detail_action(ar)
+        
+        # if a is not None:
+        #     if ar is None or a.get_bound_action_permission(ar, obj, None):
+        #         return a
+            
+    def get_detail_url(self, actor, pk, *args, **kw):
+        # return str(actor)+"/"+str(pk)
+        return "Detail"  # many doctests depend on this
 
 
 class HtmlRenderer(Renderer):
@@ -147,22 +158,6 @@ class HtmlRenderer(Renderer):
             if ar.actor.slave_grid_format == 'summary':
                 return ar.actor.get_slave_summary(ar.master_instance, ar)
         return ar.table2xhtml(**kw)
-
-    def action_call(self, ar, ba, status):
-        """Returns the action name. This is not a valid link, but it's
-        important to differentiate between clickable and non-clickable
-        :meth:`obj2html` calls.
-
-        """
-        return str(ba.action)
-
-    def action_call_on_instance(self, obj, ar, ba, request_kwargs={}, **st):
-        """Return a string with Javascript code that would run the given
-        action `ba` on the given model instance `obj`. The second
-        parameter (`ar`) is the calling action request.
-
-        """
-        return self.not_implemented_js
 
     def request_handler(self, ar, *args, **kw):
         """Return a string with Javascript code that would run the given
@@ -232,6 +227,29 @@ request `tar`."""
         else:
             return E.a(*text, **kw)
 
+    def action_call(self, ar, ba, status):
+        """Returns the action name. This is not a valid link, but it's
+        important to differentiate between clickable and non-clickable
+        :meth:`obj2html` calls.
+
+        """
+        return str(ba.action)
+
+    def window_action_button(
+            self, ar, ba,
+            status={}, label=None, title=None, **kw):
+        """
+        Render the given bound action `ba` as an action button.
+
+        Returns a HTML tree element.
+
+        """
+        label = label or ba.get_button_label()
+        url = self.js2url(self.action_call(ar, ba, status))
+        #~ logger.info('20121002 window_action_button %s %r',a,unicode(label))
+        return self.href_button_action(ba, url, str(label),
+                                       title or ba.action.help_text, **kw)
+
     def quick_add_buttons(self, ar):
         """Returns a HTML chunk that displays "quick add buttons" for the
         given :class:`action request
@@ -274,26 +292,14 @@ request `tar`."""
         #~ return '<p>%s</p>' % s
         return E.p(*buttons)
 
-    def pk2url(self, ar, pk, **kw):
-        return None
-
     def get_home_url(self, *args, **kw):
         return settings.SITE.kernel.default_ui.build_plain_url(*args, **kw)
 
-    def instance_handler(self, ar, obj):
-        """Return a string of Javascript code which would open a detail window
-        on the given database object.
-
-        """
-        a = obj.get_detail_action(ar)
-        
-        if a is not None:
-            if ar is None or a.get_bound_action_permission(ar, obj, None):
-                return self.action_call(ar, a, dict(record_id=obj.pk))
-
     def obj2url(self, ar, obj):
-        return self.js2url(self.instance_handler(ar, obj))
-
+        ba = obj.get_detail_action(ar)
+        if ba is not None:
+            return self.get_detail_url(ba.actor, obj.pk)
+        
     def obj2html(self, ar, obj, text=None, **kwargs):
         """Return a html representation of a pointer to the given database
         object.
@@ -307,6 +313,9 @@ request `tar`."""
         if url is None:
             return E.em(*text)
         return self.href_button(url, text, **kwargs)
+
+    def obj2str(self, ar, obj, text=None, **kwargs):
+        return E.tostring(self.obj2html(ar, obj, text, **kwargs))
 
     def quick_upload_buttons(self, rr):
         return '[?!]'
@@ -329,6 +338,32 @@ request `tar`."""
         uri = self.js2url(js)
         return self.href_button_action(
             ba, uri, label, title or ba.action.help_text, **kw)
+
+    def menu_item_button(self, ar, mi, label=None, icon_name=None, **kwargs):
+        """Render the given menu item `mi` as an action button.
+
+        Returns a HTML tree element.
+        Currently supports only window actions.
+
+        """
+        label = label or mi.label or mi.bound_action.get_button_label()
+        if mi.instance is not None:
+            kwargs.update(status=dict(record_id=mi.instance.pk))
+        return self.window_action_button(
+            ar, mi.bound_action, label=label,
+            icon_name=icon_name, **kwargs)
+
+    def action_button(self, obj, ar, ba, label=None, **kw):
+        label = label or ba.get_button_label()
+        return "[%s]" % label
+
+    def action_call_on_instance(self, obj, ar, ba, request_kwargs={}, **st):
+        """Return a string with Javascript code that would run the given
+        action `ba` on the given model instance `obj`. The second
+        parameter (`ar`) is the calling action request.
+
+        """
+        return self.not_implemented_js
 
     def row_action_button(
             self, obj, ar, ba, label=None, title=None, request_kwargs={},
@@ -357,39 +392,6 @@ request `tar`."""
         return self.href_button_action(
             ba, uri, label, title or ba.action.help_text, **kw)
 
-    def menu_item_button(self, ar, mi, label=None, icon_name=None, **kwargs):
-        """Render the given menu item `mi` as an action button.
-
-        Returns a HTML tree element.
-        Currently supports only window actions.
-
-        """
-        label = label or mi.label or mi.bound_action.get_button_label()
-        if mi.instance is not None:
-            kwargs.update(status=dict(record_id=mi.instance.pk))
-        return self.window_action_button(
-            ar, mi.bound_action, label=label,
-            icon_name=icon_name, **kwargs)
-
-    def window_action_button(
-            self, ar, ba,
-            status={}, label=None, title=None, **kw):
-        """
-        Render the given bound action `ba` as an action button.
-
-        Returns a HTML tree element.
-
-        """
-        label = label or ba.get_button_label()
-        url = self.js2url(self.action_call(ar, ba, status))
-        #~ logger.info('20121002 window_action_button %s %r',a,unicode(label))
-        return self.href_button_action(ba, url, str(label),
-                                       title or ba.action.help_text, **kw)
-
-    def action_button(self, obj, ar, ba, label=None, **kw):
-        label = label or ba.get_button_label()
-        return "[%s]" % label
-
     def show_story(self, ar, story, stripped=True, **kwargs):
         """Render the given story as an HTML element. Ignore `stripped`
         because it makes no sense in HTML.
@@ -414,9 +416,6 @@ request `tar`."""
             else:
                 raise Exception("Cannot handle %r" % item)
         return E.div(*elems)
-
-    def obj2str(self, ar, obj, text=None, **kwargs):
-        return E.tostring(self.obj2html(ar, obj, text, **kwargs))
 
     def show_menu(self, ar, mnu, level=1):
         """
@@ -463,74 +462,6 @@ request `tar`."""
 
     def goto_instance(self, ar, obj, **kw):
         pass
-
-class JsRenderer(HtmlRenderer):
-    
-    def goto_instance(self, ar, obj, **kw):
-        """
-        Ask the client to display a :term:`detail window` on the given
-        record. The client might ignore this if Lino does not know a
-        detail window.
-
-        This is a utility wrapper around :meth:`set_response` which sets
-        either `data_record` or a `record_id`.
-
-        Usually `data_record`, except if it is a `file upload
-        <https://docs.djangoproject.com/en/dev/topics/http/file-uploads/>`_
-        where some mysterious decoding problems (:blogref:`20120209`)
-        force us to return a `record_id` which has the same visible
-        result but using an additional GET.
-
-        If the calling window is a detail on the same table, then it
-        should simply get updated to the given record. Otherwise open a
-        new detail window.
-
-        """
-        js = self.instance_handler(ar, obj)
-        kw.update(eval_js=js)
-        ar.set_response(**kw)
-
-    def js2url(self, js):
-        if not js:
-            return None
-        js = escape(js)
-        return 'javascript:' + js
-
-    def get_action_status(self, ar, ba, obj, **kw):
-        kw.update(ar.get_status())
-        if ba.action.parameters and not ba.action.keep_user_values:
-            apv = ar.action_param_values
-            if apv is None:
-                apv = ba.action.action_param_defaults(ar, obj)
-            ps = ba.action.params_layout.params_store
-            kw.update(field_values=ps.pv2dict(apv))
-        if isinstance(obj, models.Model):
-            kw.update(record_id=obj.pk)
-
-        return kw
-
-    def ar2js(self, ar, obj, **status):
-        """Implements :meth:`lino.core.renderer.HtmlRenderer.ar2js`.
-
-        """
-        rp = ar.requesting_panel
-        ba = ar.bound_action
-
-        if ba.action.is_window_action():
-            # Window actions have been generated by
-            # js_render_window_action(), so we just call its `run(`)
-            # method:
-            status.update(self.get_action_status(ar, ba, obj))
-            return "Lino.%s.run(%s,%s)" % (
-                ba.full_name(), py2js(rp), py2js(status))
-
-        # It's a custom ajax action generated by
-        # js_render_custom_action().
-
-        # 20140429 `ar` is now None, see :ref:`welfare.tested.integ`
-        params = self.get_action_params(ar, ba, obj)
-        return "Lino.%s(%s,%s,%s)" % (
-            ba.full_name(), py2js(rp), py2js(obj.pk), py2js(params))
 
 class TextRenderer(HtmlRenderer):
     """The renderer used when rendering to .rst files and console output.
@@ -667,4 +598,104 @@ class TextRenderer(HtmlRenderer):
         # return "**{0}**".format(text)
         return settings.SITE.obj2text_template.format(text)
 
+
+class MailRenderer(HtmlRenderer):
+    """A renderer to be used when sending emails.
+    """
+    def get_detail_url(self, actor, pk, *args, **kw):
+        # return self.plugin.build_plain_url(
+        #     'api', actor.app_label, actor.__name__, str(pk), *args, **kw)
+        return "{}api/{}/{}/{}".format(
+            settings.SITE.server_url,
+            actor.app_label, actor.__name__, pk)
+
+
+class JsRenderer(HtmlRenderer):
+    """Common base for extjs.ext_renderer.ExtRenderer and
+    lino_extjs6.extjs.ext_renderer.ExtRenderer.
+
+    """
+
+    def goto_instance(self, ar, obj, **kw):
+        """
+        Ask the client to display a :term:`detail window` on the given
+        record. The client might ignore this if Lino does not know a
+        detail window.
+
+        This is a utility wrapper around :meth:`set_response` which sets
+        either `data_record` or a `record_id`.
+
+        Usually `data_record`, except if it is a `file upload
+        <https://docs.djangoproject.com/en/dev/topics/http/file-uploads/>`_
+        where some mysterious decoding problems (:blogref:`20120209`)
+        force us to return a `record_id` which has the same visible
+        result but using an additional GET.
+
+        If the calling window is a detail on the same table, then it
+        should simply get updated to the given record. Otherwise open a
+        new detail window.
+
+        """
+        js = self.instance_handler(ar, obj)
+        kw.update(eval_js=js)
+        ar.set_response(**kw)
+
+    def js2url(self, js):
+        if not js:
+            return None
+        js = escape(js)
+        return 'javascript:' + js
+
+    def get_action_status(self, ar, ba, obj, **kw):
+        kw.update(ar.get_status())
+        if ba.action.parameters and not ba.action.keep_user_values:
+            apv = ar.action_param_values
+            if apv is None:
+                apv = ba.action.action_param_defaults(ar, obj)
+            ps = ba.action.params_layout.params_store
+            kw.update(field_values=ps.pv2dict(apv))
+        if isinstance(obj, models.Model):
+            kw.update(record_id=obj.pk)
+
+        return kw
+
+    def ar2js(self, ar, obj, **status):
+        """Implements :meth:`lino.core.renderer.HtmlRenderer.ar2js`.
+
+        """
+        rp = ar.requesting_panel
+        ba = ar.bound_action
+
+        if ba.action.is_window_action():
+            # Window actions have been generated by
+            # js_render_window_action(), so we just call its `run(`)
+            # method:
+            status.update(self.get_action_status(ar, ba, obj))
+            return "Lino.%s.run(%s,%s)" % (
+                ba.full_name(), py2js(rp), py2js(status))
+
+        # It's a custom ajax action generated by
+        # js_render_custom_action().
+
+        # 20140429 `ar` is now None, see :ref:`welfare.tested.integ`
+        params = self.get_action_params(ar, ba, obj)
+        return "Lino.%s(%s,%s,%s)" % (
+            ba.full_name(), py2js(rp), py2js(obj.pk), py2js(params))
+
+    def get_detail_url(self, actor, pk, *args, **kw):
+        return self.plugin.build_plain_url(
+            'api', actor.app_label, actor.__name__, str(pk), *args, **kw)
+
+
+    def instance_handler(self, ar, obj):
+        """Return a string of Javascript code which would open a detail window
+        on the given database object.
+
+        """
+        ba = obj.get_detail_action(ar)
+        if ba is not None:
+            return self.action_call(ar, ba, dict(record_id=obj.pk))
+
+    def obj2url(self, ar, obj):
+        return self.js2url(self.instance_handler(ar, obj))
 

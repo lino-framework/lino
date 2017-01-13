@@ -725,9 +725,6 @@ request from it.
     def summary_row(self, obj, **kwargs):
         return obj.summary_row(self, **kwargs)
 
-    def pk2url(self, *args, **kwargs):
-        return self.renderer.pk2url(self, *args, **kwargs)
-
     def obj2html(self, *args, **kwargs):
         """Return a HTML element which represents a pointer to the given
         database object. Depending on the renderer this will be more
@@ -1059,7 +1056,6 @@ class ActorRequest(BaseRequest):
             return
         if da.actor != self.actor:
             return super(ActorRequest, self).goto_instance(obj, **kw)
-        # da = self.actor.detail_action
         self.set_response(detail_handler_name=da.full_name())
         if self.actor.handle_uploaded_files is not None:
             self.set_response(record_id=obj.pk)
@@ -1075,6 +1071,9 @@ class ActorRequest(BaseRequest):
         location = ar.get_request_url()
         return self.request.build_absolute_uri(location)
 
+    def pk2url(self, pk):
+        return self.renderer.get_detail_url(self.actor, pk)
+    
     def run(self, *args, **kw):
         """
         Runs this action request.

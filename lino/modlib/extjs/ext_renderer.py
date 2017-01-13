@@ -100,9 +100,6 @@ class ExtRenderer(JsRenderer):
 
         self.prepare_layouts()
 
-    def pk2url(self, ar, pk, **kw):
-        return None
-
     def py2js_converter(self, v):
         """
         Additional converting logic for serializing Python values to json.
@@ -343,10 +340,6 @@ class ExtRenderer(JsRenderer):
             kw[constants.URL_PARAM_ACTION_NAME] = ar.bound_action.action.action_name
         return self.plugin.build_plain_url(
             'api', ar.actor.app_label, ar.actor.__name__, *args, **kw)
-
-    def get_detail_url(self, obj, *args, **kw):
-        return self.plugin.build_plain_url(
-            'api', obj._meta.app_label, obj.__class__.__name__, str(obj.pk), *args, **kw)
 
     # def show_table(
     #         self, ar, stripped=True, nosummary=False, **kw):
