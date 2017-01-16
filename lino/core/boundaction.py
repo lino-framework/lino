@@ -73,6 +73,7 @@ class BoundAction(object):
         return self.action.full_name(self.actor)
 
     def request(self, *args, **kw):
+        # print("20170116 BoundAction.request()", args, kw)
         kw.update(action=self)
         return self.actor.request(*args, **kw)
 

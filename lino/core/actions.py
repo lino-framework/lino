@@ -1,16 +1,9 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2016 Luc Saffre
+# Copyright 2009-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """This defines the :class:`Action` class and the :func:`action`
-decorator, together with some of the predefined actions.
-
-
-See also:
-
-- :ref:`dev.actions`.
-- :doc:`/tutorials/actions/index`
-
+decorator, and some of the standard actions.  See :ref:`dev.actions`.
 
 """
 import six
@@ -101,13 +94,22 @@ def install_layout(cls, k, layout_class, **options):
     elif isinstance(dl, layouts.Panel):
         options.update(dl.options)
         setattr(cls, k, layout_class(dl.desc, cls, **options))
-    elif dl._datasource is None:
-        dl.set_datasource(cls)
-        setattr(cls, k, dl)
-    elif not issubclass(cls, dl._datasource):
-        raise Exception(
-            "Cannot reuse %s instance (%s of %r) for %r" %
-            (dl.__class__, k, dl._datasource, cls))
+    else:
+        if not isinstance(dl, layout_class):
+            if not isinstance(cls, type):
+                # cls is an action instance
+                cls = cls.__class__
+            msg = "{}.{}.{} must be a string, " \
+                  "a Panel or an instance of {} (not {!r})"
+            raise Exception(msg.format(
+                cls.__module__, cls.__name__, k, layout_class.__name__, dl))
+        if dl._datasource is None:
+            dl.set_datasource(cls)
+            setattr(cls, k, dl)
+        elif not issubclass(cls, dl._datasource):
+            raise Exception(
+                "Cannot reuse %s instance (%s of %r) for %r" %
+                (dl.__class__, k, dl._datasource, cls))
 
 
 def register_params(cls):
@@ -126,7 +128,9 @@ def register_params(cls):
         install_layout(cls, 'params_layout', cls._layout_class)
 
     elif cls.params_layout is not None:
-        raise Exception("params_layout but no parameters ?!")
+        raise Exception(
+            "{} has a params_layout but no parameters".format(
+                cls))
 
 
 def setup_params_choosers(self):
@@ -156,272 +160,41 @@ from django.utils.encoding import python_2_unicode_compatible
 
 @python_2_unicode_compatible
 class Action(Parametrizable, Permittable):
-    """
-    Abstract base class for all actions.
-    """
-
     #~ __metaclass__ = ActionMetaClass
     _layout_class = layouts.ActionParamsLayout
-
     label = None
-    """The label of this action. A short descriptive text in user
-    language.
-
-    """
-
     button_text = None
-    """The text to appear on buttons for this action. If this is not
-    defined, the :attr:`label` is used.
-
-    """
-
     debug_permissions = False
     save_action_name = None
     disable_primary_key = True
-    """Whether primary key fields should be disabled when using this
-    action. This is `True` for all actions except :class:`InsertRow`.
-
-    """
-
     keep_user_values = False
-    """Whether the parameter window should keep its values between
-    different calls. If this is True, Lino does not fill any default
-    values and leaves those from a previous call.
-
-    """
-
     icon_name = None
-    """The class name of an icon to be used for this action when rendered
-    as toolbar button.
-
-    Allowed icon names are defined in
-    :data:`lino.core.constants.ICON_NAMES`.
-
-    """
-
     hidden_elements = frozenset()
     combo_group = None
-    """
-    The name of another action to which to "attach" this action.
-    Both actions will then be rendered as a single combobutton.
-
-    """
-
     parameters = None
-    "See :attr:`Parametrizable.parameters`."
-
     use_param_panel = False
-    """Used internally. This is True for window actions whose window use
-    the parameter panel: grid and emptytable (but not showdetail)
-
-    """
-
     no_params_window = False
-    """Set this to `True` if your action has :attr:`parameters` but you
-    do *not* want it to open a window where the user can edit these
-    parameters before calling the action.
-
-    Setting this attribute to `True` means that the calling code must
-    explicitly set all parameter values.  Usage example is the
-    :attr:`lino_xl.lib.polls.models.AnswersByResponse.answer_buttons`
-    virtual field.
-
-    """
-
     sort_index = 90
-    """Determines the sort order in which the actions will be presented
-    to the user.
-
-    List actions are negative and come first.
-
-    Predefined `sort_index` values are:
-
-    ===== =================================
-    value action
-    ===== =================================
-    -1    :class:`as_pdf <lino_xl.lib.appypod.PrintTableAction>`
-    10    :class:`InsertRow`, :class:`SubmitDetail`
-    11    :attr:`duplicate <lino.mixins.duplicable.Duplicable.duplicate>`
-    20    :class:`detail <ShowDetailAction>`
-    30    :class:`delete <DeleteSelected>`
-    31    :class:`merge <lino.core.merge.MergeAction>`
-    50    :class:`Print <lino.mixins.printable.BasePrintAction>`
-    51    :class:`Clear Cache <lino.mixins.printable.ClearCacheAction>`
-    60    :class:`ShowSlaveTable`
-    90    default for all custom row actions
-    200   default for all workflow actions (:class:`ChangeStateAction <lino.core.workflows.ChangeStateAction>`)
-    ===== =================================
-
-    """
-
     help_text = None
-    """A help text that shortly explains what this action does.
-    :mod:`lino.modlib.extjs` shows this as tooltip text.
-
-    """
-
     auto_save = True
-    """
-    What to do when this action is being called while the user is on a
-    dirty record.
-    
-    - `False` means: forget any changes in current record and run the
-      action.
-
-    - `True` means: save any changes in current record before running
-      the action.  `None` means: ask the user.
-
-    """
-
     extjs_main_panel = None
-    """Used by :mod:`lino_xl.lib.extensible` and
-    :mod:`lino.modlib.awesome_uploader`.
-
-    Example::
-
-        class CalendarAction(dd.Action):
-            extjs_main_panel = "Lino.CalendarApp().get_main_panel()"
-            ...
-
-    """
-
     js_handler = None
-    """
-    This is usually `None`. Otherwise it is the name of a Javascript
-    callable to be called without arguments. That callable must have
-    been defined in a :attr:`lino.core.plugin.Plugin.site_js_snippets` of the plugin.
-
-    """
-
     action_name = None
-    """Internally used to store the name of this action within the
-    defining Actor's namespace.
-
-    """
     defining_actor = None
-    """Internally used to store the :class:`lino.core.actors.Actor` who
-    defined this action.
-
-    """
-
     key = None
-    """
-    The hotkey to associate to this action in a user interface.
-    """
-
     default_format = 'html'
-    """
-    Used internally.
-    """
-
     editable = True
-    """
-    Whether the parameter fields should be editable.
-    Setting this to False seems nonsense.
-    """
-    
     readonly = True
-    """Whether this action is readonly, i.e. does not change any data.
-
-    Setting this to `False` will make the action unavailable for
-    `readonly` user profiles and will cause it to be logged when
-    :attr:`log_each_action_request
-    <lino.core.site.Site.log_each_action_request>` is set to `True`.
-    
-    Note that when a readonly action actually *does* modify the
-    database, Lino won't "notice" it.
-
-    Discussion
-    
-    Maybe we should change the name `readonly` to `modifying` or
-    `writing` (and set the default value `False`).  Because for the
-    application developer that looks more natural.  Or --maybe better
-    but probably with even more consequences-- the default value
-    should be `False`.  Because being readonly, for actions, is a kind
-    of "privilege": they don't get logged, they also exists for
-    readonly users...  It would be more "secure" when the developer
-    must explicitly "say something" it when granting that privilege.
-
-    Another subtlety is the fact that this attribute is used by
-    :class:`lino.modlib.users.mixins.UserAuthored`.  For example the
-    :class:`StartTicketSession
-    <lino_noi.lib.clocking.actions.StartTicketSession>` action in
-    :ref:`noi` is declared "readonly" because we want Workers who are
-    not Triagers to see this action even if they are not the author
-    (reporter) of a ticket. In this use case the name should rather be
-    `requires_authorship`.
-
-    """
-
     opens_a_window = False
-    """
-    Used internally to say whether this action opens a window.
-    """
-
     hide_top_toolbar = False
-    """Used internally if :attr:`opens_a_window` to say whether the
-    window has a top toolbar.
-
-    """
-
     hide_navigator = False
-    """Used internally if :attr:`opens_a_window` to say whether the
-    window has a navigator.
-
-    """
-
     show_in_bbar = True
-    """Whether this action should be displayed as a button in the toolbar
-    and the context menu.
-
-    For example the :class:`CheckinVisitor
-    <lino_xl.lib.reception.models.CheckinVisitor>`,
-    :class:`ReceiveVisitor
-    <lino_xl.lib.reception.models.ReceiveVisitor>` and
-    :class:`CheckoutVisitor
-    <lino_xl.lib.reception.models.CheckoutVisitor>` actions have this
-    attribute explicitly set to `False` because otherwise they would be
-    visible in the toolbar.
-
-    """
-
     show_in_workflow = False
-    """Used internally.  Whether this action should be displayed as the
-    :attr:`workflow_buttons <lino.core.model.Model.workflow_buttons>`
-    column. If this is True, then Lino will automatically set
-    :attr:`custom_handler` to True.
-
-    """
-
     custom_handler = False
-    """
-    Whether this action is implemented as Javascript function call.
-    This is necessary if you want your action to be callable using an
-    "action link" (html button).
-
-    """
-
     select_rows = True
-    """True if this action needs an object to act on.
-
-    Set this to `False` if this action is a list action, not a row
-    action.
-
-    """
-
     http_method = 'GET'
-    """
-    HTTP method to use when this action is called using an AJAX call.
-    """
-
     preprocessor = 'null'  # None
-    """
-    Name of a Javascript function to be invoked on the web client when
-    this action is called.
-    """
-
     hide_virtual_fields = False
-
     required_states = None
 
     def __init__(self, label=None, **kw):
@@ -1026,8 +799,8 @@ class MultipleRowAction(Action):
 
 
 class DeleteSelected(MultipleRowAction):
-    """The action used to delete the selected row(s). Automatically
-    installed on every editable actor.
+    """Delete the selected row(s). This action is automatically installed
+    on every editable actor.
 
     """
 
@@ -1082,18 +855,6 @@ class DeleteSelected(MultipleRowAction):
 
 
 def action(*args, **kw):
-    """Decorator to define custom actions.
-    
-    The decorated function will be installed as the actions's
-    :meth:`run_from_ui <Action.run_from_ui>` method.
-
-    Same signature as :meth:`Action.__init__`.
-    In practice you'll possibly use:
-    :attr:`label <Action.label>`,
-    :attr:`help_text <Action.help_text>` and
-    :attr:`required_roles <lino.core.permissions.Permittable.required_roles>`.
-
-    """
     def decorator(fn):
         assert not 'required' in kw
         # print 20140422, fn.__name__
@@ -1109,7 +870,6 @@ def action(*args, **kw):
 
 
 def get_view_permission(e):
-    from lino.utils import jsgen
     if isinstance(e, Permittable) and not e.get_view_permission(
             get_user_profile()):
         return False

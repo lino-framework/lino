@@ -146,38 +146,6 @@ else:
     models.signals.post_syncdb.connect(my_handler)
 
 
-#~ @dd.receiver(dd.database_connected)
-#~ def my_callback(sender,**kw):
-    #~ settings.SITE.clear_site_config()
-#~ dd.connection_created.connect(my_callback)
-#~ models.signals.post_syncdb.connect(my_callback)
-#~ from lino.utils.djangotest import testcase_setup
-#~ testcase_setup.connect(my_callback)
-#~ dd.startup.connect(my_callback)
-#~ models.signals.post_save.connect(my_callback,sender=SiteConfig)
-#~ NOTE : I didn't manage to get that last line working.
-#~ When specifying a `sender`, the signal seems to just not get sent.
-#~ Worked around this by overriding SiteConfig.save() to call directly clear_site_config()
-#~ @dd.receiver(models.signals.post_save, sender=SiteConfig)
-#~ def my_callback2(sender,**kw):
-    #~ print "callback2"
-    #~ settings.SITE.clear_site_config()
-#~ models.signals.post_save.connect(my_callback2,sender=SiteConfig)
-#~ from django.test.signals import setting_changed
-#~ setting_changed.connect(my_callback)
-#~ class SiteConfigDetail(dd.FormLayout):
-    #~ about = """
-    #~ versions:40x5 startup_time:30
-    #~ lino.ModelsBySite:70x10
-    #~ """
-    #~ config = """
-    #~ default_build_method
-    #~ """
-    #~ main = "about config"
-    #~ def setup_handle(self,lh):
-        #~ lh.config.label = _("Site Parameters")
-        #~ lh.about.label = _("About")
-
 class SiteConfigs(dd.Table):
 
     """

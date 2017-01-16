@@ -1,4 +1,4 @@
-# Copyright 2009-2016 Luc Saffre
+# Copyright 2009-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """See :doc:`/dev/layouts`.
@@ -6,8 +6,6 @@
 """
 
 from __future__ import unicode_literals
-# import six
-# str = six.text_type
 from builtins import str
 from past.builtins import basestring
 from builtins import object
@@ -49,13 +47,12 @@ class DummyPanel(object):
 class Panel(object):
 
     """This is available in :mod:`lino.api.dd`.  To be used when a panel
-    is more complex than what can be expressed using a simple template
-    string.
-
-    The `options` parameter can be:
+    cannot be expressed using a simple template string because it
+    requires one or more options. These `options` parameters can be:
 
     - label
     - required_roles
+    - window_size
 
     Unlike a :class:`FormLayout` it cannot have any child panels
     and cannot become a tabbed panel.
@@ -76,14 +73,6 @@ class Panel(object):
         """
         self.desc = self.desc.replace(*args, **kw)
 
-    #~ def remove_element(self,*args):
-        #~ """
-        #~ Removes specified element names from this Panel's `main` template.
-        #~ """
-        #~ for name in args:
-            #~ if not name in self.desc:
-                #~ raise Exception("Panel has no element '%s'" % name)
-            #~ self.desc = self.desc.replace(name,'')
 
 
 class LayoutHandle(object):

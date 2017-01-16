@@ -439,6 +439,10 @@ class ApiElement(View):
             #~ ar = ba.request(request=request,selected_pks=[pk])
             #~ print 20131004, ba.actor
             ar = ba.request(request=request)
+            
+            # print(
+            #     "20170116 views.ApiElement.get", ba,
+            #     ar.action_param_values)
 
             ar.set_selected_pks(pk)
             elem = ar.selected_rows[0]
@@ -492,6 +496,7 @@ class ApiElement(View):
             ar.selected_rows = [elem]
         elif elem is None:
             raise http.Http404(NOT_FOUND % (rpt, pk))
+        
         return settings.SITE.kernel.run_action(ar)
 
     def post(self, request, app_label=None, actor=None, pk=None):

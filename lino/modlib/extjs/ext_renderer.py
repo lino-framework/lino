@@ -124,7 +124,7 @@ class ExtRenderer(JsRenderer):
 
         if isinstance(v, menus.MenuItem):
             if v.instance is not None:
-                h = self.instance_handler(None, v.instance)
+                h = self.instance_handler(None, v.instance, None)
                 assert h is not None
                 js = "function() {%s}" % h
                 return self.handler_item(v, js, None)

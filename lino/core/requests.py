@@ -1035,33 +1035,6 @@ class ActorRequest(BaseRequest):
     def render_to_dict(self):
         return self.bound_action.action.render_to_dict(self)
 
-    def goto_instance(self, obj, **kw):
-        """Ask the client to open a detail window on this object.  The effect
-        is like :meth:`BaseRequest.goto_instance`, but if the detail
-        layout of the current actor can be used for the object to be
-        displayed, we don't want to open a new detail window.
-
-        This calls :meth:`obj.get_detail_action
-        <lino.core.model.Model.get_detail_action>`.
-
-        """
-        # e.g. find_by_beid is called from viewport, so there is no
-        # requesting_panel.
-        # if self.actor.model is None \
-        #    or not isinstance(obj, self.actor.model) \
-        #    or self.actor.detail_action is None:
-        #     return super(ActorRequest, self).goto_instance(obj, **kw)
-        da = obj.get_detail_action(self)
-        if da is None:
-            return
-        if da.actor != self.actor:
-            return super(ActorRequest, self).goto_instance(obj, **kw)
-        self.set_response(detail_handler_name=da.full_name())
-        if self.actor.handle_uploaded_files is not None:
-            self.set_response(record_id=obj.pk)
-        else:
-            self.set_response(data_record=self.elem2rec_detailed(obj))
-
     def get_request_url(self, *args, **kw):
         return self.renderer.get_request_url(self, *args, **kw)
 
@@ -1111,6 +1084,7 @@ class ActionRequest(ActorRequest):
         - :meth:`lino.core.actions.Action.request`
         
         """
+        # print("20170116 ActionRequest.__init__()", actor, kw)
         assert unused_renderer is None
         assert unused_request is None
         self.actor = actor
@@ -1193,6 +1167,7 @@ class ActionRequest(ActorRequest):
         action = self.bound_action.action
         if action.parameters is not None:
             apv = action.action_param_defaults(self, None)
+            # print("20170116 requests.py", apv)
             if request is not None:
                 apv.update(
                     action.params_layout.params_store.parse_params(request))

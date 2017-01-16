@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2016 Luc Saffre
+# Copyright 2009-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 "Defines the :class:`Model` class."
@@ -7,7 +7,7 @@
 from __future__ import unicode_literals
 from __future__ import print_function
 import six
-# str = six.text_type
+
 from builtins import str
 from past.builtins import basestring
 from builtins import object
@@ -561,7 +561,7 @@ class Model(models.Model):
         """
         return []
 
-    @fields.displayfield()
+    @fields.displayfield(_("Description"))
     def overview(self, ar):
         if ar is None:
             return ''
@@ -776,6 +776,9 @@ class Model(models.Model):
         for ba in actor.get_actions():
             assert ba.actor == actor  # 20170102
             if ba.action.show_in_workflow:
+                # if actor.model.__name__ == 'Vote':
+                #     if ba.action.__class__.__name__ == 'MarkVoteAssigned':
+                #         print(20170115, actor, ar.get_user())
                 if actor.get_row_permission(obj, ar, state, ba):
                     if show and isinstance(ba.action, ChangeStateAction):
                         show_state()
@@ -971,6 +974,15 @@ action on individual instances.
     @classmethod
     def get_title_tags(self, ar):
         return []
+
+    @classmethod
+    def resolve_states(cls, states):
+        if isinstance(states, six.string_types):
+            fld = cls.workflow_state_field
+            return set([fld.choicelist.get_by_name(x)
+                        for x in states.split()])
+        return states
+    
 
     @classmethod
     def django2lino(cls, model):
