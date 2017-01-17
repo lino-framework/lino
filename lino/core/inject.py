@@ -342,10 +342,16 @@ def update_field(model_spec, name, **kw):
             fld = model._meta.get_field(name)
             #~ fld = model._meta.get_field_by_name(name)[0]
         except FieldDoesNotExist:
-            msg = "Cannot update unresolved field %s.%s", model, name
-            raise Exception(msg)
-            logger.warning(msg)
-            return
+            fld = getattr(model, name, None)
+            if fld is None:
+                msg = "Cannot update unresolved field %s.%s", model, name
+                raise Exception(msg)
+                logger.warning(msg)
+            elif isinstance(fld, fields.VirtualField):
+                fld = fld.return_type
+            else:
+                msg = "Cannot update field %s.%s", model, name
+                raise Exception(msg)
         # if fld.model != model:
         #     raise Exception('20120715 update_field(%s.%s) : %s' %
         #                     (model, fld, fld.model))
