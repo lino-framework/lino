@@ -355,7 +355,7 @@ class VirtStoreField(StoreField):
     def full_value_from_object(self, obj, ar):
         # 20150218 : added new rule that virtual fields are never
         # computed for unsaved instances. This is because
-        # `InsertRow.get_status` otherwise generated lots of useless
+        # `ShowInsert.get_status` otherwise generated lots of useless
         # slave summaries which furthermore caused an endless
         # recursion problem. See test case in
         # :ref:`welfare.tested.pcsw`. Note that `obj` does not need to
@@ -629,7 +629,7 @@ class AutoStoreField(StoreField):
 
     def form2obj(self, ar, obj, post_data, is_new):
         # logger.info("20121022 AutoStoreField.form2obj(%r)",ar.bound_action.full_name())
-        if isinstance(ar.bound_action.action, actions.InsertRow):
+        if isinstance(ar.bound_action.action, actions.ShowInsert):
             return super(AutoStoreField, self).form2obj(
                 ar, obj, post_data, is_new)
 

@@ -977,11 +977,23 @@ action on individual instances.
 
     @classmethod
     def resolve_states(cls, states):
-        if isinstance(states, six.string_types):
+        """Convert the given string `states` into a set of state objects.
+
+        The states specifier must be either a set containing state
+        objects or a string containing a space-separated list of valid
+        state names. If it is a string, convert it to the set.
+
+        """
+        if states is None:
+            return None
+        elif isinstance(states, six.string_types):
             fld = cls.workflow_state_field
-            return set([fld.choicelist.get_by_name(x)
-                        for x in states.split()])
-        return states
+            return set(
+                [fld.choicelist.get_by_name(x) for x in states.split()])
+        elif isinstance(states, set):
+            return states
+        raise Exception(
+            "Cannot resolve stateset specifier {!r}".format(states))
     
 
     @classmethod

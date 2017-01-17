@@ -580,7 +580,7 @@ class ApiList(View):
                 after_show.update(
                     show_params_panel=constants.parse_boolean(sp))
 
-            # if isinstance(ar.bound_action.action, actions.InsertRow):
+            # if isinstance(ar.bound_action.action, actions.ShowInsert):
             #     elem = ar.create_instance()
             #     rec = ar.elem2rec_insert(rh, elem)
             #     after_show.update(data_record=rec)

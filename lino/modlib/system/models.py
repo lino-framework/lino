@@ -155,7 +155,7 @@ class SiteConfigs(dd.Table):
     """
     model = 'system.SiteConfig'
     required_roles = dd.required(SiteStaff)
-    default_action = actions.ShowDetailAction()
+    default_action = actions.ShowDetail()
     #~ has_navigator = False
     hide_top_toolbar = True
     #~ can_delete = perms.never

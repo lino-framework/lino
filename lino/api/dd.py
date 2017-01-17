@@ -159,8 +159,8 @@ from lino.core.actions import Action
 from lino.core.actions import MultipleRowAction
 from lino.core.actions import ShowSlaveTable
 
-from lino.core.actions import GridEdit, ShowDetailAction
-from lino.core.actions import InsertRow, DeleteSelected
+from lino.core.actions import ShowTable, ShowDetail
+from lino.core.actions import ShowInsert, DeleteSelected
 from lino.core.actions import SubmitDetail, SubmitInsert
 
 from lino.core.choicelists import ChoiceList, Choice

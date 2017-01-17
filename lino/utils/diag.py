@@ -45,7 +45,7 @@ class Analyzer(object):
                             raise Exception("20150323 : {0}".format(ba))
                             # Was used to find Exception: 20150323 :
                             # <BoundAction(plausibility.Checkers,
-                            # <ShowDetailAction detail (u'Detail')>)>
+                            # <ShowDetail detail (u'Detail')>)>
 
                         if wl not in window_actions:
                             # lh = wl.get_layout_handle(ui)

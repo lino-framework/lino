@@ -95,7 +95,7 @@ class MySettings(Users):
 
     @classmethod
     def get_default_action(cls):
-        return actions.ShowDetailAction()
+        return actions.ShowDetail()
 
 
 class Authorities(dd.Table):

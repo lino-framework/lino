@@ -821,10 +821,10 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
         if cls.detail_layout:
             if default_action and isinstance(
-                    default_action, actions.ShowDetailAction):
+                    default_action, actions.ShowDetail):
                 cls.detail_action = cls._bind_action(default_action)
             else:
-                cls.detail_action = cls._bind_action(actions.ShowDetailAction())
+                cls.detail_action = cls._bind_action(actions.ShowDetail())
             if cls.editable:
                 cls.submit_detail = cls._bind_action(actions.SubmitDetail())
 
@@ -881,7 +881,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     @classmethod
     def get_insert_action(cls):
-        return actions.InsertRow()
+        return actions.ShowInsert()
 
     @classmethod
     def get_label(self):

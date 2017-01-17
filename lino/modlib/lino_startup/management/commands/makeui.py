@@ -102,11 +102,11 @@ class Command(GeneratingCommand):
             #~ f.write("Ext.namespace('Lino.%s')\n" % rpt)
             context.update(rh=rh)
             for a in rpt.get_actions():
-                if isinstance(a, dbtables.GridEdit):
+                if isinstance(a, dbtables.ShowTable):
                     context.update(action=a)
                     self.generate_class_file(
                         a2class(a), 'XyzTableWindow.js.tmpl', **context)
-                if isinstance(a, actions.ShowDetailAction):
+                if isinstance(a, actions.ShowDetail):
                     context.update(action=a)
                     self.generate_class_file(a2class(a),
                                              'XyzDetailWindow.js.tmpl',

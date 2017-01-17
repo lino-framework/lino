@@ -229,10 +229,10 @@ def get_actor_description(self):
     #~ return body
 
 
-IGNORED_ACTIONS = (actions.GridEdit, actions.SubmitDetail,
-                   actions.ShowDetailAction,
+IGNORED_ACTIONS = (actions.ShowTable, actions.SubmitDetail,
+                   actions.ShowDetail,
                    actions.DeleteSelected,
-                   actions.InsertRow, actions.SubmitInsert)
+                   actions.ShowInsert, actions.SubmitInsert)
 
 
 def menuselection_text(mi):

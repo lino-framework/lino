@@ -20,7 +20,7 @@ import datetime
 from django.conf import settings
 from django.utils.timezone import make_aware
 
-from lino.core.actions import Action, ShowDetailAction, GridEdit
+from lino.core.actions import Action, ShowDetail, ShowTable
 from lino.api import rt, _
 from lino.core import dbutils
 
@@ -58,8 +58,8 @@ class BasePrintAction(Action):
 
     def is_callable_from(self, caller):
         # including ShowEmptyTable which is subclass of
-        # ShowDetailAction. But not callable from InsertRow.
-        return isinstance(caller, (GridEdit, ShowDetailAction))
+        # ShowDetail. But not callable from ShowInsert.
+        return isinstance(caller, (ShowTable, ShowDetail))
 
     def get_print_templates(self, bm, elem):
         return elem.get_print_templates(bm, self)

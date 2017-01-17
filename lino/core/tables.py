@@ -351,7 +351,7 @@ class AbstractTable(actors.Actor):
 
     default_group = Group()
 
-    #~ default_action = GridEdit
+    #~ default_action = ShowTable
     default_layout = 0
 
     typo_check = True
@@ -479,7 +479,7 @@ method in order to sort the rows of the queryset.
     def get_default_action(cls):
         #~ return actions.BoundAction(cls,cls.grid)
         #~ return 'grid'
-        return actions.GridEdit()
+        return actions.ShowTable()
 
     @classmethod
     def get_actor_editable(self):

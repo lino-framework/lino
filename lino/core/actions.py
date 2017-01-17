@@ -236,10 +236,10 @@ class Action(Parametrizable, Permittable):
             self, instance.get_default_table(), instance, owner)
 
     def is_callable_from(self, caller):
-        return isinstance(caller, (GridEdit, ShowDetailAction))
+        return isinstance(caller, (ShowTable, ShowDetail))
         #~ if self.select_rows:
-            #~ return isinstance(caller,(GridEdit,ShowDetailAction))
-        #~ return isinstance(caller,GridEdit)
+            #~ return isinstance(caller,(ShowTable,ShowDetail))
+        #~ return isinstance(caller,ShowTable)
 
     def is_window_action(self):
         """Return `True` if this is a "window action" (i.e. which opens a GUI
@@ -425,7 +425,7 @@ class RedirectAction(Action):
         raise NotImplementedError
 
 
-class GridEdit(TableAction):
+class ShowTable(TableAction):
     """Open a window with a grid editor on this table as main item.
 
     """
@@ -441,7 +441,7 @@ class GridEdit(TableAction):
     def attach_to_actor(self, actor, name):
         #~ self.label = actor.button_label or actor.label
         self.label = actor.label
-        return super(GridEdit, self).attach_to_actor(actor, name)
+        return super(ShowTable, self).attach_to_actor(actor, name)
 
     def get_window_layout(self, actor):
         #~ return self.actor.list_layout
@@ -451,7 +451,7 @@ class GridEdit(TableAction):
         return actor.window_size
 
 
-class ShowDetailAction(Action):
+class ShowDetail(Action):
     """Open the detail window on a row of this table.
 
     """
@@ -463,7 +463,7 @@ class ShowDetailAction(Action):
     sort_index = 20
 
     def is_callable_from(self, caller):
-        return isinstance(caller, GridEdit)
+        return isinstance(caller, ShowTable)
 
     action_name = 'detail'
     label = _("Detail")
@@ -477,7 +477,7 @@ class ShowDetailAction(Action):
         return wl.window_size
 
 
-class ShowEmptyTable(ShowDetailAction):
+class ShowEmptyTable(ShowDetail):
     use_param_panel = True
     action_name = 'show'
     default_format = 'html'
@@ -486,7 +486,7 @@ class ShowEmptyTable(ShowDetailAction):
     icon_name = None
 
     def is_callable_from(self, caller):
-        return isinstance(caller, GridEdit)
+        return isinstance(caller, ShowTable)
 
     def attach_to_actor(self, actor, name):
         self.label = actor.label
@@ -496,7 +496,7 @@ class ShowEmptyTable(ShowDetailAction):
         return super(ShowEmptyTable, self).as_bootstrap_html(ar, '-99998')
 
 
-class InsertRow(TableAction):
+class ShowInsert(TableAction):
     """Open the Insert window filled with a row of blank or default
     values.  The new row will be actually created only when this
     window gets submitted.
@@ -539,10 +539,10 @@ class InsertRow(TableAction):
         # if settings.SITE.user_model and ar.get_user().profile.readonly:
         if ar.get_user().profile.readonly:
             return False
-        return super(InsertRow, self).get_action_permission(ar, obj, state)
+        return super(ShowInsert, self).get_action_permission(ar, obj, state)
 
     def get_status(self, ar, **kw):
-        kw = super(InsertRow, self).get_status(ar, **kw)
+        kw = super(ShowInsert, self).get_status(ar, **kw)
         if 'record_id' in kw:
             return kw
         if 'data_record' in kw:
@@ -639,7 +639,9 @@ class ValidateForm(Action):
 
 
 class SubmitDetail(SaveRow):
-    """The "Save" button of a :term:`detail window`.
+    """Save changes in the detail form.
+
+    This is rendered as the "Save" button of a :term:`detail window`.
 
     Called when the OK button of a Detail Window was clicked.
     Installed as `submit_detail` on every actor.
@@ -648,10 +650,10 @@ class SubmitDetail(SaveRow):
     icon_name = 'disk'
     help_text = _("Save changes in this form")
     label = _("Save")
-    action_name = ShowDetailAction.save_action_name
+    action_name = ShowDetail.save_action_name
 
     def is_callable_from(self, caller):
-        return isinstance(caller, ShowDetailAction)
+        return isinstance(caller, ShowDetail)
 
     def run_from_ui(self, ar, **kw):
         # logger.info("20140423 SubmitDetail")
@@ -705,15 +707,18 @@ class CreateRow(Action):
 
 
 class SubmitInsert(CreateRow):
-    """Called when the OK button of an Insert Window was clicked.
-    Installed as `submit_insert` on every `dd.Model <lino.core.model.Model>`.
+    """Create a new database row using the data specified in the insert
+    window.  Called when the OK button of an Insert Window was
+    clicked.  Installed as `submit_insert` on every `dd.Model
+    <lino.core.model.Model>`.
+
     """
     label = _("Create")
     action_name = None  # 'post'
     help_text = _("Create the record and open a detail window on it")
 
     def is_callable_from(self, caller):
-        return isinstance(caller, InsertRow)
+        return isinstance(caller, ShowInsert)
 
     def run_from_ui(self, ar, **kw):
         ar.requesting_panel = None
@@ -775,7 +780,7 @@ class MultipleRowAction(Action):
     """Base class for actions that update something on every selected row.
     """
     custom_handler = True
-    callable_from = (GridEdit, ShowDetailAction)
+    callable_from = (ShowTable, ShowDetail)
 
     def run_on_row(self, obj, ar):
         """This is being called on every selected row.
@@ -812,7 +817,7 @@ class DeleteSelected(MultipleRowAction):
     readonly = False
     show_in_workflow = False
     # required_roles = set([SiteUser])
-    #~ callable_from = (GridEdit,ShowDetailAction)
+    #~ callable_from = (ShowTable,ShowDetail)
     #~ needs_selection = True
     label = _("Delete")
     #~ url_action_name = 'delete'
