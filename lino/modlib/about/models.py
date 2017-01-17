@@ -1,4 +1,4 @@
-# Copyright 2012-2016 Luc Saffre
+# Copyright 2012-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -228,7 +228,7 @@ class About(EmptyTable):
     help_text = _("Show information about this site.")
     required_roles = set()
     hide_top_toolbar = True
-    detail_layout = dd.FormLayout("""
+    detail_layout = dd.DetailLayout("""
     about_html
     server_status
     """, window_size=(60, 20))

@@ -36,8 +36,8 @@ from lino.core.renderer import JsRenderer
 
 from lino.api.ad import Plugin
 
-from lino.core.actions import (ShowEmptyTable, ShowDetailAction,
-                               InsertRow, GridEdit, SubmitDetail,
+from lino.core.actions import (ShowEmptyTable, ShowDetail,
+                               ShowInsert, ShowTable, SubmitDetail,
                                SubmitInsert)
 from lino.core import dbtables
 from lino.core import tables
@@ -124,7 +124,7 @@ class ExtRenderer(JsRenderer):
 
         if isinstance(v, menus.MenuItem):
             if v.instance is not None:
-                h = self.instance_handler(None, v.instance)
+                h = self.instance_handler(None, v.instance, None)
                 assert h is not None
                 js = "function() {%s}" % h
                 return self.handler_item(v, js, None)
@@ -802,8 +802,8 @@ class ExtRenderer(JsRenderer):
                 if ba.action.parameters and not ba.action.no_params_window:
                     pass
                 elif ba.action.opens_a_window:
-                    if isinstance(ba.action, (ShowDetailAction,
-                                              InsertRow)):
+                    if isinstance(ba.action, (ShowDetail,
+                                              ShowInsert)):
                         for ln in self.js_render_detail_action_FormPanel(
                                 rh, ba):
                             f.write(ln + '\n')
@@ -899,9 +899,9 @@ class ExtRenderer(JsRenderer):
         elif isinstance(a, SubmitDetail):
             js = 'function(panel){panel.save()}'
             kw.update(panel_btn_handler=js_code(js))
-        elif isinstance(a, ShowDetailAction):
+        elif isinstance(a, ShowDetail):
             kw.update(panel_btn_handler=js_code('Lino.show_detail'))
-        elif isinstance(a, InsertRow):
+        elif isinstance(a, ShowInsert):
             kw.update(panel_btn_handler=js_code('Lino.show_insert'))
         else:
             kw.update(
@@ -1160,7 +1160,7 @@ class ExtRenderer(JsRenderer):
         yield "  ls_url: %s," % py2js(rpt.actor_url())
         if action.action != rpt.default_action.action:
             yield "  action_name: %s," % py2js(action.action.action_name)
-        if isinstance(action.action, InsertRow):
+        if isinstance(action.action, ShowInsert):
             yield "  default_record_id: -99999,"
             
         yield "  initComponent : function() {"
@@ -1307,11 +1307,11 @@ class ExtRenderer(JsRenderer):
         else:
             params_panel = None
 
-        if isinstance(ba.action, ShowDetailAction):
+        if isinstance(ba.action, ShowDetail):
             mainPanelClass = "Lino.%sPanel" % ba.full_name()
-        elif isinstance(ba.action, InsertRow):
+        elif isinstance(ba.action, ShowInsert):
             mainPanelClass = "Lino.%sPanel" % ba.full_name()
-        elif isinstance(ba.action, GridEdit):
+        elif isinstance(ba.action, ShowTable):
             mainPanelClass = "Lino.%s.GridPanel" % rpt
         elif ba.action.parameters and not ba.action.no_params_window:
             params_panel = ba.action.make_params_layout_handle(

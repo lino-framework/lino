@@ -33,7 +33,7 @@ from lino.core.menus import find_menu_item
 from lino.sphinxcontrib.actordoc import menuselection_text
 
 from lino.core.menus import Menu
-from lino.core.actions import GridEdit
+from lino.core.actions import ShowTable
 
 test_client = Client()
 # naming it simply "client" caused conflict with a
@@ -282,8 +282,8 @@ def show_dialog_actions():
 
 
 def walk_menu_items(username=None, severe=False):
-    """Walk through all menu items which run a :class:`GridEdit
-    <lino.core.actions.GridEdit>` action, showing how many data rows
+    """Walk through all menu items which run a :class:`ShowTable
+    <lino.core.actions.ShowTable>` action, showing how many data rows
     the grid contains.
 
     """
@@ -292,7 +292,7 @@ def walk_menu_items(username=None, severe=False):
         items = []
         for mi in mnu.walk_items():
           if mi.bound_action:
-            if isinstance(mi.bound_action.action, GridEdit):
+            if isinstance(mi.bound_action.action, ShowTable):
                 mt = mi.bound_action.actor
                 url = 'api/{}/{}'.format(mt.app_label, mt.__name__)
                 url = six.text_type(settings.SITE.buildurl(url, fmt='json'))

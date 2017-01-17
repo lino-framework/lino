@@ -48,7 +48,7 @@ class TextFieldTemplate(UserAuthored):
 class TextFieldTemplates(dd.Table):
     model = TextFieldTemplate
     required_roles = dd.required(dd.SiteStaff, OfficeUser)
-    insert_layout = dd.FormLayout("""
+    insert_layout = dd.InsertLayout("""
     name
     user #team
     """, window_size=(60, 'auto'))

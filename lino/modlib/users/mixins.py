@@ -114,8 +114,9 @@ class Authored(model.Model):
         if not super(Authored, self).get_row_permission(ar, state, ba):
             return False
         user = ar.get_user()
-        if self.get_author() != ar.user \
-           and (ar.subst_user is None or self.get_author() != ar.subst_user) \
+        author = self.get_author()
+        if author != ar.user \
+           and (ar.subst_user is None or author != ar.subst_user) \
            and not user.profile.has_required_roles(
                self.manager_roles_required):
             return ba.action.readonly

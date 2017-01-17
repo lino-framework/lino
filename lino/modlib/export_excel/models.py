@@ -96,7 +96,7 @@ class ExportExcelAction(actions.Action):
     preprocessor = "Lino.get_current_grid_config"
 
     def is_callable_from(self, caller):
-        return isinstance(caller, actions.GridEdit)
+        return isinstance(caller, actions.ShowTable)
 
     def run_from_ui(self, ar, **kw):
         # Prepare tmp file

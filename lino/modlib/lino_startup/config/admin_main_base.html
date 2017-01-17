@@ -11,7 +11,7 @@
         {% if extjs.autorefresh_seconds %}
         <a href="javascript:Lino.autorefresh();">autorefresh</a>
         {% endif %}
-        <a href="javascript:Lino.viewport.refresh();">refresh</a>
+        [<a href="javascript:Lino.viewport.refresh();" style="text-decoration:none">{{_("Refresh")}}</a>]
         </p>
         <p>{{_("Hi, %(user)s!") % dict(user=ar.get_user())}}
         {% for msg in settings.SITE.get_welcome_messages(ar) %}

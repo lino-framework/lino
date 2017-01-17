@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2016 Luc Saffre
+# Copyright 2012-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 """Defines the classes used for generating workflows:
 :class:`State` and :class:`Workflow`, :class:`ChangeStateAction`.
@@ -238,14 +238,39 @@ class ChangeStateAction(actions.Action):
 
 
     def run_from_ui(self, ar):
+        # print(20170116, ar.action_param_values)
         for row in ar.selected_rows:
             self.execute(ar, row)
         ar.set_response(refresh=True)
         ar.success()
 
+    confirmation_msg_template = None
+
+    def get_confirmation_msg_context(self, ar, obj, **kwargs):
+        kwargs.update(
+            user=ar.get_user(),
+            state=self.target_state)
+        return kwargs
+
+    def before_execute(self, ar, obj):
+        """
+        Usage example : lino_noi.lib.noi.workflows.MarkVoteassigned"""
+        pass
+    
     def execute(self, ar, obj):
-        return obj.set_workflow_state(
-            ar,
-            ar.actor.workflow_state_field,
-            self.target_state)
+        def doit(ar):
+            self.before_execute(ar, obj)
+            obj.set_workflow_state(
+                ar,
+                ar.actor.workflow_state_field,
+                self.target_state)
+            
+        
+        
+        if self.confirmation_msg_template is None:
+            doit(ar)
+        else:
+            ctx = self.get_confirmation_msg_context(ar, obj)
+            msg = self.confirmation_msg_template.format(**ctx)
+            ar.confirm(doit, msg, _("Are you sure?"))
 

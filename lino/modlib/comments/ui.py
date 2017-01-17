@@ -23,7 +23,7 @@ class Comments(dd.Table):
 
     model = 'comments.Comment'
 
-    insert_layout = dd.FormLayout("""
+    insert_layout = dd.InsertLayout("""
     short_text
     """, window_size=(40, 10))
 

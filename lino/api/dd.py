@@ -57,8 +57,10 @@ Virtual Fields:
 
 Layouts:
 
-- :class:`FormLayout <lino.core.layouts.FormLayout>`
+- :class:`DetailLayout <lino.core.layouts.DetailLayout>`
 - :class:`Panel <lino.core.layouts.Panel>`
+- :class:`FormLayout <lino.core.layouts.FormLayout>` no longer supported.
+  Application code should use either InsertLayout or DetailLayout instead.
 
 Utilities:
 
@@ -157,8 +159,8 @@ from lino.core.actions import Action
 from lino.core.actions import MultipleRowAction
 from lino.core.actions import ShowSlaveTable
 
-from lino.core.actions import GridEdit, ShowDetailAction
-from lino.core.actions import InsertRow, DeleteSelected
+from lino.core.actions import ShowTable, ShowDetail
+from lino.core.actions import ShowInsert, DeleteSelected
 from lino.core.actions import SubmitDetail, SubmitInsert
 
 from lino.core.choicelists import ChoiceList, Choice
@@ -200,7 +202,8 @@ from lino.core.utils import babel_values  # alias for babelkw for backward compa
 
 from lino.utils.choosers import chooser, action_chooser
 
-from lino.core.layouts import FormLayout, DetailLayout, InsertLayout, Panel
+# from lino.core.layouts import FormLayout
+from lino.core.layouts import DetailLayout, InsertLayout, Panel
 from lino.core.layouts import ParamsLayout
 from lino.core.layouts import DummyPanel
 

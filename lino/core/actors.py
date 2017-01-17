@@ -821,10 +821,10 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
         if cls.detail_layout:
             if default_action and isinstance(
-                    default_action, actions.ShowDetailAction):
+                    default_action, actions.ShowDetail):
                 cls.detail_action = cls._bind_action(default_action)
             else:
-                cls.detail_action = cls._bind_action(actions.ShowDetailAction())
+                cls.detail_action = cls._bind_action(actions.ShowDetail())
             if cls.editable:
                 cls.submit_detail = cls._bind_action(actions.SubmitDetail())
 
@@ -881,7 +881,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     @classmethod
     def get_insert_action(cls):
-        return actions.InsertRow()
+        return actions.ShowInsert()
 
     @classmethod
     def get_label(self):
@@ -1071,7 +1071,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                 contacts.Partners.set_detail_layout(PartnerDetail())
 
         """
-        return self.set_form_layout('detail_layout', *args, **kw)
+        return self.set_form_layout(
+            'detail_layout', layouts.DetailLayout, *args, **kw)
 
     @classmethod
     def set_insert_layout(self, *args, **kw):
@@ -1082,16 +1083,16 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         Otherwise same usage as :meth:`set_detail_layout`.
 
         """
-        return self.set_form_layout('insert_layout', *args, **kw)
+        return self.set_form_layout(
+            'insert_layout', layouts.InsertLayout, *args, **kw)
 
     @classmethod
-    def set_form_layout(self, attname, dtl=None, **kw):
+    def set_form_layout(self, attname, lcl, dtl=None, **kw):
         if dtl is not None:
             existing = getattr(self, attname)  # 20120914c
             if isinstance(dtl, string_types):
                 if existing is None:
-                    setattr(self, attname, layouts.FormLayout(
-                        dtl, self, **kw))
+                    setattr(self, attname, lcl(dtl, self, **kw))
                 # if existing is None or isinstance(existing, string_types):
                 #     if kw:
                 #         setattr(self, attname, layouts.FormLayout(
@@ -1108,7 +1109,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                         "set_detail() got two definitions for %r." % name)
                 kw[name] = dtl
             else:
-                assert isinstance(dtl, layouts.FormLayout)
+                assert isinstance(dtl, lcl)
                 assert dtl._datasource is None
                 # added for 20120914c but it wasn't the problem
                 if existing and not isinstance(existing, string_types):

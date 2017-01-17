@@ -35,12 +35,12 @@ class NotifyingAction(actions.Action):
     parameters = dict(
         notify_subject=models.CharField(
             _("Summary"), blank=True, max_length=200),
-        notify_body=fields.RichTextField(_("Description"), blank=True),
+        notify_body=dd.RichTextField(_("Description"), blank=True),
         notify_silent=models.BooleanField(
             _("Don't notify others"), default=False),
     )
 
-    params_layout = layouts.Panel("""
+    params_layout = dd.Panel("""
     notify_subject
     notify_body
     notify_silent

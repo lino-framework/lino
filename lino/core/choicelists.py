@@ -376,7 +376,7 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
 
     @classmethod
     def get_default_action(cls):
-        return actions.GridEdit()
+        return actions.ShowTable()
 
     hidden_columns = frozenset(['workflow_buttons'])
 
