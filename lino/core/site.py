@@ -50,7 +50,6 @@ from lino import assert_django_code, DJANGO_DEFAULT_LANGUAGE
 from lino.utils.xmlgen.html import E
 # from lino.utils.html2text import html2text
 # from html2text import html2text
-from lino.core.userprefs import UserPrefs
 from lino.core.exceptions import ChangedAPI
 # from .roles import SiteUser
 

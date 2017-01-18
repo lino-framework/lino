@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2016 Luc Saffre
+# Copyright 2009-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """This defines :class:`Actor` and related classes.
@@ -942,7 +942,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
         """
         title = self.title or self.label
-        if self.master is not None:
+        # if self.master is not None:
+        if ar.master_instance is not None:
             title = self.details_of_master_template % dict(
                 details=title,
                 master=ar.master_instance)
