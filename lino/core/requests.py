@@ -653,7 +653,7 @@ request from it.
         Note that this function either returns a string or prints to
         stdout and returns None, depending on the current renderer.
 
-        Usage in a :doc:`tested document </dev/tested_docs>`:
+        Usage in a :doc:`tested document </dev/doctests>`:
 
         >>> from lino.api import rt
         >>> rt.login('robin').show('users.UsersOverview', limit=5)

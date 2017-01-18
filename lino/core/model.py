@@ -561,12 +561,6 @@ class Model(models.Model):
         """
         return []
 
-    @fields.displayfield(_("Description"))
-    def overview(self, ar):
-        if ar is None:
-            return ''
-        return E.div(*self.get_overview_elems(ar))
-
     def get_overview_elems(self, ar):
         """This is expected to return a list of HTML elements to be wrapped
         into a `<DIV>`.
@@ -738,6 +732,12 @@ class Model(models.Model):
 
         """
         yield ar.obj2html(self)
+
+    @fields.displayfield(_("Description"))
+    def overview(self, ar):
+        if ar is None:
+            return ''
+        return E.div(*self.get_overview_elems(ar))
 
     @fields.displayfield(_("Description"))
     def description_column(self, ar):

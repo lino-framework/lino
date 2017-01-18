@@ -507,9 +507,13 @@ class ShowInsert(TableAction):
     disable_primary_key = False
 
     label = _("New")
-    icon_name = 'add'  # if action rendered as toolbar button
-    # button_text = "❏"  # 274F Lower right drop-shadowed white square
-    # button_text = "⊕"  # 2295 circled plus
+    if True:  # settings.SITE.use_silk_icons:
+        icon_name = 'add'  # if action rendered as toolbar button
+    else:
+        # button_text = u"❏"  # 274F Lower right drop-shadowed white square
+        button_text = u"⊞"  # 229e SQUARED PLUS
+        # button_text = u"⊕"  # 2295 circled plus
+        
     help_text = _("Insert a new record")
     
     show_in_workflow = False
@@ -804,13 +808,18 @@ class MultipleRowAction(Action):
 
 
 class DeleteSelected(MultipleRowAction):
-    """Delete the selected row(s). This action is automatically installed
-    on every editable actor.
+    """Delete the selected row(s).
+
+    This action is automatically installed on every editable actor.
 
     """
 
     action_name = 'delete_selected'  # because...
-    icon_name = 'delete'
+    if True:  # settings.SITE.use_silk_icons:
+        icon_name = 'delete'
+    else:
+        # button_text = u"⊖"  # 2296 CIRCLED MINUS	
+        button_text = u"⊟"  # 229F SQUARED MINUS	
     help_text = _("Delete this record")
     auto_save = False
     sort_index = 30

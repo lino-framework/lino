@@ -99,29 +99,21 @@ def update_widgets_for(ar, user):
     Widget = rt.models.dashboard.Widget
     qs = Widget.objects.filter(user=user).order_by('seqno')
     
-    def ok(ar):
-        seqno = 0
-        for w in qs:
-            if w.item_name in available:
-                available.remove(w.item_name)
-                seqno = max(seqno, w.seqno)
-            else:
-                w.delete()
-        up = user.get_preferences()
-        for name in available:
-            seqno += 1
-            obj = Widget(user=user, item_name=name, seqno=seqno)
-            obj.full_clean()
-            obj.save()
-            # print(20161128, "created item", obj)
+    seqno = 0
+    for w in qs:
+        if w.item_name in available:
+            available.remove(w.item_name)
+            seqno = max(seqno, w.seqno)
+        else:
+            w.delete()
+    up = user.get_preferences()
+    for name in available:
+        seqno += 1
+        obj = Widget(user=user, item_name=name, seqno=seqno)
+        obj.full_clean()
+        obj.save()
+        # print(20161128, "created item", obj)
 
-        up.invalidate()
-        ar.set_response(refresh=True)
-        
-    if qs.count() > 0:
-        ar.confirm(
-            ok, _("This will overwrite your current settings."),
-            _("Are you sure?"))
-    else:
-        ok(ar)
-        
+    up.invalidate()
+    ar.set_response(refresh=True)
+

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2016 Luc Saffre.
+# Copyright 2016-2017 Luc Saffre.
 # License: BSD, see LICENSE for more details.
 """The user preferences registry.
 

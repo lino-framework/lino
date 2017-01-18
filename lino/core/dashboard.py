@@ -1,19 +1,15 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2016 Luc Saffre.
+# Copyright 2016-2017 Luc Saffre.
 # License: BSD, see LICENSE for more details.
 """Lino's user preferences registry.
 
 """
 from __future__ import unicode_literals
 
-import six
-from builtins import object
-from django.conf import settings
 
 from lino.api import _
 from lino.core.permissions import Permittable
 from lino.utils.xmlgen.html import E
-from lino.core.actors import Actor
 
 class DashboardItem(Permittable):
     """Base class for all dashboard items.
