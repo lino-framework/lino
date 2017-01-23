@@ -3179,19 +3179,19 @@ site. :manage:`diag` is a command-line shortcut to this.
         self._site_config = None
         #~ print "20130320 clear_site_config"
 
-    def get_quicklinks(self, ar):
+    def get_quicklinks(self, user):
         from lino.core import menus
-        m = menus.Toolbar(ar.get_user().profile, 'quicklinks')
-        self.setup_quicklinks(ar, m)
+        m = menus.Toolbar(user.profile, 'quicklinks')
+        self.setup_quicklinks(user, m)
         return m
 
-    def setup_quicklinks(self, ar, m):
+    def setup_quicklinks(self, user, m):
         """Override this in application-specific (or even local)
         :xfile:`settings.py` files to define a series of *quick links*
         to appear below the main menu bar.
 
         """
-        self.on_each_app('setup_quicklinks', ar, m)
+        self.on_each_app('setup_quicklinks', user, m)
 
     def get_site_menu(self, ui, profile):
         """

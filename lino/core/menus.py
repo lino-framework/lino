@@ -36,7 +36,7 @@ class MenuItem(object):
                  action=None,
                  #~ can_view=None,
                  hotkey=None,
-                 params={},
+                 params=None,
                  help_text=None,
                  #~ request=None,
                  instance=None,
@@ -53,7 +53,7 @@ class MenuItem(object):
                 raise Exception("20130610")
             instance._detail_action = action
         self.bound_action = action
-        self.params = params
+        self.params = params or {}
         self.href = href
         #~ self.request = request
         self.instance = instance

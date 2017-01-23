@@ -183,14 +183,14 @@ class ExtRenderer(JsRenderer):
         return self.row_action_button(obj, ar, ba, label, **kw)
 
     def window_action_button(
-            self, ar, ba, status={},
+            self, ar, ba, status=None,
             label=None, title=None, **kw):
         """Return a HTML chunk for a button that will execute this action
         using a Javascript link to this action.
 
         """
         label = str(label or ba.get_button_label())
-        uri = self.js2url(self.action_call(ar, ba, status))
+        uri = self.js2url(self.action_call(ar, ba, status or {}))
         return self.href_button_action(
             ba, uri, label, title or ba.action.help_text, **kw)
 
