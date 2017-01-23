@@ -9,7 +9,6 @@ from __future__ import print_function
 import six
 
 from builtins import str
-from past.builtins import basestring
 from builtins import object
 
 import logging
@@ -266,7 +265,7 @@ class Model(models.Model):
                         raise Exception(
                             "Invalid remote field {0} for {1}".format(name, cls))
 
-                    if isinstance(model, basestring):
+                    if isinstance(model, six.string_types):
                         model = resolve_model(model)
                         # logger.warning("20151203 %s", model)
                         # Django 1.9 no longer resolves the
@@ -451,7 +450,7 @@ class Model(models.Model):
 
     @classmethod
     def add_active_field(cls, names):
-        if isinstance(cls.active_fields, basestring):
+        if isinstance(cls.active_fields, six.string_types):
             cls.active_fields = frozenset(
                 fields.fields_list(cls, cls.active_fields))
         cls.active_fields = cls.active_fields | fields.fields_list(cls, names)
@@ -597,7 +596,7 @@ class Model(models.Model):
         fkw = dict()
         fkw.update(known_values)
 
-        if isinstance(lookup_field, basestring):
+        if isinstance(lookup_field, six.string_types):
             lookup_field = model._meta.get_field(lookup_field)
         if isinstance(lookup_field, BabelCharField):
             flt = settings.SITE.lookup_filter(

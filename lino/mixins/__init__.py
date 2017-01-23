@@ -44,6 +44,37 @@ from lino.core import model
 
 from lino.core.workflows import ChangeStateAction
 
+from lino.utils.mldbc.fields import LanguageField
+
+
+class Contactable(model.Model):
+    """Mixin for models that represent somebody who can be contacted by
+    email.
+
+    """
+    class Meta(object):
+        abstract = True
+
+    email = models.EmailField(_('e-mail address'), blank=True)
+    language = LanguageField(default=models.NOT_PROVIDED, blank=True)
+    
+
+class Phonable(model.Model):
+    """Mixin for models that represent somebody who can be contacted by
+    phone.
+
+    """
+
+    class Meta(object):
+        abstract = True
+
+    url = models.URLField(_('URL'), blank=True)
+    phone = models.CharField(_('Phone'), max_length=200, blank=True)
+    gsm = models.CharField(_('GSM'), max_length=200, blank=True)
+    fax = models.CharField(_('Fax'), max_length=200, blank=True)
+    
+    
+
 
 class Registrable(model.Model):
 

@@ -1,19 +1,16 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2016 Luc Saffre
+# Copyright 2008-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Defines extended database field classes and utility functions
 related to fields.
 
 """
-# import six
-# str = six.text_type
 from builtins import str
-from past.builtins import basestring
+import six
 from builtins import object
 
 import logging
-
 logger = logging.getLogger(__name__)
 
 import datetime
@@ -162,7 +159,7 @@ class NullCharField(models.CharField):  # subclass the CharField
     # this is the value right out of the db, or an instance
     def to_python(self, value):
         # ~ if isinstance(value, models.CharField): #if an instance, just return the instance
-        if isinstance(value, basestring):  # if a string, just return the value
+        if isinstance(value, six.string_types):  # if a string, just return the value
             return value
         if value is None:  # if the db has a NULL (==None in Python)
             return ''  # convert it into the Django-friendly '' string
@@ -396,7 +393,7 @@ class VirtualField(FakeField):
                 #~ raise Exception("Tried to re-use %s.%s" % (actor_or_model,name))
         #~ self.name = name
 
-        if isinstance(self.return_type, basestring):
+        if isinstance(self.return_type, six.string_types):
             self.return_type = resolve_field(self.return_type)
 
         #~ self.return_type.name = self.name
@@ -675,7 +672,7 @@ class QuantityField(CharField):
         if isinstance(value, Decimal):
             return value
         if value:
-            if isinstance(value, basestring):
+            if isinstance(value, six.string_types):
                 return quantities.parse(value)
             return Decimal(value)
         return None
@@ -707,7 +704,7 @@ class DurationField(QuantityField):
         if isinstance(value, Duration):
             return value
         if value:
-            # if isinstance(value, basestring):
+            # if isinstance(value, six.string_types):
             #     return Duration(value)
             return Duration(value)
         return None
@@ -925,7 +922,7 @@ def ForeignKey(othermodel, *args, **kw):
     """
     if othermodel is None:
         return DummyField(othermodel, *args, **kw)
-    if isinstance(othermodel, basestring):
+    if isinstance(othermodel, six.string_types):
         if not settings.SITE.is_installed_model_spec(othermodel):
             return DummyField(othermodel, *args, **kw)
 

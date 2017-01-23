@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2010-2016 Luc Saffre
+# Copyright 2010-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -10,7 +10,7 @@ Lino's authentification middleware
 """
 
 from __future__ import unicode_literals
-from past.builtins import basestring
+import six
 from builtins import object
 
 import logging
@@ -283,7 +283,7 @@ class LDAPAuthMiddleware(SessionUserMiddleware):
         from activedirectory.core.exception import Error
 
         server_spec = settings.SITE.ldap_auth_server
-        if isinstance(server_spec, basestring):
+        if isinstance(server_spec, six.string_types):
             server_spec = server_spec.split()
 
         self.domain = server_spec[0]

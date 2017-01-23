@@ -1,11 +1,10 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2016 Luc Saffre
+# Copyright 2009-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 """Defines the :class:`DisableDeleteHandler` class.
 """
 
 from __future__ import unicode_literals
-from past.builtins import cmp
 from builtins import object
 
 import logging
@@ -50,11 +49,9 @@ class DisableDeleteHandler(object):
                 return
         self.fklist.append((model, fk))
 
-        def f(a, b):
-            return cmp(
-                fmn(a[0])+'.'+a[1].name, fmn(b[0])+'.'+b[1].name)
-        from functools import cmp_to_key
-        self.fklist.sort(key=cmp_to_key(f))
+        def f(a):
+            return fmn(a[0]) + '.' + a[1].name
+        self.fklist.sort(key=f)
 
     def __str__(self):
         s = ','.join([m.__name__ + '.' + fk.name for m, fk in self.fklist])

@@ -4,7 +4,7 @@
 """Core tools of Lino's permission system.
 
 """
-from past.builtins import basestring
+import six
 from builtins import object
 
 import logging
@@ -244,7 +244,7 @@ def make_permission_handler_(
             #~ print 20120621, "ok", actor
         lst = actor.workflow_state_field.choicelist
         ns = []
-        if isinstance(allowed_states, basestring):
+        if isinstance(allowed_states, six.string_types):
             allowed_states = allowed_states.split()
         for n in allowed_states:
             if n not in lst.removed_names:

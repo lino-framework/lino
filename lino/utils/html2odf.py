@@ -133,7 +133,6 @@ from __future__ import unicode_literals
 # standard_library.install_aliases()
 from builtins import str
 import six
-# from past.builtins import basestring
 
 import logging
 logger = logging.getLogger(__name__)

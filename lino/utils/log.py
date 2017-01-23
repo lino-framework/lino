@@ -1,4 +1,4 @@
-# Copyright 2010-2015 Luc Saffre
+# Copyright 2010-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -81,7 +81,7 @@ See also :srcref:`docs/tickets/15`
 
 """
 from __future__ import print_function
-from past.builtins import basestring
+import six
 
 import os
 import sys
@@ -190,7 +190,7 @@ production server with :setting:`DEBUG` False.
     tty = config.get('tty', True)
 
     level = getattr(logging, config.get('level', 'notset').upper())
-    if isinstance(logger_names, basestring):
+    if isinstance(logger_names, six.string_types):
         logger_names = logger_names.split()
     # print "20130418 configure loggers", logger_names, config
     loggers = [logging.getLogger(n) for n in logger_names]

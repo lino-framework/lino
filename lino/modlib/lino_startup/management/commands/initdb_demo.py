@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2014 Luc Saffre
+# Copyright 2013-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -12,7 +12,7 @@ Calls :manage:`initdb` using the application's
 Introduction see :ref:`lino.tutorial.hello`.
 
 """
-from past.builtins import basestring
+import six
 
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
@@ -31,7 +31,7 @@ class Command(BaseCommand):
                 "This command takes no arguments (got %r)" % fixtures)
 
         args = settings.SITE.demo_fixtures
-        if isinstance(args, basestring):
+        if isinstance(args, six.string_types):
             args = args.split()
         options['fixtures'] = args
         # super(Command, self).handle(*args, **options)

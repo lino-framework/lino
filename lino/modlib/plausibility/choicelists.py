@@ -9,7 +9,7 @@ Choicelists for `lino.modlib.plausibility`.
 
 from __future__ import unicode_literals, print_function
 from builtins import str
-from past.builtins import basestring
+import six
 
 from django.utils import translation
 from lino.core.gfks import gfk2lookup
@@ -57,7 +57,7 @@ class Checker(dd.Choice):
     def __init__(self):
         # value = self.__module__ + '.' + self.__class__.__name__
         value = self.__module__.split('.')[-2] + '.' + self.__class__.__name__
-        # if isinstance(self.model, basestring):
+        # if isinstance(self.model, six.string_types):
         #     value = self.model + '.' + self.__class__.__name__
         # else:
         #     value = self.model.__name__ + '.' + self.__class__.__name__
@@ -89,7 +89,7 @@ class Checker(dd.Choice):
         return rt.models_by_base(self.model, toplevel_only=True)
 
     def resolve_model(self, site):
-        if isinstance(self.model, basestring):
+        if isinstance(self.model, six.string_types):
             self.model = site.modules.resolve(self.model)
 
     def update_problems(self, obj, delete=True, fix=False):

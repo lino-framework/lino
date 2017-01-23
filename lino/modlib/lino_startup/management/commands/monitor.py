@@ -6,8 +6,8 @@
 Writes a status report about this Site. 
 Used to monitor a production database. 
 """
-from future import standard_library
-standard_library.install_aliases()
+# from future import standard_library
+# standard_library.install_aliases()
 
 import logging
 logger = logging.getLogger(__name__)

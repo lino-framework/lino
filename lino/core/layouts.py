@@ -7,7 +7,7 @@
 
 from __future__ import unicode_literals
 from builtins import str
-from past.builtins import basestring
+import six
 from builtins import object
 
 import logging
@@ -375,7 +375,7 @@ class BaseLayout(object):
     def set_datasource(self, ds):
         self._datasource = ds
         if ds is not None:
-            if isinstance(self.hidden_elements, basestring):
+            if isinstance(self.hidden_elements, six.string_types):
                 self.hidden_elements = set(fields_list(
                     ds, self.hidden_elements))
             self.hidden_elements = self.hidden_elements | ds.hidden_elements

@@ -5,7 +5,6 @@
 Database models for `lino.modlib.about`.
 
 """
-from past.builtins import cmp
 from builtins import str
 from builtins import object
 

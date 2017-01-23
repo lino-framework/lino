@@ -1,4 +1,4 @@
-# Copyright 2011-2016 Luc Saffre
+# Copyright 2011-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Defines the choicelists for :mod:`lino.modlib.users`.
@@ -11,7 +11,7 @@ from builtins import str
 from django.conf import settings
 
 from lino.core.choicelists import ChoiceList, Choice
-from lino.core.roles import SiteAdmin
+from lino.core.roles import SiteAdmin, check_required_roles
 
 from lino.api import dd, _
 
@@ -19,10 +19,11 @@ from lino.api import dd, _
 class UserType(Choice):
     """Base class for all user profiles.
 
-    .. attribute:: role
+    .. attribute:: roles
 
-        The role of users having this type. This is an instance of
-        :class:`<lino.core.roles.UserRole>` or some subclass thereof.
+        The roles of users having this type. This is a tuple of
+        instance of :class:`<lino.core.roles.UserRole>` or some
+        subclass thereof.
 
     .. attribute:: readonly
 
@@ -37,7 +38,7 @@ class UserType(Choice):
 
     """
 
-    role = None
+    roles = None
     hidden_languages = None
     readonly = False
 
@@ -52,7 +53,10 @@ class UserType(Choice):
         #     value = self.__module__.split('.')[-2] + '.' \
         #         + self.__class__.__name__
         super(UserType, self).__init__(value, text, name)
-        self.role = role_class()
+        if isinstance(role_class, (tuple, list)):
+            self.roles = set([rc() for rc in role_class])
+        else:
+            self.roles = set([role_class()])
         self.readonly = readonly
         self.kw = kw
 
@@ -83,18 +87,17 @@ class UserType(Choice):
         s += ":" + self.value
         return s
 
+
     def has_required_roles(self, required_roles):
-        """Return `True` if this user profile's :attr:`role` satisfies the
-        specified requirements.  See
-        :meth:`lino.core.roles.UserRole.has_required_roles`.
+        """Return `True` if at least one of this user type's :attr:`roles`
+        satisfies the specified requirements.  
 
         """
-        return self.role.has_required_roles(required_roles)
-        # try:
-        #     return self.role.has_required_roles(required_roles)
-        # except TypeError:
-        #     raise Exception("Invalid roles specified: {0}".format(
-        #         required_roles))
+        for role in self.roles:
+            if role.satisfies_requirement(required_roles):
+                return True
+            
+        return False
 
 
 ##

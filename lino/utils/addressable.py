@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2016 Luc Saffre
+# Copyright 2013-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Used by :class:`lino_xl.lib.appypod.mixins.PrintLabelsAction` and
@@ -10,14 +10,13 @@ $ python setup.py test -s tests.UtilsTests.test_addressable
 """
 
 from __future__ import print_function
-from builtins import object
 
 from lino.utils.xmlgen.html import E, lines2p
 
 
 class Addressable(object):
-    """Mixin to encapsulate the generating of "traditional" ("snail") mail
-    addresses.
+    """General mixin (not only for Django models) to encapsulate the
+    generating of "traditional" ("snail") mail addresses.
 
     It differentiates between the "person" and the "location" part of
     an address.  For example::

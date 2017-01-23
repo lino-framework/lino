@@ -5,8 +5,8 @@
 """
 Writes screenshots to <project_dir>/media/cache/screenshots
 """
-from future import standard_library
-standard_library.install_aliases()
+# from future import standard_library
+# standard_library.install_aliases()
 from builtins import str
 
 import logging

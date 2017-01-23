@@ -4,10 +4,9 @@
 """Some diagnostic utilities."""
 
 from __future__ import unicode_literals
-from past.builtins import cmp
 from builtins import str
-from past.builtins import basestring
 from builtins import object
+import six
 
 # from textwrap import fill
 from atelier import rstgen
@@ -41,7 +40,7 @@ class Analyzer(object):
                 if ba.action.is_window_action():
                     wl = ba.get_window_layout() or ba.action.params_layout
                     if wl is not None:
-                        if isinstance(wl, basestring):
+                        if isinstance(wl, six.string_types):
                             raise Exception("20150323 : {0}".format(ba))
                             # Was used to find Exception: 20150323 :
                             # <BoundAction(plausibility.Checkers,
@@ -56,10 +55,10 @@ class Analyzer(object):
                     self.custom_actions.append(ba)
         l = list(window_actions.values())
 
-        def f(a, b):
-            return cmp(str(a.full_name()), str(b.full_name()))
-        self.window_actions = list(sorted(l, f))
-        self.custom_actions = list(sorted(self.custom_actions, f))
+        def f(a):
+            return str(a.full_name())
+        self.window_actions = list(sorted(l, key=f))
+        self.custom_actions = list(sorted(self.custom_actions, key=f))
     
     def show_window_fields(self):
         self.analyze()

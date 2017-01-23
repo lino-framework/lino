@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2016 Luc Saffre
+# Copyright 2009-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 """Defines "layout elements" (widgets).
 
@@ -10,8 +10,8 @@ The biggest part of this module should actually be moved to
 
 from __future__ import print_function
 from builtins import str
-from past.builtins import basestring
 from builtins import object
+import six
 
 import logging
 logger = logging.getLogger(__name__)
@@ -873,7 +873,7 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
 
     def get_field_options(self, **kw):
         kw = super(ForeignKeyElement, self).get_field_options(**kw)
-        if isinstance(self.field.rel.model, basestring):
+        if isinstance(self.field.rel.model, six.string_types):
             raise Exception("20130827 %s.rel.model is %r" %
                             (self.field, self.field.rel.model))
         pw = self.field.rel.model.preferred_foreignkey_width

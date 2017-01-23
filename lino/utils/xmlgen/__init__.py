@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2015 Luc Saffre
+# Copyright 2011-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Inspired by Frederik Lundh's
@@ -56,7 +56,6 @@ new element:
 
 """
 from builtins import str
-from past.builtins import basestring
 from builtins import object
 import six
 
@@ -222,7 +221,7 @@ class Namespace(object):
                 item = force_text(item)
             if isinstance(item, dict):
                 elem.attrib.update(self.makeattribs(**item))
-            elif isinstance(item, basestring):
+            elif isinstance(item, six.string_types):
                 #~ if len(elem) and len(elem[-1]) == 0:
                 if len(elem):
                     last = elem[-1]

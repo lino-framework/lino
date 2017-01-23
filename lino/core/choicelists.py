@@ -49,7 +49,6 @@ automatically available as a property value in
 from __future__ import unicode_literals
 from django.utils.encoding import python_2_unicode_compatible
 from past.builtins import cmp
-from past.builtins import basestring
 from builtins import object
 from builtins import str
 from future.utils import with_metaclass
@@ -117,7 +116,7 @@ class Choice(object):
         This is also being called from :meth:`Choicelist.add_item`.
     
         """
-        if not isinstance(value, basestring):
+        if not isinstance(value, six.string_types):
             raise Exception("value must be a string")
         self.pk = self.value = value
         self.name = name
@@ -647,7 +646,7 @@ Django creates copies of them when inheriting models.
         specified `value`.
 
         """
-        if not isinstance(value, basestring):
+        if not isinstance(value, six.string_types):
             raise Exception("%r is not a string" % value)
         #~ print "get_text_for_value"
         #~ return self.items_dict.get(value, None)

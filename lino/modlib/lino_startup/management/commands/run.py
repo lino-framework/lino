@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2015 by Luc Saffre.
+# Copyright 2012-2017 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 """.. management_command:: run
 
@@ -40,7 +40,7 @@ about how to run standalone Django scripts
 """
 
 from __future__ import unicode_literals
-from past.builtins import execfile
+from six.moves.builtins import execfile
 
 import sys
 import argparse
