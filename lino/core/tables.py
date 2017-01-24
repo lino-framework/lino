@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2016 Luc Saffre
+# Copyright 2009-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Defines the classes :class:`AbstractTable` and
@@ -7,9 +7,9 @@
 
 """
 from __future__ import print_function
-import six
-str = six.text_type
-# from builtins import str
+# import six
+# str = six.text_type
+from builtins import str
 # from builtins import object
 
 import logging
@@ -375,9 +375,13 @@ class AbstractTable(actors.Actor):
     """
 
     stay_in_grid = False
-    """
-    Set this to True if Lino should not open a newly created record in
-    a detail window.
+    """Set this to True if Lino should prefer grid mode and not open a
+    detail window on a newly created record.  :class:`SubmitDetail
+    <lino.core.actions.SubmitDetail>` closes the window when this is
+    True.
+
+    Usage example :class:`LanguageKnowledgesByPerson
+    <lino_xl.lib.cv.models.LanguageKnowledgesByPerson>`.
 
     """
 
