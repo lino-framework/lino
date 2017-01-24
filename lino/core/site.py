@@ -2031,9 +2031,9 @@ this field.
     def startup(self):
         """Start up this Site.
 
-        You probably don't want to override this method since it might
-        be called several times.  e.g. under mod_wsgi: another thread
-        has started and not yet finished `startup()`.
+        You probably don't want to override this method as it might be
+        called several times.  e.g. under mod_wsgi: another thread has
+        started and not yet finished `startup()`.
 
         If you want to run custom code on
         site startup, override :meth:`do_site_startup`.
@@ -2041,6 +2041,22 @@ this field.
         """
         from lino.core.kernel import site_startup
         site_startup(self)
+
+    def do_site_startup(self):
+        """This method is called exactly once during site startup,
+        just between the pre_startup and the post_startup signals.
+        A hook for subclasses.
+
+        TODO: rename this to `on_startup`?
+
+        If you override it, don't forget to call the super method.
+
+        """
+
+        # self.logger.info("20160526 %s do_site_startup() a", self.__class__)
+
+
+        # self.logger.info("20160526 %s do_site_startup() b", self.__class__)
 
     @property
     def logger(self):
@@ -2322,22 +2338,6 @@ this field.
 
     def register_virtual_field(self, vf):
         self.VIRTUAL_FIELDS.append(vf)
-
-    def do_site_startup(self):
-        """This method is called exactly once during site startup,
-        just between the pre_startup and the post_startup signals.
-        A hook for subclasses.
-
-        TODO: rename this to `on_startup`?
-
-        If you override it, don't forget to call the super method.
-
-        """
-
-        # self.logger.info("20160526 %s do_site_startup() a", self.__class__)
-
-
-        # self.logger.info("20160526 %s do_site_startup() b", self.__class__)
 
     def find_config_file(self, *args, **kwargs):
         return self.confdirs.find_config_file(*args, **kwargs)
