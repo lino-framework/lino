@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2016 Luc Saffre.
+# Copyright 2009-2017 Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """Defines the :class:`Site` class. For an overview see
@@ -23,7 +23,6 @@ from builtins import map
 import six
 # str = six.text_type
 from builtins import str
-# from past.builtins import basestring
 # from builtins import object
 
 import os
@@ -1204,6 +1203,10 @@ class Site(object):
 
         self.load_help_texts()
 
+        for p in self.installed_plugins:
+            p.on_site_init()
+        
+
     def init_before_local(self, settings_globals, local_apps):
         """If your :attr:`project_dir` contains no :xfile:`models.py`, but
         *does* contain a `fixtures` subdir, then Lino automatically adds this
@@ -1634,7 +1637,7 @@ class Site(object):
 
         self.installed_plugin_modules = set()
         for p in self.installed_plugins:
-            # self.installed_plugin_modules.add(p.__module__)
+            self.installed_plugin_modules.add(p.app_module.__name__)
             for pp in plugin_parents(p.__class__):
                 self.installed_plugin_modules.add(pp.__module__)
 
@@ -2096,6 +2099,10 @@ this field.
         """
         app_name = '.'.join(module_name.split('.')[:-1])
         model_name = app_name + '.' + model_name
+        # if 'avanti' in model_name:
+        #     print("20170120", model_name,
+        #           self.override_modlib_models,
+        #           [m for m in self.installed_plugin_modules])
         rv = model_name in self.override_modlib_models
         if not rv:
             if app_name not in self.installed_plugin_modules:
@@ -3172,19 +3179,19 @@ site. :manage:`diag` is a command-line shortcut to this.
         self._site_config = None
         #~ print "20130320 clear_site_config"
 
-    def get_quicklinks(self, ar):
+    def get_quicklinks(self, user):
         from lino.core import menus
-        m = menus.Toolbar(ar.get_user().profile, 'quicklinks')
-        self.setup_quicklinks(ar, m)
+        m = menus.Toolbar(user.profile, 'quicklinks')
+        self.setup_quicklinks(user, m)
         return m
 
-    def setup_quicklinks(self, ar, m):
+    def setup_quicklinks(self, user, m):
         """Override this in application-specific (or even local)
         :xfile:`settings.py` files to define a series of *quick links*
         to appear below the main menu bar.
 
         """
-        self.on_each_app('setup_quicklinks', ar, m)
+        self.on_each_app('setup_quicklinks', user, m)
 
     def get_site_menu(self, ui, profile):
         """

@@ -22,9 +22,6 @@ application.
 """
 from __future__ import unicode_literals, print_function
 import six
-# str = six.text_type
-# from builtins import str
-from past.builtins import basestring
 from builtins import object
 
 import logging
@@ -263,15 +260,15 @@ class Kernel(object):
 
             Model.django2lino(model)
 
-            if isinstance(model.hidden_columns, basestring):
+            if isinstance(model.hidden_columns, six.string_types):
                 model.hidden_columns = frozenset(
                     fields.fields_list(model, model.hidden_columns))
 
-            if isinstance(model.active_fields, basestring):
+            if isinstance(model.active_fields, six.string_types):
                 model.active_fields = frozenset(
                     fields.fields_list(model, model.active_fields))
 
-            if isinstance(model.allow_cascaded_delete, basestring):
+            if isinstance(model.allow_cascaded_delete, six.string_types):
                 model.allow_cascaded_delete = frozenset(
                     fields.fields_list(model, model.allow_cascaded_delete))
 
@@ -286,7 +283,7 @@ class Kernel(object):
                 model.quick_search_fields = frozenset(fields_list)
             elif isinstance(qsf, frozenset):
                 pass
-            elif isinstance(qsf, basestring):
+            elif isinstance(qsf, six.string_types):
                 model.quick_search_fields = frozenset(
                     fields.fields_list(model, model.quick_search_fields))
             else:
@@ -305,7 +302,7 @@ class Kernel(object):
                 model.quick_search_fields_digit = frozenset(fields_list)
             elif isinstance(qsf, frozenset):
                 pass
-            elif isinstance(qsf, basestring):
+            elif isinstance(qsf, six.string_types):
                 model.quick_search_fields_digit = frozenset(
                     fields.fields_list(model, model.quick_search_fields_digit))
             else:
@@ -361,7 +358,7 @@ class Kernel(object):
                     msg = "Nullable CharField %s in %s" % (f.name, model)
                     raise Exception(msg)
                 elif isinstance(f, models.ForeignKey):
-                    if isinstance(f.rel.model, basestring):
+                    if isinstance(f.rel.model, six.string_types):
                         raise Exception("Could not resolve target %r of "
                                         "ForeignKey '%s' in %s "
                                         "(models are %s)" %

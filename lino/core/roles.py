@@ -1,4 +1,4 @@
-# Copyright 2011-2016 Luc Saffre
+# Copyright 2011-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Defines built-in user roles. See :ref:`permissions`.
@@ -13,9 +13,9 @@ class UserRole(object):
 
     """
 
-    def has_required_roles(self, required_roles):
-        """Return `True` if this user role satisfies the specified required
-roles.
+    def satisfies_requirement(self, required_roles):
+        """Return `True` if this user role satisfies the specified role
+        requirement.
 
         The specified arguments are the set of role requirements
         (class objects).  This role (an instance) must satisfy *every*
@@ -28,6 +28,8 @@ roles.
             if not isinstance(self, rr):
                 return False
         return True
+
+    has_required_roles = satisfies_requirement  # backwards compat
 
     @classmethod
     def get_user_profiles(cls):

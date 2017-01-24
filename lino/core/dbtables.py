@@ -9,8 +9,6 @@ from builtins import str
 import six
 # str = six.text_type
 
-# from past.builtins import basestring
-
 import logging
 logger = logging.getLogger(__name__)
 

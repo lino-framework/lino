@@ -9,11 +9,11 @@ Documented in :ref:`dpy`.
 
 from __future__ import unicode_literals
 from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
+# from future import standard_library
+# standard_library.install_aliases()
 from builtins import str
-from past.builtins import basestring
 from builtins import object
+import six
 
 import logging
 logger = logging.getLogger(__name__)
@@ -355,7 +355,7 @@ class DpyDeserializer(LoaderBase):
 
     def deserialize(self, fp, **options):
         # logger.info("20120225 DpyLoader.deserialize()")
-        if isinstance(fp, basestring):
+        if isinstance(fp, six.string_types):
             raise NotImplementedError
 
         # ignore fixtures in current directory.
@@ -525,7 +525,7 @@ def install_migrations(self, loader):
         if m is not None:
             # logger.info("Found %s()", funcname)
             to_version = m(globals_dict)
-            if not isinstance(to_version, basestring):
+            if not isinstance(to_version, six.string_types):
                 raise Exception("Oops, %s didn't return a string!" % m)
             if to_version <= from_version:
                 raise Exception(

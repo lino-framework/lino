@@ -647,7 +647,6 @@ class SubmitDetail(SaveRow):
 
     This is rendered as the "Save" button of a :term:`detail window`.
 
-    Called when the OK button of a Detail Window was clicked.
     Installed as `submit_detail` on every actor.
 
     """
@@ -664,6 +663,9 @@ class SubmitDetail(SaveRow):
         elem = ar.selected_rows[0]
         # ar.form2obj_and_save(ar.rqdata, elem, False)
         self.save_existing_instance(elem, ar)
+        if ar.actor.stay_in_grid:
+            ar.close_window()
+            return
         ar.goto_instance(elem)
 
 

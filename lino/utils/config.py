@@ -20,7 +20,6 @@ One possibility might be to write a special Jinja Template class...
 """
 
 from __future__ import unicode_literals
-from past.builtins import cmp
 from builtins import object
 
 import logging
@@ -181,9 +180,9 @@ class ConfigDirCache(object):
         """
         files = list(self.find_config_files(pattern, *groups).items())
 
-        def fcmp(a, b):
-            return cmp(a[0][:-4], b[0][:-4])
-        files.sort(fcmp)
+        def fcmp(a):
+            return a[0][:-4]
+        files.sort(key=fcmp)
         for group in groups:
             prefix = group.replace("/", os.sep)
             for filename, cd in files:

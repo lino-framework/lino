@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2016 Luc Saffre
+# Copyright 2011-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 """Database models for `lino.modlib.users`.
 
@@ -20,7 +20,7 @@ from lino.core import userprefs
 from lino.core.fields import NullCharField
 from lino.core.roles import SiteAdmin
 
-from lino.mixins import CreatedModified
+from lino.mixins import CreatedModified, Contactable
 
 from .choicelists import UserTypes
 from .mixins import UserAuthored, TimezoneHolder
@@ -28,7 +28,7 @@ from .actions import ChangePassword, SendWelcomeMail
 
 
 @python_2_unicode_compatible
-class User(AbstractBaseUser, CreatedModified, TimezoneHolder):
+class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
     """Represents a user of this site.
 
     .. attribute:: username
@@ -94,11 +94,7 @@ class User(AbstractBaseUser, CreatedModified, TimezoneHolder):
     initials = models.CharField(_('Initials'), max_length=10, blank=True)
     first_name = models.CharField(_('First name'), max_length=30, blank=True)
     last_name = models.CharField(_('Last name'), max_length=30, blank=True)
-    email = models.EmailField(_('e-mail address'), blank=True)
-
     remarks = models.TextField(_("Remarks"), blank=True)  # ,null=True)
-
-    language = dd.LanguageField(default=models.NOT_PROVIDED, blank=True)
 
     if dd.is_installed('contacts'):
 
@@ -153,7 +149,7 @@ class User(AbstractBaseUser, CreatedModified, TimezoneHolder):
         if not ba.action.readonly:
             user = ar.get_user()
             if user != self:
-                if not isinstance(user.profile.role, SiteAdmin):
+                if not user.profile.has_required_roles([SiteAdmin]):
                     if not self.is_editable_by_all():
                         return False
         return super(User, self).get_row_permission(ar, state, ba)
@@ -165,7 +161,7 @@ class User(AbstractBaseUser, CreatedModified, TimezoneHolder):
         See also :meth:`Users.get_row_permission`.
         """
         rv = super(User, self).disabled_fields(ar)
-        if not isinstance(ar.get_user().profile.role, SiteAdmin):
+        if not ar.get_user().profile.has_required_roles([SiteAdmin]):
             rv.add('profile')
         return rv
 

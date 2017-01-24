@@ -62,7 +62,7 @@ Exception: Invalid decimal value '1,000.50'
 """
 from __future__ import division
 from builtins import str
-from past.builtins import basestring
+import six
 from past.utils import old_div
 
 import datetime
@@ -94,7 +94,7 @@ class Quantity(Decimal):
 class Percentage(Quantity):
 
     def __new__(cls, value="0", context=None):
-        if isinstance(value, basestring) and value.endswith('%'):
+        if isinstance(value, six.string_types) and value.endswith('%'):
             self = Decimal.__new__(
                 Percentage, old_div(Decimal(value[:-1]), 100), context)
             self._value = value
@@ -173,7 +173,7 @@ class Duration(Quantity):
     """
 
     def __new__(cls, value="0", context=None):
-        if isinstance(value, basestring):
+        if isinstance(value, six.string_types):
             if ':' in value:
                 h, m = value.split(':')
                 value = Decimal(h) + Decimal(m) * DEC2HOUR
@@ -200,7 +200,7 @@ class Duration(Quantity):
 def parse(s):
     """
     """
-    if not isinstance(s, basestring):
+    if not isinstance(s, six.string_types):
         raise Exception("Expected a string, got %r" % s)
     if ':' in s:
         return Duration(s)

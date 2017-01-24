@@ -1,11 +1,13 @@
 <div style="margin:5px">
   
+{% set user = ar.get_user() %}
+  
 {{ before_welcome }}
             
-{% if request.user.authenticated %}
+{% if user.authenticated %}
     {% block hello_user %}
         <p>{{_("Quick links:")}}
-        {% for mi in settings.SITE.get_quicklinks(ar).items %}
+        {% for mi in settings.SITE.get_quicklinks(user).items %}
         [{{E.tostring(ar.menu_item_button(mi))}}]
         {% endfor %}
         {% if extjs.autorefresh_seconds %}
@@ -13,7 +15,7 @@
         {% endif %}
         [<a href="javascript:Lino.viewport.refresh();" style="text-decoration:none">{{_("Refresh")}}</a>]
         </p>
-        <p>{{_("Hi, %(user)s!") % dict(user=ar.get_user())}}
+        <p>{{_("Hi, %(user)s!") % dict(user=user)}}
         {% for msg in settings.SITE.get_welcome_messages(ar) %}
             {{ E.tostring(msg) }}
         {% endfor %}
@@ -58,7 +60,7 @@
         <a href="#" 
            onclick="javascript:Lino.show_login_window()">{{_("log in")}}</a>
       {{_("using the <b>Log in</b> button in the upper right corner.")}}
-        {% if site.plugins.users.online_registration and not request.user.profile.readonly %}
+        {% if site.plugins.users.online_registration and not user.profile.readonly %}
         {{_("Or {} as a new user.").format(
           E.tostring(ar.window_action_button(
             site.actors.users.Register.insert_action,
@@ -83,7 +85,7 @@
 {{ after_welcome }}
             
 {% block admin_main_items %}
-{% for i in ar.get_user().get_preferences().dashboard_items -%}
+{% for i in user.get_preferences().dashboard_items -%}
 {{ i.render(ar) }}
 {%- endfor %}
 {% endblock %}

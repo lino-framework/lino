@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2016 Luc Saffre.
+# Copyright 2008-2017 Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """This defines the :class:`Plugin` class.
@@ -221,6 +221,16 @@ class Plugin(object):
         """This will be called when the Plugin is being instantiated (i.e.
         even before the :class:`Site` instantiation has finished. Used by
         :mod:`lino.modlib.users` to set :attr:`user_model`.
+
+        """
+        pass
+
+    def on_site_init(self):
+        """Called exactly once on each installed plugin, when the
+        :class:`Site` has finished instantiating. This is still before
+        settings are ready (and long before the models will load).
+
+        There is currently no usage example for this.
 
         """
         pass

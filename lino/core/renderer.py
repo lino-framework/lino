@@ -7,10 +7,9 @@ Defines :class:`HtmlRenderer` and :class:`TextRenderer`.
 
 from __future__ import unicode_literals
 from __future__ import print_function
-# import six
+import six
 # str = six.text_type
 from builtins import str
-from past.builtins import basestring
 from builtins import object
 
 import logging
@@ -307,7 +306,7 @@ request `tar`."""
         """
         if text is None:
             text = (force_text(obj),)
-        elif isinstance(text, basestring) or E.iselement(text):
+        elif isinstance(text, six.string_types) or E.iselement(text):
             text = (text,)
         url = self.obj2url(ar, obj)
         if url is None:

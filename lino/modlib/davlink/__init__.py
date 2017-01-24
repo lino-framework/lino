@@ -61,7 +61,7 @@ class Plugin(ad.Plugin):
     def jnlp_file_parts(self):
         return ('cache', self.media_name + '.jnlp')
     
-    def setup_quicklinks(self, ar, tb):
+    def setup_quicklinks(self, user, tb):
         if self.site.use_java:
             tb.add_action('davlink.Toolbar', 'reset_davlink')
 

@@ -1,4 +1,4 @@
-# Copyright 2012-2016 Luc Saffre
+# Copyright 2012-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Database models for `lino.modlib.changes`.
@@ -10,8 +10,8 @@ menu entry to the `Explorer` menu.
 See also :ref:`lino.tutorial.watch`.
 
 """
-from past.builtins import basestring
 from builtins import object
+import six
 
 import logging
 logger = logging.getLogger(__name__)
@@ -223,9 +223,9 @@ def watch_changes(model, ignore=[], master_key=None, **options):
     All calls to watch_changes will be grouped by model.
 
     """
-    if isinstance(ignore, basestring):
+    if isinstance(ignore, six.string_types):
         ignore = fields.fields_list(model, ignore)
-    if isinstance(master_key, basestring):
+    if isinstance(master_key, six.string_types):
         fld = model.get_data_elem(master_key)
         if fld is None:
             raise Exception("No field %r in %s" % (master_key, model))

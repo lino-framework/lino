@@ -13,6 +13,10 @@ help_texts = {
     'lino.api.rt.actors' : _("""Shortcut to lino.core.site.Site.actors"""),
     'lino.api.selenium.Album' : _("""Generates one directory of screenshots images and their index.rst
 file."""),
+    'lino.mixins.Contactable' : _("""Mixin for models that represent somebody who can be contacted by
+email."""),
+    'lino.mixins.Phonable' : _("""Mixin for models that represent somebody who can be contacted by
+phone."""),
     'lino.mixins.Registrable' : _("""Base class to anything that may be "registered" and "deregistered"
 (e.g. Invoices, Vouchers, Declarations, Reservations,...).
 "Registered" in general means "this object has been taken account of".
@@ -398,8 +402,9 @@ yet. And SiteAdmin users don't need to specify this at all."""),
     'lino.modlib.users.actions.ChangePassword.new1' : _("""The new password."""),
     'lino.modlib.users.actions.ChangePassword.new2' : _("""The new password a second time. Both passwords must match."""),
     'lino.modlib.users.choicelists.UserType' : _("""Base class for all user profiles."""),
-    'lino.modlib.users.choicelists.UserType.role' : _("""The role of users having this type. This is an instance of
-<lino.core.roles.UserRole> or some subclass thereof."""),
+    'lino.modlib.users.choicelists.UserType.roles' : _("""The roles of users having this type. This is a tuple of
+instance of <lino.core.roles.UserRole> or some
+subclass thereof."""),
     'lino.modlib.users.choicelists.UserType.readonly' : _("""Whether users of this type get only write-proteced access."""),
     'lino.modlib.users.choicelists.UserType.hidden_languages' : _("""A subset of languages
 which should be hidden for users of this type.  Default value
@@ -483,8 +488,8 @@ this document."""),
     'lino.sphinxcontrib.actordoc.Lino2rstDirective' : _("""Defines the lino2rst directive."""),
     'lino.utils.IncompleteDate' : _("""Naive representation of a potentially incomplete gregorian date."""),
     'lino.utils.SumCollector' : _("""A dictionary of sums to be collected using an arbitrary key."""),
-    'lino.utils.addressable.Addressable' : _("""Mixin to encapsulate the generating of "traditional" ("snail") mail
-addresses."""),
+    'lino.utils.addressable.Addressable' : _("""General mixin (not only for Django models) to encapsulate the
+generating of "traditional" ("snail") mail addresses."""),
     'lino.utils.addressable.Addressable.address' : _("""A property which calls get_address()."""),
     'lino.utils.addressable.Addressable.address_html' : _("""A property which calls get_address_html()."""),
     'lino.utils.addressable.TestAddress' : _("""Used only for testing."""),

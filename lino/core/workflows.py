@@ -6,10 +6,7 @@
 
 """
 from builtins import str
-# import six
-# str = six.text_type
-
-from past.builtins import basestring
+import six
 
 import logging
 logger = logging.getLogger(__name__)
@@ -79,7 +76,9 @@ class State(choicelists.Choice):
         if icon_name is not None:
             kw.update(icon_name=icon_name)
         kw.update(sort_index=200 + i)
-        if label is not None and not isinstance(label, (basestring, Promise)):
+        if label is not None \
+           and not isinstance(label, six.string_types) \
+           and not isinstance(label, Promise):
             # it's a subclass of ChangeStateAction
             assert isinstance(label, type)
             assert issubclass(label, ChangeStateAction)

@@ -1,4 +1,4 @@
-# Copyright 2009-2016 Luc Saffre
+# Copyright 2009-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Defines the :class:`Instantiator` class and some other utilities
@@ -22,7 +22,7 @@ null,{ &quot;record_id&quot;: 6 })">Gast #6 ("Termin #51")</a>'
 from __future__ import unicode_literals
 from __future__ import print_function
 from builtins import str
-from past.builtins import basestring
+import six
 from builtins import object
 
 
@@ -242,7 +242,7 @@ class Instantiator(object):
         # if self.model._meta.pk is None:
             # raise Exception("Model %r is not installed (_meta.pk is None)." % self.model)
         # if type(fieldnames) == str:
-        if isinstance(fieldnames, basestring):
+        if isinstance(fieldnames, six.string_types):
             fieldnames = fieldnames.split()
         self.default_values = kw
         #self.fieldnames = fieldnames
@@ -301,7 +301,7 @@ class Instantiator(object):
         # i = 0
         kw['_m2m'] = {}
         for i, v in enumerate(values):
-            if isinstance(v, basestring):
+            if isinstance(v, six.string_types):
                 v = v.strip()
                 if len(v) > 0:
                     kw[self.fields[i].name] = v
