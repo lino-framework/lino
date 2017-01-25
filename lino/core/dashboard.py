@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2016-2017 Luc Saffre.
 # License: BSD, see LICENSE for more details.
-"""Lino's user preferences registry.
+"""Defines the :class:`DashboardItem` class.
 
 """
 from __future__ import unicode_literals
@@ -38,6 +38,10 @@ class ActorItem(DashboardItem):
 
     See :mod:`lino_xl.lib.blogs` as a usage example.
 
+    .. attribute:: header_level
+
+        The header level.
+
     """
     def __init__(self, actor, header_level=2):
         self.actor = actor
@@ -48,6 +52,16 @@ class ActorItem(DashboardItem):
         return self.actor.default_action.get_view_permission(profile)
 
     def render(self, ar):
+        """Render this table to the dashboard.
+
+        - Do nothing if there is no data.
+
+        - If :attr:`header_level` is not None, add a header
+
+        - Render the table itself by calling
+          :meth:`lino.core.requests.BaseRequest.show`
+
+        """
         T = self.actor
         sar = ar.spawn(T, limit=T.preview_limit)
         if not sar.get_total_count():
