@@ -58,8 +58,14 @@ class ActorItem(DashboardItem):
             s = E.tostring(E.h2(
                 T.label, ' ', ar.window_action_button(
                     T.default_action,
-                    label="🗗",
-                    style="text-decoration:none; font-size:80%;",
+                    # label="🗗",
+                    # label="☌",  # conjunction
+                    # label="◱", # 25F1
+                    # label="◳", # 25F3
+                    # label="⏍", # 23CD
+                    label="⍐", # 2350
+                    # style="text-decoration:none; font-size:80%;",
+                    style="text-decoration:none;",
                     title=_("Show this table in own window"))))
 
         s += E.tostring(ar.show(sar))
