@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-01-22 01:44+0200\n"
-"PO-Revision-Date: 2017-01-22 01:45+0200\n"
+"POT-Creation-Date: 2017-01-25 00:56+0200\n"
+"PO-Revision-Date: 2017-01-25 06:38+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language: fr\n"
 "Language-Team: \n"
@@ -50,41 +50,41 @@ msgstr "%s a été mis à jour."
 msgid "%s : nothing to save."
 msgstr ""
 
-#: lino/core/actions.py:655
+#: lino/core/actions.py:654
 msgid "Save changes in this form"
 msgstr "Enregistrer les changements dans ce formulaire"
 
-#: lino/core/actions.py:656
+#: lino/core/actions.py:655
 msgid "Save"
 msgstr "Enregistrer"
 
-#: lino/core/actions.py:693 lino/core/requests.py:919
+#: lino/core/actions.py:695 lino/core/requests.py:919
 #, python-format
 msgid "%s has been created."
 msgstr "%s a été créé"
 
-#: lino/core/actions.py:720 lino/modlib/changes/models.py:51
+#: lino/core/actions.py:722 lino/modlib/changes/models.py:51
 msgid "Create"
 msgstr "Créer"
 
-#: lino/core/actions.py:722
+#: lino/core/actions.py:724
 msgid "Create the record and open a detail window on it"
 msgstr ""
 
-#: lino/core/actions.py:805
+#: lino/core/actions.py:807
 #, fuzzy, python-format
 msgid "%d row(s) have been updated."
 msgstr "Enregistrement %s a été mis à jour."
 
-#: lino/core/actions.py:823
+#: lino/core/actions.py:825
 msgid "Delete this record"
 msgstr "Supprimer cet enregistrement"
 
-#: lino/core/actions.py:831 lino/modlib/changes/models.py:53
+#: lino/core/actions.py:833 lino/modlib/changes/models.py:53
 msgid "Delete"
 msgstr "Supprimer"
 
-#: lino/core/actions.py:860
+#: lino/core/actions.py:862
 #, python-format
 msgid ""
 "You are about to delete %(num)d %(type)s:\n"
@@ -93,7 +93,7 @@ msgstr ""
 "Ceci va supprimer %(num)d %(type)s:\n"
 "%(targets)s"
 
-#: lino/core/actions.py:863
+#: lino/core/actions.py:865
 msgid "Are you sure ?"
 msgstr "D'accord ?"
 
@@ -241,7 +241,7 @@ msgstr ""
 "Impossible de supprimer %(model)s %(self)s parce que %(count)d  %(refs)s y "
 "font référence."
 
-#: lino/core/model.py:735 lino/core/model.py:741 lino/core/tables.py:672
+#: lino/core/model.py:735 lino/core/model.py:741 lino/core/tables.py:676
 #: lino/modlib/importfilters/models.py:111 lino/modlib/notify/actions.py:38
 #: lino/modlib/tinymce/models.py:34 lino/modlib/uploads/models.py:121
 #: lino/modlib/uploads/models.py:134
@@ -249,12 +249,10 @@ msgid "Description"
 msgstr "Description"
 
 #: lino/core/model.py:747
-#, fuzzy
 msgid "Actions"
-msgstr "Fonction"
+msgstr "Actions"
 
 #: lino/core/renderer.py:279
-#, fuzzy
 msgid "Show Last"
 msgstr "Dernier"
 
@@ -353,7 +351,7 @@ msgstr "%r (choix non valide)"
 msgid "Invalid value for this field (%s)."
 msgstr ""
 
-#: lino/core/tables.py:703
+#: lino/core/tables.py:707
 msgid "Button"
 msgstr ""
 
@@ -473,10 +471,9 @@ msgid "Mr"
 msgstr "M."
 
 #: lino/mixins/human.py:199
-#, fuzzy
 msgctxt "(of a human)"
 msgid "Title"
-msgstr "Allocution"
+msgstr "Titre"
 
 #: lino/mixins/human.py:203 lino/modlib/users/models.py:95
 msgid "First name"
@@ -736,12 +733,12 @@ msgid "Server uptime"
 msgstr "Ce serveur tourne depuis"
 
 #: lino/modlib/about/models.py:261
-#: lino/modlib/lino_startup/config/admin_main_base.html:24
+#: lino/modlib/lino_startup/config/admin_main_base.html:26
 msgid "This is a Lino demo site."
 msgstr "Ceci est un site de démonstration Lino."
 
 #: lino/modlib/about/models.py:264
-#: lino/modlib/lino_startup/config/admin_main_base.html:28
+#: lino/modlib/lino_startup/config/admin_main_base.html:30
 msgid "We are running with simulated date set to {0}."
 msgstr "Ce site tourne avec une date simulée fixée au {0}."
 
@@ -1110,9 +1107,8 @@ msgid "Select another view of this report"
 msgstr ""
 
 #: lino/modlib/extjs/linoweb.js:3526
-#, fuzzy
 msgid "Page"
-msgstr "Page suivante"
+msgstr "Page"
 
 #: lino/modlib/extjs/linoweb.js:3527
 msgid "of {0}"
@@ -3168,20 +3164,20 @@ msgstr "Veuillez nous excuser pour les inconvénients."
 msgid "If you can reproduce this message, please tell us how you did that."
 msgstr "Si cette erreur persiste, n'hésitez pas à nous le signaler."
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:7
+#: lino/modlib/lino_startup/config/admin_main_base.html:9
 msgid "Quick links:"
 msgstr "Raccourcis:"
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:14
+#: lino/modlib/lino_startup/config/admin_main_base.html:16
 msgid "Refresh"
 msgstr ""
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:16
+#: lino/modlib/lino_startup/config/admin_main_base.html:18
 #, python-format
 msgid "Hi, %(user)s!"
 msgstr "Salut, %(user)s!"
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:25
+#: lino/modlib/lino_startup/config/admin_main_base.html:27
 msgid ""
 "Try also the other <a href=\"http://lino-framework.org/demos.html\">demo "
 "sites</a>."
@@ -3189,57 +3185,57 @@ msgstr ""
 "Essayez également les autres <a href=\"http://lino-framework.org/demos.html"
 "\">sites de démonstration</a>."
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:26
+#: lino/modlib/lino_startup/config/admin_main_base.html:28
 #, python-format
 msgid "Your feedback is welcome to %s or directly to the person who invited you."
 msgstr "Vos réactions sont les bienvenues par courier électronique à %s."
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:40
+#: lino/modlib/lino_startup/config/admin_main_base.html:42
 msgid "You have entered the <b>admin</b> section."
 msgstr ""
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:41
+#: lino/modlib/lino_startup/config/admin_main_base.html:43
 msgid ""
 "Unlike the <a href=\"/\">web content section</a> there is now a GUI menu bar "
 "in the upper part of the screen."
 msgstr ""
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:46
+#: lino/modlib/lino_startup/config/admin_main_base.html:48
 #, python-format
 msgid "Welcome to the <b>%s</b> site."
 msgstr "Bienvenue sur <b>%s</b>."
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:48
+#: lino/modlib/lino_startup/config/admin_main_base.html:50
 #, python-format
 msgid "We are running %(name)s version %(version)s"
 msgstr "Ce site héberge le logiciel libre  %(name)s version %(version)s"
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:57
+#: lino/modlib/lino_startup/config/admin_main_base.html:59
 msgid "You will now probably want to"
 msgstr "Veuillez"
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:59
+#: lino/modlib/lino_startup/config/admin_main_base.html:61
 msgid "log in"
 msgstr "vous connecter"
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:60
+#: lino/modlib/lino_startup/config/admin_main_base.html:62
 msgid "using the <b>Log in</b> button in the upper right corner."
 msgstr "en cliquant le bouton <b>Se connecter</b> dans le coin supérieur droit."
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:62
+#: lino/modlib/lino_startup/config/admin_main_base.html:64
 msgid "Or {} as a new user."
 msgstr ""
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:65
+#: lino/modlib/lino_startup/config/admin_main_base.html:67
 msgid "register"
 msgstr ""
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:70
+#: lino/modlib/lino_startup/config/admin_main_base.html:72
 #, python-format
 msgid "This demo site has %d users:"
 msgstr "Ce site de démonstration connait %d utilisateurs:"
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:75
+#: lino/modlib/lino_startup/config/admin_main_base.html:77
 msgid "The password is the same for all of them: \"1234\"."
 msgstr "Ils ont tous le même mot de passe \"1234\"."
 
