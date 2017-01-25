@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-25 00:56+0200\n"
+"POT-Creation-Date: 2017-01-25 17:07+0200\n"
 "PO-Revision-Date: 2016-09-08 06:45+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language: et\n"
@@ -130,7 +130,7 @@ msgstr ""
 msgid "%(value)r (invalid choice for %(list)s)"
 msgstr ""
 
-#: lino/core/dashboard.py:63
+#: lino/core/dashboard.py:83
 msgid "Show this table in own window"
 msgstr ""
 
