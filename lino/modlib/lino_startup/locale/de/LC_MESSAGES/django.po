@@ -5,19 +5,18 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lino\n"
+"Project-Id-Version:  lino\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-22 01:44+0200\n"
+"POT-Creation-Date: 2017-01-25 00:56+0200\n"
 "PO-Revision-Date: 2017-01-22 01:45+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language: de\n"
 "Language-Team: \n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
-"X-Generator: Poedit 1.8.7.1\n"
 
 #: lino/core/actions.py:469
 msgid "Detail"
@@ -50,41 +49,41 @@ msgstr "%s wurde aktualisiert."
 msgid "%s : nothing to save."
 msgstr "%s : nichts zu speichern."
 
-#: lino/core/actions.py:655
+#: lino/core/actions.py:654
 msgid "Save changes in this form"
 msgstr "Änderungen in diesem Formular speichern"
 
-#: lino/core/actions.py:656
+#: lino/core/actions.py:655
 msgid "Save"
 msgstr "Speichern"
 
-#: lino/core/actions.py:693 lino/core/requests.py:919
+#: lino/core/actions.py:695 lino/core/requests.py:919
 #, python-format
 msgid "%s has been created."
 msgstr "%s wurde erstellt."
 
-#: lino/core/actions.py:720 lino/modlib/changes/models.py:51
+#: lino/core/actions.py:722 lino/modlib/changes/models.py:51
 msgid "Create"
 msgstr "Erstellen"
 
-#: lino/core/actions.py:722
+#: lino/core/actions.py:724
 msgid "Create the record and open a detail window on it"
 msgstr "Datensatz erstellen und dann im Detail-Fenster öffnen"
 
-#: lino/core/actions.py:805
+#: lino/core/actions.py:807
 #, python-format
 msgid "%d row(s) have been updated."
 msgstr "%d Datensätze wurden gelöscht."
 
-#: lino/core/actions.py:823
+#: lino/core/actions.py:825
 msgid "Delete this record"
 msgstr "Diesen Datensatz löschen"
 
-#: lino/core/actions.py:831 lino/modlib/changes/models.py:53
+#: lino/core/actions.py:833 lino/modlib/changes/models.py:53
 msgid "Delete"
 msgstr "Löschen"
 
-#: lino/core/actions.py:860
+#: lino/core/actions.py:862
 #, python-format
 msgid ""
 "You are about to delete %(num)d %(type)s:\n"
@@ -93,7 +92,7 @@ msgstr ""
 "%(num)d %(type)s werden gelöscht:\n"
 "%(targets)s"
 
-#: lino/core/actions.py:863
+#: lino/core/actions.py:865
 msgid "Are you sure ?"
 msgstr "Sind Sie sicher?"
 
@@ -158,9 +157,9 @@ msgid ""
 "\"00.07.1980\" means \"in July 1980\"\n"
 "or \"23.07.0000\" means \"on a 23th of July\"."
 msgstr ""
-"Unkomplette Datumsangaben sind erlaubt, z.B. \"%(ex1)s\" heißt \"irgendwann im "
-"Jahr 1980\", \"%(ex2)s\" heißt \"im Juli 1980\"oder \"%(ex3)s\" heißt \"an einem "
-"23. Juli\"."
+"Unkomplette Datumsangaben sind erlaubt, z.B. \"%(ex1)s\" heißt "
+"\"irgendwann im Jahr 1980\", \"%(ex2)s\" heißt \"im Juli 1980\"oder "
+"\"%(ex3)s\" heißt \"an einem 23. Juli\"."
 
 #: lino/core/kernel.py:129 lino/modlib/extjs/linoweb.js:1540
 #: lino/modlib/extjs/linoweb.js:2921
@@ -243,9 +242,10 @@ msgstr ""
 #, python-format
 msgid "Cannot delete %(model)s %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
-"Kann %(model)s %(self)s nicht löschen weil %(count)d %(refs)s darauf verweisen."
+"Kann %(model)s %(self)s nicht löschen weil %(count)d %(refs)s darauf "
+"verweisen."
 
-#: lino/core/model.py:735 lino/core/model.py:741 lino/core/tables.py:672
+#: lino/core/model.py:735 lino/core/model.py:741 lino/core/tables.py:676
 #: lino/modlib/importfilters/models.py:111 lino/modlib/notify/actions.py:38
 #: lino/modlib/tinymce/models.py:34 lino/modlib/uploads/models.py:121
 #: lino/modlib/uploads/models.py:134
@@ -354,7 +354,7 @@ msgstr "%r (ungültige Auswahl)"
 msgid "Invalid value for this field (%s)."
 msgstr ""
 
-#: lino/core/tables.py:703
+#: lino/core/tables.py:707
 msgid "Button"
 msgstr ""
 
@@ -738,12 +738,12 @@ msgid "Server uptime"
 msgstr "Server läuft seit"
 
 #: lino/modlib/about/models.py:261
-#: lino/modlib/lino_startup/config/admin_main_base.html:24
+#: lino/modlib/lino_startup/config/admin_main_base.html:26
 msgid "This is a Lino demo site."
 msgstr "Dies ist eine Demo-Anwendung."
 
 #: lino/modlib/about/models.py:264
-#: lino/modlib/lino_startup/config/admin_main_base.html:28
+#: lino/modlib/lino_startup/config/admin_main_base.html:30
 msgid "We are running with simulated date set to {0}."
 msgstr "Simuliertes Tagesdatum {0}."
 
@@ -1336,7 +1336,8 @@ msgstr ""
 msgid ""
 "Base class to anything that may be \"registered\" and \"deregistered\"\n"
 "(e.g. Invoices, Vouchers, Declarations, Reservations,...).\n"
-"\"Registered\" in general means \"this object has been taken account of\".\n"
+"\"Registered\" in general means \"this object has been taken account "
+"of\".\n"
 "Registered objects are not editable."
 msgstr ""
 
@@ -2511,19 +2512,22 @@ msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:426
 msgid ""
-"A form that creates a user, with no privileges, from the given username and\n"
+"A form that creates a user, with no privileges, from the given username "
+"and\n"
 "password."
 msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:428
 msgid ""
-"Base class for authenticating users. Extend this to get a form that accepts\n"
+"Base class for authenticating users. Extend this to get a form that "
+"accepts\n"
 "username/password logins."
 msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:430
 msgid ""
-"A form that lets a user change set their password without entering the old\n"
+"A form that lets a user change set their password without entering the "
+"old\n"
 "password"
 msgstr ""
 
@@ -2613,7 +2617,8 @@ msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:458
 msgid ""
-"A virtual read-only field which returns the Person MTI child corresponding\n"
+"A virtual read-only field which returns the Person MTI child "
+"corresponding\n"
 "to the partner (if it exists) and otherwise None."
 msgstr ""
 
@@ -2862,7 +2867,8 @@ msgstr ""
 #: lino/modlib/lino_startup/help_texts.py:536
 msgid ""
 "A Converter for ForeignKey and ManyToManyField. \n"
-"If the lookup_field is a BabelField, then it tries all available languages."
+"If the lookup_field is a BabelField, then it tries all available "
+"languages."
 msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:538
@@ -3072,7 +3078,8 @@ msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:611
 msgid ""
-"The WebServiceConnector namespace used for wrapping \"classical\" CBSS services."
+"The WebServiceConnector namespace used for wrapping \"classical\" CBSS "
+"services."
 msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:612
@@ -3155,81 +3162,81 @@ msgstr "Wir bitten um Verständnis."
 #: lino/modlib/lino_startup/config/500.html:9
 msgid "If you can reproduce this message, please tell us how you did that."
 msgstr ""
-"Bitte informieren sie uns über das Problem falls Sie diese Meldung reproduzieren "
-"können."
+"Bitte informieren sie uns über das Problem falls Sie diese Meldung "
+"reproduzieren können."
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:7
+#: lino/modlib/lino_startup/config/admin_main_base.html:9
 msgid "Quick links:"
 msgstr "Schnellverbindungen:"
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:14
+#: lino/modlib/lino_startup/config/admin_main_base.html:16
 msgid "Refresh"
 msgstr "Aktualisieren"
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:16
+#: lino/modlib/lino_startup/config/admin_main_base.html:18
 #, python-format
 msgid "Hi, %(user)s!"
 msgstr "Hallo, %(user)s!"
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:25
+#: lino/modlib/lino_startup/config/admin_main_base.html:27
 msgid ""
-"Try also the other <a href=\"http://lino-framework.org/demos.html\">demo sites</"
-"a>."
+"Try also the other <a href=\"http://lino-framework.org/demos.html\">demo "
+"sites</a>."
 msgstr ""
-"Probieren Sie auch die anderen <a href=\"http://lino-framework.org/demos.html"
-"\">Online-Demos</a> aus."
+"Probieren Sie auch die anderen <a href=\"http://lino-"
+"framework.org/demos.html\">Online-Demos</a> aus."
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:26
+#: lino/modlib/lino_startup/config/admin_main_base.html:28
 #, python-format
 msgid "Your feedback is welcome to %s or directly to the person who invited you."
 msgstr "Fragen und Verbesserungsvorschläge sind willkommen per E-Mail an %s."
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:40
+#: lino/modlib/lino_startup/config/admin_main_base.html:42
 msgid "You have entered the <b>admin</b> section."
 msgstr ""
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:41
+#: lino/modlib/lino_startup/config/admin_main_base.html:43
 msgid ""
-"Unlike the <a href=\"/\">web content section</a> there is now a GUI menu bar in "
-"the upper part of the screen."
+"Unlike the <a href=\"/\">web content section</a> there is now a GUI menu "
+"bar in the upper part of the screen."
 msgstr ""
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:46
+#: lino/modlib/lino_startup/config/admin_main_base.html:48
 #, python-format
 msgid "Welcome to the <b>%s</b> site."
 msgstr "Willkommen auf <b>%s</b>."
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:48
+#: lino/modlib/lino_startup/config/admin_main_base.html:50
 #, python-format
 msgid "We are running %(name)s version %(version)s"
 msgstr "Hier läuft %(name)s  %(version)s"
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:57
+#: lino/modlib/lino_startup/config/admin_main_base.html:59
 msgid "You will now probably want to"
 msgstr "Sie wollen sich jetzt wahrscheinlich"
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:59
+#: lino/modlib/lino_startup/config/admin_main_base.html:61
 msgid "log in"
 msgstr "anmelden"
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:60
+#: lino/modlib/lino_startup/config/admin_main_base.html:62
 msgid "using the <b>Log in</b> button in the upper right corner."
 msgstr "indem Sie oben rechts auf den Button <b>Anmelden</b> klicken."
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:62
+#: lino/modlib/lino_startup/config/admin_main_base.html:64
 msgid "Or {} as a new user."
 msgstr "Oder ein {} registrieren."
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:65
+#: lino/modlib/lino_startup/config/admin_main_base.html:67
 msgid "register"
 msgstr "neues Benutzerkonto"
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:70
+#: lino/modlib/lino_startup/config/admin_main_base.html:72
 #, python-format
 msgid "This demo site has %d users:"
 msgstr "Diese Demo-Anwendung hat %d Benutzer:"
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:75
+#: lino/modlib/lino_startup/config/admin_main_base.html:77
 msgid "The password is the same for all of them: \"1234\"."
 msgstr "Das Passwort ist für alle Benutzer gleich: \"1234\"."
 
@@ -3442,7 +3449,8 @@ msgstr "Datenproblem"
 msgid "Plausibility problems"
 msgstr "Datenprobleme"
 
-#: lino/modlib/plausibility/models.py:153 lino/modlib/plausibility/models.py:169
+#: lino/modlib/plausibility/models.py:153
+#: lino/modlib/plausibility/models.py:169
 msgid "Responsible"
 msgstr "Verantwortlicher"
 
@@ -3475,8 +3483,9 @@ msgstr "Drucken"
 #: lino/modlib/printing/actions.py:87
 #, python-format
 msgid ""
-"Your printable document (filename %(doc)s) should now open in a new browser "
-"window. If it doesn't, please consult %(help)s or ask your system administrator."
+"Your printable document (filename %(doc)s) should now open in a new "
+"browser window. If it doesn't, please consult %(help)s or ask your system"
+" administrator."
 msgstr ""
 "Das druckbare Dokument (Datei %(doc)s) müsste sich jetzt in einem neuen "
 "Browserfenster öffnen. Andernfalls bitte  %(help)s konsultieren oder den "
@@ -3493,8 +3502,8 @@ msgstr "Vorlage bearbeiten"
 
 #: lino/modlib/printing/actions.py:277
 msgid ""
-"Before you can edit this template we must create a local copy on the server. "
-"This will exclude the template from future updates."
+"Before you can edit this template we must create a local copy on the "
+"server. This will exclude the template from future updates."
 msgstr ""
 
 #: lino/modlib/printing/actions.py:298
@@ -3808,15 +3817,16 @@ msgstr ""
 
 #: lino/modlib/users/forms.py:110
 msgid ""
-"Raw passwords are not stored, so there is no way to see this user's password, "
-"but you can change the password using <a href=\"../password/\">this form</a>."
+"Raw passwords are not stored, so there is no way to see this user's "
+"password, but you can change the password using <a "
+"href=\"../password/\">this form</a>."
 msgstr ""
 
 #: lino/modlib/users/forms.py:140
 #, python-format
 msgid ""
-"Please enter a correct %(username)s and password. Note that both fields may be "
-"case-sensitive."
+"Please enter a correct %(username)s and password. Note that both fields "
+"may be case-sensitive."
 msgstr ""
 
 #: lino/modlib/users/forms.py:142
@@ -4099,3 +4109,4 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 
 #~ msgid "Welcome"
 #~ msgstr "Willkommen"
+
