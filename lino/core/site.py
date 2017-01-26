@@ -521,10 +521,11 @@ class Site(object):
     """
     
     user_types_module = None
-    """The name of the **user profiles module** to be used on this site.
+    """The name of the **user types module** to be used on this site.
 
     Default value is `None`, meaning that permission control is
-    inactive: everything is permitted.
+    inactive: everything is permitted.  But note that
+    :meth:`set_user_model` sets it to :mod:`lino.modlib.users`.
 
     This must be set if you want to enable permission control based on
     user roles defined in :attr:`Permittable.required_roles
@@ -760,19 +761,13 @@ class Site(object):
     this to a nonempty value will disable authentication on this site.
     The special value `'anonymous'` will cause anonymous requests
     (whose `user` attribute is the :class:`AnonymousUser
-    <lino.modlib.users.utils.AnonymousUser>` instance).
+    <lino.modlib.users.utils.AnonymousUser>` singleton).
 
     See also :meth:`get_auth_method`.
 
     This setting should be `None` when :attr:`user_model` is `None`.
 
     """
-
-#     anonymous_user_type = '000'
-#     """The user profile to be assigned to the anonymous user
-# (:class:`AnonymousUser <lino.modlib.users.utils.AnonymousUser>`).
-
-#     """
 
     remote_user_header = None
     """The name of the header (set by the web server) that Lino should
@@ -1924,17 +1919,18 @@ this field.
         :mod:`lino.modlib.users`).
 
         """
-        if self.user_model is not None:
-            msg = "Site.user_model was already set!"
-            # Theoretically this should raise an exception. But in a
-            # transitional phase after 20150116 we just ignore it. A
-            # warning would be nice, but we cannot use the logger here
-            # since it is not yet configured.
-            if False:
-                # self.logger.warning(msg)
-                raise Exception(msg)
+        # if self.user_model is not None:
+        #     msg = "Site.user_model was already set!"
+        #     Theoretically this should raise an exception. But in a
+        #     transitional phase after 20150116 we just ignore it. A
+        #     warning would be nice, but we cannot use the logger here
+        #     since it is not yet configured.
+        #     self.logger.warning(msg)
+        #     raise Exception(msg)
         self.user_model = spec
-
+        if self.user_types_module is None:
+            self.user_types_module = 'lino.modlib.users.roles'
+            
     def get_auth_method(self):
         """Returns the authentication method used on this site. This is one of
         `None`, `'remote'` or `'session'`.

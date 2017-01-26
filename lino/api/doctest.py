@@ -70,7 +70,9 @@ def post_json_dict(username, url, data, **extra):
 
     """
     res = test_client.post(url, data, REMOTE_USER=username, **extra)
-    assert res.status_code == 200
+    if res.status_code != 200:
+        raise Exception("{} gave status code {} instead of 200".format(
+            url , res.status_code))
     return AttrDict(json.loads(res.content))
 
 
