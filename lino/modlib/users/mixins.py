@@ -144,6 +144,12 @@ class Authored(model.Model):
         s.add('user')  # cls.author_field_name)
         return s
 
+    def get_print_language(self):
+        u = self.get_author()
+        if u is None or not u.language:
+            return super(Authored, self).get_print_language()
+        return u.language
+
     
 class UserAuthored(Authored):
     """Model mixin for database objects that have a `user` field which
