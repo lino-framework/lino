@@ -79,6 +79,7 @@ class Change(dd.Model):
         verbose_name_plural = _("Changes")
 
     # allow_cascaded_delete = 'master'
+    quick_search_fields = 'changed_fields diff'
 
     time = models.DateTimeField()
     type = ChangeTypes.field()
@@ -103,6 +104,8 @@ class Change(dd.Model):
     master = GenericForeignKey('master_type', 'master_id', _("Master"))
 
     diff = dd.RichTextField(_("Changes"), format='plain', blank=True)
+    changed_fields = dd.CharField(
+        _("Fields"), max_length=250, blank=True)
 
     def __str__(self):
         # ~ return "#%s - %s" % (self.id,self.time)
@@ -134,8 +137,8 @@ class Changes(dd.Table):
     order_by = ['-time']
 
     detail_layout = """
-        time user type master object id
-        diff
+    time user type master object id
+    diff
     """
 
     params_layout = """
@@ -168,7 +171,7 @@ class ChangesByObject(Changes):
     """
     required_roles = dd.required(SiteStaff)
     master_key = 'object'
-    column_names = 'time user type master diff master_type master_id'
+    column_names = 'time user type changed_fields master master_type master_id *'
 
 
 class ChangesByMaster(Changes):
@@ -178,8 +181,7 @@ class ChangesByMaster(Changes):
     """
     required_roles = dd.required()
     master_key = 'master'
-    # column_names = 'time user type object diff object_type object_id'
-    column_names = 'time user type object diff *'
+    column_names = 'time user type changed_fields object *'
 
 
 class WatcherSpec(object):
@@ -268,13 +270,14 @@ def get_master(obj):
         return cs.get_master(obj)
 
 
-def log_change(type, request, master, obj, msg=''):
+def log_change(type, request, master, obj, msg='', changed_fields=''):
     Change(
         type=type,
         time=timezone.now(),
         user=request.user,
         master=master,
         object=obj,
+        changed_fields=changed_fields,
         diff=msg).save()
 
 
@@ -282,6 +285,7 @@ def log_change(type, request, master, obj, msg=''):
 def on_update(sender=None, watcher=None, request=None, **kw):
     """
     Log a Change if there is a `change_watcher_spec`.
+    `watcher` is a :class:`lino.core.diff.ChangeWatcher` instance.
     """
     master = get_master(watcher.watched)
     if master is None:
@@ -289,7 +293,10 @@ def on_update(sender=None, watcher=None, request=None, **kw):
         return
 
     cs = watcher.watched.change_watcher_spec
-    if False:  # html version
+    changed_fields = ''
+    if False:  # I tried a html version, but it doesn't help to make
+               # things more end-user firiendly. And it caused
+               # problems when being rendered in a grid.
         changes = list(watcher.get_updates_html(cs.ignored_fields))
         if len(changes) == 0:
             msg = '(no changes)'
@@ -300,6 +307,7 @@ def on_update(sender=None, watcher=None, request=None, **kw):
     else:
         changes = []
         for k, old, new in watcher.get_updates(cs.ignored_fields):
+            changed_fields += k + " "
             changes.append("%s : %s --> %s" %
                            (k, dd.obj2str(old), dd.obj2str(new)))
         if len(changes) == 0:
@@ -308,7 +316,9 @@ def on_update(sender=None, watcher=None, request=None, **kw):
             msg = changes[0]
         else:
             msg = '- ' + ('\n- '.join(changes))
-    log_change(ChangeTypes.update, request, master, watcher.watched, msg)
+    log_change(
+        ChangeTypes.update, request, master, watcher.watched,
+        msg, changed_fields)
 
 
 @receiver(pre_ui_delete)

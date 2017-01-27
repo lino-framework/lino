@@ -704,12 +704,14 @@ class CreateRow(Action):
             # browser adds a <PRE></PRE> tag around the AJAX response.
             ar.set_content_type('text/html')
 
-        if ar.actor.stay_in_grid:
+        if ar.actor.stay_in_grid and ar.requesting_panel:
+            # do not open a detail window on the new instance
             return
-            # No need to ask refresh_all since closing the window will
-            # automatically refresh the underlying window.
 
         ar.goto_instance(elem)
+        
+        # No need to ask refresh_all since closing the window will
+        # automatically refresh the underlying window.
 
 
 class SubmitInsert(CreateRow):
@@ -727,10 +729,11 @@ class SubmitInsert(CreateRow):
         return isinstance(caller, ShowInsert)
 
     def run_from_ui(self, ar, **kw):
+        # must set requesting_panel to None, otherwise javascript
+        # button actions would try to refer the requesting panel which
+        # is going to be closed (this disturbs at least in ticket
+        # #219)
         ar.requesting_panel = None
-        # must set this to None, otherwise javascript button actions
-        # would try to refer the requesting panel which is going to be
-        # closed (this disturbs at least in ticket #219)
         elem = ar.create_instance_from_request()
         self.save_new_instance(ar, elem)
         ar.set_response(close_window=True)
