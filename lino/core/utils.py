@@ -649,17 +649,20 @@ class InstanceAction(object):
         return "{0} on {1}".format(self.bound_action, obj2str(self.instance))
 
     def run_from_code(self, ar, *args, **kw):
+        # raise Exception("20170129 is this still used?")
         ar.selected_rows = [self.instance]
         return self.bound_action.action.run_from_code(ar, *args, **kw)
 
     def run_from_ui(self, ar, **kw):
+        # raise Exception("20170129 is this still used?")
+        # kw.update(selected_rows=[self.instance])
         ar.selected_rows = [self.instance]
         self.bound_action.action.run_from_ui(ar)
 
     def request_from(self, ses, **kw):
+        kw.update(selected_rows=[self.instance])
         ar = self.bound_action.request(**kw)
         ar.setup_from(ses)
-        ar.selected_rows = [self.instance]
         return ar
 
     def run_from_session(self, ses, **kw):
