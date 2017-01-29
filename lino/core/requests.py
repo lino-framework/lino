@@ -214,6 +214,7 @@ class BaseRequest(object):
               subst_user=None,
               current_project=None,
               selected_pks=None,
+              selected_rows=None,
               master_instance=None,
               limit=None,
               requesting_panel=None,
@@ -232,7 +233,9 @@ class BaseRequest(object):
             renderer = settings.SITE.kernel.text_renderer
         self.renderer = renderer
         self.subst_user = subst_user
-
+        if selected_rows is not None:
+            self.selected_rows = selected_rows
+            assert selected_pks is None
         if selected_pks is not None:
             self.set_selected_pks(*selected_pks)
 
@@ -259,8 +262,9 @@ request from it.
             # logger.info("20150130 b %s", tab)
             self.set_response(active_tab=tab)
 
-        selected = rqdata.getlist(constants.URL_PARAM_SELECTED)
-        kw.update(selected_pks=selected)
+        if not 'selected_pks' in kw:
+            selected = rqdata.getlist(constants.URL_PARAM_SELECTED)
+            kw.update(selected_pks=selected)
 
         #~ if settings.SITE.user_model:
             #~ username = rqdata.get(constants.URL_PARAM_SUBST_USER,None)
@@ -1166,8 +1170,13 @@ class ActionRequest(ActorRequest):
             self.param_values = AttrDict(**pv)
         action = self.bound_action.action
         if action.parameters is not None:
-            apv = action.action_param_defaults(self, None)
-            # print("20170116 requests.py", apv)
+            if len(self.selected_rows) == 1:
+                apv = action.action_param_defaults(
+                    self, self.selected_rows[0])
+            else:
+                msg = "20170116 selected_rows is {} for {!r}".format(
+                    self.selected_rows, action)
+                raise Exception(msg)
             if request is not None:
                 apv.update(
                     action.params_layout.params_store.parse_params(request))

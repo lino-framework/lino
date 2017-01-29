@@ -372,6 +372,7 @@ request `tar`."""
         which runs the bound action `ba` when clicked.
         """
         label = label or ba.get_button_label()
+        request_kwargs.update(selected_rows=[obj])
         js = self.action_call_on_instance(obj, ar, ba, request_kwargs)
         uri = self.js2url(js)
         return self.href_button_action(

@@ -438,13 +438,10 @@ class ApiElement(View):
         if pk and pk != '-99999' and pk != '-99998':
             #~ ar = ba.request(request=request,selected_pks=[pk])
             #~ print 20131004, ba.actor
-            ar = ba.request(request=request)
-            
+            ar = ba.request(request=request, selected_pks=[pk])
             # print(
             #     "20170116 views.ApiElement.get", ba,
             #     ar.action_param_values)
-
-            ar.set_selected_pks(pk)
             elem = ar.selected_rows[0]
         else:
             ar = ba.request(request=request)

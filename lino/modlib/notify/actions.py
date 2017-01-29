@@ -60,6 +60,8 @@ class NotifyingAction(actions.Action):
 
     def action_param_defaults(self, ar, obj, **kw):
         kw = super(NotifyingAction, self).action_param_defaults(ar, obj, **kw)
+        if obj is None:
+            raise Exception("2017129 called without obj")
         if obj is not None:
             s = self.get_notify_subject(ar, obj)
             if s is not None:
@@ -70,6 +72,7 @@ class NotifyingAction(actions.Action):
         return kw
 
     def run_from_ui(self, ar, **kw):
+        # raise Exception("20170128a {}".format(ar.action_param_values))
         ar.set_response(message=ar.action_param_values.notify_subject)
         ar.set_response(refresh=True)
         ar.set_response(success=True)
@@ -83,7 +86,9 @@ class NotifyingAction(actions.Action):
         mt = rt.models.notify.MessageTypes.action
         pv = ar.action_param_values
         def msg(user, mm):
-            return pv.notify_subject + "\n" + pv.notify_body
+            if not pv.notify_subject:
+                return None
+            return (pv.notify_subject, pv.notify_body)
         rt.models.notify.Message.emit_message(
             ar, owner, mt, msg, recipients)
 

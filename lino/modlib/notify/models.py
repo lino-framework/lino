@@ -6,7 +6,7 @@
 
 """
 from __future__ import unicode_literals
-# from builtins import str
+from builtins import str
 from builtins import object
 import json
 
@@ -106,9 +106,12 @@ class Message(UserAuthored, Controllable, Created):
     """A **Notification message** is a instant message sent by the
     application to a given user.
 
-    Use the class method :meth:`create_message` to create a new
-    message (and to skip creation in case that user has already
-    been notified about that owner)
+    Applications can either use it indirectly by sublassing
+    :class:`ChangeObservable
+    <lino.modlib.notify.mixins.ChangeObservable>` or by directly
+    calling the class method :meth:`create_message` to create a new
+    message.
+
 
     .. attribute:: subject
     .. attribute:: body
@@ -122,11 +125,11 @@ class Message(UserAuthored, Controllable, Created):
 
        This may be `None`, which means that the message has no
        controller. When a notification is controlled, then the
-       recipient will receive only the first message for that
-       object. Any following message is ignored until the recipient
-       has "confirmed" the first message. Typical use case are the
+       recipient will receive only the first message for that object.
+       Any following message is ignored until the recipient has
+       "confirmed" the first message. Typical use case are the
        messages emitted by :class:`ChangeObservable`: you don't want
-       to get 10 mails just because a collegue makes 10 small
+       to get 10 mails just because a colleague makes 10 small
        modifications when authoring the text field of a
        ChangeObservable object.
 
@@ -146,9 +149,8 @@ class Message(UserAuthored, Controllable, Created):
     sent = models.DateTimeField(_("sent"), null=True, editable=False)
     body = dd.RichTextField(_("Body"), editable=False, format='html')
     mail_mode = MailModes.field(default=MailModes.often.as_callable)
-
-    # no longer used:
-    subject = models.CharField(_("Subject"), max_length=250, editable=False)
+    subject = models.CharField(
+        _("Subject"), max_length=250, editable=False)
 
     def __str__(self):
         return "{} #{}".format(self.message_type, self.id)
@@ -160,11 +162,15 @@ class Message(UserAuthored, Controllable, Created):
     #     self.user, self.owner)
 
     @classmethod
-    def emit_message(cls, ar, owner, message_type, body_func, recipients):
+    def emit_message(
+            cls, ar, owner, message_type, msg_func, recipients):
         """Create one database object for every recipient.
 
         `recipients` is a list of `(user, mail_mode)` tuples.
-        `body_func` is a callable to be called for each recipient.
+
+        `msg_func` is a callable expected to return a tuple (subject,
+        body). It is called for each recipient (in the recipient's
+        language).
 
         The changing user does not get notified about their own
         changes, except when working as another user.
@@ -184,10 +190,12 @@ class Message(UserAuthored, Controllable, Created):
             #     "Notify %s users about %s", len(others), subject)
             for user, mm in others:
                 with dd.translation.override(user.language):
-                    body = body_func(user, mm)
-                    if body:
+                    subject_body = msg_func(user, mm)
+                    if subject_body is not None:
+                        subject, body = subject_body
                         cls.create_message(
                             user, owner, body=body,
+                            subject=subject,
                             mail_mode=mm, message_type=message_type)
 
     @classmethod
@@ -340,7 +348,7 @@ class Message(UserAuthored, Controllable, Created):
 
         message = {
             "id": self.id,
-            "subject": str(self),
+            "subject": self.subject,
             "body": html2text(self.body),
             "created": self.created.strftime("%a %d %b %Y %H:%M"),
         }
@@ -363,7 +371,7 @@ class Message(UserAuthored, Controllable, Created):
 
         message = {
             "id": self.id,
-            "subject": str(self),
+            "subject": str(self.subject),
             "body": html2text(self.body),
             "created": self.created.strftime("%a %d %b %Y %H:%M"),
         }
@@ -400,7 +408,7 @@ dd.inject_field(
 class Messages(dd.Table):
     "Base for all tables of messages."
     model = 'notify.Message'
-    column_names = "created body user seen sent *"
+    column_names = "created subject user seen sent *"
 
     # detail_layout = dd.DetailLayout("""
     # created user seen sent owner
@@ -466,7 +474,7 @@ class MyMessages(My, Messages):
     # label = _("My messages")
     required_roles = dd.required(OfficeUser)
     # column_names = "created subject owner sent workflow_buttons *"
-    column_names = "body created message_type workflow_buttons *"
+    column_names = "created subject message_type workflow_buttons *"
     order_by = ['created']
     # hide_headers = True
     slave_grid_format = 'summary'

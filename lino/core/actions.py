@@ -704,7 +704,8 @@ class CreateRow(Action):
             # browser adds a <PRE></PRE> tag around the AJAX response.
             ar.set_content_type('text/html')
 
-        if ar.actor.stay_in_grid and ar.requesting_panel:
+        # if ar.actor.stay_in_grid and ar.requesting_panel:
+        if ar.actor.stay_in_grid:
             # do not open a detail window on the new instance
             return
 
