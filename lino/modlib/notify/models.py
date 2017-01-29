@@ -330,7 +330,10 @@ class Message(UserAuthored, Controllable, Created):
             "Send out %s summaries for %d users.", mm, len(users))
         for user, messages in users.items():
             with translation.override(user.language):
-                subject = _("{} notifications").format(len(messages))
+                if len(messages) == 1:
+                    subject = messages[0].subject
+                else:
+                    subject = _("{} notifications").format(len(messages))
                 subject = settings.EMAIL_SUBJECT_PREFIX + subject
                 context.update(user=user, messages=messages)
                 body = template.render(**context)
