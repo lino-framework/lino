@@ -56,12 +56,21 @@ class Comment(CreatedModified, UserAuthored, Controllable,
         for u in obs.get_change_observers():
             yield u
 
+    def get_change_subject(self, ar, cw):
+        if cw is None:
+            s = _("{user} commented on {obj}")
+        else:
+            s = _("{user} modified comment on {obj}")
+        return s.format(user=ar.get_user(), obj=self.owner)
+    
     def get_change_body(self, ar, cw):
-        if cw is not None:
-            return super(Comment, self).get_change_body(ar, cw)
-        s = _("{user} commented on {obj}:").format(
+        if cw is None:
+            s = _("{user} commented on {obj}")
+        else:
+            s = _("{user} modified comment on {obj}")
+        s = s.format(
             user=ar.get_user(), obj=ar.obj2memo(self.owner))
-        s += ' ' + self.short_text
+        s += ': ' + self.short_text
         if False:
             s += '\n<p>\n' + self.more_text
         return s

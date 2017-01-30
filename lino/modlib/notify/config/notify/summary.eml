@@ -1,10 +1,16 @@
 <body>
+{% if len(messages) == 1 %}
+{% set msg = messages[0] %}
+({{fds(msg.created.date())}} {{msg.created.time().strftime('%H:%M')}})
+{{ar.parse_memo(msg.body)}}
+{% else %}
 {{_("Hi")}} {{user}},
 {{_("You have {} unseen notifications").format(len(messages))}}
-{% for msg in messages%}
+{% for msg in messages %}
 <div>
 <H3>{{fds(msg.created.date())}} {{msg.created.time().strftime('%H:%M')}}</H3>
 {{ar.parse_memo(msg.body)}}
 </div>
 {% endfor %}
-<body>
+{% endif %}
+</body>
