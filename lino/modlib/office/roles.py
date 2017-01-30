@@ -1,4 +1,4 @@
-# Copyright 2015-2016 Luc Saffre
+# Copyright 2015-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 """User roles for `lino.modlib.office`.
 
@@ -6,7 +6,7 @@
 
 from lino.core.roles import UserRole, SiteUser, SiteAdmin
 
-from lino_xl.lib.contacts.roles import ContactsUser, ContactsStaff
+# from lino_xl.lib.contacts.roles import ContactsUser, ContactsStaff
 # from lino.modlib.users.roles import AuthorshipTaker
 
 
@@ -32,7 +32,8 @@ class OfficeOperator(SiteUser):
     """
 
 
-class OfficeStaff(OfficeUser, OfficeOperator, ContactsStaff):
+# class OfficeStaff(OfficeUser, OfficeOperator, ContactsStaff):
+class OfficeStaff(OfficeUser, OfficeOperator):
     """A user who manages configuration of office functionality.
 
     """

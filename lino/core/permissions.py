@@ -172,7 +172,9 @@ def make_view_permission_handler_(
             #     print 20150831, profile.role, required_roles
             # if action.action_name == "export_excel":
             #     print 20150828, profile.role, required_roles
-            return profile.has_required_roles(required_roles)
+            v = profile.has_required_roles(required_roles)
+            # print("20170130", required_roles)
+            return v
         
         if not readonly:
             allow3 = allow
