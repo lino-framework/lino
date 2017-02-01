@@ -708,15 +708,13 @@ class Kernel(object):
         for each row. (Is there a possibility to do this in a single
         SQL query?)
     
-        Each yeld object has two special attributes:
+        Each yielded object has two special attributes:
     
         - `_message` : a textual description of the problem
         - `_todo` : 'delete', 'clear' or 'manual'
 
         Note: the "clear" action should not run automatically, at
         least not for :mod:`lino.modlib.changes`.
-
-        See also :ref:`lino.tutorial.watch`.
 
         """
         gfks = [f for f in self.GFK_LIST if f.model is model]

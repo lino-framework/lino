@@ -1,4 +1,4 @@
-# Copyright: Copyright 2011-2015 by Luc Saffre.
+# Copyright: Copyright 2011-2017 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """Two TestCase classes for writing tests be run using Django's test
@@ -17,6 +17,8 @@ from django.test import Client
 from django.db import connection, reset_queries
 from django.utils import translation
 
+import json
+from atelier.utils import AttrDict
 from lino.core.signals import testcase_setup, database_ready
 
 from .test import CommonTestCase
@@ -95,6 +97,33 @@ class DjangoManageTestCase(DjangoTestCase, CommonTestCase):
                 logger.warning("Unexpected SQL:---\n%s\n---", q['sql'])
             self.fail("Found unexpected SQL")
         reset_queries()
+
+    def get_json_dict(self, *args, **kwargs):
+        return self.client_json_dict(self.client.get, *args, **kwargs)
+    
+    def post_json_dict(self, *args, **kwargs):
+        return self.client_json_dict(self.client.post, *args, **kwargs)
+    
+    def put_json_dict(self, *args, **kwargs):
+        return self.client_json_dict(self.client.put, *args, **kwargs)
+    
+    def client_json_dict(self, meth, username, url, data, **extra):
+        """Send a POST or PUT to client with given username, url and data. The
+        client is expected to respond with a JSON encoded
+        response. Parse the response's content (which is expected to
+        contain a dict), convert this dict to an AttrDict before
+        returning it.
+
+        """
+        res = meth(url, data, REMOTE_USER=username, **extra)
+        if res.status_code != 200:
+            raise Exception("{} gave status code {} instead of 200".format(
+                url, res.status_code))
+        try:
+            d = json.loads(res.content)
+        except ValueError as e:
+            raise ValueError("Invalid JSON {} : {}".format(res.content, e))
+        return AttrDict(d)
 
 
 class WebIndexTestCase(DjangoManageTestCase):

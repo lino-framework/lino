@@ -22,6 +22,7 @@ from django.utils.translation import ugettext_lazy as _
 from lino import AFTER18
 from lino.core.utils import obj2str, full_model_name
 from lino.core.diff import ChangeWatcher
+from lino.core.utils import obj2unicode
 
 from lino.core import fields
 from lino.core import signals
@@ -30,6 +31,7 @@ from lino.core.utils import error2str
 from lino.core.utils import resolve_model
 from lino.utils.xmlgen.html import E
 from lino.utils import get_class_attr
+from lino.core.signals import on_ui_created, pre_ui_delete, pre_ui_save
 
 from .workflows import ChangeStateAction
 
@@ -524,7 +526,29 @@ class Model(models.Model):
         """
         pass
 
+    def save_new_instance(elem, ar):
+        pre_ui_save.send(sender=elem.__class__, instance=elem, ar=ar)
+        elem.before_ui_save(ar)
+        elem.save(force_insert=True)
+        # yes, `on_ui_created` comes *after* save()
+        on_ui_created.send(elem, request=ar.request)
+        # elem.after_ui_create(ar)
+        elem.after_ui_save(ar, None)
 
+    def save_watched_instance(elem, ar, watcher):
+        if watcher.is_dirty():
+            pre_ui_save.send(sender=elem.__class__, instance=elem, ar=ar)
+            elem.before_ui_save(ar)
+            elem.save(force_update=True)
+            watcher.send_update(ar.request)
+            ar.success(_("%s has been updated.") % obj2unicode(elem))
+        else:
+            ar.success(_("%s : nothing to save.") % obj2unicode(elem))
+        elem.after_ui_save(ar, watcher)
+
+    def delete_instance(self, ar):
+        pre_ui_delete.send(sender=self, request=ar.request)
+        self.delete()
 
     def get_row_permission(self, ar, state, ba):
         """Returns True or False whether this database object gives permission

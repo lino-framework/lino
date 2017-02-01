@@ -1,13 +1,11 @@
 # Copyright 2012-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Database models for `lino.modlib.changes`.
+"""Database models for this plugin.
 
 It defines the :class:`Change` model, and the functions
 :func:`watch_changes` and :func:`watch_all_changes`.  It also adds a
 menu entry to the `Explorer` menu.
-
-See also :ref:`lino.tutorial.watch`.
 
 """
 from builtins import object

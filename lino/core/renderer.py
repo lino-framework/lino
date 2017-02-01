@@ -598,6 +598,12 @@ class TextRenderer(HtmlRenderer):
         # return "**{0}**".format(text)
         return settings.SITE.obj2text_template.format(text)
 
+class TestRenderer(TextRenderer):
+    """Experimentally used in :mod:`lino_book.projects.watch.tests`.
+
+    """
+    def show_table(self, *args, **kwargs):
+        return self.table2story(*args, **kwargs)
 
 class MailRenderer(HtmlRenderer):
     """A renderer to be used when sending emails.

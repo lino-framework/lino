@@ -525,7 +525,7 @@ class Site(object):
 
     Default value is `None`, meaning that permission control is
     inactive: everything is permitted.  But note that
-    :meth:`set_user_model` sets it to :mod:`lino.modlib.users`.
+    :meth:`set_user_model` sets it to :mod:`lino.core.user_types`.
 
     This must be set if you want to enable permission control based on
     user roles defined in :attr:`Permittable.required_roles
@@ -541,7 +541,7 @@ class Site(object):
     For example::
 
         class Site(Site):
-            user_types_module = 'lino.modlib.users.roles'
+            user_types_module = 'myapp.user_types'
 
     Examples of such user profiles modules are
     :mod:`lino.modlib.users.roles` and
@@ -1929,7 +1929,7 @@ this field.
         #     raise Exception(msg)
         self.user_model = spec
         if self.user_types_module is None:
-            self.user_types_module = 'lino.modlib.users.roles'
+            self.user_types_module = 'lino.core.user_types'
             
     def get_auth_method(self):
         """Returns the authentication method used on this site. This is one of

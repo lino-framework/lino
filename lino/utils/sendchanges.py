@@ -3,6 +3,8 @@
 """Send an email to a configurable list of addresses when a
 configurable database item has been changed.
 
+This is deprecated and no longer being tested.
+
 Importing this module will add a receiver to the
 :attr:`on_ui_created <lino.core.signals.on_ui_created>`,
 :attr:`on_ui_updated <lino.core.signals.on_ui_updated>` and

@@ -33,7 +33,6 @@ from lino.core.utils import resolve_model
 from lino.core import layouts
 from lino.core import fields
 from lino.core import keyboard
-from lino.core.signals import on_ui_created, pre_ui_delete, pre_ui_save
 from lino.core.permissions import Permittable
 from lino.core.utils import Parametrizable, InstanceAction
 from lino.utils.jsgen import get_user_profile
@@ -596,16 +595,7 @@ class SaveRow(Action):
         ar.ah.store.form2obj(ar, ar.rqdata, elem, False)
         elem.full_clean()
 
-        if watcher.is_dirty():
-            pre_ui_save.send(sender=elem.__class__, instance=elem, ar=ar)
-            elem.before_ui_save(ar)
-            elem.save(force_update=True)
-            watcher.send_update(ar.request)
-            ar.success(_("%s has been updated.") % obj2unicode(elem))
-        else:
-            ar.success(_("%s : nothing to save.") % obj2unicode(elem))
-
-        elem.after_ui_save(ar, watcher)
+        elem.save_watched_instance(ar, watcher)
 
         # TODO: in fact we need *either* `rows` (when this was called
         # from a Grid) *or* `goto_instance` (when this was called from a
@@ -660,14 +650,12 @@ class SubmitDetail(SaveRow):
 
     def run_from_ui(self, ar, **kw):
         # logger.info("20140423 SubmitDetail")
-        elem = ar.selected_rows[0]
-        # ar.form2obj_and_save(ar.rqdata, elem, False)
-        self.save_existing_instance(elem, ar)
-        if ar.actor.stay_in_grid:
-            ar.close_window()
-            return
-        ar.goto_instance(elem)
-
+        for elem in ar.selected_rows:
+            self.save_existing_instance(elem, ar)
+            if ar.actor.stay_in_grid:
+                ar.close_window()
+            else:
+                ar.goto_instance(elem)
 
 class CreateRow(Action):
     """Called when user edited a cell of a phantom record in a grid.
@@ -685,13 +673,7 @@ class CreateRow(Action):
         self.save_new_instance(ar, elem)
 
     def save_new_instance(self, ar, elem):
-        pre_ui_save.send(sender=elem.__class__, instance=elem, ar=ar)
-        elem.before_ui_save(ar)
-        elem.save(force_insert=True)
-        # yes, `on_ui_created` comes *after* save()
-        on_ui_created.send(elem, request=ar.request)
-        # elem.after_ui_create(ar)
-        elem.after_ui_save(ar, None)
+        elem.save_new_instance(ar)
         ar.success(_("%s has been created.") % obj2unicode(elem))
 
         if ar.actor.handle_uploaded_files is None:
@@ -869,8 +851,7 @@ class DeleteSelected(MultipleRowAction):
                 _("Are you sure ?")))
 
     def run_on_row(self, obj, ar):
-        pre_ui_delete.send(sender=obj, request=ar.request)
-        obj.delete()
+        obj.delete_instance(ar)
         return 1
 
 

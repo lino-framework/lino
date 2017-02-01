@@ -137,6 +137,7 @@ class DocTest(unittest.TestCase):
                 res = doctest.testfile(fn, **kwargs)
                 if res.failed:
                     self.fail("Failed doctest %s" % fn)
+                    return
             else:
                 self.fail("No such file: %s" % fn)
 

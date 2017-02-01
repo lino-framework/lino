@@ -242,7 +242,6 @@ and uploads."""),
     'lino.modlib.office.roles.OfficeOperator' : _("""A user who manages office functionality for other users (but not
 for himself)."""),
     'lino.modlib.office.roles.OfficeStaff' : _("""A user who manages configuration of office functionality."""),
-    'lino.modlib.office.roles.SiteAdmin' : _("""A user with all permissions."""),
     'lino.modlib.plausibility.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.plausibility.Plugin.responsible_user' : _("""The username
 of the main plausibility responsible, i.e. a designated
@@ -402,9 +401,8 @@ yet. And SiteAdmin users don't need to specify this at all."""),
     'lino.modlib.users.actions.ChangePassword.new1' : _("""The new password."""),
     'lino.modlib.users.actions.ChangePassword.new2' : _("""The new password a second time. Both passwords must match."""),
     'lino.modlib.users.choicelists.UserType' : _("""Base class for all user profiles."""),
-    'lino.modlib.users.choicelists.UserType.roles' : _("""The roles of users having this type. This is a tuple of
-instance of <lino.core.roles.UserRole> or some
-subclass thereof."""),
+    'lino.modlib.users.choicelists.UserType.role' : _("""The role of users having this type. This is an instance of
+<lino.core.roles.UserRole> or some subclass thereof."""),
     'lino.modlib.users.choicelists.UserType.readonly' : _("""Whether users of this type get only write-proteced access."""),
     'lino.modlib.users.choicelists.UserType.hidden_languages' : _("""A subset of languages
 which should be hidden for users of this type.  Default value
