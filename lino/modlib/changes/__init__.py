@@ -2,7 +2,7 @@
 # License: BSD (see file COPYING for details)
 
 """Adds functionality for recording database changes into a database
-table.  See :ref:`lino.tutorial.watch` for an introduction.
+table.  See :ref:`dev.watch` for an introduction.
 
 .. autosummary::
    :toctree:

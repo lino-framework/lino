@@ -1,4 +1,4 @@
-# Copyright 2015-2016 Luc Saffre
+# Copyright 2015-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Defines a default set of user profiles "Anonymous", "User" and
@@ -10,8 +10,7 @@ e.g.  :mod:`lino.projects.min1` and :mod:`lino.projects.min2`.
 
 """
 
-from django.utils.translation import ugettext_lazy as _
-from lino.core.roles import UserRole, SiteUser, SiteAdmin
+from lino.core.roles import SiteUser
 
 class Helper(SiteUser):
     """Somebody who can help others by running :class:`AssignToMe`
@@ -25,12 +24,3 @@ class AuthorshipTaker(SiteUser):
 
     """
 
-from .choicelists import UserTypes
-
-
-UserTypes.clear()  # e.g. Sphinx autodoc might import other user types
-                   # modules.
-add = UserTypes.add_item
-add('000', _("Anonymous"), UserRole, name='anonymous', readonly=True)
-add('100', _("User"), SiteUser, name='user')
-add('900', _("Administrator"), SiteAdmin, name='admin')

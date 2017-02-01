@@ -739,9 +739,14 @@ class PseudoRequest(object):
             cw.send_update(REQUEST)
 
     """
+    method = 'GET'
+    subst_user = None
+    requesting_panel = None
+    
     def __init__(self, username):
         self.username = username
         self._user = None
+        self.GET = QueryDict('')
 
     def get_user(self):
         if self._user is None:

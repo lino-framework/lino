@@ -19,11 +19,10 @@ from lino.api import dd, _
 class UserType(Choice):
     """Base class for all user profiles.
 
-    .. attribute:: roles
+    .. attribute:: role
 
-        The roles of users having this type. This is a tuple of
-        instance of :class:`<lino.core.roles.UserRole>` or some
-        subclass thereof.
+        The role of users having this type. This is an instance of
+        :class:`<lino.core.roles.UserRole>` or some subclass thereof.
 
     .. attribute:: readonly
 
@@ -38,7 +37,7 @@ class UserType(Choice):
 
     """
 
-    roles = None
+    role = None
     hidden_languages = None
     readonly = False
 
@@ -54,9 +53,9 @@ class UserType(Choice):
         #         + self.__class__.__name__
         super(UserType, self).__init__(value, text, name)
         if isinstance(role_class, (tuple, list)):
-            self.roles = set([rc() for rc in role_class])
-        else:
-            self.roles = set([role_class()])
+            raise Exception("No longer supported")
+            # self.roles = set([rc() for rc in role_class])
+        self.role = role_class()
         self.readonly = readonly
         self.kw = kw
 
@@ -93,11 +92,8 @@ class UserType(Choice):
         satisfies the specified requirements.  
 
         """
-        for role in self.roles:
-            if role.satisfies_requirement(required_roles):
-                return True
-            
-        return False
+        # for role in self.roles:
+        return self.role.satisfies_requirement(required_roles)
 
 
 ##

@@ -392,8 +392,13 @@ request from it.
 
         """
         #~ print 20131003, selected_pks
-        self.selected_rows = [
-            self.get_row_by_pk(pk) for pk in selected_pks if pk]
+        self.selected_rows = []
+        for pk in selected_pks:
+            if pk:
+                obj = self.get_row_by_pk(pk)
+                if obj is not None:
+                    self.selected_rows.append(obj)
+        # self.selected_rows = filter(lambda x: x, self.selected_rows)
         # note: ticket #523 was because the GET contained an empty pk ("&sr=")
 
     def get_permission(self):
