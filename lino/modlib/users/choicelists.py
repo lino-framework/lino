@@ -120,7 +120,7 @@ class UserTypes(ChoiceList):
     verbose_name_plural = _("User types")
     show_values = True
     max_length = 20
-    # column_names = "value name text readonly"
+    column_names = "value name text user_role"
 
     preferred_foreignkey_width = 20
 
@@ -132,6 +132,10 @@ class UserTypes(ChoiceList):
     attached choice item.
 
     """
+
+    @dd.displayfield(_("User role"))
+    def user_role(cls, obj, ar):
+        return str(obj.role.__class__)
 
 # add = UserTypes.add_item
 # add('000', _("Anonymous"), UserRole, 'anonymous', readonly=True)
