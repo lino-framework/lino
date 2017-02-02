@@ -543,9 +543,9 @@ class Site(object):
         class Site(Site):
             user_types_module = 'myapp.user_types'
 
-    Examples of such user profiles modules are
-    :mod:`lino.modlib.users.roles` and
-    :mod:`lino_noi.projects.noi.roles`.
+    Examples of such user types modules are
+    :mod:`lino.core.user_types` and
+    :mod:`lino_noi.lib.noi.user_types`.
 
     """
 
