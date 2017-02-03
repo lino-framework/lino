@@ -707,7 +707,7 @@ class Site(object):
     # demo_fixtures = ['std', 'demo', 'demo2']
     demo_fixtures = []
     """
-    The list of fixtures to be loaded by the :manage:`initdb_demo`
+    The list of fixtures to be loaded by the :manage:`prep`
     command.
 
     """

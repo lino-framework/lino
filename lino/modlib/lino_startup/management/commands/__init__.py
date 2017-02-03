@@ -7,7 +7,7 @@
     diag
     dump2py
     initdb
-    initdb_demo
+    prep
     mergedata
     monitor
     run

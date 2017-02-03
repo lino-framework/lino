@@ -135,7 +135,7 @@ class UserTypes(ChoiceList):
 
     @dd.displayfield(_("User role"))
     def user_role(cls, obj, ar):
-        return str(obj.role.__class__)
+        return obj.role.__class__.__module__ + '.' + obj.role.__class__.__name__
 
 # add = UserTypes.add_item
 # add('000', _("Anonymous"), UserRole, 'anonymous', readonly=True)
