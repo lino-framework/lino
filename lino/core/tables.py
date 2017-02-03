@@ -183,14 +183,20 @@ class AbstractTable(actors.Actor):
     This string must not contain any newline characters because a
     ColumnsLayout's `main` panel descriptor must be horizontal.
 
-    Default value is ``'*'``.  This wildcard character means "all
-    columns which have not been named explicitly". It can be combined
-    with explicitly specified names. For example::
+    Default value is ``'*'``. Where all columns are included.
+    This wildcard character means "all columns which have not been
+    named explicitly can be selected by the user and inserted at
+    this point". It can be combined with explicitly specified names.
+
+    For example::
 
       column_names = "name owner * date"
 
-    specifies that `name` and `owner` come first, followed by all
-    other columns and finally by `date`.
+    specifies that `name` and `owner` come first, followed by inserted
+    columns and finally by `date`.
+
+    If ``'*'`` is not present in the string only explicitly named
+    columns will be available. 
 
     See also :meth:`setup_column` and :meth:`get_column_names`.
 
