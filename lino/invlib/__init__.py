@@ -10,11 +10,8 @@ Tasks
 
 .. command:: inv prep
 
-    Prepare a test run. This currently just runs :manage:`initdb_demo`
+    Prepare a test run. This currently just runs :manage:`prep`
     on every demo project :attr:`config.demo_projects`.
-
-    Note: Don't mix up :manage:`initdb_demo` with :manage:`initdb`.
-
 
 
 Configuration settings

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2016 Luc Saffre
+# Copyright 2008-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 r""" Utilities for manipulating *Belgian national identification
@@ -111,7 +111,6 @@ Functions
 from __future__ import division
 from builtins import str
 
-from django.utils import six
 from past.utils import old_div
 
 
@@ -183,11 +182,9 @@ def is_valid_ssin(ssin):
     """
     Returns True if this is a valid SSIN.
     """
-    try:
-        ssin_validator(ssin)
-        return True
-    except ValidationError:
+    if ssin_veto(ssin):
         return False
+    return True
 
 
 def new_format_ssin(s):
@@ -260,14 +257,17 @@ def ssin_validator(ssin):
     ValidationError.
 
     """
+    msg = ssin_veto(ssin)
+    if msg:
+        raise ValidationError(msg)
+    
+def ssin_veto(ssin):
     ssin = ssin.strip()
     if not ssin:
-        return ''
+        return
     if len(ssin) != 13:
-        raise ValidationError(
-            force_text(_('Invalid SSIN %s : ') % (ssin))
-            + force_text(_('A formatted SSIN must have 13 positions'))
-        )
+        return force_text(_('Invalid SSIN %s : ') % (ssin)) + \
+            force_text(_('A formatted SSIN must have 13 positions'))
     xtest = ssin[:6] + ssin[7:10]
     if ssin[10] == "=":
         #~ print 'yes'
@@ -275,16 +275,14 @@ def ssin_validator(ssin):
     try:
         xtest = int(xtest)
     except ValueError as e:
-        raise ValidationError(_('Invalid SSIN %s : ') % ssin + str(e))
+        return _('Invalid SSIN %s : ') % ssin + str(e)
     xtest = abs((xtest - 97 * (int(old_div(xtest, 97)))) - 97)
     if xtest == 0:
         xtest = 97
     found = int(ssin[11:13])
     if xtest != found:
-        raise ValidationError(
-            force_text(_("Invalid SSIN %s :") % ssin)
+        return force_text(_("Invalid SSIN %s :") % ssin) \
             + _("Check digit is %(found)d but should be %(expected)d") % dict(
                 expected=xtest, found=found)
-        )
-    return
+
 

@@ -5,6 +5,7 @@
 """
 
 .. management_command:: initdb_demo
+.. management_command:: prep
 
 Calls :manage:`initdb` using the application's
 :attr:`lino.core.site.Site.demo_fixtures`.

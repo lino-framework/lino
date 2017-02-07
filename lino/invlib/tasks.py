@@ -41,8 +41,8 @@ def run_in_demo_projects(ctx, admin_cmd, *more, **args):
 
 
 @task(name='prep')
-def initdb_demo(ctx, cov=False):
-    """Run `manage.py initdb_demo` on every demo project."""
+def prep(ctx, cov=False):
+    """Run `manage.py prep` on every demo project."""
     if cov:
         # covfile = ctx.root_dir.child('.coveragerc')
         # if not covfile.exists():
@@ -50,12 +50,12 @@ def initdb_demo(ctx, cov=False):
         #     return
         # os.environ['COVERAGE_PROCESS_START'] = covfile
         ctx.run('coverage erase', pty=True)
-        run_in_demo_projects(ctx, 'initdb_demo', "--noinput", '--traceback', "--noreload", cov=cov)
+        run_in_demo_projects(ctx, 'prep', "--noinput", '--traceback', "--noreload", cov=cov)
     else:
-        run_in_demo_projects(ctx, 'initdb_demo', "--noinput", '--traceback', cov=cov)
+        run_in_demo_projects(ctx, 'prep', "--noinput", '--traceback', cov=cov)
 
 
-@task(name='cov', pre=[tasks.call(initdb_demo, cov=True)])
+@task(name='cov', pre=[tasks.call(prep, cov=True)])
 def run_tests_coverage(ctx, html=True, html_cov_dir='htmlcov'):
     """Run all tests and create a coverage report.
 

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2015 Luc Saffre
+# Copyright 2008-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Defines the :class:`Language` model.
@@ -14,7 +14,7 @@ from lino.api import dd
 from lino import mixins
 from django.utils.translation import ugettext_lazy as _
 
-from lino.modlib.office.roles import OfficeUser
+from lino.modlib.office.roles import OfficeStaff
 
 
 class Language(mixins.BabelNamed):
@@ -30,6 +30,6 @@ class Language(mixins.BabelNamed):
 
 class Languages(dd.Table):
     model = 'languages.Language'
-    required_roles = dd.required(OfficeUser)
+    required_roles = dd.required(OfficeStaff)
 
 
