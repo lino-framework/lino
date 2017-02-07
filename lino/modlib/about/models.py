@@ -22,9 +22,11 @@ from django.conf import settings
 
 from lino.utils.report import EmptyTable
 from lino.utils import AttrDict
+from lino.core.utils import get_models
 
 from lino.utils.code import codetime, codefiles, SourceFile
 from lino.utils.xmlgen.html import E
+from lino.utils import join_elems
 
 from lino.api import rt, dd
 
@@ -33,7 +35,7 @@ class Models(dd.VirtualTable):
     label = _("Models")
     # column_defaults = dict(width=8)
     # column_names = "app name verbose_name docstring rows"
-    column_names = "app name docstring rows detail_action"
+    column_names = "app name fields #docstring tables rows detail_action"
     detail_layout = """
     app name docstring rows
     about.FieldsByModel
@@ -44,7 +46,7 @@ class Models(dd.VirtualTable):
     @classmethod
     def get_data_rows(self, ar):
         # profile = ar.get_user().profile
-        for model in models.get_models():
+        for model in get_models():
             if True:
                 # print model
                 yield model
@@ -61,12 +63,20 @@ class Models(dd.VirtualTable):
     def name(self, obj, ar):
         return obj.__name__
 
-    # @dd.displayfield(_("Detail Action"))
-    @dd.displayfield()
+    @dd.displayfield(_("Detail Action"))
     def detail_action(self, obj, ar):
         if obj.get_default_table().detail_action is None:
             return ''
         return obj.get_default_table().detail_action.full_name()
+
+    @dd.displayfield(_("Tables"))
+    def tables(self, obj, ar):
+        # tables = obj._lino_slaves.values()
+        def fmt(tbl):
+            url = tbl.__module__ + '.' + tbl.__name__
+            return E.a(tbl.__name__, href=url)
+        return join_elems([fmt(tbl) for tbl in obj._lino_tables])
+        # return obj.get_default_table().detail_action.full_name()
 
     # @dd.displayfield(_("verbose name"))
     # def vebose_name(self,obj,ar):
@@ -80,8 +90,11 @@ class Models(dd.VirtualTable):
     @dd.requestfield(_("Rows"))
     def rows(self, obj, ar):
         return obj.get_default_table().request(
-            ar.ui,
             user=ar.get_user(), renderer=ar.renderer)
+
+    @dd.displayfield(_("Fields"))
+    def fields(self, obj, ar):
+        return ' '.join([f.name for f in obj._meta.get_fields()])
 
 
 class FieldsByModel(dd.VirtualTable):
@@ -171,6 +184,8 @@ class Inspector(dd.VirtualTable):
                 return True
 
         o = self.get_inspected(ar.param_values.inspected)
+        # print(20170207, o)
+        
         if isinstance(o, (list, tuple)):
             for i, v in enumerate(o):
                 k = "[" + str(i) + "]"
@@ -182,6 +197,10 @@ class Inspector(dd.VirtualTable):
             for k, v in list(o.items()):
                 k = "[" + repr(k) + "]"
                 yield Inspected(o, '', k, v)
+        elif isinstance(o, type) and issubclass(o, models.Model):
+            for fld in o._meta.get_fields():
+                k = "._meta.get_field('" + fld.name + "')"
+                yield Inspected(o, '', fld.name, fld)
         else:
             for k in dir(o):
                 if not k.startswith('__'):
@@ -205,9 +224,9 @@ class Inspector(dd.VirtualTable):
         else:
             pv.update(inspected=obj.name)
         # newreq = ar.spawn(ar.ui,user=ar.user,renderer=ar.renderer,param_values=pv)
-        newreq = ar.spawn(param_values=pv)
-        return ar.href_to_request(newreq, obj.name)
-        # return obj.name
+        # newreq = ar.spawn_request(param_values=pv)
+        # return ar.href_to_request(newreq, obj.name)
+        return obj.name
 
     @dd.displayfield(_("Value"))
     def i_value(self, obj, ar):

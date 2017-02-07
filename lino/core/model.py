@@ -231,6 +231,7 @@ class Model(models.Model):
     """
 
     _widget_options = {}
+    _lino_tables = []
 
     def as_list_item(self, ar):
         return E.li(str(self))
@@ -1132,7 +1133,7 @@ LINO_MODEL_ATTRIBS = (
     'error2str',
     'get_typed_instance',
     'print_subclasses_graph',
-    'grid_post', 'submit_insert', 'delete_veto_message')
+    'grid_post', 'submit_insert', 'delete_veto_message', '_lino_tables')
 
 
 from lino.core.signals import receiver

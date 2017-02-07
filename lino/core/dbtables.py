@@ -175,9 +175,12 @@ def register_report(rpt):
     # rptname_choices.append(rpt.actor_id)
     
     if issubclass(rpt, Table):
+        lst = rpt.model._lino_tables + [rpt]
+        rpt.model._lino_tables = lst
         if rpt.master is None:
             if not rpt.model._meta.abstract:
                 # logger.debug("20120102 register %s : master report", rpt.actor_id)
+                # rpt.model._lino_tables.append(rpt)
                 master_reports.append(rpt)
             if not '_lino_default_table' in rpt.model.__dict__:
                 if is_candidate(rpt):
