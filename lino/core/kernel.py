@@ -375,9 +375,6 @@ class Kernel(object):
                         msg = "20150824 {1} (needed by {0}) "\
                               "has no _lino_ddh"
                         raise Exception(msg.format(f.rel, f.rel.model))
-                    # f.rel.model._lino_ddh.add_fk(f.model, f)
-                    # m = f.model._meta.concrete_model
-                    # f.rel.model._lino_ddh.add_fk(m, f)
                     f.rel.model._lino_ddh.add_fk(m or model, f)
 
         self.protect_foreignkeys(models_list)
@@ -394,6 +391,9 @@ class Kernel(object):
         # keep_volatiles
 
         site.setup_actions()
+
+        if site.custom_layouts_module:
+            import_module(site.custom_layouts_module)
 
         for model in models_list:
 
@@ -460,7 +460,9 @@ class Kernel(object):
 
         site.setup_layouts()
 
-        site.on_each_app('site_setup')  # deprecated
+        site.on_each_app('site_setup')
+        # Deprecated. Use custom_layouts_module instead.
+
 
         # Actor.after_site_setup() is called after the plugins's
         # site_setup().  Example: pcsw.site_setup() adds a detail to
@@ -488,11 +490,6 @@ class Kernel(object):
 
         site.resolve_virtual_fields()
 
-        self.code_mtime = codetime()
-        # We set `code_mtime` only after kernel_startup() because
-        # codetime watches only those modules which are already
-        # imported.
-
         self.memo_parser = Parser()
 
         def url2html(parser, s):
@@ -504,6 +501,11 @@ class Kernel(object):
             return '<a href="%s" target="_blank">%s</a>' % (url, text)
 
         self.memo_parser.register_command('url', url2html)
+
+        self.code_mtime = codetime()
+        # We set `code_mtime` only after kernel_startup() because
+        # codetime watches only those modules which are already
+        # imported.
 
         if 'LINO_BUILD_CACHE_ON_STARTUP' in os.environ:
             site.build_js_cache_on_startup = True

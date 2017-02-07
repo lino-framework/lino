@@ -589,7 +589,7 @@ class Model(models.Model):
         into a `<DIV>`.
 
         """
-        return []
+        return [ar.obj2html(self)]
 
     @classmethod
     def on_analyze(cls, site):

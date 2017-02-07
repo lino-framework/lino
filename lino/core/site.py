@@ -549,6 +549,12 @@ class Site(object):
 
     """
 
+    custom_layouts_module = None
+    """The full Python path of the **custom layouts module** used on this
+    site.
+
+    """
+
     legacy_data_path = None
     """
     Used by custom fixtures that import data from some legacy
