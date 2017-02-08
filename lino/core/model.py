@@ -541,7 +541,7 @@ class Model(models.Model):
             pre_ui_save.send(sender=elem.__class__, instance=elem, ar=ar)
             elem.before_ui_save(ar)
             elem.save(force_update=True)
-            watcher.send_update(ar.request)
+            watcher.send_update(ar)
             ar.success(_("%s has been updated.") % obj2unicode(elem))
         else:
             ar.success(_("%s : nothing to save.") % obj2unicode(elem))
@@ -731,7 +731,7 @@ class Model(models.Model):
         row.save()
         target_state.choicelist.after_state_change(row, ar, old, target_state)
         row.after_state_change(ar, old, target_state)
-        watcher.send_update(ar.request)
+        watcher.send_update(ar)
         row.after_ui_save(ar, watcher)
 
     def after_send_mail(self, mail, ar, kw):

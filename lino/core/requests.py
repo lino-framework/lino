@@ -927,7 +927,7 @@ request from it.
                 on_ui_created.send(elem, request=ar.request)
                 ar.success(_("%s has been created.") % obj2unicode(elem))
             else:
-                watcher.send_update(ar.request)
+                watcher.send_update(ar)
                 ar.success(_("%s has been updated.") % obj2unicode(elem))
         else:
             ar.success(_("%s : nothing to save.") % obj2unicode(elem))

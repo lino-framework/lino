@@ -105,9 +105,10 @@ class ChangeWatcher(object):
                 return True
         return False
 
-    def send_update(self, request):
+    def send_update(self, ar):
         #~ print "ChangeWatcher.send_update()", self.watched
         on_ui_updated.send(
-            sender=self.watched.__class__, watcher=self, request=request)
+            sender=self.watched.__class__, watcher=self,
+            request=ar)
 
 

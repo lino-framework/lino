@@ -73,7 +73,7 @@
               <lino.core.utils.ChangeWatcher>` object (which contains
               the model instance and information about the changes)
 
-    :request: the HttpRequest object
+    :request: the BaseRequest object
     
 .. data:: pre_merge
     

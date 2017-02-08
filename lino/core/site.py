@@ -17,13 +17,9 @@
 
 """
 from __future__ import unicode_literals, print_function
-# from future import standard_library
-# standard_library.install_aliases()
 from builtins import map
 import six
-# str = six.text_type
 from builtins import str
-# from builtins import object
 
 import os
 import sys
@@ -3455,7 +3451,8 @@ signature as `django.core.mail.EmailMessage`.
                 "Ignoring email '%s' because sender is %s", subject, sender)
             print(PRINT_EMAIL.format(
                 subject=subject, sender=sender, body=body,
-                recipients=', '.join(recipients)))
+                recipients=u', '.join(recipients)).encode(
+                    'ascii', 'replace'))
             return
 
         recipients = [a for a in recipients if '@example.com' not in a]

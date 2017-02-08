@@ -1,6 +1,7 @@
-# -*- coding: UTF-8 -*-
-# Copyright 2016 Luc Saffre
+# Copyright 2016-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
+
+from __future__ import unicode_literals
 
 from builtins import str
 from django.conf import settings
