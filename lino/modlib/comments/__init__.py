@@ -33,3 +33,6 @@ class Plugin(ad.Plugin):
         mg = site.plugins.office
         m = m.add_menu(mg.app_label, mg.verbose_name)
         m.add_action('comments.Comments')
+
+    def get_dashboard_items(self, user):
+        yield self.site.actors.comments.RecentComments
