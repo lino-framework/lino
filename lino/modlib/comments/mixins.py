@@ -19,8 +19,8 @@ class Commentable(dd.Model):
     private = models.BooleanField(_("Private"), default=False)
     
     def get_rfc_description(self, ar):
-        """Return a HTML formatted string with the description of this RFC as
-        it should be displayed by the slave summary of
+        """Return a HTML formatted string with the description of this
+        Commentable as it should be displayed by the slave summary of
         CommentsByOwner.
 
         It must be a string and not an etree element. That's because
