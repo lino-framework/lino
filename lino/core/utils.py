@@ -742,6 +742,7 @@ class PseudoRequest(object):
     method = 'GET'
     subst_user = None
     requesting_panel = None
+    success = None
     
     def __init__(self, username):
         self.username = username
