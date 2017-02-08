@@ -81,6 +81,8 @@ class RecentComments(Comments):
         html = ""
 
         items = [o.as_li(ar) for o in sar]
+        # html += "<p>" + E.tostring(btn) + "</p>"
+        
         if len(items) > 0:
             html += u"<div>{0}</div>".format(''.join(items))
 

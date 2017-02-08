@@ -1,4 +1,4 @@
-# Copyright 2013-2016 Luc Saffre
+# Copyright 2013-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -23,6 +23,15 @@ class Plugin(ad.Plugin):
     verbose_name = _("Comments")
 
     needs_plugins = ['lino.modlib.office']
+
+    commentable_model = None
+
+    def on_site_startup(self, site):
+        if self.commentable_model is not None:
+            self.commentable_model = site.models.resolve(
+                self.commentable_model)
+        super(Plugin, self).on_site_startup(site)
+    
 
     def setup_main_menu(config, site, profile, m):
         mg = site.plugins.office
