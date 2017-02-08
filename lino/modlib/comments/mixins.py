@@ -1,22 +1,26 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015-2016 Luc Saffre
+# Copyright 2015-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 """Database models for `lino.modlib.comments`.
 
 """
 from builtins import object
 
-from lino.api import dd
+from django.db import models
+
+from lino.api import dd, _
 
 
-class RFC(dd.Model):
+class Commentable(dd.Model):
     """A request for comment. Every database model of an application"""
     class Meta(object):
         abstract = True
 
+    private = models.BooleanField(_("Private"), default=False)
+    
     def get_rfc_description(self, ar):
-        """Return a HTML formatted string with the description of this RFC as
-        it should be displayed by the slave summary of
+        """Return a HTML formatted string with the description of this
+        Commentable as it should be displayed by the slave summary of
         CommentsByOwner.
 
         It must be a string and not an etree element. That's because
@@ -27,4 +31,4 @@ class RFC(dd.Model):
         """
         return ''
 
-
+        

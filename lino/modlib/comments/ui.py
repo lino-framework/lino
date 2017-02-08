@@ -55,6 +55,40 @@ class CommentsByX(Comments):
 USE_ETREE = False
 
 
+class RecentComments(Comments):
+    """Shows the comments for a given database object.
+
+    .. attribute:: slave_summary
+
+
+    """
+
+    required_roles = set([])
+    column_names = "short_text created user *"
+    stay_in_grid = True
+    order_by = ["-created"]
+    label = "Recent Comments"
+
+    @classmethod
+    def get_slave_summary(self, obj, ar):
+        """The :meth:`summary view <lino.core.actors.Actor.get_slave_summary>`
+        for :class:`RecentComments`.
+
+        """
+        sar = self.request_from(ar, master_instance=obj)
+
+        # print "20170208", sar, obj, sar
+        html = ""
+
+        items = [o.as_li(ar) for o in sar]
+        # html += "<p>" + E.tostring(btn) + "</p>"
+        
+        if len(items) > 0:
+            html += u"<div>{0}</div>".format(''.join(items))
+
+        return ar.html_text(html)
+
+
 class CommentsByRFC(CommentsByX):
     """Shows the comments for a given database object.
 
