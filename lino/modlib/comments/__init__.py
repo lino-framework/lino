@@ -9,7 +9,7 @@ Add comments to any model instance.
 
     models
     mixins
-    fixtures.demo
+    fixtures.demo2
 
 """
 
