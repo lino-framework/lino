@@ -27,6 +27,8 @@ notifications:
   email:
     recipients:
         #tonis.piip@gmail.com
-        - secure: K86wAaWqn9JW9uwaMfM6A1XMVY3aiz7+9PiFLJLH8QbQSHlSxvRpLtUzB6COZnyLSDbmbpXaMZfccL7Rz3YntjnOE8FEP2g453rL97suF58sUxqgNm40FNth++RgZNsIDDkHjovwbknVPVt2OXvgI6lHX+rA52Icgka1oe4I/is=
+        - secure: EpnJWwQ4myD7BqduLffWkbrZsaHqWqNr+xeaQKfgON1Z7TOT/ML3qWVR+hr+v7ZkxCuGv0GRjbyVNTeRW7sEhwo4nsmuvR+7w4BpCjXhWuL71fkq0zIdwViapoY91InJHeKIJi9FzKAJEhmm0VWuj9ouHF28AUKJKFJQ01EHrCE=
         #luc.saffre@gmail.com
         - secure: PI5TM+LEssN/WbnMmRylCnEkhmME/VmyKcFik25cZvnfKQcqp9gHTZ6xCVSFbPFF12u+RCohqs/joA7xMaBlVVmCwU8NNubw75xO8apLoaCcAAOMy/mRLDIpNDzRELt+LLp7HNyjvOT8nf1xmTfrbX/44ImJjHfIdgT6UPGhr+o=
+    on_success: change
+    on_failure: always
