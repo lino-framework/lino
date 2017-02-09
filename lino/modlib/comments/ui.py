@@ -79,8 +79,13 @@ class RecentComments(Comments):
 
         # print "20170208", sar, obj, sar
         html = ""
-
-        items = [o.as_li(ar) for o in sar]
+        items = []
+        for o in sar:
+            li = o.as_li(ar)
+            if o.owner: #Catch for ownerless hackerish comments
+                #Not to happy with this, but since the str repersention is done in as_li no choice. 
+                li=li.replace("</li>", " On: " + E.tostring(ar.obj2html(o.owner)) + "</li>")
+            items.append(li)
         # html += "<p>" + E.tostring(btn) + "</p>"
         
         if len(items) > 0:
