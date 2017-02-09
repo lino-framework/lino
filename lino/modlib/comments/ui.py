@@ -4,6 +4,7 @@
 """Database models for `lino.modlib.comments`.
 
 """
+from __future__ import unicode_literals
 
 import logging
 logger = logging.getLogger(__name__)
@@ -83,13 +84,13 @@ class RecentComments(Comments):
         for o in sar:
             li = o.as_li(ar)
             if o.owner: #Catch for ownerless hackerish comments
-                #Not to happy with this, but since the str repersention is done in as_li no choice. 
-                li=li.replace("</li>", " On: " + E.tostring(ar.obj2html(o.owner)) + "</li>")
-            items.append(li)
+                li += _(" On: ") + E.tostring(ar.obj2html(o.owner))
+                
+            items.append("<li>{}</li>".format(li))
         # html += "<p>" + E.tostring(btn) + "</p>"
         
         if len(items) > 0:
-            html += u"<div>{0}</div>".format(''.join(items))
+            html += "<div>{0}</div>".format(''.join(items))
 
         return ar.html_text(html)
 
@@ -119,7 +120,7 @@ class CommentsByRFC(CommentsByX):
             btn = sar.ar2button(None, _("Write comment"), icon_name=None)
             html += "<p>" + E.tostring(btn) + "</p>"
 
-        items = [o.as_li(ar) for o in sar]
+        items = ["<li>{}</li>".format(o.as_li(ar)) for o in sar]
         if len(items) > 0:
             html += u"<ul>{0}</ul>".format(''.join(items))
 

@@ -96,7 +96,8 @@ class Comment(CreatedModified, UserAuthored, # Controllable,
     #     return self.owner
 
     def as_li(self, ar):
-        """Return this comment as a list item. 
+        """Return this comment for usage in a list item as a string with HTML
+        tags .
 
         """
         chunks = [ar.parse_memo(self.short_text)]
@@ -109,7 +110,8 @@ class Comment(CreatedModified, UserAuthored, # Controllable,
             chunks.append(" (...)")
 
         html = ''.join(chunks)
-        return "<li>" + html + "</li>"
+        return html
+        # return "<li>" + html + "</li>"
 
 dd.update_field(Comment, 'user', editable=False)
 
