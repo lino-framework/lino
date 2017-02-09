@@ -166,7 +166,8 @@ class Message(UserAuthored, Controllable, Created):
             cls, ar, owner, message_type, msg_func, recipients):
         """Create one database object for every recipient.
 
-        `recipients` is a list of `(user, mail_mode)` tuples.
+        `recipients` is a list of `(user, mail_mode)` tuples. Items
+        with duplicate or empty user are removed.
 
         `msg_func` is a callable expected to return a tuple (subject,
         body). It is called for each recipient (in the recipient's
@@ -177,11 +178,15 @@ class Message(UserAuthored, Controllable, Created):
 
         """
         # dd.logger.info("20160717 %s emit_messages()", self)
+        # remove recipients without user:
+        if ar is None:
+            me = None
+        else:
+            me = ar.get_user()
         others = set()
-        me = ar.get_user()
         for user, mm in recipients:
             if user:
-                if user != me or me.notify_myself:
+                if me is None or me.notify_myself or user != me:
                     others.add((user, mm))
 
         if len(others):

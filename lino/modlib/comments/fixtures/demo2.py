@@ -10,10 +10,14 @@ from lino.api import rt, dd
 
 
 def objects():
+    if dd.plugins.comments.commentable_model is None:
+        return
     OWNERS = Cycler(dd.plugins.comments.commentable_model.objects.all())
+    if len(OWNERS) == 0:
+        return
     Comment = rt.models.comments.Comment
     User = rt.models.users.User
-    for i in range(5):
+    for i in range(2):
         for u in User.objects.all():
             owner = OWNERS.pop()
             if owner.private:

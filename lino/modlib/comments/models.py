@@ -22,8 +22,13 @@ from lino.modlib.notify.mixins import ChangeObservable
 from lino.utils.xmlgen.html import E
 from lino.mixins.bleached import Bleached
 from lino.core.roles import SiteUser
-from lino.core.gfks import gfk2lookup
+# from lino.core.gfks import gfk2lookup
 
+try:    
+    commentable_model = dd.plugins.comments.commentable_model
+except AttributeError:
+    commentable_model = None
+    
 @dd.python_2_unicode_compatible
 class Comment(CreatedModified, UserAuthored, # Controllable,
               ChangeObservable, Bleached):
@@ -36,7 +41,6 @@ class Comment(CreatedModified, UserAuthored, # Controllable,
         than one paragraph.
 
     """
-    
     # ALLOWED_TAGS = ['a', 'b', 'i', 'em', 'ul', 'ol', 'li']
     
     class Meta(object):
@@ -46,8 +50,7 @@ class Comment(CreatedModified, UserAuthored, # Controllable,
         verbose_name_plural = _("Comments")
 
     short_text = dd.RichTextField(_("Short text"))
-    owner = dd.ForeignKey(
-        dd.plugins.comments.commentable_model, blank=True, null=True)
+    owner = dd.ForeignKey(commentable_model, blank=True, null=True)
     more_text = dd.RichTextField(_("More text"), blank=True)
     # private = models.BooleanField(_("Private"), default=False)
 
@@ -96,7 +99,8 @@ class Comment(CreatedModified, UserAuthored, # Controllable,
     #     return self.owner
 
     def as_li(self, ar):
-        """Return this comment as a list item. 
+        """Return this comment for usage in a list item as a string with HTML
+        tags .
 
         """
         chunks = [ar.parse_memo(self.short_text)]
@@ -109,7 +113,8 @@ class Comment(CreatedModified, UserAuthored, # Controllable,
             chunks.append(" (...)")
 
         html = ''.join(chunks)
-        return "<li>" + html + "</li>"
+        return html
+        # return "<li>" + html + "</li>"
 
 dd.update_field(Comment, 'user', editable=False)
 
