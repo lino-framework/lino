@@ -557,15 +557,16 @@ request from it.
             if self._confirm_answer:
                 ok_func(self)
 
-    def parse_memo(self, html, **context):
+    def parse_memo(self, txt, **context):
         context.update(ar=self)
-        return settings.SITE.kernel.memo_parser.parse(html, **context)
+        return settings.SITE.kernel.memo_parser.parse(txt, **context)
 
     def obj2memo(self, *args, **kwargs):
         """Calls the site's parser's :meth:`obj2memo
         <lino.utils.memo.Parser.obj2memo>` method.
 
         """
+        # kwargs.update(ar=self)
         return settings.SITE.kernel.memo_parser.obj2memo(*args, **kwargs)
 
     # def parse_memo(self, html):

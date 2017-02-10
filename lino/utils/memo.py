@@ -54,7 +54,7 @@ ellipsis because the error message varies with Python versions):
 
 >>> print(p.parse('This is a [url http://xyz.com].'))  #doctest: +ELLIPSIS
 [DEBUG] url2html() got 'http://xyz.com'
-This is a [ERROR ... in '[url http://xyz.com]' at position 10-30].
+This is a [ERROR ... in ...'[url http://xyz.com]' at position 10-30].
 
 
 Newlines preceded by a backslash will be removed before the command
@@ -147,6 +147,8 @@ The answer is 42.
 <ul><li>1</li><li>2</li><li>3</li><li>4</li><li>5</li></ul>
 
 """
+from __future__ import unicode_literals
+
 from builtins import str
 from builtins import object
 
@@ -173,12 +175,65 @@ class Parser(object):
         self.renderers = dict()
 
     def register_command(self, cmd, func):
+        # print("20170210 register_command {} {}".format(cmd, func))
         self.commands[cmd] = func
 
     def register_renderer(self, cl, func):
         assert not cl in self.renderers
         self.renderers[cl] = func
 
+    def register_django_model(
+            self, name, model, cmd=None, rnd=None, title=str):
+        """Register the given `name` as command for referring to database
+        rows. `model` is a Django database model. 
+
+        Optional keyword arguments are 
+
+        - `cmd` the command handler used by :meth:`parse`
+        - `rnd` the renderer function for :meth:`obj2memo`
+        - `title` a function which returns a string to be used as title
+
+        """
+        # print("20170210 register_django_model {} {}".format(name, model))
+        if rnd is None:
+            def rnd(obj):
+                return "[{} {}] ({})".format(name, obj.id, title(obj))
+        if cmd is None:
+            def cmd(parser, s):
+                """
+Insert a reference to the specified database object.
+
+The first argument is mandatory and specifies the
+primary key.
+
+If there is more than one argument, all remaining text
+is used as the text of the link.
+
+                """
+                args = s.split(None, 1)
+                if len(args) == 1:
+                    pk = s
+                    txt = None
+                else:
+                    pk = args[0]
+                    txt = args[1]
+
+                ar = parser.context['ar']
+                kw = dict()
+                # dd.logger.info("20161019 %s", ar.renderer)
+                pk = int(pk)
+                obj = model.objects.get(pk=pk)
+                if txt is None:
+                    txt = "#{0}".format(obj.id)
+                    kw.update(title=title(obj))
+                e = ar.obj2html(obj, txt, **kw)
+                # return str(ar)
+                return etree.tostring(e)
+
+        self.register_command(name, cmd)
+        self.register_renderer(model, rnd)
+            
+        
     def eval_match(self, matchobj):
         expr = matchobj.group(1)
         try:

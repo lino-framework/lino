@@ -10,6 +10,7 @@ import six
 
 # from textwrap import fill
 from atelier import rstgen
+from atelier.utils import unindent
 
 from django.conf import settings
 from django.utils.encoding import force_text
@@ -79,6 +80,35 @@ class Analyzer(object):
                     ba.full_name(), visible_for(ba)))
 
         return rstgen.ul(items)
+    
+    def show_memo_commands(self, doctestfmt=False):
+        rst = ""
+        mp = settings.SITE.kernel.memo_parser
+        items = []
+        for cmd, func in sorted(mp.commands.items()):
+            doc = unindent(func.__doc__ or '')
+            if doc:
+                # doc = doc.splitlines()[0]
+                items.append(
+                    "[{0} ...] : {1}".format(cmd, doc))
+            
+        # rst += "\n**Commands**"
+        # rst += rstgen.boldheader("Commands")
+        rst += rstgen.ul(items)
+
+        if False:
+            items = []
+            for model, func in sorted(mp.renderers.items()):
+                doc = unindent(func.__doc__ or '')
+                if doc:
+                    items.append(
+                        "[{0} ...] : {1}".format(model, doc))
+            if len(items):
+                rst += "\n**Renderers**"
+                rst += rstgen.ul(items)
+        
+
+        return rst
     
     def show_dialog_actions(self, doctestfmt=False):
         self.analyze()

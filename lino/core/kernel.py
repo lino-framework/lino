@@ -486,8 +486,6 @@ class Kernel(object):
             a.after_site_setup(site)
                 
 
-        #~ site.on_site_startup()
-
         site.resolve_virtual_fields()
 
         self.memo_parser = Parser()
@@ -1033,6 +1031,9 @@ def site_startup(self):
         # self.ui = self.kernel  # internal backwards compat
 
         self.do_site_startup()
+
+        for p in self.installed_plugins:
+            p.post_site_startup(self)
 
         # print("20161219 Site.startup() done")
         post_startup.send(self)
