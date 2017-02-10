@@ -193,7 +193,7 @@ class AllProblems(Problems):
     :menuselection:`Explorer --> System --> Plausibility problems`.
 
     """
-    required_roles = dd.required(SiteStaff)
+    required_roles = dd.login_required(SiteStaff)
 
 
 class ProblemsByOwner(Problems):
@@ -229,7 +229,7 @@ class MyProblems(Problems):
     """Shows the plausibility problems assigned to this user.
 
     """
-    required_roles = dd.required(PlausibilityUser)
+    required_roles = dd.login_required(PlausibilityUser)
     label = _("Plausibility problems assigned to me")
 
     @classmethod

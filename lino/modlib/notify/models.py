@@ -474,13 +474,13 @@ class AllMessages(Messages):
     """The gobal list of all messages.
 
     """
-    required_roles = dd.required(dd.SiteAdmin)
+    required_roles = dd.login_required(dd.SiteAdmin)
 
 
 class MyMessages(My, Messages):
     """Shows messages emitted to you."""
     # label = _("My messages")
-    required_roles = dd.required(OfficeUser)
+    required_roles = dd.login_required(OfficeUser)
     # column_names = "created subject owner sent workflow_buttons *"
     column_names = "created subject message_type workflow_buttons *"
     order_by = ['created']

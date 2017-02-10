@@ -72,7 +72,7 @@ Site.  See :func:`add_shortcut`.
 
 
 class UploadAreas(dd.ChoiceList):
-    required_roles = dd.required(OfficeStaff)
+    required_roles = dd.login_required(OfficeStaff)
     verbose_name = _("Upload Area")
     verbose_name_plural = _("Upload Areas")
 add = UploadAreas.add_item

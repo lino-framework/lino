@@ -140,7 +140,7 @@ class Inspector(dd.VirtualTable):
     
     """
     label = _("Inspector")
-    required_roles = dd.required(dd.SiteStaff)
+    required_roles = dd.login_required(dd.SiteStaff)
     column_names = "i_name i_type i_value"
     parameters = dict(
         inspected=models.CharField(

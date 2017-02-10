@@ -81,7 +81,7 @@ class Widgets(dd.Table):
 
 class AllWidgets(Widgets):
     label = _("All dashboard widgets")
-    required_roles = dd.required(SiteAdmin)
+    required_roles = dd.login_required(SiteAdmin)
     column_names = 'id user seqno move_buttons title visible *'
     order_by = ['id']
         
