@@ -40,7 +40,7 @@ class ContentTypes(dd.Table):
     """
     model = 'contenttypes.ContentType'
 
-    required_roles = dd.required(SiteStaff)
+    required_roles = dd.login_required(SiteStaff)
 
     detail_layout = """
     id app_label model base_classes
@@ -129,7 +129,7 @@ class HelpText(dd.Model):
 
 
 class HelpTexts(dd.Table):
-    required_roles = dd.required(SiteStaff)
+    required_roles = dd.login_required(SiteStaff)
     model = 'gfks.HelpText'
     column_names = "field verbose_name help_text id content_type"
 
@@ -145,7 +145,7 @@ class BrokenGFKs(dd.VirtualTable):
 
     """
     label = _("Broken GFKs")
-    required_roles = dd.required(SiteStaff)
+    required_roles = dd.login_required(SiteStaff)
 
     column_names = "database_model database_object message todo"
 

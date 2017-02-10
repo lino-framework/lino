@@ -62,7 +62,7 @@ class UploadTypes(dd.Table):
 
     This usually is accessible via the `Configure` menu.
     """
-    required_roles = dd.required(OfficeStaff)
+    required_roles = dd.login_required(OfficeStaff)
     model = 'uploads.UploadType'
     column_names = "upload_area name max_number wanted shortcut *"
     order_by = ["upload_area", "name"]
@@ -208,7 +208,7 @@ class Uploads(dd.Table):
 
 class AllUploads(Uploads):
     use_as_default_table = False
-    required_roles = dd.required(OfficeStaff)
+    required_roles = dd.login_required(OfficeStaff)
 
 
 class UploadsByType(Uploads):
@@ -218,7 +218,7 @@ class UploadsByType(Uploads):
 
 class MyUploads(My, Uploads):
     """Shows only my Uploads (i.e. those whose author is current user)."""
-    required_roles = dd.required((OfficeUser, OfficeOperator))
+    required_roles = dd.login_required((OfficeUser, OfficeOperator))
     column_names = "file description user owner *"
     # order_by = ["modified"]
 
@@ -234,7 +234,7 @@ class MyUploads(My, Uploads):
 
 
 class AreaUploads(Uploads):
-    required_roles = dd.required((OfficeUser, OfficeOperator))
+    required_roles = dd.login_required((OfficeUser, OfficeOperator))
     stay_in_grid = True
     _upload_area = UploadAreas.general
     slave_grid_format = 'summary'

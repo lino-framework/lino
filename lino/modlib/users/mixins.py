@@ -301,7 +301,7 @@ class AssignToMe(dd.Action):
     label = _("Assign to me")
     show_in_workflow = True
     # readonly = False
-    required_roles = dd.required(Helper)
+    required_roles = dd.login_required(Helper)
 
     # button_text = u"\u2698"  # FLOWER (⚘)
     # button_text = u"\u26d1"  # ⛑
@@ -348,7 +348,7 @@ class TakeAuthorship(dd.Action):
     # objects authored by others.
     # readonly = False
     
-    required_roles = dd.required(AuthorshipTaker)
+    required_roles = dd.login_required(AuthorshipTaker)
 
     button_text = u"\u2691"
     help_text = _("Take responsibility for this entry.")

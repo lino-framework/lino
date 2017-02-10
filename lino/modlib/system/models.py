@@ -154,7 +154,7 @@ class SiteConfigs(dd.Table):
     Deserves more documentation.
     """
     model = 'system.SiteConfig'
-    required_roles = dd.required(SiteStaff)
+    required_roles = dd.login_required(SiteStaff)
     default_action = actions.ShowDetail()
     #~ has_navigator = False
     hide_top_toolbar = True

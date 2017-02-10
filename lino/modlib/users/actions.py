@@ -26,7 +26,7 @@ class SendWelcomeMail(dd.Action):
         show_in_bbar = False
         show_in_workflow = True
     button_text = u"\u2709"  # ✉
-    required_roles = dd.required(SiteAdmin)
+    required_roles = dd.login_required(SiteAdmin)
     parameters = dict(
         email=models.EmailField(_('e-mail address')),
         subject=models.CharField(_('Subject'), max_length=250),

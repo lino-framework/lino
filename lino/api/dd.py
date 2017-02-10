@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2016 Luc Saffre
+# Copyright 2011-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -320,7 +320,7 @@ from lino.core.roles import SiteStaff, SiteUser, SiteAdmin, login_required
 
 
 # deprecated aliases:
-Required = required = login_required
+# Required = required = login_required
 
 # logger.info("20140227 dd.py b %s", site)
 

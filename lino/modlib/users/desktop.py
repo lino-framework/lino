@@ -74,7 +74,7 @@ class Users(dd.Table):
 
 class AllUsers(Users):
     """Shows the list of all users on this site."""
-    required_roles = dd.required(SiteAdmin)
+    required_roles = dd.login_required(SiteAdmin)
     send_welcome_email = SendWelcomeMail()
 
 class UsersOverview(Users):
@@ -90,7 +90,7 @@ class UsersOverview(Users):
 class MySettings(Users):
     use_as_default_table = False
     hide_top_toolbar = True
-    required_roles = dd.required()
+    required_roles = dd.login_required()
     default_list_action_name = 'detail'
 
     @classmethod
@@ -99,12 +99,12 @@ class MySettings(Users):
 
 
 class Authorities(dd.Table):
-    required_roles = dd.required(SiteAdmin)
+    required_roles = dd.login_required(SiteAdmin)
     model = 'users.Authority'
 
 
 class AuthoritiesGiven(Authorities):
-    required_roles = dd.required()
+    required_roles = dd.login_required()
     master_key = 'user'
     label = _("Authorities given")
     column_names = 'authorized'
@@ -112,7 +112,7 @@ class AuthoritiesGiven(Authorities):
 
 
 class AuthoritiesTaken(Authorities):
-    required_roles = dd.required()
+    required_roles = dd.login_required()
     master_key = 'authorized'
     label = _("Authorities taken")
     column_names = 'user'

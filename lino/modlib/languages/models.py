@@ -30,6 +30,6 @@ class Language(mixins.BabelNamed):
 
 class Languages(dd.Table):
     model = 'languages.Language'
-    required_roles = dd.required(OfficeStaff)
+    required_roles = dd.login_required(OfficeStaff)
 
 

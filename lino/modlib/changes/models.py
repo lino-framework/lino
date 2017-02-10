@@ -128,7 +128,7 @@ class Changes(dd.Table):
             settings.SITE.user_model,
             blank=True)
 
-    required_roles = dd.required(SiteStaff)
+    required_roles = dd.login_required(SiteStaff)
 
     editable = False
     model = 'changes.Change'
@@ -167,7 +167,7 @@ class ChangesByObject(Changes):
     object.
 
     """
-    required_roles = dd.required(SiteStaff)
+    required_roles = dd.login_required(SiteStaff)
     master_key = 'object'
     column_names = 'time user type changed_fields master master_type master_id *'
 
@@ -177,7 +177,7 @@ class ChangesByMaster(Changes):
     including those applied to "child" objects.
 
     """
-    required_roles = dd.required()
+    required_roles = dd.login_required()
     master_key = 'master'
     column_names = 'time user type changed_fields object *'
 
