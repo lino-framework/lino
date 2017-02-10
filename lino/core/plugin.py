@@ -240,7 +240,13 @@ class Plugin(object):
 
         """
         pass
+    
+    def post_site_startup(self, site):
+        """This will be called exactly once, when models are ready.
 
+        """
+        pass
+    
     @classmethod
     def extends_from(cls):
         """Return the plugin from which this plugin inherits."""
