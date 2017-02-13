@@ -80,6 +80,7 @@ class ChangeWatcher(object):
                 labels = {
                     '+': _("lines added"),
                     '-': _("lines removed"),
+                    '?': _("modifications"),
                     ' ': _("lines changed")}
                 diff = list(difflib.ndiff(
                     old.splitlines(), new.splitlines()))
