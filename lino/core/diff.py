@@ -1,6 +1,8 @@
 # Copyright 2010-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
+from __future__ import unicode_literals
+
 import six
 import difflib
 
