@@ -12,7 +12,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino.core.signals import on_ui_updated
 from lino.utils.xmlgen.html import E
-from .utils import obj2str
+# from .utils import obj2str
+from .utils import obj2unicode
 
 
 class ChangeWatcher(object):
@@ -109,8 +110,8 @@ class ChangeWatcher(object):
             if isinstance(new, six.string_types):
                 new = f.choicelist.get_by_value(new)
         else:
-            old = obj2str(old)
-            new = obj2str(new)
+            old = obj2unicode(old)
+            new = obj2unicode(new)
         return E.li(
             E.b(f.verbose_name), " : ",
             u"{0} --> {1}".format(old, new))
