@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2017-02-13 06:13+0200\n"
-"PO-Revision-Date: 2017-02-13 06:15+0200\n"
+"PO-Revision-Date: 2017-02-13 06:30+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language: fr\n"
 "Language-Team: \n"
@@ -922,14 +922,12 @@ msgid "More text"
 msgstr ""
 
 #: lino/modlib/comments/models.py:81 lino/modlib/comments/models.py:88
-#, fuzzy
 msgid "{user} commented on {obj}"
-msgstr "{user} a modifié {obj}"
+msgstr "{user} a écrit une commentaire à propos de {obj}"
 
 #: lino/modlib/comments/models.py:83 lino/modlib/comments/models.py:90
-#, fuzzy
 msgid "{user} modified comment on {obj}"
-msgstr "{user} a modifié {obj}"
+msgstr "{user} a modifié commentaire à propos de {obj}"
 
 #: lino/modlib/comments/models.py:107
 msgid "{0} by {1}"
@@ -3331,9 +3329,8 @@ msgid "Immediately"
 msgstr "Immédiatement"
 
 #: lino/modlib/notify/choicelists.py:62
-#, fuzzy
 msgid "Often"
-msgstr "mois"
+msgstr "Souvent"
 
 #: lino/modlib/notify/choicelists.py:63
 msgid "Daily"
@@ -3344,13 +3341,12 @@ msgid "Weekly"
 msgstr "1x par semaine"
 
 #: lino/modlib/notify/mixins.py:24 lino/modlib/notify/mixins.py:48
-#, fuzzy
 msgid "{user} created {what}"
-msgstr "{user} a modifié {obj}"
+msgstr "{user} a créé {what}"
 
 #: lino/modlib/notify/mixins.py:29 lino/modlib/notify/mixins.py:57
 msgid "{user} modified {what}"
-msgstr ""
+msgstr "{user} a modifié {what}"
 
 #: lino/modlib/notify/models.py:46
 msgid "Mark all as seen"
@@ -3391,7 +3387,7 @@ msgstr "Corps du texte"
 
 #: lino/modlib/notify/models.py:153 lino/modlib/users/actions.py:32
 msgid "Subject"
-msgstr ""
+msgstr "Sujet"
 
 #: lino/modlib/notify/models.py:279
 msgctxt "notification"
