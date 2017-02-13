@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  lino\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-10 19:42+0200\n"
+"POT-Creation-Date: 2017-02-13 06:13+0200\n"
 "PO-Revision-Date: 2017-01-25 17:08+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language: de\n"
@@ -130,6 +130,18 @@ msgstr "Dieses Panel in eigenem Fenster öffnen"
 #: lino/core/dbtables.py:651
 msgid "You have no permission to delete this row."
 msgstr "Sie haben nicht die Berechtigung, diese Zeile zu löschen."
+
+#: lino/core/diff.py:79
+msgid "lines added"
+msgstr ""
+
+#: lino/core/diff.py:80
+msgid "lines removed"
+msgstr ""
+
+#: lino/core/diff.py:81
+msgid "lines changed"
+msgstr ""
 
 #: lino/core/fields.py:637
 msgid "Quantity (Decimal or Duration)"
@@ -4137,9 +4149,6 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 #~ msgstr ""
 
 #~ msgid ""
-#~ "The roles of users having this type. This is a tuple of\n"
-#~ "instance of <lino.core.roles.UserRole> or some\n"
-#~ "subclass thereof."
 #~ msgstr ""
 
 #~ msgid "has been created by {user}"

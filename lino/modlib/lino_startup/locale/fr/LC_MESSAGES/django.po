@@ -5,18 +5,19 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version:  \n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-02-10 19:42+0200\n"
-"PO-Revision-Date: 2017-01-25 17:09+0200\n"
+"POT-Creation-Date: 2017-02-13 06:13+0200\n"
+"PO-Revision-Date: 2017-02-13 06:30+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language: fr\n"
 "Language-Team: \n"
-"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
+"X-Generator: Poedit 1.8.7.1\n"
 
 #: lino/core/actions.py:468
 msgid "Detail"
@@ -130,6 +131,18 @@ msgstr "Montrer ce panneau dans une fenêtre à part."
 msgid "You have no permission to delete this row."
 msgstr ""
 
+#: lino/core/diff.py:79
+msgid "lines added"
+msgstr "lignes ajoutées"
+
+#: lino/core/diff.py:80
+msgid "lines removed"
+msgstr "lignes enlevées"
+
+#: lino/core/diff.py:81
+msgid "lines changed"
+msgstr "lignes modifiées"
+
 #: lino/core/fields.py:637
 msgid "Quantity (Decimal or Duration)"
 msgstr ""
@@ -227,8 +240,8 @@ msgstr ""
 #, python-format
 msgid "Cannot delete %(model)s %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
-"Impossible de supprimer %(model)s %(self)s parce que %(count)d  %(refs)s "
-"y font référence."
+"Impossible de supprimer %(model)s %(self)s parce que %(count)d  %(refs)s y "
+"font référence."
 
 #: lino/core/model.py:545 lino/core/requests.py:932
 #, python-format
@@ -909,14 +922,12 @@ msgid "More text"
 msgstr ""
 
 #: lino/modlib/comments/models.py:81 lino/modlib/comments/models.py:88
-#, fuzzy
 msgid "{user} commented on {obj}"
-msgstr "{user} a modifié {obj}"
+msgstr "{user} a écrit une commentaire à propos de {obj}"
 
 #: lino/modlib/comments/models.py:83 lino/modlib/comments/models.py:90
-#, fuzzy
 msgid "{user} modified comment on {obj}"
-msgstr "{user} a modifié {obj}"
+msgstr "{user} a modifié commentaire à propos de {obj}"
 
 #: lino/modlib/comments/models.py:107
 msgid "{0} by {1}"
@@ -1381,8 +1392,7 @@ msgstr ""
 msgid ""
 "Base class to anything that may be \"registered\" and \"deregistered\"\n"
 "(e.g. Invoices, Vouchers, Declarations, Reservations,...).\n"
-"\"Registered\" in general means \"this object has been taken account "
-"of\".\n"
+"\"Registered\" in general means \"this object has been taken account of\".\n"
 "Registered objects are not editable."
 msgstr ""
 
@@ -2551,22 +2561,19 @@ msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:424
 msgid ""
-"A form that creates a user, with no privileges, from the given username "
-"and\n"
+"A form that creates a user, with no privileges, from the given username and\n"
 "password."
 msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:426
 msgid ""
-"Base class for authenticating users. Extend this to get a form that "
-"accepts\n"
+"Base class for authenticating users. Extend this to get a form that accepts\n"
 "username/password logins."
 msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:428
 msgid ""
-"A form that lets a user change set their password without entering the "
-"old\n"
+"A form that lets a user change set their password without entering the old\n"
 "password"
 msgstr ""
 
@@ -2655,8 +2662,7 @@ msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:456
 msgid ""
-"A virtual read-only field which returns the Person MTI child "
-"corresponding\n"
+"A virtual read-only field which returns the Person MTI child corresponding\n"
 "to the partner (if it exists) and otherwise None."
 msgstr ""
 
@@ -2905,8 +2911,7 @@ msgstr ""
 #: lino/modlib/lino_startup/help_texts.py:534
 msgid ""
 "A Converter for ForeignKey and ManyToManyField. \n"
-"If the lookup_field is a BabelField, then it tries all available "
-"languages."
+"If the lookup_field is a BabelField, then it tries all available languages."
 msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:536
@@ -3218,8 +3223,8 @@ msgid ""
 "Try also the other <a href=\"http://lino-framework.org/demos.html\">demo "
 "sites</a>."
 msgstr ""
-"Essayez également les autres <a href=\"http://lino-"
-"framework.org/demos.html\">sites de démonstration</a>."
+"Essayez également les autres <a href=\"http://lino-framework.org/demos.html"
+"\">sites de démonstration</a>."
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:28
 #, python-format
@@ -3232,8 +3237,8 @@ msgstr ""
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:43
 msgid ""
-"Unlike the <a href=\"/\">web content section</a> there is now a GUI menu "
-"bar in the upper part of the screen."
+"Unlike the <a href=\"/\">web content section</a> there is now a GUI menu bar "
+"in the upper part of the screen."
 msgstr ""
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:48
@@ -3324,9 +3329,8 @@ msgid "Immediately"
 msgstr "Immédiatement"
 
 #: lino/modlib/notify/choicelists.py:62
-#, fuzzy
 msgid "Often"
-msgstr "mois"
+msgstr "Souvent"
 
 #: lino/modlib/notify/choicelists.py:63
 msgid "Daily"
@@ -3337,13 +3341,12 @@ msgid "Weekly"
 msgstr "1x par semaine"
 
 #: lino/modlib/notify/mixins.py:24 lino/modlib/notify/mixins.py:48
-#, fuzzy
 msgid "{user} created {what}"
-msgstr "{user} a modifié {obj}"
+msgstr "{user} a créé {what}"
 
 #: lino/modlib/notify/mixins.py:29 lino/modlib/notify/mixins.py:57
 msgid "{user} modified {what}"
-msgstr ""
+msgstr "{user} a modifié {what}"
 
 #: lino/modlib/notify/models.py:46
 msgid "Mark all as seen"
@@ -3384,7 +3387,7 @@ msgstr "Corps du texte"
 
 #: lino/modlib/notify/models.py:153 lino/modlib/users/actions.py:32
 msgid "Subject"
-msgstr ""
+msgstr "Sujet"
 
 #: lino/modlib/notify/models.py:279
 msgctxt "notification"
@@ -3478,8 +3481,7 @@ msgstr "Problème de données"
 msgid "Plausibility problems"
 msgstr "Problèmes de données"
 
-#: lino/modlib/plausibility/models.py:153
-#: lino/modlib/plausibility/models.py:169
+#: lino/modlib/plausibility/models.py:153 lino/modlib/plausibility/models.py:169
 msgid "Responsible"
 msgstr "Utilisateur responsable"
 
@@ -3512,12 +3514,12 @@ msgstr "Imprimer"
 #: lino/modlib/printing/actions.py:87
 #, python-format
 msgid ""
-"Your printable document (filename %(doc)s) should now open in a new "
-"browser window. If it doesn't, please consult %(help)s or ask your system"
-" administrator."
+"Your printable document (filename %(doc)s) should now open in a new browser "
+"window. If it doesn't, please consult %(help)s or ask your system "
+"administrator."
 msgstr ""
-"Votre document imprimable (fichier %(doc)s) devrait maintenant apparaître"
-" dans une nouvelle fenêtre. Sinon consultez %(help)s ou demandez votre  "
+"Votre document imprimable (fichier %(doc)s) devrait maintenant apparaître dans "
+"une nouvelle fenêtre. Sinon consultez %(help)s ou demandez votre  "
 "administrateur système."
 
 #: lino/modlib/printing/actions.py:174
@@ -3531,8 +3533,8 @@ msgstr "Modifier le modèle d'impression"
 
 #: lino/modlib/printing/actions.py:277
 msgid ""
-"Before you can edit this template we must create a local copy on the "
-"server. This will exclude the template from future updates."
+"Before you can edit this template we must create a local copy on the server. "
+"This will exclude the template from future updates."
 msgstr ""
 
 #: lino/modlib/printing/actions.py:298
@@ -3851,16 +3853,15 @@ msgstr ""
 
 #: lino/modlib/users/forms.py:110
 msgid ""
-"Raw passwords are not stored, so there is no way to see this user's "
-"password, but you can change the password using <a "
-"href=\"../password/\">this form</a>."
+"Raw passwords are not stored, so there is no way to see this user's password, "
+"but you can change the password using <a href=\"../password/\">this form</a>."
 msgstr ""
 
 #: lino/modlib/users/forms.py:140
 #, python-format
 msgid ""
-"Please enter a correct %(username)s and password. Note that both fields "
-"may be case-sensitive."
+"Please enter a correct %(username)s and password. Note that both fields may be "
+"case-sensitive."
 msgstr ""
 
 #: lino/modlib/users/forms.py:142
@@ -4106,19 +4107,3 @@ msgstr "NISS invalide %s : "
 #, python-format
 msgid "Check digit is %(found)d but should be %(expected)d"
 msgstr ""
-
-#~ msgid "A user with all permissions."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "The roles of users having this type. This is a tuple of\n"
-#~ "instance of <lino.core.roles.UserRole> or some\n"
-#~ "subclass thereof."
-#~ msgstr ""
-
-#~ msgid "has been created by {user}"
-#~ msgstr "a été modifié par {user}"
-
-#~ msgid "has been modified by {user}"
-#~ msgstr "a été modifié par {user}"
-

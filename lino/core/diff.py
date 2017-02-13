@@ -1,13 +1,19 @@
 # Copyright 2010-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
+from __future__ import unicode_literals
+
 import six
 import difflib
+
 from django.db.models.fields import NOT_PROVIDED
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
+
 from lino.core.signals import on_ui_updated
 from lino.utils.xmlgen.html import E
-from .utils import obj2str
+# from .utils import obj2str
+from .utils import obj2unicode
 
 
 class ChangeWatcher(object):
@@ -66,11 +72,30 @@ class ChangeWatcher(object):
         if isinstance(f, models.TextField):
             old = old or ''
             new = new or ''
-            return E.li(
-                E.b(f.verbose_name), " : ",
-                E.pre('\n'.join(difflib.unified_diff(
+            if False:
+                diff = difflib.unified_diff(
                     old.splitlines(), new.splitlines(),
-                    fromfile="before", tofile="after", lineterm=''))))
+                    fromfile="before", tofile="after", lineterm='')
+                txt = E.pre('\n'.join(diff))
+            else:
+                labels = {
+                    '+': _("lines added"),
+                    '-': _("lines removed"),
+                    '?': _("modifications"),
+                    ' ': _("lines changed")}
+                diff = list(difflib.ndiff(
+                    old.splitlines(), new.splitlines()))
+                counters = {}
+                for ln in diff:
+                    if ln:
+                        k = ln[0]
+                        c = counters.get(k, 0)
+                        counters[k] = c + 1
+                txt = ', '.join([
+                    "{0} {1}".format(n, labels[op])
+                    for op, n in counters.items()])
+            return E.li(
+                E.b(f.verbose_name), " : ", txt)
             
         if isinstance(f, models.DateTimeField):
             return
@@ -85,8 +110,8 @@ class ChangeWatcher(object):
             if isinstance(new, six.string_types):
                 new = f.choicelist.get_by_value(new)
         else:
-            old = obj2str(old)
-            new = obj2str(new)
+            old = obj2unicode(old)
+            new = obj2unicode(new)
         return E.li(
             E.b(f.verbose_name), " : ",
             u"{0} --> {1}".format(old, new))
