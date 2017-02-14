@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2017-02-13 06:13+0200\n"
-"PO-Revision-Date: 2017-02-13 06:30+0200\n"
+"PO-Revision-Date: 2017-02-13 12:05+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language: fr\n"
 "Language-Team: \n"
@@ -923,7 +923,7 @@ msgstr ""
 
 #: lino/modlib/comments/models.py:81 lino/modlib/comments/models.py:88
 msgid "{user} commented on {obj}"
-msgstr "{user} a écrit une commentaire à propos de {obj}"
+msgstr "{user} a commenté {obj}"
 
 #: lino/modlib/comments/models.py:83 lino/modlib/comments/models.py:90
 msgid "{user} modified comment on {obj}"
