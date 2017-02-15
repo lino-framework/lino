@@ -119,6 +119,7 @@ class GridColumn(jsgen.Component):
 
     def __init__(self, layout_handle, index, editor, **kw):
         self.editor = editor
+        # kw.setdefault('sortable', True)
         kw.update(sortable=True)
         kw.update(colIndex=index)
         if editor.hidden:
@@ -197,6 +198,8 @@ class GridColumn(jsgen.Component):
             kw.update(editable=False)
         kw.update(editor.get_column_options())
         jsgen.Component.__init__(self, editor.name, **kw)
+        # if self.name == 'requested':
+        #     print("20170214 {}".format(editor.sortable))
 
     def ext_options(self, **kw):
         kw = jsgen.Component.ext_options(self, **kw)
@@ -2259,6 +2262,7 @@ def create_layout_element(lh, name, **kw):
 
 def create_vurt_element(lh, name, vf, **kw):
     e = create_field_element(lh, vf, **kw)
+    e.sortable = False
     if not vf.is_enabled(lh):
         e.editable = False
     return e
