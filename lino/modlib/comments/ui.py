@@ -25,8 +25,10 @@ class Comments(dd.Table):
     model = 'comments.Comment'
 
     insert_layout = dd.InsertLayout("""
+    reply_to
+    owner
     short_text
-    """, window_size=(40, 10))
+    """, window_size=(40, 10), hidden_elements="reply_to owner")
 
     detail_layout = """
     id user created modified owner
@@ -40,6 +42,39 @@ class Comments(dd.Table):
     #~ hidden_columns = frozenset(['body'])
     #~ order_by = ["id"]
     #~ label = _("Notes")
+
+    @classmethod
+    def as_li(cls, self, ar):
+        """Return this comment for usage in a list item as a string with HTML
+        tags .
+
+        """
+        chunks = [ar.parse_memo(self.short_text)]
+        by = _("{0} by {1}").format(
+            naturaltime(self.created), str(self.user)),
+        a = ar.obj2html(self, by)
+        if (self.modified - self.created).total_seconds() < 1:
+            a.set('title',_("Created " + self.created.strftime('%Y-%m-%d %H:%M') ))
+        else:
+            a.set('title',_("Modified " + self.modified.strftime('%Y-%m-%d %H:%M') ))
+        chunks += [
+            " (", E.tostring(a), ")"
+        ]
+        if self.more_text:
+            chunks.append(" (...)")
+
+        sar = cls.insert_action.request_from(ar)
+        # print(20170217, sar)
+        sar.known_values = dict(reply_to=self, owner=self.owner)
+        if sar.get_permission():
+            btn = sar.ar2button(
+                None, _("Reply to"), icon_name=None)
+            chunks.append(E.tostring(btn))
+            
+
+        html = ''.join(chunks)
+        return html
+        # return "<li>" + html + "</li>"
 
 
 class MyComments(My, Comments):
@@ -82,7 +117,7 @@ class RecentComments(Comments):
         html = ""
         items = []
         for o in sar:
-            li = o.as_li(ar)
+            li = self.as_li(o, ar)
             if o.owner: #Catch for ownerless hackerish comments
                 li += _(" On: ") + E.tostring(ar.obj2html(o.owner))
                 
@@ -120,7 +155,7 @@ class CommentsByRFC(CommentsByX):
             btn = sar.ar2button(None, _("Write comment"), icon_name=None)
             html += "<p>" + E.tostring(btn) + "</p>"
 
-        items = ["<li>{}</li>".format(o.as_li(ar)) for o in sar]
+        items = ["<li>{}</li>".format(self.as_li(o, ar)) for o in sar]
         if len(items) > 0:
             html += u"<ul>{0}</ul>".format(''.join(items))
 
