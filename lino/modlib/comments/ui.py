@@ -44,6 +44,61 @@ class Comments(dd.Table):
     #~ label = _("Notes")
 
     @classmethod
+    def get_summary_header(cls,):
+        """returns a string form html header for a comment,"""
+        chunks = []
+        js = """<script type="text/javascript">
+        <!--
+            function toggle_visibility(id) {
+               var e = document.getElementById(id);
+               if(e.style.display == 'block'|| (e.style.display != 'block' && e.style.display != 'none'))
+                  e.style.display = 'none';
+               else
+                  e.style.display = 'block';
+            }
+        //-->
+        </script>"""
+
+        chunks.append(js)
+        css = """
+        <style>
+ul.flat li {
+    display: inline;
+}
+</style>"""
+        chunks.append(css)
+
+        return "".join(chunks)
+
+    @classmethod
+    def get_comment_header(cls, comment, ar):
+        ch = E.ul()
+        ch.attrib={"class": "flat"}
+        ch.append(E.li(ar.obj2html(comment.user, str(comment.user))))
+
+        wrote = _(" wrote {0}:").format(naturaltime(comment.created))
+        if (comment.modified - comment.created).total_seconds() < 1:
+            t = _("Created " + comment.created.strftime('%Y-%m-%d %H:%M'))
+        else:
+            t = _("Modified " + comment.modified.strftime('%Y-%m-%d %H:%M'))
+        ch.append(E.li(ar.obj2html(comment, wrote, title=t)))
+
+
+        sar = cls.insert_action.request_from(ar)
+        # print(20170217, sar)
+        sar.known_values = dict(reply_to=comment, owner=comment.owner)
+        if sar.get_permission():
+            btn = sar.ar2button(None, _("Reply"), icon_name=None)
+            btn.set("style", "padding-left:10px")
+            ch.append(btn)
+
+        ch.append(
+            E.a(u"⁜", style = "padding-left:30px", onclick="toggle_visibility('comment-{}');".format(comment.id), title = _("Hide"), href="#")
+        )
+
+        return E.tostring(ch)
+
+    @classmethod
     def as_li(cls, self, ar):
         """Return this comment for usage in a list item as a string with HTML
         tags .
@@ -51,14 +106,16 @@ class Comments(dd.Table):
         """
         chunks = [ar.parse_memo(self.short_text)]
         by = _("{0} by {1}").format(
-            naturaltime(self.created), str(self.user)),
-        a = ar.obj2html(self, by)
+            naturaltime(self.created), str(self.user))
+
+        t = ""
         if (self.modified - self.created).total_seconds() < 1:
-            a.set('title',_("Created " + self.created.strftime('%Y-%m-%d %H:%M') ))
+            t= _("Created " + self.created.strftime('%Y-%m-%d %H:%M') )
         else:
-            a.set('title',_("Modified " + self.modified.strftime('%Y-%m-%d %H:%M') ))
+            t= _("Modified " + self.modified.strftime('%Y-%m-%d %H:%M') )
+
         chunks += [
-            " (", E.tostring(a), ")"
+            " (", E.tostring(ar.obj2html(self, by, title = t)), ")"
         ]
         if self.more_text:
             chunks.append(" (...)")
@@ -150,14 +207,19 @@ class CommentsByRFC(CommentsByX):
         sar = self.request_from(ar, master_instance=obj)
 
         html = obj.get_rfc_description(ar)
+        html += self.get_summary_header()
         sar = self.insert_action.request_from(sar)
         if sar.get_permission():
             btn = sar.ar2button(None, _("Write comment"), icon_name=None)
             html += "<p>" + E.tostring(btn) + "</p>"
 
-        items = ["<li>{}</li>".format(self.as_li(o, ar)) for o in sar]
-        if len(items) > 0:
-            html += u"<ul>{0}</ul>".format(''.join(items))
+        html += "<ul>"
+        for c in sar:
+            html += "<li>{}<div id={}>{}</div></li>".format(self.get_comment_header(c,sar),
+                                                            "comment-" + str(c.id),
+                                                            ar.parse_memo(c.short_text))
+
+        html += "</ul>"
 
         return ar.html_text(html)
 
