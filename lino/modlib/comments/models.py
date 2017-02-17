@@ -106,8 +106,13 @@ class Comment(CreatedModified, UserAuthored, # Controllable,
         chunks = [ar.parse_memo(self.short_text)]
         by = _("{0} by {1}").format(
             naturaltime(self.created), str(self.user)),
+        a = ar.obj2html(self, by)
+        if (self.modified - self.created).total_seconds() < 1:
+            a.set('title',_("Created " + self.created.strftime('%Y-%m-%d %H:%M') ))
+        else:
+            a.set('title',_("Modified " + self.modified.strftime('%Y-%m-%d %H:%M') ))
         chunks += [
-            " (", E.tostring(ar.obj2html(self, by)), ")"
+            " (", E.tostring(a), ")"
         ]
         if self.more_text:
             chunks.append(" (...)")
