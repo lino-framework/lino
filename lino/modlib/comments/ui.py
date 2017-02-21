@@ -162,6 +162,7 @@ class RecentComments(Comments):
     stay_in_grid = True
     order_by = ["-created"]
     label = "Recent Comments"
+    preview_limit = 10
 
     @classmethod
     def get_slave_summary(self, obj, ar):
@@ -169,12 +170,13 @@ class RecentComments(Comments):
         for :class:`RecentComments`.
 
         """
-        sar = self.request_from(ar, master_instance=obj)
+        sar = self.request_from(
+            ar, master_instance=obj, limit=self.preview_limit)
 
-        # print "20170208", sar, obj, sar
+        # print "20170208", sar.limit
         html = ""
         items = []
-        for o in sar:
+        for o in sar.sliced_data_iterator:
             li = self.as_li(o, ar)
             if o.owner: #Catch for ownerless hackerish comments
                 li += _(" On: ") + E.tostring(ar.obj2html(o.owner))

@@ -354,6 +354,7 @@ class TableRequest(ActionRequest):
 
         if limit is not None:
             self.limit = limit
+            
 
     def to_rst(self, *args, **kw):
         """Returns a string representing this table request in
