@@ -120,14 +120,15 @@ ul.flat li {
         if self.more_text:
             chunks.append(" (...)")
 
-        sar = cls.insert_action.request_from(ar)
-        # print(20170217, sar)
-        sar.known_values = dict(reply_to=self, owner=self.owner)
-        if sar.get_permission():
-            btn = sar.ar2button(
-                None, _("Reply to"), icon_name=None)
-            chunks.append(E.tostring(btn))
-            
+        if ar.get_user().authenticated:
+            sar = cls.insert_action.request_from(ar)
+            # print(20170217, sar)
+            sar.known_values = dict(reply_to=self, owner=self.owner)
+            if sar.get_permission():
+                btn = sar.ar2button(
+                    None, _("Reply to"), icon_name=None)
+                chunks.append(E.tostring(btn))
+
 
         html = ''.join(chunks)
         return html
