@@ -280,6 +280,9 @@ request from it.
         """Copy certain values (renderer, user, subst_user &
         requesting_panel) from this request to the other.
 
+        Deprecated. You should rather instantiate a request and
+        specify parent instead.
+
         """
         if not self.must_execute():
             return
@@ -310,6 +313,8 @@ request from it.
         - a :class:`BoundAction` instance
         - another action request (deprecated use)
 
+        Deprecated. Use spawn_request() if spec is 
+
         """
         from lino.core.actors import resolve_action
         if isinstance(spec, ActionRequest):  # deprecated use
@@ -321,7 +326,6 @@ request from it.
         elif isinstance(spec, BoundAction):
             kw.update(parent=self)
             spec = spec.request(**kw)
-            # spec.setup_from(self)
         else:
             kw.update(parent=self)
             ba = resolve_action(spec)
