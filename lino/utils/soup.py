@@ -12,11 +12,9 @@
 
 """
 
-
-
 """
 
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
 
 def truncate_comment(html_str, max_p_len = 240,):
     """
@@ -36,18 +34,16 @@ def truncate_comment(html_str, max_p_len = 240,):
 
     >>> truncate_comment('<p>Lorem ipsum dolor sit amet</p><p>consectetur adipiscing elit.</p>',30)
     '<p>Lorem ipsum dolor sit amet</p><p>...</p>'
-
-
-
+    
     """
 
-    soup = BeautifulSoup(html_str)
-    ps = soup.findAll("p")
+    soup = BeautifulSoup(html_str, "html.parser")
+    ps = soup.find_all("p")
     if not ps:
         return html_str
     elif len(ps) == 1 or len(ps[0].text) >= max_p_len:
         if len(ps[0].text) > max_p_len:
-            ps[0].setString(ps[0].text[:max_p_len] + "...")
+            ps[0].string= (ps[0].text[:max_p_len] + "...")
         return str(ps[0])
     else:
         tl = 0

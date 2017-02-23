@@ -18,7 +18,6 @@ from lino.modlib.office.roles import OfficeStaff, OfficeUser
 from lino.utils.xmlgen.html import E
 from lino.utils.soup import truncate_comment
 
-from BeautifulSoup import BeautifulSoup
 
 class Comments(dd.Table):
     required_roles = dd.login_required(OfficeStaff)
@@ -89,15 +88,14 @@ ul.flat li {
         sar = cls.insert_action.request_from(ar)
         # print(20170217, sar)
         sar.known_values = dict(reply_to=comment, owner=comment.owner)
-        if sar.get_permission():
-            btn = sar.ar2button(None, _("Reply"), icon_name=None)
-            btn.set("style", "padding-left:10px")
+        if ar.get_user().authenticated:
+            btn = sar.ar2button(None, _(" Reply "), icon_name=None)
+            # btn.set("style", "padding-left:10px")
             ch.append(btn)
 
         ch.append(
-            E.a(u"⁜", style = "padding-left:30px", onclick="toggle_visibility('comment-{}');".format(comment.id), title = _("Hide"), href="#")
+            E.a(u"⁜", onclick="toggle_visibility('comment-{}');".format(comment.id), title = _("Hide"), href="#")
         )
-
         return E.tostring(ch)
 
     @classmethod
@@ -167,19 +165,19 @@ class RecentComments(Comments):
     preview_limit = 10
 
     @classmethod
-    def get_slave_summary(self, obj, ar):
+    def get_slave_summary(cls, obj, ar):
         """The :meth:`summary view <lino.core.actors.Actor.get_slave_summary>`
         for :class:`RecentComments`.
 
         """
-        sar = self.request_from(
-            ar, master_instance=obj, limit=self.preview_limit)
+        sar = cls.request_from(
+            ar, master_instance=obj, limit=cls.preview_limit)
 
         # print "20170208", sar.limit
         html = ""
         items = []
         for o in sar.sliced_data_iterator:
-            li = self.as_li(o, ar)
+            li = cls.as_li(o, ar)
             if o.owner: #Catch for ownerless hackerish comments
                 li += _(" On: ") + E.tostring(ar.obj2html(o.owner))
                 
