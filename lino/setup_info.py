@@ -35,7 +35,7 @@ install_requires = [
     # 'html5lib',  # version 7x9 (not 9x9) required by bleach
     'schedule',
     'django-wkhtmltopdf',
-    'beautifulsoup']
+    'beautifulsoup4']
 
 if PY2:
     install_requires.append('reportlab<2.7')
