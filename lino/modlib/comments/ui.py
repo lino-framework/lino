@@ -16,6 +16,7 @@ from lino.api import dd
 from lino.modlib.users.mixins import My
 from lino.modlib.office.roles import OfficeStaff, OfficeUser
 from lino.utils.xmlgen.html import E
+from lino.utils.soup import truncate_comment
 
 from BeautifulSoup import BeautifulSoup
 
@@ -105,13 +106,11 @@ ul.flat li {
         tags .
 
         """
-        comment = BeautifulSoup(self.short_text).p or self.short_text
-        chunks = [ar.parse_memo(str(comment))
-                  ]
+        chunks = [truncate_comment(ar.parse_memo(self.short_text))]
+
         by = _("{0} by {1}").format(
             naturaltime(self.created), str(self.user))
 
-        t = ""
         if (self.modified - self.created).total_seconds() < 1:
             t = _("Created " + self.created.strftime('%Y-%m-%d %H:%M') )
         else:
