@@ -17,6 +17,7 @@ from lino.modlib.users.mixins import My
 from lino.modlib.office.roles import OfficeStaff, OfficeUser
 from lino.utils.xmlgen.html import E
 
+from BeautifulSoup import BeautifulSoup
 
 class Comments(dd.Table):
     required_roles = dd.login_required(OfficeStaff)
@@ -104,15 +105,17 @@ ul.flat li {
         tags .
 
         """
-        chunks = [ar.parse_memo(self.short_text)]
+        comment = BeautifulSoup(self.short_text).p or self.short_text
+        chunks = [ar.parse_memo(str(comment))
+                  ]
         by = _("{0} by {1}").format(
             naturaltime(self.created), str(self.user))
 
         t = ""
         if (self.modified - self.created).total_seconds() < 1:
-            t= _("Created " + self.created.strftime('%Y-%m-%d %H:%M') )
+            t = _("Created " + self.created.strftime('%Y-%m-%d %H:%M') )
         else:
-            t= _("Modified " + self.modified.strftime('%Y-%m-%d %H:%M') )
+            t = _("Modified " + self.modified.strftime('%Y-%m-%d %H:%M') )
 
         chunks += [
             " (", E.tostring(ar.obj2html(self, by, title = t)), ")"

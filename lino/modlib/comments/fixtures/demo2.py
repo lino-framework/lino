@@ -22,9 +22,9 @@ table = """<table class="editorDemoTable"><thead>
 lorem = """<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc cursus felis nisi, eu pellentesque lorem lobortis non. Aenean non sodales neque, vitae venenatis lectus. In eros dui, gravida et dolor at, pellentesque hendrerit magna. Quisque vel lectus dictum, rhoncus massa feugiat, condimentum sem. Donec elit nisl, placerat vitae imperdiet eget, hendrerit nec quam. Ut elementum ligula vitae odio efficitur rhoncus. Duis in blandit neque. Sed dictum mollis volutpat. Morbi at est et nisi euismod viverra. Nulla quis lacus vitae ante sollicitudin tincidunt. Donec nec enim in leo vulputate ultrices. Suspendisse potenti. Ut elit nibh, porta ut enim ac, convallis molestie risus. Praesent consectetur lacus lacus, in faucibus justo fringilla vel.</p>
 <p>Donec fermentum enim et maximus vestibulum. Sed mollis lacus quis dictum fermentum. Maecenas libero tellus, hendrerit cursus pretium et, hendrerit quis lectus. Nunc bibendum nunc nunc, ac commodo sem interdum ut. Quisque vitae turpis lectus. Nullam efficitur scelerisque hendrerit. Fusce feugiat ullamcorper nulla. Suspendisse quis placerat ligula. Etiam ullamcorper elementum consectetur. Aenean et diam ullamcorper, posuere turpis eget, egestas nibh. Quisque condimentum arcu ac metus sodales placerat. Quisque placerat, quam nec tincidunt pharetra, urna justo scelerisque urna, et vulputate ipsum lacus at ligula.</p>"""
 
-comments = [styled, table, lorem]
-
 def objects():
+    TXT = Cycler([styled, table, lorem])
+
     if dd.plugins.comments.commentable_model is None:
         return
     OWNERS = Cycler(dd.plugins.comments.commentable_model.objects.all())
@@ -36,9 +36,10 @@ def objects():
         for u in User.objects.all():
             owner = OWNERS.pop()
             if owner.private:
-                txt = "Very confidential comment"
+
+                txt = "<p>Very confidential comment</p>"
             else:
-                txt = "Hackerish comment"
+                txt = TXT.pop()# txt = "Hackerish comment"
             yield Comment(
                 user=u, owner=owner,
                 short_text=txt,
