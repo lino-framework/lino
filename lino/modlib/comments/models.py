@@ -42,6 +42,7 @@ class Comment(CreatedModified, UserAuthored, # Controllable,
 
     """
     # ALLOWED_TAGS = ['a', 'b', 'i', 'em', 'ul', 'ol', 'li']
+    bleached_fields = 'short_text more_text'
     
     class Meta(object):
         app_label = 'comments'
