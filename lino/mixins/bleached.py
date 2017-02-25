@@ -136,12 +136,12 @@ class Bleached(Model):
                 "{} has bleached fields but `bleach` is not installed.".format(
                     cls))
 
-    def save(self, *args, **kwargs):
+    def full_clean(self, *args, **kwargs):
         if bleach and self.bleached_fields:
             for k in self.bleached_fields:
                 setattr(self, k, bleach.clean(
                     getattr(self, k),
                     tags=self.allowed_tags, strip=True))
-        super(Bleached, self).save(*args, **kwargs)
+        super(Bleached, self).full_clean(*args, **kwargs)
 
 
