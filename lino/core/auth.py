@@ -34,6 +34,7 @@ class AuthMiddleWareBase(object):
 
     # Singleton instance
     _instance = None
+    max_failed_auth_per_ip = 10 #Should be set in settings.SITE
 
     class NOT_NEEDED(object):
         pass
@@ -157,6 +158,32 @@ class AuthMiddleWareBase(object):
     def change_password(self, request, user, password):
         raise NotImplementedError
 
+
+    def get_client_id(self,request):
+        # from http://stackoverflow.com/questions/4581789/how-do-i-get-user-ip-address-in-django
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0]
+        else:
+            ip = request.META.get('REMOTE_ADDR')
+        return ip
+
+    def get_blacklist(self):
+        try:
+            return settings.SITE.blacklist
+        except AttributeError:
+            settings.SITE.blacklist = {}
+            return self.get_blacklist()
+
+    def is_blacklisted(self, request):
+
+        bl = self.get_blacklist()
+        return bl.get(self.get_client_id(), 0) >= self.max_failed_auth_per_ip
+
+    def add_to_blacklist(self, request):
+        bl = self.get_blacklist()
+        ip = self.get_client_id()
+        bl[ip] = bl.get(ip,0) + 1
 
 class DefaultUserMiddleware(AuthMiddleWareBase):
     """Used when :attr:`lino.core.site.Site.default_user` is non-empty.
