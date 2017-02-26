@@ -136,12 +136,21 @@ class Bleached(Model):
                 "{} has bleached fields but `bleach` is not installed.".format(
                     cls))
 
-    def full_clean(self, *args, **kwargs):
+    # def full_clean(self, *args, **kwargs):
+    def before_ui_save(self, ar):
+        """This does the actual bleaching work.
+        
+        TODO: Lino should log at least a bit of bleach's "activity",
+        for example an info message saying "Removed tags x, y, z from
+        short_text"
+
+        """
         if bleach and self.bleached_fields:
             for k in self.bleached_fields:
                 setattr(self, k, bleach.clean(
                     getattr(self, k),
                     tags=self.allowed_tags, strip=True))
-        super(Bleached, self).full_clean(*args, **kwargs)
+        # super(Bleached, self).full_clean(*args, **kwargs)
+        super(Bleached, self).before_ui_save(ar)
 
 

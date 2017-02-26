@@ -1521,9 +1521,9 @@ class Site(object):
                     # lino_noi.lib.noi is both a required plugin and
                     # the default_ui.
                     return
-                raise Exception("Tried to install %r where %r "
-                                "is already installed." % (
-                                    app_name, other.app_name))
+                raise Exception("Tried to install {} where {} "
+                                "is already installed.".format(
+                                    app_name, other))
 
             # Can an `__init__.py` file explicitly set ``Plugin =
             # None``? Is that feature being used?

@@ -62,6 +62,8 @@ class Comment(CreatedModified, UserAuthored, # Controllable,
 
     @classmethod
     def get_request_queryset(cls, ar):
+        if commentable_model is None:
+            return cls.objects.all()
         if ar.get_user().profile.has_required_roles([SiteUser]):
             return cls.objects.all()
         else:
