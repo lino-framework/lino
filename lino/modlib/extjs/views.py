@@ -166,7 +166,7 @@ class Authenticate(View):
     def post(self, request, *args, **kw):
         username = request.POST.get('username')
         password = request.POST.get('password')
-        user = auth.authenticate(username, password)
+        user = auth.authenticate(username, password,request)
         ar = BaseRequest(request)
         if user is None:
             ar.error("Could not authenticate %r" % username)

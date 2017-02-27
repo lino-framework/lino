@@ -34,6 +34,8 @@ class AuthMiddleWareBase(object):
 
     # Singleton instance
     _instance = None
+    max_failed_auth_per_ip = 4 #Should be set in settings.SITE?
+    blacklist = {}
 
     class NOT_NEEDED(object):
         pass
@@ -156,6 +158,27 @@ class AuthMiddleWareBase(object):
 
     def change_password(self, request, user, password):
         raise NotImplementedError
+
+    @staticmethod
+    def get_client_id(request):
+        # from http://stackoverflow.com/questions/4581789/how-do-i-get-user-ip-address-in-django
+        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            ip = x_forwarded_for.split(',')[0]
+        else:
+            ip = request.META.get('REMOTE_ADDR')
+        return ip
+
+    def is_blacklisted(self, request):
+
+        bl = self.blacklist
+        return bl.get(self.get_client_id(request), 0) >= self.max_failed_auth_per_ip
+
+    def add_to_blacklist(self, request):
+        bl = self.blacklist
+        ip = self.get_client_id(request)
+        bl[ip] = bl.get(ip,0) + 1
+        logger.info("Bad log-in on IP:{}".format(ip))
 
 
 class DefaultUserMiddleware(AuthMiddleWareBase):
@@ -329,9 +352,17 @@ def get_auth_middleware():
     return AuthMiddleWareBase._instance
 
 
-def authenticate(*args, **kwargs):
+def authenticate(username, password, request):
     """
     Needed by the ``/auth`` view (:class:`lino.ui.views.Authenticate`).
     Called when the Login window of the web interface is confirmed.
     """
-    return get_auth_middleware().authenticate(*args, **kwargs)
+    auth = get_auth_middleware()
+    user = auth.authenticate(username, password)
+    if auth.is_blacklisted(request):
+        logger.info("Blacklisted IP:{} attempted log-in".format(auth.get_client_id(request)))
+        return None
+    if user is None:
+        #user failed authenticate
+        auth.add_to_blacklist(request)
+    return user
