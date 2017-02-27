@@ -106,7 +106,7 @@ class Polymorphic(model.Model):
     person and an employee at the same time.
 
     Note that not every usage of Multiple Table Inheritance means
-    polymorphism. For example `lino_cosi.lib.ledger.models.Voucher`
+    polymorphism. For example `lino_xl.lib.ledger.models.Voucher`
     has a pointer to the journal which knows which specialization to
     use, so a given voucher has always exactly one specialization.
 
