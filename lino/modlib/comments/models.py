@@ -14,7 +14,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.humanize.templatetags.humanize import naturaltime
 # from django.db import models
 
-from lino.api import dd
+from lino.api import dd, rt
 from lino.mixins import CreatedModified
 from lino.modlib.users.mixins import UserAuthored
 # from lino.modlib.gfks.mixins import Controllable
@@ -42,6 +42,7 @@ class Comment(CreatedModified, UserAuthored, # Controllable,
 
     """
     # ALLOWED_TAGS = ['a', 'b', 'i', 'em', 'ul', 'ol', 'li']
+    bleached_fields = 'short_text more_text'
     
     class Meta(object):
         app_label = 'comments'
@@ -51,6 +52,8 @@ class Comment(CreatedModified, UserAuthored, # Controllable,
 
     short_text = dd.RichTextField(_("Short text"))
     owner = dd.ForeignKey(commentable_model, blank=True, null=True)
+    reply_to = dd.ForeignKey(
+        'self', blank=True, null=True, verbose_name=_("Reply to"))
     more_text = dd.RichTextField(_("More text"), blank=True)
     # private = models.BooleanField(_("Private"), default=False)
 
@@ -59,6 +62,8 @@ class Comment(CreatedModified, UserAuthored, # Controllable,
 
     @classmethod
     def get_request_queryset(cls, ar):
+        if commentable_model is None:
+            return cls.objects.all()
         if ar.get_user().profile.has_required_roles([SiteUser]):
             return cls.objects.all()
         else:
@@ -97,29 +102,6 @@ class Comment(CreatedModified, UserAuthored, # Controllable,
 
     # def get_change_owner(self, ar):
     #     return self.owner
-
-    def as_li(self, ar):
-        """Return this comment for usage in a list item as a string with HTML
-        tags .
-
-        """
-        chunks = [ar.parse_memo(self.short_text)]
-        by = _("{0} by {1}").format(
-            naturaltime(self.created), str(self.user)),
-        a = ar.obj2html(self, by)
-        if (self.modified - self.created).total_seconds() < 1:
-            a.set('title',_("Created " + self.created.strftime('%Y-%m-%d %H:%M') ))
-        else:
-            a.set('title',_("Modified " + self.modified.strftime('%Y-%m-%d %H:%M') ))
-        chunks += [
-            " (", E.tostring(a), ")"
-        ]
-        if self.more_text:
-            chunks.append(" (...)")
-
-        html = ''.join(chunks)
-        return html
-        # return "<li>" + html + "</li>"
 
 dd.update_field(Comment, 'user', editable=False)
 

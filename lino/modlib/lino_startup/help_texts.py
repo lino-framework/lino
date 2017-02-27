@@ -620,4 +620,5 @@ This is instantiated as E."""),
 <foot> and <body>."""),
     'lino.utils.xmlgen.html.Document' : _("""A pythonic representation of a <body> with a <title> and
 some <head> tags for stylesheets."""),
+    'lino.modlib.contacts.models.Partner.invoice_recipient' : _("""The recipient of invoices (invoicing address)."""),
 }

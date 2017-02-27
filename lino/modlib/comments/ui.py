@@ -16,6 +16,7 @@ from lino.api import dd
 from lino.modlib.users.mixins import My
 from lino.modlib.office.roles import OfficeStaff, OfficeUser
 from lino.utils.xmlgen.html import E
+from lino.utils.soup import truncate_comment
 
 
 class Comments(dd.Table):
@@ -25,8 +26,10 @@ class Comments(dd.Table):
     model = 'comments.Comment'
 
     insert_layout = dd.InsertLayout("""
+    reply_to
+    owner
     short_text
-    """, window_size=(40, 10))
+    """, window_size=(40, 10), hidden_elements="reply_to owner")
 
     detail_layout = """
     id user created modified owner
@@ -40,6 +43,96 @@ class Comments(dd.Table):
     #~ hidden_columns = frozenset(['body'])
     #~ order_by = ["id"]
     #~ label = _("Notes")
+
+    @classmethod
+    def get_summary_header(cls,):
+        """returns a string form html header for a comment,"""
+        chunks = []
+        js = """<script type="text/javascript">
+        <!--
+            function toggle_visibility(id) {
+               var e = document.getElementById(id);
+               if(e.style.display == 'block'|| (e.style.display != 'block' && e.style.display != 'none'))
+                  e.style.display = 'none';
+               else
+                  e.style.display = 'block';
+            }
+        //-->
+        </script>"""
+
+        chunks.append(js)
+        css = """
+        <style>
+ul.flat li {
+    display: inline;
+}
+</style>"""
+        chunks.append(css)
+
+        return "".join(chunks)
+
+    @classmethod
+    def get_comment_header(cls, comment, ar):
+        ch = E.ul()
+        ch.attrib={"class": "flat"}
+        ch.append(E.li(ar.obj2html(comment.user, str(comment.user))))
+
+        wrote = _(" wrote {0}:").format(naturaltime(comment.created))
+        if (comment.modified - comment.created).total_seconds() < 1:
+            t = _("Created " + comment.created.strftime('%Y-%m-%d %H:%M'))
+        else:
+            t = _("Modified " + comment.modified.strftime('%Y-%m-%d %H:%M'))
+        ch.append(E.li(ar.obj2html(comment, wrote, title=t)))
+
+
+        sar = cls.insert_action.request_from(ar)
+        # print(20170217, sar)
+        sar.known_values = dict(reply_to=comment, owner=comment.owner)
+        if ar.get_user().authenticated:
+            btn = sar.ar2button(None, _(" Reply "), icon_name=None)
+            # btn.set("style", "padding-left:10px")
+            ch.append(btn)
+
+        ch.append(
+            E.a(u"⁜", onclick="toggle_visibility('comment-{}');".format(comment.id), title = _("Hide"), href="#")
+        )
+        return E.tostring(ch)
+
+    @classmethod
+    def as_li(cls, self, ar):
+        """Return this comment for usage in a list item as a string with HTML
+        tags .
+
+        """
+        chunks = [truncate_comment(ar.parse_memo(self.short_text))]
+
+        by = _("{0} by {1}").format(
+            naturaltime(self.created), str(self.user))
+
+        if (self.modified - self.created).total_seconds() < 1:
+            t = _("Created " + self.created.strftime('%Y-%m-%d %H:%M') )
+        else:
+            t = _("Modified " + self.modified.strftime('%Y-%m-%d %H:%M') )
+
+        chunks += [
+            " (", E.tostring(ar.obj2html(self, by, title = t)), ")"
+        ]
+        if self.more_text:
+            chunks.append(" (...)")
+
+        if ar.get_user().authenticated:
+            sar = cls.insert_action.request_from(ar)
+            # print(20170217, sar)
+            sar.known_values = dict(reply_to=self, owner=self.owner)
+            if sar.get_permission():
+                btn = sar.ar2button(
+                    None, _("Reply to"), icon_name=None)
+                chunks.append(E.tostring(btn))
+
+
+        html = ''.join(chunks)
+        return html
+        # return "<li>" + html + "</li>"
 
 
 class MyComments(My, Comments):
@@ -72,19 +165,19 @@ class RecentComments(Comments):
     preview_limit = 10
 
     @classmethod
-    def get_slave_summary(self, obj, ar):
+    def get_slave_summary(cls, obj, ar):
         """The :meth:`summary view <lino.core.actors.Actor.get_slave_summary>`
         for :class:`RecentComments`.
 
         """
-        sar = self.request_from(
-            ar, master_instance=obj, limit=self.preview_limit)
+        sar = cls.request_from(
+            ar, master_instance=obj, limit=cls.preview_limit)
 
         # print "20170208", sar.limit
         html = ""
         items = []
         for o in sar.sliced_data_iterator:
-            li = o.as_li(ar)
+            li = cls.as_li(o, ar)
             if o.owner: #Catch for ownerless hackerish comments
                 li += _(" On: ") + E.tostring(ar.obj2html(o.owner))
                 
@@ -117,14 +210,19 @@ class CommentsByRFC(CommentsByX):
         sar = self.request_from(ar, master_instance=obj)
 
         html = obj.get_rfc_description(ar)
+        html += self.get_summary_header()
         sar = self.insert_action.request_from(sar)
         if sar.get_permission():
             btn = sar.ar2button(None, _("Write comment"), icon_name=None)
             html += "<p>" + E.tostring(btn) + "</p>"
 
-        items = ["<li>{}</li>".format(o.as_li(ar)) for o in sar]
-        if len(items) > 0:
-            html += u"<ul>{0}</ul>".format(''.join(items))
+        html += "<ul>"
+        for c in sar:
+            html += "<li>{}<div id={}>{}</div></li>".format(self.get_comment_header(c,sar),
+                                                            "comment-" + str(c.id),
+                                                            ar.parse_memo(c.short_text))
+
+        html += "</ul>"
 
         return ar.html_text(html)
 

@@ -166,8 +166,8 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
         return rv
 
     def full_clean(self, *args, **kw):
-        p = self.person
-        if p is not None:
+        p = self.get_person()
+        if p is not None and p != self:
             for n in ('first_name', 'last_name', 'email', 'language'):
                 if not getattr(self, n):
                     setattr(self, n, getattr(p, n))

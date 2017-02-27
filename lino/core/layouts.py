@@ -528,7 +528,9 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
         return h
 
     def __str__(self):
-        return "%s on %s" % (self.__class__.__name__, self._datasource)
+        return "{}.{} on {!r}".format(
+            self.__class__.__module__, self.__class__.__name__,
+            self._datasource)
 
     def get_choices_url(self, ui, field, **kw):
         # 20140101

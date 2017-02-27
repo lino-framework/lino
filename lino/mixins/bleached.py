@@ -1,14 +1,37 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2016 Luc Saffre
+# Copyright 2016-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
-"""If `bleach <http://bleach.readthedocs.org/en/latest/>`_ is
-installed, all tags except some will be removed when saving the
-content of a :class:`RichHtmlField <lino.core.fields.RichHtmlField>`.
+"""Remove all tags except some when saving the content of a
+:class:`RichHtmlField <lino.core.fields.RichHtmlField>`.
 
-Note that `bleach` requires html5lib` version `0.9999999` (7*"9")
-while the current version is `0.999999999` (9*"9"). Which means that
-you might inadvertedly break `bleach` when you ask to update
-`html5lib`::
+When copying rich text from other applications into Lino, the text can
+contain styles and other things which can cause side effects when
+displaying or printing them.
+
+A possible strategy for avoiding such problems is to bleach any
+content, i.e. allow only simple plain HTML formatting.
+
+If you use this in your application, then your application must add
+`bleach <http://bleach.readthedocs.org/en/latest/>`_ to its
+:ref:`install_requires`.
+
+Usage example (excerpt from
+:class:`lino.modlib.comments.models.Comment`)::
+
+  from lino.mixins.bleached import Bleached
+  from lino.api import dd
+
+  class MyModel(Bleached):
+
+      short_text = dd.RichTextField(_("Short text"), blank=True)
+      more_text = dd.RichTextField(_("More text"), blank=True)
+
+      bleached_fields = "short_text more_text"
+
+Note that `bleach` until 20170225 required html5lib` version
+`0.9999999` (7*"9") while the current version is `0.999999999`
+(9*"9"). Which means that you might inadvertedly break `bleach` when
+you ask to update `html5lib`::
 
     $ pip install -U html5lib
     ...
@@ -24,14 +47,18 @@ you might inadvertedly break `bleach` when you ask to update
     ImportError: No module named sanitizer
 
 """
+import six
+
 try:
     import bleach
 except ImportError:
     bleach = None
 
 from lino.core.model import Model
+from lino.core.fields import fields_list
 from lino.utils.restify import restify
 from lino.utils.xmlgen.html import E
+
 
 def rich_text_to_elems(ar, description):
     """A RichTextField can contain HTML markup or plain text."""
@@ -54,7 +81,7 @@ def body_subject_to_elems(ar, title, description):
     """Convert the given `title` and `description` to a list of HTML
     elements.
 
-    Used by :mod:`lino.modlib.notify` and by :mod:`lino_cosi.lib.sales`
+    Used by :mod:`lino.modlib.notify` and by :mod:`lino_xl.lib.sales`
 
     """
     if description:
@@ -78,15 +105,16 @@ class Bleached(Model):
         A list of strings with the names of the fields that are
         to be bleached.
 
-    .. attribute:: ALLOWED_TAGS
+    .. attribute:: allowed_tags
 
         A list of tag names which are to *remain* in HTML comments if
         bleaching is active.
 
     """
     
-    ALLOWED_TAGS = ['a', 'b', 'i', 'em', 'ul', 'ol', 'li', 'strong', 'p',
-                    'br', 'span', 'pre', 'def']
+    allowed_tags = ['a', 'b', 'i', 'em', 'ul', 'ol', 'li', 'strong',
+                    'p', 'br', 'span', 'pre', 'def', 'table', 'th', 'tr',
+                    'td', 'thead', 'tfoot', 'tbody']
 
     bleached_fields = []
 
@@ -94,18 +122,35 @@ class Bleached(Model):
         abstract = True
 
     @classmethod
-    def on_analyze(self, site):
+    def on_analyze(cls, site):
+        super(Bleached, cls).on_analyze(site)
+        if cls.bleached_fields is None:
+            return
+        if isinstance(cls.bleached_fields, six.string_types):
+            cls.bleached_fields = fields_list(cls, cls.bleached_fields)
         if not bleach:
-            site.logger.debug(
-                "%s not being bleached because `bleach` is broken "
-                "or not installed.", self)
+            # site.logger.debug(
+            #     "%s not being bleached because `bleach` is broken "
+            #     "or not installed.", cls)
+            raise Exception(
+                "{} has bleached fields but `bleach` is not installed.".format(
+                    cls))
 
-    def save(self, *args, **kwargs):
-        if bleach:
+    # def full_clean(self, *args, **kwargs):
+    def before_ui_save(self, ar):
+        """This does the actual bleaching work.
+        
+        TODO: Lino should log at least a bit of bleach's "activity",
+        for example an info message saying "Removed tags x, y, z from
+        short_text"
+
+        """
+        if bleach and self.bleached_fields:
             for k in self.bleached_fields:
                 setattr(self, k, bleach.clean(
                     getattr(self, k),
-                    tags=self.ALLOWED_TAGS, strip=True))
-        super(Bleached, self).save(*args, **kwargs)
+                    tags=self.allowed_tags, strip=True))
+        # super(Bleached, self).full_clean(*args, **kwargs)
+        super(Bleached, self).before_ui_save(ar)
 
 
