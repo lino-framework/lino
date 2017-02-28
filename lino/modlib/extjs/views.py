@@ -154,7 +154,7 @@ class Authenticate(View):
         action_name = request.GET.get(constants.URL_PARAM_ACTION_NAME)
         if action_name == 'logout':
             username = request.session.pop('username', None)
-            request.session.pop('password', None)
+            # request.session.pop('password', None)
             #~ username = request.session['username']
             #~ del request.session['password']
 
@@ -166,13 +166,15 @@ class Authenticate(View):
     def post(self, request, *args, **kw):
         username = request.POST.get('username')
         password = request.POST.get('password')
-        user = auth.authenticate(username, password,request)
         ar = BaseRequest(request)
-        if user is None:
-            ar.error("Could not authenticate %r" % username)
+        mw = auth.get_auth_middleware()
+        msg = mw.authenticate(username, password, request)
+        if msg:
+            request.session.pop('username', None)
+            ar.error(msg)
         else:
             request.session['username'] = username
-            request.session['password'] = password
+            # request.session['password'] = password
             ar.success(("Now logged in as %r" % username))
             # print "20150428 Now logged in as %r (%s)" % (username, user)
         return settings.SITE.kernel.render_action_response(ar)

@@ -172,3 +172,6 @@ if settings.SITE.user_model == 'auth.User':
                     'profile', UserTypes.field())
     dd.inject_field(settings.SITE.user_model, 'language', dd.LanguageField())
 
+
+
+

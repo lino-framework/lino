@@ -98,7 +98,7 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
 
     if dd.is_installed('contacts'):
 
-        partner = models.ForeignKey(
+        partner = dd.ForeignKey(
             'contacts.Partner', blank=True, null=True,
             on_delete=models.PROTECT)
 

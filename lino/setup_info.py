@@ -138,6 +138,7 @@ lino.modlib.export_excel
 lino.modlib.extjs
 lino.modlib.gfks
 lino.modlib.gfks.fixtures
+lino.modlib.ipdict
 lino.modlib.jinja
 lino.modlib.importfilters
 lino.modlib.languages
