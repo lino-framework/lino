@@ -442,7 +442,7 @@ class Model(models.Model):
         Used e.g. in :mod:`lino_xl.lib.cal` to add the `UpdateReminders`
         action to :class: `lino.modlib.users.models.User`.
 
-        Or in :mod:`lino_cosi.lib.invoicing.models` for defining a
+        Or in :mod:`lino_xl.lib.invoicing.models` for defining a
         custom chooser.
 
         """

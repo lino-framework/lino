@@ -118,7 +118,7 @@ Example of a class description::
     <desc desctype="class" domain="py" noindex="False" objtype="class">
         <desc_signature class="" first="False" fullname="Plan" ids="..." module="..." names="...">
         <desc_annotation>class </desc_annotation>
-            <desc_addname>lino_cosi.lib.invoicing.models.</desc_addname>
+            <desc_addname>lino_xl.lib.invoicing.models.</desc_addname>
             <desc_name>Plan</desc_name>
             <desc_parameterlist>
                 <desc_parameter>*args</desc_parameter>
@@ -153,9 +153,9 @@ Example of a field description::
 
     <desc desctype="attribute" domain="py" noindex="False" objtype="attribute">
       <desc_signature class="Plan" first="False" fullname="Plan.journal" 
-            ids="lino_cosi.lib.invoicing.models.Plan.journal" 
-            module="lino_cosi.lib.invoicing.models" 
-            names="lino_cosi.lib.invoicing.models.Plan.journal">
+            ids="lino_xl.lib.invoicing.models.Plan.journal" 
+            module="lino_xl.lib.invoicing.models" 
+            names="lino_xl.lib.invoicing.models.Plan.journal">
         <desc_name>journal</desc_name>
       </desc_signature>
       <desc_content>
@@ -219,7 +219,7 @@ class HelpTextExtractor(object):
             ' '.join(self.name2file.values())))
 
     def extract_help_texts(self, app, doctree):
-        # if docname != 'api/lino_cosi.lib.invoicing.models':
+        # if docname != 'api/lino_xl.lib.invoicing.models':
         #     return
         # print(doctree)
         # return

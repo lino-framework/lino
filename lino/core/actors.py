@@ -184,6 +184,9 @@ class ActorMetaClass(type):
     def __str__(cls):
         return cls.actor_id
 
+    def __repr__(cls):
+        return cls.__module__ + "." + cls.__name__
+
     @property
     def label(cls):
         return cls.get_actor_label()
