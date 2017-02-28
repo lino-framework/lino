@@ -174,11 +174,11 @@ class AuthMiddleWareBase(object):
         bl = self.blacklist
         return bl.get(ip, 0) >= self.max_failed_auth_per_ip
 
-    def add_to_blacklist(self, request):
+    def add_to_blacklist(self, ip):
         bl = self.blacklist
-        ip = self.get_client_id(request)
-        bl[ip] = bl.get(ip,0) + 1
-        logger.info("Bad log-in on IP:{}".format(ip))
+        # ip = self.get_client_id(request)
+        bl[ip] = bl.get(ip, 0) + 1
+        logger.info("Bad log-in from IP: %s", ip)
 
 
 class DefaultUserMiddleware(AuthMiddleWareBase):
@@ -362,8 +362,9 @@ def authenticate(username, password, request):
     if auth.is_blacklisted(ip):
         msg = "Blacklisted IP {} (contact your system administrator)"
         raise exceptions.PermissionDenied(msg.format(ip))
+        # raise Warning(msg.format(ip))
     user = auth.authenticate(username, password)
     if user is None:
         #user failed authenticate
-        auth.add_to_blacklist(request)
+        auth.add_to_blacklist(ip)
     return user
