@@ -44,6 +44,7 @@ Utilities
    :toctree:
 
     about
+    ipdict
     export_excel
     tinymce
     notify

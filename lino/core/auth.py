@@ -21,9 +21,13 @@ from django.utils import translation
 from django.utils.timezone import activate
 from django.conf import settings
 from django import http
+from django.utils.translation import ugettext_lazy as _
 
 from lino.core import constants
 from lino.modlib.users.utils import AnonymousUser
+
+class NOT_NEEDED(object):
+    pass
 
 
 class AuthMiddleWareBase(object):
@@ -35,19 +39,10 @@ class AuthMiddleWareBase(object):
     # Singleton instance
     _instance = None
     
-    max_failed_auth_per_ip = 4 # Should be set in settings.SITE?
-    blacklist = {}
-
-    class NOT_NEEDED(object):
-        pass
-
     def __init__(self):
         # Save singleton instance
         AuthMiddleWareBase._instance = self
         # print("20150129 Middleware is {0}".format(self.__class__))
-
-    def get_user_from_request(self, request):
-        raise NotImplementedError
 
     def process_request(self, request):
         # first request will trigger site startup to load UserTypes
@@ -57,51 +52,9 @@ class AuthMiddleWareBase(object):
 
         # logger.info("20150428 %s process_request %s -> %s" % (
         #     self.__class__.__name__, request.path, user))
-
-        self.on_login(request, user)
-
-    def authenticate(self, username, password=NOT_NEEDED):
-        # logger.info("20150424 authenticate %s, %s" % (username, password))
-
-        if not username:
-            return AnonymousUser.instance()
-
-        # 20120110 : Alicia once managed to add a space char in front
-        # of her username log in the login dialog.  Apache let her in
-        # as " alicia".
-        username = username.strip()
-
-        try:
-            user = settings.SITE.user_model.objects.get(username=username)
-            if user.profile is None:
-                logger.info(
-                    "Could not authenticate %s : user has no profile",
-                    username)
-                return None
-            if password != self.NOT_NEEDED:
-                if not user.check_password(password):
-                    logger.info(
-                        "Could not authenticate %s : password mismatch",
-                        username)
-                    return None
-                #~ logger.info("20130923 good password for %s",username)
-            #~ else:
-                #~ logger.info("20130923 no password needed for %s",username)
-            return user
-        except settings.SITE.user_model.DoesNotExist:
-            logger.debug("Could not authenticate %s : no such user", username)
-            return None
-
-    def on_login(self, request, user):
-        """The method which is applied when the user has been determined.  On
-        multilingual sites, if URL_PARAM_USER_LANGUAGE is present it
-        overrides user.language.
-
-        """
-        # logger.info("20130923 on_login(%s)" % user)
-
+        
         request.user = user
-
+        
         user_language = user.language  # or settings.SITE.get_default_language()
 
         if settings.USE_TZ:
@@ -154,38 +107,67 @@ class AuthMiddleWareBase(object):
         #~ if request.subst_user is not None and not isinstance(request.subst_user,settings.SITE.user_model):
             #~ raise Exception("20121228")
 
+    def get_user_from_request(self, request):
+        raise NotImplementedError()
+
+    def lookup_user_by_name(self, username):
+        if not username:
+            return None
+        # 20120110 : Alicia once managed to add a space char in front
+        # of her username log in the login dialog.  Apache let her in
+        # as " alicia".
+        username = username.strip()
+        try:
+            return settings.SITE.user_model.objects.get(username=username)
+        except settings.SITE.user_model.DoesNotExist:
+            return None
+            # logger.debug("Could not authenticate %s : no such user",
+            #              username)
+        # return None
+
+
+    def authenticate(self, username, password=NOT_NEEDED, request=None):
+        """Authenticate the given username and password and request.
+
+        Return None if authentication is successfull, otherwise a
+        translatable message to be forwarded to the user who is trying
+        to authenticate.
+
+        """
+        # logger.info("20150424 authenticate %s, %s" % (username, password))
+
+        user = self.lookup_user_by_name(username)
+        
+        if user is None:
+            return _("Could not authenticate {} : no such user").format(
+                username)
+            # return AnonymousUser.instance()
+        
+
+        if user.profile is None:
+            return _(
+                "Could not authenticate {} : user is inactive").format(
+                    username)
+            return None
+        if password is NOT_NEEDED:
+            return
+        
+        if not user.check_password(password):
+            return _(
+                "Could not authenticate {} : wrong password").format(
+                    username)
+
     def can_change_password(self, request, user):
         return False
 
     def change_password(self, request, user, password):
         raise NotImplementedError
 
-    @staticmethod
-    def get_client_id(request):
-        # from http://stackoverflow.com/questions/4581789/how-do-i-get-user-ip-address-in-django
-        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-        if x_forwarded_for:
-            ip = x_forwarded_for.split(',')[0]
-        else:
-            ip = request.META.get('REMOTE_ADDR')
-        return ip
-
-    def is_blacklisted(self, ip):
-        bl = self.blacklist
-        return bl.get(ip, 0) >= self.max_failed_auth_per_ip
-
-    def add_to_blacklist(self, ip):
-        bl = self.blacklist
-        # ip = self.get_client_id(request)
-        bl[ip] = bl.get(ip, 0) + 1
-        logger.info("Bad log-in from IP: %s", ip)
-
-
 class DefaultUserMiddleware(AuthMiddleWareBase):
     """Used when :attr:`lino.core.site.Site.default_user` is non-empty.
     """
     def get_user_from_request(self, request):
-        user = self.authenticate(settings.SITE.default_user)
+        user = self.lookup_user_by_name(settings.SITE.default_user)
 
         # print 20150701, user.profile.role
 
@@ -225,14 +207,11 @@ class RemoteUserMiddleware(AuthMiddleWareBase):
 
     def get_user_from_request(self, request):
         username = request.META.get(settings.SITE.remote_user_header, None)
-
         if not username:
             raise Exception(
                 "Using remote authentication, but no user credentials found.")
 
-        user = self.authenticate(username)
-
-        # print 20150701, user.profile.role
+        user = self.lookup_user_by_name(username)
 
         if user is None:
             # print("20130514 Unknown username %s from request %s" % (
@@ -274,12 +253,9 @@ class SessionUserMiddleware(AuthMiddleWareBase):
         #     request.session.get('username'),
         #     request.session.get('password')))
 
-        user = self.authenticate(request.session.get('username'),
-                                 request.session.get('password'))
-
+        user = self.lookup_user_by_name(request.session.get('username'))
         if user is None:
             user = AnonymousUser.instance()
-
         return user
 
 
@@ -302,45 +278,37 @@ class LDAPAuthMiddleware(SessionUserMiddleware):
     """
 
     def __init__(self):
-        from activedirectory import Client, Creds
-        from activedirectory.core.exception import Error
+        from activedirectory import Creds
+        # from activedirectory.core.exception import Error
 
         server_spec = settings.SITE.ldap_auth_server
         if isinstance(server_spec, six.string_types):
             server_spec = server_spec.split()
 
-        self.domain = server_spec[0]
+        domain = server_spec[0]
         self.server = server_spec[1]
-
         self.creds = Creds(domain)
 
-    def check_password(self, username, password):
+    def authenticate(
+            self,
+            username,
+            password=NOT_NEEDED,
+            request=None):
+        if username and password is not NOT_NEEDED:
+            try:
+                self.creds.acquire(username, password, server=self.server)
+            except Exception as e:
+                return str(e)
+        return SessionUserMiddleware.authenticate(
+            username, password=NOT_NEEDED, request=request)
 
-        try:
-            self.creds.acquire(username, password, server=self.server)
-            return True
-        except Exception as e:
-            pass
+    # def get_user_from_request(self, request):
+    #     user = self.lookup_user_by_name(request.session.get('username'))
+    #     if user is None:
+    #         # logger.debug("Login failed from session %s", request.session)
+    #         user = AnonymousUser.instance()
 
-        return False
-
-    def authenticate(self, username, password=SessionUserMiddleware.NOT_NEEDED, from_session=False):
-        if not from_session and username and password != SessionUserMiddleware.NOT_NEEDED:
-            if not self.check_password(username, password):
-                return None
-
-        return SessionUserMiddleware.authenticate(username, SessionUserMiddleware.NOT_NEEDED)
-
-    def get_user_from_request(self, request):
-
-        user = self.authenticate(request.session.get('username'),
-                                 request.session.get('password'), True)
-
-        if user is None:
-            logger.debug("Login failed from session %s", request.session)
-            user = AnonymousUser.instance()
-
-        return user
+    #     return user
 
 
 def get_auth_middleware():
@@ -357,14 +325,4 @@ def authenticate(username, password, request):
     Needed by the ``/auth`` view (:class:`lino.ui.views.Authenticate`).
     Called when the Login window of the web interface is confirmed.
     """
-    auth = get_auth_middleware()
-    ip = auth.get_client_id(request)
-    if auth.is_blacklisted(ip):
-        msg = "Blacklisted IP {} (contact your system administrator)"
-        raise exceptions.PermissionDenied(msg.format(ip))
-        # raise Warning(msg.format(ip))
-    user = auth.authenticate(username, password)
-    if user is None:
-        #user failed authenticate
-        auth.add_to_blacklist(ip)
-    return user
+    return get_auth_middleware().authenticate(username, password, request)

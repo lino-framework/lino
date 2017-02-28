@@ -495,6 +495,10 @@ class Site(object):
 
     """
 
+    use_ipdict = False
+    """Whether this site uses :mod:`lino.modlib.ipdict`.
+    """
+    
     # use_auth = True
     # """Whether this site uses authentication.  If this is set to `False`,
     # all requests are anonymous (as if :attr:`user_model` was `None`).
@@ -3283,6 +3287,8 @@ Please convert to Plugin method".format(mod, methname)
                 yield 'django.contrib.sessions.middleware.SessionMiddleware'
                 if self.ldap_auth_server:
                     yield 'lino.core.auth.LDAPAuthMiddleware'
+                elif self.use_ipdict:
+                    yield 'lino.modlib.ipdict.middleware.Middleware'
                 else:
                     yield 'lino.core.auth.SessionUserMiddleware'
 
@@ -3375,6 +3381,9 @@ Please convert to Plugin method".format(mod, methname)
 
         yield 'django.contrib.staticfiles'
         yield 'lino.modlib.about'
+
+        if self.use_ipdict:
+            yield 'lino.modlib.ipdict'
 
         yield self.default_ui
         # if self.default_ui == "extjs":
