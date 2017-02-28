@@ -34,7 +34,8 @@ class AuthMiddleWareBase(object):
 
     # Singleton instance
     _instance = None
-    max_failed_auth_per_ip = 4 #Should be set in settings.SITE?
+    
+    max_failed_auth_per_ip = 4 # Should be set in settings.SITE?
     blacklist = {}
 
     class NOT_NEEDED(object):
@@ -169,10 +170,9 @@ class AuthMiddleWareBase(object):
             ip = request.META.get('REMOTE_ADDR')
         return ip
 
-    def is_blacklisted(self, request):
-
+    def is_blacklisted(self, ip):
         bl = self.blacklist
-        return bl.get(self.get_client_id(request), 0) >= self.max_failed_auth_per_ip
+        return bl.get(ip, 0) >= self.max_failed_auth_per_ip
 
     def add_to_blacklist(self, request):
         bl = self.blacklist
@@ -358,10 +358,11 @@ def authenticate(username, password, request):
     Called when the Login window of the web interface is confirmed.
     """
     auth = get_auth_middleware()
+    ip = auth.get_client_id(request)
+    if auth.is_blacklisted(ip):
+        msg = "Blacklisted IP {} (contact your system administrator)"
+        raise exceptions.PermissionDenied(msg.format(ip))
     user = auth.authenticate(username, password)
-    if auth.is_blacklisted(request):
-        logger.info("Blacklisted IP:{} attempted log-in".format(auth.get_client_id(request)))
-        return None
     if user is None:
         #user failed authenticate
         auth.add_to_blacklist(request)
