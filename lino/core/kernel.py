@@ -991,8 +991,6 @@ def site_startup(self):
         #     django.setup()
 
 
-        pre_startup.send(self)
-
         for p in self.installed_plugins:
             # m = loading.load_app(p.app_name, False)
             # In Django17+ we cannot say can_postpone=False,
@@ -1013,6 +1011,8 @@ def site_startup(self):
                 # print(rrrr)
 
             self.models.define(six.text_type(p.app_label), m)
+
+        pre_startup.send(self)
 
         for p in self.installed_plugins:
             p.on_site_startup(self)

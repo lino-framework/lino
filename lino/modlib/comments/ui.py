@@ -115,7 +115,7 @@ ul.flat li {
             t = _("Modified " + self.modified.strftime('%Y-%m-%d %H:%M') )
 
         chunks += [
-            " (", E.tostring(ar.obj2html(self, by, title = t)), ")"
+            " (", E.tostring(ar.obj2html(self, by, title=t)), ")"
         ]
         if self.more_text:
             chunks.append(" (...)")

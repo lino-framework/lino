@@ -1,4 +1,4 @@
-# Copyright 2015-2016 Luc Saffre
+# Copyright 2015-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -27,12 +27,12 @@ from lino.utils.jinja import Counter
 from lino.utils import SumCollector
 from lino.core.auth import AnonymousUser
 
-from lino.core.renderer import HtmlRenderer
+from lino.core.renderer import MailRenderer
 
 from lino.api import rt
 
 
-class JinjaRenderer(HtmlRenderer):
+class JinjaRenderer(MailRenderer):
 
     tableattrs = dict()
     cellattrs = dict()

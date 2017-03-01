@@ -211,6 +211,7 @@ update_controller_field() instead."""),
     'lino.modlib.gfks.models.BrokenGFKs' : _("""Shows all database objects (model instances) who have a broken
 GeneriForeignKey field."""),
     'lino.modlib.importfilters.Plugin' : _("""See /dev/plugins."""),
+    'lino.modlib.ipdict.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.jinja.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.jinja.loader.DjangoJinjaTemplate' : _("""used e.g. to render /lino/lino/config/500.html"""),
     'lino.modlib.languages.Plugin' : _("""See /dev/plugins."""),
@@ -453,8 +454,8 @@ Leaving this empty means that the user cannot log in."""),
     'lino.modlib.users.models.User.profile' : _("""The profile of a user is what defines her or his permissions."""),
     'lino.modlib.users.models.User.partner' : _("""Pointer to the Partner instance related to
 this user."""),
-    'lino.modlib.users.models.User.person' : _("""A virtual read-only field which returns the Person MTI child corresponding
-to the partner (if it exists) and otherwise None."""),
+    'lino.modlib.users.models.User.person' : _("""A virtual read-only field which returns the Person MTI child of the
+partner (if it exists) and otherwise None."""),
     'lino.modlib.users.models.User.last_login' : _("""Not used in Lino."""),
     'lino.modlib.users.models.User.authenticated' : _("""This is always True.
 See also lino.modlib.users.utils.AnonymousUser.authenticated."""),

@@ -611,6 +611,10 @@ class MailRenderer(HtmlRenderer):
     def get_detail_url(self, actor, pk, *args, **kw):
         # return self.plugin.build_plain_url(
         #     'api', actor.app_label, actor.__name__, str(pk), *args, **kw)
+        if actor.model:
+            return "{}api/{}/{}/{}".format(
+                settings.SITE.server_url,
+                actor.model._meta.app_label, actor.model.__name__, pk)
         return "{}api/{}/{}/{}".format(
             settings.SITE.server_url,
             actor.app_label, actor.__name__, pk)

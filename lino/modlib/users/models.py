@@ -50,19 +50,24 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
         <lino_xl.lib.contacts.models.Partner>` instance related to
         this user.
 
-        This is a DummyField when :mod:`lino_xl.lib.contacts` is not
-        installed.
+        Every user account can optionally point to a partner instance
+        which holds extended contact information. One partner can have
+        more than one user accounts.
+
+        This is a :class:`DummyField` when :mod:`lino_xl.lib.contacts`
+        is not installed or when User is a subclass of :class:`Partner
+        <lino_xl.lib.contacts.models.Partner>` .
 
     .. attribute:: person
 
         A virtual read-only field which returns the :class:`Person
-        <lino_xl.lib.contacts.models.Person>` MTI child corresponding
-        to the :attr:`partner` (if it exists) and otherwise `None`.
+        <lino_xl.lib.contacts.models.Person>` MTI child of the
+        :attr:`partner` (if it exists) and otherwise `None`.
 
     .. attribute:: last_login
 
         Not used in Lino.
-    
+
     """
 
     class Meta(object):
@@ -96,16 +101,6 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
     last_name = models.CharField(_('Last name'), max_length=30, blank=True)
     remarks = models.TextField(_("Remarks"), blank=True)  # ,null=True)
 
-    if dd.is_installed('contacts'):
-
-        partner = dd.ForeignKey(
-            'contacts.Partner', blank=True, null=True,
-            on_delete=models.PROTECT)
-
-    else:
-
-        partner = dd.DummyField()
-
     change_password = ChangePassword()
 
     def __str__(self):
@@ -122,13 +117,9 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
         # return join_words(self.last_name.upper(),self.first_name)
         return str(self)
 
-    if dd.is_installed('contacts'):
-        def get_person(self):
-            if self.partner:
-                return self.partner.get_mti_child('person')
-    else:
-        def get_person(self):
-            return None
+    def get_person(self):
+        if self.partner:
+            return self.partner.get_mti_child('person')
 
     person = property(get_person)
 
@@ -274,5 +265,19 @@ class Authority(UserAuthored):
             qs = qs.exclude(id=user.id)
             #~ .exclude(level__gte=UserLevels.admin)
         return qs
+
+@dd.receiver(dd.pre_startup)
+def inject_partner_field(sender=None, **kwargs):
+
+    User = sender.models.users.User
+
+    if dd.is_installed('contacts'):
+        Partner = sender.models.contacts.Partner
+        if not issubclass(User, Partner):
+            dd.inject_field(User, 'partner', dd.ForeignKey(
+                'contacts.Partner', blank=True, null=True,
+                on_delete=models.PROTECT))
+            return
+    dd.inject_field(User, 'partner', dd.DummyField())
 
 
