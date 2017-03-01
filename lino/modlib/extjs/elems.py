@@ -597,6 +597,7 @@ class FieldElement(LayoutElement):
 
         """
         if self.field.primary_key:
+            # print(20170301, ar.renderer)
             url = ar.renderer.get_detail_url(ar.actor, v)
             if url is not None:
                 return E.td(E.a(self.format_value(
