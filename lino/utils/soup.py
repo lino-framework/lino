@@ -14,6 +14,9 @@
 
 """
 
+from __future__ import unicode_literals
+from builtins import str
+
 from bs4 import BeautifulSoup
 
 def truncate_comment(html_str, max_p_len = 240,):
