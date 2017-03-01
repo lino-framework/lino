@@ -211,6 +211,7 @@ update_controller_field() instead."""),
     'lino.modlib.gfks.models.BrokenGFKs' : _("""Shows all database objects (model instances) who have a broken
 GeneriForeignKey field."""),
     'lino.modlib.importfilters.Plugin' : _("""See /dev/plugins."""),
+    'lino.modlib.ipdict.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.jinja.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.jinja.loader.DjangoJinjaTemplate' : _("""used e.g. to render /lino/lino/config/500.html"""),
     'lino.modlib.languages.Plugin' : _("""See /dev/plugins."""),
