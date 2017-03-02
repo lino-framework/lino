@@ -495,7 +495,7 @@ class Site(object):
 
     """
 
-    use_ipdict = True
+    use_ipdict = False
     """Whether this site uses :mod:`lino.modlib.ipdict`.
     """
     
