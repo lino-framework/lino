@@ -159,6 +159,9 @@ def format_request(request):
     return s
 
 
+def model_class_path(model):
+    return model.__module__ + '.' + model.__name__
+
 def full_model_name(model, sep='.'):
     """Returns the "full name" of the given model, e.g. "contacts.Person" etc.
     """
