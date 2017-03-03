@@ -15,7 +15,7 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 # from django.db import models
 
 from lino.api import dd, rt
-from lino.mixins import CreatedModified
+from lino.mixins import CreatedModified, BabelNamed
 from lino.modlib.users.mixins import UserAuthored
 # from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.notify.mixins import ChangeObservable
@@ -28,6 +28,27 @@ try:
     commentable_model = dd.plugins.comments.commentable_model
 except AttributeError:
     commentable_model = None
+
+
+class CommentType(BabelNamed):
+    """The type of an upload.
+
+    .. attribute:: shortcut
+
+        Optional pointer to a virtual **upload shortcut** field.  If
+        this is not empty, then the given shortcut field will manage
+        uploads of this type.  See also :class:`Shortcuts
+        <lino.modlib.uploads.choicelists.Shortcuts>`.
+
+    """
+    class Meta(object):
+        abstract = dd.is_abstract_model(__name__, 'CommentType')
+        verbose_name = _("Comment Type")
+        verbose_name_plural = _("Comment Types")
+
+
+
+    
     
 @dd.python_2_unicode_compatible
 class Comment(CreatedModified, UserAuthored, # Controllable,
@@ -56,6 +77,8 @@ class Comment(CreatedModified, UserAuthored, # Controllable,
         'self', blank=True, null=True, verbose_name=_("Reply to"))
     more_text = dd.RichTextField(_("More text"), blank=True)
     # private = models.BooleanField(_("Private"), default=False)
+    comment_type = dd.ForeignKey(
+        'comments.CommentType', blank=True, null=True)
 
     def __str__(self):
         return u'%s #%s' % (self._meta.verbose_name, self.pk)

@@ -14,25 +14,46 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 
 from lino.api import dd
 from lino.modlib.users.mixins import My
-from lino.modlib.office.roles import OfficeStaff, OfficeUser
 from lino.utils.xmlgen.html import E
 from lino.utils.soup import truncate_comment
+from .roles import CommentsReader, CommentsUser, CommentsStaff
+
+class CommentTypes(dd.Table):
+    """The table with all existing upload types.
+
+    This usually is accessible via the `Configure` menu.
+    """
+    required_roles = dd.login_required(CommentsStaff)
+    model = 'comments.CommentType'
+    column_names = "name *"
+    order_by = ["name"]
+
+    insert_layout = """
+    name
+    id
+    """
+
+    detail_layout = """
+    id name
+    comments.CommentsByType
+    """
 
 
 class Comments(dd.Table):
-    required_roles = dd.login_required(OfficeStaff)
+    required_roles = dd.login_required(CommentsUser)
     slave_grid_format = "summary"
 
     model = 'comments.Comment'
 
     insert_layout = dd.InsertLayout("""
-    reply_to
-    owner
+    reply_to owner
+    comment_type
     short_text
-    """, window_size=(40, 10), hidden_elements="reply_to owner")
+    """, window_size=(60, 10), hidden_elements="reply_to owner")
 
     detail_layout = """
-    id user created modified owner
+    id user created modified 
+    reply_to owner comment_type
     short_text
     more_text
     """
@@ -136,18 +157,17 @@ ul.flat li {
 
 
 class MyComments(My, Comments):
-    required_roles = dd.login_required(OfficeUser)
+    required_roles = dd.login_required(CommentsUser)
     auto_fit_column_widths = True
     order_by = ["modified"]
     column_names = "modified short_text owner *"
 
 
 class CommentsByX(Comments):
-    required_roles = dd.login_required(OfficeUser)
+    required_roles = dd.login_required(CommentsReader)
     order_by = ["-created"]
 
 USE_ETREE = False
-
 
 class RecentComments(Comments):
     """Shows the comments for a given database object.
@@ -157,7 +177,8 @@ class RecentComments(Comments):
 
     """
 
-    required_roles = set([])
+    required_roles = dd.login_required(CommentsReader)
+    # required_roles = set([CommentsReader])
     column_names = "short_text created user *"
     stay_in_grid = True
     order_by = ["-created"]
@@ -190,6 +211,11 @@ class RecentComments(Comments):
         return ar.html_text(html)
 
 
+class CommentsByType(CommentsByX):
+    master_key = 'comment_type'
+    column_names = "short_text created user *"
+
+    
 class CommentsByRFC(CommentsByX):
     """Shows the comments for a given database object.
 
