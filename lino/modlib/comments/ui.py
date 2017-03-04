@@ -91,7 +91,7 @@ class Comments(dd.Table):
             E.a(u"⁜", onclick="toggle_visibility('comment-{}');".format(
                 comment.id), title=_("Hide"), href="#")
         )
-        return E.tostring(E.span(*ch))
+        return E.tostring(ch)
 
     @classmethod
     def as_li(cls, self, ar):
