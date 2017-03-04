@@ -58,6 +58,12 @@ class Contactable(model.Model):
     email = models.EmailField(_('e-mail address'), blank=True)
     language = LanguageField(default=models.NOT_PROVIDED, blank=True)
     
+    def get_as_user(self):
+        """Return the user object representing this contactable.
+
+        """
+        raise NotImplementedError()
+        
 
 class Phonable(model.Model):
     """Mixin for models that represent somebody who can be contacted by
