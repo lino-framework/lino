@@ -140,6 +140,10 @@ including those applied to "child" objects."""),
     'lino.modlib.changes.models.ChangesByMaster.model' : _("""alias of Change"""),
     'lino.modlib.comments.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.comments.mixins.Commentable' : _("""A request for comment. Every database model of an application"""),
+    'lino.modlib.comments.models.CommentType' : _("""The type of an upload."""),
+    'lino.modlib.comments.models.CommentType.shortcut' : _("""Optional pointer to a virtual upload shortcut field.  If
+this is not empty, then the given shortcut field will manage
+uploads of this type.  See also Shortcuts."""),
     'lino.modlib.comments.models.Comment' : _("""A comment is a short text which some user writes about some
 other database object. It has no recipient."""),
     'lino.modlib.comments.models.Comment.short_text' : _("""A short "abstract" of your comment. This should not be more

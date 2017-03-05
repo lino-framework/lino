@@ -87,6 +87,16 @@ class SiteConfig(dd.Model):
         If no plugin named 'contacts' is intalled, then this is a
         dummy field which always contains `None`.
 
+
+    .. attribute:: hide_events_before
+
+        If this is not empty, any calendar events before that date are
+        being hidden in certain places.
+
+        For example OverdueEvents, EventsByController, ...
+
+        Injected by :mod:`lino_xl.lib.cal`.
+
     """
 
     class Meta(object):
