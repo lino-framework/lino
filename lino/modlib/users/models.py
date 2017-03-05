@@ -106,6 +106,9 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
     def __str__(self):
         return self.get_full_name()
 
+    def get_as_user(self):
+        return self
+    
     def get_full_name(self):
         "Returns the first_name plus the last_name, with a space in between."
         if not self.first_name and not self.last_name:

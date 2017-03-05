@@ -5,6 +5,7 @@
 
 """
 from __future__ import unicode_literals
+from builtins import str
 
 import logging
 logger = logging.getLogger(__name__)
@@ -66,45 +67,16 @@ class Comments(dd.Table):
     #~ label = _("Notes")
 
     @classmethod
-    def get_summary_header(cls,):
-        """returns a string form html header for a comment,"""
-        chunks = []
-        js = """<script type="text/javascript">
-        <!--
-            function toggle_visibility(id) {
-               var e = document.getElementById(id);
-               if(e.style.display == 'block'|| (e.style.display != 'block' && e.style.display != 'none'))
-                  e.style.display = 'none';
-               else
-                  e.style.display = 'block';
-            }
-        //-->
-        </script>"""
-
-        chunks.append(js)
-        css = """
-        <style>
-ul.flat li {
-    display: inline;
-}
-</style>"""
-        chunks.append(css)
-
-        return "".join(chunks)
-
-    @classmethod
     def get_comment_header(cls, comment, ar):
-        ch = E.ul()
-        ch.attrib={"class": "flat"}
-        ch.append(E.li(ar.obj2html(comment.user, str(comment.user))))
-
-        wrote = _(" wrote {0}:").format(naturaltime(comment.created))
+        ch = []
         if (comment.modified - comment.created).total_seconds() < 1:
             t = _("Created " + comment.created.strftime('%Y-%m-%d %H:%M'))
         else:
             t = _("Modified " + comment.modified.strftime('%Y-%m-%d %H:%M'))
-        ch.append(E.li(ar.obj2html(comment, wrote, title=t)))
-
+        ch.append(ar.obj2html(
+            comment, naturaltime(comment.created), title=t))
+        ch += [" ", _("by"), " ",
+               ar.obj2html(comment.user, str(comment.user))]
 
         sar = cls.insert_action.request_from(ar)
         # print(20170217, sar)
@@ -112,10 +84,12 @@ ul.flat li {
         if ar.get_user().authenticated:
             btn = sar.ar2button(None, _(" Reply "), icon_name=None)
             # btn.set("style", "padding-left:10px")
-            ch.append(btn)
+            ch += [" [", btn, "]"]
 
+        ch.append(' ')
         ch.append(
-            E.a(u"⁜", onclick="toggle_visibility('comment-{}');".format(comment.id), title = _("Hide"), href="#")
+            E.a(u"⁜", onclick="toggle_visibility('comment-{}');".format(
+                comment.id), title=_("Hide"), href="#")
         )
         return E.tostring(ch)
 
@@ -147,8 +121,8 @@ ul.flat li {
             sar.known_values = dict(reply_to=self, owner=self.owner)
             if sar.get_permission():
                 btn = sar.ar2button(
-                    None, _("Reply to"), icon_name=None)
-                chunks.append(E.tostring(btn))
+                    None, _("Reply"), icon_name=None)
+                chunks.append(' '+E.tostring(btn))
 
 
         html = ''.join(chunks)
@@ -159,7 +133,7 @@ ul.flat li {
 class MyComments(My, Comments):
     required_roles = dd.login_required(CommentsUser)
     auto_fit_column_widths = True
-    order_by = ["modified"]
+    order_by = ["-modified"]
     column_names = "modified short_text owner *"
 
 
@@ -167,6 +141,10 @@ class CommentsByX(Comments):
     required_roles = dd.login_required(CommentsReader)
     order_by = ["-created"]
 
+class AllComments(Comments):
+    required_roles = dd.login_required(CommentsStaff)
+    
+    
 USE_ETREE = False
 
 class RecentComments(Comments):
@@ -236,7 +214,6 @@ class CommentsByRFC(CommentsByX):
         sar = self.request_from(ar, master_instance=obj)
 
         html = obj.get_rfc_description(ar)
-        html += self.get_summary_header()
         sar = self.insert_action.request_from(sar)
         if sar.get_permission():
             btn = sar.ar2button(None, _("Write comment"), icon_name=None)
@@ -244,9 +221,10 @@ class CommentsByRFC(CommentsByX):
 
         html += "<ul>"
         for c in sar:
-            html += "<li>{}<div id={}>{}</div></li>".format(self.get_comment_header(c,sar),
-                                                            "comment-" + str(c.id),
-                                                            ar.parse_memo(c.short_text))
+            html += "<li>{}<div id={}>{}</div></li>".format(
+                self.get_comment_header(c, sar),
+                "comment-" + str(c.id),
+                ar.parse_memo(c.short_text))
 
         html += "</ul>"
 
