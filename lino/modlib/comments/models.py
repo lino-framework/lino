@@ -23,6 +23,8 @@ from lino.utils.xmlgen.html import E
 from lino.mixins.bleached import Bleached
 from lino.core.roles import SiteUser
 # from lino.core.gfks import gfk2lookup
+if dd.is_installed("inbox"):
+    from lino_xl.lib.inbox.models import comment_email
 
 try:    
     commentable_model = dd.plugins.comments.commentable_model
@@ -116,8 +118,13 @@ class Comment(CreatedModified, UserAuthored, # Controllable,
             s = _("{user} commented on {obj}")
         else:
             s = _("{user} modified comment on {obj}")
+        user = ar.get_user()
         s = s.format(
-            user=ar.get_user(), obj=ar.obj2memo(self.owner))
+            user=user, obj=ar.obj2memo(self.owner))
+        if dd.is_installed("inbox"):
+            #mailto:ADDR@HOST.com?subject=SUBJECT&body=Filling%20in%20the%20Body!%0D%0Afoo%0D%0Abar
+            s += ' <a href="{href}">{reply}</a>'.format(href=comment_email.gen_href(self, user), reply=_("Reply"))
+
         s += ': ' + self.short_text
         if False:
             s += '\n<p>\n' + self.more_text
