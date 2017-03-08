@@ -356,6 +356,8 @@ system date."""),
     'lino.modlib.system.models.SiteConfig.site_company' : _("""The organisation who runs this site.  This is used e.g. when
 printing your address in certain documents or reports.  Or
 newly created partners inherit the country of the site owner."""),
+    'lino.modlib.system.models.SiteConfig.hide_events_before' : _("""If this is not empty, any calendar events before that date are
+being hidden in certain places."""),
     'lino.modlib.system.models.SiteConfigs' : _("""The table used to present the SiteConfig row in a Detail form.
 See also lino.Lino.get_site_config().
 Deserves more documentation."""),
