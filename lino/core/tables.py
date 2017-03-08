@@ -671,29 +671,40 @@ class VirtualTable(AbstractTable):
     pass
 
 
-class VentilatingTable(VirtualTable):
+class VentilatedColumns(AbstractTable):
     """
     A mixin for tables that have a series of automatically generated
     columns
     """
-
     ventilated_column_suffix = ':5'
-
-    @fields.virtualfield(models.CharField(_("Description"), max_length=30))
-    def description(self, obj, ar):
-        return str(obj)
+    column_names_template = ''
 
     @classmethod
     def setup_columns(self):
-        self.column_names = 'description '
+        # if not "{vcolumns}" in self.column_names_template:
+        #     return
+        # self.column_names = 'description '
+        names = ''
         for i, vf in enumerate(self.get_ventilated_columns()):
             self.add_virtual_field('vc' + str(i), vf)
-            self.column_names += ' ' + vf.name + self.ventilated_column_suffix
+            names += ' ' + vf.name + self.ventilated_column_suffix
+
+        self.column_names = self.column_names_template.format(
+            vcolumns=names)
+        
         #~ logger.info("20131114 setup_columns() --> %s",self.column_names)
 
     @classmethod
     def get_ventilated_columns(self):
         return []
+
+class VentilatingTable(VentilatedColumns):
+
+    column_names_template = 'description {vcolumns}'
+
+    @fields.virtualfield(models.CharField(_("Description"), max_length=30))
+    def description(self, obj, ar):
+        return str(obj)
 
 
 class ButtonsTable(VirtualTable):
@@ -723,9 +734,10 @@ from django.db.utils import DatabaseError
 # @signals.receiver(database_ready)
 @signals.receiver(post_analyze)
 def setup_ventilated_columns(sender, **kw):
+    # print("20170308 SETUP_VENTILATED_COLUMNS")
     if actors.actors_list is not None:
         for a in actors.actors_list:
-            if issubclass(a, AbstractTable):
+            if issubclass(a, AbstractTable) and not a.abstract:
                 try:
                     a.setup_columns()
                 except DatabaseError:
