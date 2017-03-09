@@ -1226,7 +1226,16 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         return [ba for ba in self.get_actions(cf)
                 if ba.action.show_in_bbar]
                 # if ba.action.select_rows]
-        
+
+    # @classmethod
+    # def get_cell_context_actions(self, cf):
+    #     cca = dict()
+    #     for col in self.columns:
+    #         if it is a FK field::
+    #             f = col.editor
+    #             cca[f.name] = f.rel.to.detail_action
+    #     return cca
+
     @classmethod
     def get_actions(self, callable_from=None):
         if callable_from is None:
