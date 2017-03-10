@@ -279,7 +279,10 @@ def inject_partner_field(sender=None, **kwargs):
         if not issubclass(User, Partner):
             dd.inject_field(User, 'partner', dd.ForeignKey(
                 'contacts.Partner', blank=True, null=True,
+                related_name='users_by_partner',
                 on_delete=models.PROTECT))
+            # a related_name is needed so that Avanti can have aClient
+            # who inherits from both Partner and UserAuthored
             return
     dd.inject_field(User, 'partner', dd.DummyField())
 

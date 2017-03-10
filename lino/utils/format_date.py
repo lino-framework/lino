@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2016 by Luc Saffre.
+# Copyright 2009-2017 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """Date formatting functions
@@ -169,6 +169,7 @@ dtomy = fdmy  # backward compat
 
 
 def day_and_month(d):
+    # this is not used. see also lino_xl.lib.cal.utils.day_and_month
     return format_date(d, "dd. MMMM")
 
 
