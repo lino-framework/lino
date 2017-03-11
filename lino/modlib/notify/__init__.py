@@ -56,10 +56,10 @@ from lino.api import ad, _
 
 # from django.conf import settings
 
-try:
-    import redis
-except:
-    redis = False
+# try:
+#     import redis
+# except:
+#     redis = False
 
 
 class Plugin(ad.Plugin):
@@ -79,27 +79,36 @@ class Plugin(ad.Plugin):
 
     # """
 
+    def get_used_libs(self, html=None):
+        try:
+            import channels
+            version = channels.__version__
+        except ImportError:
+            version = self.site.not_found_msg
+        name = "Channels ({})".format(
+            "active" if self.site.use_websockets else "inactive")
+        
+        yield (name, version, "https://github.com/django/channels")
+
+    
     def on_init(self):
         if self.site.use_websockets:
             self.needs_plugins.append('channels')
 
             sd = self.site.django_settings
-            # the dict which will be
-            # used to create settings
-            sd['CHANNEL_LAYERS'] = {
-                "default": {
-                    "BACKEND": "asgiref.inmemory.ChannelLayer",
-                    "ROUTING": "lino.modlib.notify.routing.channel_routing",
-                },
-            }
-            if redis:
-                rs = redis.Redis("localhost")
-                try:
-                    response = rs.client_list()
-                    sd['CHANNEL_LAYERS']['default']['BACKEND'] = "asgi_redis.RedisChannelLayer"
-                    sd['CHANNEL_LAYERS']['default']['CONFIG'] = {"hosts": [("localhost", 6379)], }
-                except redis.ConnectionError:
-                    pass
+            # the dict which will be used to create settings
+            cld = {}
+            sd['CHANNEL_LAYERS'] = { "default": cld }
+            cld["BACKEND"] = "asgiref.inmemory.ChannelLayer"
+            cld["ROUTING"] = "lino.modlib.notify.routing.channel_routing"
+            # if redis:
+            #     rs = redis.Redis("localhost")
+            #     try:
+            #         response = rs.client_list()
+            #         cld['BACKEND'] = "asgi_redis.RedisChannelLayer"
+            #         cld['CONFIG'] = {"hosts": [("localhost", 6379)], }
+            #     except redis.ConnectionError:
+            #         pass
 
     def get_js_includes(self, settings, language):
         if self.site.use_websockets:
