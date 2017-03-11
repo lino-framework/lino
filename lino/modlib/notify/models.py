@@ -194,6 +194,8 @@ class Message(UserAuthored, Controllable, Created):
             # dd.logger.info(
             #     "Notify %s users about %s", len(others), subject)
             for user, mm in others:
+                if mm is None:
+                    mm = MailModes.often
                 with dd.translation.override(user.language):
                     subject_body = msg_func(user, mm)
                     if subject_body is not None:

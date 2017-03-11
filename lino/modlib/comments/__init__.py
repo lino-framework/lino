@@ -45,5 +45,6 @@ class Plugin(ad.Plugin):
         m = m.add_menu(mg.app_label, mg.verbose_name)
         m.add_action('comments.AllComments')
 
-    def get_dashboard_items(self, user):
+    def unused_get_dashboard_items(self, user):
+        # removed because it is rather disturbing to see all comments
         yield self.site.actors.comments.RecentComments

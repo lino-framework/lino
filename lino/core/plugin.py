@@ -225,12 +225,14 @@ class Plugin(object):
         """
         pass
 
-    def on_site_init(self):
+    def on_plugins_loaded(self, site):
         """Called exactly once on each installed plugin, when the
-        :class:`Site` has finished instantiating. This is still before
-        settings are ready (and long before the models will load).
+        :class:`Site` has loaded all plugins but before calling
+        :meth:`setup_plugins`.  All this happens before settings are
+        ready and long before the models modules start to load.
 
-        There is currently no usage example for this.
+        For example :mod:`groups` uses this to set a default value to
+        the :attr:`commentable_model` for :mod:`comments` plugin.
 
         """
         pass
