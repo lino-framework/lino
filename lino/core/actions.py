@@ -255,7 +255,7 @@ class Action(Parametrizable, Permittable):
             else:
                 defaults = kw.get('field_values', {})
                 pv = self.params_layout.params_store.pv2dict(
-                    ar.action_param_values, **defaults)
+                    ar, ar.action_param_values, **defaults)
                 kw.update(field_values=pv)
         return kw
 

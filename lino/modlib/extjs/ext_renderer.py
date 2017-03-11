@@ -199,7 +199,7 @@ class ExtRenderer(JsRenderer):
         put_data = dict()
         for k, v in list(data.items()):
             fld = obj._meta.get_field(k)
-            fld._lino_atomizer.value2dict(v, put_data, obj)
+            fld._lino_atomizer.value2dict(ar, v, put_data, obj)
 
         js = 'Lino.put(%s,%s,%s)' % (
             py2js(ar.requesting_panel),

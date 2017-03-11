@@ -2421,10 +2421,10 @@ this field.
     def get_used_libs(self, html=None):
         """
         Yield a list of (name, version, url) tuples describing the
-        third-party software used on this Site.
+        third-party software used on this site.
 
-        This function is used by :meth:`using_text` which is used by
-        :meth:`welcome_text`.
+        This function is used by :meth:`using_text` and
+        :meth:`welcome_html`.
 
         """
 
@@ -2460,9 +2460,9 @@ this field.
         version = getattr(jinja2, '__version__', '')
         yield ("Jinja", version, "http://jinja.pocoo.org/")
 
-        import sphinx
-        version = getattr(sphinx, '__version__', '')
-        yield ("Sphinx", version, "http://sphinx-doc.org/")
+        # import sphinx
+        # version = getattr(sphinx, '__version__', '')
+        # yield ("Sphinx", version, "http://sphinx-doc.org/")
 
         import dateutil
         version = getattr(dateutil, '__version__', '')
@@ -2475,63 +2475,23 @@ this field.
         #~ except ImportError:
             #~ pass
 
-        try:
-            from odf import opendocument
-            version = opendocument.__version__
-        except ImportError:
-            version = self.not_found_msg
-        yield ("OdfPy", version, "http://pypi.python.org/pypi/odfpy")
+        # try:
+        #     from odf import opendocument
+        #     version = opendocument.__version__
+        # except ImportError:
+        #     version = self.not_found_msg
+        # yield ("OdfPy", version, "http://pypi.python.org/pypi/odfpy")
 
-        try:
-            import docutils
-            version = docutils.__version__
-        except ImportError:
-            version = self.not_found_msg
-        yield ("docutils", version, "http://docutils.sourceforge.net/")
+        # try:
+        #     import docutils
+        #     version = docutils.__version__
+        # except ImportError:
+        #     version = self.not_found_msg
+        # yield ("docutils", version, "http://docutils.sourceforge.net/")
 
-        try:
-            import suds
-            version = suds.__version__
-        except ImportError:
-            version = self.not_found_msg
-        yield ("suds", version, "https://fedorahosted.org/suds/")
-
-        import yaml
-        version = getattr(yaml, '__version__', '')
-        yield ("PyYaml", version, "http://pyyaml.org/")
-
-        if False:
-            try:
-                import pyratemp
-                version = getattr(pyratemp, '__version__', '')
-            except ImportError:
-                version = self.not_found_msg
-            yield ("pyratemp", version,
-                   "http://www.simple-is-better.org/template/pyratemp.html")
-
-        if False:
-            try:
-                import ho.pisa as pisa
-                version = getattr(pisa, '__version__', '')
-                yield ("xhtml2pdf", version, "http://www.xhtml2pdf.com")
-            except ImportError:
-                pass
-
-            try:
-                import reportlab
-                version = reportlab.Version
-            except ImportError:
-                version = self.not_found_msg
-            yield ("ReportLab", version,
-                   "http://www.reportlab.org/rl_toolkit.html")
-
-        try:
-            #~ import appy
-            from appy import version
-            version = version.verbose
-        except ImportError:
-            version = self.not_found_msg
-        yield ("Appy", version, "http://appyframework.org/pod.html")
+        # import yaml
+        # version = getattr(yaml, '__version__', '')
+        # yield ("PyYaml", version, "http://pyyaml.org/")
 
         for p in self.installed_plugins:
             for u in p.get_used_libs(html):

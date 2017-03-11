@@ -1009,7 +1009,7 @@ class ActorRequest(BaseRequest):
         if self.actor.parameters:
             kw.update(
                 param_values=self.actor.params_layout.params_store.pv2dict(
-                    self.param_values))
+                    self, self.param_values))
 
         kw = self.bound_action.action.get_status(self, **kw)
 

@@ -124,7 +124,7 @@ class StoreField(object):
     def value2list(self, ar, v, l, row):
         return l.append(v)
 
-    def value2dict(self, v, d, row):
+    def value2dict(self, ar, v, d, row):
         d[str(self.name)] = v
 
     # def value2odt(self,ar,v,tc,**params):
@@ -243,16 +243,16 @@ class ComboStoreField(StoreField):
 
     # def obj2list(self,request,obj):
     def value2list(self, ar, v, l, row):
-        value, text = self.get_value_text(v, row)
+        value, text = self.get_value_text(ar, v, row)
         l += [text, value]
 
     # def obj2dict(self,request,obj,d):
-    def value2dict(self, v, d, row):
-        value, text = self.get_value_text(v, row)
+    def value2dict(self, ar, v, d, row):
+        value, text = self.get_value_text(ar, v, row)
         d[str(self.name)] = text
         d[str(self.name + constants.CHOICES_HIDDEN_SUFFIX)] = value
 
-    def get_value_text(self, v, obj):
+    def get_value_text(self, ar, v, obj):
         # v = self.full_value_from_object(None,obj)
         if v is None or v == '':
             return (None, None)
@@ -275,15 +275,19 @@ class ForeignKeyStoreField(RelatedMixin, ComboStoreField):
             # return ''
         # return req.ui.obj2html(obj)
 
-    def get_value_text(self, v, obj):
+    def get_value_text(self, ar, v, obj):
         # v = self.full_value_from_object(None,obj)
         # if isinstance(v,basestring):
             # logger.info("20120109 %s -> %s -> %r",obj,self,v)
         if v is None:
             return (None, None)
         else:
-            return (v.pk, str(v))
+            return (v.pk, self.format_value(ar, v))
+            #return (v.pk, str(v))
 
+    def format_value(self, ar, v):
+        return v.get_choices_text(ar, ar.actor, self.field)
+    
     def parse_form_value(self, v, obj):
         """Convert the form field value (expected to contain a primary key)
         into the corresponding database object. If it is an invalid
@@ -386,8 +390,8 @@ class RequestStoreField(StoreField):
     def value2list(self, ar, v, l, row):
         return l.append(self.format_value(ar, v))
 
-    def value2dict(self, v, d, row):
-        d[str(self.name)] = self.format_value(None, v)
+    def value2dict(self, ar, v, d, row):
+        d[str(self.name)] = self.format_value(ar, v)
         # d[self.options['name']] = self.format_value(ui,v)
         # d[self.field.name] = v
 
@@ -882,10 +886,10 @@ class ParameterStore(BaseStore):
         return "%s of %s" % (
             self.__class__.__name__, self.params_layout_handle)
 
-    def pv2dict(self, pv, **d):
+    def pv2dict(self, ar, pv, **d):
         for fld in self.param_fields:
             v = pv.get(fld.name, None)
-            fld.value2dict(v, d, None)
+            fld.value2dict(ar, v, d, None)
         return d
 
     def pv2list(self, ar, pv, **d):  # new since 20140930
@@ -1100,22 +1104,19 @@ class Store(BaseStore):
         # logger.info("20111214 column_names: %s",list(self.column_names()))
         return list(self.column_names()).index(name)
 
-    def row2list(self, request, row):
-        # assert isinstance(request,dbtables.AbstractTableRequest)
-        # if not isinstance(request,dbtables.ListActionRequest):
+    def row2list(self, ar, row):
+        # assert isinstance(ar, dbtables.AbstractTableRequest)
+        # if not isinstance(ar, dbtables.ListActionRequest):
             # raise Exception()
         # logger.info("20120107 Store %s row2list(%s)", self.report.model, dd.obj2str(row))
         l = []
         if isinstance(row, PhantomRow):
             for fld in self.list_fields:
-                fld.value2list(request, None, l, row)
-        # elif isinstance(row,actions.VirtualRow):
-            # for fld in self.list_fields:
-                # fld.value2list(request,None,l,row)
+                fld.value2list(ar, None, l, row)
         else:
             for fld in self.list_fields:
-                v = fld.full_value_from_object(row, request)
-                fld.value2list(request, v, l, row)
+                v = fld.full_value_from_object(row, ar)
+                fld.value2list(ar, v, l, row)
         # logger.info("20130611 Store row2list() --> %r", l)
         return l
 
@@ -1127,7 +1128,7 @@ class Store(BaseStore):
         for fld in fields:
             # logger.info("20140429 Store.row2dict %s", fld)
             v = fld.full_value_from_object(row, ar)
-            fld.value2dict(v, d, row)
+            fld.value2dict(ar, v, d, row)
             # logger.info("20140429 Store.row2dict %s -> %s", fld, v)
         return d
 

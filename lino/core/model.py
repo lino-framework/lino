@@ -332,7 +332,7 @@ class Model(models.Model):
         `request` is the web request,
         `actor` is the requesting actor.
 
-        The default behavious is to simply return `unicode(self)`.
+        The default behaviour is to simply return `str(self)`.
 
         Usage example is :class:`lino_xl.lib.countries.models.Place`.
         """
