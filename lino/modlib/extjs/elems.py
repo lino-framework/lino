@@ -906,7 +906,8 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
         return ui.obj2html(obj)
 
     def value2html(self, ar, v, **cellattrs):
-        return E.td(ar.obj2html(v), **cellattrs)
+        txt = self.format_value(ar, v)
+        return E.td(ar.obj2html(v, txt), **cellattrs)
 
 
 class TimeFieldElement(FieldElement):

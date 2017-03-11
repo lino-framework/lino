@@ -75,10 +75,9 @@ def elem2rec_empty(ar, ah, elem, **rec):
     rec.update(id=-99998)
     #~ rec.update(id=elem.pk) or -99999)
     if ar.actor.parameters:
-        #~ rec.update(param_values=ar.ah.store.pv2dict(ar.ui,ar.param_values))
         rec.update(
             param_values=ar.actor.params_layout.params_store.pv2dict(
-                ar.param_values))
+                ar, ar.param_values))
     return rec
 
 
@@ -566,7 +565,7 @@ class ApiList(View):
             if ar.actor.parameters:
                 kw.update(
                     param_values=ar.actor.params_layout.params_store.pv2dict(
-                        ar.param_values))
+                        ar, ar.param_values))
             return json_response(kw)
 
         if fmt == constants.URL_FORMAT_HTML:
