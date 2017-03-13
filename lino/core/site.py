@@ -1189,6 +1189,10 @@ class Site(object):
         self.run_lino_site_module()
         self.override_settings(**kwargs)
         self.load_plugins()
+        
+        for p in self.installed_plugins:
+            p.on_plugins_loaded(self)
+        
         self.setup_plugins()
         self.install_settings()
 
@@ -1204,9 +1208,6 @@ class Site(object):
 
         self.load_help_texts()
 
-        for p in self.installed_plugins:
-            p.on_site_init()
-        
 
     def init_before_local(self, settings_globals, local_apps):
         """If your :attr:`project_dir` contains no :xfile:`models.py`, but

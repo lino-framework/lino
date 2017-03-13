@@ -87,9 +87,8 @@ class ChangeObservable(dd.Model):
         """Return or yield a list of `(user, mail_mode)` tuples who are
         observing changes on this object.
 
-        Should be implemented in subclasses. The default
-        implementation returns an empty list, i.e. nobody gets
-        notified.
+        Subclasses should implemented. The default implementation
+        returns an empty list, i.e. nobody gets notified.
 
         """
         return []

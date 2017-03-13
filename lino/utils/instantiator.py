@@ -376,7 +376,6 @@ def create_and_get(model, **kw):
     o = create(model, **kw)
     return model.objects.get(pk=o.pk)
 
-
 def _test():
     import doctest
     doctest.testmod()

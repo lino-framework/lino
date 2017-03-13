@@ -84,6 +84,9 @@ class Comment(CreatedModified, UserAuthored, # Controllable,
 
     def __str__(self):
         return u'%s #%s' % (self._meta.verbose_name, self.pk)
+        # return _('{user} {time}').format(
+        #     user=self.user, obj=self.owner,
+        #     time=naturaltime(self.modified))
 
     @classmethod
     def get_request_queryset(cls, ar):

@@ -26,3 +26,11 @@ Multilingual database content:
 
 """
 
+from django.conf import settings
+
+def babel_named(model, name, **kwargs):
+    """Instantiate the given subclass of BabelNamed"""
+    kwargs = settings.SITE.str2kw('name', name, **kwargs)
+    return model(**kwargs)
+
+
