@@ -106,7 +106,7 @@ class State(choicelists.Choice):
                 raise NotImplementedError(
                     "Since 20160718 you must write your own action "
                     "class if you want it to be notifying.")
-                cl = NotifyingChangeStateAction
+                # cl = NotifyingChangeStateAction
             else:
                 cl = ChangeStateAction
             if label is None:
@@ -252,8 +252,11 @@ class ChangeStateAction(actions.Action):
         return kwargs
 
     def before_execute(self, ar, obj):
+        """This may raise a Warning with a user message to prevent execution.
+
+        Usage example : lino_noi.lib.noi.workflows.MarkVoteassigned.
+
         """
-        Usage example : lino_noi.lib.noi.workflows.MarkVoteassigned"""
         pass
     
     def execute(self, ar, obj):

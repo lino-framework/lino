@@ -47,10 +47,6 @@ class SiteUser(UserRole):
     """Every authenticated user has this role."""
 
 
-class Supervisor(UserRole):
-    """A user who has permission to act as another user."""
-
-
 class SiteStaff(SiteUser):
     """A user who can configure site-wide functionality.
 
@@ -65,7 +61,18 @@ class SiteStaff(SiteUser):
     """
 
 
-class SiteAdmin(SiteStaff, Supervisor):
+class Supervisor(UserRole):
+    """A user who has permission to act as another user."""
+
+
+class Explorer(UserRole):
+    """A user who has permission to explore the database content, e.g.
+    for writing statistical reports.
+
+    """
+
+
+class SiteAdmin(SiteStaff, Supervisor, Explorer):
     """The root user of this system. """
     pass
 
