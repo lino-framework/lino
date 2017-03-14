@@ -40,6 +40,11 @@ class Plugin(ad.Plugin):
         m = m.add_menu(mg.app_label, mg.verbose_name)
         m.add_action('comments.MyComments')
 
+    def setup_config_menu(config, site, profile, m):
+        mg = site.plugins.office
+        m = m.add_menu(mg.app_label, mg.verbose_name)
+        m.add_action('comments.CommentTypes')
+
     def setup_explorer_menu(config, site, profile, m):
         mg = site.plugins.office
         m = m.add_menu(mg.app_label, mg.verbose_name)

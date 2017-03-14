@@ -402,3 +402,10 @@ class Assignable(Authored):
 
     take = TakeAuthorship()
     assign_to_me = AssignToMe()
+
+    def on_create(self, ar):
+        # 20130722 e.g. CreateClientEvent sets assigned_to it explicitly
+        if self.assigned_to is None:
+            self.assigned_to = ar.subst_user
+        super(Assignable, self).on_create(ar)
+    

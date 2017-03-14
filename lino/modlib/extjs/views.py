@@ -207,11 +207,14 @@ class Callbacks(View):
 
 
 def choices_for_field(request, holder, field):
-    """Return the choices for the given field and the given web request
-    (whose requesting holder is given as `holder`).  holder is either
-    a Model, an Actor or an Action.
+    """Return the choices for the given field and the given HTTP request
+    whose `holder` is either a Model, an Actor or an Action.
 
     """
+    if not holder.get_view_permission(request.user.profile):
+        raise Exception(
+            "{user} has no permission for {holder}".format(
+                user=request.user, holder=holder))
     # model = holder.get_chooser_model()
     chooser = holder.get_chooser_for_field(field.name)
     # logger.info('20140822 choices_for_field(%s.%s) --> %s',
