@@ -826,6 +826,13 @@ class Model(models.Model):
             if isinstance(self, settings.SITE.project_model):
                 return self
 
+    def obj2href(self, ar, **kwargs):
+        """Return a tuple (text, attributes) to use when rendering an `<a
+        href>` that points to this object.
+
+        """
+        return ar.obj2html(self, **kwargs)
+
     def to_html(self, **kw):
         import lino.ui.urls  # hack: trigger ui instantiation
         actor = self.get_default_table()
@@ -1123,6 +1130,7 @@ LINO_MODEL_ATTRIBS = (
     'get_default_table',
     'get_template_group',
     'get_related_project',
+    'obj2href',
     'quick_search_fields',
     'quick_search_fields_digit',
     'change_watcher_spec',
