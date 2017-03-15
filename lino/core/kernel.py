@@ -500,11 +500,6 @@ class Kernel(object):
 
         self.memo_parser.register_command('url', url2html)
 
-        self.code_mtime = codetime()
-        # We set `code_mtime` only after kernel_startup() because
-        # codetime watches only those modules which are already
-        # imported.
-
         if 'LINO_BUILD_CACHE_ON_STARTUP' in os.environ:
             site.build_js_cache_on_startup = True
         if site.build_js_cache_on_startup is None:
@@ -527,8 +522,6 @@ class Kernel(object):
                 # site.install_help_text(ba.action, ba.action.__class__)
                 site.install_help_text(ba.action.__class__)
             
-        pre_ui_build.send(self)
-
         self.reserved_names = [getattr(constants, n)
                                for n in constants.URL_PARAMS]
 
@@ -537,6 +530,14 @@ class Kernel(object):
             if n in names:
                 raise Exception("Duplicate reserved name %r" % n)
             names.add(n)
+
+        # We set `code_mtime` only after kernel_startup() because
+        # codetime watches only those modules which are already
+        # imported.
+
+        self.code_mtime = codetime()
+        
+        pre_ui_build.send(self)
 
         # 20160530
         # self.html_renderer = HtmlRenderer(self)

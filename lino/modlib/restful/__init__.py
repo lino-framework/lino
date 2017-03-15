@@ -1,4 +1,4 @@
-# Copyright 2016 Luc Saffre
+# Copyright 2016-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Lino's :mod:`lino.modlib.restful` plugin is an adapter to the
@@ -7,6 +7,11 @@ django-restful framework.
 Usage:
 
 - Add ``'lino.modlib.restful'`` to your :meth:`get_installed_apps`.
+
+- Install `djangorestframework` manually in case it is not installed
+  automatically::
+
+      $ pip install djangorestframework
 
 - Set your :attr:`root_urlconf` to 'mysite.urls'
 

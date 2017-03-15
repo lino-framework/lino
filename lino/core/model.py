@@ -1091,6 +1091,8 @@ action on individual instances.
 
 LINO_MODEL_ATTRIBS = (
     'get_parameter_fields',
+    'save_new_instance',
+    'save_watched_instance',
     '_widget_options',
     'set_widget_options',
     'get_widget_options',
