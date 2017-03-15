@@ -3077,9 +3077,10 @@ site. :manage:`diag` is a command-line shortcut to this.
         customized dashboard.
 
         """
-        for p in self.installed_plugins:
-            for i in p.get_dashboard_items(user):
-                yield i
+        if user:
+            for p in self.installed_plugins:
+                for i in p.get_dashboard_items(user):
+                    yield i
 
     @property
     def site_config(self):
