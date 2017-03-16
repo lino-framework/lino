@@ -552,9 +552,10 @@ method in order to sort the rows of the queryset.
         key of the action request's :attr:`master_instance
         <lino.core.requests.BaseRequest.master_instance>`.
 
-        :class:`lino_noi.lib.tickets.models.EntriesBySession` Blog
-        Entries are not directly linked to a Session, but in the
-        Detail of a Session we want to display a table of related blog
+        Another example is
+        :class:`lino_noi.lib.tickets.models.EntriesBySession`, where
+        blog entries are not directly linked to a session, but in the
+        detail of a session we want to display a table of related blog
         entries.
 
         :class:`lino_xl.lib.households.models.SiblingsByPerson`
