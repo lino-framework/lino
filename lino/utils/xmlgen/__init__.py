@@ -64,7 +64,6 @@ logger = logging.getLogger(__name__)
 
 
 import datetime
-from functools import partial
 from lino.core.exceptions import ChangedAPI
 from lino.utils.xmlgen import etree
 #~ from lino.utils import Warning
@@ -236,6 +235,7 @@ class Namespace(object):
         return elem
 
     def define_names(self, names):
+        from functools import partial
         if isinstance(names, six.string_types):
             raise ChangedAPI("{} must now call itself split().".format(
                 self))
