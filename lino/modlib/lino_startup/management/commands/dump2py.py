@@ -199,8 +199,12 @@ def bv2kw(fieldname, values):
                       if f.concrete and f.model is model]
             for f in fields:
                 if getattr(f, 'auto_now_add', False):
-                    raise Exception("%s.%s.auto_now_add is True : values will be lost!" % (
-                        full_model_name(model), f.name))
+                    # raise Exception("%s.%s.auto_now_add is True : values will be lost!" % (
+                    #     full_model_name(model), f.name))
+                    logger.warning(
+                        "%s.%s.auto_now_add is True : values will be lost!",
+                        full_model_name(model), f.name)
+                    # f.auto_now_add = False
             #~ fields = model._meta.local_fields
             #~ fields = [f for f in model._meta.fields if f.serialize]
             #~ fields = [f for f in model._meta.local_fields if f.serialize]
