@@ -834,7 +834,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         if cls.editable:
             if cls.allow_create:
                 # cls.create_action = cls._bind_action(actions.SubmitInsert())
-                if cls.detail_action and not cls.hide_top_toolbar:
+                if cls.insert_layout and not cls.hide_top_toolbar:
                     cls.insert_action = cls._bind_action(
                         cls.get_insert_action())
             if not cls.hide_top_toolbar:
