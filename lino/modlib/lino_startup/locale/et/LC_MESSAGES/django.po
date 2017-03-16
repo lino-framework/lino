@@ -5,18 +5,19 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version:  \n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-13 16:17+0200\n"
-"PO-Revision-Date: 2016-09-08 06:45+0300\n"
+"POT-Creation-Date: 2017-03-16 16:38+0200\n"
+"PO-Revision-Date: 2017-03-16 17:04+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language: et\n"
 "Language-Team: et\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
+"X-Generator: Poedit 1.8.7.1\n"
 
 #: lino/core/actions.py:468
 msgid "Detail"
@@ -28,7 +29,7 @@ msgstr ""
 
 #: lino/core/actions.py:508 lino/core/renderer.py:267
 msgid "New"
-msgstr ""
+msgstr "Uus"
 
 #: lino/core/actions.py:516
 msgid "Insert a new record"
@@ -92,7 +93,7 @@ msgstr "%(master)s'i %(details)s"
 #: lino/core/actors.py:1054
 #, python-format
 msgid "Total (%d rows)"
-msgstr ""
+msgstr "Kokku (%d rida)"
 
 #: lino/core/auth.py:142
 msgid "Could not authenticate {} : no such user"
@@ -177,15 +178,15 @@ msgstr ""
 #: lino/core/kernel.py:129 lino/modlib/extjs/linoweb.js:1540
 #: lino/modlib/extjs/linoweb.js:2921
 msgid "Confirmation"
-msgstr ""
+msgstr "Kinnitus"
 
 #: lino/core/kernel.py:595
 msgid "You have "
-msgstr ""
+msgstr "Sul on "
 
 #: lino/core/kernel.py:596
 msgid "{0} items in {1}"
-msgstr ""
+msgstr "{0} rida tabellis {1}"
 
 #: lino/core/kernel.py:749
 msgid "User abandoned"
@@ -267,7 +268,7 @@ msgstr ""
 msgid "%s : nothing to save."
 msgstr ""
 
-#: lino/core/model.py:760 lino/core/model.py:766 lino/core/tables.py:705
+#: lino/core/model.py:760 lino/core/model.py:766 lino/core/tables.py:706
 #: lino/modlib/importfilters/models.py:111 lino/modlib/notify/actions.py:38
 #: lino/modlib/tinymce/models.py:34 lino/modlib/uploads/models.py:121
 #: lino/modlib/uploads/models.py:134
@@ -349,15 +350,15 @@ msgstr ""
 msgid "English"
 msgstr ""
 
-#: lino/core/site.py:3471
+#: lino/core/site.py:3472
 msgid "This is "
 msgstr "See on "
 
-#: lino/core/site.py:3480
+#: lino/core/site.py:3481
 msgid " using "
 msgstr " kasutades "
 
-#: lino/core/site.py:3525
+#: lino/core/site.py:3526
 #, python-format
 msgid "%(place)s, %(date)s"
 msgstr ""
@@ -377,7 +378,7 @@ msgstr ""
 msgid "Invalid value for this field (%s)."
 msgstr ""
 
-#: lino/core/tables.py:724
+#: lino/core/tables.py:725
 msgid "Button"
 msgstr ""
 
@@ -1450,8 +1451,7 @@ msgstr ""
 msgid ""
 "Base class to anything that may be \"registered\" and \"deregistered\"\n"
 "(e.g. Invoices, Vouchers, Declarations, Reservations,...).\n"
-"\"Registered\" in general means \"this object has been taken account "
-"of\".\n"
+"\"Registered\" in general means \"this object has been taken account of\".\n"
 "Registered objects are not editable."
 msgstr ""
 
@@ -2618,22 +2618,19 @@ msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:431
 msgid ""
-"A form that creates a user, with no privileges, from the given username "
-"and\n"
+"A form that creates a user, with no privileges, from the given username and\n"
 "password."
 msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:433
 msgid ""
-"Base class for authenticating users. Extend this to get a form that "
-"accepts\n"
+"Base class for authenticating users. Extend this to get a form that accepts\n"
 "username/password logins."
 msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:435
 msgid ""
-"A form that lets a user change set their password without entering the "
-"old\n"
+"A form that lets a user change set their password without entering the old\n"
 "password"
 msgstr ""
 
@@ -2971,8 +2968,7 @@ msgstr ""
 #: lino/modlib/lino_startup/help_texts.py:541
 msgid ""
 "A Converter for ForeignKey and ManyToManyField. \n"
-"If the lookup_field is a BabelField, then it tries all available "
-"languages."
+"If the lookup_field is a BabelField, then it tries all available languages."
 msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:543
@@ -3281,15 +3277,14 @@ msgstr ""
 #: lino/modlib/lino_startup/config/admin_main_base.html:18
 #, python-format
 msgid "Hi, %(user)s!"
-msgstr ""
+msgstr "Tere, %(user)s!"
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:27
 msgid ""
 "Try also the other <a href=\"http://lino-framework.org/demos.html\">demo "
 "sites</a>."
 msgstr ""
-"Vaata ka teisi <a href=\"http://lino-framework.org/demos.html\">demo "
-"saite</a>."
+"Vaata ka teisi <a href=\"http://lino-framework.org/demos.html\">demo saite</a>."
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:28
 #, python-format
@@ -3302,19 +3297,19 @@ msgstr ""
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:43
 msgid ""
-"Unlike the <a href=\"/\">web content section</a> there is now a GUI menu "
-"bar in the upper part of the screen."
+"Unlike the <a href=\"/\">web content section</a> there is now a GUI menu bar "
+"in the upper part of the screen."
 msgstr ""
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:48
 #, python-format
 msgid "Welcome to the <b>%s</b> site."
-msgstr ""
+msgstr "Tere tulemast <b>%s</b> saidile."
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:50
 #, python-format
 msgid "We are running %(name)s version %(version)s"
-msgstr ""
+msgstr "Siin jookseb %(name)s (version %(version)s)"
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:59
 msgid "You will now probably want to"
@@ -3326,15 +3321,15 @@ msgstr "sisse logida"
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:62
 msgid "using the <b>Log in</b> button in the upper right corner."
-msgstr ""
+msgstr "kasutades nuppu <b>Log in </b> ülemises paremas nurgas."
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:64
 msgid "Or {} as a new user."
-msgstr ""
+msgstr "Või {} uueks kasutajaks."
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:67
 msgid "register"
-msgstr ""
+msgstr "registreerda"
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:72
 #, python-format
@@ -3350,7 +3345,6 @@ msgid "Messages"
 msgstr ""
 
 #: lino/modlib/notify/actions.py:37
-#, fuzzy
 msgid "Summary"
 msgstr "Kokkuvõte"
 
@@ -3392,20 +3386,19 @@ msgstr ""
 
 #: lino/modlib/notify/choicelists.py:61
 msgid "Immediately"
-msgstr ""
+msgstr "kohe"
 
 #: lino/modlib/notify/choicelists.py:62
-#, fuzzy
 msgid "Often"
-msgstr "Märkus"
+msgstr "tihti"
 
 #: lino/modlib/notify/choicelists.py:63
 msgid "Daily"
-msgstr ""
+msgstr "kord päevas"
 
 #: lino/modlib/notify/choicelists.py:64
 msgid "Weekly"
-msgstr ""
+msgstr "kord nädalas"
 
 #: lino/modlib/notify/mixins.py:24 lino/modlib/notify/mixins.py:48
 msgid "{user} created {what}"
@@ -3433,11 +3426,11 @@ msgstr ""
 
 #: lino/modlib/notify/models.py:144
 msgid "Notification message"
-msgstr ""
+msgstr "Teade"
 
 #: lino/modlib/notify/models.py:145
 msgid "Notification messages"
-msgstr ""
+msgstr "Teaded"
 
 #: lino/modlib/notify/models.py:148
 #, fuzzy
@@ -3546,8 +3539,7 @@ msgstr ""
 msgid "Plausibility problems"
 msgstr ""
 
-#: lino/modlib/plausibility/models.py:153
-#: lino/modlib/plausibility/models.py:169
+#: lino/modlib/plausibility/models.py:153 lino/modlib/plausibility/models.py:169
 #, fuzzy
 msgid "Responsible"
 msgstr "Isikud"
@@ -3580,9 +3572,9 @@ msgstr "Trüki"
 #: lino/modlib/printing/actions.py:87
 #, python-format
 msgid ""
-"Your printable document (filename %(doc)s) should now open in a new "
-"browser window. If it doesn't, please consult %(help)s or ask your system"
-" administrator."
+"Your printable document (filename %(doc)s) should now open in a new browser "
+"window. If it doesn't, please consult %(help)s or ask your system "
+"administrator."
 msgstr ""
 
 #: lino/modlib/printing/actions.py:174
@@ -3596,8 +3588,8 @@ msgstr ""
 
 #: lino/modlib/printing/actions.py:277
 msgid ""
-"Before you can edit this template we must create a local copy on the "
-"server. This will exclude the template from future updates."
+"Before you can edit this template we must create a local copy on the server. "
+"This will exclude the template from future updates."
 msgstr ""
 
 #: lino/modlib/printing/actions.py:298
@@ -3633,7 +3625,7 @@ msgstr ""
 msgid "Seems to have been built ({bt}), but cache file is missing ."
 msgstr ""
 
-#: lino/modlib/restful/__init__.py:28
+#: lino/modlib/restful/__init__.py:33
 msgid "Restful"
 msgstr ""
 
@@ -3907,16 +3899,15 @@ msgstr ""
 
 #: lino/modlib/users/forms.py:110
 msgid ""
-"Raw passwords are not stored, so there is no way to see this user's "
-"password, but you can change the password using <a "
-"href=\"../password/\">this form</a>."
+"Raw passwords are not stored, so there is no way to see this user's password, "
+"but you can change the password using <a href=\"../password/\">this form</a>."
 msgstr ""
 
 #: lino/modlib/users/forms.py:140
 #, python-format
 msgid ""
-"Please enter a correct %(username)s and password. Note that both fields "
-"may be case-sensitive."
+"Please enter a correct %(username)s and password. Note that both fields may be "
+"case-sensitive."
 msgstr ""
 
 #: lino/modlib/users/forms.py:142
@@ -4155,118 +4146,3 @@ msgstr ""
 #, python-format
 msgid "Check digit is %(found)d but should be %(expected)d"
 msgstr ""
-
-#~ msgid ""
-#~ msgstr ""
-
-#~ msgid "Notify me"
-#~ msgstr ""
-
-#~ msgid "alias of UserProfile"
-#~ msgstr ""
-
-#~ msgid "alias of Notification"
-#~ msgstr "Nimetus"
-
-#~ msgid "Shows notifications emitted to you."
-#~ msgstr ""
-
-#~ msgid "Notifications"
-#~ msgstr "Teenused"
-
-#~ msgid "Don't send email notification"
-#~ msgstr ""
-
-#~ msgid "Notification"
-#~ msgstr "Nimetus"
-
-#~ msgid "(more)"
-#~ msgstr ""
-
-#~ msgid "Send notifications via e-mail"
-#~ msgstr ""
-
-#~ msgid "You have %d unseen notifications."
-#~ msgstr ""
-
-#~ msgid "{user} commented on {obj}"
-#~ msgstr ""
-
-#~ msgid "Mark this notification as not yet seen."
-#~ msgstr ""
-
-#~ msgid "Base for all tables of notifications."
-#~ msgstr ""
-
-#~ msgid "The gobal list of all notifications."
-#~ msgstr ""
-
-#~ msgid "{user} modified {obj}"
-#~ msgstr ""
-
-#~ msgid "Overview"
-#~ msgstr ""
-
-#~ msgid "About {0}"
-#~ msgstr " / {0}"
-
-#~ msgid "{} about {}"
-#~ msgstr ""
-
-#~ msgid "{user} modified"
-#~ msgstr "Muudatud"
-
-#~ msgid "Workflow"
-#~ msgstr ""
-
-#~ msgid "Send messages via e-mail"
-#~ msgstr ""
-
-#~ msgid "Move this row one row upwards"
-#~ msgstr ""
-
-#~ msgid "Move this row one row downwards"
-#~ msgstr ""
-
-#~ msgid "All dasboard widgets"
-#~ msgstr ""
-
-#~ msgid "Hi, %(first_name)s!"
-#~ msgstr "Tere, %(first_name)s!"
-
-#~ msgid "Whether users with this profile get only write-proteced access."
-#~ msgstr ""
-
-#~ msgid "The name of the field which defines the author of this object."
-#~ msgstr ""
-
-#~ msgid "Send e-mail"
-#~ msgstr ""
-
-#~ msgid "{} unseen notifications"
-#~ msgstr ""
-
-#~ msgid "Verification code"
-#~ msgstr ""
-
-#~ msgid "%(details)s"
-#~ msgstr ""
-
-#~ msgid "Welcome"
-#~ msgstr ""
-
-#~ msgid "This will overwrite your current settings."
-#~ msgstr ""
-
-#~ msgid "{user} commented on {obj}:"
-#~ msgstr ""
-
-#~ msgid "A user with all permissions."
-#~ msgstr ""
-
-#~ msgid "has been created by {user}"
-#~ msgstr ""
-
-#~ msgid "has been modified by {user}"
-#~ msgstr ""
-

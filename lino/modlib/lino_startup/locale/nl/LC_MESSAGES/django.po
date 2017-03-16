@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-13 16:17+0200\n"
+"POT-Creation-Date: 2017-03-16 16:38+0200\n"
 "PO-Revision-Date: 2014-02-05 09:34+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language: nl\n"
@@ -270,7 +270,7 @@ msgstr "%s wurde aktualisiert."
 msgid "%s : nothing to save."
 msgstr "%s : nichts zu speichern."
 
-#: lino/core/model.py:760 lino/core/model.py:766 lino/core/tables.py:705
+#: lino/core/model.py:760 lino/core/model.py:766 lino/core/tables.py:706
 #: lino/modlib/importfilters/models.py:111 lino/modlib/notify/actions.py:38
 #: lino/modlib/tinymce/models.py:34 lino/modlib/uploads/models.py:121
 #: lino/modlib/uploads/models.py:134
@@ -353,17 +353,17 @@ msgstr "Site"
 msgid "English"
 msgstr ""
 
-#: lino/core/site.py:3471
+#: lino/core/site.py:3472
 #, fuzzy
 msgid "This is "
 msgstr "Auswahlmöglichkeiten für %s"
 
-#: lino/core/site.py:3480
+#: lino/core/site.py:3481
 #, fuzzy
 msgid " using "
 msgstr "Meine Einstellungen"
 
-#: lino/core/site.py:3525
+#: lino/core/site.py:3526
 #, fuzzy, python-format
 msgid "%(place)s, %(date)s"
 msgstr "%(date)s om %(time)s"
@@ -383,7 +383,7 @@ msgstr "%r (ongeldig selectie)"
 msgid "Invalid value for this field (%s)."
 msgstr ""
 
-#: lino/core/tables.py:724
+#: lino/core/tables.py:725
 msgid "Button"
 msgstr ""
 
@@ -3689,7 +3689,7 @@ msgstr ""
 msgid "Seems to have been built ({bt}), but cache file is missing ."
 msgstr ""
 
-#: lino/modlib/restful/__init__.py:28
+#: lino/modlib/restful/__init__.py:33
 msgid "Restful"
 msgstr ""
 

@@ -5,19 +5,18 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: lino\n"
+"Project-Id-Version:  lino\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-13 16:17+0200\n"
+"POT-Creation-Date: 2017-03-16 16:38+0200\n"
 "PO-Revision-Date: 2017-03-13 16:41+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language: de\n"
 "Language-Team: \n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.3.4\n"
-"X-Generator: Poedit 1.8.7.1\n"
 
 #: lino/core/actions.py:468
 msgid "Detail"
@@ -177,9 +176,9 @@ msgid ""
 "\"00.07.1980\" means \"in July 1980\"\n"
 "or \"23.07.0000\" means \"on a 23th of July\"."
 msgstr ""
-"Unkomplette Datumsangaben sind erlaubt, z.B. \"%(ex1)s\" heißt \"irgendwann im "
-"Jahr 1980\", \"%(ex2)s\" heißt \"im Juli 1980\"oder \"%(ex3)s\" heißt \"an einem "
-"23. Juli\"."
+"Unkomplette Datumsangaben sind erlaubt, z.B. \"%(ex1)s\" heißt "
+"\"irgendwann im Jahr 1980\", \"%(ex2)s\" heißt \"im Juli 1980\"oder "
+"\"%(ex3)s\" heißt \"an einem 23. Juli\"."
 
 #: lino/core/kernel.py:129 lino/modlib/extjs/linoweb.js:1540
 #: lino/modlib/extjs/linoweb.js:2921
@@ -262,7 +261,8 @@ msgstr ""
 #, python-format
 msgid "Cannot delete %(model)s %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
-"Kann %(model)s %(self)s nicht löschen weil %(count)d %(refs)s darauf verweisen."
+"Kann %(model)s %(self)s nicht löschen weil %(count)d %(refs)s darauf "
+"verweisen."
 
 #: lino/core/model.py:545 lino/core/requests.py:936
 #, python-format
@@ -274,7 +274,7 @@ msgstr "%s wurde aktualisiert."
 msgid "%s : nothing to save."
 msgstr "%s : nichts zu speichern."
 
-#: lino/core/model.py:760 lino/core/model.py:766 lino/core/tables.py:705
+#: lino/core/model.py:760 lino/core/model.py:766 lino/core/tables.py:706
 #: lino/modlib/importfilters/models.py:111 lino/modlib/notify/actions.py:38
 #: lino/modlib/tinymce/models.py:34 lino/modlib/uploads/models.py:121
 #: lino/modlib/uploads/models.py:134
@@ -355,15 +355,15 @@ msgstr "Site"
 msgid "English"
 msgstr ""
 
-#: lino/core/site.py:3471
+#: lino/core/site.py:3472
 msgid "This is "
 msgstr "Dies ist "
 
-#: lino/core/site.py:3480
+#: lino/core/site.py:3481
 msgid " using "
 msgstr " unter "
 
-#: lino/core/site.py:3525
+#: lino/core/site.py:3526
 #, python-format
 msgid "%(place)s, %(date)s"
 msgstr "%(place)s, den %(date)s"
@@ -383,7 +383,7 @@ msgstr "%r (ungültige Auswahl)"
 msgid "Invalid value for this field (%s)."
 msgstr ""
 
-#: lino/core/tables.py:724
+#: lino/core/tables.py:725
 msgid "Button"
 msgstr ""
 
@@ -1468,7 +1468,8 @@ msgstr ""
 msgid ""
 "Base class to anything that may be \"registered\" and \"deregistered\"\n"
 "(e.g. Invoices, Vouchers, Declarations, Reservations,...).\n"
-"\"Registered\" in general means \"this object has been taken account of\".\n"
+"\"Registered\" in general means \"this object has been taken account "
+"of\".\n"
 "Registered objects are not editable."
 msgstr ""
 
@@ -2647,19 +2648,22 @@ msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:431
 msgid ""
-"A form that creates a user, with no privileges, from the given username and\n"
+"A form that creates a user, with no privileges, from the given username "
+"and\n"
 "password."
 msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:433
 msgid ""
-"Base class for authenticating users. Extend this to get a form that accepts\n"
+"Base class for authenticating users. Extend this to get a form that "
+"accepts\n"
 "username/password logins."
 msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:435
 msgid ""
-"A form that lets a user change set their password without entering the old\n"
+"A form that lets a user change set their password without entering the "
+"old\n"
 "password"
 msgstr ""
 
@@ -2998,7 +3002,8 @@ msgstr ""
 #: lino/modlib/lino_startup/help_texts.py:541
 msgid ""
 "A Converter for ForeignKey and ManyToManyField. \n"
-"If the lookup_field is a BabelField, then it tries all available languages."
+"If the lookup_field is a BabelField, then it tries all available "
+"languages."
 msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:543
@@ -3208,7 +3213,8 @@ msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:616
 msgid ""
-"The WebServiceConnector namespace used for wrapping \"classical\" CBSS services."
+"The WebServiceConnector namespace used for wrapping \"classical\" CBSS "
+"services."
 msgstr ""
 
 #: lino/modlib/lino_startup/help_texts.py:617
@@ -3295,8 +3301,8 @@ msgstr "Wir bitten um Verständnis."
 #: lino/modlib/lino_startup/config/500.html:9
 msgid "If you can reproduce this message, please tell us how you did that."
 msgstr ""
-"Bitte informieren sie uns über das Problem falls Sie diese Meldung reproduzieren "
-"können."
+"Bitte informieren sie uns über das Problem falls Sie diese Meldung "
+"reproduzieren können."
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:9
 msgid "Quick links:"
@@ -3313,11 +3319,11 @@ msgstr "Hallo, %(user)s!"
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:27
 msgid ""
-"Try also the other <a href=\"http://lino-framework.org/demos.html\">demo sites</"
-"a>."
+"Try also the other <a href=\"http://lino-framework.org/demos.html\">demo "
+"sites</a>."
 msgstr ""
-"Probieren Sie auch die anderen <a href=\"http://lino-framework.org/demos.html"
-"\">Online-Demos</a> aus."
+"Probieren Sie auch die anderen <a href=\"http://lino-"
+"framework.org/demos.html\">Online-Demos</a> aus."
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:28
 #, python-format
@@ -3330,8 +3336,8 @@ msgstr ""
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:43
 msgid ""
-"Unlike the <a href=\"/\">web content section</a> there is now a GUI menu bar in "
-"the upper part of the screen."
+"Unlike the <a href=\"/\">web content section</a> there is now a GUI menu "
+"bar in the upper part of the screen."
 msgstr ""
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:48
@@ -3570,7 +3576,8 @@ msgstr "Datenproblem"
 msgid "Plausibility problems"
 msgstr "Datenprobleme"
 
-#: lino/modlib/plausibility/models.py:153 lino/modlib/plausibility/models.py:169
+#: lino/modlib/plausibility/models.py:153
+#: lino/modlib/plausibility/models.py:169
 msgid "Responsible"
 msgstr "Verantwortlicher"
 
@@ -3603,8 +3610,9 @@ msgstr "Drucken"
 #: lino/modlib/printing/actions.py:87
 #, python-format
 msgid ""
-"Your printable document (filename %(doc)s) should now open in a new browser "
-"window. If it doesn't, please consult %(help)s or ask your system administrator."
+"Your printable document (filename %(doc)s) should now open in a new "
+"browser window. If it doesn't, please consult %(help)s or ask your system"
+" administrator."
 msgstr ""
 "Das druckbare Dokument (Datei %(doc)s) müsste sich jetzt in einem neuen "
 "Browserfenster öffnen. Andernfalls bitte  %(help)s konsultieren oder den "
@@ -3621,8 +3629,8 @@ msgstr "Vorlage bearbeiten"
 
 #: lino/modlib/printing/actions.py:277
 msgid ""
-"Before you can edit this template we must create a local copy on the server. "
-"This will exclude the template from future updates."
+"Before you can edit this template we must create a local copy on the "
+"server. This will exclude the template from future updates."
 msgstr ""
 
 #: lino/modlib/printing/actions.py:298
@@ -3659,7 +3667,7 @@ msgstr "Sind die phonetischen Wörter aktualisiert?"
 msgid "Seems to have been built ({bt}), but cache file is missing ."
 msgstr ""
 
-#: lino/modlib/restful/__init__.py:28
+#: lino/modlib/restful/__init__.py:33
 msgid "Restful"
 msgstr ""
 
@@ -3936,15 +3944,16 @@ msgstr ""
 
 #: lino/modlib/users/forms.py:110
 msgid ""
-"Raw passwords are not stored, so there is no way to see this user's password, "
-"but you can change the password using <a href=\"../password/\">this form</a>."
+"Raw passwords are not stored, so there is no way to see this user's "
+"password, but you can change the password using <a "
+"href=\"../password/\">this form</a>."
 msgstr ""
 
 #: lino/modlib/users/forms.py:140
 #, python-format
 msgid ""
-"Please enter a correct %(username)s and password. Note that both fields may be "
-"case-sensitive."
+"Please enter a correct %(username)s and password. Note that both fields "
+"may be case-sensitive."
 msgstr ""
 
 #: lino/modlib/users/forms.py:142
@@ -4188,3 +4197,4 @@ msgstr "Ungültige belgische NR-Nummer %s :"
 #, python-format
 msgid "Check digit is %(found)d but should be %(expected)d"
 msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
+
