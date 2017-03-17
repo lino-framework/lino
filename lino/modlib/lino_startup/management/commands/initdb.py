@@ -132,12 +132,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        if settings.SITE.readonly:
-            dd.logger.info(
-                "Skipped `initdb` on readonly site '%s'.",
-                settings.SETTINGS_MODULE)
-            return
-
         using = options.get('database', DEFAULT_DB_ALIAS)
         dbname = settings.DATABASES[using]['NAME']
         engine = settings.DATABASES[using]['ENGINE']

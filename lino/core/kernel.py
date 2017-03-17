@@ -845,18 +845,22 @@ class Kernel(object):
         """
         
         a = ar.bound_action.action
-        if self.site.log_each_action_request and not a.readonly:
-            flds = []
-            A = flds.append
-            a = ar.bound_action.action
-            # A(a.__class__.__module__+'.'+a.__class__.__name__)
-            A(ar.get_user().username)
-            A(ar.bound_action.full_name())
-            A(obj2str(ar.master_instance))
-            A(obj2str(ar.selected_rows))
-            # A(format_request(ar.request))
-            logger.info("run_action {0}".format(' '.join(flds)))
-            # logger.info("run_action {0}".format(ar))
+        if not a.readonly:
+            if self.site.readonly:
+                ar.error(_("Server is in readonly mode"), alert=True)
+                return self.render_action_response(ar)
+            if self.site.log_each_action_request:
+                flds = []
+                A = flds.append
+                a = ar.bound_action.action
+                # A(a.__class__.__module__+'.'+a.__class__.__name__)
+                A(ar.get_user().username)
+                A(ar.bound_action.full_name())
+                A(obj2str(ar.master_instance))
+                A(obj2str(ar.selected_rows))
+                # A(format_request(ar.request))
+                logger.info("run_action {0}".format(' '.join(flds)))
+                # logger.info("run_action {0}".format(ar))
         try:
             a.run_from_ui(ar)
             if a.parameters and not a.no_params_window:

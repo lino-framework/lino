@@ -31,6 +31,12 @@ class Command(BaseCommand):
             raise CommandError(
                 "This command takes no arguments (got %r)" % fixtures)
 
+        if settings.SITE.readonly:
+            settings.SITE.logger.info(
+                "Skipped `initdb` on readonly site '%s'.",
+                settings.SETTINGS_MODULE)
+            return
+
         args = settings.SITE.demo_fixtures
         if isinstance(args, six.string_types):
             args = args.split()
