@@ -3,6 +3,7 @@
 # License: BSD, see LICENSE for more details.
 
 """This defines the :class:`Plugin` class.
+
 See :doc:`/dev/plugins` before reading this.
 
 
