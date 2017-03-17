@@ -48,7 +48,7 @@ class Comments(dd.Table):
 
     insert_layout = dd.InsertLayout("""
     reply_to owner
-    comment_type
+    # comment_type
     short_text
     """, window_size=(60, 10), hidden_elements="reply_to owner")
 

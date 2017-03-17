@@ -4,6 +4,10 @@
   
 {{ before_welcome }}
             
+{% if site.readonly %}
+<p><b>{{_("This server is running in READONLY mode.")}}</b></p>
+{% endif %}
+
 {% if user.authenticated %}
     {% block hello_user %}
         <p>{{_("Quick links:")}}

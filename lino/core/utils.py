@@ -612,7 +612,7 @@ class Parametrizable(object):
     should be laid out in the parameters panel.
     """
 
-    params_panel_hidden = False
+    params_panel_hidden = True
     """If this table has parameters, set this to True if the parameters
     panel should be initially hidden when this table is being
     displayed.
