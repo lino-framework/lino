@@ -865,6 +865,8 @@ def use_as_wildcard(de):
     return True
 
 
+from .gfks import GenericForeignKey
+
 def fields_list(model, field_names):
     """Return a set with the names of the specified fields, checking whether
     each of them exists.
@@ -901,9 +903,17 @@ def fields_list(model, field_names):
         if e is None:
             raise models.FieldDoesNotExist(
                 "No data element %r in %s" % (name, model))
-        if not isinstance(e, DummyField):
+        if isinstance(e, DummyField):
+            pass
+        elif isinstance(e, (
+                models.Field, FakeField,
+                GenericForeignKey)):
             lst.add(e.name)
+        else:
+            raise Exception("{}.{} : invalid field type {}".format(
+                model, name, e))
     return lst
+
 
 
 def ForeignKey(othermodel, *args, **kw):
