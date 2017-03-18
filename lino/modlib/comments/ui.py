@@ -56,7 +56,7 @@ class Comments(dd.Table):
     id user created modified 
     reply_to owner comment_type
     short_text
-    more_text
+    # more_text
     """
 
     #~ column_names = "id date user type event_type subject * body_html"
