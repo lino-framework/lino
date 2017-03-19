@@ -1,4 +1,4 @@
-# Copyright 2010-2016 Luc Saffre
+# Copyright 2010-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 """A collection of utilities which require Django settings to be
 importable.
@@ -22,9 +22,11 @@ from django.db.models import ForeignKey
 
 from .utils import UnresolvedField, UnresolvedModel
 
+from .fields import GenericForeignKey
+
+
 if settings.SITE.is_installed('contenttypes'):
     from django.contrib.contenttypes.models import ContentType
-    from lino.modlib.gfks.fields import GenericForeignKey
     from django.contrib.contenttypes.fields import GenericForeignKey \
         as DjangoGenericForeignKey
 
@@ -34,7 +36,6 @@ if settings.SITE.is_installed('contenttypes'):
         return isinstance(fld, (ForeignKey, DjangoGenericForeignKey))
 else:
     ContentType = UnresolvedModel
-    GenericForeignKey = UnresolvedField
     GenericRelation = UnresolvedField
 
     def is_foreignkey(fld):

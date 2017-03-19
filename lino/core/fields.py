@@ -864,8 +864,11 @@ def use_as_wildcard(de):
         return False
     return True
 
+if settings.SITE.is_installed('contenttypes'):
+    from lino.modlib.gfks.fields import GenericForeignKey
+else:    
+    GenericForeignKey = UnresolvedField
 
-from .gfks import GenericForeignKey
 
 def fields_list(model, field_names):
     """Return a set with the names of the specified fields, checking whether
