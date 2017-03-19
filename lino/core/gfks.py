@@ -22,10 +22,8 @@ from django.db.models import ForeignKey
 
 from .utils import UnresolvedField, UnresolvedModel
 
-from .fields import GenericForeignKey
-
-
 if settings.SITE.is_installed('contenttypes'):
+    from lino.modlib.gfks.fields import GenericForeignKey
     from django.contrib.contenttypes.models import ContentType
     from django.contrib.contenttypes.fields import GenericForeignKey \
         as DjangoGenericForeignKey
@@ -35,6 +33,7 @@ if settings.SITE.is_installed('contenttypes'):
     def is_foreignkey(fld):
         return isinstance(fld, (ForeignKey, DjangoGenericForeignKey))
 else:
+    GenericForeignKey = UnresolvedField
     ContentType = UnresolvedModel
     GenericRelation = UnresolvedField
 

@@ -864,11 +864,6 @@ def use_as_wildcard(de):
         return False
     return True
 
-if settings.SITE.is_installed('contenttypes'):
-    from lino.modlib.gfks.fields import GenericForeignKey
-else:    
-    GenericForeignKey = UnresolvedField
-
 
 def fields_list(model, field_names):
     """Return a set with the names of the specified fields, checking whether
@@ -908,9 +903,10 @@ def fields_list(model, field_names):
                 "No data element %r in %s" % (name, model))
         if isinstance(e, DummyField):
             pass
-        elif isinstance(e, (
-                models.Field, FakeField,
-                GenericForeignKey)):
+        # elif isinstance(e,            
+        #         models.Field, FakeField,
+        #         GenericForeignKey)):
+        elif hasattr(e, 'name'):
             lst.add(e.name)
         else:
             raise Exception("{}.{} : invalid field type {}".format(
