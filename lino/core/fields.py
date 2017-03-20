@@ -901,9 +901,18 @@ def fields_list(model, field_names):
         if e is None:
             raise models.FieldDoesNotExist(
                 "No data element %r in %s" % (name, model))
-        if not isinstance(e, DummyField):
+        if isinstance(e, DummyField):
+            pass
+        # elif isinstance(e,            
+        #         models.Field, FakeField,
+        #         GenericForeignKey)):
+        elif hasattr(e, 'name'):
             lst.add(e.name)
+        else:
+            raise Exception("{}.{} : invalid field type {}".format(
+                model, name, e))
     return lst
+
 
 
 def ForeignKey(othermodel, *args, **kw):
