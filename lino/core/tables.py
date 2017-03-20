@@ -553,7 +553,7 @@ method in order to sort the rows of the queryset.
         <lino.core.requests.BaseRequest.master_instance>`.
 
         Another example is
-        :class:`lino_noi.lib.tickets.models.EntriesBySession`, where
+        :class:`lino_xl.lib.tickets.models.EntriesBySession`, where
         blog entries are not directly linked to a session, but in the
         detail of a session we want to display a table of related blog
         entries.
