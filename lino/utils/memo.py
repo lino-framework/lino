@@ -223,6 +223,9 @@ is used as the text of the link.
                 # dd.logger.info("20161019 %s", ar.renderer)
                 pk = int(pk)
                 obj = model.objects.get(pk=pk)
+                # try:
+                # except model.DoesNotExist:
+                #     return "[{} {}]".format(name, s)
                 if txt is None:
                     txt = "#{0}".format(obj.id)
                     kw.update(title=title(obj))
@@ -260,7 +263,9 @@ is used as the text of the link.
         try:
             return self.format_value(cmdh(self, params))
         except Exception as e:
-            logger.exception(e)
+            logger.warning(e)
+            # don't log an exception because that might cause lots of
+            # emails to the admins.
             return self.handle_error(matchobj, e)
 
     def handle_error(self, mo, e):

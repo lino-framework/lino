@@ -212,20 +212,17 @@ class Site(object):
 
     """
 
-    history_aware_logging = None
+    history_aware_logging = False
     """Whether to log a message :message:`Started %s (using %s) --> PID
     %s` at process startup (and a message :message:`Done PID %s` at
     termination).
 
     These two messages are interesting e.g. when a system
     administrator wants to know which processes have been running on a
-    given on a production site, but they are usually disturbing during
+    given production site, but they are usually disturbing during
     development.
 
-    The default value `None` instructs Lino to decide automatically
-    whether we want it or not.
-
-    TODO: Replace this setting by an aproach using an second logger
+    TODO: Replace this setting by an aproach using a second logger
     `lino.archive`. Also tidy up usage of
     :mod:`lino.utils.dblogger`. To be meditated.
 
@@ -1358,8 +1355,8 @@ class Site(object):
         if self.logger_filename and 'file' not in handlers:
             logdir = self.project_dir.child('log')
             if logdir.isdir():
-                if self.history_aware_logging is None:
-                    self.history_aware_logging = True
+                # if self.history_aware_logging is None:
+                #     self.history_aware_logging = True
                 formatters = d.setdefault('formatters', {})
                 formatters.setdefault('verbose', dict(
                     format='%(asctime)s %(levelname)s '
