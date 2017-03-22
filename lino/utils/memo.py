@@ -45,8 +45,7 @@ which is to replace the ``[KEYWORD ARGS]`` fragment.  It is
 responsible for parsing the text that it receives as parameter.
 
 If an exception occurs during the command handler, the final exception
-message is inserted into the result.  The whole traceback is being
-logged to the lino logger.
+message is inserted into the result.  
 
 To demonstrate this, our example implementation has a bug, it doesn't
 support the case of having only an URL without TEXT (we use an
@@ -152,10 +151,6 @@ from __future__ import unicode_literals
 from builtins import str
 from builtins import object
 
-import logging
-logger = logging.getLogger(__name__)
-
-
 import re
 COMMAND_REGEX = re.compile(r"\[(\w+)\s*((?:[^[\]]|\[.*?\])*?)\]")
 #                                       ===...... .......=
@@ -223,6 +218,9 @@ is used as the text of the link.
                 # dd.logger.info("20161019 %s", ar.renderer)
                 pk = int(pk)
                 obj = model.objects.get(pk=pk)
+                # try:
+                # except model.DoesNotExist:
+                #     return "[{} {}]".format(name, s)
                 if txt is None:
                     txt = "#{0}".format(obj.id)
                     kw.update(title=title(obj))
@@ -239,7 +237,9 @@ is used as the text of the link.
         try:
             return self.format_value(eval(expr, self.context))
         except Exception as e:
-            logger.exception(e)
+            # don't log an exception because that might cause lots of
+            # emails to the admins.
+            # logger.warning(e)
             return self.handle_error(matchobj, e)
 
     def format_value(self, v):
@@ -260,14 +260,16 @@ is used as the text of the link.
         try:
             return self.format_value(cmdh(self, params))
         except Exception as e:
-            logger.exception(e)
+            # logger.warning(e)
+            # don't log an exception because that might cause lots of
+            # emails to the admins.
             return self.handle_error(matchobj, e)
 
     def handle_error(self, mo, e):
         #~ return mo.group(0)
         msg = "[ERROR %s in %r at position %d-%d]" % (
             e, mo.group(0), mo.start(), mo.end())
-        logger.error(msg)
+        # logger.debug(msg)
         return msg
 
     def parse(self, s, **context):

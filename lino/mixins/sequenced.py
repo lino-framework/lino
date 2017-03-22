@@ -269,6 +269,7 @@ class Sequenced(Duplicable):
         if qs is None:
             return
         nav = AttrDict(**navinfo(qs, self))
+        # print(20170321, nav)
         if not nav.recno:
             return
         new_recno = nav.recno + offset
