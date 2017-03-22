@@ -140,3 +140,10 @@ dd.update_field(Comment, 'user', editable=False)
 
 
 from .ui import *
+
+@dd.schedule_often(10)
+def get_new_mail():
+    for mb in rt.models.django_mailbox.Mailbox.objects.filter(active=True):
+        mails = mb.get_new_mail()
+        if mails:
+            logger.info("got {} from mailbox: {}".format(mails,mb))
