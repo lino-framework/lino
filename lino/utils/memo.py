@@ -242,7 +242,9 @@ is used as the text of the link.
         try:
             return self.format_value(eval(expr, self.context))
         except Exception as e:
-            logger.exception(e)
+            # don't log an exception because that might cause lots of
+            # emails to the admins.
+            logger.warning(e)
             return self.handle_error(matchobj, e)
 
     def format_value(self, v):
