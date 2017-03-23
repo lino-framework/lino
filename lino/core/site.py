@@ -1159,6 +1159,11 @@ class Site(object):
         :xfile:`settings.py`.
 
         """
+        
+        if hasattr(self, 'setup_choicelists'):
+            raise ChangedAPI("setup_choicelists is no longer supported")
+        if hasattr(self, 'setup_workflows'):
+            raise ChangedAPI("setup_workflows is no longer supported")
 
         # if len(_INSTANCES):
         #     raise Exception("20161219")
@@ -2345,27 +2350,27 @@ this field.
     def find_template_config_files(self, *args, **kwargs):
         return self.confdirs.find_template_config_files(*args, **kwargs)
 
-    def setup_user_profiles(self):
-        """Deprecated. Use :attr:`user_types_module` instead.
+    # def setup_user_profiles(self):
+    #     """Deprecated. Use :attr:`user_types_module` instead.
 
-        """
-        pass
+    #     """
+    #     pass
 
-    def setup_choicelists(self):
-        """This is a hook for code to be run *after* all plugins have been
-        instantiated and *before* the models are being discovered.
+    # def setup_choicelists(self):
+    #     """This is a hook for code to be run *after* all plugins have been
+    #     instantiated and *before* the models are being discovered.
 
-        This is useful for redefining your application's ChoiceLists.
+    #     This is useful for redefining your application's ChoiceLists.
 
-        Note that you may not specify values longer than `max_length` when
-        redefining your choicelists.  This limitation is because these
-        redefinitions happen at a moment where database fields have
-        already been instantiated, so it is too late to change their
-        max_length.  Note that this limitation is only for the *values*,
-        not for the names or texts of choices.
+    #     Note that you may not specify values longer than `max_length` when
+    #     redefining your choicelists.  This limitation is because these
+    #     redefinitions happen at a moment where database fields have
+    #     already been instantiated, so it is too late to change their
+    #     max_length.  Note that this limitation is only for the *values*,
+    #     not for the names or texts of choices.
 
-        """
-        self.setup_user_profiles()
+    #     """
+    #     self.setup_user_profiles()
 
     # def setup_workflows(self):
     #     """Deprecated. Define a :attr:`workflows_module` instead.

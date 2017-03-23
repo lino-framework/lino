@@ -176,6 +176,7 @@ class Kernel(object):
     #     return cls._singleton_instance
 
     def __init__(self, site):
+        
         # logger.info("20140227 Kernel.__init__() a")
 
         # from importlib import import_module
@@ -335,13 +336,14 @@ class Kernel(object):
 
         if site.user_types_module:
             import_module(site.user_types_module)
+
+        # site.setup_choicelists()
         
-        site.setup_choicelists()
         # site.setup_workflows()
 
-        if site.workflows_module:
-            import_module(site.workflows_module)
-
+        # Install help texts to all fields which don't have their own.
+        # Check for nullable charfields.
+        # Initialize _lino_ddh for all models.
         for model in models_list:
             if model._meta.auto_created:
                 continue  # automatic intermediate models created by
@@ -377,7 +379,13 @@ class Kernel(object):
                         raise Exception(msg.format(f.rel, f.rel.model))
                     f.rel.model._lino_ddh.add_fk(m or model, f)
 
+        # Protect the foreign keys by removing Django's default
+        # behaviour of having on_delete with CASCADE as default.
+        
         self.protect_foreignkeys(models_list)
+        
+        if site.workflows_module:
+            import_module(site.workflows_module)
 
         for p in site.installed_plugins:
             if isinstance(p, Plugin):
@@ -387,7 +395,8 @@ class Kernel(object):
         pre_analyze.send(site, models_list=models_list)
         # logger.info("20150429 pre_analyze signal done")
         # MergeActions are defined in pre_analyze.
-        # And MergeAction needs the info in _lino_ddh to correctly find
+        
+        # MergeAction needs the info in _lino_ddh to correctly find
         # keep_volatiles
 
         site.setup_actions()
