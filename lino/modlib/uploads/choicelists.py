@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2010-2015 Luc Saffre
+# Copyright 2010-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Upload shortcut fields
@@ -12,13 +12,11 @@ related to a given database object.
 Usage:
 
 - Declare your Site's upload shortcuts from within your
-  :meth:`setup_choicelists
-  <lino.core.site.Site.setup_choicelists>`. For example::
+  :attr:`workflows_module
+  <lino.core.site.Site.workflows_module>`. For example::
 
-    def setup_choicelists(self):
-        super(Site, self).setup_choicelists()
-        from lino.modlib.uploads.choicelists import add_shortcut as add
-        add('contacts.Person', 'uploaded_foos', _("Foos"))
+      from lino.modlib.uploads.choicelists import add_shortcut as add
+      add('contacts.Person', 'uploaded_foos', _("Foos"))
     
 - Using the web interface, select :menuselection:`Configure --> Office
   --> Upload types`, create an upload type named "Foo" and set its
@@ -148,8 +146,8 @@ def set_upload_shortcuts(sender, **kw):
 
 def add_shortcut(*args, **kw):
     """Declare an upload shortcut field. This is designed to be called
-    from within your :meth:`setup_choicelists
-    <lino.core.site.Site.setup_choicelists>`.
+    from within your :attr:`workflows_module
+    <lino.core.site.Site.workflows_module>`.
 
     """
     return Shortcuts.add_item(*args, **kw)

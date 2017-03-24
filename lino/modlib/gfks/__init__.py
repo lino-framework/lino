@@ -1,4 +1,4 @@
-# Copyright 2008-2015 Luc Saffre
+# Copyright 2008-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Extends `django.contrib.contenttypes`.  This module must be
@@ -23,10 +23,10 @@ class Plugin(ad.Plugin):
 
     needs_plugins = ['lino.modlib.system', 'django.contrib.contenttypes']
 
-    def setup_reports_menu(config, site, profile, m):
-        hook = site.plugins.system
-        m = m.add_menu(hook.app_label, hook.verbose_name)
-        m.add_action(site.modules.gfks.BrokenGFKs)
+    # def setup_reports_menu(config, site, profile, m):
+    #     hook = site.plugins.system
+    #     m = m.add_menu(hook.app_label, hook.verbose_name)
+    #     m.add_action(site.modules.gfks.BrokenGFKs)
 
     def setup_config_menu(config, site, profile, m):
         hook = site.plugins.system
