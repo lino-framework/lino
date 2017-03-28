@@ -334,6 +334,10 @@ class HtmlBox(DisplayField):
 #     def __repr__(self):
 #         return "<{0}>.{1}".format(repr(self.instance), self.vf.name)
 
+VFIELD_ATTRIBS = frozenset('''to_python choices save_form_data
+  value_to_string max_length rel
+  max_digits verbose_name decimal_places
+  help_text blank'''.split())
 
 class VirtualField(FakeField):
     """Represents a virtual field. Virtual fields are not stored in the
@@ -345,12 +349,14 @@ class VirtualField(FakeField):
     BooleanField, ...) or one of Lino's custom fields
     :class:`DisplayField`, :class:`HtmlBox` or :class:`RequestField`.
 
+    The `get` must be a callable which takes the following arguments:
+
     """
 
     def __init__(self, return_type, get):
         self.return_type = return_type  # a Django Field instance
         self.get = get
-
+        
         settings.SITE.register_virtual_field(self)
         """
         Normal VirtualFields are read-only and not editable.
@@ -377,6 +383,20 @@ class VirtualField(FakeField):
             model._meta.add_field(self, virtual=True)
         else:
             model._meta.add_virtual_field(self)
+
+        # if self.get is None:
+        #     return
+        # if self.get.func_code.co_argcount != 2:
+        #     if self.get.func_code.co_argcount == 2:
+        #         getter = self.get
+        #         def w(fld, obj, ar=None):
+        #             return getter(obj, ar)
+        #         self.get = w
+        #         logger.warning("DeprecationWarning")
+        #     else:
+        #         msg = "Invalid getter for VirtualField {}".format(self)
+        #         raise ChangedAPI(msg)
+
         #~ logger.info('20120831 VirtualField %s.%s',full_model_name(model),name)
 
     def __repr__(self):
@@ -396,9 +416,9 @@ class VirtualField(FakeField):
         if isinstance(self.return_type, six.string_types):
             self.return_type = resolve_field(self.return_type)
 
+        f = self.return_type
         #~ self.return_type.name = self.name
-        if isinstance(self.return_type, models.ForeignKey):
-            f = self.return_type
+        if isinstance(f, models.ForeignKey):
             if AFTER18:
                 f.rel.model = resolve_model(f.rel.model)
             else:
@@ -410,11 +430,7 @@ class VirtualField(FakeField):
                     #~ set_default_verbose_name(self.return_type)
 
         #~ removed 20120919 self.return_type.editable = self.editable
-        for k in ('''to_python choices save_form_data
-          value_to_string verbose_name max_length rel
-          max_digits decimal_places
-          help_text
-          blank'''.split()):
+        for k in VFIELD_ATTRIBS:
             setattr(self, k, getattr(self.return_type, k, None))
         #~ logger.info('20120831 VirtualField %s on %s',name,actor_or_model)
 
@@ -474,8 +490,8 @@ class VirtualField(FakeField):
 
         """
         m = self.get
-        #~ assert m.func_code.co_argcount == 2, (self.name, m.func_code.co_varnames)
         #~ print self.field.name
+        # return m(self, obj, ar)
         return m(obj, ar)
 
     def __get__(self, instance, owner):
