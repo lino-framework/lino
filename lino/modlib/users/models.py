@@ -107,6 +107,10 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
         return self.get_full_name()
 
     def get_as_user(self):
+        """Overrides
+        :meth:`lino_xl.lib.contacts.models.Partner.get_as_user`.
+
+        """
         return self
     
     def get_full_name(self):

@@ -6,7 +6,8 @@
 
 from lino.core.roles import UserRole, SiteUser, SiteAdmin
 
-class OfficeUser(SiteUser):
+# class OfficeUser(SiteUser):
+class OfficeUser(UserRole):
     """A user who has access to office functionality like calendar, notes
     and uploads.
 

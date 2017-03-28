@@ -458,7 +458,8 @@ class ExtRenderer(JsRenderer):
 
             # users = settings.SITE.actors.users
             
-            if request.user.profile.has_required_roles([SiteUser]):
+            # if request.user.profile.has_required_roles([SiteUser]):
+            if request.user.authenticated:
                 if request.subst_user:
                     yield "Lino.set_subst_user(%s,%s);" % (
                         py2js(request.subst_user.id),
