@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino 2016.12.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-03-16 16:38+0200\n"
+"POT-Creation-Date: 2017-03-29 11:18+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -155,15 +155,15 @@ msgstr ""
 msgid "lines changed"
 msgstr ""
 
-#: lino/core/fields.py:637
+#: lino/core/fields.py:653
 msgid "Quantity (Decimal or Duration)"
 msgstr ""
 
-#: lino/core/fields.py:719
+#: lino/core/fields.py:735
 msgid "Invalid date"
 msgstr ""
 
-#: lino/core/fields.py:740
+#: lino/core/fields.py:756
 msgid ""
 "Uncomplete dates are allowed, e.g. \n"
 "\"00.00.1980\" means \"some day in 1980\", \n"
@@ -176,16 +176,20 @@ msgstr ""
 msgid "Confirmation"
 msgstr ""
 
-#: lino/core/kernel.py:595
+#: lino/core/kernel.py:604
 msgid "You have "
 msgstr ""
 
-#: lino/core/kernel.py:596
+#: lino/core/kernel.py:605
 msgid "{0} items in {1}"
 msgstr ""
 
-#: lino/core/kernel.py:749
+#: lino/core/kernel.py:758
 msgid "User abandoned"
+msgstr ""
+
+#: lino/core/kernel.py:859
+msgid "Server is in readonly mode"
 msgstr ""
 
 #: lino/core/layouts.py:489
@@ -320,39 +324,39 @@ msgstr ""
 msgid "No data to display"
 msgstr ""
 
-#: lino/core/site.py:378 lino/modlib/changes/models.py:102
+#: lino/core/site.py:375 lino/modlib/changes/models.py:102
 msgid "Master"
 msgstr ""
 
-#: lino/core/site.py:380
+#: lino/core/site.py:377
 msgid "Reports"
 msgstr ""
 
-#: lino/core/site.py:381
+#: lino/core/site.py:378
 msgid "Configure"
 msgstr ""
 
-#: lino/core/site.py:382
+#: lino/core/site.py:379
 msgid "Explorer"
 msgstr ""
 
-#: lino/core/site.py:383
+#: lino/core/site.py:380
 msgid "Site"
 msgstr ""
 
-#: lino/core/site.py:2609 lino/modlib/languages/fixtures/few_languages.py:21
+#: lino/core/site.py:2611 lino/modlib/languages/fixtures/few_languages.py:21
 msgid "English"
 msgstr ""
 
-#: lino/core/site.py:3472
+#: lino/core/site.py:3474
 msgid "This is "
 msgstr ""
 
-#: lino/core/site.py:3481
+#: lino/core/site.py:3483
 msgid " using "
 msgstr ""
 
-#: lino/core/site.py:3526
+#: lino/core/site.py:3528
 #, python-format
 msgid "%(place)s, %(date)s"
 msgstr ""
@@ -671,15 +675,15 @@ msgstr ""
 msgid "Row # %s"
 msgstr ""
 
-#: lino/mixins/sequenced.py:286
+#: lino/mixins/sequenced.py:287
 msgid "Move"
 msgstr ""
 
-#: lino/mixins/sequenced.py:313
+#: lino/mixins/sequenced.py:314
 msgid "Parent"
 msgstr ""
 
-#: lino/mixins/sequenced.py:317
+#: lino/mixins/sequenced.py:318
 msgid "Children"
 msgstr ""
 
@@ -741,7 +745,7 @@ msgid "show callables"
 msgstr ""
 
 #: lino/modlib/about/models.py:218 lino/modlib/importfilters/models.py:35
-#: lino/modlib/users/models.py:118
+#: lino/modlib/users/models.py:122
 msgid "Name"
 msgstr ""
 
@@ -771,12 +775,12 @@ msgid "Server uptime"
 msgstr ""
 
 #: lino/modlib/about/models.py:280
-#: lino/modlib/lino_startup/config/admin_main_base.html:26
+#: lino/modlib/lino_startup/config/admin_main_base.html:30
 msgid "This is a Lino demo site."
 msgstr ""
 
 #: lino/modlib/about/models.py:283
-#: lino/modlib/lino_startup/config/admin_main_base.html:30
+#: lino/modlib/lino_startup/config/admin_main_base.html:34
 msgid "We are running with simulated date set to {0}."
 msgstr ""
 
@@ -826,7 +830,7 @@ msgid "Show this table in Bootstrap3 interface"
 msgstr ""
 
 #: lino/modlib/bootstrap3/config/bootstrap3/base.html:22
-#: lino/modlib/bootstrap3/views.py:49 lino/modlib/extjs/ext_renderer.py:717
+#: lino/modlib/bootstrap3/views.py:49 lino/modlib/extjs/ext_renderer.py:718
 msgid "Home"
 msgstr ""
 
@@ -1028,7 +1032,7 @@ msgstr ""
 msgid "Select a %s..."
 msgstr ""
 
-#: lino/modlib/extjs/elems.py:1279 lino/modlib/uploads/choicelists.py:118
+#: lino/modlib/extjs/elems.py:1279 lino/modlib/uploads/choicelists.py:116
 msgid "show"
 msgstr ""
 
@@ -1040,40 +1044,40 @@ msgstr ""
 msgid "Manage"
 msgstr ""
 
-#: lino/modlib/extjs/ext_renderer.py:467
+#: lino/modlib/extjs/ext_renderer.py:468
 msgid "as"
 msgstr ""
 
-#: lino/modlib/extjs/ext_renderer.py:499
+#: lino/modlib/extjs/ext_renderer.py:500
 msgid "My settings"
 msgstr ""
 
-#: lino/modlib/extjs/ext_renderer.py:509
+#: lino/modlib/extjs/ext_renderer.py:510
 msgid "Myself"
 msgstr ""
 
-#: lino/modlib/extjs/ext_renderer.py:511
+#: lino/modlib/extjs/ext_renderer.py:512
 msgid "Act as..."
 msgstr ""
 
-#: lino/modlib/extjs/ext_renderer.py:517
+#: lino/modlib/extjs/ext_renderer.py:518
 msgid "Log out"
 msgstr ""
 
-#: lino/modlib/extjs/ext_renderer.py:520 lino/modlib/users/actions.py:117
+#: lino/modlib/extjs/ext_renderer.py:521 lino/modlib/users/actions.py:117
 msgid "Change password"
 msgstr ""
 
-#: lino/modlib/extjs/ext_renderer.py:522
+#: lino/modlib/extjs/ext_renderer.py:523
 msgid "Forgot password"
 msgstr ""
 
-#: lino/modlib/extjs/ext_renderer.py:532 lino/modlib/extjs/linoweb.js:364
+#: lino/modlib/extjs/ext_renderer.py:533 lino/modlib/extjs/linoweb.js:364
 #: lino/modlib/extjs/linoweb.js:399
 msgid "Log in"
 msgstr ""
 
-#: lino/modlib/extjs/ext_renderer.py:1211
+#: lino/modlib/extjs/ext_renderer.py:1212
 msgid "No data to display."
 msgstr ""
 
@@ -3242,76 +3246,80 @@ msgstr ""
 msgid "If you can reproduce this message, please tell us how you did that."
 msgstr ""
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:9
+#: lino/modlib/lino_startup/config/admin_main_base.html:8
+msgid "This server is running in READONLY mode."
+msgstr ""
+
+#: lino/modlib/lino_startup/config/admin_main_base.html:13
 msgid "Quick links:"
 msgstr ""
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:16
+#: lino/modlib/lino_startup/config/admin_main_base.html:20
 msgid "Refresh"
 msgstr ""
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:18
+#: lino/modlib/lino_startup/config/admin_main_base.html:22
 #, python-format
 msgid "Hi, %(user)s!"
 msgstr ""
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:27
+#: lino/modlib/lino_startup/config/admin_main_base.html:31
 msgid ""
 "Try also the other <a href=\"http://lino-framework.org/demos.html\">demo "
 "sites</a>."
 msgstr ""
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:28
+#: lino/modlib/lino_startup/config/admin_main_base.html:32
 #, python-format
 msgid "Your feedback is welcome to %s or directly to the person who invited you."
 msgstr ""
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:42
+#: lino/modlib/lino_startup/config/admin_main_base.html:46
 msgid "You have entered the <b>admin</b> section."
 msgstr ""
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:43
+#: lino/modlib/lino_startup/config/admin_main_base.html:47
 msgid ""
 "Unlike the <a href=\"/\">web content section</a> there is now a GUI menu "
 "bar in the upper part of the screen."
 msgstr ""
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:48
+#: lino/modlib/lino_startup/config/admin_main_base.html:52
 #, python-format
 msgid "Welcome to the <b>%s</b> site."
 msgstr ""
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:50
+#: lino/modlib/lino_startup/config/admin_main_base.html:54
 #, python-format
 msgid "We are running %(name)s version %(version)s"
 msgstr ""
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:59
+#: lino/modlib/lino_startup/config/admin_main_base.html:63
 msgid "You will now probably want to"
 msgstr ""
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:61
+#: lino/modlib/lino_startup/config/admin_main_base.html:65
 msgid "log in"
 msgstr ""
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:62
+#: lino/modlib/lino_startup/config/admin_main_base.html:66
 msgid "using the <b>Log in</b> button in the upper right corner."
 msgstr ""
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:64
+#: lino/modlib/lino_startup/config/admin_main_base.html:68
 msgid "Or {} as a new user."
 msgstr ""
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:67
+#: lino/modlib/lino_startup/config/admin_main_base.html:71
 msgid "register"
 msgstr ""
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:72
+#: lino/modlib/lino_startup/config/admin_main_base.html:76
 #, python-format
 msgid "This demo site has %d users:"
 msgstr ""
 
-#: lino/modlib/lino_startup/config/admin_main_base.html:77
+#: lino/modlib/lino_startup/config/admin_main_base.html:81
 msgid "The password is the same for all of them: \"1234\"."
 msgstr ""
 
@@ -3704,53 +3712,53 @@ msgstr ""
 msgid "Template Text"
 msgstr ""
 
-#: lino/modlib/uploads/__init__.py:21 lino/modlib/uploads/choicelists.py:79
+#: lino/modlib/uploads/__init__.py:21 lino/modlib/uploads/choicelists.py:77
 #: lino/modlib/uploads/models.py:112
 msgid "Uploads"
 msgstr ""
 
-#: lino/modlib/uploads/choicelists.py:68
+#: lino/modlib/uploads/choicelists.py:66
 msgid "Upload shortcut"
 msgstr ""
 
-#: lino/modlib/uploads/choicelists.py:69
+#: lino/modlib/uploads/choicelists.py:67
 msgid "Upload shortcuts"
 msgstr ""
 
-#: lino/modlib/uploads/choicelists.py:76
+#: lino/modlib/uploads/choicelists.py:74
 msgid "Upload Area"
 msgstr ""
 
-#: lino/modlib/uploads/choicelists.py:77
+#: lino/modlib/uploads/choicelists.py:75
 msgid "Upload Areas"
 msgstr ""
 
-#: lino/modlib/uploads/choicelists.py:110 lino/modlib/uploads/models.py:111
+#: lino/modlib/uploads/choicelists.py:108 lino/modlib/uploads/models.py:111
 msgid "Upload"
 msgstr ""
 
-#: lino/modlib/uploads/choicelists.py:111
+#: lino/modlib/uploads/choicelists.py:109
 msgid "Upload a file from your PC to the server."
 msgstr ""
 
-#: lino/modlib/uploads/choicelists.py:122 lino/modlib/uploads/models.py:303
+#: lino/modlib/uploads/choicelists.py:120 lino/modlib/uploads/models.py:303
 msgid "Open the uploaded file in a new browser window"
 msgstr ""
 
-#: lino/modlib/uploads/choicelists.py:128
+#: lino/modlib/uploads/choicelists.py:126
 msgid "Edit"
 msgstr ""
 
-#: lino/modlib/uploads/choicelists.py:129 lino/modlib/uploads/models.py:289
+#: lino/modlib/uploads/choicelists.py:127 lino/modlib/uploads/models.py:289
 msgid "Edit metadata of the uploaded file."
 msgstr ""
 
-#: lino/modlib/uploads/choicelists.py:133
+#: lino/modlib/uploads/choicelists.py:131
 msgctxt "uploaded file"
 msgid "Last"
 msgstr ""
 
-#: lino/modlib/uploads/choicelists.py:137
+#: lino/modlib/uploads/choicelists.py:135
 msgid "All {0} files"
 msgstr ""
 
@@ -3934,15 +3942,15 @@ msgstr ""
 msgid "Remarks"
 msgstr ""
 
-#: lino/modlib/users/models.py:254
+#: lino/modlib/users/models.py:258
 msgid "Authority"
 msgstr ""
 
-#: lino/modlib/users/models.py:255
+#: lino/modlib/users/models.py:259
 msgid "Authorities"
 msgstr ""
 
-#: lino/modlib/users/models.py:260
+#: lino/modlib/users/models.py:264
 msgid "The user who gets authority to act in your name."
 msgstr ""
 
