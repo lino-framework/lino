@@ -872,10 +872,14 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     @classmethod
     def _bind_action(self, a):
         # internal use during _collect_actions()
-        ba = BoundAction(self, a)
-        if a.action_name is not None:
-            self.actions.define(a.action_name, ba)
-        self._actions_list.append(ba)
+        try:
+            ba = BoundAction(self, a)
+            if a.action_name is not None:
+                self.actions.define(a.action_name, ba)
+            self._actions_list.append(ba)
+        except Exception as e:
+            raise Exception("Cannot bind {!r} to {!r} : {}".format(
+                a, self, e))
         return ba
 
     @classmethod
@@ -1117,10 +1121,11 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                 assert dtl._datasource is None
                 # added for 20120914c but it wasn't the problem
                 if existing and not isinstance(existing, string_types):
-                    if not isinstance(dtl, existing.__class__):
-                        raise Exception(
-                            "Cannot replace existing %s %r by %r" % (
-                                attname, existing, dtl))
+                    if settings.SITE.strict_dependencies:
+                        if not isinstance(dtl, existing.__class__):
+                            raise Exception(
+                                "Cannot replace existing %s %r by %r" % (
+                                    attname, existing, dtl))
                     if existing._added_panels:
                         if '\n' in dtl.main:
                             raise NotImplementedError(

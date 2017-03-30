@@ -1002,6 +1002,12 @@ class Site(object):
 
     """
 
+    strict_dependencies = True
+    """This should be True unless this site is being used just for
+    autodoc or similar applications.
+
+    """
+    
     strict_choicelist_values = True
     """Whether invalid values in a ChoiceList should raise an exception.
 
@@ -1836,8 +1842,9 @@ this field.
                 # `models.py`, then it is a plugin and we must not add
                 # the subdir because Django does that.
                 if exists(join(p, '..', 'models.py')):
-                    self.logger.info(
-                        "Ignoring %s %s because it is a plugin", p, name)
+                    self.logger.debug(
+                        "Not loading %s %s because Django does that",
+                        p, name)
                 else:
                     add(p)
                     if (max_count is not None) and len(lst) >= max_count:

@@ -305,9 +305,14 @@ class Action(Parametrizable, Permittable):
 
     def __repr__(self):
         if self.label is None:
-            return "<%s %s>" % (self.__class__.__name__, self.action_name)
-        return "<%s %s (%r)>" % (
-            self.__class__.__name__, self.action_name, str(self.label))
+            name = self.action_name
+        else:
+            name = "{} ('{}')".format(self.action_name, self.label)
+            
+        return "<{}.{} {}>".format(
+            self.__class__.__module__,
+            self.__class__.__name__,
+            name)
 
     def unused__str__(self):
         raise Exception("20121003 Must use full_name(actor)")
