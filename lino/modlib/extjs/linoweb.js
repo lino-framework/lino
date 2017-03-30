@@ -3061,7 +3061,14 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       }
     }
     // console.log('20140917 gonna call before_row_edit', record);
+        var current_focus_fields = false;
+        for (var i = 0; i < this.form.items.items.length;i++) {
+            if (this.form.items.items[i].hasFocus) current_focus_fields = i;
+        }
     this.before_row_edit(record);
+        if (current_focus_fields != false){
+            this.form.items.items[current_focus_fields].focus();
+        }
     // console.log('20140917 gonna call after', after);
     if (after) after();
   },
