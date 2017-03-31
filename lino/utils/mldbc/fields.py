@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2015 Luc Saffre
+# Copyright 2012-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Defines the babel field classes (:class:`BabelCharField` and
@@ -20,6 +20,7 @@ Example::
 """
 
 from __future__ import unicode_literals
+import six
 
 import logging
 logger = logging.getLogger(__name__)
@@ -48,7 +49,10 @@ def contribute_to_class(field, cls, fieldclass, **kw):
         # used by dbtools.get_data_elems
         newfield._lino_babel_field = field.name
         newfield._babel_language = lang
-        cls.add_to_class(field.name + '_' + lang.name, newfield)
+        cls.add_to_class(six.text_type(field.name + '_' + lang.name), newfield)
+        # we must convert the field name to six.text_type because lang.name is a newstr, and Django can raise a
+        # TypeError: unorderable types: str() and <type 'str'>
+        # when a model contains both Babelfields and fields with plain Py2 str names.
 
 
 class BabelCharField(models.CharField):
