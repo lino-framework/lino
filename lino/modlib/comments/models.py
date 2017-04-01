@@ -98,6 +98,11 @@ class Comment(CreatedModified, UserAuthored, # Controllable,
         else:
             return cls.objects.exclude(owner__private=True)
         
+    def after_ui_save(self, ar, cw):
+        super(Comment, self).after_ui_save(ar, cw)
+        if self.owner_id:
+            self.owner.on_commented(self, ar, cw)
+        
     # def full_clean(self):
     #     super(Comment, self).full_clean()
     #     self.owner.setup_comment(self)
