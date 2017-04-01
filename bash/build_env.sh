@@ -5,7 +5,7 @@ mkdir src
 cd src
 
 
-for pro in atelier lino xl cosi noi book voga presto welfare avanti extjs6
+for pro in atelier lino xl cosi noi book voga welfare avanti extjs6
 
 do
     git clone git@github.com:lino-framework/$pro.git
@@ -22,7 +22,7 @@ do
 done
 
 
-for i in atelier lino xl noi django-mailbox extjs6 commondata commondata-be commondata-ee commondata-eg cosi voga presto welfare avanti book
+for i in atelier lino xl noi django-mailbox extjs6 commondata commondata-be commondata-ee commondata-eg cosi voga welfare avanti book
 do
     pip install -e $i
 done
