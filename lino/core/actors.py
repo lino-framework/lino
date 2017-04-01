@@ -980,7 +980,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         Other usages are more hackerish:
 
         - :class:`lino_xl.lib.households.models.SiblingsByPerson`
-        - :class:`lino_welfare.modlib.cal.models.EventsByClient`
+        - :class:`lino_welfare.modlib.cal.models.EntriesByClient`
         - :class:`lino_welfare.pcsw.models.Home`,
         - :class:`lino.modlib.users.models.MySettings`.
 
