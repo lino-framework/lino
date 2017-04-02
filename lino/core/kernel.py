@@ -212,8 +212,7 @@ class Kernel(object):
         definitions are done, now Lino analyzes them and does certain
         actions:
 
-        - Verify that there are no more pending injects Install a
-          :class:`DisableDeleteHandler
+        - Install a :class:`DisableDeleteHandler
           <lino.core.ddh.DisableDeleteHandler>` for each Model into
           `_lino_ddh`.
 

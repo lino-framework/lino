@@ -18,6 +18,13 @@ class Commentable(dd.Model):
 
     private = models.BooleanField(_("Private"), default=False)
     
+    def on_commented(self, comment, ar, cw):
+        """This is automatically called when a comment has been created or
+        modified.
+
+        """
+        pass
+    
     def get_rfc_description(self, ar):
         """Return a HTML formatted string with the description of this
         Commentable as it should be displayed by the slave summary of

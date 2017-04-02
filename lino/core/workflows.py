@@ -222,6 +222,9 @@ class ChangeStateAction(actions.Action):
 
         super(ChangeStateAction, self).__init__(**kw)
         #~ logger.info('20120930 ChangeStateAction %s %s', actor,target_state)
+        if self.label is None:
+            self.label = target_state.text
+            
         if self.button_text is None:
             self.button_text = target_state.button_text
 

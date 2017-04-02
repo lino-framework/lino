@@ -98,6 +98,11 @@ class Comment(CreatedModified, UserAuthored, # Controllable,
         else:
             return cls.objects.exclude(owner__private=True)
         
+    def after_ui_save(self, ar, cw):
+        super(Comment, self).after_ui_save(ar, cw)
+        if self.owner_id:
+            self.owner.on_commented(self, ar, cw)
+        
     # def full_clean(self):
     #     super(Comment, self).full_clean()
     #     self.owner.setup_comment(self)
@@ -142,9 +147,3 @@ dd.update_field(Comment, 'user', editable=False)
 
 from .ui import *
 
-@dd.schedule_often(10)
-def get_new_mail():
-    for mb in rt.models.django_mailbox.Mailbox.objects.filter(active=True):
-        mails = mb.get_new_mail()
-        if mails:
-            logger.info("got {} from mailbox: {}".format(mails,mb))
