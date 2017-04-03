@@ -1097,6 +1097,7 @@ action on individual instances.
         print(self.get_subclasses_graph())
 
 LINO_MODEL_ATTRIBS = (
+    'define_action',
     'delete_instance',
     'get_parameter_fields',
     'save_new_instance',
