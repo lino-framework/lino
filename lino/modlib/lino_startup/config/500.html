@@ -4,7 +4,10 @@
 
 {% block content %}
 <h1>{{_('Server Error <em>(500)</em>')}}</h1>
-<p>{{_("Congratulations, you found an error in our system.")}}
+<p>{{_("Oops, you found an error in our system.")}}
+{{_("Don't panic, this is definitively not your fault.")}}
+{{_("Maybe we are working on the server, 
+please check the <a href=\"{{site.hoster_status_url}}\">hoster status page</a>.")}}
 {{_("We apologize for the inconvenience.")}}
 {{_("If you can reproduce this message, please tell us how you did that.")}}
 </p>

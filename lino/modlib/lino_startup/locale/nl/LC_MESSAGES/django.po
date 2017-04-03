@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-01 11:44+0300\n"
+"POT-Creation-Date: 2017-04-03 04:33+0300\n"
 "PO-Revision-Date: 2014-02-05 09:34+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language: nl\n"
@@ -183,19 +183,19 @@ msgstr ""
 msgid "Confirmation"
 msgstr "Bestätigung"
 
-#: lino/core/kernel.py:604
+#: lino/core/kernel.py:603
 msgid "You have "
 msgstr ""
 
-#: lino/core/kernel.py:605
+#: lino/core/kernel.py:604
 msgid "{0} items in {1}"
 msgstr ""
 
-#: lino/core/kernel.py:758
+#: lino/core/kernel.py:757
 msgid "User abandoned"
 msgstr ""
 
-#: lino/core/kernel.py:859
+#: lino/core/kernel.py:858
 msgid "Server is in readonly mode"
 msgstr ""
 
@@ -333,41 +333,41 @@ msgstr ""
 msgid "No data to display"
 msgstr "Keine Daten anzuzeigen"
 
-#: lino/core/site.py:375 lino/modlib/changes/models.py:102
+#: lino/core/site.py:379 lino/modlib/changes/models.py:102
 msgid "Master"
 msgstr "Stammdaten"
 
-#: lino/core/site.py:377
+#: lino/core/site.py:381
 msgid "Reports"
 msgstr ""
 
-#: lino/core/site.py:378
+#: lino/core/site.py:382
 msgid "Configure"
 msgstr "Konfigurierung"
 
-#: lino/core/site.py:379
+#: lino/core/site.py:383
 msgid "Explorer"
 msgstr ""
 
-#: lino/core/site.py:380
+#: lino/core/site.py:384
 msgid "Site"
 msgstr "Site"
 
-#: lino/core/site.py:2618 lino/modlib/languages/fixtures/few_languages.py:21
+#: lino/core/site.py:2622 lino/modlib/languages/fixtures/few_languages.py:21
 msgid "English"
 msgstr ""
 
-#: lino/core/site.py:3481
+#: lino/core/site.py:3485
 #, fuzzy
 msgid "This is "
 msgstr "Auswahlmöglichkeiten für %s"
 
-#: lino/core/site.py:3490
+#: lino/core/site.py:3494
 #, fuzzy
 msgid " using "
 msgstr "Meine Einstellungen"
 
-#: lino/core/site.py:3535
+#: lino/core/site.py:3539
 #, fuzzy, python-format
 msgid "%(place)s, %(date)s"
 msgstr "%(date)s om %(time)s"
@@ -3318,14 +3318,25 @@ msgid "Server Error <em>(500)</em>"
 msgstr ""
 
 #: lino/modlib/lino_startup/config/500.html:7
-msgid "Congratulations, you found an error in our system."
+msgid "Oops, you found an error in our system."
 msgstr ""
 
 #: lino/modlib/lino_startup/config/500.html:8
-msgid "We apologize for the inconvenience."
+msgid "Don't panic, this is definitively not your fault."
 msgstr ""
 
 #: lino/modlib/lino_startup/config/500.html:9
+msgid ""
+"Maybe we are working on the server, \n"
+"please check the <a href=\"{{site.hoster_status_url}}\">hoster status "
+"page</a>."
+msgstr ""
+
+#: lino/modlib/lino_startup/config/500.html:11
+msgid "We apologize for the inconvenience."
+msgstr ""
+
+#: lino/modlib/lino_startup/config/500.html:12
 msgid "If you can reproduce this message, please tell us how you did that."
 msgstr ""
 
@@ -8813,5 +8824,8 @@ msgstr ""
 #~ msgstr "%s wurde erstellt."
 
 #~ msgid "has been modified by {user}"
+#~ msgstr ""
+
+#~ msgid "Congratulations, you found an error in our system."
 #~ msgstr ""
 
