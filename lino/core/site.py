@@ -243,6 +243,10 @@ class Site(object):
 
     """
 
+    hoster_status_url = "http://bugs.saffre-rumma.net/"
+    """This is mentioned in :xfile:`500.html`.
+    """
+
     verbose_name = "yet another Lino application"
     """The name of this application, to be displayed to end-users at
     different places.
