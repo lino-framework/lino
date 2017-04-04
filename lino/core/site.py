@@ -1044,7 +1044,7 @@ class Site(object):
     See also :ref:`lino.logging`.
 
     """
-    auto_configure_logger_names = 'schedule atelier django lino'
+    auto_configure_logger_names = 'schedule atelier django lino radicale'
     """
     A string with a space-separated list of logger names to be
     automatically configured. See :meth:`setup_logging`.
