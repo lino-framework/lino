@@ -10,6 +10,7 @@
 
 from django.conf import settings
 
+from datetime import datetime, timedelta
 # from django.db import models
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
@@ -26,44 +27,44 @@ def format_timestamp(dt):
         naturaltime(dt))
 
 
-class Connections(dd.VirtualTable):
+class Sessions(dd.Table):
     """
 
     """
     label = _("Connections")
+    model = 'sessions.Session'
+    
     required_roles = dd.login_required(dd.SiteAdmin)
     column_names = "ip_address:12 login_failures:5 blacklisted_since:12 username:20 last_request:30 last_login:30"
-    window_size = (90, 12)
+    # window_size = (90, 12)
 
 
-    @classmethod
-    def get_data_rows(cls, ar):
-        auth = get_auth_middleware()
-        return auth.ip_records.values()
-    
     @dd.displayfield(_("IP address"))
     def ip_address(self, obj, ar):
-        return obj.addr
+        d = obj.get_decoded()
+        return str(d.keys())
 
     @dd.displayfield(_("Blacklisted since"))
     def blacklisted_since(self, obj, ar):
-        return format_timestamp(obj.blacklisted_since)
+        return format_timestamp(None)
 
     @dd.displayfield(_("Login failures"))
     def login_failures(self, obj, ar):
-        return obj.login_failures
+        return None
 
     @dd.displayfield(_("Username"))
     def username(self, obj, ar):
-        return  obj.username
+        return None
+        # d = obj.get_decoded()
+        # return d['user_id']
 
     @dd.displayfield(_("Last request"))
     def last_request(self, obj, ar):
-        return format_timestamp(obj.last_request)
+        return format_timestamp(datetime.now())
 
     @dd.displayfield(_("Last login"))
     def last_login(self, obj, ar):
-        return format_timestamp(obj.last_login)
+        return format_timestamp(None)
 
     
             

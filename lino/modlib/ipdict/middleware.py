@@ -2,63 +2,67 @@
 # Copyright 2017 Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
-from datetime import datetime
+#import six
+from datetime import datetime, timedelta
 
 from django.utils.translation import ugettext_lazy as _
+# from django.contrib.humanize.templatetags.humanize import naturaltime
+from django.conf import settings
+
 from lino.core.auth import NOT_NEEDED, SessionUserMiddleware
 
+# def format_timestamp(dt):        
+#     d = dt.strftime(settings.SITE.date_format_strftime)
+#     t = dt.strftime(settings.SITE.time_format_strftime)
+#     return "{} {}".format(d, t)
+
+max_blacklist_time  = timedelta(minutes=1)
+
 class IPRecord(object):
-    def __init__(self, ip):
-        self.ip = ip
+    def __init__(self, addr, username):
+        self.addr = addr
+        self.username = username
         self.login_failures = 0
         self.blacklisted_since = None
-        self.user_records = {}
-        
-    def get_user_record(self, username):
-        ur = self.user_records.get(username, None)
-        if ur is None:
-            ur = UserIPRecord(self.ip, username)
-            self.user_records[username] = ur
-        return ur
-    
-    def record_login(self, username):
-        ur = self.get_user_record(username)
-        ur.last_login = datetime.now()
-        
-    def record_request(self, username):
-        ur = self.get_user_record(username)
-        ur.last_request = datetime.now()
-        
-
-class UserIPRecord(object):
-    def __init__(self, ip, username):
-        self.ip = ip
-        self.username = username
         self.last_login = None
         self.last_failure = None
         self.last_request = None
 
-    def __str__(self):
-        return "{username} ({last_request})".format(
-            username=self.username, last_request=self.last_request)
+#six.python_2_unicode_compatible
+class UserIPRecord(object):
+    def __init__(self, ip, username):
+        self.ip = ip
+
+    # def __str__(self):
+    #     s = u"{username} {last_request} ({ago})".format(
+    #         username=self.username,
+    #         last_request=format_timestamp(self.last_request),
+    #         ago=naturaltime(self.last_request)
+    #     )
+    #     # idletime = datetime.now() - self.last_request
+    #     # if idletime > max_idletime:
+    #     #     s += _(" ({})").format(naturaltime(self.last_request))
+    #     return s
     
 class Middleware(SessionUserMiddleware):
     
     max_failed_auth_per_ip = 4 # Should be set in settings.SITE?
     # blacklist = {}
     ip_records = {}
-
+        
     def process_request(self, request):
         super(Middleware, self).process_request(request)
-        ip = self.get_client_id(request)
-        self.get_ip_record(ip).record_request(request.user.username)
+        ip = self.get_ip_record(request, request.user.username)
+        ip.last_request = datetime.now()
         
-    def get_ip_record(self, ip):
-        rec = self.ip_records.get(ip, None)
-        if rec is None:
-            rec = IPRecord(ip)
-            self.ip_records[ip] = rec
-        return rec
+    def get_ip_record(self, request, username):
+        addr = self.get_client_id(request)
+        k = (addr, username)
+        ip = self.ip_records.get(k, None)
+        if ip is None:
+            ip = IPRecord(addr, username)
+            self.ip_records[k] = ip
+        return ip
     
     @staticmethod
     def get_client_id(request):
@@ -84,21 +88,36 @@ class Middleware(SessionUserMiddleware):
             self, username,
             password=NOT_NEEDED,
             request=None, **kwargs):
-        ip = self.get_client_id(request)
-        rec = self.get_ip_record(ip)
+        rec = self.get_ip_record(request, 'anonymous')
         if rec.blacklisted_since is not None:
-            msg = _("Blacklisted IP {} : contact your "
-                    "system administrator")
-            # raise exceptions.PermissionDenied(msg.format(ip))
-            return msg.format(ip)
+            since = datetime.now() - rec.blacklisted_since
+            if since < max_blacklist_time:
+                msg = _("Blacklisted IP {} : contact your "
+                        "system administrator")
+                # raise exceptions.PermissionDenied(msg.format(ip))
+                return msg.format(rec.addr)
         msg = super(Middleware, self).authenticate(
             username, password, request, **kwargs)
         if msg:
+            # user failed to authenticate
             rec.login_failures += 1
             if rec.login_failures >= self.max_failed_auth_per_ip:
-                # user failed authenticate
-                rec.blacklisted_since = datetime.now()
+                # maybe a robot is trying to log in with brute force
+                # and waited patiently for max_blacklist_time to pass,
+                # and now continues to try. In that case we don't
+                # forget the blacklisted_since, so the robot must now
+                # wait a full minute for every attempt
+                if rec.blacklisted_since is None:
+                    rec.blacklisted_since = datetime.now()
             # self.add_to_blacklist(ip)
         else:
-            rec.record_login(username)
+            # when an IP was blacklisted, got unlocked after
+            # max_blacklist_time and then received a successful login,
+            # then all sins of anonymous are being erased:
+            rec.blacklisted_since = None
+            rec.login_failures = 0
+            
+            # record the login time for username
+            rec = self.get_ip_record(request, username)
+            rec.last_login = datetime.now()
         return msg
