@@ -70,9 +70,9 @@ SETUP_INFO.update(long_description="""
     alt="coverage"
     src="https://coveralls.io/repos/github/lino-framework/book/badge.svg?branch=master"
     /></a> <a class="reference external"
-    href="https://travis-ci.org/lino-framework/book?branch=master"><img
+    href="https://travis-ci.org/lino-framework/book?branch=stable"><img
     alt="build"
-    src="https://travis-ci.org/lino-framework/book.svg?branch=master"
+    src="https://travis-ci.org/lino-framework/book.svg?branch=stable"
     /></a> <a class="reference external"
     href="https://pypi.python.org/pypi/lino/"><img alt="pypi_v"
     src="https://img.shields.io/pypi/v/lino.svg" /></a> <a
