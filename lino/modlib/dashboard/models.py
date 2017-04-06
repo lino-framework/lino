@@ -73,6 +73,11 @@ class Widget(UserAuthored, Sequenced):
     @dd.displayfield(_("Label"))
     def title(self, ar):
         a = settings.SITE.actors.resolve(self.item_name)
+        # might be invalid e.g. if the widget was created by a
+        # previous version.
+        if a is None:
+            return _("Invalid item_name {} in {}").format(
+                self.item_name, self._meta.verbose_name)
         return a.label
     
 
