@@ -245,6 +245,21 @@ class Model(models.Model):
         return None
 
     @classmethod
+    def add_param_filter(cls, qs, lookup_prefix='', **kwargs):
+        """Add filters to queryset using table parameter fields.
+
+        Usage example is :class:`DeploymentsByTicket
+        <lino_xl.lib.deploy.desktop.DeploymentsByTicket>`.
+
+        """
+        
+        if len(kwargs):
+            raise Exception(
+                "{}.add_param_filter got unknown argument {}".format(
+                    str(cls.__name__), kwargs))
+        return qs
+
+    @classmethod
     def get_data_elem(cls, name):
         """Return the named data element. This can be a database field, a
         :class:`lino.core.fields.RemoteField`, a
@@ -1026,7 +1041,6 @@ action on individual instances.
         raise Exception(
             "Cannot resolve stateset specifier {!r}".format(states))
     
-
     @classmethod
     def django2lino(cls, model):
         """
