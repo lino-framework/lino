@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2016 by Luc Saffre & Hamza Khchine.
+# Copyright 2013-2017 by Luc Saffre & Hamza Khchine.
 # License: BSD, see LICENSE for more details.
 
 from atelier.invlib.tasks import *
@@ -25,7 +25,7 @@ def run_in_demo_projects(ctx, admin_cmd, *more, **args):
             # m = import_module(mod)
             if cov:
                 args = ["coverage"]
-                args += ["run -a"]
+                args += ["run --append"]
                 args += ["`which django-admin.py`"]
                 datacovfile = ctx.root_dir.child('.coverage')
                 if not datacovfile.exists():
