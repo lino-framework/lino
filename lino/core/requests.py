@@ -991,8 +991,8 @@ class ActorRequest(BaseRequest):
         obj = self.actor.create_instance(self, **kw)
         return obj
 
-    def create_instance_from_request(self):
-        elem = self.create_instance()
+    def create_instance_from_request(self, **kwargs):
+        elem = self.create_instance( **kwargs)
         if self.actor.handle_uploaded_files is not None:
             self.actor.handle_uploaded_files(elem, self.request)
 

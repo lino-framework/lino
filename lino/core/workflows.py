@@ -56,32 +56,25 @@ class State(choicelists.Choice):
         <lino.core.choicelists.Choice.text>` will be used as label.
 
         You can specify an explicit `name` in order to allow replacing
-        the transition action later by another action.
+        the transition action later by another action. Otherwise Lino
+        will generate an internal name.
 
         """
         workflow_actions = self.choicelist.workflow_actions
         i = len(workflow_actions)
-        if name is None:
-            #~ name = 'mark_' + self.value
-            name = 'wf' + str(i + 1)
         
-        for x in self.choicelist.workflow_actions:
-            if x.action_name == name:
-                raise Exception(
-                    "Duplicate transition name {0}".format(name))
-    
         kw = dict()
         if help_text is not None:
             kw.update(help_text=help_text)
         if icon_name is not None:
             kw.update(icon_name=icon_name)
         kw.update(sort_index=200 + i)
-        if label is not None \
-           and not isinstance(label, six.string_types) \
-           and not isinstance(label, Promise):
+        if label and not isinstance(label, (six.string_types, Promise)):
             # it's a subclass of ChangeStateAction
             assert isinstance(label, type)
             assert issubclass(label, ChangeStateAction)
+            if name is None:
+                name = label.action_name
             if required_roles:
                 raise Exception(
                     "Cannot specify requirements when using your own class")
@@ -114,6 +107,16 @@ class State(choicelists.Choice):
             a = cl(self, required_roles, label=label, **kw)
             if debug_permissions:
                 a.debug_permissions = debug_permissions
+
+        if name is None:
+            #~ name = 'mark_' + self.value
+            name = 'wf' + str(i + 1)
+        
+        for x in workflow_actions:
+            if x.action_name == name:
+                raise Exception(
+                    "Duplicate transition name {0}".format(name))
+    
         a.attach_to_workflow(self.choicelist, name)
 
         self.choicelist.workflow_actions = workflow_actions + [a]

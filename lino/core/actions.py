@@ -326,7 +326,8 @@ class Action(Parametrizable, Permittable):
         #~ self.permission = perms.factory(*args,**kw)
 
     def attach_to_workflow(self, wf, name):
-        assert self.action_name is None
+        if self.action_name is not None:
+            assert self.action_name == name
         self.action_name = name
         self.defining_actor = wf
         setup_params_choosers(self)
@@ -628,8 +629,8 @@ class ValidateForm(Action):
     def is_callable_from(self, caller):
         return False
 
-    def run_from_ui(self, ar, **kw):
-        elem = ar.create_instance_from_request()
+    def run_from_ui(self, ar, **kwargs):
+        elem = ar.create_instance_from_request(**kwargs)
         ar.ah.store.form2obj(ar, ar.rqdata, elem, False)
         elem.full_clean()
         ar.success()
@@ -673,8 +674,8 @@ class CreateRow(Action):
     def is_callable_from(self, caller):
         return False
 
-    def run_from_ui(self, ar, **kw):
-        elem = ar.create_instance_from_request()
+    def run_from_ui(self, ar, **kwargs):
+        elem = ar.create_instance_from_request(**kwargs)
         self.save_new_instance(ar, elem)
 
     def save_new_instance(self, ar, elem):
@@ -716,13 +717,13 @@ class SubmitInsert(CreateRow):
     def is_callable_from(self, caller):
         return isinstance(caller, ShowInsert)
 
-    def run_from_ui(self, ar, **kw):
+    def run_from_ui(self, ar, **kwargs):
         # must set requesting_panel to None, otherwise javascript
         # button actions would try to refer the requesting panel which
         # is going to be closed (this disturbs at least in ticket
         # #219)
         ar.requesting_panel = None
-        elem = ar.create_instance_from_request()
+        elem = ar.create_instance_from_request(**kwargs)
         self.save_new_instance(ar, elem)
         ar.set_response(close_window=True)
 
