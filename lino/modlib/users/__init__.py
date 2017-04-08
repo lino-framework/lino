@@ -1,27 +1,9 @@
-# Copyright 2011-2016 Luc Saffre
+# Copyright 2011-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Lino's :mod:`lino.modlib.users` is Lino's replacement for Django's
-:mod:`django.contrib.auth` module.  This module does not require
-:mod:`django.contrib.sessions` to be installed.  See also
-:doc:`/dev/users`. Note that parts of this module are being used by
-Lino's core even if it is not among the installed apps.
+"""
 
-.. autosummary::
-   :toctree:
-
-    utils
-    mixins
-    roles
-    models
-    choicelists
-    actions
-    desktop
-    forms
-    views
-    fixtures.demo
-    fixtures.demo_users
-    fixtures.demo2
+Documentation is in :doc:`/specs/users` and :doc:`/dev/users`
 
 """
 
@@ -29,14 +11,6 @@ from lino.api import ad, _
 
 
 class Plugin(ad.Plugin):
-    """See :doc:`/dev/plugins`.
-
-    .. attribute:: online_registration
-
-        Whether this site offers :ref:`online registration
-        <online_registration>` of new users.
-
-    """
     verbose_name = _("Users")
 
     needs_plugins = ['lino.modlib.system']

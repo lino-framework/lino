@@ -1,9 +1,9 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2011-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
-"""Database models for `lino.modlib.users`.
+"""Database models for this plugin.
 
-See also :doc:`/dev/users`
+Documentation is in :doc:`/specs/users` and :doc:`/dev/users`
 
 """
 from builtins import str
@@ -29,47 +29,6 @@ from .actions import ChangePassword, SendWelcomeMail
 
 @python_2_unicode_compatible
 class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
-    """Represents a user of this site.
-
-    .. attribute:: username
-    
-        Must be unique.
-        Leaving this empty means that the user cannot log in.
-
-    .. attribute:: profile
-
-        The profile of a user is what defines her or his permissions.
-
-        Users with an empty `profile` field are considered inactive and
-        cannot log in.
-
-
-    .. attribute:: partner
-
-        Pointer to the :class:`Partner
-        <lino_xl.lib.contacts.models.Partner>` instance related to
-        this user.
-
-        Every user account can optionally point to a partner instance
-        which holds extended contact information. One partner can have
-        more than one user accounts.
-
-        This is a :class:`DummyField` when :mod:`lino_xl.lib.contacts`
-        is not installed or when User is a subclass of :class:`Partner
-        <lino_xl.lib.contacts.models.Partner>` .
-
-    .. attribute:: person
-
-        A virtual read-only field which returns the :class:`Person
-        <lino_xl.lib.contacts.models.Person>` MTI child of the
-        :attr:`partner` (if it exists) and otherwise `None`.
-
-    .. attribute:: last_login
-
-        Not used in Lino.
-
-    """
-
     class Meta(object):
         app_label = 'users'
         verbose_name = _('User')
@@ -80,22 +39,11 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
     USERNAME_FIELD = 'username'
 
     preferred_foreignkey_width = 15
-
     hidden_columns = 'password remarks'
-
     authenticated = True
-    """This is always `True`.
-    See also :attr:`lino.modlib.users.utils.AnonymousUser.authenticated`.
-    """
 
-    username = NullCharField(
-        _('Username'), max_length=30, unique=True,
-        help_text=_(
-            "Must be unique. "
-            "Leaving this empty means that the user cannot log in."))
-
+    username = NullCharField(_('Username'), max_length=30, unique=True)
     profile = UserTypes.field(blank=True)
-
     initials = models.CharField(_('Initials'), max_length=10, blank=True)
     first_name = models.CharField(_('First name'), max_length=30, blank=True)
     last_name = models.CharField(_('Last name'), max_length=30, blank=True)
@@ -114,9 +62,8 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
         return self
     
     def get_full_name(self):
-        "Returns the first_name plus the last_name, with a space in between."
         if not self.first_name and not self.last_name:
-            return self.username
+            return self.initials or self.username
         return u'{} {}'.format(self.first_name, self.last_name).strip()
 
     @dd.displayfield(_("Name"), max_length=15)
@@ -134,14 +81,6 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
         return False
     
     def get_row_permission(self, ar, state, ba):
-        """Only system managers may edit other users.
-        See also :meth:`User.disabled_fields`.
-
-        One exception is when AnonymousUser is not readonly. This
-        means that we want to enable online registration. In this case
-        everybody can modify an unsaved user.
-
-        """
         #~ print 20120621, self, user, state, action
         # import pdb ; pdb.set_trace()
         if not ba.action.readonly:
@@ -175,9 +114,9 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
             self.language = settings.SITE.get_default_language()
         if not self.password:
             self.set_unusable_password()
-        if not self.initials:
-            if self.first_name and self.last_name:
-                self.initials = self.first_name[0] + self.last_name[0]
+        # if not self.initials:
+        #     if self.first_name and self.last_name:
+        #         self.initials = self.first_name[0] + self.last_name[0]
         super(User, self).full_clean(*args, **kw)
 
     def get_received_mandates(self):
@@ -239,29 +178,13 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
     # send_email = SendWelcomeMail()
 
 class Authority(UserAuthored):
-    """An Authority is when a user gives another user the right to
-    "represent" them.
-   
-    .. attribute:: user
-
-        The user who gives the right of representation. author of this
-        authority
-
-    .. attribute:: authorized 
-
-        The user who gets the right to represent the author
-
-    """
-
     class Meta(object):
         app_label = 'users'
         verbose_name = _("Authority")
         verbose_name_plural = _("Authorities")
 
 
-    authorized = models.ForeignKey(
-        settings.SITE.user_model,
-        help_text=_("The user who gets authority to act in your name."))
+    authorized = models.ForeignKey(settings.SITE.user_model)
 
     @dd.chooser()
     def authorized_choices(cls, user):
