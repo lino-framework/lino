@@ -413,11 +413,10 @@ request from it.
         """
         if self.bound_action.action.select_rows:
             # raise Exception("20160814 {}".format(self.bound_action))
-            if len(self.selected_rows) == 0:
-                return False
-            obj = self.selected_rows[0]
-            state = self.bound_action.actor.get_row_state(obj)
-            return self.bound_action.get_row_permission(self, obj, state)
+            if len(self.selected_rows) == 1:
+                obj = self.selected_rows[0]
+                state = self.bound_action.actor.get_row_state(obj)
+                return self.bound_action.get_row_permission(self, obj, state)
         return self.bound_action.get_bound_action_permission(
             self, None, None)
         

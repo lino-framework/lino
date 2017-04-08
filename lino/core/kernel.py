@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2016 Luc Saffre
+# Copyright 2009-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """This defines the :class:`Kernel` class.
@@ -43,6 +43,7 @@ from django.apps import apps
 from django.conf import settings
 from django.core import exceptions
 from django.utils.encoding import force_text
+from django.core.exceptions import PermissionDenied
 
 from django.db import models
 
@@ -271,6 +272,10 @@ class Kernel(object):
             if isinstance(model.allow_cascaded_delete, six.string_types):
                 model.allow_cascaded_delete = frozenset(
                     fields.fields_list(model, model.allow_cascaded_delete))
+
+            if isinstance(model.allow_cascaded_copy, six.string_types):
+                model.allow_cascaded_copy = frozenset(
+                    fields.fields_list(model, model.allow_cascaded_copy))
 
             qsf = model.quick_search_fields
             # Attention when inheriting this from from parent model.
@@ -851,6 +856,13 @@ class Kernel(object):
         in a user-friendly way.
 
         """
+        
+        if not ar.get_permission():
+            msg = "{} has no permission to run this request".format(
+                ar.get_user())
+            msg = "No permission to run {}".format(ar)
+            raise Exception(msg)
+            raise PermissionDenied(msg)
         
         a = ar.bound_action.action
         if not a.readonly:
