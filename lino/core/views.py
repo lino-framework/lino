@@ -21,7 +21,11 @@ def json_response_kw(**kw):
 
 
 def json_response(x, content_type='application/json'):
-    s = py2js(x)
+    # s = py2js(x)
+    try:
+        s = py2js(x)
+    except Exception as e:
+        raise Exception("Failed to render {!r} : {}".format(x, e))
     """
     Theroretically we should send content_type='application/json'
     (http://stackoverflow.com/questions/477816/the-right-json-content-type),

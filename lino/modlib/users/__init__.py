@@ -5,33 +5,12 @@
 
 Documentation is in :doc:`/specs/users` and :doc:`/dev/users`
 
-.. autosummary::
-   :toctree:
-
-    utils
-    roles
-    choicelists
-    actions
-    forms
-    views
-    fixtures.demo
-    fixtures.demo_users
-    fixtures.demo2
-
 """
 
 from lino.api import ad, _
 
 
 class Plugin(ad.Plugin):
-    """See :doc:`/dev/plugins`.
-
-    .. attribute:: online_registration
-
-        Whether this site offers :ref:`online registration
-        <online_registration>` of new users.
-
-    """
     verbose_name = _("Users")
 
     needs_plugins = ['lino.modlib.system']

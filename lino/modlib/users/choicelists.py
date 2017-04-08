@@ -17,26 +17,6 @@ from lino.api import dd, _
 
 
 class UserType(Choice):
-    """Base class for all user profiles.
-
-    .. attribute:: role
-
-        The role of users having this type. This is an instance of
-        :class:`<lino.core.roles.UserRole>` or some subclass thereof.
-
-    .. attribute:: readonly
-
-        Whether users of this type get only write-proteced access.
-
-    .. attribute:: hidden_languages
-
-        A subset of :attr:`languages<lino.core.site.Site.languages>`
-        which should be hidden for users of this type.  Default value
-        is :attr:`hidden_languages<UserTypes.hidden_languages>`.  This
-        is used on multilingual sites with more than 4 or 5 languages.
-
-    """
-
     role = None
     hidden_languages = None
     readonly = False
@@ -100,20 +80,6 @@ class UserType(Choice):
 
 
 class UserTypes(ChoiceList):
-    """The list of user profiles available on this site.
-    
-    You can see the user profiles available in your application via
-    :menuselection:`Explorer --> System --> User Profiles`.
-
-    Every site should define at least three named user types:
-
-    .. attribute:: anonymous
-
-    .. attribute:: user
-
-    .. attribute:: admin
-
-    """
     required_roles = dd.login_required(SiteAdmin)
     item_class = UserType
     verbose_name = _("User type")

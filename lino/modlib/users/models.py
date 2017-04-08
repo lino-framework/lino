@@ -52,7 +52,7 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
     change_password = ChangePassword()
 
     def __str__(self):
-        return self.initials or self.get_full_name()
+        return self.get_full_name()
 
     def get_as_user(self):
         """Overrides
@@ -114,9 +114,9 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
             self.language = settings.SITE.get_default_language()
         if not self.password:
             self.set_unusable_password()
-        if not self.initials:
-            if self.first_name and self.last_name:
-                self.initials = self.first_name[0] + self.last_name[0]
+        # if not self.initials:
+        #     if self.first_name and self.last_name:
+        #         self.initials = self.first_name[0] + self.last_name[0]
         super(User, self).full_clean(*args, **kw)
 
     def get_received_mandates(self):
