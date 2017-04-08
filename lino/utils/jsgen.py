@@ -452,7 +452,7 @@ def py2js(v):
         try:
             return json.dumps(force_text(etree.tostring(v)))
         except Exception as e:
-            return "Failed to render {!r} : {}".format(v, e)
+            return json.dumps("Failed to render {!r} : {}".format(v, e))
 
     # if type(v) is types.GeneratorType:
         # raise Exception("Please don't call the generator function yourself")
