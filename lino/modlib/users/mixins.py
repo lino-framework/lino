@@ -1,10 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2016 Luc Saffre
+# Copyright 2011-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Model mixins for :mod:`lino.modlib.users`.
-
-.. autosummary::
+"""Model mixins for this plugin.
 
 """
 
@@ -32,13 +30,6 @@ from .roles import Helper, AuthorshipTaker
 
 
 class TimezoneHolder(models.Model):
-    """Mixin for database models which have a :attr:`timezone` field.
-
-    .. attribute:: timezone
-    
-        The timezone.
-
-    """
     class Meta(object):
         abstract = True
 
@@ -56,38 +47,12 @@ class TimezoneHolder(models.Model):
 
 
 class Authored(model.Model):
-    """.. attribute:: author_field_name
-
-        No longer user. The name of the field that defines the author
-        of this object.
-
-    """
     class Meta(object):
         abstract = True
 
     # author_field_name = None
     
     manager_roles_required = login_required(SiteStaff)
-    """The list of required roles for getting permission to edit other
-    users' work.
-
-    By default, only :class:`SiteStaff <lino.core.roles.SiteStaff>`
-    users can edit other users' work.
-
-    An application can set :attr:`manager_roles_required` to some
-    other user role class or a tuple of such classes.
-
-    Setting :attr:`manager_roles_required` to ``[]`` will **disable**
-    this behaviour (i.e. everybody can edit the work of other users).
-
-    This is going to be passed to :meth:`has_required_roles
-    <lino.core.users.choicelists.UserType.has_required_roles>` of
-    the requesting user's profile.
-
-    Usage examples see :class:`lino_xl.lib.notes.models.Note` or
-    :class:`lino_xl.lib.cal.models.Component`.
-
-    """
 
     def get_author(self):
         return self.user
@@ -152,17 +117,6 @@ class Authored(model.Model):
 
     
 class UserAuthored(Authored):
-    """Model mixin for database objects that have a `user` field which
-    points to the "author" of this object. The default user is
-    automatically set to the requesting user.
-
-    .. attribute:: user
-
-        The author of this object.
-        A pointer to :class:`lino.modlib.users.models.User`.
-
-    """
-
     class Meta(object):
         abstract = True
 

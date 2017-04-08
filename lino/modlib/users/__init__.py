@@ -1,22 +1,17 @@
-# Copyright 2011-2016 Luc Saffre
+# Copyright 2011-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Lino's :mod:`lino.modlib.users` is Lino's replacement for Django's
-:mod:`django.contrib.auth` module.  This module does not require
-:mod:`django.contrib.sessions` to be installed.  See also
-:doc:`/dev/users`. Note that parts of this module are being used by
-Lino's core even if it is not among the installed apps.
+"""
+
+Documentation is in :doc:`/specs/users` and :doc:`/dev/users`
 
 .. autosummary::
    :toctree:
 
     utils
-    mixins
     roles
-    models
     choicelists
     actions
-    desktop
     forms
     views
     fixtures.demo

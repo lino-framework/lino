@@ -420,14 +420,6 @@ is used on multilingual sites with more than 4 or 5 languages."""),
     'lino.modlib.users.choicelists.UserTypes.hidden_languages' : _("""Default value for the
 hidden_languages of newly
 attached choice item."""),
-    'lino.modlib.users.desktop.Users' : _("""Base class for all user tables."""),
-    'lino.modlib.users.desktop.Users.model' : _("""alias of User"""),
-    'lino.modlib.users.desktop.AllUsers' : _("""Shows the list of all users on this site."""),
-    'lino.modlib.users.desktop.AllUsers.model' : _("""alias of User"""),
-    'lino.modlib.users.desktop.UsersOverview' : _("""A variant of Users showing only active users and only some
-fields.  This is used on demo sites in admin_main.html to
-display the list of available users."""),
-    'lino.modlib.users.desktop.UsersOverview.model' : _("""alias of User"""),
     'lino.modlib.users.forms.UserCreationForm' : _("""A form that creates a user, with no privileges, from the given username and
 password."""),
     'lino.modlib.users.forms.AuthenticationForm' : _("""Base class for authenticating users. Extend this to get a form that accepts
@@ -437,39 +429,6 @@ password"""),
     'lino.modlib.users.forms.PasswordChangeForm' : _("""A form that lets a user change their password by entering their old
 password."""),
     'lino.modlib.users.forms.AdminPasswordChangeForm' : _("""A form used to change the password of a user in the admin interface."""),
-    'lino.modlib.users.mixins.TimezoneHolder' : _("""Mixin for database models which have a timezone field."""),
-    'lino.modlib.users.mixins.TimezoneHolder.timezone' : _("""The timezone."""),
-    'lino.modlib.users.mixins.Authored' : _("""No longer user. The name of the field that defines the author
-of this object."""),
-    'lino.modlib.users.mixins.Authored.manager_roles_required' : _("""The list of required roles for getting permission to edit other
-users' work."""),
-    'lino.modlib.users.mixins.UserAuthored' : _("""Model mixin for database objects that have a user field which
-points to the "author" of this object. The default user is
-automatically set to the requesting user."""),
-    'lino.modlib.users.mixins.UserAuthored.user' : _("""The author of this object.
-A pointer to lino.modlib.users.models.User."""),
-    'lino.modlib.users.mixins.AutoUser' : _("""alias of UserAuthored"""),
-    'lino.modlib.users.mixins.AssignToMe' : _("""Set yourself as assigned user."""),
-    'lino.modlib.users.mixins.TakeAuthorship' : _("""You declare to become the fully responsible user for this database
-object."""),
-    'lino.modlib.users.mixins.Assignable' : _("""This field is usually empty.  Setting it to another user means
-"I am not fully responsible for this item"."""),
-    'lino.modlib.users.models.User' : _("""Represents a user of this site."""),
-    'lino.modlib.users.models.User.username' : _("""Must be unique.
-Leaving this empty means that the user cannot log in."""),
-    'lino.modlib.users.models.User.profile' : _("""The profile of a user is what defines her or his permissions."""),
-    'lino.modlib.users.models.User.partner' : _("""Pointer to the Partner instance related to
-this user."""),
-    'lino.modlib.users.models.User.person' : _("""A virtual read-only field which returns the Person MTI child of the
-partner (if it exists) and otherwise None."""),
-    'lino.modlib.users.models.User.last_login' : _("""Not used in Lino."""),
-    'lino.modlib.users.models.User.authenticated' : _("""This is always True.
-See also lino.modlib.users.utils.AnonymousUser.authenticated."""),
-    'lino.modlib.users.models.Authority' : _("""An Authority is when a user gives another user the right to
-"represent" them."""),
-    'lino.modlib.users.models.Authority.user' : _("""The user who gives the right of representation. author of this
-authority"""),
-    'lino.modlib.users.models.Authority.authorized' : _("""The user who gets the right to represent the author"""),
     'lino.modlib.users.roles.Helper' : _("""Somebody who can help others by running AssignToMe
 action."""),
     'lino.modlib.users.roles.AuthorshipTaker' : _("""Somebody who can help others by running TakeAuthorship
@@ -628,4 +587,36 @@ This is instantiated as E."""),
     'lino.utils.xmlgen.html.Document' : _("""A pythonic representation of a <body> with a <title> and
 some <head> tags for stylesheets."""),
     'lino.modlib.contacts.models.Partner.invoice_recipient' : _("""The recipient of invoices (invoicing address)."""),
+    'lino.modlib.users.User' : _("""Fields:"""),
+    'lino.modlib.users.User.authenticated' : _("""This is always True.  Compare with
+AnonymousUser.authenticated."""),
+    'lino.modlib.users.User.username' : _("""Must be unique or empty.
+Leaving this empty means that the user cannot log in."""),
+    'lino.modlib.users.User.profile' : _("""The profile of a user is what defines her or his permissions."""),
+    'lino.modlib.users.User.partner' : _("""Pointer to the Partner instance related to
+this user."""),
+    'lino.modlib.users.User.person' : _("""A virtual read-only field which returns the Person MTI child of the
+partner (if it exists) and otherwise None."""),
+    'lino.modlib.users.User.last_login' : _("""Not used in Lino."""),
+    'lino.modlib.users.Authority' : _("""An authority is when a user gives another user the right to
+"represent" them."""),
+    'lino.modlib.users.Authority.user' : _("""The user who gives the right of representation. author of this
+authority"""),
+    'lino.modlib.users.Authority.authorized' : _("""The user who gets the right to represent the author"""),
+    'lino.modlib.users.Users' : _("""Base class for all user tables."""),
+    'lino.modlib.users.AllUsers' : _("""Shows the list of all users on this site."""),
+    'lino.modlib.users.UsersOverview' : _("""A variant of Users showing only active users and only some
+fields.  This is used on demo sites in admin_main.html to
+display the list of available users."""),
+    'lino.modlib.users.TimezoneHolder' : _("""Mixin for database models which have a timezone field."""),
+    'lino.modlib.users.TimezoneHolder.timezone' : _("""The timezone."""),
+    'lino.modlib.users.Authored.manager_roles_required' : _("""The list of required roles for getting permission to edit
+other users' work."""),
+    'lino.modlib.users.Authored.author_field_name' : _("""No longer used. The name of the field that defines the author
+of this object."""),
+    'lino.modlib.users.UserAuthored' : _("""Mixin for models that have a user field which points to
+the "author" of this object. The default user of new instances is
+automatically set to the requesting user."""),
+    'lino.modlib.users.UserAuthored.user' : _("""The author of this object.
+A pointer to lino.modlib.users.models.User."""),
 }
