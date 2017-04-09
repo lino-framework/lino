@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2015 Luc Saffre
+# Copyright 2012-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Defines the model mixin :class:`Duplicable`.  "duplicable"
@@ -23,9 +23,10 @@ from lino.core.diff import ChangeWatcher
 
 
 class Duplicate(actions.Action):
-    """Duplicate the selected row. This will call
-    :meth:`lino.core.model.Model.on_duplicate` on the new object and
-    on related objects.
+    """Duplicate the selected row. 
+
+    This will call :meth:`lino.core.model.Model.on_duplicate` on the
+    new object and on related objects.
 
     """
     label = "\u2687"  # ⚇ "white circle with two dots"
@@ -34,7 +35,6 @@ class Duplicate(actions.Action):
     sort_index = 11
     show_in_workflow = False
     readonly = False  # like ShowInsert. See docs/blog/2012/0726
-    help_text = _("Duplicate this row.")
 
     def is_callable_from(self, caller):
         if isinstance(caller, actions.ShowInsert):

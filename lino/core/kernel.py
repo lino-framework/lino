@@ -861,7 +861,7 @@ class Kernel(object):
             msg = "{} has no permission to run this request".format(
                 ar.get_user())
             msg = "No permission to run {}".format(ar)
-            raise Exception(msg)
+            # raise Exception(msg)
             raise PermissionDenied(msg)
         
         a = ar.bound_action.action
