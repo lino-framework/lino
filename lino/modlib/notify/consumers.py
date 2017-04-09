@@ -1,4 +1,3 @@
-
 import functools
 import json
 
@@ -115,6 +114,7 @@ def channel_session_user_from_http(func):
 def ws_connect(message):
     Group(PUBLIC_GROUP).add(message.reply_channel)
 
+
 @channel_session_user_from_http
 def ws_disconnect(message):
     Group(PUBLIC_GROUP).discard(message.reply_channel)
@@ -141,9 +141,10 @@ def set_notification_as_seen(message):
 
 @channel_session_user
 def user_connected(message):
-    username = message['username']
-    Group(username).add(message.reply_channel)
-    print (username ,"is connected")
+    if message.get('text', False):
+        payload = json.loads(message['text'])
+        Group(payload['username']).add(message.reply_channel)
+        print (payload['username'], "is connected")
     # Not need any more
     # message.reply_channel.send({
     #     "text": username,
