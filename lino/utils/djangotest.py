@@ -107,7 +107,7 @@ class DjangoManageTestCase(DjangoTestCase, CommonTestCase):
     def put_json_dict(self, *args, **kwargs):
         return self.client_json_dict(self.client.put, *args, **kwargs)
     
-    def client_json_dict(self, meth, username, url, data, **extra):
+    def client_json_dict(self, meth, username, url, *data, **extra):
         """Send a POST or PUT to client with given username, url and data. The
         client is expected to respond with a JSON encoded
         response. Parse the response's content (which is expected to
@@ -115,7 +115,8 @@ class DjangoManageTestCase(DjangoTestCase, CommonTestCase):
         returning it.
 
         """
-        res = meth(url, data, REMOTE_USER=username, **extra)
+        extra.update(REMOTE_USER=username)
+        res = meth(url, *data, **extra)
         if res.status_code != 200:
             raise Exception("{} gave status code {} instead of 200".format(
                 url, res.status_code))
@@ -124,6 +125,38 @@ class DjangoManageTestCase(DjangoTestCase, CommonTestCase):
         except ValueError as e:
             raise ValueError("Invalid JSON {} : {}".format(res.content, e))
         return AttrDict(d)
+
+    def check_callback_dialog(self, meth, username, url, dialog, *data, **extra):
+        """Check wether the given dialog runs as expected and return the final
+        response as an `AttrDict`.
+
+        - `meth` : should be `self.client.get` or `self.client.post`
+        - `username` : the username
+        - `url` : the url
+
+        - `dialog` : a list of `(expected, reply)` tuples where
+          `expected` it the expected response message and `reply` must
+          be one of `'yes'` or `'no'` for all items expect for the
+          last item where it must be None.
+
+        - `data` : optional positional arguments to the `meth`
+        - `extra` : optional keywords arguments to the `meth`
+
+        """
+        result = self.client_json_dict(meth, username, url, *data, **extra)
+        for expected, answer in dialog:
+            self.assertEquivalent(expected, result.message)
+            if answer is None:
+                return result
+            cb = result.xcallback
+            self.assertEqual(cb['title'], "Confirmation")
+            self.assertEqual(cb['buttons'], {'yes': 'Yes', 'no': 'No'})
+            url = '/callbacks/%d/yes' % cb['id']
+            result = self.client_json_dict(
+                self.client.get, username, url, **extra)
+            self.assertEqual(result.success, True)
+            
+        raise Exception("last item of dialog must have answer None")
 
 
 class WebIndexTestCase(DjangoManageTestCase):

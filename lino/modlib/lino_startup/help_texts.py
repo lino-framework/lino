@@ -59,9 +59,7 @@ resolved at startup to the model's class object."""),
     'lino.mixins.dupable.DupableChecker.model' : _("""alias of Dupable"""),
     'lino.mixins.dupable.SimilarObjects' : _("""Shows the other objects who are similar to this one."""),
     'lino.mixins.dupable.SimilarObjects.master' : _("""alias of Model"""),
-    'lino.mixins.duplicable.Duplicate' : _("""Duplicate the selected row. This will call
-lino.core.model.Model.on_duplicate() on the new object and
-on related objects."""),
+    'lino.mixins.duplicable.Duplicate' : _("""Duplicate the selected row."""),
     'lino.mixins.duplicable.Duplicable' : _("""Adds a row action "Duplicate" which duplicates (creates a clone
 of) the object it was called on."""),
     'lino.mixins.human.Human' : _("""Base class for all models that represent a human."""),
@@ -399,6 +397,30 @@ uploaded file in a new browser window."""),
     'lino.modlib.uploads.models.MyUploads' : _("""Shows only my Uploads (i.e. those whose author is current user)."""),
     'lino.modlib.uploads.models.MyUploads.model' : _("""alias of Upload"""),
     'lino.modlib.uploads.models.UploadsByController.model' : _("""alias of Upload"""),
+    'lino.modlib.users.actions.SendWelcomeMail' : _("""Send a welcome mail to this user."""),
+    'lino.modlib.users.actions.ChangePassword' : _("""Change the password of this user."""),
+    'lino.modlib.users.actions.ChangePassword.current' : _("""The current password. Leave empty if the user has no password
+yet. And SiteAdmin users don't need to specify this at all."""),
+    'lino.modlib.users.actions.ChangePassword.new1' : _("""The new password."""),
+    'lino.modlib.users.actions.ChangePassword.new2' : _("""The new password a second time. Both passwords must match."""),
+    'lino.modlib.users.forms.UserCreationForm' : _("""A form that creates a user, with no privileges, from the given username and
+password."""),
+    'lino.modlib.users.forms.AuthenticationForm' : _("""Base class for authenticating users. Extend this to get a form that accepts
+username/password logins."""),
+    'lino.modlib.users.forms.SetPasswordForm' : _("""A form that lets a user change set their password without entering the old
+password"""),
+    'lino.modlib.users.forms.PasswordChangeForm' : _("""A form that lets a user change their password by entering their old
+password."""),
+    'lino.modlib.users.forms.AdminPasswordChangeForm' : _("""A form used to change the password of a user in the admin interface."""),
+    'lino.modlib.users.roles.Helper' : _("""Somebody who can help others by running AssignToMe
+action."""),
+    'lino.modlib.users.roles.AuthorshipTaker' : _("""Somebody who can help others by running TakeAuthorship
+action."""),
+    'lino.modlib.users.utils.AnonymousUser' : _("""A singleton class whose instance will be assigned to the
+user attribute of anonymous incoming requests, similar to
+Django's approach."""),
+    'lino.modlib.users.utils.AnonymousUser.authenticated' : _("""This is always False.
+See also lino.modlib.users.models.User.authenticated."""),
     'lino.modlib.weasyprint.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.weasyprint.choicelists.WeasyBuildMethod' : _("""The base class for both build methods."""),
     'lino.modlib.weasyprint.choicelists.WeasyPdfBuildMethod' : _("""Like WeasyBuildMethod, but the rendered HTML is then
@@ -548,30 +570,6 @@ This is instantiated as E."""),
     'lino.utils.xmlgen.html.Document' : _("""A pythonic representation of a <body> with a <title> and
 some <head> tags for stylesheets."""),
     'lino.modlib.contacts.models.Partner.invoice_recipient' : _("""The recipient of invoices (invoicing address)."""),
-    'lino.modlib.users.actions.SendWelcomeMail' : _("""Send a welcome mail to this user."""),
-    'lino.modlib.users.actions.ChangePassword' : _("""Change the password of this user."""),
-    'lino.modlib.users.actions.ChangePassword.current' : _("""The current password. Leave empty if the user has no password
-yet. And SiteAdmin users don't need to specify this at all."""),
-    'lino.modlib.users.actions.ChangePassword.new1' : _("""The new password."""),
-    'lino.modlib.users.actions.ChangePassword.new2' : _("""The new password a second time. Both passwords must match."""),
-    'lino.modlib.users.forms.UserCreationForm' : _("""A form that creates a user, with no privileges, from the given username and
-password."""),
-    'lino.modlib.users.forms.AuthenticationForm' : _("""Base class for authenticating users. Extend this to get a form that accepts
-username/password logins."""),
-    'lino.modlib.users.forms.SetPasswordForm' : _("""A form that lets a user change set their password without entering the old
-password"""),
-    'lino.modlib.users.forms.PasswordChangeForm' : _("""A form that lets a user change their password by entering their old
-password."""),
-    'lino.modlib.users.forms.AdminPasswordChangeForm' : _("""A form used to change the password of a user in the admin interface."""),
-    'lino.modlib.users.roles.Helper' : _("""Somebody who can help others by running AssignToMe
-action."""),
-    'lino.modlib.users.roles.AuthorshipTaker' : _("""Somebody who can help others by running TakeAuthorship
-action."""),
-    'lino.modlib.users.utils.AnonymousUser' : _("""A singleton class whose instance will be assigned to the
-user attribute of anonymous incoming requests, similar to
-Django's approach."""),
-    'lino.modlib.users.utils.AnonymousUser.authenticated' : _("""This is always False.
-See also lino.modlib.users.models.User.authenticated."""),
     'lino.modlib.users.User' : _("""Fields:"""),
     'lino.modlib.users.User.authenticated' : _("""This is always True.  Compare with
 AnonymousUser.authenticated."""),

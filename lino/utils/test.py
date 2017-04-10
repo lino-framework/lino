@@ -64,6 +64,8 @@ class CommonTestCase(unittest.TestCase):
             self.assertEqual(set(result.keys()), set(expected_keys.split()))
         return result
 
+    
+
     def assertEquivalent(self, a, b, report_plain=False):
         """Compares two strings `a` (expected) and `b` (got), ignoring
         whitespace repetitions and writing a logger message in case

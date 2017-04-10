@@ -1454,7 +1454,10 @@ Lino.on_store_exception = function (store,type,action,options,response,arg) {
     "options=",options,
     "response=",response,
     "arg=",arg);
-  if (arg) { console.log(arg.stack)};
+    if (arg != undefined && arg) { console.log(arg.stack)};
+    Ext.Msg.alert("{{_('Database problem')}}",
+                  "{{_('There was a problem with the database connection. If the error persists, try reloading your browser.')}}");
+    
 };
 
 //~ Lino.on_submit_success = function(form, action) {
@@ -1553,6 +1556,7 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
             url: '{{extjs.build_plain_url("callbacks")}}/'
                   + result.xcallback.id + '/' + buttonId,
             params: p,
+            failure: Lino.ajax_error_handler(panel),
             success: Lino.action_handler(panel, on_success, on_confirm)
           });
         }

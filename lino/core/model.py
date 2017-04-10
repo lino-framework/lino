@@ -109,6 +109,18 @@ class Model(models.Model):
     class Meta(object):
         abstract = True
 
+    allow_cascaded_copy = frozenset()
+    """A set of names of `ForeignKey` or `GenericForeignKey` fields of
+    this model that cause objects to be automatically duplicated when
+    their master gets duplicated.
+
+    If this is a simple string, Lino expects it to be a
+    space-separated list of filenames and convert it into a set at
+    startup.
+
+    """
+    
+    
     allow_cascaded_delete = frozenset()
     """A set of names of `ForeignKey` or `GenericForeignKey` fields of
     this model that allow for cascaded delete.
@@ -1131,6 +1143,7 @@ LINO_MODEL_ATTRIBS = (
     'preferred_foreignkey_width',
     'before_ui_save',
     'allow_cascaded_delete',
+    'allow_cascaded_copy',
     'workflow_state_field',
     'workflow_owner_field',
     'disabled_fields',

@@ -425,13 +425,17 @@ class Restful(View):
             rows=[rh.store.row2dict(ar, elem, rh.store.list_fields)])
         return json_response(ar.response)
 
-NOT_FOUND = "%s has no row with primary key %r" 
+NOT_FOUND = "%s has no row with primary key %r"
 
 class ApiElement(View):
 
     def get(self, request, app_label=None, actor=None, pk=None):
         ui = settings.SITE.kernel
         rpt = requested_actor(app_label, actor)
+        # if not rpt.get_view_permission(request.user.profile):
+        #     raise PermissionDenied("{} has permission to view {}".format(
+        #         request.user.profile, rpt))
+        # print(rpt, request.user.profile)
 
         action_name = request.GET.get(constants.URL_PARAM_ACTION_NAME,
                                       rpt.default_elem_action_name)

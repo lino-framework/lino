@@ -34,11 +34,13 @@ import sys
 import traceback
 from django.conf import settings
 from django.http import HttpResponseServerError
+from django.http import HttpResponse
 from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from django.utils.encoding import smart_text
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from lino.core.utils import format_request
 
+from lino.core.views import json_response
 
 class AjaxExceptionResponse(object):
     """The middleware class definition."""
@@ -60,11 +62,16 @@ class AjaxExceptionResponse(object):
                 settings.SITE.logger.warning(msg)
             else:
                 settings.SITE.logger.exception(msg)
+            
+            # return json_response(
+            #     dict(success=False, alert="AJAX error", message=response),
+            #     status=400)
+            return HttpResponse(response, status=400)
 
-            if isinstance(exception, PermissionDenied):
-                return HttpResponseForbidden(response)
-            if isinstance(exception, ObjectDoesNotExist):
-                return HttpResponseBadRequest(response)
-            return HttpResponseServerError(response)
+            # if isinstance(exception, PermissionDenied):
+            #     return HttpResponseForbidden(response)
+            # if isinstance(exception, ObjectDoesNotExist):
+            #     return HttpResponseBadRequest(response)
+            # return HttpResponseServerError(response)
 
 
