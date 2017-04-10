@@ -52,22 +52,21 @@ class AjaxExceptionResponse(object):
             response = "%s: " % exc_type.__name__
             response += "%s" % exc_info
 
+            # message to be logged:
+            msg = "AjaxExceptionResponse {0}\n".format(response)
+            msg += "\nin request {0}\n".format(format_request(request))
+            msg += "TRACEBACK:\n"
+            for tb in traceback.format_tb(tb):
+                msg += smart_text(tb)
+            if settings.DEBUG:
+                settings.SITE.logger.warning(msg)
+            else:
+                settings.SITE.logger.exception(msg)
+            
             # return json_response(
             #     dict(success=False, alert="AJAX error", message=response),
             #     status=400)
             return HttpResponse(response, status=400)
-        
-            # # message to be logged:
-            # msg = "AjaxExceptionResponse {0}\n".format(response)
-            # msg += "\nin request {0}\n".format(format_request(request))
-            # msg += "TRACEBACK:\n"
-            # for tb in traceback.format_tb(tb):
-            #     msg += smart_text(tb)
-            # if settings.DEBUG:
-            #     settings.SITE.logger.warning(msg)
-            # else:
-            #     settings.SITE.logger.exception(msg)
-            
 
             # if isinstance(exception, PermissionDenied):
             #     return HttpResponseForbidden(response)

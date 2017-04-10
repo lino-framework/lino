@@ -110,6 +110,16 @@ class Model(models.Model):
         abstract = True
 
     allow_cascaded_copy = frozenset()
+    """A set of names of `ForeignKey` or `GenericForeignKey` fields of
+    this model that cause objects to be automatically duplicated when
+    their master gets duplicated.
+
+    If this is a simple string, Lino expects it to be a
+    space-separated list of filenames and convert it into a set at
+    startup.
+
+    """
+    
     
     allow_cascaded_delete = frozenset()
     """A set of names of `ForeignKey` or `GenericForeignKey` fields of
