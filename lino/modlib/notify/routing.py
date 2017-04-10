@@ -20,7 +20,8 @@ custom_routing = [
     # onto this channel) - routed on the "command" attribute of the decoded
     # message.
     # route("notify.receive", set_notification_as_seen, command="^seen", ),
-    route("notify.receive", user_connected, command="^user_connect", ),
+    # route("notify.receive", user_connected, command='^/user_connect/'),
+    route("websocket.receive", user_connected),
 ]
 
 channel_routing = [
