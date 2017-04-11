@@ -86,9 +86,7 @@ class Plugin(ad.Plugin):
             cld["BACKEND"] = "asgiref.inmemory.ChannelLayer"
             cld["ROUTING"] = "lino.modlib.notify.routing.channel_routing"
             if redis:
-                rs = redis.Redis("localhost")
                 try:
-                    response = rs.client_list()
                     cld['BACKEND'] = "asgi_redis.RedisChannelLayer"
                     cld['CONFIG'] = {"hosts": [("localhost", 6379)], }
                 except redis.ConnectionError:
