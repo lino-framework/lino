@@ -4,7 +4,7 @@
   
 {{ before_welcome }}
             
-{% if site.readonly %}
+{% if site.readonly and site.kernel.default_renderer.is_interactive %}
 <p><b>{{_("This server is running in READONLY mode.")}}</b></p>
 {% endif %}
 
