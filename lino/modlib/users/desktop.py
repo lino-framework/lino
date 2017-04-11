@@ -1,7 +1,9 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2016 Luc Saffre
+# Copyright 2011-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 """Desktop UI for this plugin.
+
+Documentation is in :doc:`/specs/users` and :doc:`/dev/users`
 
 """
 
@@ -40,7 +42,6 @@ class UserInsertLayout(dd.InsertLayout):
 
 
 class Users(dd.Table):
-    """Base class for all user tables."""
     #~ debug_actions  = True
     model = 'users.User'
     #~ order_by = "last_name first_name".split()
@@ -73,17 +74,11 @@ class Users(dd.Table):
 
 
 class AllUsers(Users):
-    """Shows the list of all users on this site."""
     required_roles = dd.login_required(SiteAdmin)
     send_welcome_email = SendWelcomeMail()
 
 class UsersOverview(Users):
 
-    """A variant of :class:`Users` showing only active users and only some
-    fields.  This is used on demo sites in :xfile:`admin_main.html` to
-    display the list of available users.
-
-    """
     column_names = 'username profile language'
     exclude = dict(profile='')
 

@@ -449,6 +449,10 @@ def py2js(v):
         return "".join([py2js(x) for x in v])
     if etree.iselement(v):
         return json.dumps(force_text(etree.tostring(v)))
+        # try:
+        #     return json.dumps(force_text(etree.tostring(v)))
+        # except Exception as e:
+        #     return json.dumps("Failed to render {!r} : {}".format(v, e))
 
     # if type(v) is types.GeneratorType:
         # raise Exception("Please don't call the generator function yourself")

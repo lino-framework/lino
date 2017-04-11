@@ -20,7 +20,7 @@ def json_response_kw(**kw):
     return json_response(kw)
 
 
-def json_response(x, content_type='application/json'):
+def json_response(x, content_type='application/json', status=200):
     s = py2js(x)
     """
     Theroretically we should send content_type='application/json'
@@ -34,17 +34,16 @@ def json_response(x, content_type='application/json'):
     (http://docs.sencha.com/ext-js/3-4/#!/api/Ext.form.BasicForm)
     See 20120209.
     """
-    return http.HttpResponse(s, content_type=content_type)
+    return http.HttpResponse(s, content_type=content_type, status=status)
     #~ return HttpResponse(s, content_type='text/html')
     #~ return HttpResponse(s, content_type='application/json')
     #~ return HttpResponse(s, content_type='text/json')
 
 
 def requested_actor(app_label, actor):
-    """
-    Utility function which returns the requested actor,
-    either directly or (if specified name is a model) that
-    model's default table.
+    """Return the requested actor, either directly or (if specified name
+    is a model) that model's default table.
+
     """
     x = settings.SITE.actors.get(app_label)
     # x = getattr(settings.SITE.modules, app_label, None)

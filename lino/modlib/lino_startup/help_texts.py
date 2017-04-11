@@ -59,9 +59,7 @@ resolved at startup to the model's class object."""),
     'lino.mixins.dupable.DupableChecker.model' : _("""alias of Dupable"""),
     'lino.mixins.dupable.SimilarObjects' : _("""Shows the other objects who are similar to this one."""),
     'lino.mixins.dupable.SimilarObjects.master' : _("""alias of Model"""),
-    'lino.mixins.duplicable.Duplicate' : _("""Duplicate the selected row. This will call
-lino.core.model.Model.on_duplicate() on the new object and
-on related objects."""),
+    'lino.mixins.duplicable.Duplicate' : _("""Duplicate the selected row."""),
     'lino.mixins.duplicable.Duplicable' : _("""Adds a row action "Duplicate" which duplicates (creates a clone
 of) the object it was called on."""),
     'lino.mixins.human.Human' : _("""Base class for all models that represent a human."""),
@@ -399,35 +397,12 @@ uploaded file in a new browser window."""),
     'lino.modlib.uploads.models.MyUploads' : _("""Shows only my Uploads (i.e. those whose author is current user)."""),
     'lino.modlib.uploads.models.MyUploads.model' : _("""alias of Upload"""),
     'lino.modlib.uploads.models.UploadsByController.model' : _("""alias of Upload"""),
-    'lino.modlib.users.Plugin' : _("""See /dev/plugins."""),
-    'lino.modlib.users.Plugin.online_registration' : _("""Whether this site offers online registration of new users."""),
     'lino.modlib.users.actions.SendWelcomeMail' : _("""Send a welcome mail to this user."""),
     'lino.modlib.users.actions.ChangePassword' : _("""Change the password of this user."""),
     'lino.modlib.users.actions.ChangePassword.current' : _("""The current password. Leave empty if the user has no password
 yet. And SiteAdmin users don't need to specify this at all."""),
     'lino.modlib.users.actions.ChangePassword.new1' : _("""The new password."""),
     'lino.modlib.users.actions.ChangePassword.new2' : _("""The new password a second time. Both passwords must match."""),
-    'lino.modlib.users.choicelists.UserType' : _("""Base class for all user profiles."""),
-    'lino.modlib.users.choicelists.UserType.role' : _("""The role of users having this type. This is an instance of
-<lino.core.roles.UserRole> or some subclass thereof."""),
-    'lino.modlib.users.choicelists.UserType.readonly' : _("""Whether users of this type get only write-proteced access."""),
-    'lino.modlib.users.choicelists.UserType.hidden_languages' : _("""A subset of languages
-which should be hidden for users of this type.  Default value
-is hidden_languages.  This
-is used on multilingual sites with more than 4 or 5 languages."""),
-    'lino.modlib.users.choicelists.UserTypes' : _("""The list of user profiles available on this site."""),
-    'lino.modlib.users.choicelists.UserTypes.item_class' : _("""alias of UserType"""),
-    'lino.modlib.users.choicelists.UserTypes.hidden_languages' : _("""Default value for the
-hidden_languages of newly
-attached choice item."""),
-    'lino.modlib.users.desktop.Users' : _("""Base class for all user tables."""),
-    'lino.modlib.users.desktop.Users.model' : _("""alias of User"""),
-    'lino.modlib.users.desktop.AllUsers' : _("""Shows the list of all users on this site."""),
-    'lino.modlib.users.desktop.AllUsers.model' : _("""alias of User"""),
-    'lino.modlib.users.desktop.UsersOverview' : _("""A variant of Users showing only active users and only some
-fields.  This is used on demo sites in admin_main.html to
-display the list of available users."""),
-    'lino.modlib.users.desktop.UsersOverview.model' : _("""alias of User"""),
     'lino.modlib.users.forms.UserCreationForm' : _("""A form that creates a user, with no privileges, from the given username and
 password."""),
     'lino.modlib.users.forms.AuthenticationForm' : _("""Base class for authenticating users. Extend this to get a form that accepts
@@ -437,39 +412,6 @@ password"""),
     'lino.modlib.users.forms.PasswordChangeForm' : _("""A form that lets a user change their password by entering their old
 password."""),
     'lino.modlib.users.forms.AdminPasswordChangeForm' : _("""A form used to change the password of a user in the admin interface."""),
-    'lino.modlib.users.mixins.TimezoneHolder' : _("""Mixin for database models which have a timezone field."""),
-    'lino.modlib.users.mixins.TimezoneHolder.timezone' : _("""The timezone."""),
-    'lino.modlib.users.mixins.Authored' : _("""No longer user. The name of the field that defines the author
-of this object."""),
-    'lino.modlib.users.mixins.Authored.manager_roles_required' : _("""The list of required roles for getting permission to edit other
-users' work."""),
-    'lino.modlib.users.mixins.UserAuthored' : _("""Model mixin for database objects that have a user field which
-points to the "author" of this object. The default user is
-automatically set to the requesting user."""),
-    'lino.modlib.users.mixins.UserAuthored.user' : _("""The author of this object.
-A pointer to lino.modlib.users.models.User."""),
-    'lino.modlib.users.mixins.AutoUser' : _("""alias of UserAuthored"""),
-    'lino.modlib.users.mixins.AssignToMe' : _("""Set yourself as assigned user."""),
-    'lino.modlib.users.mixins.TakeAuthorship' : _("""You declare to become the fully responsible user for this database
-object."""),
-    'lino.modlib.users.mixins.Assignable' : _("""This field is usually empty.  Setting it to another user means
-"I am not fully responsible for this item"."""),
-    'lino.modlib.users.models.User' : _("""Represents a user of this site."""),
-    'lino.modlib.users.models.User.username' : _("""Must be unique.
-Leaving this empty means that the user cannot log in."""),
-    'lino.modlib.users.models.User.profile' : _("""The profile of a user is what defines her or his permissions."""),
-    'lino.modlib.users.models.User.partner' : _("""Pointer to the Partner instance related to
-this user."""),
-    'lino.modlib.users.models.User.person' : _("""A virtual read-only field which returns the Person MTI child of the
-partner (if it exists) and otherwise None."""),
-    'lino.modlib.users.models.User.last_login' : _("""Not used in Lino."""),
-    'lino.modlib.users.models.User.authenticated' : _("""This is always True.
-See also lino.modlib.users.utils.AnonymousUser.authenticated."""),
-    'lino.modlib.users.models.Authority' : _("""An Authority is when a user gives another user the right to
-"represent" them."""),
-    'lino.modlib.users.models.Authority.user' : _("""The user who gives the right of representation. author of this
-authority"""),
-    'lino.modlib.users.models.Authority.authorized' : _("""The user who gets the right to represent the author"""),
     'lino.modlib.users.roles.Helper' : _("""Somebody who can help others by running AssignToMe
 action."""),
     'lino.modlib.users.roles.AuthorshipTaker' : _("""Somebody who can help others by running TakeAuthorship
@@ -628,4 +570,50 @@ This is instantiated as E."""),
     'lino.utils.xmlgen.html.Document' : _("""A pythonic representation of a <body> with a <title> and
 some <head> tags for stylesheets."""),
     'lino.modlib.contacts.models.Partner.invoice_recipient' : _("""The recipient of invoices (invoicing address)."""),
+    'lino.modlib.users.User' : _("""Fields:"""),
+    'lino.modlib.users.User.authenticated' : _("""This is always True.  Compare with
+AnonymousUser.authenticated."""),
+    'lino.modlib.users.User.username' : _("""Must be unique or empty.
+Leaving this empty means that the user cannot log in."""),
+    'lino.modlib.users.User.initials' : _("""The nickname or initials of this user. This does not need to
+be unique but should provide a reasonably identifying
+function."""),
+    'lino.modlib.users.User.profile' : _("""The profile of a user is what defines her or his permissions."""),
+    'lino.modlib.users.User.partner' : _("""Pointer to the Partner instance related to
+this user."""),
+    'lino.modlib.users.User.person' : _("""A virtual read-only field which returns the Person MTI child of the
+partner (if it exists) and otherwise None."""),
+    'lino.modlib.users.User.last_login' : _("""Not used in Lino."""),
+    'lino.modlib.users.Authority' : _("""An authority is when a user gives another user the right to
+"represent" them."""),
+    'lino.modlib.users.Authority.user' : _("""The user who gives the right of representation. author of this
+authority"""),
+    'lino.modlib.users.Authority.authorized' : _("""The user who gets the right to represent the author"""),
+    'lino.modlib.users.Users' : _("""Base class for all user tables."""),
+    'lino.modlib.users.AllUsers' : _("""Shows the list of all users on this site."""),
+    'lino.modlib.users.UsersOverview' : _("""A variant of Users showing only active users and only some
+fields.  This is used on demo sites in admin_main.html to
+display the list of available users."""),
+    'lino.modlib.users.TimezoneHolder' : _("""Mixin for database models which have a timezone field."""),
+    'lino.modlib.users.TimezoneHolder.timezone' : _("""The timezone."""),
+    'lino.modlib.users.Authored.manager_roles_required' : _("""The list of required roles for getting permission to edit
+other users' work."""),
+    'lino.modlib.users.Authored.author_field_name' : _("""No longer used. The name of the field that defines the author
+of this object."""),
+    'lino.modlib.users.UserAuthored' : _("""Mixin for models that have a user field which points to
+the "author" of this object. The default user of new instances is
+automatically set to the requesting user."""),
+    'lino.modlib.users.UserAuthored.user' : _("""The author of this object.
+A pointer to lino.modlib.users.models.User."""),
+    'lino.modlib.users.UserTypes' : _("""The list of user types available in this application."""),
+    'lino.modlib.users.UserType' : _("""Base class for all user types."""),
+    'lino.modlib.users.UserType.role' : _("""The role of users having this type. This is an instance of
+<lino.core.roles.UserRole> or some subclass thereof."""),
+    'lino.modlib.users.UserType.readonly' : _("""Whether users of this type get only write-proteced access."""),
+    'lino.modlib.users.UserType.hidden_languages' : _("""A subset of languages
+which should be hidden for users of this type.  Default value
+is hidden_languages.  This
+is used on multilingual sites with more than 4 or 5 languages."""),
+    'lino.modlib.users.Plugin' : _("""See /dev/plugins."""),
+    'lino.modlib.users.Plugin.online_registration' : _("""Whether this site offers online registration of new users."""),
 }

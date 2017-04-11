@@ -109,6 +109,18 @@ class Model(models.Model):
     class Meta(object):
         abstract = True
 
+    allow_cascaded_copy = frozenset()
+    """A set of names of `ForeignKey` or `GenericForeignKey` fields of
+    this model that cause objects to be automatically duplicated when
+    their master gets duplicated.
+
+    If this is a simple string, Lino expects it to be a
+    space-separated list of filenames and convert it into a set at
+    startup.
+
+    """
+    
+    
     allow_cascaded_delete = frozenset()
     """A set of names of `ForeignKey` or `GenericForeignKey` fields of
     this model that allow for cascaded delete.
@@ -243,6 +255,21 @@ class Model(models.Model):
         # does not match any field. There is currently no usage
         # example for this on database models.
         return None
+
+    @classmethod
+    def add_param_filter(cls, qs, lookup_prefix='', **kwargs):
+        """Add filters to queryset using table parameter fields.
+
+        Usage example is :class:`DeploymentsByTicket
+        <lino_xl.lib.deploy.desktop.DeploymentsByTicket>`.
+
+        """
+        
+        if len(kwargs):
+            raise Exception(
+                "{}.add_param_filter got unknown argument {}".format(
+                    str(cls.__name__), kwargs))
+        return qs
 
     @classmethod
     def get_data_elem(cls, name):
@@ -1026,7 +1053,6 @@ action on individual instances.
         raise Exception(
             "Cannot resolve stateset specifier {!r}".format(states))
     
-
     @classmethod
     def django2lino(cls, model):
         """
@@ -1117,6 +1143,7 @@ LINO_MODEL_ATTRIBS = (
     'preferred_foreignkey_width',
     'before_ui_save',
     'allow_cascaded_delete',
+    'allow_cascaded_copy',
     'workflow_state_field',
     'workflow_owner_field',
     'disabled_fields',

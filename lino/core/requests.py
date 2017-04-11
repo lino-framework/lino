@@ -413,11 +413,10 @@ request from it.
         """
         if self.bound_action.action.select_rows:
             # raise Exception("20160814 {}".format(self.bound_action))
-            if len(self.selected_rows) == 0:
-                return False
-            obj = self.selected_rows[0]
-            state = self.bound_action.actor.get_row_state(obj)
-            return self.bound_action.get_row_permission(self, obj, state)
+            if len(self.selected_rows) == 1:
+                obj = self.selected_rows[0]
+                state = self.bound_action.actor.get_row_state(obj)
+                return self.bound_action.get_row_permission(self, obj, state)
         return self.bound_action.get_bound_action_permission(
             self, None, None)
         
@@ -991,8 +990,8 @@ class ActorRequest(BaseRequest):
         obj = self.actor.create_instance(self, **kw)
         return obj
 
-    def create_instance_from_request(self):
-        elem = self.create_instance()
+    def create_instance_from_request(self, **kwargs):
+        elem = self.create_instance( **kwargs)
         if self.actor.handle_uploaded_files is not None:
             self.actor.handle_uploaded_files(elem, self.request)
 

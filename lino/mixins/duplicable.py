@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2015 Luc Saffre
+# Copyright 2012-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Defines the model mixin :class:`Duplicable`.  "duplicable"
@@ -23,9 +23,10 @@ from lino.core.diff import ChangeWatcher
 
 
 class Duplicate(actions.Action):
-    """Duplicate the selected row. This will call
-    :meth:`lino.core.model.Model.on_duplicate` on the new object and
-    on related objects.
+    """Duplicate the selected row. 
+
+    This will call :meth:`lino.core.model.Model.on_duplicate` on the
+    new object and on related objects.
 
     """
     label = "\u2687"  # ⚇ "white circle with two dots"
@@ -34,7 +35,6 @@ class Duplicate(actions.Action):
     sort_index = 11
     show_in_workflow = False
     readonly = False  # like ShowInsert. See docs/blog/2012/0726
-    help_text = _("Duplicate this row.")
 
     def is_callable_from(self, caller):
         if isinstance(caller, actions.ShowInsert):
@@ -50,7 +50,7 @@ class Duplicate(actions.Action):
         obj = ar.selected_rows[0]
         related = []
         for m, fk in obj._lino_ddh.fklist:
-            if fk.name in m.allow_cascaded_delete:
+            if fk.name in m.allow_cascaded_delete or fk.name in m.allow_cascaded_copy:
                 related.append((fk, m.objects.filter(**{fk.name: obj})))
 
         if AFTER17:
@@ -75,9 +75,6 @@ class Duplicate(actions.Action):
         new.on_duplicate(ar, None)
         new.save(force_insert=True)
         cw = ChangeWatcher(new)
-        if cw.is_dirty():
-            new.full_clean()
-            new.save()
 
         for fk, qs in related:
             for relobj in qs:
@@ -86,22 +83,30 @@ class Duplicate(actions.Action):
                 relobj.on_duplicate(ar, new)
                 relobj.save(force_insert=True)
 
+        if cw.is_dirty():
+            new.full_clean()
+            new.save()
+            
         return new
 
     def run_from_ui(self, ar, **kw):
         """This actually runs the action."""
+        def ok(ar2):
+            new = self.run_from_code(ar)
+            kw = dict()
+            # kw.update(refresh=True)
+            kw.update(message=_("Duplicated %(old)s to %(new)s.") %
+                      dict(old=obj, new=new))
+            #~ kw.update(new_status=dict(record_id=new.pk))
+            ar2.success(**kw)
+            if ar.actor.detail_action is None or ar.actor.stay_in_grid:
+                ar2.set_response(refresh_all=True)
+            else:
+                ar2.goto_instance(new)
         obj = ar.selected_rows[0]
-        new = self.run_from_code(ar)
-        kw = dict()
-        # kw.update(refresh=True)
-        kw.update(message=_("Duplicated %(old)s to %(new)s.") %
-                  dict(old=obj, new=new))
-        #~ kw.update(new_status=dict(record_id=new.pk))
-        ar.success(**kw)
-        if ar.actor.detail_action is None or ar.actor.stay_in_grid:
-            ar.set_response(refresh_all=True)
-        else:
-            ar.goto_instance(new)
+        ar.confirm(
+            ok, _("This will create a copy of {}").format(obj),
+            _("Are you sure?"))
 
 
 class Duplicable(model.Model):

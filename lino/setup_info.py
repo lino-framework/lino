@@ -127,6 +127,7 @@ lino.mixins
 lino.modlib
 lino.modlib.about
 lino.modlib.awesomeuploader
+lino.modlib.blacklist
 lino.modlib.bootstrap3
 lino.modlib.changes
 lino.modlib.comments

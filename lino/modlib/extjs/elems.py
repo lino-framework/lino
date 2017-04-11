@@ -1346,6 +1346,12 @@ class GenericForeignKeyElement(DisplayElement):
     def add_default_value(self, kw):
         pass
 
+    def value_from_object(self, obj, ar):
+        # needed for as_plain_html()
+        return getattr(obj, self.field.name)
+
+    
+
 
 class RecurrenceElement(DisplayElement):
     value_template = "new Ext.ensible.cal.RecurrenceField(%s)"
@@ -1392,7 +1398,7 @@ is 'summary'.
     def __init__(self, lh, actor, **kw):
         box = fields.HtmlBox(actor.label, help_text=actor.help_text)
         fld = fields.VirtualField(box, actor.get_slave_summary)
-        fld.name = actor.__name__
+        fld.name = actor.__module__ + '_' + actor.__name__
         fld.lino_resolve_type()
         super(SlaveSummaryPanel, self).__init__(lh, fld, **kw)
 

@@ -353,9 +353,10 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
 
     Note that this specifies the *default* default value for *all*
     :class:`ChoiceListField <lino.core.choicelists.ChoiceListField>`
-    of this choicelist.  The disadvantage is that when somebody *does
-    not* want your default value, then they must explicitly specify
-    `default=''` when defining a field on your choicelist.
+    of this choicelist, including parameter fields.  The disadvantage
+    is that when somebody *does not* want your default value, then
+    they must explicitly specify `default=''` when defining a field on
+    your choicelist.
 
     """
     
@@ -695,6 +696,14 @@ Django creates copies of them when inheriting models.
             return self.get_by_name(name)
         return f
 
+    @classmethod
+    def get_default_value(self):
+        """Return the *default* default value for fields using this
+        choicelist.
+
+        """
+        return self.get_by_name(self.default_value)
+
     #~ @classmethod
     #~ def items(self):
         #~ return [choice[0] for choice in self.choices]
@@ -758,9 +767,11 @@ class ChoiceListField(models.CharField):
         self.force_selection = force_selection
         defaults = dict(
             max_length=choicelist.max_length)
+        # if choicelist.default_value:
+        #     defaults.update(
+        #         default=choicelist.as_callable(choicelist.default_value))
         if choicelist.default_value:
-            defaults.update(
-                default=choicelist.as_callable(choicelist.default_value))
+            defaults.update(default=choicelist.get_default_value)
         # if not 'help_text' in kw:
         #     # inherited docstrings won't be helpful here.
         #     doc = choicelist.__dict__['__doc__']

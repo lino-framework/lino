@@ -498,6 +498,12 @@ class Site(object):
 
     use_ipdict = False
     """Whether this site uses :mod:`lino.modlib.ipdict`.
+
+    Note that :mod:`lino.modlib.ipdict` unlike normal plugins should
+    not be installed by adding it to your :meth:`get_installed_apps`
+    method but by setting this attribute. This is because Lino
+    automatically manages the MIDDLEWARE_CLASSES.
+
     """
     
     # use_auth = True
@@ -1579,8 +1585,10 @@ class Site(object):
         # plugin, so if needed we must add the django.contrib.sessions
         # afterwards.
         if self.get_auth_method() == 'session':
-            # actual_apps.insert(0, str('django.contrib.sessions'))
-            install_plugin(str('django.contrib.sessions'))
+            k = str('django.contrib.sessions')
+            if not k in self.plugins:
+                # actual_apps.insert(0, str('django.contrib.sessions'))
+                install_plugin(k)
 
         # install_plugin(str('lino.modlib.database_ready'))
 
@@ -3257,6 +3265,10 @@ Please convert to Plugin method".format(mod, methname)
                     yield 'lino.core.auth.DefaultUserMiddleware'
             elif self.remote_user_header:
                 yield 'lino.core.auth.RemoteUserMiddleware'
+                # if self.use_ipdict:
+                #     yield 'django.contrib.sessions.middleware.SessionMiddleware'
+                #     yield 'lino.modlib.ipdict.middleware.Middleware'
+                    
             else:
                 # not using remote http auth, so we need sessions
                 yield 'django.contrib.sessions.middleware.SessionMiddleware'
