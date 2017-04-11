@@ -1346,6 +1346,12 @@ class GenericForeignKeyElement(DisplayElement):
     def add_default_value(self, kw):
         pass
 
+    def value_from_object(self, obj, ar):
+        # needed for as_plain_html()
+        return getattr(obj, self.field.name)
+
+    
+
 
 class RecurrenceElement(DisplayElement):
     value_template = "new Ext.ensible.cal.RecurrenceField(%s)"
