@@ -128,9 +128,9 @@ class Plugin(ad.Plugin):
         console.log("Connecting to " + ws_path);
         var webSocketBridge = new channels.WebSocketBridge();
         var username = '%s' ;
-        webSocketBridge.connect();
+        webSocketBridge.connect(ws_path);
         lino_connecting = function() {
-            console.log("lino_connecting");
+            console.log("lino connecting ...");
             webSocketBridge.send({
                         "command": "user_connect",
                         "username": username
@@ -150,7 +150,6 @@ class Plugin(ad.Plugin):
         Push.Permission.request(onGranted,onDenied);
 
         webSocketBridge.listen(function(action, stream) {
-        console.log(action, stream);
             try {
                 Push.create( %s , {
                     body: action['body'],
