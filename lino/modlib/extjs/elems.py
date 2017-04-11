@@ -1398,7 +1398,8 @@ is 'summary'.
     def __init__(self, lh, actor, **kw):
         box = fields.HtmlBox(actor.label, help_text=actor.help_text)
         fld = fields.VirtualField(box, actor.get_slave_summary)
-        fld.name = actor.__module__ + '_' + actor.__name__
+        # fld.name = actor.__module__ + '_' + actor.__name__
+        fld.name = actor.actor_id.replace('.', '_')
         fld.lino_resolve_type()
         super(SlaveSummaryPanel, self).__init__(lh, fld, **kw)
 
