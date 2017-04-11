@@ -33,9 +33,9 @@ from builtins import object
 import sys
 import traceback
 from django.conf import settings
-from django.http import HttpResponseServerError
+# from django.http import HttpResponseServerError
 from django.http import HttpResponse
-from django.http import HttpResponseForbidden, HttpResponseBadRequest
+# from django.http import HttpResponseForbidden, HttpResponseBadRequest
 from django.utils.encoding import smart_text
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from lino.core.utils import format_request
@@ -44,6 +44,9 @@ from lino.core.views import json_response
 
 class AjaxExceptionResponse(object):
     """The middleware class definition."""
+    
+    no_traceback = (PermissionDenied, ObjectDoesNotExist)
+    
     def process_exception(self, request, exception):
         if request.is_ajax():
             (exc_type, exc_info, tb) = sys.exc_info()
@@ -52,24 +55,19 @@ class AjaxExceptionResponse(object):
             response = "%s: " % exc_type.__name__
             response += "%s" % exc_info
 
-            # message to be logged:
-            msg = "AjaxExceptionResponse {0}\n".format(response)
-            msg += "\nin request {0}\n".format(format_request(request))
-            msg += "TRACEBACK:\n"
-            for tb in traceback.format_tb(tb):
-                msg += smart_text(tb)
-            if settings.DEBUG:
-                settings.SITE.logger.warning(msg)
-            else:
-                settings.SITE.logger.exception(msg)
-            
-            # return json_response(
-            #     dict(success=False, alert="AJAX error", message=response),
-            #     status=400)
-            return HttpResponse(response, status=400)
+            if not isinstance(exception, self.no_traceback):
+                # message to be logged:
+                msg = "AjaxExceptionResponse {0}\n".format(response)
+                msg += "\nin request {0}\n".format(format_request(request))
+                msg += "TRACEBACK:\n"
+                for tb in traceback.format_tb(tb):
+                    msg += smart_text(tb)
+                if settings.DEBUG:
+                    settings.SITE.logger.warning(msg)
+                else:
+                    settings.SITE.logger.exception(msg)
 
-            # if isinstance(exception, PermissionDenied):
-            #     return HttpResponseForbidden(response)
+            return HttpResponse(response, status=400)
             # if isinstance(exception, ObjectDoesNotExist):
             #     return HttpResponseBadRequest(response)
             # return HttpResponseServerError(response)
