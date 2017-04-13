@@ -158,6 +158,36 @@ class Choice(object):
             return cmp(self.value, other.value)
         return cmp(self.value, other)
 
+    def __eq__(self, other):
+        if other.__class__ is self.__class__:
+            return (self.value == other.value)
+        return self.value == other
+
+    def __ne__(self, other):
+        if other.__class__ is self.__class__:
+            return (self.value != other.value)
+        return (self.value != other)
+
+    def __lt__(self, other):
+        if other.__class__ is self.__class__:
+            return (self.value < other.value)
+        return (self.value < other)
+    def __le__(self, other):
+        if other.__class__ is self.__class__:
+            return (self.value <= other.value)
+        return (self.value <= other)
+
+    def __gt__(self, other):
+        if other.__class__ is self.__class__:
+            return (self.value > other.value)
+        return (self.value > other)
+
+    def __ge__(self, other):
+        if other.__class__ is self.__class__:
+            return (self.value >= other.value)  
+        return (self.value >= other)
+
+    __hash__ = object.__hash__
     #~ 20120620: removed to see where it was used
     #~ def __getattr__(self,name):
         #~ return curry(getattr(self.choicelist, name),self)
