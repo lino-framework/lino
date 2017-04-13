@@ -128,7 +128,7 @@ class Plugin(ad.Plugin):
         console.log("Connecting to " + ws_path);
         var webSocketBridge = new channels.WebSocketBridge();
         var username = '%s' ;
-        webSocketBridge.connect(ws_path);
+        webSocketBridge.connect();
         lino_connecting = function() {
             console.log("lino connecting ...");
             webSocketBridge.send({
