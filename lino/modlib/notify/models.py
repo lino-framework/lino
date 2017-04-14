@@ -419,6 +419,7 @@ class Messages(dd.Table):
     "Base for all tables of messages."
     model = 'notify.Message'
     column_names = "created subject user seen sent *"
+    # cell_edit = False
 
     # detail_layout = dd.DetailLayout("""
     # created user seen sent owner

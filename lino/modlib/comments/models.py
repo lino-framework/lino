@@ -107,13 +107,16 @@ class Comment(CreatedModified, UserAuthored, # Controllable,
     #     super(Comment, self).full_clean()
     #     self.owner.setup_comment(self)
 
-    def get_change_observers(self):
-        if isinstance(self.owner, ChangeObservable):
-            obs = self.owner
-        else:
-            obs = super(Comment, self)
-        for u in obs.get_change_observers():
-            yield u
+    def get_change_owner(self):
+        return self.owner or self
+    
+    # def get_change_observers(self):
+    #     if isinstance(self.owner, ChangeObservable):
+    #         obs = self.owner
+    #     else:
+    #         obs = super(Comment, self)
+    #     for u in obs.get_change_observers():
+    #         yield u
 
     def get_change_subject(self, ar, cw):
         if cw is None:

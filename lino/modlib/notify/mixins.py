@@ -69,41 +69,58 @@ class ChangeObservable(dd.Model):
         """
         return []
         
-    def get_change_owner(self, ar):
+    def get_change_owner(self):
         """Return the owner (the database object we are talking about) of the
-        notification to emit. When a user has already an unseen
-        notification about a given owner, then Lino ignores all
-        subsequent notifications with that owner.
+        notification to emit. 
+
+        The "owner" is the object which decides who is observing this
+        object.
+
+        No longer true:
+
+        When a user has already an unseen notification about a given
+        owner, then Lino ignores all subsequent notifications with
+        that owner.
 
         For example
         :class:`lino_welfare.modlib.pcsw.coaching.Coaching` returns
         the coaching's client as owner in order to avoid multiple
-        messages.
+        messages when several coachings of a same client are being
+        updated.
 
         """
         return self
 
     def get_change_observers(self):
         """Return or yield a list of `(user, mail_mode)` tuples who are
-        observing changes on this object.
+        observing changes on this object.  Returning an empty list
+        means that nobody gets notified.
 
-        Subclasses should implemented. The default implementation
-        returns an empty list, i.e. nobody gets notified.
+        Subclasses may override this. The default implementation
+        forwards the question to the owner if the owner is
+        ChangeObservable and otherwise returns an empty list.
 
         """
-        return []
+        owner = self.get_change_owner()
+        if not isinstance(owner, ChangeObservable):
+            return []
+        if owner == self:
+            return []
+        return owner.get_change_observers()
+        
 
     def after_ui_save(self, ar, cw):
         """Emits notification about the change to every watcher."""
         super(ChangeObservable, self).after_ui_save(ar, cw)
-
         def msg(user, mm):
             subject = self.get_change_subject(ar, cw)
             if not subject:
                 return None
             return (subject, self.get_change_body(ar, cw))
-            
-        owner = self.get_change_owner(ar)
+
         mt = rt.actors.notify.MessageTypes.change
+        # owner = self.get_change_owner()
+        # rt.models.notify.Message.emit_message(
+        #     ar, owner, mt, msg, self.get_change_observers())
         rt.models.notify.Message.emit_message(
-            ar, owner, mt, msg, self.get_change_observers())
+            ar, self, mt, msg, self.get_change_observers())
