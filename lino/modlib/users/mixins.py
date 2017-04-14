@@ -46,7 +46,7 @@ class TimezoneHolder(models.Model):
         return pytz.common_timezones
 
 
-class Authored(model.Model):
+class Authored(dd.Model):
     class Meta(object):
         abstract = True
 

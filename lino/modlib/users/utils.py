@@ -37,7 +37,8 @@ class AnonymousUser(object):
     readonly = True
     pk = None
     timezone = None
-
+    notify_myself = False
+    
     _instance = None
 
     @classmethod
