@@ -853,12 +853,14 @@ class Model(models.Model):
             if isinstance(self, settings.SITE.project_model):
                 return self
 
-    def obj2href(self, ar, **kwargs):
-        """Return a tuple (text, attributes) to use when rendering an `<a
-        href>` that points to this object.
+    def obj2href(self, ar, *args, **kwargs):
+        """Return a html representation of a pointer to the given database
+        object.
+
+        Examples see :ref:`obj2href`.
 
         """
-        return ar.obj2html(self, **kwargs)
+        return ar.obj2html(self, *args, **kwargs)
 
     def to_html(self, **kw):
         import lino.ui.urls  # hack: trigger ui instantiation
