@@ -303,6 +303,8 @@ request `tar`."""
         """Return a html representation of a pointer to the given database
         object.
 
+        Examples see :ref:`obj2href`.
+
         """
         if text is None:
             text = (force_text(obj),)
@@ -313,8 +315,8 @@ request `tar`."""
             return E.em(*text)
         return self.href_button(url, text, **kwargs)
 
-    def obj2str(self, ar, obj, text=None, **kwargs):
-        return E.tostring(self.obj2html(ar, obj, text, **kwargs))
+    def obj2str(self, *args, **kwargs):
+        return E.tostring(self.obj2html(*args, **kwargs))
 
     def quick_upload_buttons(self, rr):
         return '[?!]'
