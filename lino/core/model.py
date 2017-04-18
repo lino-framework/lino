@@ -680,7 +680,7 @@ class Model(models.Model):
         return obj
 
     @classmethod
-    def quick_search_filter(model, search_text, prefix='', quick_search_fields_digit="", quick_search_fields=""):
+    def quick_search_filter(model, search_text, prefix=''):
         """Return the filter expression to apply when a quick search text is
         specified.
 
@@ -691,11 +691,11 @@ class Model(models.Model):
         q = models.Q()
 
         if search_text.isdigit() and not search_text.startswith('0'):
-            for fn in model.quick_search_fields_digit or quick_search_fields_digit:
+            for fn in model.quick_search_fields_digit:
                 kw = {prefix + fn: int(search_text)}
                 q = q | models.Q(**kw)
         else:
-            for fn in model.quick_search_fields or quick_search_fields:
+            for fn in model.quick_search_fields:
                 kw = {prefix + fn + "__icontains": search_text}
                 q = q | models.Q(**kw)
         return q
