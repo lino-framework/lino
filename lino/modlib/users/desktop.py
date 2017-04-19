@@ -28,6 +28,18 @@ class UserDetail(dd.DetailLayout):
     remarks:40 AuthoritiesGiven:20
     """
 
+    main_m = """
+    username 
+    profile
+    partner
+    first_name last_name 
+    initials
+    email language timezone
+    id created modified
+    remarks
+    AuthoritiesGiven
+    """
+
 
 class UserInsertLayout(dd.InsertLayout):
 
@@ -57,6 +69,11 @@ class Users(dd.Table):
     column_names = 'username profile first_name last_name *'
     detail_layout = UserDetail()
     insert_layout = UserInsertLayout()
+    column_names_m = 'mobile_item *'
+
+    @classmethod
+    def render_list_item(cls, obj, ar):
+        return "<p>{}</p>".format(obj.username)
 
     #~ @classmethod
     #~ def get_row_permission(cls,action,user,obj):

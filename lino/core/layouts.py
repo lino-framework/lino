@@ -92,7 +92,12 @@ class LayoutHandle(object):
         self._store_fields = []
         self._names = {}
 
-        self.define_panel('main', layout.main)
+        # self.define_panel('main', layout.main)
+        if settings.SITE.mobile_view:
+            main = layout.main_m or layout.main
+        else:
+            main = layout.main
+        self.define_panel('main', main)
 
         self.main = self._names.get('main')
         if self.main is None:
@@ -343,6 +348,7 @@ class BaseLayout(object):
     """
     
     main = None
+    main_m = None
 
     def __init__(self, main=None, datasource=None,
                  hidden_elements=None, **kw):

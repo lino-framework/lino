@@ -922,6 +922,11 @@ class Site(object):
 
     """
 
+    mobile_view = False
+    
+    detail_main_name = 'main'
+    # detail_main_name = 'main_m'
+    
     design_name = 'desktop'
     """The name of the design to use. The default value is
     ``'desktop'``. The value should be one of ``'desktop'`` or
