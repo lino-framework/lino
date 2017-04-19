@@ -452,7 +452,7 @@ class FieldElement(LayoutElement):
         self.editable = field.editable  # and not field.primary_key
 
         if 'listeners' not in kw:
-            if not isinstance(layout_handle.layout, layouts.ColumnsLayout):
+            if not isinstance(layout_handle.layout, ColumnsLayout):
                 add_help_text(
                     kw, self.field.help_text, self.field.verbose_name,
                     layout_handle.layout._datasource, self.field.name)
@@ -553,7 +553,7 @@ class FieldElement(LayoutElement):
         # name attribute because it is not needed for grids and might
         # conflict with fields of a surrounding detail form. See ticket
         # #38 (`/blog/2011/0408`).  Also don't set a label then.
-        if not isinstance(self.layout_handle.layout, layouts.ColumnsLayout):
+        if not isinstance(self.layout_handle.layout, ColumnsLayout):
             kw.update(name=self.field.name)
             if self.label:
                 label = self.label
@@ -678,6 +678,14 @@ class TextFieldElement(FieldElement):
                 # autocomplete="off"
                 # )
             )
+            # Using a text editor in a grid is irritating because the
+            # grid editor doesn't react "normally" to ENTER. We might
+            # use enterIsSpecial, but then users have no chance at all
+            # to insert a newline character.
+            if False:
+                if isinstance(layout_handle.layout, ColumnsLayout):
+                    kw.update(enterIsSpecial=True)
+                
         else:
             raise Exception(
                 "Invalid textfield format %r for field %s.%s" % (
@@ -782,7 +790,7 @@ class ComboFieldElement(FieldElement):
         # surronding detail form. See ticket #38 (`/blog/2011/0408`).
         # Also, Comboboxes with simple values may never have a hiddenName
         # option.
-        if not isinstance(self.layout_handle.layout, layouts.ColumnsLayout) \
+        if not isinstance(self.layout_handle.layout, ColumnsLayout) \
                 and not isinstance(self, SimpleRemoteComboFieldElement):
             kw.update(hiddenName=self.field.name +
                       constants.CHOICES_HIDDEN_SUFFIX)
@@ -884,7 +892,7 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
         if pw is not None:
             kw.setdefault('preferred_width', pw)
         actor = self.field.rel.model.get_default_table()
-        if not isinstance(self.layout_handle.layout, layouts.ColumnsLayout):
+        if not isinstance(self.layout_handle.layout, ColumnsLayout):
             a1 = actor.detail_action
             a2 = actor.insert_action
             if a1 is not None or a2 is not None:
@@ -1261,7 +1269,7 @@ class BooleanFieldElement(FieldElement):
 
     def get_field_options(self, **kw):
         kw = FieldElement.get_field_options(self, **kw)
-        if not isinstance(self.layout_handle.layout, layouts.ColumnsLayout):
+        if not isinstance(self.layout_handle.layout, ColumnsLayout):
             if 'fieldLabel' in kw:
                 del kw['fieldLabel']
             # kw.update(hideLabel=True)

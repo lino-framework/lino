@@ -175,6 +175,8 @@ class AbstractTable(actors.Actor):
 
     """
 
+    column_names_m = None
+    
     column_names = '*'
     """A string that describes the list of columns of this table.
 
@@ -507,7 +509,10 @@ method in order to sort the rows of the queryset.
         :attr:`column_names` which depends on the request.
 
         """
-        return self.column_names
+        if settings.SITE.mobile_view:
+            return self.column_names_m or self.column_names
+        else:
+            return self.column_names
 
     @classmethod
     def group_from_row(self, row):

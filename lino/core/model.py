@@ -612,12 +612,16 @@ class Model(models.Model):
         """
         return []
 
+    def get_mobile_list_item_elems(self, ar):
+        return [self.obj2href(ar)]
+
     def get_overview_elems(self, ar):
         """This is expected to return a list of HTML elements to be wrapped
         into a `<DIV>`.
 
         """
-        return [ar.obj2html(self)]
+        # return [ar.obj2html(self)]
+        return [self.obj2href(ar)]
 
     @classmethod
     def on_analyze(cls, site):
@@ -783,6 +787,12 @@ class Model(models.Model):
 
         """
         yield ar.obj2html(self)
+
+    @fields.displayfield(_("Description"))
+    def mobile_item(self, ar):
+        if ar is None:
+            return ''
+        return E.div(*self.get_mobile_list_item_elems(ar))
 
     @fields.displayfield(_("Description"))
     def overview(self, ar):
