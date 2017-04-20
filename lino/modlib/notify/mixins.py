@@ -19,7 +19,7 @@ class ChangeObservable(dd.Model):
         abstract = True
 
     def get_change_subject(self, ar, cw):
-        ctx = dict(user=ar.get_user(), what=str(self))
+        ctx = dict(user=ar.user, what=str(self))
         if cw is None:
             return _("{user} created {what}").format(**ctx)
             # msg = _("has been created by {user}").format(**ctx)
@@ -42,7 +42,7 @@ class ChangeObservable(dd.Model):
         string means to suppress notification.
 
         """
-        ctx = dict(user=ar.get_user(), what=ar.obj2memo(self))
+        ctx = dict(user=ar.user, what=ar.obj2memo(self))
         if cw is None:
             elems = [E.p(
                 _("{user} created {what}").format(**ctx), ".")]
