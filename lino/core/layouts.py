@@ -348,7 +348,19 @@ class BaseLayout(object):
     """
     
     main = None
+    """The description of the main element of this layout.
+
+    For a :class:`ColumnsLayout` this is the same as
+    :attr:`column_names
+    <lino.core.tables.AbstractTable.column_names>`.
+
+    """
+    
     main_m = None
+    """An optional alternative for :attr:`main` to use when
+    :attr:`mobile_view <lino.core.site.Site.mobile_view>` is True.
+
+    """
 
     def __init__(self, main=None, datasource=None,
                  hidden_elements=None, **kw):

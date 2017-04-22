@@ -923,6 +923,17 @@ class Site(object):
     """
 
     mobile_view = False
+    """When this is `False` (the default), then Lino uses an attribute
+    named :attr:`main <lino.core.layouts.BaseLayout.main>` as the main
+    element of a detail window and :attr:`column_names
+    <lino.core.tables.AbstractTable.column_names>` as the table's
+    column layout.
+
+    When this is `True`, then Lino uses :attr:`main_m
+    <lino.core.layouts.BaseLayout.main_m>` and :attr:`column_names_m
+    <lino.core.tables.AbstractTable.column_names_m>` respectively.
+
+    """
     
     detail_main_name = 'main'
     # detail_main_name = 'main_m'

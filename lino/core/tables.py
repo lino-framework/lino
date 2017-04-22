@@ -176,6 +176,10 @@ class AbstractTable(actors.Actor):
     """
 
     column_names_m = None
+    """An optional alternative for :attr:`column_names` to use when
+    :attr:`mobile_view <lino.core.site.Site.mobile_view>` is True.
+
+    """
     
     column_names = '*'
     """A string that describes the list of columns of this table.
