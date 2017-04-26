@@ -1,4 +1,4 @@
-# Copyright 2009-2015 Luc Saffre
+# Copyright 2009-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Extends the possibilities for defining choices for fields of a
@@ -28,14 +28,11 @@ handle these cases accordingly.
 from builtins import str
 from builtins import object
 
-import logging
-logger = logging.getLogger(__name__)
-
 from lino.utils.instantiator import make_converter
 from lino.core import constants
 
 from lino.core.utils import getrqdata
-
+from lino.api import rt
 
 class BaseChooser(object):
     pass
@@ -156,7 +153,6 @@ class Chooser(FieldChooser):
         Return a list of choices for this chooser,
         using a HttpRequest to build the context.
         """
-        from django.contrib.contenttypes.models import ContentType
         kw = {}
 
         # 20120202
@@ -166,6 +162,7 @@ class Chooser(FieldChooser):
                 master = tbl.master
             else:
                 mt = rqdata.get(constants.URL_PARAM_MASTER_TYPE)
+                ContentType = rt.models.contenttypes.ContentType
                 try:
                     master = ContentType.objects.get(pk=mt).model_class()
                 except ContentType.DoesNotExist:
