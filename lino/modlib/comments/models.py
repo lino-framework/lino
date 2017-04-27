@@ -22,7 +22,9 @@ from lino.modlib.notify.mixins import ChangeObservable
 from lino.utils.xmlgen.html import E
 from lino.mixins.bleached import Bleached
 from lino.core.roles import SiteUser
-# from lino.core.gfks import gfk2lookup
+from lino.core.gfks import gfk2lookup
+from lino.modlib.gfks.fields import GenericForeignKey, GenericForeignKeyIdField
+
 if dd.is_installed("inbox"):
     from lino_xl.lib.inbox.models import comment_email
 
@@ -74,7 +76,17 @@ class Comment(CreatedModified, UserAuthored, # Controllable,
         verbose_name_plural = _("Comments")
 
     short_text = dd.RichTextField(_("Short text"))
-    owner = dd.ForeignKey(commentable_model, blank=True, null=True)
+    # owner = dd.ForeignKey(commentable_model, blank=True, null=True)
+
+    owner_type = dd.ForeignKey(
+        'contenttypes.ContentType', blank=True, null=True,
+        verbose_name=_("Object type"),
+        related_name='comments_by_object')
+    owner_id = GenericForeignKeyIdField(
+        owner_type, blank=True, null=True)
+    owner = GenericForeignKey('owner_type', 'owner_id', _("owner"))
+
+
     reply_to = dd.ForeignKey(
         'self', blank=True, null=True, verbose_name=_("Reply to"))
     more_text = dd.RichTextField(_("More text"), blank=True)

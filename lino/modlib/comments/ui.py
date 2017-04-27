@@ -54,7 +54,7 @@ class Comments(dd.Table):
 
     detail_layout = """
     id user created modified 
-    reply_to owner comment_type
+    reply_to owner owner_type owner_id comment_type
     short_text
     # more_text
     """
