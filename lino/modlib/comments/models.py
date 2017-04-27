@@ -102,13 +102,15 @@ class Comment(CreatedModified, UserAuthored, # Controllable,
 
     @classmethod
     def get_request_queryset(cls, ar):
-        if commentable_model is None:
-            return cls.objects.all()
+        # if commentable_model is None:
+        #     return cls.objects.all()
         # if ar.get_user().profile.has_required_roles([SiteUser]):
         if ar.get_user().authenticated:
             return cls.objects.all()
-        else:
-            return cls.objects.exclude(owner__private=True)
+        return super(Comment, cls).get_request_queryset(ar)
+
+        # else:
+        #     return cls.objects.exclude(owner__private=True)
         
     def after_ui_save(self, ar, cw):
         super(Comment, self).after_ui_save(ar, cw)
