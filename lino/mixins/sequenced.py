@@ -356,7 +356,12 @@ class Hierarchical(Duplicable):
         return rv
 
     def get_parental_line(self):
-        """A top-level project is its own root."""
+        """Return an ordered list of all ancestors of this instance.  
+
+        The last element of the list is this.
+        A top-level project is its own root.
+
+        """
         obj = self
         tree = [obj]
         while obj.parent is not None:
@@ -367,6 +372,9 @@ class Hierarchical(Duplicable):
         return tree
 
     def whole_clan(self):
+        """Return a set of this instance and all children and grandchildren.
+
+        """
         # TODO: go deeper but check for circular references
         clan = set([self])
         l1 = self.__class__.objects.filter(parent=self)
