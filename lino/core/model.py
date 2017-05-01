@@ -742,6 +742,16 @@ class Model(models.Model):
         """
         pass
 
+    def after_duplicate(self, ar, source):
+        """Called by :class:`lino.mixins.duplicable.Duplicate` on
+        the new copied row instance, after the row and it's related fields
+        have been saved.
+
+        `ar` is the action request that asked to duplicate.
+        `source` is the original row that is being copied.
+        """
+        pass
+
     def before_state_change(self, ar, old, new):
         """Called by :meth:`set_workflow_state` before a state change."""
         pass
