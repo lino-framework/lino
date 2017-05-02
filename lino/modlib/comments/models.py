@@ -22,14 +22,17 @@ from lino.modlib.notify.mixins import ChangeObservable
 from lino.utils.xmlgen.html import E
 from lino.mixins.bleached import Bleached
 from lino.core.roles import SiteUser
-# from lino.core.gfks import gfk2lookup
+from lino.core.gfks import gfk2lookup
+from lino.modlib.gfks.fields import GenericForeignKey, GenericForeignKeyIdField
+from lino.modlib.gfks.mixins import Controllable
+
 if dd.is_installed("inbox"):
     from lino_xl.lib.inbox.models import comment_email
 
-try:    
-    commentable_model = dd.plugins.comments.commentable_model
-except AttributeError:
-    commentable_model = None
+# try:    
+#     commentable_model = dd.plugins.comments.commentable_model
+# except AttributeError:
+#     commentable_model = None
 
 
 class CommentType(BabelNamed):
@@ -53,7 +56,7 @@ class CommentType(BabelNamed):
     
     
 @dd.python_2_unicode_compatible
-class Comment(CreatedModified, UserAuthored, # Controllable,
+class Comment(CreatedModified, UserAuthored, Controllable,
               ChangeObservable, Bleached):
     """A **comment** is a short text which some user writes about some
     other database object. It has no recipient.
@@ -74,7 +77,17 @@ class Comment(CreatedModified, UserAuthored, # Controllable,
         verbose_name_plural = _("Comments")
 
     short_text = dd.RichTextField(_("Short text"))
-    owner = dd.ForeignKey(commentable_model, blank=True, null=True)
+    # owner = dd.ForeignKey(commentable_model, blank=True, null=True)
+
+    # owner_type = dd.ForeignKey(
+    #     'contenttypes.ContentType', blank=True, null=True,
+    #     verbose_name=_("Object type"),
+    #     related_name='comments_by_object')
+    # owner_id = GenericForeignKeyIdField(
+    #     owner_type, blank=True, null=True)
+    # owner = GenericForeignKey('owner_type', 'owner_id', _("owner"))
+
+
     reply_to = dd.ForeignKey(
         'self', blank=True, null=True, verbose_name=_("Reply to"))
     more_text = dd.RichTextField(_("More text"), blank=True)
@@ -90,13 +103,15 @@ class Comment(CreatedModified, UserAuthored, # Controllable,
 
     @classmethod
     def get_request_queryset(cls, ar):
-        if commentable_model is None:
-            return cls.objects.all()
+        # if commentable_model is None:
+        #     return cls.objects.all()
         # if ar.get_user().profile.has_required_roles([SiteUser]):
         if ar.get_user().authenticated:
             return cls.objects.all()
-        else:
-            return cls.objects.exclude(owner__private=True)
+        return super(Comment, cls).get_request_queryset(ar)
+
+        # else:
+        #     return cls.objects.exclude(owner__private=True)
         
     def after_ui_save(self, ar, cw):
         super(Comment, self).after_ui_save(ar, cw)

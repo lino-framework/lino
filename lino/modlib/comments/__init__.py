@@ -26,13 +26,13 @@ class Plugin(ad.Plugin):
     
     needs_plugins = ['lino.modlib.office']
 
-    commentable_model = None
+    # commentable_model = None
 
-    def on_site_startup(self, site):
-        if self.commentable_model is not None:
-            self.commentable_model = site.models.resolve(
-                self.commentable_model)
-        super(Plugin, self).on_site_startup(site)
+    # def on_site_startup(self, site):
+    #     if self.commentable_model is not None:
+    #         self.commentable_model = site.models.resolve(
+    #             self.commentable_model)
+    #     super(Plugin, self).on_site_startup(site)
     
 
     def setup_main_menu(config, site, profile, m):

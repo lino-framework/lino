@@ -260,16 +260,18 @@ class Model(models.Model):
     def add_param_filter(cls, qs, lookup_prefix='', **kwargs):
         """Add filters to queryset using table parameter fields.
 
+        This is called for every simple parameter.
+
         Usage example is :class:`DeploymentsByTicket
         <lino_xl.lib.deploy.desktop.DeploymentsByTicket>`.
 
         """
-        
-        if len(kwargs):
-            raise Exception(
-                "{}.add_param_filter got unknown argument {}".format(
-                    str(cls.__name__), kwargs))
-        return qs
+        return qs.filter(**kwargs)
+        # if len(kwargs):
+        #     raise Exception(
+        #         "{}.add_param_filter got unknown argument {}".format(
+        #             str(cls.__name__), kwargs))
+        # return qs
 
     @classmethod
     def get_data_elem(cls, name):
@@ -740,6 +742,17 @@ class Model(models.Model):
         """
         pass
 
+    def after_duplicate(self, ar):
+        """Called by :class:`lino.mixins.duplicable.Duplicate` on
+        the new copied row instance, after the row and it's related fields
+        have been saved.
+
+        `ar` is the action request that asked to duplicate.
+
+        `ar.selected_rows[0]` contains the original row that is being copied.
+        """
+        pass
+
     def before_state_change(self, ar, old, new):
         """Called by :meth:`set_workflow_state` before a state change."""
         pass
@@ -1138,6 +1151,7 @@ LINO_MODEL_ATTRIBS = (
     'define_action',
     'delete_instance',
     'get_parameter_fields',
+    'add_param_filter',
     'save_new_instance',
     'save_watched_instance',
     '_widget_options',

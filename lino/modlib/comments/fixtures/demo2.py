@@ -29,9 +29,11 @@ short_lorem = """<p>Lorem ipsum <strong> dolor sit amet</strong>, consectetur ad
 def objects():
     TXT = Cycler([styled, table, lorem, short_lorem])
 
-    if dd.plugins.comments.commentable_model is None:
+    # if dd.plugins.comments.commentable_model is None:
+    #     return
+    if not dd.is_installed('tickets'):
         return
-    OWNERS = Cycler(dd.plugins.comments.commentable_model.objects.all())
+    OWNERS = Cycler(rt.models.tickets.Ticket.objects.all())
     if len(OWNERS) == 0:
         return
     Comment = rt.models.comments.Comment

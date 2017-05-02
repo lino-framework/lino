@@ -83,6 +83,8 @@ class Duplicate(actions.Action):
                 relobj.on_duplicate(ar, new)
                 relobj.save(force_insert=True)
 
+        new.after_duplicate(ar)
+
         if cw.is_dirty():
             new.full_clean()
             new.save()

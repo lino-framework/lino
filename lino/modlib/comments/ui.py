@@ -18,6 +18,7 @@ from lino.modlib.users.mixins import My
 from lino.utils.xmlgen.html import E
 from lino.utils.soup import truncate_comment
 from .roles import CommentsReader, CommentsUser, CommentsStaff
+from django.contrib.contenttypes.models import ContentType
 
 class CommentTypes(dd.Table):
     """The table with all existing upload types.
@@ -47,14 +48,14 @@ class Comments(dd.Table):
     model = 'comments.Comment'
 
     insert_layout = dd.InsertLayout("""
-    reply_to owner
+    reply_to owner owner_type owner_id
     # comment_type
     short_text
-    """, window_size=(60, 10), hidden_elements="reply_to owner")
+    """, window_size=(60, 10), hidden_elements="reply_to owner owner_type owner_id")
 
     detail_layout = """
     id user created modified 
-    reply_to owner comment_type
+    reply_to owner owner_type owner_id comment_type
     short_text
     # more_text
     """
@@ -80,7 +81,8 @@ class Comments(dd.Table):
 
         sar = cls.insert_action.request_from(ar)
         # print(20170217, sar)
-        sar.known_values = dict(reply_to=comment, owner=comment.owner)
+        owner = ContentType.objects.get(app_label='tickets',model="ticket")
+        sar.known_values = dict(reply_to=comment, owner_id=comment.owner.id, owner_type=owner)
         if ar.get_user().authenticated:
             btn = sar.ar2button(None, _(" Reply "), icon_name=None)
             # btn.set("style", "padding-left:10px")

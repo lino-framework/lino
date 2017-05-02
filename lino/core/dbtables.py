@@ -706,10 +706,12 @@ class Table(AbstractTable):
             qs = qs.exclude(**rr.exclude)
             # qs = qs.exclude(rr.exclude)
 
+        spv = dict()
         for k in self.simple_parameters:
             v = getattr(rr.param_values, k)
-            if v:
-                qs = qs.filter(**{k: v})
+            if v is not None:
+                spv[k] = v
+        qs = self.model.add_param_filter(qs, **spv)
 
         if self.filter:
             qs = qs.filter(self.filter)
