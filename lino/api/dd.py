@@ -204,7 +204,7 @@ from lino.utils.choosers import chooser, action_chooser
 
 # from lino.core.layouts import FormLayout
 from lino.core.layouts import DetailLayout, InsertLayout, Panel
-from lino.core.layouts import ParamsLayout
+from lino.core.layouts import ParamsLayout, ActionParamsLayout
 from lino.core.layouts import DummyPanel
 
 
