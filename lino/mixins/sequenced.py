@@ -123,7 +123,7 @@ class DuplicateSequenced(Duplicate):
 
         #~ print '20120605 duplicate', self.seqno, self.account
         seqno = obj.seqno
-        qs = obj.get_siblings().filter(seqno__gte=seqno).reverse()
+        qs = obj.get_siblings().filter(seqno__gt=seqno).reverse()
         if qs is None:
             raise Exception(
                 "20121227 TODO: Tried to duplicate a root element?")
@@ -131,7 +131,7 @@ class DuplicateSequenced(Duplicate):
             #~ print '20120605 duplicate inc', s.seqno, s.account
             s.seqno += 1
             s.save()
-        kw.update(seqno=seqno)
+        kw.update(seqno=seqno+1)
         return super(DuplicateSequenced, self).run_from_code(ar, **kw)
 
 
