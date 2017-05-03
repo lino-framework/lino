@@ -136,11 +136,13 @@ def setup_params_choosers(self):
     if self.parameters:
         for k, fld in list(self.parameters.items()):
             if isinstance(fld, models.ForeignKey):
+                msg = "Invalid target %s in parameter {} of {}".format(
+                    k, self)
                 # Before Django 1.8:
                 if AFTER18:
-                    fld.rel.model = resolve_model(fld.rel.model)
+                    fld.rel.model = resolve_model(fld.rel.model, strict=msg)
                 else:
-                    fld.rel.to = resolve_model(fld.rel.to)
+                    fld.rel.to = resolve_model(fld.rel.to, strict=msg)
                 from lino.core.kernel import set_default_verbose_name
                 set_default_verbose_name(fld)
                 #~ if fld.verbose_name is None:
