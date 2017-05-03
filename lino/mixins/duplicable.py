@@ -60,7 +60,8 @@ class Duplicate(actions.Action):
         if True:
             for f in fields_list:
                 if not f.primary_key:
-                    known_values[f.name] = getattr(obj, f.name)
+                    if f.name not in known_values:
+                        known_values[f.name] = getattr(obj, f.name)
             new = obj.__class__(**known_values)
             # 20120704 create_instances causes fill_from_person() on a
             # CBSS request.
