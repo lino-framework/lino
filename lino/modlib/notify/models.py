@@ -38,6 +38,8 @@ from datetime import timedelta
 
 from .choicelists import MessageTypes, MailModes
 
+import logging
+logger = logging.getLogger(__name__)
 
 class MarkAllSeen(dd.Action):
     select_rows = False
@@ -390,7 +392,8 @@ class Message(UserAuthored, Controllable, Created):
         # Websocket. Note how you can send to a channel or Group from any part
         # of Django, not just inside a consumer.
         from channels import Group
-        Group(user.username).send({
+        logger.info("Sending browser notification to %s" % user.username)
+        Group(str(user.username)).send({
             # WebSocket text frame, with JSON content
             "text": json.dumps(message),
         })
