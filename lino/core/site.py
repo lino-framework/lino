@@ -1536,6 +1536,7 @@ class Site(object):
         disabled_plugins = set()
 
         def install_plugin(app_name, needed_by=None):
+            # print("20170505 install_plugin({})".format(app_name))
             # Django does not accept newstr, and we don't want to see
             # ``u'applabel'`` in doctests.
             app_name = six.text_type(app_name)

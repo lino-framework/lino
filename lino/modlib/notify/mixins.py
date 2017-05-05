@@ -117,7 +117,9 @@ class ChangeObservable(dd.Model):
             if not subject:
                 return None
             return (subject, self.get_change_body(ar, cw))
-
+        if not dd.is_installed('notify'):
+            # happens e.g. in amici where we use calendar without notify
+            return
         mt = rt.actors.notify.MessageTypes.change
         # owner = self.get_change_owner()
         # rt.models.notify.Message.emit_message(
