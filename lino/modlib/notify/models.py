@@ -222,7 +222,7 @@ class Message(UserAuthored, Controllable, Created):
         obj = cls(user=user, owner=owner, **kwargs)
         obj.full_clean()
         obj.save()
-        if settings.SITE.use_websockets:
+        if settings.SITE.use_websockets and user is not None:
             obj.send_browser_message(user)
 
     # @dd.displayfield(_("Subject"))
