@@ -33,6 +33,9 @@ cd src
 for PY in 3.5 2.7
 do . ../$PY/bin/activate
 
+pip -U pip
+pip -U setuptools
+
 for i in atelier lino xl noi django-mailbox extjs6 commondata commondata-be commondata-ee commondata-eg cosi voga welfare vilma avanti book presto
 do
     pip install -e $i
