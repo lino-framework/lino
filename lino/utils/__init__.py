@@ -342,7 +342,10 @@ class IncompleteDate(object):
             s = s[1:]
         else:
             bc = False
-        y, m, d = list(map(int, s.split('-')))
+        try:
+            y, m, d = list(map(int, s.split('-')))
+        except ValueError:
+            raise Exception("Invalid date value {}".format(s))
         if bc:
             y = - y
         return cls(y, m, d)
