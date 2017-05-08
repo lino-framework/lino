@@ -20,7 +20,7 @@ import six
 
 from bs4 import BeautifulSoup
 
-def truncate_comment(html_str, max_p_len=240):
+def truncate_comment(html_str, max_p_len=None):
     """Return a shortened preview of a html string, containing at most one
     paragraph with at most `max_p_len` characters.
 
