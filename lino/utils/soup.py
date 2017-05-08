@@ -52,7 +52,7 @@ def truncate_comment(html_str, max_p_len=240):
     ps = soup.find_all("p")
     if len(ps) > 0:
         txt = ps[0].text
-        if len(txt) > max_p_len:
+        if max_p_len is not None and len(txt) > max_p_len:
             txt = txt[:max_p_len] + "..."
         elif len(ps) > 1:
             txt = txt + " (...)"
