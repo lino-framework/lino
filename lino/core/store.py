@@ -150,7 +150,7 @@ class StoreField(object):
         - sales.Invoice.number may be blank
         """
         v = self.extract_form_data(post_data)
-        # logger.info("20130128 %s.form2obj() %s = %r",self.__class__.__name__,self.name,v)
+        # logger.info("20170508 %s.form2obj() %s = %r", self.__class__.__name__,self.name,v)
         if v is None:
             # means that the field wasn't part of the submitted form. don't
             # touch it.
@@ -173,6 +173,7 @@ class StoreField(object):
             # print("20160611 {0} = {1}".format(self.field.name, v))
         else:
             v = self.parse_form_value(v, instance)
+        # logger.info("20170508b %r", v)
         if not is_new and self.field.primary_key and instance.pk is not None:
             if instance.pk == v:
                 return
@@ -305,6 +306,7 @@ class ForeignKeyStoreField(RelatedMixin, ComboStoreField):
         if not relto_model:
             # logger.info("20111209 get_value_text: no relto_model")
             return
+   
         try:
             return relto_model.objects.get(pk=v)
         except ValueError:
@@ -342,6 +344,7 @@ class VirtStoreField(StoreField):
         self.value2list = delegate.value2list
         self.value2dict = delegate.value2dict
         self.format_value = delegate.format_value
+        self.extract_form_data = delegate.extract_form_data
         # 20130130 self.format_sum = delegate.format_sum
         # 20130130 self.sum2html = delegate.sum2html
         # self.form2obj = delegate.form2obj

@@ -241,8 +241,9 @@ def choices_for_field(request, holder, field):
                 d[constants.CHOICES_TEXT_FIELD] = str(obj[1])
                 d[constants.CHOICES_VALUE_FIELD] = obj[0]
                 return d
+        return (qs, row2dict)
 
-    elif field.choices:
+    if field.choices:
         qs = field.choices
 
         def row2dict(obj, d):
@@ -254,8 +255,12 @@ def choices_for_field(request, holder, field):
                     obj, request, field)
                 d[constants.CHOICES_VALUE_FIELD] = str(obj)
             return d
+        return (qs, row2dict)
 
-    elif isinstance(field, models.ForeignKey):
+    if isinstance(field, dd.VirtualField):
+        field = field.return_type
+        
+    if isinstance(field, models.ForeignKey):
         m = field.rel.model
         t = m.get_default_table()
         qs = t.request(request=request).data_iterator

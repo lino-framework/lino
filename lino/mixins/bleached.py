@@ -58,9 +58,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 from lino.core.model import Model
-from lino.core.fields import fields_list
+from lino.core.fields import fields_list, RichTextField
 from lino.utils.restify import restify
+from lino.utils.soup import truncate_comment
 from lino.utils.xmlgen.html import E
+from lino.api import _
 
 
 def rich_text_to_elems(ar, description):
@@ -160,4 +162,25 @@ class Bleached(Model):
         # super(Bleached, self).full_clean(*args, **kwargs)
         super(Bleached, self).before_ui_save(ar)
 
+
+class BleachedPreviewBody(Bleached):
+
+    class Meta:
+        abstract = True
+
+    bleached_fields = 'body'
+
+    body = RichTextField(_("Body"), blank=True, format='html')
+    body_preview = RichTextField(
+        _("Preview"), blank=True, editable=False)
+
+    def full_clean(self, *args, **kwargs):
+        """Fills the body_preview field.
+
+        """
+        super(BleachedPreviewBody, self).full_clean(*args, **kwargs)
+        self.body_preview = truncate_comment(self.body)
+
+
+   
 

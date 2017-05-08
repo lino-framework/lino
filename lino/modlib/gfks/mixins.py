@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2010-2016 Luc Saffre
+# Copyright 2010-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 
@@ -12,6 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
 
 from lino.api import dd
+from lino.core.gfks import gfk2lookup
 
 from .fields import GenericForeignKey, GenericForeignKeyIdField
 
@@ -129,4 +130,9 @@ class Controllable(dd.Model):
             if self.owner:
                 self.owner.after_update_owned_instance(self)
 
+
+    def controlled_rows(self, model, **kwargs):
+        gfk = self._meta.get_field('owner')
+        kwargs = gfk2lookup(gfk, self, **kwargs)
+        return model.objects.filter(**kwargs)
 
