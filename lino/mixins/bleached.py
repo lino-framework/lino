@@ -54,6 +54,9 @@ try:
 except ImportError:
     bleach = None
 
+import logging
+logger = logging.getLogger(__name__)
+
 from lino.core.model import Model
 from lino.core.fields import fields_list
 from lino.utils.restify import restify
@@ -68,9 +71,9 @@ def rich_text_to_elems(ar, description):
         return [desc]
     # desc = E.raw('<div>%s</div>' % self.description)
     html = restify(ar.parse_memo(description))
-    # dd.logger.info("20160704b restified --> %s", html)
+    # logger.info("20160704b restified --> %s", html)
     desc = E.raw(html)
-    # dd.logger.info(
+    # logger.info(
     #     "20160704c parsed --> %s", E.tostring(desc))
     if desc.tag == 'body':
         # happens if it contains more than one paragraph
@@ -147,9 +150,13 @@ class Bleached(Model):
         """
         if bleach and self.bleached_fields:
             for k in self.bleached_fields:
-                setattr(self, k, bleach.clean(
-                    getattr(self, k),
-                    tags=self.allowed_tags, strip=True))
+                old = getattr(self, k)
+                new = bleach.clean(
+                    old, tags=self.allowed_tags, strip=True)
+                if old != new:
+                    logger.debug(
+                        "Bleaching %s from %r to %r", k, old, new)
+                setattr(self, k, new)
         # super(Bleached, self).full_clean(*args, **kwargs)
         super(Bleached, self).before_ui_save(ar)
 
