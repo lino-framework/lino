@@ -68,7 +68,9 @@ class MoveUp(actions.Action):
 
     def run_from_ui(self, ar, **kw):
         obj = ar.selected_rows[0]
-        obj.swap_seqno(ar, -1)
+        obj.seqno -= 1
+        obj.full_clean()
+        obj.save()
         kw = dict()
         kw.update(refresh_all=True)
         kw.update(message=_("Moved up."))
@@ -107,7 +109,9 @@ class MoveDown(actions.Action):
 
     def run_from_ui(self, ar, **kw):
         obj = ar.selected_rows[0]
-        obj.swap_seqno(ar, 1)
+        obj.seqno += 1
+        obj.full_clean()
+        obj.save()
         #~ obj.move_down()
         kw = dict()
         #~ kw.update(refresh=True)
@@ -251,18 +255,36 @@ class Sequenced(Duplicable):
                 self.seqno = last.seqno + 1
 
     def full_clean(self, *args, **kw):
-        if self.seqno is None:
+
+        super(Sequenced, self).full_clean(*args, **kw)
+
+        try:
+            qs = self.get_siblings()
+            old_self = qs.get(id=self.id)
+            qs = qs.exclude(id=self.id)
+            if old_self.seqno != self.seqno:
+                seq_no = 1
+
+                for i in qs:
+                    if seq_no == self.seqno:
+                        seq_no += 1
+                    i.seqno = seq_no
+                    seq_no += 1
+                    i.save()
+
+        except self.DoesNotExist:
             self.set_seqno()
         # if hasattr(self, 'amount'):
         #     logger.info("20151117 Sequenced.full_clean a %s", self.amount)
         #     logger.info("20151117  %s", self.__class__.mro())
-        super(Sequenced, self).full_clean(*args, **kw)
         # if hasattr(self, 'amount'):
         #     logger.info("20151117 Sequenced.full_clean b %s", self.amount)
 
     def swap_seqno(self, ar, offset):
         """
         Move this row "up or down" within its siblings
+
+        depreciated, sibling reordering is done in full-clean.
         """
         #~ qs = self.get_siblings()
         qs = ar.data_iterator
