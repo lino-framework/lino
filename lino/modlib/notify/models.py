@@ -392,8 +392,8 @@ class Message(UserAuthored, Controllable, Created):
         # Websocket. Note how you can send to a channel or Group from any part
         # of Django, not just inside a consumer.
         from channels import Group
-        logger.info("Sending browser notification to %s" % user.username)
-        Group(str(user.username)).send({
+        logger.info("Sending browser notification to %s", user.username)
+        Group(user.username.encode('ascii', 'ignore')).send({
             # WebSocket text frame, with JSON content
             "text": json.dumps(message),
         })
