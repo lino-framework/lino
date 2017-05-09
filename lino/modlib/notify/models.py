@@ -511,7 +511,10 @@ class MyMessages(My, Messages):
             s = E.tostring(ar.action_button(ba, obj))
             s += fds(obj.created) + " " + obj.created.strftime(
                 settings.SITE.time_format_strftime) + " "
-            s += ar.parse_memo(obj.body)
+            if obj.body:
+                s += ar.parse_memo(obj.body)
+            else:
+                s += ar.parse_memo(obj.subject)
             # s += obj.body
             return "<li>{}</li>".format(s)
 
