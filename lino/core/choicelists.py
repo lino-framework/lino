@@ -467,6 +467,7 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
         cls.removed_names = frozenset()
         cls.items_dict = {}
         cls.choices = []  # remove blank_item from choices
+        cls.workflow_actions = []
 
     @classmethod
     def remove_item(cls, i):

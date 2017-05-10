@@ -222,7 +222,7 @@ class Message(UserAuthored, Controllable, Created):
         obj = cls(user=user, owner=owner, **kwargs)
         obj.full_clean()
         obj.save()
-        if settings.SITE.use_websockets and user is not None:
+        if settings.SITE.use_websockets:
             obj.send_browser_message(user)
 
     # @dd.displayfield(_("Subject"))
@@ -392,8 +392,8 @@ class Message(UserAuthored, Controllable, Created):
         # Websocket. Note how you can send to a channel or Group from any part
         # of Django, not just inside a consumer.
         from channels import Group
-        logger.info("Sending browser notification to %s" % user.username)
-        Group(str(user.username)).send({
+        logger.info("Sending browser notification to %s", user.username)
+        Group(user.username.encode('ascii', 'ignore')).send({
             # WebSocket text frame, with JSON content
             "text": json.dumps(message),
         })
@@ -511,7 +511,10 @@ class MyMessages(My, Messages):
             s = E.tostring(ar.action_button(ba, obj))
             s += fds(obj.created) + " " + obj.created.strftime(
                 settings.SITE.time_format_strftime) + " "
-            s += ar.parse_memo(obj.body)
+            if obj.body:
+                s += ar.parse_memo(obj.body)
+            else:
+                s += ar.parse_memo(obj.subject)
             # s += obj.body
             return "<li>{}</li>".format(s)
 

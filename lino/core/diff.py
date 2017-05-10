@@ -11,6 +11,7 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from lino.core.signals import on_ui_updated
+from lino.core.fields import VirtualField
 from lino.utils.xmlgen.html import E
 # from .utils import obj2str
 from .utils import obj2unicode
@@ -37,6 +38,9 @@ class ChangeWatcher(object):
     def __init__(self, watched):
         self.original_state = dict(watched.__dict__)
         self.watched = watched
+        for fld in watched._meta.get_fields():
+            if isinstance(fld, VirtualField) and fld.editable:
+                self.original_state[fld.name] = None
         #~ self.is_new = is_new
         #~ self.request
 

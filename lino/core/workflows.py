@@ -121,7 +121,7 @@ class State(choicelists.Choice):
 
         self.choicelist.workflow_actions = workflow_actions + [a]
 
-    add_workflow = add_transition  # backwards compat
+    # add_workflow = add_transition  # backwards compat
 
 
 class Workflow(choicelists.ChoiceList):
@@ -180,6 +180,10 @@ class Workflow(choicelists.ChoiceList):
                 raise Exception(
                     "There is no workflow action named {0}".format(name))
 
+    @classmethod
+    def clear_transitions(cls):
+        cls.workflow_actions = []
+        
 
 class ChangeStateAction(actions.Action):
     """This is the class used when generating automatic "state
