@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino 2016.12.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-05-09 08:48+0300\n"
+"POT-Creation-Date: 2017-05-11 10:32+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -126,7 +126,7 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: lino/core/choicelists.py:733
+#: lino/core/choicelists.py:734
 #, python-format
 msgid "%(value)r (invalid choice for %(list)s)"
 msgstr ""
@@ -413,10 +413,10 @@ msgstr ""
 msgid "Symbol"
 msgstr ""
 
-#: lino/core/workflows.py:283 lino/mixins/duplicable.py:112
+#: lino/core/workflows.py:287 lino/mixins/duplicable.py:112
 #: lino/modlib/notify/models.py:63 lino/modlib/printing/actions.py:175
 #: lino/modlib/printing/actions.py:283 lino/modlib/printing/actions.py:337
-#: lino/modlib/users/mixins.py:275 lino/modlib/users/mixins.py:334
+#: lino/modlib/users/mixins.py:285 lino/modlib/users/mixins.py:345
 msgid "Are you sure?"
 msgstr ""
 
@@ -3449,7 +3449,7 @@ msgstr ""
 msgid "Seen"
 msgstr ""
 
-#: lino/modlib/notify/models.py:544
+#: lino/modlib/notify/models.py:547
 #, python-format
 msgid "You have %d unseen messages."
 msgstr ""
@@ -3922,15 +3922,19 @@ msgstr ""
 msgid "Assign to me"
 msgstr ""
 
-#: lino/modlib/users/mixins.py:297
+#: lino/modlib/users/mixins.py:284
+msgid "You become assigned to this."
+msgstr ""
+
+#: lino/modlib/users/mixins.py:307
 msgid "Take"
 msgstr ""
 
-#: lino/modlib/users/mixins.py:308
-msgid "Take responsibility for this entry."
+#: lino/modlib/users/mixins.py:344
+msgid "You take responsibility for {}."
 msgstr ""
 
-#: lino/modlib/users/mixins.py:353
+#: lino/modlib/users/mixins.py:364
 msgid "Assigned to"
 msgstr ""
 
