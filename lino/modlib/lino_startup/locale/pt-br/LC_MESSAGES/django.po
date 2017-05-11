@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-09 08:48+0300\n"
+"POT-Creation-Date: 2017-05-11 10:32+0300\n"
 "PO-Revision-Date: 2013-06-15 18:57-0300\n"
 "Last-Translator: Flavio Gondin <flvgondin@gmail.com>\n"
 "Language: pt_BR\n"
@@ -128,7 +128,7 @@ msgstr "Remarque"
 msgid "Type"
 msgstr ""
 
-#: lino/core/choicelists.py:733
+#: lino/core/choicelists.py:734
 #, python-format
 msgid "%(value)r (invalid choice for %(list)s)"
 msgstr "%(value)r (choix non valable pour %(list)s)"
@@ -430,10 +430,10 @@ msgstr "Site"
 msgid "Symbol"
 msgstr ""
 
-#: lino/core/workflows.py:283 lino/mixins/duplicable.py:112
+#: lino/core/workflows.py:287 lino/mixins/duplicable.py:112
 #: lino/modlib/notify/models.py:63 lino/modlib/printing/actions.py:175
 #: lino/modlib/printing/actions.py:283 lino/modlib/printing/actions.py:337
-#: lino/modlib/users/mixins.py:275 lino/modlib/users/mixins.py:334
+#: lino/modlib/users/mixins.py:285 lino/modlib/users/mixins.py:345
 msgid "Are you sure?"
 msgstr "Etes-vous certain ?"
 
@@ -3537,7 +3537,7 @@ msgstr ""
 msgid "Seen"
 msgstr "Réouvrir"
 
-#: lino/modlib/notify/models.py:544
+#: lino/modlib/notify/models.py:547
 #, python-format
 msgid "You have %d unseen messages."
 msgstr ""
@@ -4042,16 +4042,20 @@ msgstr ""
 msgid "Assign to me"
 msgstr ""
 
-#: lino/modlib/users/mixins.py:297
+#: lino/modlib/users/mixins.py:284
+msgid "You become assigned to this."
+msgstr ""
+
+#: lino/modlib/users/mixins.py:307
 #, fuzzy
 msgid "Take"
 msgstr "Site"
 
-#: lino/modlib/users/mixins.py:308
-msgid "Take responsibility for this entry."
+#: lino/modlib/users/mixins.py:344
+msgid "You take responsibility for {}."
 msgstr ""
 
-#: lino/modlib/users/mixins.py:353
+#: lino/modlib/users/mixins.py:364
 #, fuzzy
 msgid "Assigned to"
 msgstr "Attribué à"
@@ -9118,12 +9122,6 @@ msgstr ""
 #~ msgid "Congratulations, you found an error in our system."
 #~ msgstr ""
 
-#~ msgid ""
-#~ "Duplicate the selected row. This will call\n"
-#~ "lino.core.model.Model.on_duplicate() on the new object and\n"
-#~ "on related objects."
-#~ msgstr ""
-
 #~ msgid "Base class for all user profiles."
 #~ msgstr ""
 
@@ -9133,29 +9131,7 @@ msgstr ""
 #~ msgid "alias of UserType"
 #~ msgstr ""
 
-#~ msgid ""
-#~ "Default value for the\n"
-#~ "hidden_languages of newly\n"
-#~ "attached choice item."
-#~ msgstr ""
-
 #~ msgid "alias of User"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "No longer user. The name of the field that defines the author\n"
-#~ "of this object."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "The list of required roles for getting permission to edit other\n"
-#~ "users' work."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Model mixin for database objects that have a user field which\n"
-#~ "points to the \"author\" of this object. The default user is\n"
-#~ "automatically set to the requesting user."
 #~ msgstr ""
 
 #~ msgid "alias of UserAuthored"
@@ -9164,32 +9140,7 @@ msgstr ""
 #~ msgid "Set yourself as assigned user."
 #~ msgstr ""
 
-#~ msgid ""
-#~ "You declare to become the fully responsible user for this database\n"
-#~ "object."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "This field is usually empty.  Setting it to another user means\n"
-#~ "\"I am not fully responsible for this item\"."
-#~ msgstr ""
-
 #~ msgid "Represents a user of this site."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Must be unique.\n"
-#~ "Leaving this empty means that the user cannot log in."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "This is always True.\n"
-#~ "See also lino.modlib.users.utils.AnonymousUser.authenticated."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "An Authority is when a user gives another user the right to\n"
-#~ "\"represent\" them."
 #~ msgstr ""
 
 #~ msgid "Immediately"
@@ -9199,5 +9150,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "The user who gets authority to act in your name."
+#~ msgstr ""
+
+#~ msgid "Take responsibility for this entry."
 #~ msgstr ""
 

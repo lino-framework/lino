@@ -30,8 +30,10 @@ class UpdateWidgets(dd.Action):
     # icon_name = 'lightning'
 
     def get_action_permission(self, ar, obj, state):
-        if obj != ar.get_user():
-            return False
+        me = ar.get_user()
+        if not me.profile.satisfies_requirement([SiteAdmin]):
+            if obj != me:
+                return False
         return super(UpdateWidgets, self).get_action_permission(
             ar, obj, state)
 

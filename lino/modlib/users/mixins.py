@@ -264,6 +264,15 @@ class AssignToMe(dd.Action):
     
     # help_text = _("You become assigned to this.")
 
+    def get_action_permission(self, ar, obj, state):
+        user = ar.get_user()
+        if obj.assigned_to == user:
+            return False
+        if user == obj.get_author():
+            return False
+        return super(AssignToMe,
+                     self).get_action_permission(ar, obj, state)
+
     def run_from_ui(self, ar, **kw):
         obj = ar.selected_rows[0]
 
@@ -272,7 +281,8 @@ class AssignToMe(dd.Action):
             obj.save()
             ar.set_response(refresh=True)
 
-        ar.confirm(ok, self.help_text, _("Are you sure?"))
+        ar.confirm(ok, _("You become assigned to this."),
+                   _("Are you sure?"))
 
 
 class TakeAuthorship(dd.Action):
@@ -296,6 +306,7 @@ class TakeAuthorship(dd.Action):
     """
     label = _("Take")
     show_in_workflow = True
+    show_in_bbar = False
     
     # This action modifies the object, but we don't tell Lino about it
     # because we want that even non-manager users can run it on
@@ -305,12 +316,13 @@ class TakeAuthorship(dd.Action):
     required_roles = dd.login_required(AuthorshipTaker)
 
     button_text = u"\u2691"
-    help_text = _("Take responsibility for this entry.")
 
     def get_action_permission(self, ar, obj, state):
         # new since 20160814
-        if obj.assigned_to != ar.get_user():
+        if obj.get_author() == ar.get_user():
             return False
+        # if obj.assigned_to != ar.get_user():
+        #     return False
         # if obj.get_author() == ar.get_user():
         #     if obj.assigned_to is None:
         #         return False
@@ -331,7 +343,9 @@ class TakeAuthorship(dd.Action):
             obj.save()
             ar.set_response(refresh=True)
 
-        ar.confirm(ok, self.help_text, _("Are you sure?"))
+        ar.confirm(ok,
+                   _("You take responsibility for {}.").format(obj),
+                   _("Are you sure?"))
 
 
 class Assignable(Authored):
