@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2016 Luc Saffre
+# Copyright 2009-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -18,8 +18,10 @@ logger = logging.getLogger(__name__)
 
 import os
 import io
+from copy import copy
 
 from django.conf import settings
+from django.utils import translation
 
 
 try:
@@ -285,6 +287,44 @@ class RtfBuildMethod(SimpleBuildMethod):
         return os.path.getmtime(target)
 
 
+class XmlBuildMethod(DjangoBuildMethod):
+    """
+    Generates .xml files from .xml templates.
+    """
+
+    target_ext = '.xml'
+    template_ext = '.xml'
+    cache_name = 'xml'
+
+    def build(self, ar, action, elem):
+        filename = action.before_build(self, elem)
+        if filename is None:
+            return
+        tpl = self.get_template(action, elem)
+
+        lang = str(elem.get_print_language()
+                   or settings.SITE.DEFAULT_LANGUAGE.django_code)
+        ar = copy(ar)
+        ar.renderer = settings.SITE.plugins.jinja.renderer
+        # ar.tableattrs = dict()
+        # ar.cellattrs = dict(bgcolor="blue")
+
+        with translation.override(lang):
+            cmd_options = elem.get_build_options(self)
+            logger.info(
+                "%s render %s -> %s (%r, %s)",
+                self.name, tpl, filename, lang, cmd_options)
+            context = elem.get_printable_context(ar)
+            xml = tpl.render(context)
+            self.write2file(xml, filename)
+            return os.path.getmtime(filename)
+    
+    def write2file(self, txt, filename):
+        txt = txt.encode("utf-8")
+        file(filename, 'w').write(txt)
+
+
+
 class BuildMethods(ChoiceList):
     """
     The choicelist of build methods offered on this site.
@@ -315,3 +355,4 @@ add = BuildMethods.add_item_instance
 add(LatexBuildMethod('latex'))
 add(PisaBuildMethod('pisa'))
 add(RtfBuildMethod('rtf'))
+add(XmlBuildMethod('xml'))
