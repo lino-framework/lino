@@ -21,19 +21,22 @@ def json_response_kw(**kw):
 
 
 def json_response(x, content_type='application/json', status=200):
-    s = py2js(x)
-    """
-    Theroretically we should send content_type='application/json'
-    (http://stackoverflow.com/questions/477816/the-right-json-content-type),
-    but "File uploads are not performed using Ajax submission, 
-    that is they are not performed using XMLHttpRequests. (...) 
-    If the server is using JSON to send the return object, then 
-    the Content-Type header must be set to "text/html" in order 
-    to tell the browser to insert the text unchanged into the 
-    document body." 
-    (http://docs.sencha.com/ext-js/3-4/#!/api/Ext.form.BasicForm)
-    See 20120209.
-    """
+    try:
+        s = py2js(x)
+    except Exception as e:
+        raise Exception("Failed to render {!r} : {}".format(x, e))
+    
+    # Theroretically we should send content_type='application/json'
+    # (http://stackoverflow.com/questions/477816/the-right-json-content-type),
+    # but "File uploads are not performed using Ajax submission, that
+    # is they are not performed using XMLHttpRequests. (...)  If the
+    # server is using JSON to send the return object, then the
+    # Content-Type header must be set to "text/html" in order to tell
+    # the browser to insert the text unchanged into the document
+    # body."
+    # (http://docs.sencha.com/ext-js/3-4/#!/api/Ext.form.BasicForm)
+    # See 20120209.
+    
     return http.HttpResponse(s, content_type=content_type, status=status)
     #~ return HttpResponse(s, content_type='text/html')
     #~ return HttpResponse(s, content_type='application/json')
