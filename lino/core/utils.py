@@ -3,15 +3,6 @@
 """A collection of utilities which require Django settings to be
 importable.
 
-This defines some helper classes like
-
-- :class:`Parametrizable` and :class:`Permittable` ("mixins" with
-  common functionality for both actors and actions),
-- the volatile :class:`InstanceAction` object
-- the :class:`ParameterPanel` class (used
-  e.g. by :class:`lino.mixins.periods.ObservedPeriod`)
-- :attr:`ContentType` and `GenericForeignKey`
-
 """
 
 from __future__ import unicode_literals
@@ -576,9 +567,12 @@ def navinfo(qs, elem):
 #         # self.ui.setup_handle(self, ar)
 
 
+
 class Parametrizable(object):
     """Base class for both Actors and Actions.
 
+    This is a pseudo-mixins with common functionality for both actors
+    and actions,
 
     .. method:: FOO_choices
 
@@ -586,7 +580,6 @@ class Parametrizable(object):
         called "FOO_choices" (which must be decorated by
         :func:`dd.chooser`), then this method will be installed as a
         chooser for this parameter field.
-
 
     """
 
@@ -698,6 +691,8 @@ class InstanceAction(object):
 class ParameterPanel(object):
     """A utility class for defining reusable definitions for
     :attr:`parameters <lino.core.actors.Actor.parameters>`.
+
+    Used  e.g. by :class:`lino.mixins.periods.ObservedPeriod`.
 
     """
     def __init__(self, **kw):
