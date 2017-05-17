@@ -610,3 +610,10 @@ def clear_seen_messages():
             "Removing %d messages older than %d hours.",
             qs.count(), remove_after)
         qs.delete()
+
+
+import warnings
+warnings.filterwarnings(
+    "ignore", "You do not have a working installation of the service_identity module: .* Many valid certificate/hostname mappings may be rejected.",
+    UserWarning)
+        
