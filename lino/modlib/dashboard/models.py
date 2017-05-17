@@ -31,7 +31,7 @@ class UpdateWidgets(dd.Action):
 
     def get_action_permission(self, ar, obj, state):
         me = ar.get_user()
-        if not me.profile.role.satisfies_requirement([SiteAdmin]):
+        if not me.profile.has_required_roles([SiteAdmin]):
             if obj != me:
                 return False
         return super(UpdateWidgets, self).get_action_permission(
