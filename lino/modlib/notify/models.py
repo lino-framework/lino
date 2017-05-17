@@ -404,7 +404,6 @@ class Message(UserAuthored, Controllable, Created):
         # of Django, not just inside a consumer.
         from channels import Group
         logger.info("Sending browser notification to %s", user.username)
-
         Group(groupname(user.username)).send({
             # WebSocket text frame, with JSON content
             "text": json.dumps(message),
