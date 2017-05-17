@@ -393,7 +393,7 @@ class Message(UserAuthored, Controllable, Created):
         # of Django, not just inside a consumer.
         from channels import Group
         logger.info("Sending browser notification to %s", user.username)
-        Group(user.username.encode('ascii', 'ignore')).send({
+        Group(user.username.encode('ascii', 'ignore').replace("@","at")).send({
             # WebSocket text frame, with JSON content
             "text": json.dumps(message),
         })
