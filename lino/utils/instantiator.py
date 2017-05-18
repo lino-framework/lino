@@ -100,8 +100,8 @@ class DateConverter(Converter):
 
     def convert(self, **kw):
         value = kw.get(self.field.name)
-        if value is not None:
-            if not isinstance(value, datetime.date):
+        if not isinstance(value, datetime.date):
+            if value:  # keep out empty strings
                 if type(value) == int:
                     value = str(value)
                 d = dateparser.parse(value)
