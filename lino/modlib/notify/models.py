@@ -41,6 +41,17 @@ from .choicelists import MessageTypes, MailModes
 import logging
 logger = logging.getLogger(__name__)
 
+def groupname(s):
+    """Remove any invalid characters from the given string so that it can
+    be used as a Redis group name.
+
+    "Group name must be a valid unicode string containing only
+    alphanumerics, hyphens, or periods."
+
+    """
+    s = s.replace('@', '-')
+    return s.encode('ascii', 'ignore')
+
 class MarkAllSeen(dd.Action):
     select_rows = False
     http_method = 'POST'
@@ -393,7 +404,7 @@ class Message(UserAuthored, Controllable, Created):
         # of Django, not just inside a consumer.
         from channels import Group
         logger.info("Sending browser notification to %s", user.username)
-        Group(user.username.encode('ascii', 'ignore')).send({
+        Group(groupname(user.username)).send({
             # WebSocket text frame, with JSON content
             "text": json.dumps(message),
         })
@@ -610,3 +621,10 @@ def clear_seen_messages():
             "Removing %d messages older than %d hours.",
             qs.count(), remove_after)
         qs.delete()
+
+
+import warnings
+warnings.filterwarnings(
+    "ignore", "You do not have a working installation of the service_identity module: .* Many valid certificate/hostname mappings may be rejected.",
+    UserWarning)
+        

@@ -57,6 +57,7 @@ new element:
 """
 from builtins import str
 from builtins import object
+from future.types import newstr
 import six
 
 import logging
@@ -66,6 +67,7 @@ logger = logging.getLogger(__name__)
 import datetime
 from lino.core.exceptions import ChangedAPI
 from lino.utils.xmlgen import etree
+# from atelier.utils import assert_pure
 #~ from lino.utils import Warning
 from django.utils.functional import Promise
 from django.utils.encoding import force_text
@@ -103,7 +105,8 @@ def compatstr(s):
     unefficient.
 
     """
-    if isinstance(s, str):
+    # assert_pure(s)
+    if isinstance(s, newstr):
         return six.text_type(s)
     return s
 
@@ -218,9 +221,11 @@ class Namespace(object):
         for item in children:
             if isinstance(item, Promise):
                 item = force_text(item)
+                # assert_pure(item)
             if isinstance(item, dict):
                 elem.attrib.update(self.makeattribs(**item))
             elif isinstance(item, six.string_types):
+                # assert_pure(item)
                 #~ if len(elem) and len(elem[-1]) == 0:
                 if len(elem):
                     last = elem[-1]
