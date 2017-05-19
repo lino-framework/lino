@@ -207,6 +207,7 @@ class FlushDeferredObjects(object):
 class LoaderBase(object):
 
     quick = False
+    source_version = None
 
     def __init__(self):
         # logger.info("20120225 DpyLoader.__init__()")
