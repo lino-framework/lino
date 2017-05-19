@@ -1021,6 +1021,12 @@ action on individual instances.
         return kw
 
     def before_printable_build(self, bm):
+        """This is called by print actions before the printable is being
+        generated.  Application code may e.g. raise a `Warning`
+        exception in order to refuse the print action.
+        The warning message can be a translatable string.
+
+        """
         pass
 
     def filename_root(self):

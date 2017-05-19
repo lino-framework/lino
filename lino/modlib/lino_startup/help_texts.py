@@ -304,6 +304,7 @@ Usage example see /tutorials/pisa/index."""),
 Not actively used."""),
     'lino.modlib.printing.choicelists.RtfBuildMethod' : _("""Generates .rtf files from .rtf templates.
 Not actively used."""),
+    'lino.modlib.printing.choicelists.XmlBuildMethod' : _("""Generates .xml files from .xml templates."""),
     'lino.modlib.printing.choicelists.BuildMethods' : _("""The choicelist of build methods offered on this site."""),
     'lino.modlib.printing.mixins.PrintableType' : _("""Base class for models that specify the
 TypedPrintable.type."""),

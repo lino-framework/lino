@@ -69,6 +69,7 @@ class BasePrintAction(Action):
         otherwise return ``None``.
         """
         elem.before_printable_build(bm)
+        # raise Exception("20170519 before_build didn't warn")
         filename = bm.get_target_name(self, elem)
         if not filename:
             return
