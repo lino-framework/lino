@@ -17,8 +17,8 @@ from lino.api import dd
 from lino.modlib.users.mixins import My
 from lino.utils.xmlgen.html import E
 from lino.utils.soup import truncate_comment
+from lino.core.gfks import gfk2lookup
 from .roles import CommentsReader, CommentsUser, CommentsStaff
-from django.contrib.contenttypes.models import ContentType
 
 class CommentTypes(dd.Table):
     """The table with all existing upload types.
@@ -81,8 +81,9 @@ class Comments(dd.Table):
 
         sar = cls.insert_action.request_from(ar)
         # print(20170217, sar)
-        owner = ContentType.objects.get(app_label='tickets',model="ticket")
-        sar.known_values = dict(reply_to=comment, owner_id=comment.owner.id, owner_type=owner)
+        sar.known_values = dict(
+            reply_to=comment, **gfk2lookup(
+                comment.__class__.owner, comment.owner))
         if ar.get_user().authenticated:
             btn = sar.ar2button(None, _(" Reply "), icon_name=None)
             # btn.set("style", "padding-left:10px")
