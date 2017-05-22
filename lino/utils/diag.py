@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2012-2016 Luc Saffre
+# Copyright 2012-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 """Some diagnostic utilities."""
 
@@ -257,6 +257,20 @@ class Analyzer(object):
         items1 = sorted(items1)
         return rstgen.ul(items1)
 
+    def show_complexity_factors(self):
+        self.analyze()
+        items = []
+        items.append("{0} plugins".format(len(dd.plugins)))
+        items.append("{0} models".format(len(get_models())))
+        items.append("{0} views".format(len(actors.actors_list)))
+        items.append("{0} user types".format(len(UserTypes.objects())))
+
+        dialog_actions = [ba for ba in analyzer.custom_actions +
+                          analyzer.window_actions if
+                          ba.action.parameters]
+        items.append("{0} dialog actions".format(len(dialog_actions)))
+        return rstgen.ul(items)
+        
     
 def visible_for(ba):
     """Shows a list of user profiles for which this action is visible."""
