@@ -304,16 +304,16 @@ class XmlBuildMethod(DjangoBuildMethod):
 
         lang = str(elem.get_print_language()
                    or settings.SITE.DEFAULT_LANGUAGE.django_code)
-        ar = copy(ar)
-        ar.renderer = settings.SITE.plugins.jinja.renderer
-        # ar.tableattrs = dict()
-        # ar.cellattrs = dict(bgcolor="blue")
 
         with translation.override(lang):
             cmd_options = elem.get_build_options(self)
             logger.info(
                 "%s render %s -> %s (%r, %s)",
                 self.name, tpl, filename, lang, cmd_options)
+            ar = copy(ar)
+            ar.renderer = settings.SITE.plugins.jinja.renderer
+            # ar.tableattrs = dict()
+            # ar.cellattrs = dict(bgcolor="blue")
             context = elem.get_printable_context(ar)
             xml = tpl.render(context)
             self.write2file(xml, filename)
