@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright 2015-2016 Luc Saffre
+# Copyright 2015-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 #
 # Make a snapshot of a Lino database.
@@ -78,5 +78,5 @@ zip -r $ZIPFILE media/beid
 zip $ZIPFILE *.py *.sh
 
 # delete all files older than 60 days in ARCHDIR:
-find $ARCH_DIR -maxdepth 1 -name '*.zip' -depth -mtime +60 -delete
+find $ARCH_DIR -maxdepth 1 -depth -name '*.zip' -mtime +60 -delete
 
