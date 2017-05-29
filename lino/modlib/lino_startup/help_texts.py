@@ -17,20 +17,20 @@ file."""),
 email."""),
     'lino.mixins.Phonable' : _("""Mixin for models that represent somebody who can be contacted by
 phone."""),
-    'lino.mixins.Registrable' : _("""Base class to anything that may be "registered" and "deregistered"
-(e.g. Invoices, Vouchers, Declarations, Reservations,...).
-"Registered" in general means "this object has been taken account of".
+    'lino.mixins.Registrable' : _("""Base class to anything that may be “registered” and “deregistered”
+(e.g. Invoices, Vouchers, Declarations, Reservations,…).
+“Registered” in general means “this object has been taken account of”.
 Registered objects are not editable."""),
     'lino.mixins.Registrable.state' : _("""The ChoiceList of the state field must have at least two items
-named "draft" and "registered".
+named “draft” and “registered”.
 There may be additional states.
-Every state must have an extra attribute "editable"."""),
+Every state must have an extra attribute “editable”."""),
     'lino.mixins.Created' : _("""Mixin for models which have a field created"""),
     'lino.mixins.Created.created' : _("""The timestame when this object was created."""),
     'lino.mixins.CreatedModified' : _("""Adds two timestamp fields created and modified."""),
-    'lino.mixins.ProjectRelated' : _("""Mixin for Models that are automatically related to a "project".  A
-project means here "the central most important thing that is used
-to classify most other things"."""),
+    'lino.mixins.ProjectRelated' : _("""Mixin for Models that are automatically related to a “project”.  A
+project means here “the central most important thing that is used
+to classify most other things”."""),
     'lino.mixins.Referrable' : _("""Mixin for things that have a unique ref field and a
 get_by_ref method."""),
     'lino.mixins.Referrable.ref' : _("""The reference. This must be either empty or unique."""),
@@ -41,10 +41,10 @@ a confirmation if there is a possible duplicate record."""),
 model. For every (non-abstract) dupable model there must be a
 subclass of PhoneticWordBase.
 The subclass must define a field
-owner which points to the Dupable, and the Dupable's
+owner which points to the Dupable, and the Dupable’s
 dupable_word_model must point to its subclass
 of PhoneticWordBase."""),
-    'lino.mixins.dupable.Dupable' : _("""Base class for models that can be "dupable"."""),
+    'lino.mixins.dupable.Dupable' : _("""Base class for models that can be “dupable”."""),
     'lino.mixins.dupable.Dupable.submit_insert' : _("""A dupable model has its
 submit_insert action
 overridden by CheckedSubmitInsert, a extended variant of
@@ -54,16 +54,16 @@ confirmation when necessary."""),
 description that is being tested for duplicates."""),
     'lino.mixins.dupable.Dupable.dupable_word_model' : _("""Full name of the model used to hold dupable words for instances of
 this model.  Applications can specify a string which will be
-resolved at startup to the model's class object."""),
+resolved at startup to the model’s class object."""),
     'lino.mixins.dupable.DupableChecker' : _("""Checks for the following repairable problem:"""),
     'lino.mixins.dupable.DupableChecker.model' : _("""alias of Dupable"""),
     'lino.mixins.dupable.SimilarObjects' : _("""Shows the other objects who are similar to this one."""),
     'lino.mixins.dupable.SimilarObjects.master' : _("""alias of Model"""),
     'lino.mixins.duplicable.Duplicate' : _("""Duplicate the selected row."""),
-    'lino.mixins.duplicable.Duplicable' : _("""Adds a row action "Duplicate" which duplicates (creates a clone
+    'lino.mixins.duplicable.Duplicable' : _("""Adds a row action “Duplicate” which duplicates (creates a clone
 of) the object it was called on."""),
     'lino.mixins.human.Human' : _("""Base class for all models that represent a human."""),
-    'lino.mixins.human.Human.title' : _("""An optional name prefix like "Dr." or "PhD", used to specify a
+    'lino.mixins.human.Human.title' : _("""An optional name prefix like “Dr.” or “PhD”, used to specify a
 professional position or academic qualification."""),
     'lino.mixins.human.Human.first_name' : _("""The first name, also known as given name."""),
     'lino.mixins.human.Human.last_name' : _("""The last name, also known as family name."""),
@@ -72,7 +72,7 @@ professional position or academic qualification."""),
     'lino.mixins.human.Human.full_name' : _("""Returns a one-line string composed of salutation, title,
 first_name and last_name."""),
     'lino.mixins.human.Born' : _("""Abstract base class that adds a birth_date
-field and a virtual field "Age"."""),
+field and a virtual field “Age”."""),
     'lino.mixins.human.Born.birth_date' : _("""An IncompleteDateField."""),
     'lino.mixins.human.Born.age' : _("""Virtual field displaying the age in years."""),
     'lino.mixins.periods.CombinedDateTime' : _("""Mixin for models which have at least one couple of date and time
@@ -99,23 +99,23 @@ different views."""),
     'lino.mixins.sequenced.MoveDown' : _("""Move this row one row downwards."""),
     'lino.mixins.sequenced.DuplicateSequenced' : _("""Duplicate this row."""),
     'lino.mixins.sequenced.Sequenced' : _("""Mixin for models that have a field seqno containing a
-"sequence number"."""),
+“sequence number”."""),
     'lino.mixins.sequenced.Sequenced.seqno' : _("""The sequence number of this item with its parent."""),
     'lino.mixins.sequenced.Sequenced.move_up' : _("""Exchange the seqno of this item and the previous item."""),
     'lino.mixins.sequenced.Sequenced.move_down' : _("""Exchange the seqno of this item and the next item."""),
     'lino.mixins.sequenced.Sequenced.move_buttons' : _("""Displays buttons for certain actions on this row:"""),
     'lino.mixins.sequenced.Sequenced.move_action_names' : _("""The names of the actions to display in the move_buttons
 column."""),
-    'lino.mixins.sequenced.Hierarchical' : _("""Abstract model mixin for things that have a "parent" and
-"siblings"."""),
+    'lino.mixins.sequenced.Hierarchical' : _("""Abstract model mixin for things that have a “parent” and
+“siblings”."""),
     'lino.mixins.uploadable.Uploadable' : _("""Mixin for objects that represent an uploadable file."""),
     'lino.mixins.uploadable.Uploadable.file' : _("""Pointer to the file itself (a Django FileField)."""),
     'lino.mixins.uploadable.Uploadable.mimetype' : _("""The Media type
 of the file.  See also this thread
 about length of MIME type field."""),
     'lino.modlib.about.Plugin' : _("""See /dev/plugins."""),
-    'lino.modlib.about.models.Inspector' : _("""Shows a simplistic "inspector" which once helped me for debugging.
-Needs more work to become seriously useful..."""),
+    'lino.modlib.about.models.Inspector' : _("""Shows a simplistic “inspector” which once helped me for debugging.
+Needs more work to become seriously useful…"""),
     'lino.modlib.about.models.About' : _("""Display information about this web site.  This defines the window
 which opens via the menu command Site ‣ About."""),
     'lino.modlib.bootstrap3.renderer.Renderer' : _("""A  HTML render that uses Bootstrap3."""),
@@ -126,7 +126,7 @@ which opens via the menu command Site ‣ About."""),
     'lino.modlib.changes.models.ChangeTypes' : _("""The list of possible choices for the type field
 of a Change."""),
     'lino.modlib.changes.models.Change' : _("""A registered change in the database."""),
-    'lino.modlib.changes.models.Change.master' : _("""The database object which acts as "master"."""),
+    'lino.modlib.changes.models.Change.master' : _("""The database object which acts as “master”."""),
     'lino.modlib.changes.models.Change.object' : _("""The database object which has been modified."""),
     'lino.modlib.changes.models.Changes' : _("""The default table for Change."""),
     'lino.modlib.changes.models.Changes.model' : _("""alias of Change"""),
@@ -134,7 +134,7 @@ of a Change."""),
 object."""),
     'lino.modlib.changes.models.ChangesByObject.model' : _("""alias of Change"""),
     'lino.modlib.changes.models.ChangesByMaster' : _("""Slave Table showing the changes related to the current object,
-including those applied to "child" objects."""),
+including those applied to “child” objects."""),
     'lino.modlib.changes.models.ChangesByMaster.model' : _("""alias of Change"""),
     'lino.modlib.comments.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.comments.mixins.Commentable' : _("""A request for comment. Every database model of an application"""),
@@ -144,7 +144,7 @@ this is not empty, then the given shortcut field will manage
 uploads of this type.  See also Shortcuts."""),
     'lino.modlib.comments.models.Comment' : _("""A comment is a short text which some user writes about some
 other database object. It has no recipient."""),
-    'lino.modlib.comments.models.Comment.short_text' : _("""A short "abstract" of your comment. This should not be more
+    'lino.modlib.comments.models.Comment.short_text' : _("""A short “abstract” of your comment. This should not be more
 than one paragraph."""),
     'lino.modlib.dashboard.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.dashboard.models.UpdateWidgets' : _("""Create or update the widgets for this user."""),
@@ -170,14 +170,14 @@ choicelists are actors to define them once and refer to them.
 Special case are choicelist fields with blank=True: these must
 dynamicaly add a blank choice to the the choicelist."""),
     'lino.modlib.extjs.elems.IncompleteDateFieldElement' : _("""Widget for lino.core.fields.IncompleteDate fields."""),
-    'lino.modlib.extjs.elems.NumberFieldElement' : _("""Base class for integers, decimals, RequestField,..."""),
+    'lino.modlib.extjs.elems.NumberFieldElement' : _("""Base class for integers, decimals, RequestField,…"""),
     'lino.modlib.extjs.elems.DisplayElement' : _("""ExtJS element to be used for DisplayFields."""),
     'lino.modlib.extjs.elems.SingleRelatedObjectElement' : _("""The widget used to render a SingleRelatedObjectDescriptor,
 i.e. the other side of a OneToOneField."""),
     'lino.modlib.extjs.elems.GenericForeignKeyElement' : _("""A DisplayElement specially adapted to a GFK field."""),
     'lino.modlib.extjs.elems.HtmlBoxElement' : _("""Element that renders to a Lino.HtmlBoxPanel."""),
     'lino.modlib.extjs.elems.SlaveSummaryPanel' : _("""The panel used to display a slave table whose slave_grid_format
-is 'summary'."""),
+is ‘summary’."""),
     'lino.modlib.extjs.elems.Container' : _("""Base class for Layout Elements that can contain other Layout Elements:
 Panel,
 TabPanel,
@@ -200,11 +200,11 @@ empty (and user_model not).
 lino.core.auth.SessionUserMiddleware"""),
     'lino.modlib.extjs.views.Restful' : _("""Used to collaborate with a restful Ext.data.Store."""),
     'lino.modlib.gfks.Plugin' : _("""See /dev/plugins."""),
-    'lino.modlib.gfks.fields.GenericForeignKey' : _("""Add verbose_name and help_text to Django's GFK."""),
+    'lino.modlib.gfks.fields.GenericForeignKey' : _("""Add verbose_name and help_text to Django’s GFK."""),
     'lino.modlib.gfks.fields.GenericForeignKeyIdField' : _("""Use this instead of models.PositiveIntegerField for fields that
 are part of a GFK and you want Lino to render them using a
 Combobox."""),
-    'lino.modlib.gfks.mixins.Controllable' : _("""Mixin for models that are "controllable" by another database object."""),
+    'lino.modlib.gfks.mixins.Controllable' : _("""Mixin for models that are “controllable” by another database object."""),
     'lino.modlib.gfks.mixins.Controllable.controller_is_optional' : _("""Deprecated. This is (and always was) being ignored. Use
 update_controller_field() instead."""),
     'lino.modlib.gfks.models.ContentTypes' : _("""Default table for django.contrib.ContentType."""),
@@ -220,14 +220,14 @@ GeneriForeignKey field."""),
     'lino.modlib.lino_startup.management.commands.initdb.Command' : _("""Flush the database and load the specified fixtures."""),
     'lino.modlib.lino_startup.management.commands.prep.Command' : _("""Flushes the database and loads the default demo fixtures."""),
     'lino.modlib.notify.Plugin' : _("""See lino.core.plugin.Plugin."""),
-    'lino.modlib.notify.actions.NotifyingAction' : _("""An action which pops up a dialog window of three fields "Summary",
-"Description" and a checkbox "Don't notify others" to optionally
+    'lino.modlib.notify.actions.NotifyingAction' : _("""An action which pops up a dialog window of three fields “Summary”,
+“Description” and a checkbox “Don’t notify others” to optionally
 suppress notification."""),
     'lino.modlib.notify.choicelists.MessageTypes' : _("""The list of possible choices for the message_type field
 of a Message."""),
     'lino.modlib.notify.choicelists.MailModes' : _("""How the system should send email notifications to a user."""),
     'lino.modlib.notify.mixins.ChangeObservable' : _("""Mixin for models which can emit notifications to a list of
-"observers" when an instance is modified."""),
+“observers” when an instance is modified."""),
     'lino.modlib.notify.models.ClearSeen' : _("""Mark this message as not yet seen."""),
     'lino.modlib.notify.models.Message' : _("""A Notification message is a instant message sent by the
 application to a given user."""),
@@ -250,7 +250,7 @@ for himself)."""),
 of the main plausibility responsible, i.e. a designated
 user who will be attributed to plausibility problems for which
 no specific responible could be designated (returned by the
-checker's get_responsible_user
+checker’s get_responsible_user
 method)."""),
     'lino.modlib.plausibility.choicelists.Checker' : _("""Base class for the choices of Checkers."""),
     'lino.modlib.plausibility.choicelists.Checker.model' : _("""The model to be checked. This may be an abstract model.  It can
@@ -283,35 +283,36 @@ for fixing this problem."""),
     'lino.modlib.plausibility.models.MyProblems.model' : _("""alias of Problem"""),
     'lino.modlib.plausibility.roles.PlausibilityUser' : _("""A user who can see plausibility problems."""),
     'lino.modlib.printing.Plugin' : _("""See /dev/plugins."""),
-    'lino.modlib.printing.actions.BasePrintAction' : _("""Base class for all "Print" actions."""),
+    'lino.modlib.printing.actions.BasePrintAction' : _("""Base class for all “Print” actions."""),
     'lino.modlib.printing.actions.DirectPrintAction' : _("""Print using a hard-coded template and without cache."""),
     'lino.modlib.printing.actions.CachedPrintAction' : _("""A print action which uses a cache for the generated printable
-document and builds is only when it doesn't yet exist."""),
+document and builds is only when it doesn’t yet exist."""),
     'lino.modlib.printing.actions.EditTemplate' : _("""Edit the print template, i.e. the file specified by
 Printable.get_print_templates()."""),
     'lino.modlib.printing.actions.ClearCacheAction' : _("""Defines the Clear cache button on a Printable record."""),
     'lino.modlib.printing.choicelists.TemplatedBuildMethod' : _("""Base class for all build methods.  A build method encapsulates the
-process of generating a "printable document" that inserts data
+process of generating a “printable document” that inserts data
 from the database into a template, using a given combination of a
 template parser and post-processor."""),
-    'lino.modlib.printing.choicelists.DjangoBuildMethod' : _("""Using Django's templating engine."""),
+    'lino.modlib.printing.choicelists.DjangoBuildMethod' : _("""Using Django’s templating engine."""),
     'lino.modlib.printing.choicelists.PisaBuildMethod' : _("""Generates .pdf files from .html templates.
 Requires pisa.
 Usage example see /tutorials/pisa/index."""),
-    'lino.modlib.printing.choicelists.SimpleBuildMethod' : _("""Base for build methods which use Lino's templating system
+    'lino.modlib.printing.choicelists.SimpleBuildMethod' : _("""Base for build methods which use Lino’s templating system
 (find_config_file)."""),
     'lino.modlib.printing.choicelists.LatexBuildMethod' : _("""Generates .pdf files from .tex templates.
 Not actively used."""),
     'lino.modlib.printing.choicelists.RtfBuildMethod' : _("""Generates .rtf files from .rtf templates.
 Not actively used."""),
+    'lino.modlib.printing.choicelists.XmlBuildMethod' : _("""Generates .xml files from .xml templates."""),
     'lino.modlib.printing.choicelists.BuildMethods' : _("""The choicelist of build methods offered on this site."""),
     'lino.modlib.printing.mixins.PrintableType' : _("""Base class for models that specify the
 TypedPrintable.type."""),
     'lino.modlib.printing.mixins.PrintableType.build_method' : _("""A pointer to an item of
 lino.modlib.printing.choicelists.BuildMethods."""),
     'lino.modlib.printing.mixins.PrintableType.template' : _("""The name of the file to be used as template."""),
-    'lino.modlib.printing.mixins.PrintableType.templates_group' : _("""Default value for templates_group is the model's full name."""),
-    'lino.modlib.printing.mixins.Printable' : _("""Mixin for models whose instances have a "print" action (i.e. for
+    'lino.modlib.printing.mixins.PrintableType.templates_group' : _("""Default value for templates_group is the model’s full name."""),
+    'lino.modlib.printing.mixins.Printable' : _("""Mixin for models whose instances have a “print” action (i.e. for
 which Lino can generate a printable document)."""),
     'lino.modlib.printing.mixins.Printable.do_print' : _("""The action used to print this object.
 This is an instance of
@@ -323,8 +324,8 @@ lino_xl.lib.excerpts.CreateExcerpt instance."""),
     'lino.modlib.printing.mixins.CachedPrintable' : _("""Mixin for Models that generate a unique external file at a
 determined place when being printed."""),
     'lino.modlib.printing.mixins.CachedPrintable.build_time' : _("""Timestamp of the built target file. Contains None
-if no build hasn't been called yet."""),
-    'lino.modlib.printing.mixins.TypedPrintable' : _("""A CachedPrintable that uses a "Type" for deciding which
+if no build hasn’t been called yet."""),
+    'lino.modlib.printing.mixins.TypedPrintable' : _("""A CachedPrintable that uses a “Type” for deciding which
 template to use on a given instance."""),
     'lino.modlib.printing.mixins.CachedPrintableChecker' : _("""Checks for missing cache files on all objects which inherit
 CachedPrintable."""),
@@ -335,12 +336,12 @@ CachedPrintable."""),
     'lino.modlib.summaries.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.summaries.Plugin.start_year' : _("""The first year for which summaries should be computed."""),
     'lino.modlib.summaries.Plugin.end_year' : _("""The last year for which summaries should be computed."""),
-    'lino.modlib.summaries.mixins.Summary' : _("""Base class for all "summary data" models."""),
+    'lino.modlib.summaries.mixins.Summary' : _("""Base class for all “summary data” models."""),
     'lino.modlib.system.Plugin' : _("""See /dev/plugins."""),
-    'lino.modlib.system.choicelists.YesNo' : _("""A choicelist with two values "Yes" and "No"."""),
-    'lino.modlib.system.choicelists.Genders' : _("""Defines the two possible choices "male" and "female"
+    'lino.modlib.system.choicelists.YesNo' : _("""A choicelist with two values “Yes” and “No”."""),
+    'lino.modlib.system.choicelists.Genders' : _("""Defines the two possible choices “male” and “female”
 for the gender of a person."""),
-    'lino.modlib.system.choicelists.ObservedEvent' : _("""Base class for choices of "observed event"-style choicelists."""),
+    'lino.modlib.system.choicelists.ObservedEvent' : _("""Base class for choices of “observed event”-style choicelists."""),
     'lino.modlib.system.choicelists.PeriodEvents' : _("""The list of things you can observe on a
 lino.mixins.periods.DatePeriod."""),
     'lino.modlib.system.models.BuildSiteCache' : _("""Rebuild the site cache.
@@ -400,7 +401,7 @@ uploaded file in a new browser window."""),
     'lino.modlib.users.actions.SendWelcomeMail' : _("""Send a welcome mail to this user."""),
     'lino.modlib.users.actions.ChangePassword' : _("""Change the password of this user."""),
     'lino.modlib.users.actions.ChangePassword.current' : _("""The current password. Leave empty if the user has no password
-yet. And SiteAdmin users don't need to specify this at all."""),
+yet. And SiteAdmin users don’t need to specify this at all."""),
     'lino.modlib.users.actions.ChangePassword.new1' : _("""The new password."""),
     'lino.modlib.users.actions.ChangePassword.new2' : _("""The new password a second time. Both passwords must match."""),
     'lino.modlib.users.forms.UserCreationForm' : _("""A form that creates a user, with no privileges, from the given username and
@@ -418,7 +419,7 @@ action."""),
 action."""),
     'lino.modlib.users.utils.AnonymousUser' : _("""A singleton class whose instance will be assigned to the
 user attribute of anonymous incoming requests, similar to
-Django's approach."""),
+Django’s approach."""),
     'lino.modlib.users.utils.AnonymousUser.authenticated' : _("""This is always False.
 See also lino.modlib.users.models.User.authenticated."""),
     'lino.modlib.weasyprint.Plugin' : _("""See /dev/plugins."""),
@@ -436,7 +437,7 @@ this document."""),
     'lino.utils.IncompleteDate' : _("""Naive representation of a potentially incomplete gregorian date."""),
     'lino.utils.SumCollector' : _("""A dictionary of sums to be collected using an arbitrary key."""),
     'lino.utils.addressable.Addressable' : _("""General mixin (not only for Django models) to encapsulate the
-generating of "traditional" ("snail") mail addresses."""),
+generating of “traditional” (“snail”) mail addresses."""),
     'lino.utils.addressable.Addressable.address' : _("""A property which calls get_address()."""),
     'lino.utils.addressable.Addressable.address_html' : _("""A property which calls get_address_html()."""),
     'lino.utils.addressable.TestAddress' : _("""Used only for testing."""),
@@ -446,7 +447,7 @@ field."""),
     'lino.utils.code.SourceFile' : _("""Counts the number of code lines in a given Python source file."""),
     'lino.utils.config.ConfigDir' : _("""A directory that may contain configuration files."""),
     'lino.utils.daemoncommand.DaemonCommand' : _("""If you have an existing Django management command, just rename
-it's handle method to handle_daemon and inherit from this
+it’s handle method to handle_daemon and inherit from this
 instead of django.core.management.base.BaseCommand."""),
     'lino.utils.daemoncommand.DaemonCommand.help' : _("""The loggers to preserve. If not None, this should be a list of
 loggers (logging.Logger instances) whose file handles
@@ -478,7 +479,7 @@ Fixture may yield a FlushDeferredObjects
 to indicate that all deferred objects should get saved before going on."""),
     'lino.utils.dpy.DpyLoader' : _("""Instantiated by restore.py."""),
     'lino.utils.dpy.DpyDeserializer' : _("""The Django deserializer for dpy."""),
-    'lino.utils.dpy.Migrator' : _("""The SITE's Migrator class is instantiated by install_migrations."""),
+    'lino.utils.dpy.Migrator' : _("""The SITE’s Migrator class is instantiated by install_migrations."""),
     'lino.utils.htmlgen.TABLE' : _("""Renders as a simple table."""),
     'lino.utils.instantiator.LookupConverter' : _("""A Converter for ForeignKey and ManyToManyField. 
 If the lookup_field is a BabelField, then it tries all available languages."""),
@@ -501,13 +502,13 @@ two properties name and url."""),
     'lino.utils.mldbc.fields.BabelCharField' : _("""Define a variable number of CharField database fields, one for
 each language of your lino.core.site.Site.languages.  See
 mldbc."""),
-    'lino.utils.mldbc.fields.BabelTextField' : _("""Define a variable number of clones of the "master" field,
+    'lino.utils.mldbc.fields.BabelTextField' : _("""Define a variable number of clones of the “master” field,
 one for each language .
 See mldbc."""),
     'lino.utils.mldbc.fields.LanguageField' : _("""A field that lets the user select a language from the available
 lino.core.site.Site.languages."""),
     'lino.utils.mldbc.mixins.BabelNamed' : _("""Mixin for models that have a babel field name (labelled
-"Description" by default) for each language."""),
+“Description” by default) for each language."""),
     'lino.utils.mti.ChildCollector' : _("""A Collector that does not delete the MTI parents."""),
     'lino.utils.mti.EnableChild' : _("""Rendered as a checkbox that indicates whether an mti child of the
 given model exists."""),
@@ -541,24 +542,24 @@ Intended for use with the django development server."""),
     'lino.utils.test.HttpQuery.url_base' : _("""Alias for field number 1"""),
     'lino.utils.test.HttpQuery.username' : _("""Alias for field number 0"""),
     'lino.utils.test.CommonTestCase' : _("""An extended django.test.TestCase."""),
-    'lino.utils.test.DocTest' : _("""Looks for a file "index.rst" in your project_dir and (if it exists)
+    'lino.utils.test.DocTest' : _("""Looks for a file “index.rst” in your project_dir and (if it exists)
 runs doctest on it."""),
     'lino.utils.test.DocTest.doctest_files' : _("""The files to be tested."""),
     'lino.utils.test.DemoTestCase' : _("""Used to define tests that are to be run directly in the demo
 database, without using the Django test runner (i.e. without
 creating a temporary test database)."""),
     'lino.utils.ucsv.UTF8Recoder' : _("""Iterator that reads an encoded stream and reencodes the input to UTF-8"""),
-    'lino.utils.ucsv.UnicodeReader' : _("""A CSV reader which will iterate over lines in the CSV file "f",
+    'lino.utils.ucsv.UnicodeReader' : _("""A CSV reader which will iterate over lines in the CSV file “f”,
 which is encoded in the given encoding."""),
-    'lino.utils.ucsv.UnicodeWriter' : _("""A CSV writer which will write rows to CSV file "f",
+    'lino.utils.ucsv.UnicodeWriter' : _("""A CSV writer which will write rows to CSV file “f”,
 which is encoded in the given encoding."""),
     'lino.utils.xmlgen.Namespace' : _("""An XML namespace.  Base class for
 lino.utils.xmlgen.html.HtmlNamespace and the namespaces
 defined in lino.utils.xmlgen.intervat."""),
-    'lino.utils.xmlgen.cbss.WebServiceConnector' : _("""The WebServiceConnector namespace used for wrapping "classical" CBSS services."""),
-    'lino.utils.xmlgen.cbss.SSDNns' : _("""The SSDN namespace used for wrapping "classical" CBSS services."""),
+    'lino.utils.xmlgen.cbss.WebServiceConnector' : _("""The WebServiceConnector namespace used for wrapping “classical” CBSS services."""),
+    'lino.utils.xmlgen.cbss.SSDNns' : _("""The SSDN namespace used for wrapping “classical” CBSS services."""),
     'lino.utils.xmlgen.cbss.Service' : _("""Base class for the individual services."""),
-    'lino.utils.xmlgen.cbss.IdentifyPersonRequest' : _("""A request for identifying a person or validating a person's identity"""),
+    'lino.utils.xmlgen.cbss.IdentifyPersonRequest' : _("""A request for identifying a person or validating a person’s identity"""),
     'lino.utils.xmlgen.cbss.PerformInvestigationRequest' : _("""A request to the PerformInvestigation BCSS service.
 Net yet used in practice."""),
     'lino.utils.xmlgen.cbss.HealthInsuranceRequest' : _("""A request to the HealthInsurance BCSS service.
@@ -585,7 +586,7 @@ this user."""),
 partner (if it exists) and otherwise None."""),
     'lino.modlib.users.User.last_login' : _("""Not used in Lino."""),
     'lino.modlib.users.Authority' : _("""An authority is when a user gives another user the right to
-"represent" them."""),
+“represent” them."""),
     'lino.modlib.users.Authority.user' : _("""The user who gives the right of representation. author of this
 authority"""),
     'lino.modlib.users.Authority.authorized' : _("""The user who gets the right to represent the author"""),
@@ -597,11 +598,11 @@ display the list of available users."""),
     'lino.modlib.users.TimezoneHolder' : _("""Mixin for database models which have a timezone field."""),
     'lino.modlib.users.TimezoneHolder.timezone' : _("""The timezone."""),
     'lino.modlib.users.Authored.manager_roles_required' : _("""The list of required roles for getting permission to edit
-other users' work."""),
+other users’ work."""),
     'lino.modlib.users.Authored.author_field_name' : _("""No longer used. The name of the field that defines the author
 of this object."""),
     'lino.modlib.users.UserAuthored' : _("""Mixin for models that have a user field which points to
-the "author" of this object. The default user of new instances is
+the “author” of this object. The default user of new instances is
 automatically set to the requesting user."""),
     'lino.modlib.users.UserAuthored.user' : _("""The author of this object.
 A pointer to lino.modlib.users.models.User."""),

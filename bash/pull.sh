@@ -8,6 +8,9 @@
 
 set -e
 
+date >> freeze.log
+pip freeze >> freeze.log
+
 function pull_here() {
     pwd
     git pull

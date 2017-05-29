@@ -19,6 +19,15 @@ class ChangeObservable(dd.Model):
         abstract = True
 
     def get_change_subject(self, ar, cw):
+        """Returns the subject text of the notification message to emit.
+
+        The default implementation returns a message of style
+        "{user} modified|created {object}" .  
+
+        Returning None or an empty string means to suppress
+        notification.
+
+        """
         ctx = dict(user=ar.user, what=str(self))
         if cw is None:
             return _("{user} created {what}").format(**ctx)
@@ -32,14 +41,11 @@ class ChangeObservable(dd.Model):
             
             
     def get_change_body(self, ar, cw):
-        """Returns the text of the notification message to emit.
+        """Returns the body text of the notification message to emit.
 
         The default implementation returns a message of style
         "{object} has been modified by {user}" followed by a summary
         of the changes.  
-
-        Application code can override this. Returning None or an empty
-        string means to suppress notification.
 
         """
         ctx = dict(user=ar.user, what=ar.obj2memo(self))

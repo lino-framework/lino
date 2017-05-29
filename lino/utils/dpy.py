@@ -143,7 +143,7 @@ class FakeDeserializedObject(base.DeserializedObject):
             """
             m = getattr(obj, 'before_dumpy_save', None)
             if m is not None:
-                m()
+                m(self.deserializer)
             if not self.deserializer.quick:
                 try:
                     obj.full_clean()
@@ -207,6 +207,7 @@ class FlushDeferredObjects(object):
 class LoaderBase(object):
 
     quick = False
+    source_version = None
 
     def __init__(self):
         # logger.info("20120225 DpyLoader.__init__()")
@@ -329,6 +330,7 @@ class DpyLoader(LoaderBase):
     def __init__(self, globals_dict):
         self.globals_dict = globals_dict
         super(DpyLoader, self).__init__()
+        self.source_version = globals_dict['SOURCE_VERSION']
         site = globals_dict['settings'].SITE
         site.startup()
         site.install_migrations(self)
