@@ -37,9 +37,12 @@ from builtins import object
 
 from django.conf import settings
 from django.db import models
+from django.contrib.contenttypes.fields import GenericRelation
 
-from lino.api import dd, _
+from lino.api import dd, rt, _
 from lino.core.actions import SubmitInsert
+from lino.core.gfks import gfk2lookup
+from lino.core.gfks import ContentType
 from lino.utils import join_elems
 from lino.utils.xmlgen.html import E
 
@@ -74,55 +77,6 @@ class CheckedSubmitInsert(SubmitInsert):
         else:
             ok(ar)
 
-
-from django.utils.encoding import python_2_unicode_compatible
-
-
-@python_2_unicode_compatible
-class PhoneticWordBase(dd.Model):
-    """Base class for the table of phonetic words of a given dupable
-    model. For every (non-abstract) dupable model there must be a
-    subclass of `PhoneticWordBase`.
-    The subclass must define a field
-    :attr:`owner` which points to the `Dupable`, and the `Dupable`'s
-    :attr:`dupable_word_model` must point to its subclass
-    of `PhoneticWordBase`.
-
-    """
-    class Meta(object):
-        abstract = True
-
-    allow_cascaded_delete = ['owner']
-
-    word = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.word
-
-    @classmethod
-    def on_analyze(cls, site):
-        pass
-        # import metaphone as fuzzy
-        # cls._fuzzy_DMetaphone = fuzzy.doublemetaphone()
-        # import fuzzy
-        # cls._fuzzy_DMetaphone = fuzzy.DMetaphone()
-
-    @classmethod
-    def reduce_word(cls, s):
-        # from metaphone.word import Word
-        import metaphone as fuzzy
-        # fuzzy.DMetaphone does not work with unicode strings, see
-        # https://bitbucket.org/yougov/fuzzy/issue/2/fuzzy-support-for-unicode-strings-with
-        # dm = fuzzy.doublemetaphone(s.encode('utf8'))
-        dm = fuzzy.doublemetaphone(s)
-        dms = dm[0] or dm[1]
-        if dms is None:
-            return ''
-        if isinstance(dms, six.binary_type):
-            dms = dms.decode('utf8')
-        return dms
-
-
 class Dupable(dd.Model):
     """Base class for models that can be "dupable".
 
@@ -130,17 +84,14 @@ class Dupable(dd.Model):
     having unwanted duplicate records. It is both for *avoiding* such
     duplicates on new records and for *detecting* existing duplicates.
 
-    Note that adding :class:`Dupable` to your model's base classes does
-    not yet activate any functionality, it just declares that model as
-    being dupable.  In order to activate verification, you must also
-    define a model which implements :class:`PhoneticWordBase` and set
-    :attr:`Dupable.dupable_word_model` to point to that model.  This is
-    done by plugins like :mod:`lino_xl.lib.dupable_partners` or
-    :mod:`lino_welfare.modlib.dupable_clients`
-
     """
     class Meta(object):
         abstract = True
+
+    dupable_words = GenericRelation(
+        'dupable.PhoneticWord',
+        content_type_field='owner_type',
+        object_id_field='owner_id')
 
     submit_insert = CheckedSubmitInsert()
     """A dupable model has its
@@ -154,25 +105,6 @@ class Dupable(dd.Model):
     dupable_words_field = 'name'
     """The name of a CharField on this model which holds the full-text
     description that is being tested for duplicates."""
-
-    dupable_word_model = None
-    """Full name of the model used to hold dupable words for instances of
-    this model.  Applications can specify a string which will be
-    resolved at startup to the model's class object.
-
-    """
-
-    @classmethod
-    def on_analyze(cls, site):
-        """Setup the :attr:`dupable_word_model` attribute.  This will be
-        called only on concrete subclasses.
-
-        """
-        super(Dupable, cls).on_analyze(site)
-        # if not site.is_installed(cls._meta.app_label):
-        #     cls.dupable_word_model = None
-        #     return
-        site.setup_model_spec(cls, 'dupable_word_model')
 
     def dupable_matches_required(self):
         """Return the minimum number of words that must sound alike before
@@ -190,9 +122,9 @@ class Dupable(dd.Model):
         # nullable...
         if settings.SITE.loading_from_dump:
             return
-        if self.dupable_word_model is None:
-            return
-        qs = self.dupable_word_model.objects.filter(owner=self)
+        PhoneticWord = rt.models.dupable.PhoneticWord
+        qs = PhoneticWord.objects.filter(
+            **gfk2lookup(PhoneticWord.owner, self))
         existing = [o.word for o in qs]
         wanted = self.get_dupable_words(
             getattr(self, self.dupable_words_field))
@@ -201,7 +133,7 @@ class Dupable(dd.Model):
         if really:
             qs.delete()
             for w in wanted:
-                self.dupable_word_model(word=w, owner=self).save()
+                PhoneticWord(word=w, owner=self).save()
         return _("Must update phonetic words.")
 
     def after_ui_save(self, ar, cw):
@@ -212,7 +144,7 @@ class Dupable(dd.Model):
     def get_dupable_words(self, s):
         for c in '-,/&+':
             s = s.replace(c, ' ')
-        return list(map(self.dupable_word_model.reduce_word, s.split()))
+        return map(rt.models.dupable.PhoneticWord.reduce_word, s.split())
 
     def find_similar_instances(self, limit=None, **kwargs):
         """Return a queryset or yield a list of similar objects.
@@ -224,15 +156,21 @@ class Dupable(dd.Model):
         list or generator instead of a Django queryset.
 
         """
-        if self.dupable_word_model is None:
-            return self.__class__.objects.none()
         qs = self.__class__.objects.filter(**kwargs)
         if self.pk is not None:
             qs = qs.exclude(pk=self.pk)
         parts = self.get_dupable_words(
             getattr(self, self.dupable_words_field))
-        qs = qs.filter(dupable_words__word__in=parts).distinct()
-        qs = qs.annotate(num=models.Count('dupable_words__word'))
+        if False:
+            fkw = gfk2lookup(rt.models.dupable.PhoneticWord.owner, self)
+            wq = rt.models.dupable.PhoneticWord.objects.filter(**fkw)
+            wq = wq.filter(word__in=parts).distinct()
+            qs = qs.annotate(num=models.Count('dupable_words__word'))
+            # ct = ContentType.objects.get_for_model(self.__class__)
+            # qs = qs.filter(owner_type=ct)
+        if True:
+            qs = qs.filter(dupable_words__word__in=parts).distinct()
+            qs = qs.annotate(num=models.Count('dupable_words__word'))
         qs = qs.filter(num__gte=self.dupable_matches_required())
         qs = qs.order_by('-num', 'pk')
         # print("20150306 find_similar_instances %s" % qs.query)
@@ -260,49 +198,4 @@ class DupableChecker(Checker):
 
 DupableChecker.activate()
 
-
-class SimilarObjects(dd.VirtualTable):
-    """Shows the other objects which are similar to this one."""
-    # slave_grid_format = 'html'
-    slave_grid_format = 'summary'
-    master = dd.Model
-
-    # class Row:
-
-    #     def __init__(self, master, other):
-    #         self.master = master
-    #         self.other = other
-
-    #     def summary_row(self, ar):
-    #         yield ar.obj2html(self.other)
-
-    #     def __unicode__(self):
-    #         return unicode(self.other)
-
-    @classmethod
-    def get_data_rows(self, ar):
-        mi = ar.master_instance
-        if mi is None:
-            return
-
-        for o in mi.find_similar_instances(4):
-            # yield self.Row(mi, o)
-            yield o
-
-    @dd.displayfield(_("Similar record"))
-    def similar_record(self, obj, ar):
-        # return ar.obj2html(obj.other)
-        return ar.obj2html(obj)
-
-    @classmethod
-    def get_slave_summary(self, obj, ar):
-        chunks = []
-        for other in ar.spawn(self, master_instance=obj):
-            chunks.append(ar.obj2html(other))
-        if len(chunks):
-            s = getattr(obj, obj.dupable_words_field)
-            words = ', '.join(obj.get_dupable_words(s))
-            chunks.append(_("Phonetic words: {0}").format(words))
-            return E.p(*join_elems(chunks))
-        return ''
 

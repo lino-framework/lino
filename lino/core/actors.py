@@ -8,7 +8,7 @@ See :doc:`/dev/actors`.
 
 
 """
-from six import string_types
+# from six import string_types
 from builtins import str
 from future.utils import with_metaclass
 
@@ -30,7 +30,7 @@ from lino.core.permissions import add_requirements, Permittable
 from lino.core.utils import resolve_model
 from lino.core.utils import error2str
 from lino.core.utils import qs2summary
-from lino.utils import curry, AttrDict
+from lino.utils import curry, AttrDict, is_string
 from lino.utils.xmlgen.html import E
 
 from .roles import SiteUser
@@ -735,7 +735,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
             raise ChangedAPI(
                 "{0} must convert `required` to `required_roles`".format(cls))
         master = getattr(cls, 'master', None)
-        if isinstance(master, string_types):
+        if is_string(master):
+        # if isinstance(master, string_types):
             cls.master = resolve_model(master)
 
         actions.install_layout(cls, 'detail_layout', layouts.DetailLayout)
@@ -843,10 +844,12 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
             if cls.detail_layout:
                 cls.validate_form = cls._bind_action(actions.ValidateForm())
 
-        if isinstance(cls.workflow_owner_field, string_types):
+        if is_string(cls.workflow_owner_field):
+        # if isinstance(cls.workflow_owner_field, string_types):
             cls.workflow_owner_field = cls.get_data_elem(
                 cls.workflow_owner_field)
-        if isinstance(cls.workflow_state_field, string_types):
+        if is_string(cls.workflow_state_field):
+        # if isinstance(cls.workflow_state_field, string_types):
             cls.workflow_state_field = cls.get_data_elem(
                 cls.workflow_state_field)
             
@@ -1098,7 +1101,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     def set_form_layout(self, attname, lcl, dtl=None, **kw):
         if dtl is not None:
             existing = getattr(self, attname)  # 20120914c
-            if isinstance(dtl, string_types):
+            if is_string(dtl):
+            # if isinstance(dtl, string_types):
                 if existing is None:
                     setattr(self, attname, lcl(dtl, self, **kw))
                 # if existing is None or isinstance(existing, string_types):
@@ -1117,10 +1121,14 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                         "set_detail() got two definitions for %r." % name)
                 kw[name] = dtl
             else:
-                assert isinstance(dtl, lcl)
+                if not isinstance(dtl, lcl):
+                    msg = "{} is neither a string nor a layout".format(
+                        type(dtl))
+                    raise Exception(msg)
                 assert dtl._datasource is None
                 # added for 20120914c but it wasn't the problem
-                if existing and not isinstance(existing, string_types):
+                # if existing and not isinstance(existing, string_types):
+                if existing and not is_string(existing):
                     if settings.SITE.strict_dependencies:
                         if not isinstance(dtl, existing.__class__):
                             raise Exception(
@@ -1409,7 +1417,8 @@ def resolve_action(spec, action=None):
     """
     givenspec = spec
 
-    if isinstance(spec, string_types):
+    # if isinstance(spec, string_types):
+    if is_string(spec):
         site = settings.SITE
         spec = site.actors.resolve(spec) or site.models.resolve(spec)
 
