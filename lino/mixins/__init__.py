@@ -358,8 +358,9 @@ class Referrable(model.Model):
         the primary key.
 
         """
-        if search_text.isdigit():
-            return models.Q(**{prefix+'ref__icontains': search_text})
+        #if search_text.isdigit():
+        if search_text.startswith('*'):
+            return models.Q(**{prefix+'ref__icontains': search_text[1:]})
         return super(Referrable, cls).quick_search_filter(search_text, prefix)
 
     # def __unicode__(self):
