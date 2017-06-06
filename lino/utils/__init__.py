@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2016 Luc Saffre
+# Copyright 2009-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """:mod:`lino.utils` (the top-level module) contains a few often-used
@@ -113,21 +113,10 @@ from decimal import Decimal
 
 # encapsulate where they come from:
 
-from atelier.utils import AttrDict, iif, ispure, assert_pure, confirm
+from atelier.utils import AttrDict, iif, ispure, assert_pure, confirm, isiterable, is_string, i2d, i2t
 from atelier import rstgen
-from atelier.utils import i2d
-from atelier.utils import i2t
 from lino.utils.cycler import Cycler
 from lino.utils.code import codefiles, codetime
-
-
-def isiterable(x):
-    "Returns `True` if the specified object is iterable."
-    try:
-        iter(x)
-    except TypeError:
-        return False
-    return True
 
 
 def join_words(*words):
