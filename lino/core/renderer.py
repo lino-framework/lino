@@ -120,6 +120,14 @@ class Renderer(object):
         # return str(actor)+"/"+str(pk)
         return "Detail"  # many doctests depend on this
 
+        
+    def render_action_response(self, ar):
+        """In a plain HTML UI this will return a full HTML index page, in
+        ExtJS it will return JSON code.
+
+        """
+        raise NotImplementedError()
+        
 
 class HtmlRenderer(Renderer):
     row_classes_map = {}

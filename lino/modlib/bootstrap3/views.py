@@ -243,26 +243,66 @@ class Element(View):
         context.update(ar=ar)
         return http_response(ar, ar.actor.detail_html_template, context)
 
+class Authenticate(View):
+    """
+    Render the main page.
+    """
+    def get(self, request, *args, **kw):
+        action_name = request.GET.get(constants.URL_PARAM_ACTION_NAME)
+        if action_name == 'logout':
+            username = request.session.pop('username', None)
+            # request.session.pop('password', None)
+            #~ username = request.session['username']
+            #~ del request.session['password']
 
+            ar = BaseRequest(request)
+            ar.success("User %r logged out." % username)
+            return settings.SITE.kernel.default_renderer.render_action_response(ar)
+        raise http.Http404()
+
+    def post(self, request, *args, **kw):
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        ar = BaseRequest(request)
+        mw = auth.get_auth_middleware()
+        msg = mw.authenticate(username, password, request)
+        if msg:
+            request.session.pop('username', None)
+            ar.error(msg)
+        else:
+            request.session['username'] = username
+            # request.session['password'] = password
+            ar.success(("Now logged in as %r" % username))
+            # print "20150428 Now logged in as %r (%s)" % (username, user)
+        return settings.SITE.kernel.default_renderer.render_action_response(ar)
+
+        
 class Index(View):
     """
     Render the main page.
     """
     def get(self, request, *args, **kw):
         ui = dd.plugins.bootstrap3
+        # print("20170607", request.user)
         assert ui.renderer is not None
-        main = settings.SITE.get_main_html(request, extjs=ui)
-        main = ui.renderer.html_text(main)
-        context = dict(
-            title=settings.SITE.title,
-            main=main,
-        )
-        if settings.SITE.user_model is None:
-            user = auth.AnonymousUser.instance()
-        else:
-            user = request.subst_user or request.user
         ar = BaseRequest(
-            user=user, request=request,
+            # user=user,
+            request=request,
             renderer=ui.renderer)
-        # context.update(ar=ar)
-        return http_response(ar, 'bootstrap3/index.html', context)
+        return index_response(ar)
+
+def index_response(ar):
+    ui = dd.plugins.bootstrap3
+
+    main = settings.SITE.get_main_html(ar.request, extjs=ui)
+    main = ui.renderer.html_text(main)
+    context = dict(
+        title=settings.SITE.title,
+        main=main,
+    )
+    # if settings.SITE.user_model is None:
+    #     user = auth.AnonymousUser.instance()
+    # else:
+    #     user = request.subst_user or request.user
+    # context.update(ar=ar)
+    return http_response(ar, 'bootstrap3/index.html', context)

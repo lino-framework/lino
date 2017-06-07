@@ -9,12 +9,16 @@
   <div class="container-fluid">
     {% block header %}
     <div class="container-fluid lino-bs-header">
-    {% if False and site.user_model -%}
+      {% if site.user_model and not site.default_user -%}
+      {% if not ar.user.authenticated -%}
         <form class="form-inline" method="POST" action="{{ar.renderer.plugin.build_plain_url('auth')}}">
-        <input type="username" class="input-small" placeholder="Username">
-        <input type="password" class="input-small" placeholder="Password">
+        <input name="username" type="username" class="input-small" placeholder="Username">
+        <input name="password" type"password" class="input-small" placeholder="Password">
         <button type="submit" class="btn">Sign in</button>
         &mdash;
+        {% else -%}
+        <a href="{{ar.renderer.plugin.build_plain_url('auth')}}?an=logout">Log out</a>
+    {% endif -%}
     {% endif -%}
 
     {% if ar -%}
@@ -45,7 +49,7 @@
     {% endif -%}
 
 
-    {% if False and site.user_model -%}
+    {% if site.user_model -%}
       </form>
     {% endif -%}
 
