@@ -195,7 +195,19 @@ class DupableChecker(Checker):
         msg = obj.update_dupable_words(fix)
         if msg:
             yield (True, msg)
+            
 
 DupableChecker.activate()
 
+class SimilarObjectsChecker(Checker):
+    model = Dupable
+    verbose_name = _("Check for similar objects")
+    
+    def get_plausibility_problems(self, obj, fix=False):
+        lst = list(obj.find_similar_instances(1))
+        if len(lst):
+            msg = _("Similar clients: {clients}").format(
+                clients=', '.join(map(str, lst)))
+            yield (False, msg)
 
+SimilarObjectsChecker.activate()    

@@ -916,13 +916,6 @@ class Kernel(object):
 
         h.store = Store(h)
 
-    def render_action_response(self, ar):
-        """Builds a JSON response from response information stored in given
-        ActionRequest.
-
-        """
-        return views.json_response(ar.response, ar.content_type)
-
     def row_action_button(self, *args, **kw):
         """
         See :meth:`ExtRenderer.row_action_button`

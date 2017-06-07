@@ -696,9 +696,10 @@ class Model(models.Model):
         #     model, search_text, prefix)
         q = models.Q()
 
-        if search_text.isdigit() and not search_text.startswith('0'):
+        # if search_text.isdigit() and not search_text.startswith('0'):
+        if search_text.startswith("#") and search_text[1:].isdigit():
             for fn in model.quick_search_fields_digit:
-                kw = {prefix + fn: int(search_text)}
+                kw = {prefix + fn: int(search_text[1:])}
                 q = q | models.Q(**kw)
         else:
             for fn in model.quick_search_fields:

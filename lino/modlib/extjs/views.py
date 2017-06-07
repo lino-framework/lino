@@ -87,7 +87,7 @@ def delete_element(ar, elem):
     msg = ar.actor.disable_delete(elem, ar)
     if msg is not None:
         ar.error(None, msg, alert=True)
-        return settings.SITE.kernel.render_action_response(ar)
+        return settings.SITE.kernel.default_renderer.render_action_response(ar)
 
     #~ dblogger.log_deleted(ar.request,elem)
 
@@ -103,7 +103,7 @@ def delete_element(ar, elem):
                 ) % dict(record=dd.obj2unicode(elem), error=e)
         #~ msg = "Failed to delete %s." % element_name(elem)
         ar.error(None, msg)
-        return settings.SITE.kernel.render_action_response(ar)
+        return settings.SITE.kernel.default_renderer.render_action_response(ar)
         #~ raise Http404(msg)
 
     return HttpResponseDeleted()
@@ -139,7 +139,7 @@ class MainHtml(View):
             request, extjs=settings.SITE.plugins.extjs)
         html = dd.plugins.extjs.renderer.html_text(html)
         ar.success(html=html)
-        return ui.render_action_response(ar)
+        return ui.default_renderer.render_action_response(ar)
 
 
 class Authenticate(View):
@@ -159,7 +159,7 @@ class Authenticate(View):
 
             ar = BaseRequest(request)
             ar.success("User %r logged out." % username)
-            return settings.SITE.kernel.render_action_response(ar)
+            return settings.SITE.kernel.default_renderer.render_action_response(ar)
         raise http.Http404()
 
     def post(self, request, *args, **kw):
@@ -176,7 +176,7 @@ class Authenticate(View):
             # request.session['password'] = password
             ar.success(("Now logged in as %r" % username))
             # print "20150428 Now logged in as %r (%s)" % (username, user)
-        return settings.SITE.kernel.render_action_response(ar)
+        return settings.SITE.kernel.default_renderer.render_action_response(ar)
 
 
 class RunJasmine(View):

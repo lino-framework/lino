@@ -41,6 +41,7 @@ from lino.core.actions import (ShowEmptyTable, ShowDetail,
                                SubmitInsert)
 from lino.core import dbtables
 from lino.core import tables
+from lino.core.views import json_response
 
 from lino.utils import AttrDict
 from lino.core import choicelists
@@ -159,6 +160,13 @@ class ExtRenderer(JsRenderer):
             return dict(text=prepare_label(v), href=url)
         return v
 
+    def render_action_response(self, ar):
+        """Builds a JSON response from response information stored in given
+        ActionRequest.
+
+        """
+        return json_response(ar.response, ar.content_type)
+    
     def get_action_params(self, ar, ba, obj, **kw):
         if ba.action.parameters:
             fv = ba.action.params_layout.params_store.pv2list(

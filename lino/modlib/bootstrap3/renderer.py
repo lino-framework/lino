@@ -10,6 +10,7 @@ from lino.core import constants as ext_requests
 from lino.core.renderer import HtmlRenderer
 from lino.core.renderer import add_user_language
 
+from .views import index_response
 
 class Renderer(HtmlRenderer):
 
@@ -72,7 +73,10 @@ class Renderer(HtmlRenderer):
         label = label or ba.action.label
         return label
 
-    def action_call(self, request, bound_action, status):
-        ar = bound_action.request()
-        return self.get_request_url(ar)
+    def action_call(self, ar, bound_action, status):
+        sar = bound_action.request_from(ar)
+        return self.get_request_url(sar)
+
+    def render_action_response(self, ar):
+        return index_response(ar)
 
