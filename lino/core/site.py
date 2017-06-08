@@ -489,7 +489,7 @@ class Site(object):
     """
 
     user_model = None
-    """If :mod:`lino.modlib.users` is installed, this holds a reference to
+    """If :mod:`lino.modlib.auth` is installed, this holds a reference to
     the model class which represents a user of the system. Default
     value is `None`, meaning that this application has no user
     management.  See also :meth:`set_user_model`
@@ -538,12 +538,12 @@ class Site(object):
     user roles defined in :attr:`Permittable.required_roles
     <lino.core.permissions.Permittable.required_roles>` and
     :attr:`UserType.role
-    <lino.modlib.users.choicelists.UserType.role>`.
+    <lino.modlib.auth.choicelists.UserType.role>`.
 
     If set, Lino will import the named module during site startup. It
     is expected to define application-specific user roles (if
     necessary) and to fill the :class:`UserTypes
-    <lino.modlib.users.choicelists.UserTypes>` choicelist.
+    <lino.modlib.auth.choicelists.UserTypes>` choicelist.
 
     For example::
 
@@ -774,7 +774,7 @@ class Site(object):
     this to a nonempty value will disable authentication on this site.
     The special value `'anonymous'` will cause anonymous requests
     (whose `user` attribute is the :class:`AnonymousUser
-    <lino.modlib.users.utils.AnonymousUser>` singleton).
+    <lino.modlib.auth.utils.AnonymousUser>` singleton).
 
     See also :meth:`get_auth_method`.
 
@@ -1872,7 +1872,7 @@ this field.
             ])
             
 
-        self.define_settings(AUTH_USER_MODEL=self.user_model)
+        # self.define_settings(AUTH_USER_MODEL=self.user_model)
         
 
         def collect_settings_subdirs(lst, name, max_count=None):
@@ -2568,7 +2568,7 @@ this field.
         self.language_dict = dict()  # maps simple_code -> LanguageInfo
 
         self.LANGUAGE_CHOICES = []
-        self.LANGUAGE_DICT = dict()  # used in lino.modlib.users
+        self.LANGUAGE_DICT = dict()  # used in lino.modlib.auth
         must_set_language_code = False
 
         #~ self.AVAILABLE_LANGUAGES = (to_locale(self.DEFAULT_LANGUAGE),)
@@ -3198,7 +3198,7 @@ site. :manage:`diag` is a command-line shortcut to this.
 
     def get_quicklinks(self, user):
         from lino.core import menus
-        m = menus.Toolbar(user.profile, 'quicklinks')
+        m = menus.Toolbar(user.user_type, 'quicklinks')
         self.setup_quicklinks(user, m)
         return m
 
@@ -3210,19 +3210,19 @@ site. :manage:`diag` is a command-line shortcut to this.
         """
         self.on_each_app('setup_quicklinks', user, m)
 
-    def get_site_menu(self, ui, profile):
+    def get_site_menu(self, ui, user_type):
         """
         Return this site's main menu for the given UserType.
         Must be a :class:`lino.core.menus.Toolbar` instance.
         Applications usually should not need to override this.
         """
         from lino.core import menus
-        main = menus.Toolbar(profile, 'main')
-        self.setup_menu(profile, main)
+        main = menus.Toolbar(user_type, 'main')
+        self.setup_menu(user_type, main)
         main.compress()
         return main
 
-    def setup_menu(self, profile, main):
+    def setup_menu(self, user_type, main):
         """Set up the application's menu structure.
 
         The default implementation uses a system of *predefined
@@ -3260,7 +3260,7 @@ Please convert to Plugin method".format(mod, methname)
             for p in self.installed_plugins:
                 meth = getattr(p, methname, None)
                 if meth is not None:
-                    meth(self, profile, menu)
+                    meth(self, user_type, menu)
 
     def get_middleware_classes(self):
         """Yields the strings to be stored in
@@ -3277,19 +3277,23 @@ Please convert to Plugin method".format(mod, methname)
         """
 
         yield 'django.middleware.common.CommonMiddleware'
-        #~ yield 'django.contrib.sessions.middleware.SessionMiddleware'
         if self.languages and len(self.languages) > 1:
             yield 'django.middleware.locale.LocaleMiddleware'
-        #~ yield 'django.contrib.auth.middleware.AuthenticationMiddleware'
         #~ if self.user_model:
         #~ if self.user_model is None:
             #~ yield 'lino.core.auth.NoUserMiddleware'
 
         if self.get_auth_method():
-            yield 'django.contrib.auth.AuthenticationMiddleware'
+            yield 'django.contrib.sessions.middleware.SessionMiddleware'
+            yield 'django.contrib.auth.middleware.AuthenticationMiddleware'
+            yield 'lino.modlib.auth.middleware.Middleware'
+            
             if self.get_auth_method() == 'remote':
                 yield 'django.contrib.auth.RemoteUserMiddleware'
-            
+            if self.use_ipdict:
+                if False:
+                    yield 'lino.modlib.ipdict.middleware.Middleware'
+                    
         if False:
             
           if self.auth_middleware:
@@ -3336,7 +3340,7 @@ Please convert to Plugin method".format(mod, methname)
             yield 'lino.utils.sqllog.SQLLogToConsoleMiddleware'
             #~ yield 'lino.utils.sqllog.SQLLogMiddleware'
 
-    # def get_main_action(self, profile):
+    # def get_main_action(self, user_type):
     #     """No longer used.
     #     Return the action to show as top-level "index.html".
     #     The default implementation returns `None`, which means

@@ -17,7 +17,7 @@ from django.utils.encoding import force_text
 
 from lino.core.layouts import BaseLayout
 from lino.modlib.extjs.elems import Container, Wrapper, FieldElement
-from lino.modlib.users.choicelists import UserTypes
+from lino.modlib.auth.choicelists import UserTypes
 from lino.core import actors
 from lino.core import actions
 from lino.core.utils import get_models

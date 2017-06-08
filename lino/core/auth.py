@@ -26,7 +26,7 @@ from django import http
 from django.utils.translation import ugettext_lazy as _
 
 from lino.core import constants
-from lino.modlib.users.utils import AnonymousUser
+from lino.modlib.auth.utils import AnonymousUser
 
 class NOT_NEEDED(object):
     pass
@@ -146,7 +146,7 @@ class AuthMiddleWareBase(object):
             # return AnonymousUser.instance()
         
 
-        if user.profile is None:
+        if user.user_type is None:
             return _(
                 "Could not authenticate {} : user is inactive").format(
                     username)
@@ -171,7 +171,7 @@ class DefaultUserMiddleware(AuthMiddleWareBase):
     def get_user_from_request(self, request):
         user = self.lookup_user_by_name(settings.SITE.default_user)
 
-        # print 20150701, user.profile.role
+        # print 20150701, user.user_type.role
 
         if user is None:
             # print("20130514 Unknown username %s from request %s" % (

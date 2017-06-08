@@ -7,7 +7,6 @@ The ``lino.core`` package
 
     actions
     actors
-    auth
     boundaction
     choicelists
     constants

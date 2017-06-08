@@ -1,7 +1,7 @@
 # Copyright 2015-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Defines a default set of user profiles "Anonymous", "User" and
+"""Defines a default set of user user_types "Anonymous", "User" and
 "Administrator".
 
 This can be used directly as :attr:`user_types_module

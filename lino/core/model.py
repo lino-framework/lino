@@ -469,7 +469,7 @@ class Model(models.Model):
         specified keys must not yet exist on the model.
 
         Used e.g. in :mod:`lino_xl.lib.cal` to add the `UpdateReminders`
-        action to :class: `lino.modlib.users.models.User`.
+        action to :class: `lino.modlib.auth.models.User`.
 
         Or in :mod:`lino_xl.lib.invoicing.models` for defining a
         custom chooser.
@@ -931,7 +931,7 @@ class Model(models.Model):
                 a = self.__class__.get_default_table().detail_action
         if a is None or ar is None:
             return a
-        if a.get_view_permission(ar.get_user().profile):
+        if a.get_view_permission(ar.get_user().user_type):
             return a
 
     def is_attestable(self):
@@ -1044,7 +1044,7 @@ action on individual instances.
 
         See also :meth:`get_simple_parameters`.
 
-        Usage example: :class:`lino.modlib.users.mixins.UserAuthored`.
+        Usage example: :class:`lino.modlib.auth.mixins.UserAuthored`.
 
         """
         return fields

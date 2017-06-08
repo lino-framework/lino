@@ -18,5 +18,5 @@ from lino.api import ad
 class Plugin(ad.Plugin):
     "See :doc:`/dev/plugins`."
 
-    def setup_site_menu(config, site, profile, m):
+    def setup_site_menu(config, site, user_type, m):
         m.add_action(site.modules.ipdict.Connections)

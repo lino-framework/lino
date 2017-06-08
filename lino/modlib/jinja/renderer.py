@@ -25,7 +25,7 @@ from lino.utils.xmlgen import html as xghtml
 from lino.utils.xmlgen.html import E
 from lino.utils.jinja import Counter
 from lino.utils import SumCollector
-from lino.core.auth import AnonymousUser
+from lino.modlib.auth.utils import AnonymousUser
 
 from lino.core.renderer import MailRenderer
 
@@ -75,7 +75,8 @@ class JinjaRenderer(MailRenderer):
 
         def as_table(action_spec):
             a = settings.SITE.modules.resolve(action_spec)
-            ar = a.request(user=AnonymousUser.instance())
+            ar = a.request(
+                user=settings.SITE.user_model.get_anonymous_user())
             return self.as_table(ar)
 
         def as_table2(ar):
@@ -92,7 +93,8 @@ class JinjaRenderer(MailRenderer):
 
         def as_ul(action_spec):
             a = settings.SITE.actors.resolve(action_spec)
-            ar = a.request(user=AnonymousUser.instance())
+            ar = a.request(
+                user=settings.SITE.user_model.get_anonymous_user())
             # 20150810
             ar.renderer = self
             # ar.renderer = settings.SITE.plugins.bootstrap3.renderer

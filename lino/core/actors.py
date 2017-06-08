@@ -460,7 +460,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     This option is `True` in
     :class:`lino.models.SiteConfigs`,
     :class:`lino_welfare.pcsw.models.Home`,
-    :class:`lino.modlib.users.desktop.MySettings`.
+    :class:`lino.modlib.auth.desktop.MySettings`.
 
     """
     _label = None
@@ -777,12 +777,12 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         return add_requirements(cls, *args)
 
     @classmethod
-    def get_view_permission(self, profile):
+    def get_view_permission(self, user_type):
         """Return True if this actor as a whole is visible for users with the
-        given profile.
+        given user_type.
 
         """
-        # return isinstance(profile, tuple(self.required_roles))
+        # return isinstance(user_type, tuple(self.required_roles))
         return True
 
     @classmethod
@@ -793,7 +793,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         """
         if not settings.SITE.user_types_module:
             return True
-        if ar.get_user().profile.readonly:
+        if ar.get_user().user_type.readonly:
             return False
         return True
 
@@ -805,7 +805,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         """
         if ba.action.readonly:
             return True
-        if ar.get_user().profile.readonly:
+        if ar.get_user().user_type.readonly:
             return False
         return cls.editable
 
@@ -978,14 +978,14 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         super().
 
         Used e.g. by :class:`lino_xl.lib.outbox.models.MyOutbox` or
-        :class:`lino.modlib.users.mixins.ByUser`.
+        :class:`lino.modlib.auth.mixins.ByUser`.
 
         Other usages are more hackerish:
 
         - :class:`lino_xl.lib.households.models.SiblingsByPerson`
         - :class:`lino_welfare.modlib.cal.models.EntriesByClient`
         - :class:`lino_welfare.pcsw.models.Home`,
-        - :class:`lino.modlib.users.models.MySettings`.
+        - :class:`lino.modlib.auth.models.MySettings`.
 
         """
         pass

@@ -1,5 +1,5 @@
 """modified copy of django.contrib.auth.forms used for
-:mod:`lino.modlib.users.views`.
+:mod:`lino.modlib.auth.views`.
 
 """
 from __future__ import unicode_literals

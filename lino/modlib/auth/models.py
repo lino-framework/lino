@@ -6,13 +6,14 @@
 Documentation is in :doc:`/specs/users` and :doc:`/dev/users`
 
 """
+
 from builtins import str
 from builtins import object
 
 from django.utils.encoding import python_2_unicode_compatible
 from django.db import models
 from django.conf import settings
-from django.contrib.auth.base_user import AbstractBaseUser
+from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 
 from lino.api import dd, rt, _
 from lino.utils.xmlgen.html import E
@@ -25,25 +26,32 @@ from lino.mixins import CreatedModified, Contactable
 from .choicelists import UserTypes
 from .mixins import UserAuthored, TimezoneHolder
 from .actions import ChangePassword, SendWelcomeMail
+from .utils import AnonymousUser
 
+class UserManager(BaseUserManager):
+    pass
 
 @python_2_unicode_compatible
 class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
     class Meta(object):
-        app_label = 'users'
+        app_label = 'auth'
         verbose_name = _('User')
         verbose_name_plural = _('Users')
         abstract = dd.is_abstract_model(__name__, 'User')
         ordering = ['last_name', 'first_name', 'username']
 
     USERNAME_FIELD = 'username'
+    _anon_user = None
+    objects = UserManager()
+
+    # anonymous_user_class = AnonymousUser
 
     preferred_foreignkey_width = 15
     hidden_columns = 'password remarks'
     authenticated = True
 
     username = NullCharField(_('Username'), max_length=30, unique=True)
-    profile = UserTypes.field(blank=True)
+    user_type = UserTypes.field(blank=True)
     initials = models.CharField(_('Initials'), max_length=10, blank=True)
     first_name = models.CharField(_('First name'), max_length=30, blank=True)
     last_name = models.CharField(_('Last name'), max_length=30, blank=True)
@@ -86,7 +94,7 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
         if not ba.action.readonly:
             user = ar.get_user()
             if user != self:
-                if not user.profile.has_required_roles([SiteAdmin]):
+                if not user.user_type.has_required_roles([SiteAdmin]):
                     if not self.is_editable_by_all():
                         return False
         return super(User, self).get_row_permission(ar, state, ba)
@@ -94,12 +102,12 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
 
     def disabled_fields(self, ar):
         """
-        Only System admins may change the `profile` of users.
+        Only System admins may change the `user_type` of users.
         See also :meth:`Users.get_row_permission`.
         """
         rv = super(User, self).disabled_fields(ar)
-        if not ar.get_user().profile.has_required_roles([SiteAdmin]):
-            rv.add('profile')
+        if not ar.get_user().user_type.has_required_roles([SiteAdmin]):
+            rv.add('user_type')
         return rv
 
     def full_clean(self, *args, **kw):
@@ -143,7 +151,7 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
         url = "javascript:Lino.show_login_window(null, {0})".format(p)
         return E.li(E.a(self.username, href=url), ' : ',
                     str(self), ', ',
-                    str(self.profile), ', ',
+                    str(self.user_type), ', ',
                     E.strong(settings.SITE.LANGUAGE_DICT.get(self.language)))
 
     @classmethod
@@ -169,6 +177,12 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
         """
         return userprefs.reg.get(self)
     
+    @classmethod
+    def get_anonymous_user(cls):
+        if cls._anon_user is None:
+            cls._anon_user = AnonymousUser()
+        return cls._anon_user
+    
     # @dd.action(label=_("Send e-mail"),
     #            show_in_bbar=True, show_in_workflow=False,
     #            button_text="✉")  # u"\u2709"
@@ -179,7 +193,7 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
 
 class Authority(UserAuthored):
     class Meta(object):
-        app_label = 'users'
+        app_label = 'auth'
         verbose_name = _("Authority")
         verbose_name_plural = _("Authorities")
 
@@ -189,8 +203,8 @@ class Authority(UserAuthored):
     @dd.chooser()
     def authorized_choices(cls, user):
         qs = settings.SITE.user_model.objects.exclude(
-            profile=None)
-            #~ profile=UserTypes.blank_item) 20120829
+            user_type=None)
+            #~ user_type=UserTypes.blank_item) 20120829
         if user is not None:
             qs = qs.exclude(id=user.id)
             #~ .exclude(level__gte=UserLevels.admin)
@@ -199,7 +213,7 @@ class Authority(UserAuthored):
 @dd.receiver(dd.pre_startup)
 def inject_partner_field(sender=None, **kwargs):
 
-    User = sender.models.users.User
+    User = sender.models.auth.User
 
     if dd.is_installed('contacts'):
         Partner = sender.models.contacts.Partner
@@ -213,4 +227,11 @@ def inject_partner_field(sender=None, **kwargs):
             return
     dd.inject_field(User, 'partner', dd.DummyField())
 
+    
+class Permission(dd.Model):
+    class Meta(object):
+        app_label = 'auth'
+        abstract = True
 
+# from django.contrib.auth.models import Permission
+# Permission._meta.app_label = 'auth'

@@ -126,7 +126,7 @@ Example of a class description::
             </desc_parameterlist>
         </desc_signature>
         <desc_content>
-            <paragraph>Bases: <reference internal="False" reftitle="(in Lino v1.7)" refuri="http://www.lino-framework.org/api/lino.modlib.users.mixins.html#lino.modlib.users.mixins.UserAuthored"><literal classes="xref py py-class">lino.modlib.users.mixins.UserAuthored</literal></reference>
+            <paragraph>Bases: <reference internal="False" reftitle="(in Lino v1.7)" refuri="http://www.lino-framework.org/api/lino.modlib.auth.mixins.html#lino.modlib.auth.mixins.UserAuthored"><literal classes="xref py py-class">lino.modlib.auth.mixins.UserAuthored</literal></reference>
             </paragraph>
             <paragraph>An <strong>invoicing plan</strong> is a rather temporary database object which represents the plan of a given user to have Lino generate a series of invoices.
             </paragraph>

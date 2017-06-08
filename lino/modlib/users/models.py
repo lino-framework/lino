@@ -43,7 +43,7 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
     authenticated = True
 
     username = NullCharField(_('Username'), max_length=30, unique=True)
-    profile = UserTypes.field(blank=True)
+    user_type = UserTypes.field(blank=True)
     initials = models.CharField(_('Initials'), max_length=10, blank=True)
     first_name = models.CharField(_('First name'), max_length=30, blank=True)
     last_name = models.CharField(_('Last name'), max_length=30, blank=True)
@@ -86,7 +86,7 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
         if not ba.action.readonly:
             user = ar.get_user()
             if user != self:
-                if not user.profile.has_required_roles([SiteAdmin]):
+                if not user.user_type.has_required_roles([SiteAdmin]):
                     if not self.is_editable_by_all():
                         return False
         return super(User, self).get_row_permission(ar, state, ba)
@@ -94,12 +94,12 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
 
     def disabled_fields(self, ar):
         """
-        Only System admins may change the `profile` of users.
+        Only System admins may change the `user_type` of users.
         See also :meth:`Users.get_row_permission`.
         """
         rv = super(User, self).disabled_fields(ar)
-        if not ar.get_user().profile.has_required_roles([SiteAdmin]):
-            rv.add('profile')
+        if not ar.get_user().user_type.has_required_roles([SiteAdmin]):
+            rv.add('user_type')
         return rv
 
     def full_clean(self, *args, **kw):
@@ -143,7 +143,7 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
         url = "javascript:Lino.show_login_window(null, {0})".format(p)
         return E.li(E.a(self.username, href=url), ' : ',
                     str(self), ', ',
-                    str(self.profile), ', ',
+                    str(self.user_type), ', ',
                     E.strong(settings.SITE.LANGUAGE_DICT.get(self.language)))
 
     @classmethod
@@ -189,8 +189,8 @@ class Authority(UserAuthored):
     @dd.chooser()
     def authorized_choices(cls, user):
         qs = settings.SITE.user_model.objects.exclude(
-            profile=None)
-            #~ profile=UserTypes.blank_item) 20120829
+            user_type=None)
+            #~ user_type=UserTypes.blank_item) 20120829
         if user is not None:
             qs = qs.exclude(id=user.id)
             #~ .exclude(level__gte=UserLevels.admin)
@@ -199,7 +199,7 @@ class Authority(UserAuthored):
 @dd.receiver(dd.pre_startup)
 def inject_partner_field(sender=None, **kwargs):
 
-    User = sender.models.users.User
+    User = sender.models.auth.User
 
     if dd.is_installed('contacts'):
         Partner = sender.models.contacts.Partner

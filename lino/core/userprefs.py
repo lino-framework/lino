@@ -37,7 +37,7 @@ def get_available_items(user):
             i = ActorItem(i)
         elif not isinstance(i, DashboardItem):
             raise Exception("Unsupported dashboard item %r" % i)
-        if i.get_view_permission(user.profile):
+        if i.get_view_permission(user.user_type):
             lst.append(i)
     return lst
 

@@ -564,15 +564,15 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
             self._datasource.__name__,
             field.name, **kw)
 
-    def to_rst(self, profile=None, name=None):
+    def to_rst(self, user_type=None, name=None):
         lh = self.get_layout_handle(settings.SITE.kernel.default_ui)
-        # if profile is None:
-        #     profile = UserTypes.admin
+        # if user_type is None:
+        #     user_type = UserTypes.admin
         if name is None:
             e = lh.main
         else:
             e = lh.main.find_by_name(name)
-        return e.to_rst(profile)
+        return e.to_rst(user_type)
 
 
 class FieldLayout(BaseLayout):

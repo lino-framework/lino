@@ -17,7 +17,7 @@ from __future__ import unicode_literals
 
 from django.conf.urls import url
 #from django.contrib.auth import views
-from lino.modlib.users import views
+from lino.modlib.auth import views
 
 template_name = {'template_name': 'rest_framework/login.html'}
 

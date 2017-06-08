@@ -168,8 +168,8 @@ lino.modlib.system.tests
 lino.modlib.tinymce
 lino.modlib.tinymce.fixtures
 lino.modlib.uploads
-lino.modlib.users
-lino.modlib.users.fixtures
+lino.modlib.auth
+lino.modlib.auth.fixtures
 lino.modlib.weasyprint
 lino.modlib.wkhtmltopdf
 lino.projects

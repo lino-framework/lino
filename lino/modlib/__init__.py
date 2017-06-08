@@ -1,4 +1,4 @@
-# Copyright 2008-2016 Luc Saffre
+# Copyright 2008-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """The standard model library included with Lino.
@@ -15,7 +15,7 @@ Lino applications.
     gfks
     system
     lino_startup
-    users
+    auth
 
 Utilities
 =========
@@ -44,7 +44,6 @@ Utilities
    :toctree:
 
     about
-    ipdict
     export_excel
     tinymce
     notify

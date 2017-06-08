@@ -17,7 +17,7 @@ class Site(Site):
         tb.add_action(self.modules.contacts.Persons.detail_action)
         tb.add_action(self.modules.contacts.Companies.detail_action)
 
-    def setup_menu(self, profile, main):
+    def setup_menu(self, user_type, main):
         from django.utils.translation import ugettext_lazy as _
         from django.db import models
 
@@ -28,16 +28,16 @@ class Site(Site):
                     meth(*args)
 
         m = main.add_menu("master", _("Master"))
-        doit('setup_main_menu', self, ui, profile, m)
+        doit('setup_main_menu', self, ui, user_type, m)
 
         m = main.add_menu("config", _("Configure"))
-        doit('setup_config_menu', self, ui, profile, m)
+        doit('setup_config_menu', self, ui, user_type, m)
 
         m = main.add_menu("explorer", _("Explorer"))
-        doit('setup_explorer_menu', self, ui, profile, m)
+        doit('setup_explorer_menu', self, ui, user_type, m)
 
         m = main.add_menu("site", _("Site"))
-        doit('setup_site_menu', self, ui, profile, m)
+        doit('setup_site_menu', self, ui, user_type, m)
 
 SITE = Site(globals())
 

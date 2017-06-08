@@ -1,7 +1,7 @@
 # Copyright 2011-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Defines the choicelists for :mod:`lino.modlib.users`.
+"""Defines the choicelists for :mod:`lino.modlib.auth`.
 
 """
 
@@ -22,7 +22,7 @@ class UserType(Choice):
     readonly = False
 
     # authenticated = True
-    # """Whether users with this profile should be considered authenticated."""
+    # """Whether users with this user_type should be considered authenticated."""
 
     def __init__(self, value, text, role_class,
                  name=None,  # authenticated=True,

@@ -190,8 +190,8 @@ def screenshot(obj, filename, rstname, username='robin'):
 def show_menu_path(spec, language=None):
 
     def doit():
-        # profile = ar.get_user().profile
-        # menu = settings.SITE.get_site_menu(settings.SITE.kernel, profile)
+        # user_type = ar.get_user().user_type
+        # menu = settings.SITE.get_site_menu(settings.SITE.kernel, user_type)
         # mi = menu.find_item(spec)
         mi = find_menu_item(spec)
         if mi is None:
@@ -319,7 +319,7 @@ def walk_menu_items(username=None, severe=False):
     if settings.SITE.user_types_module:
         ar = settings.SITE.login(username)
         with translation.override(ar.user.language):
-            doit(ar.user.profile)
+            doit(ar.user.user_type)
     else:
         doit(None)
         

@@ -16,7 +16,7 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 
 from lino.api import dd, rt
 from lino.mixins import CreatedModified, BabelNamed
-from lino.modlib.users.mixins import UserAuthored
+from lino.modlib.auth.mixins import UserAuthored
 # from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.notify.mixins import ChangeObservable
 from lino.utils.xmlgen.html import E
@@ -105,7 +105,7 @@ class Comment(CreatedModified, UserAuthored, Controllable,
     def get_request_queryset(cls, ar):
         # if commentable_model is None:
         #     return cls.objects.all()
-        # if ar.get_user().profile.has_required_roles([SiteUser]):
+        # if ar.get_user().user_type.has_required_roles([SiteUser]):
         if ar.get_user().authenticated:
             return cls.objects.all()
         return super(Comment, cls).get_request_queryset(ar)

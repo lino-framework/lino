@@ -17,11 +17,12 @@ from django.views.generic import View
 from django.core import exceptions
 from django.utils.translation import ugettext as _
 from django.utils.translation import get_language
+from django.contrib import auth
 
 
 from lino.api import dd
 from lino.core import constants
-from lino.core import auth
+# from lino.core import auth
 from lino.core.requests import BaseRequest
 from lino.core.tablerequest import TableRequest
 from lino.core.views import action_request
@@ -38,10 +39,10 @@ def http_response(ar, tplname, context):
     "Deserves a docstring"
     u = ar.get_user()
     lang = get_language()
-    k = (u.profile, lang)
+    k = (u.user_type, lang)
     menu = MENUS.get(k, None)
     if menu is None:
-        menu = settings.SITE.get_site_menu(None, u.profile)
+        menu = settings.SITE.get_site_menu(None, u.user_type)
         bs3 = settings.SITE.plugins.bootstrap3
         if False:  # 20150803 home button now in base.html
             assert bs3.renderer is not None
@@ -251,7 +252,8 @@ class Authenticate(View):
         action_name = request.GET.get(constants.URL_PARAM_ACTION_NAME)
         if action_name == 'logout':
             username = request.session.pop('username', None)
-            request.user = auth.AnonymousUser.instance()
+            auth.logout(request)
+            # request.user = settings.SITE.user_model.get_anonymous_user()
             # request.session.pop('password', None)
             #~ username = request.session['username']
             #~ del request.session['password']
@@ -264,18 +266,21 @@ class Authenticate(View):
     def post(self, request, *args, **kw):
         username = request.POST.get('username')
         password = request.POST.get('password')
+        user = auth.authenticate(
+            request, username=username, password=password)
+        auth.login(request, user)
         ar = BaseRequest(request)
-        mw = auth.get_auth_middleware()
-        msg = mw.authenticate(username, password, request)
-        if msg:
-            request.session.pop('username', None)
-            ar.error(msg)
-        else:
-            request.session['username'] = username
-            # request.session['password'] = password
-            ar.user = request....
-            ar.success(("Now logged in as %r" % username))
-            # print "20150428 Now logged in as %r (%s)" % (username, user)
+        # mw = auth.get_auth_middleware()
+        # msg = mw.authenticate(username, password, request)
+        # if msg:
+        #     request.session.pop('username', None)
+        #     ar.error(msg)
+        # else:
+        #     request.session['username'] = username
+        #     # request.session['password'] = password
+        #     # ar.user = request....
+        #     ar.success(("Now logged in as %r" % username))
+        #     # print "20150428 Now logged in as %r (%s)" % (username, user)
         return settings.SITE.kernel.default_renderer.render_action_response(ar)
 
         

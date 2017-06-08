@@ -13,6 +13,6 @@ from django.conf import settings
 
 
 def objects():
-    for u in settings.SITE.user_model.objects.exclude(profile=''):
+    for u in settings.SITE.user_model.objects.exclude(user_type=''):
         u.set_password('1234')
         yield u

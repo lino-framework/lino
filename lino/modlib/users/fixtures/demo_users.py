@@ -9,7 +9,7 @@ sites </demos>`.
 .. Lino currently knows demo users for the following languages:
   .. lino2rst::
   ses = rt.login()
-  ses.show(rt.modules.users.Users,
+  ses.show(rt.modules.auth.Users,
     column_names="username first_name last_name language")
 
 We are trying to sound realistic without actually hitting any real
@@ -25,13 +25,13 @@ logger = logging.getLogger(__name__)
 
 
 from django.conf import settings
-from lino.modlib.users.choicelists import UserTypes
+from lino.modlib.auth.choicelists import UserTypes
 
 
 def root_user(lang, **kw):
-    # ~ kw.update(profile='900') # UserTypes.admin)
+    # ~ kw.update(user_type='900') # UserTypes.admin)
     #~ print 20130219, UserTypes.items()
-    kw.update(profile=UserTypes.admin)
+    kw.update(user_type=UserTypes.admin)
     kw.update(email=settings.SITE.demo_email)  # 'root@example.com'
     lang = lang.django_code
     kw.update(language=lang)

@@ -35,7 +35,7 @@ Rando Roosi from Tallinn
 Rik Rozenbos from Antwerpen
 Robin Rood from London
 
-(Note: these are fictive person names from :mod:`lino.modlib.users.fixtures.demo`).
+(Note: these are fictive person names from :mod:`lino.modlib.auth.fixtures.demo`).
 
 
 """

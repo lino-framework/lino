@@ -46,7 +46,7 @@ E = xghtml.E
 from lino.utils import ucsv
 from lino.utils import isiterable
 from lino.utils import dblogger
-from lino.core import auth
+# from lino.core import auth
 
 from lino.core import actions
 
@@ -122,7 +122,7 @@ class AdminIndex(View):
         # if settings.SITE.user_model is not None:
         #     user = request.subst_user or request.user
         #     a = settings.SITE.get_main_action(user)
-        #     if a is not None and a.get_view_permission(user.profile):
+        #     if a is not None and a.get_view_permission(user.user_type):
         #         kw.update(on_ready=renderer.action_call(request, a, {}))
         return http.HttpResponse(renderer.html_page(request, **kw))
 
@@ -165,17 +165,19 @@ class Authenticate(View):
     def post(self, request, *args, **kw):
         username = request.POST.get('username')
         password = request.POST.get('password')
+        from django.contrib.auth import authenticate
+        authenticate(username, password, request)
         ar = BaseRequest(request)
-        mw = auth.get_auth_middleware()
-        msg = mw.authenticate(username, password, request)
-        if msg:
-            request.session.pop('username', None)
-            ar.error(msg)
-        else:
-            request.session['username'] = username
-            # request.session['password'] = password
-            ar.success(("Now logged in as %r" % username))
-            # print "20150428 Now logged in as %r (%s)" % (username, user)
+        # mw = auth.get_auth_middleware()
+        # msg = mw.authenticate(username, password, request)
+        # if msg:
+        #     request.session.pop('username', None)
+        #     ar.error(msg)
+        # else:
+        #     request.session['username'] = username
+        #     # request.session['password'] = password
+        #     ar.success(("Now logged in as %r" % username))
+        #     # print "20150428 Now logged in as %r (%s)" % (username, user)
         return settings.SITE.kernel.default_renderer.render_action_response(ar)
 
 
@@ -211,7 +213,7 @@ def choices_for_field(request, holder, field):
     whose `holder` is either a Model, an Actor or an Action.
 
     """
-    if not holder.get_view_permission(request.user.profile):
+    if not holder.get_view_permission(request.user.user_type):
         raise Exception(
             "{user} has no permission for {holder}".format(
                 user=request.user, holder=holder))
@@ -437,10 +439,10 @@ class ApiElement(View):
     def get(self, request, app_label=None, actor=None, pk=None):
         ui = settings.SITE.kernel
         rpt = requested_actor(app_label, actor)
-        # if not rpt.get_view_permission(request.user.profile):
+        # if not rpt.get_view_permission(request.user.user_type):
         #     raise PermissionDenied("{} has permission to view {}".format(
-        #         request.user.profile, rpt))
-        # print(rpt, request.user.profile)
+        #         request.user.user_type, rpt))
+        # print(rpt, request.user.user_type)
 
         action_name = request.GET.get(constants.URL_PARAM_ACTION_NAME,
                                       rpt.default_elem_action_name)

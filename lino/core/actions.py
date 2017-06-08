@@ -373,9 +373,9 @@ class Action(Parametrizable, Permittable):
         """
         return True
 
-    def get_view_permission(self, profile):
+    def get_view_permission(self, user_type):
         """
-        Return True if this action is visible for users of given profile.
+        Return True if this action is visible for users of given user_type.
 
         """
         return True
@@ -407,7 +407,7 @@ class Action(Parametrizable, Permittable):
         in a toolbar (:ticket:`1336`).
 
         Usage examples:
-        :class:`lino.modlib.users.actions.SendWelcomeMail`
+        :class:`lino.modlib.auth.actions.SendWelcomeMail`
 
         """
 
@@ -547,8 +547,8 @@ class ShowInsert(TableAction):
 
     def unused_get_action_permission(self, ar, obj, state):
         # see blog/2012/0726
-        # if settings.SITE.user_model and ar.get_user().profile.readonly:
-        if ar.get_user().profile.readonly:
+        # if settings.SITE.user_model and ar.get_user().user_type.readonly:
+        if ar.get_user().user_type.readonly:
             return False
         return super(ShowInsert, self).get_action_permission(ar, obj, state)
 

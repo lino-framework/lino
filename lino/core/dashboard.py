@@ -48,8 +48,8 @@ class ActorItem(DashboardItem):
         self.header_level = header_level
         super(ActorItem, self).__init__(str(actor))
         
-    def get_view_permission(self, profile):
-        return self.actor.default_action.get_view_permission(profile)
+    def get_view_permission(self, user_type):
+        return self.actor.default_action.get_view_permission(user_type)
 
     def render(self, ar):
         """Render this table to the dashboard.

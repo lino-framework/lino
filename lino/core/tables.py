@@ -475,7 +475,7 @@ method in order to sort the rows of the queryset.
         If you override :meth:`parse_req`, then keep in mind that it will
         be called *before* Lino checks the requirements.  For example the
         user may be AnonymousUser even if the requirements won't let it be
-        executed.  `ar.subst_user.profile` may be None, e.g. when called
+        executed.  `ar.subst_user.user_type` may be None, e.g. when called
         from `find_appointment` in :class:`welfare.pcsw.Clients`.
 
         """

@@ -77,7 +77,8 @@ class Plugin(ad.Plugin):
         context = ar.get_printable_context(**context)
         context.update(ar=ar)
         template = self.renderer.jinja_env.get_template(template_name)
-        # print("20170607b", ar.user)
+        u = ar.get_user()
+        print("20170607", u)
         return template.render(**context)
     
     def render_jinja(self, ar, tplname, context):

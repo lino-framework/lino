@@ -64,19 +64,19 @@
         <a href="#" 
            onclick="javascript:Lino.show_login_window()">{{_("log in")}}</a>
       {{_("using the <b>Log in</b> button in the upper right corner.")}}
-        {% if site.plugins.users.online_registration and not user.profile.readonly %}
+        {% if site.plugins.auth.online_registration and not user.user_type.readonly %}
         {{_("Or {} as a new user.").format(
           E.tostring(ar.window_action_button(
-            site.actors.users.Register.insert_action,
+            site.actors.auth.Register.insert_action,
             label=_("register"), icon_name=None)))}}
         {% endif %}
       </p>
         {% if site.is_demo_site %}
             <p>
             {{_("This demo site has %d users:") % 
-            site.actors.users.UsersOverview.request().get_total_count()}}
+            site.actors.auth.UsersOverview.request().get_total_count()}}
             </p>
-            {{as_ul('users.UsersOverview')}}
+            {{as_ul('auth.UsersOverview')}}
             <p>
             {{_("The password is the same for all of them: \"1234\".")}}
             </p>
