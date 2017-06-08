@@ -9,6 +9,8 @@ Lino's authentification middleware
 
 """
 
+raise Exception("No longer used after 20170708")
+
 from __future__ import unicode_literals
 import six
 from builtins import object

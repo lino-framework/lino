@@ -251,6 +251,7 @@ class Authenticate(View):
         action_name = request.GET.get(constants.URL_PARAM_ACTION_NAME)
         if action_name == 'logout':
             username = request.session.pop('username', None)
+            request.user = auth.AnonymousUser.instance()
             # request.session.pop('password', None)
             #~ username = request.session['username']
             #~ del request.session['password']
@@ -272,6 +273,7 @@ class Authenticate(View):
         else:
             request.session['username'] = username
             # request.session['password'] = password
+            ar.user = request....
             ar.success(("Now logged in as %r" % username))
             # print "20150428 Now logged in as %r (%s)" % (username, user)
         return settings.SITE.kernel.default_renderer.render_action_response(ar)

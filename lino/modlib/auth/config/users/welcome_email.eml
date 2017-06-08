@@ -1,0 +1,10 @@
+<body>
+<p>Dear {{obj.get_full_name()}},</p>
+
+<p>Welcome to the
+<a href="{{rt.settings.SITE.server_url}}">{{rt.settings.SITE.server_url}}</a> site.
+</p>
+
+Please click {{E.tostring(ar.instance_action_button(obj.verify))}} and enter your verificataion code: <b>{{obj.verification_code}}</b>.
+
+</body>

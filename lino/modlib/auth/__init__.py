@@ -18,7 +18,6 @@ Submodules:
     fixtures.demo2
 
 """
-raise Exception("No longer used after 20170708")
 
 from lino.api import ad, _
 

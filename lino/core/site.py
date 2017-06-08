@@ -1819,10 +1819,10 @@ this field.
         ]
 
         tcp = []
-        if self.user_model == 'auth.User':  # not tested
-            self.update_settings(LOGIN_URL='/accounts/login/')
-            self.update_settings(LOGIN_REDIRECT_URL="/")
-            tcp += ['django.contrib.auth.context_processors.auth']
+        # if self.user_model == 'auth.User':  # not tested
+        #     self.update_settings(LOGIN_URL='/accounts/login/')
+        #     self.update_settings(LOGIN_REDIRECT_URL="/")
+        #     tcp += ['django.contrib.auth.context_processors.auth']
 
         tcp += [
             'django.template.context_processors.debug',
@@ -1859,6 +1859,21 @@ this field.
 
         self.define_settings(
             MIDDLEWARE_CLASSES=tuple(self.get_middleware_classes()))
+
+
+        # if self.get_auth_method() == 'session':
+        #     self.define_settings(AUTHENTICATION_BACKENDS=[
+        #         'django.contrib.auth.backends.RemoteUserBackend'
+        #     ])
+            
+        if self.get_auth_method() == 'remote':
+            self.define_settings(AUTHENTICATION_BACKENDS=[
+                'django.contrib.auth.backends.RemoteUserBackend'
+            ])
+            
+
+        self.define_settings(AUTH_USER_MODEL=self.user_model)
+        
 
         def collect_settings_subdirs(lst, name, max_count=None):
             def add(p):
@@ -1961,7 +1976,7 @@ this field.
         """This can be called during the :meth:`on_init
         <lino.core.plugin.Plugin.on_init>` of plugins which provide
         user management (the only plugin which does this is currently
-        :mod:`lino.modlib.users`).
+        :mod:`lino.modlib.auth`).
 
         """
         # if self.user_model is not None:
@@ -1995,8 +2010,8 @@ this field.
         if self.default_user is not None:
             return None
         if self.remote_user_header is None:
-            return 'session'
-        return 'remote'
+            return 'session'  # model backend
+        return 'remote'  # remote user backend
 
     def get_apps_modifiers(self, **kw):
         """Override or hide individual plugins of an existing application.
@@ -3270,9 +3285,16 @@ Please convert to Plugin method".format(mod, methname)
         #~ if self.user_model is None:
             #~ yield 'lino.core.auth.NoUserMiddleware'
 
-        if self.auth_middleware:
+        if self.get_auth_method():
+            yield 'django.contrib.auth.AuthenticationMiddleware'
+            if self.get_auth_method() == 'remote':
+                yield 'django.contrib.auth.RemoteUserMiddleware'
+            
+        if False:
+            
+          if self.auth_middleware:
             yield self.auth_middleware
-        else:
+          else:
             if self.user_model is None:
                 yield 'lino.core.auth.NoUserMiddleware'
             elif self.default_user:

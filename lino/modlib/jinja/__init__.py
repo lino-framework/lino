@@ -66,7 +66,6 @@ class Plugin(ad.Plugin):
         """
         from lino.core import requests
         context.update(request=request)
-        print(20170607, request.user)
         ar = requests.BaseRequest(
             # renderer=settings.SITE.plugins.jinja.renderer,
             renderer=self.site.kernel.default_renderer,
@@ -78,7 +77,7 @@ class Plugin(ad.Plugin):
         context = ar.get_printable_context(**context)
         context.update(ar=ar)
         template = self.renderer.jinja_env.get_template(template_name)
-        print("20170607b", ar.user)
+        # print("20170607b", ar.user)
         return template.render(**context)
     
     def render_jinja(self, ar, tplname, context):
