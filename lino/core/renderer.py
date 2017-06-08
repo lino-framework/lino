@@ -35,6 +35,7 @@ from lino.core.menus import Menu, MenuItem
 # from lino.utils.xmlgen.html import html2rst
 from lino.modlib.extjs.elems import create_layout_panel, create_layout_element
 
+from .views import json_response
 from .plugin import Plugin
 # from . import elems
 
@@ -737,3 +738,12 @@ class JsRenderer(HtmlRenderer):
     def obj2url(self, ar, obj):
         return self.js2url(self.instance_handler(ar, obj, None))
 
+
+    def render_action_response(self, ar):
+        """Builds a JSON response from response information stored in given
+        ActionRequest.
+
+        """
+        return json_response(ar.response, ar.content_type)
+    
+    
