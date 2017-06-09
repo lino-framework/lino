@@ -513,10 +513,10 @@ class ExtRenderer(JsRenderer):
 
                     login_menu_items.insert(0, act_as)
 
+                if site.remote_user_header is None:
+                    login_menu_items.append(
+                        dict(text=_("Log out"), handler=js_code('Lino.logout')))
                 # the following was never used
-                # if site.remote_user_header is None:
-                #     login_menu_items.append(
-                #         dict(text=_("Log out"), handler=js_code('Lino.logout')))
                 #     if auth.get_auth_middleware().can_change_password(request, request.user):
                 #         login_menu_items.append(
                 #             dict(text=_("Change password"), handler=js_code('Lino.change_password')))
@@ -774,7 +774,7 @@ class ExtRenderer(JsRenderer):
                 for ln in self.js_render_ActionFormPanelSubclass(lh):
                     f.write(ln + '\n')
 
-        assert user_type == jsgen.get_user_user_type()
+        assert user_type == jsgen.get_user_profile()
 
         for fl in self.form_panels:
             lh = fl.get_layout_handle(self.plugin)

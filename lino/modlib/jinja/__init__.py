@@ -19,7 +19,8 @@ class Plugin(ad.Plugin):
     "See :doc:`/dev/plugins`."
     verbose_name = _("Jinja templates")
 
-    def on_ui_init(self, kernel):
+    def post_site_startup(self, site):
+    # def on_ui_init(self, kernel):
         """
         This is being called from
         :meth:`lino.core.kernel.Kernel.kernel_startup`.
@@ -75,10 +76,11 @@ class Plugin(ad.Plugin):
         #     self.site.kernel.default_renderer)
 
         context = ar.get_printable_context(**context)
-        context.update(ar=ar)
+        context.update(ar=ar)  # probably useless because done by
+                               # get_printable_context()
         template = self.renderer.jinja_env.get_template(template_name)
-        u = ar.get_user()
-        print("20170607", u)
+        # u = ar.get_user()
+        # print("20170607", u)
         return template.render(**context)
     
     def render_jinja(self, ar, tplname, context):

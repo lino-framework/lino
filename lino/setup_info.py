@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2016 Luc Saffre
+# Copyright 2009-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 # Note that this module may not have a docstring because any
@@ -18,7 +18,7 @@ PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3
 
 install_requires = [
-    'django<1.10',
+    'django<=1.11',
     'Sphinx',
     'atelier', 'unipath', 'python_dateutil',
     'Babel', 'lxml',
@@ -135,6 +135,7 @@ lino.modlib.comments.fixtures
 lino.modlib.dashboard
 lino.modlib.database_ready
 lino.modlib.davlink
+lino.modlib.dupable
 lino.modlib.export_excel
 lino.modlib.extjs
 lino.modlib.gfks

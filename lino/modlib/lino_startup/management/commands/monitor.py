@@ -77,11 +77,11 @@ def compare(old, new):
 class Command(BaseCommand):
     help = __doc__
 
-    option_list = BaseCommand.option_list + (
-        make_option('--nowrite', action='store_false',
-                    dest='write', default=True,
-                    help='Do not write status to pickle.'),
-    )
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--nowrite', action='store_false',
+            dest='write', default=True,
+            help='Do not write status to pickle.')
 
     def handle(self, *args, **options):
         if args:

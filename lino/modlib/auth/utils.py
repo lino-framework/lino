@@ -75,6 +75,9 @@ class AnonymousUser(object):
         # object has no attribute 'get_typed_instance'
         return self
     
+    def get_username(self):
+        return self.username
+    
     def get_preferences(self):
         """Return the preferences of this user. The returned object is a
         :class:`lino.core.userprefs.UserPrefs` object.

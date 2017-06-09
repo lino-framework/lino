@@ -34,9 +34,9 @@ class Plugin(ad.Plugin):
 
     needs_plugins = ['rest_framework']
 
-    def on_init(self):
-        super(Plugin, self).on_init()
-        self.site.set_user_model('auth.User')
+    # def on_init(self):
+    #     super(Plugin, self).on_init()
+    #     self.site.set_user_model('auth.User')
 
     def on_init(self):
         # if self.site.use_websockets:

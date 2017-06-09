@@ -1601,10 +1601,10 @@ class Site(object):
         # The return value of get_auth_method() may depend on a
         # plugin, so if needed we must add the django.contrib.sessions
         # afterwards.
-        if self.get_auth_method() == 'session':
+        # if self.get_auth_method() == 'session':
+        if self.user_model:
             k = str('django.contrib.sessions')
             if not k in self.plugins:
-                # actual_apps.insert(0, str('django.contrib.sessions'))
                 install_plugin(k)
 
         # install_plugin(str('lino.modlib.database_ready'))
@@ -3279,20 +3279,17 @@ Please convert to Plugin method".format(mod, methname)
         yield 'django.middleware.common.CommonMiddleware'
         if self.languages and len(self.languages) > 1:
             yield 'django.middleware.locale.LocaleMiddleware'
-        #~ if self.user_model:
-        #~ if self.user_model is None:
-            #~ yield 'lino.core.auth.NoUserMiddleware'
-
-        if self.get_auth_method():
+            
+        if self.user_model:
             yield 'django.contrib.sessions.middleware.SessionMiddleware'
             yield 'django.contrib.auth.middleware.AuthenticationMiddleware'
             yield 'lino.modlib.auth.middleware.Middleware'
             
-            if self.get_auth_method() == 'remote':
-                yield 'django.contrib.auth.RemoteUserMiddleware'
-            if self.use_ipdict:
-                if False:
-                    yield 'lino.modlib.ipdict.middleware.Middleware'
+        if self.get_auth_method() == 'remote':
+            yield 'django.contrib.auth.middleware.RemoteUserMiddleware'
+        if self.use_ipdict:
+            if False:  # not yet converted after 20170608
+                yield 'lino.modlib.ipdict.middleware.Middleware'
                     
         if False:
             

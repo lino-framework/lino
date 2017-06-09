@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2016 Luc Saffre
+# Copyright 2009-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -37,6 +37,7 @@ from django.views.generic import View
 import json
 from django.utils.translation import ugettext as _
 from django.utils.encoding import force_text
+from django.contrib import auth
 
 from lino.api import dd
 
@@ -46,7 +47,6 @@ E = xghtml.E
 from lino.utils import ucsv
 from lino.utils import isiterable
 from lino.utils import dblogger
-# from lino.core import auth
 
 from lino.core import actions
 
@@ -153,6 +153,7 @@ class Authenticate(View):
         action_name = request.GET.get(constants.URL_PARAM_ACTION_NAME)
         if action_name == 'logout':
             username = request.session.pop('username', None)
+            auth.logout(request)
             # request.session.pop('password', None)
             #~ username = request.session['username']
             #~ del request.session['password']
@@ -165,8 +166,12 @@ class Authenticate(View):
     def post(self, request, *args, **kw):
         username = request.POST.get('username')
         password = request.POST.get('password')
-        from django.contrib.auth import authenticate
-        authenticate(username, password, request)
+        user = auth.authenticate(
+            request, username=username, password=password)
+        auth.login(request, user)
+        
+        # from django.contrib.auth import authenticate
+        # authenticate(username, password, request)
         ar = BaseRequest(request)
         # mw = auth.get_auth_middleware()
         # msg = mw.authenticate(username, password, request)
@@ -176,7 +181,7 @@ class Authenticate(View):
         # else:
         #     request.session['username'] = username
         #     # request.session['password'] = password
-        #     ar.success(("Now logged in as %r" % username))
+        ar.success(("Now logged in as %r" % username))
         #     # print "20150428 Now logged in as %r (%s)" % (username, user)
         return settings.SITE.kernel.default_renderer.render_action_response(ar)
 

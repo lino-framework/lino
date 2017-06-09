@@ -57,7 +57,7 @@ this model.  Applications can specify a string which will be
 resolved at startup to the model’s class object."""),
     'lino.mixins.dupable.DupableChecker' : _("""Checks for the following repairable problem:"""),
     'lino.mixins.dupable.DupableChecker.model' : _("""alias of Dupable"""),
-    'lino.mixins.dupable.SimilarObjects' : _("""Shows the other objects who are similar to this one."""),
+    'lino.mixins.dupable.SimilarObjects' : _("""Shows the other objects which are similar to this one."""),
     'lino.mixins.dupable.SimilarObjects.master' : _("""alias of Model"""),
     'lino.mixins.duplicable.Duplicate' : _("""Duplicate the selected row."""),
     'lino.mixins.duplicable.Duplicable' : _("""Adds a row action “Duplicate” which duplicates (creates a clone
@@ -118,9 +118,25 @@ about length of MIME type field."""),
 Needs more work to become seriously useful…"""),
     'lino.modlib.about.models.About' : _("""Display information about this web site.  This defines the window
 which opens via the menu command Site ‣ About."""),
+    'lino.modlib.auth.actions.SendWelcomeMail' : _("""Send a welcome mail to this user."""),
+    'lino.modlib.auth.actions.ChangePassword' : _("""Change the password of this user."""),
+    'lino.modlib.auth.actions.ChangePassword.current' : _("""The current password. Leave empty if the user has no password
+yet. And SiteAdmin users don’t need to specify this at all."""),
+    'lino.modlib.auth.actions.ChangePassword.new1' : _("""The new password."""),
+    'lino.modlib.auth.actions.ChangePassword.new2' : _("""The new password a second time. Both passwords must match."""),
+    'lino.modlib.auth.roles.Helper' : _("""Somebody who can help others by running AssignToMe
+action."""),
+    'lino.modlib.auth.roles.AuthorshipTaker' : _("""Somebody who can help others by running TakeAuthorship
+action."""),
+    'lino.modlib.auth.utils.AnonymousUser' : _("""A singleton class whose instance will be assigned to the
+user attribute of anonymous incoming requests, similar to
+Django’s approach."""),
+    'lino.modlib.auth.utils.AnonymousUser.authenticated' : _("""This is always False.
+See also lino.modlib.auth.models.User.authenticated."""),
     'lino.modlib.bootstrap3.renderer.Renderer' : _("""A  HTML render that uses Bootstrap3."""),
     'lino.modlib.bootstrap3.views.List' : _("""Render a list of records."""),
     'lino.modlib.bootstrap3.views.Element' : _("""Render a single record."""),
+    'lino.modlib.bootstrap3.views.Authenticate' : _("""Render the main page."""),
     'lino.modlib.bootstrap3.views.Index' : _("""Render the main page."""),
     'lino.modlib.changes.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.changes.models.ChangeTypes' : _("""The list of possible choices for the type field
@@ -213,7 +229,6 @@ update_controller_field() instead."""),
     'lino.modlib.gfks.models.BrokenGFKs' : _("""Shows all database objects (model instances) who have a broken
 GeneriForeignKey field."""),
     'lino.modlib.importfilters.Plugin' : _("""See /dev/plugins."""),
-    'lino.modlib.ipdict.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.jinja.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.jinja.loader.DjangoJinjaTemplate' : _("""used e.g. to render /lino/lino/config/500.html"""),
     'lino.modlib.languages.Plugin' : _("""See /dev/plugins."""),
@@ -398,30 +413,6 @@ uploaded file in a new browser window."""),
     'lino.modlib.uploads.models.MyUploads' : _("""Shows only my Uploads (i.e. those whose author is current user)."""),
     'lino.modlib.uploads.models.MyUploads.model' : _("""alias of Upload"""),
     'lino.modlib.uploads.models.UploadsByController.model' : _("""alias of Upload"""),
-    'lino.modlib.auth.actions.SendWelcomeMail' : _("""Send a welcome mail to this user."""),
-    'lino.modlib.auth.actions.ChangePassword' : _("""Change the password of this user."""),
-    'lino.modlib.auth.actions.ChangePassword.current' : _("""The current password. Leave empty if the user has no password
-yet. And SiteAdmin users don’t need to specify this at all."""),
-    'lino.modlib.auth.actions.ChangePassword.new1' : _("""The new password."""),
-    'lino.modlib.auth.actions.ChangePassword.new2' : _("""The new password a second time. Both passwords must match."""),
-    'lino.modlib.auth.forms.UserCreationForm' : _("""A form that creates a user, with no privileges, from the given username and
-password."""),
-    'lino.modlib.auth.forms.AuthenticationForm' : _("""Base class for authenticating users. Extend this to get a form that accepts
-username/password logins."""),
-    'lino.modlib.auth.forms.SetPasswordForm' : _("""A form that lets a user change set their password without entering the old
-password"""),
-    'lino.modlib.auth.forms.PasswordChangeForm' : _("""A form that lets a user change their password by entering their old
-password."""),
-    'lino.modlib.auth.forms.AdminPasswordChangeForm' : _("""A form used to change the password of a user in the admin interface."""),
-    'lino.modlib.auth.roles.Helper' : _("""Somebody who can help others by running AssignToMe
-action."""),
-    'lino.modlib.auth.roles.AuthorshipTaker' : _("""Somebody who can help others by running TakeAuthorship
-action."""),
-    'lino.modlib.auth.utils.AnonymousUser' : _("""A singleton class whose instance will be assigned to the
-user attribute of anonymous incoming requests, similar to
-Django’s approach."""),
-    'lino.modlib.auth.utils.AnonymousUser.authenticated' : _("""This is always False.
-See also lino.modlib.auth.models.User.authenticated."""),
     'lino.modlib.weasyprint.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.weasyprint.choicelists.WeasyBuildMethod' : _("""The base class for both build methods."""),
     'lino.modlib.weasyprint.choicelists.WeasyPdfBuildMethod' : _("""Like WeasyBuildMethod, but the rendered HTML is then
@@ -579,7 +570,7 @@ Leaving this empty means that the user cannot log in."""),
     'lino.modlib.auth.User.initials' : _("""The nickname or initials of this user. This does not need to
 be unique but should provide a reasonably identifying
 function."""),
-    'lino.modlib.auth.User.profile' : _("""The profile of a user is what defines her or his permissions."""),
+    'lino.modlib.auth.User.user_type' : _("""The user_type of a user is what defines her or his permissions."""),
     'lino.modlib.auth.User.partner' : _("""Pointer to the Partner instance related to
 this user."""),
     'lino.modlib.auth.User.person' : _("""A virtual read-only field which returns the Person MTI child of the
