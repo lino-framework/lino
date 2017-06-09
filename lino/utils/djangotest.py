@@ -115,7 +115,12 @@ class DjangoManageTestCase(DjangoTestCase, CommonTestCase):
         returning it.
 
         """
-        extra.update(REMOTE_USER=username)
+        ar = settings.SITE.login(username)
+        self.client.force_login(ar.user)
+        extra[settings.SITE.remote_user_header] = username
+        # extra.update(REMOTE_USER=username)
+        # print(20170609, settings.MIDDLEWARE_CLASSES)
+        # print(20170609, settings.AUTHENTICATION_BACKENDS)
         res = meth(url, *data, **extra)
         if res.status_code != 200:
             raise Exception("{} gave status code {} instead of 200".format(
@@ -187,7 +192,7 @@ class RemoteAuthTestCase(DjangoManageTestCase):
     def __call__(self, *args, **kw):
         settings.SITE.override_defaults(remote_user_header='REMOTE_USER')
         mysettings = dict()
-        for k in ('MIDDLEWARE_CLASSES',):
+        for k in ('MIDDLEWARE_CLASSES', 'AUTHENTICATION_BACKENDS'):
             mysettings[k] = settings.SITE.django_settings.get(k)
 
         with self.settings(**mysettings):

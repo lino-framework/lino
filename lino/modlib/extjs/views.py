@@ -160,7 +160,7 @@ class Authenticate(View):
 
             ar = BaseRequest(request)
             ar.success("User %r logged out." % username)
-            return settings.SITE.kernel.default_renderer.render_action_response(ar)
+            return ar.renderer.render_action_response(ar)
         raise http.Http404()
 
     def post(self, request, *args, **kw):
@@ -183,7 +183,7 @@ class Authenticate(View):
         #     # request.session['password'] = password
         ar.success(("Now logged in as %r" % username))
         #     # print "20150428 Now logged in as %r (%s)" % (username, user)
-        return settings.SITE.kernel.default_renderer.render_action_response(ar)
+        return ar.renderer.render_action_response(ar)
 
 
 class RunJasmine(View):

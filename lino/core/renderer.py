@@ -123,11 +123,18 @@ class Renderer(object):
 
         
     def render_action_response(self, ar):
-        """In a plain HTML UI this will return a full HTML index page, in
-        ExtJS it will return JSON code.
+        """Builds a JSON response from response information stored in given
+        ActionRequest.
 
         """
-        raise NotImplementedError()
+        return json_response(ar.response, ar.content_type)
+    
+    # def render_action_response(self, ar):
+    #     """In a plain HTML UI this will return a full HTML index page, in
+    #     ExtJS it will return JSON code.
+
+    #     """
+    #     raise NotImplementedError()
         
 
 class HtmlRenderer(Renderer):
@@ -616,6 +623,7 @@ class TestRenderer(TextRenderer):
     def show_table(self, *args, **kwargs):
         return self.table2story(*args, **kwargs)
 
+    
 class MailRenderer(HtmlRenderer):
     """A renderer to be used when sending emails.
     """
@@ -739,11 +747,4 @@ class JsRenderer(HtmlRenderer):
         return self.js2url(self.instance_handler(ar, obj, None))
 
 
-    def render_action_response(self, ar):
-        """Builds a JSON response from response information stored in given
-        ActionRequest.
-
-        """
-        return json_response(ar.response, ar.content_type)
-    
     

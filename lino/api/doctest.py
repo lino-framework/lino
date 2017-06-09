@@ -21,7 +21,7 @@ from bs4 import BeautifulSoup
 from atelier.rstgen import table
 from atelier import rstgen
 from atelier.rstgen import attrtable
-from atelier.utils import unindent
+from atelier.utils import unindent, remove_u
 
 from lino.utils import AttrDict
 from lino.utils import i2d
@@ -31,6 +31,8 @@ from lino.utils import diag
 from lino.core import actors
 from lino.core.menus import find_menu_item
 from lino.sphinxcontrib.actordoc import menuselection_text
+from pprint import pprint
+
 
 from lino.core.menus import Menu
 from lino.core.actions import ShowTable

@@ -13,11 +13,29 @@ from django.conf import settings
 from django import http
 
 from lino.core import constants
+from lino.modlib.auth.utils import AnonymousUser
 
-class Middleware(object):
+class NoUserMiddleware(object):
+    def process_request(self, request):
+        if settings.USE_TZ:
+            activate(settings.TIME_ZONE)
+        request.subst_user = None
+        request.user = AnonymousUser()
+        if request.method == 'GET':
+            rqdata = request.GET
+        elif request.method in ('PUT', 'DELETE'):
+            # raw_post_data before Django 1.4
+            rqdata = http.QueryDict(request.body)
+        elif request.method == 'POST':
+            rqdata = request.POST
+        else:
+            return
+        request.requesting_panel = rqdata.get(
+        constants.URL_PARAM_REQUESTING_PANEL, None)
+
+class WithUserMiddleware(object):
     
     def process_request(self, request):
-        request.subst_user = None
         user = request.user
         user_language = user.language  # or settings.SITE.get_default_language()
 

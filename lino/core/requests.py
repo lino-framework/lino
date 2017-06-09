@@ -224,8 +224,8 @@ class BaseRequest(object):
         self.requesting_panel = requesting_panel
         self.master_instance = master_instance
         if user is None:
-            # from lino.modlib.auth.utils import AnonymousUser
-            self.user = settings.SITE.user_model.get_anonymous_user()
+            from lino.modlib.auth.utils import AnonymousUser
+            self.user = AnonymousUser()
         else:
             self.user = user
         self.current_project = current_project
@@ -244,8 +244,9 @@ class BaseRequest(object):
 request from it.
 
         """
-        kw.update(user=request.user)
-        kw.update(subst_user=request.subst_user)
+        if settings.SITE.user_model:
+            kw.update(user=request.user)
+            kw.update(subst_user=request.subst_user)
         kw.update(requesting_panel=request.requesting_panel)
         kw.update(current_project=rqdata.get(
             constants.URL_PARAM_PROJECT, None))

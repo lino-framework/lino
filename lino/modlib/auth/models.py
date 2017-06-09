@@ -179,9 +179,10 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
     
     @classmethod
     def get_anonymous_user(cls):
-        if cls._anon_user is None:
-            cls._anon_user = AnonymousUser()
-        return cls._anon_user
+        return AnonymousUser()
+        # if cls._anon_user is None:
+        #     cls._anon_user = AnonymousUser()
+        # return cls._anon_user
     
     # @dd.action(label=_("Send e-mail"),
     #            show_in_bbar=True, show_in_workflow=False,

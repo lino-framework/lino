@@ -3283,7 +3283,9 @@ Please convert to Plugin method".format(mod, methname)
         if self.user_model:
             yield 'django.contrib.sessions.middleware.SessionMiddleware'
             yield 'django.contrib.auth.middleware.AuthenticationMiddleware'
-            yield 'lino.modlib.auth.middleware.Middleware'
+            yield 'lino.modlib.auth.middleware.WithUserMiddleware'
+        else:
+            yield 'lino.modlib.auth.middleware.NoUserMiddleware'
             
         if self.get_auth_method() == 'remote':
             yield 'django.contrib.auth.middleware.RemoteUserMiddleware'

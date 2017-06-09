@@ -783,7 +783,7 @@ class Kernel(object):
             logger.debug("No callback %r in %r" % (
                 thread_id, list(self.pending_threads.keys())))
             ar.error("Unknown callback %r" % thread_id)
-            return self.render_action_response(ar)
+            return ar.renderer.render_action_response(ar)
 
         # e.g. SubmitInsertClient must set `data_record` in the
         # callback request ("ar2"), not the original request ("ar"),
@@ -805,10 +805,10 @@ class Kernel(object):
                     c.func(ar)
                 except Warning as e:
                     ar.error(e, alert=True)
-                return self.render_action_response(ar)
+                return ar.renderer.render_action_response(ar)
 
         ar.error("Invalid button %r for callback" % (button_id, thread_id))
-        return self.render_action_response(ar)
+        return ar.renderer.render_action_response(ar)
 
     def add_callback(self, ar, *msgs):
         """Returns an *action callback* which will initiate a dialog thread by
@@ -868,7 +868,7 @@ class Kernel(object):
         if not a.readonly:
             if self.site.readonly:
                 ar.error(_("Server is in readonly mode"), alert=True)
-                return self.render_action_response(ar)
+                return ar.renderer.render_action_response(ar)
             if self.site.log_each_action_request:
                 flds = []
                 A = flds.append
@@ -891,7 +891,7 @@ class Kernel(object):
         except Warning as e:
             ar.error(e, alert=True)
 
-        return self.render_action_response(ar)
+        return ar.renderer.render_action_response(ar)
 
     def setup_handle(self, h, ar):
         """
