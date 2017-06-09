@@ -45,7 +45,7 @@ from lino.core import tables
 from lino.utils import AttrDict
 from lino.core import choicelists
 from lino.core import menus
-from lino.core import auth
+# from lino.core import auth
 from lino.utils import jsgen
 from lino.utils.jsgen import py2js, js_code
 from lino.utils.xmlgen.html import E
@@ -61,10 +61,10 @@ else:
 
 from . import elems as ext_elems
 
-from lino.modlib.users.choicelists import UserTypes
+from lino.modlib.auth.choicelists import UserTypes
 
 # if settings.SITE.user_model:
-#     from lino.modlib.users import models as users
+#     from lino.modlib.auth import models as users
 
 # ONE_CHAR_LABEL = "\u00A0{}\u00A0"
 # ONE_CHAR_LABEL = "<font size=\"4\">\u00A0{}\u00A0</font>"
@@ -391,7 +391,7 @@ class ExtRenderer(JsRenderer):
         """
         user = request.user
         # print 20150427, user
-        if True:  # user.profile.level >= UserLevels.admin:
+        if True:  # user.user_type.level >= UserLevels.admin:
             if request.subst_user:
                 user = request.subst_user
 
@@ -415,7 +415,7 @@ class ExtRenderer(JsRenderer):
             context.update(kw)
             return tpl.render(context)
     
-        return jsgen.with_user_profile(user.profile, getit)
+        return jsgen.with_user_profile(user.user_type, getit)
 
     def html_page_main_window(self, on_ready, request, site):
         """Called from :srcref:`lino/modlib/extjs/config/extjs/index.html`."""
@@ -451,7 +451,7 @@ class ExtRenderer(JsRenderer):
     def html_page_user(self, request, site):
         """Build the "user menu", i.e. the menu in the top right corner.
 
-        TODO: move this to :mod:`lino.modlib.users`.
+        TODO: move this to :mod:`lino.modlib.auth`.
 
         """
         if settings.SITE.user_model is not None:
@@ -478,23 +478,23 @@ class ExtRenderer(JsRenderer):
 
                 def usertext(u):
                     return "{0} {1}, {3} ({2})".format(
-                        u.last_name, u.first_name, u.username, u.profile)
+                        u.last_name, u.first_name, u.username, u.user_type)
 
-                if user.profile.has_required_roles([Supervisor]):
+                if user.user_type.has_required_roles([Supervisor]):
                     authorities = [
                         (u.id, usertext(u))
                         for u in settings.SITE.user_model.objects.exclude(
-                            profile='').exclude(id=user.id)]
+                            user_type='').exclude(id=user.id)]
                 else:
-                    qs = rt.models.users.Authority.objects.filter(
-                        authorized=user).exclude(user__profile='')
+                    qs = rt.models.auth.Authority.objects.filter(
+                        authorized=user).exclude(user__user_type='')
                     qs = qs.order_by(
                         'user__last_name', 'user__first_name',
                         'user__username')
                     authorities = [
                         (a.user.id, usertext(a.user)) for a in qs]
 
-                a = rt.actors.users.MySettings.default_action
+                a = rt.actors.auth.MySettings.default_action
                 handler = self.action_call(None, a, dict(record_id=user.pk))
                 handler = "function(){%s}" % handler
                 mysettings = dict(text=_("My settings"),
@@ -516,11 +516,12 @@ class ExtRenderer(JsRenderer):
                 if site.remote_user_header is None:
                     login_menu_items.append(
                         dict(text=_("Log out"), handler=js_code('Lino.logout')))
-                    if auth.get_auth_middleware().can_change_password(request, request.user):
-                        login_menu_items.append(
-                            dict(text=_("Change password"), handler=js_code('Lino.change_password')))
-                        login_menu_items.append(
-                            dict(text=_("Forgot password"), handler=js_code('Lino.forgot_password')))
+                # the following was never used
+                #     if auth.get_auth_middleware().can_change_password(request, request.user):
+                #         login_menu_items.append(
+                #             dict(text=_("Change password"), handler=js_code('Lino.change_password')))
+                #         login_menu_items.append(
+                #             dict(text=_("Forgot password"), handler=js_code('Lino.forgot_password')))
 
                 login_menu = dict(
                     text=user_text,
@@ -549,7 +550,7 @@ class ExtRenderer(JsRenderer):
         
     def build_site_cache(self, force=False):
         """Build the site cache files under `/media/cache`, especially the
-        :xfile:`lino*.js` files, one per user profile and language.
+        :xfile:`lino*.js` files, one per user user_type and language.
 
         """
         # if not self.is_prepared:
@@ -581,9 +582,9 @@ class ExtRenderer(JsRenderer):
             count = 0
             for lng in settings.SITE.languages:
                 with translation.override(lng.django_code):
-                    for profile in UserTypes.objects():
+                    for user_type in UserTypes.objects():
                         count += jsgen.with_user_profile(
-                            profile, self.build_js_cache, force)
+                            user_type, self.build_js_cache, force)
             logger.info("%d lino*.js files have been built in %s seconds.",
                         count, time.time() - started)
 
@@ -685,7 +686,7 @@ class ExtRenderer(JsRenderer):
 
     def write_lino_js(self, f):
 
-        profile = jsgen.get_user_profile()
+        user_type = jsgen.get_user_profile()
 
         context = dict(
             ext_renderer=self,
@@ -713,7 +714,7 @@ class ExtRenderer(JsRenderer):
                     f.write(jscompress('\n// from %s:%s\n' % (p, tplname)))
                     f.write(jscompress('\n' + tpl.render(**context) + '\n'))
 
-        menu = settings.SITE.get_site_menu(self, profile)
+        menu = settings.SITE.get_site_menu(self, user_type)
         menu.add_item(
             'home', _("Home"), javascript="Lino.handle_home_button()")
         f.write("Lino.main_menu = %s;\n" % py2js(menu))
@@ -734,7 +735,7 @@ class ExtRenderer(JsRenderer):
         # generate only actors whose default_action is visible
         actors_list = [
             a for a in actors_list
-            if a.default_action.get_view_permission(profile)]
+            if a.default_action.get_view_permission(user_type)]
 
         # Define every choicelist as a JS array:
         f.write("\n// ChoiceLists: \n")
@@ -746,38 +747,38 @@ class ExtRenderer(JsRenderer):
         #~ logger.info('20120120 dbtables.all_details:\n%s',
             #~ '\n'.join([str(d) for d in dbtables.all_details]))
 
-        assert profile == jsgen.get_user_profile()
+        assert user_type == jsgen.get_user_profile()
 
-        def must_render(lh, profile):
+        def must_render(lh, user_type):
             """Return True if the given form layout `fl` is needed for
-            profile."""
-            if not lh.main.get_view_permission(profile):
+            user_type."""
+            if not lh.main.get_view_permission(user_type):
                 return False
-            if lh.layout._datasource.get_view_permission(profile):
+            if lh.layout._datasource.get_view_permission(user_type):
                 return True
             for ds in lh.layout._other_datasources:
-                if ds.get_view_permission(profile):
+                if ds.get_view_permission(user_type):
                     return True
             return False
 
         #~ f.write('\n/* Application FormPanel subclasses */\n')
         for fl in self.param_panels:
             lh = fl.get_layout_handle(self.plugin)
-            if must_render(lh, profile):
+            if must_render(lh, user_type):
                 for ln in self.js_render_ParamsPanelSubclass(lh):
                     f.write(ln + '\n')
 
         for fl in self.action_param_panels:
             lh = fl.get_layout_handle(self.plugin)
-            if must_render(lh, profile):
+            if must_render(lh, user_type):
                 for ln in self.js_render_ActionFormPanelSubclass(lh):
                     f.write(ln + '\n')
 
-        assert profile == jsgen.get_user_profile()
+        assert user_type == jsgen.get_user_profile()
 
         for fl in self.form_panels:
             lh = fl.get_layout_handle(self.plugin)
-            if must_render(lh, profile):
+            if must_render(lh, user_type):
                 for ln in self.js_render_FormPanelSubclass(lh):
                     f.write(ln + '\n')
 
@@ -789,7 +790,7 @@ class ExtRenderer(JsRenderer):
                     if ba.action not in actions_written:
                         actions_written.add(ba.action)
                         for ln in self.js_render_window_action(
-                                rh, ba, profile):
+                                rh, ba, user_type):
                             f.write(ln + '\n')
 
         for rpt in actors_list:
@@ -808,24 +809,24 @@ class ExtRenderer(JsRenderer):
                         for ln in self.js_render_detail_action_FormPanel(
                                 rh, ba):
                             f.write(ln + '\n')
-                    for ln in self.js_render_window_action(rh, ba, profile):
+                    for ln in self.js_render_window_action(rh, ba, user_type):
                         f.write(ln + '\n')
                 elif ba.action.action_name:
                     for ln in self.js_render_custom_action(rh, ba):
                         f.write(ln + '\n')
 
-        if profile != jsgen.get_user_profile():
+        if user_type != jsgen.get_user_profile():
             logger.warning(
-                "Oops, profile %s != jsgen.get_user_profile() %s",
-                profile, jsgen.get_user_profile())
+                "Oops, user_type %s != jsgen.get_user_profile() %s",
+                user_type, jsgen.get_user_profile())
 
         return 1
 
     def lino_js_parts(self):
-        profile = jsgen.get_user_profile()
+        user_type = jsgen.get_user_profile()
         filename = 'lino_'
-        if profile is not None:
-            filename += profile.value + '_'
+        if user_type is not None:
+            filename += user_type.value + '_'
         filename += translation.get_language() + '.js'
         return ('cache', 'js', filename)
 
@@ -844,12 +845,12 @@ class ExtRenderer(JsRenderer):
         """
         This also manages action groups
         """
-        profile = jsgen.get_user_profile()
+        user_type = jsgen.get_user_profile()
         buttons = []
         combo_map = dict()
         for ba in action_list:
 
-            if ba.action.show_in_bbar and ba.get_view_permission(profile):
+            if ba.action.show_in_bbar and ba.get_view_permission(user_type):
                 if ba.action.combo_group is None:
                     buttons.append(self.a2btn(ba))
                 else:
@@ -947,13 +948,13 @@ class ExtRenderer(JsRenderer):
 
     def build_on_render(self, main):
         "dh is a FormLayout or a ColumnsLayout"
-        profile = jsgen.get_user_profile()
+        user_type = jsgen.get_user_profile()
         on_render = []
         elems_by_field = {}
         field_elems = []
         for e in main.active_children:
             if isinstance(e, ext_elems.FieldElement):
-                if e.get_view_permission(profile):
+                if e.get_view_permission(user_type):
                     field_elems.append(e)
                     l = elems_by_field.get(e.field.name, None)
                     if l is None:

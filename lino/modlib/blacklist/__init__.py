@@ -24,5 +24,5 @@ class Plugin(ad.Plugin):
 
     needs_plugins = ['django.contrib.sessions']
 
-    def setup_site_menu(config, site, profile, m):
+    def setup_site_menu(config, site, user_type, m):
         m.add_action(site.modules.blacklist.Sessions)

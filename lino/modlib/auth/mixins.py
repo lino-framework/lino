@@ -82,7 +82,7 @@ class Authored(dd.Model):
         author = self.get_author()
         if author != ar.user \
            and (ar.subst_user is None or author != ar.subst_user) \
-           and not user.profile.has_required_roles(
+           and not user.user_type.has_required_roles(
                self.manager_roles_required):
             return ba.action.readonly
         return True
@@ -99,7 +99,7 @@ class Authored(dd.Model):
         fld = cls._meta.get_field('user')
         fields.setdefault(
             'user', models.ForeignKey(
-                'users.User', verbose_name=fld.verbose_name,
+                'auth.User', verbose_name=fld.verbose_name,
                 blank=True, null=True))
         return super(Authored, cls).get_parameter_fields(**fields)
 
@@ -123,7 +123,7 @@ class UserAuthored(Authored):
     workflow_owner_field = 'user'
     # author_field_name = 'user'    
     user = dd.ForeignKey(
-        'users.User',
+        'auth.User',
         verbose_name=_("Author"),
         related_name="%(app_label)s_%(class)s_set_by_user",
         blank=True, null=True)
@@ -218,10 +218,10 @@ class My(dbtables.Table):
 #         super(ByUser, self).setup_request(ar)
 
 #     @classmethod
-#     def get_view_permission(self, profile):
-#         if not profile.has_required_roles([SiteUser]):
+#     def get_view_permission(self, user_type):
+#         if not user_type.has_required_roles([SiteUser]):
 #             return False
-#         return super(ByUser, self).get_view_permission(profile)
+#         return super(ByUser, self).get_view_permission(user_type)
 
 # if settings.SITE.user_model is None:
 
@@ -239,7 +239,7 @@ class My(dbtables.Table):
 #     def get_action_permission(self, ar, obj, state):
 #         user = ar.get_user()
 #         if obj.user != user and \
-#            not user.profile.has_required_roles(self.manager_roles_required):
+#            not user.user_type.has_required_roles(self.manager_roles_required):
 #             return self.readonly
 #         return super(
 #             AuthorAction, self).get_action_permission(ar, obj, state)

@@ -26,7 +26,6 @@ Submodules
 .. autosummary::
    :toctree:
 
-   models
    management.commands
 
 """

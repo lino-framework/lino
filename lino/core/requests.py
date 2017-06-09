@@ -224,8 +224,8 @@ class BaseRequest(object):
         self.requesting_panel = requesting_panel
         self.master_instance = master_instance
         if user is None:
-            from lino.modlib.users.utils import AnonymousUser
-            self.user = AnonymousUser.instance()
+            from lino.modlib.auth.utils import AnonymousUser
+            self.user = AnonymousUser()
         else:
             self.user = user
         self.current_project = current_project
@@ -244,8 +244,9 @@ class BaseRequest(object):
 request from it.
 
         """
-        kw.update(user=request.user)
-        kw.update(subst_user=request.subst_user)
+        if settings.SITE.user_model:
+            kw.update(user=request.user)
+            kw.update(subst_user=request.subst_user)
         kw.update(requesting_panel=request.requesting_panel)
         kw.update(current_project=rqdata.get(
             constants.URL_PARAM_PROJECT, None))
@@ -612,7 +613,7 @@ request from it.
         return fld.value_from_object(obj, self)
 
     def get_user(self):
-        """Return the :class:`User <lino.modlib.users.models.User>` instance
+        """Return the :class:`User <lino.modlib.auth.models.User>` instance
         of the user who issued the request.  If the authenticated user
         is acting as somebody else, return that user's instance.
 
@@ -669,11 +670,11 @@ request from it.
         Usage in a :doc:`tested document </dev/doctests>`:
 
         >>> from lino.api import rt
-        >>> rt.login('robin').show('users.UsersOverview', limit=5)
+        >>> rt.login('robin').show('auth.UsersOverview', limit=5)
 
         Usage in a Jinja template::
 
-          {{ar.show('users.UsersOverview')}}
+          {{ar.show('auth.UsersOverview')}}
 
         """
         from lino.utils.report import Report
@@ -710,14 +711,14 @@ request from it.
 
         :language: explicitly select another language than that
                    specified in the requesting user's :attr:`language
-                   <lino.modlib.users.models.User.language>` field.
+                   <lino.modlib.auth.models.User.language>` field.
 
         """
         user = self.get_user()
         if language is None:
             language = user.language
         with translation.override(language):
-            mnu = settings.SITE.get_site_menu(None, user.profile)
+            mnu = settings.SITE.get_site_menu(None, user.user_type)
             self.renderer.show_menu(self, mnu, **kwargs)
 
     def get_home_url(self, *args, **kw):

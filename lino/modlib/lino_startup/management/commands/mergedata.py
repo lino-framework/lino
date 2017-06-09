@@ -42,14 +42,15 @@ class Command(BaseCommand):
     help = __doc__
     args = "action_spec [args ...]"
 
-    option_list = BaseCommand.option_list + (
-        make_option('--noinput', action='store_false',
-                    dest='interactive', default=True,
-                    help='Do not prompt for input of any kind.'),
-        make_option('--nochange', action='store_true',
-                    dest='nochange', default=False,
-                    help='Dry run. Do not actually change anything.'),
-    )
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--noinput', action='store_false',
+            dest='interactive', default=True,
+            help='Do not prompt for input of any kind.')
+        parser.add_argument(
+            '--nochange', action='store_true',
+            dest='nochange', default=False,
+            help='Dry run. Do not actually change anything.')
 
     def merge_module(self, name):
         m = import_module(name)

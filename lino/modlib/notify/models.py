@@ -26,7 +26,7 @@ from lino.core.site import html2text
 from lino.mixins import Created, ObservedPeriod
 from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.notify.consumers import PUBLIC_GROUP
-from lino.modlib.users.mixins import UserAuthored, My
+from lino.modlib.auth.mixins import UserAuthored, My
 from lino.modlib.office.roles import OfficeStaff, OfficeUser
 from lino.mixins.bleached import body_subject_to_elems
 
@@ -418,12 +418,12 @@ dd.update_field(Message, 'user',
 #     null=True, blank=True, verbose_name=_("About"))
 
 dd.inject_field(
-    'users.User', 'notify_myself',
+    'auth.User', 'notify_myself',
     models.BooleanField(
         _('Notify myself'), default=False))
 
 dd.inject_field(
-    'users.User', 'mail_mode',
+    'auth.User', 'mail_mode',
     MailModes.field(
         _('Email notification mode'),
         default=MailModes.often.as_callable))

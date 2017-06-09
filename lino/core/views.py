@@ -83,10 +83,10 @@ def action_request(app_label, actor, request, rqdata, is_list, **kw):
                 rpt, action_name, rpt.get_url_action_names()))
     user = request.subst_user or request.user
     if True:  # False:  # 20130829
-        if not a.get_view_permission(user.profile):
+        if not a.get_view_permission(user.user_type):
             raise exceptions.PermissionDenied(
                 "As %s you have no permission to run this action."
-                % user.profile)
+                % user.user_type)
                 # The text of an Exception may not be
                 # internationalized because some error handling code
                 # may want to write it to a plain ascii stream.

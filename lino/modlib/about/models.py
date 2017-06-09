@@ -45,7 +45,7 @@ class Models(dd.VirtualTable):
 
     @classmethod
     def get_data_rows(self, ar):
-        # profile = ar.get_user().profile
+        # user_type = ar.get_user().user_type
         for model in get_models():
             if True:
                 # print model

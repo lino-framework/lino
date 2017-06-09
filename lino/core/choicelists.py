@@ -638,7 +638,7 @@ Django creates copies of them when inheriting models.
         instance `bc` to the user.
 
         Override this to customize the display text of choices.
-        :class:`lino.modlib.users.choicelists.UserGroups` and
+        :class:`lino.modlib.auth.choicelists.UserGroups` and
         :class:`lino.modlib.cv.models.CefLevel` used to do this before
         we had the :attr:`ChoiceList.show_values` option.
 
@@ -746,15 +746,15 @@ class ChoiceListField(models.CharField):
     database query you cannot use ``__isnull``.  The following query
     won't work as expected::
     
-      for u in users.User.objects.filter(profile__isnull=False):
+      for u in auth.User.objects.filter(user_type__isnull=False):
       
     You must either check for an empty string::
       
-      for u in users.User.objects.exclude(profile='')
+      for u in auth.User.objects.exclude(user_type='')
 
     or use the ``__gte`` operator::
       
-      for u in users.User.objects.filter(profile__gte=dd.UserLevels.guest):
+      for u in auth.User.objects.filter(user_type__gte=dd.UserLevels.guest):
 
     """
 

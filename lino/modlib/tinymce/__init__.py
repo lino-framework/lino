@@ -145,13 +145,13 @@ class Plugin(ad.Plugin):
             if e.format == 'html':
                 yield "%s.refresh();" % e.as_ext()
 
-    def setup_config_menu(self, site, profile, m):
+    def setup_config_menu(self, site, user_type, m):
         if site.user_model is not None:
             mg = site.plugins.office
             m = m.add_menu(mg.app_label, mg.verbose_name)
             m.add_action('tinymce.MyTextFieldTemplates')
 
-    def setup_explorer_menu(self, site, profile, m):
+    def setup_explorer_menu(self, site, user_type, m):
         if site.user_model is not None:
             mg = site.plugins.office
             m = m.add_menu(mg.app_label, mg.verbose_name)

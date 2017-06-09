@@ -599,7 +599,7 @@ class Kernel(object):
                 
                     def get_welcome_messages(ar):
                         sar = ar.spawn(cls)
-                        # if not cls.get_view_permission(ar.get_user().profile):
+                        # if not cls.get_view_permission(ar.get_user().user_type):
                         if not sar.get_permission():
                             # raise Exception(20160814)
                             return
@@ -783,7 +783,7 @@ class Kernel(object):
             logger.debug("No callback %r in %r" % (
                 thread_id, list(self.pending_threads.keys())))
             ar.error("Unknown callback %r" % thread_id)
-            return self.render_action_response(ar)
+            return ar.renderer.render_action_response(ar)
 
         # e.g. SubmitInsertClient must set `data_record` in the
         # callback request ("ar2"), not the original request ("ar"),
@@ -805,10 +805,10 @@ class Kernel(object):
                     c.func(ar)
                 except Warning as e:
                     ar.error(e, alert=True)
-                return self.render_action_response(ar)
+                return ar.renderer.render_action_response(ar)
 
         ar.error("Invalid button %r for callback" % (button_id, thread_id))
-        return self.render_action_response(ar)
+        return ar.renderer.render_action_response(ar)
 
     def add_callback(self, ar, *msgs):
         """Returns an *action callback* which will initiate a dialog thread by
@@ -868,7 +868,7 @@ class Kernel(object):
         if not a.readonly:
             if self.site.readonly:
                 ar.error(_("Server is in readonly mode"), alert=True)
-                return self.render_action_response(ar)
+                return ar.renderer.render_action_response(ar)
             if self.site.log_each_action_request:
                 flds = []
                 A = flds.append
@@ -891,7 +891,7 @@ class Kernel(object):
         except Warning as e:
             ar.error(e, alert=True)
 
-        return self.render_action_response(ar)
+        return ar.renderer.render_action_response(ar)
 
     def setup_handle(self, h, ar):
         """
@@ -1008,27 +1008,36 @@ def site_startup(self):
         #     import django
         #     django.setup()
 
+        
+        for a in apps.get_app_configs():
+            self.models.define(six.text_type(a.label), a.models_module)
 
-        for p in self.installed_plugins:
-            # m = loading.load_app(p.app_name, False)
-            # In Django17+ we cannot say can_postpone=False,
-            # and we don't need to, because anyway we used it
-            # just for our hack in `lino.models`
-            # load_app(app_name) is deprecated
-            # from django.apps import apps
-            # m = apps.load_app(p.app_name)
-            try:
-                app_config = AppConfig.create(p.app_name)
-                app_config.import_models(
-                    apps.all_models[app_config.label])
-                apps.app_configs[app_config.label] = app_config
-                apps.clear_cache()
-                m = app_config.models_module
-            except ImportError:
-                logger.debug("No module {0}.models", p.app_name)
-                # print(rrrr)
+        # the following was equivalent of above until Django 1.9
+        
+        # for p in self.installed_plugins:
+        #     # m = loading.load_app(p.app_name, False)
+        #     # In Django17+ we cannot say can_postpone=False,
+        #     # and we don't need to, because anyway we used it
+        #     # just for our hack in `lino.models`
+        #     # load_app(app_name) is deprecated
+        #     # from django.apps import apps
+        #     # m = apps.load_app(p.app_name)
+        #     try:
+        #         app_config = AppConfig.create(p.app_name)
+        #         try:
+        #             app_config.import_models()
+        #         except AttributeError:
+        #             raise Exception("Failed to import models for {}".format(p))
+        #         # app_config.import_models(
+        #         #     apps.all_models[app_config.label])
+        #         apps.app_configs[app_config.label] = app_config
+        #         apps.clear_cache()
+        #         m = app_config.models_module
+        #     except ImportError:
+        #         logger.debug("No module {0}.models", p.app_name)
+        #         # print(rrrr)
 
-            self.models.define(six.text_type(p.app_label), m)
+        #     self.models.define(six.text_type(p.app_label), m)
 
         pre_startup.send(self)
 

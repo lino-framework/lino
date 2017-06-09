@@ -23,17 +23,17 @@ class Plugin(ad.Plugin):
 
     needs_plugins = ['lino.modlib.system', 'django.contrib.contenttypes']
 
-    # def setup_reports_menu(config, site, profile, m):
+    # def setup_reports_menu(config, site, user_type, m):
     #     hook = site.plugins.system
     #     m = m.add_menu(hook.app_label, hook.verbose_name)
     #     m.add_action(site.modules.gfks.BrokenGFKs)
 
-    def setup_config_menu(config, site, profile, m):
+    def setup_config_menu(config, site, user_type, m):
         hook = site.plugins.system
         m = m.add_menu(hook.app_label, hook.verbose_name)
         m.add_action(site.modules.gfks.HelpTexts)
 
-    def setup_explorer_menu(config, site, profile, m):
+    def setup_explorer_menu(config, site, user_type, m):
         hook = site.plugins.system
         m = m.add_menu(hook.app_label, hook.verbose_name)
         m.add_action(site.modules.gfks.ContentTypes)

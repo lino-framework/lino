@@ -52,7 +52,7 @@ class Plugin(ad.Plugin):
 
     .. attribute:: responsible_user
 
-        The :attr:`username <lino.modlib.users.models.User.username>`
+        The :attr:`username <lino.modlib.auth.models.User.username>`
         of the **main plausibility responsible**, i.e. a designated
         user who will be attributed to plausibility problems for which
         no *specific responible* could be designated (returned by the
@@ -67,7 +67,7 @@ class Plugin(ad.Plugin):
 
     """
     verbose_name = _("Plausibility")
-    needs_plugins = ['lino.modlib.users', 'lino.modlib.gfks']
+    needs_plugins = ['lino.modlib.auth', 'lino.modlib.gfks']
 
     # plugin settings
     responsible_user = None  # the username (a string)
@@ -77,7 +77,7 @@ class Plugin(ad.Plugin):
         if self.responsible_user is None:
             return None
         if self._responsible_user is None:
-            User = self.site.modules.users.User
+            User = self.site.modules.auth.User
             try:
                 self._responsible_user = User.objects.get(
                     username=self.responsible_user)
@@ -96,12 +96,12 @@ class Plugin(ad.Plugin):
         if site.is_demo_site:
             self.configure(responsible_user='robin')
 
-    def setup_main_menu(self, site, profile, m):
+    def setup_main_menu(self, site, user_type, m):
         g = site.plugins.office
         m = m.add_menu(g.app_label, g.verbose_name)
         m.add_action('plausibility.MyProblems')
 
-    def setup_explorer_menu(config, site, profile, m):
+    def setup_explorer_menu(config, site, user_type, m):
         g = site.plugins.system
         m = m.add_menu(g.app_label, g.verbose_name)
         m.add_action('plausibility.Checkers')

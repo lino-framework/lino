@@ -80,7 +80,7 @@ class Permittable(object):
     def add_requirements(self, *args):
         return add_requirements(self, *args)
 
-    def get_view_permission(self, profile):
+    def get_view_permission(self, user_type):
         return True
 
 
@@ -136,7 +136,7 @@ def make_permission_handler(*args, **kw):
         author of the object.  This requirement is allowed only on
         models that have a field `user` which is supposed to contain
         the author.  Usually a subclass of
-        :class:`lino.modlib.users.mixins.UserAuthored`, but
+        :class:`lino.modlib.auth.mixins.UserAuthored`, but
         e.g. :class:`lino_xl.lib.cal.models.Guest` defines a property
         `user` because it has no own `user` field).
 
@@ -166,28 +166,28 @@ def make_view_permission_handler_(
     check_required_roles(required_roles, actor)
 
     if settings.SITE.user_types_module:
-        def allow(action, profile):
+        def allow(action, user_type):
             # print str(actor)
             # if str(actor.actor) == "tickets.PublicTickets":
-            #     print 20150831, profile.role, required_roles
+            #     print 20150831, user_type.role, required_roles
             # if action.action_name == "export_excel":
-            #     print 20150828, profile.role, required_roles
-            v = profile.has_required_roles(required_roles)
+            #     print 20150828, user_type.role, required_roles
+            v = user_type.has_required_roles(required_roles)
             # print("20170130", required_roles)
             return v
         
         if not readonly:
             allow3 = allow
 
-            def allow(action, profile):
-                if not allow3(action, profile):
+            def allow(action, user_type):
+                if not allow3(action, user_type):
                     return False
-                if profile.readonly:
+                if user_type.readonly:
                     return False
                 return True
 
     else:
-        def allow(action, profile):
+        def allow(action, user_type):
             return True
 
     if debug_permissions:  # False:
@@ -196,13 +196,13 @@ def make_view_permission_handler_(
             #~ user_level,user_groups,allow,auth,owner,states])
         allow4 = allow
 
-        def allow(action, profile):
-            v = allow4(action, profile)
+        def allow(action, user_type):
+            v = allow4(action, user_type)
             if True:  # not v:
                 logger.info(
                     u"debug_permissions (view) %r "
                     "required(%s), allow(%s)--> %s",
-                    action, action.required_roles, profile, v)
+                    action, action.required_roles, user_type, v)
             return v
     return allow
 
@@ -225,7 +225,7 @@ def make_permission_handler_(
         if settings.SITE.user_types_module:
             def allow(action, user, obj, state):
                 # print 20150828, action, required_roles
-                return user.profile.has_required_roles(required_roles)
+                return user.user_type.has_required_roles(required_roles)
         else:
             def allow(action, user, obj, state):
                 return True
@@ -272,7 +272,7 @@ def make_permission_handler_(
         def allow(action, user, obj, state):
             if not allow3(action, user, obj, state):
                 return False
-            if user.profile.readonly:
+            if user.user_type.readonly:
                 return False
             return True
 

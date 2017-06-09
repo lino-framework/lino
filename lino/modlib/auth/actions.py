@@ -64,7 +64,7 @@ class SendWelcomeMail(dd.Action):
         user = ar.get_user()
         if not obj.email:
             return False
-        if not user.profile.has_required_roles([SiteAdmin]):
+        if not user.user_type.has_required_roles([SiteAdmin]):
             return False
         return super(
             SendWelcomeMail, self).get_action_permission(ar, obj, state)
@@ -131,7 +131,7 @@ class ChangePassword(dd.Action):
         user = ar.get_user()
         # print("20160825", obj, user)
         if obj != user and \
-           not user.profile.has_required_roles([SiteAdmin]):
+           not user.user_type.has_required_roles([SiteAdmin]):
             return False
         return super(
             ChangePassword, self).get_action_permission(ar, obj, state)
@@ -144,7 +144,7 @@ class ChangePassword(dd.Action):
             return
         done_for = []
         for obj in ar.selected_rows:
-            if ar.get_user().profile.has_required_roles([SiteAdmin]) \
+            if ar.get_user().user_type.has_required_roles([SiteAdmin]) \
                or not obj.has_usable_password() \
                or obj.check_password(pv.current):
                 obj.set_password(pv.new1)

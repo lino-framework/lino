@@ -1539,24 +1539,24 @@ class Container(LayoutElement):
         kw.update(hidden=True)
         return kw
 
-    def get_view_permission(self, profile):
+    def get_view_permission(self, user_type):
         """A Panel which doesn't contain a single visible element becomes
         itself hidden.
 
         """
         # if the Panel itself is invisble, no need to loop through the
         # children
-        if not super(Container, self).get_view_permission(profile):
+        if not super(Container, self).get_view_permission(user_type):
             return False
         for e in self.elements:
             if (not isinstance(e, Permittable)) or \
-               e.get_view_permission(profile):
+               e.get_view_permission(user_type):
                 # one visible child is enough, no need to continue loop
                 return True
             # if not isinstance(e, Permittable):
             #     return True
             # if isinstance(e, Panel) and \
-            #    e.get_view_permission(profile):
+            #    e.get_view_permission(user_type):
             #     return True
         # logger.info("20120925 not a single visible element in %s of %s",self,self.layout_handle)
         return False
@@ -1590,8 +1590,8 @@ class Wrapper(VisibleComponent):
     def is_visible(self):
         return self.wrapped.is_visible()
 
-    def get_view_permission(self, profile):
-        return self.wrapped.get_view_permission(profile)
+    def get_view_permission(self, user_type):
+        return self.wrapped.get_view_permission(user_type)
 
     def walk(self):
         if not self.is_visible():
@@ -1873,11 +1873,11 @@ class GridElement(Container):
         Container.__init__(self, layout_handle, name, **kw)
         self.active_children = columns
 
-    def get_view_permission(self, profile):
+    def get_view_permission(self, user_type):
         # skip Container parent:
-        if not super(Container, self).get_view_permission(profile):
+        if not super(Container, self).get_view_permission(user_type):
             return False
-        return self.actor.default_action.get_view_permission(profile)
+        return self.actor.default_action.get_view_permission(user_type)
 
     def ext_options(self, **kw):
         # not direct parent (Container), only LayoutElement

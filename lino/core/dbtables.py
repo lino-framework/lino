@@ -304,7 +304,7 @@ class Table(AbstractTable):
 
     screenshot_profiles = ['admin']
     """
-    The user profile(s) for which we want a screenshot of this table.
+    The user user_type(s) for which we want a screenshot of this table.
     """
 
     use_as_default_table = True
@@ -364,8 +364,8 @@ class Table(AbstractTable):
 
         profiles2user = dict()
         for u in settings.SITE.user_model.objects.filter(language=language):
-            if u.profile and u.profile.name in self.screenshot_profiles and not u.profile in profiles2user:
-                profiles2user[u.profile] = u
+            if u.user_type and u.user_type.name in self.screenshot_profiles and not u.user_type in profiles2user:
+                profiles2user[u.user_type] = u
         for user in list(profiles2user.values()):
             # if user.profile.name != 'admin': return
             # yield self.default_action.request(user=user)

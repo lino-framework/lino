@@ -16,7 +16,7 @@ from lino.core.userprefs import get_available_items
 
 from lino.mixins import Sequenced
 
-from lino.modlib.users.mixins import UserAuthored
+from lino.modlib.auth.mixins import UserAuthored
 
 
 class UpdateWidgets(dd.Action):
@@ -31,7 +31,7 @@ class UpdateWidgets(dd.Action):
 
     def get_action_permission(self, ar, obj, state):
         me = ar.get_user()
-        if not me.profile.has_required_roles([SiteAdmin]):
+        if not me.user_type.has_required_roles([SiteAdmin]):
             if obj != me:
                 return False
         return super(UpdateWidgets, self).get_action_permission(
@@ -41,7 +41,7 @@ class UpdateWidgets(dd.Action):
         for obj in ar.selected_rows:
             update_widgets_for(ar, obj)
 
-dd.inject_action('users.User', update_widgets=UpdateWidgets())
+dd.inject_action('auth.User', update_widgets=UpdateWidgets())
 
 
 @dd.python_2_unicode_compatible

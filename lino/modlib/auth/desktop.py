@@ -17,7 +17,7 @@ from .actions import SendWelcomeMail
 class UserDetail(dd.DetailLayout):
 
     box1 = """
-    username profile:20 partner
+    username user_type:20 partner
     first_name last_name initials
     email language timezone
     id created modified
@@ -30,7 +30,7 @@ class UserDetail(dd.DetailLayout):
 
     main_m = """
     username 
-    profile
+    user_type
     partner
     first_name last_name 
     initials
@@ -49,24 +49,24 @@ class UserInsertLayout(dd.InsertLayout):
     username email
     first_name last_name
     partner
-    language profile
+    language user_type
     """
 
 
 class Users(dd.Table):
     #~ debug_actions  = True
-    model = 'users.User'
+    model = 'auth.User'
     #~ order_by = "last_name first_name".split()
     order_by = ["username"]
     active_fields = 'partner'
 
     parameters = dict(
-        profile=UserTypes.field(blank=True))
+        user_type=UserTypes.field(blank=True))
 
-    simple_parameters = ['profile']
+    simple_parameters = ['user_type']
 
     #~ column_names = 'username first_name last_name is_active is_staff is_expert is_superuser *'
-    column_names = 'username profile first_name last_name *'
+    column_names = 'username user_type first_name last_name *'
     detail_layout = UserDetail()
     insert_layout = UserInsertLayout()
     column_names_m = 'mobile_item *'
@@ -96,8 +96,8 @@ class AllUsers(Users):
 
 class UsersOverview(Users):
 
-    column_names = 'username profile language'
-    exclude = dict(profile='')
+    column_names = 'username user_type language'
+    exclude = dict(user_type='')
 
 class MySettings(Users):
     use_as_default_table = False
@@ -112,7 +112,7 @@ class MySettings(Users):
 
 class Authorities(dd.Table):
     required_roles = dd.login_required(SiteAdmin)
-    model = 'users.Authority'
+    model = 'auth.Authority'
 
 
 class AuthoritiesGiven(Authorities):

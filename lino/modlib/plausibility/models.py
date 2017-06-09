@@ -19,7 +19,7 @@ from django.utils import translation
 
 from lino.core.gfks import gfk2lookup
 from lino.modlib.gfks.mixins import Controllable
-from lino.modlib.users.mixins import UserAuthored
+from lino.modlib.auth.mixins import UserAuthored
 from lino.core.roles import SiteStaff
 
 from lino.api import dd, rt, _
@@ -125,7 +125,7 @@ class Problem(Controllable, UserAuthored):
 
     .. attribute:: user
 
-       The :class:`user <lino.modlib.users.models.User>` reponsible
+       The :class:`user <lino.modlib.auth.models.User>` reponsible
        for fixing this problem.
 
        This field is being filled by the :meth:`get_responsible_user
@@ -165,7 +165,7 @@ class Problems(dd.Table):
     cell_edit = False
     parameters = dict(
         user=models.ForeignKey(
-            'users.User', blank=True, null=True,
+            'auth.User', blank=True, null=True,
             verbose_name=_("Responsible"),
             help_text=_("""Only problems for this responsible.""")),
         checker=Checkers.field(

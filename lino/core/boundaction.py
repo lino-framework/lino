@@ -130,7 +130,7 @@ class BoundAction(object):
         handler of an action with default `required_roles` can make
         database queries based on `ar.get_user()`, which would cause
         errors like :message:`Cannot assign
-        "<lino.modlib.users.utils.AnonymousUser object at
+        "<lino.modlib.auth.utils.AnonymousUser object at
         0x7f562512f210>": "Upload.user" must be a "User" instance`
         when called by anonymous.
 
@@ -142,16 +142,16 @@ class BoundAction(object):
         return True
         # return self._allow(ar.get_user(), obj, state)
 
-    def get_view_permission(self, profile):
+    def get_view_permission(self, user_type):
         """
         Return True if this bound action is visible for users of this
-        profile.
+        user_type.
         """
-        if not self.actor.get_view_permission(profile):
+        if not self.actor.get_view_permission(user_type):
             return False
-        if not self.action.get_view_permission(profile):
+        if not self.action.get_view_permission(user_type):
             return False
-        return self.allow_view(profile)
+        return self.allow_view(user_type)
 
     def __repr__(self):
         return "<%s(%s, %r)>" % (

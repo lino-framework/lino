@@ -37,7 +37,7 @@ class UserRole(object):
         role.
 
         """
-        from lino.modlib.users.choicelists import UserTypes
+        from lino.modlib.auth.choicelists import UserTypes
         for p in UserTypes.items():
             if p.has_required_roles([cls]):
                 yield p
@@ -79,7 +79,7 @@ class SiteAdmin(SiteStaff, Supervisor, Explorer):
 
 def login_required(*args):
     """An API shortcut available in :mod:`lino.api.dd`. See
-    :meth:`lino.modlib.users.choicelists.UserType.has_required_role`
+    :meth:`lino.modlib.auth.choicelists.UserType.has_required_role`
 
     """
     if len(args):

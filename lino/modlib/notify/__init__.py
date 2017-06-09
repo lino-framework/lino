@@ -52,7 +52,7 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("Messages")
 
-    needs_plugins = ['lino.modlib.users', 'lino.modlib.gfks']
+    needs_plugins = ['lino.modlib.auth', 'lino.modlib.gfks']
 
     media_name = 'js'
 
@@ -99,12 +99,12 @@ class Plugin(ad.Plugin):
             else:
                 yield self.build_lib_url(('push.js/push.js'))
 
-    def setup_main_menu(self, site, profile, m):
+    def setup_main_menu(self, site, user_type, m):
         p = site.plugins.office
         m = m.add_menu(p.app_label, p.verbose_name)
         m.add_action('notify.MyMessages')
 
-    def setup_explorer_menu(self, site, profile, m):
+    def setup_explorer_menu(self, site, user_type, m):
         p = site.plugins.system
         m = m.add_menu(p.app_label, p.verbose_name)
         m.add_action('notify.AllMessages')

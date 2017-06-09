@@ -533,7 +533,7 @@ class TableRequest(ActionRequest):
         if u is None:
             return getit()
         else:
-            return with_user_profile(u.profile, getit)
+            return with_user_profile(u.user_type, getit)
 
     def row2html(self, recno, columns, row, sums, **cellattrs):
         has_numeric_value = False

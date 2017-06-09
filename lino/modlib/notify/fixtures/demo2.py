@@ -19,7 +19,7 @@ def objects():
     if settings.USE_TZ:
         now = make_aware(now)
     mt = rt.models.notify.MessageTypes.system
-    for u in rt.models.users.User.objects.all():
+    for u in rt.models.auth.User.objects.all():
         with translation.override(u.language):
             yield rt.models.notify.Message.create_message(
                 u, subject=_("The database has been initialized."),
