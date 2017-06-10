@@ -18,7 +18,7 @@ PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3
 
 install_requires = [
-    'django<=1.11',
+    'django<2',
     'Sphinx',
     'atelier', 'unipath', 'python_dateutil',
     'Babel', 'lxml',
