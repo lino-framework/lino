@@ -228,6 +228,7 @@ def noblanklines(s):
 
 def show_choices(username, url):
     """Print the choices returned via web client."""
+    test_client.force_login(rt.login(username).user)
     response = test_client.get(url, REMOTE_USER=username)
     if response.status_code != 200:
         raise Exception(
