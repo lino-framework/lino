@@ -21,7 +21,7 @@ from bs4 import BeautifulSoup
 from atelier.rstgen import table
 from atelier import rstgen
 from atelier.rstgen import attrtable
-from atelier.utils import unindent, remove_u
+from atelier.utils import unindent, rmu
 
 from lino.utils import AttrDict
 from lino.utils import i2d
@@ -49,6 +49,7 @@ HttpQuery = collections.namedtuple(
 
 def get_json_dict(username, uri, an='detail'):
     url = '/api/{0}?fmt=json&an={1}'.format(uri, an)
+    test_client.force_login(rt.login(username).user)
     res = test_client.get(url, REMOTE_USER=username)
     assert res.status_code == 200
     return json.loads(res.content)
@@ -71,6 +72,7 @@ def post_json_dict(username, url, data, **extra):
     this dict to an AttrDict before returning it.
 
     """
+    test_client.force_login(rt.login(username).user)
     res = test_client.post(url, data, REMOTE_USER=username, **extra)
     if res.status_code != 200:
         raise Exception("{} gave status code {} instead of 200".format(
@@ -109,10 +111,10 @@ def demo_get(
     # See #870
     url = six.text_type(settings.SITE.buildurl(case.url_base, **case.kwargs))
     # print(20160329, url)
-    if True:
+    if False:
         msg = 'Using remote authentication, but no user credentials found.'
         try:
-            response = self.client.get(url)
+            response = test_client.get(url)
             raise Exception("Expected '%s'" % msg)
         except Exception:
             pass
@@ -129,7 +131,8 @@ def demo_get(
                 "Status code %s other than 403 for anonymous on GET %s" % (
                     response.status_code, url))
 
-    response = test_client.get(url, REMOTE_USER=str(case.username))
+    test_client.force_login(rt.login(username).user)
+    response = test_client.get(url, REMOTE_USER=username)
     # try:
     if True:
         user = settings.SITE.user_model.objects.get(
@@ -291,7 +294,12 @@ def walk_menu_items(username=None, severe=False):
     the grid contains.
 
     """
-    def doit(user_type):
+    def doit(ar):
+        if ar is None:
+            user_type = None
+        else:
+            user_type = ar.user.user_type
+            test_client.force_login(ar.user)
         mnu = settings.SITE.get_site_menu(None, user_type)
         items = []
         for mi in mnu.walk_items():
@@ -321,7 +329,7 @@ def walk_menu_items(username=None, severe=False):
     if settings.SITE.user_types_module:
         ar = settings.SITE.login(username)
         with translation.override(ar.user.language):
-            doit(ar.user.user_type)
+            doit(ar)
     else:
         doit(None)
         
