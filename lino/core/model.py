@@ -177,6 +177,14 @@ class Model(models.Model):
     This is also used when a gridfilter has been set on a foreign key
     column which points to this model.
 
+    **Special quick search strings**
+
+    If the search string starts with "#", then Lino searches for a row
+    with that *primary key*.
+
+    If the search string starts with "*", then Lino searches for a row
+    with that *reference*.
+
     """
 
     quick_search_fields_digit = None
