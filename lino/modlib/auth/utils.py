@@ -14,8 +14,7 @@ from django.utils.crypto import constant_time_compare
 from django.utils.module_loading import import_string
 from lino.core import userprefs
 
-
-class AnonymousUser(object):
+class AnonymousUser:
     """A singleton class whose instance will be assigned to the
     :attr:`user` attribute of anonymous incoming requests, similar to
     Django's approach.

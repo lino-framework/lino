@@ -494,9 +494,9 @@ def install_migrations(self, loader):
 
     self.loading_from_dump = True
 
-    if self.is_installed('auth'):
-        from django.contrib.auth.models import Permission
-        Permission.objects.all().delete()
+    # if self.is_installed('auth'):
+    #     from django.contrib.auth.models import Permission
+    #     Permission.objects.all().delete()
     if self.is_installed('sites'):
         from django.contrib.sites.models import Site
         Site.objects.all().delete()

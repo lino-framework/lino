@@ -140,7 +140,7 @@
             {{ ln }}
         {%- endfor -%}
         {# anonymous request using permalink: forward request.path as "on_login" URL #}
-        {%- if settings.SITE.user_model and on_ready and not request.user.authenticated and not settings.SITE.plugins.users.online_registration -%}
+        {%- if settings.SITE.user_model and on_ready and not request.user.authenticated and not settings.SITE.plugins.auth.online_registration -%}
             {%- set on_ready = "Lino.show_login_window(" + py2js(request.path) + ")" -%}
         {%- endif -%}
         {# Render main window #}
