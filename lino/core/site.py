@@ -1868,7 +1868,11 @@ this field.
             
         if self.get_auth_method() == 'remote':
             self.define_settings(AUTHENTICATION_BACKENDS=[
-                'django.contrib.auth.backends.RemoteUserBackend'
+                'lino.modlib.auth.backends.RemoteUserBackend'
+            ])
+        else:
+            self.define_settings(AUTHENTICATION_BACKENDS=[
+                'lino.modlib.auth.backends.ModelBackend'
             ])
             
 
@@ -3282,13 +3286,15 @@ Please convert to Plugin method".format(mod, methname)
             
         if self.user_model:
             yield 'django.contrib.sessions.middleware.SessionMiddleware'
-            yield 'django.contrib.auth.middleware.AuthenticationMiddleware'
+            # yield 'django.contrib.auth.middleware.AuthenticationMiddleware'
+            yield 'lino.modlib.auth.middleware.AuthenticationMiddleware'
             yield 'lino.modlib.auth.middleware.WithUserMiddleware'
         else:
             yield 'lino.modlib.auth.middleware.NoUserMiddleware'
             
         if self.get_auth_method() == 'remote':
-            yield 'django.contrib.auth.middleware.RemoteUserMiddleware'
+            # yield 'django.contrib.auth.middleware.RemoteUserMiddleware'
+            yield 'lino.modlib.auth.middleware.RemoteUserMiddleware'
         if self.use_ipdict:
             if False:  # not yet converted after 20170608
                 yield 'lino.modlib.ipdict.middleware.Middleware'
