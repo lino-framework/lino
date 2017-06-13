@@ -70,7 +70,7 @@ class Model(models.Model):
 
         Example::
 
-          def city_changed(self,oldvalue):
+          def city_changed(self, oldvalue):
               print("City changed from %s to %s!" % (oldvalue, self.city))
 
     .. method:: FOO_choices

@@ -1067,8 +1067,9 @@ class Store(BaseStore):
         changed_triggers = []
         for f in self.all_fields:
             if f.name not in disabled_fields:
-                try:
+                try:  
                     if f.form2obj(ar, instance, form_values, is_new):
+                        # Check whether FOO_changed exists
                         m = getattr(instance, f.name + "_changed", None)
                         if m is not None:
                             changed_triggers.append(m)

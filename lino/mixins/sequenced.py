@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2016 Luc Saffre
+# Copyright 2009-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 """Defines the model mixins :class:`Sequenced` and
 :class:`Hierarchical`.
@@ -9,8 +9,6 @@ order which can be manipulated by the user using actions
 :class:`MoveUp` and :class:`MoveDown`.
 
 :class:`Hierarchical` is a :class:`Sequenced` with a `parent` field.
-
-.. autosummary::
 
 """
 
@@ -69,7 +67,8 @@ class MoveUp(actions.Action):
     def run_from_ui(self, ar, **kw):
         obj = ar.selected_rows[0]
         obj.seqno -= 1
-        obj.full_clean()
+        obj.seqno_changed(ar)
+        # obj.full_clean()
         obj.save()
         kw = dict()
         kw.update(refresh_all=True)
@@ -110,9 +109,9 @@ class MoveDown(actions.Action):
     def run_from_ui(self, ar, **kw):
         obj = ar.selected_rows[0]
         obj.seqno += 1
-        obj.full_clean()
+        obj.seqno_changed(ar)
+        # obj.full_clean()
         obj.save()
-        #~ obj.move_down()
         kw = dict()
         #~ kw.update(refresh=True)
         kw.update(refresh_all=True)
@@ -127,10 +126,7 @@ class DuplicateSequenced(Duplicate):
 
         #~ print '20120605 duplicate', self.seqno, self.account
         seqno = obj.seqno
-        qs = obj.get_siblings().filter(seqno__gt=seqno).reverse()
-        if qs is None:
-            raise Exception(
-                "20121227 TODO: Tried to duplicate a root element?")
+        qs = obj.get_siblings().filter(seqno__gt=seqno).order_by('-seqno')
         for s in qs:
             #~ print '20120605 duplicate inc', s.seqno, s.account
             s.seqno += 1
@@ -229,7 +225,7 @@ class Sequenced(Duplicable):
 
               def get_siblings(self):
                   return Property.objects.filter(
-                      product=self.product).order_by('seqno')
+                      product=self.product)
 
         Overridden e.g. in
         :class:`lino_xl.lib.thirds.models.Third`
@@ -243,7 +239,7 @@ class Sequenced(Duplicable):
         """
         Initialize `seqno` to the `seqno` of eldest sibling + 1.
         """
-        qs = self.get_siblings()
+        qs = self.get_siblings().order_by('seqno')
         if qs is None:
             self.seqno = 0
         else:
@@ -255,57 +251,40 @@ class Sequenced(Duplicable):
                 self.seqno = last.seqno + 1
 
     def full_clean(self, *args, **kw):
-
+        if not self.seqno:
+            self.set_seqno()
         super(Sequenced, self).full_clean(*args, **kw)
 
-        try:
-            qs = self.get_siblings()
-            old_self = qs.get(id=self.id)
-            qs = qs.exclude(id=self.id)
-            if old_self.seqno != self.seqno:
-                seq_no = 1
-
-                for i in qs:
-                    if seq_no == self.seqno:
-                        seq_no += 1
-                    i.seqno = seq_no
-                    seq_no += 1
-                    i.save()
-
-        except self.DoesNotExist:
-            self.set_seqno()
         # if hasattr(self, 'amount'):
         #     logger.info("20151117 Sequenced.full_clean a %s", self.amount)
         #     logger.info("20151117  %s", self.__class__.mro())
         # if hasattr(self, 'amount'):
         #     logger.info("20151117 Sequenced.full_clean b %s", self.amount)
 
-    def swap_seqno(self, ar, offset):
-        """
-        Move this row "up or down" within its siblings
+    def seqno_changed(self, ar):
+        """If the user manually assigns a seqno."""
+        #get siblings list
+        qs = self.get_siblings().order_by('seqno').exclude(
+            id=self.id)
+        # old_self = qs.get(id=self.id)
+        # qs = qs.exclude(id=self.id)
 
-        depreciated, sibling reordering is done in full-clean.
-        """
-        #~ qs = self.get_siblings()
-        qs = ar.data_iterator
-        if qs is None:
-            return
-        nav = AttrDict(**navinfo(qs, self))
-        # print(20170321, nav)
-        if not nav.recno:
-            return
-        new_recno = nav.recno + offset
-        if new_recno <= 0:
-            return
-        if new_recno > qs.count():
-            return
-        other = qs[new_recno - 1]
-        prev_seqno = other.seqno
-        other.seqno = self.seqno
-        self.seqno = prev_seqno
-        self.save()
-        other.save()
+        # if old_self.seqno != self.seqno:
+        seq_no = 1
 
+        for i in qs:
+            if seq_no == self.seqno:
+                seq_no += 1
+
+            if i.seqno != seq_no:
+                i.seqno = seq_no
+                # if diff
+                i.save()
+
+            seq_no += 1
+            
+        ar.set_response(refresh_all=True)
+        
     @fields.displayfield(_("Move"))
     def move_buttons(obj, ar):
         if ar is None:
@@ -327,6 +306,8 @@ Sequenced.set_widget_options('move_buttons', width=5)
 class Hierarchical(Duplicable):
     """Abstract model mixin for things that have a "parent" and
     "siblings".
+
+    Pronounciation: [hai'ra:kikl]
 
     """
     class Meta(object):
