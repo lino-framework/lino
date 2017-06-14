@@ -408,11 +408,6 @@ yet. And SiteAdmin users don't need to specify this at all."""),
 action."""),
     'lino.modlib.users.roles.AuthorshipTaker' : _("""Somebody who can help others by running TakeAuthorship
 action."""),
-    'lino.modlib.users.utils.AnonymousUser' : _("""A singleton class whose instance will be assigned to the
-user attribute of anonymous incoming requests, similar to
-Django's approach."""),
-    'lino.modlib.users.utils.AnonymousUser.authenticated' : _("""This is always False.
-See also lino.modlib.users.models.User.authenticated."""),
     'lino.modlib.weasyprint.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.weasyprint.choicelists.WeasyBuildMethod' : _("""The base class for both build methods."""),
     'lino.modlib.weasyprint.choicelists.WeasyPdfBuildMethod' : _("""Like WeasyBuildMethod, but the rendered HTML is then
