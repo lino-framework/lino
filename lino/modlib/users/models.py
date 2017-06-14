@@ -34,7 +34,7 @@ class UserManager(BaseUserManager):
 @python_2_unicode_compatible
 class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
     class Meta(object):
-        app_label = 'auth'
+        app_label = 'users'
         verbose_name = _('User')
         verbose_name_plural = _('Users')
         abstract = dd.is_abstract_model(__name__, 'User')
@@ -194,7 +194,7 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
 
 class Authority(UserAuthored):
     class Meta(object):
-        app_label = 'auth'
+        app_label = 'users'
         verbose_name = _("Authority")
         verbose_name_plural = _("Authorities")
 
@@ -214,7 +214,7 @@ class Authority(UserAuthored):
 @dd.receiver(dd.pre_startup)
 def inject_partner_field(sender=None, **kwargs):
 
-    User = sender.models.auth.User
+    User = sender.models.users.User
 
     if dd.is_installed('contacts'):
         Partner = sender.models.contacts.Partner
@@ -231,8 +231,6 @@ def inject_partner_field(sender=None, **kwargs):
     
 class Permission(dd.Model):
     class Meta(object):
-        app_label = 'auth'
+        app_label = 'users'
         abstract = True
 
-# from django.contrib.auth.models import Permission
-# Permission._meta.app_label = 'auth'

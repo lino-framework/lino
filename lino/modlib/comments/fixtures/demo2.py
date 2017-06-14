@@ -37,7 +37,7 @@ def objects():
     if len(OWNERS) == 0:
         return
     Comment = rt.models.comments.Comment
-    User = rt.models.auth.User
+    User = rt.models.users.User
     for i in range(2):
         for u in User.objects.all():
             owner = OWNERS.pop()

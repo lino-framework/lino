@@ -52,7 +52,7 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("Messages")
 
-    needs_plugins = ['lino.modlib.auth', 'lino.modlib.gfks']
+    needs_plugins = ['lino.modlib.users', 'lino.modlib.gfks']
 
     media_name = 'js'
 

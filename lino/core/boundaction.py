@@ -130,7 +130,7 @@ class BoundAction(object):
         handler of an action with default `required_roles` can make
         database queries based on `ar.get_user()`, which would cause
         errors like :message:`Cannot assign
-        "<lino.modlib.auth.utils.AnonymousUser object at
+        "<lino.modlib.users.utils.AnonymousUser object at
         0x7f562512f210>": "Upload.user" must be a "User" instance`
         when called by anonymous.
 

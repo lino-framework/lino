@@ -136,7 +136,7 @@ def make_permission_handler(*args, **kw):
         author of the object.  This requirement is allowed only on
         models that have a field `user` which is supposed to contain
         the author.  Usually a subclass of
-        :class:`lino.modlib.auth.mixins.UserAuthored`, but
+        :class:`lino.modlib.users.mixins.UserAuthored`, but
         e.g. :class:`lino_xl.lib.cal.models.Guest` defines a property
         `user` because it has no own `user` field).
 

@@ -118,21 +118,6 @@ about length of MIME type field."""),
 Needs more work to become seriously useful..."""),
     'lino.modlib.about.models.About' : _("""Display information about this web site.  This defines the window
 which opens via the menu command Site ‣ About."""),
-    'lino.modlib.auth.actions.SendWelcomeMail' : _("""Send a welcome mail to this user."""),
-    'lino.modlib.auth.actions.ChangePassword' : _("""Change the password of this user."""),
-    'lino.modlib.auth.actions.ChangePassword.current' : _("""The current password. Leave empty if the user has no password
-yet. And SiteAdmin users don't need to specify this at all."""),
-    'lino.modlib.auth.actions.ChangePassword.new1' : _("""The new password."""),
-    'lino.modlib.auth.actions.ChangePassword.new2' : _("""The new password a second time. Both passwords must match."""),
-    'lino.modlib.auth.roles.Helper' : _("""Somebody who can help others by running AssignToMe
-action."""),
-    'lino.modlib.auth.roles.AuthorshipTaker' : _("""Somebody who can help others by running TakeAuthorship
-action."""),
-    'lino.modlib.auth.utils.AnonymousUser' : _("""A singleton class whose instance will be assigned to the
-user attribute of anonymous incoming requests, similar to
-Django's approach."""),
-    'lino.modlib.auth.utils.AnonymousUser.authenticated' : _("""This is always False.
-See also lino.modlib.auth.models.User.authenticated."""),
     'lino.modlib.bootstrap3.renderer.Renderer' : _("""A  HTML render that uses Bootstrap3."""),
     'lino.modlib.bootstrap3.views.List' : _("""Render a list of records."""),
     'lino.modlib.bootstrap3.views.Element' : _("""Render a single record."""),
@@ -413,6 +398,21 @@ uploaded file in a new browser window."""),
     'lino.modlib.uploads.models.MyUploads' : _("""Shows only my Uploads (i.e. those whose author is current user)."""),
     'lino.modlib.uploads.models.MyUploads.model' : _("""alias of Upload"""),
     'lino.modlib.uploads.models.UploadsByController.model' : _("""alias of Upload"""),
+    'lino.modlib.users.actions.SendWelcomeMail' : _("""Send a welcome mail to this user."""),
+    'lino.modlib.users.actions.ChangePassword' : _("""Change the password of this user."""),
+    'lino.modlib.users.actions.ChangePassword.current' : _("""The current password. Leave empty if the user has no password
+yet. And SiteAdmin users don't need to specify this at all."""),
+    'lino.modlib.users.actions.ChangePassword.new1' : _("""The new password."""),
+    'lino.modlib.users.actions.ChangePassword.new2' : _("""The new password a second time. Both passwords must match."""),
+    'lino.modlib.users.roles.Helper' : _("""Somebody who can help others by running AssignToMe
+action."""),
+    'lino.modlib.users.roles.AuthorshipTaker' : _("""Somebody who can help others by running TakeAuthorship
+action."""),
+    'lino.modlib.users.utils.AnonymousUser' : _("""A singleton class whose instance will be assigned to the
+user attribute of anonymous incoming requests, similar to
+Django's approach."""),
+    'lino.modlib.users.utils.AnonymousUser.authenticated' : _("""This is always False.
+See also lino.modlib.users.models.User.authenticated."""),
     'lino.modlib.weasyprint.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.weasyprint.choicelists.WeasyBuildMethod' : _("""The base class for both build methods."""),
     'lino.modlib.weasyprint.choicelists.WeasyPdfBuildMethod' : _("""Like WeasyBuildMethod, but the rendered HTML is then
@@ -562,50 +562,50 @@ This is instantiated as E."""),
     'lino.utils.xmlgen.html.Document' : _("""A pythonic representation of a <body> with a <title> and
 some <head> tags for stylesheets."""),
     'lino.modlib.contacts.models.Partner.invoice_recipient' : _("""The recipient of invoices (invoicing address)."""),
-    'lino.modlib.auth.User' : _("""Fields:"""),
-    'lino.modlib.auth.User.authenticated' : _("""This is always True.  Compare with
+    'lino.modlib.users.User' : _("""Fields:"""),
+    'lino.modlib.users.User.authenticated' : _("""This is always True.  Compare with
 AnonymousUser.authenticated."""),
-    'lino.modlib.auth.User.username' : _("""Must be unique or empty.
+    'lino.modlib.users.User.username' : _("""Must be unique or empty.
 Leaving this empty means that the user cannot log in."""),
-    'lino.modlib.auth.User.initials' : _("""The nickname or initials of this user. This does not need to
+    'lino.modlib.users.User.initials' : _("""The nickname or initials of this user. This does not need to
 be unique but should provide a reasonably identifying
 function."""),
-    'lino.modlib.auth.User.user_type' : _("""The user_type of a user is what defines her or his permissions."""),
-    'lino.modlib.auth.User.partner' : _("""Pointer to the Partner instance related to
+    'lino.modlib.users.User.user_type' : _("""The user_type of a user is what defines her or his permissions."""),
+    'lino.modlib.users.User.partner' : _("""Pointer to the Partner instance related to
 this user."""),
-    'lino.modlib.auth.User.person' : _("""A virtual read-only field which returns the Person MTI child of the
+    'lino.modlib.users.User.person' : _("""A virtual read-only field which returns the Person MTI child of the
 partner (if it exists) and otherwise None."""),
-    'lino.modlib.auth.User.last_login' : _("""Not used in Lino."""),
-    'lino.modlib.auth.Authority' : _("""An authority is when a user gives another user the right to
+    'lino.modlib.users.User.last_login' : _("""Not used in Lino."""),
+    'lino.modlib.users.Authority' : _("""An authority is when a user gives another user the right to
 "represent" them."""),
-    'lino.modlib.auth.Authority.user' : _("""The user who gives the right of representation. author of this
+    'lino.modlib.users.Authority.user' : _("""The user who gives the right of representation. author of this
 authority"""),
-    'lino.modlib.auth.Authority.authorized' : _("""The user who gets the right to represent the author"""),
-    'lino.modlib.auth.Users' : _("""Base class for all user tables."""),
-    'lino.modlib.auth.AllUsers' : _("""Shows the list of all users on this site."""),
-    'lino.modlib.auth.UsersOverview' : _("""A variant of Users showing only active users and only some
+    'lino.modlib.users.Authority.authorized' : _("""The user who gets the right to represent the author"""),
+    'lino.modlib.users.Users' : _("""Base class for all user tables."""),
+    'lino.modlib.users.AllUsers' : _("""Shows the list of all users on this site."""),
+    'lino.modlib.users.UsersOverview' : _("""A variant of Users showing only active users and only some
 fields.  This is used on demo sites in admin_main.html to
 display the list of available users."""),
-    'lino.modlib.auth.TimezoneHolder' : _("""Mixin for database models which have a timezone field."""),
-    'lino.modlib.auth.TimezoneHolder.timezone' : _("""The timezone."""),
-    'lino.modlib.auth.Authored.manager_roles_required' : _("""The list of required roles for getting permission to edit
+    'lino.modlib.users.TimezoneHolder' : _("""Mixin for database models which have a timezone field."""),
+    'lino.modlib.users.TimezoneHolder.timezone' : _("""The timezone."""),
+    'lino.modlib.users.Authored.manager_roles_required' : _("""The list of required roles for getting permission to edit
 other users' work."""),
-    'lino.modlib.auth.Authored.author_field_name' : _("""No longer used. The name of the field that defines the author
+    'lino.modlib.users.Authored.author_field_name' : _("""No longer used. The name of the field that defines the author
 of this object."""),
-    'lino.modlib.auth.UserAuthored' : _("""Mixin for models that have a user field which points to
+    'lino.modlib.users.UserAuthored' : _("""Mixin for models that have a user field which points to
 the "author" of this object. The default user of new instances is
 automatically set to the requesting user."""),
-    'lino.modlib.auth.UserAuthored.user' : _("""The author of this object.
-A pointer to lino.modlib.auth.models.User."""),
-    'lino.modlib.auth.UserTypes' : _("""The list of user types available in this application."""),
-    'lino.modlib.auth.UserType' : _("""Base class for all user types."""),
-    'lino.modlib.auth.UserType.role' : _("""The role of users having this type. This is an instance of
+    'lino.modlib.users.UserAuthored.user' : _("""The author of this object.
+A pointer to lino.modlib.users.models.User."""),
+    'lino.modlib.users.UserTypes' : _("""The list of user types available in this application."""),
+    'lino.modlib.users.UserType' : _("""Base class for all user types."""),
+    'lino.modlib.users.UserType.role' : _("""The role of users having this type. This is an instance of
 <lino.core.roles.UserRole> or some subclass thereof."""),
-    'lino.modlib.auth.UserType.readonly' : _("""Whether users of this type get only write-proteced access."""),
-    'lino.modlib.auth.UserType.hidden_languages' : _("""A subset of languages
+    'lino.modlib.users.UserType.readonly' : _("""Whether users of this type get only write-proteced access."""),
+    'lino.modlib.users.UserType.hidden_languages' : _("""A subset of languages
 which should be hidden for users of this type.  Default value
 is hidden_languages.  This
 is used on multilingual sites with more than 4 or 5 languages."""),
-    'lino.modlib.auth.Plugin' : _("""See /dev/plugins."""),
-    'lino.modlib.auth.Plugin.online_registration' : _("""Whether this site offers online registration of new users."""),
+    'lino.modlib.users.Plugin' : _("""See /dev/plugins."""),
+    'lino.modlib.users.Plugin.online_registration' : _("""Whether this site offers online registration of new users."""),
 }

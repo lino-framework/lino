@@ -111,8 +111,8 @@ URL_PARAMS = [
 #~ FMT_RUN = 'act'
 #~ FMT_JSON = 'json'
 
-#~ User = reports.resolve_model('auth.User')
-#~ from lino.modlib.auth.models import User
+#~ User = reports.resolve_model('users.User')
+#~ from lino.modlib.users.models import User
 
 URL_FORMAT_JSON = 'json'
 URL_FORMAT_PDF = 'pdf'

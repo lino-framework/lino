@@ -20,7 +20,7 @@ from lino import mixins
 from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 from lino.modlib.gfks.mixins import Controllable
-from lino.modlib.auth.mixins import UserAuthored, My
+from lino.modlib.users.mixins import UserAuthored, My
 from lino.modlib.office.roles import OfficeUser, OfficeStaff, OfficeOperator
 
 from .choicelists import Shortcuts, UploadAreas
@@ -184,7 +184,7 @@ class Uploads(dd.Table):
 
     parameters = mixins.ObservedPeriod(
         # user=models.ForeignKey(
-        #     'auth.User', blank=True, null=True,
+        #     'users.User', blank=True, null=True,
         #     verbose_name=_("Uploaded by")),
         upload_type=models.ForeignKey(
             'uploads.UploadType', blank=True, null=True))

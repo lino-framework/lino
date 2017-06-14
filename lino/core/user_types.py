@@ -12,7 +12,7 @@ This can be used directly as :attr:`user_types_module
 from django.utils.translation import ugettext_lazy as _
 from lino.core.roles import UserRole, SiteAdmin
 from lino.modlib.office.roles import OfficeUser, OfficeStaff
-from lino.modlib.auth.choicelists import UserTypes
+from lino.modlib.users.choicelists import UserTypes
 
 
 class SiteAdmin(SiteAdmin, OfficeStaff):

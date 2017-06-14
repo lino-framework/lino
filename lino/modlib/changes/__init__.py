@@ -19,7 +19,7 @@ class Plugin(ad.Plugin):
     verbose_name = _("Changes")
 
     needs_plugins = [
-        'lino.modlib.auth', 'lino.modlib.gfks']
+        'lino.modlib.users', 'lino.modlib.gfks']
 
     def setup_explorer_menu(config, site, user_type, m):
         menu_group = site.plugins.system

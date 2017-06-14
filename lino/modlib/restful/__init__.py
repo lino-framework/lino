@@ -36,7 +36,7 @@ class Plugin(ad.Plugin):
 
     # def on_init(self):
     #     super(Plugin, self).on_init()
-    #     self.site.set_user_model('auth.User')
+    #     self.site.set_user_model('users.User')
 
     def on_init(self):
         # if self.site.use_websockets:
@@ -51,7 +51,7 @@ class Plugin(ad.Plugin):
                 'rest_framework.permissions.IsAuthenticatedOrReadOnly'
     ],
             # 'EXCEPTION_HANDLER': 'lino_noi.lib.rest.utils.exception_handler',
-            'UNAUTHENTICATED_USER': 'lino.modlib.auth.utils.AnonymousUser'
+            'UNAUTHENTICATED_USER': 'lino.modlib.users.utils.AnonymousUser'
         })
             
             

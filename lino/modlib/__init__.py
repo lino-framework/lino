@@ -15,7 +15,7 @@ Lino applications.
     gfks
     system
     lino_startup
-    auth
+    users
 
 Utilities
 =========

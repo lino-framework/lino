@@ -477,7 +477,7 @@ class Model(models.Model):
         specified keys must not yet exist on the model.
 
         Used e.g. in :mod:`lino_xl.lib.cal` to add the `UpdateReminders`
-        action to :class: `lino.modlib.auth.models.User`.
+        action to :class: `lino.modlib.users.models.User`.
 
         Or in :mod:`lino_xl.lib.invoicing.models` for defining a
         custom chooser.
@@ -1052,7 +1052,7 @@ action on individual instances.
 
         See also :meth:`get_simple_parameters`.
 
-        Usage example: :class:`lino.modlib.auth.mixins.UserAuthored`.
+        Usage example: :class:`lino.modlib.users.mixins.UserAuthored`.
 
         """
         return fields

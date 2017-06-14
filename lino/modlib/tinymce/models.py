@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from lino.modlib.auth.mixins import UserAuthored, My
+from lino.modlib.users.mixins import UserAuthored, My
 from lino.modlib.office.roles import OfficeUser
 from lino.api import dd
 

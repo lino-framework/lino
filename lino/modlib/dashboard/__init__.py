@@ -18,7 +18,7 @@ class Plugin(ad.Plugin):
     "See :doc:`/dev/plugins`."
     verbose_name = _("Dashboard")
 
-    needs_plugins = ['lino.modlib.auth']
+    needs_plugins = ['lino.modlib.users']
 
     def setup_explorer_menu(self, site, user_type, m):
         g = site.plugins.system

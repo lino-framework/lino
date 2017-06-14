@@ -25,7 +25,7 @@ from django.conf.urls import url, include
 
 
 # from django.contrib.auth import views
-# from lino.modlib.auth import views
+# from lino.modlib.users import views
 
 
 # template_name = {'template_name': 'rest_framework/login.html'}

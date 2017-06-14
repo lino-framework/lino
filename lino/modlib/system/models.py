@@ -19,7 +19,7 @@ from django.utils.encoding import force_text
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from lino.modlib.auth.choicelists import UserTypes
+from lino.modlib.users.choicelists import UserTypes
 from lino.api import dd
 from lino.core import actions
 
@@ -177,7 +177,7 @@ class SiteConfigs(dd.Table):
     do_build = BuildSiteCache()
 
 
-# if settings.SITE.user_model == 'auth.User':
+# if settings.SITE.user_model == 'users.User':
 #     dd.inject_field(settings.SITE.user_model,
 #                     'user_type', UserTypes.field())
 #     dd.inject_field(settings.SITE.user_model, 'language', dd.LanguageField())

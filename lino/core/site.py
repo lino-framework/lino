@@ -489,7 +489,7 @@ class Site(object):
     """
 
     user_model = None
-    """If :mod:`lino.modlib.auth` is installed, this holds a reference to
+    """If :mod:`lino.modlib.users` is installed, this holds a reference to
     the model class which represents a user of the system. Default
     value is `None`, meaning that this application has no user
     management.  See also :meth:`set_user_model`
@@ -538,12 +538,12 @@ class Site(object):
     user roles defined in :attr:`Permittable.required_roles
     <lino.core.permissions.Permittable.required_roles>` and
     :attr:`UserType.role
-    <lino.modlib.auth.choicelists.UserType.role>`.
+    <lino.modlib.users.choicelists.UserType.role>`.
 
     If set, Lino will import the named module during site startup. It
     is expected to define application-specific user roles (if
     necessary) and to fill the :class:`UserTypes
-    <lino.modlib.auth.choicelists.UserTypes>` choicelist.
+    <lino.modlib.users.choicelists.UserTypes>` choicelist.
 
     For example::
 
@@ -774,7 +774,7 @@ class Site(object):
     this to a nonempty value will disable authentication on this site.
     The special value `'anonymous'` will cause anonymous requests
     (whose `user` attribute is the :class:`AnonymousUser
-    <lino.modlib.auth.utils.AnonymousUser>` singleton).
+    <lino.modlib.users.utils.AnonymousUser>` singleton).
 
     See also :meth:`get_auth_method`.
 
@@ -1819,10 +1819,6 @@ this field.
         ]
 
         tcp = []
-        # if self.user_model == 'auth.User':  # not tested
-        #     self.update_settings(LOGIN_URL='/accounts/login/')
-        #     self.update_settings(LOGIN_REDIRECT_URL="/")
-        #     tcp += ['django.contrib.auth.context_processors.auth']
 
         tcp += [
             'django.template.context_processors.debug',
@@ -1857,6 +1853,10 @@ this field.
 
         self.update_settings(TEMPLATES=TEMPLATES)
 
+        if self.user_model:
+            self.update_settings(AUTH_USER_MODEL='users.User')
+        # self.define_settings(AUTH_USER_MODEL=self.user_model)
+        
         self.define_settings(
             MIDDLEWARE_CLASSES=tuple(self.get_middleware_classes()))
 
@@ -1868,15 +1868,14 @@ this field.
             
         if self.get_auth_method() == 'remote':
             self.define_settings(AUTHENTICATION_BACKENDS=[
-                'lino.modlib.auth.backends.RemoteUserBackend'
+                'lino.modlib.users.backends.RemoteUserBackend'
             ])
         else:
             self.define_settings(AUTHENTICATION_BACKENDS=[
-                'lino.modlib.auth.backends.ModelBackend'
+                'lino.modlib.users.backends.ModelBackend'
             ])
             
 
-        # self.define_settings(AUTH_USER_MODEL=self.user_model)
         
 
         def collect_settings_subdirs(lst, name, max_count=None):
@@ -1980,7 +1979,7 @@ this field.
         """This can be called during the :meth:`on_init
         <lino.core.plugin.Plugin.on_init>` of plugins which provide
         user management (the only plugin which does this is currently
-        :mod:`lino.modlib.auth`).
+        :mod:`lino.modlib.users`).
 
         """
         # if self.user_model is not None:
@@ -2240,6 +2239,7 @@ this field.
                 return
             from lino.core.utils import resolve_model
             msg = "Unresolved model '%s' in {0}.".format(name)
+            msg += " ({})".format(str(self.installed_plugins))
             setattr(obj, name, resolve_model(spec, strict=msg))
 
     def on_each_app(self, methname, *args):
@@ -2572,7 +2572,7 @@ this field.
         self.language_dict = dict()  # maps simple_code -> LanguageInfo
 
         self.LANGUAGE_CHOICES = []
-        self.LANGUAGE_DICT = dict()  # used in lino.modlib.auth
+        self.LANGUAGE_DICT = dict()  # used in lino.modlib.users
         must_set_language_code = False
 
         #~ self.AVAILABLE_LANGUAGES = (to_locale(self.DEFAULT_LANGUAGE),)
@@ -3287,14 +3287,14 @@ Please convert to Plugin method".format(mod, methname)
         if self.user_model:
             yield 'django.contrib.sessions.middleware.SessionMiddleware'
             # yield 'django.contrib.auth.middleware.AuthenticationMiddleware'
-            yield 'lino.modlib.auth.middleware.AuthenticationMiddleware'
-            yield 'lino.modlib.auth.middleware.WithUserMiddleware'
+            yield 'lino.modlib.users.middleware.AuthenticationMiddleware'
+            yield 'lino.modlib.users.middleware.WithUserMiddleware'
         else:
-            yield 'lino.modlib.auth.middleware.NoUserMiddleware'
+            yield 'lino.modlib.users.middleware.NoUserMiddleware'
             
         if self.get_auth_method() == 'remote':
             # yield 'django.contrib.auth.middleware.RemoteUserMiddleware'
-            yield 'lino.modlib.auth.middleware.RemoteUserMiddleware'
+            yield 'lino.modlib.users.middleware.RemoteUserMiddleware'
         if self.use_ipdict:
             if False:  # not yet converted after 20170608
                 yield 'lino.modlib.ipdict.middleware.Middleware'

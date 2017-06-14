@@ -26,7 +26,7 @@ from django import http
 from django.utils.translation import ugettext_lazy as _
 
 from lino.core import constants
-from lino.modlib.auth.utils import AnonymousUser
+from lino.modlib.users.utils import AnonymousUser
 
 class NOT_NEEDED(object):
     pass
