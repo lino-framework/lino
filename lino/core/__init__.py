@@ -40,6 +40,7 @@ The ``lino.core`` package
     utils
     views
     workflows
+    auth
 
 
 """

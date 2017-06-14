@@ -120,6 +120,7 @@ SETUP_INFO.update(packages=[str(n) for n in """
 lino
 lino.api
 lino.core
+lino.core.auth
 lino.fake_migrations
 lino.history
 lino.invlib

@@ -26,10 +26,8 @@ from lino.mixins import CreatedModified, Contactable
 from .choicelists import UserTypes
 from .mixins import UserAuthored, TimezoneHolder
 from .actions import ChangePassword, SendWelcomeMail
-from .utils import AnonymousUser
+from lino.core.auth.utils import AnonymousUser
 
-class UserManager(BaseUserManager):
-    pass
 
 @python_2_unicode_compatible
 class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
@@ -42,9 +40,7 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
 
     USERNAME_FIELD = 'username'
     _anon_user = None
-    objects = UserManager()
-
-    # anonymous_user_class = AnonymousUser
+    objects = BaseUserManager()
 
     preferred_foreignkey_width = 15
     hidden_columns = 'password remarks'
@@ -180,9 +176,6 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
     @classmethod
     def get_anonymous_user(cls):
         return AnonymousUser()
-        # if cls._anon_user is None:
-        #     cls._anon_user = AnonymousUser()
-        # return cls._anon_user
     
     # @dd.action(label=_("Send e-mail"),
     #            show_in_bbar=True, show_in_workflow=False,

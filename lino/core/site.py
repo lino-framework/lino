@@ -774,7 +774,7 @@ class Site(object):
     this to a nonempty value will disable authentication on this site.
     The special value `'anonymous'` will cause anonymous requests
     (whose `user` attribute is the :class:`AnonymousUser
-    <lino.modlib.users.utils.AnonymousUser>` singleton).
+    <lino.core.auth.utils.AnonymousUser>` singleton).
 
     See also :meth:`get_auth_method`.
 
@@ -1868,11 +1868,11 @@ this field.
             
         if self.get_auth_method() == 'remote':
             self.define_settings(AUTHENTICATION_BACKENDS=[
-                'lino.modlib.users.backends.RemoteUserBackend'
+                'lino.core.auth.backends.RemoteUserBackend'
             ])
         else:
             self.define_settings(AUTHENTICATION_BACKENDS=[
-                'lino.modlib.users.backends.ModelBackend'
+                'lino.core.auth.backends.ModelBackend'
             ])
             
 
@@ -3287,48 +3287,18 @@ Please convert to Plugin method".format(mod, methname)
         if self.user_model:
             yield 'django.contrib.sessions.middleware.SessionMiddleware'
             # yield 'django.contrib.auth.middleware.AuthenticationMiddleware'
-            yield 'lino.modlib.users.middleware.AuthenticationMiddleware'
-            yield 'lino.modlib.users.middleware.WithUserMiddleware'
+            yield 'lino.core.auth.middleware.AuthenticationMiddleware'
+            yield 'lino.core.auth.middleware.WithUserMiddleware'
         else:
-            yield 'lino.modlib.users.middleware.NoUserMiddleware'
+            yield 'lino.core.auth.middleware.NoUserMiddleware'
             
         if self.get_auth_method() == 'remote':
             # yield 'django.contrib.auth.middleware.RemoteUserMiddleware'
-            yield 'lino.modlib.users.middleware.RemoteUserMiddleware'
-        if self.use_ipdict:
-            if False:  # not yet converted after 20170608
+            yield 'lino.core.auth.middleware.RemoteUserMiddleware'
+        if False:  # not yet converted after 20170608
+            if self.use_ipdict:
                 yield 'lino.modlib.ipdict.middleware.Middleware'
                     
-        if False:
-            
-          if self.auth_middleware:
-            yield self.auth_middleware
-          else:
-            if self.user_model is None:
-                yield 'lino.core.auth.NoUserMiddleware'
-            elif self.default_user:
-                if self.default_user == "anonymous":
-                    yield 'lino.core.auth.NoUserMiddleware'
-                else:
-                    yield 'lino.core.auth.DefaultUserMiddleware'
-            elif self.remote_user_header:
-                yield 'lino.core.auth.RemoteUserMiddleware'
-                # if self.use_ipdict:
-                #     yield 'django.contrib.sessions.middleware.SessionMiddleware'
-                #     yield 'lino.modlib.ipdict.middleware.Middleware'
-                    
-            else:
-                # not using remote http auth, so we need sessions
-                yield 'django.contrib.sessions.middleware.SessionMiddleware'
-                if self.ldap_auth_server:
-                    yield 'lino.core.auth.LDAPAuthMiddleware'
-                elif self.use_ipdict:
-                    yield 'lino.modlib.ipdict.middleware.Middleware'
-                else:
-                    yield 'lino.core.auth.SessionUserMiddleware'
-
-                #~ raise Exception("""\
-    #~ `user_model` is not None, but no `remote_user_header` in your settings.SITE.""")
         #~ yield 'lino.utils.editing.EditingMiddleware'
         if True:
             yield 'lino.utils.ajax.AjaxExceptionResponse'

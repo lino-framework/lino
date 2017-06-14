@@ -1,9 +1,7 @@
-# Copyright 2011-2016 Luc Saffre
+# Copyright 2011-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Utilities for :mod:`lino.modlib.users`.
-
-.. autosummary::
+"""Utilities for authentication. Adapted from `django.contrib.auth`.
 
 """
 from __future__ import unicode_literals
@@ -12,7 +10,6 @@ from builtins import object
 from django.conf import settings
 from django.utils.crypto import constant_time_compare
 from django.utils.module_loading import import_string
-from lino.core import userprefs
 
 class AnonymousUser:
     """A singleton class whose instance will be assigned to the
@@ -87,6 +84,7 @@ class AnonymousUser:
         :class:`lino.core.userprefs.UserPrefs` object.
 
         """
+        from lino.core import userprefs
         return userprefs.reg.get(self)
     
     def is_authenticated(self):

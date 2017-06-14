@@ -8,7 +8,6 @@ Submodules:
 .. autosummary::
    :toctree:
 
-    utils
     roles
     actions
     fixtures.demo
