@@ -1860,23 +1860,19 @@ this field.
         self.define_settings(
             MIDDLEWARE_CLASSES=tuple(self.get_middleware_classes()))
 
-
         # if self.get_auth_method() == 'session':
         #     self.define_settings(AUTHENTICATION_BACKENDS=[
         #         'django.contrib.auth.backends.RemoteUserBackend'
         #     ])
-            
-        if self.get_auth_method() == 'remote':
-            self.define_settings(AUTHENTICATION_BACKENDS=[
-                'lino.core.auth.backends.RemoteUserBackend'
-            ])
-        else:
-            self.define_settings(AUTHENTICATION_BACKENDS=[
-                'lino.core.auth.backends.ModelBackend'
-            ])
-            
 
-        
+        backends = []
+        # if self.use_ipdict:
+        #     backends.append('lino.modlib.ipdict.backends.Backend')
+        if self.get_auth_method() == 'remote':
+            backends.append('lino.core.auth.backends.RemoteUserBackend')
+        else:
+            backends.append('lino.core.auth.backends.ModelBackend')
+        self.define_settings(AUTHENTICATION_BACKENDS=tuple(backends))
 
         def collect_settings_subdirs(lst, name, max_count=None):
             def add(p):
@@ -3295,9 +3291,8 @@ Please convert to Plugin method".format(mod, methname)
         if self.get_auth_method() == 'remote':
             # yield 'django.contrib.auth.middleware.RemoteUserMiddleware'
             yield 'lino.core.auth.middleware.RemoteUserMiddleware'
-        if False:  # not yet converted after 20170608
-            if self.use_ipdict:
-                yield 'lino.modlib.ipdict.middleware.Middleware'
+        if self.use_ipdict:
+            yield 'lino.modlib.ipdict.middleware.Middleware'
                     
         #~ yield 'lino.utils.editing.EditingMiddleware'
         if True:

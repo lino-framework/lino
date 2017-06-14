@@ -11,7 +11,9 @@ from django.conf import settings
 from django.utils.crypto import constant_time_compare
 from django.utils.module_loading import import_string
 
-class AnonymousUser:
+from lino.utils import SimpleSingleton
+
+class AnonymousUser(SimpleSingleton):
     """A singleton class whose instance will be assigned to the
     :attr:`user` attribute of anonymous incoming requests, similar to
     Django's approach.
@@ -36,13 +38,6 @@ class AnonymousUser:
     notify_myself = False
     user_type = None
     
-    _instance = None
-
-    def __new__(cls, *args, **kwargs):
-        if not isinstance(cls._instance, cls):
-            cls._instance = object.__new__(cls, *args, **kwargs)
-        return cls._instance
-
     def __init__(self):
         settings.SITE.startup()
         from lino.modlib.users.choicelists import UserTypes
@@ -102,60 +97,60 @@ class AnonymousUser:
 
 # copied from django.contrib.auth:
 
-SESSION_KEY = '_auth_user_id'
-BACKEND_SESSION_KEY = '_auth_user_backend'
-HASH_SESSION_KEY = '_auth_user_hash'
-REDIRECT_FIELD_NAME = 'next'
+# SESSION_KEY = '_auth_user_id'
+# BACKEND_SESSION_KEY = '_auth_user_backend'
+# HASH_SESSION_KEY = '_auth_user_hash'
+# REDIRECT_FIELD_NAME = 'next'
 
-# copied from django.contrib.auth.models
-SESSION_KEY = '_auth_user_id'
-BACKEND_SESSION_KEY = '_auth_user_backend'
-HASH_SESSION_KEY = '_auth_user_hash'
-REDIRECT_FIELD_NAME = 'next'
+# # copied from django.contrib.auth.models
+# SESSION_KEY = '_auth_user_id'
+# BACKEND_SESSION_KEY = '_auth_user_backend'
+# HASH_SESSION_KEY = '_auth_user_hash'
+# REDIRECT_FIELD_NAME = 'next'
 
-def load_backend(path):
-    return import_string(path)()
-
-
-def get_user_model():
-    # from lino.api import rt
-    # rt.models.users.User
-    return settings.SITE.user_model
-
-# copied from django.contrib.auth
-def _get_user_session_key(request):
-    # This value in the session is always serialized to a string, so we need
-    # to convert it back to Python whenever we access it.
-    return get_user_model()._meta.pk.to_python(request.session[SESSION_KEY])
+# def load_backend(path):
+#     return import_string(path)()
 
 
-# adapted copy of django.contrib.auth.get_user
-def get_user(request):
-    """
-    Returns the user model instance associated with the given request session.
-    If no user is retrieved an instance of `AnonymousUser` is returned.
-    """
-    user = None
-    try:
-        user_id = _get_user_session_key(request)
-        backend_path = request.session[BACKEND_SESSION_KEY]
-    except KeyError:
-        pass
-    else:
-        if backend_path in settings.AUTHENTICATION_BACKENDS:
-            backend = load_backend(backend_path)
-            user = backend.get_user(user_id)
-            # Verify the session
-            if ('django.contrib.auth.middleware.SessionAuthenticationMiddleware'
-                in settings.MIDDLEWARE_CLASSES and hasattr(user, 'get_session_auth_hash')):
-                session_hash = request.session.get(HASH_SESSION_KEY)
-                session_hash_verified = session_hash and constant_time_compare(
-                    session_hash,
-                    user.get_session_auth_hash()
-                )
-                if not session_hash_verified:
-                    request.session.flush()
-                    user = None
+# def get_user_model():
+#     # from lino.api import rt
+#     # rt.models.users.User
+#     return settings.SITE.user_model
 
-    return user or AnonymousUser()
+# # copied from django.contrib.auth
+# def _get_user_session_key(request):
+#     # This value in the session is always serialized to a string, so we need
+#     # to convert it back to Python whenever we access it.
+#     return get_user_model()._meta.pk.to_python(request.session[SESSION_KEY])
+
+
+# # adapted copy of django.contrib.auth.get_user
+# def get_user(request):
+#     """
+#     Returns the user model instance associated with the given request session.
+#     If no user is retrieved an instance of `AnonymousUser` is returned.
+#     """
+#     user = None
+#     try:
+#         user_id = _get_user_session_key(request)
+#         backend_path = request.session[BACKEND_SESSION_KEY]
+#     except KeyError:
+#         pass
+#     else:
+#         if backend_path in settings.AUTHENTICATION_BACKENDS:
+#             backend = load_backend(backend_path)
+#             user = backend.get_user(user_id)
+#             # Verify the session
+#             if ('django.contrib.auth.middleware.SessionAuthenticationMiddleware'
+#                 in settings.MIDDLEWARE_CLASSES and hasattr(user, 'get_session_auth_hash')):
+#                 session_hash = request.session.get(HASH_SESSION_KEY)
+#                 session_hash_verified = session_hash and constant_time_compare(
+#                     session_hash,
+#                     user.get_session_auth_hash()
+#                 )
+#                 if not session_hash_verified:
+#                     request.session.flush()
+#                     user = None
+
+#     return user or AnonymousUser()
 
