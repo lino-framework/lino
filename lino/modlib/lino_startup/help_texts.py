@@ -398,16 +398,6 @@ uploaded file in a new browser window."""),
     'lino.modlib.uploads.models.MyUploads' : _("""Shows only my Uploads (i.e. those whose author is current user)."""),
     'lino.modlib.uploads.models.MyUploads.model' : _("""alias of Upload"""),
     'lino.modlib.uploads.models.UploadsByController.model' : _("""alias of Upload"""),
-    'lino.modlib.users.actions.SendWelcomeMail' : _("""Send a welcome mail to this user."""),
-    'lino.modlib.users.actions.ChangePassword' : _("""Change the password of this user."""),
-    'lino.modlib.users.actions.ChangePassword.current' : _("""The current password. Leave empty if the user has no password
-yet. And SiteAdmin users don't need to specify this at all."""),
-    'lino.modlib.users.actions.ChangePassword.new1' : _("""The new password."""),
-    'lino.modlib.users.actions.ChangePassword.new2' : _("""The new password a second time. Both passwords must match."""),
-    'lino.modlib.users.roles.Helper' : _("""Somebody who can help others by running AssignToMe
-action."""),
-    'lino.modlib.users.roles.AuthorshipTaker' : _("""Somebody who can help others by running TakeAuthorship
-action."""),
     'lino.modlib.weasyprint.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.weasyprint.choicelists.WeasyBuildMethod' : _("""The base class for both build methods."""),
     'lino.modlib.weasyprint.choicelists.WeasyPdfBuildMethod' : _("""Like WeasyBuildMethod, but the rendered HTML is then
@@ -603,4 +593,14 @@ is hidden_languages.  This
 is used on multilingual sites with more than 4 or 5 languages."""),
     'lino.modlib.users.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.users.Plugin.online_registration' : _("""Whether this site offers online registration of new users."""),
+    'lino.modlib.users.Helper' : _("""Somebody who can help others by running AssignToMe
+action."""),
+    'lino.modlib.users.AuthorshipTaker' : _("""Somebody who can help others by running TakeAuthorship
+action."""),
+    'lino.modlib.users.SendWelcomeMail' : _("""Send a welcome mail to this user."""),
+    'lino.modlib.users.ChangePassword' : _("""Change the password of this user."""),
+    'lino.modlib.users.ChangePassword.current' : _("""The current password. Leave empty if the user has no password
+yet. And SiteAdmin users don't need to specify this at all."""),
+    'lino.modlib.users.ChangePassword.new1' : _("""The new password."""),
+    'lino.modlib.users.ChangePassword.new2' : _("""The new password a second time. Both passwords must match."""),
 }
