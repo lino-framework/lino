@@ -1,7 +1,7 @@
 # Copyright 2011-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Defines the choicelists for :mod:`lino.modlib.auth`.
+"""Defines the choicelists for :mod:`lino.modlib.users`.
 
 """
 

@@ -99,9 +99,9 @@ Actions:
 
 Permissions:
 
-- :class:`UserGroups <lino.modlib.auth.mixins.UserGroups>`
-- :class:`UserLevels <lino.modlib.auth.mixins.UserLevels>`
-- :func:`add_user_group <lino.modlib.auth.mixins.add_user_group>`
+- :class:`UserGroups <lino.modlib.users.mixins.UserGroups>`
+- :class:`UserLevels <lino.modlib.users.mixins.UserLevels>`
+- :func:`add_user_group <lino.modlib.users.mixins.add_user_group>`
 
 
 Workflows:
@@ -246,8 +246,8 @@ from lino.core.inject import do_when_prepared, when_prepared
 
 from lino.core.utils import ParameterPanel, PseudoRequest
 
-#from lino.modlib.auth.choicelists import UserLevels, UserGroups
-#from lino.modlib.auth.utils import add_user_group
+#from lino.modlib.users.choicelists import UserLevels, UserGroups
+#from lino.modlib.users.utils import add_user_group
 
 
 from lino.utils import IncompleteDate

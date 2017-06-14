@@ -16,7 +16,7 @@ from lino.core.userprefs import get_available_items
 
 from lino.mixins import Sequenced
 
-from lino.modlib.auth.mixins import UserAuthored
+from lino.modlib.users.mixins import UserAuthored
 
 
 class UpdateWidgets(dd.Action):
@@ -41,7 +41,7 @@ class UpdateWidgets(dd.Action):
         for obj in ar.selected_rows:
             update_widgets_for(ar, obj)
 
-dd.inject_action('auth.User', update_widgets=UpdateWidgets())
+dd.inject_action('users.User', update_widgets=UpdateWidgets())
 
 
 @dd.python_2_unicode_compatible

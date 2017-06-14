@@ -407,7 +407,7 @@ class Action(Parametrizable, Permittable):
         in a toolbar (:ticket:`1336`).
 
         Usage examples:
-        :class:`lino.modlib.auth.actions.SendWelcomeMail`
+        :class:`lino.modlib.users.actions.SendWelcomeMail`
 
         """
 

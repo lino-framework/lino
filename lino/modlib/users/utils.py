@@ -1,7 +1,7 @@
 # Copyright 2011-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Utilities for :mod:`lino.modlib.auth`.
+"""Utilities for :mod:`lino.modlib.users`.
 
 .. autosummary::
 
@@ -24,7 +24,7 @@ class AnonymousUser:
     """
     authenticated = False
     """This is always `False`.
-    See also :attr:`lino.modlib.auth.models.User.authenticated`.
+    See also :attr:`lino.modlib.users.models.User.authenticated`.
     """
     is_active = False
 
@@ -48,7 +48,7 @@ class AnonymousUser:
 
     def __init__(self):
         settings.SITE.startup()
-        from lino.modlib.auth.choicelists import UserTypes
+        from lino.modlib.users.choicelists import UserTypes
         self.user_type = UserTypes.get_by_name(self.username, None)
 
     # @classmethod
@@ -58,7 +58,7 @@ class AnonymousUser:
     #         # multi-threaded environment:
     #         settings.SITE.startup()
     #         cls._instance = cls()
-    #         from lino.modlib.auth.choicelists import UserTypes
+    #         from lino.modlib.users.choicelists import UserTypes
     #         cls._instance.user_type = UserTypes.get_by_name(
     #             'anonymous', None)
     #         # cls._instance.user_type = UserTypes.get_by_value(
@@ -121,7 +121,7 @@ def load_backend(path):
 
 def get_user_model():
     # from lino.api import rt
-    # rt.models.auth.User
+    # rt.models.users.User
     return settings.SITE.user_model
 
 # copied from django.contrib.auth

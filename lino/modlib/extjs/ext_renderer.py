@@ -61,10 +61,10 @@ else:
 
 from . import elems as ext_elems
 
-from lino.modlib.auth.choicelists import UserTypes
+from lino.modlib.users.choicelists import UserTypes
 
 # if settings.SITE.user_model:
-#     from lino.modlib.auth import models as users
+#     from lino.modlib.users import models as users
 
 # ONE_CHAR_LABEL = "\u00A0{}\u00A0"
 # ONE_CHAR_LABEL = "<font size=\"4\">\u00A0{}\u00A0</font>"
@@ -451,7 +451,7 @@ class ExtRenderer(JsRenderer):
     def html_page_user(self, request, site):
         """Build the "user menu", i.e. the menu in the top right corner.
 
-        TODO: move this to :mod:`lino.modlib.auth`.
+        TODO: move this to :mod:`lino.modlib.users`.
 
         """
         if settings.SITE.user_model is not None:
@@ -486,7 +486,7 @@ class ExtRenderer(JsRenderer):
                         for u in settings.SITE.user_model.objects.exclude(
                             user_type='').exclude(id=user.id)]
                 else:
-                    qs = rt.models.auth.Authority.objects.filter(
+                    qs = rt.models.users.Authority.objects.filter(
                         authorized=user).exclude(user__user_type='')
                     qs = qs.order_by(
                         'user__last_name', 'user__first_name',
@@ -494,7 +494,7 @@ class ExtRenderer(JsRenderer):
                     authorities = [
                         (a.user.id, usertext(a.user)) for a in qs]
 
-                a = rt.actors.auth.MySettings.default_action
+                a = rt.actors.users.MySettings.default_action
                 handler = self.action_call(None, a, dict(record_id=user.pk))
                 handler = "function(){%s}" % handler
                 mysettings = dict(text=_("My settings"),

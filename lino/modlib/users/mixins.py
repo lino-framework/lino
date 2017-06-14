@@ -99,7 +99,7 @@ class Authored(dd.Model):
         fld = cls._meta.get_field('user')
         fields.setdefault(
             'user', models.ForeignKey(
-                'auth.User', verbose_name=fld.verbose_name,
+                'users.User', verbose_name=fld.verbose_name,
                 blank=True, null=True))
         return super(Authored, cls).get_parameter_fields(**fields)
 
@@ -123,7 +123,7 @@ class UserAuthored(Authored):
     workflow_owner_field = 'user'
     # author_field_name = 'user'    
     user = dd.ForeignKey(
-        'auth.User',
+        'users.User',
         verbose_name=_("Author"),
         related_name="%(app_label)s_%(class)s_set_by_user",
         blank=True, null=True)

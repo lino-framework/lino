@@ -14,7 +14,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
 from lino.api import dd
-from lino.modlib.auth.mixins import My
+from lino.modlib.users.mixins import My
 from lino.utils.xmlgen.html import E
 from lino.utils.soup import truncate_comment
 from lino.core.gfks import gfk2lookup

@@ -55,7 +55,7 @@ class UserInsertLayout(dd.InsertLayout):
 
 class Users(dd.Table):
     #~ debug_actions  = True
-    model = 'auth.User'
+    model = 'users.User'
     #~ order_by = "last_name first_name".split()
     order_by = ["username"]
     active_fields = 'partner'
@@ -112,7 +112,7 @@ class MySettings(Users):
 
 class Authorities(dd.Table):
     required_roles = dd.login_required(SiteAdmin)
-    model = 'auth.Authority'
+    model = 'users.Authority'
 
 
 class AuthoritiesGiven(Authorities):

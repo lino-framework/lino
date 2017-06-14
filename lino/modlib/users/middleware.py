@@ -13,7 +13,7 @@ from django.conf import settings
 from django import http
 
 from lino.core import constants
-from lino.modlib.auth.utils import AnonymousUser
+from lino.modlib.users.utils import AnonymousUser
 
 
 from django.contrib import auth

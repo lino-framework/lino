@@ -460,7 +460,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     This option is `True` in
     :class:`lino.models.SiteConfigs`,
     :class:`lino_welfare.pcsw.models.Home`,
-    :class:`lino.modlib.auth.desktop.MySettings`.
+    :class:`lino.modlib.users.desktop.MySettings`.
 
     """
     _label = None
@@ -978,14 +978,14 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         super().
 
         Used e.g. by :class:`lino_xl.lib.outbox.models.MyOutbox` or
-        :class:`lino.modlib.auth.mixins.ByUser`.
+        :class:`lino.modlib.users.mixins.ByUser`.
 
         Other usages are more hackerish:
 
         - :class:`lino_xl.lib.households.models.SiblingsByPerson`
         - :class:`lino_welfare.modlib.cal.models.EntriesByClient`
         - :class:`lino_welfare.pcsw.models.Home`,
-        - :class:`lino.modlib.auth.models.MySettings`.
+        - :class:`lino.modlib.users.models.MySettings`.
 
         """
         pass

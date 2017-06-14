@@ -9,7 +9,7 @@ sites </demos>`.
 .. Lino currently knows demo users for the following languages:
   .. lino2rst::
   ses = rt.login()
-  ses.show(rt.modules.auth.Users,
+  ses.show(rt.modules.users.Users,
     column_names="username first_name last_name language")
 
 We are trying to sound realistic without actually hitting any real
@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 
 
 from django.conf import settings
-from lino.modlib.auth.choicelists import UserTypes
+from lino.modlib.users.choicelists import UserTypes
 
 
 def root_user(lang, **kw):

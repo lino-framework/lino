@@ -16,7 +16,7 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 
 from lino.api import dd, rt
 from lino.mixins import CreatedModified, BabelNamed
-from lino.modlib.auth.mixins import UserAuthored
+from lino.modlib.users.mixins import UserAuthored
 # from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.notify.mixins import ChangeObservable
 from lino.utils.xmlgen.html import E
