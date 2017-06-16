@@ -25,7 +25,6 @@ from lino.utils.xmlgen import html as xghtml
 from lino.utils.xmlgen.html import E
 from lino.utils.jinja import Counter
 from lino.utils import SumCollector
-from lino.modlib.users.utils import AnonymousUser
 
 from lino.core.renderer import MailRenderer
 

@@ -95,6 +95,74 @@ def is_pointer_to_contenttype(f):
     return f.rel.model is settings.SITE.modules.contenttypes.ContentType
 
 
+def write_create_function(model, stream):
+    fields = [f for f in model._meta.get_fields()
+              if f.concrete and f.model is model]
+    for f in fields:
+        if getattr(f, 'auto_now_add', False):
+            # raise Exception("%s.%s.auto_now_add is True : values will be lost!" % (
+            #     full_model_name(model), f.name))
+            logger.warning(
+                "%s.%s.auto_now_add is True : values will be lost!",
+                full_model_name(model), f.name)
+            # f.auto_now_add = False
+    #~ fields = model._meta.local_fields
+    #~ fields = [f for f in model._meta.fields if f.serialize]
+    #~ fields = [f for f in model._meta.local_fields if f.serialize]
+    stream.write('def create_%s(%s):\n' % (
+        model._meta.db_table, ', '.join([
+            f.attname for f in fields
+            if not getattr(f, '_lino_babel_field', False)])))
+    for f in fields:
+        if isinstance(f, models.DecimalField):
+            stream.write(
+                '    if %s is not None: %s = Decimal(%s)\n' % (
+                    f.attname, f.attname, f.attname))
+        elif isinstance(f, ChoiceListField):
+            lstname = 'settings.SITE.modules.{0}.{1}'.format(
+                f.choicelist.app_label, f.choicelist.__name__)
+            ln = '    if {0}: {0} = {1}.get_by_value({0})\n'
+            stream.write(ln.format(f.attname, lstname))
+        elif is_pointer_to_contenttype(f):
+            stream.write(
+                '    %s = new_content_type_id(%s)\n' % (
+                    f.attname, f.attname))
+
+    if model._meta.parents:
+        if len(model._meta.parents) != 1:
+            msg = "%s : model._meta.parents is %r" % (
+                model, model._meta.parents)
+            raise Exception(msg)
+        pm, pf = list(model._meta.parents.items())[0]
+        child_fields = [f for f in fields if f != pf]
+        if child_fields:
+            attrs = ',' + ','.join([
+                '%s=%s' % (f.attname, f.attname)
+                for f in child_fields])
+        else:
+            attrs = ''
+        stream.write(
+            '    return create_mti_child(%s, %s, %s%s)\n' % (
+                full_model_name(pm, '_'), pf.attname,
+                full_model_name(model, '_'), attrs))
+    else:
+        stream.write("    kw = dict()\n")
+        for f in fields:
+            if getattr(f, '_lino_babel_field', False):
+                continue
+            elif isinstance(f, (BabelCharField, BabelTextField)):
+                stream.write(
+                    '    if %s is not None: kw.update(bv2kw(%r,%s))\n' % (
+                        f.attname, f.attname, f.attname))
+            else:
+                stream.write(
+                    '    kw.update(%s=%s)\n' % (f.attname, f.attname))
+
+        stream.write('    return %s(**kw)\n\n' %
+                          full_model_name(model, '_'))
+
+
+
 class Command(BaseCommand):
     # tmpl_dir = ''
     # args = "output_dir"
@@ -195,70 +263,7 @@ def bv2kw(fieldname, values):
         self.models = self.sort_models(self.models)
         self.stream.write('\n')
         for model in self.models:
-            fields = [f for f in model._meta.get_fields()
-                      if f.concrete and f.model is model]
-            for f in fields:
-                if getattr(f, 'auto_now_add', False):
-                    # raise Exception("%s.%s.auto_now_add is True : values will be lost!" % (
-                    #     full_model_name(model), f.name))
-                    logger.warning(
-                        "%s.%s.auto_now_add is True : values will be lost!",
-                        full_model_name(model), f.name)
-                    # f.auto_now_add = False
-            #~ fields = model._meta.local_fields
-            #~ fields = [f for f in model._meta.fields if f.serialize]
-            #~ fields = [f for f in model._meta.local_fields if f.serialize]
-            self.stream.write('def create_%s(%s):\n' % (
-                model._meta.db_table, ', '.join([
-                    f.attname for f in fields
-                    if not getattr(f, '_lino_babel_field', False)])))
-            for f in fields:
-                if isinstance(f, models.DecimalField):
-                    self.stream.write(
-                        '    if %s is not None: %s = Decimal(%s)\n' % (
-                            f.attname, f.attname, f.attname))
-                elif isinstance(f, ChoiceListField):
-                    lstname = 'settings.SITE.modules.{0}.{1}'.format(
-                        f.choicelist.app_label, f.choicelist.__name__)
-                    ln = '    if {0}: {0} = {1}.get_by_value({0})\n'
-                    self.stream.write(ln.format(f.attname, lstname))
-                elif is_pointer_to_contenttype(f):
-                    self.stream.write(
-                        '    %s = new_content_type_id(%s)\n' % (
-                            f.attname, f.attname))
-
-            if model._meta.parents:
-                if len(model._meta.parents) != 1:
-                    msg = "%s : model._meta.parents is %r" % (
-                        model, model._meta.parents)
-                    raise Exception(msg)
-                pm, pf = list(model._meta.parents.items())[0]
-                child_fields = [f for f in fields if f != pf]
-                if child_fields:
-                    attrs = ',' + ','.join([
-                        '%s=%s' % (f.attname, f.attname)
-                        for f in child_fields])
-                else:
-                    attrs = ''
-                self.stream.write(
-                    '    return create_mti_child(%s, %s, %s%s)\n' % (
-                        full_model_name(pm, '_'), pf.attname,
-                        full_model_name(model, '_'), attrs))
-            else:
-                self.stream.write("    kw = dict()\n")
-                for f in fields:
-                    if getattr(f, '_lino_babel_field', False):
-                        continue
-                    elif isinstance(f, (BabelCharField, BabelTextField)):
-                        self.stream.write(
-                            '    if %s is not None: kw.update(bv2kw(%r,%s))\n' % (
-                                f.attname, f.attname, f.attname))
-                    else:
-                        self.stream.write(
-                            '    kw.update(%s=%s)\n' % (f.attname, f.attname))
-
-                self.stream.write('    return %s(**kw)\n\n' %
-                                  full_model_name(model, '_'))
+            write_create_function(model, self.stream)
         self.stream.write('\n')
         #~ used_models = set()
 

@@ -51,7 +51,7 @@ class Plugin(ad.Plugin):
                 'rest_framework.permissions.IsAuthenticatedOrReadOnly'
     ],
             # 'EXCEPTION_HANDLER': 'lino_noi.lib.rest.utils.exception_handler',
-            'UNAUTHENTICATED_USER': 'lino.modlib.users.utils.AnonymousUser'
+            'UNAUTHENTICATED_USER': 'lino.core.auth.utils.AnonymousUser'
         })
             
             

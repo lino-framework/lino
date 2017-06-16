@@ -168,10 +168,10 @@ class Authenticate(View):
         password = request.POST.get('password')
         user = auth.authenticate(
             request, username=username, password=password)
-        auth.login(request, user)
+        if user is not None:
+            # user.is_authenticated:
+            auth.login(request, user)
         
-        # from django.contrib.auth import authenticate
-        # authenticate(username, password, request)
         ar = BaseRequest(request)
         # mw = auth.get_auth_middleware()
         # msg = mw.authenticate(username, password, request)
@@ -181,8 +181,12 @@ class Authenticate(View):
         # else:
         #     request.session['username'] = username
         #     # request.session['password'] = password
-        ar.success(("Now logged in as %r" % username))
+        # ar.success(("Now logged in as %r" % username))
         #     # print "20150428 Now logged in as %r (%s)" % (username, user)
+        if user is None:
+            ar.error(_("Failed to log in as {}.".format(username)))
+        else:
+            ar.success(("Now logged in as %r" % username))
         return ar.renderer.render_action_response(ar)
 
 

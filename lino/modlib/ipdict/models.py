@@ -8,14 +8,16 @@
 # from builtins import object
 # from builtins import str
 
+from datetime import datetime
 from django.conf import settings
 
 # from django.db import models
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
+from django.contrib.auth.signals import user_logged_in, user_login_failed
+# from django.contrib.auth.signals user_logged_out
 from lino.api import dd, _
 
-from lino.core.auth import get_auth_middleware
 
 def format_timestamp(dt):
     if dt is None:
@@ -38,8 +40,7 @@ class Connections(dd.VirtualTable):
 
     @classmethod
     def get_data_rows(cls, ar):
-        auth = get_auth_middleware()
-        return auth.ip_records.values()
+        return dd.plugins.ipdict.ip_records.values()
     
     @dd.displayfield(_("IP address"))
     def ip_address(self, obj, ar):
@@ -67,3 +68,34 @@ class Connections(dd.VirtualTable):
 
     
             
+
+@dd.receiver(user_login_failed)
+def on_login_failed(sender=None, credentials=None, request=None,
+                    **kwargs):
+    ipdict = settings.SITE.plugins.ipdict
+    rec = ipdict.get_ip_record(request, 'anonymous')
+    # user failed to authenticate
+    rec.login_failures += 1
+    if rec.login_failures >= ipdict.max_failed_auth_per_ip:
+        # maybe a robot is trying to log in with brute force
+        # and waited patiently for max_blacklist_time to pass,
+        # and now continues to try. In that case we don't
+        # forget the blacklisted_since, so the robot must now
+        # wait a full minute for every attempt
+        if rec.blacklisted_since is None:
+            rec.blacklisted_since = datetime.now()
+
+
+@dd.receiver(user_logged_in)
+def on_logged_in(sender=None, request=None, user=None, **kwargs):
+    # when an IP was blacklisted, got unlocked after
+    # max_blacklist_time and then received a successful login,
+    # then all sins of anonymous are being erased:
+    ipdict = settings.SITE.plugins.ipdict
+    rec = ipdict.get_ip_record(request, 'anonymous')
+    rec.blacklisted_since = None
+    rec.login_failures = 0
+
+    # record the login time for username
+    rec = ipdict.get_ip_record(request, user.username)
+    rec.last_login = datetime.now()

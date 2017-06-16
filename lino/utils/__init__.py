@@ -612,6 +612,17 @@ class SumCollector(object):
         return repr(self._sums)
 
 
+class SimpleSingleton(object):
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if not isinstance(cls._instance, cls):
+            cls._instance = object.__new__(cls, *args, **kwargs)
+        return cls._instance
+
+    
+
+
 def _test():
     import doctest
     doctest.testmod()

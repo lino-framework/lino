@@ -1,13 +1,9 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2011-2016 Luc Saffre
 # License: BSD (see file COPYING for details)
-"""Actions for this plugin.
 
-"""
 from builtins import str
 from builtins import object
-
-from django.utils.encoding import python_2_unicode_compatible
 
 from django.db import models
 from django.conf import settings
@@ -17,7 +13,6 @@ from lino.core.roles import SiteAdmin
 
 
 class SendWelcomeMail(dd.Action):
-    """Send a welcome mail to this user."""
     label = _("Welcome mail")
     if False:  # #1336
         show_in_bbar = True
@@ -94,22 +89,6 @@ class SendWelcomeMail(dd.Action):
 
 
 class ChangePassword(dd.Action):
-    """Change the password of this user.
-
-    .. attribute:: current
-
-        The current password. Leave empty if the user has no password
-        yet. And SiteAdmin users don't need to specify this at all.
-
-    .. attribute:: new1
-
-        The new password.
-
-    .. attribute:: new2
-
-        The new password a second time. Both passwords must match.
-
-    """
     # button_text = u"\u205C"  # DOTTED CROSS (⁜)
     # button_text = u"\u2042"  # ASTERISM (⁂)
     button_text = u"\u2731" # 'HEAVY ASTERISK' (✱)

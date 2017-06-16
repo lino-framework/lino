@@ -1,16 +1,14 @@
 # Copyright 2011-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Most documentation is in :doc:`/specs/users` and :doc:`/dev/users`
+"""Implements functionality for managing users.  See
+:doc:`/specs/users`.
 
 Submodules:
 
 .. autosummary::
    :toctree:
 
-    utils
-    roles
-    actions
     fixtures.demo
     fixtures.demo_users
     fixtures.demo2

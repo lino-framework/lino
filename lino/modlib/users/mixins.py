@@ -23,9 +23,8 @@ from lino.core.exceptions import ChangedAPI
 from lino.core import model
 from lino.core import actions
 from lino.core import dbtables
-from lino.core.roles import SiteUser, SiteStaff, login_required
+from lino.core.roles import SiteUser, SiteStaff
 
-from .utils import AnonymousUser
 from .roles import Helper, AuthorshipTaker
 
 
@@ -52,7 +51,7 @@ class Authored(dd.Model):
 
     # author_field_name = None
     
-    manager_roles_required = login_required(SiteStaff)
+    manager_roles_required = dd.login_required(SiteStaff)
 
     def get_author(self):
         return self.user
@@ -234,7 +233,7 @@ class My(dbtables.Table):
 #     object.
 
 #     """
-#     manager_roles_required = login_required(SiteStaff)
+#     manager_roles_required = dd.login_required(SiteStaff)
 
 #     def get_action_permission(self, ar, obj, state):
 #         user = ar.get_user()

@@ -1,16 +1,41 @@
+"""
+This started as a copy of Django 1.11 django.contrib.auth.backends.
+
+Changes:
+
+- move "from django.contrib.auth.models import Permission" from global_settings
+
+- added support for use_ipdict
+
+"""
 from __future__ import unicode_literals
 
 from django.contrib.auth import get_user_model
+from django.conf import settings
 
+from datetime import datetime
+from django.core.exceptions import PermissionDenied
+from lino.api import _
 
-
-    
+   
 class ModelBackend(object):
     """
     Authenticates against settings.AUTH_USER_MODEL.
     """
 
     def authenticate(self, request, username=None, password=None, **kwargs):
+        if settings.SITE.use_ipdict:
+            ipdict = settings.SITE.plugins.ipdict
+            rec = ipdict.get_ip_record(request, 'anonymous')
+            if rec.blacklisted_since is not None:
+                since = datetime.now() - rec.blacklisted_since
+                if since < ipdict.max_blacklist_time:
+                    msg = _("Blacklisted IP {} : contact your "
+                            "system administrator")
+                    # block this request, don't ask other backends
+                    raise PermissionDenied(msg.format(rec.addr))
+                    # return msg.format(rec.addr)
+                
         UserModel = get_user_model()
         
         if username is None:

@@ -30,6 +30,7 @@ from lino.core.diff import ChangeWatcher
 from lino.core.utils import getrqdata
 from lino.utils import AttrDict
 from lino.utils.xmlgen.html import E
+from lino.core.auth.utils import AnonymousUser
 
 
 CATCHED_AJAX_EXCEPTIONS = (Warning, exceptions.ValidationError)
@@ -224,7 +225,6 @@ class BaseRequest(object):
         self.requesting_panel = requesting_panel
         self.master_instance = master_instance
         if user is None:
-            from lino.modlib.users.utils import AnonymousUser
             self.user = AnonymousUser()
         else:
             self.user = user

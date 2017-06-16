@@ -109,6 +109,7 @@ class MoveDown(actions.Action):
     def run_from_ui(self, ar, **kw):
         obj = ar.selected_rows[0]
         obj.seqno += 1
+        # obj.seqno = obj.seqno + 1
         obj.seqno_changed(ar)
         # obj.full_clean()
         obj.save()
@@ -240,7 +241,7 @@ class Sequenced(Duplicable):
         Initialize `seqno` to the `seqno` of eldest sibling + 1.
         """
         qs = self.get_siblings().order_by('seqno')
-        if qs is None:
+        if qs is None:  # TODO: remove this as it is no longer used (?)
             self.seqno = 0
         else:
             n = qs.count()
@@ -266,11 +267,14 @@ class Sequenced(Duplicable):
         #get siblings list
         qs = self.get_siblings().order_by('seqno').exclude(
             id=self.id)
+
+        # print("20170615 qs is", qs)
         # old_self = qs.get(id=self.id)
         # qs = qs.exclude(id=self.id)
 
         # if old_self.seqno != self.seqno:
         seq_no = 1
+        n = 0
 
         for i in qs:
             if seq_no == self.seqno:
@@ -280,9 +284,12 @@ class Sequenced(Duplicable):
                 i.seqno = seq_no
                 # if diff
                 i.save()
+                n += 1
 
             seq_no += 1
             
+        ar.success(message=_("Renumbered {} of {} siblings.").format(
+            n, qs.count()))
         ar.set_response(refresh_all=True)
         
     @fields.displayfield(_("Move"))
