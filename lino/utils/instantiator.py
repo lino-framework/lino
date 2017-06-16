@@ -366,6 +366,22 @@ def create_row(model, **kw):
     o.save()
     return o
 
+def create_or_update_row(model, lookup_values, new_values):
+    """
+    Update a single existing row that can be found using param: lookup values, with new_values.
+    If one doesn't exist, instantiates, full_cleans, saves and returns a database object
+    """
+    try:
+        o = model.objects.get(**lookup_values)
+        for attr, value in new_values.items():
+            setattr(o, attr, value)
+    except model.DoesNotExist: # If get receives more than one item will raise MultipleObjectsReturned:
+        o = model(**new_values)
+    o.full_clean()
+    o.save()
+    return o
+
+
 create = create_row  # backwards-compat
 
 def create_and_get(model, **kw):
