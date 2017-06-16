@@ -39,7 +39,15 @@ class ChangeObservable(dd.Model):
         # msg = _("has been modified by {user}").format(**ctx)
         # return "{} {}".format(self, msg)
             
-            
+    def add_change_watcher(self, user):
+        """
+        .. parameter:: user
+
+            The user that will be linked to this object as a change watcher.
+
+        """
+        raise NotImplementedError()
+
     def get_change_body(self, ar, cw):
         """Returns the body text of the notification message to emit.
 
