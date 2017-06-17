@@ -566,7 +566,7 @@ class Model(models.Model):
 
     def after_ui_create(self, ar):
         """Called when a user creates a new object instance in a grid or through a insert action."""
-        print(19062017, "Ticket 1910")
+        # print(19062017, "Ticket 1910")
         pass
 
     def save_new_instance(elem, ar):
