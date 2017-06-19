@@ -37,7 +37,7 @@ from django.views.generic import View
 import json
 from django.utils.translation import ugettext as _
 from django.utils.encoding import force_text
-from django.contrib import auth
+from lino.core import auth
 
 from lino.api import dd
 

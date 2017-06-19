@@ -16,8 +16,8 @@ from lino.core import constants
 from .utils import AnonymousUser
 
 
-from django.contrib import auth
-from django.contrib.auth import load_backend
+from lino.core import auth
+from lino.core.auth import load_backend
 from .backends import RemoteUserBackend
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.deprecation import MiddlewareMixin
