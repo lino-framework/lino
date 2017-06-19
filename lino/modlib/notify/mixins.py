@@ -62,7 +62,7 @@ class ChangeObservable(dd.Model):
                 _("{user} created {what}").format(**ctx), ".")]
             elems += list(self.get_change_info(ar, cw))
         else:
-            items = list(cw.get_updates_html(self.change_watcher_spec.ignored_fields))
+            items = list(cw.get_updates_html(["_user_cache"]))
             if len(items) == 0:
                 return
             elems = []
