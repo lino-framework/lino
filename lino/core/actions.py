@@ -684,6 +684,7 @@ class CreateRow(Action):
         elem.save_new_instance(ar)
         ar.success(_("%s has been created.") % obj2unicode(elem))
 
+        # print(19062017, "Ticket 1910")
         if ar.actor.handle_uploaded_files is None:
             # The `rows` can contain complex strings which cause
             # decoding problems on the client when responding to a

@@ -193,6 +193,13 @@ class Model(models.Model):
 
     """
 
+    quick_search_fields_strict = None
+    """Same as :attr:`quick_search_fields`, but this list is used to
+    match rows where the search text is exactly what's contained in the
+    fields.
+
+    """
+
     active_fields = frozenset()
     """If specified, this is the default value for
     :attr:`active_fields<lino.core.tables.AbstractTable.active_fields>`
@@ -564,13 +571,18 @@ class Model(models.Model):
         """
         pass
 
+    def after_ui_create(self, ar):
+        """Called when a user creates a new object instance in a grid or through a insert action."""
+        # print(19062017, "Ticket 1910")
+        pass
+
     def save_new_instance(elem, ar):
         pre_ui_save.send(sender=elem.__class__, instance=elem, ar=ar)
         elem.before_ui_save(ar)
         elem.save(force_insert=True)
         # yes, `on_ui_created` comes *after* save()
         on_ui_created.send(elem, request=ar.request)
-        # elem.after_ui_create(ar)
+        elem.after_ui_create(ar)
         elem.after_ui_save(ar, None)
 
     def save_watched_instance(elem, ar, watcher):
@@ -713,6 +725,13 @@ class Model(models.Model):
             for fn in model.quick_search_fields:
                 kw = {prefix + fn + "__icontains": search_text}
                 q = q | models.Q(**kw)
+
+        strict_search_text = int(search_text) if search_text.isdigit() else search_text
+
+        for fn in model.quick_search_fields_strict:
+            kw = {prefix + fn: strict_search_text}
+            q = q | models.Q(**kw)
+
         return q
 
     @classmethod
@@ -1203,6 +1222,7 @@ LINO_MODEL_ATTRIBS = (
     'obj2href',
     'quick_search_fields',
     'quick_search_fields_digit',
+    'quick_search_fields_strict',
     'change_watcher_spec',
     'on_analyze',
     'disable_delete',
