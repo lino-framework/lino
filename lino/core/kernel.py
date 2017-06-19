@@ -297,22 +297,6 @@ class Kernel(object):
                     "of space-separated field names (not {1})".format(
                         model, qsf))
 
-            qsf = model.quick_search_fields_strict
-            # Attention when inheriting this from from parent model.
-            # qsf = model.__dict__.get('quick_search_fields', None)
-            if qsf is None:
-                model.quick_search_fields_strict = frozenset([])
-            elif isinstance(qsf, frozenset):
-                pass
-            elif isinstance(qsf, six.string_types):
-                model.quick_search_fields_strict = frozenset(
-                    fields.fields_list(model, model.quick_search_fields_strict))
-            else:
-                raise ChangedAPI(
-                    "{0}.quick_search_fields_strict must be None or a string "
-                    "of space-separated field names (not {1})".format(
-                        model, qsf))
-
             qsf = model.quick_search_fields_digit
             if qsf is None:
                 fields_list = []

@@ -193,13 +193,6 @@ class Model(models.Model):
 
     """
 
-    quick_search_fields_strict = None
-    """Same as :attr:`quick_search_fields`, but this list is used to
-    match rows where the search text is exactly what's contained in the
-    fields.
-
-    """
-
     active_fields = frozenset()
     """If specified, this is the default value for
     :attr:`active_fields<lino.core.tables.AbstractTable.active_fields>`
@@ -725,13 +718,6 @@ class Model(models.Model):
             for fn in model.quick_search_fields:
                 kw = {prefix + fn + "__icontains": search_text}
                 q = q | models.Q(**kw)
-
-        strict_search_text = int(search_text) if search_text.isdigit() else search_text
-
-        for fn in model.quick_search_fields_strict:
-            kw = {prefix + fn: strict_search_text}
-            q = q | models.Q(**kw)
-
         return q
 
     @classmethod
@@ -1222,7 +1208,6 @@ LINO_MODEL_ATTRIBS = (
     'obj2href',
     'quick_search_fields',
     'quick_search_fields_digit',
-    'quick_search_fields_strict',
     'change_watcher_spec',
     'on_analyze',
     'disable_delete',
