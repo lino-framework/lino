@@ -41,9 +41,9 @@ class ChangeObservable(dd.Model):
             
     def add_change_watcher(self, user):
         """
-        .. parameter:: user
+        Parameters:
 
-            The user that will be linked to this object as a change watcher.
+        :user: The user that will be linked to this object as a change watcher.
 
         """
         raise NotImplementedError()
