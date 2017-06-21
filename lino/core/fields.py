@@ -242,7 +242,7 @@ class RemoteField(FakeField):
         #~ print 20120424, self.name
         #~ settings.SITE.register_virtual_field(self)
 
-        if isinstance(fld, models.ForeignKey):
+        if isinstance(fld, models.ForeignKey) or (isinstance(fld, VirtualField) and isinstance(fld.return_type, models.ForeignKey)):
             self.rel = self.field.rel
             from lino.core import store
             store.get_atomizer(self.rel, self, name)
