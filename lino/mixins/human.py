@@ -157,18 +157,11 @@ class Human(model.Model):
 
     .. attribute:: title
 
-        An optional name prefix like "Dr." or "PhD", used to specify a
-        professional position or academic qualification.
+        Used to specify a professional position or academic
+        qualification like "Dr." or "PhD".
 
         If given, the content of this field comes always *between*
-        salutation and name.  It does not handle special cases like
-        titles which replace the salutation ("Br.", "Sr.") or which
-        must come at another position of the full name
-        (e.g. "Cardinal", "Graf" before the last name).
-
-        External links: `linguee.de
-        <http://www.linguee.de/englisch-deutsch/uebersetzung/mr.+dr..html>`__
-        and `wikipedia.org <https://en.wikipedia.org/wiki/Title>`__
+        salutation and name.  
 
     .. attribute:: first_name
 
@@ -234,9 +227,25 @@ class Human(model.Model):
             #~ translation.get_language(),
             self.gender, **salutation_options)
 
+    def get_last_name_prefix(self):
+        """May be used for handling special of titles (e.g. "Cardinal",
+        "Graf") which come before the last name (not before the first
+        name).
+
+        Lino currently does not support titles which replace the
+        salutation ("Br.", "Sr.")  or which must come at another
+        position of the full name
+
+        External links: `linguee.de
+        <http://www.linguee.de/englisch-deutsch/uebersetzung/mr.+dr..html>`__
+        and `wikipedia.org <https://en.wikipedia.org/wiki/Title>`__
+
+        """
+        return ''
+    
     def get_full_name(
             self, salutation=True, upper=None, **salutation_options):
-        """Returns a one-line string composed of salutation, :attr:`title`,
+        """Returns a one-line string composed of salutation,
         :attr:`first_name` and :attr:`last_name`.
 
         The optional keyword argument `salutation` can be set to
@@ -251,6 +260,10 @@ class Human(model.Model):
         Any other keyword arguments are forwarded to
         :func:`lino.mixins.human.get_salutation` (see there).
 
+        If :meth:`get_after_salutation_words` yields a sequence of
+        words, then these are inserted between salutation and first
+        name.
+
         See :ref:`lino.tutorial.human` for some examples.
 
         """
@@ -261,6 +274,9 @@ class Human(model.Model):
         if self.title:
             words.append(self.title)
         words.append(self.first_name)
+        prefix = self.get_last_name_prefix()
+        if prefix:
+            words.append(prefix)
         if upper is None:
             upper = settings.SITE.uppercase_last_name
         if upper:
