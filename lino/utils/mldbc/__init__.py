@@ -34,3 +34,9 @@ def babel_named(model, name, **kwargs):
     return model(**kwargs)
 
 
+def babeld(model, desig, **kwargs):
+    """Instantiate the given subclass of BabelDesignated"""
+    kwargs = settings.SITE.str2kw('designation', desig, **kwargs)
+    return model(**kwargs)
+
+

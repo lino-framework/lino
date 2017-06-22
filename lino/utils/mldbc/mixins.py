@@ -22,8 +22,12 @@ from .fields import BabelCharField
 class BabelNamed(model.Model):
 
     """Mixin for models that have a babel field `name` (labelled
-    "Description" by default) for each language.
-    
+    "Designation" by default) for each language.
+
+    This mixin is deprecated (but without any planned expiry date so
+    far). For new applications we recommend to use
+    :class:`BabelDesignated` instead.
+
     """
 
     class Meta(object):
@@ -33,5 +37,28 @@ class BabelNamed(model.Model):
 
     def __str__(self):
         return settings.SITE.babelattr(self, 'name')
+    
+
+
+@python_2_unicode_compatible
+class BabelDesignated(model.Model):
+
+    """Mixin for models that have a babel field "Designation" (i.e. one
+    designation for each language defined in the site's
+    :attr:`languages <lino.core.site.Site.languages>`.
+
+    This is the same as :class:`BabelNamed` but the internal field
+    name matches the label.
+
+    """
+
+    class Meta(object):
+        abstract = True
+
+    designation = BabelCharField(
+        max_length=200, verbose_name=_("Designation"))
+
+    def __str__(self):
+        return settings.SITE.babelattr(self, 'designation')
 
 

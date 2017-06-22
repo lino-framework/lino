@@ -823,7 +823,7 @@ class Kernel(object):
                     ar.error(e, alert=True)
                 return ar.renderer.render_action_response(ar)
 
-        ar.error("Invalid button %r for callback" % (button_id, thread_id))
+        ar.error("Invalid button %r for callback %r" % (button_id, thread_id))
         return ar.renderer.render_action_response(ar)
 
     def add_callback(self, ar, *msgs):
