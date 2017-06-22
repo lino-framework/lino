@@ -83,7 +83,7 @@ EXT_CHAR_HEIGHT = 22
 FULLWIDTH = '-20'
 FULLHEIGHT = '-10'
 
-USED_NUMBER_FORMATS = dict()
+# USED_NUMBER_FORMATS = dict()
 
 DEFAULT_PADDING = 2
 
@@ -1070,21 +1070,65 @@ class NumberFieldElement(FieldElement):
 
     def get_column_options(self, **kw):
         kw = FieldElement.get_column_options(self, **kw)
-        # kw.update(xtype='numbercolumn')
         kw.update(align='right')
 
-        # if settings.SITE.decimal_group_separator:
-            # fmt = '0' + settings.SITE.decimal_group_separator + '000'
-        # else:
-        # Ext.utils.format.number() is not able to specify ' ' as group separator,
-        # so we don't use grouping at all.
-        if self.number_format != settings.SITE.default_number_format_extjs:
+        # if self.number_format != settings.SITE.default_number_format_extjs:
+        #     kw.update(format=self.number_format)
+        if self.number_format:
+            kw.update(xtype='numbercolumn')
             kw.update(format=self.number_format)
-        n = USED_NUMBER_FORMATS.get(self.number_format, 0)
-        USED_NUMBER_FORMATS[self.number_format] = n + 1
+        # n = USED_NUMBER_FORMATS.get(self.number_format, 0)
+        # USED_NUMBER_FORMATS[self.number_format] = n + 1
         # ~ kw.update(format='') # 20130125
         # ~ kw.update(renderer=js_code('Lino.nullnumbercolumn_renderer')) # 20130125
         return kw
+
+
+class DecimalFieldElement(NumberFieldElement):
+    zero = decimal.Decimal(0)
+    # value_template = "new Ext.form.NumberField(%s)"
+    # filter_type = 'numeric'
+    # gridfilters_settings = dict(type='numeric')
+    # xtype = 'numberfield'
+    # sortable = True
+    # data_type = 'float'
+
+    def __init__(self, *args, **kw):
+        FieldElement.__init__(self, *args, **kw)
+        self.preferred_width = max(5, self.field.max_digits) \
+            + self.field.decimal_places
+        # fmt = '0,000'
+        # fmt = '0.0'
+        # if self.field.decimal_places > 0:
+        #     fmt += ',' + ("0" * self.field.decimal_places)
+        if len(settings.SITE.decimal_group_separator):
+            # Ext.utils.format.number() is not able to specify
+            # anything else than '.' or ',' as group separator,
+            if settings.SITE.decimal_separator == ',':
+                fmt = "0.000"
+            else:
+                fmt = "0,000"
+        else:
+                fmt = "0"
+        if self.field.decimal_places > 0:
+            fmt += settings.SITE.decimal_separator
+            fmt += "0" * self.field.decimal_places
+        if settings.SITE.decimal_separator == ',':
+            fmt += "/i"
+        self.number_format = fmt
+
+    def get_field_options(self, **kw):
+        kw = FieldElement.get_field_options(self, **kw)
+        if self.field.decimal_places:
+            kw.update(decimalPrecision=self.field.decimal_places)
+            # kw.update(decimalPrecision=-1)
+            kw.update(decimalSeparator=settings.SITE.decimal_separator)
+        else:
+            kw.update(allowDecimals=False)
+        if self.editable:
+            kw.update(allowBlank=self.field.blank)
+        return kw
+
 
 
 class IntegerFieldElement(NumberFieldElement):
@@ -1139,40 +1183,6 @@ class RequestFieldElement(IntegerFieldElement):
     def format_sum(self, ar, sums, i):
         # return self.format_value(ar,sums[i])
         return E.b(str(sums[self.name]))
-
-
-class DecimalFieldElement(NumberFieldElement):
-    zero = decimal.Decimal(0)
-    # value_template = "new Ext.form.NumberField(%s)"
-    # filter_type = 'numeric'
-    # gridfilters_settings = dict(type='numeric')
-    # xtype = 'numberfield'
-    # sortable = True
-    # data_type = 'float'
-
-    def __init__(self, *args, **kw):
-        FieldElement.__init__(self, *args, **kw)
-        self.preferred_width = max(5, self.field.max_digits) \
-            + self.field.decimal_places
-        fmt = '0'
-        if self.field.decimal_places > 0:
-            fmt += settings.SITE.decimal_separator + \
-                ("0" * self.field.decimal_places)
-        if settings.SITE.decimal_separator == ',':
-            fmt += "/i"
-        self.number_format = fmt
-
-    def get_field_options(self, **kw):
-        kw = FieldElement.get_field_options(self, **kw)
-        if self.field.decimal_places:
-            kw.update(decimalPrecision=self.field.decimal_places)
-            # kw.update(decimalPrecision=-1)
-            kw.update(decimalSeparator=settings.SITE.decimal_separator)
-        else:
-            kw.update(allowDecimals=False)
-        if self.editable:
-            kw.update(allowBlank=self.field.blank)
-        return kw
 
 
 class QuantityFieldElement(CharFieldElement):
