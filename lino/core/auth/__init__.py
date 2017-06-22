@@ -29,7 +29,11 @@ from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured, PermissionDenied
 from django.middleware.csrf import rotate_token
 from django.utils.crypto import constant_time_compare
-from django.utils.deprecation import RemovedInDjango21Warning
+try:
+    from django.utils.deprecation import RemovedInDjango21Warning
+except ImportError:  # when using Django 1.10
+    RemovedInDjango21Warning = Warning
+
 from django.utils.module_loading import import_string
 from django.utils.translation import LANGUAGE_SESSION_KEY
 

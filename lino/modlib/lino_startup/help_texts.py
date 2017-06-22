@@ -63,13 +63,13 @@ resolved at startup to the model's class object."""),
     'lino.mixins.duplicable.Duplicable' : _("""Adds a row action "Duplicate" which duplicates (creates a clone
 of) the object it was called on."""),
     'lino.mixins.human.Human' : _("""Base class for all models that represent a human."""),
-    'lino.mixins.human.Human.title' : _("""An optional name prefix like "Dr." or "PhD", used to specify a
-professional position or academic qualification."""),
+    'lino.mixins.human.Human.title' : _("""Used to specify a professional position or academic
+qualification like "Dr." or "PhD"."""),
     'lino.mixins.human.Human.first_name' : _("""The first name, also known as given name."""),
     'lino.mixins.human.Human.last_name' : _("""The last name, also known as family name."""),
     'lino.mixins.human.Human.middle_name' : _("""A space-separated list of all middle names."""),
     'lino.mixins.human.Human.gender' : _("""The sex of this person (male or female)."""),
-    'lino.mixins.human.Human.full_name' : _("""Returns a one-line string composed of salutation, title,
+    'lino.mixins.human.Human.full_name' : _("""Returns a one-line string composed of salutation,
 first_name and last_name."""),
     'lino.mixins.human.Born' : _("""Abstract base class that adds a birth_date
 field and a virtual field "Age"."""),
