@@ -79,8 +79,12 @@ def create_mti_child(parent_model, pk, child_model, **kw):
     
     child_obj = child_model(**kw)
     
-    for k, v in pfields.items():
-        setattr(child_obj, k, v)
+    if len(pfields):
+        parent_obj = parent_model.objects.get(pk=pk)
+        for k, v in pfields.items():
+            setattr(parent_obj, k, v)
+        parent_obj.full_clean()
+        parent_obj.save()
 
     def full_clean(*args, **kw):
         pass

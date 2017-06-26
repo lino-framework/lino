@@ -3,6 +3,7 @@
 # License: BSD (see file COPYING for details)
 
 """Defines the :class:`Polymorphic` model mixin.
+See :doc:`/dev/mti`.
 
 """
 from builtins import str
@@ -115,7 +116,7 @@ class Polymorphic(model.Model):
         A virtual field which defines buttons for switching between the
         different views.
 
-    Usage example in :doc:`/tutorials/mti/index` and
+    Usage examples in :doc:`/specs/projects/mti` and
     :doc:`/tutorials/letsmti/index`.
 
     """
