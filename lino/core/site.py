@@ -752,8 +752,8 @@ class Site(object):
 
     """
 
-    #~ default_number_format_extjs = '0,000.00/i'
-    default_number_format_extjs = '0,00/i'
+    default_number_format_extjs = '0,000.00/i'
+    # default_number_format_extjs = '0,00/i'
 
     uppercase_last_name = False
     """

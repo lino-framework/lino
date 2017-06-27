@@ -63,20 +63,28 @@ def create_mti_child(parent_model, pk, child_model, **kw):
     if parent_link_field is None:
         raise ValidationError("A %s cannot be parent for a %s" % (
             parent_model.__name__, child_model.__name__))
-    ignored = {}
+    pfields = {}
     for f in parent_model._meta.fields:
         if f.name in kw:
-            ignored[f.name] = kw.pop(f.name)
+            pfields[f.name] = kw.pop(f.name)
     kw[parent_link_field.name + "_id"] = pk
-    if ignored:
-        raise Exception(
-            "create_mti_child() %s %s from %s : "
-            "ignored non-local fields %s" % (
-                child_model.__name__,
-                pk,
-                parent_model.__name__,
-                ignored))
+    # if ignored:
+    #     raise Exception(
+    #         "create_mti_child() %s %s from %s : "
+    #         "ignored non-local fields %s" % (
+    #             child_model.__name__,
+    #             pk,
+    #             parent_model.__name__,
+    #             ignored))
+    
     child_obj = child_model(**kw)
+    
+    if len(pfields):
+        parent_obj = parent_model.objects.get(pk=pk)
+        for k, v in pfields.items():
+            setattr(parent_obj, k, v)
+        parent_obj.full_clean()
+        parent_obj.save()
 
     def full_clean(*args, **kw):
         pass

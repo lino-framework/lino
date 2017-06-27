@@ -2,10 +2,7 @@
 # License: BSD (see file COPYING for details)
 
 """
-A collection of tools around :doc:`/topics/mti`.
-See the source code of :mod:`lino.test_apps.mti`.
-Certainly not perfect, but works for me.
-I wrote it mainly to solve ticket :srcref:`docs/tickets/22`.
+A collection of tools around :doc:`multi-table inheritance </dev/mti>`.
 
 
 

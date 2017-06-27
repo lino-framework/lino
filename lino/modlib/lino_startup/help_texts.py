@@ -484,7 +484,10 @@ See mldbc."""),
     'lino.utils.mldbc.fields.LanguageField' : _("""A field that lets the user select a language from the available
 lino.core.site.Site.languages."""),
     'lino.utils.mldbc.mixins.BabelNamed' : _("""Mixin for models that have a babel field name (labelled
-"Description" by default) for each language."""),
+"Designation" by default) for each language."""),
+    'lino.utils.mldbc.mixins.BabelDesignated' : _("""Mixin for models that have a babel field "Designation" (i.e. one
+designation for each language defined in the site's
+languages."""),
     'lino.utils.mti.ChildCollector' : _("""A Collector that does not delete the MTI parents."""),
     'lino.utils.mti.EnableChild' : _("""Rendered as a checkbox that indicates whether an mti child of the
 given model exists."""),
