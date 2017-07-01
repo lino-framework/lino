@@ -1044,8 +1044,8 @@ def site_startup(self):
         for p in self.installed_plugins:
             p.on_site_startup(self)
 
-        for k, v in self.models.items():
-            self.actors.setdefault(k, v)
+        # for k, v in self.models.items():
+        #     self.actors.setdefault(k, v)
 
         self.user_interfaces = tuple([
             p for p in self.installed_plugins if p.ui_label is not None])

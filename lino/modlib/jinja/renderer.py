@@ -91,7 +91,7 @@ class JinjaRenderer(MailRenderer):
             #~ return E.tostring(E.ul(*[E.li(ar.summary_row(obj)) for obj in ar]),method="html")
 
         def as_ul(action_spec):
-            a = settings.SITE.actors.resolve(action_spec)
+            a = settings.SITE.models.resolve(action_spec)
             ar = a.request(
                 user=settings.SITE.user_model.get_anonymous_user())
             # 20150810
