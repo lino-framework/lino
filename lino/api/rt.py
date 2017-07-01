@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Luc Saffre
+# Copyright 2014-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """This module is a shortcut to miscellaneous functions and classes which
@@ -19,7 +19,11 @@ function has been called.
 
 .. attribute:: actors
 
-    Shortcut to :attr:`lino.core.site.Site.actors`
+    Deprecated alias for :attr:`models`
+
+.. attribute:: modules
+
+    Deprecated alias for :attr:`models`
 
 """
 
@@ -28,9 +32,9 @@ from django.conf import settings
 from lino.core.utils import models_by_base
 
 models = settings.SITE.modules
-modules = settings.SITE.modules  # deprecated alias
+actors = modules = settings.SITE.modules  # deprecated alias
 
-actors = settings.SITE.actors
+# actors = settings.SITE.actors
 
 login = settings.SITE.login
 startup = settings.SITE.startup

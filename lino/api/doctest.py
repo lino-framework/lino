@@ -289,7 +289,7 @@ def show_dialog_actions():
     return analyzer.show_dialog_actions(True)
 
 
-def walk_menu_items(username=None, severe=False):
+def walk_menu_items(username=None, severe=True):
     """Walk through all menu items which run a :class:`ShowTable
     <lino.core.actions.ShowTable>` action, showing how many data rows
     the grid contains.

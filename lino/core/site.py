@@ -148,7 +148,7 @@ class Site(object):
 
         An :class:`AttrDict <atelier.utils.AttrDict>` which maps every
         installed `app_label` to the corresponding :xfile:`models.py`
-        module.
+        module object.
 
         This is also available as the shortcut :attr:`rt.models
         <lino.api.rt.models>`.
@@ -156,6 +156,8 @@ class Site(object):
         See :doc:`/dev/plugins`
 
     .. attribute:: actors
+
+        An alias for :attr:`models`. Deprecated.
 
         An :class:`AttrDict <atelier.utils.AttrDict>` which maps every
         installed `app_label` to the corresponding *actors module*.
@@ -943,10 +945,13 @@ class Site(object):
     ``'desktop'``. The value should be one of ``'desktop'`` or
     ``'mobile'``.
 
-    For every plugin, Lino will try to import a "design module".
-    E.g. if :attr:`design_name` is ``'desktop'``, then the design
-    module for a plugin ``'foo.bar'`` is ``'foo.bar.desktop'``.  If
-    such a module exists, Lino stores it as ``rt.actors.bar``.
+    For every plugin, Lino will try to import its "design module".
+    For example if :attr:`design_name` is ``'desktop'``, then the
+    design module for a plugin ``'foo.bar'`` is ``'foo.bar.desktop'``.
+    If such a module exists, Lino imports it and adds it to
+    :attr:`models.bar`. The result is the same as if there were a
+    ``from .desktop import *`` statement at the end of the
+    :xfile:`models.py` module.
 
     """
 
@@ -1214,7 +1219,8 @@ class Site(object):
         self.plugins = AttrDict()
         self.models = AttrDict()
         self.modules = self.models  # backwards compat
-        self.actors = AttrDict()
+        # self.actors = self.models  # backwards compat
+        # self.actors = AttrDict()
 
         if settings_globals is None:
             settings_globals = {}
@@ -1716,7 +1722,9 @@ class Site(object):
             fn = join(
                 dirname(p.app_module.__file__), self.design_name + '.py')
             if exists(fn):
-                self.actors[p.app_label] = import_module(mn)
+                # self.actors[p.app_label] = import_module(mn)
+                m = import_module(mn)
+                self.models[p.app_label].__dict__.update(m.__dict__)
             # try:
             #     # print("20160725 Loading actors from", mn)
             #     self.actors[p.app_label] = import_module(mn)
@@ -2454,8 +2462,8 @@ this field.
                 self.models.system.SiteConfigs.set_detail_layout("""
                 site_company next_partner_id:10
                 default_build_method
-                clients_account   sales_account     sales_vat_account
-                suppliers_account purchases_account purchases_vat_account
+                clients_account   sales_account
+                suppliers_account purchases_account
                 """)
 
                 self.models.accounts.Accounts.set_detail_layout("""

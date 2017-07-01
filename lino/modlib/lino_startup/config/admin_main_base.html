@@ -67,14 +67,14 @@
         {% if site.plugins.users.online_registration and not user.user_type.readonly %}
         {{_("Or {} as a new user.").format(
           E.tostring(ar.window_action_button(
-            site.actors.users.Register.insert_action,
+            site.models.users.Register.insert_action,
             label=_("register"), icon_name=None)))}}
         {% endif %}
       </p>
         {% if site.is_demo_site %}
             <p>
             {{_("This demo site has %d users:") % 
-            site.actors.users.UsersOverview.request().get_total_count()}}
+            site.models.users.UsersOverview.request().get_total_count()}}
             </p>
             {{as_ul('users.UsersOverview')}}
             <p>

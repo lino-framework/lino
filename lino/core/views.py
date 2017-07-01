@@ -51,7 +51,7 @@ def requested_actor(app_label, actor):
     is a model) that model's default table.
 
     """
-    x = settings.SITE.actors.get(app_label)
+    x = settings.SITE.models.get(app_label)
     # x = getattr(settings.SITE.modules, app_label, None)
     if x is None:
         raise http.Http404("There's no app_label %r here" % app_label)
@@ -59,6 +59,8 @@ def requested_actor(app_label, actor):
     cl = getattr(x, actor, None)
     if not isinstance(cl, type):
         raise http.Http404("%s.%s is not a class" % (app_label, actor))
+        # raise http.Http404("%s.%s is not a class (but %r)" % (
+        #     app_label, actor, cl))
     if issubclass(cl, models.Model):
         return cl.get_default_table()
     if not issubclass(cl, actors.Actor):

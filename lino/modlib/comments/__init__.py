@@ -52,4 +52,4 @@ class Plugin(ad.Plugin):
 
     def unused_get_dashboard_items(self, user):
         # removed because it is rather disturbing to see all comments
-        yield self.site.actors.comments.RecentComments
+        yield self.site.models.comments.RecentComments
