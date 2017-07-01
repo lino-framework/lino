@@ -10,7 +10,8 @@ help_texts = {
     'lino.api.doctest.HttpQuery.username' : _("""Alias for field number 0"""),
     'lino.api.rt.plugins' : _("""Shortcut to lino.core.site.Site.plugins"""),
     'lino.api.rt.models' : _("""Shortcut to lino.core.site.Site.models"""),
-    'lino.api.rt.actors' : _("""Shortcut to lino.core.site.Site.actors"""),
+    'lino.api.rt.actors' : _("""Deprecated alias for models"""),
+    'lino.api.rt.modules' : _("""Deprecated alias for models"""),
     'lino.api.selenium.Album' : _("""Generates one directory of screenshots images and their index.rst
 file."""),
     'lino.mixins.Contactable' : _("""Mixin for models that represent somebody who can be contacted by
