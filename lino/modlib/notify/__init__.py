@@ -180,5 +180,5 @@ class Plugin(ad.Plugin):
     def get_dashboard_items(self, user):
         if user.authenticated:
             # yield ActorItem(
-            #     self.actors.notify.MyMessages, header_level=None)
-            yield self.site.actors.notify.MyMessages
+            #     self.models.notify.MyMessages, header_level=None)
+            yield self.site.models.notify.MyMessages

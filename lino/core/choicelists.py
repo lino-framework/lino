@@ -139,9 +139,26 @@ class Choice(object):
             if not hasattr(self, k):
                 raise Exception("%s has no attribute `%s`" % (self, k))
             setattr(self, k, v)
-
-    def attach(self, choicelist):
-        self.choicelist = choicelist
+            
+    def attach(i, cls):
+        i.choicelist = cls
+        dt = cls.display_text(i)
+        cls.choices.append((i, dt))
+        # cls.preferred_width = max(cls.preferred_width, len(unicode(dt)))
+        cls.items_dict[i.value] = i
+        #~ cls.items_dict[i] = i
+        if len(i.value) > cls.max_length:
+            if len(cls._fields) > 0:
+                raise Exception(
+                    "%s cannot add value %r because fields exist "
+                    "and max_length is %d."
+                    % (cls, i.value, cls.max_length) + """\
+When fields have been created, we cannot simply change their max_length because
+Django creates copies of them when inheriting models.
+""")
+            cls.max_length = len(i.value)
+            #~ for fld in cls._fields:
+                #~ fld.set_max_length(cls.max_length)
 
     def remove(self):
         """Remove this choice from its list.
@@ -543,23 +560,6 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
             warnings.warn("Duplicate value %r in %s." % (i.value, cls))
             is_duplicate = True
         i.attach(cls)
-        dt = cls.display_text(i)
-        cls.choices.append((i, dt))
-        # cls.preferred_width = max(cls.preferred_width, len(unicode(dt)))
-        cls.items_dict[i.value] = i
-        #~ cls.items_dict[i] = i
-        if len(i.value) > cls.max_length:
-            if len(cls._fields) > 0:
-                raise Exception(
-                    "%s cannot add value %r because fields exist "
-                    "and max_length is %d."
-                    % (cls, i.value, cls.max_length) + """\
-When fields have been created, we cannot simply change their max_length because
-Django creates copies of them when inheriting models.
-""")
-            cls.max_length = len(i.value)
-            #~ for fld in cls._fields:
-                #~ fld.set_max_length(cls.max_length)
         if i.name:
             if not is_duplicate:
                 if i.name in cls.__dict__:
