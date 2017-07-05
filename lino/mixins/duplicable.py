@@ -50,6 +50,7 @@ class Duplicate(actions.Action):
         obj = ar.selected_rows[0]
         related = []
         for m, fk in obj._lino_ddh.fklist:
+            print fk.name, m.allow_cascaded_delete, m.allow_cascaded_copy, obj
             if fk.name in m.allow_cascaded_delete or fk.name in m.allow_cascaded_copy:
                 related.append((fk, m.objects.filter(**{fk.name: obj})))
 
@@ -84,7 +85,7 @@ class Duplicate(actions.Action):
                 relobj.on_duplicate(ar, new)
                 relobj.save(force_insert=True)
 
-        new.after_duplicate(ar)
+        new.after_duplicate(ar, obj)
 
         if cw.is_dirty():
             new.full_clean()

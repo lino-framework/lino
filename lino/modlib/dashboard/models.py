@@ -74,7 +74,7 @@ class Widget(UserAuthored, Sequenced):
     
     @dd.displayfield(_("Label"))
     def title(self, ar):
-        a = settings.SITE.actors.resolve(self.item_name)
+        a = settings.SITE.models.resolve(self.item_name)
         # might be invalid e.g. if the widget was created by a
         # previous version.
         if a is None:
