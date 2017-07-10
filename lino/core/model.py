@@ -756,15 +756,15 @@ class Model(models.Model):
         """
         pass
 
-    def after_duplicate(self, ar):
+    def after_duplicate(self, ar, master):
         """Called by :class:`lino.mixins.duplicable.Duplicate` on
         the new copied row instance, after the row and it's related fields
         have been saved.
 
         `ar` is the action request that asked to duplicate.
 
-        `ar.selected_rows[0]` contains the original row that is being copied.
-        """
+        `ar.selected_rows[0]` contains the original row that is being
+        copied, which is the `master` parameter """
         pass
 
     def before_state_change(self, ar, old, new):
