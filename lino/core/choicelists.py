@@ -586,7 +586,14 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
         #     return value
         if not value:
             return None
-        v = cls.items_dict.get(value)
+        v = None
+        if isinstance(value, unicode):
+            try:
+                v = cls.items_dict.get(value.encode())
+            except UnicodeEncodeError:
+                pass
+        # If not unicode, use value, if unicode and didn't encode right try get without encode,
+        v = cls.items_dict.get(value) if v is None else v
         if v is None:
             if settings.SITE.strict_choicelist_values:
                 raise UnresolvedChoice(
