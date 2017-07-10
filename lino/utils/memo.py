@@ -101,12 +101,7 @@ Text with only [opening square bracket.
 Special handling
 ----------------
 
-Non-breaking, leading and trailing spaces are always removed from
-command text:
-
->>> print(p.parse(u"[url\u00A0http://example.com example.com]."))
-[DEBUG] url2html() got 'http://example.com example.com'
-<a href="http://example.com">example.com</a>.
+Leading and trailing spaces are always removed from command text:
 
 >>> print(p.parse("[url http://example.com Trailing space  ]."))
 [DEBUG] url2html() got 'http://example.com Trailing space'
@@ -116,6 +111,15 @@ command text:
 [DEBUG] url2html() got 'http://example.com   Leading space'
 <a href="http://example.com">Leading space</a>.
 
+Non-breaking and zero-width spaces are treated like normal spaces:
+
+>>> print(p.parse(u"[url\u00A0http://example.com example.com]."))
+[DEBUG] url2html() got 'http://example.com example.com'
+<a href="http://example.com">example.com</a>.
+
+>>> print(p.parse(u"[url \u200bhttp://example.com example.com]."))
+[DEBUG] url2html() got 'http://example.com example.com'
+<a href="http://example.com">example.com</a>.
 
 Limits
 ------
@@ -256,6 +260,7 @@ is used as the text of the link.
         params = matchobj.group(2)
         params = params.replace('\\\n', ' ')
         params = params.replace(u'\xa0', ' ')
+        params = params.replace(u'\u200b', ' ')
         params = str(params.strip())
         try:
             return self.format_value(cmdh(self, params))
