@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2016 Luc Saffre
+# Copyright 2008-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -42,9 +42,6 @@ Example on how to use a ChoiceList in your model::
       spoken = HowWell.field(verbose_name=_("spoken"))
       written = HowWell.field(verbose_name=_("written"))
 
-Every user-defined subclass of ChoiceList is also
-automatically available as a property value in
-:mod:`lino.modlib.properties`.
 """
 from __future__ import unicode_literals
 from django.utils.encoding import python_2_unicode_compatible
@@ -463,7 +460,12 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
 
     @classmethod
     def get_data_rows(self, ar=None):
-        return list(self.items())
+        """When showing a :class:`ChoiceList` as a table, the items are sorted
+        by their value, not by the order of creation.  For example in
+        :class:`lino.modlib.plausibility.Checkers` this is different.
+
+        """
+        return sorted(self.items())
 
     @classmethod
     def get_actor_label(self):
