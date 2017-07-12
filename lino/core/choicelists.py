@@ -461,11 +461,11 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
     @classmethod
     def get_data_rows(self, ar=None):
         """When showing a :class:`ChoiceList` as a table, the items are sorted
-        by their value, not by the order of creation.  For example in
-        :class:`lino.modlib.plausibility.Checkers` this is different.
+        by their order of creation, not by their value.
 
         """
-        return sorted(self.items())
+        # return sorted(self.items())
+        return self.get_list_items()
 
     @classmethod
     def get_actor_label(self):
