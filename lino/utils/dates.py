@@ -16,6 +16,9 @@ from __future__ import unicode_literals
 
 import collections
 from dateutil.rrule import DAILY, rrule, MO, TU, WE, TH, FR
+from dateutil.relativedelta import relativedelta as delta
+AMONTH = delta(months=1)
+ADAY = delta(days=1)
 
 DatePeriodValue = collections.namedtuple(
     'DatePeriodValue', ('start_date', 'end_date'))

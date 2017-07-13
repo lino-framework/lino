@@ -277,12 +277,14 @@ class Yearly(ObservedPeriod):
     """
 
     def get_default_start_date(self):
-        D = datetime.date
-        return D(D.today().year, 1, 1)
+        return dd.today().replace(month=1, day=1)
+        # D = datetime.date
+        # return D(D.today().year, 1, 1)
 
     def get_default_end_date(self):
-        D = datetime.date
-        return D(D.today().year, 12, 31)
+        return dd.today().replace(month=12, day=31)
+        # D = datetime.date
+        # return D(D.today().year, 12, 31)
 
 
 class Monthly(ObservedPeriod):
