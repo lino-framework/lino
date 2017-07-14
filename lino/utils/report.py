@@ -226,6 +226,7 @@ class Report(EmptyTable):
 
     @fields.virtualfield(fields.HtmlBox())
     def body(cls, self, ar):
+        ar.master_instance = self
         return ar.story2html(self.get_story(ar))
 
     @classmethod
