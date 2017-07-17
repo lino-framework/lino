@@ -59,6 +59,7 @@ This is a tested document. To test it, run::
     textfields
     ucsv
     xmlgen
+    report
 
 
 >>> from __future__ import print_function
