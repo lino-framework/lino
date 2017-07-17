@@ -378,7 +378,7 @@ class Referrable(model.Model):
 from lino.mixins.duplicable import Duplicable, Duplicate
 from lino.mixins.sequenced import Sequenced, Hierarchical
 from lino.mixins.periods import DatePeriod
-from lino.mixins.periods import ObservedPeriod, Yearly, Today
+from lino.mixins.periods import ObservedPeriod, Yearly, Monthly, Today
 from lino.mixins.polymorphic import Polymorphic
 from lino.mixins.uploadable import Uploadable
 

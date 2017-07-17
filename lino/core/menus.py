@@ -72,8 +72,8 @@ class MenuItem(object):
         self.enabled = enabled
         self.hotkey = hotkey
 
-        if label:
-            label = label.replace('~', '')
+        # if label:
+        #     label = label.replace('~', '')
         self.label = label
 
         #~ if self.label is None:
