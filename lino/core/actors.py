@@ -660,6 +660,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         renderer used by specified action request.  Don't override.
 
         """
+        logger.info(18072017, "self.get_handle_name:|%s|"%(self.get_handle_name), "#1955")
         if self.get_handle_name is None:
             return self._get_handle(ar, _handle_attr_name)
         return self._get_handle(ar, self.get_handle_name(ar))
@@ -718,10 +719,12 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     def _get_handle(self, ar, hname):
         # don't inherit from parent!
         h = self.__dict__.get(hname, None)
+        logger.info(18072017, "h:|%s|, hname:|%s|"%(h, hname), "#1955")
         if h is None:
             h = self._handle_class(self)
             setattr(self, hname, h)
             settings.SITE.kernel.setup_handle(h, ar)
+        logger.info(18072017, "h:|%s|, h.store:|%s|"%(h, getattr(h,'store',None)), "#1955")
         return h
 
     @classmethod
