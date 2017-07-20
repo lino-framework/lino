@@ -103,8 +103,8 @@ class LinoClient(QMainWindow):
         # a.triggered.connect(self.show_detail)
         # fileMenu.addAction(a)
 
-        self.toolbar = self.addToolBar('Exit')
-        self.toolbar.addAction(exitAction)
+        # self.toolbar = self.addToolBar('Exit')
+        # self.toolbar.addAction(exitAction)
 
         # btn = QPushButton('Quit', self)
         # btn.clicked.connect(QCoreApplication.instance().quit)
