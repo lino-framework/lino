@@ -196,6 +196,13 @@ def insert_child(obj, child_model, full_clean=False, **attrs):
     return new_obj
         
 
+def mtichild(p, model, **kw):
+    c = insert_child(p, model)
+    for k, v in kw.items():
+        setattr(c, k, v)
+    c.save()
+    return model.objects.get(pk=p.pk)
+
 #~ def insert_child_and_save(obj,child_model,**attrs):
     #~ """
     #~ Insert (create) and save a `child_model` instance of existing `obj`.
