@@ -197,9 +197,14 @@ def insert_child(obj, child_model, full_clean=False, **attrs):
         
 
 def mtichild(p, model, **kw):
+    """Create an MTI child, optionally set some attributes, save it to the
+    database and then return the new database object.
+
+    """
     c = insert_child(p, model)
     for k, v in kw.items():
         setattr(c, k, v)
+    c.full_clean()
     c.save()
     return model.objects.get(pk=p.pk)
 
