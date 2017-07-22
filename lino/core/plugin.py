@@ -228,12 +228,19 @@ class Plugin(object):
 
     def on_plugins_loaded(self, site):
         """Called exactly once on each installed plugin, when the
-        :class:`Site` has loaded all plugins but before calling
+        :class:`Site` has loaded all plugins but *before* calling
         :meth:`setup_plugins`.  All this happens before settings are
         ready and long before the models modules start to load.
 
-        For example :mod:`groups` uses this to set a default value to
+        This is used for initializing default values of plugin
+        attributes which (a) depend on other plugins but (b) should be
+        overridable in :meth:`lino.core.site.Site.setup_plugin`.
+
+        For example :mod:`groups` used this to set a default value to
         the :attr:`commentable_model` for :mod:`comments` plugin.
+
+        Or :mod:`lino.modlib.plausibility` uses it to set
+        `responsible_user` to "robin" when it is a demo site.
 
         """
         pass

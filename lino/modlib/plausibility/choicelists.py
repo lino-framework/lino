@@ -115,6 +115,7 @@ class Checker(dd.Choice):
             else:
                 todo.append(msg)
         if len(todo):
+            # dd.logger.info("%s : %s", obj, todo)
             user = self.get_responsible_user(obj)
             if user is None:
                 lang = dd.get_default_language()

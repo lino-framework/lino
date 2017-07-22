@@ -400,6 +400,8 @@ class VirtualField(FakeField):
         #~ logger.info('20120831 VirtualField %s.%s',full_model_name(model),name)
 
     def __repr__(self):
+        if self.model is None:
+            return super(VirtualField, self).__repr__()
         return "%s %s.%s.%s" % (self.__class__.__name__, self.model.__module__,
                                 self.model.__name__, self.name)
 
