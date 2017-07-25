@@ -87,12 +87,12 @@ class Plugin(ad.Plugin):
                 raise Exception(msg)
         return self._responsible_user
 
-    def on_site_startup(self, site):
+    def on_plugins_loaded(self, site):
         """Set :attr:`responsible_user` to ``"'robin'`` if this is a demo site
         (:attr:`is_demo_site <lino.core.site.Site.is_demo_site>`).
 
         """
-        super(Plugin, self).on_site_startup(site)
+        super(Plugin, self).on_plugins_loaded(site)
         if site.is_demo_site:
             self.configure(responsible_user='robin')
 

@@ -8,7 +8,7 @@
 
 """
 
-from __future__ import unicode_literals
+from __future__ import unicode_literals, print_function
 from builtins import object
 
 import logging
@@ -50,7 +50,7 @@ class Duplicate(actions.Action):
         obj = ar.selected_rows[0]
         related = []
         for m, fk in obj._lino_ddh.fklist:
-            print fk.name, m.allow_cascaded_delete, m.allow_cascaded_copy, obj
+            # print(fk.name, m.allow_cascaded_delete, m.allow_cascaded_copy, obj)
             if fk.name in m.allow_cascaded_delete or fk.name in m.allow_cascaded_copy:
                 related.append((fk, m.objects.filter(**{fk.name: obj})))
 
