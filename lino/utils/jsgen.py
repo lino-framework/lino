@@ -4,6 +4,8 @@
 
 r"""A framework for generating Javascript from Python.
 
+See also :doc:`/specs/jsgen`.
+
 Example:
 
 >>> class TextField(Component):
@@ -27,36 +29,6 @@ var p14 = { "items": [ fld22, fld33 ], "title": "Panel", "xtype": "panel" };
 >>> print(py2js(d))
 { "main": { "items": [ fld11, p14 ], "title": "Main", "xtype": "form" }, "wc": [ 1, 2, 3 ] }
   
-Another example...
-
->>> def onReady(name):
-...     yield js_line("hello = function() {")
-...     yield js_line("console.log(%s)" % py2js("Hello, " + name + "!"))
-...     yield js_line("}")
->>> print(py2js(onReady("World")))
-hello = function() {
-console.log("Hello, World!")
-}
-<BLANKLINE>
-
-And yet another example (`/blog/2012/0208`)...
-
->>> chunk = '<a href="javascript:alert({&quot;record_id&quot;: 122 })">Test</a>'
->>> print(py2js(chunk))
-"<a href=\"javascript:alert({&quot;record_id&quot;: 122 })\">Test</a>"
-
->>> data_record = dict(
-...   title="Upload \"Aufenthaltserlaubnis\"",
-...   data=dict(owner=chunk))
->>> print(py2js(data_record))
-{ "data": { "owner": "<a href=\"javascript:alert({&quot;record_id&quot;: 122 })\">Test</a>" }, "title": "Upload \"Aufenthaltserlaubnis\"" }
->>> response = dict(
-...   message="Upload \"Aufenthaltserlaubnis\" wurde erstellt.",
-...   success=True,
-...   data_record=data_record)
->>> print(py2js(response)) #doctest: +NORMALIZE_WHITESPACE
-{ "data_record": { "data": { "owner": "<a href=\"javascript:alert({&quot;record_id&quot;: 122 })\">Test</a>" }, "title": "Upload \"Aufenthaltserlaubnis\"" }, "message": "Upload \"Aufenthaltserlaubnis\" wurde erstellt.", "success": true }
-
 """
 
 from __future__ import unicode_literals

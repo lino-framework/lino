@@ -1,6 +1,12 @@
 # Copyright 2011-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
+"""Utilities for managing the :ref:`current_user_type`.
+
+
+"""
+
+
 import threading
 user_profile_rlock = threading.RLock()
 _for_user_profile = None
@@ -11,12 +17,8 @@ def with_user_profile(profile, func, *args, **kwargs):
     activated. Optional args and kwargs are forwarded to the callable,
     and the return value is returned.
 
-    Nott that this might be deprecated some day since we now have a
-    method :meth:`lino.modlib.users.UserType.context` which returns a
-    context manager so you can now write::
-
-      with UserTypes.admin.context():
-          # some code
+    This might get deprecated some day since we now have the
+    :meth:`lino.modlib.users.UserType.context` method
 
     """
     global _for_user_profile
@@ -24,8 +26,9 @@ def with_user_profile(profile, func, *args, **kwargs):
     with user_profile_rlock:
         old = _for_user_profile
         _for_user_profile = profile
-        return func(*args, **kwargs)
+        rv = func(*args, **kwargs)
         _for_user_profile = old
+        return rv
 
 
 def get_user_profile():
@@ -33,7 +36,7 @@ def get_user_profile():
 
 
 class UserTypeContext(object):
-
+    """A context manager which activates a current user type."""
     def __init__(self, user_type):
         self.user_type = user_type
         

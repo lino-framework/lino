@@ -9,6 +9,7 @@ Submodules:
 .. autosummary::
    :toctree:
 
+    utils
     fixtures.demo
     fixtures.demo_users
     fixtures.demo2
