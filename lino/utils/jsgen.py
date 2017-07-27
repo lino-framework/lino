@@ -509,7 +509,7 @@ def py2js(v):
         return '"%s"' % v.strftime(settings.SITE.time_format_strftime)
     if isinstance(v, datetime.date):
         if v.year < 1900:
-            v = IncompleteDate(v)
+            v = IncompleteDate.from_date(v)
             return '"%s"' % v.strftime(settings.SITE.date_format_strftime)
         return '"%s"' % v.strftime(settings.SITE.date_format_strftime)
 
