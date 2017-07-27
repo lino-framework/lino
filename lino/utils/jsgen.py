@@ -72,7 +72,6 @@ import types
 import datetime
 import decimal
 import fractions
-import threading
 
 
 from django.conf import settings
@@ -87,9 +86,9 @@ from lino.utils.xmlgen import etree
 from lino.utils import curry
 from lino.core.permissions import Permittable
 from lino.core.permissions import make_view_permission_handler
+from lino.modlib.users.utils import get_user_profile
+from lino.modlib.users.utils import with_user_profile  # backwards compat
 
-
-user_profile_rlock = threading.RLock()
 
 CONVERTERS = []
 
@@ -101,32 +100,7 @@ def dict2js(d):
 def register_converter(func):
     CONVERTERS.append(func)
 
-_for_user_profile = None
 
-
-def with_user_profile(profile, func, *args, **kwargs):
-    """Run the given callable `func` with the given user profile `profile`
-    activated. Optional args and kwargs are forwarded to the callable,
-    and the return value is returned.
-
-    """
-    global _for_user_profile
-
-    with user_profile_rlock:
-        old = _for_user_profile
-        _for_user_profile = profile
-        return func(*args, **kwargs)
-        _for_user_profile = old
-
-
-def get_user_profile():
-    return _for_user_profile
-
-# def set_user_profile(up):
-#     global _for_user_profile
-#     _for_user_profile = up
-
-# set_for_user_profile = set_user_profile
 
 # def key2js(s):
 #     if isinstance(s, str):
@@ -324,7 +298,7 @@ class VisibleComponent(Component, Permittable):
     def is_visible(self):
         if self.hidden:
             return False
-        return self.get_view_permission(_for_user_profile)
+        return self.get_view_permission(get_user_profile())
 
     def get_view_permission(self, profile):
         return self.allow_read(profile)
@@ -401,7 +375,7 @@ def declare_vars(v):
                 yield ln
         return
     if isinstance(v, VisibleComponent) and not v.get_view_permission(
-            _for_user_profile):
+            get_user_profile()):
         return
     if isinstance(v, Component):
         for sub in list(v.ext_options().values()):
@@ -469,7 +443,7 @@ def py2js(v):
     if isinstance(v, (list, tuple)):  # (types.ListType, types.TupleType):
         elems = [py2js(x) for x in v
                  if (not isinstance(x, VisibleComponent))
-                 or x.get_view_permission(_for_user_profile)]
+                 or x.get_view_permission(get_user_profile())]
         return "[ %s ]" % ", ".join(elems)
 
     if isinstance(v, dict):
@@ -478,7 +452,7 @@ def py2js(v):
             # i for i in sorted(v.items())
             i for i in v.items()
             if (not isinstance(v, VisibleComponent))
-            or v.get_view_permission(_for_user_profile)]
+            or v.get_view_permission(get_user_profile())]
         
         # "sorted(v.items())" without sortkey caused TypeError when
         # the dictionary contained a mixture of unicode and

@@ -35,7 +35,7 @@ from lino.core import fields
 from lino.core import keyboard
 from lino.core.permissions import Permittable
 from lino.core.utils import Parametrizable, InstanceAction
-from lino.utils.jsgen import get_user_profile
+from lino.modlib.users.utils import get_user_profile
 from lino.utils.choosers import Chooser
 from lino.utils.xmlgen.html import E
 

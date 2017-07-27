@@ -74,6 +74,8 @@ from lino.utils.xmlgen.html import E
 from lino.core.site import html2text
 from lino.utils.xmlgen.html import html2rst
 
+from lino.modlib.users.utils import get_user_profile
+
 EXT_CHAR_WIDTH = 9
 EXT_CHAR_HEIGHT = 22
 
@@ -168,7 +170,7 @@ class GridColumn(jsgen.Component):
                 rpt = fld.rel.model.get_default_table()
                 if rpt.detail_action is not None:
                     if rpt.detail_action.get_view_permission(
-                            jsgen._for_user_profile):
+                            get_user_profile()):
                         return "Lino.fk_renderer('%s','Lino.%s')" % (
                             name + constants.CHOICES_HIDDEN_SUFFIX,
                             rpt.detail_action.full_name())
@@ -421,11 +423,12 @@ def is_hidden_babel_field(fld):
     lng = getattr(fld, '_babel_language', None)
     if lng is None:
         return False
-    if jsgen._for_user_profile is None:
+    ut = get_user_profile()
+    if ut is None:
         return False
-    if jsgen._for_user_profile.hidden_languages is None:
+    if ut.hidden_languages is None:
         return False
-    if lng in jsgen._for_user_profile.hidden_languages:
+    if lng in ut.hidden_languages:
         return True
     return False
 
