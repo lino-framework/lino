@@ -692,7 +692,7 @@ class ParameterPanel(object):
     """A utility class for defining reusable definitions for
     :attr:`parameters <lino.core.actors.Actor.parameters>`.
 
-    Used  e.g. by :class:`lino.mixins.periods.ObservedPeriod`.
+    Used  e.g. by :class:`lino.mixins.periods.ObservedDateRange`.
 
     """
     def __init__(self, **kw):

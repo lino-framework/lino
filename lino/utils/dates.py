@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Luc Saffre
+# Copyright 2014-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -20,8 +20,8 @@ from dateutil.relativedelta import relativedelta as delta
 AMONTH = delta(months=1)
 ADAY = delta(days=1)
 
-DatePeriodValue = collections.namedtuple(
-    'DatePeriodValue', ('start_date', 'end_date'))
+DateRangeValue = collections.namedtuple(
+    'DateRangeValue', ('start_date', 'end_date'))
 """
 A named tuple with the following fields:
 

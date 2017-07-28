@@ -182,7 +182,7 @@ class Uploads(dd.Table):
     user
     """
 
-    parameters = mixins.ObservedPeriod(
+    parameters = mixins.ObservedDateRange(
         # user=models.ForeignKey(
         #     'users.User', blank=True, null=True,
         #     verbose_name=_("Uploaded by")),

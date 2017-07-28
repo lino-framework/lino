@@ -18,7 +18,7 @@ by applications, but None of them is mandatory for a Lino application.
 
 Parameter panels:
 
-- :class:`ObservedPeriod <lino.mixins.periods.ObservedPeriod>`
+- :class:`ObservedDateRange <lino.mixins.periods.ObservedDateRange>`
 - :class:`Yearly <lino.mixins.periods.Yearly>`
 - :class:`Today <lino.mixins.periods.Today>`
 
@@ -191,6 +191,18 @@ class Registrable(model.Model):
         state_field = self.workflow_state_field
         target_state = state_field.choicelist.draft
         self.set_workflow_state(ar, state_field, target_state)
+
+    @classmethod
+    def get_parameter_fields(cls, **fields):
+        wsf = cls.workflow_state_field
+        fields[wsf.name] = wsf.choicelist.field(blank=True, null=True)
+        return super(Registrable, cls).get_parameter_fields(**fields)
+
+    @classmethod
+    def get_simple_parameters(cls):
+        s = super(Registrable, cls).get_simple_parameters()
+        s.add(cls.workflow_state_field.name)
+        return s
 
 
 class Modified(model.Model):
@@ -377,8 +389,8 @@ class Referrable(model.Model):
 
 from lino.mixins.duplicable import Duplicable, Duplicate
 from lino.mixins.sequenced import Sequenced, Hierarchical
-from lino.mixins.periods import DatePeriod
-from lino.mixins.periods import ObservedPeriod, Yearly, Monthly, Today
+from lino.mixins.periods import DateRange
+from lino.mixins.periods import ObservedDateRange, Yearly, Monthly, Today
 from lino.mixins.polymorphic import Polymorphic
 from lino.mixins.uploadable import Uploadable
 
