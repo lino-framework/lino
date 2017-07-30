@@ -739,13 +739,15 @@ request from it.
     def summary_row(self, obj, **kwargs):
         return obj.summary_row(self, **kwargs)
 
-    def obj2html(self, *args, **kwargs):
+    def obj2html(self, obj, *args, **kwargs):
         """Return a HTML element which represents a pointer to the given
         database object. Depending on the renderer this will be more
         or less clickable.
 
         """
-        return self.renderer.obj2html(self, *args, **kwargs)
+        if obj is None:
+            return ''
+        return self.renderer.obj2html(self, obj, *args, **kwargs)
 
     def obj2str(self, *args, **kwargs):
         """Return a string with a pointer to the given object.

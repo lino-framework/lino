@@ -9,7 +9,7 @@ This defines some helper classes like
   common functionality for both actors and actions),
 - the volatile :class:`InstanceAction` object
 - the :class:`ParameterPanel` class (used
-  e.g. by :class:`lino.mixins.periods.ObservedPeriod`)
+  e.g. by :class:`lino.mixins.periods.ObservedDateRange`)
 - :attr:`ContentType` and `GenericForeignKey`
 
 """

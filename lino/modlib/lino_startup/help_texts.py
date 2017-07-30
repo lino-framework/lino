@@ -83,13 +83,13 @@ start_time"""),
     'lino.mixins.periods.Ended' : _("""Mixin for models with two fields end_date and
 end_time
 Models inheriting from this must also inherit from Started."""),
-    'lino.mixins.periods.DatePeriod' : _("""A model mixin for models which represent a period whose start and
+    'lino.mixins.periods.DateRange' : _("""A model mixin for models which represent a period whose start and
 end are date fields."""),
-    'lino.mixins.periods.ObservedPeriod' : _("""lino.core.param_panel.ParameterPanel with two fields
+    'lino.mixins.periods.ObservedDateRange' : _("""lino.core.param_panel.ParameterPanel with two fields
 start_date and end_date which default to empty."""),
-    'lino.mixins.periods.Yearly' : _("""An ObservedPeriod for which start_date defaults to Jan
+    'lino.mixins.periods.Yearly' : _("""An ObservedDateRange for which start_date defaults to Jan
 1st and end_date to Dec 31 of the current year."""),
-    'lino.mixins.periods.Monthly' : _("""An ObservedPeriod which defaults to the current month."""),
+    'lino.mixins.periods.Monthly' : _("""An ObservedDateRange which defaults to the current month."""),
     'lino.mixins.periods.Today' : _("""A ParameterPanel
 with a field today which defaults to today."""),
     'lino.mixins.polymorphic.Polymorphic' : _("""Mixin for models that use Multiple Table Inheritance to implement
@@ -344,7 +344,7 @@ CachedPrintable."""),
 for the gender of a person."""),
     'lino.modlib.system.choicelists.ObservedEvent' : _("""Base class for choices of "observed event"-style choicelists."""),
     'lino.modlib.system.choicelists.PeriodEvents' : _("""The list of things you can observe on a
-lino.mixins.periods.DatePeriod."""),
+lino.mixins.periods.DateRange."""),
     'lino.modlib.system.models.BuildSiteCache' : _("""Rebuild the site cache.
 This action is available on About."""),
     'lino.modlib.system.models.SiteConfig' : _("""This model should have exactly one instance,
@@ -399,6 +399,7 @@ uploaded file in a new browser window."""),
     'lino.modlib.uploads.models.MyUploads' : _("""Shows only my Uploads (i.e. those whose author is current user)."""),
     'lino.modlib.uploads.models.MyUploads.model' : _("""alias of Upload"""),
     'lino.modlib.uploads.models.UploadsByController.model' : _("""alias of Upload"""),
+    'lino.modlib.users.utils.UserTypeContext' : _("""A context manager which activates a current user type."""),
     'lino.modlib.weasyprint.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.weasyprint.choicelists.WeasyBuildMethod' : _("""The base class for both build methods."""),
     'lino.modlib.weasyprint.choicelists.WeasyPdfBuildMethod' : _("""Like WeasyBuildMethod, but the rendered HTML is then
@@ -431,9 +432,9 @@ loggers (logging.Logger instances) whose file handles
 should not get closed."""),
     'lino.utils.dataserializer.FakeDeserializedObject' : _("""loaddata requires DeserializedObject instances, 
 but this Deserializer does not bypass pre_save/save methods."""),
-    'lino.utils.dates.DatePeriodValue' : _("""A named tuple with the following fields:"""),
-    'lino.utils.dates.DatePeriodValue.start_date' : _("""The start date"""),
-    'lino.utils.dates.DatePeriodValue.end_date' : _("""The end date"""),
+    'lino.utils.dates.DateRangeValue' : _("""A named tuple with the following fields:"""),
+    'lino.utils.dates.DateRangeValue.start_date' : _("""The start date"""),
+    'lino.utils.dates.DateRangeValue.end_date' : _("""The end date"""),
     'lino.utils.dbfreader.DBFFile' : _("""Represents a single DBF file."""),
     'lino.utils.dbfreader.DBFField' : _("""Represents a field in a DBF file."""),
     'lino.utils.dbfreader.FPTFile' : _("""Represents an FPT block file"""),

@@ -16,7 +16,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
 
 from lino.core.choicelists import ChoiceList, Choice
-from lino.utils.dates import DatePeriodValue
+from lino.utils.dates import DateRangeValue
 
 # from lino.utils import AttrDict
 
@@ -82,9 +82,9 @@ class ObservedEvent(Choice):
         """Add a filter to the given Django queryset. The given `obj` must be
         either a `datetime.date` object or must have two attributes
         `start_date` and `end_date`. The easiest way is to have it an
-        instance of :class:`DatePeriod
-        <lino.mixins.periods.DatePeriod>` or :class:`DatePeriodValue
-        <lino.utils.dates.DatePeriodValue>`.
+        instance of :class:`DateRange
+        <lino.mixins.periods.DateRange>` or :class:`DateRangeValue
+        <lino.utils.dates.DateRangeValue>`.
 
         """
         return qs
@@ -96,7 +96,7 @@ class PeriodStarted(ObservedEvent):
 
     def add_filter(self, qs, obj):
         if isinstance(obj, datetime.date):
-            obj = DatePeriodValue(obj, obj)
+            obj = DateRangeValue(obj, obj)
         qs = qs.filter(start_date__isnull=False)
         if obj.start_date:
             qs = qs.filter(start_date__gte=obj.start_date)
@@ -111,7 +111,7 @@ class PeriodActive(ObservedEvent):
 
     def add_filter(self, qs, obj):
         if isinstance(obj, datetime.date):
-            obj = DatePeriodValue(obj, obj)
+            obj = DateRangeValue(obj, obj)
         if obj.end_date:
             qs = qs.filter(Q(start_date__isnull=True) |
                            Q(start_date__lte=obj.end_date))
@@ -127,7 +127,7 @@ class PeriodEnded(ObservedEvent):
 
     def add_filter(self, qs, obj):
         if isinstance(obj, datetime.date):
-            obj = DatePeriodValue(obj, obj)
+            obj = DateRangeValue(obj, obj)
         qs = qs.filter(end_date__isnull=False)
         if obj.start_date:
             qs = qs.filter(end_date__gte=obj.start_date)
@@ -144,7 +144,7 @@ class PeriodEnded(ObservedEvent):
 
 class PeriodEvents(ChoiceList):
     """The list of things you can observe on a
-    :class:`lino.mixins.periods.DatePeriod`.
+    :class:`lino.mixins.periods.DateRange`.
 
     """
     verbose_name = _("Observed event")

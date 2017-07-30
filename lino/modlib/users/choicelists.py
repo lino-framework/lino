@@ -12,6 +12,7 @@ from django.conf import settings
 
 from lino.core.choicelists import ChoiceList, Choice
 from lino.core.roles import SiteAdmin, check_required_roles
+from .utils import UserTypeContext
 
 from lino.api import dd, _
 
@@ -38,6 +39,9 @@ class UserType(Choice):
         self.role = role_class()
         self.readonly = readonly
         self.kw = kw
+
+    def context(self):
+        return UserTypeContext(self)
 
     def attach(self, cls):
         super(UserType, self).attach(cls)
