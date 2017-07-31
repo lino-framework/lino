@@ -1380,7 +1380,9 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         def meth(master, ar):
             #~ ar = self.request(ui,request=ar.request,
                 #~ master_instance=master,param_values={})
-            ar = self.request(master, request=ar.request, param_values={})
+            ar = self.request(
+                master, request=ar.request, param_values={},
+                is_on_main_actor=False)
             ar.renderer = settings.SITE.kernel.default_renderer
             #~ s = ui.table2xhtml(ar).tostring()
             return ar.table2xhtml()

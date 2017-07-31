@@ -264,6 +264,7 @@ class ExtRenderer(JsRenderer):
         if ar is None:
             sar = ba.request(**request_kwargs)
         else:
+            
             sar = ar.spawn(ba, **request_kwargs)
         return self.ar2js(sar, obj, **status)
 
@@ -1287,10 +1288,10 @@ class ExtRenderer(JsRenderer):
         """Defines the non-window action handler used by
         :meth:`row_action_button`
         """
-        yield "Lino.%s = function(rp, pk, params) { " % action.full_name()
+        yield "Lino.%s = function(rp, is_main, pk, params) { " % action.full_name()
         yield "  var h = function() { "
         uri = rh.actor.actor_url()
-        yield "    Lino.run_row_action(rp, %s, %s, pk, %s, params, %s);" % (
+        yield "    Lino.run_row_action(rp, is_main, %s, %s, pk, %s, params, %s);" % (
             py2js(uri), py2js(action.action.http_method),
             py2js(action.action.action_name),
             action.action.preprocessor)

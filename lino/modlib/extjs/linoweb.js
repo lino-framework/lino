@@ -2166,7 +2166,7 @@ Lino.param_action_handler = function(window_action) { // 20121012
 
 
 Lino.run_row_action = function(
-    requesting_panel, url, meth, pk, actionName, params, preprocessor) {
+    requesting_panel, is_on_main_actor, url, meth, pk, actionName, params, preprocessor) {
   //~ var panel = action.get_window().main_item;
   // console.log("20140930 Lino.run_row_action", params);
   url = '{{extjs.build_plain_url("api")}}' + url  + '/' + pk;
@@ -2176,8 +2176,9 @@ Lino.run_row_action = function(
       var p = preprocessor(); 
       Ext.apply(params, p);
   }
-  if (panel) 
-      Ext.apply(params, panel.get_base_params());
+  if (panel && is_on_main_actor) {
+      Ext.apply(params, panel.get_base_params())
+  } else { Lino.insert_subst_user(params); }
   var fn = function(panel, btn, step) {
     Lino.call_ajax_action(panel, meth, url, params, actionName, step, fn);
   }

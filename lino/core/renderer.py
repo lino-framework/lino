@@ -725,8 +725,9 @@ class JsRenderer(HtmlRenderer):
 
         # 20140429 `ar` is now None, see :ref:`welfare.tested.integ`
         params = self.get_action_params(ar, ba, obj)
-        return "Lino.%s(%s,%s,%s)" % (
-            ba.full_name(), py2js(rp), py2js(obj.pk), py2js(params))
+        return "Lino.%s(%s,%s,%s,%s)" % (
+            ba.full_name(), py2js(rp),
+            py2js(ar.is_on_main_actor), py2js(obj.pk), py2js(params))
 
     def get_detail_url(self, actor, pk, *args, **kw):
         return self.plugin.build_plain_url(
