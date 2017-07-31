@@ -121,7 +121,7 @@ ExtJS defines disabled checkboxes `readonly`, not `disabled` as for other inputs
 
 */
 Ext.lib.Ajax.serializeForm = function(form) {
-    //~ console.log('20120203 linolib.js serializeForm',form);
+    console.log('20170731 linolib.js serializeForm', form);
     var fElements = form.elements || (document.forms[form] || Ext.getDom(form)).elements, 
         hasSubmit = false, 
         encoder = encodeURIComponent, 
@@ -2096,7 +2096,7 @@ Lino.call_ajax_action = function(
       p.{{constants.URL_PARAM_SELECTED}} = rs;
   }
   
-  // console.log("20170731 Lino.call_ajax_action", p, actionName, step);
+  console.log("20170731 Lino.call_ajax_action", Ext.Ajax, p, actionName, step);
   
   if (panel.loadMask) panel.loadMask.show(); 
     
