@@ -1403,7 +1403,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         each table which invokes this method.
 
         """
-        ar = ar.spawn(self, master_instance=obj)
+        ar = ar.spawn(self, master_instance=obj, is_on_main_actor=False)
         return qs2summary(ar, ar.data_iterator, self.summary_sep)
 
     @classmethod

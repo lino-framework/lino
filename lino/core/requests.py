@@ -212,6 +212,7 @@ class BaseRequest(object):
             # if not parent.is_on_main_actor or parent.actor != kw.get('actor', None):
             if not parent.is_on_main_actor:
                 is_on_main_actor = False
+            # is_on_main_actor = False
         self.is_on_main_actor = is_on_main_actor
             
         self.setup(**kw)
