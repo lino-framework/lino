@@ -1,4 +1,4 @@
-# Copyright 2014-2016 Luc Saffre
+# Copyright 2014-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -170,7 +170,7 @@ class Ended(CombinedDateTime):
 
 
 
-class DatePeriod(Model):
+class DateRange(Model):
 
     """A model mixin for models which represent a period whose start and
     end are date fields.
@@ -191,7 +191,7 @@ class DatePeriod(Model):
     def full_clean(self, *args, **kw):
         if not isrange(self.start_date, self.end_date):
             raise ValidationError(_("Date period ends before it started."))
-        super(DatePeriod, self).full_clean(*args, **kw)
+        super(DateRange, self).full_clean(*args, **kw)
 
     def get_period(self):
         return (self.start_date, self.end_date)
@@ -240,10 +240,10 @@ class DatePeriod(Model):
                 blank=True, null=True,
                 default=cls.get_default_end_date,
                 help_text=_("End date of observed period")))
-        return super(DatePeriod, cls).get_parameter_fields(**fields)
+        return super(DateRange, cls).get_parameter_fields(**fields)
 
 
-class ObservedPeriod(ParameterPanel):
+class ObservedDateRange(ParameterPanel):
     """:class:`lino.core.param_panel.ParameterPanel` with two fields
     `start_date` and `end_date` which default to empty.
 
@@ -253,25 +253,25 @@ class ObservedPeriod(ParameterPanel):
     get_default_end_date = None
 
     def __init__(self,
-                 verbose_name_start=_("Period from"),
-                 verbose_name_end=_("until"), **kw):
-        kw.update(
+                 verbose_name_start=_("Date from"),
+                 verbose_name_end=_("until"), **kwargs):
+        kwargs.update(
             start_date=models.DateField(
                 verbose_name_start, blank=True, null=True,
                 default=self.get_default_start_date,
-                help_text=_("Start date of observed period")),
+                help_text=_("Start of observed date range")),
             end_date=models.DateField(
                 verbose_name_end,
                 blank=True, null=True,
                 default=self.get_default_end_date,
-                help_text=_("End date of observed period")),
+                help_text=_("End of observed date range")),
         )
-        super(ObservedPeriod, self).__init__(**kw)
+        super(ObservedDateRange, self).__init__(**kwargs)
 
 
-class Yearly(ObservedPeriod):
+class Yearly(ObservedDateRange):
 
-    """An :class:`ObservedPeriod` for which `start_date` defaults to Jan
+    """An :class:`ObservedDateRange` for which `start_date` defaults to Jan
     1st and `end_date` to Dec 31 of the current year.
 
     """
@@ -287,9 +287,9 @@ class Yearly(ObservedPeriod):
         # return D(D.today().year, 12, 31)
 
 
-class Monthly(ObservedPeriod):
+class Monthly(ObservedDateRange):
 
-    """An :class:`ObservedPeriod` which defaults to the current month.
+    """An :class:`ObservedDateRange` which defaults to the current month.
 
     """
 

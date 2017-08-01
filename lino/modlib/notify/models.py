@@ -23,7 +23,7 @@ from lino.core.gfks import gfk2lookup
 #from lino.core.requests import BaseRequest
 from lino.core.site import html2text
 
-from lino.mixins import Created, ObservedPeriod
+from lino.mixins import Created, ObservedDateRange
 from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.notify.consumers import PUBLIC_GROUP
 from lino.modlib.users.mixins import UserAuthored, My
@@ -440,7 +440,7 @@ class Messages(dd.Table):
     # overview
     # """, window_size=(50, 15))
 
-    parameters = ObservedPeriod(
+    parameters = ObservedDateRange(
         user=dd.ForeignKey(
             settings.SITE.user_model,
             blank=True, null=True),

@@ -897,7 +897,7 @@ class Kernel(object):
         """
         ar is usually None, except for actors with dynamic handle
         """
-        logger.info('20121010 ExtUI.setup_handle() %s'%h.actor)
+        # logger.info('20121010 ExtUI.setup_handle() %s'%h.actor)
 
         if h.actor.is_abstract():
             return
@@ -914,7 +914,7 @@ class Kernel(object):
         if h.actor.params_layout:
             h.params_layout_handle = h.actor.make_params_layout_handle(self)
         h.store = Store(h)
-        logger.info("18072017, h:|%s|, h.store:|%s| #1955"%(h, h.store))
+        # logger.info("18072017, h:|%s|, h.store:|%s| #1955"%(h, h.store))
 
     def row_action_button(self, *args, **kw):
         """

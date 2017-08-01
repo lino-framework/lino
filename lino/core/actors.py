@@ -660,7 +660,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         renderer used by specified action request.  Don't override.
 
         """
-        logger.info("18072017, self.get_handle_name:|%s| #1955"%(self.get_handle_name),)
+        # logger.info("18072017, self.get_handle_name:|%s| #1955"%(self.get_handle_name),)
         if self.get_handle_name is None:
             return self._get_handle(ar, _handle_attr_name)
         return self._get_handle(ar, self.get_handle_name(ar))
@@ -719,12 +719,12 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     def _get_handle(self, ar, hname):
         # don't inherit from parent!
         h = self.__dict__.get(hname, None)
-        logger.info("18072017, h:|%s|, hname:|%s| #1955"%(h, hname))
+        # logger.info("18072017, h:|%s|, hname:|%s| #1955"%(h, hname))
         if h is None:
             h = self._handle_class(self)
             setattr(self, hname, h)
             settings.SITE.kernel.setup_handle(h, ar)
-        logger.info("18072017, h:|%s|, h.store:|%s|, #1955"%(h, getattr(h,'store',None)))
+        # logger.info("18072017, h:|%s|, h.store:|%s|, #1955"%(h, getattr(h,'store',None)))
         return h
 
     @classmethod
@@ -1380,7 +1380,9 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         def meth(master, ar):
             #~ ar = self.request(ui,request=ar.request,
                 #~ master_instance=master,param_values={})
-            ar = self.request(master, request=ar.request, param_values={})
+            ar = self.request(
+                master, request=ar.request, param_values={},
+                is_on_main_actor=False)
             ar.renderer = settings.SITE.kernel.default_renderer
             #~ s = ui.table2xhtml(ar).tostring()
             return ar.table2xhtml()
@@ -1401,7 +1403,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         each table which invokes this method.
 
         """
-        ar = ar.spawn(self, master_instance=obj)
+        ar = ar.spawn(self, master_instance=obj, is_on_main_actor=False)
         return qs2summary(ar, ar.data_iterator, self.summary_sep)
 
     @classmethod

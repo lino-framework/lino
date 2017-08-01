@@ -657,8 +657,9 @@ class InstanceAction(object):
 
     def request_from(self, ses, **kw):
         kw.update(selected_rows=[self.instance])
+        kw.update(parent=ses)
         ar = self.bound_action.request(**kw)
-        ar.setup_from(ses)
+        # ar.setup_from(ses)
         return ar
 
     def run_from_session(self, ses, **kw):
@@ -692,7 +693,7 @@ class ParameterPanel(object):
     """A utility class for defining reusable definitions for
     :attr:`parameters <lino.core.actors.Actor.parameters>`.
 
-    Used  e.g. by :class:`lino.mixins.periods.ObservedPeriod`.
+    Used  e.g. by :class:`lino.mixins.periods.ObservedDateRange`.
 
     """
     def __init__(self, **kw):

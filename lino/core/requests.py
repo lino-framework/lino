@@ -172,6 +172,7 @@ class BaseRequest(object):
     param_values = None
     bound_action = None
     known_values = {}
+    is_on_main_actor = True
     master_instance = None
     """The database object which acts as master. This is `None` for master
     requests.
@@ -188,7 +189,8 @@ class BaseRequest(object):
     content_type = 'application/json'
     requesting_panel = None
 
-    def __init__(self, request=None, parent=None, **kw):
+    def __init__(self, request=None, parent=None,
+                 is_on_main_actor=True, **kw):
         self.request = request
         self.response = dict()
         if request is not None:
@@ -207,6 +209,11 @@ class BaseRequest(object):
             # kw.setdefault('subst_user', parent.subst_user)
             # kw.setdefault('renderer', parent.renderer)
             # kw.setdefault('requesting_panel', parent.requesting_panel)
+            # if not parent.is_on_main_actor or parent.actor != kw.get('actor', None):
+            if not parent.is_on_main_actor:
+                is_on_main_actor = False
+            # is_on_main_actor = False
+        self.is_on_main_actor = is_on_main_actor
             
         self.setup(**kw)
 
@@ -739,13 +746,15 @@ request from it.
     def summary_row(self, obj, **kwargs):
         return obj.summary_row(self, **kwargs)
 
-    def obj2html(self, *args, **kwargs):
+    def obj2html(self, obj, *args, **kwargs):
         """Return a HTML element which represents a pointer to the given
         database object. Depending on the renderer this will be more
         or less clickable.
 
         """
-        return self.renderer.obj2html(self, *args, **kwargs)
+        if obj is None:
+            return ''
+        return self.renderer.obj2html(self, obj, *args, **kwargs)
 
     def obj2str(self, *args, **kwargs):
         """Return a string with a pointer to the given object.
