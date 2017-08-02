@@ -197,6 +197,7 @@ class BaseRequest(object):
             rqdata = getrqdata(request)
             kw = self.parse_req(request, rqdata, **kw)
         if parent is not None:
+            self._confirm_answer = parent._confirm_answer
             for k in inheritable_attrs:
                 if k in kw:
                     if kw[k] is None:
