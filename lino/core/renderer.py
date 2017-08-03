@@ -680,7 +680,8 @@ class JsRenderer(HtmlRenderer):
                 if ar.actor.handle_uploaded_files is not None:
                     ar.set_response(record_id=obj.pk)
                 else:
-                    ar.set_response(data_record=ar.elem2rec_detailed(obj))
+                    ar.set_response(
+                        data_record=ar.elem2rec_detailed(obj))
                 return
         js = self.instance_handler(ar, obj, detail_action)
         kw.update(eval_js=js)

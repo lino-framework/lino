@@ -872,7 +872,7 @@ request from it.
         rec.update(phantom=True)
         return rec
 
-    def elem2rec_detailed(ar, elem, **rec):
+    def elem2rec_detailed(ar, elem, with_navinfo=True, **rec):
         """Adds additional information for this record, used only by detail
         views.
 
@@ -905,7 +905,7 @@ request from it.
         rec.update(id=elem.pk)
         if ar.actor.editable:
             rec.update(disable_delete=rh.actor.disable_delete(elem, ar))
-        if rh.actor.show_detail_navigator:
+        if rh.actor.show_detail_navigator and with_navinfo:
             rec.update(navinfo=navinfo(ar.data_iterator, elem))
         return rec
 

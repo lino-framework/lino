@@ -56,7 +56,8 @@ multilingual userdocs.
 
 from __future__ import unicode_literals, print_function
 
-from sphinx.util.compat import Directive
+from docutils.parsers.rst import Directive
+# from sphinx.util.compat import Directive
 
 
 from sphinx.roles import XRefRole, menusel_role

@@ -208,6 +208,12 @@ class Kernel(object):
         self.kernel_startup(site)
         # logger.info("20140227 Kernel.__init__() done")
 
+        # # seems to not have any effect...
+        # import warnings
+        # from sphinx.deprecation import RemovedInSphinx17Warning
+        # warnings.filterwarnings("error", category=RemovedInSphinx17Warning)
+        
+
     def kernel_startup(self, site):
         """This is a part of a Lino site startup.  The Django Model
         definitions are done, now Lino analyzes them and does certain

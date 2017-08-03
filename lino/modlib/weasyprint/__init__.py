@@ -36,7 +36,7 @@ HTML file to convert it to a :file:`.pdf` file.
 
 """
 
-# seems to not work...
+# seems to not have any effect...
 import warnings
 warnings.filterwarnings("ignore", module='cffi.model')
 
