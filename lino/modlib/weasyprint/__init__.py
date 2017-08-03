@@ -8,10 +8,14 @@
 Applications which use this plugin must also add `'weasyprint'` to
 their :ref:`install_requires`.
 
-(Probably obsolete:) They should also add `'cairocffi<0.7'` (see
-:ticket:`1119`) or install it using pip::
+Note that this plugins installs a warnings filter for the `cffi.model`
+module in order to get rid of a disturbing warning :message:`There are
+known rendering problems with Cairo <= 1.14.0` issued by this module.
 
-  $ pip install 'cairocffi<0.7' weasyprint
+.. (Probably obsolete:) They should also add `'cairocffi<0.7'` (see
+   :ticket:`1119`) or install it using pip::
+
+      $ pip install 'cairocffi<0.7' weasyprint
 
 The build methods defined by this plugin both have the same input
 template, whose ending must be :xfile:`.weasy.html`.  Both methods
@@ -32,6 +36,7 @@ HTML file to convert it to a :file:`.pdf` file.
 
 """
 
+# seems to not work...
 import warnings
 warnings.filterwarnings("ignore", module='cffi.model')
 
