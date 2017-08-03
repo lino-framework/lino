@@ -32,6 +32,10 @@ HTML file to convert it to a :file:`.pdf` file.
 
 """
 
+import warnings
+warnings.filterwarnings("ignore", module='cffi.model')
+
+
 from lino.api import ad, _
 
 
