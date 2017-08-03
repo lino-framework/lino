@@ -89,7 +89,13 @@ def install_layout(cls, k, layout_class, **options):
     if dl is None:
         return
     if isinstance(dl, six.string_types):
-        setattr(cls, k, layout_class(dl, cls, **options))
+        if '\n' in dl or not '.' in dl:
+            setattr(cls, k, layout_class(dl, cls, **options))
+        else:
+            layout_class = settings.SITE.models.resolve(dl)
+            if layout_class is None:
+                raise Exception("Unresolved {} {!r} for {}".format(k, dl, cls))
+            setattr(cls, k, layout_class(None, cls, **options))
     elif isinstance(dl, layouts.Panel):
         options.update(dl.options)
         setattr(cls, k, layout_class(dl.desc, cls, **options))
