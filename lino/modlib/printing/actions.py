@@ -268,6 +268,9 @@ class EditTemplate(BasePrintAction):
         if filename == local_file:
             doit(ar)
         else:
+            ar.info("Gonna copy %s to %s",
+                    rt.relpath(filename), rt.relpath(local_file))
+            
             def ok(ar2):
                 logger.info(
                     "%s made local template copy %s", ar.user, local_file)
@@ -279,8 +282,6 @@ class EditTemplate(BasePrintAction):
                 "Before you can edit this template we must create a "
                 "local copy on the server. "
                 "This will exclude the template from future updates.")
-            ar.info("Gonna copy %s to %s",
-                    rt.relpath(filename), rt.relpath(local_file))
             ar.confirm(ok, msg, _("Are you sure?"))
                 
 

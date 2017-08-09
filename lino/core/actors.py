@@ -486,14 +486,58 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     actor_id = None
 
     detail_layout = None
-    """Define the form layout to use for the detail window.  Actors with
-    :attr:`detail_layout` will automatocally get a `show_detail`
-    action.
+    '''Define the layout to use for the detail window.  Actors with
+    :attr:`detail_layout` will get a `show_detail` action.
 
     When you define a :attr:`detail_layout`, you will probably also
     want to define a :attr:`insert_layout`.
 
-    """
+    The :attr:`detail_layout` is normally an instance of
+    :class:`DetailLayout <lino.core.layouts.DetailLayout>` or a
+    subclass thereof.  For example::
+
+        class FooDetail(dd.DetailLayout):
+            ...
+
+        class Foos(dd.Table):
+            ...
+            detail_layout = FooDetail()
+
+    It is possible to specify :attr:`detail_layout` as a string, in
+    which case it will be resolved at startup as follows.
+
+    If the string contains at least one newline (or no newline but
+    also no dot) then it is taken as the :attr:`main` of a
+    :class:`DetailLayout <lino.core.layouts.DetailLayout>`.
+    For example::
+
+        class Foos(dd.Table):
+            ...
+            detail_layout =
+
+            """
+            id name
+            description
+            """
+
+    If the string contains a dot ('.') and *does not contain* any
+    newlines, then Lino takes this as the name of the class to be
+    instantiated and used.
+
+    For example::
+
+        class Courses(dd.Table):
+            ...
+            detail_layout = 'courses.CourseDetail'
+
+
+    This new feature was necessary because otherwise it could become very
+    tricky to override the detail layout in an extended plugin. Until now
+    you had to define a new class and to assign an instance of that class
+    to every actor which uses it.  But e.g. in :mod:`lino_xl.lib.courses`
+    we have a lot of subclasses of the :class:`Courses` actor.
+
+    '''
 
     insert_layout = None
     """Define the form layout to use for the insert window.  If there's a

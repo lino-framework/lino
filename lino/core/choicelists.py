@@ -66,7 +66,8 @@ from lino.core import actions
 from lino.core import actors
 from lino.core import tables
 from lino.core import fields
-from lino.core.exceptions import UnresolvedChoice
+from .exceptions import UnresolvedChoice
+from .signals import receiver, pre_analyze
 
 
 STRICT = True
@@ -325,6 +326,7 @@ class ChoiceListMeta(actors.ActorMetaClass):
         cls.items_dict = {}
         cls.clear()
         cls._fields = []
+        cls._lazy_items = []
         #~ cls.max_length = 1
         #~ assert not hasattr(cls,'items') 20120620
         #~ for i in cls.items:
@@ -531,6 +533,24 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
         cls._fields.append(fld)
         return fld
 
+    @classmethod
+    def add_item_lazy(cls, *args, **kwargs):
+        """Run :meth:`add_item` with these arguments when all plugins have
+        been loaded.
+
+        This is used e.g. when declaring
+        :mod:`lino_xl.lib.ledger.VoucherTypes` : a voucher type is
+        defined using its ByJournal table. But the model of that table
+        is not necessarily resolvable at that moment.
+
+        """
+        @receiver(pre_analyze)
+        def func(sender, **kw):
+            # logger.info("20170802 okay %s", cls)
+            cls.add_item(*args, **kwargs)
+            
+        cls._lazy_items.append(func)
+            
     @classmethod
     def add_item(cls, *args, **kw):
         """Instantiates a new choice and adds it to this list. Signature is

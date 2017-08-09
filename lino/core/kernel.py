@@ -208,6 +208,7 @@ class Kernel(object):
         self.kernel_startup(site)
         # logger.info("20140227 Kernel.__init__() done")
 
+
     def kernel_startup(self, site):
         """This is a part of a Lino site startup.  The Django Model
         definitions are done, now Lino analyzes them and does certain

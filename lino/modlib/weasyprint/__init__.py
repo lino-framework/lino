@@ -8,10 +8,15 @@
 Applications which use this plugin must also add `'weasyprint'` to
 their :ref:`install_requires`.
 
-(Probably obsolete:) They should also add `'cairocffi<0.7'` (see
-:ticket:`1119`) or install it using pip::
+This plugins installs a warnings filter for the `cffi.model` module in
+order to get rid of a disturbing warning :message:`There are known
+rendering problems with Cairo <= 1.14.0` and :message:`@font-face
+support needs Pango >= 1.38` issued by weasyprint.
 
-  $ pip install 'cairocffi<0.7' weasyprint
+.. (Probably obsolete:) They should also add `'cairocffi<0.7'` (see
+   :ticket:`1119`) or install it using pip::
+
+      $ pip install 'cairocffi<0.7' weasyprint
 
 The build methods defined by this plugin both have the same input
 template, whose ending must be :xfile:`.weasy.html`.  Both methods
@@ -31,6 +36,15 @@ HTML file to convert it to a :file:`.pdf` file.
     models
 
 """
+
+# trying to get rid of disturbing warnings in
+# https://travis-ci.org/lino-framework/book/jobs/260560833
+import warnings
+warnings.filterwarnings(
+    "ignore", 'There are known rendering problems with Cairo <= 1.14.0')
+warnings.filterwarnings(
+    "ignore", '@font-face support needs Pango >= 1.38')
+
 
 from lino.api import ad, _
 
