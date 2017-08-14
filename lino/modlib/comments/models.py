@@ -69,7 +69,8 @@ class Comment(CreatedModified, UserAuthored, Controllable,
     """
     # ALLOWED_TAGS = ['a', 'b', 'i', 'em', 'ul', 'ol', 'li']
     bleached_fields = 'short_text more_text'
-    
+    quick_search_fields = "short_text more_text"
+
     class Meta(object):
         app_label = 'comments'
         abstract = dd.is_abstract_model(__name__, 'Comment')
