@@ -284,7 +284,7 @@ class Kernel(object):
             if qsf is None:
                 fields_list = []
                 for field in model._meta.fields:
-                    if isinstance(field, models.CharField):
+                    if isinstance(field, (models.CharField, models.TextField)):
                         fields_list.append(field.name)
                 model.quick_search_fields = frozenset(fields_list)
             elif isinstance(qsf, frozenset):
