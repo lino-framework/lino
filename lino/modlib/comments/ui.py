@@ -146,8 +146,9 @@ class CommentsByX(Comments):
 
 class AllComments(Comments):
     required_roles = dd.login_required(CommentsStaff)
-    
-    
+    order_by = ["-created"]
+
+
 USE_ETREE = False
 
 class RecentComments(Comments):
