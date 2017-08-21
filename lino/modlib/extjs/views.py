@@ -288,32 +288,55 @@ def choices_for_field(request, holder, field):
 
 
 def choices_response(actor, request, qs, row2dict, emptyValue):
-    quick_search = request.GET.get(constants.URL_PARAM_FILTER, None)
-    if quick_search and isinstance(qs, models.QuerySet):
-        qs = qs.filter(qs.model.quick_search_filter(quick_search))
-    count = len(qs)
+    """
+    :param actor: requesting Actor
+    :param request: web request
+    :param qs: list of django model QS,
+    :param row2dict: function for converting data set into a dict for json
+    :param emptyValue: The Text value to represent None in the choice-list
+    :return: json web responce
 
+    Filters data-set acording to quickseach
+    Counts total rows in the set,
+    Calculates offset and limit
+    Adds None value
+    returns
+    """
+    quick_search = request.GET.get(constants.URL_PARAM_FILTER, None)
     offset = request.GET.get(constants.URL_PARAM_START, None)
-    if offset:
-        qs = qs[int(offset):]
-        #~ kw.update(offset=int(offset))
     limit = request.GET.get(constants.URL_PARAM_LIMIT, None)
-    if limit:
-        #~ kw.update(limit=int(limit))
-        qs = qs[:int(limit)]
+
+    if isinstance(qs, models.QuerySet):
+        qs = qs.filter(qs.model.quick_search_filter(quick_search)) if quick_search else qs
+        count = len(qs) #todo move
+
+        if offset:
+            qs = qs[int(offset):]
+            #~ kw.update(offset=int(offset))
+
+        if limit:
+            #~ kw.update(limit=int(limit))
+            qs = qs[:int(limit)]
 
     rows = [row2dict(row, {}) for row in qs]
 
-    if quick_search and isinstance(qs, list):
-        txt = quick_search.lower()
-        rows = [row for row in rows
-                if txt in row[constants.CHOICES_TEXT_FIELD].lower()]
+    if isinstance(qs, list):
+        if quick_search:
+            txt = quick_search.lower()
 
+            rows = [row for row in rows
+                    if txt in row[constants.CHOICES_TEXT_FIELD].lower()]
+        count = len(rows)
+        rows = rows[int(offset):] if offset else rows
+        rows = rows[:int(limit)] if limit else rows
+
+    # Add None choice
     if emptyValue and not quick_search:
         empty = dict()
         empty[constants.CHOICES_TEXT_FIELD] = emptyValue
         empty[constants.CHOICES_VALUE_FIELD] = None
         rows.insert(0, empty)
+
     return json_response_kw(count=count, rows=rows)
     #~ return json_response_kw(count=len(rows),rows=rows)
     #~ return json_response_kw(count=len(rows),rows=rows,title=_('Choices for %s') % fldname)
