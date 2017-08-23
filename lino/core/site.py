@@ -654,13 +654,13 @@ class Site(object):
 
     """
 
-    use_silk_icons = False
+    use_silk_icons = True
     """If this is `True`, certain Lino plugins use `silk icons library
     <http://www.famfamfam.com/lab/icons/silk/>`__ for representing
     workflows.
 
-    The recommended "modern" style is to use unicode symbols instead
-    of icons.
+    The recommended but not yet well working "modern" style is to use
+    unicode symbols instead of icons.
 
     """
     

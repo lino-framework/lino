@@ -171,6 +171,7 @@ class Action(Parametrizable, Permittable):
     _layout_class = layouts.ActionParamsLayout
     label = None
     button_text = None
+    button_color = None
     debug_permissions = False
     save_action_name = None
     disable_primary_key = True
@@ -520,7 +521,7 @@ class ShowInsert(TableAction):
     disable_primary_key = False
 
     label = _("New")
-    if True:  # settings.SITE.use_silk_icons:
+    if settings.SITE.use_silk_icons:
         icon_name = 'add'  # if action rendered as toolbar button
     else:
         # button_text = u"❏"  # 274F Lower right drop-shadowed white square
@@ -818,7 +819,7 @@ class DeleteSelected(MultipleRowAction):
     """
 
     action_name = 'delete_selected'  # because...
-    if True:  # settings.SITE.use_silk_icons:
+    if settings.SITE.use_silk_icons:
         icon_name = 'delete'
     else:
         # button_text = u"⊖"  # 2296 CIRCLED MINUS	
