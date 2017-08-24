@@ -521,12 +521,12 @@ class ShowInsert(TableAction):
     disable_primary_key = False
 
     label = _("New")
-    if settings.SITE.use_silk_icons:
+    if False:  # settings.SITE.use_silk_icons:
         icon_name = 'add'  # if action rendered as toolbar button
     else:
         # button_text = u"❏"  # 274F Lower right drop-shadowed white square
-        button_text = u"⊞"  # 229e SQUARED PLUS
-        # button_text = u"⊕"  # 2295 circled plus
+        # button_text = u"⊞"  # 229e SQUARED PLUS
+        button_text = u"⊕"  # 2295 circled plus
         
     help_text = _("Insert a new record")
     
@@ -819,11 +819,12 @@ class DeleteSelected(MultipleRowAction):
     """
 
     action_name = 'delete_selected'  # because...
-    if settings.SITE.use_silk_icons:
+    if False:  # settings.SITE.use_silk_icons:
         icon_name = 'delete'
     else:
-        # button_text = u"⊖"  # 2296 CIRCLED MINUS	
-        button_text = u"⊟"  # 229F SQUARED MINUS	
+        button_text = u"⊖"  # 2296 CIRCLED MINUS	
+        # button_text = u"⊟"  # 229F SQUARED MINUS
+        
     help_text = _("Delete this record")
     auto_save = False
     sort_index = 30
