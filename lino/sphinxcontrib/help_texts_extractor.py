@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2016 Luc Saffre
+# Copyright 2016-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 '''Causes a :xfile:`help_texts.py` file to be generated after each complete built of the doctree. 
 
@@ -183,6 +183,7 @@ from sphinx import addnodes
 from importlib import import_module
 
 from unipath import Path
+from lino.core.utils import simplify_name
 
 useless_starts = set(['lino.core'])
 useless_endings = set(['.My', '.ByUser'])
@@ -317,6 +318,7 @@ class HelpTextExtractor(object):
         for e in useless_endings:
             if name.endswith(e):
                 return
+        name = simplify_name(name)
         for root, d in self.name2dict.items():
             if name.startswith(root):
                 d[name] = value

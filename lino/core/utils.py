@@ -1,4 +1,4 @@
-# Copyright 2010-2016 Luc Saffre
+# Copyright 2010-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 """A collection of utilities which require Django settings to be
 importable.
@@ -783,4 +783,17 @@ def lazy_format(tpl, *args, **kwargs):
     def f():
         return tpl.format(*args, **kwargs)
     return lazy(f, six.text_type)()
+    
+simplify_parts = set(['models', 'desktop', 'ui', 'choicelists'])
+
+def simplify_name(name):
+    """Simplify the given Lino name. This is used when we want to ignore
+    whether a model or table or action is defined in a
+
+    """
+    parts = name.split('.')
+    for e in simplify_parts:
+        if e in parts:
+            parts.remove(e)
+    return '.'.join(parts)
     

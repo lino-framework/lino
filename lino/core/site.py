@@ -43,6 +43,7 @@ from lino.core.plugin import Plugin
 
 from lino import assert_django_code, DJANGO_DEFAULT_LANGUAGE
 from lino.utils.xmlgen.html import E
+from lino.core.utils import simplify_name
 # from lino.utils.html2text import html2text
 # from html2text import html2text
 from lino.core.exceptions import ChangedAPI
@@ -1738,7 +1739,9 @@ this field.
         """
         if cls is None:
             cls = fld
-        # debug = False
+        debug = False
+        # if attrname.startswith('mun'):
+        #     debug = True
         # from lino.core.actions import Action
         # if isinstance(fld, Action) and fld.__class__.__name__ == 'ChangePassword':        
         #     debug = True
@@ -1747,12 +1750,12 @@ this field.
         #     debug = True
         if not hasattr(fld, 'help_text'):  # e.g. virtual fields don't
                                            # have a help_text attribute
-            # if debug:
-            #     print("20160725 {!r} has no help_text".format(fld))
+            if debug:
+                print("20170824 {!r} has no help_text".format(fld))
             return
         if fld.help_text:
-            # if debug:
-            #     print("20160829 {} on {} has already a help_text {}".format(attrname, cls, fld.help_text))
+            if debug:
+                print("20170824 {} on {} has already a help_text {}".format(attrname, cls, fld.help_text))
             return
         # if debug:
         #     print(20160829, cls)
@@ -1767,20 +1770,24 @@ this field.
             # if m in self.unhelpful_classes:
             #     continue
             k = m.__module__ + '.' + m.__name__
+            k = simplify_name(k)
             if attrname:
                 k += '.' + attrname
             txt = self._help_texts.get(k, None)
             if txt is None:
                 pass
-                # if debug:
-                #     print("20160725 {}.{} : no help_text using {!r}".format(
-                #         cls, attrname, k))
+                if debug:
+                    print("20170824 {}.{} : no help_text using {!r}".format(
+                        cls, attrname, k))
             else:
-                # if debug:
-                #     print("20160725 {}.{}.help_text found using {}".format(
-                #         cls, attrname, k))
+                if debug:
+                    print("20170824 {}.{}.help_text found using {}".format(
+                        cls, attrname, k))
                 fld.help_text = txt
                 return
+        if debug:
+            print("20170824 {}.{} : no help_text".format(
+                cls, attrname))
 
     def setup_plugins(self):
         """This method is called exactly once during site startup, after
