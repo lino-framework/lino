@@ -298,27 +298,34 @@ class Human(model.Model):
         return ar.obj2html(other, text)
 
     @classmethod
-    def get_parameter_fields(cls, **fields):
-        fields.update(
-            gender=Genders.field(
-                blank=True, help_text=_(
-                    "Show only persons with the given gender.")))
-        return super(Human, cls).get_parameter_fields(**fields)
+    def get_simple_parameters(cls):
+        for p in super(Human, cls).get_simple_parameters():
+            yield p
+        yield 'gender'
+        
+    # no longer needed after 20170826
+    # @classmethod
+    # def get_parameter_fields(cls, **fields):
+    #     fields.update(
+    #         gender=Genders.field(
+    #             blank=True, help_text=_(
+    #                 "Show only persons with the given gender.")))
+    #     return super(Human, cls).get_parameter_fields(**fields)
 
-    @classmethod
-    def get_request_queryset(cls, ar):
-        # print("20160329 Human.get_request_queryset")
-        qs = super(Human, cls).get_request_queryset(ar)
-        if ar.param_values.gender:
-            qs = qs.filter(gender__exact=ar.param_values.gender)
-        return qs
+    # @classmethod
+    # def get_request_queryset(cls, ar):
+    #     # print("20160329 Human.get_request_queryset")
+    #     qs = super(Human, cls).get_request_queryset(ar)
+    #     if ar.param_values.gender:
+    #         qs = qs.filter(gender__exact=ar.param_values.gender)
+    #     return qs
 
-    @classmethod
-    def get_title_tags(cls, ar):
-        for t in super(Human, cls).get_title_tags(ar):
-            yield t
-        if ar.param_values.gender:
-            yield str(ar.param_values.gender)
+    # @classmethod
+    # def get_title_tags(cls, ar):
+    #     for t in super(Human, cls).get_title_tags(ar):
+    #         yield t
+    #     if ar.param_values.gender:
+    #         yield str(ar.param_values.gender)
 
 
 class Born(model.Model):

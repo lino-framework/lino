@@ -1057,18 +1057,21 @@ action on individual instances.
 
         See also :meth:`get_simple_parameters`.
 
-        Usage example: :class:`lino.modlib.users.mixins.UserAuthored`.
+        Usage example: :class:`lino.modlib.users.UserAuthored`.
 
         """
         return fields
 
     @classmethod
     def get_simple_parameters(cls):
-        """Return a set of names of simple parameter fields of every
+        """Return or yield a list of names of simple parameter fields of every
         `Table` on this model.
 
+        When the list contains names for which no parameter field is
+        defined, then Lino creates that parameter field as a copy of
+        the database field of the same name.
         """
-        return set([])
+        return []
 
     @classmethod
     def get_request_queryset(cls, ar):

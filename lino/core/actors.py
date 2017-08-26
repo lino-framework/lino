@@ -15,6 +15,8 @@ from future.utils import with_metaclass
 import logging
 logger = logging.getLogger(__name__)
 
+from copy import copy
+
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -353,10 +355,12 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     """
 
     simple_parameters = None
-    """A set of names of filter parameters which are handled automatically.
+    """A tuple of names of filter parameters which are handled
+    automatically.
 
-    Application developers do not set this attribute but define a
-    :meth:`get_simple_parameters` on the model.
+    Application developers should not set this attribute directly,
+    they should rather define a :meth:`get_simple_parameters` on the
+    model.
 
     """
 
@@ -798,11 +802,21 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         else:
             cls.parameters = cls.get_parameter_fields(**cls.parameters)
 
-        cls.simple_parameters = cls.get_simple_parameters()
-        # if cls.simple_parameters is None:
-        #     cls.simple_parameters = cls.get_simple_parameters()
-        # else:
-        #     raise ChangedAPI("20150829 {0}".format(cls))
+        cls.simple_parameters = tuple(cls.get_simple_parameters())
+        
+        if cls.parameters is None and len(cls.simple_parameters) > 0 :
+            cls.parameters = {}
+            
+        for name in cls.simple_parameters:
+            if name not in cls.parameters:
+                fld = copy(cls.get_data_elem(name))
+                fld.blank = True
+                fld.null = True
+                fld.default = None
+                cls.parameters[name] = fld
+
+        # if len(cls.parameters) == 0:
+        #     cls.parameters = None # backwards compatibility
 
     @classmethod
     def get_known_values(self):
@@ -1053,11 +1067,11 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     @classmethod
     def get_simple_parameters(cls):
         """Inheritable hook for defining which parameters are simple.
-        Expected to return a set of names of parameter fields.
+        Expected to return a list of names of parameter fields.
 
         """
         if cls.model is None:
-            return set([])
+            return []
         return cls.model.get_simple_parameters()
 
     @classmethod

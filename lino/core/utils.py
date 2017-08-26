@@ -714,6 +714,9 @@ class ParameterPanel(object):
     def __getitem__(self, *args, **kw):
         return self.fields.__getitem__(*args, **kw)
 
+    def __setitem__(self, *args, **kw):
+        return self.fields.__setitem__(*args, **kw)
+
     def get(self, *args, **kw):
         return self.fields.get(*args, **kw)
 
