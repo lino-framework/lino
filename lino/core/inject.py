@@ -357,6 +357,11 @@ def update_field(model_spec, name, **kw):
         #                     (model, fld, fld.model))
         #     logger.warning('update_field(%s.%s) : %s', model, fld, fld.model)
         for k, v in list(kw.items()):
+            # old = getattr(fld, k, "(undefined)")
+            # if old != v:
+            #     logger.info(
+            #         u"20170825 updated %s.%s from %s to %s",
+            #         fld, k, old, v)
             setattr(fld, k, v)
         #~ if model.__name__ == "SiteConfig":
             #~ logger.info("20130228 updated field %s in %s",name,model)

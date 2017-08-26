@@ -346,7 +346,6 @@ class Kernel(object):
         
         # site.setup_workflows()
 
-        # Install help texts to all fields which don't have their own.
         # Check for nullable charfields.
         # Initialize _lino_ddh for all models.
         for model in models_list:
@@ -355,7 +354,6 @@ class Kernel(object):
                           # ManyToManyField should not disable delete
             # for f, m in model._meta.get_fields_with_model():
             for f in model._meta.get_fields():
-                site.install_help_text(f, model, f.name)
                 m = f.model
 
                 # Refuse nullable CharFields, but don't trigger on
@@ -423,9 +421,13 @@ class Kernel(object):
             for k, v in class_dict_items(model):
                 if isinstance(v, fields.VirtualField):
                     v.attach_to_model(model, k)
-
         #~ logger.info("20130817 attached model vfs")
 
+        # Install help texts to all database fields:
+        for model in models_list:
+            for f in model._meta.get_fields():
+                site.install_help_text(f, model, f.name)
+                
         actors.discover()
 
         logger.debug("actors.initialize()")

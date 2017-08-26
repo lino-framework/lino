@@ -4,8 +4,8 @@
 
 """User roles for `lino.modlib.plausibility`."""
 
-from lino.core.roles import SiteUser
+from lino.core.roles import UserRole
 
 
-class PlausibilityUser(SiteUser):
+class PlausibilityUser(UserRole):
     """A user who can see plausibility problems."""

@@ -149,6 +149,19 @@ class Problem(Controllable, UserAuthored):
     update_problem = UpdateProblem()
     fix_problem = FixProblem()
 
+    # no longer needed after 20170826
+    # @classmethod
+    # def get_parameter_fields(cls, **fields):
+    #     fields.update(checker=Checkers.field(
+    #         blank=True, help_text=_("Only problems by this checker.")))
+    #     return fields
+                      
+    @classmethod
+    def get_simple_parameters(cls):
+        for p in super(Problem, cls).get_simple_parameters():
+            yield p
+        # yield 'user'
+        yield 'checker'
 
 dd.update_field(Problem, 'user', verbose_name=_("Responsible"))
 Problem.set_widget_options('checker', width=10)
@@ -163,14 +176,12 @@ class Problems(dd.Table):
     auto_fit_column_widths = True
     editable = False
     cell_edit = False
-    parameters = dict(
-        user=models.ForeignKey(
-            'users.User', blank=True, null=True,
-            verbose_name=_("Responsible"),
-            help_text=_("""Only problems for this responsible.""")),
-        checker=Checkers.field(
-            blank=True, help_text=_("Only problems by this checker.")),
-        )
+    # parameters = dict(
+    #     # user=models.ForeignKey(
+    #     #     'users.User', blank=True, null=True,
+    #     #     verbose_name=_("Responsible"),
+    #     #     help_text=_("""Only problems for this responsible.""")),
+    #     )
     params_layout = "user checker"
 
     # simple_parameters = ('user', 'checker')
@@ -178,12 +189,6 @@ class Problems(dd.Table):
     user owner checker id
     message""", window_size=(70, 'auto'))
 
-    @classmethod
-    def get_simple_parameters(cls):
-        s = super(Problems, cls).get_simple_parameters()
-        s.add('user')
-        s.add('checker')
-        return s
 
 
 class AllProblems(Problems):

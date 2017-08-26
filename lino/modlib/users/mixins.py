@@ -92,21 +92,22 @@ class Authored(dd.Model):
             raise ChangedAPI("{0} has a manager_level_field".format(cls))
         super(Authored, cls).on_analyze(site)
 
-    @classmethod
-    def get_parameter_fields(cls, **fields):
-        """Adds the :attr:`user` filter parameter field."""
-        fld = cls._meta.get_field('user')
-        fields.setdefault(
-            'user', models.ForeignKey(
-                'users.User', verbose_name=fld.verbose_name,
-                blank=True, null=True))
-        return super(Authored, cls).get_parameter_fields(**fields)
+    # no longer needed after 20170826
+    # @classmethod
+    # def get_parameter_fields(cls, **fields):
+    #     """Adds the :attr:`user` filter parameter field."""
+    #     fld = cls._meta.get_field('user')
+    #     fields.setdefault(
+    #         'user', models.ForeignKey(
+    #             'users.User', verbose_name=fld.verbose_name,
+    #             blank=True, null=True))
+    #     return super(Authored, cls).get_parameter_fields(**fields)
 
     @classmethod
     def get_simple_parameters(cls):
-        s = super(Authored, cls).get_simple_parameters()
-        s.add('user')  # cls.author_field_name)
-        return s
+        for p in super(Authored, cls).get_simple_parameters():
+            yield p
+        yield 'user'  # cls.author_field_name)
 
     def get_print_language(self):
         u = self.get_author()

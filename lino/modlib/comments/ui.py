@@ -208,6 +208,12 @@ class CommentsByRFC(CommentsByX):
     master_key = 'owner'
     column_names = "short_text created user *"
     stay_in_grid = True
+    insert_layout = dd.InsertLayout("""
+    reply_to
+    # comment_type
+    short_text
+    """, window_size=(60, 10), hidden_elements="reply_to")
+
 
     @classmethod
     def get_slave_summary(self, obj, ar):

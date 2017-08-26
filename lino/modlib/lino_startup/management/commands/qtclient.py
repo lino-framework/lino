@@ -27,6 +27,20 @@ from lino.core.menus import Menu  # , MenuItem
 from unipath import Path
 images_path = Path(settings.STATIC_ROOT, Path('static/images/mjames'))
 
+class ItemCaller(object):
+    def __init__(self, win, mi):
+        self.mi = mi
+        self.win  = win
+        
+    def __call__(self, event):
+        QMessageBox.question(
+            self.win, str(self.mi.label),
+            str(self.mi.help_text),
+            QMessageBox.Yes | 
+            QMessageBox.No, QMessageBox.Yes)
+
+            
+
 class DetailForm(QWidget):
     
     def __init__(self, title="Detail Form"):
@@ -89,7 +103,7 @@ class LinoClient(QMainWindow):
                 if mi.hotkey:
                     a.setShortcut(mi.hotkey)
                 a.setStatusTip(str(mi.help_text))
-                a.triggered.connect(self.callerfunc(mi))
+                a.triggered.connect(ItemCaller(self, mi))
                 menubar.addAction(a)
 
         # fileMenu = menubar.addMenu('&File')
@@ -112,16 +126,6 @@ class LinoClient(QMainWindow):
         # btn.resize(btn.sizeHint())
         # btn.move(50, 50)               
     
-    def callerfunc(self, mi):
-        def f(event):
-            QMessageBox.question(
-                self, str(mi.label),
-                str(mi.help_text),
-                QMessageBox.Yes | 
-                QMessageBox.No, QMessageBox.Yes)
-
-        return f
-            
     def show_detail(self, event):
         self.detail_form = DetailForm()
         self.detail_form.show()

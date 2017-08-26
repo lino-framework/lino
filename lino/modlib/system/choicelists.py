@@ -25,11 +25,6 @@ class YesNo(ChoiceList):
     """
     A choicelist with two values "Yes" and "No".
 
-    .. django2rst::
-
-        from lino.modlib.system.choicelists import YesNo
-        rt.show(YesNo)
-
     Used e.g. to define parameter panel fields for BooleanFields::
 
       foo = dd.YesNo.field(_("Foo"), blank=True)
@@ -37,6 +32,8 @@ class YesNo(ChoiceList):
 
     """
     verbose_name_plural = _("Yes or no")
+    preferred_width = 12
+    
 add = YesNo.add_item
 add('y', _("Yes"), 'yes')
 add('n', _("No"), 'no')

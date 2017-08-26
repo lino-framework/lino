@@ -192,17 +192,18 @@ class Registrable(model.Model):
         target_state = state_field.choicelist.draft
         self.set_workflow_state(ar, state_field, target_state)
 
-    @classmethod
-    def get_parameter_fields(cls, **fields):
-        wsf = cls.workflow_state_field
-        fields[wsf.name] = wsf.choicelist.field(blank=True, null=True)
-        return super(Registrable, cls).get_parameter_fields(**fields)
+    # no longer needed after 20170826
+    # @classmethod
+    # def get_parameter_fields(cls, **fields):
+    #     wsf = cls.workflow_state_field
+    #     fields[wsf.name] = wsf.choicelist.field(blank=True, null=True)
+    #     return super(Registrable, cls).get_parameter_fields(**fields)
 
     @classmethod
     def get_simple_parameters(cls):
-        s = super(Registrable, cls).get_simple_parameters()
-        s.add(cls.workflow_state_field.name)
-        return s
+        for p in super(Registrable, cls).get_simple_parameters():
+            yield p
+        yield cls.workflow_state_field.name
 
 
 class Modified(model.Model):

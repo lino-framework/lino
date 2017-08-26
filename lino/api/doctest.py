@@ -246,9 +246,15 @@ from lino.core.tables import AbstractTable
 from lino.core.boundaction import BoundAction
 
 
-def show_fields(model, fieldnames=None):
+def show_fields(model, fieldnames=None, columns=False):
     """Print an overview description of the specified fields of the
-    specified model.
+    specified model. 
+
+    If model is an action or table, print the parameter fields of that
+    action or table.
+
+    If model is a table and you want the columns instead of the
+    parameter fields, then specify `columns=True`.
 
     """
     cells = []
@@ -266,9 +272,15 @@ def show_fields(model, fieldnames=None):
         if fieldnames is None:
             fieldnames = [f.name for f in model._meta.get_fields()]
     elif issubclass(model, AbstractTable):
-        get_field = model.parameters.get
-        if fieldnames is None:
-            fieldnames = model.params_layout.main
+        if columns:
+            get_field = model.get_data_elem
+            if fieldnames is None:
+                fieldnames = model.column_names
+                # get_handle().list_layout.main.columns
+        else:
+            get_field = model.parameters.get
+            if fieldnames is None:
+                fieldnames = model.params_layout.main
     if isinstance(fieldnames, six.string_types):
         fieldnames = fieldnames.split()
     for n in fieldnames:
@@ -279,6 +291,14 @@ def show_fields(model, fieldnames=None):
                           unindent(fld.help_text or '')])
 
     print(table(cols, cells).strip())
+
+
+def show_columns(*args, **kwargs):
+    """Like :func:`show_fields` but with `columns` defaulting to True.
+
+    """
+    kwargs.update(columns=True)
+    return show_fields(*args, **kwargs)
 
 
 def py2rst(x):

@@ -441,19 +441,19 @@ class Messages(dd.Table):
     # """, window_size=(50, 15))
 
     parameters = ObservedDateRange(
-        user=dd.ForeignKey(
-            settings.SITE.user_model,
-            blank=True, null=True),
+        # user=dd.ForeignKey(
+        #     settings.SITE.user_model,
+        #     blank=True, null=True),
         show_seen=dd.YesNo.field(_("Seen"), blank=True),
     )
 
     params_layout = "user show_seen start_date end_date"
 
-    @classmethod
-    def get_simple_parameters(cls):
-        s = super(Messages, cls).get_simple_parameters()
-        s.add('user')
-        return s
+    # @classmethod
+    # def get_simple_parameters(cls):
+    #     for p in super(Messages, cls).get_simple_parameters():
+    #         yield p
+    #     yield 'user'
 
     @classmethod
     def get_request_queryset(self, ar):

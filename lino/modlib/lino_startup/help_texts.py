@@ -10,7 +10,7 @@ help_texts = {
     'lino.api.doctest.HttpQuery.url_base' : _("""Alias for field number 1"""),
     'lino.api.doctest.HttpQuery.username' : _("""Alias for field number 0"""),
     'lino.api.rt.plugins' : _("""Shortcut to lino.core.site.Site.plugins"""),
-    'lino.api.rt.models' : _("""Shortcut to lino.core.site.Site.models"""),
+    'lino.api.rt' : _("""Shortcut to lino.core.site.Site.models"""),
     'lino.api.rt.actors' : _("""Deprecated alias for models"""),
     'lino.api.rt.modules' : _("""Deprecated alias for models"""),
     'lino.api.selenium.Album' : _("""Generates one directory of screenshots images and their index.rst
@@ -116,9 +116,9 @@ column."""),
 of the file.  See also this thread
 about length of MIME type field."""),
     'lino.modlib.about.Plugin' : _("""See /dev/plugins."""),
-    'lino.modlib.about.models.Inspector' : _("""Shows a simplistic "inspector" which once helped me for debugging.
+    'lino.modlib.about.Inspector' : _("""Shows a simplistic "inspector" which once helped me for debugging.
 Needs more work to become seriously useful..."""),
-    'lino.modlib.about.models.About' : _("""Display information about this web site.  This defines the window
+    'lino.modlib.about.About' : _("""Display information about this web site.  This defines the window
 which opens via the menu command Site ‣ About."""),
     'lino.modlib.bootstrap3.renderer.Renderer' : _("""A  HTML render that uses Bootstrap3."""),
     'lino.modlib.bootstrap3.views.List' : _("""Render a list of records."""),
@@ -126,31 +126,31 @@ which opens via the menu command Site ‣ About."""),
     'lino.modlib.bootstrap3.views.Authenticate' : _("""Render the main page."""),
     'lino.modlib.bootstrap3.views.Index' : _("""Render the main page."""),
     'lino.modlib.changes.Plugin' : _("""See /dev/plugins."""),
-    'lino.modlib.changes.models.ChangeTypes' : _("""The list of possible choices for the type field
+    'lino.modlib.changes.ChangeTypes' : _("""The list of possible choices for the type field
 of a Change."""),
-    'lino.modlib.changes.models.Change' : _("""A registered change in the database."""),
-    'lino.modlib.changes.models.Change.master' : _("""The database object which acts as "master"."""),
-    'lino.modlib.changes.models.Change.object' : _("""The database object which has been modified."""),
-    'lino.modlib.changes.models.Changes' : _("""The default table for Change."""),
-    'lino.modlib.changes.models.Changes.model' : _("""alias of Change"""),
-    'lino.modlib.changes.models.ChangesByObject' : _("""Slave Table showing the direct changes related to the current
+    'lino.modlib.changes.Change' : _("""A registered change in the database."""),
+    'lino.modlib.changes.Change.master' : _("""The database object which acts as "master"."""),
+    'lino.modlib.changes.Change.object' : _("""The database object which has been modified."""),
+    'lino.modlib.changes.Changes' : _("""The default table for Change."""),
+    'lino.modlib.changes.Changes.model' : _("""alias of Change"""),
+    'lino.modlib.changes.ChangesByObject' : _("""Slave Table showing the direct changes related to the current
 object."""),
-    'lino.modlib.changes.models.ChangesByObject.model' : _("""alias of Change"""),
-    'lino.modlib.changes.models.ChangesByMaster' : _("""Slave Table showing the changes related to the current object,
+    'lino.modlib.changes.ChangesByObject.model' : _("""alias of Change"""),
+    'lino.modlib.changes.ChangesByMaster' : _("""Slave Table showing the changes related to the current object,
 including those applied to "child" objects."""),
-    'lino.modlib.changes.models.ChangesByMaster.model' : _("""alias of Change"""),
+    'lino.modlib.changes.ChangesByMaster.model' : _("""alias of Change"""),
     'lino.modlib.comments.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.comments.mixins.Commentable' : _("""A request for comment. Every database model of an application"""),
-    'lino.modlib.comments.models.CommentType' : _("""The type of an upload."""),
-    'lino.modlib.comments.models.CommentType.shortcut' : _("""Optional pointer to a virtual upload shortcut field.  If
+    'lino.modlib.comments.CommentType' : _("""The type of an upload."""),
+    'lino.modlib.comments.CommentType.shortcut' : _("""Optional pointer to a virtual upload shortcut field.  If
 this is not empty, then the given shortcut field will manage
 uploads of this type.  See also Shortcuts."""),
-    'lino.modlib.comments.models.Comment' : _("""A comment is a short text which some user writes about some
+    'lino.modlib.comments.Comment' : _("""A comment is a short text which some user writes about some
 other database object. It has no recipient."""),
-    'lino.modlib.comments.models.Comment.short_text' : _("""A short "abstract" of your comment. This should not be more
+    'lino.modlib.comments.Comment.short_text' : _("""A short "abstract" of your comment. This should not be more
 than one paragraph."""),
     'lino.modlib.dashboard.Plugin' : _("""See /dev/plugins."""),
-    'lino.modlib.dashboard.models.UpdateWidgets' : _("""Create or update the widgets for this user."""),
+    'lino.modlib.dashboard.UpdateWidgets' : _("""Create or update the widgets for this user."""),
     'lino.modlib.davlink.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.export_excel.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.extjs.Plugin' : _("""Extends lino.core.plugin.Plugin."""),
@@ -210,10 +210,10 @@ Combobox."""),
     'lino.modlib.gfks.mixins.Controllable' : _("""Mixin for models that are "controllable" by another database object."""),
     'lino.modlib.gfks.mixins.Controllable.controller_is_optional' : _("""Deprecated. This is (and always was) being ignored. Use
 update_controller_field() instead."""),
-    'lino.modlib.gfks.models.ContentTypes' : _("""Default table for django.contrib.ContentType."""),
-    'lino.modlib.gfks.models.ContentTypes.base_classes' : _("""Display a clickable list of all MTI parents, i.e. base models"""),
-    'lino.modlib.gfks.models.HelpText' : _("""A custom help text to be displayed for a given field."""),
-    'lino.modlib.gfks.models.BrokenGFKs' : _("""Shows all database objects (model instances) who have a broken
+    'lino.modlib.gfks.ContentTypes' : _("""Default table for django.contrib.ContentType."""),
+    'lino.modlib.gfks.ContentTypes.base_classes' : _("""Display a clickable list of all MTI parents, i.e. base models"""),
+    'lino.modlib.gfks.HelpText' : _("""A custom help text to be displayed for a given field."""),
+    'lino.modlib.gfks.BrokenGFKs' : _("""Shows all database objects (model instances) who have a broken
 GeneriForeignKey field."""),
     'lino.modlib.importfilters.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.jinja.Plugin' : _("""See /dev/plugins."""),
@@ -225,22 +225,22 @@ GeneriForeignKey field."""),
     'lino.modlib.notify.actions.NotifyingAction' : _("""An action which pops up a dialog window of three fields "Summary",
 "Description" and a checkbox "Don't notify others" to optionally
 suppress notification."""),
-    'lino.modlib.notify.choicelists.MessageTypes' : _("""The list of possible choices for the message_type field
+    'lino.modlib.notify.MessageTypes' : _("""The list of possible choices for the message_type field
 of a Message."""),
-    'lino.modlib.notify.choicelists.MailModes' : _("""How the system should send email notifications to a user."""),
+    'lino.modlib.notify.MailModes' : _("""How the system should send email notifications to a user."""),
     'lino.modlib.notify.mixins.ChangeObservable' : _("""Mixin for models which can emit notifications to a list of
 "observers" when an instance is modified."""),
-    'lino.modlib.notify.models.ClearSeen' : _("""Mark this message as not yet seen."""),
-    'lino.modlib.notify.models.Message' : _("""A Notification message is a instant message sent by the
+    'lino.modlib.notify.ClearSeen' : _("""Mark this message as not yet seen."""),
+    'lino.modlib.notify.Message' : _("""A Notification message is a instant message sent by the
 application to a given user."""),
-    'lino.modlib.notify.models.Message.user' : _("""The recipient."""),
-    'lino.modlib.notify.models.Message.owner' : _("""The database object which controls this message."""),
-    'lino.modlib.notify.models.Messages' : _("""Base for all tables of messages."""),
-    'lino.modlib.notify.models.Messages.model' : _("""alias of Message"""),
-    'lino.modlib.notify.models.AllMessages' : _("""The gobal list of all messages."""),
-    'lino.modlib.notify.models.AllMessages.model' : _("""alias of Message"""),
-    'lino.modlib.notify.models.MyMessages' : _("""Shows messages emitted to you."""),
-    'lino.modlib.notify.models.MyMessages.model' : _("""alias of Message"""),
+    'lino.modlib.notify.Message.user' : _("""The recipient."""),
+    'lino.modlib.notify.Message.owner' : _("""The database object which controls this message."""),
+    'lino.modlib.notify.Messages' : _("""Base for all tables of messages."""),
+    'lino.modlib.notify.Messages.model' : _("""alias of Message"""),
+    'lino.modlib.notify.AllMessages' : _("""The gobal list of all messages."""),
+    'lino.modlib.notify.AllMessages.model' : _("""alias of Message"""),
+    'lino.modlib.notify.MyMessages' : _("""Shows messages emitted to you."""),
+    'lino.modlib.notify.MyMessages.model' : _("""alias of Message"""),
     'lino.modlib.office.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.office.roles.OfficeUser' : _("""A user who has access to office functionality like calendar, notes
 and uploads."""),
@@ -254,35 +254,35 @@ user who will be attributed to plausibility problems for which
 no specific responible could be designated (returned by the
 checker's get_responsible_user
 method)."""),
-    'lino.modlib.plausibility.choicelists.Checker' : _("""Base class for the choices of Checkers."""),
-    'lino.modlib.plausibility.choicelists.Checker.model' : _("""The model to be checked. This may be an abstract model.  It can
+    'lino.modlib.plausibility.Checker' : _("""Base class for the choices of Checkers."""),
+    'lino.modlib.plausibility.Checker.model' : _("""The model to be checked. This may be an abstract model.  It can
 also be None, but then you must define your own
 get_checkable_models() method."""),
-    'lino.modlib.plausibility.choicelists.Checkers' : _("""The list of plausibility problem types known by this application."""),
-    'lino.modlib.plausibility.choicelists.Checkers.item_class' : _("""alias of Checker"""),
-    'lino.modlib.plausibility.models.UpdateProblemsByController' : _("""Updates the table of plausibility problems for a given database
+    'lino.modlib.plausibility.Checkers' : _("""The list of plausibility problem types known by this application."""),
+    'lino.modlib.plausibility.Checkers.item_class' : _("""alias of Checker"""),
+    'lino.modlib.plausibility.UpdateProblemsByController' : _("""Updates the table of plausibility problems for a given database
 object, also removing those messages which no longer exist. This
 action does not change anything else in the database."""),
-    'lino.modlib.plausibility.models.FixProblemsByController' : _("""Update plausibility problems, repairing those which are
+    'lino.modlib.plausibility.FixProblemsByController' : _("""Update plausibility problems, repairing those which are
 automatically fixable."""),
-    'lino.modlib.plausibility.models.Problem' : _("""Represents a detected plausibility problem."""),
-    'lino.modlib.plausibility.models.Problem.checker' : _("""The Checker which reported
+    'lino.modlib.plausibility.Problem' : _("""Represents a detected plausibility problem."""),
+    'lino.modlib.plausibility.Problem.checker' : _("""The Checker which reported
 this problem."""),
-    'lino.modlib.plausibility.models.Problem.message' : _("""The message text. This is a concatenation of all messages that
+    'lino.modlib.plausibility.Problem.message' : _("""The message text. This is a concatenation of all messages that
 were yeld by the checker."""),
-    'lino.modlib.plausibility.models.Problem.user' : _("""The user reponsible
+    'lino.modlib.plausibility.Problem.user' : _("""The user reponsible
 for fixing this problem."""),
-    'lino.modlib.plausibility.models.Problems' : _("""The base table for Problem objects."""),
-    'lino.modlib.plausibility.models.Problems.model' : _("""alias of Problem"""),
-    'lino.modlib.plausibility.models.AllProblems' : _("""Show all plausibility problems."""),
-    'lino.modlib.plausibility.models.AllProblems.model' : _("""alias of Problem"""),
-    'lino.modlib.plausibility.models.ProblemsByOwner' : _("""Show data problems related to this database object."""),
-    'lino.modlib.plausibility.models.ProblemsByOwner.model' : _("""alias of Problem"""),
-    'lino.modlib.plausibility.models.ProblemsByChecker' : _("""Show the plausibility problems by checker."""),
-    'lino.modlib.plausibility.models.ProblemsByChecker.master' : _("""alias of Checker"""),
-    'lino.modlib.plausibility.models.ProblemsByChecker.model' : _("""alias of Problem"""),
-    'lino.modlib.plausibility.models.MyProblems' : _("""Shows the plausibility problems assigned to this user."""),
-    'lino.modlib.plausibility.models.MyProblems.model' : _("""alias of Problem"""),
+    'lino.modlib.plausibility.Problems' : _("""The base table for Problem objects."""),
+    'lino.modlib.plausibility.Problems.model' : _("""alias of Problem"""),
+    'lino.modlib.plausibility.AllProblems' : _("""Show all plausibility problems."""),
+    'lino.modlib.plausibility.AllProblems.model' : _("""alias of Problem"""),
+    'lino.modlib.plausibility.ProblemsByOwner' : _("""Show data problems related to this database object."""),
+    'lino.modlib.plausibility.ProblemsByOwner.model' : _("""alias of Problem"""),
+    'lino.modlib.plausibility.ProblemsByChecker' : _("""Show the plausibility problems by checker."""),
+    'lino.modlib.plausibility.ProblemsByChecker.master' : _("""alias of Checker"""),
+    'lino.modlib.plausibility.ProblemsByChecker.model' : _("""alias of Problem"""),
+    'lino.modlib.plausibility.MyProblems' : _("""Shows the plausibility problems assigned to this user."""),
+    'lino.modlib.plausibility.MyProblems.model' : _("""alias of Problem"""),
     'lino.modlib.plausibility.roles.PlausibilityUser' : _("""A user who can see plausibility problems."""),
     'lino.modlib.printing.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.printing.actions.BasePrintAction' : _("""Base class for all "Print" actions."""),
@@ -292,22 +292,22 @@ document and builds is only when it doesn't yet exist."""),
     'lino.modlib.printing.actions.EditTemplate' : _("""Edit the print template, i.e. the file specified by
 Printable.get_print_templates()."""),
     'lino.modlib.printing.actions.ClearCacheAction' : _("""Defines the Clear cache button on a Printable record."""),
-    'lino.modlib.printing.choicelists.TemplatedBuildMethod' : _("""Base class for all build methods.  A build method encapsulates the
+    'lino.modlib.printing.TemplatedBuildMethod' : _("""Base class for all build methods.  A build method encapsulates the
 process of generating a "printable document" that inserts data
 from the database into a template, using a given combination of a
 template parser and post-processor."""),
-    'lino.modlib.printing.choicelists.DjangoBuildMethod' : _("""Using Django's templating engine."""),
-    'lino.modlib.printing.choicelists.PisaBuildMethod' : _("""Generates .pdf files from .html templates.
+    'lino.modlib.printing.DjangoBuildMethod' : _("""Using Django's templating engine."""),
+    'lino.modlib.printing.PisaBuildMethod' : _("""Generates .pdf files from .html templates.
 Requires pisa.
 Usage example see /tutorials/pisa/index."""),
-    'lino.modlib.printing.choicelists.SimpleBuildMethod' : _("""Base for build methods which use Lino's templating system
+    'lino.modlib.printing.SimpleBuildMethod' : _("""Base for build methods which use Lino's templating system
 (find_config_file)."""),
-    'lino.modlib.printing.choicelists.LatexBuildMethod' : _("""Generates .pdf files from .tex templates.
+    'lino.modlib.printing.LatexBuildMethod' : _("""Generates .pdf files from .tex templates.
 Not actively used."""),
-    'lino.modlib.printing.choicelists.RtfBuildMethod' : _("""Generates .rtf files from .rtf templates.
+    'lino.modlib.printing.RtfBuildMethod' : _("""Generates .rtf files from .rtf templates.
 Not actively used."""),
-    'lino.modlib.printing.choicelists.XmlBuildMethod' : _("""Generates .xml files from .xml templates."""),
-    'lino.modlib.printing.choicelists.BuildMethods' : _("""The choicelist of build methods offered on this site."""),
+    'lino.modlib.printing.XmlBuildMethod' : _("""Generates .xml files from .xml templates."""),
+    'lino.modlib.printing.BuildMethods' : _("""The choicelist of build methods offered on this site."""),
     'lino.modlib.printing.mixins.PrintableType' : _("""Base class for models that specify the
 TypedPrintable.type."""),
     'lino.modlib.printing.mixins.PrintableType.build_method' : _("""A pointer to an item of
@@ -340,29 +340,29 @@ CachedPrintable."""),
     'lino.modlib.summaries.Plugin.end_year' : _("""The last year for which summaries should be computed."""),
     'lino.modlib.summaries.mixins.Summary' : _("""Base class for all "summary data" models."""),
     'lino.modlib.system.Plugin' : _("""See /dev/plugins."""),
-    'lino.modlib.system.choicelists.YesNo' : _("""A choicelist with two values "Yes" and "No"."""),
-    'lino.modlib.system.choicelists.Genders' : _("""Defines the two possible choices "male" and "female"
+    'lino.modlib.system.YesNo' : _("""A choicelist with two values "Yes" and "No"."""),
+    'lino.modlib.system.Genders' : _("""Defines the two possible choices "male" and "female"
 for the gender of a person."""),
-    'lino.modlib.system.choicelists.ObservedEvent' : _("""Base class for choices of "observed event"-style choicelists."""),
-    'lino.modlib.system.choicelists.PeriodEvents' : _("""The list of things you can observe on a
+    'lino.modlib.system.ObservedEvent' : _("""Base class for choices of "observed event"-style choicelists."""),
+    'lino.modlib.system.PeriodEvents' : _("""The list of things you can observe on a
 lino.mixins.periods.DateRange."""),
-    'lino.modlib.system.models.BuildSiteCache' : _("""Rebuild the site cache.
+    'lino.modlib.system.BuildSiteCache' : _("""Rebuild the site cache.
 This action is available on About."""),
-    'lino.modlib.system.models.SiteConfig' : _("""This model should have exactly one instance,
+    'lino.modlib.system.SiteConfig' : _("""This model should have exactly one instance,
 used to store persistent global site parameters.
 Application code sees this instance as settings.SITE.site_config."""),
-    'lino.modlib.system.models.SiteConfig.default_build_method' : _("""The default build method to use when rendering printable documents."""),
-    'lino.modlib.system.models.SiteConfig.simulate_today' : _("""A constant user-defined date to be substituted as current
+    'lino.modlib.system.SiteConfig.default_build_method' : _("""The default build method to use when rendering printable documents."""),
+    'lino.modlib.system.SiteConfig.simulate_today' : _("""A constant user-defined date to be substituted as current
 system date."""),
-    'lino.modlib.system.models.SiteConfig.site_company' : _("""The organisation who runs this site.  This is used e.g. when
+    'lino.modlib.system.SiteConfig.site_company' : _("""The organisation who runs this site.  This is used e.g. when
 printing your address in certain documents or reports.  Or
 newly created partners inherit the country of the site owner."""),
-    'lino.modlib.system.models.SiteConfig.hide_events_before' : _("""If this is not empty, any calendar events before that date are
+    'lino.modlib.system.SiteConfig.hide_events_before' : _("""If this is not empty, any calendar events before that date are
 being hidden in certain places."""),
-    'lino.modlib.system.models.SiteConfigs' : _("""The table used to present the SiteConfig row in a Detail form.
+    'lino.modlib.system.SiteConfigs' : _("""The table used to present the SiteConfig row in a Detail form.
 See also lino.Lino.get_site_config().
 Deserves more documentation."""),
-    'lino.modlib.system.models.SiteConfigs.model' : _("""alias of SiteConfig"""),
+    'lino.modlib.system.SiteConfigs.model' : _("""alias of SiteConfig"""),
     'lino.modlib.tinymce.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.tinymce.Plugin.document_domain' : _("""When serving static files from a different subdomain, TinyMCE needs
 to know about this. Typical usage is to specify this in your
@@ -378,34 +378,34 @@ window."""),
     'lino.modlib.tinymce.Plugin.media_name' : _("""Lino currently includes three versions of TinyMCE, but for
 production sites we still use the eldest version 3.4.8."""),
     'lino.modlib.uploads.Plugin' : _("""See /dev/plugins."""),
-    'lino.modlib.uploads.choicelists.Shortcut' : _("""Represents a shortcut field."""),
-    'lino.modlib.uploads.choicelists.Shortcuts' : _("""The list of upload shortcut fields which have been declared on this
+    'lino.modlib.uploads.Shortcut' : _("""Represents a shortcut field."""),
+    'lino.modlib.uploads.Shortcuts' : _("""The list of upload shortcut fields which have been declared on this
 Site.  See add_shortcut()."""),
-    'lino.modlib.uploads.choicelists.Shortcuts.item_class' : _("""alias of Shortcut"""),
-    'lino.modlib.uploads.models.UploadType' : _("""The type of an upload."""),
-    'lino.modlib.uploads.models.UploadType.shortcut' : _("""Optional pointer to a virtual upload shortcut field.  If
+    'lino.modlib.uploads.Shortcuts.item_class' : _("""alias of Shortcut"""),
+    'lino.modlib.uploads.UploadType' : _("""The type of an upload."""),
+    'lino.modlib.uploads.UploadType.shortcut' : _("""Optional pointer to a virtual upload shortcut field.  If
 this is not empty, then the given shortcut field will manage
 uploads of this type.  See also Shortcuts."""),
-    'lino.modlib.uploads.models.UploadTypes' : _("""The table with all existing upload types."""),
-    'lino.modlib.uploads.models.UploadTypes.model' : _("""alias of UploadType"""),
-    'lino.modlib.uploads.models.Upload' : _("""Represents an uploaded file."""),
-    'lino.modlib.uploads.models.Upload.file' : _("""Pointer to the uploaded file. See
+    'lino.modlib.uploads.UploadTypes' : _("""The table with all existing upload types."""),
+    'lino.modlib.uploads.UploadTypes.model' : _("""alias of UploadType"""),
+    'lino.modlib.uploads.Upload' : _("""Represents an uploaded file."""),
+    'lino.modlib.uploads.Upload.file' : _("""Pointer to the uploaded file. See
 lino.mixins.uploadable.Uploadable.file"""),
-    'lino.modlib.uploads.models.Upload.description' : _("""A short description entered manually by the user."""),
-    'lino.modlib.uploads.models.Upload.description_link' : _("""Almost the same as description, but if file is
+    'lino.modlib.uploads.Upload.description' : _("""A short description entered manually by the user."""),
+    'lino.modlib.uploads.Upload.description_link' : _("""Almost the same as description, but if file is
 not empty, the text is clickable, and clicking on it opens the
 uploaded file in a new browser window."""),
-    'lino.modlib.uploads.models.Uploads' : _("""Shows all Uploads"""),
-    'lino.modlib.uploads.models.Uploads.model' : _("""alias of Upload"""),
-    'lino.modlib.uploads.models.MyUploads' : _("""Shows only my Uploads (i.e. those whose author is current user)."""),
-    'lino.modlib.uploads.models.MyUploads.model' : _("""alias of Upload"""),
-    'lino.modlib.uploads.models.UploadsByController.model' : _("""alias of Upload"""),
+    'lino.modlib.uploads.Uploads' : _("""Shows all Uploads"""),
+    'lino.modlib.uploads.Uploads.model' : _("""alias of Upload"""),
+    'lino.modlib.uploads.MyUploads' : _("""Shows only my Uploads (i.e. those whose author is current user)."""),
+    'lino.modlib.uploads.MyUploads.model' : _("""alias of Upload"""),
+    'lino.modlib.uploads.UploadsByController.model' : _("""alias of Upload"""),
     'lino.modlib.users.utils.UserTypeContext' : _("""A context manager which activates a current user type."""),
     'lino.modlib.weasyprint.Plugin' : _("""See /dev/plugins."""),
-    'lino.modlib.weasyprint.choicelists.WeasyBuildMethod' : _("""The base class for both build methods."""),
-    'lino.modlib.weasyprint.choicelists.WeasyPdfBuildMethod' : _("""Like WeasyBuildMethod, but the rendered HTML is then
+    'lino.modlib.weasyprint.WeasyBuildMethod' : _("""The base class for both build methods."""),
+    'lino.modlib.weasyprint.WeasyPdfBuildMethod' : _("""Like WeasyBuildMethod, but the rendered HTML is then
 passed through weasyprint which converts from HTML to PDF."""),
-    'lino.modlib.weasyprint.choicelists.WeasyHtmlBuildMethod' : _("""Renders the input template and returns the unmodified output as
+    'lino.modlib.weasyprint.WeasyHtmlBuildMethod' : _("""Renders the input template and returns the unmodified output as
 plain HTML."""),
     'lino.modlib.wkhtmltopdf.Plugin' : _("""See /dev/plugins."""),
     'lino.sphinxcontrib.actordoc.CurrentLanguage' : _("""Tell Sphinx to switch to the specified language until the end of
@@ -559,7 +559,7 @@ This is instantiated as E."""),
 <foot> and <body>."""),
     'lino.utils.xmlgen.html.Document' : _("""A pythonic representation of a <body> with a <title> and
 some <head> tags for stylesheets."""),
-    'lino.modlib.contacts.models.Partner.invoice_recipient' : _("""The recipient of invoices (invoicing address)."""),
+    'lino.modlib.contacts.Partner.invoice_recipient' : _("""The recipient of invoices (invoicing address)."""),
     'lino.modlib.users.User' : _("""Fields:"""),
     'lino.modlib.users.User.authenticated' : _("""This is always True.  Compare with
 AnonymousUser.authenticated."""),
