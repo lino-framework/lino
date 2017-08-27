@@ -119,11 +119,13 @@ from atelier import rstgen
 from lino.utils.cycler import Cycler
 from lino.utils.code import codefiles, codetime
 
-
 def join_words(*words):
     """
     Remove any empty item (None or ''), call unicode on each and
     join the remaining word using a single space.
+
+    TODO: move this to lino.utils.xmlgen.html ?
+
     """
     return ' '.join([str(x) for x in words if x])
 
