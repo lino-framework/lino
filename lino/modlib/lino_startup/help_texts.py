@@ -297,9 +297,10 @@ process of generating a "printable document" that inserts data
 from the database into a template, using a given combination of a
 template parser and post-processor."""),
     'lino.modlib.printing.DjangoBuildMethod' : _("""Using Django's templating engine."""),
-    'lino.modlib.printing.PisaBuildMethod' : _("""Generates .pdf files from .html templates.
+    'lino.modlib.printing.PisaBuildMethod' : _("""Deprecated.
+Generates .pdf files from .html templates.
 Requires pisa.
-Usage example see /tutorials/pisa/index."""),
+Usage example see lino_book.projects.pisa."""),
     'lino.modlib.printing.SimpleBuildMethod' : _("""Base for build methods which use Lino's templating system
 (find_config_file)."""),
     'lino.modlib.printing.LatexBuildMethod' : _("""Generates .pdf files from .tex templates.
