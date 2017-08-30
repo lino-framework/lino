@@ -166,7 +166,6 @@ lino.modlib.summaries.fixtures
 lino.modlib.summaries.management
 lino.modlib.summaries.management.commands
 lino.modlib.system
-lino.modlib.system.tests
 lino.modlib.tinymce
 lino.modlib.tinymce.fixtures
 lino.modlib.uploads

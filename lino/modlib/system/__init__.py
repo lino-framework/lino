@@ -1,11 +1,9 @@
-# Copyright 2014-2016 Luc Saffre
+# Copyright 2014-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Defines some system models, especially the :class:`SiteConfig` model.
 
-This app should usually be installed in every Lino application.
-But there are exceptions, e.g. :ref:`lino.tutorial.polls`
-or :doc:`/tutorials/de_BE/index` don't.
+This plugin is installed in most Lino applications.
 
 .. autosummary::
    :toctree:
@@ -13,7 +11,6 @@ or :doc:`/tutorials/de_BE/index` don't.
    choicelists
    mixins
    models
-   tests
 
 
 """

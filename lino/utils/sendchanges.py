@@ -11,7 +11,7 @@ Importing this module will add a receiver to the
 :attr:`pre_ui_delete <lino.core.signals.pre_ui_delete>`
 signals.
 
-Usage example (taken from :doc:`/tutorials/sendchanges/index`)::
+Usage example::
 
     class Site(Site):
         title = "sendchanges example"

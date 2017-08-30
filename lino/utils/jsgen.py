@@ -425,14 +425,19 @@ def py2js(v):
             i for i in v.items()
             if (not isinstance(v, VisibleComponent))
             or v.get_view_permission(get_user_profile())]
-        
-        # "sorted(v.items())" without sortkey caused TypeError when
-        # the dictionary contained a mixture of unicode and
-        # future.types.newstr objects.
-        def sortkey(x):
-            if isinstance(x[0], newstr):
-                return six.text_type(x[0])
-            return x[0]
+
+        if six.PY2:
+            # "sorted(v.items())" without sortkey caused TypeError when
+            # the dictionary contained a mixture of unicode and
+            # future.types.newstr objects.
+            def sortkey(x):
+                if isinstance(x[0], newstr):
+                    return six.text_type(x[0])
+                return x[0]
+        else:
+            def sortkey(x):
+                return x[0]
+            
         items = sorted(items, key=sortkey)
         # try:
         #     items = sorted(items, key=sortkey)

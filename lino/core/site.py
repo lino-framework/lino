@@ -1826,12 +1826,12 @@ this field.
         if not self.django_settings.get('STATIC_URL', False):
             self.update_settings(STATIC_URL='/static/')
 
-        loaders = [
-            'lino.modlib.jinja.loader.Loader',
-            'django.template.loaders.filesystem.Loader',
-            'django.template.loaders.app_directories.Loader',
-            #~ 'django.template.loaders.eggs.Loader',
-        ]
+        # loaders = [
+        #     'lino.modlib.jinja.loader.Loader',
+        #     'django.template.loaders.filesystem.Loader',
+        #     'django.template.loaders.app_directories.Loader',
+        #     #~ 'django.template.loaders.eggs.Loader',
+        # ]
 
         tcp = []
 
