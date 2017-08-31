@@ -833,7 +833,7 @@ class Model(models.Model):
             return ''
         return ar.obj2html(self)
 
-    @fields.displayfield(_("Actions"))
+    @fields.displayfield(_("Workflow"))
     def workflow_buttons(self, ar):
         if ar is None:
             return ''
