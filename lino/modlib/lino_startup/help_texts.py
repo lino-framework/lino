@@ -222,6 +222,9 @@ GeneriForeignKey field."""),
     'lino.modlib.lino_startup.management.commands.initdb.Command' : _("""Flush the database and load the specified fixtures."""),
     'lino.modlib.lino_startup.management.commands.prep.Command' : _("""Flushes the database and loads the default demo fixtures."""),
     'lino.modlib.notify.Plugin' : _("""See lino.core.plugin.Plugin."""),
+    'lino.modlib.notify.Plugin.remove_after' : _("""Automatically remove notification messages after x hours."""),
+    'lino.modlib.notify.Plugin.keep_unseen' : _("""Whether to keep unseen messages when removing old messages
+according to remove_after."""),
     'lino.modlib.notify.actions.NotifyingAction' : _("""An action which pops up a dialog window of three fields "Summary",
 "Description" and a checkbox "Don't notify others" to optionally
 suppress notification."""),
