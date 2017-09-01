@@ -54,6 +54,24 @@ class Plugin(ad.Plugin):
 
     needs_plugins = ['lino.modlib.users', 'lino.modlib.gfks']
 
+    remove_after = 24
+    """Automatically remove notification messages after x hours.
+
+    Set this to None or 0 to deactivate cleanup and keep messages
+    forever.
+
+    """
+    
+    keep_unseen = True
+    """Whether to keep unseen messages when removing old messages
+    according to :attr:`remove_after`.
+
+    In normal operationi this should be True, but e.g. after a flood
+    of messages during experimental phases we might want to get rid of
+    them automatically.
+
+    """
+    
     media_name = 'js'
 
     # email_subject_template = "Message about {obj.owner}"
