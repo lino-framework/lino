@@ -1262,8 +1262,6 @@ class Site(object):
         lino_noi.projects.team.
 
         """
-        if isinstance(local_apps, six.string_types):
-            local_apps = [local_apps]
         if not isinstance(settings_globals, dict):
             raise Exception("""
             The first argument when instantiating a %s

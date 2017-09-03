@@ -373,7 +373,7 @@ class Choices(View):
         rpt = requested_actor(app_label, rptname)
         emptyValue = None
         if fldname is None:
-            ar = rpt.request(request=request)  # ,rpt.default_action)
+            ar = rpt.request(request=request)
             #~ rh = rpt.get_handle(self)
             #~ ar = ViewReportRequest(request,rh,rpt.default_action)
             #~ ar = dbtables.TableRequest(self,rpt,request,rpt.default_action)

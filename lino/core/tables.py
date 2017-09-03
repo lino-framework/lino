@@ -363,7 +363,6 @@ class AbstractTable(actors.Actor):
 
     default_group = Group()
 
-    #~ default_action = ShowTable
     default_layout = 0
 
     typo_check = True

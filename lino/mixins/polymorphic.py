@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2016 Luc Saffre
+# Copyright 2009-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Defines the :class:`Polymorphic` model mixin.
@@ -38,7 +38,7 @@ class ChildAction(Action):
 
     def attach_to_actor(self, actor, name):
         self.child_model = resolve_model(self.child_model)
-        self.label = self.child_model._meta.verbose_name
+        self._label = self.child_model._meta.verbose_name
         return super(ChildAction, self).attach_to_actor(actor, name)
 
     def get_child(self, obj):

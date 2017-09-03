@@ -941,6 +941,9 @@ class Model(models.Model):
                and self.__class__ is ar.actor.model:
                 a = ar.actor.detail_action
             else:
+                # if ar and ar.actor and ar.actor.model:
+                #     print("20170902 {} : {} is not {}".format(
+                #         ar.actor, self.__class__, ar.actor.model))
                 a = self.__class__.get_default_table().detail_action
         if a is None or ar is None:
             return a

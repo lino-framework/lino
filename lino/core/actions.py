@@ -243,6 +243,9 @@ class Action(Parametrizable, Permittable):
         return InstanceAction(
             self, instance.get_default_table(), instance, owner)
 
+    def get_required_roles(self, actor):
+        return actor.required_roles
+
     def is_callable_from(self, caller):
         return isinstance(caller, (ShowTable, ShowDetail))
         #~ if self.select_rows:
@@ -292,6 +295,9 @@ class Action(Parametrizable, Permittable):
         # same as in Actor but here it is an instance method
         return options
 
+    def get_label(self):
+        return self.label or self.action_name
+    
     def get_button_label(self, actor):
         if actor is None or actor.default_action is None:
             return self.label
@@ -341,31 +347,40 @@ class Action(Parametrizable, Permittable):
         self.defining_actor = wf
         setup_params_choosers(self)
 
-    def attach_to_actor(self, actor, name):
+    def attach_to_actor(self, owner, name):
         """Called once per Actor per Action on startup before a BoundAction
         instance is being created.  If this returns False, then the
         action won't be attached to the given actor.
+
+        The owner is the object which "defines" the action, i.e. uses
+        that instance for the first time. Subclasses of the owner may
+        re-use the same instance without becoming the owner.
 
         """
         # if not actor.editable and not self.readonly:
         #     return False
         if self.defining_actor is not None:
-            # already defined in another actor
+            # already defined by another actor
             return True
+        self.defining_actor = owner
+        # if self.label is None:
+        #     self.label = name
         if self.action_name is not None:
-            raise Exception("tried to attach named action %s.%s" %
-                            (actor, self.action_name))
+            return True
+            # if name == self.action_name:
+            #     return True
+            # raise Exception(
+            #     "tried to attach named action %s.%s as %s" %
+            #     (actor, self.action_name, name))
         self.action_name = name
-        self.defining_actor = actor
-        if self.label is None:
-            self.label = name
         setup_params_choosers(self)
         # setup_params_choosers(self.__class__)
         return True
 
     def __str__(self):
         # return force_text(self.label)
-        return str(self.label)
+        # return str(self.get_label())
+        return str(self.get_label())
 
     def get_action_permission(self, ar, obj, state):
         """Return (True or False) whether the given :class:`ActionRequest
@@ -452,11 +467,13 @@ class ShowTable(TableAction):
     def is_callable_from(self, caller):
         return False
 
-    def attach_to_actor(self, actor, name):
-        #~ self.label = actor.button_label or actor.label
-        self.label = actor.label
-        return super(ShowTable, self).attach_to_actor(actor, name)
+    # def attach_to_actor(self, actor, name):
+    #     self.label = actor.label
+    #     return super(ShowTable, self).attach_to_actor(actor, name)
 
+    def get_label(self):
+        return self.label or self.defining_actor.label
+    
     def get_window_layout(self, actor):
         #~ return self.actor.list_layout
         return None
@@ -466,9 +483,11 @@ class ShowTable(TableAction):
 
 
 class ShowDetail(Action):
-    """Open the detail window on a row of this table.
+    """Open a detail window on this record.
 
     """
+    action_name = 'detail'
+    label = _("Detail")
     icon_name = 'application_form'
     opens_a_window = True
     show_in_workflow = False
@@ -476,12 +495,17 @@ class ShowDetail(Action):
 
     sort_index = 20
 
+    def __init__(self, dl, label=None, **kwargs):
+        self.owner = dl
+        super(ShowDetail, self).__init__(label, **kwargs)
+
+    def get_required_roles(self, actor):
+        if self.owner.required_roles is None:
+            return actor.required_roles
+        return self.owner.required_roles
+
     def is_callable_from(self, caller):
         return isinstance(caller, ShowTable)
-
-    action_name = 'detail'
-    label = _("Detail")
-    help_text = _("Open a detail window on this record")
 
     def get_window_layout(self, actor):
         return actor.detail_layout
@@ -502,9 +526,13 @@ class ShowEmptyTable(ShowDetail):
     def is_callable_from(self, caller):
         return isinstance(caller, ShowTable)
 
-    def attach_to_actor(self, actor, name):
-        self.label = actor.label
-        return super(ShowEmptyTable, self).attach_to_actor(actor, name)
+    # def attach_to_actor(self, actor, name):
+    #     self.label = actor.label
+    #     return super(ShowEmptyTable, self).attach_to_actor(actor, name)
+    
+    def get_label(self):
+        return self.label or self.defining_actor.label
+    
 
     def as_bootstrap_html(self, ar):
         return super(ShowEmptyTable, self).as_bootstrap_html(ar, '-99998')
@@ -761,7 +789,7 @@ class ShowSlaveTable(Action):
 
     @classmethod
     def get_actor_label(self):
-        return self._label or self.slave_table.label
+        return self.get_label() or self.slave_table.label
 
     def attach_to_actor(self, actor, name):
         if isinstance(self.slave_table, six.string_types):

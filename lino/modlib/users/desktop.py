@@ -67,7 +67,7 @@ class Users(dd.Table):
 
     #~ column_names = 'username first_name last_name is_active is_staff is_expert is_superuser *'
     column_names = 'username user_type first_name last_name *'
-    detail_layout = UserDetail()
+    detail_layout = 'users.UserDetail'
     insert_layout = UserInsertLayout()
     column_names_m = 'mobile_item *'
 
@@ -100,14 +100,15 @@ class UsersOverview(Users):
     exclude = dict(user_type='')
 
 class MySettings(Users):
-    use_as_default_table = False
+    # use_as_default_table = False
     hide_top_toolbar = True
     required_roles = dd.login_required()
     default_list_action_name = 'detail'
+    # detail_layout = 'users.UserDetail'
 
     @classmethod
     def get_default_action(cls):
-        return actions.ShowDetail()
+        return actions.ShowDetail(cls.detail_layout)
 
 
 class Authorities(dd.Table):

@@ -332,6 +332,8 @@ class BaseLayout(object):
 
     _datasource = None
 
+    required_roles = None
+
     window_size = None
     """A tuple `(width, height)` that specifies the size of the window to
     be used for this layout.
@@ -381,7 +383,6 @@ class BaseLayout(object):
                 "Cannot instantiate %s without `main`." % self.__class__)
         self.set_datasource(datasource)
         for k, v in list(kw.items()):
-            
             # The following test is deactivated because it is possible
             # to dynamically define subpanels on a panel,
             # e.g. MergeAction.keep_volatiles

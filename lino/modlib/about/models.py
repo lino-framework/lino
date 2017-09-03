@@ -35,7 +35,7 @@ class Models(dd.VirtualTable):
     label = _("Models")
     # column_defaults = dict(width=8)
     # column_names = "app name verbose_name docstring rows"
-    column_names = "app name fields #docstring tables rows detail_action"
+    column_names = "app name fields #docstring tables rows detail_action_column"
     detail_layout = """
     app name docstring rows
     about.FieldsByModel
@@ -64,7 +64,7 @@ class Models(dd.VirtualTable):
         return obj.__name__
 
     @dd.displayfield(_("Detail Action"))
-    def detail_action(self, obj, ar):
+    def detail_action_column(self, obj, ar):
         if obj.get_default_table().detail_action is None:
             return ''
         return obj.get_default_table().detail_action.full_name()
