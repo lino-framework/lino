@@ -106,7 +106,7 @@ def compatstr(s):
 
     """
     # assert_pure(s)
-    if isinstance(s, newstr):
+    if six.PY2 and isinstance(s, newstr):
         return six.text_type(s)
     return s
 

@@ -508,18 +508,16 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
             detail_layout = FooDetail()
 
     It is possible to specify :attr:`detail_layout` as a string, in
-    which case it will be resolved at startup as follows.
+    which case it will be resolved at startup as follows:
 
-    If the string contains at least one newline (or no newline but
+    If the string contains at least one newline (or no newline and
     also no dot) then it is taken as the :attr:`main` of a
     :class:`DetailLayout <lino.core.layouts.DetailLayout>`.
     For example::
 
         class Foos(dd.Table):
             ...
-            detail_layout =
-
-            """
+            detail_layout = """
             id name
             description
             """
@@ -533,7 +531,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         class Courses(dd.Table):
             ...
             detail_layout = 'courses.CourseDetail'
-
 
     This new feature was necessary because otherwise it could become very
     tricky to override the detail layout in an extended plugin. Until now
@@ -882,28 +879,39 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         default_action = cls.get_default_action()
 
         if default_action is not None:
-            cls.default_action = cls._bind_action(default_action)
+            # cls.default_action = cls._bind_action(default_action)
+            cls.default_action = cls._bind_action(
+                'default_action', default_action)
 
         if cls.detail_layout:
             if default_action and isinstance(
-                    default_action, actions.ShowDetail):
-                cls.detail_action = cls._bind_action(default_action)
+                    default_action, actions.ShowDetail) and \
+                    default_action.owner == cls.detail_layout:
+                dtla = default_action
             else:
-                cls.detail_action = cls._bind_action(actions.ShowDetail())
+                if cls.detail_action and cls.detail_action.action.owner == cls.detail_layout:
+                    dtla = cls.detail_action.action
+                else:
+                    dtla = actions.ShowDetail(cls.detail_layout)
+            cls.detail_action = cls._bind_action('detail_action', dtla)
             if cls.editable:
-                cls.submit_detail = cls._bind_action(actions.SubmitDetail())
+                cls.submit_detail = cls._bind_action(
+                    'submit_detail', actions.SubmitDetail())
 
         if cls.editable:
             if cls.allow_create:
                 # cls.create_action = cls._bind_action(actions.SubmitInsert())
                 if cls.detail_action and not cls.hide_top_toolbar:
                     cls.insert_action = cls._bind_action(
-                        cls.get_insert_action())
+                        'insert_action', cls.get_insert_action())
             if not cls.hide_top_toolbar:
-                cls.delete_action = cls._bind_action(actions.DeleteSelected())
-            cls.update_action = cls._bind_action(actions.SaveRow())
+                cls.delete_action = cls._bind_action(
+                    'delete_action', actions.DeleteSelected())
+            cls.update_action = cls._bind_action(
+                'update_action', actions.SaveRow())
             if cls.detail_layout:
-                cls.validate_form = cls._bind_action(actions.ValidateForm())
+                cls.validate_form = cls._bind_action(
+                    'validate_form', actions.ValidateForm())
 
         if is_string(cls.workflow_owner_field):
         # if isinstance(cls.workflow_owner_field, string_types):
@@ -921,21 +929,22 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
         # bind all my actions, including those inherited from parent actors:
         for b in cls.mro():
-            for k, v in list(b.__dict__.items()):
+            for k, v in b.__dict__.items():
                 # Allow disabling inherited actions by setting them to
                 # None in subclass.
                 v = cls.__dict__.get(k, v)
                 if isinstance(v, actions.Action):
                     if not k in cls.actions:
-                        if v.attach_to_actor(cls, k):
-                            cls._bind_action(v)
+                        cls._bind_action(k, v)
 
         cls._actions_list.sort(key=lambda a: a.action.sort_index)
         # cls._actions_list = tuple(cls._actions_list)
 
     @classmethod
-    def _bind_action(self, a):
-        # internal use during _collect_actions()
+    def _bind_action(self, k, a):
+        # for internal use during _collect_actions()
+        if not a.attach_to_actor(self, k):
+            return
         try:
             ba = BoundAction(self, a)
             if a.action_name is not None:
@@ -944,6 +953,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         except Exception as e:
             raise Exception("Cannot bind {!r} to {!r} : {}".format(
                 a, self, e))
+        # setattr(self, k, ba)
         return ba
 
     @classmethod

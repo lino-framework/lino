@@ -915,15 +915,15 @@ class ExtRenderer(JsRenderer):
         if a.icon_name:
             kw.update(iconCls='x-tbar-' + a.icon_name)
         else:
-            txt = a.button_text or a.label
+            txt = a.button_text or a.get_label()
             if len(txt) == 1:
                 txt = ONE_CHAR_LABEL.format(txt)
                 
             kw.update(text=txt)
         kw.update(
             #~ name=a.name,
-            menu_item_text=a.label,
-            overflowText=a.label,
+            menu_item_text=a.get_label(),
+            overflowText=a.get_label(),
             auto_save=a.auto_save,
             itemId=a.action_name,
             #~ text=unicode(a.label),
@@ -946,7 +946,7 @@ class ExtRenderer(JsRenderer):
                     py2js(a.help_text))
                 ))
         elif a.icon_name:
-            kw.update(tooltip=a.label)
+            kw.update(tooltip=a.get_label())
         return kw
 
     def build_on_render(self, main):

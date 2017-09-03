@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2016 Luc Saffre
+# Copyright 2009-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Database models for `lino.modlib.system`.
@@ -165,7 +165,7 @@ class SiteConfigs(dd.Table):
     """
     model = 'system.SiteConfig'
     required_roles = dd.login_required(SiteStaff)
-    default_action = actions.ShowDetail()
+    # default_action = actions.ShowDetail()
     #~ has_navigator = False
     hide_top_toolbar = True
     #~ can_delete = perms.never
@@ -173,6 +173,12 @@ class SiteConfigs(dd.Table):
     default_build_method
     # lino.ModelsBySite
     """
+
+    @classmethod
+    def get_default_action(cls):
+        return actions.ShowDetail(cls.detail_layout)
+
+    
 
     do_build = BuildSiteCache()
 

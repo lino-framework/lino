@@ -556,9 +556,9 @@ def install_migrations(self, loader):
             break
 
 
-def load_fixture_from_module(m, **options):
-    """Used in unit tests (e.g. :doc:`/tutorials/tables/index`) to
-    manually load a given fixture module.
+def unused_load_fixture_from_module(m, **options):
+    """No longer used in unit tests to manually load a given fixture
+module.
 
     """
     # filename = m.__file__[:-1]

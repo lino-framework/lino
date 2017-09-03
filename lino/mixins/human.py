@@ -3,7 +3,7 @@
 # License: BSD (see file COPYING for details)
 """
 
-See test cases and examples in :doc:`/tutorials/human/index`.
+See test cases and examples in :doc:`/specs/human`.
 
 
 """

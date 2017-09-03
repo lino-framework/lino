@@ -161,9 +161,10 @@ class DjangoBuildMethod(TemplatedBuildMethod):
 
 class PisaBuildMethod(DjangoBuildMethod):
     """
+    Deprecated.
     Generates .pdf files from .html templates.
     Requires `pisa <https://pypi.python.org/pypi/pisa>`_.
-    Usage example see :doc:`/tutorials/pisa/index`.
+    Usage example see :mod:`lino_book.projects.pisa`.
     """
     # name = 'pisa'
     target_ext = '.pdf'

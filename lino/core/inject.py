@@ -392,7 +392,7 @@ def django_patch():
     """Remove duplicate entries in the field cache of models to fix
     Django ticket :djangoticket:`10808`.
 
-    Used by :doc:`/tested/diamond2/index`.
+    See :doc:`/dev/diamond`.
 
     """
     check_pending_injects(None, get_models())

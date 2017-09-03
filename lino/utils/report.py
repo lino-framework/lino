@@ -114,7 +114,7 @@ class EmptyTable(Frame):
 
     @classmethod
     def get_default_action(cls):
-        return ShowEmptyTable()
+        return ShowEmptyTable(cls.detail_layout)
 
     @classmethod
     def get_template_groups(self):

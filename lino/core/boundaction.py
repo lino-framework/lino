@@ -35,10 +35,20 @@ class BoundAction(object):
         self.action = action
         self.actor = actor
 
-        required = set(actor.required_roles)
+        # take care of not accidentally modifying ther actor's
+        # requirements!
+        required = set(action.get_required_roles(actor))
+        # required = set(actor.required_roles)
+        # if action.defining_actor is None:
+        #     required = set(actor.required_roles)
+        # else:
+        #     required = set(action.defining_actor.required_roles)
         # required = set()
         # required |= actor.required_roles
         required |= action.required_roles
+        
+        if True:  # 20170902 useful when debugging permission problems
+            self.required = required  
 
         debug_permissions = actor.debug_permissions and \
             action.debug_permissions
@@ -119,7 +129,6 @@ class BoundAction(object):
         does not (again) call any custom permission handler defined on
         the model.
 
-
         This is done in two steps: first we check the requirements
         specified in `required_roles` and `required_states`, then (if
         these pass) we check any custom permissions defined on the
@@ -149,6 +158,12 @@ class BoundAction(object):
         """
         if not self.actor.get_view_permission(user_type):
             return False
+        # # 20170902
+        # if self.action.defining_actor is None:
+        #     if not self.actor.get_view_permission(user_type):
+        #         return False
+        # elif not self.action.defining_actor.get_view_permission(user_type):
+        #     return False
         if not self.action.get_view_permission(user_type):
             return False
         return self.allow_view(user_type)

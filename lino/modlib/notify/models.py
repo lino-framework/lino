@@ -602,25 +602,24 @@ def send_pending_emails_daily():
 #         dd.logger.debug("No messages to send.")
 
 
-@dd.schedule_daily()
-def clear_seen_messages():
-    """Daily task which deletes messages older than 24 hours.
+remove_after = dd.plugins.notify.remove_after
 
-    Currently it deletes *all* messages, regardless of whether
-    they have been seen or not.  TODO: make this configurable.
+if remove_after:
+    
+    @dd.schedule_daily()
+    def clear_seen_messages():
+        # Daily task which deletes messages older than X hours.
 
-    """
-    remove_after = 24
-    Message = rt.models.notify.Message
-    qs = Message.objects.filter(
-        created__lt=timezone.now() - timedelta(hours=remove_after))
-    if False:  # TODO: make this configurable
-        qs = qs.filter(seen__isnull=False)
-    if qs.count() > 0:
-        dd.logger.info(
-            "Removing %d messages older than %d hours.",
-            qs.count(), remove_after)
-        qs.delete()
+        Message = rt.models.notify.Message
+        qs = Message.objects.filter(
+            created__lt=timezone.now() - timedelta(hours=remove_after))
+        if dd.plugins.notify.keep_unseen: 
+            qs = qs.filter(seen__isnull=False)
+        if qs.count() > 0:
+            dd.logger.info(
+                "Removing %d messages older than %d hours.",
+                qs.count(), remove_after)
+            qs.delete()
 
 
 import warnings

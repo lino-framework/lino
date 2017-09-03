@@ -6,18 +6,15 @@ from atelier.invlib.tasks import *
 
 from importlib import import_module
 
-def run_in_demo_projects(ctx, admin_cmd, *more, **args):
+def run_in_demo_projects(ctx, admin_cmd, *more, **kwargs):
     """Run the given shell command in each demo project (see
     :attr:`ctx.demo_projects`).
 
     """
-    cov = args.pop('cov', False)
+    cov = kwargs.pop('cov', False)
     for mod in ctx.demo_projects:
-        # puts("-" * 80)
-        # puts("In demo project {0}:".format(mod))
-        print("-" * 80)
-        print("In demo project {0}:".format(mod))
-
+        # print("-" * 80)
+        # print("In demo project {0}:".format(mod))
         m = import_module(mod)
         # 20160710 p = m.SITE.cache_dir or m.SITE.project_dir
         p = m.SITE.project_dir
@@ -37,6 +34,8 @@ def run_in_demo_projects(ctx, admin_cmd, *more, **args):
             args += more
             args += ["--settings=" + mod]
             cmd = " ".join(args)
+            print("-" * 80)
+            print("Run in demo project {0}\n$ {1} :".format(p, cmd))
             ctx.run(cmd, pty=True)
 
 
