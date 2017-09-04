@@ -29,6 +29,8 @@ LABEL_ALIGN_TOP = 'top'
 LABEL_ALIGN_LEFT = 'left'
 LABEL_ALIGN_RIGHT = 'right'
 
+ALLOW_DUPLICATE_ELEMS = True
+
 
 def DEBUG_LAYOUTS(lo):
     #~ if lo._table.__name__ == 'Users':
@@ -220,9 +222,12 @@ class LayoutHandle(object):
         if not desc:
             return
         if name in self._names:
-            raise Exception(
-                'Duplicate element definition %s = %r in %s'
-                % (name, desc, self.layout))
+            if ALLOW_DUPLICATE_ELEMS:
+                return self._names[name]
+            else:
+                raise Exception(
+                    'Duplicate element definition %s = %r in %s'
+                    % (name, desc, self.layout))
         e = self.desc2elem(name, desc, **kw)
         if e is None:
             return
@@ -233,9 +238,12 @@ class LayoutHandle(object):
         #~ logger.debug("create_element(%r)", desc_name)
         name, options = self.splitdesc(desc_name)
         if name in self._names:
-            raise Exception(
-                'Duplicate element usage %s = %r in %s'
-                % (name, desc_name, self.layout))
+            if ALLOW_DUPLICATE_ELEMS:
+                return self._names[name]
+            else:
+                raise Exception(
+                    'Duplicate element usage %s = %r in %s'
+                    % (name, desc_name, self.layout))
         desc = getattr(self.layout, name, None)
         if desc is not None:
             return self.define_panel(name, desc, **options)

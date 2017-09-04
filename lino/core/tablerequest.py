@@ -44,7 +44,9 @@ def column_header(col):
         #~ if col.label:
             #~ return join_elems(col.label.split('\n'),sep=E.br)
         #~ return [unicode(col.name)]
-    return six.text_type(col.label or col.name)
+    if col.label is None:
+        return col.name
+    return six.text_type(col.label)
 
 
 class TableRequest(ActionRequest):

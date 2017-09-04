@@ -527,10 +527,14 @@ class FieldElement(LayoutElement):
         kw.update(dataIndex=self.name)
         if self.label is None:
             kw.update(header=self.name)
-        elif self.label:
-            kw.update(header=self.label)
         else:
             kw.update(header=self.label)
+        # if self.label is None:
+        #     kw.update(header=self.name)
+        # elif self.label:
+        #     kw.update(header=self.label)
+        # else:
+        #     kw.update(header=self.label)
         if not self.editable:
             kw.update(editable=False)
         if not self.sortable:
