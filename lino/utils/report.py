@@ -58,7 +58,8 @@ class EmptyTableRow(VirtualRow, Printable):
         # same as Model.get_printable_context
         kw = ar.get_printable_context(**kw)
         kw.update(this=self)  # preferred in new templates
-        kw.update(language=self.get_print_language())
+        kw.update(language=self.get_print_language() \
+                  or settings.SITE.DEFAULT_LANGUAGE.django_code)
         return kw
 
     def get_template_groups(self):

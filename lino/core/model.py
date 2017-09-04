@@ -1034,7 +1034,8 @@ action on individual instances.
             kw = ar.get_printable_context(**kw)
         kw.update(this=self)  # for backward compatibility
         kw.update(obj=self)  # preferred in new templates
-        kw.update(language=self.get_print_language())
+        kw.update(language=self.get_print_language() or \
+                  settings.SITE.DEFAULT_LANGUAGE.django_code)
         return kw
 
     def before_printable_build(self, bm):
