@@ -979,7 +979,7 @@ class ActorRequest(BaseRequest):
     no_data_text = _("No data to display")
 
     def create_phantom_rows(self, **kw):
-        if not self.actor.stay_in_grid:
+        if not self.actor.stay_in_grid and self.actor.insert_layout is not None:
             return
         if self.create_kw is None or not self.actor.editable \
            or not self.actor.allow_create:
