@@ -69,11 +69,15 @@ def add_gridfilters(qs, gridfilters):
     # logger.info("20160610 %s", gridfilters)
     # raise Exception("20160610 %s" % gridfilters)
     for flt in gridfilters:
-        field = get_field(qs.model, flt['field'])
+        field = get_field(qs.model, flt.get('field', None) or flt.get("property"))
         flttype = flt['type']
         kw = {}
         if flttype == 'string':
-            if isinstance(field, models.CharField):
+            if isinstance(field, ChoiceListField):
+                choices = [x[0] for x in field.choices if flt['value'].lower() in x[1].lower()]
+                kw[field.name + "__in"] = choices
+                q = q & models.Q(**kw)
+            elif isinstance(field, models.CharField):
                 kw[field.name + "__icontains"] = flt['value']
                 q = q & models.Q(**kw)
             elif isinstance(field, models.ForeignKey):
@@ -91,7 +95,7 @@ def add_gridfilters(qs, gridfilters):
             else:
                 raise NotImplementedError(repr(flt))
         elif flttype == 'numeric':
-            cmp = str(flt['comparison'])
+            cmp = str(flt.get('comparison', None) or flt.get('operator', None))
             if cmp == 'eq':
                 cmp = 'exact'
             kw[field.name + "__" + cmp] = flt['value']
@@ -103,7 +107,7 @@ def add_gridfilters(qs, gridfilters):
         elif flttype == 'date':
             v = datetime.date(*settings.SITE.parse_date(flt['value']))
             # v = parse_js_date(flt['value'],field.name)
-            cmp = str(flt['comparison'])
+            cmp = str(flt.get('comparison', None) or flt.get('operator', None))
             if cmp == 'eq':
                 cmp = 'exact'
             kw[field.name + "__" + cmp] = v
