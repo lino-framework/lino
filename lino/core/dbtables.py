@@ -31,6 +31,7 @@ from lino.core import actors
 from lino.core import frames
 
 from lino.core.choicelists import ChoiceListField
+from .utils import models_by_base
 
 
 from lino.core.utils import resolve_model, get_field, UnresolvedModel
@@ -178,7 +179,8 @@ def register_report(rpt):
         lst = rpt.model._lino_tables + [rpt]
         rpt.model._lino_tables = lst
         if rpt.master is None:
-            if not rpt.model._meta.abstract:
+            # 20170905 if not rpt.model._meta.abstract:
+            if not rpt.is_abstract():
                 # logger.debug("20120102 register %s : master report", rpt.actor_id)
                 # rpt.model._lino_tables.append(rpt)
                 master_reports.append(rpt)
@@ -615,8 +617,8 @@ class Table(AbstractTable):
     @classmethod
     def is_abstract(self):
         if self.model is None \
-            or self.model is Model \
-                or self.model._meta.abstract:
+            or self.model is Model:
+            # or self.model._meta.abstract:
             # logger.info('20120621 %s : no real table',h)
             return True
         return self.abstract
@@ -668,26 +670,21 @@ class Table(AbstractTable):
                     (self, self.model))
 
             # logger.info("20120202 Table.get_data_elem found nothing")
-            de = self.model.get_data_elem(name)
-            if de is not None:
-                return de
+            for m in models_by_base(self.model):
+                de = m.get_data_elem(name)
+                if de is not None:
+                    return de
         return super(Table, self).get_data_elem(name)
 
     @classmethod
-    def get_request_queryset(self, rr):
+    def get_request_queryset(self, rr, **filter):
         """Build a Queryset for the specified ActionRequest on this table.
 
-        Upon first call, this will also lazily install Table.queryset
-        which will be reused on every subsequent call.
+        The return value is either a Django queryset object or a list
+        or tuple of Django database objects.
 
-        The return value is othe of the following:
-
-        - a Django queryset
-        - a list or tuple
-
-        - If you override this, you may turn this method into a
-          generator. The only advantage of this is syntax, since the
-          yeld objects will be stored in a tuple.
+        Any keyword attributes will be forwarded to 
+        :meth:`lino.core.model.Model.get_request_queryset`.
 
         """
         # print("20160329 dbtables.py get_request_queryset({})".format(
@@ -750,9 +747,13 @@ class Table(AbstractTable):
         return qs
 
     @classmethod
-    def get_queryset(self, ar):
+    def get_queryset(self, ar, **filter):
         """
         Return an iterable over the items processed by this table.
+
+        Any keyword attributes are forwarded to 
+        :meth:`lino.core.model.Model.get_request_queryset`.
+
         Override this to use e.g. select_related() or to return a list.
 
         Return a customized default queryset
@@ -764,7 +765,22 @@ class Table(AbstractTable):
 
 
         """
-        return self.model.get_request_queryset(ar)
+        if self.model._meta.abstract:
+            lst = list(models_by_base(self.model))
+            qs = lst[0].get_request_queryset(ar, **filter)
+            if len(lst) > 1:
+                flds = self.get_handle().store.list_fields
+                flds = set([
+                    f.name for f in flds
+                    if isinstance(f.field, models.Field)])
+                flds |= self.hidden_elements
+                # flds = self.column_names.split()
+                qs = qs.only(*flds)
+                for m in lst[1:]:
+                    qs = qs.union(m.get_request_queryset(ar, **filter).only(*flds))
+                # raise Exception("20170905 {} {}".format(flds, qs.query))
+            return qs
+        return self.model.get_request_queryset(ar, **filter)
 
     @classmethod
     def get_title_tags(self, ar):

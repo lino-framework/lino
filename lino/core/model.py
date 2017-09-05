@@ -827,11 +827,16 @@ class Model(models.Model):
             return ''
         return E.div(*self.get_overview_elems(ar))
 
-    @fields.displayfield(_("Description"))
-    def description_column(self, ar):
-        if ar is None:
-            return ''
-        return ar.obj2html(self)
+    # no longer needed here because implemented in AbstractTable
+    # @dd.displayfield(_("Description"))
+    # def detail_pointer(self, obj, ar):
+    #     return ar.obj2html(obj)
+
+    # @fields.displayfield(_("Description"))
+    # def detail_pointer(self, ar):
+    #     if ar is None:
+    #         return ''
+    #     return ar.obj2html(self)
 
     @fields.displayfield(_("Workflow"))
     def workflow_buttons(self, ar):
@@ -1078,8 +1083,22 @@ action on individual instances.
         return []
 
     @classmethod
-    def get_request_queryset(cls, ar):
+    def get_request_queryset(cls, ar, **filter):
+        """Return the base queryset for tables on this object.
+
+        The optional `filter` keyword arguments, if present, are
+        applied as additional filter. This is used only in UNION
+        tables on abstract model mixins where filtering cannot be done
+        after the join.
+
+        """
+        if filter:
+            return cls.objects.filter(**filter)
         return cls.objects.all()
+        # qs = cls.objects.all()
+        # if ar.actor.only_fields is not None:
+        #     qs = qs.only(ar.actor.only_fields)
+        # return qs
 
     @classmethod
     def get_title_tags(self, ar):

@@ -287,7 +287,7 @@ class Menu(MenuItem):
         assert isinstance(mi, MenuItem)
         mi.parent = self
         if mi.bound_action is not None:
-            if mi.bound_action.actor.abstract:
+            if mi.bound_action.actor.is_abstract():
                 return
             if not mi.bound_action.get_view_permission(self.user_profile):
                 return

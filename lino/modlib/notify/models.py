@@ -456,8 +456,8 @@ class Messages(dd.Table):
     #     yield 'user'
 
     @classmethod
-    def get_request_queryset(self, ar):
-        qs = super(Messages, self).get_request_queryset(ar)
+    def get_request_queryset(self, ar, **filter):
+        qs = super(Messages, self).get_request_queryset(ar, **filter)
         pv = ar.param_values
 
         if pv.show_seen == dd.YesNo.yes:

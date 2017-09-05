@@ -193,8 +193,8 @@ class Uploads(dd.Table):
     # simple_parameters = ['user']
 
     @classmethod
-    def get_request_queryset(cls, ar):
-        qs = super(Uploads, cls).get_request_queryset(ar)
+    def get_request_queryset(cls, ar, **filter):
+        qs = super(Uploads, cls).get_request_queryset(ar, **filter)
         pv = ar.param_values
 
         if pv.user:

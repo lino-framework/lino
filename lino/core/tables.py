@@ -615,6 +615,10 @@ method in order to sort the rows of the queryset.
             #~ action = self.default_action
         #~ return TableRequest(ui,self,request,action,**kw)
 
+    @fields.displayfield(_("Details"))
+    def detail_pointer(self, obj, ar):
+        return obj.obj2href(ar)
+
     @classmethod
     def request(self, master_instance=None, **kw):
         """Return a new :class:`TableRequest

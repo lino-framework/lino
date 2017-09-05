@@ -399,8 +399,8 @@ class Born(model.Model):
         return super(Born, cls).get_parameter_fields(**fields)
 
     @classmethod
-    def get_request_queryset(cls, ar):
-        qs = super(Born, cls).get_request_queryset(ar)
+    def get_request_queryset(cls, ar, **filter):
+        qs = super(Born, cls).get_request_queryset(ar, **filter)
         pv = ar.param_values
 
         today = settings.SITE.today()

@@ -292,6 +292,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     """
 
+    only_fields = None
+
     app_label = None
     """
     Specify this if you want to "override" an existing actor.
@@ -365,12 +367,17 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     """
 
     hidden_elements = frozenset()
-    """A set of names of layoutelements which are hidden by default.
+    """A set of names of layout elements which are hidden by default.
 
     The default is an empty set except for
     :class:`lino.core.dbtables.Table` where this will be populated from
     :attr:`hidden_elements <lino.core.model.Model.hidden_elements>`
     of the :class:`lino.core.model.Model`.
+
+    Note that these names are not being verified to be names of
+    existing fields. This fact is being used by UNION tables like 
+    :class:`lino_xl.lib.vat.IntracomInvoices`
+
     """
 
     detail_html_template = 'bootstrap3/detail.html'

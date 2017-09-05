@@ -103,13 +103,13 @@ class Comment(CreatedModified, UserAuthored, Controllable,
         #     time=naturaltime(self.modified))
 
     @classmethod
-    def get_request_queryset(cls, ar):
+    def get_request_queryset(cls, ar, **filter):
         # if commentable_model is None:
         #     return cls.objects.all()
         # if ar.get_user().user_type.has_required_roles([SiteUser]):
         if ar.get_user().authenticated:
             return cls.objects.all()
-        return super(Comment, cls).get_request_queryset(ar)
+        return super(Comment, cls).get_request_queryset(ar, **filter)
 
         # else:
         #     return cls.objects.exclude(owner__private=True)

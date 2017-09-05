@@ -180,6 +180,7 @@ class FakeField(object):
 
     """
     model = None
+    db_column = None
     choices = []
     primary_key = False
     editable = False
@@ -431,14 +432,21 @@ class VirtualField(FakeField):
                     #~ from lino.core.kernel import set_default_verbose_name
                     #~ set_default_verbose_name(self.return_type)
 
+        # if self.name == 'detail_pointer':
+        #     logger.info('20170905 resolve_type 1 %s on %s',
+        #                 self.name, self.verbose_name)
+            
         #~ removed 20120919 self.return_type.editable = self.editable
         for k in VFIELD_ATTRIBS:
             setattr(self, k, getattr(self.return_type, k, None))
-        #~ logger.info('20120831 VirtualField %s on %s',name,actor_or_model)
+        # if self.name == 'detail_pointer':
+        #     logger.info('20170905 resolve_type done %s %s',
+        #                 self.name, self.verbose_name)
 
         from lino.core import store
         #~ self._lino_atomizer = store.create_field(self,self.name)
         store.get_atomizer(self.model, self, self.name)
+
 
     def get_default(self):
         return self.return_type.get_default()

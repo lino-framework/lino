@@ -56,4 +56,18 @@ class UserTypeContext(object):
 
 # set_for_user_profile = set_user_profile
 
+from lino.api import rt
+from lino.utils import camelize
+
+def create_user(username, user_type=None, **kw):
+    first_name = camelize(username.upper())
+    if user_type:
+        kw.update(username=username, user_type=user_type)
+        kw.update(first_name=first_name)
+        # kw.update(partner=person)
+        return rt.models.users.User(**kw)
+    else:
+        # return dd.plugins.faculties.supplier_model(first_name=first_name)
+        return rt.models.contacts.Person(first_name=first_name)
+
 

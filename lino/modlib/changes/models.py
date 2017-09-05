@@ -144,8 +144,8 @@ class Changes(dd.Table):
     """
 
     @classmethod
-    def get_request_queryset(cls, ar):
-        qs = super(Changes, cls).get_request_queryset(ar)
+    def get_request_queryset(cls, ar, **filter):
+        qs = super(Changes, cls).get_request_queryset(ar, **filter)
         if not isinstance(qs, list):
             if ar.param_values.change_type:
                 qs = qs.filter(type=ar.param_values.change_type)

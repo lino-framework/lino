@@ -902,8 +902,9 @@ class Kernel(object):
         """
         # logger.info('20121010 ExtUI.setup_handle() %s'%h.actor)
 
-        if h.actor.is_abstract():
-            return
+        # 20170905 IntracomInvoices
+        # if h.actor.is_abstract():
+        #     return
 
         if isinstance(h, tables.TableHandle):
             he = set(h.actor.hidden_columns | h.actor.hidden_elements)

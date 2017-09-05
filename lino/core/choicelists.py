@@ -264,6 +264,10 @@ Django creates copies of them when inheriting models.
         """
         return self
 
+    def obj2href(self, ar):
+        # needed by `detail_pointer`
+        return str(self)
+
 
 class UnresolvedValue(Choice):
     def __init__(self, choicelist, value):
