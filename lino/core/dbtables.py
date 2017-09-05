@@ -70,7 +70,7 @@ def add_gridfilters(qs, gridfilters):
     # logger.info("20160610 %s", gridfilters)
     # raise Exception("20160610 %s" % gridfilters)
     for flt in gridfilters:
-        field = get_field(qs.model, flt['field'])
+        field = get_field(qs.model, flt.get('field', None) or flt.get("property"))
         flttype = flt['type']
         kw = {}
         if flttype == 'string':
@@ -92,7 +92,7 @@ def add_gridfilters(qs, gridfilters):
             else:
                 raise NotImplementedError(repr(flt))
         elif flttype == 'numeric':
-            cmp = str(flt['comparison'])
+            cmp = str(flt.get('comparison', None) or flt.get('operator', None))
             if cmp == 'eq':
                 cmp = 'exact'
             kw[field.name + "__" + cmp] = flt['value']
@@ -104,12 +104,22 @@ def add_gridfilters(qs, gridfilters):
         elif flttype == 'date':
             v = datetime.date(*settings.SITE.parse_date(flt['value']))
             # v = parse_js_date(flt['value'],field.name)
-            cmp = str(flt['comparison'])
+            cmp = str(flt.get('comparison', None) or flt.get('operator', None))
             if cmp == 'eq':
                 cmp = 'exact'
             kw[field.name + "__" + cmp] = v
             q = q & models.Q(**kw)
             # print kw
+        elif flttype == 'list':
+            if isinstance(field, ChoiceListField):
+                choices = []
+                for x in field.choices:
+                    if x[1] in flt['value']:
+                        choices.append(x[0])
+                kw[field.name + "__in"] = choices
+                q = q & models.Q(**kw)
+            else:
+                raise NotImplementedError(repr(flt))
         else:
             raise NotImplementedError(repr(flt))
     return qs.filter(q)
