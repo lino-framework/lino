@@ -73,11 +73,7 @@ def add_gridfilters(qs, gridfilters):
         flttype = flt['type']
         kw = {}
         if flttype == 'string':
-            if isinstance(field, ChoiceListField):
-                choices = [x[0] for x in field.choices if flt['value'].lower() in x[1].lower()]
-                kw[field.name + "__in"] = choices
-                q = q & models.Q(**kw)
-            elif isinstance(field, models.CharField):
+            if isinstance(field, models.CharField):
                 kw[field.name + "__icontains"] = flt['value']
                 q = q & models.Q(**kw)
             elif isinstance(field, models.ForeignKey):
@@ -113,6 +109,16 @@ def add_gridfilters(qs, gridfilters):
             kw[field.name + "__" + cmp] = v
             q = q & models.Q(**kw)
             # print kw
+        elif flttype == 'list':
+            if isinstance(field, ChoiceListField):
+                choices = []
+                for x in field.choices:
+                    if x[1] in flt['value']:
+                        choices.append(x[0])
+                kw[field.name + "__in"] = choices
+                q = q & models.Q(**kw)
+            else:
+                raise NotImplementedError(repr(flt))
         else:
             raise NotImplementedError(repr(flt))
     return qs.filter(q)
