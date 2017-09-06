@@ -2606,8 +2606,8 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel, {
   ,config_containing_window : function(wincfg) { 
       wincfg.title = this.window_title;
       wincfg.keys = [
-        { key: Ext.EventObject.ENTER, fn: this.on_ok }
-      ]
+        { key: Ext.EventObject.ENTER, fn: this.on_ok, scope: this }
+      ];
       
       if (!wincfg.defaultButton) this.getForm().items.each(function(f){
           if(f.isFormField){ 
