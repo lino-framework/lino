@@ -232,6 +232,7 @@ Are you sure (y/n) ?""" % dbname):
         settings.SITE._site_config = None  # clear cached instance
 
         if AFTER18:
+            call_command('migrate', **options)
             call_command('migrate', '--run-syncdb', **options)
         else:
             call_command('migrate', **options)
