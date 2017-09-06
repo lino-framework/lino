@@ -232,18 +232,18 @@ Are you sure (y/n) ?""" % dbname):
         settings.SITE._site_config = None  # clear cached instance
 
         if AFTER18:
-            call_command('migrate', **options)
+            # call_command('migrate', **options)
             call_command('migrate', '--run-syncdb', **options)
         else:
             call_command('migrate', **options)
 
         if len(fixtures):
-            if engine == 'django.db.backends.postgresql':
-                foralltables(using, "ALTER TABLE {} DISABLE TRIGGER ALL;")
+            # if engine == 'django.db.backends.postgresql':
+            #     foralltables(using, "ALTER TABLE {} DISABLE TRIGGER ALL;")
                 
             call_command('loaddata', *fixtures, **options)
             
-            if engine == 'django.db.backends.postgresql':
-                foralltables(using, "ALTER TABLE {} ENABLE TRIGGER ALL;")
+            # if engine == 'django.db.backends.postgresql':
+            #     foralltables(using, "ALTER TABLE {} ENABLE TRIGGER ALL;")
 
             # dblogger.info("Lino initdb done %s on database %s.", args, dbname)
