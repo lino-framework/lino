@@ -183,7 +183,7 @@ Are you sure (y/n) ?""" % dbname):
             # cmd = """select 'DROP TABLE "' || tablename || '" IF EXISTS CASCADE;' from pg_tables where schemaname = 'public';"""
             # cursor.execute(cmd)
             # cursor.close()
-            # del connections[using]
+            del connections[using]
         else:
             raise Exception("Not tested for %r" % engine)
             sql_list = []
