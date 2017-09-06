@@ -172,12 +172,9 @@ Are you sure (y/n) ?""" % dbname):
         elif engine == 'django.db.backends.postgresql':
             conn = connections[using]
             cursor = conn.cursor()
-            cursor.execute("DROP DATABASE %s;" % dbname)
-            cursor.execute("CREATE DATABASE %s;" % dbname)
-            # We must now force Django to reconnect, otherwise we get
-            # "no database selected" since Django would try to
-            # continue on the dropped database:
-            del connections[using]
+            cmd = """select 'drop table "' || tablename || '" cascade;' \
+            from pg_tables where schemaname = 'public';"""
+            cursor.execute(cmd)
         else:
             raise Exception("Not tested for %r" % engine)
             sql_list = []
