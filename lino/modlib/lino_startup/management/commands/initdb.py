@@ -86,6 +86,14 @@ http://thingsilearned.com/2009/05/10/drop-database-command-for-django-manager/
 
 """
 
+def foralltables(using, cmd):
+    conn = connections[using]
+    cursor = conn.cursor()
+    cursor.execute("SELECT tablename FROM pg_tables WHERE schemaname = 'public';")
+    for tablename in cursor.fetchall():
+        cursor.execute(cmd.format(tablename[0]))
+
+
 
 class Command(BaseCommand):
     """Flush the database and load the specified fixtures.
@@ -151,6 +159,7 @@ Are you sure (y/n) ?""" % dbname):
             dd.logger.info(
                 "`initdb %s` started on database %s.", ' '.join(fixtures), dbname)
 
+
         if engine == 'django.db.backends.sqlite3':
             if dbname != ':memory:' and os.path.isfile(dbname):
                 os.remove(dbname)
@@ -170,13 +179,11 @@ Are you sure (y/n) ?""" % dbname):
             cursor = conn.cursor()
             cursor.execute("set foreign_key_checks=0;")
         elif engine == 'django.db.backends.postgresql':
-            conn = connections[using]
-            cursor = conn.cursor()
-            cmd = """select 'DROP TABLE "' || tablename || '" \
-            IF EXISTS CASCADE;' \
-            from pg_tables where schemaname = 'public';"""
-            cursor.execute(cmd)
-            cursor.close()
+            foralltables(using, "DROP TABLE {} IF EXISTS CASCADE;")
+            # cmd = """select 'DROP TABLE "' || tablename || '" IF EXISTS CASCADE;' from pg_tables where schemaname = 'public';"""
+            # cursor.execute(cmd)
+            # cursor.close()
+            # del connections[using]
         else:
             raise Exception("Not tested for %r" % engine)
             sql_list = []
@@ -230,24 +237,12 @@ Are you sure (y/n) ?""" % dbname):
             call_command('migrate', **options)
 
         if len(fixtures):
-            # if engine == 'django.db.backends.postgresql':
-            #     conn = connections[using]
-            #     cursor = conn.cursor()
-            #     cmd = """select 'ALTER TABLE "' || tablename || '" \
-            #     DISABLE TRIGGER ALL;' \
-            #     from pg_tables where schemaname = 'public';"""
-            #     cursor.execute(cmd)
-            #     cursor.close()
+            if engine == 'django.db.backends.postgresql':
+                foralltables(using, "ALTER TABLE {} DISABLE TRIGGER ALL;")
                 
             call_command('loaddata', *fixtures, **options)
             
-            # if engine == 'django.db.backends.postgresql':
-            #     conn = connections[using]
-            #     cursor = conn.cursor()
-            #     cmd = """select 'ALTER TABLE "' || tablename || '" \
-            #     ENABLE TRIGGER ALL;' \
-            #     from pg_tables where schemaname = 'public';"""
-            #     cursor.execute(cmd)
-            #     cursor.close()
+            if engine == 'django.db.backends.postgresql':
+                foralltables(using, "ALTER TABLE {} ENABLE TRIGGER ALL;")
 
             # dblogger.info("Lino initdb done %s on database %s.", args, dbname)
