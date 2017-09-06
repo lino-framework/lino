@@ -306,7 +306,7 @@ class Table(AbstractTable):
     """
     
     model = None
-    """See :attr:`lino.core.actors.AbstractTable.model`
+    """See :attr:`lino.core.actors.Actor.model`
 
     """
 
