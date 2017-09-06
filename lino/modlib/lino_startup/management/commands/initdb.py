@@ -169,6 +169,15 @@ Are you sure (y/n) ?""" % dbname):
             conn = connections[using]
             cursor = conn.cursor()
             cursor.execute("set foreign_key_checks=0;")
+        elif engine == 'django.db.backends.postgresql':
+            conn = connections[using]
+            cursor = conn.cursor()
+            cursor.execute("DROP DATABASE %s;" % dbname)
+            cursor.execute("CREATE DATABASE %s;" % dbname)
+            # We must now force Django to reconnect, otherwise we get
+            # "no database selected" since Django would try to
+            # continue on the dropped database:
+            del connections[using]
         else:
             raise Exception("Not tested for %r" % engine)
             sql_list = []
