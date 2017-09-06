@@ -228,6 +228,20 @@ Are you sure (y/n) ?""" % dbname):
             call_command('migrate', **options)
 
         if len(fixtures):
+            if engine == 'django.db.backends.postgresql':
+                conn = connections[using]
+                cursor = conn.cursor()
+                cmd = """select 'ALTER TABLE "' || tablename || '" \
+                DISABLE TRIGGER ALL;' \
+                from pg_tables where schemaname = 'public';"""
+                cursor.execute(cmd)
             call_command('loaddata', *fixtures, **options)
+            if engine == 'django.db.backends.postgresql':
+                conn = connections[using]
+                cursor = conn.cursor()
+                cmd = """select 'ALTER TABLE "' || tablename || '" \
+                ENABLE TRIGGER ALL;' \
+                from pg_tables where schemaname = 'public';"""
+                cursor.execute(cmd)
 
             # dblogger.info("Lino initdb done %s on database %s.", args, dbname)
