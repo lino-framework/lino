@@ -175,6 +175,7 @@ Are you sure (y/n) ?""" % dbname):
             cmd = """select 'drop table "' || tablename || '" cascade;' \
             from pg_tables where schemaname = 'public';"""
             cursor.execute(cmd)
+            cursor.close()
         else:
             raise Exception("Not tested for %r" % engine)
             sql_list = []
@@ -235,7 +236,10 @@ Are you sure (y/n) ?""" % dbname):
                 DISABLE TRIGGER ALL;' \
                 from pg_tables where schemaname = 'public';"""
                 cursor.execute(cmd)
+                cursor.close()
+                
             call_command('loaddata', *fixtures, **options)
+            
             if engine == 'django.db.backends.postgresql':
                 conn = connections[using]
                 cursor = conn.cursor()
@@ -243,5 +247,6 @@ Are you sure (y/n) ?""" % dbname):
                 ENABLE TRIGGER ALL;' \
                 from pg_tables where schemaname = 'public';"""
                 cursor.execute(cmd)
+                cursor.close()
 
             # dblogger.info("Lino initdb done %s on database %s.", args, dbname)
