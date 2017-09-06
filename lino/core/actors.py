@@ -548,9 +548,15 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     '''
 
     insert_layout = None
-    """Define the form layout to use for the insert window.  If there's a
-    :attr:`detail_layout` but no :attr:`insert_layout`, Lino will use
-    :attr:`detail_layout` for the insert window.
+    """Define the form layout to use for the insert window.  
+
+    If there's a :attr:`detail_layout` but no :attr:`insert_layout`,
+    the table won't have any (+) button to create a new row via a
+    dialog window, but users can still create rows by writing into the
+    phantom row. Example of this is
+    :class:`linoc_xl.lib.courses.Topics` which has a detail layout
+    with slave tables, but the model itself has only two fields (id
+    and name) and it makes no sense to have an insert window.
 
     """
 
@@ -908,7 +914,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         if cls.editable:
             if cls.allow_create:
                 # cls.create_action = cls._bind_action(actions.SubmitInsert())
-                if cls.detail_action and not cls.hide_top_toolbar:
+                # if cls.detail_action and not cls.hide_top_toolbar:
+                if cls.insert_layout and not cls.hide_top_toolbar:
                     cls.insert_action = cls._bind_action(
                         'insert_action', cls.get_insert_action())
             if not cls.hide_top_toolbar:
