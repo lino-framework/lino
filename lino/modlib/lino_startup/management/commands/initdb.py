@@ -179,7 +179,7 @@ Are you sure (y/n) ?""" % dbname):
             cursor = conn.cursor()
             cursor.execute("set foreign_key_checks=0;")
         elif engine == 'django.db.backends.postgresql':
-            foralltables(using, "DROP TABLE {} IF EXISTS CASCADE;")
+            foralltables(using, "DROP TABLE IF EXISTS {} CASCADE;")
             # cmd = """select 'DROP TABLE "' || tablename || '" IF EXISTS CASCADE;' from pg_tables where schemaname = 'public';"""
             # cursor.execute(cmd)
             # cursor.close()
