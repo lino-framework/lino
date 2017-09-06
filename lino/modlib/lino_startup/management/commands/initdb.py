@@ -172,7 +172,8 @@ Are you sure (y/n) ?""" % dbname):
         elif engine == 'django.db.backends.postgresql':
             conn = connections[using]
             cursor = conn.cursor()
-            cmd = """select 'drop table "' || tablename || '" cascade;' \
+            cmd = """select 'DROP TABLE "' || tablename || '" \
+            IF EXISTS CASCADE;' \
             from pg_tables where schemaname = 'public';"""
             cursor.execute(cmd)
             cursor.close()
