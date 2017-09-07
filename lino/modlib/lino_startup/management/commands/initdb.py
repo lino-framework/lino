@@ -1,20 +1,19 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2016 by Luc Saffre.
+# Copyright 2009-2017 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """.. management_command:: initdb
 
-Performs an initialization of the database, replacing all data by default
-data (according to the specified fixtures).
+Performs an initialization of the database, replacing all data by
+default data loaded from the specified fixtures.
 
 This command REMOVES *all existing tables* from the database (not only
 Django tables), then runs Django's `migrate` to create all tables, and
-`loaddata` commands to load the specified fixtures for all
-applications.
+`loaddata` commands to load the specified fixtures for all plugins.
 
 This is functionally equivalent to running Django's :manage:`flush`
 command followed by :manage:`loaddata`, but the command-line options
-are a bit different and :manage:`initdb` it is more efficient in when
+are a bit different and :manage:`initdb` it is more efficient when
 using SQLite.
 
 This also adds a `warning filter
@@ -109,10 +108,6 @@ class Command(BaseCommand):
                             default=DEFAULT_DB_ALIAS,
                             help='Nominates a database to reset. '
                                  'Defaults to the "default" database.')
-        parser.add_argument(
-            '--noreload', action='store_false', dest='use_reloader', default=True,
-            help='Tells Django to NOT use the auto-reloader.',
-        )
 
     def try_sql(self, conn, sql_list):
         hope = False
@@ -251,4 +246,4 @@ Are you sure (y/n) ?""" % dbname):
             # if engine == 'django.db.backends.postgresql':
             #     foralltables(using, "ALTER TABLE {} ENABLE TRIGGER ALL;")
 
-            # dblogger.info("Lino initdb done %s on database %s.", args, dbname)
+            # dblogger.info("Lino initdb %s done on database %s.", args, dbname)
