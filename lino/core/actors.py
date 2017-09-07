@@ -554,7 +554,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     the table won't have any (+) button to create a new row via a
     dialog window, but users can still create rows by writing into the
     phantom row. Example of this is
-    :class:`linoc_xl.lib.courses.Topics` which has a detail layout
+    :class:`lino_xl.lib.courses.Topics` which has a detail layout
     with slave tables, but the model itself has only two fields (id
     and name) and it makes no sense to have an insert window.
 
