@@ -1380,6 +1380,7 @@ class Site(object):
         d = DEFAULT_LOGGING
 
         level = os.environ.get('LINO_LOGLEVEL') or 'INFO'
+        file_level = os.environ.get('LINO_FILE_LOGLEVEL') or 'INFO'
 
         loggercfg = {
             'handlers': ['console', 'mail_admins'],
@@ -1405,8 +1406,7 @@ class Site(object):
                     '%(module)s : %(message)s',
                     datefmt='%Y%m-%d %H:%M:%S'))
                 handlers['file'] = {
-                    # 'level': level,
-                    'level': 'INFO',
+                    'level': file_level,
                     'class': 'logging.FileHandler',
                     'filename': logdir.child(self.logger_filename),
                     'encoding': 'UTF-8',
