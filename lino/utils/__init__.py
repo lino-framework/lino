@@ -171,18 +171,6 @@ def get_class_attr(cl, name):
             return value
 
 
-def class_dict_items(cl, exclude=None):
-    if exclude is None:
-        exclude = set()
-    for k, v in list(cl.__dict__.items()):
-        if not k in exclude:
-            yield k, v
-            exclude.add(k)
-    for b in cl.__bases__:
-        for k, v in class_dict_items(b, exclude):
-            yield k, v
-
-
 def call_optional_super(cls, self, name, *args, **kw):
     """
     Doesn't work. See `20110914`.
