@@ -67,7 +67,7 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
     
     def get_full_name(self):
         if not self.first_name and not self.last_name:
-            return self.initials or self.username
+            return self.initials or self.username or str(self.pk)
         return u'{} {}'.format(self.first_name, self.last_name).strip()
 
     @dd.displayfield(_("Name"), max_length=15)
