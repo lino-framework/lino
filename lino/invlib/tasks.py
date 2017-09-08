@@ -49,7 +49,9 @@ def prep(ctx, cov=False):
         #     return
         # os.environ['COVERAGE_PROCESS_START'] = covfile
         ctx.run('coverage erase', pty=True)
-        run_in_demo_projects(ctx, 'prep', "--noinput", '--traceback', "--noreload", cov=cov)
+        
+        # run_in_demo_projects(ctx, 'prep', "--noinput", '--traceback', "--noreload", cov=cov)
+        run_in_demo_projects(ctx, 'prep', "--noinput", '--traceback', cov=cov)
     else:
         run_in_demo_projects(ctx, 'prep', "--noinput", '--traceback', cov=cov)
 

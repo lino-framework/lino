@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2016 by Luc Saffre
+# Copyright 2016-2017 by Luc Saffre
 # License: BSD, see LICENSE for more details.
 
 """Extends :mod:`atelier.invlib` by adding a series of Lino-specific
