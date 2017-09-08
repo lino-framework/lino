@@ -321,7 +321,8 @@ class XmlBuildMethod(DjangoBuildMethod):
             return os.path.getmtime(filename)
     
     def write2file(self, txt, filename):
-        txt = txt.encode("utf-8")
+        if six.PY2:
+            txt = txt.encode("utf-8")
         open(filename, 'w').write(txt)
 
 
