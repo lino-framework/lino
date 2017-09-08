@@ -180,7 +180,7 @@ class PisaBuildMethod(DjangoBuildMethod):
         #~ html = self.render_template(elem,tpl,request=ar.request)
         html = self.render_template(elem, tpl, ar=ar)
         html = html.encode("utf-8")
-        file(filename + '.html', 'w').write(html)
+        open(filename + '.html', 'w').write(html)
 
         result = io.BytesIO()
         h = logging.FileHandler(filename + '.log', 'w')
@@ -189,7 +189,7 @@ class PisaBuildMethod(DjangoBuildMethod):
             io.BytesIO(html), result, encoding='utf-8')
         pisa.log.removeHandler(h)
         h.close()
-        fd = file(filename, 'wb')
+        fd = open(filename, 'wb')
         fd.write(result.getvalue())
         fd.close()
         if pdf.err:
@@ -282,7 +282,7 @@ class RtfBuildMethod(SimpleBuildMethod):
             result = t(**context)
         except pyratemp.TemplateRenderError as e:
             raise Exception(u"%s in %s" % (e, tpl))
-        fd = file(target, 'wb')
+        fd = open(target, 'wb')
         fd.write(result)
         fd.close()
         return os.path.getmtime(target)
@@ -322,7 +322,7 @@ class XmlBuildMethod(DjangoBuildMethod):
     
     def write2file(self, txt, filename):
         txt = txt.encode("utf-8")
-        file(filename, 'w').write(txt)
+        open(filename, 'w').write(txt)
 
 
 
