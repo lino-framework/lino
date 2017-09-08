@@ -28,7 +28,7 @@ def validate_pain001(xmlfile):
 if __name__ == '__main__':
 
     if len(sys.argv) < 2:
-        print USAGE
+        print(USAGE)
         sys.exit(-1)
 
     validate_pain001(sys.argv[1])
