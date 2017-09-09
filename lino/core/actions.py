@@ -378,6 +378,12 @@ class Action(Parametrizable, Permittable):
         E.g. the MoveUp action of a Sequenced is not available on the
         first row of given `ar`.
 
+        This should be used only for light-weight tests. If this
+        requires a database lookup, consider disabling the action in
+        :meth:`disabled_fields
+        <lino.core.model.Model.disabled_fields>` where you can disable
+        multiple actions and fields at once.
+
         """
         return True
 

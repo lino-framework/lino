@@ -264,14 +264,14 @@ class AssignToMe(dd.Action):
     
     # help_text = _("You become assigned to this.")
 
-    def get_action_permission(self, ar, obj, state):
-        user = ar.get_user()
-        if obj.assigned_to == user:
-            return False
-        if user == obj.get_author():
-            return False
-        return super(AssignToMe,
-                     self).get_action_permission(ar, obj, state)
+    # def get_action_permission(self, ar, obj, state):
+    #     user = ar.get_user()
+    #     if obj.assigned_to == user:
+    #         return False
+    #     if user == obj.get_author():
+    #         return False
+    #     return super(AssignToMe,
+    #                  self).get_action_permission(ar, obj, state)
 
     def run_from_ui(self, ar, **kw):
         obj = ar.selected_rows[0]
@@ -317,19 +317,19 @@ class TakeAuthorship(dd.Action):
 
     button_text = u"\u2691"
 
-    def get_action_permission(self, ar, obj, state):
-        # new since 20160814
-        if obj.get_author() == ar.get_user():
-            return False
-        # if obj.assigned_to != ar.get_user():
-        #     return False
-        # if obj.get_author() == ar.get_user():
-        #     if obj.assigned_to is None:
-        #         return False
-        # elif obj.assigned_to != ar.get_user():
-        #     return False
-        return super(TakeAuthorship,
-                     self).get_action_permission(ar, obj, state)
+    # def get_action_permission(self, ar, obj, state):
+    #     # new since 20160814
+    #     if obj.get_author() == ar.get_user():
+    #         return False
+    #     # if obj.assigned_to != ar.get_user():
+    #     #     return False
+    #     # if obj.get_author() == ar.get_user():
+    #     #     if obj.assigned_to is None:
+    #     #         return False
+    #     # elif obj.assigned_to != ar.get_user():
+    #     #     return False
+    #     return super(TakeAuthorship,
+    #                  self).get_action_permission(ar, obj, state)
 
     def run_from_ui(self, ar, **kw):
         obj = ar.selected_rows[0]
@@ -370,6 +370,17 @@ class Assignable(Authored):
 
     take = TakeAuthorship()
     assign_to_me = AssignToMe()
+
+    def disabled_fields(self, ar):
+        s = super(Assignable, self).disabled_fields(ar)
+        user = ar.get_user()
+        if self.assigned_to == user:
+            s.add('assign_to_me')
+        if user == self.get_author():
+            s.add('assign_to_me')
+            s.add('take')
+        return s
+    
 
     def on_create(self, ar):
         # 20130722 e.g. CreateClientEvent sets assigned_to it explicitly

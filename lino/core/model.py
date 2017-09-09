@@ -433,11 +433,12 @@ class Model(models.Model):
 
         Usage example::
 
-          def disabled_fields(self,request):
-              if self.user == request.user: return []
-              df = ['field1']
+          def disabled_fields(self, ar):
+              df = super(MyModel, self).disabled_fields(ar)
+              if self.user == ar.user:
+                  return df
               if self.foo:
-                df.append('field2')
+                  df.add('field2')
               return df
 
         """
@@ -866,13 +867,16 @@ class Model(models.Model):
             #~ l.append(u" \u2192 ")
             #~ sep = u" \u25b8 "
 
+        df = actor.disabled_fields(obj, ar)
+        # print(20170909, df)
         for ba in actor.get_actions():
             assert ba.actor == actor  # 20170102
             if ba.action.show_in_workflow:
                 # if actor.model.__name__ == 'Vote':
                 #     if ba.action.__class__.__name__ == 'MarkVoteAssigned':
                 #         print(20170115, actor, ar.get_user())
-                if actor.get_row_permission(obj, ar, state, ba):
+                if ba.action.action_name not in df:
+                  if actor.get_row_permission(obj, ar, state, ba):
                     if show and isinstance(ba.action, ChangeStateAction):
                         show_state()
                         sep = u" \u2192 "

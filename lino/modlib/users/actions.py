@@ -55,14 +55,14 @@ class SendWelcomeMail(dd.Action):
         # kw.update(body_text=body)
         return kw
     
-    def get_action_permission(self, ar, obj, state):
-        user = ar.get_user()
-        if not obj.email:
-            return False
-        if not user.user_type.has_required_roles([SiteAdmin]):
-            return False
-        return super(
-            SendWelcomeMail, self).get_action_permission(ar, obj, state)
+    # def get_action_permission(self, ar, obj, state):
+    #     user = ar.get_user()
+    #     if not obj.email:
+    #         return False
+    #     if not user.user_type.has_required_roles([SiteAdmin]):
+    #         return False
+    #     return super(
+    #         SendWelcomeMail, self).get_action_permission(ar, obj, state)
 
     def run_from_ui(self, ar, **kw):
 
@@ -106,14 +106,14 @@ class ChangePassword(dd.Action):
     new2
     """
 
-    def get_action_permission(self, ar, obj, state):
-        user = ar.get_user()
-        # print("20160825", obj, user)
-        if obj != user and \
-           not user.user_type.has_required_roles([SiteAdmin]):
-            return False
-        return super(
-            ChangePassword, self).get_action_permission(ar, obj, state)
+    # def get_action_permission(self, ar, obj, state):
+    #     user = ar.get_user()
+    #     # print("20160825", obj, user)
+    #     if obj != user and \
+    #        not user.user_type.has_required_roles([SiteAdmin]):
+    #         return False
+    #     return super(
+    #         ChangePassword, self).get_action_permission(ar, obj, state)
 
     def run_from_ui(self, ar, **kw):
         

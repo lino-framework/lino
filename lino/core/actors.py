@@ -694,6 +694,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
           @classmethod
           def disabled_fields(cls, obj, ar):
+              s = super(MyActor, cls).disabled_fields(obj, ar)
               ...
               return set()
 
@@ -703,6 +704,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         method::
 
           def disabled_fields(self, ar):
+              s = super(MyModel, self).disabled_fields(ar)
               ...
               return set()
 
@@ -710,7 +712,13 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
 
         """
-        return set()
+
+        s = set()
+        state = cls.get_row_state(obj)
+        if state is not None:
+            s |= cls._state_to_disabled_actions.get(state.name, set())
+        
+        return s
 
     @classmethod
     def get_request_handle(self, ar):
@@ -824,9 +832,9 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                 fld.null = True
                 fld.default = None
                 cls.parameters[name] = fld
-
         # if len(cls.parameters) == 0:
         #     cls.parameters = None # backwards compatibility
+
 
     @classmethod
     def get_known_values(self):
@@ -953,6 +961,30 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
         cls._actions_list.sort(key=lambda a: a.action.sort_index)
         # cls._actions_list = tuple(cls._actions_list)
+        
+        # build a dict which maps state.name to a set of action names
+        # to be disabled on objects having that state:
+        cls._state_to_disabled_actions = {}
+        st2da = cls._state_to_disabled_actions
+        wsf = cls.workflow_state_field
+        if wsf is not None:
+            for state in wsf.choicelist.get_list_items():
+                st2da[state.name] = set()
+            for a in wsf.choicelist.workflow_actions:
+                st2da[a.target_state.name].add(a.action_name)
+            for ba in cls._actions_list:
+                # st2da[ba] = 1
+                if ba.action.action_name:
+                    required_states = ba.action.required_states
+                    if required_states:
+                        # if an action has required states, then it must
+                        # get disabled for all other states:
+                        if is_string(required_states):
+                            required_states = set(required_states.split())
+                        for k in st2da.keys():
+                            if k not in required_states:
+                                st2da[k].add(ba.action.action_name)
+        
 
     @classmethod
     def _bind_action(self, k, a):
@@ -1113,20 +1145,20 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
             #~ if isinstance(state,choicelists.Choice):
                 #~ state = state.value
 
-    @classmethod
-    def disabled_actions(self, ar, obj):
-        """
-        Returns a dictionary containg the names of the actions
-        that are disabled  for the given object instance `obj`
-        and the user who issued the given ActionRequest `ar`.
+    # @classmethod
+    # def disabled_actions(self, ar, obj):  # no longer used since 20170909
+    #     """
+    #     Returns a dictionary containg the names of the actions
+    #     that are disabled  for the given object instance `obj`
+    #     and the user who issued the given ActionRequest `ar`.
 
-        Application developers should not need to override this method.
+    #     Application developers should not need to override this method.
 
-        Default implementation returns an empty dictionary.
-        Overridden by :class:`dd.Table`
+    #     Default implementation returns an empty dictionary.
+    #     Overridden by :class:`dd.Table`
 
-        """
-        return {}
+    #     """
+    #     return {}
 
     @classmethod
     def override_column_headers(self, ar, **kwargs):

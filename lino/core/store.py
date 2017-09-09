@@ -500,15 +500,15 @@ class DisabledFieldsStoreField(SpecialStoreField):
             #     pk = None
         return d
 
+# no longer used since 20170909
+# class DisabledActionsStoreField(SpecialStoreField):
 
-class DisabledActionsStoreField(SpecialStoreField):
+#     """
+#     """
+#     name = str('disabled_actions')
 
-    """
-    """
-    name = str('disabled_actions')
-
-    def full_value_from_object(self, obj, ar):
-        return self.store.actor.disabled_actions(ar, obj)
+#     def full_value_from_object(self, obj, ar):
+#         return self.store.actor.disabled_actions(ar, obj)
 
 
 # class RecnoStoreField(SpecialStoreField):
@@ -995,11 +995,11 @@ class Store(BaseStore):
         # if not issubclass(rh.report,dbtables.Table):
             # addfield(RecnoStoreField(self))
 
-        if rh.actor.editable:  # condition added 20131017
-
+        if rh.actor.editable:
             addfield(DisabledFieldsStoreField(self))
+            # NB what about disabled actions on non-editable actor?
 
-        addfield(DisabledActionsStoreField(self))
+        # addfield(DisabledActionsStoreField(self))
 
         if rh.actor.editable:
             addfield(DisableEditingStoreField(self))

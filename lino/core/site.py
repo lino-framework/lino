@@ -1426,10 +1426,9 @@ class Site(object):
                 'level': 'WARNING',
             }
 
-        if False:
-            dblogger = d['loggers'].setdefault('django.db.backends', {})
-            dblogger['propagate'] = False
-            dblogger['level'] = 'WARNING'
+        dblogger = d['loggers'].setdefault('django.db.backends', {})
+        dblogger['propagate'] = False
+        dblogger['level'] = os.environ.get('LINO_SQL_LOGLEVEL', 'WARNING')
 
 
         # self.update_settings(LOGGING=d)

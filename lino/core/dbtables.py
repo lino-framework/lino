@@ -437,23 +437,23 @@ class Table(AbstractTable):
         except self.model.DoesNotExist:
             return None
 
-    @classmethod
-    def disabled_actions(self, ar, obj):
-        d = dict()
-        if obj is not None:
-            state = self.get_row_state(obj)
-            # u = ar.get_user()
-            for ba in self.get_actions(ar.bound_action.action):
-                if ba.action.action_name:
-                    if ba.action.show_in_bbar and not self.get_row_permission(obj, ar, state, ba):
-                    # if ba.action.show_in_bbar and not obj.get_row_permission(u,state,ba.action):
-                    # if a.show_in_bbar and not a.get_action_permission(ar.get_user(),obj,state):
-                        d[ba.action.action_name] = True
-                # if ba.action.action_name == 'do_clear_cache':
-                    # logger.info("20121127 %s %s", obj, d)
-            # if obj.__class__.__name__ == 'Note':
-                # logger.info("20120920 %s %s %r", obj, d,obj.__class__.get_row_permission)
-        return d
+    # @classmethod
+    # def disabled_actions(self, ar, obj):  # no longer used since 20170909
+    #     d = dict()
+    #     if obj is not None:
+    #         state = self.get_row_state(obj)
+    #         # u = ar.get_user()
+    #         for ba in self.get_actions(ar.bound_action.action):
+    #             if ba.action.action_name:
+    #                 if ba.action.show_in_bbar and not self.get_row_permission(obj, ar, state, ba):
+    #                 # if ba.action.show_in_bbar and not obj.get_row_permission(u,state,ba.action):
+    #                 # if a.show_in_bbar and not a.get_action_permission(ar.get_user(),obj,state):
+    #                     d[ba.action.action_name] = True
+    #             # if ba.action.action_name == 'do_clear_cache':
+    #                 # logger.info("20121127 %s %s", obj, d)
+    #         # if obj.__class__.__name__ == 'Note':
+    #             # logger.info("20120920 %s %s %r", obj, d,obj.__class__.get_row_permission)
+    #     return d
 
     @classmethod
     def wildcard_data_elems(self):
@@ -635,7 +635,16 @@ class Table(AbstractTable):
 
     @classmethod
     def disabled_fields(cls, obj, ar):
-        return obj.disabled_fields(ar)
+        s = super(Table, cls).disabled_fields(obj, ar)
+
+        if obj is not None:
+            s |= obj.disabled_fields(ar)
+            state = cls.get_row_state(obj)
+            for ba in cls.get_actions(ar.bound_action.action):
+                if ba.action.action_name:
+                    if ba.action.show_in_bbar and not cls.get_row_permission(obj, ar, state, ba):
+                        s.add(ba.action.action_name)
+        return s
 
     @classmethod
     def get_row_permission(cls, obj, ar, state, ba):

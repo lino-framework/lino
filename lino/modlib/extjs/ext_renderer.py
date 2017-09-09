@@ -1243,7 +1243,7 @@ class ExtRenderer(JsRenderer):
         #~ if rh.actor.master:
         kw.update(title=rh.actor.label)
         kw.update(
-            disabled_actions_index=rh.store.column_index('disabled_actions'))
+            disabled_fields_index=rh.store.column_index('disabled_fields'))
 
         for k, v in list(kw.items()):
             yield "  %s : %s," % (k, py2js(v))

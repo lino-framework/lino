@@ -102,8 +102,12 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
         See also :meth:`Users.get_row_permission`.
         """
         rv = super(User, self).disabled_fields(ar)
-        if not ar.get_user().user_type.has_required_roles([SiteAdmin]):
+        user = ar.get_user()
+        if not user.user_type.has_required_roles([SiteAdmin]):
+            rv.add('send_email')
             rv.add('user_type')
+            if user != self:
+                rv.add('change_password')
         return rv
 
     def full_clean(self, *args, **kw):
