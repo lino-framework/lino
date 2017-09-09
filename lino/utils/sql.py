@@ -19,8 +19,11 @@ import textwrap
 def p(kw, sql_width = 60):
     """Prints a parsed sql log nicely"""
     kw['sql'] = ("\n    ").join(textwrap.wrap(kw['sql'], sql_width))
-    print("time: {time}\n"
+    print(
           "table: {table}\n"
+          "Longest_time: {time}\n"
+          "Queries: {count}\n"
+          "total_time: {total_time}\n"
           "sql: {sql}".format(**kw))
 
 
@@ -36,11 +39,15 @@ if __name__ == "__main__":
         # print m
         if m:
             g = m.groupdict()
-            if d.get(g['table'], {'time':-1}) < g['time']:
-                d[g['table']] = g
+            g['time'] = float(g['time'])
+            r = d.setdefault(g['table'], {})
+            r['count'] = r.get('count', 0) + 1
+            r["total_time"] = r.get("total_time", 0 ) + float(g['time'])
+            if r.get('time', -1) < g['time']:
+                d[g['table']].update(g)
         l = f.readline()
     if d:
-        for kw in d.values():
+        for kw in sorted(d.values(), key= lambda x: x['total_time']):
             p(kw)
             print "-------------------"
         print("The slowest SQL call was:")
