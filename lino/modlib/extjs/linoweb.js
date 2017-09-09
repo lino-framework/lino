@@ -4267,13 +4267,15 @@ Lino.cell_context_menu = function(grid,row,col,e) {
   //~ return;
   if(!grid.cmenu.el){grid.cmenu.render(); }
   //~ if(e.record.data.disabled_fields) {
-  
-  var da = grid.store.reader.arrayData.rows[row][grid.disabled_fields_index];
-  if (da) {
-      this.cmenu.cascade(function(item){ 
-        //~ console.log(20120531, item.itemId, da[item.itemId]);
-        if (da[item.itemId]) item.disable(); else item.enable();
-      });
+
+  if (grid.disabled_fields_index) {
+      var da = grid.store.reader.arrayData.rows[row][grid.disabled_fields_index];
+      if (da) {
+          this.cmenu.cascade(function(item){ 
+            //~ console.log(20120531, item.itemId, da[item.itemId]);
+            if (da[item.itemId]) item.disable(); else item.enable();
+          });
+      }
   };
   
   var xy = e.getXY();
