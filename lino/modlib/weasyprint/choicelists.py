@@ -86,7 +86,7 @@ class WeasyHtmlBuildMethod(WeasyBuildMethod):
 
     def html2file(self, html, filename):
         html = html.encode("utf-8")
-        file(filename, 'w').write(html)
+        open(filename, 'w').write(html)
 
 
 add = BuildMethods.add_item_instance
