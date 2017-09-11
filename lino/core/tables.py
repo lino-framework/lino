@@ -523,7 +523,7 @@ method in order to sort the rows of the queryset.
 
     @classmethod
     def wildcard_data_elems(self):
-        for cc in list(self.virtual_fields.values()):
+        for cc in self.virtual_fields.values():
             yield cc
         #~ return []
 

@@ -343,8 +343,6 @@ class TableRequest(ActionRequest):
             # assert master_instance is None
             # master_instance = self.master.objects.get(pk=master_id)
 
-        # Table.page_length is not a default value for ReportRequest.limit
-        # For example CSVReportRequest wants all rows.
         self.page_length = self.actor.page_length
 
         #~ logger.info("20120121 %s.setup() done",self)

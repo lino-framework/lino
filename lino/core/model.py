@@ -1061,7 +1061,7 @@ action on individual instances.
             + '-' + str(self.pk)
 
     @classmethod
-    def get_parameter_fields(cls, **fields):
+    def setup_parameters(cls, fields):
         """Inheritable hook for defining parameters.
         Called once per actor at site startup.
 
@@ -1201,7 +1201,7 @@ action on individual instances.
 LINO_MODEL_ATTRIBS = (
     'define_action',
     'delete_instance',
-    'get_parameter_fields',
+    'setup_parameters',
     'add_param_filter',
     'save_new_instance',
     'save_watched_instance',

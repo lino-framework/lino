@@ -305,12 +305,12 @@ class Human(model.Model):
         
     # no longer needed after 20170826
     # @classmethod
-    # def get_parameter_fields(cls, **fields):
+    # def setup_parameters(cls, **fields):
     #     fields.update(
     #         gender=Genders.field(
     #             blank=True, help_text=_(
     #                 "Show only persons with the given gender.")))
-    #     return super(Human, cls).get_parameter_fields(**fields)
+    #     return super(Human, cls).setup_parameters(**fields)
 
     # @classmethod
     # def get_request_queryset(cls, ar):
@@ -386,7 +386,7 @@ class Born(model.Model):
         return u"±" + s
 
     @classmethod
-    def get_parameter_fields(cls, **fields):
+    def setup_parameters(cls, fields):
         fields.update(
             aged_from=models.IntegerField(
                 _("Aged from"), blank=True, null=True,
@@ -396,7 +396,7 @@ class Born(model.Model):
                 _("Aged to"), blank=True, null=True,
                 help_text=_("Select only persons aged at most "
                             "the given number of years.")))
-        return super(Born, cls).get_parameter_fields(**fields)
+        super(Born, cls).setup_parameters(fields)
 
     @classmethod
     def get_request_queryset(cls, ar, **filter):

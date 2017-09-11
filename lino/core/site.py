@@ -714,7 +714,7 @@ class Site(object):
     Default value is `True`.  On a production site you will of course
     set this to `False`.
     
-    See also :attr:`demo_fixtures`.
+    See also :attr:`demo_fixtures` and :attr:`the_demo_date`.
 
     """
 

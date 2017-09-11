@@ -194,10 +194,10 @@ class Registrable(model.Model):
 
     # no longer needed after 20170826
     # @classmethod
-    # def get_parameter_fields(cls, **fields):
+    # def setup_parameters(cls, **fields):
     #     wsf = cls.workflow_state_field
     #     fields[wsf.name] = wsf.choicelist.field(blank=True, null=True)
-    #     return super(Registrable, cls).get_parameter_fields(**fields)
+    #     return super(Registrable, cls).setup_parameters(**fields)
 
     @classmethod
     def get_simple_parameters(cls):

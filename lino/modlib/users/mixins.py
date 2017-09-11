@@ -94,14 +94,14 @@ class Authored(dd.Model):
 
     # no longer needed after 20170826
     # @classmethod
-    # def get_parameter_fields(cls, **fields):
+    # def setup_parameters(cls, **fields):
     #     """Adds the :attr:`user` filter parameter field."""
     #     fld = cls._meta.get_field('user')
     #     fields.setdefault(
     #         'user', models.ForeignKey(
     #             'users.User', verbose_name=fld.verbose_name,
     #             blank=True, null=True))
-    #     return super(Authored, cls).get_parameter_fields(**fields)
+    #     return super(Authored, cls).setup_parameters(**fields)
 
     @classmethod
     def get_simple_parameters(cls):

@@ -32,6 +32,7 @@ from lino.core.permissions import add_requirements, Permittable
 from lino.core.utils import resolve_model
 from lino.core.utils import error2str
 from lino.core.utils import qs2summary
+from lino.core.utils import ParameterPanel
 from lino.utils import curry, AttrDict, is_string
 from lino.utils.xmlgen.html import E
 
@@ -814,11 +815,12 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
             window_size=(cls.insert_layout_width, 'auto'))
 
         if cls.parameters is None:
-            params = cls.get_parameter_fields()
+            params = {}
+            cls.setup_parameters(params)
             if len(params):
                 cls.parameters = params
         else:
-            cls.parameters = cls.get_parameter_fields(**cls.parameters)
+            cls.setup_parameters(cls.parameters)
 
         cls.simple_parameters = tuple(cls.get_simple_parameters())
         
@@ -1083,6 +1085,9 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         the actual title.
 
         """
+        if isinstance(self.parameters, ParameterPanel):
+            for t in self.parameters.get_title_tags(ar):
+                yield t
         for k in self.simple_parameters:
             v = getattr(ar.param_values, k)
             if v:
@@ -1108,17 +1113,17 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         pass
 
     @classmethod
-    def get_parameter_fields(cls, **fields):
+    def setup_parameters(cls, fields):
         """Inheritable hook for defining parameters. Called once per actor at
         site startup.  The default implementation just calls
-        :meth:`get_parameter_fields
-        <lino.core.model.Model.get_parameter_fields>` of the
+        :meth:`setup_parameters
+        <lino.core.model.Model.setup_parameters>` of the
         :attr:`model` (if a :attr:`model` is set).
 
         """
         if cls.model is None:
-            return fields
-        return cls.model.get_parameter_fields(**fields)
+            return
+        cls.model.setup_parameters(fields)
 
     @classmethod
     def get_simple_parameters(cls):
