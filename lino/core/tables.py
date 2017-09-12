@@ -396,11 +396,12 @@ class AbstractTable(actors.Actor):
 
     """
 
-    force_phantom_row = False
-    """Whether to show a phantom row even when there is an
-    :attr:`insert_layout` and :attr:`stay_in_grid` is `False`.
+    no_phantom_row = False
+    """Suppress a phantom row in situations where Lino would otherwise add
+    one.
 
-    Usage example `notes.NotesByProject`.
+    Used for :class:`lino_xl.lib.ledger.ByJournal` where a phantom row
+    is disturbing.
 
     TODO: Actually this option would not be necessary if the AJAX call
     sent by a grid panel would include an option which says whether it
