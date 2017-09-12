@@ -314,8 +314,8 @@ class Site(object):
 
     project_name = None
     """A nickname for this project. This is used to set :attr:`cache_dir`
-    and therefore should be unique for all Lino projects on a given
-    machine.
+    and therefore should be unique for all Lino projects in a given
+    development environment.
 
     If this is None, Lino will find a default value by splitting
     :attr:`project_dir` and taking the last part (or the second-last
@@ -388,14 +388,14 @@ class Site(object):
     ]
     "The list of top-level menu items. See :meth:`setup_menu`."
 
-    is_local_project_dir = False
-    """Contains `True` if this is a "local" project.  For local projects,
-    Lino checks for local fixtures and config directories and adds
-    them to the default settings.
+    # is_local_project_dir = False
+    # """Contains `True` if this is a "local" project.  For local projects,
+    # Lino checks for local fixtures and config directories and adds
+    # them to the default settings.
 
-    This is automatically set when a :class:`Site` is instantiated.
+    # This is automatically set when a :class:`Site` is instantiated.
 
-    """
+    # """
 
     ignore_model_errors = False
     """Not yet sure whether this is needed. Maybe when generating
@@ -1320,12 +1320,12 @@ class Site(object):
                 SESSION_COOKIE_PATH=self.site_prefix[:-1])
             # self.update_settings(SESSION_COOKIE_NAME='ssid')
 
-        ## Local project directory
-        modname = self.__module__
-        i = modname.rfind('.')
-        if i != -1:
-            modname = modname[:i]
-        self.is_local_project_dir = modname not in self.local_apps
+        # ## Local project directory
+        # modname = self.__module__
+        # i = modname.rfind('.')
+        # if i != -1:
+        #     modname = modname[:i]
+        # self.is_local_project_dir = modname not in self.local_apps
 
         self.VIRTUAL_FIELDS = []
 

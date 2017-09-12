@@ -80,8 +80,8 @@ class ConfigDirCache(object):
 
         self.LOCAL_CONFIG_DIR = None
 
-        if site.is_local_project_dir:
-            p = join(site.project_dir, SUBDIR_NAME)
+        if True:  # site.is_local_project_dir:
+            p = join(site.cache_dir, SUBDIR_NAME)
             if isdir(p):
                 self.LOCAL_CONFIG_DIR = ConfigDir(p, True)
                 config_dirs.append(self.LOCAL_CONFIG_DIR)
