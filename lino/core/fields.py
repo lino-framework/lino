@@ -873,8 +873,8 @@ def use_as_wildcard(de):
 
 
 def fields_list(model, field_names):
-    """Return a set with the names of the specified fields, checking whether
-    each of them exists.
+    """Return a set with the names of the specified fields, checking
+    whether each of them exists.
 
     Arguments: `model` is any subclass of `django.db.models.Model`. It
     may be a string with the full name of a model
@@ -889,35 +889,33 @@ def fields_list(model, field_names):
     ``['foo','bar']`` and ``dd.fields_list(MyModel,"foo baz")`` will raise
     an exception.
 
+    TODO: either rename this to `fields_set` or change it to return an
+    iterable on the fields.
+
     """
     lst = set()
-    if '*' in field_names:
-        explicit_names = set()
-        for name in field_names.split():
-            if name != '*':
-                explicit_names.add(name)
-        wildcard_names = [de.name for de in wildcard_data_elems(model)
-                          if (de.name not in explicit_names)
-                          and use_as_wildcard(de)]
-        wildcard_str = ' '.join(wildcard_names)
-        field_names = field_names.replace('*', wildcard_str)
+    names_list = field_names.split()
 
-    for name in field_names.split():
-
-        e = model.get_data_elem(name)
-        if e is None:
-            raise models.FieldDoesNotExist(
-                "No data element %r in %s" % (name, model))
-        if isinstance(e, DummyField):
-            pass
-        # elif isinstance(e,            
-        #         models.Field, FakeField,
-        #         GenericForeignKey)):
-        elif hasattr(e, 'name'):
-            lst.add(e.name)
+    for name in names_list:
+        if name == '*':
+            explicit_names = set()
+            for name in names_list:
+                if name != '*':
+                    explicit_names.add(name)
+            for de in wildcard_data_elems(model):
+                if not isinstance(de, DummyField):
+                    if de.name not in explicit_names:
+                        if use_as_wildcard(de):
+                            lst.add(de.name)
         else:
-            raise Exception("{}.{} : invalid field type {}".format(
-                model, name, e))
+            e = model.get_data_elem(name)
+            if e is None:
+                raise models.FieldDoesNotExist(
+                    "No data element %r in %s" % (name, model))
+            if isinstance(e, DummyField):
+                pass
+            else:
+                lst.add(e.name)
     return lst
 
 

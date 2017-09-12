@@ -1083,7 +1083,7 @@ class Site(object):
     appy_params = dict(
         ooPort=8100, pythonWithUnoPath='/usr/bin/python3',
         raiseOnError=True)
-    """Used by :class:`lino.mixins.printable.AppyBuildMethod`.
+    """Used by :class:`lino_xl.lib.appypod.choicelist.AppyBuildMethod`.
 
     Allowed keyword arguments for `appy.pod.renderer.Render` are::
 

@@ -396,6 +396,18 @@ class AbstractTable(actors.Actor):
 
     """
 
+    force_phantom_row = False
+    """Whether to show a phantom row even when there is an
+    :attr:`insert_layout` and :attr:`stay_in_grid` is `False`.
+
+    Usage example `notes.NotesByProject`.
+
+    TODO: Actually this option would not be necessary if the AJAX call
+    sent by a grid panel would include an option which says whether it
+    is main item or not.
+
+    """
+    
     grid_configs = []
     """
     Will be filled during :meth:`lino.core.table.Table.do_setup`.
