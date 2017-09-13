@@ -365,13 +365,13 @@ class Kernel(object):
             for f in model._meta.get_fields():
                 m = f.model
 
+                # no longer needed with Django 1.11+
                 # Refuse nullable CharFields, but don't trigger on
                 # NullableCharField (which is a subclass of CharField).
-
-                if f.__class__ is models.CharField and f.null:
-                    msg = "Nullable CharField %s in %s" % (f.name, model)
-                    raise Exception(msg)
-                elif isinstance(f, models.ForeignKey):
+                # if f.__class__ is models.CharField and f.null:
+                #     msg = "Nullable CharField %s in %s" % (f.name, model)
+                #     raise Exception(msg)
+                if isinstance(f, models.ForeignKey):
                     if isinstance(f.rel.model, six.string_types):
                         raise Exception("Could not resolve target %r of "
                                         "ForeignKey '%s' in %s "

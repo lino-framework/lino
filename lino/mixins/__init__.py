@@ -338,10 +338,14 @@ class Referrable(model.Model):
     ref_max_length = 40
     """The maximum length of the :attr:`ref` field."""
 
-    ref = fields.NullCharField(_("Reference"),
-                               max_length=ref_max_length,
-                               blank=True, null=True,
-                               unique=True)
+    # ref = fields.NullCharField(_("Reference"),
+    #                            max_length=ref_max_length,
+    #                            blank=True, null=True,
+    #                            unique=True)
+
+    ref = models.CharField(
+        _("Reference"), max_length=ref_max_length,
+        blank=True, null=True, unique=True)
 
     def on_duplicate(self, ar, master):
         """Before saving a duplicated object for the first time, we must

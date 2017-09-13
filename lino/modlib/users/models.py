@@ -18,7 +18,7 @@ from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from lino.api import dd, rt, _
 from lino.utils.xmlgen.html import E
 from lino.core import userprefs
-from lino.core.fields import NullCharField
+# from lino.core.fields import NullCharField
 from lino.core.roles import SiteAdmin
 
 from lino.mixins import CreatedModified, Contactable
@@ -46,7 +46,9 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
     hidden_columns = 'password remarks'
     authenticated = True
 
-    username = NullCharField(_('Username'), max_length=30, unique=True)
+    # username = NullCharField(_('Username'), max_length=30, unique=True)
+    username = models.CharField(
+        _('Username'), max_length=30, unique=True, null=True, blank=True)
     user_type = UserTypes.field(blank=True)
     initials = models.CharField(_('Initials'), max_length=10, blank=True)
     first_name = models.CharField(_('First name'), max_length=30, blank=True)
