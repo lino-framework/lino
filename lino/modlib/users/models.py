@@ -46,9 +46,9 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
     hidden_columns = 'password remarks'
     authenticated = True
 
-    # username = NullCharField(_('Username'), max_length=30, unique=True)
-    username = models.CharField(
-        _('Username'), max_length=30, unique=True, null=True, blank=True)
+    # username = dd.NullCharField(_('Username'), max_length=30, unique=True)
+    username = models.CharField(_('Username'), max_length=30, unique=True)
+    # seems that Django doesn't like nullable username 
     user_type = UserTypes.field(blank=True)
     initials = models.CharField(_('Initials'), max_length=10, blank=True)
     first_name = models.CharField(_('First name'), max_length=30, blank=True)

@@ -33,7 +33,6 @@ Tables:
 Extended Fields:
 
 - :class:`CharField <fields.CharField>`
-- :class:`NullCharField <lino.core.fields.NullCharField>`
 - :class:`IncompleteDateField <lino.core.fields.IncompleteDateField>`
 - :class:`PasswordField <lino.core.fields.PasswordField>`
 - :class:`MonthField <lino.core.fields.MonthField>`
