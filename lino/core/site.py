@@ -3632,14 +3632,14 @@ signature as `django.core.mail.EmailMessage`.
             del kw[fieldname + lng.suffix + self.LOOKUP_OP]
         return flt
 
-    def relpath(self, p):
-        """Used by :class:`lino.mixins.printable.EditTemplate` in order to
-        write a testable message...
+    # def relpath(self, p):
+    #     """Used by :class:`lino.mixins.printable.EditTemplate` in order to
+    #     write a testable message...
 
-        """
-        if p.startswith(self.project_dir):
-            p = "$(PRJ)" + p[len(self.project_dir):]
-        return p
+    #     """
+    #     if p.startswith(self.project_dir):
+    #         p = "$(PRJ)" + p[len(self.project_dir):]
+    #     return p
 
 
 class TestSite(Site):
