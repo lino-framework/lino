@@ -304,18 +304,18 @@ class Site(object):
     """
     
     make_missing_dirs = True
-    """
-    Set this to `False` if you don't want this Site to automatically
-    create missing directories when needed (but to raise an exception
-    in these cases, asking you to create it yourself)
+    """Set this to `False` if you don't want Lino to automatically create
+    missing directories when needed.  If this is False, Lino will
+    raise an exception in these cases, asking you to create it
+    yourself.
 
     """
     userdocs_prefix = ''
 
     project_name = None
     """A nickname for this project. This is used to set :attr:`cache_dir`
-    and therefore should be unique for all Lino projects on a given
-    machine.
+    and therefore should be unique for all Lino projects in a given
+    development environment.
 
     If this is None, Lino will find a default value by splitting
     :attr:`project_dir` and taking the last part (or the second-last
@@ -388,14 +388,14 @@ class Site(object):
     ]
     "The list of top-level menu items. See :meth:`setup_menu`."
 
-    is_local_project_dir = False
-    """Contains `True` if this is a "local" project.  For local projects,
-    Lino checks for local fixtures and config directories and adds
-    them to the default settings.
+    # is_local_project_dir = False
+    # """Contains `True` if this is a "local" project.  For local projects,
+    # Lino checks for local fixtures and config directories and adds
+    # them to the default settings.
 
-    This is automatically set when a :class:`Site` is instantiated.
+    # This is automatically set when a :class:`Site` is instantiated.
 
-    """
+    # """
 
     ignore_model_errors = False
     """Not yet sure whether this is needed. Maybe when generating
@@ -714,7 +714,7 @@ class Site(object):
     Default value is `True`.  On a production site you will of course
     set this to `False`.
     
-    See also :attr:`demo_fixtures`.
+    See also :attr:`demo_fixtures` and :attr:`the_demo_date`.
 
     """
 
@@ -1083,7 +1083,7 @@ class Site(object):
     appy_params = dict(
         ooPort=8100, pythonWithUnoPath='/usr/bin/python3',
         raiseOnError=True)
-    """Used by :class:`lino.mixins.printable.AppyBuildMethod`.
+    """Used by :class:`lino_xl.lib.appypod.choicelist.AppyBuildMethod`.
 
     Allowed keyword arguments for `appy.pod.renderer.Render` are::
 
@@ -1320,12 +1320,12 @@ class Site(object):
                 SESSION_COOKIE_PATH=self.site_prefix[:-1])
             # self.update_settings(SESSION_COOKIE_NAME='ssid')
 
-        ## Local project directory
-        modname = self.__module__
-        i = modname.rfind('.')
-        if i != -1:
-            modname = modname[:i]
-        self.is_local_project_dir = modname not in self.local_apps
+        # ## Local project directory
+        # modname = self.__module__
+        # i = modname.rfind('.')
+        # if i != -1:
+        #     modname = modname[:i]
+        # self.is_local_project_dir = modname not in self.local_apps
 
         self.VIRTUAL_FIELDS = []
 
@@ -1380,6 +1380,7 @@ class Site(object):
         d = DEFAULT_LOGGING
 
         level = os.environ.get('LINO_LOGLEVEL') or 'INFO'
+        file_level = os.environ.get('LINO_FILE_LOGLEVEL') or 'INFO'
 
         loggercfg = {
             'handlers': ['console', 'mail_admins'],
@@ -1405,8 +1406,7 @@ class Site(object):
                     '%(module)s : %(message)s',
                     datefmt='%Y%m-%d %H:%M:%S'))
                 handlers['file'] = {
-                    # 'level': level,
-                    'level': 'INFO',
+                    'level': file_level,
                     'class': 'logging.FileHandler',
                     'filename': logdir.child(self.logger_filename),
                     'encoding': 'UTF-8',
@@ -1428,7 +1428,7 @@ class Site(object):
 
         dblogger = d['loggers'].setdefault('django.db.backends', {})
         dblogger['propagate'] = False
-        dblogger['level'] = 'WARNING'
+        dblogger['level'] = os.environ.get('LINO_SQL_LOGLEVEL', 'WARNING')
 
 
         # self.update_settings(LOGGING=d)
@@ -2275,8 +2275,8 @@ this field.
         Call the given function on each installed app.
         Successor of :meth:`on_each_app`.  This also loops over
 
-        - apps that don't have a models module
-        - inherited apps
+        - plugins that don't have a models module
+        - the base plugins of plugins which extend some plugin.
 
         """
 
@@ -3632,14 +3632,14 @@ signature as `django.core.mail.EmailMessage`.
             del kw[fieldname + lng.suffix + self.LOOKUP_OP]
         return flt
 
-    def relpath(self, p):
-        """Used by :class:`lino.mixins.printable.EditTemplate` in order to
-        write a testable message...
+    # def relpath(self, p):
+    #     """Used by :class:`lino.mixins.printable.EditTemplate` in order to
+    #     write a testable message...
 
-        """
-        if p.startswith(self.project_dir):
-            p = "$(PRJ)" + p[len(self.project_dir):]
-        return p
+    #     """
+    #     if p.startswith(self.project_dir):
+    #         p = "$(PRJ)" + p[len(self.project_dir):]
+    #     return p
 
 
 class TestSite(Site):

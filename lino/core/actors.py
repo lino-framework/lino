@@ -32,6 +32,7 @@ from lino.core.permissions import add_requirements, Permittable
 from lino.core.utils import resolve_model
 from lino.core.utils import error2str
 from lino.core.utils import qs2summary
+from lino.core.utils import ParameterPanel
 from lino.utils import curry, AttrDict, is_string
 from lino.utils.xmlgen.html import E
 
@@ -292,6 +293,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     """
 
+    only_fields = None
+
     app_label = None
     """
     Specify this if you want to "override" an existing actor.
@@ -365,12 +368,17 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     """
 
     hidden_elements = frozenset()
-    """A set of names of layoutelements which are hidden by default.
+    """A set of names of layout elements which are hidden by default.
 
     The default is an empty set except for
     :class:`lino.core.dbtables.Table` where this will be populated from
     :attr:`hidden_elements <lino.core.model.Model.hidden_elements>`
     of the :class:`lino.core.model.Model`.
+
+    Note that these names are not being verified to be names of
+    existing fields. This fact is being used by UNION tables like 
+    :class:`lino_xl.lib.vat.IntracomInvoices`
+
     """
 
     detail_html_template = 'bootstrap3/detail.html'
@@ -541,9 +549,15 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     '''
 
     insert_layout = None
-    """Define the form layout to use for the insert window.  If there's a
-    :attr:`detail_layout` but no :attr:`insert_layout`, Lino will use
-    :attr:`detail_layout` for the insert window.
+    """Define the form layout to use for the insert window.  
+
+    If there's a :attr:`detail_layout` but no :attr:`insert_layout`,
+    the table won't have any (+) button to create a new row via a
+    dialog window, but users can still create rows by writing into the
+    phantom row. Example of this is
+    :class:`lino_xl.lib.courses.Topics` which has a detail layout
+    with slave tables, but the model itself has only two fields (id
+    and name) and it makes no sense to have an insert window.
 
     """
 
@@ -681,6 +695,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
           @classmethod
           def disabled_fields(cls, obj, ar):
+              s = super(MyActor, cls).disabled_fields(obj, ar)
               ...
               return set()
 
@@ -690,6 +705,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         method::
 
           def disabled_fields(self, ar):
+              s = super(MyModel, self).disabled_fields(ar)
               ...
               return set()
 
@@ -697,7 +713,13 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
 
         """
-        return set()
+
+        s = set()
+        state = cls.get_row_state(obj)
+        if state is not None:
+            s |= cls._state_to_disabled_actions.get(state.name, set())
+        
+        return s
 
     @classmethod
     def get_request_handle(self, ar):
@@ -793,11 +815,12 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
             window_size=(cls.insert_layout_width, 'auto'))
 
         if cls.parameters is None:
-            params = cls.get_parameter_fields()
+            params = {}
+            cls.setup_parameters(params)
             if len(params):
                 cls.parameters = params
         else:
-            cls.parameters = cls.get_parameter_fields(**cls.parameters)
+            cls.setup_parameters(cls.parameters)
 
         cls.simple_parameters = tuple(cls.get_simple_parameters())
         
@@ -811,9 +834,9 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                 fld.null = True
                 fld.default = None
                 cls.parameters[name] = fld
-
         # if len(cls.parameters) == 0:
         #     cls.parameters = None # backwards compatibility
+
 
     @classmethod
     def get_known_values(self):
@@ -901,7 +924,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         if cls.editable:
             if cls.allow_create:
                 # cls.create_action = cls._bind_action(actions.SubmitInsert())
-                if cls.detail_action and not cls.hide_top_toolbar:
+                # if cls.detail_action and not cls.hide_top_toolbar:
+                if cls.insert_layout and not cls.hide_top_toolbar:
                     cls.insert_action = cls._bind_action(
                         'insert_action', cls.get_insert_action())
             if not cls.hide_top_toolbar:
@@ -939,6 +963,30 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
         cls._actions_list.sort(key=lambda a: a.action.sort_index)
         # cls._actions_list = tuple(cls._actions_list)
+        
+        # build a dict which maps state.name to a set of action names
+        # to be disabled on objects having that state:
+        cls._state_to_disabled_actions = {}
+        st2da = cls._state_to_disabled_actions
+        wsf = cls.workflow_state_field
+        if wsf is not None:
+            for state in wsf.choicelist.get_list_items():
+                st2da[state.name] = set()
+            for a in wsf.choicelist.workflow_actions:
+                st2da[a.target_state.name].add(a.action_name)
+            for ba in cls._actions_list:
+                # st2da[ba] = 1
+                if ba.action.action_name:
+                    required_states = ba.action.required_states
+                    if required_states:
+                        # if an action has required states, then it must
+                        # get disabled for all other states:
+                        if is_string(required_states):
+                            required_states = set(required_states.split())
+                        for k in st2da.keys():
+                            if k not in required_states:
+                                st2da[k].add(ba.action.action_name)
+        
 
     @classmethod
     def _bind_action(self, k, a):
@@ -1037,6 +1085,9 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         the actual title.
 
         """
+        if isinstance(self.parameters, ParameterPanel):
+            for t in self.parameters.get_title_tags(ar):
+                yield t
         for k in self.simple_parameters:
             v = getattr(ar.param_values, k)
             if v:
@@ -1062,17 +1113,17 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         pass
 
     @classmethod
-    def get_parameter_fields(cls, **fields):
+    def setup_parameters(cls, fields):
         """Inheritable hook for defining parameters. Called once per actor at
         site startup.  The default implementation just calls
-        :meth:`get_parameter_fields
-        <lino.core.model.Model.get_parameter_fields>` of the
+        :meth:`setup_parameters
+        <lino.core.model.Model.setup_parameters>` of the
         :attr:`model` (if a :attr:`model` is set).
 
         """
         if cls.model is None:
-            return fields
-        return cls.model.get_parameter_fields(**fields)
+            return
+        cls.model.setup_parameters(fields)
 
     @classmethod
     def get_simple_parameters(cls):
@@ -1099,20 +1150,20 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
             #~ if isinstance(state,choicelists.Choice):
                 #~ state = state.value
 
-    @classmethod
-    def disabled_actions(self, ar, obj):
-        """
-        Returns a dictionary containg the names of the actions
-        that are disabled  for the given object instance `obj`
-        and the user who issued the given ActionRequest `ar`.
+    # @classmethod
+    # def disabled_actions(self, ar, obj):  # no longer used since 20170909
+    #     """
+    #     Returns a dictionary containg the names of the actions
+    #     that are disabled  for the given object instance `obj`
+    #     and the user who issued the given ActionRequest `ar`.
 
-        Application developers should not need to override this method.
+    #     Application developers should not need to override this method.
 
-        Default implementation returns an empty dictionary.
-        Overridden by :class:`dd.Table`
+    #     Default implementation returns an empty dictionary.
+    #     Overridden by :class:`dd.Table`
 
-        """
-        return {}
+    #     """
+    #     return {}
 
     @classmethod
     def override_column_headers(self, ar, **kwargs):

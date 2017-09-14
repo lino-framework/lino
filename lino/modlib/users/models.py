@@ -18,7 +18,7 @@ from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from lino.api import dd, rt, _
 from lino.utils.xmlgen.html import E
 from lino.core import userprefs
-from lino.core.fields import NullCharField
+# from lino.core.fields import NullCharField
 from lino.core.roles import SiteAdmin
 
 from lino.mixins import CreatedModified, Contactable
@@ -46,7 +46,9 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
     hidden_columns = 'password remarks'
     authenticated = True
 
-    username = NullCharField(_('Username'), max_length=30, unique=True)
+    # username = dd.NullCharField(_('Username'), max_length=30, unique=True)
+    username = models.CharField(_('Username'), max_length=30, unique=True)
+    # seems that Django doesn't like nullable username 
     user_type = UserTypes.field(blank=True)
     initials = models.CharField(_('Initials'), max_length=10, blank=True)
     first_name = models.CharField(_('First name'), max_length=30, blank=True)
@@ -67,7 +69,7 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
     
     def get_full_name(self):
         if not self.first_name and not self.last_name:
-            return self.initials or self.username
+            return self.initials or self.username or str(self.pk)
         return u'{} {}'.format(self.first_name, self.last_name).strip()
 
     @dd.displayfield(_("Name"), max_length=15)
@@ -102,8 +104,12 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
         See also :meth:`Users.get_row_permission`.
         """
         rv = super(User, self).disabled_fields(ar)
-        if not ar.get_user().user_type.has_required_roles([SiteAdmin]):
+        user = ar.get_user()
+        if not user.user_type.has_required_roles([SiteAdmin]):
+            rv.add('send_email')
             rv.add('user_type')
+            if user != self:
+                rv.add('change_password')
         return rv
 
     def full_clean(self, *args, **kw):

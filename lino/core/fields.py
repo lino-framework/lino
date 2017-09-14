@@ -148,31 +148,31 @@ http://stackoverflow.com/a/1934764
 """
 
 
-class NullCharField(models.CharField):  # subclass the CharField
-    description = "CharField that stores empty strings as NULL instead of ''."
+# class NullCharField(models.CharField):  # subclass the CharField
+#     description = "CharField that stores empty strings as NULL instead of ''."
 
-    def __init__(self, *args, **kwargs):
-        defaults = dict(blank=True, null=True)
-        defaults.update(kwargs)
-        super(NullCharField, self).__init__(*args, **defaults)
+#     def __init__(self, *args, **kwargs):
+#         defaults = dict(blank=True, null=True)
+#         defaults.update(kwargs)
+#         super(NullCharField, self).__init__(*args, **defaults)
 
-    # this is the value right out of the db, or an instance
-    def to_python(self, value):
-        # ~ if isinstance(value, models.CharField): #if an instance, just return the instance
-        if isinstance(value, six.string_types):  # if a string, just return the value
-            return value
-        if value is None:  # if the db has a NULL (==None in Python)
-            return ''  # convert it into the Django-friendly '' string
-        else:
-            return value  # otherwise, return just the value
+#     # this is the value right out of the db, or an instance
+#     def to_python(self, value):
+#         # ~ if isinstance(value, models.CharField): #if an instance, just return the instance
+#         if isinstance(value, six.string_types):  # if a string, just return the value
+#             return value
+#         if value is None:  # if the db has a NULL (==None in Python)
+#             return ''  # convert it into the Django-friendly '' string
+#         else:
+#             return value  # otherwise, return just the value
 
-    def get_db_prep_value(self, value, connection, prepared=False):
-        # catches value right before sending to db
-        # if Django tries to save '' string, send the db None (NULL)
-        if value == '':
-            return None
-        else:
-            return value  # otherwise, just pass the value
+#     def get_db_prep_value(self, value, connection, prepared=False):
+#         # catches value right before sending to db
+#         # if Django tries to save '' string, send the db None (NULL)
+#         if value == '':
+#             return None
+#         else:
+#             return value  # otherwise, just pass the value
 
 
 class FakeField(object):
@@ -180,6 +180,7 @@ class FakeField(object):
 
     """
     model = None
+    db_column = None
     choices = []
     primary_key = False
     editable = False
@@ -340,16 +341,22 @@ VFIELD_ATTRIBS = frozenset('''to_python choices save_form_data
   help_text blank'''.split())
 
 class VirtualField(FakeField):
-    """Represents a virtual field. Virtual fields are not stored in the
-    database, but computed each time they are read. Django doesn't see
-    them.
+    """Represents a virtual field. Values of virtual fields are not stored
+    in the database, but computed on the fly each time they get
+    read. Django doesn't see them.
 
     A virtual field must have a `return_type`, which can be either a
     Django field type (CharField, TextField, IntegerField,
     BooleanField, ...) or one of Lino's custom fields
     :class:`DisplayField`, :class:`HtmlBox` or :class:`RequestField`.
 
-    The `get` must be a callable which takes the following arguments:
+    The `get` must be a callable which takes two arguments: `obj` the
+    database object and `ar` an action request.
+
+    The :attr:`model` of a VirtualField is the class where the field
+    was *defined*. This can be an abstract model. The VirtualField
+    instance does not have a list of the concrete models which use it
+    (because they inherit from that class).
 
     """
 
@@ -379,10 +386,12 @@ class VirtualField(FakeField):
         #~ self.return_type.attname = name
         #~ if issubclass(model,models.Model):
         #~ self.lino_resolve_type(model,name)
-        if AFTER17:
-            model._meta.add_field(self, virtual=True)
-        else:
-            model._meta.add_virtual_field(self)
+        
+        # must now be done by caller code:
+        # if AFTER17:
+        #     model._meta.add_field(self, virtual=True)
+        # else:
+        #     model._meta.add_virtual_field(self)
 
         # if self.get is None:
         #     return
@@ -402,8 +411,8 @@ class VirtualField(FakeField):
     def __repr__(self):
         if self.model is None:
             return super(VirtualField, self).__repr__()
-        return "%s %s.%s.%s" % (self.__class__.__name__, self.model.__module__,
-                                self.model.__name__, self.name)
+        return "%s.%s.%s" % (self.model.__module__,
+                             self.model.__name__, self.name)
 
     def lino_resolve_type(self):
         """Called on virtual fields that are defined on an Actor
@@ -431,14 +440,21 @@ class VirtualField(FakeField):
                     #~ from lino.core.kernel import set_default_verbose_name
                     #~ set_default_verbose_name(self.return_type)
 
+        # if self.name == 'detail_pointer':
+        #     logger.info('20170905 resolve_type 1 %s on %s',
+        #                 self.name, self.verbose_name)
+            
         #~ removed 20120919 self.return_type.editable = self.editable
         for k in VFIELD_ATTRIBS:
             setattr(self, k, getattr(self.return_type, k, None))
-        #~ logger.info('20120831 VirtualField %s on %s',name,actor_or_model)
+        # if self.name == 'detail_pointer':
+        #     logger.info('20170905 resolve_type done %s %s',
+        #                 self.name, self.verbose_name)
 
         from lino.core import store
         #~ self._lino_atomizer = store.create_field(self,self.name)
         store.get_atomizer(self.model, self, self.name)
+
 
     def get_default(self):
         return self.return_type.get_default()
@@ -577,33 +593,7 @@ def requestfield(*args, **kw):
     return decorator
 
 
-class MethodField(VirtualField):
-    # Not used. See `/blog/2011/1221`.
-    # Similar to VirtualField, but the `get` argument to `__init__`
-    # must be a string which is the name of a model method to be called
-    # without a `request`.
-
-    def __init__(self, return_type, get, *args, **kw):
-        self.args = args
-        self.kw = kw
-        VirtualField.__init__(self, return_type, get)
-
-    def attach_to_model(self, model, name):
-        self.get = getattr(model, get)
-        VirtualField.attach_to_model(self, model, name)
-
-    #~ def value_from_object(self,request,obj):
-    def value_from_object(self, obj, ar=None):
-        """
-        Return the value of this field in the specified model instance `obj`.
-        `request` is ignored.
-        """
-        m = self.get
-        return m(obj, *self.args, **self.kw)
-
-
 class CharField(models.CharField):
-
     """
     An extension around Django's `models.CharField`.
 
@@ -848,9 +838,8 @@ class DummyField(FakeField):
 
 
 def wildcard_data_elems(model):
-    """Yields names that will be used as wildcard in the
-    :attr:`column_names` of a table or when :func:`fields_list` find a
-    ``*``.
+    """Yield names to be used as wildcard in the :attr:`column_names` of a
+    table or when :func:`fields_list` finds a ``*``.
 
     """
     meta = model._meta
@@ -884,8 +873,8 @@ def use_as_wildcard(de):
 
 
 def fields_list(model, field_names):
-    """Return a set with the names of the specified fields, checking whether
-    each of them exists.
+    """Return a set with the names of the specified fields, checking
+    whether each of them exists.
 
     Arguments: `model` is any subclass of `django.db.models.Model`. It
     may be a string with the full name of a model
@@ -900,35 +889,33 @@ def fields_list(model, field_names):
     ``['foo','bar']`` and ``dd.fields_list(MyModel,"foo baz")`` will raise
     an exception.
 
+    TODO: either rename this to `fields_set` or change it to return an
+    iterable on the fields.
+
     """
     lst = set()
-    if '*' in field_names:
-        explicit_names = set()
-        for name in field_names.split():
-            if name != '*':
-                explicit_names.add(name)
-        wildcard_names = [de.name for de in wildcard_data_elems(model)
-                          if (de.name not in explicit_names)
-                          and use_as_wildcard(de)]
-        wildcard_str = ' '.join(wildcard_names)
-        field_names = field_names.replace('*', wildcard_str)
+    names_list = field_names.split()
 
-    for name in field_names.split():
-
-        e = model.get_data_elem(name)
-        if e is None:
-            raise models.FieldDoesNotExist(
-                "No data element %r in %s" % (name, model))
-        if isinstance(e, DummyField):
-            pass
-        # elif isinstance(e,            
-        #         models.Field, FakeField,
-        #         GenericForeignKey)):
-        elif hasattr(e, 'name'):
-            lst.add(e.name)
+    for name in names_list:
+        if name == '*':
+            explicit_names = set()
+            for name in names_list:
+                if name != '*':
+                    explicit_names.add(name)
+            for de in wildcard_data_elems(model):
+                if not isinstance(de, DummyField):
+                    if de.name not in explicit_names:
+                        if use_as_wildcard(de):
+                            lst.add(de.name)
         else:
-            raise Exception("{}.{} : invalid field type {}".format(
-                model, name, e))
+            e = model.get_data_elem(name)
+            if e is None:
+                raise models.FieldDoesNotExist(
+                    "No data element %r in %s" % (name, model))
+            if isinstance(e, DummyField):
+                pass
+            else:
+                lst.add(e.name)
     return lst
 
 

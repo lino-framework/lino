@@ -209,7 +209,7 @@ def make_view_permission_handler_(
 
 def make_permission_handler_(
     elem, actor, readonly, debug_permissions, required_roles,
-        allow=None, auth=False, owner=None, allowed_states=None):
+        allow=None, auth=False, owner=None):
 
     check_required_roles(required_roles, actor)
 
@@ -236,35 +236,35 @@ def make_permission_handler_(
     if owner is not None:
         raise ChangedAPI("20150718 owner no longer supported")
 
-    if allowed_states:
-        if actor.workflow_state_field is None:
-            raise Exception(
-                """\
-%s cannot specify `allowed_states` when %s.workflow_state_field is %r.
-                """ % (elem, actor, actor.workflow_state_field))
-        #~ else:
-            #~ print 20120621, "ok", actor
-        lst = actor.workflow_state_field.choicelist
-        ns = []
-        if isinstance(allowed_states, six.string_types):
-            allowed_states = allowed_states.split()
-        for n in allowed_states:
-            if n not in lst.removed_names:
-                if n is not None:
-                    if n == '_':
-                        n = None
-                    else:
-                        n = lst.get_by_name(n)
-                ns.append(n)
-        allowed_states = frozenset(ns)
-        allow2 = allow
+#     if allowed_states:
+#         if actor.workflow_state_field is None:
+#             raise Exception(
+#                 """\
+# %s cannot specify `allowed_states` when %s.workflow_state_field is %r.
+#                 """ % (elem, actor, actor.workflow_state_field))
+#         #~ else:
+#             #~ print 20120621, "ok", actor
+#         lst = actor.workflow_state_field.choicelist
+#         ns = []
+#         if isinstance(allowed_states, six.string_types):
+#             allowed_states = allowed_states.split()
+#         for n in allowed_states:
+#             if n not in lst.removed_names:
+#                 if n is not None:
+#                     if n == '_':
+#                         n = None
+#                     else:
+#                         n = lst.get_by_name(n)
+#                 ns.append(n)
+#         allowed_states = frozenset(ns)
+#         allow2 = allow
 
-        def allow(action, user, obj, state):
-            if not allow2(action, user, obj, state):
-                return False
-            if obj is None:
-                return True
-            return state in allowed_states
+#         def allow(action, user, obj, state):
+#             if not allow2(action, user, obj, state):
+#                 return False
+#             if obj is None:
+#                 return True
+#             return state in allowed_states
 
     if settings.SITE.user_types_module and not readonly:
         allow3 = allow
@@ -282,10 +282,10 @@ def make_permission_handler_(
         def allow(action, user, obj, state):
             v = allow4(action, user, obj, state)
             logger.info(
-                u"debug_permissions %r required(%s, %s), "
+                u"debug_permissions %r required(%s), "
                 "allow(%s, %s, %s) --> %s",
                 action, required_roles,
-                allowed_states, user.username, obj2str(obj), state, v)
+                user.username, obj2str(obj), state, v)
             return v
     return allow
 

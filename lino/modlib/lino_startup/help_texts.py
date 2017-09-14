@@ -567,8 +567,7 @@ some <head> tags for stylesheets."""),
     'lino.modlib.users.User' : _("""Fields:"""),
     'lino.modlib.users.User.authenticated' : _("""This is always True.  Compare with
 AnonymousUser.authenticated."""),
-    'lino.modlib.users.User.username' : _("""Must be unique or empty.
-Leaving this empty means that the user cannot log in."""),
+    'lino.modlib.users.User.username' : _("""Must be unique and cannot be empty."""),
     'lino.modlib.users.User.initials' : _("""The nickname or initials of this user. This does not need to
 be unique but should provide a reasonably identifying
 function."""),

@@ -58,7 +58,6 @@ from lino.core import dbtables
 from lino.core import tables
 from lino.core import constants
 from lino.core import views
-from lino.utils import class_dict_items
 from lino.utils.memo import Parser
 from lino.utils.xmlgen.html import E
 from lino.core.requests import ActorRequest
@@ -86,6 +85,16 @@ from .gfks import GenericForeignKey
 startup_rlock = threading.RLock()  # Lock() or RLock()?
 
 
+def class_dict_items(cl, exclude=None):
+    if exclude is None:
+        exclude = set()
+    for k, v in cl.__dict__.items():
+        if not k in exclude:
+            yield cl, k, v
+            exclude.add(k)
+    for b in cl.__bases__:
+        for i in class_dict_items(b, exclude):
+            yield i
 
 
 def set_default_verbose_name(f):
@@ -356,13 +365,13 @@ class Kernel(object):
             for f in model._meta.get_fields():
                 m = f.model
 
+                # no longer needed with Django 1.11+ (?)
                 # Refuse nullable CharFields, but don't trigger on
                 # NullableCharField (which is a subclass of CharField).
-
-                if f.__class__ is models.CharField and f.null:
-                    msg = "Nullable CharField %s in %s" % (f.name, model)
-                    raise Exception(msg)
-                elif isinstance(f, models.ForeignKey):
+                # if f.__class__ is models.CharField and f.null:
+                #     msg = "Nullable CharField %s in %s" % (f.name, model)
+                #     raise Exception(msg)
+                if isinstance(f, models.ForeignKey):
                     if isinstance(f.rel.model, six.string_types):
                         raise Exception("Could not resolve target %r of "
                                         "ForeignKey '%s' in %s "
@@ -418,9 +427,11 @@ class Kernel(object):
 
             model.on_analyze(site)
 
-            for k, v in class_dict_items(model):
+            for m, k, v in class_dict_items(model):
                 if isinstance(v, fields.VirtualField):
-                    v.attach_to_model(model, k)
+                    v.attach_to_model(m, k)
+                    model._meta.add_field(v, virtual=True)
+                    
         #~ logger.info("20130817 attached model vfs")
 
         # Install help texts to all database fields:
@@ -902,8 +913,9 @@ class Kernel(object):
         """
         # logger.info('20121010 ExtUI.setup_handle() %s'%h.actor)
 
-        if h.actor.is_abstract():
-            return
+        # 20170905 IntracomInvoices
+        # if h.actor.is_abstract():
+        #     return
 
         if isinstance(h, tables.TableHandle):
             he = set(h.actor.hidden_columns | h.actor.hidden_elements)

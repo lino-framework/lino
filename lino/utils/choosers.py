@@ -176,8 +176,6 @@ class Chooser(FieldChooser):
                     raise Exception(
                         "Invalid primary key %r for %s", pk, master.__name__)
                 except master.DoesNotExist:
-                    # todo: ReportRequest should become a subclass of Dialog
-                    # and this exception should call dlg.error()
                     raise Exception("There's no %s with primary key %r" %
                                     (master.__name__, pk))
 

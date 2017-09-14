@@ -206,11 +206,6 @@ class Action(Parametrizable, Permittable):
     required_states = None
 
     def __init__(self, label=None, **kw):
-        """The first argument is the optional `label`, other arguments should
-        be specified as keywords and can be any of the existing class
-        attributes.
-
-        """
         if label is not None:
             self.label = label
 
@@ -348,15 +343,6 @@ class Action(Parametrizable, Permittable):
         setup_params_choosers(self)
 
     def attach_to_actor(self, owner, name):
-        """Called once per Actor per Action on startup before a BoundAction
-        instance is being created.  If this returns False, then the
-        action won't be attached to the given actor.
-
-        The owner is the object which "defines" the action, i.e. uses
-        that instance for the first time. Subclasses of the owner may
-        re-use the same instance without becoming the owner.
-
-        """
         # if not actor.editable and not self.readonly:
         #     return False
         if self.defining_actor is not None:
@@ -391,6 +377,12 @@ class Action(Parametrizable, Permittable):
         Derived Action classes may override this to add vetos.
         E.g. the MoveUp action of a Sequenced is not available on the
         first row of given `ar`.
+
+        This should be used only for light-weight tests. If this
+        requires a database lookup, consider disabling the action in
+        :meth:`disabled_fields
+        <lino.core.model.Model.disabled_fields>` where you can disable
+        multiple actions and fields at once.
 
         """
         return True

@@ -1,4 +1,4 @@
-# Copyright 2009-2016 Luc Saffre
+# Copyright 2009-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 """Defines the "store" and its "fields" .
 
@@ -136,7 +136,7 @@ class StoreField(object):
 
     def parse_form_value(self, v, obj):
         # if v == '' and not self.field.empty_strings_allowed:
-            # return None
+        #     return None
         return self.field.to_python(v)
 
     def extract_form_data(self, post_data):
@@ -144,10 +144,12 @@ class StoreField(object):
         return post_data.get(self.name, None)
 
     def form2obj(self, ar, instance, post_data, is_new):
-        """
-        Test cases:
-        - setting a CharField to ''
+        """Test cases:
+
+        - setting a CharField to '' will store either '' or None,
+          depending on whether the field is nullable or not.
         - sales.Invoice.number may be blank
+
         """
         v = self.extract_form_data(post_data)
         # logger.info("20170508 %s.form2obj() %s = %r", self.__class__.__name__,self.name,v)
@@ -158,7 +160,9 @@ class StoreField(object):
         if v == '':
             # print(20160611, self.field.empty_strings_allowed,
             #       self.field.name, self.form2obj_default)
-            if self.field.empty_strings_allowed:
+            if self.field.null:
+                v = None
+            elif self.field.empty_strings_allowed:
                 v = self.parse_form_value(v, instance)
 
                 # If a field has been posted with empty string, we
@@ -167,7 +171,7 @@ class StoreField(object):
                 # never be unset!
 
                 # Charfields have empty_strings_allowed (e.g. id field
-                # may be empty) but don't do this for other cases.
+                # may be empty), but don't do this for other cases.
             else:
                 v = self.form2obj_default
             # print("20160611 {0} = {1}".format(self.field.name, v))
@@ -500,15 +504,15 @@ class DisabledFieldsStoreField(SpecialStoreField):
             #     pk = None
         return d
 
+# no longer used since 20170909
+# class DisabledActionsStoreField(SpecialStoreField):
 
-class DisabledActionsStoreField(SpecialStoreField):
+#     """
+#     """
+#     name = str('disabled_actions')
 
-    """
-    """
-    name = str('disabled_actions')
-
-    def full_value_from_object(self, obj, ar):
-        return self.store.actor.disabled_actions(ar, obj)
+#     def full_value_from_object(self, obj, ar):
+#         return self.store.actor.disabled_actions(ar, obj)
 
 
 # class RecnoStoreField(SpecialStoreField):
@@ -995,11 +999,11 @@ class Store(BaseStore):
         # if not issubclass(rh.report,dbtables.Table):
             # addfield(RecnoStoreField(self))
 
-        if rh.actor.editable:  # condition added 20131017
-
+        if rh.actor.editable:
             addfield(DisabledFieldsStoreField(self))
+            # NB what about disabled actions on non-editable actor?
 
-        addfield(DisabledActionsStoreField(self))
+        # addfield(DisabledActionsStoreField(self))
 
         if rh.actor.editable:
             addfield(DisableEditingStoreField(self))

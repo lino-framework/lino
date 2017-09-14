@@ -67,8 +67,8 @@ class BoundAction(object):
             self, action.readonly, debug_permissions, required), action)
         self._allow = curry(make_permission_handler(
             action, actor, action.readonly,
-            debug_permissions, required,
-            allowed_states=action.required_states), action)
+            debug_permissions, required), action)
+            # allowed_states=action.required_states), action)
         #~ if debug_permissions:
             #~ logger.info("20130424 _allow is %s",self._allow)
         #~ actor.actions.define(a.action_name,ba)

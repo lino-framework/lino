@@ -2606,8 +2606,8 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel, {
   ,config_containing_window : function(wincfg) { 
       wincfg.title = this.window_title;
       wincfg.keys = [
-        { key: Ext.EventObject.ENTER, fn: this.on_ok }
-      ]
+        { key: Ext.EventObject.ENTER, fn: this.on_ok, scope: this }
+      ];
       
       if (!wincfg.defaultButton) this.getForm().items.each(function(f){
           if(f.isFormField){ 
@@ -3011,9 +3011,9 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       this.form.my_loadRecord(record.data);
       this.set_window_title(record.title);
       //~ this.getBottomToolbar().enable();
-      var da = record.data.disabled_actions;
+      var da = record.data.disabled_fields;
       if (da) {
-          //~ console.log('20120528 disabled_actions =',da,this.getBottomToolbar());
+          //~ console.log('20120528 disabled_fields =',da,this.getBottomToolbar());
           //~ 20121016 this.getBottomToolbar().items.each(function(item,index,length){
           if(this.hide_top_toolbar) {
               var tb = this.getBottomToolbar();
@@ -4267,13 +4267,15 @@ Lino.cell_context_menu = function(grid,row,col,e) {
   //~ return;
   if(!grid.cmenu.el){grid.cmenu.render(); }
   //~ if(e.record.data.disabled_fields) {
-  
-  var da = grid.store.reader.arrayData.rows[row][grid.disabled_actions_index];
-  if (da) {
-      this.cmenu.cascade(function(item){ 
-        //~ console.log(20120531, item.itemId, da[item.itemId]);
-        if (da[item.itemId]) item.disable(); else item.enable();
-      });
+
+  if (grid.disabled_fields_index) {
+      var da = grid.store.reader.arrayData.rows[row][grid.disabled_fields_index];
+      if (da) {
+          this.cmenu.cascade(function(item){ 
+            //~ console.log(20120531, item.itemId, da[item.itemId]);
+            if (da[item.itemId]) item.disable(); else item.enable();
+          });
+      }
   };
   
   var xy = e.getXY();

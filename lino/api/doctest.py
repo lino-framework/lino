@@ -15,6 +15,7 @@ django.setup()
 from lino.api.shell import *
 from django.utils import translation
 from django.test import Client
+from django.db import connection, reset_queries as reset_sql_queries
 import json
 from bs4 import BeautifulSoup
 
@@ -355,3 +356,15 @@ def walk_menu_items(username=None, severe=True):
         doit(None)
         
         
+def show_sql_queries():
+    """Print the SQL queries which have been made since last call.
+
+    Usage example: :ref:`specs.noi.sql`.
+
+    """
+    for qry in connection.queries:
+        sql = qry['sql'].strip()
+        print(sql)
+    reset_sql_queries()
+        
+

@@ -243,7 +243,7 @@ def models_by_base(base, toplevel_only=False):
 
     """
     found = []
-    for m in get_models():
+    for m in get_models(include_auto_created=True):
         if issubclass(m, base):
             add = True
             if toplevel_only:
@@ -592,7 +592,7 @@ class Parametrizable(object):
     Set this to a `dict` of `name = models.XyzField()` pairs.
 
     On an actor you can alternatively or additionally implement a
-    class method :meth:`lino.core.actors.Actor.get_parameter_fields`.
+    class method :meth:`lino.core.actors.Actor.setup_parameters`.
 
     TODO: write documentation.
 
@@ -693,11 +693,17 @@ class ParameterPanel(object):
     """A utility class for defining reusable definitions for
     :attr:`parameters <lino.core.actors.Actor.parameters>`.
 
-    Used  e.g. by :class:`lino.mixins.periods.ObservedDateRange`.
+    Subclassed e.g. by 
+    :class:`lino.mixins.periods.ObservedDateRange`.
+    :class:`lino_xl.lib.ledger.AccountingPeriodRange`.
+
 
     """
     def __init__(self, **kw):
         self.fields = kw
+
+    def get(self, *args, **kw):
+        return self.fields.get(*args, **kw)
 
     def values(self, *args, **kw):
         return self.fields.values(*args, **kw)
@@ -705,6 +711,15 @@ class ParameterPanel(object):
     def keys(self, *args, **kw):
         return self.fields.keys(*args, **kw)
 
+    def items(self, *args, **kw):
+        return self.fields.items(*args, **kw)
+
+    def update(self, *args, **kw):
+        return self.fields.update(*args, **kw)
+    
+    def setdefault(self, *args, **kw):
+        return self.fields.setdefault(*args, **kw)
+    
     def __iter__(self, *args, **kw):
         return self.fields.__iter__(*args, **kw)
 
@@ -717,11 +732,14 @@ class ParameterPanel(object):
     def __setitem__(self, *args, **kw):
         return self.fields.__setitem__(*args, **kw)
 
-    def get(self, *args, **kw):
-        return self.fields.get(*args, **kw)
+    def get_title_tags(self, ar):
+        """A hook for specifying title tags for the actor which uses this
+        parameter panel.
 
-    def items(self, *args, **kw):
-        return self.fields.items(*args, **kw)
+        See :meth:`lino.core.actor.Actor.get_title_tags`.
+
+        """
+        return []
 
 
 class PseudoRequest(object):

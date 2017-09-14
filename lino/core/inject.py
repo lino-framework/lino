@@ -338,20 +338,29 @@ def update_field(model_spec, name, **kw):
 
     """
     def todo(model):
-        try:
-            fld = model._meta.get_field(name)
-            #~ fld = model._meta.get_field_by_name(name)[0]
-        except FieldDoesNotExist:
-            fld = getattr(model, name, None)
+        if True:  # new implementation since 20170905
+            fld = model.get_data_elem(name)
             if fld is None:
                 msg = "Cannot update unresolved field %s.%s", model, name
                 raise Exception(msg)
                 logger.warning(msg)
             elif isinstance(fld, fields.VirtualField):
                 fld = fld.return_type
-            else:
-                msg = "Cannot update field %s.%s", model, name
-                raise Exception(msg)
+        else:
+            try:
+                fld = model._meta.get_field(name)
+                #~ fld = model._meta.get_field_by_name(name)[0]
+            except FieldDoesNotExist:
+                fld = getattr(model, name, None)
+                if fld is None:
+                    msg = "Cannot update unresolved field %s.%s", model, name
+                    raise Exception(msg)
+                    logger.warning(msg)
+                elif isinstance(fld, fields.VirtualField):
+                    fld = fld.return_type
+                else:
+                    msg = "Cannot update field %s.%s", model, name
+                    raise Exception(msg)
         # if fld.model != model:
         #     raise Exception('20120715 update_field(%s.%s) : %s' %
         #                     (model, fld, fld.model))
@@ -359,6 +368,7 @@ def update_field(model_spec, name, **kw):
         for k, v in list(kw.items()):
             # old = getattr(fld, k, "(undefined)")
             # if old != v:
+            # if name == 'detail_pointer':
             #     logger.info(
             #         u"20170825 updated %s.%s from %s to %s",
             #         fld, k, old, v)

@@ -212,7 +212,7 @@ class CommentsByRFC(CommentsByX):
     reply_to
     # comment_type
     short_text
-    """, window_size=(60, 10), hidden_elements="reply_to")
+    """, window_size=(60, 13), hidden_elements="reply_to")
 
 
     @classmethod

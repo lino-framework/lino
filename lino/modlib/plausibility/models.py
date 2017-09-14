@@ -151,7 +151,7 @@ class Problem(Controllable, UserAuthored):
 
     # no longer needed after 20170826
     # @classmethod
-    # def get_parameter_fields(cls, **fields):
+    # def setup_parameters(cls, **fields):
     #     fields.update(checker=Checkers.field(
     #         blank=True, help_text=_("Only problems by this checker.")))
     #     return fields

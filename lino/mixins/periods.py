@@ -228,7 +228,7 @@ class DateRange(Model):
     get_default_end_date = None
 
     @classmethod
-    def get_parameter_fields(cls, **fields):
+    def setup_parameters(cls, fields):
         fields.update(
             start_date=models.DateField(
                 _("Period from"), blank=True, null=True,
@@ -240,7 +240,7 @@ class DateRange(Model):
                 blank=True, null=True,
                 default=cls.get_default_end_date,
                 help_text=_("End date of observed period")))
-        return super(DateRange, cls).get_parameter_fields(**fields)
+        super(DateRange, cls).setup_parameters(fields)
 
 
 class ObservedDateRange(ParameterPanel):

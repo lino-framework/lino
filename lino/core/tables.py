@@ -396,6 +396,19 @@ class AbstractTable(actors.Actor):
 
     """
 
+    no_phantom_row = False
+    """Suppress a phantom row in situations where Lino would otherwise add
+    one.
+
+    Used for :class:`lino_xl.lib.ledger.ByJournal` where a phantom row
+    is disturbing.
+
+    TODO: Actually this option would not be necessary if the AJAX call
+    sent by a grid panel would include an option which says whether it
+    is main item or not.
+
+    """
+    
     grid_configs = []
     """
     Will be filled during :meth:`lino.core.table.Table.do_setup`.
@@ -523,7 +536,7 @@ method in order to sort the rows of the queryset.
 
     @classmethod
     def wildcard_data_elems(self):
-        for cc in list(self.virtual_fields.values()):
+        for cc in self.virtual_fields.values():
             yield cc
         #~ return []
 
@@ -614,6 +627,10 @@ method in order to sort the rows of the queryset.
         #~ if action is None:
             #~ action = self.default_action
         #~ return TableRequest(ui,self,request,action,**kw)
+
+    @fields.displayfield(_("Details"))
+    def detail_pointer(self, obj, ar):
+        return obj.obj2href(ar)
 
     @classmethod
     def request(self, master_instance=None, **kw):

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2016 Luc Saffre
+# Copyright 2016-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 """This module defines the actual :mod:`lino.modlib.weasyprint` build
 methods.
@@ -9,6 +9,7 @@ methods.
 from __future__ import unicode_literals
 from __future__ import absolute_import
 from builtins import str
+import six
 
 import logging
 logger = logging.getLogger(__name__)
@@ -85,8 +86,9 @@ class WeasyHtmlBuildMethod(WeasyBuildMethod):
     name = 'weasy2html'
 
     def html2file(self, html, filename):
-        html = html.encode("utf-8")
-        file(filename, 'w').write(html)
+        if six.PY2:
+            html = html.encode("utf-8")
+        open(filename, 'w').write(html)
 
 
 add = BuildMethods.add_item_instance

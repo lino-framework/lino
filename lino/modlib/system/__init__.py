@@ -9,7 +9,6 @@ This plugin is installed in most Lino applications.
    :toctree:
 
    choicelists
-   mixins
    models
 
 

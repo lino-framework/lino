@@ -194,10 +194,10 @@ class Registrable(model.Model):
 
     # no longer needed after 20170826
     # @classmethod
-    # def get_parameter_fields(cls, **fields):
+    # def setup_parameters(cls, **fields):
     #     wsf = cls.workflow_state_field
     #     fields[wsf.name] = wsf.choicelist.field(blank=True, null=True)
-    #     return super(Registrable, cls).get_parameter_fields(**fields)
+    #     return super(Registrable, cls).setup_parameters(**fields)
 
     @classmethod
     def get_simple_parameters(cls):
@@ -338,10 +338,14 @@ class Referrable(model.Model):
     ref_max_length = 40
     """The maximum length of the :attr:`ref` field."""
 
-    ref = fields.NullCharField(_("Reference"),
-                               max_length=ref_max_length,
-                               blank=True, null=True,
-                               unique=True)
+    # ref = fields.NullCharField(_("Reference"),
+    #                            max_length=ref_max_length,
+    #                            blank=True, null=True,
+    #                            unique=True)
+
+    ref = models.CharField(
+        _("Reference"), max_length=ref_max_length,
+        blank=True, null=True, unique=True)
 
     def on_duplicate(self, ar, master):
         """Before saving a duplicated object for the first time, we must

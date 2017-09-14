@@ -20,15 +20,15 @@ from os.path import join, dirname
 from lxml import etree
 
 def validate_pain001(xmlfile):
-    doc = etree.parse(file(xmlfile))
+    doc = etree.parse(open(xmlfile))
     xsdfile = join(dirname(__file__), 'XSD', 'pain.001.001.02.xsd')
-    xsd = etree.XMLSchema(etree.parse(file(xsdfile)))
+    xsd = etree.XMLSchema(etree.parse(open(xsdfile)))
     xsd.assertValid(doc)
     
 if __name__ == '__main__':
 
     if len(sys.argv) < 2:
-        print USAGE
+        print(USAGE)
         sys.exit(-1)
 
     validate_pain001(sys.argv[1])

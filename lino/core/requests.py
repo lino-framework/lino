@@ -979,6 +979,14 @@ class ActorRequest(BaseRequest):
     no_data_text = _("No data to display")
 
     def create_phantom_rows(self, **kw):
+        # phantom row disturbs when there is an insert button in
+        # the toolbar
+        if self.actor.no_phantom_row:
+            return
+        # if self.actor.insert_layout is not None \
+        #    and not self.actor.stay_in_grid \
+        #    and not self.actor.force_phantom_row:
+        #     return
         if self.create_kw is None or not self.actor.editable \
            or not self.actor.allow_create:
             return

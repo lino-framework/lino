@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2016 Luc Saffre
+# Copyright 2009-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Defines actions for :doc:`/admin/printing`.
@@ -268,8 +268,7 @@ class EditTemplate(BasePrintAction):
         if filename == local_file:
             doit(ar)
         else:
-            ar.info("Gonna copy %s to %s",
-                    rt.relpath(filename), rt.relpath(local_file))
+            ar.info("Gonna copy %s to %s", filename, local_file)
             
             def ok(ar2):
                 logger.info(

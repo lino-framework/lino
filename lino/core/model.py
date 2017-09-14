@@ -433,11 +433,12 @@ class Model(models.Model):
 
         Usage example::
 
-          def disabled_fields(self,request):
-              if self.user == request.user: return []
-              df = ['field1']
+          def disabled_fields(self, ar):
+              df = super(MyModel, self).disabled_fields(ar)
+              if self.user == ar.user:
+                  return df
               if self.foo:
-                df.append('field2')
+                  df.add('field2')
               return df
 
         """
@@ -827,11 +828,16 @@ class Model(models.Model):
             return ''
         return E.div(*self.get_overview_elems(ar))
 
-    @fields.displayfield(_("Description"))
-    def description_column(self, ar):
-        if ar is None:
-            return ''
-        return ar.obj2html(self)
+    # no longer needed here because implemented in AbstractTable
+    # @dd.displayfield(_("Description"))
+    # def detail_pointer(self, obj, ar):
+    #     return ar.obj2html(obj)
+
+    # @fields.displayfield(_("Description"))
+    # def detail_pointer(self, ar):
+    #     if ar is None:
+    #         return ''
+    #     return ar.obj2html(self)
 
     @fields.displayfield(_("Workflow"))
     def workflow_buttons(self, ar):
@@ -861,13 +867,16 @@ class Model(models.Model):
             #~ l.append(u" \u2192 ")
             #~ sep = u" \u25b8 "
 
+        df = actor.disabled_fields(obj, ar)
+        # print(20170909, df)
         for ba in actor.get_actions():
             assert ba.actor == actor  # 20170102
             if ba.action.show_in_workflow:
                 # if actor.model.__name__ == 'Vote':
                 #     if ba.action.__class__.__name__ == 'MarkVoteAssigned':
                 #         print(20170115, actor, ar.get_user())
-                if actor.get_row_permission(obj, ar, state, ba):
+                if ba.action.action_name not in df:
+                  if actor.get_row_permission(obj, ar, state, ba):
                     if show and isinstance(ba.action, ChangeStateAction):
                         show_state()
                         sep = u" \u2192 "
@@ -1034,7 +1043,8 @@ action on individual instances.
             kw = ar.get_printable_context(**kw)
         kw.update(this=self)  # for backward compatibility
         kw.update(obj=self)  # preferred in new templates
-        kw.update(language=self.get_print_language())
+        kw.update(language=self.get_print_language() or \
+                  settings.SITE.DEFAULT_LANGUAGE.django_code)
         return kw
 
     def before_printable_build(self, bm):
@@ -1051,7 +1061,7 @@ action on individual instances.
             + '-' + str(self.pk)
 
     @classmethod
-    def get_parameter_fields(cls, **fields):
+    def setup_parameters(cls, fields):
         """Inheritable hook for defining parameters.
         Called once per actor at site startup.
 
@@ -1077,8 +1087,22 @@ action on individual instances.
         return []
 
     @classmethod
-    def get_request_queryset(cls, ar):
+    def get_request_queryset(cls, ar, **filter):
+        """Return the base queryset for tables on this object.
+
+        The optional `filter` keyword arguments, if present, are
+        applied as additional filter. This is used only in UNION
+        tables on abstract model mixins where filtering cannot be done
+        after the join.
+
+        """
+        if filter:
+            return cls.objects.filter(**filter)
         return cls.objects.all()
+        # qs = cls.objects.all()
+        # if ar.actor.only_fields is not None:
+        #     qs = qs.only(ar.actor.only_fields)
+        # return qs
 
     @classmethod
     def get_title_tags(self, ar):
@@ -1173,10 +1197,11 @@ action on individual instances.
     def print_subclasses_graph(self):
         print(self.get_subclasses_graph())
 
+
 LINO_MODEL_ATTRIBS = (
     'define_action',
     'delete_instance',
-    'get_parameter_fields',
+    'setup_parameters',
     'add_param_filter',
     'save_new_instance',
     'save_watched_instance',

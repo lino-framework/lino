@@ -43,8 +43,8 @@ class JinjaRenderer(MailRenderer):
         prefix_loaders = {}
 
         paths = list(settings.SITE.get_settings_subdirs(SUBDIR_NAME))
-        if settings.SITE.is_local_project_dir:
-            p = join(settings.SITE.project_dir, SUBDIR_NAME)
+        if True:  # settings.SITE.is_local_project_dir:
+            p = join(settings.SITE.cache_dir, SUBDIR_NAME)
             if isdir(p):
                 paths.append(p)
         #~ logger.info("20130717 web.py paths %s",paths)

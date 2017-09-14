@@ -13,7 +13,6 @@
     run
     show
     linod
-
-
+    resetsequences
 
 """

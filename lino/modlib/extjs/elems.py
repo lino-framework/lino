@@ -472,6 +472,9 @@ class FieldElement(LayoutElement):
         # kw.update(style='padding: 10px')
         # logger.info("20120931 %s %s",layout_handle,field.name)
         kw.setdefault('label', field.verbose_name)
+        # if field.name == "detail_pointer":
+        #     logger.info("20170905 using verbose_name %s",
+        #                 field.verbose_name)
 
         # kw.setdefault('label',string_concat('<b>',field.verbose_name,'</b>'))
         # kw.setdefault('label',
@@ -527,10 +530,14 @@ class FieldElement(LayoutElement):
         kw.update(dataIndex=self.name)
         if self.label is None:
             kw.update(header=self.name)
-        elif self.label:
-            kw.update(header=self.label)
         else:
             kw.update(header=self.label)
+        # if self.label is None:
+        #     kw.update(header=self.name)
+        # elif self.label:
+        #     kw.update(header=self.label)
+        # else:
+        #     kw.update(header=self.label)
         if not self.editable:
             kw.update(editable=False)
         if not self.sortable:

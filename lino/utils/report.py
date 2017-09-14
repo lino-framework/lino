@@ -14,7 +14,7 @@ from lino.utils import curry
 from lino.core.frames import Frame
 
 from lino.core.requests import VirtualRow
-from lino.core.requests import ActionRequest
+# from lino.core.requests import ActionRequest
 from lino.core.actions import ShowEmptyTable
 from lino.core import actions
 from lino.core import fields
@@ -48,7 +48,7 @@ class EmptyTableRow(VirtualRow, Printable):
         pass
 
     def filename_root(self):
-        return self._meta.app_label + '.' + self.__class__.__name__
+        return self._table.app_label + '.' + self._table.__name__
 
     def get_print_language(self):
         # same as Model.get_print_language
@@ -58,7 +58,8 @@ class EmptyTableRow(VirtualRow, Printable):
         # same as Model.get_printable_context
         kw = ar.get_printable_context(**kw)
         kw.update(this=self)  # preferred in new templates
-        kw.update(language=self.get_print_language())
+        kw.update(language=self.get_print_language() \
+                  or settings.SITE.DEFAULT_LANGUAGE.django_code)
         return kw
 
     def get_template_groups(self):
@@ -78,14 +79,17 @@ class EmptyTableRow(VirtualRow, Printable):
         # header_center
         return self._table.get_build_options(bm, **opts)
 
-    def filename_root(self):
-        return self._table.app_label + '.' + self._table.__name__
-
+    def get_subtitle(self, ar):
+        
+        return ', '.join(self._table.get_title_tags(ar))
+        
     def __getattr__(self, name):
         """
         Since there is only one EmptyTableRow class, we simulate a
         getter here by manually creating an InstanceAction.
         """
+        # if name not in ('get_story'):
+        #     raise Exception("20170910 %s" % name)
         v = getattr(self._table, name)
         if isinstance(v, actions.Action):
             return actions.InstanceAction(v, self._table, self, None)
@@ -141,8 +145,15 @@ class EmptyTable(Frame):
         return obj
 
     @classmethod
+    def wildcard_data_elems(self):
+        return self.parameters.values()
+        
+    @classmethod
     def get_data_elem(self, name):
         de = super(EmptyTable, self).get_data_elem(name)
+        if de is not None:
+            return de
+        de = self.parameters.get(name, None)
         if de is not None:
             return de
         a = name.split('.')
@@ -150,16 +161,16 @@ class EmptyTable(Frame):
             return getattr(getattr(settings.SITE.modules, a[0]), a[1])
 
 
-class ReportRequest(ActionRequest):
+# class ReportRequest(ActionRequest):
 
-    def unsued_show_request(ar, **kwargs):
-        # self = ar.selected_rows[0]
-        self = None  # ar.actor.create_instance(ar)
-        story = ar.actor.get_story(self, ar)
-        ar.renderer.show_story(story)
+#     def unsued_show_request(ar, **kwargs):
+#         # self = ar.selected_rows[0]
+#         self = None  # ar.actor.create_instance(ar)
+#         story = ar.actor.get_story(self, ar)
+#         ar.renderer.show_story(story)
 
-        # return '\n'.join(ar.story2rst(
-        #     ar.actor.get_story(self, ar), **kwargs))
+#         # return '\n'.join(ar.story2rst(
+#         #     ar.actor.get_story(self, ar), **kwargs))
 
 
 class Report(EmptyTable):
@@ -170,6 +181,10 @@ class Report(EmptyTable):
     When subclassing this, application code must either define
     :attr:`report_items` or implement an alternative :meth:`get_story`.
 
+    :class:`lino_xl.lib.courses.StatusReport`
+    :class:`lino_xl.lib.ledger.Situation`
+    :class:`lino_xl.lib.ledger.ActivityReport`
+
     """
 
     detail_layout = "body"
@@ -179,13 +194,13 @@ class Report(EmptyTable):
     report_items = None
     """ """
 
-    @classmethod
-    def request(self, **kw):
-        """Return an action request on this actor.
+    # @classmethod
+    # def request(self, **kw):
+    #     """Return an action request on this actor.
 
-        """
-        kw.update(actor=self)
-        return ReportRequest(**kw)
+    #     """
+    #     kw.update(actor=self)
+    #     return ActionRequest(**kw)
 
     @classmethod
     def get_template_groups(self):
@@ -209,11 +224,19 @@ class Report(EmptyTable):
             opts['footer-left'] = "<p>Footer [page]</p>"
         return opts
 
+    # @classmethod
+    # def get_title_base(self, ar):
+    #     return self.title or self.label
+
+    @classmethod
+    def get_title(self, ar):
+        return self.title or self.label
+
     @classmethod
     def get_story(cls, self, ar):
-        """Yield a sequence of story items. These can be (1)
-        ElementTree elements or (2) AbstractTable or (3) action
-        requests.
+        """Yield a sequence of story items. Every item can be (1)
+        an ElementTree element or (2) a table or (3) an action
+        request.
 
         """
         if cls.report_items is None:
