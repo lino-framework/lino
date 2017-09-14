@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2016 Luc Saffre
+# Copyright 2009-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """This defines the :class:`ConfigDirCache` which Lino instantiates
@@ -62,9 +62,13 @@ class ConfigDirCache(object):
             raise Exception("Oops, ConfigDirCache was already instantiated!")
         self._init = True
         self.site = site
+        self.scan_config_dirs()
+        
+    def scan_config_dirs(self):
+        """Scan the file system and populate :attr:`config_dirs`."""
         config_dirs = []
 
-        for pth in site.get_settings_subdirs(SUBDIR_NAME):
+        for pth in self.site.get_settings_subdirs(SUBDIR_NAME):
             if six.PY2:
                 pth = pth.decode(fs_encoding)
             config_dirs.append(ConfigDir(pth, False))
@@ -76,20 +80,14 @@ class ConfigDirCache(object):
                 # config_dirs.append(ConfigDir(pth.decode(fs_encoding), False))
                 config_dirs.append(ConfigDir(pth, False))
 
-        site.for_each_app(add_config_dir)
+        self.site.for_each_app(add_config_dir)
 
         self.LOCAL_CONFIG_DIR = None
 
-        if True:  # site.is_local_project_dir:
-            p = join(site.cache_dir, SUBDIR_NAME)
-            if isdir(p):
-                self.LOCAL_CONFIG_DIR = ConfigDir(p, True)
-                config_dirs.append(self.LOCAL_CONFIG_DIR)
-        #         print "20140625 Local config directory %s." % p
-        #     else:
-        #         print "20140625 No local config directory.", p
-        # else:
-        #     print "20140625 Not a local project directory."
+        p = self.site.cache_dir.child(SUBDIR_NAME)
+        if isdir(p):
+            self.LOCAL_CONFIG_DIR = ConfigDir(p, True)
+            config_dirs.append(self.LOCAL_CONFIG_DIR)
 
         config_dirs.reverse()
         self.config_dirs = tuple(config_dirs)

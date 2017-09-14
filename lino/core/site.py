@@ -304,10 +304,10 @@ class Site(object):
     """
     
     make_missing_dirs = True
-    """
-    Set this to `False` if you don't want this Site to automatically
-    create missing directories when needed (but to raise an exception
-    in these cases, asking you to create it yourself)
+    """Set this to `False` if you don't want Lino to automatically create
+    missing directories when needed.  If this is False, Lino will
+    raise an exception in these cases, asking you to create it
+    yourself.
 
     """
     userdocs_prefix = ''
@@ -2275,8 +2275,8 @@ this field.
         Call the given function on each installed app.
         Successor of :meth:`on_each_app`.  This also loops over
 
-        - apps that don't have a models module
-        - inherited apps
+        - plugins that don't have a models module
+        - the base plugins of plugins which extend some plugin.
 
         """
 
