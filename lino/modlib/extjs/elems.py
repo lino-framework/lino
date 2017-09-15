@@ -2066,7 +2066,8 @@ def field2elem(layout_handle, field, **kw):
     # remember the case of RemoteField to VirtualField
 
     if isinstance(selector_field, fields.CustomField):
-        e = selector_field.create_layout_elem(layout_handle, field, **kw)
+        e = selector_field.create_layout_elem(
+            CharFieldElement, layout_handle, field, **kw)
         if e is not None:
             return e
 
