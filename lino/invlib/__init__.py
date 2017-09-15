@@ -10,8 +10,8 @@ Tasks
 
 .. command:: inv prep
 
-    Prepare a test run. This currently just runs :manage:`prep`
-    on every demo project :attr:`config.demo_projects`.
+    Prepare a test run. This currently just runs :manage:`prep` on
+    every demo project defined by :envvar:`config.demo_projects`.
 
 
 Configuration settings
