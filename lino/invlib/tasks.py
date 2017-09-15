@@ -50,10 +50,7 @@ def prep(ctx, cov=False):
         # os.environ['COVERAGE_PROCESS_START'] = covfile
         ctx.run('coverage erase', pty=True)
         
-        # run_in_demo_projects(ctx, 'prep', "--noinput", '--traceback', "--noreload", cov=cov)
-        run_in_demo_projects(ctx, 'prep', "--noinput", '--traceback', cov=cov)
-    else:
-        run_in_demo_projects(ctx, 'prep', "--noinput", '--traceback', cov=cov)
+    run_in_demo_projects(ctx, 'prep', "--noinput", '--traceback', cov=cov)
 
 
 @task(name='cov', pre=[tasks.call(prep, cov=True)])
@@ -85,9 +82,11 @@ def run_tests_coverage(ctx, html=True, html_cov_dir='htmlcov'):
     ctx.run('coverage combine', pty=True)
     ctx.run('coverage report', pty=True)
     if html:
-        print("Writing html report to %s" % html_cov_dir)
-        ctx.run('coverage html -d {0} && open {0}/index.html'.format(
-            html_cov_dir), pty=True)
+        pth = ctx.root_dir.child(html_cov_dir)
+        print("Writing html report to {}" % pth)
+        ctx.run('coverage html -d {0}'.format(pth), pty=True)
+        if False:
+            ctx.run('open {0}/index.html'.format(pth), pty=True)
         print('html report is ready.')
     ctx.run('coverage erase', pty=True)
 
