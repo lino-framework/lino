@@ -601,7 +601,7 @@ class ApiList(View):
             
             total_count = ar.get_total_count()
             for row in ar.create_phantom_rows():
-                if len(rows) < ar.limit-1:
+                if len(rows)+1 < ar.limit:
                     d = rh.store.row2list(ar, row)
                     rows.append(d)
                 total_count += 1
