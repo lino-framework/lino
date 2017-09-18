@@ -1,7 +1,7 @@
 # Copyright 2009-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""See :doc:`/dev/layouts`.
+"""See :doc:`/dev/layouts/index`.
 
 """
 

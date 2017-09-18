@@ -2,10 +2,7 @@
 # Copyright 2011-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-The :mod:`lino.api.dd` module is a shortcut to those parts of Lino which
-are used in your :xfile:`models.py` modules.  The name ``dd`` stands
-for "Database Design".
+"""See :doc:`/dev/dd`.
 
 Application:
 
@@ -108,7 +105,6 @@ Workflows:
 - :class:`Workflow <lino.core.workflows.Workflow>`
 - :class:`State <lino.core.workflows.State>`
 
-
 """
 
 from __future__ import unicode_literals
@@ -124,6 +120,7 @@ Shortcut to the main Lino logger.
 # logger.info("20140227 dd.py a")
 
 from django.conf import settings
+from django.db.models import *
 from django.utils.encoding import python_2_unicode_compatible
 
 from lino.core.tables import VirtualTable
