@@ -368,3 +368,15 @@ def show_sql_queries():
     reset_sql_queries()
         
 
+def add_call_logger(owner, name):
+    """Replace the callable named name on owner by a wrapper which
+    additionally prints a message on each call.
+
+    """
+    func = getattr(owner, name)
+    msg = "{}() on {} was called".format(name, owner)
+    def w(*args, **kwargs):
+        print(msg)
+        return func(*args, **kwargs)
+    setattr(owner, name, w)
+    
