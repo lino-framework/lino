@@ -501,7 +501,7 @@ class VirtualField(FakeField):
         #                               (value, self))
 
     #~ def value_from_object(self,request,obj):
-    def value_from_object(self, obj, ar=None):
+    def value_from_object(self, obj, ar=None, **kwargs):
         """Return the value of this field in the specified model instance
         `obj`.  `ar` may be `None`, it's forwarded to the getter
         method who may decide to return values depending on it.
@@ -510,7 +510,7 @@ class VirtualField(FakeField):
         m = self.get
         #~ print self.field.name
         # return m(self, obj, ar)
-        return m(obj, ar)
+        return m(obj, ar, **kwargs)
 
     def __get__(self, instance, owner):
         if instance is None:

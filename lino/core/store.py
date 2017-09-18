@@ -363,7 +363,7 @@ class VirtStoreField(StoreField):
     def __repr__(self):
         return '(virtual)' + self.delegate.__class__.__name__ + ' ' + self.name
 
-    def full_value_from_object(self, obj, ar):
+    def full_value_from_object(self, obj, ar, **kwargs):
         # 20150218 : added new rule that virtual fields are never
         # computed for unsaved instances. This is because
         # `ShowInsert.get_status` otherwise generated lots of useless
@@ -375,7 +375,7 @@ class VirtStoreField(StoreField):
         if ar.bound_action.action.hide_virtual_fields:
         # if isinstance(obj, models.Model) and not obj.pk:
             return None
-        return self.vf.value_from_object(obj, ar)
+        return self.vf.value_from_object(obj, ar, **kwargs)
 
 
 class RequestStoreField(StoreField):
@@ -1122,8 +1122,17 @@ class Store(BaseStore):
             for fld in self.list_fields:
                 fld.value2list(ar, None, l, row)
         else:
+            # disabled fields first
+            df = [f for f in self.list_fields if isinstance(f, DisabledFieldsStoreField)]
+            if df: df = df[0]
+            df_v = df.full_value_from_object(row, ar)
             for fld in self.list_fields:
-                v = fld.full_value_from_object(row, ar)
+                if isinstance(fld, DisabledFieldsStoreField):
+                    v = df_v
+                elif fld.name == "workflow_buttons":
+                    v = fld.full_value_from_object(row, ar, **{'df':df_v})
+                else:
+                    v = fld.full_value_from_object(row, ar)
                 fld.value2list(ar, v, l, row)
         # logger.info("20130611 Store row2list() --> %r", l)
         return l

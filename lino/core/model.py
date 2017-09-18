@@ -840,12 +840,12 @@ class Model(models.Model):
     #     return ar.obj2html(self)
 
     @fields.displayfield(_("Workflow"))
-    def workflow_buttons(self, ar):
+    def workflow_buttons(self, ar, df=None):
         if ar is None:
             return ''
-        return self.get_workflow_buttons(ar)
+        return self.get_workflow_buttons(ar, df)
     
-    def get_workflow_buttons(obj, ar):
+    def get_workflow_buttons(obj, ar, df=None):
         l = []
         actor = ar.actor
         # print(20170102, actor)
@@ -867,7 +867,7 @@ class Model(models.Model):
             #~ l.append(u" \u2192 ")
             #~ sep = u" \u25b8 "
 
-        df = actor.disabled_fields(obj, ar)
+        df = actor.disabled_fields(obj, ar) if df is None else df
         # print(20170909, df)
         for ba in actor.get_actions():
             assert ba.actor == actor  # 20170102
