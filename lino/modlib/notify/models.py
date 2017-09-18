@@ -500,7 +500,7 @@ class MyMessages(My, Messages):
     required_roles = dd.login_required(OfficeUser)
     # column_names = "created subject owner sent workflow_buttons *"
     column_names = "created subject message_type workflow_buttons *"
-    order_by = ['created']
+    order_by = ['-created']
     # hide_headers = True
     slave_grid_format = 'summary'
     # slave_grid_format = 'list'
