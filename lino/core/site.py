@@ -1422,14 +1422,14 @@ class Site(object):
         # TODO: find a more elegant way to do this.
         if 'schedule' in d['loggers']:
             d['loggers']['schedule'] = {
-                'handers': loggercfg['handlers'],
+                'handlers': loggercfg['handlers'],
                 'level': 'WARNING',
             }
 
         dblogger = d['loggers'].setdefault('django.db.backends', {})
         dblogger['propagate'] = False
         dblogger['level'] = os.environ.get('LINO_SQL_LOGLEVEL', 'WARNING')
-
+        dblogger['handlers'] = loggercfg['handlers']
 
         # self.update_settings(LOGGING=d)
         # from pprint import pprint

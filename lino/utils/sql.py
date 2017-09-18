@@ -29,7 +29,7 @@ def p(kw, sql_width = 60):
 
 if __name__ == "__main__":
     matches = []
-    regex = r"^.+\((?P<time>[\d\.]*)\) (?P<sql>.*FROM \`(?P<table>.*?)\`.*)$"
+    regex = r"^.+?\((?P<time>[\d\.]*)\) (?P<sql>.*FROM \`(?P<table>.*?)\`.*?;).*$"
     # f = open("log/lino.log", 'r')
     f = sys.stdin
     d= {}
