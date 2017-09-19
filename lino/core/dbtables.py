@@ -634,8 +634,8 @@ class Table(AbstractTable):
         return self.abstract
 
     @classmethod
-    def disabled_fields(cls, obj, ar):
-        s = super(Table, cls).disabled_fields(obj, ar)
+    def make_disabled_fields(cls, obj, ar):
+        s = super(Table, cls).make_disabled_fields(obj, ar)
 
         if obj is not None:
             s |= obj.disabled_fields(ar)

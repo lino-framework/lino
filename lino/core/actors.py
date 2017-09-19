@@ -685,7 +685,15 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         #     logger.info("Invalid master %s", master)
 
     @classmethod
-    def disabled_fields(cls, obj, ar):
+    def get_disabled_fields(cls, obj, ar):
+        df = getattr(obj, '_disabled_fields', None)
+        if df is None:
+            df = cls.make_disabled_fields(obj, ar)
+            setattr(obj, '_disabled_fields', df)
+        return df
+    
+    @classmethod
+    def make_disabled_fields(cls, obj, ar):
         """
         Return a set of field names that should not be editable
         for the specified `obj` and `request`.
