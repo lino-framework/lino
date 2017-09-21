@@ -94,6 +94,8 @@ class AnonymousUser(SimpleSingleton):
                 return False
         return True
 
+    def get_choices_text(self, request, actor, field):
+        return str(self)
 
 # copied from django.contrib.auth:
 

@@ -517,8 +517,12 @@ class ExtRenderer(JsRenderer):
                     login_menu_items.insert(0, act_as)
 
                 if site.remote_user_header is None:
+                    # 20170921
+                    a = user.sign_out.bound_action
+                    js = self.action_call(None, a, {})
+                    js = "function(){%s}" % js
                     login_menu_items.append(
-                        dict(text=_("Log out"), handler=js_code('Lino.logout')))
+                        dict(text=a.get_button_label(), handler=js_code(js)))
                 # the following was never used
                 #     if auth.get_auth_middleware().can_change_password(request, request.user):
                 #         login_menu_items.append(
@@ -533,11 +537,17 @@ class ExtRenderer(JsRenderer):
                 yield "Lino.main_menu = Lino.main_menu.concat(['->',%s]);" % py2js(login_menu)
 
             else:
-                login_buttons = [
-                    dict(xtype="button", text=_("Log in"),
-                         handler=js_code('Lino.show_login_window')),
-                    #~ dict(xtype="button",text="Register",handler=Lino.register),
-                ]
+                a = rt.models.users.UsersOverview.get_action_by_name('sign_in')
+                js = self.action_call(None, a, {})
+                js = "function(){%s}" % js
+                login_buttons = [ dict(
+                    xtype="button", text=a.get_button_label(),
+                    handler=js_code(js)) ]
+                # login_buttons = [
+                #     dict(xtype="button", text=_("Log in"),
+                #          handler=js_code('Lino.show_login_window')),
+                #     #~ dict(xtype="button",text="Register",handler=Lino.register),
+                # ]
                 yield "Lino.main_menu = \
                 Lino.main_menu.concat(['->',%s]);" % py2js(login_buttons)
 

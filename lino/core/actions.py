@@ -123,13 +123,13 @@ def register_params(cls):
 
     """
     if cls.parameters:
-        for k, v in list(cls.parameters.items()):
+        for k, v in cls.parameters.items():
             v.set_attributes_from_name(k)
             v.table = cls
 
         if cls.params_layout is None:
             cls.params_layout = cls._layout_class.join_str.join(
-                list(cls.parameters.keys()))
+                cls.parameters.keys())
         install_layout(cls, 'params_layout', cls._layout_class)
 
     elif cls.params_layout is not None:
@@ -140,7 +140,7 @@ def register_params(cls):
 
 def setup_params_choosers(self):
     if self.parameters:
-        for k, fld in list(self.parameters.items()):
+        for k, fld in self.parameters.items():
             if isinstance(fld, models.ForeignKey):
                 msg = "Invalid target %s in parameter {} of {}".format(
                     k, self)
@@ -324,6 +324,11 @@ class Action(Parametrizable, Permittable):
             self.__class__.__name__,
             name)
 
+    def __str__(self):
+        # return force_text(self.label)
+        # return str(self.get_label())
+        return str(self.get_label())
+
     def unused__str__(self):
         raise Exception("20121003 Must use full_name(actor)")
         if self.defining_actor is None:
@@ -362,11 +367,6 @@ class Action(Parametrizable, Permittable):
         setup_params_choosers(self)
         # setup_params_choosers(self.__class__)
         return True
-
-    def __str__(self):
-        # return force_text(self.label)
-        # return str(self.get_label())
-        return str(self.get_label())
 
     def get_action_permission(self, ar, obj, state):
         """Return (True or False) whether the given :class:`ActionRequest

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2015 Luc Saffre
+# Copyright 2009-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Views for `lino.modlib.bootstrap3`.
@@ -17,7 +17,8 @@ from django.views.generic import View
 from django.core import exceptions
 from django.utils.translation import ugettext as _
 from django.utils.translation import get_language
-from django.contrib import auth
+# from django.contrib import auth
+from lino.core import auth
 
 
 from lino.api import dd
@@ -245,9 +246,6 @@ class Element(View):
         return http_response(ar, ar.actor.detail_html_template, context)
 
 class Authenticate(View):
-    """
-    Render the main page.
-    """
     def get(self, request, *args, **kw):
         action_name = request.GET.get(constants.URL_PARAM_ACTION_NAME)
         if action_name == 'logout':
@@ -257,10 +255,13 @@ class Authenticate(View):
             # request.session.pop('password', None)
             #~ username = request.session['username']
             #~ del request.session['password']
+            target = '/'
+            return http.HttpResponseRedirect(target)
+            
 
-            ar = BaseRequest(request)
-            ar.success("User %r logged out." % username)
-            return ar.renderer.render_action_response(ar)
+            # ar = BaseRequest(request)
+            # ar.success("User %r logged out." % username)
+            # return ar.renderer.render_action_response(ar)
         raise http.Http404()
 
     def post(self, request, *args, **kw):
@@ -269,7 +270,9 @@ class Authenticate(View):
         user = auth.authenticate(
             request, username=username, password=password)
         auth.login(request, user)
-        ar = BaseRequest(request)
+        target = '/'
+        return http.HttpResponseRedirect(target)
+        # ar = BaseRequest(request)
         # mw = auth.get_auth_middleware()
         # msg = mw.authenticate(username, password, request)
         # if msg:
@@ -281,7 +284,7 @@ class Authenticate(View):
         #     # ar.user = request....
         #     ar.success(("Now logged in as %r" % username))
         #     # print "20150428 Now logged in as %r (%s)" % (username, user)
-        return ar.renderer.render_action_response(ar)
+        # return ar.renderer.render_action_response(ar)
 
         
 class Index(View):

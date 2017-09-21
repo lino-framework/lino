@@ -208,7 +208,7 @@ class Plugin(Plugin):
             # url(rx + '/?$', views.AdminIndex.as_view()),
             url(rx + '$', views.AdminIndex.as_view()),
             url(rx + r'api/main_html$', views.MainHtml.as_view()),
-            url(rx + r'auth$', views.Authenticate.as_view()),
+            # url(rx + r'auth$', views.Authenticate.as_view()),
             url(rx + r'grid_config/(?P<app_label>\w+)/(?P<actor>\w+)$',
                 views.GridConfig.as_view()),
             url(rx + r'api/(?P<app_label>\w+)/(?P<actor>\w+)$',

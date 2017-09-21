@@ -74,6 +74,9 @@ class Renderer(HtmlRenderer):
         return label
 
     def action_call(self, ar, bound_action, status):
+        a = bound_action.action
+        if a.opens_a_window or (a.parameters and not a.no_params_window):
+            return "#"
         sar = bound_action.request_from(ar)
         return self.get_request_url(sar)
 

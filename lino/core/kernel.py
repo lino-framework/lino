@@ -632,13 +632,11 @@ class Kernel(object):
         post_ui_build.send(self)
 
         if ui is not None:
-
             # trigger creation of params_layout.params_store
             for res in actors.actors_list:
                 for ba in res.get_actions():
                     if ba.action.params_layout is not None:
-                        ba.action.params_layout.get_layout_handle(
-                            self.default_ui)
+                        ba.action.params_layout.get_layout_handle(ui)
         # logger.info("20161219 kernel_startup done")
 
     def protect_foreignkeys(self, models_list):
@@ -675,11 +673,12 @@ class Kernel(object):
                 assert fk.rel.model is model
                 if fk.rel.on_delete == models.CASCADE:
                     if must_protect(m, fk, model):
-                        msg = (
-                            "Setting {0}.{1}.on_delete to PROTECT because "
-                            "field is not specified in "
-                            "allow_cascaded_delete.").format(fmn(m), fk.name)
-                        logger.debug(msg)
+                        # 20170921 removed disturbing debug message 
+                        # msg = (
+                        #     "Setting {0}.{1}.on_delete to PROTECT because "
+                        #     "field is not specified in "
+                        #     "allow_cascaded_delete.").format(fmn(m), fk.name)
+                        # logger.debug(msg)
                         fk.rel.on_delete = models.PROTECT
                 else:
                     if fk.name in m.allow_cascaded_delete:

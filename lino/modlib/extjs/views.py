@@ -142,7 +142,7 @@ class MainHtml(View):
         return ui.default_renderer.render_action_response(ar)
 
 
-class Authenticate(View):
+class unused_Authenticate(View):
     """This view is being used when :setting:`remote_user_header` is
     empty (and :setting:`user_model` not).
     :class:`lino.core.auth.SessionUserMiddleware`
@@ -594,6 +594,7 @@ class ApiList(View):
         fmt = request.GET.get(
             constants.URL_PARAM_FORMAT,
             ar.bound_action.action.default_format)
+        # print(20170921, fmt)
 
         if fmt == constants.URL_FORMAT_JSON:
             rows = [rh.store.row2list(ar, row)
