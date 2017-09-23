@@ -305,10 +305,9 @@ def choices_response(actor, request, qs, row2dict, emptyValue):
     quick_search = request.GET.get(constants.URL_PARAM_FILTER, None)
     offset = request.GET.get(constants.URL_PARAM_START, None)
     limit = request.GET.get(constants.URL_PARAM_LIMIT, None)
-
     if isinstance(qs, models.QuerySet):
         qs = qs.filter(qs.model.quick_search_filter(quick_search)) if quick_search else qs
-        count = len(qs) #todo move
+        count = qs.count()
 
         if offset:
             qs = qs[int(offset):]
@@ -318,9 +317,10 @@ def choices_response(actor, request, qs, row2dict, emptyValue):
             #~ kw.update(limit=int(limit))
             qs = qs[:int(limit)]
 
-    rows = [row2dict(row, {}) for row in qs]
+        rows = [row2dict(row, {}) for row in qs]
 
-    if isinstance(qs, list):
+    else:
+        rows = [row2dict(row, {}) for row in qs]
         if quick_search:
             txt = quick_search.lower()
 
