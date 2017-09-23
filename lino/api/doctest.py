@@ -227,7 +227,7 @@ def noblanklines(s):
     return '\n'.join([ln for ln in s.splitlines() if ln.strip()])
 
 
-def show_choices(username, url):
+def show_choices(username, url, show_count=False):
     """Print the choices returned via web client."""
     test_client.force_login(rt.login(username).user)
     response = test_client.get(url, REMOTE_USER=username)
@@ -240,6 +240,9 @@ def show_choices(username, url):
     for r in result['rows']:
         print(r['text'])
         # print(r['value'], r['text'])
+
+    if show_count:
+        print("{} rows".format(result['count']))
 
 from django.db.models import Model
 from lino.core.actions import Action
