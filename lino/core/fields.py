@@ -950,10 +950,11 @@ class CustomField(object):
     It defines a single method :meth:`create_layout_elem`.
 
     """
-    def create_layout_elem(self, layout_handle, field, **kw):
-        """Instantiate and return some subclass of
-        :class:`lino.core.elems.LayoutElement` to be used in
+    def create_layout_elem(self, base_class, layout_handle, field, **kw):
+        """Return the widget to represent this field in the specified
         `layout_handle`.
+
+        The widget must be an instance of the given `base_class`.
 
         `self` and `field` are identical unless `self` is a
         :class`RemoteField` or a :class:`VirtualField`.

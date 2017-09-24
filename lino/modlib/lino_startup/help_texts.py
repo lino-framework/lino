@@ -123,7 +123,6 @@ which opens via the menu command Site ‣ About."""),
     'lino.modlib.bootstrap3.renderer.Renderer' : _("""A  HTML render that uses Bootstrap3."""),
     'lino.modlib.bootstrap3.views.List' : _("""Render a list of records."""),
     'lino.modlib.bootstrap3.views.Element' : _("""Render a single record."""),
-    'lino.modlib.bootstrap3.views.Authenticate' : _("""Render the main page."""),
     'lino.modlib.bootstrap3.views.Index' : _("""Render the main page."""),
     'lino.modlib.changes.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.changes.ChangeTypes' : _("""The list of possible choices for the type field
@@ -198,7 +197,7 @@ JS part stored in Lino.GridPanel.params_panel."""),
     'lino.modlib.extjs.elems.ActionParamsPanel' : _("""The optional Panel for parameters of an Action."""),
     'lino.modlib.extjs.ext_renderer.ExtRenderer' : _("""An HTML renderer that uses the ExtJS Javascript toolkit."""),
     'lino.modlib.extjs.views.AdminIndex' : _("""Similar to PlainIndex"""),
-    'lino.modlib.extjs.views.Authenticate' : _("""This view is being used when remote_user_header is
+    'lino.modlib.extjs.views.unused_Authenticate' : _("""This view is being used when remote_user_header is
 empty (and user_model not).
 lino.core.auth.SessionUserMiddleware"""),
     'lino.modlib.extjs.views.Restful' : _("""Used to collaborate with a restful Ext.data.Store."""),
@@ -619,4 +618,8 @@ action."""),
 yet. And SiteAdmin users don't need to specify this at all."""),
     'lino.modlib.users.ChangePassword.new1' : _("""The new password."""),
     'lino.modlib.users.ChangePassword.new2' : _("""The new password a second time. Both passwords must match."""),
+    'lino.modlib.users.SignIn' : _("""Open a window which asks for username and password and which
+authenticates as this user when submitted."""),
+    'lino.modlib.users.SignOut' : _("""Sign out the current user and return to the welcome screen for
+anonymous visitors."""),
 }

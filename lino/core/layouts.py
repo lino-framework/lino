@@ -1,7 +1,7 @@
 # Copyright 2009-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""See :doc:`/dev/layouts`.
+"""See :doc:`/dev/layouts/index`.
 
 """
 
@@ -55,14 +55,15 @@ class Panel(object):
     - label
     - required_roles
     - window_size
+    - label_align
 
-    Unlike a :class:`FormLayout` it cannot have any child panels
+    Unlike a :class:`BaseLayout` it cannot have any child panels
     and cannot become a tabbed panel.
 
     """
 
     def __init__(self, desc, label=None, **options):
-        assert not 'required' in options
+        # assert not 'required' in options
         self.desc = desc
         if label is not None:
             options.update(label=label)
@@ -150,6 +151,8 @@ class LayoutHandle(object):
             else:
                 kwargs = desc.options
             desc = desc.desc
+            # if 'label_align' in kwargs:
+            #     print("20170921 desc2elem", elemname, desc, kwargs)
 
         # flatten continued lines:
         desc = desc.replace('\\\n', '')
@@ -339,8 +342,8 @@ class BaseLayout(object):
     """
 
     _datasource = None
-
     required_roles = None
+    label_align = LABEL_ALIGN_TOP
 
     window_size = None
     """A tuple `(width, height)` that specifies the size of the window to
@@ -380,7 +383,6 @@ class BaseLayout(object):
         self._labels = self.override_labels()
         self._added_panels = dict()
         self._other_datasources = set()
-        #~ self._window_size = window_size
         self.hidden_elements = hidden_elements or set()
         self._element_options = dict()
         if main is not None:
@@ -390,7 +392,7 @@ class BaseLayout(object):
             raise Exception(
                 "Cannot instantiate %s without `main`." % self.__class__)
         self.set_datasource(datasource)
-        for k, v in list(kw.items()):
+        for k, v in kw.items():
             # The following test is deactivated because it is possible
             # to dynamically define subpanels on a panel,
             # e.g. MergeAction.keep_volatiles
@@ -399,13 +401,22 @@ class BaseLayout(object):
             #     raise Exception("Got unexpected keyword %s=%r" % (k,v))
             setattr(self, k, v)
 
+        # if "Sign in" in str(datasource):
+        #     # if self.label_align == 'left':
+        #     print("20170921 BaseLayout.__init__", self.label_align)
+
+    def __str__(self):
+        return "{}.{} on {!r}".format(
+            self.__class__.__module__, self.__class__.__name__,
+            self._datasource)
+
     def set_datasource(self, ds):
         self._datasource = ds
         if ds is not None:
             if isinstance(self.hidden_elements, six.string_types):
                 self.hidden_elements = set(fields_list(
                     ds, self.hidden_elements))
-            self.hidden_elements = self.hidden_elements | ds.hidden_elements
+            self.hidden_elements |= ds.hidden_elements
             self.editable = ds.editable
             #~ if str(ds).endswith('Partners'):
                 #~ print "20130124 set_datasource ", self,self.hidden_elements
@@ -553,11 +564,6 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
             h = LayoutHandle(self, ui)
             setattr(self, hname, h)
         return h
-
-    def __str__(self):
-        return "{}.{} on {!r}".format(
-            self.__class__.__module__, self.__class__.__name__,
-            self._datasource)
 
     def get_choices_url(self, ui, field, **kw):
         # 20140101

@@ -25,7 +25,9 @@ from lino.mixins import CreatedModified, Contactable
 
 from .choicelists import UserTypes
 from .mixins import UserAuthored, TimezoneHolder
-from .actions import ChangePassword, SendWelcomeMail
+from .actions import ChangePassword, SignOut
+# from .actions import SendWelcomeMail
+# from .actions import SignIn
 from lino.core.auth.utils import AnonymousUser
 
 
@@ -56,6 +58,8 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
     remarks = models.TextField(_("Remarks"), blank=True)  # ,null=True)
 
     change_password = ChangePassword()
+    # sign_in = SignIn()
+    sign_out = SignOut()
 
     def __str__(self):
         return self.get_full_name()
@@ -146,15 +150,29 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
         return template.render(**context)
         
     def as_list_item(self, ar):
+        pv = dict(username=self.username)
         if settings.SITE.is_demo_site:
-            p = "'{0}', '{1}'".format(self.username, '1234')
-        else:
-            p = "'{0}'".format(self.username)
-        url = "javascript:Lino.show_login_window(null, {0})".format(p)
-        return E.li(E.a(self.username, href=url), ' : ',
-                    str(self), ', ',
-                    str(self.user_type), ', ',
-                    E.strong(settings.SITE.LANGUAGE_DICT.get(self.language)))
+            pv.update(password='1234')
+        btn = rt.models.users.UsersOverview.get_action_by_name('sign_in')
+        # print btn.get_row_permission(ar, None, None)
+        btn = btn.request(
+            action_param_values=pv,
+            renderer=settings.SITE.kernel.default_renderer)
+        btn = btn.ar2button(label=self.username)
+        return E.li(
+            btn, ' : ',
+            str(self), ', ',
+            str(self.user_type), ', ',
+            E.strong(settings.SITE.LANGUAGE_DICT.get(self.language)))
+        # if settings.SITE.is_demo_site:
+        #     p = "'{0}', '{1}'".format(self.username, '1234')
+        # else:
+        #     p = "'{0}'".format(self.username)
+        # url = "javascript:Lino.show_login_window(null, {0})".format(p)
+        # return E.li(E.a(self.username, href=url), ' : ',
+        #             str(self), ', ',
+        #             str(self.user_type), ', ',
+        #             E.strong(settings.SITE.LANGUAGE_DICT.get(self.language)))
 
     @classmethod
     def get_by_username(cls, username, default=models.NOT_PROVIDED):

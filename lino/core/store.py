@@ -477,7 +477,7 @@ class DisabledFieldsStoreField(SpecialStoreField):
 
     def full_value_from_object(self, obj, ar):
         d = dict()
-        for name in self.store.actor.disabled_fields(obj, ar):
+        for name in self.store.actor.get_disabled_fields(obj, ar):
             if name is not None:
                 d[str(name)] = True
 
@@ -1067,7 +1067,7 @@ class Store(BaseStore):
         :meth:`form2obj` for every store field.
 
         """
-        disabled_fields = set(self.actor.disabled_fields(instance, ar))
+        disabled_fields = set(self.actor.get_disabled_fields(instance, ar))
         changed_triggers = []
         for f in self.all_fields:
             if f.name not in disabled_fields:

@@ -867,7 +867,7 @@ class Model(models.Model):
             #~ l.append(u" \u2192 ")
             #~ sep = u" \u25b8 "
 
-        df = actor.disabled_fields(obj, ar)
+        df = actor.get_disabled_fields(obj, ar)
         # print(20170909, df)
         for ba in actor.get_actions():
             assert ba.actor == actor  # 20170102

@@ -12,7 +12,7 @@ from lino.core import actions
 from lino.core.roles import SiteAdmin
 
 from .choicelists import UserTypes
-from .actions import SendWelcomeMail
+from .actions import SendWelcomeMail, SignIn
 
 class UserDetail(dd.DetailLayout):
 
@@ -95,9 +95,10 @@ class AllUsers(Users):
     send_welcome_email = SendWelcomeMail()
 
 class UsersOverview(Users):
-
+    required_roles = set([])
     column_names = 'username user_type language'
     exclude = dict(user_type='')
+    sign_in = SignIn()
 
 class MySettings(Users):
     # use_as_default_table = False

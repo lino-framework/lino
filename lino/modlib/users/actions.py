@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2016 Luc Saffre
+# Copyright 2011-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 from builtins import str
@@ -10,7 +10,7 @@ from django.conf import settings
 
 from lino.api import dd, rt, _
 from lino.core.roles import SiteAdmin
-
+from lino.core import auth
 
 class SendWelcomeMail(dd.Action):
     label = _("Welcome mail")
@@ -137,4 +137,43 @@ class ChangePassword(dd.Action):
             ', '.join(done_for))
         ar.success(msg, alert=True)
 
+class SignOut(dd.Action):
+    label = _("Sign out")
+    select_rows = False
+    default_format = 'ajax'
+    
+    def run_from_ui(self, ar, **kw):
+        # print(20170921, ar.request)
+        user = ar.get_user()
+        auth.logout(ar.request)
+        ar.success(
+            _("User {} logged out.").format(user),
+            goto_url="/")
+
+
+class SignIn(dd.Action):
+    label = _("Sign in")
+    select_rows = False
+    parameters = dict(
+        username=dd.CharField(_("Username")),
+        password=dd.PasswordField(_("Password"), blank=True)
+    )
+    # params_layout = dd.ActionParamsLayout("""
+    params_layout = dd.Panel("""
+    username
+    password
+    """, label_align="left")
+
+
+    def run_from_ui(self, ar, **kw):
+        pv = ar.action_param_values
+        user = auth.authenticate(
+            ar.request, username=pv.username, password=pv.password)
+        if user is None:
+            ar.error(_("Failed to log in as {}.".format(pv.username)))
+        else:
+            # user.is_authenticated:
+            auth.login(ar.request, user)
+            ar.success(
+                _("Now logged in as {}").format(user), goto_url="/")
 

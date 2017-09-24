@@ -87,7 +87,13 @@ class ValidActionResponses(object):
     close_window = None
     record_deleted = None
     xcallback = None
+    
+    goto_url = None
+    """Leave current page and go to the given URL."""
+    
     open_url = None
+    """Open the given URL in a new browser window."""
+    
     open_davlink_url = None
     info_message = None
     warning_message = None
@@ -1199,9 +1205,10 @@ class ActionRequest(ActorRequest):
                 apv = action.action_param_defaults(
                     self, self.selected_rows[0])
             else:
-                msg = "20170116 selected_rows is {} for {!r}".format(
-                    self.selected_rows, action)
-                raise Exception(msg)
+                apv = action.action_param_defaults(self, None)
+                # msg = "20170116 selected_rows is {} for {!r}".format(
+                #     self.selected_rows, action)
+                # raise Exception(msg)
             if request is not None:
                 apv.update(
                     action.params_layout.params_store.parse_params(request))

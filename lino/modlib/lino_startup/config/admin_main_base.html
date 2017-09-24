@@ -58,12 +58,13 @@
         {% endif %}
         </p>
       {% endif %}
+      {{ self.feedback() }}
       {% if site.get_auth_method() %}
       <p>
-      {{_("You will now probably want to")}}
-        <a href="#" 
-           onclick="javascript:Lino.show_login_window()">{{_("log in")}}</a>
-      {{_("using the <b>Log in</b> button in the upper right corner.")}}
+        {{_("You will now probably want to {}.").format(
+          E.tostring(ar.window_action_button(
+            site.models.users.UsersOverview.get_action_by_name('sign_in'),
+            label=_("sign in"), icon_name=None)))}}
         {% if site.plugins.users.online_registration and not user.user_type.readonly %}
         {{_("Or {} as a new user.").format(
           E.tostring(ar.window_action_button(
@@ -82,7 +83,6 @@
             </p>
         {% endif %}
       {% endif %}
-      {{ self.feedback() }}
   {% endblock %}
 {% endif %}
 

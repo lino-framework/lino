@@ -116,7 +116,7 @@ class Polymorphic(model.Model):
         A virtual field which defines buttons for switching between the
         different views.
 
-    Usage examples in :doc:`/dev/mti` and :doc:`/dev/lets`.
+    Usage examples in :doc:`/dev/mti` and :doc:`/dev/lets/index`.
 
     """
     class Meta(object):

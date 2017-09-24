@@ -321,7 +321,7 @@ Lino.insert_subst_user = function(p){
     //~ console.log('20120714 insert_subst_user -->',Lino.subst_user,p);
 }
 
-Lino.login_window = null;
+// Lino.login_window = null;
 
 {% if extjs.autorefresh_seconds -%}
 Lino.autorefresh = function() {
@@ -332,7 +332,7 @@ Lino.autorefresh = function() {
 }
 {%- endif %}
 
-Lino.show_login_window = function(on_login, username, password) {
+Lino.unused_show_login_window = function(on_login, username, password) {
   // console.log('20121103 show_login_window',arguments);
   //~ var current_window = Lino.current_window;
   if (typeof username != 'string') username = '';
@@ -414,7 +414,7 @@ Lino.show_login_window = function(on_login, username, password) {
   Lino.login_window.show();
 };
 
-Lino.logout = function(id,name) {
+Lino.unused_logout = function(id,name) {
     Lino.call_ajax_action(
         Lino.viewport, 'GET', 
         '{{extjs.build_plain_url("auth")}}',
@@ -1710,6 +1710,7 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
        Lino.davlink_open(result.open_davlink_url);
     }
     {%- endif -%}
+    if (result.goto_url) document.location = result.goto_url;
     if (result.open_url) {
         //~ console.log(20111126,result.open_url);
         //~ if (!result.message)
@@ -2494,7 +2495,7 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel, {
   //~ ,frame: true
   window_title : "Action Parameters",
   constructor : function(config){
-    config.bbar = [
+    config.buttons = [
         {text: 'OK', handler: this.on_ok, scope: this},
         {text: 'Cancel', handler: this.on_cancel, scope: this}
     ];

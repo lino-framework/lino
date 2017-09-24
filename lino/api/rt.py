@@ -1,13 +1,8 @@
 # Copyright 2014-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
+"""
 
-"""This module is a shortcut to miscellaneous functions and classes which
-are available "at runtime", i.e. when the Django machine has been
-initialized.
-
-You may *import* it at the global namespace of a :xfile:`models.py`
-file, but you can *use* most of it only when the :func:`startup`
-function has been called.
+See :doc:`/dev/rt`.
 
 .. attribute:: plugins
 
@@ -24,6 +19,7 @@ function has been called.
 .. attribute:: modules
 
     Deprecated alias for :attr:`models`
+
 
 """
 
