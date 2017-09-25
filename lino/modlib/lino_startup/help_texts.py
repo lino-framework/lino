@@ -562,6 +562,8 @@ This is instantiated as E."""),
 <foot> and <body>."""),
     'lino.utils.xmlgen.html.Document' : _("""A pythonic representation of a <body> with a <title> and
 some <head> tags for stylesheets."""),
+    'lino.modlib.users.User.coaching_type' : _("""The coaching type used for new coachings of this user."""),
+    'lino.modlib.users.User.coaching_supervisor' : _("""Notify me when a coach has been assigned."""),
     'lino.modlib.contacts.Partner.invoice_recipient' : _("""The recipient of invoices (invoicing address)."""),
     'lino.modlib.users.User' : _("""Fields:"""),
     'lino.modlib.users.User.authenticated' : _("""This is always True.  Compare with

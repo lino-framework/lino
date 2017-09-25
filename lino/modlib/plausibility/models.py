@@ -105,7 +105,7 @@ class FixProblemsByController(UpdateProblemsByController):
     label = _("Fix plausibility problems")
     fix_them = True
 
-
+@dd.python_2_unicode_compatible
 class Problem(Controllable, UserAuthored):
     """Represents a detected plausibility problem.
 
@@ -156,6 +156,9 @@ class Problem(Controllable, UserAuthored):
     #         blank=True, help_text=_("Only problems by this checker.")))
     #     return fields
                       
+    def __str__(self):
+        return self.message
+
     @classmethod
     def get_simple_parameters(cls):
         for p in super(Problem, cls).get_simple_parameters():
@@ -186,8 +189,11 @@ class Problems(dd.Table):
 
     # simple_parameters = ('user', 'checker')
     detail_layout = dd.DetailLayout("""
-    user owner checker id
-    message""", window_size=(70, 'auto'))
+    checker
+    owner
+    message
+    user id
+    """, window_size=(70, 'auto'))
 
 
 
@@ -207,6 +213,7 @@ class ProblemsByOwner(Problems):
     """
     master_key = 'owner'
     column_names = "message checker user #fixable *"
+    slave_grid_format = 'summary'
 
 
 class ProblemsByChecker(Problems):
