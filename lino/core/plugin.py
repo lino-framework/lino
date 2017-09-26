@@ -234,7 +234,7 @@ class Plugin(object):
 
         This is used for initializing default values of plugin
         attributes which (a) depend on other plugins but (b) should be
-        overridable in :meth:`lino.core.site.Site.setup_plugin`.
+        overridable in :meth:`lino.core.site.Site.setup_plugins`.
 
         For example :mod:`groups` used this to set a default value to
         the :attr:`commentable_model` for :mod:`comments` plugin.
