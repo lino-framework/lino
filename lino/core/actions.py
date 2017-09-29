@@ -765,6 +765,14 @@ class SubmitInsert(CreateRow):
 #     help_text = _("Don't open a detail window on the new record")
 
 
+class ExplicitRefresh(Action): # experimental 20170929
+    label = _("Go")
+    show_in_bbar = False
+    # js_handler = 'function(panel) {panel.refresh()}'
+    js_handler = 'function(btn, evt) {console.log("20170928", this); this.refresh()}'
+    # def run_from_ui(self, ar, **kw):
+    #     ar.set_response(refresh_all=True)
+    
 class ShowSlaveTable(Action):
     """An action which opens a window showing the table specified when
     instantiating the action.

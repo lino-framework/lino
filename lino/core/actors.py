@@ -438,6 +438,12 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     """
 
+    auto_apply_params = True
+    """Whether the parameter values of the parameter panel should be
+    applied automatically when some value has been changed.
+
+    """
+
     insert_layout_width = 60
     """
     When specifying an :attr:`insert_layout` using a simple a multline

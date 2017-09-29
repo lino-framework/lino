@@ -830,33 +830,6 @@ request from it.
     def get_detail_title(self, elem):
         return self.actor.get_detail_title(self, elem)
 
-    def put_button(self, obj, text, data, **kw):
-        """
-        Render a button which when clicked will send a PUT
-        for the given row with the specified data.
-        
-        Usage example::
-        
-            @dd.displayfield(_("My answer"))
-            def answer_buttons(self,obj,ar):
-                l = []
-                if self.choice is None:
-                    kw = dict(title=_("Select this value"))
-                    for c in self.question.get_choiceset().choices.all():
-                        l.append(
-                            ar.put_button(self,
-                            unicode(c), dict(choice=c),**kw))
-                else:
-                    l.append(E.b(unicode(self.choice)))
-                    l.append(ar.put_button(
-                        self, _("Undo"), dict(choice=None),
-                        title=_("Undo your vote")))
-                return E.span(*join_elems(l))
-
-        
-        """
-        return self.renderer.put_button(self, obj, text, data, **kw)
-
     def as_button(self, *args, **kw):
         """Return a button which when activated executes (a copy of)
         this request.

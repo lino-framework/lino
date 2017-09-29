@@ -1,7 +1,6 @@
-# Copyright 2009-2016 Luc Saffre
+# Copyright 2009-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 """
-
 
 
 """
@@ -15,7 +14,7 @@ from lino.core.frames import Frame
 
 from lino.core.requests import VirtualRow
 # from lino.core.requests import ActionRequest
-from lino.core.actions import ShowEmptyTable
+from lino.core.actions import ShowEmptyTable  #, ExplicitRefresh
 from lino.core import actions
 from lino.core import fields
 
@@ -72,8 +71,9 @@ class EmptyTableRow(VirtualRow, Printable):
         """
         return self._table.get_print_templates(*args)
 
-    # def get_build_method(self):
-    #     return self._table.get_build_method()
+    def get_build_method(self):
+        return self._table.build_method \
+            or super(EmptyTableRow, self).get_build_method()
 
     def get_build_options(self, bm, **opts):
         # header_center
@@ -115,6 +115,8 @@ class EmptyTable(Frame):
     hide_navigator = True
     default_list_action_name = 'show'
     default_elem_action_name = 'show'
+
+    build_method = None
 
     @classmethod
     def get_default_action(cls):
@@ -190,6 +192,7 @@ class Report(EmptyTable):
     detail_layout = "body"
 
     do_print = DirectPrintAction()
+    # go_button = ExplicitRefresh()
 
     report_items = None
     """ """

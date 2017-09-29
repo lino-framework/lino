@@ -101,12 +101,9 @@ class BasePrintAction(Action):
 
     def run_from_ui(self, ar, **kw):
         elem = ar.selected_rows[0]
-        if self.build_method is None:
-            bm = elem.get_build_method()
-        elif isinstance(self.build_method, six.string_types):
-            bm = BuildMethods.get_by_value(self.build_method)
-        else:
-            bm = self.build_method
+        bm = self.build_method or elem.get_build_method()
+        if isinstance(bm, six.string_types):
+            bm = BuildMethods.get_by_value(bm)
         bm.build(ar, self, elem)
         mf = bm.get_target(self, elem)
         leaf = mf.parts[-1]

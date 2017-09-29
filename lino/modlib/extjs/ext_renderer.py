@@ -196,20 +196,6 @@ class ExtRenderer(JsRenderer):
         return self.href_button_action(
             ba, uri, label, title or ba.action.help_text, **kw)
 
-    def put_button(self, ar, obj, text, data, **kw):
-
-        put_data = dict()
-        for k, v in list(data.items()):
-            fld = obj._meta.get_field(k)
-            fld._lino_atomizer.value2dict(ar, v, put_data, obj)
-
-        js = 'Lino.put(%s,%s,%s)' % (
-            py2js(ar.requesting_panel),
-            py2js(obj.pk),
-            py2js(put_data))
-        uri = self.js2url(js)
-        return self.href_button(uri, text, **kw)
-
     def quick_manage_toolbar(self, ar, obj):
         """Returns a HTML chunk that displays a "toolbar" with a series of
         "quick manage buttons": one "Insert" and another to open the
@@ -1102,6 +1088,8 @@ class ExtRenderer(JsRenderer):
             yield "  content_type: %s," % py2js(ContentType.objects.get_for_model(tbl.model).pk)
         if not tbl.editable:
             yield "  disable_editing: true,"
+        if not tbl.auto_apply_params:
+            yield "  auto_apply_params: false,"
         yield "  initComponent : function() {"
         # 20140503 yield "    var containing_panel = this;"
         # yield "// user profile: %s" % jsgen._for_user_profile
