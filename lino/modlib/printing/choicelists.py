@@ -46,21 +46,6 @@ class BuildMethod(Choice):
     target_ext = None
     cache_name = 'cache'
     use_webdav = False
-    """Whether this build method results is an editable file.  For
-    example, `.odt` files are considered editable while `.pdf` files
-    aren't.
-    
-    In that case the target will be in a webdav folder and the print
-    action will respond `open_davlink_url` instead of the usual
-    `open_url`, which extjs3 ui will implement by calling
-    `Lino.davlink_open()` instead of the usual `window.open()`.
-    
-    When :mod:`lino.modlib.davlink` is not installed, this setting
-    still influences the target path of resulting files, but the
-    clients will not automatically recognize them as webdav-editable
-    URLs.
-
-    """
 
     def __init__(self, name=None, **kwargs):
         # For build methods, `Choice.name` and `Choice.value` are the
@@ -91,12 +76,6 @@ class BuildMethod(Choice):
 
 class TemplatedBuildMethod(BuildMethod):
 
-    """Base class for all build methods.  A build method encapsulates the
-    process of generating a "printable document" that inserts data
-    from the database into a template, using a given combination of a
-    template parser and post-processor.
-
-    """
     template_ext = None
     templates_name = None
     default_template = ''  # overridden by lino_xl.lib.appypod
@@ -118,10 +97,6 @@ class TemplatedBuildMethod(BuildMethod):
 
 
 class DjangoBuildMethod(TemplatedBuildMethod):
-
-    """
-    Using Django's templating engine.
-    """
 
     def get_template(self, action, elem):
         tpls = action.get_print_templates(self, elem)
@@ -160,12 +135,6 @@ class DjangoBuildMethod(TemplatedBuildMethod):
 
 
 class PisaBuildMethod(DjangoBuildMethod):
-    """
-    Deprecated.
-    Generates .pdf files from .html templates.
-    Requires `pisa <https://pypi.python.org/pypi/pisa>`_.
-    Usage example see :mod:`lino_book.projects.pisa`.
-    """
     # name = 'pisa'
     target_ext = '.pdf'
     template_ext = '.pisa.html'
@@ -198,13 +167,6 @@ class PisaBuildMethod(DjangoBuildMethod):
 
 
 class SimpleBuildMethod(TemplatedBuildMethod):
-    """Base for build methods which use Lino's templating system
-    (:meth:`find_config_file <lino.core.site.Site.find_config_file>`).
-
-    TODO: check whether this extension to Django's templating system
-    is still needed.
-
-    """
     def get_template_leaf(self, action, elem):
 
         tpls = action.get_print_templates(self, elem)
@@ -253,10 +215,6 @@ class SimpleBuildMethod(TemplatedBuildMethod):
 
 
 class LatexBuildMethod(SimpleBuildMethod):
-    """
-    Generates `.pdf` files from `.tex` templates.
-    Not actively used.
-    """
     target_ext = '.pdf'
     template_ext = '.tex'
 
@@ -266,11 +224,6 @@ class LatexBuildMethod(SimpleBuildMethod):
 
 
 class RtfBuildMethod(SimpleBuildMethod):
-    """
-    Generates .rtf files from .rtf templates.
-    Not actively used.
-    """
-
     target_ext = '.rtf'
     template_ext = '.rtf'
     cache_name = 'userdocs'
@@ -289,10 +242,6 @@ class RtfBuildMethod(SimpleBuildMethod):
 
 
 class XmlBuildMethod(DjangoBuildMethod):
-    """
-    Generates .xml files from .xml templates.
-    """
-
     target_ext = '.xml'
     template_ext = '.xml'
     cache_name = 'xml'
@@ -328,9 +277,6 @@ class XmlBuildMethod(DjangoBuildMethod):
 
 
 class BuildMethods(ChoiceList):
-    """
-    The choicelist of build methods offered on this site.
-    """
     verbose_name = _("Build method")
     item_class = BuildMethod
     # app_label = 'lino'

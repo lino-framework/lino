@@ -2,10 +2,6 @@
 # Copyright 2009-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Defines actions for :doc:`/admin/printing`.
-
-"""
-
 from __future__ import unicode_literals
 # from builtins import str
 import six
@@ -36,9 +32,6 @@ has_davlink = davlink is not None and settings.SITE.use_java
 
 
 class BasePrintAction(Action):
-    """
-    Base class for all "Print" actions.
-    """
     sort_index = 50
     url_action_name = 'print'
     label = _('Print')
@@ -111,9 +104,6 @@ class BasePrintAction(Action):
 
 
 class DirectPrintAction(BasePrintAction):
-    """Print using a hard-coded template and without cache.
-
-    """
     url_action_name = None
     icon_name = 'printer'
     tplname = None
@@ -132,10 +122,6 @@ class DirectPrintAction(BasePrintAction):
 
 class CachedPrintAction(BasePrintAction):
 
-    """A print action which uses a cache for the generated printable
-    document and builds is only when it doesn't yet exist.
-
-    """
 
     # select_rows = False
     http_method = 'POST'
@@ -189,29 +175,6 @@ class CachedPrintAction(BasePrintAction):
 
 
 class EditTemplate(BasePrintAction):
-    """Edit the print template, i.e. the file specified by
-    :meth:`Printable.get_print_templates`.
-
-    The action available only when :mod:`lino.modlib.davlink` is
-    installed, and only for users with `SiteStaff` role.
-
-    If it is available, then it still works only when
-
-    - your site has a local config directory
-    - your :xfile:`webdav` directory (1) is published by your server under
-      "/webdav" and (2) has a symbolic link named `config` which points
-      to your local config directory.
-    - the local config directory is writable by `www-data`
-
-    **Factory template versus local template**
-    
-    The action automatically copies a factory template to the local
-    config tree if necessary. Before doing so, it will ask for
-    confirmation: :message:`Before you can edit this template we must
-    create a local copy on the server.  This will exclude the template
-    from future updates.`
-
-    """
     sort_index = 51
     url_action_name = 'edit_tpl'
     label = _('Edit Print Template')
@@ -282,15 +245,6 @@ class EditTemplate(BasePrintAction):
                 
 
 class ClearCacheAction(Action):
-
-    """
-    Defines the :guilabel:`Clear cache` button on a Printable record.
-    
-    The `run_from_ui` method has an optional keyword argmuent
-     `force`. This is set to True in `docs/tests/debts.rst`
-     to avoid compliations.
-    
-    """
     sort_index = 51
     url_action_name = 'clear'
     label = _('Clear cache')
