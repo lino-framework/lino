@@ -6,10 +6,9 @@
 
 Reset the database sequences for all plugins.
 
-This is required on a postgres after restoring from a snapshot
-(:xfile:`restore.py') because this operation specifies explicit
-primary keys. 
-It
+This is required (and automatically called) on a postgres after
+restoring from a snapshot (:xfile:`restore.py`) because this operation
+specifies explicit primary keys.
 
 Unlike Django's :manage:`sqlsequencereset` command this does not just
 output the SQL statements, it also executes them.  And it works always

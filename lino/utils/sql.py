@@ -1,3 +1,15 @@
+# -*- coding: UTF-8 -*-
+# Copyright 2017 Tonis Piip, Luc Saffre
+# License: BSD (see file COPYING for details)
+"""Print a summary of a series of SQL queries.
+
+If invoked from command line, expects as argument the log file to be
+parsed.
+
+"""
+
+from __future__ import print_function
+
 # import lino
 # lino.startup('lino_book.projects.team.settings.demo')
 # import django
@@ -17,7 +29,7 @@ import sys
 import textwrap
 
 def p(kw, sql_width = 60):
-    """Prints a parsed sql log nicely"""
+    # Prints a parsed sql log nicely
     kw['sql'] = ("\n    ").join(textwrap.wrap(kw['sql'], sql_width))
     print(
           "table: {table}\n"
@@ -31,6 +43,12 @@ regex = r"^.+?\((?P<time>[\d\.]*)\) (?P<sql>.*FROM \`(?P<table>.*?)\`.*?;).*$"
 # regex = r".*\((?P<time>[\d\.]*)\) (?P<sql>.*FROM \`(?P<table>.*?)\`.*?;).*"
 
 def sql_summary(lines):
+    """Parse the SQL queries from `lines` and print a summary.
+
+    `lines` is an iterable of text lines from a logfile or from 
+    :func:`lino.api.doctest.show_sql_summary`.
+
+    """
     # matches = []
     d = {}
     for l in lines:
@@ -50,12 +68,12 @@ def sql_summary(lines):
     if d:
         for kw in sorted(d.values(), key= lambda x: x['total_time']):
             p(kw)
-            print "-------------------"
+            print("-------------------")
         print("The slowest SQL call was:")
         #find max
         kw = d[max(d, key=lambda x: float(d[x].get('time', 0)))]
         p(kw)
-        print "-------------------"
+        print("-------------------")
 
     else:
         print("No sql queries found")
