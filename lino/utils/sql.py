@@ -26,15 +26,14 @@ def p(kw, sql_width = 60):
           "total_time: {total_time}\n"
           "sql: {sql}".format(**kw))
 
+regex = r"^.+?\((?P<time>[\d\.]*)\) (?P<sql>.*FROM \`(?P<table>.*?)\`.*?;).*$"
 
-if __name__ == "__main__":
-    matches = []
-    regex = r"^.+?\((?P<time>[\d\.]*)\) (?P<sql>.*FROM \`(?P<table>.*?)\`.*?;).*$"
-    # f = open("log/lino.log", 'r')
-    f = sys.stdin
-    d= {}
-    l = f.readline()
-    while l:
+# regex = r".*\((?P<time>[\d\.]*)\) (?P<sql>.*FROM \`(?P<table>.*?)\`.*?;).*"
+
+def sql_summary(lines):
+    # matches = []
+    d = {}
+    for l in lines:
         m = re.match(regex, l)
         # print m
         if m:
@@ -45,7 +44,9 @@ if __name__ == "__main__":
             r["total_time"] = r.get("total_time", 0 ) + float(g['time'])
             if r.get('time', -1) < g['time']:
                 d[g['table']].update(g)
-        l = f.readline()
+        else:
+            print("Invalid line: " + l)
+        
     if d:
         for kw in sorted(d.values(), key= lambda x: x['total_time']):
             p(kw)
@@ -58,3 +59,11 @@ if __name__ == "__main__":
 
     else:
         print("No sql queries found")
+
+
+if __name__ == "__main__":
+    # f = open("log/lino.log", 'r')
+    f = sys.stdin
+    sql_summary(f.readlines())
+    
+        

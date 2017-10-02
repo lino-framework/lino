@@ -29,6 +29,7 @@ from lino.utils import i2d
 from lino.utils.xmlgen.html import E
 from lino.utils.diag import analyzer
 from lino.utils import diag
+from lino.utils.sql import sql_summary
 from lino.core import actors
 from lino.core.menus import find_menu_item
 from lino.sphinxcontrib.actordoc import menuselection_text
@@ -369,6 +370,24 @@ def show_sql_queries():
         sql = qry['sql'].strip()
         print(sql)
     reset_sql_queries()
+        
+
+def show_sql_summary():
+    """Print a summary of the SQL queries which have been made since last
+    call.
+
+    Usage example: :ref:`specs.tera.sql`.
+
+    """
+    def func():
+        for qry in connection.queries:
+            try:
+                yield "({time}) {sql};".format(**qry)
+            except KeyError as e:
+                yield "{} : {}".format(qry, e)
+                
+    sql_summary(func())
+    # reset_sql_queries()
         
 
 def add_call_logger(owner, name):

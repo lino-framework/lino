@@ -287,55 +287,6 @@ for fixing this problem."""),
     'lino.modlib.plausibility.MyProblems.model' : _("""alias of Problem"""),
     'lino.modlib.plausibility.roles.PlausibilityUser' : _("""A user who can see plausibility problems."""),
     'lino.modlib.printing.Plugin' : _("""See /dev/plugins."""),
-    'lino.modlib.printing.actions.BasePrintAction' : _("""Base class for all "Print" actions."""),
-    'lino.modlib.printing.actions.DirectPrintAction' : _("""Print using a hard-coded template and without cache."""),
-    'lino.modlib.printing.actions.CachedPrintAction' : _("""A print action which uses a cache for the generated printable
-document and builds is only when it doesn't yet exist."""),
-    'lino.modlib.printing.actions.EditTemplate' : _("""Edit the print template, i.e. the file specified by
-Printable.get_print_templates()."""),
-    'lino.modlib.printing.actions.ClearCacheAction' : _("""Defines the Clear cache button on a Printable record."""),
-    'lino.modlib.printing.TemplatedBuildMethod' : _("""Base class for all build methods.  A build method encapsulates the
-process of generating a "printable document" that inserts data
-from the database into a template, using a given combination of a
-template parser and post-processor."""),
-    'lino.modlib.printing.DjangoBuildMethod' : _("""Using Django's templating engine."""),
-    'lino.modlib.printing.PisaBuildMethod' : _("""Deprecated.
-Generates .pdf files from .html templates.
-Requires pisa.
-Usage example see lino_book.projects.pisa."""),
-    'lino.modlib.printing.SimpleBuildMethod' : _("""Base for build methods which use Lino's templating system
-(find_config_file)."""),
-    'lino.modlib.printing.LatexBuildMethod' : _("""Generates .pdf files from .tex templates.
-Not actively used."""),
-    'lino.modlib.printing.RtfBuildMethod' : _("""Generates .rtf files from .rtf templates.
-Not actively used."""),
-    'lino.modlib.printing.XmlBuildMethod' : _("""Generates .xml files from .xml templates."""),
-    'lino.modlib.printing.BuildMethods' : _("""The choicelist of build methods offered on this site."""),
-    'lino.modlib.printing.mixins.PrintableType' : _("""Base class for models that specify the
-TypedPrintable.type."""),
-    'lino.modlib.printing.mixins.PrintableType.build_method' : _("""A pointer to an item of
-lino.modlib.printing.choicelists.BuildMethods."""),
-    'lino.modlib.printing.mixins.PrintableType.template' : _("""The name of the file to be used as template."""),
-    'lino.modlib.printing.mixins.PrintableType.templates_group' : _("""Default value for templates_group is the model's full name."""),
-    'lino.modlib.printing.mixins.Printable' : _("""Mixin for models whose instances have a "print" action (i.e. for
-which Lino can generate a printable document)."""),
-    'lino.modlib.printing.mixins.Printable.do_print' : _("""The action used to print this object.
-This is an instance of
-DirectPrintAction or CachedPrintAction by
-default.  And if lino_xl.lib.excerpts is installed,
-then set_excerpts_actions possibly replaces
-do_print by a
-lino_xl.lib.excerpts.CreateExcerpt instance."""),
-    'lino.modlib.printing.mixins.CachedPrintable' : _("""Mixin for Models that generate a unique external file at a
-determined place when being printed."""),
-    'lino.modlib.printing.mixins.CachedPrintable.build_time' : _("""Timestamp of the built target file. Contains None
-if no build hasn't been called yet."""),
-    'lino.modlib.printing.mixins.TypedPrintable' : _("""A CachedPrintable that uses a "Type" for deciding which
-template to use on a given instance."""),
-    'lino.modlib.printing.mixins.CachedPrintableChecker' : _("""Checks for missing cache files on all objects which inherit
-CachedPrintable."""),
-    'lino.modlib.printing.mixins.CachedPrintableChecker.model' : _("""alias of CachedPrintable"""),
-    'lino.modlib.printing.utils.CustomBuildMethod' : _("""For example CourseToXls."""),
     'lino.modlib.restful.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.smtpd.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.summaries.Plugin' : _("""See /dev/plugins."""),
@@ -565,6 +516,58 @@ some <head> tags for stylesheets."""),
     'lino.modlib.users.User.coaching_type' : _("""The coaching type used for new coachings of this user."""),
     'lino.modlib.users.User.coaching_supervisor' : _("""Notify me when a coach has been assigned."""),
     'lino.modlib.contacts.Partner.invoice_recipient' : _("""The recipient of invoices (invoicing address)."""),
+    'lino.modlib.printing.Printable' : _("""Mixin for models whose instances have a "print" action (i.e. for
+which Lino can generate a printable document)."""),
+    'lino.modlib.printing.Printable.do_print' : _("""The action used to print this object.
+This is an instance of
+DirectPrintAction or CachedPrintAction by
+default.  And if lino_xl.lib.excerpts is installed,
+then set_excerpts_actions possibly replaces
+do_print by a
+lino_xl.lib.excerpts.CreateExcerpt instance."""),
+    'lino.modlib.printing.CachedPrintable' : _("""Mixin for Models that generate a unique external file at a
+determined place when being printed."""),
+    'lino.modlib.printing.CachedPrintable.build_time' : _("""Timestamp of the built target file. Contains None
+if no build hasn't been called yet."""),
+    'lino.modlib.printing.TypedPrintable' : _("""A CachedPrintable that uses a "Type" for deciding which
+template to use on a given instance."""),
+    'lino.modlib.printing.PrintableType' : _("""Base class for models that specify the
+TypedPrintable.type."""),
+    'lino.modlib.printing.PrintableType.templates_group' : _("""Default value for templates_group is the model's full name."""),
+    'lino.modlib.printing.PrintableType.build_method' : _("""A pointer to an item of
+lino.modlib.printing.choicelists.BuildMethods."""),
+    'lino.modlib.printing.PrintableType.template' : _("""The name of the file to be used as template."""),
+    'lino.modlib.printing.CachedPrintableChecker' : _("""Checks for missing cache files on all objects which inherit
+CachedPrintable."""),
+    'lino.modlib.printing.BasePrintAction' : _("""Base class for all "Print" actions."""),
+    'lino.modlib.printing.DirectPrintAction' : _("""Print using a hard-coded template and without cache."""),
+    'lino.modlib.printing.CachedPrintAction' : _("""A print action which uses a cache for the generated printable
+document and builds is only when it doesn't yet exist."""),
+    'lino.modlib.printing.ClearCacheAction' : _("""Defines the Clear cache button on a Printable record."""),
+    'lino.modlib.printing.EditTemplate' : _("""Edit the print template, i.e. the file specified by
+Printable.get_print_templates()."""),
+    'lino.modlib.printing.BuildMethods' : _("""The choicelist of build methods offered on this site."""),
+    'lino.modlib.printing.BuildMethod' : _("""Base class for all build methods.  A build method encapsulates the
+process of generating a "printable document" that inserts data
+from the database into a template, using a given combination of a
+template parser and post-processor."""),
+    'lino.modlib.printing.BuildMethod.use_webdav' : _("""Whether this build method results is an editable file.  For
+example, .odt files are considered editable while .pdf files
+aren't."""),
+    'lino.modlib.printing.TemplatedBuildMethod' : _("""A BuildMethod which uses a template."""),
+    'lino.modlib.printing.DjangoBuildMethod' : _("""A TemplatedBuildMethod which uses Django's templating engine."""),
+    'lino.modlib.printing.XmlBuildMethod' : _("""Generates .xml files from .xml templates."""),
+    'lino.modlib.printing.SimpleBuildMethod' : _("""Base for build methods which use Lino's templating system
+(find_config_file)."""),
+    'lino.modlib.printing.CustomBuildMethod' : _("""For example CourseToXls."""),
+    'lino.modlib.printing.LatexBuildMethod' : _("""Not actively used.
+Generates .pdf files from .tex templates."""),
+    'lino.modlib.printing.RtfBuildMethod' : _("""Not actively used.
+Generates .rtf files from .rtf templates."""),
+    'lino.modlib.printing.PisaBuildMethod' : _("""Deprecated.
+Generates .pdf files from .html templates.
+Requires pisa.
+Usage example see lino_book.projects.pisa."""),
     'lino.modlib.users.User' : _("""Fields:"""),
     'lino.modlib.users.User.authenticated' : _("""This is always True.  Compare with
 AnonymousUser.authenticated."""),
