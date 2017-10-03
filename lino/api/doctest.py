@@ -368,7 +368,7 @@ def show_sql_queries():
     """
     for qry in connection.queries:
         sql = qry['sql'].strip()
-        print(sql)
+        print(sql.replace('"', ''))
     reset_sql_queries()
         
 
