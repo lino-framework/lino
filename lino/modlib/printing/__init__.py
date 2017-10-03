@@ -1,18 +1,8 @@
-# Copyright 2015-2016 Luc Saffre
+# Copyright 2015-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Adds printing functionality to your Lino application.
-See :doc:`/admin/printing`.
-
-
-.. autosummary::
-   :toctree:
-
-    choicelists
-    actions
-    utils
-    mixins
-    models
+"""Adds printing functionality to a Lino application.
+See :doc:`/specs/printing`.
 
 """
 

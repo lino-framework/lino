@@ -430,11 +430,17 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     <lino.core.actions.Action.readonly>` is `False`.
 
     The
-    :class:`changes.Changes<lino.modlib.changes.models.Changes>`
+    :class:`changes.Changes <lino.modlib.changes.models.Changes>`
     table is an example where this is being used: nobody should
     ever edit something in the table of Changes.  The user
     interface uses this to generate optimized JS code for this
     case.
+
+    """
+
+    auto_apply_params = True
+    """Whether the parameter values of the parameter panel should be
+    applied automatically when some value has been changed.
 
     """
 

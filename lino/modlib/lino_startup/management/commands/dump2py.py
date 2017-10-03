@@ -106,26 +106,27 @@ def write_create_function(model, stream):
                 "%s.%s.auto_now_add is True : values will be lost!",
                 full_model_name(model), f.name)
             # f.auto_now_add = False
-    #~ fields = model._meta.local_fields
-    #~ fields = [f for f in model._meta.fields if f.serialize]
-    #~ fields = [f for f in model._meta.local_fields if f.serialize]
     stream.write('def create_%s(%s):\n' % (
         model._meta.db_table, ', '.join([
             f.attname for f in fields
             if not getattr(f, '_lino_babel_field', False)])))
     for f in fields:
+        if f.model is model:
+            pre = '    '
+        else:
+            pre = '#   '
         if isinstance(f, models.DecimalField):
             stream.write(
-                '    if %s is not None: %s = Decimal(%s)\n' % (
+                pre+'if %s is not None: %s = Decimal(%s)\n' % (
                     f.attname, f.attname, f.attname))
         elif isinstance(f, ChoiceListField):
             lstname = 'settings.SITE.modules.{0}.{1}'.format(
                 f.choicelist.app_label, f.choicelist.__name__)
-            ln = '    if {0}: {0} = {1}.get_by_value({0})\n'
+            ln = pre+'if {0}: {0} = {1}.get_by_value({0})\n'
             stream.write(ln.format(f.attname, lstname))
         elif is_pointer_to_contenttype(f):
             stream.write(
-                '    %s = new_content_type_id(%s)\n' % (
+                pre+'%s = new_content_type_id(%s)\n' % (
                     f.attname, f.attname))
 
     if model._meta.parents:
@@ -135,32 +136,26 @@ def write_create_function(model, stream):
             raise Exception(msg)
         pm, pf = list(model._meta.parents.items())[0]
         fields = [f for f in fields if f != pf]
-    #     parent_fields = []
-    #     child_fields = []
-    #     for f in fields:
-    #         if f.model is not None and issubclass(f.model, pm):
-    #             parent_fields.append(f)
-    #         else:
-    #             child_fields.append(f)
-    # else:
-    #     parent_fields = []
-    #     child_fields = fields
         
     stream.write("    kw = dict()\n")
     for f in fields:
+        if f.model is model:
+            pre = '    '
+        else:
+            pre = '#   '
         if getattr(f, '_lino_babel_field', False):
             continue
         elif isinstance(f, (BabelCharField, BabelTextField)):
             stream.write(
-                '    if %s is not None: kw.update(bv2kw(%r,%s))\n' % (
+                pre + 'if %s is not None: kw.update(bv2kw(%r,%s))\n' % (
                     f.attname, f.attname, f.attname))
         else:
             stream.write(
-                '    kw.update(%s=%s)\n' % (f.attname, f.attname))
+                pre + 'kw.update(%s=%s)\n' % (f.attname, f.attname))
 
     if model._meta.parents:
         stream.write(
-            '    return create_mti_child(%s, %s, %s, **kw)\n' % (
+            '    return create_mti_child(%s, %s, %s, **kw)\n\n' % (
                 full_model_name(pm, '_'), pf.attname,
                 full_model_name(model, '_')))
     else:
@@ -220,6 +215,7 @@ from datetime import datetime
 from datetime import time, date
 from django.conf import settings
 from django.utils.timezone import make_aware
+from django.core.management import call_command
 # from django.contrib.contenttypes.models import ContentType
 from lino.utils.dpy import create_mti_child
 from lino.utils.dpy import DpyLoader
@@ -333,6 +329,9 @@ def main(args):
             '    loader.finalize()\n')
         # self.stream.write(
         #     '    logger.info("Loaded %d objects",loader.count_objects)\n')
+        self.stream.write(
+            "    call_command('resetsequences')\n")
+        
         self.stream.write("""
 if __name__ == '__main__':
     import argparse
@@ -395,7 +394,7 @@ if __name__ == '__main__':
             msg += "- " + '\n- '.join([
                 full_model_name(m) + ' (depends on %s)' % ", ".join([
                     full_model_name(d) for d in deps])
-                for m, deps in list(guilty.items())])
+                for m, deps in guilty.items()])
             if False:
                 # we don't write them to the .py file because they are
                 # in random order which would cause false ddt to fail

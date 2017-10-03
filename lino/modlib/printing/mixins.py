@@ -1,17 +1,9 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2016 Luc Saffre
+# Copyright 2009-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
-
-"""Defines most of the classes needed for
-:doc:`/admin/printing`.
-
-"""
 
 from __future__ import unicode_literals
 # from builtins import object
-
-import logging
-logger = logging.getLogger(__name__)
 
 import os
 import datetime
@@ -23,7 +15,6 @@ from django.utils.timezone import make_aware
 
 from lino.api import rt
 from lino.modlib.plausibility.choicelists import Checker
-
 
 # from lino.core import actions
 from lino.utils.choosers import chooser
@@ -47,31 +38,8 @@ def build_method_choices():
 
 
 class PrintableType(Model):
-    """Base class for models that specify the
-    :attr:`TypedPrintable.type`.
-
-    .. attribute:: build_method
-
-        A pointer to an item of
-        :class:`lino.modlib.printing.choicelists.BuildMethods`.
-
-    .. attribute:: template
-
-        The name of the file to be used as template.
-    
-        If this field is empty, Lino will use the filename returned by
-        :meth:`lino.modlib.printing.Plugin.get_default_template`.
-    
-        The list of choices for this field depend on the
-        :attr:`build_method`.  Ending must correspond to the
-        :attr:`build_method`.
-
-    """
 
     templates_group = None
-    """
-    Default value for `templates_group` is the model's full name.
-    """
 
     class Meta(object):
         abstract = True
@@ -102,25 +70,6 @@ class PrintableType(Model):
 
 
 class Printable(PrintableObject):
-    """Mixin for models whose instances have a "print" action (i.e. for
-    which Lino can generate a printable document).
-
-    Extended by :class:`CachedPrintable` and :class:`TypedPrintable`.
-
-    .. attribute:: do_print
-
-        The action used to print this object.
-        This is an instance of
-        :class:`DirectPrintAction` or :class:`CachedPrintAction` by
-        default.  And if :mod:`lino_xl.lib.excerpts` is installed,
-        then :func:`set_excerpts_actions
-        <lino_xl.lib.excerpts.set_excerpts_actions>` possibly replaces
-        :attr:`do_print` by a
-        :class:`lino_xl.lib.excerpts.CreateExcerpt` instance.
-
-    .. attribute:: edit_template
-
-    """
 
     do_print = DirectPrintAction()
 
@@ -128,33 +77,6 @@ class Printable(PrintableObject):
 
 
 class CachedPrintable(Duplicable, Printable):
-    """
-    Mixin for Models that generate a unique external file at a
-    determined place when being printed.
-    
-    Adds a "Print" button, a "Clear cache" button and a `build_time`
-    field.
-    
-    The "Print" button of a :class:`CachedPrintable
-    <lino.mixins.printable.CachedPrintable>` transparently handles the
-    case when multiple rows are selected.  If multiple rows are
-    selected (which is possible only when :attr:`cell_edit
-    <lino.core.tables.AbstractTable.cell_edit>` is True), then it will
-    automatically:
-    
-    - build the cached printable for those objects who don't yet have
-      one
-      
-    - generate a single temporary pdf file which is a merge of these
-      individual cached printable docs
-
-    .. attribute:: build_time
-
-        Timestamp of the built target file. Contains `None`
-        if no build hasn't been called yet.
-
-    """
-
     do_print = CachedPrintAction()
     do_clear_cache = ClearCacheAction()
 
@@ -221,18 +143,6 @@ class CachedPrintable(Duplicable, Printable):
 
 
 class TypedPrintable(CachedPrintable):
-    """A :class:`CachedPrintable` that uses a "Type" for deciding which
-    template to use on a given instance.
-    
-    A TypedPrintable model must define itself a field ``type`` which
-    is a ForeignKey to a Model that implements :class:`PrintableType`.
-    
-    Alternatively you can override :meth:`get_printable_type` if you
-    want to name the field differently. An example of this is
-    :attr:`ml.sales.SalesDocument.imode`.
-
-    """
-
     type = None
 
     class Meta(object):
@@ -273,28 +183,6 @@ class TypedPrintable(CachedPrintable):
 
 
 class CachedPrintableChecker(Checker):
-    """Checks for missing cache files on all objects which inherit
-    :class:`CachedPrintable`.
-
-    When a CachedPrintable has a non-empty :attr:`build_time
-    <CachedPrintable.build_time>` field, this means that the target
-    file has been built.  That file might no longer exists for several
-    reasons:
-
-    - it has really beeen removed from the cache directory.
-
-    - we are working in a copy of the database, using a different
-      cache directory.
-
-    - the computed name of the file has changed due to a change in
-      configuration or code.
-
-    An easy quick "fix" would be to set `build_time` to None, but this
-    is not automatic because in cases of real data loss a system admin
-    might want to have at least that timestamp in order to search for
-    the lost file.
-
-    """
     model = CachedPrintable
     verbose_name = _("Check for missing target files")
     

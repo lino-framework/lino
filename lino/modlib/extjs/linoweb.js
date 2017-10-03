@@ -332,96 +332,6 @@ Lino.autorefresh = function() {
 }
 {%- endif %}
 
-Lino.unused_show_login_window = function(on_login, username, password) {
-  // console.log('20121103 show_login_window',arguments);
-  //~ var current_window = Lino.current_window;
-  if (typeof username != 'string') username = '';
-  if (typeof password != 'string') password = '';
-  if (Lino.login_window == null) {
-    
-      function do_login() { 
-            Lino.viewport.loadMask.show()
-            login_panel.getForm().submit({ 
-                method:'POST', 
-                waitTitle:'Connecting', 
-                waitMsg:'Sending data...',
-                success:function(){ 
-                  Lino.login_window.hide();
-                  Lino.handle_home_button();
-                  Lino.viewport.loadMask.hide();
-                  if (typeof on_login == 'string') {
-                      Lino.load_url(on_login);
-                  } 
-                },
-                failure: function(form,action) { 
-                  Lino.on_submit_failure(form, action);
-                  Lino.viewport.loadMask.hide()
-                }
-            }); 
-      };
-    
-      var login_button = new Ext.Button({ 
-        text:"{{_('Log in')}}",
-        formBind: true,	 
-        // Function that fires when user clicks the button 
-        handler: do_login});
-    
-      var login_panel = new Ext.FormPanel({ 
-        //~ inspired by http://www.sencha.com/learn/a-basic-login/
-        autoHeight:true,
-        labelWidth:90,
-        url:'{{extjs.build_plain_url("auth")}}', 
-        frame:true, 
-        defaultType:'textfield',
-        monitorValid:true,
-        items:[{ 
-            fieldLabel:"{{_('Username')}}", 
-            id: 'username',
-            name:'username', 
-            value: username, 
-            autoHeight:true,
-            allowBlank:false 
-        },{ 
-            fieldLabel:"{{_('Password')}}", 
-            id:'password', 
-            name:'password', 
-            value: password, 
-            inputType:'password', 
-            autoHeight:true,
-            allowBlank:false 
-        }],        
-        buttons:[ login_button ]});
-        
-      Lino.login_window = new Ext.Window({
-          layout:'fit',
-          defaultButton: 'username',
-          width:300,
-          title:"{{_('Log in')}}", 
-          autoHeight:true,
-          modal: true,
-          closeAction: "hide",
-          keys: {
-            key: Ext.EventObject.ENTER,
-            fn: function() { do_login()}
-          },
-          items: [login_panel] });
-  } else {
-      var fld = Lino.login_window.items.first().form.findField('username');
-      fld.setValue(username);
-      var fld = Lino.login_window.items.first().form.findField('password');
-      fld.setValue(password);
-  };
-  Lino.login_window.show();
-};
-
-Lino.unused_logout = function(id,name) {
-    Lino.call_ajax_action(
-        Lino.viewport, 'GET', 
-        '{{extjs.build_plain_url("auth")}}',
-        {}, 'logout', undefined, undefined,
-        function(){Lino.reload();})
-}
-
 Lino.set_subst_user = function(id, name) {
     //~ console.log(20130723,'Lino.set_subst_user',id,name,Lino.current_window,Lino.viewport);
     Lino.subst_user = id;
@@ -453,9 +363,10 @@ Lino.perc2width = function(perc) {
 
 
 Lino.MainPanel = {
-  is_home_page: false,
-  setting_param_values : false,
-  config_containing_window : function(wincfg) { }
+  is_home_page: false
+  ,auto_apply_params: true
+  ,setting_param_values : false
+  ,config_containing_window : function(wincfg) { }
   ,init_containing_window : function(win) { }
   ,is_loading : function() { 
       if (!this.rendered) return true;
@@ -596,29 +507,32 @@ Lino.MainPanel = {
           }
         }); 
         tbar = tbar.concat([this.toggle_params_panel_btn]);
-        var refresh = function() {
-            if (!t.setting_param_values) {
-                t._force_dirty = true; 
-                t.refresh();
+
+        if (this.auto_apply_params) {
+            var refresh = function() {
+                if (!t.setting_param_values) {
+                    t._force_dirty = true; 
+                    t.refresh();
+                }
             }
+            Ext.each(this.params_panel.fields,function(f) {
+              //~ f.on('valid',function() {t.refresh()});
+              if (f instanceof Ext.form.Checkbox) {
+                  f.on('check',refresh);
+              } else if (f instanceof Ext.DatePicker) {
+                  f.on('select',refresh);
+              } else if (f instanceof Ext.form.TriggerField) {
+                  f.on('select',refresh);
+                  //~ f.on('change',refresh);
+                  //~ f.on('valid',refresh);
+              } else {
+                  if (! f.on) 
+                      console.log("20121010 no method 'on'",f);
+                  else
+                      f.on('change',refresh);
+                }
+              });
         }
-        Ext.each(this.params_panel.fields,function(f) {
-          //~ f.on('valid',function() {t.refresh()});
-          if (f instanceof Ext.form.Checkbox) {
-              f.on('check',refresh);
-          } else if (f instanceof Ext.DatePicker) {
-              f.on('select',refresh);
-          } else if (f instanceof Ext.form.TriggerField) {
-              f.on('select',refresh);
-              //~ f.on('change',refresh);
-              //~ f.on('valid',refresh);
-          } else {
-              if (! f.on) 
-                  console.log("20121010 no method 'on'",f);
-              else
-                  f.on('change',refresh);
-            }
-          });
       }
       return tbar;
   }
@@ -1986,7 +1900,8 @@ Lino.build_buttons = function(panel,actions) {
       cmenu[i] = {
             text : a.menu_item_text,
             iconCls : a.iconCls,
-            menu : a.menu
+            menu : a.menu,
+            itemId : a.itemId
           };
       if (a.panel_btn_handler) {
           var h = a.panel_btn_handler.createCallback(panel);
@@ -2194,29 +2109,6 @@ Lino.run_row_action = function(
   }
   fn(panel, null, null);
 }
-
-Lino.put = function(requesting_panel, pk, data) {
-    var panel = Ext.getCmp(requesting_panel);
-    //~ var panel = null; // 20131026
-    var p = {};
-    p.{{constants.URL_PARAM_ACTION_NAME}} = 'put'; // SubmitDetail.action_name
-
-    Ext.apply(p,data);
-    var req = {
-        params:p
-        ,waitMsg: 'Saving your data...'
-        ,scope: panel
-        ,success: Lino.action_handler( panel, function(result) { 
-            panel.refresh();
-        })
-        ,failure: Lino.ajax_error_handler(panel)
-    };
-    req.method = 'PUT';
-    req.url = '{{extjs.build_plain_url("api")}}' + panel.ls_url + '/' + pk;
-    if (panel.loadMask) panel.loadMask.show(); 
-    Ext.Ajax.request(req);
-}
-
 
 
 Lino.show_detail = function(panel, btn) {
@@ -2660,9 +2552,9 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     //~ console.log('FormPanel.constructor() 2',config)
       
     config.trackResetOnLoad = true;
-    
+  
     Lino.FormPanel.superclass.constructor.call(this, config);
-      
+
     //~ this.set_base_param('$URL_PARAM_FILTER',null); // 20111018
     //~ this.set_base_param('$URL_PARAM_FILTER',''); // 20111018
       
@@ -2672,8 +2564,6 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     this.containing_panel = this;
 
     //~ console.log("20111201 containing_window",this.containing_window,this);
-
-
     var actions = Lino.build_buttons(this, this.ls_bbar_actions);
     if (actions) {
         this.bbar = actions.bbar;
@@ -2733,11 +2623,10 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       }
       this.tbar = this.add_params_panel(this.tbar);
       
-      //~ console.log(20101117,this.containing_window.refresh);
       this.tbar = this.tbar.concat([
         {
-          //~ text:'Refresh',
-          handler:function(){ this.do_when_clean(false,this.refresh.createDelegate(this)) },
+            handler:function(){ this.do_when_clean(
+                false, this.refresh.createDelegate(this)) },
           iconCls: 'x-tbar-loading',
           tooltip:"{{_('Reload current record')}}",
           scope:this}

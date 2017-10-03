@@ -45,7 +45,7 @@ from django.db.models.fields import NOT_PROVIDED
 
 from lino.core import layouts
 from lino.core import fields
-from lino.core.actions import Permittable
+from lino.core.actions import Action, Permittable
 from lino.core import constants
 from lino.core.gfks import GenericRelation
 
@@ -393,6 +393,21 @@ class ConstantElement(LayoutElement):
     def as_plain_html(self, ar, obj):
         return self.value.get('html')
 
+class ButtonElement(LayoutElement):
+    declare_type = jsgen.DECLARE_INLINE
+    # xtype = 'label'
+    xtype = 'button'
+
+    def __init__(self, lh, name, a, **kwargs):
+        # kwargs.update(html='<a href="#" onclick="javascript:{js}">{text}</a>'.format(
+        #     text=a.label, js=a.js_handler))
+        kwargs.update(
+            text=a.label,
+            handler=js_code(a.js_handler),
+            scope=js_code('this'))
+        LayoutElement.__init__(self, lh, name, **kwargs)
+
+    
 
 class Spacer(LayoutElement):
     declare_type = jsgen.DECLARE_INLINE
@@ -2275,6 +2290,9 @@ def create_layout_element(lh, name, **kw):
             lh.add_store_field(e.field)
             return e
 
+    if isinstance(de, Action):
+        return ButtonElement(lh, name, de)
+    
     if isinstance(de, fields.VirtualField):
         return create_vurt_element(lh, name, de, **kw)
 

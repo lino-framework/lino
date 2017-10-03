@@ -153,8 +153,13 @@ class Bleached(Model):
         if bleach and self.bleached_fields:
             for k in self.bleached_fields:
                 old = getattr(self, k)
-                new = bleach.clean(
-                    old, tags=self.allowed_tags, strip=True)
+                try:
+                    new = bleach.clean(
+                        old, tags=self.allowed_tags, strip=True)
+                except TypeError as e:
+                    logger.warning(
+                        "Could not bleach %r : %s (%s)", old, e, self)
+                    continue
                 if old != new:
                     logger.debug(
                         "Bleaching %s from %r to %r", k, old, new)
