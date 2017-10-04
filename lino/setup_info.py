@@ -44,8 +44,7 @@ else:
 
 SETUP_INFO = dict(
     name='lino',
-    # version='1.7.6',
-    version='2016.12.0',
+    version='17.10.0',
     install_requires=install_requires,
     description="A framework for writing desktop-like web applications "
                 "using Django and ExtJS",
@@ -98,23 +97,22 @@ The central project homepage is http://www.lino-framework.org
 """)
 
 SETUP_INFO.update(classifiers="""\
-  Programming Language :: Python
-  Programming Language :: Python :: 2
-  Programming Language :: Python :: 3
-  Development Status :: 5 - Production/Stable
-  Environment :: Web Environment
-  Framework :: Django
-  Intended Audience :: Developers
-  Intended Audience :: System Administrators
-  License :: OSI Approved :: BSD License
-  Natural Language :: English
-  Natural Language :: French
-  Natural Language :: German
-  Operating System :: OS Independent
-  Topic :: Database :: Front-Ends
-  Topic :: Home Automation
-  Topic :: Office/Business
-  Topic :: Software Development :: Libraries :: Application Frameworks""".splitlines())
+Programming Language :: Python
+Programming Language :: Python :: 2
+Programming Language :: Python :: 3
+Development Status :: 5 - Production/Stable
+Environment :: Web Environment
+Framework :: Django
+Intended Audience :: Developers
+Intended Audience :: System Administrators
+License :: OSI Approved :: BSD License
+Natural Language :: English
+Natural Language :: French
+Natural Language :: German
+Operating System :: OS Independent
+Topic :: Database :: Front-Ends
+Topic :: Office/Business
+Topic :: Software Development :: Libraries :: Application Frameworks""".splitlines())
 
 SETUP_INFO.update(packages=[str(n) for n in """
 lino

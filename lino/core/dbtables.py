@@ -540,8 +540,8 @@ class Table(AbstractTable):
 
                 master_model = None
                 try:
-                    fk = self.model._meta.get_field(self.master_key)
-                    # x = self.model._meta.get_field_by_name(self.master_key)
+                    fk = self.model.get_data_elem(self.master_key)
+                    # fk = self.model._meta.get_field(self.master_key)
                     # fk, remote, direct, m2m = x
                     # assert direct
                     # assert not m2m
@@ -551,10 +551,12 @@ class Table(AbstractTable):
                         master_model = fk.choicelist.item_class
                     elif isinstance(fk, GenericForeignKey):
                         master_model = ContentType
+                    elif isinstance(fk, fields.DummyField):
+                        pass
                     else:
                         raise Exception(
-                            "Unsupported master_key {0} ({1})".format(
-                                fk, fk.__class__))
+                            "Unsupported master_key {0}.{1} ({2})".format(
+                                self, fk, fk.__class__))
                 except models.FieldDoesNotExist:
                     for vf in self.model._meta.virtual_fields:
                         if vf.name == self.master_key:
