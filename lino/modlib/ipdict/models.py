@@ -34,13 +34,16 @@ class Connections(dd.VirtualTable):
     """
     label = _("Connections")
     required_roles = dd.login_required(dd.SiteAdmin)
-    column_names = "ip_address:12 login_failures:5 blacklisted_since:12 username:20 last_request:30 last_login:30"
+    column_names = "last_request:30 ip_address:12 login_failures:5 blacklisted_since:12 username:20 last_login:30"
     window_size = (90, 12)
 
 
     @classmethod
     def get_data_rows(cls, ar):
-        return dd.plugins.ipdict.ip_records.values()
+        # return dd.plugins.ipdict.ip_records.values()
+        return reversed(sorted(
+            dd.plugins.ipdict.ip_records.values(),
+            key=lambda x: x.last_request))
     
     @dd.displayfield(_("IP address"))
     def ip_address(self, obj, ar):
