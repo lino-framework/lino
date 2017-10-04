@@ -205,7 +205,10 @@ class FakeField(object):
     
     # required by Django 1.10:
     one_to_many = False
-    one_to_one = False    
+    one_to_one = False
+
+    # required since 20171003
+    rel = None
 
     def is_enabled(self, lh):
         """
@@ -811,7 +814,13 @@ class DummyField(FakeField):
 
     def __init__(self, *args, **kw):
         pass
+    
+    # def __init__(self, name, *args, **kw):
+    #     self.name = name
 
+    def __str__(self):
+        return self.name
+    
     def __get__(self, instance, owner):
         if instance is None:
             return self

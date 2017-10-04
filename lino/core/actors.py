@@ -1537,7 +1537,15 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
         """
         ar = ar.spawn(self, master_instance=obj, is_on_main_actor=False)
-        return qs2summary(ar, ar.data_iterator, self.summary_sep)
+        p = qs2summary(ar, ar.data_iterator, self.summary_sep)
+        if self.insert_action is not None:
+            ir = self.insert_action.request_from(ar)
+            if ir.get_permission():
+                btn = ir.ar2button()
+                if len(p):
+                    p.append(E.br())
+                p.append(btn)
+        return p
 
     @classmethod
     def error2str(self, e):

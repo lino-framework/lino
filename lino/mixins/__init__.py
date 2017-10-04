@@ -283,7 +283,7 @@ class ProjectRelated(model.Model):
             related_name="%(app_label)s_%(class)s_set_by_project",
         )
     else:
-        project = fields.DummyField()
+        project = fields.DummyField('project')
 
     def get_related_project(self):
         if settings.SITE.project_model:
