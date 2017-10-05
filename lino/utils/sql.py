@@ -36,11 +36,10 @@ def p(kw, sql_width = 60):
           "Longest_time: {time}\n"
           "Queries: {count}\n"
           "total_time: {total_time}".format(**kw))
-    if sql_width > 0:
-        sql = "{sql1} {table} {sql2}".format(**kw)
-        sql = sql.replace('"','')
-        kw['sql'] = ("\n    ").join(textwrap.wrap(sql, sql_width))
-        print("sql: {sql}".format(**kw))
+    sql = "{sql1} {table} {sql2}".format(**kw)
+    sql = sql.replace('"','')
+    kw['sql'] = ("\n    ").join(textwrap.wrap(sql, sql_width))
+    print("sql: {sql}".format(**kw))
 
 # regex = r"^.+?\((?P<time>[\d\.]*)\) (?P<sql>.*FROM \`(?P<table>.*?)\`.*?;).*$"
 
@@ -58,6 +57,7 @@ def sql_summary(lines, show_times=False, show_details=False, **options):
     d = {}
     for l in lines:
         l = l.replace('"','')
+        l = l.replace('`','')
         m = re.match(regex, l)
         # print m
         if m:
@@ -84,10 +84,12 @@ def sql_summary(lines, show_times=False, show_details=False, **options):
         else:
             if show_times:
                 headers = 'total_time count table time'.split()
+                values = sorted(d.values(), key= lambda x: -x['total_time'])
             else:
                 headers = 'table count'.split()
+                values = sorted(d.values(), key= lambda x: x['table'])
             rows = []
-            for kw in sorted(d.values(), key= lambda x: x['total_time']):
+            for kw in values:
                 rows.append([kw[h] for h in headers])
             print(rstgen.table(headers, rows))
     else:
@@ -97,6 +99,6 @@ def sql_summary(lines, show_times=False, show_details=False, **options):
 if __name__ == "__main__":
     # f = open("log/lino.log", 'r')
     f = sys.stdin
-    sql_summary(f.readlines())
+    sql_summary(f.readlines(), show_details=True)
     
         
