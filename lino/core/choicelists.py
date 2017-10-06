@@ -517,14 +517,21 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
 
     @classmethod
     def field(cls, *args, **kw):
-        """Create a database field (a :class:`ChoiceListField`) that holds
-        one value of this choicelist.
+        """Create and return a database field that points to one value of this
+        choicelist.
+
+        The returned field is an instance of :class:`ChoiceListField`.
+        Returns a `DummyField` if the plugin which defines this
+        choicelist is not installed.
+        
 
         """
-        fld = ChoiceListField(cls, *args, **kw)
-        cls.setup_field(fld)
-        cls._fields.append(fld)
-        return fld
+        if settings.SITE.is_installed(cls.app_label):
+            fld = ChoiceListField(cls, *args, **kw)
+            cls.setup_field(fld)
+            cls._fields.append(fld)
+            return fld
+        return fields.DummyField()
 
     @classmethod
     def multifield(cls, *args, **kw):

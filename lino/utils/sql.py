@@ -52,6 +52,12 @@ def sql_summary(lines, show_times=False, show_details=False, **options):
     `lines` is an iterable of text lines from a logfile or from 
     :func:`lino.api.doctest.show_sql_summary`.
 
+    Any backticks and double quotes are removed for readability.
+    MySQL uses backticks where SQLite uses double quotes around table
+    and field names in the SQL syntax.  `Here
+    <https://stackoverflow.com/questions/11321491/when-to-use-single-quotes-double-quotes-and-backticks-in-mysql>`__
+    is an interesting discussion with examples.
+
     """
     # matches = []
     d = {}
