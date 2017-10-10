@@ -125,9 +125,9 @@ class Checker(dd.Choice):
                 lang = user.language
             with translation.override(lang):
                 msg = '\n'.join([str(s) for s in todo])
-            prb = Problem(owner=obj, message=msg, checker=self, user=user)
-            prb.full_clean()
-            prb.save()
+                prb = Problem(owner=obj, message=msg, checker=self, user=user)
+                prb.full_clean()
+                prb.save()
         return (todo, done)
 
     def get_plausibility_problems(self, obj, fix=False):
