@@ -61,7 +61,7 @@ from django.utils.functional import lazy
 from django.db import models
 from django.conf import settings
 
-from atelier.utils import assert_pure
+# from atelier.utils import assert_pure
 from lino.core import actions
 from lino.core import actors
 from lino.core import tables
@@ -674,7 +674,7 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
         instance `bc` to the user.
 
         Override this to customize the display text of choices.
-        :class:`lino.modlib.users.choicelists.UserGroups` and
+        :class:`lino.modlib.users.UserGroups` and
         :class:`lino.modlib.cv.models.CefLevel` used to do this before
         we had the :attr:`ChoiceList.show_values` option.
 
