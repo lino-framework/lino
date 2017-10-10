@@ -124,7 +124,7 @@ class Dupable(dd.Model):
             return
         PhoneticWord = rt.models.dupable.PhoneticWord
         qs = PhoneticWord.objects.filter(
-            **gfk2lookup(PhoneticWord.owner, self))
+            **gfk2lookup(PhoneticWord.owner, self)).order_by('id')
         existing = [o.word for o in qs]
         wanted = list(self.get_dupable_words(
             getattr(self, self.dupable_words_field)))
