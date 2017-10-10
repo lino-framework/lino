@@ -105,7 +105,7 @@ class Choice(object):
     """
 
 
-    def __init__(self, value, text=None, name=None, **kwargs):
+    def __init__(self, value=None, text=None, name=None, **kwargs):
         """Create a new :class:`Choice` instance.
     
         Parameters: see :attr:`value`, :attr:`text` and :attr:`name`.
@@ -114,10 +114,13 @@ class Choice(object):
         This is also being called from :meth:`Choicelist.add_item`.
     
         """
-        if not isinstance(value, six.string_types):
+        if value is not None:
+            self.value = value
+        if not isinstance(self.value, six.string_types):
             raise Exception("value must be a string")
-        self.pk = self.value = value
-        self.name = name
+        self.pk = self.value
+        if name is not None:
+            self.name = name
         # if name is not None:
         #     if self.name is None:
         #         self.name = value

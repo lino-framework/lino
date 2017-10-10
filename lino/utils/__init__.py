@@ -111,6 +111,7 @@ import sys
 import datetime
 import re
 from decimal import Decimal
+from collections import OrderedDict
 
 # encapsulate where they come from:
 
@@ -579,7 +580,7 @@ class SumCollector(object):
 
     """
     def __init__(self):
-        self._sums = dict()
+        self._sums = OrderedDict()
 
     def collect(self, k, value):
         """This returns an empty string """
