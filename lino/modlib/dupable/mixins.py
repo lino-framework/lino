@@ -134,8 +134,8 @@ class Dupable(dd.Model):
             qs.delete()
             for w in wanted:
                 PhoneticWord(word=w, owner=self).save()
-        return _("Must update phonetic words.")
-        # return _("Must update phonetic words. (existing {}, wanted {})").format(existing, wanted)
+        # return _("Must update phonetic words.")
+        return _("Must update phonetic words. (existing {}, wanted {})").format(existing, wanted)
 
     def after_ui_save(self, ar, cw):
         super(Dupable, self).after_ui_save(ar, cw)
