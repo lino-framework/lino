@@ -372,7 +372,7 @@ def show_sql_queries():
     reset_sql_queries()
         
 
-def show_sql_summary():
+def show_sql_summary(**kwargs):
     """Print a summary of the SQL queries which have been made since last
     call.
 
@@ -386,8 +386,8 @@ def show_sql_summary():
             except KeyError as e:
                 yield "{} : {}".format(qry, e)
                 
-    sql_summary(func())
-    # reset_sql_queries()
+    sql_summary(func(), **kwargs)
+    reset_sql_queries()
         
 
 def add_call_logger(owner, name):

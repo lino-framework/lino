@@ -27,31 +27,43 @@ import re
 import sys
 # from pprint import pprint
 import textwrap
+from atelier import rstgen
 
 def p(kw, sql_width = 60):
     # Prints a parsed sql log nicely
-    kw['sql'] = ("\n    ").join(textwrap.wrap(kw['sql'], sql_width))
     print(
           "table: {table}\n"
           "Longest_time: {time}\n"
           "Queries: {count}\n"
-          "total_time: {total_time}\n"
-          "sql: {sql}".format(**kw))
+          "total_time: {total_time}".format(**kw))
+    sql = "{sql1} {table} {sql2}".format(**kw)
+    sql = sql.replace('"','')
+    kw['sql'] = ("\n    ").join(textwrap.wrap(sql, sql_width))
+    print("sql: {sql}".format(**kw))
 
-regex = r"^.+?\((?P<time>[\d\.]*)\) (?P<sql>.*FROM \`(?P<table>.*?)\`.*?;).*$"
+# regex = r"^.+?\((?P<time>[\d\.]*)\) (?P<sql>.*FROM \`(?P<table>.*?)\`.*?;).*$"
 
-# regex = r".*\((?P<time>[\d\.]*)\) (?P<sql>.*FROM \`(?P<table>.*?)\`.*?;).*"
+regex = r"^.*?\((?P<time>\S+?)\)\s+(?P<sql1>.*)\s+FROM\s+(?P<table>\S+)\s*(?P<sql2>.*);$"
 
-def sql_summary(lines):
+
+def sql_summary(lines, show_times=False, show_details=False, **options):
     """Parse the SQL queries from `lines` and print a summary.
 
     `lines` is an iterable of text lines from a logfile or from 
     :func:`lino.api.doctest.show_sql_summary`.
 
+    Any backticks and double quotes are removed for readability.
+    MySQL uses backticks where SQLite uses double quotes around table
+    and field names in the SQL syntax.  `Here
+    <https://stackoverflow.com/questions/11321491/when-to-use-single-quotes-double-quotes-and-backticks-in-mysql>`__
+    is an interesting discussion with examples.
+
     """
     # matches = []
     d = {}
     for l in lines:
+        l = l.replace('"','')
+        l = l.replace('`','')
         m = re.match(regex, l)
         # print m
         if m:
@@ -63,18 +75,29 @@ def sql_summary(lines):
             if r.get('time', -1) < g['time']:
                 d[g['table']].update(g)
         else:
-            print("Invalid line: " + l)
+            print("Invalid line {!r}".format(l))
         
     if d:
-        for kw in sorted(d.values(), key= lambda x: x['total_time']):
-            p(kw)
+        if show_details:
+            for kw in sorted(d.values(), key= lambda x: x['total_time']):
+                p(kw, **options)
+                print("-------------------")
+            print("The slowest SQL call was:")
+            #find max
+            kw = d[max(d, key=lambda x: float(d[x].get('time', 0)))]
+            p(kw, **options)
             print("-------------------")
-        print("The slowest SQL call was:")
-        #find max
-        kw = d[max(d, key=lambda x: float(d[x].get('time', 0)))]
-        p(kw)
-        print("-------------------")
-
+        else:
+            if show_times:
+                headers = 'total_time count table time'.split()
+                values = sorted(d.values(), key= lambda x: -x['total_time'])
+            else:
+                headers = 'table count'.split()
+                values = sorted(d.values(), key= lambda x: x['table'])
+            rows = []
+            for kw in values:
+                rows.append([kw[h] for h in headers])
+            print(rstgen.table(headers, rows))
     else:
         print("No sql queries found")
 
@@ -82,6 +105,6 @@ def sql_summary(lines):
 if __name__ == "__main__":
     # f = open("log/lino.log", 'r')
     f = sys.stdin
-    sql_summary(f.readlines())
+    sql_summary(f.readlines(), show_details=True)
     
         

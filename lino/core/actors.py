@@ -615,6 +615,10 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         return '/' + self.app_label + '/' + self.__name__
 
     @classmethod
+    def is_installed(self):
+        return settings.SITE.is_installed(self.app_label)
+
+    @classmethod
     def get_widget_options(self, name, **options):
         return options
 

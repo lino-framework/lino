@@ -105,7 +105,7 @@ class Choice(object):
     """
 
 
-    def __init__(self, value, text=None, name=None, **kwargs):
+    def __init__(self, value=None, text=None, name=None, **kwargs):
         """Create a new :class:`Choice` instance.
     
         Parameters: see :attr:`value`, :attr:`text` and :attr:`name`.
@@ -114,10 +114,13 @@ class Choice(object):
         This is also being called from :meth:`Choicelist.add_item`.
     
         """
-        if not isinstance(value, six.string_types):
+        if value is not None:
+            self.value = value
+        if not isinstance(self.value, six.string_types):
             raise Exception("value must be a string")
-        self.pk = self.value = value
-        self.name = name
+        self.pk = self.value
+        if name is not None:
+            self.name = name
         # if name is not None:
         #     if self.name is None:
         #         self.name = value
@@ -517,14 +520,21 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
 
     @classmethod
     def field(cls, *args, **kw):
-        """Create a database field (a :class:`ChoiceListField`) that holds
-        one value of this choicelist.
+        """Create and return a database field that points to one value of this
+        choicelist.
+
+        The returned field is an instance of :class:`ChoiceListField`.
+        Returns a `DummyField` if the plugin which defines this
+        choicelist is not installed.
+        
 
         """
-        fld = ChoiceListField(cls, *args, **kw)
-        cls.setup_field(fld)
-        cls._fields.append(fld)
-        return fld
+        if settings.SITE.is_installed(cls.app_label):
+            fld = ChoiceListField(cls, *args, **kw)
+            cls.setup_field(fld)
+            cls._fields.append(fld)
+            return fld
+        return fields.DummyField()
 
     @classmethod
     def multifield(cls, *args, **kw):

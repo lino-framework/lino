@@ -97,7 +97,8 @@ class Plugin(Plugin):
 
     """
 
-    autorefresh_seconds = 60
+    autorefresh_seconds = 0
+    # autorefresh_seconds = 60
     """Number of seconds to wait between two refreshes when autorefresh is
     activated. Default is 60. Set this to 0 in order to deactivate
     the autorefresh button.
