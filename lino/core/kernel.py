@@ -964,7 +964,7 @@ class Kernel(object):
         # developing you are watching at such messages. OTOH it should
         # not be shown when running unit tests because its occurence
         # is not (easily) predictable.
-        logger.debug("Building %s ...", fn)
+        logger.info("Building %s ...", fn)
         
         self.site.makedirs_if_missing(dirname(fn))
         f = codecs.open(fn, 'w', encoding='utf-8')
