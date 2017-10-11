@@ -48,6 +48,7 @@ HttpQuery = collections.namedtuple(
     'HttpQuery',
     ['username', 'url_base', 'json_fields', 'expected_rows', 'kwargs'])
 
+settings.SITE.is_testing = True
 
 def get_json_dict(username, uri, an='detail'):
     url = '/api/{0}?fmt=json&an={1}'.format(uri, an)
@@ -106,7 +107,6 @@ def check_json_result(response, expected_keys=None, msg=''):
 def demo_get(
         username, url_base, json_fields=None,
         expected_rows=None, **kwargs):
-    from django.conf import settings
     case = HttpQuery(username, url_base, json_fields,
                      expected_rows, kwargs)
     # Django test client does not like future pseudo-unicode strings

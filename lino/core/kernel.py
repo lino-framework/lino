@@ -49,6 +49,7 @@ from django.db import models
 
 from django.utils.translation import ugettext_lazy as _
 
+import lino  # for is_testing
 from lino.utils import codetime
 from lino.core import layouts
 from lino.core import actors
@@ -217,6 +218,17 @@ class Kernel(object):
         self.kernel_startup(site)
         # logger.info("20140227 Kernel.__init__() done")
 
+
+    _code_mtime = None
+
+    def code_mtime(self):
+        # We set `code_mtime` only after kernel_startup() because
+        # codetime watches only those modules which are already
+        # imported.
+        if self._code_mtime is None:
+            self._code_mtime = codetime()
+        return self._code_mtime
+        
 
     def kernel_startup(self, site):
         """This is a part of a Lino site startup.  The Django Model
@@ -558,12 +570,6 @@ class Kernel(object):
                 raise Exception("Duplicate reserved name %r" % n)
             names.add(n)
 
-        # We set `code_mtime` only after kernel_startup() because
-        # codetime watches only those modules which are already
-        # imported.
-
-        self.code_mtime = codetime()
-        
         pre_ui_build.send(self)
 
         # 20160530
@@ -961,11 +967,12 @@ class Kernel(object):
 
         # The following message is important to see in a developer
         # console because the process takes some time and when
-        # developing you are watching at such messages. OTOH it should
-        # not be shown when running unit tests because its occurence
-        # is not (easily) predictable.
+        # developing you are watching at such messages. Also on a
+        # production site we want it to be logged. It should *not* be
+        # shown when running unit tests because its occurence is not
+        # (easily) predictable.
         logger.info("Building %s ...", fn)
-        
+            
         self.site.makedirs_if_missing(dirname(fn))
         f = codecs.open(fn, 'w', encoding='utf-8')
         try:
