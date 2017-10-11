@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-10-10 17:50+0300\n"
-"PO-Revision-Date: 2017-10-10 17:56+0300\n"
+"PO-Revision-Date: 2017-10-11 22:09+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language: de\n"
 "Language-Team: \n"
@@ -3406,14 +3406,12 @@ msgid "We are running %(name)s version %(version)s"
 msgstr "Hier läuft %(name)s  %(version)s"
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:64
-#, fuzzy
 msgid "You will now probably want to {}."
-msgstr "Sie wollen sich jetzt wahrscheinlich"
+msgstr "Sie wollen sich jetzt wahrscheinlich {}."
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:67
-#, fuzzy
 msgid "sign in"
-msgstr "Bezeichnung"
+msgstr "anmelden"
 
 #: lino/modlib/lino_startup/config/admin_main_base.html:69
 msgid "Or {} as a new user."
