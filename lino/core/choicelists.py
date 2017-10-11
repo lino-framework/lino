@@ -376,7 +376,37 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
 
     Note that this specifies the *default* default value for *all*
     :class:`ChoiceListField <lino.core.choicelists.ChoiceListField>`
-    of this choicelist, including parameter fields.  The disadvantage
+    of this choicelist, including parameter fields.  
+
+    You can remove that "default default value" for all tables by
+    specifying `default=''`. There are two places where you can
+    specify this: (a) on the parameter field itself (which then
+    applies to all subtables) or (b) just on one table. For example
+    (excerpt from :mod:`lino_avanti.lib.avanti`)::
+
+        from lino_xl.lib.coachings.choicelists import ClientStates
+        ClientStates.default_value = 'coached'
+
+        parameters = ObservedDateRange(
+            ... 
+            client_state=ClientStates.field(blank=True, default=''))
+
+    Note that the default values of parameter fields of a table which
+    is used as the *models default table* will apply for the choices
+    of pointers to that model. Concrete use case is the choicelist of
+    `cal.Guest.partner` in :ref:`avanti` which should show only
+    coached clients.  So instead of above code we actually now do::
+
+        class MyClients(My, Clients):
+            @classmethod
+            def param_defaults(self, ar, **kw):
+                kw = super(MyClients, self).param_defaults(ar, **kw)
+                kw.update(client_state='')
+                return kw
+
+
+
+The disadvantage
     is that when somebody *does not* want your default value, then
     they must explicitly specify `default=''` when defining a field on
     your choicelist.
