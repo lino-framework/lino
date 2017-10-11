@@ -967,11 +967,14 @@ class Kernel(object):
 
         # The following message is important to see in a developer
         # console because the process takes some time and when
-        # developing you are watching at such messages. Also on a
-        # production site we want it to be logged. It should *not* be
-        # shown when running unit tests because its occurence is not
-        # (easily) predictable.
-        logger.info("Building %s ...", fn)
+        # developing you are watching at such messages. It should
+        # *not* be shown when running unit tests because its occurence
+        # is not (easily) predictable.  OTOH we would like it to be
+        # logged on a production site as well.
+        if self.site.is_demo_site:
+            logger.debug("Building %s ...", fn)
+        else:
+            logger.info("Building %s ...", fn)
             
         self.site.makedirs_if_missing(dirname(fn))
         f = codecs.open(fn, 'w', encoding='utf-8')
