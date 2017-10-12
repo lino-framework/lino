@@ -18,125 +18,127 @@ class ChangeObservable(dd.Model):
     class Meta(object):
         abstract = True
 
-    def get_change_subject(self, ar, cw):
-        """Returns the subject text of the notification message to emit.
+    if dd.is_installed('notify'):
 
-        The default implementation returns a message of style
-        "{user} modified|created {object}" .  
+        def get_change_subject(self, ar, cw):
+            """Returns the subject text of the notification message to emit.
 
-        Returning None or an empty string means to suppress
-        notification.
+            The default implementation returns a message of style
+            "{user} modified|created {object}" .  
 
-        """
-        ctx = dict(user=ar.user, what=str(self))
-        if cw is None:
-            return _("{user} created {what}").format(**ctx)
-            # msg = _("has been created by {user}").format(**ctx)
-            # return "{} {}".format(self, msg)
-        if len(list(cw.get_updates())) == 0:
-            return
-        return _("{user} modified {what}").format(**ctx)
-        # msg = _("has been modified by {user}").format(**ctx)
-        # return "{} {}".format(self, msg)
-            
-    def add_change_watcher(self, user):
-        """
-        Parameters:
+            Returning None or an empty string means to suppress
+            notification.
 
-        :user: The user that will be linked to this object as a change watcher.
-
-        """
-        raise NotImplementedError()
-
-    def get_change_body(self, ar, cw):
-        """Returns the body text of the notification message to emit.
-
-        The default implementation returns a message of style
-        "{object} has been modified by {user}" followed by a summary
-        of the changes.  
-
-        """
-        ctx = dict(user=ar.user, what=ar.obj2memo(self))
-        if cw is None:
-            elems = [E.p(
-                _("{user} created {what}").format(**ctx), ".")]
-            elems += list(self.get_change_info(ar, cw))
-        else:
-            items = list(cw.get_updates_html(["_user_cache"]))
-            if len(items) == 0:
+            """
+            ctx = dict(user=ar.user, what=str(self))
+            if cw is None:
+                return _("{user} created {what}").format(**ctx)
+                # msg = _("has been created by {user}").format(**ctx)
+                # return "{} {}".format(self, msg)
+            if len(list(cw.get_updates())) == 0:
                 return
-            elems = []
-            elems += list(self.get_change_info(ar, cw))
-            elems.append(E.p(
-                _("{user} modified {what}").format(**ctx), ":"))
-            elems.append(E.ul(*items))
-        # print("20170210 {}".format(E.tostring(E.div(*elems))))
-        return E.tostring(E.div(*elems))
+            return _("{user} modified {what}").format(**ctx)
+            # msg = _("has been modified by {user}").format(**ctx)
+            # return "{} {}".format(self, msg)
 
-    def get_change_info(self, ar, cw):
-        """Return a list of HTML elements to be inserted into the body.
+        def add_change_watcher(self, user):
+            """
+            Parameters:
 
-        This is called by :meth:`get_change_body`.
-        Subclasses can override this. Usage example
-        :class:`lino_xl.lib.notes.models.Note`
+            :user: The user that will be linked to this object as a change watcher.
 
-        """
-        return []
-        
-    def get_change_owner(self):
-        """Return the owner (the database object we are talking about) of the
-        notification to emit. 
+            """
+            raise NotImplementedError()
 
-        The "owner" is the object which decides who is observing this
-        object.
+        def get_change_body(self, ar, cw):
+            """Returns the body text of the notification message to emit.
 
-        No longer true:
+            The default implementation returns a message of style
+            "{object} has been modified by {user}" followed by a summary
+            of the changes.  
 
-        When a user has already an unseen notification about a given
-        owner, then Lino ignores all subsequent notifications with
-        that owner.
+            """
+            ctx = dict(user=ar.user, what=ar.obj2memo(self))
+            if cw is None:
+                elems = [E.p(
+                    _("{user} created {what}").format(**ctx), ".")]
+                elems += list(self.get_change_info(ar, cw))
+            else:
+                items = list(cw.get_updates_html(["_user_cache"]))
+                if len(items) == 0:
+                    return
+                elems = []
+                elems += list(self.get_change_info(ar, cw))
+                elems.append(E.p(
+                    _("{user} modified {what}").format(**ctx), ":"))
+                elems.append(E.ul(*items))
+            # print("20170210 {}".format(E.tostring(E.div(*elems))))
+            return E.tostring(E.div(*elems))
 
-        For example
-        :class:`lino_welfare.modlib.pcsw.coaching.Coaching` returns
-        the coaching's client as owner in order to avoid multiple
-        messages when several coachings of a same client are being
-        updated.
+        def get_change_info(self, ar, cw):
+            """Return a list of HTML elements to be inserted into the body.
 
-        """
-        return self
+            This is called by :meth:`get_change_body`.
+            Subclasses can override this. Usage example
+            :class:`lino_xl.lib.notes.models.Note`
 
-    def get_change_observers(self):
-        """Return or yield a list of `(user, mail_mode)` tuples who are
-        observing changes on this object.  Returning an empty list
-        means that nobody gets notified.
-
-        Subclasses may override this. The default implementation
-        forwards the question to the owner if the owner is
-        ChangeObservable and otherwise returns an empty list.
-
-        """
-        owner = self.get_change_owner()
-        if not isinstance(owner, ChangeObservable):
+            """
             return []
-        if owner == self:
-            return []
-        return owner.get_change_observers()
-        
 
-    def after_ui_save(self, ar, cw):
-        """Emits notification about the change to every watcher."""
-        super(ChangeObservable, self).after_ui_save(ar, cw)
-        def msg(user, mm):
-            subject = self.get_change_subject(ar, cw)
-            if not subject:
-                return None
-            return (subject, self.get_change_body(ar, cw))
-        if not dd.is_installed('notify'):
-            # happens e.g. in amici where we use calendar without notify
-            return
-        mt = rt.actors.notify.MessageTypes.change
-        # owner = self.get_change_owner()
-        # rt.models.notify.Message.emit_message(
-        #     ar, owner, mt, msg, self.get_change_observers())
-        rt.models.notify.Message.emit_message(
-            ar, self, mt, msg, self.get_change_observers())
+        def get_change_owner(self):
+            """Return the owner (the database object we are talking about) of the
+            notification to emit. 
+
+            The "owner" is the object which decides who is observing this
+            object.
+
+            No longer true:
+
+            When a user has already an unseen notification about a given
+            owner, then Lino ignores all subsequent notifications with
+            that owner.
+
+            For example
+            :class:`lino_welfare.modlib.pcsw.coaching.Coaching` returns
+            the coaching's client as owner in order to avoid multiple
+            messages when several coachings of a same client are being
+            updated.
+
+            """
+            return self
+
+        def get_change_observers(self):
+            """Return or yield a list of `(user, mail_mode)` tuples who are
+            observing changes on this object.  Returning an empty list
+            means that nobody gets notified.
+
+            Subclasses may override this. The default implementation
+            forwards the question to the owner if the owner is
+            ChangeObservable and otherwise returns an empty list.
+
+            """
+            owner = self.get_change_owner()
+            if not isinstance(owner, ChangeObservable):
+                return []
+            if owner == self:
+                return []
+            return owner.get_change_observers()
+
+
+        def after_ui_save(self, ar, cw):
+            """Emits notification about the change to every watcher."""
+            super(ChangeObservable, self).after_ui_save(ar, cw)
+            def msg(user, mm):
+                subject = self.get_change_subject(ar, cw)
+                if not subject:
+                    return None
+                return (subject, self.get_change_body(ar, cw))
+            if not dd.is_installed('notify'):
+                # happens e.g. in amici where we use calendar without notify
+                return
+            mt = rt.actors.notify.MessageTypes.change
+            # owner = self.get_change_owner()
+            # rt.models.notify.Message.emit_message(
+            #     ar, owner, mt, msg, self.get_change_observers())
+            rt.models.notify.Message.emit_message(
+                ar, self, mt, msg, self.get_change_observers())
