@@ -124,10 +124,10 @@ class Dupable(dd.Model):
             return
         PhoneticWord = rt.models.dupable.PhoneticWord
         qs = PhoneticWord.objects.filter(
-            **gfk2lookup(PhoneticWord.owner, self))
+            **gfk2lookup(PhoneticWord.owner, self)).order_by('id')
         existing = [o.word for o in qs]
-        wanted = self.get_dupable_words(
-            getattr(self, self.dupable_words_field))
+        wanted = list(self.get_dupable_words(
+            getattr(self, self.dupable_words_field)))
         if existing == wanted:
             return
         if really:
@@ -135,6 +135,7 @@ class Dupable(dd.Model):
             for w in wanted:
                 PhoneticWord(word=w, owner=self).save()
         return _("Must update phonetic words.")
+        # return _("Must update phonetic words. (existing {}, wanted {})").format(existing, wanted)
 
     def after_ui_save(self, ar, cw):
         super(Dupable, self).after_ui_save(ar, cw)

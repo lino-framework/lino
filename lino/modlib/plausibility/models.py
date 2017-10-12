@@ -1,4 +1,4 @@
-# Copyright 2015-2016 Luc Saffre
+# Copyright 2015-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -140,7 +140,7 @@ class Problem(Controllable, UserAuthored):
         ordering = ['owner_type', 'owner_id', 'checker']
 
     # problem_type = ProblemTypes.field()
-    checker = Checkers.field()
+    checker = Checkers.field(verbose_name=_("Checker"))
     # severity = Severities.field()
     # feedback = Feedbacks.field(blank=True)
     message = models.CharField(_("Message"), max_length=250)
@@ -170,6 +170,7 @@ dd.update_field(Problem, 'user', verbose_name=_("Responsible"))
 Problem.set_widget_options('checker', width=10)
 Problem.set_widget_options('user', width=10)
 Problem.set_widget_options('message', width=50)
+Problem.update_controller_field(verbose_name = _('Database object'))
 
 
 class Problems(dd.Table):

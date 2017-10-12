@@ -1,4 +1,4 @@
-# Copyright 2015-2016 Luc Saffre
+# Copyright 2015-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -14,6 +14,7 @@ import six
 from django.utils import translation
 from lino.core.gfks import gfk2lookup
 from lino.core.roles import SiteStaff
+from django.utils.translation import string_concat
 
 from lino.api import dd, rt, _
 
@@ -109,7 +110,8 @@ class Checker(dd.Choice):
         todo = []
         for fixable, msg in self.get_plausibility_problems(obj, fix):
             if fixable:
-                msg = u"(\u2605) " + str(msg)
+                # attn: do not yet translate
+                msg = string_concat(u"(\u2605) ", msg)
             if fixable and fix:
                 done.append(msg)
             else:

@@ -24,7 +24,7 @@ class Plugin(ad.Plugin):
 
     site_js_snippets = ['comments/comments.js']
     
-    needs_plugins = ['lino.modlib.office']
+    needs_plugins = ['lino.modlib.office', 'lino.modlib.gfks']
 
     # commentable_model = None
 

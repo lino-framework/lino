@@ -264,10 +264,17 @@ class XmlBuildMethod(DjangoBuildMethod):
             ar.renderer = settings.SITE.plugins.jinja.renderer
             # ar.tableattrs = dict()
             # ar.cellattrs = dict(bgcolor="blue")
-            context = elem.get_printable_context(ar)
+            context = action.get_printable_context(self, elem, ar)
             xml = tpl.render(context)
             self.write2file(xml, filename)
-            return os.path.getmtime(filename)
+            
+        self.validate_result_file(filename)
+        return os.path.getmtime(filename)
+    
+    def validate_result_file(self, filename):
+        """Validate the generated file.
+        """
+        pass
     
     def write2file(self, txt, filename):
         if six.PY2:
