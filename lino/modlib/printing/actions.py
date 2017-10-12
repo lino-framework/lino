@@ -57,6 +57,15 @@ class BasePrintAction(Action):
     def get_print_templates(self, bm, elem):
         return elem.get_print_templates(bm, self)
 
+    def get_printable_context(self, bm, elem, ar):
+        """A hook for defining action-specific context variables.  
+        The default
+        implementation calls
+        :meth:`lino.core.model.Model.get_printable_context`.
+
+        """
+        return elem.get_printable_context(ar)
+    
     def before_build(self, bm, elem):
         """Return the target filename if a document needs to be built,
         otherwise return ``None``.
