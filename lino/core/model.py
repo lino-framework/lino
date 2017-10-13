@@ -822,7 +822,8 @@ class Model(models.Model):
             return ''
         return E.div(*self.get_mobile_list_item_elems(ar))
 
-    @fields.displayfield(_("Description"))
+    # @fields.displayfield(_("Description"))
+    @fields.htmlbox(_("Description"))
     def overview(self, ar):
         if ar is None:
             return ''

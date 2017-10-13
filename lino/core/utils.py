@@ -243,6 +243,8 @@ def models_by_base(base, toplevel_only=False):
 
     """
     found = []
+    if base is None:
+        return found
     for m in get_models(include_auto_created=True):
         if issubclass(m, base):
             add = True
