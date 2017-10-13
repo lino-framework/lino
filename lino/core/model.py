@@ -1046,6 +1046,7 @@ action on individual instances.
         kw.update(obj=self)  # preferred in new templates
         kw.update(language=self.get_print_language() or \
                   settings.SITE.DEFAULT_LANGUAGE.django_code)
+        kw.update(site=settings.SITE)
         return kw
 
     def before_printable_build(self, bm):
