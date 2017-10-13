@@ -91,7 +91,7 @@ class Checker(dd.Choice):
 
     def resolve_model(self, site):
         if isinstance(self.model, six.string_types):
-            self.model = site.models.resolve(self.model)
+            self.model = dd.resolve_model(self.model, strict=True)
 
     def update_problems(self, obj, delete=True, fix=False):
         """Update the problems of this checker and the specified object.
