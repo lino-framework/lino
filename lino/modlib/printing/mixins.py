@@ -23,7 +23,6 @@ from lino.mixins.duplicable import Duplicable
 
 
 from .choicelists import BuildMethods
-from .utils import PrintableObject
 from .actions import (DirectPrintAction, CachedPrintAction,
                       ClearCacheAction, EditTemplate)
 
@@ -69,24 +68,121 @@ class PrintableType(Model):
             build_method.template_ext, *template_groups)
 
 
-class Printable(PrintableObject):
+class Printable(Model):
 
-    do_print = DirectPrintAction()
+    class Meta(object):
+        abstract = True
 
-    edit_template = EditTemplate()
+    @classmethod
+    def get_printable_demo_objects(cls):
+        """Return an iterable of database objects for which Lino should
+        generate a printable excerpt.
+
+        This is being called by
+        :mod:`lino_xl.lib.excerpts.fixtures.demo2`.
+
+        """
+
+        qs = cls.objects.all()
+        if qs.count() > 0:
+            yield qs[0]
+
+    @classmethod
+    def get_template_group(cls):
+        # used by excerpts and printable
+        return cls._meta.app_label + '/' + cls.__name__
+
+    def get_body_template(self):
+        """Return the name of the body template to use when rendering this
+        object in a printable excerpt (:mod:`lino_xl.lib.excerpts`).
+        An empty string means that Lino should use the default value
+        defined on the ExcerptType.
+
+        """
+        return ''
+
+    # def get_excerpt_type(self):
+    #     "Return the primary ExcerptType for the given model."
+    #     ContentType = settings.SITE.modules.contenttypes.ContentType
+    #     ct = ContentType.objects.get_for_model(
+    #         self.__class__)
+    #     return self.__class__.objects.get(primary=True, content_type=ct)
+
+    def get_excerpt_options(self, ar, **kw):
+        """Set additional fields of newly created excerpts from this.  Called
+        from
+        :class:`lino_xl.lib.excerpts.models.ExcerptType.get_or_create_excerpt`.
+
+        """
+        return kw
+
+    def get_print_language(self):
+        """Return a Django language code to be activated when an instance of
+        this is being printed.  The default implementation returns the
+        Site's default language.
+
+        """
+        # same as EmptyTableRow.get_print_language
+        return settings.SITE.DEFAULT_LANGUAGE.django_code
+
+    def get_template_groups(self):
+        return [self.__class__.get_template_group()]
+
+    def get_print_templates(self, bm, action):
+        return [bm.get_default_template(self)]
+
+    def get_default_build_method(self):
+        return BuildMethods.get_system_default()
+
+    def get_build_method(self):
+        # TypedPrintable  overrides this
+        return self.get_default_build_method()
+
+    def get_build_options(self, bm, **opts):
+        # header_center
+        return opts
+
+    def get_printable_context(self, ar=None, **kw):
+
+        """Adds a series of names to the context used when rendering printable
+        documents. See :doc:`/user/templates_api`.
+
+        :class:`lino_xl.lib.notes.models.Note` extends this.
+
+        """
+        # same as lino.utils.report.EmptyTableRow.get_printable_context
+        if ar is not None:
+            kw = ar.get_printable_context(**kw)
+        kw.update(this=self)  # for backward compatibility
+        kw.update(obj=self)  # preferred in new templates
+        kw.update(language=self.get_print_language() or \
+                  settings.SITE.DEFAULT_LANGUAGE.django_code)
+        kw.update(site=settings.SITE)
+        return kw
+
+    def before_printable_build(self, bm):
+        """This is called by print actions before the printable is being
+        generated.  Application code may e.g. raise a `Warning`
+        exception in order to refuse the print action.
+        The warning message can be a translatable string.
+
+        """
+        pass
 
 
 class CachedPrintable(Duplicable, Printable):
+    
+    class Meta(object):
+        abstract = True
+
     do_print = CachedPrintAction()
     do_clear_cache = ClearCacheAction()
+    edit_template = EditTemplate()
 
     build_time = models.DateTimeField(
         _("build time"), null=True, editable=False)
 
     build_method = BuildMethods.field(blank=True, null=True)
-
-    class Meta(object):
-        abstract = True
 
     def full_clean(self, *args, **kwargs):
         if not self.build_method:
@@ -143,6 +239,7 @@ class CachedPrintable(Duplicable, Printable):
 
 
 class TypedPrintable(CachedPrintable):
+    
     type = None
 
     class Meta(object):

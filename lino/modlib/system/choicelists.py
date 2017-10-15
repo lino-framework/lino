@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2016 Luc Saffre
+# Copyright 2011-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -43,12 +43,6 @@ class Genders(ChoiceList):
     """
     Defines the two possible choices "male" and "female"
     for the gender of a person.
-
-    .. django2rst::
-
-            from lino.modlib.system.choicelists import Genders
-            rt.show(Genders)
-
 
     See :ref:`lino.tutorial.human` for examples.
     See :doc:`/dev/choicelists`.

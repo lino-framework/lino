@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2014 Luc Saffre
+# Copyright 2013-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """A Sphinx extension used to write multilingual user documentation
@@ -55,6 +55,8 @@ multilingual userdocs.
 """
 
 from __future__ import unicode_literals, print_function
+
+from .base import menuselection_text
 
 from docutils.parsers.rst import Directive
 # from sphinx.util.compat import Directive
@@ -235,17 +237,6 @@ IGNORED_ACTIONS = (actions.ShowTable, actions.SubmitDetail,
                    actions.DeleteSelected,
                    actions.ShowInsert, actions.SubmitInsert)
 
-
-def menuselection_text(mi):
-    s = my_escape(unicode(mi.label).strip())
-    p = mi.parent
-    while p is not None:
-        if p.label:
-            s = my_escape(unicode(p.label).strip()) + " --> " + s
-        p = p.parent
-    return s
-
-
 def menuselection(mi):
     return ":menuselection:`%s`" % menuselection_text(mi)
 
@@ -265,11 +256,6 @@ def actions_ul(action_list):
     return rstgen.ul(items)
 
 from lino.core.menus import find_menu_item
-
-
-def my_escape(s):
-    s = s.replace("\u25b6", "")
-    return s
 
 
 def actors_overview_ul(model_reports):
@@ -649,3 +635,4 @@ def setup(app):
     app.add_directive('currentproject', CurrentProject)
     app.add_directive('django2rst', Lino2rstDirective)  # backward compat
     app.add_directive('lino2rst', Lino2rstDirective)
+    
