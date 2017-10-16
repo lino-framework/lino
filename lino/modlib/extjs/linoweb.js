@@ -1456,6 +1456,11 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
         //~ h(panel,{record_id:result.goto_record[1]});
     //~ }
     
+    if (result.goto_url) {
+        document.location = result.goto_url;
+        return;
+    }
+    
     if (result.xcallback) {
         //~ var config = {title:"{{_('Confirmation')}}"};
         var config = {title:result.xcallback.title};
@@ -1624,7 +1629,6 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
        Lino.davlink_open(result.open_davlink_url);
     }
     {%- endif -%}
-    if (result.goto_url) document.location = result.goto_url;
     if (result.open_url) {
         //~ console.log(20111126,result.open_url);
         //~ if (!result.message)
