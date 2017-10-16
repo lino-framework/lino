@@ -473,6 +473,11 @@ method in order to sort the rows of the queryset.
     view.
     """
 
+    use_paging = False
+    """
+    Set this to True in Extjs6 to not use a Buffered Store, and use a JsonStore with paging instead.
+    """
+
     @classmethod
     def spawn(cls, suffix, **kw):
         kw['app_label'] = cls.app_label
