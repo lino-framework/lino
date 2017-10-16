@@ -221,6 +221,7 @@ class Kernel(object):
 
     _code_mtime = None
 
+    @property
     def code_mtime(self):
         # We set `code_mtime` only after kernel_startup() because
         # codetime watches only those modules which are already
