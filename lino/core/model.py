@@ -721,14 +721,6 @@ class Model(models.Model):
                 q = q | models.Q(**kw)
         return q
 
-    @classmethod
-    def setup_table(cls, t):
-        """Called during site startup once on each Table that uses this
-        model. Note that this is a class method.
-
-        """
-        pass
-
     def on_duplicate(self, ar, master):
         """Called by :class:`lino.mixins.duplicable.Duplicate` on
         the new row instance and on all related objects.

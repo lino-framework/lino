@@ -69,19 +69,12 @@ class PrintableType(Model):
 
 
 class Printable(Model):
-
+    
     class Meta(object):
         abstract = True
 
     @classmethod
     def get_printable_demo_objects(cls):
-        """Return an iterable of database objects for which Lino should
-        generate a printable excerpt.
-
-        This is being called by
-        :mod:`lino_xl.lib.excerpts.fixtures.demo2`.
-
-        """
 
         qs = cls.objects.all()
         if qs.count() > 0:
@@ -93,12 +86,6 @@ class Printable(Model):
         return cls._meta.app_label + '/' + cls.__name__
 
     def get_body_template(self):
-        """Return the name of the body template to use when rendering this
-        object in a printable excerpt (:mod:`lino_xl.lib.excerpts`).
-        An empty string means that Lino should use the default value
-        defined on the ExcerptType.
-
-        """
         return ''
 
     # def get_excerpt_type(self):
@@ -109,19 +96,9 @@ class Printable(Model):
     #     return self.__class__.objects.get(primary=True, content_type=ct)
 
     def get_excerpt_options(self, ar, **kw):
-        """Set additional fields of newly created excerpts from this.  Called
-        from
-        :class:`lino_xl.lib.excerpts.models.ExcerptType.get_or_create_excerpt`.
-
-        """
         return kw
 
     def get_print_language(self):
-        """Return a Django language code to be activated when an instance of
-        this is being printed.  The default implementation returns the
-        Site's default language.
-
-        """
         # same as EmptyTableRow.get_print_language
         return settings.SITE.DEFAULT_LANGUAGE.django_code
 
@@ -143,13 +120,6 @@ class Printable(Model):
         return opts
 
     def get_printable_context(self, ar=None, **kw):
-
-        """Adds a series of names to the context used when rendering printable
-        documents. See :doc:`/user/templates_api`.
-
-        :class:`lino_xl.lib.notes.models.Note` extends this.
-
-        """
         # same as lino.utils.report.EmptyTableRow.get_printable_context
         if ar is not None:
             kw = ar.get_printable_context(**kw)
@@ -161,12 +131,6 @@ class Printable(Model):
         return kw
 
     def before_printable_build(self, bm):
-        """This is called by print actions before the printable is being
-        generated.  Application code may e.g. raise a `Warning`
-        exception in order to refuse the print action.
-        The warning message can be a translatable string.
-
-        """
         pass
 
 

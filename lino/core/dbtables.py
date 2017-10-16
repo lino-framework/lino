@@ -622,10 +622,6 @@ class Table(AbstractTable):
         else:
             self._slaves = []
 
-        m = getattr(self.model, 'setup_table', None)
-        if m is not None:
-            m(self)
-
     @classmethod
     def is_abstract(self):
         if self.model is None \

@@ -516,8 +516,8 @@ some <head> tags for stylesheets."""),
     'lino.modlib.users.User.coaching_type' : _("""The coaching type used for new coachings of this user."""),
     'lino.modlib.users.User.coaching_supervisor' : _("""Notify me when a coach has been assigned."""),
     'lino.modlib.contacts.Partner.invoice_recipient' : _("""The recipient of invoices (invoicing address)."""),
-    'lino.modlib.printing.Printable' : _("""Mixin for models whose instances have a "print" action (i.e. for
-which Lino can generate a printable document)."""),
+    'lino.modlib.printing.Printable' : _("""Mixin for models for which Lino can generate a printable
+document."""),
     'lino.modlib.printing.Printable.do_print' : _("""The action used to print this object.
 This is an instance of
 DirectPrintAction or CachedPrintAction by

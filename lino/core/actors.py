@@ -122,8 +122,6 @@ class ActorMetaClass(type):
         #~ if not classDict.has_key('known_values'):
             #~ cls.known_values = ClassProperty(cls.get_known_values)
             # ~ meta.known_values = property(cls.get_known_values.im_func) # 20130906
-        #~ if cls.is_abstract():
-            #~ actions.register_params(cls)
         """
         On 20110822 I thought "A Table always gets the app_label of its model,
         you cannot set this yourself in a subclass
@@ -755,8 +753,10 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         return False
 
     @classmethod
-    def make_params_layout_handle(self, ui):
-        return actions.make_params_layout_handle(self, ui)
+    def make_params_layout_handle(cls):
+        if cls.is_abstract():
+            raise Exception("{} is abstract".format(cls))
+        return actions.make_params_layout_handle(cls)
 
     @classmethod
     def is_abstract(cls):
@@ -1351,8 +1351,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
         self._collect_actions()
 
-        #~ Parametrizable.after_site_setup(self)
-        #~ super(Actor,self).after_site_setup(site)
         if not self.is_abstract():
             actions.setup_params_choosers(self)
 
