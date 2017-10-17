@@ -516,19 +516,19 @@ some <head> tags for stylesheets."""),
     'lino.modlib.users.User.coaching_type' : _("""The coaching type used for new coachings of this user."""),
     'lino.modlib.users.User.coaching_supervisor' : _("""Notify me when a coach has been assigned."""),
     'lino.modlib.contacts.Partner.invoice_recipient' : _("""The recipient of invoices (invoicing address)."""),
-    'lino.modlib.printing.Printable' : _("""Mixin for models whose instances have a "print" action (i.e. for
-which Lino can generate a printable document)."""),
-    'lino.modlib.printing.Printable.do_print' : _("""The action used to print this object.
+    'lino.modlib.printing.Printable' : _("""Mixin for models for which Lino can generate a printable
+document."""),
+    'lino.modlib.printing.CachedPrintable' : _("""Mixin for Models that generate a unique external file at a
+determined place when being printed."""),
+    'lino.modlib.printing.CachedPrintable.build_time' : _("""Timestamp of the built target file. Contains None
+if no build hasn't been called yet."""),
+    'lino.modlib.printing.CachedPrintable.do_print' : _("""The action used to print this object.
 This is an instance of
 DirectPrintAction or CachedPrintAction by
 default.  And if lino_xl.lib.excerpts is installed,
 then set_excerpts_actions possibly replaces
 do_print by a
 lino_xl.lib.excerpts.CreateExcerpt instance."""),
-    'lino.modlib.printing.CachedPrintable' : _("""Mixin for Models that generate a unique external file at a
-determined place when being printed."""),
-    'lino.modlib.printing.CachedPrintable.build_time' : _("""Timestamp of the built target file. Contains None
-if no build hasn't been called yet."""),
     'lino.modlib.printing.TypedPrintable' : _("""A CachedPrintable that uses a "Type" for deciding which
 template to use on a given instance."""),
     'lino.modlib.printing.PrintableType' : _("""Base class for models that specify the

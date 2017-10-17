@@ -23,7 +23,6 @@ from lino.mixins.duplicable import Duplicable
 
 
 from .choicelists import BuildMethods
-from .utils import PrintableObject
 from .actions import (DirectPrintAction, CachedPrintAction,
                       ClearCacheAction, EditTemplate)
 
@@ -69,24 +68,85 @@ class PrintableType(Model):
             build_method.template_ext, *template_groups)
 
 
-class Printable(PrintableObject):
+class Printable(Model):
+    
+    class Meta(object):
+        abstract = True
 
-    do_print = DirectPrintAction()
+    @classmethod
+    def get_printable_demo_objects(cls):
 
-    edit_template = EditTemplate()
+        qs = cls.objects.all()
+        if qs.count() > 0:
+            yield qs[0]
+
+    @classmethod
+    def get_template_group(cls):
+        # used by excerpts and printable
+        return cls._meta.app_label + '/' + cls.__name__
+
+    def get_body_template(self):
+        return ''
+
+    # def get_excerpt_type(self):
+    #     "Return the primary ExcerptType for the given model."
+    #     ContentType = settings.SITE.modules.contenttypes.ContentType
+    #     ct = ContentType.objects.get_for_model(
+    #         self.__class__)
+    #     return self.__class__.objects.get(primary=True, content_type=ct)
+
+    def get_excerpt_options(self, ar, **kw):
+        return kw
+
+    def get_print_language(self):
+        # same as EmptyTableRow.get_print_language
+        return settings.SITE.DEFAULT_LANGUAGE.django_code
+
+    def get_template_groups(self):
+        return [self.__class__.get_template_group()]
+
+    def get_print_templates(self, bm, action):
+        return [bm.get_default_template(self)]
+
+    def get_default_build_method(self):
+        return BuildMethods.get_system_default()
+
+    def get_build_method(self):
+        # TypedPrintable  overrides this
+        return self.get_default_build_method()
+
+    def get_build_options(self, bm, **opts):
+        # header_center
+        return opts
+
+    def get_printable_context(self, ar=None, **kw):
+        # same as lino.utils.report.EmptyTableRow.get_printable_context
+        if ar is not None:
+            kw = ar.get_printable_context(**kw)
+        kw.update(this=self)  # for backward compatibility
+        kw.update(obj=self)  # preferred in new templates
+        kw.update(language=self.get_print_language() or \
+                  settings.SITE.DEFAULT_LANGUAGE.django_code)
+        kw.update(site=settings.SITE)
+        return kw
+
+    def before_printable_build(self, bm):
+        pass
 
 
 class CachedPrintable(Duplicable, Printable):
+    
+    class Meta(object):
+        abstract = True
+
     do_print = CachedPrintAction()
     do_clear_cache = ClearCacheAction()
+    edit_template = EditTemplate()
 
     build_time = models.DateTimeField(
         _("build time"), null=True, editable=False)
 
     build_method = BuildMethods.field(blank=True, null=True)
-
-    class Meta(object):
-        abstract = True
 
     def full_clean(self, *args, **kwargs):
         if not self.build_method:
@@ -143,6 +203,7 @@ class CachedPrintable(Duplicable, Printable):
 
 
 class TypedPrintable(CachedPrintable):
+    
     type = None
 
     class Meta(object):

@@ -221,6 +221,7 @@ class Kernel(object):
 
     _code_mtime = None
 
+    @property
     def code_mtime(self):
         # We set `code_mtime` only after kernel_startup() because
         # codetime watches only those modules which are already
@@ -916,7 +917,7 @@ class Kernel(object):
         """
         ar is usually None, except for actors with dynamic handle
         """
-        # logger.info('20121010 ExtUI.setup_handle() %s'%h.actor)
+        # logger.info('20121010 Kernel.setup_handle() %s', h.actor)
 
         # 20170905 IntracomInvoices
         # if h.actor.is_abstract():
@@ -932,7 +933,7 @@ class Kernel(object):
             h.list_layout = None
 
         if h.actor.params_layout:
-            h.params_layout_handle = h.actor.make_params_layout_handle(self)
+            h.params_layout_handle = h.actor.make_params_layout_handle()
         h.store = Store(h)
         # logger.info("18072017, h:|%s|, h.store:|%s| #1955"%(h, h.store))
 

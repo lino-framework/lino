@@ -721,14 +721,6 @@ class Model(models.Model):
                 q = q | models.Q(**kw)
         return q
 
-    @classmethod
-    def setup_table(cls, t):
-        """Called during site startup once on each Table that uses this
-        model. Note that this is a class method.
-
-        """
-        pass
-
     def on_duplicate(self, ar, master):
         """Called by :class:`lino.mixins.duplicable.Duplicate` on
         the new row instance and on all related objects.
@@ -960,55 +952,17 @@ class Model(models.Model):
         if a.get_view_permission(ar.get_user().user_type):
             return a
 
-    def is_attestable(self):
-        """Override this to disable the :class:`lino_xl.lib.excerpts.CreateExcerpt`
-action on individual instances.
+#     def is_attestable(self):
+#         """Override this to disable the :class:`lino_xl.lib.excerpts.CreateExcerpt`
+# action on individual instances.
 
-        """
-        return True
+#         """
+#         return True
 
     @classmethod
     def get_chooser_for_field(cls, fieldname):
         d = getattr(cls, '_choosers_dict', {})
         return d.get(fieldname, None)
-
-    @classmethod
-    def get_template_group(cls):
-        # used by excerpts and printable
-        return cls._meta.app_label + '/' + cls.__name__
-
-    def get_body_template(self):
-        """Return the name of the body template to use when rendering this
-        object in a printable excerpt (:mod:`lino_xl.lib.excerpts`).
-        An empty string means that Lino should use the default value
-        defined on the ExcerptType.
-
-        """
-        return ''
-
-    # def get_excerpt_type(self):
-    #     "Return the primary ExcerptType for the given model."
-    #     ContentType = settings.SITE.modules.contenttypes.ContentType
-    #     ct = ContentType.objects.get_for_model(
-    #         self.__class__)
-    #     return self.__class__.objects.get(primary=True, content_type=ct)
-
-    def get_excerpt_options(self, ar, **kw):
-        """Set additional fields of newly created excerpts from this.  Called
-        from
-        :class:`lino_xl.lib.excerpts.models.ExcerptType.get_or_create_excerpt`.
-
-        """
-        return kw
-
-    def get_print_language(self):
-        """Return a Django language code to be activated when an instance of
-        this is being printed.  The default implementation returns the
-        Site's default language.
-
-        """
-        # same as EmptyTableRow.get_print_language
-        return settings.SITE.DEFAULT_LANGUAGE.django_code
 
     @classmethod
     def set_widget_options(self, name, **options):
@@ -1030,32 +984,6 @@ action on individual instances.
     def get_widget_options(self, name, **options):
         options.update(self._widget_options.get(name, {}))
         return options
-
-    def get_printable_context(self, ar=None, **kw):
-
-        """Adds a series of names to the context used when rendering printable
-        documents. See :doc:`/user/templates_api`.
-
-        :class:`lino_xl.lib.notes.models.Note` extends this.
-
-        """
-        # same as lino.utils.report.EmptyTableRow.get_printable_context
-        if ar is not None:
-            kw = ar.get_printable_context(**kw)
-        kw.update(this=self)  # for backward compatibility
-        kw.update(obj=self)  # preferred in new templates
-        kw.update(language=self.get_print_language() or \
-                  settings.SITE.DEFAULT_LANGUAGE.django_code)
-        return kw
-
-    def before_printable_build(self, bm):
-        """This is called by print actions before the printable is being
-        generated.  Application code may e.g. raise a `Warning`
-        exception in order to refuse the print action.
-        The warning message can be a translatable string.
-
-        """
-        pass
 
     def filename_root(self):
         return self._meta.app_label + '.' + self.__class__.__name__ \
@@ -1211,10 +1139,10 @@ LINO_MODEL_ATTRIBS = (
     'get_widget_options',
     'get_chooser_for_field',
     'get_detail_action',
-    'get_print_language',
+    # 'get_print_language',
     'get_row_permission',
-    'get_excerpt_options',
-    'is_attestable',
+    # 'get_excerpt_options',
+    # 'is_attestable',
     'get_data_elem',
     'get_param_elem',
     'after_ui_save',
@@ -1235,7 +1163,7 @@ LINO_MODEL_ATTRIBS = (
     'get_request_queryset',
     'get_title_tags',
     'get_default_table',
-    'get_template_group',
+    # 'get_template_group',
     'get_related_project',
     'obj2href',
     'quick_search_fields',

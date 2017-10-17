@@ -34,7 +34,6 @@ from django.template.loader import select_template
 from lino.core.choicelists import ChoiceList, Choice
 from lino.utils.media import MediaFile
 from lino.api import rt, _
-# from .utils import PrintableObject
 
 try:
     import pyratemp
@@ -106,11 +105,6 @@ class DjangoBuildMethod(TemplatedBuildMethod):
         for i in tpls:
             for g in elem.get_template_groups():
                 tpls2.append(g+'/'+i)
-            # if isinstance(elem, PrintableObject):
-            #     for g in elem.get_template_groups():
-            #         tpls2.append(g+'/'+i)
-            # else:
-            #     tpls2.append(elem.get_template_group()+'/'+i)
         #~ logger.debug('make_pisa_html %s',tpls)
         # prefix = '/'.join(elem.get_template_groups())
         # if prefix:

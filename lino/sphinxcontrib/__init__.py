@@ -7,6 +7,7 @@
 .. autosummary::
    :toctree:
 
+   base
    logo
    actordoc
    help_texts_extractor

@@ -24,6 +24,7 @@ from lino.core import model
 from lino.core import actions
 from lino.core import dbtables
 from lino.core.roles import SiteUser, SiteStaff
+from lino.modlib.printing.mixins import Printable
 
 from .roles import Helper, AuthorshipTaker
 
@@ -45,7 +46,7 @@ class TimezoneHolder(models.Model):
         return pytz.common_timezones
 
 
-class Authored(dd.Model):
+class Authored(Printable):
     class Meta(object):
         abstract = True
 

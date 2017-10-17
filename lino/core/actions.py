@@ -118,8 +118,8 @@ def install_layout(cls, k, layout_class, **options):
 
 
 def register_params(cls):
-    """Note that `cls` is either an actor or an action. And remember that
-    actors are class objects while actions are instances.
+    """`cls` is either an actor (a class object) or an action (an
+    instance).
 
     """
     if cls.parameters:
@@ -157,7 +157,8 @@ def setup_params_choosers(self):
             check_for_chooser(self, fld)
 
 
-def make_params_layout_handle(self, ui):
+def make_params_layout_handle(self):
+    # `self` is either an Action instance or an Actor class object
     return self.params_layout.get_layout_handle(
         settings.SITE.kernel.default_ui)
 
@@ -273,8 +274,8 @@ class Action(Parametrizable, Permittable):
     def get_choices_text(self, obj, request, field):
         return obj.get_choices_text(request, self, field)
 
-    def make_params_layout_handle(self, ui):
-        return make_params_layout_handle(self, ui)
+    def make_params_layout_handle(self):
+        return make_params_layout_handle(self)
 
     def get_data_elem(self, name):
         # same as in Actor but here it is an instance method

@@ -34,6 +34,9 @@ class EmptyTableRow(VirtualRow, Printable):
     An EmptyTableRow instance
     """
 
+    class Meta(object):
+        abstract = True
+
     pk = -99998
 
     def __init__(self, table, **kw):
@@ -49,17 +52,17 @@ class EmptyTableRow(VirtualRow, Printable):
     def filename_root(self):
         return self._table.app_label + '.' + self._table.__name__
 
-    def get_print_language(self):
-        # same as Model.get_print_language
-        return settings.SITE.DEFAULT_LANGUAGE.django_code
+    # def get_print_language(self):
+    #     # same as Printable.get_print_language
+    #     return settings.SITE.DEFAULT_LANGUAGE.django_code
 
-    def get_printable_context(self, ar=None, **kw):
-        # same as Model.get_printable_context
-        kw = ar.get_printable_context(**kw)
-        kw.update(this=self)  # preferred in new templates
-        kw.update(language=self.get_print_language() \
-                  or settings.SITE.DEFAULT_LANGUAGE.django_code)
-        return kw
+    # def get_printable_context(self, ar=None, **kw):
+    #     # same as Model.get_printable_context
+    #     kw = ar.get_printable_context(**kw)
+    #     kw.update(this=self)  # preferred in new templates
+    #     kw.update(language=self.get_print_language() \
+    #               or settings.SITE.DEFAULT_LANGUAGE.django_code)
+    #     return kw
 
     def get_template_groups(self):
         return self._table.get_template_groups()
