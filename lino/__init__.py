@@ -15,7 +15,6 @@
    projects
    modlib
    sphinxcontrib
-   invlib
 
 
 """
