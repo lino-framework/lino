@@ -179,12 +179,13 @@ class Message(UserAuthored, Controllable, Created):
             cls, ar, owner, message_type, msg_func, recipients):
         """Create one database object for every recipient.
 
-        `recipients` is a list of `(user, mail_mode)` tuples. Items
-        with duplicate or empty user are removed.
+        `recipients` is an iterable of `(user, mail_mode)` tuples.
+        Duplicate items, items with user being None and items having
+        user.mail_mode set to MailModes.silent are removed.
 
         `msg_func` is a callable expected to return a tuple (subject,
-        body). It is called for each recipient (in the recipient's
-        language).
+        body). It is called for each recipient in the recipient's
+        language.
 
         The changing user does not get notified about their own
         changes, except when working as another user.
@@ -198,7 +199,7 @@ class Message(UserAuthored, Controllable, Created):
             me = ar.get_user()
         others = set()
         for user, mm in recipients:
-            if user:
+            if user is not None and mm != MailModes.silent :
                 if me is None or me.notify_myself or user != me:
                     others.add((user, mm))
 
@@ -419,14 +420,11 @@ dd.update_field(Message, 'user',
 
 dd.inject_field(
     'users.User', 'notify_myself',
-    models.BooleanField(
-        _('Notify myself'), default=False))
+    models.BooleanField(_('Notify myself'), default=False))
 
 dd.inject_field(
     'users.User', 'mail_mode',
-    MailModes.field(
-        _('Email notification mode'),
-        default=MailModes.often.as_callable))
+    MailModes.field(default=MailModes.often.as_callable))
 
 
 class Messages(dd.Table):

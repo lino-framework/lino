@@ -207,7 +207,7 @@ def on_update(sender=None, watcher=None, request=None, **kw):
     cs = watcher.watched.change_watcher_spec
     changed_fields = ''
     if False:  # I tried a html version, but it doesn't help to make
-               # things more end-user firiendly. And it caused
+               # things more end-user friendly. And it caused
                # problems when being rendered in a grid.
         changes = list(watcher.get_updates_html(cs.ignored_fields))
         if len(changes) == 0:

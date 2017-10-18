@@ -16,6 +16,19 @@ from lino.utils.xmlgen.html import E
 # from .utils import obj2str
 from .utils import obj2unicode
 
+def state2dict(obj):
+    d = {}
+    for k, v in obj.__dict__.items():
+        if not k.startswith('_'):
+            d[k] = v
+    # for fld in obj._meta.get_fields():
+    #     # if isinstance(fld, VirtualField) and fld.editable:
+    #     if isinstance(fld, VirtualField):
+    #         v = NOT_PROVIDED
+    #     else:
+    #         v = obj.__dict__.get(fld.name, NOT_PROVIDED)
+    #     d[fld.name] = v
+    return d
 
 class ChangeWatcher(object):
     """Lightweight volatile object to watch changes on a database object.
@@ -36,11 +49,12 @@ class ChangeWatcher(object):
     watched = None
 
     def __init__(self, watched):
-        self.original_state = dict(watched.__dict__)
+        # self.original_state = dict(watched.__dict__)
+        # self.original_state = {
+        #     k:v for k, v in watched.__dict__.items()
+        #     if not k.startswith('_')}
+        self.original_state = state2dict(watched)
         self.watched = watched
-        for fld in watched._meta.get_fields():
-            if isinstance(fld, VirtualField) and fld.editable:
-                self.original_state[fld.name] = None
         #~ self.is_new = is_new
         #~ self.request
 
@@ -50,12 +64,21 @@ class ChangeWatcher(object):
         set of fieldnames to be ignored.
 
         """
-        for k, old in self.original_state.items():
+        lst = []
+        for k, new in state2dict(self.watched).items():
             if k not in ignored_fields:
                 if watched_fields is None or k in watched_fields:
-                    new = self.watched.__dict__.get(k, NOT_PROVIDED)
+                    old = self.original_state.get(k, None)
                     if old != new:
-                        yield k, old, new
+                        lst.append((k, old, new))
+        return sorted(lst, key=lambda x: x[0])
+            
+        # for k, old in self.original_state.items():
+        #     if k not in ignored_fields:
+        #         if watched_fields is None or k in watched_fields:
+        #             new = self.watched.__dict__.get(k, NOT_PROVIDED)
+        #             if old != new:
+        #                 yield k, old, new
 
     def get_updates_html(self, *args, **kwargs):
         """A more descriptive variant of :meth:`get_updates` which uses a
