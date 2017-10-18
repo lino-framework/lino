@@ -52,13 +52,23 @@ add('300', _("Action"), 'action')
 class MailModes(dd.ChoiceList):
     """How the system should send email notifications to a user.
 
+    .. attribute:: silent
+
+        Disable notifications for this user.
+
+    .. attribute:: never
+
+        Notify in Lino but never send email.
+
+
     """
-    verbose_name = _("Email notification mode")
-    verbose_name_plural = _("Email notification modes")
+    verbose_name = _("Notification mode")
+    verbose_name_plural = _("Notification modes")
     
 add = MailModes.add_item
-add('never', _("Never"), 'never')
+add('silent', _("Silent"), 'silent')
+add('never', _("No mails"), 'never')
 # add('immediately', _("Immediately"), 'immediately')  # obsolete
-add('often', _("Often"), 'often')
-add('daily', _("Daily"), 'daily')
-add('weekly', _("Weekly"), 'weekly')  # not yet implemented
+add('often', _("Mail often"), 'often')
+add('daily', _("Daily email digest"), 'daily')
+add('weekly', _("Weekly email digest"), 'weekly')  # not yet implemented
