@@ -30,6 +30,7 @@ else:
 from lino.core import constants
 from lino.core.utils import obj2unicode
 from lino.core.utils import resolve_model
+from lino.core.utils import navinfo
 from lino.core import layouts
 from lino.core import fields
 from lino.core import keyboard
@@ -718,6 +719,7 @@ class CreateRow(Action):
             # decoding problems on the client when responding to a
             # file upload
             ar.set_response(rows=[ar.ah.store.row2list(ar, elem)])
+            ar.set_response(navinfo=navinfo(ar.data_iterator,elem))
         else:
             # Must set text/html for file uploads, otherwise the
             # browser adds a <PRE></PRE> tag around the AJAX response.

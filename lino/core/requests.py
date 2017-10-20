@@ -61,7 +61,7 @@ class ValidActionResponses(object):
     errors = None
     html = None
     rows = None
-
+    navinfo = None
     data_record = None
     """Certain requests are expected to return the detailed information
     about a single data record. That's done in :attr:`data_record`
