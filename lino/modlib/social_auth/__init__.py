@@ -2,21 +2,21 @@
 # Copyright 2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Adds authentication via third-party providers using `Python Social
-Auth <https://github.com/python-social-auth>`__
+"""Adds authentication via third-party providers using
+`Python Social Auth <https://github.com/python-social-auth>`__
 
 Sites which use this plugins must also install::
 
   $ pip install social-auth-app-django
 
-And then define local settings, e.g.::
+And then define a backend and credentials in your local
+:xfile:`settings.py` file, e.g.::
 
   SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = \
     '1234567890-a1b2c3d4e5.apps.googleusercontent.com'
   SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'SH6da...'
   AUTHENTICATION_BACKENDS.insert(
     0, 'social_core.backends.google.GoogleOAuth2')
-
 
 """
 
