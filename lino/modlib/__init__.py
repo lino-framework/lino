@@ -52,6 +52,8 @@ Utilities
     wkhtmltopdf
     weasyprint
     dashboard
+    davlink
+    social_auth
 
 "Enterprise Resources"
 ======================
@@ -60,7 +62,6 @@ Utilities
    :toctree:
 
     comments
-    davlink
     importfilters
     languages
     office

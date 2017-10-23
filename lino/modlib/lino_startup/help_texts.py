@@ -230,6 +230,8 @@ suppress notification."""),
     'lino.modlib.notify.MessageTypes' : _("""The list of possible choices for the message_type field
 of a Message."""),
     'lino.modlib.notify.MailModes' : _("""How the system should send email notifications to a user."""),
+    'lino.modlib.notify.MailModes.silent' : _("""Disable notifications for this user."""),
+    'lino.modlib.notify.MailModes.never' : _("""Notify in Lino but never send email."""),
     'lino.modlib.notify.mixins.ChangeObservable' : _("""Mixin for models which can emit notifications to a list of
 "observers" when an instance is modified."""),
     'lino.modlib.notify.ClearSeen' : _("""Mark this message as not yet seen."""),

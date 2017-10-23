@@ -158,6 +158,7 @@ lino.modlib.smtpd.management
 lino.modlib.smtpd.management.commands
 lino.modlib.notify
 lino.modlib.notify.fixtures
+lino.modlib.social_auth
 lino.modlib.summaries
 lino.modlib.summaries.fixtures
 lino.modlib.summaries.management
