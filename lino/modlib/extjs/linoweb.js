@@ -191,52 +191,53 @@ Ext.Ajax.on('beforerequest', function (conn, options) {
 }, this);
 
 
-/*
+/* This probably worked, but was not used in real world.
 My fix for the "Cannot set QuickTips dismissDelay to 0" bug,
 see http://www.sencha.com/forum/showthread.php?183515 
+
 */
-Ext.override(Ext.QuickTip,{
-  showAt : function(xy){
-        var t = this.activeTarget;
-        //~ console.log("20120224 QuickTip.showAt",this.title,this.dismissDelay,t.dismissDelay);
-        if(t){
-            if(!this.rendered){
-                this.render(Ext.getBody());
-                this.activeTarget = t;
-            }
-            if(t.width){
-                this.setWidth(t.width);
-                this.body.setWidth(this.adjustBodyWidth(t.width - this.getFrameWidth()));
-                this.measureWidth = false;
-            } else{
-                this.measureWidth = true;
-            }
-            this.setTitle(t.title || '');
-            this.body.update(t.text);
-            this.autoHide = t.autoHide;
-            // bugfix by Luc 20120226
-            if (t.dismissDelay != undefined) this.dismissDelay = t.dismissDelay;
-            //~ this.dismissDelay = t.dismissDelay || this.dismissDelay;
-            if(this.lastCls){
-                this.el.removeClass(this.lastCls);
-                delete this.lastCls;
-            }
-            if(t.cls){
-                this.el.addClass(t.cls);
-                this.lastCls = t.cls;
-            }
-            if(this.anchor){
-                this.constrainPosition = false;
-            }else if(t.align){ 
-                xy = this.el.getAlignToXY(t.el, t.align);
-                this.constrainPosition = false;
-            }else{
-                this.constrainPosition = true;
-            }
-        }
-        Ext.QuickTip.superclass.showAt.call(this, xy);
-    }
-});
+// Ext.override(Ext.QuickTip,{
+//   showAt : function(xy){
+//         var t = this.activeTarget;
+//         // console.log("20171024 QuickTip.showAt",this.title,this.dismissDelay,t.dismissDelay);
+//         if(t){
+//             if(!this.rendered){
+//                 this.render(Ext.getBody());
+//                 this.activeTarget = t;
+//             }
+//             if(t.width){
+//                 this.setWidth(t.width);
+//                 this.body.setWidth(this.adjustBodyWidth(t.width - this.getFrameWidth()));
+//                 this.measureWidth = false;
+//             } else{
+//                 this.measureWidth = true;
+//             }
+//             this.setTitle(t.title || '');
+//             this.body.update(t.text);
+//             this.autoHide = t.autoHide;
+//             // bugfix by Luc 20120226
+//             if (t.dismissDelay != undefined) this.dismissDelay = t.dismissDelay;
+//             //~ this.dismissDelay = t.dismissDelay || this.dismissDelay;
+//             if(this.lastCls){
+//                 this.el.removeClass(this.lastCls);
+//                 delete this.lastCls;
+//             }
+//             if(t.cls){
+//                 this.el.addClass(t.cls);
+//                 this.lastCls = t.cls;
+//             }
+//             if(this.anchor){
+//                 this.constrainPosition = false;
+//             }else if(t.align){ 
+//                 xy = this.el.getAlignToXY(t.el, t.align);
+//                 this.constrainPosition = false;
+//             }else{
+//                 this.constrainPosition = true;
+//             }
+//         }
+//         Ext.QuickTip.superclass.showAt.call(this, xy);
+//     }
+// });
 
 /*
 Another hack. See /docs/blog/2012/0228
@@ -1774,25 +1775,29 @@ Ext.QuickTips.init();
 //~ });
 
 
-//~ Ext.apply(Ext.QuickTip, {
-    //~ dismissDelay: 0,
-//~ });
+// Ext.apply(Ext.QuickTips.getQuickTip(), {
+//     dismissDelay: 500,
+//     showDelay: 20      // Show 10ms after entering target
+// });
   
 Lino.quicktip_renderer = function(title, body) {
   return function(c) {
     //~ if (c instanceof Ext.Panel) var t = c.bwrap; else // 20130129
-      if (c instanceof Ext.Panel)
+      if (c instanceof Ext.Panel) {
           var t = c.header;
-      else // 20130129
+      } else if (c instanceof Ext.Button) {
+          var t = c.btnEl;
+      } else  {
           var t = c.getEl();
-    // if (title == 'a2btn') console.log(20160829, c, t, body);
+      }
+    // console.log(20171024, c, t, body);
     //~ t.dismissDelay = 0;
     Ext.QuickTips.register({
       target: t,
       //~ cls: 'lino-quicktip-classical',
-      dismissDelay: 0,
+      dismissDelay: 10000,
       //~ autoHide: false,
-      showDelay: 50,      // Show 50ms after entering target
+      showDelay: 30,      // Show X ms after entering target
       //~ title: title,
       text: body
     });

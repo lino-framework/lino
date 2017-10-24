@@ -16,7 +16,7 @@ And then define a backend and credentials in your local
     '1234567890-a1b2c3d4e5.apps.googleusercontent.com'
   SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'SH6da...'
   AUTHENTICATION_BACKENDS.insert(
-    0, 'social_core.backends.google.GoogleOAuth2')
+    0, 'social_core.backends.google.GooglePlusAuth')
 
 """
 
@@ -65,3 +65,13 @@ class Plugin(ad.Plugin):
             ]
         return urlpatterns
         
+    # def get_js_includes(self, settings, language):
+    #     yield settings.SITE.build_static_url(
+    #         "social_auth", "google_plus.js")
+
+    def get_head_lines(self, site, request):
+        from django.conf import settings
+        # yield request.render_jinja()
+        context = dict(settings=settings)
+        yield site.plugins.jinja.render_from_request(
+            request, 'social_auth/google_plus.html', **context)

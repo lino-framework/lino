@@ -348,6 +348,8 @@ class ExtRenderer(JsRenderer):
         if mi.bound_action and mi.bound_action.action.icon_name:
             d.update(iconCls='x-tbar-' + mi.bound_action.action.icon_name)
         if settings.SITE.use_quicktips and help_text:
+            # d.update(tooltip=help_text)
+            # d.update(tooltipType='title')
             d.update(listeners=dict(render=js_code(
                 "Lino.quicktip_renderer(%s,%s)" % (
                     py2js('Foo'), py2js(help_text)))

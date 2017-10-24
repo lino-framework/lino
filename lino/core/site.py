@@ -1885,7 +1885,7 @@ this field.
             backends.append('lino.core.auth.backends.RemoteUserBackend')
         else:
             backends.append('lino.core.auth.backends.ModelBackend')
-        self.define_settings(AUTHENTICATION_BACKENDS=tuple(backends))
+        self.define_settings(AUTHENTICATION_BACKENDS=backends)
 
         def collect_settings_subdirs(lst, name, max_count=None):
             def add(p):
