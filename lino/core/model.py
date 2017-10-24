@@ -530,7 +530,7 @@ class Model(models.Model):
         Deprecated.  Use the :data:`pre_ui_save
         <lino.core.signals.pre_ui_save>` signal instead.
 
-        Example in :class:`lino_xl.lib.cal.models.Event` to mark the
+        Example in :class:`lino_xl.lib.cal.Event` to mark the
         event as user modified by setting a default state.
 
         """
