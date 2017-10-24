@@ -145,7 +145,10 @@ class Dupable(dd.Model):
     def get_dupable_words(self, s):
         for c in '-,/&+':
             s = s.replace(c, ' ')
-        return map(rt.models.dupable.PhoneticWord.reduce_word, s.split())
+        return filter(
+            None, map(
+                rt.models.dupable.PhoneticWord.reduce_word,
+                s.split()))
 
     def find_similar_instances(self, limit=None, **kwargs):
         """Return a queryset or yield a list of similar objects.
