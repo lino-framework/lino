@@ -71,6 +71,10 @@
             site.models.users.Register.insert_action,
             label=_("register"), icon_name=None)))}}
         {% endif %}
+        {% if site.is_installed('social_auth') %}
+        {{_("Or sign in using social auth:")}}
+        <div id="google-plus-button">Google+ Sign In</div>
+        {% endif %}
       </p>
         {% if site.is_demo_site %}
             <p>

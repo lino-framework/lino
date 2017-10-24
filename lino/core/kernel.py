@@ -821,6 +821,7 @@ class Kernel(object):
                 if self.site.log_each_action_request and not a.readonly:
                     logger.info("run_callback {0} {1} {2}".format(
                         thread_id, cb.message, c.name))
+                    # ar.info(cb.message)
                 try:
                     c.func(ar)
                 except Warning as e:
