@@ -4,7 +4,8 @@
 
 """
 
-from lino.core.roles import UserRole, SiteUser, SiteAdmin
+# from lino.core.roles import UserRole, SiteUser, SiteAdmin
+from lino.core.roles import UserRole
 
 # class OfficeUser(SiteUser):
 class OfficeUser(UserRole):
@@ -13,7 +14,8 @@ class OfficeUser(UserRole):
 
     """
 
-class OfficeOperator(SiteUser):
+# class OfficeOperator(SiteUser):
+class OfficeOperator(UserRole):
     """A user who manages office functionality for other users (but not
     for himself).
 

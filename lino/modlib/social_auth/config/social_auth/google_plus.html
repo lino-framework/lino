@@ -18,23 +18,34 @@
       console.log("User is signed-in in Google+ platform?", auth2.isSignedIn.get() ? "Yes" : "No");
 
       auth2.attachClickHandler(button, {}, function (googleUser) {
+        var authResponse = googleUser.getAuthResponse();
         // Send access-token to backend to finish the authenticate
         // with your application
+        var action = {
+          method: 'POST',
+          url : '/complete/google-plus/',
+          // waitMsg: "{{_('Please wait...')}}",
+          failure: function(response, options) {
+              console.log('Ajax failure:', response, options);},
+              success: function() {
+                console.log('Ajax success:', arguments);},
+          params: { 'id_token': authResponse.id_token}
+        };
+        Ext.Ajax.request(action);
+  
+        // var $form;
+        // var $input;
+        // $form = $("<form>");
+        // $form.attr("action", "/complete/google-plus");
+        // $form.attr("method", "post");
+        // $input = $("<input>");
+        // $input.attr("name", "id_token");
+        // $input.attr("value", authResponse.id_token);
+        // $form.append($input);
+        // // Add csrf-token if needed
+        // $(document.body).append($form);
+        // $form.submit();
 
-        var authResponse = googleUser.getAuthResponse();
-        var $form;
-        var $input;
-
-        $form = $("<form>");
-        $form.attr("action", "/complete/google-plus");
-        $form.attr("method", "post");
-        $input = $("<input>");
-        $input.attr("name", "id_token");
-        $input.attr("value", authResponse.id_token);
-        $form.append($input);
-        // Add csrf-token if needed
-        $(document.body).append($form);
-        $form.submit();
       });
     });
   });
