@@ -20,6 +20,8 @@ from dateutil.relativedelta import relativedelta as delta
 AMONTH = delta(months=1)
 ADAY = delta(days=1)
 
+from lino.utils.format_date import fds
+
 DateRangeValue = collections.namedtuple(
     'DateRangeValue', ('start_date', 'end_date'))
 """
@@ -55,5 +57,14 @@ def weekdays(start_date, end_date):
     return len(list(rrule(
         DAILY, dtstart=start_date, until=end_date,
         byweekday=(MO, TU, WE, TH, FR))))
+
+
+
+def daterange_text(a, b):
+    """
+    """
+    if a == b:
+        return fds(a)
+    return fds(a) + "-" + fds(b)
 
 

@@ -1535,6 +1535,10 @@ class Site(object):
 
         for x in self.get_installed_apps():
             add(x)
+            
+        for x in self.local_apps:
+            add(x)
+
 
         # actual_apps = []
         plugins = []
@@ -3404,9 +3408,6 @@ Please convert to Plugin method".format(mod, methname)
         #     yield 'lino.modlib.bootstrap3'
         # elif self.default_ui == "bootstrap3":
         #     yield 'lino.modlib.bootstrap3'
-
-        for a in self.local_apps:
-            yield a
 
         # yield "lino.modlib.lino_startup"
 
