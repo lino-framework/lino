@@ -56,7 +56,7 @@ def base_attrs(cl):
 def add_gridfilters(qs, gridfilters):
     """Converts a `filter` request in the format used by
     :extux:`Ext.ux.grid.GridFilters` into a `Django field lookup
-    <http://docs.djangoproject.com/en/1.2/ref/models/querysets/#field-lookups>`_
+    <https://docs.djangoproject.com/en/1.11/ref/models/querysets/#field-lookups>`_
     on a :class:`django.db.models.query.QuerySet`.
 
     :param qs: the queryset to be modified.

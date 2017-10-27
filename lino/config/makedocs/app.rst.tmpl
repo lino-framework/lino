@@ -1,0 +1,26 @@
+$header(1,$app_label)
+
+.. currentmodule:: $app_label
+
+${doc($app.__doc__)}
+
+Defined in :srcref:`/${'/'.join($app.__name__.split('.'))+'.py'}`
+
+.. toctree::
+    :maxdepth: 2
+    :hidden:
+
+#for $model in $app_models
+    $full_model_name($model)
+#end for 
+
+
+Models
+------
+
+#for $model in $app_models
+- :doc:`$model.__name__ <$(full_model_name($model))>` :
+  $abstract($model,2)
+#end for 
+
+
