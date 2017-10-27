@@ -19,7 +19,7 @@ from django.utils import translation
 
 import json
 from atelier.utils import AttrDict
-from lino.core.signals import testcase_setup, database_ready
+from lino.core.signals import testcase_setup # , database_ready
 
 from .test import CommonTestCase
 

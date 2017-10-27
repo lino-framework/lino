@@ -131,7 +131,6 @@ lino.modlib.changes
 lino.modlib.comments
 lino.modlib.comments.fixtures
 lino.modlib.dashboard
-lino.modlib.database_ready
 lino.modlib.davlink
 lino.modlib.dupable
 lino.modlib.export_excel
