@@ -27,8 +27,8 @@
           // waitMsg: "{{_('Please wait...')}}",
           failure: function(response, options) {
               console.log('Ajax failure:', response, options);},
-              success: function() {
-                console.log('Ajax success:', arguments);},
+          success: function() {
+              console.log('Ajax success:', arguments);},
           params: { 'id_token': authResponse.id_token}
         };
         Ext.Ajax.request(action);
