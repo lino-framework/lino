@@ -14,7 +14,6 @@ Lino applications.
 
     gfks
     system
-    lino_startup
     users
 
 Utilities

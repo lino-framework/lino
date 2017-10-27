@@ -1597,7 +1597,8 @@ class Site(object):
                 disabled_plugins.add(dp)
 
         # lino_startup is always the first plugin:
-        install_plugin(str('lino.modlib.lino_startup'))
+        # install_plugin(str('lino.modlib.lino_startup'))
+        install_plugin(str('lino'))
 
         for app_name in requested_apps:
             install_plugin(app_name)

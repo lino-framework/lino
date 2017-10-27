@@ -1,0 +1,37 @@
+$(header(1,"Model **"+$app_label+'.'+$model.__name__+"**"))
+
+.. currentmodule:: $app_label
+
+.. index::
+   pair: model; $(app_label).$(model.__name__)
+
+.. _$(model_ref($model)):
+
+${doc($model.__doc__)}
+  
+$model_overview($model)
+    
+- Source code: :srcref:`/$('/'.join($model.__module__.split('.'))+'.py')`
+- API doc : :class:`$($model.__module__).$($model.__name__)`
+- Referenced from $model_referenced_from($model)
+
+
+#for $field in $model._meta.fields
+.. index::
+   single: field;${field.name}
+   
+.. _$(settings.LINO.source_name).${app_label}.${model.__name__}.${field.name}:
+
+$(header(3,$model.__name__+'.'+$field.name))
+
+The $(field.__class__.__name__) field **$(model.__name__).$(field.name)** ...
+
+The $(field.__class__.__name__) field :ref:`${field.name} <$(settings.LINO.source_name).${app_label}.${model.__name__}.${field.name}>`
+...
+
+
+
+$field.help_text
+
+   
+#end for

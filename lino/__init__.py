@@ -2,7 +2,13 @@
 # Copyright 2002-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""The :mod:`lino` package contains the core of the Lino framework.
+"""The :mod:`lino` package is the core of the Lino framework.
+
+This is the base plugin for all Lino applications, added automatically
+to your `INSTALLED_APPS`. It defines no models, but some system
+templates, django admin commands, translation messages and the core
+:xfile:`help_texts.py` file.
+
 
 .. autosummary::
    :toctree:
@@ -15,15 +21,28 @@
    projects
    modlib
    sphinxcontrib
+   management.commands
+
+
+Template files
+==============
+
+.. xfile:: admin_main_base.html
+.. xfile:: admin_main.html
+
+This is the template used to generate the inner content of the home
+page. It is split into two files
+:srcref:`admin_main.html<lino/modlib/lino_startup/config/admin_main.html>`
+and
+:srcref:`admin_main_base.html<lino/modlib/lino_startup/config/admin_main_base.html>`.
+
+
 
 
 """
 
-from __future__ import unicode_literals
-from __future__ import absolute_import
-
-# import logging
-# logger = logging.getLogger(__name__)
+# from __future__ import unicode_literals
+# from __future__ import absolute_import
 
 import sys
 import os
@@ -44,6 +63,14 @@ elif sys.version_info[0] == 2 and sys.version_info[1] > 6:
     PYAFTER26 = True
 else:
     PYAFTER26 = False
+
+import warnings
+warnings.filterwarnings(
+    "error", "DateTimeField .* received a naive datetime (.*) while time zone support is active.",
+    RuntimeWarning, "django.db.models.fields")
+
+from django.conf import settings
+from django.apps import AppConfig
 
 
 # def setup_project(settings_module):
@@ -77,10 +104,6 @@ else:
 def startup(settings_module=None):
     """Start up Django and Lino.
 
-    Until Django 1.6 this was called automatically (by
-    :mod:`lino.modlib.lino_startup`), but this trick no longer worked
-    after 1.7.
-
     This is called automatically when a process is invoked by an
     *admin command*.
 
@@ -89,8 +112,8 @@ def startup(settings_module=None):
     >>> import lino
     >>> lino.startup('my.project.settings')
 
-    Note that above two lines are recommended over the old-style
-    method (which worked only until Django 1.6)::
+    Above two lines are recommended over the old-style method (the
+    only one only until Django 1.6)::
 
     >>> import os
     >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'my.project.settings'
@@ -102,7 +125,6 @@ def startup(settings_module=None):
     # print("20160711 startup")
     # logger.info("20160711 startup")
     if settings_module:
-        import os
         os.environ['DJANGO_SETTINGS_MODULE'] = settings_module
 
     import django
@@ -112,26 +134,34 @@ def startup(settings_module=None):
     # logger.info("20160711 startup done")
 
 
-def site_startup():
-    """Called from `lino.modlib.lino_startup.models`"""
-    # print "site_startup"
-    from django.conf import settings
-    if False:
-        settings.SITE.startup()
-    else:
-        try:
+class AppConfig(AppConfig):
+    """This is the only :class:`django.apps.AppConfig` object used by
+Lino.
+
+    Lino applications use the :class:`lino.core.plugins.Plugin`
+    because it has some additional functionality.
+
+    """
+    name = 'lino'
+
+    def ready(self):
+        if False:
             settings.SITE.startup()
-        except ImportError as e:
-            import traceback
-            # traceback.print_exc(e)
-            # sys.exit(-1)
-            raise Exception("ImportError during startup:\n" +
-                            traceback.format_exc(e))
+        else:
+            try:
+                settings.SITE.startup()
+            except ImportError as e:
+                import traceback
+                # traceback.print_exc(e)
+                # sys.exit(-1)
+                raise Exception("ImportError during startup:\n" +
+                                traceback.format_exc(e))
+            except Exception as e:
+                print(e)
+                raise
+
+default_app_config = 'lino.AppConfig'
 
 # deprecated use, only for backwards compat:
 from django.utils.translation import ugettext_lazy as _
 
-import warnings
-warnings.filterwarnings(
-    "error", "DateTimeField .* received a naive datetime (.*) while time zone support is active.",
-    RuntimeWarning, "django.db.models.fields")

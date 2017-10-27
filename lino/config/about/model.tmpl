@@ -1,0 +1,42 @@
+#extends AboutBase
+#def title
+Model $href($args[0])
+#end def
+#def body
+$lino.welcome_html()
+
+#from lino.core.coretools import app_labels
+<h2>$len($app_labels()) apps</h2>
+#for $app in $app_labels()
+<a href="/about/apps?app=$app">$app</a>
+#end for
+
+#if len($args) == 0
+
+<h2>$len($models.get_models()) models</h2>
+<table border="1">
+#for $m in $models.get_models()
+<tr>
+
+<td>
+<b>$say($m)</b>
+($escape($m._meta.verbose_name),
+$escape($m._meta.verbose_name_plural))
+</td>
+<td>
+#for $field in $m._meta.fields
+<br>$field.name ($field.verbose_name)
+#end for
+</td>
+<td>
+#for $fkm,$fk in $m._lino_ddh.fklist
+<br>$fkm.__name__.$fk.name 
+#end for
+</td>
+
+</tr>
+#end for
+</table>
+#end if
+
+#end def

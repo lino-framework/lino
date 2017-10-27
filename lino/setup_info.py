@@ -143,9 +143,8 @@ lino.modlib.jinja
 lino.modlib.importfilters
 lino.modlib.languages
 lino.modlib.languages.fixtures
-lino.modlib.lino_startup
-lino.modlib.lino_startup.management
-lino.modlib.lino_startup.management.commands
+lino.management
+lino.management.commands
 lino.modlib.office
 lino.modlib.plausibility
 lino.modlib.plausibility.fixtures

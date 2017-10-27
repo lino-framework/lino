@@ -7,5 +7,5 @@ ns.setup_from_tasks(
     # tolerate_sphinx_warnings=True,
     blogref_url = 'http://luc.lino-framework.org',
     revision_control_system='git',
-    locale_dir='lino/modlib/lino_startup/locale',
+    locale_dir='lino/locale',
     doc_trees=[])

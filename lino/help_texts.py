@@ -4,6 +4,8 @@ from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _
 
 help_texts = {
+    'lino.AppConfig' : _("""This is the only django.apps.AppConfig object used by
+Lino."""),
     'lino.api.doctest.HttpQuery.expected_rows' : _("""Alias for field number 3"""),
     'lino.api.doctest.HttpQuery.json_fields' : _("""Alias for field number 2"""),
     'lino.api.doctest.HttpQuery.kwargs' : _("""Alias for field number 4"""),
@@ -15,6 +17,8 @@ help_texts = {
     'lino.api.rt.modules' : _("""Deprecated alias for models"""),
     'lino.api.selenium.Album' : _("""Generates one directory of screenshots images and their index.rst
 file."""),
+    'lino.management.commands.initdb.Command' : _("""Flush the database and load the specified fixtures."""),
+    'lino.management.commands.prep.Command' : _("""Flushes the database and loads the default demo fixtures."""),
     'lino.mixins.Contactable' : _("""Mixin for models that represent somebody who can be contacted by
 email."""),
     'lino.mixins.Phonable' : _("""Mixin for models that represent somebody who can be contacted by
@@ -218,8 +222,6 @@ GeneriForeignKey field."""),
     'lino.modlib.jinja.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.jinja.loader.DjangoJinjaTemplate' : _("""used e.g. to render /lino/lino/config/500.html"""),
     'lino.modlib.languages.Plugin' : _("""See /dev/plugins."""),
-    'lino.modlib.lino_startup.management.commands.initdb.Command' : _("""Flush the database and load the specified fixtures."""),
-    'lino.modlib.lino_startup.management.commands.prep.Command' : _("""Flushes the database and loads the default demo fixtures."""),
     'lino.modlib.notify.Plugin' : _("""See lino.core.plugin.Plugin."""),
     'lino.modlib.notify.Plugin.remove_after' : _("""Automatically remove notification messages after x hours."""),
     'lino.modlib.notify.Plugin.keep_unseen' : _("""Whether to keep unseen messages when removing old messages
