@@ -2,7 +2,7 @@
 # License: BSD (see file COPYING for details)
 
 """
-Database models for `lino.modlib.plausibility`.
+Database models for `lino.modlib.checkdata`.
 
 .. autosummary::
 
@@ -26,13 +26,13 @@ from lino.api import dd, rt, _
 
 from .choicelists import Checker, Checkers
 
-from .roles import PlausibilityUser
+from .roles import CheckdataUser
 
 
 class UpdateProblem(dd.Action):
     icon_name = 'bell'
-    label = _("Check plausibility")
-    combo_group = "plausibility"
+    label = _("Check data")
+    combo_group = "checkdata"
     fix_them = False
     sort_index = 90
     # custom_handler = True
@@ -42,7 +42,7 @@ class UpdateProblem(dd.Action):
     def run_from_ui(self, ar, fix=None):
         if fix is None:
             fix = self.fix_them
-        Problem = rt.modules.plausibility.Problem
+        Problem = rt.modules.checkdata.Problem
         # print(20150327, ar.selected_rows)
         for obj in ar.selected_rows:
             assert isinstance(obj, Problem)
@@ -58,24 +58,24 @@ class UpdateProblem(dd.Action):
 
 
 class FixProblem(UpdateProblem):
-    label = _("Fix plausibility problems")
+    label = _("Fix data problems")
     fix_them = True
     sort_index = 91
 
 
 class UpdateProblemsByController(dd.Action):
-    """Updates the table of plausibility problems for a given database
+    """Updates the table of data problems for a given database
     object, also removing those messages which no longer exist. This
     action does not change anything else in the database.
 
     This action is automatically being installed on each model for
     which there is at least one active :class:`Checker
-    <lino.modlib.plausibility.choicelists.Checker>`.
+    <lino.modlib.checkdata.choicelists.Checker>`.
 
     """
     icon_name = 'bell'
-    label = _("Check plausibility")
-    combo_group = "plausibility"
+    label = _("Check data")
+    combo_group = "checkdata"
     fix_them = False
 
     def __init__(self, model):
@@ -85,7 +85,7 @@ class UpdateProblemsByController(dd.Action):
     def run_from_ui(self, ar, fix=None):
         if fix is None:
             fix = self.fix_them
-        Problem = rt.modules.plausibility.Problem
+        Problem = rt.modules.checkdata.Problem
         gfk = Problem.owner
         checkers = get_checkable_models()[self.model]
         for obj in ar.selected_rows:
@@ -98,16 +98,16 @@ class UpdateProblemsByController(dd.Action):
 
 
 class FixProblemsByController(UpdateProblemsByController):
-    """Update plausibility problems, repairing those which are
+    """Update data problems, repairing those which are
     automatically fixable.
 
     """
-    label = _("Fix plausibility problems")
+    label = _("Fix data problems")
     fix_them = True
 
 @dd.python_2_unicode_compatible
 class Problem(Controllable, UserAuthored):
-    """Represents a detected plausibility problem.
+    """Represents a detected data problem.
 
     Database objects of this model are considered temporary data which
     may be updated automatically without user interaction.
@@ -115,7 +115,7 @@ class Problem(Controllable, UserAuthored):
     .. attribute:: checker
 
        The :class:`Checker
-       <lino.modlib.plausibility.choicelists.Checker>` which reported
+       <lino.modlib.checkdata.choicelists.Checker>` which reported
        this problem.
 
     .. attribute:: message
@@ -129,14 +129,14 @@ class Problem(Controllable, UserAuthored):
        for fixing this problem.
 
        This field is being filled by the :meth:`get_responsible_user
-       <lino.modlib.plausibility.choicelists.Checker.get_responsible_user>`
+       <lino.modlib.checkdata.choicelists.Checker.get_responsible_user>`
        method of the :attr:`checker`.
 
     """
     class Meta(object):
-        app_label = 'plausibility'
-        verbose_name = _("Plausibility problem")
-        verbose_name_plural = _("Plausibility problems")
+        app_label = 'checkdata'
+        verbose_name = _("Data problem")
+        verbose_name_plural = _("Data problems")
         ordering = ['owner_type', 'owner_id', 'checker']
 
     # problem_type = ProblemTypes.field()
@@ -175,7 +175,7 @@ Problem.update_controller_field(verbose_name = _('Database object'))
 
 class Problems(dd.Table):
     "The base table for :class:`Problem` objects."
-    model = 'plausibility.Problem'
+    model = 'checkdata.Problem'
     column_names = "user owner message #fixable checker *"
     auto_fit_column_widths = True
     editable = False
@@ -199,10 +199,10 @@ class Problems(dd.Table):
 
 
 class AllProblems(Problems):
-    """Show all plausibility problems.
+    """Show all data problems.
 
     This table can be opened by system managers using
-    :menuselection:`Explorer --> System --> Plausibility problems`.
+    :menuselection:`Explorer --> System --> Data problems`.
 
     """
     required_roles = dd.login_required(SiteStaff)
@@ -218,7 +218,7 @@ class ProblemsByOwner(Problems):
 
 
 class ProblemsByChecker(Problems):
-    """Show the plausibility problems by checker.
+    """Show the data problems by checker.
 
     This was the first use case of a slave table with a master which
     is something else than a model instance.
@@ -239,11 +239,11 @@ class ProblemsByChecker(Problems):
 
 
 class MyProblems(Problems):
-    """Shows the plausibility problems assigned to this user.
+    """Shows the data problems assigned to this user.
 
     """
-    required_roles = dd.login_required(PlausibilityUser)
-    label = _("Plausibility problems assigned to me")
+    required_roles = dd.login_required(CheckdataUser)
+    label = _("Data problems assigned to me")
 
     @classmethod
     def param_defaults(self, ar, **kw):
@@ -258,27 +258,27 @@ class MyProblems(Problems):
             return
         count = sar.get_total_count()
         if count > 0:
-            msg = _("There are {0} plausibility problems assigned to you.")
+            msg = _("There are {0} data problems assigned to you.")
             msg = msg.format(count)
             yield ar.href_to_request(sar, msg)
 
 
 @dd.receiver(dd.pre_analyze)
-def set_plausibility_actions(sender, **kw):
+def set_checkdata_actions(sender, **kw):
     """Installs the :class:`UpdateProblemsByController` action on every
     model for which there is at least one Checker
 
     """
     for m in list(get_checkable_models().keys()):
         assert m is not Problem
-        m.define_action(check_plausibility=UpdateProblemsByController(m))
+        m.define_action(check_data=UpdateProblemsByController(m))
         m.define_action(fix_problems=FixProblemsByController(m))
         if False:
             # don't add it automatically because appdev might prefer
             # to show it in a detail_layout:
             m.define_action(show_problems=dd.ShowSlaveTable(
                 ProblemsByOwner,
-                icon_name = 'bell', combo_group = "plausibility"))
+                icon_name = 'bell', combo_group = "checkdata"))
 
 
 
@@ -304,9 +304,9 @@ def get_checkable_models(*args):
     return checkable_models
 
 
-def check_plausibility(args=[], fix=True):
+def check_data(args=[], fix=True):
     """Called by :manage:`checkdata`. See there."""
-    Problem = rt.modules.plausibility.Problem
+    Problem = rt.modules.checkdata.Problem
     mc = get_checkable_models(*args)
     if len(mc) == 0 and len(args) > 0:
         raise Exception("No checker matches {0}".format(args))
@@ -342,5 +342,5 @@ def check_plausibility(args=[], fix=True):
 @dd.schedule_daily()
 def checkdata():
     """Run all data checkers."""
-    check_plausibility(fix=False)
+    check_data(fix=False)
     # rt.login().run(settings.SITE.site_config.run_checkdata)

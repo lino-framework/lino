@@ -23,7 +23,7 @@ Utilities
    :toctree:
 
     jinja
-    plausibility
+    checkdata
     printing
     summaries
 

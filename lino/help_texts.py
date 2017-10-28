@@ -142,6 +142,43 @@ object."""),
     'lino.modlib.changes.ChangesByMaster' : _("""Slave Table showing the changes related to the current object,
 including those applied to "child" objects."""),
     'lino.modlib.changes.ChangesByMaster.model' : _("""alias of Change"""),
+    'lino.modlib.checkdata.Plugin' : _("""See /dev/plugins."""),
+    'lino.modlib.checkdata.Plugin.responsible_user' : _("""The username
+of the main checkdata responsible, i.e. a designated
+user who will be attributed to data problems for which
+no specific responible could be designated (returned by the
+checker's get_responsible_user
+method)."""),
+    'lino.modlib.checkdata.Checker' : _("""Base class for the choices of Checkers."""),
+    'lino.modlib.checkdata.Checker.model' : _("""The model to be checked. This may be an abstract model.  It can
+also be None, but then you must define your own
+get_checkable_models() method."""),
+    'lino.modlib.checkdata.Checkers' : _("""The list of data problem types known by this application."""),
+    'lino.modlib.checkdata.Checkers.item_class' : _("""alias of Checker"""),
+    'lino.modlib.checkdata.UpdateProblemsByController' : _("""Updates the table of data problems for a given database
+object, also removing those messages which no longer exist. This
+action does not change anything else in the database."""),
+    'lino.modlib.checkdata.FixProblemsByController' : _("""Update data problems, repairing those which are
+automatically fixable."""),
+    'lino.modlib.checkdata.Problem' : _("""Represents a detected data problem."""),
+    'lino.modlib.checkdata.Problem.checker' : _("""The Checker which reported
+this problem."""),
+    'lino.modlib.checkdata.Problem.message' : _("""The message text. This is a concatenation of all messages that
+were yeld by the checker."""),
+    'lino.modlib.checkdata.Problem.user' : _("""The user reponsible
+for fixing this problem."""),
+    'lino.modlib.checkdata.Problems' : _("""The base table for Problem objects."""),
+    'lino.modlib.checkdata.Problems.model' : _("""alias of Problem"""),
+    'lino.modlib.checkdata.AllProblems' : _("""Show all data problems."""),
+    'lino.modlib.checkdata.AllProblems.model' : _("""alias of Problem"""),
+    'lino.modlib.checkdata.ProblemsByOwner' : _("""Show data problems related to this database object."""),
+    'lino.modlib.checkdata.ProblemsByOwner.model' : _("""alias of Problem"""),
+    'lino.modlib.checkdata.ProblemsByChecker' : _("""Show the data problems by checker."""),
+    'lino.modlib.checkdata.ProblemsByChecker.master' : _("""alias of Checker"""),
+    'lino.modlib.checkdata.ProblemsByChecker.model' : _("""alias of Problem"""),
+    'lino.modlib.checkdata.MyProblems' : _("""Shows the data problems assigned to this user."""),
+    'lino.modlib.checkdata.MyProblems.model' : _("""alias of Problem"""),
+    'lino.modlib.checkdata.roles.CheckdataUser' : _("""A user who can see data problems."""),
     'lino.modlib.comments.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.comments.mixins.Commentable' : _("""A request for comment. Every database model of an application"""),
     'lino.modlib.comments.CommentType' : _("""The type of an upload."""),
@@ -253,43 +290,6 @@ and uploads."""),
     'lino.modlib.office.roles.OfficeOperator' : _("""A user who manages office functionality for other users (but not
 for himself)."""),
     'lino.modlib.office.roles.OfficeStaff' : _("""A user who manages configuration of office functionality."""),
-    'lino.modlib.plausibility.Plugin' : _("""See /dev/plugins."""),
-    'lino.modlib.plausibility.Plugin.responsible_user' : _("""The username
-of the main plausibility responsible, i.e. a designated
-user who will be attributed to plausibility problems for which
-no specific responible could be designated (returned by the
-checker's get_responsible_user
-method)."""),
-    'lino.modlib.plausibility.Checker' : _("""Base class for the choices of Checkers."""),
-    'lino.modlib.plausibility.Checker.model' : _("""The model to be checked. This may be an abstract model.  It can
-also be None, but then you must define your own
-get_checkable_models() method."""),
-    'lino.modlib.plausibility.Checkers' : _("""The list of plausibility problem types known by this application."""),
-    'lino.modlib.plausibility.Checkers.item_class' : _("""alias of Checker"""),
-    'lino.modlib.plausibility.UpdateProblemsByController' : _("""Updates the table of plausibility problems for a given database
-object, also removing those messages which no longer exist. This
-action does not change anything else in the database."""),
-    'lino.modlib.plausibility.FixProblemsByController' : _("""Update plausibility problems, repairing those which are
-automatically fixable."""),
-    'lino.modlib.plausibility.Problem' : _("""Represents a detected plausibility problem."""),
-    'lino.modlib.plausibility.Problem.checker' : _("""The Checker which reported
-this problem."""),
-    'lino.modlib.plausibility.Problem.message' : _("""The message text. This is a concatenation of all messages that
-were yeld by the checker."""),
-    'lino.modlib.plausibility.Problem.user' : _("""The user reponsible
-for fixing this problem."""),
-    'lino.modlib.plausibility.Problems' : _("""The base table for Problem objects."""),
-    'lino.modlib.plausibility.Problems.model' : _("""alias of Problem"""),
-    'lino.modlib.plausibility.AllProblems' : _("""Show all plausibility problems."""),
-    'lino.modlib.plausibility.AllProblems.model' : _("""alias of Problem"""),
-    'lino.modlib.plausibility.ProblemsByOwner' : _("""Show data problems related to this database object."""),
-    'lino.modlib.plausibility.ProblemsByOwner.model' : _("""alias of Problem"""),
-    'lino.modlib.plausibility.ProblemsByChecker' : _("""Show the plausibility problems by checker."""),
-    'lino.modlib.plausibility.ProblemsByChecker.master' : _("""alias of Checker"""),
-    'lino.modlib.plausibility.ProblemsByChecker.model' : _("""alias of Problem"""),
-    'lino.modlib.plausibility.MyProblems' : _("""Shows the plausibility problems assigned to this user."""),
-    'lino.modlib.plausibility.MyProblems.model' : _("""alias of Problem"""),
-    'lino.modlib.plausibility.roles.PlausibilityUser' : _("""A user who can see plausibility problems."""),
     'lino.modlib.printing.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.restful.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.smtpd.Plugin' : _("""See /dev/plugins."""),
