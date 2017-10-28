@@ -665,7 +665,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         You need to override this only on slave actors whose
         :attr:`master` is something else than a database model,
         e.g. the :class:`ProblemsByChecker
-        <lino.modlib.plausibility.models.ProblemsByChecker>` table.
+        <lino.modlib.checkdata.models.ProblemsByChecker>` table.
 
         `ar` is the action request on this actor. `model` is the
         :attr:`master`, except if :attr:`master` is `ContentType` (in

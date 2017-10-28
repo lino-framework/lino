@@ -2,18 +2,18 @@
 # Copyright 2015 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Adds functionality for handling plausibility problems.
+"""Adds functionality for handling data problems.
 
-A plausibility problem is a database integrity problem which is not
+A data problem is a database integrity problem which is not
 visible by the DBMS because detecting it requires higher business
-intelligence.  Some plausibility problems can be fixed automatically,
+intelligence.  Some data problems can be fixed automatically,
 others need human interaction.
 
-The application developer writes **plausibility checkers**,
+The application developer writes **data checkers**,
 i.e. pieces of code which contain that business intelligence and which
 are attached to a given model.
 
-Examples of plausibility problems are:
+Examples of data problems are:
 
 - :class:`lino_xl.lib.countries.models.PlaceChecker`
 - :class:`lino_xl.lib.beid.mixins.BeIdCardHolderChecker`
@@ -26,7 +26,7 @@ Examples of plausibility problems are:
 
 
 
-Users automatically get a button "Update plausibility problems" on
+Users automatically get a button "Update data problems" on
 objects for which there is at least one checker available.
 
 The application developer can also add a :class:`ProblemsByOwner`
@@ -53,11 +53,11 @@ class Plugin(ad.Plugin):
     .. attribute:: responsible_user
 
         The :attr:`username <lino.modlib.users.User.username>`
-        of the **main plausibility responsible**, i.e. a designated
-        user who will be attributed to plausibility problems for which
+        of the **main checkdata responsible**, i.e. a designated
+        user who will be attributed to data problems for which
         no *specific responible* could be designated (returned by the
         checker's :meth:`get_responsible_user
-        <lino.modlib.plausibility.choicelists.Checker.get_responsible_user>`
+        <lino.modlib.checkdata.choicelists.Checker.get_responsible_user>`
         method).
 
         The default value for this is `None`, except on a demo site
@@ -66,7 +66,7 @@ class Plugin(ad.Plugin):
         ``"'robin'``.
 
     """
-    verbose_name = _("Plausibility")
+    verbose_name = _("Checkdata")
     needs_plugins = ['lino.modlib.users', 'lino.modlib.gfks']
 
     # plugin settings
@@ -99,13 +99,13 @@ class Plugin(ad.Plugin):
     def setup_main_menu(self, site, user_type, m):
         g = site.plugins.office
         m = m.add_menu(g.app_label, g.verbose_name)
-        m.add_action('plausibility.MyProblems')
+        m.add_action('checkdata.MyProblems')
 
     def setup_explorer_menu(config, site, user_type, m):
         g = site.plugins.system
         m = m.add_menu(g.app_label, g.verbose_name)
-        m.add_action('plausibility.Checkers')
-        m.add_action('plausibility.AllProblems')
-        # m.add_action('plausibility.Severities')
-        # m.add_action('plausibility.Feedbacks')
+        m.add_action('checkdata.Checkers')
+        m.add_action('checkdata.AllProblems')
+        # m.add_action('checkdata.Severities')
+        # m.add_action('checkdata.Feedbacks')
 

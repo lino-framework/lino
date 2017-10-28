@@ -1617,8 +1617,6 @@ class Site(object):
             if not k in self.plugins:
                 install_plugin(k)
 
-        # install_plugin(str('lino.modlib.database_ready'))
-
         for p in plugins:
             if p.app_label in disabled_plugins \
                or p.app_name in disabled_plugins:

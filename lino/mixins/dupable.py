@@ -241,7 +241,7 @@ class Dupable(dd.Model):
         return qs[:limit]
 
 
-from lino.modlib.plausibility.choicelists import Checker
+from lino.modlib.checkdata.choicelists import Checker
 
 
 class DupableChecker(Checker):
@@ -253,7 +253,7 @@ class DupableChecker(Checker):
     verbose_name = _("Check for missing phonetic words")
     model = Dupable
     
-    def get_plausibility_problems(self, obj, fix=False):
+    def get_checkdata_problems(self, obj, fix=False):
         msg = obj.update_dupable_words(fix)
         if msg:
             yield (True, msg)

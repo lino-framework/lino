@@ -25,7 +25,7 @@ install_requires = [
     'beautifulsoup4',
     'pisa',
     'jinja2', 'pytidylib', 'PyYAML',
-    'clint',  # lino.modlib.plausibility.management.commands
+    'clint',  # lino.modlib.checkdata.management.commands
     'django-localflavor',  # lino.modlib.sepa
     # 'django-iban',  # lino.modlib.sepa
     'openpyxl', 'html2text',
@@ -131,7 +131,6 @@ lino.modlib.changes
 lino.modlib.comments
 lino.modlib.comments.fixtures
 lino.modlib.dashboard
-lino.modlib.database_ready
 lino.modlib.davlink
 lino.modlib.dupable
 lino.modlib.export_excel
@@ -146,10 +145,10 @@ lino.modlib.languages.fixtures
 lino.management
 lino.management.commands
 lino.modlib.office
-lino.modlib.plausibility
-lino.modlib.plausibility.fixtures
-lino.modlib.plausibility.management
-lino.modlib.plausibility.management.commands
+lino.modlib.checkdata
+lino.modlib.checkdata.fixtures
+lino.modlib.checkdata.management
+lino.modlib.checkdata.management.commands
 lino.modlib.printing
 lino.modlib.restful
 lino.modlib.smtpd

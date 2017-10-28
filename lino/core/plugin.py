@@ -239,7 +239,7 @@ class Plugin(object):
         For example :mod:`groups` used this to set a default value to
         the :attr:`commentable_model` for :mod:`comments` plugin.
 
-        Or :mod:`lino.modlib.plausibility` uses it to set
+        Or :mod:`lino.modlib.checkdata` uses it to set
         `responsible_user` to "robin" when it is a demo site.
 
         """

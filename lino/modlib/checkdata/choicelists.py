@@ -2,7 +2,7 @@
 # License: BSD (see file COPYING for details)
 
 """
-Choicelists for `lino.modlib.plausibility`.
+Choicelists for `lino.modlib.checkdata`.
 
 
 """
@@ -22,8 +22,8 @@ from lino.api import dd, rt, _
 if False:
 
     class Feedbacks(dd.ChoiceList):
-        verbose_name = _("Plausibility feedback")
-        verbose_name_plural = _("Plausibility feedback")
+        verbose_name = _("Checkdata feedback")
+        verbose_name_plural = _("Checkdata feedback")
 
     add = Feedbacks.add_item()
     add("10", _("Ignorable"), 'ignorable')
@@ -31,7 +31,7 @@ if False:
 
     class Severities(dd.ChoiceList):
         verbose_name = _("Severity")
-        verbose_name_plural = _("Plausibility problem severities")
+        verbose_name_plural = _("Data problem severities")
 
     add = Severities.add_item()
     add("10", _("Note"), 'note')
@@ -100,7 +100,7 @@ class Checker(dd.Choice):
         any existing objects.
 
         """
-        Problem = rt.modules.plausibility.Problem
+        Problem = rt.modules.checkdata.Problem
         if delete:
             gfk = Problem.owner
             qs = Problem.objects.filter(**gfk2lookup(gfk, obj, checker=self))
@@ -108,7 +108,7 @@ class Checker(dd.Choice):
 
         done = []
         todo = []
-        for fixable, msg in self.get_plausibility_problems(obj, fix):
+        for fixable, msg in self.get_checkdata_problems(obj, fix):
             if fixable:
                 # attn: do not yet translate
                 msg = string_concat(u"(\u2605) ", msg)
@@ -130,9 +130,9 @@ class Checker(dd.Choice):
             prb.save()
         return (todo, done)
 
-    def get_plausibility_problems(self, obj, fix=False):
+    def get_checkdata_problems(self, obj, fix=False):
         """Return or yield a series of `(fixable, message)` tuples, each
-        describing a plausibility problem. `fixable` is a boolean
+        describing a data problem. `fixable` is a boolean
         saying whther this problem can be automatically fixed. And if
         `fix` is `True`, this method is also responsible for fixing
         it.
@@ -141,23 +141,23 @@ class Checker(dd.Choice):
         return []
 
     def get_responsible_user(self, obj):
-        """The :attr:`user <lino.modlib.plausibility.models.Problem.user>` to
+        """The :attr:`user <lino.modlib.checkdata.models.Problem.user>` to
         be considered as reponsible for problems detected by this
         checker on the given database object `obj`.
 
         The given `obj` will always be an instance of :attr:`model`.
 
-        The default implementation returns the *main plausibility
+        The default implementation returns the *main checkdata
         responsible* defined for this site (see
         :attr:`responsible_user
-        <lino.modlib.plausibility.Plugin.responsible_user>`).
+        <lino.modlib.checkdata.Plugin.responsible_user>`).
 
         """
-        return dd.plugins.plausibility.get_responsible_user(self, obj)
+        return dd.plugins.checkdata.get_responsible_user(self, obj)
 
 
 class Checkers(dd.ChoiceList):
-    """The list of plausibility problem types known by this application.
+    """The list of data problem types known by this application.
 
     This was the first use case of a :class:`ChoiceList
     <lino.core.choicelists.ChoiceList>` with a :attr:`detail_layout
@@ -165,8 +165,8 @@ class Checkers(dd.ChoiceList):
 
     """
     required_roles = dd.login_required(SiteStaff)
-    verbose_name = _("Plausibility checker")
-    verbose_name_plural = _("Plausibility checkers")
+    verbose_name = _("Data checker")
+    verbose_name_plural = _("Data checkers")
     item_class = Checker
     max_length = 250
     # e.g. "lino_welfare.modlib.pcsw.models.ClientCoachingsChecker"
@@ -175,7 +175,7 @@ class Checkers(dd.ChoiceList):
 
     detail_layout = """
     value text
-    plausibility.ProblemsByChecker
+    checkdata.ProblemsByChecker
     """
 
 

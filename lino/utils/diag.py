@@ -44,7 +44,7 @@ class Analyzer(object):
                         if isinstance(wl, six.string_types):
                             raise Exception("20150323 : {0}".format(ba))
                             # Was used to find Exception: 20150323 :
-                            # <BoundAction(plausibility.Checkers,
+                            # <BoundAction(checkdata.Checkers,
                             # <ShowDetail detail (u'Detail')>)>
 
                         if wl not in window_actions:

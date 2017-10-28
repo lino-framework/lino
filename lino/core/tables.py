@@ -757,12 +757,10 @@ class ButtonsTable(VirtualTable):
         return obj
 
 
-# from lino.core.signals import database_ready
 from lino.core.signals import post_analyze
 from django.db.utils import DatabaseError
 
 
-# @signals.receiver(database_ready)
 @signals.receiver(post_analyze)
 def setup_ventilated_columns(sender, **kw):
     # print("20170308 SETUP_VENTILATED_COLUMNS")

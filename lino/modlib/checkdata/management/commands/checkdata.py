@@ -7,12 +7,12 @@
 
 .. py2rst::
 
-  from lino.modlib.plausibility.management.commands.checkdata \
+  from lino.modlib.checkdata.management.commands.checkdata \
       import Command
   print(Command.help)
 
 In other words, this command does the same as if a user would click on
-the button with the bell ("Check plausibility") on each database
+the button with the bell ("Check data") on each database
 object for which there are data checkers.
 
 """
@@ -22,8 +22,8 @@ from __future__ import unicode_literals, print_function
 from django.core.management.base import BaseCommand, CommandError
 
 from atelier.utils import list_py2
-from lino.modlib.plausibility.choicelists import Checkers
-from lino.modlib.plausibility.models import check_plausibility
+from lino.modlib.checkdata.choicelists import Checkers
+from lino.modlib.checkdata.models import check_data
 
 from lino.api import rt
 
@@ -32,9 +32,9 @@ class Command(BaseCommand):
     args = "[app1.Model1.Checker1] [app2.Model2.Checker2] ..."
     help = """
 
-    Update the table of plausibility problems.
+    Update the table of data problems.
 
-    If no arguments are given, run it on all plausibility checkers.
+    If no arguments are given, run it on all data checkers.
     Otherwise every positional argument is expected to be a model name in
     the form `app_label.ModelName`, and only these models are being
     updated.
@@ -60,4 +60,4 @@ class Command(BaseCommand):
             rt.show(Checkers, column_names="value text")
         else:
             rt.startup()
-            check_plausibility(args=args, fix=options['fix'])
+            check_data(args=args, fix=options['fix'])

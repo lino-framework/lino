@@ -207,7 +207,6 @@ from lino.core.layouts import DummyPanel
 from lino.core.signals import on_ui_created, pre_ui_delete, on_ui_updated
 
 from lino.core.signals import database_connected
-from lino.core.signals import database_ready
 from lino.core.signals import pre_startup, post_startup
 from lino.core.signals import pre_analyze
 from lino.core.signals import post_analyze

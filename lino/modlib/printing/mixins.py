@@ -14,7 +14,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.timezone import make_aware
 
 from lino.api import rt
-from lino.modlib.plausibility.choicelists import Checker
+from lino.modlib.checkdata.choicelists import Checker
 
 # from lino.core import actions
 from lino.utils.choosers import chooser
@@ -247,7 +247,7 @@ class CachedPrintableChecker(Checker):
     model = CachedPrintable
     verbose_name = _("Check for missing target files")
     
-    def get_plausibility_problems(self, obj, fix=False):
+    def get_checkdata_problems(self, obj, fix=False):
         if obj.build_time is not None:
             t = obj.get_cache_mtime()
             if t is None:

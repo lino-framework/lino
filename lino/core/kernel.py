@@ -264,14 +264,16 @@ class Kernel(object):
         site.setup_model_spec(site, 'user_model')
         site.setup_model_spec(site, 'project_model')
 
-        for app_name_model, p in list(site.override_modlib_models.items()):
+        for app_name_model, p in site.override_modlib_models.items():
             # app_name_model is the full installed app module name +
             # the model name. It certainly contains at least one dot.
             m = '.'.join(app_name_model.split('.')[-2:])
             resolve_model(
                 m,
-                strict="%s plugin tries to extend unresolved model '%%s'" %
-                p.__class__.__module__)
+                strict="{!r} tries to extend unresolved model '%s'".format(
+                    p.__module__))
+                # strict="%s plugin tries to extend unresolved model '%%s'" %
+                # p.__class__.__module__)
 
         for model in models_list:
             #~ print 20130216, model

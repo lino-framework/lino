@@ -106,7 +106,6 @@ from django.dispatch import Signal, receiver
 pre_startup = Signal()
 post_startup = Signal()
 testcase_setup = Signal()
-database_ready = Signal()
 pre_analyze = Signal(['models_list'])
 post_analyze = Signal(['models_list'])
 auto_create = Signal(["field", "value"])
