@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-27 22:52+0300\n"
+"POT-Creation-Date: 2017-10-29 06:52+0200\n"
 "PO-Revision-Date: 2013-06-15 18:57-0300\n"
 "Last-Translator: Flavio Gondin <flvgondin@gmail.com>\n"
 "Language: pt_BR\n"
@@ -368,9 +368,9 @@ msgid ""
 msgstr ""
 
 #: lino/help_texts.py:122 lino/help_texts.py:131 lino/help_texts.py:145
-#: lino/help_texts.py:155 lino/help_texts.py:157 lino/help_texts.py:158
-#: lino/help_texts.py:208 lino/help_texts.py:221 lino/help_texts.py:222
-#: lino/help_texts.py:224 lino/help_texts.py:250 lino/help_texts.py:256
+#: lino/help_texts.py:182 lino/help_texts.py:192 lino/help_texts.py:194
+#: lino/help_texts.py:195 lino/help_texts.py:245 lino/help_texts.py:258
+#: lino/help_texts.py:259 lino/help_texts.py:261 lino/help_texts.py:287
 #: lino/help_texts.py:293 lino/help_texts.py:294 lino/help_texts.py:295
 #: lino/help_texts.py:296 lino/help_texts.py:300 lino/help_texts.py:324
 #: lino/help_texts.py:338 lino/help_texts.py:362 lino/help_texts.py:368
@@ -446,64 +446,158 @@ msgid ""
 msgstr ""
 
 #: lino/help_texts.py:146
+msgid ""
+"The username\n"
+"of the main checkdata responsible, i.e. a designated\n"
+"user who will be attributed to data problems for which\n"
+"no specific responible could be designated (returned by the\n"
+"checker's get_responsible_user\n"
+"method)."
+msgstr ""
+
+#: lino/help_texts.py:152
+msgid "Base class for the choices of Checkers."
+msgstr ""
+
+#: lino/help_texts.py:153
+msgid ""
+"The model to be checked. This may be an abstract model.  It can\n"
+"also be None, but then you must define your own\n"
+"get_checkable_models() method."
+msgstr ""
+
+#: lino/help_texts.py:156
+msgid "The list of data problem types known by this application."
+msgstr ""
+
+#: lino/help_texts.py:157 lino/help_texts.py:177
+msgid "alias of Checker"
+msgstr ""
+
+#: lino/help_texts.py:158
+msgid ""
+"Updates the table of data problems for a given database\n"
+"object, also removing those messages which no longer exist. This\n"
+"action does not change anything else in the database."
+msgstr ""
+
+#: lino/help_texts.py:161
+msgid ""
+"Update data problems, repairing those which are\n"
+"automatically fixable."
+msgstr ""
+
+#: lino/help_texts.py:163
+msgid "Represents a detected data problem."
+msgstr ""
+
+#: lino/help_texts.py:164
+msgid ""
+"The Checker which reported\n"
+"this problem."
+msgstr ""
+
+#: lino/help_texts.py:166
+msgid ""
+"The message text. This is a concatenation of all messages that\n"
+"were yeld by the checker."
+msgstr ""
+
+#: lino/help_texts.py:168
+msgid ""
+"The user reponsible\n"
+"for fixing this problem."
+msgstr ""
+
+#: lino/help_texts.py:170
+msgid "The base table for Problem objects."
+msgstr ""
+
+#: lino/help_texts.py:171 lino/help_texts.py:173 lino/help_texts.py:175
+#: lino/help_texts.py:178 lino/help_texts.py:180
+msgid "alias of Problem"
+msgstr ""
+
+#: lino/help_texts.py:172
+msgid "Show all data problems."
+msgstr ""
+
+#: lino/help_texts.py:174
+msgid "Show data problems related to this database object."
+msgstr ""
+
+#: lino/help_texts.py:176
+#, fuzzy
+msgid "Show the data problems by checker."
+msgstr "%d rendez-vous vous ont été attribués"
+
+#: lino/help_texts.py:179
+msgid "Shows the data problems assigned to this user."
+msgstr ""
+
+#: lino/help_texts.py:181
+msgid "A user who can see data problems."
+msgstr ""
+
+#: lino/help_texts.py:183
 msgid "A request for comment. Every database model of an application"
 msgstr ""
 
-#: lino/help_texts.py:147 lino/help_texts.py:343
+#: lino/help_texts.py:184 lino/help_texts.py:343
 msgid "The type of an upload."
 msgstr ""
 
-#: lino/help_texts.py:148 lino/help_texts.py:344
+#: lino/help_texts.py:185 lino/help_texts.py:344
 msgid ""
 "Optional pointer to a virtual upload shortcut field.  If\n"
 "this is not empty, then the given shortcut field will manage\n"
 "uploads of this type.  See also Shortcuts."
 msgstr ""
 
-#: lino/help_texts.py:151
+#: lino/help_texts.py:188
 msgid ""
 "A comment is a short text which some user writes about some\n"
 "other database object. It has no recipient."
 msgstr ""
 
-#: lino/help_texts.py:153
+#: lino/help_texts.py:190
 msgid ""
 "A short \"abstract\" of your comment. This should not be more\n"
 "than one paragraph."
 msgstr ""
 
-#: lino/help_texts.py:156
+#: lino/help_texts.py:193
 msgid "Create or update the widgets for this user."
 msgstr ""
 
-#: lino/help_texts.py:159
+#: lino/help_texts.py:196
 msgid "Extends lino.core.plugin.Plugin."
 msgstr ""
 
-#: lino/help_texts.py:160
+#: lino/help_texts.py:197
 msgid ""
 "Whether the ENTER key (or CTRL+ENTER when in a\n"
 "textarea field) should submit the form."
 msgstr ""
 
-#: lino/help_texts.py:162
+#: lino/help_texts.py:199
 msgid ""
 "Whether to use a status bar to display certain messages to the user.\n"
 "Default is False since currently this is not really useful."
 msgstr ""
 
-#: lino/help_texts.py:164
+#: lino/help_texts.py:201
 msgid "The URL from where to include the ExtJS library files."
 msgstr ""
 
-#: lino/help_texts.py:165
+#: lino/help_texts.py:202
 msgid ""
 "Number of seconds to wait between two refreshes when autorefresh is\n"
 "activated. Default is 60. Set this to 0 in order to deactivate\n"
 "the autorefresh button."
 msgstr ""
 
-#: lino/help_texts.py:168
+#: lino/help_texts.py:205
 msgid ""
 "Path to the ExtJS root directory.  Only used when\n"
 "media_base_url is None, and when the media directory has\n"
@@ -511,15 +605,15 @@ msgid ""
 "directory."
 msgstr ""
 
-#: lino/help_texts.py:172
+#: lino/help_texts.py:209
 msgid "The component that generates the JS of a grid column."
 msgstr ""
 
-#: lino/help_texts.py:173
+#: lino/help_texts.py:210
 msgid "Base class for all Widgets on some filed-like data element."
 msgstr ""
 
-#: lino/help_texts.py:174
+#: lino/help_texts.py:211
 msgid ""
 "Like ChoicesFieldElement, but we use the fact that\n"
 "choicelists are actors to define them once and refer to them.\n"
@@ -527,39 +621,39 @@ msgid ""
 "dynamicaly add a blank choice to the the choicelist."
 msgstr ""
 
-#: lino/help_texts.py:178
+#: lino/help_texts.py:215
 msgid "Widget for lino.core.fields.IncompleteDate fields."
 msgstr ""
 
-#: lino/help_texts.py:179
+#: lino/help_texts.py:216
 msgid "Base class for integers, decimals, RequestField,..."
 msgstr ""
 
-#: lino/help_texts.py:180
+#: lino/help_texts.py:217
 msgid "ExtJS element to be used for DisplayFields."
 msgstr ""
 
-#: lino/help_texts.py:181
+#: lino/help_texts.py:218
 msgid ""
 "The widget used to render a SingleRelatedObjectDescriptor,\n"
 "i.e. the other side of a OneToOneField."
 msgstr ""
 
-#: lino/help_texts.py:183
+#: lino/help_texts.py:220
 msgid "A DisplayElement specially adapted to a GFK field."
 msgstr ""
 
-#: lino/help_texts.py:184
+#: lino/help_texts.py:221
 msgid "Element that renders to a Lino.HtmlBoxPanel."
 msgstr ""
 
-#: lino/help_texts.py:185
+#: lino/help_texts.py:222
 msgid ""
 "The panel used to display a slave table whose slave_grid_format\n"
 "is 'summary'."
 msgstr ""
 
-#: lino/help_texts.py:187
+#: lino/help_texts.py:224
 msgid ""
 "Base class for Layout Elements that can contain other Layout Elements:\n"
 "Panel,\n"
@@ -568,7 +662,7 @@ msgid ""
 "GridPanel"
 msgstr ""
 
-#: lino/help_texts.py:192
+#: lino/help_texts.py:229
 msgid ""
 "A vertical Panel is vflex if and only if at least one of its\n"
 "children is vflex.  A horizontal Panel is vflex if and only if\n"
@@ -577,272 +671,178 @@ msgid ""
 "the highest non-vflex element)."
 msgstr ""
 
-#: lino/help_texts.py:197
+#: lino/help_texts.py:234
 msgid ""
 "Represents a Lino.GridPanel, i.e. the widget used to represent a\n"
 "table or a slave table."
 msgstr ""
 
-#: lino/help_texts.py:199
+#: lino/help_texts.py:236
 msgid ""
 "The optional Panel for parameters of a Table.\n"
 "JS part stored in Lino.GridPanel.params_panel."
 msgstr ""
 
-#: lino/help_texts.py:201
+#: lino/help_texts.py:238
 msgid "The optional Panel for parameters of an Action."
 msgstr ""
 
-#: lino/help_texts.py:202
+#: lino/help_texts.py:239
 msgid "An HTML renderer that uses the ExtJS Javascript toolkit."
 msgstr ""
 
-#: lino/help_texts.py:203
+#: lino/help_texts.py:240
 msgid "Similar to PlainIndex"
 msgstr ""
 
-#: lino/help_texts.py:204
+#: lino/help_texts.py:241
 msgid ""
 "This view is being used when remote_user_header is\n"
 "empty (and user_model not).\n"
 "lino.core.auth.SessionUserMiddleware"
 msgstr ""
 
-#: lino/help_texts.py:207
+#: lino/help_texts.py:244
 msgid "Used to collaborate with a restful Ext.data.Store."
 msgstr ""
 
-#: lino/help_texts.py:209
+#: lino/help_texts.py:246
 msgid "Add verbose_name and help_text to Django's GFK."
 msgstr ""
 
-#: lino/help_texts.py:210
+#: lino/help_texts.py:247
 msgid ""
 "Use this instead of models.PositiveIntegerField for fields that\n"
 "are part of a GFK and you want Lino to render them using a\n"
 "Combobox."
 msgstr ""
 
-#: lino/help_texts.py:213
+#: lino/help_texts.py:250
 msgid "Mixin for models that are \"controllable\" by another database object."
 msgstr ""
 
-#: lino/help_texts.py:214
+#: lino/help_texts.py:251
 msgid ""
 "Deprecated. This is (and always was) being ignored. Use\n"
 "update_controller_field() instead."
 msgstr ""
 
-#: lino/help_texts.py:216
+#: lino/help_texts.py:253
 msgid "Default table for django.contrib.ContentType."
 msgstr ""
 
-#: lino/help_texts.py:217
+#: lino/help_texts.py:254
 msgid "Display a clickable list of all MTI parents, i.e. base models"
 msgstr ""
 
-#: lino/help_texts.py:218
+#: lino/help_texts.py:255
 msgid "A custom help text to be displayed for a given field."
 msgstr ""
 
-#: lino/help_texts.py:219
+#: lino/help_texts.py:256
 msgid ""
 "Shows all database objects (model instances) who have a broken\n"
 "GeneriForeignKey field."
 msgstr ""
 
-#: lino/help_texts.py:223
+#: lino/help_texts.py:260
 msgid "used e.g. to render /lino/lino/config/500.html"
 msgstr ""
 
-#: lino/help_texts.py:225
+#: lino/help_texts.py:262
 msgid "See lino.core.plugin.Plugin."
 msgstr ""
 
-#: lino/help_texts.py:226
+#: lino/help_texts.py:263
 msgid "Automatically remove notification messages after x hours."
 msgstr ""
 
-#: lino/help_texts.py:227
+#: lino/help_texts.py:264
 msgid ""
 "Whether to keep unseen messages when removing old messages\n"
 "according to remove_after."
 msgstr ""
 
-#: lino/help_texts.py:229
+#: lino/help_texts.py:266
 msgid ""
 "An action which pops up a dialog window of three fields \"Summary\",\n"
 "\"Description\" and a checkbox \"Don't notify others\" to optionally\n"
 "suppress notification."
 msgstr ""
 
-#: lino/help_texts.py:232
+#: lino/help_texts.py:269
 msgid ""
 "The list of possible choices for the message_type field\n"
 "of a Message."
 msgstr ""
 
-#: lino/help_texts.py:234
+#: lino/help_texts.py:271
 msgid "How the system should send email notifications to a user."
 msgstr ""
 
-#: lino/help_texts.py:235
+#: lino/help_texts.py:272
 msgid "Disable notifications for this user."
 msgstr ""
 
-#: lino/help_texts.py:236
+#: lino/help_texts.py:273
 msgid "Notify in Lino but never send email."
 msgstr ""
 
-#: lino/help_texts.py:237
+#: lino/help_texts.py:274
 msgid ""
 "Mixin for models which can emit notifications to a list of\n"
 "\"observers\" when an instance is modified."
 msgstr ""
 
-#: lino/help_texts.py:239
+#: lino/help_texts.py:276
 msgid "Mark this message as not yet seen."
 msgstr ""
 
-#: lino/help_texts.py:240
+#: lino/help_texts.py:277
 msgid ""
 "A Notification message is a instant message sent by the\n"
 "application to a given user."
 msgstr ""
 
-#: lino/help_texts.py:242
+#: lino/help_texts.py:279
 #, fuzzy
 msgid "The recipient."
 msgstr "Destinataire"
 
-#: lino/help_texts.py:243
+#: lino/help_texts.py:280
 msgid "The database object which controls this message."
 msgstr ""
 
-#: lino/help_texts.py:244
+#: lino/help_texts.py:281
 msgid "Base for all tables of messages."
 msgstr ""
 
-#: lino/help_texts.py:245 lino/help_texts.py:247 lino/help_texts.py:249
+#: lino/help_texts.py:282 lino/help_texts.py:284 lino/help_texts.py:286
 msgid "alias of Message"
 msgstr ""
 
-#: lino/help_texts.py:246
+#: lino/help_texts.py:283
 msgid "The gobal list of all messages."
 msgstr ""
 
-#: lino/help_texts.py:248
+#: lino/help_texts.py:285
 msgid "Shows messages emitted to you."
 msgstr ""
 
-#: lino/help_texts.py:251
+#: lino/help_texts.py:288
 msgid ""
 "A user who has access to office functionality like calendar, notes\n"
 "and uploads."
 msgstr ""
 
-#: lino/help_texts.py:253
+#: lino/help_texts.py:290
 msgid ""
 "A user who manages office functionality for other users (but not\n"
 "for himself)."
 msgstr ""
 
-#: lino/help_texts.py:255
-msgid "A user who manages configuration of office functionality."
-msgstr ""
-
-#: lino/help_texts.py:257
-msgid ""
-"The username\n"
-"of the main plausibility responsible, i.e. a designated\n"
-"user who will be attributed to plausibility problems for which\n"
-"no specific responible could be designated (returned by the\n"
-"checker's get_responsible_user\n"
-"method)."
-msgstr ""
-
-#: lino/help_texts.py:263
-msgid "Base class for the choices of Checkers."
-msgstr ""
-
-#: lino/help_texts.py:264
-msgid ""
-"The model to be checked. This may be an abstract model.  It can\n"
-"also be None, but then you must define your own\n"
-"get_checkable_models() method."
-msgstr ""
-
-#: lino/help_texts.py:267
-msgid "The list of plausibility problem types known by this application."
-msgstr ""
-
-#: lino/help_texts.py:268 lino/help_texts.py:288
-msgid "alias of Checker"
-msgstr ""
-
-#: lino/help_texts.py:269
-msgid ""
-"Updates the table of plausibility problems for a given database\n"
-"object, also removing those messages which no longer exist. This\n"
-"action does not change anything else in the database."
-msgstr ""
-
-#: lino/help_texts.py:272
-msgid ""
-"Update plausibility problems, repairing those which are\n"
-"automatically fixable."
-msgstr ""
-
-#: lino/help_texts.py:274
-msgid "Represents a detected plausibility problem."
-msgstr ""
-
-#: lino/help_texts.py:275
-msgid ""
-"The Checker which reported\n"
-"this problem."
-msgstr ""
-
-#: lino/help_texts.py:277
-msgid ""
-"The message text. This is a concatenation of all messages that\n"
-"were yeld by the checker."
-msgstr ""
-
-#: lino/help_texts.py:279
-msgid ""
-"The user reponsible\n"
-"for fixing this problem."
-msgstr ""
-
-#: lino/help_texts.py:281
-msgid "The base table for Problem objects."
-msgstr ""
-
-#: lino/help_texts.py:282 lino/help_texts.py:284 lino/help_texts.py:286
-#: lino/help_texts.py:289 lino/help_texts.py:291
-msgid "alias of Problem"
-msgstr ""
-
-#: lino/help_texts.py:283
-msgid "Show all plausibility problems."
-msgstr ""
-
-#: lino/help_texts.py:285
-msgid "Show data problems related to this database object."
-msgstr ""
-
-#: lino/help_texts.py:287
-#, fuzzy
-msgid "Show the plausibility problems by checker."
-msgstr "%d rendez-vous vous ont été attribués"
-
-#: lino/help_texts.py:290
-msgid "Shows the plausibility problems assigned to this user."
-msgstr ""
-
 #: lino/help_texts.py:292
-msgid "A user who can see plausibility problems."
+msgid "A user who manages configuration of office functionality."
 msgstr ""
 
 #: lino/help_texts.py:297
@@ -2126,19 +2126,19 @@ msgstr ""
 msgid "Confirmation"
 msgstr "Confirmação"
 
-#: lino/core/kernel.py:629
+#: lino/core/kernel.py:631
 msgid "You have "
 msgstr ""
 
-#: lino/core/kernel.py:630
+#: lino/core/kernel.py:632
 msgid "{0} items in {1}"
 msgstr ""
 
-#: lino/core/kernel.py:782
+#: lino/core/kernel.py:784
 msgid "User abandoned"
 msgstr ""
 
-#: lino/core/kernel.py:891
+#: lino/core/kernel.py:893
 msgid "Server is in readonly mode"
 msgstr ""
 
@@ -9372,5 +9372,40 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "There are {0} plausibility problems assigned to you."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "The username\n"
+#~ "of the main plausibility responsible, i.e. a designated\n"
+#~ "user who will be attributed to plausibility problems for which\n"
+#~ "no specific responible could be designated (returned by the\n"
+#~ "checker's get_responsible_user\n"
+#~ "method)."
+#~ msgstr ""
+
+#~ msgid "The list of plausibility problem types known by this application."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Updates the table of plausibility problems for a given database\n"
+#~ "object, also removing those messages which no longer exist. This\n"
+#~ "action does not change anything else in the database."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Update plausibility problems, repairing those which are\n"
+#~ "automatically fixable."
+#~ msgstr ""
+
+#~ msgid "Represents a detected plausibility problem."
+#~ msgstr ""
+
+#~ msgid "Show all plausibility problems."
+#~ msgstr ""
+
+#~ msgid "Shows the plausibility problems assigned to this user."
+#~ msgstr ""
+
+#~ msgid "A user who can see plausibility problems."
 #~ msgstr ""
 
