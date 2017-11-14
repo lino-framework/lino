@@ -14,13 +14,12 @@ from django.conf.urls import url, include
 from django.conf.urls.static import static
 from lino.core.utils import is_devserver
 
-# import lino
-# lino.startup()
-
 # we must explicitly call django.setup() because when running under
 # mod_wsgi this is not done automatically as with runserver (or at
 # least it seems so)
-# lino.lino_startup()
+import lino
+lino.startup()
+
 
 site = settings.SITE
 urlpatterns = []
