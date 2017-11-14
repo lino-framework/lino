@@ -21,7 +21,7 @@ from django.utils.translation import get_language
 from lino.core import auth
 
 
-from lino.api import dd
+# from lino.api import dd
 from lino.core import constants
 # from lino.core import auth
 from lino.core.requests import BaseRequest
@@ -169,7 +169,7 @@ class List(View):
     """
     def get(self, request, app_label=None, actor=None):
         ar = action_request(app_label, actor, request, request.GET, True)
-        ar.renderer = dd.plugins.bootstrap3.renderer
+        ar.renderer = settings.SITE.plugins.bootstrap3.renderer
 
         context = dict(
             title=ar.get_title(),
@@ -191,7 +191,7 @@ class Element(View):
     """
     def get(self, request, app_label=None, actor=None, pk=None):
         ar = action_request(app_label, actor, request, request.GET, False)
-        ar.renderer = dd.plugins.bootstrap3.renderer
+        ar.renderer = settings.SITE.plugins.bootstrap3.renderer
 
         navigator = None
         if pk and pk != '-99999' and pk != '-99998':
@@ -292,7 +292,7 @@ class Index(View):
     Render the main page.
     """
     def get(self, request, *args, **kw):
-        ui = dd.plugins.bootstrap3
+        ui = settings.SITE.plugins.bootstrap3
         # print("20170607", request.user)
         assert ui.renderer is not None
         ar = BaseRequest(
@@ -302,7 +302,7 @@ class Index(View):
         return index_response(ar)
 
 def index_response(ar):
-    ui = dd.plugins.bootstrap3
+    ui = settings.SITE.plugins.bootstrap3
 
     main = settings.SITE.get_main_html(ar.request, extjs=ui)
     main = ui.renderer.html_text(main)
