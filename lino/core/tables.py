@@ -28,6 +28,7 @@ from lino.core import actions
 from lino.core import fields
 from lino.core import signals
 from lino.core.tablerequest import TableRequest
+from lino.core.fields import RemoteField
 
 
 class InvalidRequest(Exception):
@@ -599,6 +600,16 @@ method in order to sort the rows of the queryset.
             # UsersWithClients as "slave" of the "table" Home
         elif self.master is models.Model:
             pass
+        elif isinstance(self.master_field, RemoteField):
+            # it's not possible to insert rows in a slave table with a
+            # remote master field
+            return None
+            # obj = master_instance
+            # parts = list(self.master_field.name.split('__'))
+            # for k in parts:
+            #     obj = getattr(obj, k)
+            # kw[parts[0]] = obj
+                
         elif isinstance(self.master_field, GenericForeignKey):
             kw = gfk2lookup(self.master_field, master_instance, **kw)
         elif self.master_field is not None:
