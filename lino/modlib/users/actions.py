@@ -175,5 +175,7 @@ class SignIn(dd.Action):
             # user.is_authenticated:
             auth.login(ar.request, user)
             ar.success(
-                _("Now logged in as {}").format(user), goto_url="/")
+                _("Now logged in as {}").format(user),
+                close_window=True,
+                goto_url="/")
 
