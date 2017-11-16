@@ -1,9 +1,9 @@
-"""
-This started as a copy of Django 1.11 django.contrib.auth.backends.
+"""This started as a copy of Django 1.11 django.contrib.auth.backends.
 
 Changes:
 
-- move "from django.contrib.auth.models import Permission" from global_settings
+- move "from django.contrib.auth.models import Permission" from global
+  to local context
 
 - added support for use_ipdict
 
