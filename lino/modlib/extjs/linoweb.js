@@ -3352,15 +3352,6 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
       
     var this_ = this;
     //~ var grid = this;
-    /**
-    *  Cancel the previous request when do a new load request.
-    *  Prevents Ajax race conditions. Ticket #2136
-    **/
-    this.store.on('beforeload', function(theStore, operation, eOpts) {
-                        var c = theStore.proxy.getConnection();
-                        c.abort(c.transId);
-                        });
-
     this.store.on('load', function() {
         //~ console.log('20120814 GridStore.on(load)',this_.store);
         this_.set_param_values(this_.store.reader.arrayData.param_values);
@@ -3748,7 +3739,16 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
     //~ console.log("2012124 search_keypress",arguments);
   //~ },
   search_validate : function(value) {
-    if (value == this.quick_search_text) return true;
+      if (value == this.quick_search_text) return true;
+
+      /**
+      *  Cancel the previous request when do a new load request.
+      *  Prevents Ajax race conditions. Ticket #2136
+      **/
+      var c = this.store.proxy.getConnection();
+      c.abort(c.transId);
+
+      
     this.is_searching = true;
     //~ console.log('search_validate',value)
     this.quick_search_text = value;
