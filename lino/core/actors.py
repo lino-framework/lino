@@ -457,7 +457,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     allow_create = True
     """
-    If this is False, then then Actor won't have no insert_action.
+    If this is False, the table won't have any insert_action.
     """
 
     hide_headers = False
