@@ -479,6 +479,14 @@ method in order to sort the rows of the queryset.
     Set this to True in Extjs6 to not use a Buffered Store, and use a JsonStore with paging instead.
     """
 
+    drag_drop_sequenced_field = None
+    """
+    Extjs6 only
+    Enables drag and drop reordering for a table.
+    Set to the field name that is used to track the order.
+    Only used in lino.mixins.sequenced.Sequenced. Field name seqno
+    """
+
     @classmethod
     def spawn(cls, suffix, **kw):
         kw['app_label'] = cls.app_label
