@@ -174,6 +174,7 @@ class Kernel(object):
 
     """
     default_ui = None
+    admin_ui = None
 
     # _singleton_instance = None
 
@@ -582,34 +583,20 @@ class Kernel(object):
         for p in site.installed_plugins:
             p.on_ui_init(self)
 
-        ui = None
-        if self.site.default_ui is None:
+        for p in self.site.installed_plugins:
+            if p.app_name == self.site.default_ui:
+                p.url_prefix = None
+                self.default_renderer = p.renderer
+                self.default_ui = p
+                self.html_renderer = HtmlRenderer(p)
+                self.text_renderer = TextRenderer(p)
+                break
+        if self.site.admin_ui is not None:
             for p in self.site.installed_plugins:
-                if p.ui_handle_attr_name is not None:
-                    ui = p
-                    break
-            # if ui is None:
-            #     raise Exception("No user interface in {0}".format(
-            #         [u.app_name for u in self.site.installed_plugins]))
-
-        else:
-            for p in self.site.installed_plugins:
-                if p.app_name == self.site.default_ui:
-                    ui = p
-            if ui is None:
-                raise Exception(
-                    "Invalid value %r for `default_ui` "
-                    "(must be None or the name of an installed plugin)"
-                    % self.site.default_ui)
-            ui.url_prefix = None
-
-        if ui is not None:
-            self.default_renderer = ui.renderer
-            self.default_ui = ui
+                if p.app_name == self.site.admin_ui:
+                    self.admin_ui  = p
 
         # 20160530
-        self.html_renderer = HtmlRenderer(ui)
-        self.text_renderer = TextRenderer(ui)
 
         for a in actors.actors_list:
             
@@ -640,12 +627,12 @@ class Kernel(object):
 
         post_ui_build.send(self)
 
-        if ui is not None:
-            # trigger creation of params_layout.params_store
-            for res in actors.actors_list:
-                for ba in res.get_actions():
-                    if ba.action.params_layout is not None:
-                        ba.action.params_layout.get_layout_handle(ui)
+        # trigger creation of params_layout.params_store
+        for res in actors.actors_list:
+            for ba in res.get_actions():
+                if ba.action.params_layout is not None:
+                    ba.action.params_layout.get_layout_handle(
+                        self.default_ui)
         # logger.info("20161219 kernel_startup done")
 
     def protect_foreignkeys(self, models_list):
@@ -1075,8 +1062,8 @@ def site_startup(self):
         # for k, v in self.models.items():
         #     self.actors.setdefault(k, v)
 
-        self.user_interfaces = tuple([
-            p for p in self.installed_plugins if p.ui_label is not None])
+        # self.user_interfaces = tuple([
+        #     p for p in self.installed_plugins if p.ui_label is not None])
 
         # logger.info("20150428 user_interfaces %s", self.user_interfaces)
 

@@ -6,6 +6,12 @@
 
 Runs a Qt client for this application.
 
+This requires::
+
+    pip install pyqt5
+
+which is only available under Python 3.
+
 """
 
 from __future__ import print_function
@@ -33,19 +39,23 @@ class ItemCaller(object):
         self.win  = win
         
     def __call__(self, event):
-        QMessageBox.question(
-            self.win, str(self.mi.label),
-            str(self.mi.help_text),
-            QMessageBox.Yes | 
-            QMessageBox.No, QMessageBox.Yes)
+        if False:
+            QMessageBox.question(
+                self.win, str(self.mi.label),
+                str(self.mi.help_text),
+                QMessageBox.Yes | 
+                QMessageBox.No, QMessageBox.Yes)
 
+        self.frm = DetailForm(self.win, self.mi)
+        self.frm.show()
             
 
 class DetailForm(QWidget):
     
-    def __init__(self, title="Detail Form"):
-        super().__init__()
-        self.setWindowTitle(title)    
+    def __init__(self, win, mi):
+        self.mi = mi
+        super().__init__(win)
+        self.setWindowTitle(str(self.mi.label))    
         self.initUI()
         
     def initUI(self):
@@ -81,13 +91,14 @@ class LinoClient(QMainWindow):
 
         self.setGeometry(300, 300, 300, 220)
         self.center()
-        self.setWindowTitle('2.py')
+        self.setWindowTitle('qtclient.py')
         self.setWindowIcon(QIcon('../../.static/logo.png'))
         self.setToolTip('This is a <b>QWidget</b> widget')
         self.menubar = self.menuBar()
 
         user_type = rt.modules.users.UserTypes.get_by_value('900')
-        menu = settings.SITE.get_site_menu(settings.SITE.kernel, user_type)
+        menu = settings.SITE.get_site_menu(
+            settings.SITE.kernel, user_type)
         self.load_menu(menu, self.menubar)
         self.show()
         self.statusBar().showMessage('Ready')
@@ -126,11 +137,15 @@ class LinoClient(QMainWindow):
         # btn.resize(btn.sizeHint())
         # btn.move(50, 50)               
     
-    def show_detail(self, event):
-        self.detail_form = DetailForm()
-        self.detail_form.show()
+    # def show_detail(self, event):
+    #     self.detail_form = DetailForm()
+    #     self.detail_form.show()
         
     def closeEvent(self, event):
+        
+        if True:
+            event.accept()
+            return
         
         reply = QMessageBox.question(self, 'MessageBox',
             "This will close the window! Are you sure?",

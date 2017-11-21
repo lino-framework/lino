@@ -924,6 +924,9 @@ class Site(object):
     Usage example for this see :mod:`lino.projects.cms`.
 
     """
+    
+    admin_ui = None
+    
 
     mobile_view = False
     """When this is `False` (the default), then Lino uses an attribute
@@ -3402,6 +3405,14 @@ Please convert to Plugin method".format(mod, methname)
             yield 'lino.modlib.ipdict'
 
         yield self.default_ui
+        
+        if self.admin_ui is not None:
+            if self.admin_ui == self.default_ui:
+                raise Exception(
+                    "admin_ui (if specified) must be different "
+                    "from default_ui")
+            yield self.admin_ui
+            
         # if self.default_ui == "extjs":
         #     yield 'lino.modlib.extjs'
         #     yield 'lino.modlib.bootstrap3'
