@@ -34,6 +34,7 @@ from lino.utils.xmlgen import html as xghtml
 from lino.utils.xmlgen.html import E
 from lino.utils import jsgen
 from lino.core.utils import getrqdata
+from .fields import RemoteField
 
 from .requests import ActionRequest
 
@@ -130,6 +131,7 @@ class TableRequest(ActionRequest):
             if self.limit is not None:
                 self._sliced_data_iterator = self._sliced_data_iterator[
                     :self.limit]
+        # logger.info("20171116 executed : %s", self._sliced_data_iterator)
 
     def must_execute(self):
         return self._data_iterator is None
@@ -351,7 +353,12 @@ class TableRequest(ActionRequest):
 
         self.actor.setup_request(self)
 
-        self.create_kw = self.actor.get_filter_kw(self)
+        if isinstance(self.actor.master_field, RemoteField):
+            # cannot insert rows in a slave table with a remote master
+            # field
+            self.create_kw = None
+        else:
+            self.create_kw = self.actor.get_filter_kw(self)
 
         if offset is not None:
             self.offset = offset

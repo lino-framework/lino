@@ -704,8 +704,6 @@ class Table(AbstractTable):
         :meth:`lino.core.model.Model.get_request_queryset`.
 
         """
-        # print("20160329 dbtables.py get_request_queryset({})".format(
-        #     rr.param_values))
         qs = self.get_queryset(rr)
         # print("20160329 {}".format(qs.query))
         if qs is None:
@@ -714,6 +712,8 @@ class Table(AbstractTable):
         if kw is None:
             return self.model.objects.none()
         if len(kw):
+            # print("20171116 dbtables.py get_request_queryset({})".format(
+            #     kw))
             qs = qs.filter(**kw)
 
         if rr.exclude:
