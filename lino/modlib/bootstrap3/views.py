@@ -292,9 +292,11 @@ class Index(View):
     Render the main page.
     """
     def get(self, request, *args, **kw):
+        # raise Exception("20171122 {} {}".format(
+        #     get_language(), settings.MIDDLEWARE_CLASSES))
         ui = settings.SITE.plugins.bootstrap3
         # print("20170607", request.user)
-        assert ui.renderer is not None
+        # assert ui.renderer is not None
         ar = BaseRequest(
             # user=user,
             request=request,

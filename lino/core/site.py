@@ -3317,13 +3317,6 @@ Please convert to Plugin method".format(mod, methname)
         if True:
             yield 'lino.utils.ajax.AjaxExceptionResponse'
 
-        if False:  # not BYPASS_PERMS:
-            yield 'django.contrib.auth.middleware.RemoteUserMiddleware'
-            # TODO: find solution for this:
-            #~ AUTHENTICATION_BACKENDS = (
-              #~ 'django.contrib.auth.backends.RemoteUserBackend',
-            #~ )
-
         if False:
             #~ yield 'lino.utils.sqllog.ShortSQLLogToConsoleMiddleware'
             yield 'lino.utils.sqllog.SQLLogToConsoleMiddleware'
