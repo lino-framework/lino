@@ -195,6 +195,7 @@ class FakeField(object):
     default = NOT_PROVIDED
     generate_reverse_relation = False  # needed when AFTER17
     remote_field = False
+    sortable_by = None
 
     # required by Django 1.8:
     is_relation = False
@@ -243,6 +244,7 @@ class RemoteField(FakeField):
         self.max_length = getattr(fld, 'max_length', None)
         self.max_digits = getattr(fld, 'max_digits', None)
         self.decimal_places = getattr(fld, 'decimal_places', None)
+        self.sortable_by = [ name ]
         #~ print 20120424, self.name
         #~ settings.SITE.register_virtual_field(self)
 
@@ -286,7 +288,7 @@ class DisplayField(FakeField):
 
     def __init__(self, verbose_name=None, **kw):
         self.verbose_name = verbose_name
-        for k, v in list(kw.items()):
+        for k, v in kw.items():
             assert hasattr(self, k)
             setattr(self, k, v)
 
@@ -443,6 +445,8 @@ class VirtualField(FakeField):
                     #~ from lino.core.kernel import set_default_verbose_name
                     #~ set_default_verbose_name(self.return_type)
 
+        if isinstance(f, FakeField):
+            self.sortable_by = f.sortable_by
         # if self.name == 'detail_pointer':
         #     logger.info('20170905 resolve_type 1 %s on %s',
         #                 self.name, self.verbose_name)

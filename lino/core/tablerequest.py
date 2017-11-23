@@ -34,7 +34,7 @@ from lino.utils.xmlgen import html as xghtml
 from lino.utils.xmlgen.html import E
 from lino.utils import jsgen
 from lino.core.utils import getrqdata
-from .fields import RemoteField
+from .fields import RemoteField, FakeField
 
 from .requests import ActionRequest
 
@@ -276,7 +276,6 @@ class TableRequest(ActionRequest):
                 kw['gridfilters'] = [constants.dict2kw(flt) for flt in filter]
 
         kw = ActionRequest.parse_req(self, request, rqdata, **kw)
-        #~ raise Exception("20120121 %s.parse_req(%s)" % (self,kw))
 
         #~ kw.update(self.report.known_values)
         #~ for fieldname, default in self.report.known_values.items():
@@ -290,10 +289,16 @@ class TableRequest(ActionRequest):
 
         sort = rqdata.get(constants.URL_PARAM_SORT, None)
         if sort:
+            sortfld = self.actor.get_data_elem(sort)
+            if isinstance(sortfld, FakeField):
+                sort = sortfld.sortable_by
+            else:
+                sort = [sort]
             sort_dir = rqdata.get(constants.URL_PARAM_SORTDIR, 'ASC')
             if sort_dir == 'DESC':
-                sort = '-' + sort
-            kw.update(order_by=[sort])
+                sort = ['-' + k for k in sort]
+            # print("20171123", sort)
+            kw.update(order_by=sort)
 
         try:
             offset = rqdata.get(constants.URL_PARAM_START, None)
@@ -308,7 +313,9 @@ class TableRequest(ActionRequest):
             # 'fdpkvcnrfdybhur'
             raise SuspiciousOperation("Invalid value for limit or offset")
 
-        return self.actor.parse_req(request, rqdata, **kw)
+        kw = self.actor.parse_req(request, rqdata, **kw)
+        # print("20171123 %s.parse_req() --> %s" % (self, kw))
+        return kw
 
     def setup(self,
               quick_search=None,

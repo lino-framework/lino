@@ -122,7 +122,8 @@ class GridColumn(jsgen.Component):
     def __init__(self, layout_handle, index, editor, **kw):
         self.editor = editor
         # kw.setdefault('sortable', True)
-        kw.update(sortable=True)
+        kw.update(sortable=editor.sortable)
+        kw.update(editable=editor.editable)
         kw.update(colIndex=index)
         if editor.hidden:
             kw.update(hidden=True)
@@ -187,7 +188,7 @@ class GridColumn(jsgen.Component):
             if has_fk_renderer(editor.field):
                 rend = fk_renderer(editor.field, editor.field.name)
             elif isinstance(editor.field, fields.VirtualField):
-                kw.update(sortable=False)
+                # kw.update(sortable=False)
                 if has_fk_renderer(editor.field.return_type):
                     rend = fk_renderer(
                         editor.field.return_type, editor.field.name)
@@ -507,6 +508,9 @@ class FieldElement(LayoutElement):
 
         # if self.field.__class__.__name__ == "DcAmountField":
             # print 20130911, self.field, self.editable
+            
+        if isinstance(field, fields.FakeField) and field.sortable_by:
+            self.sortable = True
 
     def value_from_object(self, obj, ar):
         """
@@ -553,10 +557,6 @@ class FieldElement(LayoutElement):
         #     kw.update(header=self.label)
         # else:
         #     kw.update(header=self.label)
-        if not self.editable:
-            kw.update(editable=False)
-        if not self.sortable:
-            kw.update(sortable=False)
         w = self.width or self.preferred_width
         # kw.update(width=w*EXT_CHAR_WIDTH)
         kw.update(width=js_code("Lino.chars2width(%d)" % (w + 1)))
@@ -2322,7 +2322,7 @@ def create_layout_element(lh, name, **kw):
 
 def create_vurt_element(lh, name, vf, **kw):
     e = create_field_element(lh, vf, **kw)
-    e.sortable = False
+    # e.sortable = False
     if not vf.is_enabled(lh):
         e.editable = False
     return e
