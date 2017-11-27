@@ -487,7 +487,11 @@ class ApiElement(View):
         if pk and pk != '-99999' and pk != '-99998':
             #~ ar = ba.request(request=request,selected_pks=[pk])
             #~ print 20131004, ba.actor
-            ar = ba.request(request=request, selected_pks=[pk])
+            # Use url selected rows as selected PKs if defined, otherwise use the PK defined in the url path
+            sr = request.GET.getlist(constants.URL_PARAM_SELECTED)
+            if not sr:
+                sr = [pk]
+            ar = ba.request(request=request, selected_pks=sr)
             # print(
             #     "20170116 views.ApiElement.get", ba,
             #     ar.action_param_values)
