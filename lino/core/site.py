@@ -743,7 +743,16 @@ class Site(object):
     If you change this setting, you also need to override :meth:`parse_time`.
 
     """
+    alt_time_formats_extjs = "g:ia|g:iA|g:i a|g:i A|h:i|g:i|H:i|ga|ha|gA|h a|g a|g A|gi|hi" \
+                             "|gia|hia|g|H|gi a|hi a|giA|hiA|gi A|hi A" \
+                             "|Hi|g.ia|g.iA|g.i a|g.i A|h.i|g.i|H.i"
+    """Alternative time entry formats accepted by ExtJS time widgets.
+    Extjs default is:
+        "g:ia|g:iA|g:i a|g:i A|h:i|g:i|H:i|ga|ha|gA|h a|g a|g A|gi|hi|gia|hia|g|H|gi a|hi a|giA|hiA|gi A|hi A"
+    Lino's extended default also includes:
+        "Hi" (1900) and "g.ia|g.iA|g.i a|g.i A|h.i|g.i|H.i" (Using . in replacement of ":")
 
+    """
     date_format_extjs = 'd.m.Y'
     """Format (in ExtJS syntax) to use for displaying dates to the user.
     If you change this setting, you also need to override :meth:`parse_date`.

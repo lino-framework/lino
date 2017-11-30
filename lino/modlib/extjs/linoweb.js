@@ -927,6 +927,7 @@ Lino.on_tab_activate = function(item) {
 
 Lino.TimeField = Ext.extend(Ext.form.TimeField,{
   format: '{{settings.SITE.time_format_extjs}}',
+  altFormats: '{{settings.SITE.alt_time_formats_extjs}}',
   increment: 15
   });
 Lino.DateField = Ext.extend(Ext.form.DateField,{
