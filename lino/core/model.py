@@ -563,7 +563,8 @@ class Model(models.Model):
         overrides this in order to call its `populate` method.
 
         """
-        pass
+        # Invalidate disabled_fields cache
+        self._disabled_fields = None
 
     def after_ui_create(self, ar):
         """Called when a user creates a new object instance in a grid or through a insert action."""
