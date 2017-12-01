@@ -747,9 +747,13 @@ class Site(object):
                              "|gia|hia|g|H|gi a|hi a|giA|hiA|gi A|hi A" \
                              "|Hi|g.ia|g.iA|g.i a|g.i A|h.i|g.i|H.i"
     """Alternative time entry formats accepted by ExtJS time widgets.
-    Extjs default is:
+
+    ExtJS default is:
+
         "g:ia|g:iA|g:i a|g:i A|h:i|g:i|H:i|ga|ha|gA|h a|g a|g A|gi|hi|gia|hia|g|H|gi a|hi a|giA|hiA|gi A|hi A"
+
     Lino's extended default also includes:
+
         "Hi" (1900) and "g.ia|g.iA|g.i a|g.i A|h.i|g.i|H.i" (Using . in replacement of ":")
 
     """
