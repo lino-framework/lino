@@ -333,7 +333,7 @@ def choices_response(actor, request, qs, row2dict, emptyValue):
         rows = rows[:int(limit)] if limit else rows
 
     # Add None choice
-    if emptyValue and not quick_search:
+    if emptyValue is not None and not quick_search:
         empty = dict()
         empty[constants.CHOICES_TEXT_FIELD] = emptyValue
         empty[constants.CHOICES_VALUE_FIELD] = None
