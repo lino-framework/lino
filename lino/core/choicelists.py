@@ -776,6 +776,18 @@ The disadvantage
         #~ return [choice[0] for choice in self.choices]
 
     @classmethod
+    def find(cls, **fkw):
+        """Find and return the choice which satisfies the given search
+        criteria.  Return None if no choice is found or if more than
+        one choice is found.
+
+        """
+        lst = cls.filter(**fkw)
+        if len(lst) == 1:
+            return lst[0]
+        return None
+    
+    @classmethod
     def filter(self, **fkw):
         def f(item):
             for k, v in list(fkw.items()):
