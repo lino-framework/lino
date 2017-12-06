@@ -343,7 +343,10 @@ class Table(AbstractTable):
         search for the given `search_text`.
 
         """
-        return qs.filter(qs.model.quick_search_filter(search_text))
+        flt = qs.model.quick_search_filter(search_text)
+        if len(flt) == 0:
+            return qs.model.objects.none()
+        return qs.filter(flt)
 
     @classmethod
     def get_chooser_for_field(self, fieldname):

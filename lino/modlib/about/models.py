@@ -11,6 +11,7 @@ from builtins import object
 import logging
 logger = logging.getLogger(__name__)
 
+import re
 import cgi
 import types
 import datetime
@@ -29,7 +30,86 @@ from lino.utils.xmlgen.html import E
 from lino.utils import join_elems
 
 from lino.api import rt, dd
+# from .mixins import Searchable
 
+
+class SiteSearch(dd.VirtualTable):
+    label = _("Search")
+    column_names = "description matches"
+    
+   
+    # _site_search_tables = []
+    # @classmethod
+    # def register(cls, t):
+    #     assert t not in cls._site_search_tables
+    #     cls._site_search_tables.append(t)
+        
+    # disabled_models = set()
+    # @classmethod
+    # def disable_model(cls, m):
+    #     cls.disabled_models.add(m)
+        
+    @classmethod
+    def get_data_rows(cls, ar):
+        if ar.quick_search is None or len(ar.quick_search) < 2:
+            return
+        
+        user_type = ar.get_user().user_type
+        # for model in rt.models_by_base(Searchable):
+        for model in get_models():
+            # if model not in cls.disabled_models:
+            if model.show_in_site_search:
+                t = model.get_default_table()
+                # for t in cls._site_search_tables:
+                if not t.get_view_permission(user_type):
+                    continue
+                sar = t.request(
+                    parent=ar, quick_search=ar.quick_search)
+                for obj in sar:
+                    yield obj
+
+    @dd.displayfield(_("Description"))
+    def description(self, obj, ar):
+        elems = []
+        elems.append(ar.obj2html(obj))
+        # elems.append(u" ({})".format(obj._meta.verbose_name))
+        elems += (" (", obj._meta.verbose_name, ")")
+        return E.p(*elems)
+
+    @dd.displayfield(_("Matches"))
+    def matches(self, obj, ar):
+        def bold(mo):
+            return "<b>{}</b>".format(mo.group(0))
+        matches = {}
+        for w in ar.quick_search.split():
+            char_search = True
+            lst = None
+            if w.startswith("#") and w[1:].isdigit():
+                w = w[1:]
+                char_search = False
+            if w.isdigit():
+                i = int(w)
+                for de in obj.quick_search_fields_digit:
+                    if de.value_from_object(obj) == i:
+                    # if getattr(obj, fn) == int(w):
+                        matches.setdefault(de, w)
+            if char_search:
+                for de in obj.quick_search_fields:
+                    s = matches.get(de, None) or str(de.value_from_object(obj))
+                    r, count = re.subn(w, bold, s, flags=re.IGNORECASE)
+                    if count:
+                        matches[de] = r
+
+        chunks = []
+        for de in obj.quick_search_fields + obj.quick_search_fields_digit:
+            lst = matches.get(de, None)
+            if lst:
+                chunks.append(de.name + ":" + lst)
+
+        return E.raw(', '.join(chunks))
+        
+def setup_quicklinks(site, user, m):
+    m.add_action('about.SiteSearch')
 
 class Models(dd.VirtualTable):
     label = _("Models")

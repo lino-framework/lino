@@ -159,7 +159,9 @@ class Model(models.Model):
     override it.
 
     """
-
+    
+    show_in_site_search = True
+    
     quick_search_fields = None
     """Explicitly specify the fields to be included in queries with a
     quick search value.
@@ -167,9 +169,11 @@ class Model(models.Model):
     In your model declarations this should be either `None` or a
     `string` containing a space-separated list of field names.
 
-    This is being resolved during server startup into a frozenset of
-    field names. If it is `None`, Lino builds a list of all CharFields
-    on the model.
+    This is being resolved during server startup into a tuple of
+    data elements. 
+
+    If it is `None`, Lino builds a list of all CharFields on the
+    model.
 
     If you want to not inherit this field from a parent using standard
     MRO, then you must set that field explictly to `None`.
@@ -709,18 +713,23 @@ class Model(models.Model):
         # logger.info(
         #     "20160610 quick_search_filter(%s, %r, %r)",
         #     model, search_text, prefix)
-        q = models.Q()
-
-        # if search_text.isdigit() and not search_text.startswith('0'):
-        if search_text.startswith("#") and search_text[1:].isdigit():
-            for fn in model.quick_search_fields_digit:
-                kw = {prefix + fn: int(search_text[1:])}
-                q = q | models.Q(**kw)
-        else:
-            for fn in model.quick_search_fields:
-                kw = {prefix + fn + "__icontains": search_text}
-                q = q | models.Q(**kw)
-        return q
+        flt = models.Q()
+        for w in search_text.split():
+            q = models.Q()
+            char_search = True
+            if w.startswith("#") and w[1:].isdigit():
+                w = w[1:]
+                char_search = False
+            if w.isdigit():
+                for fn in model.quick_search_fields_digit:
+                    kw = {prefix + fn.name: int(w)}
+                    q = q | models.Q(**kw)
+            if char_search:
+                for fn in model.quick_search_fields:
+                    kw = {prefix + fn.name + "__icontains": w}
+                    q = q | models.Q(**kw)
+            flt &= q
+        return flt
 
     def on_duplicate(self, ar, master):
         """Called by :class:`lino.mixins.duplicable.Duplicate` on
@@ -1179,7 +1188,8 @@ LINO_MODEL_ATTRIBS = (
     'error2str',
     'get_typed_instance',
     'print_subclasses_graph',
-    'grid_post', 'submit_insert', 'delete_veto_message', '_lino_tables')
+    'grid_post', 'submit_insert', 'delete_veto_message', '_lino_tables',
+    'show_in_site_search')
 
 
 from lino.core.signals import receiver

@@ -310,13 +310,16 @@ class Kernel(object):
                 fields_list = []
                 for field in model._meta.fields:
                     if isinstance(field, (models.CharField, models.TextField)):
-                        fields_list.append(field.name)
-                model.quick_search_fields = frozenset(fields_list)
-            elif isinstance(qsf, frozenset):
+                        fields_list.append(field)
+                model.quick_search_fields = tuple(fields_list)
+            elif isinstance(qsf, tuple):
                 pass
             elif isinstance(qsf, six.string_types):
-                model.quick_search_fields = frozenset(
-                    fields.fields_list(model, model.quick_search_fields))
+                tuple()
+                    
+                model.quick_search_fields = tuple(
+                    [model.get_data_elem(n) for n in qsf.split()])
+                    # fields.fields_list(model, model.quick_search_fields))
             else:
                 raise ChangedAPI(
                     "{0}.quick_search_fields must be None or a string "
@@ -329,13 +332,14 @@ class Kernel(object):
                 for field in model._meta.fields:
                     if isinstance(field, (
                             models.IntegerField, models.AutoField)):
-                        fields_list.append(field.name)
-                model.quick_search_fields_digit = frozenset(fields_list)
-            elif isinstance(qsf, frozenset):
+                        fields_list.append(field)
+                model.quick_search_fields_digit = tuple(fields_list)
+            elif isinstance(qsf, tuple):
                 pass
             elif isinstance(qsf, six.string_types):
-                model.quick_search_fields_digit = frozenset(
-                    fields.fields_list(model, model.quick_search_fields_digit))
+                model.quick_search_fields_digit = tuple(
+                    [model.get_data_elem(n) for n in qsf.split()])
+                    #fields.fields_list(model, model.quick_search_fields_digit))
             else:
                 raise Exception(
                     "{0}.quick_search_fields_digit must be None or a string "
