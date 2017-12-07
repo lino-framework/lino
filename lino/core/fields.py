@@ -224,6 +224,17 @@ class FakeField(object):
     def has_default(self):
         return self.default is not NOT_PROVIDED
 
+    def get_default(self):
+        return self.default
+    
+    def set_attributes_from_name(self, name):
+        if not self.name:
+            self.name = name
+        self.attname = name
+        self.column = None
+        self.concrete = False
+        # if self.verbose_name is None and self.name:
+        #     self.verbose_name = self.name.replace('_', ' ')
 
 class RemoteField(FakeField):
     """A field on a related object.
@@ -306,7 +317,7 @@ class DisplayField(FakeField):
         raise NotImplementedError
 
     def value_from_object(self, obj, ar=None):
-        return ''
+        return self.default
 
 
 class HtmlBox(DisplayField):
@@ -541,14 +552,12 @@ def virtualfield(return_type):
 
 
 class Constant(object):
-
     """
     Deserves more documentation.
     """
 
     def __init__(self, text_fn):
         self.text_fn = text_fn
-
 
 def constant():
     """Decorator to turn a function into a :class:`Constant`.  The
@@ -848,7 +857,6 @@ class DummyField(FakeField):
 
     def set_attributes_from_name(self, k):
         pass
-
 
 def wildcard_data_elems(model):
     """Yield names to be used as wildcard in the :attr:`column_names` of a

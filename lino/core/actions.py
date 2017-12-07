@@ -18,13 +18,8 @@ from django.utils.encoding import force_text
 from django.conf import settings
 from django.db import models
 
-from lino import AFTER17, AFTER18
-
-if AFTER17:
-    from django.apps import apps
-    get_models = apps.get_models
-else:
-    from django.db.models.loading import get_models
+from django.apps import apps
+get_models = apps.get_models
 
 
 from lino.core import constants
@@ -66,10 +61,7 @@ def discover_choosers():
     #~ logger.debug("Instantiate model reports...")
     for model in get_models():
         #~ n = 0
-        if AFTER17:
-            allfields = model._meta.fields
-        else:
-            allfields = model._meta.fields + model._meta.virtual_fields
+        allfields = model._meta.fields
         for field in allfields:
             check_for_chooser(model, field)
         #~ logger.debug("Discovered %d choosers in model %s.",n,model)
@@ -145,11 +137,7 @@ def setup_params_choosers(self):
             if isinstance(fld, models.ForeignKey):
                 msg = "Invalid target %s in parameter {} of {}".format(
                     k, self)
-                # Before Django 1.8:
-                if AFTER18:
-                    fld.rel.model = resolve_model(fld.rel.model, strict=msg)
-                else:
-                    fld.rel.to = resolve_model(fld.rel.to, strict=msg)
+                fld.rel.model = resolve_model(fld.rel.model, strict=msg)
                 from lino.core.kernel import set_default_verbose_name
                 set_default_verbose_name(fld)
                 #~ if fld.verbose_name is None:
@@ -280,7 +268,7 @@ class Action(Parametrizable, Permittable):
 
     def get_data_elem(self, name):
         # same as in Actor but here it is an instance method
-        return None
+        return self.defining_actor.get_data_elem(name)
 
     def get_param_elem(self, name):
         # same as in Actor but here it is an instance method

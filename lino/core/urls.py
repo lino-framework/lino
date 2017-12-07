@@ -40,6 +40,12 @@ for p in site.installed_plugins:
     else:
         urlpatterns.append(url(prx, include(pat)))
 
+if site.social_auth_backends:
+    urlpatterns.append(
+        url('^oauth/', include('social_django.urls', namespace='social')))
+        
+        
+
 if site.django_admin_prefix:  # not tested
     from django.contrib import admin
     admin.autodiscover()

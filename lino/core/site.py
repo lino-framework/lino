@@ -499,6 +499,30 @@ class Site(object):
 
     """
 
+    social_auth_backends = None
+    """A list of backends for `Python Social Auth
+    <https://github.com/python-social-auth>`__ (PSA).
+
+    Having this at a value different from `None` means that this site
+    uses authentication via third-party providers.
+
+    Sites which use this must also install PSA into their
+    environment::
+
+      $ pip install social-auth-app-django
+
+    Depending on the backend you must also add credentials in your
+    local :xfile:`settings.py` file, e.g.::
+
+      SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = \
+        '1234567890-a1b2c3d4e5.apps.googleusercontent.com'
+      SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'SH6da...'
+
+    A working example is in the :mod:`lino_book.projects.team` demo
+    project.
+
+    """
+
     use_ipdict = False
     """Whether this site uses :mod:`lino.modlib.ipdict`.
 
@@ -1904,7 +1928,18 @@ this field.
             backends.append('lino.core.auth.backends.RemoteUserBackend')
         else:
             backends.append('lino.core.auth.backends.ModelBackend')
+
+        if self.social_auth_backends is not None:
+            backends += self.social_auth_backends
+
         self.define_settings(AUTHENTICATION_BACKENDS=backends)
+
+        self.update_settings(
+            LOGIN_URL='/accounts/login/',
+            LOGIN_REDIRECT_URL = '/',
+            # LOGIN_REDIRECT_URL = '/accounts/profile/',
+            LOGOUT_REDIRECT_URL = None)
+        
 
         def collect_settings_subdirs(lst, name, max_count=None):
             def add(p):
@@ -2579,9 +2614,37 @@ this field.
         # version = getattr(yaml, '__version__', '')
         # yield ("PyYaml", version, "http://pyyaml.org/")
 
+        if self.social_auth_backends is not None:
+            try:
+                import social_django
+                version = social_django.__version__
+            except ImportError:
+                version = self.not_found_msg
+            name = "social-django"
+
+            yield (name, version, "https://github.com/python-social-auth")
+
         for p in self.installed_plugins:
             for u in p.get_used_libs(html):
                 yield u
+
+    def get_social_auth_links(self):
+        # print("20171207 site.py")
+        # elems = []
+        if self.social_auth_backends is None:
+            return
+        from social_core.backends.utils import load_backends
+        # from collections import OrderedDict
+        # from django.conf import settings
+        # from social_core.backends.base import BaseAuth
+        # backend = module_member(auth_backend)
+        # if issubclass(backend, BaseAuth):
+        for b in load_backends(
+            self.social_auth_backends).values():
+            yield E.a(b.name, href="/oauth/login/"+b.name)
+        # print("20171207 a", elems)
+        # return E.div(*elems)
+
 
     def apply_languages(self):
         """This function is called when a Site object gets instantiated,
@@ -3325,6 +3388,9 @@ Please convert to Plugin method".format(mod, methname)
             yield 'lino.core.auth.middleware.RemoteUserMiddleware'
         if self.use_ipdict:
             yield 'lino.modlib.ipdict.middleware.Middleware'
+        if self.social_auth_backends:
+            yield 'social_django.middleware.SocialAuthExceptionMiddleware'
+            
                     
         #~ yield 'lino.utils.editing.EditingMiddleware'
         if True:
@@ -3409,6 +3475,9 @@ Please convert to Plugin method".format(mod, methname)
 
         if self.use_ipdict:
             yield 'lino.modlib.ipdict'
+            
+        if self.social_auth_backends:
+            yield 'social_django'
 
         yield self.default_ui
         

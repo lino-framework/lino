@@ -75,6 +75,12 @@
         {{_("Or sign in using social auth:")}}
         <div id="google-plus-button">[Google+ Sign In]</div>
         {% endif %}
+        {% if site.social_auth_backends %}
+        {{_("Or sign in using ")}}
+        {% for e in site.get_social_auth_links() %}
+        {{E.tostring(e)}}
+        {% endfor %}
+        {% endif %}
       </p>
         {% if site.is_demo_site %}
             <p>

@@ -636,11 +636,11 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
             vf = fields.VirtualField(v, field_getter(k))
             cls.add_virtual_field(k, vf)
 
-    @classmethod
-    def inject_field(cls, name, fld):
-        # called from auth.add_user_group()
-        setattr(cls, name, fld)
-        cls.register_class_attribute(name, fld)
+    # @classmethod
+    # def inject_field(cls, name, fld):
+    #     # called from auth.add_user_group()
+    #     setattr(cls, name, fld)
+    #     cls.register_class_attribute(name, fld)
 
     @classmethod
     def get_pk_field(self):

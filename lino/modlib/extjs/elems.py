@@ -1427,7 +1427,16 @@ class HtmlBoxElement(DisplayElement):
 
         # ~ if self.field.drop_zone: # testing with drop_zone 'FooBar'
             # kw.update(listeners=dict(render=js_code('initialize%sDropZone' % self.field.drop_zone)))
-        kw.update(items=js_code("new Ext.BoxComponent({autoScroll:true})"))
+            
+        html = self.field.default
+        if html is NOT_PROVIDED:
+            js = "new Ext.BoxComponent({autoScroll:true})"
+        else:
+            if callable(html):
+                html = html()
+            js = "new Ext.BoxComponent({autoScroll:true, html:%s})"
+            js = js % py2js(html)
+        kw.update(items=js_code(js))
         if self.label:
             kw.update(title=self.label)
         return kw
@@ -2227,6 +2236,8 @@ def create_layout_element(lh, name, **kw):
                     bf = lh.get_data_elem(name + lang.suffix)
                     elems.append(create_field_element(lh, bf, **kw))
                 return elems
+        return create_field_element(lh, de, **kw)
+    if isinstance(de, fields.DisplayField):
         return create_field_element(lh, de, **kw)
 
     if isinstance(de, GenericForeignKey):
