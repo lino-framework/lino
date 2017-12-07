@@ -153,7 +153,7 @@ class Comment(CreatedModified, UserAuthored, Controllable,
             #mailto:ADDR@HOST.com?subject=SUBJECT&body=Filling%20in%20the%20Body!%0D%0Afoo%0D%0Abar
             s += ' <a href="{href}">{reply}</a>'.format(href=comment_email.gen_href(self, user), reply=_("Reply"))
 
-        s += ': ' + self.short_text
+        s += ':<br>' + self.short_text
         if False:
             s += '\n<p>\n' + self.more_text
         return s
