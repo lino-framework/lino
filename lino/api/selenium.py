@@ -1,7 +1,17 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015-2016 Luc Saffre.
+# Copyright 2015-2017 Luc Saffre.
 # License: BSD, see LICENSE for more details.
-"""Used by :xfile:`make_screenshots.py` scripts.
+"""Used by :xfile:`make_screenshots.py` and :xfile:`maketour.py` scripts.
+
+Defines an :class:`Album` class and a :func:`runserver` function. An
+"album" represents a directory with screenshot images and their
+`index.rst` file.
+
+Note that one :xfile:`maketour.py` file might generate several albums
+during a single `runserver` process, e.g. one for each language.
+
+
+
 
 `Introducing the Selenium-WebDriver API by Example
 <http://www.seleniumhq.org/docs/03_webdriver.jsp#introducing-the-selenium-webdriver-api-by-example>`__
@@ -21,6 +31,7 @@ import sys
 import time
 from threading import Thread
 import subprocess
+import traceback
 
 from unipath import Path
 from atelier import rstgen
@@ -81,7 +92,8 @@ class Album(object):
     title = None
     intro = None
     ref = None
-
+    error_message = None
+    
     def __init__(self, driver, root=None, title="Screenshots",
                  ref=None, intro=None):
         self.driver = driver
@@ -169,5 +181,27 @@ class Album(object):
 
 """.format(**locals())
 
+        if self.error_message:
+            content += "\n\n"
+            if self.ref:
+                content += ".. _{0}.oops:\n\n".format(self.ref)
+            content += rstgen.header(2, "Not finished")
+            content += "\n\n"
+            content += "Oops, we had a problem when generating this document::\n"
+            isep = '\n    '
+            content += isep
+            content += isep.join(self.error_message.splitlines())
+            content += "\n\n"
+
         index.write_file(content.encode('utf-8'))
+
+    def run(self, func):    
+        try:
+            func(self)
+        except Exception as e:
+            self.error_message = traceback.format_exc(e)
+            traceback.print_exc(e)
+            # print(e)
+
+        self.write_index()
 
