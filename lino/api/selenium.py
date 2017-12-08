@@ -61,7 +61,9 @@ def runserver(settings_module, func, driver=None):
         driver.get(url)
         func(driver)
     except Exception as e:
-        print(e)
+        import traceback
+        traceback.print_exc(e)
+        # print(e)
 
     if INVOKE_SERVER:
         server.terminate()
@@ -99,6 +101,7 @@ class Album(object):
             sys.exit(-1)
 
     def screenshot(self, name, caption, before='', after=''):
+        
         filename = self.screenshot_root.child(name)
         print("Writing screenshot {0} ...".format(filename))
         if not self.driver.get_screenshot_as_file(filename):
