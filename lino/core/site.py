@@ -2503,7 +2503,7 @@ this field.
         """
         from lino.core.merge import MergeAction
         for m in get_models():
-            if m.allow_merge:
+            if m.allow_merge_action:
                 m.define_action(merge_row=MergeAction(m))
 
     def setup_layouts(self):

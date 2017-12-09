@@ -160,8 +160,10 @@ class Model(models.Model):
 
     """
     
-    allow_merge = True
-    """Whether 
+    allow_merge_action = True
+    """Whether this model should have a merge action.
+
+    See :class:`lino.core.merge.MergeAction`
     """
     
     show_in_site_search = True
@@ -1198,7 +1200,7 @@ LINO_MODEL_ATTRIBS = (
     'get_typed_instance',
     'print_subclasses_graph',
     'grid_post', 'submit_insert', 'delete_veto_message', '_lino_tables',
-    'show_in_site_search', 'allow_merge')
+    'show_in_site_search', 'allow_merge_action')
 
 
 from lino.core.signals import receiver

@@ -1,16 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2016 Luc Saffre
+# Copyright 2013-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 """
 This defines the :class:`MergeAction` class.
-
-Usage example::
-
-  @dd.receiver(dd.pre_analyze)
-  def my_merge_actions(sender,**kw):
-      models = sender.models
-      for m in (models.contacts.Person, models.contacts.Company):
-          m.define_action(merge_row=dd.MergeAction(m))
 
 It should not be used on models that have MTI children.
 
@@ -64,7 +56,6 @@ class MergeAction(actions.Action):
     This action has a dynamically generated parameters window.
 
     """
-    help_text = _("Merge this object into another object of same class.")
     label = _("Merge")
     icon_name = 'arrow_join'
     sort_index = 31
