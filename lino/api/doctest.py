@@ -132,16 +132,16 @@ def demo_get(
             raise Exception(
                 "Status code %s other than 403 for anonymous on GET %s" % (
                     response.status_code, url))
-
-    test_client.force_login(rt.login(username).user)
+    ses= rt.login(username)
+    test_client.force_login(ses.user)
     response = test_client.get(url, REMOTE_USER=username)
     # try:
     if True:
-        user = settings.SITE.user_model.objects.get(
-            username=case.username)
+        # user = settings.SITE.user_model.objects.get(
+        #     username=case.username)
         result = check_json_result(
             response, case.json_fields,
-            "GET %s for user %s" % (url, user))
+            "GET %s for user %s" % (url, ses.user))
 
         num = case.expected_rows
         if num is not None:

@@ -43,13 +43,14 @@ from lino.core.plugin import Plugin
 
 from lino import assert_django_code, DJANGO_DEFAULT_LANGUAGE
 from lino.utils.xmlgen.html import E
-from lino.core.utils import simplify_name
+from lino.core.utils import simplify_name, get_models
 # from lino.utils.html2text import html2text
 # from html2text import html2text
 from lino.core.exceptions import ChangedAPI
 # from .roles import SiteUser
 
 from html2text import HTML2Text
+
 
 # _INSTANCES = []
 
@@ -2068,7 +2069,8 @@ this field.
 
         It influences the results of
         :meth:`get_middleware_classes` and
-        :meth:`get_installed_apps`.
+        :meth:`get_installed_apps`, and the content of
+        :setting:`AUTHENTICATION_BACKENDS`.
 
         """
         if self.user_model is None:
@@ -2498,17 +2500,11 @@ this field.
     def setup_actions(self):
         """Hook for subclasses to add or modify actions.
 
-        Usage example::
-
-            def setup_actions(self):
-                super(Site, self).setup_actions()
-                from lino.core.merge import MergeAction
-                partners = self.models.contacts
-                for m in (partners.Person, partners.Organisation):
-                    m.define_action(merge_row=MergeAction(m))
-
         """
-        pass
+        from lino.core.merge import MergeAction
+        for m in get_models():
+            if m.allow_merge:
+                m.define_action(merge_row=MergeAction(m))
 
     def setup_layouts(self):
         '''Hook for subclasses to add or modify layouts.

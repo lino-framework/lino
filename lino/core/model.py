@@ -160,7 +160,16 @@ class Model(models.Model):
 
     """
     
+    allow_merge = True
+    """Whether 
+    """
+    
     show_in_site_search = True
+    """Set this to `False` if you really don't want this model to occur
+    in the site-wide search
+    (:class:`lino.modlib.about.models.SiteSearch`).
+
+    """
     
     quick_search_fields = None
     """Explicitly specify the fields to be included in queries with a
@@ -1189,7 +1198,7 @@ LINO_MODEL_ATTRIBS = (
     'get_typed_instance',
     'print_subclasses_graph',
     'grid_post', 'submit_insert', 'delete_veto_message', '_lino_tables',
-    'show_in_site_search')
+    'show_in_site_search', 'allow_merge')
 
 
 from lino.core.signals import receiver

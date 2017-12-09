@@ -9,7 +9,7 @@ Documentation is in :doc:`/specs/users` and :doc:`/dev/users`
 from django.conf import settings
 from lino.api import dd, rt, _
 from lino.core import actions
-from lino.core.roles import SiteAdmin
+from lino.core.roles import SiteAdmin, SiteUser
 
 from .choicelists import UserTypes
 from .actions import SendWelcomeMail, SignIn, SignInWithSocialAuth
@@ -147,9 +147,13 @@ if settings.SITE.social_auth_backends:
             "$ pip install social-auth-app-django")
     
 
-    class SocialAuthsByUser(dd.Table):
-        # required_roles = dd.login_required(SiteAdmin)
+    class SocialAuths(dd.Table):
+        label = _("Third-party authorizations")
+        required_roles = dd.login_required(SiteAdmin)
         model = 'social_django.UserSocialAuth'
+        
+    class SocialAuthsByUser(SocialAuths):
+        required_roles = dd.login_required(SiteUser)
         master_key = 'user'
 else:
 

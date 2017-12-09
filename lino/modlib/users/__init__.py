@@ -41,5 +41,7 @@ class Plugin(ad.Plugin):
         m = m.add_menu(g.app_label, g.verbose_name)
         m.add_action('users.Authorities')
         m.add_action('users.UserTypes')
+        if site.social_auth_backends is not None:
+            m.add_action('users.SocialAuths')
 
 
