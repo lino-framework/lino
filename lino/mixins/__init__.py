@@ -277,7 +277,7 @@ class ProjectRelated(model.Model):
         abstract = True
 
     if settings.SITE.project_model:
-        project = models.ForeignKey(
+        project = fields.ForeignKey(
             settings.SITE.project_model,
             blank=True, null=True,
             related_name="%(app_label)s_%(class)s_set_by_project",

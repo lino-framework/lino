@@ -32,9 +32,6 @@ from lino.utils import IncompleteDate
 from lino.utils import quantities
 from lino.utils.quantities import Duration
 
-from lino import AFTER17, AFTER18
-
-
 class PasswordField(models.CharField):
 
     """Stored as plain text in database, but not displayed in user
@@ -260,9 +257,9 @@ class RemoteField(FakeField):
         #~ settings.SITE.register_virtual_field(self)
 
         if isinstance(fld, models.ForeignKey) or (isinstance(fld, VirtualField) and isinstance(fld.return_type, models.ForeignKey)):
-            self.rel = self.field.rel
+            self.remote_field = self.field.remote_field
             from lino.core import store
-            store.get_atomizer(self.rel, self, name)
+            store.get_atomizer(self.remote_field, self, name)
 
     #~ def lino_resolve_type(self):
         #~ self._lino_atomizer = self.field._lino_atomizer
@@ -352,7 +349,7 @@ class HtmlBox(DisplayField):
 #         return "<{0}>.{1}".format(repr(self.instance), self.vf.name)
 
 VFIELD_ATTRIBS = frozenset('''to_python choices save_form_data
-  value_to_string max_length rel
+  value_to_string max_length remote_field
   max_digits verbose_name decimal_places
   help_text blank'''.split())
 
@@ -446,13 +443,10 @@ class VirtualField(FakeField):
         f = self.return_type
         #~ self.return_type.name = self.name
         if isinstance(f, models.ForeignKey):
-            if AFTER18:
-                f.rel.model = resolve_model(f.rel.model)
-            else:
-                f.rel.to = resolve_model(f.rel.to)
+            f.remote_field.model = resolve_model(f.remote_field.model)
             if f.verbose_name is None:
                 #~ if f.name is None:
-                f.verbose_name = f.rel.model._meta.verbose_name
+                f.verbose_name = f.remote_field.model._meta.verbose_name
                     #~ from lino.core.kernel import set_default_verbose_name
                     #~ set_default_verbose_name(self.return_type)
 
@@ -961,7 +955,8 @@ def ForeignKey(othermodel, *args, **kw):
         if not settings.SITE.is_installed_model_spec(othermodel):
             return DummyField(othermodel, *args, **kw)
 
-    # kw.setdefault('on_delete', models.PROTECT)
+    # Django 2 wants it explicitly:
+    kw.setdefault('on_delete', models.CASCADE)
     return models.ForeignKey(othermodel, *args, **kw)
 
 

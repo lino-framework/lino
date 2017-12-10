@@ -82,8 +82,8 @@ class HelpText(dd.Model):
         verbose_name = _("Help Text")
         verbose_name_plural = _("Help Texts")
 
-    content_type = models.ForeignKey('contenttypes.ContentType',
-                                     verbose_name=_("Model"))
+    content_type = dd.ForeignKey('contenttypes.ContentType',
+                                 verbose_name=_("Model"))
     field = models.CharField(_("Field"), max_length=200)
 
     help_text = dd.RichTextField(_("HelpText"),

@@ -21,6 +21,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino.core import actions
 from lino.core import layouts
+from lino.core import fields
 from lino.core.signals import pre_merge
 from lino.core.utils import full_model_name
 from lino.core.roles import SiteStaff
@@ -65,9 +66,9 @@ class MergeAction(actions.Action):
 
     def __init__(self, model, **kw):
 
-        fields = dict(
+        parameters = dict(
             #~ merge_from=models.ForeignKey(model,verbose_name=_("Merge...")),
-            merge_to=models.ForeignKey(
+            merge_to=fields.ForeignKey(
                 model, verbose_name=_("into..."), blank=False, null=False),
             reason=models.CharField(_("Reason"), max_length=100)
             #~ notify=models.BooleanField(_("Send notifications"))
@@ -83,7 +84,7 @@ class MergeAction(actions.Action):
                 fieldname = full_model_name(m, '_')
                 if fieldname not in keep_volatiles:
                     keep_volatiles.append(fieldname)
-                    fields[fieldname] = models.BooleanField(
+                    parameters[fieldname] = models.BooleanField(
                         m._meta.verbose_name_plural, default=False)
                 # logger.info(
                 #     "20160621 %r in %r", fk.name, m.allow_cascaded_delete)
@@ -118,7 +119,7 @@ class MergeAction(actions.Action):
 
         layout.update(window_size=(width, 'auto'))
         kw.update(
-            parameters=fields,
+            parameters=parameters,
             params_layout=layouts.Panel(main, **layout))
 
         super(MergeAction, self).__init__(**kw)

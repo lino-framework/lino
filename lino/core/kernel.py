@@ -101,12 +101,12 @@ def class_dict_items(cl, exclude=None):
 def set_default_verbose_name(f):
     """If the verbose_name of a ForeignKey was not set by user code,
     Django sets it to ``field.name.replace('_', ' ')``.  We replace
-    this default value by ``f.rel.model._meta.verbose_name``.  This rule
+    this default value by ``f.remote_field.model._meta.verbose_name``.  This rule
     holds also for virtual FK fields.
 
     """
     if f.verbose_name == f.name.replace('_', ' '):
-        f.verbose_name = f.rel.model._meta.verbose_name
+        f.verbose_name = f.remote_field.model._meta.verbose_name
 
 
 CLONEABLE_ATTRS = frozenset("""ah request user subst_user
@@ -351,7 +351,9 @@ class Kernel(object):
 
             # site.modules.define(model._meta.app_label, model.__name__, model)
 
-            for f in model._meta.virtual_fields:
+            # Django 1.10 : The private attribute virtual_fields of
+            # Model._meta is deprecated in favor of private_fields.
+            for f in model._meta.private_fields:
                 if isinstance(f, GenericForeignKey):
                     self.GFK_LIST.append(f)
 
@@ -392,11 +394,11 @@ class Kernel(object):
                 #     msg = "Nullable CharField %s in %s" % (f.name, model)
                 #     raise Exception(msg)
                 if isinstance(f, models.ForeignKey):
-                    if isinstance(f.rel.model, six.string_types):
+                    if isinstance(f.remote_field.model, six.string_types):
                         raise Exception("Could not resolve target %r of "
                                         "ForeignKey '%s' in %s "
                                         "(models are %s)" %
-                                        (f.rel.model, f.name, model, models_list))
+                                        (f.remote_field.model, f.name, model, models_list))
                     set_default_verbose_name(f)
 
                     """
@@ -405,11 +407,12 @@ class Kernel(object):
                     JobProvider being referred only by objects that can refer
                     to a Company as well.
                     """
-                    if not hasattr(f.rel.model, '_lino_ddh'):
+                    if not hasattr(f.remote_field.model, '_lino_ddh'):
                         msg = "20150824 {1} (needed by {0}) "\
                               "has no _lino_ddh"
-                        raise Exception(msg.format(f.rel, f.rel.model))
-                    f.rel.model._lino_ddh.add_fk(m or model, f)
+                        raise Exception(msg.format(
+                            f.remote_field, f.remote_field.model))
+                    f.remote_field.model._lino_ddh.add_fk(m or model, f)
 
         # Protect the foreign keys by removing Django's default
         # behaviour of having on_delete with CASCADE as default.
@@ -450,7 +453,7 @@ class Kernel(object):
             for m, k, v in class_dict_items(model):
                 if isinstance(v, fields.VirtualField):
                     v.attach_to_model(m, k)
-                    model._meta.add_field(v, virtual=True)
+                    model._meta.add_field(v, private=True)
                     
         #~ logger.info("20130817 attached model vfs")
 
@@ -670,8 +673,8 @@ class Kernel(object):
 
         for model in models_list:
             for m, fk in model._lino_ddh.fklist:
-                assert fk.rel.model is model
-                if fk.rel.on_delete == models.CASCADE:
+                assert fk.remote_field.model is model
+                if fk.remote_field.on_delete == models.CASCADE:
                     if must_protect(m, fk, model):
                         # 20170921 removed disturbing debug message 
                         # msg = (
@@ -679,7 +682,7 @@ class Kernel(object):
                         #     "field is not specified in "
                         #     "allow_cascaded_delete.").format(fmn(m), fk.name)
                         # logger.debug(msg)
-                        fk.rel.on_delete = models.PROTECT
+                        fk.remote_field.on_delete = models.PROTECT
                 else:
                     if fk.name in m.allow_cascaded_delete:
                         msg = ("{0}.{1} specified in allow_cascaded_delete "
@@ -687,16 +690,16 @@ class Kernel(object):
                             fmn(m), fk.name)
                         raise Exception(msg)
     
-                    if fk.rel.on_delete == models.SET_NULL:
+                    if fk.remote_field.on_delete == models.SET_NULL:
                         if not fk.null:
                             msg = ("{0}.{1} has on_delete SET_NULL but "
                                    "is not nullable ")
-                            msg = msg.format(fmn(m), fk.name, fk.rel.model)
+                            msg = msg.format(fmn(m), fk.name, fk.remote_field.model)
                             raise Exception(msg)
 
                     else:
                         msg = ("{0}.{1} has custom on_delete").format(
-                            fmn(m), fk.name, fk.rel.on_delete)
+                            fmn(m), fk.name, fk.remote_field.on_delete)
                         logger.debug(msg)
                 
     def get_generic_related(self, obj):

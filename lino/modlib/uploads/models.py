@@ -183,10 +183,10 @@ class Uploads(dd.Table):
     """
 
     parameters = mixins.ObservedDateRange(
-        # user=models.ForeignKey(
+        # user=dd.ForeignKey(
         #     'users.User', blank=True, null=True,
         #     verbose_name=_("Uploaded by")),
-        upload_type=models.ForeignKey(
+        upload_type=dd.ForeignKey(
             'uploads.UploadType', blank=True, null=True))
     params_layout = "start_date end_date user upload_type"
 

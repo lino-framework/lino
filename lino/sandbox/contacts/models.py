@@ -142,7 +142,7 @@ else:
 
         class Meta:
             abstract = True
-        address = models.ForeignKey(Address, null=True, blank=True)
+        address = dd.ForeignKey(Address, null=True, blank=True)
 
     class Addresses(dd.Table):
         model = Address
@@ -214,14 +214,14 @@ class Contact(dd.Model):
         verbose_name = _("Contact")
         verbose_name_plural = _("Contacts")
 
-    person = models.ForeignKey(Person, null=True, blank=True)
-    company = models.ForeignKey(Company, null=True, blank=True)
-    role = models.ForeignKey(Role, null=True, blank=True)
+    person = dd.ForeignKey(Person, null=True, blank=True)
+    company = dd.ForeignKey(Company, null=True, blank=True)
+    role = dd.ForeignKey(Role, null=True, blank=True)
 
     language = dd.LanguageField()
 
-    #~ address = models.ForeignKey(Address,null=True,blank=True)
-    #~ address_type = models.ForeignKey(AddressType,blank=True,null=True)
+    #~ address = dd.ForeignKey(Address,null=True,blank=True)
+    #~ address_type = dd.ForeignKey(AddressType,blank=True,null=True)
 
     email = models.EmailField(_('E-Mail'), blank=True)  # ,null=True)
     url = models.URLField(_('URL'), blank=True)
@@ -317,12 +317,12 @@ if settings.SITE.is_installed('contacts'):
 
     dd.inject_field(SiteConfig,
                     'site_company',
-                    models.ForeignKey(Company,
-                                      blank=True, null=True,
-                                      verbose_name=_(
-                                          "The company that runs this site"),
-                                      related_name='site_company_sites',
-                                      ),
+                    dd.ForeignKey(Company,
+                                  blank=True, null=True,
+                                  verbose_name=_(
+                                      "The company that runs this site"),
+                                  related_name='site_company_sites',
+                    ),
         """The Company to be used as sender in documents.""")
 
 

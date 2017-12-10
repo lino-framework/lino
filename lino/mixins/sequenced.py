@@ -320,7 +320,7 @@ class Hierarchical(Duplicable):
     class Meta(object):
         abstract = True
 
-    parent = models.ForeignKey('self',
+    parent = fields.ForeignKey('self',
                                verbose_name=_("Parent"),
                                null=True, blank=True,
                                related_name='children')

@@ -254,7 +254,7 @@ class Authority(UserAuthored):
         verbose_name_plural = _("Authorities")
 
 
-    authorized = models.ForeignKey(settings.SITE.user_model)
+    authorized = dd.ForeignKey(settings.SITE.user_model)
 
     @dd.chooser()
     def authorized_choices(cls, user):

@@ -19,7 +19,6 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
-from lino import AFTER18
 from lino.core.utils import obj2str, full_model_name
 from lino.core.diff import ChangeWatcher
 from lino.core.utils import obj2unicode
@@ -321,11 +320,11 @@ class Model(models.Model):
                             "Invalid remote field {0} for {1}".format(name, cls))
 
                     if isinstance(model, six.string_types):
-                        model = resolve_model(model)
-                        # logger.warning("20151203 %s", model)
                         # Django 1.9 no longer resolves the
                         # rel.model of ForeignKeys on abstract
-                        # models.
+                        # models, so we do it here.
+                        model = resolve_model(model)
+                        # logger.warning("20151203 %s", model)
 
                     # ~ 20130508 model.get_default_table().get_handle() # make sure that all atomizers of those fields get created.
                     fld = model.get_data_elem(n)
@@ -337,11 +336,10 @@ class Model(models.Model):
                     # make sure that the atomizer gets created.
                     store.get_atomizer(model, fld, fld.name)
                     field_chain.append(fld)
-                    if getattr(fld, 'rel', None):
-                        if AFTER18:
-                            model = fld.rel.model
-                        else:
-                            model = fld.rel.to
+                    if getattr(fld, 'remote_field', None):
+                        model = fld.remote_field.model
+                    elif getattr(fld, 'rel', None):
+                        model = fld.rel.model
                     else:
                         model = None
 
@@ -372,7 +370,7 @@ class Model(models.Model):
         if v is not None:
             return v
 
-        for vf in cls._meta.virtual_fields:
+        for vf in cls._meta.private_fields:
             if vf.name == name:
                 return vf
 

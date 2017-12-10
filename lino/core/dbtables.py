@@ -78,7 +78,7 @@ def add_gridfilters(qs, gridfilters):
                 kw[field.name + "__icontains"] = flt['value']
                 q = q & models.Q(**kw)
             elif isinstance(field, models.ForeignKey):
-                qf = field.rel.model.quick_search_filter(
+                qf = field.remote_field.model.quick_search_filter(
                     flt['value'], prefix=field.name + "__")
                 # logger.info("20160610 %s %s", field.rel.model, qf)
                 q = q & qf
@@ -548,8 +548,8 @@ class Table(AbstractTable):
                     # fk, remote, direct, m2m = x
                     # assert direct
                     # assert not m2m
-                    if fk.rel is not None:
-                        master_model = fk.rel.model
+                    if fk.remote_field:
+                        master_model = fk.remote_field.model
                     elif isinstance(fk, ChoiceListField):
                         master_model = fk.choicelist.item_class
                     elif isinstance(fk, GenericForeignKey):

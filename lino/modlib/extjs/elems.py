@@ -19,28 +19,19 @@ logger = logging.getLogger(__name__)
 from cgi import escape
 import decimal
 
-from lino import AFTER17, AFTER18
-
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.utils.translation import string_concat
 from django.conf import settings
-if AFTER18:
-    from django.db.models.fields.related import \
-        ReverseOneToOneDescriptor as SingleRelatedObjectDescriptor
-    from django.db.models.fields.related import \
-        ReverseManyToOneDescriptor as ForeignRelatedObjectsDescriptor
-    from django.db.models.fields.related import \
-        ManyToManyDescriptor as ManyRelatedObjectsDescriptor
-else:
-    from django.db.models.fields.related import SingleRelatedObjectDescriptor
-    from django.db.models.fields.related import ForeignRelatedObjectsDescriptor
-    from django.db.models.fields.related import ManyRelatedObjectsDescriptor
+from django.db.models.fields.related import \
+    ReverseOneToOneDescriptor as SingleRelatedObjectDescriptor
+from django.db.models.fields.related import \
+    ReverseManyToOneDescriptor as ForeignRelatedObjectsDescriptor
+from django.db.models.fields.related import \
+    ManyToManyDescriptor as ManyRelatedObjectsDescriptor
 
 
-
-if AFTER17:
-    from django.db.models.fields.related import ManyToManyRel, ManyToOneRel
+from django.db.models.fields.related import ManyToManyRel, ManyToOneRel
 from django.db.models.fields import NOT_PROVIDED
 
 from lino.core import layouts
@@ -168,7 +159,7 @@ class GridColumn(jsgen.Component):
             def fk_renderer(fld, name):
                 # FK fields are clickable only if their target has a
                 # detail view
-                rpt = fld.rel.model.get_default_table()
+                rpt = fld.remote_field.model.get_default_table()
                 if rpt.detail_action is not None:
                     if rpt.detail_action.get_view_permission(
                             get_user_profile()):
@@ -910,13 +901,15 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
 
     def get_field_options(self, **kw):
         kw = super(ForeignKeyElement, self).get_field_options(**kw)
-        if isinstance(self.field.rel.model, six.string_types):
-            raise Exception("20130827 %s.rel.model is %r" %
-                            (self.field, self.field.rel.model))
-        pw = self.field.rel.model.preferred_foreignkey_width
+        if not self.field.remote_field:
+            raise Exception("20171210 %r" % self.field.__class__)
+        if isinstance(self.field.remote_field.model, six.string_types):
+            raise Exception("20130827 %s.remote_field.model is %r" %
+                            (self.field, self.field.remote_field.model))
+        pw = self.field.remote_field.model.preferred_foreignkey_width
         if pw is not None:
             kw.setdefault('preferred_width', pw)
-        actor = self.field.rel.model.get_default_table()
+        actor = self.field.remote_field.model.get_default_table()
         if not isinstance(self.layout_handle.layout, ColumnsLayout):
             a1 = actor.detail_action
             a2 = actor.insert_action
@@ -1459,7 +1452,7 @@ is 'summary'.
 class ManyRelatedObjectElement(HtmlBoxElement):
 
     def __init__(self, lh, relobj, **kw):
-        name = relobj.field.rel.related_name
+        name = relobj.field.remote_field.related_name
 
         def f(obj, ar):
             return qs2summary(ar, getattr(obj, name).all())
@@ -2215,18 +2208,14 @@ def create_layout_element(lh, name, **kw):
 
     if isinstance(de, models.ManyToManyField):
         # Replacing related by remote_field to supports Django 1.9.9 and 1.10
-        if AFTER18:
-            e = ManyToManyElement(lh, de.remote_field, **kw)
-        else:
-            e = ManyToManyElement(lh, de.related, **kw)
+        e = ManyToManyElement(lh, de.remote_field, **kw)
         lh.add_store_field(e.field)
         return e
 
-    if AFTER17:
-        if isinstance(de, (ManyToManyRel, ManyToOneRel)):
-            e = ManyRelatedObjectElement(lh, de, **kw)
-            lh.add_store_field(e.field)
-            return e
+    if isinstance(de, (ManyToManyRel, ManyToOneRel)):
+        e = ManyRelatedObjectElement(lh, de, **kw)
+        lh.add_store_field(e.field)
+        return e
 
     if isinstance(de, models.Field):
         if isinstance(de, (BabelCharField, BabelTextField)):
