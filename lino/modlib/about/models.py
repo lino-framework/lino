@@ -31,9 +31,11 @@ from lino.utils import join_elems
 
 from lino.api import rt, dd
 # from .mixins import Searchable
+from .roles import SiteSearcher
 
 
 class SiteSearch(dd.VirtualTable):
+    required_roles = dd.login_required(SiteSearcher)
     label = _("Search")
     column_names = "description matches"
     
