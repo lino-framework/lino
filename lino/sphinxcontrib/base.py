@@ -16,6 +16,7 @@ Adds Lino-specific Sphinx setup.
 
 """
 
+import six
 # from builtins import str
 # Exception occurred:
 #   File "site-packages/sphinx/registry.py", line 137, in add_object_type
@@ -28,11 +29,11 @@ def my_escape(s):
 
 
 def menuselection_text(mi):
-    s = my_escape(unicode(mi.label).strip())
+    s = my_escape(six.text_type(mi.label).strip())
     p = mi.parent
     while p is not None:
         if p.label:
-            s = my_escape(unicode(p.label).strip()) + " --> " + s
+            s = my_escape(six.text_type(p.label).strip()) + " --> " + s
         p = p.parent
     return s
 

@@ -94,7 +94,7 @@ def check_json_result(response, expected_keys=None, msg=''):
             "Response status ({0}) was {1} instead of 200".format(
                 msg, response.status_code))
     try:
-        result = json.loads(response.content)
+        result = json.loads(response.content.decode())
     except ValueError as e:
         raise Exception("{0} in {1}".format(e, response.content))
     if expected_keys is not None:
@@ -237,7 +237,7 @@ def show_choices(username, url, show_count=False):
             "Response status ({0}) was {1} instead of 200".format(
                 url, response.status_code))
 
-    result = json.loads(response.content)
+    result = json.loads(response.content.decode())
     for r in result['rows']:
         print(r['text'])
         # print(r['value'], r['text'])
