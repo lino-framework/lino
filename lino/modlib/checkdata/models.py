@@ -48,12 +48,15 @@ class UpdateProblem(dd.Action):
             assert isinstance(obj, Problem)
             chk = obj.checker
             owner = obj.owner
-            # not tested: what happens if the following deletes
-            # another obj from selected_rows?
-            qs = Problem.objects.filter(
-                **gfk2lookup(Problem.owner, owner, checker=chk))
-            qs.delete()
-            chk.update_problems(owner, False, fix)
+            if owner is None:
+                # A problem where owner is None means that the owner
+                # has been deleted.
+                obj.delete()
+            else:
+                qs = Problem.objects.filter(
+                    **gfk2lookup(Problem.owner, owner, checker=chk))
+                qs.delete()
+                chk.update_problems(owner, False, fix)
         ar.set_response(refresh_all=True)
 
 
