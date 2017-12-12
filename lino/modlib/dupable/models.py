@@ -95,6 +95,13 @@ class PhoneticWord(Controllable):
             dms = dms.decode('utf8')
         return dms
 
+    @classmethod
+    def get_simple_parameters(cls):
+        for p in super(PhoneticWord, cls).get_simple_parameters():
+            yield p
+        yield 'owner_id'
+        yield 'owner_type'
+
 
 class PhoneticWords(dd.Table):
     model = 'dupable.PhoneticWord'
