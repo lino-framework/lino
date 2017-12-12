@@ -65,6 +65,7 @@ class PhoneticWord(Controllable):
         verbose_name_plural = _("Phonetic words")
 
     allow_cascaded_delete = ['owner']
+    # quick_search_fields = ['owner__' + dupable_words_field]
 
     word = models.CharField(max_length=100)
 
