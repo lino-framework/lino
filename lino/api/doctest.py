@@ -22,7 +22,7 @@ from bs4 import BeautifulSoup
 from atelier.rstgen import table
 from atelier import rstgen
 from atelier.rstgen import attrtable
-from atelier.utils import unindent, rmu
+from atelier.utils import unindent, rmu, sixprint
 
 from lino.utils import AttrDict
 from lino.utils import i2d

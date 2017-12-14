@@ -62,7 +62,8 @@ if is_devserver():
     urlpatterns += static(
         settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
         # 'django.views.static', (pat, 'serve', opts))
-
+    # print('\n'.join(map(str, lst)))
+    # print(20171212, lst)
     # why do i need the following? i thought that this is done
     # automatically:
     # urlpatterns += static(

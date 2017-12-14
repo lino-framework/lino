@@ -84,7 +84,7 @@ class CommonTestCase(unittest.TestCase):
         if report_plain:
             msg = "----- EXPECTED : -----\n%s\n----- GOT : -----\n%s" % (a, b)
         else:
-            msg = "EXPECTED : %s" % (' '.join(ta))
+            msg =  "\nEXPECTED : %s" % (' '.join(ta))
             msg += "\n     GOT : %s" % (' '.join(tb))
         if False:
             logger.warning(msg)
