@@ -78,7 +78,7 @@ from django.db import models
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.db.utils import DatabaseError
-from django.utils.timezone import make_naive, is_aware
+from django.utils.timezone import make_naive, is_aware, utc
 
 from lino.utils import puts
 from lino.core.utils import sorted_models_list, full_model_name
@@ -214,7 +214,7 @@ from decimal import Decimal
 from datetime import datetime
 from datetime import time, date
 from django.conf import settings
-from django.utils.timezone import make_aware
+from django.utils.timezone import make_aware, utc
 from django.core.management import call_command
 # from django.contrib.contenttypes.models import ContentType
 from lino.utils.dpy import create_mti_child
@@ -223,7 +223,7 @@ from lino.core.utils import resolve_model
 
 if settings.USE_TZ:
     def dt(*args):
-        return make_aware(datetime(*args))
+        return make_aware(datetime(*args), timezone=utc)
 else:
     def dt(*args):
         return datetime(*args)
@@ -418,7 +418,7 @@ if __name__ == '__main__':
             return 'None'
         if isinstance(field, models.DateTimeField):
             if is_aware(value):
-                d = make_naive(value)
+                d = make_naive(value, timezone=utc)
             else:
                 d = value
             return 'dt(%d,%d,%d,%d,%d,%d)' % (

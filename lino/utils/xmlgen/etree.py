@@ -9,6 +9,7 @@ Added by LS:
 - register_namespace is not in __all__
 
 """
+import six
 import xml.etree.ElementTree as etree
 
 if hasattr(etree, '_serialize_xml'):
@@ -35,3 +36,11 @@ else:
         pass
 
 from xml.etree.ElementTree import *
+
+if six.PY3:
+    _tostring = tostring
+    # # change default value for encoding to 'unicode'
+    # def tostring(element, encoding="us-ascii", *args, **kwargs):
+    #     return _tostring(element, encoding, *args, **kwargs)
+    def tostring(*args, **kwargs):
+        return _tostring(*args, **kwargs).decode()

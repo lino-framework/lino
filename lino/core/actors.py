@@ -979,7 +979,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                     if not k in cls.actions:
                         cls._bind_action(k, v)
 
-        cls._actions_list.sort(key=lambda a: a.action.sort_index)
+        cls._actions_list.sort(
+            key=lambda a: (a.action.sort_index, a.action.action_name))
         # cls._actions_list = tuple(cls._actions_list)
         
         # build a dict which maps state.name to a set of action names

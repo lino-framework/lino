@@ -176,8 +176,11 @@ def obj2str(i, force_detailed=False):
             return str(i)  # AutoField is long on mysql, int on sqlite
         if isinstance(i, datetime.date):
             return i.isoformat()
-        if isinstance(i, str):
-            return repr(i)[1:]
+        if six.PY2:
+            if isinstance(i, unicode):
+                i = str(i)
+        # if isinstance(i, str):
+        #     return repr(i)[1:]
         return repr(i)
     if i.pk is None:
         force_detailed = True
@@ -196,10 +199,7 @@ def obj2str(i, force_detailed=False):
     #~ names = [fld.name for (fld,model) in i._meta.get_fields_with_model()]
     #~ s = ','.join(["%s=%r" % (n, getattr(i,n)) for n in names])
     pairs = []
-    if AFTER17:
-        fields_list = i._meta.concrete_fields
-    else:
-        fields_list = i._meta.fields
+    fields_list = i._meta.concrete_fields
     for fld in fields_list:
         #~ if fld.name == 'language':
             #~ print 20120905, model, fld

@@ -1540,7 +1540,7 @@ class Site(object):
 
         #~ logger.info("20130404 lino.site.Site.override_defaults")
 
-        for k, v in list(kwargs.items()):
+        for k, v in kwargs.items():
             if not hasattr(self, k):
                 raise Exception("%s has no attribute %s" % (self.__class__, k))
             setattr(self, k, v)
@@ -2673,7 +2673,7 @@ this field.
             #~ self.language_dict[info.name] = info
         else:
             if isinstance(self.languages, six.string_types):
-                self.languages = self.languages.split()
+                self.languages = str(self.languages).split()
             #~ lc = [x for x in self.django_settings.get('LANGUAGES' if x[0] in languages]
             #~ lc = language_choices(*self.languages)
             #~ self.update_settings(LANGUAGES = lc)
@@ -2685,7 +2685,7 @@ this field.
         languages = []
         for i, django_code in enumerate(self.languages):
             assert_django_code(django_code)
-            name = (to_locale(django_code))
+            name = str(to_locale(django_code))
             if name in self.language_dict:
                 raise Exception("Duplicate name %s for language code %r"
                                 % (name, django_code))
@@ -2784,7 +2784,7 @@ this field.
             #~ set_language(self.get_default_language())
 
             """
-            reduce LANGUAGES to my babel languages:
+            reduce Django's LANGUAGES to my babel languages:
             """
             self.update_settings(
                 LANGUAGES=[x for x in LANGUAGES
@@ -2835,7 +2835,7 @@ this field.
         """
         rv = []
         if isinstance(languages, six.string_types):
-            languages = languages.split()
+            languages = str(languages).split()
         for k in languages:
             if isinstance(k, six.string_types):
                 li = self.get_language_info(k)
@@ -3556,7 +3556,7 @@ signature as `django.core.mail.EmailMessage`.
             print(PRINT_EMAIL.format(
                 subject=subject, sender=sender, body=body,
                 recipients=u', '.join(recipients)).encode(
-                    'ascii', 'replace'))
+                    'ascii', 'replace').decode())
             return
 
         recipients = [a for a in recipients if '@example.com' not in a]
