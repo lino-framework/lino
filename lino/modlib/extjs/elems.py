@@ -517,6 +517,8 @@ class FieldElement(LayoutElement):
             text = " "
         # yield E.p(unicode(elem.field.verbose_name),':',E.br(),E.b(text))
         yield E.label(str(self.field.verbose_name))
+        if self.parent.label_align == layouts.LABEL_ALIGN_TOP:
+            yield E.br()
         yield E.input(type="text", value=text)
         # if self.field.help_text:
             # yield E.span(unicode(text),class_="help-block")
