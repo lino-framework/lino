@@ -2018,7 +2018,7 @@ Lino.call_ajax_action = function(
       //~ console.log("20130831",selected_recs);
       var rs = Array(selected_recs.length);
       for(var i=0; i < selected_recs.length;i++) {
-          rs[i] = selected_recs[i].data.id;
+          rs[i] = selected_recs[i].id;
       };
       p.{{constants.URL_PARAM_SELECTED}} = rs;
   }
@@ -2041,8 +2041,8 @@ Lino.call_ajax_action = function(
 
 
 Lino.row_action_handler = function(actionName, hm, pp) {
-  var p = {};
   var fn = function(panel, btn, step) {
+      var p = {};
       // console.log('20150514 row_action_handler');
       if (pp) { p = pp(panel); if (! p) return; }
       
@@ -2069,9 +2069,9 @@ Lino.row_action_handler = function(actionName, hm, pp) {
 };
 
 Lino.list_action_handler = function(ls_url,actionName,hm,pp) {
-  var p = {};
   var url = '{{extjs.build_plain_url("api")}}' + ls_url
   var fn = function(panel,btn,step) {
+      var p = {};
       //~ console.log("20121210 Lino.list_action_handler",arguments);
       if (pp) { p = pp(panel);  if (! p) return; }
       if (panel) { // may be undefined when called e.g. from quicklink
