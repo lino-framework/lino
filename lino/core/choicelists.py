@@ -132,11 +132,11 @@ class Choice(object):
         else:
             # assert_pure(text)
             self.text = text
-        for k, v in list(kwargs.items()):
+        for k, v in kwargs.items():
             setattr(self, k, v)
 
     def update(self, **kwargs):
-        for k, v in list(kwargs.items()):
+        for k, v in kwargs.items():
             if not hasattr(self, k):
                 raise Exception("%s has no attribute `%s`" % (self, k))
             setattr(self, k, v)
@@ -496,6 +496,10 @@ The disadvantage
     @fields.displayfield(_("Type"))
     def type(cls, choice, ar):
         return choice.__class__.__name__
+
+    # @fields.displayfield(_("Description"))
+    # def description(cls, choice, ar):
+    #     return choice.help_text
 
     @classmethod
     def get_data_rows(self, ar=None):
