@@ -589,6 +589,21 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
             e = lh.main.find_by_name(name)
         return e.to_rst(user_type)
 
+    def __getitem__(self, name):
+        """
+        Used for writing doctests. Untested example:
+
+        >>> print(py2rst(pcsw.Clients.detail_layout['calendar']))
+        **Calendar** (calendar) [visible for 100 110 120 200 210 220 300 400 410 500 510 800 admin 910]:
+        - **Calendar entries** (cal.EntriesByClient)
+        - **Tasks** (cal.TasksByProject) [visible for 100 110 120 200 300 400 410 500 510 admin 910]
+        <BLANKLINE>
+
+
+        """
+        lh = self.get_layout_handle(settings.SITE.kernel.default_ui)
+        return lh[name]
+
 
 class FieldLayout(BaseLayout):
     pass
