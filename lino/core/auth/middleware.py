@@ -107,12 +107,14 @@ class RemoteUserMiddleware(MiddlewareMixin):
         Allows the backend to clean the username, if the backend defines a
         clean_username method.
         """
-        backend_str = request.session[auth.BACKEND_SESSION_KEY]
-        backend = auth.load_backend(backend_str)
-        try:
-            username = backend.clean_username(username)
-        except AttributeError:  # Backend has no clean_username method.
-            pass
+        # LS 20171221 : support remote auth without session
+        backend_str = request.session.get(auth.BACKEND_SESSION_KEY, '')
+        if backend_str:
+            backend = auth.load_backend(backend_str)
+            try:
+                username = backend.clean_username(username)
+            except AttributeError:  # Backend has no clean_username method.
+                pass
         return username
 
     def _remove_invalid_user(self, request):
