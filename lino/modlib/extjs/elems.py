@@ -716,8 +716,11 @@ class TextFieldElement(FieldElement):
         if not text:
             text = " "
         # yield E.p(unicode(elem.field.verbose_name),':',E.br(),E.b(text))
-        yield E.label(str(self.field.verbose_name))
-        yield E.textarea(text, rows=str(self.preferred_height))
+        yield E.div(
+            E.label(str(self.field.verbose_name)),
+            E.textarea(text, rows=str(self.preferred_height), class_="form-control"),
+            class_="form-group"
+        )
 
     def value2html(self, ar, v, **cellattrs):
         if self.format == 'html' and v:
