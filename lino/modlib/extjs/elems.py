@@ -519,7 +519,7 @@ class FieldElement(LayoutElement):
         yield E.label(str(self.field.verbose_name))
         if self.parent.label_align == layouts.LABEL_ALIGN_TOP:
             yield E.br()
-        yield E.input(type="text", value=text)
+        yield E.input(type="text",value=text, class_="form-control")
         # if self.field.help_text:
             # yield E.span(unicode(text),class_="help-block")
         # yield E.p(unicode(elem.field.verbose_name),':',E.br(),E.b(text))
@@ -1516,25 +1516,23 @@ class Container(LayoutElement):
         LayoutElement.__init__(self, layout_handle, name, **kw)
 
     def as_plain_html(self, ar, obj):
-        children = []
-        for e in self.elements:
-            for chunk in e.as_plain_html(ar, obj):
-                children.append(chunk)
         if self.vertical:
-            # for ch in children:
-                # yield ch
+            children = []
+            for e in self.elements:
+                for chunk in e.as_plain_html(ar, obj):
+                    children.append(chunk)
             yield E.fieldset(*children)
         else:
             # if len(children) > 1:
-                # span = 'span' + str(12 / len(children))
-                # children = [E.div(ch,class_=span) for ch in children]
-                # yield E.div(*children,class_="row-fluid")
+            # span = 'span' + str(12 / len(children))
+            # children = [E.div(ch,class_=span) for ch in children]
+            # yield E.div(*children,class_="row-fluid")
             # else:
-                # yield children[0]
+            # yield children[0]
 
             # for ch in children:
-                # yield E.fieldset(ch)
-                # yield ch
+            # yield E.fieldset(ch)
+            # yield ch
             # tr = E.tr(*[E.td(ch) for ch in children])
             tr = []
             for e in self.elements:
@@ -1591,14 +1589,14 @@ class Container(LayoutElement):
             return False
         for e in self.elements:
             if (not isinstance(e, Permittable)) or \
-               e.get_view_permission(user_type):
+                    e.get_view_permission(user_type):
                 # one visible child is enough, no need to continue loop
                 return True
-            # if not isinstance(e, Permittable):
-            #     return True
-            # if isinstance(e, Panel) and \
-            #    e.get_view_permission(user_type):
-            #     return True
+                # if not isinstance(e, Permittable):
+                #     return True
+                # if isinstance(e, Panel) and \
+                #    e.get_view_permission(user_type):
+                #     return True
         # logger.info("20120925 not a single visible element in %s of %s",self,self.layout_handle)
         return False
 
@@ -2007,6 +2005,20 @@ class TabPanel(Panel):
 
         Container.__init__(self, layout_handle, name, *elems, **kw)
 
+    def as_plain_html(self, ar, obj):
+        nav = E.ul(class_="nav nav-tabs")
+        for e in self.elements:
+            tab = E.li()
+            tab.append(E.a(str(e.label), data_toggle="tab", href="#" + e.ext_name))
+            nav.append(tab)
+        nav[0].attrib["class"] = "active"
+
+        yield nav
+        main = E.div(class_ = "tab-content")
+        for e in self.elements:
+            main.append(E.div(*tuple(e.as_plain_html(ar, obj)), id=e.ext_name, class_="tab-pane fade"))
+        main[0].attrib["class"] += " in active"
+        yield main
 
 _FIELD2ELEM = (
     # (dd.Constant, ConstantElement),
