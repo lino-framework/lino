@@ -429,7 +429,7 @@ class TableRequest(ActionRequest):
             headers = [
                 x for x in grid.headers2html(
                     self, columns, headers, **self.renderer.cellattrs)]
-            if cellwidths:
+            if cellwidths and self.renderer.is_interactive:
                 for i, td in enumerate(headers):
                     td.attrib.update(width=six.text_type(cellwidths[i]))
             tble.head.append(xghtml.E.tr(*headers))

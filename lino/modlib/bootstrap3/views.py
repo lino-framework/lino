@@ -93,7 +93,7 @@ def table2html(ar, as_main=True):
     toolbar. (This argument is currently being ignored.)
 
     """
-    as_main = True
+    # as_main = True
     t = xghtml.Table()
     t.attrib.update(class_="table table-striped table-hover")
     if ar.limit is None:
@@ -113,7 +113,11 @@ def table2html(ar, as_main=True):
     ar.dump2html(t, ar.sliced_data_iterator)
     if not as_main:
         url = ar.get_request_url()  # open in own window
-        return E.div(E.a(ar.get_title(), href=url), t.as_element())
+        return E.div(
+                E.div(E.div(E.a(E.span(class_="glyphicon glyphicon-folder-open"),class_="btn btn-default pull-right", href=url, style = "margin-left: 4px;"),E.h5(ar.get_title(), style="display: inline-block;"), class_="panel-title"),
+                      class_="panel-heading"),
+                t.as_element(),
+               class_="panel panel-default",style="display: inline-block;")
 
     buttons = []
     kw = dict()
@@ -190,6 +194,7 @@ class Element(View):
 
     """
     def get(self, request, app_label=None, actor=None, pk=None):
+        print(request, app_label, actor, pk)
         ar = action_request(app_label, actor, request, request.GET, False)
         ar.renderer = settings.SITE.plugins.bootstrap3.renderer
 
@@ -222,6 +227,18 @@ class Element(View):
                     navigator = E.p("No navinfo")
         else:
             elem = None
+
+
+        # main = E.div(
+        #     E.div(E.div(E.h5(ar.get_title(),
+        #              style="display: inline-block;"),
+        #         class_="panel-title"),
+        #         class_="panel-heading"),
+        #     E.div(layout2html(ar, elem),class_="panel-body"), # Content
+        #     class_="panel panel-default",
+        #     # style="display: inline-block;"
+        # )
+
 
         main = layout2html(ar, elem)
        

@@ -61,6 +61,7 @@ from lino.utils.format_date import fds
 
 from lino.utils.xmlgen import etree
 from lino.utils.xmlgen.html import E
+from lino.utils import is_string
 
 from lino.core.site import html2text
 from lino.utils.xmlgen.html import html2rst
@@ -1261,6 +1262,14 @@ class DisplayElement(FieldElement):
             return html2rst(v)
         return self.field._lino_atomizer.format_value(ar, v)
 
+    def as_plain_html(self, ar, obj):
+        #Todo make part of a panel or something so it's aligned with the other elements.
+        value = self.value_from_object(obj, ar)
+        if E.iselement(value):
+            yield value
+        else:
+            for x in super(DisplayElement, self).as_plain_html(ar, obj):
+                yield x
 
 class BooleanDisplayElement(DisplayElement):
     preferred_width = 20
@@ -1439,6 +1448,16 @@ class HtmlBoxElement(DisplayElement):
             kw.update(title=self.label)
         return kw
 
+    def as_plain_html(self, ar, obj):
+        value = self.value_from_object(obj, ar)
+        if value == fields.NOT_PROVIDED:
+            value = str(ar.no_data_text)
+        if is_string(value):
+            panel = E.fromstring('<div class = "panel panel-default"> <div class = "panel-body">' + value + "</div></div>")
+        elif E.iselement(value):
+            panel = E.div(E.div(value, class_="panel-body"),class_="panel panel-default")
+
+        yield panel
 
 class SlaveSummaryPanel(HtmlBoxElement):
     """The panel used to display a slave table whose `slave_grid_format`
@@ -1539,7 +1558,7 @@ class Container(LayoutElement):
             # tr = E.tr(*[E.td(ch) for ch in children])
             tr = []
             for e in self.elements:
-                cell = E.td(*tuple(e.as_plain_html(ar, obj)))
+                cell = E.td(*tuple(e.as_plain_html(ar, obj)), style="vertical-align: top;")
                 tr.append(cell)
             yield E.table(E.tr(*tr))
 
