@@ -14,13 +14,12 @@ from django.conf.urls import url, include
 from django.conf.urls.static import static
 from lino.core.utils import is_devserver
 
-# import lino
-# lino.startup()
-
 # we must explicitly call django.setup() because when running under
 # mod_wsgi this is not done automatically as with runserver (or at
 # least it seems so)
-# lino.lino_startup()
+import lino
+lino.startup()
+
 
 site = settings.SITE
 urlpatterns = []
@@ -41,6 +40,12 @@ for p in site.installed_plugins:
     else:
         urlpatterns.append(url(prx, include(pat)))
 
+if site.social_auth_backends:
+    urlpatterns.append(
+        url('^oauth/', include('social_django.urls', namespace='social')))
+        
+        
+
 if site.django_admin_prefix:  # not tested
     from django.contrib import admin
     admin.autodiscover()
@@ -57,7 +62,8 @@ if is_devserver():
     urlpatterns += static(
         settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
         # 'django.views.static', (pat, 'serve', opts))
-
+    # print('\n'.join(map(str, lst)))
+    # print(20171212, lst)
     # why do i need the following? i thought that this is done
     # automatically:
     # urlpatterns += static(

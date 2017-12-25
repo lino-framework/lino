@@ -101,12 +101,12 @@ def class_dict_items(cl, exclude=None):
 def set_default_verbose_name(f):
     """If the verbose_name of a ForeignKey was not set by user code,
     Django sets it to ``field.name.replace('_', ' ')``.  We replace
-    this default value by ``f.rel.model._meta.verbose_name``.  This rule
+    this default value by ``f.remote_field.model._meta.verbose_name``.  This rule
     holds also for virtual FK fields.
 
     """
     if f.verbose_name == f.name.replace('_', ' '):
-        f.verbose_name = f.rel.model._meta.verbose_name
+        f.verbose_name = f.remote_field.model._meta.verbose_name
 
 
 CLONEABLE_ATTRS = frozenset("""ah request user subst_user
@@ -174,6 +174,7 @@ class Kernel(object):
 
     """
     default_ui = None
+    admin_ui = None
 
     # _singleton_instance = None
 
@@ -309,13 +310,16 @@ class Kernel(object):
                 fields_list = []
                 for field in model._meta.fields:
                     if isinstance(field, (models.CharField, models.TextField)):
-                        fields_list.append(field.name)
-                model.quick_search_fields = frozenset(fields_list)
-            elif isinstance(qsf, frozenset):
+                        fields_list.append(field)
+                model.quick_search_fields = tuple(fields_list)
+            elif isinstance(qsf, tuple):
                 pass
             elif isinstance(qsf, six.string_types):
-                model.quick_search_fields = frozenset(
-                    fields.fields_list(model, model.quick_search_fields))
+                tuple()
+                    
+                model.quick_search_fields = tuple(
+                    [model.get_data_elem(n) for n in qsf.split()])
+                    # fields.fields_list(model, model.quick_search_fields))
             else:
                 raise ChangedAPI(
                     "{0}.quick_search_fields must be None or a string "
@@ -328,13 +332,14 @@ class Kernel(object):
                 for field in model._meta.fields:
                     if isinstance(field, (
                             models.IntegerField, models.AutoField)):
-                        fields_list.append(field.name)
-                model.quick_search_fields_digit = frozenset(fields_list)
-            elif isinstance(qsf, frozenset):
+                        fields_list.append(field)
+                model.quick_search_fields_digit = tuple(fields_list)
+            elif isinstance(qsf, tuple):
                 pass
             elif isinstance(qsf, six.string_types):
-                model.quick_search_fields_digit = frozenset(
-                    fields.fields_list(model, model.quick_search_fields_digit))
+                model.quick_search_fields_digit = tuple(
+                    [model.get_data_elem(n) for n in qsf.split()])
+                    #fields.fields_list(model, model.quick_search_fields_digit))
             else:
                 raise Exception(
                     "{0}.quick_search_fields_digit must be None or a string "
@@ -346,7 +351,9 @@ class Kernel(object):
 
             # site.modules.define(model._meta.app_label, model.__name__, model)
 
-            for f in model._meta.virtual_fields:
+            # Django 1.10 : The private attribute virtual_fields of
+            # Model._meta is deprecated in favor of private_fields.
+            for f in model._meta.private_fields:
                 if isinstance(f, GenericForeignKey):
                     self.GFK_LIST.append(f)
 
@@ -387,11 +394,11 @@ class Kernel(object):
                 #     msg = "Nullable CharField %s in %s" % (f.name, model)
                 #     raise Exception(msg)
                 if isinstance(f, models.ForeignKey):
-                    if isinstance(f.rel.model, six.string_types):
+                    if isinstance(f.remote_field.model, six.string_types):
                         raise Exception("Could not resolve target %r of "
                                         "ForeignKey '%s' in %s "
                                         "(models are %s)" %
-                                        (f.rel.model, f.name, model, models_list))
+                                        (f.remote_field.model, f.name, model, models_list))
                     set_default_verbose_name(f)
 
                     """
@@ -400,11 +407,12 @@ class Kernel(object):
                     JobProvider being referred only by objects that can refer
                     to a Company as well.
                     """
-                    if not hasattr(f.rel.model, '_lino_ddh'):
+                    if not hasattr(f.remote_field.model, '_lino_ddh'):
                         msg = "20150824 {1} (needed by {0}) "\
                               "has no _lino_ddh"
-                        raise Exception(msg.format(f.rel, f.rel.model))
-                    f.rel.model._lino_ddh.add_fk(m or model, f)
+                        raise Exception(msg.format(
+                            f.remote_field, f.remote_field.model))
+                    f.remote_field.model._lino_ddh.add_fk(m or model, f)
 
         # Protect the foreign keys by removing Django's default
         # behaviour of having on_delete with CASCADE as default.
@@ -445,7 +453,7 @@ class Kernel(object):
             for m, k, v in class_dict_items(model):
                 if isinstance(v, fields.VirtualField):
                     v.attach_to_model(m, k)
-                    model._meta.add_field(v, virtual=True)
+                    model._meta.add_field(v, private=True)
                     
         #~ logger.info("20130817 attached model vfs")
 
@@ -582,34 +590,20 @@ class Kernel(object):
         for p in site.installed_plugins:
             p.on_ui_init(self)
 
-        ui = None
-        if self.site.default_ui is None:
+        for p in self.site.installed_plugins:
+            if p.app_name == self.site.default_ui:
+                p.url_prefix = None
+                self.default_renderer = p.renderer
+                self.default_ui = p
+                self.html_renderer = HtmlRenderer(p)
+                self.text_renderer = TextRenderer(p)
+                break
+        if self.site.admin_ui is not None:
             for p in self.site.installed_plugins:
-                if p.ui_handle_attr_name is not None:
-                    ui = p
-                    break
-            # if ui is None:
-            #     raise Exception("No user interface in {0}".format(
-            #         [u.app_name for u in self.site.installed_plugins]))
-
-        else:
-            for p in self.site.installed_plugins:
-                if p.app_name == self.site.default_ui:
-                    ui = p
-            if ui is None:
-                raise Exception(
-                    "Invalid value %r for `default_ui` "
-                    "(must be None or the name of an installed plugin)"
-                    % self.site.default_ui)
-            ui.url_prefix = None
-
-        if ui is not None:
-            self.default_renderer = ui.renderer
-            self.default_ui = ui
+                if p.app_name == self.site.admin_ui:
+                    self.admin_ui  = p
 
         # 20160530
-        self.html_renderer = HtmlRenderer(ui)
-        self.text_renderer = TextRenderer(ui)
 
         for a in actors.actors_list:
             
@@ -640,12 +634,12 @@ class Kernel(object):
 
         post_ui_build.send(self)
 
-        if ui is not None:
-            # trigger creation of params_layout.params_store
-            for res in actors.actors_list:
-                for ba in res.get_actions():
-                    if ba.action.params_layout is not None:
-                        ba.action.params_layout.get_layout_handle(ui)
+        # trigger creation of params_layout.params_store
+        for res in actors.actors_list:
+            for ba in res.get_actions():
+                if ba.action.params_layout is not None:
+                    ba.action.params_layout.get_layout_handle(
+                        self.default_ui)
         # logger.info("20161219 kernel_startup done")
 
     def protect_foreignkeys(self, models_list):
@@ -679,8 +673,8 @@ class Kernel(object):
 
         for model in models_list:
             for m, fk in model._lino_ddh.fklist:
-                assert fk.rel.model is model
-                if fk.rel.on_delete == models.CASCADE:
+                assert fk.remote_field.model is model
+                if fk.remote_field.on_delete == models.CASCADE:
                     if must_protect(m, fk, model):
                         # 20170921 removed disturbing debug message 
                         # msg = (
@@ -688,7 +682,7 @@ class Kernel(object):
                         #     "field is not specified in "
                         #     "allow_cascaded_delete.").format(fmn(m), fk.name)
                         # logger.debug(msg)
-                        fk.rel.on_delete = models.PROTECT
+                        fk.remote_field.on_delete = models.PROTECT
                 else:
                     if fk.name in m.allow_cascaded_delete:
                         msg = ("{0}.{1} specified in allow_cascaded_delete "
@@ -696,16 +690,16 @@ class Kernel(object):
                             fmn(m), fk.name)
                         raise Exception(msg)
     
-                    if fk.rel.on_delete == models.SET_NULL:
+                    if fk.remote_field.on_delete == models.SET_NULL:
                         if not fk.null:
                             msg = ("{0}.{1} has on_delete SET_NULL but "
                                    "is not nullable ")
-                            msg = msg.format(fmn(m), fk.name, fk.rel.model)
+                            msg = msg.format(fmn(m), fk.name, fk.remote_field.model)
                             raise Exception(msg)
 
                     else:
                         msg = ("{0}.{1} has custom on_delete").format(
-                            fmn(m), fk.name, fk.rel.on_delete)
+                            fmn(m), fk.name, fk.remote_field.on_delete)
                         logger.debug(msg)
                 
     def get_generic_related(self, obj):
@@ -1075,8 +1069,8 @@ def site_startup(self):
         # for k, v in self.models.items():
         #     self.actors.setdefault(k, v)
 
-        self.user_interfaces = tuple([
-            p for p in self.installed_plugins if p.ui_label is not None])
+        # self.user_interfaces = tuple([
+        #     p for p in self.installed_plugins if p.ui_label is not None])
 
         # logger.info("20150428 user_interfaces %s", self.user_interfaces)
 

@@ -202,6 +202,8 @@ class Menu(MenuItem):
     def __init__(self, user_profile, name, label=None, parent=None, **kw):
         MenuItem.__init__(self, name, label, **kw)
         self.parent = parent
+        if settings.SITE.user_types_module:
+            assert user_profile is not None
         self.user_profile = user_profile
         self.clear()
 

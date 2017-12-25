@@ -9,6 +9,7 @@ from __future__ import unicode_literals
 from builtins import str
 
 from django.conf import settings
+from atelier.utils import unindent
 
 from lino.core.choicelists import ChoiceList, Choice
 from lino.core.roles import SiteAdmin, check_required_roles
@@ -46,14 +47,18 @@ class UserType(Choice):
     def attach(self, cls):
         super(UserType, self).attach(cls)
         self.kw.setdefault('hidden_languages', cls.hidden_languages)
+        if 'remark' not in self.kw:
+            s = self.role.__doc__
+            if s is not None:
+                self.kw['remark'] = unindent(s)
 
-        for k, vf in list(cls.virtual_fields.items()):
+        for k, vf in cls.virtual_fields.items():
             if vf.has_default():
                 self.kw.setdefault(k, vf.get_default())
             elif vf.return_type.blank:
                 self.kw.setdefault(k, None)
 
-        for k, v in list(self.kw.items()):
+        for k, v in self.kw.items():
             setattr(self, k, v)
 
         if self.hidden_languages is not None:

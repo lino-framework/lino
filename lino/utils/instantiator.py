@@ -70,7 +70,7 @@ class LookupConverter(Converter):
 
     def __init__(self, field, lookup_field):
         Converter.__init__(self, field)
-        model = field.rel.model
+        model = field.remote_field.model
         if lookup_field == 'pk':
             self.lookup_field = model._meta.pk
         else:
@@ -78,7 +78,7 @@ class LookupConverter(Converter):
         # self.lookup_field = lookup_field
 
     def lookup(self, value, **kw):
-        model = self.field.rel.model
+        model = self.field.remote_field.model
         if isinstance(value, model):
             return value
         return model.lookup_or_create(self.lookup_field, value, **kw)
@@ -181,7 +181,7 @@ class ManyToManyConverter(LookupConverter):
     splitsep = None
 
     # def lookup(self,value):
-        # model = self.field.rel.model
+        # model = self.field.remote_field.model
         # try:
             # return model.objects.get(
               # **{self.lookup_field: value})

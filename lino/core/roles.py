@@ -8,7 +8,8 @@ from builtins import object
 
 
 class UserRole(object):
-    """Base class for all user roles. Even anonymous users have this
+    """
+    Base class for all user roles. Even anonymous users have this
     role.
 
     """
@@ -43,12 +44,17 @@ class UserRole(object):
                 yield p
 
 
+class Anonymous(UserRole):
+    """The role used by anonymous guest sessions."""
+    
 class SiteUser(UserRole):
     """Every authenticated user has this role."""
 
 
 class SiteStaff(SiteUser):
-    """A user who can configure site-wide functionality.
+    """
+
+    A user who can configure site-wide functionality.
 
     Certain privileged actions require this role:
 
@@ -66,7 +72,8 @@ class Supervisor(UserRole):
 
 
 class Explorer(UserRole):
-    """A user who has permission to explore the database content, e.g.
+    """
+    A user who has permission to explore the database content, e.g.
     for writing statistical reports.
 
     """

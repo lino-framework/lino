@@ -231,7 +231,7 @@ class CommentsByRFC(CommentsByX):
 
         html += "<ul>"
         for c in sar:
-            html += "<li>{}<div id={}>{}</div></li>".format(
+            html += "<li>{}<div id=\"{}\">{}</div></li>".format(
                 self.get_comment_header(c, sar),
                 "comment-" + str(c.id),
                 ar.parse_memo(c.short_text))

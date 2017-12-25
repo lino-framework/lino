@@ -19,28 +19,19 @@ logger = logging.getLogger(__name__)
 from cgi import escape
 import decimal
 
-from lino import AFTER17, AFTER18
-
 from django.db import models
 from django.utils.translation import ugettext as _
 from django.utils.translation import string_concat
 from django.conf import settings
-if AFTER18:
-    from django.db.models.fields.related import \
-        ReverseOneToOneDescriptor as SingleRelatedObjectDescriptor
-    from django.db.models.fields.related import \
-        ReverseManyToOneDescriptor as ForeignRelatedObjectsDescriptor
-    from django.db.models.fields.related import \
-        ManyToManyDescriptor as ManyRelatedObjectsDescriptor
-else:
-    from django.db.models.fields.related import SingleRelatedObjectDescriptor
-    from django.db.models.fields.related import ForeignRelatedObjectsDescriptor
-    from django.db.models.fields.related import ManyRelatedObjectsDescriptor
+from django.db.models.fields.related import \
+    ReverseOneToOneDescriptor as SingleRelatedObjectDescriptor
+from django.db.models.fields.related import \
+    ReverseManyToOneDescriptor as ForeignRelatedObjectsDescriptor
+from django.db.models.fields.related import \
+    ManyToManyDescriptor as ManyRelatedObjectsDescriptor
 
 
-
-if AFTER17:
-    from django.db.models.fields.related import ManyToManyRel, ManyToOneRel
+from django.db.models.fields.related import ManyToManyRel, ManyToOneRel
 from django.db.models.fields import NOT_PROVIDED
 
 from lino.core import layouts
@@ -70,6 +61,7 @@ from lino.utils.format_date import fds
 
 from lino.utils.xmlgen import etree
 from lino.utils.xmlgen.html import E
+from lino.utils import is_string
 
 from lino.core.site import html2text
 from lino.utils.xmlgen.html import html2rst
@@ -122,7 +114,8 @@ class GridColumn(jsgen.Component):
     def __init__(self, layout_handle, index, editor, **kw):
         self.editor = editor
         # kw.setdefault('sortable', True)
-        kw.update(sortable=True)
+        kw.update(sortable=editor.sortable)
+        kw.update(editable=editor.editable)
         kw.update(colIndex=index)
         if editor.hidden:
             kw.update(hidden=True)
@@ -167,7 +160,7 @@ class GridColumn(jsgen.Component):
             def fk_renderer(fld, name):
                 # FK fields are clickable only if their target has a
                 # detail view
-                rpt = fld.rel.model.get_default_table()
+                rpt = fld.remote_field.model.get_default_table()
                 if rpt.detail_action is not None:
                     if rpt.detail_action.get_view_permission(
                             get_user_profile()):
@@ -187,7 +180,7 @@ class GridColumn(jsgen.Component):
             if has_fk_renderer(editor.field):
                 rend = fk_renderer(editor.field, editor.field.name)
             elif isinstance(editor.field, fields.VirtualField):
-                kw.update(sortable=False)
+                # kw.update(sortable=False)
                 if has_fk_renderer(editor.field.return_type):
                     rend = fk_renderer(
                         editor.field.return_type, editor.field.name)
@@ -507,6 +500,9 @@ class FieldElement(LayoutElement):
 
         # if self.field.__class__.__name__ == "DcAmountField":
             # print 20130911, self.field, self.editable
+            
+        if isinstance(field, fields.FakeField) and field.sortable_by:
+            self.sortable = True
 
     def value_from_object(self, obj, ar):
         """
@@ -522,7 +518,9 @@ class FieldElement(LayoutElement):
             text = " "
         # yield E.p(unicode(elem.field.verbose_name),':',E.br(),E.b(text))
         yield E.label(str(self.field.verbose_name))
-        yield E.input(type="text", value=text)
+        if self.parent.label_align == layouts.LABEL_ALIGN_TOP:
+            yield E.br()
+        yield E.input(type="text",value=text, class_="form-control")
         # if self.field.help_text:
             # yield E.span(unicode(text),class_="help-block")
         # yield E.p(unicode(elem.field.verbose_name),':',E.br(),E.b(text))
@@ -553,10 +551,6 @@ class FieldElement(LayoutElement):
         #     kw.update(header=self.label)
         # else:
         #     kw.update(header=self.label)
-        if not self.editable:
-            kw.update(editable=False)
-        if not self.sortable:
-            kw.update(sortable=False)
         w = self.width or self.preferred_width
         # kw.update(width=w*EXT_CHAR_WIDTH)
         kw.update(width=js_code("Lino.chars2width(%d)" % (w + 1)))
@@ -723,8 +717,11 @@ class TextFieldElement(FieldElement):
         if not text:
             text = " "
         # yield E.p(unicode(elem.field.verbose_name),':',E.br(),E.b(text))
-        yield E.label(str(self.field.verbose_name))
-        yield E.textarea(text, rows=str(self.preferred_height))
+        yield E.div(
+            E.label(str(self.field.verbose_name)),
+            E.textarea(text, rows=str(self.preferred_height), class_="form-control"),
+            class_="form-group"
+        )
 
     def value2html(self, ar, v, **cellattrs):
         if self.format == 'html' and v:
@@ -910,13 +907,15 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
 
     def get_field_options(self, **kw):
         kw = super(ForeignKeyElement, self).get_field_options(**kw)
-        if isinstance(self.field.rel.model, six.string_types):
-            raise Exception("20130827 %s.rel.model is %r" %
-                            (self.field, self.field.rel.model))
-        pw = self.field.rel.model.preferred_foreignkey_width
+        if not self.field.remote_field:
+            raise Exception("20171210 %r" % self.field.__class__)
+        if isinstance(self.field.remote_field.model, six.string_types):
+            raise Exception("20130827 %s.remote_field.model is %r" %
+                            (self.field, self.field.remote_field.model))
+        pw = self.field.remote_field.model.preferred_foreignkey_width
         if pw is not None:
             kw.setdefault('preferred_width', pw)
-        actor = self.field.rel.model.get_default_table()
+        actor = self.field.remote_field.model.get_default_table()
         if not isinstance(self.layout_handle.layout, ColumnsLayout):
             a1 = actor.detail_action
             a2 = actor.insert_action
@@ -1263,6 +1262,14 @@ class DisplayElement(FieldElement):
             return html2rst(v)
         return self.field._lino_atomizer.format_value(ar, v)
 
+    def as_plain_html(self, ar, obj):
+        #Todo make part of a panel or something so it's aligned with the other elements.
+        value = self.value_from_object(obj, ar)
+        if E.iselement(value):
+            yield value
+        else:
+            for x in super(DisplayElement, self).as_plain_html(ar, obj):
+                yield x
 
 class BooleanDisplayElement(DisplayElement):
     preferred_width = 20
@@ -1427,11 +1434,30 @@ class HtmlBoxElement(DisplayElement):
 
         # ~ if self.field.drop_zone: # testing with drop_zone 'FooBar'
             # kw.update(listeners=dict(render=js_code('initialize%sDropZone' % self.field.drop_zone)))
-        kw.update(items=js_code("new Ext.BoxComponent({autoScroll:true})"))
+            
+        html = self.field.default
+        if html is NOT_PROVIDED:
+            js = "new Ext.BoxComponent({autoScroll:true})"
+        else:
+            if callable(html):
+                html = html()
+            js = "new Ext.BoxComponent({autoScroll:true, html:%s})"
+            js = js % py2js(html)
+        kw.update(items=js_code(js))
         if self.label:
             kw.update(title=self.label)
         return kw
 
+    def as_plain_html(self, ar, obj):
+        value = self.value_from_object(obj, ar)
+        if value == fields.NOT_PROVIDED:
+            value = str(ar.no_data_text)
+        if is_string(value):
+            panel = E.fromstring('<div class = "panel panel-default"> <div class = "panel-body">' + value + "</div></div>")
+        elif E.iselement(value):
+            panel = E.div(E.div(value, class_="panel-body"),class_="panel panel-default")
+
+        yield panel
 
 class SlaveSummaryPanel(HtmlBoxElement):
     """The panel used to display a slave table whose `slave_grid_format`
@@ -1450,7 +1476,7 @@ is 'summary'.
 class ManyRelatedObjectElement(HtmlBoxElement):
 
     def __init__(self, lh, relobj, **kw):
-        name = relobj.field.rel.related_name
+        name = relobj.field.remote_field.related_name
 
         def f(obj, ar):
             return qs2summary(ar, getattr(obj, name).all())
@@ -1512,29 +1538,27 @@ class Container(LayoutElement):
         LayoutElement.__init__(self, layout_handle, name, **kw)
 
     def as_plain_html(self, ar, obj):
-        children = []
-        for e in self.elements:
-            for chunk in e.as_plain_html(ar, obj):
-                children.append(chunk)
         if self.vertical:
-            # for ch in children:
-                # yield ch
+            children = []
+            for e in self.elements:
+                for chunk in e.as_plain_html(ar, obj):
+                    children.append(chunk)
             yield E.fieldset(*children)
         else:
             # if len(children) > 1:
-                # span = 'span' + str(12 / len(children))
-                # children = [E.div(ch,class_=span) for ch in children]
-                # yield E.div(*children,class_="row-fluid")
+            # span = 'span' + str(12 / len(children))
+            # children = [E.div(ch,class_=span) for ch in children]
+            # yield E.div(*children,class_="row-fluid")
             # else:
-                # yield children[0]
+            # yield children[0]
 
             # for ch in children:
-                # yield E.fieldset(ch)
-                # yield ch
+            # yield E.fieldset(ch)
+            # yield ch
             # tr = E.tr(*[E.td(ch) for ch in children])
             tr = []
             for e in self.elements:
-                cell = E.td(*tuple(e.as_plain_html(ar, obj)))
+                cell = E.td(*tuple(e.as_plain_html(ar, obj)), style="vertical-align: top;")
                 tr.append(cell)
             yield E.table(E.tr(*tr))
 
@@ -1587,14 +1611,14 @@ class Container(LayoutElement):
             return False
         for e in self.elements:
             if (not isinstance(e, Permittable)) or \
-               e.get_view_permission(user_type):
+                    e.get_view_permission(user_type):
                 # one visible child is enough, no need to continue loop
                 return True
-            # if not isinstance(e, Permittable):
-            #     return True
-            # if isinstance(e, Panel) and \
-            #    e.get_view_permission(user_type):
-            #     return True
+                # if not isinstance(e, Permittable):
+                #     return True
+                # if isinstance(e, Panel) and \
+                #    e.get_view_permission(user_type):
+                #     return True
         # logger.info("20120925 not a single visible element in %s of %s",self,self.layout_handle)
         return False
 
@@ -2003,6 +2027,20 @@ class TabPanel(Panel):
 
         Container.__init__(self, layout_handle, name, *elems, **kw)
 
+    def as_plain_html(self, ar, obj):
+        nav = E.ul(class_="nav nav-tabs")
+        for e in self.elements:
+            tab = E.li()
+            tab.append(E.a(str(e.label), data_toggle="tab", href="#" + e.ext_name))
+            nav.append(tab)
+        nav[0].attrib["class"] = "active"
+
+        yield nav
+        main = E.div(class_ = "tab-content")
+        for e in self.elements:
+            main.append(E.div(*tuple(e.as_plain_html(ar, obj)), id=e.ext_name, class_="tab-pane fade"))
+        main[0].attrib["class"] += " in active"
+        yield main
 
 _FIELD2ELEM = (
     # (dd.Constant, ConstantElement),
@@ -2206,18 +2244,14 @@ def create_layout_element(lh, name, **kw):
 
     if isinstance(de, models.ManyToManyField):
         # Replacing related by remote_field to supports Django 1.9.9 and 1.10
-        if AFTER18:
-            e = ManyToManyElement(lh, de.remote_field, **kw)
-        else:
-            e = ManyToManyElement(lh, de.related, **kw)
+        e = ManyToManyElement(lh, de.remote_field, **kw)
         lh.add_store_field(e.field)
         return e
 
-    if AFTER17:
-        if isinstance(de, (ManyToManyRel, ManyToOneRel)):
-            e = ManyRelatedObjectElement(lh, de, **kw)
-            lh.add_store_field(e.field)
-            return e
+    if isinstance(de, (ManyToManyRel, ManyToOneRel)):
+        e = ManyRelatedObjectElement(lh, de, **kw)
+        lh.add_store_field(e.field)
+        return e
 
     if isinstance(de, models.Field):
         if isinstance(de, (BabelCharField, BabelTextField)):
@@ -2227,6 +2261,8 @@ def create_layout_element(lh, name, **kw):
                     bf = lh.get_data_elem(name + lang.suffix)
                     elems.append(create_field_element(lh, bf, **kw))
                 return elems
+        return create_field_element(lh, de, **kw)
+    if isinstance(de, fields.DisplayField):
         return create_field_element(lh, de, **kw)
 
     if isinstance(de, GenericForeignKey):
@@ -2322,7 +2358,7 @@ def create_layout_element(lh, name, **kw):
 
 def create_vurt_element(lh, name, vf, **kw):
     e = create_field_element(lh, vf, **kw)
-    e.sortable = False
+    # e.sortable = False
     if not vf.is_enabled(lh):
         e.editable = False
     return e

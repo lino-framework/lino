@@ -39,7 +39,8 @@ from django.utils.translation import ugettext as _
 from django.utils.encoding import force_text
 from lino.core import auth
 
-from lino.api import dd
+from lino.core.signals import pre_ui_delete
+from lino.core.utils import obj2unicode
 
 from lino.utils.xmlgen import html as xghtml
 E = xghtml.E
@@ -49,6 +50,7 @@ from lino.utils import isiterable
 from lino.utils import dblogger
 
 from lino.core import actions
+from lino.core import fields
 
 from lino.core.views import requested_actor, action_request
 from lino.core.views import json_response, json_response_kw
@@ -93,14 +95,14 @@ def delete_element(ar, elem):
 
     #~ changes.log_delete(ar.request,elem)
 
-    dd.pre_ui_delete.send(sender=elem, request=ar.request)
+    pre_ui_delete.send(sender=elem, request=ar.request)
 
     try:
         elem.delete()
     except Exception as e:
         dblogger.exception(e)
         msg = _("Failed to delete %(record)s : %(error)s."
-                ) % dict(record=dd.obj2unicode(elem), error=e)
+                ) % dict(record=obj2unicode(elem), error=e)
         #~ msg = "Failed to delete %s." % element_name(elem)
         ar.error(None, msg)
         return settings.SITE.kernel.default_renderer.render_action_response(ar)
@@ -118,7 +120,7 @@ class AdminIndex(View):
     def get(self, request, *args, **kw):
         # logger.info("20150427 AdminIndex.get()")
         # settings.SITE.startup()
-        renderer = dd.plugins.extjs.renderer
+        renderer = settings.SITE.plugins.extjs.renderer
         # if settings.SITE.user_model is not None:
         #     user = request.subst_user or request.user
         #     a = settings.SITE.get_main_action(user)
@@ -137,7 +139,7 @@ class MainHtml(View):
         ar = BaseRequest(request)
         html = settings.SITE.get_main_html(
             request, extjs=settings.SITE.plugins.extjs)
-        html = dd.plugins.extjs.renderer.html_text(html)
+        html = settings.SITE.plugins.extjs.renderer.html_text(html)
         ar.success(html=html)
         return ui.default_renderer.render_action_response(ar)
 
@@ -268,7 +270,7 @@ def choices_for_field(request, holder, field):
             return d
         return (qs, row2dict)
 
-    if isinstance(field, dd.VirtualField):
+    if isinstance(field, fields.VirtualField):
         field = field.return_type
         
     if isinstance(field, models.ForeignKey):
@@ -331,7 +333,7 @@ def choices_response(actor, request, qs, row2dict, emptyValue):
         rows = rows[:int(limit)] if limit else rows
 
     # Add None choice
-    if emptyValue and not quick_search:
+    if emptyValue is not None and not quick_search:
         empty = dict()
         empty[constants.CHOICES_TEXT_FIELD] = emptyValue
         empty[constants.CHOICES_VALUE_FIELD] = None
@@ -485,7 +487,11 @@ class ApiElement(View):
         if pk and pk != '-99999' and pk != '-99998':
             #~ ar = ba.request(request=request,selected_pks=[pk])
             #~ print 20131004, ba.actor
-            ar = ba.request(request=request, selected_pks=[pk])
+            # Use url selected rows as selected PKs if defined, otherwise use the PK defined in the url path
+            sr = request.GET.getlist(constants.URL_PARAM_SELECTED)
+            if not sr:
+                sr = [pk]
+            ar = ba.request(request=request, selected_pks=sr)
             # print(
             #     "20170116 views.ApiElement.get", ba,
             #     ar.action_param_values)
@@ -599,8 +605,8 @@ class ApiList(View):
         if fmt == constants.URL_FORMAT_JSON:
             rows = [rh.store.row2list(ar, row)
                     for row in ar.sliced_data_iterator]
-            
             total_count = ar.get_total_count()
+            # raise Exception("20171208 {}".format(ar.data_iterator.query))
             for row in ar.create_phantom_rows():
                 if len(rows)+1 < ar.limit\
                         or ar.limit == total_count + 1:

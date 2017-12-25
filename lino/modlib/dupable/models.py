@@ -31,25 +31,18 @@ Search by Sound with Python
 
 from __future__ import unicode_literals
 import six
-from builtins import map
-from builtins import str
 from builtins import object
 
-from django.conf import settings
 from django.db import models
 
 from lino.api import dd, _
+from lino.modlib.gfks.mixins import Controllable
 from lino.utils import join_elems
 from lino.utils.xmlgen.html import E
 
-
-from django.utils.encoding import python_2_unicode_compatible
-
-from lino.modlib.gfks.mixins import Controllable
 from .mixins import Dupable
 
-
-@python_2_unicode_compatible
+@dd.python_2_unicode_compatible
 class PhoneticWord(Controllable):
     """Base class for the table of phonetic words of a given dupable
     model. For every (non-abstract) dupable model there must be a
@@ -65,6 +58,7 @@ class PhoneticWord(Controllable):
         verbose_name_plural = _("Phonetic words")
 
     allow_cascaded_delete = ['owner']
+    # quick_search_fields = ['owner__' + dupable_words_field]
 
     word = models.CharField(max_length=100)
 
@@ -94,6 +88,13 @@ class PhoneticWord(Controllable):
             dms = dms.decode('utf8')
         return dms
 
+    @classmethod
+    def get_simple_parameters(cls):
+        for p in super(PhoneticWord, cls).get_simple_parameters():
+            yield p
+        yield 'owner_id'
+        yield 'owner_type'
+
 
 class PhoneticWords(dd.Table):
     model = 'dupable.PhoneticWord'
@@ -101,14 +102,16 @@ class PhoneticWords(dd.Table):
 
 
 class WordsByOwner(PhoneticWords):
+    "Show the phonetic words for this database record."
     required_roles = dd.login_required()
     master_key = 'owner'
     column_names = "word"
-
+    label = ' ♋ '  # 264B
 
 
 class SimilarObjects(dd.VirtualTable):
     """Shows the other objects which are similar to this one."""
+    label = _("Similar objects")
     # slave_grid_format = 'html'
     slave_grid_format = 'summary'
     # master = dd.Model
@@ -146,11 +149,28 @@ class SimilarObjects(dd.VirtualTable):
         chunks = []
         for other in ar.spawn(self, master_instance=obj):
             chunks.append(ar.obj2html(other))
+
+        # sar = WordsByOwner.default_action.request_from(
+        #     ar, master_instance=obj)
+        # if sar.get_permission():
+        #     if len(chunks):
+        #         chunks.append(E.br())
+        #     s = getattr(obj, obj.dupable_words_field)
+        #     words = ' '.join(obj.get_dupable_words(s))
+        #     label = "({0})".format(words)
+        #     btn = sar.ar2button(label=label)
+        #     chunks.append(btn)
         if len(chunks):
-            s = getattr(obj, obj.dupable_words_field)
-            words = ' '.join(obj.get_dupable_words(s))
-            # chunks.append(_("Phonetic words: {0}").format(words))
-            chunks.append(" ({0})".format(words))
-            return E.p(*join_elems(chunks))
-        return ''
+            chunks.append(E.br())
+        s = getattr(obj, obj.dupable_words_field)
+        words = ' '.join(obj.get_dupable_words(s))
+        chunks.append("({0})".format(words))
+        return E.p(*join_elems(chunks))
+        # if len(chunks):
+        #     # s = getattr(obj, obj.dupable_words_field)
+        #     # words = ' '.join(obj.get_dupable_words(s))
+        #     # # chunks.append(_("Phonetic words: {0}").format(words))
+        #     # chunks.append(" ({0})".format(words))
+        #     return E.p(*join_elems(chunks))
+        # return ''
 

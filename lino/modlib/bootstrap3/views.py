@@ -21,7 +21,7 @@ from django.utils.translation import get_language
 from lino.core import auth
 
 
-from lino.api import dd
+# from lino.api import dd
 from lino.core import constants
 # from lino.core import auth
 from lino.core.requests import BaseRequest
@@ -93,7 +93,7 @@ def table2html(ar, as_main=True):
     toolbar. (This argument is currently being ignored.)
 
     """
-    as_main = True
+    # as_main = True
     t = xghtml.Table()
     t.attrib.update(class_="table table-striped table-hover")
     if ar.limit is None:
@@ -113,7 +113,11 @@ def table2html(ar, as_main=True):
     ar.dump2html(t, ar.sliced_data_iterator)
     if not as_main:
         url = ar.get_request_url()  # open in own window
-        return E.div(E.a(ar.get_title(), href=url), t.as_element())
+        return E.div(
+                E.div(E.div(E.a(E.span(class_="glyphicon glyphicon-folder-open"),class_="btn btn-default pull-right", href=url, style = "margin-left: 4px;"),E.h5(ar.get_title(), style="display: inline-block;"), class_="panel-title"),
+                      class_="panel-heading"),
+                t.as_element(),
+               class_="panel panel-default",style="display: inline-block;")
 
     buttons = []
     kw = dict()
@@ -169,7 +173,7 @@ class List(View):
     """
     def get(self, request, app_label=None, actor=None):
         ar = action_request(app_label, actor, request, request.GET, True)
-        ar.renderer = dd.plugins.bootstrap3.renderer
+        ar.renderer = settings.SITE.plugins.bootstrap3.renderer
 
         context = dict(
             title=ar.get_title(),
@@ -190,8 +194,9 @@ class Element(View):
 
     """
     def get(self, request, app_label=None, actor=None, pk=None):
+        print(request, app_label, actor, pk)
         ar = action_request(app_label, actor, request, request.GET, False)
-        ar.renderer = dd.plugins.bootstrap3.renderer
+        ar.renderer = settings.SITE.plugins.bootstrap3.renderer
 
         navigator = None
         if pk and pk != '-99999' and pk != '-99998':
@@ -222,6 +227,18 @@ class Element(View):
                     navigator = E.p("No navinfo")
         else:
             elem = None
+
+
+        # main = E.div(
+        #     E.div(E.div(E.h5(ar.get_title(),
+        #              style="display: inline-block;"),
+        #         class_="panel-title"),
+        #         class_="panel-heading"),
+        #     E.div(layout2html(ar, elem),class_="panel-body"), # Content
+        #     class_="panel panel-default",
+        #     # style="display: inline-block;"
+        # )
+
 
         main = layout2html(ar, elem)
        
@@ -292,9 +309,11 @@ class Index(View):
     Render the main page.
     """
     def get(self, request, *args, **kw):
-        ui = dd.plugins.bootstrap3
+        # raise Exception("20171122 {} {}".format(
+        #     get_language(), settings.MIDDLEWARE_CLASSES))
+        ui = settings.SITE.plugins.bootstrap3
         # print("20170607", request.user)
-        assert ui.renderer is not None
+        # assert ui.renderer is not None
         ar = BaseRequest(
             # user=user,
             request=request,
@@ -302,7 +321,7 @@ class Index(View):
         return index_response(ar)
 
 def index_response(ar):
-    ui = dd.plugins.bootstrap3
+    ui = settings.SITE.plugins.bootstrap3
 
     main = settings.SITE.get_main_html(ar.request, extjs=ui)
     main = ui.renderer.html_text(main)

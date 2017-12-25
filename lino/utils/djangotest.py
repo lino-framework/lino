@@ -125,10 +125,11 @@ class DjangoManageTestCase(DjangoTestCase, CommonTestCase):
         if res.status_code != 200:
             raise Exception("{} gave status code {} instead of 200".format(
                 url, res.status_code))
+        content = res.content.decode()
         try:
-            d = json.loads(res.content)
+            d = json.loads(content)
         except ValueError as e:
-            raise ValueError("Invalid JSON {} : {}".format(res.content, e))
+            raise ValueError("Invalid JSON {} : {}".format(content, e))
         return AttrDict(d)
 
     def check_callback_dialog(self, meth, username, url, dialog, *data, **extra):

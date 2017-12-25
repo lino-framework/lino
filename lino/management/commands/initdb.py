@@ -143,7 +143,7 @@ class Command(BaseCommand):
 Are you sure (y/n) ?""" % dbname):
                 raise CommandError("User abort.")
             
-        fixtures = options.get('fixtures', args)
+        fixtures = options.pop('fixtures', args)
 
         # print(20160817, fixtures, options)
 
@@ -226,21 +226,19 @@ Are you sure (y/n) ?""" % dbname):
 
         settings.SITE._site_config = None  # clear cached instance
 
-        if AFTER18:
-            if engine == 'django.db.backends.postgresql':
-                # a first time to create tables of contenttypes. At
-                # least on PostgreSQL this is required because for
-                # some reason the syncdb fails when contenttypes is
-                # not initialized.
-                call_command('migrate', **options)
-            call_command('migrate', '--run-syncdb', **options)
-        else:
+        if engine == 'django.db.backends.postgresql':
+            # a first time to create tables of contenttypes. At
+            # least on PostgreSQL this is required because for
+            # some reason the syncdb fails when contenttypes is
+            # not initialized.
             call_command('migrate', **options)
+        call_command('migrate', '--run-syncdb', **options)
 
         if len(fixtures):
             # if engine == 'django.db.backends.postgresql':
             #     foralltables(using, "ALTER TABLE {} DISABLE TRIGGER ALL;")
-                
+
+            options.pop('interactive')
             call_command('loaddata', *fixtures, **options)
             
             # if engine == 'django.db.backends.postgresql':

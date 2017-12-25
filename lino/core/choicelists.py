@@ -132,11 +132,11 @@ class Choice(object):
         else:
             # assert_pure(text)
             self.text = text
-        for k, v in list(kwargs.items()):
+        for k, v in kwargs.items():
             setattr(self, k, v)
 
     def update(self, **kwargs):
-        for k, v in list(kwargs.items()):
+        for k, v in kwargs.items():
             if not hasattr(self, k):
                 raise Exception("%s has no attribute `%s`" % (self, k))
             setattr(self, k, v)
@@ -497,6 +497,10 @@ The disadvantage
     def type(cls, choice, ar):
         return choice.__class__.__name__
 
+    # @fields.displayfield(_("Description"))
+    # def description(cls, choice, ar):
+    #     return choice.help_text
+
     @classmethod
     def get_data_rows(self, ar=None):
         """When showing a :class:`ChoiceList` as a table, the items are sorted
@@ -775,6 +779,18 @@ The disadvantage
     #~ def items(self):
         #~ return [choice[0] for choice in self.choices]
 
+    @classmethod
+    def find(cls, **fkw):
+        """Find and return the choice which satisfies the given search
+        criteria.  Return None if no choice is found or if more than
+        one choice is found.
+
+        """
+        lst = cls.filter(**fkw)
+        if len(lst) == 1:
+            return lst[0]
+        return None
+    
     @classmethod
     def filter(self, **fkw):
         def f(item):

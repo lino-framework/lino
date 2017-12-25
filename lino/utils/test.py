@@ -56,10 +56,11 @@ class CommonTestCase(unittest.TestCase):
             response.status_code, 200,
             "Response status ({0}) was {1} instead of 200".format(
                 msg, response.status_code))
+        content = response.content.decode()
         try:
-            result = json.loads(response.content)
+            result = json.loads(content)
         except ValueError as e:
-            logger.warning("%s in %r", e, response.content)
+            logger.warning("%s in %r", e, content)
             raise
         if expected_keys is not None:
             self.assertEqual(set(result.keys()), set(expected_keys.split()))
@@ -83,7 +84,7 @@ class CommonTestCase(unittest.TestCase):
         if report_plain:
             msg = "----- EXPECTED : -----\n%s\n----- GOT : -----\n%s" % (a, b)
         else:
-            msg = "EXPECTED : %s" % (' '.join(ta))
+            msg =  "\nEXPECTED : %s" % (' '.join(ta))
             msg += "\n     GOT : %s" % (' '.join(tb))
         if False:
             logger.warning(msg)

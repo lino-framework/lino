@@ -97,7 +97,6 @@ Permissions:
 
 - :class:`UserGroups <lino.modlib.users.mixins.UserGroups>`
 - :class:`UserLevels <lino.modlib.users.mixins.UserLevels>`
-- :func:`add_user_group <lino.modlib.users.mixins.add_user_group>`
 
 
 Workflows:

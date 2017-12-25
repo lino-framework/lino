@@ -78,7 +78,7 @@ def add_gridfilters(qs, gridfilters):
                 kw[field.name + "__icontains"] = flt['value']
                 q = q & models.Q(**kw)
             elif isinstance(field, models.ForeignKey):
-                qf = field.rel.model.quick_search_filter(
+                qf = field.remote_field.model.quick_search_filter(
                     flt['value'], prefix=field.name + "__")
                 # logger.info("20160610 %s %s", field.rel.model, qf)
                 q = q & qf
@@ -343,7 +343,10 @@ class Table(AbstractTable):
         search for the given `search_text`.
 
         """
-        return qs.filter(qs.model.quick_search_filter(search_text))
+        flt = qs.model.quick_search_filter(search_text)
+        if len(flt) == 0:
+            return qs.model.objects.none()
+        return qs.filter(flt)
 
     @classmethod
     def get_chooser_for_field(self, fieldname):
@@ -545,8 +548,8 @@ class Table(AbstractTable):
                     # fk, remote, direct, m2m = x
                     # assert direct
                     # assert not m2m
-                    if fk.rel is not None:
-                        master_model = fk.rel.model
+                    if fk.remote_field:
+                        master_model = fk.remote_field.model
                     elif isinstance(fk, ChoiceListField):
                         master_model = fk.choicelist.item_class
                     elif isinstance(fk, GenericForeignKey):
@@ -695,108 +698,117 @@ class Table(AbstractTable):
 
     @classmethod
     def get_request_queryset(self, rr, **filter):
-        """Build a Queryset for the specified ActionRequest on this table.
+        """Return the iterable of Django database objects for the specified
+        action request.
 
-        The return value is either a Django queryset object or a list
-        or tuple of Django database objects.
-
-        Any keyword attributes will be forwarded to 
-        :meth:`lino.core.model.Model.get_request_queryset`.
+        The default implementation calls :meth:`get_queryset` and then
+        applies request parameters.
 
         """
-        # print("20160329 dbtables.py get_request_queryset({})".format(
-        #     rr.param_values))
+
+        def apply(qs):
+        
+            # print("20160329 {}".format(qs.query))
+            if qs is None:
+                return self.model.objects.none()
+            kw = self.get_filter_kw(rr)
+            if kw is None:
+                return self.model.objects.none()
+            if len(kw):
+                # print("20171116 dbtables.py get_request_queryset({})".format(
+                #     kw))
+                qs = qs.filter(**kw)
+
+            if rr.exclude:
+                qs = qs.exclude(**rr.exclude)
+                # qs = qs.exclude(rr.exclude)
+
+            spv = dict()
+            for k in self.simple_parameters:
+                v = getattr(rr.param_values, k)
+                if v is not None:
+                    spv[k] = v
+            qs = self.model.add_param_filter(qs, **spv)
+
+            if self.filter:
+                qs = qs.filter(self.filter)
+
+            if rr.filter:
+                qs = qs.filter(rr.filter)
+
+            if rr.known_values:
+                # logger.info("20120111 known values %r",rr.known_values)
+                d = {}
+                for k, v in list(rr.known_values.items()):
+                    if v is None:
+                        d[k + "__isnull"] = True
+                    else:
+                        # d[k+"__exact"] = v
+                        d[k] = v
+                    qs = qs.filter(**d)
+
+            if self.exclude:
+                qs = qs.exclude(**self.exclude)
+                # TODO: use Q object instead of dict
+
+            if rr.quick_search:
+                qs = self.add_quick_search_filter(qs, rr.quick_search)
+            if rr.gridfilters is not None:
+                qs = add_gridfilters(qs, rr.gridfilters)
+            extra = rr.extra or self.extra
+            if extra is not None:
+                qs = qs.extra(**extra)
+            order_by = rr.order_by or self.order_by
+            if order_by:
+                # logger.info("20120122 order_by %s",order_by)
+                qs = qs.order_by(*order_by)
+            if self.debug_sql:
+                logger.info("%s %s", self.debug_sql, qs.query)
+            return qs
+
+        if self.model._meta.abstract:
+            def func():
+                for m in models_by_base(self.model):
+                    qs = m.get_request_queryset(rr, **filter)
+                    qs = apply(qs)
+                    for obj in qs:
+                        yield obj
+            return func()
         qs = self.get_queryset(rr)
-        # print("20160329 {}".format(qs.query))
-        if qs is None:
-            return self.model.objects.none()
-        kw = self.get_filter_kw(rr)
-        if kw is None:
-            return self.model.objects.none()
-        if len(kw):
-            qs = qs.filter(**kw)
-
-        if rr.exclude:
-            qs = qs.exclude(**rr.exclude)
-            # qs = qs.exclude(rr.exclude)
-
-        spv = dict()
-        for k in self.simple_parameters:
-            v = getattr(rr.param_values, k)
-            if v is not None:
-                spv[k] = v
-        qs = self.model.add_param_filter(qs, **spv)
-
-        if self.filter:
-            qs = qs.filter(self.filter)
-
-        if rr.filter:
-            qs = qs.filter(rr.filter)
-
-        if rr.known_values:
-            # logger.info("20120111 known values %r",rr.known_values)
-            d = {}
-            for k, v in list(rr.known_values.items()):
-                if v is None:
-                    d[k + "__isnull"] = True
-                else:
-                    # d[k+"__exact"] = v
-                    d[k] = v
-                qs = qs.filter(**d)
-
-        if self.exclude:
-            qs = qs.exclude(**self.exclude)
-            # TODO: use Q object instead of dict
-
-        if rr.quick_search:
-            qs = self.add_quick_search_filter(qs, rr.quick_search)
-        if rr.gridfilters is not None:
-            qs = add_gridfilters(qs, rr.gridfilters)
-        extra = rr.extra or self.extra
-        if extra is not None:
-            qs = qs.extra(**extra)
-        order_by = rr.order_by or self.order_by
-        if order_by:
-            # logger.info("20120122 order_by %s",order_by)
-            qs = qs.order_by(*order_by)
-        if self.debug_sql:
-            logger.info("%s %s", self.debug_sql, qs.query)
-        return qs
+        return apply(qs)
 
     @classmethod
     def get_queryset(self, ar, **filter):
-        """
-        Return an iterable over the items processed by this table.
+        """Return the Django Queryset processed by this table.
 
-        Any keyword attributes are forwarded to 
-        :meth:`lino.core.model.Model.get_request_queryset`.
+        The default implementation forwards the call to the model's
+        :meth:`get_request_queryset
+        <lino.core.model.Model.get_request_queryset>`.
 
         Override this to use e.g. select_related() or to return a list.
-
-        Return a customized default queryset
-    
+   
         Example::
 
           def get_queryset(self):
               return self.model.objects.select_related('country', 'city')
 
-
         """
-        if self.model._meta.abstract:
-            lst = list(models_by_base(self.model))
-            qs = lst[0].get_request_queryset(ar, **filter)
-            if len(lst) > 1:
-                flds = self.get_handle().store.list_fields
-                flds = set([
-                    f.name for f in flds
-                    if isinstance(f.field, models.Field)])
-                flds |= self.hidden_elements
-                # flds = self.column_names.split()
-                qs = qs.only(*flds)
-                for m in lst[1:]:
-                    qs = qs.union(m.get_request_queryset(ar, **filter).only(*flds))
-                # raise Exception("20170905 {} {}".format(flds, qs.query))
-            return qs
+        assert not self.model._meta.abstract
+        # if self.model._meta.abstract:
+        #     lst = list(models_by_base(self.model))
+        #     qs = lst[0].get_request_queryset(ar, **filter)
+        #     if len(lst) > 1:
+        #         flds = self.get_handle().store.list_fields
+        #         flds = set([
+        #             f.name for f in flds
+        #             if isinstance(f.field, models.Field)])
+        #         flds |= self.hidden_elements
+        #         # flds = self.column_names.split()
+        #         qs = qs.only(*flds)
+        #         for m in lst[1:]:
+        #             qs = qs.union(m.get_request_queryset(ar, **filter).only(*flds))
+        #         # raise Exception("20170905 {} {}".format(flds, qs.query))
+        #     return qs
         return self.model.get_request_queryset(ar, **filter)
 
     @classmethod

@@ -1,6 +1,7 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2017 Luc Saffre
 # License: BSD (see file COPYING for details)
+# This started as a copy of Django 1.11 django.contrib.auth.middleware.
 
 from __future__ import unicode_literals
 import six
@@ -106,12 +107,14 @@ class RemoteUserMiddleware(MiddlewareMixin):
         Allows the backend to clean the username, if the backend defines a
         clean_username method.
         """
-        backend_str = request.session[auth.BACKEND_SESSION_KEY]
-        backend = auth.load_backend(backend_str)
-        try:
-            username = backend.clean_username(username)
-        except AttributeError:  # Backend has no clean_username method.
-            pass
+        # LS 20171221 : support remote auth without session
+        backend_str = request.session.get(auth.BACKEND_SESSION_KEY, '')
+        if backend_str:
+            backend = auth.load_backend(backend_str)
+            try:
+                username = backend.clean_username(username)
+            except AttributeError:  # Backend has no clean_username method.
+                pass
         return username
 
     def _remove_invalid_user(self, request):
@@ -129,6 +132,41 @@ class RemoteUserMiddleware(MiddlewareMixin):
                 auth.logout(request)
 
 
+def request2data(request, user_language=None):
+
+    if request.method == 'GET':
+        rqdata = request.GET
+    elif request.method in ('PUT', 'DELETE'):
+        # raw_post_data before Django 1.4
+        rqdata = http.QueryDict(request.body)
+    elif request.method == 'POST':
+        rqdata = request.POST
+    else:
+        # e.g. OPTIONS, HEAD
+        if user_language and len(settings.SITE.languages) > 1:
+            translation.activate(user_language)
+            request.LANGUAGE_CODE = translation.get_language()
+        #~ logger.info("20121205 on_login %r",translation.get_language())
+        request.requesting_panel = None
+        request.subst_user = None
+        return
+    # ~ else: # DELETE
+        #~ request.subst_user = None
+        #~ request.requesting_panel = None
+        #~ return
+
+    request.requesting_panel = rqdata.get(
+        constants.URL_PARAM_REQUESTING_PANEL, None)
+    
+    if len(settings.SITE.languages) > 1:
+        user_language = rqdata.get(
+            constants.URL_PARAM_USER_LANGUAGE, user_language)
+        if user_language:
+            translation.activate(user_language)
+        request.LANGUAGE_CODE = translation.get_language()
+
+    return rqdata
+
 
 
 class NoUserMiddleware(object):
@@ -137,17 +175,8 @@ class NoUserMiddleware(object):
             activate(settings.TIME_ZONE)
         request.subst_user = None
         request.user = AnonymousUser()
-        if request.method == 'GET':
-            rqdata = request.GET
-        elif request.method in ('PUT', 'DELETE'):
-            # raw_post_data before Django 1.4
-            rqdata = http.QueryDict(request.body)
-        elif request.method == 'POST':
-            rqdata = request.POST
-        else:
-            return
-        request.requesting_panel = rqdata.get(
-        constants.URL_PARAM_REQUESTING_PANEL, None)
+        request2data(request)
+        
 
 class WithUserMiddleware(object):
     
@@ -158,35 +187,9 @@ class WithUserMiddleware(object):
         if settings.USE_TZ:
             activate(user.timezone or settings.TIME_ZONE)
 
-        if request.method == 'GET':
-            rqdata = request.GET
-        elif request.method in ('PUT', 'DELETE'):
-            # raw_post_data before Django 1.4
-            rqdata = http.QueryDict(request.body)
-        elif request.method == 'POST':
-            rqdata = request.POST
-        else:
-            # e.g. OPTIONS, HEAD
-            if len(settings.SITE.languages) > 1:
-                if user_language:
-                    translation.activate(user_language)
-                request.LANGUAGE_CODE = translation.get_language()
-            #~ logger.info("20121205 on_login %r",translation.get_language())
-            request.requesting_panel = None
-            request.subst_user = None
+        rqdata = request2data(request, user_language)
+        if rqdata is None:
             return
-        # ~ else: # DELETE
-            #~ request.subst_user = None
-            #~ request.requesting_panel = None
-            #~ return
-
-        if len(settings.SITE.languages) > 1:
-
-            user_language = rqdata.get(
-                constants.URL_PARAM_USER_LANGUAGE, user_language)
-            if user_language:
-                translation.activate(user_language)
-            request.LANGUAGE_CODE = translation.get_language()
 
         su = rqdata.get(constants.URL_PARAM_SUBST_USER, None)
         if su is not None:
@@ -199,6 +202,4 @@ class WithUserMiddleware(object):
             else:
                 su = None  # e.g. when it was an empty string "su="
         request.subst_user = su
-        request.requesting_panel = rqdata.get(
-            constants.URL_PARAM_REQUESTING_PANEL, None)
 

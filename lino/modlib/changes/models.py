@@ -85,7 +85,7 @@ class Change(dd.Model):
     else:
         user = dd.DummyField()
 
-    object_type = models.ForeignKey(
+    object_type = dd.ForeignKey(
         'contenttypes.ContentType', blank=True, null=True,
         verbose_name=_("Object type"),
         related_name='changes_by_object')
@@ -93,7 +93,7 @@ class Change(dd.Model):
         object_type, blank=True, null=True)
     object = GenericForeignKey('object_type', 'object_id', _("Object"))
 
-    master_type = models.ForeignKey(
+    master_type = dd.ForeignKey(
         'contenttypes.ContentType', blank=True, null=True,
         verbose_name=_("Master type"), related_name='changes_by_master')
     master_id = GenericForeignKeyIdField(
@@ -113,7 +113,7 @@ class Changes(dd.Table):
     """The default table for :class:`Change`.
     """
 
-    param_object_type = models.ForeignKey(
+    param_object_type = dd.ForeignKey(
         'contenttypes.ContentType',
         verbose_name=_("Object type"), blank=True)
     parameters = {

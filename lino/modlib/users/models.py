@@ -31,6 +31,33 @@ from .actions import ChangePassword, SignOut
 from lino.core.auth.utils import AnonymousUser
 
 
+class UserManager(BaseUserManager):
+    use_in_migrations = True
+
+    def _create_user(self, username, email, password, **extra_fields):
+        """
+        Creates and saves a User with the given username, email and password.
+        """
+        if not username:
+            raise ValueError('The given username must be set')
+        email = self.normalize_email(email)
+        username = self.model.normalize_username(username)
+        user = self.model(username=username, email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_user(self, username, email=None, password=None, **extra_fields):
+        extra_fields.setdefault('user_type', UserTypes.user)
+        return self._create_user(username, email, password, **extra_fields)
+
+    def create_superuser(self, username, email, password, **extra_fields):
+        extra_fields.setdefault('user_type', UserTypes.admin)
+        return self._create_user(username, email, password, **extra_fields)
+
+
+
+
 @python_2_unicode_compatible
 class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
     class Meta(object):
@@ -42,15 +69,16 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
 
     USERNAME_FIELD = 'username'
     _anon_user = None
-    objects = BaseUserManager()
+    objects = UserManager()
 
     preferred_foreignkey_width = 15
     hidden_columns = 'password remarks'
     authenticated = True
 
+    # seems that Django doesn't like nullable username
     # username = dd.NullCharField(_('Username'), max_length=30, unique=True)
     username = models.CharField(_('Username'), max_length=30, unique=True)
-    # seems that Django doesn't like nullable username 
+    
     user_type = UserTypes.field(blank=True)
     initials = models.CharField(_('Initials'), max_length=10, blank=True)
     first_name = models.CharField(_('First name'), max_length=30, blank=True)
@@ -81,6 +109,14 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
         # return join_words(self.last_name.upper(),self.first_name)
         return str(self)
 
+    # @dd.displayfield(_("Other authentication providers"))
+    # def social_auth_links(self, ar=None):
+    #     return settings.SITE.get_social_auth_links        ()
+    #     # elems = []
+    #     # for backend in get_social_auth_backends()
+    #     # elems.append(E.a("foo"))
+    #     # return E.p(elems)
+    
     def get_person(self):
         if self.partner:
             return self.partner.get_mti_child('person')
@@ -159,11 +195,13 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
             action_param_values=pv,
             renderer=settings.SITE.kernel.default_renderer)
         btn = btn.ar2button(label=self.username)
-        return E.li(
-            btn, ' : ',
-            str(self), ', ',
-            str(self.user_type), ', ',
-            E.strong(settings.SITE.LANGUAGE_DICT.get(self.language)))
+        items = [ btn, ' : ',
+                  str(self), ', ',
+                  str(self.user_type)]
+        if self.language:
+            items += [', ',
+            E.strong(settings.SITE.LANGUAGE_DICT.get(self.language))]
+        return E.li(*items)
         # if settings.SITE.is_demo_site:
         #     p = "'{0}', '{1}'".format(self.username, '1234')
         # else:
@@ -216,7 +254,7 @@ class Authority(UserAuthored):
         verbose_name_plural = _("Authorities")
 
 
-    authorized = models.ForeignKey(settings.SITE.user_model)
+    authorized = dd.ForeignKey(settings.SITE.user_model)
 
     @dd.chooser()
     def authorized_choices(cls, user):

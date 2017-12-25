@@ -25,11 +25,9 @@ from __future__ import print_function
 
 from lino.api import ad, _
 
-# raise Exception("20160528")
-
 
 class Plugin(ad.Plugin):
-    needs_plugins = ['lino.modlib.users']
+    needs_plugins = ['lino.modlib.users', 'social_django']
 
     ui_label = _("Social Authentication")
 
@@ -44,7 +42,9 @@ class Plugin(ad.Plugin):
         yield (name, version, "https://github.com/python-social-auth")
 
     def on_init(self):
-        self.needs_plugins.append('social_django')
+        raise Exception("No longer used. See Site.social_auth_backends.")
+
+        # self.needs_plugins.append()
         ds = self.site.django_settings
         if False:
             ds['SOCIAL_AUTH_PIPELINE'] = (

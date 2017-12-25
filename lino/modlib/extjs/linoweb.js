@@ -927,6 +927,7 @@ Lino.on_tab_activate = function(item) {
 
 Lino.TimeField = Ext.extend(Ext.form.TimeField,{
   format: '{{settings.SITE.time_format_extjs}}',
+  altFormats: '{{settings.SITE.alt_time_formats_extjs}}',
   increment: 15
   });
 Lino.DateField = Ext.extend(Ext.form.DateField,{
@@ -1459,6 +1460,7 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
     
     if (result.goto_url) {
         document.location = result.goto_url;
+        if (result.close_window) Lino.close_window();
         return;
     }
     
@@ -1545,7 +1547,7 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
               panel.set_status(st);
           } else {
               // console.log("20150514 run detail_handler.");
-              st.base_params = panel.get_base_params();
+              if (panel.ls_detail_handler == detail_handler){st.base_params = panel.get_base_params();}
               detail_handler.run(null, st);
           }
 
@@ -2011,12 +2013,12 @@ Lino.call_ajax_action = function(
   // Ext.apply(p, panel.get_base_params());
   // console.log("20150130 b", p.{{constants.URL_PARAM_PARAM_VALUES}});
 
-  if (panel.get_selected) {
+  if (panel.get_selected && p.{{constants.URL_PARAM_SELECTED}} === undefined) {
       var selected_recs = panel.get_selected();
       //~ console.log("20130831",selected_recs);
       var rs = Array(selected_recs.length);
       for(var i=0; i < selected_recs.length;i++) {
-          rs[i] = selected_recs[i].data.id;
+          rs[i] = selected_recs[i].id;
       };
       p.{{constants.URL_PARAM_SELECTED}} = rs;
   }
@@ -2039,8 +2041,8 @@ Lino.call_ajax_action = function(
 
 
 Lino.row_action_handler = function(actionName, hm, pp) {
-  var p = {};
   var fn = function(panel, btn, step) {
+      var p = {};
       // console.log('20150514 row_action_handler');
       if (pp) { p = pp(panel); if (! p) return; }
       
@@ -2067,9 +2069,9 @@ Lino.row_action_handler = function(actionName, hm, pp) {
 };
 
 Lino.list_action_handler = function(ls_url,actionName,hm,pp) {
-  var p = {};
   var url = '{{extjs.build_plain_url("api")}}' + ls_url
   var fn = function(panel,btn,step) {
+      var p = {};
       //~ console.log("20121210 Lino.list_action_handler",arguments);
       if (pp) { p = pp(panel);  if (! p) return; }
       if (panel) { // may be undefined when called e.g. from quicklink
@@ -2107,12 +2109,11 @@ Lino.run_row_action = function(
   }
   if (panel && is_on_main_actor) {
       Ext.apply(params, panel.get_base_params())
-  } else {
-      // 20170731
-      // params.{{constants.URL_PARAM_PARAM_VALUES}} = Array();
-      // delete params.{{constants.URL_PARAM_PARAM_VALUES}};
-      Lino.insert_subst_user(params);
+  }else {
+     params.{{constants.URL_PARAM_SELECTED}} = pk
   }
+  Lino.insert_subst_user(params);
+
   var fn = function(panel, btn, step) {
     Lino.call_ajax_action(panel, meth, url, params, actionName, step, fn);
   }
@@ -3351,15 +3352,6 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
       
     var this_ = this;
     //~ var grid = this;
-    /**
-    *  Cancel the previous request when do a new load request.
-    *  Prevents Ajax race conditions. Ticket #2136
-    **/
-    this.store.on('beforeload', function(theStore, operation, eOpts) {
-                        var c = theStore.proxy.getConnection();
-                        c.abort(c.transId);
-                        });
-
     this.store.on('load', function() {
         //~ console.log('20120814 GridStore.on(load)',this_.store);
         this_.set_param_values(this_.store.reader.arrayData.param_values);
@@ -3747,7 +3739,16 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
     //~ console.log("2012124 search_keypress",arguments);
   //~ },
   search_validate : function(value) {
-    if (value == this.quick_search_text) return true;
+      if (value == this.quick_search_text) return true;
+
+      /**
+      *  Cancel the previous request when do a new load request.
+      *  Prevents Ajax race conditions. Ticket #2136
+      **/
+      var c = this.store.proxy.getConnection();
+      c.abort(c.transId);
+
+      
     this.is_searching = true;
     //~ console.log('search_validate',value)
     this.quick_search_text = value;

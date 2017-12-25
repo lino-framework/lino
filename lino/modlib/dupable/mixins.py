@@ -2,35 +2,7 @@
 # Copyright 2014-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Defines the :class:`Dupable` model mixin and related functionality
-to assist users in finding unwanted duplicate database records.
-
-Don't mix up this module with :mod:`lino.mixins.duplicable`.  Models
-are "duplicable" if users may *want* to duplicate some instance
-thereof, while "dupable" implies that the duplicates are *unwanted*.
-To dupe *somebody* means "to make a dupe of; deceive; delude; trick."
-(`reference.com <http://dictionary.reference.com/browse/dupe>`_), and
-to dupe *something* means to duplicate it (eventually in order to
-cheat somebody e.g. by making a cheap copy of a valuable object).
-
-This requires the `metafone
-<https://pypi.python.org/pypi/Metafone/0.5>`__ package (a successor of
-`fuzzy <https://pypi.python.org/pypi/Fuzzy>`__ which isn't yet ported
-to Python 3).  Applications that use this mixin must themselves add
-`metafone` to their :ref:`install_requires`.
-
-The current implementation uses a helper table with "phonetic words"
-and the `Double Metaphone
-<https://en.wikipedia.org/wiki/Metaphone#Double_Metaphone>`_
-algorithm.  Read also Doug Hellmann about `Using Fuzzy Matching to
-Search by Sound with Python
-<http://www.informit.com/articles/article.aspx?p=1848528>`_
-(2012-03-22).
-
-"""
-
 from __future__ import unicode_literals
-import six
 from builtins import map
 from builtins import str
 from builtins import object
@@ -43,8 +15,6 @@ from lino.api import dd, rt, _
 from lino.core.actions import SubmitInsert
 from lino.core.gfks import gfk2lookup
 from lino.core.gfks import ContentType
-from lino.utils import join_elems
-from lino.utils.xmlgen.html import E
 
 
 class CheckedSubmitInsert(SubmitInsert):
@@ -93,6 +63,8 @@ class Dupable(dd.Model):
         content_type_field='owner_type',
         object_id_field='owner_id')
 
+    # show_words = dd.ShowSlaveTable('dupable.WordsByOwner')
+
     submit_insert = CheckedSubmitInsert()
     """A dupable model has its
     :attr:`submit_insert<lino.core.model.Model.submit_insert>` action
@@ -135,7 +107,7 @@ class Dupable(dd.Model):
             for w in wanted:
                 PhoneticWord(word=w, owner=self).save()
         return _("Must update phonetic words.")
-        # return _("Must update phonetic words. (existing {}, wanted {})").format(existing, wanted)
+        # return _("(existing {}, wanted {})").format(existing, wanted)
 
     def after_ui_save(self, ar, cw):
         super(Dupable, self).after_ui_save(ar, cw)
@@ -181,6 +153,9 @@ class Dupable(dd.Model):
         if limit is None:
             return qs
         return qs[:limit]
+
+
+    
 
 
 from lino.modlib.checkdata.choicelists import Checker

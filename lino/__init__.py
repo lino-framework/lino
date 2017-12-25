@@ -43,6 +43,7 @@ and
 
 # from __future__ import unicode_literals
 # from __future__ import absolute_import
+# from builtins import str
 
 import sys
 import os
@@ -89,13 +90,18 @@ def assert_django_code(django_code):
 
 from django import VERSION
 
-AFTER17 = False
-AFTER18 = False
+AFTER17 = True
+AFTER18 = True
 if VERSION[0] == 1:
-    if VERSION[1] > 6:
-        AFTER17 = True
-        if VERSION[1] > 8:
-            AFTER18 = True
+    if VERSION[1] < 10:
+        raise Exception("Unsupported Django version %s" % VERSION)
+    # if VERSION[1] > 6:
+    #     AFTER17 = True
+    #     if VERSION[1] > 8:
+    #         AFTER18 = True
+elif VERSION[0] == 2:
+    AFTER17 = True
+    AFTER18 = True
 else:
     raise Exception("Unsupported Django version %s" % VERSION)
 

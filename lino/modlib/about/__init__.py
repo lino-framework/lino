@@ -1,4 +1,4 @@
-# Copyright 2008-2015 Luc Saffre
+# Copyright 2008-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -17,12 +17,13 @@ from lino.api import ad
 class Plugin(ad.Plugin):
     "See :doc:`/dev/plugins`."
 
-    def setup_site_menu(config, site, user_type, m):
-        m.add_action(site.modules.about.About)
+    def setup_site_menu(self, site, user_type, m):
+        m.add_action(site.models.about.About)
+        # m.add_action(site.models.about.SiteSearch)
         if site.use_experimental_features:
-            m.add_action(site.modules.about.Models)
-            m.add_action(site.modules.about.Inspector)
-            m.add_action(site.modules.about.SourceFiles)
-            # m.add_action(site.modules.about.DetailLayouts)
-            # m.add_action(site.modules.about.WindowActions)
-            # m.add_action(site.modules.about.FormPanels)
+            m.add_action(site.models.about.Models)
+            m.add_action(site.models.about.Inspector)
+            m.add_action(site.models.about.SourceFiles)
+            # m.add_action(site.models.about.DetailLayouts)
+            # m.add_action(site.models.about.WindowActions)
+            # m.add_action(site.models.about.FormPanels)

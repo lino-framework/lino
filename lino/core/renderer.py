@@ -20,7 +20,7 @@ from atelier import rstgen
 
 from django.conf import settings
 from django.db import models
-from django.utils.encoding import force_text
+# from django.utils.encoding import force_text
 
 from django.utils.translation import ugettext as _
 from django.utils.translation import get_language
@@ -184,9 +184,11 @@ class HtmlRenderer(Renderer):
     def href_to(self, ar, obj, text=None):
         h = self.obj2url(ar, obj)
         if h is None:
-            return escape(force_text(obj))
+            # return escape(force_text(obj))
+            return escape(str(obj))
         uri = self.js2url(h)
-        return self.href(uri, text or force_text(obj))
+        # return self.href(uri, text or force_text(obj))
+        return self.href(uri, text or str(obj))
 
     def href_to_request(self, sar, tar, text=None, **kw):
         """Return a string with an URL which would run the given target
@@ -323,7 +325,8 @@ request `tar`."""
 
         """
         if text is None:
-            text = (force_text(obj),)
+            # text = (force_text(obj),)
+            text = (str(obj),)
         elif isinstance(text, six.string_types) or E.iselement(text):
             text = (text,)
         url = self.obj2url(ar, obj)
@@ -612,7 +615,8 @@ class TextRenderer(HtmlRenderer):
         """Used by :meth:`lino.core.requests.BaseRequest.obj2str`.
         """
         if text is None:
-            text = force_text(obj)
+            # text = force_text(obj)
+            text = str(obj)
         # return "**{0}**".format(text)
         return settings.SITE.obj2text_template.format(text)
 

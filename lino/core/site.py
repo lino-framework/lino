@@ -43,13 +43,14 @@ from lino.core.plugin import Plugin
 
 from lino import assert_django_code, DJANGO_DEFAULT_LANGUAGE
 from lino.utils.xmlgen.html import E
-from lino.core.utils import simplify_name
+from lino.core.utils import simplify_name, get_models
 # from lino.utils.html2text import html2text
 # from html2text import html2text
 from lino.core.exceptions import ChangedAPI
 # from .roles import SiteUser
 
 from html2text import HTML2Text
+
 
 # _INSTANCES = []
 
@@ -499,6 +500,30 @@ class Site(object):
 
     """
 
+    social_auth_backends = None
+    """A list of backends for `Python Social Auth
+    <https://github.com/python-social-auth>`__ (PSA).
+
+    Having this at a value different from `None` means that this site
+    uses authentication via third-party providers.
+
+    Sites which use this must also install PSA into their
+    environment::
+
+      $ pip install social-auth-app-django
+
+    Depending on the backend you must also add credentials in your
+    local :xfile:`settings.py` file, e.g.::
+
+      SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = \
+        '1234567890-a1b2c3d4e5.apps.googleusercontent.com'
+      SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'SH6da...'
+
+    A working example is in the :mod:`lino_book.projects.team` demo
+    project.
+
+    """
+
     use_ipdict = False
     """Whether this site uses :mod:`lino.modlib.ipdict`.
 
@@ -743,7 +768,20 @@ class Site(object):
     If you change this setting, you also need to override :meth:`parse_time`.
 
     """
+    alt_time_formats_extjs = "g:ia|g:iA|g:i a|g:i A|h:i|g:i|H:i|ga|ha|gA|h a|g a|g A|gi|hi" \
+                             "|gia|hia|g|H|gi a|hi a|giA|hiA|gi A|hi A" \
+                             "|Hi|g.ia|g.iA|g.i a|g.i A|h.i|g.i|H.i"
+    """Alternative time entry formats accepted by ExtJS time widgets.
 
+    ExtJS default is:
+
+        "g:ia|g:iA|g:i a|g:i A|h:i|g:i|H:i|ga|ha|gA|h a|g a|g A|gi|hi|gia|hia|g|H|gi a|hi a|giA|hiA|gi A|hi A"
+
+    Lino's extended default also includes:
+
+        "Hi" (1900) and "g.ia|g.iA|g.i a|g.i A|h.i|g.i|H.i" (Using . in replacement of ":")
+
+    """
     date_format_extjs = 'd.m.Y'
     """Format (in ExtJS syntax) to use for displaying dates to the user.
     If you change this setting, you also need to override :meth:`parse_date`.
@@ -924,6 +962,9 @@ class Site(object):
     Usage example for this see :mod:`lino.projects.cms`.
 
     """
+    
+    admin_ui = None
+    
 
     mobile_view = False
     """When this is `False` (the default), then Lino uses an attribute
@@ -1499,7 +1540,7 @@ class Site(object):
 
         #~ logger.info("20130404 lino.site.Site.override_defaults")
 
-        for k, v in list(kwargs.items()):
+        for k, v in kwargs.items():
             if not hasattr(self, k):
                 raise Exception("%s has no attribute %s" % (self.__class__, k))
             setattr(self, k, v)
@@ -1888,7 +1929,18 @@ this field.
             backends.append('lino.core.auth.backends.RemoteUserBackend')
         else:
             backends.append('lino.core.auth.backends.ModelBackend')
+
+        if self.social_auth_backends is not None:
+            backends += self.social_auth_backends
+
         self.define_settings(AUTHENTICATION_BACKENDS=backends)
+
+        self.update_settings(
+            LOGIN_URL='/accounts/login/',
+            LOGIN_REDIRECT_URL = '/',
+            # LOGIN_REDIRECT_URL = '/accounts/profile/',
+            LOGOUT_REDIRECT_URL = None)
+        
 
         def collect_settings_subdirs(lst, name, max_count=None):
             def add(p):
@@ -2017,7 +2069,8 @@ this field.
 
         It influences the results of
         :meth:`get_middleware_classes` and
-        :meth:`get_installed_apps`.
+        :meth:`get_installed_apps`, and the content of
+        :setting:`AUTHENTICATION_BACKENDS`.
 
         """
         if self.user_model is None:
@@ -2447,17 +2500,11 @@ this field.
     def setup_actions(self):
         """Hook for subclasses to add or modify actions.
 
-        Usage example::
-
-            def setup_actions(self):
-                super(Site, self).setup_actions()
-                from lino.core.merge import MergeAction
-                partners = self.models.contacts
-                for m in (partners.Person, partners.Organisation):
-                    m.define_action(merge_row=MergeAction(m))
-
         """
-        pass
+        from lino.core.merge import MergeAction
+        for m in get_models():
+            if m.allow_merge_action:
+                m.define_action(merge_row=MergeAction(m))
 
     def setup_layouts(self):
         '''Hook for subclasses to add or modify layouts.
@@ -2563,9 +2610,37 @@ this field.
         # version = getattr(yaml, '__version__', '')
         # yield ("PyYaml", version, "http://pyyaml.org/")
 
+        if self.social_auth_backends is not None:
+            try:
+                import social_django
+                version = social_django.__version__
+            except ImportError:
+                version = self.not_found_msg
+            name = "social-django"
+
+            yield (name, version, "https://github.com/python-social-auth")
+
         for p in self.installed_plugins:
             for u in p.get_used_libs(html):
                 yield u
+
+    def get_social_auth_links(self):
+        # print("20171207 site.py")
+        # elems = []
+        if self.social_auth_backends is None:
+            return
+        from social_core.backends.utils import load_backends
+        # from collections import OrderedDict
+        # from django.conf import settings
+        # from social_core.backends.base import BaseAuth
+        # backend = module_member(auth_backend)
+        # if issubclass(backend, BaseAuth):
+        for b in load_backends(
+            self.social_auth_backends).values():
+            yield E.a(b.name, href="/oauth/login/"+b.name)
+        # print("20171207 a", elems)
+        # return E.div(*elems)
+
 
     def apply_languages(self):
         """This function is called when a Site object gets instantiated,
@@ -2598,7 +2673,7 @@ this field.
             #~ self.language_dict[info.name] = info
         else:
             if isinstance(self.languages, six.string_types):
-                self.languages = self.languages.split()
+                self.languages = str(self.languages).split()
             #~ lc = [x for x in self.django_settings.get('LANGUAGES' if x[0] in languages]
             #~ lc = language_choices(*self.languages)
             #~ self.update_settings(LANGUAGES = lc)
@@ -2610,7 +2685,7 @@ this field.
         languages = []
         for i, django_code in enumerate(self.languages):
             assert_django_code(django_code)
-            name = (to_locale(django_code))
+            name = str(to_locale(django_code))
             if name in self.language_dict:
                 raise Exception("Duplicate name %s for language code %r"
                                 % (name, django_code))
@@ -2709,7 +2784,7 @@ this field.
             #~ set_language(self.get_default_language())
 
             """
-            reduce LANGUAGES to my babel languages:
+            reduce Django's LANGUAGES to my babel languages:
             """
             self.update_settings(
                 LANGUAGES=[x for x in LANGUAGES
@@ -2760,7 +2835,7 @@ this field.
         """
         rv = []
         if isinstance(languages, six.string_types):
-            languages = languages.split()
+            languages = str(languages).split()
         for k in languages:
             if isinstance(k, six.string_types):
                 li = self.get_language_info(k)
@@ -3309,17 +3384,13 @@ Please convert to Plugin method".format(mod, methname)
             yield 'lino.core.auth.middleware.RemoteUserMiddleware'
         if self.use_ipdict:
             yield 'lino.modlib.ipdict.middleware.Middleware'
+        if self.social_auth_backends:
+            yield 'social_django.middleware.SocialAuthExceptionMiddleware'
+            
                     
         #~ yield 'lino.utils.editing.EditingMiddleware'
         if True:
             yield 'lino.utils.ajax.AjaxExceptionResponse'
-
-        if False:  # not BYPASS_PERMS:
-            yield 'django.contrib.auth.middleware.RemoteUserMiddleware'
-            # TODO: find solution for this:
-            #~ AUTHENTICATION_BACKENDS = (
-              #~ 'django.contrib.auth.backends.RemoteUserBackend',
-            #~ )
 
         if False:
             #~ yield 'lino.utils.sqllog.ShortSQLLogToConsoleMiddleware'
@@ -3400,8 +3471,19 @@ Please convert to Plugin method".format(mod, methname)
 
         if self.use_ipdict:
             yield 'lino.modlib.ipdict'
+            
+        if self.social_auth_backends:
+            yield 'social_django'
 
         yield self.default_ui
+        
+        if self.admin_ui is not None:
+            if self.admin_ui == self.default_ui:
+                raise Exception(
+                    "admin_ui (if specified) must be different "
+                    "from default_ui")
+            yield self.admin_ui
+            
         # if self.default_ui == "extjs":
         #     yield 'lino.modlib.extjs'
         #     yield 'lino.modlib.bootstrap3'
@@ -3474,7 +3556,7 @@ signature as `django.core.mail.EmailMessage`.
             print(PRINT_EMAIL.format(
                 subject=subject, sender=sender, body=body,
                 recipients=u', '.join(recipients)).encode(
-                    'ascii', 'replace'))
+                    'ascii', 'replace').decode())
             return
 
         recipients = [a for a in recipients if '@example.com' not in a]

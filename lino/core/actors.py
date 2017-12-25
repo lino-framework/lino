@@ -457,7 +457,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     allow_create = True
     """
-    If this is False, then then Actor won't have no insert_action.
+    If this is False, the table won't have any insert_action.
     """
 
     hide_headers = False
@@ -636,11 +636,11 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
             vf = fields.VirtualField(v, field_getter(k))
             cls.add_virtual_field(k, vf)
 
-    @classmethod
-    def inject_field(cls, name, fld):
-        # called from auth.add_user_group()
-        setattr(cls, name, fld)
-        cls.register_class_attribute(name, fld)
+    # @classmethod
+    # def inject_field(cls, name, fld):
+    #     # called from auth.add_user_group()
+    #     setattr(cls, name, fld)
+    #     cls.register_class_attribute(name, fld)
 
     @classmethod
     def get_pk_field(self):
@@ -979,7 +979,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                     if not k in cls.actions:
                         cls._bind_action(k, v)
 
-        cls._actions_list.sort(key=lambda a: a.action.sort_index)
+        cls._actions_list.sort(
+            key=lambda a: (a.action.sort_index, a.action.action_name))
         # cls._actions_list = tuple(cls._actions_list)
         
         # build a dict which maps state.name to a set of action names

@@ -32,9 +32,6 @@ from lino.utils import IncompleteDate
 from lino.utils import quantities
 from lino.utils.quantities import Duration
 
-from lino import AFTER17, AFTER18
-
-
 class PasswordField(models.CharField):
 
     """Stored as plain text in database, but not displayed in user
@@ -195,6 +192,7 @@ class FakeField(object):
     default = NOT_PROVIDED
     generate_reverse_relation = False  # needed when AFTER17
     remote_field = False
+    sortable_by = None
 
     # required by Django 1.8:
     is_relation = False
@@ -223,6 +221,17 @@ class FakeField(object):
     def has_default(self):
         return self.default is not NOT_PROVIDED
 
+    def get_default(self):
+        return self.default
+    
+    def set_attributes_from_name(self, name):
+        if not self.name:
+            self.name = name
+        self.attname = name
+        self.column = None
+        self.concrete = False
+        # if self.verbose_name is None and self.name:
+        #     self.verbose_name = self.name.replace('_', ' ')
 
 class RemoteField(FakeField):
     """A field on a related object.
@@ -243,13 +252,14 @@ class RemoteField(FakeField):
         self.max_length = getattr(fld, 'max_length', None)
         self.max_digits = getattr(fld, 'max_digits', None)
         self.decimal_places = getattr(fld, 'decimal_places', None)
+        self.sortable_by = [ name ]
         #~ print 20120424, self.name
         #~ settings.SITE.register_virtual_field(self)
 
         if isinstance(fld, models.ForeignKey) or (isinstance(fld, VirtualField) and isinstance(fld.return_type, models.ForeignKey)):
-            self.rel = self.field.rel
+            self.remote_field = self.field.remote_field
             from lino.core import store
-            store.get_atomizer(self.rel, self, name)
+            store.get_atomizer(self.remote_field, self, name)
 
     #~ def lino_resolve_type(self):
         #~ self._lino_atomizer = self.field._lino_atomizer
@@ -286,7 +296,7 @@ class DisplayField(FakeField):
 
     def __init__(self, verbose_name=None, **kw):
         self.verbose_name = verbose_name
-        for k, v in list(kw.items()):
+        for k, v in kw.items():
             assert hasattr(self, k)
             setattr(self, k, v)
 
@@ -304,7 +314,7 @@ class DisplayField(FakeField):
         raise NotImplementedError
 
     def value_from_object(self, obj, ar=None):
-        return ''
+        return self.default
 
 
 class HtmlBox(DisplayField):
@@ -339,7 +349,7 @@ class HtmlBox(DisplayField):
 #         return "<{0}>.{1}".format(repr(self.instance), self.vf.name)
 
 VFIELD_ATTRIBS = frozenset('''to_python choices save_form_data
-  value_to_string max_length rel
+  value_to_string max_length remote_field
   max_digits verbose_name decimal_places
   help_text blank'''.split())
 
@@ -433,16 +443,15 @@ class VirtualField(FakeField):
         f = self.return_type
         #~ self.return_type.name = self.name
         if isinstance(f, models.ForeignKey):
-            if AFTER18:
-                f.rel.model = resolve_model(f.rel.model)
-            else:
-                f.rel.to = resolve_model(f.rel.to)
+            f.remote_field.model = resolve_model(f.remote_field.model)
             if f.verbose_name is None:
                 #~ if f.name is None:
-                f.verbose_name = f.rel.model._meta.verbose_name
+                f.verbose_name = f.remote_field.model._meta.verbose_name
                     #~ from lino.core.kernel import set_default_verbose_name
                     #~ set_default_verbose_name(self.return_type)
 
+        if isinstance(f, FakeField):
+            self.sortable_by = f.sortable_by
         # if self.name == 'detail_pointer':
         #     logger.info('20170905 resolve_type 1 %s on %s',
         #                 self.name, self.verbose_name)
@@ -537,14 +546,12 @@ def virtualfield(return_type):
 
 
 class Constant(object):
-
     """
     Deserves more documentation.
     """
 
     def __init__(self, text_fn):
         self.text_fn = text_fn
-
 
 def constant():
     """Decorator to turn a function into a :class:`Constant`.  The
@@ -845,7 +852,6 @@ class DummyField(FakeField):
     def set_attributes_from_name(self, k):
         pass
 
-
 def wildcard_data_elems(model):
     """Yield names to be used as wildcard in the :attr:`column_names` of a
     table or when :func:`fields_list` finds a ``*``.
@@ -949,7 +955,8 @@ def ForeignKey(othermodel, *args, **kw):
         if not settings.SITE.is_installed_model_spec(othermodel):
             return DummyField(othermodel, *args, **kw)
 
-    # kw.setdefault('on_delete', models.PROTECT)
+    # Django 2 wants it explicitly:
+    kw.setdefault('on_delete', models.CASCADE)
     return models.ForeignKey(othermodel, *args, **kw)
 
 

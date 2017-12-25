@@ -6,13 +6,13 @@
 Documentation is in :doc:`/specs/users` and :doc:`/dev/users`
 
 """
-
+from django.conf import settings
 from lino.api import dd, rt, _
 from lino.core import actions
-from lino.core.roles import SiteAdmin
+from lino.core.roles import SiteAdmin, SiteUser
 
 from .choicelists import UserTypes
-from .actions import SendWelcomeMail, SignIn
+from .actions import SendWelcomeMail, SignIn, SignInWithSocialAuth
 
 class UserDetail(dd.DetailLayout):
 
@@ -25,7 +25,7 @@ class UserDetail(dd.DetailLayout):
 
     main = """
     box1 #MembershipsByUser:20
-    remarks:40 AuthoritiesGiven:20
+    remarks:40 AuthoritiesGiven:20 SocialAuthsByUser:30
     """
 
     main_m = """
@@ -99,6 +99,10 @@ class UsersOverview(Users):
     column_names = 'username user_type language'
     exclude = dict(user_type='')
     sign_in = SignIn()
+    # if settings.SITE.social_auth_backends is None:
+    #     sign_in = SignIn()
+    # else:
+    #     sign_in = SignInWithSocialAuth()
 
 class MySettings(Users):
     # use_as_default_table = False
@@ -132,4 +136,26 @@ class AuthoritiesTaken(Authorities):
     column_names = 'user'
     auto_fit_column_widths = True
 
+if settings.SITE.social_auth_backends:
 
+    try:
+        import social_django
+    except ImportError:
+        raise Exception(
+            "Sites with social_auth_backends must also install PSA "
+            "into their environment: "
+            "$ pip install social-auth-app-django")
+    
+
+    class SocialAuths(dd.Table):
+        label = _("Third-party authorizations")
+        required_roles = dd.login_required(SiteAdmin)
+        model = 'social_django.UserSocialAuth'
+        
+    class SocialAuthsByUser(SocialAuths):
+        required_roles = dd.login_required(SiteUser)
+        master_key = 'user'
+else:
+
+    class SocialAuthsByUser(dd.Dummy):
+        pass

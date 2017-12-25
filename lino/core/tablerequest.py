@@ -34,6 +34,7 @@ from lino.utils.xmlgen import html as xghtml
 from lino.utils.xmlgen.html import E
 from lino.utils import jsgen
 from lino.core.utils import getrqdata
+from .fields import RemoteField, FakeField
 
 from .requests import ActionRequest
 
@@ -130,6 +131,7 @@ class TableRequest(ActionRequest):
             if self.limit is not None:
                 self._sliced_data_iterator = self._sliced_data_iterator[
                     :self.limit]
+        # logger.info("20171116 executed : %s", self._sliced_data_iterator)
 
     def must_execute(self):
         return self._data_iterator is None
@@ -274,7 +276,6 @@ class TableRequest(ActionRequest):
                 kw['gridfilters'] = [constants.dict2kw(flt) for flt in filter]
 
         kw = ActionRequest.parse_req(self, request, rqdata, **kw)
-        #~ raise Exception("20120121 %s.parse_req(%s)" % (self,kw))
 
         #~ kw.update(self.report.known_values)
         #~ for fieldname, default in self.report.known_values.items():
@@ -288,10 +289,16 @@ class TableRequest(ActionRequest):
 
         sort = rqdata.get(constants.URL_PARAM_SORT, None)
         if sort:
+            sortfld = self.actor.get_data_elem(sort)
+            if isinstance(sortfld, FakeField):
+                sort = sortfld.sortable_by
+            else:
+                sort = [sort]
             sort_dir = rqdata.get(constants.URL_PARAM_SORTDIR, 'ASC')
             if sort_dir == 'DESC':
-                sort = '-' + sort
-            kw.update(order_by=[sort])
+                sort = ['-' + k for k in sort]
+            # print("20171123", sort)
+            kw.update(order_by=sort)
 
         try:
             offset = rqdata.get(constants.URL_PARAM_START, None)
@@ -306,7 +313,9 @@ class TableRequest(ActionRequest):
             # 'fdpkvcnrfdybhur'
             raise SuspiciousOperation("Invalid value for limit or offset")
 
-        return self.actor.parse_req(request, rqdata, **kw)
+        kw = self.actor.parse_req(request, rqdata, **kw)
+        # print("20171123 %s.parse_req() --> %s" % (self, kw))
+        return kw
 
     def setup(self,
               quick_search=None,
@@ -351,7 +360,12 @@ class TableRequest(ActionRequest):
 
         self.actor.setup_request(self)
 
-        self.create_kw = self.actor.get_filter_kw(self)
+        if isinstance(self.actor.master_field, RemoteField):
+            # cannot insert rows in a slave table with a remote master
+            # field
+            self.create_kw = None
+        else:
+            self.create_kw = self.actor.get_filter_kw(self)
 
         if offset is not None:
             self.offset = offset
@@ -415,7 +429,7 @@ class TableRequest(ActionRequest):
             headers = [
                 x for x in grid.headers2html(
                     self, columns, headers, **self.renderer.cellattrs)]
-            if cellwidths:
+            if cellwidths and self.renderer.is_interactive:
                 for i, td in enumerate(headers):
                     td.attrib.update(width=six.text_type(cellwidths[i]))
             tble.head.append(xghtml.E.tr(*headers))

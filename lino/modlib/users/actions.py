@@ -148,7 +148,22 @@ class SignOut(dd.Action):
         auth.logout(ar.request)
         ar.success(
             _("User {} logged out.").format(user),
-            goto_url="/")
+            goto_url=ar.renderer.plugin.build_plain_url())
+
+from lino.utils.xmlgen.html import E
+# from lino.core.fields import DisplayField, DummyField
+
+# class SocialAuthField(DisplayField):
+
+#     def value_from_object(self, obj, ar=None):
+#         elems = []
+#         elems.append(E.a("foo"))
+#         return E.p(elems)
+
+# def social_auth_field():
+#     if settings.SITE.social_auth_backends:
+#         return SocialAuthField()
+#     return DummyField()
 
 
 class SignIn(dd.Action):
@@ -164,7 +179,6 @@ class SignIn(dd.Action):
     password
     """, label_align="left")
 
-
     def run_from_ui(self, ar, **kw):
         pv = ar.action_param_values
         user = auth.authenticate(
@@ -175,5 +189,29 @@ class SignIn(dd.Action):
             # user.is_authenticated:
             auth.login(ar.request, user)
             ar.success(
-                _("Now logged in as {}").format(user), goto_url="/")
+                _("Now logged in as {}").format(user),
+                close_window=True,
+                goto_url=ar.renderer.plugin.build_plain_url())
+
+
+
+class SignInWithSocialAuth(SignIn):
+    # 20171207 nice as an example of a action dialog window with a
+    # HtmlBox, but we don't currently use it.
+    parameters = dict(
+        social_auth_links=dd.HtmlBox(
+            # _("Other authentications"),
+            default=E.div(*settings.SITE.get_social_auth_links())),
+        # social_auth_links=dd.Constant(
+        #     settings.SITE.get_social_auth_links),
+        # social=social_auth_field(),
+        username=dd.CharField(_("Username")),
+        password=dd.PasswordField(_("Password"), blank=True)
+    )
+    # params_layout = dd.ActionParamsLayout("""
+    params_layout = dd.Panel("""
+    username
+    password
+    social_auth_links
+    """, label_align="left", window_size=(60,10))
 
