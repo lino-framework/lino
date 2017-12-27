@@ -345,7 +345,7 @@ class LayoutElement(VisibleComponent):
             # self.update(label = None)
         if self.label:
             if isinstance(parent, Panel):
-                if parent.label_align == layouts.LABEL_ALIGN_LEFT:
+                if self.layout_handle.layout.label_align == layouts.LABEL_ALIGN_LEFT:
                     self.preferred_width += len(self.label)
 
     def ext_options(self, **kw):
@@ -1581,6 +1581,57 @@ class ManyToManyElement(HtmlBoxElement):
         super(ManyToManyElement, self).__init__(lh, fld, **kw)
 
 
+class Wrapper(VisibleComponent):
+
+    """
+    """
+    # label = None
+
+    def __init__(self, e, **kw):
+        kw.update(layout='form')
+        if not isinstance(e, TextFieldElement):
+            kw.update(autoHeight=True)
+        # kw.update(labelAlign=e.parent.label_align)
+        kw.update(items=e, xtype='panel')
+        VisibleComponent.__init__(self, e.name + "_ct", **kw)
+        self.wrapped = e
+        for n in ('width', 'height', 'preferred_width', 'preferred_height',
+                  # 'loosen_requirements'
+                  'vflex'):
+            setattr(self, n, getattr(e, n))
+
+        if e.vflex:
+            e.update(anchor=FULLWIDTH + ' ' + FULLHEIGHT)
+        else:
+            e.update(anchor=FULLWIDTH)
+            e.update(autoHeight=True)  # 20130924
+
+    def is_visible(self):
+        return self.wrapped.is_visible()
+
+    def get_view_permission(self, user_type):
+        return self.wrapped.get_view_permission(user_type)
+
+    def walk(self):
+        if not self.is_visible():
+            return
+        for e in self.wrapped.walk():
+            yield e
+        yield self
+
+    def as_plain_html(self, ar, obj):
+        for chunk in self.wrapped.as_plain_html(ar, obj):
+            yield chunk
+
+    def ext_options(self, **kw):
+        kw = super(Wrapper, self).ext_options(**kw)
+        if self.wrapped.field is not None:
+            if is_hidden_babel_field(self.wrapped.field):
+                kw.update(hidden=True)
+                # print("20130827 hidden %s" % self.wrapped.field)
+        return kw
+
+
 class Container(LayoutElement):
 
     """
@@ -1595,14 +1646,14 @@ class Container(LayoutElement):
     is_fieldset = False
     value_template = "new Ext.Container(%s)"
     hideCheckBoxLabels = True
-    label_align = layouts.LABEL_ALIGN_TOP
+    # label_align = layouts.LABEL_ALIGN_TOP
 
     declare_type = jsgen.DECLARE_VAR
 
     def __init__(self, layout_handle, name, *elements, **kw):
         self.active_children = []
         self.elements = elements
-        self.label_align = kw.pop('label_align', layouts.LABEL_ALIGN_TOP)
+        # self.label_align = kw.pop('label_align', layouts.LABEL_ALIGN_TOP)
         if elements:
             for e in elements:
                 e.set_parent(self)
@@ -1668,7 +1719,7 @@ class Container(LayoutElement):
 
     def ext_options(self, **kw):
         kw = LayoutElement.ext_options(self, **kw)
-        kw.update(labelAlign=self.label_align)
+        # kw.update(labelAlign=self.label_align)
         # not necessary to filter elements here, jsgen does that
         kw.update(items=self.elements)
         # if all my children are hidden, i am myself hidden
@@ -1701,57 +1752,6 @@ class Container(LayoutElement):
         return False
 
 
-class Wrapper(VisibleComponent):
-
-    """
-    """
-    # label = None
-
-    def __init__(self, e, **kw):
-        kw.update(layout='form')
-        if not isinstance(e, TextFieldElement):
-            kw.update(autoHeight=True)
-        kw.update(labelAlign=e.parent.label_align)
-        kw.update(items=e, xtype='panel')
-        VisibleComponent.__init__(self, e.name + "_ct", **kw)
-        self.wrapped = e
-        for n in ('width', 'height', 'preferred_width', 'preferred_height',
-                  # 'loosen_requirements'
-                  'vflex'):
-            setattr(self, n, getattr(e, n))
-
-        if e.vflex:
-            e.update(anchor=FULLWIDTH + ' ' + FULLHEIGHT)
-        else:
-            e.update(anchor=FULLWIDTH)
-            e.update(autoHeight=True)  # 20130924
-
-    def is_visible(self):
-        return self.wrapped.is_visible()
-
-    def get_view_permission(self, user_type):
-        return self.wrapped.get_view_permission(user_type)
-
-    def walk(self):
-        if not self.is_visible():
-            return
-        for e in self.wrapped.walk():
-            yield e
-        yield self
-
-    def as_plain_html(self, ar, obj):
-        for chunk in self.wrapped.as_plain_html(ar, obj):
-            yield chunk
-
-    def ext_options(self, **kw):
-        kw = super(Wrapper, self).ext_options(**kw)
-        if self.wrapped.field is not None:
-            if is_hidden_babel_field(self.wrapped.field):
-                kw.update(hidden=True)
-                # print("20130827 hidden %s" % self.wrapped.field)
-        return kw
-
-
 class Panel(Container):
 
     """A vertical Panel is vflex if and only if at least one of its
@@ -1765,9 +1765,27 @@ class Panel(Container):
     active_child = False
     value_template = "new Ext.Panel(%s)"
 
+    def set_layout_manager(self, name, **cfg):
+        d = self.value
+        if cfg:
+            if self.layout_handle.ui.renderer.extjs_version == 3:
+                d['layout'] = name
+                d['layoutConfig'] = cfg
+            else:
+                d.update(layout=dict(type=name, **cfg))
+        else:
+            d.update(layout=name)
+            
+    def get_layout_name(self):
+        x = self.value.get('layout')
+        if x is not None:
+            if isinstance(x, dict):
+                return x.get('type')
+            return x
+        
     def __init__(self, layout_handle, name, vertical, *elements, **kw):
+        Container.__init__(self, layout_handle, name, *elements, **kw)
         self.vertical = vertical
-
         self.vflex = not vertical
         for e in elements:
             if self.vertical:
@@ -1788,7 +1806,7 @@ class Panel(Container):
                 # vflex elements go into a vbox, the others into a form layout.
 
             else:  # not self.vertical
-                kw.update(layout='hbox', layoutConfig=dict(align='stretch'))
+                self.set_layout_manager('hbox', align='stretch')
 
         for e in elements:
             if isinstance(e, FieldElement):
@@ -1798,7 +1816,6 @@ class Panel(Container):
                     if self.label_width < w:
                         self.label_width = w
 
-        Container.__init__(self, layout_handle, name, *elements, **kw)
 
         w = h = 0
         has_height = False  # 20120210
@@ -1829,23 +1846,16 @@ class Panel(Container):
             if len(self.elements) == 1:
                 d.update(layout='fit')
             elif self.vertical:
-                # d.update(layout='form')
-                if layout_handle.ui.renderer.extjs_version == 3:
-                    d.update(layout=dict(type='vbox', align='stretch'))
+                if self.vflex:
+                    self.set_layout_manager('vbox', align='stretch')
                 else:
-                    if self.vflex:
-                        d.update(layout='vbox', layoutConfig=dict(align='stretch'))
-                    else:
-                        # 20100921b
-                        # d.update(layout='form')
-                        d.update(layout='form', autoHeight=True)
-                        # d.update(layout='vbox',autoHeight=True)
+                    self.set_layout_manager('form', autoHeight=True)
             else:
-                d.update(layout='hbox', autoHeight=True)  # 20101028
+                self.set_layout_manager('hbox', autoHeight=True)
 
-        if d['layout'] == 'form':
+        if self.get_layout_name() == 'form':
             assert self.vertical
-            self.update(labelAlign=self.label_align)
+            # self.update(labelAlign=self.label_align)
             self.wrap_formlayout_elements()
             if len(self.elements) == 1 and self.elements[0].vflex:
                 self.elements[0].update(anchor=FULLWIDTH + ' ' + FULLHEIGHT)
@@ -1853,7 +1863,7 @@ class Panel(Container):
                 for e in self.elements:
                     e.update(anchor=FULLWIDTH)
 
-        elif d['layout'] == 'hbox' or (type(d['layout']) is dict and d['layout'].get('type', False) == 'hbox'):
+        elif self.get_layout_name() == 'hbox':
         # elif d['layout'] == 'hbox':
             self.wrap_formlayout_elements()
             for e in self.elements:
@@ -1868,13 +1878,9 @@ class Panel(Container):
 
             if not self.vflex:  # 20101028
                 d.update(autoHeight=True)
-                if layout_handle.ui.renderer.extjs_version == 3:
-                    d.update(layoutConfig=dict(align='stretchmax'))
-                else:
-                    d.update(layout=dict(type='hbox', align='stretchmax'))
+                self.set_layout_manager('hbox', align='stretchmax')
 
-        elif d['layout'] in ['vbox', 'anchor'] or (
-                        type(d['layout']) is dict and d['layout'].get('type', False) in ['vbox', 'anchor']):
+        elif self.get_layout_name() in ['vbox', 'anchor']:
             # a vbox with 2 or 3 elements, of which at least two are
             # vflex will be implemented as a VBorderPanel.
             assert len(self.elements) > 1
@@ -1900,7 +1906,7 @@ class Panel(Container):
                 self.elements[1].update(region='center')
                 if len(self.elements) == 3:
                     self.elements[2].update(region='south')
-        elif d['layout'] == 'fit':
+        elif self.get_layout_name() == 'fit':
             self.wrap_formlayout_elements()
         else:
             raise Exception("layout is %r" % d['layout'])
@@ -2252,10 +2258,10 @@ def create_layout_panel(rnd, lh, name, vertical, elems, **kwargs):
     like `label_align` to their ExtJS equivalent `labelAlign`.
     """
     pkw = dict()
-    if rnd.extjs_version == 3:
-        # pkw.update(labelAlign=kwargs.pop('label_align', 'top'))
-        pkw.update(label_align=kwargs.pop(
-            'label_align', lh.layout.label_align))
+    # if rnd.extjs_version == 3:
+    #     # pkw.update(labelAlign=kwargs.pop('label_align', 'top'))
+    #     pkw.update(label_align=kwargs.pop(
+    #         'label_align', lh.layout.label_align))
     pkw.update(hideCheckBoxLabels=kwargs.pop('hideCheckBoxLabels', True))
     pkw.update(label=kwargs.pop('label', None))
     pkw.update(width=kwargs.pop('width', None))

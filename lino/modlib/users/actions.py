@@ -10,7 +10,7 @@ from django.conf import settings
 
 from lino.api import dd, rt, _
 from lino.core.roles import SiteAdmin
-from lino.core import auth
+from lino.core import auth, layouts
 
 class SendWelcomeMail(dd.Action):
     label = _("Welcome mail")
@@ -177,7 +177,7 @@ class SignIn(dd.Action):
     params_layout = dd.Panel("""
     username
     password
-    """, label_align="left")
+    """, label_align=layouts.LABEL_ALIGN_LEFT)
 
     def run_from_ui(self, ar, **kw):
         pv = ar.action_param_values
