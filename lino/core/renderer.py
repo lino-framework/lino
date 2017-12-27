@@ -340,6 +340,9 @@ request `tar`."""
     def quick_upload_buttons(self, rr):
         return '[?!]'
 
+    def setup_layout_element(self, el):
+        pass
+    
     def create_layout_element(self, *args, **kw):
         return create_layout_element(*args, **kw)
 

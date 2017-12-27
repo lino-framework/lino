@@ -1752,13 +1752,16 @@ class Panel(Container):
                 d.update(layout='fit')
             elif self.vertical:
                 # d.update(layout='form')
-                if self.vflex:
-                    d.update(layout='vbox', layoutConfig=dict(align='stretch'))
+                if layout_handle.ui.renderer.extjs_version == 3:
+                    d.update(layout=dict(type='vbox', align='stretch'))
                 else:
-                    # 20100921b
-                    # d.update(layout='form')
-                    d.update(layout='form', autoHeight=True)
-                    # d.update(layout='vbox',autoHeight=True)
+                    if self.vflex:
+                        d.update(layout='vbox', layoutConfig=dict(align='stretch'))
+                    else:
+                        # 20100921b
+                        # d.update(layout='form')
+                        d.update(layout='form', autoHeight=True)
+                        # d.update(layout='vbox',autoHeight=True)
             else:
                 d.update(layout='hbox', autoHeight=True)  # 20101028
 
@@ -1772,7 +1775,8 @@ class Panel(Container):
                 for e in self.elements:
                     e.update(anchor=FULLWIDTH)
 
-        elif d['layout'] == 'hbox':
+        elif d['layout'] == 'hbox' or (type(d['layout']) is dict and d['layout'].get('type', False) == 'hbox'):
+        # elif d['layout'] == 'hbox':
             self.wrap_formlayout_elements()
             for e in self.elements:
                 # a hbox having at least one child with explicit
@@ -1786,9 +1790,13 @@ class Panel(Container):
 
             if not self.vflex:  # 20101028
                 d.update(autoHeight=True)
-                d.update(layoutConfig=dict(align='stretchmax'))
+                if layout_handle.ui.renderer.extjs_version == 3:
+                    d.update(layoutConfig=dict(align='stretchmax'))
+                else:
+                    d.update(layout=dict(type='hbox', align='stretchmax'))
 
-        elif d['layout'] == 'vbox':
+        elif d['layout'] in ['vbox', 'anchor'] or (
+                        type(d['layout']) is dict and d['layout'].get('type', False) in ['vbox', 'anchor']):
             # a vbox with 2 or 3 elements, of which at least two are
             # vflex will be implemented as a VBorderPanel.
             assert len(self.elements) > 1
@@ -1802,7 +1810,10 @@ class Panel(Container):
                     vflex_count += 1
             if vflex_count >= 2 and len(self.elements) <= 3:
                 self.remove('layout', 'layoutConfig')
-                self.value_template = 'new Lino.VBorderPanel(%s)'
+                if layout_handle.ui.renderer.extjs_version == 3:
+                    self.value_template = 'new Lino.VBorderPanel(%s)'
+                else:
+                    self.value_template = 'Lino.VBorderPanel(%s)'
                 for e in self.elements:
                     if e.vflex:
                         e.update(flex=e.height or e.preferred_height)
@@ -1838,7 +1849,10 @@ class Panel(Container):
         if self.label:
             if not isinstance(self.parent, TabPanel):
                 self.update(title=self.label)
-                self.value_template = "new Ext.form.FieldSet(%s)"
+                if self.layout_handle.ui.renderer.extjs_version == 3:
+                    self.value_template = "new Ext.form.FieldSet(%s)"
+                else:
+                    self.value_template = "Ext.create('Ext.form.FieldSet',%s)"
                 self.update(frame=False)
                 self.update(bodyBorder=True)
                 self.update(border=True)
@@ -1859,6 +1873,8 @@ class Panel(Container):
             d.update(frame=True)
             d.update(bodyBorder=False)
             d.update(border=False)
+            if self.layout_handle.ui.renderer.extjs_version != 3:
+                d.update(layout=dict(type='vbox', align='stretch'))
             # d.update(style=dict(padding='0px'),color='green')
         else:
             d.update(frame=False)
@@ -1877,7 +1893,7 @@ class GridElement(Container):
     # declare_type = jsgen.DECLARE_THIS
     # value_template = "new Ext.grid.EditorGridPanel(%s)"
     # value_template = "new Ext.grid.GridPanel(%s)"
-    value_template = "new Lino.GridPanel(%s)"
+    # value_template = "new Lino.GridPanel(%s)"
     ext_suffix = "_grid"
     vflex = True
     xtype = None
@@ -1892,7 +1908,10 @@ class GridElement(Container):
 
         """
         # assert isinstance(rpt,dd.AbstractTable), "%r is not a Table!" % rpt
-        self.value_template = "new Lino.%s.GridPanel(%%s)" % rpt
+        if layout_handle.ui.renderer.extjs_version == 3:
+            self.value_template = "new Lino.%s.GridPanel(%%s)" % rpt
+        else:
+            self.value_template = "Ext.create('Lino.%s.GridPanel',%%s)" % rpt
         self.actor = rpt
         if len(columns) == 0:
             self.rh = rpt.get_handle()
@@ -2078,12 +2097,15 @@ _FIELD2ELEM = (
 TRIGGER_BUTTON_WIDTH = 3
 
 
-def field2elem(layout_handle, field, **kw):
+def field2elem(rnd, layout_handle, field, **kw):
     holder = layout_handle.layout.get_chooser_holder()
     ch = holder.get_chooser_for_field(field.name)
     if ch:
         if ch.can_create_choice or not ch.force_selection:
             kw.update(forceSelection=False)
+        elif rnd.extjs_version == 6:
+            # Ticket #2006, even with ch.force_selection == True for timezone, the js defaults to False
+            kw.update(forceSelection=True)
         if ch.simple_values:
             return SimpleRemoteComboFieldElement(layout_handle, field, **kw)
         else:
@@ -2146,15 +2168,16 @@ def field2elem(layout_handle, field, **kw):
             field.name, field.__class__, layout_handle.layout))
 
 
-def create_layout_panel(lh, name, vertical, elems, **kwargs):
+def create_layout_panel(rnd, lh, name, vertical, elems, **kwargs):
     """
     This also must translate ui-agnostic parameters
     like `label_align` to their ExtJS equivalent `labelAlign`.
     """
     pkw = dict()
-    # pkw.update(labelAlign=kwargs.pop('label_align', 'top'))
-    pkw.update(label_align=kwargs.pop(
-        'label_align', lh.layout.label_align))
+    if rnd.extjs_version == 3:
+        # pkw.update(labelAlign=kwargs.pop('label_align', 'top'))
+        pkw.update(label_align=kwargs.pop(
+            'label_align', lh.layout.label_align))
     pkw.update(hideCheckBoxLabels=kwargs.pop('hideCheckBoxLabels', True))
     pkw.update(label=kwargs.pop('label', None))
     pkw.update(width=kwargs.pop('width', None))
@@ -2185,7 +2208,7 @@ def create_layout_panel(lh, name, vertical, elems, **kwargs):
     return Panel(lh, name, vertical, *elems, **pkw)
 
 
-def create_layout_element(lh, name, **kw):
+def create_layout_element(rnd, lh, name, **kw):
     """
     Create a layout element from the named data element.
     """
@@ -2301,8 +2324,7 @@ def create_layout_element(lh, name, **kw):
                     if a is not None:
                         kw.update(ls_insert_handler=js_code("Lino.%s" %
                                   a.full_name()))
-                        kw.update(ls_bbar_actions=[
-                            settings.SITE.plugins.extjs.renderer.a2btn(a)])
+                        kw.update(ls_bbar_actions=[rnd.a2btn(a)])
                 field = fields.HtmlBox(verbose_name=de.label)
                 field.name = de.__name__
                 field.help_text = de.help_text
