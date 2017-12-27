@@ -699,7 +699,7 @@ class ExtRenderer(JsRenderer):
             language=translation.get_language(),
             # ext_requests=constants,
             constants=constants,
-            extjs=settings.SITE.plugins.extjs,
+            extjs=self.plugin,  # 20171227
         )
 
         context.update(_=_)
@@ -834,15 +834,17 @@ class ExtRenderer(JsRenderer):
         return ('cache', 'js', filename)
 
     def linolib_template(self):
-        env = jinja2.Environment(loader=jinja2.FileSystemLoader(
-            os.path.dirname(__file__)))
-        return env.get_template('linoweb.js')
+        # env = jinja2.Environment(loader=jinja2.FileSystemLoader(
+        #     os.path.dirname(__file__)))
+        # return env.get_template('linoweb.js')
+        env = settings.SITE.plugins.jinja.renderer.jinja_env
+        return env.get_template('extjs/linoweb.js')
 
     def create_layout_element(self, *args, **kw):
-        return ext_elems.create_layout_element(*args, **kw)
+        return ext_elems.create_layout_element(self, *args, **kw)
 
     def create_layout_panel(self, *args, **kw):
-        return ext_elems.create_layout_panel(*args, **kw)
+        return ext_elems.create_layout_panel(self, *args, **kw)
 
     def toolbar(self, action_list):
         """
@@ -1391,7 +1393,8 @@ class ExtRenderer(JsRenderer):
         Called from :xfile:`linolib.js`.
         """
 
-        extjs = settings.SITE.plugins.extjs
+        # extjs = settings.SITE.plugins.extjs
+        extjs = self.plugin
 
         def fn():
             yield "// lino.js --- generated %s by %s for %s." % (

@@ -113,9 +113,14 @@ class GridColumn(jsgen.Component):
 
     def __init__(self, layout_handle, index, editor, **kw):
         self.editor = editor
+        # 20171227 taken from extjs6
+        if editor.grid_column_template is not None:
+            self.value_template = editor.grid_column_template
         # kw.setdefault('sortable', True)
         kw.update(sortable=editor.sortable)
+        # 20171227 in extjs6, editable was not set here:
         kw.update(editable=editor.editable)
+        
         kw.update(colIndex=index)
         if editor.hidden:
             kw.update(hidden=True)
@@ -127,7 +132,11 @@ class GridColumn(jsgen.Component):
                     kw.update(clearFilter=True)
                 # else:
                     # print index, "is not 1"
-                kw.update(filterInput=js_code('new Ext.form.TextField()'))
+                if self.layout_handle.ui.renderer.extjs_version == 3:
+                    js = 'new Ext.form.TextField()'
+                else:
+                    js = "Ext.create('Ext.form.TextField',{})"
+                kw.update(filterInput=js_code(js))
                 kw.update(filterOptions=[
                     # dict(value='startwith', text='Start With'),
                     # dict(value='endwith', text='End With'),
@@ -140,22 +149,18 @@ class GridColumn(jsgen.Component):
         if settings.SITE.use_gridfilters and editor.gridfilters_settings:
             if isinstance(editor, FieldElement) \
                and not isinstance(editor.field, fields.VirtualField):
-                kw.update(filter=editor.gridfilters_settings)
+                kw = editor.get_gridfilters_settings(kw)
+                # kw.update(filter=editor.gridfilters_settings)
         if isinstance(editor, FieldElement):
             if settings.SITE.use_quicktips:
-                # if jsgen._for_user_profile.expert:
-                if settings.SITE.show_internal_field_names:
-                    ttt = "(%s.%s) " % (layout_handle.layout._datasource,
-                                        self.editor.field.name)
-                else:
-                    ttt = ''
-                if self.editor.field.help_text \
-                   and "<" not in self.editor.field.help_text:
-                    # and '"' not in self.editor.field.help_text
-                    # GridColumn tooltips don't support html
-                    ttt = string_concat(ttt, self.editor.field.help_text)
-                if ttt:
-                    kw.update(tooltip=ttt)
+                # 20171227 taken from extjs6:
+                add_help_text(kw,
+                              # GridColumn tooltips don't support html
+                              self.editor.field.help_text if self.editor.field.help_text and "<" not in self.editor.field.help_text else "",
+                              "", #Title
+                              layout_handle.layout._datasource,
+                              self.editor.field.name)
+                
 
             def fk_renderer(fld, name):
                 # FK fields are clickable only if their target has a
@@ -239,6 +244,7 @@ class LayoutElement(VisibleComponent):
     editable = False
     sortable = False
     xtype = None  # set by subclasses
+    grid_column_template = None
     collapsible = False
     active_child = True
     refers_to_ww = False
@@ -323,6 +329,11 @@ class LayoutElement(VisibleComponent):
         return self.parent.get_property(name)
 
     def get_column_options(self, **kw):
+        return kw
+
+    def get_gridfilters_settings(self, kw): # 20171227 taken from extjs6
+        if self.gridfilters_settings:
+            kw.update(filter=dict(self.gridfilters_settings))
         return kw
 
     def set_parent(self, parent):
@@ -500,7 +511,8 @@ class FieldElement(LayoutElement):
 
         # if self.field.__class__.__name__ == "DcAmountField":
             # print 20130911, self.field, self.editable
-            
+
+        # this was still missing in ectjs6:
         if isinstance(field, fields.FakeField) and field.sortable_by:
             self.sortable = True
 
@@ -551,6 +563,13 @@ class FieldElement(LayoutElement):
         #     kw.update(header=self.label)
         # else:
         #     kw.update(header=self.label)
+
+        # 20171227 taken from extjs6:
+        if not self.editable:  
+            kw.update(editable=False)
+        if not self.sortable:
+            kw.update(sortable=False)
+        
         w = self.width or self.preferred_width
         # kw.update(width=w*EXT_CHAR_WIDTH)
         kw.update(width=js_code("Lino.chars2width(%d)" % (w + 1)))
@@ -567,12 +586,18 @@ class FieldElement(LayoutElement):
 
         if is_hidden_babel_field(self.field):
             kw.update(hidden=True)
+            
+        # since 20171227:
+        kw.update(labelAlign=self.layout_handle.layout.label_align)
 
         # When used as editor of an EditorGridPanel, don't set the
         # name attribute because it is not needed for grids and might
         # conflict with fields of a surrounding detail form. See ticket
         # #38 (`/blog/2011/0408`).  Also don't set a label then.
-        if not isinstance(self.layout_handle.layout, ColumnsLayout):
+        if isinstance(self.layout_handle.layout, ColumnsLayout):
+            # ticket#1964 : Omit the 'Hidden' value for the column editor even if the field is hidden
+            kw.update(hidden=False)
+        else:
             kw.update(name=self.field.name)
             if self.label:
                 label = self.label
@@ -618,6 +643,8 @@ class FieldElement(LayoutElement):
         if self.field.primary_key:
             # print(20170301, ar.renderer)
             url = ar.renderer.get_detail_url(ar.actor, v)
+            # 20171227 in extjs6 above line was:
+            # url = ar.pk2url(v)
             if url is not None:
                 return E.td(E.a(self.format_value(
                     ar, v), href=url), **cellattrs)
@@ -654,7 +681,7 @@ class TextFieldElement(FieldElement):
     filter_type = 'string'
     gridfilters_settings = dict(type='string')
     vflex = True
-    value_template = "new Ext.form.TextArea(%s)"
+    # value_template = "new Ext.form.TextArea(%s)"
     xtype = None
     #width = 60
     preferred_width = 60
@@ -667,9 +694,19 @@ class TextFieldElement(FieldElement):
     def __init__(self, layout_handle, field, **kw):
         self.format = getattr(field, 'textfield_format', None) \
             or settings.SITE.textfield_format
+
+        if layout_handle.ui.renderer.extjs_version == 3:
+            self.value_template = "new Ext.form.TextArea(%s)"
+        else:
+            self.value_template = "Ext.create('Ext.form.TextArea',%s)"
+            
         if self.format == 'html':
             if settings.SITE.is_installed('tinymce'):
-                self.value_template = "new Lino.RichTextPanel(%s)"
+                if layout_handle.ui.renderer.extjs_version == 3:
+                    self.value_template = "new Lino.RichTextPanel(%s)"
+                else:
+                    self.value_template = "Ext.create('Lino.RichTextPanel',%s)"
+                    
                 self.active_child = True
                 # if self.label:
                     # kw.update(title=unicode(self.label))
@@ -686,7 +723,10 @@ class TextFieldElement(FieldElement):
                 return LayoutElement.__init__(
                     self, layout_handle, field.name, **kw)
             else:
-                self.value_template = "new Ext.form.HtmlEditor(%s)"
+                if layout_handle.ui.renderer.extjs_version == 3:
+                    self.value_template = "new Ext.form.HtmlEditor(%s)"
+                else:
+                    self.value_template = "Ext.create('Ext.form.HtmlEditor',%s)"
                 if settings.SITE.use_vinylfox:
                     kw.update(plugins=js_code('Lino.VinylFoxPlugins()'))
         elif self.format == 'plain':
@@ -717,6 +757,7 @@ class TextFieldElement(FieldElement):
         if not text:
             text = " "
         # yield E.p(unicode(elem.field.verbose_name),':',E.br(),E.b(text))
+        # 20171227 in extjs there was no E.div() around them.
         yield E.div(
             E.label(str(self.field.verbose_name)),
             E.textarea(text, rows=str(self.preferred_height), class_="form-control"),
@@ -836,6 +877,8 @@ class ChoiceListFieldElement(ChoicesFieldElement):
     dynamicaly add a blank choice to the the choicelist.
 
     """
+    filter_type = 'list'
+    gridfilters_settings = dict(type='list')
 
     def __init__(self, layout_handle, field, **kw):
         pw = field.choicelist.preferred_foreignkey_width
@@ -849,8 +892,16 @@ class ChoiceListFieldElement(ChoicesFieldElement):
         js = 'Lino.%s' % self.field.choicelist.actor_id
         if self.field.blank:
             js = "[['','<br>']].concat(%s)" % js
+            # 20171227 in extjs6 it was:
+            # js = "[['','']].concat(%s)" % js
         kw.update(store=js_code(js))
         return kw
+
+    def get_gridfilters_settings(self, kw):
+        kw = super(ChoicesFieldElement, self).get_gridfilters_settings(kw)
+        kw['filter'].update(options = [str(c[1]) for c in self.field.choices])
+        return kw
+
 
 
 class RemoteComboFieldElement(ComboFieldElement):
@@ -861,8 +912,11 @@ class RemoteComboFieldElement(ComboFieldElement):
         if self.editable:
             url = self.layout_handle.get_choices_url(self.field, **kw)
             proxy = dict(url=url, method='GET')
-            kw.update(proxy=js_code("new Ext.data.HttpProxy(%s)" %
-                      py2js(proxy)))
+            if self.layout_handle.ui.renderer.extjs_version == 3:
+                js = "new Ext.data.HttpProxy(%s)"
+            else:
+                js = "Ext.create('Ext.data.HttpProxy',%s)"
+            kw.update(proxy=js_code(js % py2js(proxy)))
         # a JsonStore without explicit proxy sometimes used method POST
         return kw
 
@@ -870,8 +924,16 @@ class RemoteComboFieldElement(ComboFieldElement):
         kw = ComboFieldElement.get_field_options(self, **kw)
         sto = self.store_options()
         # print repr(sto)
-        kw.update(store=js_code("new Lino.ComplexRemoteComboStore(%s)" %
-                  py2js(sto)))
+        if self.layout_handle.ui.renderer.extjs_version == 3:
+            kw.update(
+                store=js_code(
+                    "new Lino.ComplexRemoteComboStore(%s)" %
+                    py2js(sto)))
+        else:
+            kw.update(
+                store=js_code(
+                    "Ext.create('Lino.ComplexRemoteComboStore',%s)" %
+                    py2js(sto)))
         return kw
 
 
@@ -920,7 +982,10 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
             a1 = actor.detail_action
             a2 = actor.insert_action
             if a1 is not None or a2 is not None:
-                self.value_template = "new Lino.TwinCombo(%s)"
+                if self.layout_handle.ui.renderer.extjs_version == 3:
+                    self.value_template = "new Lino.TwinCombo(%s)"
+                else:
+                    self.value_template = "Ext.create('Lino.TwinCombo',%s)"
                 js = "function(e){ Lino.show_fk_detail(this,%s,%s)}" % (
                     action_name(a1), action_name(a2))
                 kw.update(onTrigger2Click=js_code(js))
@@ -961,9 +1026,17 @@ class DateTimeFieldElement(FieldElement):
 
     def __init__(self, layout_handle, field, **kw):
         if self.editable:
-            self.value_template = "new Lino.DateTimeField(%s)"
+            if layout_handle.ui.renderer.extjs_version == 3:
+                self.value_template = "new Lino.DateTimeField(%s)"
+            else:
+                self.value_template = "Ext.create('Lino.DateTimeField',%s)"
         else:
             kw.update(value="<br>")
+            if layout_handle.ui.renderer.extjs_version == 3:
+                self.value_template = "new Ext.form.DisplayField(%s)"
+            else:
+                self.value_template = "Ext.create('Ext.form.DisplayField',%s)"
+            
         FieldElement.__init__(self, layout_handle, field, **kw)
 
     def value2html(self, ar, v, **cellattrs):
@@ -998,6 +1071,7 @@ class DateFieldElement(FieldElement):
     gridfilters_settings = dict(
         type='date', dateFormat=settings.SITE.date_format_extjs)
     # todo: DateFieldElement.preferred_width should be computed from Report.date_format
+    # ~ grid_column_template = "new Ext.grid.DateColumn(%s)"
 
     # def __init__(self,layout_handle,field,**kw):
         # ~ if False: # getattr(field,'picker',False):
@@ -1436,12 +1510,16 @@ class HtmlBoxElement(DisplayElement):
             # kw.update(listeners=dict(render=js_code('initialize%sDropZone' % self.field.drop_zone)))
             
         html = self.field.default
+        if self.layout_handle.ui.renderer.extjs_version == 3:
+            js1 = "new Ext.BoxComponent("
+        else:
+            js1 = "Ext.create('Ext.Component',"
         if html is NOT_PROVIDED:
-            js = "new Ext.BoxComponent({autoScroll:true})"
+            js = js1 + "{autoScroll:true})"
         else:
             if callable(html):
                 html = html()
-            js = "new Ext.BoxComponent({autoScroll:true, html:%s})"
+            js = js1 + "{autoScroll:true, html:%s})"
             js = js % py2js(html)
         kw.update(items=js_code(js))
         if self.label:
@@ -2144,7 +2222,7 @@ def field2elem(rnd, layout_handle, field, **kw):
 
     if isinstance(selector_field, fields.CustomField):
         e = selector_field.create_layout_elem(
-            CharFieldElement, layout_handle, field, **kw)
+            rnd, CharFieldElement, layout_handle, field, **kw)
         if e is not None:
             return e
 
@@ -2254,7 +2332,7 @@ def create_layout_element(rnd, lh, name, **kw):
         return ConstantElement(lh, de, **kw)
 
     if isinstance(de, fields.RemoteField):
-        return create_field_element(lh, de, **kw)
+        return create_field_element(rnd, lh, de, **kw)
 
     if isinstance(de, SingleRelatedObjectDescriptor):
         return SingleRelatedObjectElement(lh, de.related, **kw)
@@ -2279,14 +2357,14 @@ def create_layout_element(rnd, lh, name, **kw):
     if isinstance(de, models.Field):
         if isinstance(de, (BabelCharField, BabelTextField)):
             if len(settings.SITE.BABEL_LANGS) > 0:
-                elems = [create_field_element(lh, de, **kw)]
+                elems = [create_field_element(rnd, lh, de, **kw)]
                 for lang in settings.SITE.BABEL_LANGS:
                     bf = lh.get_data_elem(name + lang.suffix)
-                    elems.append(create_field_element(lh, bf, **kw))
+                    elems.append(create_field_element(rnd, lh, bf, **kw))
                 return elems
-        return create_field_element(lh, de, **kw)
+        return create_field_element(rnd, lh, de, **kw)
     if isinstance(de, fields.DisplayField):
-        return create_field_element(lh, de, **kw)
+        return create_field_element(rnd, lh, de, **kw)
 
     if isinstance(de, GenericForeignKey):
         # create a horizontal panel with 2 comboboxes
@@ -2352,12 +2430,12 @@ def create_layout_element(rnd, lh, name, **kw):
         return ButtonElement(lh, name, de)
     
     if isinstance(de, fields.VirtualField):
-        return create_vurt_element(lh, name, de, **kw)
+        return create_vurt_element(rnd, lh, name, de, **kw)
 
     if callable(de):
         rt = getattr(de, 'return_type', None)
         if rt is not None:
-            return create_meth_element(lh, name, de, rt, **kw)
+            return create_meth_element(rnd, lh, name, de, rt, **kw)
 
     # Now we tried everything. Build an error message.
 
@@ -2378,25 +2456,25 @@ def create_layout_element(rnd, lh, name, **kw):
     raise KeyError(msg)
 
 
-def create_vurt_element(lh, name, vf, **kw):
-    e = create_field_element(lh, vf, **kw)
+def create_vurt_element(rnd, lh, name, vf, **kw):
+    e = create_field_element(rnd, lh, vf, **kw)
     # e.sortable = False
     if not vf.is_enabled(lh):
         e.editable = False
     return e
 
 
-def create_meth_element(lh, name, meth, rt, **kw):
+def create_meth_element(rnd, lh, name, meth, rt, **kw):
     rt.name = name
     rt._return_type_for_method = meth
     if meth.__code__.co_argcount < 2:
         raise Exception("Method %s has %d arguments (must have at least 2)" %
                         (meth, meth.__code__.co_argcount))
-    return create_field_element(lh, rt, **kw)
+    return create_field_element(rnd, lh, rt, **kw)
 
 
-def create_field_element(lh, field, **kw):
-    e = field2elem(lh, field, **kw)
+def create_field_element(rnd, lh, field, **kw):
+    e = field2elem(rnd, lh, field, **kw)
     # if not lh.layout.editable and isinstance(e, ForeignKeyElement):
     #     raise Exception(20160907)
     #     return CharFieldElement(lh, field, **kw)   
