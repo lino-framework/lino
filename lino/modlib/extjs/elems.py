@@ -1591,7 +1591,7 @@ class Wrapper(VisibleComponent):
         kw.update(layout='form')
         if not isinstance(e, TextFieldElement):
             kw.update(autoHeight=True)
-        # kw.update(labelAlign=e.parent.label_align)
+        kw.update(labelAlign=e.layout_handle.layout.label_align)
         kw.update(items=e, xtype='panel')
         VisibleComponent.__init__(self, e.name + "_ct", **kw)
         self.wrapped = e
@@ -1718,7 +1718,8 @@ class Container(LayoutElement):
 
     def ext_options(self, **kw):
         kw = LayoutElement.ext_options(self, **kw)
-        # kw.update(labelAlign=self.label_align)
+        if self.layout_handle.ui.renderer.extjs_version == 3:
+            kw.update(labelAlign=self.layout_handle.layout.label_align)
         # not necessary to filter elements here, jsgen does that
         kw.update(items=self.elements)
         # if all my children are hidden, i am myself hidden
