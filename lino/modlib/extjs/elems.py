@@ -255,7 +255,7 @@ class LayoutElement(VisibleComponent):
         # name = layout_handle.layout._actor_name + '_' + name
         assert isinstance(layout_handle, layouts.LayoutHandle)
         opts = layout_handle.layout._element_options.get(name, {})
-        for k, v in list(opts.items()):
+        for k, v in opts.items():
             if not hasattr(self, k):
                 raise Exception("%s has no attribute %s" % (self, k))
             setattr(self, k, v)
@@ -1654,15 +1654,14 @@ class Container(LayoutElement):
         self.active_children = []
         self.elements = elements
         # self.label_align = kw.pop('label_align', layouts.LABEL_ALIGN_TOP)
-        if elements:
-            for e in elements:
-                e.set_parent(self)
-                if not isinstance(e, LayoutElement):
-                    raise Exception("%r is not a LayoutElement" % e)
-                if e.active_child:
-                    self.active_children.append(e)
-                elif isinstance(e, Panel):
-                    self.active_children += e.active_children
+        for e in elements:
+            e.set_parent(self)
+            if not isinstance(e, LayoutElement):
+                raise Exception("%r is not a LayoutElement" % e)
+            if e.active_child:
+                self.active_children.append(e)
+            elif isinstance(e, Panel):
+                self.active_children += e.active_children
 
         LayoutElement.__init__(self, layout_handle, name, **kw)
 
@@ -1784,7 +1783,9 @@ class Panel(Container):
             return x
         
     def __init__(self, layout_handle, name, vertical, *elements, **kw):
+        
         Container.__init__(self, layout_handle, name, *elements, **kw)
+        
         self.vertical = vertical
         self.vflex = not vertical
         for e in elements:
@@ -1794,7 +1795,7 @@ class Panel(Container):
             else:
                 if not e.vflex:
                     self.vflex = False
-
+                    
         if len(elements) > 1 and self.vflex:
             if self.vertical:
                 """
@@ -1815,7 +1816,6 @@ class Panel(Container):
                     w = len(e.label) + 1  # +1 for the ":"
                     if self.label_width < w:
                         self.label_width = w
-
 
         w = h = 0
         has_height = False  # 20120210
@@ -1846,10 +1846,13 @@ class Panel(Container):
             if len(self.elements) == 1:
                 d.update(layout='fit')
             elif self.vertical:
-                if self.vflex:
-                    self.set_layout_manager('vbox', align='stretch')
+                if layout_handle.ui.renderer.extjs_version == 3:
+                    if self.vflex:
+                        self.set_layout_manager('vbox', align='stretch')
+                    else:
+                        self.set_layout_manager('form', autoHeight=True)
                 else:
-                    self.set_layout_manager('form', autoHeight=True)
+                    self.set_layout_manager('vbox', align='stretch')
             else:
                 self.set_layout_manager('hbox', autoHeight=True)
 
@@ -1912,6 +1915,8 @@ class Panel(Container):
             raise Exception("layout is %r" % d['layout'])
 
     def wrap_formlayout_elements(self):
+        if self.layout_handle.ui.renderer.extjs_version != 3:
+            return
         def wrap(e):
             if not isinstance(e, FieldElement):
                 return e
