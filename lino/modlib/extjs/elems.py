@@ -911,10 +911,16 @@ class RemoteComboFieldElement(ComboFieldElement):
         # ~ kw.update(baseParams=js_code('this.get_base_params()')) # 20120202
         if self.editable:
             url = self.layout_handle.get_choices_url(self.field, **kw)
-            proxy = dict(url=url, method='GET')
             if self.layout_handle.ui.renderer.extjs_version == 3:
+                proxy = dict(url=url, method='GET')
                 js = "new Ext.data.HttpProxy(%s)"
             else:
+                reader = dict(
+                    type='json', rootProperty='rows',
+                    totalProperty='count',
+                    idProperty='this.ls_id_property',
+                    keepRawData='true')
+                proxy = dict(url=url, method='GET', reader=reader)
                 js = "Ext.create('Ext.data.HttpProxy',%s)"
             kw.update(proxy=js_code(js % py2js(proxy)))
         # a JsonStore without explicit proxy sometimes used method POST
@@ -922,18 +928,19 @@ class RemoteComboFieldElement(ComboFieldElement):
 
     def get_field_options(self, **kw):
         kw = ComboFieldElement.get_field_options(self, **kw)
-        sto = self.store_options()
-        # print repr(sto)
-        if self.layout_handle.ui.renderer.extjs_version == 3:
-            kw.update(
-                store=js_code(
-                    "new Lino.ComplexRemoteComboStore(%s)" %
-                    py2js(sto)))
-        else:
-            kw.update(
-                store=js_code(
-                    "Ext.create('Lino.ComplexRemoteComboStore',%s)" %
-                    py2js(sto)))
+        if self.editable:
+            sto = self.store_options()
+            # print repr(sto)
+            if self.layout_handle.ui.renderer.extjs_version == 3:
+                kw.update(
+                    store=js_code(
+                        "new Lino.ComplexRemoteComboStore(%s)" %
+                        py2js(sto)))
+            else:
+                kw.update(
+                    store=js_code(
+                        "Ext.create('Lino.ComplexRemoteComboStore',%s)" %
+                        py2js(sto)))
         return kw
 
 
