@@ -194,7 +194,7 @@ class Element(View):
 
     """
     def get(self, request, app_label=None, actor=None, pk=None):
-        print(request, app_label, actor, pk)
+        # print(request, app_label, actor, pk)
         ar = action_request(app_label, actor, request, request.GET, False)
         ar.renderer = settings.SITE.plugins.bootstrap3.renderer
 
