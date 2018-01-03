@@ -235,7 +235,7 @@ class LayoutElement(VisibleComponent):
     parent = None  # will be set by Container
 
     label = None
-    label_width = 0
+    # label_width = 0
     editable = False
     sortable = False
     xtype = None  # set by subclasses
@@ -1715,10 +1715,6 @@ class Panel(Container):
         for e in elements:
             if isinstance(e, FieldElement):
                 self.is_fieldset = True
-                if e.label:
-                    w = len(e.label) + 1  # +1 for the ":"
-                    if self.label_width < w:
-                        self.label_width = w
 
         Container.__init__(self, layout_handle, name, *elements, **kw)
 
@@ -1849,7 +1845,20 @@ class Panel(Container):
         d.update(autoScroll=False)
 
         if self.is_fieldset:
-            d.update(labelWidth=self.label_width * EXT_CHAR_WIDTH)
+            # Note that the value of labelWidth depends on the
+            # language.  For example the sign_in dialog window has a
+            # field labelled "Username:" which is "Nom d'utilisateur:"
+            # in French.
+            
+            label_width = 0
+            for e in self.elements:
+                if isinstance(e, FieldElement):
+                    if e.label:
+                        w = len(e.label) + 1  # +1 for the ":"
+                        if label_width < w:
+                            label_width = w
+            d.update(labelWidth=label_width * EXT_CHAR_WIDTH)
+            
         if self.parent is None or (len(self.elements) > 1 and self.vertical):
             """
             The `self.parent is None` test is e.g. for Parameter
