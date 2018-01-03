@@ -588,7 +588,8 @@ class FieldElement(LayoutElement):
             kw.update(hidden=True)
             
         # since 20171227:
-        kw.update(labelAlign=self.layout_handle.layout.label_align)
+        if self.layout_handle.ui.renderer.extjs_version != 3:
+            kw.update(labelAlign=self.layout_handle.layout.label_align)
 
         # When used as editor of an EditorGridPanel, don't set the
         # name attribute because it is not needed for grids and might
@@ -1863,11 +1864,16 @@ class Panel(Container):
                     if self.vflex:
                         self.set_layout_manager('vbox', align='stretch')
                     else:
-                        self.set_layout_manager('form', autoHeight=True)
+                        self.set_layout_manager('form')
+                        d.update(autoHeight=True)
                 else:
                     self.set_layout_manager('vbox', align='stretch')
             else:
-                self.set_layout_manager('hbox', autoHeight=True)
+                if layout_handle.ui.renderer.extjs_version == 3:
+                    self.set_layout_manager('hbox')
+                    d.update(autoHeight=True)
+                else:
+                    self.set_layout_manager('hbox', autoHeight=True)
 
         if self.get_layout_name() == 'form':
             assert self.vertical
