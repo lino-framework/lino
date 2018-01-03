@@ -94,6 +94,7 @@ class Renderer(object):
     is_interactive = False
     # not_implemented_js = "alert('Not implemented')"
     not_implemented_js = None
+    extjs_version = None
 
     tableattrs = dict(cellspacing="3px", bgcolor="#ffffff", width="100%")
     cellattrs = dict(align="left", valign="top", bgcolor="#eeeeee")
@@ -340,11 +341,14 @@ request `tar`."""
     def quick_upload_buttons(self, rr):
         return '[?!]'
 
+    def setup_layout_element(self, el):
+        pass
+    
     def create_layout_element(self, *args, **kw):
-        return create_layout_element(*args, **kw)
+        return create_layout_element(self, *args, **kw)
 
     def create_layout_panel(self, *args, **kw):
-        return create_layout_panel(*args, **kw)
+        return create_layout_panel(self, *args, **kw)
 
     # def insert_button(self, ar, text, known_values={}, **options):
     #     return '[?!]'
