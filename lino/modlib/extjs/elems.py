@@ -1848,7 +1848,7 @@ class Panel(Container):
             # Note that the value of labelWidth depends on the
             # language.  For example the sign_in dialog window has a
             # field labelled "Username:" which is "Nom d'utilisateur:"
-            # in French.
+            # in French (#2240 spacing problem in french login form).
             
             label_width = 0
             for e in self.elements:
