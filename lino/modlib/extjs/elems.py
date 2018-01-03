@@ -1798,6 +1798,14 @@ class Panel(Container):
         
     def __init__(self, layout_handle, name, vertical, *elements, **kw):
         
+        for e in elements:
+            if isinstance(e, FieldElement):
+                self.is_fieldset = True
+                if e.label:
+                    w = len(e.label) + 1  # +1 for the ":"
+                    if self.label_width < w:
+                        self.label_width = w
+
         Container.__init__(self, layout_handle, name, *elements, **kw)
         
         self.vertical = vertical
@@ -1822,14 +1830,6 @@ class Panel(Container):
 
             else:  # not self.vertical
                 self.set_layout_manager('hbox', align='stretch')
-
-        for e in elements:
-            if isinstance(e, FieldElement):
-                self.is_fieldset = True
-                if e.label:
-                    w = len(e.label) + 1  # +1 for the ":"
-                    if self.label_width < w:
-                        self.label_width = w
 
         w = h = 0
         has_height = False  # 20120210
