@@ -525,6 +525,16 @@ class TableRequest(ActionRequest):
 
                 columns = [e for e in columns if not e.hidden]
 
+                # if str(ar.actor) == "isip.ExamPolicies":
+                    # from lino.modlib.extjs.elems import is_hidden_babel_field
+                    # print("20180103", [c.name for c in columns])
+                    # print("20180103", [c.field for c in columns])
+                    # print("20180103", [c.value['hidden'] for c in columns])
+                    # print("20180103", [
+                    #     is_hidden_babel_field(c.field) for c in columns])
+                    # print("20180103", [
+                    #     getattr(c.field, '_babel_language', None)
+                    #     for c in columns])
                 widths = ["%d" % (col.width or col.preferred_width)
                           for col in columns]
                 #~ 20130415 widths = ["%d%%" % (col.width or col.preferred_width) for col in columns]

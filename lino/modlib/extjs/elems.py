@@ -596,7 +596,12 @@ class FieldElement(LayoutElement):
         # #38 (`/blog/2011/0408`).  Also don't set a label then.
         if isinstance(self.layout_handle.layout, ColumnsLayout):
             # ticket#1964 : Omit the 'Hidden' value for the column editor even if the field is hidden
-            kw.update(hidden=False)
+            # kw.update(hidden=False)
+            # above line removed 20180103 because it caused hidden
+            # babel fields to not get hidden in use_django_forms
+            # and because there are changces that it is no longer
+            # needed for #1964
+            pass
         else:
             kw.update(name=self.field.name)
             if self.label:
