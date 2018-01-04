@@ -136,6 +136,7 @@ lino.modlib.davlink
 lino.modlib.dupable
 lino.modlib.export_excel
 lino.modlib.extjs
+lino.modlib.forms
 lino.modlib.gfks
 lino.modlib.gfks.fixtures
 lino.modlib.ipdict

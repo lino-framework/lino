@@ -81,9 +81,19 @@ class Panel(object):
 class LayoutHandle(object):
     """
     A `LayoutHandle` analyzes some subclass of :class:`BaseLayout` and
-    stores the resulting layout elements provided by the renderer.
+    holds the resulting metadata, especially the layout elements and
+    panels provided by the renderer.
 
-    The same class is used for all kinds of BaseLayout instances.
+    The implementation of layout elements is left to the ui renderer,
+    but we differentiate *panels* from *atomic elements*. A panel is a
+    group of elements and is either *vertical* or *horizontal*.
+
+    LayoutHandle is not meant to be subclassed. The same class is used
+    for all kinds of BaseLayout instances.
+
+    .. attribute:: main
+
+        The main element.
     """
 
     def __init__(self, layout, ui):
@@ -112,30 +122,12 @@ class LayoutHandle(object):
         self.height = self.main.height
 
         self.layout.setup_handle(self)
-        for k, v in list(self.layout._labels.items()):
+        for k, v in self.layout._labels.items():
             if k not in self._names:
                 raise Exception(
                     "%s has no attribute %r (layout.main is %r)" %
                     (self, k, layout.main))
             self._names[k].label = v
-
-    def __str__(self):
-        return "%s for %s" % (self.__class__.__name__, self.layout)
-
-    def __getitem__(self, name):
-        return self._names[name]
-
-    def add_store_field(self, field):
-        self._store_fields.append(field)
-
-    def get_title(self, ar):
-        return self.layout.get_title(ar)
-
-    def walk(self):
-        return self.main.walk()
-
-    def ext_lines(self, request):
-        return self.main.ext_lines(request)
 
     def desc2elem(self, elemname, desc, **kwargs):
         # logger.debug("desc2elem(panelclass,%r,%r)",elemname,desc)
@@ -263,6 +255,7 @@ class LayoutHandle(object):
             else:
                 e.hidden = True
         
+        self.ui.renderer.setup_layout_element(e)
         self.layout.setup_element(self, e)
         self._names[name] = e
         return e
@@ -291,6 +284,24 @@ class LayoutHandle(object):
 
         options = self.layout._datasource.get_widget_options(name, **options)
         return name, options
+
+    def __str__(self):
+        return "%s for %s" % (self.__class__.__name__, self.layout)
+
+    def __getitem__(self, name):
+        return self._names[name]
+
+    def add_store_field(self, field):
+        self._store_fields.append(field)
+
+    def get_title(self, ar):
+        return self.layout.get_title(ar)
+
+    def walk(self):
+        return self.main.walk()
+
+    def ext_lines(self, request):
+        return self.main.ext_lines(request)
 
     def use_as_wildcard(self, de):
         if de.name.endswith('_ptr'):

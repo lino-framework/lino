@@ -93,6 +93,8 @@ class ExtRenderer(JsRenderer):
     is_interactive = True
     # is_prepared = False
 
+    extjs_version = 3
+    
     def __init__(self, plugin):
         super(ExtRenderer, self).__init__(plugin)
         jsgen.register_converter(self.py2js_converter)
@@ -395,7 +397,7 @@ class ExtRenderer(JsRenderer):
             tpl = env.get_template('extjs/index.html')
             context = {
                 'site': settings.SITE,
-                'extjs': settings.SITE.plugins.extjs,
+                'extjs': self.plugin,
                 'ext_renderer': self,
                 'py2js': py2js,  # TODO: Should be template filter
                 'jsgen': jsgen,  # TODO: Should be in filters
@@ -697,7 +699,7 @@ class ExtRenderer(JsRenderer):
             language=translation.get_language(),
             # ext_requests=constants,
             constants=constants,
-            extjs=settings.SITE.plugins.extjs,
+            extjs=self.plugin,  # 20171227
         )
 
         context.update(_=_)
@@ -832,15 +834,17 @@ class ExtRenderer(JsRenderer):
         return ('cache', 'js', filename)
 
     def linolib_template(self):
-        env = jinja2.Environment(loader=jinja2.FileSystemLoader(
-            os.path.dirname(__file__)))
-        return env.get_template('linoweb.js')
+        # env = jinja2.Environment(loader=jinja2.FileSystemLoader(
+        #     os.path.dirname(__file__)))
+        # return env.get_template('linoweb.js')
+        env = settings.SITE.plugins.jinja.renderer.jinja_env
+        return env.get_template('extjs/linoweb.js')
 
     def create_layout_element(self, *args, **kw):
-        return ext_elems.create_layout_element(*args, **kw)
+        return ext_elems.create_layout_element(self, *args, **kw)
 
     def create_layout_panel(self, *args, **kw):
-        return ext_elems.create_layout_panel(*args, **kw)
+        return ext_elems.create_layout_panel(self, *args, **kw)
 
     def toolbar(self, action_list):
         """
@@ -1383,12 +1387,14 @@ class ExtRenderer(JsRenderer):
                 yield "  return new %s(p);" % mainPanelClass
         yield "});"
 
+
     def linolib_intro(self):
         """
         Called from :xfile:`linolib.js`.
         """
 
-        extjs = settings.SITE.plugins.extjs
+        # extjs = settings.SITE.plugins.extjs
+        extjs = self.plugin
 
         def fn():
             yield "// lino.js --- generated %s by %s for %s." % (
@@ -1396,8 +1402,9 @@ class ExtRenderer(JsRenderer):
                 get_user_profile())
             # lino.__version__)
             #~ // $site.title ($lino.welcome_text())
-            yield "Ext.BLANK_IMAGE_URL = '%s';" % extjs.build_lib_url(
-                'resources/images/default/s.gif')
+            if self.extjs_version == 3:
+                yield "Ext.BLANK_IMAGE_URL = '%s';" % extjs.build_lib_url(
+                    'resources/images/default/s.gif')
             yield "LANGUAGE_CHOICES = %s;" % py2js(
                 list(settings.SITE.LANGUAGE_CHOICES))
             yield "MEDIA_URL = %s;" % py2js(settings.SITE.build_media_url())
