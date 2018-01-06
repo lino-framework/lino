@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.ui.demo.wt.controller.tickets_detail"
+	controllerName="sap.ui.demo.wt.helloworld.controller.helloworld"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
 	<Button

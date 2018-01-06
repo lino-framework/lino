@@ -15,9 +15,8 @@
             }' ></script>
     <script>
 			sap.ui.getCore().attachInit(function () {
-
-			sap.ui.xmlview({
-               viewName : "sap.ui.demo.wt.view.tickets_detail"
+			new sap.ui.core.ComponentContainer({
+               name : "sap.ui.demo.wt.helloworld"
             }).placeAt('content');
 
             });
