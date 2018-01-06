@@ -1,0 +1,24 @@
+{% extends "bootstrap3/base.html" %}
+{% set active_page = "" %}
+{% block title %}{{title}}{% endblock %}
+{% block main %}
+<div class="row-fluid">
+    <div class="panel panel-default" >
+        <div class="panel-heading">
+            {% if obj %}
+            <div class="panel-title">
+                <h3>{{obj}}</h3>
+            </div>
+            {% endif %}
+            {{E.tostring(navigator)}}
+        </div>
+        <div class="panel body">
+        {{E.tostring(form)}}
+        </div>
+
+
+    </div>
+</div>
+{% endblock %}
+
+
