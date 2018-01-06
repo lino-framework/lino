@@ -1,31 +1,28 @@
 <!DOCTYPE html>
-<html language="{{requested_language}}"><head>
-<meta charset="utf-8"/>
-<title>{% block title %}{{site.title or site.verbose_name}}{% endblock %}</title>
-<link rel="stylesheet" href="{{site.build_static_url('bootstrap.css')}}" type="text/css">
-<script src="https://openui5.hana.ondemand.com/1.28.15/resources/sap-ui-core.js"
-		id="sap-ui-bootstrap"
-		data-sap-ui-libs="sap.m"
-		data-sap-ui-theme="sap_bluecrystal"></script>
+<html language="{{requested_language}}">
+<head>
+    <meta charset="utf-8"/>
+    <title>{% block title %}{{site.title or site.verbose_name}}{% endblock %}</title>
+    <!--<link rel="stylesheet" href="{{site.build_static_url('bootstrap.css')}}" type="text/css">-->
+    <script src="https://openui5.hana.ondemand.com/1.28.15/resources/sap-ui-core.js"
+            id="sap-ui-bootstrap"
+            data-sap-ui-libs="sap.m"
+            data-sap-ui-theme="sap_bluecrystal"
+            data-sap-ui-compatVersion="edge"
+            data-sap-ui-preload="async"
+            data-sap-ui-resourceroots='{
+            "sap.ui.demo.wt": "./static/openui5/"
+            }' ></script>
+    <script>
+			sap.ui.getCore().attachInit(function () {
+
+			sap.ui.xmlview({
+               viewName : "sap.ui.demo.wt.view.tickets_detail"
+            }).placeAt('content');
+
+            });
+    </script>
 </head>
-<body>
-<div id="wrap">
-  <div id="content">
+<body id="content" class="sapUiBody">
 
-  </div>
-</div>
-<div id="footer">
-<footer class="container-fluid">
-{% block footer %}
-<p style="vertical-align: middle;">
-{% if request and site.title %}
-&copy; Copyright {{now.year}} by <a href="http://{{request.get_host()}}">{{site.title}}</a>.
-{% endif %}
-{{E.tostring(site.welcome_html())}}
-</p>
-{% endblock %}
-</footer>
-</div>
-
-<!-- Placed at the end of the document so the pages load faster -->
 </body></html>
