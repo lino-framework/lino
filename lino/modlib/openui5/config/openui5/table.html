@@ -1,0 +1,13 @@
+{% extends "bootstrap3/base.html" %}
+{% set active_page = "" %}
+{% block title %}{{title}}{% endblock %}
+{% block main %}
+<h2>{{heading}}</h2>
+<div class="container-fluid">
+  <div class="row">
+    {{E.tostring(main)}}
+  </div>
+</div>
+{% endblock %}
+
+

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html language="{{requested_language}}"><head>
+<meta charset="utf-8"/>
+<title>{% block title %}{{site.title or site.verbose_name}}{% endblock %}</title>
+<link rel="stylesheet" href="{{site.plugins.bootstrap3.build_lib_url('css','bootstrap.css')}}" type="text/css">
+<link rel="stylesheet" href="{{site.build_static_url('bootstrap.css')}}" type="text/css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/timepicker@1.11.12/jquery.timepicker.min.css" type="text/css">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://openui5.hana.ondemand.com/1.28.15/resources/sap-ui-core.js"
+		id="sap-ui-bootstrap"
+		data-sap-ui-libs="sap.m"
+		data-sap-ui-theme="sap_bluecrystal"></script>
+</head>
+<body>
+<div id="wrap">
+  <div id="content">
+
+  </div>
+</div>
+<div id="footer">
+<footer class="container-fluid">
+{% block footer %}
+<p style="vertical-align: middle;">
+{% if request and site.title %}
+&copy; Copyright {{now.year}} by <a href="http://{{request.get_host()}}">{{site.title}}</a>.
+{% endif %}
+{{E.tostring(site.welcome_html())}}
+</p>
+{% endblock %}
+</footer>
+</div>
+
+<!-- Placed at the end of the document so the pages load faster -->
+</body></html>

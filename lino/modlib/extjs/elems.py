@@ -249,6 +249,8 @@ class LayoutElement(VisibleComponent):
     active_child = True
     refers_to_ww = False
 
+    input_classes = None
+
     def __init__(self, layout_handle, name, **kw):
         #logger.debug("LayoutElement.__init__(%r,%r)", layout_handle.layout,name)
         #self.parent = parent
@@ -532,7 +534,8 @@ class FieldElement(LayoutElement):
         yield E.label(str(self.field.verbose_name))
         if self.layout_handle.layout.label_align == layouts.LABEL_ALIGN_TOP:
             yield E.br()
-        yield E.input(type="text",value=text, class_="form-control")
+        input_classes = "form-control " + self.input_classes if self.input_classes is not None else "form-control"
+        yield E.input(type="text",value=text, class_=input_classes)
         # if self.field.help_text:
             # yield E.span(unicode(text),class_="help-block")
         # yield E.p(unicode(elem.field.verbose_name),':',E.br(),E.b(text))
@@ -1027,6 +1030,7 @@ class TimeFieldElement(FieldElement):
     sortable = True
     preferred_width = 8
     # filter_type = 'time'
+    input_classes = "TimeField"
 
 
 class DateTimeFieldElement(FieldElement):
@@ -1062,6 +1066,8 @@ class DateTimeFieldElement(FieldElement):
 
 
 class DatePickerFieldElement(FieldElement):
+    input_classes = "DatePickerField"
+
     value_template = "new Lino.DatePickerField(%s)"
 
     def get_column_options(self, **kw):
@@ -1069,6 +1075,8 @@ class DatePickerFieldElement(FieldElement):
 
 
 class DateFieldElement(FieldElement):
+
+    input_classes = "DatePickerField"
     if settings.SITE.use_spinner:
         raise Exception("20130114")
         value_template = "new Lino.SpinnerDateField(%s)"

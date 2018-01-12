@@ -8,7 +8,13 @@ div .lino-bs-header {
   padding: 2px 6px;
 }
 
-/* Sticky footer styles
+
+/* Overwride master bootstrap*/
+form input.form-control {
+
+  height: 3ch;
+}
+/* Sticky footer styles`
 -------------------------------------------------- 
 copied and modified from 
 http://twitter.github.com/bootstrap/examples/sticky-footer.html
