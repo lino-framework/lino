@@ -326,10 +326,8 @@ class Model(models.Model):
                         model = resolve_model(model)
                         # logger.warning("20151203 %s", model)
 
-                    # ~ 20130508 model.get_default_table().get_handle() # make sure that all atomizers of those fields get created.
                     fld = model.get_data_elem(n)
                     if fld is None:
-                        # raise Exception("Part %s of %s got None" % (n,model))
                         raise Exception(
                             "Invalid RemoteField %s.%s (no field %s in %s)" %
                             (full_model_name(model), name, n, full_model_name(model)))
