@@ -1798,9 +1798,9 @@ class Panel(Container):
         
     def __init__(self, layout_handle, name, vertical, *elements, **kw):
         
-        for e in elements:
-            if isinstance(e, FieldElement):
-                self.is_fieldset = True
+        # for e in elements:
+        #     if isinstance(e, FieldElement):
+        #         self.is_fieldset = True
 
         Container.__init__(self, layout_handle, name, *elements, **kw)
         
@@ -1831,7 +1831,7 @@ class Panel(Container):
             if isinstance(e, FieldElement):
                 self.is_fieldset = True
 
-        Container.__init__(self, layout_handle, name, *elements, **kw)
+        # Container.__init__(self, layout_handle, name, *elements, **kw)
 
         w = h = 0
         has_height = False  # 20120210
