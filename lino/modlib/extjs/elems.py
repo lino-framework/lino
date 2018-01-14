@@ -1563,7 +1563,7 @@ class HtmlBoxElement(DisplayElement):
                 E.div(value, class_="panel-body"),
                 class_="panel panel-default")
 
-        yield panel
+            yield panel
 
 class SlaveSummaryPanel(HtmlBoxElement):
     """The panel used to display a slave table whose `slave_grid_format`
