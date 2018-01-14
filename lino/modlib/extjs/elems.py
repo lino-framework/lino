@@ -1552,9 +1552,16 @@ class HtmlBoxElement(DisplayElement):
         if value == fields.NOT_PROVIDED:
             value = str(ar.no_data_text)
         if is_string(value):
-            panel = E.fromstring('<div class = "panel panel-default"> <div class = "panel-body">' + value + "</div></div>")
-        elif E.iselement(value):
-            panel = E.div(E.div(value, class_="panel-body"),class_="panel panel-default")
+            try:
+                value = E.fromstring(value)
+            except Exception:
+                logger.warning("20180114 Failed to parse %s", value)
+                pass
+                # panel = E.fromstring('<div class="panel panel-default"><div class="panel-body">' + value + "</div></div>")
+        if E.iselement(value):
+            panel = E.div(
+                E.div(value, class_="panel-body"),
+                class_="panel panel-default")
 
         yield panel
 
