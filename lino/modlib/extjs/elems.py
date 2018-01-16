@@ -249,6 +249,8 @@ class LayoutElement(VisibleComponent):
     active_child = True
     refers_to_ww = False
 
+    input_classes = None
+
     def __init__(self, layout_handle, name, **kw):
         #logger.debug("LayoutElement.__init__(%r,%r)", layout_handle.layout,name)
         #self.parent = parent
@@ -532,7 +534,8 @@ class FieldElement(LayoutElement):
         yield E.label(str(self.field.verbose_name))
         if self.layout_handle.layout.label_align == layouts.LABEL_ALIGN_TOP:
             yield E.br()
-        yield E.input(type="text",value=text, class_="form-control")
+        input_classes = "form-control " + self.input_classes if self.input_classes is not None else "form-control"
+        yield E.input(type="text",value=text, class_=input_classes)
         # if self.field.help_text:
             # yield E.span(unicode(text),class_="help-block")
         # yield E.p(unicode(elem.field.verbose_name),':',E.br(),E.b(text))
@@ -1027,6 +1030,7 @@ class TimeFieldElement(FieldElement):
     sortable = True
     preferred_width = 8
     # filter_type = 'time'
+    input_classes = "TimeField"
 
 
 class DateTimeFieldElement(FieldElement):
@@ -1062,6 +1066,8 @@ class DateTimeFieldElement(FieldElement):
 
 
 class DatePickerFieldElement(FieldElement):
+    input_classes = "DatePickerField"
+
     value_template = "new Lino.DatePickerField(%s)"
 
     def get_column_options(self, **kw):
@@ -1069,6 +1075,8 @@ class DatePickerFieldElement(FieldElement):
 
 
 class DateFieldElement(FieldElement):
+
+    input_classes = "DatePickerField"
     if settings.SITE.use_spinner:
         raise Exception("20130114")
         value_template = "new Lino.SpinnerDateField(%s)"
@@ -1544,11 +1552,18 @@ class HtmlBoxElement(DisplayElement):
         if value == fields.NOT_PROVIDED:
             value = str(ar.no_data_text)
         if is_string(value):
-            panel = E.fromstring('<div class = "panel panel-default"> <div class = "panel-body">' + value + "</div></div>")
-        elif E.iselement(value):
-            panel = E.div(E.div(value, class_="panel-body"),class_="panel panel-default")
+            try:
+                value = E.fromstring(value)
+            except Exception:
+                logger.warning("20180114 Failed to parse %s", value)
+                pass
+                # panel = E.fromstring('<div class="panel panel-default"><div class="panel-body">' + value + "</div></div>")
+        if E.iselement(value):
+            panel = E.div(
+                E.div(value, class_="panel-body"),
+                class_="panel panel-default")
 
-        yield panel
+            yield panel
 
 class SlaveSummaryPanel(HtmlBoxElement):
     """The panel used to display a slave table whose `slave_grid_format`
@@ -1798,9 +1813,9 @@ class Panel(Container):
         
     def __init__(self, layout_handle, name, vertical, *elements, **kw):
         
-        for e in elements:
-            if isinstance(e, FieldElement):
-                self.is_fieldset = True
+        # for e in elements:
+        #     if isinstance(e, FieldElement):
+        #         self.is_fieldset = True
 
         Container.__init__(self, layout_handle, name, *elements, **kw)
         
@@ -1831,7 +1846,7 @@ class Panel(Container):
             if isinstance(e, FieldElement):
                 self.is_fieldset = True
 
-        Container.__init__(self, layout_handle, name, *elements, **kw)
+        # Container.__init__(self, layout_handle, name, *elements, **kw)
 
         w = h = 0
         has_height = False  # 20120210

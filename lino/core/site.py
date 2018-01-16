@@ -1444,7 +1444,7 @@ class Site(object):
                 formatters = d.setdefault('formatters', {})
                 formatters.setdefault('verbose', dict(
                     format='%(asctime)s %(levelname)s '
-                    '%(module)s : %(message)s',
+                    '[%(module)s %(process)d %(thread)d] : %(message)s',
                     datefmt='%Y%m-%d %H:%M:%S'))
                 handlers['file'] = {
                     'level': file_level,

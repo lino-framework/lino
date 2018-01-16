@@ -14,11 +14,14 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.conf import settings
+from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.fields import NOT_PROVIDED
+from django.db.models.fields.related import ForeignObject
+# from django.contrib.contenttypes.fields import GenericRelation
 
 from lino.core import constants
-from lino.core.fields import fields_list, VirtualField
+from lino.core.fields import fields_list, VirtualField, wildcard_data_elems
 from lino.core.plugin import Plugin
 
 
@@ -149,24 +152,52 @@ class LayoutHandle(object):
         # flatten continued lines:
         desc = desc.replace('\\\n', '')
 
+        # expand wildcards
         if '*' in desc:
             assert elemname == 'main'
             explicit_specs = set()
+            remote_wildcards = []
             for spec in desc.split():
-                if spec != '*':
+                if '*' not in spec:
                     name, kwargs = self.splitdesc(spec)
                     explicit_specs.add(name)
+                elif len(spec) > 1:
+                    remote_wildcards.append(spec)
+                    
+            for rwspec in remote_wildcards:
+                assert rwspec.endswith('__*')
+                rmodel = rwspec[:-3]
+                rwprefix = rwspec[:-1]
+
+                fld = self.get_data_elem(rmodel)
+                if fld is None:
+                    raise Exception(
+                        "Invalid remote wildcard %s" % rw)
+                rwmodel = fld.remote_field.model
+                rwnames = []
+                for de in wildcard_data_elems(rwmodel):
+                    if isinstance(de, (VirtualField, ForeignObject)):
+                        continue
+                    if self.use_as_wildcard(de):
+                        k = rwprefix + de.name
+                        if k not in explicit_specs:
+                            rwnames.append(k)
+                            self.hidden_elements.add(k)
+                wildcard_str = self.layout.join_str.join(rwnames)
+                # print("20180112a", rwmodel, wildcard_str)
+                # print("20180112b", rwspec, desc)
+                desc = desc.replace(rwspec, wildcard_str)
+
             wildcard_names = []
             for de in self.layout._datasource.wildcard_data_elems():
-                if (de.name not in explicit_specs):
+                if de.name not in explicit_specs:
                     if self.use_as_wildcard(de):
                         wildcard_names.append(de.name)
                         if len(explicit_specs) or isinstance(de, VirtualField):
                             self.hidden_elements.add(de.name)
             wildcard_str = self.layout.join_str.join(wildcard_names)
             desc = desc.replace('*', wildcard_str)
-            # if len(explicit_specs) > 0:
-            #     self.hidden_elements |= set(wildcard_names)
+
             mk = self.layout._datasource.master_key
             if mk and mk not in explicit_specs \
                and mk not in self.hidden_elements:

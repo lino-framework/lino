@@ -4,6 +4,9 @@
 <title>{% block title %}{{site.title or site.verbose_name}}{% endblock %}</title>
 <link rel="stylesheet" href="{{site.plugins.bootstrap3.build_lib_url('css','bootstrap.css')}}" type="text/css">
 <link rel="stylesheet" href="{{site.build_static_url('bootstrap.css')}}" type="text/css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/timepicker@1.11.12/jquery.timepicker.min.css" type="text/css">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
 </head><body>
 <div id="wrap">
   <div class="container-fluid">
@@ -85,5 +88,8 @@
 
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
 <script src="{{site.plugins.bootstrap3.build_lib_url('js','bootstrap.min.js')}}"></script>
+<script src="https://cdn.jsdelivr.net/npm/timepicker@1.11.12/jquery.timepicker.min.js"></script>
+<script src="{{site.plugins.bootstrap3.build_lib_url('js','bootstrap_lino.js')}}"></script>
 </body></html>

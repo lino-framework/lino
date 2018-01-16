@@ -9,10 +9,10 @@ When this plugin is installed, you can still easily disable it by
 setting :attr:`use_java <lino.core.site.Site.use_java>` to `False` in
 your :xfile:`settings.py`.
 
-When this plugin is enabled, then you must also add the `.jar` files
-required by :ref:`davlink` into your media directory, in a
-subdirectory named "davlink".  TODO: move :ref:`davlink` to a `static`
-directory in the Lino repository.
+.. obsolete: When this plugin is enabled, then you must also add the `.jar` files
+   required by :ref:`davlink` into your media directory, in a
+   subdirectory named "davlink".  TODO: move :ref:`davlink` to a `static`
+   directory in the Lino repository.
 
 """
 

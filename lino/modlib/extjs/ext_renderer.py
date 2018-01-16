@@ -1307,7 +1307,7 @@ class ExtRenderer(JsRenderer):
 
     def js_render_window_action(self, rh, ba, unused_profile):
         # x = str(rh)
-        # if x.startswith('clocking'):
+        # if x.startswith('working'):
         #     print "20150421 {0}".format(x)
         # profile = get_user_profile()
         rpt = rh.actor
