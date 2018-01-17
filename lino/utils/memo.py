@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2006-2017 Luc Saffre
+# Copyright 2006-2018 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 r""" A simple markup parser that expands "commands" found in an input
@@ -7,10 +7,12 @@ string to produce a resulting output string.  Commands are in the form
 ``[KEYWORD ARGS]``.  The caller defines itself all commands, there are
 no predefined commands.
 
-..  This document is part of the Lino test suite. You can test only
-    this document with::
+..  This document is part of the Lino test suite.  You can test it
+    individually with::
 
-        $ python setup.py test -s tests.UtilsTests.test_memo
+        $ doctest lino/utils/memo.py
+
+A concrete real-world specification is in :doc:`/specs/noi/memo`
 
 
 Usage example
@@ -118,6 +120,10 @@ Non-breaking and zero-width spaces are treated like normal spaces:
 <a href="http://example.com">example.com</a>.
 
 >>> print(p.parse(u"[url \u200bhttp://example.com example.com]."))
+[DEBUG] url2html() got 'http://example.com example.com'
+<a href="http://example.com">example.com</a>.
+
+>>> print(p.parse(u"[url&nbsp;http://example.com example.com]."))
 [DEBUG] url2html() got 'http://example.com example.com'
 <a href="http://example.com">example.com</a>.
 
@@ -261,6 +267,7 @@ is used as the text of the link.
         params = params.replace('\\\n', ' ')
         params = params.replace(u'\xa0', ' ')
         params = params.replace(u'\u200b', ' ')
+        params = params.replace('&nbsp;', ' ')
         params = str(params.strip())
         try:
             return self.format_value(cmdh(self, params))
