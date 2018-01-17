@@ -1555,7 +1555,7 @@ class HtmlBoxElement(DisplayElement):
             try:
                 value = E.fromstring(value)
             except Exception:
-                logger.warning("20180114 Failed to parse %s", value)
+                # logger.warning("20180114 Failed to parse %s", value)
                 pass
                 # panel = E.fromstring('<div class="panel panel-default"><div class="panel-body">' + value + "</div></div>")
         if E.iselement(value):
