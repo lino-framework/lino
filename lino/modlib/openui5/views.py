@@ -26,6 +26,11 @@ from lino.core import constants
 # from lino.core import auth
 from lino.core.requests import BaseRequest
 from lino.core.tablerequest import TableRequest
+import json
+
+from lino.core.views import requested_actor, action_request
+from lino.core.views import json_response, json_response_kw
+
 from lino.core.views import action_request
 from lino.core.utils import navinfo
 from lino.utils.xmlgen.html import E
@@ -34,6 +39,71 @@ from lino.utils.xmlgen import html as xghtml
 PLAIN_PAGE_LENGTH = 15
 
 MENUS = dict()
+
+
+# Taken from lino.modlib.extjs.views
+
+class Restful(View):
+
+    """
+    Used to collaborate with a restful Ext.data.Store.
+    """
+
+    def post(self, request, app_label=None, actor=None, pk=None):
+        rpt = requested_actor(app_label, actor)
+        ar = rpt.request(request=request)
+
+        instance = ar.create_instance()
+        # store uploaded files.
+        # html forms cannot send files with PUT or GET, only with POST
+        if ar.actor.handle_uploaded_files is not None:
+            ar.actor.handle_uploaded_files(instance, request)
+
+        data = request.POST.get('rows')
+        data = json.loads(data)
+        ar.form2obj_and_save(data, instance, True)
+
+        # Ext.ensible needs list_fields, not detail_fields
+        ar.set_response(
+            rows=[ar.ah.store.row2dict(
+                ar, instance, ar.ah.store.list_fields)])
+        return json_response(ar.response)
+
+    # def delete(self, request, app_label=None, actor=None, pk=None):
+    #     rpt = requested_actor(app_label, actor)
+    #     ar = rpt.request(request=request)
+    #     ar.set_selected_pks(pk)
+    #     return delete_element(ar, ar.selected_rows[0])
+
+    def get(self, request, app_label=None, actor=None, pk=None):
+        rpt = requested_actor(app_label, actor)
+        assert pk is None, 20120814
+        ar = rpt.request(request=request)
+        rh = ar.ah
+        rows = [
+            rh.store.row2dict(ar, row, rh.store.all_fields)
+            for row in ar.sliced_data_iterator]
+        kw = dict(count=ar.get_total_count(), rows=rows)
+        kw.update(title=str(ar.get_title()))
+        return json_response(kw)
+
+    def put(self, request, app_label=None, actor=None, pk=None):
+        rpt = requested_actor(app_label, actor)
+        ar = rpt.request(request=request)
+        ar.set_selected_pks(pk)
+        elem = ar.selected_rows[0]
+        rh = ar.ah
+
+        data = http.QueryDict(request.body).get('rows')
+        data = json.loads(data)
+        a = rpt.get_url_action(rpt.default_list_action_name)
+        ar = rpt.request(request=request, action=a)
+        ar.renderer = settings.SITE.kernel.extjs_renderer
+        ar.form2obj_and_save(data, elem, False)
+        # Ext.ensible needs list_fields, not detail_fields
+        ar.set_response(
+            rows=[rh.store.row2dict(ar, elem, rh.store.list_fields)])
+        return json_response(ar.response)
 
 
 def http_response(ar, tplname, context):

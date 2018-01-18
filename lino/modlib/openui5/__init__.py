@@ -55,6 +55,11 @@ class Plugin(Plugin):
             #     views.List.as_view()),
             # url(rx + r'(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$',
             #     views.Element.as_view()),
+            url(rx + r'restful/(?P<app_label>\w+)/(?P<actor>\w+)$',
+                views.Restful.as_view()),
+            url(rx + r'restful/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$',
+                views.Restful.as_view()),
+
             url(rx + r'$', views.Tickets.as_view()),
 
         ]
