@@ -4,7 +4,7 @@ sap.ui.define([
 ], function (Controller, MessageToast) {
 //	"use strict";
 
-	return Controller.extend("sap.ui.demo.wt.helloworld.controller.helloworld", {
+	return Controller.extend("sap.ui.demo.wt.controller.HelloPanel", {
 	                          // Name should be name of controller in the correct namespace
 		onShowHello : function () {
 		    /* // read msg from i18n model, disabled for simplicity
@@ -14,6 +14,11 @@ sap.ui.define([
 			*/
 			MessageToast.show("Hello World");
 		}
+
+		,onOpenDialog : function () {
+            this.getOwnerComponent().openHelloDialog();
+		}
+
 	});
 
 });

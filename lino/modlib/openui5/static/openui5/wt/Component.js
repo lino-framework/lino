@@ -1,10 +1,11 @@
 sap.ui.define([
    "sap/ui/core/UIComponent",
    "sap/ui/model/json/JSONModel",
-   "sap/ui/model/resource/ResourceModel"
-], function (UIComponent, JSONModel, ResourceModel) {
+   "sap/ui/model/resource/ResourceModel",
+   "sap/ui/demo/wt/controller/HelloDialog"
+], function (UIComponent, JSONModel, ResourceModel, HelloDialog) {
    "use strict";
-   return UIComponent.extend("sap.ui.demo.wt.helloworld.Component", {
+   return UIComponent.extend("sap.ui.demo.wt.Component", {
 
       metadata :{
 //            rootView : "sap.ui.demo.wt.helloworld.view.helloworld"
@@ -17,7 +18,7 @@ sap.ui.define([
         // set data model
          var oData = {
             recipient : {
-               name : "World"
+               name : "Sad World"
             }
          };
          var oModel = new JSONModel(oData);
@@ -30,6 +31,11 @@ sap.ui.define([
          });
          this.setModel(i18nModel, "i18n");
          */
-	}
+         // set dialog
+         this._helloDialog = new HelloDialog(this.getRootControl());
+         },
+         openHelloDialog : function() {
+         	    this._helloDialog.open();
+         	    }
    });
 });
