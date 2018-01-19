@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2010-2017 Luc Saffre
+# Copyright 2010-2018 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Upload shortcut fields
@@ -30,10 +30,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import pgettext_lazy as pgettext
-
-from lino.utils.xmlgen.html import E
-from lino.utils import join_elems
 
 from lino.modlib.office.roles import OfficeStaff
 
@@ -77,71 +73,7 @@ add = UploadAreas.add_item
 add('90', _("Uploads"), 'general')
 
 
-@dd.receiver(dd.pre_analyze)
-def set_upload_shortcuts(sender, **kw):
-    """This is the successor for `quick_upload_buttons`."""
-
-    # remember that models might have been overridden.
-    UploadType = sender.modules.uploads.UploadType
-
-    for i in list(Shortcuts.items()):
-
-        def f(obj, ar):
-            if obj is None or ar is None:
-                return E.div()
-            try:
-                utype = UploadType.objects.get(shortcut=i)
-            except UploadType.DoesNotExist:
-                return E.div()
-            items = []
-            target = sender.modules.resolve(i.target)
-            sar = ar.spawn_request(
-                actor=target,
-                master_instance=obj,
-                known_values=dict(type=utype))
-                # param_values=dict(pupload_type=et))
-            n = sar.get_total_count()
-            if n == 0:
-                iar = target.insert_action.request_from(
-                    sar, master_instance=obj)
-                btn = iar.ar2button(
-                    None, _("Upload"), icon_name="page_add",
-                    title=_("Upload a file from your PC to the server."))
-                items.append(btn)
-            elif n == 1:
-                after_show = ar.get_status()
-                obj = sar.data_iterator[0]
-                items.append(sar.renderer.href_button(
-                    dd.build_media_url(obj.file.name),
-                    _("show"),
-                    target='_blank',
-                    icon_name='page_go',
-                    style="vertical-align:-30%;",
-                    title=_("Open the uploaded file in a "
-                            "new browser window")))
-                after_show.update(record_id=obj.pk)
-                items.append(sar.window_action_button(
-                    sar.ah.actor.detail_action,
-                    after_show,
-                    _("Edit"), icon_name='application_form',
-                    title=_("Edit metadata of the uploaded file.")))
-            else:
-                obj = sar.sliced_data_iterator[0]
-                items.append(ar.obj2html(
-                    obj, pgettext("uploaded file", "Last")))
-
-                btn = sar.renderer.action_button(
-                    obj, sar, sar.bound_action,
-                    _("All {0} files").format(n),
-                    icon_name=None)
-                items.append(btn)
-
-            return E.div(*join_elems(items, ', '))
-
-        vf = dd.VirtualField(dd.DisplayField(i.text), f)
-        dd.inject_field(i.model_spec, i.name, vf)
-        # logger.info("Installed upload shortcut field %s.%s",
-        #             i.model_spec, i.name)
+   
 
 
 def add_shortcut(*args, **kw):
