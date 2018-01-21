@@ -69,6 +69,7 @@ from lino.core.signals import (pre_ui_build, post_ui_build,
                                pre_startup, post_startup,
                                pre_analyze, post_analyze)
 
+
 # from .widgets import WidgetFactory
 from .plugin import Plugin
 from .ddh import DisableDeleteHandler

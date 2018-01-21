@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2016 Luc Saffre
+# Copyright 2008-2018 Luc Saffre
 # License: BSD (see file COPYING for details)
 """
 Database models for `lino.modlib.uploads`.
@@ -12,18 +12,18 @@ logger = logging.getLogger(__name__)
 
 from django.db import models
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import string_concat
+from django.utils.translation import pgettext_lazy as pgettext
 
-from lino.api import dd, rt
+from lino.api import dd, rt, _
 from lino import mixins
-from lino.utils.xmlgen.html import E
-from lino.utils import join_elems
+from lino.utils.xmlgen.html import E, join_elems
 from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.users.mixins import UserAuthored, My
 from lino.modlib.office.roles import OfficeUser, OfficeStaff, OfficeOperator
 
 from .choicelists import Shortcuts, UploadAreas
+from .mixins import UploadController
 
 
 class UploadType(mixins.BabelNamed):
@@ -232,22 +232,21 @@ class MyUploads(My, Uploads):
     #     kw.update(user=ar.get_user())
     #     return kw
 
-
 class AreaUploads(Uploads):
     required_roles = dd.login_required((OfficeUser, OfficeOperator))
     stay_in_grid = True
-    _upload_area = UploadAreas.general
+    # _upload_area = UploadAreas.general
     slave_grid_format = 'summary'
 
-    @classmethod
-    def get_known_values(self):
-        return dict(upload_area=self._upload_area)
-
-    @classmethod
-    def get_actor_label(self):
-        if self._upload_area is not None:
-            return self._upload_area.text
-        return self._label or self.__name__
+    # 20180119
+    # @classmethod
+    # def get_known_values(self):
+    #     return dict(upload_area=self._upload_area)
+    # @classmethod
+    # def get_actor_label(self):
+    #     if self._upload_area is not None:
+    #         return self._upload_area.text
+    #     return self._label or self.__name__
 
     @classmethod
     def format_row_in_slave_summary(self, ar, obj):
@@ -266,14 +265,23 @@ class AreaUploads(Uploads):
         and their subclasses for the different `_upload_area`.
 
         """
-        UploadType = rt.modules.uploads.UploadType
+        if obj is None:
+            return
+        UploadType = rt.models.uploads.UploadType
         # Upload = rt.modules.uploads.Upload
         elems = []
         types = []
-
         perm = ar.get_user().user_type.has_required_roles(self.required_roles)
-
-        for ut in UploadType.objects.filter(upload_area=self._upload_area):
+        qs = UploadType.objects.all()
+        if isinstance(obj, UploadController):
+            area = obj.get_upload_area()
+            if area is not None:
+                qs = qs.filter(upload_area=area)
+        else:
+            raise Exception("A {} is not an UploadController!".format(
+                obj.__class__))
+                
+        for ut in qs:
             sar = ar.spawn(
                 self, master_instance=obj,
                 known_values=dict(type_id=ut.id))
@@ -338,4 +346,70 @@ class UploadsByController(AreaUploads):
     def format_upload(self, obj):
         return str(obj.type)
 
+@dd.receiver(dd.pre_analyze)
+def before_analyze(sender, **kwargs):
+    """This is the successor for `quick_upload_buttons`."""
+
+    # remember that models might have been overridden.
+    UploadType = sender.modules.uploads.UploadType
+    Shortcuts = sender.modules.uploads.Shortcuts
+
+    for i in Shortcuts.items():
+
+        def f(obj, ar):
+            if obj is None or ar is None:
+                return E.div()
+            try:
+                utype = UploadType.objects.get(shortcut=i)
+            except UploadType.DoesNotExist:
+                return E.div()
+            items = []
+            target = sender.modules.resolve(i.target)
+            sar = ar.spawn_request(
+                actor=target,
+                master_instance=obj,
+                known_values=dict(type=utype))
+                # param_values=dict(pupload_type=et))
+            n = sar.get_total_count()
+            if n == 0:
+                iar = target.insert_action.request_from(
+                    sar, master_instance=obj)
+                btn = iar.ar2button(
+                    None, _("Upload"), icon_name="page_add",
+                    title=_("Upload a file from your PC to the server."))
+                items.append(btn)
+            elif n == 1:
+                after_show = ar.get_status()
+                obj = sar.data_iterator[0]
+                items.append(sar.renderer.href_button(
+                    sender.build_media_url(obj.file.name),
+                    _("show"),
+                    target='_blank',
+                    icon_name='page_go',
+                    style="vertical-align:-30%;",
+                    title=_("Open the uploaded file in a "
+                            "new browser window")))
+                after_show.update(record_id=obj.pk)
+                items.append(sar.window_action_button(
+                    sar.ah.actor.detail_action,
+                    after_show,
+                    _("Edit"), icon_name='application_form',
+                    title=_("Edit metadata of the uploaded file.")))
+            else:
+                obj = sar.sliced_data_iterator[0]
+                items.append(ar.obj2html(
+                    obj, pgettext("uploaded file", "Last")))
+
+                btn = sar.renderer.action_button(
+                    obj, sar, sar.bound_action,
+                    _("All {0} files").format(n),
+                    icon_name=None)
+                items.append(btn)
+
+            return E.div(*join_elems(items, ', '))
+
+        vf = dd.VirtualField(dd.DisplayField(i.text), f)
+        dd.inject_field(i.model_spec, i.name, vf)
+        # logger.info("Installed upload shortcut field %s.%s",
+        #             i.model_spec, i.name)
 

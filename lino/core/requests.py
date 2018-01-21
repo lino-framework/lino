@@ -162,7 +162,11 @@ class PhantomRow(VirtualRow):
 inheritable_attrs = frozenset(
     'user subst_user renderer requesting_panel master_instance'.split())
 
-
+def bool2text(x):
+    if x:
+        return _("Yes")
+    return _("No")
+    
 class BaseRequest(object):
     """Base class of all action requests.
 
@@ -389,6 +393,7 @@ request from it.
             fdf=dd.fdf,
             fdmy=dd.fdmy,
             iif=iif,
+            bool2text=bool2text,
             unicode=str,  # backwards-compatibility. In new template
                           # you should prefer `str`.
             pgettext=pgettext,

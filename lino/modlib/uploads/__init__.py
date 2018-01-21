@@ -1,4 +1,4 @@
-# Copyright 2010-2015 Luc Saffre
+# Copyright 2010-2018 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Adds functionality for uploading files to the server and managing
@@ -11,8 +11,7 @@ them.
    choicelists
 
 """
-from lino import ad
-from django.utils.translation import ugettext_lazy as _
+from lino import ad, _
 
 
 class Plugin(ad.Plugin):
@@ -35,3 +34,4 @@ class Plugin(ad.Plugin):
         m = m.add_menu(mg.app_label, mg.verbose_name)
         m.add_action('uploads.AllUploads')
         m.add_action('uploads.UploadAreas')
+
