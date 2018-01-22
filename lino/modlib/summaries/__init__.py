@@ -1,18 +1,8 @@
-# Copyright 2016 Luc Saffre
+# Copyright 2016-2018 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Installs a framework for defining summary tables using the
-:class:`Summary <lino.modlib.summaries.mixins.Summary>` model mixin
-and the :manage:`checksummaries` command.
-
-Usage example: :mod:`lino_welfare.modlib.esf`.
-
-
-.. autosummary::
-   :toctree:
-
-    mixins
-    management.commands.checksummaries
+"""A framework for defining and managing summary tables.
+See :doc:`/specs/summaries`.
 
 """
 

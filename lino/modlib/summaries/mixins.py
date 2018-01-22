@@ -1,10 +1,6 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2016 Luc Saffre
+# Copyright 2016-2018 Luc Saffre
 # License: BSD (see file COPYING for details)
-
-"""Model mixins for summaries.
-
-"""
 
 from __future__ import unicode_literals
 from builtins import range
@@ -39,10 +35,7 @@ class ComputeResults(dd.Action):
 
 
 class UpdateSummariesByMaster(dd.Action):
-    """
-    """
     icon_name = 'lightning'
-    label = _("Update summary data for this object")
 
     def __init__(self, master_model, summary_models):
         self.master_model = master_model
@@ -58,15 +51,13 @@ class UpdateSummariesByMaster(dd.Action):
 
 
 class Summary(dd.Model):
-    """Base class for all "summary data" models.
-    """
     class Meta(object):
         abstract = True
 
     # summary_period = 'yearly'
     summary_period = 'monthly'
 
-    year = models.IntegerField(_("Year"))
+    year = models.IntegerField(_("Year"), null=True, blank=True)
     month = models.IntegerField(_("Month"), null=True, blank=True)
 
     compute_results = ComputeResults()
@@ -81,9 +72,10 @@ class Summary(dd.Model):
         for year in range(config.start_year, config.end_year+1):
             if cls.summary_period == 'yearly':
                 yield year, None
-            else:
+            elif cls.summary_period == 'monthly':
                 for month in range(1, 12):
                     yield year, month
+        yield None, None
 
     @classmethod
     def get_for_period(cls, master, year, month):
@@ -102,15 +94,6 @@ class Summary(dd.Model):
     def get_summary_master_model(cls):
         raise NotImplementedError()
 
-    def get_summary_collectors(self):
-        """This should yield a sequence of ``(collector, qs)`` tuples, where
-        `collector` is a callable and `qs` a queryset. Lino will call
-        `collector` for each `obj` in `qs`. The collector is
-        responsible for updating that object.
-
-        """
-        raise NotImplementedError()
-
     @classmethod
     def get_summary_masters(cls):
         return cls.get_summary_master_model().objects.all()
@@ -121,6 +104,9 @@ class Summary(dd.Model):
             obj = cls.get_for_period(master, year, month)
             obj.compute_summary_values()
                 
+    def get_summary_collectors(self):
+        raise NotImplementedError()
+
     def reset_summary_data(self):
         pass
 
@@ -137,7 +123,8 @@ class Summary(dd.Model):
         self.save()
 
     def add_date_filter(self, qs, fldname, **kwargs):
-        kwargs[fldname+'__year'] = self.year
+        if self.year is not None:
+            kwargs[fldname+'__year'] = self.year
         if self.month is not None:
             kwargs[fldname+'__month'] = self.month
         return qs.filter(**kwargs)
