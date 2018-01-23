@@ -110,6 +110,29 @@ def set_default_verbose_name(f):
         f.verbose_name = f.remote_field.model._meta.verbose_name
 
 
+def resolve_fields_list(model, k):
+    qsf = getattr(model, k)
+    if qsf is None:
+        return
+    elif isinstance(qsf, tuple):
+        pass
+    elif isinstance(qsf, six.string_types):
+        lst = []
+        for n in qsf.split():
+            f = model.get_data_elem(n)
+            if f is None:
+                msg = "Invalid field {} in {} of {}"
+                msg = msg.format(n, k, model)
+                raise Exception(msg)
+            lst.append(f)
+        setattr(model, k, tuple(lst))
+            # fields.fields_list(model, model.quick_search_fields))
+    else:
+        raise ChangedAPI(
+            "{0}.{1} must be None or a string "
+            "of space-separated field names (not {2})".format(
+                model, k, qsf))
+            
 CLONEABLE_ATTRS = frozenset("""ah request user subst_user
 bound_action create_kw known_values param_values
 action_param_values""".split())
@@ -304,49 +327,26 @@ class Kernel(object):
                 model.allow_cascaded_copy = frozenset(
                     fields.fields_list(model, model.allow_cascaded_copy))
 
-            qsf = model.quick_search_fields
-            # Attention when inheriting this from from parent model.
-            # qsf = model.__dict__.get('quick_search_fields', None)
-            if qsf is None:
+            # Note how to inherit this from from parent model.
+            if model.quick_search_fields is None:
                 fields_list = []
                 for field in model._meta.fields:
                     if isinstance(field, (models.CharField, models.TextField)):
                         fields_list.append(field)
                 model.quick_search_fields = tuple(fields_list)
-            elif isinstance(qsf, tuple):
-                pass
-            elif isinstance(qsf, six.string_types):
-                tuple()
-                    
-                model.quick_search_fields = tuple(
-                    [model.get_data_elem(n) for n in qsf.split()])
-                    # fields.fields_list(model, model.quick_search_fields))
             else:
-                raise ChangedAPI(
-                    "{0}.quick_search_fields must be None or a string "
-                    "of space-separated field names (not {1})".format(
-                        model, qsf))
+                resolve_fields_list(model, 'quick_search_fields')
 
-            qsf = model.quick_search_fields_digit
-            if qsf is None:
+            if model.quick_search_fields_digit is None:
                 fields_list = []
                 for field in model._meta.fields:
                     if isinstance(field, (
                             models.IntegerField, models.AutoField)):
                         fields_list.append(field)
                 model.quick_search_fields_digit = tuple(fields_list)
-            elif isinstance(qsf, tuple):
-                pass
-            elif isinstance(qsf, six.string_types):
-                model.quick_search_fields_digit = tuple(
-                    [model.get_data_elem(n) for n in qsf.split()])
-                    #fields.fields_list(model, model.quick_search_fields_digit))
             else:
-                raise Exception(
-                    "{0}.quick_search_fields_digit must be None or a string "
-                    "of space-separated field names (not {1})".format(
-                        model, qsf))
-
+                resolve_fields_list(model, 'quick_search_fields_digit')
+                
             if model._meta.abstract:
                 raise Exception("Tiens?")
 
