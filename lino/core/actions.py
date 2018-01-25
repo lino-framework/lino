@@ -784,7 +784,7 @@ class ShowSlaveTable(Action):
 
     def attach_to_actor(self, actor, name):
         if isinstance(self.slave_table, six.string_types):
-            T = settings.SITE.modules.resolve(self.slave_table)
+            T = settings.SITE.models.resolve(self.slave_table)
             if T is None:
                 msg = "Invalid action {} on actor {!r}: "\
                       "no table named {}".format(
