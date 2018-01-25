@@ -31,6 +31,9 @@ Registered objects are not editable."""),
 named "draft" and "registered".
 There may be additional states.
 Every state must have an extra attribute "editable"."""),
+    'lino.mixins.Modified' : _("""Adds a a timestamp field which keeps track of the last
+modification of every individual database object."""),
+    'lino.mixins.Modified.auto_touch' : _("""Whether to touch objects automatically when saving them."""),
     'lino.mixins.Created' : _("""Mixin for models which have a field created"""),
     'lino.mixins.Created.created' : _("""The timestame when this object was created."""),
     'lino.mixins.CreatedModified' : _("""Adds two timestamp fields created and modified."""),
@@ -296,7 +299,6 @@ for himself)."""),
     'lino.modlib.summaries.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.summaries.Plugin.start_year' : _("""The first year for which summaries should be computed."""),
     'lino.modlib.summaries.Plugin.end_year' : _("""The last year for which summaries should be computed."""),
-    'lino.modlib.summaries.mixins.Summary' : _("""Base class for all "summary data" models."""),
     'lino.modlib.system.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.system.YesNo' : _("""A choicelist with two values "Yes" and "No"."""),
     'lino.modlib.system.Genders' : _("""Defines the two possible choices "male" and "female"
