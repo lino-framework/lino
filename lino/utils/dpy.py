@@ -307,6 +307,9 @@ data."""
 
         # logger.info("Loaded %d objects", self.count_objects)
     
+        self.flush("Abandoning with {} unsaved instances:{}")
+        
+    def flush(self, msg="Flush {} unsaved instances:{}"):
         if self.save_later:
             count = 0
             s = ''
@@ -322,14 +325,14 @@ data."""
                             ', '.join([str(o.object.pk) for o in objects]))
                     count += len(objects)
 
-            msg = "Abandoning with %d unsaved instances:%s" % (count, s)
-            logger.warning(msg)
+            logger.warning(msg.format(count, s))
 
             # Don't raise an exception. The unsaved instances got lost and
             # the loaddata should be done again, but meanwhile the database
             # is not necessarily invalid and may be used for further testing.
             # And anyway, loaddata would catch it and still continue.
             # raise Exception(msg)
+
 
 
 class DpyLoader(LoaderBase):
