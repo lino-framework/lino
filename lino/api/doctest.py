@@ -1,8 +1,9 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015-2017 Luc Saffre
+# Copyright 2015-2018 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""A selection of names to be used in tested documents.
+"""
+A selection of names to be used in tested documents.
 """
 
 from __future__ import print_function

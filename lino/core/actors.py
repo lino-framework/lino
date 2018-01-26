@@ -251,7 +251,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
             @classmethod
             def get_row_classes(cls,obj,ar):
-                if obj.client_state == pcsw.ClientStates.newcomer:
+                if obj.client_state == ClientStates.newcomer:
                     return 'green'
 
         Defining this method will cause an additional special

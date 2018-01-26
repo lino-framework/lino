@@ -384,7 +384,7 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
     applies to all subtables) or (b) just on one table. For example
     (excerpt from :mod:`lino_avanti.lib.avanti`)::
 
-        from lino_xl.lib.coachings.choicelists import ClientStates
+        from lino_xl.lib.clients.choicelists import ClientStates
         ClientStates.default_value = 'coached'
 
         parameters = ObservedDateRange(
