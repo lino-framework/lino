@@ -1,8 +1,9 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2016 by Luc Saffre.
+# Copyright 2013-2018 by Luc Saffre.
 # License: BSD, see file LICENSE for more details.
 
-"""This defines the :manage:`dump2py` management command.
+"""
+This defines the :manage:`dump2py` management command.
 
 .. management_command:: dump2py
 
@@ -59,7 +60,6 @@ SEE ALSO
 
 - :doc:`/dev/datamig`
 - :doc:`/dev/dump2py`
-
 """
 
 from __future__ import unicode_literals
@@ -204,12 +204,13 @@ from __future__ import unicode_literals
 
 import logging
 logger = logging.getLogger('%s')
-import os
 
 ''' % __name__)
 
         self.stream.write('SOURCE_VERSION = %r\n' % str(current_version))
         self.stream.write('''
+import os
+import six
 from decimal import Decimal
 from datetime import datetime
 from datetime import time, date
@@ -233,7 +234,17 @@ def new_content_type_id(m):
     ct = settings.SITE.models.contenttypes.ContentType.objects.get_for_model(m)
     if ct is None: return None
     return ct.pk
+
+def pmem():
+    # Thanks to https://stackoverflow.com/questions/938733/total-memory-used-by-python-process    
+    process = psutil.Process(os.getpid())
+    print(process.memory_info().rss)
     
+def execfile(fn, *args):
+    logger.info("Opening file %s ...", fn)
+    six.exec_(compile(open(fn, "rb").read(), fn, 'exec'), *args)
+    # pmem()  # requires pip install psutil
+
 ''')
         s = ','.join([
             '%s=values[%d]' % (lng.name, lng.index)
