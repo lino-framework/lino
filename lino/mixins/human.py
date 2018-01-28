@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2008-2016 Luc Saffre
+# Copyright 2008-2018 Luc Saffre
 # License: BSD (see file COPYING for details)
 """
 
@@ -31,7 +31,10 @@ from lino.core import fields
 from lino.core import model
 
 name_prefixes1 = set(("HET", "'T", 'VAN', 'DER', 'TER', 'DEN',
-                      'VOM', 'VON', 'OF', "DE", "DU", "EL", "AL", "DI"))
+                      'VOM', 'VON', 'OF',
+                      "DE", "DU",
+                      "DA", "DI", "DO", "DOS",
+                      "EL", "AL"))
 name_prefixes2 = set(("VAN DEN", "VAN DER", "VAN DE",
                       "IN HET", "VON DER", "DE LA"))
 
@@ -39,21 +42,29 @@ NAME_PREFIXES = set([p + ' ' for p in name_prefixes1])
 NAME_PREFIXES |= set([p + ' ' for p in name_prefixes2])
 
 
+
 def strip_name_prefix(s):
     """Strip name prefix from given family name `s`."""
     s = s.upper()
-    for p in NAME_PREFIXES:
-        if s.startswith(p):
-            s = s[len(p):]
+    
+    def strip_from(s, lst):
+        for p in lst:
+            p = p + ' '
+            if s.startswith(p):
+                s = s[len(p):]
+        return s  
+
+    s = strip_from(s, name_prefixes2)
+    s = strip_from(s, name_prefixes1)
     return s
 
 
 def name2kw(s, last_name_first=True):
-    """Separate first name from last name.  Split a string that contains
-both last_name and first_name.  The caller must indicate whether the
-string contains last_name first (e.g. Saffre Luc) or first_name first
-(e.g. Luc Saffre).
-
+    """
+    Separate first name from last name.  Split a string that contains
+    both last_name and first_name.  The caller must indicate whether
+    the string contains last_name first (e.g. Saffre Luc) or
+    first_name first (e.g. Luc Saffre).
     """
     kw = {}
     a = s.split(',')
@@ -71,7 +82,7 @@ string contains last_name first (e.g. Saffre Luc) or first_name first
         else:
             return dict(last_name=a[1], first_name=a[0])
     else:
-        # string consisting of more than 3 words
+        # string of more than 3 words
         if last_name_first:
             a01 = a[0] + ' ' + a[1]
             if a01.upper() in name_prefixes2:
@@ -128,7 +139,8 @@ def parse_name(text):
 
 
 def get_salutation(gender, nominative=False):
-    """Returns "Mr" or "Mrs" or a translation thereof, depending on the
+    """
+    Returns "Mr" or "Mrs" or a translation thereof, depending on the
     gender and the current language.
     
     Note that the English abbreviations `Mr
@@ -140,7 +152,6 @@ def get_salutation(gender, nominative=False):
     languages like German: specifying ``nominative=True`` for a male
     person will return the nominative or direct form "Herr" instead of
     the default (accusative or indirect form) "Herrn".
-
     """
     if not gender:
         return ''
@@ -153,7 +164,8 @@ def get_salutation(gender, nominative=False):
 
 @python_2_unicode_compatible
 class Human(model.Model):
-    """Base class for all models that represent a human.
+    """
+    Base class for models that represent a human.
 
     .. attribute:: title
 
@@ -182,7 +194,6 @@ class Human(model.Model):
 
         Possible values are defined in
         :class:`lino.modlib.lino.choicelists.Genders`.
-
     """
 
     class Meta(object):
@@ -228,7 +239,8 @@ class Human(model.Model):
             self.gender, **salutation_options)
 
     def get_last_name_prefix(self):
-        """May be used for handling special of titles (e.g. "Cardinal",
+        """
+        May be used for handling special of titles (e.g. "Cardinal",
         "Graf") which come before the last name (not before the first
         name).
 
@@ -239,13 +251,13 @@ class Human(model.Model):
         External links: `linguee.de
         <http://www.linguee.de/englisch-deutsch/uebersetzung/mr.+dr..html>`__
         and `wikipedia.org <https://en.wikipedia.org/wiki/Title>`__
-
         """
         return ''
     
     def get_full_name(
             self, salutation=True, upper=None, **salutation_options):
-        """Returns a one-line string composed of salutation,
+        """
+        Returns a one-line string composed of salutation,
         :attr:`first_name` and :attr:`last_name`.
 
         The optional keyword argument `salutation` can be set to
@@ -265,7 +277,6 @@ class Human(model.Model):
         name.
 
         See :ref:`lino.tutorial.human` for some examples.
-
         """
         words = []
 
@@ -287,9 +298,9 @@ class Human(model.Model):
     full_name = property(get_full_name)
 
     def format_family_member(self, ar, other):
-        """used in `humanlinks.LinksByHuman` and in
-`households.SiblingsByPerson`.
-
+        """
+        Used in `humanlinks.LinksByHuman` and in
+        `households.SiblingsByPerson`.
         """
         if other.last_name == self.last_name:
             text = other.first_name
@@ -330,8 +341,8 @@ class Human(model.Model):
 
 class Born(model.Model):
     """
-    Abstract base class that adds a `birth_date`
-    field and a virtual field "Age".
+    Abstract base class that adds a `birth_date` field and a virtual
+    field "Age".
 
     .. attribute:: birth_date
 
@@ -340,7 +351,6 @@ class Born(model.Model):
     .. attribute:: age
 
       Virtual field displaying the age in years.
-
     """
 
     class Meta(object):
@@ -350,8 +360,9 @@ class Born(model.Model):
         blank=True, verbose_name=_("Birth date"))
 
     def get_age(self, today=None):
-        """Return the age (in years) of this human.
-        See :meth:`lino.utils.IncompleteDateField.get_age`.
+        """
+        Return the age (in years) of this human.  See
+        :meth:`lino.utils.IncompleteDateField.get_age`.
         """
         if self.birth_date:
             return self.birth_date.get_age(today or settings.SITE.today())

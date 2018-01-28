@@ -241,7 +241,7 @@ def pmem():
     print(process.memory_info().rss)
     
 def execfile(fn, *args):
-    logger.info("Opening file %s ...", fn)
+    logger.info("Execute file %s ...", fn)
     six.exec_(compile(open(fn, "rb").read(), fn, 'exec'), *args)
     # pmem()  # requires pip install psutil
 
@@ -288,6 +288,7 @@ def main(args):
     call_command('initdb', interactive=args.interactive)
     os.chdir(os.path.dirname(__file__))
     loader.initialize()
+    args = (globals(), locals())
 
 """)
 
@@ -334,7 +335,7 @@ def main(args):
             stream.close()
 
             #~ self.stream.write('\nfilename = os.path.join(os.path.dirname(__file__),"%s.py")\n' % )
-            self.stream.write('    execfile("%s.py")\n' % model._meta.db_table)
+            self.stream.write('    execfile("%s.py", *args)\n' % model._meta.db_table)
 
         self.stream.write(
             '    loader.finalize()\n')
