@@ -217,6 +217,7 @@ class LoaderBase(object):
 
     quick = False
     source_version = None
+    max_deferred_objects = 1000
 
     def __init__(self):
         # logger.info("20120225 DpyLoader.__init__()")
@@ -274,8 +275,15 @@ class LoaderBase(object):
         msg = force_text(e)
         d = self.save_later.setdefault(obj.object.__class__, {})
         l = d.setdefault(msg, [])
-        if len(l) == 0:
+        count = len(l)
+        if count == 0:
             logger.info("Deferred %s : %s", obj2str(obj.object), msg)
+        elif count > self.max_deferred_objects:
+            self.flush_deferred_objects()
+            if count > self.max_deferred_objects + 1:
+                raise Exception(
+                    "More than {} deferred objects".format(
+                        self.max_deferred_objects))
         l.append(obj)
         # report a full traceback, but only once per model and
         # exception type:
@@ -321,15 +329,15 @@ data."""
                             full_model_name(model), msg, len(objects),
                             ', '.join([str(o.object.pk) for o in objects]))
                     count += len(objects)
-
-            msg = "Abandoning with %d unsaved instances:%s" % (count, s)
-            logger.warning(msg)
+            msg = "Abandoning with {} unsaved instances:{}"
+            logger.warning(msg.format(count, s))
 
             # Don't raise an exception. The unsaved instances got lost and
             # the loaddata should be done again, but meanwhile the database
             # is not necessarily invalid and may be used for further testing.
             # And anyway, loaddata would catch it and still continue.
             # raise Exception(msg)
+
 
 
 class DpyLoader(LoaderBase):

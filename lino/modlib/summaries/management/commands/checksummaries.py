@@ -1,19 +1,6 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2016 by Luc Saffre.
+# Copyright 2016-2018 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
-"""Defines the :manage:`checksummaries` management command:
-
-.. management_command:: checksummaries
-
-
-.. py2rst::
-
-  from lino.modlib.summaries.management.commands.checksummaries \
-      import Command
-  print(Command.help)
-
-
-"""
 
 from __future__ import unicode_literals, print_function
 

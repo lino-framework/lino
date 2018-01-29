@@ -548,6 +548,10 @@ class Table(AbstractTable):
                     # fk, remote, direct, m2m = x
                     # assert direct
                     # assert not m2m
+                    if fk is None:
+                        raise Exception(
+                            "Invalid master_key {} on {}".format(
+                                self.master_key, self))
                     if fk.remote_field:
                         master_model = fk.remote_field.model
                     elif isinstance(fk, ChoiceListField):
