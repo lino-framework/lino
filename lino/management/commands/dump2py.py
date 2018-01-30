@@ -18,33 +18,41 @@ Usage: cd to your project directory and say::
 This will create a python dump of your database to the directory
 `TARGET`.
 
-
-Note that you might theoretically use Django's :manage:`dumpdata`
-command for writing a Python fixture, but this possibility is currently
-deactivated because a huge database would create a huge Python module
-which might not fit into memory.
-
-Options:
-
-- `--noinput` : Do not prompt for user input of any kind.
-
-- `--tolerate` : Tolerate database errors. This can help making a
-  partial snapshot of a database which is not (fully) synced with the
-  application code.
-
-
-The directory will contain a file :xfile:`restore.py` and a lot of
-other `.py` files (currently one for every model) which are being
-:func:`execfile`\ d from that :xfile:`restore.py`.  To restore such a
-dump to your database, simply run the `restore.py` script using the
-:manage:`run` management command::
+The directory will contain a file :xfile:`restore.py` and a series of
+`.py` files (one for every model) which are being :func:`execfile`\ d
+from that :xfile:`restore.py`.  To restore such a dump to your
+database, simply run the `restore.py` script using the :manage:`run`
+management command::
 
   $ python manage.py run mydump/restore.py
 
-Or, if you don't use per-project :xfile:`manage.py` files::
+Options:
 
-  $ set DJANGO_SETTINGS_MODULE=myproject
-  $ django-admin.py run mydump/restore.py
+.. option:: --noinput 
+
+    Do not prompt for user input of any kind.
+
+.. option:: --tolerate
+
+    Tolerate database errors. This can help making a partial snapshot
+    of a database which is not (fully) synced with the application
+    code.
+
+.. option:: --max-row-count <NUM>
+
+    Change the maximum number of rows per source file from its default
+    value (50000) to NUM.
+
+    When a table contains many rows, the resulting :file:`.py` file
+    can become so large that it doesn't fit into memory, causing the
+    Python process to get killed when it tries to execute it.  To
+    avoid this limitation, :xfile:`dump2py` distributes the content
+    over several files if a table contains are more than NUM rows.
+
+.. You might theoretically use Django's :manage:`dumpdata` command for
+   writing a Python fixture, but this possibility is currently
+   deactivated because a huge database would create a huge Python module
+   which might not fit into memory.
 
 
 FILES
@@ -58,6 +66,7 @@ FILES
 SEE ALSO
 ========
 
+- :doc:`/specs/dumps`
 - :doc:`/dev/datamig`
 - :doc:`/dev/dump2py`
 """
