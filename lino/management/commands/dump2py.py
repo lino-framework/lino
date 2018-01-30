@@ -20,11 +20,7 @@ This will create a python dump of your database to the directory
 
 The directory will contain a file :xfile:`restore.py` and a series of
 `.py` files (one for every model) which are being :func:`execfile`\ d
-from that :xfile:`restore.py`.  To restore such a dump to your
-database, simply run the `restore.py` script using the :manage:`run`
-management command::
-
-  $ python manage.py run mydump/restore.py
+from that :xfile:`restore.py`.  
 
 Options:
 
@@ -37,6 +33,11 @@ Options:
     Tolerate database errors. This can help making a partial snapshot
     of a database which is not (fully) synced with the application
     code.
+
+.. option:: --overwrite
+
+    Don't complain if the TARGET directory already exists. This will
+    potentially overwrite existing files.
 
 .. option:: --max-row-count <NUM>
 
@@ -54,6 +55,12 @@ Options:
    deactivated because a huge database would create a huge Python module
    which might not fit into memory.
 
+
+To restore a dump created using :manage:`dump2py` to your database,
+simply run the `restore.py` script using the :manage:`run` management
+command::
+
+  $ python manage.py run mydump/restore.py
 
 FILES
 =====
