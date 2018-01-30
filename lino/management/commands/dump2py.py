@@ -181,6 +181,9 @@ class Command(BaseCommand):
         parser.add_argument('-o', '--overwrite', action='store_true',
                             dest='overwrite', default=False,
                             help='Overwrite existing files.'),
+        parser.add_argument('-m', '--max-row-count', type=int,
+                            dest='max_row_count', default=50000,
+                            help='Maximum number of rows per file.'),
         #~ make_option('--quick', action='store_true',
         #~ dest='quick', default=False,
         #~ help='Do not call full_clean() method on restored instances.'),
@@ -292,24 +295,56 @@ def main(args):
 
 """)
 
+        max_row_count = self.options['max_row_count']
         for model in progress.bar(self.models):
-            filename = '%s.py' % model._meta.db_table
-            filename = os.path.join(self.output_dir, filename)
-            # puts("Writing {0}...".format(filename))
-            # stream = file(filename, 'wt')
-            stream = open(filename, 'wt')
-            stream.write('# -*- coding: UTF-8 -*-\n')
-            qs = model.objects.all()
             try:
-                stream.write(
-                    'logger.info("Loading %d objects to table %s...")\n' % (
-                        qs.count(), model._meta.db_table))
+                qs = model.objects.all()
+                total_count = qs.count()
+            except DatabaseError as e:
+                self.database_errors += 1
+                if not self.options['tolerate']:
+                    raise
+                self.stream.write('\n')
+                logger.warning("Tolerating database error %s in %s",
+                               e, model._meta.db_table)
+                msg = ("The data of table {0} has not been dumped"
+                       "because an error {1} occured.").format(
+                           model._meta.db_table, e)
+                self.stream.write('raise Exception("{0}")\n'.format(msg))
+                continue
 
-                fields = [f for f in model._meta.get_fields()
-                          if f.concrete and f.model is model]
-                fields = [
-                    f for f in fields
-                    if not getattr(f, '_lino_babel_field', False)]
+            fields = [f for f in model._meta.get_fields()
+                      if f.concrete and f.model is model]
+            fields = [
+                f for f in fields
+                if not getattr(f, '_lino_babel_field', False)]
+
+            chunks = []  # list of tuples (i, filename, queryset)
+            if total_count > max_row_count:
+                num_files = (total_count // max_row_count) + 1
+                for i in range(num_files):
+                    o1 = max_row_count * i
+                    o2 = max_row_count * (i+1)
+                    t = (i+1,
+                         '%s_%d.py' % (model._meta.db_table, i+1),
+                         qs[o1:o2])
+                    chunks.append(t)
+            else:
+                chunks.append((1, '%s.py' % model._meta.db_table, qs))
+            for i, filename, qs in chunks:
+                self.stream.write('    execfile("%s", *args)\n' % filename)
+                filename = os.path.join(self.output_dir, filename)
+                # puts("Writing {0}...".format(filename))
+                # stream = file(filename, 'wt')
+                stream = open(filename, 'wt')
+                stream.write('# -*- coding: UTF-8 -*-\n')
+                txt = "%d objects" % total_count
+                if len(chunks) > 1:
+                    txt += " (part %d of %d)" % (i, len(chunks))
+                stream.write(
+                    'logger.info("Loading %s to table %s...")\n' % (
+                        txt, model._meta.db_table))
+
                 stream.write(
                     "# fields: %s\n" % ', '.join(
                         [f.name for f in fields]))
@@ -320,22 +355,12 @@ def main(args):
                         obj._meta.db_table,
                         ','.join([self.value2string(obj, f) for f in fields])))
                 stream.write('\n')
-                stream.write('loader.flush_deferred_objects()\n')
-            except DatabaseError as e:
-                self.database_errors += 1
-                if not self.options['tolerate']:
-                    raise
-                stream.write('\n')
-                logger.warning("Tolerating database error %s in %s",
-                               e, model._meta.db_table)
-                msg = ("The data of this table has not been dumped"
-                       "because an error {0} occured.").format(e)
-                stream.write('raise Exception("{0}")\n'.format(msg))
-                
-            stream.close()
+                if i == len(chunks):
+                    stream.write('loader.flush_deferred_objects()\n')
+
+                stream.close()
 
             #~ self.stream.write('\nfilename = os.path.join(os.path.dirname(__file__),"%s.py")\n' % )
-            self.stream.write('    execfile("%s.py", *args)\n' % model._meta.db_table)
 
         self.stream.write(
             '    loader.finalize()\n')
