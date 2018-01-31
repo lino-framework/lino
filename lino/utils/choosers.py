@@ -5,13 +5,10 @@
 Django model.
 
 - Context-sensitive choices (see :ref:`lino.dev.combo`)
-- Non-limiting choices :
+- Non-limiting choices (`force_selection` False) :
   specify a pick list of suggestions but leave the possibility
   to store manually entered values
 - :ref:`learning_combos`
-
-TODO: compare with `django-ajax-selects
-<https://github.com/crucialfelix/django-ajax-selects>`_
 
 
 """
