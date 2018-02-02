@@ -55,6 +55,7 @@ class Plugin(Plugin):
             #     views.List.as_view()),
             # url(rx + r'(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$',
             #     views.Element.as_view()),
+            url(rx + r'api/main_html$', views.MainHtml.as_view()),
             url(rx + r'restful/(?P<app_label>\w+)/(?P<actor>\w+)$',
                 views.Restful.as_view()),
             url(rx + r'restful/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$',

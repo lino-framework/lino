@@ -275,9 +275,14 @@ class Tickets(View):
         ar = action_request(app_label, actor, request, request.GET, True)
         ar.renderer = settings.SITE.plugins.openui5.renderer
 
+        # ui = settings.SITE.plugins.openui5
+        # main = settings.SITE.get_main_html(ar.request, extjs=ui)
+        # main = ui.renderer.html_text(main)
+        # print(main)
         context = dict(
             title=ar.get_title(),
             heading=ar.get_title(),
+            # main=main,
         )
 
         if isinstance(ar, TableRequest):
@@ -288,6 +293,19 @@ class Tickets(View):
         context.update(ar=ar)
         return http_response(ar,"openui5/tickets_ui5.html", context)
 
+
+class MainHtml(View):
+
+    def get(self, request, *args, **kw):
+        #~ logger.info("20130719 MainHtml")
+        settings.SITE.startup()
+        #~ raise Exception("20131023")
+        ar = BaseRequest(request)
+        html = settings.SITE.get_main_html(
+            request, extjs=settings.SITE.plugins.openui5)
+        html = settings.SITE.plugins.openui5.renderer.html_text(html)
+        ar.success(html=html)
+        return json_response(ar.response, ar.content_type)
 
 class Connector(View):
     """
@@ -479,7 +497,7 @@ class Index(View):
         return index_response(ar)
 
 def index_response(ar):
-    ui = settings.SITE.plugins.bootstrap3
+    ui = settings.SITE.plugins.openui5
 
     main = settings.SITE.get_main_html(ar.request, extjs=ui)
     main = ui.renderer.html_text(main)

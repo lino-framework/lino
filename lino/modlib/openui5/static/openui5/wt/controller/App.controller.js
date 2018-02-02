@@ -12,7 +12,12 @@ sap.ui.define([
         // MenuItemEvent controlering
         onInit: function(){
             this._menus = {}
-
+            var that=this;
+            that.getView().byId('dashboard').getParent().setBusy(true);
+            $.get( "/api/main_html", function( data ) {
+                    that.getView().byId('dashboard').setContent(data.html);
+                    that.getView().byId('dashboard').getParent().setBusy(false);
+                });
             // highlights first item in menu if selected with Keyboard
 //			this.byId("openMenu").attachBrowserEvent("tab keyup", function(oEvent){
 //				this._bKeyboard = oEvent.type == "keyup";
@@ -57,6 +62,16 @@ sap.ui.define([
 		handleMenuItemPress: function(oEvent) {
 			var msg = "'" + oEvent.getParameter("item").getText() + "' pressed";
 			MessageToast.show(msg);
+			var vp = this.getView().byId('viewport')
+			var p = new sap.m.Page({content:
+			            new sap.ui.xmlview({
+                            viewName : "sap.ui.demo.wt.view.AllTickets"
+                            })
+                            });
+			vp.addPage(p);
+			vp.to(p);
+
+
 		},
 
    });

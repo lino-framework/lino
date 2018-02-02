@@ -3,6 +3,7 @@
         xmlns="sap.m"
         xmlns:tnt="sap.tnt"
         xmlns:u="sap.ui.unified"
+       	xmlns:core="sap.ui.core"
         xmlns:mvc="sap.ui.core.mvc"
         xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 
@@ -13,24 +14,21 @@
 
         <!--<tnt:header>-->
 
-	<tnt:ToolHeader id="mainmenu" >
-		<!--<ToolbarSpacer width="20px" />-->
-		{% for item in menu.items %}
-        <Button id="menu.{{ item.name }}" text="{{ item.label }}" type="Transparent"  press="handlePressOpenMenu"
-            customData:menu="{{item.name}}"
-            >
-			<!--<layoutData>-->
-				<!--<OverflowToolbarLayoutData priority="Low" />-->
-			<!--</layoutData>-->
-		</Button>
-        {% endfor %}
+        <Page title="helloWorld" showHeader="false" enableScrolling="false">
+                <tnt:ToolHeader id="mainmenu">
+                        <!--<ToolbarSpacer width="20px" />-->
+                        {% for item in menu.items %}
+                        <Button id="menu.{{ item.name }}" text="{{ item.label }}" type="Transparent"
+                                press="handlePressOpenMenu"
+                                customData:menu="{{item.name}}"
+                        >
+                            <!--<layoutData>-->
+                            <!--<OverflowToolbarLayoutData priority="Low" />-->
+                            <!--</layoutData>-->
+                        </Button>
+                        {% endfor %}
 
-	</tnt:ToolHeader>
-    <NavContainer id="pageContainer" height="100%">
-
-        <pages>
-
-            <Page title="helloWorld" showHeader="false">
+                    </tnt:ToolHeader>
                 <!--<headerContent>-->
                     <!--<Button-->
                             <!--icon="sap-icon://hello-world"-->
@@ -38,15 +36,25 @@
                 <!--</headerContent>-->
 
                 <content>
-                    <!--<mvc:XMLView viewName="sap.ui.demo.wt.view.HelloPanel"/>-->
-                    <!--<mvc:XMLView viewName="sap.ui.demo.wt.view.SideNav"/>-->
-                    <!--<mvc:XMLView viewName="sap.ui.demo.wt.view.HelloPanel"/>-->
-                    <mvc:XMLView viewName="sap.ui.demo.wt.view.AllTickets"/>
-                </content>
-            </Page>
-        </pages>
+                    <NavContainer height="100%" id="viewport">
+                        <pages>
+                            <Page showHeader="true">
+                                <Panel ><core:HTML id="dashboard"
+                                        content=""
+                                />
 
-			</NavContainer>
+                                </Panel>
+                                <!--<mvc:XMLView viewName="sap.ui.demo.wt.view.HelloPanel"/>-->
+                                <!--<mvc:XMLView viewName="sap.ui.demo.wt.view.SideNav"/>-->
+                                <!--<mvc:XMLView viewName="sap.ui.demo.wt.view.HelloPanel"/>-->
+                                <!--<mvc:XMLView viewName="sap.ui.demo.wt.view.AllTickets"/>-->
+                            </Page>
+                        </pages>
+                    </NavContainer>
+                </content>
+
+            </Page>
+
         <!--</tnt:mainContents>-->
 
 
