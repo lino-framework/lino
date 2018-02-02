@@ -1,7 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015-2017 Luc Saffre.
+# Copyright 2015-2018 Luc Saffre.
 # License: BSD, see LICENSE for more details.
-"""Used by :xfile:`make_screenshots.py` and :xfile:`maketour.py` scripts.
+"""
+Used by :xfile:`make_screenshots.py` and :xfile:`maketour.py` scripts.
 
 Defines an :class:`Album` class and a :func:`runserver` function. An
 "album" represents a directory with screenshot images and their
@@ -9,8 +10,6 @@ Defines an :class:`Album` class and a :func:`runserver` function. An
 
 Note that one :xfile:`maketour.py` file might generate several albums
 during a single `runserver` process, e.g. one for each language.
-
-
 
 
 `Introducing the Selenium-WebDriver API by Example
@@ -21,15 +20,13 @@ during a single `runserver` process, e.g. one for each language.
 therefore not even yet responding to connection requests. The only
 workaround for this is currently to run the webserver process in a
 different terminal.
-
 """
 
 from __future__ import unicode_literals, absolute_import, print_function
-from builtins import object
+import six
 import os
 import sys
 import time
-from threading import Thread
 import subprocess
 import traceback
 
@@ -72,9 +69,9 @@ def runserver(settings_module, func, driver=None):
         driver.get(url)
         func(driver)
     except Exception as e:
+        print(e)
         import traceback
-        traceback.print_exc(e)
-        # print(e)
+        traceback.print_exc()
 
     if INVOKE_SERVER:
         server.terminate()
@@ -83,9 +80,9 @@ def runserver(settings_module, func, driver=None):
     
 
 class Album(object):
-    """Generates one directory of screenshots images and their `index.rst`
+    """
+    Generates one directory of screenshots images and their `index.rst`
     file.
-
     """
     screenshot_root = None
     screenshots = []
@@ -115,10 +112,10 @@ class Album(object):
     def screenshot(self, name, caption, before='', after=''):
         
         filename = self.screenshot_root.child(name)
-        print("Writing screenshot {0} ...".format(filename))
         if not self.driver.get_screenshot_as_file(filename):
-            print("Failed to create {0}".format(filename))
+            print("Failed to write {0}".format(filename))
             sys.exit(-1)
+        print("Wrote screenshot {0} ...".format(filename))
         before = unindent(before)
         after = unindent(after)
         self.screenshots.append((name, caption, before, after))
@@ -193,15 +190,17 @@ class Album(object):
             content += isep.join(self.error_message.splitlines())
             content += "\n\n"
 
-        index.write_file(content.encode('utf-8'))
+        if six.PY2:
+            content = content.encode('utf-8')
+        index.write_file(content)
 
     def run(self, func):    
         try:
             func(self)
         except Exception as e:
-            self.error_message = traceback.format_exc(e)
-            traceback.print_exc(e)
-            # print(e)
+            print(e)
+            self.error_message = traceback.format_exc()
+            traceback.print_exc()
 
         self.write_index()
 

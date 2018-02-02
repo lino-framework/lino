@@ -1,14 +1,16 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2002-2017 Luc Saffre
+# Copyright 2002-2018 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""The :mod:`lino` package is the core of the Lino framework.
+"""
+The :mod:`lino` package is the core of the Lino framework.
 
 This is the base plugin for all Lino applications, added automatically
-to your `INSTALLED_APPS`. It defines no models, but some system
-templates, django admin commands, translation messages and the core
+to your `INSTALLED_APPS`. It defines no models, but some template
+files, django admin commands, translation messages and the core
 :xfile:`help_texts.py` file.
 
+.. rubric:: submodules
 
 .. autosummary::
    :toctree:
@@ -24,21 +26,15 @@ templates, django admin commands, translation messages and the core
    management.commands
 
 
-Template files
-==============
+.. rubric:: Template files
 
 .. xfile:: admin_main_base.html
 .. xfile:: admin_main.html
 
 This is the template used to generate the inner content of the home
 page. It is split into two files
-:srcref:`admin_main.html<lino/modlib/lino_startup/config/admin_main.html>`
-and
-:srcref:`admin_main_base.html<lino/modlib/lino_startup/config/admin_main_base.html>`.
-
-
-
-
+:srcref:`admin_main.html<lino/config/admin_main.html>` and
+:srcref:`admin_main_base.html<lino/config/admin_main_base.html>`.
 """
 
 # from __future__ import unicode_literals

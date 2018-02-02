@@ -1,28 +1,15 @@
-# Copyright 2009-2017 Luc Saffre
+# Copyright 2009-2018 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Extends the possibilities for defining choices for fields of a
 Django model.
 
-- Context-sensitive choices
-- Non-limiting choices :
+- Context-sensitive choices (see :ref:`lino.dev.combo`)
+- Non-limiting choices (`force_selection` False) :
   specify a pick list of suggestions but leave the possibility
   to store manually entered values
 - :ref:`learning_combos`
 
-TODO: compare with `django-ajax-selects
-<https://github.com/crucialfelix/django-ajax-selects>`_
-
-
-.. _learning_combos:
-
-Learning Comboboxes
--------------------
-
-Choosers inspect the model, and if it defines a method
-`create_FOO_choice`, then the chooser will become "learning": the
-ComboBox will be told to accept also new values, and the server will
-handle these cases accordingly.
 
 """
 from builtins import str
