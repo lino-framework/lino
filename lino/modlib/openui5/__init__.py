@@ -60,6 +60,9 @@ class Plugin(Plugin):
             url(rx + r'restful/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$',
                 views.Restful.as_view()),
 
+            url(rx + r'ui/(?P<name>.*)$',
+                views.Connector.as_view()),
+
             url(rx + r'$', views.Tickets.as_view()),
 
         ]

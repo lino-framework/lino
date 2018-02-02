@@ -136,6 +136,36 @@ def http_response(ar, tplname, context):
     return response
 
 
+def XML_response(ar, tplname, context):
+    "Deserves a docstring"
+    # u = ar.get_user()
+    # lang = get_language()
+    # k = (u.user_type, lang)
+    # menu = MENUS.get(k, None)
+    # if menu is None:
+    #     menu = settings.SITE.get_site_menu(None, u.user_type)
+    #     ui5 = settings.SITE.plugins.openui5
+    #     if False:  # 20150803 home button now in base.html
+    #         assert ui5.renderer is not None
+    #         url = ui5.build_plain_url()
+    #         menu.add_url_button(url, label=_("Home"))
+    #     e = ui5.renderer.show_menu(ar, menu)
+    #     menu = E.tostring(e)
+    #     MENUS[k] = menu
+    # context.update(menu=menu)
+    # context = ar.get_printable_context(**context)
+    # context['ar'] = ar
+    # context['memo'] = ar.parse_memo  # MEMO_PARSER.parse
+    env = settings.SITE.plugins.jinja.renderer.jinja_env
+    template = env.get_template(tplname)
+
+    response = http.HttpResponse(
+        template.render(**context),
+        content_type='text/html;charset="utf-8"')
+
+    return response
+
+
 def buttons2pager(buttons, title=None):
     items = []
     if title:
@@ -257,6 +287,42 @@ class Tickets(View):
 
         context.update(ar=ar)
         return http_response(ar,"openui5/tickets_ui5.html", context)
+
+
+class Connector(View):
+    """
+    Static View for Tickets,
+    Uses a template for generating the XML views  rather then layouts
+    """
+    def get(self, request, name=None):
+        # ar = action_request(None, None, request, request.GET, True)
+        ar = BaseRequest(
+            # user=user,
+            request=request,
+            renderer=settings.SITE.plugins.openui5.renderer)
+        u = ar.get_user()
+
+        context = dict(
+            menu=settings.SITE.get_site_menu(None, u.user_type)
+        )
+
+        print(u)
+        print name
+        if name.startswith("view/"):
+            tplname = "openui5/" + name
+        elif name.startswith("menu/"):
+            tplname = "openui5/fragment/Menu.fragment.xml"
+            sel_menu = name.split("/",1)[1].split('.',1)[0]
+            for i in context['menu'].items:
+                if i.name == sel_menu:
+                    context.update(dict(
+                        opened_menu=i
+                    ))
+                    break
+            else:
+                raise Exception("No Menu with name %s"%sel_menu)
+
+        return XML_response(ar, tplname, context)
 
 
 class List(View):

@@ -1,0 +1,57 @@
+<mvc:View
+        controllerName="sap.ui.demo.wt.controller.App"
+        xmlns="sap.m"
+        xmlns:tnt="sap.tnt"
+        xmlns:u="sap.ui.unified"
+        xmlns:mvc="sap.ui.core.mvc"
+        xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+
+        displayBlock="true" height="100%">
+    <!--<App class="sapUiDemoWT">-->
+
+        <!--<tnt:ToolPage id="toolPage">-->
+
+        <!--<tnt:header>-->
+
+	<tnt:ToolHeader id="mainmenu" >
+		<!--<ToolbarSpacer width="20px" />-->
+		{% for item in menu.items %}
+        <Button id="menu.{{ item.name }}" text="{{ item.label }}" type="Transparent"  press="handlePressOpenMenu"
+            customData:menu="{{item.name}}"
+            >
+			<!--<layoutData>-->
+				<!--<OverflowToolbarLayoutData priority="Low" />-->
+			<!--</layoutData>-->
+		</Button>
+        {% endfor %}
+
+	</tnt:ToolHeader>
+    <NavContainer id="pageContainer" height="100%">
+
+        <pages>
+
+            <Page title="helloWorld" showHeader="false">
+                <!--<headerContent>-->
+                    <!--<Button-->
+                            <!--icon="sap-icon://hello-world"-->
+                            <!--press="onOpenDialog"/>-->
+                <!--</headerContent>-->
+
+                <content>
+                    <!--<mvc:XMLView viewName="sap.ui.demo.wt.view.HelloPanel"/>-->
+                    <!--<mvc:XMLView viewName="sap.ui.demo.wt.view.SideNav"/>-->
+                    <!--<mvc:XMLView viewName="sap.ui.demo.wt.view.HelloPanel"/>-->
+                    <mvc:XMLView viewName="sap.ui.demo.wt.view.AllTickets"/>
+                </content>
+            </Page>
+        </pages>
+
+			</NavContainer>
+        <!--</tnt:mainContents>-->
+
+
+        <!--</tnt:ToolPage>-->
+
+
+    <!--</App>-->
+</mvc:View>
