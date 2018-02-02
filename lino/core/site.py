@@ -2,7 +2,8 @@
 # Copyright 2009-2017 Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
-"""Defines the :class:`Site` class. For an overview see
+"""
+Defines the :class:`Site` class. For an overview see
 :doc:`/dev/site` and :doc:`/dev/plugins` .
 
 .. This document is part of the Lino test suite. You can test only
@@ -14,7 +15,6 @@
     doctest init:
     >>> import lino
     >>> lino.startup('lino.projects.std.settings_test')
-
 """
 from __future__ import unicode_literals, print_function
 from builtins import map
@@ -485,11 +485,10 @@ class Site(object):
 
     project_model = None
     """
-    Optionally set this to the <applabel.ModelName> of a model used as
-    "central project" in your application.  Which concretely means that
-    certain other models like notes.Note, outbox.Mail, ... have an
+    Optionally set this to the full name of a model used as "central
+    project" in your application.  Models which inherit from
+    :class:`ProjectRelated <lino.mixins.ProjectRelated>` then have an
     additional ForeignKey to this model.
-
     """
 
     user_model = None

@@ -77,6 +77,7 @@ class Change(dd.Model):
 
     # allow_cascaded_delete = 'master'
     quick_search_fields = 'changed_fields diff'
+    show_in_site_search = False
 
     time = models.DateTimeField()
     type = ChangeTypes.field()

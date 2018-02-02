@@ -1,9 +1,10 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2010-2017 Luc Saffre
+# Copyright 2010-2018 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""This package contains Model mixins, some of which are heavily used
-by applications, but None of them is mandatory for a Lino application.
+"""
+This package contains model mixins, some of which are heavily used
+by applications and the :ref:`xl`. But none of them is mandatory.
 
 .. autosummary::
    :toctree:
@@ -15,22 +16,11 @@ by applications, but None of them is mandatory for a Lino application.
     periods
     polymorphic
     uploadable
-
-Parameter panels:
-
-- :class:`ObservedDateRange <lino.mixins.periods.ObservedDateRange>`
-- :class:`Yearly <lino.mixins.periods.Yearly>`
-- :class:`Today <lino.mixins.periods.Today>`
-
 """
 
 from __future__ import unicode_literals
 from builtins import str
 from builtins import object
-
-import logging
-logger = logging.getLogger(__name__)
-
 
 from django.db import models
 from django.conf import settings
@@ -38,19 +28,16 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
-
 from lino.core import fields
 from lino.core import model
-
 from lino.core.workflows import ChangeStateAction
-
 from lino.utils.mldbc.fields import LanguageField
 
 
 class Contactable(model.Model):
-    """Mixin for models that represent somebody who can be contacted by
+    """
+    Mixin for models that represent somebody who can be contacted by
     email.
-
     """
     class Meta(object):
         abstract = True
@@ -66,9 +53,9 @@ class Contactable(model.Model):
         
 
 class Phonable(model.Model):
-    """Mixin for models that represent somebody who can be contacted by
+    """
+    Mixin for models that represent somebody who can be contacted by
     phone.
-
     """
 
     class Meta(object):
@@ -130,7 +117,6 @@ class Registrable(model.Model):
     def on_analyze(cls, site):
         super(Registrable, cls).on_analyze(site)
         cls._registrable_fields = set(cls.get_registrable_fields(site))
-        # logger.info("20130128 %s %s",cls,cls._registrable_fields)
 
     def disabled_fields(self, ar):
         if not self.state.editable:
@@ -155,7 +141,8 @@ class Registrable(model.Model):
         return super(Registrable, self).get_row_permission(ar, state, ba)
 
     def register(self, ar):
-        """Register this object.  The base implementation just sets the state
+        """
+        Register this object.  The base implementation just sets the state
         to "registered".
 
         Subclasses may override this to add custom behaviour.  Instead
@@ -165,7 +152,6 @@ class Registrable(model.Model):
         <lino.core.model.Model.before_state_change>` or
         :meth:`after_state_change
         <lino.core.model.Model.after_state_change>`.
-
         """
 
         # state_field = self._meta.get_field(self.workflow_state_field)
@@ -174,7 +160,8 @@ class Registrable(model.Model):
         self.set_workflow_state(ar, state_field, target_state)
 
     def deregister(self, ar):
-        """Deregister this object.  The base implementation just sets the
+        """
+        Deregister this object.  The base implementation just sets the
         state to "draft".
 
         Subclasses may override this to add custom behaviour.  Instead
@@ -184,7 +171,6 @@ class Registrable(model.Model):
         <lino.core.model.Model.before_state_change>` or
         :meth:`after_state_change
         <lino.core.model.Model.after_state_change>`.
-
         """
 
         # state_field = self._meta.get_field(self.workflow_state_field)
@@ -207,14 +193,30 @@ class Registrable(model.Model):
 
 
 class Modified(model.Model):
+    """
+    Adds a a timestamp field which holds the last modification time of
+    every individual database object.
 
+    .. attribute:: modified
+
+        The time when this database object was last modified.
+    """
+
+    auto_touch = True
+    """
+    Whether to touch objects automatically when saving them.
+
+    If you set this to `False`, :attr:`modified` is updated only when
+    you explicitly call :meth:`touch`.
+    """
+    
     class Meta(object):
         abstract = True
 
     modified = models.DateTimeField(_("Modified"), editable=False)
 
     def save(self, *args, **kwargs):
-        if not settings.SITE.loading_from_dump:
+        if self.auto_touch and not settings.SITE.loading_from_dump:
             self.touch()
         super(Modified, self).save(*args, **kwargs)
 
@@ -223,12 +225,16 @@ class Modified(model.Model):
 
 
 class Created(model.Model):
-    """Mixin for models which have a field :attr:`created` 
+    """
+    Adds a a timestamp field which holds the creation time of every
+    individual database object.
 
     .. attribute:: created
 
-        The timestame when this object was created.
+        The time when this object was created.
 
+        Does nut use Django's `auto_now` and `auto_now_add` features
+        because their deserialization would be problematic.
     """
     class Meta(object):
         abstract = True
@@ -247,11 +253,8 @@ class Created(model.Model):
 
 class CreatedModified(Created, Modified):
 
-    """Adds two timestamp fields `created` and `modified`.
-
-    We don't use Django's `auto_now` and `auto_now_add` features
-    because their deserialization (restore from a python dump) would
-    be problematic.
+    """
+    Adds two timestamp fields `created` and `modified`.
 
     """
 
@@ -261,16 +264,25 @@ class CreatedModified(Created, Modified):
 
 class ProjectRelated(model.Model):
 
-    """Mixin for Models that are automatically related to a "project".  A
-    project means here "the central most important thing that is used
-    to classify most other things".  
+    """
+    Mixin for models that are related to a "project". This adds a
+    field named `project` and related default behaviour.
 
-    Whether an application has such a concept of "project",
-    and which model has this privileged status,
-    is set in :attr:`lino.core.site.Site.project_model`.
+    A project in this context means what the users consider "the
+    central most important model that is used to classify most other
+    things".  For example in :ref:`avanti` the "project" is a Client
+    while in :ref:`tera` it is a therapy.  The application's project
+    model is specified in :attr:`lino.core.site.Site.project_model`.
 
-    For example in :ref:`welfare` the "project" is a Client.
 
+    .. attribute:: project
+
+        Pointer to the project to which this object is related.
+
+        If the application's :attr:`project_model
+        <lino.core.site.Site.project_model>` is empty, the
+        :attr:`project` field will be a :class:`DummyField
+        <lino.core.fields.DummyField>`.
     """
 
     class Meta(object):
@@ -300,10 +312,9 @@ class ProjectRelated(model.Model):
 
     def update_owned_instance(self, controllable):
         """
-        When a :class:`project-related <ProjectRelated>`
-        object controls another project-related object,
-        then the controlled automatically inherits
-        the `project` of its controller.
+        When a :class:`project-related <ProjectRelated>` object controls
+        another project-related object, then the controlled
+        automatically inherits the `project` of its controller.
         """
         if isinstance(controllable, ProjectRelated):
             controllable.project = self.project
@@ -324,13 +335,15 @@ class ProjectRelated(model.Model):
 
 
 class Referrable(model.Model):
-    """Mixin for things that have a unique :attr:`ref` field and a
-    `get_by_ref` method.
+    """
+    Mixin for things that have a unique reference, i.e. an identifying
+    name used by humans to refer to an individual object.
+
+    A reference, unlike a primary key, can easily be changed.
 
     .. attribute:: ref
 
         The reference. This must be either empty or unique.
-
     """
     class Meta(object):
         abstract = True
@@ -348,9 +361,9 @@ class Referrable(model.Model):
         blank=True, null=True, unique=True)
 
     def on_duplicate(self, ar, master):
-        """Before saving a duplicated object for the first time, we must
+        """
+        Before saving a duplicated object for the first time, we must
         change the :attr:`ref` in order to avoid an IntegrityError.
-
         """
         if self.ref:
             self.ref += ' (DUP)'
@@ -358,6 +371,9 @@ class Referrable(model.Model):
 
     @classmethod
     def get_by_ref(cls, ref, default=models.NOT_PROVIDED):
+        """
+        Return the object identified by the given reference.
+        """
         try:
             return cls.objects.get(ref=ref)
         except cls.DoesNotExist:
@@ -380,17 +396,7 @@ class Referrable(model.Model):
             return models.Q(**{prefix+'ref__icontains': search_text[1:]})
         return super(Referrable, cls).quick_search_filter(search_text, prefix)
 
-    # def __unicode__(self):
-    #     return self.ref or unicode(_('(Root)'))
 
-    # def __unicode__(self):
-    #     return super(Referrable, self).__unicode__() + " (" + self.ref + ")"
-        # return unicode(super(Referrable, self)) + " (" + self.ref + ")"
-
-
-# from lino.modlib.printing.mixins import (
-#     Printable, PrintableType, CachedPrintable, TypedPrintable,
-#     DirectPrintAction, CachedPrintAction)
 
 from lino.mixins.duplicable import Duplicable, Duplicate
 from lino.mixins.sequenced import Sequenced, Hierarchical

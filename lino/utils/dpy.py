@@ -1,10 +1,53 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2016 by Luc Saffre.
+# Copyright 2009-2018 by Luc Saffre.
 # License: BSD, see file LICENSE for more details.
 
 """
-Documented in :ref:`dpy`.
+.. _dpy:
 
+The Python serializer
+=====================
+
+This module defines Lino's **Python serializer and deserializer**,
+which is used for :doc:`writing and loading demo data
+</dev/dumpy/index>`, :doc:`making backups </dev/dump2py>` and
+:doc:`migrating </dev/datamig>` databases.
+
+Concept and implementation is one of the important concepts which Lino
+adds to a Django project. It is fully the author's work, and we didn't
+yet find a similar approach in any other framework [#notnew]_.  In
+March 2009 Luc suggested to merge it into Django or make it available
+outside of Lino as well (`#10664
+<http://code.djangoproject.com/ticket/10664>`__), but that idea is
+sleeping since then.
+
+A **serializer** is run by the :manage:`dumpdata` command and writes
+data into a file which can be used as a fixture.  A **deserializer**
+is run by :manage:`loaddata` and loads fixtures into the database.
+
+Basic idea:
+
+When a Lino application starts up, it sets your `SERIALIZATION_MODULES
+<https://docs.djangoproject.com/en/1.11/ref/settings/#serialization-modules>`_
+setting to `{"py" : "lino.utils.dpy"}`.  This tells Django to
+associate the `.py` ending to the :class:`lino.utils.dpy.Deserializer`
+class when loading ("deserializing") fixtures.
+
+The :class:`lino.utils.dpy.Deserializer` expects every Python fixture
+to define a global function `objects` which it expects to return (or
+`yield
+<http://stackoverflow.com/questions/231767/the-python-yield-keyword-explained>`_)
+the list of model instances to be added to the database.
+  
+.. rubric:: Footnotes
+
+.. [#notnew] Though the basic idea of using Python language to
+    describe data collections is not new.  For example Limodou
+    published a Djangosnippet in 2007 which does something similar:
+    `db_dump.py - for dumping and loading data from database
+    <http://djangosnippets.org/snippets/14/>`_.  Or `Why using
+    factories in Django
+    <http://eatsomecode.com/why-using-factories-in-django>`__.
 """
 
 from __future__ import unicode_literals
@@ -19,30 +62,29 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-from io import StringIO
+#from io import StringIO
 import os
-from os.path import dirname
+#from os.path import dirname
 import imp
-from decimal import Decimal
+#from decimal import Decimal
 from unipath import Path
-from lino import AFTER17
+# from lino import AFTER17
 
 from django.conf import settings
 from django.db import models
-from django.db.models import ForeignKey
 
-from django.utils.module_loading import import_string
-
-from django.db import IntegrityError
-from django.db.models.fields import NOT_PROVIDED
-from django.core.serializers import base
-from django.core.exceptions import ValidationError, ObjectDoesNotExist
-from django.utils.encoding import smart_text, is_protected_type, force_text
 from django.utils import translation
+from django.utils.module_loading import import_string
+from django.utils.encoding import force_text
 
-from lino.utils.mldbc.fields import BabelCharField, BabelTextField
-from lino.core.choicelists import ChoiceListField
-from lino.core.utils import obj2str, sorted_models_list, full_model_name
+#from django.db import IntegrityError
+from django.core.serializers import base
+from django.core.exceptions import ValidationError
+#from django.core.exceptions import ObjectDoesNotExist
+
+#from lino.utils.mldbc.fields import BabelCharField, BabelTextField
+#from lino.core.choicelists import ChoiceListField
+from lino.core.utils import obj2str, full_model_name
 
 SUFFIX = '.py'
 
@@ -217,6 +259,7 @@ class LoaderBase(object):
 
     quick = False
     source_version = None
+    max_deferred_objects = 1000
 
     def __init__(self):
         # logger.info("20120225 DpyLoader.__init__()")
@@ -274,8 +317,15 @@ class LoaderBase(object):
         msg = force_text(e)
         d = self.save_later.setdefault(obj.object.__class__, {})
         l = d.setdefault(msg, [])
-        if len(l) == 0:
+        count = len(l)
+        if count == 0:
             logger.info("Deferred %s : %s", obj2str(obj.object), msg)
+        elif count > self.max_deferred_objects:
+            self.flush_deferred_objects()
+            if count > self.max_deferred_objects + 1:
+                raise Exception(
+                    "More than {} deferred objects".format(
+                        self.max_deferred_objects))
         l.append(obj)
         # report a full traceback, but only once per model and
         # exception type:
@@ -321,15 +371,15 @@ data."""
                             full_model_name(model), msg, len(objects),
                             ', '.join([str(o.object.pk) for o in objects]))
                     count += len(objects)
-
-            msg = "Abandoning with %d unsaved instances:%s" % (count, s)
-            logger.warning(msg)
+            msg = "Abandoning with {} unsaved instances:{}"
+            logger.warning(msg.format(count, s))
 
             # Don't raise an exception. The unsaved instances got lost and
             # the loaddata should be done again, but meanwhile the database
             # is not necessarily invalid and may be used for further testing.
             # And anyway, loaddata would catch it and still continue.
             # raise Exception(msg)
+
 
 
 class DpyLoader(LoaderBase):
@@ -416,31 +466,31 @@ class DpyDeserializer(LoaderBase):
                     empty_fixture = False
                     yield o
 
-        # Since Django 1.7 no longer considers empty fixtures as an
-        # error, we don't need to use our trick of yielding the
-        # SiteConfig instance. That trick sometimes could cause side
-        # effects.
-        if empty_fixture and not AFTER17:
-            if SUPPORT_EMPTY_FIXTURES:
-                # avoid Django interpreting empty fixtures as an error
-                yield DummyDeserializedObject()
-            else:
-                # To avoid Django interpreting empty fixtures as an
-                # error, we yield one object which always exists: the
-                # SiteConfig instance.
+#         # Since Django 1.7 no longer considers empty fixtures as an
+#         # error, we don't need to use our trick of yielding the
+#         # SiteConfig instance. That trick sometimes could cause side
+#         # effects.
+#         if empty_fixture and not AFTER17:
+#             if SUPPORT_EMPTY_FIXTURES:
+#                 # avoid Django interpreting empty fixtures as an error
+#                 yield DummyDeserializedObject()
+#             else:
+#                 # To avoid Django interpreting empty fixtures as an
+#                 # error, we yield one object which always exists: the
+#                 # SiteConfig instance.
 
-                # Oops, that will fail in lino_welfare if the company
-                # pointed to by SiteConfig.job_office had been
-                # deferred.
-                if settings.SITE.site_config:
-                    yield FakeDeserializedObject(
-                        self, settings.SITE.site_config)
-                else:
-                    raise Exception("""\
-Fixture %s decided to not create any object.
-We're sorry, but Django doesn't like that.
-See <https://code.djangoproject.com/ticket/18213>.
-""" % module.__name__)
+#                 # Oops, that will fail in lino_welfare if the company
+#                 # pointed to by SiteConfig.job_office had been
+#                 # deferred.
+#                 if settings.SITE.site_config:
+#                     yield FakeDeserializedObject(
+#                         self, settings.SITE.site_config)
+#                 else:
+#                     raise Exception("""\
+# Fixture %s decided to not create any object.
+# We're sorry, but Django doesn't like that.
+# See <https://code.djangoproject.com/ticket/18213>.
+# """ % module.__name__)
 
         # logger.info("Saved %d instances from %s.",self.saved,fp.name)
 

@@ -173,16 +173,15 @@ class Model(models.Model):
     """
     
     quick_search_fields = None
-    """Explicitly specify the fields to be included in queries with a
+    """
+    Explicitly specify the fields to be included in queries with a
     quick search value.
 
     In your model declarations this should be either `None` or a
-    `string` containing a space-separated list of field names.
+    `string` containing a space-separated list of field names.  During
+    server startup resolves it into a tuple of data elements.
 
-    This is being resolved during server startup into a tuple of
-    data elements. 
-
-    If it is `None`, Lino builds a list of all CharFields on the
+    If it is `None`, Lino installs a list of all CharFields on the
     model.
 
     If you want to not inherit this field from a parent using standard
@@ -198,7 +197,6 @@ class Model(models.Model):
 
     If the search string starts with "*", then Lino searches for a row
     with that *reference*.
-
     """
 
     quick_search_fields_digit = None

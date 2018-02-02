@@ -31,14 +31,19 @@ Registered objects are not editable."""),
 named "draft" and "registered".
 There may be additional states.
 Every state must have an extra attribute "editable"."""),
-    'lino.mixins.Created' : _("""Mixin for models which have a field created"""),
-    'lino.mixins.Created.created' : _("""The timestame when this object was created."""),
+    'lino.mixins.Modified' : _("""Adds a a timestamp field which holds the last modification time of
+every individual database object."""),
+    'lino.mixins.Modified.modified' : _("""The time when this database object was last modified."""),
+    'lino.mixins.Modified.auto_touch' : _("""Whether to touch objects automatically when saving them."""),
+    'lino.mixins.Created' : _("""Adds a a timestamp field which holds the creation time of every
+individual database object."""),
+    'lino.mixins.Created.created' : _("""The time when this object was created."""),
     'lino.mixins.CreatedModified' : _("""Adds two timestamp fields created and modified."""),
-    'lino.mixins.ProjectRelated' : _("""Mixin for Models that are automatically related to a "project".  A
-project means here "the central most important thing that is used
-to classify most other things"."""),
-    'lino.mixins.Referrable' : _("""Mixin for things that have a unique ref field and a
-get_by_ref method."""),
+    'lino.mixins.ProjectRelated' : _("""Mixin for models that are related to a "project". This adds a
+field named project and related default behaviour."""),
+    'lino.mixins.ProjectRelated.project' : _("""Pointer to the project to which this object is related."""),
+    'lino.mixins.Referrable' : _("""Mixin for things that have a unique reference, i.e. an identifying
+name used by humans to refer to an individual object."""),
     'lino.mixins.Referrable.ref' : _("""The reference. This must be either empty or unique."""),
     'lino.mixins.Referrable.ref_max_length' : _("""The maximum length of the ref field."""),
     'lino.mixins.dupable.CheckedSubmitInsert' : _("""Like the standard lino.core.actions.SubmitInsert, but adds
@@ -68,7 +73,7 @@ resolved at startup to the model's class object."""),
     'lino.mixins.duplicable.Duplicate' : _("""Duplicate the selected row."""),
     'lino.mixins.duplicable.Duplicable' : _("""Adds a row action "Duplicate" which duplicates (creates a clone
 of) the object it was called on."""),
-    'lino.mixins.human.Human' : _("""Base class for all models that represent a human."""),
+    'lino.mixins.human.Human' : _("""Base class for models that represent a human."""),
     'lino.mixins.human.Human.title' : _("""Used to specify a professional position or academic
 qualification like "Dr." or "PhD"."""),
     'lino.mixins.human.Human.first_name' : _("""The first name, also known as given name."""),
@@ -77,8 +82,8 @@ qualification like "Dr." or "PhD"."""),
     'lino.mixins.human.Human.gender' : _("""The sex of this person (male or female)."""),
     'lino.mixins.human.Human.full_name' : _("""Returns a one-line string composed of salutation,
 first_name and last_name."""),
-    'lino.mixins.human.Born' : _("""Abstract base class that adds a birth_date
-field and a virtual field "Age"."""),
+    'lino.mixins.human.Born' : _("""Abstract base class that adds a birth_date field and a virtual
+field "Age"."""),
     'lino.mixins.human.Born.birth_date' : _("""An IncompleteDateField."""),
     'lino.mixins.human.Born.age' : _("""Virtual field displaying the age in years."""),
     'lino.mixins.periods.CombinedDateTime' : _("""Mixin for models which have at least one couple of date and time
@@ -296,7 +301,6 @@ for himself)."""),
     'lino.modlib.summaries.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.summaries.Plugin.start_year' : _("""The first year for which summaries should be computed."""),
     'lino.modlib.summaries.Plugin.end_year' : _("""The last year for which summaries should be computed."""),
-    'lino.modlib.summaries.mixins.Summary' : _("""Base class for all "summary data" models."""),
     'lino.modlib.system.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.system.YesNo' : _("""A choicelist with two values "Yes" and "No"."""),
     'lino.modlib.system.Genders' : _("""Defines the two possible choices "male" and "female"
@@ -517,6 +521,8 @@ This is instantiated as E."""),
 <foot> and <body>."""),
     'lino.utils.xmlgen.html.Document' : _("""A pythonic representation of a <body> with a <title> and
 some <head> tags for stylesheets."""),
+    'lino.modlib.contacts.Partner.client_contact_type' : _("""Setting this field on a partner makes this partner available
+as a client contact."""),
     'lino.modlib.users.User.coaching_type' : _("""The coaching type used for new coachings of this user."""),
     'lino.modlib.users.User.coaching_supervisor' : _("""Notify me when a coach has been assigned."""),
     'lino.modlib.contacts.Partner.invoice_recipient' : _("""The recipient of invoices (invoicing address)."""),
