@@ -252,7 +252,7 @@ class Command(BaseCommand):
             logger.info("Built %d screenshots.", count)
         except Exception as e:
             import traceback
-            traceback.print_exc(e)
+            traceback.print_exc()
             #~ print e
             self.stop_server()
             raise
