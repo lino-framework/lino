@@ -608,7 +608,7 @@ class ApiList(View):
             total_count = ar.get_total_count()
             # raise Exception("20171208 {}".format(ar.data_iterator.query))
             for row in ar.create_phantom_rows():
-                if len(rows)+1 < ar.limit\
+                if ar.limit is not None and len(rows)+1 < ar.limit\
                         or ar.limit == total_count + 1:
                     d = rh.store.row2list(ar, row)
                     rows.append(d)
