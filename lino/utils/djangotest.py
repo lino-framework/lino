@@ -1,9 +1,9 @@
 # Copyright: Copyright 2011-2017 by Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
-"""Two TestCase classes for writing tests be run using Django's test
+"""
+Two TestCase classes for writing tests be run using Django's test
 runner (i.e. `manage.py test`).
-
 """
 
 from __future__ import print_function
@@ -25,8 +25,8 @@ from .test import CommonTestCase
 
 
 class DjangoManageTestCase(DjangoTestCase, CommonTestCase):
-    """Adds some extensions to the Django TestCase.
-
+    """
+    Adds some extensions to the Django TestCase.
     """
 
     longMessage = True  # see unittest. used for check_json_result
@@ -184,11 +184,11 @@ class WebIndexTestCase(DjangoManageTestCase):
 
 
 class RemoteAuthTestCase(DjangoManageTestCase):
-    """Base class for tests that use remote http authentication.  We
+    """
+    Base class for tests that use remote http authentication.  We
     override the :meth:`__call__` method in order to simulate
     `remote_user_header <lino.core.site.Site.remote_user_header>`
     being set to ``'REMOTE_USER'``.
-
     """
     def __call__(self, *args, **kw):
         settings.SITE.override_defaults(remote_user_header='REMOTE_USER')

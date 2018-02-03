@@ -1,17 +1,11 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2017 Luc Saffre
+# Copyright 2009-2018 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Database models for `lino.modlib.system`.
-
+"""
+Database models for this plugin.
 """
 from builtins import object
-
-import logging
-logger = logging.getLogger(__name__)
-
-from lino import AFTER18
-
 
 from django.conf import settings
 from django.utils.encoding import force_text
@@ -19,7 +13,7 @@ from django.utils.encoding import force_text
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from lino.modlib.users.choicelists import UserTypes
+# from lino.modlib.users.choicelists import UserTypes
 from lino.api import dd
 from lino.core import actions
 
@@ -27,6 +21,7 @@ from lino.modlib.printing.choicelists import BuildMethods
 
 from lino.core.roles import SiteStaff
 
+# import them here to have them on rt.models.system:
 from .choicelists import YesNo, Genders, PeriodEvents
 
 
@@ -59,9 +54,10 @@ class SiteConfigManager(models.Manager):
 
 @dd.python_2_unicode_compatible
 class SiteConfig(dd.Model):
-    """This model should have exactly one instance,
-    used to store persistent global site parameters.
-    Application code sees this instance as ``settings.SITE.site_config``.
+    """
+    This model should have exactly one instance, used to store
+    persistent global site parameters.  Application code sees this
+    instance as ``settings.SITE.site_config``.
 
     .. attribute:: default_build_method
 
@@ -96,7 +92,6 @@ class SiteConfig(dd.Model):
         For example OverdueEvents, EntriesByController, ...
 
         Injected by :mod:`lino_xl.lib.cal`.
-
     """
 
     class Meta(object):
@@ -141,7 +136,7 @@ class SiteConfig(dd.Model):
 
 
 def my_handler(sender, **kw):
-    #~ print "20130704 Gonna clear_site_config"
+    # print("20180203 Gonna clear_site_config")
     settings.SITE.clear_site_config()
     #~ kw.update(sender=sender)
     dd.database_connected.send(sender)
@@ -150,10 +145,7 @@ def my_handler(sender, **kw):
 from lino.utils.djangotest import testcase_setup
 testcase_setup.connect(my_handler)
 dd.connection_created.connect(my_handler)
-if AFTER18:
-    models.signals.post_migrate.connect(my_handler)
-else:
-    models.signals.post_syncdb.connect(my_handler)
+models.signals.post_migrate.connect(my_handler)
 
 
 class SiteConfigs(dd.Table):
