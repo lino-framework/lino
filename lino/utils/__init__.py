@@ -9,7 +9,6 @@ This is a tested document. To test it, run::
 
   $ doctest lino/utils/__init__.py
 
-
 .. autosummary::
    :toctree:
 
@@ -269,9 +268,10 @@ class IncompleteDate(object):
     to real datetime.date objects:
 
     >>> IncompleteDate(-7, 12, 25).as_date()
+    ... #doctest: +ELLIPSIS
     Traceback (most recent call last):
     ...
-    ValueError: year is out of range
+    ValueError: year...is out of range
 
     >>> IncompleteDate(1756, 1, 27).as_date()
     datetime.date(1756, 1, 27)
