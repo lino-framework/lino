@@ -141,7 +141,7 @@ class SiteConfig(dd.Model):
 
 
 def my_handler(sender, **kw):
-    #~ print "20130704 Gonna clear_site_config"
+    print("20180203 Gonna clear_site_config")
     settings.SITE.clear_site_config()
     #~ kw.update(sender=sender)
     dd.database_connected.send(sender)
