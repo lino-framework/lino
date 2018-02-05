@@ -308,7 +308,7 @@ class Action(Parametrizable, Permittable):
             name = self.action_name
         else:
             label_repr = repr(str(self.label))
-            name = "{} ('{}')".format(self.action_name, label_repr)
+            name = "{} ({})".format(self.action_name, label_repr)
             
         return "<{}.{} {}>".format(
             self.__class__.__module__,
