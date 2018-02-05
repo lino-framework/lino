@@ -36,6 +36,9 @@ from lino.core.utils import navinfo
 from lino.utils.xmlgen.html import E
 from lino.utils.xmlgen import html as xghtml
 
+from lino.api import rt
+import re
+
 PLAIN_PAGE_LENGTH = 15
 
 MENUS = dict()
@@ -331,6 +334,7 @@ class Connector(View):
         elif name.startswith("menu/"):
             tplname = "openui5/fragment/Menu.fragment.xml"
             sel_menu = name.split("/",1)[1].split('.',1)[0]
+            # [05/Feb/2018 09:32:25] "GET /ui/menu/mailbox.fragment.xml HTTP/1.1" 200 325
             for i in context['menu'].items:
                 if i.name == sel_menu:
                     context.update(dict(
@@ -339,6 +343,24 @@ class Connector(View):
                     break
             else:
                 raise Exception("No Menu with name %s"%sel_menu)
+        elif name.startswith("grid/"): # Table/grid view
+            # todo Get table data
+            # "grid/tickets/AllTickets.view.xml"
+            app_label, actor = re.match(r"grid\/(.+)\/(.+).view.xml$", name).groups()
+            actor = rt.models.resolve(app_label + "." + actor)
+            context.update({
+                "actor": actor,
+                "columns": actor.get_handle().get_columns(),
+                "actions": actor.get_actions(),
+                "title": actor.label,
+
+            })
+            tplname = "openui5/view/table.view.xml" # Change to "grid" to match action?
+            # ar = action_request(app_label, actor, request, request.GET, True)
+            # add to context
+
+        else:
+            raise Exception("Can't find a view for path: {}".format(name))
 
         return XML_response(ar, tplname, context)
 

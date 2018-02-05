@@ -60,12 +60,15 @@ sap.ui.define([
 		},
 
 		handleMenuItemPress: function(oEvent) {
-			var msg = "'" + oEvent.getParameter("item").getText() + "' pressed";
+		    var oButton = oEvent.getSource();
+            var actor_id = oButton.data('actor_id');
+            var action_name = oButton.data('action_name');
+			var msg = "'" + oEvent.getParameter("item").getText() + actor_id +":" + action_name + "' pressed";
 			MessageToast.show(msg);
 			var vp = this.getView().byId('viewport')
 			var p = new sap.m.Page({content:
 			            new sap.ui.xmlview({
-                            viewName : "sap.ui.demo.wt.view.AllTickets"
+                            viewName : "sap.ui.lino." + action_name + "." + actor_id
                             })
                             });
 			vp.addPage(p);

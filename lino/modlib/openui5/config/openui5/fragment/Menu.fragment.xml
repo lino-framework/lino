@@ -8,8 +8,9 @@
 		{% for item in opened_menu.items recursive -%}
 		<u:MenuItem
 				text="{{ item.label }}"
-
-				{% if not item.items -%}
+                {% if not item.items -%}
+				customData:actor_id="{{item.bound_action.actor.actor_id}}"
+				customData:action_name="{{item.bound_action.action.action_name}}"
 				select="handleMenuItemPress"
 				{%- endif %}
 
