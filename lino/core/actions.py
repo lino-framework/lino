@@ -307,7 +307,8 @@ class Action(Parametrizable, Permittable):
         if self.label is None:
             name = self.action_name
         else:
-            name = "{} ('{}')".format(self.action_name, self.label)
+            label_repr = repr(str(self.label))
+            name = "{} ('{}')".format(self.action_name, label_repr)
             
         return "<{}.{} {}>".format(
             self.__class__.__module__,
