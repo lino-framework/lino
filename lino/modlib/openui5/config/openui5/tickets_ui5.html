@@ -15,14 +15,24 @@
             "sap.ui.lino": "./ui/"
             }' ></script>
     <script>
+
 			sap.ui.getCore().attachInit(function () {
-			new sap.m.Shell({
-               app :  new sap.ui.core.ComponentContainer({
-                   name : "sap.ui.demo.wt",
-                   height : "100%"
-               })
-            }).placeAt('content');
-            });
+                sap.ui.require(['sap/ui/core/library', 'sap/ui/base/DataType'], function(library, DataType){
+                    library.CSSSize = DataType.createType('sap.ui.core.CSSSize', {
+                      isValid : function(){
+                        return true
+                      },
+                    },
+                    DataType.getType('string')
+                    );
+                new sap.m.Shell({
+                   app :  new sap.ui.core.ComponentContainer({
+                       name : "sap.ui.demo.wt",
+                       height : "100%"
+                   })
+                }).placeAt('content');
+                });
+             });
     </script>
 </head>
 <body id="content" class="sapUiBody">

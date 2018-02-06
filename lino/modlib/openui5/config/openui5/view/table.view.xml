@@ -1,9 +1,10 @@
 <mvc:View
-		{# controllerName="sap.ui.demo.wt.controller.AllTickets" #}
+		controllerName="sap.ui.demo.wt.controller.table"
 		xmlns="sap.ui.table"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:u="sap.ui.unified"
 		xmlns:m="sap.m"
+	    xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 		height="100%"
 		class="sapUiSizeCompact">
 	<m:Page
@@ -12,7 +13,8 @@
 		class="sapUiContentPadding">
 		<m:content>
 			<Table
-				id="table"
+				id="MAIN_TABLE"
+				customData:url="/restful/{{actor.app_label}}/{{actor.__name__}}"
 				selectionMode="MultiToggle"
 				rows="{/rows}"
 				visibleRowCount="7"
@@ -25,7 +27,7 @@
 				class="sapUiSizeCondenced">
 				<toolbar>
 					<m:Toolbar>
-						<m:Title id="title" text="{{title}}"></m:Title>
+						<m:Title text="{{title}}"></m:Title>
 						<m:ToolbarSpacer/>
 						<m:ToggleButton
 							icon="sap-icon://show"
@@ -44,15 +46,7 @@
 				</toolbar>
 				<columns>
 					{% for c in columns %}
-					{% if not c.hidden %}
-					<Column>
-						{# todo have hidden be an attribute for the column #}
-						<m:Label text="{{c.label}}" />
-						<template>
-							<m:Text text="{ {{c.field.name}} }" wrapping="false" />
-						</template>
-					</Column>
-					{% endif %}
+					{% include c.oui5_column_template %}
 					{% endfor %}
 					{#
 					<Column

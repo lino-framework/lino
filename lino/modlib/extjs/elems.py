@@ -468,6 +468,8 @@ class FieldElement(LayoutElement):
     # ext_suffix = "_field"
     zero = 0
 
+    oui5_column_template = "openui5/elems/column/FieldElement.xml"
+
     def __init__(self, layout_handle, field, **kw):
         if not getattr(field, 'name', None):
             raise Exception("Field '%s' in %s has no name!" %

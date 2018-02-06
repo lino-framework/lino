@@ -35,3 +35,22 @@ sap.ui.define([
 	});
 
 });
+
+sap.ui.getCore().attachInit(function () {
+  sap.ui.require(['sap/ui/core/library', 'sap/ui/base/DataType'], function(library, DataType){
+    library.CSSSize = DataType.createType('sap.ui.core.CSSSize', {
+      isValid : function(){
+        return true
+      },
+    },
+    DataType.getType('string')
+    );
+    new sap.m.Panel({
+      headerText : "Panel 1",
+      height     : "100vh",
+      width      : "100vw",
+      backgroundDesign: "Solid",
+      expanded   : true
+    }).placeAt("content");
+  });
+});

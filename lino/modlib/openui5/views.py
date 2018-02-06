@@ -156,11 +156,15 @@ def XML_response(ar, tplname, context):
     #     menu = E.tostring(e)
     #     MENUS[k] = menu
     # context.update(menu=menu)
-    # context = ar.get_printable_context(**context)
+    context = ar.get_printable_context(**context)
     # context['ar'] = ar
     # context['memo'] = ar.parse_memo  # MEMO_PARSER.parse
     env = settings.SITE.plugins.jinja.renderer.jinja_env
     template = env.get_template(tplname)
+    context.update(
+        # Because it's a pain to excape {x} in jinja
+        bind=lambda s: "{" + s + "}"
+    )
 
     response = http.HttpResponse(
         template.render(**context),
