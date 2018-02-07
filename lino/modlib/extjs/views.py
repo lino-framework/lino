@@ -28,6 +28,7 @@ Summary from <http://en.wikipedia.org/wiki/Restful>:
 from builtins import str
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 from django import http
@@ -43,6 +44,7 @@ from lino.core.signals import pre_ui_delete
 from lino.core.utils import obj2unicode
 
 from lino.utils.xmlgen import html as xghtml
+
 E = xghtml.E
 
 from lino.utils import ucsv
@@ -56,8 +58,8 @@ from lino.core.views import requested_actor, action_request
 from lino.core.views import json_response, json_response_kw
 
 from lino.core import constants
-from lino.core.requests import BaseRequest
-        
+from lino.core.requests import BaseRequest, PhantomRow
+
 MAX_ROW_COUNT = 300
 
 
@@ -69,13 +71,13 @@ def elem2rec_empty(ar, ah, elem, **rec):
     """
     Returns a dict of this record, designed for usage by an EmptyTable.
     """
-    #~ rec.update(data=rh.store.row2dict(ar,elem))
+    # ~ rec.update(data=rh.store.row2dict(ar,elem))
     rec.update(data=elem._data)
-    #~ rec = elem2rec1(ar,ah,elem)
-    #~ rec.update(title=_("Insert into %s...") % ar.get_title())
+    # ~ rec = elem2rec1(ar,ah,elem)
+    # ~ rec.update(title=_("Insert into %s...") % ar.get_title())
     rec.update(title=ar.get_action_title())
     rec.update(id=-99998)
-    #~ rec.update(id=elem.pk) or -99999)
+    # ~ rec.update(id=elem.pk) or -99999)
     if ar.actor.parameters:
         rec.update(
             param_values=ar.actor.params_layout.params_store.pv2dict(
@@ -91,9 +93,9 @@ def delete_element(ar, elem):
         ar.error(None, msg, alert=True)
         return settings.SITE.kernel.default_renderer.render_action_response(ar)
 
-    #~ dblogger.log_deleted(ar.request,elem)
+    # ~ dblogger.log_deleted(ar.request,elem)
 
-    #~ changes.log_delete(ar.request,elem)
+    # ~ changes.log_delete(ar.request,elem)
 
     pre_ui_delete.send(sender=elem, request=ar.request)
 
@@ -103,16 +105,15 @@ def delete_element(ar, elem):
         dblogger.exception(e)
         msg = _("Failed to delete %(record)s : %(error)s."
                 ) % dict(record=obj2unicode(elem), error=e)
-        #~ msg = "Failed to delete %s." % element_name(elem)
+        # ~ msg = "Failed to delete %s." % element_name(elem)
         ar.error(None, msg)
         return settings.SITE.kernel.default_renderer.render_action_response(ar)
-        #~ raise Http404(msg)
+        # ~ raise Http404(msg)
 
     return HttpResponseDeleted()
 
 
 class AdminIndex(View):
-
     """
     Similar to PlainIndex
     """
@@ -130,12 +131,11 @@ class AdminIndex(View):
 
 
 class MainHtml(View):
-
     def get(self, request, *args, **kw):
-        #~ logger.info("20130719 MainHtml")
+        # ~ logger.info("20130719 MainHtml")
         settings.SITE.startup()
         ui = settings.SITE.kernel
-        #~ raise Exception("20131023")
+        # ~ raise Exception("20131023")
         ar = BaseRequest(request)
         html = settings.SITE.get_main_html(
             request, extjs=settings.SITE.plugins.extjs)
@@ -157,8 +157,8 @@ class unused_Authenticate(View):
             username = request.session.pop('username', None)
             auth.logout(request)
             # request.session.pop('password', None)
-            #~ username = request.session['username']
-            #~ del request.session['password']
+            # ~ username = request.session['username']
+            # ~ del request.session['password']
 
             ar = BaseRequest(request)
             ar.success("User %r logged out." % username)
@@ -173,7 +173,7 @@ class unused_Authenticate(View):
         if user is not None:
             # user.is_authenticated:
             auth.login(request, user)
-        
+
         ar = BaseRequest(request)
         # mw = auth.get_auth_middleware()
         # msg = mw.authenticate(username, password, request)
@@ -193,7 +193,6 @@ class unused_Authenticate(View):
 
 
 class RunJasmine(View):
-
     """
     """
 
@@ -204,7 +203,6 @@ class RunJasmine(View):
 
 
 class EidAppletService(View):
-
     """
     """
 
@@ -214,7 +212,6 @@ class EidAppletService(View):
 
 
 class Callbacks(View):
-
     def get(self, request, thread_id, button_id):
         return settings.SITE.kernel.run_callback(request, thread_id, button_id)
 
@@ -268,15 +265,17 @@ def choices_for_field(request, holder, field):
                     obj, request, field)
                 d[constants.CHOICES_VALUE_FIELD] = str(obj)
             return d
+
         return (qs, row2dict)
 
     if isinstance(field, fields.VirtualField):
         field = field.return_type
-        
+
     if isinstance(field, models.ForeignKey):
         m = field.rel.model
         t = m.get_default_table()
         qs = t.request(request=request).data_iterator
+
         # logger.info('20120710 choices_view(FK) %s --> %s', t, qs.query)
 
         def row2dict(obj, d):
@@ -313,10 +312,10 @@ def choices_response(actor, request, qs, row2dict, emptyValue):
 
         if offset:
             qs = qs[int(offset):]
-            #~ kw.update(offset=int(offset))
+            # ~ kw.update(offset=int(offset))
 
         if limit:
-            #~ kw.update(limit=int(limit))
+            # ~ kw.update(limit=int(limit))
             qs = qs[:int(limit)]
 
         rows = [row2dict(row, {}) for row in qs]
@@ -340,8 +339,8 @@ def choices_response(actor, request, qs, row2dict, emptyValue):
         rows.insert(0, empty)
 
     return json_response_kw(count=count, rows=rows)
-    #~ return json_response_kw(count=len(rows),rows=rows)
-    #~ return json_response_kw(count=len(rows),rows=rows,title=_('Choices for %s') % fldname)
+    # ~ return json_response_kw(count=len(rows),rows=rows)
+    # ~ return json_response_kw(count=len(rows),rows=rows,title=_('Choices for %s') % fldname)
 
 
 class ActionParamChoices(View):
@@ -361,7 +360,6 @@ class ActionParamChoices(View):
 
 
 class Choices(View):
-
     def get(self, request, app_label=None, rptname=None, fldname=None, **kw):
         """If `fldname` is specified, return a JSON object with two
         attributes `count` and `rows`, where `rows` is a list of
@@ -376,13 +374,14 @@ class Choices(View):
         emptyValue = None
         if fldname is None:
             ar = rpt.request(request=request)
-            #~ rh = rpt.get_handle(self)
-            #~ ar = ViewReportRequest(request,rh,rpt.default_action)
-            #~ ar = dbtables.TableRequest(self,rpt,request,rpt.default_action)
-            #~ rh = ar.ah
-            #~ qs = ar.get_data_iterator()
+            # ~ rh = rpt.get_handle(self)
+            # ~ ar = ViewReportRequest(request,rh,rpt.default_action)
+            # ~ ar = dbtables.TableRequest(self,rpt,request,rpt.default_action)
+            # ~ rh = ar.ah
+            # ~ qs = ar.get_data_iterator()
             qs = ar.data_iterator
-            #~ qs = rpt.request(self).get_queryset()
+
+            # ~ qs = rpt.request(self).get_queryset()
 
             def row2dict(obj, d):
                 d[constants.CHOICES_TEXT_FIELD] = str(obj)
@@ -405,7 +404,6 @@ class Choices(View):
 
 
 class Restful(View):
-
     """
     Used to collaborate with a restful Ext.data.Store.
     """
@@ -466,10 +464,11 @@ class Restful(View):
             rows=[rh.store.row2dict(ar, elem, rh.store.list_fields)])
         return json_response(ar.response)
 
+
 NOT_FOUND = "%s has no row with primary key %r"
 
-class ApiElement(View):
 
+class ApiElement(View):
     def get(self, request, app_label=None, actor=None, pk=None):
         ui = settings.SITE.kernel
         rpt = requested_actor(app_label, actor)
@@ -485,8 +484,8 @@ class ApiElement(View):
             raise http.Http404("%s has no action %r" % (rpt, action_name))
 
         if pk and pk != '-99999' and pk != '-99998':
-            #~ ar = ba.request(request=request,selected_pks=[pk])
-            #~ print 20131004, ba.actor
+            # ~ ar = ba.request(request=request,selected_pks=[pk])
+            # ~ print 20131004, ba.actor
             # Use url selected rows as selected PKs if defined, otherwise use the PK defined in the url path
             sr = request.GET.getlist(constants.URL_PARAM_SELECTED)
             if not sr:
@@ -546,7 +545,7 @@ class ApiElement(View):
             ar.selected_rows = [elem]
         elif elem is None:
             raise http.Http404(NOT_FOUND % (rpt, pk))
-        
+
         return settings.SITE.kernel.run_action(ar)
 
     def post(self, request, app_label=None, actor=None, pk=None):
@@ -576,7 +575,7 @@ class ApiElement(View):
             renderer=settings.SITE.kernel.extjs_renderer)
         ar.set_selected_pks(pk)
         return settings.SITE.kernel.run_action(ar)
-        
+
     def old_delete(self, request, app_label=None, actor=None, pk=None):
         rpt = requested_actor(app_label, actor)
         ar = rpt.request(request=request)
@@ -586,7 +585,6 @@ class ApiElement(View):
 
 
 class ApiList(View):
-
     def post(self, request, app_label=None, actor=None):
         ar = action_request(app_label, actor, request, request.POST, True)
         ar.renderer = settings.SITE.kernel.extjs_renderer
@@ -608,12 +606,12 @@ class ApiList(View):
             total_count = ar.get_total_count()
             # raise Exception("20171208 {}".format(ar.data_iterator.query))
             for row in ar.create_phantom_rows():
-                if ar.limit is not None and len(rows)+1 < ar.limit\
-                        or ar.limit == total_count + 1:
+                if (ar.limit is not None and len(rows) + 1 < ar.limit) or (
+                                ar.limit is None and isinstance(row, PhantomRow)) or ar.limit == total_count + 1:
                     d = rh.store.row2list(ar, row)
                     rows.append(d)
                 total_count += 1
-                    
+
             kw = dict(count=total_count,
                       rows=rows,
                       success=True,
@@ -631,7 +629,7 @@ class ApiList(View):
             sp = request.GET.get(
                 constants.URL_PARAM_SHOW_PARAMS_PANEL, None)
             if sp is not None:
-                #~ after_show.update(show_params_panel=sp)
+                # ~ after_show.update(show_params_panel=sp)
                 after_show.update(
                     show_params_panel=constants.parse_boolean(sp))
 
@@ -641,15 +639,15 @@ class ApiList(View):
             #     after_show.update(data_record=rec)
 
             kw = dict(on_ready=
-                      ar.renderer.action_call(
-                          ar.request,
-                          ar.bound_action, after_show))
-            #~ print '20110714 on_ready', params
+            ar.renderer.action_call(
+                ar.request,
+                ar.bound_action, after_show))
+            # ~ print '20110714 on_ready', params
             kw.update(title=ar.get_title())
             return http.HttpResponse(ar.renderer.html_page(request, **kw))
 
         if fmt == 'csv':
-            #~ response = HttpResponse(mimetype='text/csv')
+            # ~ response = HttpResponse(mimetype='text/csv')
             charset = settings.SITE.csv_params.get('encoding', 'utf-8')
             response = http.HttpResponse(
                 content_type='text/csv;charset="%s"' % charset)
@@ -657,11 +655,11 @@ class ApiList(View):
                 response['Content-Disposition'] = \
                     'attachment; filename="%s.csv"' % ar.actor
             else:
-                #~ response = HttpResponse(content_type='application/csv')
+                # ~ response = HttpResponse(content_type='application/csv')
                 response['Content-Disposition'] = \
                     'inline; filename="%s.csv"' % ar.actor
 
-            #~ response['Content-Disposition'] = 'attachment; filename=%s.csv' % ar.get_base_filename()
+            # ~ response['Content-Disposition'] = 'attachment; filename=%s.csv' % ar.get_base_filename()
             w = ucsv.UnicodeWriter(response, **settings.SITE.csv_params)
             w.writerow(ar.ah.store.column_names())
             if True:  # 20130418 : also column headers, not only internal names
@@ -682,7 +680,7 @@ class ApiList(View):
             doc = xghtml.Document(force_text(ar.get_title()))
             doc.body.append(E.h1(doc.title))
             t = doc.add_table()
-            #~ settings.SITE.kernel.ar2html(ar,t,ar.data_iterator)
+            # ~ settings.SITE.kernel.ar2html(ar,t,ar.data_iterator)
             ar.dump2html(t, ar.data_iterator)
             doc.write(response, encoding='utf-8')
             return response
@@ -691,7 +689,6 @@ class ApiList(View):
 
 
 class GridConfig(View):
-
     def put(self, request, app_label=None, actor=None):
         rpt = requested_actor(app_label, actor)
         PUT = http.QueryDict(request.body)  # raw_post_data before Django 1.4
@@ -702,7 +699,7 @@ class GridConfig(View):
                      for x in PUT.getlist(constants.URL_PARAM_COLUMNS)],
             hiddens=[(x == 'true')
                      for x in PUT.getlist(constants.URL_PARAM_HIDDENS)],
-            #~ hidden_cols=[str(x) for x in PUT.getlist('hidden_cols')],
+            # ~ hidden_cols=[str(x) for x in PUT.getlist('hidden_cols')],
         )
 
         filter = PUT.get('filter', None)
@@ -723,8 +720,6 @@ class GridConfig(View):
             msg = _("Error while saving GC for %(table)s: %(error)s") % dict(
                 table=rpt, error=e)
             return settings.SITE.kernel.error(None, msg, alert=True)
-        #~ logger.info(msg)
+        # ~ logger.info(msg)
         settings.SITE.kernel.extjs_renderer.build_site_cache(True)
         return settings.SITE.kernel.success(msg)
-
-
