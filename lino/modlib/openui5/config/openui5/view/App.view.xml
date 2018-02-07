@@ -14,7 +14,7 @@
 
         <!--<tnt:header>-->
 
-        <Page title="helloWorld" showHeader="false" enableScrolling="false">
+        <Page title="helloWorld" showHeader="false" enableScrolling="false" id="mainPage">
                 <tnt:ToolHeader id="mainmenu">
                         <!--<ToolbarSpacer width="20px" />-->
                         {% for item in menu.items %}
@@ -29,16 +29,19 @@
                         {% endfor %}
 
                     </tnt:ToolHeader>
-                <!--<headerContent>-->
-                    <!--<Button-->
-                            <!--icon="sap-icon://hello-world"-->
-                            <!--press="onOpenDialog"/>-->
-                <!--</headerContent>-->
 
+                <headerContent>
+                    <Button
+                            icon="sap-icon://hello-world"
+                            press="onOpenDialog"/>
+                </headerContent>
+                <!--<u:Header enabledPrevious="true">-->
+
+                <!--</u:Header>-->
                 <content>
-                    <NavContainer height="100%" id="viewport">
+                    <NavContainer height="100%" id="viewport" >
                         <pages>
-                            <Page showHeader="true">
+                            <Page showHeader="true" >
                                 <Panel ><core:HTML id="dashboard"
                                         content=""
                                 />
