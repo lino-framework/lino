@@ -17,6 +17,9 @@
     {# The FieldElemnt for columns is var "c" #}
     <m:Label text="{{c.label}}"/>
     <template>
+    {% block column_template %}
         <m:Text text="{{bind(c.field.name)}}" wrapping="true"/>
+    {% endblock %}
+
     </template>
 </Column>

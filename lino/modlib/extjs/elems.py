@@ -1332,6 +1332,8 @@ class DisplayElement(FieldElement):
     # declare_type = jsgen.DECLARE_THIS
     declare_type = jsgen.DECLARE_VAR
     value_template = "new Ext.form.DisplayField(%s)"
+    oui5_column_template = "openui5/elems/column/DisplayElement.xml"
+
 
     def __init__(self, *args, **kw):
         kw.setdefault('value', '<br/>')  # see blog/2012/0527

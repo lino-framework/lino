@@ -66,18 +66,26 @@ sap.ui.define([
 			var msg = "'" + oEvent.getParameter("item").getText() + actor_id +":" + action_name + "' pressed";
 			MessageToast.show(msg);
 			var vp = this.getView().byId('viewport')
-			var p = new sap.m.Page({
-			    showHeader:true,
-			    showNavButton:true,
-			    content: new sap.ui.xmlview({
-			                    viewName : "sap.ui.lino." + action_name + "." + actor_id
-			                    }),
-			    });
-			p.attachNavButtonPress(null, function(oEvent){
-			    vp.back();
-			})
-			vp.addPage(p);
-			vp.to(p);
+			var content = sap.ui.getCore().byId(actor_id)
+			if (content===undefined){
+                content = new sap.ui.xmlview({id: actor_id,
+                                    viewName : "sap.ui.lino." + action_name + "." + actor_id});
+
+                var p = new sap.m.Page({
+                    showHeader:true,
+                    showNavButton:true,
+                    content: content,
+                    });
+                p.attachNavButtonPress(null, function(oEvent){
+                    vp.back();
+                })
+
+			    vp.addPage(p);
+			    vp.to(p);
+			    }
+			else{
+			    vp.to(content.getParent())
+			    }
 
 
 		},

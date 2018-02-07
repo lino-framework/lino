@@ -12,7 +12,11 @@ sap.ui.define([
 
 		onInit : function () {
 			var oView = this.getView();
-
+            this._table = oView.byId("MAIN_TABLE")
+			this.page_no = 0;
+            this.page_limit = this.visibleRowCount;
+            this.pv = []; // unused,
+            if (this.count == undefined) this.count = 0;
 			// set explored app's demo model on this sample
 			var oJSONModel = this.initSampleDataModel();
 			oView.setModel(oJSONModel);
@@ -31,36 +35,15 @@ sap.ui.define([
 
 			jQuery.ajax(this.getView().byId("MAIN_TABLE").data("url"), {
 				dataType: "json",
+				data:{test:'test'},
 				success: function (oData) {
-//					var aTemp1 = [];
-//					var aTemp2 = [];
-//					var aSuppliersData = [];
-//					var aCategoryData = [];
-//					for (var i = 0; i < oData.ProductCollection.length; i++) {
-//						var oProduct = oData.ProductCollection[i];
-//						if (oProduct.SupplierName && jQuery.inArray(oProduct.SupplierName, aTemp1) < 0) {
-//							aTemp1.push(oProduct.SupplierName);
-//							aSuppliersData.push({Name: oProduct.SupplierName});
-//						}
-//						if (oProduct.Category && jQuery.inArray(oProduct.Category, aTemp2) < 0) {
-//							aTemp2.push(oProduct.Category);
-//							aCategoryData.push({Name: oProduct.Category});
-//						}
-//						oProduct.DeliveryDate = (new Date()).getTime() - (i % 10 * 4 * 24 * 60 * 60 * 1000);
-//						oProduct.DeliveryDateStr = oDateFormat.format(new Date(oProduct.DeliveryDate));
-//						oProduct.Heavy = oProduct.WeightMeasure > 1000 ? "true" : "false";
-//						oProduct.Available = oProduct.Status == "Available" ? true : false;
-//					}
-//
-//					oData.Suppliers = aSuppliersData;
-//					oData.Categories = aCategoryData;
-
 					oModel.setData(oData);
 				},
 				error: function () {
 					jQuery.sap.log.error("failed to load json");
 				}
 			});
+			console.log(this.count++)
 
 			return oModel;
 		},

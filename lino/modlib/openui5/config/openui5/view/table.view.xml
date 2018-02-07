@@ -2,6 +2,7 @@
 		controllerName="sap.ui.demo.wt.controller.table"
 		xmlns="sap.ui.table"
 		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:core="sap.ui.core"
 		xmlns:u="sap.ui.unified"
 		xmlns:m="sap.m"
 	    xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
@@ -9,6 +10,7 @@
 		class="sapUiSizeCompact">
 	<m:Page
 		showHeader="false"
+		showFooter="true"
 		enableScrolling="false"
 		class="sapUiContentPadding">
 		<m:content>
@@ -17,17 +19,17 @@
 				customData:url="/restful/{{actor.app_label}}/{{actor.__name__}}"
 				selectionMode="MultiToggle"
 				rows="{/rows}"
-				visibleRowCount="7"
+				visibleRowCountMode="Auto"
 				showColumnVisibilityMenu="{ui>/showVisibilityMenuEntry}"
 				enableColumnFreeze="{ui>/showFreezeMenuEntry}"
 				enableCellFilter="{ui>/enableCellFilter}"
 				columnSelect="onColumnSelect"
 				cellContextmenu="onProductIdCellContextMenu"
 				ariaLabelledBy="title"
-				class="sapUiSizeCondenced">
+				class="sapUiSizeCondensed">
 				<toolbar>
 					<m:Toolbar>
-						<m:Title text="{{title}}"></m:Title>
+						<m:Title text="{{title}}"/>
 						<m:ToolbarSpacer/>
 						<m:ToggleButton
 							icon="sap-icon://show"
