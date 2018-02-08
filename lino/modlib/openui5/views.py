@@ -335,6 +335,13 @@ class Connector(View):
         print name
         if name.startswith("view/"):
             tplname = "openui5/" + name
+
+        elif name.startswith("dialog/SignInActionFormPanel"):
+            tplname = "openui5/fragment/SignInActionFormPanel.fragment.xml"
+
+        elif name.startswith("menu/user/user.fragment.xml"):
+            tplname = "openui5/fragment/UserMenu.fragment.xml"
+
         elif name.startswith("menu/"):
             tplname = "openui5/fragment/Menu.fragment.xml"
             sel_menu = name.split("/",1)[1].split('.',1)[0]
@@ -488,7 +495,7 @@ class Authenticate(View):
         password = request.POST.get('password')
         user = auth.authenticate(
             request, username=username, password=password)
-        auth.login(request, user)
+        auth.login(request, user, backend=u'lino.core.auth.backends.ModelBackend')
         target = '/'
         return http.HttpResponseRedirect(target)
         # ar = BaseRequest(request)

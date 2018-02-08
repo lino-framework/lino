@@ -1,7 +1,8 @@
 sap.ui.define([
    "sap/ui/core/mvc/Controller",
    "sap/m/MessageToast",
-], function (Controller, MessageToast) {
+   "sap/ui/model/json/JSONModel",
+], function (Controller, MessageToast, JSONModel) {
    "use strict";
    return Controller.extend("sap.ui.demo.wt.controller.App", {
 
@@ -76,6 +77,8 @@ sap.ui.define([
                     showNavButton:true,
                     content: content,
                     });
+                this.getView().addDependent(p)
+                this.getView().addDependent(content) // unsure if needed
                 p.attachNavButtonPress(null, function(oEvent){
                     vp.back();
                 })
@@ -83,17 +86,58 @@ sap.ui.define([
 			    vp.addPage(p);
 			    vp.to(p);
 			    }
-			else{
-			    vp.to(content.getParent())
-			    }
-
-
+			else{ vp.to(content.getParent()) }
 		},
 
 		onBackPress: function(oEvent){
 		    var vp = this.getView().byId('viewport')
 			vp.back()
 		},
+
+        onSignInButtonPress: function(oEvent){
+            var oView = this.getView();
+            var oButton = oEvent.getSource();
+            var oDialog = oView.byId("dialog");
+                     // create dialog lazily
+             if (!oDialog) {
+                // create dialog via fragment factory
+                var form_data = {username:"", password:""}
+                var oModel = new JSONModel(form_data);
+                this.getView().setModel(oModel, "form_data");
+                oDialog = sap.ui.xmlfragment(oView.getId(), "sap.ui.lino.dialog.SignInActionFormPanel", this);
+                oView.addDependent(oDialog);
+             }
+             oDialog.open();
+
+        },
+
+        onCloseDialog: function(oEvent){
+            var oDialog = this.getView().byId("dialog");
+            oDialog.close()
+        },
+
+        onOkDialog: function(oEvent){
+            var oModel = this.getView().getModel("form_data");
+//            oModel.refresh(true) // Goes from data -> view only
+            $.post( "/auth",oModel.oData).
+                done( function( data ) {
+                    document.location = '/'; // Might work? Untested, might add refresh()
+                    }).
+                fail(
+                    function(xhr, textStatus, errorThrown){
+                    MessageToast.show("Unable to log in as " + oModel.oData.username);
+                    });
+        },
+
+        onSignOutButtonPress: function(oEvent){
+            var oButton = oEvent.getSource();
+            $.get( "/auth?an=logout", function( data ) {
+                // Works, but might not be best method, the return should give a url to redirect to,
+                document.location = '/';
+            });
+        },
+
+
 
    });
 });

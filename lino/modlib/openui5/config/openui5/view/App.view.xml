@@ -27,7 +27,29 @@
                             <!--</layoutData>-->
                         </Button>
                         {% endfor %}
+                        <tnt:ToolHeaderUtilitySeparator />
+                        <ToolbarSpacer>
+                            <layoutData>
+                                <OverflowToolbarLayoutData priority="NeverOverflow" minWidth="20px" />
+                            </layoutData>
+                        </ToolbarSpacer>
+                        {% if ar.user.is_authenticated() %}
+                        <Button text="{{ar.user.name}}" type="Transparent"
+                                press="handlePressOpenMenu"
+                                customData:menu="user.user">
 
+                            <layoutData>
+                                <OverflowToolbarLayoutData priority="NeverOverflow" />
+                            </layoutData>
+                        </Button>
+                        {% else %}
+                        <Button text="Sign in" type="Transparent" press="onSignInButtonPress">
+                            <layoutData>
+                                <OverflowToolbarLayoutData priority="NeverOverflow" />
+                            </layoutData>
+                        </Button>
+
+                        {% endif %}
                     </tnt:ToolHeader>
 
                 <headerContent>

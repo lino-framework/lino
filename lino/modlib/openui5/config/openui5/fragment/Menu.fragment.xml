@@ -13,7 +13,6 @@
 				customData:action_name="{{item.bound_action.action.action_name}}"
 				select="handleMenuItemPress"
 				{%- endif %}
-
 				{# icon="sap-icon://save" #}
 		>
 
