@@ -78,7 +78,7 @@ sap.ui.define([
                     content: content,
                     });
                 this.getView().addDependent(p)
-                this.getView().addDependent(content) // unsure if needed
+//                this.getView().addDependent(content) // Unwanted, causes content not to render, parent object should be dependent,
                 p.attachNavButtonPress(null, function(oEvent){
                     vp.back();
                 })
@@ -86,7 +86,7 @@ sap.ui.define([
 			    vp.addPage(p);
 			    vp.to(p);
 			    }
-			else{ vp.to(content.getParent()) }
+			else{ vp.to(content.getParent());}
 		},
 
 		onBackPress: function(oEvent){
