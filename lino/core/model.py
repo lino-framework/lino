@@ -385,10 +385,11 @@ class Model(models.Model):
         return str(self)
 
     def disable_delete(self, ar=None):
-        """Decide whether this database object may be deleted.  Return `None`
+        """
+        Decide whether this database object may be deleted.  Return `None`
         if it is okay to delete this object, otherwise a nonempty
-        translatable string with a message that explains why this
-        object cannot be deleted.
+        translatable string with a message that explains in user
+        language why this object cannot be deleted.
 
         The argument `ar` contains the action request which is trying
         to delete. `ar` is possibly `None` when this is being called
@@ -412,11 +413,10 @@ class Model(models.Model):
 
         Note that :class:`lino.mixins.polymorphic.Polymorphic`
         overrides this.
-
         """
         # In case of MTI, every concrete model has its own ddh.
-        # Deleting an Invoice will also delete the Voucher. Ask all MTI
-        # parents whether they have a veto (other than self).
+        # Deleting an Invoice will also delete the Voucher. Ask all
+        # MTI parents (other than self) whether they have a veto .
         
         for b in self.__class__.__bases__:
             if issubclass(b, models.Model) \
