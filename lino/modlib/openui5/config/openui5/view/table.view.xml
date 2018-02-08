@@ -20,7 +20,7 @@
 				selectionMode="MultiToggle"
 				rows="{/rows}"
 				visibleRowCountMode="Auto"
-				showColumnVisibilityMenu="{ui>/showVisibilityMenuEntry}"
+				showColumnVisibilityMenu="true"
 				enableColumnFreeze="{ui>/showFreezeMenuEntry}"
 				enableCellFilter="{ui>/enableCellFilter}"
 				columnSelect="onColumnSelect"

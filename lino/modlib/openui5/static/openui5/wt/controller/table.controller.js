@@ -22,7 +22,7 @@ sap.ui.define([
 			oView.setModel(oJSONModel);
 
 			oView.setModel(new JSONModel({
-				showVisibilityMenuEntry: false,
+//				showVisibilityMenuEntry: false,
 				showFreezeMenuEntry: false,
 				enableCellFilter: false
 			}), "ui");
