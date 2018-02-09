@@ -32,10 +32,6 @@
 						<m:Title text="{{title}}"/>
 						<m:ToolbarSpacer/>
 						<m:ToggleButton
-							icon="sap-icon://show"
-							tooltip="Enable / Disable Visibility Menu Entries"
-							pressed="{ui>/showVisibilityMenuEntry}"/>
-						<m:ToggleButton
 							icon="sap-icon://resize-horizontal"
 							tooltip="Enable / Disable Freezing Menu Entries"
 							pressed="{ui>/showFreezeMenuEntry}"/>
