@@ -267,8 +267,8 @@ class BaseRequest(object):
 
     def parse_req(self, request, rqdata, **kw):
         """
-        Parse the given incoming HttpRequest and set up this action request
-from it.
+        Parse the given incoming HttpRequest and set up this action
+        request from it.
         """
         if settings.SITE.user_model:
             kw.update(user=request.user)
