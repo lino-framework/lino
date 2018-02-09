@@ -1,9 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2017 Luc Saffre
+# Copyright 2009-2018 Luc Saffre
 # License: BSD (see file COPYING for details)
 """
 See introduction in :doc:`/dev/ar`.
-
 """
 from builtins import str
 import six
@@ -37,23 +36,26 @@ CATCHED_AJAX_EXCEPTIONS = (Warning, exceptions.ValidationError)
 
 
 class ValidActionResponses(object):
-    """These are the allowed keyword arguments for :meth:`ar.set_response
+    """
+    These are the allowed keyword arguments for :meth:`ar.set_response
     <BaseRequest.set_response>`, and the action responses supported by
-    :js:func:`Lino.handle_action_result` (defined in :xfile:`linolib.js`).
+    :js:func:`Lino.handle_action_result` (defined in
+    :xfile:`linolib.js`).
 
     This class is never instantiated, but used as a placeholder for
     these names and their documentation.
-
     """
 
     message = None
-    """a string with a message to be shown to the user.
+    """
+    A translatable message text to be shown to the user.
     """
 
     alert = None
-    """ True to specify that the message is rather important
-    and should alert and should be presented in a dialog box to be
-    confirmed by the user.
+    """
+    True to specify that the message is rather important and should
+    alert and should be presented in a dialog box to be confirmed by
+    the user.
     """
 
     success = None
@@ -63,7 +65,8 @@ class ValidActionResponses(object):
     rows = None
     navinfo = None
     data_record = None
-    """Certain requests are expected to return the detailed information
+    """
+    Certain requests are expected to return the detailed information
     about a single data record. That's done in :attr:`data_record`
     which must itself be a dict with the following keys:
 
@@ -73,13 +76,12 @@ class ValidActionResponses(object):
     - navinfo : an object with information for the navigator
     - disable_delete : either null (if that record may be deleted, or
       otherwise a message explaining why.
-
     """
 
     record_id = None
-    """When an action returns a `record_id`, it asks the user interface to
+    """
+    When an action returns a `record_id`, it asks the user interface to
     jump to the given record.
-
     """
 
     refresh = None
@@ -89,10 +91,14 @@ class ValidActionResponses(object):
     xcallback = None
     
     goto_url = None
-    """Leave current page and go to the given URL."""
+    """
+    Leave current page and go to the given URL.
+    """
     
     open_url = None
-    """Open the given URL in a new browser window."""
+    """
+    Open the given URL in a new browser window.
+    """
     
     open_davlink_url = None
     info_message = None
@@ -103,10 +109,10 @@ class ValidActionResponses(object):
     active_tab = None
 
     detail_handler_name = None
-    """The name of the detail handler to be used.  Application code should
+    """
+    The name of the detail handler to be used.  Application code should
     not need to use this.  It is automatically set by
     :meth:`ActorRequest.goto_instance`.
-
     """
 
 
@@ -168,14 +174,16 @@ def bool2text(x):
     return _("No")
     
 class BaseRequest(object):
-    """Base class of all action requests.
-
+    """
+    Base class of all action requests.
     """
     user = None
     subst_user = None
 
     renderer = None
-    """The renderer to use when processing this request."""
+    """
+    The renderer to use when processing this request.
+    """
 
     actor = None
     action_param_values = None
@@ -184,15 +192,15 @@ class BaseRequest(object):
     known_values = {}
     is_on_main_actor = True
     master_instance = None
-    """The database object which acts as master. This is `None` for master
+    """
+    The database object which acts as master. This is `None` for master
     requests.
-
     """
 
     request = None
-    """The incoming Django HttpRequest object which caused this action
+    """
+    The incoming Django HttpRequest object which caused this action
     request.
-
     """
 
     selected_rows = []
@@ -240,8 +248,6 @@ class BaseRequest(object):
               limit=None,
               requesting_panel=None,
               renderer=None):
-        """If a `limit` is specified, this is ignored silently.
-        """
         self.requesting_panel = requesting_panel
         self.master_instance = master_instance
         if user is None:
@@ -260,9 +266,9 @@ class BaseRequest(object):
             self.set_selected_pks(*selected_pks)
 
     def parse_req(self, request, rqdata, **kw):
-        """Parse the given incoming HttpRequest and set up this action
-request from it.
-
+        """
+        Parse the given incoming HttpRequest and set up this action request
+from it.
         """
         if settings.SITE.user_model:
             kw.update(user=request.user)
@@ -298,12 +304,12 @@ request from it.
         return kw
 
     def setup_from(self, other):
-        """Copy certain values (renderer, user, subst_user &
-        requesting_panel) from this request to the other.
+        """
+        Copy certain values (renderer, user, subst_user & requesting_panel)
+        from this request to the other.
 
         Deprecated. You should rather instantiate a request and
         specify parent instead.
-
         """
         if not self.must_execute():
             return
@@ -318,14 +324,15 @@ request from it.
         self.requesting_panel = other.requesting_panel
 
     def spawn_request(self, **kw):
-        """Create a new of same class which inherits from this one.
-
+        """
+        Create a new of same class which inherits from this one.
         """
         kw.update(parent=self)
         return self.__class__(**kw)
 
     def spawn(self, spec=None, **kw):
-        """Create a new action request using default values from this one and
+        """
+        Create a new action request using default values from this one and
         the action specified by `spec`.
 
         The first argument, `spec` can be:
@@ -334,8 +341,7 @@ request from it.
         - a :class:`BoundAction` instance
         - another action request (deprecated use)
 
-        Deprecated. Use spawn_request() if spec is 
-
+        Deprecated. Use spawn_request() if spec is
         """
         from lino.core.actors import resolve_action
         if isinstance(spec, ActionRequest):  # deprecated use
@@ -357,9 +363,9 @@ request from it.
         return spec
 
     def get_printable_context(self, **kw):
-        """Adds a series of names to the context used when rendering printable
+        """
+        Adds a series of names to the context used when rendering printable
         documents. See :doc:`/user/templates_api`.
-
         """
         # from django.conf import settings
         from django.utils.translation import ugettext
@@ -413,9 +419,9 @@ request from it.
         return kw
 
     def set_selected_pks(self, *selected_pks):
-        """Given a tuple of primary keys, set :attr:`selected_rows` to a list
+        """
+        Given a tuple of primary keys, set :attr:`selected_rows` to a list
         of corresponding database objects.
-
         """
         #~ print 20131003, selected_pks
         self.selected_rows = []
@@ -428,10 +434,9 @@ request from it.
         # note: ticket #523 was because the GET contained an empty pk ("&sr=")
 
     def get_permission(self):
-        """Whether this request has permission to run on the given database
-        object. `obj` can be None if the action is a list action
-        (whose `select_rows` is `False`).
-
+        """
+        Whether this request has permission to run.  `obj` can be None if
+        the action is a list action (whose `select_rows` is `False`).
         """
         if self.bound_action.action.select_rows:
             # raise Exception("20160814 {}".format(self.bound_action))
@@ -443,7 +448,8 @@ request from it.
             self, None, None)
         
     def set_response(self, **kw):
-        """Set (some part of) the response to be sent when the action request
+        """
+        Set (some part of) the response to be sent when the action request
         finishes.  Allowed keywords are documented in
         :class:`ValidActionResponses`.
 
@@ -456,7 +462,6 @@ request from it.
         been issued. This is a design decision.  We *want* that, when
         writing custom actions, the order of these instructions does not
         matter.
-
         """
         for k in list(kw.keys()):
             if not hasattr(ValidActionResponses, k):
@@ -464,7 +469,8 @@ request from it.
         self.response.update(kw)
             
     def error(self, e=None, message=None, **kw):
-        """Shortcut to :meth:`set_response` used to set an error response.
+        """
+        Shortcut to :meth:`set_response` used to set an error response.
 
         The first argument should be either an exception object or a
         text with a message.
@@ -477,7 +483,6 @@ request from it.
         will be converted to::
     
             NotImplementedError: &lt;dl&gt; inside &lt;text:p&gt;
-
         """
         kw.update(success=False)
         kw.update(alert=_("Error"))  # added 20140304
@@ -496,11 +501,11 @@ request from it.
         self.set_response(**kw)
 
     def success(self, message=None, alert=None, **kw):
-        """Tell the client to consider the action as successful. This is the
+        """
+        Tell the client to consider the action as successful. This is the
         same as :meth:`set_response` with `success=True`.
 
         First argument should be a textual message.
-
         """
         kw.update(success=True)
         if alert is not None:
@@ -546,14 +551,14 @@ request from it.
     _confirm_answer = True
 
     def set_confirm_answer(self, ans):
-        """Set a "No" answer for following confirm in a non-interactive
-        renderer.
-
+        """
+        Set an answer for following confirm in a non-interactive renderer.
         """
         self._confirm_answer = ans
 
     def confirm(self, ok_func, *msgs):
-        """Execute the specified callable `ok_func` after the user has
+        """
+        Execute the specified callable `ok_func` after the user has
         confirmed the specified message.
         
         The confirmation message may be specified as a series of
@@ -568,7 +573,6 @@ request from it.
         In a non-interactive environment the `ok_func` function is
         called directly (i.e. we don't ask any confirmation and act as
         confirmation had been given).
-
         """
         cb = self.add_callback(*msgs)
 
@@ -587,9 +591,9 @@ request from it.
         return settings.SITE.kernel.memo_parser.parse(txt, **context)
 
     def obj2memo(self, *args, **kwargs):
-        """Calls the site's parser's :meth:`obj2memo
+        """
+        Calls the site's parser's :meth:`obj2memo
         <lino.utils.memo.Parser.obj2memo>` method.
-
         """
         # kwargs.update(ar=self)
         return settings.SITE.kernel.memo_parser.obj2memo(*args, **kwargs)
@@ -622,35 +626,37 @@ request from it.
         return True
 
     def get_total_count(self):
-        """TableRequest overrides this to return the number of rows."""
+        """
+        TableRequest overrides this to return the number of rows.
+        """
         return -1
     
     def get_data_value(self, obj, name):
-        """Return the value of the virtual field `name` for this action
+        """
+        Return the value of the virtual field `name` for this action
         request on the given object `obj`.
-
         """
         fld = obj.get_data_elem(name)
         return fld.value_from_object(obj, self)
 
     def get_user(self):
-        """Return the :class:`User <lino.modlib.users.models.User>` instance
+        """
+        Return the :class:`User <lino.modlib.users.models.User>` instance
         of the user who issued the request.  If the authenticated user
         is acting as somebody else, return that user's instance.
-
         """
         return self.subst_user or self.user
 
     def run(self, thing, *args, **kw):
-        """The first parameter `thing` may be an :class:`InstanceAction
+        """
+        The first parameter `thing` may be an :class:`InstanceAction
         <lino.core.utils.InstanceAction>` or a Model instance.
-
         """
         return thing.run_from_session(self, *args, **kw)
 
     def story2html(self, story, *args, **kwargs):
-        """Convert a story into a stream of HTML elements.
-
+        """
+        Convert a story into a stream of HTML elements.
         """
         # return self.renderer.show_story(self, story, *args, **kwargs)
         return settings.SITE.kernel.html_renderer.show_story(
@@ -661,10 +667,12 @@ request from it.
 
     def show(self, spec, master_instance=None, column_names=None,
              header_level=None, language=None, nosummary=False,
-             stripped=True, **kwargs):
-        """Show the specified table or action using the current renderer.  If
-        the table is a :term:`slave table`, then a `master_instance` must
-        be specified as second argument.
+             stripped=True, show_links=False,
+             **kwargs):
+        """
+        Show the specified table or action using the current renderer.  If
+        the table is a :term:`slave table`, then a `master_instance`
+        must be specified as second argument.
 
         The first argument specifies the table or actor to show. It is
         forwarded to :meth:`spawn`.
@@ -672,6 +680,10 @@ request from it.
         Optional keyword arguments are:
 
         :column_names: overrides default list of columns
+
+        :show_links: show links and other html formatting.  Used
+                     .e.g. in :ref:`avanti.specs.roles` where we want
+                     to show whether cells are clickable or not.
 
         :nosummary: if it is a table with :attr:`slave_grid_format
                     <lino.core.tables.AbstractTable.slave_grid_format>`
@@ -696,7 +708,6 @@ request from it.
         Usage in a Jinja template::
 
           {{ar.show('users.UsersOverview')}}
-
         """
         from lino.utils.report import Report
 
@@ -717,7 +728,8 @@ request from it.
                     self, story, header_level=header_level, stripped=stripped)
             return ar.renderer.show_table(
                 ar, column_names=column_names, header_level=header_level,
-                nosummary=nosummary, stripped=stripped)
+                nosummary=nosummary, stripped=stripped,
+                show_links=show_links)
 
         if language:
             with translation.override(language):

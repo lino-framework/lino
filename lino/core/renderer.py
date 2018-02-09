@@ -546,9 +546,11 @@ class TextRenderer(HtmlRenderer):
         print(self.table2story(*args, **kwargs))
 
     def table2story(self, ar, column_names=None, header_level=None,
-                    nosummary=False, stripped=True, **kwargs):
-        """Render the given table request as reStructuredText to stdout.
-        See :meth:`ar.show <lino.core.request.BaseRequest.show>`.
+                    nosummary=False, stripped=True, show_links=False,
+                    **kwargs):
+        """
+        Render the given table request as reStructuredText to stdout.  See
+        :meth:`ar.show <lino.core.request.BaseRequest.show>`.
         """
 
         if ar.actor.master is not None and not nosummary:
@@ -567,7 +569,12 @@ class TextRenderer(HtmlRenderer):
         recno = 0
         for row in ar.sliced_data_iterator:
             recno += 1
-            rows.append([x for x in ar.row2text(fields, row, sums)])
+            if show_links:
+                rows.append([
+                    E.to_rst(x) for x in ar.row2html(
+                        recno, fields, row, sums)])
+            else:
+                rows.append([x for x in ar.row2text(fields, row, sums)])
         if len(rows) == 0:
             s = str(ar.no_data_text)
             if not stripped:

@@ -406,7 +406,7 @@ class TableRequest(ActionRequest):
         return e
 
     def dump2html(self, tble, data_iterator, column_names=None,
-                  hide_sums=None):
+                  show_links=None, hide_sums=None):
         """
         Render this table into an existing
         :class:`lino.utils.xmlgen.html.Table` instance.
