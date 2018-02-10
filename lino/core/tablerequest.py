@@ -387,9 +387,9 @@ class TableRequest(ActionRequest):
         return rv
 
     def table2rst(self, *args, **kwargs):
-        """Print a reStructuredText representation of this table request to
+        """
+        Print a reStructuredText representation of this table request to
         stdout.
-
         """
         settings.SITE.kernel.text_renderer.show_table(self, *args, **kwargs)
 

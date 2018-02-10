@@ -160,6 +160,8 @@ class LayoutHandle(object):
             for spec in desc.split():
                 if '*' not in spec:
                     name, kwargs = self.splitdesc(spec)
+                    # if 'hide_sum' in kwargs:
+                    #     raise Exception("20180210a")
                     explicit_specs.add(name)
                 elif len(spec) > 1:
                     remote_wildcards.append(spec)
@@ -263,6 +265,8 @@ class LayoutHandle(object):
     def create_element(self, desc_name):
         #~ logger.debug("create_element(%r)", desc_name)
         name, options = self.splitdesc(desc_name)
+        # if 'hide_sum' in options:
+        #     raise Exception("20180210b")
         if name in self._names:
             if ALLOW_DUPLICATE_ELEMS:
                 return self._names[name]

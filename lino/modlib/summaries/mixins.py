@@ -69,13 +69,15 @@ class Summary(dd.Model):
     @classmethod
     def get_summary_periods(cls):
         config = dd.plugins.summaries
+        if cls.summary_period == 'timeless':
+            yield None, None
+            return
         for year in range(config.start_year, config.end_year+1):
             if cls.summary_period == 'yearly':
                 yield year, None
             elif cls.summary_period == 'monthly':
-                for month in range(1, 12):
+                for month in range(1, 13):
                     yield year, month
-        yield None, None
 
     @classmethod
     def get_for_period(cls, master, year, month):
@@ -92,7 +94,7 @@ class Summary(dd.Model):
 
     @classmethod
     def get_summary_master_model(cls):
-        raise NotImplementedError()
+        return cls._meta.get_field('master').rel.model
 
     @classmethod
     def get_summary_masters(cls):
@@ -129,4 +131,12 @@ class Summary(dd.Model):
             kwargs[fldname+'__month'] = self.month
         return qs.filter(**kwargs)
 
+    # @classmethod
+    # def get_widget_options(cls, name, **options):
+    #     if name in ('year', 'month'):
+    #         options.update(hide_sum=True)
+    #     return super(Summary, cls).get_widget_options(name, **options)
 
+
+Summary.set_widget_options('year', hide_sum=True)
+Summary.set_widget_options('month', hide_sum=True)

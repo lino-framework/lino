@@ -1,11 +1,6 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2017 Luc Saffre
+# Copyright 2011-2018 Luc Saffre
 # License: BSD (see file COPYING for details)
-"""Database models for this plugin.
-
-Documentation is in :doc:`/specs/users` and :doc:`/dev/users`
-
-"""
 
 from builtins import str
 from builtins import object
@@ -22,6 +17,7 @@ from lino.core import userprefs
 from lino.core.roles import SiteAdmin
 
 from lino.mixins import CreatedModified, Contactable
+from lino.mixins import DateRange
 
 from .choicelists import UserTypes
 from .mixins import UserAuthored, TimezoneHolder
@@ -59,7 +55,8 @@ class UserManager(BaseUserManager):
 
 
 @python_2_unicode_compatible
-class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
+class User(AbstractBaseUser, Contactable, CreatedModified,
+           TimezoneHolder, DateRange):
     class Meta(object):
         app_label = 'users'
         verbose_name = _('User')
@@ -92,10 +89,17 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
     def __str__(self):
         return self.get_full_name()
 
+    @property
+    def is_active(self):
+        if self.start_date and self.start_date > dd.today():
+            return False
+        if self.end_date and self.end_date < dd.today():
+            return False
+        return True
+        
     def get_as_user(self):
-        """Overrides
-        :meth:`lino_xl.lib.contacts.models.Partner.get_as_user`.
-
+        """
+        Overrides :meth:`lino_xl.lib.contacts.Partner.get_as_user`.
         """
         return self
     
@@ -216,8 +220,8 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
     def get_by_username(cls, username, default=models.NOT_PROVIDED):
         """
         `User.get_by_username(x)` is equivalent to
-        `User.objects.get(username=x)` except that the text
-        of the DoesNotExist exception is more useful.
+        `User.objects.get(username=x)` except that the text of the
+        DoesNotExist exception is more useful.
         """
         try:
             return cls.objects.get(username=username)
@@ -229,9 +233,9 @@ class User(AbstractBaseUser, Contactable, CreatedModified, TimezoneHolder):
             return default
 
     def get_preferences(self):
-        """Return the preferences of this user. The returned object is a
+        """
+        Return the preferences of this user. The returned object is a
         :class:`lino.core.userprefs.UserPrefs` object.
-
         """
         return userprefs.reg.get(self)
     
@@ -288,4 +292,5 @@ class Permission(dd.Model):
     class Meta(object):
         app_label = 'users'
         abstract = True
+
 

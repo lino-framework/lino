@@ -991,6 +991,10 @@ class Model(models.Model):
         when using this element in a layout.
 
         """
+        # from lino.modlib.extjs.elems import FieldElement
+        # for k in options.keys():
+        #     if not hasattr(FieldElement, k):
+        #         raise Exception("Invalid widget option {}".format(k))
         self._widget_options = dict(**self._widget_options)
         d = self._widget_options.setdefault(name, {})
         d.update(options)
@@ -1080,6 +1084,12 @@ class Model(models.Model):
         :mod:`lino.core.kernel`
 
         """
+        wo = {}
+        for b in model.__mro__:
+            if issubclass(b, cls):
+                wo.update(b._widget_options)
+        model._widget_options = wo
+        
         if issubclass(model, cls):
             return
 

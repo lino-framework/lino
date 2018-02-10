@@ -255,6 +255,8 @@ class LayoutElement(VisibleComponent):
         #logger.debug("LayoutElement.__init__(%r,%r)", layout_handle.layout,name)
         #self.parent = parent
         # name = layout_handle.layout._actor_name + '_' + name
+        # if 'hide_sum' in kw:
+        #     raise Exception("20180210")
         assert isinstance(layout_handle, layouts.LayoutHandle)
         opts = layout_handle.layout._element_options.get(name, {})
         for k, v in opts.items():
@@ -467,13 +469,15 @@ class FieldElement(LayoutElement):
     #declaration_order = 3
     # ext_suffix = "_field"
     zero = 0
+    hide_sum = False
 
-    def __init__(self, layout_handle, field, **kw):
+    def __init__(self, layout_handle, field, hide_sum=False, **kw):
         if not getattr(field, 'name', None):
             raise Exception("Field '%s' in %s has no name!" %
                             (field, layout_handle))
         self.field = field
         self.editable = field.editable  # and not field.primary_key
+        self.hide_sum = hide_sum
 
         if 'listeners' not in kw:
             if not isinstance(layout_handle.layout, ColumnsLayout):
@@ -676,8 +680,11 @@ class FieldElement(LayoutElement):
         """
         if i == ar.actor.sum_text_column:
             return E.b(ar.get_sum_text(sums))
-        if sums[self.name]:
-            return E.b(self.format_value(ar, sums[self.name]))
+        if self.hide_sum:
+            return ''
+        v = sums[self.name]
+        if v:
+            return E.b(self.format_value(ar, v))
         return ''
 
     def value2num(self, v):
@@ -1169,6 +1176,10 @@ class NumberFieldElement(FieldElement):
         # logger.info("20130119 apply_cell_format %s",etree.tostring(e))
 
     def format_sum(self, ar, sums, i):
+        if self.hide_sum:
+            if i == ar.actor.sum_text_column:
+                return E.b(ar.get_sum_text(sums))
+            return ''
         return E.b(self.format_value(ar, sums[self.name]))
 
     def value2num(self, v):
@@ -1300,6 +1311,8 @@ class RequestFieldElement(IntegerFieldElement):
         return ar.href_to_request(v, str(n))
 
     def format_sum(self, ar, sums, i):
+        if self.hide_sum:
+            return ''
         # return self.format_value(ar,sums[i])
         return E.b(str(sums[self.name]))
 

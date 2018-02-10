@@ -1,4 +1,4 @@
-# Copyright 2014-2017 Luc Saffre
+# Copyright 2014-2018 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -9,16 +9,11 @@ Defines classes related to date ranges.
 from __future__ import unicode_literals
 from builtins import object
 
-import logging
-logger = logging.getLogger(__name__)
-
 import datetime
-
 try:
     import pytz
 except ImportError:
     pytz = None
-
 
 from django.db import models
 from django.conf import settings
@@ -28,7 +23,6 @@ from django.core.exceptions import ValidationError
 from django.utils.timezone import is_aware
 
 from atelier.utils import last_day_of_month
-
 from lino.api import dd
 from lino.core.model import Model
 from lino.utils.format_date import fdl, fds
@@ -43,9 +37,9 @@ def rangefmt(r):
 
 
 class CombinedDateTime(dd.Model):
-    """Mixin for models which have at least one couple of date and time
+    """
+    Mixin for models which have at least one couple of date and time
     fields which form a kind of editable timestamp field.
-
     """
     class Meta:
         abstract = True
@@ -98,12 +92,12 @@ class CombinedDateTime(dd.Model):
 
 
 class Started(CombinedDateTime):
-    """Mixin for models with two fields :attr:`start_date` and
+    """
+    Mixin for models with two fields :attr:`start_date` and
     :attr:`start_time`
 
     .. attribute:: start_date
     .. attribute:: start_time
-
     """
     class Meta:
         abstract = True
@@ -125,13 +119,13 @@ class Started(CombinedDateTime):
         super(Started, self).save(*args, **kw)
 
 class Ended(CombinedDateTime):
-    """Mixin for models with two fields :attr:`end_date` and
-    :attr:`end_time`
-    Models inheriting from this must also inherit from Started.
+    """
+    Mixin for models with two fields :attr:`end_date` and
+    :attr:`end_time` Models inheriting from this must also inherit
+    from Started.
 
     .. attribute:: end_date
     .. attribute:: end_time
-
     """
     class Meta:
         abstract = True
@@ -171,13 +165,12 @@ class Ended(CombinedDateTime):
 
 
 class DateRange(Model):
-
-    """A model mixin for models which represent a period whose start and
-    end are date fields.
+    """
+    Mixin for models which represent a period whose start and end are
+    date fields.
 
     Designed for usage with
     :class:`lino.modlib.system.choicelists.PeriodEvents`.
-
     """
 
     class Meta(object):

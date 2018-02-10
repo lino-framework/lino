@@ -5,6 +5,7 @@
 from __future__ import unicode_literals, print_function
 
 from django.conf import settings
+from django.db import models
 from lino.api import dd, rt, _
 
 from .mixins import UpdateSummariesByMaster, Summary
@@ -24,14 +25,15 @@ class CheckSummaries(dd.Action):
                 
         ar.set_response(refresh=True)
 
-dd.inject_action('system.SiteConfig', check_summaries=CheckSummaries())
+dd.inject_action('system.SiteConfig', check_all_summaries=CheckSummaries())
 
 
 @dd.receiver(dd.pre_analyze)
 def set_summary_actions(sender, **kw):
     for mm, summary_models in get_summary_models().items():
         mm.define_action(
-            check_summaries=UpdateSummariesByMaster(mm, summary_models))
+            check_summaries=UpdateSummariesByMaster(
+                mm, summary_models))
 
 
 def get_summary_models():
