@@ -26,7 +26,13 @@
   },
   "sap.ui5": {
 	"_version": "1.1.0",
-	"rootView": "sap.ui.lino.view.App",
+	"rootView": {
+          "viewName": "sap.ui.lino.view.App",
+          "type": "XML",
+          "id": "MAIN_VIEW"
+
+        },
+
 	"dependencies": {
 	  "minUI5Version": "1.30",
 	  "libs": {

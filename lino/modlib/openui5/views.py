@@ -45,6 +45,23 @@ MENUS = dict()
 
 
 # Taken from lino.modlib.extjs.views
+NOT_FOUND = "%s has no row with primary key %r"
+def elem2rec_empty(ar, ah, elem, **rec):
+    """
+    Returns a dict of this record, designed for usage by an EmptyTable.
+    """
+    #~ rec.update(data=rh.store.row2dict(ar,elem))
+    rec.update(data=elem._data)
+    #~ rec = elem2rec1(ar,ah,elem)
+    #~ rec.update(title=_("Insert into %s...") % ar.get_title())
+    rec.update(title=ar.get_action_title())
+    rec.update(id=-99998)
+    #~ rec.update(id=elem.pk) or -99999)
+    if ar.actor.parameters:
+        rec.update(
+            param_values=ar.actor.params_layout.params_store.pv2dict(
+                ar, ar.param_values))
+    return rec
 
 class Restful(View):
 
@@ -79,16 +96,49 @@ class Restful(View):
     #     return delete_element(ar, ar.selected_rows[0])
 
     def get(self, request, app_label=None, actor=None, pk=None):
+        """
+        Works, but is ugly to get list and detail
+        """
         rpt = requested_actor(app_label, actor)
-        assert pk is None, 20120814
-        ar = rpt.request(request=request)
-        rh = ar.ah
-        rows = [
-            rh.store.row2dict(ar, row, rh.store.all_fields)
-            for row in ar.sliced_data_iterator]
-        kw = dict(count=ar.get_total_count(), rows=rows)
-        kw.update(title=str(ar.get_title()))
-        return json_response(kw)
+
+
+        action_name = request.GET.get(constants.URL_PARAM_ACTION_NAME,
+                                      rpt.default_elem_action_name)
+        fmt = request.GET.get(
+            constants.URL_PARAM_FORMAT,constants.URL_FORMAT_JSON)
+        sr = request.GET.getlist(constants.URL_PARAM_SELECTED)
+        if not sr:
+            sr = [pk]
+        ar = rpt.request(request=request, selected_pks=sr)
+        if pk is None:
+            rh = ar.ah
+            rows = [
+                rh.store.row2dict(ar, row, rh.store.all_fields)
+                for row in ar.sliced_data_iterator]
+            kw = dict(count=ar.get_total_count(), rows=rows)
+            kw.update(title=str(ar.get_title()))
+            return json_response(kw)
+
+        else: #action_name=="detail": #ba.action.opens_a_window:
+
+            ba = rpt.get_url_action(action_name)
+            ah = ar.ah
+            ar = ba.request(request=request, selected_pks=sr)
+            elem = ar.selected_rows[0]
+            if fmt == constants.URL_FORMAT_JSON:
+                if pk == '-99999':
+                    elem = ar.create_instance()
+                    datarec = ar.elem2rec_insert(ah, elem)
+                elif pk == '-99998':
+                    elem = ar.create_instance()
+                    datarec = elem2rec_empty(ar, ah, elem)
+                elif elem is None:
+                    datarec = dict(
+                        success=False, message=NOT_FOUND % (rpt, pk))
+                else:
+                    datarec = ar.elem2rec_detailed(elem)
+                return json_response(datarec)
+
 
     def put(self, request, app_label=None, actor=None, pk=None):
         rpt = requested_actor(app_label, actor)
@@ -163,8 +213,14 @@ def XML_response(ar, tplname, context):
     template = env.get_template(tplname)
     context.update(
         # Because it's a pain to excape {x} in jinja
-        bind=lambda s: "{" + s + "}"
+        bind=lambda *args: "{" + "".join(args) + "}",
     )
+    def p(*args):
+        print(args),
+        return ""
+
+    env.filters.update(
+        p=p)
 
     response = http.HttpResponse(
         template.render(**context),
@@ -367,6 +423,28 @@ class Connector(View):
 
             })
             tplname = "openui5/view/table.view.xml" # Change to "grid" to match action?
+            # ar = action_request(app_label, actor, request, request.GET, True)
+            # add to context
+
+        elif name.startswith("detail"):  # Detail view
+            # "detail/tickets/AllTickets.view.xml"
+            app_label, actor = re.match(r"detail\/(.+)\/(.+).view.xml$", name).groups()
+            actor = rt.models.resolve(app_label + "." + actor)
+            detail_action = actor.  actions['detail']
+            window_layout = detail_action.get_window_layout()
+            layout_handle = window_layout.get_layout_handle(settings.SITE.plugins.openui5)
+            layout_handle.main.elements # elems # Refactor into actor get method?
+            context.update({
+                "actor": actor,
+                # "columns": actor.get_handle().get_columns(),
+                "actions": actor.get_actions(),
+                "title": actor.label, #
+                # "main_elems": layout_handle.main.elements,
+                "main": layout_handle.main,
+                "layout_handle": layout_handle
+
+            })
+            tplname = "openui5/view/detail.view.xml"  # Change to "grid" to match action?
             # ar = action_request(app_label, actor, request, request.GET, True)
             # add to context
 

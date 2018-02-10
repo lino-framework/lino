@@ -72,21 +72,21 @@ sap.ui.define([
                 content = new sap.ui.xmlview({id: "grid." + actor_id,
                                     viewName : "sap.ui.lino." + action_name + "." + actor_id});
 
-                var p = new sap.m.Page({
+                var p = content /*new sap.m.Page({
                     showHeader:true,
                     showNavButton:true,
                     content: content,
-                    });
+                    });*/
                 this.getView().addDependent(p)
 //                this.getView().addDependent(content) // Unwanted, causes content not to render, parent object should be dependent,
-                p.attachNavButtonPress(null, function(oEvent){
+                /*p.attachNavButtonPress(null, function(oEvent){
                     vp.back();
-                })
+                })*/
 
 			    vp.addPage(p);
 			    vp.to(p);
 			    }
-			else{ vp.to(content.getParent());}
+			else{ vp.to(content/*.getParent()*/);}
 		},
 
 		onBackPress: function(oEvent){

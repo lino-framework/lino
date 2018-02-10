@@ -9,14 +9,18 @@
 		height="100%"
 		class="sapUiSizeCompact">
 	<m:Page
-		showHeader="false"
+		showHeader="true"
+		showNavButton="true"
+		navButtonPress="onNavButtonPress"
 		showFooter="true"
 		enableScrolling="false"
 		class="sapUiContentPadding">
 		<m:content>
 			<Table
 				id="MAIN_TABLE"
-				customData:url="/restful/{{actor.app_label}}/{{actor.__name__}}"
+				customData:PK="{{actor.model._meta.pk.name}}"
+                customData:actor_id="{{actor.actor_id}}"
+                customData:url="/restful/{{actor.app_label}}/{{actor.__name__}}"
 				selectionMode="MultiToggle"
 				rows="{/rows}"
 				visibleRowCountMode="Auto"
@@ -26,8 +30,18 @@
 				columnSelect="onColumnSelect"
 				cellContextmenu="onProductIdCellContextMenu"
 				ariaLabelledBy="title"
-				class="sapUiSizeCondensed">
-				<toolbar>
+				class="sapUiSizeCondensed"
+                rowActionCount="1">
+				<rowActionTemplate>
+					<RowAction visible="true">
+                        <items>
+						<RowActionItem type="Navigation" visible="true" press="onRowNavPress">
+
+						</RowActionItem>
+                        </items>
+					</RowAction>
+				</rowActionTemplate>
+				<extension>
 					<m:Toolbar>
 						<m:Title text="{{title}}"/>
 						<m:ToolbarSpacer/>
@@ -41,7 +55,7 @@
 							pressed="{ui>/enableCellFilter}"/>
 
 					</m:Toolbar>
-				</toolbar>
+				</extension>
 				<columns>
 					{% for c in columns %}
 					{% include c.oui5_column_template %}

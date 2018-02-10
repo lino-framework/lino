@@ -255,7 +255,7 @@ class ComboStoreField(StoreField):
     def value2dict(self, ar, v, d, row):
         value, text = self.get_value_text(ar, v, row)
         d[str(self.name)] = text
-        d[str(self.name + constants.CHOICES_HIDDEN_SUFFIX)] = getattr(value, "value", None)
+        d[str(self.name + constants.CHOICES_HIDDEN_SUFFIX)] = value
 
     def get_value_text(self, ar, v, obj):
         # v = self.full_value_from_object(None,obj)
@@ -268,7 +268,7 @@ class ComboStoreField(StoreField):
         for i in self.field.choices:
             if i[0] == v:
                 # return (v, i[1].encode('utf8'))
-                return (v, i[1])
+                return (getattr(v, "value", v), i[1])
         return (v, _("%r (invalid choice)") % v)
 
 
