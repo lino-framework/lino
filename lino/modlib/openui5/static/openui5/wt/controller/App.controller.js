@@ -67,9 +67,9 @@ sap.ui.define([
 			var msg = "'" + oEvent.getParameter("item").getText() + actor_id +":" + action_name + "' pressed";
 			MessageToast.show(msg);
 			var vp = this.getView().byId('viewport')
-			var content = sap.ui.getCore().byId(actor_id)
+			var content = sap.ui.getCore().byId("grid." + actor_id)
 			if (content===undefined){
-                content = new sap.ui.xmlview({id: actor_id,
+                content = new sap.ui.xmlview({id: "grid." + actor_id,
                                     viewName : "sap.ui.lino." + action_name + "." + actor_id});
 
                 var p = new sap.m.Page({
