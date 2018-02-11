@@ -35,10 +35,15 @@ def set_summary_actions(sender, **kw):
             check_summaries=UpdateSummariesByMaster(
                 mm, summary_models))
 
+SUMMARY_PERIODS = ['yearly', 'monthly', 'timeless']
 
 def get_summary_models():
     summary_masters = dict()
     for sm in rt.models_by_base(Summary, toplevel_only=True):
+        if sm.summary_period not in SUMMARY_PERIODS:
+            raise Exception(
+                "Invalid summary_period {!r} for {}".format(
+                    sm.summary_period, sm))
         mm = sm.get_summary_master_model()
         lst = summary_masters.setdefault(mm, [])
         lst.append(sm)

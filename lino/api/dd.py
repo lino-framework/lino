@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2017 Luc Saffre
+# Copyright 2011-2018 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """See :doc:`/dev/dd`.
@@ -299,9 +299,10 @@ get_language_info = settings.SITE.get_language_info
 resolve_languages = settings.SITE.resolve_languages
 babelattr = settings.SITE.babelattr
 
-apps = plugins = settings.SITE.plugins
-# `apps` is an alias for `plugins`. We recommend plugins since `apps`
-# is being used by Django 1.7
+# apps = plugins = settings.SITE.plugins
+plugins = settings.SITE.plugins
+# `apps` is a deprecated alias for `plugins`. We recommend plugins
+# since `apps` is being used by Django 1.7
 
 
 def resolve_plugin(app_label):
@@ -311,10 +312,6 @@ from django.utils import translation
 get_language = translation.get_language
 
 from lino.core.roles import SiteStaff, SiteUser, SiteAdmin, login_required
-
-
-# deprecated aliases:
-# Required = required = login_required
 
 # logger.info("20140227 dd.py b %s", site)
 
@@ -326,11 +323,14 @@ except ImportError as e:
 
 
 def schedule_often(every=10):
-    """Decorator which schedules the given function to be run "often"
+    """
+    Decorator which schedules the given function to be run "often"
     (default every 10 seconds).
 
-    See :ref:`dev.linod`.
+    This does nothing if `schedule
+    <https://pypi.python.org/pypi/schedule>`__ is not installed.
 
+    See :ref:`dev.linod`.
     """
     def decorator(func):
         if schedule:
@@ -340,8 +340,12 @@ def schedule_often(every=10):
 
 
 def schedule_daily(at="20:00"):
-    """Decorator which schedules the given function to be run "daily"
-    (by default at 20:00).
+    """
+    Decorator which schedules the given function to be run "daily" (by
+    default at 20:00).
+
+    This does nothing if `schedule
+    <https://pypi.python.org/pypi/schedule>`__ is not installed.
 
     See :ref:`dev.linod`.
     """

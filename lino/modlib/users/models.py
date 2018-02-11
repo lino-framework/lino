@@ -172,6 +172,10 @@ class User(AbstractBaseUser, Contactable, CreatedModified,
         #     if self.first_name and self.last_name:
         #         self.initials = self.first_name[0] + self.last_name[0]
         super(User, self).full_clean(*args, **kw)
+        
+    def on_create(self, ar):
+        self.start_date = dd.today()
+        super(User, self).on_create(ar)
 
     def get_received_mandates(self):
         #~ return [ [u.id,_("as %s")%u] for u in self.__class__.objects.all()]

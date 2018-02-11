@@ -91,10 +91,10 @@ fields which form a kind of editable timestamp field."""),
     'lino.mixins.periods.Started' : _("""Mixin for models with two fields start_date and
 start_time"""),
     'lino.mixins.periods.Ended' : _("""Mixin for models with two fields end_date and
-end_time
-Models inheriting from this must also inherit from Started."""),
-    'lino.mixins.periods.DateRange' : _("""A model mixin for models which represent a period whose start and
-end are date fields."""),
+end_time Models inheriting from this must also inherit
+from Started."""),
+    'lino.mixins.periods.DateRange' : _("""Mixin for models which represent a period whose start and end are
+date fields."""),
     'lino.mixins.periods.ObservedDateRange' : _("""lino.core.param_panel.ParameterPanel with two fields
 start_date and end_date which default to empty."""),
     'lino.mixins.periods.Yearly' : _("""An ObservedDateRange for which start_date defaults to Jan
@@ -578,6 +578,15 @@ Generates .rtf files from .rtf templates."""),
 Generates .pdf files from .html templates.
 Requires pisa.
 Usage example see lino_book.projects.pisa."""),
+    'lino.modlib.summaries.Summary' : _("""Abstract base class for all "summary data" models."""),
+    'lino.modlib.summaries.Summary.master' : _("""Any implementing subclass of Summary must define field
+named master which must be a ForeignKey field.  The
+target model of the master will automatically receive
+an action check_summaries"""),
+    'lino.modlib.summaries.Summary.summary_period' : _("""Can be 'yearly', 'monthly' or 'timeless'."""),
+    'lino.modlib.summaries.ComputeResults' : _("""See Summary.compute_results()"""),
+    'lino.modlib.summaries.CheckSummaries' : _("""Web UI version of checksummaries."""),
+    'lino.modlib.summaries.UpdateSummariesByMaster' : _("""Update summary data for this object."""),
     'lino.modlib.users.User' : _("""Fields:"""),
     'lino.modlib.users.User.authenticated' : _("""This is always True.  Compare with
 AnonymousUser.authenticated."""),
@@ -591,6 +600,8 @@ this user."""),
     'lino.modlib.users.User.person' : _("""A virtual read-only field which returns the Person MTI child of the
 partner (if it exists) and otherwise None."""),
     'lino.modlib.users.User.last_login' : _("""Not used in Lino."""),
+    'lino.modlib.users.User.start_date' : _("""The site administrator can optionally specify a date when a
+user started or stopped to be active."""),
     'lino.modlib.users.Authority' : _("""An authority is when a user gives another user the right to
 "represent" them."""),
     'lino.modlib.users.Authority.user' : _("""The user who gives the right of representation. author of this
