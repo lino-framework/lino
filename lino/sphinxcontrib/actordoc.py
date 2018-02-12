@@ -2,7 +2,8 @@
 # Copyright 2013-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""A Sphinx extension used to write multilingual user documentation
+"""
+A Sphinx extension used to write multilingual user documentation
 for a Lino application.
 
 .. rst:directive:: lino2rst
@@ -51,7 +52,6 @@ that Actor or Model (data elements can be fields or actions)
 (Deprecated) Insert a reference to the named data dictionary item.
 The visible text will be automatically in the right language in
 multilingual userdocs.
-
 """
 
 from __future__ import unicode_literals, print_function
@@ -419,7 +419,7 @@ class Lino2rstDirective(Py2rstDirective):
         from django.conf import settings
         context = super(Lino2rstDirective, self).get_context()
         context.update(settings=settings)
-        context.update(settings.SITE.modules)
+        context.update(settings.SITE.models)
         context.update(dd=dd)
         context.update(rt=rt)
         return context

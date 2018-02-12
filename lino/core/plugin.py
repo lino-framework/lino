@@ -377,3 +377,8 @@ class Plugin(object):
 
         """
         return []
+
+    def setup_layout_element(self, el):
+        pass
+    
+    

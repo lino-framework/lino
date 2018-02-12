@@ -112,11 +112,8 @@ class TableHandle(object):
 
     def __init__(self, actor):
         self.actor = actor
-        # Handle.__init__(self)
-        #~ super(TableHandle,self).__init__()
 
     def __str__(self):
-        #~ return str(self.ui.__class__)+str(self.actor) + 'Handle'
         return str(self.actor) + 'Handle'
 
     def setup_layouts(self):

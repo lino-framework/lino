@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2017 Luc Saffre
+# Copyright 2009-2018 Luc Saffre
 # License: BSD (see file COPYING for details)
 """Defines "layout elements" (widgets).
 
@@ -2255,7 +2255,8 @@ _FIELD2ELEM = (
 TRIGGER_BUTTON_WIDTH = 3
 
 
-def field2elem(rnd, layout_handle, field, **kw):
+def field2elem(layout_handle, field, **kw):
+    rnd = layout_handle.ui.renderer
     holder = layout_handle.layout.get_chooser_holder()
     ch = holder.get_chooser_for_field(field.name)
     if ch:
@@ -2326,7 +2327,7 @@ def field2elem(rnd, layout_handle, field, **kw):
             field.name, field.__class__, layout_handle.layout))
 
 
-def create_layout_panel(rnd, lh, name, vertical, elems, **kwargs):
+def create_layout_panel(lh, name, vertical, elems, **kwargs):
     """
     This also must translate ui-agnostic parameters
     like `label_align` to their ExtJS equivalent `labelAlign`.
@@ -2366,7 +2367,7 @@ def create_layout_panel(rnd, lh, name, vertical, elems, **kwargs):
     return Panel(lh, name, vertical, *elems, **pkw)
 
 
-def create_layout_element(rnd, lh, name, **kw):
+def create_layout_element(lh, name, **kw):
     """
     Create a layout element from the named data element.
     """
@@ -2412,7 +2413,7 @@ def create_layout_element(rnd, lh, name, **kw):
         return ConstantElement(lh, de, **kw)
 
     if isinstance(de, fields.RemoteField):
-        return create_field_element(rnd, lh, de, **kw)
+        return create_field_element(lh, de, **kw)
 
     if isinstance(de, SingleRelatedObjectDescriptor):
         return SingleRelatedObjectElement(lh, de.related, **kw)
@@ -2437,14 +2438,14 @@ def create_layout_element(rnd, lh, name, **kw):
     if isinstance(de, models.Field):
         if isinstance(de, (BabelCharField, BabelTextField)):
             if len(settings.SITE.BABEL_LANGS) > 0:
-                elems = [create_field_element(rnd, lh, de, **kw)]
+                elems = [create_field_element(lh, de, **kw)]
                 for lang in settings.SITE.BABEL_LANGS:
                     bf = lh.get_data_elem(name + lang.suffix)
-                    elems.append(create_field_element(rnd, lh, bf, **kw))
+                    elems.append(create_field_element(lh, bf, **kw))
                 return elems
-        return create_field_element(rnd, lh, de, **kw)
+        return create_field_element(lh, de, **kw)
     if isinstance(de, fields.DisplayField):
-        return create_field_element(rnd, lh, de, **kw)
+        return create_field_element(lh, de, **kw)
 
     if isinstance(de, GenericForeignKey):
         # create a horizontal panel with 2 comboboxes
@@ -2482,7 +2483,8 @@ def create_layout_element(rnd, lh, name, **kw):
                     if a is not None:
                         kw.update(ls_insert_handler=js_code("Lino.%s" %
                                   a.full_name()))
-                        kw.update(ls_bbar_actions=[rnd.a2btn(a)])
+                        kw.update(ls_bbar_actions=[
+                            lh.ui.renderer.a2btn(a)])
                 field = fields.HtmlBox(verbose_name=de.label)
                 field.name = de.__name__
                 field.help_text = de.help_text
@@ -2510,12 +2512,12 @@ def create_layout_element(rnd, lh, name, **kw):
         return ButtonElement(lh, name, de)
     
     if isinstance(de, fields.VirtualField):
-        return create_vurt_element(rnd, lh, name, de, **kw)
+        return create_vurt_element(lh, name, de, **kw)
 
     if callable(de):
         rt = getattr(de, 'return_type', None)
         if rt is not None:
-            return create_meth_element(rnd, lh, name, de, rt, **kw)
+            return create_meth_element(lh, name, de, rt, **kw)
 
     # Now we tried everything. Build an error message.
 
@@ -2536,25 +2538,25 @@ def create_layout_element(rnd, lh, name, **kw):
     raise KeyError(msg)
 
 
-def create_vurt_element(rnd, lh, name, vf, **kw):
-    e = create_field_element(rnd, lh, vf, **kw)
+def create_vurt_element(lh, name, vf, **kw):
+    e = create_field_element(lh, vf, **kw)
     # e.sortable = False
     if not vf.is_enabled(lh):
         e.editable = False
     return e
 
 
-def create_meth_element(rnd, lh, name, meth, rt, **kw):
+def create_meth_element(lh, name, meth, rt, **kw):
     rt.name = name
     rt._return_type_for_method = meth
     if meth.__code__.co_argcount < 2:
         raise Exception("Method %s has %d arguments (must have at least 2)" %
                         (meth, meth.__code__.co_argcount))
-    return create_field_element(rnd, lh, rt, **kw)
+    return create_field_element(lh, rt, **kw)
 
 
-def create_field_element(rnd, lh, field, **kw):
-    e = field2elem(rnd, lh, field, **kw)
+def create_field_element(lh, field, **kw):
+    e = field2elem(lh, field, **kw)
     # if not lh.layout.editable and isinstance(e, ForeignKeyElement):
     #     raise Exception(20160907)
     #     return CharFieldElement(lh, field, **kw)   
