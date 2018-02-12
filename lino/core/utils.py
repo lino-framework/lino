@@ -65,7 +65,7 @@ def getrqdata(request):
     """Return the request data.
 
     Unlike the now defunct `REQUEST
-    <https://docs.djangoproject.com/en/1.6/ref/request-response/#django.http.HttpRequest.REQUEST>`_
+    <https://docs.djangoproject.com/en/1.11/ref/request-response/#django.http.HttpRequest.REQUEST>`_
     attribute, this inspects the request's `method` in order to decide
     what to return.
 

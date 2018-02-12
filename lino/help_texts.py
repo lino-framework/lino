@@ -207,36 +207,6 @@ the autorefresh button."""),
 media_base_url is None, and when the media directory has
 no symbolic link named extjs pointing to the ExtJS root
 directory."""),
-    'lino.modlib.extjs.elems.GridColumn' : _("""The component that generates the JS of a grid column."""),
-    'lino.modlib.extjs.elems.FieldElement' : _("""Base class for all Widgets on some filed-like data element."""),
-    'lino.modlib.extjs.elems.ChoiceListFieldElement' : _("""Like ChoicesFieldElement, but we use the fact that
-choicelists are actors to define them once and refer to them.
-Special case are choicelist fields with blank=True: these must
-dynamicaly add a blank choice to the the choicelist."""),
-    'lino.modlib.extjs.elems.IncompleteDateFieldElement' : _("""Widget for lino.core.fields.IncompleteDate fields."""),
-    'lino.modlib.extjs.elems.NumberFieldElement' : _("""Base class for integers, decimals, RequestField,..."""),
-    'lino.modlib.extjs.elems.DisplayElement' : _("""ExtJS element to be used for DisplayFields."""),
-    'lino.modlib.extjs.elems.SingleRelatedObjectElement' : _("""The widget used to render a SingleRelatedObjectDescriptor,
-i.e. the other side of a OneToOneField."""),
-    'lino.modlib.extjs.elems.GenericForeignKeyElement' : _("""A DisplayElement specially adapted to a GFK field."""),
-    'lino.modlib.extjs.elems.HtmlBoxElement' : _("""Element that renders to a Lino.HtmlBoxPanel."""),
-    'lino.modlib.extjs.elems.SlaveSummaryPanel' : _("""The panel used to display a slave table whose slave_grid_format
-is 'summary'."""),
-    'lino.modlib.extjs.elems.Container' : _("""Base class for Layout Elements that can contain other Layout Elements:
-Panel,
-TabPanel,
-FormPanel,
-GridPanel"""),
-    'lino.modlib.extjs.elems.Panel' : _("""A vertical Panel is vflex if and only if at least one of its
-children is vflex.  A horizontal Panel is vflex if and only if
-all its children are vflex (if vflex and non-vflex elements are
-together in a hbox, then the vflex elements will get the height of
-the highest non-vflex element)."""),
-    'lino.modlib.extjs.elems.GridElement' : _("""Represents a Lino.GridPanel, i.e. the widget used to represent a
-table or a slave table."""),
-    'lino.modlib.extjs.elems.ParamsPanel' : _("""The optional Panel for parameters of a Table.
-JS part stored in Lino.GridPanel.params_panel."""),
-    'lino.modlib.extjs.elems.ActionParamsPanel' : _("""The optional Panel for parameters of an Action."""),
     'lino.modlib.extjs.ext_renderer.ExtRenderer' : _("""An HTML renderer that uses the ExtJS Javascript toolkit."""),
     'lino.modlib.extjs.views.AdminIndex' : _("""Similar to PlainIndex"""),
     'lino.modlib.extjs.views.unused_Authenticate' : _("""This view is being used when remote_user_header is

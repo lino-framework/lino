@@ -2,9 +2,9 @@
 # Copyright 2008-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Defines extended database field classes and utility functions
+"""
+Defines extended database field classes and utility functions
 related to fields.
-
 """
 from builtins import str
 import six
@@ -112,11 +112,11 @@ class MonthField(models.DateField):
 
 
 class PriceField(models.DecimalField):
-    """A thin wrapper around Django's `DecimalField
-    <https://docs.djangoproject.com/en/1.8/ref/models/fields/#decimalfield>`_
+    """
+    A thin wrapper around Django's `DecimalField
+    <https://docs.djangoproject.com/en/1.11/ref/models/fields/#decimalfield>`_
     which adds default values for `decimal_places`, `max_length` and
     `max_digits`.
-
     """
 
     def __init__(self, *args, **kwargs):
@@ -173,8 +173,8 @@ http://stackoverflow.com/a/1934764
 
 
 class FakeField(object):
-    """Base class for :class:`RemoteField` and :class:`DisplayField`.
-
+    """
+    Base class for :class:`RemoteField` and :class:`DisplayField`.
     """
     model = None
     db_column = None
@@ -234,11 +234,11 @@ class FakeField(object):
         #     self.verbose_name = self.name.replace('_', ' ')
 
 class RemoteField(FakeField):
-    """A field on a related object.
+    """
+    A field on a related object.
 
     Remote fields are created by
     :meth:`lino.core.model.Model.get_data_elem` when needed.
-
     """
     #~ primary_key = False
     #~ editable = False
@@ -264,10 +264,10 @@ class RemoteField(FakeField):
     #~ def lino_resolve_type(self):
         #~ self._lino_atomizer = self.field._lino_atomizer
     def value_from_object(self, obj, ar=None):
-        """Return the value of this field in the specified model instance
+        """
+        Return the value of this field in the specified model instance
         `obj`.  `ar` may be `None`, it's forwarded to the getter
         method who may decide to return values depending on it.
-
         """
         m = self.func
         return m(obj, ar)
@@ -279,7 +279,8 @@ class RemoteField(FakeField):
 
 
 class DisplayField(FakeField):
-    """A field to be rendered like a normal read-only form field, but with
+    """
+    A field to be rendered like a normal read-only form field, but with
     plain HTML instead of an ``<input>`` tag.
 
     This is to be used as
@@ -287,7 +288,6 @@ class DisplayField(FakeField):
 
     The value to be represented is either some unicode text, a
     translatable text or a :mod:`HTML element <lino.utils.xmlgen.html>`.
-
     """
     choices = None
     blank = True
@@ -318,9 +318,9 @@ class DisplayField(FakeField):
 
 
 class HtmlBox(DisplayField):
-    """Like :class:`DisplayField`, but to be rendered as a panel rather
+    """
+    Like :class:`DisplayField`, but to be rendered as a panel rather
     than as a form field.
-
     """
     pass
 
@@ -354,7 +354,8 @@ VFIELD_ATTRIBS = frozenset('''to_python choices save_form_data
   help_text blank'''.split())
 
 class VirtualField(FakeField):
-    """Represents a virtual field. Values of virtual fields are not stored
+    """
+    Represents a virtual field. Values of virtual fields are not stored
     in the database, but computed on the fly each time they get
     read. Django doesn't see them.
 
@@ -370,7 +371,6 @@ class VirtualField(FakeField):
     was *defined*. This can be an abstract model. The VirtualField
     instance does not have a list of the concrete models which use it
     (because they inherit from that class).
-
     """
 
     def __init__(self, return_type, get):
@@ -499,12 +499,12 @@ class VirtualField(FakeField):
 
     def set_value_in_object(self, request, obj, value):
         """
-        Stores the specified `value` in the specified model instance `obj`.
-        `request` may be `None`.
+        Stores the specified `value` in the specified model instance
+        `obj`.  `request` may be `None`.
 
-        Note that any implementation must also return `obj`,
-        and callers must be ready to get another instance.
-        This special behaviour is needed to implement
+        Note that any implementation must also return `obj`, and
+        callers must be ready to get another instance.  This special
+        behaviour is needed to implement
         :class:`lino.utils.mti.EnableChild`.
         """
         pass
@@ -514,10 +514,10 @@ class VirtualField(FakeField):
 
     #~ def value_from_object(self,request,obj):
     def value_from_object(self, obj, ar=None):
-        """Return the value of this field in the specified model instance
+        """
+        Return the value of this field in the specified model instance
         `obj`.  `ar` may be `None`, it's forwarded to the getter
         method who may decide to return values depending on it.
-
         """
         m = self.get
         #~ print self.field.name
@@ -554,9 +554,9 @@ class Constant(object):
         self.text_fn = text_fn
 
 def constant():
-    """Decorator to turn a function into a :class:`Constant`.  The
+    """
+    Decorator to turn a function into a :class:`Constant`.  The
     function must accept one positional argument `datasource`.
-
     """
     def decorator(fn):
         return Constant(fn)
@@ -564,10 +564,10 @@ def constant():
 
 
 class RequestField(VirtualField):
-    """A :class:`VirtualField` whose values are table action requests to
+    """
+    A :class:`VirtualField` whose values are table action requests to
     be rendered as a clickable integer containing the number of rows.
     Clicking on it will open a window with the table.
-
     """
     def __init__(self, get, *args, **kw):
         kw.setdefault('max_length', 8)
@@ -575,25 +575,25 @@ class RequestField(VirtualField):
 
 
 def displayfield(*args, **kw):
-    """Decorator to turn a method into a :class:`VirtualField` of type
+    """
+    Decorator to turn a method into a :class:`VirtualField` of type
     :class:`DisplayField`.
-
     """
     return virtualfield(DisplayField(*args, **kw))
 
 
 def htmlbox(*args, **kw):
-    """Decorator shortcut to turn a method into a a :class:`VirtualField`
+    """
+    Decorator shortcut to turn a method into a a :class:`VirtualField`
     of type :class:`HtmlBox`.
-
     """
     return virtualfield(HtmlBox(*args, **kw))
 
 
 def requestfield(*args, **kw):
-    """Decorator shortcut to turn a method into a a :class:`VirtualField`
+    """
+    Decorator shortcut to turn a method into a a :class:`VirtualField`
     of type :class:`RequestField`.
-
     """
     def decorator(fn):
         #~ def wrapped(*args):
@@ -607,14 +607,10 @@ class CharField(models.CharField):
     """
     An extension around Django's `models.CharField`.
 
-    Adds two keywords `mask_re` and
-    `strip_chars_re` which, when using the ExtJS ui,
-    will be rendered as the
-    `maskRe` and `stripCharsRe` config options
-    of
-    `TextField`
-    as described in the
-    `ExtJS documentation
+    Adds two keywords `mask_re` and `strip_chars_re` which, when using
+    the ExtJS ui, will be rendered as the `maskRe` and `stripCharsRe`
+    config options of `TextField` as described in the `ExtJS
+    documentation
     <http://docs.sencha.com/extjs/3.4.0/#!/api/Ext.form.TextField>`__,
     converting naming conventions as follows:
 
@@ -628,8 +624,6 @@ class CharField(models.CharField):
     Example usage:
 
       belgian_phone_no = dd.CharField(max_length=15,strip_chars_re='')
-
-
     """
 
     def __init__(self, *args, **kw):
@@ -640,7 +634,8 @@ class CharField(models.CharField):
 
 
 class QuantityField(CharField):
-    """A field that accepts :class:`Quantity
+    """
+    A field that accepts :class:`Quantity
     <lino.utils.quantities.Quantity>`, :class:`Percentage
     <lino.utils.quantities.Percentage>` and :class:`Duration
     <lino.utils.quantities.Duration>` values.
@@ -650,7 +645,6 @@ class QuantityField(CharField):
 
     When you set `blank=True`, then you should declare `null=True` as
     well.
-
     """
     description = _("Quantity (Decimal or Duration)")
 
@@ -667,7 +661,8 @@ class QuantityField(CharField):
         #~ return "CharField"
 
     def to_python(self, value):
-        """Excerpt from `Django doc
+        """
+        Excerpt from `Django doc
         <https://docs.djangoproject.com/en/dev/howto/custom-model-fields/#django.db.models.Field.to_python>`__:
 
             As a general rule, the method should deal gracefully with
@@ -685,7 +680,6 @@ class QuantityField(CharField):
         >>> to_python(30L)
         >>> to_python('')
         >>> to_python(Decimal(0))
-
         """
         if isinstance(value, Decimal):
             return value
@@ -708,12 +702,12 @@ class QuantityField(CharField):
 
 
 class DurationField(QuantityField):
-    """A field that stores :class:`Duration
+    """
+    A field that stores :class:`Duration
     <lino.utils.quantities.Duration>` values as CHAR.
 
     Note that you cannot use SUM or AVG agregators on these fields
     since the database does not know how to calculate sums from them.
-
     """
     def from_db_value(self, value, expression, connection, context):
         return Duration(value) if value else self.get_default()
@@ -739,8 +733,8 @@ def validate_incomplete_date(value):
 
 class IncompleteDateField(models.CharField):
     """
-    A field that behaves like a DateField, but accepts
-    incomplete dates represented using
+    A field that behaves like a DateField, but accepts incomplete
+    dates represented using
     :class:`lino.utils.format_date.IncompleteDate`.
     """
 
@@ -809,12 +803,12 @@ class Dummy(object):
 
 
 class DummyField(FakeField):
-    """Represents a field that doesn't exist in the current configuration
+    """
+    Represents a field that doesn't exist in the current configuration
     but might exist in other configurations. The "value" of a
     DummyField is always `None`.
 
     See e.g. :func:`ForeignKey` and :func:`fields_list`.
-
     """
     # choices = []
     # primary_key = False
@@ -853,9 +847,9 @@ class DummyField(FakeField):
         pass
 
 def wildcard_data_elems(model):
-    """Yield names to be used as wildcard in the :attr:`column_names` of a
+    """
+    Yield names to be used as wildcard in the :attr:`column_names` of a
     table or when :func:`fields_list` finds a ``*``.
-
     """
     meta = model._meta
     for f in meta.fields:
@@ -888,7 +882,8 @@ def use_as_wildcard(de):
 
 
 def fields_list(model, field_names):
-    """Return a set with the names of the specified fields, checking
+    """
+    Return a set with the names of the specified fields, checking
     whether each of them exists.
 
     Arguments: `model` is any subclass of `django.db.models.Model`. It
@@ -906,7 +901,6 @@ def fields_list(model, field_names):
 
     TODO: either rename this to `fields_set` or change it to return an
     iterable on the fields.
-
     """
     lst = set()
     names_list = field_names.split()
@@ -937,16 +931,14 @@ def fields_list(model, field_names):
 
 def ForeignKey(othermodel, *args, **kw):
     """
-    A wrapper function which returns a Django `ForeignKey
-    <https://docs.djangoproject.com/en/dev/ref/models/fields/#foreignkey>`__
-    field, with some subtle differences:
+    Return a Django `ForeignKey` field, with some subtle differences:
 
     - It supports `othermodel` being `None` or the name of some
       non-installed model and returns a :class:`DummyField` in that
       case.  This difference is useful when designing reusable models.
 
     - Explicitly sets the default value for `on_delete
-      <https://docs.djangoproject.com/en/1.8/ref/models/fields/#django.db.models.ForeignKey.on_delete>`_
+      <https://docs.djangoproject.com/en/1.11/ref/models/fields/#django.db.models.ForeignKey.on_delete>`__
       to ``CASCADE`` (as required by Django 2).
     """
     if othermodel is None:
@@ -980,7 +972,7 @@ class CustomField(object):
 
 class ImportedFields(object):
     """
-    Model mixin to easily declare "imported fields".
+    Mixin for models which have "imported fields".
     """
     _imported_fields = set()
 

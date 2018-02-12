@@ -32,7 +32,7 @@ class Plugin(object):
     is the `app_label` of the plugin).
 
     The :class:`Plugin` class is comparable to Django's `AppConfig
-    <https://docs.djangoproject.com/en/1.7/ref/applications/>`_ class
+    <https://docs.djangoproject.com/en/1.11/ref/applications/>`_ class
     which has been added in version 1.7., but there is at least one
     important difference: in Lino the :class:`Plugin` instances for
     all installed plugins are available (in :attr:`dd.plugins

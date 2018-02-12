@@ -140,7 +140,7 @@ class Plugin(ad.Plugin):
         return urlpatterns
 
     def get_row_edit_lines(self, e, panel):
-        from lino.modlib.extjs.elems import TextFieldElement
+        from lino.core.elems import TextFieldElement
         if isinstance(e, TextFieldElement):
             if e.format == 'html':
                 yield "%s.refresh();" % e.as_ext()

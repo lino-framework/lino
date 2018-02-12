@@ -408,7 +408,7 @@ class DpyDeserializer(LoaderBase):
     See e.g. :ticket:`1029`.  We consider it an odd behaviour of
     Django to search for fixtures also in the current directory (and
     not, as `documented
-    <https://docs.djangoproject.com/en/1.9/howto/initial-data/#where-django-finds-fixture-files>`__,
+    <https://docs.djangoproject.com/en/1.11/howto/initial-data/#where-django-finds-fixture-files>`__,
     in the `fixtures` subdirs of plugins and the optional
     :setting:`FIXTURE_DIRS`).
 

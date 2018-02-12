@@ -22,7 +22,6 @@ your application.
 .. autosummary::
    :toctree:
 
-   elems
    views
    ext_renderer
 
@@ -128,8 +127,8 @@ class Plugin(Plugin):
         # logger.info("20140227 extjs.Plugin.on_ui_init() b")
 
     def get_row_edit_lines(self, e, panel):
-        from .elems import (GridElement, HtmlBoxElement, FieldElement,
-                            form_field_name)
+        from lino.core.elems import (
+            GridElement, HtmlBoxElement, FieldElement, form_field_name)
         from lino.core import constants
         master_field = panel.layout_handle.layout._datasource.master_field
         if isinstance(e, GridElement):

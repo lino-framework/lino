@@ -33,7 +33,7 @@ from lino.core import constants
 from lino.core.menus import Menu, MenuItem
 # from lino.utils.xmlgen.html import _html2rst as html2rst
 # from lino.utils.xmlgen.html import html2rst
-from lino.modlib.extjs.elems import create_layout_panel, create_layout_element
+from .elems import create_layout_panel, create_layout_element
 
 from .views import json_response
 from .plugin import Plugin

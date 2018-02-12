@@ -161,7 +161,7 @@ class Site(object):
     .. attribute:: LANGUAGE_CHOICES
     
         A tuple in the format expected by Django's `choices
-        <https://docs.djangoproject.com/en/1.7/ref/models/fields/#choices>`__
+        <https://docs.djangoproject.com/en/1.11/ref/models/fields/#choices>`__
         attribute, used e.g. by :class:`LanguageField
         <lino.utils.mldbc.fields.LanguageField>`. It's content is
         automatically populated from :attr:`languages` and application
@@ -1395,7 +1395,7 @@ class Site(object):
         See also :ref:`lino.logging`.
 
         See also Django's doc about `Logging
-        <https://docs.djangoproject.com/en/1.9/topics/logging/>`__.
+        <https://docs.djangoproject.com/en/1.11/topics/logging/>`__.
 
         """
         if not self.auto_configure_logger_names:

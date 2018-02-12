@@ -41,7 +41,7 @@ even with `constraint_checks_disabled` we had sporadic errors. See
 Note that Lino does not use Django's migration framework, so
 :manage:`initdb` runs Django's `migrate` command with the
 `--run-syncdb
-<https://docs.djangoproject.com/en/1.9/ref/django-admin/#django-admin-option---run-syncdb>`_
+<https://docs.djangoproject.com/en/1.11/ref/django-admin/#django-admin-option---run-syncdb>`_
 option which "allows creating tables for apps without
 migrations".    
 The Django docs add that "While this isn’t recommended, the

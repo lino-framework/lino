@@ -61,7 +61,7 @@ else:
     def jscompress(s):
         return s
 
-from . import elems as ext_elems
+from lino.core import elems as ext_elems
 
 from lino.modlib.users.choicelists import UserTypes
 
