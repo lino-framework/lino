@@ -2,119 +2,12 @@
 # Copyright 2011-2018 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""See :doc:`/dev/dd`.
-
-Application:
-
-- :attr:`plugins <lino.core.site.Site.plugins>`
-- :attr:`decfmt <lino.core.site.Site.decfmt>`
-- :attr:`str2kw <lino.core.site.Site.str2kw>`
-- :attr:`today <lino.core.site.Site.today>`
-- :attr:`strftime <lino.core.site.Site.strftime>`
-- :attr:`demo_date <lino.core.site.Site.demo_date>`
-- :attr:`is_abstract_model <lino.core.site.Site.is_abstract_model>`
-- :attr:`is_installed <lino.core.site.Site.is_installed>`
-- :attr:`add_welcome_handler <lino.core.site.Site.add_welcome_handler>`
-- :attr:`build_media_url <lino.core.site.Site.build_media_url>`
-- :attr:`get_default_language <lino.core.site.Site.get_default_language>`
-
-
-Tables:
-
-- :class:`Table <lino.core.dbtables.Table>`
-- :class:`VirtualTable`
-- :class:`VentilatingTable`
-- :class:`Frame <lino.core.frames.Frame>`
-- :class:`ChoiceList <lino.core.choicelists.ChoiceList>`
-
-Extended Fields:
-
-- :class:`CharField <fields.CharField>`
-- :class:`IncompleteDateField <lino.core.fields.IncompleteDateField>`
-- :class:`PasswordField <lino.core.fields.PasswordField>`
-- :class:`MonthField <lino.core.fields.MonthField>`
-- :class:`PercentageField <lino.core.fields.PercentageField>`
-- :class:`QuantityField <lino.core.fields.QuantityField>`
-- :class:`PriceField<lino.core.fields.PriceField>`
-- :class:`CustomField <lino.core.fields.CustomField>`
-- :class:`RecurrenceField <lino.core.fields.RecurrenceField>`
-- :class:`DummyField <lino.core.fields.DummyField>`
-- :func:`ForeignKey <lino.core.fields.ForeignKey>`
-
-Virtual Fields:
-
-- :class:`Constant <lino.core.fields.Constant>` and
-  :class:`@constant <lino.core.fields.constant>`
-- :class:`DisplayField <lino.core.fields.DisplayField>` and
-  :class:`@displayfield <lino.core.fields.displayfield>`
-- :class:`VirtualField <lino.core.fields.VirtualField>` and
-  :class:`@virtualfield <lino.core.fields.virtualfield>`
-- :class:`HtmlBox <lino.core.fields.HtmlBox>`
-
-Layouts:
-
-- :class:`DetailLayout <lino.core.layouts.DetailLayout>`
-- :class:`Panel <lino.core.layouts.Panel>`
-- :class:`FormLayout <lino.core.layouts.FormLayout>` no longer supported.
-  Application code should use either InsertLayout or DetailLayout instead.
-
-Utilities:
-
-- :func:`obj2str <lino.core.utils.obj2str>`
-- :func:`obj2unicode <lino.core.utils.obj2unicode>`
-- :func:`range_filter <lino.core.utils.range_filter>`,
-  :func:`inrange_filter <lino.core.utils.inrange_filter>`
-- :func:`full_model_name <lino.core.utils.full_model_name>`
-- :func:`fields_list <lino.core.fields.fields_list>`
-- :func:`chooser <lino.utils.choosers.chooser>`
-- :class: `ParameterPanel <lino.core.utils.ParameterPanel>`
-
-
-Inter-app relations:
-
-- :func:`resolve_field <lino.core.utils.resolve_field>`
-- :func:`resolve_model <lino.core.utils.resolve_model>`
-- :func:`resolve_app <lino.core.utils.resolve_app>`
-- :func:`update_field <lino.core.inject.update_field>`
-- :func:`inject_field <lino.core.inject.inject_field>`
-- :func:`inject_action <lino.core.inject.inject_action>`
-- :func:`update_model <lino.core.inject.update_model>`
-
-- :func:`inject_quick_add_buttons <lino.core.inject.inject_quick_add_buttons>`
-
-Signals:
-
-- See :ref:`lino.signals`
-
-Actions:
-
-- :class:`Action <lino.core.actions.Action>`
-- :class:`ChangeStateAction <lino.core.workflows.ChangeStateAction>`
-- :class:`MergeAction <lino.core.merge.MergeAction>`
-- :class:`ShowSlaveTable <lino.core.actions.ShowSlaveTable>`
-
-Permissions:
-
-- :class:`UserGroups <lino.modlib.users.mixins.UserGroups>`
-- :class:`UserLevels <lino.modlib.users.mixins.UserLevels>`
-
-
-Workflows:
-
-- :class:`Workflow <lino.core.workflows.Workflow>`
-- :class:`State <lino.core.workflows.State>`
-
-"""
-
 from __future__ import unicode_literals
 from __future__ import print_function
 
 
 import logging
 logger = logging.getLogger(__name__)
-"""
-Shortcut to the main Lino logger.
-"""
 
 # logger.info("20140227 dd.py a")
 
@@ -228,9 +121,6 @@ from django.dispatch import receiver
 
 from django.db.models.fields import NOT_PROVIDED
 
-#~ class Module(object):
-    #~ pass
-
 from lino.core.inject import inject_action
 from lino.core.inject import inject_field
 from lino.core.inject import update_model
@@ -240,10 +130,6 @@ from lino.core.inject import do_when_prepared, when_prepared
 
 from lino.core.utils import ParameterPanel, PseudoRequest
 
-#from lino.modlib.users.choicelists import UserLevels, UserGroups
-#from lino.modlib.users.utils import add_user_group
-
-
 from lino.utils import IncompleteDate
 
 from lino.utils.format_date import fdm, fdl, fdf, fdmy
@@ -251,9 +137,6 @@ from lino.utils.format_date import fds as fds_
 
 
 def fds(d):
-    """
-    Adds support for :class:`lino.fields.IncompleteDate`.
-    """
     if isinstance(d, IncompleteDate):
         return fds_(d.as_date())
     return fds_(d)
@@ -323,15 +206,6 @@ except ImportError as e:
 
 
 def schedule_often(every=10):
-    """
-    Decorator which schedules the given function to be run "often"
-    (default every 10 seconds).
-
-    This does nothing if `schedule
-    <https://pypi.python.org/pypi/schedule>`__ is not installed.
-
-    See :ref:`dev.linod`.
-    """
     def decorator(func):
         if schedule:
             schedule.every(every).seconds.do(func)
@@ -340,15 +214,6 @@ def schedule_often(every=10):
 
 
 def schedule_daily(at="20:00"):
-    """
-    Decorator which schedules the given function to be run "daily" (by
-    default at 20:00).
-
-    This does nothing if `schedule
-    <https://pypi.python.org/pypi/schedule>`__ is not installed.
-
-    See :ref:`dev.linod`.
-    """
     def decorator(func):
         if schedule:
             # schedule.every(10).seconds.do(func)

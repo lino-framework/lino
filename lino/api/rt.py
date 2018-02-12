@@ -1,27 +1,5 @@
-# Copyright 2014-2017 Luc Saffre
+# Copyright 2014-2018 Luc Saffre
 # License: BSD (see file COPYING for details)
-"""
-
-See :doc:`/dev/rt`.
-
-.. attribute:: plugins
-
-    Shortcut to :attr:`lino.core.site.Site.plugins`
-
-.. attribute:: models
-
-    Shortcut to :attr:`lino.core.site.Site.models`
-
-.. attribute:: actors
-
-    Deprecated alias for :attr:`models`
-
-.. attribute:: modules
-
-    Deprecated alias for :attr:`models`
-
-
-"""
 
 from django.conf import settings
 
@@ -46,21 +24,11 @@ makedirs_if_missing = settings.SITE.makedirs_if_missing
 
 
 def get_template(*args, **kw):
-    """Shortcut to :meth:`get_template` on the global `jinja2.Environment`
-    (:attr:`jinja_env <lino.core.site.Site.jinja_env>`, see
-    :mod:`lino.core.web`).
-
-    """
     return settings.SITE.plugins.jinja.renderer.jinja_env.get_template(
         *args, **kw)
 
 
 def show(*args, **kw):
-    """Calls :meth:`show <lino.core.requests.BaseRequest.show>` on a
-    temporary anonymous session (created using
-    :meth:`rt.login <lino.core.site.Site.login>`).
-
-    """
     return login().show(*args, **kw)
 
 
