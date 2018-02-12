@@ -468,6 +468,9 @@ class FieldElement(LayoutElement):
     zero = 0
     hide_sum = False
 
+    oui5_column_template = "openui5/elems/column/FieldElement.xml"
+    oui5_field_template = "openui5/elems/field/FieldElement.xml"
+
     def __init__(self, layout_handle, field, hide_sum=False, **kw):
         if not getattr(field, 'name', None):
             raise Exception("Field '%s' in %s has no name!" %
@@ -1340,6 +1343,8 @@ class DisplayElement(FieldElement):
     # declare_type = jsgen.DECLARE_THIS
     declare_type = jsgen.DECLARE_VAR
     value_template = "new Ext.form.DisplayField(%s)"
+    oui5_column_template = "openui5/elems/column/DisplayElement.xml"
+    oui5_field_template = "openui5/elems/field/DisplayElement.xml"
 
     def __init__(self, *args, **kw):
         kw.setdefault('value', '<br/>')  # see blog/2012/0527
@@ -1688,6 +1693,8 @@ class Container(LayoutElement):
 
     declare_type = jsgen.DECLARE_VAR
 
+    oui5_field_template = None #"openui5/elems/field/DisplayElement.xml"
+    
     def __init__(self, layout_handle, name, *elements, **kw):
         self.active_children = []
         self.elements = elements
@@ -1802,6 +1809,7 @@ class Panel(Container):
     ext_suffix = "_panel"
     active_child = False
     value_template = "new Ext.Panel(%s)"
+    oui5_field_template = "openui5/elems/field/Panel.xml"
 
     def set_layout_manager(self, name, **cfg):
         d = self.value
@@ -2142,6 +2150,7 @@ class GridElement(Container):
 class DetailMainPanel(Panel):
     xtype = None
     value_template = "new Ext.Panel(%s)"
+    oui5_field_template = "openui5/elems/field/DetailMainPanel.xml"
 
     def __init__(self, layout_handle, name, vertical, *elements, **kw):
         kw.update(autoScroll=True)
@@ -2176,6 +2185,7 @@ class ActionParamsPanel(Panel):
 
 class TabPanel(Panel):
     value_template = "new Ext.TabPanel(%s)"
+    oui5_field_template = "openui5/elems/field/TabPanel.xml"
 
     def __init__(self, layout_handle, name, *elems, **kw):
         kw.update(autoScroll=True)

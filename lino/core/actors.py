@@ -1398,7 +1398,23 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     @classmethod
     def make_chooser(cls, wrapped):
         return classmethod(wrapped)
-    
+
+    @classmethod
+    def get_detail_elems(cls, ui=None):
+        """
+
+        `ui` is a :class:`Plugin` instance.
+        if None will use settings.SITE.kernel.default_ui
+
+        :return: a list of layout elements, defined in
+        lino.modlib.extjs.elems that make up the detail layout
+        """
+        actor = cls
+        detail_action = actor.get_actions()['detail']
+        window_layout = detail_action.get_window_layout()
+        layout_handle = window_layout.get_layout_handle(settings.SITE.plugins.openui5)
+        return layout_handle.main.elements  # elems
+
     @classmethod
     def get_data_elem(self, name):
         """Find data element in this actor by name.

@@ -50,11 +50,20 @@ class Plugin(Plugin):
 
             ## original views from bs3 commented out
             # url(rx + r'$', views.Index.as_view()),
-            # url(rx + r'auth', views.Authenticate.as_view()),
+            url(rx + r'auth$', views.Authenticate.as_view()),
             # url(rx + r'(?P<app_label>\w+)/(?P<actor>\w+)$',
             #     views.List.as_view()),
             # url(rx + r'(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$',
             #     views.Element.as_view()),
+            url(rx + r'api/main_html$', views.MainHtml.as_view()),
+            url(rx + r'restful/(?P<app_label>\w+)/(?P<actor>\w+)$',
+                views.Restful.as_view()),
+            url(rx + r'restful/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$',
+                views.Restful.as_view()),
+
+            url(rx + r'ui/(?P<name>.*)$',
+                views.Connector.as_view()),
+
             url(rx + r'$', views.Tickets.as_view()),
 
         ]

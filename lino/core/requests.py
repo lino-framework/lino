@@ -400,6 +400,7 @@ class BaseRequest(object):
             fdmy=dd.fdmy,
             iif=iif,
             bool2text=bool2text,
+            bool2js=lambda b: "true" if b else "false",
             unicode=str,  # backwards-compatibility. In new template
                           # you should prefer `str`.
             pgettext=pgettext,

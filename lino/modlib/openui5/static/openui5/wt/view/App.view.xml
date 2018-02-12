@@ -1,19 +1,25 @@
 <mvc:View
         controllerName="sap.ui.demo.wt.controller.App"
         xmlns="sap.m"
+        xmlns:tnt="sap.tnt"
         xmlns:mvc="sap.ui.core.mvc"
         displayBlock="true">
     <App class="sapUiDemoWT">
+
         <pages>
+
             <Page title="helloWorld">
                 <headerContent>
                     <Button
                             icon="sap-icon://hello-world"
                             press="onOpenDialog"/>
                 </headerContent>
+
                 <content>
                     <!--<mvc:XMLView viewName="sap.ui.demo.wt.view.HelloPanel"/>-->
-                    <mvc:XMLView viewName="sap.ui.demo.wt.view.HelloPanel"/>
+                    <!--<mvc:XMLView viewName="sap.ui.demo.wt.view.SideNav"/>-->
+                    <!--<mvc:XMLView viewName="sap.ui.demo.wt.view.HelloPanel"/>-->
+                    <!--<mvc:XMLView viewName="sap.ui.demo.wt.view.AllTickets"/>-->
                 </content>
             </Page>
         </pages>

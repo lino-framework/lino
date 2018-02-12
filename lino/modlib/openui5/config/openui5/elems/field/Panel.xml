@@ -1,0 +1,19 @@
+{% if e.vertical %}
+<VBox fitContainer="true"
+      alignItems="Stretch" height="auto">
+{% else %}
+<HBox fitContainer="true"
+      alignItems="Stretch" width="auto">
+{% endif %}
+    <items>
+    {% for e in e.elements %}
+        {{ e|p }}
+        {% include e.oui5_field_template %}
+    {% endfor %}
+    </items>
+
+{% if e.vertical %}
+</VBox>
+{% else %}
+</HBox>
+{% endif %}

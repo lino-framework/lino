@@ -1,0 +1,50 @@
+<core:FragmentDefinition
+   xmlns="sap.m"
+   xmlns:core="sap.ui.core"
+   xmlns:form="sap.ui.layout.form"
+>
+   <Dialog
+      id="dialog" showHeader="false"
+      title ="Sign In" class="sapUiResponsiveContentPadding sapUiSizeCompact">
+       <content>
+           <form:SimpleForm
+			    {# layout="ResponsiveGridLayout" #}
+			editable="true"
+			title="Result in a Form"
+           >
+            <Label text="User name" labelFor="UserName" />
+			<Input
+				id="UserName"
+				type="Text"
+				placeholder="Enter UserName ..."
+                name="username"
+                value="{form_data>/username}"
+                submit="onOkDialog"
+            />
+
+            <Label text="Password" labelFor="passwordInput"/>
+            <Input
+				id="passwordInput"
+				type="Password"
+				placeholder="Enter password ..."
+                name="password"
+                value="{form_data>/password}"
+                submit="onOkDialog"
+            />
+
+           </form:SimpleForm>
+
+       </content>
+
+      <beginButton>
+         <Button
+            text="Cancel"
+            press="onCloseDialog"/>
+      </beginButton>
+      <endButton>
+         <Button text="OK"
+           press="onOkDialog"
+         />
+      </endButton>
+   </Dialog>
+</core:FragmentDefinition>

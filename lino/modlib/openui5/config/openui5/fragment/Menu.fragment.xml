@@ -1,0 +1,28 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:u="sap.ui.unified"
+	xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+    >
+	<u:Menu>
+		{% for item in opened_menu.items recursive -%}
+		<u:MenuItem
+				text="{{ item.label }}"
+                {% if not item.items -%}
+				customData:actor_id="{{item.bound_action.actor.actor_id}}"
+				customData:action_name="{{item.bound_action.action.action_name}}"
+				select="handleMenuItemPress"
+				{%- endif %}
+				{# icon="sap-icon://save" #}
+		>
+
+		{%- if item.items -%}
+		<u:Menu>
+			{{ loop(item.items) }}
+		</u:Menu>
+		{%- endif %}
+
+		</u:MenuItem>
+		{%- endfor %}
+	</u:Menu>
+</core:FragmentDefinition>

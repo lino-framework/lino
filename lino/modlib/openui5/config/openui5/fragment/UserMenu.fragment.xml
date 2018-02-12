@@ -1,0 +1,15 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:u="sap.ui.unified"
+	xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+    >
+	<u:Menu>
+		<u:MenuItem
+				text="Sign out"
+				select="onSignOutButtonPress">
+		</u:MenuItem>
+
+
+	</u:Menu>
+</core:FragmentDefinition>
