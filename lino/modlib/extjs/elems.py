@@ -474,8 +474,7 @@ class FieldElement(LayoutElement):
     oui5_column_template = "openui5/elems/column/FieldElement.xml"
     oui5_field_template = "openui5/elems/field/FieldElement.xml"
 
-
-    def __init__(self, layout_handle, field, **kw):
+    def __init__(self, layout_handle, field, hide_sum=False, **kw):
         if not getattr(field, 'name', None):
             raise Exception("Field '%s' in %s has no name!" %
                             (field, layout_handle))
