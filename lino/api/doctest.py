@@ -307,8 +307,8 @@ def show_columns(*args, **kwargs):
     return show_fields(*args, **kwargs)
 
 
-def py2rst(x):
-    return diag.py2rst(x, True)
+def py2rst(x, doctestfmt=True):
+    return diag.py2rst(x, doctestfmt)
 
 
 def show_dialog_actions():
