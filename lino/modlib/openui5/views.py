@@ -211,9 +211,11 @@ def XML_response(ar, tplname, context):
     # context['memo'] = ar.parse_memo  # MEMO_PARSER.parse
     env = settings.SITE.plugins.jinja.renderer.jinja_env
     template = env.get_template(tplname)
+    def bind(*args):
+        return "{" + escape("".join(args)) + "}"
     context.update(
         # Because it's a pain to excape {x} in jinja
-        bind=lambda *args: "{" + "".join(args) + "}",
+        bind=bind
     )
     def p(*args):
         print(args),

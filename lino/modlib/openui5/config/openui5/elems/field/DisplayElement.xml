@@ -1,7 +1,8 @@
 <Panel>
 <VBox width="auto">
     <Label text="{{e.label}}"></Label>
-<core:HTML content="{{bind('record>/data/',e.field.name)}}" wrapping="true" xmlns="sap.ui.core" displayBlock="true">
+<core:HTML content="&lt;span&gt;{{bind('record>/data/',e.field.name)}}&lt;/span&gt;" wrapping="true" xmlns="sap.ui.core" displayBlock="true">
+
 </core:HTML>
     {# <layoutData>
         <m:FlexItemData growFactor="1" />
