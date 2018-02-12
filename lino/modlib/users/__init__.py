@@ -1,8 +1,9 @@
-# Copyright 2011-2017 Luc Saffre
+# Copyright 2011-2018 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Implements functionality for managing users.  See
-:doc:`/specs/users`.
+"""
+Implements functionality for managing users.  See
+:doc:`/specs/users` and :doc:`/dev/users`
 
 Submodules:
 
@@ -13,7 +14,6 @@ Submodules:
     fixtures.demo
     fixtures.demo_users
     fixtures.demo2
-
 """
 
 

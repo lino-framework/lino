@@ -387,9 +387,9 @@ class TableRequest(ActionRequest):
         return rv
 
     def table2rst(self, *args, **kwargs):
-        """Print a reStructuredText representation of this table request to
+        """
+        Print a reStructuredText representation of this table request to
         stdout.
-
         """
         settings.SITE.kernel.text_renderer.show_table(self, *args, **kwargs)
 
@@ -406,7 +406,7 @@ class TableRequest(ActionRequest):
         return e
 
     def dump2html(self, tble, data_iterator, column_names=None,
-                  hide_sums=None):
+                  show_links=None, hide_sums=None):
         """
         Render this table into an existing
         :class:`lino.utils.xmlgen.html.Table` instance.

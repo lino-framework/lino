@@ -936,18 +936,18 @@ def fields_list(model, field_names):
 
 
 def ForeignKey(othermodel, *args, **kw):
-    """A wrapper function which returns a Django
-    `ForeignKey <https://docs.djangoproject.com/en/dev/ref/models/fields/#foreignkey>`__
+    """
+    A wrapper function which returns a Django `ForeignKey
+    <https://docs.djangoproject.com/en/dev/ref/models/fields/#foreignkey>`__
     field, with some subtle differences:
 
     - It supports `othermodel` being `None` or the name of some
       non-installed model and returns a :class:`DummyField` in that
       case.  This difference is useful when designing reusable models.
 
-    - (CANCELLED) The default value for `on_delete
+    - Explicitly sets the default value for `on_delete
       <https://docs.djangoproject.com/en/1.8/ref/models/fields/#django.db.models.ForeignKey.on_delete>`_
-      is ``PROTECT`` instead of ``CASCADE``.
-
+      to ``CASCADE`` (as required by Django 2).
     """
     if othermodel is None:
         return DummyField(othermodel, *args, **kw)
@@ -955,16 +955,15 @@ def ForeignKey(othermodel, *args, **kw):
         if not settings.SITE.is_installed_model_spec(othermodel):
             return DummyField(othermodel, *args, **kw)
 
-    # Django 2 wants it explicitly:
     kw.setdefault('on_delete', models.CASCADE)
     return models.ForeignKey(othermodel, *args, **kw)
 
 
 class CustomField(object):
-    """Mixin to create a custom field.
+    """
+    Mixin to create a custom field.
 
     It defines a single method :meth:`create_layout_elem`.
-
     """
     def create_layout_elem(self, base_class, layout_handle, field, **kw):
         """Return the widget to represent this field in the specified

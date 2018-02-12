@@ -1,22 +1,44 @@
-# Copyright 2014-2017 Luc Saffre
+# Copyright 2014-2018 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
-Some shortcut modules which group Lino's core functionalities into
-a convenient name for different usage contexts.
+A series of wrapper modules to encapsulate Lino's core
+functionalities.  They don't define anything on their own but just
+import things which are commonly used in different contexts.
 
-Common usage is to write import statements like this::
+One module for each of the three startup phases used when writing
+application code:
 
-  from lino.api import ad, _
+- :doc:`/dev/ad` contains classes and functions that are available
+  already **before** your Lino application gets initialized.  You use
+  it to define your **overall application structure** (in your
+  :xfile:`settings.py` files and in the :xfile:`__init__.py` files of
+  your plugins).
+
+
+- :doc:`/dev/dd` is for when you are **describing your database
+  schema** (in your :xfile:`models.py` modules).
+
+- :doc:`/dev/rt` contains functions and classes which are commonly
+  used "at runtime", i.e. when the Lino application has been
+  initialized.
+
+  You may *import* it at the global namespace of a :xfile:`models.py`
+  file, but you can *use* most of it only when the :func:`startup`
+  function has been called.
+
+Recommended usage is to import these modules as follows::
+
+  from lino.api import ad, dd, rt, _
+
+Another set of modules defined here are for more technical usage in
+specialized context:
 
 .. autosummary::
    :toctree:
 
-   ad
-   dd
-   rt
-   shell
    doctest
+   shell
    selenium
 """
 

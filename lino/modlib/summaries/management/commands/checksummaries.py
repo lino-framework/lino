@@ -26,5 +26,5 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         ses = rt.login()
-        ses.run(settings.SITE.site_config.check_summaries)
+        ses.run(settings.SITE.site_config.check_all_summaries)
         # checksummaries(args=args)
