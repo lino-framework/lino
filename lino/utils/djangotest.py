@@ -165,24 +165,6 @@ class DjangoManageTestCase(DjangoTestCase, CommonTestCase):
         raise Exception("last item of dialog must have answer None")
 
 
-class WebIndexTestCase(DjangoManageTestCase):
-    """Designed to be just imported. No subclassing needed."""
-
-    # removed 20150819 because it took unbearably much time for
-    # welfare test suite:
-    # override_djangosite_settings = dict(
-    #     build_js_cache_on_startup=True)
-
-    def test_get_root(self):
-        client = Client()
-        url = '/'
-        res = client.get(url)
-        self.assertEqual(
-            res.status_code, 200,
-            "Status code %s other than 200 for anonymous on GET %s" % (
-                res.status_code, url))
-
-
 class RemoteAuthTestCase(DjangoManageTestCase):
     """
     Base class for tests that use remote http authentication.  We
@@ -200,6 +182,30 @@ class RemoteAuthTestCase(DjangoManageTestCase):
             return super(RemoteAuthTestCase, self).__call__(*args, **kw)
 
 TestCase = RemoteAuthTestCase
+
+
+#class WebIndexTestCase(DjangoManageTestCase):
+class WebIndexTestCase(RemoteAuthTestCase):
+    """Designed to be just imported. No subclassing needed."""
+
+    # removed 20150819 because it took unbearably much time for
+    # welfare test suite:
+    # override_djangosite_settings = dict(
+    #     build_js_cache_on_startup=True)
+
+    def test_get_index(self):
+        client = Client()
+        url = '/'
+        res = client.get(url)
+        self.assertEqual(
+            res.status_code, 200,
+            "Status code %s other than 200 for anonymous on GET %s" % (
+                res.status_code, url))
+        # res = client.get(url, REMOTE_USER='robin')
+        # self.assertEqual(
+        #     res.status_code, 200,
+        #     "Status code %s other than 200 for robin on GET %s" % (
+        #         res.status_code, url))
 
 
 class NoAuthTestCase(DjangoManageTestCase):
