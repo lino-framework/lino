@@ -9,7 +9,7 @@ sap.ui.define([
 
       metadata :{
 //            rootView : "sap.ui.demo.wt.helloworld.view.helloworld"
-              manifest:"json"
+              manifest:"json",
       },
 
       init : function () {

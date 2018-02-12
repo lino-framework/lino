@@ -1,0 +1,17 @@
+<IconTabBar
+		{# id="idIconTabBarInlineMode"
+		headerMode="Inline"
+		upperCase="true"
+		expanded="{device>/isNoPhone}" #}
+		class="sapUiResponsiveContentPadding">
+		<items>
+			{% for e in main.elements %}
+            <IconTabFilter
+				text="{{e.label}}"
+				{#count="3"#}
+                >
+                {% include e.oui5_field_template %}
+			</IconTabFilter>
+			{% endfor %}
+        </items>
+</IconTabBar>

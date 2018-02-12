@@ -517,17 +517,17 @@ class Model(models.Model):
         self.hidden_elements = self.hidden_elements | set(names)
 
     def on_create(self, ar):
-        """Override this to set default values that depend on the request.
+        """
+        Override this to set default values that depend on the request.
 
         The difference with Django's `pre_init
-        <https://docs.djangoproject.com/en/1.10/ref/signals/#pre-init>`__
+        <https://docs.djangoproject.com/en/1.11/ref/signals/#pre-init>`__
         and `post_init
-        <https://docs.djangoproject.com/en/1.10/ref/signals/#post-init>`__
+        <https://docs.djangoproject.com/en/1.11/ref/signals/#post-init>`__
         signals is that (1) you override the method instead of binding
         a signal and (2) you get the action request as argument.
 
         Used e.g. by :class:`lino_xl.lib.notes.models.Note`.
-
         """
         pass
 
@@ -991,6 +991,10 @@ class Model(models.Model):
         when using this element in a layout.
 
         """
+        # from lino.modlib.extjs.elems import FieldElement
+        # for k in options.keys():
+        #     if not hasattr(FieldElement, k):
+        #         raise Exception("Invalid widget option {}".format(k))
         self._widget_options = dict(**self._widget_options)
         d = self._widget_options.setdefault(name, {})
         d.update(options)
@@ -1080,6 +1084,12 @@ class Model(models.Model):
         :mod:`lino.core.kernel`
 
         """
+        wo = {}
+        for b in model.__mro__:
+            if issubclass(b, cls):
+                wo.update(b._widget_options)
+        model._widget_options = wo
+        
         if issubclass(model, cls):
             return
 
@@ -1213,7 +1223,7 @@ def pre_delete_handler(sender, instance=None, **kw):
 
     It seems that Django deletes *generic related objects* only if
     the object being deleted has a `GenericRelation
-    <https://docs.djangoproject.com/en/1.7/ref/contrib/contenttypes/#django.contrib.contenttypes.fields.GenericRelation>`_
+    <https://docs.djangoproject.com/en/1.11/ref/contrib/contenttypes/#django.contrib.contenttypes.fields.GenericRelation>`_
     field (according to `Why won't my GenericForeignKey cascade
     when deleting?
     <http://stackoverflow.com/questions/6803018/why-wont-my-genericforeignkey-cascade-when-deleting>`_).

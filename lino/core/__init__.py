@@ -15,6 +15,7 @@ The ``lino.core`` package
     dbutils
     ddh
     diff
+    elems
     exceptions
     fields
     frames

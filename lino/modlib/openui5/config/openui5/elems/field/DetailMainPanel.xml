@@ -1,0 +1,8 @@
+
+			<VBox fitContainer="true">
+				    <items>
+					{% for e in main.elements %}
+					    {% include e.oui5_field_template %}
+					{% endfor %}
+				    </items>
+			</VBox>

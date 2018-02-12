@@ -61,7 +61,7 @@ else:
     def jscompress(s):
         return s
 
-from . import elems as ext_elems
+from lino.core import elems as ext_elems
 
 from lino.modlib.users.choicelists import UserTypes
 
@@ -839,12 +839,6 @@ class ExtRenderer(JsRenderer):
         # return env.get_template('linoweb.js')
         env = settings.SITE.plugins.jinja.renderer.jinja_env
         return env.get_template('extjs/linoweb.js')
-
-    def create_layout_element(self, *args, **kw):
-        return ext_elems.create_layout_element(self, *args, **kw)
-
-    def create_layout_panel(self, *args, **kw):
-        return ext_elems.create_layout_panel(self, *args, **kw)
 
     def toolbar(self, action_list):
         """

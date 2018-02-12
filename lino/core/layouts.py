@@ -1,4 +1,4 @@
-# Copyright 2009-2017 Luc Saffre
+# Copyright 2009-2018 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """See :doc:`/dev/layouts/index`.
@@ -14,7 +14,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.conf import settings
-from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.fields import NOT_PROVIDED
 from django.db.models.fields.related import ForeignObject
@@ -42,18 +41,19 @@ def DEBUG_LAYOUTS(lo):
 
 
 class DummyPanel(object):
-    """A layout panel which does not exist in the current configuration
+    """
+    A layout panel which does not exist in the current configuration
     but might exist as a real panel in some other configuration.
-
     """
     pass
 
 
 class Panel(object):
 
-    """This is available in :mod:`lino.api.dd`.  To be used when a panel
-    cannot be expressed using a simple template string because it
-    requires one or more options. These `options` parameters can be:
+    """
+    To be used when a panel cannot be expressed using a simple
+    template string because it requires one or more options. These
+    `options` parameters can be:
 
     - label
     - required_roles
@@ -62,7 +62,6 @@ class Panel(object):
 
     Unlike a :class:`BaseLayout` it cannot have any child panels
     and cannot become a tabbed panel.
-
     """
 
     def __init__(self, desc, label=None, **options):
@@ -160,6 +159,8 @@ class LayoutHandle(object):
             for spec in desc.split():
                 if '*' not in spec:
                     name, kwargs = self.splitdesc(spec)
+                    # if 'hide_sum' in kwargs:
+                    #     raise Exception("20180210a")
                     explicit_specs.add(name)
                 elif len(spec) > 1:
                     remote_wildcards.append(spec)
@@ -241,7 +242,8 @@ class LayoutHandle(object):
         if len(elems) == 1 and elemname != 'main':
             elems[0].setup(**kwargs)
             return elems[0]
-        return self.ui.renderer.create_layout_panel(
+        from lino.core.elems import create_layout_panel
+        return create_layout_panel(
             self, elemname, vertical, elems, **kwargs)
 
     def define_panel(self, name, desc, **kw):
@@ -261,8 +263,11 @@ class LayoutHandle(object):
         return e
 
     def create_element(self, desc_name):
+        from lino.core.elems import create_layout_element
         #~ logger.debug("create_element(%r)", desc_name)
         name, options = self.splitdesc(desc_name)
+        # if 'hide_sum' in options:
+        #     raise Exception("20180210b")
         if name in self._names:
             if ALLOW_DUPLICATE_ELEMS:
                 return self._names[name]
@@ -273,7 +278,7 @@ class LayoutHandle(object):
         desc = getattr(self.layout, name, None)
         if desc is not None:
             return self.define_panel(name, desc, **options)
-        e = self.ui.renderer.create_layout_element(self, name, **options)
+        e = create_layout_element(self, name, **options)
         if e is None:
             return None  # e.g. NullField
         if name in self.hidden_elements:
@@ -286,7 +291,7 @@ class LayoutHandle(object):
             else:
                 e.hidden = True
         
-        self.ui.renderer.setup_layout_element(e)
+        self.ui.setup_layout_element(e)
         self.layout.setup_element(self, e)
         self._names[name] = e
         return e
@@ -589,10 +594,12 @@ add_tabpanel() on %s horizontal 'main' panel %r."""
         #~ if kw:
             #~ print 20120525, self, self.detail_layout._element_options
 
-    def get_layout_handle(self, ui):
+    def get_layout_handle(self, ui=None):
         """
         `ui` is a :class:`Plugin` instance.
         """
+        if ui is None:
+            ui = settings.SITE.kernel.default_ui
         hname = ui.ui_handle_attr_name
         if hname is None:
             raise Exception(

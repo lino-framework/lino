@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2017 Luc Saffre.
+# Copyright 2009-2018 Luc Saffre.
 # License: BSD, see LICENSE for more details.
 
 """
@@ -108,10 +108,10 @@ PLUGIN_CONFIGS = {}
 
 
 def configure_plugin(app_label, **kwargs):
-    """Set one ore several configuration settings of the given plugin
-    *before* the :setting:`SITE` has been instantiated.
-    See :doc:`/dev/plugins`.
-
+    """
+    Set one or several configuration settings of the given plugin
+    *before* the :setting:`SITE` has been instantiated.  See
+    :doc:`/dev/plugins`.
     """
     # if PLUGIN_CONFIGS is None:
     #     raise ImproperlyConfigured(
@@ -126,21 +126,22 @@ class NOT_PROVIDED(object):
 
 
 class Site(object):
-    """The base class for a Lino application.  This class is designed to
+    """
+    The base class for a Lino application.  This class is designed to
     be overridden by both application developers and local site
     administrators.  Your :setting:`SITE` setting is expected to
     contain an instance of a subclass of this.
 
     .. attribute:: plugins
 
-        An :class:`AttrDict` object with one entry for each installed
-        app, mapping the `app_label` of every plugin to the
-        corresponding :class:`lino.core.plugin.Plugin` instance.
+        An :class:`AttrDict <atelier.utils.AttrDict>` with one entry
+        for each installed plugin, mapping the `app_label` of every
+        plugin to the corresponding :class:`lino.core.plugin.Plugin`
+        instance.
 
         This attribute is automatically filled by Lino and available as
         :attr:`dd.plugins <lino.api.dd>` already before Django starts to
         import :xfile:`models.py` modules.
-
 
     .. attribute:: modules
 
@@ -157,41 +158,26 @@ class Site(object):
 
         See :doc:`/dev/plugins`
 
-    .. attribute:: actors
-
-        An alias for :attr:`models`. Deprecated.
-
-        An :class:`AttrDict <atelier.utils.AttrDict>` which maps every
-        installed `app_label` to the corresponding *actors module*.
-
-        If a plugin has no actors module, then this points to the
-        models module (for backwards compatibility because until
-        :blogref:`20160727` the actors of a plugin were always defined
-        in the models module).
-
-        This is also available as the shortcut :attr:`rt.actors
-        <lino.api.rt.actors>`.
-
     .. attribute:: LANGUAGE_CHOICES
     
         A tuple in the format expected by Django's `choices
-        <https://docs.djangoproject.com/en/1.7/ref/models/fields/#choices>`__
+        <https://docs.djangoproject.com/en/1.11/ref/models/fields/#choices>`__
         attribute, used e.g. by :class:`LanguageField
         <lino.utils.mldbc.fields.LanguageField>`. It's content is
         automatically populated from :attr:`languages` and application
         code should not change it's value.
-
     """
 
     auto_fit_column_widths = True
-    """The default value for the
-    :attr:`auto_fit_column_widths<lino.core.tables.AbstractTable.auto_fit_column_widths>`
-    of tables in this application.
-
+    """
+    The default value for the :attr:`auto_fit_column_widths
+    <lino.core.tables.AbstractTable.auto_fit_column_widths>` of tables
+    in this application.
     """
 
     confdirs = None
-    """This attribute is available only after site startup.  See
+    """
+    This attribute is available only after site startup.  See
     :mod:`lino.utils.config`.
     """
 
@@ -202,11 +188,11 @@ class Site(object):
 
     """
 
-    ui = None
-    """
-    Deprecated alias for :attr:`kernel`.
+    # ui = None
+    # """
+    # Deprecated alias for :attr:`kernel`.
 
-    """
+    # """
 
     readonly = False
     """Setting this to `True` turns this site in a readonly site.  This
@@ -492,15 +478,16 @@ class Site(object):
     """
 
     user_model = None
-    """If :mod:`lino.modlib.users` is installed, this holds a reference to
+    """
+    If :mod:`lino.modlib.users` is installed, this holds a reference to
     the model class which represents a user of the system. Default
     value is `None`, meaning that this application has no user
     management.  See also :meth:`set_user_model`
-
     """
 
     social_auth_backends = None
-    """A list of backends for `Python Social Auth
+    """
+    A list of backends for `Python Social Auth
     <https://github.com/python-social-auth>`__ (PSA).
 
     Having this at a value different from `None` means that this site
@@ -520,7 +507,6 @@ class Site(object):
 
     A working example is in the :mod:`lino_book.projects.team` demo
     project.
-
     """
 
     use_ipdict = False
@@ -673,20 +659,19 @@ class Site(object):
 
     use_java = True
     """
-    A site-wide option to disable everything that needs Java.  Note that
-    it is up to the apps which include Java applications to respect this
-    setting. Usage example is :mod:`lino_xl.lib.beid`.
-
+    A site-wide option to disable everything that needs Java.  Note
+    that it is up to the plugins which include Java applications to
+    respect this setting. Usage example is :mod:`lino_xl.lib.beid`.
     """
 
     use_silk_icons = False
-    """If this is `True`, certain Lino plugins use the deprecated `silk
+    """
+    If this is `True`, certain Lino plugins use the deprecated `silk
     icons library <http://www.famfamfam.com/lab/icons/silk/>`__ for
     representing workflows.
 
     The recommended but not yet fully implemented "modern" style is to
     use unicode symbols instead of icons.
-
     """
     
     use_new_unicode_symbols = False
@@ -841,17 +826,17 @@ class Site(object):
     use_gridfilters = True
 
     use_eid_applet = False
-    """Whether to include functionality to read Belgian id cards using
-    the official `eid-applet <http://code.google.com/p/eid-applet>`_.
+    """
+    Whether to include functionality to read Belgian id cards using the
+    official `eid-applet <http://code.google.com/p/eid-applet>`_.
     This option is experimental and doesn't yet work.  See
     `/blog/2012/1105`.
-
     """
 
     use_esteid = False
     """
-    Whether to include functionality to read Estonian id cards.
-    This option is experimental and doesn't yet work.
+    Whether to include functionality to read Estonian id cards.  This
+    option is experimental and doesn't yet work.
     """
 
     use_filterRow = not use_gridfilters
@@ -927,29 +912,30 @@ class Site(object):
     """
 
     config_id = 1
-    """The primary key of the one and only
-    :class:`SiteConfig<lino.modlib.system.models.SiteConfig>` instance
-    of this :class:`Site`. Default value is 1.
+    """
+    The primary key of the one and only :class:`SiteConfig
+    <lino.modlib.system.models.SiteConfig>` instance of this
+    :class:`Site`. Default value is 1.
 
     This is Lino's equivalent of Django's :setting:`SITE_ID` setting.
-    Lino applications don't need ``django.contrib.sites`` (`The "sites"
-    framework
-    <https://docs.djangoproject.com/en/dev/ref/contrib/sites/>`_) because
-    this functionality is integral part of :mod:`lino.modlib.system`.
-
+    Lino applications don't need ``django.contrib.sites`` (`The
+    "sites" framework
+    <https://docs.djangoproject.com/en/dev/ref/contrib/sites/>`_)
+    because an analog functionality is provided by
+    :mod:`lino.modlib.system`.
     """
 
     preview_limit = 15
-    """Default value for the
-    :attr:`preview_limit<lino.core.tables.AbstractTable.preview_limit>`
-    parameter of all tables who don't specify their own one.  Default
-    value is 15.
-
+    """
+    Default value for the :attr:`preview_limit
+    <lino.core.tables.AbstractTable.preview_limit>` parameter of all
+    tables who don't specify their own one.  Default value is 15.
     """
 
     # default_ui = 'lino_extjs6.extjs6'
     default_ui = 'lino.modlib.extjs'
-    """The full Python name of the plugin which is to be used as default
+    """
+    The full Python name of the plugin which is to be used as default
     user interface on this :class:`Site`.
 
     Default value is :mod:`lino.modlib.extjs`. Other candidates are
@@ -959,14 +945,14 @@ class Site(object):
     Another possibility is to set it to `None`. In that case you will
     probably also set :attr:`root_urlconf` to a custom URL dispatcher.
     Usage example for this see :mod:`lino.projects.cms`.
-
     """
     
     admin_ui = None
     
 
     mobile_view = False
-    """When this is `False` (the default), then Lino uses an attribute
+    """
+    When this is `False` (the default), then Lino uses an attribute
     named :attr:`main <lino.core.layouts.BaseLayout.main>` as the main
     element of a detail window and :attr:`column_names
     <lino.core.tables.AbstractTable.column_names>` as the table's
@@ -975,14 +961,14 @@ class Site(object):
     When this is `True`, then Lino uses :attr:`main_m
     <lino.core.layouts.BaseLayout.main_m>` and :attr:`column_names_m
     <lino.core.tables.AbstractTable.column_names_m>` respectively.
-
     """
     
     detail_main_name = 'main'
     # detail_main_name = 'main_m'
     
     design_name = 'desktop'
-    """The name of the design to use. The default value is
+    """
+    The name of the design to use. The default value is
     ``'desktop'``. The value should be one of ``'desktop'`` or
     ``'mobile'``.
 
@@ -993,20 +979,20 @@ class Site(object):
     :attr:`models.bar`. The result is the same as if there were a
     ``from .desktop import *`` statement at the end of the
     :xfile:`models.py` module.
-
     """
 
     root_urlconf = 'lino.core.urls'
-    """The value to be attribute to :setting:`ROOT_URLCONF` when this
+    """
+    The value to be attribute to :setting:`ROOT_URLCONF` when this
     :class:`Site` instantiates.
 
     The default value is :mod:`lino.core.urls`.
-
     """
 
     textfield_format = 'plain'
-    """The default format for text fields.
-    Valid choices are currently 'plain' and 'html'.
+    """
+    The default format for text fields.  Valid choices are currently
+    'plain' and 'html'.
 
     Text fields are either Django's `models.TextField` or
     :class:`lino.core.fields.RichTextField`.
@@ -1026,11 +1012,11 @@ class Site(object):
     make that specific field html-formatted::
 
        resolve_field('Bar.foo').set_format('html')
-
     """
 
     log_each_action_request = False
-    """Whether Lino should log every incoming request for non
+    """
+    Whether Lino should log every incoming request for non
     :attr:`readonly <lino.core.actions.Action.readonly>` actions.
 
     This is experimental. Theoretically it is useless to ask Lino for
@@ -1043,7 +1029,6 @@ class Site(object):
     <lino.core.kernel.Kernel.run_action>` or
     :meth:`run_callback
     <lino.core.kernel.Kernel.run_callback>` methods.
-
     """
 
     verbose_client_info_message = False
@@ -1063,7 +1048,8 @@ class Site(object):
     """
 
     catch_layout_exceptions = True
-    """Lino usually catches any exception during startup (in
+    """
+    Lino usually catches any exception during startup (in
     :func:`create_layout_element
     <lino.core.layouts.create_layout_element>`) to report errors of
     style "Unknown element "postings.PostingsByController
@@ -1071,23 +1057,24 @@ class Site(object):
     
     Setting this to `False` is useful when there's some problem
     *within* the framework.
-
     """
 
     strict_dependencies = True
-    """This should be True unless this site is being used just for
-    autodoc or similar applications.
-
+    """
+    This should be True unless this site is being used just for autodoc
+    or similar applications.
     """
     
     strict_choicelist_values = True
-    """Whether invalid values in a ChoiceList should raise an exception.
+    """
+    Whether invalid values in a ChoiceList should raise an exception.
 
     This should be `True` except for exceptional situations.
     """
 
     csv_params = dict()
-    """Site-wide default parameters for CSV generation.  This must be a
+    """
+    Site-wide default parameters for CSV generation.  This must be a
     dictionary that will be used as keyword parameters to Python
     `csv.writer()
     <http://docs.python.org/library/csv.html#csv.writer>`_
@@ -1103,27 +1090,26 @@ class Site(object):
     - many more allowed keys are explained in
       `Dialects and Formatting Parameters
       <http://docs.python.org/library/csv.html#csv-fmt-params>`_.
-
     """
 
     logger_filename = 'lino.log'
-    """The name of Lino's main log file, created in :meth:`setup_logging`.
+    """
+    The name of Lino's main log file, created in :meth:`setup_logging`.
 
     See also :ref:`lino.logging`.
-
     """
     auto_configure_logger_names = 'schedule atelier django lino radicale'
     """
     A string with a space-separated list of logger names to be
     automatically configured. See :meth:`setup_logging`.
-
     """
 
     # appy_params = dict(ooPort=8100)
     appy_params = dict(
         ooPort=8100, pythonWithUnoPath='/usr/bin/python3',
         raiseOnError=True)
-    """Used by :class:`lino_xl.lib.appypod.choicelist.AppyBuildMethod`.
+    """
+    Used by :class:`lino_xl.lib.appypod.choicelist.AppyBuildMethod`.
 
     Allowed keyword arguments for `appy.pod.renderer.Render` are::
 
@@ -1141,15 +1127,13 @@ class Site(object):
     for details.
 
     See also :doc:`/admin/oood`
-
     """
 
     #~ decimal_separator = '.'
     decimal_separator = ','
-    """Set this to either ``'.'`` or ``','`` to define wether to use
-    comma or dot as decimal point separator when entering a
-    `DecimalField`.
-
+    """
+    Set this to either ``'.'`` or ``','`` to define wether to use comma
+    or dot as decimal point separator when entering a `DecimalField`.
     """
 
     # decimal_group_separator = ','
@@ -1205,7 +1189,8 @@ class Site(object):
     _starting_up = False
 
     override_modlib_models = None
-    """A dictionary which maps model class names to the plugin which
+    """
+    A dictionary which maps model class names to the plugin which
     overrides them.
 
     This is automatically filled at startup.  You can inspect it, but
@@ -1217,15 +1202,15 @@ class Site(object):
     :attr:`extends_models <lino.core.plugin.Plugin.extends_models>`.
 
     This can be tricky, see e.g. 20160205.
-
     """
 
     installed_plugin_modules = None
-    """A set of the full Python paths of all imported plugin modules. Not
-    just the plugin modules themselves but also those they inherit
-    from. This is used internally by :meth:`is_abstract_model`.  Don't
-    modify.
+    """
+    Used internally by :meth:`is_abstract_model`.  Don't modify.
 
+    A set of the full Python paths of all imported plugin modules. Not
+    just the plugin modules themselves but also those they inherit
+    from.
     """
 
     def __init__(self, settings_globals=None, local_apps=[], **kwargs):
@@ -1410,7 +1395,7 @@ class Site(object):
         See also :ref:`lino.logging`.
 
         See also Django's doc about `Logging
-        <https://docs.djangoproject.com/en/1.9/topics/logging/>`__.
+        <https://docs.djangoproject.com/en/1.11/topics/logging/>`__.
 
         """
         if not self.auto_configure_logger_names:
@@ -2224,7 +2209,8 @@ this field.
                                 dirname)
 
     def is_abstract_model(self, module_name, model_name):
-        """Return True if the named model is declared as being extended by
+        """
+        Return True if the named model is declared as being extended by
         :attr:`lino.core.plugin.Plugin.extends_models`.
 
         Typical usage::
@@ -2234,7 +2220,6 @@ this field.
                      abstract = dd.is_abstract_model(__name__, 'MyModel')
 
         See :doc:`/dev/plugin_inheritance`.
-
         """
         app_name = '.'.join(module_name.split('.')[:-1])
         model_name = app_name + '.' + model_name
@@ -2256,9 +2241,9 @@ this field.
         return rv
 
     def is_installed_model_spec(self, model_spec):
-        """Deprecated. This feature was a bit too automagic and caused bugs
+        """
+        Deprecated. This feature was a bit too automagic and caused bugs
         to pass silently.  See e.g. :blogref:`20131025`.
-
         """
         if False:  # mod_wsgi interprets them as error
             warnings.warn("is_installed_model_spec is deprecated.",
@@ -2278,7 +2263,8 @@ this field.
         return app_label in self.plugins
 
     def setup_model_spec(self, obj, name):
-        """If the value of the named attribute of `obj` is a string, replace
+        """
+        If the value of the named attribute of `obj` is a string, replace
         it by the model specified by that string.
 
         Example usage::
@@ -2293,8 +2279,6 @@ this field.
             # user code:
             class MyThing(ThingBase):
                 the_model = "contacts.Partner"
-
-
         """
         spec = getattr(obj, name)
         if spec and isinstance(spec, six.string_types):
@@ -2307,13 +2291,13 @@ this field.
             setattr(obj, name, resolve_model(spec, strict=msg))
 
     def on_each_app(self, methname, *args):
-        """Call the named method on the :xfile:`models.py` module of each
+        """
+        Call the named method on the :xfile:`models.py` module of each
         installed app.
 
         Note that this mechanism is deprecated. It is still used (on
         names like ``setup_workflows`` and ``setup_site``) for
         historical reasons but will disappear one day.
-
         """
         from django.apps import apps
         apps = [a.models_module for a in apps.get_app_configs()]
@@ -2327,12 +2311,11 @@ this field.
 
     def for_each_app(self, func, *args, **kw):
         """
-        Call the given function on each installed app.
-        Successor of :meth:`on_each_app`.  This also loops over
+        Call the given function on each installed plugin.  Successor of
+        :meth:`on_each_app`.  
 
-        - plugins that don't have a models module
-        - the base plugins of plugins which extend some plugin.
-
+        This also loops over plugins that don't have a models module
+        and the base plugins of plugins which extend some plugin.
         """
 
         from importlib import import_module
@@ -2349,30 +2332,27 @@ this field.
 
     def demo_date(self, *args, **kwargs):
         """
-        Deprecated. Should be replaced by :meth:`today`.
-        Compute a date using :func:`atelier.utils.date_offset` based on
-        the process startup time (or :attr:`the_demo_date` if this is
-        set).
+        Deprecated. Should be replaced by :meth:`today`.  Compute a date
+        using :func:`atelier.utils.date_offset` based on the process
+        startup time (or :attr:`the_demo_date` if this is set).
 
         Used in Python fixtures and unit tests.
-
-
         """
         base = self.the_demo_date or self.startup_time.date()
         return date_offset(base, *args, **kwargs)
 
     def today(self, *args, **kwargs):
-        """This is almost equivalent to calling :func:`datetime.date.today`.
+        """
+        Almost the same as :func:`datetime.date.today`.
 
-        The difference is when :attr:`the_demo_date` is set, in which
-        case :meth:`today` will return that date.
+        One difference is that the system's *today* is replaced by
+        :attr:`the_demo_date` if that attribute is set.
 
-        Another difference is that any arguments are forwarded to
-        :func:`atelier.utils.date_offset`.
+        Another difference is that arguments can be passed to add some
+        offset. See :func:`atelier.utils.date_offset`.
 
         This feature is being used in many test cases where e.g. the
         age of people would otherwise change.
-
         """
         if self.site_config is not None:
             base = self.site_config.simulate_today \
@@ -2382,9 +2362,9 @@ this field.
         return date_offset(base, *args, **kwargs)
 
     def welcome_text(self):
-        """Returns the text to display in a console window when this Site
-        starts.
-
+        """
+        Returns the text to display in a console window when this
+        application starts.
         """
         return "This is %s using %s." % (
             self.site_version(), self.using_text())
@@ -2397,8 +2377,8 @@ this field.
                           for n, v, u in self.get_used_libs()])
 
     def site_version(self):
-        """Used in footnote or header of certain printed documents.
-
+        """
+        Used in footnote or header of certain printed documents.
         """
         if self.version:
             return self.verbose_name + ' ' + self.version
@@ -2415,10 +2395,10 @@ this field.
         install_migrations(self, *args)
 
     def parse_date(self, s):
-        """Convert a string formatted using :attr:`date_format_strftime` or
+        """
+        Convert a string formatted using :attr:`date_format_strftime` or
         :attr:`date_format_extjs` into a `(y,m,d)` tuple (not a
         `datetime.date` instance).  See `/blog/2010/1130`.
-
         """
         ymd = tuple(reversed(list(map(int, s.split('.')))))
         assert len(ymd) == 3
@@ -2426,18 +2406,18 @@ this field.
         #~ return datetime.date(*ymd)
 
     def parse_time(self, s):
-        """Convert a string formatted using :attr:`time_format_strftime` or
+        """
+        Convert a string formatted using :attr:`time_format_strftime` or
         :attr:`time_format_extjs` into a `datetime.time` instance.
-
         """
         hms = list(map(int, s.split(':')))
         return datetime.time(*hms)
 
     def parse_datetime(self, s):
-        """Convert a string formatted using :attr:`datetime_format_strftime`
+        """
+        Convert a string formatted using :attr:`datetime_format_strftime`
         or :attr:`datetime_format_extjs` into a `datetime.datetime`
         instance.
-
         """
         #~ print "20110701 parse_datetime(%r)" % s
         #~ s2 = s.split()
@@ -2469,36 +2449,9 @@ this field.
     def find_template_config_files(self, *args, **kwargs):
         return self.confdirs.find_template_config_files(*args, **kwargs)
 
-    # def setup_user_profiles(self):
-    #     """Deprecated. Use :attr:`user_types_module` instead.
-
-    #     """
-    #     pass
-
-    # def setup_choicelists(self):
-    #     """This is a hook for code to be run *after* all plugins have been
-    #     instantiated and *before* the models are being discovered.
-
-    #     This is useful for redefining your application's ChoiceLists.
-
-    #     Note that you may not specify values longer than `max_length` when
-    #     redefining your choicelists.  This limitation is because these
-    #     redefinitions happen at a moment where database fields have
-    #     already been instantiated, so it is too late to change their
-    #     max_length.  Note that this limitation is only for the *values*,
-    #     not for the names or texts of choices.
-
-    #     """
-    #     self.setup_user_profiles()
-
-    # def setup_workflows(self):
-    #     """Deprecated. Define a :attr:`workflows_module` instead.
-    #     """
-    #     self.on_each_app('setup_workflows')
-
     def setup_actions(self):
-        """Hook for subclasses to add or modify actions.
-
+        """
+        Hook for subclasses to add or modify actions.
         """
         from lino.core.merge import MergeAction
         for m in get_models():
@@ -2506,7 +2459,8 @@ this field.
                 m.define_action(merge_row=MergeAction(m))
 
     def setup_layouts(self):
-        '''Hook for subclasses to add or modify layouts.
+        '''
+        Hook for subclasses to add or modify layouts.
         
         Usage example::
 
@@ -2525,7 +2479,6 @@ this field.
                 seqno group type clearable
                 ledger.MovementsByAccount
                 """)
-
         '''
         pass
 
@@ -3647,8 +3600,8 @@ signature as `django.core.mail.EmailMessage`.
         return requests.BaseRequest(**kw)
 
     def get_letter_date_text(self, today=None):
-        """Returns a string like "Eupen, den 26. August 2013".
-
+        """
+        Returns a string like "Eupen, den 26. August 2013".
         """
         sc = self.site_config.site_company
         if today is None:
@@ -3660,7 +3613,8 @@ signature as `django.core.mail.EmailMessage`.
         return fdl(today)
 
     def decfmt(self, v, places=2, **kw):
-        """ Format a Decimal value using :func:`lino.utils.moneyfmt`, but
+        """
+        Format a Decimal value using :func:`lino.utils.moneyfmt`, but
         applying the site settings
         :attr:`lino.Lino.decimal_group_separator` and
         :attr:`lino.Lino.decimal_separator`.
@@ -3687,8 +3641,6 @@ signature as `django.core.mail.EmailMessage`.
         >>> self.decimal_group_separator = "oops"
         >>> print(self.decfmt(x))
         1oops234,00
-        
-
         """
         kw.setdefault('sep', self.decimal_group_separator)
         kw.setdefault('dp', self.decimal_separator)

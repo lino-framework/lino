@@ -13,8 +13,7 @@ from django.utils.encoding import force_text
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-# from lino.modlib.users.choicelists import UserTypes
-from lino.api import dd
+from lino.api import dd, rt
 from lino.core import actions
 
 from lino.modlib.printing.choicelists import BuildMethods
@@ -179,7 +178,5 @@ class SiteConfigs(dd.Table):
 #     dd.inject_field(settings.SITE.user_model,
 #                     'user_type', UserTypes.field())
 #     dd.inject_field(settings.SITE.user_model, 'language', dd.LanguageField())
-
-
 
 

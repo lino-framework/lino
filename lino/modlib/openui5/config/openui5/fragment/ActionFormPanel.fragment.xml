@@ -1,0 +1,43 @@
+{# Needs to be talored for ActionFormPanel Elems #}
+<core:FragmentDefinition
+   xmlns="sap.m"
+   xmlns:core="sap.ui.core"
+   xmlns:form="sap.ui.layout.form"
+>
+   <Dialog
+      id="dialog" showHeader="false"
+      title ="Sign In" class="sapUiResponsiveContentPadding sapUiSizeCompact">
+       <content>
+           <form:SimpleForm
+			{# layout="ResponsiveGridLayout" #}
+			editable="true"
+			title="Result in a Form"
+           >
+            <Label text="User name" labelFor="UserName" />
+			<Input
+				id="UserName"
+				type="Text"
+				placeholder="Enter UserName ..." />
+
+            <Label text="Password" labelFor="passwordInput"/>
+            <Input
+				id="passwordInput"
+				type="Password"
+				placeholder="Enter password ..." />
+
+           </form:SimpleForm>
+
+       </content>
+
+      <beginButton>
+         <Button
+            text="Cancel"
+            press="onCloseDialog"/>
+      </beginButton>
+      <endButton>
+         <Button text="OK"
+           press="onOKDialog"
+         />
+      </endButton>
+   </Dialog>
+</core:FragmentDefinition>

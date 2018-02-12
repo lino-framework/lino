@@ -829,7 +829,8 @@ class Kernel(object):
         return ar.renderer.render_action_response(ar)
 
     def add_callback(self, ar, *msgs):
-        """Returns an *action callback* which will initiate a dialog thread by
+        """
+        Returns an *action callback* which will initiate a dialog thread by
         asking a question to the user and suspending execution until
         the user's answer arrives in a next HTTP request.
 
@@ -841,8 +842,7 @@ class Kernel(object):
 
         The client will display the prompt and will continue this
         thread by requesting
-        :class:`lino.modlib.extjs3.views.Callbacks`.
-
+        :class:`lino.modlib.extjs.views.Callbacks`.
         """
         if len(msgs) > 1:
             msg = '\n'.join([force_text(s) for s in msgs])

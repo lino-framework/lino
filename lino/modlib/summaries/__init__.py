@@ -27,8 +27,8 @@ class Plugin(ad.Plugin):
         if self.start_year is None:
             self.start_year = self.end_year - 2
 
-    def setup_config_menu(self, site, user_type, m):
-        g = site.plugins.system
-        m = m.add_menu(g.app_label, g.verbose_name)
-        m.add_action('system.SiteConfig', 'check_summaries')
+    # def setup_config_menu(self, site, user_type, m):
+    #     g = site.plugins.system
+    #     m = m.add_menu(g.app_label, g.verbose_name)
+    #     m.add_action('system.SiteConfig', 'check_summaries')
 

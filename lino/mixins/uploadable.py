@@ -21,7 +21,7 @@ class Uploadable(Model):
     .. attribute:: file
 
         Pointer to the file itself (a `Django FileField
-        <https://docs.djangoproject.com/en/1.8/ref/models/fields/#filefield>`_).
+        <https://docs.djangoproject.com/en/1.11/ref/models/fields/#filefield>`_).
 
     .. attribute:: mimetype
 

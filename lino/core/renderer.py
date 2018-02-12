@@ -33,7 +33,6 @@ from lino.core import constants
 from lino.core.menus import Menu, MenuItem
 # from lino.utils.xmlgen.html import _html2rst as html2rst
 # from lino.utils.xmlgen.html import html2rst
-from lino.modlib.extjs.elems import create_layout_panel, create_layout_element
 
 from .views import json_response
 from .plugin import Plugin
@@ -340,18 +339,6 @@ request `tar`."""
 
     def quick_upload_buttons(self, rr):
         return '[?!]'
-
-    def setup_layout_element(self, el):
-        pass
-    
-    def create_layout_element(self, *args, **kw):
-        return create_layout_element(self, *args, **kw)
-
-    def create_layout_panel(self, *args, **kw):
-        return create_layout_panel(self, *args, **kw)
-
-    # def insert_button(self, ar, text, known_values={}, **options):
-    #     return '[?!]'
 
     def ar2button(self, ar, obj=None, label=None, title=None, **kw):
         ba = ar.bound_action

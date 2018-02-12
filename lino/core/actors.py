@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2017 Luc Saffre
+# Copyright 2009-2018 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """This defines :class:`Actor` and related classes.
@@ -202,7 +202,8 @@ class ActorMetaClass(type):
 
 
 class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizable, Permittable), {}))):
-    """The base class for all actors.  Subclassed by :class:`AbstractTable
+    """
+    The base class for all actors.  Subclassed by :class:`AbstractTable
     <lino.core.tables.AbstractTable>`, :class:`Table
     <lino.core.dbtables.Table>`, :class:`ChoiceList
     <lino.core.choicelists.ChoiceList>` and :class:`Frame
@@ -237,8 +238,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
         Most actors use the same UI handle for each request.  But
         e.g. :class:`lino_welfare.modlib.debts.models.PrintEntriesByBudget`
-        overrides this to implement dynamic columns depending on it's
-        master_instance.
+        and :class:`lino_xl.lib.events.EventsByType` override this to
+        implement dynamic columns depending on it's master_instance.
 
 
     .. classmethod:: get_row_classes(self, ar)
@@ -269,7 +270,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
         Note that this handler will be called independently of whether
         the user has permission to view the actor or not.
-
     """
     required_roles = set([SiteUser])
     """See :attr:`lino.core.permissions.Permittable.required_roles`"""
@@ -502,7 +502,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     actor_id = None
 
     detail_layout = None
-    '''Define the layout to use for the detail window.  Actors with
+    '''
+    Define the layout to use for the detail window.  Actors with
     :attr:`detail_layout` will get a `show_detail` action.
 
     When you define a :attr:`detail_layout`, you will probably also
@@ -549,11 +550,11 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     you had to define a new class and to assign an instance of that class
     to every actor which uses it.  But e.g. in :mod:`lino_xl.lib.courses`
     we have a lot of subclasses of the :class:`Courses` actor.
-
     '''
 
     insert_layout = None
-    """Define the form layout to use for the insert window.  
+    """
+    Define the form layout to use for the insert window.
 
     If there's a :attr:`detail_layout` but no :attr:`insert_layout`,
     the table won't have any (+) button to create a new row via a
@@ -562,7 +563,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     :class:`lino_xl.lib.courses.Topics` which has a detail layout
     with slave tables, but the model itself has only two fields (id
     and name) and it makes no sense to have an insert window.
-
     """
 
     detail_template = None    # deprecated: use insert_layout instead
@@ -739,9 +739,9 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     @classmethod
     def get_request_handle(self, ar):
-        """Return the dynamic (per-request) handle for this actor for the
-        renderer used by specified action request.  Don't override.
-
+        """
+        Return the dynamic (per-request) handle for this actor for the
+        renderer used by specified action request.
         """
         # logger.info("18072017, self.get_handle_name:|%s| #1955"%(self.get_handle_name),)
         if self.get_handle_name is None:
@@ -1398,7 +1398,34 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     @classmethod
     def make_chooser(cls, wrapped):
         return classmethod(wrapped)
-    
+
+    @classmethod
+    def get_detail_layout(cls, *args):
+        assert cls.detail_action is not None
+        wl = cls.detail_action.get_window_layout()
+        return wl.get_layout_handle(*args)
+
+    @classmethod
+    def get_list_layout(cls, *args):
+        assert cls.default_action is not None
+        ah = cls.get_handle()
+        return ah.get_list_layout()
+        # return ll.get_layout_handle(*args)
+
+    @classmethod
+    def get_detail_elems(cls, *args):
+        """
+        An optional first argument is the user interface plugin, a
+        :class:`Plugin` instance.  If this is None, will use
+        :attr:`settings.SITE.kernel.default_ui
+        <lino.core.kernel.Kernel.default_ui>`.
+
+        Returns a list of the widgets (layout elements) that make up
+        the detail layout.
+        """
+        lh = cls.get_detail_layout(*args)
+        return lh.main.elements
+
     @classmethod
     def get_data_elem(self, name):
         """Find data element in this actor by name.

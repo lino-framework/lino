@@ -112,11 +112,8 @@ class TableHandle(object):
 
     def __init__(self, actor):
         self.actor = actor
-        # Handle.__init__(self)
-        #~ super(TableHandle,self).__init__()
 
     def __str__(self):
-        #~ return str(self.ui.__class__)+str(self.actor) + 'Handle'
         return str(self.actor) + 'Handle'
 
     def setup_layouts(self):
@@ -417,7 +414,7 @@ class AbstractTable(actors.Actor):
     order_by = None
     """If specified, this must be a tuple or list of field names which
 will be passed to Django's `order_by
-<https://docs.djangoproject.com/en/1.9/ref/models/querysets/#order-by>`__
+<https://docs.djangoproject.com/en/1.11/ref/models/querysets/#order-by>`__
 method in order to sort the rows of the queryset.
 
     """
@@ -426,7 +423,7 @@ method in order to sort the rows of the queryset.
     """If specified, this must be a `models.Q` object (not a dict of
     (fieldname -> value) pairs) which will be passed to Django's
     `filter
-    <https://docs.djangoproject.com/en/1.9/ref/models/querysets/#filter>`__
+    <https://docs.djangoproject.com/en/1.11/ref/models/querysets/#filter>`__
     method.
 
     Note that if you allow a user to insert rows into a filtered
@@ -442,14 +439,14 @@ method in order to sort the rows of the queryset.
     One advantage of :attr:`filter` over
     :attr:`known_values  <lino.core.actors.Actor.known_values>`
     is that this can use the full range of Django's `field lookup methods
-    <https://docs.djangoproject.com/en/1.9/topics/db/queries/#field-lookups>`_
+    <https://docs.djangoproject.com/en/1.11/topics/db/queries/#field-lookups>`_
 
     """
 
     exclude = None
     """If specified, this must be dict which will be passed to Django's
     `exclude
-    <https://docs.djangoproject.com/en/1.9/ref/models/querysets/#exclude>`__
+    <https://docs.djangoproject.com/en/1.11/ref/models/querysets/#exclude>`__
     method on the queryset.
 
     """

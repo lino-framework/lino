@@ -268,7 +268,7 @@ class ComboStoreField(StoreField):
         for i in self.field.choices:
             if i[0] == v:
                 # return (v, i[1].encode('utf8'))
-                return (v, i[1])
+                return (getattr(v, "value", v), i[1])
         return (v, _("%r (invalid choice)") % v)
 
 

@@ -2018,7 +2018,7 @@ Lino.call_ajax_action = function(
       //~ console.log("20130831",selected_recs);
       var rs = Array(selected_recs.length);
       for(var i=0; i < selected_recs.length;i++) {
-          rs[i] = selected_recs[i].id;
+          rs[i] = selected_recs[i].data[panel.ls_id_property];
       };
       p.{{constants.URL_PARAM_SELECTED}} = rs;
   }
@@ -2998,7 +2998,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     this.refresh();
   },
   
-  get_selected : function() { return [ this.current_record ] },
+//  get_selected : function() { return [ this.current_record ] },
   get_current_record : function() {  
     //~ console.log(20100714,this.current_record);
     return this.current_record 

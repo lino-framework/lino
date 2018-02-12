@@ -1,0 +1,7 @@
+{% extends "/openui5/elems/column/FieldElement.xml" %}
+
+{% block column_template %}
+
+<core:HTML content="&lt;span&gt;{{bind(c.field.name)}}&lt;/span&gt;" wrapping="true" xmlns="sap.ui.core"/>
+
+{% endblock %}
