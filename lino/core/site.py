@@ -414,6 +414,12 @@ class Site(object):
 
     See :ref:`datamig` and/or :func:`lino.utils.dpy.install_migrations`.
 
+    TODO: rename this to `migrator_class`
+
+    """
+    
+    migration_module = None
+    """The full Python path of a module to use for all migrations.
     """
 
     hidden_languages = None
@@ -1259,6 +1265,12 @@ class Site(object):
         for p in self.installed_plugins:
             p.on_plugins_loaded(self)
         
+        if self.migration_module is not None:
+            self.django_settings.update(
+                MIGRATION_MODULES={
+                    p.app_label:self.migration_module
+                    for p in self.installed_plugins})
+            
         self.setup_plugins()
         self.install_settings()
 

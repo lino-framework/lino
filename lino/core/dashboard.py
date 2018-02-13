@@ -26,6 +26,7 @@ class DashboardItem(Permittable):
     """
 
     width = None
+    header_level = None
     
     def __init__(self, name):
         self.name = name
@@ -33,10 +34,48 @@ class DashboardItem(Permittable):
     def render(self, ar):
         """Return a HTML string """
 
-class ActorItem(DashboardItem):
-    """The only one that's being used.
+    def render_request(self, ar, sar):
+        """
+        Render the given table action
+        request. `ar` is the incoming request (the one which displays
+        the dashboard), `sar` is the table we want to show (a child of
+        `sar`).
 
-    See :mod:`lino_xl.lib.blogs` as a usage example.
+        This is a helper function for shared use by :class:`ActorItem`
+        and :class:`RequestItem`.
+        """
+        T = sar.actor
+        if not sar.get_total_count():
+            # print("20180212 render no rows in ", sar)
+            return ''
+        if self.header_level is None:
+            s = ''
+        else:
+            s = E.tostring(E.h2(
+                sar.actor.get_title_base(sar),
+                ' ', ar.window_action_button(
+                    T.default_action,
+                    # label="🗗",
+                    # label="☌",  # conjunction
+                    # label="◱", # 25F1
+                    # label="◳", # 25F3
+                    # label="⏍", # 23CD
+                    label="⏏", # 23CF
+                    # label="⍐", # 2350
+                    # style="text-decoration:none; font-size:80%;",
+                    style="text-decoration:none;",
+                    title=_("Show this table in own window"))))
+
+        s += E.tostring(ar.show(sar))
+        return s
+            
+class ActorItem(DashboardItem):
+    """A dashboard item which simply renders a given actor.
+    The actor should be a table, other usage is untested.
+
+    Usage examples:
+    - :mod:`lino_xl.lib.blogs` 
+    - :mod:`lino_book.projects.events` 
 
     .. attribute:: header_level
 
@@ -64,27 +103,23 @@ class ActorItem(DashboardItem):
         """
         T = self.actor
         sar = ar.spawn(T, limit=T.preview_limit)
-        if not sar.get_total_count():
-            return ''
-        if self.header_level is None:
-            s = ''
-        else:
-            s = E.tostring(E.h2(
-                T.label, ' ', ar.window_action_button(
-                    T.default_action,
-                    # label="🗗",
-                    # label="☌",  # conjunction
-                    # label="◱", # 25F1
-                    # label="◳", # 25F3
-                    # label="⏍", # 23CD
-                    label="⍐", # 2350
-                    # style="text-decoration:none; font-size:80%;",
-                    style="text-decoration:none;",
-                    title=_("Show this table in own window"))))
-
-        s += E.tostring(ar.show(sar))
-        return s
-            
+        return self.render_request(ar, sar)
+    
+class RequestItem(DashboardItem):
+    """
+    Experimentally used in `lino_book.projects.events`.
+    """
+    def __init__(self, sar, header_level=2):
+        self.sar = sar
+        self.header_level = header_level
+        super(RequestItem, self).__init__(None)
+        
+    def get_view_permission(self, user_type):
+        return self.sar.get_permission()
+    
+    def render(self, ar):
+        return self.render_request(ar, self.sar)
+        
 
 class CustomItem(DashboardItem):
     """Won't work. Not used and not tested."""

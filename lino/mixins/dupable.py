@@ -1,8 +1,9 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2014-2017 Luc Saffre
+# Copyright 2014-2018 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Defines the :class:`Dupable` model mixin and related functionality
+"""
+Defines the :class:`Dupable` model mixin and related functionality
 to assist users in finding unwanted duplicate database records.
 
 Don't mix up this module with :mod:`lino.mixins.duplicable`.  Models
@@ -25,8 +26,10 @@ and the `Double Metaphone
 algorithm.  Read also Doug Hellmann about `Using Fuzzy Matching to
 Search by Sound with Python
 <http://www.informit.com/articles/article.aspx?p=1848528>`_
-(2012-03-22).
-
+(2012-03-22) and `Phonetic Similarity of Words: A Vectorized Approach
+in Python
+<http://stackabuse.com/phonetic-similarity-of-words-a-vectorized-approach-in-python/>`__
+by Frank Hofmann (2018-02-12)
 """
 
 from __future__ import unicode_literals
@@ -124,31 +127,32 @@ class PhoneticWordBase(dd.Model):
 
 
 class Dupable(dd.Model):
-    """Base class for models that can be "dupable".
+    """
+    Base class for models that can be "dupable".
 
     This mixin is to be used on models for which there is a danger of
     having unwanted duplicate records. It is both for *avoiding* such
     duplicates on new records and for *detecting* existing duplicates.
 
-    Note that adding :class:`Dupable` to your model's base classes does
-    not yet activate any functionality, it just declares that model as
-    being dupable.  In order to activate verification, you must also
-    define a model which implements :class:`PhoneticWordBase` and set
-    :attr:`Dupable.dupable_word_model` to point to that model.  This is
-    done by plugins like :mod:`lino_xl.lib.dupable_partners` or
+    Note that adding :class:`Dupable` to your model's base classes
+    does not yet activate any functionality, it just declares that
+    model as being dupable.  In order to activate verification, you
+    must also define a model which implements
+    :class:`PhoneticWordBase` and set
+    :attr:`Dupable.dupable_word_model` to point to that model.  This
+    is done by plugins like :mod:`lino_xl.lib.dupable_partners` or
     :mod:`lino_welfare.modlib.dupable_clients`
-
     """
     class Meta(object):
         abstract = True
 
     submit_insert = CheckedSubmitInsert()
-    """A dupable model has its
+    """
+    A dupable model has its
     :attr:`submit_insert<lino.core.model.Model.submit_insert>` action
     overridden by :class:`CheckedSubmitInsert`, a extended variant of
     the action which checks for duplicate rows and asks a user
     confirmation when necessary.
-
     """
 
     dupable_words_field = 'name'

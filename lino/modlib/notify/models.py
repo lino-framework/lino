@@ -161,7 +161,7 @@ class Message(UserAuthored, Controllable, Created):
     seen = models.DateTimeField(_("seen"), null=True, editable=False)
     sent = models.DateTimeField(_("sent"), null=True, editable=False)
     body = dd.RichTextField(_("Body"), editable=False, format='html')
-    mail_mode = MailModes.field(default=MailModes.often.as_callable)
+    mail_mode = MailModes.field(default=MailModes.as_callable('often'))
     subject = models.CharField(
         _("Subject"), max_length=250, editable=False)
 
@@ -424,7 +424,7 @@ dd.inject_field(
 
 dd.inject_field(
     'users.User', 'mail_mode',
-    MailModes.field(default=MailModes.often.as_callable))
+    MailModes.field(default=MailModes.as_callable('often')))
 
 
 class Messages(dd.Table):

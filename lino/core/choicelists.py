@@ -135,6 +135,10 @@ class Choice(object):
         for k, v in kwargs.items():
             setattr(self, k, v)
 
+    def deconstruct(self):
+        # return (path, args, kwargs)
+        return ('lino.api.rt.resolve', (str(self.choicelist), self.value), {})
+    
     def update(self, **kwargs):
         for k, v in kwargs.items():
             if not hasattr(self, k):
@@ -227,7 +231,7 @@ Django creates copies of them when inheriting models.
         # return self.text
         return str(self.text)
 
-    def as_callable(self):
+    def unused_as_callable(self):
         """Use this when you want to specify some named default choice of
         this list as a default value *without* removing the
         possibility to clear and re-populate the list after the field
@@ -757,10 +761,14 @@ The disadvantage
 
     @classmethod
     def as_callable(self, name):
-        """Use this when you want to specify some named default choice of
-        this list as a default value *without* removing the
-        possibility to clear and re-populate the list after the field
-        definition.
+        """
+        Use this when you want to specify some named default choice of this
+        list as a default value *without* removing the possibility to
+        clear and re-populate the list after the field definition.
+
+        Usage example::
+
+            state = MyStates.field(default=MyStates.as_callable('foo'))
 
         """
         def f():
@@ -873,9 +881,9 @@ class ChoiceListField(models.CharField):
     #         setattr(cls, a.action_name, a)
     
     def deconstruct(self):
-        """Needed for Django 1.7+, see
+        """
+        Needed for Django 1.7+, see
         https://docs.djangoproject.com/en/dev/howto/custom-model-fields/#custom-field-deconstruct-method
-
         """
 
         name, path, args, kwargs = super(ChoiceListField, self).deconstruct()
@@ -883,7 +891,7 @@ class ChoiceListField(models.CharField):
 
         # kwargs.pop('default', None)
         # TODO: above line is cheating in order to get makemigrations
-        # to pass. we remove the default attribute because it is not
+        # to pass. we remove the `default` attribute because it is not
         # serializable. This means that our migrations are probably
         # invalid and not usable.
 
