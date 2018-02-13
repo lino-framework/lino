@@ -56,7 +56,7 @@ def get_json_dict(username, uri, an='detail'):
     test_client.force_login(rt.login(username).user)
     res = test_client.get(url, REMOTE_USER=username)
     assert res.status_code == 200
-    return json.loads(res.content)
+    return json.loads(res.content.decode())
 
 
 def get_json_soup(username, uri, fieldname, **kwargs):
