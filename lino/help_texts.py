@@ -373,12 +373,12 @@ but this Deserializer does not bypass pre_save/save methods."""),
     'lino.utils.djangotest.DjangoManageTestCase.override_djangosite_settings' : _("""If specified, this is a dict of Site
 attributes to override before running the test."""),
     'lino.utils.djangotest.DjangoManageTestCase.defining_module' : _("""When you decorate your subclass of TestCase, you must also specify:"""),
-    'lino.utils.djangotest.WebIndexTestCase' : _("""Designed to be just imported. No subclassing needed."""),
     'lino.utils.djangotest.RemoteAuthTestCase' : _("""Base class for tests that use remote http authentication.  We
 override the __call__() method in order to simulate
 remote_user_header <lino.core.site.Site.remote_user_header>
 being set to 'REMOTE_USER'."""),
     'lino.utils.djangotest.TestCase' : _("""alias of lino.utils.djangotest.RemoteAuthTestCase"""),
+    'lino.utils.djangotest.WebIndexTestCase' : _("""Designed to be just imported. No subclassing needed."""),
     'lino.utils.dpy.FakeDeserializedObject' : _("""Imitates DeserializedObject required by loaddata."""),
     'lino.utils.dpy.Serializer' : _("""Serializes a QuerySet to a py stream."""),
     'lino.utils.dpy.FlushDeferredObjects' : _("""Indicator class object.

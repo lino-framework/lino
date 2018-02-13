@@ -1084,10 +1084,13 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     @classmethod
     def get_title_base(self, ar):
-        """Return the base part of the title. This should be a translatable
+        """
+        Return the base part of the title. This should be a translatable
         string. This is called by :meth:`get_title` to construct the
         actual title.
 
+        It is also called by
+        :meth:`lino.core.dashboard.DashboardItem.render_request`
         """
         title = self.title or self.label
         # if self.master is not None:

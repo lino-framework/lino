@@ -35,6 +35,15 @@ class DashboardItem(Permittable):
         """Return a HTML string """
 
     def render_request(self, ar, sar):
+        """
+        Render the given table action
+        request. `ar` is the incoming request (the one which displays
+        the dashboard), `sar` is the table we want to show (a child of
+        `sar`).
+
+        This is a helper function for shared use by :class:`ActorItem`
+        and :class:`RequestItem`.
+        """
         T = sar.actor
         if not sar.get_total_count():
             # print("20180212 render no rows in ", sar)
@@ -43,14 +52,16 @@ class DashboardItem(Permittable):
             s = ''
         else:
             s = E.tostring(E.h2(
-                sar.get_title(), ' ', ar.window_action_button(
+                sar.actor.get_title_base(sar),
+                ' ', ar.window_action_button(
                     T.default_action,
                     # label="🗗",
                     # label="☌",  # conjunction
                     # label="◱", # 25F1
                     # label="◳", # 25F3
                     # label="⏍", # 23CD
-                    label="⍐", # 2350
+                    label="⏏", # 23CF
+                    # label="⍐", # 2350
                     # style="text-decoration:none; font-size:80%;",
                     style="text-decoration:none;",
                     title=_("Show this table in own window"))))
@@ -59,9 +70,12 @@ class DashboardItem(Permittable):
         return s
             
 class ActorItem(DashboardItem):
-    """The only one that's actually useful.
+    """A dashboard item which simply renders a given actor.
+    The actor should be a table, other usage is untested.
 
-    See :mod:`lino_xl.lib.blogs` as a usage example.
+    Usage examples:
+    - :mod:`lino_xl.lib.blogs` 
+    - :mod:`lino_book.projects.events` 
 
     .. attribute:: header_level
 
