@@ -42,7 +42,7 @@ class UploadType(mixins.BabelNamed):
         verbose_name = _("Upload Type")
         verbose_name_plural = _("Upload Types")
 
-    upload_area = UploadAreas.field(default=UploadAreas.general.as_callable)
+    upload_area = UploadAreas.field(default=UploadAreas.as_callable('general'))
 
     max_number = models.IntegerField(
         _("Max. number"), default=-1,
@@ -111,7 +111,7 @@ class Upload(mixins.Uploadable, UserAuthored, Controllable):
         verbose_name = _("Upload")
         verbose_name_plural = _("Uploads")
 
-    upload_area = UploadAreas.field(default=UploadAreas.general.as_callable)
+    upload_area = UploadAreas.field(default=UploadAreas.as_callable('general'))
 
     type = dd.ForeignKey(
         "uploads.UploadType",
