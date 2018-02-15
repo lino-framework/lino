@@ -91,7 +91,7 @@ def login_required(*args):
     """
     if len(args):
         return set(args)
-    return set([SiteUser])
+    return {SiteUser}
 
 
 def check_role(rr, actor):
