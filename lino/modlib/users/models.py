@@ -274,6 +274,8 @@ class Authority(UserAuthored):
             #~ .exclude(level__gte=UserLevels.admin)
         return qs
 
+dd.update_field(Authority, 'user', null=False)    
+
 @dd.receiver(dd.pre_startup)
 def inject_partner_field(sender=None, **kwargs):
 
