@@ -156,6 +156,7 @@ class HtmlNamespace(Namespace):
         # the snippet, but we don't want it.
         try:
             root = HTML(raw_html)[0]
+            # root = E.html(raw_html)[0]
         except Exception as e:
             return E.p("Invalid HTML ({}) in {}".format(e, raw_html))
         if len(root) == 1:
