@@ -11,7 +11,7 @@ from django.conf import settings
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 
 from lino.api import dd, rt, _
-from lino.utils.xmlgen.html import E
+from etgen.html import E
 from lino.core import userprefs
 # from lino.core.fields import NullCharField
 from lino.core.roles import SiteAdmin

@@ -31,7 +31,7 @@ from lino.modlib.office.roles import OfficeStaff, OfficeUser
 from lino.mixins.bleached import body_subject_to_elems
 
 from lino.utils.format_date import fds
-from lino.utils.xmlgen.html import E
+from etgen.html import E
 from lino.utils import join_elems
 
 from datetime import timedelta

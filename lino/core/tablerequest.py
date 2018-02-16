@@ -30,8 +30,8 @@ from lino.core.utils import obj2str
 from lino.core.utils import format_request
 from lino.core.store import get_atomizer
 from lino.core import constants
-from lino.utils.xmlgen import html as xghtml
-from lino.utils.xmlgen.html import E
+from etgen import html as xghtml
+from etgen.html import E
 from lino.utils import jsgen
 from lino.core.utils import getrqdata
 from .fields import RemoteField, FakeField
@@ -409,7 +409,7 @@ class TableRequest(ActionRequest):
                   show_links=None, hide_sums=None):
         """
         Render this table into an existing
-        :class:`lino.utils.xmlgen.html.Table` instance.
+        :class:`etgen.html.Table` instance.
 
         """
         ar = self

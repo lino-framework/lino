@@ -15,7 +15,7 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 
 from lino.api import dd
 from lino.modlib.users.mixins import My
-from lino.utils.xmlgen.html import E
+from etgen.html import E
 from lino.utils.soup import truncate_comment
 from lino.core.gfks import gfk2lookup
 from .roles import CommentsReader, CommentsUser, CommentsStaff

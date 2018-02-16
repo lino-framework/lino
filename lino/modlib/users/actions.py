@@ -150,7 +150,7 @@ class SignOut(dd.Action):
             _("User {} logged out.").format(user),
             goto_url=ar.renderer.plugin.build_plain_url())
 
-from lino.utils.xmlgen.html import E
+from etgen.html import E
 # from lino.core.fields import DisplayField, DummyField
 
 # class SocialAuthField(DisplayField):

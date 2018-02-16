@@ -12,7 +12,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from lino.core.signals import on_ui_updated
 from lino.core.fields import VirtualField
-from lino.utils.xmlgen.html import E
+from etgen.html import E
 # from .utils import obj2str
 from .utils import obj2unicode
 

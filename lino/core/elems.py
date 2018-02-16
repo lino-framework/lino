@@ -56,12 +56,12 @@ from lino.core import tables
 from lino.core.gfks import GenericForeignKey
 from lino.utils.format_date import fds
 
-from lino.utils.xmlgen import etree
-from lino.utils.xmlgen.html import E
+from etgen import etree
+from etgen.html import E
 from lino.utils import is_string
 
 from lino.core.site import html2text
-from lino.utils.xmlgen.html import html2rst
+from etgen.html import html2rst
 
 from lino.modlib.users.utils import get_user_profile
 

@@ -26,7 +26,7 @@ from django.core import exceptions
 from django.utils.encoding import force_text
 from django.http import QueryDict
 
-from lino.utils.xmlgen.html import E
+from etgen.html import E
 from lino import AFTER17
 
 from django.core.validators import (

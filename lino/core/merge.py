@@ -25,7 +25,7 @@ from lino.core import fields
 from lino.core.signals import pre_merge
 from lino.core.utils import full_model_name
 from lino.core.roles import SiteStaff
-from lino.utils.xmlgen.html import E
+from etgen.html import E
 from lino.api import rt
 
 

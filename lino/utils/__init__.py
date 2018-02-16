@@ -116,6 +116,8 @@ from collections import OrderedDict
 
 from atelier.utils import AttrDict, iif, ispure, assert_pure, confirm, isiterable, is_string, i2d, i2t
 from atelier import rstgen
+from etgen.utils import join_elems
+
 from lino.utils.cycler import Cycler
 from lino.utils.code import codefiles, codetime
 
@@ -124,36 +126,10 @@ def join_words(*words):
     Remove any empty item (None or ''), call unicode on each and
     join the remaining word using a single space.
 
-    TODO: move this to lino.utils.xmlgen.html ?
+    TODO: move this to etgen.html ?
 
     """
     return ' '.join([str(x) for x in words if x])
-
-
-def join_elems(elems, sep=' '):
-    """
-    Examples:
-    >>> join_elems([1, 2, 3])
-    [1, ' ', 2, ' ', 3]
-    >>> join_elems([1, 2, 3],' / ')
-    [1, ' / ', 2, ' / ', 3]
-    >>> join_elems([])
-    []
-
-    """
-    if not callable(sep):
-        sep_value = sep
-
-        def sep():
-            return sep_value
-    l = []
-    s = None
-    for e in elems:
-        if s is not None:
-            l.append(s)
-        s = sep()
-        l.append(e)
-    return l
 
 
 def d2iso(d):

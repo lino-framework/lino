@@ -10,7 +10,7 @@ import datetime
 from lino.api import dd
 from lino.utils import ONE_DAY
 SEVEN_DAYS = datetime.timedelta(days=7)
-from lino.utils.xmlgen.html import E
+from etgen.html import E
 from lino_xl.lib.cal.utils import Weekdays
 from lino.modlib.users.roles import SiteUser
 

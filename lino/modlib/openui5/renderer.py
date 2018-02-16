@@ -11,7 +11,7 @@ from lino.core.renderer import HtmlRenderer
 from lino.core.renderer import add_user_language
 from lino.core.menus import Menu, MenuItem
 
-from lino.utils.xmlgen.ui5xml import E
+from etgen.ui5xml import E
 
 from .views import index_response
 

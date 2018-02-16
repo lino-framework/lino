@@ -34,7 +34,7 @@ from lino.core.utils import error2str
 from lino.core.utils import qs2summary
 from lino.core.utils import ParameterPanel
 from lino.utils import curry, AttrDict, is_string
-from lino.utils.xmlgen.html import E
+from etgen.html import E
 
 from .roles import SiteUser
 

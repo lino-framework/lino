@@ -15,7 +15,7 @@ from lino.core import actions
 from lino.core.tables import AbstractTable
 from lino.utils.media import TmpMediaFile
 from lino.utils import IncompleteDate
-from lino.utils.xmlgen.html import E
+from etgen.html import E
 from lino.utils.quantities import Duration
 from lino.core.choicelists import Choice
 from lino.api import dd

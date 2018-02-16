@@ -27,7 +27,7 @@ from django.core.exceptions import ValidationError
 from lino.core import actions
 from lino.core import fields
 from lino.core.utils import navinfo
-from lino.utils.xmlgen.html import E
+from etgen.html import E
 from lino.utils import AttrDict
 from lino.utils import join_elems
 

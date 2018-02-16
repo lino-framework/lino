@@ -25,14 +25,14 @@ from django.db import models
 from django.utils.translation import ugettext as _
 from django.utils.translation import get_language
 
-from lino.utils.html2rst import RstTable
+from etgen.html2rst import RstTable
 from lino.utils import isiterable
 from lino.utils.jsgen import py2js
-from lino.utils.xmlgen.html import E
+from etgen.html import E
 from lino.core import constants
 from lino.core.menus import Menu, MenuItem
-# from lino.utils.xmlgen.html import _html2rst as html2rst
-# from lino.utils.xmlgen.html import html2rst
+# from etgen.html import _html2rst as html2rst
+# from etgen.html import html2rst
 
 from .views import json_response
 from .plugin import Plugin

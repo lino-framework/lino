@@ -42,7 +42,7 @@ from django.utils.translation import get_language
 from lino.core.plugin import Plugin
 
 from lino import assert_django_code, DJANGO_DEFAULT_LANGUAGE
-from lino.utils.xmlgen.html import E
+from etgen.html import E
 from lino.core.utils import simplify_name, get_models
 # from lino.utils.html2text import html2text
 # from html2text import html2text
@@ -3406,7 +3406,7 @@ Please convert to Plugin method".format(mod, methname)
         instance representing this request as positional argument.
         The callable is expected to yield a series of messages
         (usually either 0 or 1). Each message must be either a string
-        or a :class:`E.span <lino.utils.xmlgen.html.E>` element.
+        or a :class:`E.span <etgen.html.E>` element.
 
         """
         # print(

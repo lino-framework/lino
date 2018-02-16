@@ -23,7 +23,7 @@ from django.db.models import FieldDoesNotExist
 
 from lino.core.roles import SiteStaff
 from lino.api import dd, rt
-from lino.utils.xmlgen.html import E
+from etgen.html import E
 from lino.utils import join_elems
 
 from lino.core.utils import get_models

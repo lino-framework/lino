@@ -4,7 +4,7 @@
 
 """This module contains mainly a utility function :func:`html2odf`
 which converts an ElementTree object generated using
-:mod:`lino.utils.xmlgen.html` to a fragment of ODF.
+:mod:`etgen.html` to a fragment of ODF.
 
 .. This is part of the Lino test suite. To test it individually, run:
 
@@ -24,7 +24,7 @@ use :mod:`appy.pod` to do the actual generation.
 
 Usage examples:
 
->>> from lino.utils.xmlgen.html import E
+>>> from etgen.html import E
 >>> def test(e):
 ...     print (E.tostring(e))
 ...     print (toxml(html2odf(e)))
@@ -156,7 +156,7 @@ PTAGS = ('p', 'td', 'div', 'table', 'tr')
 
 def html2odf(e, ct=None, **ctargs):
     """
-    Convert a :mod:`lino.utils.xmlgen.html` element to an ODF text element.
+    Convert a :mod:`etgen.html` element to an ODF text element.
     Most formats are not implemented.
     There's probably a better way to do this...
 

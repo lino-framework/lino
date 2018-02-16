@@ -17,7 +17,7 @@ from django.utils.translation import pgettext_lazy as pgettext
 
 from lino.api import dd, rt, _
 from lino import mixins
-from lino.utils.xmlgen.html import E, join_elems
+from etgen.html import E, join_elems
 from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.users.mixins import UserAuthored, My
 from lino.modlib.office.roles import OfficeUser, OfficeStaff, OfficeOperator

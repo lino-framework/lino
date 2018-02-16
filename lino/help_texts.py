@@ -470,22 +470,22 @@ creating a temporary test database)."""),
 which is encoded in the given encoding."""),
     'lino.utils.ucsv.UnicodeWriter' : _("""A CSV writer which will write rows to CSV file "f",
 which is encoded in the given encoding."""),
-    'lino.utils.xmlgen.Namespace' : _("""An XML namespace.  Base class for
-lino.utils.xmlgen.html.HtmlNamespace and the namespaces
-defined in lino.utils.xmlgen.intervat."""),
-    'lino.utils.xmlgen.cbss.WebServiceConnector' : _("""The WebServiceConnector namespace used for wrapping "classical" CBSS services."""),
-    'lino.utils.xmlgen.cbss.SSDNns' : _("""The SSDN namespace used for wrapping "classical" CBSS services."""),
-    'lino.utils.xmlgen.cbss.Service' : _("""Base class for the individual services."""),
-    'lino.utils.xmlgen.cbss.IdentifyPersonRequest' : _("""A request for identifying a person or validating a person's identity"""),
-    'lino.utils.xmlgen.cbss.PerformInvestigationRequest' : _("""A request to the PerformInvestigation BCSS service.
+    'etgen.Namespace' : _("""An XML namespace.  Base class for
+etgen.html.HtmlNamespace and the namespaces
+defined in etgen.intervat."""),
+    'etgen.cbss.WebServiceConnector' : _("""The WebServiceConnector namespace used for wrapping "classical" CBSS services."""),
+    'etgen.cbss.SSDNns' : _("""The SSDN namespace used for wrapping "classical" CBSS services."""),
+    'etgen.cbss.Service' : _("""Base class for the individual services."""),
+    'etgen.cbss.IdentifyPersonRequest' : _("""A request for identifying a person or validating a person's identity"""),
+    'etgen.cbss.PerformInvestigationRequest' : _("""A request to the PerformInvestigation BCSS service.
 Net yet used in practice."""),
-    'lino.utils.xmlgen.cbss.HealthInsuranceRequest' : _("""A request to the HealthInsurance BCSS service.
+    'etgen.cbss.HealthInsuranceRequest' : _("""A request to the HealthInsurance BCSS service.
 Net yet used in practice."""),
-    'lino.utils.xmlgen.html.HtmlNamespace' : _("""The HTML namespace.
+    'etgen.html.HtmlNamespace' : _("""The HTML namespace.
 This is instantiated as E."""),
-    'lino.utils.xmlgen.html.Table' : _("""A pythonic representation of a <table> with <head>,
+    'etgen.html.Table' : _("""A pythonic representation of a <table> with <head>,
 <foot> and <body>."""),
-    'lino.utils.xmlgen.html.Document' : _("""A pythonic representation of a <body> with a <title> and
+    'etgen.html.Document' : _("""A pythonic representation of a <body> with a <title> and
 some <head> tags for stylesheets."""),
     'lino.api.ad.Plugin' : _("""Shortcut to lino.core.plugins.Plugin."""),
     'lino.api.ad.Site' : _("""Shortcut to lino.core.site.Site."""),

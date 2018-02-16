@@ -38,7 +38,7 @@ from django.db import models
 from lino.api import dd, _
 from lino.modlib.gfks.mixins import Controllable
 from lino.utils import join_elems
-from lino.utils.xmlgen.html import E
+from etgen.html import E
 
 from .mixins import Dupable
 

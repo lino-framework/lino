@@ -20,6 +20,7 @@ PY3 = sys.version_info[0] == 3
 install_requires = [
     'Sphinx',
     'atelier', 'unipath', 'python_dateutil',
+    'etgen',
     'Babel', 'lxml',
     'beautifulsoup4',
     'pisa',
@@ -179,11 +180,6 @@ lino.sphinxcontrib.logo
 lino.utils
 lino.utils.demonames
 lino.utils.mldbc
-lino.utils.xmlgen
-lino.utils.xmlgen.cbss
-lino.utils.xmlgen.intervat
-lino.utils.xmlgen.odf
-lino.utils.xmlgen.sepa
 """.splitlines() if n])
 
 SETUP_INFO.update(message_extractors={

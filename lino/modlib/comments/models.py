@@ -19,7 +19,7 @@ from lino.mixins import CreatedModified, BabelNamed
 from lino.modlib.users.mixins import UserAuthored
 # from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.notify.mixins import ChangeObservable
-from lino.utils.xmlgen.html import E
+from etgen.html import E
 from lino.mixins.bleached import Bleached
 from lino.core.roles import SiteUser
 from lino.core.gfks import gfk2lookup

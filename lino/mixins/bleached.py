@@ -61,7 +61,7 @@ from lino.core.model import Model
 from lino.core.fields import fields_list, RichTextField
 from lino.utils.restify import restify
 from lino.utils.soup import truncate_comment
-from lino.utils.xmlgen.html import E
+from etgen.html import E
 from lino.api import _
 
 
