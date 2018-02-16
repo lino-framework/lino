@@ -26,7 +26,7 @@ from lino.utils import AttrDict
 from lino.core.utils import get_models
 
 from lino.utils.code import codetime, codefiles, SourceFile
-from lino.utils.xmlgen.html import E
+from etgen.html import E
 from lino.utils import join_elems
 
 from lino.api import rt, dd

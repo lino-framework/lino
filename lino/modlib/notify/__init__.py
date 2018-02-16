@@ -28,7 +28,7 @@ Templates used by this plugin
     - ``obj`` -- The :class:`Message
       <lino.modlib.notify.models.Message>` instance being sent.
 
-    - ``E`` -- The html namespace :mod:`lino.utils.xmlgen.html`
+    - ``E`` -- The html namespace :mod:`etgen.html`
 
     - ``rt`` -- The runtime API :mod:`lino.api.rt`
 

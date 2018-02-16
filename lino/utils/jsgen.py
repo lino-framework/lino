@@ -54,7 +54,7 @@ from django.db.models.fields import NOT_PROVIDED
 
 from lino.utils import IncompleteDate
 from lino.utils.quantities import Quantity
-from lino.utils.xmlgen import etree
+from etgen import etree
 from lino.utils import curry
 from lino.core.permissions import Permittable
 from lino.core.permissions import make_view_permission_handler

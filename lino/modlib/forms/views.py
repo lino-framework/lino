@@ -28,8 +28,8 @@ from lino.core.requests import BaseRequest
 from lino.core.tablerequest import TableRequest
 from lino.core.views import action_request
 from lino.core.utils import navinfo
-from lino.utils.xmlgen.html import E
-from lino.utils.xmlgen import html as xghtml
+from etgen.html import E
+from etgen import html as xghtml
 
 PLAIN_PAGE_LENGTH = 15
 
@@ -87,7 +87,7 @@ def table2html(ar, as_main=True):
     :class:`lino.core.tablerequest.TableRequest`.
 
     The returned HTML enclosed in a ``<div>`` tag and generated using
-    :mod:`lino.utils.xmlgen.html`.
+    :mod:`etgen.html`.
 
     If `as_main` is True, include additional elements such as a paging
     toolbar. (This argument is currently being ignored.)

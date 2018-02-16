@@ -48,7 +48,7 @@ from lino.core import menus
 # from lino.core import auth
 from lino.utils import jsgen
 from lino.utils.jsgen import py2js, js_code
-from lino.utils.xmlgen.html import E
+from etgen.html import E
 
 from lino.core.roles import SiteUser, Supervisor
 

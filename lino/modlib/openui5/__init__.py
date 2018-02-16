@@ -1,10 +1,13 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2015 Luc Saffre
+# Copyright 2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-"""This started as a copy of :mod:`lino.modlib.plain` and moved to the
-version 3 of `Bootstrap <http://twitter.github.com/bootstrap>`_ CSS
-toolkit.
+"""
+A user interface for Lino applications that uses `OpenUI5
+<http://openui5.org>`__.
+
+Started in January 2018 as an alternative to :mod:`lino.modlib.extjs`.
+Not finished.
 
 .. autosummary::
    :toctree:
@@ -12,8 +15,6 @@ toolkit.
     views
     renderer
     models
-
-
 """
 
 from lino.api.ad import Plugin

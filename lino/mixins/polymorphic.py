@@ -16,7 +16,7 @@ from lino.core.utils import models_by_base
 
 from lino.utils import mti
 from lino.utils import join_elems
-from lino.utils.xmlgen.html import E
+from etgen.html import E
 from lino.core import model
 from lino.core import fields
 from lino.core.actions import Action

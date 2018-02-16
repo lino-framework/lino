@@ -21,7 +21,7 @@ from lino.api import rt, _
 from lino.core import dbutils
 
 from lino.core.roles import SiteStaff
-from lino.utils.xmlgen.html import E
+from etgen.html import E
 from lino.utils.media import TmpMediaFile
 from lino.utils.pdf import merge_pdfs
 

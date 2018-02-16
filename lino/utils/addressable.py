@@ -11,7 +11,7 @@ $ python setup.py test -s tests.UtilsTests.test_addressable
 
 from __future__ import print_function
 
-from lino.utils.xmlgen.html import E, lines2p
+from etgen.html import E, lines2p
 
 
 class Addressable(object):
@@ -98,7 +98,7 @@ class Addressable(object):
         <p>line1<br />line2<br /><br /><br /></p>
 
         Any arguments are forwarded to :meth:`lines2p
-        <lino.utils.xmlgen.html.lines2p>` which is used to pack the address
+        <etgen.html.lines2p>` which is used to pack the address
         lines into a paragraph (see there for more examples).
 
         """

@@ -44,7 +44,7 @@ from django.db import models
 from lino.api import dd, _
 from lino.core.actions import SubmitInsert
 from lino.utils import join_elems
-from lino.utils.xmlgen.html import E
+from etgen.html import E
 
 
 class CheckedSubmitInsert(SubmitInsert):

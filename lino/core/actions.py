@@ -33,7 +33,7 @@ from lino.core.permissions import Permittable
 from lino.core.utils import Parametrizable, InstanceAction
 from lino.modlib.users.utils import get_user_profile
 from lino.utils.choosers import Chooser
-from lino.utils.xmlgen.html import E
+from etgen.html import E
 
 from .diff import ChangeWatcher
 

@@ -12,7 +12,7 @@ from django.db import models
 from django.conf import settings
 
 from lino.core.model import Model
-from lino.utils.xmlgen.html import E
+from etgen.html import E
 
 
 class Uploadable(Model):

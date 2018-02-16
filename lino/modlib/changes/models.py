@@ -22,7 +22,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 
 from lino.api import dd
-from lino.utils.xmlgen.html import E
+from etgen.html import E
 from lino.utils.watch import get_master
 
 from lino.core.roles import SiteStaff

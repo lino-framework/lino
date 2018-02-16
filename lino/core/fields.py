@@ -287,7 +287,7 @@ class DisplayField(FakeField):
     the `return_type` of a :class:`VirtualField`.
 
     The value to be represented is either some unicode text, a
-    translatable text or a :mod:`HTML element <lino.utils.xmlgen.html>`.
+    translatable text or a :mod:`HTML element <etgen.html>`.
     """
     choices = None
     blank = True

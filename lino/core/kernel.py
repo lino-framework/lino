@@ -60,7 +60,7 @@ from lino.core import tables
 from lino.core import constants
 from lino.core import views
 from lino.utils.memo import Parser
-from lino.utils.xmlgen.html import E
+from etgen.html import E
 from lino.core.requests import ActorRequest
 from lino.core.model import Model
 from lino.core.store import Store

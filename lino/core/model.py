@@ -28,7 +28,7 @@ from lino.core import signals
 from lino.core import actions
 from lino.core.utils import error2str
 from lino.core.utils import resolve_model
-from lino.utils.xmlgen.html import E
+from etgen.html import E
 from lino.utils import get_class_attr
 from lino.core.signals import on_ui_created, pre_ui_delete, pre_ui_save
 

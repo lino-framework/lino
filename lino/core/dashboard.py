@@ -9,7 +9,7 @@ from __future__ import unicode_literals
 
 from lino.api import _
 from lino.core.permissions import Permittable
-from lino.utils.xmlgen.html import E
+from etgen.html import E
 
 class DashboardItem(Permittable):
     """Base class for all dashboard items.

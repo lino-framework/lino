@@ -21,8 +21,8 @@ from django.utils.translation import ugettext
 from django.utils.translation import pgettext
 from lino.utils import iif
 from lino.utils import format_date
-from lino.utils.xmlgen import html as xghtml
-from lino.utils.xmlgen.html import E
+from etgen import html as xghtml
+from etgen.html import E
 from lino.utils.jinja import Counter
 from lino.utils import SumCollector
 

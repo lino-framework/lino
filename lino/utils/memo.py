@@ -167,7 +167,7 @@ COMMAND_REGEX = re.compile(r"\[(\w+)\s*((?:[^[\]]|\[.*?\])*?)\]")
 
 EVAL_REGEX = re.compile(r"\[=((?:[^[\]]|\[.*?\])*?)\]")
 
-from lino.utils.xmlgen import etree
+from etgen import etree
 
 
 class Parser(object):

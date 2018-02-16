@@ -21,7 +21,7 @@ from lino.core import fields
 from lino.modlib.printing.mixins import Printable
 from lino.modlib.printing.mixins import DirectPrintAction
 from lino.modlib.printing.choicelists import SimpleBuildMethod
-from lino.utils.xmlgen.html import E
+from etgen.html import E
 
 
 from django.utils.encoding import python_2_unicode_compatible
