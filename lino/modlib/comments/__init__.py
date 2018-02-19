@@ -1,16 +1,13 @@
-# Copyright 2013-2017 Luc Saffre
+# Copyright 2013-2018 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
-Add comments to any model instance.
+Lino's comments framework.  See :doc:`/specs/comments`.
 
 .. autosummary::
    :toctree:
 
-    models
-    mixins
     fixtures.demo2
-
 """
 
 from lino import ad
@@ -50,6 +47,6 @@ class Plugin(ad.Plugin):
         m = m.add_menu(mg.app_label, mg.verbose_name)
         m.add_action('comments.AllComments')
 
-    def unused_get_dashboard_items(self, user):
-        # removed because it is rather disturbing to see all comments
+    def get_dashboard_items(self, user):
+        yield self.site.models.comments.MyPendingComments
         yield self.site.models.comments.RecentComments

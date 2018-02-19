@@ -30,7 +30,6 @@ This is a tested document. To test it, run::
     html2odf
     html2xhtml
     mytidylib
-    htmlgen
     instantiator
     jinja
     jscompressor
@@ -52,6 +51,7 @@ This is a tested document. To test it, run::
     restify
     screenshots
     sendchanges
+    soup
     sqllog
     ssin
     test
