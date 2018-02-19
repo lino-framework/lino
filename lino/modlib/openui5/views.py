@@ -212,7 +212,7 @@ def XML_response(ar, tplname, context):
     env = settings.SITE.plugins.jinja.renderer.jinja_env
     template = env.get_template(tplname)
     def bind(*args):
-        return "{" + escape("".join(args)) + "}"
+        return "{" + "".join(args) + "}"
     context.update(
         # Because it's a pain to excape {x} in jinja
         bind=bind
