@@ -181,15 +181,6 @@ for fixing this problem."""),
     'lino.modlib.checkdata.MyProblems.model' : _("""alias of Problem"""),
     'lino.modlib.checkdata.roles.CheckdataUser' : _("""A user who can see data problems."""),
     'lino.modlib.comments.Plugin' : _("""See /dev/plugins."""),
-    'lino.modlib.comments.mixins.Commentable' : _("""A request for comment. Every database model of an application"""),
-    'lino.modlib.comments.CommentType' : _("""The type of an upload."""),
-    'lino.modlib.comments.CommentType.shortcut' : _("""Optional pointer to a virtual upload shortcut field.  If
-this is not empty, then the given shortcut field will manage
-uploads of this type.  See also Shortcuts."""),
-    'lino.modlib.comments.Comment' : _("""A comment is a short text which some user writes about some
-other database object. It has no recipient."""),
-    'lino.modlib.comments.Comment.short_text' : _("""A short "abstract" of your comment. This should not be more
-than one paragraph."""),
     'lino.modlib.dashboard.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.dashboard.UpdateWidgets' : _("""Create or update the widgets for this user."""),
     'lino.modlib.davlink.Plugin' : _("""See /dev/plugins."""),
@@ -396,7 +387,6 @@ to indicate that all deferred objects should get saved before going on."""),
     'lino.utils.dpy.DpyLoader' : _("""Instantiated by restore.py."""),
     'lino.utils.dpy.DpyDeserializer' : _("""The Django deserializer for dpy."""),
     'lino.utils.dpy.Migrator' : _("""The SITE's Migrator class is instantiated by install_migrations."""),
-    'lino.utils.htmlgen.TABLE' : _("""Renders as a simple table."""),
     'lino.utils.instantiator.LookupConverter' : _("""A Converter for ForeignKey and ManyToManyField. 
 If the lookup_field is a BabelField, then it tries all available languages."""),
     'lino.utils.instantiator.ChoiceConverter' : _("""Converter for ChoiceListField."""),
@@ -490,6 +480,19 @@ which is encoded in the given encoding."""),
 as a client contact."""),
     'lino.modlib.users.User.coaching_type' : _("""The coaching type used for new coachings of this user."""),
     'lino.modlib.users.User.coaching_supervisor' : _("""Notify me when a coach has been assigned."""),
+    'lino.modlib.comments.Comment.body_text' : _("""The full body text of your comment."""),
+    'lino.modlib.comments.Comment.body_preview' : _("""The first paragraph of your body."""),
+    'lino.modlib.comments.Comments.show_published' : _("""Whether to show only (un)published comments, independently of
+the publication date."""),
+    'lino.modlib.comments.Comments.end_date' : _("""The date range to filter."""),
+    'lino.modlib.comments.Comments.observed_event' : _("""Which event (created, modified or published) to consider when
+applying the date range given by start_date and
+end_date."""),
+    'lino.modlib.comments.CommentsByRFC' : _("""Shows the comments for a given database object."""),
+    'lino.modlib.comments.CommentEvents' : _("""The choicelist with selections for
+Comments.observed_event."""),
+    'lino.modlib.comments.CommentTypes' : _("""The table with all existing comment types."""),
+    'lino.modlib.comments.Commentable' : _("""Mixin for models that can be subject to comments."""),
     'lino.modlib.contacts.Partner.invoice_recipient' : _("""The recipient of invoices (invoicing address)."""),
     'lino.modlib.printing.Printable' : _("""Mixin for models for which Lino can generate a printable
 document."""),

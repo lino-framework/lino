@@ -851,6 +851,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                 fld.blank = True
                 fld.null = True
                 fld.default = None
+                fld.editable = True
                 cls.parameters[name] = fld
         # if len(cls.parameters) == 0:
         #     cls.parameters = None # backwards compatibility

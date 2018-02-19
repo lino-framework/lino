@@ -1,51 +1,29 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2017 Luc Saffre
+# Copyright 2013-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
-"""Database models for `lino.modlib.comments`.
 
-"""
 from builtins import str
 from builtins import object
 
 import logging
 logger = logging.getLogger(__name__)
+from django.db import models
 
-from django.utils.translation import ugettext_lazy as _
-from django.contrib.humanize.templatetags.humanize import naturaltime
-# from django.db import models
-
-from lino.api import dd, rt
+from lino.api import dd, _
 from lino.mixins import CreatedModified, BabelNamed
 from lino.modlib.users.mixins import UserAuthored
-# from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.notify.mixins import ChangeObservable
-from etgen.html import E
-from lino.mixins.bleached import Bleached
-from lino.core.roles import SiteUser
-from lino.core.gfks import gfk2lookup
-from lino.modlib.gfks.fields import GenericForeignKey, GenericForeignKeyIdField
 from lino.modlib.gfks.mixins import Controllable
+from lino.mixins.bleached import BleachedPreviewBody
+from .choicelists import CommentEvents
+from .choicelists import PublishAllComments, PublishComment
+
+
 
 if dd.is_installed("inbox"):
     from lino_xl.lib.inbox.models import comment_email
 
-# try:    
-#     commentable_model = dd.plugins.comments.commentable_model
-# except AttributeError:
-#     commentable_model = None
-
-
 class CommentType(BabelNamed):
-    """The type of an upload.
-
-    .. attribute:: shortcut
-
-        Optional pointer to a virtual **upload shortcut** field.  If
-        this is not empty, then the given shortcut field will manage
-        uploads of this type.  See also :class:`Shortcuts
-        <lino.modlib.uploads.choicelists.Shortcuts>`.
-
-    """
     class Meta(object):
         abstract = dd.is_abstract_model(__name__, 'CommentType')
         verbose_name = _("Comment Type")
@@ -57,19 +35,13 @@ class CommentType(BabelNamed):
     
 @dd.python_2_unicode_compatible
 class Comment(CreatedModified, UserAuthored, Controllable,
-              ChangeObservable, Bleached):
-    """A **comment** is a short text which some user writes about some
-    other database object. It has no recipient.
-
-    .. attribute:: short_text
-
-        A short "abstract" of your comment. This should not be more
-        than one paragraph.
-
-    """
+              ChangeObservable, BleachedPreviewBody):
     # ALLOWED_TAGS = ['a', 'b', 'i', 'em', 'ul', 'ol', 'li']
-    bleached_fields = 'short_text more_text'
+    # bleached_fields = 'short_text more_text'
+    bleached_fields = 'body'
 
+    publish_this = PublishComment()
+    publish_all = PublishAllComments()
 
     class Meta(object):
         app_label = 'comments'
@@ -77,24 +49,17 @@ class Comment(CreatedModified, UserAuthored, Controllable,
         verbose_name = _("Comment")
         verbose_name_plural = _("Comments")
 
-    short_text = dd.RichTextField(_("Short text"))
+    # short_text = dd.RichTextField(_("Short text"))
     # owner = dd.ForeignKey(commentable_model, blank=True, null=True)
-
-    # owner_type = dd.ForeignKey(
-    #     'contenttypes.ContentType', blank=True, null=True,
-    #     verbose_name=_("Object type"),
-    #     related_name='comments_by_object')
-    # owner_id = GenericForeignKeyIdField(
-    #     owner_type, blank=True, null=True)
-    # owner = GenericForeignKey('owner_type', 'owner_id', _("owner"))
-
 
     reply_to = dd.ForeignKey(
         'self', blank=True, null=True, verbose_name=_("Reply to"))
-    more_text = dd.RichTextField(_("More text"), blank=True)
+    # more_text = dd.RichTextField(_("More text"), blank=True)
     # private = models.BooleanField(_("Private"), default=False)
     comment_type = dd.ForeignKey(
         'comments.CommentType', blank=True, null=True)
+    published = models.DateTimeField(
+        _("Published"), blank=True, null=True)
 
     def __str__(self):
         return u'%s #%s' % (self._meta.verbose_name, self.pk)
@@ -102,17 +67,17 @@ class Comment(CreatedModified, UserAuthored, Controllable,
         #     user=self.user, obj=self.owner,
         #     time=naturaltime(self.modified))
 
-    @classmethod
-    def get_request_queryset(cls, ar, **filter):
-        # if commentable_model is None:
-        #     return cls.objects.all()
-        # if ar.get_user().user_type.has_required_roles([SiteUser]):
-        if ar.get_user().authenticated:
-            return cls.objects.all()
-        return super(Comment, cls).get_request_queryset(ar, **filter)
+    # @classmethod
+    # def get_request_queryset(cls, ar, **filter):
+    #     # if commentable_model is None:
+    #     #     return cls.objects.all()
+    #     # if ar.get_user().user_type.has_required_roles([SiteUser]):
+    #     if ar.get_user().authenticated:
+    #         return cls.objects.all()
+    #     return super(Comment, cls).get_request_queryset(ar, **filter)
 
-        # else:
-        #     return cls.objects.exclude(owner__private=True)
+    #     # else:
+    #     #     return cls.objects.exclude(owner__private=True)
         
     def after_ui_save(self, ar, cw):
         super(Comment, self).after_ui_save(ar, cw)
@@ -155,13 +120,43 @@ class Comment(CreatedModified, UserAuthored, Controllable,
                 href=comment_email.gen_href(self, user),
                 reply=_("Reply"))
 
-        s += ':<br>' + self.short_text
-        if False:
-            s += '\n<p>\n' + self.more_text
+        s += ':<br>' + self.body
+        # if False:
+        #     s += '\n<p>\n' + self.more_text
         return s
 
     # def get_change_owner(self, ar):
     #     return self.owner
+
+
+    @classmethod
+    def setup_parameters(cls, fields):
+        fields.update(
+            observed_event=CommentEvents.field(blank=True))
+        fields.update(
+            start_date=models.DateField(
+                _("Period from"), blank=True, null=True,
+                help_text=_("Start date of observed period")))
+        fields.update(
+            end_date=models.DateField(
+                _("until"),
+                blank=True, null=True,
+                help_text=_("End date of observed period")))
+        fields.update(
+            show_published=dd.YesNo.field(_("Published"), blank=True))
+        super(Comment, cls).setup_parameters(fields)
+
+    @classmethod
+    def get_request_queryset(cls, ar, **filter):
+        qs = super(Comment, cls).get_request_queryset(ar, **filter)
+        pv = ar.param_values
+        if pv.observed_event:
+            qs = pv.observed_event.add_filter(qs, pv)
+        if pv.show_published == dd.YesNo.yes:
+            qs = qs.filter(published__isnull=False)
+        elif pv.show_published == dd.YesNo.no:
+            qs = qs.filter(published__isnull=True)
+        return qs
 
 dd.update_field(Comment, 'user', editable=False)
 
