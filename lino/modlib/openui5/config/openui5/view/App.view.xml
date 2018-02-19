@@ -6,7 +6,7 @@
        	xmlns:core="sap.ui.core"
         xmlns:mvc="sap.ui.core.mvc"
         xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
-
+        xmlns:html="http://www.w3.org/1999/xhtml"
         displayBlock="true" height="100%">
     <!--<App class="sapUiDemoWT">-->
 

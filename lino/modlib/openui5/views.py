@@ -412,10 +412,12 @@ class Connector(View):
                     break
             else:
                 raise Exception("No Menu with name %s"%sel_menu)
-        elif name.startswith("grid/"): # Table/grid view
+        elif name.startswith("grid/") or name.startswith("slavetable/"): # Table/grid view
             # todo Get table data
             # "grid/tickets/AllTickets.view.xml"
-            app_label, actor = re.match(r"grid\/(.+)\/(.+).view.xml$", name).groups()
+            # or
+            # "slavetable/tickets/AllTickets.view.xml"
+            app_label, actor = re.match(r"(?:grid|slavetable)\/(.+)\/(.+).view.xml$", name).groups()
             actor = rt.models.resolve(app_label + "." + actor)
             context.update({
                 "actor": actor,
@@ -424,7 +426,10 @@ class Connector(View):
                 "title": actor.label,
 
             })
-            tplname = "openui5/view/table.view.xml" # Change to "grid" to match action?
+            if name.startswith("slavetable/"):
+                tplname = "openui5/view/slaveTable.view.xml"
+            else:
+                tplname = "openui5/view/table.view.xml" # Change to "grid" to match action?
             # ar = action_request(app_label, actor, request, request.GET, True)
             # add to context
 
@@ -432,7 +437,7 @@ class Connector(View):
             # "detail/tickets/AllTickets.view.xml"
             app_label, actor = re.match(r"detail\/(.+)\/(.+).view.xml$", name).groups()
             actor = rt.models.resolve(app_label + "." + actor)
-            detail_action = actor.  actions['detail']
+            detail_action = actor.actions['detail']
             window_layout = detail_action.get_window_layout()
             layout_handle = window_layout.get_layout_handle(settings.SITE.plugins.openui5)
             layout_handle.main.elements # elems # Refactor into actor get method?

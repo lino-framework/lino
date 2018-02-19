@@ -1,9 +1,11 @@
 {% if e.vertical %}
 <VBox fitContainer="true"
-      alignItems="Stretch" height="auto">
+      alignItems="Stretch"
+        render="bare"{# width="auto"  height="auto"#}>
 {% else %}
 <HBox fitContainer="true"
-      alignItems="Stretch" width="auto">
+      alignItems="Stretch"
+        render="bare"{#width="auto"  height="auto"#}>
 {% endif %}
     <items>
     {% for e in e.elements %}

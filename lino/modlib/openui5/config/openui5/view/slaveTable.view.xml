@@ -9,14 +9,6 @@
 		xmlns:html="http://www.w3.org/1999/xhtml"
 		height="100%"
 		class="sapUiSizeCompact">
-	<m:Page
-		showHeader="true"
-		showNavButton="true"
-		navButtonPress="onNavButtonPress"
-		showFooter="true"
-		enableScrolling="false"
-		class="sapUiContentPadding">
-		<m:content>
 			<Table
 				id="MAIN_TABLE"
 				customData:PK="{{actor.model._meta.pk.name}}"
@@ -143,6 +135,4 @@
 					</m:Toolbar>
 				</footer>
 			</Table>
-		</m:content>
-	</m:Page>
 </mvc:View>

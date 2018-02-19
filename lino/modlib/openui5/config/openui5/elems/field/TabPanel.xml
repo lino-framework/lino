@@ -1,4 +1,5 @@
 <IconTabBar
+		stretchContentHeight="true"
 		{# id="idIconTabBarInlineMode"
 		headerMode="Inline"
 		upperCase="true"
@@ -10,7 +11,8 @@
 				text="{{e.label}}"
 				{#count="3"#}
                 >
-                {% include e.oui5_field_template %}
+				{% include e.oui5_field_template %}
+
 			</IconTabFilter>
 			{% endfor %}
         </items>

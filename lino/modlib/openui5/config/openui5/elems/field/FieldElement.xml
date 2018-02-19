@@ -1,11 +1,19 @@
 <Panel>
-<VBox with="auto">
-<Label text="{{e.label}}"></Label>
+<VBox>
+
+{% block field_label %}
+<Label text="{{e.label}}"/>
+{% endblock %}
+
 {# <Text text="{{bind('record>/data/',e.field.name)}}" wrapping="true" displayBlock="true"/> #}
-<Input value="{{bind('record>/data/',e.field.name)}}" wrapping="true"/>
+
+{% block field_content %}
+    <Input value="{{bind('record>/data/',e.field.name)}}" wrapping="true"/>
+{% endblock %}
 
 {#<layoutData>
     <m:FlexItemData growFactor="1" />
 </layoutData>#}
+
 </VBox>
 </Panel>
