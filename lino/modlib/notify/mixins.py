@@ -1,10 +1,9 @@
-# Copyright 2016-2017 Luc Saffre
+# Copyright 2016-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 from __future__ import unicode_literals
 
 from builtins import str
-from django.conf import settings
 from lino.api import dd, rt, _
 from etgen.html import E
 
@@ -12,6 +11,8 @@ from etgen.html import E
 class ChangeObservable(dd.Model):
     """Mixin for models which can emit notifications to a list of
     "observers" when an instance is modified.
+
+    TODO: rename ChangeObservable to ChangeNotifier
 
     """
 
@@ -126,17 +127,19 @@ class ChangeObservable(dd.Model):
 
 
         def after_ui_save(self, ar, cw):
-            """Emits notification about the change to every watcher."""
+            """
+            Emits notification about the change to every observer.
+            """
             super(ChangeObservable, self).after_ui_save(ar, cw)
+            if not dd.is_installed('notify'):
+                # happens e.g. in amici where we use calendar without notify
+                return
             def msg(user, mm):
                 subject = self.get_change_subject(ar, cw)
                 if not subject:
                     return None
                 return (subject, self.get_change_body(ar, cw))
-            if not dd.is_installed('notify'):
-                # happens e.g. in amici where we use calendar without notify
-                return
-            mt = rt.actors.notify.MessageTypes.change
+            mt = rt.models.notify.MessageTypes.change
             # owner = self.get_change_owner()
             # rt.models.notify.Message.emit_message(
             #     ar, owner, mt, msg, self.get_change_observers())
