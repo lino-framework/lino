@@ -4,9 +4,6 @@
 from __future__ import unicode_literals
 from builtins import str
 
-import logging
-logger = logging.getLogger(__name__)
-
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
@@ -154,7 +151,7 @@ class RecentComments(Comments):
     # required_roles = set([CommentsReader])
     column_names = "body_preview published user *"
     stay_in_grid = True
-    order_by = ["-created"]
+    order_by = ["-published"]
     label = _("Recent comments")
     preview_limit = 10
 

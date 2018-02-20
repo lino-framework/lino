@@ -2,8 +2,7 @@
 # Copyright 2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-from django.utils import timezone
-from lino.api import dd, _
+from lino.api import dd, rt, _
 from lino.modlib.system.choicelists import ObservedEvent
 from .roles import CommentsUser
 
@@ -44,14 +43,10 @@ class PublishComment(dd.Action):
     show_in_bbar = False
     required_roles = dd.login_required(CommentsUser)
 
-    def publish(self, obj):
-        obj.published = timezone.now()
-        obj.full_clean()
-        obj.save()
-        
+    
     def run_from_ui(self, ar, **kw):
         for obj in ar.selected_rows:
-            self.publish(obj)
+            obj.do_publish(ar)
         ar.success(
             _("{0} comments published.").format(
                 len(ar.selected_rows)), refresh_all=True)
@@ -67,7 +62,7 @@ class PublishAllComments(PublishComment):
         n = ar.get_total_count()
         def ok(ar):
             for obj in ar:
-                self.publish(obj)
+                obj.do_publish(ar)
             ar.success(
                 _("{0} comments published.").format(n), refresh_all=True)
 
