@@ -39,11 +39,6 @@ from etgen import html as xghtml
 from lino.api import rt
 import re
 
-PLAIN_PAGE_LENGTH = 15
-
-MENUS = dict()
-
-
 # Taken from lino.modlib.extjs.views
 NOT_FOUND = "%s has no row with primary key %r"
 def elem2rec_empty(ar, ah, elem, **rec):
@@ -62,6 +57,15 @@ def elem2rec_empty(ar, ah, elem, **rec):
             param_values=ar.actor.params_layout.params_store.pv2dict(
                 ar, ar.param_values))
     return rec
+
+class ApiList(View):
+    pass
+
+class ApiElement(View):
+    pass
+
+class Choices(View):
+    pass
 
 class Restful(View):
 
@@ -164,18 +168,6 @@ def http_response(ar, tplname, context):
     u = ar.get_user()
     lang = get_language()
     k = (u.user_type, lang)
-    menu = MENUS.get(k, None)
-    if menu is None:
-        menu = settings.SITE.get_site_menu(None, u.user_type)
-        ui5 = settings.SITE.plugins.openui5
-        if False:  # 20150803 home button now in base.html
-            assert ui5.renderer is not None
-            url = ui5.build_plain_url()
-            menu.add_url_button(url, label=_("Home"))
-        e = ui5.renderer.show_menu(ar, menu)
-        menu = E.tostring(e)
-        MENUS[k] = menu
-    context.update(menu=menu)
     context = ar.get_printable_context(**context)
     context['ar'] = ar
     context['memo'] = ar.parse_memo  # MEMO_PARSER.parse
@@ -190,131 +182,40 @@ def http_response(ar, tplname, context):
 
 
 def XML_response(ar, tplname, context):
-    "Deserves a docstring"
+    """
+    Respone used for rendering XML views in openui5.
+    Includes some helper functions for rendering.
+    """
     # u = ar.get_user()
     # lang = get_language()
     # k = (u.user_type, lang)
-    # menu = MENUS.get(k, None)
-    # if menu is None:
-    #     menu = settings.SITE.get_site_menu(None, u.user_type)
-    #     ui5 = settings.SITE.plugins.openui5
-    #     if False:  # 20150803 home button now in base.html
-    #         assert ui5.renderer is not None
-    #         url = ui5.build_plain_url()
-    #         menu.add_url_button(url, label=_("Home"))
-    #     e = ui5.renderer.show_menu(ar, menu)
-    #     menu = E.tostring(e)
-    #     MENUS[k] = menu
-    # context.update(menu=menu)
     context = ar.get_printable_context(**context)
     # context['ar'] = ar
     # context['memo'] = ar.parse_memo  # MEMO_PARSER.parse
     env = settings.SITE.plugins.jinja.renderer.jinja_env
     template = env.get_template(tplname)
+
     def bind(*args):
+        """Helper function to wrap a string in {}s"""
+
         return "{" + "".join(args) + "}"
-    context.update(
-        # Because it's a pain to excape {x} in jinja
-        bind=bind
-    )
+
+    context.update(bind=bind)
+
     def p(*args):
-        print(args),
+        """Debugger helper; prints out all args put into the filter but doesn't include them in the template.
+        usage: {{debug | p}}
+        """
+        print(args)
         return ""
 
-    env.filters.update(
-        p=p)
+    env.filters.update(p=p)
 
     response = http.HttpResponse(
         template.render(**context),
         content_type='text/html;charset="utf-8"')
 
     return response
-
-
-def buttons2pager(buttons, title=None):
-    items = []
-    if title:
-        items.append(E.li(E.span(title)))
-    for symbol, label, url in buttons:
-        if url is None:
-            items.append(E.li(E.span(symbol), class_="disabled"))
-        else:
-            items.append(E.li(E.a(symbol, href=url)))
-    # Bootstrap version 2.x
-    # return E.div(E.ul(*items), class_='pagination')
-    return E.ul(*items, class_='pagination pagination-sm')
-
-
-def table2html(ar, as_main=True):
-    """Represent the given table request as an HTML table.
-
-    `ar` is the request to be rendered, an instance of
-    :class:`lino.core.tablerequest.TableRequest`.
-
-    The returned HTML enclosed in a ``<div>`` tag and generated using
-    :mod:`etgen.html`.
-
-    If `as_main` is True, include additional elements such as a paging
-    toolbar. (This argument is currently being ignored.)
-
-    """
-    # as_main = True
-    t = xghtml.Table()
-    t.attrib.update(class_="table table-striped table-hover")
-    if ar.limit is None:
-        ar.limit = PLAIN_PAGE_LENGTH
-    pglen = ar.limit
-    if ar.offset is None:
-        page = 1
-    else:
-        """
-        (assuming pglen is 5)
-        offset page
-        0      1
-        5      2
-        """
-        page = int(old_div(ar.offset, pglen)) + 1
-
-    ar.dump2html(t, ar.sliced_data_iterator)
-    if not as_main:
-        url = ar.get_request_url()  # open in own window
-        return E.div(
-                E.div(E.div(E.a(E.span(class_="glyphicon glyphicon-folder-open"),class_="btn btn-default pull-right", href=url, style = "margin-left: 4px;"),E.h5(ar.get_title(), style="display: inline-block;"), class_="panel-title"),
-                      class_="panel-heading"),
-                t.as_element(),
-               class_="panel panel-default",style="display: inline-block;")
-
-    buttons = []
-    kw = dict()
-    kw = {}
-    if pglen != PLAIN_PAGE_LENGTH:
-        kw[constants.URL_PARAM_LIMIT] = pglen
-
-    if page > 1:
-        kw[constants.URL_PARAM_START] = pglen * (page - 2)
-        prev_url = ar.get_request_url(**kw)
-        kw[constants.URL_PARAM_START] = 0
-        first_url = ar.get_request_url(**kw)
-    else:
-        prev_url = None
-        first_url = None
-    buttons.append(('<<', _("First page"), first_url))
-    buttons.append(('<', _("Previous page"), prev_url))
-
-    next_start = pglen * page
-    if next_start < ar.get_total_count():
-        kw[constants.URL_PARAM_START] = next_start
-        next_url = ar.get_request_url(**kw)
-        last_page = int(old_div((ar.get_total_count() - 1), pglen))
-        kw[constants.URL_PARAM_START] = pglen * last_page
-        last_url = ar.get_request_url(**kw)
-    else:
-        next_url = None
-        last_url = None
-    buttons.append(('>', _("Next page"), next_url))
-    buttons.append(('>>', _("Last page"), last_url))
-
-    return E.div(buttons2pager(buttons), t.as_element())
 
 
 def layout2html(ar, elem):
@@ -329,12 +230,12 @@ def layout2html(ar, elem):
     #~ print E.tostring(E.div())
     #~ if len(items) == 0: return ""
     return E.form(*items)
-    #~ print 20120901, lh.main.__html__(ar)
+
 
 class Tickets(View):
     """
-    Static View for Tickets,
-    Uses a template for generating the UI rather then layouts
+    Was a static View for Tickets,
+    IS currently main app entry point,
     """
     def get(self, request, app_label="tickets", actor="AllTickets"):
         ar = action_request(app_label, actor, request, request.GET, True)
@@ -350,18 +251,19 @@ class Tickets(View):
             # main=main,
         )
 
-        if isinstance(ar, TableRequest):
-            context.update(main=table2html(ar))
-        else:
-            context.update(main=layout2html(ar, None))
-
         context.update(ar=ar)
-        return http_response(ar,"openui5/tickets_ui5.html", context)
 
+        context = ar.get_printable_context(**context)
+        env = settings.SITE.plugins.jinja.renderer.jinja_env
+        template = env.get_template("openui5/tickets_ui5.html")
+
+        return http.HttpResponse(
+            template.render(**context),
+            content_type='text/html;charset="utf-8"')
 
 class MainHtml(View):
-
     def get(self, request, *args, **kw):
+        """Returns a json struct for the main user dashboard."""
         #~ logger.info("20130719 MainHtml")
         settings.SITE.startup()
         #~ raise Exception("20131023")
@@ -462,100 +364,6 @@ class Connector(View):
         return XML_response(ar, tplname, context)
 
 
-class List(View):
-    """Render a list of records.
-
-    """
-    def get(self, request, app_label=None, actor=None):
-        ar = action_request(app_label, actor, request, request.GET, True)
-        ar.renderer = settings.SITE.plugins.bootstrap3.renderer
-
-        context = dict(
-            title=ar.get_title(),
-            heading=ar.get_title(),
-        )
-
-        if isinstance(ar, TableRequest):
-            context.update(main=table2html(ar))
-        else:
-            context.update(main=layout2html(ar, None))
-
-        context.update(ar=ar)
-        return http_response(ar, ar.actor.list_html_template, context)
-
-
-class Element(View):
-    """Render a single record.
-
-    """
-    def get(self, request, app_label=None, actor=None, pk=None):
-        # print(request, app_label, actor, pk)
-        ar = action_request(app_label, actor, request, request.GET, False)
-        ar.renderer = settings.SITE.plugins.bootstrap3.renderer
-
-        navigator = None
-        if pk and pk != '-99999' and pk != '-99998':
-            elem = ar.get_row_by_pk(pk)
-            if elem is None:
-                raise http.Http404("%s has no row with primary key %r" %
-                                   (ar.actor, pk))
-                #~ raise Exception("20120327 %s.get_row_by_pk(%r)" % (rpt,pk))
-            if ar.actor.show_detail_navigator:
-
-                ni = navinfo(ar.data_iterator, elem)
-                if ni:
-                    # m = elem.__class__
-                    buttons = []
-                    #~ buttons.append( ('*',_("Home"), '/' ))
-
-                    buttons.append(
-                        ('<<', _("First page"), ar.pk2url(ni['first'])))
-                    buttons.append(
-                        ('<', _("Previous page"), ar.pk2url(ni['prev'])))
-                    buttons.append(
-                        ('>', _("Next page"), ar.pk2url(ni['next'])))
-                    buttons.append(
-                        ('>>', _("Last page"), ar.pk2url(ni['last'])))
-
-                    navigator = buttons2pager(buttons)
-                else:
-                    navigator = E.p("No navinfo")
-        else:
-            elem = None
-
-
-        # main = E.div(
-        #     E.div(E.div(E.h5(ar.get_title(),
-        #              style="display: inline-block;"),
-        #         class_="panel-title"),
-        #         class_="panel-heading"),
-        #     E.div(layout2html(ar, elem),class_="panel-body"), # Content
-        #     class_="panel panel-default",
-        #     # style="display: inline-block;"
-        # )
-
-
-        main = layout2html(ar, elem)
-
-        # The `method="html"` argument isn't available in Python 2.6,
-        # only 2.7.  It is useful to avoid side effects in case of
-        # empty elements: the default method (xml) writes an empty
-        # E.div() as "<div/>" while in HTML5 it must be "<div></div>"
-        # (and the ending / is ignored).
-
-        #~ return E.tostring(main, method="html")
-        #~ return E.tostring(main)
-        # return main
-
-        context = dict(
-            title=ar.get_action_title(),
-            obj=elem,
-            form=main,
-            navigator=navigator,
-        )
-        #~ template = web.jinja_env.get_template('detail.html')
-        context.update(ar=ar)
-        return http_response(ar, ar.actor.detail_html_template, context)
 
 class Authenticate(View):
     def get(self, request, *args, **kw):
@@ -598,7 +406,7 @@ class Authenticate(View):
         #     # print "20150428 Now logged in as %r (%s)" % (username, user)
         # return ar.renderer.render_action_response(ar)
 
-
+# Todo repalce with Tickets
 class Index(View):
     """
     Render the main page.
@@ -614,6 +422,7 @@ class Index(View):
             request=request,
             renderer=ui.renderer)
         return index_response(ar)
+
 
 def index_response(ar):
     ui = settings.SITE.plugins.openui5

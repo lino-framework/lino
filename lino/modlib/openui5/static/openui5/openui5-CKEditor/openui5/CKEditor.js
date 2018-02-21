@@ -9,10 +9,10 @@
 jQuery.sap.registerResourcePath('ckeditor', './static/openui5/openui5-CKEditor/ckeditor/ckeditor');
 window.CKEDITOR_BASEPATH = './static/openui5/openui5-CKEditor/ckeditor/';
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'openui5/CKEditorToolbar', 'ckeditor'],
-    function(jQuery, Control, CKEditorToolbar, CKEDITOR) {
+    function(jQuery, Control, CKEditorToolbar, Editor) {
         'use strict';
 
-        var Editor = window.CKEDITOR;
+        Editor = window.CKEDITOR;
 
         var CKEditor = Control.extend('openui5.CKEditor', {
             metadata: {
@@ -100,7 +100,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'openui5/CKEditorTool
         };
 
         CKEditor.prototype.onAfterRendering = function() {
-            console.log("onAfterRender:", this, this.editor);
+//            console.log("onAfterRender:", this, this.editor);
             if (true || !this._bEditorCreated) {
                 // first rendering: instantiate the editor
                 this.afterFirstRender();
@@ -132,9 +132,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'openui5/CKEditorTool
             Editor.disableAutoInline = true;
             if (this.editor) {
                 this.editor.removeAllListeners();
-                Editor.remove(this.editor);
 //                this.editor.destroy();
+                Editor.remove(this.editor);
             }
+            /*One possible reason for failure to start the editor is an empty textfield.*/
 //            var elem = Editor.dom.element.get( this.textAreaId );
 //            console.warn(elem.getValue());
 //            elem.setValue("<p>&nbsp;</p>");
