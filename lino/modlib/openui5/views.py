@@ -58,11 +58,224 @@ def elem2rec_empty(ar, ah, elem, **rec):
                 ar, ar.param_values))
     return rec
 
-class ApiList(View):
-    pass
 
 class ApiElement(View):
-    pass
+
+    def get(self, request, app_label=None, actor=None, pk=None):
+        ui = settings.SITE.kernel
+        rpt = requested_actor(app_label, actor)
+
+        action_name = request.GET.get(constants.URL_PARAM_ACTION_NAME,
+                                      rpt.default_elem_action_name)
+        ba = rpt.get_url_action(action_name)
+        if ba is None:
+            raise http.Http404("%s has no action %r" % (rpt, action_name))
+
+        if pk and pk != '-99999' and pk != '-99998':
+            # ~ ar = ba.request(request=request,selected_pks=[pk])
+            # ~ print 20131004, ba.actor
+            # Use url selected rows as selected PKs if defined, otherwise use the PK defined in the url path
+            sr = request.GET.getlist(constants.URL_PARAM_SELECTED)
+            if not sr:
+                sr = [pk]
+            ar = ba.request(request=request, selected_pks=sr)
+            elem = ar.selected_rows[0]
+        else:
+            ar = ba.request(request=request)
+            elem = None
+
+        ar.renderer = ui.default_renderer
+        ah = ar.ah
+
+        fmt = request.GET.get(
+            constants.URL_PARAM_FORMAT, ba.action.default_format)
+
+        if ba.action.opens_a_window:
+
+            if fmt == constants.URL_FORMAT_JSON:
+                if pk == '-99999':
+                    elem = ar.create_instance()
+                    datarec = ar.elem2rec_insert(ah, elem)
+                elif pk == '-99998':
+                    elem = ar.create_instance()
+                    datarec = elem2rec_empty(ar, ah, elem)
+                elif elem is None:
+                    datarec = dict(
+                        success=False, message=NOT_FOUND % (rpt, pk))
+                else:
+                    datarec = ar.elem2rec_detailed(elem)
+                return json_response(datarec)
+
+            after_show = ar.get_status(record_id=pk)
+            tab = request.GET.get(constants.URL_PARAM_TAB, None)
+            if tab is not None:
+                tab = int(tab)
+                after_show.update(active_tab=tab)
+
+            return http.HttpResponse(
+                ui.extjs_renderer.html_page(
+                    request, ba.action.label,
+                    on_ready=ui.extjs_renderer.action_call(
+                        request, ba, after_show)))
+
+        if isinstance(ba.action, actions.RedirectAction):
+            target = ba.action.get_target_url(elem)
+            if target is None:
+                raise http.Http404("%s failed for %r" % (ba, elem))
+            return http.HttpResponseRedirect(target)
+
+        if pk == '-99998':
+            assert elem is None
+            elem = ar.create_instance()
+            ar.selected_rows = [elem]
+        elif elem is None:
+            raise http.Http404(NOT_FOUND % (rpt, pk))
+        return settings.SITE.kernel.run_action(ar)
+
+    def post(self, request, app_label=None, actor=None, pk=None):
+        ar = action_request(
+            app_label, actor, request, request.POST, True,
+            renderer=settings.SITE.kernel.extjs_renderer)
+        if pk == '-99998':
+            elem = ar.create_instance()
+            ar.selected_rows = [elem]
+        else:
+            ar.set_selected_pks(pk)
+        return settings.SITE.kernel.run_action(ar)
+
+    def put(self, request, app_label=None, actor=None, pk=None):
+        data = http.QueryDict(request.body)  # raw_post_data before Django 1.4
+        # logger.info("20150130 %s", data)
+        ar = action_request(
+            app_label, actor, request, data, False,
+            renderer=settings.SITE.kernel.extjs_renderer)
+        ar.set_selected_pks(pk)
+        return settings.SITE.kernel.run_action(ar)
+
+    def delete(self, request, app_label=None, actor=None, pk=None):
+        data = http.QueryDict(request.body)
+        ar = action_request(
+            app_label, actor, request, data, False,
+            renderer=settings.SITE.kernel.extjs_renderer)
+        ar.set_selected_pks(pk)
+        return settings.SITE.kernel.run_action(ar)
+
+    def old_delete(self, request, app_label=None, actor=None, pk=None):
+        rpt = requested_actor(app_label, actor)
+        ar = rpt.request(request=request)
+        ar.set_selected_pks(pk)
+        elem = ar.selected_rows[0]
+        return delete_element(ar, elem)
+
+
+class ApiList(View):
+
+
+    def post(self, request, app_label=None, actor=None):
+        ar = action_request(app_label, actor, request, request.POST, True)
+        ar.renderer = settings.SITE.kernel.extjs_renderer
+        return settings.SITE.kernel.run_action(ar)
+
+    def get(self, request, app_label=None, actor=None):
+        ar = action_request(app_label, actor, request, request.GET, True)
+        # Add this hack to support the 'sort' param which is different in Extjs6.
+        if ar.order_by and ar.order_by[0]:
+            _sort = ast.literal_eval(ar.order_by[0])
+            sort = _sort[0]['property']
+            if _sort[0]['direction'] and _sort[0]['direction'] == 'DESC':
+                sort = '-' + sort
+            ar.order_by = [str(sort)]
+        ar.renderer = settings.SITE.kernel.default_renderer
+        rh = ar.ah
+
+        fmt = request.GET.get(
+            constants.URL_PARAM_FORMAT,
+            ar.bound_action.action.default_format)
+
+        if fmt == constants.URL_FORMAT_JSON:
+            rows = [rh.store.row2list(ar, row)
+                    for row in ar.sliced_data_iterator]
+            total_count = ar.get_total_count()
+            for row in ar.create_phantom_rows():
+                if ar.limit is None or len(rows) + 1 < ar.limit or ar.limit == total_count + 1:
+                    d = rh.store.row2list(ar, row)
+                    rows.append(d)
+                total_count += 1
+            # assert len(rows) <= ar.limit
+            kw = dict(count=total_count,
+                      rows=rows,
+                      success=True,
+                      no_data_text=ar.no_data_text,
+                      title=str(ar.get_title()))
+            if ar.actor.parameters:
+                kw.update(
+                    param_values=ar.actor.params_layout.params_store.pv2dict(
+                        ar, ar.param_values))
+            return json_response(kw)
+
+        if fmt == constants.URL_FORMAT_HTML:
+            after_show = ar.get_status()
+
+            sp = request.GET.get(
+                constants.URL_PARAM_SHOW_PARAMS_PANEL, None)
+            if sp is not None:
+                # ~ after_show.update(show_params_panel=sp)
+                after_show.update(
+                    show_params_panel=constants.parse_boolean(sp))
+
+            # if isinstance(ar.bound_action.action, actions.ShowInsert):
+            #     elem = ar.create_instance()
+            #     rec = ar.elem2rec_insert(rh, elem)
+            #     after_show.update(data_record=rec)
+
+            kw = dict(on_ready=
+            ar.renderer.action_call(
+                ar.request,
+                ar.bound_action, after_show))
+            # ~ print '20110714 on_ready', params
+            kw.update(title=ar.get_title())
+            return http.HttpResponse(ar.renderer.html_page(request, **kw))
+
+        if fmt == 'csv':
+            # ~ response = HttpResponse(mimetype='text/csv')
+            charset = settings.SITE.csv_params.get('encoding', 'utf-8')
+            response = http.HttpResponse(
+                content_type='text/csv;charset="%s"' % charset)
+            if False:
+                response['Content-Disposition'] = \
+                    'attachment; filename="%s.csv"' % ar.actor
+            else:
+                # ~ response = HttpResponse(content_type='application/csv')
+                response['Content-Disposition'] = \
+                    'inline; filename="%s.csv"' % ar.actor
+
+            # ~ response['Content-Disposition'] = 'attachment; filename=%s.csv' % ar.get_base_filename()
+            w = ucsv.UnicodeWriter(response, **settings.SITE.csv_params)
+            w.writerow(ar.ah.store.column_names())
+            if True:  # 20130418 : also column headers, not only internal names
+                column_names = None
+                fields, headers, cellwidths = ar.get_field_info(column_names)
+                w.writerow(headers)
+
+            for row in ar.data_iterator:
+                w.writerow([str(v) for v in rh.store.row2list(ar, row)])
+            return response
+
+        if fmt == constants.URL_FORMAT_PRINTER:
+            if ar.get_total_count() > MAX_ROW_COUNT:
+                raise Exception(_("List contains more than %d rows") %
+                                MAX_ROW_COUNT)
+            response = http.HttpResponse(
+                content_type='text/html;charset="utf-8"')
+            doc = xghtml.Document(force_text(ar.get_title()))
+            doc.body.append(E.h1(doc.title))
+            t = doc.add_table()
+            # ~ settings.SITE.kernel.ar2html(ar,t,ar.data_iterator)
+            ar.dump2html(t, ar.data_iterator)
+            doc.write(response, encoding='utf-8')
+            return response
+
+        return settings.SITE.kernel.run_action(ar)
 
 class Choices(View):
     pass
@@ -197,7 +410,7 @@ def XML_response(ar, tplname, context):
 
     def bind(*args):
         """Helper function to wrap a string in {}s"""
-
+        args = [str(a) for a in args]
         return "{" + "".join(args) + "}"
 
     context.update(bind=bind)
@@ -318,9 +531,11 @@ class Connector(View):
             # todo Get table data
             # "grid/tickets/AllTickets.view.xml"
             # or
-            # "slavetable/tickets/AllTickets.view.xml"
+            # "slavetable/tickets/AllTickets.view.xml
             app_label, actor = re.match(r"(?:grid|slavetable)\/(.+)\/(.+).view.xml$", name).groups()
+            ar = action_request(app_label, actor, request, request.GET, True)
             actor = rt.models.resolve(app_label + "." + actor)
+            print(ar.ah.store.pk_index) # indexk of PK
             context.update({
                 "actor": actor,
                 "columns": actor.get_handle().get_columns(),

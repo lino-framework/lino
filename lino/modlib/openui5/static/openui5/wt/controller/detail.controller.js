@@ -28,7 +28,7 @@ sap.ui.define([
 
 			jQuery.ajax(this.getView().byId("MAIN_PAGE").data("url"), {
 				dataType: "json",
-				data:{limit:15},
+				data:{limit:15,fmt:'json',an:"detail"},
 				success: function (oData) {
 					oModel.setData(oData);
 				},

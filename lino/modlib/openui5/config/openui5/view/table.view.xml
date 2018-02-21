@@ -59,7 +59,10 @@
 				</extension>
 				<columns>
 					{% for c in columns %}
-					{% include c.oui5_column_template %}
+					{% with %}
+						{% set c_loop = loop %}
+						{% include c.oui5_column_template %}
+					{% endwith %}
 					{% endfor %}
 					{#
 					<Column

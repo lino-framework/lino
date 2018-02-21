@@ -57,9 +57,9 @@ class Plugin(Plugin):
 
             # To be fased out
             url(rx + r'restful/(?P<app_label>\w+)/(?P<actor>\w+)$',
-                views.Restful.as_view()),
+                views.ApiList.as_view()),
             url(rx + r'restful/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$',
-                views.Restful.as_view()),
+                views.ApiElement.as_view()),
             # From extjs
             url(rx + r'api/(?P<app_label>\w+)/(?P<actor>\w+)$',
                 views.ApiList.as_view()),
