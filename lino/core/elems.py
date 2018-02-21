@@ -706,6 +706,7 @@ class TextFieldElement(FieldElement):
     separate_window = False
     active_child = False
     format = 'plain'
+    oui5_field_template = "/openui5/elems/field/TextFieldElement.xml"
 
     def __init__(self, layout_handle, field, **kw):
         self.format = getattr(field, 'textfield_format', None) \

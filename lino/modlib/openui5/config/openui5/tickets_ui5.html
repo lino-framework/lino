@@ -12,13 +12,16 @@
             data-sap-ui-preload="async"
             data-sap-ui-resourceroots='{
             "sap.ui.demo.wt": "./static/openui5/wt/",
-            "sap.ui.lino": "./ui/"
+            "sap.ui.lino": "./ui/",
+            "openui5" : "./static/openui5/openui5-CKEditor/openui5/"
             }' ></script>
     <script>
+            jQuery.sap.registerModulePath('openui5','./static/openui5/openui5-CKEditor/openui5/');
+            jQuery.sap.require("openui5.CKEditor");
             sap.ui.getCore().attachInit(function () {
                 // https://github.com/SAP/openui5/issues/1535
                 // To allow ch as a valid CSS width for tables and other elements.
-                sap.ui.require(['sap/ui/core/library', 'sap/ui/base/DataType'], function(library, DataType){
+                sap.ui.require(['sap/ui/core/library', 'sap/ui/base/DataType', ], function(library, DataType){
                     library.CSSSize = DataType.createType('sap.ui.core.CSSSize', {
                       isValid : function(){
                         return true

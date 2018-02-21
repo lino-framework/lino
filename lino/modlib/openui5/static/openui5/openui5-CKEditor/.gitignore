@@ -1,0 +1,4 @@
+test/
+src/
+node_modules/
+*.swp

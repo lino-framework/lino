@@ -28,9 +28,11 @@
 				<rowActionTemplate>
 					<RowAction visible="true">
                         <items>
+							{% if actor.detail_action %}
 						<RowActionItem type="Navigation" visible="true" press="onRowNavPress">
 
 						</RowActionItem>
+							{% endif %}
                         </items>
 					</RowAction>
 				</rowActionTemplate>

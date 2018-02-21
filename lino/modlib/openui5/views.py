@@ -437,7 +437,8 @@ class Connector(View):
             # "detail/tickets/AllTickets.view.xml"
             app_label, actor = re.match(r"detail\/(.+)\/(.+).view.xml$", name).groups()
             actor = rt.models.resolve(app_label + "." + actor)
-            detail_action = actor.actions['detail']
+            # detail_action = actor.actions['detail']
+            detail_action = actor.detail_action
             window_layout = detail_action.get_window_layout()
             layout_handle = window_layout.get_layout_handle(settings.SITE.plugins.openui5)
             layout_handle.main.elements # elems # Refactor into actor get method?

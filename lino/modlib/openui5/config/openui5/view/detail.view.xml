@@ -8,6 +8,7 @@
 		xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 		xmlns:html="http://www.w3.org/1999/xhtml"
 		xmlns:ui="sap.ui"
+		xmlns:editor="openui5"
 		height="100%"
 		class="sapUiSizeCompact">
 	<Page
