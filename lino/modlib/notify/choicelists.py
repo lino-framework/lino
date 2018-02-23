@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2016 Luc Saffre
+# Copyright 2016-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Choicelists for this plugin.
@@ -7,28 +7,9 @@
 """
 from __future__ import unicode_literals
 # from builtins import str
-from builtins import object
-import json
 
-from django.db import models
-from django.conf import settings
-from django.utils import timezone
+from lino.api import dd, _, pgettext
 
-from lino.api import dd, rt, _, pgettext
-
-from lino.core.roles import SiteStaff
-from lino.core.gfks import gfk2lookup
-from lino.core.requests import BaseRequest
-from lino.core.site import html2text
-
-from lino.mixins import Created, ObservedDateRange
-from lino.modlib.gfks.mixins import Controllable
-from lino.modlib.users.mixins import UserAuthored, My
-from lino.modlib.office.roles import OfficeStaff, OfficeUser
-from lino.mixins.bleached import body_subject_to_elems
-
-from etgen.html import E
-from lino.utils import join_elems
 
 class MessageTypes(dd.ChoiceList):
     """

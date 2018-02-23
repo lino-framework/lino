@@ -9,11 +9,11 @@ from etgen.html import E
 
 
 class ChangeObservable(dd.Model):
-    """Mixin for models which can emit notifications to a list of
+    """
+    Mixin for models which can emit notifications to a list of
     "observers" when an instance is modified.
 
     TODO: rename ChangeObservable to ChangeNotifier
-
     """
 
     class Meta(object):
@@ -87,45 +87,35 @@ class ChangeObservable(dd.Model):
             return []
 
         def get_change_owner(self):
-            """Return the owner (the database object we are talking about) of the
-            notification to emit. 
+            """
+            Return the owner of the notification to emit.
 
-            The "owner" is the object which decides who is observing this
-            object.
-
-            No longer true:
-
-            When a user has already an unseen notification about a given
-            owner, then Lino ignores all subsequent notifications with
-            that owner.
-
-            For example
-            :class:`lino_welfare.modlib.pcsw.coaching.Coaching` returns
-            the coaching's client as owner in order to avoid multiple
-            messages when several coachings of a same client are being
-            updated.
-
+            The "owner" is "the database object we are talking about"
+            and decides who is observing this object.
             """
             return self
 
         def get_change_observers(self):
-            """Return or yield a list of `(user, mail_mode)` tuples who are
+            """
+            Return or yield a list of `(user, mail_mode)` tuples who are
             observing changes on this object.  Returning an empty list
             means that nobody gets notified.
 
             Subclasses may override this. The default implementation
             forwards the question to the owner if the owner is
             ChangeObservable and otherwise returns an empty list.
-
             """
             owner = self.get_change_owner()
-            if not isinstance(owner, ChangeObservable):
+            if owner is self:
                 return []
-            if owner == self:
+            if not isinstance(owner, ChangeObservable):
                 return []
             return owner.get_change_observers()
 
 
+        def get_notify_message_type(self):
+            return rt.models.notify.MessageTypes.change
+    
         def after_ui_save(self, ar, cw):
             """
             Emits notification about the change to every observer.
@@ -134,12 +124,14 @@ class ChangeObservable(dd.Model):
             if not dd.is_installed('notify'):
                 # happens e.g. in amici where we use calendar without notify
                 return
+            mt = self.get_notify_message_type()
+            if mt is None:
+                return
             def msg(user, mm):
                 subject = self.get_change_subject(ar, cw)
                 if not subject:
                     return None
                 return (subject, self.get_change_body(ar, cw))
-            mt = rt.models.notify.MessageTypes.change
             # owner = self.get_change_owner()
             # rt.models.notify.Message.emit_message(
             #     ar, owner, mt, msg, self.get_change_observers())

@@ -36,7 +36,7 @@ class Comments(dd.Table):
     required_roles = dd.login_required(CommentsUser)
 
     model = 'comments.Comment'
-    params_layout = "start_date end_date observed_event show_published"
+    params_layout = "start_date end_date observed_event user"
 
     insert_layout = dd.InsertLayout("""
     reply_to owner owner_type owner_id
@@ -45,7 +45,7 @@ class Comments(dd.Table):
     """, window_size=(60, 10), hidden_elements="reply_to owner owner_type owner_id")
 
     detail_layout = """
-    id user created modified published workflow_buttons
+    id user created modified
     reply_to owner owner_type owner_id comment_type
     body
     """
@@ -136,29 +136,29 @@ class CommentsByX(Comments):
     slave_grid_format = "summary"
 
 
-class MyPendingComments(MyComments):
-    label = _("My pending comments")
-    welcome_message_when_count = 0
+# class MyPendingComments(MyComments):
+#     label = _("My pending comments")
+#     welcome_message_when_count = 0
     
-    @classmethod
-    def param_defaults(cls, ar, **kw):
-        kw = super(MyPendingComments, cls).param_defaults(ar, **kw)
-        kw.update(show_published=dd.YesNo.no)
-        return kw
+#     @classmethod
+#     def param_defaults(cls, ar, **kw):
+#         kw = super(MyPendingComments, cls).param_defaults(ar, **kw)
+#         kw.update(show_published=dd.YesNo.no)
+#         return kw
     
 class RecentComments(Comments):
     required_roles = dd.login_required(CommentsReader)
     # required_roles = set([CommentsReader])
-    column_names = "body_preview published user *"
+    column_names = "body_preview modified user *"
     stay_in_grid = True
-    order_by = ["-published"]
+    order_by = ["-modified"]
     label = _("Recent comments")
     preview_limit = 10
 
     @classmethod
     def param_defaults(cls, ar, **kw):
         kw = super(RecentComments, cls).param_defaults(ar, **kw)
-        kw.update(observed_event=CommentEvents.published)
+        kw.update(observed_event=CommentEvents.modified)
         kw.update(end_date=dd.today())
         return kw
     

@@ -14,7 +14,8 @@ from lino.core import actions
 
 
 class NotifyingAction(actions.Action):
-    """An action which pops up a dialog window of three fields "Summary",
+    """
+    An action which pops up a dialog window of three fields "Summary",
     "Description" and a checkbox "Don't notify others" to optionally
     suppress notification.
 
@@ -28,7 +29,6 @@ class NotifyingAction(actions.Action):
     .. attribute:: subject
     .. attribute:: body
     .. attribute:: silent
-
     """
     custom_handler = True
 
@@ -82,8 +82,8 @@ class NotifyingAction(actions.Action):
 
     def emit_message(self, ar, obj, **kw):
         owner = self.get_notify_owner(ar, obj)
-        recipients = self.get_notify_recipients(ar, obj)
         mt = rt.models.notify.MessageTypes.action
+        recipients = self.get_notify_recipients(ar, obj)
         pv = ar.action_param_values
         def msg(user, mm):
             if not pv.notify_subject:

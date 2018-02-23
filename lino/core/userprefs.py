@@ -1,23 +1,20 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2016-2017 Luc Saffre.
+# Copyright 2016-2018 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
-"""The user preferences registry.
+"""
+The user preferences registry.
 
 Application code should get the preferences for a user by calling
-:meth:`lino.core.site.Site.get_user_prefs` which returns an object
-of this class.
+:meth:`lino.core.site.Site.get_user_prefs` which returns an object of
+this class.
 
 There is one instance per user which will be created upon first
-request. 
+request.
 
 After instantiating a preferences object, Lino calls the
-:meth:`setup_user_prefs
-<lino.core.plugin.Plugin.setup_user_prefs>` of every installed
-plugin once on it. This feature is used by
+:meth:`setup_user_prefs <lino.core.plugin.Plugin.setup_user_prefs>` of
+every installed plugin once on it. This feature is used by
 :mod:`lino.modlib.dashboard`).
-
-
-
 """
 
 from django.conf import settings
@@ -26,10 +23,10 @@ from .actors import Actor
 from .dashboard import ActorItem, DashboardItem
 
 def get_available_items(user):
-    """Return a list of all available dasboard items for this user.
+    """
+    Return a list of all available dasboard items for this user.
 
     This does not call :meth:`setup_user_prefs` of installed plugins.
-
     """
     lst = []
     for i in settings.SITE.get_dashboard_items(user):
