@@ -177,7 +177,8 @@ class Message(UserAuthored, Controllable, Created):
     @classmethod
     def emit_message(
             cls, ar, owner, message_type, msg_func, recipients):
-        """Create one database object for every recipient.
+        """
+        Create one database object for every recipient.
 
         `recipients` is an iterable of `(user, mail_mode)` tuples.
         Duplicate items, items with user being None and items having
@@ -188,8 +189,8 @@ class Message(UserAuthored, Controllable, Created):
         language.
 
         The changing user does not get notified about their own
-        changes, except when working as another user.
-
+        changes, except when working as another user or when
+        notify_myself is set.
         """
         # dd.logger.info("20160717 %s emit_messages()", self)
         # remove recipients without user:

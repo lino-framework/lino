@@ -157,38 +157,6 @@ class Comment(CreatedModified, UserAuthored, Controllable,
         #     qs = qs.filter(published__isnull=True)
         return qs
 
-    def unused_do_publish(self, ar):
-        self.published = timezone.now()
-        self.full_clean()
-        self.save()
-
-        if not dd.is_installed('notify'):
-            return
-        
-        message_tpl = _("{user} commented on {obj}")
-        owner = self.owner
-        if not isinstance(owner, ChangeObservable):
-            return
-
-        
-        def msg(recipient, mm):
-            user = ar.get_user()
-            subject = message_tpl.format(user=user, obj=owner)
-            body = message_tpl.format(
-                user=user, obj=ar.obj2memo(owner))
-
-            if dd.is_installed("inbox"):
-                #mailto:ADDR@HOST.com?subject=SUBJECT&body=Filling%20in%20the%20Body!%0D%0Afoo%0D%0Abar
-                body += ' <a href="{href}">{reply}</a>'.format(
-                    href=comment_email.gen_href(self, user),
-                    reply=_("Reply"))
-
-            body += ':<br>' + self.body
-            return (subject, body)
-        mt = rt.models.notify.MessageTypes.change
-        rt.models.notify.Message.emit_message(
-            ar, self, mt, msg, owner.get_change_observers())
-        
 dd.update_field(Comment, 'user', editable=False)
 
 

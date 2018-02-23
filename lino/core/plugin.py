@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2017 Luc Saffre.
+# Copyright 2008-2018 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 
 """This defines the :class:`Plugin` class.
@@ -356,9 +356,9 @@ class Plugin(object):
         return self.needed_by or self
 
     def setup_user_prefs(self, up):
-        """Called when a :class:`lino.core.userprefs.UserPrefs` get
+        """
+        Called when a :class:`lino.core.userprefs.UserPrefs` get
         instantiated.
-
         """
         pass
     
