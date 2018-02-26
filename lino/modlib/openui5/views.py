@@ -39,6 +39,22 @@ from etgen import html as xghtml
 from lino.api import rt
 import re
 
+
+from lino.core.elems import ComboFieldElement
+
+def find(itter, target, key=None):
+    """Returns the index of an element in a callable which can be use a key function"""
+    assert key == None or callable(key), "key shold be a function that takes the itter's item " \
+                                         "and returns that wanted matched item"
+    for i,x in enumerate(itter):
+        if key:
+            x = key(x)
+        if x == target:
+            return i
+    else:
+        return -1
+
+
 # Taken from lino.modlib.extjs.views
 NOT_FOUND = "%s has no row with primary key %r"
 def elem2rec_empty(ar, ah, elem, **rec):
@@ -535,12 +551,26 @@ class Connector(View):
             app_label, actor = re.match(r"(?:grid|slavetable)\/(.+)\/(.+).view.xml$", name).groups()
             ar = action_request(app_label, actor, request, request.GET, True)
             actor = rt.models.resolve(app_label + "." + actor)
-            print(ar.ah.store.pk_index) # indexk of PK
+            store = ar.ah.store
+            columns = actor.get_handle().get_columns()
+            store.list_fields
+            # todo match columns's field.name with store.list_fields storefield's index.
+            index_mod = 0
+            for c in columns:
+                c.fields_index = find(store.list_fields, c.field.name,
+                                      key=lambda f: f.name) + index_mod
+                if isinstance(c, ComboFieldElement):
+                    # Skip the data value for multi value columns, such as choices and FK fields.
+                    # use c.fields_index -1 for data value
+                    index_mod += 1
+            print(ar.ah.store.pk_index) # indexk of PK in detail row data
+
             context.update({
                 "actor": actor,
-                "columns": actor.get_handle().get_columns(),
+                "columns": columns,
                 "actions": actor.get_actions(),
                 "title": actor.label,
+                "pk_index": store.pk_index,
 
             })
             if name.startswith("slavetable/"):
