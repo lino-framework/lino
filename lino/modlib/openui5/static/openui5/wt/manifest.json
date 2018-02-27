@@ -40,10 +40,6 @@
 	  }
 	}
     ,"models":{
-	  "AllTickets": {
-		"type": "sap.ui.model.json.JSONModel",
-		"uri": "/restful/tickets/AllTickets"
-	  }
     }
   }
 }

@@ -10,20 +10,32 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.demo.wt.controller.table", {
 
+        getParentView: function(){
+            var v = this.getView()
+            while (v && v.getParent) {
+                v = v.getParent();
+                if (v instanceof sap.ui.core.mvc.View){
+//                    console.log(v.getMetadata()); //you have found the view
+                    return v
+                    break;
+                    }
+                }
+            },
+
 		onInit : function () {
 			var oView = this.getView();
+			var oMainTable = this.getView().byId("MAIN_TABLE");
             this._table = oView.byId("MAIN_TABLE")
 			this.page_no = 0;
             this.page_limit = this.visibleRowCount;
             this.pv = []; // unused,
-            this._PK = this.getView().byId("MAIN_TABLE").data("PK");
-            this._actor_id = this.getView().byId("MAIN_TABLE").data("actor_id");
-
+            this._PK = oMainTable.data("PK");
+            this._actor_id = oMainTable.data("actor_id");
+            this._content_type = oMainTable.data("content_type"); // null or int
+            this._is_slave = oMainTable.data("is_slave"); // null or int
+            this._table.setBusy(true);
             if (this.count == undefined) this.count = 0;
 			// set explored app's demo model on this sample
-			var oJSONModel = this.initSampleDataModel();
-			oView.setModel(oJSONModel);
-
 			oView.setModel(new JSONModel({
 //				showVisibilityMenuEntry: false,
 				showFreezeMenuEntry: false,
@@ -35,16 +47,30 @@ sap.ui.define([
             this.getNavport().back();
         },
 
-		initSampleDataModel : function() {
-			var oModel = new JSONModel();
+        onAfterRendering : function(oEvent){
+            console.log("loading data");
+    		var oJSONModel = this.initSampleDataModel();
+			this.getView().setModel(oJSONModel);
+        },
 
+        beforeExit: function(){console.log("beforeExit")},
+
+		initSampleDataModel : function() {
+		    var me = this
+			this._table.setBusy(true);
+			var oModel = new JSONModel();
+            var data = {limit:15, fmt:'json', mt:this._content_type }
 			var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
+            if (this._is_slave){
+                data.mk = this.getParentView().getController()._PK
+            }
 
 			jQuery.ajax(this.getView().byId("MAIN_TABLE").data("url"), {
 				dataType: "json",
-				data:{limit:15, fmt:'json'},
+				data:data,
 				success: function (oData) {
 					oModel.setData(oData);
+				    me._table.setBusy(false)
 				},
 				error: function () {
 					jQuery.sap.log.error("failed to load json");
@@ -80,7 +106,8 @@ sap.ui.define([
 			var content = sap.ui.getCore().byId("detail." + actor_id)
 			if (content===undefined){
                 content = new sap.ui.xmlview({id: "detail." + actor_id,
-                                    viewName : "sap.ui.lino." + action_name + "." + actor_id});
+                                    viewName : "sap.ui.lino." + action_name + "." + actor_id}
+                                    );
 
                 this.getView().addDependent(content)
 			    vp.addPage(content);

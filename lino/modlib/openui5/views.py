@@ -20,6 +20,7 @@ from django.utils.translation import get_language
 # from django.contrib import auth
 from lino.core import auth
 
+from lino.core.gfks import ContentType
 
 # from lino.api import dd
 from lino.core import constants
@@ -435,7 +436,7 @@ def XML_response(ar, tplname, context):
         """Debugger helper; prints out all args put into the filter but doesn't include them in the template.
         usage: {{debug | p}}
         """
-        print(args)
+        # print(args)
         return ""
 
     env.filters.update(p=p)
@@ -563,7 +564,16 @@ class Connector(View):
                     # Skip the data value for multi value columns, such as choices and FK fields.
                     # use c.fields_index -1 for data value
                     index_mod += 1
-            print(ar.ah.store.pk_index) # indexk of PK in detail row data
+            # print(ar.ah.store.pk_index) # indexk of PK in detail row data
+
+            if settings.SITE.is_installed('contenttypes'):
+                # Used in slave tables of gfks relations
+                m = getattr(store.pk, 'model', None)
+                # e.g. pk may be the VALUE_FIELD of a choicelist which
+                # has no model
+                if m is not None:
+                    ct = ContentType.objects.get_for_model(m).pk
+                    context.update(content_type=ct)
 
             context.update({
                 "actor": actor,
@@ -571,12 +581,13 @@ class Connector(View):
                 "actions": actor.get_actions(),
                 "title": actor.label,
                 "pk_index": store.pk_index,
-
+                "is_slave": name.startswith("slavetable/")
             })
             if name.startswith("slavetable/"):
                 tplname = "openui5/view/slaveTable.view.xml"
             else:
                 tplname = "openui5/view/table.view.xml" # Change to "grid" to match action?
+
             # ar = action_request(app_label, actor, request, request.GET, True)
             # add to context
 

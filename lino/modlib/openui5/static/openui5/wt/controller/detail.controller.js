@@ -54,6 +54,7 @@ sap.ui.define([
 		load_record: function(sPK){
 			var oModel = new JSONModel();
             var oView = this.getView();
+            this._PK = sPK;
 		    MessageToast.show("Going to load item with PK of" + sPK);
 
 		    jQuery.ajax(oView.byId("MAIN_PAGE").data("url") + sPK, {
