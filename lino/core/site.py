@@ -4,17 +4,18 @@
 
 """
 Defines the :class:`Site` class. For an overview see
-:doc:`/dev/site` and :doc:`/dev/plugins` .
+:doc:`/dev/site` and :doc:`/dev/plugins`.
 
-.. This document is part of the Lino test suite. You can test only
-    this document using::
 
-        $ python setup.py test -s tests.CoreTests.test_site
-        $ python lino/core/site.py
+This document is part of the Lino test suite. You can test only
+this document using::
 
-    doctest init:
+    $ doctest lino/core/site.py
+
+..  doctest init:
     >>> import lino
     >>> lino.startup('lino.projects.std.settings_test')
+
 """
 from __future__ import unicode_literals, print_function
 from builtins import map
@@ -696,6 +697,7 @@ class Site(object):
     site_config_defaults = {}
     """
     Default values to be used when creating the :attr:`site_config`.
+
     
     Usage example::
     
