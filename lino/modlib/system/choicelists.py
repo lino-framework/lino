@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2017 Luc Saffre
+# Copyright 2011-2018 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """
@@ -14,6 +14,8 @@ import datetime
 
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
+
+from atelier.utils import isidentifier
 
 from lino.core.choicelists import ChoiceList, Choice
 from lino.utils.dates import DateRangeValue
@@ -53,12 +55,6 @@ class Genders(ChoiceList):
 add = Genders.add_item
 add('M', _("Male"), 'male')
 add('F', _("Female"), 'female')
-
-
-def isidentifier(s):
-    if six.PY2:
-        return re.match("[_A-Za-z][_a-zA-Z0-9]*$", s)
-    return s.isidentifier()
 
 
 class ObservedEvent(Choice):

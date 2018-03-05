@@ -82,7 +82,9 @@ class NotifyingAction(actions.Action):
 
     def emit_message(self, ar, obj, **kw):
         owner = self.get_notify_owner(ar, obj)
-        mt = rt.models.notify.MessageTypes.action
+        mt = self.get_notify_message_type()
+        if mt is None:
+            return
         recipients = self.get_notify_recipients(ar, obj)
         pv = ar.action_param_values
         def msg(user, mm):
@@ -92,6 +94,9 @@ class NotifyingAction(actions.Action):
         rt.models.notify.Message.emit_message(
             ar, owner, mt, msg, recipients)
 
+    def get_notify_message_type(self):
+        return rt.models.notify.MessageTypes.change
+    
     def get_notify_owner(self, ar, obj):
         """Expected to return the :attr:`owner
         lino.modlib.notify.models.Message.owner>` of the message.

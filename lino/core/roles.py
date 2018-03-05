@@ -1,4 +1,4 @@
-# Copyright 2011-2017 Luc Saffre
+# Copyright 2011-2018 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Defines built-in user roles. See :ref:`permissions`.
