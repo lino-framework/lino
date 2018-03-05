@@ -201,14 +201,19 @@ class Message(UserAuthored, Controllable, Created):
         others = set()
         for user, mm in recipients:
             if user is not None and mm != MailModes.silent :
+                if user.user_type is None:
+                    continue
                 if me is None or me.notify_myself or user != me:
                     others.add((user, mm))
 
         if len(others):
+            rr = message_type.required_roles
             # subject = "{} by {}".format(message_type, me)
             # dd.logger.info(
             #     "Notify %s users about %s", len(others), subject)
             for user, mm in others:
+                if not user.user_type.has_required_roles(rr):
+                    continue
                 if mm is None:
                     mm = MailModes.often
                 with dd.translation.override(user.language):

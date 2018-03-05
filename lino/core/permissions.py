@@ -85,12 +85,12 @@ class Permittable(object):
 
 
 def add_requirements(obj, *args):
-    """Add the specified requirements to `obj`.  `obj` can be an
+    """
+    Add the specified requirements to `obj`.  `obj` can be an
     :class:`lino.core.actors.Actor` or any :class:`Permittable`.
     Application code uses this indirectly through the shortcut methods
     :meth:`lino.core.actors.Actor.add_view_requirements` or a
     :meth:`Permittable.add_requirements`.
-
     """
     obj.required_roles |= set(args)
 
