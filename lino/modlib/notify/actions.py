@@ -26,9 +26,9 @@ class NotifyingAction(actions.Action):
 
     Dialog fields:
 
-    .. attribute:: subject
-    .. attribute:: body
-    .. attribute:: silent
+    .. attribute:: notify_subject
+    .. attribute:: notify_body
+    .. attribute:: notify_silent
     """
     custom_handler = True
 
@@ -85,13 +85,18 @@ class NotifyingAction(actions.Action):
         mt = self.get_notify_message_type()
         if mt is None:
             return
-        recipients = self.get_notify_recipients(ar, obj)
         pv = ar.action_param_values
+        
+        m = getattr(obj, 'emit_system_note', None)
+        if m is not None:
+            m(ar, subject=pv.notify_subject, body=pv.notify_body)
+        
+        recipients = self.get_notify_recipients(ar, obj)
         def msg(user, mm):
             if not pv.notify_subject:
                 return None
             return (pv.notify_subject, pv.notify_body)
-        rt.models.notify.Message.emit_message(
+        rt.models.notify.Message.emit_notification(
             ar, owner, mt, msg, recipients)
 
     def get_notify_message_type(self):

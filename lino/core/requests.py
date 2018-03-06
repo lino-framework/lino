@@ -949,7 +949,8 @@ class BaseRequest(object):
         elem.after_ui_save(ar, watcher)
 
     def get_help_url(self, docname=None, text=None, **kw):
-        """Generate a link to the help section of the documentation (whose
+        """
+        Generate a link to the help section of the documentation (whose
         base is defined by :attr:`lino.core.site.Site.help_url`)
 
         Usage example::
@@ -960,7 +961,6 @@ class BaseRequest(object):
                     "or ask your system administrator.")
             msg %= dict(help=E.tostring(help))
             kw.update(message=msg, alert=True)
-
         """
         if text is None:
             text = six.text_type(_("the documentation"))

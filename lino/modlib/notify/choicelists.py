@@ -14,18 +14,18 @@ from lino.api import dd, _, pgettext
 
 
 class MessageType(dd.Choice):
-    required_roles = set({})
+    #required_roles = set({})
     
     def __init__(self, value, text, **kwargs):
         if not isidentifier(value):
             raise Exception("{} not a valid identifier".format(value))
         super(MessageType, self).__init__(value, text, value, **kwargs)
         
-    def add_requirements(self, *args):
-        """
-        Add the specified user roles as requirements to this message type.
-        """
-        self.required_roles |= set(args)
+    # def add_requirements(self, *args):
+    #     """
+    #     Add the specified user roles as requirements to this message type.
+    #     """
+    #     self.required_roles |= set(args)
 
 class MessageTypes(dd.ChoiceList):
     """

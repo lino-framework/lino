@@ -133,7 +133,7 @@ class ChangeObservable(dd.Model):
                     return None
                 return (subject, self.get_change_body(ar, cw))
             # owner = self.get_change_owner()
-            # rt.models.notify.Message.emit_message(
+            # rt.models.notify.Message.emit_notification(
             #     ar, owner, mt, msg, self.get_change_observers())
-            rt.models.notify.Message.emit_message(
+            rt.models.notify.Message.emit_notification(
                 ar, self, mt, msg, self.get_change_observers())
