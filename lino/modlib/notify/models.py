@@ -116,41 +116,6 @@ class ClearSeen(dd.Action):
 
 @dd.python_2_unicode_compatible
 class Message(UserAuthored, Controllable, Created):
-    """A **Notification message** is a instant message sent by the
-    application to a given user.
-
-    Applications can either use it indirectly by sublassing
-    :class:`ChangeObservable
-    <lino.modlib.notify.mixins.ChangeObservable>` or by directly
-    calling the class method :meth:`create_message` to create a new
-    message.
-
-
-    .. attribute:: subject
-    .. attribute:: body
-    .. attribute:: user
-
-        The recipient.
-
-    .. attribute:: owner
- 
-       The database object which controls this message. 
-
-       This may be `None`, which means that the message has no
-       controller. When a notification is controlled, then the
-       recipient will receive only the first message for that object.
-       Any following message is ignored until the recipient has
-       "confirmed" the first message. Typical use case are the
-       messages emitted by :class:`ChangeObservable`: you don't want
-       to get 10 mails just because a colleague makes 10 small
-       modifications when authoring the text field of a
-       ChangeObservable object.
-
-    .. attribute:: created
-    .. attribute:: sent
-    .. attribute:: seen
-
-    """
 
     class Meta(object):
         app_label = 'notify'
@@ -175,24 +140,9 @@ class Message(UserAuthored, Controllable, Created):
     #     self.user, self.owner)
 
     @classmethod
-    def emit_message(
+    def emit_notification(
             cls, ar, owner, message_type, msg_func, recipients):
-        """
-        Create one database object for every recipient.
-
-        `recipients` is an iterable of `(user, mail_mode)` tuples.
-        Duplicate items, items with user being None and items having
-        user.mail_mode set to MailModes.silent are removed.
-
-        `msg_func` is a callable expected to return a tuple (subject,
-        body). It is called for each recipient in the recipient's
-        language.
-
-        The changing user does not get notified about their own
-        changes, except when working as another user or when
-        notify_myself is set.
-        """
-        # dd.logger.info("20160717 %s emit_messages()", self)
+        # dd.logger.info("20160717 %s emit_notification()", self)
         # remove recipients without user:
         if ar is None:
             me = None
@@ -207,12 +157,13 @@ class Message(UserAuthored, Controllable, Created):
                     others.add((user, mm))
 
         if len(others):
-            rr = message_type.required_roles
+            # rr = message_type.required_roles
             # subject = "{} by {}".format(message_type, me)
             # dd.logger.info(
             #     "Notify %s users about %s", len(others), subject)
             for user, mm in others:
-                if not user.user_type.has_required_roles(rr):
+                # if not user.user_type.has_required_roles(rr):
+                if message_type in user.user_type.mask_message_types:
                     continue
                 if mm is None:
                     mm = MailModes.often
@@ -227,10 +178,6 @@ class Message(UserAuthored, Controllable, Created):
 
     @classmethod
     def create_message(cls, user, owner=None, **kwargs):
-        """Create a message unless that user has already been notified
-        about that object.
-
-        """
         if owner is not None:
             fltkw = gfk2lookup(cls.owner, owner)
             qs = cls.objects.filter(
@@ -243,102 +190,12 @@ class Message(UserAuthored, Controllable, Created):
         if settings.SITE.use_websockets:
             obj.send_browser_message(user)
 
-    # @dd.displayfield(_("Subject"))
-    # def subject_more(self, ar):
-    #     if ar is None:
-    #         return ''
-    #     elems = [self.subject]
-    #     if self.body:
-    #         elems.append(' ')
-    #         # elems.append(ar.obj2html(self, _("(more)")))
-    #         elems.append(E.raw(self.body))
-    #     # print 20160908, elems
-    #     return E.p(*elems)
-
-    # @dd.displayfield(_("Overview"))
-    # def overview(self, ar):
-    #     if ar is None:
-    #         return ''
-    #     return self.get_overview(ar)
-
-    # def get_overview(self, ar):
-    #     """Return the content to be displayed in the :attr:`overview` field.
-    #     On interactive rendererers (extjs, bootstrap3) the `obj` and
-    #     `user` are clickable.
-
-    #     This is also used from the :xfile:`notify/body.eml` template
-    #     where they should just be surrounded by **double asterisks**
-    #     so that Thunderbird displays them bold.
-
-    #     """
-    #     elems = body_subject_to_elems(ar, self.subject, self.body)
-    #     return E.div(*elems)
-    #     # context = dict(
-    #     #     obj=ar.obj2str(self.owner),
-    #     #     user=ar.obj2str(self.user))
-    #     # return _(self.message).format(**context)
-    #     # return E.p(
-    #     #     ar.obj2html(self.owner), " ",
-    #     #     _("was modified by {0}").format(self.user))
-
-    def unused_send_individual_email(self):
-        """"""
-        if not self.user.email:
-            # debug level because we don't want to see this message
-            # every 10 seconds:
-            dd.logger.debug("User %s has no email address", self.user)
-            return
-        # dd.logger.info("20151116 %s %s", ar.bound_action, ar.actor)
-        # ar = ar.spawn_request(renderer=dd.plugins.bootstrap3.renderer)
-        # sar = BaseRequest(
-        #     # user=self.user, renderer=dd.plugins.bootstrap3.renderer)
-        #     user=self.user, renderer=settings.SITE.kernel.text_renderer)
-        # tpl = dd.plugins.notify.email_subject_template
-        # subject = tpl.format(obj=self)
-        if self.owner is None:
-            subject = str(self)
-        else:
-            subject = pgettext("notification", "{} in {}").format(
-                self.message_type, self.owner)
-        subject = settings.EMAIL_SUBJECT_PREFIX + subject
-        # template = rt.get_template('notify/body.eml')
-        # context = dict(obj=self, E=E, rt=rt, ar=sar)
-        # body = template.render(**context)
-
-        template = rt.get_template('notify/individual.eml')
-        context = dict(obj=self, E=E, rt=rt)
-        body = template.render(**context)
-
-        sender = settings.SERVER_EMAIL
-        rt.send_email(subject, sender, body, [self.user.email])
-        self.sent = timezone.now()
-        self.save()
-
-    # for testing, set show_in_workflow to True:
-    # @dd.action(label=_("Send e-mail"),
-    #            show_in_bbar=False, show_in_workflow=False,
-    #            button_text="✉")  # u"\u2709"
-    # def do_send_email(self, ar):
-    #     self.send_individual_email()
-
-    # @dd.action(label=_("Seen"),
-    #            show_in_bbar=False, show_in_workflow=True,
-    #            button_text="✓")  # u"\u2713"
-    # def mark_seen(self, ar):
-    #     self.seen = timezone.now()
-    #     self.save()
-    #     ar.success(refresh_all=True)
-
     mark_all_seen = MarkAllSeen()
     mark_seen = MarkSeen()
     clear_seen = ClearSeen()
 
     @classmethod
     def send_summary_emails(cls, mm):
-        """Send summary emails for all pending notifications with the given
-        mail_mode `mm`.
-
-        """
         qs = cls.objects.filter(sent__isnull=True)
         qs = qs.exclude(user__email='')
         qs = qs.filter(mail_mode=mm).order_by('user')
@@ -372,9 +229,6 @@ class Message(UserAuthored, Controllable, Created):
 
 
     def send_browser_message_for_all_users(self, user):
-        """
-        Send_message to all connected users
-        """
 
         message = {
             "id": self.id,
@@ -395,9 +249,6 @@ class Message(UserAuthored, Controllable, Created):
         return
 
     def send_browser_message(self, user):
-        """
-        Send_message to the user's browser
-        """
 
         message = {
             "id": self.id,
@@ -434,7 +285,6 @@ dd.inject_field(
 
 
 class Messages(dd.Table):
-    "Base for all tables of messages."
     model = 'notify.Message'
     column_names = "created subject user seen sent *"
     # cell_edit = False
@@ -492,14 +342,10 @@ class Messages(dd.Table):
 
 
 class AllMessages(Messages):
-    """The gobal list of all messages.
-
-    """
     required_roles = dd.login_required(dd.SiteAdmin)
 
 
 class MyMessages(My, Messages):
-    """Shows messages emitted to you."""
     # label = _("My messages")
     required_roles = dd.login_required(OfficeUser)
     # column_names = "created subject owner sent workflow_buttons *"
@@ -545,38 +391,6 @@ class MyMessages(My, Messages):
         kw = super(MyMessages, self).param_defaults(ar, **kw)
         kw.update(show_seen=dd.YesNo.no)
         return kw
-
-    @classmethod
-    def unused_get_welcome_messages(cls, ar, **kw):
-        """Emits the :message:`You have %d unseen messages.` message.
-
-        This is no longer used, applications should rather yield this
-        table at the beginning of :meth:`get_dashboard_items`.
-
-        """
-        sar = ar.spawn(cls)
-        if not sar.get_permission():
-            return
-        count = sar.get_total_count()
-        if count > 0:
-            msg = _("You have %d unseen messages.") % count
-            yield ar.href_to_request(sar, msg)
-
-
-# def welcome_messages(ar):
-#     """Yield messages for the welcome page."""
-
-#     Message = rt.models.notify.Message
-#     qs = Message.objects.filter(user=ar.get_user(), seen__isnull=True)
-#     if qs.count() > 0:
-#         chunks = [
-#             str(_("You have %d unseen messages: ")) % qs.count()]
-#         chunks += join_elems([
-#             ar.obj2html(obj, obj.subject) for obj in qs])
-#         yield E.span(*chunks)
-
-# dd.add_welcome_handler(welcome_messages)
-
 
 # h = settings.EMAIL_HOST
 # if not h or h.endswith('example.com'):

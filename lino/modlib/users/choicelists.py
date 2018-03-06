@@ -1,4 +1,4 @@
-# Copyright 2011-2017 Luc Saffre
+# Copyright 2011-2018 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Defines the choicelists for :mod:`lino.modlib.users`.
@@ -40,6 +40,7 @@ class UserType(Choice):
         self.role = role_class()
         self.readonly = readonly
         self.kw = kw
+        self.mask_message_types = set([])
 
     def context(self):
         return UserTypeContext(self)
@@ -76,6 +77,15 @@ class UserType(Choice):
         return s
 
 
+    def mask_notifications(self, *args):
+        """
+        Add the given notification message types to the notification mask.
+        Notifications will not be forwarded to users whose user_type
+        filters them away.
+        """
+        for mt in args:
+            self.mask_message_types.add(mt)
+            
     def has_required_roles(self, required_roles):
         """Return `True` if at least one of this user type's :attr:`roles`
         satisfies the specified requirements.  
