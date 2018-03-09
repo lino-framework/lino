@@ -28,7 +28,7 @@ from django.utils.translation import get_language
 from etgen.html2rst import RstTable
 from lino.utils import isiterable
 from lino.utils.jsgen import py2js
-from etgen.html import E
+from etgen.html import E, tostring, iselement, forcetext, to_rst
 from lino.core import constants
 from lino.core.menus import Menu, MenuItem
 # from etgen.html import _html2rst as html2rst
@@ -148,7 +148,7 @@ class HtmlRenderer(Renderer):
         return E.a(text, href=url)
 
     def show_table(self, *args, **kwargs):
-        return E.tostring(self.table2story(*args, **kwargs))
+        return tostring(self.table2story(*args, **kwargs))
 
     def html_text(self, html):
         """Render a chunk of HTML text.
@@ -232,6 +232,7 @@ request `tar`."""
             #~ return xghtml.E.a(text,href=url,title=title)
         if not isinstance(text, (tuple, list)):
             text = (text,)
+        text = forcetext(text)
         if url is None:
             return E.b(*text)
 
@@ -327,7 +328,7 @@ request `tar`."""
         if text is None:
             # text = (force_text(obj),)
             text = (str(obj),)
-        elif isinstance(text, six.string_types) or E.iselement(text):
+        elif isinstance(text, six.string_types) or iselement(text):
             text = (text,)
         url = self.obj2url(ar, obj)
         if url is None:
@@ -335,7 +336,7 @@ request `tar`."""
         return self.href_button(url, text, **kwargs)
 
     def obj2str(self, *args, **kwargs):
-        return E.tostring(self.obj2html(*args, **kwargs))
+        return tostring(self.obj2html(*args, **kwargs))
 
     def quick_upload_buttons(self, rr):
         return '[?!]'
@@ -412,8 +413,8 @@ request `tar`."""
         from lino.core.actors import Actor
         from lino.core.tables import TableRequest
         elems = []
-        for item in story:
-            if E.iselement(item):
+        for item in forcetext(story):
+            if iselement(item):
                 elems.append(item)
             elif isinstance(item, type) and issubclass(item, Actor):
                 ar = item.default_action.request(parent=ar)
@@ -449,19 +450,19 @@ request `tar`."""
             assert mnu.label is not None
             if url is None:
                 return E.p()  # spacer
-            return E.li(E.a(mnu.label, href=url, tabindex="-1"))
+            return E.li(E.a(str(mnu.label), href=url, tabindex="-1"))
 
         items = [self.show_menu(ar, mi, level + 1) for mi in mnu.items]
         #~ print 20120901, items
         if level == 1:
-            return E.ul(*items, class_='nav navbar-nav')
+            return E.ul(*items, **{'class':'nav navbar-nav'})
         if mnu.label is None:
             raise Exception("%s has no label" % mnu)
         if level == 2:
             cl = 'dropdown'
             menu_title = E.a(
-                str(mnu.label), E.b(' ', class_="caret"), href="#",
-                class_='dropdown-toggle', data_toggle="dropdown")
+                str(mnu.label), E.b(' ', **{'class': "caret"}), href="#",
+                data_toggle="dropdown", **{'class':'dropdown-toggle'})
         elif level == 3:
             menu_title = E.a(str(mnu.label), href="#")
             cl = 'dropdown-submenu'
@@ -469,8 +470,8 @@ request `tar`."""
             raise Exception("Menu with more than three levels")
         return E.li(
             menu_title,
-            E.ul(*items, class_='dropdown-menu'),
-            class_=cl)
+            E.ul(*items, **{'class':'dropdown-menu'}),
+            **{'class':cl})
 
     def goto_instance(self, ar, obj, **kw):
         pass
@@ -542,7 +543,7 @@ class TextRenderer(HtmlRenderer):
 
         if ar.actor.master is not None and not nosummary:
             if ar.actor.slave_grid_format == 'summary':
-                s = E.to_rst(
+                s = to_rst(
                     ar.actor.get_slave_summary(ar.master_instance, ar),
                     stripped=stripped)
                 if stripped:
@@ -558,7 +559,7 @@ class TextRenderer(HtmlRenderer):
             recno += 1
             if show_links:
                 rows.append([
-                    E.to_rst(x) for x in ar.row2html(
+                    to_rst(x) for x in ar.row2html(
                         recno, fields, row, sums)])
             else:
                 rows.append([x for x in ar.row2text(fields, row, sums)])
@@ -585,7 +586,7 @@ class TextRenderer(HtmlRenderer):
             if stripped:
                 h = h.strip()
             s = h + "\n" + s
-            # s = E.tostring(E.h2(ar.get_title())) + s
+            # s = tostring(E.h2(ar.get_title())) + s
         return s
 
     def show_story(self, ar, story, stripped=True, **kwargs):
@@ -593,9 +594,9 @@ class TextRenderer(HtmlRenderer):
         from lino.core.actors import Actor
         from lino.core.requests import ActionRequest
 
-        for item in story:
-            if E.iselement(item):
-                print(E.to_rst(item, stripped))
+        for item in forcetext(story):
+            if iselement(item):
+                print(to_rst(item, stripped))
             elif isinstance(item, type) and issubclass(item, Actor):
                 ar = item.default_action.request(parent=ar)
                 self.show_table(ar, stripped=stripped, **kwargs)

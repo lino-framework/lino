@@ -75,7 +75,7 @@ class SiteSearch(dd.VirtualTable):
         elems = []
         elems.append(ar.obj2html(obj))
         # elems.append(u" ({})".format(obj._meta.verbose_name))
-        elems += (" (", obj._meta.verbose_name, ")")
+        elems += (" (", str(obj._meta.verbose_name), ")")
         return E.p(*elems)
 
     @dd.displayfield(_("Matches"))
@@ -107,8 +107,15 @@ class SiteSearch(dd.VirtualTable):
             lst = matches.get(de, None)
             if lst:
                 chunks.append(de.name + ":" + lst)
-
-        return E.raw(', '.join(chunks))
+        from lxml import etree
+        s = ', '.join(chunks)
+        s = "<span>" + s + "</span>"
+        try:
+            return etree.fromstring(s)
+        except Exception as e:
+            raise Exception("{} : {}".format(e, s))
+        # return etree.fromstring(', '.join(chunks))
+        # return E.raw(', '.join(chunks))
         
 def setup_quicklinks(site, user, m):
     m.add_action('about.SiteSearch')

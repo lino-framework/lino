@@ -48,7 +48,7 @@ from lino.core import menus
 # from lino.core import auth
 from lino.utils import jsgen
 from lino.utils.jsgen import py2js, js_code
-from etgen.html import E
+from etgen.html import E, iselement
 
 from lino.core.roles import SiteUser, Supervisor
 
@@ -368,12 +368,12 @@ class ExtRenderer(JsRenderer):
         """
         if isinstance(html, six.string_types):
             return '<div class="htmlText">{0}</div>'.format(html)
-        if not E.iselement(html):
+        if not iselement(html):
             raise Exception("{!r} is not an element".format(html))
         if html.tag in ('div', 'span'):
-            html.attrib['class'] = 'htmlText'
+            html.set('class', 'htmlText')
             return html
-        return E.div(html, class_='htmlText')
+        return E.div(html, **{'class': 'htmlText'})
         # # is a list or tuple of ET elements
         # return E.div(*html, class_='htmlText')
 

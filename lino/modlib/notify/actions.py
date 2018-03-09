@@ -1,35 +1,12 @@
 # -*- coding: UTF-8 -*-
 
-import logging
-
-logger = logging.getLogger(__name__)
-
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 
-from lino.api import dd, rt
-from lino.core import layouts
-from lino.core import fields
+from lino.api import dd, rt, _
 from lino.core import actions
 
 
 class NotifyingAction(actions.Action):
-    """
-    An action which pops up a dialog window of three fields "Summary",
-    "Description" and a checkbox "Don't notify others" to optionally
-    suppress notification.
-
-    Screenshot of a notifying action:
-
-    .. image:: /images/screenshots/reception.CheckinVisitor.png
-        :scale: 50
-
-    Dialog fields:
-
-    .. attribute:: notify_subject
-    .. attribute:: notify_body
-    .. attribute:: notify_silent
-    """
     custom_handler = True
 
     parameters = dict(
@@ -47,15 +24,9 @@ class NotifyingAction(actions.Action):
     """, window_size=(50, 15))
 
     def get_notify_subject(self, ar, obj):
-        """
-        Return the default value of the `notify_subject` field.
-        """
         return None
 
     def get_notify_body(self, ar, obj):
-        """
-        Return the default value of the `notify_body` field.
-        """
         return None
 
     def action_param_defaults(self, ar, obj, **kw):
@@ -103,24 +74,9 @@ class NotifyingAction(actions.Action):
         return rt.models.notify.MessageTypes.change
     
     def get_notify_owner(self, ar, obj):
-        """Expected to return the :attr:`owner
-        lino.modlib.notify.models.Message.owner>` of the message.
-
-        The default returns `None`.
-
-        `ar` is the action request, `obj` the object on which the
-        action is running,
-
-        """
         return None
 
     def get_notify_recipients(self, ar, obj):
-        """Yield a list of users to be notified.
-
-        `ar` is the action request, `obj` the object on which the
-        action is running, 
-
-        """
         return []
 
         

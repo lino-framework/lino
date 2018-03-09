@@ -225,27 +225,6 @@ GeneriForeignKey field."""),
     'lino.modlib.notify.Plugin.remove_after' : _("""Automatically remove notification messages after x hours."""),
     'lino.modlib.notify.Plugin.keep_unseen' : _("""Whether to keep unseen messages when removing old messages
 according to remove_after."""),
-    'lino.modlib.notify.actions.NotifyingAction' : _("""An action which pops up a dialog window of three fields "Summary",
-"Description" and a checkbox "Don't notify others" to optionally
-suppress notification."""),
-    'lino.modlib.notify.MessageTypes' : _("""The list of possible choices for the message_type field
-of a Message."""),
-    'lino.modlib.notify.MailModes' : _("""How the system should send email notifications to a user."""),
-    'lino.modlib.notify.MailModes.silent' : _("""Disable notifications for this user."""),
-    'lino.modlib.notify.MailModes.never' : _("""Notify in Lino but never send email."""),
-    'lino.modlib.notify.mixins.ChangeObservable' : _("""Mixin for models which can emit notifications to a list of
-"observers" when an instance is modified."""),
-    'lino.modlib.notify.ClearSeen' : _("""Mark this message as not yet seen."""),
-    'lino.modlib.notify.Message' : _("""A Notification message is a instant message sent by the
-application to a given user."""),
-    'lino.modlib.notify.Message.user' : _("""The recipient."""),
-    'lino.modlib.notify.Message.owner' : _("""The database object which controls this message."""),
-    'lino.modlib.notify.Messages' : _("""Base for all tables of messages."""),
-    'lino.modlib.notify.Messages.model' : _("""alias of Message"""),
-    'lino.modlib.notify.AllMessages' : _("""The gobal list of all messages."""),
-    'lino.modlib.notify.AllMessages.model' : _("""alias of Message"""),
-    'lino.modlib.notify.MyMessages' : _("""Shows messages emitted to you."""),
-    'lino.modlib.notify.MyMessages.model' : _("""alias of Message"""),
     'lino.modlib.office.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.office.roles.OfficeUser' : _("""A user who has access to office functionality like calendar, notes
 and uploads."""),
@@ -502,6 +481,24 @@ one day we will probably remove it."""),
     'lino.modlib.comments.CommentTypes' : _("""The table with all existing comment types."""),
     'lino.modlib.comments.Commentable' : _("""Mixin for models that can be subject to comments."""),
     'lino.modlib.contacts.Partner.invoice_recipient' : _("""The recipient of invoices (invoicing address)."""),
+    'lino.modlib.notify.Message' : _("""A Notification message is an instant message sent by the
+application to a given user."""),
+    'lino.modlib.notify.Message.user' : _("""The recipient."""),
+    'lino.modlib.notify.Message.owner' : _("""The database object which controls this message."""),
+    'lino.modlib.notify.Messages' : _("""Base for all tables of messages."""),
+    'lino.modlib.notify.AllMessages' : _("""The gobal list of all messages."""),
+    'lino.modlib.notify.MyMessages' : _("""Shows messages emitted to me."""),
+    'lino.modlib.notify.NotifyingAction' : _("""An action which pops up a dialog window of three fields "Summary",
+"Description" and a checkbox "Don't notify others" to optionally
+suppress notification."""),
+    'lino.modlib.notify.MessageTypes' : _("""The list of possible choices for the message_type field
+of a Message."""),
+    'lino.modlib.notify.MailModes' : _("""How the system should send email notifications to a user."""),
+    'lino.modlib.notify.MailModes.silent' : _("""Disable notifications for this user."""),
+    'lino.modlib.notify.MailModes.never' : _("""Notify in Lino but never send email."""),
+    'lino.modlib.notify.MarkSeen' : _("""Mark this message as seen."""),
+    'lino.modlib.notify.MarkAllSeen' : _("""Mark all messages as seen."""),
+    'lino.modlib.notify.ClearSeen' : _("""Mark this message as not yet seen."""),
     'lino.modlib.printing.Printable' : _("""Mixin for models for which Lino can generate a printable
 document."""),
     'lino.modlib.printing.CachedPrintable' : _("""Mixin for Models that generate a unique external file at a

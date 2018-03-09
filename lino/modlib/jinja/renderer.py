@@ -22,7 +22,7 @@ from django.utils.translation import pgettext
 from lino.utils import iif
 from lino.utils import format_date
 from etgen import html as xghtml
-from etgen.html import E
+from etgen.html import E, tostring
 from lino.utils.jinja import Counter
 from lino.utils import SumCollector
 
@@ -87,8 +87,8 @@ class JinjaRenderer(MailRenderer):
             ar.dump2html(t, ar.sliced_data_iterator)
 
             #~ print ar.get_total_count()
-            return E.tostring(t.as_element())
-            #~ return E.tostring(E.ul(*[E.li(ar.summary_row(obj)) for obj in ar]),method="html")
+            return tostring(t.as_element())
+            #~ return tostring(E.ul(*[E.li(ar.summary_row(obj)) for obj in ar]),method="html")
 
         def as_ul(action_spec):
             a = settings.SITE.models.resolve(action_spec)
@@ -97,7 +97,7 @@ class JinjaRenderer(MailRenderer):
             # 20150810
             ar.renderer = self
             # ar.renderer = settings.SITE.plugins.bootstrap3.renderer
-            return E.tostring(E.ul(*[obj.as_list_item(ar) for obj in ar]))
+            return tostring(E.ul(*[obj.as_list_item(ar) for obj in ar]))
 
         from lino.core.requests import BaseRequest
 
@@ -114,6 +114,7 @@ class JinjaRenderer(MailRenderer):
             str=str,
             len=len,
             E=E,
+            tostring=tostring,
             ar=ar,
             # _=_,
             now=datetime.datetime.now(),
@@ -149,5 +150,5 @@ class JinjaRenderer(MailRenderer):
 
     # def show_table(self, *args, **kwargs):
     #     e = super(JinjaRenderer, self).show_table(*args, **kwargs)
-    #     return E.tostring(e)
+    #     return tostring(e)
 

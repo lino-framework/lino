@@ -27,7 +27,7 @@ from atelier.utils import unindent, rmu, sixprint
 
 from lino.utils import AttrDict
 from lino.utils import i2d
-from etgen.html import E
+from etgen.html import E, tostring, to_rst
 from lino.utils.diag import analyzer
 from lino.utils import diag
 from lino.utils.sql import sql_summary

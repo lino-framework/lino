@@ -17,7 +17,7 @@ from django.utils.translation import pgettext_lazy as pgettext
 
 from lino.api import dd, rt, _
 from lino import mixins
-from etgen.html import E, join_elems
+from etgen.html import E, join_elems, tostring
 from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.users.mixins import UserAuthored, My
 from lino.modlib.office.roles import OfficeUser, OfficeStaff, OfficeOperator
@@ -309,7 +309,7 @@ class AreaUploads(Uploads):
                         # icon_name='page_go',
                         # style="vertical-align:-30%;",
                         title=_("Open the uploaded file in a new browser window"))
-                    # logger.info("20140430 %s", E.tostring(e))
+                    # logger.info("20140430 %s", tostring(e))
                     files.append(E.span(edit, ' ', show))
                 else:
                     files.append(edit)
@@ -323,9 +323,9 @@ class AreaUploads(Uploads):
             if len(files) > 0:
                 e = E.p(str(ut), ': ', *join_elems(files, ', '))
                 types.append(e)
-        # logger.info("20140430 %s", [E.tostring(e) for e in types])
+        # logger.info("20140430 %s", [tostring(e) for e in types])
         if len(types) == 0:
-            elems.append(E.ul(E.li(ar.no_data_text)))
+            elems.append(E.ul(E.li(str(ar.no_data_text))))
         else:
             elems.append(E.ul(*[E.li(e) for e in types]))
         return E.div(*elems)

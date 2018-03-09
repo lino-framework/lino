@@ -22,7 +22,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils import timezone
 
 from lino.api import dd
-from etgen.html import E
+from etgen.html import E, tostring
 from lino.utils.watch import get_master
 
 from lino.core.roles import SiteStaff
@@ -214,9 +214,9 @@ def on_update(sender=None, watcher=None, request=None, **kw):
         if len(changes) == 0:
             msg = '(no changes)'
         elif len(changes) == 1:
-            msg = E.tostring(changes[0])
+            msg = tostring(changes[0])
         else:
-            msg = E.tostring(E.ul(*changes))
+            msg = tostring(E.ul(*changes))
     else:
         changes = []
         for k, old, new in watcher.get_updates(cs.ignored_fields):

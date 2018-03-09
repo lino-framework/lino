@@ -11,7 +11,7 @@ from lino.api import dd, rt, _
     
 from lino.mixins import CreatedModified, BabelNamed
 from lino.modlib.users.mixins import UserAuthored
-from lino.modlib.notify.mixins import ChangeObservable
+from lino.modlib.notify.mixins import ChangeNotifier
 from lino.modlib.gfks.mixins import Controllable
 from lino.mixins.bleached import BleachedPreviewBody
 from .choicelists import CommentEvents
@@ -31,7 +31,7 @@ class CommentType(BabelNamed):
     
 @dd.python_2_unicode_compatible
 class Comment(CreatedModified, UserAuthored, Controllable,
-              ChangeObservable, BleachedPreviewBody):
+              ChangeNotifier, BleachedPreviewBody):
     class Meta(object):
         app_label = 'comments'
         abstract = dd.is_abstract_model(__name__, 'Comment')
@@ -95,7 +95,7 @@ class Comment(CreatedModified, UserAuthored, Controllable,
     #     return super(Comment, self).get_change_message_type(ar)
     
     def get_change_observers(self):
-        if isinstance(self.owner, ChangeObservable):
+        if isinstance(self.owner, ChangeNotifier):
             obs = self.owner
         else:
             obs = super(Comment, self)

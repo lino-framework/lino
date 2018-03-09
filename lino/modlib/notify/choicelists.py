@@ -2,9 +2,6 @@
 # Copyright 2016-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-"""Choicelists for this plugin.
-
-"""
 from __future__ import unicode_literals
 # from builtins import str
 
@@ -28,10 +25,6 @@ class MessageType(dd.Choice):
     #     self.required_roles |= set(args)
 
 class MessageTypes(dd.ChoiceList):
-    """
-    The list of possible choices for the `message_type` field
-    of a :class:`Message`.
-    """
     verbose_name = _("Message Type")
     verbose_name_plural = _("Message Types")
     item_class = MessageType
@@ -52,18 +45,6 @@ add('change', pgettext("message type", "Change"))
 
 
 class MailModes(dd.ChoiceList):
-    """How the system should send email notifications to a user.
-
-    .. attribute:: silent
-
-        Disable notifications for this user.
-
-    .. attribute:: never
-
-        Notify in Lino but never send email.
-
-
-    """
     verbose_name = _("Notification mode")
     verbose_name_plural = _("Notification modes")
     

@@ -1,45 +1,14 @@
-# Copyright 2008-2016 Luc Saffre
+# Copyright 2008-2018 Luc Saffre
 # License: BSD (see file COPYING for details)
 
 """Adds functionality for managing notification messages.
 
 See :doc:`/specs/notify`.
 
-.. autosummary::
-   :toctree:
-
-    models
-    choicelists
-    actions
-    mixins
-    utils
-    fixtures.demo2
-
-Templates used by this plugin
-=============================
-
-.. xfile:: notify/body.eml
-
-    A Jinja template used for generating the body of the email when
-    sending a message per email to its recipient.
-
-    Available context variables:
-
-    - ``obj`` -- The :class:`Message
-      <lino.modlib.notify.models.Message>` instance being sent.
-
-    - ``E`` -- The html namespace :mod:`etgen.html`
-
-    - ``rt`` -- The runtime API :mod:`lino.api.rt`
-
-    - ``ar`` -- The action request which caused the message. a
-      :class:`BaseRequest <lino.core.requests.BaseRequest>` instance.
 
 """
 
 from lino.api import ad, _
-
-# from django.conf import settings
 
 try:
     import redis

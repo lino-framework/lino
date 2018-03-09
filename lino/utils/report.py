@@ -272,5 +272,5 @@ class Report(EmptyTable):
         # .. raw:: html
         
         #    %s
-        # """ % E.tostring(obj.body).replace('\n', ' ')
+        # """ % tostring(obj.body).replace('\n', ' ')
 

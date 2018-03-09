@@ -208,7 +208,7 @@ class User(AbstractBaseUser, Contactable, CreatedModified,
                   str(self.user_type)]
         if self.language:
             items += [', ',
-            E.strong(settings.SITE.LANGUAGE_DICT.get(self.language))]
+            E.strong(str(settings.SITE.LANGUAGE_DICT.get(self.language)))]
         return E.li(*items)
         # if settings.SITE.is_demo_site:
         #     p = "'{0}', '{1}'".format(self.username, '1234')

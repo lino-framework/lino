@@ -198,7 +198,7 @@ class DateRange(Model):
     def get_period_text(self):
         if self.start_date and self.end_date:
             if self.start_date == self.end_date:
-                # s = E.tostring(E.b(fdl(self.start_date)))
+                # s = tostring(E.b(fdl(self.start_date)))
                 s = fdl(self.start_date)
                 return pgettext("date", "on %s") % s
             else:

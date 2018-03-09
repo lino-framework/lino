@@ -17,7 +17,8 @@ class Renderer(HtmlRenderer):
     """A  HTML render that uses Bootstrap3.
 
     """
-    tableattrs = dict(class_="table table-hover table-striped table-condensed")
+    tableattrs = {
+        'class': "table table-hover table-striped table-condensed"}
     cellattrs = dict(align="left", valign="top")
 
     can_auth = False
