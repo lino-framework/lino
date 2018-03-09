@@ -9,7 +9,7 @@ from django.contrib.humanize.templatetags.humanize import naturaltime
 
 from lino.api import dd
 from lino.modlib.users.mixins import My
-from etgen.html import E
+from etgen.html import E, tostring
 # from lino.utils.soup import truncate_comment
 from lino.core.gfks import gfk2lookup
 from .roles import CommentsReader, CommentsUser, CommentsStaff
@@ -82,9 +82,9 @@ class Comments(dd.Table):
         ch.append(' ')
         ch.append(
             E.a(u"⁜", onclick="toggle_visibility('comment-{}');".format(
-                comment.id), title=_("Hide"), href="#")
+                comment.id), title=str(_("Hide")), href="#")
         )
-        return E.tostring(ch)
+        return tostring(ch)
 
     @classmethod
     def as_li(cls, self, ar):
@@ -99,7 +99,7 @@ class Comments(dd.Table):
             t = _("Modified " + self.modified.strftime('%Y-%m-%d %H:%M') )
 
         chunks += [
-            " (", E.tostring(ar.obj2html(self, by, title=t)), ")"
+            " (", tostring(ar.obj2html(self, by, title=t)), ")"
         ]
         # if self.more_text:
         #     chunks.append(" (...)")
@@ -111,7 +111,7 @@ class Comments(dd.Table):
             if sar.get_permission():
                 btn = sar.ar2button(
                     None, _("Reply"), icon_name=None)
-                chunks.append(' '+E.tostring(btn))
+                chunks.append(' '+tostring(btn))
 
 
         html = ''.join(chunks)
@@ -173,10 +173,10 @@ class RecentComments(Comments):
         for o in sar.sliced_data_iterator:
             li = cls.as_li(o, ar)
             if o.owner: #Catch for ownerless hackerish comments
-                li += _(" On: ") + E.tostring(ar.obj2html(o.owner))
+                li += _(" On: ") + tostring(ar.obj2html(o.owner))
                 
             items.append("<li>{}</li>".format(li))
-        # html += "<p>" + E.tostring(btn) + "</p>"
+        # html += "<p>" + tostring(btn) + "</p>"
         
         if len(items) > 0:
             html += "<div>{0}</div>".format(''.join(items))
@@ -208,7 +208,7 @@ class CommentsByRFC(CommentsByX):
         sar = self.insert_action.request_from(sar)
         if sar.get_permission():
             btn = sar.ar2button(None, _("Write comment"), icon_name=None)
-            html += "<p>" + E.tostring(btn) + "</p>"
+            html += "<p>" + tostring(btn) + "</p>"
 
         html += "<ul>"
         for c in sar:

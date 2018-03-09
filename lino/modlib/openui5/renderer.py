@@ -11,7 +11,7 @@ from lino.core.renderer import HtmlRenderer
 from lino.core.renderer import add_user_language
 from lino.core.menus import Menu, MenuItem
 
-from etgen.ui5xml import E
+from etgen.html import E
 
 from .views import index_response
 
@@ -21,7 +21,7 @@ class Renderer(HtmlRenderer):
     """A  HTML render that uses Bootstrap3.
 
     """
-    tableattrs = dict(class_="table table-hover table-striped table-condensed")
+    tableattrs = {'class': "table table-hover table-striped table-condensed"}
     cellattrs = dict(align="left", valign="top")
 
     can_auth = False
@@ -114,14 +114,14 @@ class Renderer(HtmlRenderer):
         items = [self.show_menu(ar, mi, level + 1) for mi in mnu.items]
         #~ print 20120901, items
         if level == 1:
-            return E.ul(*items, class_='nav navbar-nav')
+            return E.ul(*items, **{'class':'nav navbar-nav'})
         if mnu.label is None:
             raise Exception("%s has no label" % mnu)
         if level == 2:
             cl = 'dropdown'
             menu_title = E.a(
-                str(mnu.label), E.b(' ', class_="caret"), href="#",
-                class_='dropdown-toggle', data_toggle="dropdown")
+                str(mnu.label), E.b(' ', **{'class':"caret"}), href="#",
+                data_toggle="dropdown", **{'class':'dropdown-toggle'})
         elif level == 3:
             menu_title = E.a(str(mnu.label), href="#")
             cl = 'dropdown-submenu'
@@ -129,5 +129,5 @@ class Renderer(HtmlRenderer):
             raise Exception("Menu with more than three levels")
         return E.li(
             menu_title,
-            E.ul(*items, class_='dropdown-menu'),
-            class_=cl)
+            E.ul(*items, **{'class':'dropdown-menu'}),
+            **{'class':cl})

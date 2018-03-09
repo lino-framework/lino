@@ -5,11 +5,11 @@
 
 """
 from __future__ import unicode_literals
-
+from builtins import str
 
 from lino.api import _
 from lino.core.permissions import Permittable
-from etgen.html import E
+from etgen.html import E, tostring
 
 class DashboardItem(Permittable):
     """Base class for all dashboard items.
@@ -51,8 +51,8 @@ class DashboardItem(Permittable):
         if self.header_level is None:
             s = ''
         else:
-            s = E.tostring(E.h2(
-                sar.actor.get_title_base(sar),
+            s = tostring(E.h2(
+                str(sar.actor.get_title_base(sar)),
                 ' ', ar.window_action_button(
                     T.default_action,
                     # label="🗗",
@@ -66,7 +66,7 @@ class DashboardItem(Permittable):
                     style="text-decoration:none;",
                     title=_("Show this table in own window"))))
 
-        s += E.tostring(ar.show(sar))
+        s += tostring(ar.show(sar))
         return s
             
 class ActorItem(DashboardItem):

@@ -34,7 +34,7 @@ from lino.core.utils import error2str
 from lino.core.utils import qs2summary
 from lino.core.utils import ParameterPanel
 from lino.utils import curry, AttrDict, is_string
-from etgen.html import E
+from etgen.html import E, tostring
 
 from .roles import SiteUser
 
@@ -1527,7 +1527,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         """
         """
         #~ settings.SITE.startup()
-        return E.tostring(self.request(**kw).table2xhtml())
+        return tostring(self.request(**kw).table2xhtml())
 
     @classmethod
     def get_screenshot_requests(self, language):

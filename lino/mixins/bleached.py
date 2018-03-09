@@ -61,9 +61,10 @@ from lino.core.model import Model
 from lino.core.fields import fields_list, RichTextField
 from lino.utils.restify import restify
 from lino.utils.soup import truncate_comment
-from etgen.html import E
+from etgen.html import E, tostring
 from lino.api import _
 
+from lxml import etree
 
 def rich_text_to_elems(ar, description):
     """
@@ -71,14 +72,14 @@ def rich_text_to_elems(ar, description):
     """
     if description.startswith("<"):
         # desc = E.raw('<div>%s</div>' % self.description)
-        desc = E.raw(ar.parse_memo(description))
+        desc = etree.fromstring(ar.parse_memo(description))
         return [desc]
     # desc = E.raw('<div>%s</div>' % self.description)
     html = restify(ar.parse_memo(description))
     # logger.info("20160704b restified --> %s", html)
-    desc = E.raw(html)
+    desc = etree.fromstring(html)
     # logger.info(
-    #     "20160704c parsed --> %s", E.tostring(desc))
+    #     "20160704c parsed --> %s", tostring(desc))
     if desc.tag == 'body':
         # happens if it contains more than one paragraph
         return list(desc)  # .children

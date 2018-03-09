@@ -24,7 +24,7 @@
 {% if request and site.title %}
 &copy; Copyright {{now.year}} by <a href="http://{{request.get_host()}}">{{site.title}}</a>.
 {% endif %}
-{{E.tostring(site.welcome_html())}}
+{{tostring(site.welcome_html())}}
 </p>
 {% endblock %}
 </footer>

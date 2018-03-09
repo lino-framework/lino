@@ -28,7 +28,7 @@ from lino.core.requests import BaseRequest
 from lino.core.tablerequest import TableRequest
 from lino.core.views import action_request
 from lino.core.utils import navinfo
-from etgen.html import E
+from etgen.html import E, tostring
 from etgen import html as xghtml
 
 PLAIN_PAGE_LENGTH = 15
@@ -50,7 +50,7 @@ def http_response(ar, tplname, context):
             url = bs3.build_plain_url()
             menu.add_url_button(url, label=_("Home"))
         e = bs3.renderer.show_menu(ar, menu)
-        menu = E.tostring(e)
+        menu = tostring(e)
         MENUS[k] = menu
     context.update(menu=menu)
     context = ar.get_printable_context(**context)
@@ -72,12 +72,12 @@ def buttons2pager(buttons, title=None):
         items.append(E.li(E.span(title)))
     for symbol, label, url in buttons:
         if url is None:
-            items.append(E.li(E.span(symbol), class_="disabled"))
+            items.append(E.li(E.span(symbol), **{'class':"disabled"}))
         else:
             items.append(E.li(E.a(symbol, href=url)))
     # Bootstrap version 2.x
     # return E.div(E.ul(*items), class_='pagination')
-    return E.ul(*items, class_='pagination pagination-sm')
+    return E.ul(*items, **{'class':'pagination pagination-sm'})
 
 
 def table2html(ar, as_main=True):
@@ -95,7 +95,7 @@ def table2html(ar, as_main=True):
     """
     # as_main = True
     t = xghtml.Table()
-    t.attrib.update(class_="table table-striped table-hover")
+    t.attrib.update(**{'class':"table table-striped table-hover"})
     if ar.limit is None:
         ar.limit = PLAIN_PAGE_LENGTH
     pglen = ar.limit
@@ -114,10 +114,18 @@ def table2html(ar, as_main=True):
     if not as_main:
         url = ar.get_request_url()  # open in own window
         return E.div(
-                E.div(E.div(E.a(E.span(class_="glyphicon glyphicon-folder-open"),class_="btn btn-default pull-right", href=url, style = "margin-left: 4px;"),E.h5(ar.get_title(), style="display: inline-block;"), class_="panel-title"),
-                      class_="panel-heading"),
+            E.div(
+                E.div(
+                    E.a(
+                        E.span(**{'class':"glyphicon glyphicon-folder-open"}),
+                        href=url, style="margin-left: 4px;",
+                        **{'class':"btn btn-default pull-right"}),
+                    E.h5(ar.get_title(), style="display: inline-block;"),
+                    **{'class': "panel-title"}),
+                **{'class':"panel-heading"}),
                 t.as_element(),
-               class_="panel panel-default",style="display: inline-block;")
+            style="display: inline-block;",
+            **{'class':"panel panel-default"})
 
     buttons = []
     kw = dict()
@@ -161,7 +169,7 @@ def layout2html(ar, elem):
     items = list(lh.main.as_plain_html(ar, elem))
     # if navigator:
     #     items.insert(0, navigator)
-    #~ print E.tostring(E.div())
+    #~ print tostring(E.div())
     #~ if len(items) == 0: return ""
     return E.form(*items)
     #~ print 20120901, lh.main.__html__(ar)
@@ -248,8 +256,8 @@ class Element(View):
         # E.div() as "<div/>" while in HTML5 it must be "<div></div>"
         # (and the ending / is ignored).
         
-        #~ return E.tostring(main, method="html")
-        #~ return E.tostring(main)
+        #~ return tostring(main, method="html")
+        #~ return tostring(main)
         # return main
 
         context = dict(

@@ -26,7 +26,7 @@ from django.core import exceptions
 from django.utils.encoding import force_text
 from django.http import QueryDict
 
-from etgen.html import E
+from etgen.html import E, tostring
 from lino import AFTER17
 
 from django.core.validators import (
@@ -682,7 +682,7 @@ class InstanceAction(object):
         the :ref:`lino.tutorial.polls`.
 
         """
-        return E.tostring(self.as_button_elem(*args, **kwargs))
+        return tostring(self.as_button_elem(*args, **kwargs))
 
     def get_row_permission(self, ar):
         state = self.bound_action.actor.get_row_state(self.instance)

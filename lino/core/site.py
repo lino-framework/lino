@@ -3571,7 +3571,7 @@ signature as `django.core.mail.EmailMessage`.
             p.append(_("This is "))
             if self.url:
                 p.append(
-                    E.a(self.verbose_name, href=self.url, target='_blank'))
+                    E.a(str(self.verbose_name), href=self.url, target='_blank'))
             else:
                 p.append(E.b(self.verbose_name))
             if self.version:

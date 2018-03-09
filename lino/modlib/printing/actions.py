@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 import os
 import shutil
 import datetime
+from lxml import etree
 
 from django.conf import settings
 from django.utils.timezone import make_aware
@@ -87,11 +88,15 @@ class BasePrintAction(Action):
 
     def notify_done(self, ar, bm, leaf, url, **kw):
         help_url = ar.get_help_url("print", target='_blank')
-        msg = _("Your printable document (filename %(doc)s) "
+        msg = _("Your printable document ({}) "
                 "should now open in a new browser window. "
-                "If it doesn't, please consult %(help)s "
-                "or ask your system administrator.")
-        msg %= dict(doc=leaf, help=E.tostring(help_url))
+                # "If it doesn't, please consult %(help)s "
+                "If it doesn't, please "
+                "ask your system administrator.")
+        msg = msg.format(
+            etree.tostring(E.a(leaf, href=url), encoding="unicode"))
+        # msg %= dict(doc=leaf, help=etree.tostring(
+        #     help_url, encoding="unicode"))
         kw.update(message=msg, alert=True)
         if bm.use_webdav and has_davlink and ar.request is not None:
             kw.update(

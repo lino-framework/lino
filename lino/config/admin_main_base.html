@@ -12,7 +12,7 @@
     {% block hello_user %}
         <p>{{_("Quick links:")}}
         {% for mi in settings.SITE.get_quicklinks(user).items %}
-        [{{E.tostring(ar.menu_item_button(mi))}}]
+        [{{tostring(ar.menu_item_button(mi))}}]
         {% endfor %}
         {% if extjs.autorefresh_seconds %}
         <a href="javascript:Lino.autorefresh();">autorefresh</a>
@@ -21,7 +21,7 @@
         </p>
         <p>{{_("Hi, %(user)s!") % dict(user=user)}}
         {% for msg in settings.SITE.get_welcome_messages(ar) %}
-            {{ E.tostring(msg) }}
+            {{ tostring(msg) }}
         {% endfor %}
         </p>
         {% block feedback %}
@@ -52,7 +52,7 @@
         {{_("Welcome to the <b>%s</b> site.") % site.title}}
         {% if site.verbose_name and site.url and site.version %}
         {{_("We are running %(name)s version %(version)s") % dict(
-            name=E.tostring(E.a(site.verbose_name, href=site.url)),
+            name=tostring(E.a(site.verbose_name, href=site.url)),
             version=site.version)}}
         {% endif %}
         {% endif %}
@@ -62,12 +62,12 @@
       {% if site.get_auth_method() %}
       <p>
         {{_("You will now probably want to {}.").format(
-          E.tostring(ar.window_action_button(
+          tostring(ar.window_action_button(
             site.models.users.UsersOverview.get_action_by_name('sign_in'),
             label=_("sign in"), icon_name=None)))}}
         {% if site.plugins.users.online_registration and not user.user_type.readonly %}
         {{_("Or {} as a new user.").format(
-          E.tostring(ar.window_action_button(
+          tostring(ar.window_action_button(
             site.models.users.Register.insert_action,
             label=_("register"), icon_name=None)))}}
         {% endif %}
@@ -78,7 +78,7 @@
         {% if site.social_auth_backends %}
         {{_("Or sign in using ")}}
         {% for e in site.get_social_auth_links() %}
-        {{E.tostring(e)}}
+        {{tostring(e)}}
         {% endfor %}
         {% endif %}
       </p>

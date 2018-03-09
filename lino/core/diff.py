@@ -2,7 +2,7 @@
 # License: BSD (see file COPYING for details)
 
 from __future__ import unicode_literals
-
+from builtins import str
 import six
 import difflib
 
@@ -122,7 +122,7 @@ class ChangeWatcher(object):
                     "{0} {1}".format(n, labels[op])
                     for op, n in counters.items()])
             return E.li(
-                E.b(f.verbose_name), " : ", txt)
+                E.b(str(f.verbose_name)), " : ", txt)
             
         if isinstance(f, models.DateTimeField):
             return
@@ -140,7 +140,7 @@ class ChangeWatcher(object):
             old = obj2unicode(old)
             new = obj2unicode(new)
         return E.li(
-            E.b(f.verbose_name), " : ",
+            E.b(str(f.verbose_name)), " : ",
             u"{0} --> {1}".format(old, new))
         
     def has_changed(self, fieldname):

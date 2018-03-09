@@ -2,9 +2,6 @@
 # Copyright 2011-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Database models for this plugin.
-
-"""
 from __future__ import unicode_literals
 from builtins import str
 from builtins import object
@@ -31,7 +28,7 @@ from lino.modlib.office.roles import OfficeStaff, OfficeUser
 from lino.mixins.bleached import body_subject_to_elems
 
 from lino.utils.format_date import fds
-from etgen.html import E
+from etgen.html import E, tostring
 from lino.utils import join_elems
 
 from datetime import timedelta
@@ -42,13 +39,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 def groupname(s):
-    """Remove any invalid characters from the given string so that it can
-    be used as a Redis group name.
+    # Remove any invalid characters from the given string so that it can
+    # be used as a Redis group name.
+    # "Group name must be a valid unicode string containing only
+    # alphanumerics, hyphens, or periods."
 
-    "Group name must be a valid unicode string containing only
-    alphanumerics, hyphens, or periods."
-
-    """
     s = s.replace('@', '-')
     return s.encode('ascii', 'ignore')
 
@@ -95,7 +90,6 @@ class MarkSeen(dd.Action):
 
 
 class ClearSeen(dd.Action):
-    """Mark this message as not yet seen."""
     label = _("Clear seen")
     show_in_bbar = False
     show_in_workflow = True
@@ -363,13 +357,13 @@ class MyMessages(My, Messages):
         qs = qs.filter(seen__isnull=True)
         # mark_all = rt.models.notify.MyMessages.get_action_by_name(
         #     'mark_all_seen')
-        # html = E.tostring(ar.action_button(mark_all, None))
+        # html = tostring(ar.action_button(mark_all, None))
         # TODO: make action_button() work with list actions
         html = ''
         ba = rt.models.notify.MyMessages.get_action_by_name('mark_seen')
 
         def fmt(obj):
-            s = E.tostring(ar.action_button(ba, obj))
+            s = tostring(ar.action_button(ba, obj))
             s += fds(obj.created) + " " + obj.created.strftime(
                 settings.SITE.time_format_strftime) + " "
             if obj.body:
@@ -426,7 +420,6 @@ if remove_after:
     
     @dd.schedule_daily()
     def clear_seen_messages():
-        # Daily task which deletes messages older than X hours.
 
         Message = rt.models.notify.Message
         qs = Message.objects.filter(
