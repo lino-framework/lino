@@ -785,16 +785,18 @@ def error2str(self, e):
     """Convert the given Exception object into a string, but handling
     ValidationError specially.
     """
+    if isinstance(e, list):
+        return ', '.join([self.error2str(v) for v in e])
     if isinstance(e, exceptions.ValidationError):
         md = getattr(e, 'message_dict', None)
         if md is not None:
             def fieldlabel(name):
                 de = self.get_data_elem(name)
-                return force_text(getattr(de, 'verbose_name', name))
+                return str(getattr(de, 'verbose_name', name))
             return '\n'.join([
                 "%s : %s" % (
                     fieldlabel(k), self.error2str(v))
-                for k, v in list(md.items())])
+                for k, v in md.items()])
         return '\n'.join(e.messages)
     return str(e)
 

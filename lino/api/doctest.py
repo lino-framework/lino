@@ -81,7 +81,7 @@ def post_json_dict(username, url, data, **extra):
     if res.status_code != 200:
         raise Exception("{} gave status code {} instead of 200".format(
             url, res.status_code))
-    return AttrDict(json.loads(res.content))
+    return AttrDict(json.loads(res.content.decode()))
 
 
 def check_json_result(response, expected_keys=None, msg=''):
