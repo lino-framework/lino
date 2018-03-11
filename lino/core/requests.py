@@ -11,10 +11,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 from copy import copy
-try:
-    from html import escape
-except ImportError:
-    from cgi import escape
+from xml.sax.saxutils import escape
+# try:
+#     from html import escape
+# except ImportError:
+#     from cgi import escape
 
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
