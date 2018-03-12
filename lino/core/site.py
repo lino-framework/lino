@@ -1623,10 +1623,13 @@ class Site(object):
             if cfg:
                 p.configure(**cfg)
 
+            needed_by = p
+            while needed_by.needed_by is not None:
+                needed_by = needed_by.needed_by
             for dep in p.needs_plugins:
                 k2 = dep.rsplit('.')[-1]
                 if k2 not in self.plugins:
-                    install_plugin(dep, needed_by=p)
+                    install_plugin(dep, needed_by=needed_by)
                     # plugins.append(dep)
 
             # actual_apps.append(app_name)
