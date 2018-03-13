@@ -809,12 +809,18 @@ def lazy_format(tpl, *args, **kwargs):
         return tpl.format(*args, **kwargs)
     return lazy(f, six.text_type)()
     
-simplify_parts = set(['models', 'desktop', 'ui', 'choicelists'])
+simplify_parts = set(
+    ['models', 'desktop', 'ui', 'choicelists', 'actions', 'mixins'])
 
 def simplify_name(name):
-    """Simplify the given Lino name. This is used when we want to ignore
-    whether a model or table or action is defined in a
+    """
+    Simplify the given full Python name. 
 
+    Removes any part 'models', 'desktop', 'ui', 'choicelists',
+    'mixins' or 'actions' from the name.
+
+    This is used when we want to ignore where exactly a model or table
+    or action is being defined within its plugin.
     """
     parts = name.split('.')
     for e in simplify_parts:

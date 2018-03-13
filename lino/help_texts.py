@@ -15,109 +15,109 @@ Lino."""),
 file."""),
     'lino.management.commands.initdb.Command' : _("""Flush the database and load the specified fixtures."""),
     'lino.management.commands.prep.Command' : _("""Flushes the database and loads the default demo fixtures."""),
-    'lino.mixins.Contactable' : _("""Mixin for models that represent somebody who can be contacted by
+    'lino.Contactable' : _("""Mixin for models that represent somebody who can be contacted by
 email."""),
-    'lino.mixins.Phonable' : _("""Mixin for models that represent somebody who can be contacted by
+    'lino.Phonable' : _("""Mixin for models that represent somebody who can be contacted by
 phone."""),
-    'lino.mixins.Registrable' : _("""Base class to anything that may be "registered" and "deregistered"
+    'lino.Registrable' : _("""Base class to anything that may be "registered" and "deregistered"
 (e.g. Invoices, Vouchers, Declarations, Reservations,...).
 "Registered" in general means "this object has been taken account of".
 Registered objects are not editable."""),
-    'lino.mixins.Registrable.state' : _("""The ChoiceList of the state field must have at least two items
+    'lino.Registrable.state' : _("""The ChoiceList of the state field must have at least two items
 named "draft" and "registered".
 There may be additional states.
 Every state must have an extra attribute "editable"."""),
-    'lino.mixins.Modified' : _("""Adds a a timestamp field which holds the last modification time of
+    'lino.Modified' : _("""Adds a a timestamp field which holds the last modification time of
 every individual database object."""),
-    'lino.mixins.Modified.modified' : _("""The time when this database object was last modified."""),
-    'lino.mixins.Modified.auto_touch' : _("""Whether to touch objects automatically when saving them."""),
-    'lino.mixins.Created' : _("""Adds a a timestamp field which holds the creation time of every
+    'lino.Modified.modified' : _("""The time when this database object was last modified."""),
+    'lino.Modified.auto_touch' : _("""Whether to touch objects automatically when saving them."""),
+    'lino.Created' : _("""Adds a a timestamp field which holds the creation time of every
 individual database object."""),
-    'lino.mixins.Created.created' : _("""The time when this object was created."""),
-    'lino.mixins.CreatedModified' : _("""Adds two timestamp fields created and modified."""),
-    'lino.mixins.ProjectRelated' : _("""Mixin for models that are related to a "project". This adds a
+    'lino.Created.created' : _("""The time when this object was created."""),
+    'lino.CreatedModified' : _("""Adds two timestamp fields created and modified."""),
+    'lino.ProjectRelated' : _("""Mixin for models that are related to a "project". This adds a
 field named project and related default behaviour."""),
-    'lino.mixins.ProjectRelated.project' : _("""Pointer to the project to which this object is related."""),
-    'lino.mixins.Referrable' : _("""Mixin for things that have a unique reference, i.e. an identifying
+    'lino.ProjectRelated.project' : _("""Pointer to the project to which this object is related."""),
+    'lino.Referrable' : _("""Mixin for things that have a unique reference, i.e. an identifying
 name used by humans to refer to an individual object."""),
-    'lino.mixins.Referrable.ref' : _("""The reference. This must be either empty or unique."""),
-    'lino.mixins.Referrable.ref_max_length' : _("""The maximum length of the ref field."""),
-    'lino.mixins.dupable.CheckedSubmitInsert' : _("""Like the standard lino.core.actions.SubmitInsert, but adds
+    'lino.Referrable.ref' : _("""The reference. This must be either empty or unique."""),
+    'lino.Referrable.ref_max_length' : _("""The maximum length of the ref field."""),
+    'lino.dupable.CheckedSubmitInsert' : _("""Like the standard lino.core.actions.SubmitInsert, but adds
 a confirmation if there is a possible duplicate record."""),
-    'lino.mixins.dupable.PhoneticWordBase' : _("""Base class for the table of phonetic words of a given dupable
+    'lino.dupable.PhoneticWordBase' : _("""Base class for the table of phonetic words of a given dupable
 model. For every (non-abstract) dupable model there must be a
 subclass of PhoneticWordBase.
 The subclass must define a field
 owner which points to the Dupable, and the Dupable's
 dupable_word_model must point to its subclass
 of PhoneticWordBase."""),
-    'lino.mixins.dupable.Dupable' : _("""Base class for models that can be "dupable"."""),
-    'lino.mixins.dupable.Dupable.submit_insert' : _("""A dupable model has its
+    'lino.dupable.Dupable' : _("""Base class for models that can be "dupable"."""),
+    'lino.dupable.Dupable.submit_insert' : _("""A dupable model has its
 submit_insert action
 overridden by CheckedSubmitInsert, a extended variant of
 the action which checks for duplicate rows and asks a user
 confirmation when necessary."""),
-    'lino.mixins.dupable.Dupable.dupable_words_field' : _("""The name of a CharField on this model which holds the full-text
+    'lino.dupable.Dupable.dupable_words_field' : _("""The name of a CharField on this model which holds the full-text
 description that is being tested for duplicates."""),
-    'lino.mixins.dupable.Dupable.dupable_word_model' : _("""Full name of the model used to hold dupable words for instances of
+    'lino.dupable.Dupable.dupable_word_model' : _("""Full name of the model used to hold dupable words for instances of
 this model.  Applications can specify a string which will be
 resolved at startup to the model's class object."""),
-    'lino.mixins.dupable.DupableChecker' : _("""Checks for the following repairable problem:"""),
-    'lino.mixins.dupable.DupableChecker.model' : _("""alias of Dupable"""),
-    'lino.mixins.dupable.SimilarObjects' : _("""Shows the other objects which are similar to this one."""),
-    'lino.mixins.dupable.SimilarObjects.master' : _("""alias of lino.core.model.Model"""),
-    'lino.mixins.duplicable.Duplicate' : _("""Duplicate the selected row."""),
-    'lino.mixins.duplicable.Duplicable' : _("""Adds a row action "Duplicate" which duplicates (creates a clone
+    'lino.dupable.DupableChecker' : _("""Checks for the following repairable problem:"""),
+    'lino.dupable.DupableChecker.model' : _("""alias of Dupable"""),
+    'lino.dupable.SimilarObjects' : _("""Shows the other objects which are similar to this one."""),
+    'lino.dupable.SimilarObjects.master' : _("""alias of lino.core.model.Model"""),
+    'lino.duplicable.Duplicate' : _("""Duplicate the selected row."""),
+    'lino.duplicable.Duplicable' : _("""Adds a row action "Duplicate" which duplicates (creates a clone
 of) the object it was called on."""),
-    'lino.mixins.human.Human' : _("""Base class for models that represent a human."""),
-    'lino.mixins.human.Human.title' : _("""Used to specify a professional position or academic
+    'lino.human.Human' : _("""Base class for models that represent a human."""),
+    'lino.human.Human.title' : _("""Used to specify a professional position or academic
 qualification like "Dr." or "PhD"."""),
-    'lino.mixins.human.Human.first_name' : _("""The first name, also known as given name."""),
-    'lino.mixins.human.Human.last_name' : _("""The last name, also known as family name."""),
-    'lino.mixins.human.Human.middle_name' : _("""A space-separated list of all middle names."""),
-    'lino.mixins.human.Human.gender' : _("""The sex of this person (male or female)."""),
-    'lino.mixins.human.Human.full_name' : _("""Returns a one-line string composed of salutation,
+    'lino.human.Human.first_name' : _("""The first name, also known as given name."""),
+    'lino.human.Human.last_name' : _("""The last name, also known as family name."""),
+    'lino.human.Human.middle_name' : _("""A space-separated list of all middle names."""),
+    'lino.human.Human.gender' : _("""The sex of this person (male or female)."""),
+    'lino.human.Human.full_name' : _("""Returns a one-line string composed of salutation,
 first_name and last_name."""),
-    'lino.mixins.human.Born' : _("""Abstract base class that adds a birth_date field and a virtual
+    'lino.human.Born' : _("""Abstract base class that adds a birth_date field and a virtual
 field "Age"."""),
-    'lino.mixins.human.Born.birth_date' : _("""An IncompleteDateField."""),
-    'lino.mixins.human.Born.age' : _("""Virtual field displaying the age in years."""),
-    'lino.mixins.periods.CombinedDateTime' : _("""Mixin for models which have at least one couple of date and time
+    'lino.human.Born.birth_date' : _("""An IncompleteDateField."""),
+    'lino.human.Born.age' : _("""Virtual field displaying the age in years."""),
+    'lino.periods.CombinedDateTime' : _("""Mixin for models which have at least one couple of date and time
 fields which form a kind of editable timestamp field."""),
-    'lino.mixins.periods.Started' : _("""Mixin for models with two fields start_date and
+    'lino.periods.Started' : _("""Mixin for models with two fields start_date and
 start_time"""),
-    'lino.mixins.periods.Ended' : _("""Mixin for models with two fields end_date and
+    'lino.periods.Ended' : _("""Mixin for models with two fields end_date and
 end_time Models inheriting from this must also inherit
 from Started."""),
-    'lino.mixins.periods.DateRange' : _("""Mixin for models which represent a period whose start and end are
+    'lino.periods.DateRange' : _("""Mixin for models which represent a period whose start and end are
 date fields."""),
-    'lino.mixins.periods.ObservedDateRange' : _("""lino.core.param_panel.ParameterPanel with two fields
+    'lino.periods.ObservedDateRange' : _("""lino.core.param_panel.ParameterPanel with two fields
 start_date and end_date which default to empty."""),
-    'lino.mixins.periods.Yearly' : _("""An ObservedDateRange for which start_date defaults to Jan
+    'lino.periods.Yearly' : _("""An ObservedDateRange for which start_date defaults to Jan
 1st and end_date to Dec 31 of the current year."""),
-    'lino.mixins.periods.Monthly' : _("""An ObservedDateRange which defaults to the current month."""),
-    'lino.mixins.periods.Today' : _("""A ParameterPanel
+    'lino.periods.Monthly' : _("""An ObservedDateRange which defaults to the current month."""),
+    'lino.periods.Today' : _("""A ParameterPanel
 with a field today which defaults to today."""),
-    'lino.mixins.polymorphic.Polymorphic' : _("""Mixin for models that use Multiple Table Inheritance to implement
+    'lino.polymorphic.Polymorphic' : _("""Mixin for models that use Multiple Table Inheritance to implement
 polymorphism."""),
-    'lino.mixins.polymorphic.Polymorphic.mti_navigator' : _("""A virtual field which defines buttons for switching between the
+    'lino.polymorphic.Polymorphic.mti_navigator' : _("""A virtual field which defines buttons for switching between the
 different views."""),
-    'lino.mixins.sequenced.MoveUp' : _("""Move this row one row upwards."""),
-    'lino.mixins.sequenced.MoveDown' : _("""Move this row one row downwards."""),
-    'lino.mixins.sequenced.DuplicateSequenced' : _("""Duplicate this row."""),
-    'lino.mixins.sequenced.Sequenced' : _("""Mixin for models that have a field seqno containing a
+    'lino.sequenced.MoveUp' : _("""Move this row one row upwards."""),
+    'lino.sequenced.MoveDown' : _("""Move this row one row downwards."""),
+    'lino.sequenced.DuplicateSequenced' : _("""Duplicate this row."""),
+    'lino.sequenced.Sequenced' : _("""Mixin for models that have a field seqno containing a
 "sequence number"."""),
-    'lino.mixins.sequenced.Sequenced.seqno' : _("""The sequence number of this item with its parent."""),
-    'lino.mixins.sequenced.Sequenced.move_up' : _("""Exchange the seqno of this item and the previous item."""),
-    'lino.mixins.sequenced.Sequenced.move_down' : _("""Exchange the seqno of this item and the next item."""),
-    'lino.mixins.sequenced.Sequenced.move_buttons' : _("""Displays buttons for certain actions on this row:"""),
-    'lino.mixins.sequenced.Sequenced.move_action_names' : _("""The names of the actions to display in the move_buttons
+    'lino.sequenced.Sequenced.seqno' : _("""The sequence number of this item with its parent."""),
+    'lino.sequenced.Sequenced.move_up' : _("""Exchange the seqno of this item and the previous item."""),
+    'lino.sequenced.Sequenced.move_down' : _("""Exchange the seqno of this item and the next item."""),
+    'lino.sequenced.Sequenced.move_buttons' : _("""Displays buttons for certain actions on this row:"""),
+    'lino.sequenced.Sequenced.move_action_names' : _("""The names of the actions to display in the move_buttons
 column."""),
-    'lino.mixins.sequenced.Hierarchical' : _("""Abstract model mixin for things that have a "parent" and
+    'lino.sequenced.Hierarchical' : _("""Abstract model mixin for things that have a "parent" and
 "siblings"."""),
-    'lino.mixins.uploadable.Uploadable' : _("""Mixin for objects that represent an uploadable file."""),
-    'lino.mixins.uploadable.Uploadable.file' : _("""Pointer to the file itself (a Django FileField)."""),
-    'lino.mixins.uploadable.Uploadable.mimetype' : _("""The Media type
+    'lino.uploadable.Uploadable' : _("""Mixin for objects that represent an uploadable file."""),
+    'lino.uploadable.Uploadable.file' : _("""Pointer to the file itself (a Django FileField)."""),
+    'lino.uploadable.Uploadable.mimetype' : _("""The Media type
 of the file.  See also this thread
 about length of MIME type field."""),
     'lino.modlib.about.Plugin' : _("""See /dev/plugins."""),
@@ -182,7 +182,7 @@ for fixing this problem."""),
     'lino.modlib.checkdata.roles.CheckdataUser' : _("""A user who can see data problems."""),
     'lino.modlib.comments.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.dashboard.Plugin' : _("""See /dev/plugins."""),
-    'lino.modlib.dashboard.UpdateWidgets' : _("""Create or update the widgets for this user."""),
+    'lino.modlib.dashboard.UpdateWidgets' : _("""Create or update the dashboard widgets for this user."""),
     'lino.modlib.davlink.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.export_excel.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.extjs.Plugin' : _("""Extends lino.core.plugin.Plugin."""),
@@ -209,8 +209,8 @@ lino.core.auth.SessionUserMiddleware"""),
     'lino.modlib.gfks.fields.GenericForeignKeyIdField' : _("""Use this instead of models.PositiveIntegerField for fields that
 are part of a GFK and you want Lino to render them using a
 Combobox."""),
-    'lino.modlib.gfks.mixins.Controllable' : _("""Mixin for models that are "controllable" by another database object."""),
-    'lino.modlib.gfks.mixins.Controllable.controller_is_optional' : _("""Deprecated. This is (and always was) being ignored. Use
+    'lino.modlib.gfks.Controllable' : _("""Mixin for models that are "controllable" by another database object."""),
+    'lino.modlib.gfks.Controllable.controller_is_optional' : _("""Deprecated. This is (and always was) being ignored. Use
 update_controller_field() instead."""),
     'lino.modlib.gfks.ContentTypes' : _("""Default table for django.contrib.ContentType."""),
     'lino.modlib.gfks.ContentTypes.base_classes' : _("""Display a clickable list of all MTI parents, i.e. base models"""),
@@ -392,9 +392,9 @@ one for each language .
 See mldbc."""),
     'lino.utils.mldbc.fields.LanguageField' : _("""A field that lets the user select a language from the available
 lino.core.site.Site.languages."""),
-    'lino.utils.mldbc.mixins.BabelNamed' : _("""Mixin for models that have a babel field name (labelled
+    'lino.utils.mldbc.BabelNamed' : _("""Mixin for models that have a babel field name (labelled
 "Designation" by default) for each language."""),
-    'lino.utils.mldbc.mixins.BabelDesignated' : _("""Mixin for models that have a babel field "Designation" (i.e. one
+    'lino.utils.mldbc.BabelDesignated' : _("""Mixin for models that have a babel field "Designation" (i.e. one
 designation for each language defined in the site's
 languages."""),
     'lino.utils.mti.ChildCollector' : _("""A Collector that does not delete the MTI parents."""),

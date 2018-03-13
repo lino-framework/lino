@@ -106,14 +106,14 @@ class UsersOverview(Users):
 
 class MySettings(Users):
     # use_as_default_table = False
-    hide_top_toolbar = True
+    # hide_top_toolbar = True
     required_roles = dd.login_required()
     default_list_action_name = 'detail'
     # detail_layout = 'users.UserDetail'
 
     @classmethod
     def get_default_action(cls):
-        return actions.ShowDetail(cls.detail_layout)
+        return actions.ShowDetail(cls.detail_layout, hide_navigator=True)
 
 
 class Authorities(dd.Table):

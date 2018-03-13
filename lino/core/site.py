@@ -1796,10 +1796,11 @@ this field.
             if debug:
                 print("20170824 {!r} has no help_text".format(fld))
             return
-        if fld.help_text:
-            if debug:
-                print("20170824 {} on {} has already a help_text {}".format(attrname, cls, fld.help_text))
-            return
+        # if fld.help_text:
+        #     # if debug:
+        #     #     print("20170824 {} on {} has already a help_text {}".format(
+        #     #         attrname, cls, repr(fld.help_text)))
+        #     return
         # if debug:
         #     print(20160829, cls)
         # if isinstance(fld, type):
@@ -1814,14 +1815,21 @@ this field.
             #     continue
             k = m.__module__ + '.' + m.__name__
             k = simplify_name(k)
+            # debug = k.startswith('users')
             if attrname:
                 k += '.' + attrname
             txt = self._help_texts.get(k, None)
+            # if attrname == "nationality":
+            #     print("20180313 {} {}".format(k, txt))
             if txt is None:
-                pass
                 if debug:
                     print("20170824 {}.{} : no help_text using {!r}".format(
                         cls, attrname, k))
+                if fld.help_text:
+                    # coded help text gets overridden only if docs
+                    # provide a more specific help text.
+                    return
+                    
             else:
                 if debug:
                     print("20170824 {}.{}.help_text found using {}".format(
