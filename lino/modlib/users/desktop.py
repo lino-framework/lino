@@ -19,7 +19,7 @@ class UserDetail(dd.DetailLayout):
     box1 = """
     username user_type:20 partner
     first_name last_name initials
-    email language timezone
+    email language time_zone
     id created modified
     """
 
@@ -34,7 +34,7 @@ class UserDetail(dd.DetailLayout):
     partner
     first_name last_name 
     initials
-    email language timezone
+    email language time_zone
     id created modified
     remarks
     AuthoritiesGiven

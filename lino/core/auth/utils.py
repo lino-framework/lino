@@ -34,7 +34,7 @@ class AnonymousUser(SimpleSingleton):
     language = None
     readonly = True
     pk = None
-    timezone = None
+    time_zone =  None
     notify_myself = False
     user_type = None
     

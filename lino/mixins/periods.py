@@ -44,9 +44,17 @@ class CombinedDateTime(dd.Model):
     class Meta:
         abstract = True
 
-    def get_timezone(self):
-        """May get overridden to return the author's timezone."""
-        return settings.TIME_ZONE
+    def get_time_zone(self):
+        """
+        The time zone for the date and time fields in this model.
+
+        Expected to always return an instance of
+        :class:`lino.modlib.about.choicelists.TimeZone`.
+
+        May get overridden to return the author's timezone.
+        """
+        return settings.SITE.time_zone
+        # return settings.TIME_ZONE
 
     def set_datetime(self, name, value):
         """
@@ -55,10 +63,12 @@ class CombinedDateTime(dd.Model):
         must be either "start" or "end").
         """
         if settings.USE_TZ and is_aware(value):
-            tz = pytz.timezone(self.get_timezone())
+            # tz = pytz.timezone(self.get_time_zone())
             # dd.logger.info("20151128 set_datetime(%r, %r)", value, tz)
-            value = value.astimezone(tz)
+            # value = value.astimezone(tz)
             # value = tz.localize(value)
+            value = value.astimezone(self.get_time_zone().tzinfo)
+            
         setattr(self, name + '_date', value.date())
         t = value.time()
         if not t:
@@ -85,9 +95,10 @@ class CombinedDateTime(dd.Model):
         else:
             dt = datetime.datetime(d.year, d.month, d.day)
         if settings.USE_TZ:
-            tz = pytz.timezone(self.get_timezone())
+            # tz = pytz.timezone(self.get_time_zone().tzinfo)
             # dd.logger.info("20151128 get_datetime() %r %r", dt, tz)
-            dt = tz.localize(dt)
+            # dt = tz.localize(dt)
+            dt = self.get_time_zone().tzinfo.localize(dt)
         return dt
 
 
