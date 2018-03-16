@@ -121,10 +121,6 @@ column."""),
 of the file.  See also this thread
 about length of MIME type field."""),
     'lino.modlib.about.Plugin' : _("""See /dev/plugins."""),
-    'lino.modlib.about.Inspector' : _("""Shows a simplistic "inspector" which once helped me for debugging.
-Needs more work to become seriously useful..."""),
-    'lino.modlib.about.About' : _("""Display information about this web site.  This defines the window
-which opens via the menu command Site ‣ About."""),
     'lino.modlib.bootstrap3.renderer.Renderer' : _("""A  HTML render that uses Bootstrap3."""),
     'lino.modlib.bootstrap3.views.List' : _("""Render a list of records."""),
     'lino.modlib.bootstrap3.views.Element' : _("""Render a single record."""),
@@ -455,6 +451,7 @@ which is encoded in the given encoding."""),
     'lino.api.dd.VirtualTable' : _("""Shortcut to lino.core.tables.VirtualTable"""),
     'lino.api.dd.VentilatingTable' : _("""Shortcut to lino.core.choicelists.ChoiceList"""),
     'lino.api.dd.Frame' : _("""Shortcut to lino.core.frames.Frame"""),
+    'lino.modlib.about.TimeZones' : _("""The list of time zones available on this site."""),
     'lino.modlib.contacts.Partner.client_contact_type' : _("""Setting this field on a partner makes this partner available
 as a client contact."""),
     'lino.modlib.users.User.coaching_type' : _("""The coaching type used for new coachings of this user."""),

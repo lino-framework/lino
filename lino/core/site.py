@@ -168,13 +168,6 @@ class Site(object):
         automatically populated from :attr:`languages` and application
         code should not change it's value.
 
-    .. attribute:: time_zone
-
-        The default time zone used on this site.
-
-        This is being used only when :setting:`USE_TZ` is `True`.
-        This is being set during :meth:`startup` after having read any
-        :attr:`custom_layouts_module`.
     """
 
     auto_fit_column_widths = True

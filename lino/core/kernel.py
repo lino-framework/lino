@@ -495,8 +495,6 @@ class Kernel(object):
         #~ choosers.discover()
         actions.discover_choosers()
 
-        site.time_zone = site.models.about.TimeZones.default
-
         for a in actors.actors_list:
             a.on_analyze(site)
 

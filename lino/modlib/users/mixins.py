@@ -160,8 +160,8 @@ class UserAuthored(Authored):
         """
         if self.user_id is None:
             # return settings.TIME_ZONE
-            return settings.SITE.time_zone
-        return self.user.time_zone or settings.SITE.time_zone
+            return rt.models.about.TimeZones.default
+        return self.user.time_zone or rt.models.about.TimeZones.default
         # return self.user.timezone or settings.TIME_ZONE
 
 

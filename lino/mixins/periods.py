@@ -53,7 +53,7 @@ class CombinedDateTime(dd.Model):
 
         May get overridden to return the author's timezone.
         """
-        return settings.SITE.time_zone
+        return settings.SITE.models.about.TimeZones.default
         # return settings.TIME_ZONE
 
     def set_datetime(self, name, value):
