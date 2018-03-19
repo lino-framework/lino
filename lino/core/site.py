@@ -19,8 +19,8 @@ this document using::
 """
 from __future__ import unicode_literals, print_function
 from builtins import map
-import six
 from builtins import str
+import six
 
 import os
 import sys
@@ -2957,7 +2957,7 @@ given object `obj`. The dict will have one key for each
         this Site's :attr:`Site.languages` attribute.
         
         """
-        return [getattr(obj, name + li.suffix) for li in self.languages]
+        return [str(getattr(obj, name + li.suffix)) for li in self.languages]
         #~ l = [ getattr(obj,name) ]
         #~ for lang in self.BABEL_LANGS:
             #~ l.append(getattr(obj,name+'_'+lang))
