@@ -252,8 +252,9 @@ from lino.core.tables import AbstractTable
 from lino.core.boundaction import BoundAction
 
 
-def show_fields(model, fieldnames=None, columns=False):
-    """Print an overview description of the specified fields of the
+def show_fields(model, fieldnames=None, columns=False, all=None):
+    """
+    Print an overview description of the specified fields of the
     specified model. 
 
     If model is an action or table, print the parameter fields of that
@@ -262,9 +263,14 @@ def show_fields(model, fieldnames=None, columns=False):
     If model is a table and you want the columns instead of the
     parameter fields, then specify `columns=True`.
 
+    By default this shows only fields which have a help text.  If you
+    specify `all=True`, then also fields that have no help text will
+    be shown.
     """
     cells = []
     cols = ["Internal name", "Verbose name", "Help text"]
+    if all is None:
+        all = fieldnames is not None
     if isinstance(model, BoundAction):
         get_field = model.action.parameters.get
         if fieldnames is None:
@@ -292,9 +298,11 @@ def show_fields(model, fieldnames=None, columns=False):
     for n in fieldnames:
         fld = get_field(n)
         if fld is not None and hasattr(fld, 'verbose_name'):
-            cells.append([n,
-                          fld.verbose_name,
-                          unindent(fld.help_text or '')])
+            ht = fld.help_text or ''
+            if ht or all:
+                cells.append([n,
+                              fld.verbose_name,
+                              unindent(ht)])
 
     print(table(cols, cells).strip())
 

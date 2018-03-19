@@ -452,6 +452,11 @@ which is encoded in the given encoding."""),
     'lino.api.dd.VentilatingTable' : _("""Shortcut to lino.core.choicelists.ChoiceList"""),
     'lino.api.dd.Frame' : _("""Shortcut to lino.core.frames.Frame"""),
     'lino.modlib.about.TimeZones' : _("""The list of time zones available on this site."""),
+    'lino.modlib.about.TimeZones.default' : _("""The default time zone on this server, corresponding to
+TIME_ZONE.  Unlike TIME_ZONE (which is a
+string), default is a choice object whose text
+is the same as the string and which has an attribute
+tzinfo which contains the time zone info object."""),
     'lino.modlib.contacts.Partner.client_contact_type' : _("""Setting this field on a partner makes this partner available
 as a client contact."""),
     'lino.modlib.users.User.coaching_type' : _("""The coaching type used for new coachings of this user."""),
