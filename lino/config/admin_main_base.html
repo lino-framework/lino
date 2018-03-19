@@ -52,7 +52,7 @@
         {{_("Welcome to the <b>%s</b> site.") % site.title}}
         {% if site.verbose_name and site.url and site.version %}
         {{_("We are running %(name)s version %(version)s") % dict(
-            name=tostring(E.a(site.verbose_name, href=site.url)),
+            name=tostring(E.a(str(site.verbose_name), href=site.url)),
             version=site.version)}}
         {% endif %}
         {% endif %}
