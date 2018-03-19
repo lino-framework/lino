@@ -116,7 +116,7 @@ class Message(UserAuthored, Controllable, Created):
         verbose_name = _("Notification message")
         verbose_name_plural = _("Notification messages")
 
-    message_type = MessageTypes.field()
+    message_type = MessageTypes.field(default="change")
     seen = models.DateTimeField(_("seen"), null=True, editable=False)
     sent = models.DateTimeField(_("sent"), null=True, editable=False)
     body = dd.RichTextField(_("Body"), editable=False, format='html')
