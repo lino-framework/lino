@@ -406,7 +406,7 @@ from lino.mixins.polymorphic import Polymorphic
 from lino.mixins.uploadable import Uploadable
 
 from lino.utils.mldbc.fields import BabelCharField, BabelTextField
-from lino.utils.mldbc.mixins import BabelNamed
+from lino.utils.mldbc.mixins import BabelNamed, BabelDesignated
 
 from lino.mixins.human import Human, Born
 
