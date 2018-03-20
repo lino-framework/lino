@@ -397,7 +397,7 @@ class Connector(View):
         )
 
         print(u)
-        print name
+        # print name
         if name.startswith("view/"):
             tplname = "openui5/" + name
 
