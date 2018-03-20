@@ -64,7 +64,7 @@ from lino.utils.soup import truncate_comment
 from etgen.html import E, tostring
 from lino.api import _
 
-from lxml import etree
+from lxml import html as lxml_html
 
 def rich_text_to_elems(ar, description):
     """
@@ -72,18 +72,24 @@ def rich_text_to_elems(ar, description):
     """
     if description.startswith("<"):
         # desc = E.raw('<div>%s</div>' % self.description)
-        desc = etree.fromstring(ar.parse_memo(description))
-        return [desc]
+        desc = lxml_html.fragments_fromstring(ar.parse_memo(description))
+        return desc
     # desc = E.raw('<div>%s</div>' % self.description)
     html = restify(ar.parse_memo(description))
-    # logger.info("20160704b restified --> %s", html)
-    desc = etree.fromstring(html)
+    # logger.info(u"20180320 restify %s --> %s", description, html)
+    # html = html.strip()
+    try:
+        desc = lxml_html.fragments_fromstring(html)
+    except Exception as e:
+        raise Exception(
+            "Could not parse {!r} : {}".format(html, e))
     # logger.info(
     #     "20160704c parsed --> %s", tostring(desc))
-    if desc.tag == 'body':
-        # happens if it contains more than one paragraph
-        return list(desc)  # .children
-    return [desc]
+    return desc
+    # if desc.tag == 'body':
+    #     # happens if it contains more than one paragraph
+    #     return list(desc)  # .children
+    # return [desc]
 
 def body_subject_to_elems(ar, title, description):
     """
