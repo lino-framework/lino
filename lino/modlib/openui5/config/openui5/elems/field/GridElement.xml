@@ -1,4 +1,4 @@
 <mvc:XMLView
-    viewName="sap.ui.lino.slavetable.{{e.actor.actor_id}}"
+    viewName="lino.slavetable.{{e.actor.actor_id}}"
     >
 </mvc:XMLView>

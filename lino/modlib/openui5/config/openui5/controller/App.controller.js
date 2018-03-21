@@ -4,7 +4,7 @@ sap.ui.define([
    "sap/ui/model/json/JSONModel",
 ], function (Controller, MessageToast, JSONModel) {
    "use strict";
-   return Controller.extend("sap.ui.demo.wt.controller.App", {
+   return Controller.extend("lino.controller.App", {
 
     	onOpenDialog : function () {
 			this.getOwnerComponent().openHelloDialog();
@@ -35,7 +35,7 @@ sap.ui.define([
 			// create menu only once
 			if (!this._menus[menu]) {
 				this._menus[menu] = sap.ui.xmlfragment(
-					"sap.ui.lino.menu." + menu,
+					"lino.menu." + menu,
 					this
 				);
 				this.getView().addDependent(this._menus[menu]);
@@ -70,7 +70,7 @@ sap.ui.define([
 			var content = sap.ui.getCore().byId("grid." + actor_id)
 			if (content===undefined){
                 content = new sap.ui.xmlview({id: "grid." + actor_id,
-                                    viewName : "sap.ui.lino." + action_name + "." + actor_id});
+                                    viewName : "lino." + action_name + "." + actor_id});
 
                 var p = content /*new sap.m.Page({
                     showHeader:true,
@@ -104,7 +104,7 @@ sap.ui.define([
                 var form_data = {username:"", password:""}
                 var oModel = new JSONModel(form_data);
                 this.getView().setModel(oModel, "form_data");
-                oDialog = sap.ui.xmlfragment(oView.getId(), "sap.ui.lino.dialog.SignInActionFormPanel", this);
+                oDialog = sap.ui.xmlfragment(oView.getId(), "lino.dialog.SignInActionFormPanel", this);
                 oView.addDependent(oDialog);
              }
              oDialog.open();

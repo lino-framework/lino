@@ -1,5 +1,5 @@
 <mvc:View
-		controllerName="sap.ui.demo.wt.controller.detail"
+		controllerName="lino.controller.detail"
 		xmlns="sap.m"
 		xmlns:m="sap.m"
 		xmlns:mvc="sap.ui.core.mvc"

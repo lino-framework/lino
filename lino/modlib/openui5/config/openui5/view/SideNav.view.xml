@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.ui.demo.wt.controller.SideNav"
+	controllerName="lino.controller.SideNav"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.tnt"
 	xmlns:m="sap.m"

@@ -106,7 +106,7 @@ sap.ui.define([
 			var content = sap.ui.getCore().byId("detail." + actor_id)
 			if (content===undefined){
                 content = new sap.ui.xmlview({id: "detail." + actor_id,
-                                    viewName : "sap.ui.lino." + action_name + "." + actor_id}
+                                    viewName : "lino." + action_name + "." + actor_id}
                                     );
 
                 this.getView().addDependent(content)

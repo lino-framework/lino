@@ -493,7 +493,7 @@ class Tickets(View):
 
         context = ar.get_printable_context(**context)
         env = settings.SITE.plugins.jinja.renderer.jinja_env
-        template = env.get_template("openui5/tickets_ui5.html")
+        template = env.get_template("openui5/main.html")
 
         return http.HttpResponse(
             template.render(**context),
@@ -531,7 +531,9 @@ class Connector(View):
 
         print(u)
         print name
-        if name.startswith("view/") or name.startswith("core/"):
+        if name.startswith("view/") or\
+           name.startswith("controller/") or\
+           name.startswith("core/"):
             tplname = "openui5/" + name
 
         elif name.startswith("dialog/SignInActionFormPanel"):
