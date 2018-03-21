@@ -43,6 +43,9 @@ import re
 
 from lino.core.elems import ComboFieldElement
 
+from jinja2.exceptions import TemplateNotFound
+
+
 def find(itter, target, key=None):
     """Returns the index of an element in a callable which can be use a key function"""
     assert key == None or callable(key), "key shold be a function that takes the itter's item " \
@@ -410,7 +413,7 @@ def http_response(ar, tplname, context):
 
     return response
 
-
+# Give better name, does more then just XML, does all the connector responses.
 def XML_response(ar, tplname, context):
     """
     Respone used for rendering XML views in openui5.
@@ -423,7 +426,10 @@ def XML_response(ar, tplname, context):
     # context['ar'] = ar
     # context['memo'] = ar.parse_memo  # MEMO_PARSER.parse
     env = settings.SITE.plugins.jinja.renderer.jinja_env
-    template = env.get_template(tplname)
+    try:
+        template = env.get_template(tplname)
+    except TemplateNotFound as e:
+        return http.HttpResponseNotFound()
 
     def bind(*args):
         """Helper function to wrap a string in {}s"""
@@ -440,7 +446,9 @@ def XML_response(ar, tplname, context):
         return ""
 
     env.filters.update(p=p)
-    content_type = "text/xml" if not tplname.endswith(".json") else "application/json"
+    content_type = "text/xml" if tplname.endswith(".xml") else\
+                   "application/javascript" if tplname.endswith(".js") else\
+                   "application/json"
     response = http.HttpResponse(
         template.render(**context),
         content_type=content_type + ';charset="utf-8"')
