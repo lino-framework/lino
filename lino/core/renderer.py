@@ -367,7 +367,7 @@ request `tar`."""
 
     def action_button(self, obj, ar, ba, label=None, **kw):
         label = label or ba.get_button_label()
-        return "[%s]" % label
+        return "%s" % label
 
     def action_call_on_instance(self, obj, ar, ba, request_kwargs={}, **st):
         """Return a string with Javascript code that would run the given

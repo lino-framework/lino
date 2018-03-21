@@ -73,8 +73,8 @@ class Renderer(HtmlRenderer):
         return ''
 
     def action_button(self, obj, ar, ba, label=None, **kw):
-        label = label or ba.action.label
-        return label
+        label = label or ba.get_button_label()
+        return "%s" % label
 
     def action_call(self, ar, bound_action, status):
         a = bound_action.action
