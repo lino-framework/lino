@@ -1,0 +1,15 @@
+{% extends "/openui5/elems/field/FieldElement.xml" %}
+
+{% block field_content %}
+<Input
+    sugestionItems="{
+        path: 'e.field.name>/rows',
+    }"
+    type="Text"
+    showValueHelp="true"
+	valueHelpRequest="handleValueHelp">
+    <suggestionItems>
+        <core:Item key="{value}" text="{text}" />
+    </suggestionItems>
+</Input>
+{% endblock %}

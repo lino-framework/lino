@@ -13,6 +13,7 @@
             data-sap-ui-resourceroots='{
             "sap.ui.demo.wt": "./static/openui5/wt/",
             "sap.ui.lino": "./ui/",
+            "lino.app":"./ui/core/",
             "openui5" : "./static/openui5/openui5-CKEditor/openui5/"
             }' ></script>
     <script>
@@ -31,7 +32,7 @@
                     );
                 new sap.m.Shell({
                    app :  new sap.ui.core.ComponentContainer({
-                       name : "sap.ui.demo.wt",
+                       name : "lino.app",
                        height : "100%"
                        //id:"Component_Container"
                    })

@@ -867,6 +867,8 @@ class ComboFieldElement(FieldElement):
     filter_type = 'string'
     gridfilters_settings = dict(type='string')
 
+    oui5_field_template = "openui5/elems/field/ComboElement.xml"
+
     def get_field_options(self, **kw):
         kw = FieldElement.get_field_options(self, **kw)
         # When used as editor of an EditorGridPanel, don't set the name attribute

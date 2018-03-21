@@ -72,6 +72,10 @@ sap.ui.define([
 			});
 		},
 
+        onLoaditems: function(oEvent){
+            console.log("loaditems");
+        },
+
 	});
 
 });

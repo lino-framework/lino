@@ -440,10 +440,10 @@ def XML_response(ar, tplname, context):
         return ""
 
     env.filters.update(p=p)
-
+    content_type = "text/xml" if not tplname.endswith(".json") else "application/json"
     response = http.HttpResponse(
         template.render(**context),
-        content_type='text/html;charset="utf-8"')
+        content_type=content_type + ';charset="utf-8"')
 
     return response
 
@@ -522,8 +522,8 @@ class Connector(View):
         )
 
         print(u)
-        # print name
-        if name.startswith("view/"):
+        print name
+        if name.startswith("view/") or name.startswith("core/"):
             tplname = "openui5/" + name
 
         elif name.startswith("dialog/SignInActionFormPanel"):
