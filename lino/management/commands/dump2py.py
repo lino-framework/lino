@@ -136,9 +136,10 @@ def write_create_function(model, stream):
                 pre+'if %s is not None: %s = Decimal(%s)\n' % (
                     f.attname, f.attname, f.attname))
         elif isinstance(f, ChoiceListField):
-            lstname = 'settings.SITE.modules.{0}.{1}'.format(
+            lstname = 'settings.SITE.models.{0}.{1}'.format(
                 f.choicelist.app_label, f.choicelist.__name__)
             ln = pre+'if {0}: {0} = {1}.get_by_value({0})\n'
+            ln = '#' + ln # no longer needed but maybe useful as a comment
             stream.write(ln.format(f.attname, lstname))
         elif is_pointer_to_contenttype(f):
             stream.write(

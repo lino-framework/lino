@@ -11,7 +11,7 @@ $ python setup.py test -s tests.UtilsTests.test_addressable
 
 from __future__ import print_function
 
-from etgen.html import E, lines2p
+from etgen.html import E, lines2p, tostring
 
 
 class Addressable(object):
@@ -80,14 +80,14 @@ class Addressable(object):
         is empty (in which case the paragraph is empty):
 
         >>> print(TestAddress().get_address_html())
-        <p />
+        <p/>
 
         Optional attributes for the enclosing `<p>` tag can be
         specified as keyword arguments. Example:
 
         >>> addr = TestAddress('line1', 'line2')
-        >>> print(addr.get_address_html(class_="Recipient"))
-        <p class="Recipient">line1<br />line2</p>
+        >>> print(addr.get_address_html(**{'class':"Recipient"}))
+        <p class="Recipient">line1<br/>line2</p>
           
         If `min_height` is specified, makes sure that the string
         contains at least that many lines. Adds as many empty lines
@@ -95,7 +95,7 @@ class Addressable(object):
         wants to get a given height for every address.
 
         >>> print(addr.get_address_html(min_height=5))
-        <p>line1<br />line2<br /><br /><br /></p>
+        <p>line1<br/>line2<br/><br/><br/></p>
 
         Any arguments are forwarded to :meth:`lines2p
         <etgen.html.lines2p>` which is used to pack the address
@@ -103,7 +103,7 @@ class Addressable(object):
 
         """
         lines = list(self.get_address_lines())
-        return E.tostring(lines2p(lines, *args, **kwargs))
+        return tostring(lines2p(lines, *args, **kwargs))
 
     address_html = property(get_address_html)
 

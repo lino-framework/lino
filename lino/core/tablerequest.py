@@ -9,7 +9,7 @@ from __future__ import division
 from __future__ import print_function
 # from future import standard_library
 # standard_library.install_aliases()
-# from builtins import str
+from builtins import str
 from past.utils import old_div
 import six
 
@@ -400,9 +400,9 @@ class TableRequest(ActionRequest):
         t = xghtml.Table()
         self.dump2html(t, self.sliced_data_iterator, **kw)
         e = t.as_element()
-        # print "20150822 table2xhtml", E.tostring(e)
+        # print "20150822 table2xhtml", tostring(e)
         if header_level is not None:
-            return E.div(E.h2(self.actor.label), e)
+            return E.div(E.h2(str(self.actor.label)), e)
         return e
 
     def dump2html(self, tble, data_iterator, column_names=None,
@@ -431,7 +431,7 @@ class TableRequest(ActionRequest):
                     self, columns, headers, **self.renderer.cellattrs)]
             if cellwidths and self.renderer.is_interactive:
                 for i, td in enumerate(headers):
-                    td.attrib.update(width=six.text_type(cellwidths[i]))
+                    td.set('width', six.text_type(cellwidths[i]))
             tble.head.append(xghtml.E.tr(*headers))
         #~ print 20120623, ar.actor
         recno = 0
@@ -444,7 +444,7 @@ class TableRequest(ActionRequest):
 
         if recno == 0:
             tble.clear()
-            tble.body.append(ar.no_data_text)
+            tble.body.append(str(ar.no_data_text))
 
         if hide_sums is None:
             hide_sums = ar.actor.hide_sums

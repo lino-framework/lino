@@ -57,11 +57,11 @@ from lino.core.gfks import GenericForeignKey
 from lino.utils.format_date import fds
 
 from etgen import etree
-from etgen.html import E
+from etgen.html import E, forcetext
 from lino.utils import is_string
 
 from lino.core.site import html2text
-from etgen.html import html2rst
+from etgen.html2rst import html2rst
 
 from lino.modlib.users.utils import get_user_profile
 
@@ -539,7 +539,7 @@ class FieldElement(LayoutElement):
         if self.layout_handle.layout.label_align == layouts.LABEL_ALIGN_TOP:
             yield E.br()
         input_classes = "form-control " + self.input_classes if self.input_classes is not None else "form-control"
-        yield E.input(type="text",value=text, class_=input_classes)
+        yield E.input(type="text",value=text, **{'class':input_classes})
         # if self.field.help_text:
             # yield E.span(unicode(text),class_="help-block")
         # yield E.p(unicode(elem.field.verbose_name),':',E.br(),E.b(text))
@@ -679,7 +679,7 @@ class FieldElement(LayoutElement):
 
         """
         if i == ar.actor.sum_text_column:
-            return E.b(ar.get_sum_text(sums))
+            return E.b(*forcetext(ar.get_sum_text(sums)))
         if self.hide_sum:
             return ''
         v = sums[self.name]
@@ -777,8 +777,9 @@ class TextFieldElement(FieldElement):
         # 20171227 in extjs there was no E.div() around them.
         yield E.div(
             E.label(str(self.field.verbose_name)),
-            E.textarea(text, rows=str(self.preferred_height), class_="form-control"),
-            class_="form-group"
+            E.textarea(text, rows=str(self.preferred_height),
+                       **{'class':"form-control"}),
+            **{'class':"form-group"}
         )
 
     def value2html(self, ar, v, **cellattrs):
@@ -786,7 +787,10 @@ class TextFieldElement(FieldElement):
             v = html2xhtml(v)
             # v = v.decode('utf-8')
             # top = E.fromstring(v)
-            top = E.raw(v)
+            # top = E.raw(v)
+            from lxml import etree
+            top = etree.fromstring(v)
+
         else:
             top = self.format_value(ar, v)
         return E.td(top, **cellattrs)
@@ -1172,14 +1176,14 @@ class NumberFieldElement(FieldElement):
     number_format = '0'
 
     def apply_cell_format(self, e):
-        # e.set('align','right')
-        e.attrib.update(align='right')
+        e.set('align', 'right')
+        # e.attrib.update(align='right')
         # logger.info("20130119 apply_cell_format %s",etree.tostring(e))
 
     def format_sum(self, ar, sums, i):
         if self.hide_sum:
             if i == ar.actor.sum_text_column:
-                return E.b(ar.get_sum_text(sums))
+                return E.b(*forcetext(ar.get_sum_text(sums)))
             return ''
         return E.b(self.format_value(ar, sums[self.name]))
 
@@ -1361,7 +1365,7 @@ class DisplayElement(FieldElement):
 
     def value2html(self, ar, v, **cellattrs):
         try:
-            if E.iselement(v) and v.tag == 'div':
+            if etree.iselement(v) and v.tag == 'div':
                 return E.td(*[child for child in v], **cellattrs)
             return E.td(v, **cellattrs)
         except Exception as e:
@@ -1376,7 +1380,7 @@ class DisplayElement(FieldElement):
     def as_plain_html(self, ar, obj):
         #Todo make part of a panel or something so it's aligned with the other elements.
         value = self.value_from_object(obj, ar)
-        if E.iselement(value):
+        if etree.iselement(value):
             yield value
         else:
             for x in super(DisplayElement, self).as_plain_html(ar, obj):
@@ -1574,10 +1578,10 @@ class HtmlBoxElement(DisplayElement):
                 # logger.warning("20180114 Failed to parse %s", value)
                 pass
                 # panel = E.fromstring('<div class="panel panel-default"><div class="panel-body">' + value + "</div></div>")
-        if E.iselement(value):
+        if etree.iselement(value):
             panel = E.div(
-                E.div(value, class_="panel-body"),
-                class_="panel panel-default")
+                E.div(value, **{'class':"panel-body"}),
+                **{'class':"panel panel-default"})
 
             yield panel
 
@@ -2210,18 +2214,18 @@ class TabPanel(Panel):
         Container.__init__(self, layout_handle, name, *elems, **kw)
 
     def as_plain_html(self, ar, obj):
-        nav = E.ul(class_="nav nav-tabs")
+        nav = E.ul(**{'class': "nav nav-tabs"})
         for e in self.elements:
             tab = E.li()
             tab.append(E.a(str(e.label), data_toggle="tab", href="#" + e.ext_name))
             nav.append(tab)
-        nav[0].attrib["class"] = "active"
+        nav[0].set("class", "active")
 
         yield nav
         main = E.div(class_ = "tab-content")
         for e in self.elements:
-            main.append(E.div(*tuple(e.as_plain_html(ar, obj)), id=e.ext_name, class_="tab-pane fade"))
-        main[0].attrib["class"] += " in active"
+            main.append(E.div(*tuple(e.as_plain_html(ar, obj)), id=e.ext_name, **{'class':"tab-pane fade"}))
+        main[0].set("class", main[0].get("class") + " in active")
         yield main
 
 _FIELD2ELEM = (

@@ -20,7 +20,7 @@ from lino.modlib.users.mixins import UserAuthored
 
 
 class UpdateWidgets(dd.Action):
-    """Create or update the widgets for this user.
+    """Create or update the dashboard widgets for this user.
 
     This is installed as :attr:`update_widgets` on :class:`Widget`.
 

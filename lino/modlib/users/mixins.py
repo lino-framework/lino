@@ -23,27 +23,33 @@ from lino.core.exceptions import ChangedAPI
 from lino.core import model
 from lino.core import actions
 from lino.core import dbtables
-from lino.core.roles import SiteUser, SiteStaff
+from lino.core.roles import SiteStaff
 from lino.modlib.printing.mixins import Printable
 
 from .roles import Helper, AuthorshipTaker
 
 
-class TimezoneHolder(models.Model):
-    class Meta(object):
-        abstract = True
+# class TimezoneHolder(models.Model):
+#     class Meta(object):
+#         abstract = True
 
-    if settings.USE_TZ:
-        timezone = models.CharField(_("Time zone"), max_length=15, blank=True)
-    else:
-        timezone = dd.DummyField()
+#     if settings.USE_TZ:
+#         timezone = models.CharField(_("Time zone"), max_length=15, blank=True)
+#     else:
+#         timezone = dd.DummyField()
 
-    @dd.chooser(simple_values=True)
-    def timezone_choices(cls, partner):
-        import pytz
-        if partner and partner.country:
-            return pytz.country_timezones[partner.country.isocode]
-        return pytz.common_timezones
+#     # @dd.chooser(simple_values=True)
+#     # def timezone_choices(cls, partner):
+#     #     import pytz
+#     #     if partner and partner.country:
+#     #         return pytz.country_timezones[partner.country.isocode]
+#     #     return pytz.common_timezones
+
+
+#     @dd.chooser(simple_values=True)
+#     def timezone_choices(cls):
+#         import pytz
+#         return pytz.common_timezones
 
 
 class Authored(Printable):
@@ -147,14 +153,16 @@ class UserAuthored(Authored):
                 self.user = u
         super(UserAuthored, self).on_create(ar)
 
-    def get_timezone(self):
+    def get_time_zone(self):
         """Return the author's timezone. Used by
         :class:`lino_xl.lib.cal.mixins.Started`.
 
         """
         if self.user_id is None:
-            return settings.TIME_ZONE
-        return self.user.timezone or settings.TIME_ZONE
+            # return settings.TIME_ZONE
+            return rt.models.about.TimeZones.default
+        return self.user.time_zone or rt.models.about.TimeZones.default
+        # return self.user.timezone or settings.TIME_ZONE
 
 
 AutoUser = UserAuthored  # old name for backwards compatibility

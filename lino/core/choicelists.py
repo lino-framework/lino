@@ -660,30 +660,17 @@ The disadvantage
         #     return value
         if not value:
             return None
-        v = cls.items_dict.get(value)
-        if v is None:
-            if settings.SITE.strict_choicelist_values:
-                raise UnresolvedChoice(
-                    "Unresolved value %r (%s) for %s (set "
-                    "Site.strict_choicelist_values to False "
-                    "to ignore this)" % (
-                        value, value.__class__, cls))
-            else:
-                return UnresolvedValue(cls, value)
-        return v
-        # Hamza, why did you replace above line by the following ones?
-        # if hasattr(v,'value'):
-        #     return v.value
-        # else:
-        #     return v
-        #~ return cls.items_dict.get(value) or UnresolvedValue(cls,value)
-        #~ return cls.items_dict[value]
-
-    #~ @classmethod
-    #~ def get_label(cls):
-        #~ if cls.label is None:
-            #~ return cls.__name__
-        #~ return _(cls.label)
+        v = cls.items_dict.get(value) or cls.get_by_name(value)
+        if v is not None:
+            return v
+        if settings.SITE.strict_choicelist_values:
+            raise UnresolvedChoice(
+                "Unresolved value %r (%s) for %s (set "
+                "Site.strict_choicelist_values to False "
+                "to ignore this)" % (
+                    value, value.__class__, cls))
+        else:
+            return UnresolvedValue(cls, value)
 
     @classmethod
     def get_choices(cls):

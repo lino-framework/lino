@@ -11,7 +11,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 from copy import copy
-from cgi import escape
+from xml.sax.saxutils import escape
+# try:
+#     from html import escape
+# except ImportError:
+#     from cgi import escape
 
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -28,7 +32,7 @@ from lino.core.signals import on_ui_created, pre_ui_save
 from lino.core.diff import ChangeWatcher
 from lino.core.utils import getrqdata
 from lino.utils import AttrDict
-from etgen.html import E
+from etgen.html import E, tostring
 from lino.core.auth.utils import AnonymousUser
 
 
@@ -389,7 +393,7 @@ class BaseRequest(object):
 
         kw['_'] = ugettext
         kw.update(
-            E=E,
+            E=E, tostring=tostring,
             dd=dd,
             rt=rt,
             decfmt=dd.decfmt,
@@ -899,7 +903,7 @@ class BaseRequest(object):
                 rec.update(title=ar.get_title() + u" » " +
                            ar.get_detail_title(elem))
             else:  # todo
-                rec.update(title=E.tostring(ar.href_to_request(ar))
+                rec.update(title=tostring(ar.href_to_request(ar))
                            + u" » " + ar.get_detail_title(elem))
         rec.update(id=elem.pk)
         if ar.actor.editable:
@@ -949,7 +953,8 @@ class BaseRequest(object):
         elem.after_ui_save(ar, watcher)
 
     def get_help_url(self, docname=None, text=None, **kw):
-        """Generate a link to the help section of the documentation (whose
+        """
+        Generate a link to the help section of the documentation (whose
         base is defined by :attr:`lino.core.site.Site.help_url`)
 
         Usage example::
@@ -958,9 +963,8 @@ class BaseRequest(object):
             msg = _("You have a problem with foo."
                     "Please consult %(help)s "
                     "or ask your system administrator.")
-            msg %= dict(help=E.tostring(help))
+            msg %= dict(help=tostring(help))
             kw.update(message=msg, alert=True)
-
         """
         if text is None:
             text = six.text_type(_("the documentation"))

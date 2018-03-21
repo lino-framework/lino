@@ -1,7 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2016-2017 Luc Saffre
+# Copyright 2016-2018 Luc Saffre
 # License: BSD (see file COPYING for details)
-"""Remove all tags except some when saving the content of a
+"""
+Remove all tags except some when saving the content of a
 :class:`RichHtmlField <lino.core.fields.RichHtmlField>`.
 
 When copying rich text from other applications into Lino, the text can
@@ -45,7 +46,6 @@ you ask to update `html5lib`::
       File "/site-packages/bleach/__init__.py", line 14, in <module>
         from html5lib.sanitizer import HTMLSanitizer
     ImportError: No module named sanitizer
-
 """
 import six
 
@@ -61,33 +61,42 @@ from lino.core.model import Model
 from lino.core.fields import fields_list, RichTextField
 from lino.utils.restify import restify
 from lino.utils.soup import truncate_comment
-from etgen.html import E
+from etgen.html import E, tostring
 from lino.api import _
 
+from lxml import html as lxml_html
 
 def rich_text_to_elems(ar, description):
-    """A RichTextField can contain HTML markup or plain text."""
+    """
+    A RichTextField can contain HTML markup or plain text.
+    """
     if description.startswith("<"):
         # desc = E.raw('<div>%s</div>' % self.description)
-        desc = E.raw(ar.parse_memo(description))
-        return [desc]
+        desc = lxml_html.fragments_fromstring(ar.parse_memo(description))
+        return desc
     # desc = E.raw('<div>%s</div>' % self.description)
     html = restify(ar.parse_memo(description))
-    # logger.info("20160704b restified --> %s", html)
-    desc = E.raw(html)
+    # logger.info(u"20180320 restify %s --> %s", description, html)
+    # html = html.strip()
+    try:
+        desc = lxml_html.fragments_fromstring(html)
+    except Exception as e:
+        raise Exception(
+            "Could not parse {!r} : {}".format(html, e))
     # logger.info(
-    #     "20160704c parsed --> %s", E.tostring(desc))
-    if desc.tag == 'body':
-        # happens if it contains more than one paragraph
-        return list(desc)  # .children
-    return [desc]
+    #     "20160704c parsed --> %s", tostring(desc))
+    return desc
+    # if desc.tag == 'body':
+    #     # happens if it contains more than one paragraph
+    #     return list(desc)  # .children
+    # return [desc]
 
 def body_subject_to_elems(ar, title, description):
-    """Convert the given `title` and `description` to a list of HTML
+    """
+    Convert the given `title` and `description` to a list of HTML
     elements.
 
     Used by :mod:`lino.modlib.notify` and by :mod:`lino_xl.lib.sales`
-
     """
     if description:
         elems = [E.p(E.b(title), E.br())]
@@ -100,7 +109,8 @@ def body_subject_to_elems(ar, title, description):
 
 
 class Bleached(Model):
-    """Mixin for models which have at least one text field which might
+    """
+    Mixin for models that have at least one text field which might
     contain HTML.
 
     When using this, you should specify :attr:`bleached_fields`.
@@ -114,7 +124,6 @@ class Bleached(Model):
 
         A list of tag names which are to *remain* in HTML comments if
         bleaching is active.
-
     """
     
     allowed_tags = ['a', 'b', 'i', 'em', 'ul', 'ol', 'li', 'strong',
@@ -153,6 +162,8 @@ class Bleached(Model):
         if bleach and self.bleached_fields:
             for k in self.bleached_fields:
                 old = getattr(self, k)
+                if old is None:
+                    continue
                 try:
                     new = bleach.clean(
                         old, tags=self.allowed_tags, strip=True)
@@ -179,13 +190,14 @@ class BleachedPreviewBody(Bleached):
     body_preview = RichTextField(
         _("Preview"), blank=True, editable=False)
 
-    def full_clean(self, *args, **kwargs):
+    # def full_clean(self, *args, **kwargs):
+    def before_ui_save(self, ar):
         """Fills the body_preview field.
 
         """
-        super(BleachedPreviewBody, self).full_clean(*args, **kwargs)
+        # super(BleachedPreviewBody, self).full_clean(*args, **kwargs)
+        super(BleachedPreviewBody, self).before_ui_save(ar)
         self.body_preview = truncate_comment(self.body)
 
 
    
-

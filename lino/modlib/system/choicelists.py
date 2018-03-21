@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2017 Luc Saffre
+# Copyright 2011-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
@@ -8,17 +8,15 @@ Choicelists included with `lino.modlib.system`.
 """
 
 from __future__ import unicode_literals
-import six
-import re
 import datetime
 
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
 
+from atelier.utils import isidentifier
+
 from lino.core.choicelists import ChoiceList, Choice
 from lino.utils.dates import DateRangeValue
-
-# from lino.utils import AttrDict
 
 
 class YesNo(ChoiceList):
@@ -53,12 +51,6 @@ class Genders(ChoiceList):
 add = Genders.add_item
 add('M', _("Male"), 'male')
 add('F', _("Female"), 'female')
-
-
-def isidentifier(s):
-    if six.PY2:
-        return re.match("[_A-Za-z][_a-zA-Z0-9]*$", s)
-    return s.isidentifier()
 
 
 class ObservedEvent(Choice):
@@ -150,4 +142,5 @@ PeriodEvents.add_item_instance(PeriodEnded('30', 'ended'))
 # add('10', _("Starts"), 'started')
 # add('20', _("Is active"), 'active')
 # add('30', _("Ends"), 'ended')
+
 

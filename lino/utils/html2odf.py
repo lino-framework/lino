@@ -24,9 +24,9 @@ use :mod:`appy.pod` to do the actual generation.
 
 Usage examples:
 
->>> from etgen.html import E
+>>> from etgen.html import E, tostring
 >>> def test(e):
-...     print (E.tostring(e))
+...     print (tostring(e))
 ...     print (toxml(html2odf(e)))
 >>> test(E.p("This is a ", E.b("first"), " test."))
 ... #doctest: +NORMALIZE_WHITESPACE
@@ -80,7 +80,9 @@ Idea: validate it against the ODF specification using lxml
 
 Here is another HTML fragment which doesn't yield a valid result:
 
->>> print(toxml(html2odf(E.raw('<td><div><p><b>Bold</b></p></div></td>'))))
+>>> from lxml import etree
+>>> html = '<td><div><p><b>Bold</b></p></div></td>'
+>>> print(toxml(html2odf(etree.fromstring(html))))
 <text:p xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"/>
 
 
@@ -115,7 +117,8 @@ Traceback (most recent call last):
 IllegalText: The <text:section> element does not allow text
 
 
->>> test(E.raw('<ul type="disc"><li>First</li><li>Second</li></ul>'))
+>>> from lxml import etree
+>>> test(etree.fromstring('<ul type="disc"><li>First</li><li>Second</li></ul>'))
 <ul type="disc"><li>First</li><li>Second</li></ul>
 <text:list xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" text:style-name="podBulletedList"><text:list-item><text:p text:style-name="podBulletItem">First</text:p></text:list-item><text:list-item><text:p text:style-name="podBulletItem">Second</text:p></text:list-item></text:list>
 
@@ -138,7 +141,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 from io import StringIO
-
+from lxml import etree
+from etgen.html import E, tostring
 
 def toxml(node):
     """Convert an ODF node to a string with its XML representation."""
@@ -171,7 +175,7 @@ def html2odf(e, ct=None, **ctargs):
             #~ oe = text.P(**ctargs)
         #~ else:
             #~ oe = text.P(**ctargs)
-            #~ logger.info("20130201 %s",E.tostring(e))
+            #~ logger.info("20130201 %s", tostring(e))
             #~ raise NotImplementedError("<%s> without container" % e.tag)
     if isinstance(e, six.string_types):
         ct.addText(e)
@@ -232,7 +236,7 @@ def html2odf(e, ct=None, **ctargs):
         #~ else:
             #~ oe = text.P(**ctargs)
     else:
-        #~ logger.info("20130201 %s",E.tostring(e))
+        logger.info("20130201 %s", tostring(e))
         raise NotImplementedError("<%s> inside <%s>" % (e.tag, ct.tagName))
         #~ oe = text.Span()
 

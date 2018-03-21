@@ -4,22 +4,23 @@
 
 """
 Defines the :class:`Site` class. For an overview see
-:doc:`/dev/site` and :doc:`/dev/plugins` .
+:doc:`/dev/site` and :doc:`/dev/plugins`.
 
-.. This document is part of the Lino test suite. You can test only
-    this document using::
 
-        $ python setup.py test -s tests.CoreTests.test_site
-        $ python lino/core/site.py
+This document is part of the Lino test suite. You can test only
+this document using::
 
-    doctest init:
+    $ doctest lino/core/site.py
+
+..  doctest init:
     >>> import lino
     >>> lino.startup('lino.projects.std.settings_test')
+
 """
 from __future__ import unicode_literals, print_function
 from builtins import map
-import six
 from builtins import str
+import six
 
 import os
 import sys
@@ -166,6 +167,7 @@ class Site(object):
         <lino.utils.mldbc.fields.LanguageField>`. It's content is
         automatically populated from :attr:`languages` and application
         code should not change it's value.
+
     """
 
     auto_fit_column_widths = True
@@ -691,11 +693,13 @@ class Site(object):
     """
     
     use_experimental_features = False
-    """Whether to include "experimental features".
+    """Whether to include "experimental features". Deprecated.
+    lino_xl.lib.inspect
     """
     site_config_defaults = {}
     """
     Default values to be used when creating the :attr:`site_config`.
+
     
     Usage example::
     
@@ -1621,10 +1625,13 @@ class Site(object):
             if cfg:
                 p.configure(**cfg)
 
+            needed_by = p
+            while needed_by.needed_by is not None:
+                needed_by = needed_by.needed_by
             for dep in p.needs_plugins:
                 k2 = dep.rsplit('.')[-1]
                 if k2 not in self.plugins:
-                    install_plugin(dep, needed_by=p)
+                    install_plugin(dep, needed_by=needed_by)
                     # plugins.append(dep)
 
             # actual_apps.append(app_name)
@@ -1791,10 +1798,11 @@ this field.
             if debug:
                 print("20170824 {!r} has no help_text".format(fld))
             return
-        if fld.help_text:
-            if debug:
-                print("20170824 {} on {} has already a help_text {}".format(attrname, cls, fld.help_text))
-            return
+        # if fld.help_text:
+        #     # if debug:
+        #     #     print("20170824 {} on {} has already a help_text {}".format(
+        #     #         attrname, cls, repr(fld.help_text)))
+        #     return
         # if debug:
         #     print(20160829, cls)
         # if isinstance(fld, type):
@@ -1809,14 +1817,21 @@ this field.
             #     continue
             k = m.__module__ + '.' + m.__name__
             k = simplify_name(k)
+            # debug = k.startswith('users')
             if attrname:
                 k += '.' + attrname
             txt = self._help_texts.get(k, None)
+            # if attrname == "nationality":
+            #     print("20180313 {} {}".format(k, txt))
             if txt is None:
-                pass
                 if debug:
                     print("20170824 {}.{} : no help_text using {!r}".format(
                         cls, attrname, k))
+                if fld.help_text:
+                    # coded help text gets overridden only if docs
+                    # provide a more specific help text.
+                    return
+                    
             else:
                 if debug:
                     print("20170824 {}.{}.help_text found using {}".format(
@@ -2942,7 +2957,7 @@ given object `obj`. The dict will have one key for each
         this Site's :attr:`Site.languages` attribute.
         
         """
-        return [getattr(obj, name + li.suffix) for li in self.languages]
+        return [str(getattr(obj, name + li.suffix)) for li in self.languages]
         #~ l = [ getattr(obj,name) ]
         #~ for lang in self.BABEL_LANGS:
             #~ l.append(getattr(obj,name+'_'+lang))
@@ -3569,9 +3584,9 @@ signature as `django.core.mail.EmailMessage`.
             p.append(_("This is "))
             if self.url:
                 p.append(
-                    E.a(self.verbose_name, href=self.url, target='_blank'))
+                    E.a(str(self.verbose_name), href=self.url, target='_blank'))
             else:
-                p.append(E.b(self.verbose_name))
+                p.append(E.b(str(self.verbose_name)))
             if self.version:
                 p.append(' ')
                 p.append(self.version)

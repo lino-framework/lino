@@ -20,11 +20,12 @@ from lino.mixins import CreatedModified, Contactable
 from lino.mixins import DateRange
 
 from .choicelists import UserTypes
-from .mixins import UserAuthored, TimezoneHolder
+from .mixins import UserAuthored  #, TimezoneHolder
 from .actions import ChangePassword, SignOut
 # from .actions import SendWelcomeMail
 # from .actions import SignIn
 from lino.core.auth.utils import AnonymousUser
+from lino.modlib.about.choicelists import TimeZones
 
 
 class UserManager(BaseUserManager):
@@ -55,8 +56,7 @@ class UserManager(BaseUserManager):
 
 
 @python_2_unicode_compatible
-class User(AbstractBaseUser, Contactable, CreatedModified,
-           TimezoneHolder, DateRange):
+class User(AbstractBaseUser, Contactable, CreatedModified, DateRange):
     class Meta(object):
         app_label = 'users'
         verbose_name = _('User')
@@ -81,6 +81,11 @@ class User(AbstractBaseUser, Contactable, CreatedModified,
     first_name = models.CharField(_('First name'), max_length=30, blank=True)
     last_name = models.CharField(_('Last name'), max_length=30, blank=True)
     remarks = models.TextField(_("Remarks"), blank=True)  # ,null=True)
+
+    if settings.USE_TZ:
+        time_zone = TimeZones.field(default='default')
+    else:
+        time_zone = dd.DummyField()
 
     change_password = ChangePassword()
     # sign_in = SignIn()
@@ -208,7 +213,7 @@ class User(AbstractBaseUser, Contactable, CreatedModified,
                   str(self.user_type)]
         if self.language:
             items += [', ',
-            E.strong(settings.SITE.LANGUAGE_DICT.get(self.language))]
+            E.strong(str(settings.SITE.LANGUAGE_DICT.get(self.language)))]
         return E.li(*items)
         # if settings.SITE.is_demo_site:
         #     p = "'{0}', '{1}'".format(self.username, '1234')

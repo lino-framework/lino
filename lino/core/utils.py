@@ -26,7 +26,7 @@ from django.core import exceptions
 from django.utils.encoding import force_text
 from django.http import QueryDict
 
-from etgen.html import E
+from etgen.html import E, tostring
 from lino import AFTER17
 
 from django.core.validators import (
@@ -682,7 +682,7 @@ class InstanceAction(object):
         the :ref:`lino.tutorial.polls`.
 
         """
-        return E.tostring(self.as_button_elem(*args, **kwargs))
+        return tostring(self.as_button_elem(*args, **kwargs))
 
     def get_row_permission(self, ar):
         state = self.bound_action.actor.get_row_state(self.instance)
@@ -785,16 +785,18 @@ def error2str(self, e):
     """Convert the given Exception object into a string, but handling
     ValidationError specially.
     """
+    if isinstance(e, list):
+        return ', '.join([self.error2str(v) for v in e])
     if isinstance(e, exceptions.ValidationError):
         md = getattr(e, 'message_dict', None)
         if md is not None:
             def fieldlabel(name):
                 de = self.get_data_elem(name)
-                return force_text(getattr(de, 'verbose_name', name))
+                return str(getattr(de, 'verbose_name', name))
             return '\n'.join([
                 "%s : %s" % (
                     fieldlabel(k), self.error2str(v))
-                for k, v in list(md.items())])
+                for k, v in md.items()])
         return '\n'.join(e.messages)
     return str(e)
 
@@ -807,12 +809,18 @@ def lazy_format(tpl, *args, **kwargs):
         return tpl.format(*args, **kwargs)
     return lazy(f, six.text_type)()
     
-simplify_parts = set(['models', 'desktop', 'ui', 'choicelists'])
+simplify_parts = set(
+    ['models', 'desktop', 'ui', 'choicelists', 'actions', 'mixins'])
 
 def simplify_name(name):
-    """Simplify the given Lino name. This is used when we want to ignore
-    whether a model or table or action is defined in a
+    """
+    Simplify the given full Python name. 
 
+    Removes any part 'models', 'desktop', 'ui', 'choicelists',
+    'mixins' or 'actions' from the name.
+
+    This is used when we want to ignore where exactly a model or table
+    or action is being defined within its plugin.
     """
     parts = name.split('.')
     for e in simplify_parts:

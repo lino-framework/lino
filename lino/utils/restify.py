@@ -150,6 +150,8 @@ class HTMLTranslator(html4css1.HTMLTranslator):
 
 class Writer(html4css1.Writer):
 
+    # settings_default_overrides = dict(newlines=False)
+
     def __init__(self):
         writers.Writer.__init__(self)
         self.translator_class = HTMLTranslator
@@ -228,7 +230,7 @@ def restify(input_string, source_path=None, destination_path=None,
     #~ if output_encoding != 'unicode':
         #~ fragment = fragment.encode(output_encoding)
     #~ print __file__, repr(fragment)
-    return fragment
+    return fragment  #.decode('utf8')
 
 
 def rst2odt(input_string, source_path=None, destination_path=None,

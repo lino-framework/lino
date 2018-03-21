@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2017 Luc Saffre
+# Copyright 2013-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
@@ -55,6 +55,7 @@ multilingual userdocs.
 """
 
 from __future__ import unicode_literals, print_function
+from builtins import str
 
 from .base import menuselection_text
 
@@ -150,10 +151,10 @@ def fields_ul(fields):
     helpless = []
 
     def field2li(fld):
-        s = "**%s**" % unicode(f.verbose_name).strip()
+        s = "**%s**" % str(f.verbose_name).strip()
         s += " (``%s``, %s)" % (f.name, fieldtype(f))
         if f.help_text:
-            s += " -- " + unicode(f.help_text)
+            s += " -- " + str(f.help_text)
             return s
         helpless.append(s)
         return None
@@ -245,13 +246,13 @@ def actions_ul(action_list):
     items = []
     for ba in action_list:
         label = ba.action.label
-        desc = "**%s** (" % unicode(label).strip()
+        desc = "**%s** (" % str(label).strip()
         if ba.action.action_name:
             desc += "``%s``" % ba.action.action_name
 
         desc += ", %s)" % typeref(ba.action.__class__)
         if ba.action.help_text:
-            desc += " -- " + unicode(ba.action.help_text)
+            desc += " -- " + str(ba.action.help_text)
         items.append(desc)
     return rstgen.ul(items)
 
@@ -262,7 +263,7 @@ def actors_overview_ul(model_reports):
     items = []
     for tb in model_reports:
         desc = actor_ref(tb)
-        #~ label = unicode(tb.title or tb.label)
+        #~ label = str(tb.title or tb.label)
         #~ desc += " (%s)" % str(tb)
         desc += " (%s)" % typeref(tb)
         mi = find_menu_item(tb.default_action)

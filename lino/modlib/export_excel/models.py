@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2014-2016 Josef Kejzlar, Luc Saffre, Hamza Khchine
+# Copyright 2014-2018 Josef Kejzlar, Luc Saffre, Hamza Khchine
 # License: BSD (see file COPYING for details)
 
 """Database models for `lino.modlib.export_excel`.
@@ -15,7 +15,7 @@ from lino.core import actions
 from lino.core.tables import AbstractTable
 from lino.utils.media import TmpMediaFile
 from lino.utils import IncompleteDate
-from etgen.html import E
+from etgen.html import iselement, to_rst
 from lino.utils.quantities import Duration
 from lino.core.choicelists import Choice
 from lino.api import dd
@@ -69,8 +69,8 @@ def ar2workbook(ar, column_names=None):
                 value = value and 1 or 0
             elif isinstance(value, (Duration, Choice)):
                 value = str(value)
-            elif E.iselement(value):
-                value = E.to_rst(value)
+            elif iselement(value):
+                value = to_rst(value)
                 # dd.logger.info("20160716 %s", value)
             elif isinstance(value, Promise):
                 value = str(value)

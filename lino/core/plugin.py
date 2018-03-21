@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2017 Luc Saffre.
+# Copyright 2008-2018 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 
 """This defines the :class:`Plugin` class.
@@ -338,17 +338,27 @@ class Plugin(object):
         return self.site.buildurl(*args, **kw)
 
     def get_menu_group(self):
-        """Return the plugin into whose menu this plugin should add its menu
-        commands.
+        """
+        Return the plugin (a :class:`Plugin` instance) into whose menu
+        this plugin should add its menu commands.
 
-        If this plugin defines a :attr:`menu_group`, return the named
-        plugin. Otherwise, if this plugin was automatically installed
-        because some other plugin needs it, return that other
-        plugin. Otherwise return this plugin.
+        This returns `self` by default, unless 
 
-        Used by :mod:`lino.modlib.languages`.
-        Returns a :class:`Plugin` instance.
+        - this plugin defines an explicit :attr:`menu_group`. In this
+          case return the named plugin.
 
+        - this plugin was automatically installed because some other
+          plugin needs it. In this case return that other plugin.
+
+        When a plugin A is automatically being installed because
+        needed by a plugin B which is itself being installed
+        automatically because needed by a third plugin C, then
+        :meth:`A.get_menu_group
+        <lino.core.plugins.Plugin.get_menu_group>` returns C (and not
+        B).  A case where this happens is
+        :mod:`lino_welfare.modlib.pcsw` which needs
+        :mod:`lino_xl.lib.coachings` which in turn needs
+        :mod:`lino_xl.lib.clients`.
         """
         if self.menu_group:
             if self.menu_group in self.site.plugins:
@@ -356,9 +366,9 @@ class Plugin(object):
         return self.needed_by or self
 
     def setup_user_prefs(self, up):
-        """Called when a :class:`lino.core.userprefs.UserPrefs` get
+        """
+        Called when a :class:`lino.core.userprefs.UserPrefs` get
         instantiated.
-
         """
         pass
     

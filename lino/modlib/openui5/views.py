@@ -34,7 +34,7 @@ from lino.core.views import json_response, json_response_kw
 
 from lino.core.views import action_request
 from lino.core.utils import navinfo
-from etgen.html import E
+from etgen.html import E, tostring
 from etgen import html as xghtml
 
 from lino.api import rt
@@ -457,7 +457,7 @@ def layout2html(ar, elem):
     items = list(lh.main.as_plain_html(ar, elem))
     # if navigator:
     #     items.insert(0, navigator)
-    #~ print E.tostring(E.div())
+    #~ print tostring(E.div())
     #~ if len(items) == 0: return ""
     return E.form(*items)
 
@@ -522,7 +522,7 @@ class Connector(View):
         )
 
         print(u)
-        print name
+        # print name
         if name.startswith("view/"):
             tplname = "openui5/" + name
 

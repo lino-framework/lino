@@ -1,6 +1,5 @@
 """
-The ``lino.core`` package
-=========================
+Contains Lino's core functionalities.
 
 .. autosummary::
    :toctree:

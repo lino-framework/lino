@@ -28,7 +28,7 @@ from lino.core import signals
 from lino.core import actions
 from lino.core.utils import error2str
 from lino.core.utils import resolve_model
-from etgen.html import E
+from etgen.html import E, forcetext
 from lino.utils import get_class_attr
 from lino.core.signals import on_ui_created, pre_ui_delete, pre_ui_save
 
@@ -827,14 +827,14 @@ class Model(models.Model):
     def mobile_item(self, ar):
         if ar is None:
             return ''
-        return E.div(*self.get_mobile_list_item_elems(ar))
+        return E.div(*forcetext(self.get_mobile_list_item_elems(ar)))
 
     # @fields.displayfield(_("Description"))
     @fields.htmlbox(_("Description"))
     def overview(self, ar):
         if ar is None:
             return ''
-        return E.div(*self.get_overview_elems(ar))
+        return E.div(*forcetext(self.get_overview_elems(ar)))
 
     # no longer needed here because implemented in AbstractTable
     # @dd.displayfield(_("Description"))
