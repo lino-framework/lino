@@ -1,0 +1,146 @@
+<mvc:View
+		controllerName="lino.controller.table"
+		xmlns="sap.ui.table"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:core="sap.ui.core"
+		xmlns:u="sap.ui.unified"
+		xmlns:m="sap.m"
+	    xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+		xmlns:html="http://www.w3.org/1999/xhtml"
+		height="100%"
+		class="sapUiSizeCompact">
+			<Table
+				id="MAIN_TABLE"
+				customData:PK="{# actor.model._meta.pk.name} #}{{pk_index}}"
+                customData:actor_id="{{actor.actor_id}}"
+                customData:url="/restful/{{actor.app_label}}/{{actor.__name__}}"
+				{% if content_type -%}
+				customData:content_type="{{content_type}}"
+				{%- endif%}
+				{% if is_slave -%}
+				customData:is_slave="true"
+				{%- endif%}
+				selectionMode="MultiToggle"
+				rows="{/rows}"
+				visibleRowCountMode="Auto"
+				showColumnVisibilityMenu="true"
+				enableColumnFreeze="{ui>/showFreezeMenuEntry}"
+				enableCellFilter="{ui>/enableCellFilter}"
+				columnSelect="onColumnSelect"
+				cellContextmenu="onProductIdCellContextMenu"
+				ariaLabelledBy="title"
+				class="sapUiSizeCondensed"
+                rowActionCount="1">
+				<rowActionTemplate>
+					<RowAction visible="true">
+                        <items>
+							{% if actor.detail_action %}
+						<RowActionItem type="Navigation" visible="true" press="onRowNavPress">
+
+						</RowActionItem>
+							{% endif %}
+                        </items>
+					</RowAction>
+				</rowActionTemplate>
+				<extension>
+					<m:Toolbar>
+						<m:Title text="{{title}}"/>
+						<m:ToolbarSpacer/>
+						<m:ToggleButton
+							icon="sap-icon://resize-horizontal"
+							tooltip="Enable / Disable Freezing Menu Entries"
+							pressed="{ui>/showFreezeMenuEntry}"/>
+						<m:ToggleButton
+							icon="sap-icon://grid"
+							tooltip="Enable / Disable Cell Filter"
+							pressed="{ui>/enableCellFilter}"/>
+
+					</m:Toolbar>
+				</extension>
+				<columns>
+					{% for c in columns %}
+					{% include c.oui5_column_template %}
+					{% endfor %}
+					{#
+					<Column
+						id="name"
+						width="11rem"
+						sortProperty="Name"
+						filterProperty="Name"
+						showFilterMenuEntry="true"
+						showSortMenuEntry="true">
+						<m:Label text="Product Name" />
+						<template>
+							<m:Text text="{Name}" wrapping="false" />
+						</template>
+					</Column>
+					<Column
+						id="productId"
+						filterProperty="ProductId"
+						sortProperty="ProductId"
+						width="11rem">
+						<m:Label text="Product Id" />
+						<template>
+							<m:Text text="{ProductId}" wrapping="false" />
+						</template>
+					</Column>
+					<Column
+						id="image"
+						width="9rem"
+						columnMenuOpen="onColumnMenuOpen">
+						<m:Label text="Image" />
+						<template>
+							<m:Link text="Show Image" href="{ProductPicUrl}" target="_blank"/>
+						</template>
+					</Column>
+					<Column
+						id="quantity"
+						width="6rem"
+						hAlign="End"
+						sortProperty="Quantity">
+						<m:Label text="Quantity" />
+						<template>
+							<m:Label text="{
+								path: 'Quantity',
+								type: 'sap.ui.model.type.Integer'
+							}" />
+						</template>
+						<menu>
+							<u:Menu ariaLabelledBy="quantity">
+								<u:items>
+									<u:MenuItem
+										text="My custom menu entry"
+										select="onQuantityCustomItemSelect"
+										/>
+									<u:MenuItem
+										text="Sort"
+										select="onQuantitySort"
+										icon="sap-icon://sort"
+										/>
+								</u:items>
+							</u:Menu>
+						</menu>
+					</Column>
+					<Column width="9rem">
+						<m:Label text="Delivery Date" />
+						<template>
+							<m:Text text="{
+								path: 'DeliveryDate',
+								type: 'sap.ui.model.type.Date',
+								formatOptions: {source: {pattern: 'timestamp'}}
+							}" wrapping="false" />
+						</template>
+					</Column>
+					#}
+				</columns>
+				<footer>
+					<m:Toolbar>
+						<m:ToolbarSpacer/>
+						<m:Button
+							icon="sap-icon://hint"
+							tooltip="Show information"
+							press="showInfo"/>
+					</m:Toolbar>
+				</footer>
+			</Table>
+</mvc:View>

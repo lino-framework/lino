@@ -1,0 +1,7 @@
+{% extends "/openui5/elems/field/FieldElement.xml" %}
+
+{% block field_content %}
+<editor:CKEditor value="{{bind('record>/data/',e.field.name)}}"
+                 {#toolbar="Basic"#}
+                 toolbar="Full"/>
+{% endblock %}

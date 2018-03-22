@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>OpenUI5 CKEditor</title>
+
+    <script id="sap-ui-bootstrap" type="text/javascript" src="../latest/resources/sap-ui-core.js" data-sap-ui-libs="sap.ui.commons" data-sap-ui-theme="sap_goldreflection">
+    </script>
+    <script type="text/javascript">
+    sap.ui.localResources("openui5");
+    // jQuery.sap.registerModulePath('openui5','https://raw.githubusercontent.com/jasper07/openui5-ckeditor/master/openui5'); // this only works with disabled web security
+    jQuery.sap.require("openui5.CKEditor");
+
+    var txt = "<ul><li>Ale fermentation mead malt extract.</li><li>Caramel malt bottle conditioning gravity hops.</li><li>Heat exchanger cold filter aroma enzymes.</li></ul>";
+    var oModel = new sap.ui.model.json.JSONModel({
+        txt: txt
+    });
+    sap.ui.getCore().setModel(oModel);
+
+    // default === full editor
+    var oEditor1 = new openui5.CKEditor({
+        value: '{/txt}'
+    });
+
+    oEditor1.placeAt("sample1");
+
+    var oEditor2 = new openui5.CKEditor({
+        value: '{/txt}',
+        width: "600px",
+        height: "250px",
+        toolbar: 'Basic',
+        inline: false,
+        uiColor: '#333333'
+    });
+
+    oEditor2.placeAt("sample2");
+
+    // inline editor
+    var oEditor3 = new openui5.CKEditor({
+        value: '{/txt}',
+        width: "668px",
+        height: "250px",
+        inline: true
+    });
+
+    oEditor3.placeAt("sample3");
+
+    openui5.CKEditorToolbar.myToolbar = [
+        ['Source'], ['Cut', 'Copy', 'Paste', 'PasteText'], ['Undo', 'Redo'],
+            '/', //new line
+        ['Bold', 'Italic','Underline'], ['BulletedList', 'NumberedList', 'Blockquote']
+    ];
+
+    // inline editor
+    var oEditor4 = new openui5.CKEditor({
+        value: '{/txt}',
+        toolbar: 'myToolbar'
+    });
+
+    oEditor4.placeAt("sample4");
+    </script>
+</head>
+
+<body>
+
+    <div id="sample1"></div>
+    <div id="sample2"></div>
+    <div id="sample3"></div>
+    <div id="sample4"></div>
+</body>
+
+</html>

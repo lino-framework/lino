@@ -706,6 +706,7 @@ class TextFieldElement(FieldElement):
     separate_window = False
     active_child = False
     format = 'plain'
+    oui5_field_template = "/openui5/elems/field/TextFieldElement.xml"
 
     def __init__(self, layout_handle, field, **kw):
         self.format = getattr(field, 'textfield_format', None) \
@@ -865,6 +866,8 @@ class ComboFieldElement(FieldElement):
     xtype = None
     filter_type = 'string'
     gridfilters_settings = dict(type='string')
+
+    oui5_field_template = "openui5/elems/field/ComboElement.xml"
 
     def get_field_options(self, **kw):
         kw = FieldElement.get_field_options(self, **kw)
@@ -1589,6 +1592,9 @@ class SlaveSummaryPanel(HtmlBoxElement):
 is 'summary'.
 
     """
+
+    oui5_field_template = "openui5/elems/field/SlaveSummaryElement.xml"
+
     def __init__(self, lh, actor, **kw):
         box = fields.HtmlBox(actor.label, help_text=actor.help_text)
         fld = fields.VirtualField(box, actor.get_slave_summary)
@@ -2059,6 +2065,7 @@ class GridElement(Container):
     xtype = None
     preferred_height = 5
     refers_to_ww = True
+    oui5_field_template = "openui5/elems/field/GridElement.xml"
 
     def __init__(self, layout_handle, name, rpt, *columns, **kw):
         """:param layout_handle: the handle of the FormLayout owning this grid.

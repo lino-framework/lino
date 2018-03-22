@@ -49,22 +49,33 @@ class Plugin(Plugin):
         urls = [
             # url(rx + r'/?$', views.Index.as_view()),
 
-            ## original views from bs3 commented out
             # url(rx + r'$', views.Index.as_view()),
-            url(rx + r'auth$', views.Authenticate.as_view()),
-            # url(rx + r'(?P<app_label>\w+)/(?P<actor>\w+)$',
-            #     views.List.as_view()),
-            # url(rx + r'(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$',
-            #     views.Element.as_view()),
-            url(rx + r'api/main_html$', views.MainHtml.as_view()),
-            url(rx + r'restful/(?P<app_label>\w+)/(?P<actor>\w+)$',
-                views.Restful.as_view()),
-            url(rx + r'restful/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$',
-                views.Restful.as_view()),
 
+            url(rx + r'auth$', views.Authenticate.as_view()),
+
+            url(rx + r'api/main_html$', views.MainHtml.as_view()),
+
+            # To be fased out
+            url(rx + r'restful/(?P<app_label>\w+)/(?P<actor>\w+)$',
+                views.ApiList.as_view()),
+            url(rx + r'restful/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$',
+                views.ApiElement.as_view()),
+            # From extjs
+            url(rx + r'api/(?P<app_label>\w+)/(?P<actor>\w+)$',
+                views.ApiList.as_view()),
+            url(rx + r'api/(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$',
+                views.ApiElement.as_view()),
+            url(rx + r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)$',
+                views.Choices.as_view()),
+            url(rx + r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)/'
+                     '(?P<fldname>\w+)$',
+                views.Choices.as_view()),
+
+            # For generating views
             url(rx + r'ui/(?P<name>.*)$',
                 views.Connector.as_view()),
 
+            # Main index, todo: refactor into main view, not Tickets
             url(rx + r'$', views.Tickets.as_view()),
 
         ]
@@ -74,6 +85,7 @@ class Plugin(Plugin):
         if html is not None:
             yield ("Openui5", '1.50.8', "http://openui5.org")
             # yield ("jQuery", '?', "http://...")
+            yield ("CKEditor", "4.8", "https://ckeditor.com/")
 
     def get_index_view(self):
         from . import views
