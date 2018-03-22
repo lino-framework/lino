@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2017 Luc Saffre
+# Copyright 2009-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 # Note that this module may not have a docstring because any
@@ -46,14 +46,14 @@ else:
 
 SETUP_INFO = dict(
     name='lino',
-    version='18.03.0',
+    version='18.3.0',
     install_requires=install_requires,
     description="A framework for writing desktop-like web applications "
                 "using Django and ExtJS",
     license='BSD License',
-    obsoletes=['djangosite', 'north'],
+    # obsoletes=['djangosite', 'north'],
     author='Luc Saffre',
-    author_email='luc.saffre@gmail.com',
+    author_email='luc@lino-framework.org',
     url="http://www.lino-framework.org",
     # ~ test_suite = 'lino.test_apps',
     test_suite='tests')
