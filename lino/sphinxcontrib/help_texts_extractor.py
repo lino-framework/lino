@@ -262,7 +262,7 @@ class HelpTextExtractor(object):
             print("Writing {} help texts for {} to {}".format(
                 len(texts), k, fn))
 
-            fd = file(fn, "w")
+            fd = open(fn, "w")
 
             def writeln(s):
                 s = s.encode('utf-8')
