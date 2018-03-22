@@ -271,7 +271,7 @@ def actors_overview_ul(model_reports):
             desc += _(" (Menu %s)") % menuselection(mi)
             #~ print(unicode(mi.label).strip())
         if tb.help_text:
-            desc += " -- " + unicode(tb.help_text).strip()
+            desc += " -- " + str(tb.help_text).strip()
 
         items.append(desc)
     return rstgen.ul(items)
@@ -330,21 +330,21 @@ class ddrefRole(XRefRole):
         lng = CurrentLanguage.get_current_value(env)
         with translation.override(lng):
             if isinstance(x, models.Field):
-                text = utils.unescape(unicode(x.verbose_name))
+                text = utils.unescape(str(x.verbose_name))
                 target = model_name(x.model) + '.' + x.name
                 # print(target)
             elif isinstance(x, Plugin):
-                text = utils.unescape(unicode(x.verbose_name))
+                text = utils.unescape(str(x.verbose_name))
                 target = settings.SITE.userdocs_prefix + target
 
             elif isinstance(x, type) and issubclass(x, models.Model):
-                text = utils.unescape(unicode(x._meta.verbose_name))
+                text = utils.unescape(str(x._meta.verbose_name))
                 target = model_name(x)
             elif isinstance(x, type) and issubclass(x, actors.Actor):
-                text = utils.unescape(unicode(x.title or x.label))
+                text = utils.unescape(str(x.title or x.label))
                 target = actor_name(x)
             elif isinstance(x, actions.Action):
-                text = utils.unescape(unicode(x.label))
+                text = utils.unescape(str(x.label))
                 target = actor_name(x)
             else:
                 raise Exception("Don't know how to handle %r" % x)
@@ -450,7 +450,7 @@ class ActorsOverviewDirective(Lino2rstDirective):
                 mi = find_menu_item(cls.default_action)
                 if mi is not None:
                     desc += _(" (Menu %s)") % menuselection(mi)
-                    #~ print(unicode(mi.label).strip())
+                    #~ print(str(mi.label).strip())
                 if cls.help_text:
                     desc += "  : " + force_text(cls.help_text).strip()
 
@@ -500,7 +500,7 @@ class ActorDirective(Lino2rstDirective):
                 title = force_text(fld.verbose_name).strip()
                 
                 s += "\n.. index::\n   single: "
-                s += unicode(_('%(field)s (field in %(model)s)') % dict(
+                s += str(_('%(field)s (field in %(model)s)') % dict(
                     field=title, model=model_ref(fld.model)))
                 s += '\n\n'
                 s += rstgen.header(level, _("%s (field)") % title)
@@ -511,9 +511,9 @@ class ActorDirective(Lino2rstDirective):
 
             if isinstance(cls, Plugin):
                 s = ''
-                title = unicode(cls.verbose_name)
+                title = str(cls.verbose_name)
                 s += "\n.. index::\n   single: "
-                s += unicode(_('%s (app)') % title)
+                s += str(_('%s (app)') % title)
                 s += '\n\n.. _' + name + ':\n'
                 s += '\n'
                 s += rstgen.header(level, _("%s (app)") % title)
@@ -529,7 +529,7 @@ class ActorDirective(Lino2rstDirective):
                 name = model_name(model).lower()
                 title = force_text(model._meta.verbose_name)
                 s += "\n.. index::\n   single: "
-                s += unicode(_('%(model)s (model in %(app)s)') % dict(
+                s += str(_('%(model)s (model in %(app)s)') % dict(
                     model=title, app=model._meta.app_label))
 
                 s += '\n\n'
