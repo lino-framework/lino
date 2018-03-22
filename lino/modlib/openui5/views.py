@@ -530,7 +530,7 @@ class Connector(View):
         )
 
         print(u)
-        print name
+        print(name)
         if name.startswith("view/") or\
            name.startswith("controller/") or\
            name.startswith("core/"):
