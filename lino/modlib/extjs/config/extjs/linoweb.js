@@ -1374,7 +1374,7 @@ Lino.on_store_exception = function (store,type,action,options,response,arg) {
     var msg = "{{_('There was a problem with the database connection.')}}";
     if (response.responseText)
         msg += '<br/>' + response.responseText
-    msg += '<br/>' + "{{_('If the error persists, try reloading the browser page.')}}"
+    msg += '<br/>' + "{{_('If the error persists, try reloading the browser page ([SHIFT+CTRL+R] in Firefox).')}}"
     Ext.Msg.alert("{{_('Database problem')}}", msg );
     
 };
