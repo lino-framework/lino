@@ -1,13 +1,9 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2018 Luc Saffre
+# Copyright 2009-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """:mod:`lino.utils` (the top-level module) contains a few often-used
 function for general use. It has also many subpackages and submodules.
-
-This is a tested document. To test it, run::
-
-  $ doctest lino/utils/__init__.py
 
 .. autosummary::
    :toctree:
@@ -59,45 +55,6 @@ This is a tested document. To test it, run::
     report
 
 
->>> from __future__ import print_function
->>> from __future__ import unicode_literals
->>> from lino.utils import *
->>> from builtins import chr
->>> from builtins import hex
->>> from builtins import next
->>> from builtins import map
->>> from builtins import str
->>> from builtins import range
->>> from builtins import object
-
-
-
-:func:`str2hex` and :func:`hex2str`
------------------------------------
-
->>> str2hex('-L')
-'2d4c'
-
->>> hex2str('2d4c')
-'-L'
-
->>> hex2str('')
-''
->>> str2hex('')
-''
-
-:func:`join_words`
-------------------
-
->>> print (join_words('This','is','a','test'))
-This is a test
-
->>> print (join_words('This','is','','another','test'))
-This is another test
-
->>> print (join_words(None,None,None,'Third','test'))
-Third test
-
 """
 
 #~ import logging
@@ -125,6 +82,15 @@ def join_words(*words):
     join the remaining word using a single space.
 
     TODO: move this to etgen.html ?
+
+    >>> print(join_words('This','is','a','test'))
+    This is a test
+
+    >>> print(join_words('This','is','','another','test'))
+    This is another test
+
+    >>> print(join_words(None, None, None, 'Third', 'test'))
+    Third test
 
     """
     return ' '.join([str(x) for x in words if x])
@@ -186,7 +152,13 @@ def call_on_bases(cls, name, *args, **kw):
 
 
 def str2hex(s):
-    """Convert a string to its hexadecimal representation."""
+    """
+    Convert a string to its hexadecimal representation.
+
+    See examples in :func:`hex2str`.
+
+
+    """
     r = ''
     for c in s:
         r += hex(ord(c))[2:]
@@ -194,7 +166,25 @@ def str2hex(s):
 
 
 def hex2str(value):
-    """Convert the hexadecimal representation of a string to the original string."""
+    """
+    Convert the hexadecimal representation of a string to the original
+    string. 
+
+    See also :func:`str2hex`.
+
+    >>> str2hex('-L')
+    '2d4c'
+
+    >>> hex2str('2d4c')
+    '-L'
+
+    >>> hex2str('')
+    ''
+    >>> str2hex('')
+    ''
+
+
+    """
     if len(value) % 2 != 0:
         raise Exception("hex2str got value %r" % value)
     r = ''
