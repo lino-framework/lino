@@ -4,7 +4,7 @@ sap.ui.define([
 	], function(jQuery, Controller) {
 	"use strict";
 
-	return Controller.extend("sap.ui.demo.wt.controller.SideNav", {
+	return Controller.extend("lino.controller.SideNav", {
 
 		onCollapseExpandPress: function () {
 			var oSideNavigation = this.getView().byId('sideNavigation');

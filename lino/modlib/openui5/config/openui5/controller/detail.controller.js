@@ -8,7 +8,7 @@ sap.ui.define([
 ], function(Controller, JSONModel, Menu, MenuItem, MessageToast, DateFormat) {
 	"use strict";
 
-	return Controller.extend("sap.ui.demo.wt.controller.detail", {
+	return Controller.extend("lino.controller.detail", {
 
 		onInit : function () {
 			var oView = this.getView();

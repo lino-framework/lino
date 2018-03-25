@@ -3,7 +3,7 @@ sap.ui.define([
 ], function (UI5Object) {
 	"use strict";
 
-	return UI5Object.extend("sap.ui.demo.wt.controller.HelloDialog", {
+	return UI5Object.extend("lino.controller.HelloDialog", {
 
 		constructor : function (oView) {
 			this._oView = oView;
