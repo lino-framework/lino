@@ -1,4 +1,4 @@
-<Column
+<table:Column
         {# id="{{c.field.name}}" #}
         {% if c.width %}
         width="{{c.width}}ch"
@@ -15,11 +15,11 @@
         visible="{{bool2js(not c.hidden)}}"
 >
     {# The FieldElemnt for columns is var "c" #}
-    <m:Label text="{{c.label}}"/>
-    <template>
+    <Label text="{{c.label}}"/>
+    <table:template>
     {% block column_template %}
         <m:Text text="{{bind(c.fields_index)}}" wrapping="true"/>
     {% endblock %}
 
-    </template>
-</Column>
+    </table:template>
+</table:Column>

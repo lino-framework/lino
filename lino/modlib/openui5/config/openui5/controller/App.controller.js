@@ -127,6 +127,8 @@ sap.ui.define([
                     function(xhr, textStatus, errorThrown){
                     MessageToast.show("Unable to log in as " + oModel.oData.username);
                     });
+              // seems that submitting the form as a normal form works, but the error handling is poor.
+//            $("#__component0---MAIN_VIEW--authForm").submit();
         },
 
         onSignOutButtonPress: function(oEvent){

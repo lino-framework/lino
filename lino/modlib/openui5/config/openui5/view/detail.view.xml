@@ -1,16 +1,8 @@
-<mvc:View
-		controllerName="lino.controller.detail"
-		xmlns="sap.m"
-		xmlns:m="sap.m"
-		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:core="sap.ui.core"
-		xmlns:u="sap.ui.unified"
-		xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
-		xmlns:html="http://www.w3.org/1999/xhtml"
-		xmlns:ui="sap.ui"
-		xmlns:editor="openui5"
-		height="100%"
-		class="sapUiSizeCompact">
+{% extends "openui5/view/mvcView.xml" %}
+
+{% block view_controller_name %}lino.controller.detail{% endblock %}
+{% block view_attributes %} 	class="sapUiSizeCompact" height="100%" {% endblock %}
+{% block view_content %}
 	<Page
 		showHeader="true"
 		showNavButton="true"
@@ -27,4 +19,4 @@
 							{% include main.oui5_field_template %}
 		</content>
 	</Page>
-</mvc:View>
+{% endblock %}
