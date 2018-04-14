@@ -14,7 +14,7 @@
 		showNavButton="true"
 		navButtonPress="onNavButtonPress"
 		showFooter="true"
-		enableScrolling="false"
+		enableScrolling="true"
 		class="sapUiContentPadding">
 		<m:content>
 			<Table
