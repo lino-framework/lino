@@ -682,7 +682,7 @@ method in order to sort the rows of the queryset.
         msg = kw.get('message')
         if msg:
             print(msg)
-        url = kw.get('open_url') or kw.get('open_davlink_url')
+        url = kw.get('open_url') or kw.get('open_webdav_url')
         if url:
             os.startfile(url)
 

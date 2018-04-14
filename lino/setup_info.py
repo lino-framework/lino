@@ -19,7 +19,7 @@ PY3 = sys.version_info[0] == 3
 
 install_requires = [
     'Sphinx',
-    'atelier', 'unipath', 'python_dateutil',
+    'atelier', 'unipath', 'python_dateutil', 'dateparser',
     'etgen',
     'Babel', 'lxml',
     'beautifulsoup4',
@@ -147,6 +147,7 @@ lino.modlib.languages
 lino.modlib.languages.fixtures
 lino.management
 lino.management.commands
+lino.modlib.odata
 lino.modlib.office
 lino.modlib.checkdata
 lino.modlib.checkdata.fixtures

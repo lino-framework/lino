@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2017 Luc Saffre
+# Copyright 2009-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 from __future__ import unicode_literals
@@ -87,7 +87,9 @@ class BasePrintAction(Action):
         return filename
 
     def notify_done(self, ar, bm, leaf, url, **kw):
-        help_url = ar.get_help_url("print", target='_blank')
+        # help_url = ar.get_help_url("print", target='_blank')
+        # if bm.use_webdav:
+        #     url = ar.build_webdav_uri(url)
         msg = _("Your printable document ({}) "
                 "should now open in a new browser window. "
                 # "If it doesn't, please consult %(help)s "
@@ -98,9 +100,9 @@ class BasePrintAction(Action):
         # msg %= dict(doc=leaf, help=etree.tostring(
         #     help_url, encoding="unicode"))
         kw.update(message=msg, alert=True)
-        if bm.use_webdav and has_davlink and ar.request is not None:
+        if has_davlink and bm.use_webdav and ar.request is not None:
             kw.update(
-                open_davlink_url=ar.request.build_absolute_uri(url))
+                open_webdav_url=ar.request.build_absolute_uri(url))
         else:
             kw.update(open_url=url)
         ar.success(**kw)
@@ -114,7 +116,7 @@ class BasePrintAction(Action):
         bm.build(ar, self, elem)
         mf = bm.get_target(self, elem)
         leaf = mf.parts[-1]
-        self.notify_done(ar, bm, leaf, mf.url, **kw)
+        self.notify_done(ar, bm, leaf, mf.get_url(ar.request), **kw)
 
 
 class DirectPrintAction(BasePrintAction):
@@ -159,14 +161,15 @@ class CachedPrintAction(BasePrintAction):
             else:
                 ar.info("Reused %s from cache.", leaf)
 
-            self.notify_done(ar, bm, leaf, mf.url, **kw)
+            url = mf.get_url(ar.request)
+            self.notify_done(ar, bm, leaf, url, **kw)
             ar.set_response(refresh=True)
             return
 
         def ok(ar2):
             # qs = [ar.actor.get_row_by_pk(pk) for pk in ar.selected_pks]
             mf = self.print_multiple(ar, ar.selected_rows)
-            ar2.success(open_url=mf.url)
+            ar2.success(open_url=mf.get_url(ar.request))
             # kw.update(refresh_all=True)
             # return kw
         msg = _("This will print %d rows.") % len(ar.selected_rows)
@@ -195,7 +198,8 @@ class EditTemplate(BasePrintAction):
     required_roles = set([SiteStaff])
 
     def attach_to_actor(self, actor, name):
-        if not settings.SITE.is_installed('davlink'):
+        # if not settings.SITE.is_installed('davlink'):
+        if not (settings.SITE.webdav_protocol or has_davlink):
             return False
         return super(EditTemplate, self).attach_to_actor(actor, name)
 
@@ -225,18 +229,20 @@ class EditTemplate(BasePrintAction):
 
         parts = ['webdav', 'config'] + parts
         url = settings.SITE.build_media_url(*parts)
-        if ar.request is not None:
-            url = ar.request.build_absolute_uri(url)
+        # url = ar.build_webdav_uri(url)
 
-        if not has_davlink:
+        if not (settings.SITE.webdav_protocol or has_davlink):
             msg = "cp %s %s" % (filename, local_file)
             ar.info(msg)
-            raise Warning("Java is not enabled. "
+            raise Warning("WebDAV is not enabled. "
                           "Contact your system administrator.")
             
         def doit(ar):
             ar.info("Going to open url: %s " % url)
-            ar.success(open_davlink_url=url)
+            if settings.SITE.webdav_protocol:
+                ar.success(open_url=url)
+            else:
+                ar.success(open_webdav_url=url)
             # logger.info('20140313 EditTemplate %r', kw)
     
         if filename == local_file:

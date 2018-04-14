@@ -66,6 +66,7 @@ import datetime
 import re
 from decimal import Decimal
 from collections import OrderedDict
+import dateparser
 
 # encapsulate where they come from:
 
@@ -274,7 +275,6 @@ class IncompleteDate(object):
     >>> IncompleteDate(2009, 32, 123)
     IncompleteDate('2009-32-123')
 
-
     """
 
     def __init__(self, year, month, day):
@@ -282,6 +282,22 @@ class IncompleteDate(object):
 
     @classmethod
     def parse(cls, s):
+        """
+        Parse the given string and return an :class:`IncompleteDate`
+        object.
+
+        >>> IncompleteDate.parse('2008-03-24')
+        IncompleteDate('2008-03-24')
+
+        Belgian eID cards gave us some special challenges:
+
+        >>> IncompleteDate.parse('01.JUN. 1968')
+        IncompleteDate('1968-06-01')
+
+        >>> IncompleteDate.parse('JUN. 1968')
+        IncompleteDate('1968-06-00')
+        """
+        
         if s.startswith('-'):
             bc = True
             s = s[1:]
@@ -290,7 +306,15 @@ class IncompleteDate(object):
         try:
             y, m, d = list(map(int, s.split('-')))
         except ValueError:
-            raise Exception("Invalid date value {}".format(s))
+            pd = dateparser.parse(
+                s, settings={'STRICT_PARSING': True})
+            if pd is None:
+                pd = dateparser.parse(
+                    s, settings={'PREFER_DAY_OF_MONTH': 'first'})
+                y, m, d = pd.year, pd.month, 0
+            else:
+                y, m, d = pd.year, pd.month, pd.day
+            # raise Exception("Invalid date value {}".format(s))
         if bc:
             y = - y
         return cls(y, m, d)

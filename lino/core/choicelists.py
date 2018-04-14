@@ -229,6 +229,8 @@ Django creates copies of them when inheriting models.
     def __str__(self):
         # return force_text(self.text, errors="replace")
         # return self.text
+        if self.choicelist.show_values:
+            return "{0} ({1})".format(self.value, self.text)
         return str(self.text)
 
     def unused_as_callable(self):

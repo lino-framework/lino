@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2018 Luc Saffre
+# Copyright 2009-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """
 See introduction in :doc:`/dev/ar`.
@@ -12,6 +12,8 @@ logger = logging.getLogger(__name__)
 
 from copy import copy
 from xml.sax.saxutils import escape
+# from urlparse import urlsplit
+# from six.moves.urllib.parse import urlencode
 # try:
 #     from html import escape
 # except ImportError:
@@ -104,7 +106,7 @@ class ValidActionResponses(object):
     Open the given URL in a new browser window.
     """
     
-    open_davlink_url = None
+    open_webdav_url = None
     info_message = None
     warning_message = None
     "deprecated"
@@ -118,27 +120,6 @@ class ValidActionResponses(object):
     not need to use this.  It is automatically set by
     :meth:`ActorRequest.goto_instance`.
     """
-
-
-# ACTION_RESPONSES = frozenset((
-#     'message', 'success', 'alert',
-#     'errors',
-#     'html',
-#     'rows',
-#     'data_record',
-#     'detail_handler_name',
-#     'record_id',
-#     'refresh', 'refresh_all',
-#     'close_window',
-#     'record_deleted',
-#     'xcallback',
-#     'open_url',
-#     'open_davlink_url',
-#     'info_message',
-#     'warning_message',  # deprecated
-#     'eval_js',
-#     'active_tab'))
-
 
 class VirtualRow(object):
 
@@ -1072,10 +1053,21 @@ class ActorRequest(BaseRequest):
 
     def absolute_uri(self, *args, **kw):
         ar = self.spawn(*args, **kw)
-        #~ location = ar.renderer.get_request_url(ar)
         location = ar.get_request_url()
         return self.request.build_absolute_uri(location)
 
+    def build_webdav_uri(self, location):
+        if self.request is None:
+            return location
+        url = self.request.build_absolute_uri(location)
+        if settings.SITE.webdav_protocol:
+            url = settings.SITE.webdav_protocol + "://" + url
+            # url = urlsplit(url)
+            # url.scheme = settings.SITE.webdav_protocol
+            # url = url.unsplit()
+        print("20180410 {}", url)
+        return url
+        
     def pk2url(self, pk):
         return self.renderer.get_detail_url(self.actor, pk)
     
