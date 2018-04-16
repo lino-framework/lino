@@ -43,7 +43,7 @@ class MediaFile(object):
 
     def get_url(self, request):
         "return the url that points to file on the server"
-        if self.editable and request is None:
+        if self.editable and request is not None:
             if is_devserver():
                 url = "file://" + join(
                     settings.SITE.webdav_root, *self.parts)
