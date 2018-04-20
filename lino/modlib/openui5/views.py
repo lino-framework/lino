@@ -40,6 +40,9 @@ from etgen import html as xghtml
 from lino.api import rt
 import re
 
+from lino.core import dbtables
+from lino.core import tables
+
 
 from lino.core.elems import ComboFieldElement
 
@@ -531,12 +534,7 @@ class Connector(View):
 
         print(u)
         print(name)
-        if name.startswith("view/") or\
-           name.startswith("controller/") or\
-           name.startswith("core/"):
-            tplname = "openui5/" + name
-
-        elif name.startswith("dialog/SignInActionFormPanel"):
+        if name.startswith("dialog/SignInActionFormPanel"):
             tplname = "openui5/fragment/SignInActionFormPanel.fragment.xml"
 
         elif name.startswith("menu/user/user.fragment.xml"):
@@ -554,12 +552,13 @@ class Connector(View):
                     break
             else:
                 raise Exception("No Menu with name %s"%sel_menu)
-        elif name.startswith("grid/") or name.startswith("slavetable/"): # Table/grid view
+        elif name.startswith("grid/") or name.startswith("slavetable/") or \
+                name.startswith("view/grid/") or name.startswith("view/slavetable/"): # Table/grid view
             # todo Get table data
             # "grid/tickets/AllTickets.view.xml"
             # or
             # "slavetable/tickets/AllTickets.view.xml
-            app_label, actor = re.match(r"(?:grid|slavetable)\/(.+)\/(.+).view.xml$", name).groups()
+            app_label, actor = re.match(r"(?:(?:view\/)?grid|slavetable)\/(.+)\/(.+).view.xml$", name).groups()
             ar = action_request(app_label, actor, request, request.GET, True)
             actor = rt.models.resolve(app_label + "." + actor)
             store = ar.ah.store
@@ -601,9 +600,9 @@ class Connector(View):
             # ar = action_request(app_label, actor, request, request.GET, True)
             # add to context
 
-        elif name.startswith("detail"):  # Detail view
+        elif name.startswith("detail") or name.startswith("view/detail") :  # Detail view
             # "detail/tickets/AllTickets.view.xml"
-            app_label, actor = re.match(r"detail\/(.+)\/(.+).view.xml$", name).groups()
+            app_label, actor = re.match(r"(?:view\/)?detail\/(.+)\/(.+).view.xml$", name).groups()
             actor = rt.models.resolve(app_label + "." + actor)
             # detail_action = actor.actions['detail']
             detail_action = actor.detail_action
@@ -623,6 +622,33 @@ class Connector(View):
             tplname = "openui5/view/detail.view.xml"  # Change to "grid" to match action?
             # ar = action_request(app_label, actor, request, request.GET, True)
             # add to context
+
+        elif name.startswith("view/") or \
+                name.startswith("controller/") or \
+                name.startswith("core/"):
+            tplname = "openui5/" + name
+
+            if "manifest.json" in name:
+                ## List all master tables for routing
+                actors_list = [
+                    rpt for rpt in dbtables.master_reports
+                    # + dbtables.slave_reports
+                    # + list(dbtables.generic_slaves.values())
+                    # + dbtables.custom_tables
+                    # + dbtables.frames_list
+                ]
+
+                # self.actors_list.extend(
+                #     [a for a in list(choicelists.CHOICELISTS.values())
+                #      if settings.SITE.is_installed(a.app_label)])
+
+                # don't include for abstract actors
+                actors_list = [a for a in actors_list
+                               if not a.is_abstract()]
+
+                context.update(actors_list=actors_list)
+
+
 
         else:
             raise Exception("Can't find a view for path: {}".format(name))

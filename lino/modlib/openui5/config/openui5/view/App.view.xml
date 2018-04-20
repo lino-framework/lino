@@ -53,17 +53,6 @@
                 <content>
                     <NavContainer height="100%" id="viewport" >
                         <pages>
-                            <Page showHeader="true" >
-                                <Panel ><core:HTML id="dashboard"
-                                        content=""
-                                />
-
-                                </Panel>
-                                <!--<mvc:XMLView viewName="sap.ui.demo.wt.view.HelloPanel"/>-->
-                                <!--<mvc:XMLView viewName="sap.ui.demo.wt.view.SideNav"/>-->
-                                <!--<mvc:XMLView viewName="sap.ui.demo.wt.view.HelloPanel"/>-->
-                                <!--<mvc:XMLView viewName="sap.ui.demo.wt.view.AllTickets"/>-->
-                            </Page>
                         </pages>
                     </NavContainer>
                 </content>
