@@ -471,6 +471,15 @@ The disadvantage
 
     column_names = 'value name text *'
 
+    old2new = {}
+    """
+    A dict which maps old values to their new values.
+
+    This dict is consulted when an unknown value is read from database
+    (e.g. during a migration).  If if contains a replacement for the
+    old value, Lino will return the choice with the new value.
+    """
+
     @classmethod
     def get_column_names(self, ar):
         return self.column_names
@@ -662,17 +671,21 @@ The disadvantage
         #     return value
         if not value:
             return None
-        v = cls.items_dict.get(value) or cls.get_by_name(value)
+        v = cls.items_dict.get(value) or cls.get_by_name(value, None)
         if v is not None:
             return v
+        nv = cls.old2new.get(value, None)
+        if nv is not None:
+            v = cls.items_dict.get(nv)
+            if v is not None:
+                return v
         if settings.SITE.strict_choicelist_values:
             raise UnresolvedChoice(
                 "Unresolved value %r (%s) for %s (set "
                 "Site.strict_choicelist_values to False "
                 "to ignore this)" % (
                     value, value.__class__, cls))
-        else:
-            return UnresolvedValue(cls, value)
+        return UnresolvedValue(cls, value)
 
     @classmethod
     def get_choices(cls):
@@ -736,17 +749,17 @@ The disadvantage
             return None
 
     @classmethod
-    def get_by_value(self, value, *args):
-        """Return the item (a :class:`Choice` instance) corresponding to the
+    def get_by_value(cls, value, *args):
+        """
+        Return the item (a :class:`Choice` instance) corresponding to the
         specified `value`.
-
         """
         if not isinstance(value, six.string_types):
             raise Exception("%r is not a string" % value)
         #~ print "get_text_for_value"
         #~ return self.items_dict.get(value, None)
         #~ return self.items_dict.get(value)
-        return self.items_dict.get(value, *args)
+        return cls.items_dict.get(value, *args)
 
     @classmethod
     def as_callable(self, name):

@@ -2883,9 +2883,8 @@ this field.
 
         """
         from django.utils import translation
-        for simple, info in list(self.language_dict.items()):
+        for simple, info in self.language_dict.items():
             with translation.override(simple):
-                # kw[name + info.suffix] = str(txt)
                 kw[name + info.suffix] = six.text_type(txt)
         return kw
 

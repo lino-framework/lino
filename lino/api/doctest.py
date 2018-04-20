@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015-2018 Luc Saffre
+# Copyright 2015-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
@@ -410,4 +410,26 @@ def add_call_logger(owner, name):
         print(msg)
         return func(*args, **kwargs)
     setattr(owner, name, w)
+
+def str2languages(txt):
+    """
+    Return a list of all translations for the given translatable text.
+    """
+    lst = []
+    for lng in settings.SITE.languages:
+        with translation.override(lng.django_code):
+            lst.append(six.text_type(txt))
+    return lst
+    
+def show_choicelist(cls):
+    """
+    Similar to :func:`rt.show`, but the `text` is shown in all
+    languages instead of just the current language.
+    """
+    headers = ["value", "name"] + [lng.name for lng in settings.SITE.languages]
+    rows = []
+    for i in cls.get_list_items():
+        row = [i.value, i.name] + str2languages(i.text)
+        rows.append(row)
+    print(table(headers, rows))
     
