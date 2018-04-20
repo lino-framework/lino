@@ -385,7 +385,7 @@ def main(args):
         # reactivated it because otherwise we have no log entry when
         # the process has finished.
         self.stream.write(
-            '    logger.info("Loaded %d objects",loader.count_objects)\n')
+            '    logger.info("Loaded %d objects", loader.count_objects)\n')
         self.stream.write(
             "    call_command('resetsequences')\n")
         
