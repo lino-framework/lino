@@ -381,8 +381,11 @@ def main(args):
 
         self.stream.write(
             '    loader.finalize()\n')
-        # self.stream.write(
-        #     '    logger.info("Loaded %d objects",loader.count_objects)\n')
+        # 20180416 why was the following message commented out?
+        # reactivated it because otherwise we have no log entry when
+        # the process has finished.
+        self.stream.write(
+            '    logger.info("Loaded %d objects", loader.count_objects)\n')
         self.stream.write(
             "    call_command('resetsequences')\n")
         

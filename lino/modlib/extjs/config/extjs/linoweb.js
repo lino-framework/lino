@@ -1628,8 +1628,8 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
         }
     }
     {%- if settings.SITE.is_installed('davlink') -%}
-    if (result.open_davlink_url) {
-       Lino.davlink_open(result.open_davlink_url);
+    if (result.open_webdav_url) {
+       Lino.davlink_open(result.open_webdav_url);
     }
     {%- endif -%}
     if (result.open_url) {

@@ -899,7 +899,8 @@ class Site(object):
     """
 
     webdav_url = None
-    """The URL prefix for webdav files.  In a normal production
+    """
+    The URL prefix for webdav files.  In a normal production
     configuration you should leave this to `None`, Lino will set a
     default value "/media/webdav/", supposing that your Apache is
     configured as described in :doc:`/admin/webdav`.
@@ -910,9 +911,31 @@ class Site(object):
     a command prompt::
     
         subst w: <dev_project_path>\media\webdav
-
     """
 
+    webdav_protocol = None
+    """
+    Set this to a string like e.g. 'wdav' in order to use a custom
+    protocol for opening editable printable documents.  In this case
+    Lino expects the browser to be configured to understand the given
+    protocol.
+
+    If this is non-empty, Lino ignores whether
+    :mod:`lino.modlib.davlink` is installed or not.
+
+    When an *editable* printable document has been generated, Lino
+    does not open a new browser window on that document but invokes
+    the client's Office application.  That application accesses the
+    document either via a WebDAV link (on a production server) or a
+    ``file://`` link (on a development server).
+    """
+
+    beid_protocol = None
+    """
+    Set this to a string like e.g. 'beid' in order to use a custom
+    protocal for reading eid cards.
+    """
+    
     sidebar_width = 0
     """
     Used by :mod:`lino.modlib.plain`.
@@ -2860,9 +2883,8 @@ this field.
 
         """
         from django.utils import translation
-        for simple, info in list(self.language_dict.items()):
+        for simple, info in self.language_dict.items():
             with translation.override(simple):
-                # kw[name + info.suffix] = str(txt)
                 kw[name + info.suffix] = six.text_type(txt)
         return kw
 

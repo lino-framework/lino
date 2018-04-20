@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2018 Luc Saffre
+# Copyright 2011-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 from builtins import str
@@ -26,6 +26,7 @@ from .actions import ChangePassword, SignOut
 # from .actions import SignIn
 from lino.core.auth.utils import AnonymousUser
 from lino.modlib.about.choicelists import TimeZones
+from lino.modlib.printing.mixins import Printable
 
 
 class UserManager(BaseUserManager):
@@ -56,7 +57,8 @@ class UserManager(BaseUserManager):
 
 
 @python_2_unicode_compatible
-class User(AbstractBaseUser, Contactable, CreatedModified, DateRange):
+class User(AbstractBaseUser, Contactable, CreatedModified, DateRange,
+           Printable):
     class Meta(object):
         app_label = 'users'
         verbose_name = _('User')
