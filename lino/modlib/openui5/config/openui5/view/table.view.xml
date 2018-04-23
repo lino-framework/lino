@@ -1,23 +1,17 @@
-<mvc:View
-		controllerName="lino.controller.table"
-		xmlns="sap.ui.table"
-		xmlns:mvc="sap.ui.core.mvc"
-		xmlns:core="sap.ui.core"
-		xmlns:u="sap.ui.unified"
-		xmlns:m="sap.m"
-	    xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
-		xmlns:html="http://www.w3.org/1999/xhtml"
-		height="100%"
-		class="sapUiSizeCompact">
-	<m:Page
+{% extends "openui5/view/mvcView.xml" %}
+
+{% block view_controller_name %}lino.controller.table{% endblock %}
+{% block view_attributes %} 	class="sapUiSizeCompact" height="100%" {% endblock %}
+{% block view_content %}
+<Page
 		showHeader="true"
 		showNavButton="true"
-		navButtonPress="onNavButtonPress"
+		navButtonPress="onNavBack"
 		showFooter="true"
 		enableScrolling="true"
 		class="sapUiContentPadding">
-		<m:content>
-			<Table
+		<content>
+			<table:Table
 				id="MAIN_TABLE"
 				customData:PK="{# actor.model._meta.pk.name} #}{{pk_index}}"
                 customData:actor_id="{{actor.actor_id}}"
@@ -33,31 +27,31 @@
 				ariaLabelledBy="title"
 				class="sapUiSizeCondensed"
                 rowActionCount="1">
-				<rowActionTemplate>
-					<RowAction visible="true">
-                        <items>
-						<RowActionItem type="Navigation" visible="true" press="onRowNavPress">
+				<table:rowActionTemplate>
+					<table:RowAction visible="true">
+                        <table:items>
+						<table:RowActionItem type="Navigation" visible="true" press="onRowNavPress">
 
-						</RowActionItem>
-                        </items>
-					</RowAction>
-				</rowActionTemplate>
-				<extension>
-					<m:Toolbar>
-						<m:Title text="{{title}}"/>
-						<m:ToolbarSpacer/>
-						<m:ToggleButton
+						</table:RowActionItem>
+                        </table:items>
+					</table:RowAction>
+				</table:rowActionTemplate>
+				<table:extension>
+					<Toolbar>
+						<Title text="{{title}}"/>
+						<ToolbarSpacer/>
+						<ToggleButton
 							icon="sap-icon://resize-horizontal"
 							tooltip="Enable / Disable Freezing Menu Entries"
 							pressed="{ui>/showFreezeMenuEntry}"/>
-						<m:ToggleButton
+						<ToggleButton
 							icon="sap-icon://grid"
 							tooltip="Enable / Disable Cell Filter"
 							pressed="{ui>/enableCellFilter}"/>
 
-					</m:Toolbar>
-				</extension>
-				<columns>
+					</Toolbar>
+				</table:extension>
+				<table:columns>
 					{% for c in columns %}
 					{% with %}
 						{% set c_loop = loop %}
@@ -65,50 +59,50 @@
 					{% endwith %}
 					{% endfor %}
 					{#
-					<Column
+					<table:Column
 						id="name"
 						width="11rem"
 						sortProperty="Name"
 						filterProperty="Name"
 						showFilterMenuEntry="true"
 						showSortMenuEntry="true">
-						<m:Label text="Product Name" />
-						<template>
-							<m:Text text="{Name}" wrapping="false" />
-						</template>
-					</Column>
-					<Column
+						<Label text="Product Name" />
+						<table:template>
+							<Text text="{Name}" wrapping="false" />
+						</table:template>
+					</table:Column>
+					<table:Column
 						id="productId"
 						filterProperty="ProductId"
 						sortProperty="ProductId"
 						width="11rem">
-						<m:Label text="Product Id" />
-						<template>
-							<m:Text text="{ProductId}" wrapping="false" />
-						</template>
-					</Column>
-					<Column
+						<Label text="Product Id" />
+						<table:template>
+							<Text text="{ProductId}" wrapping="false" />
+						</table:template>
+					</table:Column>
+					<table:Column
 						id="image"
 						width="9rem"
 						columnMenuOpen="onColumnMenuOpen">
-						<m:Label text="Image" />
-						<template>
-							<m:Link text="Show Image" href="{ProductPicUrl}" target="_blank"/>
-						</template>
-					</Column>
-					<Column
+						<Label text="Image" />
+						<table:template>
+							<Link text="Show Image" href="{ProductPicUrl}" target="_blank"/>
+						</table:template>
+					</table:Column>
+					<table:Column
 						id="quantity"
 						width="6rem"
 						hAlign="End"
 						sortProperty="Quantity">
-						<m:Label text="Quantity" />
-						<template>
-							<m:Label text="{
+						<Label text="Quantity" />
+						<table:template>
+							<Label text="{
 								path: 'Quantity',
 								type: 'sap.ui.model.type.Integer'
 							}" />
-						</template>
-						<menu>
+						</table:template>
+						<table:menu>
 							<u:Menu ariaLabelledBy="quantity">
 								<u:items>
 									<u:MenuItem
@@ -122,30 +116,30 @@
 										/>
 								</u:items>
 							</u:Menu>
-						</menu>
-					</Column>
-					<Column width="9rem">
-						<m:Label text="Delivery Date" />
-						<template>
-							<m:Text text="{
+						</table:menu>
+					</table:Column>
+					<table:Column width="9rem">
+						<Label text="Delivery Date" />
+						<table:template>
+							<Text text="{
 								path: 'DeliveryDate',
 								type: 'sap.ui.model.type.Date',
 								formatOptions: {source: {pattern: 'timestamp'}}
 							}" wrapping="false" />
-						</template>
-					</Column>
+						</table:template>
+					</table:Column>
 					#}
-				</columns>
-				<footer>
-					<m:Toolbar>
-						<m:ToolbarSpacer/>
-						<m:Button
+				</table:columns>
+				<table:footer>
+					<Toolbar>
+						<ToolbarSpacer/>
+						<Button
 							icon="sap-icon://hint"
 							tooltip="Show information"
 							press="showInfo"/>
-					</m:Toolbar>
-				</footer>
-			</Table>
-		</m:content>
-	</m:Page>
-</mvc:View>
+					</Toolbar>
+				</table:footer>
+			</table:Table>
+		</content>
+	</Page>
+{% endblock %}

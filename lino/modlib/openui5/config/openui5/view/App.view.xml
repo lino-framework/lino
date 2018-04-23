@@ -1,20 +1,10 @@
-<mvc:View
-        controllerName="lino.controller.App"
-        xmlns="sap.m"
-        xmlns:tnt="sap.tnt"
-        xmlns:u="sap.ui.unified"
-       	xmlns:core="sap.ui.core"
-        xmlns:mvc="sap.ui.core.mvc"
-        xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
-        xmlns:html="http://www.w3.org/1999/xhtml"
-        displayBlock="true" height="100%">
-    <!--<App class="sapUiDemoWT">-->
+{% extends "openui5/view/mvcView.xml" %}
 
-        <!--<tnt:ToolPage id="toolPage">-->
+{% block view_controller_name %}lino.controller.App{% endblock %}
+{% block view_attributes %} displayBlock="true" height="100%" {% endblock %}
 
-        <!--<tnt:header>-->
-
-        <Page title="helloWorld" showHeader="true" enableScrolling="false" id="mainPage">
+{% block view_content %}
+        <Page showHeader="false" enableScrolling="false" id="mainPage">
                 <tnt:ToolHeader id="mainmenu">
                         <!--<ToolbarSpacer width="20px" />-->
                         {% for item in menu.items %}
@@ -52,39 +42,20 @@
                         {% endif %}
                     </tnt:ToolHeader>
 
-                <headerContent>
-                    <Button
-                            icon="sap-icon://hello-world"
-                            press="onOpenDialog"/>
-                </headerContent>
+                <!--<headerContent>-->
+                    <!--<Button-->
+                            <!--icon="sap-icon://hello-world"-->
+                            <!--press="onOpenDialog"/>-->
+                <!--</headerContent>-->
                 <!--<u:Header enabledPrevious="true">-->
 
                 <!--</u:Header>-->
                 <content>
                     <NavContainer height="100%" id="viewport" >
                         <pages>
-                            <Page showHeader="true" >
-                                <Panel ><core:HTML id="dashboard"
-                                        content=""
-                                />
-
-                                </Panel>
-                                <!--<mvc:XMLView viewName="sap.ui.demo.wt.view.HelloPanel"/>-->
-                                <!--<mvc:XMLView viewName="sap.ui.demo.wt.view.SideNav"/>-->
-                                <!--<mvc:XMLView viewName="sap.ui.demo.wt.view.HelloPanel"/>-->
-                                <!--<mvc:XMLView viewName="sap.ui.demo.wt.view.AllTickets"/>-->
-                            </Page>
                         </pages>
                     </NavContainer>
                 </content>
 
             </Page>
-
-        <!--</tnt:mainContents>-->
-
-
-        <!--</tnt:ToolPage>-->
-
-
-    <!--</App>-->
-</mvc:View>
+{% endblock %}

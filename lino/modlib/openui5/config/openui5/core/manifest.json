@@ -40,6 +40,60 @@
 	  }
 	}
     ,"models":{
-    }
-  }
+    },
+      "routing": {
+         "config": {
+            "routerClass": "sap.m.routing.Router",
+            "viewType": "XML",
+            "viewPath": "lino.view",
+            "controlId": "viewport",
+            "controlAggregation": "pages",
+            "transition": "slide",
+            "async": true
+         },
+         "routes": [{
+				"pattern": "",
+				"name": "appHome",
+				"target": "home"
+			 }
+			 {% for actor in actors_list %}
+			 ,{
+				"pattern":"grid/{{actor.actor_id}}",
+				"name": "grid.{{actor.actor_id}}",
+				"target": "grid.{{actor.actor_id}}"
+			 }
+			 {% endfor %}
+             {% for detail in detail_list %}
+             ,{
+				"pattern":"detail/{{detail.actor_id}}/{sPK}",
+				"name": "detail.{{detail.actor_id}}",
+				"target": "detail.{{detail.actor_id}}"
+			 } {% endfor %}
+
+		 ],
+         "targets": {
+            "home": {
+               "viewId": "home",
+               "viewName": "dashboard",
+               "viewLevel" : 1
+            }
+            {% for actor in actors_list %}
+            ,"grid.{{actor.actor_id}}": {
+               "viewId": "grid.{{actor.actor_id}}",
+               "viewName": "grid.{{actor.actor_id}}",
+               "viewLevel" : 1
+            }{% endfor %}
+
+            {% for detail in detail_list %}
+            ,"detail.{{detail.actor_id}}": {
+              "viewId": "detail.{{detail.actor_id}}",
+              "viewName": "detail.{{detail.actor_id}}",
+              "viewLevel" : 2
+            }{% endfor %}
+
+
 }
+
+         }
+      }
+  }

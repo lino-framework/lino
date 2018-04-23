@@ -1,11 +1,10 @@
 sap.ui.define([
-   "sap/ui/core/mvc/Controller",
+   "lino/controller/baseController",
    "sap/m/MessageToast",
    "sap/ui/model/json/JSONModel",
-], function (Controller, MessageToast, JSONModel) {
+], function (baseController, MessageToast, JSONModel) {
    "use strict";
-   return Controller.extend("lino.controller.App", {
-
+   return baseController.extend("lino.controller.App", {
     	onOpenDialog : function () {
 			this.getOwnerComponent().openHelloDialog();
 		},
@@ -14,11 +13,11 @@ sap.ui.define([
         onInit: function(){
             this._menus = {}
             var that=this;
-            that.getView().byId('dashboard').getParent().setBusy(true);
-            $.get( "/api/main_html", function( data ) {
-                    that.getView().byId('dashboard').setContent(data.html);
-                    that.getView().byId('dashboard').getParent().setBusy(false);
-                });
+//            that.getView().byId('dashboard').getParent().setBusy(true);
+//            $.get( "/api/main_html", function( data ) {
+//                    that.getView().byId('dashboard').setContent(data.html);
+//                    that.getView().byId('dashboard').getParent().setBusy(false);
+//                });
             // highlights first item in menu if selected with Keyboard
 //			this.byId("openMenu").attachBrowserEvent("tab keyup", function(oEvent){
 //				this._bKeyboard = oEvent.type == "keyup";
@@ -64,29 +63,34 @@ sap.ui.define([
 		    var oButton = oEvent.getSource();
             var actor_id = oButton.data('actor_id');
             var action_name = oButton.data('action_name');
+
+
 			var msg = "'" + oEvent.getParameter("item").getText() + actor_id +":" + action_name + "' pressed";
 			MessageToast.show(msg);
-			var vp = this.getView().byId('viewport')
-			var content = sap.ui.getCore().byId("grid." + actor_id)
-			if (content===undefined){
-                content = new sap.ui.xmlview({id: "grid." + actor_id,
-                                    viewName : "lino." + action_name + "." + actor_id});
 
-                var p = content /*new sap.m.Page({
-                    showHeader:true,
-                    showNavButton:true,
-                    content: content,
-                    });*/
-                this.getView().addDependent(p)
-//                this.getView().addDependent(content) // Unwanted, causes content not to render, parent object should be dependent,
-                /*p.attachNavButtonPress(null, function(oEvent){
-                    vp.back();
-                })*/
-
-			    vp.addPage(p);
-			    vp.to(p);
-			    }
-			else{ vp.to(content/*.getParent()*/);}
+//		    var router = this.getRouter();
+		    this.routeTo(action_name, actor_id);
+//			var vp = this.getView().byId('viewport')
+//			var content = sap.ui.getCore().byId("grid." + actor_id)
+//			if (content===undefined){
+//                content = new sap.ui.xmlview({id: "grid." + actor_id,
+//                                    viewName : "lino." + action_name + "." + actor_id});
+//
+//                var p = content /*new sap.m.Page({
+//                    showHeader:true,
+//                    showNavButton:true,
+//                    content: content,
+//                    });*/
+//                this.getView().addDependent(p)
+////                this.getView().addDependent(content) // Unwanted, causes content not to render, parent object should be dependent,
+//                /*p.attachNavButtonPress(null, function(oEvent){
+//                    vp.back();
+//                })*/
+//
+//			    vp.addPage(p);
+//			    vp.to(p);
+//			    }
+//			else{ vp.to(content/*.getParent()*/);}
 		},
 
 		onBackPress: function(oEvent){
@@ -127,6 +131,8 @@ sap.ui.define([
                     function(xhr, textStatus, errorThrown){
                     MessageToast.show("Unable to log in as " + oModel.oData.username);
                     });
+              // seems that submitting the form as a normal form works, but the error handling is poor.
+//            $("#__component0---MAIN_VIEW--authForm").submit();
         },
 
         onSignOutButtonPress: function(oEvent){

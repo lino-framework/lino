@@ -1,0 +1,20 @@
+
+{% extends "openui5/view/mvcView.xml" %}
+
+{% block view_controller_name %}lino.controller.dashboard{% endblock %}
+{% block view_attributes %} displayBlock="true" height="100%" {% endblock %}
+
+{% block view_content %}
+<Page showHeader="true" >
+    <Panel ><core:HTML id="dashboard"
+            content=""
+    />
+
+    </Panel>
+    <!--<mvc:XMLView viewName="sap.ui.demo.wt.view.HelloPanel"/>-->
+    <!--<mvc:XMLView viewName="sap.ui.demo.wt.view.SideNav"/>-->
+    <!--<mvc:XMLView viewName="sap.ui.demo.wt.view.HelloPanel"/>-->
+    <!--<mvc:XMLView viewName="sap.ui.demo.wt.view.AllTickets"/>-->
+</Page>
+{% endblock %}
+

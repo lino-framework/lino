@@ -1,14 +1,14 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
+   "lino/controller/baseController",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/unified/Menu",
 	"sap/ui/unified/MenuItem",
 	"sap/m/MessageToast",
 	"sap/ui/core/format/DateFormat"
-], function(Controller, JSONModel, Menu, MenuItem, MessageToast, DateFormat) {
+], function(baseController, JSONModel, Menu, MenuItem, MessageToast, DateFormat) {
 	"use strict";
 
-	return Controller.extend("lino.controller.table", {
+	return baseController.extend("lino.controller.table", {
 
         getParentView: function(){
             var v = this.getView()
@@ -42,10 +42,6 @@ sap.ui.define([
 				enableCellFilter: false
 			}), "ui");
 		},
-
-        onNavButtonPress : function(oEvent){
-            this.getNavport().back();
-        },
 
         onAfterRendering : function(oEvent){
             console.log("loading data");
@@ -89,34 +85,18 @@ sap.ui.define([
 
 		onRowNavPress : function(oEvent) {
 		    // todo refactor into open_window method of app controller
-            var oRow = oEvent.getParameter("row");
+		    var oRow = oEvent.getParameter("row");
             var oBindingContext = oRow.getBindingContext();
 			var oItem = oEvent.getParameter("item");
 			var sPk = this.getView().getModel().getProperty(this._PK, oBindingContext);
 			console.log("Opening detail for: " +  this._actor_id  + "/" + sPk);
 
-
-		    var oButton = oEvent.getSource();
-            var actor_id = this._actor_id //oButton.data('actor_id');
-            var action_name = "detail"// oButton.data('action_name');
-
-			var msg = "'" + oEvent.getParameter("item").getText() + actor_id +":" + action_name + "' pressed";
+            var msg = "'" + oEvent.getParameter("item").getText() + this._actor_id +":" + "detail" + "' pressed";
 			MessageToast.show(msg);
-			var vp = this.getNavport(); //this.getView().byId('viewport')
-			var content = sap.ui.getCore().byId("detail." + actor_id)
-			if (content===undefined){
-                content = new sap.ui.xmlview({id: "detail." + actor_id,
-                                    viewName : "lino." + action_name + "." + actor_id}
-                                    );
 
-                this.getView().addDependent(content)
-			    vp.addPage(content);
-			    }
+			this.routeTo("detail", this._actor_id,{"sPK":sPk});
 
-			content.getController().load_record(sPk);
-			vp.to(content);
-
-		},
+        },
 
 
 		onColumnSelect : function (oEvent) {
