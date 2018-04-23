@@ -16,10 +16,22 @@ sap.ui.define([
             this.page_limit = this.visibleRowCount;
             this.pv = []; // unused,
             this._PK = null;
-//            this._actor_id = this.getView().byId("MAIN_TABLE").data("actor_id");
+            this._actor_id = this.getView().byId("MAIN_PAGE").data("actor_id");
 
+			var oRouter = this.getRouter();
+			oRouter.getRoute("detail." + this._actor_id).attachMatched(this._onRouteMatched, this);
+		},
+
+
+        _onRouteMatched : function (oEvent) {
+			var oArgs, oView;
+			oArgs = oEvent.getParameter("arguments");
+			oView = this.getView();
+
+            this.load_record(oArgs.sPK)
 
 		},
+
 
 		initSampleDataModel : function() {
 			var oModel = new JSONModel();
@@ -52,7 +64,7 @@ sap.ui.define([
             var oView = this.getView();
             this._PK = sPK;
 		    MessageToast.show("Going to load item with PK of" + sPK);
-
+		    oView.setBusy(true);
 		    jQuery.ajax(oView.byId("MAIN_PAGE").data("url") + sPK, {
 				dataType: "json",
 				data:{fmt:'json',
@@ -61,6 +73,7 @@ sap.ui.define([
 				success: function (oData) {
 					oModel.setData(oData);
 					oView.setModel(oModel, "record");
+					oView.setBusy(false);
 				},
 				error: function () {
 					jQuery.sap.log.error("failed to load json");

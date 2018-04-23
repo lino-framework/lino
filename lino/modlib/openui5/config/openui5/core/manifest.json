@@ -63,6 +63,12 @@
 				"target": "grid.{{actor.actor_id}}"
 			 }
 			 {% endfor %}
+             {% for detail in detail_list %}
+             ,{
+				"pattern":"detail/{{detail.actor_id}}/{sPK}",
+				"name": "detail.{{detail.actor_id}}",
+				"target": "detail.{{detail.actor_id}}"
+			 } {% endfor %}
 
 		 ],
          "targets": {
@@ -76,9 +82,17 @@
                "viewId": "grid.{{actor.actor_id}}",
                "viewName": "grid.{{actor.actor_id}}",
                "viewLevel" : 1
-            }
-            {% endfor %}
-            }
+            }{% endfor %}
+
+            {% for detail in detail_list %}
+            ,"detail.{{detail.actor_id}}": {
+              "viewId": "detail.{{detail.actor_id}}",
+              "viewName": "detail.{{detail.actor_id}}",
+              "viewLevel" : 2
+            }{% endfor %}
+
+
+}
 
          }
       }

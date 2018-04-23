@@ -638,8 +638,20 @@ class Connector(View):
                     # + dbtables.custom_tables
                     # + dbtables.frames_list
                 ]
+                detail_list = set()
 
-                # self.actors_list.extend(
+                def add(res, collector, fl, formpanel_name):
+                    if fl is None or fl._datasource is None:
+                        return  # 20130804
+                    if fl._datasource != res:
+                        fl._other_datasources.add(res)
+                    if fl not in collector:
+                        collector.add(res)
+
+                for res in actors_list:
+                    add(res, detail_list, res.detail_layout, "detail.%s" % res)
+
+                        # self.actors_list.extend(
                 #     [a for a in list(choicelists.CHOICELISTS.values())
                 #      if settings.SITE.is_installed(a.app_label)])
 
@@ -647,7 +659,9 @@ class Connector(View):
                 actors_list = [a for a in actors_list
                                if not a.is_abstract()]
 
-                context.update(actors_list=actors_list)
+                context.update(actors_list=actors_list,
+                               detail_list=detail_list,
+                               )
 
 
 

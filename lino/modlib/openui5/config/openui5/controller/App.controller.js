@@ -68,8 +68,8 @@ sap.ui.define([
 			var msg = "'" + oEvent.getParameter("item").getText() + actor_id +":" + action_name + "' pressed";
 			MessageToast.show(msg);
 
-		    var router = this.getRouter();
-		    router.navTo(action_name + "." + actor_id);
+//		    var router = this.getRouter();
+		    this.routeTo(action_name, actor_id);
 //			var vp = this.getView().byId('viewport')
 //			var content = sap.ui.getCore().byId("grid." + actor_id)
 //			if (content===undefined){

@@ -18,8 +18,14 @@ sap.ui.define([
 			if (sPreviousHash !== undefined) {
 				window.history.go(-1);
 			} else {
-				this.getRouter().navTo("Home", {}, true /*no history*/);
+				this.getRouter().navTo("appHome", {}, true /*no history*/);
 			}
-		}
+		},
+
+        routeTo: function(action, actor_id, args){
+            this.getRouter().navTo(action + "." + actor_id,
+                                   args);
+        }
+
     })
 });

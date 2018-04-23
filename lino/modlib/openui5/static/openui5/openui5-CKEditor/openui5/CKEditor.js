@@ -7,7 +7,7 @@
  */
 //Define location of CKEditor js file
 jQuery.sap.registerResourcePath('ckeditor', './static/openui5/openui5-CKEditor/ckeditor/ckeditor');
-window.CKEDITOR_BASEPATH = './static/openui5/openui5-CKEditor/ckeditor/';
+window.CKEDITOR_BASEPATH = '/static/openui5/openui5-CKEditor/ckeditor/';
 sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'openui5/CKEditorToolbar', 'ckeditor'],
     function(jQuery, Control, CKEditorToolbar, Editor) {
         'use strict';
