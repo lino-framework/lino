@@ -1,14 +1,14 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
+   "lino/controller/baseController",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/unified/Menu",
 	"sap/ui/unified/MenuItem",
 	"sap/m/MessageToast",
 	"sap/ui/core/format/DateFormat"
-], function(Controller, JSONModel, Menu, MenuItem, MessageToast, DateFormat) {
+], function(baseController, JSONModel, Menu, MenuItem, MessageToast, DateFormat) {
 	"use strict";
 
-	return Controller.extend("lino.controller.table", {
+	return baseController.extend("lino.controller.table", {
 
         getParentView: function(){
             var v = this.getView()
@@ -42,10 +42,6 @@ sap.ui.define([
 				enableCellFilter: false
 			}), "ui");
 		},
-
-        onNavButtonPress : function(oEvent){
-            this.getNavport().back();
-        },
 
         onAfterRendering : function(oEvent){
             console.log("loading data");

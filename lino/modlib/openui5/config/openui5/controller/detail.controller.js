@@ -1,14 +1,14 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
+   "lino/controller/baseController",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/unified/Menu",
 	"sap/ui/unified/MenuItem",
 	"sap/m/MessageToast",
 	"sap/ui/core/format/DateFormat"
-], function(Controller, JSONModel, Menu, MenuItem, MessageToast, DateFormat) {
+], function(baseController, JSONModel, Menu, MenuItem, MessageToast, DateFormat) {
 	"use strict";
 
-	return Controller.extend("lino.controller.detail", {
+	return baseController.extend("lino.controller.detail", {
 
 		onInit : function () {
 			var oView = this.getView();
@@ -45,10 +45,6 @@ sap.ui.define([
 		    var vp = sap.ui.getCore().byId("__component0---MAIN_VIEW").byId('viewport');
             return vp
 		},
-
-        onNavButtonPress : function(oEvent){
-            this.getNavport().back();
-        },
 
 
 		load_record: function(sPK){

@@ -1,15 +1,10 @@
 sap.ui.define([
-   "sap/ui/core/mvc/Controller",
+   "lino/controller/baseController",
    "sap/m/MessageToast",
    "sap/ui/model/json/JSONModel",
-], function (Controller, MessageToast, JSONModel) {
+], function (baseController, MessageToast, JSONModel) {
    "use strict";
-   return Controller.extend("lino.controller.App", {
-
-        getRouter : function () {
-            return sap.ui.core.UIComponent.getRouterFor(this)
-        },
-
+   return baseController.extend("lino.controller.App", {
     	onOpenDialog : function () {
 			this.getOwnerComponent().openHelloDialog();
 		},

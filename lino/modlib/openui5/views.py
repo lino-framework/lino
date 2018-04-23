@@ -27,6 +27,7 @@ from lino.core import constants
 # from lino.core import auth
 from lino.core.requests import BaseRequest
 from lino.core.tablerequest import TableRequest
+from lino.core.dbtables import master_reports
 import json
 
 from lino.core.views import requested_actor, action_request

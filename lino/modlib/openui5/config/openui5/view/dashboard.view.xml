@@ -6,7 +6,6 @@
 
 {% block view_content %}
 <Page showHeader="true" >
-    <Title text="lel"></Title>
     <Panel ><core:HTML id="dashboard"
             content=""
     />

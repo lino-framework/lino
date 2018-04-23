@@ -6,7 +6,7 @@
 	<Page
 		showHeader="true"
 		showNavButton="true"
-		navButtonPress="onNavButtonPress"
+		navButtonPress="onNavBack"
 		showFooter="true"
 		enableScrolling="false"
 		title="{record>/title}"
