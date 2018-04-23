@@ -377,7 +377,6 @@ Deserves more documentation."""),
     'lino.utils.media.MediaFile' : _("""Represents a file on the server below MEDIA_ROOT with
 two properties name and url."""),
     'lino.utils.media.MediaFile.name' : _("""return the filename on the server"""),
-    'lino.utils.media.MediaFile.url' : _("""return the url that points to file on the server"""),
     'lino.utils.mldbc.fields.BabelCharField' : _("""Define a variable number of CharField database fields, one for
 each language of your lino.core.site.Site.languages.  See
 mldbc."""),
