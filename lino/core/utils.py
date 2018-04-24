@@ -1,8 +1,8 @@
-# Copyright 2010-2017 Luc Saffre
+# Copyright 2010-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
-"""A collection of utilities which require Django settings to be
+"""
+A collection of utilities which require Django settings to be
 importable.
-
 """
 
 from __future__ import unicode_literals
@@ -28,6 +28,7 @@ from django.http import QueryDict
 
 from etgen.html import E, tostring
 from lino import AFTER17
+from lino.utils import IncompleteDate
 
 from django.core.validators import (
     validate_email, ValidationError, URLValidator)
@@ -172,7 +173,7 @@ def obj2str(i, force_detailed=False):
 
     """
     if not isinstance(i, models.Model):
-        if isinstance(i, int):
+        if isinstance(i, (int, IncompleteDate)):
             return str(i)  # AutoField is long on mysql, int on sqlite
         if isinstance(i, datetime.date):
             return i.isoformat()
