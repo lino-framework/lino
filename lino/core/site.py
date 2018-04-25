@@ -3254,8 +3254,8 @@ site. :manage:`diag` is a command-line shortcut to this.
             #~ from .models import SiteConfig
             #~ from django.db.utils import DatabaseError
             try:
-                #~ self._site_config = SiteConfig.real_objects.get(pk=1)
-                self._site_config = SiteConfig.real_objects.get(
+                # self._site_config = SiteConfig.real_objects.get(
+                self._site_config = SiteConfig.objects.get(
                     pk=self.config_id)
                 #~ print "20130301 Loaded SiteConfig record", obj2str(self._site_config,True)
             #~ except (SiteConfig.DoesNotExist,DatabaseError):

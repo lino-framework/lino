@@ -45,10 +45,10 @@ Please report any anomalies.""",
             alert=_("Success"))
 
 
-class SiteConfigManager(models.Manager):
+# class SiteConfigManager(models.Manager):
 
-    def get(self, *args, **kwargs):
-        return settings.SITE.site_config
+#     def get(self, *args, **kwargs):
+#         return settings.SITE.site_config
 
 
 @dd.python_2_unicode_compatible
@@ -97,8 +97,8 @@ class SiteConfig(dd.Model):
         abstract = dd.is_abstract_model(__name__, 'SiteConfig')
         verbose_name = _("Site configuration")
 
-    objects = SiteConfigManager()
-    real_objects = models.Manager()
+    # objects = SiteConfigManager()
+    # real_objects = models.Manager()
 
     default_build_method = BuildMethods.field(
         verbose_name=_("Default build method"),
