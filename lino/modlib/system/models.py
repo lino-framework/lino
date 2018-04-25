@@ -45,18 +45,33 @@ Please report any anomalies.""",
             alert=_("Success"))
 
 
-# class SiteConfigManager(models.Manager):
+class SiteConfigManager(models.Manager):
+    """
+    Always return the cached instance which holds the one and only
+    database instance.
 
-#     def get(self, *args, **kwargs):
-#         return settings.SITE.site_config
+    This is to avoid the following situation:
+
+    - User 1 opens the :menuselection:`Configure --> System--> System
+      Parameters` dialog
+    - User 2 creates a new Person (which increases `next_partner_id`)
+    - User 1 clicks on `Save`.
+
+    `next_partner_id` may not get overwritten by its old value when
+    User 1 clicks "Save".
+    """ 
+
+    def get(self, *args, **kwargs):
+        return settings.SITE.site_config
 
 
 @dd.python_2_unicode_compatible
 class SiteConfig(dd.Model):
     """
-    This model should have exactly one instance, used to store
-    persistent global site parameters.  Application code sees this
-    instance as ``settings.SITE.site_config``.
+    This model has exactly one instance, used to store persistent
+    global site parameters.  Application code sees this instance as
+    the :attr:`settings.SITE.site_config
+    <lino.core.site.Site.site_config>` property.
 
     .. attribute:: default_build_method
 
@@ -97,8 +112,8 @@ class SiteConfig(dd.Model):
         abstract = dd.is_abstract_model(__name__, 'SiteConfig')
         verbose_name = _("Site configuration")
 
-    # objects = SiteConfigManager()
-    # real_objects = models.Manager()
+    objects = SiteConfigManager()
+    real_objects = models.Manager()
 
     default_build_method = BuildMethods.field(
         verbose_name=_("Default build method"),
