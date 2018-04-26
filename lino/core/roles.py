@@ -1,4 +1,4 @@
-# Copyright 2011-2018 Luc Saffre
+# Copyright 2011-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Defines built-in user roles. See :ref:`permissions`.
@@ -15,14 +15,14 @@ class UserRole(object):
     """
 
     def satisfies_requirement(self, required_roles):
-        """Return `True` if this user role satisfies the specified role
-        requirement.
+        """
+        Return `True` if this user role satisfies the specified role
+        requirement.  
 
-        The specified arguments are the set of role requirements
-        (class objects).  This role (an instance) must satisfy *every*
-        specified requirement.  Every requirement is either a class
-        object (subclass of :class:`<UserRole>`) or a tuple thereof.
-
+        `required_roles` is the set of required roles (class objects).
+        Every item is either a class object (subclass of
+        :class:`<UserRole>`) or a tuple thereof.  This role (an
+        instance) must satisfy *every* specified requirement.
         """
         check_required_roles(required_roles, "code")
         for rr in required_roles:

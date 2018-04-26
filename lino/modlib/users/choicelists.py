@@ -87,9 +87,9 @@ class UserType(Choice):
             self.mask_message_types.add(mt)
             
     def has_required_roles(self, required_roles):
-        """Return `True` if at least one of this user type's :attr:`roles`
-        satisfies the specified requirements.  
-
+        """
+        Return `True` if this user type's :attr:`role` satisfies the
+        specified requirements.
         """
         # for role in self.roles:
         return self.role.satisfies_requirement(required_roles)
