@@ -256,7 +256,7 @@ class HelpTextExtractor(object):
         for k, fn in self.name2file.items():
             texts = self.name2dict.get(k, None)
             if not texts:
-                app.info("No help texts for %s", k)
+                app.info("No help texts for {}".format(k))
                 continue
             # fn = os.path.join(self.outdir, 'help_texts.py')
             print("Writing {} help texts for {} to {}".format(
@@ -265,7 +265,8 @@ class HelpTextExtractor(object):
             fd = open(fn, "w")
 
             def writeln(s):
-                s = s.encode('utf-8')
+                if six.PY2:
+                    s = s.encode('utf-8')
                 fd.write(s)
                 fd.write("\n")
 

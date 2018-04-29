@@ -249,9 +249,11 @@ for the gender of a person."""),
 lino.mixins.periods.DateRange."""),
     'lino.modlib.system.BuildSiteCache' : _("""Rebuild the site cache.
 This action is available on About."""),
-    'lino.modlib.system.SiteConfig' : _("""This model should have exactly one instance, used to store
-persistent global site parameters.  Application code sees this
-instance as settings.SITE.site_config."""),
+    'lino.modlib.system.SiteConfigManager' : _("""Always return the cached instance which holds the one and only
+database instance."""),
+    'lino.modlib.system.SiteConfig' : _("""This model has exactly one instance, used to store persistent
+global site parameters.  Application code sees this instance as
+the settings.SITE.site_config property."""),
     'lino.modlib.system.SiteConfig.default_build_method' : _("""The default build method to use when rendering printable documents."""),
     'lino.modlib.system.SiteConfig.simulate_today' : _("""A constant user-defined date to be substituted as current
 system date."""),
