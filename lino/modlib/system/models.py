@@ -133,9 +133,11 @@ class SiteConfig(dd.Model):
         return force_text(_("Site Parameters"))
 
     def update(self, **kw):
-        """Set some field of the SiteConfig object and store it to the database.
         """
-        for k, v in list(kw.items()):
+        Set some field of the SiteConfig object and store it to the
+        database.
+        """
+        for k, v in kw.items():
             if not hasattr(self, k):
                 raise Exception("SiteConfig has no attribute %r" % k)
             setattr(self, k, v)
