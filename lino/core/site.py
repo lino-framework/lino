@@ -1,22 +1,18 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2009-2018 Luc Saffre.
 # License: BSD, see LICENSE for more details.
+# doctest lino/core/site.py
 
 """
 Defines the :class:`Site` class. For an overview see
 :doc:`/dev/site` and :doc:`/dev/plugins`.
-
-
-This document is part of the Lino test suite. You can test only
-this document using::
-
-    $ doctest lino/core/site.py
 
 ..  doctest init:
     >>> import lino
     >>> lino.startup('lino.projects.std.settings_test')
 
 """
+
 from __future__ import unicode_literals, print_function
 from builtins import map
 from builtins import str
@@ -699,7 +695,6 @@ class Site(object):
     site_config_defaults = {}
     """
     Default values to be used when creating the :attr:`site_config`.
-
     
     Usage example::
     
@@ -827,7 +822,9 @@ class Site(object):
     ldap_auth_server = None
     """
     This should be a string with the domain name and DNS (separated by a
-    space) of the LDAP server to be used for authentication.  Example::
+    space) of the LDAP server to be used for authentication.  
+
+    Example::
 
       ldap_auth_server = 'DOMAIN_NAME SERVER_DNS'
 
@@ -3727,7 +3724,9 @@ class TestSite(Site):
 
     """Used to simplify doctest strings because it inserts default values
     for the two first arguments that are mandatory but not used in our
-    examples::
+    examples.
+
+    Example::
     
     >> from lino.core.site import Site
     >> Site(globals(), ...)
