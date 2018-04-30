@@ -2196,6 +2196,7 @@ this field.
         """
         from lino.core.kernel import site_startup
         site_startup(self)
+        self.clear_site_config()
 
     def do_site_startup(self):
         """This method is called exactly once during site startup,
