@@ -145,8 +145,7 @@ class SiteConfig(dd.Model):
     def save(self, *args, **kw):
         #~ print "20130321 SiteConfig.save()", dd.obj2str(self,True)
         super(SiteConfig, self).save(*args, **kw)
-        #~ settings.SITE.on_site_config_saved(self)
-        #~ settings.SITE.clear_site_config()
+        settings.SITE.clear_site_config()
 
 
 def my_handler(sender, **kw):
