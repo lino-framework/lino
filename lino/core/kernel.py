@@ -357,6 +357,7 @@ class Kernel(object):
             for f in model._meta.private_fields:
                 if isinstance(f, GenericForeignKey):
                     self.GFK_LIST.append(f)
+            self.GFK_LIST.sort(key=lambda f: str(f))
 
         site.load_actors()
 
