@@ -776,5 +776,6 @@ def setup_ventilated_columns(sender, **kw):
                 try:
                     a.setup_columns()
                 except DatabaseError:
-                    logger.info("Ignoring OperationalError")
+                    logger.debug(
+                        "Ignoring DatabaseError in %s.setup_ventilated_columns", a)
     settings.SITE.resolve_virtual_fields()
