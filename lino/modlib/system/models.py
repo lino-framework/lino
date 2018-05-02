@@ -137,6 +137,7 @@ class SiteConfig(dd.Model):
         Set some field of the SiteConfig object and store it to the
         database.
         """
+        print("20180502 update({})".format(kw))
         for k, v in kw.items():
             if not hasattr(self, k):
                 raise Exception("SiteConfig has no attribute %r" % k)
@@ -145,8 +146,7 @@ class SiteConfig(dd.Model):
         self.save()
 
     def save(self, *args, **kw):
-        print("20180502 {} save() {}".format(
-            settings.SITE, dd.obj2str(self, True)))
+        print("20180502 save() {}".format(dd.obj2str(self, True)))
         super(SiteConfig, self).save(*args, **kw)
         settings.SITE.clear_site_config()
 

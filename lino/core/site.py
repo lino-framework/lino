@@ -3241,6 +3241,9 @@ site. :manage:`diag` is a command-line shortcut to this.
         if 'system' not in self.models:
             return None
 
+        if not self._startup_done:  # 20180502
+            return None
+
         if self._site_config is None:
             #~ raise Exception(20130301)
             #~ print '20130320 create _site_config'
@@ -3254,7 +3257,7 @@ site. :manage:`diag` is a command-line shortcut to this.
             try:
                 self._site_config = SiteConfig.real_objects.get(
                     id=self.config_id)
-                print("20180502 {} loaded SiteConfig record",
+                print("20180502 {} loaded SiteConfig record {}",
                       self, obj2str(self._site_config, True))
             #~ except (SiteConfig.DoesNotExist,DatabaseError):
             except SiteConfig.DoesNotExist:
