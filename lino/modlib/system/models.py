@@ -145,13 +145,15 @@ class SiteConfig(dd.Model):
         self.save()
 
     def save(self, *args, **kw):
-        #~ print "20130321 SiteConfig.save()", dd.obj2str(self,True)
+        print("20180502 {} save() {}".format(
+            settings.SITE, dd.obj2str(self, True)))
         super(SiteConfig, self).save(*args, **kw)
         settings.SITE.clear_site_config()
 
 
 def my_handler(sender, **kw):
-    print("20180502 my_handler calls clear_site_config()")
+    # print("20180502 {} my_handler calls clear_site_config()".format(
+    #     settings.SITE))
     settings.SITE.clear_site_config()
     #~ kw.update(sender=sender)
     dd.database_connected.send(sender)

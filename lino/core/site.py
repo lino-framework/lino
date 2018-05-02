@@ -3263,8 +3263,8 @@ site. :manage:`diag` is a command-line shortcut to this.
                 #~ kw.update(settings.SITE.site_config_defaults)
                 kw.update(self.site_config_defaults)
                 self._site_config = SiteConfig(**kw)
-                print("20180502 Created SiteConfig record",
-                      obj2str(self._site_config,True))
+                print("20180502 {} Created SiteConfig object {}".format(
+                    settings.SITE, obj2str(self._site_config, True)))
                 # 20120725
                 # polls_tutorial menu selection `Config --> Site Parameters`
                 # said "SiteConfig 1 does not exist"
@@ -3284,7 +3284,8 @@ site. :manage:`diag` is a command-line shortcut to this.
         This is needed e.g. when the test runner has created a new
         test database.
         """
-        print("20180502 clear_site_config")
+        print("20180502 {} clear_site_config {}".format(
+            settings.SITE, obj2str(self._site_config, True)))
         self._site_config = None
 
     def get_quicklinks(self, user):
