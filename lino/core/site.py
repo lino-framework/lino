@@ -3227,21 +3227,23 @@ site. :manage:`diag` is a command-line shortcut to this.
 
     @property
     def site_config(self):
-        """This property holds a cached version of the one and only
+        """
+        This property holds a cached version of the one and only
         :class:`SiteConfig <lino.modlib.system.models.SiteConfig>` row
         that holds site-wide database-stored and web-editable Site
         configuration parameters.
 
         If no instance exists (which happens in a virgin database), we
-        create it using default values from :attr:`site_config_defaults`.
+        create it using default values from
+        :attr:`site_config_defaults`.
 
-        This is always `None` when :mod:`lino.modlib.system` is not installed.
-
+        This is always `None` when :mod:`lino.modlib.system` is not
+        installed.
         """
         if 'system' not in self.models:
             return None
 
-        if not self._startup_done:  # 20180502
+        if not self._startup_done:
             return None
 
         if self._site_config is None:
@@ -3249,10 +3251,7 @@ site. :manage:`diag` is a command-line shortcut to this.
             #~ print '20130320 create _site_config'
             #~ from lino.core.utils import resolve_model
             from lino.core.utils import obj2str
-            #~ from lino.utils import dblogger as logger
-            #~ SiteConfig = resolve_model('system.SiteConfig')
             SiteConfig = self.models.system.SiteConfig
-            #~ from .models import SiteConfig
             #~ from django.db.utils import DatabaseError
             try:
                 self._site_config = SiteConfig.real_objects.get(

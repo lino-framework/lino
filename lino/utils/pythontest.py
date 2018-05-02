@@ -63,6 +63,7 @@ class TestCase(TestCase):
             # args += [os.path.realpath(cwd)]  # see 20150730
             kw.update(cwd=cwd)
         args += ["--noinput"]
+        args += ["-v3"]  # temporary 20180502
         args += ["--failfast"]
         self.run_subprocess(args, **kw)
 
