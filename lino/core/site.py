@@ -3245,7 +3245,7 @@ site. :manage:`diag` is a command-line shortcut to this.
             #~ raise Exception(20130301)
             #~ print '20130320 create _site_config'
             #~ from lino.core.utils import resolve_model
-            #~ from lino.core.utils import obj2str
+            from lino.core.utils import obj2str
             #~ from lino.utils import dblogger as logger
             #~ SiteConfig = resolve_model('system.SiteConfig')
             SiteConfig = self.models.system.SiteConfig
@@ -3254,7 +3254,8 @@ site. :manage:`diag` is a command-line shortcut to this.
             try:
                 self._site_config = SiteConfig.real_objects.get(
                     id=self.config_id)
-                #~ print "20130301 Loaded SiteConfig record", obj2str(self._site_config,True)
+                print("20180502 Loaded SiteConfig record",
+                      obj2str(self._site_config, True))
             #~ except (SiteConfig.DoesNotExist,DatabaseError):
             except SiteConfig.DoesNotExist:
             #~ except Exception,e:
@@ -3262,7 +3263,8 @@ site. :manage:`diag` is a command-line shortcut to this.
                 #~ kw.update(settings.SITE.site_config_defaults)
                 kw.update(self.site_config_defaults)
                 self._site_config = SiteConfig(**kw)
-                #~ print "20130301 Created SiteConfig record", obj2str(self._site_config,True)
+                print("20180502 Created SiteConfig record",
+                      obj2str(self._site_config,True))
                 # 20120725
                 # polls_tutorial menu selection `Config --> Site Parameters`
                 # said "SiteConfig 1 does not exist"
@@ -3282,8 +3284,8 @@ site. :manage:`diag` is a command-line shortcut to this.
         This is needed e.g. when the test runner has created a new
         test database.
         """
+        print("20180502 clear_site_config")
         self._site_config = None
-        #~ print "20130320 clear_site_config"
 
     def get_quicklinks(self, user):
         from lino.core import menus
