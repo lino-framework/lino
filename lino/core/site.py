@@ -3254,8 +3254,8 @@ site. :manage:`diag` is a command-line shortcut to this.
             try:
                 self._site_config = SiteConfig.real_objects.get(
                     id=self.config_id)
-                print("20180502 Loaded SiteConfig record",
-                      obj2str(self._site_config, True))
+                print("20180502 {} loaded SiteConfig record",
+                      self, obj2str(self._site_config, True))
             #~ except (SiteConfig.DoesNotExist,DatabaseError):
             except SiteConfig.DoesNotExist:
             #~ except Exception,e:
@@ -3284,8 +3284,9 @@ site. :manage:`diag` is a command-line shortcut to this.
         This is needed e.g. when the test runner has created a new
         test database.
         """
+        from lino.core.utils import obj2str
         print("20180502 {} clear_site_config {}".format(
-            settings.SITE, obj2str(self._site_config, True)))
+            self, obj2str(self._site_config, True)))
         self._site_config = None
 
     def get_quicklinks(self, user):
