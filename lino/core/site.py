@@ -3264,7 +3264,7 @@ site. :manage:`diag` is a command-line shortcut to this.
                 kw.update(self.site_config_defaults)
                 self._site_config = SiteConfig(**kw)
                 print("20180502 {} Created SiteConfig object {}".format(
-                    settings.SITE, obj2str(self._site_config, True)))
+                    self, obj2str(self._site_config, True)))
                 # 20120725
                 # polls_tutorial menu selection `Config --> Site Parameters`
                 # said "SiteConfig 1 does not exist"
