@@ -159,7 +159,9 @@ def my_handler(sender, **kw):
     dd.database_connected.send(sender)
     #~ dd.database_connected.send(sender,**kw)
 
+from django.test.signals import setting_changed
 from lino.utils.djangotest import testcase_setup
+setting_changed.connect(my_handler)
 testcase_setup.connect(my_handler)
 dd.connection_created.connect(my_handler)
 models.signals.post_migrate.connect(my_handler)
