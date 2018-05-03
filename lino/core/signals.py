@@ -28,6 +28,8 @@
 
 .. data:: database_connected
 
+    No longer used.
+
 .. data:: testcase_setup
 
     Emitted each time `lino.core.utils.TestCase.setUp` is called.
@@ -118,5 +120,5 @@ pre_ui_save = Signal(['instance', 'ar'])
 pre_ui_delete = Signal(['request'])
 pre_ui_build = Signal()
 post_ui_build = Signal()
-database_connected = Signal()
+# database_connected = Signal()
 
