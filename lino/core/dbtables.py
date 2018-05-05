@@ -80,11 +80,11 @@ def add_gridfilters(qs, gridfilters):
             elif isinstance(field, models.ForeignKey):
                 qf = field.remote_field.model.quick_search_filter(
                     flt['value'], prefix=field.name + "__")
-                # logger.info("20160610 %s %s", field.rel.model, qf)
+                # logger.info("20160610 %s %s", field.remote_field.model, qf)
                 q = q & qf
                 # rq = models.Q()
-                # search_field = field.rel.model.grid_search_field
-                # for search_field in field.rel.model.quick_search_fields:
+                # search_field = field.remote_field.model.grid_search_field
+                # for search_field in field.remote_field.model.quick_search_fields:
                 # search_field = getattr(field.rel.model,'grid_search_field',None)
                 # if search_field is not None:
                     # rq = rq | models.Q(**{field.name+"__%s__icontains" % search_field : flt['value']})

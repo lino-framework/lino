@@ -94,7 +94,7 @@ class Summary(dd.Model):
 
     @classmethod
     def get_summary_master_model(cls):
-        return cls._meta.get_field('master').rel.model
+        return cls._meta.get_field('master').remote_field.model
 
     @classmethod
     def get_summary_masters(cls):

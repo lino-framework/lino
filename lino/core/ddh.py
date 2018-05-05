@@ -76,7 +76,7 @@ class DisableDeleteHandler(object):
             # print 20150831, m, fk
             if fk.name in m.allow_cascaded_delete:
                 continue
-            if fk.null and fk.rel.on_delete == models.SET_NULL:
+            if fk.null and fk.remote_field.on_delete == models.SET_NULL:
                 continue
             n = m.objects.filter(**{fk.name: obj}).count()
             if n:

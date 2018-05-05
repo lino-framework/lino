@@ -63,20 +63,20 @@ class ChildCollector(Collector):
             
             for related in related_objects:
                 field = related.field
-                if field.rel.on_delete == DO_NOTHING:
+                if field.remote_field.on_delete == DO_NOTHING:
                     continue
                 sub_objs = self.related_objects(related, new_objs)
                 if self.can_fast_delete(sub_objs, from_field=field):
                     self.fast_deletes.append(sub_objs)
                 elif sub_objs:
-                    field.rel.on_delete(self, field, sub_objs, self.using)
+                    field.remote_field.on_delete(self, field, sub_objs, self.using)
             for field in model._meta.virtual_fields:
                 if hasattr(field, 'bulk_related_objects'):
                     # Its something like generic foreign key.
                     sub_objs = field.bulk_related_objects(new_objs, self.using)
                     self.collect(sub_objs,
                                  source=model,
-                                 source_attr=field.rel.related_name,
+                                 source_attr=field.remote_field.related_name,
                                  nullable=True)
 
 

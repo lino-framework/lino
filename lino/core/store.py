@@ -211,7 +211,7 @@ class RelatedMixin(object):
     def get_rel_to(self, obj):
         # if self.field.rel is None:
             # return None
-        return self.field.rel.model
+        return self.field.remote_field.model
 
     def full_value_from_object(self, obj, ar):
         # here we don't want the pk (stored in field's attname)

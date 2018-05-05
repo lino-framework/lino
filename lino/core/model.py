@@ -92,7 +92,7 @@ class Model(models.Model):
           def city_choices(cls,country):
               if country is not None:
                   return country.place_set.order_by('name')
-              return cls.city.field.rel.model.objects.order_by('name')
+              return cls.city.field.remote_field.model.objects.order_by('name')
 
 
     .. method:: create_FOO_choice

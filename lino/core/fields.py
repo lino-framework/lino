@@ -191,7 +191,7 @@ class FakeField(object):
     decimal_places = None
     default = NOT_PROVIDED
     generate_reverse_relation = False  # needed when AFTER17
-    remote_field = False
+    remote_field = None
     sortable_by = None
 
     # required by Django 1.8:

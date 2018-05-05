@@ -131,7 +131,7 @@ def typeref(cls):
 def old_fieldtype(f):
     if isinstance(f, models.ForeignKey):
         #~ return f.__class__.__name__ + " to " + refto(f.rel.model)
-        return f.__class__.__name__ + " to " + model_ref(f.rel.model)
+        return f.__class__.__name__ + " to " + model_ref(f.remote_field.model)
     return f.__class__.__name__
 
 
@@ -139,7 +139,7 @@ def fieldtype(f):
     s = typeref(f.__class__)
     if isinstance(f, models.ForeignKey):
         s = _("%(classref)s to %(model)s") % dict(
-            classref=s, model=model_ref(f.rel.model))
+            classref=s, model=model_ref(f.remote_field.model))
         #~ print(20130908, s)
     if isinstance(f, choicelists.ChoiceListField):
         s = _("%(classref)s to %(model)s") % dict(

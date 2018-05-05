@@ -235,7 +235,7 @@ class Analyzer(object):
         for target in get_models():
             dp = tdp.setdefault(target, dict())
             for m, fk in target._lino_ddh.fklist:
-                k = fk.rel.on_delete
+                k = fk.remote_field.on_delete
                 p = dp.setdefault(k, [])
                 p.append((m, fk))
 

@@ -128,9 +128,9 @@ class ChangeWatcher(object):
             return
         if isinstance(f, models.ForeignKey):
             if old:
-                old = f.rel.to.objects.get(pk=old)
+                old = f.remote_field.to.objects.get(pk=old)
             if new:
-                new = f.rel.to.objects.get(pk=new)
+                new = f.remote_field.to.objects.get(pk=new)
         elif isinstance(f, ChoiceListField):
             if isinstance(old, six.string_types):
                 old = f.choicelist.get_by_value(old)

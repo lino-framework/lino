@@ -108,7 +108,7 @@ def is_pointer_to_contenttype(f):
         return False
     if not isinstance(f, models.ForeignKey):
         return False
-    return f.rel.model is settings.SITE.modules.contenttypes.ContentType
+    return f.remote_field.model is settings.SITE.modules.contenttypes.ContentType
 
 
 def write_create_function(model, stream):
@@ -417,9 +417,9 @@ if __name__ == '__main__':
             guilty = dict()
             #~ puts("hope for", [m.__name__ for m in unsorted])
             for model in unsorted:
-                deps = set([f.rel.model
+                deps = set([f.remote_field.model
                             for f in model._meta.fields
-                            if f.rel is not None and f.rel.model is not model and f.rel.model in unsorted])
+                            if f.remote_field is not None and f.remote_field.model is not model and f.remote_field.model in unsorted])
                 #~ deps += [m for m in model._meta.parents.keys()]
                 for m in sorted:
                     if m in deps:

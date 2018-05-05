@@ -272,7 +272,7 @@ def choices_for_field(request, holder, field):
         field = field.return_type
 
     if isinstance(field, models.ForeignKey):
-        m = field.rel.model
+        m = field.remote_field.model
         t = m.get_default_table()
         qs = t.request(request=request).data_iterator
 
