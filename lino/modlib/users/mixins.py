@@ -84,13 +84,14 @@ class Authored(Printable):
         """
         if not super(Authored, self).get_row_permission(ar, state, ba):
             return False
-        user = ar.get_user()
-        author = self.get_author()
-        if author != ar.user \
-           and (ar.subst_user is None or author != ar.subst_user) \
-           and not user.user_type.has_required_roles(
-               self.manager_roles_required):
-            return ba.action.readonly
+        if ba.action.select_rows:
+            user = ar.get_user()
+            author = self.get_author()
+            if author != ar.user \
+               and (ar.subst_user is None or author != ar.subst_user) \
+               and not user.user_type.has_required_roles(
+                   self.manager_roles_required):
+                return ba.action.readonly
         return True
 
     @classmethod
