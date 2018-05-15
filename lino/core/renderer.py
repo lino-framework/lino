@@ -161,12 +161,13 @@ class HtmlRenderer(Renderer):
         return html
 
     def table2story(self, ar, nosummary=False, stripped=True, **kw):
-        """Returns a HTML element representing the given action request as a
-        table. See :meth:`ar.show <lino.core.request.BaseRequest.show>`.
+        """
+        Returns a HTML element representing the given action request as a
+        table. See :meth:`ar.show
+        <lino.core.request.BaseRequest.show>`.
 
         This silently ignores the parameter `stripped` since for HTML
         this has no meaning.
-
         """
         # if ar.actor.master is not None and not nosummary:
         if not nosummary:

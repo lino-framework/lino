@@ -1025,7 +1025,8 @@ class Model(models.Model):
 
     @classmethod
     def get_simple_parameters(cls):
-        """Return or yield a list of names of simple parameter fields of every
+        """
+        Return or yield a list of names of simple parameter fields of every
         `Table` on this model.
 
         When the list contains names for which no parameter field is

@@ -702,12 +702,12 @@ class Table(AbstractTable):
 
     @classmethod
     def get_request_queryset(self, rr, **filter):
-        """Return the iterable of Django database objects for the specified
+        """
+        Return the iterable of Django database objects for the specified
         action request.
 
         The default implementation calls :meth:`get_queryset` and then
         applies request parameters.
-
         """
 
         def apply(qs):
