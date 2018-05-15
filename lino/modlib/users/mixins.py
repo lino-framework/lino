@@ -384,17 +384,25 @@ class Assignable(Authored):
     take = TakeAuthorship()
     assign_to_me = AssignToMe()
 
+    disable_author_assign = True
+    """
+    Set this to False if you want that the author of an object can
+    also assign themselves.
+
+    In Lino Noi you can be author of a ticket and then assign it to
+    yourself, but e.g. in group calendar management we don't want this
+    behaviour.
+    """
+
     def disabled_fields(self, ar):
         s = super(Assignable, self).disabled_fields(ar)
         user = ar.get_user()
         if self.assigned_to == user:
             s.add('assign_to_me')
-        # 20180515 : disabled the following veto beause you can be
-        # author of a ticket and then assign it to yourself. possible
-        # side effects in group calendar management.
-        # if user == self.get_author():
-        #     s.add('assign_to_me')
-        #     s.add('take')
+        
+        if self.disable_author_assign and user == self.get_author():
+            s.add('assign_to_me')
+            s.add('take')
         return s
     
 
