@@ -264,6 +264,9 @@ class AssignToMe(dd.Action):
     """
     label = _("Assign to me")
     show_in_workflow = True
+    show_in_bbar = False  # added 20180515 for noi. possible side
+                          # effects in welfare.
+    
     # readonly = False
     required_roles = dd.login_required(Helper)
 
@@ -296,7 +299,8 @@ class AssignToMe(dd.Action):
 
 
 class TakeAuthorship(dd.Action):
-    """You declare to become the fully responsible user for this database
+    """
+    You declare to become the fully responsible user for this database
     object.
 
     Accordingly, this action is available only when you are not
@@ -312,7 +316,6 @@ class TakeAuthorship(dd.Action):
     apointment for their colleague: that colleague goes to assigned_to
     and is invited to "take" the appointment which has been agreed for
     him.
-
     """
     label = _("Take")
     show_in_workflow = True
@@ -386,9 +389,12 @@ class Assignable(Authored):
         user = ar.get_user()
         if self.assigned_to == user:
             s.add('assign_to_me')
-        if user == self.get_author():
-            s.add('assign_to_me')
-            s.add('take')
+        # 20180515 : disabled the following veto beause you can be
+        # author of a ticket and then assign it to yourself. possible
+        # side effects in group calendar management.
+        # if user == self.get_author():
+        #     s.add('assign_to_me')
+        #     s.add('take')
         return s
     
 
