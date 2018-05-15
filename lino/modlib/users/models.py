@@ -73,6 +73,7 @@ class User(AbstractBaseUser, Contactable, CreatedModified, DateRange,
     preferred_foreignkey_width = 15
     hidden_columns = 'password remarks'
     authenticated = True
+    quick_search_fields = 'username user_type first_name last_name remarks'
 
     # seems that Django doesn't like nullable username
     # username = dd.NullCharField(_('Username'), max_length=30, unique=True)
