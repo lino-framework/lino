@@ -3417,7 +3417,7 @@ Please convert to Plugin method".format(mod, methname)
         if self.use_security_features:
             yield 'django.middleware.security.SecurityMiddleware'
             yield 'django.middleware.clickjacking.XFrameOptionsMiddleware'
-            yield 'django.middleware.csrf.CsrfViewMiddleware'
+            # yield 'django.middleware.csrf.CsrfViewMiddleware'
 
         if False:
             #~ yield 'lino.utils.sqllog.ShortSQLLogToConsoleMiddleware'
