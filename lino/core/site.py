@@ -513,16 +513,18 @@ class Site(object):
     project.
     """
 
-    use_security_features = True
+    use_security_features = False
     """
-    Whether to use some security features to protecti against
-    miscellaneous attacks.
+    Set this to `True` in order to activate a selection of security
+    features to protect against miscellaneous attacks.  You can do
+    this only if your application is being served via HTTPS.  The idea
+    is to provide a reasonable security out of the box.  
 
-    https://docs.djangoproject.com/en/1.11/topics/security/
-
-    SESSION_COOKIE_SECURE
-    CSRF_COOKIE_SECURE
-    CSRF_USE_SESSIONS
+    This will activate some middleware and set some security-related
+    settings.  This is a new feature and not much tested.  As a hoster
+    you may prefer adding security manually using your established
+    standards (regarding security Lino does not add anything to plain
+    Django).  See also :doc:`/admin/security`.
     """
 
     use_ipdict = False
