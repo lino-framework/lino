@@ -513,14 +513,27 @@ class Site(object):
     project.
     """
 
+    use_security_features = True
+    """
+    Whether to use some security features to protecti against
+    miscellaneous attacks.
+
+    https://docs.djangoproject.com/en/1.11/topics/security/
+
+    SESSION_COOKIE_SECURE
+    CSRF_COOKIE_SECURE
+    CSRF_USE_SESSIONS
+    """
+
     use_ipdict = False
-    """Whether this site uses :mod:`lino.modlib.ipdict`.
+    """
+    Whether this site uses :mod:`lino.modlib.ipdict`.
 
     Note that :mod:`lino.modlib.ipdict` unlike normal plugins should
     not be installed by adding it to your :meth:`get_installed_apps`
-    method but by setting this attribute. This is because Lino
-    automatically manages the MIDDLEWARE_CLASSES.
-
+    method but by setting this attribute.  This approach has the
+    advantage of also setting :setting:`MIDDLEWARE_CLASSES`
+    automatically.
     """
     
     # use_auth = True
@@ -1943,6 +1956,12 @@ this field.
 
         if self.user_model:
             self.update_settings(AUTH_USER_MODEL='users.User')
+            if self.use_security_features:
+                self.update_settings(
+                    CSRF_USE_SESSIONS=True,
+                    SESSION_COOKIE_SECURE=True,
+                    CSRF_COOKIE_SECURE=True)
+                
         # self.define_settings(AUTH_USER_MODEL=self.user_model)
         
         self.define_settings(
@@ -2173,7 +2192,7 @@ this field.
         doesn't work as expected.  For some reason (maybe because
         settings is being imported twice on a devserver) it raises a
         false exception when :meth:`override_defaults` tries to use it
-        on `MIDDLEWARE_CLASSES`...
+        on :setting:`MIDDLEWARE_CLASSES`...
 
         """
         if False:
@@ -3392,9 +3411,13 @@ Please convert to Plugin method".format(mod, methname)
             yield 'social_django.middleware.SocialAuthExceptionMiddleware'
             
                     
-        #~ yield 'lino.utils.editing.EditingMiddleware'
         if True:
             yield 'lino.utils.ajax.AjaxExceptionResponse'
+            
+        if self.use_security_features:
+            yield 'django.middleware.security.SecurityMiddleware'
+            yield 'django.middleware.clickjacking.XFrameOptionsMiddleware'
+            yield 'django.middleware.csrf.CsrfViewMiddleware'
 
         if False:
             #~ yield 'lino.utils.sqllog.ShortSQLLogToConsoleMiddleware'
