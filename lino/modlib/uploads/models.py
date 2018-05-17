@@ -236,7 +236,7 @@ class AreaUploads(Uploads):
     required_roles = dd.login_required((OfficeUser, OfficeOperator))
     stay_in_grid = True
     # _upload_area = UploadAreas.general
-    slave_grid_format = 'summary'
+    display_mode = 'summary'
 
     # 20180119
     # @classmethod
@@ -256,7 +256,7 @@ class AreaUploads(Uploads):
             or str(obj.id)
 
     @classmethod
-    def get_slave_summary(self, obj, ar):
+    def get_table_summary(self, obj, ar):
         """Displays the uploads related to this controller as a list grouped
         by uploads type.
 

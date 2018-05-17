@@ -1588,7 +1588,7 @@ class HtmlBoxElement(DisplayElement):
             yield panel
 
 class SlaveSummaryPanel(HtmlBoxElement):
-    """The panel used to display a slave table whose `slave_grid_format`
+    """The panel used to display a slave table whose `display_mode`
 is 'summary'.
 
     """
@@ -1597,7 +1597,7 @@ is 'summary'.
 
     def __init__(self, lh, actor, **kw):
         box = fields.HtmlBox(actor.label, help_text=actor.help_text)
-        fld = fields.VirtualField(box, actor.get_slave_summary)
+        fld = fields.VirtualField(box, actor.get_table_summary)
         # fld.name = actor.__module__ + '_' + actor.__name__
         fld.name = actor.actor_id.replace('.', '_')
         fld.lino_resolve_type()
@@ -2476,19 +2476,19 @@ def create_layout_element(lh, name, **kw):
             # displays a "summary" of that table. The panel will have
             # a tool button to "open that table in its own
             # window". The format of that summary is defined by the
-            # `slave_grid_format` of the table. `slave_grid_format` is
+            # `display_mode` of the table. `display_mode` is
             # a string with one of the following values:
 
             kw.update(tools=[
                 js_code("Lino.show_in_own_window_button(Lino.%s)" %
                       de.default_action.full_name())])
-            if de.slave_grid_format == 'grid':
+            if de.display_mode == 'grid':
                 kw.update(hide_top_toolbar=True)
                 if de.preview_limit is not None:
                     kw.update(preview_limit=de.preview_limit)
                 return GridElement(lh, name, de, **kw)
 
-            elif de.slave_grid_format == 'html':
+            elif de.display_mode == 'html':
                 if de.editable:
                     a = de.insert_action
                     if a is not None:
@@ -2505,14 +2505,14 @@ def create_layout_element(lh, name, **kw):
                 e.add_requirements(*de.required_roles)
                 return e
 
-            elif de.slave_grid_format == 'summary':
+            elif de.display_mode == 'summary':
                 e = SlaveSummaryPanel(lh, de, **kw)
                 e.add_requirements(*de.required_roles)
                 lh.add_store_field(e.field)
                 return e
             else:
                 raise Exception(
-                    "Invalid slave_grid_format %r" % de.slave_grid_format)
+                    "Invalid display_mode %r" % de.display_mode)
 
         else:
             e = SlaveSummaryPanel(lh, de, **kw)

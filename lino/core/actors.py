@@ -1541,7 +1541,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     @classmethod
     def slave_as_html_meth(self):
         """Creates and returns the method to be used when
-        :attr:`slave_grid_format` is `html`.
+        :attr:`display_mode` is `html`.
 
         """
         def meth(master, ar):
@@ -1560,10 +1560,10 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     summary_sep = E.br
 
     @classmethod
-    def get_slave_summary(self, obj, ar):
+    def get_table_summary(self, obj, ar):
         """Return the HTML paragraph to be displayed by
         :class:`lino.core.elems.TableSummaryPanel`.  That is (1) in a
-        detail form when :attr:`slave_grid_format` is `summary` or (2)
+        detail form when :attr:`display_mode` is `summary` or (2)
         in a grid.
 
         Lino internally creates a virtualfield ``slave_summary`` on

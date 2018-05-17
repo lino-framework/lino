@@ -339,8 +339,8 @@ class ExtRenderer(JsRenderer):
     #     Used by appy_pod renderer.
     #     """
     #     if ar.actor.master is not None and not nosummary:
-    #         if ar.actor.slave_grid_format == 'summary':
-    #             return ar.actor.get_slave_summary(ar.master_instance, ar)
+    #         if ar.actor.display_mode == 'summary':
+    #             return ar.actor.get_table_summary(ar.master_instance, ar)
     #     return ar.table2xhtml(**kw)
 
     def handler_item(self, mi, handler, help_text):

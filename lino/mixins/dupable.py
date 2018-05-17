@@ -267,8 +267,8 @@ DupableChecker.activate()
 
 class SimilarObjects(dd.VirtualTable):
     """Shows the other objects which are similar to this one."""
-    # slave_grid_format = 'html'
-    slave_grid_format = 'summary'
+    # display_mode = 'html'
+    display_mode = 'summary'
     master = dd.Model
 
     # class Row:
@@ -299,7 +299,7 @@ class SimilarObjects(dd.VirtualTable):
         return ar.obj2html(obj)
 
     @classmethod
-    def get_slave_summary(self, obj, ar):
+    def get_table_summary(self, obj, ar):
         chunks = []
         for other in ar.spawn(self, master_instance=obj):
             chunks.append(ar.obj2html(other))

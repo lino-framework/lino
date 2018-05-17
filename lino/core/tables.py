@@ -369,7 +369,7 @@ class AbstractTable(actors.Actor):
     Usually such a warning means that there is something wrong.
     """
 
-    slave_grid_format = 'grid'
+    display_mode = 'grid'
     """
     How to display this table when it is a slave in a detail
     window. Must be one of the following values:
@@ -378,7 +378,7 @@ class AbstractTable(actors.Actor):
     - `'summary'` to render a summary in a HtmlBoxPanel.
     - `'html'` to render plain html a HtmlBoxPanel.
 
-    Example: :class:`lino_xl.lib.households.models.SiblingsByPerson`.
+    See :doc:`/dev/table_summaries`.
 
     """
 

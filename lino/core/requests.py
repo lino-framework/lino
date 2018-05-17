@@ -671,8 +671,8 @@ class BaseRequest(object):
                      .e.g. in :ref:`avanti.specs.roles` where we want
                      to show whether cells are clickable or not.
 
-        :nosummary: if it is a table with :attr:`slave_grid_format
-                    <lino.core.tables.AbstractTable.slave_grid_format>`
+        :nosummary: if it is a table with :attr:`display_mode
+                    <lino.core.tables.AbstractTable.display_mode>`
                     set to ``'summary'``, force rendering it as a
                     table.
 

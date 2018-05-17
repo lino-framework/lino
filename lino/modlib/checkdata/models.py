@@ -219,7 +219,7 @@ class ProblemsByOwner(Problems):
     """
     master_key = 'owner'
     column_names = "message checker user #fixable *"
-    slave_grid_format = 'summary'
+    display_mode = 'summary'
 
 
 class ProblemsByChecker(Problems):

@@ -346,12 +346,12 @@ class MyMessages(My, Messages):
     column_names = "created subject message_type workflow_buttons *"
     order_by = ['-created']
     # hide_headers = True
-    slave_grid_format = 'summary'
-    # slave_grid_format = 'list'
-    # slave_grid_format = 'grid'
+    display_mode = 'summary'
+    # display_mode = 'list'
+    # display_mode = 'grid'
 
     @classmethod
-    def get_slave_summary(cls, mi, ar):
+    def get_table_summary(cls, mi, ar):
         qs = rt.models.notify.Message.objects.filter(
             user=ar.get_user()).order_by('created')
         qs = qs.filter(seen__isnull=True)
