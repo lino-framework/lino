@@ -15,10 +15,6 @@ sap.ui.define([
                     that.getView().byId('dashboard').setContent(data.html);
                     that.getView().byId('dashboard').getParent().setBusy(false);
                 });
-            // highlights first item in menu if selected with Keyboard
-//			this.byId("openMenu").attachBrowserEvent("tab keyup", function(oEvent){
-//				this._bKeyboard = oEvent.type == "keyup";
-//			}, this);
 		},
 	})
 

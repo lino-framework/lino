@@ -88,13 +88,13 @@ sap.ui.define([
 		    var oRow = oEvent.getParameter("row");
             var oBindingContext = oRow.getBindingContext();
 			var oItem = oEvent.getParameter("item");
-			var sPk = this.getView().getModel().getProperty(this._PK, oBindingContext);
-			console.log("Opening detail for: " +  this._actor_id  + "/" + sPk);
+			var record_id = this.getView().getModel().getProperty(this._PK, oBindingContext);
+			console.log("Opening detail for: " +  this._actor_id  + "/" + record_id);
 
             var msg = "'" + oEvent.getParameter("item").getText() + this._actor_id +":" + "detail" + "' pressed";
 			MessageToast.show(msg);
 
-			this.routeTo("detail", this._actor_id,{"sPK":sPk});
+			this.routeTo("detail", this._actor_id,{"record_id":record_id});
 
         },
 

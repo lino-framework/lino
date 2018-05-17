@@ -446,7 +446,7 @@ def XML_response(ar, tplname, context):
         """Debugger helper; prints out all args put into the filter but doesn't include them in the template.
         usage: {{debug | p}}
         """
-        # print(args)
+        print(args)
         return ""
 
     env.filters.update(p=p)

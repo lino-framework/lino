@@ -247,6 +247,7 @@ class LayoutElement(VisibleComponent):
     refers_to_ww = False
 
     input_classes = None
+    oui5_field_template = "openui5/elems/field/FieldElement.xml"
 
     def __init__(self, layout_handle, name, **kw):
         #logger.debug("LayoutElement.__init__(%r,%r)", layout_handle.layout,name)
@@ -464,7 +465,7 @@ class FieldElement(LayoutElement):
     filter_type = None  # 'auto'
     active_change_event = 'change'
     #declaration_order = 3
-    # ext_suffix = "_field"
+    # ext_suffix = "_field"wrapper
     zero = 0
     hide_sum = False
 
@@ -1639,6 +1640,7 @@ class Wrapper(VisibleComponent):
     """
     """
     # label = None
+    oui5_field_template = "openui5/elems/field/WrappedElement.xml"
 
     def __init__(self, e, **kw):
         kw.update(layout='form')

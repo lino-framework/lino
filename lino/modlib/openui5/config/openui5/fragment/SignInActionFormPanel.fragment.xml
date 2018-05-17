@@ -22,7 +22,7 @@
 				placeholder="Enter UserName ..."
                 name="username"
                 value="{form_data>/username}"
-                submit="onOkDialog"
+                submit="onOkSignInDialog"
             />
 
             <Label text="Password" labelFor="passwordInput"/>
@@ -32,7 +32,7 @@
 				placeholder="Enter password ..."
                 name="password"
                 value="{form_data>/password}"
-                submit="onOkDialog"
+                submit="onOkSignInDialog"
             />
            </html:form>
            </form:SimpleForm>
@@ -46,7 +46,7 @@
       </beginButton>
       <endButton>
          <Button text="OK"
-           press="onOkDialog"
+           press="onOkSignInDialog"
          />
       </endButton>
    </Dialog>

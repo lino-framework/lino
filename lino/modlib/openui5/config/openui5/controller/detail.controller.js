@@ -28,7 +28,7 @@ sap.ui.define([
 			oArgs = oEvent.getParameter("arguments");
 			oView = this.getView();
 
-            this.load_record(oArgs.sPK)
+            this.load_record(oArgs.record_id)
 
 		},
 
@@ -59,13 +59,13 @@ sap.ui.define([
 		},
 
 
-		load_record: function(sPK){
+		load_record: function(record_id){
 			var oModel = new JSONModel();
             var oView = this.getView();
-            this._PK = sPK;
-		    MessageToast.show("Going to load item with PK of" + sPK);
+            this._PK = record_id;
+		    MessageToast.show("Going to load item with PK of" + record_id);
 		    oView.setBusy(true);
-		    jQuery.ajax(oView.byId("MAIN_PAGE").data("url") + sPK, {
+		    jQuery.ajax(oView.byId("MAIN_PAGE").data("url") + record_id, {
 				dataType: "json",
 				data:{fmt:'json',
 				      an:'detail'
