@@ -38,6 +38,17 @@ sap.ui.define([
                                    args, true);
         },
 
+        getParentView: function(){
+            var v = this.getView()
+            while (v && v.getParent) {
+                v = v.getParent();
+                if (v instanceof sap.ui.core.mvc.View){
+//                    console.log(v.getMetadata()); //you have found the view
+                    return v
+                    break;
+                    }
+                }
+            },
 
     })
 });

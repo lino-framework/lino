@@ -10,52 +10,84 @@ sap.ui.define([
 
 	return baseController.extend("lino.controller.table", {
 
-        getParentView: function(){
-            var v = this.getView()
-            while (v && v.getParent) {
-                v = v.getParent();
-                if (v instanceof sap.ui.core.mvc.View){
-//                    console.log(v.getMetadata()); //you have found the view
-                    return v
-                    break;
-                    }
-                }
-            },
+        log_rows: function(sMsg){
+            console.log(sMsg,
+                        this._table.getVisibleRowCount())
+        },
 
 		onInit : function () {
+		    var me = this;
 			var oView = this.getView();
 			var oMainTable = this.getView().byId("MAIN_TABLE");
-            this._table = oView.byId("MAIN_TABLE")
-			this.page_no = 0;
-            this.page_limit = this.visibleRowCount;
-            this.pv = []; // unused,
+			this._is_rendered = false
+            this._table = oMainTable
+			this.page_limit = this.visibleRowCount;
             this._PK = oMainTable.data("PK");
             this._actor_id = oMainTable.data("actor_id");
             this._content_type = oMainTable.data("content_type"); // null or int
             this._is_slave = oMainTable.data("is_slave"); // null or int
+
             this._table.setBusy(true);
-            if (this.count == undefined) this.count = 0;
-			// set explored app's demo model on this sample
+
+            this._table.addEventDelegate({
+                afterRendering: function(){
+                    me.log_rows("tableAfterRender");
+                }
+            });
+
+            // override after rendering event handler to find out how many rows are rendered and how many should be per page
+            // Is run twice on inital loading of view, second time has the correct values
+            // view after render event is fired after first firing of this event, but before second firing of table event
+            this._table.onAfterRendering = function(){
+                sap.ui.table.Table.prototype.onAfterRendering.apply(this, arguments);
+                me.onAfterTableRendering.apply(me, arguments);
+            };
+
+			// Set values for table conf
 			oView.setModel(new JSONModel({
 //				showVisibilityMenuEntry: false,
 				showFreezeMenuEntry: false,
 				enableCellFilter: false
 			}), "ui");
+
+			// Set meta data for table/actor
+			oView.setModel(new JSONModel({
+			    page : 0,
+
+			}), "meta");
+
+			// Param values (unused ATM)
+			oView.setModel(new JSONModel({
+			}), "pv");
+
+
+
 		},
 
         onAfterRendering : function(oEvent){
-            console.log("loading data");
-    		var oJSONModel = this.initSampleDataModel();
-			this.getView().setModel(oJSONModel);
+            // to prevent second loading of data on init,
+            this._is_rendered = true;
+
         },
 
-        beforeExit: function(){console.log("beforeExit")},
+        onAfterTableRendering : function(oEvent){
+         // Called on page-resize and load, after the table has rendered and knows it's row count.
+            this._table.setBusy(true);
+            this.page_limit = this._table.getVisibleRowCount();
+                if (this._is_rendered){
+                        var oJSONModel = this.initSampleDataModel();
+                        this.getView().setModel(oJSONModel);
+                    }
+
+        },
+
+//        beforeExit: function(){console.log("beforeExit")},
 
 		initSampleDataModel : function() {
 		    var me = this
 			this._table.setBusy(true);
 			var oModel = new JSONModel();
-            var data = {limit:15, fmt:'json', mt:this._content_type }
+            var data = {limit:this.page_limit, fmt:'json', mt:this._content_type }
 			var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
             if (this._is_slave){
                 data.mk = this.getParentView().getController()._PK
@@ -65,21 +97,15 @@ sap.ui.define([
 				dataType: "json",
 				data:data,
 				success: function (oData) {
-					oModel.setData(oData);
-				    me._table.setBusy(false)
+				    oModel.setData(oData);
+					me._table.setBusy(false)
 				},
 				error: function () {
 					jQuery.sap.log.error("failed to load json");
 				}
 			});
-			console.log(this.count++)
 
 			return oModel;
-		},
-
-		getNavport: function(){
-		    var vp = sap.ui.getCore().byId("__component0---MAIN_VIEW").byId('viewport');
-            return vp
 		},
 
 

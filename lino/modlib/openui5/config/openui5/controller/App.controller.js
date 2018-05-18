@@ -117,6 +117,12 @@ sap.ui.define([
             });
         },
 
+    	getNavport: function(){
+		    var vp = sap.ui.getCore().byId("__component0---MAIN_VIEW").byId('viewport');
+            return vp
+		},
+
+
 
 
    });

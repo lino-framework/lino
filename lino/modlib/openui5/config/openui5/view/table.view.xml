@@ -40,6 +40,27 @@
 					<Toolbar>
 						<Title text="{{title}}"/>
 						<ToolbarSpacer/>
+
+						{% block pageinator %}
+						<Button icon="sap-icon://close-command-field"
+								tooltip="First page"
+								/>
+						<Button icon="sap-icon://navigation-left-arrow"
+								tooltip="Previous page"
+								/>
+						<Input
+								value="{meta>/page}"
+								width="5ch"
+								fieldWidth="60%"
+								align="center"/>
+						<Button icon="sap-icon://navigation-right-arrow"
+								tooltip="Next page"
+								/>
+						<Button icon="sap-icon://open-command-field"
+								tooltip="Last page"
+								/>
+						{% endblock %}
+						<ToolbarSpacer/>
 						<ToggleButton
 							icon="sap-icon://resize-horizontal"
 							tooltip="Enable / Disable Freezing Menu Entries"

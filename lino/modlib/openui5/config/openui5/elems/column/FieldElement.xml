@@ -18,7 +18,7 @@
     <Label text="{{c.label}}"/>
     <table:template>
     {% block column_template %}
-        <m:Text text="{{bind(c.fields_index)}}" wrapping="true"/>
+        <m:Text text="{{bind(c.fields_index)}}" wrapping="false"/>
     {% endblock %}
 
     </table:template>
