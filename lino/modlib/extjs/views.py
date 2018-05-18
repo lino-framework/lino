@@ -533,11 +533,11 @@ class ApiElement(View):
                     on_ready=ui.extjs_renderer.action_call(
                         request, ba, after_show)))
 
-        if isinstance(ba.action, actions.RedirectAction):
-            target = ba.action.get_target_url(elem)
-            if target is None:
-                raise http.Http404("%s failed for %r" % (ba, elem))
-            return http.HttpResponseRedirect(target)
+        # if isinstance(ba.action, actions.RedirectAction):
+        #     target = ba.action.get_target_url(elem)
+        #     if target is None:
+        #         raise http.Http404("%s failed for %r" % (ba, elem))
+        #     return http.HttpResponseRedirect(target)
 
         if pk == '-99998':
             assert elem is None

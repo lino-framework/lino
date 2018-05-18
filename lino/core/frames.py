@@ -1,4 +1,4 @@
-# Copyright 2009-2014 Luc Saffre
+# Copyright 2009-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """
 Defines classes :class:`Frame` and :class:`FrameHandle`
@@ -19,18 +19,21 @@ class FrameHandle(object):
         self.actor = frame
         # Handle.__init__(self)
 
-    def get_actions(self, *args, **kw):
-        return self.actor.get_actions(*args, **kw)
+    def get_actions(self):
+        return self.actor.get_actions()
 
     def __str__(self):
         return "%s on %s" % (self.__class__.__name__, self.actor)
 
 
 class Frame(actors.Actor):
-    """Base clase for actors which open a window but, but this window is
-    neither a database table nor a detail form.
+    """
+    Base clase for actors which open a window which is neither a
+    database table nor a detail form.
 
-    Example subclass is :class:`lino_xl.lib.extensible.CalendarPanel`.
+    Example subclasses are 
+    - :class:`lino_xl.lib.extensible.CalendarPanel`.
+    - :class:`lino.modlib.awesomeuploader.UploaderPanel`.
 
     """
     _handle_class = FrameHandle

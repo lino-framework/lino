@@ -417,8 +417,8 @@ An EmptyTableRow instance"""),
     'lino.utils.report.EmptyTable' : _("""A "Table" that has exactly one virtual row and thus is visible
 only using a Detail view on that row."""),
     'lino.utils.report.Report' : _("""A special kind of EmptyTable used to create complex
-"reports". A report is a series of headings, paragraphs and tables
-combined into a single printable and previewable document."""),
+"reports".  A report is a series of headings, paragraphs and
+tables combined into a single printable and previewable document."""),
     'lino.utils.restify.HTMLTranslator' : _("""Suppress surrounding DIV tag. Used by restify()."""),
     'lino.utils.sendchanges.Emitter' : _("""The object returned by register()."""),
     'lino.utils.sqllog.SQLLogMiddleware' : _("""Log all SQL statements direct to the console."""),

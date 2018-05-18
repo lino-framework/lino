@@ -645,10 +645,14 @@ class Table(AbstractTable):
         if obj is not None:
             s |= obj.disabled_fields(ar)
             state = cls.get_row_state(obj)
-            for ba in cls.get_actions(ar.bound_action.action):
-                if ba.action.action_name:
-                    if ba.action.show_in_bbar and not cls.get_row_permission(obj, ar, state, ba):
-                        s.add(ba.action.action_name)
+            parent = ar.bound_action.action
+            if not parent.opens_a_window:
+                return s
+            for ba in cls.get_button_actions(parent):
+                a = ba.action
+                if a.action_name and a.show_in_bbar:
+                    if not cls.get_row_permission(obj, ar, state, ba):
+                        s.add(a.action_name)
         return s
 
     @classmethod
