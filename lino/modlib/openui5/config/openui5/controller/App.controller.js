@@ -68,36 +68,10 @@ sap.ui.define([
 			var msg = "'" + oEvent.getParameter("item").getText() + actor_id +":" + action_name + "' pressed";
 			MessageToast.show(msg);
 
-//		    var router = this.getRouter();
 		    this.routeTo(action_name, actor_id);
-//			var vp = this.getView().byId('viewport')
-//			var content = sap.ui.getCore().byId("grid." + actor_id)
-//			if (content===undefined){
-//                content = new sap.ui.xmlview({id: "grid." + actor_id,
-//                                    viewName : "lino." + action_name + "." + actor_id});
-//
-//                var p = content /*new sap.m.Page({
-//                    showHeader:true,
-//                    showNavButton:true,
-//                    content: content,
-//                    });*/
-//                this.getView().addDependent(p)
-////                this.getView().addDependent(content) // Unwanted, causes content not to render, parent object should be dependent,
-//                /*p.attachNavButtonPress(null, function(oEvent){
-//                    vp.back();
-//                })*/
-//
-//			    vp.addPage(p);
-//			    vp.to(p);
-//			    }
-//			else{ vp.to(content/*.getParent()*/);}
 		},
 
-		onBackPress: function(oEvent){
-		    var vp = this.getView().byId('viewport')
-			vp.back()
-		},
-
+        // Todo: move into it's on controller
         onSignInButtonPress: function(oEvent){
             var oView = this.getView();
             var oButton = oEvent.getSource();
@@ -120,7 +94,7 @@ sap.ui.define([
             oDialog.close()
         },
 
-        onOkDialog: function(oEvent){
+        onOkSignInDialog: function(oEvent){
             var oModel = this.getView().getModel("form_data");
 //            oModel.refresh(true) // Goes from data -> view only
             $.post( "/auth",oModel.oData).

@@ -22,10 +22,22 @@ sap.ui.define([
 			}
 		},
 
-        routeTo: function(action, actor_id, args){
+        routeTo: function(action, actor_id, args, history){
+        /*
+            use in app routing
+        */
             this.getRouter().navTo(action + "." + actor_id,
-                                   args);
-        }
+                                   args, history);
+        },
+        routeToAction: function(action_id, args, rp){
+        /*
+            used in server generated links, note the unused rp (requesting Panel).
+            That might be used later for other action requests
+        */
+            this.getRouter().navTo(action_id,
+                                   args, true);
+        },
+
 
     })
 });
