@@ -227,7 +227,8 @@ and uploads."""),
     'lino.modlib.office.roles.OfficeOperator' : _("""A user who manages office functionality for other users (but not
 for himself)."""),
     'lino.modlib.office.roles.OfficeStaff' : _("""A user who manages configuration of office functionality."""),
-    'lino.modlib.openui5.renderer.Renderer' : _("""A  HTML render that uses Bootstrap3."""),
+    'lino.modlib.openui5.renderer.Renderer' : _(""".
+An HTML renderer that uses the OpenUI5 Javascript framework."""),
     'lino.modlib.openui5.views.Restful' : _("""Used to collaborate with a restful Ext.data.Store."""),
     'lino.modlib.openui5.views.Tickets' : _("""Was a static View for Tickets,
 IS currently main app entry point,"""),
