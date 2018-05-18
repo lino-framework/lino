@@ -44,20 +44,27 @@
 						{% block pageinator %}
 						<Button icon="sap-icon://close-command-field"
 								tooltip="First page"
-								/>
+								press="onFirstPress"/>
 						<Button icon="sap-icon://navigation-left-arrow"
 								tooltip="Previous page"
+
+								press="onPrevPress"
 								/>
 						<Input
 								value="{meta>/page}"
-								width="5ch"
+								width="4ch"
 								fieldWidth="60%"
-								align="center"/>
+								align="center"
+								liveChange="onPagerInputChange"/>
+						<Label text="of {meta>/page_total}"
+								/>
 						<Button icon="sap-icon://navigation-right-arrow"
 								tooltip="Next page"
+								press="onNextPress"
 								/>
 						<Button icon="sap-icon://open-command-field"
 								tooltip="Last page"
+								press="onLastPress"
 								/>
 						{% endblock %}
 						<ToolbarSpacer/>

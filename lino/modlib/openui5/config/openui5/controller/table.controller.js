@@ -40,7 +40,7 @@ sap.ui.define([
             // view after render event is fired after first firing of this event, but before second firing of table event
             this._table.onAfterRendering = function(){
                 sap.ui.table.Table.prototype.onAfterRendering.apply(this, arguments);
-                me.onAfterTableRendering.apply(me, arguments);
+                me.reload.apply(me, arguments);
             };
 
 			// Set values for table conf
@@ -52,8 +52,9 @@ sap.ui.define([
 
 			// Set meta data for table/actor
 			oView.setModel(new JSONModel({
-			    page : 0,
-
+			    page : 1,
+			    page_old: 1, // Todo: implement correctly for setting on invalid page number value
+                page_total : "N/A"
 			}), "meta");
 
 			// Param values (unused ATM)
@@ -69,9 +70,10 @@ sap.ui.define([
             this._is_rendered = true;
 
         },
-
-        onAfterTableRendering : function(oEvent){
+        reload : function(oEvent){
+         // Fetches the page that's set in {meta>page} or if that's not a valid page page_old
          // Called on page-resize and load, after the table has rendered and knows it's row count.
+         // oEvent is from table afterendering event
             this._table.setBusy(true);
             this.page_limit = this._table.getVisibleRowCount();
                 if (this._is_rendered){
@@ -83,11 +85,16 @@ sap.ui.define([
 
 //        beforeExit: function(){console.log("beforeExit")},
 
+
 		initSampleDataModel : function() {
 		    var me = this
 			this._table.setBusy(true);
-			var oModel = new JSONModel();
-            var data = {limit:this.page_limit, fmt:'json', mt:this._content_type }
+			var oRecordDataModel = new JSONModel();
+			var oModel =me.getView().getModel("meta");
+            var data = {limit:this.page_limit,
+                        fmt:'json',
+                        mt:this._content_type,
+                        start: (oModel.getProperty("/page") - 1) * this.page_limit }
 			var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
             if (this._is_slave){
                 data.mk = this.getParentView().getController()._PK
@@ -97,7 +104,11 @@ sap.ui.define([
 				dataType: "json",
 				data:data,
 				success: function (oData) {
-				    oModel.setData(oData);
+				    var iPage = Math.ceil(oData.count / me.page_limit);
+				    oModel.setProperty("/page_total", iPage);
+				    oModel.setProperty("/page_old", iPage);
+
+				    oRecordDataModel.setData(oData);
 					me._table.setBusy(false)
 				},
 				error: function () {
@@ -105,7 +116,7 @@ sap.ui.define([
 				}
 			});
 
-			return oModel;
+			return oRecordDataModel;
 		},
 
 
@@ -188,6 +199,7 @@ sap.ui.define([
 			this.getView().byId("table").sort(oColumn, sOrder, bAdd);
 		},
 
+        // Unused, from ui5 sample docs
 		showInfo : function(oEvent) {
 			try {
 				jQuery.sap.require("sap.ui.table.sample.TableExampleUtils");
@@ -195,7 +207,44 @@ sap.ui.define([
 			} catch (e) {
 				// nothing
 			}
-		}
+		},
+
+        // Todo disable prev and first on first page, and next and last on last page.
+		onFirstPress: function(oEvent){
+            var oModel = this.getView().getModel("meta");
+            oModel.setProperty("/page", 1);
+            this.reload();
+		},
+        onPrevPress: function(oEvent){
+            var oModel = this.getView().getModel("meta");
+            oModel.setProperty("/page", Math.max( 1 ,oModel.getProperty("/page") - 1) );
+            this.reload();
+        },
+        onPagerInputChange: function(oEvent){
+            var oModel = this.getView().getModel("meta");
+            var sPage  = +oEvent.getParameters().value; //+ converts value into int or NaN // value is same as {meta>page}
+            var sOldPage = oModel.getProperty("/page_old");
+            var input = oEvent.getSource();
+            console.log(sPage, sOldPage, input)
+            if (sPage!=sOldPage){
+                input.setValueState("None");
+                MessageToast.show("Should load page:"+sPage)
+                this.reload()
+                }
+            else if (isNaN(sPage)){
+                input.setValueState("Error");
+            }
+        },
+        onNextPress: function(oEvent){
+            var oModel = this.getView().getModel("meta");
+            oModel.setProperty("/page", Math.min(oModel.getProperty("/page")+1, oModel.getProperty("/page_total")))
+            this.reload();
+        },
+        onLastPress: function(oEvent){
+            var oModel = this.getView().getModel("meta");
+            oModel.setProperty("/page", oModel.getProperty("/page_total"))
+            this.reload();
+        }
 
 	});
 
