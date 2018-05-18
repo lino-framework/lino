@@ -186,6 +186,15 @@ class ExtRenderer(JsRenderer):
             return self.window_action_button(ar, ba, st, label, **kw)
         return self.row_action_button(obj, ar, ba, label, **kw)
 
+    def is_custom_action(self, a):
+        if a.parameters and not a.no_params_window:
+            return False
+        if a.opens_a_window:
+            return False
+        if not a.action_name:
+            return False
+        return True
+
     def window_action_button(
             self, ar, ba, status=None,
             label=None, title=None, **kw):
@@ -803,6 +812,21 @@ class ExtRenderer(JsRenderer):
                 for ln in self.js_render_GridPanel_class(rh):
                     f.write(ln + '\n')
 
+                # 20180518 There is more useless JS code in the
+                # :file:`lino_XXX_yy.js` file : for example (in team)
+                # it generates a GridPanel and related functions for
+                # `Lino.countries.PlaceTypes`.  This table is never
+                # used because there is no menu item for it.  We might
+                # extend the code which decides whether
+                # :meth:`js_render_GridPanel_class` must be called or
+                # not.  The condition would be: if it is a master
+                # table but does not have any menu item.  But that
+                # might be dangerous (cause uncovered regressions), so
+                # I prefer to leave this for another time.
+                    
+
+            window_actions = [ba.action for ba in rpt.get_actions() if
+                              ba.action.opens_a_window]
             for ba in rpt.get_actions():
                 if ba.action.parameters and not ba.action.no_params_window:
                     pass
@@ -814,9 +838,16 @@ class ExtRenderer(JsRenderer):
                             f.write(ln + '\n')
                     for ln in self.js_render_window_action(rh, ba, user_type):
                         f.write(ln + '\n')
+                # elif self.is_custom_action(ba.action):
                 elif ba.action.action_name:
-                    for ln in self.js_render_custom_action(rh, ba):
-                        f.write(ln + '\n')
+                    is_custom = False
+                    for parent in window_actions:
+                        if ba.action.is_callable_from(parent):
+                            is_custom = True
+                            break
+                    if is_custom:
+                        for ln in self.js_render_custom_action(rh, ba):
+                            f.write(ln + '\n')
 
         if user_type != get_user_profile():
             logger.warning(

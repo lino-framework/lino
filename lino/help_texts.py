@@ -227,7 +227,8 @@ and uploads."""),
     'lino.modlib.office.roles.OfficeOperator' : _("""A user who manages office functionality for other users (but not
 for himself)."""),
     'lino.modlib.office.roles.OfficeStaff' : _("""A user who manages configuration of office functionality."""),
-    'lino.modlib.openui5.renderer.Renderer' : _("""A  HTML render that uses Bootstrap3."""),
+    'lino.modlib.openui5.renderer.Renderer' : _(""".
+An HTML renderer that uses the OpenUI5 Javascript framework."""),
     'lino.modlib.openui5.views.Restful' : _("""Used to collaborate with a restful Ext.data.Store."""),
     'lino.modlib.openui5.views.Tickets' : _("""Was a static View for Tickets,
 IS currently main app entry point,"""),
@@ -417,8 +418,8 @@ An EmptyTableRow instance"""),
     'lino.utils.report.EmptyTable' : _("""A "Table" that has exactly one virtual row and thus is visible
 only using a Detail view on that row."""),
     'lino.utils.report.Report' : _("""A special kind of EmptyTable used to create complex
-"reports". A report is a series of headings, paragraphs and tables
-combined into a single printable and previewable document."""),
+"reports".  A report is a series of headings, paragraphs and
+tables combined into a single printable and previewable document."""),
     'lino.utils.restify.HTMLTranslator' : _("""Suppress surrounding DIV tag. Used by restify()."""),
     'lino.utils.sendchanges.Emitter' : _("""The object returned by register()."""),
     'lino.utils.sqllog.SQLLogMiddleware' : _("""Log all SQL statements direct to the console."""),

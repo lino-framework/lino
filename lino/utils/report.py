@@ -1,4 +1,4 @@
-# Copyright 2009-2017 Luc Saffre
+# Copyright 2009-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """
 
@@ -110,6 +110,9 @@ class EmptyTable(Frame):
     """
     A "Table" that has exactly one virtual row and thus is visible
     only using a Detail view on that row.
+
+    Subclassed by :class:`lino.modlib.about.About` and
+    :class:`Report`.
     """
 
     #~ debug_permissions = True
@@ -179,9 +182,10 @@ class EmptyTable(Frame):
 
 
 class Report(EmptyTable):
-    """A special kind of :class:`EmptyTable` used to create complex
-    "reports". A report is a series of headings, paragraphs and tables
-    combined into a single printable and previewable document.
+    """
+    A special kind of :class:`EmptyTable` used to create complex
+    "reports".  A report is a series of headings, paragraphs and
+    tables combined into a single printable and previewable document.
 
     When subclassing this, application code must either define
     :attr:`report_items` or implement an alternative :meth:`get_story`.
@@ -189,7 +193,6 @@ class Report(EmptyTable):
     :class:`lino_xl.lib.courses.StatusReport`
     :class:`lino_xl.lib.ledger.Situation`
     :class:`lino_xl.lib.ledger.ActivityReport`
-
     """
 
     detail_layout = "body"
