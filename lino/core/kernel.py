@@ -860,8 +860,8 @@ class Kernel(object):
         """
         h = hash(cb)
         self.pending_threads[h] = cb
-        # logger.info("20160526 Stored %r in %r" % (
-        #     h, self.pending_threads))
+        logger.info("20160526 Stored %r in %r" % (
+            h, self.pending_threads))
 
         buttons = dict()
         for c in cb.choices:
