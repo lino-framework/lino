@@ -797,7 +797,7 @@ class Kernel(object):
         # 20140304 Also set a renderer so that callbacks can use it
         # (feature needed by beid.FindByBeIdAction).
 
-        thread_id = int(thread_id)
+        thread_id = thread_id
         cb = self.pending_threads.pop(thread_id, None)
         if cb is None:
             ar = ActorRequest(request, renderer=self.default_renderer)
@@ -858,10 +858,10 @@ class Kernel(object):
     def set_callback(self, ar, cb):
         """
         """
-        h = hash(cb)
-        self.pending_threads[h] = cb
-        logger.info("20160526 Stored %r in %r" % (
-            h, self.pending_threads))
+        k = "{0:x}".format(hash(cb))
+        self.pending_threads[k] = cb
+        # logger.info("20160526 Stored %r in %r" % (
+        #     h, self.pending_threads))
 
         buttons = dict()
         for c in cb.choices:
@@ -869,7 +869,7 @@ class Kernel(object):
 
         ar.success(
             cb.message, xcallback=dict(
-                id=h,
+                id=k,
                 title=cb.title,
                 buttons=buttons))
 
