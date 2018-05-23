@@ -187,8 +187,8 @@ def log_change(type, request, master, obj, msg='', changed_fields=''):
     Change(
         type=type,
         time=timezone.now(),
-        user=request.user,
         master=master,
+        user=request.user,
         object=obj,
         changed_fields=changed_fields,
         diff=msg).save()
@@ -285,6 +285,8 @@ def on_remove_child(sender=None, request=None, child=None, **kw):
 def on_merge(sender=None, request=None, **kw):
     """
     """
+    if request is None:
+        return
     master = get_master(sender.obj)
     if master is None:
         return
