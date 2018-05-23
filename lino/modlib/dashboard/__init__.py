@@ -1,14 +1,16 @@
-# Copyright 2016 Luc Saffre
+# Copyright 2016-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-"""Adds the notion of dashboard widgets so that users can individually
-customize their dashboard.
+"""
+Adds the *dashboard items* to the *user preferences* so that users
+can individually customize their dashboard.
+
+See :doc:`/specs/dashboard`.
 
 .. autosummary::
    :toctree:
 
     models
-
 """
 
 from lino.api import ad, _

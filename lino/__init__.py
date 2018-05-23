@@ -26,15 +26,6 @@ files, django admin commands, translation messages and the core
    management.commands
 
 
-.. rubric:: Template files
-
-.. xfile:: admin_main_base.html
-.. xfile:: admin_main.html
-
-This is the template used to generate the inner content of the home
-page. It is split into two files
-:srcref:`admin_main.html<lino/config/admin_main.html>` and
-:srcref:`admin_main_base.html<lino/config/admin_main_base.html>`.
 """
 
 # from __future__ import unicode_literals
