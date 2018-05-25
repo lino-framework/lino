@@ -401,7 +401,7 @@ class ExtRenderer(JsRenderer):
             if not settings.SITE.build_js_cache_on_startup:
                 self.build_js_cache(False)
 
-            # Render teplate
+            # Render template
             env = settings.SITE.plugins.jinja.renderer.jinja_env
             tpl = env.get_template('extjs/index.html')
             context = {
