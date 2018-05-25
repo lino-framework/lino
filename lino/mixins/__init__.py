@@ -321,14 +321,14 @@ class ProjectRelated(model.Model):
         super(ProjectRelated, self).update_owned_instance(controllable)
 
     def get_mailable_recipients(self):
-        if isinstance(self.project, settings.SITE.modules.contacts.Partner):
+        if isinstance(self.project, settings.SITE.models.contacts.Partner):
             if self.project.email:
                 yield ('to', self.project)
         for r in super(ProjectRelated, self).get_mailable_recipients():
             yield r
 
     def get_postable_recipients(self):
-        if isinstance(self.project, settings.SITE.modules.contacts.Partner):
+        if isinstance(self.project, settings.SITE.models.contacts.Partner):
             yield self.project
         for p in super(ProjectRelated, self).get_postable_recipients():
             yield p

@@ -50,7 +50,7 @@ class Shortcut(dd.Choice):
 
     def get_uploads(self, **kw):
         """Return a queryset with the uploads of this shortcut."""
-        return rt.modules.uploads.Upload.objects.filter(
+        return rt.models.uploads.Upload.objects.filter(
             type__shortcut=self, **kw)
 
 

@@ -214,7 +214,7 @@ if False:  # disabled 20160712
   @dd.receiver(dd.pre_ui_build)
   def my_pre_ui_build(sender, **kw):
     try:
-        HelpText = rt.modules.gfks.HelpText
+        HelpText = rt.models.gfks.HelpText
         for ht in HelpText.objects.filter(help_text__isnull=False):
             # dd.logger.info("20120629 %s.help_text", ht)
             try:

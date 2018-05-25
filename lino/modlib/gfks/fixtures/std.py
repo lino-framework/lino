@@ -8,8 +8,8 @@ from lino.api import rt
 
 
 def objects():
-    HelpText = rt.modules.gfks.HelpText
-    ContentType = rt.modules.contenttypes.ContentType
+    HelpText = rt.models.gfks.HelpText
+    ContentType = rt.models.contenttypes.ContentType
     HT = Instantiator(HelpText, "content_type field help_text").build
     yield HT(ContentType.objects.get_for_model(HelpText),
              'field', "The name of the field.")

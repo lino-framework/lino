@@ -164,7 +164,7 @@ class GenericForeignKeyConverter(Converter):
             else:
                 mo = GFK_HACK.match(value)
                 if mo is not None:
-                    actor = settings.SITE.modules.resolve(mo.group(1))
+                    actor = settings.SITE.models.resolve(mo.group(1))
                     pk = mo.group(2)
                     value = actor.get_row_by_pk(None, pk)
                     # ct = ContentType.objects.get_for_model(actor.model)

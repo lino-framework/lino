@@ -42,7 +42,7 @@ class UpdateProblem(dd.Action):
     def run_from_ui(self, ar, fix=None):
         if fix is None:
             fix = self.fix_them
-        Problem = rt.modules.checkdata.Problem
+        Problem = rt.models.checkdata.Problem
         # print(20150327, ar.selected_rows)
         for obj in ar.selected_rows:
             assert isinstance(obj, Problem)
@@ -88,7 +88,7 @@ class UpdateProblemsByController(dd.Action):
     def run_from_ui(self, ar, fix=None):
         if fix is None:
             fix = self.fix_them
-        Problem = rt.modules.checkdata.Problem
+        Problem = rt.models.checkdata.Problem
         gfk = Problem.owner
         checkers = get_checkable_models()[self.model]
         for obj in ar.selected_rows:
@@ -311,14 +311,14 @@ def get_checkable_models(*args):
 
 def check_data(args=[], fix=True):
     """Called by :manage:`checkdata`. See there."""
-    Problem = rt.modules.checkdata.Problem
+    Problem = rt.models.checkdata.Problem
     mc = get_checkable_models(*args)
     if len(mc) == 0 and len(args) > 0:
         raise Exception("No checker matches {0}".format(args))
     final_sums = [0, 0, 0]
     with translation.override('en'):
         for m, checkers in mc.items():
-            ct = rt.modules.contenttypes.ContentType.objects.get_for_model(m)
+            ct = rt.models.contenttypes.ContentType.objects.get_for_model(m)
             Problem.objects.filter(owner_type=ct).delete()
             name = str(m._meta.verbose_name_plural)
             qs = m.objects.all()

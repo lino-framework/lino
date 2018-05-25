@@ -458,7 +458,7 @@ class ExtRenderer(JsRenderer):
         """
         if settings.SITE.user_model is not None:
 
-            # users = settings.SITE.actors.users
+            # users = settings.SITE.models.users
             
             # if request.user.profile.has_required_roles([SiteUser]):
             if request.user.authenticated:
@@ -496,7 +496,7 @@ class ExtRenderer(JsRenderer):
                     authorities = [
                         (a.user.id, usertext(a.user)) for a in qs]
 
-                a = rt.actors.users.MySettings.default_action
+                a = rt.models.users.MySettings.default_action
                 handler = self.action_call(None, a, dict(record_id=user.pk))
                 handler = "function(){%s}" % handler
                 mysettings = dict(text=_("My settings"),

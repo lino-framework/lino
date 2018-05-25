@@ -1,14 +1,17 @@
-# Copyright 2014-2018 Luc Saffre
+# Copyright 2014-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 from django.conf import settings
 
 from lino.core.utils import models_by_base
 
-models = settings.SITE.modules
-actors = modules = settings.SITE.modules  # deprecated alias
+models = settings.SITE.models
 
-# actors = settings.SITE.actors
+from lino.core.exceptions import ChangedAPI
+actors = modules = ChangedAPI(
+    "Replace rt.modules and rt.actors by rt.models")
+
+# actors = settings.SITE.models
 
 login = settings.SITE.login
 startup = settings.SITE.startup

@@ -108,7 +108,7 @@ def is_pointer_to_contenttype(f):
         return False
     if not isinstance(f, models.ForeignKey):
         return False
-    return f.remote_field.model is settings.SITE.modules.contenttypes.ContentType
+    return f.remote_field.model is settings.SITE.models.contenttypes.ContentType
 
 
 def write_create_function(model, stream):
@@ -484,7 +484,7 @@ if __name__ == '__main__':
             d = value
             return 'time(%d,%d,%d)' % (d.hour, d.minute, d.second)
         if is_pointer_to_contenttype(field):
-            ContentType = settings.SITE.modules.contenttypes.ContentType
+            ContentType = settings.SITE.models.contenttypes.ContentType
             ct = ContentType.objects.get(pk=value)
             return full_model_name(ct.model_class(), '_')
             #~ return "'"+full_model_name(ct.model_class())+"'"

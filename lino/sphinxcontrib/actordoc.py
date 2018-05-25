@@ -283,11 +283,11 @@ def resolve_name(name):
         return 1, settings.SITE.plugins.get(name)
         # return 1, dd.resolve_app(name)
     if len(l) == 3:
-        model = settings.SITE.modules.resolve(l[0] + '.' + l[1])
+        model = settings.SITE.models.resolve(l[0] + '.' + l[1])
         if model is None:
             raise Warning("Unkown name %s" % name)
         return 3, model.get_data_elem(l[2])
-    return len(l), settings.SITE.modules.resolve(name)
+    return len(l), settings.SITE.models.resolve(name)
 
 
 def form_lines():
@@ -439,7 +439,7 @@ class ActorsOverviewDirective(Lino2rstDirective):
             actor_names = ' '.join(self.content).split()
             items = []
             for an in actor_names:
-                cls = settings.SITE.modules.resolve(an)
+                cls = settings.SITE.models.resolve(an)
                 if not isinstance(cls, type):
                     raise Exception("%s is not an actor." % self.content[0])
                 desc = "**{0}** (:class:`{1} <{2}>`)".format(

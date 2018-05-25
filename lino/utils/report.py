@@ -166,7 +166,7 @@ class EmptyTable(Frame):
             return de
         a = name.split('.')
         if len(a) == 2:
-            return getattr(getattr(settings.SITE.modules, a[0]), a[1])
+            return getattr(getattr(settings.SITE.models, a[0]), a[1])
 
 
 # class ReportRequest(ActionRequest):

@@ -356,7 +356,7 @@ def resolve_model(model_spec, app_label=None, strict=False):
     :xfile:`models.py` module.
 
     In general we recommend to use ``from lino.api import rt`` and
-    ``rt.modules.contacts.Person`` over
+    ``rt.models.contacts.Person`` over
     ``resolve_model('contacts.Person')``. Note however that this works
     only in a local scope, not at global module level.
 

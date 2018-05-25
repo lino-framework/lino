@@ -13,4 +13,4 @@ if AFTER17:
 from django.conf import settings
 from lino.api import ad, dd, rt
 rt.startup()
-globals().update(rt.modules)
+globals().update(rt.models)

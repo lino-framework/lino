@@ -96,7 +96,7 @@ class LinoClient(QMainWindow):
         self.setToolTip('This is a <b>QWidget</b> widget')
         self.menubar = self.menuBar()
 
-        user_type = rt.modules.users.UserTypes.get_by_value('900')
+        user_type = rt.models.users.UserTypes.get_by_value('900')
         menu = settings.SITE.get_site_menu(
             settings.SITE.kernel, user_type)
         self.load_menu(menu, self.menubar)

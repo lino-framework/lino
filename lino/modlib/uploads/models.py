@@ -268,7 +268,7 @@ class AreaUploads(Uploads):
         if obj is None:
             return
         UploadType = rt.models.uploads.UploadType
-        # Upload = rt.modules.uploads.Upload
+        # Upload = rt.models.uploads.Upload
         elems = []
         types = []
         perm = ar.get_user().user_type.has_required_roles(self.required_roles)
