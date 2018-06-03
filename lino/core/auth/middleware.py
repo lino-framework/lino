@@ -172,7 +172,7 @@ def request2data(request, user_language=None):
 class NoUserMiddleware(object):
     def process_request(self, request):
         if settings.USE_TZ:
-            activate(settings.TIME_ZONE)
+            activate(settings.SITE.models.about.TimeZones.default.tzinfo)
         request.subst_user = None
         request.user = AnonymousUser()
         request2data(request)
@@ -185,7 +185,10 @@ class WithUserMiddleware(object):
         user_language = user.language  # or settings.SITE.get_default_language()
 
         if settings.USE_TZ:
-            activate(user.timezone or settings.TIME_ZONE)
+            if user.time_zone:
+                activate(user.time_zone.tzinfo)
+            else:
+                activate(settings.SITE.models.about.TimeZones.default.tzinfo)
 
         rqdata = request2data(request, user_language)
         if rqdata is None:

@@ -100,7 +100,7 @@ class Checker(dd.Choice):
         any existing objects.
 
         """
-        Problem = rt.modules.checkdata.Problem
+        Problem = rt.models.checkdata.Problem
         if delete:
             gfk = Problem.owner
             qs = Problem.objects.filter(**gfk2lookup(gfk, obj, checker=self))

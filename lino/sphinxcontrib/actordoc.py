@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2017 Luc Saffre
+# Copyright 2013-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
@@ -55,6 +55,7 @@ multilingual userdocs.
 """
 
 from __future__ import unicode_literals, print_function
+from builtins import str
 
 from .base import menuselection_text
 
@@ -130,7 +131,7 @@ def typeref(cls):
 def old_fieldtype(f):
     if isinstance(f, models.ForeignKey):
         #~ return f.__class__.__name__ + " to " + refto(f.rel.model)
-        return f.__class__.__name__ + " to " + model_ref(f.rel.model)
+        return f.__class__.__name__ + " to " + model_ref(f.remote_field.model)
     return f.__class__.__name__
 
 
@@ -138,7 +139,7 @@ def fieldtype(f):
     s = typeref(f.__class__)
     if isinstance(f, models.ForeignKey):
         s = _("%(classref)s to %(model)s") % dict(
-            classref=s, model=model_ref(f.rel.model))
+            classref=s, model=model_ref(f.remote_field.model))
         #~ print(20130908, s)
     if isinstance(f, choicelists.ChoiceListField):
         s = _("%(classref)s to %(model)s") % dict(
@@ -150,10 +151,10 @@ def fields_ul(fields):
     helpless = []
 
     def field2li(fld):
-        s = "**%s**" % unicode(f.verbose_name).strip()
+        s = "**%s**" % str(f.verbose_name).strip()
         s += " (``%s``, %s)" % (f.name, fieldtype(f))
         if f.help_text:
-            s += " -- " + unicode(f.help_text)
+            s += " -- " + str(f.help_text)
             return s
         helpless.append(s)
         return None
@@ -245,13 +246,13 @@ def actions_ul(action_list):
     items = []
     for ba in action_list:
         label = ba.action.label
-        desc = "**%s** (" % unicode(label).strip()
+        desc = "**%s** (" % str(label).strip()
         if ba.action.action_name:
             desc += "``%s``" % ba.action.action_name
 
         desc += ", %s)" % typeref(ba.action.__class__)
         if ba.action.help_text:
-            desc += " -- " + unicode(ba.action.help_text)
+            desc += " -- " + str(ba.action.help_text)
         items.append(desc)
     return rstgen.ul(items)
 
@@ -262,7 +263,7 @@ def actors_overview_ul(model_reports):
     items = []
     for tb in model_reports:
         desc = actor_ref(tb)
-        #~ label = unicode(tb.title or tb.label)
+        #~ label = str(tb.title or tb.label)
         #~ desc += " (%s)" % str(tb)
         desc += " (%s)" % typeref(tb)
         mi = find_menu_item(tb.default_action)
@@ -270,7 +271,7 @@ def actors_overview_ul(model_reports):
             desc += _(" (Menu %s)") % menuselection(mi)
             #~ print(unicode(mi.label).strip())
         if tb.help_text:
-            desc += " -- " + unicode(tb.help_text).strip()
+            desc += " -- " + str(tb.help_text).strip()
 
         items.append(desc)
     return rstgen.ul(items)
@@ -282,11 +283,11 @@ def resolve_name(name):
         return 1, settings.SITE.plugins.get(name)
         # return 1, dd.resolve_app(name)
     if len(l) == 3:
-        model = settings.SITE.modules.resolve(l[0] + '.' + l[1])
+        model = settings.SITE.models.resolve(l[0] + '.' + l[1])
         if model is None:
             raise Warning("Unkown name %s" % name)
         return 3, model.get_data_elem(l[2])
-    return len(l), settings.SITE.modules.resolve(name)
+    return len(l), settings.SITE.models.resolve(name)
 
 
 def form_lines():
@@ -329,21 +330,21 @@ class ddrefRole(XRefRole):
         lng = CurrentLanguage.get_current_value(env)
         with translation.override(lng):
             if isinstance(x, models.Field):
-                text = utils.unescape(unicode(x.verbose_name))
+                text = utils.unescape(str(x.verbose_name))
                 target = model_name(x.model) + '.' + x.name
                 # print(target)
             elif isinstance(x, Plugin):
-                text = utils.unescape(unicode(x.verbose_name))
+                text = utils.unescape(str(x.verbose_name))
                 target = settings.SITE.userdocs_prefix + target
 
             elif isinstance(x, type) and issubclass(x, models.Model):
-                text = utils.unescape(unicode(x._meta.verbose_name))
+                text = utils.unescape(str(x._meta.verbose_name))
                 target = model_name(x)
             elif isinstance(x, type) and issubclass(x, actors.Actor):
-                text = utils.unescape(unicode(x.title or x.label))
+                text = utils.unescape(str(x.title or x.label))
                 target = actor_name(x)
             elif isinstance(x, actions.Action):
-                text = utils.unescape(unicode(x.label))
+                text = utils.unescape(str(x.label))
                 target = actor_name(x)
             else:
                 raise Exception("Don't know how to handle %r" % x)
@@ -438,7 +439,7 @@ class ActorsOverviewDirective(Lino2rstDirective):
             actor_names = ' '.join(self.content).split()
             items = []
             for an in actor_names:
-                cls = settings.SITE.modules.resolve(an)
+                cls = settings.SITE.models.resolve(an)
                 if not isinstance(cls, type):
                     raise Exception("%s is not an actor." % self.content[0])
                 desc = "**{0}** (:class:`{1} <{2}>`)".format(
@@ -449,7 +450,7 @@ class ActorsOverviewDirective(Lino2rstDirective):
                 mi = find_menu_item(cls.default_action)
                 if mi is not None:
                     desc += _(" (Menu %s)") % menuselection(mi)
-                    #~ print(unicode(mi.label).strip())
+                    #~ print(str(mi.label).strip())
                 if cls.help_text:
                     desc += "  : " + force_text(cls.help_text).strip()
 
@@ -499,7 +500,7 @@ class ActorDirective(Lino2rstDirective):
                 title = force_text(fld.verbose_name).strip()
                 
                 s += "\n.. index::\n   single: "
-                s += unicode(_('%(field)s (field in %(model)s)') % dict(
+                s += str(_('%(field)s (field in %(model)s)') % dict(
                     field=title, model=model_ref(fld.model)))
                 s += '\n\n'
                 s += rstgen.header(level, _("%s (field)") % title)
@@ -510,9 +511,9 @@ class ActorDirective(Lino2rstDirective):
 
             if isinstance(cls, Plugin):
                 s = ''
-                title = unicode(cls.verbose_name)
+                title = str(cls.verbose_name)
                 s += "\n.. index::\n   single: "
-                s += unicode(_('%s (app)') % title)
+                s += str(_('%s (app)') % title)
                 s += '\n\n.. _' + name + ':\n'
                 s += '\n'
                 s += rstgen.header(level, _("%s (app)") % title)
@@ -528,7 +529,7 @@ class ActorDirective(Lino2rstDirective):
                 name = model_name(model).lower()
                 title = force_text(model._meta.verbose_name)
                 s += "\n.. index::\n   single: "
-                s += unicode(_('%(model)s (model in %(app)s)') % dict(
+                s += str(_('%(model)s (model in %(app)s)') % dict(
                     model=title, app=model._meta.app_label))
 
                 s += '\n\n'

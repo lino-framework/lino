@@ -1,0 +1,26 @@
+{
+    "name": "openui5-ckeditor",
+    "description": "CKEditor wrapped in a UI5 control",
+    "version": "1.0.0",
+    "homepage": "http://jasper07.github.io/openui5-ckeditor/",
+    "author": "John Patterson <john.patterson@secondphase.com.au>",
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:jasper07/openui5-ckeditor.git"
+    },
+    "engines": {
+        "node": "0.8.x"
+    },
+    "dependencies": {},
+    "devDependencies": {
+        "grunt": "~0.4.4",
+        "phantomjs": "~1.9.1-0",
+        "grunt-contrib-concat": "~0.3.0",
+        "grunt-contrib-jshint": "~0.6.2",
+        "grunt-contrib-uglify": "~0.2.2",
+        "grunt-contrib-copy": "~0.5.0",
+        "grunt-contrib-connect": "~0.6.0",
+        "grunt-contrib-clean": "~0.5.0",
+        "jshint": "~2.5.0"
+    }
+}

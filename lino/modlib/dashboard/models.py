@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2016 Luc Saffre
+# Copyright 2011-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """Database models for this plugin.
 
@@ -20,7 +20,7 @@ from lino.modlib.users.mixins import UserAuthored
 
 
 class UpdateWidgets(dd.Action):
-    """Create or update the widgets for this user.
+    """Create or update the dashboard widgets for this user.
 
     This is installed as :attr:`update_widgets` on :class:`Widget`.
 

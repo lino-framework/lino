@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2017 Luc Saffre
+# Copyright 2009-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """This defines the :class:`Action` class and the :func:`action`
@@ -232,6 +232,11 @@ class Action(Parametrizable, Permittable):
         return actor.required_roles
 
     def is_callable_from(self, caller):
+        """
+        Return `True` if this action makes sense as a button from within
+        the specified `caller` (an action instance which should have
+        :attr:`opens_a_window`).
+        """
         return isinstance(caller, (ShowTable, ShowDetail))
         #~ if self.select_rows:
             #~ return isinstance(caller,(ShowTable,ShowDetail))
@@ -431,15 +436,15 @@ class TableAction(Action):
         return ar.get_title()
 
 
-class RedirectAction(Action):
+# class RedirectAction(Action):
 
-    def get_target_url(self, elem):
-        raise NotImplementedError
+#     def get_target_url(self, elem):
+#         raise NotImplementedError
 
 
 class ShowTable(TableAction):
-    """Open a window with a grid editor on this table as main item.
-
+    """
+    Open a window with a grid editor on this table as main widget.
     """
     use_param_panel = True
     show_in_workflow = False
@@ -499,6 +504,9 @@ class ShowDetail(Action):
 
 
 class ShowEmptyTable(ShowDetail):
+    """
+    The default action for :class:`lino.utils.report.EmptyTable`.
+    """
     use_param_panel = True
     action_name = 'show'
     default_format = 'html'
@@ -589,10 +597,10 @@ class ShowInsert(TableAction):
         return kw
 
 
-class UpdateRowAction(Action):
-    show_in_workflow = False
-    readonly = False
-    # required_roles = set([SiteUser])
+# class UpdateRowAction(Action):
+#     show_in_workflow = False
+#     readonly = False
+#     # required_roles = set([SiteUser])
 
 
 class SaveRow(Action):
@@ -684,7 +692,8 @@ class SubmitDetail(SaveRow):
                 ar.goto_instance(elem)
 
 class CreateRow(Action):
-    """Called when user edited a cell of a phantom record in a grid.
+    """
+    Called when user edited a cell of a phantom record in a grid.
     """
     sort_index = 10
     auto_save = False
@@ -726,11 +735,11 @@ class CreateRow(Action):
 
 
 class SubmitInsert(CreateRow):
-    """Create a new database row using the data specified in the insert
+    """
+    Create a new database row using the data specified in the insert
     window.  Called when the OK button of an Insert Window was
     clicked.  Installed as `submit_insert` on every `dd.Model
     <lino.core.model.Model>`.
-
     """
     label = _("Create")
     action_name = None  # 'post'
@@ -766,9 +775,9 @@ class ExplicitRefresh(Action): # experimental 20170929
     #     ar.set_response(refresh_all=True)
     
 class ShowSlaveTable(Action):
-    """An action which opens a window showing the table specified when
-    instantiating the action.
-
+    """
+    An action which opens a window showing another table (to be
+    specified when instantiating the action).
     """
     TABLE2ACTION_ATTRS = ('help_text', 'icon_name', 'label',
                           'sort_index', 'required_roles', 'button_text')

@@ -1,8 +1,8 @@
-# Copyright 2010-2017 Luc Saffre
+# Copyright 2010-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
-"""A collection of utilities which require Django settings to be
+"""
+A collection of utilities which require Django settings to be
 importable.
-
 """
 
 from __future__ import unicode_literals
@@ -28,6 +28,7 @@ from django.http import QueryDict
 
 from etgen.html import E, tostring
 from lino import AFTER17
+from lino.utils import IncompleteDate
 
 from django.core.validators import (
     validate_email, ValidationError, URLValidator)
@@ -172,7 +173,7 @@ def obj2str(i, force_detailed=False):
 
     """
     if not isinstance(i, models.Model):
-        if isinstance(i, int):
+        if isinstance(i, (int, IncompleteDate)):
             return str(i)  # AutoField is long on mysql, int on sqlite
         if isinstance(i, datetime.date):
             return i.isoformat()
@@ -355,7 +356,7 @@ def resolve_model(model_spec, app_label=None, strict=False):
     :xfile:`models.py` module.
 
     In general we recommend to use ``from lino.api import rt`` and
-    ``rt.modules.contacts.Person`` over
+    ``rt.models.contacts.Person`` over
     ``resolve_model('contacts.Person')``. Note however that this works
     only in a local scope, not at global module level.
 
@@ -785,16 +786,18 @@ def error2str(self, e):
     """Convert the given Exception object into a string, but handling
     ValidationError specially.
     """
+    if isinstance(e, list):
+        return ', '.join([self.error2str(v) for v in e])
     if isinstance(e, exceptions.ValidationError):
         md = getattr(e, 'message_dict', None)
         if md is not None:
             def fieldlabel(name):
                 de = self.get_data_elem(name)
-                return force_text(getattr(de, 'verbose_name', name))
+                return str(getattr(de, 'verbose_name', name))
             return '\n'.join([
                 "%s : %s" % (
                     fieldlabel(k), self.error2str(v))
-                for k, v in list(md.items())])
+                for k, v in md.items()])
         return '\n'.join(e.messages)
     return str(e)
 
@@ -807,12 +810,18 @@ def lazy_format(tpl, *args, **kwargs):
         return tpl.format(*args, **kwargs)
     return lazy(f, six.text_type)()
     
-simplify_parts = set(['models', 'desktop', 'ui', 'choicelists'])
+simplify_parts = set(
+    ['models', 'desktop', 'ui', 'choicelists', 'actions', 'mixins'])
 
 def simplify_name(name):
-    """Simplify the given Lino name. This is used when we want to ignore
-    whether a model or table or action is defined in a
+    """
+    Simplify the given full Python name. 
 
+    Removes any part 'models', 'desktop', 'ui', 'choicelists',
+    'mixins' or 'actions' from the name.
+
+    This is used when we want to ignore where exactly a model or table
+    or action is being defined within its plugin.
     """
     parts = name.split('.')
     for e in simplify_parts:

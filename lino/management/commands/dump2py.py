@@ -108,7 +108,7 @@ def is_pointer_to_contenttype(f):
         return False
     if not isinstance(f, models.ForeignKey):
         return False
-    return f.rel.model is settings.SITE.modules.contenttypes.ContentType
+    return f.remote_field.model is settings.SITE.models.contenttypes.ContentType
 
 
 def write_create_function(model, stream):
@@ -136,9 +136,10 @@ def write_create_function(model, stream):
                 pre+'if %s is not None: %s = Decimal(%s)\n' % (
                     f.attname, f.attname, f.attname))
         elif isinstance(f, ChoiceListField):
-            lstname = 'settings.SITE.modules.{0}.{1}'.format(
+            lstname = 'settings.SITE.models.{0}.{1}'.format(
                 f.choicelist.app_label, f.choicelist.__name__)
             ln = pre+'if {0}: {0} = {1}.get_by_value({0})\n'
+            ln = '#' + ln # no longer needed but maybe useful as a comment
             stream.write(ln.format(f.attname, lstname))
         elif is_pointer_to_contenttype(f):
             stream.write(
@@ -380,8 +381,11 @@ def main(args):
 
         self.stream.write(
             '    loader.finalize()\n')
-        # self.stream.write(
-        #     '    logger.info("Loaded %d objects",loader.count_objects)\n')
+        # 20180416 why was the following message commented out?
+        # reactivated it because otherwise we have no log entry when
+        # the process has finished.
+        self.stream.write(
+            '    logger.info("Loaded %d objects", loader.count_objects)\n')
         self.stream.write(
             "    call_command('resetsequences')\n")
         
@@ -413,9 +417,9 @@ if __name__ == '__main__':
             guilty = dict()
             #~ puts("hope for", [m.__name__ for m in unsorted])
             for model in unsorted:
-                deps = set([f.rel.model
+                deps = set([f.remote_field.model
                             for f in model._meta.fields
-                            if f.rel is not None and f.rel.model is not model and f.rel.model in unsorted])
+                            if f.remote_field is not None and f.remote_field.model is not model and f.remote_field.model in unsorted])
                 #~ deps += [m for m in model._meta.parents.keys()]
                 for m in sorted:
                     if m in deps:
@@ -480,7 +484,7 @@ if __name__ == '__main__':
             d = value
             return 'time(%d,%d,%d)' % (d.hour, d.minute, d.second)
         if is_pointer_to_contenttype(field):
-            ContentType = settings.SITE.modules.contenttypes.ContentType
+            ContentType = settings.SITE.models.contenttypes.ContentType
             ct = ContentType.objects.get(pk=value)
             return full_model_name(ct.model_class(), '_')
             #~ return "'"+full_model_name(ct.model_class())+"'"

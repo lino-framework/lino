@@ -1,11 +1,7 @@
-<Panel>
-<VBox width="auto">
-    <Label text="{{e.label}}"></Label>
+{% extends "/openui5/elems/field/FieldElement.xml" %}
+
+{% block field_content %}
 <core:HTML content="&lt;span&gt;{{bind('record>/data/',e.field.name)}}&lt;/span&gt;" wrapping="true" xmlns="sap.ui.core" displayBlock="true">
 
 </core:HTML>
-    {# <layoutData>
-        <m:FlexItemData growFactor="1" />
-    </layoutData> #}
-</VBox>
-</Panel>
+{% endblock %}

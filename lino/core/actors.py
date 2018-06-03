@@ -703,8 +703,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     @classmethod
     def make_disabled_fields(cls, obj, ar):
         """
-        Return a set of field names that should not be editable
-        for the specified `obj` and `request`.
+        Return a set of field names that should not be editable for the
+        specified object and request.
 
         If defined in the Actor, this must be a class method that accepts
         two arguments `obj` and `ar` (an `ActionRequest`)::
@@ -715,10 +715,10 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
               ...
               return set()
 
-        If not defined in the Table, Lino will look whether the Table's
-        model has a `disabled_fields` method and install a wrapper to this
-        model method.  When defined on the model, is must be an *instance*
-        method::
+        If not defined in the Table, Lino will look whether the
+        Table's model has a `disabled_fields` method and install a
+        wrapper to this model method.  When defined on the model, is
+        must be an *instance* method::
 
           def disabled_fields(self, ar):
               s = super(MyModel, self).disabled_fields(ar)
@@ -726,8 +726,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
               return set()
 
         See also :srcref:`docs/tickets/2`.
-
-
         """
 
         s = set()
@@ -1378,8 +1376,12 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         return list(self.actions.keys())
 
     @classmethod
-    def get_toolbar_actions(self, cf):
-        return [ba for ba in self.get_actions(cf)
+    def get_toolbar_actions(self, parent):
+        """
+        Return a list of actions for which a button should exist in the
+        toolbar of the specified "parent" action.
+        """
+        return [ba for ba in self.get_button_actions(parent)
                 if ba.action.show_in_bbar]
                 # if ba.action.select_rows]
 
@@ -1393,11 +1395,30 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     #     return cca
 
     @classmethod
-    def get_actions(self, callable_from=None):
-        if callable_from is None:
-            return self._actions_list
+    def get_button_actions(self, parent):
+        """
+        Return a sorted list of actions that should be available as
+        buttons in the specified `parent` (a window action).
+
+        This is used (1) :meth:`get_toolbar_actions` and 
+        (2) to reduce the list of disabled actions
+        in `disabled_fields` to those which make sense.
+        `dbtables.make_disabled_fields`
+
+        """
+        if not parent.opens_a_window:
+            # return []
+            raise Exception("20180518 {} is not a windows action".format(
+                parent.__class__))
         return [ba for ba in self._actions_list
-                if ba.action.is_callable_from(callable_from)]
+                if ba.action.is_callable_from(parent)]
+        
+    @classmethod
+    def get_actions(self):
+        """
+        Return a sorted list of all bound actions offered by this actor.
+        """
+        return self._actions_list
 
     @classmethod
     def make_chooser(cls, wrapped):
@@ -1541,7 +1562,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     @classmethod
     def slave_as_html_meth(self):
         """Creates and returns the method to be used when
-        :attr:`slave_grid_format` is `html`.
+        :attr:`display_mode` is `html`.
 
         """
         def meth(master, ar):
@@ -1560,10 +1581,10 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     summary_sep = E.br
 
     @classmethod
-    def get_slave_summary(self, obj, ar):
+    def get_table_summary(self, obj, ar):
         """Return the HTML paragraph to be displayed by
         :class:`lino.core.elems.TableSummaryPanel`.  That is (1) in a
-        detail form when :attr:`slave_grid_format` is `summary` or (2)
+        detail form when :attr:`display_mode` is `summary` or (2)
         in a grid.
 
         Lino internally creates a virtualfield ``slave_summary`` on

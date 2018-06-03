@@ -43,14 +43,14 @@ class Templates(View):
             if elem is None:
                 raise http.Http404("%s %s does not exist." % (rpt, pk))
 
-            TextFieldTemplate = rt.modules.tinymce.TextFieldTemplate
+            TextFieldTemplate = rt.models.tinymce.TextFieldTemplate
             if tplname:
                 tft = TextFieldTemplate.objects.get(pk=int(tplname))
                 if settings.SITE.trusted_templates:
                     #~ return http.HttpResponse(tft.text)
                     template = JinjaTemplate(tft.text)
                     context = dict(request=request,
-                                   instance=elem, **rt.modules)
+                                   instance=elem, **rt.models)
                     return http.HttpResponse(template.render(**context))
                 else:
                     return http.HttpResponse(tft.text)

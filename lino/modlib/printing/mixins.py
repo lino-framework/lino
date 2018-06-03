@@ -90,7 +90,7 @@ class Printable(Model):
 
     # def get_excerpt_type(self):
     #     "Return the primary ExcerptType for the given model."
-    #     ContentType = settings.SITE.modules.contenttypes.ContentType
+    #     ContentType = settings.SITE.models.contenttypes.ContentType
     #     ct = ContentType.objects.get_for_model(
     #         self.__class__)
     #     return self.__class__.objects.get(primary=True, content_type=ct)

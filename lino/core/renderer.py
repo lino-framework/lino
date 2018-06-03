@@ -161,17 +161,18 @@ class HtmlRenderer(Renderer):
         return html
 
     def table2story(self, ar, nosummary=False, stripped=True, **kw):
-        """Returns a HTML element representing the given action request as a
-        table. See :meth:`ar.show <lino.core.request.BaseRequest.show>`.
+        """
+        Returns a HTML element representing the given action request as a
+        table. See :meth:`ar.show
+        <lino.core.request.BaseRequest.show>`.
 
         This silently ignores the parameter `stripped` since for HTML
         this has no meaning.
-
         """
         # if ar.actor.master is not None and not nosummary:
         if not nosummary:
-            if ar.actor.slave_grid_format == 'summary':
-                return ar.actor.get_slave_summary(ar.master_instance, ar)
+            if ar.actor.display_mode == 'summary':
+                return ar.actor.get_table_summary(ar.master_instance, ar)
         return ar.table2xhtml(**kw)
 
     def request_handler(self, ar, *args, **kw):
@@ -542,9 +543,9 @@ class TextRenderer(HtmlRenderer):
         """
 
         if ar.actor.master is not None and not nosummary:
-            if ar.actor.slave_grid_format == 'summary':
+            if ar.actor.display_mode == 'summary':
                 s = to_rst(
-                    ar.actor.get_slave_summary(ar.master_instance, ar),
+                    ar.actor.get_table_summary(ar.master_instance, ar),
                     stripped=stripped)
                 if stripped:
                     s = s.strip()

@@ -1,4 +1,5 @@
 <IconTabBar
+		stretchContentHeight="true"
 		{# id="idIconTabBarInlineMode"
 		headerMode="Inline"
 		upperCase="true"
@@ -6,12 +7,15 @@
 		class="sapUiResponsiveContentPadding">
 		<items>
 			{% for e in main.elements %}
-            <IconTabFilter
-				text="{{e.label}}"
-				{#count="3"#}
-                >
-                {% include e.oui5_field_template %}
-			</IconTabFilter>
+		        {% if e.get_view_permission(ar.get_user().user_type) %}
+					<IconTabFilter
+						text="{{e.label}}"
+						{#count="3"#}
+						>
+						{% include e.oui5_field_template %}
+
+					</IconTabFilter>
+		        {% endif %}
 			{% endfor %}
         </items>
 </IconTabBar>

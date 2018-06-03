@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2017 Luc Saffre
+# Copyright 2009-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 # Note that this module may not have a docstring because any
@@ -19,7 +19,7 @@ PY3 = sys.version_info[0] == 3
 
 install_requires = [
     'Sphinx',
-    'atelier', 'unipath', 'python_dateutil',
+    'atelier', 'unipath', 'python_dateutil', 'dateparser',
     'etgen',
     'Babel', 'lxml',
     'beautifulsoup4',
@@ -46,14 +46,14 @@ else:
 
 SETUP_INFO = dict(
     name='lino',
-    version='17.10.1',
+    version='18.3.0',
     install_requires=install_requires,
     description="A framework for writing desktop-like web applications "
                 "using Django and ExtJS",
     license='BSD License',
-    obsoletes=['djangosite', 'north'],
+    # obsoletes=['djangosite', 'north'],
     author='Luc Saffre',
-    author_email='luc.saffre@gmail.com',
+    author_email='luc@lino-framework.org',
     url="http://www.lino-framework.org",
     # ~ test_suite = 'lino.test_apps',
     test_suite='tests')
@@ -147,6 +147,7 @@ lino.modlib.languages
 lino.modlib.languages.fixtures
 lino.management
 lino.management.commands
+lino.modlib.odata
 lino.modlib.office
 lino.modlib.checkdata
 lino.modlib.checkdata.fixtures

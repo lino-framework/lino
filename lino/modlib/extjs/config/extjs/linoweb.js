@@ -1374,7 +1374,7 @@ Lino.on_store_exception = function (store,type,action,options,response,arg) {
     var msg = "{{_('There was a problem with the database connection.')}}";
     if (response.responseText)
         msg += '<br/>' + response.responseText
-    msg += '<br/>' + "{{_('If the error persists, try reloading the browser page.')}}"
+    msg += '<br/>' + "{{_('If the error persists, try reloading the browser page ([SHIFT+CTRL+R] in Firefox).')}}"
     Ext.Msg.alert("{{_('Database problem')}}", msg );
     
 };
@@ -1628,8 +1628,8 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
         }
     }
     {%- if settings.SITE.is_installed('davlink') -%}
-    if (result.open_davlink_url) {
-       Lino.davlink_open(result.open_davlink_url);
+    if (result.open_webdav_url) {
+       Lino.davlink_open(result.open_webdav_url);
     }
     {%- endif -%}
     if (result.open_url) {

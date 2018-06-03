@@ -247,6 +247,7 @@ class LayoutElement(VisibleComponent):
     refers_to_ww = False
 
     input_classes = None
+    oui5_field_template = "openui5/elems/field/FieldElement.xml"
 
     def __init__(self, layout_handle, name, **kw):
         #logger.debug("LayoutElement.__init__(%r,%r)", layout_handle.layout,name)
@@ -464,7 +465,7 @@ class FieldElement(LayoutElement):
     filter_type = None  # 'auto'
     active_change_event = 'change'
     #declaration_order = 3
-    # ext_suffix = "_field"
+    # ext_suffix = "_field"wrapper
     zero = 0
     hide_sum = False
 
@@ -706,6 +707,7 @@ class TextFieldElement(FieldElement):
     separate_window = False
     active_child = False
     format = 'plain'
+    oui5_field_template = "/openui5/elems/field/TextFieldElement.xml"
 
     def __init__(self, layout_handle, field, **kw):
         self.format = getattr(field, 'textfield_format', None) \
@@ -865,6 +867,8 @@ class ComboFieldElement(FieldElement):
     xtype = None
     filter_type = 'string'
     gridfilters_settings = dict(type='string')
+
+    oui5_field_template = "openui5/elems/field/ComboElement.xml"
 
     def get_field_options(self, **kw):
         kw = FieldElement.get_field_options(self, **kw)
@@ -1585,13 +1589,16 @@ class HtmlBoxElement(DisplayElement):
             yield panel
 
 class SlaveSummaryPanel(HtmlBoxElement):
-    """The panel used to display a slave table whose `slave_grid_format`
+    """The panel used to display a slave table whose `display_mode`
 is 'summary'.
 
     """
+
+    oui5_field_template = "openui5/elems/field/SlaveSummaryElement.xml"
+
     def __init__(self, lh, actor, **kw):
         box = fields.HtmlBox(actor.label, help_text=actor.help_text)
-        fld = fields.VirtualField(box, actor.get_slave_summary)
+        fld = fields.VirtualField(box, actor.get_table_summary)
         # fld.name = actor.__module__ + '_' + actor.__name__
         fld.name = actor.actor_id.replace('.', '_')
         fld.lino_resolve_type()
@@ -1633,6 +1640,7 @@ class Wrapper(VisibleComponent):
     """
     """
     # label = None
+    oui5_field_template = "openui5/elems/field/WrappedElement.xml"
 
     def __init__(self, e, **kw):
         kw.update(layout='form')
@@ -2059,6 +2067,7 @@ class GridElement(Container):
     xtype = None
     preferred_height = 5
     refers_to_ww = True
+    oui5_field_template = "openui5/elems/field/GridElement.xml"
 
     def __init__(self, layout_handle, name, rpt, *columns, **kw):
         """:param layout_handle: the handle of the FormLayout owning this grid.
@@ -2469,19 +2478,19 @@ def create_layout_element(lh, name, **kw):
             # displays a "summary" of that table. The panel will have
             # a tool button to "open that table in its own
             # window". The format of that summary is defined by the
-            # `slave_grid_format` of the table. `slave_grid_format` is
+            # `display_mode` of the table. `display_mode` is
             # a string with one of the following values:
 
             kw.update(tools=[
                 js_code("Lino.show_in_own_window_button(Lino.%s)" %
                       de.default_action.full_name())])
-            if de.slave_grid_format == 'grid':
+            if de.display_mode == 'grid':
                 kw.update(hide_top_toolbar=True)
                 if de.preview_limit is not None:
                     kw.update(preview_limit=de.preview_limit)
                 return GridElement(lh, name, de, **kw)
 
-            elif de.slave_grid_format == 'html':
+            elif de.display_mode == 'html':
                 if de.editable:
                     a = de.insert_action
                     if a is not None:
@@ -2498,14 +2507,14 @@ def create_layout_element(lh, name, **kw):
                 e.add_requirements(*de.required_roles)
                 return e
 
-            elif de.slave_grid_format == 'summary':
+            elif de.display_mode == 'summary':
                 e = SlaveSummaryPanel(lh, de, **kw)
                 e.add_requirements(*de.required_roles)
                 lh.add_store_field(e.field)
                 return e
             else:
                 raise Exception(
-                    "Invalid slave_grid_format %r" % de.slave_grid_format)
+                    "Invalid display_mode %r" % de.display_mode)
 
         else:
             e = SlaveSummaryPanel(lh, de, **kw)

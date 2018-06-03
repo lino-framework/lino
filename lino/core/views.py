@@ -52,7 +52,7 @@ def requested_actor(app_label, actor):
 
     """
     x = settings.SITE.models.get(app_label)
-    # x = getattr(settings.SITE.modules, app_label, None)
+    # x = getattr(settings.SITE.models, app_label, None)
     if x is None:
         raise http.Http404("There's no app_label %r here" % app_label)
         # raise Exception("There's no app_label %r here" % app_label)

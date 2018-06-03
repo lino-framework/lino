@@ -19,7 +19,7 @@ class UserDetail(dd.DetailLayout):
     box1 = """
     username user_type:20 partner
     first_name last_name initials
-    email language timezone
+    email language time_zone
     id created modified
     """
 
@@ -34,7 +34,7 @@ class UserDetail(dd.DetailLayout):
     partner
     first_name last_name 
     initials
-    email language timezone
+    email language time_zone
     id created modified
     remarks
     AuthoritiesGiven
@@ -106,14 +106,14 @@ class UsersOverview(Users):
 
 class MySettings(Users):
     # use_as_default_table = False
-    hide_top_toolbar = True
+    # hide_top_toolbar = True
     required_roles = dd.login_required()
     default_list_action_name = 'detail'
     # detail_layout = 'users.UserDetail'
 
     @classmethod
     def get_default_action(cls):
-        return actions.ShowDetail(cls.detail_layout)
+        return actions.ShowDetail(cls.detail_layout, hide_navigator=True)
 
 
 class Authorities(dd.Table):

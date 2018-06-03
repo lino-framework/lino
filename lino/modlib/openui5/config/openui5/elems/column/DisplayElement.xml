@@ -2,6 +2,6 @@
 
 {% block column_template %}
 
-<core:HTML content="&lt;span&gt;{{bind(c.field.name)}}&lt;/span&gt;" wrapping="true" xmlns="sap.ui.core"/>
+<core:HTML content="&lt;span&gt;{{bind(c.fields_index)}}&lt;/span&gt;" wrapping="false" xmlns="sap.ui.core"/>
 
 {% endblock %}

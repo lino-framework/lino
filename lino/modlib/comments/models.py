@@ -5,7 +5,6 @@
 from builtins import object
 
 from django.db import models
-from django.utils import timezone
 
 from lino.api import dd, rt, _
     

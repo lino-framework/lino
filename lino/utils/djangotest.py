@@ -157,7 +157,7 @@ class DjangoManageTestCase(DjangoTestCase, CommonTestCase):
             cb = result.xcallback
             self.assertEqual(cb['title'], "Confirmation")
             self.assertEqual(cb['buttons'], {'yes': 'Yes', 'no': 'No'})
-            url = '/callbacks/%d/yes' % cb['id']
+            url = '/callbacks/{}/yes'.format(cb['id'])
             result = self.client_json_dict(
                 self.client.get, username, url, **extra)
             self.assertEqual(result.success, True)

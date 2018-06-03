@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2018 Luc Saffre
+# Copyright 2011-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 from builtins import str
@@ -20,11 +20,13 @@ from lino.mixins import CreatedModified, Contactable
 from lino.mixins import DateRange
 
 from .choicelists import UserTypes
-from .mixins import UserAuthored, TimezoneHolder
+from .mixins import UserAuthored  #, TimezoneHolder
 from .actions import ChangePassword, SignOut
 # from .actions import SendWelcomeMail
 # from .actions import SignIn
 from lino.core.auth.utils import AnonymousUser
+from lino.modlib.about.choicelists import TimeZones
+from lino.modlib.printing.mixins import Printable
 
 
 class UserManager(BaseUserManager):
@@ -55,8 +57,8 @@ class UserManager(BaseUserManager):
 
 
 @python_2_unicode_compatible
-class User(AbstractBaseUser, Contactable, CreatedModified,
-           TimezoneHolder, DateRange):
+class User(AbstractBaseUser, Contactable, CreatedModified, DateRange,
+           Printable):
     class Meta(object):
         app_label = 'users'
         verbose_name = _('User')
@@ -71,6 +73,7 @@ class User(AbstractBaseUser, Contactable, CreatedModified,
     preferred_foreignkey_width = 15
     hidden_columns = 'password remarks'
     authenticated = True
+    quick_search_fields = 'username user_type first_name last_name remarks'
 
     # seems that Django doesn't like nullable username
     # username = dd.NullCharField(_('Username'), max_length=30, unique=True)
@@ -81,6 +84,11 @@ class User(AbstractBaseUser, Contactable, CreatedModified,
     first_name = models.CharField(_('First name'), max_length=30, blank=True)
     last_name = models.CharField(_('Last name'), max_length=30, blank=True)
     remarks = models.TextField(_("Remarks"), blank=True)  # ,null=True)
+
+    if settings.USE_TZ:
+        time_zone = TimeZones.field(default='default')
+    else:
+        time_zone = dd.DummyField()
 
     change_password = ChangePassword()
     # sign_in = SignIn()

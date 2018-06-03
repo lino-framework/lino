@@ -2,6 +2,7 @@
    xmlns="sap.m"
    xmlns:core="sap.ui.core"
    xmlns:form="sap.ui.layout.form"
+   xmlns:html="http://www.w3.org/1999/xhtml"
 >
    <Dialog
       id="dialog" showHeader="false"
@@ -12,6 +13,8 @@
 			editable="true"
 			title="Result in a Form"
            >
+           <html:form action="/auth" id="authForm" method="post">
+
             <Label text="User name" labelFor="UserName" />
 			<Input
 				id="UserName"
@@ -19,7 +22,7 @@
 				placeholder="Enter UserName ..."
                 name="username"
                 value="{form_data>/username}"
-                submit="onOkDialog"
+                submit="onOkSignInDialog"
             />
 
             <Label text="Password" labelFor="passwordInput"/>
@@ -29,9 +32,9 @@
 				placeholder="Enter password ..."
                 name="password"
                 value="{form_data>/password}"
-                submit="onOkDialog"
+                submit="onOkSignInDialog"
             />
-
+           </html:form>
            </form:SimpleForm>
 
        </content>
@@ -43,7 +46,7 @@
       </beginButton>
       <endButton>
          <Button text="OK"
-           press="onOkDialog"
+           press="onOkSignInDialog"
          />
       </endButton>
    </Dialog>

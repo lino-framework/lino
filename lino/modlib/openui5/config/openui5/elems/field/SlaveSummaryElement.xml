@@ -1,0 +1,11 @@
+<Panel width="100%" height="97%">
+<VBox  width="100%" height="100%" >
+    <Label text="{{e.label}}"></Label>
+<core:HTML content="&lt;span&gt;{{bind('record>/data/',e.field.name)}}&lt;/span&gt;" wrapping="true" xmlns="sap.ui.core" displayBlock="true">
+
+</core:HTML>
+</VBox>
+    <layoutData>
+        <m:FlexItemData growFactor="1" />
+    </layoutData>
+</Panel>

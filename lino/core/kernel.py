@@ -357,6 +357,7 @@ class Kernel(object):
             for f in model._meta.private_fields:
                 if isinstance(f, GenericForeignKey):
                     self.GFK_LIST.append(f)
+            self.GFK_LIST.sort(key=lambda f: str(f))
 
         site.load_actors()
 
@@ -572,6 +573,9 @@ class Kernel(object):
                 # site.install_help_text(ba.action, a, ba.action.action_name)
                 # site.install_help_text(ba.action, ba.action.__class__)
                 site.install_help_text(ba.action.__class__)
+                # site.install_help_text(
+                #     ba.action, ba.action.__class__,
+                #     attrname=ba.action.action_name)
             
         self.reserved_names = [getattr(constants, n)
                                for n in constants.URL_PARAMS]
@@ -793,7 +797,7 @@ class Kernel(object):
         # 20140304 Also set a renderer so that callbacks can use it
         # (feature needed by beid.FindByBeIdAction).
 
-        thread_id = int(thread_id)
+        thread_id = thread_id
         cb = self.pending_threads.pop(thread_id, None)
         if cb is None:
             ar = ActorRequest(request, renderer=self.default_renderer)
@@ -854,8 +858,8 @@ class Kernel(object):
     def set_callback(self, ar, cb):
         """
         """
-        h = hash(cb)
-        self.pending_threads[h] = cb
+        k = "{0:x}".format(hash(cb))
+        self.pending_threads[k] = cb
         # logger.info("20160526 Stored %r in %r" % (
         #     h, self.pending_threads))
 
@@ -865,7 +869,7 @@ class Kernel(object):
 
         ar.success(
             cb.message, xcallback=dict(
-                id=h,
+                id=k,
                 title=cb.title,
                 buttons=buttons))
 

@@ -80,11 +80,11 @@ def add_gridfilters(qs, gridfilters):
             elif isinstance(field, models.ForeignKey):
                 qf = field.remote_field.model.quick_search_filter(
                     flt['value'], prefix=field.name + "__")
-                # logger.info("20160610 %s %s", field.rel.model, qf)
+                # logger.info("20160610 %s %s", field.remote_field.model, qf)
                 q = q & qf
                 # rq = models.Q()
-                # search_field = field.rel.model.grid_search_field
-                # for search_field in field.rel.model.quick_search_fields:
+                # search_field = field.remote_field.model.grid_search_field
+                # for search_field in field.remote_field.model.quick_search_fields:
                 # search_field = getattr(field.rel.model,'grid_search_field',None)
                 # if search_field is not None:
                     # rq = rq | models.Q(**{field.name+"__%s__icontains" % search_field : flt['value']})
@@ -645,10 +645,14 @@ class Table(AbstractTable):
         if obj is not None:
             s |= obj.disabled_fields(ar)
             state = cls.get_row_state(obj)
-            for ba in cls.get_actions(ar.bound_action.action):
-                if ba.action.action_name:
-                    if ba.action.show_in_bbar and not cls.get_row_permission(obj, ar, state, ba):
-                        s.add(ba.action.action_name)
+            parent = ar.bound_action.action
+            if not parent.opens_a_window:
+                return s
+            for ba in cls.get_button_actions(parent):
+                a = ba.action
+                if a.action_name and a.show_in_bbar:
+                    if not cls.get_row_permission(obj, ar, state, ba):
+                        s.add(a.action_name)
         return s
 
     @classmethod
@@ -702,12 +706,12 @@ class Table(AbstractTable):
 
     @classmethod
     def get_request_queryset(self, rr, **filter):
-        """Return the iterable of Django database objects for the specified
+        """
+        Return the iterable of Django database objects for the specified
         action request.
 
         The default implementation calls :meth:`get_queryset` and then
         applies request parameters.
-
         """
 
         def apply(qs):

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015-2018 Luc Saffre
+# Copyright 2015-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
@@ -81,7 +81,7 @@ def post_json_dict(username, url, data, **extra):
     if res.status_code != 200:
         raise Exception("{} gave status code {} instead of 200".format(
             url, res.status_code))
-    return AttrDict(json.loads(res.content))
+    return AttrDict(json.loads(res.content.decode()))
 
 
 def check_json_result(response, expected_keys=None, msg=''):
@@ -252,8 +252,9 @@ from lino.core.tables import AbstractTable
 from lino.core.boundaction import BoundAction
 
 
-def show_fields(model, fieldnames=None, columns=False):
-    """Print an overview description of the specified fields of the
+def show_fields(model, fieldnames=None, columns=False, all=None):
+    """
+    Print an overview description of the specified fields of the
     specified model. 
 
     If model is an action or table, print the parameter fields of that
@@ -262,9 +263,14 @@ def show_fields(model, fieldnames=None, columns=False):
     If model is a table and you want the columns instead of the
     parameter fields, then specify `columns=True`.
 
+    By default this shows only fields which have a help text.  If you
+    specify `all=True`, then also fields that have no help text will
+    be shown.
     """
     cells = []
     cols = ["Internal name", "Verbose name", "Help text"]
+    if all is None:
+        all = fieldnames is not None
     if isinstance(model, BoundAction):
         get_field = model.action.parameters.get
         if fieldnames is None:
@@ -292,9 +298,11 @@ def show_fields(model, fieldnames=None, columns=False):
     for n in fieldnames:
         fld = get_field(n)
         if fld is not None and hasattr(fld, 'verbose_name'):
-            cells.append([n,
-                          fld.verbose_name,
-                          unindent(fld.help_text or '')])
+            ht = fld.help_text or ''
+            if ht or all:
+                cells.append([n,
+                              fld.verbose_name,
+                              unindent(ht)])
 
     print(table(cols, cells).strip())
 
@@ -402,4 +410,26 @@ def add_call_logger(owner, name):
         print(msg)
         return func(*args, **kwargs)
     setattr(owner, name, w)
+
+def str2languages(txt):
+    """
+    Return a list of all translations for the given translatable text.
+    """
+    lst = []
+    for lng in settings.SITE.languages:
+        with translation.override(lng.django_code):
+            lst.append(six.text_type(txt))
+    return lst
+    
+def show_choicelist(cls):
+    """
+    Similar to :func:`rt.show`, but the `text` is shown in all
+    languages instead of just the current language.
+    """
+    headers = ["value", "name"] + [lng.name for lng in settings.SITE.languages]
+    rows = []
+    for i in cls.get_list_items():
+        row = [i.value, i.name] + str2languages(i.text)
+        rows.append(row)
+    print(table(headers, rows))
     

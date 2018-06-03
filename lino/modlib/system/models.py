@@ -46,6 +46,20 @@ Please report any anomalies.""",
 
 
 class SiteConfigManager(models.Manager):
+    """
+    Always return the cached instance which holds the one and only
+    database instance.
+
+    This is to avoid the following situation:
+
+    - User 1 opens the :menuselection:`Configure --> System--> System
+      Parameters` dialog
+    - User 2 creates a new Person (which increases `next_partner_id`)
+    - User 1 clicks on `Save`.
+
+    `next_partner_id` may not get overwritten by its old value when
+    User 1 clicks "Save".
+    """ 
 
     def get(self, *args, **kwargs):
         return settings.SITE.site_config
@@ -54,9 +68,10 @@ class SiteConfigManager(models.Manager):
 @dd.python_2_unicode_compatible
 class SiteConfig(dd.Model):
     """
-    This model should have exactly one instance, used to store
-    persistent global site parameters.  Application code sees this
-    instance as ``settings.SITE.site_config``.
+    This model has exactly one instance, used to store persistent
+    global site parameters.  Application code sees this instance as
+    the :attr:`settings.SITE.site_config
+    <lino.core.site.Site.site_config>` property.
 
     .. attribute:: default_build_method
 
@@ -118,9 +133,12 @@ class SiteConfig(dd.Model):
         return force_text(_("Site Parameters"))
 
     def update(self, **kw):
-        """Set some field of the SiteConfig object and store it to the database.
         """
-        for k, v in list(kw.items()):
+        Set some field of the SiteConfig object and store it to the
+        database.
+        """
+        # print("20180502 update({})".format(kw))
+        for k, v in kw.items():
             if not hasattr(self, k):
                 raise Exception("SiteConfig has no attribute %r" % k)
             setattr(self, k, v)
@@ -128,20 +146,22 @@ class SiteConfig(dd.Model):
         self.save()
 
     def save(self, *args, **kw):
-        #~ print "20130321 SiteConfig.save()", dd.obj2str(self,True)
+        # print("20180502 save() {}".format(dd.obj2str(self, True)))
         super(SiteConfig, self).save(*args, **kw)
-        #~ settings.SITE.on_site_config_saved(self)
-        #~ settings.SITE.clear_site_config()
+        settings.SITE.clear_site_config()
 
 
 def my_handler(sender, **kw):
-    # print("20180203 Gonna clear_site_config")
+    # print("20180502 {} my_handler calls clear_site_config()".format(
+    #     settings.SITE))
     settings.SITE.clear_site_config()
     #~ kw.update(sender=sender)
-    dd.database_connected.send(sender)
+    # dd.database_connected.send(sender)
     #~ dd.database_connected.send(sender,**kw)
 
+from django.test.signals import setting_changed
 from lino.utils.djangotest import testcase_setup
+setting_changed.connect(my_handler)
 testcase_setup.connect(my_handler)
 dd.connection_created.connect(my_handler)
 models.signals.post_migrate.connect(my_handler)

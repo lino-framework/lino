@@ -369,7 +369,7 @@ class AbstractTable(actors.Actor):
     Usually such a warning means that there is something wrong.
     """
 
-    slave_grid_format = 'grid'
+    display_mode = 'grid'
     """
     How to display this table when it is a slave in a detail
     window. Must be one of the following values:
@@ -378,7 +378,7 @@ class AbstractTable(actors.Actor):
     - `'summary'` to render a summary in a HtmlBoxPanel.
     - `'html'` to render plain html a HtmlBoxPanel.
 
-    Example: :class:`lino_xl.lib.households.models.SiblingsByPerson`.
+    See :doc:`/dev/table_summaries`.
 
     """
 
@@ -682,7 +682,7 @@ method in order to sort the rows of the queryset.
         msg = kw.get('message')
         if msg:
             print(msg)
-        url = kw.get('open_url') or kw.get('open_davlink_url')
+        url = kw.get('open_url') or kw.get('open_webdav_url')
         if url:
             os.startfile(url)
 
@@ -776,5 +776,6 @@ def setup_ventilated_columns(sender, **kw):
                 try:
                     a.setup_columns()
                 except DatabaseError:
-                    logger.info("Ignoring OperationalError")
+                    logger.debug(
+                        "Ignoring DatabaseError in %s.setup_ventilated_columns", a)
     settings.SITE.resolve_virtual_fields()

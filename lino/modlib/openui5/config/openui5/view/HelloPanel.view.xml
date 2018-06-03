@@ -1,0 +1,30 @@
+<mvc:View
+        controllerName="lino.controller.HelloPanel"
+        xmlns="sap.m"
+        xmlns:mvc="sap.ui.core.mvc"
+        displayBlock="true">
+    <Panel
+            headerText="Hello World Panel"
+            class="sapUiResponsiveMargin"
+            width="auto">
+        <content>
+            <Button
+                    icon="sap-icon://world"
+                    text="Hello With Dialog!"
+                    press="onOpenDialog"
+                    class="sapUiSmallMarginEnd"/>
+
+            <Button
+                    text="Say Hello"
+                    press="onShowHello"
+                    class="sapUiSmallMarginEnd"/>
+            <Input
+                    value="{/recipient/name}"
+                    valueLiveUpdate="true"
+                    width="60%"/>
+            <Text
+                    text="Hello {/recipient/name}"
+                    class="sapUiSmallMargin"/>
+        </content>
+    </Panel>
+</mvc:View>

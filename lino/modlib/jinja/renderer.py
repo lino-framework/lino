@@ -73,7 +73,7 @@ class JinjaRenderer(MailRenderer):
         #~ jinja_env.install_gettext_translations(translation)
 
         def as_table(action_spec):
-            a = settings.SITE.modules.resolve(action_spec)
+            a = settings.SITE.models.resolve(action_spec)
             ar = a.request(
                 user=settings.SITE.user_model.get_anonymous_user())
             return self.as_table(ar)

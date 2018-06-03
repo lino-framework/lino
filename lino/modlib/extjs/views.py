@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2017 Luc Saffre
+# Copyright 2009-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
@@ -27,15 +27,15 @@ Summary from <http://en.wikipedia.org/wiki/Restful>:
 """
 from builtins import str
 
-import logging
-
-logger = logging.getLogger(__name__)
+import json
 
 from django import http
 from django.db import models
 from django.conf import settings
 from django.views.generic import View
-import json
+from django.views.decorators.cache import never_cache
+from django.utils.decorators import method_decorator
+
 from django.utils.translation import ugettext as _
 from django.utils.encoding import force_text
 from lino.core import auth
@@ -113,6 +113,7 @@ def delete_element(ar, elem):
     return HttpResponseDeleted()
 
 
+@method_decorator(never_cache, name='dispatch')
 class AdminIndex(View):
     """
     Similar to PlainIndex
@@ -272,7 +273,7 @@ def choices_for_field(request, holder, field):
         field = field.return_type
 
     if isinstance(field, models.ForeignKey):
-        m = field.rel.model
+        m = field.remote_field.model
         t = m.get_default_table()
         qs = t.request(request=request).data_iterator
 
@@ -533,11 +534,11 @@ class ApiElement(View):
                     on_ready=ui.extjs_renderer.action_call(
                         request, ba, after_show)))
 
-        if isinstance(ba.action, actions.RedirectAction):
-            target = ba.action.get_target_url(elem)
-            if target is None:
-                raise http.Http404("%s failed for %r" % (ba, elem))
-            return http.HttpResponseRedirect(target)
+        # if isinstance(ba.action, actions.RedirectAction):
+        #     target = ba.action.get_target_url(elem)
+        #     if target is None:
+        #         raise http.Http404("%s failed for %r" % (ba, elem))
+        #     return http.HttpResponseRedirect(target)
 
         if pk == '-99998':
             assert elem is None

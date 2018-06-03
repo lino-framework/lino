@@ -1,12 +1,12 @@
-# Copyright 2015-2017 Luc Saffre
+# Copyright 2015-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-"""Defines a default set of user types "Anonymous", "User" and
+"""
+Defines a set of user types "Anonymous", "User" and
 "Administrator".
 
 This can be used directly as :attr:`user_types_module
 <lino.core.site.Site.user_types_module>` for simple applications.
-
 """
 
 from django.utils.translation import ugettext_lazy as _

@@ -2,7 +2,9 @@
 			<VBox fitContainer="true">
 				    <items>
 					{% for e in main.elements %}
-					    {% include e.oui5_field_template %}
+				        {% if e.get_view_permission(ar.get_user().user_type) %}
+							{% include e.oui5_field_template %}
+						{% endif %}
 					{% endfor %}
 				    </items>
 			</VBox>

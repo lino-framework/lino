@@ -92,7 +92,7 @@ class Model(models.Model):
           def city_choices(cls,country):
               if country is not None:
                   return country.place_set.order_by('name')
-              return cls.city.field.rel.model.objects.order_by('name')
+              return cls.city.field.remote_field.model.objects.order_by('name')
 
 
     .. method:: create_FOO_choice
@@ -1025,7 +1025,8 @@ class Model(models.Model):
 
     @classmethod
     def get_simple_parameters(cls):
-        """Return or yield a list of names of simple parameter fields of every
+        """
+        Return or yield a list of names of simple parameter fields of every
         `Table` on this model.
 
         When the list contains names for which no parameter field is

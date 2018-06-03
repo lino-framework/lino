@@ -31,7 +31,7 @@ from lino.api.dd import full_model_name
 
 def fieldtype(f):
     if isinstance(f, models.ForeignKey):
-        return f.__class__.__name__ + " to " + refto(f.rel.model)
+        return f.__class__.__name__ + " to " + refto(f.remote_field.model)
     return f.__class__.__name__
 
 

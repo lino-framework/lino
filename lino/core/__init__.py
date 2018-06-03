@@ -37,6 +37,7 @@ Contains Lino's core functionalities.
     tablerequest
     urls
     userprefs
+    user_types
     utils
     views
     workflows

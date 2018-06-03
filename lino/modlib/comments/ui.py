@@ -133,7 +133,7 @@ class AllComments(Comments):
 class CommentsByX(Comments):
     required_roles = dd.login_required(CommentsReader)
     order_by = ["-created"]
-    slave_grid_format = "summary"
+    display_mode = "summary"
 
 
 # class MyPendingComments(MyComments):
@@ -163,7 +163,7 @@ class RecentComments(Comments):
         return kw
     
     @classmethod
-    def get_slave_summary(cls, obj, ar):
+    def get_table_summary(cls, obj, ar):
         sar = cls.request_from(
             ar, master_instance=obj, limit=cls.preview_limit)
 
@@ -201,7 +201,7 @@ class CommentsByRFC(CommentsByX):
 
 
     @classmethod
-    def get_slave_summary(self, obj, ar):
+    def get_table_summary(self, obj, ar):
         sar = self.request_from(ar, master_instance=obj)
 
         html = obj.get_rfc_description(ar)

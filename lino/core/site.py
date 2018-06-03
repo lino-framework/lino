@@ -1,26 +1,22 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2009-2018 Luc Saffre.
 # License: BSD, see LICENSE for more details.
+# doctest lino/core/site.py
 
 """
 Defines the :class:`Site` class. For an overview see
 :doc:`/dev/site` and :doc:`/dev/plugins`.
-
-
-This document is part of the Lino test suite. You can test only
-this document using::
-
-    $ doctest lino/core/site.py
 
 ..  doctest init:
     >>> import lino
     >>> lino.startup('lino.projects.std.settings_test')
 
 """
+
 from __future__ import unicode_literals, print_function
 from builtins import map
-import six
 from builtins import str
+import six
 
 import os
 import sys
@@ -167,6 +163,7 @@ class Site(object):
         <lino.utils.mldbc.fields.LanguageField>`. It's content is
         automatically populated from :attr:`languages` and application
         code should not change it's value.
+
     """
 
     auto_fit_column_widths = True
@@ -516,14 +513,29 @@ class Site(object):
     project.
     """
 
+    use_security_features = False
+    """
+    Set this to `True` in order to activate a selection of security
+    features to protect against miscellaneous attacks.  You can do
+    this only if your application is being served via HTTPS.  The idea
+    is to provide a reasonable security out of the box.  
+
+    This will activate some middleware and set some security-related
+    settings.  This is a new feature and not much tested.  As a hoster
+    you may prefer adding security manually using your established
+    standards (regarding security Lino does not add anything to plain
+    Django).  See also :doc:`/admin/security`.
+    """
+
     use_ipdict = False
-    """Whether this site uses :mod:`lino.modlib.ipdict`.
+    """
+    Whether this site uses :mod:`lino.modlib.ipdict`.
 
     Note that :mod:`lino.modlib.ipdict` unlike normal plugins should
     not be installed by adding it to your :meth:`get_installed_apps`
-    method but by setting this attribute. This is because Lino
-    automatically manages the MIDDLEWARE_CLASSES.
-
+    method but by setting this attribute.  This approach has the
+    advantage of also setting :setting:`MIDDLEWARE_CLASSES`
+    automatically.
     """
     
     # use_auth = True
@@ -692,12 +704,12 @@ class Site(object):
     """
     
     use_experimental_features = False
-    """Whether to include "experimental features".
+    """Whether to include "experimental features". Deprecated.
+    lino_xl.lib.inspect
     """
     site_config_defaults = {}
     """
     Default values to be used when creating the :attr:`site_config`.
-
     
     Usage example::
     
@@ -825,7 +837,9 @@ class Site(object):
     ldap_auth_server = None
     """
     This should be a string with the domain name and DNS (separated by a
-    space) of the LDAP server to be used for authentication.  Example::
+    space) of the LDAP server to be used for authentication.  
+
+    Example::
 
       ldap_auth_server = 'DOMAIN_NAME SERVER_DNS'
 
@@ -897,7 +911,8 @@ class Site(object):
     """
 
     webdav_url = None
-    """The URL prefix for webdav files.  In a normal production
+    """
+    The URL prefix for webdav files.  In a normal production
     configuration you should leave this to `None`, Lino will set a
     default value "/media/webdav/", supposing that your Apache is
     configured as described in :doc:`/admin/webdav`.
@@ -908,9 +923,31 @@ class Site(object):
     a command prompt::
     
         subst w: <dev_project_path>\media\webdav
-
     """
 
+    webdav_protocol = None
+    """
+    Set this to a string like e.g. 'wdav' in order to use a custom
+    protocol for opening editable printable documents.  In this case
+    Lino expects the browser to be configured to understand the given
+    protocol.
+
+    If this is non-empty, Lino ignores whether
+    :mod:`lino.modlib.davlink` is installed or not.
+
+    When an *editable* printable document has been generated, Lino
+    does not open a new browser window on that document but invokes
+    the client's Office application.  That application accesses the
+    document either via a WebDAV link (on a production server) or a
+    ``file://`` link (on a development server).
+    """
+
+    beid_protocol = None
+    """
+    Set this to a string like e.g. 'beid' in order to use a custom
+    protocal for reading eid cards.
+    """
+    
     sidebar_width = 0
     """
     Used by :mod:`lino.modlib.plain`.
@@ -1623,10 +1660,13 @@ class Site(object):
             if cfg:
                 p.configure(**cfg)
 
+            needed_by = p
+            while needed_by.needed_by is not None:
+                needed_by = needed_by.needed_by
             for dep in p.needs_plugins:
                 k2 = dep.rsplit('.')[-1]
                 if k2 not in self.plugins:
-                    install_plugin(dep, needed_by=p)
+                    install_plugin(dep, needed_by=needed_by)
                     # plugins.append(dep)
 
             # actual_apps.append(app_name)
@@ -1793,10 +1833,11 @@ this field.
             if debug:
                 print("20170824 {!r} has no help_text".format(fld))
             return
-        if fld.help_text:
-            if debug:
-                print("20170824 {} on {} has already a help_text {}".format(attrname, cls, fld.help_text))
-            return
+        # if fld.help_text:
+        #     # if debug:
+        #     #     print("20170824 {} on {} has already a help_text {}".format(
+        #     #         attrname, cls, repr(fld.help_text)))
+        #     return
         # if debug:
         #     print(20160829, cls)
         # if isinstance(fld, type):
@@ -1811,14 +1852,21 @@ this field.
             #     continue
             k = m.__module__ + '.' + m.__name__
             k = simplify_name(k)
+            # debug = k.startswith('users')
             if attrname:
                 k += '.' + attrname
             txt = self._help_texts.get(k, None)
+            # if attrname == "nationality":
+            #     print("20180313 {} {}".format(k, txt))
             if txt is None:
-                pass
                 if debug:
                     print("20170824 {}.{} : no help_text using {!r}".format(
                         cls, attrname, k))
+                if fld.help_text:
+                    # coded help text gets overridden only if docs
+                    # provide a more specific help text.
+                    return
+                    
             else:
                 if debug:
                     print("20170824 {}.{}.help_text found using {}".format(
@@ -1910,6 +1958,12 @@ this field.
 
         if self.user_model:
             self.update_settings(AUTH_USER_MODEL='users.User')
+            if self.use_security_features:
+                self.update_settings(
+                    CSRF_USE_SESSIONS=True,
+                    SESSION_COOKIE_SECURE=True,
+                    CSRF_COOKIE_SECURE=True)
+                
         # self.define_settings(AUTH_USER_MODEL=self.user_model)
         
         self.define_settings(
@@ -2140,7 +2194,7 @@ this field.
         doesn't work as expected.  For some reason (maybe because
         settings is being imported twice on a devserver) it raises a
         false exception when :meth:`override_defaults` tries to use it
-        on `MIDDLEWARE_CLASSES`...
+        on :setting:`MIDDLEWARE_CLASSES`...
 
         """
         if False:
@@ -2163,6 +2217,7 @@ this field.
         """
         from lino.core.kernel import site_startup
         site_startup(self)
+        self.clear_site_config()
 
     def do_site_startup(self):
         """This method is called exactly once during site startup,
@@ -2847,9 +2902,8 @@ this field.
 
         """
         from django.utils import translation
-        for simple, info in list(self.language_dict.items()):
+        for simple, info in self.language_dict.items():
             with translation.override(simple):
-                # kw[name + info.suffix] = str(txt)
                 kw[name + info.suffix] = six.text_type(txt)
         return kw
 
@@ -2944,7 +2998,7 @@ given object `obj`. The dict will have one key for each
         this Site's :attr:`Site.languages` attribute.
         
         """
-        return [getattr(obj, name + li.suffix) for li in self.languages]
+        return [str(getattr(obj, name + li.suffix)) for li in self.languages]
         #~ l = [ getattr(obj,name) ]
         #~ for lang in self.BABEL_LANGS:
             #~ l.append(getattr(obj,name+'_'+lang))
@@ -3194,43 +3248,46 @@ site. :manage:`diag` is a command-line shortcut to this.
 
     @property
     def site_config(self):
-        """This property holds a cached version of the one and only
+        """
+        This property holds a cached version of the one and only
         :class:`SiteConfig <lino.modlib.system.models.SiteConfig>` row
         that holds site-wide database-stored and web-editable Site
         configuration parameters.
 
         If no instance exists (which happens in a virgin database), we
-        create it using default values from :attr:`site_config_defaults`.
+        create it using default values from
+        :attr:`site_config_defaults`.
 
-        This is always `None` when :mod:`lino.modlib.system` is not installed.
-
+        This is always `None` when :mod:`lino.modlib.system` is not
+        installed.
         """
         if 'system' not in self.models:
+            return None
+
+        if not self._startup_done:
             return None
 
         if self._site_config is None:
             #~ raise Exception(20130301)
             #~ print '20130320 create _site_config'
             #~ from lino.core.utils import resolve_model
-            #~ from lino.core.utils import obj2str
-            #~ from lino.utils import dblogger as logger
-            #~ SiteConfig = resolve_model('system.SiteConfig')
+            from lino.core.utils import obj2str
             SiteConfig = self.models.system.SiteConfig
-            #~ from .models import SiteConfig
             #~ from django.db.utils import DatabaseError
             try:
-                #~ self._site_config = SiteConfig.real_objects.get(pk=1)
                 self._site_config = SiteConfig.real_objects.get(
-                    pk=self.config_id)
-                #~ print "20130301 Loaded SiteConfig record", obj2str(self._site_config,True)
+                    id=self.config_id)
+                # print("20180502 loaded SiteConfig {}",
+                #       obj2str(self._site_config, True))
             #~ except (SiteConfig.DoesNotExist,DatabaseError):
             except SiteConfig.DoesNotExist:
             #~ except Exception,e:
-                kw = dict(pk=self.config_id)
+                kw = dict(id=self.config_id)
                 #~ kw.update(settings.SITE.site_config_defaults)
                 kw.update(self.site_config_defaults)
                 self._site_config = SiteConfig(**kw)
-                #~ print "20130301 Created SiteConfig record", obj2str(self._site_config,True)
+                # print("20180502 Created SiteConfig {}".format(
+                #     obj2str(self._site_config, True)))
                 # 20120725
                 # polls_tutorial menu selection `Config --> Site Parameters`
                 # said "SiteConfig 1 does not exist"
@@ -3250,8 +3307,10 @@ site. :manage:`diag` is a command-line shortcut to this.
         This is needed e.g. when the test runner has created a new
         test database.
         """
+        from lino.core.utils import obj2str
+        # print("20180502 clear_site_config {}".format(
+        #     obj2str(self._site_config, True)))
         self._site_config = None
-        #~ print "20130320 clear_site_config"
 
     def get_quicklinks(self, user):
         from lino.core import menus
@@ -3354,9 +3413,13 @@ Please convert to Plugin method".format(mod, methname)
             yield 'social_django.middleware.SocialAuthExceptionMiddleware'
             
                     
-        #~ yield 'lino.utils.editing.EditingMiddleware'
         if True:
             yield 'lino.utils.ajax.AjaxExceptionResponse'
+            
+        if self.use_security_features:
+            yield 'django.middleware.security.SecurityMiddleware'
+            yield 'django.middleware.clickjacking.XFrameOptionsMiddleware'
+            # yield 'django.middleware.csrf.CsrfViewMiddleware'
 
         if False:
             #~ yield 'lino.utils.sqllog.ShortSQLLogToConsoleMiddleware'
@@ -3573,7 +3636,7 @@ signature as `django.core.mail.EmailMessage`.
                 p.append(
                     E.a(str(self.verbose_name), href=self.url, target='_blank'))
             else:
-                p.append(E.b(self.verbose_name))
+                p.append(E.b(str(self.verbose_name)))
             if self.version:
                 p.append(' ')
                 p.append(self.version)
@@ -3693,7 +3756,9 @@ class TestSite(Site):
 
     """Used to simplify doctest strings because it inserts default values
     for the two first arguments that are mandatory but not used in our
-    examples::
+    examples.
+
+    Example::
     
     >> from lino.core.site import Site
     >> Site(globals(), ...)

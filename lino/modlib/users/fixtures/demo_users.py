@@ -9,7 +9,7 @@ sites </demos>`.
 .. Lino currently knows demo users for the following languages:
   .. lino2rst::
   ses = rt.login()
-  ses.show(rt.modules.users.Users,
+  ses.show(rt.models.users.Users,
     column_names="username first_name last_name language")
 
 We are trying to sound realistic without actually hitting any real
