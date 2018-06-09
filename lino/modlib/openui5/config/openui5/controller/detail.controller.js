@@ -1,90 +1,91 @@
 sap.ui.define([
-   "lino/controller/baseController",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/unified/Menu",
-	"sap/ui/unified/MenuItem",
-	"sap/m/MessageToast",
-	"sap/ui/core/format/DateFormat"
-], function(baseController, JSONModel, Menu, MenuItem, MessageToast, DateFormat) {
-	"use strict";
+    "lino/controller/baseController",
+    "sap/ui/model/json/JSONModel",
+    "sap/ui/unified/Menu",
+    "sap/ui/unified/MenuItem",
+    "sap/m/MessageToast",
+    "sap/ui/core/format/DateFormat"
+], function (baseController,JSONModel, Menu, MenuItem, MessageToast, DateFormat) {
+    "use strict";
 
-	return baseController.extend("lino.controller.detail", {
+    return baseController.extend("lino.controller.detail", {
 
-		onInit : function () {
-			var oView = this.getView();
-			this.page_no = 0;
+        onInit: function () {
+            var oView = this.getView();
+            this.page_no = 0;
             this.page_limit = this.visibleRowCount;
             this.pv = []; // unused,
             this._PK = null;
             this._actor_id = this.getView().byId("MAIN_PAGE").data("actor_id");
 
-			var oRouter = this.getRouter();
-			oRouter.getRoute("detail." + this._actor_id).attachMatched(this._onRouteMatched, this);
-		},
+            var oRouter = this.getRouter();
+            oRouter.getRoute("detail." + this._actor_id).attachMatched(this._onRouteMatched, this);
+        },
 
 
-        _onRouteMatched : function (oEvent) {
-			var oArgs, oView;
-			oArgs = oEvent.getParameter("arguments");
-			oView = this.getView();
+        _onRouteMatched: function (oEvent) {
+            var oArgs, oView;
+            oArgs = oEvent.getParameter("arguments");
+            oView = this.getView();
 
-            this.load_record(oArgs.record_id)
+            this.load_record(oArgs.record_id);
 
-		},
+        },
 
 
-		initSampleDataModel : function() {
-			var oModel = new JSONModel();
+        initSampleDataModel: function () {
+            var oModel = new JSONModel();
 
-			var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
+            var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
 
-			jQuery.ajax(this.getView().byId("MAIN_PAGE").data("url"), {
-				dataType: "json",
-				data:{limit:15,fmt:'json',an:"detail"},
-				success: function (oData) {
-					oModel.setData(oData);
-				},
-				error: function () {
-					jQuery.sap.log.error("failed to load json");
-				}
-			});
-			console.log(this.count++)
+            jQuery.ajax(this.getView().byId("MAIN_PAGE").data("url"), {
+                dataType: "json",
+                data: {limit: 15, fmt: 'json', an: "detail"},
+                success: function (oData) {
+                    oModel.setData(oData);
+                },
+                error: function () {
+                    jQuery.sap.log.error("failed to load json");
+                }
+            });
+            console.log(this.count++)
 
-			return oModel;
-		},
+            return oModel;
+        },
 
-		getNavport: function(){
-		    var vp = sap.ui.getCore().byId("__component0---MAIN_VIEW").byId('viewport');
+        getNavport: function () {
+            var vp = sap.ui.getCore().byId("__component0---MAIN_VIEW").byId('viewport');
             return vp
-		},
+        },
 
 
-		load_record: function(record_id){
-			var oModel = new JSONModel();
+        load_record: function (record_id) {
+            var oModel = new JSONModel();
             var oView = this.getView();
             this._PK = record_id;
-		    MessageToast.show("Going to load item with PK of" + record_id);
-		    oView.setBusy(true);
-		    jQuery.ajax(oView.byId("MAIN_PAGE").data("url") + record_id, {
-				dataType: "json",
-				data:{fmt:'json',
-				      an:'detail'
-				     },
-				success: function (oData) {
-					oModel.setData(oData);
-					oView.setModel(oModel, "record");
-					oView.setBusy(false);
-				},
-				error: function () {
-					jQuery.sap.log.error("failed to load json");
-				}
-			});
-		},
+            MessageToast.show("Going to load item with PK of" + record_id);
+            oView.setBusy(true);
+            jQuery.ajax(oView.byId("MAIN_PAGE").data("url") + record_id, {
+                dataType: "json",
+                data: {
+                    fmt: 'json',
+                    an: 'detail'
+                },
+                success: function (oData) {
+                    oModel.setData(oData);
+                    oView.setModel(oModel, "record");
+                    oView.setBusy(false);
+                },
+                error: function () {
+                    jQuery.sap.log.error("failed to load json");
+                }
+            });
+        },
 
-        onLoaditems: function(oEvent){
+        onLoaditems: function (oEvent) {
             console.log("loaditems");
         },
 
-	});
+    });
 
 });
