@@ -12,6 +12,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django import http
+from django.db import models
 from django.conf import settings
 from django.views.generic import View
 from django.core import exceptions
@@ -19,6 +20,8 @@ from django.utils.translation import ugettext as _
 from django.utils.translation import get_language
 # from django.contrib import auth
 from lino.core import auth
+from lino.utils import isiterable
+from lino.core import fields
 
 from lino.core.gfks import ContentType
 
@@ -301,8 +304,175 @@ class ApiList(View):
 
         return settings.SITE.kernel.run_action(ar)
 
+
+def choices_for_field(request, holder, field):
+    """Return the choices for the given field and the given HTTP request
+    whose `holder` is either a Model, an Actor or an Action.
+
+    """
+    if not holder.get_view_permission(request.user.user_type):
+        raise Exception(
+            "{user} has no permission for {holder}".format(
+                user=request.user, holder=holder))
+    # model = holder.get_chooser_model()
+    chooser = holder.get_chooser_for_field(field.name)
+    # logger.info('20140822 choices_for_field(%s.%s) --> %s',
+    #             holder, field.name, chooser)
+    if chooser:
+        qs = chooser.get_request_choices(request, holder)
+        if not isiterable(qs):
+            raise Exception("%s.%s_choices() returned non-iterable %r" % (
+                holder.model, field.name, qs))
+        if chooser.simple_values:
+            def row2dict(obj, d):
+                d[constants.CHOICES_TEXT_FIELD] = str(obj)
+                d[constants.CHOICES_VALUE_FIELD] = obj
+                return d
+        elif chooser.instance_values:
+            # same code as for ForeignKey
+            def row2dict(obj, d):
+                d[constants.CHOICES_TEXT_FIELD] = holder.get_choices_text(
+                    obj, request, field)
+                d[constants.CHOICES_VALUE_FIELD] = obj.pk
+                return d
+        else:  # values are (value, text) tuples
+            def row2dict(obj, d):
+                d[constants.CHOICES_TEXT_FIELD] = str(obj[1])
+                d[constants.CHOICES_VALUE_FIELD] = obj[0]
+                return d
+        return (qs, row2dict)
+
+    if field.choices:
+        qs = field.choices
+
+        def row2dict(obj, d):
+            if type(obj) is list or type(obj) is tuple:
+                d[constants.CHOICES_TEXT_FIELD] = str(obj[1])
+                d[constants.CHOICES_VALUE_FIELD] = obj[0]
+            else:
+                d[constants.CHOICES_TEXT_FIELD] = holder.get_choices_text(
+                    obj, request, field)
+                d[constants.CHOICES_VALUE_FIELD] = str(obj)
+            return d
+
+        return (qs, row2dict)
+
+    if isinstance(field, fields.VirtualField):
+        field = field.return_type
+
+    if isinstance(field, models.ForeignKey):
+        m = field.remote_field.model
+        t = m.get_default_table()
+        qs = t.request(request=request).data_iterator
+
+        # logger.info('20120710 choices_view(FK) %s --> %s', t, qs.query)
+
+        def row2dict(obj, d):
+            d[constants.CHOICES_TEXT_FIELD] = holder.get_choices_text(
+                obj, request, field)
+            d[constants.CHOICES_VALUE_FIELD] = obj.pk
+            return d
+    else:
+        raise http.Http404("No choices for %s" % field)
+    return (qs, row2dict)
+
+
+def choices_response(actor, request, qs, row2dict, emptyValue):
+    """
+    :param actor: requesting Actor
+    :param request: web request
+    :param qs: list of django model QS,
+    :param row2dict: function for converting data set into a dict for json
+    :param emptyValue: The Text value to represent None in the choice-list
+    :return: json web responce
+
+    Filters data-set acording to quickseach
+    Counts total rows in the set,
+    Calculates offset and limit
+    Adds None value
+    returns
+    """
+    quick_search = request.GET.get(constants.URL_PARAM_FILTER, None)
+    offset = request.GET.get(constants.URL_PARAM_START, None)
+    limit = request.GET.get(constants.URL_PARAM_LIMIT, None)
+    if isinstance(qs, models.QuerySet):
+        qs = qs.filter(qs.model.quick_search_filter(quick_search)) if quick_search else qs
+        count = qs.count()
+
+        if offset:
+            qs = qs[int(offset):]
+            # ~ kw.update(offset=int(offset))
+
+        if limit:
+            # ~ kw.update(limit=int(limit))
+            qs = qs[:int(limit)]
+
+        rows = [row2dict(row, {}) for row in qs]
+
+    else:
+        rows = [row2dict(row, {}) for row in qs]
+        if quick_search:
+            txt = quick_search.lower()
+
+            rows = [row for row in rows
+                    if txt in row[constants.CHOICES_TEXT_FIELD].lower()]
+        count = len(rows)
+        rows = rows[int(offset):] if offset else rows
+        rows = rows[:int(limit)] if limit else rows
+
+    # Add None choice
+    if emptyValue is not None and not quick_search:
+        empty = dict()
+        empty[constants.CHOICES_TEXT_FIELD] = emptyValue
+        empty[constants.CHOICES_VALUE_FIELD] = None
+        rows.insert(0, empty)
+
+    return json_response_kw(count=count, rows=rows)
+    # ~ return json_response_kw(count=len(rows),rows=rows)
+    # ~ return json_response_kw(count=len(rows),rows=rows,title=_('Choices for %s') % fldname)
+
 class Choices(View):
-    pass
+    def get(self, request, app_label=None, rptname=None, fldname=None, **kw):
+        """If `fldname` is specified, return a JSON object with two
+        attributes `count` and `rows`, where `rows` is a list of
+        `(display_text, value)` tuples.  Used by ComboBoxes or similar
+        widgets.
+
+        If `fldname` is not specified, returns the choices for the
+        `record_selector` widget.
+
+        """
+        rpt = requested_actor(app_label, rptname)
+        emptyValue = None
+        if fldname is None:
+            ar = rpt.request(request=request)
+            # ~ rh = rpt.get_handle(self)
+            # ~ ar = ViewReportRequest(request,rh,rpt.default_action)
+            # ~ ar = dbtables.TableRequest(self,rpt,request,rpt.default_action)
+            # ~ rh = ar.ah
+            # ~ qs = ar.get_data_iterator()
+            qs = ar.data_iterator
+
+            # ~ qs = rpt.request(self).get_queryset()
+
+            def row2dict(obj, d):
+                d[constants.CHOICES_TEXT_FIELD] = str(obj)
+                # getattr(obj,'pk')
+                d[constants.CHOICES_VALUE_FIELD] = obj.pk
+                return d
+        else:
+            # NOTE: if you define a *parameter* with the same name as
+            # some existing *data element* name, then the parameter
+            # will override the data element here in choices view.
+            field = rpt.get_param_elem(fldname)
+            if field is None:
+                field = rpt.get_data_elem(fldname)
+            if field.blank:
+                # logger.info("views.Choices: %r is blank",field)
+                emptyValue = '<br/>'
+            qs, row2dict = choices_for_field(request, rpt, field)
+
+        return choices_response(rpt, request, qs, row2dict, emptyValue)
 
 class Restful(View):
 
