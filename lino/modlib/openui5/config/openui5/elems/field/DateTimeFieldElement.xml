@@ -1,0 +1,11 @@
+{% extends "/openui5/elems/field/FieldElement.xml" %}
+
+
+{% block field_content %}
+
+	<DateTimePicker
+				id="{{e}}"
+				value="{{bind('record>/data/',e.field.name)}}"
+				change="handleChange"
+				placeholder="{{e.help}}"/>
+{% endblock %}

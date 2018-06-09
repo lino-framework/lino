@@ -1,0 +1,9 @@
+{% extends "/openui5/elems/field/FieldElement.xml" %}
+
+{% block field_label %}
+{% endblock %}
+
+{% block field_content %}
+
+    <CheckBox text="{{e.label}}"/>
+{% endblock %}
