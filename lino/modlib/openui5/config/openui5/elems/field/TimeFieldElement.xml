@@ -1,0 +1,13 @@
+{% extends "/openui5/elems/field/FieldElement.xml" %}
+
+
+{% block field_content %}
+
+	<TimePicker
+				id="{{e}}"
+				value="19:15"
+				valueFormat="HH:mm"
+				displayFormat="HH:mm"
+				change="handleChange"
+				placeholder="{{e.help}}"/>
+{% endblock %}

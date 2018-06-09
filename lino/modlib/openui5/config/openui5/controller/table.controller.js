@@ -4,8 +4,10 @@ sap.ui.define([
 	"sap/ui/unified/Menu",
 	"sap/ui/unified/MenuItem",
 	"sap/m/MessageToast",
-	"sap/ui/core/format/DateFormat"
-], function(baseController, JSONModel, Menu, MenuItem, MessageToast, DateFormat) {
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator"
+], function(baseController, JSONModel, Menu, MenuItem, MessageToast, DateFormat,Filter, FilterOperator) {
 	"use strict";
 
 	return baseController.extend("lino.controller.table", {
@@ -244,7 +246,64 @@ sap.ui.define([
             var oModel = this.getView().getModel("meta");
             oModel.setProperty("/page", oModel.getProperty("/page_total"))
             this.reload();
-        }
+        },
+
+		/**
+		 * Event handler when a table item gets pressed
+		 * @param {sap.ui.base.Event} oEvent the table selectionChange event
+		 * @public
+		 */
+		onPress : function (oEvent) {
+			// The source is the list item that got pressed
+			this._showObject(oEvent.getSource());
+		},
+		/* =========================================================== */
+		/* internal methods                                            */
+		/* =========================================================== */
+
+		/**
+		 * Shows the selected item on the object page
+		 * On phones a additional history entry is created
+		 * @param {sap.m.ObjectListItem} oItem selected Item
+		 * @private
+		 */
+		_showObject : function (oItem) {
+			this.getRouter().navTo("object", {
+				objectId: oItem.getBindingContext().getProperty("ProductID")
+			});
+		},
+		onSearch : function (oEvent) {
+			if (oEvent.getParameters().refreshButtonPressed) {
+				// Search field's 'refresh' button has been pressed.
+				// This is visible if you select any master list item.
+				// In this case no new search is triggered, we only
+				// refresh the list binding.
+				this.onRefresh();
+			} else {
+				var aTableSearchState = [];
+				var sQuery = oEvent.getParameter("query");
+
+				if (sQuery && sQuery.length > 0) {
+					aTableSearchState = [new Filter("summary", FilterOperator.Contains, sQuery)];
+				}
+				this._applySearch(aTableSearchState);
+			}
+
+		},
+		/**
+		 * Internal helper method to apply both filter and search state together on the list binding
+		 * @param {sap.ui.model.Filter[]} aTableSearchState An array of filters for the search
+		 * @private
+		 */
+		_applySearch: function(aTableSearchState) {
+			var oTable = this._table,
+				oViewModel = this.getModel();
+			oTable.getBinding().filter(aTableSearchState);
+			// changes the noDataText of the list in case there are no filter results
+			// if (aTableSearchState.length !== 0) {
+			// 	oViewModel.setProperty("/tableNoDataText", this.getResourceBundle().getText("worklistNoDataWithSearchText"));
+			// }
+		}
 
 	});
 

@@ -931,6 +931,8 @@ class ChoiceListFieldElement(ChoicesFieldElement):
 class RemoteComboFieldElement(ComboFieldElement):
     value_template = "new Lino.RemoteComboFieldElement(%s)"
 
+    oui5_field_template = "openui5/elems/field/RemoteComboFieldElement.xml"
+
     def store_options(self, **kw):
         # ~ kw.update(baseParams=js_code('this.get_base_params()')) # 20120202
         if self.editable:
@@ -1047,6 +1049,8 @@ class TimeFieldElement(FieldElement):
     # filter_type = 'time'
     input_classes = "TimeField"
 
+    oui5_field_template = "openui5/elems/field/TimeFieldElement.xml"
+
 
 class DateTimeFieldElement(FieldElement):
     # value_template = "new Lino.DateTimeField(%s)"
@@ -1055,6 +1059,8 @@ class DateTimeFieldElement(FieldElement):
     sortable = True
     preferred_width = 16
     # filter_type = 'date'
+
+    oui5_field_template = "openui5/elems/field/DateTimeFieldElement.xml"
 
     def __init__(self, layout_handle, field, **kw):
         if self.editable:
@@ -1410,6 +1416,8 @@ class BooleanFieldElement(FieldElement):
     # def __init__(self,*args,**kw):
         # FieldElement.__init__(self,*args,**kw)
     # active_change_event = 'check'
+
+    oui5_field_template = "openui5/elems/field/CheckBoxFieldElement.xml"
 
     def set_parent(self, parent):
         FieldElement.set_parent(self, parent)
