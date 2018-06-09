@@ -39,6 +39,12 @@
 				<table:extension>
 					<Toolbar>
 						<Title text="{{title}}"/>
+							{% for ba in ar.actor.get_toolbar_actions(ar.bound_action.action) %}
+								<Button
+										text="{{ba.action.label}}"
+										icon="sap-icon://{{ba.action.icon_name}}"
+										press="toggleAreaPriority"/>
+							{% endfor %}
 						<ToolbarSpacer/>
 
 						{% block pageinator %}
@@ -68,6 +74,12 @@
 								/>
 						{% endblock %}
 						<ToolbarSpacer/>
+						<SearchField
+								id="searchField"
+								tooltip="{i18n>worklistSearchTooltip}"
+								search="onSearch"
+								width="auto">
+							</SearchField>
 						<ToggleButton
 							icon="sap-icon://resize-horizontal"
 							tooltip="Enable / Disable Freezing Menu Entries"
@@ -79,7 +91,7 @@
 
 					</Toolbar>
 				</table:extension>
-				<table:columns>
+				<table:columns 	press="onPress">
 					{% for c in columns %}
 					{% with %}
 						{% set c_loop = loop %}
