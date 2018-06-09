@@ -4,12 +4,14 @@
     <meta charset="utf-8"/>
     <title>{% block title %}{{site.title or site.verbose_name}}{% endblock %}</title>
     <!--<link rel="stylesheet" href="{{site.build_static_url('bootstrap.css')}}" type="text/css">-->
-    <script src="https://openui5.hana.ondemand.com/1.50.8/resources/sap-ui-core.js"
+    <script src="https://openui5nightly.hana.ondemand.com/resources/sap-ui-core.js"
             id="sap-ui-bootstrap"
             data-sap-ui-libs="sap.m"
             data-sap-ui-theme="sap_belize"
             data-sap-ui-compatVersion="edge"
+            data-sap-ui-preload="async"
             data-sap-ui-resourceroots='{
+            "lino.server":"/",
             "lino": "./ui/",
             "lino.app":"./ui/core/",
             "openui5" : "./static/openui5/openui5-CKEditor/openui5/"
