@@ -868,6 +868,7 @@ class ComboFieldElement(FieldElement):
     filter_type = 'string'
     gridfilters_settings = dict(type='string')
 
+    # oui5_field_template = "openui5/elems/field/ComboElement.xml"
     oui5_field_template = "openui5/elems/field/ComboElement.xml"
 
     def get_field_options(self, **kw):
@@ -930,8 +931,6 @@ class ChoiceListFieldElement(ChoicesFieldElement):
 
 class RemoteComboFieldElement(ComboFieldElement):
     value_template = "new Lino.RemoteComboFieldElement(%s)"
-
-    oui5_field_template = "openui5/elems/field/RemoteComboFieldElement.xml"
 
     def store_options(self, **kw):
         # ~ kw.update(baseParams=js_code('this.get_base_params()')) # 20120202
@@ -1124,6 +1123,8 @@ class DateFieldElement(FieldElement):
         # kw = FieldElement.get_field_options(self,**kw)
         # kw.update(format=self.layout_handle.rh.actor.date_format)
         # return kw
+
+    oui5_field_template = "openui5/elems/field/DateFieldElement.xml"
 
     def get_column_options(self, **kw):
         kw = FieldElement.get_column_options(self, **kw)
