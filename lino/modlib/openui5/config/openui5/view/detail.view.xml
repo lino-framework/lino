@@ -5,14 +5,18 @@
 {% block view_content %}
 
 <OverflowToolbar>
-                    {% for ba in actor.get_toolbar_actions(actor.default_action.action) %}
+                    {% for ba in ba_actions %}
                     <Button
                             text="{{ba.action.label}}"
-                            press="onPressAction">
+                            press="onPressAction"
+                    customData:action_url="{{actor.app_label}}/{{actor.__name__}}/">
                         <customData>
                             <core:CustomData
                                     key="action_name"
-                                    value="{{ba.action.label}}"/>
+                                    value="{{ba.action.action_name}}"/>
+							<core:CustomData
+                                    key="action_method"
+                                    value="{{ba.action.http_method}}"/>
                         </customData>
                     </Button>
                     {% endfor %}

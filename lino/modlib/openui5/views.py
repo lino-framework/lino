@@ -9,6 +9,7 @@ from __future__ import division
 from past.utils import old_div
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 from django import http
@@ -47,7 +48,6 @@ import re
 from lino.core import dbtables
 from lino.core import tables
 
-
 from lino.core.elems import ComboFieldElement
 
 from jinja2.exceptions import TemplateNotFound
@@ -57,7 +57,7 @@ def find(itter, target, key=None):
     """Returns the index of an element in a callable which can be use a key function"""
     assert key == None or callable(key), "key shold be a function that takes the itter's item " \
                                          "and returns that wanted matched item"
-    for i,x in enumerate(itter):
+    for i, x in enumerate(itter):
         if key:
             x = key(x)
         if x == target:
@@ -68,26 +68,31 @@ def find(itter, target, key=None):
 
 # Taken from lino.modlib.extjs.views
 NOT_FOUND = "%s has no row with primary key %r"
+
+
 def elem2rec_empty(ar, ah, elem, **rec):
     """
     Returns a dict of this record, designed for usage by an EmptyTable.
     """
-    #~ rec.update(data=rh.store.row2dict(ar,elem))
+    # ~ rec.update(data=rh.store.row2dict(ar,elem))
     rec.update(data=elem._data)
-    #~ rec = elem2rec1(ar,ah,elem)
-    #~ rec.update(title=_("Insert into %s...") % ar.get_title())
+    # ~ rec = elem2rec1(ar,ah,elem)
+    # ~ rec.update(title=_("Insert into %s...") % ar.get_title())
     rec.update(title=ar.get_action_title())
     rec.update(id=-99998)
-    #~ rec.update(id=elem.pk) or -99999)
+    # ~ rec.update(id=elem.pk) or -99999)
     if ar.actor.parameters:
         rec.update(
             param_values=ar.actor.params_layout.params_store.pv2dict(
                 ar, ar.param_values))
     return rec
 
+class Callbacks(View):
+    def get(self, request, thread_id, button_id):
+        return settings.SITE.kernel.run_callback(request, thread_id, button_id)
+
 
 class ApiElement(View):
-
     def get(self, request, app_label=None, actor=None, pk=None):
         ui = settings.SITE.kernel
         rpt = requested_actor(app_label, actor)
@@ -196,8 +201,6 @@ class ApiElement(View):
 
 
 class ApiList(View):
-
-
     def post(self, request, app_label=None, actor=None):
         ar = action_request(app_label, actor, request, request.POST, True)
         ar.renderer = settings.SITE.kernel.extjs_renderer
@@ -431,6 +434,7 @@ def choices_response(actor, request, qs, row2dict, emptyValue):
     # ~ return json_response_kw(count=len(rows),rows=rows)
     # ~ return json_response_kw(count=len(rows),rows=rows,title=_('Choices for %s') % fldname)
 
+
 class Choices(View):
     def get(self, request, app_label=None, rptname=None, fldname=None, **kw):
         """If `fldname` is specified, return a JSON object with two
@@ -474,8 +478,8 @@ class Choices(View):
 
         return choices_response(rpt, request, qs, row2dict, emptyValue)
 
-class Restful(View):
 
+class Restful(View):
     """
     Used to collaborate with a restful Ext.data.Store.
     """
@@ -512,11 +516,10 @@ class Restful(View):
         """
         rpt = requested_actor(app_label, actor)
 
-
         action_name = request.GET.get(constants.URL_PARAM_ACTION_NAME,
                                       rpt.default_elem_action_name)
         fmt = request.GET.get(
-            constants.URL_PARAM_FORMAT,constants.URL_FORMAT_JSON)
+            constants.URL_PARAM_FORMAT, constants.URL_FORMAT_JSON)
         sr = request.GET.getlist(constants.URL_PARAM_SELECTED)
         if not sr:
             sr = [pk]
@@ -530,7 +533,7 @@ class Restful(View):
             kw.update(title=str(ar.get_title()))
             return json_response(kw)
 
-        else: #action_name=="detail": #ba.action.opens_a_window:
+        else:  # action_name=="detail": #ba.action.opens_a_window:
 
             ba = rpt.get_url_action(action_name)
             ah = ar.ah
@@ -549,7 +552,6 @@ class Restful(View):
                 else:
                     datarec = ar.elem2rec_detailed(elem)
                 return json_response(datarec)
-
 
     def put(self, request, app_label=None, actor=None, pk=None):
         rpt = requested_actor(app_label, actor)
@@ -587,6 +589,7 @@ def http_response(ar, tplname, context):
 
     return response
 
+
 # Give better name, does more then just XML, does all the connector responses.
 def XML_response(ar, tplname, context):
     """
@@ -620,9 +623,9 @@ def XML_response(ar, tplname, context):
         return ""
 
     env.filters.update(p=p)
-    content_type = "text/xml" if tplname.endswith(".xml") else\
-                   "application/javascript" if tplname.endswith(".js") else\
-                   "application/json"
+    content_type = "text/xml" if tplname.endswith(".xml") else \
+        "application/javascript" if tplname.endswith(".js") else \
+            "application/json"
     response = http.HttpResponse(
         template.render(**context),
         content_type=content_type + ';charset="utf-8"')
@@ -631,16 +634,15 @@ def XML_response(ar, tplname, context):
 
 
 def layout2html(ar, elem):
-
     wl = ar.bound_action.get_window_layout()
-    #~ print 20120901, wl.main
+    # ~ print 20120901, wl.main
     lh = wl.get_layout_handle(settings.SITE.kernel.default_ui)
 
     items = list(lh.main.as_plain_html(ar, elem))
     # if navigator:
     #     items.insert(0, navigator)
-    #~ print tostring(E.div())
-    #~ if len(items) == 0: return ""
+    # ~ print tostring(E.div())
+    # ~ if len(items) == 0: return ""
     return E.form(*items)
 
 
@@ -649,6 +651,7 @@ class Tickets(View):
     Was a static View for Tickets,
     IS currently main app entry point,
     """
+
     def get(self, request, app_label="tickets", actor="AllTickets"):
         ar = action_request(app_label, actor, request, request.GET, True)
         ar.renderer = settings.SITE.plugins.openui5.renderer
@@ -673,12 +676,13 @@ class Tickets(View):
             template.render(**context),
             content_type='text/html;charset="utf-8"')
 
+
 class MainHtml(View):
     def get(self, request, *args, **kw):
         """Returns a json struct for the main user dashboard."""
-        #~ logger.info("20130719 MainHtml")
+        # ~ logger.info("20130719 MainHtml")
         settings.SITE.startup()
-        #~ raise Exception("20131023")
+        # ~ raise Exception("20131023")
         ar = BaseRequest(request)
         html = settings.SITE.get_main_html(
             request, extjs=settings.SITE.plugins.openui5)
@@ -686,11 +690,13 @@ class MainHtml(View):
         ar.success(html=html)
         return json_response(ar.response, ar.content_type)
 
+
 class Connector(View):
     """
     Static View for Tickets,
     Uses a template for generating the XML views  rather then layouts
     """
+
     def get(self, request, name=None):
         # ar = action_request(None, None, request, request.GET, True)
         ar = BaseRequest(
@@ -713,7 +719,7 @@ class Connector(View):
 
         elif name.startswith("menu/"):
             tplname = "openui5/fragment/Menu.fragment.xml"
-            sel_menu = name.split("/",1)[1].split('.',1)[0]
+            sel_menu = name.split("/", 1)[1].split('.', 1)[0]
             # [05/Feb/2018 09:32:25] "GET /ui/menu/mailbox.fragment.xml HTTP/1.1" 200 325
             for i in context['menu'].items:
                 if i.name == sel_menu:
@@ -722,9 +728,9 @@ class Connector(View):
                     ))
                     break
             else:
-                raise Exception("No Menu with name %s"%sel_menu)
+                raise Exception("No Menu with name %s" % sel_menu)
         elif name.startswith("grid/") or name.startswith("slavetable/") or \
-                name.startswith("view/grid/") or name.startswith("view/slavetable/"): # Table/grid view
+                name.startswith("view/grid/") or name.startswith("view/slavetable/"):  # Table/grid view
             # todo Get table data
             # "grid/tickets/AllTickets.view.xml"
             # or
@@ -766,12 +772,12 @@ class Connector(View):
             if name.startswith("slavetable/"):
                 tplname = "openui5/view/slaveTable.view.xml"
             else:
-                tplname = "openui5/view/table.view.xml" # Change to "grid" to match action?
+                tplname = "openui5/view/table.view.xml"  # Change to "grid" to match action?
 
-            # ar = action_request(app_label, actor, request, request.GET, True)
-            # add to context
+                # ar = action_request(app_label, actor, request, request.GET, True)
+                # add to context
 
-        elif name.startswith("detail") or name.startswith("view/detail") :  # Detail view
+        elif name.startswith("detail") or name.startswith("view/detail"):  # Detail view
             # "detail/tickets/AllTickets.view.xml"
             app_label, actor = re.match(r"(?:view\/)?detail\/(.+)\/(.+).view.xml$", name).groups()
             actor = rt.models.resolve(app_label + "." + actor)
@@ -779,12 +785,14 @@ class Connector(View):
             detail_action = actor.detail_action
             window_layout = detail_action.get_window_layout()
             layout_handle = window_layout.get_layout_handle(settings.SITE.plugins.openui5)
-            layout_handle.main.elements # elems # Refactor into actor get method?
+            layout_handle.main.elements  # elems # Refactor into actor get method?
+            ba_actions = actor.get_toolbar_actions(actor.detail_action.action)
             context.update({
                 "actor": actor,
                 # "columns": actor.get_handle().get_columns(),
                 "actions": actor.get_actions(),
-                "title": actor.label, #
+                'ba_actions': ba_actions,
+                "title": actor.label,  #
                 # "main_elems": layout_handle.main.elements,
                 "main": layout_handle.main,
                 "layout_handle": layout_handle
@@ -821,7 +829,7 @@ class Connector(View):
                 for res in actors_list:
                     add(res, detail_list, res.detail_layout, "detail.%s" % res)
 
-                        # self.actors_list.extend(
+                    # self.actors_list.extend(
                 #     [a for a in list(choicelists.CHOICELISTS.values())
                 #      if settings.SITE.is_installed(a.app_label)])
 
@@ -841,7 +849,6 @@ class Connector(View):
         return XML_response(ar, tplname, context)
 
 
-
 class Authenticate(View):
     def get(self, request, *args, **kw):
         action_name = request.GET.get(constants.URL_PARAM_ACTION_NAME)
@@ -850,8 +857,8 @@ class Authenticate(View):
             auth.logout(request)
             # request.user = settings.SITE.user_model.get_anonymous_user()
             # request.session.pop('password', None)
-            #~ username = request.session['username']
-            #~ del request.session['password']
+            # ~ username = request.session['username']
+            # ~ del request.session['password']
             target = '/'
             return http.HttpResponseRedirect(target)
 
@@ -883,11 +890,13 @@ class Authenticate(View):
         #     # print "20150428 Now logged in as %r (%s)" % (username, user)
         # return ar.renderer.render_action_response(ar)
 
+
 # Todo repalce with Tickets
 class Index(View):
     """
     Render the main page.
     """
+
     def get(self, request, *args, **kw):
         # raise Exception("20171122 {} {}".format(
         #     get_language(), settings.MIDDLEWARE_CLASSES))

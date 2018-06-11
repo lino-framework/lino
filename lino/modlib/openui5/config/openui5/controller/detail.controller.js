@@ -4,8 +4,11 @@ sap.ui.define([
     "sap/ui/unified/Menu",
     "sap/ui/unified/MenuItem",
     "sap/m/MessageToast",
-    "sap/ui/core/format/DateFormat"
-], function (baseController,JSONModel, Menu, MenuItem, MessageToast, DateFormat) {
+    "sap/ui/core/format/DateFormat",
+    'sap/m/Button',
+    'sap/m/Dialog',
+    'sap/m/Text'
+], function (baseController,JSONModel, Menu, MenuItem, MessageToast, DateFormat,Button,Dialog,Text) {
     "use strict";
 
     return baseController.extend("lino.controller.detail", {
@@ -51,6 +54,65 @@ sap.ui.define([
             console.log(this.count++)
 
             return oModel;
+        },
+
+        onPressAction: function (oEvent) {
+            var button = oEvent.getSource();
+            var oView = this.getView();
+            var action_name = button.data('action_name');
+            var action_url = button.data('action_url');
+            var action_method = button.data('action_method');
+            var msg = action_name + "' pressed";
+            // action_url = 'tickets/Tickets/';
+            var url = '/api/' + action_url  + this._PK;
+            MessageToast.show(msg);
+            jQuery.ajax({
+              url:url,
+              type: action_method,
+              data: jQuery.param({an: action_name}),
+              success: function(data){
+                  if (data && data['success'] && data['xcallback'] !== undefined){
+                    var  xcallback = data['xcallback'];
+                    var dialog = new Dialog({
+                        title: xcallback['title'],
+                        type: 'Message',
+                        content: new Text({ text: data['message']}),
+                        beginButton: new Button({
+                            text: xcallback['buttons']['yes'],
+                            press: function () {
+                                MessageToast.show('Yes pressed!');
+                                jQuery.ajax({
+                                    url:'/callbacks/'+ xcallback['id'] +'/yes',
+                                    type: 'GET',
+                                    success: function(data){
+                                      MessageToast.show(data['message']);
+                                    },
+                                    error: function(e){
+                                          MessageToast.show("error: "+e);
+                                      }
+                                    });
+                                dialog.close();
+                            }
+                        }),
+                        endButton: new Button({
+                            text:  xcallback['buttons']['no'],
+                            press: function () {
+                                dialog.close();
+                            }
+                        }),
+                        afterClose: function() {
+                            dialog.destroy();
+                        }
+                    });
+
+                    dialog.open();
+                  }
+                  MessageToast.show(data['message']);
+              },
+              error: function(e){
+                  MessageToast.show("error: "+e);
+              }
+            });
         },
 
         getNavport: function () {
