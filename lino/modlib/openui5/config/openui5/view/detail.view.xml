@@ -3,6 +3,21 @@
 {% block view_controller_name %}lino.controller.detail{% endblock %}
 {% block view_attributes %} 	class="sapUiSizeCompact" height="100%" {% endblock %}
 {% block view_content %}
+
+<OverflowToolbar>
+                    {% for ba in actor.get_toolbar_actions(actor.default_action.action) %}
+                    <Button
+                            text="{{ba.action.label}}"
+                            press="onPressAction">
+                        <customData>
+                            <core:CustomData
+                                    key="action_name"
+                                    value="{{ba.action.label}}"/>
+                        </customData>
+                    </Button>
+                    {% endfor %}
+			</OverflowToolbar>
+
 	<Page
 		showHeader="true"
 		showNavButton="true"
@@ -17,6 +32,7 @@
 	>
 		<content>
 							{% include main.oui5_field_template %}
+
 		</content>
 	</Page>
 {% endblock %}

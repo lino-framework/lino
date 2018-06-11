@@ -1,10 +1,5 @@
 <Panel>
 <VBox>
-    {% if e.editable == True  %}
-        {% set editable = true %}
-    {% else %}
-        {% set editable = false %}
-    {% endif %}
 
 {% block field_label %}
 <Label text="{{e.label}}"/>
@@ -13,7 +8,7 @@
 {# <Text text="{{bind('record>/data/',e.field.name)}}" wrapping="true" displayBlock="true"/> #}
 
 {% block field_content %}
-    <Input value="{{bind('record>/data/',e.field.name)}}" wrapping="true" />
+    <Input value="{{bind('record>/data/',e.field.name)}}" wrapping="true" editable="{{str(e.editable).lower()}}" />
 {% endblock %}
 
 {#<layoutData>

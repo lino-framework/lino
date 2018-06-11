@@ -7,5 +7,6 @@
 
     <CheckBox text="{{e.label}}"
               value="{{bind('record>/data/',e.field.name)}}"
+              editable="{{str(e.editable).lower()}}"
               selected="{{bind('record>/data/',e.field.name)}}" />
 {% endblock %}
