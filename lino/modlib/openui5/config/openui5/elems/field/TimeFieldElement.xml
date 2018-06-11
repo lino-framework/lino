@@ -8,6 +8,7 @@
 				value="19:15"
 				valueFormat="HH:mm"
 				displayFormat="HH:mm"
+				editable="{{str(e.editable).lower()}}"
 				change="handleChange"
 				placeholder="{{e.help}}"/>
 {% endblock %}

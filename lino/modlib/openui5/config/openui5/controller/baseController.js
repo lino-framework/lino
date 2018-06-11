@@ -3,7 +3,8 @@ sap.ui.define([
     "sap/ui/model/json/JSONModel",
     "sap/ui/core/routing/History",
     'sap/ui/model/Filter',
-], function (Controller,JSONModel, History,Filter) {
+    "sap/m/MessageToast"
+], function (Controller,JSONModel, History,Filter,MessageToast) {
     "use strict";
     return Controller.extend("lino.controller.baseController", {
 
@@ -68,6 +69,14 @@ sap.ui.define([
          */
         getResourceBundle: function () {
             return this.getOwnerComponent().getModel("i18n").getResourceBundle();
+        },
+
+        onPressAction: function (oEvent) {
+            var button = oEvent.getSource();
+            var oView = this.getView();
+            var action_name = button.data('action_name');
+            var msg = action_name + "' pressed";
+            MessageToast.show(msg);
         },
 
         handleSuggest: function (oEvent) {
