@@ -71,13 +71,17 @@ sap.ui.define([
             return this.getOwnerComponent().getModel("i18n").getResourceBundle();
         },
 
-        onPressAction: function (oEvent) {
-            var button = oEvent.getSource();
-            var oView = this.getView();
-            var action_name = button.data('action_name');
-            var msg = action_name + "' pressed";
-            MessageToast.show(msg);
-        },
+        onDelete : function () {
+			var oSelected = this.byId("MAIN_PAGE").getSelectedItem();
+
+			if (oSelected) {
+				oSelected.getBindingContext().delete("$auto").then(function () {
+					MessageToast.show(this._getText("deletionSuccessMessage"));
+				}.bind(this), function (oError) {
+					MessageBox.error(oError.message);
+				});
+			}
+		},
 
         handleSuggest: function (oEvent) {
             var Input = oEvent.getSource();

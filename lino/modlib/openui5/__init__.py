@@ -74,6 +74,9 @@ class Plugin(Plugin):
             # For generating views
             url(rx + r'ui/(?P<name>.*)$',
                 views.Connector.as_view()),
+            url(rx + r'callbacks/(?P<thread_id>[\-0-9a-zA-Z]+)/'
+                     '(?P<button_id>\w+)$',
+                views.Callbacks.as_view()),
 
             # Main index, todo: refactor into main view, not Tickets
             url(rx + r'$', views.Tickets.as_view()),

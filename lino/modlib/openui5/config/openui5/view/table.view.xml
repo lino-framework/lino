@@ -42,7 +42,6 @@
                     {% for ba in ar.actor.get_toolbar_actions(ar.bound_action.action) %}
                     <Button
                             text="{{ba.action.label}}"
-                            icon="sap-icon://{{ba.action.icon_name}}"
                             press="onPressAction">
                         <customData>
                             <core:CustomData
