@@ -28,7 +28,8 @@ class ChangeNotifier(dd.Model):
             # return "{} {}".format(self, msg)
 
         def add_change_watcher(self, user):
-            raise NotImplementedError()
+            pass
+            # raise NotImplementedError()
 
         def get_change_body(self, ar, cw):
             ctx = dict(user=ar.user, what=ar.obj2memo(self))
