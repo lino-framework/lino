@@ -136,10 +136,11 @@ class Message(UserAuthored, Controllable, Created):
     @classmethod
     def emit_notification(
             cls, ar, owner, message_type, msg_func, recipients):
-        recipients = list(recipients)
-        dd.logger.info(
-            "20180612 %s emit_notification() for %d recipients",
-            owner, len(recipients))
+        # recipients = list(recipients)
+        # dd.logger.info(
+        #     "20180612 %s emit_notification() for %d recipients",
+        #     owner, len(recipients))
+        
         # remove recipients without user:
         if ar is None:
             me = None
