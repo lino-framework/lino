@@ -136,7 +136,11 @@ class Message(UserAuthored, Controllable, Created):
     @classmethod
     def emit_notification(
             cls, ar, owner, message_type, msg_func, recipients):
-        # dd.logger.info("20160717 %s emit_notification()", self)
+        # recipients = list(recipients)
+        # dd.logger.info(
+        #     "20180612 %s emit_notification() for %d recipients",
+        #     owner, len(recipients))
+        
         # remove recipients without user:
         if ar is None:
             me = None
@@ -153,8 +157,8 @@ class Message(UserAuthored, Controllable, Created):
         if len(others):
             # rr = message_type.required_roles
             # subject = "{} by {}".format(message_type, me)
-            # dd.logger.info(
-            #     "Notify %s users about %s", len(others), subject)
+            dd.logger.info(
+                "20180612 Notify %s users", len(others))
             for user, mm in others:
                 # if not user.user_type.has_required_roles(rr):
                 if message_type in user.user_type.mask_message_types:

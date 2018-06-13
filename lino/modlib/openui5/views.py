@@ -307,7 +307,9 @@ class ApiList(View):
 
         return settings.SITE.kernel.run_action(ar)
 
-
+# Should we Refactor into lino.modlib.extjs.choicees_views.py and import?
+#
+# choices_for_field is copied line-for-line from lino.modlib.extjs.views.choices_for_field
 def choices_for_field(request, holder, field):
     """Return the choices for the given field and the given HTTP request
     whose `holder` is either a Model, an Actor or an Action.
@@ -380,6 +382,7 @@ def choices_for_field(request, holder, field):
     return (qs, row2dict)
 
 
+# choices_response is copied line-for-line from lino.modlib.extjs.views.choices_response
 def choices_response(actor, request, qs, row2dict, emptyValue):
     """
     :param actor: requesting Actor
@@ -435,7 +438,9 @@ def choices_response(actor, request, qs, row2dict, emptyValue):
     # ~ return json_response_kw(count=len(rows),rows=rows,title=_('Choices for %s') % fldname)
 
 
+# Copied from lino.modlib.extjs.views.Choices line for line.
 class Choices(View):
+
     def get(self, request, app_label=None, rptname=None, fldname=None, **kw):
         """If `fldname` is specified, return a JSON object with two
         attributes `count` and `rows`, where `rows` is a list of

@@ -73,6 +73,11 @@ sap.ui.define([
               success: function(data){
                   if (data && data['success'] && data['xcallback'] !== undefined){
                     var  xcallback = data['xcallback'];
+                    /* TODO: Refactor this indo it's own view where you use data binding for the message and callback_ID
+                    *      We will be doing such things for other actions (Ones that require parameters)
+                    *      it will be a good exercise.and we might need this exact same thing with other events.
+                           For example asking if you want to save unsaved data when leaving a page.
+                    */
                     var dialog = new Dialog({
                         title: xcallback['title'],
                         type: 'Message',
