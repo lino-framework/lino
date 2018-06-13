@@ -72,9 +72,9 @@ class ValidActionResponses(object):
     navinfo = None
     data_record = None
     """
-    Certain requests are expected to return the detailed information
-    about a single data record. That's done in :attr:`data_record`
-    which must itself be a dict with the following keys:
+    Certain requests are expected to return detailed information about
+    a single data record. That's done in :attr:`data_record` which
+    must itself be a dict with the following keys:
 
     - id : the primary key of this record_deleted
     - title : the title of the detail window
