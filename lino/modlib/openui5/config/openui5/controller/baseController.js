@@ -8,10 +8,19 @@ sap.ui.define([
     "use strict";
     return Controller.extend("lino.controller.baseController", {
 
+        /**
+         * Convenience method for getting the router for navigation.
+         * @public
+         * @returns {sap.ui.core.routing.Router or sap.m.routing.Router}
+         */
         getRouter: function () {
             return sap.ui.core.UIComponent.getRouterFor(this)
         },
 
+        /**
+         * Event callback for pressing the Back button
+         * Uses the router to navigate back to the previous page
+         */
         onNavBack: function (oEvent) {
             var oHistory, sPreviousHash;
 
@@ -25,22 +34,30 @@ sap.ui.define([
             }
         },
 
+        /**
+         * Used by ui5 components to route to an actors action,
+         *
+         */
         routeTo: function (action, actor_id, args, history) {
-            /*
-                use in app routing
-            */
             this.getRouter().navTo(action + "." + actor_id,
                 args, history);
         },
+
+        /**
+         * Used by Lino.window_action, a method called by action requests that have been converted to anchors
+         * Currently only used to route to grid + detail views.
+         *
+         */
         routeToAction: function (action_id, args, rp) {
-            /*
-                used in server generated links, note the unused rp (requesting Panel).
-                That might be used later for other action requests
-            */
             this.getRouter().navTo(action_id,
                 args, true);
         },
 
+        /**
+         * Convenience method for searching up the tree of elements to find the next MVC.
+         * @public
+         * @returns {sap.ui.core.mvc.View} The parent view
+         */
         getParentView: function () {
             var v = this.getView()
             while (v && v.getParent) {
