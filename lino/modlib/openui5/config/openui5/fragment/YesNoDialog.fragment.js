@@ -1,9 +1,9 @@
 sap.ui.jsfragment("lino.fragment.YesNoDialog", {
-	createContent: function(data) {
-		// var oButton = new sap.m.Button({
-		// 	text:"Hello World",
-		// 	press:oController.doSomething
-		// });
+    createContent: function (data) {
+        // var oButton = new sap.m.Button({
+        // 	text:"Hello World",
+        // 	press:oController.doSomething
+        // });
         var xcallback = data['xcallback'];
         var dialog = new sap.m.Dialog({
             title: xcallback['title'],
@@ -39,6 +39,6 @@ sap.ui.jsfragment("lino.fragment.YesNoDialog", {
                 dialog.destroy();
             }
         });
-		return dialog;
-	} 
+        return dialog;
+    }
 });

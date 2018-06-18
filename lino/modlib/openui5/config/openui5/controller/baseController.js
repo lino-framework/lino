@@ -4,7 +4,7 @@ sap.ui.define([
     "sap/ui/core/routing/History",
     'sap/ui/model/Filter',
     "sap/m/MessageToast"
-], function (Controller,JSONModel, History,Filter,MessageToast) {
+], function (Controller, JSONModel, History, Filter, MessageToast) {
     "use strict";
     return Controller.extend("lino.controller.baseController", {
 

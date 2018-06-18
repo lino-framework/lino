@@ -7,7 +7,6 @@ Database models for `lino.modlib.bootstrap3`.
 
 """
 
-
 from django.conf import settings
 from lino.core.tables import AbstractTable
 from django.utils.translation import ugettext_lazy as _
@@ -30,6 +29,7 @@ class ShowAsHtml(dd.Action):
     def run_from_ui(self, ar, **kw):
         url = dd.plugins.bootstrap3.renderer.get_request_url(ar)
         ar.success(open_url=url)
+
 
 if settings.SITE.default_ui != 'lino.modlib.bootstrap3':
     AbstractTable.show_as_html = ShowAsHtml()

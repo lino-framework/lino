@@ -24,7 +24,6 @@ from lino.utils.jsgen import py2js
 
 
 class Renderer(ExtRenderer):
-
     """.
         An HTML renderer that uses the OpenUI5 Javascript framework.
 
@@ -61,11 +60,10 @@ class Renderer(ExtRenderer):
                 sc = sc[1:]
                 kw.setdefault(ext_requests.URL_PARAM_SORTDIR, 'DESC')
             kw.setdefault(ext_requests.URL_PARAM_SORT, sc)
-        #~ print '20120901 TODO get_request_url
+        # ~ print '20120901 TODO get_request_url
 
         return self.plugin.build_plain_url(
             ar.actor.app_label, ar.actor.__name__, *args, **kw)
-
 
     # # todo: port to ui5
     # def ar2js(self, ar, obj, **status):
@@ -97,7 +95,7 @@ class Renderer(ExtRenderer):
 
         a = bound_action.action
         if a.opens_a_window or (a.parameters and not a.no_params_window):
-            fullname = ".".join(bound_action.full_name().rsplit(".",1)[::-1]) # moves action name to first arg,
+            fullname = ".".join(bound_action.full_name().rsplit(".", 1)[::-1])  # moves action name to first arg,
             if request and request.subst_user:
                 status[
                     constants.URL_PARAM_SUBST_USER] = request.subst_user
@@ -108,7 +106,7 @@ class Renderer(ExtRenderer):
             else:
                 rp = request.requesting_panel
             if not status:
-                status = {} #non param window actions also use router and just have no args,
+                status = {}  # non param window actions also use router and just have no args,
 
             return "me.open_window_action(%s,%s,%s)" % (
                 py2js(fullname),
@@ -140,16 +138,16 @@ class Renderer(ExtRenderer):
             return E.li(E.a(mnu.label, href=url, tabindex="-1"))
 
         items = [self.show_menu(ar, mi, level + 1) for mi in mnu.items]
-        #~ print 20120901, items
+        # ~ print 20120901, items
         if level == 1:
-            return E.ul(*items, **{'class':'nav navbar-nav'})
+            return E.ul(*items, **{'class': 'nav navbar-nav'})
         if mnu.label is None:
             raise Exception("%s has no label" % mnu)
         if level == 2:
             cl = 'dropdown'
             menu_title = E.a(
-                str(mnu.label), E.b(' ', **{'class':"caret"}), href="#",
-                data_toggle="dropdown", **{'class':'dropdown-toggle'})
+                str(mnu.label), E.b(' ', **{'class': "caret"}), href="#",
+                data_toggle="dropdown", **{'class': 'dropdown-toggle'})
         elif level == 3:
             menu_title = E.a(str(mnu.label), href="#")
             cl = 'dropdown-submenu'
@@ -157,5 +155,5 @@ class Renderer(ExtRenderer):
             raise Exception("Menu with more than three levels")
         return E.li(
             menu_title,
-            E.ul(*items, **{'class':'dropdown-menu'}),
-            **{'class':cl})
+            E.ul(*items, **{'class': 'dropdown-menu'}),
+            **{'class': cl})

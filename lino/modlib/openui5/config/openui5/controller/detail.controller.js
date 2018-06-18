@@ -35,7 +35,7 @@ sap.ui.define([
 
         },
 
-         /**
+        /**
          * Load data for a current object.
          * @public
          * @returns {sap.ui.model.json.JSONModel}
@@ -83,7 +83,7 @@ sap.ui.define([
                         var xcallback = data['xcallback'];
                         if (!this._yesNoDialog) {
                             this._yesNoDialog = sap.ui.jsfragment("lino.fragment.YesNoDialog",
-                            data);
+                                data);
                             oView.addDependent(this._yesNoDialog);
                         }
 
@@ -111,7 +111,7 @@ sap.ui.define([
         /***
          * Close YesNoDialog
          */
-        onNoDialog : function () {
+        onNoDialog: function () {
             var dialog = this.getParent();
             dialog.close();
         },
