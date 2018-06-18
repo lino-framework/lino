@@ -809,17 +809,17 @@ class Connector(View):
 
         elif name.startswith("view/") or \
                 name.startswith("controller/") or \
-                name.startswith("core/"):
+                name.startswith("core/") or name.startswith("fragment/"):
             tplname = "openui5/" + name
 
             if "manifest.json" in name:
                 ## List all master tables for routing
                 actors_list = [
                     rpt for rpt in dbtables.master_reports
-                    # + dbtables.slave_reports
-                    # + list(dbtables.generic_slaves.values())
-                    # + dbtables.custom_tables
-                    # + dbtables.frames_list
+                    + dbtables.slave_reports
+                    + list(dbtables.generic_slaves.values())
+                    + dbtables.custom_tables
+                    + dbtables.frames_list
                 ]
                 detail_list = set()
 
