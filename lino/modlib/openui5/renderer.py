@@ -110,7 +110,7 @@ class Renderer(ExtRenderer):
             if not status:
                 status = {} #non param window actions also use router and just have no args,
 
-            return "Lino.window_action(%s,%s,%s)" % (
+            return "me.open_window_action(%s,%s,%s)" % (
                 py2js(fullname),
                 py2js(status),
                 py2js(rp))
