@@ -21,7 +21,6 @@ from lino.api.ad import Plugin
 
 
 class Plugin(Plugin):
-
     # ui_label = _("Bootstrap")
     ui_handle_attr_name = 'openui5_handle'
 
@@ -32,6 +31,7 @@ class Plugin(Plugin):
     url_prefix = 'ui5'
 
     media_name = 'openui5'
+
     # media_root = None
     # media_base_url = "http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/"
 
@@ -93,4 +93,3 @@ class Plugin(Plugin):
     def get_index_view(self):
         from . import views
         return views.Index.as_view()
-

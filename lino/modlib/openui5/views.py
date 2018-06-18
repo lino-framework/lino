@@ -87,6 +87,7 @@ def elem2rec_empty(ar, ah, elem, **rec):
                 ar, ar.param_values))
     return rec
 
+
 class Callbacks(View):
     def get(self, request, thread_id, button_id):
         return settings.SITE.kernel.run_callback(request, thread_id, button_id)
@@ -307,6 +308,7 @@ class ApiList(View):
 
         return settings.SITE.kernel.run_action(ar)
 
+
 # Should we Refactor into lino.modlib.extjs.choicees_views.py and import?
 #
 # choices_for_field is copied line-for-line from lino.modlib.extjs.views.choices_for_field
@@ -440,7 +442,6 @@ def choices_response(actor, request, qs, row2dict, emptyValue):
 
 # Copied from lino.modlib.extjs.views.Choices line for line.
 class Choices(View):
-
     def get(self, request, app_label=None, rptname=None, fldname=None, **kw):
         """If `fldname` is specified, return a JSON object with two
         attributes `count` and `rows`, where `rows` is a list of
@@ -809,17 +810,17 @@ class Connector(View):
 
         elif name.startswith("view/") or \
                 name.startswith("controller/") or \
-                name.startswith("core/"):
+                name.startswith("core/") or name.startswith("fragment/"):
             tplname = "openui5/" + name
 
             if "manifest.json" in name:
                 ## List all master tables for routing
                 actors_list = [
                     rpt for rpt in dbtables.master_reports
-                    # + dbtables.slave_reports
-                    # + list(dbtables.generic_slaves.values())
-                    # + dbtables.custom_tables
-                    # + dbtables.frames_list
+                                   + dbtables.slave_reports
+                                   + list(dbtables.generic_slaves.values())
+                                   + dbtables.custom_tables
+                                   + dbtables.frames_list
                 ]
                 detail_list = set()
 

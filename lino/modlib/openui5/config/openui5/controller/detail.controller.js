@@ -8,7 +8,7 @@ sap.ui.define([
     'sap/m/Button',
     'sap/m/Dialog',
     'sap/m/Text'
-], function (baseController,JSONModel, Menu, MenuItem, MessageToast, DateFormat,Button,Dialog,Text) {
+], function (baseController, JSONModel, Menu, MenuItem, MessageToast, DateFormat, Button, Dialog, Text) {
     "use strict";
 
     return baseController.extend("lino.controller.detail", {
@@ -35,7 +35,11 @@ sap.ui.define([
 
         },
 
-
+        /**
+         * Load data for a current object.
+         * @public
+         * @returns {sap.ui.model.json.JSONModel}
+         */
         initSampleDataModel: function () {
             var oModel = new JSONModel();
 
@@ -56,7 +60,11 @@ sap.ui.define([
             return oModel;
         },
 
+        /**
+         * Generic function to handle button actions.
+         */
         onPressAction: function (oEvent) {
+            var me = this;
             var button = oEvent.getSource();
             var oView = this.getView();
             var action_name = button.data('action_name');
@@ -64,60 +72,48 @@ sap.ui.define([
             var action_method = button.data('action_method');
             var msg = action_name + "' pressed";
             // action_url = 'tickets/Tickets/';
-            var url = '/api/' + action_url  + this._PK;
+            var url = '/api/' + action_url + this._PK;
             MessageToast.show(msg);
             jQuery.ajax({
-              url:url,
-              type: action_method,
-              data: jQuery.param({an: action_name}),
-              success: function(data){
-                  if (data && data['success'] && data['xcallback'] !== undefined){
-                    var  xcallback = data['xcallback'];
-                    /* TODO: Refactor this indo it's own view where you use data binding for the message and callback_ID
-                    *      We will be doing such things for other actions (Ones that require parameters)
-                    *      it will be a good exercise.and we might need this exact same thing with other events.
-                           For example asking if you want to save unsaved data when leaving a page.
-                    */
-                    var dialog = new Dialog({
-                        title: xcallback['title'],
-                        type: 'Message',
-                        content: new Text({ text: data['message']}),
-                        beginButton: new Button({
-                            text: xcallback['buttons']['yes'],
-                            press: function () {
-                                MessageToast.show('Yes pressed!');
-                                jQuery.ajax({
-                                    url:'/callbacks/'+ xcallback['id'] +'/yes',
-                                    type: 'GET',
-                                    success: function(data){
-                                      MessageToast.show(data['message']);
-                                    },
-                                    error: function(e){
-                                          MessageToast.show("error: "+e);
-                                      }
-                                    });
-                                dialog.close();
-                            }
-                        }),
-                        endButton: new Button({
-                            text:  xcallback['buttons']['no'],
-                            press: function () {
-                                dialog.close();
-                            }
-                        }),
-                        afterClose: function() {
-                            dialog.destroy();
+                url: url,
+                type: action_method,
+                data: jQuery.param({an: action_name}),
+                success: function (data) {
+                    if (data && data['success'] && data['xcallback'] !== undefined) {
+                        var xcallback = data['xcallback'];
+                        if (!this._yesNoDialog) {
+                            this._yesNoDialog = sap.ui.jsfragment("lino.fragment.YesNoDialog",
+                                data);
+                            oView.addDependent(this._yesNoDialog);
                         }
-                    });
 
-                    dialog.open();
-                  }
-                  MessageToast.show(data['message']);
-              },
-              error: function(e){
-                  MessageToast.show("error: "+e);
-              }
+
+                        this._yesNoDialog.open();
+                    }
+                    else if (data && data['eval_js'] !== undefined) {
+                        var eval_js = data['eval_js'];
+                        // eval_js = eval_js.replace("Lino.", "me.");
+                        eval(eval_js);
+                    }
+                    MessageToast.show(data['message']);
+                },
+                error: function (e) {
+                    MessageToast.show("error: " + e);
+                }
             });
+        },
+
+        window_action: function (action, options, history) {
+            this.getRouter().navTo(action,
+                options, history);
+        },
+
+        /***
+         * Close YesNoDialog
+         */
+        onNoDialog: function () {
+            var dialog = this.getParent();
+            dialog.close();
         },
 
         getNavport: function () {

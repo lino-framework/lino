@@ -1,0 +1,23 @@
+<core:FragmentDefinition
+   xmlns="sap.m"
+   xmlns:core="sap.ui.core" >
+   <Dialog
+      id="YesNoDialog"
+      title="{title}">
+       <content>
+         <Text text="{text}"
+            />
+      </content>
+       <beginButton>
+           <Button
+               text="Yes"
+               press="onYesDialog"/>
+       </beginButton>
+	   <endButton>
+           <Button
+               text="No"
+               press="onNoDialog"/>
+       </endButton>
+
+   </Dialog>
+</core:FragmentDefinition>
