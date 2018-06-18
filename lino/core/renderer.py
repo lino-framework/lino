@@ -182,6 +182,16 @@ class HtmlRenderer(Renderer):
         """
         return self.not_implemented_js
         
+    def instance_handler(self, ar, obj, ba):
+        """
+        Return a string of Javascript code which would open a detail window
+        on the given database object.
+        """
+        if ba is None:
+            ba = obj.get_detail_action(ar)
+        if ba is not None:
+            return self.action_call(ar, ba, dict(record_id=obj.pk))
+
     def href_to(self, ar, obj, text=None):
         h = self.obj2url(ar, obj)
         if h is None:
@@ -738,16 +748,6 @@ class JsRenderer(HtmlRenderer):
         return self.plugin.build_plain_url(
             'api', actor.app_label, actor.__name__, str(pk), *args, **kw)
 
-
-    def instance_handler(self, ar, obj, ba):
-        """Return a string of Javascript code which would open a detail window
-        on the given database object.
-
-        """
-        if ba is None:
-            ba = obj.get_detail_action(ar)
-        if ba is not None:
-            return self.action_call(ar, ba, dict(record_id=obj.pk))
 
     def obj2url(self, ar, obj):
         return self.js2url(self.instance_handler(ar, obj, None))
