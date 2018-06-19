@@ -40,14 +40,14 @@
        </content>
 
       <beginButton>
-         <Button
-            text="Cancel"
-            press="onCloseDialog"/>
-      </beginButton>
-      <endButton>
          <Button text="OK"
            press="onOkSignInDialog"
          />
+      </beginButton>
+      <endButton>
+         <Button
+            text="Cancel"
+            press="onCloseDialog"/>
       </endButton>
    </Dialog>
 </core:FragmentDefinition>
