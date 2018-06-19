@@ -95,8 +95,9 @@ sap.ui.define([
                 limit: this.page_limit,
                 fmt: 'json',
                 mt: this._content_type,
-                start: (oModel.getProperty("/page") - 1) * this.page_limit
-            }
+                start: (oModel.getProperty("/page") - 1) * this.page_limit,
+                rp: this.getView().getId()
+            };
             var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
             if (this._is_slave) {
                 data.mk = this.getParentView().getController()._PK

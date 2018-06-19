@@ -103,7 +103,7 @@ sap.ui.define([
             });
         },
 
-        window_action: function (action, options, history) {
+        open_window_action: function (action, options, history) {
             this.getRouter().navTo(action,
                 options, history);
         },

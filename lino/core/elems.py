@@ -996,6 +996,7 @@ def action_name(a):
 
 
 class ForeignKeyElement(ComplexRemoteComboFieldElement):
+    oui5_field_template = "openui5/elems/field/ForeignKeyElement.xml"
 
     preferred_width = 20
 
