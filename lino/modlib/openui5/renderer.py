@@ -65,7 +65,6 @@ class Renderer(ExtRenderer):
         return self.plugin.build_plain_url(
             ar.actor.app_label, ar.actor.__name__, *args, **kw)
 
-    # # todo: port to ui5
     def ar2js(self, ar, obj, **status):
         """Implements :meth:`lino.core.renderer.HtmlRenderer.ar2js`.
 

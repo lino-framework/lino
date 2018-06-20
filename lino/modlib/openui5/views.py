@@ -715,8 +715,8 @@ class Connector(View):
             menu=settings.SITE.get_site_menu(None, u.user_type)
         )
 
-        print(u)
-        print(name)
+        # print(u)
+        # print(name)
         if name.startswith("dialog/SignInActionFormPanel"):
             tplname = "openui5/fragment/SignInActionFormPanel.fragment.xml"
 
