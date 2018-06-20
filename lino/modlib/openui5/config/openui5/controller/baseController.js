@@ -49,8 +49,14 @@ sap.ui.define([
          *
          */
         routeToAction: function (action_id, args, rp) {
+            var query = {};
+            if (args.base_params !== undefined) {
+                $.each(args.base_params, function (k, v) {
+                    query [k] = v;
+                });
+            }
             this.getRouter().navTo(action_id,
-                args, true);
+                {query : query}, true);
         },
 
         /**
@@ -59,7 +65,7 @@ sap.ui.define([
          * @returns {sap.ui.core.mvc.View} The parent view
          */
         getParentView: function () {
-            var v = this.getView()
+            var v = this.getView();
             while (v && v.getParent) {
                 v = v.getParent();
                 if (v instanceof sap.ui.core.mvc.View) {

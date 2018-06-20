@@ -58,7 +58,7 @@
 			 }
 			 {% for actor in actors_list %}
 			 ,{
-				"pattern":"grid/{{actor.actor_id}}",
+				"pattern":"grid/{{actor.actor_id}}:?query:",
 				"name": "grid.{{actor.actor_id}}",
 				"target": "grid.{{actor.actor_id}}"
 			 }

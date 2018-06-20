@@ -87,7 +87,7 @@ class Renderer(ExtRenderer):
         # 20140429 `ar` is now None, see :ref:`welfare.tested.integ`
         params = self.get_action_params(ar, ba, obj)
         return "Lino.simple_action(%s,%s,%s,%s,%s,%s)" % (
-            py2js(ba.actor.actor_id) , py2js(ba.action.action_name), py2js(rp),
+            py2js(ba.actor.actor_id), py2js(ba.action.action_name), py2js(rp),
             py2js(ar.is_on_main_actor), py2js(obj.pk), py2js(params))
         # bound_action.a)
 
@@ -96,9 +96,9 @@ class Renderer(ExtRenderer):
         """ Generates js string for action button calls.
             Needs to understand if it's a param action or simple action.
         """
-        js = super(ExtRenderer, self).request_handler(ar, *args, **kw)
-
-        return js
+        # js = super(ExtRenderer, self).request_handler(ar, *args, **kw)
+        st = ar.get_status(**kw)
+        return self.action_call(ar, ar.bound_action, st)
 
     def instance_handler(self, ar, obj, ba):
         # Used for navigation, currently working, due to action_call override
