@@ -17,7 +17,7 @@ sap.ui.jsfragment("lino.fragment.YesNoDialog", {
                         url: '/callbacks/' + xcallback['id'] + '/yes',
                         type: 'GET',
                         success: function (data) {
-                            MessageToast.show(data['message']);
+                            sap.m.MessageToast.show(data['message']);
                             if (data['detail_handler_name'] !== undefined) {
                                 me.routeTo("detail", data['detail_handler_name'].replace('.detail', ''), {});
                             }
