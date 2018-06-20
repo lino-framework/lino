@@ -72,9 +72,9 @@ class ValidActionResponses(object):
     navinfo = None
     data_record = None
     """
-    Certain requests are expected to return the detailed information
-    about a single data record. That's done in :attr:`data_record`
-    which must itself be a dict with the following keys:
+    Certain requests are expected to return detailed information about
+    a single data record. That's done in :attr:`data_record` which
+    must itself be a dict with the following keys:
 
     - id : the primary key of this record_deleted
     - title : the title of the detail window
@@ -82,6 +82,7 @@ class ValidActionResponses(object):
     - navinfo : an object with information for the navigator
     - disable_delete : either null (if that record may be deleted, or
       otherwise a message explaining why.
+
     """
 
     record_id = None
@@ -891,6 +892,7 @@ class BaseRequest(object):
             rec.update(disable_delete=rh.actor.disable_delete(elem, ar))
         if rh.actor.show_detail_navigator and with_navinfo:
             rec.update(navinfo=navinfo(ar.data_iterator, elem))
+
         return rec
 
     def form2obj_and_save(ar, data, elem, is_new):

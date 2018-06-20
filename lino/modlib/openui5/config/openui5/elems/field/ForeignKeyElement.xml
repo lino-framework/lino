@@ -1,0 +1,37 @@
+{% extends "/openui5/elems/field/FieldElement.xml" %}
+
+{% set url = e.layout_handle.get_choices_url(e.field) %}
+{% block field_label %}
+<Label text="{{e.label}}"/>
+{% endblock %}
+
+{% block field_content %}
+
+<Input
+				id="{{e}}"
+				type="Text"
+				textFormatMode="Value"
+				placeholder="{{e.help_text}}"
+                value="{{bind('record>/data/',e.field.name)}}"
+                wrapping="true"
+				showSuggestion="true"
+                suggest="handleSuggest"
+				showValueHelp="true"
+				valueHelpRequest="handleValueHelp"
+				suggestionItems="{Input>/rows}">
+				<suggestionItems>
+					<core:ListItem key="{Input>value}" text="{Input>text}" additionalText="{Input>value}"/>
+				</suggestionItems>
+                <customData>
+					<core:CustomData
+						key="input_url"
+						value="{{url}}" />
+                </customData>
+			</Input>
+
+<!--<ComboBox-->
+				<!--items="{products>/rows}">-->
+				<!--<core:Item key="{value}" text="{text}" />-->
+			<!--</ComboBox>-->
+
+{% endblock %}

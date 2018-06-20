@@ -879,6 +879,8 @@ class DeleteSelected(MultipleRowAction):
         def ok(ar2):
             super(DeleteSelected, self).run_from_ui(ar, **kw)
             ar2.success(record_deleted=True)
+            
+            # hack required for extjs: 
             if ar2.actor.detail_action:
                 ar2.set_response(
                     detail_handler_name=ar2.actor.detail_action.full_name())
