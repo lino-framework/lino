@@ -714,6 +714,8 @@ class Connector(View):
         context = dict(
             menu=settings.SITE.get_site_menu(None, u.user_type)
         )
+        query = request.GET.urlencode()
+        print (query)
 
         print(u)
         print(name)
@@ -773,7 +775,8 @@ class Connector(View):
                 "actions": actor.get_actions(),
                 "title": actor.label,
                 "pk_index": store.pk_index,
-                "is_slave": name.startswith("slavetable/")
+                "is_slave": name.startswith("slavetable/"),
+                "query":query
             })
             if name.startswith("slavetable/"):
                 tplname = "openui5/view/slaveTable.view.xml"
