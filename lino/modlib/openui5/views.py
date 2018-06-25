@@ -717,8 +717,8 @@ class Connector(View):
         query = request.GET.urlencode()
         print (query)
 
-        print(u)
-        print(name)
+        # print(u)
+        # print(name)
         if name.startswith("dialog/SignInActionFormPanel"):
             tplname = "openui5/fragment/SignInActionFormPanel.fragment.xml"
 
