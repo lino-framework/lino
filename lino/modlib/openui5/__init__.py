@@ -35,10 +35,11 @@ class Plugin(Plugin):
     # media_root = None
     # media_base_url = "http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/"
 
-    def on_ui_init(self, ui):
+    def on_ui_init(self, kernel):
         from .renderer import Renderer
         self.renderer = Renderer(self)
         # ui.bs3_renderer = self.renderer
+        kernel.extjs_renderer = self.renderer
 
     def get_patterns(self):
         from django.conf.urls import url

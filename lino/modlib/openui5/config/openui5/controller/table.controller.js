@@ -21,13 +21,18 @@ sap.ui.define([
             var me = this;
             var oView = this.getView();
             var oMainTable = this.getView().byId("MAIN_TABLE");
-            this._is_rendered = false
-            this._table = oMainTable
+            this._is_rendered = false;
+            this._table = oMainTable;
             this.page_limit = this.visibleRowCount;
             this._PK = oMainTable.data("PK");
             this._actor_id = oMainTable.data("actor_id");
             this._content_type = oMainTable.data("content_type"); // null or int
             this._is_slave = oMainTable.data("is_slave"); // null or int
+
+            var oRouter = this.getRouter();
+
+			oRouter.getRoute("grid."+ this._actor_id).attachMatched(this._onRouteMatched, this);
+
 
             this._table.setBusy(true);
 
@@ -64,6 +69,19 @@ sap.ui.define([
 
 
         },
+        /***
+         * Read query passed with the route.
+         * @param oEvent
+         * @private
+         */
+        _onRouteMatched : function (oEvent) {
+			var oArgs, oView;
+
+			oArgs = oEvent.getParameter("arguments");
+            if (oArgs["?query"] !== undefined){
+                this._query = oArgs["?query"];
+            }
+		},
 
         onAfterRendering: function (oEvent) {
             // to prevent second loading of data on init,
@@ -87,7 +105,7 @@ sap.ui.define([
 
 
         initSampleDataModel: function () {
-            var me = this
+            var me = this;
             this._table.setBusy(true);
             var oRecordDataModel = new JSONModel();
             var oModel = me.getView().getModel("meta");
@@ -98,6 +116,9 @@ sap.ui.define([
                 start: (oModel.getProperty("/page") - 1) * this.page_limit,
                 rp: this.getView().getId()
             };
+            if (this._query !==  undefined){
+                jQuery.extend(data, this._query);
+            }
             var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
             if (this._is_slave) {
                 data.mk = this.getParentView().getController()._PK
@@ -163,7 +184,7 @@ sap.ui.define([
                 return; //Do not use context menus on touch devices
             }
 
-            if (oEvent.getParameter("columnId") != this.getView().createId("productId")) {
+            if (oEvent.getParameter("columnId") !== this.getView().createId("productId")) {
                 return; //Custom context menu for product id column only
             }
 
@@ -197,7 +218,7 @@ sap.ui.define([
         onQuantitySort: function (oEvent) {
             var bAdd = oEvent.getParameter("ctrlKey") === true;
             var oColumn = this.getView().byId("quantity");
-            var sOrder = oColumn.getSortOrder() == "Ascending" ? "Descending" : "Ascending";
+            var sOrder = oColumn.getSortOrder() === "Ascending" ? "Descending" : "Ascending";
 
             this.getView().byId("table").sort(oColumn, sOrder, bAdd);
         },
@@ -228,10 +249,10 @@ sap.ui.define([
             var sPage = +oEvent.getParameters().value; //+ converts value into int or NaN // value is same as {meta>page}
             var sOldPage = oModel.getProperty("/page_old");
             var input = oEvent.getSource();
-            console.log(sPage, sOldPage, input)
-            if (sPage != sOldPage) {
+            console.log(sPage, sOldPage, input);
+            if (sPage !== sOldPage) {
                 input.setValueState("None");
-                MessageToast.show("Should load page:" + sPage)
+                MessageToast.show("Should load page:" + sPage);
                 this.reload()
             }
             else if (isNaN(sPage)) {
@@ -245,7 +266,7 @@ sap.ui.define([
         },
         onLastPress: function (oEvent) {
             var oModel = this.getView().getModel("meta");
-            oModel.setProperty("/page", oModel.getProperty("/page_total"))
+            oModel.setProperty("/page", oModel.getProperty("/page_total"));
             this.reload();
         },
 

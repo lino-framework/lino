@@ -8,7 +8,7 @@ from builtins import str
 
 from lino.core import constants as ext_requests
 # from lino.core.renderer import HtmlRenderer, JsRenderer
-from lino.core.renderer import add_user_language
+from lino.core.renderer import add_user_language, JsRenderer
 from lino.core.menus import Menu, MenuItem
 from lino.core import constants
 from lino.modlib.extjs.ext_renderer import ExtRenderer
@@ -65,6 +65,13 @@ class Renderer(ExtRenderer):
         return self.plugin.build_plain_url(
             ar.actor.app_label, ar.actor.__name__, *args, **kw)
 
+    def get_action_params(self, ar, ba, obj, **kw):
+        if ba.action.parameters:
+            fv = ba.action.params_layout.params_store.pv2list(
+                ar, ar.action_param_values)
+            kw[constants.URL_PARAM_FIELD_VALUES] = fv
+        return kw
+
     def ar2js(self, ar, obj, **status):
         """Implements :meth:`lino.core.renderer.HtmlRenderer.ar2js`.
 
@@ -101,7 +108,7 @@ class Renderer(ExtRenderer):
 
     def instance_handler(self, ar, obj, ba):
         # Used for navigation, currently working, due to action_call override
-        return super(ExtRenderer, self).instance_handler(ar, obj, ba)
+        return super(Renderer, self).instance_handler(ar, obj, ba)
 
     def action_call(self, request, bound_action, status):
 
