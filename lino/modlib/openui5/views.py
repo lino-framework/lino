@@ -237,7 +237,8 @@ class ApiList(View):
                       rows=rows,
                       success=True,
                       no_data_text=ar.no_data_text,
-                      title=str(ar.get_title()))
+                      # title=str(ar.get_title()),
+                      title=ar.get_title())
             if ar.actor.parameters:
                 kw.update(
                     param_values=ar.actor.params_layout.params_store.pv2dict(
@@ -714,8 +715,6 @@ class Connector(View):
         context = dict(
             menu=settings.SITE.get_site_menu(None, u.user_type)
         )
-        query = request.GET.urlencode()
-        print (query)
 
         # print(u)
         # print(name)
@@ -776,7 +775,6 @@ class Connector(View):
                 "title": actor.label,
                 "pk_index": store.pk_index,
                 "is_slave": name.startswith("slavetable/"),
-                "query":query
             })
             if name.startswith("slavetable/"):
                 tplname = "openui5/view/slaveTable.view.xml"
