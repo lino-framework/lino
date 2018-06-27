@@ -287,6 +287,7 @@ class ExtRenderer(JsRenderer):
                     py2js(rp),
                     py2js(status))
             return "Lino.%s.run(%s)" % (bound_action.full_name(), py2js(rp))
+        # raise Exception("20180620 {}".format(bound_action))
         return "%s()" % self.get_panel_btn_handler(bound_action)
 
     def get_panel_btn_handler(self, ba):
