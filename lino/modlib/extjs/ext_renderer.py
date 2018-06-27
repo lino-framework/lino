@@ -288,6 +288,9 @@ class ExtRenderer(JsRenderer):
                     py2js(status))
             return "Lino.%s.run(%s)" % (bound_action.full_name(), py2js(rp))
         # raise Exception("20180620 {}".format(bound_action))
+        
+        # used e.g. the invoicing.StartInvoicing action (visible in
+        # roger or lydia).
         return "%s()" % self.get_panel_btn_handler(bound_action)
 
     def get_panel_btn_handler(self, ba):
