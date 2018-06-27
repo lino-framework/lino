@@ -907,7 +907,7 @@ class Index(View):
     def get(self, request, *args, **kw):
         # raise Exception("20171122 {} {}".format(
         #     get_language(), settings.MIDDLEWARE_CLASSES))
-        ui = settings.SITE.plugins.bootstrap3
+        ui = settings.SITE.plugins.openui5
         # print("20170607", request.user)
         # assert ui.renderer is not None
         ar = BaseRequest(
@@ -931,4 +931,4 @@ def index_response(ar):
     # else:
     #     user = request.subst_user or request.user
     # context.update(ar=ar)
-    return http_response(ar, 'bootstrap3/index.html', context)
+    return http_response(ar, 'openui5/main.html', context)

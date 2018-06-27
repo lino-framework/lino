@@ -50,7 +50,7 @@ class Plugin(Plugin):
         urls = [
             # url(rx + r'/?$', views.Index.as_view()),
 
-            # url(rx + r'$', views.Index.as_view()),
+            url(rx + r'$', views.Index.as_view()),
 
             url(rx + r'auth$', views.Authenticate.as_view()),
 
