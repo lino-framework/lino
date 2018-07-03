@@ -774,9 +774,9 @@ class Connector(View):
                 "actions": actor.get_actions(),
                 "title": actor.label,
                 "pk_index": store.pk_index,
-                "is_slave": name.startswith("slavetable/"),
+                "is_slave": name.startswith("slavetable/") or context.get('content_type', False),
             })
-            if name.startswith("slavetable/"):
+            if name.startswith("slavetable/") or context.get('content_type', False):
                 tplname = "openui5/view/slaveTable.view.xml"
             else:
                 tplname = "openui5/view/table.view.xml"  # Change to "grid" to match action?
