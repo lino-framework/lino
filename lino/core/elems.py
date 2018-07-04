@@ -1199,6 +1199,8 @@ class NumberFieldElement(FieldElement):
         return E.b(self.format_value(ar, sums[self.name]))
 
     def value2num(self, v):
+        if self.hide_sum:
+            return 0
         return v
 
     # def apply_cell_format(self,e):
@@ -1296,6 +1298,8 @@ class AutoFieldElement(NumberFieldElement):
 class RequestFieldElement(IntegerFieldElement):
 
     def value2num(self, v):
+        if self.hide_sum:
+            return 0
         # logger.info("20131114 value2num %s",v)
         return v.get_total_count()
 
@@ -1345,6 +1349,8 @@ class QuantityFieldElement(CharFieldElement):
         return kw
 
     def value2num(self, v):
+        if self.hide_sum:
+            return 0
         return v
 
 
