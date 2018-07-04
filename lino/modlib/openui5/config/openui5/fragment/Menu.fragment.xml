@@ -6,6 +6,7 @@
     >
 	<u:Menu>
 		{% for item in opened_menu.items recursive -%}
+		{% if item.bound_action or item.items %}
 		<u:MenuItem
 				text="{{ item.label }}"
                 {% if not item.items -%}
@@ -23,6 +24,7 @@
 		{%- endif %}
 
 		</u:MenuItem>
+	{%- endif %}
 		{%- endfor %}
 	</u:Menu>
 </core:FragmentDefinition>
