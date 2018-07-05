@@ -13,10 +13,11 @@
 				customData:actor_id="{{item.bound_action.actor.actor_id}}"
 				customData:action_name="{{item.bound_action.action.action_name}}"
 				select="handleMenuItemPress"
+                customData:eval_js="{{item.openui5Render()|xmlescape}}"
+                {#item.openui5Render() | p#}
 				{%- endif %}
 				{# icon="sap-icon://save" #}
 		>
-
 		{%- if item.items -%}
 		<u:Menu>
 			{{ loop(item.items) }}

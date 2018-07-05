@@ -44,6 +44,7 @@ from etgen import html as xghtml
 
 from lino.api import rt
 import re
+import cgi
 
 from lino.core import dbtables
 from lino.core import tables
@@ -629,7 +630,10 @@ def XML_response(ar, tplname, context):
         print(args)
         return ""
 
-    env.filters.update(p=p)
+    def xmlescape(s):
+        return cgi.escape(s).replace("'","&apos;").replace('"',"&quot;") # escapes "<", ">", "&" "'" and '"'
+
+    env.filters.update(dict(p=p, xmlescape=xmlescape))
     content_type = "text/xml" if tplname.endswith(".xml") else \
         "application/javascript" if tplname.endswith(".js") else \
             "application/json"
@@ -651,8 +655,6 @@ def layout2html(ar, elem):
     # ~ print tostring(E.div())
     # ~ if len(items) == 0: return ""
     return E.form(*items)
-
-
 
 
 class MainHtml(View):
@@ -745,9 +747,9 @@ class Connector(View):
                 "actions": actor.get_actions(),
                 "title": actor.label,
                 "pk_index": store.pk_index,
-                "is_slave": name.startswith("slavetable/") or context.get('content_type', False),
+                "is_slave": name.startswith("slavetable/") or actor.master is not None,
             })
-            if name.startswith("slavetable/") or context.get('content_type', False):
+            if name.startswith("slavetable/"):
                 tplname = "openui5/view/slaveTable.view.xml"
             else:
                 tplname = "openui5/view/table.view.xml"  # Change to "grid" to match action?
@@ -840,7 +842,6 @@ class Authenticate(View):
             target = '/'
             return http.HttpResponseRedirect(target)
 
-
             # ar = BaseRequest(request)
             # ar.success("User %r logged out." % username)
             # return ar.renderer.render_action_response(ar)
@@ -868,6 +869,7 @@ class Authenticate(View):
         #     # print "20150428 Now logged in as %r (%s)" % (username, user)
         # return ar.renderer.render_action_response(ar)
 
+
 class App(View):
     """
     Main app entry point,
@@ -884,26 +886,25 @@ class App(View):
             # heading=ar.get_title(),
             # main=main,
         )
-
         context.update(ar=ar)
 
         context = ar.get_printable_context(**context)
         env = settings.SITE.plugins.jinja.renderer.jinja_env
         template = env.get_template("openui5/main.html")
-
         return http.HttpResponse(
             template.render(**context),
             content_type='text/html;charset="utf-8"')
 
+
 class Index(View):
     """
-    Render the main page.
+    Render the main dashboard.
     """
 
     def get(self, request, *args, **kw):
         # raise Exception("20171122 {} {}".format(
         #     get_language(), settings.MIDDLEWARE_CLASSES))
-        ui = settings.SITE.plugins.bootstrap3
+        ui = settings.SITE.plugins.openui5
         # print("20170607", request.user)
         # assert ui.renderer is not None
         ar = BaseRequest(
