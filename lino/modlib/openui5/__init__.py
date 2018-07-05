@@ -48,9 +48,7 @@ class Plugin(Plugin):
         rx = '^'
 
         urls = [
-            # url(rx + r'/?$', views.Index.as_view()),
-
-            # url(rx + r'$', views.Index.as_view()),
+            url(rx + r'$', views.App.as_view()),
 
             url(rx + r'auth$', views.Authenticate.as_view()),
 
@@ -78,9 +76,6 @@ class Plugin(Plugin):
             url(rx + r'callbacks/(?P<thread_id>[\-0-9a-zA-Z]+)/'
                      '(?P<button_id>\w+)$',
                 views.Callbacks.as_view()),
-
-            # Main index, todo: refactor into main view, not Tickets
-            url(rx + r'$', views.Tickets.as_view()),
 
         ]
         return urls

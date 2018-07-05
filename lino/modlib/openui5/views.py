@@ -653,35 +653,6 @@ def layout2html(ar, elem):
     return E.form(*items)
 
 
-class Tickets(View):
-    """
-    Was a static View for Tickets,
-    IS currently main app entry point,
-    """
-
-    def get(self, request, app_label="tickets", actor="AllTickets"):
-        ar = action_request(app_label, actor, request, request.GET, True)
-        ar.renderer = settings.SITE.plugins.openui5.renderer
-
-        # ui = settings.SITE.plugins.openui5
-        # main = settings.SITE.get_main_html(ar.request, extjs=ui)
-        # main = ui.renderer.html_text(main)
-        # print(main)
-        context = dict(
-            title=ar.get_title(),
-            heading=ar.get_title(),
-            # main=main,
-        )
-
-        context.update(ar=ar)
-
-        context = ar.get_printable_context(**context)
-        env = settings.SITE.plugins.jinja.renderer.jinja_env
-        template = env.get_template("openui5/main.html")
-
-        return http.HttpResponse(
-            template.render(**context),
-            content_type='text/html;charset="utf-8"')
 
 
 class MainHtml(View):
@@ -897,8 +868,33 @@ class Authenticate(View):
         #     # print "20150428 Now logged in as %r (%s)" % (username, user)
         # return ar.renderer.render_action_response(ar)
 
+class App(View):
+    """
+    Main app entry point,
+    """
 
-# Todo repalce with Tickets
+    def get(self, request):
+        ui = settings.SITE.plugins.openui5
+        ar = BaseRequest(
+            # user=user,
+            request=request,
+            renderer=ui.renderer)
+        context = dict(
+            # title=ar.get_title(),
+            # heading=ar.get_title(),
+            # main=main,
+        )
+
+        context.update(ar=ar)
+
+        context = ar.get_printable_context(**context)
+        env = settings.SITE.plugins.jinja.renderer.jinja_env
+        template = env.get_template("openui5/main.html")
+
+        return http.HttpResponse(
+            template.render(**context),
+            content_type='text/html;charset="utf-8"')
+
 class Index(View):
     """
     Render the main page.
