@@ -56,7 +56,7 @@ sap.ui.define([
                 });
             }
             this.getRouter().navTo(action_id,
-                {query : query}, true);
+                {query : query} /*if 3ed arg (history) is True, oui5 will not record history for this change.*/);
         },
 
         /**
