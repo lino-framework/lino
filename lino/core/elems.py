@@ -519,7 +519,6 @@ class FieldElement(LayoutElement):
         # if self.field.__class__.__name__ == "DcAmountField":
             # print 20130911, self.field, self.editable
 
-        # this was still missing in ectjs6:
         if isinstance(field, fields.FakeField) and field.sortable_by:
             self.sortable = True
 
