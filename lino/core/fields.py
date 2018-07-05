@@ -193,6 +193,11 @@ class FakeField(object):
     generate_reverse_relation = False  # needed when AFTER17
     remote_field = None
     sortable_by = None
+    """
+    A list of real fields to be used for sorting when this fake field
+    is selected.  For remote fields this is set automatically, on
+    virtual fields you can set it yourself.
+    """
 
     # required by Django 1.8:
     is_relation = False

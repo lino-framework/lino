@@ -308,6 +308,7 @@ class Sequenced(Duplicable):
 
 
 Sequenced.set_widget_options('move_buttons', width=5)
+Sequenced.set_widget_options('seqno', hide_sum=True)
 
 
 class Hierarchical(Duplicable):
