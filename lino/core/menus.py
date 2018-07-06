@@ -151,6 +151,12 @@ class MenuItem(object):
                 return True
         return False
 
+    def openui5Render(self):
+
+        ar = self.bound_action.request(**self.params)
+        js = settings.SITE.kernel.default_renderer.request_handler(ar)
+        return js
+
 
 def create_item(spec, action=None, help_text=None, **kw):
     """

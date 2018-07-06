@@ -44,6 +44,7 @@ from etgen import html as xghtml
 
 from lino.api import rt
 import re
+import cgi
 
 from lino.core import dbtables
 from lino.core import tables
@@ -629,7 +630,10 @@ def XML_response(ar, tplname, context):
         print(args)
         return ""
 
-    env.filters.update(p=p)
+    def xmlescape(s):
+        return cgi.escape(s).replace("'","&apos;").replace('"',"&quot;") # escapes "<", ">", "&" "'" and '"'
+
+    env.filters.update(dict(p=p, xmlescape=xmlescape))
     content_type = "text/xml" if tplname.endswith(".xml") else \
         "application/javascript" if tplname.endswith(".js") else \
             "application/json"
@@ -651,37 +655,6 @@ def layout2html(ar, elem):
     # ~ print tostring(E.div())
     # ~ if len(items) == 0: return ""
     return E.form(*items)
-
-
-class Tickets(View):
-    """
-    Was a static View for Tickets,
-    IS currently main app entry point,
-    """
-
-    def get(self, request, app_label="tickets", actor="AllTickets"):
-        ar = action_request(app_label, actor, request, request.GET, True)
-        ar.renderer = settings.SITE.plugins.openui5.renderer
-
-        # ui = settings.SITE.plugins.openui5
-        # main = settings.SITE.get_main_html(ar.request, extjs=ui)
-        # main = ui.renderer.html_text(main)
-        # print(main)
-        context = dict(
-            title=ar.get_title(),
-            heading=ar.get_title(),
-            # main=main,
-        )
-
-        context.update(ar=ar)
-
-        context = ar.get_printable_context(**context)
-        env = settings.SITE.plugins.jinja.renderer.jinja_env
-        template = env.get_template("openui5/main.html")
-
-        return http.HttpResponse(
-            template.render(**context),
-            content_type='text/html;charset="utf-8"')
 
 
 class MainHtml(View):
@@ -774,9 +747,9 @@ class Connector(View):
                 "actions": actor.get_actions(),
                 "title": actor.label,
                 "pk_index": store.pk_index,
-                "is_slave": name.startswith("slavetable/") or context.get('content_type', False),
+                "is_slave": name.startswith("slavetable/") or actor.master is not None,
             })
-            if name.startswith("slavetable/") or context.get('content_type', False):
+            if name.startswith("slavetable/"):
                 tplname = "openui5/view/slaveTable.view.xml"
             else:
                 tplname = "openui5/view/table.view.xml"  # Change to "grid" to match action?
@@ -869,7 +842,6 @@ class Authenticate(View):
             target = '/'
             return http.HttpResponseRedirect(target)
 
-
             # ar = BaseRequest(request)
             # ar.success("User %r logged out." % username)
             # return ar.renderer.render_action_response(ar)
@@ -898,10 +870,35 @@ class Authenticate(View):
         # return ar.renderer.render_action_response(ar)
 
 
-# Todo repalce with Tickets
+class App(View):
+    """
+    Main app entry point,
+    """
+
+    def get(self, request):
+        ui = settings.SITE.plugins.openui5
+        ar = BaseRequest(
+            # user=user,
+            request=request,
+            renderer=ui.renderer)
+        context = dict(
+            # title=ar.get_title(),
+            # heading=ar.get_title(),
+            # main=main,
+        )
+        context.update(ar=ar)
+
+        context = ar.get_printable_context(**context)
+        env = settings.SITE.plugins.jinja.renderer.jinja_env
+        template = env.get_template("openui5/main.html")
+        return http.HttpResponse(
+            template.render(**context),
+            content_type='text/html;charset="utf-8"')
+
+
 class Index(View):
     """
-    Render the main page.
+    Render the main dashboard.
     """
 
     def get(self, request, *args, **kw):
@@ -931,4 +928,4 @@ def index_response(ar):
     # else:
     #     user = request.subst_user or request.user
     # context.update(ar=ar)
-    return http_response(ar, 'openui5/main.html', context)
+    return http_response(ar, 'bootstrap3/index.html', context)

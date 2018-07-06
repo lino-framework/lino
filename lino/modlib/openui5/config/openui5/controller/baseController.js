@@ -49,14 +49,15 @@ sap.ui.define([
          *
          */
         routeToAction: function (action_id, args, rp) {
-            var query = {};
             if (args.base_params !== undefined) {
-                $.each(args.base_params, function (k, v) {
-                    query [k] = v;
-                });
+                // Moving base_params to a key of query, as mk and mt are querys, also maybe pvs, detail navigation also use this method
+                // However when nav buttons use this method they need args to be passed to navTo
+                Object.defineProperty(args, "query",
+                    Object.getOwnPropertyDescriptor(args, "base_params"));
+                delete args["base_params"];
             }
             this.getRouter().navTo(action_id,
-                {query : query}, true);
+                args /*if 3ed arg (history) is True, oui5 will not record history for this change.*/);
         },
 
         /**
