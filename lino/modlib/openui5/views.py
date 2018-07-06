@@ -630,10 +630,13 @@ def XML_response(ar, tplname, context):
         print(args)
         return ""
 
-    def xmlescape(s):
-        return cgi.escape(s).replace("'","&apos;").replace('"',"&quot;") # escapes "<", ">", "&" "'" and '"'
+    def zlib_compress(s):
+        import zlib
+        compressed = zlib.compress(str(s))
+        return compressed.encode('base64')
+        # return cgi.escape(s, quote=True)  # escapes "<", ">", "&" "'" and '"'
 
-    env.filters.update(dict(p=p, xmlescape=xmlescape))
+    env.filters.update(dict(p=p, zlib_compress=zlib_compress))
     content_type = "text/xml" if tplname.endswith(".xml") else \
         "application/javascript" if tplname.endswith(".js") else \
             "application/json"
