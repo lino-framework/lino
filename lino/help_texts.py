@@ -230,11 +230,10 @@ for himself)."""),
     'lino.modlib.openui5.renderer.Renderer' : _(""".
 An HTML renderer that uses the OpenUI5 Javascript framework."""),
     'lino.modlib.openui5.views.Restful' : _("""Used to collaborate with a restful Ext.data.Store."""),
-    'lino.modlib.openui5.views.Tickets' : _("""Was a static View for Tickets,
-IS currently main app entry point,"""),
     'lino.modlib.openui5.views.Connector' : _("""Static View for Tickets,
 Uses a template for generating the XML views  rather then layouts"""),
-    'lino.modlib.openui5.views.Index' : _("""Render the main page."""),
+    'lino.modlib.openui5.views.App' : _("""Main app entry point,"""),
+    'lino.modlib.openui5.views.Index' : _("""Render the main dashboard."""),
     'lino.modlib.printing.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.restful.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.smtpd.Plugin' : _("""See /dev/plugins."""),
@@ -554,10 +553,12 @@ Generates .pdf files from .html templates.
 Requires pisa.
 Usage example see lino_book.projects.pisa."""),
     'lino.modlib.summaries.Summary' : _("""Abstract base class for all "summary data" models."""),
-    'lino.modlib.summaries.Summary.master' : _("""Any implementing subclass of Summary must define field
-named master which must be a ForeignKey field.  The
-target model of the master will automatically receive
-an action check_summaries"""),
+    'lino.modlib.summaries.Summary.master' : _("""Any implementing subclass of Summary must define a
+field named master which must be a ForeignKey field.
+The target model of the master will automatically
+receive an action check_summaries.  The mixin also sets
+allow_cascaded_delete to
+['master']."""),
     'lino.modlib.summaries.Summary.summary_period' : _("""Can be 'yearly', 'monthly' or 'timeless'."""),
     'lino.modlib.summaries.ComputeResults' : _("""See Summary.compute_results()"""),
     'lino.modlib.summaries.CheckSummaries' : _("""Web UI version of checksummaries."""),
