@@ -67,12 +67,24 @@ sap.ui.define([
             var oButton = oEvent.getSource();
             var actor_id = oButton.data('actor_id');
             var action_name = oButton.data('action_name');
+            var compressed_eval_js = oButton.data('eval_js');
 
+            var s = atob(compressed_eval_js);
+
+            var data = new Array(s.length);
+            var i;
+            for (i = 0; i < s.length; ++i) {
+                data[i] = s.charCodeAt(i);
+            }
+
+            var inflate = new Zlib.Inflate(data);
+            var decompress = inflate.decompress();
+            var eval_js = new TextDecoder("utf-8").decode(decompress);
 
             var msg = "'" + oEvent.getParameter("item").getText() + actor_id + ":" + action_name + "' pressed";
             MessageToast.show(msg);
-
-            this.routeTo(action_name, actor_id);
+            eval(eval_js);
+            // this.routeTo(action_name, actor_id);
         },
 
         // Todo: move into it's on controller
