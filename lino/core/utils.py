@@ -831,10 +831,12 @@ def simplify_name(name):
             parts.remove(e)
     return '.'.join(parts)
     
-def resolve_fields_list(model, k, collection_type=tuple):
+def resolve_fields_list(model, k, collection_type=tuple, default=None):
     qsf = getattr(model, k)
     if qsf is None:
-        return
+        setattr(model, k, default)
+    elif qsf == default:
+        pass
     elif isinstance(qsf, collection_type):
         pass
     elif isinstance(qsf, six.string_types):

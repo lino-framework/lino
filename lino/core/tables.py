@@ -505,9 +505,9 @@ method in order to sort the rows of the queryset.
     @classmethod
     def class_init(cls):
         super(AbstractTable, cls).class_init()
-        resolve_fields_list(cls, 'tablet_columns', set)
-        resolve_fields_list(cls, 'mobile_columns', set)
-        resolve_fields_list(cls, 'popin_columns', set)
+        resolve_fields_list(cls, 'tablet_columns', set, {})
+        resolve_fields_list(cls, 'mobile_columns', set, {})
+        resolve_fields_list(cls, 'popin_columns', set, {})
 
         
     @classmethod
