@@ -78,8 +78,8 @@ from .utils import is_devserver
 from .utils import full_model_name as fmn
 from .utils import obj2str
 from .utils import get_models
+from .utils import resolve_fields_list
 # from .utils import format_request
-from .exceptions import ChangedAPI
 from .gfks import GenericForeignKey
 
 
@@ -110,29 +110,6 @@ def set_default_verbose_name(f):
         f.verbose_name = f.remote_field.model._meta.verbose_name
 
 
-def resolve_fields_list(model, k):
-    qsf = getattr(model, k)
-    if qsf is None:
-        return
-    elif isinstance(qsf, tuple):
-        pass
-    elif isinstance(qsf, six.string_types):
-        lst = []
-        for n in qsf.split():
-            f = model.get_data_elem(n)
-            if f is None:
-                msg = "Invalid field {} in {} of {}"
-                msg = msg.format(n, k, model)
-                raise Exception(msg)
-            lst.append(f)
-        setattr(model, k, tuple(lst))
-            # fields.fields_list(model, model.quick_search_fields))
-    else:
-        raise ChangedAPI(
-            "{0}.{1} must be None or a string "
-            "of space-separated field names (not {2})".format(
-                model, k, qsf))
-            
 CLONEABLE_ATTRS = frozenset("""ah request user subst_user
 bound_action create_kw known_values param_values
 action_param_values""".split())
