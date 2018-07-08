@@ -574,7 +574,8 @@ def navinfo(qs, elem):
 
 
 class Parametrizable(object):
-    """Base class for both Actors and Actions.
+    """
+    Base class for both Actors and Actions.
 
     This is a pseudo-mixins with common functionality for both actors
     and actions,
@@ -585,7 +586,6 @@ class Parametrizable(object):
         called "FOO_choices" (which must be decorated by
         :func:`dd.chooser`), then this method will be installed as a
         chooser for this parameter field.
-
     """
 
     active_fields = None  # 20121006
@@ -593,14 +593,14 @@ class Parametrizable(object):
     known_values = None
 
     parameters = None
-    """User-definable parameter fields for this actor or action.
-    Set this to a `dict` of `name = models.XyzField()` pairs.
+    """
+    User-definable parameter fields for this actor or action.  Set this
+    to a `dict` of `name = models.XyzField()` pairs.
 
     On an actor you can alternatively or additionally implement a
     class method :meth:`lino.core.actors.Actor.setup_parameters`.
 
     TODO: write documentation.
-
     """
 
     params_layout = None
@@ -611,10 +611,10 @@ class Parametrizable(object):
     """
 
     params_panel_hidden = True
-    """If this table has parameters, set this to True if the parameters
+    """
+    If this table has parameters, set this to True if the parameters
     panel should be initially hidden when this table is being
     displayed.
-
     """
 
     _layout_class = NotImplementedError
@@ -626,7 +626,13 @@ class Parametrizable(object):
         wl = self.get_window_layout(actor)
         if wl is not None:
             return wl.window_size
-
+        
+    def check_params(self, pv):
+        """Called when a request comes in."""
+        # Actor overrides this as a class method
+        if isinstance(self.parameters, ParameterPanel):
+            self.parameters.check_values(pv)
+    
 
 class InstanceAction(object):
     """Volatile object which wraps a given action to be run on a given
@@ -695,14 +701,13 @@ class InstanceAction(object):
 
 
 class ParameterPanel(object):
-    """A utility class for defining reusable definitions for
+    """
+    A utility class for defining reusable definitions for
     :attr:`parameters <lino.core.actors.Actor.parameters>`.
 
     Subclassed e.g. by 
     :class:`lino.mixins.periods.ObservedDateRange`.
     :class:`lino_xl.lib.ledger.AccountingPeriodRange`.
-
-
     """
     def __init__(self, **kw):
         self.fields = kw
@@ -746,6 +751,12 @@ class ParameterPanel(object):
         """
         return []
 
+    def check_values(self, pv):
+        """
+        Return an error message if the specified parameter values are
+        invalid.
+        """
+        pass
 
 class PseudoRequest(object):
     """A Django HTTP request which isn't really one.

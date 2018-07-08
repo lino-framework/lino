@@ -150,6 +150,7 @@ class TableRequest(ActionRequest):
     sliced_data_iterator = property(get_sliced_data_iterator_property)
 
     def get_data_iterator(self):
+        self.actor.check_params(self.param_values)
         if self.actor.get_data_rows is not None:
             l = []
             for row in self.actor.get_data_rows(self):

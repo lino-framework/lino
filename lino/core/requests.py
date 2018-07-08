@@ -1081,7 +1081,8 @@ class ActorRequest(BaseRequest):
 
 
 class ActionRequest(ActorRequest):
-    """Holds information about an indivitual web request and provides
+    """
+    Holds information about an indivitual web request and provides
     methods like
 
     - :meth:`get_user <lino.core.actions.BaseRequest.get_user>`
@@ -1090,6 +1091,12 @@ class ActionRequest(ActorRequest):
     
     An `ActionRequest` is also a :class:`BaseRequest` and inherits its
     methods.
+
+    An ActionRequest is instantiated from different shortcut methods:
+
+    - :meth:`lino.core.actors.Actor.request`
+    - :meth:`lino.core.actions.Action.request`
+        
 
     """
     create_kw = None
@@ -1103,13 +1110,6 @@ class ActionRequest(ActorRequest):
                  unused_request=None, action=None, unused_renderer=None,
                  rqdata=None,
                  **kw):
-        """
-        An ActionRequest is instantiated from different shortcut methods:
-        
-        - :meth:`lino.core.actors.Actor.request`
-        - :meth:`lino.core.actions.Action.request`
-        
-        """
         # print("20170116 ActionRequest.__init__()", actor, kw)
         assert unused_renderer is None
         assert unused_request is None
@@ -1190,6 +1190,8 @@ class ActionRequest(ActorRequest):
                 pv.update(param_values)
             # print("20160329 ok", pv)
             self.param_values = AttrDict(**pv)
+            # self.actor.check_params(self.param_values)
+            
         action = self.bound_action.action
         if action.parameters is not None:
             if len(self.selected_rows) == 1:
@@ -1204,6 +1206,7 @@ class ActionRequest(ActorRequest):
                 apv.update(
                     action.params_layout.params_store.parse_params(request))
             self.action_param_values = AttrDict(**apv)
+            # action.check_params(action_param_values)
             self.set_action_param_values(**action_param_values)
         self.bound_action.setup_action_request(self)
 
