@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2017 Luc Saffre
+# Copyright 2009-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Defines the classes :class:`AbstractTable` and
@@ -28,6 +28,7 @@ from lino.core import actions
 from lino.core import fields
 from lino.core import signals
 from lino.core.tablerequest import TableRequest
+from lino.core.utils import resolve_fields_list
 
 
 class InvalidRequest(Exception):
@@ -203,6 +204,24 @@ class AbstractTable(actors.Actor):
 
     See also :meth:`setup_column` and :meth:`get_column_names`.
 
+    """
+
+    tablet_columns = None
+    """
+    The columns that must remain visible when this table is rendered
+    on a tablet device.
+    """
+    
+    mobile_columns = None
+    """
+    The columns that must remain visible when this table is rendered
+    on a mobile device.
+    """
+    
+    popin_columns = None
+    """
+    The columns that must pop in below the first column if there is no
+    space to render them on the device.
     """
 
     start_at_bottom = False
@@ -483,6 +502,14 @@ method in order to sort the rows of the queryset.
     Only used in lino.mixins.sequenced.Sequenced. Field name seqno
     """
 
+    @classmethod
+    def class_init(cls):
+        super(AbstractTable, cls).class_init()
+        resolve_fields_list(cls, 'tablet_columns', set, {})
+        resolve_fields_list(cls, 'mobile_columns', set, {})
+        resolve_fields_list(cls, 'popin_columns', set, {})
+
+        
     @classmethod
     def spawn(cls, suffix, **kw):
         kw['app_label'] = cls.app_label

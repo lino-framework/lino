@@ -27,14 +27,16 @@ from django.utils.encoding import force_text
 from django.http import QueryDict
 
 from etgen.html import E, tostring
-from lino import AFTER17
-from lino.utils import IncompleteDate
 
 from django.core.validators import (
     validate_email, ValidationError, URLValidator)
 
 from django.apps import apps
 get_models = apps.get_models
+
+from lino import AFTER17
+from lino.utils import IncompleteDate
+from .exceptions import ChangedAPI
 
 validate_url = URLValidator()
 
@@ -829,3 +831,28 @@ def simplify_name(name):
             parts.remove(e)
     return '.'.join(parts)
     
+def resolve_fields_list(model, k, collection_type=tuple, default=None):
+    qsf = getattr(model, k)
+    if qsf is None:
+        setattr(model, k, default)
+    elif qsf == default:
+        pass
+    elif isinstance(qsf, collection_type):
+        pass
+    elif isinstance(qsf, six.string_types):
+        lst = []
+        for n in qsf.split():
+            f = model.get_data_elem(n)
+            if f is None:
+                msg = "Invalid field {} in {} of {}"
+                msg = msg.format(n, k, model)
+                raise Exception(msg)
+            lst.append(f)
+        setattr(model, k, collection_type(lst))
+            # fields.fields_list(model, model.quick_search_fields))
+    else:
+        raise ChangedAPI(
+            "{0}.{1} must be None or a string "
+            "of space-separated field names (not {2})".format(
+                model, k, qsf))
+            

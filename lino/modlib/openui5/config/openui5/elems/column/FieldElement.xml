@@ -7,6 +7,15 @@
         sortProperty="{{c.field.name}}"
         showSortMenuEntry="true"
         {% endif %}
+        {% if c.field.name in ar.actor.tablet_columns %}
+        minScreenWidth="Tablet"
+        {% endif %}
+        {% if c.field.name in ar.actor.mobile_columns %}
+        minScreenWidth="Mobile"
+        {% endif %}
+        {% if c.field.name in ar.actor.popin_columns %}
+        demandPopin="true"
+        {% endif %}
         {#
         filterProperty="{{c.field.name}}"
         showFilterMenuEntry="true"
