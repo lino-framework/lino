@@ -20,7 +20,7 @@ from lino.core import fields
 
 from lino.modlib.printing.mixins import Printable
 from lino.modlib.printing.mixins import DirectPrintAction
-from lino.modlib.printing.choicelists import SimpleBuildMethod
+# from lino.modlib.printing.choicelists import SimpleBuildMethod
 from etgen.html import E
 
 
@@ -169,18 +169,6 @@ class EmptyTable(Frame):
             return getattr(getattr(settings.SITE.models, a[0]), a[1])
 
 
-# class ReportRequest(ActionRequest):
-
-#     def unsued_show_request(ar, **kwargs):
-#         # self = ar.selected_rows[0]
-#         self = None  # ar.actor.create_instance(ar)
-#         story = ar.actor.get_story(self, ar)
-#         ar.renderer.show_story(story)
-
-#         # return '\n'.join(ar.story2rst(
-#         #     ar.actor.get_story(self, ar), **kwargs))
-
-
 class Report(EmptyTable):
     """
     A special kind of :class:`EmptyTable` used to create complex
@@ -243,11 +231,11 @@ class Report(EmptyTable):
 
     @classmethod
     def get_story(cls, self, ar):
-        """Yield a sequence of story items. Every item can be (1)
-        an ElementTree element or (2) a table or (3) an action
-        request.
-
         """
+        Yield a sequence of story items. Every item can be (1) an
+        ElementTree element or (2) a table or (3) an action request.
+        """
+        # cls.check_params(cls.param_values)
         if cls.report_items is None:
             raise Exception("{0} has no report_items".format(cls))
         for A in cls.report_items:

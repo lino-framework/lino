@@ -424,21 +424,24 @@ request `tar`."""
         from lino.core.actors import Actor
         from lino.core.tables import TableRequest
         elems = []
-        for item in forcetext(story):
-            if iselement(item):
-                elems.append(item)
-            elif isinstance(item, type) and issubclass(item, Actor):
-                ar = item.default_action.request(parent=ar)
-                elems.append(self.table2story(ar, **kwargs))
-            elif isinstance(item, TableRequest):
-                assert item.renderer is not None
-                elems.append(self.table2story(item, **kwargs))
-            elif isiterable(item):
-                elems.append(self.show_story(ar, item, **kwargs))
-                # for i in self.show_story(item, *args, **kwargs):
-                #     yield i
-            else:
-                raise Exception("Cannot handle %r" % item)
+        try:
+            for item in forcetext(story):
+                if iselement(item):
+                    elems.append(item)
+                elif isinstance(item, type) and issubclass(item, Actor):
+                    ar = item.default_action.request(parent=ar)
+                    elems.append(self.table2story(ar, **kwargs))
+                elif isinstance(item, TableRequest):
+                    assert item.renderer is not None
+                    elems.append(self.table2story(item, **kwargs))
+                elif isiterable(item):
+                    elems.append(self.show_story(ar, item, **kwargs))
+                    # for i in self.show_story(item, *args, **kwargs):
+                    #     yield i
+                else:
+                    raise Exception("Cannot handle %r" % item)
+        except Warning as e:
+            elems.append(str(e))
         return E.div(*elems)
 
     def show_menu(self, ar, mnu, level=1):
@@ -604,22 +607,25 @@ class TextRenderer(HtmlRenderer):
         """Render the given story as reStructuredText to stdout."""
         from lino.core.actors import Actor
         from lino.core.requests import ActionRequest
-
-        for item in forcetext(story):
-            if iselement(item):
-                print(to_rst(item, stripped))
-            elif isinstance(item, type) and issubclass(item, Actor):
-                ar = item.default_action.request(parent=ar)
-                self.show_table(ar, stripped=stripped, **kwargs)
-            elif isinstance(item, ActionRequest):
-                self.show_table(item, stripped=stripped, **kwargs)
-                # print(item.table2rst(*args, **kwargs))
-            elif isiterable(item):
-                self.show_story(ar, item, stripped, **kwargs)
-                # for i in self.show_story(ar, item, *args, **kwargs):
-                #     print(i)
-            else:
-                raise Exception("Cannot handle %r" % item)
+        
+        try:
+            for item in forcetext(story):
+                if iselement(item):
+                    print(to_rst(item, stripped))
+                elif isinstance(item, type) and issubclass(item, Actor):
+                    ar = item.default_action.request(parent=ar)
+                    self.show_table(ar, stripped=stripped, **kwargs)
+                elif isinstance(item, ActionRequest):
+                    self.show_table(item, stripped=stripped, **kwargs)
+                    # print(item.table2rst(*args, **kwargs))
+                elif isiterable(item):
+                    self.show_story(ar, item, stripped, **kwargs)
+                    # for i in self.show_story(ar, item, *args, **kwargs):
+                    #     print(i)
+                else:
+                    raise Exception("Cannot handle %r" % item)
+        except Warning as e:
+            print(e)
 
     def obj2str(self, ar, obj, text=None, **kwargs):
         """Used by :meth:`lino.core.requests.BaseRequest.obj2str`.

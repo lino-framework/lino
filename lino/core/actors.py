@@ -1159,11 +1159,16 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     @classmethod
     def get_param_elem(self, name):
         # same as in Parametrizable, but here it is a class method
-
         if self.parameters:
             return self.parameters.get(name, None)
         return None
 
+    @classmethod
+    def check_params(cls, pv):
+        # same as in Parametrizable, but here it is a class method
+        if isinstance(cls.parameters, ParameterPanel):
+            return cls.parameters.check_values(pv)
+    
     @classmethod
     def get_row_state(self, obj):
         if self.workflow_state_field is not None:

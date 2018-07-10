@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2016 Luc Saffre
+# Copyright 2009-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 r"""A framework for generating Javascript from Python.
@@ -201,9 +201,9 @@ class Variable(Value):
 
 
 class Component(Variable):
-    """A Component is a Variable whose value is a dict of otpions.
+    """
+    A Component is a Variable whose value is a dict of options.
     Deserves more documentation.
-
     """
 
     def __init__(self, name=None, **options):

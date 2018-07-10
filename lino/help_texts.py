@@ -373,7 +373,7 @@ tutorial.instantiator."""),
     'lino.utils.instantiator.InstanceGenerator' : _("""Usage example see lino_xl.lib.humanlinks.fixtures."""),
     'lino.utils.jinja.Counter' : _("""Represents a counter. Usage see"""),
     'lino.utils.jsgen.js_code' : _("""A string that py2js will represent as is, not between quotes."""),
-    'lino.utils.jsgen.Component' : _("""A Component is a Variable whose value is a dict of otpions.
+    'lino.utils.jsgen.Component' : _("""A Component is a Variable whose value is a dict of options.
 Deserves more documentation."""),
     'lino.utils.jsgen.VisibleComponent' : _("""A visible component"""),
     'lino.utils.media.MediaFile' : _("""Represents a file on the server below MEDIA_ROOT with
@@ -557,8 +557,7 @@ Usage example see lino_book.projects.pisa."""),
 field named master which must be a ForeignKey field.
 The target model of the master will automatically
 receive an action check_summaries.  The mixin also sets
-allow_cascaded_delete to
-['master']."""),
+allow_cascaded_delete to 'master'."""),
     'lino.modlib.summaries.Summary.summary_period' : _("""Can be 'yearly', 'monthly' or 'timeless'."""),
     'lino.modlib.summaries.ComputeResults' : _("""See Summary.compute_results()"""),
     'lino.modlib.summaries.CheckSummaries' : _("""Web UI version of checksummaries."""),
