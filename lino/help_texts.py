@@ -557,8 +557,7 @@ Usage example see lino_book.projects.pisa."""),
 field named master which must be a ForeignKey field.
 The target model of the master will automatically
 receive an action check_summaries.  The mixin also sets
-allow_cascaded_delete to
-['master']."""),
+allow_cascaded_delete to 'master'."""),
     'lino.modlib.summaries.Summary.summary_period' : _("""Can be 'yearly', 'monthly' or 'timeless'."""),
     'lino.modlib.summaries.ComputeResults' : _("""See Summary.compute_results()"""),
     'lino.modlib.summaries.CheckSummaries' : _("""Web UI version of checksummaries."""),
