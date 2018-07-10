@@ -631,12 +631,30 @@ def XML_response(ar, tplname, context):
         return ""
 
     def zlib_compress(s):
+        """
+        Compress a complex value in order to get decompress by the controller afterwards
+        :param s: value to get compressed.
+        :return: Compressed value.
+        """
         import zlib
         compressed = zlib.compress(str(s))
         return compressed.encode('base64')
         # return cgi.escape(s, quote=True)  # escapes "<", ">", "&" "'" and '"'
 
-    env.filters.update(dict(p=p, zlib_compress=zlib_compress))
+    def fields_search(searched_field, collections):
+        """
+        check if the fields is available in the set of collections
+        :param searched_field: searched field
+        :param collections: set of fields
+        :return: True if the field is present in the collections,False otherwise.
+        """
+        if searched_field:
+            for field in collections:
+                if searched_field == field:
+                    return True
+        return False
+
+    env.filters.update(dict(p=p, zlib_compress=zlib_compress, fields_search=fields_search))
     content_type = "text/xml" if tplname.endswith(".xml") else \
         "application/javascript" if tplname.endswith(".js") else \
             "application/json"
