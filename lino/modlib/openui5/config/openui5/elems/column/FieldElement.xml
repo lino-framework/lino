@@ -7,14 +7,12 @@
         sortProperty="{{c.field.name}}"
         showSortMenuEntry="true"
         {% endif %}
-        {% if c.field.name in ar.actor.tablet_columns %}
-        minScreenWidth="Tablet"
-        {% endif %}
-        {% if c.field.name in ar.actor.mobile_columns %}
-        minScreenWidth="Mobile"
-        {% endif %}
-        {% if c.field.name in ar.actor.popin_columns %}
-        demandPopin="true"
+        {% if c.field in ar.actor.tablet_columns and c.field.name != ar.actor.column_names.split(' ')[0] %}
+            minScreenWidth="Tablet"
+            demandPopin="true"
+        {% elif c.field in ar.actor.mobile_columns and c.field.name != ar.actor.column_names.split(' ')[0] %}
+            minScreenWidth="Mobile"
+            demandPopin="true"
         {% endif %}
         {#
         filterProperty="{{c.field.name}}"
@@ -26,9 +24,9 @@
     {# The FieldElemnt for columns is var "c" #}
     <Label text="{{c.label}}"/>
     <table:template>
-    {% block column_template %}
-        <m:Text text="{{bind(c.fields_index)}}" wrapping="false"/>
-    {% endblock %}
+        {% block column_template %}
+            <m:Text text="{{bind(c.fields_index)}}" wrapping="false"/>
+        {% endblock %}
 
     </table:template>
 </table:Column>
