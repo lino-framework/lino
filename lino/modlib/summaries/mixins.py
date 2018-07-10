@@ -54,7 +54,7 @@ class Summary(dd.Model):
     class Meta(object):
         abstract = True
 
-    allow_cascaded_delete = ['master']
+    allow_cascaded_delete = 'master'
     
     # summary_period = 'yearly'
     summary_period = 'monthly'
