@@ -387,11 +387,21 @@ class Born(model.Model):
                 pass
 
     @fields.displayfield(_("Age"))
-    def age(self, request, today=None):
+    def age(self, ar, today=None):
         a = self.get_exact_age(today)
         if a is None:
             return str(_('unknown'))
-        s = _("%d years") % (old_div(a.days, 365))
+        years = old_div(a.days, 365)
+        if years == 1:
+            s = _("{} year").format(years)
+        else:
+            s = _("{} years").format(years)
+        if years <= 4:
+            months = old_div(a.days - years * 365, 30)
+            if months == 1:
+                s += " " + _("{} month").format(months)
+            else:
+                s += " " + _("{} months").format(months)
         if self.birth_date and self.birth_date.is_complete():
             return s
         return u"±" + s
