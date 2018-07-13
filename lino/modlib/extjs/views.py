@@ -218,9 +218,9 @@ class Callbacks(View):
 
 
 def choices_for_field(request, holder, field):
-    """Return the choices for the given field and the given HTTP request
+    """
+    Return the choices for the given field and the given HTTP request
     whose `holder` is either a Model, an Actor or an Action.
-
     """
     if not holder.get_view_permission(request.user.user_type):
         raise Exception(
@@ -271,6 +271,9 @@ def choices_for_field(request, holder, field):
 
     if isinstance(field, fields.VirtualField):
         field = field.return_type
+
+    if isinstance(field, fields.RemoteField):
+        field = field.field
 
     if isinstance(field, models.ForeignKey):
         m = field.remote_field.model
@@ -562,7 +565,7 @@ class ApiElement(View):
 
     def put(self, request, app_label=None, actor=None, pk=None):
         data = http.QueryDict(request.body)  # raw_post_data before Django 1.4
-        # logger.info("20150130 %s", data)
+        # print("20180712 ApiElement.put() %s" % data)
         ar = action_request(
             app_label, actor, request, data, False,
             renderer=settings.SITE.kernel.extjs_renderer)
