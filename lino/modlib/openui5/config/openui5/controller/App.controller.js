@@ -2,7 +2,8 @@ sap.ui.define([
     "lino/controller/baseController",
     "sap/m/MessageToast",
     "sap/ui/model/json/JSONModel",
-], function (baseController, MessageToast, JSONModel) {
+    "sap/ui/Device"
+], function (baseController, MessageToast, JSONModel, Device) {
     "use strict";
     return baseController.extend("lino.controller.App", {
         onOpenDialog: function () {
@@ -11,8 +12,19 @@ sap.ui.define([
 
         // MenuItemEvent controlering
         onInit: function () {
-            this._menus = {}
+            this._menus = {};
             var that = this;
+            var connectedDevice;
+            if (Device.system.desktop === true) {
+                connectedDevice = 'desktop';
+            }
+            else if (Device.system.phone === true) {
+                connectedDevice = 'phone';
+            }
+            else if (Device.system.tablet === true) {
+                connectedDevice = 'tablet';
+            }
+
 //            that.getView().byId('dashboard').getParent().setBusy(true);
 //            $.get( "/api/main_html", function( data ) {
 //                    that.getView().byId('dashboard').setContent(data.html);
@@ -46,7 +58,7 @@ sap.ui.define([
             var eDock = sap.ui.core.Popup.Dock;
             var openMenu = function () {
                 me._menus[menu].open(me._bKeyboard, oButton, eDock.BeginTop, eDock.BeginBottom, target);
-            }
+            };
 
             fnOpenMenu = function (oEvent) {
                 oEvent.getSource().detachAfterClose(fnOpenMenu);
@@ -95,7 +107,7 @@ sap.ui.define([
             // create dialog lazily
             if (!oDialog) {
                 // create dialog via fragment factory
-                var form_data = {username: "", password: ""}
+                var form_data = {username: "", password: ""};
                 var oModel = new JSONModel(form_data);
                 this.getView().setModel(oModel, "form_data");
                 oDialog = sap.ui.xmlfragment(oView.getId(), "lino.dialog.SignInActionFormPanel", this);
@@ -134,7 +146,7 @@ sap.ui.define([
         getNavport: function () {
             var vp = sap.ui.getCore().byId("__component0---MAIN_VIEW").byId('viewport');
             return vp
-        },
+        }
 
 
     });
