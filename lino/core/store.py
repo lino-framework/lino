@@ -960,7 +960,7 @@ class ParameterStore(BaseStore):
 
         if len(pv) > 0:
             if len(self.param_fields) != len(pv):
-                raise Exception(
+                raise Warning(
                     "%s expects a list of %d values but got %d: %s" % (
                         self, len(self.param_fields), len(pv), pv))
             for i, f in enumerate(self.param_fields):
