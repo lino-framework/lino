@@ -782,7 +782,7 @@ class OneToOneRelStoreField(StoreField):
     def full_value_from_object(self, obj, ar=None):
         try:
             return getattr(obj, self.field.name)
-        except exceptions.DoesNotExist:
+        except self.field.remote_field.model.DoesNotExist:
             return None
 
 
