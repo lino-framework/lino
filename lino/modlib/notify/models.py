@@ -324,7 +324,7 @@ class Messages(dd.Table):
             yield t
         pv = ar.param_values
         if pv.show_seen:
-            yield unicode(pv.show_seen)
+            yield str(pv.show_seen)
 
     @classmethod
     def unused_get_detail_title(self, ar, obj):
