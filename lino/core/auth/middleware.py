@@ -16,7 +16,6 @@ from django import http
 from lino.core import constants
 from .utils import AnonymousUser
 
-
 from lino.core import auth
 from lino.core.auth import load_backend
 from .backends import RemoteUserBackend
@@ -31,16 +30,14 @@ def get_user(request):
     return request._cached_user
 
 
-
-
 class AuthenticationMiddleware(MiddlewareMixin):
     def process_request(self, request):
         assert hasattr(request, 'session'), (
-            "Requires session middleware "
-            "to be installed. Edit your MIDDLEWARE%s setting to insert "
-            "'django.contrib.sessions.middleware.SessionMiddleware' before "
-            "'django.contrib.auth.middleware.AuthenticationMiddleware'."
-        ) % ("_CLASSES" if settings.MIDDLEWARE is None else "")
+                                                "Requires session middleware "
+                                                "to be installed. Edit your MIDDLEWARE%s setting to insert "
+                                                "'django.contrib.sessions.middleware.SessionMiddleware' before "
+                                                "'django.contrib.auth.middleware.AuthenticationMiddleware'."
+                                            ) % ("_CLASSES" if settings.MIDDLEWARE is None else "")
         request.user = SimpleLazyObject(lambda: get_user(request))
 
 
@@ -133,7 +130,6 @@ class RemoteUserMiddleware(MiddlewareMixin):
 
 
 def request2data(request, user_language=None):
-
     if request.method == 'GET':
         rqdata = request.GET
     elif request.method in ('PUT', 'DELETE'):
@@ -146,18 +142,18 @@ def request2data(request, user_language=None):
         if user_language and len(settings.SITE.languages) > 1:
             translation.activate(user_language)
             request.LANGUAGE_CODE = translation.get_language()
-        #~ logger.info("20121205 on_login %r",translation.get_language())
+        # ~ logger.info("20121205 on_login %r",translation.get_language())
         request.requesting_panel = None
         request.subst_user = None
         return
-    # ~ else: # DELETE
-        #~ request.subst_user = None
-        #~ request.requesting_panel = None
-        #~ return
+        # ~ else: # DELETE
+        # ~ request.subst_user = None
+        # ~ request.requesting_panel = None
+        # ~ return
 
     request.requesting_panel = rqdata.get(
         constants.URL_PARAM_REQUESTING_PANEL, None)
-    
+
     if len(settings.SITE.languages) > 1:
         user_language = rqdata.get(
             constants.URL_PARAM_USER_LANGUAGE, user_language)
@@ -168,7 +164,6 @@ def request2data(request, user_language=None):
     return rqdata
 
 
-
 class NoUserMiddleware(object):
     def process_request(self, request):
         if settings.USE_TZ:
@@ -176,10 +171,9 @@ class NoUserMiddleware(object):
         request.subst_user = None
         request.user = AnonymousUser()
         request2data(request)
-        
+
 
 class WithUserMiddleware(object):
-    
     def process_request(self, request):
         user = request.user
         user_language = user.language  # or settings.SITE.get_default_language()
@@ -199,10 +193,21 @@ class WithUserMiddleware(object):
             if su:
                 try:
                     su = settings.SITE.user_model.objects.get(id=int(su))
-                    #~ logger.info("20120714 su is %s",su.username)
+                    # ~ logger.info("20120714 su is %s",su.username)
                 except settings.SITE.user_model.DoesNotExist:
                     su = None
             else:
                 su = None  # e.g. when it was an empty string "su="
         request.subst_user = su
 
+
+class DeviceTypeMiddleware(object):
+    def process_request(self, request):
+        user = request.user
+        user_language = user.language  # or settings.SITE.get_default_language()
+        rqdata = request2data(request, user_language)
+        if rqdata is None:
+            return
+
+        dt = rqdata.get(constants.URL_PARAM_DEVICE_TYPE, 'desktop')
+        request.device_type = dt

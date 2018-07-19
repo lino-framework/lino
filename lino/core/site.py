@@ -3401,6 +3401,7 @@ Please convert to Plugin method".format(mod, methname)
             # yield 'django.contrib.auth.middleware.AuthenticationMiddleware'
             yield 'lino.core.auth.middleware.AuthenticationMiddleware'
             yield 'lino.core.auth.middleware.WithUserMiddleware'
+            yield 'lino.core.auth.middleware.DeviceTypeMiddleware'
         else:
             yield 'lino.core.auth.middleware.NoUserMiddleware'
             

@@ -54,6 +54,11 @@ URL_PARAM_SUBST_USER = 'su'
 substitute user
 """
 
+URL_PARAM_DEVICE_TYPE = 'dt'
+"""
+Connected device type (used by Openui5)
+"""
+
 URL_PARAM_KNOWN_VALUES = 'kv'
 """
 known values
