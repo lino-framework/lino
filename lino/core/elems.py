@@ -1522,7 +1522,7 @@ class GenericForeignKeyElement(DisplayElement):
     def __init__(self, layout_handle, field, **kw):
         self.field = field
         self.editable = False
-        kw.update(label=getattr(field, 'verbose_name', None) or field.name)
+        kw.update(label=getattr(field, 'verbose_name', field.name))
         # kw.update(label=field.verbose_name)
         LayoutElement.__init__(self, layout_handle, field.name, **kw)
 
@@ -1530,6 +1530,7 @@ class GenericForeignKeyElement(DisplayElement):
         pass
 
     def value_from_object(self, obj, ar):
+        # logger.info("20180712 GFK.value_from_object() %s %s", self, obj)
         # needed for as_plain_html()
         return getattr(obj, self.field.name)
 
@@ -2284,6 +2285,9 @@ TRIGGER_BUTTON_WIDTH = 3
 
 
 def field2elem(layout_handle, field, **kw):
+    if isinstance(field, models.OneToOneField):
+        # logger.info("20180712 field2elem OneToOneField %s", field)
+        return GenericForeignKeyElement(layout_handle, field, **kw)
     rnd = layout_handle.ui.renderer
     holder = layout_handle.layout.get_chooser_holder()
     ch = holder.get_chooser_for_field(field.name)
@@ -2296,8 +2300,6 @@ def field2elem(layout_handle, field, **kw):
         if ch.simple_values:
             return SimpleRemoteComboFieldElement(layout_handle, field, **kw)
         else:
-            if isinstance(field, models.OneToOneField):
-                return GenericForeignKeyElement(layout_handle, field, **kw)
             if isinstance(field, models.ForeignKey):
                 return ForeignKeyElement(layout_handle, field, **kw)
             else:

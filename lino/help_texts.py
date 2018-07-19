@@ -450,6 +450,7 @@ which is encoded in the given encoding."""),
     'lino.api.dd.VirtualTable' : _("""Shortcut to lino.core.tables.VirtualTable"""),
     'lino.api.dd.VentilatingTable' : _("""Shortcut to lino.core.choicelists.ChoiceList"""),
     'lino.api.dd.Frame' : _("""Shortcut to lino.core.frames.Frame"""),
+    'lino.modlib.about.SiteSearch' : _("""Search across all tables of the application."""),
     'lino.modlib.about.TimeZones' : _("""The list of time zones available on this site."""),
     'lino.modlib.about.TimeZones.default' : _("""The default time zone on this server, corresponding to
 TIME_ZONE.  Unlike TIME_ZONE (which is a

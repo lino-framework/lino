@@ -642,7 +642,7 @@ class Table(AbstractTable):
     def make_disabled_fields(cls, obj, ar):
         s = super(Table, cls).make_disabled_fields(obj, ar)
 
-        if obj is not None:
+        if obj is not None and ar is not None:
             s |= obj.disabled_fields(ar)
             state = cls.get_row_state(obj)
             parent = ar.bound_action.action

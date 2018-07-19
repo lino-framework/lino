@@ -760,10 +760,10 @@ class BaseRequest(object):
         return obj.summary_row(self, **kwargs)
 
     def obj2html(self, obj, *args, **kwargs):
-        """Return a HTML element which represents a pointer to the given
+        """
+        Return a HTML element which represents a pointer to the given
         database object. Depending on the renderer this will be more
         or less clickable.
-
         """
         if obj is None:
             return ''

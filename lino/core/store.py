@@ -62,7 +62,8 @@ from lino.utils import IncompleteDate
 
 class StoreField(object):
 
-    """Base class for the fields of a :class:`Store`.
+    """
+    Base class for the fields of a :class:`Store`.
 
     .. attribute:: field
 
@@ -76,9 +77,8 @@ class StoreField(object):
 
     Note: `value_from_object` and `full_value_from_object` are
     similar, but for ForeignKeyStoreField and GenericForeignKeyField
-    one returns the primary key while the other returns the full
+    one returns the primary key while the latter returns the full
     instance.
-
     """
 
     form2obj_default = None
@@ -112,13 +112,13 @@ class StoreField(object):
         # yield self.options['name']
         yield self.name
 
-    def value_from_object(self, obj, ar):
+    def value_from_object(self, obj, ar=None):
         """
         
         """
         return self.full_value_from_object(obj, ar)
 
-    def full_value_from_object(self, obj, ar):
+    def full_value_from_object(self, obj, ar=None):
         return self.field.value_from_object(obj)
 
     def value2list(self, ar, v, l, row):
@@ -152,7 +152,8 @@ class StoreField(object):
 
         """
         v = self.extract_form_data(post_data)
-        # logger.info("20170508 %s.form2obj() %s = %r", self.__class__.__name__,self.name,v)
+        # logger.info("20180712 %s.form2obj() %s = %r",
+        #             self.__class__.__name__, self.name, v)
         if v is None:
             # means that the field wasn't part of the submitted form. don't
             # touch it.
@@ -177,7 +178,7 @@ class StoreField(object):
             # print("20160611 {0} = {1}".format(self.field.name, v))
         else:
             v = self.parse_form_value(v, instance)
-        # logger.info("20170508b %r", v)
+        # logger.info("20180712 %s %s", self, v)
         if not is_new and self.field.primary_key and instance.pk is not None:
             if instance.pk == v:
                 return
@@ -189,6 +190,8 @@ class StoreField(object):
         return self.set_value_in_object(ar, instance, v)
 
     def set_value_in_object(self, ar, instance, v):
+        # logger.info("20180712 super set_value_in_object() %s", v)
+        
         old_value = self.value_from_object(instance, ar.request)
         # old_value = getattr(instance,self.field.attname)
         if old_value != v:
@@ -204,16 +207,16 @@ class StoreField(object):
 
 
 class RelatedMixin(object):
-    """Common methods for :class:`ForeignKeyStoreField` and
-    :class:`OneToOneField`.
-
+    """
+    Common methods for :class:`ForeignKeyStoreField` and
+    :class:`OneToOneStoreField`.
     """
     def get_rel_to(self, obj):
         # if self.field.rel is None:
             # return None
         return self.field.remote_field.model
 
-    def full_value_from_object(self, obj, ar):
+    def full_value_from_object(self, obj, ar=None):
         # here we don't want the pk (stored in field's attname)
         # but the full object this field refers to
         relto_model = self.get_rel_to(obj)
@@ -224,10 +227,18 @@ class RelatedMixin(object):
             return getattr(obj, self.name)
         except relto_model.DoesNotExist:
             return None
+        
+    def format_value(self, ar, v):
+        if ar is None:
+            return v.get_choices_text(None, None, self.field)
+        return v.get_choices_text(ar, ar.actor, self.field)
+    
 
 
 class ComboStoreField(StoreField):
-    """An atomizer for all kinds of fields which use a ComboBox."""
+    """
+    An atomizer for all kinds of fields which use a ComboBox.
+    """
     list_values_count = 2
 
     def as_js(self, name):
@@ -290,9 +301,6 @@ class ForeignKeyStoreField(RelatedMixin, ComboStoreField):
             return (v.pk, self.format_value(ar, v))
             #return (v.pk, str(v))
 
-    def format_value(self, ar, v):
-        return v.get_choices_text(ar, ar.actor, self.field)
-    
     def parse_form_value(self, v, obj):
         """Convert the form field value (expected to contain a primary key)
         into the corresponding database object. If it is an invalid
@@ -323,6 +331,19 @@ class ForeignKeyStoreField(RelatedMixin, ComboStoreField):
             if ch and ch.can_create_choice:
                 return ch.create_choice(obj, v)
         return None
+
+class OneToOneStoreField(ForeignKeyStoreField):
+    pass
+
+# class OneToOneStoreField(RelatedMixin, StoreField):
+#     def value_from_object(self, obj, ar=None):
+#         v = self.full_value_from_object(obj, ar)
+#         if v is None:
+#             return ''
+#         if ar is None:
+#             return str(v)
+#         return v.obj2href(ar)
+   
 
 
 # class LinkedForeignKeyField(ForeignKeyStoreField):
@@ -363,7 +384,7 @@ class VirtStoreField(StoreField):
     def __repr__(self):
         return '(virtual)' + self.delegate.__class__.__name__ + ' ' + self.name
 
-    def full_value_from_object(self, obj, ar):
+    def full_value_from_object(self, obj, ar=None):
         # 20150218 : added new rule that virtual fields are never
         # computed for unsaved instances. This is because
         # `ShowInsert.get_status` otherwise generated lots of useless
@@ -372,7 +393,7 @@ class VirtStoreField(StoreField):
         # :ref:`welfare.tested.pcsw`. Note that `obj` does not need to
         # be a database object. See
         # e.g. :doc:`/tutorials/vtables/index`.
-        if ar.bound_action.action.hide_virtual_fields:
+        if ar is not None and ar.bound_action.action.hide_virtual_fields:
         # if isinstance(obj, models.Model) and not obj.pk:
             return None
         return self.vf.value_from_object(obj, ar)
@@ -391,7 +412,7 @@ class RequestStoreField(StoreField):
         self.column_names = delegate.column_names
         self.list_values_count = delegate.list_values_count
 
-    def full_value_from_object(self, obj, ar):
+    def full_value_from_object(self, obj, ar=None):
         return self.vf.value_from_object(obj, ar)
 
     def value2list(self, ar, v, l, row):
@@ -418,8 +439,9 @@ class RequestStoreField(StoreField):
 
 class PasswordStoreField(StoreField):
 
-    def value_from_object(self, obj, request):
-        v = super(PasswordStoreField, self).value_from_object(obj, request)
+    def value_from_object(self, obj, request=None):
+        v = super(PasswordStoreField, self).value_from_object(
+            obj, request)
         if v:
             return "*" * len(v)
         return v
@@ -475,7 +497,7 @@ class DisabledFieldsStoreField(SpecialStoreField):
                     if not f.field.editable:
                         self.always_disabled.add(f.name)
 
-    def full_value_from_object(self, obj, ar):
+    def full_value_from_object(self, obj, ar=None):
         d = dict()
         for name in self.store.actor.get_disabled_fields(obj, ar):
             if name is not None:
@@ -487,7 +509,7 @@ class DisabledFieldsStoreField(SpecialStoreField):
         # disable the primary key field of a saved instance. Note that
         # pk might be set also on an unsaved instance and that
 
-        if ar.bound_action.action.disable_primary_key \
+        if ar and ar.bound_action.action.disable_primary_key \
            and self.store.pk is not None:
             for pk in self.store.primary_keys:
                 d[str(pk.attname)] = True
@@ -523,7 +545,7 @@ class DisabledFieldsStoreField(SpecialStoreField):
 class RowClassStoreField(SpecialStoreField):
     name = str('row_class')
 
-    def full_value_from_object(self, obj, ar):
+    def full_value_from_object(self, obj, ar=None):
         return ' '.join([ar.renderer.row_classes_map.get(s, '')
                          for s in self.store.actor.get_row_classes(obj, ar)])
         # return ar.renderer.row_classes_map.get('x-grid3-row-%s' % s
@@ -538,12 +560,14 @@ class DisableEditingStoreField(SpecialStoreField):
     """
     name = str('disable_editing')
 
-    def full_value_from_object(self, obj, ar):
+    def full_value_from_object(self, obj, ar=None):
         # import pdb; pdb.set_trace()
         actor = self.store.actor
         if actor.update_action is None:
             # print 20120601, self.store.actor, "update_action is None"
             return True  # disable editing if there's no update_action
+        if ar is None:
+            return True
         v = actor.get_row_permission(
             obj, ar, actor.get_row_state(obj), actor.update_action)
         # if str(actor).endswith('.RegisterNewUser'):
@@ -564,10 +588,12 @@ class BooleanStoreField(StoreField):
         kw['type'] = 'boolean'
         StoreField.__init__(self, field, name, **kw)
         if not field.editable:
-            def full_value_from_object(self, obj, ar):
+            def full_value_from_object(self, obj, ar=None):
                 # return self.value2html(ar,self.field.value_from_object(obj))
-                return self.format_value(ar, self.field.value_from_object(obj))
-            self.full_value_from_object = curry(full_value_from_object, self)
+                return self.format_value(
+                    ar, self.field.value_from_object(obj))
+            self.full_value_from_object = curry(
+                full_value_from_object, self)
 
     def parse_form_value(self, v, obj):
         """
@@ -585,7 +611,7 @@ class DisplayStoreField(StoreField):
 
 class GenericForeignKeyField(DisplayStoreField):
 
-    def full_value_from_object(self, obj, ar):
+    def full_value_from_object(self, obj, ar=None):
         v = getattr(obj, self.name, None)
         # logger.info("20130611 full_value_from_object() %s",v)
         if v is None:
@@ -695,7 +721,7 @@ class TimeStoreField(StoreField):
 
 class FileFieldStoreField(StoreField):
 
-    def full_value_from_object(self, obj, request):
+    def full_value_from_object(self, obj, ar=None):
         ff = self.field.value_from_object(obj)
         return ff.name
 
@@ -704,14 +730,14 @@ class MethodStoreField(StoreField):
 
     "Deprecated. See `/blog/2012/0327`."
 
-    def full_value_from_object(self, obj, request):
+    def full_value_from_object(self, obj, ar=None):
         unbound_meth = self.field._return_type_for_method
-        assert unbound_meth.__code__.co_argcount >= 2, (self.name,
-                                                         unbound_meth.__code__.co_varnames)
+        assert unbound_meth.__code__.co_argcount >= 2, (
+            self.name, unbound_meth.__code__.co_varnames)
         # print self.field.name
-        return unbound_meth(obj, request)
+        return unbound_meth(obj, ar)
 
-    def value_from_object(self, obj, request):
+    def value_from_object(self, obj, request=None):
         unbound_meth = self.field._return_type_for_method
         assert unbound_meth.__code__.co_argcount >= 2, (self.name,
                                                          unbound_meth.__code__.co_varnames)
@@ -750,57 +776,62 @@ class MethodStoreField(StoreField):
         # meth = getattr(obj,self.field.name)
         # ~ #logger.debug('MethodStoreField.obj2dict() %s',self.field.name)
         # d[self.field.name] = self.slave_report.()
-class OneToOneStoreField(RelatedMixin, StoreField):
-
-    def value_from_object(self, obj, request):
-        v = self.full_value_from_object(obj, request)
-        # try:
-            # v = getattr(obj,self.field.name)
-        # except self.field.rel.model.DoesNotExist,e:
-            # v = None
-        if v is None:
+        
+#class OneToOneRelStoreField(RelatedMixin, StoreField):
+class OneToOneRelStoreField(StoreField):
+    def full_value_from_object(self, obj, ar=None):
+        try:
+            return getattr(obj, self.field.name)
+        except self.field.remote_field.model.DoesNotExist:
             return None
-        return v.pk
-
-    # def obj2list(self,request,obj):
-        # return [self.value_from_object(request,obj)]
-
-    # def obj2dict(self,request,obj,d):
-        # d[self.field.name] = self.value_from_object(request,obj)
 
 
-def get_atomizer(model, fld, name):
-    """Return the atomizer for this database field. The atomizer is an
+def get_atomizer(holder, fld, name):
+    """
+    Return the atomizer for this database field. The atomizer is an
     instance of a subclass of :class:`StoreField`.
-
     """
     sf = getattr(fld, '_lino_atomizer', None)
     if sf is None:
-        sf = create_atomizer(model, fld, name)
+        sf = create_atomizer(holder, fld, name)
         setattr(fld, '_lino_atomizer', sf)
     return sf
 
 
-def create_atomizer(model, fld, name):
+def create_atomizer(holder, fld, name):
+    """
+    The holder is where the (potential) choices come from. It can be
+    a model, an actor or an action.
+    """
     if isinstance(fld, fields.RemoteField):
         """
         Hack: we create a StoreField based on the remote field,
         then modify its behaviour.
         """
-        sf = create_atomizer(model, fld.field, fld.name)
+        sf = create_atomizer(holder, fld.field, fld.name)
+        # print("20180712 create_atomizer {} from {}".format(sf, fld.field))
 
-        def value_from_object(sf, obj, ar):
+        def value_from_object(sf, obj, ar=None):
             m = fld.func
             return m(obj, ar)
 
-        def full_value_from_object(sf, obj, ar):
+        def full_value_from_object(sf, obj, ar=None):
             m = fld.func
             v = m(obj, ar)
             return v
 
+        def set_value_in_object(sf, ar, instance, v):
+            # print("20180712 {}.set_value_in_object({}, {})".format(
+            #     sf, instance, v))
+            old_value = sf.value_from_object(instance, ar.request)
+            if old_value != v:
+                return fld.setter(instance, v)
+
         sf.value_from_object = curry(value_from_object, sf)
         sf.full_value_from_object = curry(full_value_from_object, sf)
+        sf.set_value_in_object = curry(set_value_in_object, sf)
         return sf
+    
     meth = getattr(fld, '_return_type_for_method', None)
     if meth is not None:
         # uh, this is tricky...
@@ -813,15 +844,15 @@ def create_atomizer(model, fld, name):
     if isinstance(fld, fields.DummyField):
         return None
     if isinstance(fld, fields.RequestField):
-        delegate = create_atomizer(model, fld.return_type, fld.name)
+        delegate = create_atomizer(holder, fld.return_type, fld.name)
         return RequestStoreField(fld, delegate, name)
     if isinstance(fld, fields.VirtualField):
-        delegate = create_atomizer(model, fld.return_type, fld.name)
+        delegate = create_atomizer(holder, fld.return_type, fld.name)
         if delegate is None:
             # e.g. VirtualField with DummyField as return_type
             return None
             # raise Exception("No atomizer for %s %s %s" % (
-            #     model, fld.return_type, fld.name))
+            #     holder, fld.return_type, fld.name))
         return VirtStoreField(fld, delegate, name)
     if isinstance(fld, models.FileField):
         return FileFieldStoreField(fld, name)
@@ -831,6 +862,8 @@ def create_atomizer(model, fld, name):
         return PasswordStoreField(fld, name)
     if isinstance(fld, models.OneToOneField):
         return OneToOneStoreField(fld, name)
+    if isinstance(fld, models.OneToOneRel):
+        return OneToOneRelStoreField(fld, name)
 
     if settings.SITE.is_installed('contenttypes'):
         from lino.core.gfks import GenericForeignKey
@@ -864,7 +897,7 @@ def create_atomizer(model, fld, name):
     if isinstance(fld, models.IntegerField):
         return IntegerStoreField(fld, name)
     kw = {}
-    if choosers.uses_simple_values(model, fld):
+    if choosers.uses_simple_values(holder, fld):
         return StoreField(fld, name, **kw)
     else:
         return ComboStoreField(fld, name, **kw)
@@ -937,8 +970,9 @@ class ParameterStore(BaseStore):
 
 
 class Store(BaseStore):
-    """A Store is the collection of StoreFields for a given actor.
-
+    """
+    A Store is the collection of StoreFields for a given actor.
+    Instantiated in kernel
     """
 
     pk = None

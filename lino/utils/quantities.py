@@ -1,10 +1,12 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2015 Luc Saffre
+# Copyright 2012-2017 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 r"""
 A :class:`Duration` is a Decimal expressed in ``hh:mm`` format.
 A :class:`Percentage` is a Decimal expressed in ``x%`` format.
+
+See also :doc:`/dev/quantities`.
 
 Usage examples:
 
@@ -24,7 +26,7 @@ Percentage('33%')
 >>> for s in '2', '2.5', '33%', '2:30', '0:20':
 ...     v = parse(s)
 ...     lines.append("%-20s %6s %6s %6s" % (repr(v), v, v*3, v*100))
->>> print '\n'.join(lines)
+>>> print('\n'.join(lines))
 repr(x)              str(x)    x*3  x*100
 ------------------- ------- ------ ------
 Decimal('2')              2      6    200
@@ -36,9 +38,9 @@ Duration('0:20')       0:20   1:00  33:20
 Formatting
 ==========
 
->>> print Duration("0.33334")
+>>> print(Duration("0.33334"))
 0:20
->>> print Duration("2.50")
+>>> print(Duration("2.50"))
 2:30
 
 Decimal separator
@@ -109,9 +111,9 @@ class Percentage(Quantity):
 class Duration(Quantity):
     """A duration, expressed in `hours:minutes`.
 
-    >>> print Duration('1')
+    >>> print(Duration('1'))
     1:00
-    >>> print Duration('2.5')
+    >>> print(Duration('2.5'))
     2:30
     >>> print Duration('2.50')
     2:30

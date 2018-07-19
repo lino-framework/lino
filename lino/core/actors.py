@@ -789,7 +789,9 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     @classmethod
     def get_handle(self):
-        """Return a static handle for this actor for the given renderer."""
+        """
+        Return a static handle for this actor.
+        """
         #~ assert ar is None or isinstance(ui,UI), \
             #~ "%s.get_handle() : %r is not a BaseUI" % (self,ui)
         if self.get_handle_name is not None:

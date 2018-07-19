@@ -894,6 +894,10 @@ class Kernel(object):
 
     def setup_handle(self, h, ar):
         """
+        Additional setup of an actor handle.  This is called lazily for
+        every actor handle because it potentially requires other actor
+        handles to be instantiated.
+
         ar is usually None, except for actors with dynamic handle
         """
         # logger.info('20121010 Kernel.setup_handle() %s', h.actor)

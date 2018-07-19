@@ -1,4 +1,4 @@
-# Copyright 2009-2018 Luc Saffre
+# Copyright 2009-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Extends the possibilities for defining choices for fields of a
@@ -14,6 +14,8 @@ Django model.
 """
 from builtins import str
 from builtins import object
+
+from django.db import models
 
 from lino.utils.instantiator import make_converter
 from lino.core import constants
@@ -209,6 +211,8 @@ def uses_simple_values(holder, fld):
     from lino.core.gfks import is_foreignkey
     if is_foreignkey(fld):
         return False
+    # if isinstance(fld, models.OneToOneRel):
+    #     return False
     if holder is not None:
         ch = holder.get_chooser_for_field(fld.name)
         if ch is not None:

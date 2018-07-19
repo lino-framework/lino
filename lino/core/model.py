@@ -312,6 +312,7 @@ class Model(models.Model):
 
                 model = cls
                 field_chain = []
+                editable = False
                 for n in parts:
                     if model is None:
                         raise Exception(
@@ -332,30 +333,80 @@ class Model(models.Model):
                     # make sure that the atomizer gets created.
                     store.get_atomizer(model, fld, fld.name)
                     field_chain.append(fld)
+                    if isinstance(fld, models.OneToOneRel):
+                        editable = True
                     if getattr(fld, 'remote_field', None):
                         model = fld.remote_field.model
                     elif getattr(fld, 'rel', None):
+                        raise Exception("20180712")
                         model = fld.rel.model
                     else:
                         model = None
 
-                def func(obj, ar=None):
+                def getter(obj, ar=None):
                     try:
                         for fld in field_chain:
                             if obj is None:
-                                return obj
+                                return None
                             obj = fld._lino_atomizer.full_value_from_object(
                                 obj, ar)
                         return obj
                     except Exception as e:
-                        raise Exception(
-                            "Error while computing %s: %s" % (name, e))
+                        # raise
+                        msg = "Error while computing {}: {} ({} in {})"
+                        raise Exception(msg.format(
+                            name, e, fld, field_chain))
                         # ~ if False: # only for debugging
                         if True:  # see 20130802
                             logger.exception(e)
                             return str(e)
                         return None
-                return fields.RemoteField(func, name, fld)
+                    
+                if not editable:
+                    return fields.RemoteField(getter, name, fld)
+                
+                def setter(obj, value):
+                    # logger.info("20180712 %s setter() %s", name, value)
+                    # all intermediate fields are OneToOneRel
+                    target = obj
+                    try:
+                        for fld in field_chain:
+                            # print("20180712a %s" % fld)
+                            if isinstance(fld, models.OneToOneRel):
+                                reltarget = getattr(target, fld.name, None)
+                                if reltarget is None:
+                                    rkw = { fld.field.name: target}
+                                    # print(
+                                    #     "20180712 create {}({})".format(
+                                    #         fld.related_model, rkw))
+                                    reltarget = fld.related_model(**rkw)
+                                    reltarget.full_clean()
+                                    reltarget.save()
+                                    
+                                setattr(target, fld.name, reltarget)
+                                target.full_clean()
+                                target.save()
+                                # print("20180712b {}.{} = {}".format(
+                                #     target, fld.name, reltarget))
+                                target = reltarget
+                            else:
+                                setattr(target, fld.name, value)
+                                target.full_clean()
+                                target.save()
+                                # print(
+                                #     "20180712c setattr({},{},{}".format(
+                                #         target, fld.name, value))
+                                return True
+                    except Exception as e:
+                        raise Exception(
+                            "Error while setting %s: %s" % (name, e))
+                        # ~ if False: # only for debugging
+                        if True:  # see 20130802
+                            logger.exception(e)
+                            return str(e)
+                        return False
+                    
+                return fields.RemoteField(getter, name, fld, setter)
 
         try:
             return cls._meta.get_field(name)

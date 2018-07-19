@@ -244,20 +244,33 @@ class RemoteField(FakeField):
 
     Remote fields are created by
     :meth:`lino.core.model.Model.get_data_elem` when needed.
+
+    .. attribute:: field
+
+        The bottom-level field object.
+
     """
     #~ primary_key = False
     #~ editable = False
 
-    def __init__(self, func, name, fld, **kw):
-        self.func = func
+    def __init__(self, getter, name, fld, setter=None, **kw):
+        self.func = getter
         self.name = name
         self.attname = name
         self.field = fld
         self.verbose_name = fld.verbose_name
+        self.help_text = fld.help_text
+        self.blank = fld.blank
+        # self.null = getattr(fld, 'null', None)
         self.max_length = getattr(fld, 'max_length', None)
         self.max_digits = getattr(fld, 'max_digits', None)
         self.decimal_places = getattr(fld, 'decimal_places', None)
         self.sortable_by = [ name ]
+        
+        self.setter = setter
+        if setter is not None:
+            self.editable = True
+            self.choices = getattr(fld, 'choices', None)
         #~ print 20120424, self.name
         #~ settings.SITE.register_virtual_field(self)
 
@@ -933,10 +946,10 @@ def fields_list(model, field_names):
     return lst
 
 
-
-def ForeignKey(othermodel, *args, **kw):
+def pointer_factory(cls, othermodel, *args, **kw):
     """
-    Return a Django `ForeignKey` field, with some subtle differences:
+    Instantiate a `ForeignKey` or `OneToOneField` with some subtle
+    differences:
 
     - It supports `othermodel` being `None` or the name of some
       non-installed model and returns a :class:`DummyField` in that
@@ -953,7 +966,20 @@ def ForeignKey(othermodel, *args, **kw):
             return DummyField(othermodel, *args, **kw)
 
     kw.setdefault('on_delete', models.CASCADE)
-    return models.ForeignKey(othermodel, *args, **kw)
+    return cls(othermodel, *args, **kw)
+
+def OneToOneField(*args, **kwargs):
+    """
+    Instantiate a :class:`django.db.models.OneToOneField` using :func:`pointer_factory`.
+    """
+    return pointer_factory(models.OneToOneField, *args, **kwargs)
+
+def ForeignKey(*args, **kwargs):
+    """
+    Instantiate a :class:`django.db.models.ForeignKey` using
+    :func:`pointer_factory`.
+    """
+    return pointer_factory(models.ForeignKey, *args, **kwargs)
 
 
 class CustomField(object):
