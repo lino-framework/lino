@@ -710,6 +710,8 @@ class Connector(View):
             menu=settings.SITE.get_site_menu(None, u.user_type)
         )
 
+        device_type = request.device_type
+        print ("device_type", device_type)
         # print(u)
         # print(name)
         if name.startswith("dialog/SignInActionFormPanel"):
@@ -773,10 +775,13 @@ class Connector(View):
             if name.startswith("slavetable/"):
                 tplname = "openui5/view/slaveTable.view.xml"
             else:
-                tplname = "openui5/view/table.view.xml"  # Change to "grid" to match action?
+                if device_type == 'desktop':
+                    tplname = "openui5/view/table.view.xml"  # Change to "grid" to match action?
+                else:
+                    tplname = "openui5/view/table.mview.xml"
 
-                # ar = action_request(app_label, actor, request, request.GET, True)
-                # add to context
+                    # ar = action_request(app_label, actor, request, request.GET, True)
+                    # add to context
 
         elif name.startswith("detail") or name.startswith("view/detail"):  # Detail view
             # "detail/tickets/AllTickets.view.xml"

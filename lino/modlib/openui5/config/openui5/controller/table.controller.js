@@ -122,7 +122,6 @@ sap.ui.define([
             var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
             if (this._is_slave) {
                 data.mk = this.getParentView().getController()._PK;
-                data.mk = this._PK;
             }
 
             jQuery.ajax(this.getView().byId("MAIN_TABLE").data("url"), {
@@ -172,7 +171,7 @@ sap.ui.define([
         onColumnMenuOpen: function (oEvent) {
             var oCurrentColumn = oEvent.getSource();
             var oImageColumn = this.getView().byId("image");
-            if (oCurrentColumn != oImageColumn) {
+            if (oCurrentColumn !== oImageColumn) {
                 return;
             }
 

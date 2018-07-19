@@ -55,7 +55,7 @@ sap.ui.define([
                     jQuery.sap.log.error("failed to load json");
                 }
             });
-            console.log(this.count++)
+            console.log(this.count++);
 
             return oModel;
         },
@@ -147,7 +147,7 @@ sap.ui.define([
 
         onLoaditems: function (oEvent) {
             console.log("loaditems");
-        },
+        }
 
     });
 

@@ -24,6 +24,11 @@
                             </layoutData>
                         </ToolbarSpacer>
                         {% if ar.user.is_authenticated() %}
+                    <Button text="Change device type" type="Transparent" press="onChangeDeviceTypeButtonPress">
+                            <layoutData>
+                                <OverflowToolbarLayoutData priority="NeverOverflow" />
+                            </layoutData>
+                        </Button>
                         <Button text="{{ar.user.name}}" type="Transparent"
                                 press="handlePressOpenMenu"
                                 customData:menu="user.user">
@@ -33,6 +38,11 @@
                             </layoutData>
                         </Button>
                         {% else %}
+                        <Button text="Change device type" type="Transparent" press="onChangeDeviceTypeButtonPress">
+                            <layoutData>
+                                <OverflowToolbarLayoutData priority="NeverOverflow" />
+                            </layoutData>
+                        </Button>
                         <Button text="Sign in" type="Transparent" press="onSignInButtonPress">
                             <layoutData>
                                 <OverflowToolbarLayoutData priority="NeverOverflow" />
