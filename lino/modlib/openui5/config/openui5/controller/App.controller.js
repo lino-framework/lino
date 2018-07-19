@@ -12,17 +12,18 @@ sap.ui.define([
 
         // MenuItemEvent controlering
         onInit: function () {
+            this.initRouter();
             this._menus = {};
             var that = this;
-            var connectedDevice;
+            this._selectedDevice = 'desktop';
             if (Device.system.desktop === true) {
-                connectedDevice = 'desktop';
+                this._connectedDevice = 'desktop';
             }
             else if (Device.system.phone === true) {
-                connectedDevice = 'phone';
+                this._connectedDevice = 'phone';
             }
             else if (Device.system.tablet === true) {
-                connectedDevice = 'tablet';
+                this._connectedDevice = 'tablet';
             }
 
 //            that.getView().byId('dashboard').getParent().setBusy(true);
@@ -34,6 +35,22 @@ sap.ui.define([
 //			this.byId("openMenu").attachBrowserEvent("tab keyup", function(oEvent){
 //				this._bKeyboard = oEvent.type == "keyup";
 //			}, this);
+        },
+
+        /**
+         * Convenience method for getting the router for navigation.
+         * @public
+         * @returns {sap.ui.core.routing.Router or sap.m.routing.Router}
+         */
+        initRouter: function () {
+            var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+                oRouter.attachRouteMatched(this.routeMatched, this);
+            return oRouter;
+        },
+
+        routeMatched: function(oEvent){
+                var oParameters = oEvent.getParameters();
+                    this.routeName = oParameters.name; // Yay! Our route name!
         },
 
         handlePressOpenMenu: function (oEvent) {
@@ -116,10 +133,25 @@ sap.ui.define([
             oDialog.open();
 
         },
+        /**
+         * Change the device type (Desktop or Mobile)
+         * @param oEvent
+         */
+        onChangeDeviceTypeButtonPress: function (oEvent) {
+            var oView = this.getView();
+            var oButton = oEvent.getSource();
+            var newdevice = 'phone';
+            if (this._selectedDevice === 'phone') {
+                newdevice = 'desktop';
+            }
+            this._selectedDevice = newdevice;
+            this.routeToAction(this.routeName,{}, true /*no history*/);
+            // this.reload.apply(this, {'dt': newdevice});
+        },
 
         onCloseDialog: function (oEvent) {
             var oDialog = this.getView().byId("dialog");
-            oDialog.close()
+            oDialog.close();
         },
 
         onOkSignInDialog: function (oEvent) {

@@ -56,6 +56,11 @@ sap.ui.define([
                     Object.getOwnPropertyDescriptor(args, "base_params"));
                 delete args["base_params"];
             }
+            if (args.query === undefined) {
+                // Object.defineProperty(args, "query",
+                //    {'dt':this._selectedDevice});
+                args.query = {'dt':this._selectedDevice};
+            }
             this.getRouter().navTo(action_id,
                 args /*if 3ed arg (history) is True, oui5 will not record history for this change.*/);
         },
