@@ -2608,7 +2608,9 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
           listeners: { 
             scope:this, 
             select:function(combo,record,index) {
-              //~ console.log('jumpto_select',arguments);
+                // console.log('20180719 select', combo);
+                this.set_base_param('{{constants.URL_PARAM_FILTER}}',
+                                    combo.lastQuery); 
               this.goto_record_id(record.id);
             }
           },
