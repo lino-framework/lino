@@ -1,16 +1,16 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2017 by Luc Saffre.
+# Copyright 2009-2018 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
+# $ doctest lino/utils/format_date.py
 
-"""Date formatting functions
--------------------------
+"""
+This module provides miscellaneous date formatting functions.
 
-To run the Lino test suite on this module::
+There are different date formatting syntaxes:
 
-  $ python setup.py test -s tests.UtilsTests.test_format_date
+- `Babel <http://babel.pocoo.org/en/latest/dates.html#date-fields>`__
+- `Django <https://docs.djangoproject.com/en/2.0/ref/templates/builtins/#date>`__
 
-This module provides shortcuts to `python-babel`'s `date formatting
-functions <http://babel.pocoo.org/docs/dates/>`_.
 
 Note that if you ask just for English, then we change Babel's default
 localization (US) to UK because US date format is just silly for
@@ -32,10 +32,10 @@ Monday, 26 August 2013
 August 2013
 
 
-The :func:`lino.core.format_date.format_date` function is a thin
-wrapper to the corresponding function in `babel.dates`, filling the
-`locale` parameter according to Django's current language (and doing
-the conversion).
+The :func:`format_date` function is a thin wrapper to the
+corresponding function in `babel.dates`, filling the `locale`
+parameter according to Django's current language (and doing the
+conversion).
 
 The major advantage over using `date_format` from
 `django.utils.formats` is that Babel offers a "full" format:
@@ -87,7 +87,6 @@ vrijdag 18 januari 2013
 Traceback (most recent call last):
   ...
 Exception: Not a date: '2014-10-12'
-
 """
 
 from __future__ import unicode_literals, print_function
@@ -168,8 +167,20 @@ dtos = fds
 dtomy = fdmy  # backward compat
 
 
-def day_and_month(d):
-    # this is not used. see also lino_xl.lib.cal.utils.day_and_month
-    return format_date(d, "dd. MMMM")
+# def day_and_month(d):
+#     # this is not used. see also lino_xl.lib.cal.utils.day_and_month
+#     return format_date(d, "dd. MMMM")
 
+
+def day_and_month(d):
+    if d is None:
+        return "-"
+    return defaultfilters.date(d, 'd.m.')
+    # return d.strftime("%d.%m.")
+
+def day_and_weekday(d):
+    if d is None:
+        return "-"
+    return defaultfilters.date(d, 'D d.')
+    # return d.strftime("%a%d")
 
