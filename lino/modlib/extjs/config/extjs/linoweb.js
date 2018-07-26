@@ -683,8 +683,8 @@ Lino.load_url = function(url) {
 }
 
 Lino.close_window = function(status_update, norestore) {
-  // norestore is used when called by handle_action_result() who 
-  // will call set_status itself later
+  // norestore is true when called by handle_action_result() who 
+  // will call set_status() itself later
   var cw = Lino.current_window;
   var ww = Lino.window_history.pop();
   var retval = cw.main_item.requesting_panel;
@@ -697,7 +697,8 @@ Lino.close_window = function(status_update, norestore) {
     //~ if (status_update) Ext.apply(ww.status,status_update);
     if(!norestore) {
         if (status_update) status_update(ww);
-        ww.window.main_item.set_status(ww.status , cw.id);
+        // 20180725 ww.window.main_item.set_status(ww.status , cw.id);
+        ww.window.main_item.set_status(ww.status , retval);
     }
     Lino.current_window = ww.window;
   } else {
@@ -2463,10 +2464,12 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel, {
     //~ console.log('20120918 ActionFormPanel.set_status()',status,rp,this.requesting_panel);
     this.clear_base_params();
     if (status == undefined) status = {};
-    //~ if (status.param_values) 
-    this.set_field_values(status.field_values);
+    //~ if (status.param_values)
+    // 20180725 : do not set field values and record id if status
+    // doesn't have them.
+    if (status.field_values) this.set_field_values(status.field_values);
     if (status.base_params) this.set_base_params(status.base_params);
-    this.record_id = status.record_id;
+    if (status.record_id) this.record_id = status.record_id;
   }
   
   ,before_row_edit : function(record) {}
@@ -2608,7 +2611,9 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
           listeners: { 
             scope:this, 
             select:function(combo,record,index) {
-              //~ console.log('jumpto_select',arguments);
+                // console.log('20180719 select', combo);
+                this.set_base_param('{{constants.URL_PARAM_FILTER}}',
+                                    combo.lastQuery); 
               this.goto_record_id(record.id);
             }
           },
