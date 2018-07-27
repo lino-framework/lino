@@ -2518,7 +2518,7 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel, {
       wincfg.title = this.window_title;
       wincfg.keys = [
         { key: Ext.EventObject.ENTER, fn: this.on_ok, scope: this }
-        ,{ key: 's', ctrl: true, fn: this.on_ok, scope: this }
+        ,{ key: 's', ctrl: true, fn: this.on_ok, scope: this, stopEvent: true  }
       ];
       
       if (!wincfg.defaultButton) this.getForm().items.each(function(f){
