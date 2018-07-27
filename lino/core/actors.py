@@ -694,6 +694,10 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     @classmethod
     def get_disabled_fields(cls, obj, ar):
+        """
+        Return the cached set of disabled fields for this `obj` and `ar`.
+        
+        """
         df = getattr(obj, '_disabled_fields', None)
         if df is None:
             df = cls.make_disabled_fields(obj, ar)
@@ -703,29 +707,10 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     @classmethod
     def make_disabled_fields(cls, obj, ar):
         """
-        Return a set of field names that should not be editable for the
-        specified object and request.
+        Return a set of disabled fields for the specified object and
+        request.
 
-        If defined in the Actor, this must be a class method that accepts
-        two arguments `obj` and `ar` (an `ActionRequest`)::
-
-          @classmethod
-          def disabled_fields(cls, obj, ar):
-              s = super(MyActor, cls).disabled_fields(obj, ar)
-              ...
-              return set()
-
-        If not defined in the Table, Lino will look whether the
-        Table's model has a `disabled_fields` method and install a
-        wrapper to this model method.  When defined on the model, is
-        must be an *instance* method::
-
-          def disabled_fields(self, ar):
-              s = super(MyModel, self).disabled_fields(ar)
-              ...
-              return set()
-
-        See also :srcref:`docs/tickets/2`.
+        See :doc:`/dev/disabled_fields`.
         """
 
         s = set()
@@ -1407,11 +1392,9 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         Return a sorted list of actions that should be available as
         buttons in the specified `parent` (a window action).
 
-        This is used (1) :meth:`get_toolbar_actions` and 
-        (2) to reduce the list of disabled actions
-        in `disabled_fields` to those which make sense.
-        `dbtables.make_disabled_fields`
-
+        This is used (1) by :meth:`get_toolbar_actions` and (2) to
+        reduce the list of disabled actions in `disabled_fields` to
+        those which make sense.  `dbtables.make_disabled_fields`
         """
         if not parent.opens_a_window:
             # return []

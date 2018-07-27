@@ -488,19 +488,11 @@ class Model(models.Model):
         return self._lino_default_table  # set in dbtables.py
 
     def disabled_fields(self, ar):
-        """Return a set of names of fields that should be disabled (not
+        """
+        Return a set of names of fields that should be disabled (not
         editable) for this record.
 
-        Usage example::
-
-          def disabled_fields(self, ar):
-              df = super(MyModel, self).disabled_fields(ar)
-              if self.user == ar.user:
-                  return df
-              if self.foo:
-                  df.add('field2')
-              return df
-
+        See :doc:`/dev/disabled_fields`.
         """
         return set()
 
