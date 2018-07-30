@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2017 Luc Saffre
+# Copyright 2009-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 "Defines the :class:`Model` class."
@@ -878,17 +878,6 @@ class Model(models.Model):
         if ar is None:
             return ''
         return E.div(*forcetext(self.get_overview_elems(ar)))
-
-    # no longer needed here because implemented in AbstractTable
-    # @dd.displayfield(_("Description"))
-    # def detail_pointer(self, obj, ar):
-    #     return ar.obj2html(obj)
-
-    # @fields.displayfield(_("Description"))
-    # def detail_pointer(self, ar):
-    #     if ar is None:
-    #         return ''
-    #     return ar.obj2html(self)
 
     @fields.displayfield(_("Workflow"))
     def workflow_buttons(self, ar):

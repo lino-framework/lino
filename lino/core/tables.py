@@ -790,19 +790,18 @@ class ButtonsTable(VirtualTable):
         return obj
 
 
-from lino.core.signals import post_analyze
-from django.db.utils import DatabaseError
+# from lino.core.signals import post_analyze
+# from django.db.utils import DatabaseError
 
-
-@signals.receiver(post_analyze)
-def setup_ventilated_columns(sender, **kw):
-    # print("20170308 SETUP_VENTILATED_COLUMNS")
-    if actors.actors_list is not None:
-        for a in actors.actors_list:
-            if issubclass(a, AbstractTable) and not a.abstract:
-                try:
-                    a.setup_columns()
-                except DatabaseError:
-                    logger.debug(
-                        "Ignoring DatabaseError in %s.setup_ventilated_columns", a)
-    settings.SITE.resolve_virtual_fields()
+# @signals.receiver(post_analyze)
+# def setup_ventilated_columns(sender, **kw):
+#     # print("20170308 SETUP_VENTILATED_COLUMNS")
+#     if actors.actors_list is not None:
+#         for a in actors.actors_list:
+#             if issubclass(a, AbstractTable) and not a.abstract:
+#                 try:
+#                     a.setup_columns()
+#                 except DatabaseError:
+#                     logger.debug(
+#                         "Ignoring DatabaseError in %s.setup_ventilated_columns", a)
+#     settings.SITE.resolve_virtual_fields()
