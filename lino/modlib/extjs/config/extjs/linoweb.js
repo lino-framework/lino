@@ -2404,9 +2404,13 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel, {
     ];
     Lino.ActionFormPanel.superclass.constructor.call(this, config);
   }
-  //~ ,initComponent : function(){
-    //~ Lino.ActionFormPanel.superclass.initComponent.call(this);
-  //~ }
+  ,initComponent : function(){
+      this.on('render',function(){
+          this.loadMask = new Ext.LoadMask(
+              this.bwrap,{msg:"{{_('Please wait...')}}"});
+      },this);
+      Lino.ActionFormPanel.superclass.initComponent.call(this);
+  }
   ,on_cancel : function() { 
     this.get_containing_window().close();
   }
@@ -2427,6 +2431,7 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel, {
         // return;
     }
     var self = this;
+    self.loadMask.show();  // 20180727
     // function on_success() { self.get_containing_window().close(); };
     // see 20131004 and 20140430
     var url = '{{extjs.build_plain_url("api")}}';
@@ -2450,7 +2455,6 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel, {
       if (panel) Ext.apply(p, panel.get_base_params());
       delete p.{{constants.URL_PARAM_PARAM_VALUES}};
       // console.log("20150130", p.{{constants.URL_PARAM_PARAM_VALUES}});
-
       Lino.call_ajax_action(
           panel, 'GET', url, p, actionName, step, fn); //  , on_success);
     }
@@ -2463,6 +2467,7 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel, {
     this.requesting_panel = Ext.getCmp(rp);
     //~ console.log('20120918 ActionFormPanel.set_status()',status,rp,this.requesting_panel);
     this.clear_base_params();
+    this.loadMask.hide();  // 20180727
     if (status == undefined) status = {};
     //~ if (status.param_values)
     // 20180725 : do not set field values and record id if status
@@ -2513,6 +2518,7 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel, {
       wincfg.title = this.window_title;
       wincfg.keys = [
         { key: Ext.EventObject.ENTER, fn: this.on_ok, scope: this }
+        ,{ key: 's', ctrl: true, fn: this.on_ok, scope: this, stopEvent: true  }
       ];
       
       if (!wincfg.defaultButton) this.getForm().items.each(function(f){

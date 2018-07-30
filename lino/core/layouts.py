@@ -1,4 +1,4 @@
-# Copyright 2009-2018 Luc Saffre
+# Copyright 2009-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """See :doc:`/dev/layouts/index`.

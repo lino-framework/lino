@@ -44,6 +44,7 @@ from django.conf import settings
 from django.core import exceptions
 from django.utils.encoding import force_text
 from django.core.exceptions import PermissionDenied
+from django.db.utils import DatabaseError
 
 from django.db import models
 
@@ -475,6 +476,14 @@ class Kernel(object):
 
         for a in actors.actors_list:
             a.on_analyze(site)
+
+        for a in actors.actors_list:
+            if issubclass(a, tables.AbstractTable) and not a.abstract:
+                try:
+                    a.setup_columns()
+                except DatabaseError:
+                    logger.debug(
+                        "Ignoring DatabaseError in %s.setup_columns", a)
 
         post_analyze.send(site, models_list=models_list)
 

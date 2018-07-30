@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  lino.modlib.systen\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-11 10:24+0300\n"
+"POT-Creation-Date: 2018-07-30 06:31+0300\n"
 "PO-Revision-Date: 2014-02-05 09:34+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmx.net>\n"
 "Language: nl\n"
@@ -381,7 +381,7 @@ msgstr ""
 #: lino/help_texts.py:237 lino/help_texts.py:238 lino/help_texts.py:239
 #: lino/help_texts.py:240 lino/help_texts.py:243 lino/help_texts.py:269
 #: lino/help_texts.py:283 lino/help_texts.py:307 lino/help_texts.py:313
-#: lino/help_texts.py:610
+#: lino/help_texts.py:611
 msgid "See /dev/plugins."
 msgstr ""
 
@@ -1320,10 +1320,14 @@ msgid "Shortcut to lino.core.frames.Frame"
 msgstr ""
 
 #: lino/help_texts.py:453
-msgid "The list of time zones available on this site."
+msgid "Search across all tables of the application."
 msgstr ""
 
 #: lino/help_texts.py:454
+msgid "The list of time zones available on this site."
+msgstr ""
+
+#: lino/help_texts.py:455
 msgid ""
 "The default time zone on this server, corresponding to\n"
 "TIME_ZONE.  Unlike TIME_ZONE (which is a\n"
@@ -1332,176 +1336,176 @@ msgid ""
 "tzinfo which contains the time zone info object."
 msgstr ""
 
-#: lino/help_texts.py:459
+#: lino/help_texts.py:460
 msgid ""
 "Setting this field on a partner makes this partner available\n"
 "as a client contact."
 msgstr ""
 
-#: lino/help_texts.py:461
+#: lino/help_texts.py:462
 msgid "The coaching type used for new coachings of this user."
 msgstr ""
 
-#: lino/help_texts.py:462
+#: lino/help_texts.py:463
 msgid "Notify me when a coach has been assigned."
 msgstr ""
 
-#: lino/help_texts.py:463
+#: lino/help_texts.py:464
 msgid ""
 "A comment is a short text which some user writes about some\n"
 "other database object. It has no recipient."
 msgstr ""
 
-#: lino/help_texts.py:465
+#: lino/help_texts.py:466
 msgid "The full body text of your comment."
 msgstr ""
 
-#: lino/help_texts.py:466
+#: lino/help_texts.py:467
 msgid "The first paragraph of your body."
 msgstr ""
 
-#: lino/help_texts.py:467
+#: lino/help_texts.py:468
 msgid "The author of the comment."
 msgstr ""
 
-#: lino/help_texts.py:468
+#: lino/help_texts.py:469
 msgid ""
 "A generic foreign key to the commentable database object to\n"
 "which this comment relates."
 msgstr ""
 
-#: lino/help_texts.py:470
+#: lino/help_texts.py:471
 msgid "When this comment has been published. A timestamp."
 msgstr ""
 
-#: lino/help_texts.py:471
+#: lino/help_texts.py:472
 msgid ""
 "Whether to show only (un)published comments, independently of\n"
 "the publication date."
 msgstr ""
 
-#: lino/help_texts.py:473
+#: lino/help_texts.py:474
 msgid "The date range to filter."
 msgstr ""
 
-#: lino/help_texts.py:474
+#: lino/help_texts.py:475
 msgid ""
 "Which event (created, modified or published) to consider when\n"
 "applying the date range given by start_date and\n"
 "end_date."
 msgstr ""
 
-#: lino/help_texts.py:477
+#: lino/help_texts.py:478
 msgid "Shows the comments for a given database object."
 msgstr ""
 
-#: lino/help_texts.py:478
+#: lino/help_texts.py:479
 msgid ""
 "The choicelist with selections for\n"
 "Comments.observed_event."
 msgstr ""
 
-#: lino/help_texts.py:480
+#: lino/help_texts.py:481
 msgid ""
 "The CommentType model is not being used in production,\n"
 "one day we will probably remove it."
 msgstr ""
 
-#: lino/help_texts.py:482
+#: lino/help_texts.py:483
 msgid "The table with all existing comment types."
 msgstr ""
 
-#: lino/help_texts.py:483
+#: lino/help_texts.py:484
 msgid "Mixin for models that can be subject to comments."
 msgstr ""
 
-#: lino/help_texts.py:484
+#: lino/help_texts.py:485
 msgid "The recipient of invoices (invoicing address)."
 msgstr ""
 
-#: lino/help_texts.py:485
+#: lino/help_texts.py:486
 msgid ""
 "A Notification message is an instant message sent by the\n"
 "application to a given user."
 msgstr ""
 
-#: lino/help_texts.py:487
+#: lino/help_texts.py:488
 #, fuzzy
 msgid "The recipient."
 msgstr "EmpfängerEmpfänger"
 
-#: lino/help_texts.py:488
+#: lino/help_texts.py:489
 msgid "The database object which controls this message."
 msgstr ""
 
-#: lino/help_texts.py:489
+#: lino/help_texts.py:490
 msgid "Base for all tables of messages."
 msgstr ""
 
-#: lino/help_texts.py:490
+#: lino/help_texts.py:491
 msgid "The gobal list of all messages."
 msgstr ""
 
-#: lino/help_texts.py:491
+#: lino/help_texts.py:492
 msgid "Shows messages emitted to me."
 msgstr ""
 
-#: lino/help_texts.py:492
+#: lino/help_texts.py:493
 msgid ""
 "An action which pops up a dialog window of three fields \"Summary\",\n"
 "\"Description\" and a checkbox \"Don't notify others\" to optionally\n"
 "suppress notification."
 msgstr ""
 
-#: lino/help_texts.py:495
+#: lino/help_texts.py:496
 msgid ""
 "The list of possible choices for the message_type field\n"
 "of a Message."
 msgstr ""
 
-#: lino/help_texts.py:497
+#: lino/help_texts.py:498
 msgid "How the system should send email notifications to a user."
 msgstr ""
 
-#: lino/help_texts.py:498
+#: lino/help_texts.py:499
 msgid "Disable notifications for this user."
 msgstr ""
 
-#: lino/help_texts.py:499
+#: lino/help_texts.py:500
 msgid "Notify in Lino but never send email."
 msgstr ""
 
-#: lino/help_texts.py:500
+#: lino/help_texts.py:501
 msgid "Mark this message as seen."
 msgstr ""
 
-#: lino/help_texts.py:501
+#: lino/help_texts.py:502
 msgid "Mark all messages as seen."
 msgstr ""
 
-#: lino/help_texts.py:502
+#: lino/help_texts.py:503
 msgid "Mark this message as not yet seen."
 msgstr ""
 
-#: lino/help_texts.py:503
+#: lino/help_texts.py:504
 msgid ""
 "Mixin for models for which Lino can generate a printable\n"
 "document."
 msgstr ""
 
-#: lino/help_texts.py:505
+#: lino/help_texts.py:506
 msgid ""
 "Mixin for Models that generate a unique external file at a\n"
 "determined place when being printed."
 msgstr ""
 
-#: lino/help_texts.py:507
+#: lino/help_texts.py:508
 msgid ""
 "Timestamp of the built target file. Contains None\n"
 "if no build hasn't been called yet."
 msgstr ""
 
-#: lino/help_texts.py:509
+#: lino/help_texts.py:510
 msgid ""
 "The action used to print this object.\n"
 "This is an instance of\n"
@@ -1512,67 +1516,67 @@ msgid ""
 "lino_xl.lib.excerpts.CreateExcerpt instance."
 msgstr ""
 
-#: lino/help_texts.py:516
+#: lino/help_texts.py:517
 msgid ""
 "A CachedPrintable that uses a \"Type\" for deciding which\n"
 "template to use on a given instance."
 msgstr ""
 
-#: lino/help_texts.py:518
+#: lino/help_texts.py:519
 msgid ""
 "Base class for models that specify the\n"
 "TypedPrintable.type."
 msgstr ""
 
-#: lino/help_texts.py:520
+#: lino/help_texts.py:521
 msgid "Default value for templates_group is the model's full name."
 msgstr ""
 
-#: lino/help_texts.py:521
+#: lino/help_texts.py:522
 msgid ""
 "A pointer to an item of\n"
 "lino.modlib.printing.choicelists.BuildMethods."
 msgstr ""
 
-#: lino/help_texts.py:523
+#: lino/help_texts.py:524
 msgid "The name of the file to be used as template."
 msgstr ""
 
-#: lino/help_texts.py:524
+#: lino/help_texts.py:525
 msgid ""
 "Checks for missing cache files on all objects which inherit\n"
 "CachedPrintable."
 msgstr ""
 
-#: lino/help_texts.py:526
+#: lino/help_texts.py:527
 msgid "Base class for all \"Print\" actions."
 msgstr ""
 
-#: lino/help_texts.py:527
+#: lino/help_texts.py:528
 msgid "Print using a hard-coded template and without cache."
 msgstr ""
 
-#: lino/help_texts.py:528
+#: lino/help_texts.py:529
 msgid ""
 "A print action which uses a cache for the generated printable\n"
 "document and builds is only when it doesn't yet exist."
 msgstr ""
 
-#: lino/help_texts.py:530
+#: lino/help_texts.py:531
 msgid "Defines the Clear cache button on a Printable record."
 msgstr ""
 
-#: lino/help_texts.py:531
+#: lino/help_texts.py:532
 msgid ""
 "Edit the print template, i.e. the file specified by\n"
 "Printable.get_print_templates()."
 msgstr ""
 
-#: lino/help_texts.py:533
+#: lino/help_texts.py:534
 msgid "The choicelist of build methods offered on this site."
 msgstr ""
 
-#: lino/help_texts.py:534
+#: lino/help_texts.py:535
 msgid ""
 "Base class for all build methods.  A build method encapsulates the\n"
 "process of generating a \"printable document\" that inserts data\n"
@@ -1580,48 +1584,48 @@ msgid ""
 "template parser and post-processor."
 msgstr ""
 
-#: lino/help_texts.py:538
+#: lino/help_texts.py:539
 msgid ""
 "Whether this build method results is an editable file.  For\n"
 "example, .odt files are considered editable while .pdf files\n"
 "aren't."
 msgstr ""
 
-#: lino/help_texts.py:541
+#: lino/help_texts.py:542
 msgid "A BuildMethod which uses a template."
 msgstr ""
 
-#: lino/help_texts.py:542
+#: lino/help_texts.py:543
 msgid "A TemplatedBuildMethod which uses Django's templating engine."
 msgstr ""
 
-#: lino/help_texts.py:543
+#: lino/help_texts.py:544
 msgid "Generates .xml files from .xml templates."
 msgstr ""
 
-#: lino/help_texts.py:544
+#: lino/help_texts.py:545
 msgid ""
 "Base for build methods which use Lino's templating system\n"
 "(find_config_file)."
 msgstr ""
 
-#: lino/help_texts.py:546
+#: lino/help_texts.py:547
 msgid "For example CourseToXls."
 msgstr ""
 
-#: lino/help_texts.py:547
+#: lino/help_texts.py:548
 msgid ""
 "Not actively used.\n"
 "Generates .pdf files from .tex templates."
 msgstr ""
 
-#: lino/help_texts.py:549
+#: lino/help_texts.py:550
 msgid ""
 "Not actively used.\n"
 "Generates .rtf files from .rtf templates."
 msgstr ""
 
-#: lino/help_texts.py:551
+#: lino/help_texts.py:552
 msgid ""
 "Deprecated.\n"
 "Generates .pdf files from .html templates.\n"
@@ -1629,11 +1633,11 @@ msgid ""
 "Usage example see lino_book.projects.pisa."
 msgstr ""
 
-#: lino/help_texts.py:555
+#: lino/help_texts.py:556
 msgid "Abstract base class for all \"summary data\" models."
 msgstr ""
 
-#: lino/help_texts.py:556
+#: lino/help_texts.py:557
 msgid ""
 "Any implementing subclass of Summary must define a\n"
 "field named master which must be a ForeignKey field.\n"
@@ -1642,153 +1646,153 @@ msgid ""
 "allow_cascaded_delete to 'master'."
 msgstr ""
 
-#: lino/help_texts.py:561
+#: lino/help_texts.py:562
 msgid "Can be 'yearly', 'monthly' or 'timeless'."
 msgstr ""
 
-#: lino/help_texts.py:562
+#: lino/help_texts.py:563
 msgid "See Summary.compute_results()"
 msgstr ""
 
-#: lino/help_texts.py:563
+#: lino/help_texts.py:564
 msgid "Web UI version of checksummaries."
 msgstr ""
 
-#: lino/help_texts.py:564
+#: lino/help_texts.py:565
 msgid "Update summary data for this object."
 msgstr ""
 
-#: lino/help_texts.py:565
+#: lino/help_texts.py:566
 #, fuzzy
 msgid "Fields:"
 msgstr "Feld"
 
-#: lino/help_texts.py:566
+#: lino/help_texts.py:567
 msgid ""
 "This is always True.  Compare with\n"
 "AnonymousUser.authenticated."
 msgstr ""
 
-#: lino/help_texts.py:568
+#: lino/help_texts.py:569
 msgid "Must be unique and cannot be empty."
 msgstr ""
 
-#: lino/help_texts.py:569
+#: lino/help_texts.py:570
 msgid ""
 "The nickname or initials of this user. This does not need to\n"
 "be unique but should provide a reasonably identifying\n"
 "function."
 msgstr ""
 
-#: lino/help_texts.py:572
+#: lino/help_texts.py:573
 msgid "The user_type of a user is what defines her or his permissions."
 msgstr ""
 
-#: lino/help_texts.py:573
+#: lino/help_texts.py:574
 msgid ""
 "Pointer to the Partner instance related to\n"
 "this user."
 msgstr ""
 
-#: lino/help_texts.py:575
+#: lino/help_texts.py:576
 msgid ""
 "A virtual read-only field which returns the Person MTI child of the\n"
 "partner (if it exists) and otherwise None."
 msgstr ""
 
-#: lino/help_texts.py:577
+#: lino/help_texts.py:578
 msgid "Not used in Lino."
 msgstr ""
 
-#: lino/help_texts.py:578
+#: lino/help_texts.py:579
 msgid ""
 "The site administrator can optionally specify a date when a\n"
 "user started or stopped to be active."
 msgstr ""
 
-#: lino/help_texts.py:580
+#: lino/help_texts.py:581
 msgid ""
 "An authority is when a user gives another user the right to\n"
 "\"represent\" them."
 msgstr ""
 
-#: lino/help_texts.py:582
+#: lino/help_texts.py:583
 msgid ""
 "The user who gives the right of representation. author of this\n"
 "authority"
 msgstr ""
 
-#: lino/help_texts.py:584
+#: lino/help_texts.py:585
 msgid "The user who gets the right to represent the author"
 msgstr ""
 
-#: lino/help_texts.py:585
+#: lino/help_texts.py:586
 msgid "Base class for all user tables."
 msgstr ""
 
-#: lino/help_texts.py:586
+#: lino/help_texts.py:587
 msgid "Shows the list of all users on this site."
 msgstr ""
 
-#: lino/help_texts.py:587
+#: lino/help_texts.py:588
 msgid ""
 "A variant of Users showing only active users and only some\n"
 "fields.  This is used on demo sites in admin_main.html to\n"
 "display the list of available users."
 msgstr ""
 
-#: lino/help_texts.py:590
+#: lino/help_texts.py:591
 msgid "Mixin for database models which have a timezone field."
 msgstr ""
 
-#: lino/help_texts.py:591
+#: lino/help_texts.py:592
 msgid "The timezone."
 msgstr ""
 
-#: lino/help_texts.py:592
+#: lino/help_texts.py:593
 msgid ""
 "The list of required roles for getting permission to edit\n"
 "other users' work."
 msgstr ""
 
-#: lino/help_texts.py:594
+#: lino/help_texts.py:595
 msgid ""
 "No longer used. The name of the field that defines the author\n"
 "of this object."
 msgstr ""
 
-#: lino/help_texts.py:596
+#: lino/help_texts.py:597
 msgid ""
 "Mixin for models that have a user field which points to\n"
 "the \"author\" of this object. The default user of new instances is\n"
 "automatically set to the requesting user."
 msgstr ""
 
-#: lino/help_texts.py:599
+#: lino/help_texts.py:600
 msgid ""
 "The author of this object.\n"
 "A pointer to lino.modlib.users.models.User."
 msgstr ""
 
-#: lino/help_texts.py:601
+#: lino/help_texts.py:602
 msgid "The list of user types available in this application."
 msgstr ""
 
-#: lino/help_texts.py:602
+#: lino/help_texts.py:603
 msgid "Base class for all user types."
 msgstr ""
 
-#: lino/help_texts.py:603
+#: lino/help_texts.py:604
 msgid ""
 "The role of users having this type. This is an instance of\n"
 "<lino.core.roles.UserRole> or some subclass thereof."
 msgstr ""
 
-#: lino/help_texts.py:605
+#: lino/help_texts.py:606
 msgid "Whether users of this type get only write-proteced access."
 msgstr ""
 
-#: lino/help_texts.py:606
+#: lino/help_texts.py:607
 msgid ""
 "A subset of languages\n"
 "which should be hidden for users of this type.  Default value\n"
@@ -1796,52 +1800,52 @@ msgid ""
 "is used on multilingual sites with more than 4 or 5 languages."
 msgstr ""
 
-#: lino/help_texts.py:611
+#: lino/help_texts.py:612
 msgid "Whether this site offers online registration of new users."
 msgstr ""
 
-#: lino/help_texts.py:612
+#: lino/help_texts.py:613
 msgid ""
 "Somebody who can help others by running AssignToMe\n"
 "action."
 msgstr ""
 
-#: lino/help_texts.py:614
+#: lino/help_texts.py:615
 msgid ""
 "Somebody who can help others by running TakeAuthorship\n"
 "action."
 msgstr ""
 
-#: lino/help_texts.py:616
+#: lino/help_texts.py:617
 msgid "Send a welcome mail to this user."
 msgstr ""
 
-#: lino/help_texts.py:617
+#: lino/help_texts.py:618
 msgid "Change the password of this user."
 msgstr ""
 
-#: lino/help_texts.py:618
+#: lino/help_texts.py:619
 msgid ""
 "The current password. Leave empty if the user has no password\n"
 "yet. And SiteAdmin users don't need to specify this at all."
 msgstr ""
 
-#: lino/help_texts.py:620
+#: lino/help_texts.py:621
 #, fuzzy
 msgid "The new password."
 msgstr "Passwort ändern"
 
-#: lino/help_texts.py:621
+#: lino/help_texts.py:622
 msgid "The new password a second time. Both passwords must match."
 msgstr ""
 
-#: lino/help_texts.py:622
+#: lino/help_texts.py:623
 msgid ""
 "Open a window which asks for username and password and which\n"
 "authenticates as this user when submitted."
 msgstr ""
 
-#: lino/help_texts.py:624
+#: lino/help_texts.py:625
 msgid ""
 "Sign out the current user and return to the welcome screen for\n"
 "anonymous visitors."
@@ -2058,7 +2062,7 @@ msgstr "Sind Sie sicher?"
 msgid "%(details)s of %(master)s"
 msgstr "%(details)s von %(master)s"
 
-#: lino/core/actors.py:1209
+#: lino/core/actors.py:1196
 #, python-format
 msgid "Total (%d rows)"
 msgstr "Total (%d Zeilen)"
@@ -2125,16 +2129,16 @@ msgstr "%s auswählen..."
 msgid "show"
 msgstr "zeigen"
 
-#: lino/core/fields.py:654
+#: lino/core/fields.py:667
 msgid "Quantity (Decimal or Duration)"
 msgstr "Menge (Zahl oder Dauer)"
 
-#: lino/core/fields.py:736
+#: lino/core/fields.py:749
 #, fuzzy
 msgid "Invalid date"
 msgstr "Erste Seite"
 
-#: lino/core/fields.py:757
+#: lino/core/fields.py:770
 msgid ""
 "Uncomplete dates are allowed, e.g. \n"
 "\"00.00.1980\" means \"some day in 1980\", \n"
@@ -2142,24 +2146,24 @@ msgid ""
 "or \"23.07.0000\" means \"on a 23th of July\"."
 msgstr ""
 
-#: lino/core/kernel.py:141 lino/modlib/extjs/config/extjs/linoweb.js:1468
-#: lino/modlib/extjs/config/extjs/linoweb.js:2838
+#: lino/core/kernel.py:142 lino/modlib/extjs/config/extjs/linoweb.js:1469
+#: lino/modlib/extjs/config/extjs/linoweb.js:2849
 msgid "Confirmation"
 msgstr "Bestätigung"
 
-#: lino/core/kernel.py:607
+#: lino/core/kernel.py:616
 msgid "You have "
 msgstr ""
 
-#: lino/core/kernel.py:608
+#: lino/core/kernel.py:617
 msgid "{0} items in {1}"
 msgstr ""
 
-#: lino/core/kernel.py:760
+#: lino/core/kernel.py:769
 msgid "User abandoned"
 msgstr ""
 
-#: lino/core/kernel.py:869
+#: lino/core/kernel.py:878
 msgid "Server is in readonly mode"
 msgstr ""
 
@@ -2219,29 +2223,29 @@ msgstr ""
 msgid "Merged %(this)s into %(merge_to)s. Updated %(updated)d related rows."
 msgstr ""
 
-#: lino/core/model.py:471
+#: lino/core/model.py:514
 #, fuzzy, python-format
 msgid "Cannot delete %(model)s %(self)s because %(count)d %(refs)s refer to it."
 msgstr "Kann %(self)s nicht löschen weil %(count)d %(refs)s darauf verweisen."
 
-#: lino/core/model.py:598 lino/core/requests.py:932
+#: lino/core/model.py:641 lino/core/requests.py:932
 #, python-format
 msgid "%s has been updated."
 msgstr "%s wurde aktualisiert."
 
-#: lino/core/model.py:600 lino/core/requests.py:934
+#: lino/core/model.py:643 lino/core/requests.py:934
 #, python-format
 msgid "%s : nothing to save."
 msgstr "%s : nichts zu speichern."
 
-#: lino/core/model.py:826 lino/core/model.py:833 lino/core/tables.py:769
+#: lino/core/model.py:869 lino/core/model.py:876 lino/core/tables.py:769
 #: lino/modlib/about/models.py:63 lino/modlib/importfilters/models.py:111
 #: lino/modlib/notify/actions.py:15 lino/modlib/tinymce/models.py:34
 #: lino/modlib/uploads/models.py:121 lino/modlib/uploads/models.py:134
 msgid "Description"
 msgstr "Omschrijving"
 
-#: lino/core/model.py:850
+#: lino/core/model.py:882
 msgid "Workflow"
 msgstr ""
 
@@ -2261,12 +2265,12 @@ msgstr "Alle zeigen"
 msgid "Show all records in a table window"
 msgstr ""
 
-#: lino/core/requests.py:159 lino/core/requests.py:568 lino/core/store.py:579
+#: lino/core/requests.py:159 lino/core/requests.py:568 lino/core/store.py:605
 #: lino/modlib/system/choicelists.py:36
 msgid "Yes"
 msgstr "Ja"
 
-#: lino/core/requests.py:160 lino/core/requests.py:569 lino/core/store.py:579
+#: lino/core/requests.py:160 lino/core/requests.py:569 lino/core/store.py:605
 #: lino/modlib/system/choicelists.py:37
 msgid "No"
 msgstr "Nein"
@@ -2316,32 +2320,32 @@ msgstr "Site"
 msgid "English"
 msgstr ""
 
-#: lino/core/site.py:3634
+#: lino/core/site.py:3635
 #, fuzzy
 msgid "This is "
 msgstr "Auswahlmöglichkeiten für %s"
 
-#: lino/core/site.py:3643
+#: lino/core/site.py:3644
 #, fuzzy
 msgid " using "
 msgstr "Meine Einstellungen"
 
-#: lino/core/site.py:3688
+#: lino/core/site.py:3689
 #, fuzzy, python-format
 msgid "%(place)s, %(date)s"
 msgstr "%(date)s om %(time)s"
 
-#: lino/core/store.py:185
+#: lino/core/store.py:186
 #, python-format
 msgid "Existing primary key value %r may not be modified."
 msgstr "Existierender ID-Wert %r darf nicht verändert werden."
 
-#: lino/core/store.py:272
+#: lino/core/store.py:283
 #, python-format
 msgid "%r (invalid choice)"
 msgstr "%r (ongeldig selectie)"
 
-#: lino/core/store.py:1088
+#: lino/core/store.py:1122
 #, python-format
 msgid "Invalid value for this field (%s)."
 msgstr ""
@@ -2836,28 +2840,28 @@ msgid "Home"
 msgstr "Hoofdpagina"
 
 #: lino/modlib/bootstrap3/views.py:144 lino/modlib/bootstrap3/views.py:225
-#: lino/modlib/extjs/config/extjs/linoweb.js:3453
+#: lino/modlib/extjs/config/extjs/linoweb.js:3464
 #: lino/modlib/forms/views.py:132 lino/modlib/forms/views.py:212
 #: lino/modlib/odata/views.py:74
 msgid "First page"
 msgstr "Erste Seite"
 
 #: lino/modlib/bootstrap3/views.py:145 lino/modlib/bootstrap3/views.py:227
-#: lino/modlib/extjs/config/extjs/linoweb.js:3455
+#: lino/modlib/extjs/config/extjs/linoweb.js:3466
 #: lino/modlib/forms/views.py:133 lino/modlib/forms/views.py:214
 #: lino/modlib/odata/views.py:76
 msgid "Previous page"
 msgstr "Vorige Seite"
 
 #: lino/modlib/bootstrap3/views.py:157 lino/modlib/bootstrap3/views.py:229
-#: lino/modlib/extjs/config/extjs/linoweb.js:3456
+#: lino/modlib/extjs/config/extjs/linoweb.js:3467
 #: lino/modlib/forms/views.py:145 lino/modlib/forms/views.py:216
 #: lino/modlib/odata/views.py:78
 msgid "Next page"
 msgstr "Nächste Seite"
 
 #: lino/modlib/bootstrap3/views.py:158 lino/modlib/bootstrap3/views.py:231
-#: lino/modlib/extjs/config/extjs/linoweb.js:3454
+#: lino/modlib/extjs/config/extjs/linoweb.js:3465
 #: lino/modlib/forms/views.py:146 lino/modlib/forms/views.py:218
 #: lino/modlib/odata/views.py:80
 msgid "Last page"
@@ -2961,7 +2965,7 @@ msgid "Note"
 msgstr "Willkommen"
 
 #: lino/modlib/checkdata/choicelists.py:38
-#: lino/modlib/extjs/config/extjs/linoweb.js:1596
+#: lino/modlib/extjs/config/extjs/linoweb.js:1597
 msgid "Warning"
 msgstr ""
 
@@ -3228,12 +3232,12 @@ msgstr "Fehler beim Löschen von %(record)s : %(error)s."
 msgid "Failed to log in as {}."
 msgstr ""
 
-#: lino/modlib/extjs/views.py:676 lino/modlib/openui5/views.py:299
+#: lino/modlib/extjs/views.py:679 lino/modlib/openui5/views.py:299
 #, python-format
 msgid "List contains more than %d rows"
 msgstr "Liste enthält mehr als %d Zeilen"
 
-#: lino/modlib/extjs/views.py:720
+#: lino/modlib/extjs/views.py:723
 #, python-format
 msgid "Error while saving GC for %(table)s: %(error)s"
 msgstr ""
@@ -3244,128 +3248,129 @@ msgstr ""
 
 #: lino/modlib/extjs/config/extjs/linoweb.js:606
 #: lino/modlib/extjs/config/extjs/linoweb.js:642
-#: lino/modlib/extjs/config/extjs/linoweb.js:1683
-#: lino/modlib/extjs/config/extjs/linoweb.js:2683
-#: lino/modlib/extjs/config/extjs/linoweb.js:3260
+#: lino/modlib/extjs/config/extjs/linoweb.js:1684
+#: lino/modlib/extjs/config/extjs/linoweb.js:2410
+#: lino/modlib/extjs/config/extjs/linoweb.js:2694
+#: lino/modlib/extjs/config/extjs/linoweb.js:3271
 #: lino/modlib/social_auth/config/social_auth/google_plus.html:27
 msgid "Please wait..."
 msgstr ""
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:867
-#: lino/modlib/extjs/config/extjs/linoweb.js:3954
+#: lino/modlib/extjs/config/extjs/linoweb.js:868
+#: lino/modlib/extjs/config/extjs/linoweb.js:3965
 msgid "This field is disabled"
 msgstr ""
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:968
+#: lino/modlib/extjs/config/extjs/linoweb.js:969
 msgid "Enter a date in format YYYY-MM-DD (use zeroes for unknown parts)."
 msgstr ""
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:1374
+#: lino/modlib/extjs/config/extjs/linoweb.js:1375
 msgid "There was a problem with the database connection."
 msgstr ""
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:1377
+#: lino/modlib/extjs/config/extjs/linoweb.js:1378
 msgid ""
 "If the error persists, try reloading the browser page ([SHIFT+CTRL+R] in "
 "Firefox)."
 msgstr ""
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:1378
+#: lino/modlib/extjs/config/extjs/linoweb.js:1379
 #, fuzzy
 msgid "Database problem"
 msgstr "Datenbankfeld"
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:1421
+#: lino/modlib/extjs/config/extjs/linoweb.js:1422
 msgid "Show this panel in own window"
 msgstr ""
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:1604
+#: lino/modlib/extjs/config/extjs/linoweb.js:1605
 #, fuzzy
 msgid "Alert"
 msgstr "Männlich"
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:1995
+#: lino/modlib/extjs/config/extjs/linoweb.js:1996
 msgid "Action not available on phantom record."
 msgstr ""
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:2152
+#: lino/modlib/extjs/config/extjs/linoweb.js:2153
 msgid "Cannot show detail for empty foreign key."
 msgstr ""
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:2615
+#: lino/modlib/extjs/config/extjs/linoweb.js:2626
 #, fuzzy
 msgid "Go to record"
 msgstr "Diesen Datensatz löschen"
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:2621
+#: lino/modlib/extjs/config/extjs/linoweb.js:2632
 msgid "First"
 msgstr ""
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:2624
+#: lino/modlib/extjs/config/extjs/linoweb.js:2635
 #, fuzzy
 msgid "Previous"
 msgstr "Vorige Seite"
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:2627
+#: lino/modlib/extjs/config/extjs/linoweb.js:2638
 #, fuzzy
 msgid "Next"
 msgstr "Nächster"
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:2630
+#: lino/modlib/extjs/config/extjs/linoweb.js:2641
 #, fuzzy
 msgid "Last"
 msgstr "als"
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:2641
+#: lino/modlib/extjs/config/extjs/linoweb.js:2652
 msgid "Reload current record"
 msgstr ""
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:2840
+#: lino/modlib/extjs/config/extjs/linoweb.js:2851
 msgid "Save changes to current record ?"
 msgstr ""
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:2898
+#: lino/modlib/extjs/config/extjs/linoweb.js:2909
 msgid "No more records to display. Detail window has been closed."
 msgstr ""
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:3404
+#: lino/modlib/extjs/config/extjs/linoweb.js:3415
 msgid "Quick Search"
 msgstr ""
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:3404
+#: lino/modlib/extjs/config/extjs/linoweb.js:3415
 msgid "Enter a text to use as quick search filter"
 msgstr ""
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:3432
+#: lino/modlib/extjs/config/extjs/linoweb.js:3443
 msgid "View"
 msgstr ""
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:3434
+#: lino/modlib/extjs/config/extjs/linoweb.js:3445
 msgid "Select another view of this report"
 msgstr ""
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:3450
+#: lino/modlib/extjs/config/extjs/linoweb.js:3461
 #, fuzzy
 msgid "Page"
 msgstr "Nächste Seite"
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:3451
+#: lino/modlib/extjs/config/extjs/linoweb.js:3462
 msgid "of {0}"
 msgstr ""
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:3452
+#: lino/modlib/extjs/config/extjs/linoweb.js:3463
 msgid "Displaying {0} - {1} of {2}"
 msgstr ""
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:3949
+#: lino/modlib/extjs/config/extjs/linoweb.js:3960
 msgid "This record is disabled"
 msgstr ""
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:4462
+#: lino/modlib/extjs/config/extjs/linoweb.js:4473
 msgid "Edit help texts for fields on this model."
 msgstr ""
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:4634
+#: lino/modlib/extjs/config/extjs/linoweb.js:4645
 msgid "Cannot show MTI child if checkbox is off."
 msgstr ""
 
