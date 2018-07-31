@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2017 Luc Saffre
+# Copyright 2008-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
@@ -61,7 +61,7 @@ from django.utils.functional import lazy
 from django.db import models
 from django.conf import settings
 
-# from atelier.utils import assert_pure
+from atelier.utils import is_string
 from lino.core import actions
 from lino.core import actors
 from lino.core import tables
@@ -563,24 +563,23 @@ The disadvantage
             if a.target_state == i:
                 del cls.workflow_actions[n]
 
-    @classmethod
-    def setup_field(cls, fld):
-        pass
+    # @classmethod  # was not used
+    # def setup_field(cls, fld):
+    #     pass
 
     @classmethod
     def field(cls, *args, **kw):
-        """Create and return a database field that points to one value of this
+        """
+        Create and return a database field that points to one value of this
         choicelist.
 
         The returned field is an instance of :class:`ChoiceListField`.
         Returns a `DummyField` if the plugin which defines this
         choicelist is not installed.
-        
-
         """
         if settings.SITE.is_installed(cls.app_label):
             fld = ChoiceListField(cls, *args, **kw)
-            cls.setup_field(fld)
+            # cls.setup_field(fld)
             cls._fields.append(fld)
             return fld
         return fields.DummyField()
@@ -853,11 +852,15 @@ class ChoiceListField(models.CharField):
     empty_strings_allowed = False
 
     def __init__(self, choicelist, verbose_name=None,
-                 force_selection=True, **kw):
+                 force_selection=True, default=None, **kw):
         if verbose_name is None:
             verbose_name = choicelist.verbose_name
         self.choicelist = choicelist
         self.force_selection = force_selection
+        if default is not None:
+            if is_string(default):
+                default = choicelist.as_callable(default)
+            kw.update(default=default)
         defaults = dict(
             max_length=choicelist.max_length)
         # if choicelist.default_value:

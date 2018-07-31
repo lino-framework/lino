@@ -332,17 +332,17 @@ class ForeignKeyStoreField(RelatedMixin, ComboStoreField):
                 return ch.create_choice(obj, v)
         return None
 
-class OneToOneStoreField(ForeignKeyStoreField):
-    pass
+# class OneToOneStoreField(ForeignKeyStoreField):
+#     pass
 
-# class OneToOneStoreField(RelatedMixin, StoreField):
-#     def value_from_object(self, obj, ar=None):
-#         v = self.full_value_from_object(obj, ar)
-#         if v is None:
-#             return ''
-#         if ar is None:
-#             return str(v)
-#         return v.obj2href(ar)
+class OneToOneStoreField(RelatedMixin, StoreField):
+    def value_from_object(self, obj, ar=None):
+        v = self.full_value_from_object(obj, ar)
+        if v is None:
+            return ''
+        if ar is None:
+            return str(v)
+        return v.obj2href(ar)
    
 
 

@@ -981,9 +981,9 @@ class ActorRequest(BaseRequest):
         yield PhantomRow(self, **kw)
 
     def create_instance(self, **kw):
-        """Create a row (a model instance if this is a database table) using
+        """
+        Create a row (a model instance if this is a database table) using
         the specified keyword arguments.
-
         """
         if self.create_kw:
             kw.update(self.create_kw)
