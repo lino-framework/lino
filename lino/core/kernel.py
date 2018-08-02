@@ -562,6 +562,11 @@ class Kernel(object):
                 # site.install_help_text(
                 #     ba.action, ba.action.__class__,
                 #     attrname=ba.action.action_name)
+
+                if ba.action.parameters is not None:
+                    for name, fld in ba.action.parameters.items():
+                        site.install_help_text(
+                            fld, ba.action.__class__, name)
             
         self.reserved_names = [getattr(constants, n)
                                for n in constants.URL_PARAMS]
