@@ -637,7 +637,9 @@ class TextRenderer(HtmlRenderer):
         return settings.SITE.obj2text_template.format(text)
 
 class TestRenderer(TextRenderer):
-    """Experimentally used in :mod:`lino_book.projects.watch.tests`.
+    """
+    Experimentally used in :mod:`lino_book.projects.watch.tests`
+    and :mod:`lino_book.projects.lydia.tests`.
 
     """
     def show_table(self, *args, **kwargs):

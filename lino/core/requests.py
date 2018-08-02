@@ -450,7 +450,7 @@ class BaseRequest(object):
         writing custom actions, the order of these instructions does not
         matter.
         """
-        for k in list(kw.keys()):
+        for k in kw.keys():
             if not hasattr(ValidActionResponses, k):
                 raise Exception("Unknown key %r in action response." % k)
         self.response.update(kw)

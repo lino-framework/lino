@@ -157,8 +157,8 @@ class Message(UserAuthored, Controllable, Created):
         if len(others):
             # rr = message_type.required_roles
             # subject = "{} by {}".format(message_type, me)
-            dd.logger.info(
-                "20180612 Notify %s users", len(others))
+            # dd.logger.info(
+            #     "20180612 Notify %s users", len(others))
             for user, mm in others:
                 # if not user.user_type.has_required_roles(rr):
                 if message_type in user.user_type.mask_message_types:

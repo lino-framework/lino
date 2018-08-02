@@ -2431,7 +2431,7 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel, {
         // return;
     }
     var self = this;
-    self.loadMask.show();  // 20180727
+    // self.loadMask.show();  // 20180727
     // function on_success() { self.get_containing_window().close(); };
     // see 20131004 and 20140430
     var url = '{{extjs.build_plain_url("api")}}';
@@ -2456,7 +2456,9 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel, {
       delete p.{{constants.URL_PARAM_PARAM_VALUES}};
       // console.log("20150130", p.{{constants.URL_PARAM_PARAM_VALUES}});
       Lino.call_ajax_action(
-          panel, 'GET', url, p, actionName, step, fn); //  , on_success);
+          self, 'GET', url, p, actionName, step, fn); //  , on_success);
+        // panel, 'GET', url, p, actionName, step, fn); //  , on_success);
+        // 20180802 : passing self instead of panel fixes #2474
     }
     fn(panel, null, null);
     
@@ -2467,7 +2469,7 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel, {
     this.requesting_panel = Ext.getCmp(rp);
     //~ console.log('20120918 ActionFormPanel.set_status()',status,rp,this.requesting_panel);
     this.clear_base_params();
-    this.loadMask.hide();  // 20180727
+    // this.loadMask.hide();  // 20180727
     if (status == undefined) status = {};
     //~ if (status.param_values)
     // 20180725 : do not set field values and record id if status
