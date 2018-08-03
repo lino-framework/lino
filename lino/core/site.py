@@ -361,7 +361,7 @@ class Site(object):
 
     plugins = None
 
-    modules = models = None
+    models = None
 
     top_level_menus = [
         ("master", _("Master")),

@@ -6,6 +6,8 @@ from django.conf import settings
 from lino.core.utils import models_by_base
 
 models = settings.SITE.models
+"""
+"""
 
 from lino.core.exceptions import ChangedAPI
 actors = modules = ChangedAPI(

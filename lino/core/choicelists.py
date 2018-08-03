@@ -287,40 +287,6 @@ class UnresolvedValue(Choice):
         self.name = None
 
 
-CHOICELISTS = {}
-
-
-def register_choicelist(cl):
-    #~ print '20121209 register_choicelist', cl
-    #~ k = cl.stored_name or cl.__name__
-    k = cl.stored_name or cl.actor_id
-    if k in CHOICELISTS:
-        raise Exception(
-            "Cannot register %r : actor name '%s' "
-            "already defined by %r" % (cl, k, CHOICELISTS[k]))
-        # logger.warning("ChoiceList name '%s' already defined by %s",
-        #                k, CHOICELISTS[k])
-    CHOICELISTS[k] = cl
-
-
-def get_choicelist(i):
-    return CHOICELISTS[i]
-
-
-def choicelist_choices():
-    """Return a list of all choicelists defined for this application."""
-    l = []
-    for k, v in list(CHOICELISTS.items()):
-        if v.verbose_name_plural is None:
-            text = v.__name__
-        else:
-            text = v.verbose_name_plural
-        l.append((k, text))
-
-    l.sort(key=lambda x: x[0])
-    return l
-
-
 class ChoiceListMeta(actors.ActorMetaClass):
 
     def __new__(meta, classname, bases, classDict):
@@ -344,9 +310,6 @@ class ChoiceListMeta(actors.ActorMetaClass):
         #~ assert not hasattr(cls,'items') 20120620
         #~ for i in cls.items:
             #~ cls.add_item(i)
-        if classname not in ('ChoiceList', 'Workflow'):
-            #~ if settings.SITE.is_installed(cls.app_label):
-            register_choicelist(cls)
         return cls
 
 

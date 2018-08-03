@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2017 Luc Saffre
+# Copyright 2009-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Views for `lino.modlib.bootstrap3`.
@@ -31,7 +31,6 @@ from lino.core import constants
 # from lino.core import auth
 from lino.core.requests import BaseRequest
 from lino.core.tablerequest import TableRequest
-from lino.core.dbtables import master_reports
 import json
 
 from lino.core.views import requested_actor, action_request
@@ -41,13 +40,12 @@ from lino.core.views import action_request
 from lino.core.utils import navinfo
 from etgen.html import E, tostring
 from etgen import html as xghtml
+from lino.core import kernel
 
 from lino.api import rt
 import re
 import cgi
 
-from lino.core import dbtables
-from lino.core import tables
 
 from lino.core.elems import ComboFieldElement
 
@@ -816,11 +814,11 @@ class Connector(View):
             if "manifest.json" in name:
                 ## List all master tables for routing
                 actors_list = [
-                    rpt for rpt in dbtables.master_reports
-                                   + dbtables.slave_reports
-                                   + list(dbtables.generic_slaves.values())
-                                   + dbtables.custom_tables
-                                   + dbtables.frames_list
+                    rpt for rpt in kernel.master_tables
+                                   + kernel.slave_tables
+                                   + list(kernel.generic_slaves.values())
+                                   + kernel.virtual_tables
+                                   + kernel.frames_list
                 ]
                 detail_list = set()
 
@@ -836,7 +834,7 @@ class Connector(View):
                     add(res, detail_list, res.detail_layout, "detail.%s" % res)
 
                     # self.actors_list.extend(
-                #     [a for a in list(choicelists.CHOICELISTS.values())
+                #     [a for a in list(kernel.CHOICELISTS.values())
                 #      if settings.SITE.is_installed(a.app_label)])
 
                 # don't include for abstract actors

@@ -81,7 +81,7 @@ from lino.api import dd, rt
 from lino.core import actors
 from lino.core import actions
 from lino.core import choicelists
-from lino.core import dbtables
+from lino.core import kernel
 from atelier.utils import unindent
 from atelier import rstgen
 from lino.core.utils import full_model_name
@@ -211,7 +211,7 @@ def get_actor_description(self):
     #~ if ll is not None:
         #~ body += fields_table([ e.field for e in ll.main.columns] )
 
-    #~ model_reports = [r for r in dbtables.master_reports if r.model is self.model]
+    #~ model_reports = [r for r in kernel.master_tables if r.model is self.model]
     #~ if model_reports:
         #~ body += '\n\nMaster tables: %s\n\n' % rptlist(model_reports)
     #~ if getattr(model,'_lino_slaves',None):
@@ -549,8 +549,8 @@ class ActorDirective(Lino2rstDirective):
                     s += '\n\n'
 
                 model_reports = [
-                    r for r in dbtables.master_reports if r.model is cls]
-                model_reports += [r for r in dbtables.slave_reports
+                    r for r in kernel.master_tables if r.model is cls]
+                model_reports += [r for r in kernel.slave_tables
                                   if r.model is cls]
                 s += rstgen.boldheader(_("Views on %s") %
                                        cls._meta.verbose_name)
