@@ -810,9 +810,9 @@ class ExtRenderer(JsRenderer):
                             f.write(ln + '\n')
 
         for rpt in actors_list:
-            x = str(rpt)
-            if x == 'working.WorkedHours':
-                raise Exception("20180803 {0}".format(x))
+            # x = str(rpt)
+            # if x == 'working.WorkedHours':
+            #     raise Exception("20180803 {0}".format(x))
             
             rh = rpt.get_handle()
             if isinstance(rpt, type) and issubclass(rpt, (
