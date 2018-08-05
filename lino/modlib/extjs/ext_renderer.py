@@ -632,26 +632,27 @@ class ExtRenderer(JsRenderer):
         self.actors_list = [
             rpt for rpt in kernel.master_tables
             + kernel.slave_tables
-            + list(kernel.generic_slaves.values())
+            + kernel.generic_slaves.values()
             + kernel.virtual_tables
-            + kernel.frames_list]
+            + kernel.frames_list
+            + kernel.CHOICELISTS.values()]
 
-        self.actors_list.extend(
-            [a for a in kernel.CHOICELISTS.values()
-             if settings.SITE.is_installed(a.app_label)])
+        # self.actors_list.extend(
+        #     [a for a in kernel.CHOICELISTS.values()
+        #      if settings.SITE.is_installed(a.app_label)])
 
         # don't generate JS for abstract actors
         self.actors_list = [a for a in self.actors_list
                             if not a.is_abstract()]
 
-        # Layouts
+        # Lino knows three types of form layouts:
 
         self.form_panels = set()
         self.param_panels = set()
         self.action_param_panels = set()
 
         def add(res, collector, fl, formpanel_name):
-            # res: an actor
+            # res: an actor class or action instance
             # collector: one of form_panels, param_panels or
             # action_param_panels
             # fl : a FormLayout
@@ -756,10 +757,10 @@ class ExtRenderer(JsRenderer):
 
         # Define every choicelist as a JS array:
         f.write("\n// ChoiceLists: \n")
-        for a in list(kernel.CHOICELISTS.values()):
-            if settings.SITE.is_installed(a.app_label):
-                f.write("Lino.%s = %s;\n" %
-                        (a.actor_id, py2js(a.get_choices())))
+        for a in kernel.CHOICELISTS.values():
+            # if settings.SITE.is_installed(a.app_label):
+            f.write("Lino.%s = %s;\n" %
+                    (a.actor_id, py2js(a.get_choices())))
 
         #~ logger.info('20120120 dbtables.all_details:\n%s',
             #~ '\n'.join([str(d) for d in dbtables.all_details]))
@@ -767,8 +768,10 @@ class ExtRenderer(JsRenderer):
         assert user_type == get_user_profile()
 
         def must_render(lh, user_type):
-            """Return True if the given form layout `fl` is needed for
-            user_type."""
+            """
+            Return True if the given form layout `fl` is needed for
+            user_type.
+            """
             if not lh.main.get_view_permission(user_type):
                 return False
             if lh.layout._datasource.get_view_permission(user_type):

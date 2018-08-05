@@ -1103,7 +1103,7 @@ def get_choicelist(i):
 def choicelist_choices():
     """Return a list of all choicelists defined for this application."""
     l = []
-    for k, v in list(CHOICELISTS.items()):
+    for k, v in CHOICELISTS.items():
         if v.verbose_name_plural is None:
             text = v.__name__
         else:
