@@ -632,10 +632,10 @@ class ExtRenderer(JsRenderer):
         self.actors_list = [
             rpt for rpt in kernel.master_tables
             + kernel.slave_tables
-            + kernel.generic_slaves.values()
+            + list(kernel.generic_slaves.values())
             + kernel.virtual_tables
             + kernel.frames_list
-            + kernel.CHOICELISTS.values()]
+            + list(kernel.CHOICELISTS.values())]
 
         # self.actors_list.extend(
         #     [a for a in kernel.CHOICELISTS.values()
