@@ -31,7 +31,7 @@ class ScreenshotDirective(Lino2rstDirective):
 def get_screenshots(language):
     #~ print 20130515, profiles2user.values()
     #~ print 20130515, actors.actors_list
-    for actor in actors.actors_list:  # dbtables.master_reports:
+    for actor in actors.actors_list:
             for ar in actor.get_screenshot_requests(language):
                 yield Screenshot(ar)
 

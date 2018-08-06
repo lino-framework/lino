@@ -233,36 +233,6 @@ Django creates copies of them when inheriting models.
             return "{0} ({1})".format(self.value, self.text)
         return str(self.text)
 
-    def unused_as_callable(self):
-        """Use this when you want to specify some named default choice of
-        this list as a default value *without* removing the
-        possibility to clear and re-populate the list after the field
-        definition.
-
-        A Choice object may not be callable itself because Django 1.9
-        would misunderstand it.
-
-        Deprecated since 20161207.  We recommend using
-        :meth:`as_callable
-        <lino.core.choicelists.ChoiceList.as_callable>` on the
-        :class:`ChoiceList`. Instead of saying::
-
-            state = MyStates.field(default=MyStates.foo.as_callable)
-
-        we now recommend saying::
-
-            state = MyStates.field(default=MyStates.as_callable('foo'))
-
-        The advantage is that the code defining the choicelist does
-        not need to define a default list of items.
-
-        """
-        return self.choicelist.get_by_name(self.name)
-
-    # def __call__(self):
-    #     """Make it callable so it can be used as `default` of a field."""
-    #     return self
-
     @classmethod
     def get_chooser_for_field(cls, fieldname):
         return None
@@ -285,40 +255,6 @@ class UnresolvedValue(Choice):
         self.text = "Unresolved value %r for %s" % (
             value, choicelist.__name__)
         self.name = None
-
-
-CHOICELISTS = {}
-
-
-def register_choicelist(cl):
-    #~ print '20121209 register_choicelist', cl
-    #~ k = cl.stored_name or cl.__name__
-    k = cl.stored_name or cl.actor_id
-    if k in CHOICELISTS:
-        raise Exception(
-            "Cannot register %r : actor name '%s' "
-            "already defined by %r" % (cl, k, CHOICELISTS[k]))
-        # logger.warning("ChoiceList name '%s' already defined by %s",
-        #                k, CHOICELISTS[k])
-    CHOICELISTS[k] = cl
-
-
-def get_choicelist(i):
-    return CHOICELISTS[i]
-
-
-def choicelist_choices():
-    """Return a list of all choicelists defined for this application."""
-    l = []
-    for k, v in list(CHOICELISTS.items()):
-        if v.verbose_name_plural is None:
-            text = v.__name__
-        else:
-            text = v.verbose_name_plural
-        l.append((k, text))
-
-    l.sort(key=lambda x: x[0])
-    return l
 
 
 class ChoiceListMeta(actors.ActorMetaClass):
@@ -344,9 +280,6 @@ class ChoiceListMeta(actors.ActorMetaClass):
         #~ assert not hasattr(cls,'items') 20120620
         #~ for i in cls.items:
             #~ cls.add_item(i)
-        if classname not in ('ChoiceList', 'Workflow'):
-            #~ if settings.SITE.is_installed(cls.app_label):
-            register_choicelist(cls)
         return cls
 
 

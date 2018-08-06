@@ -28,14 +28,13 @@ from lino.core import fields
 from lino.core import actions
 from lino.core.model import Model
 from lino.core import actors
-from lino.core import frames
 
 from lino.core.choicelists import ChoiceListField
 from .utils import models_by_base
 
 
 from lino.core.utils import resolve_model, get_field, UnresolvedModel
-from lino.core.tables import AbstractTable, TableRequest, VirtualTable
+from lino.core.tables import AbstractTable, TableRequest
 from lino.core.gfks import ContentType, GenericForeignKey
 
 
@@ -128,151 +127,6 @@ def add_gridfilters(qs, gridfilters):
 def rc_name(rptclass):
     return rptclass.app_label + '.' + rptclass.__name__
 
-# def de_verbose_name(de):
-    # if isinstance(de,models.Field):
-        # return de.verbose_name
-    # return de.name
-
-
-# TODO : move these global variables to a better place
-master_reports = []
-slave_reports = []
-generic_slaves = {}
-frames_list = []
-custom_tables = []
-# rptname_choices = []
-
-# config_dirs = []
-
-
-def register_frame(frm):
-    frames_list.append(frm)
-
-
-def is_candidate(T):
-    if T.filter or T.exclude or T.known_values:
-        return False
-    if not T.use_as_default_table:
-        return False
-    return True
-
-
-def register_report(rpt):
-    # logger.debug("20120103 register_report %s", rpt.actor_id)
-
-    if issubclass(rpt, Table) and rpt.model is None:
-        # logger.debug("20111113 %s is an abstract report", rpt)
-        return
-
-    # for name,v in rpt.__dict__.items():
-    # for name in rpt.__class__.__dict__.keys():
-    # for name in dir(rpt):
-        # v = getattr(rpt,name)
-        # if isinstance(v,Group):
-            # v.name = name
-            # v.add_to_table(rpt)
-            # rpt.custom_groups = rpt.custom_groups + [v]
-        # if isinstance(v,ComputedColumn):
-            # v.name = name
-            # v.add_to_table(rpt)
-            # d = dict()
-            # d.update(rpt.computed_columns)
-            # d[name] = v
-            # rpt.computed_columns = d
-
-    # if rpt.model._meta.abstract:
-
-    # rptname_choices.append((rpt.actor_id, rpt.get_label()))
-    # rptname_choices.append(rpt.actor_id)
-    
-    if issubclass(rpt, Table):
-        lst = rpt.model._lino_tables + [rpt]
-        rpt.model._lino_tables = lst
-        if rpt.master is None:
-            # 20170905 if not rpt.model._meta.abstract:
-            if not rpt.is_abstract():
-                # logger.debug("20120102 register %s : master report", rpt.actor_id)
-                # rpt.model._lino_tables.append(rpt)
-                master_reports.append(rpt)
-            if not '_lino_default_table' in rpt.model.__dict__:
-                if is_candidate(rpt):
-                    rpt.model._lino_default_table = rpt
-        elif rpt.master is ContentType:
-            # logger.debug("register %s : generic slave for %r", rpt.actor_id, rpt.master_key)
-            generic_slaves[rpt.actor_id] = rpt
-        else:
-            # logger.debug("20120102 register %s : slave for %r", rpt.actor_id, rpt.master_key)
-            slave_reports.append(rpt)
-    elif issubclass(rpt, VirtualTable):
-        custom_tables.append(rpt)
-
-
-def discover():
-    """This is being called at startup.
-    
-    - Each model can receive a number of "slaves".
-      Slaves are tables whose data depends on an instance
-      of another model (their master).
-
-    - For each model we want to find out the "default table".
-      The "choices table" for a foreignkey field is also currently
-      simply the pointed model's default table.
-      :modattr:`_lino_default_table`
-
-    """
-
-    logger.debug("Analyzing Tables...")
-    # logger.debug("20111113 Register Table actors...")
-    for rpt in actors.actors_list:
-        if issubclass(rpt, Table) and rpt is not Table:
-            register_report(rpt)
-        elif issubclass(rpt, VirtualTable) and rpt is not VirtualTable:
-            register_report(rpt)
-        if issubclass(rpt, frames.Frame) and rpt is not frames.Frame:
-            register_frame(rpt)
-
-    # logger.debug("Create default tables...")
-    # for model in get_models():
-    #     # Note that automatic models (created by ManyToManyField with
-    #     # a `through`) do not yet exist here.
-        
-    #     # Not getattr but __dict__.get because of the mixins.Listings
-    #     # trick:
-    #     rpt = model.__dict__.get('_lino_default_table', None)
-    #     # rpt = getattr(model,'_lino_default_table',None)
-    #     # logger.debug('20111113 %s._lino_default_table = %s',model,rpt)
-    #     if rpt is None:
-    #         rpt = table_factory(model)
-    #         if rpt is None:
-    #             raise Exception("table_factory() failed for %r." % model)
-    #         # print ("20170104 No table for {}, created default table.".format(model))
-    #         register_report(rpt)
-    #         rpt.class_init()
-    #         # rpt.collect_actions()
-    #         model._lino_default_table = rpt
-
-    logger.debug("Analyze %d slave tables...", len(slave_reports))
-    for rpt in slave_reports:
-        if isinstance(rpt.master, six.string_types):
-            raise Exception("20150216 unresolved master")
-        if isinstance(rpt.master, UnresolvedModel):
-            continue
-        if not isinstance(rpt.master, type):
-            raise Exception(
-                "20160712 invalid master {!r} in {}".format(
-                    rpt.master, rpt))
-            
-        if issubclass(rpt.master, models.Model):
-            # rpt.master = resolve_model(rpt.master)
-            slaves = getattr(rpt.master, "_lino_slaves", None)
-            if slaves is None:
-                slaves = {}
-                rpt.master._lino_slaves = slaves
-            slaves[rpt.actor_id] = rpt
-        # logger.debug("20111113 %s: slave for %s",rpt.actor_id, rpt.master.__name__)
-    # logger.debug("Assigned %d slave reports to their master.",len(slave_reports))
-
-    # logger.debug("reports.setup() done")
 
 
 def has_fk(rr, name):
@@ -281,7 +135,6 @@ def has_fk(rr, name):
     return False
 
 
-# def model2report(m):
 def model2actor(m):
     def f(table, *args):
         return m(*args)

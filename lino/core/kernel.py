@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2017 Luc Saffre
+# Copyright 2009-20178 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """This defines the :class:`Kernel` class.
@@ -55,33 +55,32 @@ from lino.utils import codetime
 from lino.core import layouts
 from lino.core import actors
 from lino.core import actions
+from lino.core import frames
 from lino.core import fields
 from lino.core import dbtables
+from lino.core import choicelists
+from lino.core import workflows
 from lino.core import tables
 from lino.core import constants
-from lino.core import views
 from lino.utils.memo import Parser
 from etgen.html import E
 from lino.core.requests import ActorRequest
 from lino.core.model import Model
 from lino.core.store import Store
 from lino.core.renderer import HtmlRenderer, TextRenderer
+from lino.core.gfks import ContentType, GenericForeignKey
 from lino.core.signals import (pre_ui_build, post_ui_build,
                                pre_startup, post_startup,
                                pre_analyze, post_analyze)
 
-
-# from .widgets import WidgetFactory
 from .plugin import Plugin
 from .ddh import DisableDeleteHandler
 from .utils import resolve_model
-from .utils import is_devserver
+from .utils import is_devserver, UnresolvedModel
 from .utils import full_model_name as fmn
 from .utils import obj2str
 from .utils import get_models
 from .utils import resolve_fields_list
-# from .utils import format_request
-from .gfks import GenericForeignKey
 
 
 
@@ -448,7 +447,7 @@ class Kernel(object):
         for a in actors.actors_list:
             a.class_init()
 
-        dbtables.discover()
+        register_actors()
 
         # Create default tables. Every model for which there is no
         # table at all, will now get an automatically created default
@@ -465,7 +464,7 @@ class Kernel(object):
                 if rpt is None:
                     raise Exception("table_factory() failed for %r." % model)
                 # print ("20170104 No table for {}, created default table.".format(model))
-                dbtables.register_report(rpt)
+                register_model_table(rpt)
                 rpt.class_init()
                 # rpt.collect_actions()
                 model._lino_default_table = rpt
@@ -1087,4 +1086,153 @@ def site_startup(self):
         # print("20161219 Site.startup() done")
         post_startup.send(self)
         self._startup_done = True
+
+        
     
+CHOICELISTS = {}
+master_tables = []
+slave_tables = []
+generic_slaves = {}
+frames_list = []
+virtual_tables = []
+
+def get_choicelist(i):
+    return CHOICELISTS[i]
+
+
+def choicelist_choices():
+    """Return a list of all choicelists defined for this application."""
+    l = []
+    for k, v in CHOICELISTS.items():
+        if v.verbose_name_plural is None:
+            text = v.__name__
+        else:
+            text = v.verbose_name_plural
+        l.append((k, text))
+
+    l.sort(key=lambda x: x[0])
+    return l
+
+def is_candidate(T):
+    if T.filter or T.exclude or T.known_values:
+        return False
+    if not T.use_as_default_table:
+        return False
+    return True
+
+
+def register_actors():
+    """This is being called at startup.
+    
+    - Each model can receive a number of "slaves".
+      Slaves are tables whose data depends on an instance
+      of another model (their master).
+
+    - For each model we want to find out the "default table".
+      The "choices table" for a foreignkey field is also currently
+      simply the pointed model's default table.
+      :modattr:`_lino_default_table`
+
+    """
+
+    logger.debug("Analyzing Tables...")
+    # logger.debug("20111113 Register Table actors...")
+    for rpt in actors.actors_list:
+        if issubclass(rpt, dbtables.Table):
+            if rpt is not dbtables.Table:
+                register_model_table(rpt)
+        elif issubclass(rpt, tables.VirtualTable):
+            if rpt not in (tables.VirtualTable, tables.VentilatedColumns):
+                virtual_tables.append(rpt)
+        elif issubclass(rpt, frames.Frame) and rpt is not frames.Frame:
+            register_frame(rpt)
+        elif issubclass(rpt, choicelists.ChoiceList):
+            if rpt not in (choicelists.ChoiceList, workflows.Workflow):
+                register_choicelist(rpt)
+
+
+    # logger.debug("Create default tables...")
+    # for model in get_models():
+    #     # Note that automatic models (created by ManyToManyField with
+    #     # a `through`) do not yet exist here.
+        
+    #     # Not getattr but __dict__.get because of the mixins.Listings
+    #     # trick:
+    #     rpt = model.__dict__.get('_lino_default_table', None)
+    #     # rpt = getattr(model,'_lino_default_table',None)
+    #     # logger.debug('20111113 %s._lino_default_table = %s',model,rpt)
+    #     if rpt is None:
+    #         rpt = table_factory(model)
+    #         if rpt is None:
+    #             raise Exception("table_factory() failed for %r." % model)
+    #         # print ("20170104 No table for {}, created default table.".format(model))
+    #         register_model_table(rpt)
+    #         rpt.class_init()
+    #         # rpt.collect_actions()
+    #         model._lino_default_table = rpt
+
+    logger.debug("Analyze %d slave tables...", len(slave_tables))
+    for rpt in slave_tables:
+        if isinstance(rpt.master, six.string_types):
+            raise Exception("20150216 unresolved master")
+        if isinstance(rpt.master, UnresolvedModel):
+            continue
+        if not isinstance(rpt.master, type):
+            raise Exception(
+                "20160712 invalid master {!r} in {}".format(
+                    rpt.master, rpt))
+            
+        if issubclass(rpt.master, models.Model):
+            # rpt.master = resolve_model(rpt.master)
+            slaves = getattr(rpt.master, "_lino_slaves", None)
+            if slaves is None:
+                slaves = {}
+                rpt.master._lino_slaves = slaves
+            slaves[rpt.actor_id] = rpt
+        # logger.debug("20111113 %s: slave for %s",rpt.actor_id, rpt.master.__name__)
+    # logger.debug("Assigned %d slave reports to their master.",len(slave_tables))
+
+    # logger.debug("reports.setup() done")
+
+def register_frame(frm):
+    frames_list.append(frm)
+
+def register_choicelist(cl):
+    #~ print '20121209 register_choicelist', cl
+    #~ k = cl.stored_name or cl.__name__
+    k = cl.stored_name or cl.actor_id
+    if k in CHOICELISTS:
+        raise Exception(
+            "Cannot register %r : actor name '%s' "
+            "already defined by %r" % (cl, k, CHOICELISTS[k]))
+        # logger.warning("ChoiceList name '%s' already defined by %s",
+        #                k, CHOICELISTS[k])
+    CHOICELISTS[k] = cl
+
+
+
+def register_model_table(rpt):
+    # logger.debug("20120103 register_report %s", rpt.actor_id)
+
+    if rpt.model is None:
+        # logger.debug("20111113 %s is an abstract report", rpt)
+        return
+    
+    lst = rpt.model._lino_tables + [rpt]
+    rpt.model._lino_tables = lst
+    if rpt.master is None:
+        # 20170905 if not rpt.model._meta.abstract:
+        if not rpt.is_abstract():
+            # logger.debug("20120102 register %s : master report", rpt.actor_id)
+            master_tables.append(rpt)
+        if not '_lino_default_table' in rpt.model.__dict__:
+            if is_candidate(rpt):
+                rpt.model._lino_default_table = rpt
+    elif rpt.master is ContentType:
+        # logger.debug("register %s : generic slave for %r", rpt.actor_id, rpt.master_key)
+        generic_slaves[rpt.actor_id] = rpt
+    else:
+        # logger.debug("20120102 register %s : slave for %r", rpt.actor_id, rpt.master_key)
+        slave_tables.append(rpt)
+
+

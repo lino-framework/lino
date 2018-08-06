@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2016-2017 Luc Saffre.
+# Copyright 2016-2018 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 """Defines the :class:`DashboardItem` class.
 
@@ -39,7 +39,7 @@ class DashboardItem(Permittable):
         Render the given table action
         request. `ar` is the incoming request (the one which displays
         the dashboard), `sar` is the table we want to show (a child of
-        `sar`).
+        `ar`).
 
         This is a helper function for shared use by :class:`ActorItem`
         and :class:`RequestItem`.

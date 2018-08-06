@@ -67,7 +67,7 @@ def create_user(username, user_type=None, **kw):
         # kw.update(partner=person)
         return rt.models.users.User(**kw)
     else:
-        # return dd.plugins.faculties.supplier_model(first_name=first_name)
+        # return dd.plugins.skills.supplier_model(first_name=first_name)
         return rt.models.contacts.Person(first_name=first_name)
 
 

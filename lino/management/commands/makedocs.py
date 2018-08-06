@@ -24,7 +24,7 @@ import lino
 from lino.utils import curry
 from lino.utils import rstgen
 from lino.utils.restify import doc2rst, abstract
-from lino.core import dbtables
+from lino.core import kernel
 
 from lino.api.dd import full_model_name
 
@@ -93,7 +93,7 @@ def model_overview(model):
     rows = [rowfmt(f) for f in model._meta.fields]
     s = rstgen.table(headers, rows)
 
-    model_reports = [r for r in dbtables.master_reports if r.model is model]
+    model_reports = [r for r in kernel.master_tables if r.model is model]
     if model_reports:
         s += '\n\nMaster tables: %s\n\n' % rptlist(model_reports)
     if getattr(model, '_lino_slaves', None):

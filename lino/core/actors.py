@@ -38,11 +38,11 @@ from etgen.html import E, tostring
 
 from .roles import SiteUser
 
+ACTOR_SEP = '.'
+
 actor_classes = []
 actors_dict = None
 actors_list = None
-
-ACTOR_SEP = '.'
 
 
 def discover():
@@ -74,6 +74,8 @@ def register_actor(a):
         actors_list.remove(old)
     actors_list.append(a)
     return a
+
+
 
 #~ class ClassProperty(property):
     #~ def __get__(self, cls, owner):

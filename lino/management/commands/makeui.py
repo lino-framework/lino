@@ -30,6 +30,7 @@ from django.db.models import loading
 
 import lino
 from lino.core import dbtables
+from lino.core import kernel
 from lino.core import actions
 from lino.core.utils import app_labels
 from lino.utils import confirm
@@ -94,9 +95,9 @@ class Command(GeneratingCommand):
         self.generate_class_file(
             'lino.Application', 'Application.js.tmpl', **context)
         #~ self.generate('Application',application_lines(self))
-        for rpt in (dbtables.master_reports
-                    + dbtables.slave_reports
-                    + list(dbtables.generic_slaves.values())):
+        for rpt in (kernel.master_tables
+                    + kernel.slave_tables
+                    + list(kernel.generic_slaves.values())):
             rh = rpt.get_handle()
             #~ js += "Ext.namespace('Lino.%s')\n" % rpt
             #~ f.write("Ext.namespace('Lino.%s')\n" % rpt)

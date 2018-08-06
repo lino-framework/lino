@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2017 Luc Saffre
+# Copyright 2009-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
@@ -40,6 +40,7 @@ from lino.core.actions import (ShowEmptyTable, ShowDetail,
                                ShowInsert, ShowTable, SubmitDetail,
                                SubmitInsert)
 from lino.core import dbtables
+from lino.core import kernel
 from lino.core import tables
 
 from lino.utils import AttrDict
@@ -629,28 +630,29 @@ class ExtRenderer(JsRenderer):
     def prepare_layouts(self):
         
         self.actors_list = [
-            rpt for rpt in dbtables.master_reports
-            + dbtables.slave_reports
-            + list(dbtables.generic_slaves.values())
-            + dbtables.custom_tables
-            + dbtables.frames_list]
+            rpt for rpt in kernel.master_tables
+            + kernel.slave_tables
+            + list(kernel.generic_slaves.values())
+            + kernel.virtual_tables
+            + kernel.frames_list
+            + list(kernel.CHOICELISTS.values())]
 
-        self.actors_list.extend(
-            [a for a in list(choicelists.CHOICELISTS.values())
-             if settings.SITE.is_installed(a.app_label)])
+        # self.actors_list.extend(
+        #     [a for a in kernel.CHOICELISTS.values()
+        #      if settings.SITE.is_installed(a.app_label)])
 
         # don't generate JS for abstract actors
         self.actors_list = [a for a in self.actors_list
                             if not a.is_abstract()]
 
-        # Layouts
+        # Lino knows three types of form layouts:
 
         self.form_panels = set()
         self.param_panels = set()
         self.action_param_panels = set()
 
         def add(res, collector, fl, formpanel_name):
-            # res: an actor
+            # res: an actor class or action instance
             # collector: one of form_panels, param_panels or
             # action_param_panels
             # fl : a FormLayout
@@ -755,10 +757,10 @@ class ExtRenderer(JsRenderer):
 
         # Define every choicelist as a JS array:
         f.write("\n// ChoiceLists: \n")
-        for a in list(choicelists.CHOICELISTS.values()):
-            if settings.SITE.is_installed(a.app_label):
-                f.write("Lino.%s = %s;\n" %
-                        (a.actor_id, py2js(a.get_choices())))
+        for a in kernel.CHOICELISTS.values():
+            # if settings.SITE.is_installed(a.app_label):
+            f.write("Lino.%s = %s;\n" %
+                    (a.actor_id, py2js(a.get_choices())))
 
         #~ logger.info('20120120 dbtables.all_details:\n%s',
             #~ '\n'.join([str(d) for d in dbtables.all_details]))
@@ -766,8 +768,10 @@ class ExtRenderer(JsRenderer):
         assert user_type == get_user_profile()
 
         def must_render(lh, user_type):
-            """Return True if the given form layout `fl` is needed for
-            user_type."""
+            """
+            Return True if the given form layout `fl` is needed for
+            user_type.
+            """
             if not lh.main.get_view_permission(user_type):
                 return False
             if lh.layout._datasource.get_view_permission(user_type):
@@ -805,11 +809,14 @@ class ExtRenderer(JsRenderer):
                 if ba.action.parameters:
                     if ba.action not in actions_written:
                         actions_written.add(ba.action)
-                        for ln in self.js_render_window_action(
-                                rh, ba, user_type):
+                        for ln in self.js_render_window_action(rh, ba):
                             f.write(ln + '\n')
 
         for rpt in actors_list:
+            # x = str(rpt)
+            # if x == 'working.WorkedHours':
+            #     raise Exception("20180803 {0}".format(x))
+            
             rh = rpt.get_handle()
             if isinstance(rpt, type) and issubclass(rpt, (
                     tables.AbstractTable, choicelists.ChoiceList)):
@@ -840,7 +847,7 @@ class ExtRenderer(JsRenderer):
                         for ln in self.js_render_detail_action_FormPanel(
                                 rh, ba):
                             f.write(ln + '\n')
-                    for ln in self.js_render_window_action(rh, ba, user_type):
+                    for ln in self.js_render_window_action(rh, ba):
                         f.write(ln + '\n')
                 # elif self.is_custom_action(ba.action):
                 elif ba.action.action_name:
@@ -1334,12 +1341,11 @@ class ExtRenderer(JsRenderer):
         yield "  if(panel) panel.do_when_clean(true, h); else h();"
         yield "};"
 
-    def js_render_window_action(self, rh, ba, unused_profile):
-        # x = str(rh)
-        # if x.startswith('working'):
-        #     print "20150421 {0}".format(x)
-        # profile = get_user_profile()
+    def js_render_window_action(self, rh, ba):
         rpt = rh.actor
+        # x = str(rpt)
+        # if x == 'working.WorkedHours':
+        #     raise Exception("20180803 {0}".format(x))
 
         if rpt.parameters and ba.action.use_param_panel:
             params_panel = rh.params_layout_handle
