@@ -48,8 +48,6 @@ SETUP_INFO = dict(
     name='lino',
     version='18.4.0',
     install_requires=install_requires,
-    dependency_links=[
-        'git+https://github.com/cylonoven/django-mailbox.git#egg=django_mailbox'],
     description="A framework for writing desktop-like web applications "
                 "using Django and ExtJS",
     license='BSD License',
