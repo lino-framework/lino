@@ -143,13 +143,13 @@ class MenuItem(object):
         """
         return str(self.label)
 
-    def has_items(menu):
-        for i in menu.items:
-            if i.label is None:
-                raise Exception("20130907 %r has no label" % i)
-            if not i.label.startswith('-'):
-                return True
-        return False
+    # def has_items(menu):
+    #     for i in menu.items:
+    #         if i.label is None:
+    #             raise Exception("20130907 %r has no label" % i)
+    #         if not i.label.startswith('-'):
+    #             return True
+    #     return False
 
     def openui5Render(self):
 
@@ -205,12 +205,12 @@ class Menu(MenuItem):
     
     """
 
-    def __init__(self, user_profile, name, label=None, parent=None, **kw):
+    def __init__(self, user_type, name, label=None, parent=None, **kw):
         MenuItem.__init__(self, name, label, **kw)
         self.parent = parent
         if settings.SITE.user_types_module:
-            assert user_profile is not None
-        self.user_profile = user_profile
+            assert user_type is not None
+        self.user_type = user_type
         self.clear()
 
     def clear(self):
@@ -219,9 +219,15 @@ class Menu(MenuItem):
 
     def compress(self):
         """
-        Dynamically removes empty menu entries.
+        Dynamically removes empty menu entries and useless separators.
         Collapses menu with only one item into their parent.
         """
+        while len(self.items) and self.items[-1].label.startswith('-'):
+            del self.items[-1]
+            
+        while len(self.items) and self.items[0].label.startswith('-'):
+            del self.items[0]
+            
         for mi in self.items:
             mi.compress()
 
@@ -229,7 +235,8 @@ class Menu(MenuItem):
 
         for mi in self.items:
             if isinstance(mi, Menu):
-                if mi.has_items():
+                # if mi.has_items():
+                if len(mi.items):
                     if not self.avoid_lonely_items:
                         newitems.append(mi)
                     elif len(mi.items) == 1:
@@ -274,7 +281,7 @@ class Menu(MenuItem):
 
     def add_menu(self, name, label, **kw):
         return self.add_item_instance(Menu(
-            self.user_profile, name, label, self, **kw))
+            self.user_type, name, label, self, **kw))
 
     def get_item(self, name):
         return self.items_dict[name]
@@ -297,9 +304,9 @@ class Menu(MenuItem):
         if mi.bound_action is not None:
             if mi.bound_action.actor.is_abstract():
                 return
-            if not mi.bound_action.get_view_permission(self.user_profile):
+            if not mi.bound_action.get_view_permission(self.user_type):
                 return
-            #~ logger.info("20130129 _add_item %s for %s",mi.label,self.user_profile)
+            #~ logger.info("20130129 _add_item %s for %s",mi.label,self.user_type)
         if mi.name is not None:
             old = self.items_dict.get(mi.name)
             if old is not None:
