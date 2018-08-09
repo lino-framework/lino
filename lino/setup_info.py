@@ -197,18 +197,21 @@ SETUP_INFO.update(message_extractors={
     ],
 })
 
-# SETUP_INFO.update(package_data=dict())
-SETUP_INFO.update(include_package_data=True, zip_safe=False)
+SETUP_INFO.update(package_data=dict())
 
 
-# def add_package_data(package, *patterns):
-#     package = str(package)
-#     l = SETUP_INFO['package_data'].setdefault(package, [])
-#     l += [str(x) for x in patterns]
-#     # l.extend(patterns)
-#     return l
+# SETUP_INFO.update(include_package_data=True, zip_safe=False)
 
-# add_package_data('lino.modlib.printing', 'config/report/Default.odt')
+
+def add_package_data(package, *patterns):
+    package = str(package)
+    l = SETUP_INFO['package_data'].setdefault(package, [])
+    # l += [str(x) for x in patterns]
+    l.extend(patterns)
+    return l
+
+
+add_package_data('lino.modlib.davlink', '*.jnlp')
 # add_package_data('lino.modlib.languages.fixtures', '*.tab')
 # add_package_data('lino.modlib.notify', 'config/notify/*.eml')
 
