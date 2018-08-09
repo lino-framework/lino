@@ -200,7 +200,7 @@ SETUP_INFO.update(message_extractors={
 SETUP_INFO.update(package_data=dict())
 
 
-# SETUP_INFO.update(include_package_data=True, zip_safe=False)
+SETUP_INFO.update(include_package_data=True)
 
 
 def add_package_data(package, *patterns):
@@ -223,6 +223,6 @@ add_package_data('lino.modlib.extjs', 'config/extjs/*.js')
 # add_package_data('lino.modlib.languages.fixtures', '*.tab')
 # add_package_data('lino.modlib.notify', 'config/notify/*.eml')
 
-# l = add_package_data('lino.modlib.lino_startup')
-# for lng in 'de fr et nl'.split():
-#     l.append('lino/modlib/lino_startup/locale/%s/LC_MESSAGES/*.mo' % lng)
+l = add_package_data('lino.locale')
+for lng in 'de es fr et nl pt pt-br'.split():
+    l.append('lino/locale/%s/LC_MESSAGES/*.mo' % lng)
