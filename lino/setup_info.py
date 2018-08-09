@@ -212,6 +212,14 @@ def add_package_data(package, *patterns):
 
 
 add_package_data('lino.modlib.davlink', '*.jnlp')
+add_package_data('lino.utils', '*.ods')
+add_package_data('lino.config', '*.html')
+add_package_data('lino.config', '*.tmpl')
+add_package_data('lino.config', 'about/*.tmpl')
+add_package_data('lino.config', 'makedocs/*.tmpl')
+add_package_data('lino.modlib.bootstrap3', 'config/bootstrap3/*.html')
+add_package_data('lino.modlib.extjs', 'config/extjs/*.html')
+add_package_data('lino.modlib.extjs', 'config/extjs/*.js')
 # add_package_data('lino.modlib.languages.fixtures', '*.tab')
 # add_package_data('lino.modlib.notify', 'config/notify/*.eml')
 
