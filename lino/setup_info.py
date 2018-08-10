@@ -197,32 +197,32 @@ SETUP_INFO.update(message_extractors={
     ],
 })
 
-SETUP_INFO.update(package_data=dict())
+# SETUP_INFO.update(package_data=dict())
 
 
-# SETUP_INFO.update(include_package_data=True, zip_safe=False)
+SETUP_INFO.update(include_package_data=True)
 
 
-def add_package_data(package, *patterns):
-    package = str(package)
-    l = SETUP_INFO['package_data'].setdefault(package, [])
-    # l += [str(x) for x in patterns]
-    l.extend(patterns)
-    return l
+# def add_package_data(package, *patterns):
+#     package = str(package)
+#     l = SETUP_INFO['package_data'].setdefault(package, [])
+#     l += [str(x) for x in patterns]
+#     l.extend(patterns)
+#     return l
 
 
-add_package_data('lino.modlib.davlink', '*.jnlp')
-add_package_data('lino.utils', '*.ods')
-add_package_data('lino.config', '*.html')
-add_package_data('lino.config', '*.tmpl')
-add_package_data('lino.config', 'about/*.tmpl')
-add_package_data('lino.config', 'makedocs/*.tmpl')
-add_package_data('lino.modlib.bootstrap3', 'config/bootstrap3/*.html')
-add_package_data('lino.modlib.extjs', 'config/extjs/*.html')
-add_package_data('lino.modlib.extjs', 'config/extjs/*.js')
+# add_package_data('lino.modlib.davlink', '*.jnlp')
+# add_package_data('lino.utils', '*.ods')
+# add_package_data('lino.config', '*.html')
+# add_package_data('lino.config', '*.tmpl')
+# add_package_data('lino.config', 'about/*.tmpl')
+# add_package_data('lino.config', 'makedocs/*.tmpl')
+# add_package_data('lino.modlib.bootstrap3', 'config/bootstrap3/*.html')
+# add_package_data('lino.modlib.extjs', 'config/extjs/*.html')
+# add_package_data('lino.modlib.extjs', 'config/extjs/*.js')
 # add_package_data('lino.modlib.languages.fixtures', '*.tab')
 # add_package_data('lino.modlib.notify', 'config/notify/*.eml')
 
-# l = add_package_data('lino.modlib.lino_startup')
-# for lng in 'de fr et nl'.split():
-#     l.append('lino/modlib/lino_startup/locale/%s/LC_MESSAGES/*.mo' % lng)
+# l = add_package_data('lino.locale')
+# for lng in 'de es fr et nl pt pt-br'.split():
+#     l.append('lino/locale/%s/LC_MESSAGES/*.mo' % lng)

@@ -4,9 +4,10 @@ global-include *.txt *.rst *.js *.css *.html \
   *.odt \
   *.wsdl \
   *.xsd \
-  *.mo
+  *.mo *.jnlp *.ods *.tmpl *.eml *.tab
 include bash/*
 prune rtlib
 prune lino/sandbox
 prune screenshots
 prune extjs-showcases
+include .idea
