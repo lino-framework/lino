@@ -1097,10 +1097,11 @@ class Store(BaseStore):
         fields.append(sf)
 
     def form2obj(self, ar, form_values, instance, is_new):
-        """Store the `form_values` into the `instance` by calling
-        :meth:`form2obj` for every store field.
-
         """
+        Store the `form_values` into the `instance` by calling
+        :meth:`form2obj` for every store field.
+        """
+        # logger.info("20180813")
         disabled_fields = set(self.actor.get_disabled_fields(instance, ar))
         changed_triggers = []
         for f in self.all_fields:

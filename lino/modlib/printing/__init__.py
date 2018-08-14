@@ -1,4 +1,4 @@
-# Copyright 2015-2017 Luc Saffre
+# Copyright 2015-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Adds printing functionality to a Lino application.
