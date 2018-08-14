@@ -278,6 +278,15 @@ class Site(object):
 
     """
 
+    device_type = 'desktop'
+    """
+    The default device type used on this server.  Should be one of
+    ``'desktop'``, ``'tablet'`` or ``'mobile'``.
+
+    This is used by :class:`DeviceTypeMiddleware
+    <lino.core.auth.middleware.DeviceTypeMiddleware>`.
+    """
+
     obj2text_template = "*{0}*"
     """The format template to use when rendering a ForeignKey as plain
     text.
