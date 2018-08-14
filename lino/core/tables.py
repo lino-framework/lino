@@ -222,6 +222,9 @@ class AbstractTable(actors.Actor):
     """
     The columns that must pop in below the first column if there is no
     space to render them on the device.
+    
+    If None: All columns not listed in mobile_columns nor Tablet_columns
+    will not pop-in. 
     """
 
     start_at_bottom = False

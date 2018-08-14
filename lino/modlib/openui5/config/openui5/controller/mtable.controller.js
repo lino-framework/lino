@@ -10,7 +10,7 @@ sap.ui.define([
 ], function (baseController, JSONModel, Menu, MenuItem, MessageToast, DateFormat, Filter, FilterOperator) {
     "use strict";
 
-    return baseController.extend("lino.controller.table", {
+    return baseController.extend("lino.controller.mtable", {
 
         log_rows: function (sMsg) {
             console.log(sMsg,
@@ -45,10 +45,10 @@ sap.ui.define([
             // override after rendering event handler to find out how many rows are rendered and how many should be per page
             // Is run twice on inital loading of view, second time has the correct values
             // view after render event is fired after first firing of this event, but before second firing of table event
-            this._table.onAfterRendering = function () {
-                sap.ui.table.Table.prototype.onAfterRendering.apply(this, arguments);
-                me.reload.apply(me, arguments);
-            };
+            // this._table.onAfterRendering = function () {
+            //     sap.ui.table.Table.prototype.onAfterRendering.apply(this, arguments);
+            //     me.reload.apply(me, arguments);
+            // };
 
             // Set values for table conf
             oView.setModel(new JSONModel({
@@ -66,7 +66,7 @@ sap.ui.define([
 
             // Param values (unused ATM)
             oView.setModel(new JSONModel({}), "pv");
-
+            me.reload.apply(me, arguments)
 
         },
         /***
@@ -93,8 +93,8 @@ sap.ui.define([
             // Called on page-resize and load, after the table has rendered and knows it's row count.
             // oEvent is from table afterendering event
             this._table.setBusy(true);
-            this.page_limit = this._table.getVisibleRowCount();
-            if (this._is_rendered) {
+            this.page_limit = 10//this._table.getVisibleRowCount();
+            if (true || this._is_rendered) {
                 var oJSONModel = this.initSampleDataModel();
                 this.getView().setModel(oJSONModel);
             }
@@ -146,15 +146,17 @@ sap.ui.define([
 
         onRowNavPress: function (oEvent) {
             // todo refactor into open_window method of app controller
-            var oRow = oEvent.getParameter("row");
-            var oBindingContext = oRow.getBindingContext();
-            var oItem = oEvent.getParameter("item");
+
+            // Todo see if this way of getting PK works for table.table
+            // var oRow = oEvent.getParameter("row");
+            // var oBindingContext = oRow.getBindingContext();
+            var oBindingContext =oEvent.oSource.getBindingContext()
             var record_id = this.getView().getModel().getProperty(this._PK, oBindingContext);
+
             console.log("Opening detail for: " + this._actor_id + "/" + record_id);
 
-            var msg = "'" + oEvent.getParameter("item").getText() + this._actor_id + ":" + "detail" + "' pressed";
-            MessageToast.show(msg);
-
+            // var msg = "'" + oEvent.getParameter("item").getText() + this._actor_id + ":" + "detail" + "' pressed";
+            // MessageToast.show(msg);
             this.routeTo("detail", this._actor_id, {"record_id": record_id});
 
         },

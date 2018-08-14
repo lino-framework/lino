@@ -1,6 +1,6 @@
 {% extends "openui5/view/mvcView.xml" %}
 
-        {% block view_controller_name %}lino.controller.table{% endblock %}
+        {% block view_controller_name %}lino.controller.mtable{% endblock %}
         {% block view_attributes %}    class="sapUiSizeCompact" height="100%" {% endblock %}
         {% block view_content %}
 <Page
@@ -16,19 +16,19 @@
                 customData:PK="{# actor.model._meta.pk.name} #}{{pk_index}}"
                 customData:actor_id="{{actor.actor_id}}"
                 customData:url="/restful/{{actor.app_label}}/{{actor.__name__}}"
-                selectionMode="MultiToggle"
-                rows="{/rows}"
+                mode="MultiSelect"
+                items="{
+                		    path: '/rows'
+                		    }"
+
                 visibleRowCountMode="Auto"
-                showColumnVisibilityMenu="true"
-                enableColumnFreeze="{ui>/showFreezeMenuEntry}"
-                enableCellFilter="{ui>/enableCellFilter}"
+                showColumnVisibilityMenu="false"
                 columnSelect="onColumnSelect"
                 cellContextmenu="onProductIdCellContextMenu"
                 ariaLabelledBy="title"
                 class="sapUiSizeCondensed"
                 rowActionCount="1">
-            <extension>
-                <Toolbar>
+                {#<Toolbar>
                     <Title text="{{title}}"/>
                     {% for ba in ar.actor.get_toolbar_actions(ar.bound_action.action) %}
                     <Button
@@ -85,96 +85,55 @@
                             tooltip="Enable / Disable Cell Filter"
                             pressed="{ui>/enableCellFilter}"/>
 
-                </Toolbar>
-            </extension>
+                </Toolbar>#}
             <columns press="onPress">
+                {% for c in columns %}
+                <Column
+                        {# id="{{c.field.name}}" #}
+                        {% if c.width %}
+                    {# todo: Have width have meaning... #}
+                        {#width="{{c.width}}ch"#}
+                        {% endif %}
+                        {% if c.sortable %}
+                        sortProperty="{{c.field.name}}"
+                        showSortMenuEntry="true"
+                        {% endif %}
+                        {% if c.field in ar.actor.mobile_columns %}
+                            {# blank, ie: always visible #}
+                        {% elif c.field in ar.actor.tablet_columns %}
+                            minScreenWidth="Tablet"
+                        {% else %}
+                            minScreenWidth="Desktop"
+                        {% endif %}
+                        {% if c.field in ar.actor.popin_columns %}
+                            demandPopin="true"
+                        {% endif %}
+
+                        {#
+                        filterProperty="{{c.field.name}}"
+                        showFilterMenuEntry="true"
+                        #}
+
+                        visible="{{bool2js(not c.hidden)}}"
+                >
+                    <m:Text text="{{c.label}}" wrapping="false"/>
+                </Column>
+
+                {% endfor %}
+            </columns>
+
+        <items>
+			<ColumnListItem vAlign="Middle" type="Navigation" press="onRowNavPress">
+				<cells>
                 {% for c in columns %}
                 {% with %}
                 {% set c_loop = loop %}
                 {% include c.oui5_column_template %}
                 {% endwith %}
                 {% endfor %}
-                {#
-                <Column
-                        id="name"
-                        width="11rem"
-                        sortProperty="Name"
-                        filterProperty="Name"
-                        showFilterMenuEntry="true"
-                        showSortMenuEntry="true">
-                    <Label text="Product Name"/>
-                    <template>
-                        <Text text="{Name}" wrapping="false"/>
-                    </template>
-                </Column>
-                <Column
-                        id="productId"
-                        filterProperty="ProductId"
-                        sortProperty="ProductId"
-                        width="11rem">
-                    <Label text="Product Id"/>
-                    <template>
-                        <Text text="{ProductId}" wrapping="false"/>
-                    </template>
-                </Column>
-                <Column
-                        id="image"
-                        width="9rem"
-                        columnMenuOpen="onColumnMenuOpen">
-                    <Label text="Image"/>
-                    <template>
-                        <Link text="Show Image" href="{ProductPicUrl}" target="_blank"/>
-                    </template>
-                </Column>
-                <Column
-                        id="quantity"
-                        width="6rem"
-                        hAlign="End"
-                        sortProperty="Quantity">
-                    <Label text="Quantity"/>
-                    <template>
-                        <Label text="{
-								path: 'Quantity',
-								type: 'sap.ui.model.type.Integer'
-							}"/>
-                    </template>
-                    <menu>
-                        <u:Menu ariaLabelledBy="quantity">
-                            <u:items>
-                                <u:MenuItem
-                                        text="My custom menu entry"
-                                        select="onQuantityCustomItemSelect"
-                                />
-                                <u:MenuItem
-                                        text="Sort"
-                                        select="onQuantitySort"
-                                        icon="sap-icon://sort"
-                                />
-                            </u:items>
-                        </u:Menu>
-                    </menu>
-                </Column>
-                <Column width="9rem">
-                    <Label text="Delivery Date"/>
-                    <template>
-                        <Text text="{
-								path: 'DeliveryDate',
-								type: 'sap.ui.model.type.Date',
-								formatOptions: {source: {pattern: 'timestamp'}}
-							}" wrapping="false"/>
-                    </template>
-                </Column>
-                #}
-            </columns>
-            <footer>
-                <Toolbar>
-                    <ToolbarSpacer/>
-                    <Button
-                            icon="sap-icon://hint"
-                            tooltip="Show information"
-                            press="showInfo"/>
-                </Toolbar>
-            </footer>
+				</cells>
+			</ColumnListItem>
+		</items>
         </Table>
     </content>
 </Page>
