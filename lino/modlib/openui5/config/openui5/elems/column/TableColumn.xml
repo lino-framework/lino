@@ -1,0 +1,14 @@
+<table:Column
+        {% if c.width %}width="{{c.width}}ch"{% endif %}
+        {% if c.sortable -%}
+        sortProperty="{{c.field.name}}"
+        showSortMenuEntry="true"
+        {%- endif %}
+        visible="{{bool2js(not c.hidden)}}"
+        >
+    {# The FieldElemnt for columns is var "c" #}
+    <Label text="{{c.label}}"/>
+    <table:template>
+        {% include c.oui5_column_template %}
+    </table:template>
+</table:Column>

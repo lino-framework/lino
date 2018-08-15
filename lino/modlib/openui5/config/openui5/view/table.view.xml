@@ -100,7 +100,7 @@
                 {% for c in columns %}
                 {% with %}
                 {% set c_loop = loop %}
-                {% include c.oui5_column_template %}
+                {% include "openui5/elems/column/TableColumn.xml" %}
                 {% endwith %}
                 {% endfor %}
                 {#

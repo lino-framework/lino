@@ -621,7 +621,6 @@ class SaveRow(Action):
     def run_from_ui(self, ar, **kw):
         # logger.info("20140423 SubmitDetail")
         elem = ar.selected_rows[0]
-        # ar.form2obj_and_save(ar.rqdata, elem, False)
         self.save_existing_instance(elem, ar)
 
     def save_existing_instance(self, elem, ar):

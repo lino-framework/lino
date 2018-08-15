@@ -773,7 +773,8 @@ class Connector(View):
             if name.startswith("slavetable/"):
                 tplname = "openui5/view/slaveTable.view.xml"
             else:
-                if device_type == 'desktop':
+                # if device_type == 'desktop':
+                if not actor.tablet_columns and not actor.mobile_columns:
                     tplname = "openui5/view/table.view.xml"  # Change to "grid" to match action?
                 else:
                     tplname = "openui5/view/table.mview.xml"

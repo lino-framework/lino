@@ -80,7 +80,7 @@
 				</table:extension>
 				<table:columns>
 					{% for c in columns %}
-					{% include c.oui5_column_template %}
+                		{% include "openui5/elems/column/TableColumn.xml" %}
 					{% endfor %}
 					{#
 					<table:Column

@@ -896,14 +896,15 @@ class BaseRequest(object):
         return rec
 
     def form2obj_and_save(ar, data, elem, is_new):
-        """Parses the data from HttpRequest to the model instance and saves it
+        """
+        Parses the data from HttpRequest to the model instance and saves
+        it.
 
         This is used by `ApiList.post` and `ApiElement.put`, and by
         `Restful.post` and `Restful.put`.
 
         20140505 : no longer used by ApiList and ApiElement, but still
         by Restful.*
-
         """
         if is_new:
             watcher = None

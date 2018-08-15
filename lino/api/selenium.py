@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015-2018 Luc Saffre.
+# Copyright 2015-2018 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 """
 Used by :xfile:`make_screenshots.py` and :xfile:`maketour.py` scripts.
@@ -15,7 +15,7 @@ during a single `runserver` process, e.g. one for each language.
 `Introducing the Selenium-WebDriver API by Example
 <http://www.seleniumhq.org/docs/03_webdriver.jsp#introducing-the-selenium-webdriver-api-by-example>`__
 
-`INVOKE_SERVER` does not work anymore. It seems that
+`INVOKE_SERVER` does not work at the moment. It seems that
 :meth:`driver.get` does not wait if the server is just starting up and
 therefore not even yet responding to connection requests. The only
 workaround for this is currently to run the webserver process in a
@@ -46,8 +46,8 @@ INVOKE_SERVER = False
 def runserver(settings_module, func, driver=None):
 
     if driver is None:
-        driver = webdriver.Firefox()
-        # driver = webdriver.Chrome('chromium-browser')
+        driver = webdriver.Firefox() # service_log_path=os.path.devnull)
+        # driver = webdriver.Chrome('/usr/bin/chromium-browser')
 
     if INVOKE_SERVER:
         env = dict()

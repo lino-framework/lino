@@ -202,6 +202,8 @@ class WithUserMiddleware(object):
 
 
 class DeviceTypeMiddleware(object):
+    """Sets the `device_type` attribute on every incoming request.
+    """
     def process_request(self, request):
         user = request.user
         user_language = user.language  # or settings.SITE.get_default_language()
@@ -209,5 +211,6 @@ class DeviceTypeMiddleware(object):
         if rqdata is None:
             return
 
-        dt = rqdata.get(constants.URL_PARAM_DEVICE_TYPE, 'desktop')
+        dt = rqdata.get(
+            constants.URL_PARAM_DEVICE_TYPE, settings.SITE.device_type)
         request.device_type = dt
