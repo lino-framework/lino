@@ -921,36 +921,36 @@ class App(View):
             content_type='text/html;charset="utf-8"')
 
 
-class Index(View):
-    """
-    Render the main dashboard.
-    """
+# class Index(View):
+#     """
+#     Render the main dashboard.
+#     """
 
-    def get(self, request, *args, **kw):
-        # raise Exception("20171122 {} {}".format(
-        #     get_language(), settings.MIDDLEWARE_CLASSES))
-        ui = settings.SITE.plugins.openui5
-        # print("20170607", request.user)
-        # assert ui.renderer is not None
-        ar = BaseRequest(
-            # user=user,
-            request=request,
-            renderer=ui.renderer)
-        return index_response(ar)
+#     def get(self, request, *args, **kw):
+#         # raise Exception("20171122 {} {}".format(
+#         #     get_language(), settings.MIDDLEWARE_CLASSES))
+#         ui = settings.SITE.plugins.openui5
+#         # print("20170607", request.user)
+#         # assert ui.renderer is not None
+#         ar = BaseRequest(
+#             # user=user,
+#             request=request,
+#             renderer=ui.renderer)
+#         return index_response(ar)
 
 
-def index_response(ar):
-    ui = settings.SITE.plugins.openui5
+# def index_response(ar):
+#     ui = settings.SITE.plugins.openui5
 
-    main = settings.SITE.get_main_html(ar.request, extjs=ui)
-    main = ui.renderer.html_text(main)
-    context = dict(
-        title=settings.SITE.title,
-        main=main,
-    )
-    # if settings.SITE.user_model is None:
-    #     user = auth.AnonymousUser.instance()
-    # else:
-    #     user = request.subst_user or request.user
-    # context.update(ar=ar)
-    return http_response(ar, 'bootstrap3/index.html', context)
+#     main = settings.SITE.get_main_html(ar.request, extjs=ui)
+#     main = ui.renderer.html_text(main)
+#     context = dict(
+#         title=settings.SITE.title,
+#         main=main,
+#     )
+#     # if settings.SITE.user_model is None:
+#     #     user = auth.AnonymousUser.instance()
+#     # else:
+#     #     user = request.subst_user or request.user
+#     # context.update(ar=ar)
+#     return http_response(ar, 'bootstrap3/index.html', context)

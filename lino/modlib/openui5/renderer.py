@@ -18,8 +18,6 @@ from lino.core.actions import (ShowEmptyTable, ShowDetail,
                                SubmitInsert)
 from etgen.html import E
 
-from .views import index_response
-
 from lino.utils.jsgen import py2js
 
 

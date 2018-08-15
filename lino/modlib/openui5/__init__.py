@@ -86,6 +86,6 @@ class Plugin(Plugin):
             # yield ("jQuery", '?', "http://...")
             yield ("CKEditor", "4.8", "https://ckeditor.com/")
 
-    def get_index_view(self):
-        from . import views
-        return views.Index.as_view()
+    # def get_index_view(self):
+    #     from . import views
+    #     return views.App.as_view()
