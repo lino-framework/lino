@@ -570,7 +570,7 @@ class Model(models.Model):
         signals is that (1) you override the method instead of binding
         a signal and (2) you get the action request as argument.
 
-        Used e.g. by :class:`lino_xl.lib.notes.models.Note`.
+        Used e.g. by :class:`lino_xl.lib.notes.Note`.
         """
         pass
 

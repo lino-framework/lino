@@ -530,10 +530,10 @@ class ShowEmptyTable(ShowDetail):
 
 
 class ShowInsert(TableAction):
-    """Open the Insert window filled with a row of blank or default
+    """
+    Open the Insert window filled with a row of blank or default
     values.  The new row will be actually created only when this
     window gets submitted.
-
     """
     save_action_name = 'submit_insert'
 
@@ -558,7 +558,7 @@ class ShowInsert(TableAction):
     action_name = 'insert'
     key = keyboard.INSERT  # (ctrl=True)
     hide_virtual_fields = True
-    readonly = False
+    # readonly = False
     select_rows = False
 
     def get_action_title(self, ar):
@@ -571,12 +571,13 @@ class ShowInsert(TableAction):
         wl = self.get_window_layout(actor)
         return wl.window_size
 
-    def unused_get_action_permission(self, ar, obj, state):
-        # see blog/2012/0726
-        # if settings.SITE.user_model and ar.get_user().user_type.readonly:
-        if ar.get_user().user_type.readonly:
+    def get_view_permission(self, user_type):
+        # the action is readonly because it doesn't write to the
+        # current object, but we want to hide it statically for
+        # readonly users.
+        if user_type and user_type.readonly:
             return False
-        return super(ShowInsert, self).get_action_permission(ar, obj, state)
+        return super(ShowInsert, self).get_view_permission(user_type)
 
     def get_status(self, ar, **kw):
         kw = super(ShowInsert, self).get_status(ar, **kw)
