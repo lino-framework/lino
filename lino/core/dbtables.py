@@ -497,6 +497,8 @@ class Table(AbstractTable):
 
         if obj is not None and ar is not None:
             s |= obj.disabled_fields(ar)
+            if settings.SITE.user_types_module is None:
+                return s
             state = cls.get_row_state(obj)
             parent = ar.bound_action.action
             if not parent.opens_a_window:

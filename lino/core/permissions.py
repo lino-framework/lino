@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2016 Luc Saffre.
+# Copyright 2011-2018 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 """Core tools of Lino's permission system.
 
@@ -96,7 +96,9 @@ def add_requirements(obj, *args):
 
 
 def make_permission_handler(*args, **kw):
-    """Return a function that will test whether permission is given or not.
+    """
+    Return a function that will test whether permission is given or
+    not.
     
     `elem` is not used (either an Action or a Permittable.)
     
@@ -110,7 +112,7 @@ def make_permission_handler(*args, **kw):
     obj and state.  The latter two may be None depending on the
     context (for example a read_required is expected to not test on
     obj or state because these values are not known when generating
-    the :xfile:`lino*.js` files.).
+    the :xfile:`linoweb.js` files.).
     
     The remaining keyword arguments are aka "requirements":
     
@@ -120,26 +122,8 @@ def make_permission_handler(*args, **kw):
         required.
     
     `allow`
-        An additional custom permission handler
-        
-    `auth`
-        No longer supported.
-        If True, permission is given only to authenticated users.  The
-        default value of this is `True` when
-        :attr:`lino.core.Site.user_model` is not None, or otherwise
-        `False`.
-        
-    `owner`
-        No longer supported.
-        If True, permission is given only to the author of the object.
-        If False, permission is given only to users who are not the
-        author of the object.  This requirement is allowed only on
-        models that have a field `user` which is supposed to contain
-        the author.  Usually a subclass of
-        :class:`lino.modlib.users.mixins.UserAuthored`, but
-        e.g. :class:`lino_xl.lib.cal.Guest` defines a property
-        `user` because it has no own `user` field).
 
+        An additional custom permission handler
     """
     # try:
     return make_permission_handler_(*args, **kw)
@@ -167,13 +151,7 @@ def make_view_permission_handler_(
 
     if settings.SITE.user_types_module:
         def allow(action, user_type):
-            # print str(actor)
-            # if str(actor.actor) == "tickets.PublicTickets":
-            #     print 20150831, user_type.role, required_roles
-            # if action.action_name == "export_excel":
-            #     print 20150828, user_type.role, required_roles
             v = user_type.has_required_roles(required_roles)
-            # print("20170130", required_roles)
             return v
         
         if not readonly:
@@ -191,9 +169,6 @@ def make_view_permission_handler_(
             return True
 
     if debug_permissions:  # False:
-        #~ logger.info("20130424 install debug_permissions for %s",
-            #~ [actor,readonly,debug_permissions,
-            #~ user_level,user_groups,allow,auth,owner,states])
         allow4 = allow
 
         def allow(action, user_type):
@@ -213,14 +188,6 @@ def make_permission_handler_(
 
     check_required_roles(required_roles, actor)
 
-    #~ if str(actor) == 'courses.PendingCourseRequests':
-        #~ if allow is None: raise Exception("20130424")
-
-    # ~ if debug_permissions: # False:
-        #~ logger.info("20130424 install debug_permissions for %s",
-            #~ [elem,actor,readonly,debug_permissions,
-            #~ user_level,user_groups,states,allow,owner,auth])
-
     if allow is None:
         if settings.SITE.user_types_module:
             def allow(action, user, obj, state):
@@ -236,36 +203,6 @@ def make_permission_handler_(
     if owner is not None:
         raise ChangedAPI("20150718 owner no longer supported")
 
-#     if allowed_states:
-#         if actor.workflow_state_field is None:
-#             raise Exception(
-#                 """\
-# %s cannot specify `allowed_states` when %s.workflow_state_field is %r.
-#                 """ % (elem, actor, actor.workflow_state_field))
-#         #~ else:
-#             #~ print 20120621, "ok", actor
-#         lst = actor.workflow_state_field.choicelist
-#         ns = []
-#         if isinstance(allowed_states, six.string_types):
-#             allowed_states = allowed_states.split()
-#         for n in allowed_states:
-#             if n not in lst.removed_names:
-#                 if n is not None:
-#                     if n == '_':
-#                         n = None
-#                     else:
-#                         n = lst.get_by_name(n)
-#                 ns.append(n)
-#         allowed_states = frozenset(ns)
-#         allow2 = allow
-
-#         def allow(action, user, obj, state):
-#             if not allow2(action, user, obj, state):
-#                 return False
-#             if obj is None:
-#                 return True
-#             return state in allowed_states
-
     if settings.SITE.user_types_module and not readonly:
         allow3 = allow
 
@@ -276,7 +213,7 @@ def make_permission_handler_(
                 return False
             return True
 
-    if debug_permissions:  # False:
+    if debug_permissions:
         allow4 = allow
 
         def allow(action, user, obj, state):

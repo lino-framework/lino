@@ -233,7 +233,6 @@ An HTML renderer that uses the OpenUI5 Javascript framework."""),
     'lino.modlib.openui5.views.Connector' : _("""Static View for Tickets,
 Uses a template for generating the XML views  rather then layouts"""),
     'lino.modlib.openui5.views.App' : _("""Main app entry point,"""),
-    'lino.modlib.openui5.views.Index' : _("""Render the main dashboard."""),
     'lino.modlib.printing.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.restful.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.smtpd.Plugin' : _("""See /dev/plugins."""),
@@ -482,7 +481,6 @@ Comments.observed_event."""),
 one day we will probably remove it."""),
     'lino.modlib.comments.CommentTypes' : _("""The table with all existing comment types."""),
     'lino.modlib.comments.Commentable' : _("""Mixin for models that can be subject to comments."""),
-    'lino.modlib.contacts.Partner.invoice_recipient' : _("""The recipient of invoices (invoicing address)."""),
     'lino.modlib.notify.Message' : _("""A Notification message is an instant message sent by the
 application to a given user."""),
     'lino.modlib.notify.Message.user' : _("""The recipient."""),
@@ -553,6 +551,7 @@ Generates .rtf files from .rtf templates."""),
 Generates .pdf files from .html templates.
 Requires pisa.
 Usage example see lino_book.projects.pisa."""),
+    'lino.modlib.contacts.Partner.invoice_recipient' : _("""The recipient of invoices (invoicing address)."""),
     'lino.modlib.summaries.Summary' : _("""Abstract base class for all "summary data" models."""),
     'lino.modlib.summaries.Summary.master' : _("""Any implementing subclass of Summary must define a
 field named master which must be a ForeignKey field.

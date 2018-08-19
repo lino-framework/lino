@@ -569,7 +569,17 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     detail_template = None    # deprecated: use insert_layout instead
     insert_template = None    # deprecated: use detail_layout instead
+    
     help_text = None
+    """
+    A help text that shortly explains what the default action of this
+    actor does.  In a graphical user interface this will be rendered
+    as a **tooltip** text.
+
+    If this is not given by the code, Lino will potentially set it at
+    startup when loading the :xfile:`help_texts.py` files.
+    """
+    
     detail_action = None
     update_action = None
     insert_action = None

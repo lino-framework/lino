@@ -1,107 +1,25 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2016-2017 Luc Saffre
+# Copyright 2016-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
-'''Causes a :xfile:`help_texts.py` file to be generated after each complete built of the doctree. 
 
-The :xfile:`help_texts.py` file contains object descriptions to be
-installed as the `help_text` attribute of certain UI widgets (actions,
-database fields, ...)
+'''
+Causes one or several :xfile:`help_texts.py` files to be generated
+after each complete build of the doctree.
 
-Overview
-========
-
-Without help_text builder::
-
-    class MyModel(dd.Model):
-        """MyModel is an important example."""
-
-        universe = models.CharField(_("First field"),
-            blank=True, max_length=100, help_text=_("""
-    The first field contains an optional answer to the
-    question about life, the universe and everything.
-    """))
-
-With help_text builder::
-
-    class MyModel(dd.Model):
-        """MyModel is an important example.
-
-        .. attribute:: universe
-
-            The first field contains an optional answer to the
-            question about life, the universe and everything.
-
-        """
-
-        universe = models.CharField(_("First field"),
-            blank=True, max_length=100)
-
-Advantages:
-
-- Better readability.
-
-- As an application developer you don't need to worry about Python
-  syntax consideration when editing your help text
-
-- Same source is used for both the API and the UI. You don't need to
-  write (and maintain) these texts twice.
-
-Note that only the *first* paragraph of the content of every
-:rst:dir:`class` and :rst:dir:`attribute` directive is taken as help
-text, and that any links are being removed.
-
-Note also that any formatting is removed.
-
-
-The :xfile:`help_texts.py` file
-===============================
-
-
-.. xfile:: help_texts.py
-
-When a Lino :class:`Site <lino.core.site.Site>` initializes, it looks
-for a file named :xfile:`help_texts.py` in every plugin directory.  If
-such a file exists, Lino imports it and expects it to contain a
-:class:`dict` of the form::
-
-    from lino.api import _
-    help_texts = {
-        'foo': _("A foo is a bar without baz.")
-    }
-
-These files are automatically generated when a full build is being
-done.
-
-See also :blogref:`20160620`.
-
-:meth:`lino.core.site.Site.install_help_text`
-:meth:`lino.core.site.Site.load_help_texts`
+See :doc:`/dev/help_texts` for a topic overview.
 
 Usage
 =====
 
-In your :xfile:`conf.py` file, add this line::
+In your :xfile:`conf.py` file, add
+:mod:`lino.sphinxcontrib.help_texts_extractor` to your ``extensions``
+and define a ``help_texts_builder_targets`` setting::
 
-    from lino.sphinxcontrib.help_text_builder import setup
-
-Or, if you have already your own :func:`setup` function defined,
-import it under another name and call it from within your function::
-
-    from lino.sphinxcontrib.help_text_builder import setup as htsetup
-    def setup(app):
-        ...
-        htsetup(app)
-        ...
+    extensions += ['lino.sphinxcontrib.help_texts_extractor']
+    help_texts_builder_targets = {
+        'lino_algus.': 'lino_algus.lib.algus'
+    }
     
-Run sphinx-build using::
-
-    $ sphinx-build -b help_texts . tmp
-
-Copy the result to the right place, e.g. to the main plugin of your
-application::
-
-    $ cp tmp/help_texts.py ../lino_voga/lib/voga/
-
 
 Internals
 =========
@@ -110,8 +28,8 @@ This builder traverses the doctree in order to find `object
 descriptions
 <http://www.sphinx-doc.org/en/stable/extdev/nodes.html>`_, i.e.  text
 nodes defined by Sphinx and inserted e.g. by the :rst:dir:`class` and
-:rst:dir:`attribute` directives (which have been inserted by autodoc
-and autosummary).
+:rst:dir:`attribute` directives (which potentially have been inserted
+by autodoc and autosummary).
 
 Example of a class description::
 
@@ -166,7 +84,6 @@ Example of a field description::
         </paragraph>
       </desc_content>
     </desc>
-
 '''
 
 from __future__ import print_function
