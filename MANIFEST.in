@@ -4,7 +4,7 @@ global-include *.txt *.rst *.js *.css *.html \
   *.odt \
   *.wsdl \
   *.xsd \
-  *.mo *.jnlp *.ods *.tmpl *.eml *.tab
+  *.mo *.jnlp *.ods *.tmpl *.eml *.tab *.gif
 include bash/*
 prune rtlib
 prune lino/sandbox
