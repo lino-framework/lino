@@ -34,9 +34,35 @@ def configure(globals_dict, settings_module_name=None):
         # from django.conf import settings
         # settings.SITE.startup()
 
-        globals_dict.update(
-            template_bridge=str('atelier.sphinxconf.DjangoTemplateBridge'))
+        # globals_dict.update(
+        #     template_bridge=str('lino.sphinxcontrib.DjangoTemplateBridge'))
     return sphinxconf.configure(globals_dict)
 
     
+
+# from sphinx.jinja2glue import BuiltinTemplateLoader
+
+
+# class DjangoTemplateBridge(BuiltinTemplateLoader):
+
+#     """The :meth:`configure` method installs this as `template_bridge
+#     <http://sphinx-doc.org/config.html#confval-template_bridge>`_ for
+#     Sphinx.  It causes a template variable ``settings`` to be added
+#     the Sphinx template context. This cannot be done using
+#     `html_context
+#     <http://sphinx-doc.org/config.html#confval-html_context>`_ because
+#     Django settings are not pickleable.
+
+#     """
+
+#     def render(self, template, context):
+#         from django.conf import settings
+#         context.update(settings=settings)
+#         return super(DjangoTemplateBridge, self).render(template, context)
+
+#     def render_string(self, source, context):
+#         from django.conf import settings
+#         context.update(settings=settings)
+#         return super(DjangoTemplateBridge, self).render_string(source, context)
+
 
