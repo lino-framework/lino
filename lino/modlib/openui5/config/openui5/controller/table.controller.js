@@ -45,10 +45,10 @@ sap.ui.define([
             // override after rendering event handler to find out how many rows are rendered and how many should be per page
             // Is run twice on inital loading of view, second time has the correct values
             // view after render event is fired after first firing of this event, but before second firing of table event
-            this._table.onAfterRendering = function () {
-                sap.ui.table.Table.prototype.onAfterRendering.apply(this, arguments);
-                me.reload.apply(me, arguments);
-            };
+            // this._table.onAfterRendering = function () {
+            //     sap.ui.table.Table.prototype.onAfterRendering.apply(this, arguments);
+            //     me.reload.apply(me, arguments);
+            // };
 
             // Set values for table conf
             oView.setModel(new JSONModel({
@@ -85,21 +85,24 @@ sap.ui.define([
 
         onAfterRendering: function (oEvent) {
             // to prevent second loading of data on init,
-            this._is_rendered = true;
-
+            //this._is_rendered = true;
+            this.reload()
         },
-        reload: function (oEvent) {
+
+        reload: Lino.debounce(
+            function (oEvent) {
             // Fetches the page that's set in {meta>page} or if that's not a valid page page_old
             // Called on page-resize and load, after the table has rendered and knows it's row count.
             // oEvent is from table afterendering event
+            console.log("...Reloading...");
             this._table.setBusy(true);
             this.page_limit = this._table.getVisibleRowCount();
-            if (this._is_rendered) {
+            if (true) {
                 var oJSONModel = this.initSampleDataModel();
                 this.getView().setModel(oJSONModel);
             }
 
-        },
+        },500),
 
 //        beforeExit: function(){console.log("beforeExit")},
 
