@@ -187,6 +187,8 @@ plugins = settings.SITE.plugins
 # `apps` is a deprecated alias for `plugins`. We recommend plugins
 # since `apps` is being used by Django 1.7
 
+format_currency = settings.SITE.format_currency
+
 
 def resolve_plugin(app_label):
     return plugins.get(app_label, None)

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2018 Luc Saffre.
+# Copyright 2009-2018 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 # doctest lino/core/site.py
 
@@ -25,6 +25,7 @@ import inspect
 import datetime
 import warnings
 import collections
+import locale
 from importlib import import_module
 from six.moves.urllib.parse import urlencode
 
@@ -79,11 +80,11 @@ A named tuple with four fields:
 
 
 def to_locale(language):
-    """Simplified copy of `django.utils.translation.to_locale`, but we
+    """
+    Simplified copy of `django.utils.translation.to_locale`, but we
     need it while the `settings` module is being loaded, i.e. we
     cannot yet import django.utils.translation.  Also we don't need
     the to_lower argument.
-
     """
     p = language.find('-')
     if p >= 0:
@@ -173,6 +174,15 @@ class Site(object):
     in this application.
     """
 
+    # locale = 'en_GB.utf-8'
+    locale = None
+    """
+    The `locale <https://docs.python.org/2/library/locale.html>`__ to
+    use for certain localized things on this site.  
+
+    Used by :meth:`format_currency`.
+    """
+    
     confdirs = None
     """
     This attribute is available only after site startup.  See
@@ -458,17 +468,17 @@ class Site(object):
     """
 
     allow_duplicate_cities = False
-    """In a default configuration (when :attr:`allow_duplicate_cities` is
+    """
+    In a default configuration (when :attr:`allow_duplicate_cities` is
     False), Lino declares a UNIQUE clause for :class:`Places
     <lino_xl.lib.countries.models.Places>` to make sure that your
-    database never contains duplicate cities.  This behaviour mighr
+    database never contains duplicate cities.  This behaviour might
     disturb e.g. when importing legacy data that did not have this
     restriction.  Set it to True to remove the UNIQUE clause.
     
     Changing this setting might affect your database structure and
     thus require a :doc:`/topics/datamig` if your application uses
     :mod:`lino_xl.lib.countries`.
-
     """
 
     uid = 'myuid'
@@ -2226,17 +2236,19 @@ this field.
         """
         from lino.core.kernel import site_startup
         site_startup(self)
+        if self.locale:
+            locale.setlocale(locale.LC_ALL, self.locale)
         self.clear_site_config()
 
     def do_site_startup(self):
-        """This method is called exactly once during site startup,
-        just between the pre_startup and the post_startup signals.
-        A hook for subclasses.
+        """
+        This method is called exactly once during site startup, just
+        between the pre_startup and the post_startup signals.  A hook
+        for subclasses.
 
         TODO: rename this to `on_startup`?
 
         If you override it, don't forget to call the super method.
-
         """
 
         # self.logger.info("20160526 %s do_site_startup() a", self.__class__)
@@ -3733,6 +3745,20 @@ signature as `django.core.mail.EmailMessage`.
         kw.setdefault('dp', self.decimal_separator)
         from lino.utils import moneyfmt
         return moneyfmt(v, places=places, **kw)
+
+    def format_currency(self, *args, **kwargs):
+        """
+        Return the given number as a string formatted according to the
+        :attr:`locale` setting on this site.
+
+        All arguments are forwarded to `locale.locale()
+        <https://docs.python.org/2/library/locale.html#locale.currency>`__.
+        """
+        res = locale.currency(*args, **kwargs)
+        if six.PY2:
+            res = res.decode(locale.nl_langinfo(locale.CODESET))
+        return res
+        
 
     LOOKUP_OP = '__iexact'
 
