@@ -709,7 +709,7 @@ class Connector(View):
         )
 
         device_type = request.device_type
-        print ("device_type", device_type)
+        # print ("device_type", device_type)
         # print(u)
         # print(name)
         if name.startswith("dialog/SignInActionFormPanel"):

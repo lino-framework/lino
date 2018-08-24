@@ -1,6 +1,7 @@
 {% extends "openui5/view/mvcView.xml" %}
 
         {% block view_controller_name %}lino.controller.mtable{% endblock %}
+
         {% block view_attributes %}    class="sapUiSizeCompact" height="100%" {% endblock %}
         {% block view_content %}
 <Page
@@ -28,64 +29,67 @@
                 ariaLabelledBy="title"
                 class="sapUiSizeCondensed"
                 rowActionCount="1">
-                {#<Toolbar>
-                    <Title text="{{title}}"/>
-                    {% for ba in ar.actor.get_toolbar_actions(ar.bound_action.action) %}
-                    <Button
-                            text="{{ba.action.label}}"
-                            press="onPressAction">
-                        <customData>
-                            <core:CustomData
-                                    key="action_name"
-                                    value="{{ba.action.label}}"/>
-                        </customData>
-                    </Button>
-                    {% endfor %}
-                    <ToolbarSpacer/>
+            <headerToolbar>
+                <Toolbar>
+                    <content>
+                        <Title text="{{title}}"/>
+                        {% for ba in ar.actor.get_toolbar_actions(ar.bound_action.action) %}
+                        <Button
+                                text="{{ba.action.label}}"
+                                press="onPressAction">
+                            <customData>
+                                <core:CustomData
+                                        key="action_name"
+                                        value="{{ba.action.label}}"/>
+                            </customData>
+                        </Button>
+                        {% endfor %}
+                        <ToolbarSpacer/>
 
-                    {% block pageinator %}
-                    <Button icon="sap-icon://close-command-field"
-                            tooltip="First page"
-                            press="onFirstPress"/>
-                    <Button icon="sap-icon://navigation-left-arrow"
-                            tooltip="Previous page"
+                        {% block pageinator %}
+                        <Button icon="sap-icon://close-command-field"
+                                tooltip="First page"
+                                press="onFirstPress"/>
+                        <Button icon="sap-icon://navigation-left-arrow"
+                                tooltip="Previous page"
 
-                            press="onPrevPress"
-                    />
-                    <Input
-                            value="{meta>/page}"
-                            width="4ch"
-                            fieldWidth="60%"
-                            align="center"
-                            liveChange="onPagerInputChange"/>
-                    <Label text="of {meta>/page_total}"
-                    />
-                    <Button icon="sap-icon://navigation-right-arrow"
-                            tooltip="Next page"
-                            press="onNextPress"
-                    />
-                    <Button icon="sap-icon://open-command-field"
-                            tooltip="Last page"
-                            press="onLastPress"
-                    />
-                    {% endblock %}
-                    <ToolbarSpacer/>
-                    <SearchField
-                            id="searchField"
-                            tooltip="{i18n>worklistSearchTooltip}"
-                            search="onSearch"
-                            width="auto">
-                    </SearchField>
-                    <ToggleButton
-                            icon="sap-icon://resize-horizontal"
-                            tooltip="Enable / Disable Freezing Menu Entries"
-                            pressed="{ui>/showFreezeMenuEntry}"/>
-                    <ToggleButton
-                            icon="sap-icon://grid"
-                            tooltip="Enable / Disable Cell Filter"
-                            pressed="{ui>/enableCellFilter}"/>
-
-                </Toolbar>#}
+                                press="onPrevPress"
+                        />
+                        <Input
+                                value="{meta>/page}"
+                                width="4ch"
+                                fieldWidth="60%"
+                                align="center"
+                                liveChange="onPagerInputChange"/>
+                        <Label text="of {meta>/page_total}"
+                        />
+                        <Button icon="sap-icon://navigation-right-arrow"
+                                tooltip="Next page"
+                                press="onNextPress"
+                        />
+                        <Button icon="sap-icon://open-command-field"
+                                tooltip="Last page"
+                                press="onLastPress"
+                        />
+                        {% endblock %}
+                        <ToolbarSpacer/>
+                        <SearchField
+                                id="searchField"
+                                tooltip="{i18n>worklistSearchTooltip}"
+                                search="onSearch"
+                                width="auto">
+                        </SearchField>
+                        <ToggleButton
+                                icon="sap-icon://resize-horizontal"
+                                tooltip="Enable / Disable Freezing Menu Entries"
+                                pressed="{ui>/showFreezeMenuEntry}"/>
+                        <ToggleButton
+                                icon="sap-icon://grid"
+                                tooltip="Enable / Disable Cell Filter"
+                                pressed="{ui>/enableCellFilter}"/>
+                    </content>
+                </Toolbar>
+            </headerToolbar>
             <columns press="onPress">
                 {% for c in columns %}
                 <Column
@@ -99,7 +103,7 @@
                         showSortMenuEntry="true"
                         {% endif %}
                         {% if c.field in ar.actor.mobile_columns %}
-                            {# blank, ie: always visible #}
+                            minScreenWidth=""{# blank, ie: always visible #}
                         {% elif c.field in ar.actor.tablet_columns %}
                             minScreenWidth="Tablet"
                         {% else %}
