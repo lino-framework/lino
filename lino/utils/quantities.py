@@ -115,61 +115,61 @@ class Duration(Quantity):
     1:00
     >>> print(Duration('2.5'))
     2:30
-    >>> print Duration('2.50')
+    >>> print (Duration('2.50'))
     2:30
     
-    >>> print Duration('1:00')
+    >>> print (Duration('1:00'))
     1:00
-    >>> print Duration('1:30')
+    >>> print (Duration('1:30'))
     1:30
-    >>> print Duration('1:55')
+    >>> print (Duration('1:55'))
     1:55
     
-    >>> print Duration('1:45') * 2
+    >>> print (Duration('1:45') * 2)
     3:30
-    >>> print Duration('1:55') * 2
+    >>> print (Duration('1:55') * 2)
     3:50
     
-    >>> print Duration('0:45') / 3
+    >>> print (Duration('0:45') / 3)
     0:15
     
-    >>> print Duration('0:49') / 10
+    >>> print (Duration('0:49') / 10)
     0:05
     
-    >>> print Duration('1:30') * 2
+    >>> print (Duration('1:30') * 2)
     3:00
-    >>> print Duration('0:03') * 10
+    >>> print (Duration('0:03') * 10)
     0:30
-    >>> print Duration('0:01') * 60
+    >>> print (Duration('0:01') * 60)
     1:00
-    >>> print Duration('0:01') * 6000
+    >>> print (Duration('0:01') * 6000)
     100:00
     
-    >>> print Duration('1:55') + Duration('0:05')
+    >>> print (Duration('1:55') + Duration('0:05'))
     2:00
-    >>> print Duration('1:55') + Duration('0:10')
+    >>> print (Duration('1:55') + Duration('0:10'))
     2:05
     
-    >>> print Duration('1:55') - Duration('0:10')
+    >>> print (Duration('1:55') - Duration('0:10'))
     1:45
-    >>> print Duration('1:05') - Duration('0:10')
+    >>> print (Duration('1:05') - Duration('0:10'))
     0:55
     
-    >>> print Duration(datetime.timedelta(0))
+    >>> print (Duration(datetime.timedelta(0)))
     0:00
-    >>> print Duration(datetime.timedelta(0, hours=10))
+    >>> print (Duration(datetime.timedelta(0, hours=10)))
     10:00
-    >>> print Duration(datetime.timedelta(0, minutes=10))
+    >>> print (Duration(datetime.timedelta(0, minutes=10)))
     0:10
 
     A duration can be more than 24 hours, and in that case (unlike
     :class:`datetime.datetime`) it is still represented using
     `hhhh.mm`:
 
-    >>> print Duration(datetime.timedelta(hours=25))
+    >>> print (Duration(datetime.timedelta(hours=25)))
     25:00
 
-    >>> print Duration(datetime.timedelta(days=128))
+    >>> print (Duration(datetime.timedelta(days=128)))
     3072:00
 
     """
