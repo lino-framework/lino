@@ -82,6 +82,12 @@ class Quantity(Decimal):
         return self.__class__(Decimal.__add__(self, *args, **kw))
     __radd__ = __add__
 
+    def __sub__(self, *args, **kw):
+        return self.__class__(Decimal.__sub__(self, *args, **kw))
+
+    def __rsub__(self, *args, **kw):
+        return self.__class__(Decimal.__rsub__(self, *args, **kw))
+
     def __truediv__(self, *args, **kw):
         return self.__class__(Decimal.__truediv__(self, *args, **kw))
     __rtruediv__ = __truediv__
