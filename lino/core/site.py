@@ -2572,7 +2572,7 @@ this field.
                 suppliers_account purchases_account
                 """)
 
-                self.models.accounts.Accounts.set_detail_layout("""
+                self.models.ledger.Accounts.set_detail_layout("""
                 ref:10 name id:5
                 seqno group type clearable
                 ledger.MovementsByAccount

@@ -1,23 +1,16 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2017 Luc Saffre
+# Copyright 2011-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
-
-"""Model mixins for this plugin.
-
-"""
 
 from __future__ import unicode_literals
 from builtins import object
-
-import logging
-logger = logging.getLogger(__name__)
 
 from django.db import models
 
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
-from lino.api import dd
+from lino.api import dd, rt
 
 from lino.core.exceptions import ChangedAPI
 from lino.core import model
