@@ -522,8 +522,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
             ...
             detail_layout = FooDetail()
 
-    It is possible to specify :attr:`detail_layout` as a string, in
-    which case it will be resolved at startup as follows:
+    It is possible and recommended to specify :attr:`detail_layout` as
+    a string, in which case it will be resolved at startup as follows:
 
     If the string contains at least one newline (or no newline and
     also no dot) then it is taken as the :attr:`main` of a
@@ -547,11 +547,11 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
             ...
             detail_layout = 'courses.CourseDetail'
 
-    This new feature was necessary because otherwise it could become very
-    tricky to override the detail layout in an extended plugin. Until now
-    you had to define a new class and to assign an instance of that class
-    to every actor which uses it.  But e.g. in :mod:`lino_xl.lib.courses`
-    we have a lot of subclasses of the :class:`Courses` actor.
+    This feature makes it possible to override the detail layout in an
+    extended plugin. Before this you had to define a new class and to
+    assign an instance of that class to every actor which uses it.
+    But e.g. in :mod:`lino_xl.lib.courses` we have a lot of subclasses
+    of the :class:`Courses` actor.
     '''
 
     insert_layout = None
