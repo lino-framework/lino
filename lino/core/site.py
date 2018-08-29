@@ -175,12 +175,17 @@ class Site(object):
     """
 
     # locale = 'en_GB.utf-8'
-    locale = None
+    site_locale = None
     """
     The `locale <https://docs.python.org/2/library/locale.html>`__ to
     use for certain localized things on this site.  
 
     Used by :meth:`format_currency`.
+
+    This should be a string of type '<language>_<country>.<encoding>',
+    and it must have been generated previously.  For example::
+
+        sudo locale-gen de_BE.utf8
     """
     
     confdirs = None
@@ -2236,8 +2241,11 @@ this field.
         """
         from lino.core.kernel import site_startup
         site_startup(self)
-        if self.locale:
-            locale.setlocale(locale.LC_ALL, self.locale)
+        if self.site_locale:
+            try:
+                locale.setlocale(locale.LC_ALL, self.site_locale)
+            except locale.Error as e:
+                self.logger.warning("%s : %s", self.site_locale, e)
         self.clear_site_config()
 
     def do_site_startup(self):
@@ -3749,7 +3757,7 @@ signature as `django.core.mail.EmailMessage`.
     def format_currency(self, *args, **kwargs):
         """
         Return the given number as a string formatted according to the
-        :attr:`locale` setting on this site.
+        :attr:`site_locale` setting on this site.
 
         All arguments are forwarded to `locale.locale()
         <https://docs.python.org/2/library/locale.html#locale.currency>`__.

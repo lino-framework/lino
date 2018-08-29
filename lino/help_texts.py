@@ -552,11 +552,12 @@ Generates .pdf files from .html templates.
 Requires pisa.
 Usage example see lino_book.projects.pisa."""),
     'lino.modlib.contacts.Partner.invoice_recipient' : _("""The recipient of invoices (invoicing address)."""),
-    'lino.modlib.summaries.Summary' : _("""Abstract base class for all "summary data" models."""),
-    'lino.modlib.summaries.Summary.master' : _("""Any implementing subclass of Summary must define a
-field named master which must be a ForeignKey field.
-The target model of the master will automatically
-receive an action check_summaries.  The mixin also sets
+    'lino.modlib.summaries.TimelessSummary' : _("""Model mixin for all "summary data" models."""),
+    'lino.modlib.summaries.TimelessSummary.master' : _("""Any implementing subclass of TimelessSummary must
+define a field named master which must be a ForeignKey
+field.  The target model of the master will
+automatically receive an action check_summaries.
+The mixin also sets
 allow_cascaded_delete to 'master'."""),
     'lino.modlib.summaries.Summary.summary_period' : _("""Can be 'yearly', 'monthly' or 'timeless'."""),
     'lino.modlib.summaries.ComputeResults' : _("""See Summary.compute_results()"""),

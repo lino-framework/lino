@@ -50,23 +50,84 @@ class UpdateSummariesByMaster(dd.Action):
         ar.set_response(refresh=True)
 
 
-class Summary(dd.Model):
+class SimpleSummary(dd.Model):
+    
+    class Meta(object):
+        abstract = True
+        
+    allow_cascaded_delete = 'master'
+    compute_results = ComputeResults()
+    
+    @classmethod
+    def get_summary_master_model(cls):
+        return cls._meta.get_field('master').remote_field.model
+
+    @classmethod
+    def get_summary_masters(cls):
+        return cls.get_summary_master_model().objects.all()
+        
+    def get_summary_collectors(self):
+        raise NotImplementedError()
+
+    def reset_summary_data(self):
+        pass
+
+    def get_summary_querysets(self):
+        return []
+
+    @classmethod
+    def get_for_master(cls, master, **flt):
+        qs = cls.objects.filter(master=master, **flt)
+        count = qs.count()
+        if count > 1:
+            # Theoretically this should never happen. There cannot be
+            # more than one object for a given master and period.
+            qs.delete()
+            count = 0
+        if count == 0:
+            return cls(master=master, **flt)
+        return qs[0]
+        
+    @classmethod
+    def update_for_master(cls, master):
+        obj = cls.get_for_master(master)
+        obj.compute_summary_values()
+                
+    def compute_summary_values(self):
+        self.reset_summary_data()
+        for collector, qs in self.get_summary_collectors():
+            for obj in qs:
+                collector(obj)
+        self.full_clean()
+        self.save()
+        
+
+# SUMMARY_PERIODS = ['yearly', 'monthly', 'timeless']
+SUMMARY_PERIODS = ['yearly', 'monthly']
+
+        
+class Summary(SimpleSummary):
     class Meta(object):
         abstract = True
 
-    allow_cascaded_delete = 'master'
-    
     # summary_period = 'yearly'
     summary_period = 'monthly'
 
     year = models.IntegerField(_("Year"), null=True, blank=True)
     month = models.IntegerField(_("Month"), null=True, blank=True)
 
-    compute_results = ComputeResults()
 
     # def __init__(self, *args, **kwargs):
     #     self.reset_summary_data()
     #     super(Summary, self). __init__(*args, **kwargs)
+
+    @classmethod
+    def on_analyze(cls, site):
+        if cls.summary_period not in SUMMARY_PERIODS:
+            raise Exception(
+                "Invalid summary_period {!r} for {}".format(
+                    cls.summary_period, cls))
+    
 
     @classmethod
     def get_summary_periods(cls):
@@ -83,49 +144,14 @@ class Summary(dd.Model):
 
     @classmethod
     def get_for_period(cls, master, year, month):
-        qs = cls.objects.filter(master=master, year=year, month=month)
-        count = qs.count()
-        if count > 1:
-            # Theoretically this should never happen. There cannot be
-            # more than one object for a given master and period.
-            qs.delete()
-            count = 0
-        if count == 0:
-            return cls(master=master, year=year, month=month)
-        return qs[0]
+        return cls.get_for_master(master, year=year, month=month)
 
-    @classmethod
-    def get_summary_master_model(cls):
-        return cls._meta.get_field('master').remote_field.model
-
-    @classmethod
-    def get_summary_masters(cls):
-        return cls.get_summary_master_model().objects.all()
-        
     @classmethod
     def update_for_master(cls, master):
         for year, month in cls.get_summary_periods():
             obj = cls.get_for_period(master, year, month)
             obj.compute_summary_values()
                 
-    def get_summary_collectors(self):
-        raise NotImplementedError()
-
-    def reset_summary_data(self):
-        pass
-
-    def get_summary_querysets(self):
-        return []
-
-    def compute_summary_values(self):
-        self.reset_summary_data()
-        for collector, qs in self.get_summary_collectors():
-            for obj in qs:
-                collector(obj)
-
-        self.full_clean()
-        self.save()
-
     def add_date_filter(self, qs, fldname, **kwargs):
         if self.year is not None:
             kwargs[fldname+'__year'] = self.year

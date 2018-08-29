@@ -811,7 +811,9 @@ class CharFieldElement(FieldElement):
 
     def __init__(self, *args, **kw):
         FieldElement.__init__(self, *args, **kw)
-        self.preferred_width = 1 + min(20, max(3, self.field.max_length or 0))
+        if self.preferred_width is None:  # 20180828
+            self.preferred_width = 1 + min(
+                20, max(3, self.field.max_length or 0))
 
     def get_field_options(self, **kw):
         kw = FieldElement.get_field_options(self, **kw)
@@ -1382,6 +1384,11 @@ class DisplayElement(FieldElement):
     def value2html(self, ar, v, **cellattrs):
         try:
             if etree.iselement(v) and v.tag == 'div':
+            # if etree.iselement(v):
+            #     if v.tag == 'div':
+            #         return E.td(*[child for child in v], **cellattrs)
+            #     if v.tag == 'td':
+            #         return v
                 return E.td(*[child for child in v], **cellattrs)
             return E.td(v, **cellattrs)
         except Exception as e:
@@ -2288,9 +2295,15 @@ def field2elem(layout_handle, field, **kw):
     if isinstance(field, models.OneToOneField):
         # logger.info("20180712 field2elem OneToOneField %s", field)
         return GenericForeignKeyElement(layout_handle, field, **kw)
+    # kw = layout_handle.layout._datasource.get_widget_options(
+    #     field.name, **kw)
+    # if field.name == 'item_ref':
+    #     print("20180828", kw)
+    
     rnd = layout_handle.ui.renderer
     holder = layout_handle.layout.get_chooser_holder()
     ch = holder.get_chooser_for_field(field.name)
+
     if ch:
         if ch.can_create_choice or not ch.force_selection:
             kw.update(forceSelection=False)

@@ -602,7 +602,8 @@ method in order to sort the rows of the queryset.
 
     @classmethod
     def get_filter_kw(self, ar, **kw):
-        """Return a dict with the "master keywords" for this table
+        """
+        Return a dict with the "master keywords" for this table
         and a given `master_instance`.
         
         For example, if you have two models :class:`Book` and
@@ -614,17 +615,15 @@ method in order to sort the rows of the queryset.
         <lino.core.requests.BaseRequest.master_instance>`.
 
         Another example is
-        :class:`lino_xl.lib.tickets.models.EntriesBySession`, where
-        blog entries are not directly linked to a session, but in the
+        :class:`lino_xl.lib.tickets.EntriesBySession`, where blog
+        entries are not directly linked to a session, but in the
         detail of a session we want to display a table of related blog
         entries.
 
-        :class:`lino_xl.lib.households.models.SiblingsByPerson`
-        Household members are not directly linked to a Person, but
-        usually a Person is member of exactly one household, and in
-        the Detail of a Person we want to display the members of that
-        household.
-
+        :class:`lino_xl.lib.households.SiblingsByPerson` Household
+        members are not directly linked to a Person, but usually a
+        Person is member of exactly one household, and in the Detail
+        of a Person we want to display the members of that household.
         """
         from lino.core.gfks import gfk2lookup, GenericForeignKey
         master_instance = ar.master_instance

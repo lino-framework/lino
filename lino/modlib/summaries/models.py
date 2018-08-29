@@ -1,21 +1,21 @@
-# Copyright 2016-2018 Luc Saffre
+# Copyright 2016-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 
 from __future__ import unicode_literals, print_function
 
 from django.conf import settings
-from django.db import models
+# from django.db import models
 from lino.api import dd, rt, _
 
-from .mixins import UpdateSummariesByMaster, Summary
+from .mixins import UpdateSummariesByMaster, SimpleSummary
 
 
 class CheckSummaries(dd.Action):
     label = _("Update all summary data")
 
     def run_from_ui(self, ar, fix=None):
-        for sm in rt.models_by_base(Summary, toplevel_only=True):
+        for sm in rt.models_by_base(SimpleSummary, toplevel_only=True):
             sm.objects.all().delete()
         for mm, summary_models in get_summary_models().items():
             for sm in summary_models:
@@ -35,15 +35,9 @@ def set_summary_actions(sender, **kw):
             check_summaries=UpdateSummariesByMaster(
                 mm, summary_models))
 
-SUMMARY_PERIODS = ['yearly', 'monthly', 'timeless']
-
 def get_summary_models():
     summary_masters = dict()
-    for sm in rt.models_by_base(Summary, toplevel_only=True):
-        if sm.summary_period not in SUMMARY_PERIODS:
-            raise Exception(
-                "Invalid summary_period {!r} for {}".format(
-                    sm.summary_period, sm))
+    for sm in rt.models_by_base(SimpleSummary, toplevel_only=True):
         mm = sm.get_summary_master_model()
         lst = summary_masters.setdefault(mm, [])
         lst.append(sm)

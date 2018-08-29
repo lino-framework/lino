@@ -930,6 +930,11 @@ class ParameterStore(BaseStore):
         for fld in self.param_fields:
             v = pv.get(fld.name, None)
             fld.value2dict(ar, v, d, None)
+            # try:
+            #     v = pv.get(fld.name, None)
+            #     fld.value2dict(ar, v, d, None)
+            # except Exception as e:
+            #     raise e.__class__("{} : {}".format(fld, e))
         return d
 
     def pv2list(self, ar, pv, **d):  # new since 20140930

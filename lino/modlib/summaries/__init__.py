@@ -1,4 +1,4 @@
-# Copyright 2016-2018 Luc Saffre
+# Copyright 2016-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """A framework for defining and managing summary tables.
