@@ -1,0 +1,19 @@
+<MenuButton
+        class="lino_MenuButton"
+        buttonMode="Split"
+        defaultAction="onPressAction"
+        {% if ba.action.ui5_icon_name -%}
+        icon="{{ba.action.ui5_icon_name}}"
+        {%- else -%}
+        text="{{ba.action.label}}"
+        {% endif %}
+        tooltip="{{ba.action.help_text}}"
+        >
+<customData>
+<core:CustomData
+        key="action_name"
+        value="{{ba.action.label}}"/>
+</customData>
+<menu>
+<Menu itemSelected="UNUSED_onMenuAction">
+    <items>

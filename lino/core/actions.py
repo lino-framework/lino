@@ -167,6 +167,7 @@ class Action(Parametrizable, Permittable):
     disable_primary_key = True
     keep_user_values = False
     icon_name = None
+    ui5_icon_name = None
     hidden_elements = frozenset()
     combo_group = None
     parameters = None
@@ -477,6 +478,7 @@ class ShowDetail(Action):
     action_name = 'detail'
     label = _("Detail")
     icon_name = 'application_form'
+    ui5_icon_name = "sap-icon://detail-view"
     opens_a_window = True
     show_in_workflow = False
     save_action_name = 'submit_detail'
@@ -546,7 +548,8 @@ class ShowInsert(TableAction):
         # button_text = u"❏"  # 274F Lower right drop-shadowed white square
         # button_text = u"⊞"  # 229e SQUARED PLUS
         button_text = u"⊕"  # 2295 circled plus
-        
+
+    ui5_icon_name = "sap-icon://add"
     help_text = _("Insert a new record")
     
     show_in_workflow = False
@@ -853,7 +856,8 @@ class DeleteSelected(MultipleRowAction):
     else:
         button_text = u"⊖"  # 2296 CIRCLED MINUS	
         # button_text = u"⊟"  # 229F SQUARED MINUS
-        
+
+    ui5_icon_name = 'sap-icon://less'
     help_text = _("Delete this record")
     auto_save = False
     sort_index = 30

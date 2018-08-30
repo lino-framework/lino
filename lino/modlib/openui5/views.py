@@ -762,7 +762,9 @@ class Connector(View):
                     ct = ContentType.objects.get_for_model(m).pk
                     context.update(content_type=ct)
 
+            ba_actions = ar.actor.get_toolbar_actions(ar.bound_action.action)
             context.update({
+                'ba_actions': ba_actions,
                 "actor": actor,
                 "columns": columns,
                 "actions": actor.get_actions(),

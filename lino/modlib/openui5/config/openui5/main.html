@@ -4,6 +4,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="utf-8"/>
     <title>{% block title %}{{site.title or site.verbose_name}}{% endblock %}</title>
+    <link rel="stylesheet" href="/static/openui5/css/lino.css">
+
+    <link rel="stylesheet" href="/static/openui5/fa/css/all.css">
+
     <!--<link rel="stylesheet" href="{{site.build_static_url('bootstrap.css')}}" type="text/css">-->
     <script src="https://openui5nightly.hana.ondemand.com/resources/sap-ui-core.js"
             id="sap-ui-bootstrap"
@@ -18,8 +22,13 @@
             "lino.fragment":"./ui/fragment",
             "openui5" : "./static/openui5/openui5-CKEditor/openui5/"
             }'></script>
+
     <script src="/static/openui5/js/lino.js"></script>
+    <script src="/static/openui5/js/fa_ui5.js"></script>
     <script src="/static/zlib/zlib.min.js"></script>
+
+    <!--<script src="https://cdn.jsdelivr.net/npm/font-awesome-openui5@^3"></script>-->
+
     <script>
         jQuery.sap.registerModulePath('openui5', './static/openui5/openui5-CKEditor/openui5/');
         jQuery.sap.require("openui5.CKEditor");
@@ -27,8 +36,17 @@
             // https://github.com/SAP/openui5/issues/1535
             // To allow ch as a valid CSS width for tables and other elements.
         sap.ui.require(
-            ['sap/ui/core/library', 'sap/ui/base/DataType',],
-            function (library, DataType) {
+            ['sap/ui/core/library', 'sap/ui/base/DataType', 'sap/ui/core/IconPool'],
+            function (library, DataType, IconPool) {
+
+                IconPool.addIcon("branch","fa", { fontFamily: "Font Awesome 5 Solid", content: "f126" });
+                //
+                // IconPool.addIcon("angry", "fa", {
+                //         fontFamily : "Font Awesome 5 Free",
+                //         content : "f556"
+                //         });
+                console.log(IconPool.getIconCollectionNames())
+
                 library.CSSSize = DataType.createType(
                     'sap.ui.core.CSSSize', {
                         isValid: function () {
@@ -46,6 +64,8 @@
             });
         });
     </script>
+
+
 </head>
 <body id="content" class="sapUiBody">
 

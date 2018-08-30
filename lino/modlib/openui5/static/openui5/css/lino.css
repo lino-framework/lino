@@ -1,0 +1,29 @@
+.sapUiIcon::before {
+ content:attr(data-sap-ui-icon-content);
+ speak:none;
+ font-weight:inherit !important;
+ -webkit-font-smoothing:antialiased
+}
+
+/*Only needed if useign the toolheaders for responsive table, if toolbar is seperate, not needed
+  Todo: Have this rule only apply to responive table headers.
+*/
+/*.lino_MenuButton .sapMBtnInner {
+    border-color: inherit !important;
+}*/
+
+.lino_MenuButton.sapMMenuBtn.sapMMenuBtnSplit .sapMSBActive:not(.sapMBtnDisabled) > .sapMBtnInner .sapMBtnIcon {
+ color: inherit;
+}
+
+.lino_IconTabBar{
+  position: relative !important;
+}
+
+.lino_IconTabBar.sapMITBStretch > .sapMITBContainerContent > .sapMITBContent{
+ position: relative;
+}
+
+.lino_Toolbar{
+ background-color: #eff4f9 !important;
+}

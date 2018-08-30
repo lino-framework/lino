@@ -1,0 +1,47 @@
+<Button icon="sap-icon://close-command-field"
+        tooltip="First page"
+        press="onFirstPress">
+    <layoutData>
+        <OverflowToolbarLayoutData priority="NeverOverflow"/>
+    </layoutData>
+</Button>
+<Button icon="sap-icon://navigation-left-arrow"
+        tooltip="Previous page"
+
+        press="onPrevPress"
+>
+<layoutData>
+    <OverflowToolbarLayoutData priority="NeverOverflow"/>
+</layoutData>
+</Button>
+<Input
+value="{meta>/page}"
+width="4ch"
+fieldWidth="60%"
+align="center"
+liveChange="onPagerInputChange">
+<layoutData>
+    <OverflowToolbarLayoutData priority="NeverOverflow"/>
+</layoutData>
+</Input>
+<Label text="of {meta>/page_total}">
+<layoutData>
+    <OverflowToolbarLayoutData priority="NeverOverflow"/>
+</layoutData>
+</Label>
+
+<Button icon="sap-icon://navigation-right-arrow"
+        tooltip="Next page"
+        press="onNextPress">
+<layoutData>
+    <OverflowToolbarLayoutData priority="NeverOverflow"/>
+</layoutData>
+</Button>
+<Button icon="sap-icon://open-command-field"
+        tooltip="Last page"
+        press="onLastPress"
+>
+<layoutData>
+    <OverflowToolbarLayoutData priority="NeverOverflow"/>
+</layoutData>
+</Button>

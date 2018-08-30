@@ -1,0 +1,31 @@
+{# bbar generation #}
+    {% set var = namespace() %}
+    {% set var.previous_group = None %}
+
+    {% for ba in ba_actions %}
+        {% set var.current_group = ba.action.combo_group %}
+        {{ba.action.label| p}}
+        {{ var.current_group | p }}
+        {{ var.previous_group | p }}
+        {% if var.previous_group != var.current_group %}
+            {% if var.current_group == None or (var.previous_group != None and var.current_group != None )%}
+                {% include "openui5/template_fragments/bbar/menu_button_close.xml" %}
+            {% endif %}
+            {% if var.previous_group == None or (var.previous_group != None and var.current_group != None ) %}
+                {% include "openui5/template_fragments/bbar/menu_button_open.xml" %}
+            {% endif %}
+        {% endif %}
+
+        {% if var.current_group %}
+            {% include "openui5/template_fragments/bbar/menuItem.xml" %}
+        {% else %}
+            {% include "openui5/template_fragments/bbar/button.xml" %}
+        {% endif %}
+
+        {% set var.previous_group = var.current_group %}
+        {{ var.previous_group | p }}
+    {% endfor %}
+
+    {% if var.previous_group %}
+        {% include "openui5/template_fragments/bbar/menu_button_close.xml" %}
+    {% endif %}

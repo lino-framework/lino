@@ -1,0 +1,20 @@
+{% if ba.action.ui5_icon_name -%}
+<OverflowToolbarButton
+        icon="{{ba.action.ui5_icon_name}}"
+        text="{{ba.action.label}}"
+        {%- else -%}
+<Button
+        text="{{ba.action.label}}"
+        {% endif %}
+        tooltip="{{ba.action.help_text}}"
+        >
+    <customData>
+        <core:CustomData
+                key="action_name"
+                value="{{ba.action.label}}"/>
+    </customData>
+{% if ba.action.ui5_icon_name -%}
+</OverflowToolbarButton>
+{% else %}
+</Button>
+{% endif %}

@@ -4,23 +4,6 @@
 {% block view_attributes %} 	class="sapUiSizeCompact" height="100%" {% endblock %}
 {% block view_content %}
 
-<OverflowToolbar>
-                    {% for ba in ba_actions %}
-                    <Button
-                            text="{{ba.action.label}}"
-                            press="onPressAction"
-                    customData:action_url="{{actor.app_label}}/{{actor.__name__}}/">
-                        <customData>
-                            <core:CustomData
-                                    key="action_name"
-                                    value="{{ba.action.action_name}}"/>
-							<core:CustomData
-                                    key="action_method"
-                                    value="{{ba.action.http_method}}"/>
-                        </customData>
-                    </Button>
-                    {% endfor %}
-			</OverflowToolbar>
 
 	<Page
 		showHeader="true"
@@ -35,7 +18,20 @@
 		customData:url="/restful/{{actor.app_label}}/{{actor.__name__}}/"
 	>
 		<content>
-							{% include main.oui5_field_template %}
+			<OverflowToolbar class="lino_Toolbar">
+				<SearchField
+						id="searchField"
+						tooltip="{i18n>worklistSearchTooltip}"
+						search="onSearch"
+						width="auto">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow"/>
+					</layoutData>
+				</SearchField>
+				<ToolbarSpacer width="5ch"/>
+				{% include "openui5/template_fragments/bbar/main.xml" %}
+			</OverflowToolbar>
+		{% include main.oui5_field_template %}
 
 		</content>
 	</Page>

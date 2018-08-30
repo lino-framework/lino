@@ -18,6 +18,7 @@ class ShowAsHtml(dd.Action):
     label = _("HTML")
     help_text = _('Show this table in Bootstrap3 interface')
     icon_name = 'html'
+    ui5_icon_name = 'sap-icon://attachment-html'
     sort_index = -15
     select_rows = False
     default_format = 'ajax'

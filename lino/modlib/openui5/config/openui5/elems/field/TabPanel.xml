@@ -4,7 +4,7 @@
 		headerMode="Inline"
 		upperCase="true"
 		expanded="{device>/isNoPhone}" #}
-		class="sapUiResponsiveContentPadding">
+		class="sapUiResponsiveContentPadding lino_IconTabBar">
 		<items>
 			{% for e in main.elements %}
 		        {% if e.get_view_permission(ar.get_user().user_type) %}

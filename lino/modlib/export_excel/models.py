@@ -90,6 +90,7 @@ class ExportExcelAction(actions.Action):
     label = _("Export to .xls")
     help_text = _('Export this table as an .xls document')
     icon_name = 'page_excel'
+    ui5_icon_name = 'sap-icon://excel-attachment'
     sort_index = -5
     select_rows = False
     default_format = 'ajax'

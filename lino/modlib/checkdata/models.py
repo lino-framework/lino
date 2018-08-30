@@ -31,6 +31,7 @@ from .roles import CheckdataUser
 
 class UpdateProblem(dd.Action):
     icon_name = 'bell'
+    ui5_icon_name = "sap-icon://bell"
     label = _("Check data")
     combo_group = "checkdata"
     fix_them = False
@@ -77,6 +78,7 @@ class UpdateProblemsByController(dd.Action):
 
     """
     icon_name = 'bell'
+    ui5_icon_name = "sap-icon://bell"
     label = _("Check data")
     combo_group = "checkdata"
     fix_them = False

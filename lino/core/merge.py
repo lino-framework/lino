@@ -60,6 +60,8 @@ class MergeAction(actions.Action):
     """
     label = _("Merge")
     icon_name = 'arrow_join'
+    ui5_icon_name = "sap-icon://font-awesome-solid/code-branch"
+    # ui5_icon_name = "sap-icon://detail-view"
     sort_index = 31
     show_in_workflow = False
     readonly = False

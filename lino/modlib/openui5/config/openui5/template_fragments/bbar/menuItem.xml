@@ -1,0 +1,13 @@
+<MenuItem
+        {% if ba.action.ui5_icon_name -%}
+        icon="{{ba.action.ui5_icon_name}}"
+        {% endif %}
+        text="{{ba.action.label}}"
+        tooltip="{{ba.action.help_text}}"
+        >
+<customData>
+<core:CustomData
+        key="action_name"
+        value="{{ba.action.label}}"/>
+</customData>
+        </MenuItem>
