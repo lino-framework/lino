@@ -17,10 +17,11 @@
 from atelier import sphinxconf
 
 def configure(globals_dict, settings_module_name=None):
-    """Same as :func:`atelier.sphinxconf.configure` but with an additional
-    positional parameter `settings_module_name`.  If this is
-    specified, call lino startup on it.
-
+    """
+    Same as :func:`atelier.sphinxconf.configure` but with an
+    additional positional argument `settings_module_name` (the name of
+    a Django settings module).  If this argument is specified, call
+    :meth:`lino.startup` with it.
     """
     if settings_module_name is not None:
         from lino import startup

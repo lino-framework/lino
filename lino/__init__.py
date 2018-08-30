@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2002-2018 Luc Saffre
+# Copyright 2002-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
@@ -93,14 +93,19 @@ else:
     raise Exception("Unsupported Django version %s" % VERSION)
 
 
-# def startup(settings_module=None, is_testing=True):
 def startup(settings_module=None):
-    """Start up Django and Lino.
+    """
+    Start up Django and Lino.
+
+    Optional `settings_module` is the name of a Django settings
+    module.  If this is specified, set the
+    :envvar:`DJANGO_SETTINGS_MODULE` environment variable.
 
     This is called automatically when a process is invoked by an
     *admin command*.
 
-    For testable documents you need to call it manually using e.g.:
+    In a document to be tested using :cmd:`doctest` you need to call
+    it manually using e.g.:
 
     >>> import lino
     >>> lino.startup('my.project.settings')
@@ -110,21 +115,12 @@ def startup(settings_module=None):
 
     >>> import os
     >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'my.project.settings'
-
     """
-    # globals().update(is_testing=is_testing)
-    # print("20171110 is_testing is {}".format(is_testing))
-    # raise Exception("20171110 is_testing is {}".format(is_testing))
-    # print("20160711 startup")
-    # logger.info("20160711 startup")
     if settings_module:
         os.environ['DJANGO_SETTINGS_MODULE'] = settings_module
 
     import django
     django.setup()
-    
-    # print("20160711 startup done")
-    # logger.info("20160711 startup done")
 
 
 class AppConfig(AppConfig):
