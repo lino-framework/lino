@@ -22,28 +22,6 @@ from lino.modlib.printing.mixins import Printable
 from .roles import Helper, AuthorshipTaker
 
 
-# class TimezoneHolder(models.Model):
-#     class Meta(object):
-#         abstract = True
-
-#     if settings.USE_TZ:
-#         timezone = models.CharField(_("Time zone"), max_length=15, blank=True)
-#     else:
-#         timezone = dd.DummyField()
-
-#     # @dd.chooser(simple_values=True)
-#     # def timezone_choices(cls, partner):
-#     #     import pytz
-#     #     if partner and partner.country:
-#     #         return pytz.country_timezones[partner.country.isocode]
-#     #     return pytz.common_timezones
-
-
-#     @dd.chooser(simple_values=True)
-#     def timezone_choices(cls):
-#         import pytz
-#         return pytz.common_timezones
-
 
 class Authored(Printable):
     class Meta(object):
@@ -159,8 +137,6 @@ class UserAuthored(Authored):
         # return self.user.timezone or settings.TIME_ZONE
 
 
-AutoUser = UserAuthored  # old name for backwards compatibility
-
 
 class My(dbtables.Table):
     """Mixin for tables on :class:`Authored` which sets the requesting
@@ -194,58 +170,48 @@ class My(dbtables.Table):
         kw['user'] = ar.get_user()
         return kw
 
+class UpdatePlan(dd.Action):
+    
+    label = _("Update plan")
+    icon_name = 'lightning'
 
-# class ByUser(dbtables.Table):
-#     """Deprecated mixin for slave tables whose master is the requesting
-#     user.
-
-#     """
-#     master_key = 'user'
-#     #~ details_of_master_template = _("%(details)s of %(master)s")
-#     details_of_master_template = _("%(details)s")
-
-#     @classmethod
-#     def get_actor_label(self):
-#         if self.model is None:
-#             return self._label or self.__name__
-#         return self._label or \
-#             _("My %s") % self.model._meta.verbose_name_plural
-
-#     @classmethod
-#     def setup_request(self, ar):
-#         #~ logger.info("ByUser.setup_request")
-#         if ar.master_instance is None:
-#             u = ar.get_user()
-#             if not isinstance(u, AnonymousUser):
-#                 ar.master_instance = u
-#         super(ByUser, self).setup_request(ar)
-
-#     @classmethod
-#     def get_view_permission(self, user_type):
-#         if not user_type.has_required_roles([SiteUser]):
-#             return False
-#         return super(ByUser, self).get_view_permission(user_type)
-
-# if settings.SITE.user_model is None:
-
-#     # dummy Table for userless sites
-#     ByUser = dbtables.Table
+    def run_from_ui(self, ar, **kw):
+        for plan in ar.selected_rows:
+            plan.update_plan(ar)
+        ar.success(refresh=True)
 
 
-# class AuthorAction(actions.Action):
-#     """Mixin for actions that are reserved to the author of the database
-#     object.
+class UserPlan(UserAuthored):
+    class Meta:
+        abstract = True
 
-#     """
-#     manager_roles_required = dd.login_required(SiteStaff)
+    today = models.DateField(
+        _("Today"), default=dd.today)
+    
+    update_plan_button = UpdatePlan()
+    
+    @classmethod
+    def start_plan(cls, user, **options):
+        try:
+            plan = cls.objects.get(user=user)
+            changed = False
+            for k, v in options.items():
+                if getattr(plan, k) != v:
+                    changed = True
+                    setattr(plan, k, v)
+            if 'today' not in options:
+                if plan.today != dd.today():
+                    plan.today = dd.today()
+                    changed = True
+            if changed:
+                plan.items.all().delete()
+        except cls.DoesNotExist:
+            plan = cls(user=user, **options)
+        plan.save()
+        return plan
 
-#     def get_action_permission(self, ar, obj, state):
-#         user = ar.get_user()
-#         if obj.user != user and \
-#            not user.user_type.has_required_roles(self.manager_roles_required):
-#             return self.readonly
-#         return super(
-#             AuthorAction, self).get_action_permission(ar, obj, state)
+    def update_plan(self, ar):
+        pass
 
    
 class AssignToMe(dd.Action):
