@@ -110,7 +110,7 @@ def table2html(ar, as_main=True):
         """
         page = int(old_div(ar.offset, pglen)) + 1
 
-    ar.dump2html(t, ar.sliced_data_iterator)
+    ar.dump2html(t, ar.sliced_data_iterator, header_links=as_main)
     if not as_main:
         url = ar.get_request_url()  # open in own window
         return E.div(

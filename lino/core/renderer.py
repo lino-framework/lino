@@ -160,20 +160,21 @@ class HtmlRenderer(Renderer):
         """
         return html
 
-    def table2story(self, ar, nosummary=False, stripped=True, **kw):
+    def table2story(self, ar, nosummary=False, stripped=True,
+                    show_links=False, **kwargs):
         """
         Returns a HTML element representing the given action request as a
         table. See :meth:`ar.show
         <lino.core.request.BaseRequest.show>`.
 
-        This silently ignores the parameter `stripped` since for HTML
-        this has no meaning.
+        Silently ignores the parameters `stripped` and `header_links`
+        since for HTML these options have no meaning.
         """
         # if ar.actor.master is not None and not nosummary:
         if not nosummary:
             if ar.actor.display_mode == 'summary':
                 return ar.actor.get_table_summary(ar.master_instance, ar)
-        return ar.table2xhtml(**kw)
+        return ar.table2xhtml(**kwargs)
 
     def request_handler(self, ar, *args, **kw):
         """Return a string with Javascript code that would run the given
@@ -189,6 +190,9 @@ class HtmlRenderer(Renderer):
         """
         if ba is None:
             ba = obj.get_detail_action(ar)
+        # print(20180831, ar.actor)
+        # ba = obj.__class__.get_default_table().detail_action
+        # print(20180831, ba.get_view_permission(ar.get_user().user_type))
         if ba is not None:
             return self.action_call(ar, ba, dict(record_id=obj.pk))
 
@@ -417,9 +421,9 @@ request `tar`."""
             ba, uri, label, title or ba.action.help_text, **kw)
 
     def show_story(self, ar, story, stripped=True, **kwargs):
-        """Render the given story as an HTML element. Ignore `stripped`
+        """
+        Render the given story as an HTML element. Ignore `stripped`
         because it makes no sense in HTML.
-
         """
         from lino.core.actors import Actor
         from lino.core.tables import TableRequest
@@ -548,8 +552,8 @@ class TextRenderer(HtmlRenderer):
         print(self.table2story(*args, **kwargs))
 
     def table2story(self, ar, column_names=None, header_level=None,
-                    nosummary=False, stripped=True, show_links=False,
-                    **kwargs):
+                    header_links=None, nosummary=False, stripped=True,
+                    show_links=False, **kwargs):
         """
         Render the given table request as reStructuredText to stdout.  See
         :meth:`ar.show <lino.core.request.BaseRequest.show>`.

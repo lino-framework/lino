@@ -84,7 +84,7 @@ class JinjaRenderer(MailRenderer):
             ar.renderer = self
 
             t = xghtml.Table()
-            ar.dump2html(t, ar.sliced_data_iterator)
+            ar.dump2html(t, ar.sliced_data_iterator, header_links=False)
 
             #~ print ar.get_total_count()
             return tostring(t.as_element())

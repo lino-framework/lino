@@ -588,17 +588,6 @@ authority"""),
     'lino.modlib.users.UsersOverview' : _("""A variant of Users showing only active users and only some
 fields.  This is used on demo sites in admin_main.html to
 display the list of available users."""),
-    'lino.modlib.users.TimezoneHolder' : _("""Mixin for database models which have a timezone field."""),
-    'lino.modlib.users.TimezoneHolder.timezone' : _("""The timezone."""),
-    'lino.modlib.users.Authored.manager_roles_required' : _("""The list of required roles for getting permission to edit
-other users' work."""),
-    'lino.modlib.users.Authored.author_field_name' : _("""No longer used. The name of the field that defines the author
-of this object."""),
-    'lino.modlib.users.UserAuthored' : _("""Mixin for models that have a user field which points to
-the "author" of this object. The default user of new instances is
-automatically set to the requesting user."""),
-    'lino.modlib.users.UserAuthored.user' : _("""The author of this object.
-A pointer to lino.modlib.users.models.User."""),
     'lino.modlib.users.UserTypes' : _("""The list of user types available in this application."""),
     'lino.modlib.users.UserType' : _("""Base class for all user types."""),
     'lino.modlib.users.UserType.role' : _("""The role of users having this type. This is an instance of
@@ -624,4 +613,20 @@ yet. And SiteAdmin users don't need to specify this at all."""),
 authenticates as this user when submitted."""),
     'lino.modlib.users.SignOut' : _("""Sign out the current user and return to the welcome screen for
 anonymous visitors."""),
+    'lino.modlib.users.Authored.manager_roles_required' : _("""The list of required roles for getting permission to edit
+other users' work."""),
+    'lino.modlib.users.Authored.author_field_name' : _("""No longer used. The name of the field that defines the author
+of this object."""),
+    'lino.modlib.users.UserAuthored' : _("""Inherits from Authored."""),
+    'lino.modlib.users.UserAuthored.user' : _("""The author of this object.
+A pointer to lino.modlib.users.models.User."""),
+    'lino.modlib.users.UserPlan' : _("""Mixin for anything that represents some plan of a given user on a
+given day.  The mixin makes sure that there is only one instance
+per user.  This instance is considered of low value and to be
+reused frequently."""),
+    'lino.modlib.users.UserPlan.user' : _("""The user who manages this plan."""),
+    'lino.modlib.users.UserPlan.today' : _("""This date of this plan.  This is automatically set to today
+each time the plan is called or updated."""),
+    'lino.modlib.users.UpdatePlan' : _("""Build a new list of suggestions.
+This will remove all current suggestions."""),
 }

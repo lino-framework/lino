@@ -1375,7 +1375,7 @@ class DisplayElement(FieldElement):
         FieldElement.__init__(self, *args, **kw)
         self.preferred_height = self.field.preferred_height
         self.preferred_width = self.field.preferred_width
-        if self.field.max_length:
+        if self.field.max_length is not None:  # might be explicit 0
             self.preferred_width = self.field.max_length
 
     def value_from_object(self, obj, ar):
@@ -2156,13 +2156,13 @@ class GridElement(Container):
         kw = LayoutElement.ext_options(self, **kw)
         return kw
 
-    def headers2html(self, ar, columns, headers, **cellattrs):
+    def headers2html(self, ar, columns, headers, header_links, **cellattrs):
         assert len(headers) == len(columns)
         for i, e in enumerate(columns):
             txt = headers[i]
             # print 20131015, txt
             txt = join_elems(txt.split('\n'), sep=E.br)
-            if ar.renderer.is_interactive:  # and ar.master_instance is None:
+            if header_links and ar.renderer.is_interactive:
                 # print 20130527, ar.order_by
                 if e.sortable and ar.order_by != [e.name]:
                     kw = {constants.URL_PARAM_SORT: e.name}

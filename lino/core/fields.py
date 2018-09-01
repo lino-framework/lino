@@ -315,7 +315,8 @@ class DisplayField(FakeField):
     def __init__(self, verbose_name=None, **kw):
         self.verbose_name = verbose_name
         for k, v in kw.items():
-            assert hasattr(self, k)
+            if not hasattr(self, k):
+                raise Exception("{} has no attribute {}".format(self, k))
             setattr(self, k, v)
 
     # the following dummy methods are never called but needed when

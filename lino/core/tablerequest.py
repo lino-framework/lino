@@ -407,7 +407,7 @@ class TableRequest(ActionRequest):
         return e
 
     def dump2html(self, tble, data_iterator, column_names=None,
-                  show_links=None, hide_sums=None):
+                  show_links=None, header_links=False, hide_sums=None):
         """
         Render this table into an existing
         :class:`etgen.html.Table` instance.
@@ -429,7 +429,8 @@ class TableRequest(ActionRequest):
         if not self.ah.actor.hide_headers:
             headers = [
                 x for x in grid.headers2html(
-                    self, columns, headers, **self.renderer.cellattrs)]
+                    self, columns, headers, header_links,
+                    **self.renderer.cellattrs)]
             if cellwidths and self.renderer.is_interactive:
                 for i, td in enumerate(headers):
                     td.set('width', six.text_type(cellwidths[i]))
@@ -538,6 +539,7 @@ class TableRequest(ActionRequest):
                     #     for c in columns])
                 widths = ["%d" % (col.width or col.preferred_width)
                           for col in columns]
+                # print("20180831 {}".format(widths))
                 #~ 20130415 widths = ["%d%%" % (col.width or col.preferred_width) for col in columns]
                 #~ fields = [col.field._lino_atomizer for col in columns]
                 fields = columns
