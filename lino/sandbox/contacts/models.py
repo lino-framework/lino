@@ -5,7 +5,7 @@
 """
 
 """
-
+import six
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -91,7 +91,7 @@ class Address(CountryCity):
             yield self.addr2
         if self.region:  # format used in Estonia
             if self.city:
-                yield unicode(self.city)
+                yield six.string_types(self.city)
             s = join_words(self.zip_code, self.region)
         else:
             s = join_words(self.zip_code, self.city)
@@ -100,7 +100,7 @@ class Address(CountryCity):
         if self.country is not None:
             sc = get_site_config()
             if not sc.site_company or self.country != sc.site_company.address.country:
-                yield unicode(self.country)
+                yield six.string_types(self.country)
 
     def address_lines(self):
         for ln in self.address_person_lines():
