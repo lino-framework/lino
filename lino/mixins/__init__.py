@@ -334,70 +334,7 @@ class ProjectRelated(model.Model):
             yield p
 
 
-class Referrable(model.Model):
-    """
-    Mixin for things that have a unique reference, i.e. an identifying
-    name used by humans to refer to an individual object.
-
-    A reference, unlike a primary key, can easily be changed.
-
-    .. attribute:: ref
-
-        The reference. This must be either empty or unique.
-    """
-    class Meta(object):
-        abstract = True
-
-    ref_max_length = 40
-    """The maximum length of the :attr:`ref` field."""
-
-    # ref = fields.NullCharField(_("Reference"),
-    #                            max_length=ref_max_length,
-    #                            blank=True, null=True,
-    #                            unique=True)
-
-    ref = models.CharField(
-        _("Reference"), max_length=ref_max_length,
-        blank=True, null=True, unique=True)
-
-    def on_duplicate(self, ar, master):
-        """
-        Before saving a duplicated object for the first time, we must
-        change the :attr:`ref` in order to avoid an IntegrityError.
-        """
-        if self.ref:
-            self.ref += ' (DUP)'
-        super(Referrable, self).on_duplicate(ar, master)
-
-    @classmethod
-    def get_by_ref(cls, ref, default=models.NOT_PROVIDED):
-        """
-        Return the object identified by the given reference.
-        """
-        try:
-            return cls.objects.get(ref=ref)
-        except cls.DoesNotExist:
-            if default is models.NOT_PROVIDED:
-                raise cls.DoesNotExist(
-                    "No %s with reference %r" % (str(cls._meta.verbose_name), ref))
-            return default
-
-    @classmethod
-    def quick_search_filter(cls, search_text, prefix=''):
-        """Overrides the default behaviour defined in
-        :meth:`lino.core.model.Model.quick_search_filter`. For
-        Referrable objects, when quick-searching for a text containing
-        only digits, the user usually means the :attr:`ref` and *not*
-        the primary key.
-
-        """
-        #if search_text.isdigit():
-        if search_text.startswith('*'):
-            return models.Q(**{prefix+'ref__icontains': search_text[1:]})
-        return super(Referrable, cls).quick_search_filter(search_text, prefix)
-
-
-
+from .ref import Referrable, StructuredReferrable
 from lino.mixins.duplicable import Duplicable, Duplicate
 from lino.mixins.sequenced import Sequenced, Hierarchical
 from lino.mixins.periods import DateRange
