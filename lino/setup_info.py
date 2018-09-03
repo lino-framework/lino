@@ -18,7 +18,7 @@ PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3
 
 install_requires = [
-    'Sphinx',
+    'Sphinx','django',
     'atelier', 'unipath', 'python_dateutil', 'dateparser',
     'etgen',
     'Babel', 'lxml',
@@ -39,9 +39,9 @@ install_requires = [
 
 if PY2:
     install_requires.append('reportlab<2.7')
-    install_requires.append('django<2')
+    # install_requires.append('django<2')
 else:
-    install_requires.append('django')
+    # install_requires.append('django')
     install_requires.append('reportlab')
 
 SETUP_INFO = dict(
