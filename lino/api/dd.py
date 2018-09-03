@@ -79,7 +79,7 @@ from lino.core.fields import DisplayField, displayfield, htmlbox
 from lino.core.fields import VirtualField, virtualfield
 from lino.core.fields import RequestField, requestfield
 from lino.core.fields import Constant, constant
-from lino.core.fields import ForeignKey
+from lino.core.fields import ForeignKey, OneToOneField
 from lino.core.fields import CharField
 
 # from lino_xl.lib.appypod.mixins import PrintTableAction
