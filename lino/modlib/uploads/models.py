@@ -12,7 +12,8 @@ logger = logging.getLogger(__name__)
 
 from django.db import models
 from django.conf import settings
-from lino.api import string_concat
+from django.utils.text import format_lazy
+# from lino.api import string_concat
 from django.utils.translation import pgettext_lazy as pgettext
 
 from lino.api import dd, rt, _
@@ -46,9 +47,13 @@ class UploadType(mixins.BabelNamed):
 
     max_number = models.IntegerField(
         _("Max. number"), default=-1,
-        help_text=string_concat(
+        # help_text=string_concat(
+        #     _("No need to upload more uploads than N of this type."),
+        #     "\n",
+        #     _("-1 means no limit.")))
+        help_text=format_lazy(
+            u"{}\n{}",
             _("No need to upload more uploads than N of this type."),
-            "\n",
             _("-1 means no limit.")))
     wanted = models.BooleanField(
         _("Wanted"), default=False,

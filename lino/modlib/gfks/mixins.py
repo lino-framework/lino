@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2010-2017 Luc Saffre
+# Copyright 2010-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 
@@ -9,7 +9,7 @@ from django.contrib.contenttypes.models import *
 from django.conf import settings
 
 from django.utils.translation import ugettext_lazy as _
-from lino.api import string_concat
+from django.utils.text import format_lazy
 
 from lino.api import dd
 from lino.core.gfks import gfk2lookup
@@ -68,13 +68,14 @@ class Controllable(dd.Model):
         ContentType,
         editable=True,
         blank=True, null=True,
-        verbose_name=string_concat(owner_label, ' ', _('(type)')))
+        verbose_name=format_lazy(u"{} {}", owner_label, _('(type)')))
+    
 
     owner_id = GenericForeignKeyIdField(
         owner_type,
         editable=True,
         blank=True, null=True,
-        verbose_name=string_concat(owner_label, ' ', _('(object)')))
+        verbose_name=format_lazy(u"{} {}", owner_label, _('(object)')))
 
     owner = GenericForeignKey(
         'owner_type', 'owner_id',
@@ -102,13 +103,13 @@ class Controllable(dd.Model):
         if verbose_name is not None:
             dd.update_field(cls, 'owner', verbose_name=verbose_name)
             kwargs.update(
-                verbose_name=string_concat(
-                    verbose_name, ' ', _('(object)')))
+                verbose_name=format_lazy(u"{} {}",
+                    verbose_name, _('(object)')))
         dd.update_field(cls, 'owner_id', **kwargs)
         if verbose_name is not None:
             kwargs.update(
-                verbose_name=string_concat(
-                    verbose_name, ' ', _('(type)')))
+                verbose_name=format_lazy(u"{} {}",
+                    verbose_name, _('(type)')))
         dd.update_field(cls, 'owner_type', **kwargs)
 
     def update_owned_instance(self, controllable):

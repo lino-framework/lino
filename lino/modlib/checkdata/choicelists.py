@@ -14,7 +14,7 @@ import six
 from django.utils import translation
 from lino.core.gfks import gfk2lookup
 from lino.core.roles import SiteStaff
-from lino.api import string_concat
+from django.utils.text import format_lazy
 
 from lino.api import dd, rt, _
 
@@ -111,7 +111,8 @@ class Checker(dd.Choice):
         for fixable, msg in self.get_checkdata_problems(obj, fix):
             if fixable:
                 # attn: do not yet translate
-                msg = string_concat(u"(\u2605) ", msg)
+                # msg = string_concat(u"(\u2605) ", msg)
+                msg = format_lazy(u"(\u2605) {}", msg)
             if fixable and fix:
                 done.append(msg)
             else:
