@@ -10,6 +10,7 @@ Requires PyYaml (http://pyyaml.org/), but that's checked for in __init__.
 # from future import standard_library
 # standard_library.install_aliases()
 from builtins import str
+import six
 
 from io import StringIO
 import yaml
