@@ -13,7 +13,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import string_concat
+from lino.api import string_concat
 from django.utils.encoding import force_text
 from django.conf import settings
 from django.db import models

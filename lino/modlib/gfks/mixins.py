@@ -9,7 +9,7 @@ from django.contrib.contenttypes.models import *
 from django.conf import settings
 
 from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import string_concat
+from lino.api import string_concat
 
 from lino.api import dd
 from lino.core.gfks import gfk2lookup

@@ -18,7 +18,7 @@ import decimal
 
 from django.db import models
 from django.utils.translation import ugettext as _
-from django.utils.translation import string_concat
+from lino.api import string_concat
 from django.conf import settings
 from django.db.models.fields.related import \
     ReverseOneToOneDescriptor as SingleRelatedObjectDescriptor

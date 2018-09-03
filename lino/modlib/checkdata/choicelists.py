@@ -14,7 +14,7 @@ import six
 from django.utils import translation
 from lino.core.gfks import gfk2lookup
 from lino.core.roles import SiteStaff
-from django.utils.translation import string_concat
+from lino.api import string_concat
 
 from lino.api import dd, rt, _
 
