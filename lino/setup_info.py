@@ -41,7 +41,7 @@ if PY2:
     install_requires.append('reportlab<2.7')
     install_requires.append('django<2')
 else:
-    install_requires.append('django<2')
+    install_requires.append('django')
     install_requires.append('reportlab')
 
 SETUP_INFO = dict(
