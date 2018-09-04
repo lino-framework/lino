@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 from django.utils.functional import Promise
 from django.utils.translation import ugettext_lazy as _
-from lino.api import string_concat
+from django.utils.text import format_lazy
 from django.db import models
 
 from lino.core import actions
@@ -236,7 +236,7 @@ class ChangeStateAction(actions.Action):
             self.button_text = target_state.button_text
 
         if self.icon_name:
-            self.help_text = string_concat(self.label, '. ', self.help_text)
+            self.help_text = format_lazy(u"{}. {}",self.label,self.help_text)
 
     # def get_action_permission(self, ar, obj, state):
     #     if not super(ChangeStateAction, self).get_action_permission(ar, obj, state):

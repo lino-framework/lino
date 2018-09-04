@@ -79,7 +79,9 @@ from django import VERSION
 
 AFTER17 = True
 AFTER18 = True
+DJANGO2 = True
 if VERSION[0] == 1:
+    DJANGO2 = False
     if VERSION[1] < 10:
         raise Exception("Unsupported Django version %s" % VERSION)
     # if VERSION[1] > 6:

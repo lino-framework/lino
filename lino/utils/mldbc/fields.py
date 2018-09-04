@@ -29,7 +29,7 @@ from django.conf import settings
 from django.db import models
 
 from django.utils.translation import ugettext_lazy as _
-from lino.api import string_concat
+from django.utils.text import format_lazy
 
 from lino.core.fields import RichTextField
 
@@ -42,7 +42,7 @@ def contribute_to_class(field, cls, fieldclass, **kw):
         return
     kw.update(blank=True)
     for lang in settings.SITE.BABEL_LANGS:
-        kw.update(verbose_name=string_concat(
+        kw.update(verbose_name=format_lazy(u"{}{}",
             field.verbose_name, ' (' + lang.django_code + ')'))
         newfield = fieldclass(**kw)
         #~ newfield._lino_babel_field = True

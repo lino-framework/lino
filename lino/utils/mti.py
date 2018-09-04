@@ -22,7 +22,7 @@ from django.utils.translation import ugettext_lazy as _
 from lino.core.utils import resolve_model
 from lino.core.fields import VirtualField
 from lino.core.signals import pre_remove_child, pre_add_child  # , on_add_child
-from lino import AFTER17
+from lino import AFTER17, DJANGO2
 
 
 class ChildCollector(Collector):
@@ -175,7 +175,8 @@ def insert_child(obj, child_model, full_clean=False, **attrs):
     else:
         fields_list = obj._meta.fields
     for field in fields_list:
-        attrs[field.name] = getattr(obj, field.name)
+        if not DJANGO2 or DJANGO2 and not field.primary_key:
+            attrs[field.name] = getattr(obj, field.name)
     new_obj = child_model(**attrs)
     #~ logger.info("20120830 insert_child %s",obj2str(new_obj))
 

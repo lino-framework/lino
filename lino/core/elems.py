@@ -18,7 +18,7 @@ import decimal
 
 from django.db import models
 from django.utils.translation import ugettext as _
-from lino.api import string_concat
+from django.utils.text import format_lazy
 from django.conf import settings
 from django.db.models.fields.related import \
     ReverseOneToOneDescriptor as SingleRelatedObjectDescriptor
@@ -424,11 +424,11 @@ class Spacer(LayoutElement):
 def add_help_text(kw, help_text, title, datasource, fieldname):
     if settings.SITE.use_quicktips:
         if settings.SITE.show_internal_field_names:
-            ttt = "(%s.%s) " % (datasource, fieldname)
+            ttt = "(%s.%s) " % (six.text_type(datasource), fieldname)
         else:
             ttt = ''
         if help_text:
-            ttt = string_concat(ttt, help_text)
+            ttt = format_lazy(u"{}{}",ttt, help_text)
         if ttt:
             # kw.update(qtip=self.field.help_text)
             # kw.update(toolTipText=self.field.help_text)
@@ -616,14 +616,14 @@ class FieldElement(LayoutElement):
                 label = self.label
                 if self.field.help_text:
                     if settings.SITE.use_css_tooltips:
-                        label = string_concat(
+                        label = format_lazy(u"{}{}{}{}{}",
                             '<a class="tooltip" href="#">',
                             label,
                             '<span class="classic">',
                             self.field.help_text,
                             '</span></a>')
                     elif settings.SITE.use_quicktips:
-                        label = string_concat(
+                        label = format_lazy(u"{}{}{}",
                             '<span style="border-bottom: 1px dotted #000000;">',
                             label,
                             '</span>')

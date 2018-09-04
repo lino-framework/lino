@@ -44,7 +44,7 @@ Example on how to use a ChoiceList in your model::
 
 """
 from __future__ import unicode_literals
-from django.utils.encoding import python_2_unicode_compatible
+from django.utils.six import python_2_unicode_compatible,text_type
 from past.builtins import cmp
 from builtins import object
 from builtins import str
@@ -231,7 +231,7 @@ Django creates copies of them when inheriting models.
         # return self.text
         if self.choicelist.show_values:
             return "{0} ({1})".format(self.value, self.text)
-        return str(self.text)
+        return text_type(self.text)
 
     @classmethod
     def get_chooser_for_field(cls, fieldname):

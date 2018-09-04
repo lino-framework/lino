@@ -13,7 +13,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.utils.translation import ugettext_lazy as _
-from lino.api import string_concat
+from django.utils.text import format_lazy
 from django.utils.encoding import force_text
 from django.conf import settings
 from django.db import models
@@ -896,10 +896,9 @@ class DeleteSelected(MultipleRowAction):
             d.update(type=ar.actor.model._meta.verbose_name_plural)
         ar.confirm(
             ok,
-            string_concat(
+            format_lazy(u"{}\n{}",
                 _("You are about to delete %(num)d %(type)s:\n"
                   "%(targets)s") % d,
-                '\n',
                 _("Are you sure ?")))
 
     def run_on_row(self, obj, ar):
