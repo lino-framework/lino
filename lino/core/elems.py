@@ -11,6 +11,7 @@ from builtins import object
 import six
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 from cgi import escape
@@ -26,7 +27,6 @@ from django.db.models.fields.related import \
     ReverseManyToOneDescriptor as ForeignRelatedObjectsDescriptor
 from django.db.models.fields.related import \
     ManyToManyDescriptor as ManyRelatedObjectsDescriptor
-
 
 from django.db.models.fields.related import ManyToManyRel, ManyToOneRel
 from django.db.models.fields import NOT_PROVIDED
@@ -102,7 +102,6 @@ def py2html(obj, name):
 
 
 class GridColumn(jsgen.Component):
-
     """
     The component that generates the JS of a grid column.
     """
@@ -117,7 +116,7 @@ class GridColumn(jsgen.Component):
         kw.update(sortable=editor.sortable)
         # 20171227 in extjs6, editable was not set here:
         kw.update(editable=editor.editable)
-        
+
         kw.update(colIndex=index)
         if editor.hidden:
             kw.update(hidden=True)
@@ -128,7 +127,7 @@ class GridColumn(jsgen.Component):
                     # column
                     kw.update(clearFilter=True)
                 # else:
-                    # print index, "is not 1"
+                # print index, "is not 1"
                 if self.layout_handle.ui.renderer.extjs_version == 3:
                     js = 'new Ext.form.TextField()'
                 else:
@@ -145,7 +144,7 @@ class GridColumn(jsgen.Component):
 
         if settings.SITE.use_gridfilters and editor.gridfilters_settings:
             if isinstance(editor, FieldElement) \
-               and not isinstance(editor.field, fields.VirtualField):
+                    and not isinstance(editor.field, fields.VirtualField):
                 kw = editor.get_gridfilters_settings(kw)
                 # kw.update(filter=editor.gridfilters_settings)
         if isinstance(editor, FieldElement):
@@ -154,10 +153,9 @@ class GridColumn(jsgen.Component):
                 add_help_text(kw,
                               # GridColumn tooltips don't support html
                               self.editor.field.help_text if self.editor.field.help_text and "<" not in self.editor.field.help_text else "",
-                              "", #Title
+                              "",  # Title
                               layout_handle.layout._datasource,
                               self.editor.field.name)
-                
 
             def fk_renderer(fld, name):
                 # FK fields are clickable only if their target has a
@@ -213,6 +211,7 @@ class Toolbar(jsgen.Component):
 class ComboBox(jsgen.Component):
     value_template = 'new Ext.form.ComboBox(%s)'
 
+
 # todo: rename this to Panel, and Panel to PanelElement or sth else
 
 
@@ -250,8 +249,8 @@ class LayoutElement(VisibleComponent):
     oui5_field_template = "openui5/elems/field/FieldElement.xml"
 
     def __init__(self, layout_handle, name, **kw):
-        #logger.debug("LayoutElement.__init__(%r,%r)", layout_handle.layout,name)
-        #self.parent = parent
+        # logger.debug("LayoutElement.__init__(%r,%r)", layout_handle.layout,name)
+        # self.parent = parent
         # name = layout_handle.layout._actor_name + '_' + name
         # if 'hide_sum' in kw:
         #     raise Exception("20180210")
@@ -273,21 +272,21 @@ class LayoutElement(VisibleComponent):
 
         VisibleComponent.__init__(self, name, **kw)
         # if opts:
-            # print "20120525 apply _element_options", opts, 'to', self.__class__, self
+        # print "20120525 apply _element_options", opts, 'to', self.__class__, self
         self.layout_handle = layout_handle
         # if layout_handle is not None:
         # layout_handle.setup_element(self)
         # if isinstance(layout_handle.layout, FormLayout):
         # if self.name.startswith('history_tab'):
         # if isinstance(self, TabPanel):
-            # if isinstance(self, TabPanel):  # self.required_roles:
-            # self.name == 'history_tab':
-            # logger.info(
-            #     "20160908 LayoutElement %r required_roles %r, kw was %r, opts was %r",
-            #   self, self.required_roles, kw, opts)
+        # if isinstance(self, TabPanel):  # self.required_roles:
+        # self.name == 'history_tab':
+        # logger.info(
+        #     "20160908 LayoutElement %r required_roles %r, kw was %r, opts was %r",
+        #   self, self.required_roles, kw, opts)
 
     # def submit_fields(self):
-        # return []
+    # return []
 
     def add_requirements(self, *args):
         super(LayoutElement, self).add_requirements(*args)
@@ -333,18 +332,18 @@ class LayoutElement(VisibleComponent):
     def get_column_options(self, **kw):
         return kw
 
-    def get_gridfilters_settings(self, kw): # 20171227 taken from extjs6
+    def get_gridfilters_settings(self, kw):  # 20171227 taken from extjs6
         if self.gridfilters_settings:
             kw.update(filter=dict(self.gridfilters_settings))
         return kw
 
     def set_parent(self, parent):
         # if self.parent is not None:
-            # raise Exception("%s : parent is already %s, cannot set it to %s" % (self,self.parent,parent))
+        # raise Exception("%s : parent is already %s, cannot set it to %s" % (self,self.parent,parent))
         self.parent = parent
         # if isinstance(parent,FieldSetPanel):
-            # self.label = None
-            # self.update(label = None)
+        # self.label = None
+        # self.update(label = None)
         if self.label:
             if isinstance(parent, Panel):
                 if self.layout_handle.layout.label_align == layouts.LABEL_ALIGN_LEFT:
@@ -378,7 +377,7 @@ class LayoutElement(VisibleComponent):
 
 class ConstantElement(LayoutElement):
     declare_type = jsgen.DECLARE_INLINE
-    #declare_type = jsgen.DECLARE_THIS
+    # declare_type = jsgen.DECLARE_THIS
     # declare_type = jsgen.DECLARE_VAR
     xtype = 'label'
     vflex = True
@@ -392,12 +391,13 @@ class ConstantElement(LayoutElement):
         # self.text = text
 
     # def ext_options(self,**kw):
-        # kw = LayoutElement.ext_options(self,**kw)
-        # kw.update(html=self.text.text)
-        # return kw
+    # kw = LayoutElement.ext_options(self,**kw)
+    # kw.update(html=self.text.text)
+    # return kw
 
     def as_plain_html(self, ar, obj):
         return self.value.get('html')
+
 
 class ButtonElement(LayoutElement):
     declare_type = jsgen.DECLARE_INLINE
@@ -413,11 +413,10 @@ class ButtonElement(LayoutElement):
             scope=js_code('this'))
         LayoutElement.__init__(self, lh, name, **kwargs)
 
-    
 
 class Spacer(LayoutElement):
     declare_type = jsgen.DECLARE_INLINE
-    #xtype = 'label'
+    # xtype = 'label'
     value_template = "new Ext.Spacer(%s)"
 
 
@@ -464,7 +463,7 @@ class FieldElement(LayoutElement):
     stored = True
     filter_type = None  # 'auto'
     active_change_event = 'change'
-    #declaration_order = 3
+    # declaration_order = 3
     # ext_suffix = "_field"wrapper
     zero = 0
     hide_sum = False
@@ -488,11 +487,11 @@ class FieldElement(LayoutElement):
 
         # http://www.rowlands-bcs.com/extjs/tips/tooltips-form-fields
         # if self.field.__doc__:
-            # kw.update(toolTipText=self.field.__doc__)
+        # kw.update(toolTipText=self.field.__doc__)
         # label = field.verbose_name
         # if not self.field.blank:
-            # label = string_concat('<b>',label,'</b>')
-            # label = string_concat(label,' [*]')
+        # label = string_concat('<b>',label,'</b>')
+        # label = string_concat(label,' [*]')
         # kw.update(style=dict(padding=DEFAULT_PADDING))
         # kw.update(style=dict(marginLeft=DEFAULT_PADDING))
         # kw.update(style='padding: 10px')
@@ -504,20 +503,20 @@ class FieldElement(LayoutElement):
 
         # kw.setdefault('label',string_concat('<b>',field.verbose_name,'</b>'))
         # kw.setdefault('label',
-          # ~ string_concat('<span class="ttdef"><a class="tooltip" href="#">',
-            # field.verbose_name,
-            # '<span class="classic">This is a test...</span></a></span>'))
+        # ~ string_concat('<span class="ttdef"><a class="tooltip" href="#">',
+        # field.verbose_name,
+        # '<span class="classic">This is a test...</span></a></span>'))
         # kw.setdefault('label',
-          # ~ string_concat('<div class="ttdef"><a class="tooltip" href="#">',
-            # field.verbose_name,
-            # '<span class="classic">This is a test...</span></a></div>'))
+        # ~ string_concat('<div class="ttdef"><a class="tooltip" href="#">',
+        # field.verbose_name,
+        # '<span class="classic">This is a test...</span></a></div>'))
 
         self.add_default_value(kw)
 
         LayoutElement.__init__(self, layout_handle, field.name, **kw)
 
         # if self.field.__class__.__name__ == "DcAmountField":
-            # print 20130911, self.field, self.editable
+        # print 20130911, self.field, self.editable
 
         if isinstance(field, fields.FakeField) and field.sortable_by:
             self.sortable = True
@@ -539,9 +538,9 @@ class FieldElement(LayoutElement):
         if self.layout_handle.layout.label_align == layouts.LABEL_ALIGN_TOP:
             yield E.br()
         input_classes = "form-control " + self.input_classes if self.input_classes is not None else "form-control"
-        yield E.input(type="text",value=text, **{'class':input_classes})
+        yield E.input(type="text", value=text, **{'class': input_classes})
         # if self.field.help_text:
-            # yield E.span(unicode(text),class_="help-block")
+        # yield E.span(unicode(text),class_="help-block")
         # yield E.p(unicode(elem.field.verbose_name),':',E.br(),E.b(text))
 
     def cell_html(self, ui, row):
@@ -572,11 +571,11 @@ class FieldElement(LayoutElement):
         #     kw.update(header=self.label)
 
         # 20171227 taken from extjs6:
-        if not self.editable:  
+        if not self.editable:
             kw.update(editable=False)
         if not self.sortable:
             kw.update(sortable=False)
-        
+
         w = self.width or self.preferred_width
         # kw.update(width=w*EXT_CHAR_WIDTH)
         kw.update(width=js_code("Lino.chars2width(%d)" % (w + 1)))
@@ -593,7 +592,7 @@ class FieldElement(LayoutElement):
 
         if is_hidden_babel_field(self.field):
             kw.update(hidden=True)
-            
+
         # since 20171227:
         if self.layout_handle.ui.renderer.extjs_version != 3:
             kw.update(labelAlign=self.layout_handle.layout.label_align)
@@ -617,16 +616,16 @@ class FieldElement(LayoutElement):
                 if self.field.help_text:
                     if settings.SITE.use_css_tooltips:
                         label = format_lazy(u"{}{}{}{}{}",
-                            '<a class="tooltip" href="#">',
-                            label,
-                            '<span class="classic">',
-                            self.field.help_text,
-                            '</span></a>')
+                                            '<a class="tooltip" href="#">',
+                                            label,
+                                            '<span class="classic">',
+                                            self.field.help_text,
+                                            '</span></a>')
                     elif settings.SITE.use_quicktips:
                         label = format_lazy(u"{}{}{}",
-                            '<span style="border-bottom: 1px dotted #000000;">',
-                            label,
-                            '</span>')
+                                            '<span style="border-bottom: 1px dotted #000000;">',
+                                            label,
+                                            '</span>')
 
                 kw.update(fieldLabel=label)
         if self.editable:
@@ -699,10 +698,10 @@ class TextFieldElement(FieldElement):
     vflex = True
     # value_template = "new Ext.form.TextArea(%s)"
     xtype = None
-    #width = 60
+    # width = 60
     preferred_width = 60
     preferred_height = 5
-    #collapsible = True
+    # collapsible = True
     separate_window = False
     active_child = False
     format = 'plain'
@@ -710,23 +709,23 @@ class TextFieldElement(FieldElement):
 
     def __init__(self, layout_handle, field, **kw):
         self.format = getattr(field, 'textfield_format', None) \
-            or settings.SITE.textfield_format
+                      or settings.SITE.textfield_format
 
         if layout_handle.ui.renderer.extjs_version == 3:
             self.value_template = "new Ext.form.TextArea(%s)"
         else:
             self.value_template = "Ext.create('Ext.form.TextArea',%s)"
-            
+
         if self.format == 'html':
             if settings.SITE.is_installed('tinymce'):
                 if layout_handle.ui.renderer.extjs_version == 3:
                     self.value_template = "new Lino.RichTextPanel(%s)"
                 else:
                     self.value_template = "Ext.create('Lino.RichTextPanel',%s)"
-                    
+
                 self.active_child = True
                 # if self.label:
-                    # kw.update(title=unicode(self.label))
+                # kw.update(title=unicode(self.label))
                 self.separate_window = True
                 # we don't call FieldElement.__init__ but do almost the same:
                 self.field = field
@@ -761,7 +760,7 @@ class TextFieldElement(FieldElement):
             if False:
                 if isinstance(layout_handle.layout, ColumnsLayout):
                     kw.update(enterIsSpecial=True)
-                
+
         else:
             raise Exception(
                 "Invalid textfield format %r for field %s.%s" % (
@@ -778,8 +777,8 @@ class TextFieldElement(FieldElement):
         yield E.div(
             E.label(str(self.field.verbose_name)),
             E.textarea(text, rows=str(self.preferred_height),
-                       **{'class':"form-control"}),
-            **{'class':"form-group"}
+                       **{'class': "form-control"}),
+            **{'class': "form-group"}
         )
 
     def value2html(self, ar, v, **cellattrs):
@@ -802,6 +801,7 @@ class TextFieldElement(FieldElement):
             return html2text(v)
         return super(TextFieldElement, self).format_value(ar, v)
 
+
 class CharFieldElement(FieldElement):
     filter_type = 'string'
     gridfilters_settings = dict(type='string')
@@ -821,12 +821,12 @@ class CharFieldElement(FieldElement):
         if self.field.max_length is not None:
             if self.field.max_length <= 10:
                 kw.update(boxMinWidth=js_code('Lino.chars2width(%d)' %
-                          self.field.max_length))
+                                              self.field.max_length))
 
         for lino_name, extjs_name in (
-            ('regex', 'regex'),
-            ('mask_re', 'maskRe'),
-            ('strip_chars_re', 'stripCharsRe'),
+                ('regex', 'regex'),
+                ('mask_re', 'maskRe'),
+                ('strip_chars_re', 'stripCharsRe'),
         ):
             v = getattr(self.field, lino_name, None)
             if v is not None:
@@ -852,14 +852,14 @@ class FileFieldElement(CharFieldElement):
     # value_template = "%s"
 
     # def __init__(self,layout_handle,*args,**kw):
-        # CharFieldElement.__init__(self,layout_handle,*args,**kw)
-        # layout_handle.has_upload = True
+    # CharFieldElement.__init__(self,layout_handle,*args,**kw)
+    # layout_handle.has_upload = True
 
     # def get_field_options(self,**kw):
-        # kw = CharFieldElement.get_field_options(self,**kw)
-        # kw.update(emptyText=_('Select a document to upload...'))
-        # ~ # kw.update(buttonCfg=dict(iconCls='upload-icon'))
-        # return kw
+    # kw = CharFieldElement.get_field_options(self,**kw)
+    # kw.update(emptyText=_('Select a document to upload...'))
+    # ~ # kw.update(buttonCfg=dict(iconCls='upload-icon'))
+    # return kw
 
 
 class ComboFieldElement(FieldElement):
@@ -882,7 +882,7 @@ class ComboFieldElement(FieldElement):
         if not isinstance(self.layout_handle.layout, ColumnsLayout) \
                 and not isinstance(self, SimpleRemoteComboFieldElement):
             kw.update(hiddenName=self.field.name +
-                      constants.CHOICES_HIDDEN_SUFFIX)
+                                 constants.CHOICES_HIDDEN_SUFFIX)
         return kw
 
 
@@ -925,9 +925,8 @@ class ChoiceListFieldElement(ChoicesFieldElement):
 
     def get_gridfilters_settings(self, kw):
         kw = super(ChoicesFieldElement, self).get_gridfilters_settings(kw)
-        kw['filter'].update(options = [str(c[1]) for c in self.field.choices])
+        kw['filter'].update(options=[str(c[1]) for c in self.field.choices])
         return kw
-
 
 
 class RemoteComboFieldElement(ComboFieldElement):
@@ -973,9 +972,9 @@ class RemoteComboFieldElement(ComboFieldElement):
 class SimpleRemoteComboFieldElement(RemoteComboFieldElement):
     value_template = "new Lino.SimpleRemoteComboFieldElement(%s)"
     # def get_field_options(self,**kw):
-        # todo : store
-        # ~ # Do never add a hiddenName
-        # return FieldElement.get_field_options(self,**kw)
+    # todo : store
+    # ~ # Do never add a hiddenName
+    # return FieldElement.get_field_options(self,**kw)
 
 
 class ComplexRemoteComboFieldElement(RemoteComboFieldElement):
@@ -988,7 +987,7 @@ class ComplexRemoteComboFieldElement(RemoteComboFieldElement):
 
 
 # class LinkedForeignKeyElement(ComplexRemoteComboFieldElement):
-    # pass
+# pass
 
 def action_name(a):
     if a is None:
@@ -1027,7 +1026,7 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
         kw.update(pageSize=actor.page_length)
         if actor.model is not None:
             kw.update(emptyText=_('Select a %s...') %
-                      actor.model._meta.verbose_name)
+                                actor.model._meta.verbose_name)
         return kw
 
     def cell_html(self, ui, row):
@@ -1075,7 +1074,7 @@ class DateTimeFieldElement(FieldElement):
                 self.value_template = "new Ext.form.DisplayField(%s)"
             else:
                 self.value_template = "Ext.create('Ext.form.DisplayField',%s)"
-            
+
         FieldElement.__init__(self, layout_handle, field, **kw)
 
     def value2html(self, ar, v, **cellattrs):
@@ -1097,7 +1096,6 @@ class DatePickerFieldElement(FieldElement):
 
 
 class DateFieldElement(FieldElement):
-
     input_classes = "DatePickerField"
     if settings.SITE.use_spinner:
         raise Exception("20130114")
@@ -1117,14 +1115,14 @@ class DateFieldElement(FieldElement):
     # ~ grid_column_template = "new Ext.grid.DateColumn(%s)"
 
     # def __init__(self,layout_handle,field,**kw):
-        # ~ if False: # getattr(field,'picker',False):
-            # self.value_template = "new Lino.DatePickerField(%s)"
-        # FieldElement.__init__(self,layout_handle,field,**kw)
+    # ~ if False: # getattr(field,'picker',False):
+    # self.value_template = "new Lino.DatePickerField(%s)"
+    # FieldElement.__init__(self,layout_handle,field,**kw)
 
     # def get_field_options(self,**kw):
-        # kw = FieldElement.get_field_options(self,**kw)
-        # kw.update(format=self.layout_handle.rh.actor.date_format)
-        # return kw
+    # kw = FieldElement.get_field_options(self,**kw)
+    # kw.update(format=self.layout_handle.rh.actor.date_format)
+    # return kw
 
     oui5_field_template = "openui5/elems/field/DateFieldElement.xml"
 
@@ -1152,13 +1150,12 @@ class URLFieldElement(CharFieldElement):
     value_template = "new Lino.URLField(%s)"
 
     # def get_field_options(self,**kw):
-        # kw = FieldElement.get_field_options(self,**kw)
-        # ~ kw.update(vtype='url') #,vtypeText=
-        # return kw
+    # kw = FieldElement.get_field_options(self,**kw)
+    # ~ kw.update(vtype='url') #,vtypeText=
+    # return kw
 
 
 class IncompleteDateFieldElement(CharFieldElement):
-
     """
     Widget for :class:`lino.core.fields.IncompleteDate` fields.
     """
@@ -1166,7 +1163,7 @@ class IncompleteDateFieldElement(CharFieldElement):
     value_template = "new Lino.IncompleteDateField(%s)"
 
     # def __init__(self,*args,**kw):
-        # FieldElement.__init__(self,*args,**kw)
+    # FieldElement.__init__(self,*args,**kw)
 
     def get_field_options(self, **kw):
         # skip CharFieldElement.get_field_options because
@@ -1177,7 +1174,6 @@ class IncompleteDateFieldElement(CharFieldElement):
 
 
 class NumberFieldElement(FieldElement):
-
     """
     Base class for integers, decimals, RequestField,...
     """
@@ -1205,7 +1201,7 @@ class NumberFieldElement(FieldElement):
         return v
 
     # def apply_cell_format(self,e):
-        # e.set('align','right')
+    # e.set('align','right')
 
     def sum2html(self, ar, sums, i, **cellattrs):
         cellattrs.update(align="right")
@@ -1214,8 +1210,8 @@ class NumberFieldElement(FieldElement):
 
     # 20130119b
     # def value2html(self,ar,v,**cellattrs):
-        # cellattrs.update(align="right")
-        # return E.td(self.format_value(ar,v),**cellattrs)
+    # cellattrs.update(align="right")
+    # return E.td(self.format_value(ar,v),**cellattrs)
 
     def get_column_options(self, **kw):
         kw = FieldElement.get_column_options(self, **kw)
@@ -1235,6 +1231,7 @@ class NumberFieldElement(FieldElement):
 
 class DecimalFieldElement(NumberFieldElement):
     zero = decimal.Decimal(0)
+
     # value_template = "new Ext.form.NumberField(%s)"
     # filter_type = 'numeric'
     # gridfilters_settings = dict(type='numeric')
@@ -1245,7 +1242,7 @@ class DecimalFieldElement(NumberFieldElement):
     def __init__(self, *args, **kw):
         FieldElement.__init__(self, *args, **kw)
         self.preferred_width = max(5, self.field.max_digits) \
-            + self.field.decimal_places
+                               + self.field.decimal_places
         # fmt = '0,000'
         # fmt = '0.0'
         # if self.field.decimal_places > 0:
@@ -1258,7 +1255,7 @@ class DecimalFieldElement(NumberFieldElement):
             else:
                 fmt = "0,000"
         else:
-                fmt = "0"
+            fmt = "0"
         if self.field.decimal_places > 0:
             fmt += settings.SITE.decimal_separator
             fmt += "0" * self.field.decimal_places
@@ -1279,7 +1276,6 @@ class DecimalFieldElement(NumberFieldElement):
         return kw
 
 
-
 class IntegerFieldElement(NumberFieldElement):
     preferred_width = 5
     # data_type = 'int'
@@ -1287,6 +1283,7 @@ class IntegerFieldElement(NumberFieldElement):
 
 class AutoFieldElement(NumberFieldElement):
     preferred_width = 5
+
     # data_type = 'int'
 
     def value2num(self, v):
@@ -1316,7 +1313,7 @@ class RequestFieldElement(IntegerFieldElement):
         url = ar.renderer.request_handler(v)
         if url is None:
             return E.td(str(n), **cellattrs)
-        return E.td(E.a(str(n), href='javascript:'+url), **cellattrs)
+        return E.td(E.a(str(n), href='javascript:' + url), **cellattrs)
 
     def format_value(self, ar, v):
         # logger.info("20121116 format_value(%s)", v)
@@ -1328,7 +1325,7 @@ class RequestFieldElement(IntegerFieldElement):
             if n == 0:
                 return ''
         # if n == 12:
-            # logger.info("20120914 format_value(%s) --> %s",v,n)
+        # logger.info("20120914 format_value(%s) --> %s",v,n)
         return ar.href_to_request(v, str(n))
 
     def format_sum(self, ar, sums, i):
@@ -1339,7 +1336,7 @@ class RequestFieldElement(IntegerFieldElement):
 
 
 class QuantityFieldElement(CharFieldElement):
-    
+
     def get_column_options(self, **kw):
         # print 20130125, self.field.name
         kw = super(QuantityFieldElement, self).get_column_options(**kw)
@@ -1384,11 +1381,11 @@ class DisplayElement(FieldElement):
     def value2html(self, ar, v, **cellattrs):
         try:
             if etree.iselement(v) and v.tag == 'div':
-            # if etree.iselement(v):
-            #     if v.tag == 'div':
-            #         return E.td(*[child for child in v], **cellattrs)
-            #     if v.tag == 'td':
-            #         return v
+                # if etree.iselement(v):
+                #     if v.tag == 'div':
+                #         return E.td(*[child for child in v], **cellattrs)
+                #     if v.tag == 'td':
+                #         return v
                 return E.td(*[child for child in v], **cellattrs)
             return E.td(v, **cellattrs)
         except Exception as e:
@@ -1401,13 +1398,14 @@ class DisplayElement(FieldElement):
         return self.field._lino_atomizer.format_value(ar, v)
 
     def as_plain_html(self, ar, obj):
-        #Todo make part of a panel or something so it's aligned with the other elements.
+        # Todo make part of a panel or something so it's aligned with the other elements.
         value = self.value_from_object(obj, ar)
         if etree.iselement(value):
             yield value
         else:
             for x in super(DisplayElement, self).as_plain_html(ar, obj):
                 yield x
+
 
 class BooleanDisplayElement(DisplayElement):
     preferred_width = 20
@@ -1421,14 +1419,13 @@ class BooleanDisplayElement(DisplayElement):
 
 
 class BooleanFieldElement(FieldElement):
-
     value_template = "new Ext.form.Checkbox(%s)"
     # xtype = 'checkbox'
     # data_type = 'boolean'
     filter_type = 'boolean'
     gridfilters_settings = dict(type='boolean')
     # def __init__(self,*args,**kw):
-        # FieldElement.__init__(self,*args,**kw)
+    # FieldElement.__init__(self,*args,**kw)
     # active_change_event = 'check'
 
     oui5_field_template = "openui5/elems/field/CheckBoxFieldElement.xml"
@@ -1468,7 +1465,7 @@ class BooleanFieldElement(FieldElement):
                     label += """ (<a href="javascript:%s">%s</a>)""" % (
                         js, _("show"))
 
-        # self.verbose_name = \
+            # self.verbose_name = \
             # 'is a <a href="javascript:Lino.enable_child_label()">%s</a>' % self.field.child_model.__name__
             # 'is a <a href="foo">[%s]</a>' % self.child_model._meta.verbose_name
 
@@ -1505,7 +1502,7 @@ class SingleRelatedObjectElement(DisplayElement):
         self.editable = False
         kw.update(
             label=str(getattr(relobj.model._meta, 'verbose_name', None))
-            or relobj.var_name)
+                  or relobj.var_name)
         # DisplayElement.__init__(self,lh,relobj.field,**kw)
 
         # ~ kw.setdefault('value','<br/>') # see blog/2012/0527
@@ -1514,14 +1511,13 @@ class SingleRelatedObjectElement(DisplayElement):
         # self.preferred_height = self.field.preferred_height
         # self.preferred_width = self.field.preferred_width
         # if self.field.max_length:
-            # self.preferred_width = self.field.max_length
+        # self.preferred_width = self.field.max_length
 
     def add_default_value(self, kw):
         pass
 
 
 class GenericForeignKeyElement(DisplayElement):
-
     """
     A :class:`DisplayElement` specially adapted to a :term:`GFK` field.
     """
@@ -1540,8 +1536,6 @@ class GenericForeignKeyElement(DisplayElement):
         # logger.info("20180712 GFK.value_from_object() %s %s", self, obj)
         # needed for as_plain_html()
         return getattr(obj, self.field.name)
-
-    
 
 
 class RecurrenceElement(DisplayElement):
@@ -1574,8 +1568,8 @@ class HtmlBoxElement(DisplayElement):
         kw.update(bodyStyle="overflow-x:hidden;")
 
         # ~ if self.field.drop_zone: # testing with drop_zone 'FooBar'
-            # kw.update(listeners=dict(render=js_code('initialize%sDropZone' % self.field.drop_zone)))
-            
+        # kw.update(listeners=dict(render=js_code('initialize%sDropZone' % self.field.drop_zone)))
+
         html = self.field.default
         if self.layout_handle.ui.renderer.extjs_version == 3:
             js1 = "new Ext.BoxComponent("
@@ -1606,10 +1600,11 @@ class HtmlBoxElement(DisplayElement):
                 # panel = E.fromstring('<div class="panel panel-default"><div class="panel-body">' + value + "</div></div>")
         if etree.iselement(value):
             panel = E.div(
-                E.div(value, **{'class':"panel-body"}),
-                **{'class':"panel panel-default"})
+                E.div(value, **{'class': "panel-body"}),
+                **{'class': "panel panel-default"})
 
             yield panel
+
 
 class SlaveSummaryPanel(HtmlBoxElement):
     """The panel used to display a slave table whose `display_mode`
@@ -1659,7 +1654,6 @@ class ManyToManyElement(HtmlBoxElement):
 
 
 class Wrapper(VisibleComponent):
-
     """
     """
     # label = None
@@ -1711,7 +1705,6 @@ class Wrapper(VisibleComponent):
 
 
 class Container(LayoutElement):
-
     """
     Base class for Layout Elements that can contain other Layout Elements:
     :class:`Panel`,
@@ -1728,8 +1721,8 @@ class Container(LayoutElement):
 
     declare_type = jsgen.DECLARE_VAR
 
-    oui5_field_template = None #"openui5/elems/field/DisplayElement.xml"
-    
+    oui5_field_template = None  # "openui5/elems/field/DisplayElement.xml"
+
     def __init__(self, layout_handle, name, *elements, **kw):
         self.active_children = []
         self.elements = elements
@@ -1833,7 +1826,6 @@ class Container(LayoutElement):
 
 
 class Panel(Container):
-
     """A vertical Panel is vflex if and only if at least one of its
     children is vflex.  A horizontal Panel is vflex if and only if
     *all* its children are vflex (if vflex and non-vflex elements are
@@ -1856,22 +1848,22 @@ class Panel(Container):
                 d.update(layout=dict(type=name, **cfg))
         else:
             d.update(layout=name)
-            
+
     def get_layout_name(self):
         x = self.value.get('layout')
         if x is not None:
             if isinstance(x, dict):
                 return x.get('type')
             return x
-        
+
     def __init__(self, layout_handle, name, vertical, *elements, **kw):
-        
+
         # for e in elements:
         #     if isinstance(e, FieldElement):
         #         self.is_fieldset = True
 
         Container.__init__(self, layout_handle, name, *elements, **kw)
-        
+
         self.vertical = vertical
         self.vflex = not vertical
         for e in elements:
@@ -1881,7 +1873,7 @@ class Panel(Container):
             else:
                 if not e.vflex:
                     self.vflex = False
-                    
+
         if len(elements) > 1 and self.vflex:
             if self.vertical:
                 """
@@ -1956,7 +1948,7 @@ class Panel(Container):
                     e.update(anchor=FULLWIDTH)
 
         elif self.get_layout_name() == 'hbox':
-        # elif d['layout'] == 'hbox':
+            # elif d['layout'] == 'hbox':
             self.wrap_formlayout_elements()
             for e in self.elements:
                 # a hbox having at least one child with explicit
@@ -2006,6 +1998,7 @@ class Panel(Container):
     def wrap_formlayout_elements(self):
         if self.layout_handle.ui.renderer.extjs_version != 3:
             return
+
         def wrap(e):
             if not isinstance(e, FieldElement):
                 return e
@@ -2020,6 +2013,7 @@ class Panel(Container):
                     # no need to wrap them since they are Panels
                     return e
             return Wrapper(e)
+
         self.elements = [wrap(e) for e in self.elements]
 
     def ext_options(self, **d):
@@ -2045,7 +2039,7 @@ class Panel(Container):
             # language.  For example the sign_in dialog window has a
             # field labelled "Username:" which is "Nom d'utilisateur:"
             # in French (#2240 spacing problem in french login form).
-            
+
             label_width = 0
             for e in self.elements:
                 if isinstance(e, FieldElement):
@@ -2054,7 +2048,7 @@ class Panel(Container):
                         if label_width < w:
                             label_width = w
             d.update(labelWidth=label_width * EXT_CHAR_WIDTH)
-            
+
         if self.parent is None or (len(self.elements) > 1 and self.vertical):
             """
             The `self.parent is None` test is e.g. for Parameter
@@ -2122,9 +2116,9 @@ class GridElement(Container):
 
         # vc = dict(emptyText=_("No data to display."))
         # if rpt.editable:
-            # vc.update(getRowClass=js_code('Lino.getRowClass'))
+        # vc.update(getRowClass=js_code('Lino.getRowClass'))
         # if rpt.auto_fit_column_widths:
-            # vc.update(forceFit=True)
+        # vc.update(forceFit=True)
         if False:  # removed 20131107
             if rpt.variable_row_height:
                 vc = dict(cellTpl=js_code("Lino.auto_height_cell_template"))
@@ -2200,7 +2194,6 @@ class DetailMainPanel(Panel):
 
 
 class ParamsPanel(Panel):
-
     """
     The optional Panel for `parameters` of a Table.
     JS part stored in `Lino.GridPanel.params_panel`.
@@ -2211,7 +2204,6 @@ class ParamsPanel(Panel):
 
 
 class ActionParamsPanel(Panel):
-
     """
     The optional Panel for `parameters` of an Action.
     """
@@ -2249,11 +2241,12 @@ class TabPanel(Panel):
         nav[0].set("class", "active")
 
         yield nav
-        main = E.div(class_ = "tab-content")
+        main = E.div(class_="tab-content")
         for e in self.elements:
-            main.append(E.div(*tuple(e.as_plain_html(ar, obj)), id=e.ext_name, **{'class':"tab-pane fade"}))
+            main.append(E.div(*tuple(e.as_plain_html(ar, obj)), id=e.ext_name, **{'class': "tab-pane fade"}))
         main[0].set("class", main[0].get("class") + " in active")
         yield main
+
 
 _FIELD2ELEM = (
     # (dd.Constant, ConstantElement),
@@ -2299,7 +2292,7 @@ def field2elem(layout_handle, field, **kw):
     #     field.name, **kw)
     # if field.name == 'item_ref':
     #     print("20180828", kw)
-    
+
     rnd = layout_handle.ui.renderer
     holder = layout_handle.layout.get_chooser_holder()
     ch = holder.get_chooser_for_field(field.name)
@@ -2501,7 +2494,7 @@ def create_layout_element(lh, name, **kw):
         # no sense in an insert window because the master does not yet
         # exist.
         kw.update(master_panel=js_code("this"))
-        
+
         if isinstance(lh.layout, FormLayout):
             # When a table is specified in the layout of a
             # DetailWindow, then it will be rendered as a panel that
@@ -2513,7 +2506,7 @@ def create_layout_element(lh, name, **kw):
 
             kw.update(tools=[
                 js_code("Lino.show_in_own_window_button(Lino.%s)" %
-                      de.default_action.full_name())])
+                        de.default_action.full_name())])
             if de.display_mode == 'grid':
                 kw.update(hide_top_toolbar=True)
                 if de.preview_limit is not None:
@@ -2525,7 +2518,7 @@ def create_layout_element(lh, name, **kw):
                     a = de.insert_action
                     if a is not None:
                         kw.update(ls_insert_handler=js_code("Lino.%s" %
-                                  a.full_name()))
+                                                            a.full_name()))
                         kw.update(ls_bbar_actions=[
                             lh.ui.renderer.a2btn(a)])
                 field = fields.HtmlBox(verbose_name=de.label)
@@ -2553,7 +2546,7 @@ def create_layout_element(lh, name, **kw):
 
     if isinstance(de, Action):
         return ButtonElement(lh, name, de)
-    
+
     if isinstance(de, fields.VirtualField):
         return create_vurt_element(lh, name, de, **kw)
 
@@ -2603,7 +2596,7 @@ def create_field_element(lh, field, **kw):
     # if not lh.layout.editable and isinstance(e, ForeignKeyElement):
     #     raise Exception(20160907)
     #     return CharFieldElement(lh, field, **kw)   
-    
+
     assert e.field is not None, "e.field is None for %s.%s" % (lh.layout, kw)
     lh.add_store_field(e.field)
     return e
