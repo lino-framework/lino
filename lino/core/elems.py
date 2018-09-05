@@ -5,7 +5,7 @@
 
 """
 
-from __future__ import print_function
+from __future__ import unicode_literals, print_function
 from builtins import str
 from builtins import object
 import six
@@ -424,7 +424,7 @@ class Spacer(LayoutElement):
 def add_help_text(kw, help_text, title, datasource, fieldname):
     if settings.SITE.use_quicktips:
         if settings.SITE.show_internal_field_names:
-            ttt = "(%s.%s) " % (six.text_type(datasource), fieldname)
+            ttt = "(%s.%s) " % (datasource, fieldname)
         else:
             ttt = ''
         if help_text:
