@@ -897,7 +897,7 @@ class ChoiceListField(models.CharField):
         #~ return None
 
     def value_to_string(self, obj):
-        value = self._get_val_from_obj(obj)
+        value = self.value_from_object(obj)
         #~ if self.attname == 'query_register':
             #~ print '20120527 value_to_string', repr(value)
         return self.get_prep_value(value)
