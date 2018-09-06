@@ -175,7 +175,7 @@ class RemoteAuthTestCase(DjangoManageTestCase):
     def __call__(self, *args, **kw):
         settings.SITE.override_defaults(remote_user_header='REMOTE_USER')
         mysettings = dict()
-        for k in ('MIDDLEWARE_CLASSES', 'AUTHENTICATION_BACKENDS'):
+        for k in ('MIDDLEWARE', 'AUTHENTICATION_BACKENDS'):
             mysettings[k] = settings.SITE.django_settings.get(k)
 
         with self.settings(**mysettings):
@@ -215,7 +215,7 @@ class NoAuthTestCase(DjangoManageTestCase):
         # method to simulate
         settings.SITE.override_defaults(remote_user_header=None)
         mysettings = dict()
-        for k in ('MIDDLEWARE_CLASSES',):
+        for k in ('MIDDLEWARE',):
             mysettings[k] = settings.SITE.django_settings.get(k)
 
         with self.settings(**mysettings):
