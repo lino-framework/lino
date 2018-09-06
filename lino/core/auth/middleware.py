@@ -173,7 +173,7 @@ class NoUserMiddleware(object):
         request2data(request)
 
 
-class WithUserMiddleware(object):
+class WithUserMiddleware(MiddlewareMixin):
     def process_request(self, request):
         user = request.user
         user_language = user.language  # or settings.SITE.get_default_language()
@@ -201,7 +201,7 @@ class WithUserMiddleware(object):
         request.subst_user = su
 
 
-class DeviceTypeMiddleware(object):
+class DeviceTypeMiddleware(MiddlewareMixin):
     """Sets the `device_type` attribute on every incoming request.
     """
     def process_request(self, request):

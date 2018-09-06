@@ -1991,7 +1991,7 @@ this field.
         # self.define_settings(AUTH_USER_MODEL=self.user_model)
         
         self.define_settings(
-            MIDDLEWARE_CLASSES=tuple(self.get_middleware_classes()))
+            MIDDLEWARE=tuple(self.get_middleware_classes()))
 
         # if self.get_auth_method() == 'session':
         #     self.define_settings(AUTHENTICATION_BACKENDS=[

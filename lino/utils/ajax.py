@@ -41,8 +41,9 @@ from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from lino.core.utils import format_request
 
 from lino.core.views import json_response
+from django.utils.deprecation import MiddlewareMixin
 
-class AjaxExceptionResponse(object):
+class AjaxExceptionResponse(MiddlewareMixin):
     """The middleware class definition."""
     
     no_traceback = (PermissionDenied, ObjectDoesNotExist)
