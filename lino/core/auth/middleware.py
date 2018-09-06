@@ -164,7 +164,7 @@ def request2data(request, user_language=None):
     return rqdata
 
 
-class NoUserMiddleware(object):
+class NoUserMiddleware(MiddlewareMixin):
     def process_request(self, request):
         if settings.USE_TZ:
             activate(settings.SITE.models.about.TimeZones.default.tzinfo)
