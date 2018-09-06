@@ -418,7 +418,7 @@ class Table(AbstractTable):
                             "Unsupported master_key {0}.{1} ({2})".format(
                                 self, fk, fk.__class__))
                 except models.FieldDoesNotExist:
-                    for vf in self.model._meta.virtual_fields:
+                    for vf in self.model._meta.private_fields:
                         if vf.name == self.master_key:
                             fk = vf
                             master_model = ContentType
@@ -436,7 +436,7 @@ class Table(AbstractTable):
                         msg = "Cannot handle master key {0}".format(df)
                         msg += " (20150820 virtual fields: {0})".format(
                             [vf.name for vf in
-                             self.model._meta.virtual_fields])
+                             self.model._meta.private_fields])
                         raise Exception(INVALID_MK.format(
                             self.master_key, self, msg))
                         # raise Exception(

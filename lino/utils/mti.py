@@ -70,7 +70,7 @@ class ChildCollector(Collector):
                     self.fast_deletes.append(sub_objs)
                 elif sub_objs:
                     field.remote_field.on_delete(self, field, sub_objs, self.using)
-            for field in model._meta.virtual_fields:
+            for field in model._meta.private_fields:
                 if hasattr(field, 'bulk_related_objects'):
                     # Its something like generic foreign key.
                     sub_objs = field.bulk_related_objects(new_objs, self.using)
