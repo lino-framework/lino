@@ -25,7 +25,6 @@ from __future__ import print_function
 
 import re
 import sys
-import sqlparse
 import textwrap
 from atelier import rstgen
 
@@ -60,10 +59,17 @@ def p(kw, sql_width = 60):
 
 regex = r"^.*?\((?P<time>\S+?)\)\s+(?P<sql>.*);$"
 
-# https://github.com/andialbrecht/sqlparse/blob/master/examples/extract_table_names.py
+try:
 
-from sqlparse.sql import IdentifierList, Identifier
-from sqlparse.tokens import Keyword, DML
+    import sqlparse
+    from sqlparse.sql import IdentifierList, Identifier
+    from sqlparse.tokens import Keyword, DML
+
+except ImportError:
+
+    sqlparse = None
+
+# Copied from https://github.com/andialbrecht/sqlparse/blob/master/examples/extract_table_names.py
 
 
 def is_subselect(parsed):
@@ -150,6 +156,8 @@ def sql_summary(lines, show_times=False, show_details=False, **options):
     <https://stackoverflow.com/questions/11321491/when-to-use-single-quotes-double-quotes-and-backticks-in-mysql>`__
     is an interesting discussion with examples.
     """
+    if sqlparse is None:
+        raise Exception("sql_summary() requires the sqlparse package")
     # matches = []
     d = {}
     for l in lines:
