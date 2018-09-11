@@ -86,6 +86,8 @@ class NOT_GIVEN(object):
 
 class Renderer(object):
     """
+    Base class for all Lino renderers.
+
     See :doc:`/dev/rendering`.
     """
 
@@ -94,9 +96,6 @@ class Renderer(object):
     # not_implemented_js = "alert('Not implemented')"
     not_implemented_js = None
     extjs_version = None
-
-    tableattrs = dict(cellspacing="3px", bgcolor="#ffffff", width="100%")
-    cellattrs = dict(align="left", valign="top", bgcolor="#eeeeee")
 
     def __init__(self, plugin=None):
         # if not isinstance(plugin, Plugin):
@@ -138,6 +137,15 @@ class Renderer(object):
         
 
 class HtmlRenderer(Renderer):
+    """
+    A Lino renderer for producing HTML content.
+    """
+    tableattrs = dict(cellspacing="3px", bgcolor="#ffffff", width="100%")
+    # cellattrs = dict(align="left", valign="top", bgcolor="#eeeeee")
+    cellattrs = {'class': 'text-cell'}
+    """The default attributes to be applied to every table cell.
+    """
+
     row_classes_map = {}
 
     def js2url(self, js):
@@ -148,7 +156,8 @@ class HtmlRenderer(Renderer):
         return E.a(text, href=url)
 
     def show_table(self, *args, **kwargs):
-        return tostring(self.table2story(*args, **kwargs))
+        return ''.join([
+            tostring(e) for e in self.table2story(*args, **kwargs)])
 
     def html_text(self, html):
         """Render a chunk of HTML text.
@@ -161,7 +170,7 @@ class HtmlRenderer(Renderer):
         return html
 
     def table2story(self, ar, nosummary=False, stripped=True,
-                    show_links=False, **kwargs):
+                    show_links=False, header_level=None, **kwargs):
         """
         Returns a HTML element representing the given action request as a
         table. See :meth:`ar.show
@@ -173,8 +182,15 @@ class HtmlRenderer(Renderer):
         # if ar.actor.master is not None and not nosummary:
         if not nosummary:
             if ar.actor.display_mode == 'summary':
-                return ar.actor.get_table_summary(ar.master_instance, ar)
-        return ar.table2xhtml(**kwargs)
+                yield ar.actor.get_table_summary(ar.master_instance, ar)
+                return
+
+        if header_level is not None:
+            k = "h" + str(header_level)
+            h = getattr(E, k)(six.text_type(ar.get_title()))
+            yield h
+            
+        yield ar.table2xhtml(**kwargs)
 
     def request_handler(self, ar, *args, **kw):
         """Return a string with Javascript code that would run the given
@@ -430,14 +446,15 @@ request `tar`."""
         elems = []
         try:
             for item in forcetext(story):
+                # print("20180907 {}".format(item))
                 if iselement(item):
                     elems.append(item)
                 elif isinstance(item, type) and issubclass(item, Actor):
                     ar = item.default_action.request(parent=ar)
-                    elems.append(self.table2story(ar, **kwargs))
+                    elems.extend(self.table2story(ar, **kwargs))
                 elif isinstance(item, TableRequest):
                     assert item.renderer is not None
-                    elems.append(self.table2story(item, **kwargs))
+                    elems.extend(self.table2story(item, **kwargs))
                 elif isiterable(item):
                     elems.append(self.show_story(ar, item, **kwargs))
                     # for i in self.show_story(item, *args, **kwargs):
@@ -446,6 +463,7 @@ request `tar`."""
                     raise Exception("Cannot handle %r" % item)
         except Warning as e:
             elems.append(str(e))
+        # print("20180907 show_story in {} : {}".format(ar.renderer, elems))
         return E.div(*elems)
 
     def show_menu(self, ar, mnu, level=1):
@@ -495,8 +513,10 @@ request `tar`."""
         pass
 
 class TextRenderer(HtmlRenderer):
-    """The renderer used when rendering to .rst files and console output.
-
+    """
+    Lino renderer which renders tables as reStructuredText to stdout.
+    Used for doctests and console output.
+    See also :class:`TestRenderer`.
     """
 
     user = None
@@ -549,7 +569,9 @@ class TextRenderer(HtmlRenderer):
             print(s)
 
     def show_table(self, *args, **kwargs):
-        print(self.table2story(*args, **kwargs))
+        for ln in self.table2story(*args, **kwargs):
+            print(ln)
+              
 
     def table2story(self, ar, column_names=None, header_level=None,
                     header_links=None, nosummary=False, stripped=True,
@@ -566,7 +588,8 @@ class TextRenderer(HtmlRenderer):
                     stripped=stripped)
                 if stripped:
                     s = s.strip()
-                return s
+                yield s
+                return
 
         fields, headers, widths = ar.get_field_info(column_names)
 
@@ -581,11 +604,21 @@ class TextRenderer(HtmlRenderer):
                         recno, fields, row, sums)])
             else:
                 rows.append([x for x in ar.row2text(fields, row, sums)])
+                
+        if header_level is not None:
+            h = rstgen.header(header_level, ar.get_title())
+            if stripped:
+                h = h.strip()
+            yield h
+            # s = h + "\n" + s
+            # s = tostring(E.h2(ar.get_title())) + s
+                
         if len(rows) == 0:
             s = str(ar.no_data_text)
             if not stripped:
                 s = "\n" + s + "\n"
-            return s
+            yield s
+            return
 
         if not ar.actor.hide_sums:
             has_sum = False
@@ -598,14 +631,7 @@ class TextRenderer(HtmlRenderer):
                 rows.append([x for x in ar.sums2html(fields, sums)])
 
         t = RstTable(headers, **kwargs)
-        s = t.to_rst(rows)
-        if header_level is not None:
-            h = rstgen.header(header_level, ar.get_title())
-            if stripped:
-                h = h.strip()
-            s = h + "\n" + s
-            # s = tostring(E.h2(ar.get_title())) + s
-        return s
+        yield t.to_rst(rows)
 
     def show_story(self, ar, story, stripped=True, **kwargs):
         """Render the given story as reStructuredText to stdout."""
@@ -642,16 +668,21 @@ class TextRenderer(HtmlRenderer):
 
 class TestRenderer(TextRenderer):
     """
+    Like :class:`TextRenderer` but returns a string instead of
+    printing to stdout.
+
     Experimentally used in :mod:`lino_book.projects.watch.tests`
     and :mod:`lino_book.projects.lydia.tests`.
-
     """
     def show_table(self, *args, **kwargs):
-        return self.table2story(*args, **kwargs)
+        return '\n'.join(self.table2story(*args, **kwargs))
 
     
 class MailRenderer(HtmlRenderer):
-    """A renderer to be used when sending emails.
+    """
+    A Lino renderer to be used when sending emails.  
+
+    Subclassed by :class:`lino.modlib.jinja.renderer.JinjaRenderer`
     """
     def get_detail_url(self, actor, pk, *args, **kw):
         # return self.plugin.build_plain_url(
@@ -663,12 +694,18 @@ class MailRenderer(HtmlRenderer):
         return "{}api/{}/{}/{}".format(
             settings.SITE.server_url,
             actor.app_label, actor.__name__, pk)
+    
+    def show_story(self, *args, **kwargs):
+        e = super(MailRenderer, self).show_story(*args, **kwargs)
+        return tostring(e)
 
 
 class JsRenderer(HtmlRenderer):
-    """Common base for extjs.ext_renderer.ExtRenderer and
-    lino_extjs6.extjs.ext_renderer.ExtRenderer.
-
+    """
+    A Lino renderer for HTML with JavaScript.
+    Common base for
+    :class:`lino.modlib.extjs.ext_renderer.ExtRenderer` and
+    :class:`lino_extjs6.extjs.ext_renderer.ExtRenderer`.
     """
 
     def goto_instance(self, ar, obj, detail_action=None, **kw):

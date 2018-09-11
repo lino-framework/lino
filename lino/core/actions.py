@@ -157,42 +157,308 @@ from django.utils.encoding import python_2_unicode_compatible
 
 @python_2_unicode_compatible
 class Action(Parametrizable, Permittable):
+    """
+    Abstract base class for all actions.
+
+    The first argument is the optional `label`, other arguments should
+    be specified as keywords and can be any of the existing class
+    attributes.
+           
+    """
     #~ __metaclass__ = ActionMetaClass
     _layout_class = layouts.ActionParamsLayout
+    
     label = None
+    """
+    The label of this action. A short descriptive text in user
+    language. Used e.g. on menu items. Also on toolbar buttons if they
+    have neither :attr:`icon_name` nor :attr:`button_text`.
+    """
+    
     button_text = None
+    """
+    The text to appear on buttons for this action. If this is not
+    defined, the :attr:`label` is used.
+    """
+
     button_color = None
+    """
+    The color to be used on icon-less buttons for this action
+    (i.e. which have no :attr:`icon_name`).  See also
+    :attr:`lino.core.site.Site.use_silk_icons`.
+
+    Not yet implemented. This is currently being ignored.
+    """
+    
     debug_permissions = False
     save_action_name = None
+    
     disable_primary_key = True
+    """
+    Whether primary key fields should be disabled when using this
+    action. This is `True` for all actions except :class:`ShowInsert`.
+    """
+    
     keep_user_values = False
+    """
+    Whether the parameter window should keep its values between
+    different calls. If this is True, Lino does not fill any default
+    values and leaves those from a previous call.
+
+    """
     icon_name = None
+    """
+    The class name of an icon to be used for this action when
+    rendered as toolbar button.  Allowed icon names are defined in
+    :data:`lino.core.constants.ICON_NAMES`.
+
+    """
     ui5_icon_name = None
     hidden_elements = frozenset()
+    
     combo_group = None
+    """
+    The name of another action to which to "attach" this action.
+    Both actions will then be rendered as a single combobutton.
+
+    """
     parameters = None
     use_param_panel = False
+    """
+    Used internally. This is True for window actions whose window use
+    the parameter panel: grid and emptytable (but not showdetail)
+
+    """
     no_params_window = False
+    """
+    Set this to `True` if your action has :attr:`parameters` but you
+    do *not* want it to open a window where the user can edit these
+    parameters before calling the action.
+
+    Setting this attribute to `True` means that the calling code must
+    explicitly set all parameter values.  Usage example is the
+    :attr:`lino_xl.lib.polls.models.AnswersByResponse.answer_buttons`
+    virtual field.
+
+    """
     sort_index = 90
+    """
+    Determines the sort order in which the actions will be presented
+    to the user.
+
+    List actions are negative and come first.
+
+    Predefined `sort_index` values are:
+
+    ===== =================================
+    value action
+    ===== =================================
+    -1    :class:`as_pdf <lino_xl.lib.appypod.PrintTableAction>`
+    10    :class:`ShowInsert`, :class:`SubmitDetail`
+    11    :attr:`duplicate <lino.mixins.duplicable.Duplicable.duplicate>`
+    20    :class:`detail <ShowDetail>`
+    30    :class:`delete <DeleteSelected>`
+    31    :class:`merge <lino.core.merge.MergeAction>`
+    50    :class:`Print <lino.mixins.printable.BasePrintAction>`
+    51    :class:`Clear Cache <lino.mixins.printable.ClearCacheAction>`
+    60    :class:`ShowSlaveTable`
+    90    default for all custom row actions
+    200   default for all workflow actions (:class:`ChangeStateAction <lino.core.workflows.ChangeStateAction>`)
+    ===== =================================
+
+
+    """
     help_text = None
+    """
+    A help text that shortly explains what this action does.  In a
+    graphical user interface this will be rendered as a **tooltip**
+    text.
+
+    If this is not given by the code, Lino will potentially set it at
+    startup when loading the :xfile:`help_texts.py` files.
+
+    """
     auto_save = True
+    """
+    What to do when this action is being called while the user is on a
+    dirty record.
+
+    - `False` means: forget any changes in current record and run the
+      action.
+
+    - `True` means: save any changes in current record before running
+      the action.  `None` means: ask the user.
+
+    """
+    
     extjs_main_panel = None
+    """
+    Used by :mod:`lino_xl.lib.extensible` and
+    :mod:`lino.modlib.awesome_uploader`.
+
+    Example::
+
+        class CalendarAction(dd.Action):
+            extjs_main_panel = "Lino.CalendarApp().get_main_panel()"
+            ...
+
+
+    """
+    
     js_handler = None
+    """
+    This is usually `None`.  Otherwise it is the name of a Javascript
+    callable to be called without arguments. That callable must have
+    been defined in a :attr:`lino.core.plugin.Plugin.site_js_snippets`
+    of the plugin.
+    """
+    
     action_name = None
+    """
+    Internally used to store the name of this action within the
+    defining Actor's namespace.
+
+    """
+    
     defining_actor = None
+    """
+    The :class:`lino.core.actors.Actor` who uses this action for the
+    first time.  This is set during :meth:`attach_to_actor`.  This is
+    used internally e.g. by :mod:`lino.modlib.extjs` when generating
+    JavaScript code for certain actions.
+    """
+
+    parameters = None
+    """
+    See :attr:`lino.core.utils.Parametrizable.parameters`.
+    """
+    
     key = None
+    """
+    Not used. The keyboard hotkey to associate to this action in a
+    user interface.
+    """
+    
     default_format = 'html'
+    """
+    Used internally.
+    """
+    
     editable = True
+    """
+                   
+    Whether the parameter fields should be editable.
+    Setting this to False seems nonsense.
+    """
+    
     readonly = True
+    """
+    Whether this action is readonly, i.e. does not change any data in
+    the current data object.
+
+    Setting this to `False` will (1) disable the action for
+    `readonly` user types or when
+    :attr:`lino.core.site.Site.readonly` is True, and (2) will
+    cause it to be logged when :attr:`log_each_action_request
+    <lino.core.site.Site.log_each_action_request>` is set to
+    `True`.
+
+    Note that :class:`ShowInsert` is readonly because it does not
+    modify the current data object.  For example the button would
+    be disabled on a registered invoice.
+
+    Note that when a readonly action actually *does* modify the
+    object, Lino won't "notice" it.
+
+    Discussion
+
+    Maybe we should change the name `readonly` to `modifying` or
+    `writing` (and set the default value `False`).  Because for the
+    application developer that looks more natural.  Or --maybe better
+    but probably with even more consequences-- the default value
+    should be `False`.  Because being readonly, for actions, is a kind
+    of "privilege": they don't get logged, they also exists for
+    readonly users...  It would be more "secure" when the developer
+    must explicitly "say something" it when granting that privilege.
+
+    Another subtlety is the fact that this attribute is used by
+    :class:`lino.modlib.users.UserAuthored`.  For example the
+    :class:`StartTicketSession
+    <lino_xl.lib.working.StartTicketSession>` action in :ref:`noi` is
+    declared "readonly" because we want Workers who are not Triagers
+    to see this action even if they are not the author (reporter) of a
+    ticket.  In this use case the name should rather be
+    `requires_authorship`.
+    """
+    
     opens_a_window = False
+    """
+    Whether this action opens a window.  If this is True, the user
+    interface is responsible for rendering that window.
+    """
+    
     hide_top_toolbar = False
+    """
+    Used internally if :attr:`opens_a_window` to say whether the
+    window has a top toolbar.
+
+    """
     hide_navigator = False
+    """
+    Used internally if :attr:`opens_a_window` to say whether the
+    window has a navigator.
+
+    """
+    
     show_in_bbar = True
+    """
+    Whether this action should be displayed as a button in the toolbar
+    and the context menu.
+
+    For example the :class:`CheckinVisitor
+    <lino_xl.lib.reception.models.CheckinVisitor>`,
+    :class:`ReceiveVisitor
+    <lino_xl.lib.reception.models.ReceiveVisitor>` and
+    :class:`CheckoutVisitor
+    <lino_xl.lib.reception.models.CheckoutVisitor>` actions have this
+    attribute explicitly set to `False` because otherwise they would be
+    visible in the toolbar.
+    """
+    
     show_in_workflow = False
+    """
+    Whether this action should be displayed in the
+    :attr:`workflow_buttons <lino.core.model.Model.workflow_buttons>`
+    column.  If this is True, then Lino will automatically set
+    :attr:`custom_handler` to True.
+    """
+    
     custom_handler = False
+    """
+    Whether this action is implemented as Javascript function call.
+    This is necessary if you want your action to be callable using an
+    "action link" (html button).
+    """
+    
     select_rows = True
+    """
+    True if this action needs an object to act on.
+
+    Set this to `False` if this action is a list action, not a row
+    action.
+    """
     http_method = 'GET'
+    """
+    HTTP method to use when this action is called using an AJAX call.
+
+    """
+    
     preprocessor = 'null'  # None
+    """
+    Name of a Javascript function to be invoked on the web client when
+    this action is called.
+    """
+    
     hide_virtual_fields = False
     required_states = None
 
@@ -287,6 +553,10 @@ class Action(Parametrizable, Permittable):
         return options
 
     def get_label(self):
+        """
+        Return the `label` of this action, or the `action_name` if the
+        action has no explicit label.
+        """
         return self.label or self.action_name
     
     def get_button_label(self, actor):
@@ -345,6 +615,15 @@ class Action(Parametrizable, Permittable):
         setup_params_choosers(self)
 
     def attach_to_actor(self, owner, name):
+        """
+        Called once per actor and per action on startup before a
+        :class:`BoundAction` instance is created.  If this returns
+        False, then the action won't be attached to the given actor.
+
+        The owner is the actor which "defines" the action, i.e. uses
+        that instance for the first time.  Subclasses of the owner may
+        re-use the same instance without becoming the owner.
+        """
         # if not actor.editable and not self.readonly:
         #     return False
         if self.defining_actor is not None:

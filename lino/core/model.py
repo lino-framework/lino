@@ -425,13 +425,15 @@ class Model(models.Model):
         """
         Return the text to be displayed when an instance of this model
         is being used as a choice in a combobox of a ForeignKey field
-        pointing to this model).
+        pointing to this model.
         `request` is the web request,
         `actor` is the requesting actor.
 
         The default behaviour is to simply return `str(self)`.
 
-        Usage example is :class:`lino_xl.lib.countries.models.Place`.
+        A usage example
+        is :class:`lino_xl.lib.countries.Place`.
+
         """
         return str(self)
 
@@ -1013,7 +1015,8 @@ class Model(models.Model):
 
     @classmethod
     def set_widget_options(self, name, **options):
-        """Set default values for the widget options of a given element.
+        """
+        Set default values for the widget options of a given element.
 
         Usage example::
 
@@ -1021,6 +1024,15 @@ class Model(models.Model):
 
         has the same effect as specifying ``duration:10`` each time
         when using this element in a layout.
+
+        List of widget options that can be set:
+
+        `width`
+        `preferred_width`
+        `label`
+        `editable`
+        `preferred_height`
+
 
         """
         # from lino.modlib.extjs.elems import FieldElement

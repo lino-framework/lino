@@ -24,6 +24,7 @@ from builtins import str
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.functions import Length
+from django.utils.encoding import python_2_unicode_compatible
 
 from etgen.html import E
 from lino.core import model
@@ -44,11 +45,16 @@ class Referrable(model.Model):
         abstract = True
 
     ref_max_length = 40
-    """The maximum length of the :attr:`ref` field."""
+    """The preferred width of the :attr:`ref` field."""
 
     ref = models.CharField(
-        _("Reference"), max_length=ref_max_length,
+        _("Reference"), max_length=200,
         blank=True, null=True, unique=True)
+
+    @classmethod
+    def on_analyze(cls, site):
+        cls.set_widget_options('ref', width=cls.ref_max_length)
+        super(Referrable, cls).on_analyze(site)
 
     def on_duplicate(self, ar, master):
         """
@@ -87,27 +93,74 @@ class Referrable(model.Model):
         return super(Referrable, cls).quick_search_filter(search_text, prefix)
 
 
+@python_2_unicode_compatible
 class StructuredReferrable(Referrable):
+    """
+    A referrable whose `ref` field is used to define a hierarchical
+    structure and is displayed together with the designation.
+
+    Example::
+
+        1       Foos
+         10     Good foos
+           1000 Perfect foos
+           1020 Amazing foos
+         11     Bad foos
+           1100 Nasty foo
+           1110 Lazy foo
+        2       Bars
+           2000 Normal bars
+           2090 Other bars
+
+    The length of the reference determines the hierarchic level: the
+    shorter it is, the higher the level.  Automatically differentiates
+    between "headings" and "leaves".
+
+    Subclasses must provide a method :meth:`get_designation`.
+
+    .. method:: get_designation
+
+        Return the "designation" part (without the reference).
+
+
+    """
     class Meta:
         abstract = True
         
+    ref_max_length = 4
+    
     @classmethod
     def get_usable_items(cls):
         return cls.objects.annotate(
             ref_len=Length('ref')).filter(
                 ref_len=cls.ref_max_length)
     
-    def get_choices_text(self, request, actor, field):
-        return "{} {}".format(self.ref, self)
+    @classmethod
+    def get_header_objects(cls):
+        return cls.objects.annotate(
+            ref_len=Length('ref')).exclude(
+                ref_len=cls.ref_max_length)
+    
+    # def get_choices_text(self, request, actor, field):
+    def __str__(self):
+        return "({}) {}".format(self.ref, self.get_designation())
+
+    # def get_designation(self):
+    #     raise NotImplementedError()
 
     def is_heading(self):
+        if self.ref is None:
+            return True
         return len(self.ref) < self.__class__.ref_max_length
 
     @displayfield(_("Description"), max_length=50)
     def description(self, ar):
-        s = self.ref
-        s = u' ' * (len(s)-1) + s
-        s += " " + str(self)
+        if self.ref is None:
+            s = self.get_designation()
+        else:
+            s = self.ref
+            s = u' ' * (len(s)-1) + s
+            s += " " + self.get_designation()
         if self.is_heading():
             s = E.b(s)
         return s

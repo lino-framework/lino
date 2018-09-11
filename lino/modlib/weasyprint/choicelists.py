@@ -1,37 +1,31 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2016-2017 Luc Saffre
+# Copyright 2016-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
-"""This module defines the actual :mod:`lino.modlib.weasyprint` build
-methods.
-
-"""
 
 from __future__ import unicode_literals
 from __future__ import absolute_import
 from builtins import str
 import six
 
-import logging
-logger = logging.getLogger(__name__)
+# import logging
+# logger = logging.getLogger(__name__)
 
 import os
 from copy import copy
-
-from django.conf import settings
-from django.utils import translation
-
-from lino.modlib.printing.choicelists import DjangoBuildMethod, BuildMethods
 
 try:
     from weasyprint import HTML
 except ImportError:
     HTML = None
 
+from django.conf import settings
+from django.utils import translation
+
+from lino.api import dd
+from lino.modlib.printing.choicelists import DjangoBuildMethod, BuildMethods
+
 
 class WeasyBuildMethod(DjangoBuildMethod):
-    """The base class for both build methods.
-
-    """
 
     template_ext = '.weasy.html'
     templates_name = 'weasy'
@@ -52,7 +46,7 @@ class WeasyBuildMethod(DjangoBuildMethod):
 
         with translation.override(lang):
             cmd_options = elem.get_build_options(self)
-            logger.info(
+            dd.logger.info(
                 "%s render %s -> %s (%r, %s)",
                 self.name, tpl, filename, lang, cmd_options)
             context = elem.get_printable_context(ar)
@@ -64,24 +58,7 @@ class WeasyBuildMethod(DjangoBuildMethod):
         raise NotImplementedError()
 
 
-class WeasyPdfBuildMethod(WeasyBuildMethod):
-    """Like :class:`WeasyBuildMethod`, but the rendered HTML is then
-    passed through weasyprint which converts from HTML to PDF.
-
-    """
-    target_ext = '.pdf'
-    name = 'weasy2pdf'
-
-    def html2file(self, html, filename):
-        pdf = HTML(string=html)
-        pdf.write_pdf(filename)
-
-
 class WeasyHtmlBuildMethod(WeasyBuildMethod):
-    """Renders the input template and returns the unmodified output as
-    plain HTML.
-
-    """
     target_ext = '.html'
     name = 'weasy2html'
 
@@ -89,6 +66,15 @@ class WeasyHtmlBuildMethod(WeasyBuildMethod):
         if six.PY2:
             html = html.encode("utf-8")
         open(filename, 'w').write(html)
+
+
+class WeasyPdfBuildMethod(WeasyBuildMethod):
+    target_ext = '.pdf'
+    name = 'weasy2pdf'
+
+    def html2file(self, html, filename):
+        pdf = HTML(string=html)
+        pdf.write_pdf(filename)
 
 
 add = BuildMethods.add_item_instance

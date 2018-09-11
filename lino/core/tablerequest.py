@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2017 Luc Saffre
+# Copyright 2009-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Defines the `TableRequest` class.
@@ -394,7 +394,8 @@ class TableRequest(ActionRequest):
         """
         settings.SITE.kernel.text_renderer.show_table(self, *args, **kwargs)
 
-    def table2xhtml(self, header_level=None, **kw):
+    # def table2xhtml(self, header_level=None, **kw):
+    def table2xhtml(self, **kw):
         """
         Return an HTML representation of this table request.
         """
@@ -402,16 +403,35 @@ class TableRequest(ActionRequest):
         self.dump2html(t, self.sliced_data_iterator, **kw)
         e = t.as_element()
         # print "20150822 table2xhtml", tostring(e)
-        if header_level is not None:
-            return E.div(E.h2(str(self.actor.label)), e)
+        # if header_level is not None:
+        #     return E.div(E.h2(str(self.actor.label)), e)
         return e
 
     def dump2html(self, tble, data_iterator, column_names=None,
-                  show_links=None, header_links=False, hide_sums=None):
+                  header_links=False, hide_sums=None):
         """
-        Render this table into an existing
-        :class:`etgen.html.Table` instance.
+        Render this table into an existing :class:`etgen.html.Table`
+        instance.  This is central method is used by all Lino
+        renderers.
 
+        Arguments:
+
+        `tble` An instance of :class:`etgen.html.Table`.
+
+        `data_iterator` the iterable provider of table rows.  This can
+        be a queryset or a list.
+
+        `column_names` is an optional string with space-separated
+        column names.  If this is None, the table's
+        :attr:`column_names <lino.core.tables.Table.column_names>` is
+        used.
+
+        `header_links` says whether to render column headers clickable
+        with a link that sorts the table.
+
+        `hide_sums` : whether to hide sums. If this is not given, use
+        the :attr:`hide_sums <lino.core.tables.Table.hide_sums>` of
+        the :attr:`actor`.
         """
         ar = self
         tble.attrib.update(self.renderer.tableattrs)
@@ -431,9 +451,14 @@ class TableRequest(ActionRequest):
                 x for x in grid.headers2html(
                     self, columns, headers, header_links,
                     **self.renderer.cellattrs)]
-            if cellwidths and self.renderer.is_interactive:
+            # if cellwidths and self.renderer.is_interactive:
+            if cellwidths:
+                totwidth = sum([int(w) for w in cellwidths])
+                widths = [str(int(int(w)*100/totwidth))+"%"
+                        for w in cellwidths]
                 for i, td in enumerate(headers):
-                    td.set('width', six.text_type(cellwidths[i]))
+                    # td.set('width', six.text_type(cellwidths[i]))
+                    td.set('width', widths[i])
             tble.head.append(xghtml.E.tr(*headers))
         #~ print 20120623, ar.actor
         recno = 0
@@ -462,13 +487,13 @@ class TableRequest(ActionRequest):
                 tble.body.append(xghtml.E.tr(*cells))
 
     def get_field_info(ar, column_names=None):
-        """Return a tuple `(fields, headers, widths)` which expresses which
+        """
+        Return a tuple `(fields, headers, widths)` which expresses which
         columns, headers and widths the user wants for this
-        request. If `self` has web request info, checks for GET
-        parameters cn, cw and ch (coming from the grid widget). Also
-        apply the tables's :meth:`override_column_headers
+        request. If `self` has web request info (:attr:`request` is
+        not None), checks for GET parameters cn, cw and ch.  Also
+        calls the tables's :meth:`override_column_headers
         <lino.core.actors.Actor.override_column_headers>` method.
-
         """
         from lino.modlib.users.utils import with_user_profile
         from lino.core.layouts import ColumnsLayout

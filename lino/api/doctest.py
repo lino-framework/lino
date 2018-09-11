@@ -370,15 +370,15 @@ def walk_menu_items(username=None, severe=True):
         
         
 def show_sql_queries():
-    """Print the SQL queries which have been made since last call.
+    """
+    Print the SQL queries which have been made since last call.
 
     Usage example: :ref:`specs.noi.sql`.
-
     """
     for qry in connection.queries:
         sql = qry['sql'].strip()
         print(sql.replace('"', ''))
-    reset_sql_queries()
+    # reset_sql_queries()
         
 
 def show_sql_summary(**kwargs):
@@ -396,7 +396,7 @@ def show_sql_summary(**kwargs):
                 yield "{} : {}".format(qry, e)
                 
     sql_summary(func(), **kwargs)
-    reset_sql_queries()
+    # reset_sql_queries()
         
 
 def add_call_logger(owner, name):

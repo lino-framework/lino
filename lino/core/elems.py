@@ -1184,7 +1184,8 @@ class NumberFieldElement(FieldElement):
     number_format = '0'
 
     def apply_cell_format(self, e):
-        e.set('align', 'right')
+        # e.set('align', 'right')
+        e.set('class', 'number-cell')
         # e.attrib.update(align='right')
         # logger.info("20130119 apply_cell_format %s",etree.tostring(e))
 
@@ -1204,7 +1205,8 @@ class NumberFieldElement(FieldElement):
     # e.set('align','right')
 
     def sum2html(self, ar, sums, i, **cellattrs):
-        cellattrs.update(align="right")
+        cellattrs['class'] = 'number-cell'
+        # cellattrs.update(align="right")
         return super(NumberFieldElement, self).sum2html(
             ar, sums, i, **cellattrs)
 

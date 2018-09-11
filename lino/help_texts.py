@@ -38,10 +38,6 @@ individual database object."""),
     'lino.ProjectRelated' : _("""Mixin for models that are related to a "project". This adds a
 field named project and related default behaviour."""),
     'lino.ProjectRelated.project' : _("""Pointer to the project to which this object is related."""),
-    'lino.Referrable' : _("""Mixin for things that have a unique reference, i.e. an identifying
-name used by humans to refer to an individual object."""),
-    'lino.Referrable.ref' : _("""The reference. This must be either empty or unique."""),
-    'lino.Referrable.ref_max_length' : _("""The maximum length of the ref field."""),
     'lino.dupable.CheckedSubmitInsert' : _("""Like the standard lino.core.actions.SubmitInsert, but adds
 a confirmation if there is a possible duplicate record."""),
     'lino.dupable.PhoneticWordBase' : _("""Base class for the table of phonetic words of a given dupable
@@ -304,11 +300,6 @@ uploaded file in a new browser window."""),
     'lino.modlib.uploads.UploadsByController.model' : _("""alias of Upload"""),
     'lino.modlib.users.utils.UserTypeContext' : _("""A context manager which activates a current user type."""),
     'lino.modlib.weasyprint.Plugin' : _("""See /dev/plugins."""),
-    'lino.modlib.weasyprint.WeasyBuildMethod' : _("""The base class for both build methods."""),
-    'lino.modlib.weasyprint.WeasyPdfBuildMethod' : _("""Like WeasyBuildMethod, but the rendered HTML is then
-passed through weasyprint which converts from HTML to PDF."""),
-    'lino.modlib.weasyprint.WeasyHtmlBuildMethod' : _("""Renders the input template and returns the unmodified output as
-plain HTML."""),
     'lino.modlib.wkhtmltopdf.Plugin' : _("""See /dev/plugins."""),
     'lino.sphinxcontrib.actordoc.CurrentLanguage' : _("""Tell Sphinx to switch to the specified language until the end of
 this document."""),
@@ -415,9 +406,7 @@ launched by this test case."""),
 An EmptyTableRow instance"""),
     'lino.utils.report.EmptyTable' : _("""A "Table" that has exactly one virtual row and thus is visible
 only using a Detail view on that row."""),
-    'lino.utils.report.Report' : _("""A special kind of EmptyTable used to create complex
-"reports".  A report is a series of headings, paragraphs and
-tables combined into a single printable and previewable document."""),
+    'lino.utils.report.Report' : _("""Deprecated. Replace by users.UserPlan and mixins.Story."""),
     'lino.utils.restify.HTMLTranslator' : _("""Suppress surrounding DIV tag. Used by restify()."""),
     'lino.utils.sendchanges.Emitter' : _("""The object returned by register()."""),
     'lino.utils.sqllog.SQLLogMiddleware' : _("""Log all SQL statements direct to the console."""),
@@ -629,4 +618,9 @@ reused frequently."""),
 each time the plan is called or updated."""),
     'lino.modlib.users.UpdatePlan' : _("""Build a new list of suggestions.
 This will remove all current suggestions."""),
+    'lino.modlib.weasyprint.WeasyBuildMethod' : _("""The base class for both build methods."""),
+    'lino.modlib.weasyprint.WeasyHtmlBuildMethod' : _("""Renders the input template and returns the unmodified output as
+plain HTML."""),
+    'lino.modlib.weasyprint.WeasyPdfBuildMethod' : _("""Like WeasyBuildMethod, but the rendered HTML is then
+passed through weasyprint which converts from HTML to PDF."""),
 }

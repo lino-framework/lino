@@ -730,6 +730,14 @@ class BaseRequest(object):
                 return doit()
         return doit()
 
+    def show_story(self, *args, **kwargs):
+        """
+        Shortcut to :meth:`show_story
+        <lino.core.renderer.HtmlRenderer.show_story>`.
+        """
+        return self.renderer.show_story(self, *args, **kwargs)
+    
+
     def show_menu(self, language=None, **kwargs):
         """Show the main menu for the requesting user using the requested
         renderer.

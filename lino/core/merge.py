@@ -230,7 +230,6 @@ class MergePlan(object):
                 "%(this)s into %(merge_to)s?") % dict(
                     this=self.obj, merge_to=self.merge_to)
         if len(items) != 0:
-            # return E.div(E.p(msg), E.ul(*items), class_="htmlText")
             return rt.html_text(E.div(E.p(msg), E.ul(*items)))
         return msg
 

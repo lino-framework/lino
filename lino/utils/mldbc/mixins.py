@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2016 Luc Saffre
+# Copyright 2012-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Defines the model mixin :class:`BabelNamed`.
@@ -21,13 +21,13 @@ from .fields import BabelCharField
 @python_2_unicode_compatible
 class BabelNamed(model.Model):
 
-    """Mixin for models that have a babel field `name` (labelled
+    """
+    Mixin for models that have a babel field `name` (labelled
     "Designation" by default) for each language.
 
     This mixin is deprecated (but without any planned expiry date so
     far). For new applications we recommend to use
     :class:`BabelDesignated` instead.
-
     """
 
     class Meta(object):
@@ -36,20 +36,22 @@ class BabelNamed(model.Model):
     name = BabelCharField(max_length=200, verbose_name=_("Designation"))
 
     def __str__(self):
-        return settings.SITE.babelattr(self, 'name')
+        return self.get_designation()
     
+    def get_designation(self):
+        return settings.SITE.babelattr(self, 'name')
 
 
 @python_2_unicode_compatible
 class BabelDesignated(model.Model):
 
-    """Mixin for models that have a babel field "Designation" (i.e. one
+    """
+    Mixin for models that have a babel field "Designation" (i.e. one
     designation for each language defined in the site's
     :attr:`languages <lino.core.site.Site.languages>`.
 
     This is the same as :class:`BabelNamed` but the internal field
     name matches the label.
-
     """
 
     class Meta(object):
@@ -59,6 +61,9 @@ class BabelDesignated(model.Model):
         max_length=200, verbose_name=_("Designation"))
 
     def __str__(self):
+        return self.get_designation()
+    
+    def get_designation(self):
         return settings.SITE.babelattr(self, 'designation')
 
 

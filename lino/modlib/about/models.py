@@ -173,7 +173,6 @@ class About(EmptyTable):
         for label, value in times:
             items.append(E.li(str(label), ' : ', E.b(dtfmt(value))))
         body.append(E.ul(*items))
-        # return E.div(*body, class_='htmlText')
         return rt.html_text(E.div(*body))
 
     @dd.displayfield(_("Server status"))

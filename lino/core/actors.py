@@ -1576,6 +1576,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
             ar.renderer = settings.SITE.kernel.default_renderer
             #~ s = ui.table2xhtml(ar).tostring()
             return ar.table2xhtml()
+            # return ar.html_text(ar.table2xhtml())
             #~ s = etree.tostring(ui.table2xhtml(ar))
             #~ return s
         return meth

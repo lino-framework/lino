@@ -1,17 +1,6 @@
 /*
- Copyright 2012 Luc Saffre
- This file is part of the Lino project.
- Lino is free software; you can redistribute it and/or modify 
- it under the terms of the GNU Lesser General Public License as published by
- the Free Software Foundation; either version 3 of the License, or
- (at your option) any later version.
- Lino is distributed in the hope that it will be useful, 
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- GNU Lesser General Public License for more details.
- You should have received a copy of the GNU Lesser General Public License
- along with Lino; if not, see <http://www.gnu.org/licenses/>.
- 
+ Copyright 2012-2018 Rumma & Ko Ltd
+ License: BSD (see file COPYING for details)
 
  Thanks to Nick La.
  I made just trivial modifications to his 
@@ -202,3 +191,16 @@ html[xmlns] #nav {
 * html #nav {
 	height: 1%;
 }
+
+.text-cell {
+    text-align: left;
+    vertical-align: top;
+    background: #eeeeee;
+}
+
+.number-cell {
+    text-align: right;
+    vertical-align: top;
+    background: #eeeeee;
+}
+

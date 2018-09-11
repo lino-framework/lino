@@ -1,10 +1,10 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2015 Luc Saffre
+# Copyright 2009-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-"""This started as a copy of :mod:`lino.modlib.plain` and moved to the
-version 3 of `Bootstrap <http://twitter.github.com/bootstrap>`_ CSS
-toolkit.
+"""
+This started as a copy of :mod:`lino.modlib.plain` and moved to the
+version 3 of `Bootstrap <https://getbootstrap.com/>`_ CSS toolkit.
 
 .. autosummary::
    :toctree:
@@ -12,8 +12,6 @@ toolkit.
     views
     renderer
     models
-
-
 """
 
 from lino.api.ad import Plugin

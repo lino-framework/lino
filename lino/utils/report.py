@@ -171,6 +171,8 @@ class EmptyTable(Frame):
 
 class Report(EmptyTable):
     """
+    Deprecated. Replace by users.UserPlan and mixins.Story.
+
     A special kind of :class:`EmptyTable` used to create complex
     "reports".  A report is a series of headings, paragraphs and
     tables combined into a single printable and previewable document.
@@ -229,6 +231,17 @@ class Report(EmptyTable):
     def get_title(self, ar):
         return self.title or self.label
 
+    @fields.virtualfield(fields.HtmlBox())
+    def body(cls, self, ar):
+        ar.master_instance = self
+        return ar.story2html(self.get_story(ar))
+
+    @classmethod
+    def as_appy_pod_xml(cls, self, apr):
+        chunks = tuple(apr.story2odt(
+            self.get_story(apr.ar), master_instance=self))
+        return str('').join(chunks)  # must be utf8 encoded
+
     @classmethod
     def get_story(cls, self, ar):
         """
@@ -244,17 +257,6 @@ class Report(EmptyTable):
             #     yield E.p(str(A.help_text))
             yield A
 
-    @fields.virtualfield(fields.HtmlBox())
-    def body(cls, self, ar):
-        ar.master_instance = self
-        return ar.story2html(self.get_story(ar))
-
-    @classmethod
-    def as_appy_pod_xml(cls, self, apr):
-        chunks = tuple(apr.story2odt(
-            self.get_story(apr.ar), master_instance=self))
-        return str('').join(chunks)  # must be utf8 encoded
-
     @classmethod
     def to_rst(self, ar, column_names=None, **kwargs):
         raise Exception("To be replaced by rt.show()")
@@ -264,4 +266,3 @@ class Report(EmptyTable):
         
         #    %s
         # """ % tostring(obj.body).replace('\n', ' ')
-

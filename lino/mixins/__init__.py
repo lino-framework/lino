@@ -334,6 +334,32 @@ class ProjectRelated(model.Model):
             yield p
 
 
+class Story(model.Model):
+    class Meta:
+        abstract = True
+
+    def get_story(self, ar):
+        return []
+    
+    @fields.virtualfield(fields.HtmlBox())
+    def body(self, ar):
+        if ar is None:
+            return ''
+        # ar.master_instance = self
+        html = ar.renderer.show_story(
+            ar, self.get_story(ar), header_level=1)
+        return ar.html_text(html)
+        # return ar.html_text(ar.story2html(
+        #     self.get_story(ar), header_level=1))
+
+    def as_appy_pod_xml(self, apr):
+        chunks = tuple(apr.story2odt(
+            self.get_story(apr.ar), master_instance=self))
+        return str('').join(chunks)  # must be utf8 encoded
+
+            
+
+
 from .ref import Referrable, StructuredReferrable
 from lino.mixins.duplicable import Duplicable, Duplicate
 from lino.mixins.sequenced import Sequenced, Hierarchical

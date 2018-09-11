@@ -8,6 +8,8 @@ from builtins import object
 from django.db import models
 
 from django.utils.translation import ugettext_lazy as _
+# from django.utils.translation import pgettext_lazy as pgettext
+from django.utils.text import format_lazy
 from django.conf import settings
 
 from lino.api import dd, rt
@@ -177,21 +179,48 @@ class UpdatePlan(dd.Action):
 
     def run_from_ui(self, ar, **kw):
         for plan in ar.selected_rows:
-            plan.update_plan(ar)
+            plan.run_update_plan(ar)
         ar.success(refresh=True)
+
+class StartPlan(dd.Action):
+    show_in_bbar = False
+    # icon_name = 'basket'
+    sort_index = 52
+    select_rows = False
+    http_method = 'POST'
+
+    def get_button_label(self, actor):
+        return self.label or actor.model._meta.verbose_name
+        # return format_lazy(
+        #     pgettext("singular", "My {}"), actor.model._meta.verbose_name)
+        
+    # def attach_to_actor(self, owner, name):
+    #     self.label = format_lazy(
+    #         _("Start new {}"), owner.model._meta.verbose_name)
+    #     # self.label = owner.model._meta.verbose_name
+    #     print("20180905 {} on {} {}".format(name, owner, self.label))
+    #     return super(StartPlan, self).attach_to_actor(owner, name)
+    
+    def get_options(self, ar):
+        return {}
+
+    def run_from_ui(self, ar, **kw):
+        options = self.get_options(ar)
+        plan = ar.actor.model.run_start_plan(ar.get_user(), **options)
+        ar.goto_instance(plan)
 
 
 class UserPlan(UserAuthored):
     class Meta:
         abstract = True
 
-    today = models.DateField(
-        _("Today"), default=dd.today)
+    today = models.DateField(_("Today"), default=dd.today)
     
-    update_plan_button = UpdatePlan()
+    update_plan = UpdatePlan()
+    start_plan = StartPlan()
     
     @classmethod
-    def start_plan(cls, user, **options):
+    def run_start_plan(cls, user, **options):
         try:
             plan = cls.objects.get(user=user)
             changed = False
@@ -204,13 +233,19 @@ class UserPlan(UserAuthored):
                     plan.today = dd.today()
                     changed = True
             if changed:
-                plan.items.all().delete()
+                plan.reset_plan()
         except cls.DoesNotExist:
             plan = cls(user=user, **options)
+        plan.full_clean()
         plan.save()
         return plan
 
-    def update_plan(self, ar):
+    def run_update_plan(self, ar):
+        pass
+
+    def reset_plan(self):
+        """Delete all cached data for this plan.
+        """
         pass
 
    

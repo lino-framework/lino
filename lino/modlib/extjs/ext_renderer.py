@@ -373,12 +373,12 @@ class ExtRenderer(JsRenderer):
         return d
 
     def html_text(self, html):
-        """Wrpt the given html fragment into a ``<div class="htmlText">``
+        """
+        Wrap the given html fragment into a ``<div class="htmlText">``
         which specifies that this fragment contains simple html text
         inside an ExtJS component.  This is required because ExtJS
         does a lot of CSS magic which neutralizes the "usual" effects
         of most html tags.
-
         """
         if isinstance(html, six.string_types):
             return '<div class="htmlText">{0}</div>'.format(html)
