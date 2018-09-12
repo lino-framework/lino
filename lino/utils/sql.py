@@ -22,23 +22,24 @@ from __future__ import print_function
 # show_sql_queries()
 
 
-
 import re
 import sys
 import textwrap
 from atelier import rstgen
 
-def p(kw, sql_width = 60):
+
+def p(kw, sql_width=60):
     # Prints a parsed sql log nicely
     print(
-          "table: {table}\n"
-          "Longest_time: {time}\n"
-          "Queries: {count}\n"
-          "total_time: {total_time}".format(kw))
+        "table: {table}\n"
+        "Longest_time: {time}\n"
+        "Queries: {count}\n"
+        "total_time: {total_time}".format(kw))
     sql = "{sql1} {table} {sql2}".format(kw)
-    sql = sql.replace('"','')
+    sql = sql.replace('"', '')
     kw['sql'] = ("\n    ").join(textwrap.wrap(sql, sql_width))
     print("sql: {sql}".format(kw))
+
 
 # regex = r"^.+?\((?P<time>[\d\.]*)\) (?P<sql>.*FROM \`(?P<table>.*?)\`.*?;).*$"
 
@@ -68,6 +69,7 @@ try:
 except ImportError:
 
     sqlparse = None
+
 
 # Copied from https://github.com/andialbrecht/sqlparse/blob/master/examples/extract_table_names.py
 
@@ -140,8 +142,7 @@ class Entry(object):
         self.total_time += other.time
         self.time = max(self.time, other.time)
         self.count += 1
-        
-        
+
 
 def sql_summary(lines, show_times=False, show_details=False, **options):
     """
@@ -161,9 +162,9 @@ def sql_summary(lines, show_times=False, show_details=False, **options):
     # matches = []
     d = {}
     for l in lines:
-        l = l.replace('"','')
-        l = l.replace('`','')
-        
+        l = l.replace('"', '')
+        l = l.replace('`', '')
+
         m = re.match(regex, l)
         if m:
             g = m.groupdict()
@@ -175,7 +176,7 @@ def sql_summary(lines, show_times=False, show_details=False, **options):
                 d[k] = entry
         else:
             raise Exception("Invalid line {!r}".format(l))
-            
+
         # k = None
         # for op, regex in operations:
         #     m = re.match(regex, l)
@@ -184,7 +185,7 @@ def sql_summary(lines, show_times=False, show_details=False, **options):
         #         k = g['table'] + op
         #         g['operation'] = op
         #         break
-                    
+
         # if k:
         #     g['time'] = float(g['time'])
         #     r = d.setdefault(k, {})
@@ -194,27 +195,28 @@ def sql_summary(lines, show_times=False, show_details=False, **options):
         #         d[k].update(g)
         # else:
         #     raise Exception("Invalid line {!r}".format(l))
-        
+
     if d:
         if show_details:
-            for e in sorted(d.values(), key= lambda x: x.total_time):
+            for e in sorted(d.values(), key=lambda x: x.total_time):
                 p(e, **options)
                 print("-------------------")
             print("The slowest SQL call was:")
-            #find max
+            # find max
             e = d[max(d, key=lambda x: x.time)]
             p(e, **options)
             print("-------------------")
         else:
             if show_times:
                 headers = 'total_time count table stmt_type time'.split()
-                values = sorted(d.values(), key= lambda x: -x.total_time)
+                values = sorted(d.values(), key=lambda x: -x.total_time)
             else:
                 headers = 'table stmt_type count'.split()
-                values = sorted(d.values(), key= lambda x: x.table)
+                values = sorted(d.values(), key=lambda x: x.table)
             rows = []
             for e in values:
-                rows.append([getattr(e,h) for h in headers])
+                rows.append([getattr(e, h) for h in headers])
+                rows.sort()
             print(rstgen.table(headers, rows))
     else:
         print("No sql queries found")
@@ -224,5 +226,3 @@ if __name__ == "__main__":
     # f = open("log/lino.log", 'r')
     f = sys.stdin
     sql_summary(f.readlines(), show_details=True)
-    
-        
