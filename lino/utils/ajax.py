@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2015 Luc Saffre
+# Copyright 2011-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """This middleware is automatically being installed on every Lino
@@ -40,7 +40,6 @@ from django.utils.encoding import smart_text
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from lino.core.utils import format_request
 
-from lino.core.views import json_response
 from django.utils.deprecation import MiddlewareMixin
 
 class AjaxExceptionResponse(MiddlewareMixin):
