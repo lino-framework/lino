@@ -10,4 +10,3 @@ prune rtlib
 prune lino/sandbox
 prune screenshots
 prune extjs-showcases
-include .idea
