@@ -1,16 +1,16 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2017 Luc Saffre
+# Copyright 2017-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-""".. management_command:: qtclient
+"""
+.. management_command:: qtclient
 
 Runs a Qt client for this application.
 
-This requires::
+This works only under Python 3 and it requires to manually install
+`PyQt5 <https://en.wikipedia.org/wiki/PyQt>`_::
 
     pip install pyqt5
-
-which is only available under Python 3.
 
 """
 
@@ -21,7 +21,6 @@ from django.conf import settings
 
 
 import sys
-from os.path import join
 from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton,
                              QMessageBox, QDesktopWidget, QMainWindow,
                              QAction, qApp, QTextEdit, QHBoxLayout,
