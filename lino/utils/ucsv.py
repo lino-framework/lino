@@ -26,7 +26,10 @@ class UTF8Recoder(object):
         return self
 
     def __next__(self):
-        return self.reader.next().encode("utf-8")
+        if six.PY2:
+            return self.reader.readline().encode("utf-8")
+        else:
+            return self.reader.readline()
 
 
 class UnicodeReader(object):
@@ -42,7 +45,10 @@ class UnicodeReader(object):
 
     def __next__(self):
         row = next(self.reader)
-        return [six.text_type(s, "utf-8") for s in row]
+        if six.PY2:
+            return [six.text_type(s, "utf-8") for s in row]
+        else:
+            return [s for s in row]
 
     def __iter__(self):
         return self
