@@ -32,6 +32,7 @@
     <script>
         jQuery.sap.registerModulePath('openui5', './static/openui5/openui5-CKEditor/openui5/');
         jQuery.sap.require("openui5.CKEditor");
+        jQuery.ajaxSettings.traditional = true;
         sap.ui.getCore().attachInit(function () {
             // https://github.com/SAP/openui5/issues/1535
             // To allow ch as a valid CSS width for tables and other elements.
@@ -45,7 +46,7 @@
                 //         fontFamily : "Font Awesome 5 Free",
                 //         content : "f556"
                 //         });
-                console.log(IconPool.getIconCollectionNames())
+                // console.log(IconPool.getIconCollectionNames())
 
                 library.CSSSize = DataType.createType(
                     'sap.ui.core.CSSSize', {

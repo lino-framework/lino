@@ -100,6 +100,62 @@ sap.ui.define([
             return this.getOwnerComponent().getModel("i18n").getResourceBundle();
         },
 
+
+        /**
+         * To be OverWridden .
+	 *  Usrd fot ajax action requests. 
+         */
+        getSelectedRows: function (oEvent) {
+	    return [];
+        },
+	
+        /**
+         * Generic function to handle button actions.
+         */
+        onPressAction: function (oEvent) {
+            var me = this;
+            var button = oEvent.getSource();
+            var oView = this.getView();
+            var action_name = button.data('action_name');
+            var action_url = button.data('action_url');
+            var action_method = button.data('action_method');
+            var msg = action_name + "' pressed";
+            // action_url = 'tickets/Tickets/';
+            var sr = this.getSelectedRows();
+            if (typeof(sr) === "string"){sr = [sr]}
+            var params = {"an":action_name,
+                  "sr":sr};
+            var url = (params.sr.length === 1) ? '/api/' + action_url + params.sr[0] : '/api/' + action_url
+
+            MessageToast.show(msg);
+            jQuery.ajax({
+                url: url,
+                type: action_method,
+                data: jQuery.param(params),
+                success: function (data) {
+                    if (data && data['success'] && data['xcallback'] !== undefined) {
+                        me.xcallback = data['xcallback'];
+                        var oView = me.getView();
+                        if (!me._yesNoDialog /*|| me._yesNoDialog.bIsDestroyed === true*/ ) {
+                            me._yesNoDialog = sap.ui.jsfragment("lino.fragment.YesNoDialog", me);
+                            oView.addDependent(me._yesNoDialog)
+                        }
+                        var oInputModel = new JSONModel(data);
+                        oView.setModel(oInputModel, "yesno");
+                        me._yesNoDialog.open();
+                    }
+                    else if (data && data['eval_js'] !== undefined) {
+                        var eval_js = data['eval_js'];
+                        eval(eval_js);
+                    }
+                    // MessageToast.show(data['message']);
+                },
+                error: function (e) {
+                    MessageToast.show("error: " + e.responseText);
+                }
+            });
+        },
+
         handleSuggest: function (oEvent) {
             var Input = oEvent.getSource();
             var oView = this.getView();
