@@ -15,7 +15,6 @@
                 <OverflowToolbar>
                     <SearchField
                             id="searchField"
-                            tooltip="{i18n>worklistSearchTooltip}"
                             search="onSearch"
                             width="auto">
 

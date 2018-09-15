@@ -36,10 +36,24 @@ sap.ui.define([
         },
 
         /**
-         *  Used fot ajax action requests.
+         *  Used for ajax action requests.
          */
         getSelectedRows: function (oEvent) {
             return this._PK
+        },
+
+        afterRecordDelete: function(){
+            var oNavInfo = this.getView().oModels.record.getData().navinfo;
+            var record_id = null;
+            if (oNavInfo.next){
+                record_id = oNavInfo.next;}
+            else if (oNavInfo.prev){
+                record_id = oNavInfo.next;}
+            //todo Direct to grid if record_id === null
+            var action = (record_id === null)? "grid" : "detail";
+            this.routeTo(action,
+                data['detail_handler_name'].replace('.detail', ''),
+                {record_id:record_id});
         },
 
         /**

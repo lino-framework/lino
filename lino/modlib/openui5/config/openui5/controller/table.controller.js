@@ -104,6 +104,20 @@ sap.ui.define([
 
         },500),
 
+        getSelectedRows: function (oEvent) {
+            var me = this;
+            var selections = this._table.getSelectedIndices();
+            return selections.map(
+                function (index) {
+                    var model = me.getView().getModel();
+                    return model.getProperty(me._PK, model.mContexts["/rows/"+index] );
+                }).filter(num => num != null );
+        },
+
+        afterRecordDelete: function() {
+            this.reload();
+        },
+
 //        beforeExit: function(){console.log("beforeExit")},
 
 

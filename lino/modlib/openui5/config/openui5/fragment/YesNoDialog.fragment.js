@@ -20,15 +20,7 @@ sap.ui.jsfragment("lino.fragment.YesNoDialog", {
                                 // todo NAV info
                                 var oView = me.getView();
                                 if (data['record_deleted'] === true) {
-                                    var oNavInfo = oView.oModels.record.getData().navinfo;
-                                    var record_id = null;
-                                    if (oNavInfo.next){
-                                        record_id = oNavInfo.next;}
-                                    else if (oNavInfo.prev){
-                                        record_id = oNavInfo.next;}
-                                    //todo Direct to grid if record_id === null
-                                    me.routeTo("detail", data['detail_handler_name'].replace('.detail', ''), {record_id:record_id});
-
+                                    me.afterRecordDelete()
                                 }
                             }
                         },

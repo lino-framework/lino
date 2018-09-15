@@ -59,7 +59,7 @@ sap.ui.define([
             if (args.query === undefined) {
                 // Object.defineProperty(args, "query",
                 //    {'dt':this._selectedDevice});
-                args.query = {'dt':this._selectedDevice};
+                args.query = {'dt': this._selectedDevice};
             }
             this.getRouter().navTo(action_id,
                 args /*if 3ed arg (history) is True, oui5 will not record history for this change.*/);
@@ -76,8 +76,7 @@ sap.ui.define([
                 v = v.getParent();
                 if (v instanceof sap.ui.core.mvc.View) {
 //                    console.log(v.getMetadata()); //you have found the view
-                    return v
-                    break;
+                    return v;
                 }
             }
         },
@@ -103,30 +102,37 @@ sap.ui.define([
 
         /**
          * To be OverWridden .
-	 *  Usrd fot ajax action requests. 
+         *  Usrd fot ajax action requests.
          */
         getSelectedRows: function (oEvent) {
-	    return [];
+            return [];
         },
-	
+
         /**
          * Generic function to handle button actions.
          */
         onPressAction: function (oEvent) {
             var me = this;
             var button = oEvent.getSource();
-            var oView = this.getView();
             var action_name = button.data('action_name');
             var action_url = button.data('action_url');
             var action_method = button.data('action_method');
             var msg = action_name + "' pressed";
             // action_url = 'tickets/Tickets/';
             var sr = this.getSelectedRows();
-            if (typeof(sr) === "string"){sr = [sr]}
-            var params = {"an":action_name,
-                  "sr":sr};
-            var url = (params.sr.length === 1) ? '/api/' + action_url + params.sr[0] : '/api/' + action_url
-
+            if (typeof(sr) === "string") {
+                sr = [sr]
+            }
+            var params = {
+                "an": action_name,
+                "sr": sr
+            };
+            if (sr.length === 0) {
+                // Cancel action press, nothing selected
+                MessageToast.show("Please select a row");
+                return;
+            }
+            var url = '/api/' + action_url + params.sr[0];
             MessageToast.show(msg);
             jQuery.ajax({
                 url: url,
@@ -136,7 +142,7 @@ sap.ui.define([
                     if (data && data['success'] && data['xcallback'] !== undefined) {
                         me.xcallback = data['xcallback'];
                         var oView = me.getView();
-                        if (!me._yesNoDialog /*|| me._yesNoDialog.bIsDestroyed === true*/ ) {
+                        if (!me._yesNoDialog /*|| me._yesNoDialog.bIsDestroyed === true*/) {
                             me._yesNoDialog = sap.ui.jsfragment("lino.fragment.YesNoDialog", me);
                             oView.addDependent(me._yesNoDialog)
                         }
@@ -148,7 +154,10 @@ sap.ui.define([
                         var eval_js = data['eval_js'];
                         eval(eval_js);
                     }
-                    // MessageToast.show(data['message']);
+                    else {
+                        MessageToast.show(data['message'])
+                    }
+                    ;
                 },
                 error: function (e) {
                     MessageToast.show("error: " + e.responseText);
