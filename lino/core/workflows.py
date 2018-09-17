@@ -1,9 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2017 Luc Saffre
+# Copyright 2012-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
-"""Defines the classes used for generating workflows:
-:class:`State` and :class:`Workflow`, :class:`ChangeStateAction`.
-
+"""
+Defines the classes used for defining.  See :doc:`/dev/workflows`.
 """
 from builtins import str
 import six
@@ -28,14 +27,15 @@ from lino.core import choicelists
 
 
 class State(choicelists.Choice):
-    """A `State` is a specialized :class:`Choice
+    """
+    A `State` is a specialized :class:`Choice
     <lino.core.choicelists.Choice>` that adds the
     :meth:`add_transition` method.
-
     """
 
     button_text = None
-    """The text to appear on any button representing this state.
+    """
+    The text to appear on buttons representing this state.
     """
 
     def add_transition(self, label=None,
@@ -47,7 +47,8 @@ class State(choicelists.Choice):
                        debug_permissions=None,
                        required_states=None,
                        required_roles=None):
-        """Declare a `ChangeStateAction` which makes an object enter this
+        """
+        Declare an transition action which makes an object enter this
         state.
 
         `label` can be a string, a subclass of
@@ -56,9 +57,8 @@ class State(choicelists.Choice):
         <lino.core.choicelists.Choice.text>` will be used as label.
 
         You can specify an explicit `name` in order to allow replacing
-        the transition action later by another action. Otherwise Lino
+        the transition action later by another action.  Otherwise Lino
         will generate an internal name.
-
         """
         workflow_actions = self.choicelist.workflow_actions
         i = len(workflow_actions)
@@ -125,16 +125,17 @@ class State(choicelists.Choice):
 
 
 class Workflow(choicelists.ChoiceList):
-
-    """A Workflow is a specialized ChoiceList used for defining the
-    states of a workflow.
-
+    """
+    A workflow is a specialized choicelist used for defining the
+    states of a workflow.  Every choice is an instance of
+    :class:`State`.
     """
     item_class = State
 
     verbose_name = _("State")
     verbose_name_plural = _("States")
     button_text = models.CharField(_("Symbol"), blank=True)
+    column_names = "value name text button_text"
 
     @classmethod
     def on_analyze(cls, site):
@@ -165,7 +166,7 @@ class Workflow(choicelists.ChoiceList):
     def override_transition(cls, **kw):
         """
         """
-        for name, cl in list(kw.items()):
+        for name, cl in kw.items():
             found = False
             for i, a in enumerate(cls.workflow_actions):
                 if a.action_name == name:
@@ -186,11 +187,11 @@ class Workflow(choicelists.ChoiceList):
         
 
 class ChangeStateAction(actions.Action):
-    """This is the class used when generating automatic "state
+    """
+    This is the class used when generating automatic "state
     actions". For each possible value of the Actor's
     :attr:`workflow_state_field` there will be an automatic action
     called `mark_XXX`
-
     """
 
     show_in_bbar = False
