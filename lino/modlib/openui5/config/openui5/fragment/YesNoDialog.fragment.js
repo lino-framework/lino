@@ -1,14 +1,12 @@
 sap.ui.jsfragment("lino.fragment.YesNoDialog", {
-    createContent: function (data) {
-        // var oButton = new sap.m.Button({
-        // 	text:"Hello World",
-        // 	press:oController.doSomething
-        // });
-        var xcallback = data['xcallback'];
+    createContent: function (context) {
+
+        var me = context;
+        var xcallback = context.xcallback;
         var dialog = new sap.m.Dialog({
             title: xcallback['title'],
             type: 'Message',
-            content: new sap.m.Text({text: data['message']}),
+            content: new sap.m.Text({text: "{yesno>/message}" /*context['message']*/}),
             beginButton: new sap.m.Button({
                 text: xcallback['buttons']['yes'],
                 press: function () {
@@ -19,7 +17,11 @@ sap.ui.jsfragment("lino.fragment.YesNoDialog", {
                         success: function (data) {
                             sap.m.MessageToast.show(data['message']);
                             if (data['detail_handler_name'] !== undefined) {
-                                me.routeTo("detail", data['detail_handler_name'].replace('.detail', ''), {});
+                                // todo NAV info
+                                var oView = me.getView();
+                                if (data['record_deleted'] === true) {
+                                    me.afterRecordDelete()
+                                }
                             }
                         },
                         error: function (e) {
@@ -37,6 +39,8 @@ sap.ui.jsfragment("lino.fragment.YesNoDialog", {
             }),
             afterClose: function () {
                 dialog.destroy();
+                me._yesNoDialog = undefined;
+                //todo also delete yes json data binding?
             }
         });
         return dialog;

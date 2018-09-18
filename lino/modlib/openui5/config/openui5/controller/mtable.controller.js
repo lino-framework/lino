@@ -102,7 +102,18 @@ sap.ui.define([
         },
 
 //        beforeExit: function(){console.log("beforeExit")},
+        getSelectedRows: function (oEvent) {
+            console.log("GSR");
+            var me = this;
+            var selections = this._table.getSelectedItems();
+            // var oBindingContext = selections[0].getBindingContext();
+            // var record_id = this.getView().getModel().getProperty(this._PK, oBindingContext);
+            var sr= selections.map(function(s){return me.getView().getModel().getProperty(
+                me._PK, s.getBindingContext())}).filter(r => r != null);
+            // console.log(sr);
+            return sr
 
+        },
 
         initSampleDataModel: function () {
             var me = this;
