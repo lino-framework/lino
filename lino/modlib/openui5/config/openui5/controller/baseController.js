@@ -186,5 +186,21 @@ sap.ui.define([
             oEvent.getSource().getBinding("suggestionItems").filter(aFilters);
         },
 
+        /**
+         * Event handler when a expand slave-table/summary button gets pressed
+         * @param {sap.ui.base.Event} oEvent the table selectionChange event
+         * @public
+         *
+         * Used in both detail controller and table controller
+         */
+        handleExpandSlave: function (oEvent) {
+            var view = this.getView();
+            var mk = this._PK;
+            var mt = this._content_type;
+            this.routeToAction("grid." + oEvent.getSource().data("actor_id"),
+                {"query":{mk:mk,
+                          mt:mt}},view.getId());
+        },
+
     })
 });

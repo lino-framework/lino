@@ -20,6 +20,7 @@ sap.ui.define([
             this.pv = []; // unused,
             this._PK = null;
             this._actor_id = this.getView().byId("MAIN_PAGE").data("actor_id");
+            this._content_type = this.getView().byId("MAIN_PAGE").data("content_type");
 
             var oRouter = this.getRouter();
             oRouter.getRoute("detail." + this._actor_id).attachMatched(this._onRouteMatched, this);

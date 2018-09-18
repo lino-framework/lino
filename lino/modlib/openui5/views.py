@@ -46,7 +46,6 @@ from lino.api import rt
 import re
 import cgi
 
-
 from lino.core.elems import ComboFieldElement
 
 from jinja2.exceptions import TemplateNotFound
@@ -606,6 +605,7 @@ def XML_response(ar, tplname, context):
     # lang = get_language()
     # k = (u.user_type, lang)
     context = ar.get_printable_context(**context)
+    context.update(constants=constants)
     # context['ar'] = ar
     # context['memo'] = ar.parse_memo  # MEMO_PARSER.parse
     env = settings.SITE.plugins.jinja.renderer.jinja_env
@@ -794,6 +794,16 @@ class Connector(View):
             layout_handle = window_layout.get_layout_handle(settings.SITE.plugins.openui5)
             layout_handle.main.elements  # elems # Refactor into actor get method?
             ba_actions = actor.get_toolbar_actions(actor.detail_action.action)
+
+            if settings.SITE.is_installed('contenttypes'):
+                # Used to open slave tables from detail views
+                m = getattr(actor, 'model', None)
+                # e.g. pk may be the VALUE_FIELD of a choicelist which
+                # has no model
+                if m is not None:
+                    ct = ContentType.objects.get_for_model(m).pk
+                    context.update(content_type=ct)
+
             context.update({
                 "actor": actor,
                 # "columns": actor.get_handle().get_columns(),
@@ -921,7 +931,6 @@ class App(View):
         return http.HttpResponse(
             template.render(**context),
             content_type='text/html;charset="utf-8"')
-
 
 # class Index(View):
 #     """
