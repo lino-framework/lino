@@ -2,13 +2,11 @@
 # Copyright 2012-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """
-Defines the classes used for defining.  See :doc:`/dev/workflows`.
+Defines the classes used for defining workflows.  See
+:doc:`/dev/workflows`.
 """
 from builtins import str
 import six
-
-import logging
-logger = logging.getLogger(__name__)
 
 from django.utils.functional import Promise
 from django.utils.translation import ugettext_lazy as _
@@ -134,14 +132,14 @@ class Workflow(choicelists.ChoiceList):
 
     verbose_name = _("State")
     verbose_name_plural = _("States")
-    button_text = models.CharField(_("Symbol"), blank=True)
+    button_text = models.CharField(_("Button text"), blank=True)
     column_names = "value name text button_text"
 
     @classmethod
     def on_analyze(cls, site):
-        """Add workflow actions to the models which use this workflow so that we
-        can access them as InstanceActions.
-
+        """
+        Add workflow actions to the models which use this workflow so that
+        we can access them as InstanceActions.
         """
         super(Workflow, cls).on_analyze(site)
         # logger.info("20150602 Workflow.on_analyze %s", cls)
