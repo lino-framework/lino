@@ -21,7 +21,10 @@ Lino = {
      * @param params
      */
     simple_action: function(actor_id, action_name,rp,is_on_main_actor,pk, params){
-        console.log(arguments);
+        console.log(arguments, this.flags);
+        this.wave_flag("simple_action", 50); // if run first
+        clearTimeout(Lino.timeouts['nav']); // if ran second
+
     },
 
     /**
@@ -49,5 +52,25 @@ Lino = {
             timeout = setTimeout(later, wait);
             if (callNow) func.apply(context, args);
         };
+    },
+
+    /**
+     * Object for storing timeout IDs
+     * Used for workflow-buttons in table-rows to prevent navigation
+     */
+    timeouts: {},
+
+    /**
+     * Flags that are used to temporarily notify other methods
+     * Currently unused
+     */
+
+    flags: {},
+
+    wave_flag: function (flag, duration) {
+        var me = this;
+        this.flags[flag] = true;
+        setTimeout(function () {me.flags[flag] = undefined},
+                   duration)
     }
 };

@@ -26,7 +26,7 @@ sap.ui.define([
             this.page_limit = this.visibleRowCount;
             this._PK = oMainTable.data("PK");
             this._actor_id = oMainTable.data("actor_id");
-            this._content_type = oMainTable.data("content_type"); // null or int
+            this._content_type = oMainTable.data("mt"); // null or int
             this._is_slave = oMainTable.data("is_slave"); // null or int
 
             var oRouter = this.getRouter();
@@ -157,18 +157,19 @@ sap.ui.define([
 
         onRowNavPress: function (oEvent) {
             // todo refactor into open_window method of app controller
+            var me = this;
+            var oBindingContext =oEvent.oSource.getBindingContext()
+            var record_id = me.getView().getModel().getProperty(me._PK, oBindingContext);
 
-            // Todo see if this way of getting PK works for table.table
+            var route=function () {
+                console.log("Opening detail for: " + me._actor_id + "/" + record_id);
+                me.routeTo("detail", me._actor_id, {"record_id": record_id});
+            };
+            if (Lino.flags['simple_action']){return;}
+            else{Lino.timeouts['nav'] = setTimeout(route,50);
+            }
             // var oRow = oEvent.getParameter("row");
             // var oBindingContext = oRow.getBindingContext();
-            var oBindingContext =oEvent.oSource.getBindingContext()
-            var record_id = this.getView().getModel().getProperty(this._PK, oBindingContext);
-
-            console.log("Opening detail for: " + this._actor_id + "/" + record_id);
-
-            // var msg = "'" + oEvent.getParameter("item").getText() + this._actor_id + ":" + "detail" + "' pressed";
-            // MessageToast.show(msg);
-            this.routeTo("detail", this._actor_id, {"record_id": record_id});
 
         },
 
