@@ -8,6 +8,7 @@ Database models for `lino.modlib.about`.
 from builtins import str
 
 import re
+import cgi
 import datetime
 
 from django.utils.translation import ugettext_lazy as _
@@ -87,7 +88,10 @@ class SiteSearch(dd.VirtualTable):
                         matches.setdefault(de, w)
             if char_search:
                 for de in obj.quick_search_fields:
-                    s = matches.get(de, None) or str(de.value_from_object(obj))
+                    s = matches.get(de, None)
+                    if s is None:
+                        s = str(de.value_from_object(obj))
+                        s = cgi.escape(s)
                     r, count = re.subn(w, bold, s, flags=re.IGNORECASE)
                     if count:
                         matches[de] = r
