@@ -4,14 +4,6 @@
         {% endif %}
         text="{{ba.action.label}}"
         tooltip="{{ba.action.help_text}}"
-        press="onPressAction"
-        customData:actor_id="{{actor.actor_id}}">
-<customData>
-<core:CustomData
-        key="action_name"
-        value="{{ba.action.action_name}}"/>
-<core:CustomData
-        key="http_method"
-        value="{{ba.action.http_method}}"/>
-</customData>
+        press="onPressAction">
+        {% include "openui5/template_fragments/action_metadata.xml" %}
         </MenuItem>
