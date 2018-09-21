@@ -109,59 +109,89 @@ sap.ui.define([
         },
 
         /**
-         * Generic function to handle button actions.
+         * Method that runs the ajax call for most actions.
+         *
+         * todo decide which args are for this method, move ajax into this method.
          */
-        onPressAction: function (oEvent) {
-            var me = this;
-            var button = oEvent.getSource();
-            var action_name = button.data('action_name');
-            var action_url = button.data('action_url');
-            var action_method = button.data('action_method');
-            var msg = action_name + "' pressed";
-            // action_url = 'tickets/Tickets/';
-            var sr = this.getSelectedRows();
-            if (typeof(sr) === "string") {
+// actor_id, action_name,rp,is_on_main_actor,pk, params
+        runSimpleAction: function ({
+                                       actor_id, action_name, sr, is_on_main_actor,
+                                       rp = this.getView().getId(), /*keyword args*/
+                                       http_method = "GET",
+                                       params = {}
+                                   }) {
+           if (typeof(sr) === "string" || typeof(sr) === "number" ) {
                 sr = [sr]
             }
-            var params = {
-                "an": action_name,
-                "sr": sr
-            };
-            if (sr.length === 0) {
+            else if (sr.length === 0) {
                 // Cancel action press, nothing selected
+                // Note: This might be wrong, some actions such as "Mark all as seen" might not need a SR.
                 MessageToast.show("Please select a row");
                 return;
             }
-            var url = '/api/' + action_url + params.sr[0];
-            MessageToast.show(msg);
+
+            jQuery.extend(params, { //same as update in python, optinal first arg for "deep update"
+                "an": action_name,
+                "sr": sr,
+                // "mt": this._content_type, /*Not sure if needed for simple, actions*/
+                // "mk": this._PK            /*Not sure if same as PK in all cases, requires talk with luc*/
+            });
+
             jQuery.ajax({
-                url: url,
-                type: action_method,
+                context: this,
+                url: '/api/' + actor_id.replace(".", "/") + "/" + params.sr[0],
+                type: http_method,
                 data: jQuery.param(params),
-                success: function (data) {
-                    if (data && data['success'] && data['xcallback'] !== undefined) {
-                        me.xcallback = data['xcallback'];
-                        var oView = me.getView();
-                        if (!me._yesNoDialog /*|| me._yesNoDialog.bIsDestroyed === true*/) {
-                            me._yesNoDialog = sap.ui.jsfragment("lino.fragment.YesNoDialog", me);
-                            oView.addDependent(me._yesNoDialog)
-                        }
-                        var oInputModel = new JSONModel(data);
-                        oView.setModel(oInputModel, "yesno");
-                        me._yesNoDialog.open();
-                    }
-                    else if (data && data['eval_js'] !== undefined) {
-                        var eval_js = data['eval_js'];
-                        eval(eval_js);
-                    }
-                    else {
-                        MessageToast.show(data['message'])
-                    }
-                    ;
-                },
+                success: this.handleActionSuccess,
                 error: function (e) {
                     MessageToast.show("error: " + e.responseText);
                 }
+            });
+        },
+
+        handleActionSuccess: function (data) {
+            if (data && data['success'] && data['xcallback']) {
+                // this.xcallback = data['xcallback']; // WARNING, this is a hack to allow the jsfragment to
+                let oView = this.getView();
+                if (!this._yesNoDialog /*|| this._yesNoDialog.bIsDestroyed === true*/) {
+                    this._yesNoDialog = sap.ui.jsfragment("lino.fragment.YesNoDialog", this);
+                    oView.addDependent(this._yesNoDialog)
+                }
+                oView.setModel(new JSONModel(data), "yesno");
+                this._yesNoDialog.open();
+            }
+            else if (data && data['eval_js']) {
+                eval(data['eval_js']);
+            }
+            // sap.m.MessageToast.show(data['message']);
+            else if (data['detail_handler_name'] !== undefined) {
+                if (data['record_deleted'] === true) {
+                    this.afterRecordDelete(data)
+                }
+            }
+
+            else if(data['refresh'] || data["refresh_all"]){
+                this.refresh();
+            }
+
+            else {
+                MessageToast.show(data['message']);
+            }
+
+        },
+
+        /**
+         * Generic function to handle button actions.
+         */
+        onPressAction: function (oEvent) {
+            const button = oEvent.getSource();
+            MessageToast.show(button.data('action_name') + "' pressed");
+            this.runSimpleAction({
+                actor_id: button.data('actor_id'),
+                action_name: button.data('action_name'),
+                sr: this.getSelectedRows(oEvent),
+                http_method: button.data('http_method'),
+
             });
         },
 
@@ -198,8 +228,12 @@ sap.ui.define([
             var mk = this._PK;
             var mt = this._content_type;
             this.routeToAction("grid." + oEvent.getSource().data("actor_id"),
-                {"query":{mk:mk,
-                          mt:mt}},view.getId());
+                {
+                    "query": {
+                        mk: mk,
+                        mt: mt
+                    }
+                }, view.getId());
         },
 
     })

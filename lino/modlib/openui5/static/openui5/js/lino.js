@@ -7,7 +7,7 @@
 */
 
 Lino = {
-    window_action: function(){
+    window_action: function () {
         sap.ui.getCore().byId("__component0---MAIN_VIEW").getController().routeToAction(...arguments);
     },
 
@@ -20,11 +20,26 @@ Lino = {
      * @param pk
      * @param params
      */
-    simple_action: function(actor_id, action_name,rp,is_on_main_actor,pk, params){
-        console.log(arguments, this.flags);
+    simple_action: function (actor_id, action_name, rp, is_on_main_actor, pk, params) {
+        // console.log(arguments, this.flags);
+
+        // In the case of selecting a workflow button on a table row, we need to stop the navigation.
         this.wave_flag("simple_action", 50); // if run first
         clearTimeout(Lino.timeouts['nav']); // if ran second
-
+        // /api/tickets/TicketsBySite/2308?_dc=1537458453973&mt=36&mk=51&an=mark_opened&sr=2308
+        rp = rp || "__component0---MAIN_VIEW";
+        sap.ui.getCore().byId(rp).getController().runSimpleAction(
+            {
+                // Are mt + mk needed, if so how to get MK?
+                // mt:
+                // mk:
+                actor_id: actor_id,
+                action_name: action_name,
+                rp: rp,
+                sr: pk,
+                is_on_main_actor: is_on_main_actor,
+                params: params
+            });
     },
 
     /**
@@ -35,15 +50,15 @@ Lino = {
      * @param rp
      * @param params
      */
-    param_action: function(actor_id, action_name,rp, params){
+    param_action: function (actor_id, action_name, rp, params) {
         console.log(arguments);
     },
 
-    debounce: function(func, wait, immediate) {
+    debounce: function (func, wait, immediate) {
         var timeout;
-        return function() {
+        return function () {
             var context = this, args = arguments;
-            var later = function() {
+            var later = function () {
                 timeout = null;
                 if (!immediate) func.apply(context, args);
             };
@@ -70,7 +85,9 @@ Lino = {
     wave_flag: function (flag, duration) {
         var me = this;
         this.flags[flag] = true;
-        setTimeout(function () {me.flags[flag] = undefined},
-                   duration)
+        setTimeout(function () {
+                me.flags[flag] = undefined
+            },
+            duration)
     }
 };

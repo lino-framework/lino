@@ -66,7 +66,7 @@ sap.ui.define([
 
             // Param values (unused ATM)
             oView.setModel(new JSONModel({}), "pv");
-            me.reload.apply(me, arguments)
+            me.refresh.apply(me, arguments)
 
         },
         /***
@@ -88,7 +88,7 @@ sap.ui.define([
             this._is_rendered = true;
 
         },
-        reload: function (oEvent) {
+        refresh: function (oEvent) {
             // Fetches the page that's set in {meta>page} or if that's not a valid page page_old
             // Called on page-resize and load, after the table has rendered and knows it's row count.
             // oEvent is from table afterendering event
@@ -251,12 +251,12 @@ sap.ui.define([
         onFirstPress: function (oEvent) {
             var oModel = this.getView().getModel("meta");
             oModel.setProperty("/page", 1);
-            this.reload();
+            this.refresh();
         },
         onPrevPress: function (oEvent) {
             var oModel = this.getView().getModel("meta");
             oModel.setProperty("/page", Math.max(1, oModel.getProperty("/page") - 1));
-            this.reload();
+            this.refresh();
         },
         onPagerInputChange: function (oEvent) {
             var oModel = this.getView().getModel("meta");
@@ -267,7 +267,7 @@ sap.ui.define([
             if (sPage !== sOldPage) {
                 input.setValueState("None");
                 MessageToast.show("Should load page:" + sPage);
-                this.reload()
+                this.refresh()
             }
             else if (isNaN(sPage)) {
                 input.setValueState("Error");
@@ -276,12 +276,12 @@ sap.ui.define([
         onNextPress: function (oEvent) {
             var oModel = this.getView().getModel("meta");
             oModel.setProperty("/page", Math.min(oModel.getProperty("/page") + 1, oModel.getProperty("/page_total")))
-            this.reload();
+            this.refresh();
         },
         onLastPress: function (oEvent) {
             var oModel = this.getView().getModel("meta");
             oModel.setProperty("/page", oModel.getProperty("/page_total"));
-            this.reload();
+            this.refresh();
         },
 
         /**

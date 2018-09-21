@@ -1,29 +1,19 @@
 sap.ui.jsfragment("lino.fragment.YesNoDialog", {
     createContent: function (context) {
 
-        var me = context;
-        var xcallback = context.xcallback;
-        var dialog = new sap.m.Dialog({
-            title: xcallback['title'],
+        let dialog = new sap.m.Dialog({
+            title: "{yesno>/xcallback/title}",
             type: 'Message',
             content: new sap.m.Text({text: "{yesno>/message}" /*context['message']*/}),
             beginButton: new sap.m.Button({
-                text: xcallback['buttons']['yes'],
+                text: "{yesno>/xcallback/buttons/yes}",
                 press: function () {
                     sap.m.MessageToast.show('Yes pressed!');
                     jQuery.ajax({
-                        url: '/callbacks/' + xcallback['id'] + '/yes',
+                        context: context,
+                        url: '/callbacks/' + context.getView().getModel("yesno").getProperty("/xcallback/id") + '/yes',
                         type: 'GET',
-                        success: function (data) {
-                            sap.m.MessageToast.show(data['message']);
-                            if (data['detail_handler_name'] !== undefined) {
-                                // todo NAV info
-                                var oView = me.getView();
-                                if (data['record_deleted'] === true) {
-                                    me.afterRecordDelete()
-                                }
-                            }
-                        },
+                        success: context.handleActionSuccess,
                         error: function (e) {
                             sap.m.MessageToast.show("error: " + e);
                         }
@@ -32,14 +22,14 @@ sap.ui.jsfragment("lino.fragment.YesNoDialog", {
                 }
             }),
             endButton: new sap.m.Button({
-                text: xcallback['buttons']['no'],
+                text: "{yesno>/xcallback/buttons/no}",
                 press: function () {
                     dialog.close();
                 }
             }),
             afterClose: function () {
                 dialog.destroy();
-                me._yesNoDialog = undefined;
+                context._yesNoDialog = undefined;
                 //todo also delete yes json data binding?
             }
         });

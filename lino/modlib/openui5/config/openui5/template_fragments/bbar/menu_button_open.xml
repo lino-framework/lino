@@ -8,13 +8,13 @@
         text="{{ba.action.label}}"
         {% endif %}
         tooltip="{{ba.action.help_text}}"
-        customData:action_url="{{actor.app_label}}/{{actor.__name__}}/">
+        customData:actor_id="{{actor.actor_id}}">
     <customData>
         <core:CustomData
                 key="action_name"
                 value="{{ba.action.action_name}}"/>
         <core:CustomData
-                key="action_method"
+                key="http_method"
                 value="{{ba.action.http_method}}"/>
     </customData>
 <menu>

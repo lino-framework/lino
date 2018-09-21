@@ -43,7 +43,7 @@ sap.ui.define([
             return this._PK
         },
 
-        afterRecordDelete: function(){
+        afterRecordDelete: function(data){
             var oNavInfo = this.getView().oModels.record.getData().navinfo;
             var record_id = null;
             if (oNavInfo.next){
@@ -99,6 +99,9 @@ sap.ui.define([
             return vp
         },
 
+        refresh:function(){
+            this.load_record(this._PK);
+        },
 
         load_record: function (record_id) {
             var oModel = new JSONModel();
@@ -110,7 +113,9 @@ sap.ui.define([
                 dataType: "json",
                 data: {
                     fmt: 'json',
-                    an: 'detail'
+                    an: 'detail',
+                    sr:record_id, // not needed, but have it anyway
+                    rp:oView.getId(),
                 },
                 success: function (oData) {
                     oModel.setData(oData);

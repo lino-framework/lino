@@ -8,14 +8,17 @@ sap.ui.define([
 
         onInit: function () {
             console.log("Things working....")
+            this.refresh();
+        },
 
-            var that = this;
+        refresh: function () {
+            let that = this;
             that.getView().byId('dashboard').getParent().setBusy(true);
-            $.get("/api/main_html", function (data) {
+            $.get("/api/main_html", {rp:this.getView().getId()}, function (data) {
                 that.getView().byId('dashboard').setContent(data.html);
                 that.getView().byId('dashboard').getParent().setBusy(false);
             });
-        },
+        }
     })
 
 });
