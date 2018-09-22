@@ -27,3 +27,9 @@
 .lino_Toolbar{
  background-color: #eff4f9 !important;
 }
+
+.sapMPanelContent:not(.sapMPanelBGTransparent) {
+
+    border-bottom: none !important;
+
+}

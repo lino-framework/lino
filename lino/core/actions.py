@@ -278,6 +278,13 @@ class Action(Parametrizable, Permittable):
     startup when loading the :xfile:`help_texts.py` files.
 
     """
+
+    submit_form_data = False
+    """
+    Should the running of the action include all known form values in 
+    the request.
+    """
+
     auto_save = True
     """
     What to do when this action is being called while the user is on a
@@ -960,6 +967,9 @@ class SubmitDetail(SaveRow):
     help_text = _("Save changes in this form")
     label = _("Save")
     action_name = ShowDetail.save_action_name
+    http_method = "PUT"
+    submit_form_data = True
+
 
     def is_callable_from(self, caller):
         return isinstance(caller, ShowDetail)

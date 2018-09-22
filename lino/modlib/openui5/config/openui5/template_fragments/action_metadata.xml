@@ -8,4 +8,15 @@
     <core:CustomData
             key="actor_id"
             value="{{actor.actor_id}}"/>
+    {% if ba.action.is_window_action() -%}
+    <core:CustomData
+            key="window_action"
+            value="true"/>
+    {%- endif %}
+    {% if ba.action.submit_form_data -%}
+    <core:CustomData
+            key="submit_form_data"
+            value="true"/>
+    {%- endif %}
+
 </customData>

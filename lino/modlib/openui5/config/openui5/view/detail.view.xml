@@ -16,6 +16,7 @@
 		customData:PK="{{actor.model._meta.pk.name}}"
 		customData:actor_id="{{actor.actor_id}}"
 		customData:url="/restful/{{actor.app_label}}/{{actor.__name__}}/"
+		customData:save_fields="{{save_fields}}"
 		{% if content_type -%}
 			customData:content_type="{{content_type}}"
 		{%- endif%}

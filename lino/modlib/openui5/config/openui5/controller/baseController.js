@@ -86,8 +86,8 @@ sap.ui.define([
          * @public
          * @returns {sap.ui.model.Model} the model instance
          */
-        getModel: function () {
-            return this.getView().getModel();
+        getModel: function (model_name) {
+            return this.getView().getModel(model_name);
         },
 
         /**
@@ -101,11 +101,19 @@ sap.ui.define([
 
 
         /**
-         * To be OverWridden .
-         *  Usrd fot ajax action requests.
+         * To be overwritten.
+         *  Used for ajax action requests.
          */
         getSelectedRows: function (oEvent) {
             return [];
+        },
+
+        /**
+         * To be overwritten.
+         * @returns record data of current row
+         */
+        getRecordData: function(){
+            return {};
         },
 
         /**
@@ -115,12 +123,12 @@ sap.ui.define([
          */
 // actor_id, action_name,rp,is_on_main_actor,pk, params
         runSimpleAction: function ({
-                                       actor_id, action_name, sr, is_on_main_actor,
+                                       actor_id, action_name, sr, is_on_main_actor, submit_form_data,
                                        rp = this.getView().getId(), /*keyword args*/
                                        http_method = "GET",
                                        params = {}
                                    }) {
-           if (typeof(sr) === "string" || typeof(sr) === "number" ) {
+            if (typeof(sr) === "string" || typeof(sr) === "number") {
                 sr = [sr]
             }
             else if (sr.length === 0) {
@@ -130,7 +138,11 @@ sap.ui.define([
                 return;
             }
 
-            jQuery.extend(params, { //same as update in python, optinal first arg for "deep update"
+            if (submit_form_data){
+                jQuery.extend(true, params,this.getRecordData())
+            }
+
+            jQuery.extend(params, { //same as dict.update in python, optional  first arg for "deep update"
                 "an": action_name,
                 "sr": sr,
                 // "mt": this._content_type, /*Not sure if needed for simple, actions*/
@@ -149,9 +161,22 @@ sap.ui.define([
             });
         },
 
+        /**
+         *  Used to open a window action's window.
+         *  Requests from the server the dialog-fragment containing the layout info and shows it.
+         *
+         *
+         */
+        open_window_action: function ({action_name, params = undefined}) {
+            console.log(arguments);
+            let oView = this.getView();
+            if (!this._yesNoDialog /*|| this._yesNoDialog.bIsDestroyed === true*/) {
+                this._yesNoDialog = sap.ui.jsfragment("lino.fragment." + action_name, this);
+                oView.addDependent(this._yesNoDialog)
+            }
+        },
         handleActionSuccess: function (data) {
             if (data && data['success'] && data['xcallback']) {
-                // this.xcallback = data['xcallback']; // WARNING, this is a hack to allow the jsfragment to
                 let oView = this.getView();
                 if (!this._yesNoDialog /*|| this._yesNoDialog.bIsDestroyed === true*/) {
                     this._yesNoDialog = sap.ui.jsfragment("lino.fragment.YesNoDialog", this);
@@ -170,7 +195,7 @@ sap.ui.define([
                 }
             }
 
-            else if(data['refresh'] || data["refresh_all"]){
+            else if (data['refresh'] || data["refresh_all"]) {
                 this.refresh();
             }
 
@@ -185,14 +210,20 @@ sap.ui.define([
          */
         onPressAction: function (oEvent) {
             const button = oEvent.getSource();
-            MessageToast.show(button.data('action_name') + "' pressed");
-            this.runSimpleAction({
+            let args = {
                 actor_id: button.data('actor_id'),
                 action_name: button.data('action_name'),
                 sr: this.getSelectedRows(oEvent),
                 http_method: button.data('http_method'),
-
-            });
+                submit_form_data: button.data('submit_form_data')
+            };
+            MessageToast.show(button.data('action_name') + "' pressed");
+            if (button.data("window_action")) {
+                this.open_window_action(args);
+            }
+            else {
+                this.runSimpleAction(args);
+            }
         },
 
         handleSuggest: function (oEvent) {
@@ -214,7 +245,8 @@ sap.ui.define([
             }
 
             oEvent.getSource().getBinding("suggestionItems").filter(aFilters);
-        },
+        }
+        ,
 
         /**
          * Event handler when a expand slave-table/summary button gets pressed
@@ -234,7 +266,8 @@ sap.ui.define([
                         mt: mt
                     }
                 }, view.getId());
-        },
+        }
+        ,
 
     })
 });

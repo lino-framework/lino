@@ -43,18 +43,20 @@ sap.ui.define([
             return this._PK
         },
 
-        afterRecordDelete: function(data){
+        afterRecordDelete: function (data) {
             var oNavInfo = this.getView().oModels.record.getData().navinfo;
             var record_id = null;
-            if (oNavInfo.next){
-                record_id = oNavInfo.next;}
-            else if (oNavInfo.prev){
-                record_id = oNavInfo.next;}
+            if (oNavInfo.next) {
+                record_id = oNavInfo.next;
+            }
+            else if (oNavInfo.prev) {
+                record_id = oNavInfo.next;
+            }
             //todo Direct to grid if record_id === null
-            var action = (record_id === null)? "grid" : "detail";
+            var action = (record_id === null) ? "grid" : "detail";
             this.routeTo(action,
                 data['detail_handler_name'].replace('.detail', ''),
-                {record_id:record_id});
+                {record_id: record_id});
         },
 
         /**
@@ -80,10 +82,27 @@ sap.ui.define([
             return oModel;
         },
 
+        /**
 
-        open_window_action: function (action, options, history) {
-            this.getRouter().navTo(action,
-                options, history);
+         * @returns record data
+         */
+        getRecordData: function () {
+            let send_data = {}
+            let data = this.getModel("record").getProperty("/data");
+            console.log(data);
+            let fields = this.getView().byId("MAIN_PAGE").data("save_fields").split(" ");
+            let disabled = Object.keys(data.disabled_fields);
+            fields.map(f => {
+                if (!disabled.includes(f)) {
+                    send_data[f] = data[f];
+                    let fH = f + "Hidden";
+                    if (data[fH]) {
+                        send_data[fH] = data[fH];
+                    }
+                }
+            });
+            console.log(send_data);
+            return send_data;
         },
 
         /***
@@ -99,7 +118,7 @@ sap.ui.define([
             return vp
         },
 
-        refresh:function(){
+        refresh: function () {
             this.load_record(this._PK);
         },
 
@@ -114,8 +133,8 @@ sap.ui.define([
                 data: {
                     fmt: 'json',
                     an: 'detail',
-                    sr:record_id, // not needed, but have it anyway
-                    rp:oView.getId(),
+                    sr: record_id, // not needed, but have it anyway
+                    rp: oView.getId(),
                 },
                 success: function (oData) {
                     oModel.setData(oData);

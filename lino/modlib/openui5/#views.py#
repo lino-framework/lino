@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*-
+ -*- coding: UTF-8 -*-
 # Copyright 2009-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
@@ -812,8 +812,7 @@ class Connector(View):
                 "title": actor.label,  #
                 # "main_elems": layout_handle.main.elements,
                 "main": layout_handle.main,
-                "layout_handle": layout_handle,
-                "save_fields": ' '.join([f.name for f in actor.model._meta.fields if f.editable]),
+                "layout_handle": layout_handle
 
             })
             tplname = "openui5/view/detail.view.xml"  # Change to "grid" to match action?
