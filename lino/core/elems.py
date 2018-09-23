@@ -901,8 +901,9 @@ class ChoiceListFieldElement(ChoicesFieldElement):
     choicelists are actors to define them once and refer to them.
     Special case are choicelist fields with blank=True: these must
     dynamicaly add a blank choice to the the choicelist.
-
     """
+
+    oui5_field_template = "openui5/elems/field/ChoiceListFieldElement.xml"
     filter_type = 'list'
     gridfilters_settings = dict(type='list')
 

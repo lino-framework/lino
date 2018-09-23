@@ -10,7 +10,13 @@
 	"description": "A Lino site",
 	"applicationVersion": {
 	  "version": "1.0.0"
-	}
+	},
+    "dataSources": {
+      "choicelists_choices": {
+        "uri": "/choicelists/",
+        "type": "JSON"
+      }
+    }
   },
   "sap.ui": {
 	"_version": "1.1.0",
@@ -40,6 +46,10 @@
 	  }
 	}
     ,"models":{
+      "choicelists_choices":{
+        "type":"sap.ui.model.json.JSONModel",
+        "dataSource":"choicelists_choices"
+      }
     },
       "routing": {
          "config": {

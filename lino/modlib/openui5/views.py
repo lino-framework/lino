@@ -19,9 +19,11 @@ from django.views.generic import View
 from django.core import exceptions
 from django.utils.translation import ugettext as _
 from django.utils.translation import get_language
+
 # from django.contrib import auth
 from lino.core import auth
 from lino.utils import isiterable
+from lino.utils.jsgen import py2js
 from lino.core import fields
 
 from lino.core.gfks import ContentType
@@ -439,6 +441,19 @@ def choices_response(actor, request, qs, row2dict, emptyValue):
     # ~ return json_response_kw(count=len(rows),rows=rows,title=_('Choices for %s') % fldname)
 
 
+class ChoiceListModel(View):
+    """
+    Creates a large JSON model that contains all the choicelists + choices
+
+    Note: This could be improved, or might cause issues due to changing language
+    """
+
+    def get(self, request):
+        data = {str(cl): [{"key":py2js(c[0]).strip('"'), "text":py2js(c[1]).strip('"')} for c in cl.get_choices()] for cl in
+                kernel.CHOICELISTS.values()}
+        return json_response(data)
+
+
 # Copied from lino.modlib.extjs.views.Choices line for line.
 class Choices(View):
     def get(self, request, app_label=None, rptname=None, fldname=None, **kw):
@@ -854,9 +869,12 @@ class Connector(View):
                 # don't include for abstract actors
                 actors_list = [a for a in actors_list
                                if not a.is_abstract()]
+                # Choicelists
+                choicelists_list = kernel.CHOICELISTS.values()
 
                 context.update(actors_list=actors_list,
                                detail_list=detail_list,
+                               choicelists_list=choicelists_list
                                )
 
 

@@ -77,6 +77,9 @@ class Plugin(Plugin):
                      '(?P<button_id>\w+)$',
                 views.Callbacks.as_view()),
 
+            url(rx+ r'choicelists/',
+                views.ChoiceListModel.as_view())
+
         ]
         return urls
 
