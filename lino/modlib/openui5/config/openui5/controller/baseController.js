@@ -112,7 +112,7 @@ sap.ui.define([
          * To be overwritten.
          * @returns record data of current row
          */
-        getRecordData: function(){
+        getRecordData: function () {
             return {};
         },
 
@@ -138,8 +138,8 @@ sap.ui.define([
                 return;
             }
 
-            if (submit_form_data){
-                jQuery.extend(true, params,this.getRecordData())
+            if (submit_form_data) {
+                jQuery.extend(true, params, this.getRecordData())
             }
 
             jQuery.extend(params, { //same as dict.update in python, optional  first arg for "deep update"
@@ -245,8 +245,19 @@ sap.ui.define([
             }
 
             oEvent.getSource().getBinding("suggestionItems").filter(aFilters);
-        }
-        ,
+        },
+
+        /**
+         * Used in input fields (ComboElement  + ForeignKeyElement) to set the hidden value when selecting choice
+         */
+        suggestionItemSelected: function (evt) {
+
+            let oItem = evt.getParameter('selectedItem'),
+                sKey = oItem ? oItem.getKey() : '';
+
+            evt.getSource().setSelectedKey(sKey);
+            // console.log(evt);
+        },
 
         /**
          * Event handler when a expand slave-table/summary button gets pressed

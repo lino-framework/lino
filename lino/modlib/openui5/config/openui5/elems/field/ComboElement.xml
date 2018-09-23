@@ -13,10 +13,12 @@
 				textFormatMode="Value"
 				placeholder="{{e.help_text}}"
                 value="{{bind('record>/data/',e.field.name)}}"
+				selectedKey="{{bind('record>/data/',e.field.name, 'Hidden')}}"
                 wrapping="true"
 				showSuggestion="true"
                 suggest="handleSuggest"
-				suggestionItems="{Input>/rows}">
+				suggestionItems="{Input>/rows}"
+				suggestionItemSelected="suggestionItemSelected">
 				<suggestionItems>
 					<core:ListItem key="{Input>value}" text="{Input>text}" additionalText="{Input>value}"/>
 				</suggestionItems>
