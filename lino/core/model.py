@@ -854,8 +854,9 @@ class Model(models.Model):
         pass
 
     def summary_row(self, ar, **kw):
-        """Return or yield a series of HTML elements that describes this
-        record in a :func:`lino.core.tables.summary`.
+        """
+        Return or yield a sequence of HTML elements that describes this
+        record in a summary panel.
 
         Usage example::
 
@@ -864,7 +865,6 @@ class Model(models.Model):
                 if self.city:
                     elems. += [" (", ar.obj2html(self.city), ")"]
                 return E.p(*elems)
-
         """
         yield ar.obj2html(self)
 

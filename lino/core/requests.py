@@ -1048,8 +1048,8 @@ class ActorRequest(BaseRequest):
     #         actor = self.actor
     #     return super(ActorRequest, self).spawn(actor, **kw)
 
-    def summary_row(self, *args, **kw):
-        return self.actor.summary_row(self, *args, **kw)
+    def summary_row(self, obj, **kwargs):
+        return self.actor.summary_row(self, obj, **kwargs)
 
     def get_sum_text(self, sums):
         return self.actor.get_sum_text(self, sums)
