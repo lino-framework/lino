@@ -293,13 +293,16 @@ class TableRequest(ActionRequest):
             sortfld = self.actor.get_data_elem(sort)
             if isinstance(sortfld, FakeField):
                 sort = sortfld.sortable_by
+                # sort might be None when user asked to sort a virtual
+                # field without sortable_by.
             else:
                 sort = [sort]
-            sort_dir = rqdata.get(constants.URL_PARAM_SORTDIR, 'ASC')
-            if sort_dir == 'DESC':
-                sort = ['-' + k for k in sort]
-            # print("20171123", sort)
-            kw.update(order_by=sort)
+            if sort is not None:
+                sort_dir = rqdata.get(constants.URL_PARAM_SORTDIR, 'ASC')
+                if sort_dir == 'DESC':
+                    sort = ['-' + k for k in sort]
+                # print("20171123", sort)
+                kw.update(order_by=sort)
 
         try:
             offset = rqdata.get(constants.URL_PARAM_START, None)

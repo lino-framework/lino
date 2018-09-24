@@ -241,7 +241,7 @@ class UserPlan(UserAuthored):
         return plan
 
     def run_update_plan(self, ar):
-        pass
+        raise NotImplementedError()
 
     def reset_plan(self):
         """Delete all cached data for this plan.
