@@ -24,10 +24,7 @@ import six
 # TypeError: type() argument 1 must be string, not newstr
 
 def my_escape(s):
-    if six.PY3:
-        s = s.replace("\u25b6 ", "")
-    else:
-        s = s.replace("\xe2\x96\xb6 ", "")
+    s = s.replace("\u25b6 ", "")
     return s
 
 
