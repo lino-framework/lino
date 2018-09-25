@@ -9,7 +9,7 @@
 <Select
     forceSelection="true"
     value="{{bind('record>/data/',e.field.name)}}"
-    {# selectedKey="{{bind('record>/data/',e.field.name+'Hidden')}}" #}
+    selectedKey="{{bind('record>/data/',e.field.name+'Hidden')}}"
     autoAdjustWidth="true"
     items="{{bind('choicelists_choices>/',str(e.field.choicelist))}}">
     <core:Item key="{choicelists_choices>key}" text="{choicelists_choices>text}" />
