@@ -6,7 +6,7 @@
 A selection of names to be used in tested documents.
 """
 
-from __future__ import print_function
+from __future__ import print_function, unicode_literals
 
 import six
 from builtins import str

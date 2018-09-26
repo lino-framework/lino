@@ -15,7 +15,7 @@ Adds Lino-specific Sphinx setup.
 
 
 """
-
+from __future__ import print_function, unicode_literals
 import six
 # from builtins import str
 # Exception occurred:
@@ -24,7 +24,7 @@ import six
 # TypeError: type() argument 1 must be string, not newstr
 
 def my_escape(s):
-    s = s.replace("\u25b6", "")
+    s = s.replace("\u25b6 ", "")
     return s
 
 

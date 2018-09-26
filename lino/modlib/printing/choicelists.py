@@ -7,7 +7,7 @@ Choicelists for `lino.modlib.printing`.
 
 """
 
-from __future__ import unicode_literals
+from __future__ import unicode_literals, print_function
 # from future import standard_library
 # standard_library.install_aliases()
 from builtins import str
