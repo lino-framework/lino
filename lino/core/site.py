@@ -165,6 +165,13 @@ class Site(object):
         automatically populated from :attr:`languages` and application
         code should not change it's value.
 
+    .. attribute:: beid_protocol
+
+        Until 20180926 this was a string like e.g. 'beid' in order to
+        use a custom protocol for reading eid cards.  Now it is
+        deprecated.  Use :attr:`lino_xl.lib.beid.Plugin.urlhandler_prefix`
+        instead.
+
     """
 
     auto_fit_column_widths = True
@@ -966,12 +973,6 @@ class Site(object):
     ``file://`` link (on a development server).
     """
 
-    beid_protocol = None
-    """
-    Set this to a string like e.g. 'beid' in order to use a custom
-    protocal for reading eid cards.
-    """
-    
     sidebar_width = 0
     """
     Used by :mod:`lino.modlib.plain`.
@@ -1296,6 +1297,9 @@ class Site(object):
             raise ChangedAPI("setup_choicelists is no longer supported")
         if hasattr(self, 'setup_workflows'):
             raise ChangedAPI("setup_workflows is no longer supported")
+        if hasattr(self, 'beid_protocol'):
+            raise ChangedAPI("Replace Site.beid_protocol by plugins.beid.urlhandler_prefix")
+        
 
         # if len(_INSTANCES):
         #     raise Exception("20161219")
@@ -2908,7 +2912,7 @@ this field.
     def get_default_language(self):
         """
         The django code of the default language to use in every
-        :class:`dd.LanguageField`.
+        :class:`lino.utils.mldbc.fields.LanguageField`.
         
         """
         return self.DEFAULT_LANGUAGE.django_code

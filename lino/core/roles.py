@@ -85,8 +85,9 @@ class SiteAdmin(SiteStaff, Supervisor, Explorer):
 
 
 def login_required(*args):
-    """An API shortcut available in :mod:`lino.api.dd`. See
-    :meth:`lino.modlib.users.choicelists.UserType.has_required_role`
+    """Return a set of roles to be used for a required_roles.
+
+    An API shortcut available in :mod:`lino.api.dd`. 
 
     """
     if len(args):
@@ -101,7 +102,8 @@ def check_role(rr, actor):
 
 
 def check_required_roles(required_roles, actor):
-    """Check whether the given value is a valid required_roles
+    """
+    Check whether the given value is a valid required_roles
     specification.
 
     - it must be iterable
@@ -111,7 +113,6 @@ def check_required_roles(required_roles, actor):
 
     - if an element is an iterable, then it may not be empty. Only the
       top-level iterable may be empty.
-
     """
     for rr in required_roles:
         if isinstance(rr, (tuple, list)):
@@ -124,3 +125,41 @@ def check_required_roles(required_roles, actor):
         else:
             check_role(rr, actor)
 
+
+def checkmro(*args):
+    """
+    Utility function to find out the reason of a TypeError "Cannot
+    create a consistent method resolution order (MRO)".
+
+    Usage: imagine you have some code like this:
+
+        from one import A
+        from two import B
+        from three import C
+
+        # A, B and C are subclasses of UserRole
+
+        class MyUserRole(A, B, C):
+            pass
+
+    and Python tells you that it cannot create a consistent MRO.
+
+    So somewhere in those classes A, B and C is a "duplicate"
+    ancestor. And you have no idea where it is.
+
+    In that case you comment out the definition of MyUserRole and
+    say::
+
+        checkmro(A, B, C):
+    """
+    bases = dict()
+    for cl in args:
+        for b in cl.__mro__:
+            if b is UserRole:
+                break
+            if b in bases:
+                print("{} inherits {} is already in {}".format(cl, b, bases[b]))
+            else:
+                bases[b] = cl
+
+            
