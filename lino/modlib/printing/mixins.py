@@ -2,7 +2,7 @@
 # Copyright 2009-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-from __future__ import unicode_literals
+from __future__ import unicode_literals, print_function
 # from builtins import object
 
 import os
