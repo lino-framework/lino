@@ -226,25 +226,48 @@ sap.ui.define([
             }
         },
 
+        /**
+         * Serverside quick-search filtering for foreign key fields
+         * @param oEvent
+         */
         handleSuggest: function (oEvent) {
-            var Input = oEvent.getSource();
-            var oView = this.getView();
-            var url = Input.data('input_url');
-            oView.setBusy(true);
-            var oInputModel = new JSONModel(jQuery.sap.getModulePath("lino.server", url));
-            oView.setModel(oInputModel, "Input");
-            oView.setBusy(false);
+            let oInput = oEvent.getSource();
+            let url = oInput.data('input_url');
+            let query = oEvent.getParameter("suggestValue");
+            oInput.setFilterSuggests(true);
+            this._handleSuggest({
+                oEvent,
+                url,
+                query
+            });
+        },
 
-            var sTerm = oEvent.getParameter("suggestValue");
-            var aFilters = [];
-            if (sTerm) {
-                aFilters.push(new Filter("text", sap.ui.model.FilterOperator.StartsWith, sTerm));
-            }
-            else {
-                aFilters.push(new Filter("text", sap.ui.model.FilterOperator.All, ""));
-            }
+        handleValueHelp: function (oEvent) {
+            let oInput = oEvent.getSource();
+            oInput.setFilterSuggests(false);
+            let url = oInput.data('input_url');
+            this._handleSuggest({
+                oEvent,
+                url,
+            });
+        },
 
-            oEvent.getSource().getBinding("suggestionItems").filter(aFilters);
+        _handleSuggest: function ({oEvent, url, query = "", oInput = oEvent.getSource()}) {
+            let oView = this.getView();
+            let oInputModel = new JSONModel(url + "?" + jQuery.param({
+                start: 0,
+                limit: 9999,
+                query: query
+            }));
+            oView.setModel(oInputModel, oInput.data('ext_name'));
+            // var aFilters = [];
+            // if (query) {
+            //     aFilters.push(new Filter("text", sap.ui.model.FilterOperator.StartsWith, query));
+            // }
+            // else {
+            //     aFilters.push(new Filter("text", sap.ui.model.FilterOperator.All, ""));
+            // }
+            // oEvent.getSource().getBinding("suggestionItems").filter(aFilters);
         },
 
         /**

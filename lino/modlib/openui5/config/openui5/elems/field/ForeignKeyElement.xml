@@ -8,13 +8,14 @@
         {% block field_content %}
 
 <Input
-id="{{e}}"
+id="{{e.ext_name}}"
 type="Text"
 textFormatMode="Value"
 placeholder="{{e.help_text}}"
 value="{{bind('record>/data/',e.field.name)}}"
 selectedKey="{{bind('record>/data/',e.field.name, 'Hidden')}}"
-suggestionItems="{Input>/rows}"
+suggestionItems="{{bind(e.ext_name,'>/rows/')}}"
+{# suggestionItems="{{bind('Input','>/rows/')}}" #}
 wrapping="true"
 showSuggestion="true"
 suggest="handleSuggest"
@@ -22,12 +23,16 @@ showValueHelp="true"
 valueHelpRequest="handleValueHelp"
 suggestionItemSelected="suggestionItemSelected">
 <suggestionItems>
-    <core:ListItem key="{Input>value}" text="{Input>text}" additionalText="{Input>value}"/>
+   <core:ListItem key="{{bind(e.ext_name,'>value')}}" text="{{bind(e.ext_name,'>text')}}" additionalText="{{bind(e.ext_name,'>value')}}"/>
+{#    <core:ListItem key="{{bind('Input','>value')}}" text="{{bind('Input','>text')}}" additionalText="{{bind('Input','>value')}}"/> #}
 </suggestionItems>
 <customData>
     <core:CustomData
             key="input_url"
             value="{{url}}"/>
+    <core:CustomData
+            key="ext_name"
+            value="{{e.ext_name}}"/>
 </customData>
 </Input>
 
