@@ -10,6 +10,7 @@ import datetime
 
 from django.db import models
 from django.conf import settings
+from django.utils import six
 from django.utils.translation import ugettext_lazy as _
 from django.utils.timezone import make_aware
 
@@ -52,7 +53,7 @@ class PrintableType(Model):
         `PrintableType` but an **instance method** on `Printable`.
 
         """
-        return [cls.templates_group]  # or full_model_name(cls)
+        return [six.text_type(cls.templates_group)]  # or full_model_name(cls)
 
     @chooser(simple_values=True)
     def template_choices(cls, build_method):
