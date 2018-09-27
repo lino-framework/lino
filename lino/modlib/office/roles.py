@@ -1,4 +1,4 @@
-# Copyright 2015-2017 Luc Saffre
+# Copyright 2015-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """User roles for `lino.modlib.office`.
 
@@ -7,14 +7,12 @@
 # from lino.core.roles import UserRole, SiteUser, SiteAdmin
 from lino.core.roles import UserRole
 
-# class OfficeUser(SiteUser):
 class OfficeUser(UserRole):
-    """A user who has access to office functionality like calendar, notes
+    """
+    A user who has access to office functionality like calendar, notes
     and uploads.
-
     """
 
-# class OfficeOperator(SiteUser):
 class OfficeOperator(UserRole):
     """A user who manages office functionality for other users (but not
     for himself).
