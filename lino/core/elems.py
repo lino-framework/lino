@@ -2244,7 +2244,7 @@ class TabPanel(Panel):
         nav[0].set("class", "active")
 
         yield nav
-        main = E.div(class_="tab-content")
+        main = E.div(**{'class':"tab-content"})
         for e in self.elements:
             main.append(E.div(*tuple(e.as_plain_html(ar, obj)), id=e.ext_name, **{'class': "tab-pane fade"}))
         main[0].set("class", main[0].get("class") + " in active")
