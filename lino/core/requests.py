@@ -652,7 +652,7 @@ class BaseRequest(object):
     def story2rst(self, story, *args, **kwargs):
         return self.renderer.show_story(self, story, *args, **kwargs)
 
-    def show(self, spec, master_instance=None, column_names=None,
+    def show(self, spec=None, master_instance=None, column_names=None,
              header_level=None, language=None, nosummary=False,
              stripped=True, show_links=False, header_links=False,
              **kwargs):
@@ -706,7 +706,9 @@ class BaseRequest(object):
         if master_instance is not None:
             kwargs.update(master_instance=master_instance)
 
-        if isinstance(spec, BaseRequest):
+        if spec is None:
+            ar = self
+        elif isinstance(spec, BaseRequest):
             assert not kwargs
             ar = spec
         else:
