@@ -115,6 +115,7 @@ class Message(UserAuthored, Controllable, Created):
         app_label = 'notify'
         verbose_name = _("Notification message")
         verbose_name_plural = _("Notification messages")
+        ordering = ['created']
 
     message_type = MessageTypes.field(default="change")
     seen = models.DateTimeField(_("seen"), null=True, editable=False)
