@@ -493,7 +493,7 @@ class Choices(View):
                 field = rpt.get_data_elem(fldname)
             if field.blank:
                 # logger.info("views.Choices: %r is blank",field)
-                emptyValue = '<br/>'
+                emptyValue = ''
             qs, row2dict = choices_for_field(request, rpt, field)
 
         return choices_response(rpt, request, qs, row2dict, emptyValue)

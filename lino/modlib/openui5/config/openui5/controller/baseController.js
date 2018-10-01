@@ -234,17 +234,32 @@ sap.ui.define([
             let oInput = oEvent.getSource();
             let url = oInput.data('input_url');
             let query = oEvent.getParameter("suggestValue");
+            // console.log("hs");
+            if (Lino.flags['suggest']) {
+                return
+            }
             oInput.setFilterSuggests(true);
             this._handleSuggest({
                 oEvent,
                 url,
                 query
             });
+
         },
 
+
+        /**
+         * Help button press on FK fields,
+         *
+         * BUG: In chrome selection doesn't work. We should change this to the normal pop-up search dialog window
+         *      that is used in the input samples. 
+         * @param oEvent
+         */
         handleValueHelp: function (oEvent) {
             let oInput = oEvent.getSource();
             oInput.setFilterSuggests(false);
+            // console.log("hvh");
+            Lino.wave_flag("suggest", 200);
             let url = oInput.data('input_url');
             this._handleSuggest({
                 oEvent,
@@ -254,13 +269,28 @@ sap.ui.define([
 
         _handleSuggest: function ({oEvent, url, query = "", oInput = oEvent.getSource()}) {
             let oView = this.getView();
-            let oInputModel = new JSONModel(url + "?" + jQuery.param({
-                start: 0,
-                limit: 9999,
-                query: query
-            }));
-            oView.setModel(oInputModel, oInput.data('ext_name'));
-            // var aFilters = [];
+            // if (oInput.getValue() === ""){
+            //     oInput.getValue(" ");
+            // }
+
+            jQuery.ajax({
+                context: this,
+                url: url,
+                type: "GET",
+                data: jQuery.param({
+                    start: 0,
+                    limit: 9999,
+                    query: query
+                }),
+                success: function (data) {
+                    let oInputModel = new JSONModel(data);
+                    oView.setModel(oInputModel, oInput.data('ext_name'));
+                },
+                error: function (e) {
+                    MessageToast.show("error: " + e.responseText);
+                }
+            });
+
             // if (query) {
             //     aFilters.push(new Filter("text", sap.ui.model.FilterOperator.StartsWith, query));
             // }
@@ -268,6 +298,7 @@ sap.ui.define([
             //     aFilters.push(new Filter("text", sap.ui.model.FilterOperator.All, ""));
             // }
             // oEvent.getSource().getBinding("suggestionItems").filter(aFilters);
+            // var aFilters = [];
         },
 
         /**
@@ -280,7 +311,8 @@ sap.ui.define([
 
             evt.getSource().setSelectedKey(sKey);
             // console.log(evt);
-        },
+        }
+        ,
 
         /**
          * Event handler when a expand slave-table/summary button gets pressed
