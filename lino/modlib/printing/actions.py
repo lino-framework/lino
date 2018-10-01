@@ -28,8 +28,10 @@ from lino.utils.pdf import merge_pdfs
 
 from .choicelists import BuildMethods
 
-davlink = settings.SITE.plugins.get('davlink', None)
-has_davlink = davlink is not None and settings.SITE.use_java
+# davlink = settings.SITE.plugins.get('davlink', None)
+# has_davlink = davlink is not None and settings.SITE.use_java
+has_davlink = False
+
 
 
 class BasePrintAction(Action):

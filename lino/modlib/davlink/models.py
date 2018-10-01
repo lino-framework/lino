@@ -1,13 +1,6 @@
 # Copyright 2008-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""
-Database models for `lino.modlib.davlink`.
-
-.. autosummary::
-
-"""
-
 from __future__ import unicode_literals
 from __future__ import print_function
 

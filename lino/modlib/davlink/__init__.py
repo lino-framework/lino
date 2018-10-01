@@ -2,8 +2,10 @@
 # Copyright 2014-2017 Luc Saffre
 # License: BSD (see file COPYING for details)
 
-"""Adds actions for editing printable documents on a server with
-:doc:`/admin/webdav`.
+"""
+Deprecated.  Use :attr:`lino.core.site.Site.webdav_protocol`
+instead.  Adds actions for editing printable documents on a server
+with :doc:`/admin/webdav`.
 
 When this plugin is installed, you can still easily disable it by
 setting :attr:`use_java <lino.core.site.Site.use_java>` to `False` in
@@ -13,7 +15,6 @@ your :xfile:`settings.py`.
    required by :ref:`davlink` into your media directory, in a
    subdirectory named "davlink".  TODO: move :ref:`davlink` to a `static`
    directory in the Lino repository.
-
 """
 
 import os

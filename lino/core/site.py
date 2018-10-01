@@ -963,14 +963,15 @@ class Site(object):
     Lino expects the browser to be configured to understand the given
     protocol.
 
-    If this is non-empty, Lino ignores whether
-    :mod:`lino.modlib.davlink` is installed or not.
-
     When an *editable* printable document has been generated, Lino
     does not open a new browser window on that document but invokes
     the client's Office application.  That application accesses the
     document either via a WebDAV link (on a production server) or a
     ``file://`` link (on a development server).
+
+    This is the functional successor for 
+    :mod:`lino.modlib.davlink` which is now deprecated.
+
     """
 
     sidebar_width = 0
