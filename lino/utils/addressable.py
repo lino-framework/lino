@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2017 Luc Saffre
+# Copyright 2013-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Used by :class:`lino_xl.lib.appypod.mixins.PrintLabelsAction` and

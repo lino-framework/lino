@@ -18,7 +18,8 @@ PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3
 
 install_requires = [
-    'Sphinx','django',
+    # 'Sphinx',
+    'django',
     'atelier', 'unipath', 'python_dateutil', 'dateparser',
     'etgen',
     'Babel', 'lxml',

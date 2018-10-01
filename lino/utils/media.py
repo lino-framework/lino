@@ -8,14 +8,12 @@ from builtins import object
 
 from os.path import join
 
-import os
-
 from django.conf import settings
-
 from lino.core.utils import is_devserver
 
-davlink = settings.SITE.plugins.get('davlink', None)
-has_davlink = davlink is not None and settings.SITE.use_java
+# davlink = settings.SITE.plugins.get('davlink', None)
+# has_davlink = davlink is not None and settings.SITE.use_java
+has_davlink = False
 
 
 class MediaFile(object):

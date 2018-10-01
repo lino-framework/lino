@@ -203,12 +203,12 @@ class Plugin(object):
         # super(Plugin, self).__init__()
 
     def configure(self, **kw):
-        """Set the given parameter(s) of this Plugin instance.  Any number of
+        """
+        Set the given parameter(s) of this Plugin instance.  Any number of
         parameters can be specified as keyword arguments.
 
         Raise an exception if caller specified a key that does not
         have a corresponding attribute.
-
         """
         for k, v in list(kw.items()):
             if not hasattr(self, k):
