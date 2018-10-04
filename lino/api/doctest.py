@@ -308,6 +308,7 @@ def show_fields(model, fieldnames=None, columns=False, all=None):
             fieldnames = model.params_layout.main
     elif issubclass(model, Model):
         get_field = model._meta.get_field
+        # get_field = model.get_data_elem
         if fieldnames is None:
             fieldnames = [f.name for f in model._meta.get_fields()]
     elif issubclass(model, AbstractTable):

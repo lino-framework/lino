@@ -1843,37 +1843,18 @@ class Site(object):
             #     pass
 
     def install_help_text(self, fld, cls=None, attrname=None):
-        """Install a `help_text` from collected :xfile:`help_texts.py` for
-this field.
-
+        """
+        Set the `help_text` attribute of the given element `fld` from
+        collected :xfile:`help_texts.py`.
         """
         if cls is None:
             cls = fld
         debug = False
-        # if attrname.startswith('mun'):
-        #     debug = True
-        # from lino.core.actions import Action
-        # if isinstance(fld, Action) and fld.__class__.__name__ == 'ChangePassword':        
-        #     debug = True
-        # if isinstance(fld, type) and fld.__name__ == 'ChangePassword':        
-        # # if isinstance(fld, Action) and fld.__class__.__name__ == 'ChangePassword':
-        #     debug = True
         if not hasattr(fld, 'help_text'):  # e.g. virtual fields don't
                                            # have a help_text attribute
             if debug:
                 print("20170824 {!r} has no help_text".format(fld))
             return
-        # if fld.help_text:
-        #     # if debug:
-        #     #     print("20170824 {} on {} has already a help_text {}".format(
-        #     #         attrname, cls, repr(fld.help_text)))
-        #     return
-        # if debug:
-        #     print(20160829, cls)
-        # if isinstance(fld, type):
-        #     cls = fld
-        # else:
-        #     cls = fld.model
         for m in cls.mro():
             # useless = ['lino.core', 'lino.mixins']
             # if m.__module__.startswith(useless):
@@ -1886,8 +1867,8 @@ this field.
             if attrname:
                 k += '.' + attrname
             txt = self._help_texts.get(k, None)
-            # if attrname == "nationality":
-            #     print("20180313 {} {}".format(k, txt))
+            # if attrname == "update_missing_rates":
+            #     print("20181004 {} {} {}".format(cls, k, txt))
             if txt is None:
                 if debug:
                     print("20170824 {}.{} : no help_text using {!r}".format(

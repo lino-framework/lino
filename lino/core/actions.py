@@ -502,6 +502,10 @@ class Action(Parametrizable, Permittable):
 
     @classmethod
     def decorate(cls, *args, **kw):
+        """
+        Return a decorator which turns an instance method on a model or a
+        class method on an actor into an action of this class.
+        """
         def decorator(fn):
             assert not 'required' in kw
             # print 20140422, fn.__name__
@@ -692,7 +696,8 @@ class Action(Parametrizable, Permittable):
         return True
 
     def run_from_ui(self, ar, **kwargs):
-        """Execute the action.  `ar` is an :class:`ActionRequest
+        """
+        Execute the action.  `ar` is an :class:`ActionRequest
         <lino.core.requests.BaseRequest>` object representing the
         context in which the action is running.
         """
@@ -700,6 +705,11 @@ class Action(Parametrizable, Permittable):
             "%s has no run_from_ui() method" % self.__class__)
 
     def run_from_code(self, ar=None, *args, **kwargs):
+        """
+        Probably to be deprecated.
+        Execute the action.  The default calls :meth:`run_from_ui`.  You
+        may override this to define special behaviour
+        """
         self.run_from_ui(ar, *args, **kwargs)
 
     def run_from_session(self, ses, *args, **kw):  # 20130820

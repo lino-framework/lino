@@ -1287,6 +1287,12 @@ class InstanceAction(object):
         return "{0} on {1}".format(self.bound_action, obj2str(self.instance))
 
     def run_from_code(self, ar, *args, **kw):
+        """
+        Probably to be deprecated.
+        Run this action on this instance in the given session, updating
+        the response of the session.  Returns the return value of the
+        action.
+        """
         # raise Exception("20170129 is this still used?")
         ar.selected_rows = [self.instance]
         return self.bound_action.action.run_from_code(ar, *args, **kw)
