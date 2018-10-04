@@ -585,13 +585,9 @@ class Site(object):
 
     """
 
-    workflows_module = None
-    """The full Python path of the **workflows module** to be used on
-    this site.
-    """
-    
     user_types_module = None
-    """The name of the **user types module** to be used on this site.
+    """
+    The name of the **user types module** to be used on this site.
 
     Default value is `None`, meaning that permission control is
     inactive: everything is permitted.  But note that
@@ -616,9 +612,14 @@ class Site(object):
     Examples of such user types modules are
     :mod:`lino.core.user_types` and
     :mod:`lino_noi.lib.noi.user_types`.
-
     """
 
+    workflows_module = None
+    """
+    The full Python path of the **workflows module** to be used on this
+    site.
+    """
+    
     custom_layouts_module = None
     """The full Python path of the **custom layouts module** used on this
     site.

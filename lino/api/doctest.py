@@ -251,6 +251,33 @@ from lino.core.actions import Action
 from lino.core.tables import AbstractTable
 from lino.core.boundaction import BoundAction
 
+def show_workflow(actions, all=False, language=None):
+    """
+    Show the given actions as a table.  Usage example in
+    :ref:`avanti.specs.cal`.
+
+    """
+    def doit():
+        cells = []
+        cols = ["Action name", "Verbose name", "Help text",
+                "Target state", "Required states"]  # , "Required roles"]
+        for a in actions:
+            ht = a.help_text or ''
+            if ht or all:
+                # required_roles = ' '.join(
+                #     [str(r) for r in a.required_roles])
+                cells.append(
+                    [a.action_name, a.label, unindent(ht),
+                     a.target_state, a.required_states or '',
+                     # required_roles
+                    ])
+        print(table(cols, cells).strip())
+        
+    if language:
+        with translation.override(language):
+            return doit()
+    return doit()
+
 
 def show_fields(model, fieldnames=None, columns=False, all=None):
     """

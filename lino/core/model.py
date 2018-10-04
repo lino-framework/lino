@@ -1062,7 +1062,7 @@ class Model(models.Model):
 
         See also :meth:`get_simple_parameters`.
 
-        Usage example: :class:`lino.modlib.users.UserAuthored`.
+        Usage example: :class:`lino.modlib.comments.Comment`.
 
         """
         return fields
