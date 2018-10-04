@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2016 Luc Saffre
+# Copyright 2009-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """
 .. autosummary::
@@ -15,7 +15,7 @@ import os
 from django.conf import settings
 
 from lino.utils import curry
-from lino.core import actions
+# from .actions import Action
 
 from lino.core.permissions import (
     make_permission_handler, make_view_permission_handler)
@@ -29,9 +29,11 @@ class BoundAction(object):
     """
 
     def __init__(self, actor, action):
-
-        if not isinstance(action, actions.Action):
-            raise Exception("%s : %r is not an Action" % (actor, action))
+        # the following test would require us to import Action, which
+        # would trigger a circular import Action -> BoundAction ->
+        # BaseRequest -> InstanceAction -> Action
+        # if not isinstance(action, Action):
+        #     raise Exception("%s : %r is not an Action" % (actor, action))
         self.action = action
         self.actor = actor
 

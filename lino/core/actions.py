@@ -13,6 +13,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.text import format_lazy
 from django.utils.encoding import force_text
 from django.conf import settings
@@ -23,19 +24,19 @@ get_models = apps.get_models
 
 
 from lino.core import constants
-from lino.core.utils import obj2unicode
-from lino.core.utils import resolve_model
-from lino.core.utils import navinfo
 from lino.core import layouts
 from lino.core import fields
 from lino.core import keyboard
-from lino.core.permissions import Permittable
-from lino.core.utils import Parametrizable, InstanceAction
 from lino.modlib.users.utils import get_user_profile
 from lino.utils.choosers import Chooser
-from etgen.html import E
 
+from .permissions import Permittable
+from .utils import obj2unicode
+from .utils import resolve_model
+from .utils import navinfo
+from .utils import Parametrizable
 from .diff import ChangeWatcher
+from .requests import InstanceAction
 
 def check_for_chooser(holder, field):
     # holder is either a Model, an Actor or an Action.
@@ -150,9 +151,6 @@ def make_params_layout_handle(self):
     # `self` is either an Action instance or an Actor class object
     return self.params_layout.get_layout_handle(
         settings.SITE.kernel.default_ui)
-
-
-from django.utils.encoding import python_2_unicode_compatible
 
 
 @python_2_unicode_compatible
@@ -502,6 +500,22 @@ class Action(Parametrizable, Permittable):
         return InstanceAction(
             self, instance.get_default_table(), instance, owner)
 
+    @classmethod
+    def decorate(cls, *args, **kw):
+        def decorator(fn):
+            assert not 'required' in kw
+            # print 20140422, fn.__name__
+            kw.setdefault('custom_handler', True)
+            a = cls(*args, **kw)
+
+            def wrapped(ar):
+                obj = ar.selected_rows[0]
+                return fn(obj, ar)
+            a.run_from_ui = wrapped
+            return a
+        return decorator
+
+
     def get_required_roles(self, actor):
         return actor.required_roles
 
@@ -677,7 +691,7 @@ class Action(Parametrizable, Permittable):
         """
         return True
 
-    def run_from_ui(self, ar, **kw):
+    def run_from_ui(self, ar, **kwargs):
         """Execute the action.  `ar` is an :class:`ActionRequest
         <lino.core.requests.BaseRequest>` object representing the
         context in which the action is running.
@@ -685,8 +699,8 @@ class Action(Parametrizable, Permittable):
         raise NotImplementedError(
             "%s has no run_from_ui() method" % self.__class__)
 
-    def run_from_code(self, ar, *args, **kw):
-        self.run_from_ui(ar, *args, **kw)
+    def run_from_code(self, ar=None, *args, **kwargs):
+        self.run_from_ui(ar, *args, **kwargs)
 
     def run_from_session(self, ses, *args, **kw):  # 20130820
         if len(args):
@@ -1194,20 +1208,7 @@ class DeleteSelected(MultipleRowAction):
         obj.delete_instance(ar)
         return 1
 
-
-def action(*args, **kw):
-    def decorator(fn):
-        assert not 'required' in kw
-        # print 20140422, fn.__name__
-        kw.setdefault('custom_handler', True)
-        a = Action(*args, **kw)
-
-        def wrapped(ar):
-            obj = ar.selected_rows[0]
-            return fn(obj, ar)
-        a.run_from_ui = wrapped
-        return a
-    return decorator
+action = Action.decorate
 
 
 def get_view_permission(e):

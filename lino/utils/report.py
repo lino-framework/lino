@@ -13,10 +13,9 @@ from lino.utils import curry
 
 from lino.core.frames import Frame
 
+from lino.core.requests import InstanceAction
 from lino.core.requests import VirtualRow
-# from lino.core.requests import ActionRequest
-from lino.core.actions import ShowEmptyTable  #, ExplicitRefresh
-from lino.core import actions
+from lino.core.actions import ShowEmptyTable, Action
 from lino.core import fields
 
 from lino.modlib.printing.mixins import Printable
@@ -95,8 +94,8 @@ class EmptyTableRow(VirtualRow, Printable):
         # if name not in ('get_story'):
         #     raise Exception("20170910 %s" % name)
         v = getattr(self._table, name)
-        if isinstance(v, actions.Action):
-            return actions.InstanceAction(v, self._table, self, None)
+        if isinstance(v, Action):
+            return InstanceAction(v, self._table, self, None)
         # 20130525 dd.Report calls `get_story` on `self`, not on the `cls`
         if callable(v):
             return curry(v, self)
