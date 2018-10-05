@@ -557,12 +557,12 @@ class Kernel(object):
                 #     ba.action.__class__, ba.action.action_name)
                 # site.install_help_text(ba.action, a, ba.action.action_name)
                 # site.install_help_text(ba.action, ba.action.__class__)
-                site.install_help_text(ba.action.__class__)
                 if a.model is not None:
                     site.install_help_text(
                         ba.action, a.model, ba.action.action_name)
                 site.install_help_text(
                     ba.action, a, ba.action.action_name)
+                site.install_help_text(ba.action.__class__)
                 # site.install_help_text(
                 #     ba.action, ba.action.__class__,
                 #     attrname=ba.action.action_name)

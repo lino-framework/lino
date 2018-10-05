@@ -837,7 +837,14 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         else:
             cls.setup_parameters(cls.parameters)
 
-        cls.simple_parameters = tuple(cls.get_simple_parameters())
+        lst = []
+        for n in cls.get_simple_parameters():
+            if n in lst:
+                logger.warning(
+                    "Removed duplicate name %s returned by %s.get_simple_parameters()", n, cls)
+            else:
+                lst.append(n)
+        cls.simple_parameters = tuple(lst)
         
         if cls.parameters is None and len(cls.simple_parameters) > 0 :
             cls.parameters = {}
