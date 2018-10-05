@@ -35,7 +35,7 @@ from lino.core import actors
 from lino.core.menus import find_menu_item
 from lino.sphinxcontrib.actordoc import menuselection_text
 from pprint import pprint
-
+from lino.utils.diag import visible_for
 
 from lino.core.menus import Menu
 from lino.core.actions import ShowTable

@@ -262,9 +262,10 @@ class Analyzer(object):
         items = []
         items.append("{0} plugins".format(len(dd.plugins)))
         items.append("{0} models".format(len(get_models())))
-        items.append("{0} views".format(len(actors.actors_list)))
+        items.append("{0} user roles".format(
+            len(settings.SITE.user_roles)))
         items.append("{0} user types".format(len(UserTypes.objects())))
-
+        items.append("{0} views".format(len(actors.actors_list)))
         dialog_actions = [ba for ba in analyzer.custom_actions +
                           analyzer.window_actions if
                           ba.action.parameters]
@@ -276,6 +277,8 @@ def visible_for(ba):
     """Shows a list of user profiles for which this action is visible."""
     if ba is None:
         return "N/A"
+    if isinstance(ba, type)  and issubclass(ba, actors.Actor):
+        ba = ba.default_action
     visible = []
     hidden = []
     for p in UserTypes.objects():

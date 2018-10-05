@@ -1,18 +1,31 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2017 Luc Saffre
+# Copyright 2011-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """Desktop UI for this plugin.
 
 Documentation is in :doc:`/specs/users` and :doc:`/dev/users`
 
 """
+from __future__ import unicode_literals
+
+from textwrap import wrap
+
 from django.conf import settings
+from django.db import models
 from lino.api import dd, rt, _
 from lino.core import actions
 from lino.core.roles import SiteAdmin, SiteUser
+from lino.core.utils import djangoname
 
 from .choicelists import UserTypes
 from .actions import SendWelcomeMail, SignIn, SignInWithSocialAuth
+
+
+def mywrap(t, ls=80):
+    t = '\n'.join([
+        ln.strip() for ln in t.splitlines() if ln.strip()])
+    return '\n'.join(wrap(t, ls))
+
 
 class UserDetail(dd.DetailLayout):
 
@@ -162,3 +175,39 @@ else:
 
 
 
+class UserRoles(dd.VirtualTable):
+    label = _("User roles")
+    required_roles = dd.login_required(SiteAdmin)
+
+
+    @classmethod
+    def get_data_rows(self, ar):
+        return settings.SITE.user_roles
+    
+    @dd.displayfield(_("Name"))
+    def name(self, obj, ar):
+        return djangoname(obj)
+
+    @dd.displayfield(_("Description"))
+    def description(self, obj, ar):
+        return mywrap(obj.__doc__ or '')
+
+    @classmethod
+    def setup_columns(cls):
+        def w(ut):
+            def func(fld, obj, ar):
+                if isinstance(ut.role, obj):
+                    return "☑"
+                return ""
+            return func
+        names = []
+        for ut in UserTypes.get_list_items():
+            name = "ut" + ut.value
+            # vf = dd.VirtualField(
+            #     models.BooleanField(str(ut.value)), w(ut))
+            vf = dd.VirtualField(
+                dd.DisplayField(str(ut.value)), w(ut))
+            cls.add_virtual_field(name, vf)
+            names.append(name+":4")
+        cls.column_names = "name:20 description:40 " + ' '.join(names)
+    

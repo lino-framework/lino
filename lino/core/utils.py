@@ -40,6 +40,8 @@ from .exceptions import ChangedAPI
 
 validate_url = URLValidator()
 
+def djangoname(o):
+    return o.__module__.split('.')[-2] + '.' + o.__name__
 
 def comma():
     return ', '
