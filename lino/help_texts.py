@@ -17,6 +17,7 @@ file."""),
 browser has processed all Javascript, including ExtJS.onReady,
 that all AJAX requests have finised."""),
     'lino.management.commands.initdb.Command' : _("""Flush the database and load the specified fixtures."""),
+    'lino.management.commands.makemigdump.Command' : _("""Create a dump for migration tests."""),
     'lino.management.commands.prep.Command' : _("""Flushes the database and loads the default demo fixtures."""),
     'lino.Contactable' : _("""Mixin for models that represent somebody who can be contacted by
 email."""),
@@ -497,6 +498,9 @@ remote_user_header <lino.core.site.Site.remote_user_header>
 being set to 'REMOTE_USER'."""),
     'lino.utils.djangotest.TestCase' : _("""alias of lino.utils.djangotest.RemoteAuthTestCase"""),
     'lino.utils.djangotest.WebIndexTestCase' : _("""Designed to be just imported. No subclassing needed."""),
+    'lino.utils.djangotest.RestoreTestCase' : _("""Used for testing migrations from previous versions."""),
+    'lino.utils.djangotest.RestoreTestCase.tested_versions' : _("""A list of strings, each string is a version for which there must
+be a migration dump created by makemigdump."""),
     'lino.utils.dpy.FakeDeserializedObject' : _("""Imitates DeserializedObject required by loaddata."""),
     'lino.utils.dpy.FakeDeserializedObject.try_save' : _("""Try to save the specified Model instance obj. Return True
 on success, False if this instance wasn't saved and should be
