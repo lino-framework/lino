@@ -196,6 +196,9 @@ def screenshot(obj, filename, rstname, username='robin'):
         
 
 def show_menu_path(spec, language=None):
+    """
+    Print the menu path of the given actor or action.
+    """
 
     def doit():
         # user_type = ar.get_user().user_type
