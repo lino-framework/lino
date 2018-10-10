@@ -172,7 +172,8 @@ class FakeDeserializedObject(base.DeserializedObject):
                     # order
                     logger.warning("Failed to save %s:" % obj2str(obj))
                     raise
-            deps = [f.remote_field.model for f in obj._meta.fields if f.remote_field.model is not None]
+            deps = [f.remote_field.model for f in obj._meta.fields
+                    if f.remote_field and f.remote_field.model]
             if not deps:
                 logger.exception(e)
                 raise Exception(
