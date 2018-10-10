@@ -355,8 +355,10 @@ class Kernel(object):
             m = import_module(site.user_types_module)
             for k in dir(m):
                 v = getattr(m, k)
-                if isinstance(v, type) and issubclass(v, UserRole):
-                    site.user_roles.append(v)
+                if not v is UserRole:
+                    if isinstance(v, type) and issubclass(v, UserRole):
+                        if v.__module__ != site.user_types_module:
+                            site.user_roles.append(v)
             site.user_roles.sort(key=djangoname)
 
         # site.setup_choicelists()

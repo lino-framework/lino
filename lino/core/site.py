@@ -3482,14 +3482,14 @@ Please convert to Plugin method".format(mod, methname)
         #         yield msg
 
     def add_welcome_handler(self, func, actor=None, msg=None):
-        """Add the given callable as a "welcome handler".  Lino will call
+        """
+        Add the given callable as a "welcome handler".  Lino will call
         every welcome handler for every incoming request, passing them
         a :class:`BaseRequest <lino.core.requests.BaseRequest>`
         instance representing this request as positional argument.
         The callable is expected to yield a series of messages
         (usually either 0 or 1). Each message must be either a string
         or a :class:`E.span <etgen.html.E>` element.
-
         """
         # print(
         #     "20161219 add_welcome_handler {} {} {}".format(

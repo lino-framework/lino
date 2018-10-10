@@ -2935,7 +2935,8 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
           }
           if (tb) tb.items.each(function(item,index,length){
               //~ console.log('20120528 ',item.itemId,'-->',da[item.itemId]);
-              if (da[item.itemId]) item.disable(); else item.enable();
+              // if (da[item.itemId]) item.disable(); else item.enable();
+              if (da[item.itemId]) item.hide(); else item.show();
           });
       };
       if (this.disable_editing | record.data.disable_editing) {

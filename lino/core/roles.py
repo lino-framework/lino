@@ -53,7 +53,6 @@ class SiteUser(UserRole):
 
 class SiteStaff(SiteUser):
     """
-
     A user who can configure site-wide functionality.
 
     Certain privileged actions require this role:

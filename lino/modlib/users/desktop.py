@@ -190,7 +190,7 @@ class UserRoles(dd.VirtualTable):
 
     @dd.displayfield(_("Description"))
     def description(self, obj, ar):
-        return mywrap(obj.__doc__ or '')
+        return mywrap(obj.__doc__ or '', 40)
 
     @classmethod
     def setup_columns(cls):
@@ -208,6 +208,6 @@ class UserRoles(dd.VirtualTable):
             vf = dd.VirtualField(
                 dd.DisplayField(str(ut.value)), w(ut))
             cls.add_virtual_field(name, vf)
-            names.append(name+":4")
+            names.append(name+":3")
         cls.column_names = "name:20 description:40 " + ' '.join(names)
     
