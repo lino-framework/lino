@@ -52,10 +52,10 @@ class BasePrintAction(Action):
         #     logger.info("20140401 attach_to_actor() %r", self)
         return super(BasePrintAction, self).attach_to_actor(actor, name)
 
-    def is_callable_from(self, caller):
-        # including ShowEmptyTable which is subclass of
-        # ShowDetail. But not callable from ShowInsert.
-        return isinstance(caller, (ShowTable, ShowDetail))
+    # def is_callable_from(self, caller):
+    #     # including ShowEmptyTable which is subclass of
+    #     # ShowDetail. But not callable from ShowInsert.
+    #     return isinstance(caller, (ShowTable, ShowDetail))
 
     def get_print_templates(self, bm, elem):
         return elem.get_print_templates(bm, self)

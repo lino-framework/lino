@@ -35,11 +35,12 @@ class Duplicate(actions.Action):
     sort_index = 11
     show_in_workflow = False
     readonly = False  # like ShowInsert. See docs/blog/2012/0726
+    callable_from = 'td'
 
-    def is_callable_from(self, caller):
-        if isinstance(caller, actions.ShowInsert):
-            return False
-        return True
+    # def is_callable_from(self, caller):
+    #     if isinstance(caller, actions.ShowInsert):
+    #         return False
+    #     return True
 
     def unused_get_action_permission(self, ar, obj, state):
         if ar.get_user().user_type.readonly:

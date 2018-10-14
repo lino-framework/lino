@@ -23,6 +23,7 @@ class ShowAsHtml(dd.Action):
     select_rows = False
     default_format = 'ajax'
     preprocessor = "Lino.get_current_grid_config"
+    callable_from = 't'
 
     def is_callable_from(self, caller):
         return isinstance(caller, dd.ShowTable)

@@ -467,16 +467,19 @@ class SpecialStoreField(StoreField):
 
 class DisabledFieldsStoreField(SpecialStoreField):
 
-    """See also blog entries 20100803, 20111003, 20120901
+    """
+    See also blog entries 20100803, 20111003, 20120901
     
     Note some special cases:
     
-    - :attr:`lino.modlib.vat.mixins.VatDocument.total_incl` (readonly
-      virtual PriceField) must be disabled and may not get submitted.
-      ExtJS requires us to set this dynamically each time.
+    - :attr:`lino.modlib.vat.VatDocument.total_incl` (readonly virtual
+      PriceField) must be disabled and may not get submitted.  ExtJS
+      requires us to set this dynamically each time.
 
     - JobsOverview.body (a virtual HtmlBox) or Model.workflow_buttons
-      (a displayfield) must *not* have the 'disabled' css class -
+      (a displayfield) must *not* have the 'disabled' css class.
+
+    - after submitting a Lockable, the 
 
     """
     name = str('disabled_fields')

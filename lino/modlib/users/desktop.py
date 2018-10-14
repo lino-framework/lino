@@ -209,5 +209,6 @@ class UserRoles(dd.VirtualTable):
                 dd.DisplayField(str(ut.value)), w(ut))
             cls.add_virtual_field(name, vf)
             names.append(name+":3")
-        cls.column_names = "name:20 description:40 " + ' '.join(names)
+        # cls.column_names = "name:20 description:40 " + ' '.join(names)
+        cls.column_names = "name:20 " + ' '.join(names)
     

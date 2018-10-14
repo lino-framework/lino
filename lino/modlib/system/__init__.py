@@ -1,4 +1,4 @@
-# Copyright 2014-2017 Luc Saffre
+# Copyright 2014-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Defines some system models, especially the :class:`SiteConfig` model.
@@ -14,8 +14,8 @@ This plugin is installed in most Lino applications.
 
 """
 
-from lino import ad
-from django.utils.translation import ugettext_lazy as _
+from lino import ad, _
+from django.utils.translation import ugettext
 from etgen.html import E, join_elems
 
 
@@ -46,7 +46,8 @@ class Plugin(ad.Plugin):
 
                 up = ar.get_user().get_preferences()
                 if len(up.locked_rows):
-                    chunks = [str(_("You have edit lock on "))]
+                    chunks = [
+                        ugettext("You have a dangling edit lock on"), " "]
                     chunks += join_elems(
                         [fmt(m, pk) for m, pk in up.locked_rows], ", ")
                     chunks.append('.')

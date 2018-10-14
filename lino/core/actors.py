@@ -955,7 +955,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                 cls.delete_action = cls._bind_action(
                     'delete_action', actions.DeleteSelected())
             cls.update_action = cls._bind_action(
-                'update_action', actions.SaveRow())
+                'update_action', actions.SaveGridCell())
             if cls.detail_layout:
                 cls.validate_form = cls._bind_action(
                     'validate_form', actions.ValidateForm())
