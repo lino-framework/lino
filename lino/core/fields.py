@@ -194,9 +194,9 @@ class FakeField(object):
     remote_field = None
     sortable_by = None
     """
-    A list of real fields to be used for sorting when this fake field
-    is selected.  For remote fields this is set automatically, on
-    virtual fields you can set it yourself.
+    A list of names of real fields to be used for sorting when this
+    fake field is selected.  For remote fields this is set
+    automatically, on virtual fields you can set it yourself.
     """
 
     # required by Django 1.8:
@@ -213,6 +213,12 @@ class FakeField(object):
     # required since 20171003
     rel = None
 
+    def __init__(self, **kwargs):
+        for k, v in kwargs.items():
+            if not hasattr(self, k):
+                raise Exception("{} has no attribute {}".format(self, k))
+            setattr(self, k, v)
+            
     def is_enabled(self, lh):
         """
         Overridden by mti.EnableChild
@@ -253,7 +259,7 @@ class RemoteField(FakeField):
     #~ primary_key = False
     #~ editable = False
 
-    def __init__(self, getter, name, fld, setter=None, **kw):
+    def __init__(self, getter, name, fld, setter=None, **kwargs):
         self.func = getter
         self.name = name
         self.attname = name
@@ -271,6 +277,7 @@ class RemoteField(FakeField):
         if setter is not None:
             self.editable = True
             self.choices = getattr(fld, 'choices', None)
+        super(RemoteField, self).__init__(**kwargs)
         #~ print 20120424, self.name
         #~ settings.SITE.register_virtual_field(self)
 
@@ -312,12 +319,9 @@ class DisplayField(FakeField):
     drop_zone = None
     max_length = None
 
-    def __init__(self, verbose_name=None, **kw):
+    def __init__(self, verbose_name=None, **kwargs):
         self.verbose_name = verbose_name
-        for k, v in kw.items():
-            if not hasattr(self, k):
-                raise Exception("{} has no attribute {}".format(self, k))
-            setattr(self, k, v)
+        super(DisplayField, self).__init__(**kwargs)
 
     # the following dummy methods are never called but needed when
     # using a DisplayField as return_type of a VirtualField
@@ -392,7 +396,7 @@ class VirtualField(FakeField):
     (because they inherit from that class).
     """
 
-    def __init__(self, return_type, get):
+    def __init__(self, return_type, get, **kwargs):
         self.return_type = return_type  # a Django Field instance
         self.get = get
         
@@ -406,6 +410,7 @@ class VirtualField(FakeField):
           def total(self, ar=None):
               return self.total_excl + self.total_vat
         """
+        super(VirtualField, self).__init__(**kwargs)
 
     def override_getter(self, get):
         self.get = get
@@ -553,14 +558,14 @@ class VirtualField(FakeField):
         return self.set_value_in_object(None, instance, value)
 
 
-def virtualfield(return_type):
+def virtualfield(return_type, **kwargs):
     """
     Decorator to turn a method into a :class:`VirtualField`.
     """
     def decorator(fn):
         if isinstance(return_type, DummyField):
             return DummyField(fn)
-        return VirtualField(return_type, fn)
+        return VirtualField(return_type, fn, **kwargs)
     return decorator
 
 
