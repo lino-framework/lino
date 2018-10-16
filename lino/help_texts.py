@@ -232,7 +232,7 @@ for fixing this problem."""),
     'lino.modlib.checkdata.ProblemsByChecker.model' : _("""alias of Problem"""),
     'lino.modlib.checkdata.MyProblems' : _("""Shows the data problems assigned to this user."""),
     'lino.modlib.checkdata.MyProblems.model' : _("""alias of Problem"""),
-    'lino.modlib.checkdata.roles.CheckdataUser' : _("""A user who can see data problems."""),
+    'lino.modlib.checkdata.roles.CheckdataUser' : _("""Can see data problems."""),
     'lino.modlib.comments.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.dashboard.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.dashboard.UpdateWidgets' : _("""Create or update the dashboard widgets for this user."""),
@@ -322,11 +322,11 @@ Jinja renderer."""),
     'lino.modlib.notify.Plugin.keep_unseen' : _("""Whether to keep unseen messages when removing old messages
 according to remove_after."""),
     'lino.modlib.office.Plugin' : _("""See /dev/plugins."""),
-    'lino.modlib.office.roles.OfficeUser' : _("""A user who has access to office functionality like calendar, notes
-and uploads."""),
-    'lino.modlib.office.roles.OfficeOperator' : _("""A user who manages office functionality for other users (but not
-for himself)."""),
-    'lino.modlib.office.roles.OfficeStaff' : _("""A user who manages configuration of office functionality."""),
+    'lino.modlib.office.roles.OfficeUser' : _("""Has access to office functionality like calendar, notes and
+uploads."""),
+    'lino.modlib.office.roles.OfficeOperator' : _("""Can manage office functionality for other users (but not for
+himself)."""),
+    'lino.modlib.office.roles.OfficeStaff' : _("""Can manage configuration of office functionality."""),
     'lino.modlib.openui5.renderer.Renderer' : _(""".
 An HTML renderer that uses the OpenUI5 Javascript framework."""),
     'lino.modlib.openui5.renderer.Renderer.get_detail_url' : _("""Opens detail however clears the app's history"""),
