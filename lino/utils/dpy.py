@@ -529,6 +529,7 @@ def install_migrations(self, loader):
     if globals_dict['SOURCE_VERSION'] == current_version:
         logger.info("Source version is %s : no migration needed",
                     current_version)
+        self.loading_from_dump = False
         return
 
     if self.migration_class is not None:
@@ -564,6 +565,8 @@ def install_migrations(self, loader):
                     "No method for migrating from version %s to %s",
                     from_version, current_version)
             break
+
+    self.loading_from_dump = False
 
 
 def unused_load_fixture_from_module(m, **options):
