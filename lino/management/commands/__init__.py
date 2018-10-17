@@ -14,5 +14,6 @@
     show
     linod
     resetsequences
+    makemigdump
 
 """

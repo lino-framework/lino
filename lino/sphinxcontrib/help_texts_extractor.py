@@ -156,6 +156,8 @@ class HelpTextExtractor(object):
                     self.store_content(node)
                 elif node['objtype'] == 'attribute':
                     self.store_content(node)
+                elif node['objtype'] == 'method':
+                    self.store_content(node)
         # for node in doctree.traverse(nodes.field):
         #     self.fields.add(node.__class__)
         self.docs_processed += 1
@@ -163,7 +165,12 @@ class HelpTextExtractor(object):
     def write_help_texts_files(self, app, exception):
         if exception:
             return
+        # found_docs also contains excluded files
+        print('20181004 found={}, all={}, processed={}'.format(
+            len(app.env.found_docs), len(app.env.all_docs),
+            self.docs_processed))
         if self.docs_processed < len(app.env.found_docs):
+        # if self.docs_processed < len(app.env.all_docs):
             app.info(
                 "Don't write help_texts.py files because "
                 "only {0} of {1} docs have been processed".format(

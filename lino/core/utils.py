@@ -26,7 +26,7 @@ from django.core import exceptions
 from django.utils.encoding import force_text
 from django.http import QueryDict
 
-from etgen.html import E, tostring
+from etgen.html import E
 
 from django.core.validators import (
     validate_email, ValidationError, URLValidator)
@@ -40,6 +40,8 @@ from .exceptions import ChangedAPI
 
 validate_url = URLValidator()
 
+def djangoname(o):
+    return o.__module__.split('.')[-2] + '.' + o.__name__
 
 def comma():
     return ', '
@@ -633,72 +635,6 @@ class Parametrizable(object):
         if isinstance(self.parameters, ParameterPanel):
             self.parameters.check_values(pv)
     
-
-class InstanceAction(object):
-    """Volatile object which wraps a given action to be run on a given
-    model instance.
-
-    """
-
-    def __init__(self, action, actor, instance, owner):
-        #~ print "Bar"
-        #~ self.action = action
-        self.bound_action = actor.get_action_by_name(action.action_name)
-        if self.bound_action is None:
-            raise Exception("%s has not action %r" % (actor, action))
-            # Happened 20131020 from lino_xl.lib.beid.eid_info() :
-            # When `use_eid_jslib` was False, then
-            # `Action.attach_to_actor` returned False.
-        self.instance = instance
-        self.owner = owner
-
-    def __str__(self):
-        return "{0} on {1}".format(self.bound_action, obj2str(self.instance))
-
-    def run_from_code(self, ar, *args, **kw):
-        # raise Exception("20170129 is this still used?")
-        ar.selected_rows = [self.instance]
-        return self.bound_action.action.run_from_code(ar, *args, **kw)
-
-    def run_from_ui(self, ar, **kw):
-        # raise Exception("20170129 is this still used?")
-        # kw.update(selected_rows=[self.instance])
-        ar.selected_rows = [self.instance]
-        self.bound_action.action.run_from_ui(ar)
-
-    def request_from(self, ses, **kw):
-        kw.update(selected_rows=[self.instance])
-        kw.update(parent=ses)
-        ar = self.bound_action.request(**kw)
-        # ar.setup_from(ses)
-        return ar
-
-    def run_from_session(self, ses, **kw):
-        ar = self.request_from(ses, **kw)
-        self.bound_action.action.run_from_code(ar)
-        return ar.response
-
-    def __call__(self, *args, **kwargs):
-        return self.run_from_code(*args, **kwargs)
-
-    def as_button_elem(self, ar, label=None, **kwargs):
-        return settings.SITE.kernel.row_action_button(
-            self.instance, ar, self.bound_action, label, **kwargs)
-
-    def as_button(self, *args, **kwargs):
-        """Return a HTML chunk with a "button" which, when clicked, will
-        execute this action on this instance.  This is being used in
-        the :ref:`lino.tutorial.polls`.
-
-        """
-        return tostring(self.as_button_elem(*args, **kwargs))
-
-    def get_row_permission(self, ar):
-        state = self.bound_action.actor.get_row_state(self.instance)
-        # logger.info("20150202 ia.get_row_permission() %s using %s",
-        #             self, state)
-        return self.bound_action.get_row_permission(ar, self.instance, state)
-
 
 class ParameterPanel(object):
     """

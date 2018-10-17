@@ -1,16 +1,6 @@
-# Copyright 2010-2017 Luc Saffre
+# Copyright 2010-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
-"""A collection of utilities which require Django settings to be
-importable.
-
-This defines some helper classes like
-
-- :class:`Parametrizable` and :class:`Permittable` ("mixins" with
-  common functionality for both actors and actions),
-- the volatile :class:`InstanceAction` object
-- the :class:`ParameterPanel` class (used
-  e.g. by :class:`lino.mixins.periods.ObservedDateRange`)
-- :attr:`ContentType` and `GenericForeignKey`
+"""Helper methods for GenericForeignKey
 
 """
 
@@ -42,11 +32,14 @@ else:
 
 
 def gfk2lookup(gfk, obj, **kw):
-    """Return a `dict` with the lookup keywords for the given
+    """
+    Return a `dict` with the lookup keywords for the given
     GenericForeignKey field `gfk` on the given database object `obj`.
 
-    See also :ref:`book.specs.gfks`.
+    If `obj` has a non-integer primary key, only the `ct_field` is
+    set.
 
+    See also :ref:`book.specs.gfks`.
     """
     if obj is None:
         # 20120222 : here was only `pass`, and the two other lines

@@ -298,9 +298,15 @@ class TableRequest(ActionRequest):
             else:
                 sort = [sort]
             if sort is not None:
+                def si(k):
+                   if k[0] == '-':
+                       return k[1:]
+                   else:
+                       return '-' + k 
                 sort_dir = rqdata.get(constants.URL_PARAM_SORTDIR, 'ASC')
                 if sort_dir == 'DESC':
-                    sort = ['-' + k for k in sort]
+                    sort = [si(k) for k in sort]
+                    # sort = ['-' + k for k in sort]
                 # print("20171123", sort)
                 kw.update(order_by=sort)
 

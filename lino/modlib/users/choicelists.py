@@ -105,7 +105,8 @@ class UserTypes(ChoiceList):
     verbose_name_plural = _("User types")
     show_values = True
     max_length = 20
-    column_names = "value name text user_role"
+    # column_names = "value name text user_role"
+    column_names = "value name text"
 
     preferred_foreignkey_width = 20
 

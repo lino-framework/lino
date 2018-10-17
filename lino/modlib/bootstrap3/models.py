@@ -23,9 +23,7 @@ class ShowAsHtml(dd.Action):
     select_rows = False
     default_format = 'ajax'
     preprocessor = "Lino.get_current_grid_config"
-
-    def is_callable_from(self, caller):
-        return isinstance(caller, dd.ShowTable)
+    callable_from = "t"
 
     def run_from_ui(self, ar, **kw):
         url = dd.plugins.bootstrap3.renderer.get_request_url(ar)

@@ -19,19 +19,18 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
-from lino.core.utils import obj2str, full_model_name
-from lino.core.diff import ChangeWatcher
-from lino.core.utils import obj2unicode
+from etgen.html import E, forcetext
 
 from lino.core import fields
 from lino.core import signals
 from lino.core import actions
-from lino.core.utils import error2str
-from lino.core.utils import resolve_model
-from etgen.html import E, forcetext
 from lino.utils import get_class_attr
-from lino.core.signals import on_ui_created, pre_ui_delete, pre_ui_save
-
+from .utils import error2str
+from .utils import resolve_model
+from .utils import obj2str, full_model_name
+from .diff import ChangeWatcher
+from .utils import obj2unicode
+from .signals import on_ui_created, pre_ui_delete, pre_ui_save
 from .workflows import ChangeStateAction
 
 
@@ -634,6 +633,12 @@ class Model(models.Model):
         elem.after_ui_create(ar)
         elem.after_ui_save(ar, None)
 
+    def save_existing_instance(self, ar):
+        watcher = ChangeWatcher(self)
+        ar.ah.store.form2obj(ar, ar.rqdata, self, False)
+        self.full_clean()
+        self.save_watched_instance(ar, watcher)
+
     def save_watched_instance(elem, ar, watcher):
         if watcher.is_dirty():
             pre_ui_save.send(sender=elem.__class__, instance=elem, ar=ar)
@@ -1062,7 +1067,7 @@ class Model(models.Model):
 
         See also :meth:`get_simple_parameters`.
 
-        Usage example: :class:`lino.modlib.users.UserAuthored`.
+        Usage example: :class:`lino.modlib.comments.Comment`.
 
         """
         return fields
@@ -1204,6 +1209,7 @@ LINO_MODEL_ATTRIBS = (
     'add_param_filter',
     'save_new_instance',
     'save_watched_instance',
+    'save_existing_instance',
     '_widget_options',
     'set_widget_options',
     'get_widget_options',

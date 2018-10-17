@@ -1,4 +1,4 @@
-# Copyright: Copyright 2011-2017 by Luc Saffre.
+# Copyright: Copyright 2011-2018 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 
 """
@@ -11,8 +11,11 @@ from __future__ import print_function
 import logging
 logger = logging.getLogger(__name__)
 
+import sys
+
 from django.conf import settings
 from django.test import TestCase as DjangoTestCase
+from django.core.management import call_command
 from django.test import Client
 from django.db import connection, reset_queries
 from django.utils import translation
@@ -221,3 +224,23 @@ class NoAuthTestCase(DjangoManageTestCase):
         with self.settings(**mysettings):
             return super(NoAuthTestCase, self).__call__(*args, **kw)
 
+class RestoreTestCase(DjangoTestCase):
+    """
+    Used for testing migrations from previous versions.
+
+    See :doc:`/dev/migtests`.
+    """
+    
+    tested_versions = []
+    """
+    A list of strings, each string is a version for which there must
+    be a migration dump created by :manage:`makemigdump`.
+    """
+    
+    def test_restore(self):
+        for v in self.tested_versions:
+            run_args = ["tests/dumps/{}/restore.py".format(v),
+                        "--noinput"]
+            sys.argv = ["manage.py", "run"] + run_args
+            call_command("run", *run_args)
+    

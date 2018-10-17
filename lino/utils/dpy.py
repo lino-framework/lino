@@ -172,7 +172,8 @@ class FakeDeserializedObject(base.DeserializedObject):
                     # order
                     logger.warning("Failed to save %s:" % obj2str(obj))
                     raise
-            deps = [f.remote_field.model for f in obj._meta.fields if f.rel is not None]
+            deps = [f.remote_field.model for f in obj._meta.fields
+                    if f.remote_field and f.remote_field.model]
             if not deps:
                 logger.exception(e)
                 raise Exception(
@@ -336,6 +337,10 @@ data."""
             # is not necessarily invalid and may be used for further testing.
             # And anyway, loaddata would catch it and still continue.
             # raise Exception(msg)
+
+        settings.SITE.loading_from_dump = False
+        # reset to False because the same SITE might get reused by
+        # Django test runner for other test cases.
 
 
 

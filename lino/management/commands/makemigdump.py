@@ -1,17 +1,17 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2018 Rumma & Ko Ltd
+# Copyright 2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
+.. management_command:: makemigdump
 
-.. management_command:: initdb_demo
-.. management_command:: prep
+Create a dump for migration tests.
 
-Calls :manage:`initdb` using the application's
-:attr:`lino.core.site.Site.demo_fixtures`.
+Calls :manage:`dump2py` to create python dump in a
+`tests/dumps/<version>` directory
 
-Introduction see :ref:`lino.tutorial.hello`.
 
+See :doc:`/dev/migtests`
 """
 import six
 
@@ -22,10 +22,19 @@ from lino.management.commands.initdb import CommandError
 
 
 class Command(BaseCommand):
-    """Flushes the database and loads the default demo fixtures.
+    """Create a dump for migration tests.
     """
 
     def handle(self, *args, **options):
+
+
+          # : loop through all demo projects.
+          # skip if the project has no  :xfile:`test_restore.py` file.
+          # dumpdir = "tests/dumps/" + version
+          # python manage.py dump2py dumpdir
+          # error if 
+
+        
         fixtures = options.get('fixtures', args)
         if len(fixtures) > 0:
             raise CommandError(

@@ -66,6 +66,7 @@ from lino.utils.memo import Parser
 from etgen.html import E
 from lino.core.requests import ActorRequest
 from lino.core.model import Model
+from lino.core.roles import UserRole
 from lino.core.store import Store
 from lino.core.renderer import HtmlRenderer, TextRenderer
 from lino.core.gfks import ContentType, GenericForeignKey
@@ -81,7 +82,7 @@ from .utils import full_model_name as fmn
 from .utils import obj2str
 from .utils import get_models
 from .utils import resolve_fields_list
-
+from .utils import djangoname
 
 
 startup_rlock = threading.RLock()  # Lock() or RLock()?
@@ -349,8 +350,16 @@ class Kernel(object):
         #         if k.startswith('setup_'):
         #             site.modules.define(app_label, k, v)
 
+        site.user_roles = []
         if site.user_types_module:
-            import_module(site.user_types_module)
+            m = import_module(site.user_types_module)
+            for k in dir(m):
+                v = getattr(m, k)
+                if not v is UserRole:
+                    if isinstance(v, type) and issubclass(v, UserRole):
+                        if v.__module__ != site.user_types_module:
+                            site.user_roles.append(v)
+            site.user_roles.sort(key=djangoname)
 
         # site.setup_choicelists()
         
@@ -557,6 +566,11 @@ class Kernel(object):
                 #     ba.action.__class__, ba.action.action_name)
                 # site.install_help_text(ba.action, a, ba.action.action_name)
                 # site.install_help_text(ba.action, ba.action.__class__)
+                if a.model is not None:
+                    site.install_help_text(
+                        ba.action, a.model, ba.action.action_name)
+                site.install_help_text(
+                    ba.action, a, ba.action.action_name)
                 site.install_help_text(ba.action.__class__)
                 # site.install_help_text(
                 #     ba.action, ba.action.__class__,

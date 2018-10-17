@@ -1,7 +1,8 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2012-2018 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
-""".. management_command:: run
+"""
+.. management_command:: run
 
 Execute a standalone Python script after having set up the Django
 environment.
@@ -30,13 +31,12 @@ the invoked script sees them as if it had been called directly.
 It is similar to the `runscript
 <http://django-extensions.readthedocs.org/en/latest/runscript.html>`_
 command which comes with `django-extensions
-<http://django-extensions.readthedocs.org/en/latest/index.html>`_.
+<http://django-extensions.readthedocs.org/en/latest/index.html>`__.
 
 This is yet another answer to the frequently asked Django question
 about how to run standalone Django scripts
 (`[1] <http://stackoverflow.com/questions/4847469/use-django-from-python-manage-py-shell-to-python-script>`__,
 `[2] <http://www.b-list.org/weblog/2007/sep/22/standalone-django-scripts/>`__).
-
 """
 
 from __future__ import unicode_literals
@@ -51,30 +51,14 @@ from django.core.management.base import BaseCommand, CommandError
 
 
 class Command(BaseCommand):
-    # help = __doc__
-    # args = "filename [args ...]"
+
+    requires_system_checks = False
 
     def add_arguments(self, parser):
         parser.add_argument('filename', nargs=argparse.REMAINDER,
                             help='The script to run.')
         parser.description = """Execute a standalone Python script after
         having set up the Django environment."""
-
-    # def run_from_argv(self, argv):
-    #     # print("run_from_argv({})".format(argv))
-    #     i = argv.index('run')
-    #     # argv, self.argv2 = argv[:i+2], argv[i+1:]
-    #     # msg = "{}, {}".format(argv, self.argv2)
-    #     # raise Exception(msg)
-    #     return super(Command, self).run_from_argv(argv[:i+2])
-
-    # def create_parser(self, prog_name, subcommand):
-    #     msg = "create_parser(prog_name:{}, subcommand:{})".format(
-    #         prog_name, subcommand)
-    #     raise Exception(msg)
-    #     return super(Command, self).create_parser(prog_name, subcommand)
-
-    requires_system_checks = False
 
     def handle(self, *args, **options):
         if True:  # Django 1.10

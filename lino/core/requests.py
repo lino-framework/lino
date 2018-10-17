@@ -26,17 +26,18 @@ from django.utils import translation
 from django.utils import timezone
 from django.core import exceptions
 
-from lino.core.utils import obj2unicode
 from lino.core import constants
-from lino.core.utils import navinfo
-from lino.core.boundaction import BoundAction
-from lino.core.signals import on_ui_created, pre_ui_save
-from lino.core.diff import ChangeWatcher
-from lino.core.utils import getrqdata
 from lino.utils import AttrDict
 from etgen.html import E, tostring
 from lino.core.auth.utils import AnonymousUser
 
+from .boundaction import BoundAction
+from .signals import on_ui_created, pre_ui_save
+from .diff import ChangeWatcher
+from .utils import getrqdata
+from .utils import navinfo, obj2unicode
+from .utils import obj2str
+from .exceptions import ChangedAPI
 
 CATCHED_AJAX_EXCEPTIONS = (Warning, exceptions.ValidationError)
 
@@ -634,12 +635,16 @@ class BaseRequest(object):
         """
         return self.subst_user or self.user
 
-    def run(self, thing, *args, **kw):
+    def run(self, ia, *args, **kw):
         """
-        The first parameter `thing` may be an :class:`InstanceAction
-        <lino.core.utils.InstanceAction>` or a Model instance.
+        Run the given instance action `ia` in a child request of this
+        request.
+        
+        Additional arguments are forwarded to the action.
+        Returns the response of the child request.
+        Does not modify response of parent request.
         """
-        return thing.run_from_session(self, *args, **kw)
+        return ia.run_from_session(self, *args, **kw)
 
     def story2html(self, story, *args, **kwargs):
         """
@@ -833,7 +838,7 @@ class BaseRequest(object):
 
     def instance_action_button(self, ai, *args, **kw):
         """Return an HTML element with a button which would run the given
-        :class:`InstanceAction <lino.core.utils.InstanceAction>`
+        :class:`InstanceAction <lino.core.requests.InstanceAction>`
         ``ai`` on the client.
 
         """
@@ -917,11 +922,8 @@ class BaseRequest(object):
         Parses the data from HttpRequest to the model instance and saves
         it.
 
-        This is used by `ApiList.post` and `ApiElement.put`, and by
-        `Restful.post` and `Restful.put`.
-
-        20140505 : no longer used by ApiList and ApiElement, but still
-        by Restful.*
+        This is deprecated, but still used by Restful (which is used
+        only by Extensible).
         """
         if is_new:
             watcher = None
@@ -1245,4 +1247,115 @@ class ActionRequest(ActorRequest):
         return six.text_type(self.actor)
         #~ s = self.get_title()
         #~ return s.encode('us-ascii','replace')
+        
+
+
+class InstanceAction(object):
+    """
+    Volatile object which wraps a given action to be run on a given
+    model instance.
+
+    .. attribute:: bound_action
+
+        The bound action that will run.
+
+    .. attribute:: instance 
+
+        The database object on which the action will run.
+
+    .. attribute:: owner
+
+
+    """
+
+    def __init__(self, action, actor, instance, owner):
+        #~ print "Bar"
+        #~ self.action = action
+        self.bound_action = actor.get_action_by_name(action.action_name)
+        if self.bound_action is None:
+            raise Exception("%s has not action %r" % (actor, action))
+            # Happened 20131020 from lino_xl.lib.beid.eid_info() :
+            # When `use_eid_jslib` was False, then
+            # `Action.attach_to_actor` returned False.
+        self.instance = instance
+        self.owner = owner
+
+    def __str__(self):
+        return "{0} on {1}".format(self.bound_action, obj2str(self.instance))
+
+    def run_from_code(self, ar, *args, **kw):
+        """
+        Probably to be deprecated.
+        Run this action on this instance in the given session, updating
+        the response of the session.  Returns the return value of the
+        action.
+        """
+        # raise Exception("20170129 is this still used?")
+        ar.selected_rows = [self.instance]
+        return self.bound_action.action.run_from_code(ar, *args, **kw)
+
+    def run_from_ui(self, ar, **kw):
+        """
+        Run this action on this instance in the given session, updating
+        the response of the session.  Returns nothing.
+        """
+        # raise Exception("20170129 is this still used?")
+        # kw.update(selected_rows=[self.instance])
+        ar.selected_rows = [self.instance]
+        self.bound_action.action.run_from_ui(ar)
+
+    def request_from(self, ses, **kwargs):
+        """
+        Create an action request on this instance action without running
+        the action.
+        """
+        kwargs.update(selected_rows=[self.instance])
+        kwargs.update(parent=ses)
+        ar = self.bound_action.request(**kwargs)
+        return ar
+
+    def run_from_session(self, ses, **kwargs):
+        """
+        Run this instance action in a child request of given session.  
+
+        Additional arguments are forwarded to the action.
+        Returns the response of the child request.
+        Doesn't modify response of parent request.  
+        """
+        ar = self.request_from(ses, **kwargs)
+        self.bound_action.action.run_from_code(ar)
+        return ar.response
+
+    def __call__(self, *args, **kwargs):
+        """
+        Run this instance action in an anonymous base request.  
+
+        Additional arguments are forwarded to the action.
+        Returns the response of the base request.
+        """
+        if len(args) and isinstance(args[0], BaseRequest):
+            raise ChangedAPI("20181004")
+        ar = self.bound_action.request()
+        self.run_from_code(ar, *args, **kwargs)
+        return ar.response
+
+    def as_button_elem(self, ar, label=None, **kwargs):
+        return settings.SITE.kernel.row_action_button(
+            self.instance, ar, self.bound_action, label, **kwargs)
+
+    def as_button(self, *args, **kwargs):
+        """Return a HTML chunk with a "button" which, when clicked, will
+        execute this action on this instance.  This is being used in
+        the :ref:`lino.tutorial.polls`.
+
+        """
+        return tostring(self.as_button_elem(*args, **kwargs))
+
+    def get_row_permission(self, ar):
+        state = self.bound_action.actor.get_row_state(self.instance)
+        # logger.info("20150202 ia.get_row_permission() %s using %s",
+        #             self, state)
+        return self.bound_action.get_row_permission(ar, self.instance, state)
+
+
 

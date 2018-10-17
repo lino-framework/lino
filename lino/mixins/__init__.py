@@ -94,7 +94,8 @@ class Registrable(model.Model):
 
     @classmethod
     def get_registrable_fields(cls, site):
-        """Return a list of the fields which are *disabled* when this is
+        """
+        Return a list of the fields which are *disabled* when this is
         *registered* (i.e. `state` is not `editable`).
 
         Usage example::
@@ -107,8 +108,6 @@ class Registrable(model.Model):
                         yield f
                     yield 'user'
                     yield 'date'
-
-
         """
         return []
         # yield 'date'

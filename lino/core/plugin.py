@@ -219,15 +219,16 @@ class Plugin(object):
         return []
 
     def on_init(self):
-        """This will be called when the Plugin is being instantiated (i.e.
-        even before the :class:`Site` instantiation has finished. Used by
-        :mod:`lino.modlib.users` to set :attr:`user_model`.
-
+        """
+        This will be called when the Plugin is being instantiated (i.e.
+        even before the :class:`Site` instantiation has finished. Used
+        by :mod:`lino.modlib.users` to set :attr:`user_model`.
         """
         pass
 
     def on_plugins_loaded(self, site):
-        """Called exactly once on each installed plugin, when the
+        """
+        Called exactly once on each installed plugin, when the
         :class:`Site` has loaded all plugins but *before* calling
         :meth:`setup_plugins`.  All this happens before settings are
         ready and long before the models modules start to load.
@@ -241,19 +242,18 @@ class Plugin(object):
 
         Or :mod:`lino.modlib.checkdata` uses it to set
         `responsible_user` to "robin" when it is a demo site.
-
         """
         pass
 
     def on_site_startup(self, site):
-        """This will be called exactly once, when models are ready.
-
+        """
+        This will be called exactly once, when models are ready.
         """
         pass
     
     def post_site_startup(self, site):
-        """This will be called exactly once, when models are ready.
-
+        """
+        This will be called exactly once, when models are ready.
         """
         pass
     
@@ -276,14 +276,15 @@ class Plugin(object):
         # print("20150331 %s : no directory %s" % (cls, p))
 
     def before_analyze(self):
-        """This is called during startup, when all models modules have been
+        """
+        This is called during startup, when all models modules have been
         imported, and before Lino starts to analyze them.
-
         """
         pass
 
     def on_ui_init(self, kernel):
-        """This is called when the kernel is being instantiated.
+        """
+        This is called when the kernel is being instantiated.
         """
         pass
 
@@ -299,8 +300,9 @@ class Plugin(object):
         return "%s (%s)" % (self.app_name, ', '.join(l))
 
     def get_patterns(self):
-        """Return a list of url patterns to be added to the Site's patterns.
-
+        """
+        Override this to return a list of url patterns to be added to the
+        Site's patterns.
         """
         return []
 
@@ -311,8 +313,10 @@ class Plugin(object):
         return []
 
     def get_head_lines(cls, site, request):
-        """Yield or return a list of textlines to add to the `<head>` of the
-        html page."""
+        """
+        Yield or return a list of textlines to add to the `<head>` of the
+        html page.
+        """
         return []
 
     def get_body_lines(cls, site, request):

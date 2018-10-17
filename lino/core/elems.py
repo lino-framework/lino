@@ -811,9 +811,8 @@ class CharFieldElement(FieldElement):
 
     def __init__(self, *args, **kw):
         FieldElement.__init__(self, *args, **kw)
-        if self.preferred_width is None:  # 20180828
-            self.preferred_width = 1 + min(
-                20, max(3, self.field.max_length or 0))
+        # See 20180828 and 20181014 
+        self.preferred_width = 1 + min(20, max(3, self.field.max_length or 0))
 
     def get_field_options(self, **kw):
         kw = FieldElement.get_field_options(self, **kw)

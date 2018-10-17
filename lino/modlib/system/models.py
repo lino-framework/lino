@@ -6,6 +6,7 @@
 Database models for this plugin.
 """
 from builtins import object
+from builtins import str
 
 from django.conf import settings
 from django.utils.encoding import force_text
@@ -22,6 +23,7 @@ from lino.core.roles import SiteStaff
 
 # import them here to have them on rt.models.system:
 from .choicelists import YesNo, Genders, PeriodEvents
+from .mixins import Lockable
 
 
 class BuildSiteCache(dd.Action):
@@ -198,5 +200,4 @@ class SiteConfigs(dd.Table):
 #     dd.inject_field(settings.SITE.user_model,
 #                     'user_type', UserTypes.field())
 #     dd.inject_field(settings.SITE.user_model, 'language', dd.LanguageField())
-
 

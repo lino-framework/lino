@@ -13,6 +13,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils.text import format_lazy
 from django.utils.encoding import force_text
 from django.conf import settings
@@ -23,19 +24,18 @@ get_models = apps.get_models
 
 
 from lino.core import constants
-from lino.core.utils import obj2unicode
-from lino.core.utils import resolve_model
-from lino.core.utils import navinfo
 from lino.core import layouts
 from lino.core import fields
 from lino.core import keyboard
-from lino.core.permissions import Permittable
-from lino.core.utils import Parametrizable, InstanceAction
 from lino.modlib.users.utils import get_user_profile
 from lino.utils.choosers import Chooser
-from etgen.html import E
 
-from .diff import ChangeWatcher
+from .permissions import Permittable
+from .utils import obj2unicode
+from .utils import resolve_model
+from .utils import navinfo
+from .utils import Parametrizable
+from .requests import InstanceAction
 
 def check_for_chooser(holder, field):
     # holder is either a Model, an Actor or an Action.
@@ -150,9 +150,6 @@ def make_params_layout_handle(self):
     # `self` is either an Action instance or an Actor class object
     return self.params_layout.get_layout_handle(
         settings.SITE.kernel.default_ui)
-
-
-from django.utils.encoding import python_2_unicode_compatible
 
 
 @python_2_unicode_compatible
@@ -465,6 +462,23 @@ class Action(Parametrizable, Permittable):
     Name of a Javascript function to be invoked on the web client when
     this action is called.
     """
+
+    window_type = None
+    """
+    On actions that opens_a_window this should be a unique one-letter
+    code.  Default codes used in extjs are 
+    t=ShowTable, d=ShowDetail, i=ShowInsert.
+    """
+    
+    callable_from = "td"
+    """
+    A string that specifies from which :attr:`window_type` this action
+    is callable.  None means that it is only callable from code.
+
+    Default value is 'td' which means from both table and detail
+    (including ShowEmptyTable which is subclass of ShowDetail). But
+    not callable from ShowInsert.
+    """
     
     hide_virtual_fields = False
     required_states = None
@@ -502,19 +516,41 @@ class Action(Parametrizable, Permittable):
         return InstanceAction(
             self, instance.get_default_table(), instance, owner)
 
+    @classmethod
+    def decorate(cls, *args, **kw):
+        """
+        Return a decorator which turns an instance method on a model or a
+        class method on an actor into an action of this class.
+        """
+        def decorator(fn):
+            assert not 'required' in kw
+            # print 20140422, fn.__name__
+            kw.setdefault('custom_handler', True)
+            a = cls(*args, **kw)
+
+            def wrapped(ar):
+                obj = ar.selected_rows[0]
+                return fn(obj, ar)
+            a.run_from_ui = wrapped
+            return a
+        return decorator
+
+
     def get_required_roles(self, actor):
         return actor.required_roles
 
     def is_callable_from(self, caller):
         """
         Return `True` if this action makes sense as a button from within
-        the specified `caller` (an action instance which should have
-        :attr:`opens_a_window`).
+        the specified `caller` (an action instance which must have a
+        :attr:`window_type`).  Do not override this method on your
+        subclass ; rather specify :attr:`callable_from`.
         """
-        return isinstance(caller, (ShowTable, ShowDetail))
-        #~ if self.select_rows:
-            #~ return isinstance(caller,(ShowTable,ShowDetail))
-        #~ return isinstance(caller,ShowTable)
+        assert caller.window_type is not None
+        if self.callable_from is None:
+            return False
+        return caller.window_type in self.callable_from
+        # return isinstance(caller, self.callable_from)
 
     def is_window_action(self):
         """Return `True` if this is a "window action" (i.e. which opens a GUI
@@ -677,16 +713,22 @@ class Action(Parametrizable, Permittable):
         """
         return True
 
-    def run_from_ui(self, ar, **kw):
-        """Execute the action.  `ar` is an :class:`ActionRequest
+    def run_from_ui(self, ar, **kwargs):
+        """
+        Execute the action.  `ar` is an :class:`ActionRequest
         <lino.core.requests.BaseRequest>` object representing the
         context in which the action is running.
         """
         raise NotImplementedError(
             "%s has no run_from_ui() method" % self.__class__)
 
-    def run_from_code(self, ar, *args, **kw):
-        self.run_from_ui(ar, *args, **kw)
+    def run_from_code(self, ar=None, *args, **kwargs):
+        """
+        Probably to be deprecated.
+        Execute the action.  The default calls :meth:`run_from_ui`.  You
+        may override this to define special behaviour
+        """
+        self.run_from_ui(ar, *args, **kwargs)
 
     def run_from_session(self, ses, *args, **kw):  # 20130820
         if len(args):
@@ -736,11 +778,13 @@ class ShowTable(TableAction):
     use_param_panel = True
     show_in_workflow = False
     opens_a_window = True
+    window_type = 't'
     action_name = 'grid'
     select_rows = False
+    callable_from = None
 
-    def is_callable_from(self, caller):
-        return False
+    # def is_callable_from(self, caller):
+    #     return False
 
     # def attach_to_actor(self, actor, name):
     #     self.label = actor.label
@@ -766,8 +810,10 @@ class ShowDetail(Action):
     icon_name = 'application_form'
     ui5_icon_name = "sap-icon://detail-view"
     opens_a_window = True
+    window_type = 'd'
     show_in_workflow = False
     save_action_name = 'submit_detail'
+    callable_from = 't'
 
     sort_index = 20
 
@@ -779,9 +825,6 @@ class ShowDetail(Action):
         if self.owner.required_roles is None:
             return actor.required_roles
         return self.owner.required_roles
-
-    def is_callable_from(self, caller):
-        return isinstance(caller, ShowTable)
 
     def get_window_layout(self, actor):
         return actor.detail_layout
@@ -801,9 +844,7 @@ class ShowEmptyTable(ShowDetail):
     #~ hide_top_toolbar = True
     hide_navigator = True
     icon_name = None
-
-    def is_callable_from(self, caller):
-        return isinstance(caller, ShowTable)
+    callable_from = 't'
 
     # def attach_to_actor(self, actor, name):
     #     self.label = actor.label
@@ -840,6 +881,7 @@ class ShowInsert(TableAction):
     
     show_in_workflow = False
     opens_a_window = True
+    window_type = 'i'
     hide_navigator = True
     sort_index = 10
     hide_top_toolbar = True
@@ -893,39 +935,6 @@ class ShowInsert(TableAction):
 #     # required_roles = set([SiteUser])
 
 
-class SaveRow(Action):
-    """
-    Called when user edited a cell of a non-phantom record in a grid.
-    Installed as `update_action` on every :class:`Actor`.
-
-    """
-    sort_index = 10
-    show_in_workflow = False
-    action_name = 'grid_put'
-    readonly = False
-    auto_save = False
-
-    def is_callable_from(self, caller):
-        return False
-
-    def run_from_ui(self, ar, **kw):
-        # logger.info("20140423 SubmitDetail")
-        elem = ar.selected_rows[0]
-        self.save_existing_instance(elem, ar)
-
-    def save_existing_instance(self, elem, ar):
-        watcher = ChangeWatcher(elem)
-        ar.ah.store.form2obj(ar, ar.rqdata, elem, False)
-        elem.full_clean()
-
-        elem.save_watched_instance(ar, watcher)
-
-        # TODO: in fact we need *either* `rows` (when this was called
-        # from a Grid) *or* `goto_instance` (when this was called from a
-        # form).  But how to find out which one is needed?
-        # if ar.edit_mode == constants.EDIT_MODE_GRID:
-        ar.set_response(rows=[ar.ah.store.row2list(ar, elem)])
-
 
 # this is a first attempt to solve the "cannot use active fields in
 # insert window" problem.  not yet ready for use. the idea is that
@@ -942,9 +951,7 @@ class ValidateForm(Action):
     action_name = 'validate'
     readonly = False
     auto_save = False
-
-    def is_callable_from(self, caller):
-        return False
+    callable_from = None
 
     def run_from_ui(self, ar, **kwargs):
         elem = ar.create_instance_from_request(**kwargs)
@@ -955,7 +962,31 @@ class ValidateForm(Action):
         ar.goto_instance(elem)
 
 
-class SubmitDetail(SaveRow):
+class SaveGridCell(Action):
+    """
+    Called when user edited a cell of a non-phantom record in a grid.
+    Installed as `update_action` on every :class:`Actor`.
+
+    """
+    sort_index = 10
+    show_in_workflow = False
+    action_name = 'grid_put'
+    readonly = False
+    auto_save = False
+    callable_from = None
+
+    def run_from_ui(self, ar, **kw):
+        # logger.info("20140423 SubmitDetail")
+        elem = ar.selected_rows[0]
+        elem.save_existing_instance(ar)
+        ar.set_response(rows=[ar.ah.store.row2list(ar, elem)])
+
+        # We also need *either* `rows` (when this was called from a
+        # Grid) *or* `goto_instance` (when this was called from a
+        # form).
+        
+
+class SubmitDetail(SaveGridCell):
     """Save changes in the detail form.
 
     This is rendered as the "Save" button of a :term:`detail window`.
@@ -969,15 +1000,12 @@ class SubmitDetail(SaveRow):
     action_name = ShowDetail.save_action_name
     http_method = "PUT"
     submit_form_data = True
-
-
-    def is_callable_from(self, caller):
-        return isinstance(caller, ShowDetail)
+    callable_from = 'd'
 
     def run_from_ui(self, ar, **kw):
         # logger.info("20140423 SubmitDetail")
         for elem in ar.selected_rows:
-            self.save_existing_instance(elem, ar)
+            elem.save_existing_instance(ar)
             if ar.actor.stay_in_grid:
                 ar.close_window()
             else:
@@ -991,9 +1019,7 @@ class CreateRow(Action):
     auto_save = False
     show_in_workflow = False
     readonly = False
-
-    def is_callable_from(self, caller):
-        return False
+    callable_from = None
 
     def run_from_ui(self, ar, **kwargs):
         elem = ar.create_instance_from_request(**kwargs)
@@ -1037,9 +1063,8 @@ class SubmitInsert(CreateRow):
     action_name = None  # 'post'
     help_text = _("Create the record and open a detail window on it")
 
-    def is_callable_from(self, caller):
-        return isinstance(caller, ShowInsert)
-
+    callable_from = 'i'
+    
     def run_from_ui(self, ar, **kwargs):
         # must set requesting_panel to None, otherwise javascript
         # button actions would try to refer the requesting panel which
@@ -1109,12 +1134,11 @@ class MultipleRowAction(Action):
     """Base class for actions that update something on every selected row.
     """
     custom_handler = True
-    callable_from = (ShowTable, ShowDetail)
 
     def run_on_row(self, obj, ar):
         """This is being called on every selected row.
         """
-        raise NotImplemented()
+        raise NotImplementedError()
 
     def run_from_ui(self, ar, **kw):
         ar.success(**kw)
@@ -1194,20 +1218,7 @@ class DeleteSelected(MultipleRowAction):
         obj.delete_instance(ar)
         return 1
 
-
-def action(*args, **kw):
-    def decorator(fn):
-        assert not 'required' in kw
-        # print 20140422, fn.__name__
-        kw.setdefault('custom_handler', True)
-        a = Action(*args, **kw)
-
-        def wrapped(ar):
-            obj = ar.selected_rows[0]
-            return fn(obj, ar)
-        a.run_from_ui = wrapped
-        return a
-    return decorator
+action = Action.decorate
 
 
 def get_view_permission(e):

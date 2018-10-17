@@ -35,7 +35,7 @@ from lino.core import actors
 from lino.core.menus import find_menu_item
 from lino.sphinxcontrib.actordoc import menuselection_text
 from pprint import pprint
-
+from lino.utils.diag import visible_for
 
 from lino.core.menus import Menu
 from lino.core.actions import ShowTable
@@ -196,6 +196,9 @@ def screenshot(obj, filename, rstname, username='robin'):
         
 
 def show_menu_path(spec, language=None):
+    """
+    Print the menu path of the given actor or action.
+    """
 
     def doit():
         # user_type = ar.get_user().user_type
@@ -251,6 +254,33 @@ from lino.core.actions import Action
 from lino.core.tables import AbstractTable
 from lino.core.boundaction import BoundAction
 
+def show_workflow(actions, all=False, language=None):
+    """
+    Show the given actions as a table.  Usage example in
+    :ref:`avanti.specs.cal`.
+
+    """
+    def doit():
+        cells = []
+        cols = ["Action name", "Verbose name", "Help text",
+                "Target state", "Required states"]  # , "Required roles"]
+        for a in actions:
+            ht = a.help_text or ''
+            if ht or all:
+                # required_roles = ' '.join(
+                #     [str(r) for r in a.required_roles])
+                cells.append(
+                    [a.action_name, a.label, unindent(ht),
+                     a.target_state, a.required_states or '',
+                     # required_roles
+                    ])
+        print(table(cols, cells).strip())
+        
+    if language:
+        with translation.override(language):
+            return doit()
+    return doit()
+
 
 def show_fields(model, fieldnames=None, columns=False, all=None):
     """
@@ -281,6 +311,7 @@ def show_fields(model, fieldnames=None, columns=False, all=None):
             fieldnames = model.params_layout.main
     elif issubclass(model, Model):
         get_field = model._meta.get_field
+        # get_field = model.get_data_elem
         if fieldnames is None:
             fieldnames = [f.name for f in model._meta.get_fields()]
     elif issubclass(model, AbstractTable):

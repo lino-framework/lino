@@ -837,7 +837,14 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         else:
             cls.setup_parameters(cls.parameters)
 
-        cls.simple_parameters = tuple(cls.get_simple_parameters())
+        lst = []
+        for n in cls.get_simple_parameters():
+            if n in lst:
+                logger.warning(
+                    "Removed duplicate name %s returned by %s.get_simple_parameters()", n, cls)
+            else:
+                lst.append(n)
+        cls.simple_parameters = tuple(lst)
         
         if cls.parameters is None and len(cls.simple_parameters) > 0 :
             cls.parameters = {}
@@ -948,7 +955,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                 cls.delete_action = cls._bind_action(
                     'delete_action', actions.DeleteSelected())
             cls.update_action = cls._bind_action(
-                'update_action', actions.SaveRow())
+                'update_action', actions.SaveGridCell())
             if cls.detail_layout:
                 cls.validate_form = cls._bind_action(
                     'validate_form', actions.ValidateForm())
