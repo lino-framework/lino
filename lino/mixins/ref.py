@@ -45,7 +45,11 @@ class Referrable(model.Model):
         abstract = True
 
     ref_max_length = 40
-    """The preferred width of the :attr:`ref` field."""
+    """
+    The preferred width of the :attr:`ref` field.
+
+    TODO: rename this to preferred_ref_width.
+    """
 
     ref = models.CharField(
         _("Reference"), max_length=200,
@@ -54,6 +58,8 @@ class Referrable(model.Model):
     @classmethod
     def on_analyze(cls, site):
         cls.set_widget_options('ref', width=cls.ref_max_length)
+        if cls.__name__.endswith("Course"):
+            print("20181018", cls.ref_max_length)
         super(Referrable, cls).on_analyze(site)
 
     def on_duplicate(self, ar, master):

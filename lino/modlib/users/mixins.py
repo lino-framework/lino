@@ -159,8 +159,10 @@ class My(dbtables.Table):
     def get_actor_label(self):
         if self.model is None:
             return self._label or self.__name__
+        # return self._label or \
+        #     _("My %s") % self.model._meta.verbose_name_plural
         return self._label or \
-            _("My %s") % self.model._meta.verbose_name_plural
+            format_lazy(_("My {}"), self.model._meta.verbose_name_plural)
 
     @classmethod
     def param_defaults(self, ar, **kw):

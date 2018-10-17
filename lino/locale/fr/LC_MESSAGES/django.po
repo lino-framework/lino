@@ -5,18 +5,19 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version:  \n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-10-14 05:11+0200\n"
-"PO-Revision-Date: 2018-10-05 19:46+0300\n"
+"POT-Creation-Date: 2018-10-18 00:38+0200\n"
+"PO-Revision-Date: 2018-10-18 00:39+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language: fr\n"
 "Language-Team: \n"
-"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.6.0\n"
+"X-Generator: Poedit 2.0.6\n"
 
 #: lino/help_texts.py:7
 msgid ""
@@ -89,8 +90,7 @@ msgstr ""
 msgid ""
 "Base class to anything that may be \"registered\" and \"deregistered\"\n"
 "(e.g. Invoices, Vouchers, Declarations, Reservations,...).\n"
-"\"Registered\" in general means \"this object has been taken account "
-"of\".\n"
+"\"Registered\" in general means \"this object has been taken account of\".\n"
 "Registered objects are not editable."
 msgstr ""
 
@@ -704,7 +704,7 @@ msgstr "Mes problèmes de données"
 
 #: lino/help_texts.py:235
 #, fuzzy
-msgid "A user who can see data problems."
+msgid "Can see data problems."
 msgstr "Réparer les problèmes de données"
 
 #: lino/help_texts.py:238
@@ -947,18 +947,18 @@ msgstr ""
 
 #: lino/help_texts.py:325
 msgid ""
-"A user who has access to office functionality like calendar, notes\n"
-"and uploads."
+"Has access to office functionality like calendar, notes and\n"
+"uploads."
 msgstr ""
 
 #: lino/help_texts.py:327
 msgid ""
-"A user who manages office functionality for other users (but not\n"
-"for himself)."
+"Can manage office functionality for other users (but not for\n"
+"himself)."
 msgstr ""
 
 #: lino/help_texts.py:329
-msgid "A user who manages configuration of office functionality."
+msgid "Can manage configuration of office functionality."
 msgstr ""
 
 #: lino/help_texts.py:330
@@ -1515,8 +1515,7 @@ msgstr ""
 #: lino/help_texts.py:517
 msgid ""
 "A Converter for ForeignKey and ManyToManyField. \n"
-"If the lookup_field is a BabelField, then it tries all available "
-"languages."
+"If the lookup_field is a BabelField, then it tries all available languages."
 msgstr ""
 
 #: lino/help_texts.py:519
@@ -2672,8 +2671,7 @@ msgstr "Pas de panique, ceci n'est certainement pas ta faute."
 #: lino/config/500.html:9
 msgid ""
 "Maybe we are working on the server, \n"
-"please check the <a href=\"{{site.hoster_status_url}}\">hoster status "
-"page</a>."
+"please check the <a href=\"{{site.hoster_status_url}}\">hoster status page</a>."
 msgstr ""
 "Il est possible que nous sommes en train de travailler sur le serveur, \n"
 "vérifie notre <a href=\"{{site.hoster_status_url}}\">page d'état</a>."
@@ -2709,11 +2707,11 @@ msgstr "Ceci est un site de démonstration Lino."
 
 #: lino/config/admin_main_base.html:31
 msgid ""
-"Try also the other <a href=\"http://lino-framework.org/demos.html\">demo "
-"sites</a>."
+"Try also the other <a href=\"http://lino-framework.org/demos.html\">demo sites</"
+"a>."
 msgstr ""
-"Essayez également les autres <a href=\"http://lino-"
-"framework.org/demos.html\">sites de démonstration</a>."
+"Essayez également les autres <a href=\"http://lino-framework.org/demos.html"
+"\">sites de démonstration</a>."
 
 #: lino/config/admin_main_base.html:32
 #, python-format
@@ -2730,8 +2728,8 @@ msgstr ""
 
 #: lino/config/admin_main_base.html:47
 msgid ""
-"Unlike the <a href=\"/\">web content section</a> there is now a GUI menu "
-"bar in the upper part of the screen."
+"Unlike the <a href=\"/\">web content section</a> there is now a GUI menu bar in "
+"the upper part of the screen."
 msgstr ""
 
 #: lino/config/admin_main_base.html:52
@@ -2917,15 +2915,15 @@ msgstr "Choisir %s..."
 msgid "show"
 msgstr "montrer"
 
-#: lino/core/fields.py:668
+#: lino/core/fields.py:673
 msgid "Quantity (Decimal or Duration)"
 msgstr ""
 
-#: lino/core/fields.py:750
+#: lino/core/fields.py:755
 msgid "Invalid date"
 msgstr "Date invalide"
 
-#: lino/core/fields.py:771
+#: lino/core/fields.py:776
 msgid ""
 "Uncomplete dates are allowed, e.g. \n"
 "\"00.00.1980\" means \"some day in 1980\", \n"
@@ -3014,8 +3012,8 @@ msgstr ""
 #, python-format
 msgid "Cannot delete %(model)s %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
-"Impossible de supprimer %(model)s %(self)s parce que %(count)d  %(refs)s "
-"y font référence."
+"Impossible de supprimer %(model)s %(self)s parce que %(count)d  %(refs)s y font "
+"référence."
 
 #: lino/core/model.py:648 lino/core/requests.py:952
 #, python-format
@@ -3028,7 +3026,7 @@ msgid "%s : nothing to save."
 msgstr ""
 
 #: lino/core/model.py:876 lino/core/model.py:883 lino/core/tables.py:771
-#: lino/mixins/ref.py:156 lino/modlib/about/models.py:64
+#: lino/mixins/ref.py:162 lino/modlib/about/models.py:64
 #: lino/modlib/importfilters/models.py:111 lino/modlib/notify/actions.py:15
 #: lino/modlib/tinymce/models.py:34 lino/modlib/uploads/models.py:126
 #: lino/modlib/uploads/models.py:139 lino/modlib/users/desktop.py:191
@@ -3188,7 +3186,7 @@ msgstr ""
 #: lino/core/workflows.py:286 lino/mixins/duplicable.py:114
 #: lino/modlib/notify/models.py:69 lino/modlib/printing/actions.py:178
 #: lino/modlib/printing/actions.py:266 lino/modlib/printing/actions.py:311
-#: lino/modlib/users/mixins.py:292 lino/modlib/users/mixins.py:355
+#: lino/modlib/users/mixins.py:294 lino/modlib/users/mixins.py:357
 msgid "Are you sure?"
 msgstr "D'accord ?"
 
@@ -3461,7 +3459,7 @@ msgstr ""
 msgid "See as "
 msgstr "Vue:"
 
-#: lino/mixins/ref.py:51
+#: lino/mixins/ref.py:55
 msgid "Reference"
 msgstr ""
 
@@ -3619,30 +3617,26 @@ msgid "Home"
 msgstr "Départ"
 
 #: lino/modlib/bootstrap3/views.py:144 lino/modlib/bootstrap3/views.py:225
-#: lino/modlib/extjs/config/extjs/linoweb.js:3467
-#: lino/modlib/forms/views.py:132 lino/modlib/forms/views.py:212
-#: lino/modlib/odata/views.py:74
+#: lino/modlib/extjs/config/extjs/linoweb.js:3467 lino/modlib/forms/views.py:132
+#: lino/modlib/forms/views.py:212 lino/modlib/odata/views.py:74
 msgid "First page"
 msgstr "Première page"
 
 #: lino/modlib/bootstrap3/views.py:145 lino/modlib/bootstrap3/views.py:227
-#: lino/modlib/extjs/config/extjs/linoweb.js:3469
-#: lino/modlib/forms/views.py:133 lino/modlib/forms/views.py:214
-#: lino/modlib/odata/views.py:76
+#: lino/modlib/extjs/config/extjs/linoweb.js:3469 lino/modlib/forms/views.py:133
+#: lino/modlib/forms/views.py:214 lino/modlib/odata/views.py:76
 msgid "Previous page"
 msgstr "Page précédente"
 
 #: lino/modlib/bootstrap3/views.py:157 lino/modlib/bootstrap3/views.py:229
-#: lino/modlib/extjs/config/extjs/linoweb.js:3470
-#: lino/modlib/forms/views.py:145 lino/modlib/forms/views.py:216
-#: lino/modlib/odata/views.py:78
+#: lino/modlib/extjs/config/extjs/linoweb.js:3470 lino/modlib/forms/views.py:145
+#: lino/modlib/forms/views.py:216 lino/modlib/odata/views.py:78
 msgid "Next page"
 msgstr "Page suivante"
 
 #: lino/modlib/bootstrap3/views.py:158 lino/modlib/bootstrap3/views.py:231
-#: lino/modlib/extjs/config/extjs/linoweb.js:3468
-#: lino/modlib/forms/views.py:146 lino/modlib/forms/views.py:218
-#: lino/modlib/odata/views.py:80
+#: lino/modlib/extjs/config/extjs/linoweb.js:3468 lino/modlib/forms/views.py:146
+#: lino/modlib/forms/views.py:218 lino/modlib/odata/views.py:80
 msgid "Last page"
 msgstr "Dernière page"
 
@@ -3717,8 +3711,7 @@ msgstr ""
 msgid "Checkdata"
 msgstr ""
 
-#: lino/modlib/checkdata/choicelists.py:25
-#: lino/modlib/checkdata/choicelists.py:26
+#: lino/modlib/checkdata/choicelists.py:25 lino/modlib/checkdata/choicelists.py:26
 msgid "Checkdata feedback"
 msgstr ""
 
@@ -4018,8 +4011,8 @@ msgstr ""
 #, python-format
 msgid "Error while saving GC for %(table)s: %(error)s"
 msgstr ""
-"Une erreur est apparue pendant la sauvgarde de la configuration pour "
-"%(table)s: %(error)s"
+"Une erreur est apparue pendant la sauvgarde de la configuration pour %(table)s: "
+"%(error)s"
 
 #: lino/modlib/extjs/config/extjs/linoweb.js:491
 msgid "Show or hide the table parameters panel"
@@ -4053,8 +4046,8 @@ msgid ""
 "If the error persists, try reloading the browser page ([SHIFT+CTRL+R] in "
 "Firefox)."
 msgstr ""
-"Si l'erreur persiste, essayez de recharger la page dans votre navigateur "
-"(MAJ+CTRL+R dans Firefox)."
+"Si l'erreur persiste, essayez de recharger la page dans votre navigateur (MAJ"
+"+CTRL+R dans Firefox)."
 
 #: lino/modlib/extjs/config/extjs/linoweb.js:1379
 msgid "Database problem"
@@ -4435,12 +4428,12 @@ msgstr "Imprimer"
 #: lino/modlib/printing/actions.py:95
 #, fuzzy
 msgid ""
-"Your printable document ({}) should now open in a new browser window. If "
-"it doesn't, please ask your system administrator."
+"Your printable document ({}) should now open in a new browser window. If it "
+"doesn't, please ask your system administrator."
 msgstr ""
-"Votre document imprimable (fichier %(doc)s) devrait maintenant apparaître"
-" dans une nouvelle fenêtre. Sinon consultez %(help)s ou demandez votre  "
-"administrateur système."
+"Votre document imprimable (fichier %(doc)s) devrait maintenant apparaître dans "
+"une nouvelle fenêtre. Sinon consultez %(help)s ou demandez votre  administrateur "
+"système."
 
 #: lino/modlib/printing/actions.py:177
 #, python-format
@@ -4453,8 +4446,8 @@ msgstr "Modifier le modèle d'impression"
 
 #: lino/modlib/printing/actions.py:262
 msgid ""
-"Before you can edit this template we must create a local copy on the "
-"server. This will exclude the template from future updates."
+"Before you can edit this template we must create a local copy on the server. "
+"This will exclude the template from future updates."
 msgstr ""
 
 #: lino/modlib/printing/actions.py:272
@@ -4530,7 +4523,7 @@ msgstr ""
 msgid "System"
 msgstr "Système"
 
-#: lino/modlib/system/__init__.py:49
+#: lino/modlib/system/__init__.py:50
 msgid "You have a dangling edit lock on"
 msgstr ""
 
@@ -4778,36 +4771,35 @@ msgstr "Rôles d'utilisateur"
 msgid "Author"
 msgstr "Auteur"
 
-#: lino/modlib/users/mixins.py:163
-#, python-format
-msgid "My %s"
-msgstr "Mes %s"
+#: lino/modlib/users/mixins.py:165
+msgid "My {}"
+msgstr "Mes {}"
 
-#: lino/modlib/users/mixins.py:177
+#: lino/modlib/users/mixins.py:179
 msgid "Update plan"
 msgstr ""
 
-#: lino/modlib/users/mixins.py:217
+#: lino/modlib/users/mixins.py:219
 msgid "Today"
 msgstr "Aujourd'hui"
 
-#: lino/modlib/users/mixins.py:259
+#: lino/modlib/users/mixins.py:261
 msgid "Assign to me"
 msgstr ""
 
-#: lino/modlib/users/mixins.py:291
+#: lino/modlib/users/mixins.py:293
 msgid "You become assigned to this."
 msgstr ""
 
-#: lino/modlib/users/mixins.py:314
+#: lino/modlib/users/mixins.py:316
 msgid "Take"
 msgstr ""
 
-#: lino/modlib/users/mixins.py:354
+#: lino/modlib/users/mixins.py:356
 msgid "You take responsibility for {}."
 msgstr ""
 
-#: lino/modlib/users/mixins.py:374
+#: lino/modlib/users/mixins.py:376
 #, fuzzy
 msgid "Assigned to"
 msgstr "Attribué à"
@@ -5013,9 +5005,5 @@ msgstr ""
 #~ msgid "{} in {}"
 #~ msgstr "{} dans {}"
 
-#~ msgid "You have edit lock on "
-#~ msgstr ""
-
-#~ msgid "You have a dangling edit lock on "
-#~ msgstr ""
-
+#~ msgid "My %s"
+#~ msgstr "Mes %s"
