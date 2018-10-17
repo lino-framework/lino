@@ -2,7 +2,7 @@
     {% set var = namespace() %}
     {% set var.previous_group = None %}
 
-    {% for ba in ba_actions %}
+    {% for ba in ba_actions if ba.action.action_name != "detail" %}
         {% set var.current_group = ba.action.combo_group %}
         {% if var.previous_group != var.current_group %}
             {% if var.current_group == None or (var.previous_group != None and var.current_group != None )%}

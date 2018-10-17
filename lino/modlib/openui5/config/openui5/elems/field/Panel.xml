@@ -8,7 +8,7 @@
         render="bare"{#width="auto"  height="auto"#}>
 {% endif %}
     <items>
-    {% for e in e.elements %}
+    {% for e in e.elements if not e.hidden %}
         {# e|p #}
         {% if e.get_view_permission(ar.get_user().user_type) %}
             {% include e.oui5_field_template %}

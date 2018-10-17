@@ -69,7 +69,9 @@ class Plugin(Plugin):
             url(rx + r'choices/(?P<app_label>\w+)/(?P<rptname>\w+)/'
                      '(?P<fldname>\w+)$',
                 views.Choices.as_view()),
-
+            url(rx + r'apchoices/(?P<app_label>\w+)/(?P<actor>\w+)/'
+                     '(?P<an>\w+)/(?P<field>\w+)$',
+                views.ActionParamChoices.as_view()),
             # For generating views
             url(rx + r'ui/(?P<name>.*)$',
                 views.Connector.as_view()),

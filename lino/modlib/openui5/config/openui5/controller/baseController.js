@@ -82,6 +82,23 @@ sap.ui.define([
         },
 
         /**
+         * Convenience method for searching up the tree of elements to find the next MVC or Dialog,
+         * Needed for setting models in dialogs that are not Dependents of Views.
+         * @public
+         * @returns {sap.ui.core.mvc.View} The parent view
+         */
+        getParentViewOrDialogFragment: function (elem) {
+            var v = elem
+            while (v && v.getParent) {
+                v = v.getParent();
+                if (v instanceof sap.ui.core.mvc.View || v instanceof sap.m.Dialog) {
+                    return v;
+                }
+            }
+        },
+
+
+        /**
          * Convenience method for getting the view model by name.
          * @public
          * @returns {sap.ui.model.Model} the model instance
@@ -116,16 +133,26 @@ sap.ui.define([
             return {};
         },
 
+        add_param_values: function (params) {
+            if (this._query) { // _query is args from route matching
+                jQuery.extend(params, {
+                    mt: this._query['mt'],
+                    mk: this._query['mk']
+                })
+            }
+            return params
+        },
+
         /**
          * Method that runs the ajax call for most actions.
          *
-         * todo decide which args are for this method, move ajax into this method.
          */
 // actor_id, action_name,rp,is_on_main_actor,pk, params
         runSimpleAction: function ({
                                        actor_id, action_name, sr, is_on_main_actor, submit_form_data,
                                        rp = this.getView().getId(), /*keyword args*/
                                        http_method = "GET",
+                                       sr_needed = true,
                                        params = {}
                                    }) {
             if (typeof(sr) === "string" || typeof(sr) === "number") {
@@ -134,8 +161,10 @@ sap.ui.define([
             else if (sr.length === 0) {
                 // Cancel action press, nothing selected
                 // Note: This might be wrong, some actions such as "Mark all as seen" might not need a SR.
-                MessageToast.show("Please select a row");
-                return;
+                if (sr_needed) {
+                    MessageToast.show("Please select a row");
+                    return;
+                }
             }
 
             if (submit_form_data) {
@@ -149,9 +178,14 @@ sap.ui.define([
                 // "mk": this._PK            /*Not sure if same as PK in all cases, requires talk with luc*/
             });
 
+            let url = '/api/' + actor_id.replace(".", "/");
+            if (!sr) {
+                url += "/" + sr[0]
+            }
+
             jQuery.ajax({
                 context: this,
-                url: '/api/' + actor_id.replace(".", "/") + "/" + params.sr[0],
+                url: url,
                 type: http_method,
                 data: jQuery.param(params),
                 success: this.handleActionSuccess,
@@ -167,12 +201,53 @@ sap.ui.define([
          *
          *
          */
-        open_window_action: function ({action_name, params = undefined}) {
+        open_window_action: function ({
+                                          actor_id, action_name, sr, is_on_main_actor,
+                                          rp = this.getView().getId(), /*keyword args*/
+                                          params = {}
+                                      }) {
             console.log(arguments);
-            let oView = this.getView();
-            if (!this._yesNoDialog /*|| this._yesNoDialog.bIsDestroyed === true*/) {
-                this._yesNoDialog = sap.ui.jsfragment("lino.fragment." + action_name, this);
-                oView.addDependent(this._yesNoDialog)
+            let name = actor_id + "." + action_name;
+            if (!this._actions) {
+                this._actions = {}
+            }
+            if (!this._actions[name]) {
+                this._actions[name] = sap.ui.xmlfragment("lino.action." + name, sap.ui.controller("lino.controller.fragment"));
+                this._actions[name]._linodata = {
+                    // an: action_name,
+                    actor_id: actor_id,
+                    callback_controller: this,
+                    sr: this.getSelectedRows(),
+                };
+            }
+            // oView.addDependent(this._actions[nam]) // Todo attach to live cycle only?
+            if (!params.data_record && action_name === "insert") {
+                let action = this._actions[name];
+                let ajax_params = {
+                    fmt: 'json',
+                    an: action_name,
+                };
+                this.add_param_values(ajax_params);
+                jQuery.ajax({
+                    context: this,
+                    url: '/api/' + actor_id.replace(".", "/") + "/" + -99999,
+                    type: "GET",
+                    data: jQuery.param(ajax_params),
+                    success: function (data) {
+                        let oInputModel = new JSONModel(data);
+                        action.setModel(oInputModel, "record");
+                        action.open();
+
+                    },
+                    error: function (e) {
+                        MessageToast.show("error: " + e.responseText);
+                    }
+                });
+
+            }
+            else {
+                this._actions[name].setModel(new JSONModel(params.data_record), "record")
+                this._actions[name].open();
             }
         },
         handleActionSuccess: function (data) {
@@ -226,25 +301,79 @@ sap.ui.define([
             }
         },
 
+        /**
+         * Serverside quick-search filtering for foreign key fields
+         * @param oEvent
+         */
         handleSuggest: function (oEvent) {
-            var Input = oEvent.getSource();
-            var oView = this.getView();
-            var url = Input.data('input_url');
-            oView.setBusy(true);
-            var oInputModel = new JSONModel(jQuery.sap.getModulePath("lino.server", url));
-            oView.setModel(oInputModel, "Input");
-            oView.setBusy(false);
-
-            var sTerm = oEvent.getParameter("suggestValue");
-            var aFilters = [];
-            if (sTerm) {
-                aFilters.push(new Filter("text", sap.ui.model.FilterOperator.StartsWith, sTerm));
+            let oInput = oEvent.getSource();
+            let url = oInput.data('input_url');
+            let query = oEvent.getParameter("suggestValue");
+            // console.log("hs");
+            if (Lino.flags['suggest']) {
+                return
             }
-            else {
-                aFilters.push(new Filter("text", sap.ui.model.FilterOperator.All, ""));
-            }
+            oInput.setFilterSuggests(true);
+            this._handleSuggest({
+                oEvent,
+                url,
+                query
+            });
 
-            oEvent.getSource().getBinding("suggestionItems").filter(aFilters);
+        },
+
+
+        /**
+         * Help button press on FK fields,
+         *
+         * BUG: In chrome selection doesn't work. We should change this to the normal pop-up search dialog window
+         *      that is used in the input samples.
+         * @param oEvent
+         */
+        handleValueHelp: function (oEvent) {
+            let oInput = oEvent.getSource();
+            oInput.setFilterSuggests(false);
+            // console.log("hvh");
+            Lino.wave_flag("suggest", 200);
+            let url = oInput.data('input_url');
+            this._handleSuggest({
+                oEvent,
+                url,
+            });
+        },
+
+        _handleSuggest: function ({oEvent, url, query = "", oInput = oEvent.getSource()}) {
+            let oView = this.getParentViewOrDialogFragment(oInput);
+            // if (oInput.getValue() === ""){
+            //     oInput.getValue(" ");
+            // }
+
+            jQuery.ajax({
+                context: this,
+                url: url,
+                type: "GET",
+                data: jQuery.param({
+                    start: 0,
+                    limit: 9999,
+                    query: query
+                }),
+                success: function (data) {
+                    let oInputModel = new JSONModel(data);
+                    oView.setModel(oInputModel, oInput.data('ext_name'));
+                },
+                error: function (e) {
+                    MessageToast.show("error: " + e.responseText);
+                }
+            });
+
+            // if (query) {
+            //     aFilters.push(new Filter("text", sap.ui.model.FilterOperator.StartsWith, query));
+            // }
+            // else {
+            //     aFilters.push(new Filter("text", sap.ui.model.FilterOperator.All, ""));
+            // }
+            // oEvent.getSource().getBinding("suggestionItems").filter(aFilters);
+            // var aFilters = [];
         },
 
         /**
@@ -257,7 +386,8 @@ sap.ui.define([
 
             evt.getSource().setSelectedKey(sKey);
             // console.log(evt);
-        },
+        }
+        ,
 
         /**
          * Event handler when a expand slave-table/summary button gets pressed
@@ -268,7 +398,7 @@ sap.ui.define([
          */
         handleExpandSlave: function (oEvent) {
             var view = this.getView();
-            var mk = this._PK;
+            var mk = this._PK; // wrong for grid, should be get SR,
             var mt = this._content_type;
             this.routeToAction("grid." + oEvent.getSource().data("actor_id"),
                 {
