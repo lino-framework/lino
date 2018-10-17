@@ -338,6 +338,10 @@ data."""
             # And anyway, loaddata would catch it and still continue.
             # raise Exception(msg)
 
+        settings.SITE.loading_from_dump = False
+        # reset to False because the same SITE might get reused by
+        # Django test runner for other test cases.
+
 
 
 class DpyLoader(LoaderBase):
