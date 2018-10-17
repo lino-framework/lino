@@ -27,6 +27,8 @@ sap.ui.define([
             this._PK = oMainTable.data("PK");
             this._actor_id = oMainTable.data("actor_id");
             this._content_type = oMainTable.data("mt"); // null or int
+            this._MT = oMainTable.data("mt"); // null or int
+
             this._is_slave = oMainTable.data("is_slave"); // null or int
 
             var oRouter = this.getRouter();

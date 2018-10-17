@@ -2,7 +2,7 @@ sap.ui.define([
     "lino/controller/baseController",
     "sap/m/MessageToast",
     "sap/ui/model/json/JSONModel",
-    "sap/ui/Device"
+    "sap/ui/Device",
 ], function (baseController, MessageToast, JSONModel, Device) {
     "use strict";
     return baseController.extend("lino.controller.App", {

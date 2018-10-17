@@ -51,7 +51,18 @@ Lino = {
      * @param params
      */
     param_action: function (actor_id, action_name, rp, params) {
-        console.log(arguments);
+        // In the case of selecting a workflow button on a table row, we need to stop the navigation.
+        this.wave_flag("simple_action", 50); // if run first
+        clearTimeout(Lino.timeouts['nav']); // if ran second
+        // /api/tickets/TicketsBySite/2308?_dc=1537458453973&mt=36&mk=51&an=mark_opened&sr=2308
+        rp = rp || "__component0---MAIN_VIEW";
+        sap.ui.getCore().byId(rp).getController().open_window_action(
+            {
+                actor_id: actor_id,
+                action_name: action_name,
+                rp: rp,
+                params: params
+            });
     },
 
     debounce: function (func, wait, immediate) {

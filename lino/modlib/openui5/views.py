@@ -449,7 +449,8 @@ class ChoiceListModel(View):
     """
 
     def get(self, request):
-        data = {str(cl): [{"key":py2js(c[0]).strip('"'), "text":py2js(c[1]).strip('"')} for c in cl.get_choices()] for cl in
+        data = {str(cl): [{"key": py2js(c[0]).strip('"'), "text": py2js(c[1]).strip('"')} for c in cl.get_choices()] for
+                cl in
                 kernel.CHOICELISTS.values()}
         return json_response(data)
 
@@ -497,6 +498,23 @@ class Choices(View):
             qs, row2dict = choices_for_field(request, rpt, field)
 
         return choices_response(rpt, request, qs, row2dict, emptyValue)
+
+
+# Also coppied from extjs.views line for line
+class ActionParamChoices(View):
+    # Examples: `welfare.pcsw.CreateCoachingVisit`
+    def get(self, request, app_label=None, actor=None, an=None, field=None, **kw):
+        actor = requested_actor(app_label, actor)
+        ba = actor.get_url_action(an)
+        if ba is None:
+            raise Exception("Unknown action %r for %s" % (an, actor))
+        field = ba.action.get_param_elem(field)
+        qs, row2dict = choices_for_field(request, ba.action, field)
+        if field.blank:
+            emptyValue = '<br/>'
+        else:
+            emptyValue = None
+        return choices_response(actor, request, qs, row2dict, emptyValue)
 
 
 class Restful(View):
@@ -835,9 +853,36 @@ class Connector(View):
             # ar = action_request(app_label, actor, request, request.GET, True)
             # add to context
 
-        elif name.startswith("view/") or \
-                name.startswith("controller/") or \
-                name.startswith("core/") or name.startswith("fragment/"):
+        elif name.startswith("action/"):
+            # Param actions
+            actor_id, action_name = re.match(r"(?:action\/)?(.+)\/(.+).fragment.xml$", name).groups()
+            actor = rt.models.resolve(actor_id.replace("/", "."))
+            action = actor.actions[action_name]
+            window_layout = action.get_window_layout()
+            layout_handle = window_layout.get_layout_handle(settings.SITE.plugins.openui5)
+            context.update({
+                "actor": actor,
+                "action": action,
+                "title": actor.label,
+                "main": layout_handle.main,
+                "layout_handle": layout_handle,
+                "save_fields": ' '.join([f.name for f in actor.model._meta.fields if f.editable]),
+                "e": layout_handle.main,  # set e for the initial main element
+            })
+            if action.action.params_layout is not None:
+                context.update(
+                    {"param_fields_to_submit": " ".join(
+                        [f.name for f in action.action.params_layout.params_store.param_fields])
+                    })
+            else:
+                context.update({"param_fields_to_submit": ""})
+            tplname = "openui5/fragment/ActionFormPanel.fragment.xml"
+
+
+        elif (name.startswith("view/") or
+              name.startswith("controller/") or
+              name.startswith("core/") or
+              name.startswith("fragment/")):
             tplname = "openui5/" + name
 
             if "manifest.json" in name:

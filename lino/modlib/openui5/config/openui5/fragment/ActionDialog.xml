@@ -1,3 +1,4 @@
+{# Needs to be talored for ActionFormPanel Elems #}
 <core:FragmentDefinition
         xmlns="sap.m"
         xmlns:tnt="sap.tnt"
@@ -16,28 +17,20 @@
             showHeader="false"
             title="{record>/data/title}"
             class="sapUiResponsiveContentPadding sapUiSizeCompact"
-    >
+
+            >
         <content>
             {% include main.oui5_field_template %}
         </content>
         <beginButton>
             <Button
                     text="Cancel"
-                    press="onCancel"/>
+                    press="onCloseDialog"/>
         </beginButton>
         <endButton>
             <Button text="OK"
-                    press="onOK"
+                    press="onOKDialog"
             />
         </endButton>
-        <customData>
-            <core:CustomData
-                    key="param_fields_to_submit"
-                    value="{{param_fields_to_submit}}"/>
-            <core:CustomData
-                    key="action_name"
-                    value="{{action.action.save_action_name or action.action.name}}"/>
-
-        </customData>
     </Dialog>
 </core:FragmentDefinition>

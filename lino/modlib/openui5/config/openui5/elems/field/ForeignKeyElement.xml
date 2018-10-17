@@ -8,14 +8,13 @@
         {% block field_content %}
 
 <Input
-id="{{e.ext_name}}"
 type="Text"
 textFormatMode="Value"
 placeholder="{{e.help_text}}"
 value="{{bind('record>/data/',e.field.name)}}"
 selectedKey="{{bind('record>/data/',e.field.name, 'Hidden')}}"
 suggestionItems="{{bind(e.ext_name,'>/rows/')}}"
-startSuggestion="0"
+startSuggestion="1"
 filterSuggests="false"
 {# suggestionItems="{{bind('Input','>/rows/')}}" #}
 wrapping="true"
