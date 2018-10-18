@@ -58,8 +58,6 @@ class Referrable(model.Model):
     @classmethod
     def on_analyze(cls, site):
         cls.set_widget_options('ref', width=cls.ref_max_length)
-        if cls.__name__.endswith("Course"):
-            print("20181018", cls.ref_max_length)
         super(Referrable, cls).on_analyze(site)
 
     def on_duplicate(self, ar, master):
