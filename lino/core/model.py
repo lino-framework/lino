@@ -421,7 +421,6 @@ class Model(models.Model):
             assert isinstance(v, fields.DummyField)
             return v
 
-
     def get_choices_text(self, request, actor, field):
         """
         Return the text to be displayed when an instance of this model

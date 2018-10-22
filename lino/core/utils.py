@@ -23,7 +23,6 @@ from importlib import import_module
 from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.core import exceptions
-from django.utils.encoding import force_text
 from django.http import QueryDict
 
 from etgen.html import E
@@ -34,7 +33,6 @@ from django.core.validators import (
 from django.apps import apps
 get_models = apps.get_models
 
-from lino import AFTER17
 from lino.utils import IncompleteDate
 from .exceptions import ChangedAPI
 
@@ -267,17 +265,6 @@ def models_by_base(base, toplevel_only=False):
     return found
 
 
-# def app_labels():
-#     return [p.app_name for p in settings.SITE.installed_plugins]
-    # if AFTER17:
-    #     from django.apps import get_app_configs
-    #     return [a.models_module.__name__.split('.')[-2]
-    #             for a in get_app_configs()]
-    # else:
-    #     from django.db.models import loading
-    #     return [a.__name__.split('.')[-2] for a in loading.get_apps()]
-
-
 def range_filter(value, f1, f2):
     """Assuming a database model with two fields of same data type named
     `f1` and `f2`, return a Q object to select those rows whose `f1`
@@ -372,15 +359,11 @@ def resolve_model(model_spec, app_label=None, strict=False):
         else:
             model_name = model_spec
 
-        if AFTER17:
-            from django.apps import apps
-            try:
-                model = apps.get_model(app_label, model_name)
-            except LookupError:
-                model = None
-        else:
-            model = models.get_model(app_label, model_name, seed_cache=False)
-        #~ model = models.get_model(app_label,model_name,seed_cache=seed_cache)
+        from django.apps import apps
+        try:
+            model = apps.get_model(app_label, model_name)
+        except LookupError:
+            model = None
     else:
         model = model_spec
     if not isinstance(model, type) or not issubclass(model, models.Model):

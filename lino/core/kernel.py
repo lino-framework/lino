@@ -85,6 +85,8 @@ from .utils import get_models
 from .utils import resolve_fields_list
 from .utils import djangoname
 
+from .inject import collect_virtual_fields
+
 
 startup_rlock = threading.RLock()  # Lock() or RLock()?
 
@@ -427,6 +429,8 @@ class Kernel(object):
             """
 
             model.on_analyze(site)
+
+            collect_virtual_fields(model)
 
             # 20181022 moved to inject.on_class_prepared
             # for m, k, v in class_dict_items(model):
