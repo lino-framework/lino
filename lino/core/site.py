@@ -1433,7 +1433,7 @@ class Site(object):
         #     modname = modname[:i]
         # self.is_local_project_dir = modname not in self.local_apps
 
-        self.VIRTUAL_FIELDS = []
+        self.VIRTUAL_FIELDS = set()
 
     def setup_logging(self):
         """Modifies the :data:`DEFAULT_LOGGING
@@ -2523,10 +2523,10 @@ class Site(object):
     def resolve_virtual_fields(self):
         for vf in self.VIRTUAL_FIELDS:
             vf.lino_resolve_type()
-        self.VIRTUAL_FIELDS = []
+        self.VIRTUAL_FIELDS = set()
 
     def register_virtual_field(self, vf):
-        self.VIRTUAL_FIELDS.append(vf)
+        self.VIRTUAL_FIELDS.add(vf)
 
     def find_config_file(self, *args, **kwargs):
         return self.confdirs.find_config_file(*args, **kwargs)

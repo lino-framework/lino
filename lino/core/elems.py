@@ -235,7 +235,7 @@ class LayoutElement(VisibleComponent):
     gridfilters_settings = None
     parent = None  # will be set by Container
 
-    label = None
+    # label = None
     # label_width = 0
     editable = False
     sortable = False
@@ -344,20 +344,22 @@ class LayoutElement(VisibleComponent):
         # if isinstance(parent,FieldSetPanel):
         # self.label = None
         # self.update(label = None)
-        if self.label:
+        label = self.get_label()
+        if label:
             if isinstance(parent, Panel):
                 if self.layout_handle.layout.label_align == layouts.LABEL_ALIGN_LEFT:
-                    self.preferred_width += len(self.label)
+                    self.preferred_width += len(label)
 
     def ext_options(self, **kw):
         if self.hidden:
             kw.update(hidden=True)
         if isinstance(self.parent, TabPanel):
-            if not self.label:
+            label = self.get_label()
+            if not label:
                 raise Exception(
                     "Item %s of tabbed %s has no label!" % (
                         self, self.layout_handle))
-            ukw = dict(title=self.label)
+            ukw = dict(title=label)
             ukw.update(
                 listeners=dict(activate=js_code("Lino.on_tab_activate")))
             # add_help_text(
@@ -496,7 +498,6 @@ class FieldElement(LayoutElement):
         # kw.update(style=dict(marginLeft=DEFAULT_PADDING))
         # kw.update(style='padding: 10px')
         # logger.info("20120931 %s %s",layout_handle,field.name)
-        kw.setdefault('label', field.verbose_name)
         # if field.name == "detail_pointer":
         #     logger.info("20170905 using verbose_name %s",
         #                 field.verbose_name)
@@ -521,6 +522,11 @@ class FieldElement(LayoutElement):
         if isinstance(field, fields.FakeField) and field.sortable_by:
             self.sortable = True
 
+    def get_label(self):
+        if self._label is None:
+            return self.field.verbose_name
+        return self._label
+    
     def value_from_object(self, obj, ar):
         """
         Wrapper around Django's `value_from_object`.
@@ -559,10 +565,11 @@ class FieldElement(LayoutElement):
         # kw.update(xtype='gridcolumn')
         # kw.update(dataIndex=self.field.name)
         kw.update(dataIndex=self.name)
-        if self.label is None:
+        label = self.get_label()
+        if label is None:
             kw.update(header=self.name)
         else:
-            kw.update(header=self.label)
+            kw.update(header=label)
         # if self.label is None:
         #     kw.update(header=self.name)
         # elif self.label:
@@ -611,8 +618,8 @@ class FieldElement(LayoutElement):
             pass
         else:
             kw.update(name=self.field.name)
-            if self.label:
-                label = self.label
+            label = self.get_label()
+            if label:
                 if self.field.help_text:
                     if settings.SITE.use_css_tooltips:
                         label = format_lazy(u"{}{}{}{}{}",
@@ -734,7 +741,7 @@ class TextFieldElement(FieldElement):
                 # kw.update(master_panel=js_code("this"))
                 kw.update(containing_panel=js_code("this"))
                 # kw.update(title=unicode(field.verbose_name)) 20111111
-                kw.update(label=field.verbose_name)
+                kw.update(label=self.get_label())
                 kw.update(title=field.verbose_name)
                 return LayoutElement.__init__(
                     self, layout_handle, field.name, **kw)
@@ -775,7 +782,7 @@ class TextFieldElement(FieldElement):
         # yield E.p(unicode(elem.field.verbose_name),':',E.br(),E.b(text))
         # 20171227 in extjs there was no E.div() around them.
         yield E.div(
-            E.label(str(self.field.verbose_name)),
+            E.label(str(self.get_label())),
             E.textarea(text, rows=str(self.preferred_height),
                        **{'class': "form-control"}),
             **{'class': "form-group"}
@@ -1376,6 +1383,8 @@ class DisplayElement(FieldElement):
         self.preferred_width = self.field.preferred_width
         if self.field.max_length is not None:  # might be explicit 0
             self.preferred_width = self.field.max_length
+        # if self.field.name == "overview":
+        #     print("20181022", self.field, self.field.verbose_name)
 
     def value_from_object(self, obj, ar):
         return self.field.value_from_object(obj, ar)
@@ -1455,7 +1464,7 @@ class BooleanFieldElement(FieldElement):
                 del kw['fieldLabel']
             # kw.update(hideLabel=True)
 
-            label = self.label
+            label = self.get_label()
 
             if isinstance(self.field, mti.EnableChild):
                 # no longer used since 20150131
@@ -1502,9 +1511,9 @@ class SingleRelatedObjectElement(DisplayElement):
         # print(20130202, relobj.parent_model, relobj.model, relobj.field)
         self.relobj = relobj
         self.editable = False
-        kw.update(
-            label=str(getattr(relobj.model._meta, 'verbose_name', None))
-                  or relobj.var_name)
+        # kw.update(
+        #     label=str(getattr(relobj.model._meta, 'verbose_name', None))
+        #           or relobj.var_name)
         # DisplayElement.__init__(self,lh,relobj.field,**kw)
 
         # ~ kw.setdefault('value','<br/>') # see blog/2012/0527
@@ -1514,6 +1523,10 @@ class SingleRelatedObjectElement(DisplayElement):
         # self.preferred_width = self.field.preferred_width
         # if self.field.max_length:
         # self.preferred_width = self.field.max_length
+
+    def get_label(self):
+        return self._label or self.relobj.model._meta.verbose_name \
+            or self.relobj.var_name
 
     def add_default_value(self, kw):
         pass
@@ -1527,7 +1540,7 @@ class GenericForeignKeyElement(DisplayElement):
     def __init__(self, layout_handle, field, **kw):
         self.field = field
         self.editable = False
-        kw.update(label=getattr(field, 'verbose_name', field.name))
+        # kw.update(label=getattr(field, 'verbose_name', field.name))
         # kw.update(label=field.verbose_name)
         LayoutElement.__init__(self, layout_handle, field.name, **kw)
 
@@ -1585,8 +1598,9 @@ class HtmlBoxElement(DisplayElement):
             js = js1 + "{autoScroll:true, html:%s})"
             js = js % py2js(html)
         kw.update(items=js_code(js))
-        if self.label:
-            kw.update(title=self.label)
+        label = self.get_label()
+        if label:
+            kw.update(title=label)
         return kw
 
     def as_plain_html(self, ar, obj):
@@ -2004,7 +2018,7 @@ class Panel(Container):
         def wrap(e):
             if not isinstance(e, FieldElement):
                 return e
-            if e.label is None:
+            if e.get_label() is None:
                 return e
             if e.hidden:
                 return e
@@ -2020,9 +2034,10 @@ class Panel(Container):
 
     def ext_options(self, **d):
 
-        if self.label:
+        label = self.get_label()
+        if label:
             if not isinstance(self.parent, TabPanel):
-                self.update(title=self.label)
+                self.update(title=label)
                 if self.layout_handle.ui.renderer.extjs_version == 3:
                     self.value_template = "new Ext.form.FieldSet(%s)"
                 else:
@@ -2045,8 +2060,9 @@ class Panel(Container):
             label_width = 0
             for e in self.elements:
                 if isinstance(e, FieldElement):
-                    if e.label:
-                        w = len(e.label) + 1  # +1 for the ":"
+                    label = e.get_label()
+                    if label:
+                        w = len(label) + 1  # +1 for the ":"
                         if label_width < w:
                             label_width = w
             d.update(labelWidth=label_width * EXT_CHAR_WIDTH)
@@ -2126,7 +2142,7 @@ class GridElement(Container):
                 vc = dict(cellTpl=js_code("Lino.auto_height_cell_template"))
                 kw.update(viewConfig=vc)
 
-        kw.setdefault('label', rpt.label)
+        # kw.setdefault('label', rpt.label)
         if len(self.columns) == 1:
             kw.setdefault('hideHeaders', True)
 
@@ -2140,6 +2156,9 @@ class GridElement(Container):
             kw.update(params_panel_hidden=True)
         Container.__init__(self, layout_handle, name, **kw)
         self.active_children = columns
+
+    def get_label(self):
+        return self.actor.label
 
     def get_view_permission(self, user_type):
         # skip Container parent:
@@ -2190,8 +2209,9 @@ class DetailMainPanel(Panel):
 
     def ext_options(self, **kw):
         kw = Panel.ext_options(self, **kw)
-        if self.layout_handle.main.label:
-            kw.update(title=_(self.layout_handle.main.label))
+        label = self.layout_handle.main.get_label()
+        if label:
+            kw.update(title=label)
         return kw
 
 
@@ -2238,7 +2258,7 @@ class TabPanel(Panel):
         nav = E.ul(**{'class': "nav nav-tabs"})
         for e in self.elements:
             tab = E.li()
-            tab.append(E.a(str(e.label), data_toggle="tab", href="#" + e.ext_name))
+            tab.append(E.a(str(e.get_label()), data_toggle="tab", href="#" + e.ext_name))
             nav.append(tab)
         nav[0].set("class", "active")
 
@@ -2523,7 +2543,7 @@ def create_layout_element(lh, name, **kw):
                                                             a.full_name()))
                         kw.update(ls_bbar_actions=[
                             lh.ui.renderer.a2btn(a)])
-                field = fields.HtmlBox(verbose_name=de.label)
+                field = fields.HtmlBox(verbose_name=de.get_label())
                 field.name = de.__name__
                 field.help_text = de.help_text
                 field._return_type_for_method = de.slave_as_html_meth()

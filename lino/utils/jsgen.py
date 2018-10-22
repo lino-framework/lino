@@ -66,7 +66,7 @@ CONVERTERS = []
 
 
 def dict2js(d):
-    return ", ".join(["%s: %s" % (k, py2js(v)) for k, v in list(d.items())])
+    return ", ".join(["%s: %s" % (k, py2js(v)) for k, v in d.items()])
 
 
 def register_converter(func):
@@ -249,11 +249,14 @@ class VisibleComponent(Component, Permittable):
     # help_text = None
     # flex = None
     hidden = False
+    _label = None
 
-    def __init__(self, name, **kw):
+    def __init__(self, name, **kwargs):
         Component.__init__(self, name)
-        self.setup(**kw)
+        self.setup(**kwargs)
         # self.install_permission_handler()
+        # if name == "overview":
+        #     print("20181022", kwargs)
 
     def install_permission_handler(self):
         """Define the `allow_read` handler used by
@@ -289,7 +292,7 @@ class VisibleComponent(Component, Permittable):
         if height is not None:
             self.height = height
         if label is not None:
-            self.label = label
+            self._label = label
         if required_roles is not NOT_PROVIDED:
             if not isinstance(required_roles, set):
                 raise Exception(
@@ -300,6 +303,9 @@ class VisibleComponent(Component, Permittable):
         #     self.help_text = help_text
         self.install_permission_handler()
 
+    def get_label(self):
+        return self._label
+    
     def __str__(self):
         "This shows how elements are specified"
         name = Component.__str__(self)
@@ -342,7 +348,7 @@ def declare_vars(v):
                 yield ln
         return
     if isinstance(v, dict):
-        for sub in list(v.values()):
+        for sub in v.values():
             for ln in declare_vars(sub):
                 yield ln
         return
@@ -350,7 +356,7 @@ def declare_vars(v):
             get_user_profile()):
         return
     if isinstance(v, Component):
-        for sub in list(v.ext_options().values()):
+        for sub in v.ext_options().values():
             for ln in declare_vars(sub):
                 yield ln
         # DON'T return

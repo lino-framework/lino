@@ -45,9 +45,10 @@ def column_header(col):
         #~ if col.label:
             #~ return join_elems(col.label.split('\n'),sep=E.br)
         #~ return [unicode(col.name)]
-    if col.label is None:
+    label = col.get_label()
+    if label is None:
         return col.name
-    return six.text_type(col.label)
+    return six.text_type(label)
 
 
 class TableRequest(ActionRequest):
@@ -579,6 +580,9 @@ class TableRequest(ActionRequest):
                 fields = columns
 
             headers = [column_header(col) for col in fields]
+
+            # if str(ar.actor).endswith("DailyPlanner"):
+            #     print("20181022", fields[0].field.verbose_name)
 
             oh = ar.actor.override_column_headers(ar)
             if oh:

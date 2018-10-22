@@ -1,4 +1,4 @@
-# Copyright 2011-2016 Luc Saffre
+# Copyright 2011-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 import logging
@@ -11,53 +11,18 @@ import inspect
 
 from django.db.models.signals import class_prepared
 from django.db.models.fields import FieldDoesNotExist
+from django.db import models
 from django.dispatch import receiver
 
-from lino import AFTER17
 from lino.core import fields
 from lino.core.signals import pre_analyze
-from lino.core.utils import resolve_model
+from .utils import resolve_model, models_by_base
 
-if AFTER17:
-    from django.apps import apps
-    get_models = apps.get_models
-else:
-    from django.db.models.loading import get_models
-
+from django.apps import apps
+get_models = apps.get_models
 
 PENDING_INJECTS = dict()
 PREPARED_MODELS = dict()
-
-
-def clear_field_cache(self):
-    """Modified copy of the Django 1.6 add_field method of
-    django.db.models.options.Options
-
-    Here we don't add a field, we just delete the cache variables.
-
-    """
-    assert not AFTER17
-
-    if hasattr(self, '_m2m_cache'):
-        del self._m2m_cache
-    if hasattr(self, '_field_cache'):
-        del self._field_cache
-        del self._field_name_cache
-        try:
-            del self.fields
-        except AttributeError:
-            pass
-        try:
-            del self.concrete_fields
-        except AttributeError:
-            pass
-        try:
-            del self.local_concrete_fields
-        except AttributeError:
-            pass
-
-    if hasattr(self, '_name_map'):
-        del self._name_map
 
 
 def fix_field_cache(model):
@@ -65,56 +30,19 @@ def fix_field_cache(model):
     in order to fix Django issue #10808
 
     """
+    new_cache = []
+    used_fields = {}
 
-    if AFTER17:
-        from django.db.models.options import make_immutable_fields_list
-        new_cache = []
-        field_names = set()
-        duplicates = []
-        used_fields = {}
-        # for f in model._meta.local_fields:
-        #     if f.attname in field_names:
-        #         duplicates.append(f)
-        #     else:
-        #         field_names.add(f.attname)
-        #         new_cache.append(f)
-        #
-        # if len(duplicates) == 0:
-        #     return
-
-        for parent in model._meta.get_parent_list():
-            for f in parent._meta.local_fields:
-                used_fields[f.name] = f
-                used_fields[f.attname] = f
-        for f in model._meta.local_fields:
-            if not (used_fields.get(f.name) or used_fields.get(f.attname) or None):
-                new_cache.append(f)
-            #~ raise Exception("20131110 %r" % (model._meta._field_cache,))
-        # tmp = make_immutable_fields_list('fields', new_cache)
-        model._meta.local_fields = new_cache
-        # print(model._meta.fields)
-
-    else:
-        if not hasattr(model._meta, '_field_cache'):
-            return
-        field_cache = model._meta._field_cache
-
-        new_cache = []
-        field_names = set()
-        duplicates = []
-        for f, m in field_cache:
-            if f.attname in field_names:
-                duplicates.append(f)
-            else:
-                field_names.add(f.attname)
-                new_cache.append((f, m))
-
-        if len(duplicates) == 0:
-            return
-            #~ raise Exception("20131110 %r" % (model._meta._field_cache,))
-
-        model._meta._field_cache = tuple(new_cache)
-        model._meta._field_name_cache = [x for x, _ in new_cache]
+    for parent in model._meta.get_parent_list():
+        for f in parent._meta.local_fields:
+            used_fields[f.name] = f
+            used_fields[f.attname] = f
+    for f in model._meta.local_fields:
+        if not (used_fields.get(f.name) or used_fields.get(f.attname) or None):
+            new_cache.append(f)
+        #~ raise Exception("20131110 %r" % (model._meta._field_cache,))
+    model._meta.local_fields = new_cache
+    # print(model._meta.fields)
 
 
 @receiver(class_prepared)
@@ -152,13 +80,7 @@ def on_class_prepared(sender, **kw):
         #~ for k,v in injects.items():
             #~ model.add_to_class(k,v)
 
-    if AFTER17:
-        # model._meta._expire_cache()
-        fix_field_cache(model)
-    else:
-        fix_field_cache(model)
-    #~ else:
-        # ~ logger.info("20131110 Could not fix Django issue #10808 for %s",model)
+    fix_field_cache(model)
 
 
 def fmt(func_caller):
@@ -195,11 +117,7 @@ def check_pending_injects(sender, models_list=None, **kw):
     has subclasses, then the new field would not be seen by subclasses
     """
     for model in models_list:
-        if AFTER17:
-            model._meta._expire_cache()
-        else:
-            clear_field_cache(model._meta)
-            model._meta._fill_fields_cache()
+        model._meta._expire_cache()
         fix_field_cache(model)
 
 
@@ -268,11 +186,13 @@ def update_model(model_spec, **actions):
     Replace the specified attributes in the specified model.
     """
     def todo(model):
-        for k, v in list(actions.items()):
+        for k, v in actions.items():
             if not hasattr(model, k):
                 raise Exception(
                     "%s has no attribute %s to update." % (model, k))
             setattr(model, k, v)
+    if isinstance(model_spec, models.Model):
+        return todo(model_spec)
     return do_when_prepared(todo, model_spec)
 
 
@@ -310,10 +230,6 @@ def inject_field(model_spec, name, field, doc=None, active=False):
     def todo(model):
         # logger.info("20150820 gonna inject_field %s %s", model.__name__, name)
         model.add_to_class(name, field)
-        if AFTER17:
-            pass  # model._meta._expire_cache()
-        else:
-            model._meta._fill_fields_cache()
         fix_field_cache(model)
         if active:
             model.add_active_field(name)
@@ -322,21 +238,25 @@ def inject_field(model_spec, name, field, doc=None, active=False):
 
 
 def update_field(model_spec, name, **kw):
-    """Update some attribute of the specified existing field.  For
-    example :class:`Human <lino.mixins.human.Human>` defines a field
+    """
+    Update some attribute of the specified existing field.  For example
+    :class:`Human <lino.mixins.human.Human>` defines a field
     `first_name` which may not be blank.  If you inherit from this
     mixin but want `first_name` to be optional::
     
       class MyPerson(mixins.Human):
-        ...
-      dd.update_field(MyPerson,'first_name',blank=True)
+          ...
+      dd.update_field(MyPerson, 'first_name', blank=True)
       
-    Or you want to change the label of a field defined in an inherited mixin,
-    as done in  :mod:`lino_xl.lib.outbox.models`::
+    Or you want to change the label of a field defined in an inherited
+    mixin, as done in :mod:`lino_xl.lib.outbox.models`::
     
-      dd.update_field(Mail,'user',verbose_name=_("Sender"))
-
+      dd.update_field(Mail, 'user', verbose_name=_("Sender"))
     """
+    # if name == "overview":
+    #     if 'verbose_name' in kw:
+    #         if kw['verbose_name'] is None:
+    #             raise Exception("20181022")
     def todo(model):
         de = model.get_data_elem(name)
         if de is None:
@@ -348,6 +268,16 @@ def update_field(model_spec, name, **kw):
             fld = de.return_type
         else:
             fld = de
+
+        # if de.model is None:
+        #     msg = "Update non-local field {} on {}".format(name, model)
+        #     raise Exception(msg)
+        #     # logger.warning(msg)
+        # elif de.model is not model:
+        #     msg = "20181022 {} is not on {} but on {}".format(
+        #         name, model, de.model)
+        #     raise Exception(msg)
+        #     # logger.warning(msg)
             
         for k, v in kw.items():
             setattr(fld, k, v)

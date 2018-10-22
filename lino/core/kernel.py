@@ -32,6 +32,7 @@ from os.path import join, dirname, exists
 
 import sys
 import time
+import copy
 import codecs
 import atexit
 import threading
@@ -440,6 +441,12 @@ class Kernel(object):
 
             for m, k, v in class_dict_items(model):
                 if isinstance(v, fields.VirtualField):
+                    if m is not model:
+                        # make a copy if the field is inherited, in
+                        # order to avoid side effects like #2592
+                        # settings.SITE.VIRTUAL_FIELDS.pop(v)
+                        v = copy.deepcopy(v)
+                        settings.SITE.register_virtual_field(v)
                     v.attach_to_model(m, k)
                     model._meta.add_field(v, private=True)
                     

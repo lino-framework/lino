@@ -412,13 +412,14 @@ class Model(models.Model):
         except models.FieldDoesNotExist:
             pass
 
+        for vf in cls._meta.private_fields:
+            if vf.name == name:
+                return vf
+            
         v = get_class_attr(cls, name)
         if v is not None:
             return v
 
-        for vf in cls._meta.private_fields:
-            if vf.name == name:
-                return vf
 
     def get_choices_text(self, request, actor, field):
         """

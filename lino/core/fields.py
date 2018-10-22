@@ -400,6 +400,9 @@ class VirtualField(FakeField):
         self.return_type = return_type  # a Django Field instance
         self.get = get
         
+        for k in VFIELD_ATTRIBS:
+            setattr(self, k, getattr(self.return_type, k, None))
+        
         settings.SITE.register_virtual_field(self)
         """
         Normal VirtualFields are read-only and not editable.
@@ -411,6 +414,7 @@ class VirtualField(FakeField):
               return self.total_excl + self.total_vat
         """
         super(VirtualField, self).__init__(**kwargs)
+        
 
     def override_getter(self, get):
         self.get = get
@@ -419,6 +423,10 @@ class VirtualField(FakeField):
         self.model = model
         self.name = name
         self.attname = name
+
+        # if name == "overview":
+        #     print("20181022", self, self.verbose_name)
+        
         #~ self.return_type.name = name
         #~ self.return_type.attname = name
         #~ if issubclass(model,models.Model):
@@ -606,12 +614,12 @@ def displayfield(*args, **kw):
     return virtualfield(DisplayField(*args, **kw))
 
 
-def htmlbox(*args, **kw):
+def htmlbox(*args, **kwargs):
     """
     Decorator shortcut to turn a method into a a :class:`VirtualField`
     of type :class:`HtmlBox`.
     """
-    return virtualfield(HtmlBox(*args, **kw))
+    return virtualfield(HtmlBox(*args, **kwargs))
 
 
 def requestfield(*args, **kw):
