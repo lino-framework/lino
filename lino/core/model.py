@@ -418,6 +418,7 @@ class Model(models.Model):
             
         v = get_class_attr(cls, name)
         if v is not None:
+            assert isinstance(v, fields.DummyField)
             return v
 
 

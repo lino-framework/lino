@@ -337,10 +337,10 @@ def py2rst(self, doctestfmt=False):
 
     if isinstance(self, FieldElement):
         s = "**%s** (%s)" % (str(self.field.verbose_name), self.field.name)
-    elif self.label is None:
+    elif self.get_label() is None:
         s = "(%s)" % self.name
     else:
-        s = "**%s** (%s)" % (str(self.label), self.name)
+        s = "**%s** (%s)" % (str(self.get_label()), self.name)
     if visible_for(self) != visible_for(self.parent):
         s += " [visible for %s]" % visible_for(self)
     if isinstance(self, Container):

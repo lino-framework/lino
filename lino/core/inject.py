@@ -8,21 +8,42 @@ from six import string_types
 logger = logging.getLogger(__name__)
 
 import inspect
+import copy
 
+from django.conf import settings
 from django.db.models.signals import class_prepared
-from django.db.models.fields import FieldDoesNotExist
+# from django.db.models.fields import FieldDoesNotExist
 from django.db import models
 from django.dispatch import receiver
 
 from lino.core import fields
 from lino.core.signals import pre_analyze
-from .utils import resolve_model, models_by_base
+from .utils import resolve_model
+from .utils import class_dict_items
+
 
 from django.apps import apps
 get_models = apps.get_models
 
 PENDING_INJECTS = dict()
 PREPARED_MODELS = dict()
+
+
+def collect_virtual_fields(model):
+    fieldnames = {f.name for f in model._meta.private_fields}
+    for m, k, v in class_dict_items(model):
+        if isinstance(v, fields.VirtualField) and not k in fieldnames:
+            if m is not model:
+                # if k == "overview" and model.__name__ == "DailyPlannerRow":
+                #     print("20181022", m, model)
+                # make a copy if the field is inherited, in
+                # order to avoid side effects like #2592
+                # settings.SITE.VIRTUAL_FIELDS.pop(v)
+                v = copy.deepcopy(v)
+                settings.SITE.register_virtual_field(v)
+            v.attach_to_model(m, k)
+            model._meta.add_field(v, private=True)
+            fieldnames.add(k)
 
 
 def fix_field_cache(model):
@@ -59,17 +80,11 @@ def on_class_prepared(sender, **kw):
       not collect them.)
 
     """
-    #~ if sender.__name__ in ('Company','Partner'):
-    #~ print("20131110 on_class_prepared",sender)
     model = sender
-    #~ if model._meta.abstract :
-        #~ """
-        #~ 20131025 :
-        #~ """
-        #~ return
-    #~ return
-    #~ if model is None:
-        #~ return
+        
+    # collect_virtual_fields() first time because virtual fields might
+    # get updated
+    collect_virtual_fields(model)
     k = model._meta.app_label + '.' + model.__name__
     PREPARED_MODELS[k] = model
     #~ logger.info("20120627 on_class_prepared %r = %r",k,model)
@@ -82,6 +97,10 @@ def on_class_prepared(sender, **kw):
 
     fix_field_cache(model)
 
+    # # collect_virtual_fields() second time because new virtual fields
+    # # might have been injected
+    # collect_virtual_fields(model)
+    
 
 def fmt(func_caller):
     f, caller = func_caller
@@ -119,6 +138,7 @@ def check_pending_injects(sender, models_list=None, **kw):
     for model in models_list:
         model._meta._expire_cache()
         fix_field_cache(model)
+        collect_virtual_fields(model)
 
 
 def do_when_prepared(todo, *model_specs):

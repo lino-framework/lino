@@ -88,18 +88,7 @@ from .utils import djangoname
 
 startup_rlock = threading.RLock()  # Lock() or RLock()?
 
-
-def class_dict_items(cl, exclude=None):
-    if exclude is None:
-        exclude = set()
-    for k, v in cl.__dict__.items():
-        if not k in exclude:
-            yield cl, k, v
-            exclude.add(k)
-    for b in cl.__bases__:
-        for i in class_dict_items(b, exclude):
-            yield i
-
+# from .utils import class_dict_items
 
 def set_default_verbose_name(f):
     """If the verbose_name of a ForeignKey was not set by user code,
@@ -439,16 +428,19 @@ class Kernel(object):
 
             model.on_analyze(site)
 
-            for m, k, v in class_dict_items(model):
-                if isinstance(v, fields.VirtualField):
-                    if m is not model:
-                        # make a copy if the field is inherited, in
-                        # order to avoid side effects like #2592
-                        # settings.SITE.VIRTUAL_FIELDS.pop(v)
-                        v = copy.deepcopy(v)
-                        settings.SITE.register_virtual_field(v)
-                    v.attach_to_model(m, k)
-                    model._meta.add_field(v, private=True)
+            # 20181022 moved to inject.on_class_prepared
+            # for m, k, v in class_dict_items(model):
+            #     if isinstance(v, fields.VirtualField):
+            #         if m is not model:
+            #             # if k == "overview" and model.__name__ == "DailyPlannerRow":
+            #             #     print("20181022", m, model)
+            #             # make a copy if the field is inherited, in
+            #             # order to avoid side effects like #2592
+            #             # settings.SITE.VIRTUAL_FIELDS.pop(v)
+            #             v = copy.deepcopy(v)
+            #             settings.SITE.register_virtual_field(v)
+            #         v.attach_to_model(m, k)
+            #         model._meta.add_field(v, private=True)
                     
         #~ logger.info("20130817 attached model vfs")
 

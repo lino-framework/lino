@@ -803,3 +803,13 @@ def resolve_fields_list(model, k, collection_type=tuple, default=None):
             "of space-separated field names (not {2})".format(
                 model, k, qsf))
             
+def class_dict_items(cl, exclude=None):
+    if exclude is None:
+        exclude = set()
+    for k, v in cl.__dict__.items():
+        if not k in exclude:
+            yield cl, k, v
+            exclude.add(k)
+    for b in cl.__bases__:
+        for i in class_dict_items(b, exclude):
+            yield i
