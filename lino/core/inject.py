@@ -338,43 +338,26 @@ def update_field(model_spec, name, **kw):
 
     """
     def todo(model):
-        if True:  # new implementation since 20170905
-            fld = model.get_data_elem(name)
-            if fld is None:
-                msg = "Cannot update unresolved field %s.%s", model, name
-                raise Exception(msg)
-                logger.warning(msg)
-            elif isinstance(fld, fields.VirtualField):
-                fld = fld.return_type
+        de = model.get_data_elem(name)
+        if de is None:
+            msg = "Cannot update unresolved field %s.%s", model, name
+            raise Exception(msg)
+            logger.warning(msg)
+        # 20181022 because Enrolment.overview
+        elif isinstance(de, fields.VirtualField):
+            fld = de.return_type
         else:
-            try:
-                fld = model._meta.get_field(name)
-                #~ fld = model._meta.get_field_by_name(name)[0]
-            except FieldDoesNotExist:
-                fld = getattr(model, name, None)
-                if fld is None:
-                    msg = "Cannot update unresolved field %s.%s", model, name
-                    raise Exception(msg)
-                    logger.warning(msg)
-                elif isinstance(fld, fields.VirtualField):
-                    fld = fld.return_type
-                else:
-                    msg = "Cannot update field %s.%s", model, name
-                    raise Exception(msg)
-        # if fld.model != model:
-        #     raise Exception('20120715 update_field(%s.%s) : %s' %
-        #                     (model, fld, fld.model))
-        #     logger.warning('update_field(%s.%s) : %s', model, fld, fld.model)
-        for k, v in list(kw.items()):
-            # old = getattr(fld, k, "(undefined)")
-            # if old != v:
-            # if name == 'detail_pointer':
-            #     logger.info(
-            #         u"20170825 updated %s.%s from %s to %s",
-            #         fld, k, old, v)
+            fld = de
+            
+        for k, v in kw.items():
             setattr(fld, k, v)
-        #~ if model.__name__ == "SiteConfig":
-            #~ logger.info("20130228 updated field %s in %s",name,model)
+
+        # if isinstance(de, fields.VirtualField):
+        #     de.lino_resolve_type()
+        # if name == "overview":
+        #     print("20181022", model, de.verbose_name, fld.verbose_name)
+            
+            
     return do_when_prepared(todo, model_spec)
 
 

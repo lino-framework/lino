@@ -183,7 +183,7 @@ class FakeField(object):
     editable = False
     name = None
     serialize = False
-    #~ verbose_name = None
+    verbose_name = None
     help_text = None
     preferred_width = 30
     preferred_height = 3
@@ -452,8 +452,8 @@ class VirtualField(FakeField):
                              self.model.__name__, self.name)
 
     def lino_resolve_type(self):
-        """Called on virtual fields that are defined on an Actor
-
+        """
+        Called on virtual fields that are defined on an Actor
         """
         #~ logger.info("20120903 lino_resolve_type %s.%s", actor_or_model, name)
         #~ if self.name is not None:
