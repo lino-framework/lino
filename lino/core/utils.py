@@ -796,3 +796,4 @@ def class_dict_items(cl, exclude=None):
     for b in cl.__bases__:
         for i in class_dict_items(b, exclude):
             yield i
+

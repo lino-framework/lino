@@ -219,6 +219,8 @@ class Component(Variable):
         return kw
 
     def update(self, **kw):
+        if 'label' in kw:
+            raise Exception("20181023")
         self.value.update(**kw)
 
     def remove(self, *keys):
@@ -306,6 +308,9 @@ class VisibleComponent(Component, Permittable):
     def get_label(self):
         return self._label
     
+    def set_label(self, v):
+        self._label = v
+
     def __str__(self):
         "This shows how elements are specified"
         name = Component.__str__(self)

@@ -21,7 +21,6 @@ from lino.core.signals import pre_analyze
 from .utils import resolve_model
 from .utils import class_dict_items
 
-
 from django.apps import apps
 get_models = apps.get_models
 
@@ -45,11 +44,12 @@ def collect_virtual_fields(model):
             model._meta.add_field(v, private=True)
             fieldnames.add(k)
 
+            
 
 def fix_field_cache(model):
-    """Remove duplicate entries in the field cache of the specified model
+    """
+    Remove duplicate entries in the field cache of the specified model
     in order to fix Django issue #10808
-
     """
     new_cache = []
     used_fields = {}
@@ -302,10 +302,12 @@ def update_field(model_spec, name, **kw):
         for k, v in kw.items():
             setattr(fld, k, v)
 
-        # if isinstance(de, fields.VirtualField):
-        #     de.lino_resolve_type()
-        # if name == "overview":
-        #     print("20181022", model, de.verbose_name, fld.verbose_name)
+        # propagate attribs from delegate to virtualfield
+        if isinstance(de, fields.VirtualField):
+            de.lino_resolve_type()
+            
+        # if name == "overview" and model.__name__ == "Client":
+        #     print("20181023", model, de.verbose_name, fld.verbose_name)
             
             
     return do_when_prepared(todo, model_spec)

@@ -129,7 +129,7 @@ class LayoutHandle(object):
                 raise Exception(
                     "%s has no attribute %r (layout.main is %r)" %
                     (self, k, layout.main))
-            self._names[k].label = v
+            self._names[k].set_label(v)
 
     def desc2elem(self, elemname, desc, **kwargs):
         # logger.debug("desc2elem(panelclass,%r,%r)",elemname,desc)
