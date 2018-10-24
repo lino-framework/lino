@@ -148,6 +148,10 @@ class LayoutHandle(object):
             # if 'label_align' in kwargs:
             #     print("20170921 desc2elem", elemname, desc, kwargs)
 
+        if not isinstance(desc, six.string_types):
+            raise Exception("{} is {} (must be a string)".format(
+                elemname, desc))
+
         # flatten continued lines:
         desc = desc.replace('\\\n', '')
 
