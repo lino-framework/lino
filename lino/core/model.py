@@ -1040,6 +1040,7 @@ class Model(models.Model):
         `label`
         `editable`
         `preferred_height`
+        `hide_sum`
 
 
         """
