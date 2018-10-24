@@ -12,6 +12,7 @@ import copy
 
 from django.conf import settings
 from django.db.models.signals import class_prepared
+from django.core.exceptions import FieldDoesNotExist
 # from django.db.models.fields import FieldDoesNotExist
 from django.db import models
 from django.dispatch import receiver
@@ -30,6 +31,8 @@ PREPARED_MODELS = dict()
 
 def collect_virtual_fields(model):
     fieldnames = {f.name for f in model._meta.private_fields}
+    if model._meta.abstract:  # 20181023
+        return
     for m, k, v in class_dict_items(model):
         if isinstance(v, fields.VirtualField) and not k in fieldnames:
             if m is not model:
@@ -40,7 +43,7 @@ def collect_virtual_fields(model):
                 # settings.SITE.VIRTUAL_FIELDS.pop(v)
                 v = copy.deepcopy(v)
                 settings.SITE.register_virtual_field(v)
-            v.attach_to_model(m, k)
+            v.attach_to_model(model, k)
             model._meta.add_field(v, private=True)
             fieldnames.add(k)
 
@@ -84,7 +87,7 @@ def on_class_prepared(sender, **kw):
         
     # collect_virtual_fields() first time because virtual fields might
     # get updated
-    collect_virtual_fields(model)
+    # collect_virtual_fields(model)
     k = model._meta.app_label + '.' + model.__name__
     PREPARED_MODELS[k] = model
     #~ logger.info("20120627 on_class_prepared %r = %r",k,model)
@@ -138,7 +141,7 @@ def check_pending_injects(sender, models_list=None, **kw):
     for model in models_list:
         model._meta._expire_cache()
         fix_field_cache(model)
-        collect_virtual_fields(model)
+        # collect_virtual_fields(model)
 
 
 def do_when_prepared(todo, *model_specs):
@@ -249,6 +252,13 @@ def inject_field(model_spec, name, field, doc=None, active=False):
 
     def todo(model):
         # logger.info("20150820 gonna inject_field %s %s", model.__name__, name)
+        if True:  # 20181023
+            try:
+                model._meta.get_field(name)
+                raise Exception("Duplicate field {} on {}".format(
+                    name, model))
+            except FieldDoesNotExist:
+                pass
         model.add_to_class(name, field)
         fix_field_cache(model)
         if active:
@@ -273,18 +283,33 @@ def update_field(model_spec, name, **kw):
     
       dd.update_field(Mail, 'user', verbose_name=_("Sender"))
     """
+    from lino.core import actors
     # if name == "overview":
     #     if 'verbose_name' in kw:
     #         if kw['verbose_name'] is None:
     #             raise Exception("20181022")
     def todo(model):
+        if issubclass(model, models.Model):
+            collect_virtual_fields(model)
         de = model.get_data_elem(name)
         if de is None:
             msg = "Cannot update unresolved field %s.%s", model, name
             raise Exception(msg)
             logger.warning(msg)
-        # 20181022 because Enrolment.overview
-        elif isinstance(de, fields.VirtualField):
+            
+            
+        if isinstance(de, fields.VirtualField):
+            if de.model is not model:
+                de = copy.deepcopy(de)
+                settings.SITE.register_virtual_field(de)
+                if issubclass(model, models.Model):
+                    de.attach_to_model(model, name)
+                    model._meta.add_field(de, private=True)
+                elif issubclass(model, actors.Actor):
+                    # similar to Actor.add_virtual_field() but now we
+                    # don't curry the get
+                    model.virtual_fields[name] = de
+                    de.model = model
             fld = de.return_type
         else:
             fld = de

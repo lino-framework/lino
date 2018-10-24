@@ -2521,12 +2521,17 @@ class Site(object):
         return t.strftime(self.time_format_strftime)
 
     def resolve_virtual_fields(self):
+        # print("20181023 resolve_virtual_fields()")
         for vf in self.VIRTUAL_FIELDS:
             vf.lino_resolve_type()
         self.VIRTUAL_FIELDS = set()
 
     def register_virtual_field(self, vf):
-        self.VIRTUAL_FIELDS.add(vf)
+        if self._startup_done:
+            vf.lino_resolve_type()
+        else:
+            # print("20181023 postpone resolve_virtual_fields() for {}".format(vf))
+            self.VIRTUAL_FIELDS.add(vf)
 
     def find_config_file(self, *args, **kwargs):
         return self.confdirs.find_config_file(*args, **kwargs)

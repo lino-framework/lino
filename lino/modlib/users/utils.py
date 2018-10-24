@@ -56,8 +56,8 @@ class UserTypeContext(object):
 
 # set_for_user_profile = set_user_profile
 
-from lino.api import rt
 from lino.utils import camelize
+from lino.api import rt
 
 def create_user(username, user_type=None, **kw):
     first_name = camelize(username.upper())

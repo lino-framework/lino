@@ -430,7 +430,6 @@ class Kernel(object):
 
             model.on_analyze(site)
 
-            collect_virtual_fields(model)
 
             # 20181022 moved to inject.on_class_prepared
             # for m, k, v in class_dict_items(model):
@@ -448,6 +447,9 @@ class Kernel(object):
                     
         #~ logger.info("20130817 attached model vfs")
 
+        for model in models_list:
+            collect_virtual_fields(model)
+            
         # Install help texts to all database fields:
         for model in models_list:
             for f in model._meta.get_fields():

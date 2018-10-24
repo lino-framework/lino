@@ -1326,15 +1326,17 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     @classmethod
     def add_virtual_field(cls, name, vf):
-        # disabled because UsersWithClients defines virtual fields on
-        # connection_created
         if False:
+            # disabled because UsersWithClients defines virtual fields
+            # on connection_created
             if name in cls.virtual_fields:
                 raise Exception("Duplicate add_virtual_field() %s.%s" %
                                 (cls, name))
         cls.virtual_fields[name] = vf
         #~ vf.lino_resolve_type(cls,name)
         vf.name = name
+        # assert vf.model is None
+        vf.model = cls  # 20181023 experimentally
         vf.get = curry(vf.get, cls)
         #~ for k,v in self.virtual_fields.items():
             #~ if isinstance(v,models.ForeignKey):

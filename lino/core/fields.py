@@ -1,11 +1,13 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2017 Luc Saffre
+# Copyright 2008-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
 Defines extended database field classes and utility functions
 related to fields.
 """
+from __future__ import unicode_literals, print_function
+
 from builtins import str
 import six
 from builtins import object
@@ -286,8 +288,6 @@ class RemoteField(FakeField):
             from lino.core import store
             store.get_atomizer(self.remote_field, self, name)
 
-    #~ def lino_resolve_type(self):
-        #~ self._lino_atomizer = self.field._lino_atomizer
     def value_from_object(self, obj, ar=None):
         """
         Return the value of this field in the specified model instance
@@ -397,13 +397,6 @@ class VirtualField(FakeField):
     """
 
     def __init__(self, return_type, get, **kwargs):
-        self.return_type = return_type  # a Django Field instance
-        self.get = get
-        
-        for k in VFIELD_ATTRIBS:
-            setattr(self, k, getattr(self.return_type, k, None))
-        
-        settings.SITE.register_virtual_field(self)
         """
         Normal VirtualFields are read-only and not editable.
         We don't want to require application developers to explicitly
@@ -413,6 +406,15 @@ class VirtualField(FakeField):
           def total(self, ar=None):
               return self.total_excl + self.total_vat
         """
+        self.return_type = return_type  # a Django Field instance
+        self.get = get
+
+        if isinstance(return_type, FakeField):
+            self.sortable_by = return_type.sortable_by
+        for k in VFIELD_ATTRIBS:
+            setattr(self, k, getattr(return_type, k, None))
+        
+        settings.SITE.register_virtual_field(self)
         super(VirtualField, self).__init__(**kwargs)
         
 
@@ -455,13 +457,15 @@ class VirtualField(FakeField):
 
     def __repr__(self):
         if self.model is None:
-            return super(VirtualField, self).__repr__()
+            return "{} {} ({})".format(
+                self.__class__.__name__, self.name, self.verbose_name)
+            # return super(VirtualField, self).__repr__()
         return "%s.%s.%s" % (self.model.__module__,
                              self.model.__name__, self.name)
 
     def lino_resolve_type(self):
         """
-        Called on virtual fields that are defined on an Actor
+        Called on every virtual field when all models are loaded.
         """
         #~ logger.info("20120903 lino_resolve_type %s.%s", actor_or_model, name)
         #~ if self.name is not None:
@@ -473,7 +477,6 @@ class VirtualField(FakeField):
             self.return_type = resolve_field(self.return_type)
 
         f = self.return_type
-        #~ self.return_type.name = self.name
         if isinstance(f, models.ForeignKey):
             f.remote_field.model = resolve_model(f.remote_field.model)
             if f.verbose_name is None:
@@ -484,20 +487,22 @@ class VirtualField(FakeField):
 
         if isinstance(f, FakeField):
             self.sortable_by = f.sortable_by
+        for k in VFIELD_ATTRIBS:
+            setattr(self, k, getattr(f, k, None))
+            
         # if self.name == 'detail_pointer':
         #     logger.info('20170905 resolve_type 1 %s on %s',
         #                 self.name, self.verbose_name)
             
         #~ removed 20120919 self.return_type.editable = self.editable
-        for k in VFIELD_ATTRIBS:
-            setattr(self, k, getattr(self.return_type, k, None))
         # if self.name == 'detail_pointer':
         #     logger.info('20170905 resolve_type done %s %s',
         #                 self.name, self.verbose_name)
 
         from lino.core import store
-        #~ self._lino_atomizer = store.create_field(self,self.name)
         store.get_atomizer(self.model, self, self.name)
+        
+        # print("20181023 Done: lino_resolve_type() for {}".format(self))
 
 
     def get_default(self):

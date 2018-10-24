@@ -1,4 +1,4 @@
-# Copyright 2009-2017 Luc Saffre
+# Copyright 2009-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """Defines the "store" and its "fields" .
 
@@ -113,9 +113,6 @@ class StoreField(object):
         yield self.name
 
     def value_from_object(self, obj, ar=None):
-        """
-        
-        """
         return self.full_value_from_object(obj, ar)
 
     def full_value_from_object(self, obj, ar=None):
@@ -731,7 +728,9 @@ class FileFieldStoreField(StoreField):
 
 class MethodStoreField(StoreField):
 
-    "Deprecated. See `/blog/2012/0327`."
+    """Deprecated. See `/blog/2012/0327`.
+    Still used for display_mode 'html'.
+    """
 
     def full_value_from_object(self, obj, ar=None):
         unbound_meth = self.field._return_type_for_method
@@ -806,6 +805,9 @@ def create_atomizer(holder, fld, name):
     The holder is where the (potential) choices come from. It can be
     a model, an actor or an action.
     """
+    if name is None:
+        return
+        # raise Exception("20181023 create_atomizer() {}".format(fld))
     if isinstance(fld, fields.RemoteField):
         """
         Hack: we create a StoreField based on the remote field,
@@ -1087,10 +1089,17 @@ class Store(BaseStore):
             if not pk_found:
                 self.add_field_for(fields, self.pk)
 
-    def add_field_for(self, fields, df):
+    def add_field_for(self, field_list, df):
         sf = get_atomizer(self.actor, df, df.name)
-        if sf is None:  # dummy fields
+        # if df.name == 'humanlinks_LinksByHuman':
+        #     raise Exception("20181023 {} ({}) {}".format(
+        #         self, df, sf))
+        if sf is None:
+            if isinstance(df, fields.DummyField):
+                return
             return
+            raise Exception("20181023 No atomizer for {} in {}".format(
+                repr(df), self.actor))
         # if not self.rh.actor.editable and isinstance(sf, ForeignKeyStoreField):
         #     sf = StoreField(df, df.name)
         #     raise Exception(20160907)
@@ -1102,7 +1111,7 @@ class Store(BaseStore):
             # sf = self.create_atomizer(df,df.name)
             # self.all_fields.append(sf)
             # self.df2sf[df] = sf
-        fields.append(sf)
+        field_list.append(sf)
 
     def form2obj(self, ar, form_values, instance, is_new):
         """
@@ -1181,6 +1190,9 @@ class Store(BaseStore):
             v = fld.full_value_from_object(row, ar)
             fld.value2dict(ar, v, d, row)
             # logger.info("20140429 Store.row2dict %s -> %s", fld, v)
+        #     if "households_" in fld.name:
+        #         print("20181023 {}".format(fld))
+        # print("20181023 row2dict {}".format(fields))
         return d
 
     # def row2odt(self,request,fields,row,sums):

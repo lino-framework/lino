@@ -416,10 +416,12 @@ class Model(models.Model):
             if vf.name == name:
                 return vf
             
-        v = get_class_attr(cls, name)
-        if v is not None:
-            assert isinstance(v, fields.DummyField)
-            return v
+        return get_class_attr(cls, name)
+        # v = get_class_attr(cls, name)
+        # if v is not None:
+        #     if isinstance(v, fields.DummyField):
+        #         return v
+        #     raise Exception("Oops, {} on {} is {}".format(name, cls, v))
 
     def get_choices_text(self, request, actor, field):
         """

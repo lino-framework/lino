@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2018 Luc Saffre
+# Copyright 2009-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """Defines "layout elements" (widgets).
 
@@ -1623,9 +1623,13 @@ class HtmlBoxElement(DisplayElement):
 
 
 class SlaveSummaryPanel(HtmlBoxElement):
-    """The panel used to display a slave table whose `display_mode`
-is 'summary'.
+    """
+    The panel used to display a slave table whose `display_mode` is
+    'summary'.  
 
+    Note that this creates an automatic VirtualField which is a bit
+    special because it is created during :func:`create_layout_element`
+    after the startup analysis.
     """
 
     oui5_field_template = "openui5/elems/field/SlaveSummaryElement.xml"
@@ -1635,6 +1639,8 @@ is 'summary'.
         fld = fields.VirtualField(box, actor.get_table_summary)
         # fld.name = actor.__module__ + '_' + actor.__name__
         fld.name = actor.actor_id.replace('.', '_')
+        fld.model = lh.layout._datasource  # 20181023 experimental
+        # actor.virtual_fields[fld.name] = fld
         fld.lino_resolve_type()
         super(SlaveSummaryPanel, self).__init__(lh, fld, **kw)
 

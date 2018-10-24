@@ -119,6 +119,7 @@ def register_params(cls):
         for k, v in cls.parameters.items():
             v.set_attributes_from_name(k)
             v.table = cls
+            # v.model = cls  # 20181023 experimentally
 
         if cls.params_layout is None:
             cls.params_layout = cls._layout_class.join_str.join(
