@@ -5,7 +5,7 @@
 
 {% block field_content %}
 
-    <CheckBox text="{{e.label}}"
+    <CheckBox text="{{e.get_label()}}"
               value="{{bind('record>/data/',e.field.name)}}"
               editable="{{str(e.editable).lower()}}"
               selected="{{bind('record>/data/',e.field.name)}}" />

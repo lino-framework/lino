@@ -2,7 +2,7 @@
 <VBox>
 
 {% block field_label %}
-<Label text="{{e.label}}"/>
+<Label text="{{e.get_label()}}"/>
 {% endblock %}
 
 {# <Text text="{{bind('record>/data/',e.field.name)}}" wrapping="true" displayBlock="true"/> #}
