@@ -2054,7 +2054,9 @@ class Site(object):
         collect_settings_subdirs(sfd, 'static')
         self.update_settings(FIXTURE_DIRS=tuple(fixture_dirs))
         self.update_settings(LOCALE_PATHS=tuple(locale_paths))
-        self.update_settings(STATICFILES_DIRS=tuple(sfd))
+        root = self.django_settings['STATIC_ROOT']
+        sfd = tuple([x for x in sfd if x != root])
+        self.update_settings(STATICFILES_DIRS=sfd)
 
         # print(20150331, self.django_settings['FIXTURE_DIRS'])
 
