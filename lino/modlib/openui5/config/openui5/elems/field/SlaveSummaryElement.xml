@@ -1,7 +1,7 @@
 <Panel width="100%" height="97%">
     <VBox width="100%" height="100%">
         <OverflowToolbar>
-            <Label text="{{e.label}}"/>
+            <Label text="{{e.get_label()}}"/>
             <ToolbarSpacer/>
             <Button icon="sap-icon://collapse-group" type="Transparent" press="handleExpandSlave"
                     customData:actor_id="{{e.field.name.replace('_','.')}}"/>

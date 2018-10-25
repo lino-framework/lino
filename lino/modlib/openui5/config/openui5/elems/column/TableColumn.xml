@@ -7,7 +7,7 @@
         visible="{{bool2js(not c.hidden)}}"
         >
     {# The FieldElemnt for columns is var "c" #}
-    <Label text="{{c.label}}"/>
+    <Label text="{{c.get_label()}}"/>
     <table:template>
         {% include c.oui5_column_template %}
     </table:template>
