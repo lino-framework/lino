@@ -179,7 +179,8 @@ sap.ui.define([
             });
 
             let url = '/api/' + actor_id.replace(".", "/");
-            if (!sr) {
+            if (sr) { // required to have the first sr be in the url for most actions. If not included will run action
+                      // on table rather than on the instance
                 url += "/" + sr[0]
             }
 
