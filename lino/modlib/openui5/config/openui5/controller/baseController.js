@@ -153,268 +153,282 @@ sap.ui.define([
                                        rp = this.getView().getId(), /*keyword args*/
                                        http_method = "GET",
                                        sr_needed = true,
-                                       params = {}
-                                   }) {
-            if (typeof(sr) === "string" || typeof(sr) === "number") {
-                sr = [sr]
+                                       params = {},
+                                       success_callback = function(){},
+})
+    {
+        if (typeof(sr) === "string" || typeof(sr) === "number") {
+            sr = [sr]
+        }
+        else if (sr.length === 0) {
+            // Cancel action press, nothing selected
+            // Note: This might be wrong, some actions such as "Mark all as seen" might not need a SR.
+            if (sr_needed) {
+                MessageToast.show("Please select a row");
+                return;
             }
-            else if (sr.length === 0) {
-                // Cancel action press, nothing selected
-                // Note: This might be wrong, some actions such as "Mark all as seen" might not need a SR.
-                if (sr_needed) {
-                    MessageToast.show("Please select a row");
-                    return;
-                }
-            }
+        }
 
-            if (submit_form_data) {
-                jQuery.extend(true, params, this.getRecordData())
-            }
+        if (submit_form_data) {
+            jQuery.extend(true, params, this.getRecordData())
+        }
 
-            jQuery.extend(params, { //same as dict.update in python, optional  first arg for "deep update"
-                "an": action_name,
-                "sr": sr,
-                // "mt": this._content_type, /*Not sure if needed for simple, actions*/
-                // "mk": this._PK            /*Not sure if same as PK in all cases, requires talk with luc*/
-            });
+        jQuery.extend(params, { //same as dict.update in python, optional  first arg for "deep update"
+            "an": action_name,
+            "sr": sr,
+            // "mt": this._content_type, /*Not sure if needed for simple, actions*/
+            // "mk": this._PK            /*Not sure if same as PK in all cases, requires talk with luc*/
+        });
 
-            let url = '/api/' + actor_id.replace(".", "/");
-            if (sr) { // required to have the first sr be in the url for most actions. If not included will run action
-                      // on table rather than on the instance
-                url += "/" + sr[0]
-            }
+        let url = '/api/' + actor_id.replace(".", "/");
+        if (sr) { // required to have the first sr be in the url for most actions. If not included will run action
+            // on table rather than on the instance
+            url += "/" + sr[0]
+        }
 
-            jQuery.ajax({
-                context: this,
-                url: url,
-                type: http_method,
-                data: jQuery.param(params),
-                success: this.handleActionSuccess,
-                error: function (e) {
-                    MessageToast.show("error: " + e.responseText);
-                }
-            });
-        },
+        jQuery.ajax({
+            context: this,
+            url: url,
+            type: http_method,
+            data: jQuery.param(params),
+            success: function (data) {
+                success_callback(data);
+                this.handleActionSuccess(data);
+            },
+            error: function (e) {
+                MessageToast.show("error: " + e.responseText);
+            }
+        });
+    }
+,
 
-        /**
-         *  Used to open a window action's window.
-         *  Requests from the server the dialog-fragment containing the layout info and shows it.
-         *
-         *
-         */
-        open_window_action: function ({
-                                          actor_id, action_name, sr, is_on_main_actor,
-                                          rp = this.getView().getId(), /*keyword args*/
-                                          params = {}
-                                      }) {
-            console.log(arguments);
-            let name = actor_id + "." + action_name;
-            if (!this._actions) {
-                this._actions = {}
-            }
-            if (!this._actions[name]) {
-                this._actions[name] = sap.ui.xmlfragment("lino.action." + name, sap.ui.controller("lino.controller.fragment"));
-                this._actions[name]._linodata = {
-                    // an: action_name,
-                    actor_id: actor_id,
-                    callback_controller: this,
-                    sr: this.getSelectedRows(),
-                };
-            }
-            // oView.addDependent(this._actions[nam]) // Todo attach to live cycle only?
-            if (!params.data_record && action_name === "insert") {
-                let action = this._actions[name];
-                let ajax_params = {
-                    fmt: 'json',
-                    an: action_name,
-                };
-                this.add_param_values(ajax_params);
-                jQuery.ajax({
-                    context: this,
-                    url: '/api/' + actor_id.replace(".", "/") + "/" + -99999,
-                    type: "GET",
-                    data: jQuery.param(ajax_params),
-                    success: function (data) {
-                        let oInputModel = new JSONModel(data);
-                        action.setModel(oInputModel, "record");
-                        action.open();
-
-                    },
-                    error: function (e) {
-                        MessageToast.show("error: " + e.responseText);
-                    }
-                });
-
-            }
-            else {
-                this._actions[name].setModel(new JSONModel(params.data_record), "record")
-                this._actions[name].open();
-            }
-        },
-        handleActionSuccess: function (data) {
-            let oView = this.getView();
-            if (data && data['success'] && data['xcallback']) {
-                if (!this._yesNoDialog /*|| this._yesNoDialog.bIsDestroyed === true*/) {
-                    this._yesNoDialog = sap.ui.jsfragment("lino.fragment.YesNoDialog", this);
-                    oView.addDependent(this._yesNoDialog)
-                }
-                oView.setModel(new JSONModel(data), "yesno");
-                this._yesNoDialog.open();
-            }
-            else if (data && data['eval_js']) {
-                eval(data['eval_js']);
-            }
-            // sap.m.MessageToast.show(data['message']);
-            else if (data['detail_handler_name'] !== undefined && data['record_deleted'] === true) {
-                this.afterRecordDelete(data)
-            }
-
-            else if (data['refresh'] || data["refresh_all"]) {
-                this.refresh();
-            }
-
-            else if (data['data_record']) {
-                let oModel = new JSONModel();
-                oModel.setData(data['data_record']);
-                oView.setModel(oModel,'record');
-            }
-
-            else {
-                MessageToast.show(data['message']);
-            }
-            console.log(data['message']);
-
-        },
-
-        /**
-         * Generic function to handle button actions.
-         */
-        onPressAction: function (oEvent) {
-            const button = oEvent.getSource();
-            let args = {
-                actor_id: button.data('actor_id'),
-                action_name: button.data('action_name'),
-                sr: this.getSelectedRows(oEvent),
-                http_method: button.data('http_method'),
-                submit_form_data: button.data('submit_form_data')
+    /**
+     *  Used to open a window action's window.
+     *  Requests from the server the dialog-fragment containing the layout info and shows it.
+     *
+     *
+     */
+    open_window_action: function ({
+                                      actor_id, action_name, sr, is_on_main_actor,
+                                      rp = this.getView().getId(), /*keyword args*/
+                                      params = {}
+                                  }) {
+        console.log(arguments);
+        let name = actor_id + "." + action_name;
+        if (!this._actions) {
+            this._actions = {}
+        }
+        if (!this._actions[name]) {
+            this._actions[name] = sap.ui.xmlfragment("lino.action." + name, sap.ui.controller("lino.controller.fragment"));
+            this._actions[name]._linodata = {
+                // an: action_name,
+                actor_id: actor_id,
+                callback_controller: this,
+                sr: this.getSelectedRows(),
+                action_name: name
             };
-            MessageToast.show(button.data('action_name') + "' pressed");
-            if (button.data("window_action")) {
-                this.open_window_action(args);
-            }
-            else {
-                this.runSimpleAction(args);
-            }
-        },
-
-        /**
-         * Serverside quick-search filtering for foreign key fields
-         * @param oEvent
-         */
-        handleSuggest: function (oEvent) {
-            let oInput = oEvent.getSource();
-            let url = oInput.data('input_url');
-            let query = oEvent.getParameter("suggestValue");
-            // console.log("hs");
-            if (Lino.flags['suggest']) {
-                return
-            }
-            oInput.setFilterSuggests(true);
-            this._handleSuggest({
-                oEvent,
-                url,
-                query
-            });
-
-        },
-
-
-        /**
-         * Help button press on FK fields,
-         *
-         * BUG: In chrome selection doesn't work. We should change this to the normal pop-up search dialog window
-         *      that is used in the input samples.
-         * @param oEvent
-         */
-        handleValueHelp: function (oEvent) {
-            let oInput = oEvent.getSource();
-            oInput.setFilterSuggests(false);
-            // console.log("hvh");
-            Lino.wave_flag("suggest", 200);
-            let url = oInput.data('input_url');
-            this._handleSuggest({
-                oEvent,
-                url,
-            });
-        },
-
-        _handleSuggest: function ({oEvent, url, query = "", oInput = oEvent.getSource()}) {
-            let oView = this.getParentViewOrDialogFragment(oInput);
-            // if (oInput.getValue() === ""){
-            //     oInput.getValue(" ");
-            // }
-
+        }
+        // oView.addDependent(this._actions[nam]) // Todo attach to live cycle only?
+        if (!params.data_record && action_name === "insert") {
+            let action = this._actions[name];
+            let ajax_params = {
+                fmt: 'json',
+                an: action_name,
+            };
+            this.add_param_values(ajax_params);
             jQuery.ajax({
                 context: this,
-                url: url,
+                url: '/api/' + actor_id.replace(".", "/") + "/" + -99999,
                 type: "GET",
-                data: jQuery.param({
-                    start: 0,
-                    limit: 9999,
-                    query: query
-                }),
+                data: jQuery.param(ajax_params),
                 success: function (data) {
                     let oInputModel = new JSONModel(data);
-                    oView.setModel(oInputModel, oInput.data('ext_name'));
+                    action.setModel(oInputModel, "record");
+                    action.open();
+
                 },
                 error: function (e) {
                     MessageToast.show("error: " + e.responseText);
                 }
             });
 
-            // if (query) {
-            //     aFilters.push(new Filter("text", sap.ui.model.FilterOperator.StartsWith, query));
-            // }
-            // else {
-            //     aFilters.push(new Filter("text", sap.ui.model.FilterOperator.All, ""));
-            // }
-            // oEvent.getSource().getBinding("suggestionItems").filter(aFilters);
-            // var aFilters = [];
-        },
-
-        /**
-         * Used in input fields (ComboElement  + ForeignKeyElement) to set the hidden value when selecting choice
-         */
-        suggestionItemSelected: function (evt) {
-
-            let oItem = evt.getParameter('selectedItem'),
-                sKey = oItem ? oItem.getKey() : '';
-
-            evt.getSource().setSelectedKey(sKey);
-            // console.log(evt);
         }
-        ,
-
-        /**
-         * Event handler when a expand slave-table/summary button gets pressed
-         * @param {sap.ui.base.Event} oEvent the table selectionChange event
-         * @public
-         *
-         * Used in both detail controller and table controller
-         */
-        handleExpandSlave: function (oEvent) {
-            var view = this.getView();
-            var mk = this._PK; // wrong for grid, should be get SR,
-            var mt = this._content_type;
-            this.routeToAction("grid." + oEvent.getSource().data("actor_id"),
-                {
-                    "query": {
-                        mk: mk,
-                        mt: mt
-                    }
-                }, view.getId());
+        else {
+            this._actions[name].setModel(new JSONModel(params.data_record), "record")
+            this._actions[name].open();
         }
-        ,
+    }
+,
+    handleActionSuccess: function (data) {
+        let oView = this.getView();
+        if (data && data['success'] && data['xcallback']) {
+            if (!this._yesNoDialog /*|| this._yesNoDialog.bIsDestroyed === true*/) {
+                this._yesNoDialog = sap.ui.jsfragment("lino.fragment.YesNoDialog", this);
+                oView.addDependent(this._yesNoDialog)
+            }
+            oView.setModel(new JSONModel(data), "yesno");
+            this._yesNoDialog.open();
+        }
+        else if (data && data['eval_js']) {
+            eval(data['eval_js']);
+        }
+        // sap.m.MessageToast.show(data['message']);
+        else if (data['detail_handler_name'] !== undefined && data['record_deleted'] === true) {
+            this.afterRecordDelete(data)
+        }
 
-    })
-});
+        else if (data['refresh'] || data["refresh_all"]) {
+            this.refresh();
+        }
+
+        else if (data['data_record']) {
+            let oModel = new JSONModel();
+            oModel.setData(data['data_record']);
+            oView.setModel(oModel, 'record');
+        }
+
+        else {
+            MessageToast.show(data['message']);
+        }
+        console.log(data['message']);
+
+    }
+,
+
+    /**
+     * Generic function to handle button actions.
+     */
+    onPressAction: function (oEvent) {
+        const button = oEvent.getSource();
+        let args = {
+            actor_id: button.data('actor_id'),
+            action_name: button.data('action_name'),
+            sr: this.getSelectedRows(oEvent),
+            http_method: button.data('http_method'),
+            submit_form_data: button.data('submit_form_data')
+        };
+        MessageToast.show(button.data('action_name') + "' pressed");
+        if (button.data("window_action")) {
+            this.open_window_action(args);
+        }
+        else {
+            this.runSimpleAction(args);
+        }
+    }
+,
+
+    /**
+     * Serverside quick-search filtering for foreign key fields
+     * @param oEvent
+     */
+    handleSuggest: function (oEvent) {
+        let oInput = oEvent.getSource();
+        let url = oInput.data('input_url');
+        let query = oEvent.getParameter("suggestValue");
+        // console.log("hs");
+        if (Lino.flags['suggest']) {
+            return
+        }
+        oInput.setFilterSuggests(true);
+        this._handleSuggest({
+            oEvent,
+            url,
+            query
+        });
+
+    }
+,
+
+
+    /**
+     * Help button press on FK fields,
+     *
+     * BUG: In chrome selection doesn't work. We should change this to the normal pop-up search dialog window
+     *      that is used in the input samples.
+     * @param oEvent
+     */
+    handleValueHelp: function (oEvent) {
+        let oInput = oEvent.getSource();
+        oInput.setFilterSuggests(false);
+        // console.log("hvh");
+        Lino.wave_flag("suggest", 200);
+        let url = oInput.data('input_url');
+        this._handleSuggest({
+            oEvent,
+            url,
+        });
+    }
+,
+
+    _handleSuggest: function ({oEvent, url, query = "", oInput = oEvent.getSource()}) {
+        let oView = this.getParentViewOrDialogFragment(oInput);
+        // if (oInput.getValue() === ""){
+        //     oInput.getValue(" ");
+        // }
+
+        jQuery.ajax({
+            context: this,
+            url: url,
+            type: "GET",
+            data: jQuery.param({
+                start: 0,
+                limit: 9999,
+                query: query
+            }),
+            success: function (data) {
+                let oInputModel = new JSONModel(data);
+                oView.setModel(oInputModel, oInput.data('ext_name'));
+            },
+            error: function (e) {
+                MessageToast.show("error: " + e.responseText);
+            }
+        });
+
+        // if (query) {
+        //     aFilters.push(new Filter("text", sap.ui.model.FilterOperator.StartsWith, query));
+        // }
+        // else {
+        //     aFilters.push(new Filter("text", sap.ui.model.FilterOperator.All, ""));
+        // }
+        // oEvent.getSource().getBinding("suggestionItems").filter(aFilters);
+        // var aFilters = [];
+    }
+,
+
+    /**
+     * Used in input fields (ComboElement  + ForeignKeyElement) to set the hidden value when selecting choice
+     */
+    suggestionItemSelected: function (evt) {
+
+        let oItem = evt.getParameter('selectedItem'),
+            sKey = oItem ? oItem.getKey() : '';
+
+        evt.getSource().setSelectedKey(sKey);
+        // console.log(evt);
+    }
+,
+
+    /**
+     * Event handler when a expand slave-table/summary button gets pressed
+     * @param {sap.ui.base.Event} oEvent the table selectionChange event
+     * @public
+     *
+     * Used in both detail controller and table controller
+     */
+    handleExpandSlave: function (oEvent) {
+        var view = this.getView();
+        var mk = this._PK; // wrong for grid, should be get SR,
+        var mt = this._content_type;
+        this.routeToAction("grid." + oEvent.getSource().data("actor_id"),
+            {
+                "query": {
+                    mk: mk,
+                    mt: mt
+                }
+            }, view.getId());
+    }
+,
+
+})
+})
+;

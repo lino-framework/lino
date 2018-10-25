@@ -16,6 +16,7 @@
             showHeader="false"
             title="{record>/data/title}"
             class="sapUiResponsiveContentPadding sapUiSizeCompact"
+            afterClose="afterClose"
     >
         <content>
             {% include main.oui5_field_template %}
@@ -32,11 +33,14 @@
         </endButton>
         <customData>
             <core:CustomData
-                    key="param_fields_to_submit"
-                    value="{{param_fields_to_submit}}"/>
+                    key="save_fields"
+                    value="{{save_fields}}"/>
             <core:CustomData
                     key="action_name"
                     value="{{action.action.save_action_name or action.action.name}}"/>
+            <core:CustomData
+                    key="is_insert_action"
+                    value="{{is_insert_action}}"/>
 
         </customData>
     </Dialog>

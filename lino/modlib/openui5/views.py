@@ -866,16 +866,10 @@ class Connector(View):
                 "title": actor.label,
                 "main": layout_handle.main,
                 "layout_handle": layout_handle,
-                "save_fields": ' '.join([f.name for f in actor.model._meta.fields if f.editable]),
+                "save_fields": " ".join([f.name for f in layout_handle._store_fields]),
                 "e": layout_handle.main,  # set e for the initial main element
+                "is_insert_action": True if action.action.params_layout is None else False
             })
-            if action.action.params_layout is not None:
-                context.update(
-                    {"param_fields_to_submit": " ".join(
-                        [f.name for f in action.action.params_layout.params_store.param_fields])
-                    })
-            else:
-                context.update({"param_fields_to_submit": ""})
             tplname = "openui5/fragment/ActionFormPanel.fragment.xml"
 
 
