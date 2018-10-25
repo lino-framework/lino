@@ -252,8 +252,8 @@ sap.ui.define([
             }
         },
         handleActionSuccess: function (data) {
+            let oView = this.getView();
             if (data && data['success'] && data['xcallback']) {
-                let oView = this.getView();
                 if (!this._yesNoDialog /*|| this._yesNoDialog.bIsDestroyed === true*/) {
                     this._yesNoDialog = sap.ui.jsfragment("lino.fragment.YesNoDialog", this);
                     oView.addDependent(this._yesNoDialog)
@@ -265,19 +265,24 @@ sap.ui.define([
                 eval(data['eval_js']);
             }
             // sap.m.MessageToast.show(data['message']);
-            else if (data['detail_handler_name'] !== undefined) {
-                if (data['record_deleted'] === true) {
-                    this.afterRecordDelete(data)
-                }
+            else if (data['detail_handler_name'] !== undefined && data['record_deleted'] === true) {
+                this.afterRecordDelete(data)
             }
 
             else if (data['refresh'] || data["refresh_all"]) {
                 this.refresh();
             }
 
+            else if (data['data_record']) {
+                let oModel = new JSONModel();
+                oModel.setData(data['data_record']);
+                oView.setModel(oModel,'record');
+            }
+
             else {
                 MessageToast.show(data['message']);
             }
+            console.log(data['message']);
 
         },
 
