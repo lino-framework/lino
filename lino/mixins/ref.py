@@ -1,21 +1,9 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2010-2018 Luc Saffre
+# Copyright 2010-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
-This package contains model mixins, some of which are heavily used
-by applications and the :ref:`xl`. But none of them is mandatory.
-
-.. autosummary::
-   :toctree:
-
-    duplicable
-    dupable
-    sequenced
-    human
-    periods
-    polymorphic
-    uploadable
+Defines the :class:`Referrable` model mixin.
 """
 
 from __future__ import unicode_literals
