@@ -24,19 +24,6 @@ email."""),
     'lino.Contactable.get_as_user' : _("""Return the user object representing this contactable."""),
     'lino.Phonable' : _("""Mixin for models that represent somebody who can be contacted by
 phone."""),
-    'lino.Registrable' : _("""Base class to anything that may be "registered" and "deregistered"
-(e.g. Invoices, Vouchers, Declarations, Reservations,...).
-"Registered" in general means "this object has been taken account of".
-Registered objects are not editable."""),
-    'lino.Registrable.state' : _("""The ChoiceList of the state field must have at least two items
-named "draft" and "registered".
-There may be additional states.
-Every state must have an extra attribute "editable"."""),
-    'lino.Registrable.get_row_permission' : _("""Only rows in an editable state may be edited."""),
-    'lino.Registrable.register' : _("""Register this object.  The base implementation just sets the state
-to "registered"."""),
-    'lino.Registrable.deregister' : _("""Deregister this object.  The base implementation just sets the
-state to "draft"."""),
     'lino.Modified' : _("""Adds a a timestamp field which holds the last modification time of
 every individual database object."""),
     'lino.Modified.modified' : _("""The time when this database object was last modified."""),
@@ -139,6 +126,28 @@ polymorphism."""),
 different views."""),
     'lino.polymorphic.Polymorphic.get_mti_child' : _("""Return the specified specialization or None."""),
     'lino.polymorphic.Polymorphic.disable_delete' : _("""Overrides lino.core.model.Model.disable_delete()."""),
+    'lino.ref.Referrable' : _("""Mixin for things that have a unique reference, i.e. an identifying
+name used by humans to refer to an individual object."""),
+    'lino.ref.Referrable.ref' : _("""The reference. This must be either empty or unique."""),
+    'lino.ref.Referrable.ref_max_length' : _("""The preferred width of the ref field."""),
+    'lino.ref.Referrable.on_duplicate' : _("""Before saving a duplicated object for the first time, we must
+change the ref in order to avoid an IntegrityError."""),
+    'lino.ref.StructuredReferrable' : _("""A referrable whose ref field is used to define a hierarchical
+structure and is displayed together with the designation."""),
+    'lino.ref.StructuredReferrable.get_designation' : _("""Return the "designation" part (without the reference)."""),
+    'lino.registrable.Registrable' : _("""Base class to anything that may be "registered" and "deregistered"
+(e.g. Invoices, Vouchers, Declarations, Reservations,...).
+"Registered" means "this object has been taken account of".
+Registered objects are not editable."""),
+    'lino.registrable.Registrable.state' : _("""The ChoiceList of the state field must have at least two items
+named "draft" and "registered".
+There may be additional states.
+Every state must have an extra attribute "is_editable"."""),
+    'lino.registrable.Registrable.get_row_permission' : _("""Only rows in an editable state may be edited."""),
+    'lino.registrable.Registrable.register' : _("""Register this object.  The base implementation just sets the state
+to "registered"."""),
+    'lino.registrable.Registrable.deregister' : _("""Deregister this object.  The base implementation just sets the
+state to "draft"."""),
     'lino.sequenced.MoveUp' : _("""Move this row one row upwards."""),
     'lino.sequenced.MoveDown' : _("""Move this row one row downwards."""),
     'lino.sequenced.DuplicateSequenced' : _("""Duplicate this row."""),
