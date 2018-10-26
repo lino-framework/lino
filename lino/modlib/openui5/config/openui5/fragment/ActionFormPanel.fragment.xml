@@ -37,10 +37,13 @@
                     value="{{save_fields}}"/>
             <core:CustomData
                     key="action_name"
-                    value="{{action.action.save_action_name or action.action.name}}"/>
+                    value="{{action.action.save_action_name or action.action.action_name}}"/>
             <core:CustomData
                     key="is_insert_action"
                     value="{{is_insert_action}}"/>
+            <core:CustomData
+                    key="select_rows"
+                    value="{{action.action.select_rows}}"/>
 
         </customData>
     </Dialog>

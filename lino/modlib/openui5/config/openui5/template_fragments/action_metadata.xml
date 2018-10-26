@@ -18,5 +18,8 @@
             key="submit_form_data"
             value="true"/>
     {%- endif %}
+    <core:CustomData
+            key="select_rows"
+            value="{{ba.action.select_rows}}"/>
 
 </customData>

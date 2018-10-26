@@ -152,7 +152,7 @@ sap.ui.define([
                                        actor_id, action_name, sr, is_on_main_actor, submit_form_data,
                                        rp = this.getView().getId(), /*keyword args*/
                                        http_method = "GET",
-                                       sr_needed = true,
+                                       select_rows = true,
                                        params = {},
                                        success_callback = function(){},
 })
@@ -163,8 +163,8 @@ sap.ui.define([
         else if (sr.length === 0) {
             // Cancel action press, nothing selected
             // Note: This might be wrong, some actions such as "Mark all as seen" might not need a SR.
-            if (sr_needed) {
-                MessageToast.show("Please select a row");
+            if (select_rows) {
+                MessageToast.show("No row selected");
                 return;
             }
         }
@@ -176,12 +176,12 @@ sap.ui.define([
         jQuery.extend(params, { //same as dict.update in python, optional  first arg for "deep update"
             "an": action_name,
             "sr": sr,
-            // "mt": this._content_type, /*Not sure if needed for simple, actions*/
-            // "mk": this._PK            /*Not sure if same as PK in all cases, requires talk with luc*/
+            "mt": params.mt || this._content_type,
+            "mk": params.mk || this._PK            /*mk + mt are needed for inserting actions*/
         });
 
         let url = '/api/' + actor_id.replace(".", "/");
-        if (sr) { // required to have the first sr be in the url for most actions. If not included will run action
+        if (sr.length >0) { // required to have the first sr be in the url for most actions. If not included will run action
             // on table rather than on the instance
             url += "/" + sr[0]
         }
@@ -209,7 +209,7 @@ sap.ui.define([
      *
      */
     open_window_action: function ({
-                                      actor_id, action_name, sr, is_on_main_actor,
+                                      actor_id, action_name, sr, is_on_main_actor, select_rows,
                                       rp = this.getView().getId(), /*keyword args*/
                                       params = {}
                                   }) {
@@ -219,13 +219,16 @@ sap.ui.define([
             this._actions = {}
         }
         if (!this._actions[name]) {
-            this._actions[name] = sap.ui.xmlfragment("lino.action." + name, sap.ui.controller("lino.controller.fragment"));
+            let control = sap.ui.controller("lino.controller.fragment");
+            this._actions[name] = sap.ui.xmlfragment("lino.action." + name, control);
             this._actions[name]._linodata = {
                 // an: action_name,
                 actor_id: actor_id,
                 callback_controller: this,
                 sr: this.getSelectedRows(),
-                action_name: name
+                action_name: name,
+                select_rows: select_rows,
+                control: control,
             };
         }
         // oView.addDependent(this._actions[nam]) // Todo attach to live cycle only?
@@ -236,6 +239,7 @@ sap.ui.define([
                 an: action_name,
             };
             this.add_param_values(ajax_params);
+            // Get init data for insert
             jQuery.ajax({
                 context: this,
                 url: '/api/' + actor_id.replace(".", "/") + "/" + -99999,
@@ -254,7 +258,8 @@ sap.ui.define([
 
         }
         else {
-            this._actions[name].setModel(new JSONModel(params.data_record), "record")
+            let record = params.data_record || params.field_values || {};
+            this._actions[name].setModel(new JSONModel({data:record}), "record")
             this._actions[name].open();
         }
     }
@@ -290,6 +295,13 @@ sap.ui.define([
         else {
             MessageToast.show(data['message']);
         }
+
+        if (data["goto_url"]){
+            document.location = data["goto_url"];
+        }
+        else if (data["open_url"]) {
+            window.open(data.open_url, 'foo', "");
+        }
         console.log(data['message']);
 
     }
@@ -305,7 +317,8 @@ sap.ui.define([
             action_name: button.data('action_name'),
             sr: this.getSelectedRows(oEvent),
             http_method: button.data('http_method'),
-            submit_form_data: button.data('submit_form_data')
+            submit_form_data: button.data('submit_form_data'),
+            select_rows: button.data("select_rows") === "True",
         };
         MessageToast.show(button.data('action_name') + "' pressed");
         if (button.data("window_action")) {

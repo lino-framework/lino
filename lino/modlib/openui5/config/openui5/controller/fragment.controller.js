@@ -31,16 +31,15 @@ sap.ui.define([
 
             this.oDialog = oDialog; // Save for later when there's no events
             console.log("OK", this._linodata, this.test);
-            var linodata = this.getLinoData(oEvent);
-
+            let linodata = this.getLinoData(oDialog);
+            let is_insert_action = linodata.is_insert_action !== "False";
             let call_params = {
-                // Are mt + mk needed, if so how to get MK?
-                // mt:
-                // mk:
+                // mk + mt added later
                 actor_id: linodata['actor_id'],
                 action_name: linodata['an'],
                 rp: linodata.callback_controller.getView().getId(),
                 sr: linodata.sr,
+                select_rows: linodata.select_rows,
                 is_on_main_actor: false, //Not sure if right...
                 // params: params
             };
@@ -48,25 +47,47 @@ sap.ui.define([
             // Extract out only needed field names from record data
             let record_data = oDialog.getModel("record").getProperty("/data");
             call_params.params = {};
-            linodata.save_fields.split(" ").forEach(function (field) {
-                if (field in record_data) {
-                    call_params.params[field] = record_data[field]
-                }
-                if (field + "Hidden" in record_data) {
-                    call_params.params[field + "Hidden"] = record_data[field + "Hidden"]
-                }
-            });
 
-            if (linodata.is_insert_action !== "") {
+            if (is_insert_action) {
                 // Inserting window.
+
+                // collect values
+                linodata.save_fields.split(" ").forEach(function (field) {
+                    if (field in record_data) {
+                        call_params.params[field] = record_data[field]
+                    }
+                    if (field + "Hidden" in record_data) {
+                        call_params.params[field + "Hidden"] = record_data[field + "Hidden"]
+                    }
+                });
+
+
                 call_params.http_method = "POST";
-                call_params.sr_needed = false;
-                linodata.callback_controller.add_param_values();
+                linodata.callback_controller.add_param_values(call_params.params); // Only add mk + mt if a running from slave table
 
 
             } else {
                 // This is a param action window,
+
+                // collect values
+                call_params.params.fv = [];
+                linodata.save_fields.split(" ").forEach(function (field) {
+                    if (field + "Hidden" in record_data) {
+                        call_params.params.fv.push(record_data[field + "Hidden"])
+                    }
+                    else if (field in record_data) {
+                        call_params.params.fv.push(record_data[field])
+                    }
+                    else {
+                        call_params.params.fv.push(undefined)
+                    }
+                });
+                if (!linodata.select_rows && linodata.sr.length === 0){
+                    call_params.sr = [-99998]
+                }
                 call_params.http_method = "GET";
+                linodata.callback_controller.add_param_values(call_params.params); // Only add mk + mt if a running from slave table
+
 
             }
 
@@ -84,11 +105,14 @@ sap.ui.define([
          * Convenince function for getting the attached linodata object which has needed data for submitting the action.
          * @param oEvent
          */
-        getLinoData: function (oEvent) {
-            let oDialog = this.getParentViewOrDialogFragment(oEvent.getSource());
+        getLinoData: function (oDialog) {
+            if (!oDialog) {
+                let oDialog = this.oDialog;
+            }
             oDialog._linodata['an'] = oDialog.data("action_name");
             oDialog._linodata['save_fields'] = oDialog.data("save_fields");
             oDialog._linodata['is_insert_action'] = oDialog.data("is_insert_action");
+            oDialog._linodata['select_rows'] = oDialog.data("select_rows") === "True";
 
             return oDialog._linodata;
         },
@@ -102,7 +126,7 @@ sap.ui.define([
          * Be sure to bind to correct context when running runSimpleAction
          * @param oData AJAX return data
          */
-        success: function(oData){
+        success: function (oData) {
             this.oDialog.close();
             // this.routeToAction()
         },
