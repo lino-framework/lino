@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2017 Luc Saffre
+# Copyright 2017-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """The models module for this plugin.
@@ -68,7 +68,7 @@ class Plugin(ad.Plugin):
             ip = x_forwarded_for.split(',')[0]
         else:
             ip = request.META.get('REMOTE_ADDR')
-        return ip
+        return ip or "(unknown)"  # see ticket #2605
 
 
     def setup_site_menu(config, site, user_type, m):

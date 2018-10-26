@@ -18,7 +18,14 @@ from lino.core.exceptions import ChangedAPI
 from lino.core.workflows import State
 
 class RegistrableState(State):
+    """
+    Base class 
+    """
     is_editable = True
+    """
+    Whether the registrable object having this state should be
+    editable or not.
+    """
 
 
 
@@ -32,7 +39,7 @@ class Registrable(model.Model):
 
     .. attribute:: state
 
-        The ChoiceList of the `state` field must have at least two items
+        The ChoiceList of this  field must have at least two items
         named "draft" and "registered".
         There may be additional states.
         Every state must have an extra attribute "is_editable".
