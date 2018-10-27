@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2006-2018 Luc Saffre
+# Copyright 2006-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 r""" A simple markup parser that expands "commands" found in an input
@@ -189,15 +189,15 @@ class Parser(object):
 
     def register_django_model(
             self, name, model, cmd=None, rnd=None, title=str):
-        """Register the given `name` as command for referring to database
-        rows. `model` is a Django database model. 
+        """
+        Register the given string `name` as command for referring to
+        database rows of the given Django database model `model`.
 
         Optional keyword arguments are 
 
         - `cmd` the command handler used by :meth:`parse`
         - `rnd` the renderer function for :meth:`obj2memo`
         - `title` a function which returns a string to be used as title
-
         """
         # print("20170210 register_django_model {} {}".format(name, model))
         if rnd is None:
@@ -208,11 +208,8 @@ class Parser(object):
                 """
 Insert a reference to the specified database object.
 
-The first argument is mandatory and specifies the
-primary key.
-
-If there is more than one argument, all remaining text
-is used as the text of the link.
+The first argument is mandatory and specifies the primary key.
+All remaining arguments are used as the text of the link.
 
                 """
                 args = s.split(None, 1)
@@ -285,6 +282,10 @@ is used as the text of the link.
         return msg
 
     def parse(self, s, **context):
+        """
+        Parse the given string `s`, replacing memo commands by their
+        result.
+        """
         #~ self.context = context
         self.context.update(context)
         s = COMMAND_REGEX.sub(self.cmd_match, s)

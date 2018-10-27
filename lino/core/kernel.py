@@ -163,8 +163,13 @@ class Callback(object):
 
 
 class Kernel(object):
-    """This is the class of the object stored in :attr:`Site.kernel
-<lino.core.site.Site.kernel>`.
+    """
+    This is the class of the object stored in :attr:`Site.kernel
+    <lino.core.site.Site.kernel>`.
+
+    .. attribute:: memo_parser
+
+        An instance of :class:`lino.utils.memo.Parser`.
 
     """
     default_ui = None
