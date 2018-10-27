@@ -135,11 +135,14 @@ change the ref in order to avoid an IntegrityError."""),
     'lino.ref.StructuredReferrable' : _("""A referrable whose ref field is used to define a hierarchical
 structure and is displayed together with the designation."""),
     'lino.ref.StructuredReferrable.get_designation' : _("""Return the "designation" part (without the reference)."""),
+    'lino.registrable.RegistrableState' : _("""Base class"""),
+    'lino.registrable.RegistrableState.is_editable' : _("""Whether the registrable object having this state should be
+editable or not."""),
     'lino.registrable.Registrable' : _("""Base class to anything that may be "registered" and "deregistered"
 (e.g. Invoices, Vouchers, Declarations, Reservations,...).
 "Registered" means "this object has been taken account of".
 Registered objects are not editable."""),
-    'lino.registrable.Registrable.state' : _("""The ChoiceList of the state field must have at least two items
+    'lino.registrable.Registrable.state' : _("""The ChoiceList of this  field must have at least two items
 named "draft" and "registered".
 There may be additional states.
 Every state must have an extra attribute "is_editable"."""),
