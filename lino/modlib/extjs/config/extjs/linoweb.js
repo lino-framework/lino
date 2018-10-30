@@ -3288,6 +3288,17 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
     //~ }
     
   },
+
+  // private
+  // Override the function to replace the element to be covered by the mask to the body.
+  initEvents : function(){
+    Ext.grid.GridPanel.superclass.initEvents.call(this);
+
+    if(this.loadMask){
+        this.loadMask = new Ext.LoadMask(this.body,
+                Ext.apply({store:this.store}, this.loadMask));
+    }
+},
   
   init_containing_window : function(win) { 
     //~ console.log("20111206 install refresh");
