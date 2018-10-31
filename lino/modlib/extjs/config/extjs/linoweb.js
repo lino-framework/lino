@@ -3290,13 +3290,28 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
   },
 
   // private
-  // Override the function to replace the element to be covered by the mask to the body.
   initEvents : function(){
-    Ext.grid.GridPanel.superclass.initEvents.call(this);
+    Ext.grid.GridPanel.initEvents.call(this);
 
+    // modifed from Ext.grid.GridPanel
+    // Override the function to replace the element to be covered by the mask to the body.
     if(this.loadMask){
         this.loadMask = new Ext.LoadMask(this.body,
                 Ext.apply({store:this.store}, this.loadMask));
+    }
+      
+    // unmodified from Ext.grid.EditorGridPanel
+    this.getGridEl().on('mousewheel', this.stopEditing.createDelegate(this, [true]), this);
+    this.on('columnresize', this.stopEditing, this, [true]);
+
+    if(this.clicksToEdit == 1){
+        this.on("cellclick", this.onCellDblClick, this);
+    }else {
+        var view = this.getView();
+        if(this.clicksToEdit == 'auto' && view.mainBody){
+            view.mainBody.on('mousedown', this.onAutoEditClick, this);
+        }
+        this.on('celldblclick', this.onCellDblClick, this);
     }
 },
   
