@@ -3291,7 +3291,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
 
   // private
   initEvents : function(){
-    Ext.grid.GridPanel.initEvents.call(this);
+    Ext.grid.GridPanel.superclass.initEvents.call(this);
 
     // modifed from Ext.grid.GridPanel
     // Override the function to replace the element to be covered by the mask to the body.
