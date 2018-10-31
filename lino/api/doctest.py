@@ -198,21 +198,21 @@ def screenshot(obj, filename, rstname, username='robin'):
 def show_menu_path(spec, language=None):
     """
     Print the menu path of the given actor or action.
+
+    Deprecated.  You should rather use
+    :meth:`lino.core.requests.BaseRequest.show_menu_path` which
+    automatically sets the language of the user and works for any user
+    type.
     """
-
-    def doit():
-        # user_type = ar.get_user().user_type
-        # menu = settings.SITE.get_site_menu(settings.SITE.kernel, user_type)
-        # mi = menu.find_item(spec)
-        mi = find_menu_item(spec)
-        if mi is None:
-            raise Exception("Invalid spec {0}".format(spec))
-        print(menuselection_text(mi))
-
+    user_type = rt.models.users.UserTypes.get_by_value('900')
+    mi = user_type.find_menu_item(spec)
+    if mi is None:
+        raise Exception("Invalid spec {0}".format(spec))
     if language:
         with translation.override(language):
-            return doit()
-    return doit()
+            print(menuselection_text(mi))
+    else:
+        print(menuselection_text(mi))
 
     # items = [mi]
     # p = mi.parent
@@ -366,7 +366,7 @@ def walk_menu_items(username=None, severe=True):
         else:
             user_type = ar.user.user_type
             test_client.force_login(ar.user)
-        mnu = settings.SITE.get_site_menu(None, user_type)
+        mnu = settings.SITE.get_site_menu(user_type)
         items = []
         for mi in mnu.walk_items():
           if mi.bound_action:

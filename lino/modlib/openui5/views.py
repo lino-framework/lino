@@ -738,7 +738,7 @@ class Connector(View):
         u = ar.get_user()
 
         context = dict(
-            menu=settings.SITE.get_site_menu(None, u.user_type)
+            menu=settings.SITE.get_site_menu(u.user_type)
         )
 
         device_type = request.device_type

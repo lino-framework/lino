@@ -96,8 +96,7 @@ class LinoClient(QMainWindow):
         self.menubar = self.menuBar()
 
         user_type = rt.models.users.UserTypes.get_by_value('900')
-        menu = settings.SITE.get_site_menu(
-            settings.SITE.kernel, user_type)
+        menu = settings.SITE.get_site_menu(user_type)
         self.load_menu(menu, self.menubar)
         self.show()
         self.statusBar().showMessage('Ready')

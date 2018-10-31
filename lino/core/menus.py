@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2017 Luc Saffre
+# Copyright 2009-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
@@ -22,9 +22,9 @@ from lino.core.boundaction import BoundAction
 
 
 class MenuItem(object):
-    """A menu item. Note that this is subclassed by :class:`Menu`: a menu
+    """
+    A menu item. Note that this is subclassed by :class:`Menu`: a menu
     is also a menu item.
-
     """
     HOTKEY_MARKER = '~'
 
@@ -174,7 +174,6 @@ def create_item(spec, action=None, help_text=None, **kw):
 
 
 class Menu(MenuItem):
-
     """
     Represents a menu. A menu is conceptually a :class:`MenuItem`
     which contains other menu items.
@@ -257,13 +256,13 @@ class Menu(MenuItem):
         return self.add_item_instance(mi)
 
     def add_instance_action(self, obj, **kw):
-        """Add an action which displays the given database object instance in
+        """
+        Add an action which displays the given database object instance in
         a detail form for editing.
 
         Used e.g. for the :menuselection`Configure --> System --> Site
         configuration` command.  Or for the :guilabel:`[My settings]`
         quicklink in :ref:`care`.
-
         """
         kw.update(instance=obj)
         ba = kw.get('action', None)
@@ -330,8 +329,8 @@ class Menu(MenuItem):
 
 
 class Toolbar(Menu):
-    """A top-level :class:`Menu`.
-
+    """
+    A top-level menu.
     """
     pass
 
@@ -339,5 +338,6 @@ class Toolbar(Menu):
 def find_menu_item(bound_action):
     from lino.api import rt
     user_type = rt.models.users.UserTypes.get_by_value('900')
-    menu = settings.SITE.get_site_menu(settings.SITE.kernel, user_type)
-    return menu.find_item(bound_action)
+    return user_type.find_menu_item(bound_action)
+    # menu = settings.SITE.get_site_menu(settings.SITE.kernel, user_type)
+    # return menu.find_item(bound_action)

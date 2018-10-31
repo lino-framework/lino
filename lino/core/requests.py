@@ -760,7 +760,7 @@ class BaseRequest(object):
         if language is None:
             language = user.language
         with translation.override(language):
-            mnu = settings.SITE.get_site_menu(None, user.user_type)
+            mnu = settings.SITE.get_site_menu(user.user_type)
             self.renderer.show_menu(self, mnu, **kwargs)
 
     def get_home_url(self, *args, **kw):
@@ -810,6 +810,27 @@ class BaseRequest(object):
     def menu_item_button(self, *args, **kwargs):
         """Forwards to :meth:`lino.core.renderer.`"""
         return self.renderer.menu_item_button(self, *args, **kwargs)
+
+    def show_menu_path(self, spec, language=None):
+        """
+        Print the menu path of the given actor or action.
+
+        This is the replacement for :func:`show_menu_path
+        <lino.api.doctest.show_menu_path>`.  It has the advantage that
+        it automatically sets the language of the user and that it
+        works for any user type.
+        """
+        from lino.sphinxcontrib.actordoc import menuselection_text
+        u = self.get_user()
+        mi = u.user_type.find_menu_item(spec)
+        if mi is None:
+            raise Exception("Invalid spec {0}".format(spec))
+        if language is None:
+            language = u.language
+        with translation.override(language):
+            print(menuselection_text(mi))
+
+    
 
     def window_action_button(self, *args, **kwargs):
         # settings.SITE.logger.info(

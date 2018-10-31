@@ -88,6 +88,7 @@ from lino.core.utils import full_model_name
 from lino.ad import Plugin
 from lino.utils.diag import analyzer
 from lino.core.actors import resolve_action
+from lino.modlib.users.choicelists import UserTypes
 
 from atelier.sphinxconf.insert_input import Py2rstDirective
 
@@ -256,17 +257,20 @@ def actions_ul(action_list):
         items.append(desc)
     return rstgen.ul(items)
 
-from lino.core.menus import find_menu_item
+# from lino.core.menus import find_menu_item
 
 
 def actors_overview_ul(model_reports):
+    user_type = UserTypes.get_by_value('900')
+    # deprecated
     items = []
     for tb in model_reports:
         desc = actor_ref(tb)
         #~ label = str(tb.title or tb.label)
         #~ desc += " (%s)" % str(tb)
         desc += " (%s)" % typeref(tb)
-        mi = find_menu_item(tb.default_action)
+        # mi = find_menu_item(tb.default_action)
+        mi = user_type.find_menu_item(tb.default_action)
         if mi is not None:
             desc += _(" (Menu %s)") % menuselection(mi)
             #~ print(unicode(mi.label).strip())
@@ -434,6 +438,7 @@ class Lino2rstDirective(Py2rstDirective):
 class ActorsOverviewDirective(Lino2rstDirective):
 
     def get_rst(self):
+        user_type = UserTypes.get_by_value('900')
         with translation.override(self.language):
             #~ set_language(lng)
             actor_names = ' '.join(self.content).split()
@@ -447,7 +452,7 @@ class ActorsOverviewDirective(Lino2rstDirective):
                     cls.__name__,
                     cls.__module__ + '.' + cls.__name__
                 )
-                mi = find_menu_item(cls.default_action)
+                mi = user_type.find_menu_item(cls.default_action)
                 if mi is not None:
                     desc += _(" (Menu %s)") % menuselection(mi)
                     #~ print(str(mi.label).strip())
@@ -616,7 +621,8 @@ class ActorDirective(Lino2rstDirective):
 
 def menupath_role(typ, rawtext, text, *args, **kwargs):
     a = resolve_action(text)
-    mi = find_menu_item(a)
+    user_type = UserTypes.get_by_value('900')
+    mi = user_type.find_menu_item(a)
     if mi is None:
         raise Exception("Unknown menu descriptor %s" % text)
     text = menuselection_text(mi)

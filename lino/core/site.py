@@ -3349,7 +3349,7 @@ site. :manage:`diag` is a command-line shortcut to this.
         """
         self.on_each_app('setup_quicklinks', user, m)
 
-    def get_site_menu(self, ui, user_type):
+    def get_site_menu(self, user_type):
         """
         Return this site's main menu for the given UserType.
         Must be a :class:`lino.core.menus.Toolbar` instance.

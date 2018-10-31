@@ -43,7 +43,7 @@ def http_response(ar, tplname, context):
     k = (u.user_type, lang)
     menu = MENUS.get(k, None)
     if menu is None:
-        menu = settings.SITE.get_site_menu(None, u.user_type)
+        menu = settings.SITE.get_site_menu(u.user_type)
         bs3 = settings.SITE.plugins.bootstrap3
         if False:  # 20150803 home button now in base.html
             assert bs3.renderer is not None

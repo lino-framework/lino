@@ -1620,12 +1620,18 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
 
 def resolve_action(spec, action=None):
-    """Return the `BoundAction` object corresponding to the given
+    """
+    Return the `BoundAction` object corresponding to the given
     specifier `spec`. The specifier can be:
 
     - a model or a table
+    - a bound action
+    - an action instance
     - a string of the form ``myapp.MyModel`` (i.e. resolving to a model)
     - a string of the form ``myapp.MyModels`` (i.e. resolving to a table)
+
+    If it is an action instance, Lino will use the
+    :attr:`definiing_actor` of that action.
 
     """
     givenspec = spec
@@ -1638,6 +1644,9 @@ def resolve_action(spec, action=None):
 
     if isinstance(spec, BoundAction):
         return spec
+
+    if isinstance(spec, actions.Action):
+        return spec.defining_actor.get_action_by_name(spec.action_name)
 
     if isinstance(spec, type) and issubclass(spec, models.Model):
         spec = spec.get_default_table()

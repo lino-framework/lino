@@ -94,6 +94,12 @@ class UserType(Choice):
         # for role in self.roles:
         return self.role.satisfies_requirement(required_roles)
 
+    def find_menu_item(self, bound_action):
+        """
+        Find the item of the main menu for the specified bound action.
+        """
+        mnu = settings.SITE.get_site_menu(self)
+        return mnu.find_item(bound_action)
 
 ##
 

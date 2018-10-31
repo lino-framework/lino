@@ -732,7 +732,7 @@ class ExtRenderer(JsRenderer):
                     f.write(jscompress('\n// from %s:%s\n' % (p, tplname)))
                     f.write(jscompress('\n' + tpl.render(**context) + '\n'))
 
-        menu = settings.SITE.get_site_menu(self, user_type)
+        menu = settings.SITE.get_site_menu(user_type)
         menu.add_item(
             'home', _("Home"), javascript="Lino.handle_home_button()")
         f.write("Lino.main_menu = %s;\n" % py2js(menu))
