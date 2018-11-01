@@ -134,6 +134,9 @@ def analyze_rst(*packages):
                "comment lines", "total lines"]
     rows = []
 
+    def fmt(n):
+        return "{}k".format(round(n/1000.0, 1))
+
     total_sums = [0] * len(fields)
     for package in packages:
         sums = [0] * len(fields)
@@ -141,10 +144,10 @@ def analyze_rst(*packages):
             sf = SourceFile(name, filename)
             for i, k in enumerate(fields):
                 sums[i] += getattr(sf, k)
-        rows.append([package] + [str(n) for n in sums])
+        rows.append([package] + [fmt(n) for n in sums])
         for i, k in enumerate(fields):
             total_sums[i] += sums[i]
-    rows.append(['total'] + [str(n) for n in total_sums])
+    rows.append(['total'] + [fmt(n) for n in total_sums])
     return rstgen.table(headers, rows)
 
 
