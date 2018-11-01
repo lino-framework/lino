@@ -789,21 +789,23 @@ class TextFieldElement(FieldElement):
 
     def value2html(self, ar, v, **cellattrs):
         if self.format == 'html' and v:
-            xv = html2xhtml(v)
-            # v = v.decode('utf-8')
-            # top = E.fromstring(v)
-            # top = E.raw(v)
-            from lxml import etree
-            if False:
-                top = etree.fromstring(xv)
-            else:
-                try:
-                    top = etree.fromstring(xv)
-                except Exception as e:
-                    top = str(e)
-                    msg = "{} while trying to parse XML\n" \
-                    "{!r}\n(from html {!r})".format(e, xv, v)
-                    logger.warning(msg)
+            from lxml import html
+            top = html.fromstring(v)
+            # xv = html2xhtml(v)
+            # # v = v.decode('utf-8')
+            # # top = E.fromstring(v)
+            # # top = E.raw(v)
+            # from lxml import etree
+            # if False:
+            #     top = etree.fromstring(xv)
+            # else:
+            #     try:
+            #         top = etree.fromstring(xv)
+            #     except Exception as e:
+            #         top = str(e)
+            #         msg = "{} while trying to parse XML\n" \
+            #         "{!r}\n(from html {!r})".format(e, xv, v)
+            #         logger.warning(msg)
         else:
             top = self.format_value(ar, v)
         return E.td(top, **cellattrs)
