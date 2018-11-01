@@ -7,7 +7,6 @@
 
 from __future__ import unicode_literals, print_function
 from builtins import str
-from builtins import object
 import six
 
 import logging
@@ -795,8 +794,11 @@ class TextFieldElement(FieldElement):
             # top = E.fromstring(v)
             # top = E.raw(v)
             from lxml import etree
-            top = etree.fromstring(v)
-
+            try:
+                top = etree.fromstring(v)
+            except Exception as e:
+                msg = "{} while trying to parse {}".format(v, e)
+                return E.td(msg, **cellattrs)
         else:
             top = self.format_value(ar, v)
         return E.td(top, **cellattrs)
