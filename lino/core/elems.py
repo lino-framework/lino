@@ -794,11 +794,16 @@ class TextFieldElement(FieldElement):
             # top = E.fromstring(v)
             # top = E.raw(v)
             from lxml import etree
-            try:
+            if True:
                 top = etree.fromstring(xv)
-            except Exception as e:
-                top = "{} while trying to parse XML {!r} (from html {!r})".format(e, xv, v)
-                logger.warning(top)
+            else:
+                try:
+                    top = etree.fromstring(xv)
+                except Exception as e:
+                    top = str(e)
+                    msg = "{} while trying to parse XML\n" \
+                    "{!r}\n(from html {!r})".format(e, xv, v)
+                    logger.warning(msg)
         else:
             top = self.format_value(ar, v)
         return E.td(top, **cellattrs)
