@@ -794,7 +794,7 @@ class TextFieldElement(FieldElement):
             # top = E.fromstring(v)
             # top = E.raw(v)
             from lxml import etree
-            if True:
+            if False:
                 top = etree.fromstring(xv)
             else:
                 try:
