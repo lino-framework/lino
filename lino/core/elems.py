@@ -1613,16 +1613,25 @@ class HtmlBoxElement(DisplayElement):
             kw.update(title=label)
         return kw
 
+    def value2html(self, ar, v, **cellattrs):
+        # added 20181102, expecting  side effects.
+        if is_string(v) and v.startswith("<"):
+            from lxml import html
+            v = html.fromstring(v)
+        return super(self, HtmlBoxElement).value2html(ar, v, **cellattrs)
+
     def as_plain_html(self, ar, obj):
         value = self.value_from_object(obj, ar)
-        if value == fields.NOT_PROVIDED:
+        if value is fields.NOT_PROVIDED:
             value = str(ar.no_data_text)
-        if is_string(value):
-            try:
-                value = E.fromstring(value)
-            except Exception:
-                # logger.warning("20180114 Failed to parse %s", value)
-                pass
+        if is_string(value) and value.startswith("<"):
+            from lxml import html
+            value = html.fromstring(value)
+            # try:
+            #     value = E.fromstring(value)
+            # except Exception:
+            #     # logger.warning("20180114 Failed to parse %s", value)
+            #     pass
                 # panel = E.fromstring('<div class="panel panel-default"><div class="panel-body">' + value + "</div></div>")
         if etree.iselement(value):
             panel = E.div(
