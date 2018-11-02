@@ -4566,7 +4566,7 @@ Ext.override(Ext.form.BasicForm,{
         forward also the record_data to field.setValue(). This second
         parameter is used by Lino.Combobox.
         */
-        //~ console.log('20120918 my_loadRecord', record_data)
+        // console.log('20181102 my_loadRecord', record_data)
         if(Ext.isArray(record_data)){ 
             for(var i = 0, len = record_data.length; i < len; i++){
                 var v = record_data[i];
@@ -4582,6 +4582,7 @@ Ext.override(Ext.form.BasicForm,{
             var field, id;
             for(id in record_data){
                 if(!Ext.isFunction(record_data[id]) && (field = this.findField(id))){
+                    // console.log('20181102 setValue', field, record_data[id]);
                     field.setValue(record_data[id], record_data);
                     if(this.trackResetOnLoad){
                         field.originalValue = field.getValue();
@@ -4589,7 +4590,7 @@ Ext.override(Ext.form.BasicForm,{
                           //~ field.hiddenField.originalValue = field.hiddenField.value;
                         //~ }
                     }
-                }
+                } // else console.log('20181102 not for ', id);
             }
         }
         return this;

@@ -464,3 +464,6 @@ def show_choicelist(cls):
         rows.append(row)
     print(table(headers, rows))
     
+
+def show_permissions(*args):
+    print(visible_for(*args))
