@@ -788,7 +788,8 @@ class TextFieldElement(FieldElement):
         )
 
     def value2html(self, ar, v, **cellattrs):
-        if self.format == 'html' and v:
+        # if self.format == 'html' and v:
+        if v and v.startswith("<"):
             from lxml import html
             top = html.fromstring(v)
             # xv = html2xhtml(v)
