@@ -1106,10 +1106,10 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     @classmethod
     def get_title_tags(self, ar):
-        """Yield a list of translatable strings to be added to the base part
+        """
+        Yield a list of translatable strings to be added to the base part
         of the title. This is called by :meth:`get_title` to construct
         the actual title.
-
         """
         if isinstance(self.parameters, ParameterPanel):
             for t in self.parameters.get_title_tags(ar):
