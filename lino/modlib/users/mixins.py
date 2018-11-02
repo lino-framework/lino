@@ -273,14 +273,16 @@ class AssignToMe(dd.Action):
     
     # help_text = _("You become assigned to this.")
 
-    # def get_action_permission(self, ar, obj, state):
-    #     user = ar.get_user()
-    #     if obj.assigned_to == user:
-    #         return False
-    #     if user == obj.get_author():
-    #         return False
-    #     return super(AssignToMe,
-    #                  self).get_action_permission(ar, obj, state)
+    def get_action_permission(self, ar, obj, state):
+        if obj.assigned_to_id:
+            return False
+        # user = ar.get_user()
+        # if obj.assigned_to == user:
+        #     return False
+        # if user == obj.get_author():
+        #     return False
+        return super(AssignToMe,
+                     self).get_action_permission(ar, obj, state)
 
     def run_from_ui(self, ar, **kw):
         obj = ar.selected_rows[0]
