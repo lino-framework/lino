@@ -139,7 +139,6 @@ class User(AbstractBaseUser, Contactable, CreatedModified, DateRange,
         return False
     
     def get_row_permission(self, ar, state, ba):
-        #~ print 20120621, self, user, state, action
         # import pdb ; pdb.set_trace()
         if not ba.action.readonly:
             user = ar.get_user()
