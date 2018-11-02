@@ -4277,7 +4277,11 @@ Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
         } else if (Ext.isDefined(record_data)) {
           text = record_data[this.name];
           //~ if (this.name == 'birth_country') 
+          this.original_record_data = record_data;
             //~ console.log(this.name,'.setValue',v,'got text ',text,' from record ',record);
+        } else if (Ext.isDefined(this.original_record_data) && this.original_record_data[this.hiddenName] === v) {
+            // Fix for ticket #2628
+            text = this.original_record_data[this.name];
         } else {
           // if(this.mode == 'remote' && !Ext.isDefined(this.store.totalLength)){
           if(this.mode == 'remote' && ( this.lastQuery === null || (!Ext.isDefined(this.store.totalLength)))){
