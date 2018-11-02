@@ -1618,7 +1618,7 @@ class HtmlBoxElement(DisplayElement):
         if is_string(v) and v.startswith("<"):
             from lxml import html
             v = html.fromstring(v)
-        return super(self, HtmlBoxElement).value2html(ar, v, **cellattrs)
+        return super(HtmlBoxElement, self).value2html(ar, v, **cellattrs)
 
     def as_plain_html(self, ar, obj):
         value = self.value_from_object(obj, ar)
