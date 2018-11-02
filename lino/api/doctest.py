@@ -467,3 +467,10 @@ def show_choicelist(cls):
 
 def show_permissions(*args):
     print(visible_for(*args))
+
+
+def show_quick_search_fields(*args):
+    for m in args:
+        print(str(m._meta.verbose_name_plural))
+        for fld in m.quick_search_fields:
+            print("- {} ({})".format(fld.verbose_name, fld.name))
