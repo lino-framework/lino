@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2018 Luc Saffre
+# Copyright 2009-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """This defines :class:`Actor` and related classes.
@@ -1075,14 +1075,13 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         :meth:`get_title_tags` and returns a string of type `BASE [
         (TAG, TAG...)]`.
 
-        Override this if your Table's title should mention for example
+        Override this if your table's title should mention for example
         filter conditions.  See also :meth:`Table.get_title
         <lino.core.dbtables.Table.get_title>`.
 
         """
-        # NOTE: similar code in dbtables
         title = self.get_title_base(ar)
-        tags = list(self.get_title_tags(ar))
+        tags = [str(t) for t in self.get_title_tags(ar)]
         if len(tags):
             title += " (%s)" % (', '.join(tags))
         return title
