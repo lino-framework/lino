@@ -1081,6 +1081,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
         """
         title = self.get_title_base(ar)
+        # tags = list(self.get_title_tags(ar))
         tags = [str(t) for t in self.get_title_tags(ar)]
         if len(tags):
             title += " (%s)" % (', '.join(tags))
