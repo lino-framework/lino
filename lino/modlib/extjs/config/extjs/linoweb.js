@@ -3436,7 +3436,8 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
     if (!this.hide_top_toolbar) {  
       var tbar = [ 
         this.quick_search_field = new Ext.form.TextField({ 
-          //~ fieldLabel: "Search"
+            //~ fieldLabel: "Search"
+          emptyText: "{{_('Quick search')}}",
           listeners: { 
             scope:this_
             //~ ,change:this_.search_change
