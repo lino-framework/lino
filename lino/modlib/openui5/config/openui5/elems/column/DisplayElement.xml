@@ -1,1 +1,0 @@
-<core:HTML content="&lt;span&gt;{{bind(c.fields_index)}}&lt;/span&gt;" wrapping="false" xmlns="sap.ui.core"/>
