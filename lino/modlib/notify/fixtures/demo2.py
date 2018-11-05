@@ -1,4 +1,4 @@
-# Copyright 2016-2018 Luc Saffre
+# Copyright 2016-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """Emits a notification "The database has been initialized." to every
 user.
@@ -19,7 +19,7 @@ def objects():
     if settings.USE_TZ:
         now = make_aware(now)
     mt = rt.models.notify.MessageTypes.system
-    for u in rt.models.users.User.objects.all():
+    for u in rt.models.users.User.objects.order_by('username'):
         # if u.user_type.has_required_roles()
         with translation.override(u.language):
             yield rt.models.notify.Message.create_message(
