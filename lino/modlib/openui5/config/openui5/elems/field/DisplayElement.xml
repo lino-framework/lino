@@ -1,7 +1,0 @@
-{% extends "/openui5/elems/field/FieldElement.xml" %}
-
-{% block field_content %}
-<core:HTML content="&lt;span&gt;{{bind('record>/data/',e.field.name)}}&lt;/span&gt;" wrapping="true" xmlns="sap.ui.core" displayBlock="true">
-
-</core:HTML>
-{% endblock %}

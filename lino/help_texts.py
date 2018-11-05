@@ -339,21 +339,6 @@ uploads."""),
     'lino.modlib.office.roles.OfficeOperator' : _("""Can manage office functionality for other users (but not for
 himself)."""),
     'lino.modlib.office.roles.OfficeStaff' : _("""Can manage configuration of office functionality."""),
-    'lino.modlib.openui5.renderer.Renderer' : _(""".
-An HTML renderer that uses the OpenUI5 Javascript framework."""),
-    'lino.modlib.openui5.renderer.Renderer.get_detail_url' : _("""Opens detail however clears the app's history"""),
-    'lino.modlib.openui5.renderer.Renderer.get_request_url' : _("""Used for turn requests into urls"""),
-    'lino.modlib.openui5.renderer.Renderer.ar2js' : _("""Implements lino.core.renderer.HtmlRenderer.ar2js()."""),
-    'lino.modlib.openui5.renderer.Renderer.request_handler' : _("""Generates js string for action button calls.
-Needs to understand if it's a param action or simple action."""),
-    'lino.modlib.openui5.renderer.Renderer.show_menu' : _("""Render the given menu as an HTML element.
-Used for writing test cases."""),
-    'lino.modlib.openui5.views.ChoiceListModel' : _("""Creates a large JSON model that contains all the choicelists + choices"""),
-    'lino.modlib.openui5.views.Restful' : _("""Used to collaborate with a restful Ext.data.Store."""),
-    'lino.modlib.openui5.views.Restful.get' : _("""Works, but is ugly to get list and detail"""),
-    'lino.modlib.openui5.views.Connector' : _("""Static View for Tickets,
-Uses a template for generating the XML views  rather then layouts"""),
-    'lino.modlib.openui5.views.App' : _("""Main app entry point,"""),
     'lino.modlib.printing.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.restful.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.smtpd.Plugin' : _("""See /dev/plugins."""),

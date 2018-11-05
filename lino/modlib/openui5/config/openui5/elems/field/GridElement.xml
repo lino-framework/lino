@@ -1,4 +1,0 @@
-<mvc:XMLView
-    viewName="lino.slavetable.{{e.actor.actor_id}}"
-    >
-</mvc:XMLView>

@@ -154,7 +154,6 @@ lino.modlib.checkdata
 lino.modlib.checkdata.fixtures
 lino.modlib.checkdata.management
 lino.modlib.checkdata.management.commands
-lino.modlib.openui5
 lino.modlib.printing
 lino.modlib.restful
 lino.modlib.smtpd

@@ -1,9 +1,0 @@
-<MenuItem
-        {% if ba.action.ui5_icon_name -%}
-        icon="{{ba.action.ui5_icon_name}}"
-        {% endif %}
-        text="{{ba.action.label}}"
-        tooltip="{{ba.action.help_text}}"
-        press="onPressAction">
-        {% include "openui5/template_fragments/action_metadata.xml" %}
-        </MenuItem>
