@@ -907,11 +907,11 @@ class Model(models.Model):
         def show_state():
             l.append(sep)
             #~ l.append(E.b(unicode(state),style="vertical-align:middle;"))
-            # if state.button_text:
-            #     l.append(E.b(state.button_text))
-            # else:
-            #     l.append(E.b(str(state)))
-            l.append(E.b(str(state)))
+            if state.button_text:
+                l.append(E.b(u"{} {}".format(state.button_text, state)))
+            else:
+                l.append(E.b(str(state)))
+            # l.append(E.b(str(state)))
             #~ l.append(u" » ")
             #~ l.append(u" \u25b8 ")
             #~ l.append(u" \u2192 ")
@@ -929,7 +929,7 @@ class Model(models.Model):
                   if actor.get_row_permission(obj, ar, state, ba):
                     if show and isinstance(ba.action, ChangeStateAction):
                         show_state()
-                        sep = u" \u2192 "
+                        sep = u" \u2192 "  # "→"
                         show = False
                     l.append(sep)
                     l.append(ar.action_button(ba, obj))
