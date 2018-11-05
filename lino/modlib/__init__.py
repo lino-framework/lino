@@ -35,7 +35,6 @@ Utilities
 
     bootstrap3
     extjs
-    openui5
 
 "Options"
 =========
