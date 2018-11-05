@@ -115,7 +115,7 @@ class Message(UserAuthored, Controllable, Created):
         app_label = 'notify'
         verbose_name = _("Notification message")
         verbose_name_plural = _("Notification messages")
-        ordering = ['created']
+        ordering = ['created', 'id']
 
     message_type = MessageTypes.field(default="change")
     seen = models.DateTimeField(_("seen"), null=True, editable=False)
@@ -160,7 +160,7 @@ class Message(UserAuthored, Controllable, Created):
             # subject = "{} by {}".format(message_type, me)
             # dd.logger.info(
             #     "20180612 Notify %s users", len(others))
-            for user, mm in others:
+            for user, mm in sorted(others, key=lambda x: x[0].username):
                 # if not user.user_type.has_required_roles(rr):
                 if message_type in user.user_type.mask_message_types:
                     continue
