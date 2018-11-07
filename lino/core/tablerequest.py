@@ -404,13 +404,12 @@ class TableRequest(ActionRequest):
         """
         settings.SITE.kernel.text_renderer.show_table(self, *args, **kwargs)
 
-    # def table2xhtml(self, header_level=None, **kw):
-    def table2xhtml(self, **kw):
+    def table2xhtml(self, **kwargs):
         """
         Return an HTML representation of this table request.
         """
         t = xghtml.Table()
-        self.dump2html(t, self.sliced_data_iterator, **kw)
+        self.dump2html(t, self.sliced_data_iterator, **kwargs)
         e = t.as_element()
         # print "20150822 table2xhtml", tostring(e)
         # if header_level is not None:

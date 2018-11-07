@@ -51,20 +51,21 @@ class DashboardItem(Permittable):
         if self.header_level is None:
             s = ''
         else:
-            s = tostring(E.h2(
-                str(sar.actor.get_title_base(sar)),
-                ' ', ar.window_action_button(
+            buttons = sar.plain_toolbar_buttons()
+            buttons.append(
+                ar.window_action_button(
                     T.default_action,
-                    # label="🗗",
-                    # label="☌",  # conjunction
-                    # label="◱", # 25F1
-                    # label="◳", # 25F3
-                    # label="⏍", # 23CD
                     label="⏏", # 23CF
-                    # label="⍐", # 2350
-                    # style="text-decoration:none; font-size:80%;",
                     style="text-decoration:none;",
-                    title=_("Show this table in own window"))))
+                    title=_("Show this table in own window")))
+            
+            elems = []
+            for b in buttons:
+                elems.append(b)
+                elems.append(' ')
+            
+            s = tostring(E.h2(
+                str(sar.actor.get_title_base(sar)), ' ', *elems))
 
         s += tostring(ar.show(sar))
         return s

@@ -1571,24 +1571,20 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         return []
 
     @classmethod
-    def slave_as_html_meth(self):
-        """Creates and returns the method to be used when
-        :attr:`display_mode` is `html`.
-
+    def slave_as_html(cls, master, ar):
         """
-        def meth(master, ar):
-            #~ ar = self.request(ui,request=ar.request,
-                #~ master_instance=master,param_values={})
-            ar = self.request(
-                master, request=ar.request, param_values={},
-                is_on_main_actor=False)
-            ar.renderer = settings.SITE.kernel.default_renderer
-            #~ s = ui.table2xhtml(ar).tostring()
-            return ar.table2xhtml()
-            # return ar.html_text(ar.table2xhtml())
-            #~ s = etree.tostring(ui.table2xhtml(ar))
-            #~ return s
-        return meth
+        Creates and returns the method to be used when :attr:`display_mode`
+        is `html`.
+        """
+        ar = cls.request(
+            master, request=ar.request, param_values={},
+            is_on_main_actor=False)
+        ar.renderer = settings.SITE.kernel.default_renderer
+        el = ar.table2xhtml()
+        toolbar = ar.plain_toolbar_buttons()
+        if len(toolbar):
+            el = E.div(el, E.p(*toolbar))
+        return el
 
     summary_sep = E.br
 

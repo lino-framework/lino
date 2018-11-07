@@ -414,11 +414,17 @@ class Action(Parametrizable, Permittable):
     window has a navigator.
 
     """
+
+    show_in_plain = False
+    """
+    Whether this action should be displayed as a button in the toolbar
+    of a plain html view.
+    """
     
     show_in_bbar = True
     """
     Whether this action should be displayed as a button in the toolbar
-    and the context menu.
+    and the context menu of a full grid.
 
     For example the :class:`CheckinVisitor
     <lino_xl.lib.reception.models.CheckinVisitor>`,
@@ -866,7 +872,7 @@ class ShowInsert(TableAction):
     window gets submitted.
     """
     save_action_name = 'submit_insert'
-
+    show_in_plain = True
     disable_primary_key = False
 
     label = _("New")
@@ -905,8 +911,8 @@ class ShowInsert(TableAction):
 
     def get_view_permission(self, user_type):
         # the action is readonly because it doesn't write to the
-        # current object, but we want to hide it statically for
-        # readonly users.
+        # current object, but since it does modify the adtabase we
+        # want to hide it for readonly users.
         if user_type and user_type.readonly:
             return False
         return super(ShowInsert, self).get_view_permission(user_type)
@@ -919,12 +925,6 @@ class ShowInsert(TableAction):
             return kw
         # raise Exception("20150218 %s" % self)
         elem = ar.create_instance()
-        # existing = getattr(ar, '_elem', None)
-        # if existing is not None:
-        #     raise Exception("20150218 %s %s", elem, existing)
-        #     if existing == elem:
-        #         return kw
-        # ar._elem = elem
         rec = ar.elem2rec_insert(ar.ah, elem)
         kw.update(data_record=rec)
         return kw

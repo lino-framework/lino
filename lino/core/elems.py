@@ -2561,17 +2561,17 @@ def create_layout_element(lh, name, **kw):
                 return GridElement(lh, name, de, **kw)
 
             elif de.display_mode == 'html':
-                if de.editable:
-                    a = de.insert_action
-                    if a is not None:
-                        kw.update(ls_insert_handler=js_code("Lino.%s" %
-                                                            a.full_name()))
-                        kw.update(ls_bbar_actions=[
-                            lh.ui.renderer.a2btn(a)])
+                # if de.editable:
+                #     a = de.insert_action
+                #     if a is not None:
+                #         kw.update(ls_insert_handler=js_code("Lino.%s" %
+                #                                             a.full_name()))
+                #         kw.update(ls_bbar_actions=[
+                #             lh.ui.renderer.a2btn(a)])
                 field = fields.HtmlBox(verbose_name=de.get_label())
                 field.name = de.__name__
                 field.help_text = de.help_text
-                field._return_type_for_method = de.slave_as_html_meth()
+                field._return_type_for_method = de.slave_as_html
                 lh.add_store_field(field)
                 e = HtmlBoxElement(lh, field, **kw)
                 e.add_requirements(*de.required_roles)

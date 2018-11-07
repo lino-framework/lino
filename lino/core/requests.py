@@ -849,13 +849,31 @@ class BaseRequest(object):
         """
         return self.renderer.row_action_button_ar(obj, self, *args, **kw)
 
-    def ar2button(self, *args, **kw):
+    def plain_toolbar_buttons(self, **btnattrs):
+        #btnattrs = {'class': "plain-toolbar"}
+        cls = self.actor
+        buttons = []
+        if cls is not None:
+            for ba in cls.get_toolbar_actions(self.bound_action.action):
+                if not ba.action.select_rows:
+                    if ba.action.show_in_plain:
+                        ir = ba.request_from(self)
+                        if ir.get_permission():
+                            buttons.append(ir.ar2button(**btnattrs))
+        # print("20181106", cls, self.bound_action, buttons)
+        return buttons
+        # if len(buttons) == 0:
+        #     return None
+        # return E.p(*buttons, **btnattrs)
+    
+
+    def ar2button(self, *args, **kwargs):
         """Return an HTML element with a button for running this action
          request. Does not spawn another request. Does not check
          permissions.
 
         """
-        return self.renderer.ar2button(self, *args, **kw)
+        return self.renderer.ar2button(self, *args, **kwargs)
 
     def instance_action_button(self, ai, *args, **kw):
         """Return an HTML element with a button which would run the given

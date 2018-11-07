@@ -103,9 +103,8 @@ class Renderer(object):
         self.plugin = plugin
 
     def ar2js(self, ar, obj, **status):
-        """Return the Javascript code which would run this `ar` on the
-        client.
-
+        """
+        Return the Javascript code that would run this `ar` on the client.
         """
         return self.not_implemented_js
 
@@ -170,7 +169,8 @@ class HtmlRenderer(Renderer):
         return html
 
     def table2story(self, ar, nosummary=False, stripped=True,
-                    show_links=False, header_level=None, **kwargs):
+                    show_links=False, header_level=None,
+                    **kwargs):
         """
         Returns a HTML element representing the given action request as a
         table. See :meth:`ar.show
@@ -192,10 +192,16 @@ class HtmlRenderer(Renderer):
             
         yield ar.table2xhtml(**kwargs)
 
-    def request_handler(self, ar, *args, **kw):
-        """Return a string with Javascript code that would run the given
-        action request `ar`.
+        # if show_toolbar:
+        #     toolbar = ar.plain_toolbar_buttons()
+        #     if len(toolbar):
+        #         yield E.p(*toolbar)
 
+
+    def request_handler(self, ar, *args, **kw):
+        """
+        Return a string with Javascript code that would run the given
+        action request `ar`.
         """
         return self.not_implemented_js
         
@@ -372,15 +378,14 @@ request `tar`."""
     def quick_upload_buttons(self, rr):
         return '[?!]'
 
-    def ar2button(self, ar, obj=None, label=None, title=None, **kw):
+    def ar2button(self, ar, obj=None, label=None, title=None, **kwargs):
         ba = ar.bound_action
-        # label = label or ba.action.label
         label = label or ba.get_button_label()
         status = ar.get_status()
         js = self.ar2js(ar, obj, **status)
         uri = self.js2url(js)
         return self.href_button_action(
-            ba, uri, label, title or ba.action.help_text, **kw)
+            ba, uri, label, title or ba.action.help_text, **kwargs)
 
     def menu_item_button(self, ar, mi, label=None, icon_name=None, **kwargs):
         """Render the given menu item `mi` as an action button.
@@ -788,10 +793,24 @@ class JsRenderer(HtmlRenderer):
         # js_render_custom_action().
 
         # 20140429 `ar` is now None, see :ref:`welfare.tested.integ`
-        params = self.get_action_params(ar, ba, obj)
-        return "Lino.%s(%s,%s,%s,%s)" % (
-            ba.full_name(), py2js(rp),
-            py2js(ar.is_on_main_actor), py2js(obj.pk), py2js(params))
+        if ba.action.select_rows:
+            params = self.get_action_params(ar, ba, obj)
+            return "Lino.%s(%s,%s,%s,%s)" % (
+                ba.full_name(), py2js(rp),
+                py2js(ar.is_on_main_actor), py2js(obj.pk), py2js(params))
+        # assert obj is None
+        # return "oops"
+        # params = self.get_action_params(ar, ba, obj)
+        # url = ar.get_request_url()
+
+        url = self.plugin.build_plain_url(
+            ar.actor.app_label, ar.actor.__name__)
+        params = ar.get_status().get('base_params', None)
+        pp = "function() {return %s;}" % py2js(params)
+        return "Lino.list_action_handler(%s,%s,%s,%s)()" % (
+            py2js(url), py2js(ba.action.action_name),
+            py2js(ba.action.http_method),pp)
+        
 
     def get_detail_url(self, actor, pk, *args, **kw):
         return self.plugin.build_plain_url(
