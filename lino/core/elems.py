@@ -565,6 +565,11 @@ class FieldElement(LayoutElement):
         # kw.update(dataIndex=self.field.name)
         kw.update(dataIndex=self.name)
         label = self.get_label()
+
+        if self.field.help_text is not None:
+            help_text = format_lazy(u"{}",self.field.help_text)
+            kw.update(tooltip=help_text)
+
         if label is None:
             kw.update(header=self.name)
         else:
