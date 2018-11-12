@@ -41,9 +41,11 @@ install_requires = [
 if PY2:
     install_requires.append('reportlab<2.7')
     # install_requires.append('django<2')
+    install_requires.append('weasyprint<0.43')
 else:
     # install_requires.append('django')
     install_requires.append('reportlab')
+    install_requires.append('weasyprint')
 
 SETUP_INFO = dict(
     name='lino',
