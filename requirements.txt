@@ -1,2 +1,2 @@
--e git+https://github.com/lino-framework/atelier.git#egg=atelier
+# -e git+https://github.com/lino-framework/atelier.git#egg=atelier
 
