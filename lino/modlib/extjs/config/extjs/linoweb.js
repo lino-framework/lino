@@ -4074,8 +4074,19 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
               //~ self.getStore().loadData(result,true);
               var r = self.getStore().reader.readRecords(result);
               if (e.record.phantom) {
+                  var was_editing = false;
                   // console.log("20140728 gonna call Store.insert()", self.getStore(), e.row, r.records);
+		  if (e.grid.editing && e.grid.activeEditor){
+		      var row = e.grid.activeEditor.row;
+		      var col = e.grid.activeEditor.col;
+		      e.grid.activeEditor.cancelEdit();
+		      was_editing = true;
+		      }
                   self.getStore().insert(e.row, r.records);
+		  if(was_editing){
+		      e.grid.startEditing(row,col);
+		  }
+
               }else{
                   // console.log("20140728 afteredit.success doUpdate", r.records[0]);
                   self.getStore().doUpdate(r.records[0]);
