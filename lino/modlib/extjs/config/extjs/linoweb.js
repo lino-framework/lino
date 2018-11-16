@@ -1148,6 +1148,22 @@ Lino.VBorderPanel = Ext.extend(Ext.Panel,{
 Ext.override(Ext.grid.CellSelectionModel, {
 //~ var dummy = {
 
+    getRowFrompx : function(px){
+        g = this.grid;
+        rows = g.getView().getRows();
+        total_height = 0,
+        searched_row = 0;
+        for (row in rows){
+            if (total_height < px){
+                searched_row += 1;
+                total_height += rows[row].clientHeight;
+                }
+            else{
+                return searched_row;
+            }
+        }
+
+    },
     handleKeyDown : function(e){
         /* removed because F2 wouldn't pass
         if(!e.isNavKeyPress()){
@@ -1278,8 +1294,27 @@ Ext.override(Ext.grid.CellSelectionModel, {
             case e.PAGE_DOWN:
                 e.stopEvent();
                 var self = this;
-                g.getView().scroller.scroll('up', 99999,true);
-                g.getView().scroller.isScrollable();
+                var scroller = g.getView().scroller;
+                var box = scroller.getBox();
+                console.log('box',box);
+                var viewSize = scroller.getSize(); // EXP {width: 547, height: 500}
+                console.log('viewSize',viewSize);
+                var scrollPosition = scroller.getScroll(); // EXP {left: 0, top: 135}
+                console.log('scrollPosition',scrollPosition);
+                var newx = this.getRowFrompx(box.height);
+                console.log('newx',newx);
+//                if (box.height < box.bottom){
+                var direction  = e.PAGE_DOWN === k ? 'b' : 'u';
+                scroller.scroll(direction, box.y,false);
+//                }
+                var new_scrollPosition = scroller.getScroll(); // EXP {left: 0, top: 135}
+                console.log('new_scrollPosition',new_scrollPosition);
+                if (new_scrollPosition.top != scrollPosition.top){
+                    break;
+                }
+
+//                g.getView().scroller.scroll('b', 99999,true);
+//                g.getView().scroller.isScrollable();
                 var new_page = e.PAGE_DOWN === k ? Math.min(d.pages, d.activePage +1) : Math.max(1, d.activePage -1);
                 if (d.activePage !== new_page) {
                     t.on('change', function (tb, pageData) {
@@ -1290,6 +1325,10 @@ Ext.override(Ext.grid.CellSelectionModel, {
                         t.moveNext();
                     }else{
                         t.movePrevious();
+//                        Go to the bottom of the new page
+                        var scroller = g.getView().scroller;
+                        var newbox = scroller.getBox();
+                        scroller.scroll('b', newbox.bottom,false);
                     }
                     return;
                 }else{ // same page, goto top / bottom row, keep c same
