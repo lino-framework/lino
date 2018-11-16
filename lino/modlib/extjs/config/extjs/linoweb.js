@@ -1296,21 +1296,21 @@ Ext.override(Ext.grid.CellSelectionModel, {
                 var self = this;
                 var scroller = g.getView().scroller;
                 var box = scroller.getBox();
-                console.log('box',box);
+                //console.log('box',box);
                 var viewSize = scroller.getSize(); // EXP {width: 547, height: 500}
                 console.log('viewSize',viewSize);
                 var scrollPosition = scroller.getScroll(); // EXP {left: 0, top: 135}
-                console.log('scrollPosition',scrollPosition);
+//                console.log('scrollPosition',scrollPosition);
 //                if (box.height < box.bottom){
                 var direction  = e.PAGE_DOWN === k ? 'b' : 'u';
                 scroller.scroll(direction, box.y,false);
 //                }
                 var new_scrollPosition = scroller.getScroll(); // EXP {left: 0, top: 135}
-                console.log('new_scrollPosition',new_scrollPosition);
+//                console.log('new_scrollPosition',new_scrollPosition);
                 if (new_scrollPosition.top != scrollPosition.top){
                     newcellpx = e.PAGE_DOWN === k ? box.height : new_scrollPosition.top;
                     var newx = this.getRowFrompx(newcellpx);
-                    console.log('newx',newx);
+//                    console.log('newx',newx);
                     newCell = walk(newx,c,1)
                     break;
                 }
