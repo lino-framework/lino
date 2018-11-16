@@ -1301,8 +1301,6 @@ Ext.override(Ext.grid.CellSelectionModel, {
                 console.log('viewSize',viewSize);
                 var scrollPosition = scroller.getScroll(); // EXP {left: 0, top: 135}
                 console.log('scrollPosition',scrollPosition);
-                var newx = this.getRowFrompx(box.height);
-                console.log('newx',newx);
 //                if (box.height < box.bottom){
                 var direction  = e.PAGE_DOWN === k ? 'b' : 'u';
                 scroller.scroll(direction, box.y,false);
@@ -1310,9 +1308,12 @@ Ext.override(Ext.grid.CellSelectionModel, {
                 var new_scrollPosition = scroller.getScroll(); // EXP {left: 0, top: 135}
                 console.log('new_scrollPosition',new_scrollPosition);
                 if (new_scrollPosition.top != scrollPosition.top){
+                    newcellpx = e.PAGE_DOWN === k ? box.height : new_scrollPosition.top;
+                    var newx = this.getRowFrompx(newcellpx);
+                    console.log('newx',newx);
+                    newCell = walk(newx,c,1)
                     break;
                 }
-
 //                g.getView().scroller.scroll('b', 99999,true);
 //                g.getView().scroller.isScrollable();
                 var new_page = e.PAGE_DOWN === k ? Math.min(d.pages, d.activePage +1) : Math.max(1, d.activePage -1);
