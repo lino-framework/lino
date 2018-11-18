@@ -25,6 +25,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from django.core.exceptions import ValidationError
 from django.db.models.fields import NOT_PROVIDED
+from django.utils.functional import cached_property
 
 from lino.core.utils import resolve_field, full_model_name, resolve_model
 from lino.core.exceptions import ChangedAPI
@@ -216,7 +217,7 @@ class FakeField(object):
     auto_created = False
     column = None
     empty_values = set([None, ''])
-    
+
     # required by Django 1.10:
     one_to_many = False
     one_to_one = False
@@ -229,7 +230,7 @@ class FakeField(object):
             if not hasattr(self, k):
                 raise Exception("{} has no attribute {}".format(self, k))
             setattr(self, k, v)
-            
+
     def is_enabled(self, lh):
         """
         Overridden by mti.EnableChild
@@ -245,7 +246,7 @@ class FakeField(object):
 
     def get_default(self):
         return self.default
-    
+
     def set_attributes_from_name(self, name):
         if not self.name:
             self.name = name
@@ -283,7 +284,7 @@ class RemoteField(FakeField):
         self.max_digits = getattr(fld, 'max_digits', None)
         self.decimal_places = getattr(fld, 'decimal_places', None)
         self.sortable_by = [ name ]
-        
+
         self.setter = setter
         if setter is not None:
             self.editable = True
@@ -419,13 +420,17 @@ class VirtualField(FakeField):
         self.get = get
 
         if isinstance(return_type, FakeField):
-            self.sortable_by = return_type.sortable_by
+            sortable_by = return_type.sortable_by
+            self.sortable_by = sortable_by
+            if sortable_by and isinstance(sortable_by, list):
+                    sortable_by = sortable_by[0]
+            self.column = sortable_by
         for k in VFIELD_ATTRIBS:
             setattr(self, k, getattr(return_type, k, None))
-        
+
         settings.SITE.register_virtual_field(self)
         super(VirtualField, self).__init__(**kwargs)
-        
+
 
     def override_getter(self, get):
         self.get = get
@@ -437,12 +442,12 @@ class VirtualField(FakeField):
 
         # if name == "overview":
         #     print("20181022", self, self.verbose_name)
-        
+
         #~ self.return_type.name = name
         #~ self.return_type.attname = name
         #~ if issubclass(model,models.Model):
         #~ self.lino_resolve_type(model,name)
-        
+
         # must now be done by caller code:
         # if AFTER17:
         #     model._meta.add_field(self, virtual=True)
@@ -498,11 +503,11 @@ class VirtualField(FakeField):
             self.sortable_by = f.sortable_by
         for k in VFIELD_ATTRIBS:
             setattr(self, k, getattr(f, k, None))
-            
+
         # if self.name == 'detail_pointer':
         #     logger.info('20170905 resolve_type 1 %s on %s',
         #                 self.name, self.verbose_name)
-            
+
         #~ removed 20120919 self.return_type.editable = self.editable
         # if self.name == 'detail_pointer':
         #     logger.info('20170905 resolve_type done %s %s',
@@ -510,7 +515,7 @@ class VirtualField(FakeField):
 
         from lino.core import store
         store.get_atomizer(self.model, self, self.name)
-        
+
         # print("20181023 Done: lino_resolve_type() for {}".format(self))
 
 
@@ -578,6 +583,28 @@ class VirtualField(FakeField):
 
     def __set__(self, instance, value):
         return self.set_value_in_object(None, instance, value)
+
+    def get_col(self, alias, output_field=None):
+        if output_field is None:
+            output_field = self
+        if alias != self.model._meta.db_table or output_field != self:
+            from django.db.models.expressions import Col
+            return Col(alias, self, output_field)
+        else:
+            return self.cached_col
+
+    @cached_property
+    def cached_col(self):
+        from django.db.models.expressions import Col
+        return Col(self.model._meta.db_table, self)
+
+    def select_format(self, compiler, sql, params):
+        """
+        Custom format for select clauses. For example, GIS columns need to be
+        selected as AsText(table.col) on MySQL as the table.col data can't be
+        used by Django.
+        """
+        return sql, params
 
 
 def virtualfield(return_type, **kwargs):
@@ -700,7 +727,7 @@ class QuantityField(CharField):
         if self.blank and not self.null:
             raise ChangedAPI(
                 "When `blank` is True, `null` must be True as well.")
-            
+
         #~ models.CharField.__init__(self,*args,**kw)
 
     #~ def get_internal_type(self):
@@ -740,7 +767,7 @@ class QuantityField(CharField):
 
     # def get_db_prep_value(self, value, connection, prepared=False):
     #     return str(value) if value else ''
-        
+
     def get_prep_value(self, value):
         # if value is None:
         #     return ''
@@ -861,13 +888,13 @@ class DummyField(FakeField):
 
     def __init__(self, *args, **kw):
         pass
-    
+
     # def __init__(self, name, *args, **kw):
     #     self.name = name
 
     def __str__(self):
         return self.name
-    
+
     def __get__(self, instance, owner):
         if instance is None:
             return self

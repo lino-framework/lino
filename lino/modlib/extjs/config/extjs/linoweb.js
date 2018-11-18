@@ -15,6 +15,12 @@ String.prototype.toCamel = function(){
       return p1 + p2.toLowerCase();});
 };
 
+if (!Array.prototype.last) {
+    Array.prototype.last = function () {
+        return this[this.length - 1];
+    }
+}
+
 
 // 20151126 hack to modify Ext.EventObjectImpl.isSpecialKey() which
 // returned false for Ctrl-S when called from a keyup handler (namely
@@ -1142,6 +1148,22 @@ Lino.VBorderPanel = Ext.extend(Ext.Panel,{
 Ext.override(Ext.grid.CellSelectionModel, {
 //~ var dummy = {
 
+    getRowFrompx : function(px){
+        g = this.grid;
+        rows = g.getView().getRows();
+        total_height = 0,
+        searched_row = 0;
+        for (row in rows){
+            if (total_height < px){
+                searched_row += 1;
+                total_height += rows[row].clientHeight;
+                }
+            else{
+                return searched_row;
+            }
+        }
+
+    },
     handleKeyDown : function(e){
         /* removed because F2 wouldn't pass
         if(!e.isNavKeyPress()){
@@ -1163,11 +1185,11 @@ Ext.override(Ext.grid.CellSelectionModel, {
                 );
             },
             cell, newCell, r, c, ae;
+            t = g.getTopToolbar();
+            d = t.getPageData();
 
         switch(k){
             case e.ESC:
-            case e.PAGE_UP:
-            case e.PAGE_DOWN:
                 break;
             default:
                 // e.stopEvent(); // removed because Browser keys like Alt-Home, Ctrl-R wouldn't work
@@ -1190,55 +1212,131 @@ Ext.override(Ext.grid.CellSelectionModel, {
             case e.TAB:
                 if(e.shiftKey){
                     newCell = walk(r, c - 1, -1);
+                    // prev + [-1 -1]
                 }else{
                     newCell = walk(r, c + 1, 1);
                 }
+                e.stopEvent(); // Don't allow tab to cause grid to loose focus
+                if(!newCell){
+                    var self = this;
+                    var new_page = e.shiftKey? Math.max(1, d.activePage -1) : Math.min(d.pages, d.activePage +1) ;
+                    if (d.activePage !== new_page) {
+                        t.on('change', function (tb, pageData) {
+                            if (e.shiftKey) {
+                                self.select(
+                                    Math.min(r, g.store.getCount() - 1),
+                                    g.getColumnModel().getColumnsBy(function (col) {return !col.hidden}).last().colIndex
+                                );
+                            }else {
+                                self.select(0,0);
+                            }
+                            //~ console.log('change',r,c);
+                        }, this, {single: true});
+
+                        if (e.shiftKey) {
+                            t.movePrevious();
+                        } else {
+                            t.moveNext();
+                        }
+                        return;}
+                }
                 break;
             case e.HOME:
-                if (! (g.isEditor && g.editing)) {
-                  if (!e.hasModifier()){
-                      newCell = [r, 0];
-                      //~ console.log('home',newCell);
-                      break;
-                  }else if(e.ctrlKey){
-                      var t = g.getTopToolbar();
-                      var activePage = Math.ceil((t.cursor + t.pageSize) / t.pageSize);
-                      if (activePage > 1) {
-                          e.stopEvent();
-                          t.moveFirst();
-                          return;
-                      }
-                      newCell = [0, c];
-                      break;
-                  }
+                if (!(g.isEditor && g.editing)) {
+                    if (!e.hasModifier()) {
+                        newCell = [r, 0];
+                        //~ console.log('home',newCell);
+                        break;
+                    } else {
+                        var activePage = Math.ceil((t.cursor + t.pageSize) / t.pageSize);
+                        if (e.ctrlKey && activePage > 1) {
+                            e.stopEvent();
+                            var self = this;
+                            t.on('change', function (tb, pageData) {
+                                self.select(0, c);
+                                //~ console.log('change',r,c);
+                            }, this, {single: true});
+
+                            t.moveFirst();
+                            return;
+                        }
+                        newCell = [0, c];
+                        break;
+                    }
                 }
             case e.END:
-                if (! (g.isEditor && g.editing)) {
-                  c = g.colModel.getColumnCount()-1;
-                  if (!e.hasModifier()) {
-                      newCell = [r, c];
-                      //~ console.log('end',newCell);
-                      break;
-                  }else if(e.ctrlKey){
-                      var t = g.getTopToolbar();
-                      var d = t.getPageData();
-                      if (d.activePage < d.pages) {
-                          e.stopEvent();
-                          var self = this;
-                          t.on('change',function(tb,pageData) {
-                              var r = g.store.getCount()-2;
-                              self.select(r, c);
-                              //~ console.log('change',r,c);
-                          },this,{single:true});
-                          t.moveLast();
-                          return;
-                      } else {
-                          newCell = [g.store.getCount()-1, c];
-                          //~ console.log('ctrl-end',newCell);
-                          break;
-                      }
-                  }
+                if (!(g.isEditor && g.editing)) {
+                    if (!e.hasModifier()) {
+                        newCell = [r, g.getColumnModel().getColumnsBy(function (col) {
+                            return !col.hidden
+                        }).last().colIndex];
+                        //~ console.log('end',newCell);
+                        break;
+                    } else {
+                        if (e.ctrlKey && d.activePage < d.pages) {
+                            e.stopEvent();
+                            var self = this;
+                            t.on('change', function (tb, pageData) {
+                                var r = g.store.getCount() - 1;
+                                self.select(r, c);
+                                //~ console.log('change',r,c);
+                            }, this, {single: true});
+                            t.moveLast();
+                            return;
+                        } else {
+                            newCell = [g.store.getCount() - 1, c];
+                            //~ console.log('ctrl-end',newCell);
+                            break;
+                        }
+                    }
                 }
+            case e.PAGE_UP:
+            case e.PAGE_DOWN:
+                e.stopEvent();
+                var self = this;
+                var scroller = g.getView().scroller;
+                var box = scroller.getBox();
+                //console.log('box',box);
+                var viewSize = scroller.getSize(); // EXP {width: 547, height: 500}
+                console.log('viewSize',viewSize);
+                var scrollPosition = scroller.getScroll(); // EXP {left: 0, top: 135}
+//                console.log('scrollPosition',scrollPosition);
+//                if (box.height < box.bottom){
+                var direction  = e.PAGE_DOWN === k ? 'b' : 'u';
+                scroller.scroll(direction, box.y,false);
+//                }
+                var new_scrollPosition = scroller.getScroll(); // EXP {left: 0, top: 135}
+//                console.log('new_scrollPosition',new_scrollPosition);
+                if (new_scrollPosition.top != scrollPosition.top){
+                    newcellpx = e.PAGE_DOWN === k ? box.height : new_scrollPosition.top;
+                    var newx = this.getRowFrompx(newcellpx);
+//                    console.log('newx',newx);
+                    newCell = walk(newx,c,1)
+                    break;
+                }
+//                g.getView().scroller.scroll('b', 99999,true);
+//                g.getView().scroller.isScrollable();
+                var new_page = e.PAGE_DOWN === k ? Math.min(d.pages, d.activePage +1) : Math.max(1, d.activePage -1);
+                if (d.activePage !== new_page) {
+                    t.on('change', function (tb, pageData) {
+                        self.select(Math.min(r, g.store.getCount() - 1), c);
+                        //~ console.log('change',r,c);
+                    }, this, {single: true});
+                    if(k === e.PAGE_DOWN){
+                        t.moveNext();
+                    }else{
+                        t.movePrevious();
+//                        Go to the bottom of the new page
+                        var scroller = g.getView().scroller;
+                        var newbox = scroller.getBox();
+                        scroller.scroll('b', newbox.bottom,false);
+                    }
+                    return;
+                }else{ // same page, goto top / bottom row, keep c same
+                    r = e.PAGE_DOWN === k ? g.store.getCount() - 1 : 0;
+                    newCell = [r, c]
+                }
+                break;
             case e.DOWN:
                 newCell = walk(r + 1, c, 1);
                 break;
@@ -1281,7 +1379,7 @@ Ext.override(Ext.grid.CellSelectionModel, {
 
             case e.ENTER:
                 e.stopEvent();
-                g.onCellDblClick(r,c);
+                g.onCellDblClick(g,r,c);
                 break;
 
             default:
@@ -4059,37 +4157,52 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
     //~ 20121109 p['$constants.URL_PARAM_ACTION_NAME'] = 'grid';
     var self = this;
     var req = {
-        params:p,
+        params: p,
         waitMsg: 'Saving your data...',
-        success: Lino.action_handler( this, function(result) {
-          // console.log("20140728 afteredit.success got ", result);
-          //~ if (result.data_record) {
-          if (result.refresh_all) {
-              var cw = self.get_containing_window();
-              if (cw) {
-                  cw.main_item.refresh();
-              }
-              else console.log("20120123 cannot refresh_all",self);
-          } else if (result.rows) {
-              //~ self.getStore().loadData(result,true);
-              var r = self.getStore().reader.readRecords(result);
-              if (e.record.phantom) {
-                  // console.log("20140728 gonna call Store.insert()", self.getStore(), e.row, r.records);
-                  self.getStore().insert(e.row, r.records);
-              }else{
-                  // console.log("20140728 afteredit.success doUpdate", r.records[0]);
-                  self.getStore().doUpdate(r.records[0]);
-              }
-              self.getStore().rejectChanges(); 
-              /* 
-              get rid of the red triangles without saving the record again
-              */
-              //~ self.getStore().commitChanges(); // get rid of the red triangles
-          } else {
-              self.getStore().commitChanges(); // get rid of the red triangles
-              self.getStore().reload();        // reload our datastore.
-          }
-          }),
+        success: Lino.action_handler(this, function (result) {
+            // console.log("20140728 afteredit.success got ", result);
+            //~ if (result.data_record) {
+            if (result.refresh_all) {
+                var cw = self.get_containing_window();
+                if (cw) {
+                    cw.main_item.refresh();
+                }
+                else console.log("20120123 cannot refresh_all", self);
+            } else if (result.rows) {
+                //~ self.getStore().loadData(result,true);
+                var r = self.getStore().reader.readRecords(result);
+                var cell = e.grid.getSelectionModel().selection.cell; // post insert cord for edit / selection
+                if (e.record.phantom) {
+                    var was_editing = false;
+                    // console.log("20140728 gonna call Store.insert()", self.getStore(), e.row, r.records);
+                    if (e.grid.editing && e.grid.activeEditor) {
+                        cell = [e.grid.activeEditor.row, e.grid.activeEditor.col];
+                        console.log("was editing", cell);
+                        e.grid.activeEditor.cancelEdit();
+                        was_editing = true;
+                    }
+
+                    self.getStore().insert(e.row, r.records);
+                    if (was_editing) {
+                        e.grid.startEditing(cell[0], cell[1]);
+                    }
+
+                } else {
+                    // console.log("20140728 afteredit.success doUpdate", r.records[0]);
+                    self.getStore().doUpdate(r.records[0]);
+                }
+                self.getStore().rejectChanges();
+                /*
+            get rid of the red triangles without saving the record again
+            */
+                e.grid.getSelectionModel().select(cell[0], cell[1]);
+
+                //~ self.getStore().commitChanges(); // get rid of the red triangles
+            } else {
+                self.getStore().commitChanges(); // get rid of the red triangles
+                self.getStore().reload();        // reload our datastore.
+            }
+        }),
         scope: this,
         failure: Lino.ajax_error_handler(this)
     };
