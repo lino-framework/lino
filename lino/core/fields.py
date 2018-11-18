@@ -26,8 +26,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
 from django.db.models.fields import NOT_PROVIDED
 
-from lino.core.utils import resolve_field
-from lino.core.utils import resolve_model
+from lino.core.utils import resolve_field, full_model_name, resolve_model
 from lino.core.exceptions import ChangedAPI
 
 from lino.utils import IncompleteDate
@@ -85,12 +84,22 @@ class PercentageField(models.DecimalField):
         super(PercentageField, self).__init__(*args, **defaults)
 
 
+class TimeField(models.TimeField):
+    """
+    Like a TimeField, but allowed values are between
+    :attr:`calendar_start_hour
+    <lino.core.site.Site.calendar_start_hour>` and
+    :attr:`calendar_end_hour <lino.core.site.Site.calendar_end_hour>`.
+    """
+    pass
+
 class DatePickerField(models.DateField):
 
     """
     A DateField that uses a DatePicker instead of a normal DateWidget.
     Doesn't yet work.
     """
+    pass
 
 
 class MonthField(models.DateField):
@@ -121,14 +130,14 @@ class PriceField(models.DecimalField):
     `max_digits`.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, verbose_name=None, max_digits=10, **kwargs):
         defaults = dict(
-            max_length=10,
-            max_digits=10,
+            max_length=max_digits,
+            max_digits=max_digits,
             decimal_places=2,
         )
         defaults.update(kwargs)
-        super(PriceField, self).__init__(*args, **defaults)
+        super(PriceField, self).__init__(verbose_name, **defaults)
 
 
 #~ class MyDateField(models.DateField):
@@ -1033,3 +1042,108 @@ class ImportedFields(object):
         #~ logger.info('20120801 %s.declare_imported_fields() --> %s' % (
             #~ cls,cls._imported_fields))
 
+def make_remote_field(model, name):
+    parts = name.split('__')
+    if len(parts) == 1:
+        return
+    # It's going to be a RemoteField
+    # logger.warning("20151203 RemoteField %s in %s", name, cls)
+
+    from lino.core import store
+    cls = model
+    field_chain = []
+    editable = False
+    for n in parts:
+        if model is None:
+            raise Exception(
+                "Invalid remote field {0} for {1}".format(name, cls))
+
+        if isinstance(model, six.string_types):
+            # Django 1.9 no longer resolves the
+            # rel.model of ForeignKeys on abstract
+            # models, so we do it here.
+            model = resolve_model(model)
+            # logger.warning("20151203 %s", model)
+
+        fld = model.get_data_elem(n)
+        if fld is None:
+            raise Exception(
+                "Invalid RemoteField %s.%s (no field %s in %s)" %
+                (full_model_name(model), name, n, full_model_name(model)))
+        # make sure that the atomizer gets created.
+        store.get_atomizer(model, fld, fld.name)
+        field_chain.append(fld)
+        if isinstance(fld, models.OneToOneRel):
+            editable = True
+        if getattr(fld, 'remote_field', None):
+            model = fld.remote_field.model
+        elif getattr(fld, 'rel', None):
+            raise Exception("20180712")
+            model = fld.rel.model
+        else:
+            model = None
+
+    def getter(obj, ar=None):
+        try:
+            for fld in field_chain:
+                if obj is None:
+                    return None
+                obj = fld._lino_atomizer.full_value_from_object(
+                    obj, ar)
+            return obj
+        except Exception as e:
+            # raise
+            msg = "Error while computing {}: {} ({} in {})"
+            raise Exception(msg.format(
+                name, e, fld, field_chain))
+            # ~ if False: # only for debugging
+            if True:  # see 20130802
+                logger.exception(e)
+                return str(e)
+            return None
+
+    if not editable:
+        return RemoteField(getter, name, fld)
+
+    def setter(obj, value):
+        # logger.info("20180712 %s setter() %s", name, value)
+        # all intermediate fields are OneToOneRel
+        target = obj
+        try:
+            for fld in field_chain:
+                # print("20180712a %s" % fld)
+                if isinstance(fld, models.OneToOneRel):
+                    reltarget = getattr(target, fld.name, None)
+                    if reltarget is None:
+                        rkw = { fld.field.name: target}
+                        # print(
+                        #     "20180712 create {}({})".format(
+                        #         fld.related_model, rkw))
+                        reltarget = fld.related_model(**rkw)
+                        reltarget.full_clean()
+                        reltarget.save()
+
+                    setattr(target, fld.name, reltarget)
+                    target.full_clean()
+                    target.save()
+                    # print("20180712b {}.{} = {}".format(
+                    #     target, fld.name, reltarget))
+                    target = reltarget
+                else:
+                    setattr(target, fld.name, value)
+                    target.full_clean()
+                    target.save()
+                    # print(
+                    #     "20180712c setattr({},{},{}".format(
+                    #         target, fld.name, value))
+                    return True
+        except Exception as e:
+            raise e.__class__(
+                "Error while setting %s: %s" % (name, e))
+            # ~ if False: # only for debugging
+            if True:  # see 20130802
+                logger.exception(e)
+                return str(e)
+            return False
+
+    return RemoteField(getter, name, fld, setter)
