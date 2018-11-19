@@ -1186,7 +1186,12 @@ Ext.override(Ext.grid.CellSelectionModel, {
             },
             cell, newCell, r, c, ae;
             t = g.getTopToolbar();
-            d = t.getPageData();
+            if (t != undefined){
+                d = t.getPageData();
+            }
+            else{
+                d = undefined;
+            }
 
         switch(k){
             case e.ESC:
@@ -1217,7 +1222,7 @@ Ext.override(Ext.grid.CellSelectionModel, {
                     newCell = walk(r, c + 1, 1);
                 }
                 e.stopEvent(); // Don't allow tab to cause grid to loose focus
-                if(!newCell){
+                if(!newCell && d != undefined){
                     var self = this;
                     var new_page = e.shiftKey? Math.max(1, d.activePage -1) : Math.min(d.pages, d.activePage +1) ;
                     if (d.activePage !== new_page) {
@@ -1272,7 +1277,7 @@ Ext.override(Ext.grid.CellSelectionModel, {
                         }).last().colIndex];
                         //~ console.log('end',newCell);
                         break;
-                    } else {
+                    } else if (d != undefined){
                         if (e.ctrlKey && d.activePage < d.pages) {
                             e.stopEvent();
                             var self = this;
@@ -1298,7 +1303,7 @@ Ext.override(Ext.grid.CellSelectionModel, {
                 var box = scroller.getBox();
                 //console.log('box',box);
                 var viewSize = scroller.getSize(); // EXP {width: 547, height: 500}
-                console.log('viewSize',viewSize);
+//                console.log('viewSize',viewSize);
                 var scrollPosition = scroller.getScroll(); // EXP {left: 0, top: 135}
 //                console.log('scrollPosition',scrollPosition);
 //                if (box.height < box.bottom){
@@ -1316,20 +1321,22 @@ Ext.override(Ext.grid.CellSelectionModel, {
                 }
 //                g.getView().scroller.scroll('b', 99999,true);
 //                g.getView().scroller.isScrollable();
-                var new_page = e.PAGE_DOWN === k ? Math.min(d.pages, d.activePage +1) : Math.max(1, d.activePage -1);
-                if (d.activePage !== new_page) {
-                    t.on('change', function (tb, pageData) {
-                        self.select(Math.min(r, g.store.getCount() - 1), c);
-                        //~ console.log('change',r,c);
-                    }, this, {single: true});
-                    if(k === e.PAGE_DOWN){
-                        t.moveNext();
-                    }else{
-                        t.movePrevious();
-//                        Go to the bottom of the new page
-                        var scroller = g.getView().scroller;
-                        var newbox = scroller.getBox();
-                        scroller.scroll('b', newbox.bottom,false);
+                if (d != undefined){
+                    var new_page = e.PAGE_DOWN === k ? Math.min(d.pages, d.activePage +1) : Math.max(1, d.activePage -1);
+                    if (d.activePage !== new_page) {
+                        t.on('change', function (tb, pageData) {
+                            self.select(Math.min(r, g.store.getCount() - 1), c);
+                            //~ console.log('change',r,c);
+                        }, this, {single: true});
+                        if(k === e.PAGE_DOWN){
+                            t.moveNext();
+                        }else{
+                            t.movePrevious();
+    //                        Go to the bottom of the new page
+                            var scroller = g.getView().scroller;
+                            var newbox = scroller.getBox();
+                            scroller.scroll('b', newbox.bottom,false);
+                        }
                     }
                     return;
                 }else{ // same page, goto top / bottom row, keep c same
@@ -4361,10 +4368,17 @@ Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
   // forceSelection: true,
   triggerAction: 'all',
   minListWidth:280, // 20131022
-  autoSelect: false,
+  autoSelect: true,
+//  lazyRender:true,
+//  lazyInit:false,
+//  validationDelay :0,
+//  typeAhead : true,
+//  typeAheadDelay :false,
   selectOnFocus: true, // select any existing text in the field immediately on focus.
   submitValue: true,
-  displayField: '{{constants.CHOICES_TEXT_FIELD}}', // 'text', 
+  queryDelay:0,
+  minChars: 0,
+  displayField: '{{constants.CHOICES_TEXT_FIELD}}', // 'text',
   valueField: '{{constants.CHOICES_VALUE_FIELD}}', // 'value',
   
   //~ initComponent : Ext.form.ComboBox.prototype.initComponent.createSequence(function() {
@@ -4373,6 +4387,10 @@ Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
       //~ Ext.form.ComboBox.initComponent(this);
       Lino.ComboBox.superclass.initComponent.call(this);
   },
+  initEvents : function(){
+        Lino.ComboBox.superclass.initEvents.call(this);
+        this.queryDelay = 0;
+   },
   setValue : function(v, record_data){
       /*
       Based on feature request developed in http://extjs.net/forum/showthread.php?t=75751
@@ -4501,8 +4519,8 @@ Lino.ComplexRemoteComboStore = Ext.extend(Ext.data.JsonStore,{
 Lino.RemoteComboFieldElement = Ext.extend(Lino.ComboBox,{
   mode: 'remote',
   //~ forceSelection:false,
-  minChars: 2, // default 4 is too much
-  queryDelay: 300, // default 500 is maybe slow
+  minChars: 0, // default 4 is too much
+//  queryDelay: 300, // default 500 is maybe slow
   queryParam: '{{constants.URL_PARAM_FILTER}}', 
   //~ typeAhead: true,
   //~ selectOnFocus: true, // select any existing text in the field immediately on focus.
