@@ -566,9 +566,9 @@ class ExtRenderer(JsRenderer):
                     yield ln
         
     def build_site_cache(self, force=False):
-        """Build the site cache files under `/media/cache`, especially the
+        """
+        Build the site cache files under `/media/cache`, especially the
         :xfile:`lino*.js` files, one per user user_type and language.
-
         """
         # if not self.is_prepared:
         #     self.prepare_layouts()

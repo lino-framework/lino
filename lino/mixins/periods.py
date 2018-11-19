@@ -104,11 +104,11 @@ class CombinedDateTime(dd.Model):
 
 class Started(CombinedDateTime):
     """
-    Mixin for models with two fields :attr:`start_date` and
-    :attr:`start_time`
+    Adds two fields :attr:`start_date` and :attr:`start_time`.
 
     .. attribute:: start_date
     .. attribute:: start_time
+
     """
     class Meta:
         abstract = True
@@ -116,7 +116,7 @@ class Started(CombinedDateTime):
     start_date = models.DateField(
         blank=True, null=True,
         verbose_name=_("Start date"))  # iCal:DTSTART
-    start_time = models.TimeField(
+    start_time = dd.TimeField(
         blank=True, null=True,
         verbose_name=_("Start time"))  # iCal:DTSTART
     #~ start = dd.FieldSet(_("Start"),'start_date start_time')
@@ -132,8 +132,7 @@ class Started(CombinedDateTime):
 class Ended(CombinedDateTime):
     """
     Mixin for models with two fields :attr:`end_date` and
-    :attr:`end_time` Models inheriting from this must also inherit
-    from Started.
+    :attr:`end_time`. 
 
     .. attribute:: end_date
     .. attribute:: end_time
@@ -144,7 +143,7 @@ class Ended(CombinedDateTime):
     end_date = models.DateField(
         blank=True, null=True,
         verbose_name=_("End Date"))
-    end_time = models.TimeField(
+    end_time = dd.TimeField(
         blank=True, null=True,
         verbose_name=_("End Time"))
 

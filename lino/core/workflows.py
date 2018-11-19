@@ -181,6 +181,7 @@ class Workflow(choicelists.ChoiceList):
 
     @classmethod
     def clear_transitions(cls):
+        assert cls._state_to_disabled_actions is None
         cls.workflow_actions = []
         
 
@@ -205,17 +206,6 @@ class ChangeStateAction(actions.Action):
         new_required = set(self.required_roles)
         if required_roles is not None:
             new_required |= required_roles
-        if target_state.name:
-
-            m = getattr(target_state.choicelist, 'allow_transition', None)
-            if m is not None:
-                raise Exception("20150621 was allow_transition still used?!")
-                assert 'allowed' not in required_roles
-
-                def allow(action, user, obj, state):
-                    return m(obj, user, target_state)
-                new_required.update(allow=allow)
-
         kw.update(required_roles=new_required)
         if self.help_text is None:
             if help_text is None:

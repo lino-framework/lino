@@ -1061,7 +1061,6 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
         txt = self.format_value(ar, v)
         return E.td(ar.obj2html(v, txt), **cellattrs)
 
-
 class TimeFieldElement(FieldElement):
     value_template = "new Lino.TimeField(%s)"
     # xtype = 'timefield'
@@ -1073,6 +1072,22 @@ class TimeFieldElement(FieldElement):
 
     oui5_field_template = "openui5/elems/field/TimeFieldElement.xml"
 
+    def get_field_options(self, **kwargs):
+        kwargs = FieldElement.get_field_options(self, **kwargs)
+        if settings.SITE.calendar_start_hour:
+            kwargs['minValue'] = '{}:00'.format(
+                settings.SITE.calendar_start_hour)
+            # kwargs['minValue'] = settings.SITE.calendar_start_hour
+        eh = settings.SITE.calendar_end_hour
+        if eh:
+            if eh > 12:
+                kwargs['maxValue'] = '{}:00 PM'.format(eh-12)
+            else:
+                kwargs['maxValue'] = '{}:00'.format(eh)
+            # kwargs['maxValue'] = settings.SITE.calendar_end_hour
+            # kwargs['maxValue'] = '9:00 PM'
+        return kwargs
+        
 
 class DateTimeFieldElement(FieldElement):
     # value_template = "new Lino.DateTimeField(%s)"

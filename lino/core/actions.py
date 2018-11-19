@@ -252,7 +252,7 @@ class Action(Parametrizable, Permittable):
     value action
     ===== =================================
     -1    :class:`as_pdf <lino_xl.lib.appypod.PrintTableAction>`
-    10    :class:`ShowInsert`, :class:`SubmitDetail`
+    10    :class:`ShowInsert`
     11    :attr:`duplicate <lino.mixins.duplicable.Duplicable.duplicate>`
     20    :class:`detail <ShowDetail>`
     30    :class:`delete <DeleteSelected>`
@@ -261,6 +261,7 @@ class Action(Parametrizable, Permittable):
     51    :class:`Clear Cache <lino.mixins.printable.ClearCacheAction>`
     60    :class:`ShowSlaveTable`
     90    default for all custom row actions
+    100   :class:`SubmitDetail`
     200   default for all workflow actions (:class:`ChangeStateAction <lino.core.workflows.ChangeStateAction>`)
     ===== =================================
 
@@ -635,7 +636,8 @@ class Action(Parametrizable, Permittable):
         else:
             label_repr = repr(str(self.label))
             name = "{} ({})".format(self.action_name, label_repr)
-            
+        # if self.button_text:
+        #     name = repr(str(self.button_text)) + " " + name
         return "<{}.{} {}>".format(
             self.__class__.__module__,
             self.__class__.__name__,
@@ -995,6 +997,7 @@ class SubmitDetail(SaveGridCell):
     Installed as `submit_detail` on every actor.
 
     """
+    sort_index = 100
     icon_name = 'disk'
     help_text = _("Save changes in this form")
     label = _("Save")

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2017 Luc Saffre
+# Copyright 2013-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """
 This defines the :class:`MergeAction` class.
@@ -25,7 +25,7 @@ from lino.core import layouts
 from lino.core import fields
 from lino.core.signals import pre_merge
 from lino.core.utils import full_model_name
-from lino.core.roles import SiteStaff
+from lino.core.roles import Expert
 from etgen.html import E
 from lino.api import rt
 
@@ -65,7 +65,7 @@ class MergeAction(actions.Action):
     sort_index = 31
     show_in_workflow = False
     readonly = False
-    required_roles = set([SiteStaff])
+    required_roles = set([Expert])
 
     def __init__(self, model, **kw):
 

@@ -206,9 +206,16 @@ class StartPlan(dd.Action):
     def get_options(self, ar):
         return {}
 
+    def get_plan_model(self):
+        return self.defining_actor.model
+        # return ar.actor.model
+    
     def run_from_ui(self, ar, **kw):
         options = self.get_options(ar)
-        plan = ar.actor.model.run_start_plan(ar.get_user(), **options)
+        pm = self.get_plan_model()
+        plan = pm.run_start_plan(ar.get_user(), **options)
+        # plan = self.defining_actor.model.run_start_plan(
+        #     ar.get_user(), **options)
         ar.goto_instance(plan)
 
 

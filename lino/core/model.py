@@ -25,9 +25,9 @@ from lino.core import fields
 from lino.core import signals
 from lino.core import actions
 from lino.utils import get_class_attr
+from .fields import make_remote_field
 from .utils import error2str
-from .utils import resolve_model
-from .utils import obj2str, full_model_name
+from .utils import obj2str
 from .diff import ChangeWatcher
 from .utils import obj2unicode
 from .signals import on_ui_created, pre_ui_delete, pre_ui_save
@@ -158,7 +158,7 @@ class Model(models.Model):
 
     """
     
-    allow_merge_action = True
+    allow_merge_action = False
     """Whether this model should have a merge action.
 
     See :class:`lino.core.merge.MergeAction`
@@ -302,110 +302,9 @@ class Model(models.Model):
         """
         #~ logger.info("20120202 get_data_elem %r,%r",model,name)
         if not name.startswith('__'):
-            parts = name.split('__')
-            if len(parts) > 1:
-                # It's going to be a RemoteField
-                # logger.warning("20151203 RemoteField %s in %s", name, cls)
-
-                from lino.core import store
-
-                model = cls
-                field_chain = []
-                editable = False
-                for n in parts:
-                    if model is None:
-                        raise Exception(
-                            "Invalid remote field {0} for {1}".format(name, cls))
-
-                    if isinstance(model, six.string_types):
-                        # Django 1.9 no longer resolves the
-                        # rel.model of ForeignKeys on abstract
-                        # models, so we do it here.
-                        model = resolve_model(model)
-                        # logger.warning("20151203 %s", model)
-
-                    fld = model.get_data_elem(n)
-                    if fld is None:
-                        raise Exception(
-                            "Invalid RemoteField %s.%s (no field %s in %s)" %
-                            (full_model_name(model), name, n, full_model_name(model)))
-                    # make sure that the atomizer gets created.
-                    store.get_atomizer(model, fld, fld.name)
-                    field_chain.append(fld)
-                    if isinstance(fld, models.OneToOneRel):
-                        editable = True
-                    if getattr(fld, 'remote_field', None):
-                        model = fld.remote_field.model
-                    elif getattr(fld, 'rel', None):
-                        raise Exception("20180712")
-                        model = fld.rel.model
-                    else:
-                        model = None
-
-                def getter(obj, ar=None):
-                    try:
-                        for fld in field_chain:
-                            if obj is None:
-                                return None
-                            obj = fld._lino_atomizer.full_value_from_object(
-                                obj, ar)
-                        return obj
-                    except Exception as e:
-                        # raise
-                        msg = "Error while computing {}: {} ({} in {})"
-                        raise Exception(msg.format(
-                            name, e, fld, field_chain))
-                        # ~ if False: # only for debugging
-                        if True:  # see 20130802
-                            logger.exception(e)
-                            return str(e)
-                        return None
-                    
-                if not editable:
-                    return fields.RemoteField(getter, name, fld)
-                
-                def setter(obj, value):
-                    # logger.info("20180712 %s setter() %s", name, value)
-                    # all intermediate fields are OneToOneRel
-                    target = obj
-                    try:
-                        for fld in field_chain:
-                            # print("20180712a %s" % fld)
-                            if isinstance(fld, models.OneToOneRel):
-                                reltarget = getattr(target, fld.name, None)
-                                if reltarget is None:
-                                    rkw = { fld.field.name: target}
-                                    # print(
-                                    #     "20180712 create {}({})".format(
-                                    #         fld.related_model, rkw))
-                                    reltarget = fld.related_model(**rkw)
-                                    reltarget.full_clean()
-                                    reltarget.save()
-                                    
-                                setattr(target, fld.name, reltarget)
-                                target.full_clean()
-                                target.save()
-                                # print("20180712b {}.{} = {}".format(
-                                #     target, fld.name, reltarget))
-                                target = reltarget
-                            else:
-                                setattr(target, fld.name, value)
-                                target.full_clean()
-                                target.save()
-                                # print(
-                                #     "20180712c setattr({},{},{}".format(
-                                #         target, fld.name, value))
-                                return True
-                    except Exception as e:
-                        raise Exception(
-                            "Error while setting %s: %s" % (name, e))
-                        # ~ if False: # only for debugging
-                        if True:  # see 20130802
-                            logger.exception(e)
-                            return str(e)
-                        return False
-                    
-                return fields.RemoteField(getter, name, fld, setter)
+            rf = make_remote_field(cls, name)
+            if rf:
+                return rf
 
         try:
             return cls._meta.get_field(name)

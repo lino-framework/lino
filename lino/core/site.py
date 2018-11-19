@@ -798,6 +798,21 @@ class Site(object):
     Leave this unchanged as long as :srcref:`docs/tickets/70` is not solved.
     """
 
+    calendar_start_hour = 7
+    """
+    The first hour of a work day.
+
+    Limits the choices of a :class:`lino.core.fields.CalendarTimeField`.
+    """
+
+    calendar_end_hour = 21
+    """
+    The last hour of a work day.
+
+    Limits the choices of a :class:`lino.core.fields.CalendarTimeField`.
+
+    """
+
     time_format_extjs = 'H:i'
     """
     Format (in ExtJS syntax) to use for displaying dates to the user.

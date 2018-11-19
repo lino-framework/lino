@@ -25,6 +25,8 @@ class Referrable(model.Model):
 
     A reference, unlike a primary key, can easily be changed.
 
+    Referrable objects are mergeable by default.
+
     .. attribute:: ref
 
         The reference. This must be either empty or unique.
@@ -32,6 +34,8 @@ class Referrable(model.Model):
     class Meta(object):
         abstract = True
 
+    allow_merge_action = True
+    
     ref_max_length = 40
     """
     The preferred width of the :attr:`ref` field.

@@ -343,6 +343,15 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     "See :attr:`lino.core.utils.Parametrizable.parameters`."
 
     _layout_class = layouts.ParamsLayout
+    _state_to_disabled_actions = None
+
+    ignore_required_states = False
+    """
+    Whether to ignore the required states of workflow actions.
+
+    Set this to `True` on a workflow if you want to disable workflow
+    control based on the state of the object.
+    """
 
     sort_index = 60
     """The :attr:`sort_index <lino.core.actions.Action.sort_index>` to be
@@ -729,7 +738,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         state = cls.get_row_state(obj)
         if state is not None:
             s |= cls._state_to_disabled_actions.get(state.name, set())
-        
         return s
 
     @classmethod
@@ -991,13 +999,19 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         # build a dict which maps state.name to a set of action names
         # to be disabled on objects having that state:
         cls._state_to_disabled_actions = {}
-        st2da = cls._state_to_disabled_actions
         wsf = cls.workflow_state_field
         if wsf is not None:
+            st2da = cls._state_to_disabled_actions
             for state in wsf.choicelist.get_list_items():
                 st2da[state.name] = set()
             for a in wsf.choicelist.workflow_actions:
                 st2da[a.target_state.name].add(a.action_name)
+            if wsf.choicelist.ignore_required_states:
+                # raise Exception("20181107")
+                # logger.info("20181107 %s", st2da)
+                # from pprint import pprint
+                # pprint(st2da)
+                return
             for ba in cls._actions_list:
                 # st2da[ba] = 1
                 if ba.action.action_name:
@@ -1127,14 +1141,14 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         super().
 
         Used e.g. by :class:`lino_xl.lib.outbox.models.MyOutbox` or
-        :class:`lino.modlib.users.mixins.ByUser`.
+        :class:`lino.modlib.users.ByUser`.
 
         Other usages are more hackerish:
 
         - :class:`lino_xl.lib.households.models.SiblingsByPerson`
-        - :class:`lino_welfare.modlib.cal.models.EntriesByClient`
+        - :class:`lino_welfare.modlib.cal.EntriesByClient`
         - :class:`lino_welfare.pcsw.models.Home`,
-        - :class:`lino.modlib.users.models.MySettings`.
+        - :class:`lino.modlib.users.MySettings`.
 
         """
         pass

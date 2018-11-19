@@ -560,7 +560,7 @@ class Table(AbstractTable):
         return super(Table, self).get_data_elem(name)
 
     @classmethod
-    def get_request_queryset(self, rr, **filter):
+    def get_request_queryset(self, ar, **filter):
         """
         Return the iterable of Django database objects for the specified
         action request.
@@ -574,7 +574,7 @@ class Table(AbstractTable):
             # print("20160329 {}".format(qs.query))
             if qs is None:
                 return self.model.objects.none()
-            kw = self.get_filter_kw(rr)
+            kw = self.get_filter_kw(ar)
             if kw is None:
                 return self.model.objects.none()
             if len(kw):
@@ -582,13 +582,13 @@ class Table(AbstractTable):
                 #     kw))
                 qs = qs.filter(**kw)
 
-            if rr.exclude:
-                qs = qs.exclude(**rr.exclude)
-                # qs = qs.exclude(rr.exclude)
+            if ar.exclude:
+                qs = qs.exclude(**ar.exclude)
+                # qs = qs.exclude(ar.exclude)
 
             spv = dict()
             for k in self.simple_parameters:
-                v = getattr(rr.param_values, k)
+                v = getattr(ar.param_values, k)
                 if v is not None:
                     spv[k] = v
             qs = self.model.add_param_filter(qs, **spv)
@@ -596,13 +596,13 @@ class Table(AbstractTable):
             if self.filter:
                 qs = qs.filter(self.filter)
 
-            if rr.filter:
-                qs = qs.filter(rr.filter)
+            if ar.filter:
+                qs = qs.filter(ar.filter)
 
-            if rr.known_values:
-                # logger.info("20120111 known values %r",rr.known_values)
+            if ar.known_values:
+                # logger.info("20120111 known values %r", ar.known_values)
                 d = {}
-                for k, v in list(rr.known_values.items()):
+                for k, v in list(ar.known_values.items()):
                     if v is None:
                         d[k + "__isnull"] = True
                     else:
@@ -614,14 +614,14 @@ class Table(AbstractTable):
                 qs = qs.exclude(**self.exclude)
                 # TODO: use Q object instead of dict
 
-            if rr.quick_search:
-                qs = self.add_quick_search_filter(qs, rr.quick_search)
-            if rr.gridfilters is not None:
-                qs = add_gridfilters(qs, rr.gridfilters)
-            extra = rr.extra or self.extra
+            if ar.quick_search:
+                qs = self.add_quick_search_filter(qs, ar.quick_search)
+            if ar.gridfilters is not None:
+                qs = add_gridfilters(qs, ar.gridfilters)
+            extra = ar.extra or self.extra
             if extra is not None:
                 qs = qs.extra(**extra)
-            order_by = rr.order_by or self.order_by
+            order_by = ar.order_by or self.order_by
             if order_by:
                 # logger.info("20120122 order_by %s",order_by)
                 qs = qs.order_by(*order_by)
@@ -630,14 +630,21 @@ class Table(AbstractTable):
             return qs
 
         if self.model._meta.abstract:
+            # Django's UNION feature is a pseudo feature because
+            # count() doesn't work and because it doesn't work on
+            # mysql (Django ticket #28281).  So here we emulate a
+            # union and return an iteration over the different models
+            # which implement the abstract model. One limitation is of
+            # course that they are ordered only within their model.
+            # There is no known in production usage of this feature.
             def func():
                 for m in models_by_base(self.model):
-                    qs = m.get_request_queryset(rr, **filter)
+                    qs = m.get_request_queryset(ar, **filter)
                     qs = apply(qs)
                     for obj in qs:
                         yield obj
             return func()
-        qs = self.get_queryset(rr)
+        qs = self.get_queryset(ar)
         return apply(qs)
 
     @classmethod

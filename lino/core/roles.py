@@ -50,8 +50,11 @@ class Anonymous(UserRole):
 class SiteUser(UserRole):
     """Every authenticated user has this role."""
 
+class Expert(SiteUser):
+    """A user with some expertise."""
 
-class SiteStaff(SiteUser):
+
+class SiteStaff(Expert):
     """
     A user who can configure site-wide functionality.
 

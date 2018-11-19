@@ -57,6 +57,7 @@ from lino.core.workflows import State, Workflow, ChangeStateAction
 
 from lino.core.fields import fields_list, ImportedFields
 from lino.core.fields import Dummy, DummyField
+from lino.core.fields import TimeField
 
 # 20140314 need a Dummy object to define a dummy module
 # from lino.core.layouts import BaseLayout as Dummy  # 20140314

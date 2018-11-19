@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2018 Luc Saffre
+# Copyright 2009-2018 Rumma & Ko Ltd
 # License: BSD, see file LICENSE for more details.
 
 """
@@ -17,6 +17,7 @@ import six
 
 import logging
 logger = logging.getLogger(__name__)
+from pkg_resources import parse_version as PV
 
 
 #from io import StringIO
@@ -552,7 +553,7 @@ def install_migrations(self, loader):
             to_version = m(globals_dict)
             if not isinstance(to_version, six.string_types):
                 raise Exception("Oops, %s didn't return a string!" % m)
-            if to_version <= from_version:
+            if PV(to_version) <= PV(from_version):
                 raise Exception(
                     "Oops, %s tries to migrate from version %s to %s ?!" %
                     (m, from_version, to_version))

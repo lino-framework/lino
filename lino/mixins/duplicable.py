@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2017 Luc Saffre
+# Copyright 2012-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Defines the model mixin :class:`Duplicable`.  "duplicable"
@@ -16,10 +16,10 @@ logger = logging.getLogger(__name__)
 
 from django.utils.translation import ugettext_lazy as _
 
-from lino import AFTER17
 from lino.core import actions
 from lino.core import model
 from lino.core.diff import ChangeWatcher
+from lino.core.roles import Expert
 
 
 class Duplicate(actions.Action):
@@ -37,16 +37,17 @@ class Duplicate(actions.Action):
     readonly = False  # like ShowInsert. See docs/blog/2012/0726
     callable_from = 'td'
 
-    # def is_callable_from(self, caller):
-    #     if isinstance(caller, actions.ShowInsert):
-    #         return False
-    #     return True
-
-    def unused_get_action_permission(self, ar, obj, state):
-        if ar.get_user().user_type.readonly:
-            return False
-        return super(Duplicate, self).get_action_permission(ar, obj, state)
-
+    def get_view_permission(self, user_type):
+        # the action is readonly because it doesn't write to the
+        # current object, but since it does modify the database we
+        # want to hide it for readonly users.
+        if user_type:
+            if user_type.readonly:
+                return False
+            if not user_type.has_required_roles([Expert]):
+                return False
+        return super(Duplicate, self).get_view_permission(user_type)
+        
     def run_from_code(self, ar, **known_values):
         obj = ar.selected_rows[0]
         related = []
@@ -55,10 +56,7 @@ class Duplicate(actions.Action):
             if fk.name in m.allow_cascaded_delete or fk.name in m.allow_cascaded_copy:
                 related.append((fk, m.objects.filter(**{fk.name: obj})))
 
-        if AFTER17:
-            fields_list = obj._meta.concrete_fields
-        else:
-            fields_list = obj._meta.fields
+        fields_list = obj._meta.concrete_fields
         if True:
             for f in fields_list:
                 if not f.primary_key:

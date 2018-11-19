@@ -1,4 +1,4 @@
-# Copyright 2009-2017 Luc Saffre
+# Copyright 2009-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Defines the :class:`Instantiator` class and some other utilities
@@ -44,9 +44,7 @@ from lino.core.utils import resolve_model, UnresolvedModel
 
 from lino.utils import i2d  # for backward compatibility of .py fixtures
 from lino.core.utils import obj2str
-
-from lino import AFTER17
-
+from lino.core.fields import make_remote_field, RemoteField
 
 class DataError(Exception):
     pass
@@ -257,8 +255,13 @@ class Instantiator(object):
                 if len(a) == 2:
                     name = a[0]
                     lookup_fields[name] = a[1]
-                field = self.model._meta.get_field(name)
-                self.fields.append(field)
+
+                rf = make_remote_field(model, name)
+                if rf:
+                    self.fields.append(rf)
+                else:
+                    field = self.model._meta.get_field(name)
+                    self.fields.append(field)
         # print " ".join(dir(model_class))
         # print " ".join(model_class._meta.fields)
         # for f in model_class._meta.fields:
@@ -300,16 +303,26 @@ class Instantiator(object):
         # logger.debug("Instantiator.build(%s,%r,%r)",self.model_class._meta.db_table,values,kw)
         # i = 0
         kw['_m2m'] = {}
+        setters = []
         for i, v in enumerate(values):
+            fld = self.fields[i]
             if isinstance(v, six.string_types):
                 v = v.strip()
-                if len(v) > 0:
-                    kw[self.fields[i].name] = v
+                if len(v) == 0:
+                    continue
+            if isinstance(fld, RemoteField):
+                setters.append((fld, v))
             else:
-                kw[self.fields[i].name] = v
-            # i += 1
+                kw[fld.name] = v
+
+        for name, v in list(kw.items()):
+            if "__" in name:
+                del kw[name]
+                fld = make_remote_field(self.model, name)
+                setters.append((fld, v))
+            
         # kw.update(self.default_values)
-        for k, v in list(self.default_values.items()):
+        for k, v in self.default_values.items():
             kw.setdefault(k, v)
         for c in self.converters:
             kw = c.convert(**kw)
@@ -321,8 +334,13 @@ class Instantiator(object):
         m2m = kw.pop("_m2m")
         instance = self.model(**kw)
         instance.full_clean()
-        if m2m:
+        if m2m or len(setters):
             instance.save()
+            
+        for fld, v in setters:
+            fld.setter(instance, v)
+        
+        if m2m:
             for k, v in list(m2m.items()):
                 queryset = getattr(instance, k)
                 queryset.add(*v)
