@@ -4368,10 +4368,17 @@ Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
   // forceSelection: true,
   triggerAction: 'all',
   minListWidth:280, // 20131022
-  autoSelect: false,
+  autoSelect: true,
+//  lazyRender:true,
+//  lazyInit:false,
+//  validationDelay :0,
+//  typeAhead : true,
+//  typeAheadDelay :false,
   selectOnFocus: true, // select any existing text in the field immediately on focus.
   submitValue: true,
-  displayField: '{{constants.CHOICES_TEXT_FIELD}}', // 'text', 
+  queryDelay:0,
+  minChars: 0,
+  displayField: '{{constants.CHOICES_TEXT_FIELD}}', // 'text',
   valueField: '{{constants.CHOICES_VALUE_FIELD}}', // 'value',
   
   //~ initComponent : Ext.form.ComboBox.prototype.initComponent.createSequence(function() {
@@ -4380,6 +4387,10 @@ Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
       //~ Ext.form.ComboBox.initComponent(this);
       Lino.ComboBox.superclass.initComponent.call(this);
   },
+  initEvents : function(){
+        Lino.ComboBox.superclass.initEvents.call(this);
+        this.queryDelay = 0;
+   },
   setValue : function(v, record_data){
       /*
       Based on feature request developed in http://extjs.net/forum/showthread.php?t=75751
@@ -4508,8 +4519,8 @@ Lino.ComplexRemoteComboStore = Ext.extend(Ext.data.JsonStore,{
 Lino.RemoteComboFieldElement = Ext.extend(Lino.ComboBox,{
   mode: 'remote',
   //~ forceSelection:false,
-  minChars: 2, // default 4 is too much
-  queryDelay: 300, // default 500 is maybe slow
+  minChars: 0, // default 4 is too much
+//  queryDelay: 300, // default 500 is maybe slow
   queryParam: '{{constants.URL_PARAM_FILTER}}', 
   //~ typeAhead: true,
   //~ selectOnFocus: true, // select any existing text in the field immediately on focus.
