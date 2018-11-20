@@ -38,7 +38,7 @@ if False:
     add("20", _("Warning"), 'warning')
     add("30", _("Error"), 'error')
 
-
+    
 class Checker(dd.Choice):
     """Base class for the choices of :class:`Checkers`.
 
@@ -82,6 +82,14 @@ class Checker(dd.Choice):
         cls.self = cls()
         Checkers.add_item_instance(cls.self)
 
+    @classmethod
+    def check_instance(cls, *args, **kwargs):
+        """
+        Run :meth:`get_checkdata_problems` on this checker for the given
+        instance.
+        """
+        return cls.self.get_checkdata_problems(*args, **kwargs)
+        
     def get_checkable_models(self):
         """Return a list of the models to check.
 

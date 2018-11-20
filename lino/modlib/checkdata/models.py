@@ -92,7 +92,7 @@ class UpdateProblemsByController(dd.Action):
             fix = self.fix_them
         Problem = rt.models.checkdata.Problem
         gfk = Problem.owner
-        checkers = get_checkable_models()[self.model]
+        checkers = get_checkers_for(self.model)
         for obj in ar.selected_rows:
             assert isinstance(obj, self.model)
             qs = Problem.objects.filter(**gfk2lookup(gfk, obj))
@@ -288,16 +288,26 @@ def set_checkdata_actions(sender, **kw):
                 icon_name = 'bell', combo_group = "checkdata"))
 
 
+def get_checkers_for(model):
+    return get_checkable_models()[model]
+
+def check_instance(obj):
+    """
+    Run all checkers on the given instance.  Return list of problems.
+    """
+    for chk in get_checkers_for(obj.__class__):
+        for prb in chk.check_instance(obj):
+            yield prb
 
 def get_checkable_models(*args):
-    """Return an `OrderedDict` mapping each model which has at least one
+    """
+    Return an `OrderedDict` mapping each model which has at least one
     checker to a list of these checkers.
 
     The dict is ordered to avoid that checkers run in a random order.
-
     """
     checkable_models = OrderedDict()
-    for chk in Checkers.objects():
+    for chk in Checkers.get_list_items():
         if len(args):
             skip = True
             for arg in args:
