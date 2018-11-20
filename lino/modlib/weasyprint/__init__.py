@@ -13,7 +13,7 @@ See :doc:`/specs/weasyprint`.
 # https://travis-ci.org/lino-framework/book/jobs/260560833
 import warnings
 warnings.filterwarnings(
-    "ignore", 'There are known rendering problems with Cairo <= 1.14.0')
+    "ignore", 'There are known rendering problems with Cairo')
 warnings.filterwarnings(
     "ignore", '@font-face support needs Pango >= 1.38')
 
