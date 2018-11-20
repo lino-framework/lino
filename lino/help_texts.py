@@ -104,12 +104,10 @@ FOO_date and FOO_time (where FOO is specified in name which
 must be either "start" or "end")."""),
     'lino.periods.CombinedDateTime.get_datetime' : _("""Return a datetime value from the two corresponding
 date and time fields."""),
-    'lino.periods.Started' : _("""Mixin for models with two fields start_date and
-start_time"""),
+    'lino.periods.Started' : _("""Adds two fields start_date and start_time."""),
     'lino.periods.Started.save' : _("""Fills default value "today" to start_date"""),
     'lino.periods.Ended' : _("""Mixin for models with two fields end_date and
-end_time Models inheriting from this must also inherit
-from Started."""),
+end_time."""),
     'lino.periods.Ended.get_duration' : _("""Return the duration in hours."""),
     'lino.periods.DateRange' : _("""Mixin for models which represent a period whose start and end are
 date fields."""),
@@ -680,8 +678,7 @@ Commentable as it should be displayed by the slave summary of
 CommentsByOwner."""),
     'lino.modlib.comments.Commentable.on_commented' : _("""This is automatically called when a comment has been created
 or modified."""),
-    'lino.modlib.notify.Message' : _("""A Notification message is an instant message sent by the
-application to a given user."""),
+    'lino.modlib.notify.Message' : _("""The Django model that represents a notification message."""),
     'lino.modlib.notify.Message.user' : _("""The recipient."""),
     'lino.modlib.notify.Message.owner' : _("""The database object which controls this message."""),
     'lino.modlib.notify.Message.emit_notification' : _("""Class method which creates one database object per recipient."""),
