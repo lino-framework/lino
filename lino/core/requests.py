@@ -28,7 +28,7 @@ from django.core import exceptions
 
 from lino.core import constants
 from lino.utils import AttrDict
-from etgen.html import E, tostring
+from etgen.html import E, tostring, iselement
 from lino.core.auth.utils import AnonymousUser
 
 from .boundaction import BoundAction
@@ -708,6 +708,7 @@ class BaseRequest(object):
           {{ar.show('users.UsersOverview')}}
         """
         from lino.utils.report import Report
+        #from lino.core.actors import Actor
 
         if master_instance is not None:
             kwargs.update(master_instance=master_instance)
@@ -718,7 +719,9 @@ class BaseRequest(object):
             assert not kwargs
             ar = spec
         else:
+            #assert isinstance(spec, type) and issubclass(spec, Actor)
             ar = self.spawn(spec, **kwargs)
+            # return self.renderer.show_story(spec, **kwargs)
 
         def doit():
             # print 20160530, ar.renderer
@@ -740,11 +743,15 @@ class BaseRequest(object):
 
     def show_story(self, *args, **kwargs):
         """
-        Shortcut to :meth:`show_story
-        <lino.core.renderer.HtmlRenderer.show_story>`.
+        Shortcut to the renderer's :meth:`show_story
+        <lino.core.renderer.HtmlRenderer.show_story>` method.
         """
         return self.renderer.show_story(self, *args, **kwargs)
     
+    def show_dashboard(self):
+        """Utility method to show the dashboard of """
+        return self.show_story(
+            self.get_user().get_preferences().dashboard_items)
 
     def show_menu(self, language=None, **kwargs):
         """Show the main menu for the requesting user using the requested

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2017 Luc Saffre
+# Copyright 2009-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """
 Defines :class:`HtmlRenderer` and :class:`TextRenderer`.
@@ -34,6 +34,7 @@ from lino.core.menus import Menu, MenuItem
 # from etgen.html import _html2rst as html2rst
 # from etgen.html import html2rst
 
+from .dashboard import DashboardItem
 from .views import json_response
 from .plugin import Plugin
 # from . import elems
@@ -460,6 +461,9 @@ request `tar`."""
                 elif isinstance(item, TableRequest):
                     assert item.renderer is not None
                     elems.extend(self.table2story(item, **kwargs))
+                elif isinstance(item, DashboardItem):
+                    elems.append(
+                        self.show_story(ar, item.render(ar), **kwargs))
                 elif isiterable(item):
                     elems.append(self.show_story(ar, item, **kwargs))
                     # for i in self.show_story(item, *args, **kwargs):
@@ -577,7 +581,6 @@ class TextRenderer(HtmlRenderer):
         for ln in self.table2story(*args, **kwargs):
             print(ln)
               
-
     def table2story(self, ar, column_names=None, header_level=None,
                     header_links=None, nosummary=False, stripped=True,
                     show_links=False, **kwargs):
@@ -650,6 +653,9 @@ class TextRenderer(HtmlRenderer):
                 elif isinstance(item, type) and issubclass(item, Actor):
                     ar = item.default_action.request(parent=ar)
                     self.show_table(ar, stripped=stripped, **kwargs)
+                elif isinstance(item, DashboardItem):
+                    self.show_story(
+                        ar, item.render(ar), stripped, **kwargs)
                 elif isinstance(item, ActionRequest):
                     self.show_table(item, stripped=stripped, **kwargs)
                     # print(item.table2rst(*args, **kwargs))

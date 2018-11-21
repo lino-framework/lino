@@ -23,16 +23,24 @@ class DashboardItem(Permittable):
 
         The width in percent of total available width.
 
+    .. attribute:: min_count
+
+        Hide this item if there are less than min_count rows.
+
     """
 
     width = None
     header_level = None
+    min_count = None
     
-    def __init__(self, name):
+    def __init__(self, name, header_level=2, min_count=1):
         self.name = name
+        self.header_level = header_level
+        self.min_count = min_count
+        
         
     def render(self, ar):
-        """Return a HTML string """
+        """Yield a list of etree html elements"""
 
     def render_request(self, ar, sar):
         """
@@ -45,13 +53,11 @@ class DashboardItem(Permittable):
         and :class:`RequestItem`.
         """
         T = sar.actor
-        # temp 20181121
-        if not sar.get_total_count():
-            # print("20180212 render no rows in ", sar)
-            return ''
-        if self.header_level is None:
-            s = ''
-        else:
+        if self.min_count is not None:
+            if sar.get_total_count() < self.min_count:
+                # print("20180212 render no rows in ", sar)
+                return
+        if self.header_level is not None:
             buttons = sar.plain_toolbar_buttons()
             buttons.append(
                 ar.window_action_button(
@@ -65,11 +71,10 @@ class DashboardItem(Permittable):
                 elems.append(b)
                 elems.append(' ')
             
-            s = tostring(E.h2(
-                str(sar.actor.get_title_base(sar)), ' ', *elems))
+            yield E.h2(str(
+                sar.actor.get_title_base(sar)), ' ', *elems)
 
-        s += tostring(ar.show(sar))
-        return s
+        yield sar
             
 class ActorItem(DashboardItem):
     """A dashboard item which simply renders a given actor.
@@ -84,10 +89,9 @@ class ActorItem(DashboardItem):
         The header level.
 
     """
-    def __init__(self, actor, header_level=2):
+    def __init__(self, actor, **kwargs):
         self.actor = actor
-        self.header_level = header_level
-        super(ActorItem, self).__init__(str(actor))
+        super(ActorItem, self).__init__(str(actor), **kwargs)
         
     def get_view_permission(self, user_type):
         return self.actor.default_action.get_view_permission(user_type)
@@ -105,32 +109,33 @@ class ActorItem(DashboardItem):
         """
         T = self.actor
         sar = ar.spawn(T, limit=T.preview_limit)
-        return self.render_request(ar, sar)
+        for i in self.render_request(ar, sar):
+            yield i
     
 class RequestItem(DashboardItem):
     """
     Experimentally used in `lino_book.projects.events`.
     """
-    def __init__(self, sar, header_level=2):
+    def __init__(self, sar, **kwargs):
         self.sar = sar
-        self.header_level = header_level
-        super(RequestItem, self).__init__(None)
+        super(RequestItem, self).__init__(None, **kwargs)
         
     def get_view_permission(self, user_type):
         return self.sar.get_permission()
     
     def render(self, ar):
-        return self.render_request(ar, self.sar)
+        for i in self.render_request(ar, self.sar):
+            yield i
         
 
-class CustomItem(DashboardItem):
-    """Won't work. Not used and not tested."""
-    def __init__(self, name, func, *args, **kwargs):
-        self.func = func
-        self.args = args
-        self.kwargs = kwargs
-        super(CustomItem, self).__init__(name)
+# class CustomItem(DashboardItem):
+#     """Won't work. Not used and not tested."""
+#     def __init__(self, name, func, *args, **kwargs):
+#         self.func = func
+#         self.args = args
+#         self.kwargs = kwargs
+#         super(CustomItem, self).__init__(name)
         
-    def render(self, ar):
-        return self.func(ar, *self.args, **self.kwargs)
+#     def render(self, ar):
+#         return self.func(ar, *self.args, **self.kwargs)
                           

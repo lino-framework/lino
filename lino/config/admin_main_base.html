@@ -99,9 +99,7 @@
 {{ after_welcome }}
             
 {% block admin_main_items %}
-{% for i in user.get_preferences().dashboard_items -%}
-{{ i.render(ar) }}
-{%- endfor %}
+{{ tostring(ar.show_dashboard()) }}
 {% endblock %}
 
 </div>
