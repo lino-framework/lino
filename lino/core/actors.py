@@ -1555,16 +1555,19 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     @classmethod
     def request(self, *args, **kw):
-        """Return an :class:`ActionRequest <lino.core.requests.ActionRequest>`
-        on this actor.
-
+        """
+        Return an action request on this actor.
         """
         kw.update(actor=self)
         return ActionRequest(*args, **kw)
 
     @classmethod
-    def request_from(self, ar, *args, **kw):
-        sar = self.request(*args, **kw)
+    def request_from(cls, ar, *args, **kwargs):
+        """
+        Return an action request on this actor which inherits from the
+        given parent request.
+        """
+        sar = cls.request(*args, **kwargs)
         sar.setup_from(ar)
         return sar
 

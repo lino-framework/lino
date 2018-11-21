@@ -146,7 +146,10 @@ class BoundAction(object):
         when called by anonymous.
 
         """
-        if not self._allow(ar.get_user(), obj, state):
+        u = ar.get_user()
+        if not self.action.get_view_permission(u.user_type):
+            return False
+        if not self._allow(u, obj, state):
             return False
         if not self.action.get_action_permission(ar, obj, state):
             return False

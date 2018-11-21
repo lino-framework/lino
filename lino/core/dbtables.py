@@ -1,4 +1,4 @@
-# Copyright 2009-2017 Luc Saffre
+# Copyright 2009-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
@@ -568,6 +568,7 @@ class Table(AbstractTable):
         The default implementation calls :meth:`get_queryset` and then
         applies request parameters.
         """
+        # print("20181121b get_request_queryset", self)
 
         def apply(qs):
         
@@ -578,8 +579,6 @@ class Table(AbstractTable):
             if kw is None:
                 return self.model.objects.none()
             if len(kw):
-                # print("20171116 dbtables.py get_request_queryset({})".format(
-                #     kw))
                 qs = qs.filter(**kw)
 
             if ar.exclude:

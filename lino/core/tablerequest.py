@@ -79,6 +79,7 @@ class TableRequest(ActionRequest):
         or :attr:`sliced_data_iterator` is accesed.
 
         """
+        # print("20181121 execute", self.actor)
         try:
             self._data_iterator = self.get_data_iterator()
             if self._data_iterator is None:
@@ -160,6 +161,7 @@ class TableRequest(ActionRequest):
             return l
         #~ logger.info("20120914 tables.get_data_iterator %s",self)
         #~ logger.info("20120914 tables.get_data_iterator %s",self.actor)
+        # print("20181121 get_data_iterator", self.actor)
         return self.actor.get_request_queryset(self)
 
     def get_total_count(self):

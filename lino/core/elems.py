@@ -1675,6 +1675,9 @@ class SlaveSummaryPanel(HtmlBoxElement):
 
     def __init__(self, lh, actor, **kw):
         box = fields.HtmlBox(actor.label, help_text=actor.help_text)
+        # def getter(*args, **kwargs):
+        #     print("20181121 SlaveSummaryPanel getter", actor)
+        #     return actor.get_table_summary(*args, **kwargs)
         fld = fields.VirtualField(box, actor.get_table_summary)
         # fld.name = actor.__module__ + '_' + actor.__name__
         fld.name = actor.actor_id.replace('.', '_')

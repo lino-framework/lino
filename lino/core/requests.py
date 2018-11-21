@@ -296,7 +296,8 @@ class BaseRequest(object):
         from this request to the other.
 
         Deprecated. You should rather instantiate a request and
-        specify parent instead.
+        specify parent instead. Or use :meth:`spawn_request` on
+        parent.
         """
         if not self.must_execute():
             return
