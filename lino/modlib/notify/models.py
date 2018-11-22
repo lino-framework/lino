@@ -380,7 +380,7 @@ class MyMessages(My, Messages):
             else:
                 s += ar.parse_memo(obj.subject)
             e  = etree.parse(StringIO(s), html_parser)
-            return E.li(*e.iter())
+            return E.li(E.div(*e.iter()))
             # s += obj.body
             # return "<li>{}</li>".format(s)
 
