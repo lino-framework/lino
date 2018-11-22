@@ -4,6 +4,8 @@ python:
   - "3.6"
 env:
   - DJANGO=1.11
+  global:
+    secure: YscqZKGnX2vxiqO0RlGYli1oWCfJsHHiMd+RzScbyiCyDSNedFlI7Da5bYJaOeQ9VxG9gd6Fe6gw/3d38CkOFItqYTGHSDiw3MccWMFBaIGwXa11z6SHRVviUCNPujAXl/4Cq0W7AedB4vAbgDUoCbPdRuQ7d3gHNGBzQFDbN6w=
 
 # command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
 install:
