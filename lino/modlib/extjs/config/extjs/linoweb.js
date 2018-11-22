@@ -4384,13 +4384,15 @@ Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
   //~ initComponent : Ext.form.ComboBox.prototype.initComponent.createSequence(function() {
   initComponent : function(){
       this.contextParams = {};
+      this.on('expand',function(){
+        console.log("expand",this.store.getRange());
+        if (this.store.getRange().length > 1){
+            this.select(this.store.getRange()[0].id);
+        }
+      },this);
       //~ Ext.form.ComboBox.initComponent(this);
       Lino.ComboBox.superclass.initComponent.call(this);
   },
-  initEvents : function(){
-        Lino.ComboBox.superclass.initEvents.call(this);
-        this.queryDelay = 0;
-   },
   setValue : function(v, record_data){
       /*
       Based on feature request developed in http://extjs.net/forum/showthread.php?t=75751
