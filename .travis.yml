@@ -23,7 +23,7 @@ script:
   - inv prep test
 
 after_script:
-  if [ "${TRAVIS_PYTHON_VERSION}" = "2.7"]; then ./bash/trigger_build.sh "lino-framework/react" "Auto test triggered by repo `basename $(git rev-parse --show-toplevel)` commit `git rev-parse HEAD`" "$TRAVIS_API_TOKEN"; fi
+  if [ "${TRAVIS_PYTHON_VERSION}" = "2.7" ]; then ./bash/trigger_build.sh "lino-framework/react" "Auto test triggered by repo `basename $(git rev-parse --show-toplevel)` commit `git rev-parse HEAD`" "$TRAVIS_API_TOKEN"; fi
 
 #after_success:
   # coveralls
