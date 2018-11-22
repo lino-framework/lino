@@ -22,7 +22,7 @@ script:
   - inv prep test
 
 after_success:
-  - ./bash/triger_build.sh "lino-framework/react" "Auto test triggered by: `basename $(git rev-parse --show-toplevel)`:`git rev-parse HEAD`" "$TRAVIS_API_TOKEN"
+  - ./bash/trigger_build.sh "lino-framework/react" "Auto test triggered by: `basename $(git rev-parse --show-toplevel)`:`git rev-parse HEAD`" "$TRAVIS_API_TOKEN"
   # coveralls
 
 notifications:
