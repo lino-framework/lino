@@ -236,7 +236,7 @@ class Site(object):
     `lino.archive`. Also tidy up usage of
     :mod:`lino.utils.dblogger`. To be meditated.
 
-    See also :ref:`lino.logging`.
+    See also :ref:`host.logging`.
 
     """
 
@@ -1183,7 +1183,7 @@ class Site(object):
     """
     The name of Lino's main log file, created in :meth:`setup_logging`.
 
-    See also :ref:`lino.logging`.
+    See also :ref:`host.logging`.
     """
     auto_configure_logger_names = 'schedule atelier django lino radicale'
     """
@@ -1488,10 +1488,7 @@ class Site(object):
         It does nothing at all if :attr:`auto_configure_logger_names`
         is set to `None` or empty.
 
-        See also :ref:`lino.logging`.
-
-        See also Django's doc about `Logging
-        <https://docs.djangoproject.com/en/1.11/topics/logging/>`__.
+        See also :ref:`host.logging`.
 
         """
         if not self.auto_configure_logger_names:
