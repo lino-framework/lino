@@ -21,8 +21,10 @@ script:
   - # coverage run --source=lino setup.py test
   - inv prep test
 
+after_script:
+ - if [ "${TRAVIS_PYTHON_VERSION}" = "2.7"]; then ./bash/trigger_build.sh "lino-framework/react" "Auto test triggered by: `basename $(git rev-parse --show-toplevel)`:`git rev-parse HEAD`" "$TRAVIS_API_TOKEN"; fi
+
 after_success:
-  - ./bash/trigger_build.sh "lino-framework/react" "Auto test triggered by: `basename $(git rev-parse --show-toplevel)`:`git rev-parse HEAD`" "$TRAVIS_API_TOKEN"
   # coveralls
 
 notifications:
