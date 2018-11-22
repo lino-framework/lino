@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2013 Luc Saffre
+# Copyright 2008-2013 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 #~ import logging

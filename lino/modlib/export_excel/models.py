@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2014-2018 Josef Kejzlar, Luc Saffre, Hamza Khchine
+# Copyright 2014-2018 Josef Kejzlar, Rumma & Ko Ltd, Hamza Khchine
 # License: BSD (see file COPYING for details)
 
 """Database models for `lino.modlib.export_excel`.

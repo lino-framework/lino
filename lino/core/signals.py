@@ -1,4 +1,4 @@
-# Copyright 2013-2015 Luc Saffre
+# Copyright 2013-2015 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """This defines Lino's standard system signals.

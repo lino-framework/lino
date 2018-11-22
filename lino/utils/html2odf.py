@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2016 Luc Saffre
+# Copyright 2011-2016 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """This module contains mainly a utility function :func:`html2odf`

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011 Luc Saffre
+# Copyright 2011 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """

@@ -1,4 +1,4 @@
-# Copyright 2015 Luc Saffre
+# Copyright 2015 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Serves as menu hook for several other modules.

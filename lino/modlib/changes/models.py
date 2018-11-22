@@ -1,4 +1,4 @@
-# Copyright 2012-2017 Luc Saffre
+# Copyright 2012-2017 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Database models for this plugin.

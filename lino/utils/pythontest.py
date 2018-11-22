@@ -1,4 +1,4 @@
-# Copyright 2013-2015 by Luc Saffre.
+# Copyright 2013-2015 by Rumma & Ko Ltd.
 # License: BSD, see LICENSE for more details.
 
 """An extended :class:`TestCase` for the plain python tests of a Lino

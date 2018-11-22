@@ -1,4 +1,4 @@
-# Copyright 2010-2017 Luc Saffre
+# Copyright 2010-2017 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 from __future__ import unicode_literals

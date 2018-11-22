@@ -1,4 +1,4 @@
-# Copyright 2009-2017 Luc Saffre
+# Copyright 2009-2017 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """The default URLconf module for Lino applications.

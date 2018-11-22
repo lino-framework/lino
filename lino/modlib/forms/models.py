@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2014-2015 Luc Saffre
+# Copyright 2014-2015 Rumma & Ko Ltd
 """
 Database models for `lino.modlib.bootstrap3`.
 

@@ -1,4 +1,4 @@
-# Copyright 2016 Luc Saffre
+# Copyright 2016 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """This plugins installs a build method for generating printable

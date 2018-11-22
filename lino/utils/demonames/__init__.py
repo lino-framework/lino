@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2015 Luc Saffre
+# Copyright 2012-2015 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 u"""A collection of tools for generating fictive people and addresses.
