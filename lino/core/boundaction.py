@@ -78,6 +78,10 @@ class BoundAction(object):
     def get_window_layout(self):
         return self.action.get_window_layout(self.actor)
 
+    def get_layout_handel(self):
+        layout = self.get_window_layout()
+        return layout.get_layout_handle() if layout is not None else None
+
     def get_window_size(self):
         return self.action.get_window_size(self.actor)
 

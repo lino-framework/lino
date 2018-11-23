@@ -30,6 +30,10 @@ def with_user_profile(profile, func, *args, **kwargs):
         _for_user_profile = old
         return rv
 
+def set_user_profile(profile):
+    """Used in doctests to set a default profile"""
+    global _for_user_profile
+    _for_user_profile = profile
 
 def get_user_profile():
     return _for_user_profile
