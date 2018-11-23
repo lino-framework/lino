@@ -568,7 +568,11 @@ class FieldElement(LayoutElement):
 
         if self.field.help_text is not None:
             help_text = format_lazy(u"{}",self.field.help_text)
-            kw.update(tooltip=help_text)
+        elif settings.SITE.show_internal_field_names:
+            help_text = format_lazy("(%s.%s) " % ( self.layout_handle.layout._datasource, self.field.name))
+        else:
+            help_text = ''
+        kw.update(tooltip=help_text)
 
         if label is None:
             kw.update(header=self.name)
