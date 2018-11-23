@@ -1,11 +1,15 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2017 Luc Saffre
+# Copyright 2011-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 from __future__ import unicode_literals
 from builtins import str
 from builtins import object
 import json
+
+from io import StringIO
+from lxml import etree
+html_parser = etree.HTMLParser()
 
 from django.db import models
 from django.conf import settings
@@ -364,7 +368,7 @@ class MyMessages(My, Messages):
         #     'mark_all_seen')
         # html = tostring(ar.action_button(mark_all, None))
         # TODO: make action_button() work with list actions
-        html = ''
+        # html = ''
         ba = rt.models.notify.MyMessages.get_action_by_name('mark_seen')
 
         def fmt(obj):
@@ -375,13 +379,16 @@ class MyMessages(My, Messages):
                 s += ar.parse_memo(obj.body)
             else:
                 s += ar.parse_memo(obj.subject)
+            e  = etree.parse(StringIO(s), html_parser)
+            return E.li(E.div(*e.iter()))
             # s += obj.body
-            return "<li>{}</li>".format(s)
+            # return "<li>{}</li>".format(s)
 
         items = []
         for obj in qs:
             items.append(fmt(obj))
-        return html + "<ul>{}</ul>".format(''.join(items))
+        return E.ul(*items)
+        # return html + "<ul>{}</ul>".format(''.join(items))
 
     # filter = models.Q(seen__isnull=True)
 

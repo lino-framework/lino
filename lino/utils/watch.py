@@ -1,4 +1,4 @@
-# Copyright 2012-2017 Luc Saffre
+# Copyright 2012-2017 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """It defines the functions :func:`watch_changes` and
 :func:`watch_all_changes`.

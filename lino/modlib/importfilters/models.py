@@ -1,4 +1,4 @@
-# Copyright 2009-2015 Luc Saffre
+# Copyright 2009-2015 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Database models for `lino.modlib.importfilter`.

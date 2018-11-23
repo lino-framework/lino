@@ -1,4 +1,4 @@
-# Copyright 2014-2015 Josef Kejzlar, Luc Saffre
+# Copyright 2014-2015 Josef Kejzlar, Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """This app installs a button to "export" any table to excel xls format.

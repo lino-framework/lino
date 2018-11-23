@@ -446,6 +446,9 @@ request `tar`."""
         """
         Render the given story as an HTML element. Ignore `stripped`
         because it makes no sense in HTML.
+
+        A story is an iterable of things that can be rendered.
+
         """
         from lino.core.actors import Actor
         from lino.core.tables import TableRequest

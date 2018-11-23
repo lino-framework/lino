@@ -1,4 +1,4 @@
-# Copyright 2009-2011 Luc Saffre
+# Copyright 2009-2011 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """A middleware for sending SQL statements to the Lino logger.

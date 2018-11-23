@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2016 Luc Saffre
+# Copyright 2013-2016 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Defines the :class:`DocTest` and :class:`DemoTestCase` classes.

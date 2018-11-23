@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2017 Luc Saffre
+# Copyright 2008-2017 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """See :doc:`/specs/ssin`.

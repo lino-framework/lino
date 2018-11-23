@@ -1,4 +1,4 @@
-# Copyright 2010-2015 Luc Saffre
+# Copyright 2010-2015 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Generic support for :ref:`mldbc`.

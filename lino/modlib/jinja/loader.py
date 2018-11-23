@@ -1,4 +1,4 @@
-# Copyright 2012-2015 Luc Saffre
+# Copyright 2012-2015 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Defines a Loader which is automatically installed to

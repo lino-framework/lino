@@ -1,4 +1,4 @@
-# Copyright 2009-2016 Luc Saffre
+# Copyright 2009-2016 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """Defines explicit code names for URL parameters
 

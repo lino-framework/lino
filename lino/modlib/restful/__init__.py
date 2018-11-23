@@ -1,4 +1,4 @@
-# Copyright 2016-2017 Luc Saffre
+# Copyright 2016-2017 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Lino's :mod:`lino.modlib.restful` plugin is an adapter to the

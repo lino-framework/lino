@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2017 Luc Saffre
+# Copyright 2017 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 # This started as a copy of Django 1.11 django.contrib.auth.middleware.
 

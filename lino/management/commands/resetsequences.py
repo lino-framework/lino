@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2017 by Luc Saffre.
+# Copyright 2017 by Rumma & Ko Ltd.
 # License: BSD, see LICENSE for more details.
 
 """.. management_command:: resetsequences

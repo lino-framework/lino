@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2017 Luc Saffre.
+# Copyright 2017 Rumma & Ko Ltd.
 # License: BSD, see LICENSE for more details.
 
 """This package contains code from django.contrib.auth which needed a

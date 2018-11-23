@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015-2016 Luc Saffre
+# Copyright 2015-2016 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 raise Exception("20160627 Is still being used somewhere?")
