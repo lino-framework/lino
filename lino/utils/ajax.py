@@ -55,7 +55,7 @@ class AjaxExceptionResponse(MiddlewareMixin):
             response = "%s: " % exc_type.__name__
             response += "%s" % exc_info
 
-            if not isinstance(exception, self.no_traceback):
+            if True:  # not isinstance(exception, self.no_traceback):
                 # message to be logged:
                 msg = "AjaxExceptionResponse {0}\n".format(response)
                 msg += "\nin request {0}\n".format(format_request(request))
