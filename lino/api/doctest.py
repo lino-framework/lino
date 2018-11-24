@@ -193,7 +193,7 @@ def screenshot(obj, filename, rstname, username='robin'):
             app.error("Failed to create {0}".format(filename))
 
     runserver(settings.SETTINGS_MODULE, f)
-        
+
 
 def show_menu_path(spec, language=None):
     """
@@ -275,7 +275,7 @@ def show_workflow(actions, all=False, language=None):
                      # required_roles
                     ])
         print(table(cols, cells).strip())
-        
+
     if language:
         with translation.override(language):
             return doit()
@@ -398,8 +398,8 @@ def walk_menu_items(username=None, severe=True):
             doit(ar)
     else:
         doit(None)
-        
-        
+
+
 def show_sql_queries():
     """
     Print the SQL queries which have been made since last call.
@@ -410,7 +410,7 @@ def show_sql_queries():
         sql = qry['sql'].strip()
         print(sql.replace('"', ''))
     # reset_sql_queries()
-        
+
 
 def show_sql_summary(**kwargs):
     """Print a summary of the SQL queries which have been made since last
@@ -425,10 +425,10 @@ def show_sql_summary(**kwargs):
                 yield "({time}) {sql};".format(**qry)
             except KeyError as e:
                 yield "{} : {}".format(qry, e)
-                
+
     sql_summary(func(), **kwargs)
     # reset_sql_queries()
-        
+
 
 def add_call_logger(owner, name):
     """Replace the callable named name on owner by a wrapper which
@@ -451,7 +451,7 @@ def str2languages(txt):
         with translation.override(lng.django_code):
             lst.append(six.text_type(txt))
     return lst
-    
+
 def show_choicelist(cls):
     """
     Similar to :func:`rt.show`, but the `text` is shown in all
@@ -463,7 +463,7 @@ def show_choicelist(cls):
         row = [i.value, i.name] + str2languages(i.text)
         rows.append(row)
     print(table(headers, rows))
-    
+
 
 def show_permissions(*args):
     print(visible_for(*args))
@@ -474,3 +474,14 @@ def show_quick_search_fields(*args):
         print(str(m._meta.verbose_name_plural))
         for fld in m.quick_search_fields:
             print("- {} ({})".format(fld.verbose_name, fld.name))
+
+def pprint_json_string(s):
+    """
+    Used to doctest json values and have them be python 2/3 passable.
+    :param s: json string
+
+    """
+    print(json.dumps(json.loads(s),
+                     indent=2,
+                     sort_keys=True,
+                     separators=(",", ": ")))
