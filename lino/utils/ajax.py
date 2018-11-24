@@ -45,8 +45,9 @@ from django.utils.deprecation import MiddlewareMixin
 class AjaxExceptionResponse(MiddlewareMixin):
     """The middleware class definition."""
     
-    no_traceback = (PermissionDenied, ObjectDoesNotExist)
-    
+    #no_traceback = (PermissionDenied, ObjectDoesNotExist)
+    no_traceback = (PermissionDenied, )
+
     def process_exception(self, request, exception):
         if request.is_ajax():
             (exc_type, exc_info, tb) = sys.exc_info()
@@ -55,7 +56,7 @@ class AjaxExceptionResponse(MiddlewareMixin):
             response = "%s: " % exc_type.__name__
             response += "%s" % exc_info
 
-            if True:  # not isinstance(exception, self.no_traceback):
+            if not isinstance(exception, self.no_traceback):
                 # message to be logged:
                 msg = "AjaxExceptionResponse {0}\n".format(response)
                 msg += "\nin request {0}\n".format(format_request(request))
