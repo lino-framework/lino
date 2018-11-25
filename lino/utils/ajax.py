@@ -44,9 +44,13 @@ from django.utils.deprecation import MiddlewareMixin
 
 class AjaxExceptionResponse(MiddlewareMixin):
     """The middleware class definition."""
-    
-    #no_traceback = (PermissionDenied, ObjectDoesNotExist)
-    no_traceback = (PermissionDenied, )
+
+    no_traceback = (PermissionDenied, ObjectDoesNotExist)
+    # no_traceback = (PermissionDenied, )
+
+    # see also /docs/specs/invalid_requests.rst
+    # it can be helpful to temporarily disable filtering of ObjectDoesNotExist
+    # exceptions on a production site in order to debug problems like #2699
 
     def process_exception(self, request, exception):
         if request.is_ajax():
