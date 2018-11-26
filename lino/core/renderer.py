@@ -718,6 +718,7 @@ class JsRenderer(HtmlRenderer):
     """
     A Lino renderer for HTML with JavaScript.
     Common base for
+    :class:`lino_react.react.renderer.Renderer`,
     :class:`lino.modlib.extjs.ext_renderer.ExtRenderer` and
     :class:`lino_extjs6.extjs.ext_renderer.ExtRenderer`.
     """
