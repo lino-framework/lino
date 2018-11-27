@@ -724,7 +724,7 @@ build method.  Returning an empty list means that this item is
 not printable.  For subclasses of SimpleBuildMethod
 the returned list may not contain more than 1 element."""),
     'lino.modlib.printing.Printable.get_printable_context' : _("""Adds a series of names to the context used when rendering
-printable documents. See /user/templates_api."""),
+printable documents."""),
     'lino.modlib.printing.Printable.get_body_template' : _("""Return the name of the body template to use when rendering this
 object in a printable excerpt (lino_xl.lib.excerpts).
 An empty string means that Lino should use the default value

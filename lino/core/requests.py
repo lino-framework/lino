@@ -353,7 +353,7 @@ class BaseRequest(object):
     def get_printable_context(self, **kw):
         """
         Adds a series of names to the context used when rendering printable
-        documents. See :doc:`/user/templates_api`.
+        documents.
         """
         # from django.conf import settings
         from django.utils.translation import ugettext

@@ -1,4 +1,4 @@
-# Copyright 2008-2015 Luc Saffre
+# Copyright 2008-2015 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Defines a list of languages (the :class:`Language

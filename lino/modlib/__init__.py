@@ -1,4 +1,4 @@
-# Copyright 2008-2017 Luc Saffre
+# Copyright 2008-2017 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """The standard model library included with Lino.

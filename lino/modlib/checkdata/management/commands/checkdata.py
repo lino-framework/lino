@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015-2016 by Luc Saffre.
+# Copyright 2015-2016 by Rumma & Ko Ltd.
 # License: BSD, see LICENSE for more details.
 """Defines the :manage:`checkdata` management command:
 

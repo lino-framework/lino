@@ -1,10 +1,10 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2010-2015 Luc Saffre
+# Copyright 2010-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """This fixture installs fictive root users (administrators), one for
-each language.  These names are being used by the :doc:`Online demo
-sites </demos>`.
+each language.  These names are being used by the  online demo
+sites.
 
 .. Lino currently knows demo users for the following languages:
   .. lino2rst::

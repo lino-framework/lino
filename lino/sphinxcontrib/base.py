@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2017 Luc Saffre
+# Copyright 2017-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """
 Adds Lino-specific Sphinx setup.
@@ -7,7 +7,6 @@ Adds Lino-specific Sphinx setup.
 .. rst:directive:: tcname
 
     Used for documenting template context names. 
-    Usage example in :ref:`tplcontext`.
 
 .. rst:role:: tcname
 

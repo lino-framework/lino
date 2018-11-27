@@ -1,5 +1,5 @@
 #coding: latin1
-## Copyright 2005 Luc Saffre 
+## Copyright 2005 Rumma & Ko Ltd
 
 ## This file is part of the Lino project.
 

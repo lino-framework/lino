@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2016 Luc Saffre
+# Copyright 2008-2016 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """Extended fields for use with `lino.modlib.gfks`.
 """
