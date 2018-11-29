@@ -39,3 +39,5 @@ lino/modlib/openui5/static/openui5/openui5-CKEditor/ckeditor-repo/
 lino/modlib/openui5/static/openui5/openui5-CKEditor/ckeditor-working/
 
 lino/modlib/openui5/static/openui5/openui5-CKEditor/ckeditor4\.3\.2-min/
+
+*.py#
