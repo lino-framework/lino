@@ -92,7 +92,7 @@ class Modified(model.Model):
     class Meta(object):
         abstract = True
 
-    modified = models.DateTimeField(_("Modified"), editable=False)
+    modified = models.DateTimeField(_("Modified"), editable=False, null=True)
 
     def save(self, *args, **kwargs):
         if self.auto_touch and not settings.SITE.loading_from_dump:
