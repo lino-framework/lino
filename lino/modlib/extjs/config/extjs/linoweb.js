@@ -4385,14 +4385,26 @@ Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
   initComponent : function(){
       this.contextParams = {};
       this.on('expand',function(){
-        console.log("expand",this.store.getRange());
+        // console.log("expand",this.store.getRange());
         if (this.store.getRange().length > 1){
+            // Auto selection the first choices in the dropdown list.
             this.select(this.store.getRange()[0].id);
         }
       },this);
       //~ Ext.form.ComboBox.initComponent(this);
       Lino.ComboBox.superclass.initComponent.call(this);
+      this.queryDelay = 0;
   },
+  //Override this to accept DELETE key as not a specialkey and show choices.
+  onKeyUp : function(e){
+    var k = e.getKey();
+    if(this.editable !== false && this.readOnly !== true && (k == e.BACKSPACE || k == e.DELETE || !e.isSpecialKey())){
+
+        this.lastKey = k;
+        this.dqTask.delay(this.queryDelay);
+    }
+    Ext.form.ComboBox.superclass.onKeyUp.call(this, e);
+    },
   setValue : function(v, record_data){
       /*
       Based on feature request developed in http://extjs.net/forum/showthread.php?t=75751
