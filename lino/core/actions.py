@@ -866,7 +866,6 @@ class ShowEmptyTable(ShowDetail):
     def as_bootstrap_html(self, ar):
         return super(ShowEmptyTable, self).as_bootstrap_html(ar, '-99998')
 
-
 class ShowInsert(TableAction):
     """
     Open the Insert window filled with a row of blank or default
@@ -919,6 +918,13 @@ class ShowInsert(TableAction):
             return False
         return super(ShowInsert, self).get_view_permission(user_type)
 
+    def create_instance(self, ar):
+        """
+        create a temporary instance that will not be saved, used only to
+        build the button.
+        """
+        return ar.create_instance()
+
     def get_status(self, ar, **kw):
         kw = super(ShowInsert, self).get_status(ar, **kw)
         if 'record_id' in kw:
@@ -926,7 +932,7 @@ class ShowInsert(TableAction):
         if 'data_record' in kw:
             return kw
         # raise Exception("20150218 %s" % self)
-        elem = ar.create_instance()
+        elem = self.create_instance(ar)
         rec = ar.elem2rec_insert(ar.ah, elem)
         kw.update(data_record=rec)
         return kw
