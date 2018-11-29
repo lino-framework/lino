@@ -33,6 +33,7 @@ from lino.api import rt
 import lino
 from lino.core import constants
 from lino.core.renderer import JsRenderer
+from lino.core.renderer_mixins import JsCacheRenderer
 
 from lino.api.ad import Plugin
 
@@ -64,7 +65,6 @@ else:
 
 from lino.core import elems as ext_elems
 
-from lino.modlib.users.choicelists import UserTypes
 
 # if settings.SITE.user_model:
 #     from lino.modlib.users import models as users
@@ -87,7 +87,7 @@ def prepare_label(mi):
     #~ return label
 
 
-class ExtRenderer(JsRenderer):
+class ExtRenderer(JsRenderer, JsCacheRenderer):
     """An HTML renderer that uses the ExtJS Javascript toolkit.
 
     """
@@ -98,6 +98,7 @@ class ExtRenderer(JsRenderer):
     
     def __init__(self, plugin):
         super(ExtRenderer, self).__init__(plugin)
+        JsCacheRenderer.__init__(self)
         jsgen.register_converter(self.py2js_converter)
 
         for s in 'green blue red yellow'.split():
@@ -564,143 +565,6 @@ class ExtRenderer(JsRenderer):
             for p in settings.SITE.installed_plugins:
                 for ln in p.get_row_edit_lines(e, panel):
                     yield ln
-        
-    def build_site_cache(self, force=False):
-        """
-        Build the site cache files under `/media/cache`, especially the
-        :xfile:`lino*.js` files, one per user user_type and language.
-        """
-        # if not self.is_prepared:
-        #     self.prepare_layouts()
-        #     self.is_prepared = True
-
-        if settings.SITE.never_build_site_cache:
-            logger.debug(
-                "Not building site cache because `settings.SITE.never_build_site_cache` is True")
-            return
-        if not os.path.isdir(settings.MEDIA_ROOT):
-            logger.debug(
-                "Not building site cache because " +
-                "directory '%s' (settings.MEDIA_ROOT) does not exist.",
-                settings.STATIC_ROOT)
-            return
-
-        started = time.time()
-        # logger.info("20140401 build_site_cache started")
-
-        settings.SITE.on_each_app('setup_site_cache', force)
-
-        settings.SITE.makedirs_if_missing(
-            os.path.join(settings.MEDIA_ROOT, 'upload'))
-        settings.SITE.makedirs_if_missing(
-            os.path.join(settings.MEDIA_ROOT, 'webdav'))
-
-        if force or settings.SITE.build_js_cache_on_startup:
-            count = 0
-            for lng in settings.SITE.languages:
-                with translation.override(lng.django_code):
-                    for user_type in UserTypes.objects():
-                        count += with_user_profile(
-                            user_type, self.build_js_cache, force)
-            logger.info("%d lino*.js files have been built in %s seconds.",
-                        count, time.time() - started)
-
-    def build_js_cache(self, force):
-        """Build the :xfile:`lino*.js` file for the current user and the
-        current language.  If the file exists and is up to date, don't
-        generate it unless `force` is `True`.
-
-        This is called
-
-        - on each request if :attr:`build_js_cache_on_startup
-          <lino.core.site.Site.build_js_cache_on_startup>` is `False`.
-
-        - with `force=True` when
-          :class:`lino.modlib.lino.models.BuildSiteCache` action is
-          run.
-
-        """
-        fn = os.path.join(*self.lino_js_parts())
-
-        def write(f):
-            self.write_lino_js(f)
-
-        return settings.SITE.kernel.make_cache_file(fn, write, force)
-    
-    def prepare_layouts(self):
-        
-        self.actors_list = [
-            rpt for rpt in kernel.master_tables
-            + kernel.slave_tables
-            + list(kernel.generic_slaves.values())
-            + kernel.virtual_tables
-            + kernel.frames_list
-            + list(kernel.CHOICELISTS.values())]
-
-        # self.actors_list.extend(
-        #     [a for a in kernel.CHOICELISTS.values()
-        #      if settings.SITE.is_installed(a.app_label)])
-
-        # don't generate JS for abstract actors
-        self.actors_list = [a for a in self.actors_list
-                            if not a.is_abstract()]
-
-        # Lino knows three types of form layouts:
-
-        self.form_panels = set()
-        self.param_panels = set()
-        self.action_param_panels = set()
-
-        def add(res, collector, fl, formpanel_name):
-            # res: an actor class or action instance
-            # collector: one of form_panels, param_panels or
-            # action_param_panels
-            # fl : a FormLayout
-            if fl is None:
-                return
-            if fl._datasource is None:
-                return  # 20130804
-
-            if fl._datasource != res:
-                fl._other_datasources.add(res)
-                # if str(res).startswith('newcomers.AvailableCoaches'):
-                #     logger.info("20150716 %s also needed by %s", fl, res)
-                # if str(res) == 'courses.Pupils':
-                #     print("20160329 ext_renderer.py {2}: {0} != {1}".format(
-                #         fl._datasource, res, fl))
-
-            if False:
-                try:
-                    lh = fl.get_layout_handle(self.plugin)
-                except Exception as e:
-                    logger.exception(e)
-                    raise Exception("Could not define %s for %r: %s" % (
-                        formpanel_name, res, e))
-
-                # lh.main.loosen_requirements(res)
-                for e in lh.main.walk():
-                    e.loosen_requirements(res)
-
-            if fl not in collector:
-                fl._formpanel_name = formpanel_name
-                fl._url = res.actor_url()
-                collector.add(fl)
-                # if str(res) == 'courses.Pupils':
-                #     print("20160329 ext_renderer.py collected {}".format(fl))
-
-        for res in self.actors_list:
-            add(res, self.form_panels, res.detail_layout,
-                "%s.DetailFormPanel" % res)
-            add(res, self.form_panels, res.insert_layout,
-                "%s.InsertFormPanel" % res)
-            add(res, self.param_panels, res.params_layout,
-                "%s.ParamsPanel" % res)
-
-            for ba in res.get_actions():
-                if ba.action.parameters:
-                    add(res, self.action_param_panels,
-                        ba.action.params_layout,
-                        "%s.%s_ActionFormPanel" % (res, ba.action.action_name))
 
     def write_lino_js(self, f):
 
@@ -834,7 +698,6 @@ class ExtRenderer(JsRenderer):
                 # table but does not have any menu item.  But that
                 # might be dangerous (cause uncovered regressions), so
                 # I prefer to leave this for another time.
-                    
 
             window_actions = [ba.action for ba in rpt.get_actions() if
                               ba.action.opens_a_window]
@@ -866,21 +729,6 @@ class ExtRenderer(JsRenderer):
                 user_type, get_user_profile())
 
         return 1
-
-    def lino_js_parts(self):
-        user_type = get_user_profile()
-        filename = 'lino_'
-        if user_type is not None:
-            filename += user_type.value + '_'
-        filename += translation.get_language() + '.js'
-        return ('cache', 'js', filename)
-
-    def linolib_template(self):
-        # env = jinja2.Environment(loader=jinja2.FileSystemLoader(
-        #     os.path.dirname(__file__)))
-        # return env.get_template('linoweb.js')
-        env = settings.SITE.plugins.jinja.renderer.jinja_env
-        return env.get_template('extjs/linoweb.js')
 
     def toolbar(self, action_list):
         """
