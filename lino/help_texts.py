@@ -282,11 +282,6 @@ of most html tags."""),
 extjs/index.html template."""),
     'lino.modlib.extjs.ext_renderer.ExtRenderer.html_page_main_window' : _("""Called from lino/modlib/extjs/config/extjs/index.html."""),
     'lino.modlib.extjs.ext_renderer.ExtRenderer.html_page_user' : _("""Build the "user menu", i.e. the menu in the top right corner."""),
-    'lino.modlib.extjs.ext_renderer.ExtRenderer.build_site_cache' : _("""Build the site cache files under /media/cache, especially the
-lino*.js files, one per user user_type and language."""),
-    'lino.modlib.extjs.ext_renderer.ExtRenderer.build_js_cache' : _("""Build the lino*.js file for the current user and the
-current language.  If the file exists and is up to date, don't
-generate it unless force is True."""),
     'lino.modlib.extjs.ext_renderer.ExtRenderer.toolbar' : _("""This also manages action groups"""),
     'lino.modlib.extjs.ext_renderer.ExtRenderer.build_on_render' : _("""dh is a FormLayout or a ColumnsLayout"""),
     'lino.modlib.extjs.ext_renderer.ExtRenderer.js_render_custom_action' : _("""Defines the non-window action handler used by
