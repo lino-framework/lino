@@ -508,6 +508,12 @@ required_roles."""),
 two properties name and url."""),
     'lino.utils.media.MediaFile.name' : _("""return the filename on the server"""),
     'lino.utils.media.MediaFile.get_url' : _("""return the url that points to file on the server"""),
+    'lino.utils.memo.Parser' : _("""The memo parser."""),
+    'lino.utils.memo.Parser.register_django_model' : _("""Register the given string name as command for referring to
+database rows of the given Django database model model."""),
+    'lino.utils.memo.Parser.parse' : _("""Parse the given string s, replacing memo commands by their
+result."""),
+    'lino.utils.memo.Parser.obj2memo' : _("""Render the given database object as memo markup."""),
     'lino.utils.mldbc.fields.BabelCharField' : _("""Define a variable number of CharField database fields, one for
 each language of your lino.core.site.Site.languages.  See
 mldbc."""),

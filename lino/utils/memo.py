@@ -174,6 +174,7 @@ COMMAND_REGEX = re.compile(r"\[(\w+)\s*((?:[^[\]]|\[.*?\])*?)\]")
 EVAL_REGEX = re.compile(r"\[=((?:[^[\]]|\[.*?\])*?)\]")
 
 class Parser(object):
+    """The memo parser. """
 
     safe_mode = False
 
