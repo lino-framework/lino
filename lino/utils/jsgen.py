@@ -28,7 +28,7 @@ var p14 = { "items": [ fld22, fld33 ], "title": "Panel", "xtype": "panel" };
 
 >>> print(py2js(d))
 { "main": { "items": [ fld11, p14 ], "title": "Main", "xtype": "form" }, "wc": [ 1, 2, 3 ] }
-  
+
 """
 
 from __future__ import unicode_literals
@@ -67,6 +67,23 @@ CONVERTERS = []
 
 def dict2js(d):
     return ", ".join(["%s: %s" % (k, py2js(v)) for k, v in d.items()])
+
+def obj2dict(o, attrs):
+    """
+
+    :param o: object
+    :param attrs: space seperated string or list of strings of wanted attrs
+    :param kws: existing dict of values
+    :return: dict with key:value pairs that match the object[arrts] if arrts exist in object
+    """
+    result = dict()
+    if type(attrs) != list:
+        attrs = attrs.split(" ")
+
+    for k in attrs:
+        if hasattr(o, k):
+            result[k] = getattr(o, k)
+    return result
 
 
 def register_converter(func):
@@ -307,7 +324,7 @@ class VisibleComponent(Component, Permittable):
 
     def get_label(self):
         return self._label
-    
+
     def set_label(self, v):
         self._label = v
 
@@ -448,7 +465,7 @@ def py2js(v):
         else:
             def sortkey(x):
                 return x[0]
-            
+
         items = sorted(items, key=sortkey)
         # try:
         #     items = sorted(items, key=sortkey)

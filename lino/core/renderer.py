@@ -21,13 +21,15 @@ from atelier import rstgen
 from django.conf import settings
 from django.db import models
 # from django.utils.encoding import force_text
+from django.utils.text import format_lazy
+
 
 from django.utils.translation import ugettext as _
 from django.utils.translation import get_language
 
 from etgen.html2rst import RstTable
 from lino.utils import isiterable
-from lino.utils.jsgen import py2js
+from lino.utils.jsgen import py2js, js_code
 from etgen.html import E, tostring, iselement, forcetext, to_rst
 from lino.core import constants
 from lino.core.menus import Menu, MenuItem
@@ -830,5 +832,21 @@ class JsRenderer(HtmlRenderer):
     def obj2url(self, ar, obj):
         return self.js2url(self.instance_handler(ar, obj, None))
 
+    def add_help_text(self, kw, help_text, title, datasource, fieldname):
+        if settings.SITE.use_quicktips:
+            if settings.SITE.show_internal_field_names:
+                ttt = "(%s.%s) " % (datasource, fieldname)
+            else:
+                ttt = ''
+            if help_text:
+                ttt = format_lazy(u"{}{}", ttt, help_text)
+            if ttt:
+                # kw.update(qtip=self.field.help_text)
+                # kw.update(toolTipText=self.field.help_text)
+                # kw.update(tooltip=self.field.help_text)
+                kw.update(listeners=dict(render=js_code(
+                    "Lino.quicktip_renderer(%s,%s)" % (
+                        py2js(title),
+                        py2js(ttt)))
+                ))
 
-    

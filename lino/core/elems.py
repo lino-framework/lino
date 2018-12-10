@@ -119,7 +119,7 @@ class GridColumn(jsgen.Component):
         kw.update(colIndex=index)
         if editor.hidden:
             kw.update(hidden=True)
-        if settings.SITE.use_filterRow:
+        if settings.SITE.use_filterRow and layout_handle.ui.renderer.extjs_version is not None:
             if editor.filter_type:
                 if index == 0:
                     # first column used to show clear filter icon in this
@@ -149,7 +149,7 @@ class GridColumn(jsgen.Component):
         if isinstance(editor, FieldElement):
             if settings.SITE.use_quicktips:
                 # 20171227 taken from extjs6:
-                add_help_text(kw,
+                layout_handle.ui.renderer.add_help_text(kw,
                               # GridColumn tooltips don't support html
                               self.editor.field.help_text if self.editor.field.help_text and "<" not in self.editor.field.help_text else "",
                               "",  # Title
@@ -482,7 +482,7 @@ class FieldElement(LayoutElement):
 
         if 'listeners' not in kw:
             if not isinstance(layout_handle.layout, ColumnsLayout):
-                add_help_text(
+                layout_handle.ui.renderer.add_help_text(
                     kw, self.field.help_text, self.field.verbose_name,
                     layout_handle.layout._datasource, self.field.name)
 
@@ -747,7 +747,8 @@ class TextFieldElement(FieldElement):
                 self.editable = field.editable  # and not field.primary_key
                 # 20111126 kw.update(ls_url=rpt2url(layout_handle.rh.report))
                 # kw.update(master_panel=js_code("this"))
-                kw.update(containing_panel=js_code("this"))
+                if layout_handle.ui.renderer.extjs_version is not None:
+                    kw.update(containing_panel=js_code("this"))
                 # kw.update(title=unicode(field.verbose_name)) 20111111
                 kw.update(label=self.get_label())
                 kw.update(title=field.verbose_name)
@@ -1606,7 +1607,8 @@ class HtmlBoxElement(DisplayElement):
     def get_field_options(self, **kw):
         # kw.update(master_panel=js_code("this"))
         kw.update(name=self.field.name)
-        kw.update(containing_panel=js_code("this"))
+        if self.layout_handle.ui.renderer.extjs_version is not None:
+            kw.update(containing_panel=js_code("this"))
         kw.update(layout='fit')
         # kw.update(autoScroll=True)
 
@@ -2198,11 +2200,12 @@ class GridElement(Container):
         if len(self.columns) == 1:
             kw.setdefault('hideHeaders', True)
 
-        add_help_text(kw, rpt.help_text, rpt.title or rpt.label,
+        layout_handle.ui.renderer.add_help_text(kw, rpt.help_text, rpt.title or rpt.label,
                       rpt.app_label, rpt.actor_id)
 
         # kw.update(containing_window=js_code("this.containing_window"))
-        kw.update(containing_panel=js_code("this"))
+        if layout_handle.ui.renderer.extjs_version is not None:
+            kw.update(containing_panel=js_code("this"))
         # if not rpt.show_params_at_render:
         if rpt.params_panel_hidden:
             kw.update(params_panel_hidden=True)
@@ -2567,7 +2570,9 @@ def create_layout_element(lh, name, **kw):
         # The data element refers to a slave table. Slave tables make
         # no sense in an insert window because the master does not yet
         # exist.
-        kw.update(master_panel=js_code("this"))
+
+        if lh.ui.renderer.extjs_version is not None:
+            kw.update(master_panel=js_code("this"))
 
         if isinstance(lh.layout, FormLayout):
             # When a table is specified in the layout of a
@@ -2577,10 +2582,10 @@ def create_layout_element(lh, name, **kw):
             # window". The format of that summary is defined by the
             # `display_mode` of the table. `display_mode` is
             # a string with one of the following values:
-
-            kw.update(tools=[
-                js_code("Lino.show_in_own_window_button(Lino.%s)" %
-                        de.default_action.full_name())])
+            if lh.ui.renderer.extjs_version is not None:
+                kw.update(tools=[
+                    js_code("Lino.show_in_own_window_button(Lino.%s)" %
+                            de.default_action.full_name())])
             if de.display_mode == 'grid':
                 kw.update(hide_top_toolbar=True)
                 if de.preview_limit is not None:
