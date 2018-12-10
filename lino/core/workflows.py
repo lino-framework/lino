@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*-
+    # -*- coding: UTF-8 -*-
 # Copyright 2012-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """
@@ -30,12 +30,14 @@ class State(choicelists.Choice):
     A `State` is a specialized :class:`Choice
     <lino.core.choicelists.Choice>` that adds the
     :meth:`add_transition` method.
+
+    .. attribute:: button_text
+
+        The text to appear on buttons representing this state.
+
     """
 
     button_text = None
-    """
-    The text to appear on buttons representing this state.
-    """
 
     def add_transition(self, label=None,
                        help_text=None,
@@ -128,6 +130,20 @@ class Workflow(choicelists.ChoiceList):
     A workflow is a specialized choicelist used for defining the
     states of a workflow.  Every choice is an instance of
     :class:`State`.
+
+    .. attribute:: verbose_name
+
+        The translatable designation for a given state in this workflow.
+
+    .. attribute:: verbose_name_plural
+
+        The translatable designation for the set of existing states in this workflow.
+
+        The default value for this is built during startup: if the workflow is
+        being used on a single model (which is the case for most workflows),
+        the default text is "{} states" where {} is the model's verbose name.
+
+
     """
     item_class = State
 
