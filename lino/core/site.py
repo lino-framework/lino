@@ -2159,7 +2159,11 @@ class Site(object):
         return 'remote'  # remote user backend
 
     def get_apps_modifiers(self, **kw):
-        """Override or hide individual plugins of an existing application.
+        """
+        Override or hide individual plugins of an existing application.
+
+        Deprecated because this approach increases complexity instead of
+        simplifying things.
 
         For example, if your site inherits from
         :mod:`lino.projects.min2`::

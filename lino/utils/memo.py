@@ -160,15 +160,18 @@ from __future__ import unicode_literals
 
 from builtins import str
 from builtins import object
-
+import logging ; logger = logging.getLogger(__name__)
+# from inspect import getsourcefile
 import re
+import inspect
+
+from etgen import etree
+
+
 COMMAND_REGEX = re.compile(r"\[(\w+)\s*((?:[^[\]]|\[.*?\])*?)\]")
 #                                       ===...... .......=
 
 EVAL_REGEX = re.compile(r"\[=((?:[^[\]]|\[.*?\])*?)\]")
-
-from etgen import etree
-
 
 class Parser(object):
 
@@ -184,7 +187,21 @@ class Parser(object):
         self.commands[cmd] = func
 
     def register_renderer(self, cl, func):
-        assert not cl in self.renderers
+        # print("20181205", str(cl))
+        # if str(cl).endswith("Person'>"):
+        #     raise Exception("20181205")
+
+        frame, filename, line_number, function_name, lines, index = \
+        inspect.stack()[2]
+        # print(frame, filename, line_number, function_name, lines, index)
+        func._defined_in = "function {} in {}".format(function_name, filename)
+
+        if cl in self.renderers:
+            def fmt(x):
+                return x._defined_in
+            ex = self.renderers[cl]
+            raise Exception(
+                "Duplicate renderer for %s : %s and %s", cl, fmt(ex), fmt(func))
         self.renderers[cl] = func
 
     def register_django_model(

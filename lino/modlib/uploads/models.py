@@ -1,9 +1,7 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2008-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
-"""
-Database models for `lino.modlib.uploads`.
-"""
+
 from builtins import str
 from builtins import object
 
@@ -28,16 +26,6 @@ from .mixins import UploadController
 
 
 class UploadType(mixins.BabelNamed):
-    """The type of an upload.
-
-    .. attribute:: shortcut
-
-        Optional pointer to a virtual **upload shortcut** field.  If
-        this is not empty, then the given shortcut field will manage
-        uploads of this type.  See also :class:`Shortcuts
-        <lino.modlib.uploads.choicelists.Shortcuts>`.
-
-    """
     class Meta(object):
         abstract = dd.is_abstract_model(__name__, 'UploadType')
         verbose_name = _("Upload Type")
@@ -63,10 +51,6 @@ class UploadType(mixins.BabelNamed):
 
 
 class UploadTypes(dd.Table):
-    """The table with all existing upload types.
-
-    This usually is accessible via the `Configure` menu.
-    """
     required_roles = dd.login_required(OfficeStaff)
     model = 'uploads.UploadType'
     column_names = "upload_area name max_number wanted shortcut *"
@@ -93,34 +77,14 @@ def filename_leaf(name):
 
 @dd.python_2_unicode_compatible
 class Upload(mixins.Uploadable, UserAuthored, Controllable):
-    """Represents an uploaded file.
-
-    .. attribute:: file
-
-        Pointer to the uploaded file. See
-        :attr:`lino.mixins.uploadable.Uploadable.file`
-
-    .. attribute:: description
-
-        A short description entered manually by the user.
-
-    .. attribute:: description_link
-
-        Almost the same as :attr:`description`, but if :attr:`file` is
-        not empty, the text is clickable, and clicking on it opens the
-        uploaded file in a new browser window.
-
-    """
     class Meta(object):
         abstract = dd.is_abstract_model(__name__, 'Upload')
         verbose_name = _("Upload")
         verbose_name_plural = _("Uploads")
 
-    upload_area = UploadAreas.field(default=UploadAreas.as_callable('general'))
+    upload_area = UploadAreas.field(default='general')
 
-    type = dd.ForeignKey(
-        "uploads.UploadType",
-        blank=True, null=True)
+    type = dd.ForeignKey("uploads.UploadType", blank=True, null=True)
 
     description = models.CharField(
         _("Description"), max_length=200, blank=True)
@@ -168,7 +132,6 @@ dd.update_field(Upload, 'user', verbose_name=_("Uploaded by"))
 
 
 class Uploads(dd.Table):
-    "Shows all Uploads"
     model = 'uploads.Upload'
     required_roles = dd.login_required((OfficeUser, OfficeOperator))
     column_names = "file type user owner description *"
@@ -222,7 +185,6 @@ class UploadsByType(Uploads):
 
 
 class MyUploads(My, Uploads):
-    """Shows only my Uploads (i.e. those whose author is current user)."""
     required_roles = dd.login_required((OfficeUser, OfficeOperator))
     column_names = "file description user owner *"
     # order_by = ["modified"]
@@ -262,14 +224,6 @@ class AreaUploads(Uploads):
 
     @classmethod
     def get_table_summary(self, obj, ar):
-        """Displays the uploads related to this controller as a list grouped
-        by uploads type.
-
-        Note that this also works on
-        :class:`lino_welfare.modlib.uploads.models.UploadsByClient`
-        and their subclasses for the different `_upload_area`.
-
-        """
         if obj is None:
             return
         UploadType = rt.models.uploads.UploadType
@@ -326,18 +280,29 @@ class AreaUploads(Uploads):
                 if btn is not None:
                     files.append(btn)
             if len(files) > 0:
-                e = E.p(str(ut), ': ', *join_elems(files, ', '))
-                types.append(e)
+                chunks = (str(ut), ': ') + tuple(join_elems(files, ', '))
+                types.append(chunks)
         # logger.info("20140430 %s", [tostring(e) for e in types])
-        if len(types) == 0:
-            elems.append(E.ul(E.li(str(ar.no_data_text))))
+        # elems += [str(ar.bound_action.action.__class__), " "]
+        if ar.bound_action.action.window_type == "d":
+            if len(types) == 0:
+                elems.append(E.ul(E.li(str(ar.no_data_text))))
+            else:
+                elems.append(E.ul(*[E.li(*chunks) for chunks in types]))
         else:
-            elems.append(E.ul(*[E.li(e) for e in types]))
+            if len(types) == 0:
+                elems.append(str(ar.no_data_text))
+                elems.append(" / ")
+            else:
+                for chunks in types:
+                    elems.extend(chunks)
+                    elems.append(" / ")
+            elems.append(obj.show_uploads.as_button_elem(ar))
+        # ba = self.find_action_by_name("show_uploads")
         return E.div(*elems)
 
 
 class UploadsByController(AreaUploads):
-    "UploadsByController"
     master_key = 'owner'
     column_names = "file type description user *"
 
@@ -353,11 +318,11 @@ class UploadsByController(AreaUploads):
 
 @dd.receiver(dd.pre_analyze)
 def before_analyze(sender, **kwargs):
-    """This is the successor for `quick_upload_buttons`."""
+    # This is the successor for `quick_upload_buttons`.
 
     # remember that models might have been overridden.
-    UploadType = sender.modules.uploads.UploadType
-    Shortcuts = sender.modules.uploads.Shortcuts
+    UploadType = sender.models.uploads.UploadType
+    Shortcuts = sender.models.uploads.Shortcuts
 
     for i in Shortcuts.items():
 

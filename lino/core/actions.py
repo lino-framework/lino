@@ -473,9 +473,20 @@ class Action(Parametrizable, Permittable):
 
     window_type = None
     """
-    On actions that opens_a_window this should be a unique one-letter
-    code.  Default codes used in extjs are 
-    t=ShowTable, d=ShowDetail, i=ShowInsert.
+    On actions that opens_a_window this must be a unique one-letter
+    string expressing the window type.
+    
+    Allowed values are:
+    
+    - None : opens_a_window is False
+    - 't' : ShowTable
+    - 'd' : ShowDetail
+    - 'i' : ShowInsert
+    
+    This can be used e.g. by a summary view to decide how to present the
+    summary data (usage example
+    :meth:`lino.modlib.uploads.AreaUploads.get_table_summary`).
+    
     """
     
     callable_from = "td"

@@ -351,7 +351,9 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     Set this to `True` on a workflow if you want to disable workflow
     control based on the state of the object.
-    """
+    
+    Note that you must set this to True before importing any library workflows
+    because permission handlers are defined when a workflow is imported. """
 
     sort_index = 60
     """The :attr:`sort_index <lino.core.actions.Action.sort_index>` to be

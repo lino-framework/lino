@@ -15,6 +15,7 @@ from django.db import models
 
 from lino.core import actions
 from lino.core import choicelists
+from lino.core.utils import models_by_base
 
 # from django.utils.encoding import force_text
 # from django.utils.functional import lazy
@@ -131,7 +132,8 @@ class Workflow(choicelists.ChoiceList):
     item_class = State
 
     verbose_name = _("State")
-    verbose_name_plural = _("States")
+    # verbose_name_plural = _("States")
+    verbose_name_plural = None
     button_text = models.CharField(_("Button text"), blank=True)
     column_names = "value name text button_text"
 
@@ -143,14 +145,29 @@ class Workflow(choicelists.ChoiceList):
         """
         super(Workflow, cls).on_analyze(site)
         # logger.info("20150602 Workflow.on_analyze %s", cls)
+        used_on_models = []
         for fld in cls._fields:
             model = getattr(fld, 'model', None)
             if model:
+                used_on_models.append(model)
                 # logger.info("20150602 %s, %s", model, cls.workflow_actions)
                 for a in cls.workflow_actions:
                     # if not a.action_name.startswith('wf'):
                     if not hasattr(model, a.action_name):
                         setattr(model, a.action_name, a)
+        if cls.verbose_name_plural is None:
+            if len(used_on_models) == 1:
+                concrete_models = list(models_by_base(used_on_models[0]))
+                if len(concrete_models) == 1:
+                    m = concrete_models[0]
+                else:
+                    m = used_on_models[0]
+                name = m._meta.verbose_name
+                cls.verbose_name_plural = format_lazy(_("{} states"), name)
+            else:
+                cls.verbose_name_plural = _("States")
+
+
 
     @classmethod
     def before_state_change(cls, obj, ar, oldstate, newstate):

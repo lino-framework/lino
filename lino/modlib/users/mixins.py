@@ -45,7 +45,7 @@ class Authored(Printable):
         the user who requested the duplicate.
 
         """
-        if ar.user is not None:
+        if ar and ar.user:
             self.set_author(ar.user)
         super(Authored, self).on_duplicate(ar, master)
 
@@ -57,7 +57,7 @@ class Authored(Printable):
         """
         if not super(Authored, self).get_row_permission(ar, state, ba):
             return False
-        if ba.action.select_rows:
+        if ar and ba.action.select_rows:
             user = ar.get_user()
             author = self.get_author()
             if author != ar.user \
@@ -118,10 +118,10 @@ class UserAuthored(Authored):
         Adds the requesting user to the `user` field.
 
         When acting as another user, the default implementation
-        still inserts the real user, not subst_user.
+        inserts the *real* user, not subst_user.
         This is important for cal.Event.
         """
-        if self.user_id is None:
+        if ar and self.user_id is None:
             u = ar.user
             if u is not None:
                 self.user = u

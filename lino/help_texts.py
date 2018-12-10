@@ -385,29 +385,6 @@ window."""),
     'lino.modlib.tinymce.Plugin.media_name' : _("""Lino currently includes three versions of TinyMCE, but for
 production sites we still use the eldest version 3.4.8."""),
     'lino.modlib.uploads.Plugin' : _("""See /dev/plugins."""),
-    'lino.modlib.uploads.Shortcut' : _("""Represents a shortcut field."""),
-    'lino.modlib.uploads.Shortcut.get_uploads' : _("""Return a queryset with the uploads of this shortcut."""),
-    'lino.modlib.uploads.Shortcuts' : _("""The list of upload shortcut fields which have been declared on this
-Site.  See add_shortcut()."""),
-    'lino.modlib.uploads.Shortcuts.item_class' : _("""alias of Shortcut"""),
-    'lino.modlib.uploads.UploadType' : _("""The type of an upload."""),
-    'lino.modlib.uploads.UploadType.shortcut' : _("""Optional pointer to a virtual upload shortcut field.  If
-this is not empty, then the given shortcut field will manage
-uploads of this type.  See also Shortcuts."""),
-    'lino.modlib.uploads.UploadTypes' : _("""The table with all existing upload types."""),
-    'lino.modlib.uploads.UploadTypes.model' : _("""alias of UploadType"""),
-    'lino.modlib.uploads.Upload' : _("""Represents an uploaded file."""),
-    'lino.modlib.uploads.Upload.file' : _("""Pointer to the uploaded file. See
-lino.mixins.uploadable.Uploadable.file"""),
-    'lino.modlib.uploads.Upload.description' : _("""A short description entered manually by the user."""),
-    'lino.modlib.uploads.Upload.description_link' : _("""Almost the same as description, but if file is
-not empty, the text is clickable, and clicking on it opens the
-uploaded file in a new browser window."""),
-    'lino.modlib.uploads.Uploads' : _("""Shows all Uploads"""),
-    'lino.modlib.uploads.Uploads.model' : _("""alias of Upload"""),
-    'lino.modlib.uploads.MyUploads' : _("""Shows only my Uploads (i.e. those whose author is current user)."""),
-    'lino.modlib.uploads.MyUploads.model' : _("""alias of Upload"""),
-    'lino.modlib.uploads.UploadsByController.model' : _("""alias of Upload"""),
     'lino.modlib.users.utils.UserTypeContext' : _("""A context manager which activates a current user type."""),
     'lino.modlib.weasyprint.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.wkhtmltopdf.Plugin' : _("""See /dev/plugins."""),
@@ -807,6 +784,26 @@ object."""),
     'lino.modlib.summaries.ComputeResults' : _("""See Summary.compute_results()"""),
     'lino.modlib.summaries.CheckSummaries' : _("""Web UI version of checksummaries."""),
     'lino.modlib.summaries.UpdateSummariesByMaster' : _("""Update summary data for this object."""),
+    'lino.modliblib.uploads.Upload' : _("""Django model representing an upload."""),
+    'lino.modliblib.uploads.Upload.type' : _("""The type of this upload."""),
+    'lino.modliblib.uploads.Upload.file' : _("""Pointer to the uploaded file. See
+lino.mixins.uploadable.Uploadable.file"""),
+    'lino.modliblib.uploads.Upload.description' : _("""A short description entered manually by the user."""),
+    'lino.modliblib.uploads.Upload.description_link' : _("""Almost the same as description, but if file is
+not empty, the text is clickable, and clicking on it opens the
+uploaded file in a new browser window."""),
+    'lino.modliblib.uploads.AreaUploads' : _("""Mixin for tables of uploads where the area is known. Inherited by
+UploadsByController."""),
+    'lino.modliblib.uploads.MyUploads' : _("""Shows my uploads (i.e. those whose author is the current user)."""),
+    'lino.modliblib.uploads.UploadsByController' : _("""Shows the uploads controlled by this database object."""),
+    'lino.modliblib.uploads.UploadType' : _("""The type of an upload."""),
+    'lino.modliblib.uploads.UploadType.shortcut' : _("""Optional pointer to a virtual upload shortcut field.  If
+this is not empty, then the given shortcut field will manage
+uploads of this type.  See also Shortcuts."""),
+    'lino.modliblib.uploads.UploadTypes' : _("""The table with all existing upload types."""),
+    'lino.modliblib.uploads.UploadController.show_uploads' : _("""Show uploads in a grid table."""),
+    'lino.modliblib.uploads.Shortcuts' : _("""The list of upload shortcut fields which have been declared on this
+Site."""),
     'lino.modlib.users.User' : _("""Fields:"""),
     'lino.modlib.users.User.authenticated' : _("""This is always True.  Compare with
 AnonymousUser.authenticated."""),
