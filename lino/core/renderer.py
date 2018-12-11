@@ -5,14 +5,16 @@
 Defines :class:`HtmlRenderer` and :class:`TextRenderer`.
 """
 
-from __future__ import unicode_literals
 from __future__ import print_function
-import six
-# str = six.text_type
-from builtins import str
-from builtins import object
+from __future__ import unicode_literals
 
 import logging
+from builtins import object
+# str = six.text_type
+from builtins import str
+
+import six
+
 logger = logging.getLogger(__name__)
 
 from cgi import escape
@@ -38,7 +40,7 @@ from lino.core.menus import Menu, MenuItem
 
 from .dashboard import DashboardItem
 from .views import json_response
-from .plugin import Plugin
+
 # from . import elems
 
 if False:
@@ -524,6 +526,9 @@ request `tar`."""
             **{'class':cl})
 
     def goto_instance(self, ar, obj, **kw):
+        pass
+
+    def add_help_text(self, kw, help_text, title, datasource, fieldname):
         pass
 
 class TextRenderer(HtmlRenderer):
