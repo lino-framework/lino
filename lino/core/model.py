@@ -782,11 +782,18 @@ class Model(models.Model):
         return E.div(*forcetext(self.get_mobile_list_item_elems(ar)))
 
     # @fields.displayfield(_("Description"))
-    @fields.htmlbox(_("Description"))
+    # @fields.htmlbox(_("Description"))
+    @fields.htmlbox()
     def overview(self, ar):
         if ar is None:
             return ''
         return E.div(*forcetext(self.get_overview_elems(ar)))
+
+    @fields.htmlbox(_("Description"))
+    def clickable_description(self, ar):
+        if ar is None:
+            return str(self)
+        return E.div(*forcetext(self.obj2href(ar)))
 
     @fields.displayfield(_("Workflow"))
     def workflow_buttons(self, ar):
