@@ -793,7 +793,7 @@ class Model(models.Model):
     def clickable_description(self, ar):
         if ar is None:
             return str(self)
-        return E.div(*forcetext(self.obj2href(ar)))
+        return E.div(*forcetext([self.obj2href(ar)]))
 
     @fields.displayfield(_("Workflow"))
     def workflow_buttons(self, ar):
