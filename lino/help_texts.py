@@ -769,25 +769,25 @@ Generates .pdf files from .html templates.
 Requires pisa.
 Usage example see lino_book.projects.pisa."""),
     'lino.modlib.contacts.Partner.invoice_recipient' : _("""The recipient of invoices (invoicing address)."""),
-    'lino.modlib.summaries.TimelessSummary' : _("""Model mixin for all "summary data" models."""),
-    'lino.modlib.summaries.TimelessSummary.master' : _("""Any implementing subclass of TimelessSummary must
+    'lino.modlib.summaries.Summarizable' : _("""Model mixin for database objects that have summary fields."""),
+    'lino.modlib.summaries.Summarizable.compute_results' : _("""Update all the summary fields on this database object."""),
+    'lino.modlib.summaries.Summarizable.reset_summary_data' : _("""Set all counters and sums to 0."""),
+    'lino.modlib.summaries.Summarizable.compute_summary_values' : _("""Reset summary data fields (reset_summary_data()), for
+every collector (get_summary_collectors()) loop over its
+database objects and collect data, then save this record."""),
+    'lino.modlib.summaries.Summarizable.get_summary_collectors' : _("""To be implemented by subclasses. This should yield a sequence
+of (collector, qs) tuples, where collector is a callable
+and qs a queryset. Lino will call collector for each obj
+in qs. The collector is responsible for updating that
+object."""),
+    'lino.modlib.summaries.SimpleSummary' : _("""Model mixin for all "summary data" models."""),
+    'lino.modlib.summaries.SimpleSummary.master' : _("""Any implementing subclass of TimelessSummary must
 define a field named master which must be a ForeignKey
 field.  The target model of the master will
 automatically receive an action check_summaries.
 The mixin also sets
 allow_cascaded_delete to 'master'."""),
-    'lino.modlib.summaries.TimelessSummary.compute_results' : _("""Update this summary."""),
-    'lino.modlib.summaries.TimelessSummary.reset_summary_data' : _("""Set all counters and sums to 0."""),
-    'lino.modlib.summaries.TimelessSummary.compute_summary_values' : _("""Reset summary data fields (reset_summary_data()), for
-every collector (get_summary_collectors()) loop over its
-database objects and collect data, then save this record."""),
-    'lino.modlib.summaries.TimelessSummary.get_summary_collectors' : _("""To be implemented by subclasses. This should yield a sequence
-of (collector, qs) tuples, where collector is a callable
-and qs a queryset. Lino will call collector for each obj
-in qs. The collector is responsible for updating that
-object."""),
     'lino.modlib.summaries.Summary.summary_period' : _("""Can be 'yearly', 'monthly' or 'timeless'."""),
-    'lino.modlib.summaries.ComputeResults' : _("""See Summary.compute_results()"""),
     'lino.modlib.summaries.CheckSummaries' : _("""Web UI version of checksummaries."""),
     'lino.modlib.summaries.UpdateSummariesByMaster' : _("""Update summary data for this object."""),
     'lino.modliblib.uploads.Upload' : _("""Django model representing an upload."""),

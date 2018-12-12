@@ -537,6 +537,10 @@ class Table(AbstractTable):
         return obj.disable_delete(ar)
 
     @classmethod
+    def get_layout_aliases(cls):
+        return cls.model.get_layout_aliases()
+
+    @classmethod
     def get_data_elem(self, name):
         """
         Adds the possibility to specify

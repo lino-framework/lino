@@ -778,6 +778,15 @@ class Action(Parametrizable, Permittable):
     def setup_action_request(self, actor, ar):
         pass
 
+    def get_layout_aliases(self):
+        """
+
+        Yield a series of (ALIAS, repl) tuples that cause a name ALIAS in a
+        layout based on this action to be replaced by its replacement `repl`.
+
+        """
+        return []
+
 
 class TableAction(Action):
 

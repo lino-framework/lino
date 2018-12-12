@@ -1231,6 +1231,16 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         return str(_("Total (%d rows)") % ar.get_total_count())
 
     @classmethod
+    def get_layout_aliases(cls):
+        """
+
+        Yield a series of (ALIAS, repl) tuples that cause a name ALIAS in a
+        layout based on this actor to be replaced by its replacement `repl`.
+
+        """
+        return []
+
+    @classmethod
     def set_detail_layout(self, *args, **kw):
         """Update the :attr:`detail_layout` of this actor, or create a new
         layout if there wasn't one before.

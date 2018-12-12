@@ -1030,6 +1030,16 @@ class Model(models.Model):
             "Cannot resolve stateset specifier {!r}".format(states))
     
     @classmethod
+    def get_layout_aliases(cls):
+        """
+
+        Yield a series of (ALIAS, repl) tuples that cause a name ALIAS in a
+        layout based on this model to be replaced by its replacement `repl`.
+
+        """
+        return []
+
+    @classmethod
     def django2lino(cls, model):
         """
         A list of the attributes to be copied to Django models which do
@@ -1142,6 +1152,7 @@ LINO_MODEL_ATTRIBS = (
     'get_request_queryset',
     'get_title_tags',
     'get_default_table',
+    'get_layout_aliases',
     # 'get_template_group',
     'get_related_project',
     'obj2href',

@@ -13,7 +13,8 @@ from lino.api import dd, _
 
 class ComputeResults(dd.Action):
     label = _("Compute results")
-    icon_name = 'lightning'
+    # icon_name = 'lightning'
+    button_text = u" ∑ "  # u"\u2211"  # N-ARY SUMMATION
     readonly = False
 
     def run_from_ui(self, ar, **kw):
@@ -22,20 +23,7 @@ class ComputeResults(dd.Action):
         ar.success(refresh=True)
 
 
-# class UpdateSummary(dd.Action):
-#     icon_name = 'bell'
-#     label = _("Update summary")
-#     sort_index = 90
-
-#     def run_from_ui(self, ar):
-#         # print(20150327, ar.selected_rows)
-#         for obj in ar.selected_rows:
-#             obj.update_
-#         ar.set_response(refresh_all=True)
-
-
-class UpdateSummariesByMaster(dd.Action):
-    icon_name = 'lightning'
+class UpdateSummariesByMaster(ComputeResults):
 
     def __init__(self, master_model, summary_models):
         self.master_model = master_model
@@ -50,27 +38,52 @@ class UpdateSummariesByMaster(dd.Action):
         ar.set_response(refresh=True)
 
 
-class SimpleSummary(dd.Model):
-    
+class Summarizable(dd.Model):
+
     class Meta(object):
         abstract = True
-        
-    allow_cascaded_delete = 'master'
+
     compute_results = ComputeResults()
-    
+
     @classmethod
     def get_summary_master_model(cls):
-        return cls._meta.get_field('master').remote_field.model
+        return cls
 
     @classmethod
     def get_summary_masters(cls):
         return cls.get_summary_master_model().objects.all()
-        
+
+    @classmethod
+    def update_for_master(cls, master):
+        assert isinstance(master, cls)
+        master.compute_summary_values()
+
     def get_summary_collectors(self):
-        raise NotImplementedError()
+        raise NotImplementedError(
+            "{} must define get_summary_collectors()".format(self.__class__))
 
     def reset_summary_data(self):
         pass
+
+    def compute_summary_values(self):
+        self.reset_summary_data()
+        for collector, qs in self.get_summary_collectors():
+            for obj in qs:
+                collector(obj)
+        self.full_clean()
+        self.save()
+
+
+class SimpleSummary(Summarizable):
+
+    class Meta(object):
+        abstract = True
+        
+    allow_cascaded_delete = 'master'
+
+    @classmethod
+    def get_summary_master_model(cls):
+        return cls._meta.get_field('master').remote_field.model
 
     def get_summary_querysets(self):
         return []
@@ -93,14 +106,6 @@ class SimpleSummary(dd.Model):
         obj = cls.get_for_master(master)
         obj.compute_summary_values()
                 
-    def compute_summary_values(self):
-        self.reset_summary_data()
-        for collector, qs in self.get_summary_collectors():
-            for obj in qs:
-                collector(obj)
-        self.full_clean()
-        self.save()
-        
 
 # SUMMARY_PERIODS = ['yearly', 'monthly', 'timeless']
 SUMMARY_PERIODS = ['yearly', 'monthly']

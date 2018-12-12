@@ -7,11 +7,10 @@
 
 from __future__ import unicode_literals
 from builtins import str
-import six
 from builtins import object
-
-import logging
-logger = logging.getLogger(__name__)
+import six
+import logging ; logger = logging.getLogger(__name__)
+import re
 
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -82,9 +81,9 @@ class Panel(object):
 
 class LayoutHandle(object):
     """
-    A `LayoutHandle` analyzes some subclass of :class:`BaseLayout` and
-    holds the resulting metadata, especially the layout elements and
-    panels provided by the renderer.
+    A `LayoutHandle` analyzes an instance of :class:`BaseLayout` or a some
+    subclass thereof and holds the resulting metadata, especially the layout
+    elements and panels provided by the renderer.
 
     The implementation of layout elements is left to the ui renderer,
     but we differentiate *panels* from *atomic elements*. A panel is a
@@ -154,6 +153,10 @@ class LayoutHandle(object):
 
         # flatten continued lines:
         desc = desc.replace('\\\n', '')
+
+        # expand aliases (configurable fields)
+        for alias, repl in self.layout._datasource.get_layout_aliases():
+            desc = re.sub(r"\b"+alias+r"\b", repl, desc)
 
         # expand wildcards
         if '*' in desc:
@@ -354,7 +357,7 @@ class LayoutHandle(object):
         return True
 
     def get_data_elem(self, name):
-        # 20150610 : data elements defined on the layout panel have
+        # 20150610 : data elements defined on the layout have
         # precedence over those defined in the datasource.
 
         # if not name in ('__str__', '__unicode__', 'name', 'label'):
