@@ -50,8 +50,16 @@ class Model(models.Model):
 
     .. attribute:: overview
 
-        The **overview** of a database object is a fragment of HTML
-        describing this object in a concise and user-friendly way.
+        A fragment of HTML describing this object in a customizable story of
+        paragraphs.
+
+        Customizable using :meth:`get_overview_elems`.
+
+    .. attribute:: detail_link
+
+        A virtual field which displays this database row as a clickable link
+        which opens the detail window.  Functionally equivalent to a double
+        click, but more intuitive in some places.
 
     .. method:: full_clean
 
@@ -603,14 +611,26 @@ class Model(models.Model):
 
     @classmethod
     def on_analyze(cls, site):
-        
         if isinstance(cls.workflow_owner_field, six.string_types):
             cls.workflow_owner_field = cls.get_data_elem(
                 cls.workflow_owner_field)
         if isinstance(cls.workflow_state_field, six.string_types):
             cls.workflow_state_field = cls.get_data_elem(
                 cls.workflow_state_field)
-        
+        # for vf in cls._meta.private_fields:
+        #     if vf.name == 'detail_link':
+        #         if vf.verbose_name is None:
+        #
+        #             # note that the verbose_name of a virtual field is a copy
+        #             # of the verbose_name of its return_type (see
+        #             # VirtualField.lino_resolve_type)
+        #
+        #             # vf.verbose_name = model._meta.verbose_name
+        #             vf.return_type.verbose_name = cls._meta.verbose_name
+        #             # if model.__name__ == "Course":
+        #             #     print("20181212", model)
+        #             break
+
 
     @classmethod
     def lookup_or_create(model, lookup_field, value, **known_values):
@@ -782,17 +802,19 @@ class Model(models.Model):
         return E.div(*forcetext(self.get_mobile_list_item_elems(ar)))
 
     # @fields.displayfield(_("Description"))
-    # @fields.htmlbox()
-    @fields.htmlbox(_("Overview"))
+    # @fields.htmlbox(_("Overview"))
+    @fields.htmlbox()
     def overview(self, ar):
         if ar is None:
             return ''
         return E.div(*forcetext(self.get_overview_elems(ar)))
 
-    @fields.htmlbox(_("Description"))
-    def clickable_description(self, ar):
+    # @fields.htmlbox(_("Description"))
+    @fields.htmlbox()
+    def detail_link(self, ar):
         if ar is None:
-            return str(self)
+            return ''
+            # return str(self)
         return E.div(*forcetext([ar.obj2html(self)]))
 
     @fields.displayfield(_("Workflow"))

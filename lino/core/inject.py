@@ -30,6 +30,8 @@ PREPARED_MODELS = dict()
 
 
 def collect_virtual_fields(model):
+    # make a copy if the field is inherited, in
+    # order to avoid side effects like #2592
     fieldnames = {f.name for f in model._meta.private_fields}
     if model._meta.abstract:  # 20181023
         return
@@ -38,8 +40,6 @@ def collect_virtual_fields(model):
             if m is not model:
                 # if k == "overview" and model.__name__ == "DailyPlannerRow":
                 #     print("20181022", m, model)
-                # make a copy if the field is inherited, in
-                # order to avoid side effects like #2592
                 # settings.SITE.VIRTUAL_FIELDS.pop(v)
                 v = copy.deepcopy(v)
                 settings.SITE.register_virtual_field(v)

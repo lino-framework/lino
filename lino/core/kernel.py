@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-20178 Rumma & Ko Ltd
+# Copyright 2009-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """This defines the :class:`Kernel` class.
@@ -399,6 +399,7 @@ class Kernel(object):
                             f.remote_field, f.remote_field.model))
                     f.remote_field.model._lino_ddh.add_fk(m or model, f)
 
+
         # Protect the foreign keys by removing Django's default
         # behaviour of having on_delete with CASCADE as default.
         
@@ -435,26 +436,29 @@ class Kernel(object):
 
             model.on_analyze(site)
 
-
-            # 20181022 moved to inject.on_class_prepared
-            # for m, k, v in class_dict_items(model):
-            #     if isinstance(v, fields.VirtualField):
-            #         if m is not model:
-            #             # if k == "overview" and model.__name__ == "DailyPlannerRow":
-            #             #     print("20181022", m, model)
-            #             # make a copy if the field is inherited, in
-            #             # order to avoid side effects like #2592
-            #             # settings.SITE.VIRTUAL_FIELDS.pop(v)
-            #             v = copy.deepcopy(v)
-            #             settings.SITE.register_virtual_field(v)
-            #         v.attach_to_model(m, k)
-            #         model._meta.add_field(v, private=True)
-                    
         #~ logger.info("20130817 attached model vfs")
 
         for model in models_list:
             collect_virtual_fields(model)
-            
+
+        # set the verbose_name of the detail_link field on each model
+
+        for model in models_list:
+            for vf in model._meta.private_fields:
+                if vf.name == 'detail_link':
+                    # if vf.verbose_name  == 'detail_link':
+                    # vf.verbose_name = model._meta.verbose_name
+
+                    # note that the verbose_name of a virtual field is a copy
+                    # of the verbose_name of its return_type (see
+                    # VirtualField.lino_resolve_type)
+                    vf.return_type.verbose_name = model._meta.verbose_name
+                    # if model.__name__ == "Course":
+                    #     print("20181212", model)
+                    break
+
+
+
         # Install help texts to all database fields:
         for model in models_list:
             for f in model._meta.get_fields():
