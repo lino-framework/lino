@@ -769,25 +769,26 @@ Generates .pdf files from .html templates.
 Requires pisa.
 Usage example see lino_book.projects.pisa."""),
     'lino.modlib.contacts.Partner.invoice_recipient' : _("""The recipient of invoices (invoicing address)."""),
-    'lino.modlib.summaries.Summarizable' : _("""Model mixin for database objects that have summary fields."""),
-    'lino.modlib.summaries.Summarizable.compute_results' : _("""Update all the summary fields on this database object."""),
-    'lino.modlib.summaries.Summarizable.reset_summary_data' : _("""Set all counters and sums to 0."""),
-    'lino.modlib.summaries.Summarizable.compute_summary_values' : _("""Reset summary data fields (reset_summary_data()), for
+    'lino.modlib.summaries.Summarized' : _("""Model mixin for database objects that have summary fields."""),
+    'lino.modlib.summaries.Summarized.delete_them_all' : _("""Set this to True if all instances of this model should be considered
+temporary data to be deleted by checksummaries."""),
+    'lino.modlib.summaries.Summarized.compute_results' : _("""Update all the summary fields on this database object."""),
+    'lino.modlib.summaries.Summarized.reset_summary_data' : _("""Set all counters and sums to 0."""),
+    'lino.modlib.summaries.Summarized.compute_summary_values' : _("""Reset summary data fields (reset_summary_data()), for
 every collector (get_summary_collectors()) loop over its
 database objects and collect data, then save this record."""),
-    'lino.modlib.summaries.Summarizable.get_summary_collectors' : _("""To be implemented by subclasses. This should yield a sequence
+    'lino.modlib.summaries.Summarized.get_summary_collectors' : _("""To be implemented by subclasses. This must yield a sequence
 of (collector, qs) tuples, where collector is a callable
 and qs a queryset. Lino will call collector for each obj
 in qs. The collector is responsible for updating that
 object."""),
-    'lino.modlib.summaries.SimpleSummary' : _("""Model mixin for all "summary data" models."""),
-    'lino.modlib.summaries.SimpleSummary.master' : _("""Any implementing subclass of TimelessSummary must
-define a field named master which must be a ForeignKey
-field.  The target model of the master will
-automatically receive an action check_summaries.
-The mixin also sets
-allow_cascaded_delete to 'master'."""),
-    'lino.modlib.summaries.Summary.summary_period' : _("""Can be 'yearly', 'monthly' or 'timeless'."""),
+    'lino.modlib.summaries.SlaveSummarized' : _("""Mixin for Summarized models that are related to a master."""),
+    'lino.modlib.summaries.SlaveSummarized.master' : _("""The target model of the master will automatically receive an
+action check_summaries."""),
+    'lino.modlib.summaries.MonthlySummarized' : _("""A Summarized that will have more than one entries per master,
+one for each month."""),
+    'lino.modlib.summaries.MonthlySummarized.summary_period' : _("""Can be 'yearly' or 'monthly'."""),
+    'lino.modlib.summaries.MonthlySlaveSummary' : _("""A combination of SlaveSummary and MonthlySummarized."""),
     'lino.modlib.summaries.CheckSummaries' : _("""Web UI version of checksummaries."""),
     'lino.modlib.summaries.UpdateSummariesByMaster' : _("""Update summary data for this object."""),
     'lino.modliblib.uploads.Upload' : _("""Django model representing an upload."""),
