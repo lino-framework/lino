@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2016-2018 by Luc Saffre.
+# Copyright 2016-2018 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 
 from __future__ import unicode_literals, print_function

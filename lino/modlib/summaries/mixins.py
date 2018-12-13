@@ -11,10 +11,13 @@ from django.db import models
 from lino.api import dd, _
 
 
+# SUMMARY_PERIODS = ['yearly', 'monthly', 'timeless']
+SUMMARY_PERIODS = ['yearly', 'monthly']
+
 class ComputeResults(dd.Action):
-    label = _("Compute results")
+    label = _("Update summary data")
     # icon_name = 'lightning'
-    button_text = u" ∑ "  # u"\u2211"  # N-ARY SUMMATION
+    button_text = u"∑"  # u"\u2211"  # N-ARY SUMMATION
     readonly = False
 
     def run_from_ui(self, ar, **kw):
@@ -34,36 +37,46 @@ class UpdateSummariesByMaster(ComputeResults):
         for master in ar.selected_rows:
             assert isinstance(master, self.master_model)
             for sm in self.summary_models:
-                sm.update_for_master(master)
+                sm.update_for_filter(master=master)
         ar.set_response(refresh=True)
 
 
-class Summarizable(dd.Model):
+class Summarized(dd.Model):
 
     class Meta(object):
         abstract = True
 
     compute_results = ComputeResults()
+    delete_them_all = False
 
     @classmethod
-    def get_summary_master_model(cls):
-        return cls
+    def check_all_summaries(cls):
+        if cls.delete_them_all:
+            cls.objects.all().delete()
+        cls.update_for_filter()
 
     @classmethod
-    def get_summary_masters(cls):
-        return cls.get_summary_master_model().objects.all()
+    def update_for_filter(cls, **flt):
+        for obj in cls.get_for_filter(**flt):
+            obj.compute_summary_values()
+
+    # @classmethod
+    # def get_summary_masters(cls):
+    #     yield None
 
     @classmethod
-    def update_for_master(cls, master):
-        assert isinstance(master, cls)
-        master.compute_summary_values()
-
-    def get_summary_collectors(self):
-        raise NotImplementedError(
-            "{} must define get_summary_collectors()".format(self.__class__))
-
-    def reset_summary_data(self):
-        pass
+    def get_for_filter(cls, **flt):
+        qs = cls.objects.filter(**flt)
+        if cls.delete_them_all:
+            count = qs.count()
+            if count > 1:
+                # Theoretically this should never happen. There cannot be
+                # more than one object for a given master and period.
+                qs.delete()
+                count = 0
+            if count == 0:
+                return [cls(**flt)]
+        return qs
 
     def compute_summary_values(self):
         self.reset_summary_data()
@@ -73,8 +86,15 @@ class Summarizable(dd.Model):
         self.full_clean()
         self.save()
 
+    def reset_summary_data(self):
+        pass
 
-class SimpleSummary(Summarizable):
+    def get_summary_collectors(self):
+        raise NotImplementedError(
+            "{} must define get_summary_collectors()".format(self.__class__))
+
+
+class SlaveSummarized(Summarized):
 
     class Meta(object):
         abstract = True
@@ -82,36 +102,33 @@ class SimpleSummary(Summarizable):
     allow_cascaded_delete = 'master'
 
     @classmethod
+    def check_all_summaries(cls):
+        if cls.delete_them_all:
+            cls.objects.all().delete()
+        for master in cls.get_summary_masters():
+            cls.update_for_filter(master=master)
+
+    @classmethod
+    def get_summary_masters(cls):
+        return cls.get_summary_master_model().objects.all()
+
+    @classmethod
     def get_summary_master_model(cls):
         return cls._meta.get_field('master').remote_field.model
 
-    def get_summary_querysets(self):
-        return []
+    # @classmethod
+    # def get_for_filter(cls, master, **flt):
+    #     flt.update(master=master)
+    #     return super(SlaveSummarized, cls).get_for_filter(master, **flt)
 
-    @classmethod
-    def get_for_master(cls, master, **flt):
-        qs = cls.objects.filter(master=master, **flt)
-        count = qs.count()
-        if count > 1:
-            # Theoretically this should never happen. There cannot be
-            # more than one object for a given master and period.
-            qs.delete()
-            count = 0
-        if count == 0:
-            return cls(master=master, **flt)
-        return qs[0]
-        
-    @classmethod
-    def update_for_master(cls, master):
-        obj = cls.get_for_master(master)
-        obj.compute_summary_values()
-                
+    # @classmethod
+    # def update_for_filter(cls, **flt):
+    #     obj = cls.get_for_filter(**flt)
+    #     obj.compute_summary_values()
 
-# SUMMARY_PERIODS = ['yearly', 'monthly', 'timeless']
-SUMMARY_PERIODS = ['yearly', 'monthly']
 
-        
-class Summary(SimpleSummary):
+class MonthlySummarized(Summarized):
+
     class Meta(object):
         abstract = True
 
@@ -121,18 +138,12 @@ class Summary(SimpleSummary):
     year = models.IntegerField(_("Year"), null=True, blank=True)
     month = models.IntegerField(_("Month"), null=True, blank=True)
 
-
-    # def __init__(self, *args, **kwargs):
-    #     self.reset_summary_data()
-    #     super(Summary, self). __init__(*args, **kwargs)
-
     @classmethod
     def on_analyze(cls, site):
         if cls.summary_period not in SUMMARY_PERIODS:
             raise Exception(
                 "Invalid summary_period {!r} for {}".format(
                     cls.summary_period, cls))
-    
 
     @classmethod
     def get_summary_periods(cls):
@@ -140,28 +151,18 @@ class Summary(SimpleSummary):
         if cls.summary_period == 'timeless':
             yield None, None
             return
-        for year in range(config.start_year, config.end_year+1):
+        for year in range(config.start_year, config.end_year + 1):
             if cls.summary_period == 'yearly':
                 yield year, None
             elif cls.summary_period == 'monthly':
                 for month in range(1, 13):
                     yield year, month
 
-    @classmethod
-    def get_for_period(cls, master, year, month):
-        return cls.get_for_master(master, year=year, month=month)
-
-    @classmethod
-    def update_for_master(cls, master):
-        for year, month in cls.get_summary_periods():
-            obj = cls.get_for_period(master, year, month)
-            obj.compute_summary_values()
-                
     def add_date_filter(self, qs, fldname, **kwargs):
         if self.year is not None:
-            kwargs[fldname+'__year'] = self.year
+            kwargs[fldname + '__year'] = self.year
         if self.month is not None:
-            kwargs[fldname+'__month'] = self.month
+            kwargs[fldname + '__month'] = self.month
         return qs.filter(**kwargs)
 
     # @classmethod
@@ -170,6 +171,20 @@ class Summary(SimpleSummary):
     #         options.update(hide_sum=True)
     #     return super(Summary, cls).get_widget_options(name, **options)
 
+    @classmethod
+    def update_for_filter(cls, **flt):
+        for year, month in cls.get_summary_periods():
+            flt.update(year=year, month=month)
+            # obj = cls.get_for_period(**flt)
+            for obj in cls.get_for_filter(**flt):
+                obj.compute_summary_values()
 
-Summary.set_widget_options('year', hide_sum=True)
-Summary.set_widget_options('month', hide_sum=True)
+
+MonthlySummarized.set_widget_options('year', hide_sum=True)
+MonthlySummarized.set_widget_options('month', hide_sum=True)
+
+class MonthlySlaveSummary(MonthlySummarized, SlaveSummarized):
+
+    class Meta(object):
+        abstract = True
+
