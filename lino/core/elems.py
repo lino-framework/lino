@@ -963,18 +963,19 @@ class RemoteComboFieldElement(ComboFieldElement):
         # ~ kw.update(baseParams=js_code('this.get_base_params()')) # 20120202
         if self.editable:
             url = self.layout_handle.get_choices_url(self.field, **kw)
-            if self.layout_handle.ui.renderer.extjs_version == 3:
-                proxy = dict(url=url, method='GET')
-                js = "new Ext.data.HttpProxy(%s)"
-            else:
-                reader = dict(
-                    type='json', rootProperty='rows',
-                    totalProperty='count',
-                    idProperty='this.ls_id_property',
-                    keepRawData='true')
-                proxy = dict(url=url, method='GET', reader=reader)
-                js = "Ext.create('Ext.data.HttpProxy',%s)"
-            kw.update(proxy=js_code(js % py2js(proxy)))
+            if self.layout_handle.ui.renderer.extjs_version is not None:
+                if self.layout_handle.ui.renderer.extjs_version == 3:
+                    proxy = dict(url=url, method='GET')
+                    js = "new Ext.data.HttpProxy(%s)"
+                else:
+                    reader = dict(
+                        type='json', rootProperty='rows',
+                        totalProperty='count',
+                        idProperty='this.ls_id_property',
+                        keepRawData='true')
+                    proxy = dict(url=url, method='GET', reader=reader)
+                    js = "Ext.create('Ext.data.HttpProxy',%s)"
+                kw.update(proxy=js_code(js % py2js(proxy)))
         # a JsonStore without explicit proxy sometimes used method POST
         return kw
 
