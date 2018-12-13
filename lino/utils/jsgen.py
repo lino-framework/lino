@@ -397,7 +397,7 @@ def declare_vars(v):
             yield "this.%s = %s;" % (v.ext_name, v.js_value())
 
 
-def py2js(v):
+def py2js(v, compact=True):
     """Note that None values are rendered as ``null`` (not ``undefined``.
 
     """
@@ -420,7 +420,7 @@ def py2js(v):
         return json.dumps(force_text(v.encode('utf8')))
 
     if isinstance(v, types.GeneratorType):
-        return "".join([py2js(x) for x in v])
+        return "".join([py2js(x, compact=compact) for x in v])
     if etree.iselement(v):
         return json.dumps(force_text(etree.tostring(v)))
         # try:
@@ -441,10 +441,11 @@ def py2js(v):
         # return 'undefined'
         return 'null'
     if isinstance(v, (list, tuple)):  # (types.ListType, types.TupleType):
-        elems = [py2js(x) for x in v
+        elems = [py2js(x, compact=compact) for x in v
                  if (not isinstance(x, VisibleComponent))
                  or x.get_view_permission(get_user_profile())]
-        return "[ %s ]" % ", ".join(elems)
+        sep = ", " if compact else ", \n"
+        return "[ %s ]" % sep.join(elems)
 
     if isinstance(v, dict):
         items = [
@@ -471,8 +472,9 @@ def py2js(v):
         #     items = sorted(items, key=sortkey)
         # except TypeError as e:
         #     raise TypeError("Failed to sort {0!r} : {1}".format(items, e))
-        return "{ %s }" % ", ".join(
-            ["%s: %s" % (py2js(k), py2js(i)) for k, i in items])
+        sep = ", " if compact else ", \n"
+        return "{ %s }" % sep.join(
+            ["%s: %s" % (py2js(k, compact=compact), py2js(i, compact=compact)) for k, i in items])
 
     if isinstance(v, bool):  # types.BooleanType:
         return str(v).lower()
@@ -499,7 +501,9 @@ def py2js(v):
     # http://docs.djangoproject.com/en/dev/topics/serialization/
     # if not isinstance(v, (str,unicode)):
         # raise Exception("20120121 %r is of type %s" % (v,type(v)))
-    return json.dumps(v)
+    return json.dumps(v,sort_keys=True,
+                  indent=4, separators=(',', ': ')
+                      )
     # try:
     #     return json.dumps(v)
     # except TypeError as e:
