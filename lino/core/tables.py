@@ -7,12 +7,13 @@
 
 """
 from __future__ import print_function
+
+import logging
 # import six
 # str = six.text_type
 from builtins import str
-# from builtins import object
 
-import logging
+# from builtins import object
 logger = logging.getLogger(__name__)
 
 import os
@@ -26,7 +27,6 @@ from django.utils.translation import ugettext_lazy as _
 from lino.core import actors
 from lino.core import actions
 from lino.core import fields
-from lino.core import signals
 from lino.core.tablerequest import TableRequest
 from lino.core.utils import resolve_fields_list
 
@@ -503,6 +503,11 @@ method in order to sort the rows of the queryset.
     Enables drag and drop reordering for a table.
     Set to the field name that is used to track the order.
     Only used in lino.mixins.sequenced.Sequenced. Field name seqno
+    """
+
+    focus_on_quick_search = False
+    """
+    If True , when the grid opens, the initial keyboard focus will be in the quick search field.
     """
 
     @classmethod
