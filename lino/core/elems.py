@@ -1621,20 +1621,20 @@ class HtmlBoxElement(DisplayElement):
 
         # ~ if self.field.drop_zone: # testing with drop_zone 'FooBar'
         # kw.update(listeners=dict(render=js_code('initialize%sDropZone' % self.field.drop_zone)))
-
-        html = self.field.default
-        if self.layout_handle.ui.renderer.extjs_version == 3:
-            js1 = "new Ext.BoxComponent("
-        else:
-            js1 = "Ext.create('Ext.Component',"
-        if html is NOT_PROVIDED:
-            js = js1 + "{autoScroll:true})"
-        else:
-            if callable(html):
-                html = html()
-            js = js1 + "{autoScroll:true, html:%s})"
-            js = js % py2js(html)
-        kw.update(items=js_code(js))
+        if self.layout_handle.ui.renderer.extjs_version is not None:
+            html = self.field.default
+            if self.layout_handle.ui.renderer.extjs_version == 3:
+                js1 = "new Ext.BoxComponent("
+            else:
+                js1 = "Ext.create('Ext.Component',"
+            if html is NOT_PROVIDED:
+                js = js1 + "{autoScroll:true})"
+            else:
+                if callable(html):
+                    html = html()
+                js = js1 + "{autoScroll:true, html:%s})"
+                js = js % py2js(html)
+            kw.update(items=js_code(js))
         label = self.get_label()
         if label:
             kw.update(title=label)
