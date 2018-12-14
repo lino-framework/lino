@@ -1,17 +1,7 @@
-# Copyright 2008-2016 Rumma & Ko Ltd
+# Copyright 2008-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-"""Extends `django.contrib.contenttypes`.  This module must be
-installed if your models contain GenericForeignKey fields or inherit
-from the :class:`Controllable
-<lino.modlib.gfks.mixins.Controllable>` mixin.
-
-.. autosummary::
-   :toctree:
-
-    models
-    mixins
-    fields
+"""See :doc:`/specs/gfks`.
 
 """
 
@@ -19,7 +9,8 @@ from lino.api import ad
 
 
 class Plugin(ad.Plugin):
-    "See :doc:`/dev/plugins`."
+
+    """Base class for this plugin."""
 
     needs_plugins = ['lino.modlib.system', 'django.contrib.contenttypes']
 

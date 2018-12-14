@@ -1,8 +1,7 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2016 Rumma & Ko Ltd
+# Copyright 2008-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
-"""Extended fields for use with `lino.modlib.gfks`.
-"""
+
 from builtins import str
 
 from django.db import models
@@ -16,13 +15,6 @@ from lino.core.utils import full_model_name
 
 class GenericForeignKey(DjangoGenericForeignKey):
 
-    """Add verbose_name and help_text to Django's GFK.
-
-    Used by
-    :class:`lino.modlib.gfks.mixins.Controllable`.
-
-    """
-
     def __init__(self, ct_field="content_type", fk_field="object_id",
                  verbose_name=None, help_text=None, dont_merge=False):
         self.verbose_name = verbose_name
@@ -31,10 +23,8 @@ class GenericForeignKey(DjangoGenericForeignKey):
         DjangoGenericForeignKey.__init__(self, ct_field, fk_field)
 
     def contribute_to_class(self, cls, name):
-        """Automatically setup chooser and display field for ID field of
-        generic foreign key.
-
-        """
+        # Automatically setup chooser and display field for ID field of
+        # generic foreign key.
 
         super(GenericForeignKey, self).contribute_to_class(cls, name)
 
@@ -69,17 +59,6 @@ class GenericForeignKey(DjangoGenericForeignKey):
 
 
 class GenericForeignKeyIdField(models.PositiveIntegerField):
-
-    """Use this instead of `models.PositiveIntegerField` for fields that
-    are part of a :term:`GFK` and you want Lino to render them using a
-    Combobox.
-
-    Used by :class:`lino.modlib.gfks.mixins.Controllable`.
-
-    Note: `type_field` is a mandatory argument, but you can specify
-    anything because it is being ignored.
-
-    """
 
     def __init__(self, type_field, *args, **kw):
         self.type_field = type_field

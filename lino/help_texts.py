@@ -292,23 +292,7 @@ row_action_button()"""),
 empty (and user_model not).
 lino.core.auth.SessionUserMiddleware"""),
     'lino.modlib.extjs.views.Restful' : _("""Used to collaborate with a restful Ext.data.Store."""),
-    'lino.modlib.gfks.Plugin' : _("""See /dev/plugins."""),
-    'lino.modlib.gfks.fields.GenericForeignKey' : _("""Add verbose_name and help_text to Django's GFK."""),
-    'lino.modlib.gfks.fields.GenericForeignKey.contribute_to_class' : _("""Automatically setup chooser and display field for ID field of
-generic foreign key."""),
-    'lino.modlib.gfks.fields.GenericForeignKeyIdField' : _("""Use this instead of models.PositiveIntegerField for fields that
-are part of a GFK and you want Lino to render them using a
-Combobox."""),
-    'lino.modlib.gfks.Controllable' : _("""Mixin for models that are "controllable" by another database object."""),
-    'lino.modlib.gfks.Controllable.controller_is_optional' : _("""Deprecated. This is (and always was) being ignored. Use
-update_controller_field() instead."""),
-    'lino.modlib.gfks.Controllable.update_owned_instance' : _("""If this (acting as a controller) is itself controlled, forward the
-call to the controller."""),
-    'lino.modlib.gfks.ContentTypes' : _("""Default table for django.contrib.ContentType."""),
-    'lino.modlib.gfks.ContentTypes.base_classes' : _("""Display a clickable list of all MTI parents, i.e. base models"""),
-    'lino.modlib.gfks.HelpText' : _("""A custom help text to be displayed for a given field."""),
-    'lino.modlib.gfks.BrokenGFKs' : _("""Shows all database objects (model instances) who have a broken
-GeneriForeignKey field."""),
+    'lino.modlib.gfks.Plugin' : _("""Base class for this plugin."""),
     'lino.modlib.importfilters.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.jinja.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.jinja.Plugin.post_site_startup' : _("""This is being called from
@@ -615,7 +599,6 @@ which is encoded in the given encoding."""),
     'lino.api.dd.VirtualTable' : _("""Shortcut to lino.core.tables.VirtualTable"""),
     'lino.api.dd.VentilatingTable' : _("""Shortcut to lino.core.choicelists.ChoiceList"""),
     'lino.api.dd.Frame' : _("""Shortcut to lino.core.frames.Frame"""),
-    'lino.modlib.about.SiteSearch' : _("""Search across all tables of the application."""),
     'lino.modlib.about.TimeZones' : _("""The list of time zones available on this site."""),
     'lino.modlib.about.TimeZones.default' : _("""The default time zone on this server, corresponding to
 TIME_ZONE.  Unlike TIME_ZONE (which is a
@@ -656,6 +639,25 @@ Commentable as it should be displayed by the slave summary of
 CommentsByOwner."""),
     'lino.modlib.comments.Commentable.on_commented' : _("""This is automatically called when a comment has been created
 or modified."""),
+    'lino.modlib.gkfs.Controllable' : _("""Mixin for models that are "controllable" by another database object."""),
+    'lino.modlib.gkfs.Controllable.update_controller_field' : _("""Update attributes of the owner field and its underlying
+fields owner_id and owner_type."""),
+    'lino.modlib.gkfs.Controllable.update_owned_instance' : _("""If this (acting as a controller) is itself controlled, forward the
+call to the controller."""),
+    'lino.modlib.gkfs.Controllable.owner_label' : _("""Deprecated. This is (and always was) being ignored. Use
+update_controller_field() instead.
+The labels (verbose_name) of the fields owned_type, owned_id
+and owned are derived from this attribute which may be overridden by
+subclasses."""),
+    'lino.modlib.gkfs.ContentTypes' : _("""Lino installs this as the default table for
+django.contrib.ContentType."""),
+    'lino.modlib.gkfs.ContentTypes.base_classes' : _("""Display a clickable list of all MTI parents, i.e. base models"""),
+    'lino.modlib.gkfs.HelpText' : _("""A custom help text to be displayed for a given field."""),
+    'lino.modlib.gkfs.BrokenGFKs' : _("""Shows all database objects who have a broken GeneriForeignKey field."""),
+    'lino.modlib.gkfs.GenericForeignKey' : _("""Add verbose_name and help_text to Django's GFK."""),
+    'lino.modlib.gkfs.GenericForeignKeyIdField' : _("""Use this instead of models.PositiveIntegerField for fields that
+are part of a GFK and you want Lino to render them using a
+Combobox."""),
     'lino.modlib.notify.Message' : _("""The Django model that represents a notification message."""),
     'lino.modlib.notify.Message.user' : _("""The recipient."""),
     'lino.modlib.notify.Message.owner' : _("""The database object which controls this message."""),
@@ -769,6 +771,7 @@ Generates .pdf files from .html templates.
 Requires pisa.
 Usage example see lino_book.projects.pisa."""),
     'lino.modlib.contacts.Partner.invoice_recipient' : _("""The recipient of invoices (invoicing address)."""),
+    'lino.modlib.about.SiteSearch' : _("""The virtual table used to implement site-wide searches"""),
     'lino.modlib.summaries.Summarized' : _("""Model mixin for database objects that have summary fields."""),
     'lino.modlib.summaries.Summarized.delete_them_all' : _("""Set this to True if all instances of this model should be considered
 temporary data to be deleted by checksummaries."""),

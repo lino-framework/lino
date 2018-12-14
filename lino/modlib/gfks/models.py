@@ -1,15 +1,7 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2010-2015 Rumma & Ko Ltd
+# Copyright 2010-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-"""
-Database models for `lino.modlib.gfks`.
-
-See also unit test :doc:`/dev/gfks`.
-
-.. autosummary::
-
-"""
 from builtins import str
 from builtins import object
 
@@ -30,14 +22,6 @@ from lino.core.utils import get_models
 
 
 class ContentTypes(dd.Table):
-    """Default table for `django.contrib.ContentType`.
-
-
-    .. attribute:: base_classes
-
-        Display a clickable list of all MTI parents, i.e. base models
-
-    """
     model = 'contenttypes.ContentType'
 
     required_roles = dd.login_required(SiteStaff)
@@ -76,7 +60,6 @@ class ContentTypes(dd.Table):
 
 @dd.python_2_unicode_compatible
 class HelpText(dd.Model):
-    """A custom help text to be displayed for a given field."""
     class Meta(object):
         app_label = 'gfks'
         verbose_name = _("Help Text")
@@ -139,11 +122,6 @@ class HelpTextsByModel(HelpTexts):
 
 
 class BrokenGFKs(dd.VirtualTable):
-    """Shows all database objects (model instances) who have a broken
-    GeneriForeignKey field.
-
-
-    """
     label = _("Broken GFKs")
     required_roles = dd.login_required(SiteStaff)
 
