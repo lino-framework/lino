@@ -1,9 +1,6 @@
-# Copyright 2009-2017 Rumma & Ko Ltd
+# Copyright 2009-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-"""Database models for `lino.modlib.system`.
-
-"""
 from builtins import object
 
 import logging
@@ -20,11 +17,6 @@ from lino.api import dd
 
 @dd.python_2_unicode_compatible
 class TextFieldTemplate(UserAuthored):
-
-    """A reusable block of text that can be selected from a text editor to
-    be inserted into the text being edited.
-
-    """
 
     class Meta(object):
         verbose_name = _("Text Field Template")

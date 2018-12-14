@@ -1,4 +1,4 @@
-/* Copyright 2009-2015 Luc Saffre */
+/* Copyright 2009-2018 Rumma & Ko Ltd */
 {% if site.plugins.tinymce.document_domain %}
 document.domain = '{{site.plugins.tinymce.document_domain}}';
 {% endif %}

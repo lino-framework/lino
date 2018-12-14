@@ -10,8 +10,8 @@ from lino.api import ad
 
 
 #TINYMCE_VERSION = '3.4.8'
-TINYMCE_VERSION = '3.5.11'
 #TINYMCE_VERSION = '4.1.10'
+TINYMCE_VERSION = '3.5.11'
 
 """Which version of TinyMCE to use.
 
@@ -32,7 +32,7 @@ def javascript(url):
 class Plugin(ad.Plugin):
     "See :doc:`/dev/plugins`."
 
-    needs_plugins = ['lino.modlib.office']  # because of TextFieldTemplate
+    needs_plugins = ['lino.modlib.office', 'lino.modlib.extjs']
 
     site_js_snippets = ['tinymce/tinymce.js']
 
@@ -42,29 +42,7 @@ class Plugin(ad.Plugin):
     # window_height = 500
 
     document_domain = None
-    """When serving static files from a different subdomain, TinyMCE needs
-    to know about this. Typical usage is to specify this in your
-    :xfile:`lino_local.py` file::
-
-        def setup_site(self):
-            ...
-            from lino.api.ad import configure_plugin
-            configure_plugin('tinymce', document_domain="mydomain.com")
-
-    Currently when using this, **you must also manually change** your
-    static :xfile:`tiny_mce_popup.js` file after each `collectstatic`.
-
-    .. xfile:: tiny_mce_popup.js
-
-    The factory version of that file contains::
-
-        // Uncomment and change this document.domain value if you are loading the script cross subdomains
-        // document.domain = 'moxiecode.com';
-
-    Uncomment and set the ``document.domain`` to the same value as
-    your :attr:`document_domain`.
-
-    """
+    """The domain name of this production site."""
 
     window_width = 500
     """The initial width of the window to use when editing in own

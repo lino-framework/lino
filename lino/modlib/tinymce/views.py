@@ -2,9 +2,6 @@
 # Copyright 2009-2015 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-"""Views for `lino.modlib.tinymce`.
-
-"""
 from builtins import str
 
 import logging
@@ -24,13 +21,6 @@ from lino.api import dd, rt
 
 
 class Templates(View):
-
-    """
-    Called by TinyMCE (`template_external_list_url
-    <http://www.tinymce.com/wiki.php/configuration:external_template_list_url>`_)
-    to fill the list of available templates.
-
-    """
 
     def get(self, request,
             app_label=None, actor=None,

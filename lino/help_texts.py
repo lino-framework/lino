@@ -355,9 +355,7 @@ See also lino.Lino.get_site_config().
 Deserves more documentation."""),
     'lino.modlib.system.SiteConfigs.model' : _("""alias of SiteConfig"""),
     'lino.modlib.tinymce.Plugin' : _("""See /dev/plugins."""),
-    'lino.modlib.tinymce.Plugin.document_domain' : _("""When serving static files from a different subdomain, TinyMCE needs
-to know about this. Typical usage is to specify this in your
-lino_local.py file:"""),
+    'lino.modlib.tinymce.Plugin.document_domain' : _("""The domain name of this production site."""),
     'lino.modlib.tinymce.Plugin.window_width' : _("""The initial width of the window to use when editing in own
 window."""),
     'lino.modlib.tinymce.Plugin.window_height' : _("""The initial height of the window to use when editing in own
@@ -794,6 +792,8 @@ one for each month."""),
     'lino.modlib.summaries.MonthlySlaveSummary' : _("""A combination of SlaveSummary and MonthlySummarized."""),
     'lino.modlib.summaries.CheckSummaries' : _("""Web UI version of checksummaries."""),
     'lino.modlib.summaries.UpdateSummariesByMaster' : _("""Update summary data for this object."""),
+    'lino.modlib.tinymce.TextFieldTemplate' : _("""A reusable block of text that can be selected from a text editor to
+be inserted into the text being edited."""),
     'lino.modliblib.uploads.Upload' : _("""Django model representing an upload."""),
     'lino.modliblib.uploads.Upload.type' : _("""The type of this upload."""),
     'lino.modliblib.uploads.Upload.file' : _("""Pointer to the uploaded file. See
