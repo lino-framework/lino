@@ -201,9 +201,6 @@ class Command(BaseCommand):
         parser.add_argument('-m', '--max-row-count', type=int,
                             dest='max_row_count', default=50000,
                             help='Maximum number of rows per file.'),
-        #~ make_option('--quick', action='store_true',
-        #~ dest='quick', default=False,
-        #~ help='Do not call full_clean() method on restored instances.'),
 
     def write_files(self):
         puts("Writing {0}...".format(self.main_file))
@@ -303,7 +300,7 @@ def bv2kw(fieldname, values):
         self.stream.write("""
 
 def main(args):
-    loader = DpyLoader(globals())
+    loader = DpyLoader(globals(), quick=args.quick)
     from django.core.management import call_command
     call_command('initdb', interactive=args.interactive)
     os.chdir(os.path.dirname(__file__))
@@ -396,6 +393,9 @@ if __name__ == '__main__':
     parser.add_argument('--noinput', dest='interactive',
         action='store_false', default=True,
         help="Don't ask for confirmation before flushing the database.")
+    parser.add_argument('--quick', dest='quick', 
+        action='store_true',default=False,
+        help='Do not call full_clean() on restored instances.')
 
     args = parser.parse_args()
     main(args)

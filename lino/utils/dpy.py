@@ -349,7 +349,9 @@ class DpyLoader(LoaderBase):
     """Instantiated by :xfile:`restore.py`.
 
     """
-    def __init__(self, globals_dict):
+    def __init__(self, globals_dict, quick=None):
+        if quick is not None:
+            self.quick = quick
         self.globals_dict = globals_dict
         super(DpyLoader, self).__init__()
         self.source_version = globals_dict['SOURCE_VERSION']
