@@ -6,23 +6,22 @@
 Defines the :class:`ExtRenderer` class.
 """
 
-from __future__ import unicode_literals
 from __future__ import print_function
-from builtins import str
-import six
+from __future__ import unicode_literals
 
 import logging
+from builtins import str
+
+import six
+
 logger = logging.getLogger(__name__)
 
-import os
 import cgi
 import time
-import jinja2
 
 from django.conf import settings
 from django.db import models
 from django.utils import translation
-from django.utils.encoding import force_text
 
 from django.utils.translation import ugettext as _
 
@@ -52,7 +51,7 @@ from lino.utils import jsgen
 from lino.utils.jsgen import py2js, js_code
 from etgen.html import E, iselement
 
-from lino.core.roles import SiteUser, Supervisor
+from lino.core.roles import Supervisor
 
 from lino.modlib.users.utils import get_user_profile, with_user_profile
 
@@ -1093,6 +1092,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
                     kw.update(content_type=ct)
 
         kw.update(cell_edit=rh.actor.cell_edit)
+        kw.update(focus_on_quick_search=rh.actor.focus_on_quick_search)
         kw.update(ls_bbar_actions=self.toolbar(
             rh.actor.get_toolbar_actions(rh.actor.default_action.action)))
         kw.update(ls_grid_configs=[gc.data for gc in rh.actor.grid_configs])

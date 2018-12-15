@@ -3551,6 +3551,11 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
             {% endif %}
             //~ ,keypress: this.search_keypress 
             ,blur: function() { this.is_searching = false}
+            ,afterrender: function(field) {
+                if (this.focus_on_quick_search){
+                    field.focus(false, 1000);
+                    }
+              }
           }
           ,validator:function(value) { return this_.search_validate(value) }
           //~ ,tooltip: "Enter a quick search text, then press TAB"
