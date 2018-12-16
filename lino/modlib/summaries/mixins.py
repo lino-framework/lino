@@ -17,7 +17,9 @@ SUMMARY_PERIODS = ['yearly', 'monthly']
 class ComputeResults(dd.Action):
     label = _("Update summary data")
     # icon_name = 'lightning'
-    button_text = u"∑"  # u"\u2211"  # N-ARY SUMMATION
+    # button_text = u"∑"  # u"\u2211"  # N-ARY SUMMATION
+    button_text = u"Σ"  # u"\u03A3"  # GREEK CAPITAL LETTER SIGMA
+
     readonly = False
 
     def run_from_ui(self, ar, **kw):
