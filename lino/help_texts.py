@@ -794,25 +794,25 @@ one for each month."""),
     'lino.modlib.summaries.UpdateSummariesByMaster' : _("""Update summary data for this object."""),
     'lino.modlib.tinymce.TextFieldTemplate' : _("""A reusable block of text that can be selected from a text editor to
 be inserted into the text being edited."""),
-    'lino.modliblib.uploads.Upload' : _("""Django model representing an upload."""),
-    'lino.modliblib.uploads.Upload.type' : _("""The type of this upload."""),
-    'lino.modliblib.uploads.Upload.file' : _("""Pointer to the uploaded file. See
+    'lino.modlib.uploads.Upload' : _("""Django model representing an upload."""),
+    'lino.modlib.uploads.Upload.type' : _("""The type of this upload."""),
+    'lino.modlib.uploads.Upload.file' : _("""Pointer to the uploaded file. See
 lino.mixins.uploadable.Uploadable.file"""),
-    'lino.modliblib.uploads.Upload.description' : _("""A short description entered manually by the user."""),
-    'lino.modliblib.uploads.Upload.description_link' : _("""Almost the same as description, but if file is
+    'lino.modlib.uploads.Upload.description' : _("""A short description entered manually by the user."""),
+    'lino.modlib.uploads.Upload.description_link' : _("""Almost the same as description, but if file is
 not empty, the text is clickable, and clicking on it opens the
 uploaded file in a new browser window."""),
-    'lino.modliblib.uploads.AreaUploads' : _("""Mixin for tables of uploads where the area is known. Inherited by
+    'lino.modlib.uploads.AreaUploads' : _("""Mixin for tables of uploads where the area is known. Inherited by
 UploadsByController."""),
-    'lino.modliblib.uploads.MyUploads' : _("""Shows my uploads (i.e. those whose author is the current user)."""),
-    'lino.modliblib.uploads.UploadsByController' : _("""Shows the uploads controlled by this database object."""),
-    'lino.modliblib.uploads.UploadType' : _("""The type of an upload."""),
-    'lino.modliblib.uploads.UploadType.shortcut' : _("""Optional pointer to a virtual upload shortcut field.  If
+    'lino.modlib.uploads.MyUploads' : _("""Shows my uploads (i.e. those whose author is the current user)."""),
+    'lino.modlib.uploads.UploadsByController' : _("""Shows the uploads controlled by this database object."""),
+    'lino.modlib.uploads.UploadType' : _("""The type of an upload."""),
+    'lino.modlib.uploads.UploadType.shortcut' : _("""Optional pointer to a virtual upload shortcut field.  If
 this is not empty, then the given shortcut field will manage
 uploads of this type.  See also Shortcuts."""),
-    'lino.modliblib.uploads.UploadTypes' : _("""The table with all existing upload types."""),
-    'lino.modliblib.uploads.UploadController.show_uploads' : _("""Show uploads in a grid table."""),
-    'lino.modliblib.uploads.Shortcuts' : _("""The list of upload shortcut fields which have been declared on this
+    'lino.modlib.uploads.UploadTypes' : _("""The table with all existing upload types."""),
+    'lino.modlib.uploads.UploadController.show_uploads' : _("""Show uploads in a grid table."""),
+    'lino.modlib.uploads.Shortcuts' : _("""The list of upload shortcut fields which have been declared on this
 Site."""),
     'lino.modlib.users.User' : _("""Fields:"""),
     'lino.modlib.users.User.authenticated' : _("""This is always True.  Compare with
