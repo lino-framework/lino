@@ -15,6 +15,8 @@ from lino.core.gfks import gfk2lookup
 from .roles import CommentsReader, CommentsUser, CommentsStaff
 from .choicelists import CommentEvents
 
+
+
 class CommentTypes(dd.Table):
     required_roles = dd.login_required(CommentsStaff)
     model = 'comments.CommentType'
