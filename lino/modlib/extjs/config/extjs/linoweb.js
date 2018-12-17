@@ -1731,6 +1731,7 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
         if (result.refresh) {
             // console.log("20140917 Gonna call panel.refresh()", panel);
             panel.refresh();
+            panel.focus();
         }
     }
     {%- if settings.SITE.is_installed('davlink') -%}
@@ -3026,6 +3027,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     this.current_record = record;
     if (record && record.data) {
       this.enable();
+      // After this method focus is moved to the panel.
       this.form.my_loadRecord(record.data);
       this.set_window_title(record.title);
       //~ this.getBottomToolbar().enable();
@@ -3106,6 +3108,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
             this.form.items.items[current_focus_fields].focus();
         }
     // console.log('20140917 gonna call after', after);
+    this.containing_window.focus(); // ticket: 2509 regain focus on reload
     if (after) after();
   },
   
@@ -3266,7 +3269,8 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
           });
 {% endif %}
       wincfg.keys.push({
-          key: Ext.EventObject.ESCAPE, 
+          key: Ext.EventObject.ESCAPE,
+          // this is not called sometimes.
           handler: this.on_cancel, scope:this });
       wincfg.keys.push({
           key: 's', ctrl: true, 
