@@ -17,9 +17,22 @@ import sys
 PY2 = sys.version_info[0] == 2
 PY3 = sys.version_info[0] == 3
 
+SETUP_INFO = dict(
+    name='lino',
+    version='18.12.2',
+    description="A framework for writing desktop-like web applications "
+                "using Django and ExtJS",
+    license='BSD License',
+    # obsoletes=['djangosite', 'north'],
+    author='Luc Saffre',
+    author_email='luc@lino-framework.org',
+    url="http://www.lino-framework.org",
+    # ~ test_suite = 'lino.test_apps',
+    test_suite='tests')
+
 install_requires = [
     # 'Sphinx',
-    'django',
+    'Django',
     'atelier', 'unipath', 'python_dateutil', 'dateparser',
     'etgen',
     'Babel', 'lxml',
@@ -41,24 +54,18 @@ if PY2:
     install_requires.append('reportlab<2.7')
     # install_requires.append('django<2')
     install_requires.append('weasyprint<0.43')
+    install_requires.append('appy')
 else:
     # install_requires.append('django')
     install_requires.append('reportlab')
     install_requires.append('weasyprint')
 
-SETUP_INFO = dict(
-    name='lino',
-    version='18.12.2',
-    install_requires=install_requires,
-    description="A framework for writing desktop-like web applications "
-                "using Django and ExtJS",
-    license='BSD License',
-    # obsoletes=['djangosite', 'north'],
-    author='Luc Saffre',
-    author_email='luc@lino-framework.org',
-    url="http://www.lino-framework.org",
-    # ~ test_suite = 'lino.test_apps',
-    test_suite='tests')
+    SETUP_INFO.update(dependency_links=[
+        "svn+https://svn.forge.pallavi.be/appy-dev/dev1#egg=appy"
+        # "git+https://github.com/lino-framework/appypod.git@dbf123584cd9c5ef4a35e8efb9f489eaa54e26f2#egg=appy"
+    ])
+
+SETUP_INFO.update(install_requires=install_requires)
 
 SETUP_INFO.update(long_description="""
 
@@ -124,7 +131,6 @@ lino.api
 lino.core
 lino.core.auth
 lino.fake_migrations
-lino.history
 lino.mixins
 lino.modlib
 lino.modlib.about
