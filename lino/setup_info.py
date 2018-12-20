@@ -50,19 +50,16 @@ install_requires = [
     'schedule',
     'django-wkhtmltopdf',
     'beautifulsoup4',
-    'appy@svn+https://svn.forge.pallavi.be/appy-dev/dev1',
-    'django-mailbox@git+https://github.com/cylonoven/django-mailbox'
-    ]
+    'django-mailbox@git+https://github.com/cylonoven/django-mailbox#egg=django-mailbox']
 
 if PY2:
     install_requires.append('reportlab<2.7')
-    # install_requires.append('django<2')
     install_requires.append('weasyprint<0.43')
     install_requires.append('appy')
 else:
-    # install_requires.append('django')
     install_requires.append('reportlab')
     install_requires.append('weasyprint')
+    install_requires.append('appy@svn+https://svn.forge.pallavi.be/appy-dev/dev1')
 
     # SETUP_INFO.update(dependency_links=[
     #     "svn+https://svn.forge.pallavi.be/appy-dev/dev1#egg=appy-dev"
