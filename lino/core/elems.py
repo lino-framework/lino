@@ -1040,16 +1040,18 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
             kw.setdefault('preferred_width', pw)
         actor = self.field.remote_field.model.get_default_table()
         if not isinstance(self.layout_handle.layout, ColumnsLayout):
-            a1 = actor.detail_action
-            a2 = actor.insert_action
-            if a1 is not None or a2 is not None:
-                if self.layout_handle.ui.renderer.extjs_version == 3:
-                    self.value_template = "new Lino.TwinCombo(%s)"
-                else:
-                    self.value_template = "Ext.create('Lino.TwinCombo',%s)"
-                js = "function(e){ Lino.show_fk_detail(this,%s,%s)}" % (
-                    action_name(a1), action_name(a2))
-                kw.update(onTrigger2Click=js_code(js))
+            if self.layout_handle.ui.renderer.extjs_version is not None:
+                a1 = actor.detail_action
+                a2 = actor.insert_action
+                if a1 is not None or a2 is not None:
+                    if self.layout_handle.ui.renderer.extjs_version == 3:
+                        self.value_template = "new Lino.TwinCombo(%s)"
+                    else:
+                        self.value_template = "Ext.create('Lino.TwinCombo',%s)"
+                    js = "function(e){ Lino.show_fk_detail(this,%s,%s)}" % (
+                        action_name(a1), action_name(a2))
+                    kw.update(onTrigger2Click=js_code(js))
+        kw.update(related_actor_id=actor.actor_id)
 
         kw.update(pageSize=actor.page_length)
         if actor.model is not None:
