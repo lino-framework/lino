@@ -49,8 +49,7 @@ install_requires = [
     # 'html5lib',  # version 7x9 (not 9x9) required by bleach
     'schedule',
     'django-wkhtmltopdf',
-    'beautifulsoup4',
-    'django-mailbox@git+https://github.com/cylonoven/django-mailbox#egg=django-mailbox']
+    'beautifulsoup4',]
 
 if PY2:
     install_requires.append('reportlab<2.7')
@@ -59,8 +58,8 @@ if PY2:
 else:
     install_requires.append('reportlab')
     install_requires.append('weasyprint')
-    install_requires.append('appy@svn+https://svn.forge.pallavi.be/appy-dev/dev1')
-
+    # install_requires.append('appy@svn+https://svn.forge.pallavi.be/appy-dev/dev1')
+    # 'django-mailbox@git+https://github.com/cylonoven/django-mailbox#egg=django-mailbox'
     # SETUP_INFO.update(dependency_links=[
     #     "svn+https://svn.forge.pallavi.be/appy-dev/dev1#egg=appy-dev"
         # "git+https://github.com/lino-framework/appypod.git@dbf123584cd9c5ef4a35e8efb9f489eaa54e26f2#egg=appy-dev"
