@@ -65,6 +65,8 @@ class PrintableType(Model):
     def get_template_choices(cls, build_method, template_groups):
         if not build_method:
             build_method = BuildMethods.get_system_default()
+        if not build_method:
+            return []
         return rt.find_template_config_files(
             build_method.template_ext, *template_groups)
 

@@ -38,7 +38,7 @@ install_requires = [
     'etgen',
     'Babel', 'lxml',
     'beautifulsoup4',
-    'pisa',
+    # 'pisa',
     'jinja2', 'pytidylib', 'PyYAML',
     'clint',  # lino.modlib.checkdata.management.commands
     'django-localflavor',  # lino.modlib.sepa
@@ -48,7 +48,7 @@ install_requires = [
     # 'bleach',
     # 'html5lib',  # version 7x9 (not 9x9) required by bleach
     'schedule',
-    'django-wkhtmltopdf',
+    # 'django-wkhtmltopdf',
     'beautifulsoup4',]
 
 if PY2:

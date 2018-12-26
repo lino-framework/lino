@@ -285,8 +285,9 @@ class BuildMethods(ChoiceList):
 
     @classmethod
     def get_system_default(cls):
-        """Return the default build method to be used when really no default
-        build method has been defined anywhere, even not in
+        """Return the default build method to be used.
+
+        Either the one defined in :class:`SiteConfig`, or the one defined by
         :attr:`default_build_method
         <lino.core.site.Site.default_build_method>`.
 
@@ -295,13 +296,17 @@ class BuildMethods(ChoiceList):
         if sc.default_build_method:
             return sc.default_build_method
         if settings.SITE.default_build_method:
-            return cls.get_by_value(
+            bm = cls.get_by_value(
                 settings.SITE.default_build_method)
-        return cls.pisa  # hard-coded default
+            if bm is None:
+                raise Exception("Invalid default_build_method '{}', choices are {}".format(
+                    settings.SITE.default_build_method, tuple(cls.get_list_items())))
+            return bm
+        # return cls.pisa  # hard-coded default
 
 
 add = BuildMethods.add_item_instance
 add(LatexBuildMethod('latex'))
-add(PisaBuildMethod('pisa'))
+# add(PisaBuildMethod('pisa'))
 add(RtfBuildMethod('rtf'))
 add(XmlBuildMethod('xml'))
