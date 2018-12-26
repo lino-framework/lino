@@ -30,13 +30,21 @@ PREPARED_MODELS = dict()
 
 
 def collect_virtual_fields(model):
-    # make a copy if the field is inherited, in
-    # order to avoid side effects like #2592
-    fieldnames = {f.name for f in model._meta.private_fields}
+    """Declare every virtual field defined on this model to Django.
+    We use Django's undocumented :meth:`add_field` method.
+
+    Make a copy if the field is inherited, in order to avoid side effects like
+    #2592
+
+    If a model defines both a database field and a virtualfield of same name,
+    then the virtualfield is being ignored.
+
+    """
     if model._meta.abstract:  # 20181023
         return
+    fieldnames = {f.name for f in model._meta.private_fields + model._meta.local_fields}
     for m, k, v in class_dict_items(model):
-        if isinstance(v, fields.VirtualField) and not k in fieldnames:
+        if isinstance(v, fields.VirtualField) and k not in fieldnames:
             if m is not model:
                 # if k == "overview" and model.__name__ == "DailyPlannerRow":
                 #     print("20181022", m, model)

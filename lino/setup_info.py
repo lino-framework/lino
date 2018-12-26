@@ -54,7 +54,7 @@ install_requires = [
 if PY2:
     install_requires.append('reportlab<2.7')
     install_requires.append('weasyprint<0.43')
-    install_requires.append('appy')
+    # install_requires.append('appy')
 else:
     install_requires.append('reportlab')
     install_requires.append('weasyprint')
