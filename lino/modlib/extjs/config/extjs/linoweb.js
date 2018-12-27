@@ -526,8 +526,11 @@ Lino.MainPanel = {
               //~ f.on('valid',function() {t.refresh()});
               if (f instanceof Ext.form.Checkbox) {
                   f.on('check',refresh);
-              } else if (f instanceof Ext.DatePicker) {
-                  f.on('select',refresh);
+//              } else if (f instanceof Ext.DatePicker) {
+//                  f.on('select',refresh);
+//                  console.log('Ext.DatePicker');
+              } else if (f instanceof Ext.form.DateField) {
+                  f.on('change',refresh);
               } else if (f instanceof Ext.form.TriggerField) {
                   f.on('select',refresh);
                   //~ f.on('change',refresh);
