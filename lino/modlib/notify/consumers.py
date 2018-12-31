@@ -7,11 +7,10 @@ from channels.sessions import channel_session, http_session
 # from channels.auth import channel_session_user, channel_session_user_from_http
 from django.utils import timezone
 
-from lino.core.auth.utils import AnonymousUser
-from lino.core.auth import get_user
 from lino.core.auth import BACKEND_SESSION_KEY, SESSION_KEY, HASH_SESSION_KEY
-
-PUBLIC_GROUP = 'all_users_channel'
+from lino.core.auth import get_user
+from lino.core.auth.utils import AnonymousUser
+from .mixins import PUBLIC_GROUP
 
 
 # adapted copy from channels.auth

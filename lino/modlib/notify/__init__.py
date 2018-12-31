@@ -8,6 +8,8 @@ See :doc:`/specs/notify`.
 
 """
 
+import six
+
 from lino.api import ad, _
 
 try:
@@ -70,14 +72,21 @@ class Plugin(ad.Plugin):
             # the dict which will be used to create settings
             cld = {}
             sd['CHANNEL_LAYERS'] = {"default": cld}
-            cld["BACKEND"] = "asgiref.inmemory.ChannelLayer"
-            cld["ROUTING"] = "lino.modlib.notify.routing.channel_routing"
+            if six.PY2:
+                cld["ROUTING"] = "lino.modlib.notify.routing.channel_routing"
+                cld["BACKEND"] = "asgiref.inmemory.ChannelLayer"
+            else:
+                sd['ASGI_APPLICATION'] = "lino.modlib.notify.routing2.application"
+                cld["BACKEND"] = "channels_redis.core.RedisChannelLayer"
+                cld['CONFIG'] = {"hosts": [("localhost", 6379)], }
             if redis:
                 try:
                     cld['BACKEND'] = "asgi_redis.RedisChannelLayer"
                     cld['CONFIG'] = {"hosts": [("localhost", 6379)], }
                 except redis.ConnectionError:
                     pass
+
+
 
     def get_js_includes(self, settings, language):
         if self.site.use_websockets:
@@ -104,64 +113,126 @@ class Plugin(ad.Plugin):
         if request.user.authenticated:
             user_name = request.user.username
         site_title = site.title or 'Lino-framework'
-
-        js_to_add = """
-    <script type="text/javascript">
-    Ext.onReady(function() {
-        // Note that the path doesn't matter for routing; any WebSocket
-        // connection gets bumped over to WebSocket consumers
-        var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-        var ws_path = window.location.pathname + "lino/";
-        console.log("Connecting to " + ws_path);
-        var webSocketBridge = new channels.WebSocketBridge();
-        var username = '%s' ;
-        webSocketBridge.connect();
-        lino_connecting = function() {
-            console.log("lino connecting ...");
-            webSocketBridge.send({
-                        "command": "user_connect",
-                        "username": username
-                    });
-        }
-        webSocketBridge.socket.addEventListener('open', function() {
-            lino_connecting();
-        });
-        // Helpful debugging
-        webSocketBridge.socket.onclose = function () {
-            console.log("Disconnected from chat socket");
-        }
-
-        onGranted = console.log("onGranted");
-        onDenied = console.log("onDenied");
-        // Ask for permission if it's not already granted
-        Push.Permission.request(onGranted,onDenied);
-
-        webSocketBridge.listen(function(action, stream) {
-            try {
-                Push.create( %s , {
-                    body: action['body'],
-                    icon: '/static/img/lino-logo.png',
-                    onClick: function () {
-                        window.focus();
-                        Lino.viewport.refresh();
-                        this.close();
-                    }
-                });
-                if (false && Number.isInteger(action["id"])){
-                    webSocketBridge.stream('lino').send({message_id: action["id"]})
-                    webSocketBridge.send(JSON.stringify({
-                                    "command": "seen",
-                                    "message_id": action["id"],
-                                }));
-                            }
-                }
-            catch(err) {
-                console.log(err.message);
+        if six.PY2:
+            js_to_add = """
+        <script type="text/javascript">
+        Ext.onReady(function() {
+            // Note that the path doesn't matter for routing; any WebSocket
+            // connection gets bumped over to WebSocket consumers
+            var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+            var ws_path = window.location.pathname + "lino/";
+            console.log("Connecting to " + ws_path);
+            var webSocketBridge = new channels.WebSocketBridge();
+            var username = '%s' ;
+            webSocketBridge.connect();
+            lino_connecting = function() {
+                console.log("lino connecting ...");
+                webSocketBridge.send({
+                            "command": "user_connect",
+                            "username": username
+                        });
             }
-        })});
-    // end of onReady()"
-    </script>
-        """ % (user_name, py2js(site_title))
+            webSocketBridge.socket.addEventListener('open', function() {
+                lino_connecting();
+            });
+            // Helpful debugging
+            webSocketBridge.socket.onclose = function () {
+                console.log("Disconnected from chat socket");
+            }
+
+            onGranted = console.log("onGranted");
+            onDenied = console.log("onDenied");
+            // Ask for permission if it's not already granted
+            Push.Permission.request(onGranted,onDenied);
+
+            webSocketBridge.listen(function(action, stream) {
+                try {
+                    Push.create( %s , {
+                        body: action['body'],
+                        icon: '/static/img/lino-logo.png',
+                        onClick: function () {
+                            window.focus();
+                            Lino.viewport.refresh();
+                            this.close();
+                        }
+                    });
+                    if (false && Number.isInteger(action["id"])){
+                        webSocketBridge.stream('lino').send({message_id: action["id"]})
+                        webSocketBridge.send(JSON.stringify({
+                                        "command": "seen",
+                                        "message_id": action["id"],
+                                    }));
+                                }
+                    }
+                catch(err) {
+                    console.log(err.message);
+                }
+            })});
+        // end of onReady()"
+        </script>
+            """ % (user_name, py2js(site_title))
+        else:
+            js_to_add = """
+        <script type="text/javascript">
+        Ext.onReady(function() {
+            // Note that the path doesn't matter for routing; any WebSocket
+            // connection gets bumped over to WebSocket consumers
+            var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
+            var ws_path = ws_scheme+ "://" + window.location.host + "/lino/";
+            console.log("Connecting to " + ws_path);
+            var webSocketBridge = new WebSocket(ws_path);
+            var username = '%s' ;
+            // webSocketBridge.connect();
+            lino_connecting = function() {
+                console.log("lino connecting ...");
+                webSocketBridge.send({
+                            "command": "user_connect",
+                            "username": username
+                        });
+            }
+            //webSocketBridge.addEventListener('open', function() {
+            //    lino_connecting();
+            //});
+            // Helpful debugging
+            webSocketBridge.onclose = function () {
+                console.log("Disconnected from chat socket");
+            }
+
+            onGranted = console.log("onGranted");
+            onDenied = console.log("onDenied");
+            // Ask for permission if it's not already granted
+            Push.Permission.request(onGranted,onDenied);
+
+            webSocketBridge.onmessage = function(e) {
+                var data = e.data;
+                Push.Permission.request(onGranted,onDenied);
+                console.log("We get the message ",data);
+                // var message = data['message'];
+                try {
+                    Push.create( %s , {
+                        body: data,
+                        icon: '/static/img/lino-logo.png',
+                        onClick: function () {
+                            window.focus();
+                            Lino.viewport.refresh();
+                            this.close();
+                        }
+                    });
+                    if (false && Number.isInteger(action["id"])){
+                        webSocketBridge.stream('lino').send({message_id: action["id"]})
+                        webSocketBridge.send(JSON.stringify({
+                                        "command": "seen",
+                                        "message_id": action["id"],
+                                    }));
+                                }
+                    }
+                catch(err) {
+                    console.log(err.message);
+                }
+            }});
+        // end of onReady()"
+        </script>
+            """ % (user_name, py2js(site_title))
         yield js_to_add
 
     def get_dashboard_items(self, user):

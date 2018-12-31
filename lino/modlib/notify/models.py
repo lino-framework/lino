@@ -3,44 +3,46 @@
 # License: BSD (see file COPYING for details)
 
 from __future__ import unicode_literals
-from builtins import str
-from builtins import object
-import json
 
+import json
+from builtins import object
+from builtins import str
 from io import StringIO
+
 from lxml import etree
+
 html_parser = etree.HTMLParser()
 
 from django.db import models
 from django.conf import settings
-from django.utils import timezone
+from django.utils import timezone, six
 from django.utils import translation
 
 from lino.api import dd, rt, _
-from lino.api import pgettext
 
-#from lino.core.roles import SiteStaff
+# from lino.core.roles import SiteStaff
 from lino.core.gfks import gfk2lookup
-#from lino.core.requests import BaseRequest
+# from lino.core.requests import BaseRequest
 from lino.core.site import html2text
 
 from lino.mixins import Created, ObservedDateRange
 from lino.modlib.gfks.mixins import Controllable
-from lino.modlib.notify.consumers import PUBLIC_GROUP
+# from lino.modlib.notify.consumers import PUBLIC_GROUP
+from .mixins import PUBLIC_GROUP
 from lino.modlib.users.mixins import UserAuthored, My
-from lino.modlib.office.roles import OfficeStaff, OfficeUser
-from lino.mixins.bleached import body_subject_to_elems
+from lino.modlib.office.roles import OfficeUser
 
 from lino.utils.format_date import fds
 from etgen.html import E, tostring
-from lino.utils import join_elems
 
 from datetime import timedelta
 
 from .choicelists import MessageTypes, MailModes
 
 import logging
+
 logger = logging.getLogger(__name__)
+
 
 def groupname(s):
     # Remove any invalid characters from the given string so that it can
@@ -50,6 +52,7 @@ def groupname(s):
 
     s = s.replace('@', '-')
     return s.encode('ascii', 'ignore')
+
 
 class MarkAllSeen(dd.Action):
     select_rows = False
@@ -114,7 +117,6 @@ class ClearSeen(dd.Action):
 
 @dd.python_2_unicode_compatible
 class Message(UserAuthored, Controllable, Created):
-
     class Meta(object):
         app_label = 'notify'
         verbose_name = _("Notification message")
@@ -145,7 +147,7 @@ class Message(UserAuthored, Controllable, Created):
         # dd.logger.info(
         #     "20180612 %s emit_notification() for %d recipients",
         #     owner, len(recipients))
-        
+
         # remove recipients without user:
         if ar is None:
             me = None
@@ -153,7 +155,7 @@ class Message(UserAuthored, Controllable, Created):
             me = ar.get_user()
         others = set()
         for user, mm in recipients:
-            if user is not None and mm != MailModes.silent :
+            if user is not None and mm != MailModes.silent:
                 if user.user_type is None:
                     continue
                 if me is None or me.notify_myself or user != me:
@@ -230,7 +232,6 @@ class Message(UserAuthored, Controllable, Created):
                     msg.sent = timezone.now()
                     msg.save()
 
-
     def send_browser_message_for_all_users(self, user):
 
         message = {
@@ -243,11 +244,17 @@ class Message(UserAuthored, Controllable, Created):
         # Encode and send that message to the whole channels Group for our
         # liveblog. Note how you can send to a channel or Group from any part
         # of Django, not just inside a consumer.
-        from channels import Group
-        Group(PUBLIC_GROUP).send({
-            # WebSocket text frame, with JSON content
-            "text": json.dumps(message),
-        })
+        if six.PY2:
+            from channels import Group
+            Group(PUBLIC_GROUP).send({
+                # WebSocket text frame, with JSON content
+                "text": json.dumps(message),
+            })
+        else:
+            from channels.layers import get_channel_layer
+            channel_layer = get_channel_layer()
+            from asgiref.sync import async_to_sync
+            async_to_sync(channel_layer.group_send)(PUBLIC_GROUP, {"text": json.dumps(message)})
 
         return
 
@@ -263,12 +270,19 @@ class Message(UserAuthored, Controllable, Created):
         # Encode and send that message to the whole channels Group for our
         # Websocket. Note how you can send to a channel or Group from any part
         # of Django, not just inside a consumer.
-        from channels import Group
         logger.info("Sending browser notification to %s", user.username)
-        Group(groupname(user.username)).send({
-            # WebSocket text frame, with JSON content
-            "text": json.dumps(message),
-        })
+        if six.PY2:
+            from channels import Group
+            Group(groupname(user.username)).send({
+                # WebSocket text frame, with JSON content
+                "text": json.dumps(message),
+            })
+        else:
+            from channels.layers import get_channel_layer
+            channel_layer = get_channel_layer()
+            from asgiref.sync import async_to_sync
+            async_to_sync(channel_layer.group_send)(user.username, {"type": "send.notification",
+                                                                    "text": message['body']})
 
         return
 
@@ -356,6 +370,7 @@ class MyMessages(My, Messages):
     order_by = ['-created']
     # hide_headers = True
     display_mode = 'summary'
+
     # display_mode = 'list'
     # display_mode = 'grid'
 
@@ -379,7 +394,7 @@ class MyMessages(My, Messages):
                 s += ar.parse_memo(obj.body)
             else:
                 s += ar.parse_memo(obj.subject)
-            e  = etree.parse(StringIO(s), html_parser)
+            e = etree.parse(StringIO(s), html_parser)
             return E.li(E.div(*e.iter()))
             # s += obj.body
             # return "<li>{}</li>".format(s)
@@ -398,6 +413,7 @@ class MyMessages(My, Messages):
         kw.update(show_seen=dd.YesNo.no)
         return kw
 
+
 # h = settings.EMAIL_HOST
 # if not h or h.endswith('example.com'):
 #     dd.logger.debug(
@@ -408,10 +424,12 @@ class MyMessages(My, Messages):
 def send_pending_emails_often():
     rt.models.notify.Message.send_summary_emails(MailModes.often)
 
+
 @dd.schedule_daily()
 def send_pending_emails_daily():
     rt.models.notify.Message.send_summary_emails(MailModes.daily)
-    
+
+
 # @dd.schedule_often(every=10)
 # def send_pending_emails_often():
 #     Message = rt.models.notify.Message
@@ -429,14 +447,14 @@ def send_pending_emails_daily():
 remove_after = dd.plugins.notify.remove_after
 
 if remove_after:
-    
+
     @dd.schedule_daily()
     def clear_seen_messages():
 
         Message = rt.models.notify.Message
         qs = Message.objects.filter(
             created__lt=timezone.now() - timedelta(hours=remove_after))
-        if dd.plugins.notify.keep_unseen: 
+        if dd.plugins.notify.keep_unseen:
             qs = qs.filter(seen__isnull=False)
         if qs.count() > 0:
             dd.logger.info(
@@ -444,9 +462,9 @@ if remove_after:
                 qs.count(), remove_after)
             qs.delete()
 
-
 import warnings
+
 warnings.filterwarnings(
-    "ignore", "You do not have a working installation of the service_identity module: .* Many valid certificate/hostname mappings may be rejected.",
+    "ignore",
+    "You do not have a working installation of the service_identity module: .* Many valid certificate/hostname mappings may be rejected.",
     UserWarning)
-        
