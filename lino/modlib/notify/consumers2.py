@@ -1,7 +1,5 @@
 import json
 
-# This example uses WebSocket consumer, which is synchronous, and so
-# needs the async channel layer functions to be converted.
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 
@@ -12,7 +10,6 @@ class LinoConsumer(WebsocketConsumer):
         if self.scope.get('user', False):
             username = self.scope["user"].username
             async_to_sync(self.channel_layer.group_add)(username, self.channel_name)
-        # self.send_notification(text={'text': username})
 
     def disconnect(self, close_code):
         pass
