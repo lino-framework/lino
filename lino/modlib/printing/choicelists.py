@@ -8,12 +8,14 @@ Choicelists for `lino.modlib.printing`.
 """
 
 from __future__ import unicode_literals, print_function
+
+import logging
 # from future import standard_library
 # standard_library.install_aliases()
 from builtins import str
+
 import six
 
-import logging
 logger = logging.getLogger(__name__)
 
 import os
@@ -134,7 +136,10 @@ class PisaBuildMethod(DjangoBuildMethod):
     template_ext = '.pisa.html'
 
     def build(self, ar, action, elem):
-        import ho.pisa as pisa
+        if six.PY2:
+            import ho.pisa as pisa
+        else:
+            from xhtml2pdf import pisa
         # pisa.showLogging()
         tpl = self.get_template(action, elem)
         filename = action.before_build(self, elem)
