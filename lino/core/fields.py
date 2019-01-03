@@ -10,19 +10,15 @@ from __future__ import unicode_literals, print_function
 
 from builtins import str
 import six
-from builtins import object
+# from builtins import object
 
-import logging
-logger = logging.getLogger(__name__)
-
+import logging ; logger = logging.getLogger(__name__)
 import datetime
 from decimal import Decimal
-
 
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
-
 from django.core.exceptions import ValidationError
 from django.db.models.fields import NOT_PROVIDED
 from django.utils.functional import cached_property
@@ -30,9 +26,43 @@ from django.utils.functional import cached_property
 from lino.core.utils import resolve_field, full_model_name, resolve_model
 from lino.core.exceptions import ChangedAPI
 
+from lino.utils import get_class_attr
 from lino.utils import IncompleteDate
 from lino.utils import quantities
 from lino.utils.quantities import Duration
+
+
+def validate_incomplete_date(value):
+    """Raise ValidationError if user enters e.g. a date 30.02.2009.
+    """
+    try:
+        value.as_date()
+    except ValueError:
+        raise ValidationError(_("Invalid date"))
+
+
+def set_default_verbose_name(f):
+    """
+
+    If the verbose_name of a ForeignKey was not set by user code, Lino sets it
+    to the verbose_name of the model pointed to.  This rule holds also for
+    virtual FK fields.
+
+    For every FK field defined on a model (including virtual FK fields) this is
+    called during kernel startup.  Django sets the `verbose_name` of every
+    field to ``field.name.replace('_', ' ')``.
+
+    For virtual FK fields defined on an actor or an action it is called a bit
+    later. These fields don't have a name.
+
+    """
+    if f.name is None:
+        if f.verbose_name is None:
+            f.verbose_name = f.remote_field.model._meta.verbose_name
+    elif f.verbose_name == f.name.replace('_', ' '):
+        f.verbose_name = f.remote_field.model._meta.verbose_name
+
+
 
 class PasswordField(models.CharField):
 
@@ -419,17 +449,57 @@ class VirtualField(FakeField):
         self.return_type = return_type  # a Django Field instance
         self.get = get
 
-        if isinstance(return_type, FakeField):
-            sortable_by = return_type.sortable_by
-            self.sortable_by = sortable_by
-            if sortable_by and isinstance(sortable_by, list):
-                    sortable_by = sortable_by[0]
-            self.column = sortable_by
-        for k in VFIELD_ATTRIBS:
-            setattr(self, k, getattr(return_type, k, None))
+        # if isinstance(return_type, FakeField):
+        #     sortable_by = return_type.sortable_by
+        #     self.sortable_by = sortable_by
+        #     if sortable_by and isinstance(sortable_by, list):
+        #             sortable_by = sortable_by[0]
+        #     self.column = sortable_by
+        # for k in VFIELD_ATTRIBS:
+        #     setattr(self, k, getattr(return_type, k, None))
 
         settings.SITE.register_virtual_field(self)
         super(VirtualField, self).__init__(**kwargs)
+
+    def lino_resolve_type(self):
+        """
+        Called on every virtual field when all models are loaded.
+        """
+
+        f = self.return_type
+
+        if isinstance(f, six.string_types):
+            f = self.return_type = resolve_field(f)
+
+        if isinstance(f, FakeField):
+            sortable_by = f.sortable_by
+            self.sortable_by = sortable_by
+            if sortable_by and isinstance(sortable_by, list):
+                sortable_by = sortable_by[0]
+            self.column = sortable_by
+
+        if isinstance(f, models.ForeignKey):
+            f.remote_field.model = resolve_model(f.remote_field.model)
+            set_default_verbose_name(f)
+
+        for k in VFIELD_ATTRIBS:
+            setattr(self, k, getattr(f, k, None))
+
+        # if self.name == 'detail_pointer':
+        #     logger.info('20170905 resolve_type 1 %s on %s',
+        #                 self.name, self.verbose_name)
+
+        #~ removed 20120919 self.return_type.editable = self.editable
+        # if self.name == 'detail_pointer':
+        #     logger.info('20170905 resolve_type done %s %s',
+        #                 self.name, self.verbose_name)
+
+        from lino.core import store
+        store.get_atomizer(self.model, self, self.name)
+
+
+
+        # print("20181023 Done: lino_resolve_type() for {}".format(self))
 
 
     def override_getter(self, get):
@@ -476,48 +546,6 @@ class VirtualField(FakeField):
             # return super(VirtualField, self).__repr__()
         return "%s.%s.%s" % (self.model.__module__,
                              self.model.__name__, self.name)
-
-    def lino_resolve_type(self):
-        """
-        Called on every virtual field when all models are loaded.
-        """
-        #~ logger.info("20120903 lino_resolve_type %s.%s", actor_or_model, name)
-        #~ if self.name is not None:
-            #~ if self.name != name:
-                #~ raise Exception("Tried to re-use %s.%s" % (actor_or_model,name))
-        #~ self.name = name
-
-        if isinstance(self.return_type, six.string_types):
-            self.return_type = resolve_field(self.return_type)
-
-        f = self.return_type
-        if isinstance(f, models.ForeignKey):
-            f.remote_field.model = resolve_model(f.remote_field.model)
-            if f.verbose_name is None:
-                #~ if f.name is None:
-                f.verbose_name = f.remote_field.model._meta.verbose_name
-                    #~ from lino.core.kernel import set_default_verbose_name
-                    #~ set_default_verbose_name(self.return_type)
-
-        if isinstance(f, FakeField):
-            self.sortable_by = f.sortable_by
-        for k in VFIELD_ATTRIBS:
-            setattr(self, k, getattr(f, k, None))
-
-        # if self.name == 'detail_pointer':
-        #     logger.info('20170905 resolve_type 1 %s on %s',
-        #                 self.name, self.verbose_name)
-
-        #~ removed 20120919 self.return_type.editable = self.editable
-        # if self.name == 'detail_pointer':
-        #     logger.info('20170905 resolve_type done %s %s',
-        #                 self.name, self.verbose_name)
-
-        from lino.core import store
-        store.get_atomizer(self.model, self, self.name)
-
-        # print("20181023 Done: lino_resolve_type() for {}".format(self))
-
 
     def get_default(self):
         return self.return_type.get_default()
@@ -574,6 +602,10 @@ class VirtualField(FakeField):
         #~ print self.field.name
         # return m(self, obj, ar)
         return m(obj, ar)
+        # try:
+        #     return m(obj, ar)
+        # except TypeError as e:
+        #     return "{} : {}".format(self, e)
 
     def __get__(self, instance, owner):
         if instance is None:
@@ -795,15 +827,6 @@ class DurationField(QuantityField):
         return None
 
 
-def validate_incomplete_date(value):
-    """Raise ValidationError if user enters e.g. a date 30.02.2009.
-    """
-    try:
-        value.as_date()
-    except ValueError:
-        raise ValidationError(_("Invalid date"))
-
-
 class IncompleteDateField(models.CharField):
     """
     A field that behaves like a DateField, but accepts incomplete
@@ -919,25 +942,6 @@ class DummyField(FakeField):
     def set_attributes_from_name(self, k):
         pass
 
-def wildcard_data_elems(model):
-    """
-    Yield names to be used as wildcard in the :attr:`column_names` of a
-    table or when :func:`fields_list` finds a ``*``.
-    """
-    meta = model._meta
-    for f in meta.fields:
-        # if not isinstance(f, fields.RichTextField):
-        if not isinstance(f, VirtualField):
-            if not getattr(f, '_lino_babel_field', False):
-                yield f
-    for f in meta.many_to_many:
-        yield f
-    for f in meta.private_fields:
-        #if not isinstance(f, VirtualField):
-        yield f
-    # todo: for slave in self.report.slaves
-
-
 class RecurrenceField(models.CharField):
     """
     Deserves more documentation.
@@ -947,81 +951,6 @@ class RecurrenceField(models.CharField):
         kw.setdefault('max_length', 200)
         models.CharField.__init__(self, *args, **kw)
 
-
-def use_as_wildcard(de):
-    if de.name.endswith('_ptr'):
-        return False
-    return True
-
-
-def fields_list(model, field_names):
-    """
-    Return a set with the names of the specified fields, checking
-    whether each of them exists.
-
-    Arguments: `model` is any subclass of `django.db.models.Model`. It
-    may be a string with the full name of a model
-    (e.g. ``"myapp.MyModel"``).  `field_names` is a single string with
-    a space-separated list of field names.
-
-    If one of the names refers to a :class:`DummyField`, this name
-    will be ignored silently.
-
-    For example if you have a model `MyModel` with two fields `foo` and
-    `bar`, then ``dd.fields_list(MyModel,"foo bar")`` will return
-    ``['foo','bar']`` and ``dd.fields_list(MyModel,"foo baz")`` will raise
-    an exception.
-
-    TODO: either rename this to `fields_set` or change it to return an
-    iterable on the fields.
-    """
-    lst = set()
-    names_list = field_names.split()
-
-    for name in names_list:
-        if name == '*':
-            explicit_names = set()
-            for name in names_list:
-                if name != '*':
-                    explicit_names.add(name)
-            for de in wildcard_data_elems(model):
-                if not isinstance(de, DummyField):
-                    if de.name not in explicit_names:
-                        if use_as_wildcard(de):
-                            lst.add(de.name)
-        else:
-            e = model.get_data_elem(name)
-            if e is None:
-                raise models.FieldDoesNotExist(
-                    "No data element %r in %s" % (name, model))
-            if isinstance(e, DummyField):
-                pass
-            else:
-                lst.add(e.name)
-    return lst
-
-
-def pointer_factory(cls, othermodel, *args, **kw):
-    """
-    Instantiate a `ForeignKey` or `OneToOneField` with some subtle
-    differences:
-
-    - It supports `othermodel` being `None` or the name of some
-      non-installed model and returns a :class:`DummyField` in that
-      case.  This difference is useful when designing reusable models.
-
-    - Explicitly sets the default value for `on_delete
-      <https://docs.djangoproject.com/en/1.11/ref/models/fields/#django.db.models.ForeignKey.on_delete>`__
-      to ``CASCADE`` (as required by Django 2).
-    """
-    if othermodel is None:
-        return DummyField(othermodel, *args, **kw)
-    if isinstance(othermodel, six.string_types):
-        if not settings.SITE.is_installed_model_spec(othermodel):
-            return DummyField(othermodel, *args, **kw)
-
-    kw.setdefault('on_delete', models.CASCADE)
-    return cls(othermodel, *args, **kw)
 
 def OneToOneField(*args, **kwargs):
     """
@@ -1068,6 +997,231 @@ class ImportedFields(object):
             fields_list(cls, names))
         #~ logger.info('20120801 %s.declare_imported_fields() --> %s' % (
             #~ cls,cls._imported_fields))
+
+
+
+class TableRow(object):
+
+    """Base class for everything that can be used as a table row. """
+
+    _lino_default_table = None
+
+    @classmethod
+    def get_default_table(self):
+        """Used internally. Lino chooses during the kernel startup, for each
+        model, one of the discovered Table subclasses as the "default
+        table".
+
+        """
+        return self._lino_default_table  # set in dbtables.py
+
+    @classmethod
+    def get_data_elem(cls, name):
+        return None
+
+        # v = getattr(cls, name, None)
+        # if isinstance(v, VirtualField):
+        #     return v
+
+        # return getattr(cls, name, None)
+
+
+        # return get_class_attr(cls, name)
+
+        # v = get_class_attr(cls, name)
+        # if v is not None:
+        #     if isinstance(v, fields.DummyField):
+        #         return v
+        #     raise Exception("Oops, {} on {} is {}".format(name, cls, v))
+
+    def obj2href(self, ar, *args, **kwargs):
+        """Return a html representation of a pointer to the given database
+        object.
+
+        Examples see :ref:`obj2href`.
+
+        """
+        return ar.obj2html(self, *args, **kwargs)
+
+    def get_detail_action(self, ar):
+        """Return the (bound) detail action to use for showing this object in
+        a detail window.  Return `None` when no detail form exists or
+        the requesting user has no permission to see it.
+
+        `ar` is the action request who asks to see a detail.
+        If the action requests's actor can be used for this model,
+        then use its `detail_action`. Otherwise use the
+        `detail_action` of this model's default table.
+
+        When `ar` is `None`, the permission check is bypassed.
+
+        If `self` has a special attribute `_detail_action` defined,
+        return this.  This magic is used by
+        :meth:`Menu.add_instance_action
+        <lino.core.menus.Menu.add_instance_action>`.
+
+        Usage example: :class:`courses.Course
+        <lino_xl.lib.courses.models.Course>` overrides this to return
+        the detail_action depending on the CourseArea.
+
+        """
+        a = getattr(self, '_detail_action', None)
+        if a is None:
+            if ar and ar.actor and ar.actor.model \
+               and self.__class__ is ar.actor.model:
+                a = ar.actor.detail_action
+            else:
+                # if ar and ar.actor and ar.actor.model:
+                #     print("20170902 {} : {} is not {}".format(
+                #         ar.actor, self.__class__, ar.actor.model))
+                a = self.__class__.get_default_table().detail_action
+        if a is None or ar is None:
+            return a
+        if a.get_view_permission(ar.get_user().user_type):
+            return a
+
+
+def wildcard_data_elems(model):
+    """
+    Yield names to be used as wildcard in the :attr:`column_names` of a
+    table or when :func:`fields_list` finds a ``*``.
+    """
+    meta = model._meta
+    for f in meta.fields:
+        # if not isinstance(f, fields.RichTextField):
+        if not isinstance(f, VirtualField):
+            if not getattr(f, '_lino_babel_field', False):
+                yield f
+    for f in meta.many_to_many:
+        yield f
+    for f in meta.private_fields:
+        #if not isinstance(f, VirtualField):
+        yield f
+    # todo: for slave in self.report.slaves
+
+
+def use_as_wildcard(de):
+    if de.name.endswith('_ptr'):
+        return False
+    return True
+
+
+def fields_list(model, field_names):
+    """
+    Return a set with the names of the specified fields, checking
+    whether each of them exists.
+
+    Arguments: `model` is any subclass of `django.db.models.Model`. It
+    may be a string with the full name of a model
+    (e.g. ``"myapp.MyModel"``).  `field_names` is a single string with
+    a space-separated list of field names.
+
+    If one of the names refers to a dummy field, this name will be ignored
+    silently.
+
+    For example if you have a model `MyModel` with two fields `foo` and
+    `bar`, then ``dd.fields_list(MyModel,"foo bar")`` will return
+    ``['foo','bar']`` and ``dd.fields_list(MyModel,"foo baz")`` will raise
+    an exception.
+
+    TODO: either rename this to `fields_set` or change it to return an
+    iterable on the fields.
+    """
+    lst = set()
+    names_list = field_names.split()
+
+    for name in names_list:
+        if name == '*':
+            explicit_names = set()
+            for name in names_list:
+                if name != '*':
+                    explicit_names.add(name)
+            for de in wildcard_data_elems(model):
+                if not isinstance(de, DummyField):
+                    if de.name not in explicit_names:
+                        if use_as_wildcard(de):
+                            lst.add(de.name)
+        else:
+            e = model.get_data_elem(name)
+            if e is None:
+                raise models.FieldDoesNotExist(
+                    "No data element %r in %s" % (name, model))
+            if not hasattr(e, 'name'):
+                raise models.FieldDoesNotExist(
+                    "%s %r in %s has no name" % (e.__class__, name, model))
+            if isinstance(e, DummyField):
+                pass
+            else:
+                lst.add(e.name)
+    return lst
+
+
+def pointer_factory(cls, othermodel, *args, **kw):
+    """
+    Instantiate a `ForeignKey` or `OneToOneField` with some subtle
+    differences:
+
+    - It supports `othermodel` being `None` or the name of some
+      non-installed model and returns a :class:`DummyField` in that
+      case.  This difference is useful when designing reusable models.
+
+    - Explicitly sets the default value for `on_delete
+      <https://docs.djangoproject.com/en/1.11/ref/models/fields/#django.db.models.ForeignKey.on_delete>`__
+      to ``CASCADE`` (as required by Django 2).
+    """
+    if othermodel is None:
+        return DummyField(othermodel, *args, **kw)
+    if isinstance(othermodel, six.string_types):
+        if not settings.SITE.is_installed_model_spec(othermodel):
+            return DummyField(othermodel, *args, **kw)
+
+    kw.setdefault('on_delete', models.CASCADE)
+    return cls(othermodel, *args, **kw)
+
+
+
+def unused_get_data_elem_from_model(cls, name):
+
+    """
+
+    Return the named data element from model if it exists. This can be a
+    database field, a :class:`lino.core.fields.RemoteField`, a
+    :class:`lino.core.fields.VirtualField` or a Django-style virtual field
+    (GenericForeignKey).
+
+    Works for edge cases like ContentType (which is a pure Django model) or
+    lino_xl.lib.cal.Day (which is not a Django model at all)
+
+    """
+    #~ logger.info("20120202 get_data_elem %r,%r",model,name)
+
+    for m in cls.mro():  # __mro__:
+        if issubclass(m, models.Model):
+
+            if not name.startswith('__'):
+                rf = make_remote_field(cls, name)
+                if rf:
+                    return rf
+            try:
+                return cls._meta.get_field(name)
+            except models.FieldDoesNotExist:
+                pass
+
+            for vf in cls._meta.private_fields:
+                if vf.name == name:
+                    return vf
+
+        elif issubclass(m, TableRow):
+
+            de = m.get_data_elem(name)
+            if de is not None:
+                return de
+
+        de = getattr(m, name, None)
+        if de is not None:
+            return de
+
+    # return get_class_attr(cls, name)
 
 def make_remote_field(model, name):
     parts = name.split('__')

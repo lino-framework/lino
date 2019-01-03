@@ -12,10 +12,9 @@ See :doc:`/dev/actors`.
 from builtins import str
 from future.utils import with_metaclass
 
-import logging
-logger = logging.getLogger(__name__)
+import logging ; logger = logging.getLogger(__name__)
 
-from copy import copy
+import copy
 
 from django.db import models
 from django.conf import settings
@@ -34,7 +33,7 @@ from lino.core.utils import error2str
 from lino.core.utils import qs2summary
 from lino.core.utils import ParameterPanel
 from lino.utils import curry, AttrDict, is_string
-from etgen.html import E, tostring
+from etgen.html import E, forcetext, tostring
 
 from .roles import SiteUser
 
@@ -65,10 +64,10 @@ def discover():
 
 def register_actor(a):
     #~ logger.debug("register_actor %s",a)
-    if not settings.SITE.is_installed(a.app_label):
-        # happens when sphinx autodoc imports a non installed module
-        # logger.info("20150416 register_actor skipped %s", a)
-        return
+    # if not settings.SITE.is_installed(a.app_label):
+    #     # happens when sphinx autodoc imports a non installed module
+    #     # logger.info("20150416 register_actor skipped %s", a)
+    #     return
     old = actors_dict.define(a.app_label, a.__name__, a)
     if old is not None:
         actors_list.remove(old)
@@ -81,6 +80,8 @@ def register_actor(a):
     #~ def __get__(self, cls, owner):
         #~ return self.fget.__get__(None, owner)()
 #~
+
+
 
 
 def field_getter(name):
@@ -144,21 +145,32 @@ class ActorMetaClass(type):
         cls.actor_id = cls.app_label + '.' + cls.__name__
         cls._setup_done = False
         cls._setup_doing = False
-
         cls.virtual_fields = {}
         cls._constants = {}
-        cls.actions = AttrDict()
+        cls._actions_dict = AttrDict()
         cls._actions_list = []  # 20121129
+        # cls._pending_field_updates = []
 
-        # inherit virtual fields defined on parent Actors
-        for b in bases:
-            bd = getattr(b, 'virtual_fields', None)
-            if bd:
-                cls.virtual_fields.update(bd)
+        cls.collect_virtual_fields()
 
-        if True:  # (20130817) tried to move this to a later moment
-            for k, v in list(classDict.items()):
-                cls.register_class_attribute(k, v)
+
+        # def register_class_attribute(k, v):
+        #     if isinstance(v, fields.Constant):
+        #         cls.add_constant(k, v)
+        #     elif isinstance(v, fields.VirtualField):  # 20120903b
+        #         cls.add_virtual_field(k, v)
+        #     elif isinstance(v, models.Field):  # 20130910
+        #         # ~ print "20130910 add virtual field " ,k, cls
+        #         vf = fields.VirtualField(v, field_getter(k))
+        #         cls.add_virtual_field(k, vf)
+        #
+        # # inherit virtual fields defined on parent actors
+        # for b in bases:
+        #     for cl in b.__mro__:
+        #         for k, v in cl.__dict__.items():
+        #             register_class_attribute(k, v)
+        # for k, v in classDict.items():
+        #     register_class_attribute(k, v)
 
         #~ if classname == 'Tasks':
             #~ logger.info("20130817 no longer added actor vfs")
@@ -170,18 +182,17 @@ class ActorMetaClass(type):
                 #~ v.table = cls
                 #~ cls.params.append(v)
         #~ cls.install_params_on_actor()
-        if classname not in (
-                'Table', 'AbstractTable', 'VirtualTable',
-                'Action', 'Actor', 'Frame',
-                'ChoiceList', 'Workflow',
-                'EmptyTable', 'Dialog'):
-            if actor_classes is None:
-                #~ logger.debug("%s definition was after discover",cls)
-                pass
-            elif not cls.__name__.startswith('unused_'):
-                # ~ cls.class_init() # 20120115
-                actor_classes.append(cls)
-            #~ logger.debug("ActorMetaClass.__new__(%s)", cls)
+        if actor_classes is not None:
+            actor_classes.append(cls)
+        # if classname not in (
+        #         'Table', 'AbstractTable', 'VirtualTable',
+        #         'Action', 'Actor', 'Frame',
+        #         'ChoiceList', 'Workflow',
+        #         'EmptyTable', 'Dialog'):
+        #     elif not cls.__name__.startswith('unused_'):
+        #         # ~ cls.class_init() # 20120115
+        #         actor_classes.append(cls)
+        #     #~ logger.debug("ActorMetaClass.__new__(%s)", cls)
         return cls
 
     def __str__(cls):
@@ -599,11 +610,13 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     _handle_class = None  # For internal use.
     get_handle_name = None
 
-    abstract = False
+    abstract = True
     """
     Set this to `True` to prevent Lino from generating useless
     JavaScript if this is just an abstract base class to be inherited
     by other actors.
+    
+    Note that this class attribute is not inherited to subclasses.
 
     """
     sum_text_column = 0
@@ -648,17 +661,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         d = getattr(cls, '_choosers_dict', {})
         return d.get(fieldname, None)
 
-    @classmethod
-    def register_class_attribute(cls, k, v):
-        if isinstance(v, fields.Constant):
-            cls.add_constant(k, v)
-        elif isinstance(v, fields.VirtualField):  # 20120903b
-            cls.add_virtual_field(k, v)
-        elif isinstance(v, models.Field):  # 20130910
-            #~ print "20130910 add virtual field " ,k, cls
-            vf = fields.VirtualField(v, field_getter(k))
-            cls.add_virtual_field(k, vf)
-
     # @classmethod
     # def inject_field(cls, name, fld):
     #     # called from auth.add_user_group()
@@ -667,7 +669,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     @classmethod
     def get_pk_field(self):
-        """Return the Django field object used to represent the primary key
+        """Return the Django field used to represent the primary key
         when filling `selected_pks`.
 
         """
@@ -819,20 +821,54 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         # logger.info("18072017, h:|%s|, h.store:|%s|, #1955"%(h, getattr(h,'store',None)))
         return h
 
+    # @classmethod
+    # def update_field(cls, name, **kwargs):
+    #     cls._pending_field_updates.append((name, kwargs)) xxx
+    #     de = getattr(cls, name)
+    #     if de.model is not cls:
+    #         de = copy.deepcopy(de)
+    #         de.model = cls
+    #         setattr(cls, name, de)
+    #     for k, v in kwargs.items():
+    #         setattr(de, k, v)
+
     @classmethod
     def class_init(cls):
         """Called internally at site startup. Don't override.
 
         """
-        # if str(cls) == 'courses.Pupils':
-        #     print("20160329 class_init")
+        # logger.info("20180201 class_init", cls)
+
         if hasattr(cls, 'required'):
             raise ChangedAPI(
                 "{0} must convert `required` to `required_roles`".format(cls))
+
         master = getattr(cls, 'master', None)
         if is_string(master):
         # if isinstance(master, string_types):
             cls.master = resolve_model(master)
+
+        model = getattr(cls, 'model', None)
+        if is_string(model):
+            model = cls.model = resolve_model(model)
+
+        cls.collect_virtual_fields()
+
+        # set the verbose_name of the detail_link field
+        model = cls.model
+        if isinstance(model, type) and issubclass(model, models.Model):
+            de = cls.detail_link
+            assert de.model is not None
+            # only if it hasn't been overridden by a parent actor
+            if de.model is Actor:
+                if de.return_type.verbose_name != model._meta.verbose_name:
+                    de = copy.deepcopy(de)
+                    de.model = de.return_type.model = cls
+                    de.return_type.verbose_name = model._meta.verbose_name
+                    de.lino_resolve_type()
+                    cls.detail_link = de
+                    cls.virtual_fields['detail_link'] = de
+                    # cls.add_virtual_field('detail_link', de)
 
         actions.install_layout(cls, 'detail_layout', layouts.DetailLayout)
         actions.install_layout(
@@ -861,7 +897,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
             
         for name in cls.simple_parameters:
             if name not in cls.parameters:
-                fld = copy(cls.get_data_elem(name))
+                fld = copy.copy(cls.get_data_elem(name))
                 fld.blank = True
                 fld.null = True
                 fld.default = None
@@ -870,10 +906,28 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         # if len(cls.parameters) == 0:
         #     cls.parameters = None # backwards compatibility
 
+    @classmethod
+    def collect_virtual_fields(cls):
+
+        """Collect virtual fields from class attributes and register them as
+        virtual fields. """
+        # print("20190201 collect_virtual_fields {}".format(cls))
+        for b in reversed(cls.__mro__):
+            for k, v in b.__dict__.items():
+            # for k in b.__dict__.keys():
+            #     v = getattr(cls, k)
+                if isinstance(v, fields.Constant):
+                    cls.add_constant(k, v)
+                elif isinstance(v, fields.VirtualField):  # 20120903b
+                    cls.add_virtual_field(k, v)
+                elif isinstance(v, models.Field):  # 20130910
+                    # ~ print "20130910 add virtual field " ,k, cls
+                    vf = fields.VirtualField(v, field_getter(k))
+                    cls.add_virtual_field(k, vf)
 
     @classmethod
-    def get_known_values(self):
-        return self._known_values
+    def get_known_values(cls):
+        return cls._known_values
 
     @classmethod
     def get_actor_editable(self):
@@ -950,6 +1004,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                 else:
                     dtla = actions.ShowDetail(cls.detail_layout)
             cls.detail_action = cls._bind_action('detail_action', dtla)
+            # if str(cls).endswith("Days"):
+            #     logger.info("20181230 %r detail_action is %r", cls, cls.detail_action)
             if cls.editable:
                 cls.submit_detail = cls._bind_action(
                     'submit_detail', actions.SubmitDetail())
@@ -991,7 +1047,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                 # None in subclass.
                 v = cls.__dict__.get(k, v)
                 if isinstance(v, actions.Action):
-                    if not k in cls.actions:
+                    if not k in cls._actions_dict:
                         cls._bind_action(k, v)
 
         cls._actions_list.sort(
@@ -1036,7 +1092,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         try:
             ba = BoundAction(self, a)
             if a.action_name is not None:
-                self.actions.define(a.action_name, ba)
+                self._actions_dict.define(a.action_name, ba)
             self._actions_list.append(ba)
         except Exception as e:
             raise Exception("Cannot bind {!r} to {!r} : {}".format(
@@ -1166,7 +1222,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         """
         if cls.model is None:
             return
-        cls.model.setup_parameters(fields)
+        if issubclass(cls.model, models.Model):
+            cls.model.setup_parameters(fields)
 
     @classmethod
     def get_simple_parameters(cls):
@@ -1174,9 +1231,9 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         Expected to return a list of names of parameter fields.
 
         """
-        if cls.model is None:
-            return []
-        return cls.model.get_simple_parameters()
+        if isinstance(cls.model, type) and issubclass(cls.model, models.Model):
+            return cls.model.get_simple_parameters()
+        return []
 
     @classmethod
     def get_param_elem(self, name):
@@ -1197,6 +1254,13 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
             return getattr(obj, self.workflow_state_field.name)
             #~ if isinstance(state,choicelists.Choice):
                 #~ state = state.value
+
+    @fields.displayfield(_("Description"))
+    def detail_link(cls, obj, ar):
+        if ar is None:
+            return ''
+            # return str(self)
+        return E.div(*forcetext([ar.obj2html(obj)]))
 
     # @classmethod
     # def disabled_actions(self, ar, obj):  # no longer used since 20170909
@@ -1358,12 +1422,30 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
             if name in cls.virtual_fields:
                 raise Exception("Duplicate add_virtual_field() %s.%s" %
                                 (cls, name))
-        cls.virtual_fields[name] = vf
-        #~ vf.lino_resolve_type(cls,name)
-        vf.name = name
         # assert vf.model is None
-        vf.model = cls  # 20181023 experimentally
-        vf.get = curry(vf.get, cls)
+        # if vf.model is not None:
+        #     # inherit from parent actor
+        #     vf = copy.deepcopy(vf)
+        # if name in cls.virtual_fields:
+        #     old = cls.virtual_fields[name]
+        #     if old is not vf:
+        #         print("20190102 {} of {} replaces {} by {}".format(name, cls, old, vf))
+        if vf.model is None:
+            vf.model = cls
+        elif not issubclass(cls, vf.model):
+            msg = "20190201 Cannot add field {} defined in {} to {}"
+            msg = msg.format(name, vf.model, cls)
+            # print(msg)
+            raise Exception(msg)
+        vf.name = name
+        # vf.attname = name
+        cls.virtual_fields[name] = vf
+
+        #~ vf.lino_resolve_type(cls,name)
+        # vf.get = vf.get
+        # vf.get = curry(vf.get, cls)
+        # vf.get = classmethod(vf.get)
+        # vf.get = curry(classmethod(vf.get), cls)
         #~ for k,v in self.virtual_fields.items():
             #~ if isinstance(v,models.ForeignKey):
                 #~ v.rel.model = resolve_model(v.rel.model)
@@ -1374,7 +1456,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         vf.name = name
 
     @classmethod
-    def after_site_setup(self, site):
+    def after_site_setup(cls, site):
+        self = cls
         #~ raise "20100616"
         #~ assert not self._setup_done, "%s.setup() called again" % self
         if self._setup_done:
@@ -1385,13 +1468,19 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
             else:
                 logger.warning("%s.setup() called recursively" % self)
                 return False
-        #~ logger.info("20130219 Actor.after_site_setup() %s", self)
         self._setup_doing = True
+
+        # logger.info("20181230 Actor.after_site_setup() %r", self)
+
+        for vf in self.virtual_fields.values():
+            if vf.model is self:
+                vf.get = curry(vf.get, self)
+                # settings.SITE.register_virtual_field(vf)
 
         if not self.is_abstract():
             actions.register_params(self)
 
-        self._collect_actions()
+            self._collect_actions()
 
         if not self.is_abstract():
             actions.setup_params_choosers(self)
@@ -1407,12 +1496,12 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     @classmethod
     def get_action_by_name(self, name):
-        return self.actions.get(name, None)
+        return self._actions_dict.get(name, None)
     get_url_action = get_action_by_name
 
     @classmethod
     def get_url_action_names(self):
-        return list(self.actions.keys())
+        return list(self._actions_dict.keys())
 
     @classmethod
     def get_toolbar_actions(self, parent):
@@ -1497,16 +1586,31 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         if c is not None:
             return c
         #~ return self.virtual_fields.get(name,None)
+
+        # Note that there are models with fields named 'master', 'app_label',
+        # 'model' (i.e. a name that is also used as attribute of an actor.
+
         vf = self.virtual_fields.get(name, None)
         if vf is not None:
             #~ logger.info("20120202 Actor.get_data_elem found vf %r",vf)
             return vf
 
+        if self.model is not None:
+            de = self.model.get_data_elem(name)
+            if de is not None:
+                return de
+
         a = getattr(self, name, None)
         if isinstance(a, actions.Action):
             return a
+        # if isinstance(a, fields.VirtualField):
+        #     return a
         if isinstance(a, fields.DummyField):
             return a
+        # if a is not None:
+        #     raise Exception("20190102 unhandled attribute {}={}".format(name, a))
+
+        # cc = AbstractTable.get_data_elem(self,name)
 
         #~ logger.info("20120307 lino.core.coretools.get_data_elem %r,%r",self,name)
         s = name.split('.')

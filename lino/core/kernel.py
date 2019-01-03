@@ -32,7 +32,7 @@ from os.path import join, dirname, exists
 
 import sys
 import time
-import copy
+# import copy
 import codecs
 import atexit
 import threading
@@ -85,22 +85,14 @@ from .utils import get_models
 from .utils import resolve_fields_list
 from .utils import djangoname
 
-from .inject import collect_virtual_fields
+# from .inject import collect_virtual_fields
+from .fields import set_default_verbose_name
 
 
 startup_rlock = threading.RLock()  # Lock() or RLock()?
 
 # from .utils import class_dict_items
 
-def set_default_verbose_name(f):
-    """If the verbose_name of a ForeignKey was not set by user code,
-    Django sets it to ``field.name.replace('_', ' ')``.  We replace
-    this default value by ``f.remote_field.model._meta.verbose_name``.  This rule
-    holds also for virtual FK fields.
-
-    """
-    if f.verbose_name == f.name.replace('_', ' '):
-        f.verbose_name = f.remote_field.model._meta.verbose_name
 
 
 CLONEABLE_ATTRS = frozenset("""ah request user subst_user
@@ -336,6 +328,8 @@ class Kernel(object):
 
         site.load_actors()
 
+        # raise Exception("20190102 {!r}".format(site.models.courses.CoursesByLine.detail_link))
+
         # vip_classes = (layouts.BaseLayout, fields.Dummy)
         # for a in models.get_apps():
         #     app_label = a.__name__.split('.')[-2]
@@ -384,6 +378,7 @@ class Kernel(object):
                                         "ForeignKey '%s' in %s "
                                         "(models are %s)" %
                                         (f.remote_field.model, f.name, model, models_list))
+
                     set_default_verbose_name(f)
 
                     """
@@ -426,38 +421,38 @@ class Kernel(object):
             import_module(site.custom_layouts_module)
 
         for model in models_list:
-
-            """Virtual fields declared on the model must have been attached
-            before calling Model.site_setup(), e.g. because
-            pcsw.Person.site_setup() declares `is_client` as imported
-            field.
-
-            """
-
             model.on_analyze(site)
 
         #~ logger.info("20130817 attached model vfs")
 
+        # Attach virtual fields to the model that declares them   This must be
+        # done before calling Model.site_setup(), e.g. because
+        # pcsw.Person.site_setup() declares `is_client` as imported field.
+
         for model in models_list:
-            collect_virtual_fields(model)
+            model.collect_virtual_fields()
 
-        # set the verbose_name of the detail_link field on each model
+        # for vt in virtual_tables:
+        #     if vt.model is not None:
+        #         assert vt.model._lino_default_table is None
+        #         vt.model._lino_default_table = vt
+        #         collect_virtual_fields(vt.model)
 
-        for model in models_list:
-            for vf in model._meta.private_fields:
-                if vf.name == 'detail_link':
-                    # if vf.verbose_name  == 'detail_link':
-                    # vf.verbose_name = model._meta.verbose_name
-
-                    # note that the verbose_name of a virtual field is a copy
-                    # of the verbose_name of its return_type (see
-                    # VirtualField.lino_resolve_type)
-                    vf.return_type.verbose_name = model._meta.verbose_name
-                    # if model.__name__ == "Course":
-                    #     print("20181212", model)
-                    break
-
-
+        # # set the verbose_name of the detail_link field on each model
+        # for model in models_list:
+        #     for vf in model._meta.private_fields:
+        #         if vf.name == 'detail_link':
+        #             # if vf.verbose_name  == 'detail_link':
+        #             # vf.verbose_name = model._meta.verbose_name
+        #
+        #             # note that the verbose_name of a virtual field is a copy
+        #             # of the verbose_name of its return_type (see
+        #             # VirtualField.lino_resolve_type)
+        #             vf.verbose_name = model._meta.verbose_name
+        #             vf.return_type.verbose_name = model._meta.verbose_name
+        #             # if model.__name__ == "Course":
+        #             #     print("20181212", model)
+        #             break
 
         # Install help texts to all database fields:
         for model in models_list:
@@ -538,15 +533,20 @@ class Kernel(object):
 
         later = []
         for a in actors.actors_list:
-            if a.model and a == a.model.get_default_table():
+            if isinstance(a.model, type) and issubclass(a.model, models.Model) \
+                    and a == a.model.get_default_table():
                 a.after_site_setup(site)
             else:
                 later.append(a)
         for a in later:
             a.after_site_setup(site)
-                
 
-        site.resolve_virtual_fields()
+        # choicelists.ChoiceList.after_site_setup(site)
+        # workflows.Workflow.after_site_setup(site)
+        # workflows.Workflow.after_site_setup(site)
+        # actors.Actor.after_site_setup(site)
+
+        # site.resolve_virtual_fields()
 
         self.memo_parser = Parser()
 
@@ -612,6 +612,8 @@ class Kernel(object):
 
         for p in site.installed_plugins:
             p.on_ui_init(self)
+
+        site.resolve_virtual_fields()
 
         for p in self.site.installed_plugins:
             if p.app_name == self.site.default_ui:
@@ -1057,10 +1059,10 @@ def site_startup(self):
         #     import django
         #     django.setup()
 
-        
         for a in apps.get_app_configs():
             self.models.define(six.text_type(a.label), a.models_module)
 
+        # print("20181230 SITE.models ready {}".format(self.models.keys()))
         # the following was equivalent of above until Django 1.9
         
         # for p in self.installed_plugins:
@@ -1253,7 +1255,7 @@ def register_model_table(rpt):
         if not rpt.is_abstract():
             # logger.debug("20120102 register %s : master report", rpt.actor_id)
             master_tables.append(rpt)
-        if not '_lino_default_table' in rpt.model.__dict__:
+        if '_lino_default_table' not in rpt.model.__dict__:
             if is_candidate(rpt):
                 rpt.model._lino_default_table = rpt
     elif rpt.master is ContentType:

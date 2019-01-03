@@ -21,8 +21,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django.db.models.query import QuerySet
 
-from django.apps import apps
-get_models = apps.get_models
+from django.apps import apps ; get_models = apps.get_models
 
 from lino.core import fields
 from lino.core import actions
@@ -31,6 +30,7 @@ from lino.core import actors
 
 from lino.core.choicelists import ChoiceListField
 from .utils import models_by_base
+# from .fields import get_data_elem_from_model
 
 
 from lino.core.utils import resolve_model, get_field, UnresolvedModel
@@ -157,7 +157,9 @@ class Table(AbstractTable):
     See :class:`dd.Table`.
 
     """
-    
+
+    abstract = True
+
     model = None
     """See :attr:`lino.core.actors.Actor.model`
 
@@ -356,7 +358,7 @@ class Table(AbstractTable):
             # self.simple_parameters |= self.model.simple_parameters
 
             for b in self.model.mro():
-                for k, v in list(b.__dict__.items()):
+                for k, v in b.__dict__.items():
                     if isinstance(v, actions.Action):
                         existing_value = self.__dict__.get(k, NOT_PROVIDED)
                         if existing_value is NOT_PROVIDED:
@@ -484,8 +486,7 @@ class Table(AbstractTable):
 
     @classmethod
     def is_abstract(self):
-        if self.model is None \
-            or self.model is Model:
+        if self.model is None or self.model is Model:
             # or self.model._meta.abstract:
             # logger.info('20120621 %s : no real table',h)
             return True
@@ -540,29 +541,24 @@ class Table(AbstractTable):
     def get_layout_aliases(cls):
         return cls.model.get_layout_aliases()
 
-    @classmethod
-    def get_data_elem(self, name):
-        """
-        Adds the possibility to specify
-        :class:`remote fields <lino.core.fields.RemoteField>`
-        in a layout template.
-        """
-        # cc = AbstractTable.get_data_elem(self,name)
-
-        if self.model is not None:
-            if not isinstance(self.model, type) or not issubclass(
-                    self.model, models.Model):
-                raise Exception(
-                    "%s.model is %r (and not a Model subclass)" %
-                    (self, self.model))
-
-            # logger.info("20120202 Table.get_data_elem found nothing")
-            for m in models_by_base(self.model):
-                de = m.get_data_elem(name)
-                if de is not None:
-                    return de
-        return super(Table, self).get_data_elem(name)
-
+    # @classmethod
+    # def get_data_elem(self, name):
+    #     """
+    #     Adds the possibility to specify
+    #     :class:`remote fields <lino.core.fields.RemoteField>`
+    #     in a layout template.
+    #     """
+    #     # cc = AbstractTable.get_data_elem(self,name)
+    #
+    #     # if self.model is not None:
+    #     if isinstance(self.model, type) and issubclass(self.model, models.Model):
+    #         # logger.info("20120202 Table.get_data_elem found nothing")
+    #         for m in models_by_base(self.model):
+    #             de = m.get_data_elem(name)
+    #             if de is not None:
+    #                 return de
+    #     return super(Table, self).get_data_elem(name)
+    #
     @classmethod
     def get_request_queryset(self, ar, **filter):
         """

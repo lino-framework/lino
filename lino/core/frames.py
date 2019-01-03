@@ -38,6 +38,7 @@ class Frame(actors.Actor):
     """
     _handle_class = FrameHandle
     editable = False
+    abstract = True
 
     @classmethod
     def get_actor_label(self):

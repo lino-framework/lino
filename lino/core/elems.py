@@ -1041,6 +1041,9 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
         actor = self.field.remote_field.model.get_default_table()
         if not isinstance(self.layout_handle.layout, ColumnsLayout):
             if self.layout_handle.ui.renderer.extjs_version is not None:
+                if actor is None:
+                    raise Exception("20181229 {!r} {}".format(self,
+                                                              self.field.remote_field.model))
                 a1 = actor.detail_action
                 a2 = actor.insert_action
                 if a1 is not None or a2 is not None:
@@ -1692,7 +1695,7 @@ class SlaveSummaryPanel(HtmlBoxElement):
         fld.name = actor.actor_id.replace('.', '_')
         fld.model = lh.layout._datasource  # 20181023 experimental
         # actor.virtual_fields[fld.name] = fld
-        fld.lino_resolve_type()
+        # fld.lino_resolve_type()
         super(SlaveSummaryPanel, self).__init__(lh, fld, **kw)
 
 
@@ -1707,7 +1710,8 @@ class ManyRelatedObjectElement(HtmlBoxElement):
         box = fields.HtmlBox(name)
         fld = fields.VirtualField(box, f)
         fld.name = name
-        fld.lino_resolve_type()
+        fld.model = self
+        # fld.lino_resolve_type()
         super(ManyRelatedObjectElement, self).__init__(lh, fld, **kw)
 
 
@@ -1722,7 +1726,8 @@ class ManyToManyElement(HtmlBoxElement):
         box = fields.HtmlBox(relobj.field.verbose_name)
         fld = fields.VirtualField(box, f)
         fld.name = name
-        fld.lino_resolve_type()
+        fld.model = self
+        # fld.lino_resolve_type()
         super(ManyToManyElement, self).__init__(lh, fld, **kw)
 
 
@@ -2560,6 +2565,7 @@ def create_layout_element(lh, name, **kw):
                     elems.append(create_field_element(lh, bf, **kw))
                 return elems
         return create_field_element(lh, de, **kw)
+
     if isinstance(de, fields.DisplayField):
         return create_field_element(lh, de, **kw)
 

@@ -299,7 +299,7 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
         The default `max_length` for fields using this choicelist.
 
     """
-
+    abstract = True
     workflow_actions = []
 
     item_class = Choice
@@ -345,7 +345,7 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
 
 
 
-The disadvantage
+    The disadvantage
     is that when somebody *does not* want your default value, then
     they must explicitly specify `default=''` when defining a field on
     your choicelist.

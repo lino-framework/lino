@@ -164,6 +164,8 @@ class AbstractTable(actors.Actor):
 
     """
 
+    abstract = True
+
     _handle_class = TableHandle
 
     hide_zero_rows = False
@@ -375,7 +377,7 @@ class AbstractTable(actors.Actor):
 
     """
 
-    show_detail_navigator = False
+    show_detail_navigator = True
     """
     Whether a Detail view on a row of this table should have a navigator.
     """
@@ -516,6 +518,10 @@ method in order to sort the rows of the queryset.
         resolve_fields_list(cls, 'tablet_columns', set, {})
         resolve_fields_list(cls, 'mobile_columns', set, {})
         resolve_fields_list(cls, 'popin_columns', set, {})
+        if cls.model is not None:
+            if not issubclass(cls.model, models.Model):
+                if cls.model._lino_default_table is None:
+                    cls.model._lino_default_table = cls
 
         
     @classmethod
@@ -673,9 +679,10 @@ method in order to sort the rows of the queryset.
             #~ action = self.default_action
         #~ return TableRequest(ui,self,request,action,**kw)
 
-    @fields.displayfield(_("Details"))
-    def detail_pointer(self, obj, ar):
-        return obj.obj2href(ar)
+    # @fields.displayfield(_("Details"))
+    # def detail_pointer(cls, obj, ar):
+    #     # print("20181230 detail_pointer() {}".format(cls))
+    #     return obj.obj2href(ar)
 
     @classmethod
     def request(self, master_instance=None, **kw):

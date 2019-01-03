@@ -3072,10 +3072,10 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       };
       if (this.first) {
         if (record.navinfo  && ! this.hide_navigator) {
-          this.first.setDisabled(!record.navinfo.first);
-          this.prev.setDisabled(!record.navinfo.prev);
-          this.next.setDisabled(!record.navinfo.next);
-          this.last.setDisabled(!record.navinfo.last);
+          this.first.setDisabled(record.navinfo.first == null);
+          this.prev.setDisabled(record.navinfo.prev == null);
+          this.next.setDisabled(record.navinfo.next == null);
+          this.last.setDisabled(record.navinfo.last == null);
           this.displayItem.setText(record.navinfo.message);
         } else {
           this.first.setDisabled(true);

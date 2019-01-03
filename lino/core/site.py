@@ -2545,7 +2545,9 @@ class Site(object):
         self.VIRTUAL_FIELDS = set()
 
     def register_virtual_field(self, vf):
+        """Call lino_resolve_type after startup."""
         if self._startup_done:
+            # raise Exception("20190102")
             vf.lino_resolve_type()
         else:
             # print("20181023 postpone resolve_virtual_fields() for {}".format(vf))

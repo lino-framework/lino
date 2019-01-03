@@ -957,6 +957,7 @@ class BaseRequest(object):
                 rec.update(title=tostring(ar.href_to_request(ar))
                            + u" » " + ar.get_detail_title(elem))
         rec.update(id=elem.pk)
+        # rec.update(id=ar.actor.get_pk_field().value_from_object(elem))
         if ar.actor.editable:
             rec.update(disable_delete=rh.actor.disable_delete(elem, ar))
         if rh.actor.show_detail_navigator and with_navinfo:

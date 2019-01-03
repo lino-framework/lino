@@ -118,6 +118,7 @@ class EmptyTable(Frame):
     #~ debug_permissions = True
     #~ has_navigator = False
     #~ hide_top_toolbar = True
+    abstract = True
     hide_navigator = True
     default_list_action_name = 'show'
     default_elem_action_name = 'show'

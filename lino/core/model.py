@@ -11,8 +11,8 @@ import six
 from builtins import str
 from builtins import object
 
-import logging
-logger = logging.getLogger(__name__)
+import logging ; logger = logging.getLogger(__name__)
+import copy
 
 from django.db import models
 from django.conf import settings
@@ -24,17 +24,19 @@ from etgen.html import E, forcetext
 from lino.core import fields
 from lino.core import signals
 from lino.core import actions
-from lino.utils import get_class_attr
 from .fields import make_remote_field
 from .utils import error2str
 from .utils import obj2str
 from .diff import ChangeWatcher
 from .utils import obj2unicode
+from .utils import class_dict_items
 from .signals import on_ui_created, pre_ui_delete, pre_ui_save
 from .workflows import ChangeStateAction
 
 
-class Model(models.Model):
+
+
+class Model(models.Model, fields.TableRow):
     """Lino adds a series of features to Django's `Model
     <https://docs.djangoproject.com/en/dev/ref/models/class/>`_
     class.  If a Lino application includes plain Django Model
@@ -276,12 +278,62 @@ class Model(models.Model):
         return E.li(str(self))
 
     @classmethod
+    def collect_virtual_fields(model):
+        """Declare every virtual field defined on this model to Django.
+        We use Django's undocumented :meth:`add_field` method.
+
+        Make a copy if the field is inherited, in order to avoid side effects like
+        #2592
+
+        If a model defines both a database field and a virtualfield of same name,
+        then the virtualfield is being ignored.
+
+        """
+        if model._meta.abstract:  # 20181023
+            return
+        fieldnames = {f.name for f in
+                      model._meta.private_fields + model._meta.local_fields}
+        for m, k, v in class_dict_items(model):
+            if isinstance(v, fields.VirtualField) and k not in fieldnames:
+                if m is not model:
+                    # if k == "overview" and model.__name__ == "DailyPlannerRow":
+                    #     print("20181022", m, model)
+                    # settings.SITE.VIRTUAL_FIELDS.pop(v)
+                    v = copy.deepcopy(v)
+                settings.SITE.register_virtual_field(v)
+                v.attach_to_model(model, k)
+                model._meta.add_field(v, private=True)
+                fieldnames.add(k)
+
+    @classmethod
     def get_param_elem(model, name):
         # This is called by :meth:`Chooser.get_data_elem` when
         # application code defines a chooser with an argument that
         # does not match any field. There is currently no usage
         # example for this on database models.
         return None
+
+    @classmethod
+    def get_data_elem(cls, name):
+
+        if not name.startswith('__'):
+            rf = make_remote_field(cls, name)
+            if rf:
+                return rf
+        try:
+            return cls._meta.get_field(name)
+        except models.FieldDoesNotExist:
+            pass
+
+        for vf in cls._meta.private_fields:
+            if vf.name == name:
+                return vf
+        return getattr(cls, name, None)
+
+        # we cannot return super(Model, cls).get_data_elem(name) here because
+        # get_data_elem is grafted also to pure Django models which don't
+        # inherit from TableRow
+
 
     @classmethod
     def add_param_filter(cls, qs, lookup_prefix='', **kwargs):
@@ -299,36 +351,6 @@ class Model(models.Model):
         #         "{}.add_param_filter got unknown argument {}".format(
         #             str(cls.__name__), kwargs))
         # return qs
-
-    @classmethod
-    def get_data_elem(cls, name):
-        """Return the named data element. This can be a database field, a
-        :class:`lino.core.fields.RemoteField`, a
-        :class:`lino.core.fields.VirtualField` or a Django-style
-        virtual field (GenericForeignKey).
-
-        """
-        #~ logger.info("20120202 get_data_elem %r,%r",model,name)
-        if not name.startswith('__'):
-            rf = make_remote_field(cls, name)
-            if rf:
-                return rf
-
-        try:
-            return cls._meta.get_field(name)
-        except models.FieldDoesNotExist:
-            pass
-
-        for vf in cls._meta.private_fields:
-            if vf.name == name:
-                return vf
-            
-        return get_class_attr(cls, name)
-        # v = get_class_attr(cls, name)
-        # if v is not None:
-        #     if isinstance(v, fields.DummyField):
-        #         return v
-        #     raise Exception("Oops, {} on {} is {}".format(name, cls, v))
 
     def get_choices_text(self, request, actor, field):
         """
@@ -388,15 +410,6 @@ class Model(models.Model):
                 if msg is not None:
                     return msg
         return self.__class__._lino_ddh.disable_delete_on_object(self)
-
-    @classmethod
-    def get_default_table(self):
-        """Used internally. Lino chooses during the kernel startup, for each
-        model, one of the discovered Table subclasses as the "default
-        table".
-
-        """
-        return self._lino_default_table  # set in dbtables.py
 
     def disabled_fields(self, ar):
         """
@@ -469,6 +482,131 @@ class Model(models.Model):
             if self.get_data_elem(name) is None:
                 raise Exception("%s has no element '%s'" % (self, name))
         self.hidden_elements = self.hidden_elements | set(names)
+
+    @classmethod
+    def setup_parameters(cls, fields):
+        """Inheritable hook for defining parameters.
+        Called once per actor at site startup.
+
+        It receives a `dict` object `fields` and is expected to return
+        that `dict` which it may update.
+
+        See also :meth:`get_simple_parameters`.
+
+        Usage example: :class:`lino.modlib.comments.Comment`.
+
+        """
+        return fields
+
+    @classmethod
+    def get_simple_parameters(cls):
+        """
+        Return or yield a list of names of simple parameter fields of every
+        `Table` on this model.
+
+        When the list contains names for which no parameter field is
+        defined, then Lino creates that parameter field as a copy of
+        the database field of the same name.
+        """
+        return []
+
+    @classmethod
+    def on_analyze(cls, site):
+        if isinstance(cls.workflow_owner_field, six.string_types):
+            cls.workflow_owner_field = cls.get_data_elem(
+                cls.workflow_owner_field)
+        if isinstance(cls.workflow_state_field, six.string_types):
+            cls.workflow_state_field = cls.get_data_elem(
+                cls.workflow_state_field)
+        # for vf in cls._meta.private_fields:
+        #     if vf.name == 'detail_link':
+        #         if vf.verbose_name is None:
+        #
+        #             # note that the verbose_name of a virtual field is a copy
+        #             # of the verbose_name of its return_type (see
+        #             # VirtualField.lino_resolve_type)
+        #
+        #             # vf.verbose_name = model._meta.verbose_name
+        #             vf.return_type.verbose_name = cls._meta.verbose_name
+        #             # if model.__name__ == "Course":
+        #             #     print("20181212", model)
+        #             break
+
+    @classmethod
+    def lookup_or_create(model, lookup_field, value, **known_values):
+        """
+        Look-up whether there is a model instance having
+        `lookup_field` with value `value`
+        (and optionally other `known_values` matching exactly).
+
+        If it doesn't exist, create it and emit an
+        :attr:`auto_create <lino.core.signals.auto_create>` signal.
+
+        """
+
+        from lino.utils.mldbc.fields import BabelCharField
+
+        # ~ logger.info("2013011 lookup_or_create")
+        fkw = dict()
+        fkw.update(known_values)
+
+        if isinstance(lookup_field, six.string_types):
+            lookup_field = model._meta.get_field(lookup_field)
+        if isinstance(lookup_field, BabelCharField):
+            flt = settings.SITE.lookup_filter(
+                lookup_field.name, value, **known_values)
+        else:
+            if isinstance(lookup_field, models.CharField):
+                fkw[lookup_field.name + '__iexact'] = value
+            else:
+                fkw[lookup_field.name] = value
+            flt = models.Q(**fkw)
+            # ~ flt = models.Q(**{self.lookup_field.name: value})
+        qs = model.objects.filter(flt)
+        if qs.count() > 0:  # if there are multiple objects, return the first
+            if qs.count() > 1:
+                logger.warning(
+                    "%d %s instances having %s=%r (I'll return the first).",
+                    qs.count(), model.__name__, lookup_field.name, value)
+            return qs[0]
+        # ~ known_values[lookup_field.name] = value
+        obj = model(**known_values)
+        setattr(obj, lookup_field.name, value)
+        try:
+            obj.full_clean()
+        except ValidationError as e:
+            raise ValidationError("Failed to auto_create %s : %s" %
+                                  (obj2str(obj), e))
+        obj.save()
+        signals.auto_create.send(obj, known_values=known_values)
+        return obj
+
+    @classmethod
+    def quick_search_filter(model, search_text, prefix=''):
+        """Return the filter expression to apply when a quick search text is
+        specified.
+
+        """
+        # logger.info(
+        #     "20160610 quick_search_filter(%s, %r, %r)",
+        #     model, search_text, prefix)
+        flt = models.Q()
+        for w in search_text.split():
+            q = models.Q()
+            char_search = True
+            if w.startswith("#") and w[1:].isdigit():
+                w = w[1:]
+                char_search = False
+            if w.isdigit():
+                for fn in model.quick_search_fields_digit:
+                    kw = {prefix + fn.name: int(w)}
+                    q = q | models.Q(**kw)
+            if char_search:
+                for fn in model.quick_search_fields:
+                    kw = {prefix + fn.name + "__icontains": w}
+                    q = q | models.Q(**kw)
+            flt &= q
+        return flt
 
     def on_create(self, ar):
         """
@@ -609,105 +747,6 @@ class Model(models.Model):
         # return [ar.obj2html(self)]
         return [self.obj2href(ar)]
 
-    @classmethod
-    def on_analyze(cls, site):
-        if isinstance(cls.workflow_owner_field, six.string_types):
-            cls.workflow_owner_field = cls.get_data_elem(
-                cls.workflow_owner_field)
-        if isinstance(cls.workflow_state_field, six.string_types):
-            cls.workflow_state_field = cls.get_data_elem(
-                cls.workflow_state_field)
-        # for vf in cls._meta.private_fields:
-        #     if vf.name == 'detail_link':
-        #         if vf.verbose_name is None:
-        #
-        #             # note that the verbose_name of a virtual field is a copy
-        #             # of the verbose_name of its return_type (see
-        #             # VirtualField.lino_resolve_type)
-        #
-        #             # vf.verbose_name = model._meta.verbose_name
-        #             vf.return_type.verbose_name = cls._meta.verbose_name
-        #             # if model.__name__ == "Course":
-        #             #     print("20181212", model)
-        #             break
-
-
-    @classmethod
-    def lookup_or_create(model, lookup_field, value, **known_values):
-        """
-        Look-up whether there is a model instance having
-        `lookup_field` with value `value`
-        (and optionally other `known_values` matching exactly).
-        
-        If it doesn't exist, create it and emit an
-        :attr:`auto_create <lino.core.signals.auto_create>` signal.
-        
-        """
-
-        from lino.utils.mldbc.fields import BabelCharField
-
-        #~ logger.info("2013011 lookup_or_create")
-        fkw = dict()
-        fkw.update(known_values)
-
-        if isinstance(lookup_field, six.string_types):
-            lookup_field = model._meta.get_field(lookup_field)
-        if isinstance(lookup_field, BabelCharField):
-            flt = settings.SITE.lookup_filter(
-                lookup_field.name, value, **known_values)
-        else:
-            if isinstance(lookup_field, models.CharField):
-                fkw[lookup_field.name + '__iexact'] = value
-            else:
-                fkw[lookup_field.name] = value
-            flt = models.Q(**fkw)
-            #~ flt = models.Q(**{self.lookup_field.name: value})
-        qs = model.objects.filter(flt)
-        if qs.count() > 0:  # if there are multiple objects, return the first
-            if qs.count() > 1:
-                logger.warning(
-                    "%d %s instances having %s=%r (I'll return the first).",
-                    qs.count(), model.__name__, lookup_field.name, value)
-            return qs[0]
-        #~ known_values[lookup_field.name] = value
-        obj = model(**known_values)
-        setattr(obj, lookup_field.name, value)
-        try:
-            obj.full_clean()
-        except ValidationError as e:
-            raise ValidationError("Failed to auto_create %s : %s" %
-                                  (obj2str(obj), e))
-        obj.save()
-        signals.auto_create.send(obj, known_values=known_values)
-        return obj
-
-    @classmethod
-    def quick_search_filter(model, search_text, prefix=''):
-        """Return the filter expression to apply when a quick search text is
-        specified.
-
-        """
-        # logger.info(
-        #     "20160610 quick_search_filter(%s, %r, %r)",
-        #     model, search_text, prefix)
-        flt = models.Q()
-        for w in search_text.split():
-            q = models.Q()
-            char_search = True
-            if w.startswith("#") and w[1:].isdigit():
-                w = w[1:]
-                char_search = False
-            if w.isdigit():
-                for fn in model.quick_search_fields_digit:
-                    kw = {prefix + fn.name: int(w)}
-                    q = q | models.Q(**kw)
-            if char_search:
-                for fn in model.quick_search_fields:
-                    kw = {prefix + fn.name + "__icontains": w}
-                    q = q | models.Q(**kw)
-            flt &= q
-        return flt
-
     def on_duplicate(self, ar, master):
         """Called by :class:`lino.mixins.duplicable.Duplicate` on
         the new row instance and on all related objects.
@@ -809,14 +848,6 @@ class Model(models.Model):
             return ''
         return E.div(*forcetext(self.get_overview_elems(ar)))
 
-    # @fields.htmlbox(_("Description"))
-    @fields.htmlbox()
-    def detail_link(self, ar):
-        if ar is None:
-            return ''
-            # return str(self)
-        return E.div(*forcetext([ar.obj2html(self)]))
-
     @fields.displayfield(_("Workflow"))
     def workflow_buttons(self, ar):
         if ar is None:
@@ -877,15 +908,6 @@ class Model(models.Model):
             if isinstance(self, settings.SITE.project_model):
                 return self
 
-    def obj2href(self, ar, *args, **kwargs):
-        """Return a html representation of a pointer to the given database
-        object.
-
-        Examples see :ref:`obj2href`.
-
-        """
-        return ar.obj2html(self, *args, **kwargs)
-
     def to_html(self, **kw):
         import lino.ui.urls  # hack: trigger ui instantiation
         actor = self.get_default_table()
@@ -900,42 +922,6 @@ class Model(models.Model):
         """
         return self
 
-    def get_detail_action(self, ar):
-        """Return the (bound) detail action to use for showing this object in
-        a detail window.  Return `None` when no detail form exists or
-        the requesting user has no permission to see it.
-
-        `ar` is the action request who asks to see a detail.
-        If the action requests's actor can be used for this model,
-        then use its `detail_action`. Otherwise use the
-        `detail_action` of this model's default table.
-
-        When `ar` is `None`, the permission check is bypassed.
-
-        If `self` has a special attribute `_detail_action` defined,
-        return this.  This magic is used by
-        :meth:`Menu.add_instance_action
-        <lino.core.menus.Menu.add_instance_action>`.
-
-        Usage example: :class:`courses.Course
-        <lino_xl.lib.courses.models.Course>` overrides this to return
-        the detail_action depending on the CourseArea.
-
-        """
-        a = getattr(self, '_detail_action', None)
-        if a is None:
-            if ar and ar.actor and ar.actor.model \
-               and self.__class__ is ar.actor.model:
-                a = ar.actor.detail_action
-            else:
-                # if ar and ar.actor and ar.actor.model:
-                #     print("20170902 {} : {} is not {}".format(
-                #         ar.actor, self.__class__, ar.actor.model))
-                a = self.__class__.get_default_table().detail_action
-        if a is None or ar is None:
-            return a
-        if a.get_view_permission(ar.get_user().user_type):
-            return a
 
 #     def is_attestable(self):
 #         """Override this to disable the :class:`lino_xl.lib.excerpts.CreateExcerpt`
@@ -988,33 +974,6 @@ class Model(models.Model):
     def filename_root(self):
         return self._meta.app_label + '.' + self.__class__.__name__ \
             + '-' + str(self.pk)
-
-    @classmethod
-    def setup_parameters(cls, fields):
-        """Inheritable hook for defining parameters.
-        Called once per actor at site startup.
-
-        It receives a `dict` object `fields` and is expected to return
-        that `dict` which it may update.
-
-        See also :meth:`get_simple_parameters`.
-
-        Usage example: :class:`lino.modlib.comments.Comment`.
-
-        """
-        return fields
-
-    @classmethod
-    def get_simple_parameters(cls):
-        """
-        Return or yield a list of names of simple parameter fields of every
-        `Table` on this model.
-
-        When the list contains names for which no parameter field is
-        defined, then Lino creates that parameter field as a copy of
-        the database field of the same name.
-        """
-        return []
 
     @classmethod
     def get_request_queryset(cls, ar, **filter):
@@ -1088,7 +1047,15 @@ class Model(models.Model):
         for k in LINO_MODEL_ATTRIBS:
             if not hasattr(model, k):
                 #~ setattr(model,k,getattr(dd.Model,k))
-                setattr(model, k, cls.__dict__[k])
+                # if k in cls.__dict__:
+                #     setattr(model, k, cls.__dict__[k])
+                # else:
+                #     setattr(model, k, getattr(cls, k))
+                for b in cls.__mro__:
+                    if k in b.__dict__:
+                        setattr(model, k, b.__dict__[k])
+                        break
+                # setattr(model, k, getattr(cls, k))
                 #~ model.__dict__[k] = getattr(dd.Model,k)
                 #~ logger.info("20121127 Install default %s for %s",k,model)
 
@@ -1145,6 +1112,7 @@ class Model(models.Model):
 
 
 LINO_MODEL_ATTRIBS = (
+    'collect_virtual_fields',
     'define_action',
     'delete_instance',
     'setup_parameters',

@@ -359,14 +359,21 @@ def resolve_model(model_spec, app_label=None, strict=False):
         else:
             model_name = model_spec
 
-        from django.apps import apps
-        try:
-            model = apps.get_model(app_label, model_name)
-        except LookupError:
-            model = None
+        if True:
+            app = settings.SITE.models.get(app_label)
+            model = getattr(app, model_name, None)
+            # settings.SITE.logger.info("20181230 resolve %s --> %r, %r",
+            #                           model_spec, app, model)
+        else:
+            from django.apps import apps
+            try:
+                model = apps.get_model(app_label, model_name)
+            except LookupError:
+                model = None
     else:
         model = model_spec
-    if not isinstance(model, type) or not issubclass(model, models.Model):
+    # if not isinstance(model, type) or not issubclass(model, models.Model):
+    if not isinstance(model, type):
         if strict:
             if False:
                 from django.db.models import loading
@@ -382,7 +389,6 @@ def resolve_model(model_spec, app_label=None, strict=False):
                 "(settings %s, INSTALLED_APPS=%s)" % (
                     model_spec, app_label, model,
                     settings.SETTINGS_MODULE, settings.INSTALLED_APPS))
-        #~ logger.info("20120628 unresolved %r",model)
         return UnresolvedModel(model_spec, app_label)
     return model
 

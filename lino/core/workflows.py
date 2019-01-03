@@ -152,6 +152,7 @@ class Workflow(choicelists.ChoiceList):
     verbose_name_plural = None
     button_text = models.CharField(_("Button text"), blank=True)
     column_names = "value name text button_text"
+    abstract = True
 
     @classmethod
     def on_analyze(cls, site):
@@ -160,6 +161,8 @@ class Workflow(choicelists.ChoiceList):
         we can access them as InstanceActions.
         """
         super(Workflow, cls).on_analyze(site)
+        if cls.abstract:
+            return
         # logger.info("20150602 Workflow.on_analyze %s", cls)
         used_on_models = []
         for fld in cls._fields:
@@ -180,6 +183,10 @@ class Workflow(choicelists.ChoiceList):
                     m = used_on_models[0]
                 name = m._meta.verbose_name
                 cls.verbose_name_plural = format_lazy(_("{} states"), name)
+            # elif len(used_on_models) > 1:
+            #     raise Exception(
+            #         "20190103 {} is used in more than one model : {}".format(
+            #             cls, used_on_models))
             else:
                 cls.verbose_name_plural = _("States")
 

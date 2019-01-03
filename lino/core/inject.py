@@ -20,7 +20,6 @@ from django.dispatch import receiver
 from lino.core import fields
 from lino.core.signals import pre_analyze
 from .utils import resolve_model
-from .utils import class_dict_items
 
 from django.apps import apps
 get_models = apps.get_models
@@ -29,33 +28,7 @@ PENDING_INJECTS = dict()
 PREPARED_MODELS = dict()
 
 
-def collect_virtual_fields(model):
-    """Declare every virtual field defined on this model to Django.
-    We use Django's undocumented :meth:`add_field` method.
 
-    Make a copy if the field is inherited, in order to avoid side effects like
-    #2592
-
-    If a model defines both a database field and a virtualfield of same name,
-    then the virtualfield is being ignored.
-
-    """
-    if model._meta.abstract:  # 20181023
-        return
-    fieldnames = {f.name for f in model._meta.private_fields + model._meta.local_fields}
-    for m, k, v in class_dict_items(model):
-        if isinstance(v, fields.VirtualField) and k not in fieldnames:
-            if m is not model:
-                # if k == "overview" and model.__name__ == "DailyPlannerRow":
-                #     print("20181022", m, model)
-                # settings.SITE.VIRTUAL_FIELDS.pop(v)
-                v = copy.deepcopy(v)
-                settings.SITE.register_virtual_field(v)
-            v.attach_to_model(model, k)
-            model._meta.add_field(v, private=True)
-            fieldnames.add(k)
-
-            
 
 def fix_field_cache(model):
     """
@@ -158,6 +131,8 @@ def do_when_prepared(todo, *model_specs):
     as soon as they are prepared.
     If a specified model hasn't yet been prepared,
     add the call to a queue and execute it later.
+
+    If a model_spec is not a string, the function `todo` is called immediately.
     """
     #~ caller = inspect.stack()[2]
     caller = inspect.getouterframes(inspect.currentframe())[2]
@@ -291,59 +266,68 @@ def update_field(model_spec, name, **kw):
     
       dd.update_field(Mail, 'user', verbose_name=_("Sender"))
     """
-    from lino.core import actors
     # if name == "overview":
     #     if 'verbose_name' in kw:
     #         if kw['verbose_name'] is None:
     #             raise Exception("20181022")
     def todo(model):
-        if issubclass(model, models.Model):
-            collect_virtual_fields(model)
+        from lino.core import actors
+        model.collect_virtual_fields()
+        # if issubclass(model, models.Model):
+        #     collect_virtual_fields(model)
         de = model.get_data_elem(name)
         if de is None:
-            msg = "Cannot update unresolved field %s.%s", model, name
+            msg = "Cannot update unresolved field %s.%s" % (model, name)
             raise Exception(msg)
             logger.warning(msg)
-            
-            
+        # update_data_element(model, name, de, **kw)
+
+        # if de.model is not model:
+        #     if issubclass(model, actors.Actor):
+        #     else:
+        #         msg = "20190102 field %s.%s %s" % (model, name, de.model)
+        #         raise Exception(msg)
+
         if isinstance(de, fields.VirtualField):
-            if de.model is not model:
-                de = copy.deepcopy(de)
-                settings.SITE.register_virtual_field(de)
-                if issubclass(model, models.Model):
-                    de.attach_to_model(model, name)
-                    model._meta.add_field(de, private=True)
-                elif issubclass(model, actors.Actor):
-                    # similar to Actor.add_virtual_field() but now we
-                    # don't curry the get
-                    model.virtual_fields[name] = de
+            if issubclass(model, models.Model):
+                de.attach_to_model(model, name)
+                model._meta.add_field(de, private=True)
+            elif issubclass(model, actors.Actor):
+                if de.model is not model:
+                    # old_rt = de.return_type
+                    de = copy.deepcopy(de)
+                    # de.return_type = copy.deepcopy(de.return_type)
+                    # assert de.return_type is not old_rt
                     de.model = model
+                    setattr(model, name, de)
+                    # model.add_virtual_field(name, de)
+                    model.virtual_fields[name] = de
+                # de.model = model
+            # settings.SITE.register_virtual_field(de)
             fld = de.return_type
         else:
+            assert not issubclass(model, actors.Actor)
             fld = de
 
-        # if de.model is None:
-        #     msg = "Update non-local field {} on {}".format(name, model)
-        #     raise Exception(msg)
-        #     # logger.warning(msg)
-        # elif de.model is not model:
-        #     msg = "20181022 {} is not on {} but on {}".format(
-        #         name, model, de.model)
-        #     raise Exception(msg)
-        #     # logger.warning(msg)
-            
+        # if kw.get('verbose_name', None) == "Invoice":
+        #     print("20190102 {} {} {}".format(model, de.model, fld.model))
+
         for k, v in kw.items():
             setattr(fld, k, v)
 
         # propagate attribs from delegate to virtualfield
         if isinstance(de, fields.VirtualField):
-            de.lino_resolve_type()
-            
+            settings.SITE.register_virtual_field(de)
+            # de.lino_resolve_type()
+
         # if name == "overview" and model.__name__ == "Client":
         #     print("20181023", model, de.verbose_name, fld.verbose_name)
-            
-            
+
     return do_when_prepared(todo, model_spec)
+
+
+# def update_data_element(model, name, de, **kw):
+#     return de
 
 
 def inject_quick_add_buttons(model, name, target):

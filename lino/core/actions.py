@@ -29,6 +29,7 @@ from lino.core import fields
 from lino.core import keyboard
 from lino.modlib.users.utils import get_user_profile
 from lino.utils.choosers import Chooser
+from lino.core.fields import set_default_verbose_name
 
 from .permissions import Permittable
 from .utils import obj2unicode
@@ -139,10 +140,7 @@ def setup_params_choosers(self):
                 msg = "Invalid target %s in parameter {} of {}".format(
                     k, self)
                 fld.remote_field.model = resolve_model(fld.remote_field.model, strict=msg)
-                from lino.core.kernel import set_default_verbose_name
                 set_default_verbose_name(fld)
-                #~ if fld.verbose_name is None:
-                    #~ fld.verbose_name = fld.remote_field.model._meta.verbose_name
 
             check_for_chooser(self, fld)
 

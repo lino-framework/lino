@@ -1035,8 +1035,8 @@ class Store(BaseStore):
                     break
                 self.pk_index += fld.list_values_count
             if not found:
-                raise Exception("Primary key %s not found in list_fields %s" %
-                                (self.pk, self.list_fields))
+                raise Exception("Primary key %r not found in list_fields %s" %
+                                (self.pk, [f.field for f in self.list_fields]))
 
         del self.df2sf
 
