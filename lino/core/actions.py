@@ -257,6 +257,8 @@ class Action(Parametrizable, Permittable):
     31    :class:`merge <lino.core.merge.MergeAction>`
     50    :class:`Print <lino.mixins.printable.BasePrintAction>`
     51    :class:`Clear Cache <lino.mixins.printable.ClearCacheAction>`
+    52    :attr:`lino.modlib.users.UserPlan.start_plan`
+    53    :attr:`lino.modlib.users.UserPlan.update_plan`
     60    :class:`ShowSlaveTable`
     90    default for all custom row actions
     100   :class:`SubmitDetail`

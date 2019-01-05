@@ -178,6 +178,7 @@ class UpdatePlan(dd.Action):
     
     label = _("Update plan")
     icon_name = 'lightning'
+    sort_index = 53
 
     def run_from_ui(self, ar, **kw):
         for plan in ar.selected_rows:
