@@ -255,3 +255,15 @@ class Polymorphic(model.Model):
         buttons = self.get_mti_buttons(ar)
         return E.span(*buttons)
 
+    def obj2href(self, ar, *args, **kwargs):
+        # a = super(Polymorphic, self).get_detail_action(ar)
+        a = self.get_detail_action(ar)
+        if a is not None:
+            return super(Polymorphic, self).obj2href(ar, *args, **kwargs)
+        for m in self._mtinav_models:
+            if m is not self.__class__:
+                obj = mti.get_child(self, m)
+                if obj is not None:
+                    if obj.get_detail_action(ar) is not None:
+                        return obj.obj2href(ar, *args, **kwargs)
+

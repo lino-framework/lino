@@ -1041,6 +1041,10 @@ class TableRow(object):
         Examples see :ref:`obj2href`.
 
         """
+        if ar is None:
+            if len(args):
+                return args[0]
+            return str(self)
         return ar.obj2html(self, *args, **kwargs)
 
     def get_detail_action(self, ar):
