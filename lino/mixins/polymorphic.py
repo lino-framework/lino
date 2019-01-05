@@ -230,16 +230,17 @@ class Polymorphic(model.Model):
                             item += [" [", btn, "]"]
 
                 else:
-                    item = [ar.obj2html(obj, m._meta.verbose_name)]
-                    # no DeleteChild for my parents
-                    if self.__class__ in m.mro():
-                        k = DeleteChild.name_prefix + m.__name__.lower()
-                        ba = ar.actor.get_action_by_name(k)
-                        if ba and ba.get_row_permission(ar, self, None):
-                            # btn = ar.row_action_button(self, ba, _("-"))
-                            btn = ar.row_action_button(self, ba, _(u"❌"))
-                            # Cross Mark U+274C
-                            item += [" [", btn, "]"]
+                    da = obj.get_detail_action(ar)
+                    if da is not None:
+                        item = [ar.obj2html(obj, m._meta.verbose_name)]
+                        # no DeleteChild for my parents
+                        if self.__class__ in m.mro():
+                            k = DeleteChild.name_prefix + m.__name__.lower()
+                            ba = ar.actor.get_action_by_name(k)
+                            if ba and ba.get_row_permission(ar, self, None):
+                                btn = ar.row_action_button(self, ba, _(u"❌"))
+                                # Cross Mark U+274C
+                                item += [" [", btn, "]"]
 
             if item is not None:
                 if sep is None:
