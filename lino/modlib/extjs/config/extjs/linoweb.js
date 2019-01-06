@@ -1498,13 +1498,13 @@ Lino.on_submit_failure = function(form, action) {
   // action may be undefined
     switch (action.failureType) {
         case Ext.form.Action.CLIENT_INVALID:
-            Ext.Msg.alert('Client-side failure', 'Form fields may not be submitted with invalid values');
+            Ext.Msg.alert({{_('Client-side failure')}}, {{_('Please check all fields of this form before submitting')}});
             break;
         case Ext.form.Action.CONNECT_FAILURE:
-            Ext.Msg.alert('Connection failure', 'Ajax communication failed');
+            Ext.Msg.alert({{_('Connection failure')}}, {{_('Ajax communication failed')}};
             break;
         case Ext.form.Action.SERVER_INVALID:
-            Ext.Msg.alert('Server-side failure', action.result.message);
+            Ext.Msg.alert({{_('Server-side failure')}}, action.result.message);
    }
 };
 
