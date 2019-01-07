@@ -76,7 +76,7 @@ VALUE_FIELD.attname = 'value'
 
 
 @python_2_unicode_compatible
-class Choice(object):
+class Choice(fields.TableRow):
     """A constant value whose unicode representation depends on the
     current language at runtime.  Every item of a :class:`ChoiceList`
     must be an instance of :class:`Choice` or a subclass thereof.
@@ -422,7 +422,7 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
         de = super(ChoiceList, self).get_data_elem(name)
         if de:
             return de
-        return getattr(self, name)
+        return getattr(self, name, None)
         #~ return _choicelist_column_fields.get(name)
 
     @fields.virtualfield(VALUE_FIELD)

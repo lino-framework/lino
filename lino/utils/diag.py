@@ -37,6 +37,8 @@ class Analyzer(object):
         window_actions = dict()
         self.custom_actions = []
         for a in actors.actors_list:
+            if a.abstract:
+                continue
             for ba in a.get_actions():
                 if ba.action.is_window_action():
                     wl = ba.get_window_layout() or ba.action.params_layout
@@ -265,7 +267,8 @@ class Analyzer(object):
         items.append("{0} user roles".format(
             len(settings.SITE.user_roles)))
         items.append("{0} user types".format(len(UserTypes.objects())))
-        items.append("{0} views".format(len(actors.actors_list)))
+        items.append("{0} views".format(len(
+            [a for a in actors.actors_list if not a.abstract])))
         dialog_actions = [ba for ba in analyzer.custom_actions +
                           analyzer.window_actions if
                           ba.action.parameters]

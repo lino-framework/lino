@@ -1149,6 +1149,7 @@ LINO_MODEL_ATTRIBS = (
     'get_request_queryset',
     'get_title_tags',
     'get_default_table',
+    'get_default_table',
     'get_layout_aliases',
     # 'get_template_group',
     'get_related_project',

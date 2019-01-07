@@ -1078,7 +1078,9 @@ class TableRow(object):
                 # if ar and ar.actor and ar.actor.model:
                 #     print("20170902 {} : {} is not {}".format(
                 #         ar.actor, self.__class__, ar.actor.model))
-                a = self.__class__.get_default_table().detail_action
+                dt = self.__class__.get_default_table()
+                if dt is not None:
+                    a = dt.detail_action
         if a is None or ar is None:
             return a
         if a.get_view_permission(ar.get_user().user_type):

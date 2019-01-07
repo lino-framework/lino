@@ -64,10 +64,12 @@ def discover():
 
 def register_actor(a):
     #~ logger.debug("register_actor %s",a)
-    # if not settings.SITE.is_installed(a.app_label):
-    #     # happens when sphinx autodoc imports a non installed module
-    #     # logger.info("20150416 register_actor skipped %s", a)
-    #     return
+    if not settings.SITE.is_installed(a.app_label):
+        # happens when sphinx autodoc imports a non installed module
+        # logger.info("20150416 register_actor skipped %s", a)
+
+        # also avoid registering choicelists of non-installed plugins
+        return
     old = actors_dict.define(a.app_label, a.__name__, a)
     if old is not None:
         actors_list.remove(old)
@@ -1050,6 +1052,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                     if not k in cls._actions_dict:
                         cls._bind_action(k, v)
 
+        cls._actions_list = list(cls._actions_dict.values())
         cls._actions_list.sort(
             key=lambda a: (a.action.sort_index, a.action.action_name))
         # cls._actions_list = tuple(cls._actions_list)
@@ -1091,6 +1094,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
             return
         try:
             ba = BoundAction(self, a)
+            if a.action_name is None:
+                raise Exception("20190107 {} has no name".format(a))
             if a.action_name is not None:
                 self._actions_dict.define(a.action_name, ba)
             self._actions_list.append(ba)
@@ -1412,6 +1417,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         This is deprecated. Use mixins instead.
 
         """
+        if self.detail_layout is None:
+            raise Exception("{} has no detail_layout".format(self))
         self.detail_layout.add_tabpanel(*args, **kw)
 
     @classmethod
@@ -1631,8 +1638,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                 # ignore non installed app_labels, but mistakenly
                 # specifying "person.first_name" instead of
                 # "person__first_name" did not raise an error...
-                # raise Exception("No module %s" % s[0])
-                return None
+                raise Exception("No plugin %s is installed" % s[0])
+                # return None
             rpt = getattr(m, s[1], None)
         else:
             raise Exception("Invalid data element name %r" % name)

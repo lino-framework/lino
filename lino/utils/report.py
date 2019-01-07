@@ -187,6 +187,7 @@ class Report(EmptyTable):
     """
 
     detail_layout = "body"
+    abstract = True
 
     do_print = DirectPrintAction()
     # go_button = ExplicitRefresh()

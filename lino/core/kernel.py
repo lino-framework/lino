@@ -1125,6 +1125,7 @@ slave_tables = []
 generic_slaves = {}
 frames_list = []
 virtual_tables = []
+abstract_tables = []
 
 def get_choicelist(i):
     return CHOICELISTS[i]
@@ -1168,7 +1169,9 @@ def register_actors():
     logger.debug("Analyzing Tables...")
     # logger.debug("20111113 Register Table actors...")
     for rpt in actors.actors_list:
-        if issubclass(rpt, dbtables.Table):
+        if rpt.abstract:
+            abstract_tables.append(rpt)
+        elif issubclass(rpt, dbtables.Table):
             if rpt is not dbtables.Table:
                 register_model_table(rpt)
         elif issubclass(rpt, tables.VirtualTable):

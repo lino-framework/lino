@@ -778,6 +778,7 @@ class VentilatedColumns(VirtualTable):
 
 class VentilatingTable(VentilatedColumns):
 
+    abstract = True
     column_names_template = 'description {vcolumns}'
 
     @fields.virtualfield(models.CharField(_("Description"), max_length=30))
@@ -786,14 +787,18 @@ class VentilatingTable(VentilatedColumns):
 
 
 class ButtonsTable(VirtualTable):
-    """A :class:`VirtualTable` with only one column and whose rows are
-    action buttons.  Subclasses must implement `get_data_rows` to
-    yield action buttons.
+    """
+
+    An abstract :class:`VirtualTable` with only one column and whose rows are
+    action buttons.
+
+    Subclasses must implement `get_data_rows` to yield action buttons.
 
     Usage example
     `lino_welfare.modlib.reception.models.FindDateByClientTable`.
 
     """
+    abstract = True
     column_names = 'button'
     auto_fit_column_widths = True
     window_size = (60, 20)

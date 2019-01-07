@@ -140,7 +140,7 @@ class Changes(dd.Table):
     """
 
     params_layout = """
-        date user change_type object_type object_id
+    date user change_type object_type object_id
     """
 
     @classmethod
