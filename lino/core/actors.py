@@ -1051,7 +1051,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                     if not k in cls._actions_dict:
                         cls._bind_action(k, v)
 
-        cls._actions_list = list(cls._actions_dict.values())
+        # cls._actions_list = list(cls._actions_dict.values())
         cls._actions_list.sort(
             key=lambda a: (a.action.sort_index, a.action.action_name))
         # cls._actions_list = tuple(cls._actions_list)
@@ -1093,8 +1093,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
             return
         try:
             ba = BoundAction(self, a)
-            if a.action_name is None:
-                raise Exception("20190107 {} has no name".format(a))
+            # if a.action_name is None:
+            #     raise Exception("20190107 {} has no name".format(a))
             if a.action_name is not None:
                 self._actions_dict.define(a.action_name, ba)
             self._actions_list.append(ba)
