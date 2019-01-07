@@ -64,12 +64,11 @@ def discover():
 
 def register_actor(a):
     #~ logger.debug("register_actor %s",a)
-    if not settings.SITE.is_installed(a.app_label):
-        # happens when sphinx autodoc imports a non installed module
-        # logger.info("20150416 register_actor skipped %s", a)
-
-        # also avoid registering choicelists of non-installed plugins
-        return
+    if not a.abstract:
+        if not settings.SITE.is_installed(a.app_label):
+            # avoid registering choicelists of non-installed plugins
+            # logger.info("20190107 skip register_actor for %s", a)
+            return
     old = actors_dict.define(a.app_label, a.__name__, a)
     if old is not None:
         actors_list.remove(old)
@@ -1638,8 +1637,9 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                 # ignore non installed app_labels, but mistakenly
                 # specifying "person.first_name" instead of
                 # "person__first_name" did not raise an error...
-                raise Exception("No plugin %s is installed" % s[0])
-                # return None
+                # raise Exception("No plugin %s is installed" % s[0])
+                # See docs/specs/welfare/xcourses.rst
+                return None
             rpt = getattr(m, s[1], None)
         else:
             raise Exception("Invalid data element name %r" % name)

@@ -746,7 +746,7 @@ class VirtualTable(AbstractTable):
     Subclasses must define a :meth:`get_data_rows` method.
 
     """
-    pass
+    abstract = True
 
 
 class VentilatedColumns(VirtualTable):
@@ -756,6 +756,7 @@ class VentilatedColumns(VirtualTable):
     """
     ventilated_column_suffix = ':5'
     column_names_template = ''
+    abstract = True
 
     @classmethod
     def setup_columns(self):

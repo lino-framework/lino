@@ -270,6 +270,7 @@ class SimilarObjects(dd.VirtualTable):
     # display_mode = 'html'
     display_mode = 'summary'
     master = dd.Model
+    abstract = True
 
     # class Row:
 
