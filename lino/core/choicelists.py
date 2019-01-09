@@ -58,6 +58,7 @@ import warnings
 
 from django.utils.translation import ugettext_lazy as _
 from django.utils.functional import lazy
+from django.utils.deconstruct import deconstructible
 from django.db import models
 from django.conf import settings
 
@@ -74,7 +75,7 @@ STRICT = True
 VALUE_FIELD = models.CharField(_("value"), max_length=20)
 VALUE_FIELD.attname = 'value'
 
-
+@deconstructible
 @python_2_unicode_compatible
 class Choice(fields.TableRow):
     """A constant value whose unicode representation depends on the
@@ -135,10 +136,17 @@ class Choice(fields.TableRow):
         for k, v in kwargs.items():
             setattr(self, k, v)
 
-    def deconstruct(self):
-        # return (path, args, kwargs)
-        return ('lino.api.rt.resolve', (str(self.choicelist), self.value), {})
-    
+    def __eq__(self, other):
+        return self.value == other.value
+
+    # def deconstruct(self):
+    #     return ('str', self.value, {})
+    #     # path = self.choicelist.__module__ + "." + self.choicelist.__name__
+    #     # args = (self.value, self.text, self.name)
+    #     # kwargs = {}
+    #     # return (path, args, kwargs)
+    #     # return ('lino.api.rt.resolve', (str(self.choicelist), self.value), {})
+
     def update(self, **kwargs):
         for k, v in kwargs.items():
             if not hasattr(self, k):
@@ -784,7 +792,7 @@ class ChoiceListField(models.CharField):
 
     empty_strings_allowed = False
 
-    def __init__(self, choicelist, verbose_name=None,
+    def __init__(self, choicelist=None, verbose_name=None,
                  force_selection=True, default=None, **kw):
         if verbose_name is None:
             verbose_name = choicelist.verbose_name
@@ -825,8 +833,9 @@ class ChoiceListField(models.CharField):
         """
 
         name, path, args, kwargs = super(ChoiceListField, self).deconstruct()
-        args = [self.choicelist]
+        # args = [self.choicelist]
 
+        kwargs['choicelist'] = self.choicelist
         # kwargs.pop('default', None)
         # TODO: above line is cheating in order to get makemigrations
         # to pass. we remove the `default` attribute because it is not
