@@ -1107,7 +1107,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         # if a.action_name is None:
         #     raise Exception("20190107 {} has no name".format(a))
         if a.action_name and a.action_name != k:
-            cls._actions_dict[k] = ba
+            cls._actions_dict[a.action_name] = ba
 
         # setattr(cls, k, ba)
         return ba
