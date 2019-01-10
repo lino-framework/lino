@@ -148,7 +148,7 @@ class ActorMetaClass(type):
         cls._setup_doing = False
         cls.virtual_fields = {}
         cls._constants = {}
-        cls._actions_dict = AttrDict()
+        cls._actions_dict = {}  # AttrDict()
         cls._actions_list = []  # 20121129
         # cls._pending_field_updates = []
 
@@ -1041,17 +1041,15 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
             for a in cls.workflow_state_field.choicelist.workflow_actions:
                 setattr(cls, a.action_name, a)
 
-        # bind all my actions, including those inherited from parent actors:
+        # Bind all my actions, including those inherited from parent actors.
+        # Allow disabling inherited actions by setting them to None in subclass.
+
         for b in cls.mro():
             for k, v in b.__dict__.items():
-                # Allow disabling inherited actions by setting them to
-                # None in subclass.
                 v = cls.__dict__.get(k, v)
                 if isinstance(v, actions.Action):
-                    if not k in cls._actions_dict:
-                        cls._bind_action(k, v)
+                    cls._bind_action(k, v)
 
-        # cls._actions_list = list(cls._actions_dict.values())
         cls._actions_list.sort(
             key=lambda a: (a.action.sort_index, a.action.action_name))
         # cls._actions_list = tuple(cls._actions_list)
@@ -1087,22 +1085,33 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         
 
     @classmethod
-    def _bind_action(self, k, a):
+    def _bind_action(cls, k, a):
         # for internal use during _collect_actions()
-        if not a.attach_to_actor(self, k):
+        if not a.attach_to_actor(cls, k):
             return
+        # if str(cls) == "cal.MyEntries" and a.__class__.__name__ == "ShowInsert":
+        #     print("20190110", k, a.action_name)
+
         try:
-            ba = BoundAction(self, a)
-            # if a.action_name is None:
-            #     raise Exception("20190107 {} has no name".format(a))
-            if a.action_name is not None:
-                self._actions_dict.define(a.action_name, ba)
-            self._actions_list.append(ba)
+            ba = BoundAction(cls, a)
         except Exception as e:
             raise Exception("Cannot bind {!r} to {!r} : {}".format(
-                a, self, e))
-        # setattr(self, k, ba)
+                a, cls, e))
+
+        if k in cls._actions_dict:
+            old = cls._actions_dict[k]
+            cls._actions_list.remove(old)
+        cls._actions_dict[k] = ba
+        cls._actions_list.append(ba)
+
+        # if a.action_name is None:
+        #     raise Exception("20190107 {} has no name".format(a))
+        if a.action_name and a.action_name != k:
+            cls._actions_dict[k] = ba
+
+        # setattr(cls, k, ba)
         return ba
+
 
     @classmethod
     def get_default_action(cls):
