@@ -6,22 +6,20 @@
 See :doc:`/dev/mti`.
 
 """
-from builtins import str
 from builtins import object
+from builtins import str
 
-from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ObjectDoesNotExist
-
-from lino.core.utils import models_by_base
-
-from lino.utils import mti
-from lino.utils import join_elems
+from django.utils.translation import ugettext_lazy as _
 from etgen.html import E
-from lino.core import model
+
 from lino.core import fields
+from lino.core import model
 from lino.core.actions import Action
-from lino.core.utils import resolve_model
 from lino.core.signals import pre_remove_child, pre_add_child  # , on_add_child
+from lino.core.utils import models_by_base
+from lino.core.utils import resolve_model
+from lino.utils import mti
 
 
 class ChildAction(Action):
@@ -266,4 +264,5 @@ class Polymorphic(model.Model):
                 if obj is not None:
                     if obj.get_detail_action(ar) is not None:
                         return obj.obj2href(ar, *args, **kwargs)
+        return ''
 
