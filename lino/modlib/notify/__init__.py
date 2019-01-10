@@ -8,8 +8,7 @@ See :doc:`/specs/notify`.
 
 """
 
-import six
-
+from lino import DJANGO2
 from lino.api import ad, _
 
 try:
@@ -72,7 +71,7 @@ class Plugin(ad.Plugin):
             # the dict which will be used to create settings
             cld = {}
             sd['CHANNEL_LAYERS'] = {"default": cld}
-            if six.PY2:
+            if not DJANGO2:
                 cld["ROUTING"] = "lino.modlib.notify.routing.channel_routing"
                 cld["BACKEND"] = "asgiref.inmemory.ChannelLayer"
             else:
@@ -113,7 +112,7 @@ class Plugin(ad.Plugin):
         if request.user.authenticated:
             user_name = request.user.username
         site_title = site.title or 'Lino-framework'
-        if six.PY2:
+        if not DJANGO2:
             js_to_add = """
         <script type="text/javascript">
         Ext.onReady(function() {

@@ -11,11 +11,13 @@ from io import StringIO
 
 from lxml import etree
 
+from lino import DJANGO2
+
 html_parser = etree.HTMLParser()
 
 from django.db import models
 from django.conf import settings
-from django.utils import timezone, six
+from django.utils import timezone
 from django.utils import translation
 
 from lino.api import dd, rt, _
@@ -244,7 +246,7 @@ class Message(UserAuthored, Controllable, Created):
         # Encode and send that message to the whole channels Group for our
         # liveblog. Note how you can send to a channel or Group from any part
         # of Django, not just inside a consumer.
-        if six.PY2:
+        if not DJANGO2:
             from channels import Group
             Group(PUBLIC_GROUP).send({
                 # WebSocket text frame, with JSON content
@@ -271,7 +273,7 @@ class Message(UserAuthored, Controllable, Created):
         # Websocket. Note how you can send to a channel or Group from any part
         # of Django, not just inside a consumer.
         logger.info("Sending browser notification to %s", user.username)
-        if six.PY2:
+        if not DJANGO2:
             from channels import Group
             Group(groupname(user.username)).send({
                 # WebSocket text frame, with JSON content
