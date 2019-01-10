@@ -4,9 +4,12 @@
 from __future__ import unicode_literals
 
 from builtins import str
-from lino.api import dd, rt, _
+
 from etgen.html import E, tostring
 
+from lino.api import dd, rt, _
+
+PUBLIC_GROUP = 'all_users_channel'
 
 class ChangeNotifier(dd.Model):
 
