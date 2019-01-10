@@ -1089,7 +1089,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         # for internal use during _collect_actions()
         if not a.attach_to_actor(cls, k):
             return
-        # if str(cls) == "cal.MyEntries" and a.__class__.__name__ == "ShowInsert":
+        # if str(cls) == "integ.ActivityReport": # and a.__class__.__name__ == "ShowDetail":
         #     print("20190110", k, a.action_name)
 
         try:
@@ -1098,16 +1098,18 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
             raise Exception("Cannot bind {!r} to {!r} : {}".format(
                 a, cls, e))
 
-        if k in cls._actions_dict:
-            old = cls._actions_dict[k]
-            cls._actions_list.remove(old)
-        cls._actions_dict[k] = ba
-        cls._actions_list.append(ba)
-
-        # if a.action_name is None:
-        #     raise Exception("20190107 {} has no name".format(a))
+        names = [k]
         if a.action_name and a.action_name != k:
-            cls._actions_dict[a.action_name] = ba
+            names.append(a.action_name)
+
+        for name in names:
+            if name in cls._actions_dict:
+                old = cls._actions_dict[name]
+                cls._actions_list.remove(old)
+
+        for name in names:
+            cls._actions_dict[name] = ba
+        cls._actions_list.append(ba)
 
         # setattr(cls, k, ba)
         return ba
