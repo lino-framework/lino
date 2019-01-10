@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2017 by Rumma & Ko Ltd.
+# Copyright 2009-2019 Rumma & Ko Ltd.
 # License: BSD, see LICENSE for more details.
 
 """.. management_command:: initdb
@@ -153,7 +153,6 @@ Are you sure (y/n) ?""" % dbname):
         if options.get('verbosity', 1) > 0:
             dd.logger.info(
                 "`initdb %s` started on database %s.", ' '.join(fixtures), dbname)
-
 
         if engine == 'django.db.backends.sqlite3':
             if dbname != ':memory:' and os.path.isfile(dbname):
