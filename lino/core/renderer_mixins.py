@@ -13,13 +13,12 @@ from builtins import str
 from builtins import object
 
 import logging
-logger = logging.getLogger(__name__)
 
+logger = logging.getLogger(__name__)
 
 from django.conf import settings
 
 from django.utils import translation
-
 
 import os
 import time
@@ -27,6 +26,7 @@ import time
 from lino.core import kernel
 from lino.modlib.users.utils import get_user_profile, with_user_profile
 from lino.modlib.users.choicelists import UserTypes
+
 
 class JsCacheRenderer():
     """
@@ -40,6 +40,7 @@ class JsCacheRenderer():
 
     """
     lino_web_template = "extjs/linoweb.js"
+
     def __init__(self):
         self.prepare_layouts()
 
@@ -150,10 +151,11 @@ class JsCacheRenderer():
     def lino_js_parts(self):
         user_type = get_user_profile()
         filename = 'lino_'
+        file_type = self.lino_web_template.rsplit(".")[-1]
         if user_type is not None:
             filename += user_type.value + '_'
-        filename += translation.get_language() + '.js'
-        return ('cache', 'js', filename)
+        filename += translation.get_language() + '.' + file_type
+        return ('cache', file_type, filename)
 
     def linolib_template(self):
         # env = jinja2.Environment(loader=jinja2.FileSystemLoader(
