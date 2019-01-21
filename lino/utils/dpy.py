@@ -171,7 +171,7 @@ class FakeDeserializedObject(base.DeserializedObject):
                 if not settings.SITE.loading_from_dump:
                     # hand-written fixtures are expected to yield in savable
                     # order
-                    logger.warning("Failed to save %s:" % obj2str(obj))
+                    logger.warning("Failed to save %s from manual fixture:" % obj2str(obj))
                     raise
             deps = [f.remote_field.model for f in obj._meta.fields
                     if f.remote_field and f.remote_field.model]

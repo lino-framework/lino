@@ -768,7 +768,6 @@ Generates .rtf files from .rtf templates."""),
 Generates .pdf files from .html templates.
 Requires pisa.
 Usage example see lino_book.projects.pisa."""),
-    'lino.modlib.contacts.Partner.invoice_recipient' : _("""The recipient of invoices (invoicing address)."""),
     'lino.modlib.about.SiteSearch' : _("""The virtual table used to implement site-wide searches"""),
     'lino.modlib.summaries.Summarized' : _("""Model mixin for database objects that have summary fields."""),
     'lino.modlib.summaries.Summarized.delete_them_all' : _("""Set this to True if all instances of this model should be considered

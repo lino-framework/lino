@@ -789,9 +789,13 @@ class QuantityField(CharField):
         if isinstance(value, Decimal):
             return value
         if value:
+            # try:
             if isinstance(value, six.string_types):
                 return quantities.parse(value)
             return Decimal(value)
+            # except Exception as e:
+            #     raise ValidationError(
+            #         "Invalid value {} for {} : {}".format(value, self, e))
         return None
 
     def from_db_value(self, value, expression, connection, context):
