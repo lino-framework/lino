@@ -20,7 +20,7 @@ PY3 = sys.version_info[0] == 3
 
 SETUP_INFO = dict(
     name='lino',
-    version='19.1.3',
+    version='19.1.5',
     description="A framework for writing desktop-like web applications "
                 "using Django and ExtJS",
     license='BSD License',
@@ -47,7 +47,7 @@ install_requires = [
     # 'cairocffi',  # 'cairocffi<0.7',
     # 'bleach',
     # 'html5lib',  # version 7x9 (not 9x9) required by bleach
-    'schedule',
+    'schedule==0.5.0',
     # 'django-wkhtmltopdf',
     'beautifulsoup4',]
 
@@ -58,6 +58,9 @@ if PY2:
 else:
     install_requires.append('reportlab')
     install_requires.append('weasyprint')
+    # For appy on python3
+    install_requires.append('zodb')
+    install_requires.append('DateTime')
     # install_requires.append('appy@svn+https://svn.forge.pallavi.be/appy-dev/dev1')
     # 'django-mailbox@git+https://github.com/cylonoven/django-mailbox#egg=django-mailbox'
     # SETUP_INFO.update(dependency_links=[
