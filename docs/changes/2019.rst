@@ -13,7 +13,7 @@ Changes 2019 in Lino
 2019-01-10
 ==========
 
-I fixed :ticket:`2784` (Some actions are duplicated).  The show action of
+cI fixed :ticket:`2784` (Some actions are duplicated).  The show action of
 :class:`lino_welfare.modlib.integ.ActivityReport` was duplicated in
 :attr:`Actor._actions_list` but nobody ever complained because it was not
 visible. But since I wrote a test case in :ref:`welfare.specs.integ` which
