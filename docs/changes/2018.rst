@@ -1,0 +1,230 @@
+.. include:: /../../book/docs/shared/include/defs.rst
+.. _lino.changes.2018:
+
+====================
+Changes 2018 in Lino
+====================
+
+
+.. contents::
+  :local:
+
+December
+========
+
+Fixed :ticket:`2710` in :mod:`lino.modlib.extjs`  Checking date change. When
+:attr:`lino.modlib.system.SiteConfig.next_partner_id` was inadvertently set to
+the id of an existing Company, creating a Person caused Lino to overwrite the
+data of the company instead of noticing the problem.
+
+(20181226) Removed the pisa build method for printable documents. :ref:`cosi`
+now uses :mod:`lino_xl.lib.weasyprint` as the default build method.
+
+Released :ref:`cosi` 18.12.1
+
+(20181225) Installing :ref:`cosi` with the pip command now works with Python3
+as described in :ref:`user.install`.
+
+
+.. _lino.18.12.4:
+
+2018-12-18
+==========
+
+Released version 18.12.5.
+
+Lino was not yet installable using pip under Python 3. Now it is (hopefully).
+
+A new command-line option ``--quick`` has been added to :xfile:`restore.py`.
+The idea was that calling :meth:`Model.full_clean` on every restored database
+row might make things very slow. This was used to try :ticket:`2755` on the
+field. First tests on real data indicate that it doesn't give very much.
+
+
+.. _lino.18.12.2:
+
+2018-12-13
+==========
+
+Released Lino 18.12.2
+
+The new :class:`lino.modlib.summaries.Summarized` mixin didn't yet update its
+fields during :manage:`checkdata`. And I had no pangs of conscience to
+completely review the API at that occasion: Summarizable becomes Summarized,
+Summary becomes MonthlySlaveSummary, a new attribute :attr:`delete_them_all
+<lino.modlib.summaries.Summarized.delete_them_all>` to make sure the developer
+knows what it means.
+
+:func:`lino.utils.jsgen.py2js` now has a keyword argument "compact" that
+defaults to True. Because the default behaviour of py2js returns a massive
+1-line response which makes it almost impossible to find where an issue in the
+json is if there is some problem. In the react renderer im having it using the
+:attr:`lino.core.site.Site.is_demo_site` value to determine if it wants to have
+it be compact or not.
+
+
+.. _lino.18.12.1:
+
+2018-12-12
+==========
+
+Released version 18.12.1.
+
+- :ticket:`2745` (Summaries without master) caused some changes in
+  :mod:`lino.modlib.summaries`:
+
+  Added a new type of summary: a
+  :class:`lino.modlib.summaries.Summarizable`. Models inheriting this have a
+  lightning button to the ticket and makes the summary fields get updated during
+  :manage:`computesummaries`, but unlike it subclasses the objects are not
+  considered temporary data (i.e. not being deleted during
+  :manage:`computesummaries`.
+
+  Actions for updating summaries now have a "∑" as button_text instead of a
+  'lightning' icon.
+
+  First usage example is :class:`lino_noi.lib.tickets.Ticket` which now shows
+  the total work time (one sum per reporting type) of a ticket.
+
+  The summary panel of SessionsByTicket no longer has a ▶ button for starting a
+  session from ticket. Because the same button exists already in the workflow
+  buttons where it is more intelligent because the ▶ cheanges to ■ when the
+  user has an open session on this ticket.
+
+- :ticket:`2744` (How to use locally injected fields in a layout) : new method
+  :meth:`lino.core.model.Model.get_layout_aliases`.
+
+- Fixed an unreported bug: the :manage:`checksummary` task was maybe not being run daily
+  by :manage:`linod`.
+
+- A solution for :ticket:`2746`.
+  The virtual field :attr:`lino.core.model.Model.overview` was being used for two different things: (1) in
+  detail layouts to create customizable "overview panels" and (2) in table layouts
+  to create a "clickable description", functionally equivalent to double clicking
+  on the row.
+
+  The latter use should now be done with the new virtual field
+  :attr:`lino.core.model.Model.detail_link` whose verbose_name is automatically
+  set to the model's verbose_name. This is done during startup and probably you
+  cannot override this.
+
+  The :attr:`lino.core.model.Model.overview` field no longer has a
+  verbose_name, so application code no longer needs to set it explicitly to
+  None using :func:`dd.update_field`.
+
+
+.. _lino.18.12.0:
+
+2018-12-11
+==========
+
+Released version 18.12.0
+
+We are still working on :ticket:`2741` (Have book test pass with PyPI version
+of lino and lino_xl).
+
+.. _lino.18.11.0:
+
+2018-12-10
+==========
+
+Released version 18.11.0
+
+The default value for :attr:`verbose_name_plural
+<lino.core.workflows.Workflow.verbose_name_plural>` of a
+:class:`lino.core.workflows.Workflow` is now more intelligent: if the workflow
+is being used on a single model (which is the case for most workflows), the
+text is now "{} states" where {} is the model's verbose name.
+
+:meth:`lino.utils.memo.Parser.register_django_model` now says an understandable
+error message "Duplicate renderer for %s" when an application tries to redefine
+another renderer on the same model.
+
+:mod:`lino.modlib.uploads` : the summary of AreaUploads now supports being
+shown in a grid.  It shows contant as a single paragraph (instead of an UL and
+adds an action for opening the salve table in a separate window.
+
+
+November 2018
+=============
+
+- :ticket:`2682` Optionally allow dashboard items with no data to display
+- :ticket:`2670` Leaving a combobox before its store is loaded
+- :ticket:`2668` Grid keyboard nav optimizations
+- :ticket:`2660` Configure the choices of a TimeField
+- :ticket:`2648` Show toolbar list actions in display_type "html"
+- :ticket:`2646` Cell cursor jumps to home after inserting a line
+- :ticket:`2644` Show current state's button_text in workflow_buttons
+- :ticket:`2632` Hovering over the column header of a grid doesn't display the help_text
+
+- :ticket:`2497` Comboboxes sometimes show the value instead of the text
+  (:ticket:`2628` ForeignKey fields are not rendered correctly when detail loads
+  first time)
+
+- :ticket:`2623` Inconsistent meaning of Ctrl-S and Enter
+- :ticket:`2596` Search field is disabled by loadmask
+- :ticket:`2577` Row-level edit locking
+- :ticket:`2544` SiteSearch fails when it finds a name containing "&"
+
+
+.. _v18.9:
+.. _lino.18.10:
+
+2018-10-30
+==========
+
+Database changes
+
+- Subclasses of :class:`lino.mixins.refs.Referrable` now always have
+  `max_length=200`.
+
+Internal changes:
+
+- release tags in 18.8 were missing in the git repo because atelier
+  did not yet push them.
+
+- New model mixin :class:`lino.mixins.refs.StructuredReferrable`.
+
+- New model mixin :class:`lino.modlib.users.UserPlan`.
+
+- plain html tables now use ``class="text-cell"`` instead of a
+  hard-coded set of attributes  ``align="left"``.
+
+- The :meth:`lino.core.renderer.HtmlRenderer.table2story` method now
+  yields a sequence of elements instead of returning a single one.
+
+- We have a new method :meth:`lino.core.requests.BaseRequest.show_story`
+  which is used in the template for the report
+  (:xfile:`ledger/Report/default.weazy.html`).
+
+- in :mod:`lino.api.doctest`, show_sql_queries and show_sql_summary no
+  longer call reset_sql_queries.
+
+- we continued to improve the documentation
+
+- :func:`lino.api.doctest.show_sql_summary` now supports INSERT INTO
+  and DELETE FROM statements. It now uses `sqlparse
+  <https://sqlparse.readthedocs.io/en/latest/>`__.
+
+
+.. _v18.8:
+
+2018-08-31
+============
+
+Version 18.8 was the first release for which pip install worked.  At least
+under Python 2.
+
+Released packages: :mod:`lino`, :mod:`lino_xl`, :mod:`lino_cosi`,
+:mod:`lino_noi` , :mod:`lino_tera`, :mod:`lino_amici`,
+:mod:`lino_avanti`, :mod:`lino_welfare`, :mod:`lino_vilma`,
+:mod:`lino_care`.
+
+There were many changes... we just didn't collect descriptions of them yet.
+
+- 20180521 Fixed :ticket:`2393` (Wrong error message when no eid card
+  found)
+
+- 20180522 Fixed :ticket:`2395` (Unknown callback
+  -9223363281463807000).
+

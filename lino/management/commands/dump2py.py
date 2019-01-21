@@ -44,11 +44,14 @@ Options:
     Change the maximum number of rows per source file from its default
     value (50000) to NUM.
 
-    When a table contains many rows, the resulting :file:`.py` file
-    can become so large that it doesn't fit into memory, causing the
-    Python process to get killed when it tries to execute it.  To
-    avoid this limitation, :xfile:`dump2py` distributes the content
-    over several files if a table contains are more than NUM rows.
+    When a table contains many rows, the resulting :file:`.py` file can become
+    so large that it doesn't fit into memory, causing the Python process to get
+    killed when it tries to restore the data.  To avoid this limitation,
+    :xfile:`dump2py` distributes the content over several files if a table
+    contains are more than NUM rows.
+
+    The default value has been "clinically tested" and should be small enough
+    for most machines.
 
 .. You might theoretically use Django's :manage:`dumpdata` command for
    writing a Python fixture, but this possibility is currently

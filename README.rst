@@ -33,13 +33,12 @@ and `Sencha ExtJS <http://www.sencha.com/products/extjs/>`_.
 Lino applications are Django projects
 where the application developer does not need to write any
 URLconf, HTML nor CSS (`more <http://lino-framework.org/about/what.html>`__).
-Examples of Lino applications are
-`Lino Welfare <http://welfare.lino-framework.org>`__,
-`Lino Così <http://cosi.lino-framework.org>`__
-or
-`Lino Voga <http://voga.lino-framework.org>`__
-(`more <http://lino-framework.org/about/projects.html>`__)
 
-The central project homepage is http://www.lino-framework.org
+- Changes are documented at http://core.lino-framework.org
+
+- Most documentation is in the Lino Book at http://www.lino-framework.org
+
+- For *introductions* and *commercial information* about Lino 
+  see http://www.saffre-rumma.net
 
 

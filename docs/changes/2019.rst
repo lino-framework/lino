@@ -1,0 +1,31 @@
+.. include:: /../../book/docs/shared/include/defs.rst
+.. _lino.changes.2019:
+
+====================
+Changes 2019 in Lino
+====================
+
+
+Note: The changes and releases are listed in normal chronological order (oldes
+first).
+
+
+.. contents::
+  :local:
+
+January
+========
+
+2019-01-04 We released Lino 19.1.0
+
+New :class:`lino.core.fields.TableRow`.
+
+The message "Form fields may not be submitted with invalid values" says now
+"Please check all fields of this form before submitting."
+(:xfile:`linoweb.js`)
+
+2019-01-07 We released Lino 19.1.2
+
+Immediately after the release we discovered a bug in Lino 19.1.2 which caused a
+missing |insert| button in a critical place in Tera.  So we did a quick bugfix
+release 19.1.3.

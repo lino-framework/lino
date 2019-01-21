@@ -1,0 +1,37 @@
+.. _v16.10:
+
+============================
+Version 16.10 (obsolete)
+============================
+
+This was the first release which used the
+:ref:`date-based versioning system <dev.versioning>`.
+It was never published.
+
+
+
+
+New features
+============
+
+- Contains a first preview of :ref:`extjs6`. We ask everybody to test
+  it on their site and to report problems.  We don't yet recommend to
+  activate it on a production site.
+  
+
+Bugfixes
+========
+
+- Until now Lino did not support well the case of defining a `default`
+  value on fields of type :class:`QuantityField
+  <lino.core.fields.QuantityField>`, :class:`DurationField
+  <lino.core.fields.DurationField>` or :class:`IncompleteDateField
+  <lino.core.fields.IncompleteDateField>`.  Changed API for these
+  fields: when `blank` is True, then `null` must be True as well.  The
+  previous statement "QuantityFields are implemented as CharFields and
+  therefore should *not* be declared `null=True`.  But if
+  `blank=True`, empty strings are converted to `None` values." is no
+  longer true.
+
+
+
