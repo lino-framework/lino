@@ -17,7 +17,7 @@ Changes 2019 in Lino
 sphinx.util.logging instead.` (fixed)
 
 Added intersphinx_urls, srcref_url and doc_trees settings to the main module so
-that other doctres can link to the docs.
+that other doctrees can link to the docs.
 
 
 2019-01-10
