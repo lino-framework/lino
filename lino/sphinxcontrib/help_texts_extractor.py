@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2016-2018 Rumma & Ko Ltd
+# Copyright 2016-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 '''
@@ -96,6 +96,7 @@ import six
 from docutils import nodes
 from docutils import core
 from sphinx import addnodes
+from sphinx.util import logging ; logger = logging.getLogger(__name__)
 
 from importlib import import_module
 
@@ -171,7 +172,7 @@ class HelpTextExtractor(object):
             self.docs_processed))
         if self.docs_processed < len(app.env.found_docs):
         # if self.docs_processed < len(app.env.all_docs):
-            app.info(
+            logger.info(
                 "Don't write help_texts.py files because "
                 "only {0} of {1} docs have been processed".format(
                     self.docs_processed,
@@ -180,7 +181,7 @@ class HelpTextExtractor(object):
         for k, fn in self.name2file.items():
             texts = self.name2dict.get(k, None)
             if not texts:
-                app.info("No help texts for {}".format(k))
+                logger.info("No help texts for {}".format(k))
                 continue
             # fn = os.path.join(self.outdir, 'help_texts.py')
             print("Writing {} help texts for {} to {}".format(
