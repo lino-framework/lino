@@ -525,7 +525,7 @@ class FieldElement(LayoutElement):
         if self._label is None:
             return self.field.verbose_name
         return self._label
-    
+
     def value_from_object(self, obj, ar):
         """
         Wrapper around Django's `value_from_object`.
@@ -942,11 +942,16 @@ class ChoiceListFieldElement(ChoicesFieldElement):
     def get_field_options(self, **kw):
         kw = ComboFieldElement.get_field_options(self, **kw)
         # kw.update(store=js_code('Lino.%s.choices' % self.field.choicelist.actor_id))
-        js = 'Lino.%s' % self.field.choicelist.actor_id
-        if self.field.blank:
-            js = "[['','<br>']].concat(%s)" % js
-            # 20171227 in extjs6 it was:
-            # js = "[['','']].concat(%s)" % js
+        if self.layout_handle.ui.renderer.extjs_version is not None:
+            js = 'Lino.%s' % self.field.choicelist.actor_id
+            if self.field.blank:
+                js = "[['','<br>']].concat(%s)" % js
+                # 20171227 in extjs6 it was:
+                # js = "[['','']].concat(%s)" % js
+        else:# react only
+            js = self.field.choicelist.actor_id
+            if self.field.blank:
+                kw.update(blank=self.field.blank)
         kw.update(store=js_code(js))
         return kw
 
@@ -1098,7 +1103,7 @@ class TimeFieldElement(FieldElement):
             # kwargs['maxValue'] = settings.SITE.calendar_end_hour
             # kwargs['maxValue'] = '9:00 PM'
         return kwargs
-        
+
 
 class DateTimeFieldElement(FieldElement):
     # value_template = "new Lino.DateTimeField(%s)"
