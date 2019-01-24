@@ -283,7 +283,8 @@ class XmlBuildMethod(DjangoBuildMethod):
 
 
 class BuildMethods(ChoiceList):
-    verbose_name = _("Build method")
+    # verbose_name = _("Build method")
+    verbose_name = _("Print method")
     item_class = BuildMethod
     # app_label = 'lino'
     max_length = 50
