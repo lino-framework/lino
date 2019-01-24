@@ -19,6 +19,12 @@ sphinx.util.logging instead.` (fixed)
 Added intersphinx_urls, srcref_url and doc_trees settings to the main module so
 that other doctrees can link to the docs.
 
+2019-01-16
+==========
+I fixed :ticket:`2785` (Django 2.1.5 under Py3 restore.py fails saying
+disable_constraint_checking).
+For the test :class:`lino.utils.djangotest.RestoreTestCase`, we need to make
+sure that foreign_keys is set to OFF before we actually start the restore.
 
 2019-01-10
 ==========
