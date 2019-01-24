@@ -9,6 +9,13 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-01-24
+==========
+
+Changed the verbose name for :class:`lino.modlib.printing.BuildMethods` from
+"Build method" to "Print method".
+
+
 2019-01-22
 ==========
 
