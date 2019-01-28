@@ -913,15 +913,17 @@ class BaseRequest(object):
         return self.renderer.action_button(
             None, self, self.bound_action, *args, **kw)
 
-    def elem2rec1(ar, rh, elem, **rec):
-        rec.update(data=rh.store.row2dict(ar, elem))
+    def elem2rec1(ar, rh, elem, fields=None, **rec):
+        rec.update(data=rh.store.row2dict(ar, elem, fields))
         return rec
 
     def elem2rec_insert(self, ah, elem):
         """
         Returns a dict of this record, designed for usage by an InsertWindow.
         """
-        rec = self.elem2rec1(ah, elem)
+        lh = ah.actor.insert_layout.get_layout_handle(
+            settings.SITE.kernel.default_ui)
+        rec = self.elem2rec1(ah, elem, fields=[df._lino_atomizer for df in lh._store_fields])
         rec.update(title=self.get_action_title())
         rec.update(phantom=True)
         return rec
@@ -943,7 +945,7 @@ class BaseRequest(object):
 
         """
         rh = ar.ah
-        rec = ar.elem2rec1(rh, elem, **rec)
+        rec = ar.elem2rec1(rh, elem, None, **rec)
         if ar.actor.hide_top_toolbar or ar.bound_action.action.hide_top_toolbar:
             rec.update(title=ar.get_detail_title(elem))
         else:
