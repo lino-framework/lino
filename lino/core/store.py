@@ -986,6 +986,7 @@ class Store(BaseStore):
     """
 
     pk = None
+    _disabled_fields_storefield = None
 
     def __init__(self, rh, **options):
         self.rh = rh
@@ -1044,7 +1045,8 @@ class Store(BaseStore):
             # addfield(RecnoStoreField(self))
 
         if rh.actor.editable:
-            addfield(DisabledFieldsStoreField(self))
+            self._disabled_fields_storefield = DisabledFieldsStoreField(self)
+            addfield(self._disabled_fields_storefield)
             # NB what about disabled actions on non-editable actor?
 
         # addfield(DisabledActionsStoreField(self))

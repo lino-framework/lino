@@ -12,7 +12,8 @@ Changes 2019 in Lino
 2019-01-28
 ==========
 
-Luc and I fixed the :ticket:`2782` (Dashboard in Jane is slower than before).
+We fixed the :ticket:`2782` (Dashboard in Jane is slower than before).
+Store has a new attribute `_disabled_fields_storefield`.
 
 2019-01-24
 ==========

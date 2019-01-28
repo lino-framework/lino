@@ -923,7 +923,10 @@ class BaseRequest(object):
         """
         lh = ah.actor.insert_layout.get_layout_handle(
             settings.SITE.kernel.default_ui)
-        rec = self.elem2rec1(ah, elem, fields=[df._lino_atomizer for df in lh._store_fields])
+        fields = [df._lino_atomizer for df in lh._store_fields]
+        if ah.store._disabled_fields_storefield is not None:
+            fields.append(ah.store._disabled_fields_storefield)
+        rec = self.elem2rec1(ah, elem, fields=fields)
         rec.update(title=self.get_action_title())
         rec.update(phantom=True)
         return rec
