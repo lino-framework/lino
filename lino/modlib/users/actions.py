@@ -1,6 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2017 Rumma & Ko Ltd
+# Copyright 2011-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
+
+from __future__ import unicode_literals
 
 from builtins import str
 from builtins import object
