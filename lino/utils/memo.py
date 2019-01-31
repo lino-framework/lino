@@ -202,7 +202,8 @@ class Parser(object):
                 return x._defined_in
             ex = self.renderers[cl]
             raise Exception(
-                "Duplicate renderer for %s : %s and %s", cl, fmt(ex), fmt(func))
+                "Duplicate renderer for {} : {} and {}".format(
+                    cl, fmt(ex), fmt(func)))
         self.renderers[cl] = func
 
     def register_django_model(
