@@ -975,6 +975,11 @@ class ParameterStore(BaseStore):
                         self, len(self.param_fields), len(pv), pv))
             for i, f in enumerate(self.param_fields):
                 kw[f.field.name] = parse(f, pv[i])
+        else:
+            # try to get data from dict style in main body of request
+            for i, f in enumerate(self.param_fields):
+                if f.name in data:
+                    kw[f.name] = parse(f, data[f.name])
         # print(20160329, kw)
         return kw
 
