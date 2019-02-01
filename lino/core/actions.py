@@ -919,6 +919,7 @@ class ShowInsert(TableAction):
     hide_virtual_fields = True
     # readonly = False
     select_rows = False
+    http_method = "POST"
 
     def get_action_title(self, ar):
         return _("Insert into %s") % force_text(ar.get_title())
@@ -1092,9 +1093,10 @@ class SubmitInsert(CreateRow):
     label = _("Create")
     action_name = None  # 'post'
     help_text = _("Create the record and open a detail window on it")
+    http_method = "POST"
 
     callable_from = 'i'
-    
+
     def run_from_ui(self, ar, **kwargs):
         # must set requesting_panel to None, otherwise javascript
         # button actions would try to refer the requesting panel which
@@ -1104,7 +1106,12 @@ class SubmitInsert(CreateRow):
         elem = ar.create_instance_from_request(**kwargs)
         self.save_new_instance(ar, elem)
         ar.set_response(close_window=True)
+        if settings.SITE.is_installed("react"):
+            ar.goto_instance(elem)
 
+            # ar.set_response(
+            #     eval_js=ar.renderer.obj2url(ar, elem).replace('javascript:', '', 1)
+            # )
 # class SubmitInsertAndStay(SubmitInsert):
 #     sort_index = 11
 #     switch_to_detail = False

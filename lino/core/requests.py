@@ -1071,7 +1071,7 @@ class ActorRequest(BaseRequest):
             self.actor.handle_uploaded_files(elem, self.request)
 
         if self.request is not None:
-            self.ah.store.form2obj(self, self.request.POST, elem, True)
+            self.ah.store.form2obj(self, self.request.POST or self.rqdata, elem, True)
         elem.full_clean()
         return elem
 
