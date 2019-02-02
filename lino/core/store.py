@@ -953,7 +953,7 @@ class ParameterStore(BaseStore):
         data = getrqdata(request)
         # print(20160329, data)
         # assert 'pv' in data
-        pv = data.getlist(self.url_param)
+        pv = data.getlist(self.url_param) #'fv', 'pv', post[fn] post[fv][fn]
         # logger.info("20120221 ParameterStore.parse_params(%s) --> %s",self.url_param,pv)
 
         def parse(sf, form_value):
@@ -975,10 +975,12 @@ class ParameterStore(BaseStore):
                         self, len(self.param_fields), len(pv), pv))
             for i, f in enumerate(self.param_fields):
                 kw[f.field.name] = parse(f, pv[i])
-        else:
+        elif self.url_param == "fv":
             # try to get data from dict style in main body of request
             for i, f in enumerate(self.param_fields):
-                if f.name in data:
+                if f.name + "Hidden" in data:
+                    kw[f.name] = parse(f, data[f.name + "Hidden"])
+                elif f.name in data:
                     kw[f.name] = parse(f, data[f.name])
         # print(20160329, kw)
         return kw
