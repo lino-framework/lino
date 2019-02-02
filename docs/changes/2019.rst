@@ -9,6 +9,12 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-01-02
+==========
+
+Field values for actons with paramiers no long need to be an array with a key of 'fv'.
+They now can be included in the root of the data object with the field name as the key. 
+
 2019-01-28
 ==========
 
