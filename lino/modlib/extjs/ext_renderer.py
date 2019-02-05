@@ -946,6 +946,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
         yield "    this.fields = %s;" % py2js(
             [e for e in dh.main.walk()
              if isinstance(e, ext_elems.FieldElement)])
+        yield "    this.http_method = %s" % py2js(tbl.http_method)
         yield "    Lino.%s.superclass.initComponent.call(this);" % \
             dh.layout._formpanel_name
         yield "  }"

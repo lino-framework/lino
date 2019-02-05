@@ -2565,7 +2565,7 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel, {
       delete p.{{constants.URL_PARAM_PARAM_VALUES}};
       // console.log("20150130", p.{{constants.URL_PARAM_PARAM_VALUES}});
       Lino.call_ajax_action(
-          self, 'GET', url, p, actionName, step, fn); //  , on_success);
+          self, self.http_method || "GET", url, p, actionName, step, fn); //  , on_success);
         // panel, 'GET', url, p, actionName, step, fn); //  , on_success);
         // 20180802 : passing self instead of panel fixes #2474
     }

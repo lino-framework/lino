@@ -181,6 +181,8 @@ class SignIn(dd.Action):
     password
     """, label_align=layouts.LABEL_ALIGN_LEFT)
 
+    http_method = "POST"
+
     def run_from_ui(self, ar, **kw):
         pv = ar.action_param_values
         user = auth.authenticate(

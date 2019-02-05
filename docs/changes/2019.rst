@@ -14,6 +14,10 @@ Changes 2019 in Lino
 
 Fixed :ticket:`2822` (Cannot create new user 'NoneType' object has no attribute 'full_value_from_object')
 
+Fixed ActionFormPanel logic to use action.html_method.
+
+Changed sign_in action to use POST as html_method.
+
 2019-02-02
 ==========
 
