@@ -1195,6 +1195,8 @@ class Store(BaseStore):
         if fields is None:
             fields = self.detail_fields
         for fld in fields:
+            if fld is None:
+                continue
             # logger.info("20140429 Store.row2dict %s", fld)
             v = fld.full_value_from_object(row, ar)
             fld.value2dict(ar, v, d, row)

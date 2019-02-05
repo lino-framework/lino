@@ -9,7 +9,12 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
-2019-01-02
+2019-02-05
+==========
+
+Fixed :ticket:`2822` (Cannot create new user 'NoneType' object has no attribute 'full_value_from_object')
+
+2019-02-02
 ==========
 
 Field values for actons with paramiers no long need to be an array with a key of 'fv'.
