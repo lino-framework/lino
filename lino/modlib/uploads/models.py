@@ -1,12 +1,14 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2018 Rumma & Ko Ltd
+# Copyright 2008-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 from builtins import str
 from builtins import object
 
-import logging
-logger = logging.getLogger(__name__)
+import os
+
+# import logging
+# logger = logging.getLogger(__name__)
 
 from django.db import models
 from django.conf import settings
@@ -14,15 +16,45 @@ from django.utils.text import format_lazy
 # from lino.api import string_concat
 from django.utils.translation import pgettext_lazy as pgettext
 
-from lino.api import dd, rt, _
-from lino import mixins
 from etgen.html import E, join_elems, tostring
+from lino.api import dd, rt, _
+from lino.core.utils import model_class_path
+from lino import mixins
 from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.users.mixins import UserAuthored, My
 from lino.modlib.office.roles import OfficeUser, OfficeStaff, OfficeOperator
+from lino.mixins import Referrable
 
 from .choicelists import Shortcuts, UploadAreas
 from .mixins import UploadController
+
+
+@dd.python_2_unicode_compatible
+class Volume(Referrable):
+
+    class Meta:
+        app_label = 'uploads'
+        verbose_name = _("Library volume")
+        verbose_name_plural = _("Library volumes")
+
+    preferred_foreignkey_width = 5
+
+    root_dir = dd.CharField(_("Root directory"), max_length=255)
+    base_url = dd.CharField(_("Base URL"), max_length=255, blank=True)
+    description = dd.CharField(_("Description"), max_length=255, blank=True)
+
+    def __str__(self):
+        return self.ref or self.root_dir
+
+    def get_filenames(self):
+        root_len = len(self.root_dir) + 1
+        for (root, dirs, files) in os.walk(self.root_dir):
+            relroot = root[root_len:]
+            if relroot:
+                relroot += "/"
+            for fn in files:
+                # print(relroot + "/" + fn)
+                yield relroot + fn
 
 
 class UploadType(mixins.BabelNamed):
@@ -48,6 +80,23 @@ class UploadType(mixins.BabelNamed):
         help_text=_("Add a (+) button when there is no upload of this type."))
 
     shortcut = Shortcuts.field(blank=True)
+
+
+class Volumes(dd.Table):
+    model = 'uploads.Volume'
+    required_roles = dd.login_required(OfficeStaff)
+
+    insert_layout = """
+    ref description 
+    root_dir 
+    base_url 
+    """
+    detail_layout = """
+    ref description 
+    root_dir base_url 
+    overview
+    """
+
 
 
 class UploadTypes(dd.Table):
@@ -83,8 +132,9 @@ class Upload(mixins.Uploadable, UserAuthored, Controllable):
         verbose_name_plural = _("Uploads")
 
     upload_area = UploadAreas.field(default='general')
-
     type = dd.ForeignKey("uploads.UploadType", blank=True, null=True)
+    volume = dd.ForeignKey("uploads.Volume", blank=True, null=True)
+    library_file = models.CharField(_("Library file"), max_length=255, blank=True)
 
     description = models.CharField(
         _("Description"), max_length=200, blank=True)
@@ -94,6 +144,8 @@ class Upload(mixins.Uploadable, UserAuthored, Controllable):
             s = self.description
         elif self.file:
             s = filename_leaf(self.file.name)
+        elif self.library_file:
+            s = "{}:{}".format(self.volume.ref, self.library_file)
         else:
             s = str(self.id)
         if self.type:
@@ -102,8 +154,6 @@ class Upload(mixins.Uploadable, UserAuthored, Controllable):
 
     @dd.displayfield(_("Description"))
     def description_link(self, ar):
-        if ar is None:
-            return ''
         if self.description:
             s = self.description
         elif self.file:
@@ -112,7 +162,15 @@ class Upload(mixins.Uploadable, UserAuthored, Controllable):
             s = str(self.type)
         else:
             s = str(self.id)
+        if ar is None:
+            return s
         return self.get_file_button(s)
+
+    @dd.chooser(simple_values=True)
+    def library_file_choices(self, volume):
+        if volume is None:
+            return []
+        return list(volume.get_filenames())
 
     @dd.chooser()
     def type_choices(self, upload_area):
@@ -139,6 +197,7 @@ class Uploads(dd.Table):
 
     detail_layout = dd.DetailLayout("""
     file user
+    volume:10 library_file:40 
     upload_area type description
     owner
     """, window_size=(80, 'auto'))
@@ -147,6 +206,7 @@ class Uploads(dd.Table):
     type
     description
     file
+    volume library_file
     user
     """
 
@@ -181,12 +241,12 @@ class AllUploads(Uploads):
 
 class UploadsByType(Uploads):
     master_key = 'type'
-    column_names = "file description user * "
+    column_names = "file library_file description user * "
 
 
 class MyUploads(My, Uploads):
     required_roles = dd.login_required((OfficeUser, OfficeOperator))
-    column_names = "file description user owner *"
+    column_names = "file library_file description user owner *"
     # order_by = ["modified"]
 
     # @classmethod
@@ -237,9 +297,10 @@ class AreaUploads(Uploads):
             if area is not None:
                 qs = qs.filter(upload_area=area)
         else:
-            raise Exception("A {} is not an UploadController!".format(
-                obj.__class__))
-                
+            return E.div("{} is not an UploadController!".format(
+                model_class_path(obj.__class__)))
+        volume = obj.get_uploads_volume()
+        # print(20190208, volume)
         for ut in qs:
             sar = ar.spawn(
                 self, master_instance=obj,
@@ -255,8 +316,14 @@ class AreaUploads(Uploads):
                     # icon_name='application_form',
                     title=_("Edit metadata of the uploaded file."))
                 if m.file.name:
+                    url = settings.SITE.build_media_url(m.file.name)
+                elif m.volume_id and m.volume.base_url and m.library_file:
+                    url = m.volume.base_url + m.library_file
+                else:
+                    url = None
+                if url:
                     show = ar.renderer.href_button(
-                        settings.SITE.build_media_url(m.file.name),
+                        url,
                         # u"\u21A7",  # DOWNWARDS ARROW FROM BAR (↧)
                         # u"\u21E8",
                         u"\u21f2",  # SOUTH EAST ARROW TO CORNER (⇲)
@@ -267,7 +334,8 @@ class AreaUploads(Uploads):
                         #     'images/xsite/link'),
                         # icon_name='page_go',
                         # style="vertical-align:-30%;",
-                        title=_("Open the uploaded file in a new browser window"))
+                        title=_("Open the file in a new browser window"))
+                        # title=_("Open the uploaded file in a new browser window"))
                     # logger.info("20140430 %s", tostring(e))
                     files.append(E.span(edit, ' ', show))
                 else:
@@ -276,7 +344,7 @@ class AreaUploads(Uploads):
                and (ut.max_number < 0 or len(files) < ut.max_number):
                 btn = self.insert_action.request_from(
                     sar, master_instance=obj,
-                    known_values=dict(type_id=ut.id)).ar2button()
+                    known_values=dict(type_id=ut.id, volume=volume)).ar2button()
                 if btn is not None:
                     files.append(btn)
             if len(files) > 0:
@@ -306,11 +374,12 @@ class UploadsByController(AreaUploads):
     master_key = 'owner'
     column_names = "file type description user *"
 
-    insert_layout = """
-    file
+    insert_layout = dd.InsertLayout("""
+    file 
+    volume library_file 
     type
     description
-    """
+    """, hidden_elements="volume", window_size=(60, 'auto'))
 
     @classmethod
     def format_upload(self, obj):

@@ -10,6 +10,9 @@ class UploadController(dd.Model):
     def get_upload_area(self):
         return UploadAreas.general
 
+    def get_uploads_volume(self):
+        return None
+
     if dd.is_installed("uploads"):
 
         show_uploads = dd.ShowSlaveTable(

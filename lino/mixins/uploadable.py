@@ -1,22 +1,24 @@
-# Copyright 2010-2016 Rumma & Ko Ltd
+# Copyright 2010-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """Defines the :class:`Uploadable` mixin.
 """
 
 from builtins import object
-import logging
-logger = logging.getLogger(__name__)
+
+import logging ; logger = logging.getLogger(__name__)
 
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
 from django.conf import settings
 
-from lino.core.model import Model
 from etgen.html import E
+from lino.core.model import Model
 
 
 class Uploadable(Model):
     """Mixin for objects that represent an uploadable file.
+
+    Used by :class:`lino.modlib.uploads.Upload`.
 
     .. attribute:: file
 

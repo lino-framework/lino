@@ -23,6 +23,7 @@ class Plugin(ad.Plugin):
     def setup_config_menu(self, site, user_type, m):
         mg = self.get_menu_group()
         m = m.add_menu(mg.app_label, mg.verbose_name)
+        m.add_action('uploads.Volumes')
         m.add_action('uploads.UploadTypes')
 
     def setup_explorer_menu(self, site, user_type, m):

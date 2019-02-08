@@ -637,6 +637,33 @@ Commentable as it should be displayed by the slave summary of
 CommentsByOwner."""),
     'lino.modlib.comments.Commentable.on_commented' : _("""This is automatically called when a comment has been created
 or modified."""),
+    'lino.modlib.files.Volume' : _("""The Django model representing a file volume."""),
+    'lino.modlib.files.Volume.id' : _("""The primary key used to point to this volume from a database object."""),
+    'lino.modlib.files.Volume.ref' : _("""The full path of the root folder."""),
+    'lino.modlib.files.Volume.text' : _("""A descriptive text."""),
+    'lino.modlib.files.Volume.base_url' : _("""The base URL where files of this volume are being served."""),
+    'lino.modlib.files.Volume.backend' : _("""The file backend used to access the files on this volume."""),
+    'lino.modlib.files.File.id' : _("""Internal ID to be used as primary key."""),
+    'lino.modlib.files.File.volume' : _("""The volume where this file is stored."""),
+    'lino.modlib.files.File.parent' : _("""The parent directory."""),
+    'lino.modlib.files.File.is_folder' : _("""Whether this is a directory, i.e. a special file which contains other
+files and has no content on its own."""),
+    'lino.modlib.files.File.name' : _("""The name of this file.  Must be unique among siblings of a same parent."""),
+    'lino.modlib.files.File.full_name' : _("""The full path name relative to the root folder of the volume."""),
+    'lino.modlib.files.File.broken' : _("""Whether the file no longer exists on the file system."""),
+    'lino.modlib.files.File.state' : _("""The state of this file, used to control the workflow."""),
+    'lino.modlib.files.FileStates' : _("""A choicelist with the possible states of a file."""),
+    'lino.modlib.files.Receivable' : _("""A mixin for models that require their every object to have a scan or pdf
+file of the "receipt", i.e. the document serving as the legal proof of this
+database object.  A usage example are purchase invoices in an accounting
+system."""),
+    'lino.modlib.files.Receivable.receipt' : _("""The file which serves as receipt for this database object."""),
+    'lino.modlib.files.Receivable.needs_receipt' : _("""Return True if this database object needs a receipt."""),
+    'lino.modlib.files.PendingReceivables' : _("""Shows all receivables that need a receipt but don't have any."""),
+    'lino.modlib.files.BrokenFiles' : _("""Shows all unused files (i.e. which aren't referred to by any database
+object)."""),
+    'lino.modlib.files.DanglingReceipts' : _("""Shows all files that are a receipt but aren't used as such by any
+receivable."""),
     'lino.modlib.gkfs.Controllable' : _("""Mixin for models that are "controllable" by another database object."""),
     'lino.modlib.gkfs.Controllable.update_controller_field' : _("""Update attributes of the owner field and its underlying
 fields owner_id and owner_type."""),

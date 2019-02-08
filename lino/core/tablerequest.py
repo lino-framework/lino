@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2018 Rumma & Ko Ltd
+# Copyright 2009-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Defines the `TableRequest` class.
@@ -683,7 +683,7 @@ class TableRequest(ActionRequest):
             bp[constants.URL_PARAM_SORT] = sort
 
         if self.known_values:
-            for k, v in list(self.known_values.items()):
+            for k, v in self.known_values.items():
                 if self.actor.known_values.get(k, None) != v:
                     bp[k] = v
         if self.master_instance is not None:
