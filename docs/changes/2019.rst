@@ -10,6 +10,11 @@ Changes 2019 in Lino
   :local:
 
 
+2019-02-09
+==========
+
+Released Lino 19.2.0 to PyPi.
+
 2019-02-08
 ==========
 
