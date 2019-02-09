@@ -9,6 +9,36 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+
+2019-02-08
+==========
+
+.. currentmodule:: lino.modlib.uploads
+
+The :mod:`lino.modlib.uploads` plugin has been extended to support
+:ticket:`2826`. Until now an :class:`Upload` could represent either an uploaded
+file (the original meaning) or just an entry representing some external
+document to be monitored by its author, without any uploaded file. With
+:ticket:`2826` we add a third possibility a "library file", i.e. a file that
+has been stored on some volume using some other method than uploading.
+
+Concretely:
+
+- Added a new model :class:`Volume`
+
+- Added two fields :attr:`volume` and :attr:`library_file` to the
+  :class:`Upload` model.
+
+- The insert_layout of :class:`UploadsByControler` does *not* include the
+  :attr:`volume`, but instead the controller (owner) decides which volume is to
+  be used.
+
+  IOW a new method :meth:`UploadController.get_uploads_volume`.  The field
+  should be hidden or at least readonly when the owner says that there is no
+  volume.
+
+
+
 2019-02-05
 ==========
 
