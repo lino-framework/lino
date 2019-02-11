@@ -1845,6 +1845,14 @@ Lino.permalink_handler = function (ww) {
   //~ if(plink) { eval('Lino.'+plink); }
 //~ }
 
+Lino.close_and_save_handler =  function (ww){
+    return function(){
+    if (ww) {
+        ww.main_item.do_when_clean(true,function() {
+        Lino.close_window(); });
+        }
+    }
+};
 
 Lino.ajax_error_handler = function(panel) {
   return function(response,options) {
@@ -4656,7 +4664,12 @@ Lino.Window = Ext.extend(Ext.Window,{
       config.title = this.main_item.empty_title;
       config.closable = true;
       config.tools = [ 
-        { qtip: 'permalink', handler: Lino.permalink_handler(this), id: "pin" }
+        { qtip: 'permalink',
+         handler: Lino.permalink_handler(this),
+          id: "pin" },
+        { qtip: "{{_('Save and close the window.')}}"
+        , handler: Lino.close_and_save_handler(this),
+         id: "save" }
       ];
       if (this.main_item.content_type && this.main_item.action_name != 'insert') {
         config.tools = [ {
