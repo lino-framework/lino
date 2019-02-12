@@ -372,7 +372,7 @@ class AreaUploads(Uploads):
 
 class UploadsByController(AreaUploads):
     master_key = 'owner'
-    column_names = "file type description user *"
+    column_names = "file volume library_file type description user *"
 
     insert_layout = dd.InsertLayout("""
     file 
