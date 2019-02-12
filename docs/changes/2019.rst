@@ -15,6 +15,9 @@ Changes 2019 in Lino
 
 Released Lino 19.2.0 to PyPi.
 
+Added two columns volume library_file in UploadsByController
+
+
 2019-02-08
 ==========
 

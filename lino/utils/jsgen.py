@@ -501,7 +501,7 @@ def py2js(v, compact=True):
     # http://docs.djangoproject.com/en/dev/topics/serialization/
     # if not isinstance(v, (str,unicode)):
         # raise Exception("20120121 %r is of type %s" % (v,type(v)))
-    return json.dumps(v,sort_keys=True,
+    return json.dumps(v, sort_keys=True,
                   indent=4, separators=(',', ': ')
                       )
     # try:
