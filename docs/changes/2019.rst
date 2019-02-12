@@ -9,6 +9,10 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-02-12
+==========
+
+Translations for :ticket:`2834`.
 
 2019-02-11
 ==========
