@@ -5,22 +5,20 @@
 """Database models for `lino.modlib.export_excel`.
 
 """
-from builtins import str
 import os
 
 from django.conf import settings
 from django.db.models import Model
 from django.utils.functional import Promise
-from lino.core import actions
-from lino.core.tables import AbstractTable
-from lino.utils.media import TmpMediaFile
-from lino.utils import IncompleteDate
-from etgen.html import iselement, to_rst
-from lino.utils.quantities import Duration
-from lino.core.choicelists import Choice
-from lino.api import dd
-
 from django.utils.translation import ugettext_lazy as _
+from etgen.html import iselement, to_rst
+
+from lino.core import actions
+from lino.core.choicelists import Choice
+from lino.core.tables import AbstractTable
+from lino.utils import IncompleteDate
+from lino.utils.media import TmpMediaFile
+from lino.utils.quantities import Duration
 
 
 def sheet_name(s):
