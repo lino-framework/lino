@@ -9,6 +9,11 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-02-14
+==========
+
+Make the field's label following FileField visible :ticket:`2830`.
+
 2019-02-12
 ==========
 

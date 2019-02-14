@@ -1014,6 +1014,7 @@ Lino.IncompleteDateField = Ext.extend(Ext.form.TextField,{
 //~ Lino.FileUploadField = Ext.ux.form.FileUploadField;
 
 Lino.FileUploadField = Ext.extend(Ext.ux.form.FileUploadField,{
+    ctCls :"field-margin",
     unused_onRender : function(ct, position){
       Lino.FileUploadField.superclass.onRender.call(this, ct, position);
       this.el.on({
