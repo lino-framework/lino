@@ -9,6 +9,11 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-02-17
+==========
+
+Have the renderer return a js string that when eval'd reloads the dashboard, rather than a hard-coded string.
+
 2019-02-14
 ==========
 

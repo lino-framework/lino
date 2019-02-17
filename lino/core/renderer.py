@@ -730,6 +730,13 @@ class JsRenderer(HtmlRenderer):
     :class:`lino_extjs6.extjs.ext_renderer.ExtRenderer`.
     """
 
+    def reload_js(self):
+        """
+        Returns a js string to go inside of a href in the dashboard for reloading the dashboard.
+        """
+        return "Lino.viewport.refresh();"
+
+
     def goto_instance(self, ar, obj, detail_action=None, **kw):
         """Ask the client to display a :term:`detail window` on the given
         record. The client might ignore this if Lino does not know a

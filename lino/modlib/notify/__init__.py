@@ -151,7 +151,7 @@ class Plugin(ad.Plugin):
                         icon: '/static/img/lino-logo.png',
                         onClick: function () {
                             window.focus();
-                            Lino.viewport.refresh();
+                            """ + site.kernel.default_renderer.reload_js() + """
                             this.close();
                         }
                     });
@@ -213,7 +213,7 @@ class Plugin(ad.Plugin):
                         icon: '/static/img/lino-logo.png',
                         onClick: function () {
                             window.focus();
-                            Lino.viewport.refresh();
+                            """ + site.kernel.default_renderer.reload_js() + """
                             this.close();
                         }
                     });
