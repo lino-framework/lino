@@ -150,6 +150,12 @@ class HtmlRenderer(Renderer):
     """The default attributes to be applied to every table cell.
     """
 
+    def reload_js(self):
+        """
+        Returns a js string to go inside of a href in the dashboard for reloading the dashboard.
+        """
+        return ""
+
     row_classes_map = {}
 
     def js2url(self, js):

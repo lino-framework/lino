@@ -1052,6 +1052,8 @@ class CreateRow(Action):
     readonly = False
     callable_from = None
 
+    # select_rows = False
+    # submit_form_data = True
     def run_from_ui(self, ar, **kwargs):
         elem = ar.create_instance_from_request(**kwargs)
         self.save_new_instance(ar, elem)
@@ -1106,8 +1108,8 @@ class SubmitInsert(CreateRow):
         elem = ar.create_instance_from_request(**kwargs)
         self.save_new_instance(ar, elem)
         ar.set_response(close_window=True)
-        if settings.SITE.is_installed("react"):
-            ar.goto_instance(elem)
+        # if settings.SITE.is_installed("react"):
+        #     ar.goto_instance(elem)
 
             # ar.set_response(
             #     eval_js=ar.renderer.obj2url(ar, elem).replace('javascript:', '', 1)
