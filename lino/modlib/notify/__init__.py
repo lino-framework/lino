@@ -12,7 +12,7 @@ from lino import DJANGO2
 from lino.api import ad, _
 
 try:
-    import redis
+    import asgi_redis
 except:
     redis = False
 
