@@ -113,7 +113,7 @@ class Plugin(ad.Plugin):
             user_name = request.user.username
         site_title = site.title or 'Lino-framework'
         if not DJANGO2:
-            js_to_add = """
+            js_to_add = ("""
         <script type="text/javascript">
         Ext.onReady(function() {
             // Note that the path doesn't matter for routing; any WebSocket
@@ -169,9 +169,9 @@ class Plugin(ad.Plugin):
             })});
         // end of onReady()"
         </script>
-            """ % (user_name, py2js(site_title))
+            """) % (user_name, py2js(site_title))
         else:
-            js_to_add = """
+            js_to_add = ("""
         <script type="text/javascript">
         Ext.onReady(function() {
             // Note that the path doesn't matter for routing; any WebSocket
@@ -231,7 +231,7 @@ class Plugin(ad.Plugin):
             }});
         // end of onReady()"
         </script>
-            """ % (user_name, py2js(site_title))
+            """) % (user_name, py2js(site_title))
         yield js_to_add
 
     def get_dashboard_items(self, user):
