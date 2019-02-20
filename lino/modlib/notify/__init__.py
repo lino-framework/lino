@@ -36,7 +36,7 @@ class Plugin(ad.Plugin):
     """Whether to keep unseen messages when removing old messages
     according to :attr:`remove_after`.
 
-    In normal operationi this should be True, but e.g. after a flood
+    In normal operation this should be True, but e.g. after a flood
     of messages during experimental phases we might want to get rid of
     them automatically.
 
