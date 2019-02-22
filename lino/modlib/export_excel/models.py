@@ -1,10 +1,11 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2014-2018 Josef Kejzlar, Rumma & Ko Ltd, Hamza Khchine
+# Copyright 2014-2019 Josef Kejzlar, Rumma & Ko Ltd, Hamza Khchine
 # License: BSD (see file COPYING for details)
 
 """Database models for `lino.modlib.export_excel`.
 
 """
+from builtins import str
 import os
 
 from django.conf import settings

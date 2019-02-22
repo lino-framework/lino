@@ -17,6 +17,11 @@ a bytes-like object is required, not 'str'` (:ticket:`2845`).
 
 Released Lino 19.2.1.
 
+Fixed a bug in which caused a UnicodeEncodeError in
+:ref:`lino.specs.export_excel` on `Travis
+<https://travis-ci.org/lino-framework/book/jobs/497045894#L4665>`__ and
+possibly in other situations as well.
+
 
 2019-02-17
 ==========
