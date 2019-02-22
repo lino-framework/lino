@@ -5,7 +5,7 @@
 """Database models for `lino.modlib.export_excel`.
 
 """
-from builtins import str
+import six
 import os
 
 from django.conf import settings
@@ -55,7 +55,7 @@ def ar2workbook(ar, column_names=None):
     fields, headers, widths = ar.get_field_info(column_names)
 
     for c, column in enumerate(fields):
-        sheet.cell(row=1, column=c + 1).value = str(headers[c])
+        sheet.cell(row=1, column=c + 1).value = six.text_type(headers[c])
         sheet.cell(row=1, column=c + 1).font = bold_font
         # sheet.col(c).width = min(256 * widths[c] / 7, 65535)
         # 256 == 1 character width, max width=65535
@@ -67,20 +67,27 @@ def ar2workbook(ar, column_names=None):
             if type(value) == bool:
                 value = value and 1 or 0
             elif isinstance(value, (Duration, Choice)):
-                value = str(value)
+                value = six.text_type(value)
             elif iselement(value):
                 value = to_rst(value)
                 # dd.logger.info("20160716 %s", value)
             elif isinstance(value, Promise):
-                value = str(value)
+                value = six.text_type(value)
             elif isinstance(value, IncompleteDate):
                 if value.is_complete():
                     value = value.as_date()
                 else:
-                    value = str(value)
+                    value = six.text_type(value)
             elif isinstance(value, Model):
-                value = str(value)
-            sheet.cell(row=r + 1, column=c + 1).value = value
+                value = six.text_type(value)
+            elif isinstance(value, six.text_type):
+                # if it is a future.newstr, change it to a real string to avoid
+                # ValueError: Cannot convert 'Hans Altenberg' to Excel
+                value = six.text_type(value)
+            try:
+                sheet.cell(row=r + 1, column=c + 1).value = value
+            except ValueError as e:
+                raise Exception("20190222 {} {}".format(value.__class__, value))
 
     return workbook
 
