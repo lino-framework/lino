@@ -1,4 +1,4 @@
-# Copyright 2010-2018 Rumma & Ko Ltd
+# Copyright 2010-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """Defines the :class:`Uploadable` mixin.
 """
@@ -65,13 +65,12 @@ class Uploadable(Model):
         self.size = uf.size
         self.mimetype = uf.content_type
 
-        """
-        Certain Python versions or systems don't manage non-ascii filenames,
-        so we replace any non-ascii char by "_"
-        """
+        # Certain Python versions or systems don't manage non-ascii filenames,
+        # so we replace any non-ascii char by "_". In Py3, encode() returns a
+        # bytes object, but we want the name to remain a str.
 
         #~ logger.info('20121004 handle_uploaded_files() %r',uf.name)
-        name = uf.name.encode('ascii', 'replace')
+        name = str(uf.name.encode('ascii', 'replace'))
         name = name.replace('?', '_')
 
         # Django magics:
