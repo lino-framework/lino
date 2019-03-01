@@ -2022,7 +2022,7 @@ Lino.build_buttons = function(panel,actions) {
   if (actions) {
     var buttons = Array(actions.length);
     var cmenu = Array(actions.length);
-    var keyhandlers = {};
+    var keyhandlers = [];
     for (var i=0; i < actions.length; i++) { 
       var a = actions[i];
       if (a.menu) a.menu = Lino.build_buttons(panel,a.menu).bbar;
@@ -2047,7 +2047,10 @@ Lino.build_buttons = function(panel,actions) {
           buttons[i].handler = h;
           cmenu[i].handler = h;
           if (a.keycode) {
-              keyhandlers[a.keycode] = h;
+                keyhandlers.push({
+                key : a.keycode,
+                fn : h});
+//              keyhandlers[a.keycode] = h;
           }
           //~ if (buttons[i].xtype == 'splitbutton') {
               //~ cmenu[i].menu = a.menu;
@@ -2059,6 +2062,9 @@ Lino.build_buttons = function(panel,actions) {
           // cmenu[i].handler = a.handler;
       }
     }
+//    if (keyhandlers.length > 0){
+//        var keys = new Ext.KeyMap(panel,keyhandlers);
+//    }
     return {
         bbar:buttons, 
         cmenu:new Ext.menu.Menu(cmenu),
@@ -2640,7 +2646,7 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel, {
         { key: Ext.EventObject.ENTER, fn: this.on_ok, scope: this }
         ,{ key: 's', ctrl: true, fn: this.on_ok, scope: this, stopEvent: true  }
       ];
-      
+
       if (!wincfg.defaultButton) this.getForm().items.each(function(f){
           if(f.isFormField){ 
               wincfg.defaultButton = f;
@@ -3245,6 +3251,34 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       // this.save(null, true, this.save_action_name);
       this.save();
   }
+  ,run_action_hotkeys : function(k ,e){
+    var result = this.actions_hotkeys.filter(obj => {
+      return obj.key.toUpperCase() === String.fromCharCode(k).toUpperCase()
+    })
+    if (result != undefined){
+      if (result.length != undefined){
+        result = result[0];
+      }
+      // this.actions_hotkeys[i].ba
+      var pk = this.current_record.id || this.default_record_id;
+      if (pk == undefined && this.base_params) { pk = this.base_params.mk; }
+//          if (pk == undefined && this.containing_panel) {
+//             pk = this.containing_panel.get_current_record().id;
+//          }
+      if (pk == undefined) {
+        // 20170101 VerifyUser action
+        pk = '-99998';
+        // Lino.alert("Sorry, dialog action without base_params.mk");
+        // return;
+        }
+        eval(result.ba)(this.containing_panel,
+                                              this.is_main_window,
+                                              pk, {});
+                                            }  
+      e.stopEvent();
+      e.stopPropagation();
+
+  }
   ,config_containing_window : function(wincfg) { 
 
       // Note that defaultButton means: which component should receive
@@ -3287,6 +3321,19 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       wincfg.keys.push({
           key: 's', ctrl: true, 
              stopEvent: true, handler: this.on_ok, scope:this });
+      if (this.actions_hotkeys) {
+          for (var i = 0; i < this.actions_hotkeys.length;i++) {
+            wincfg.keys.push({
+              key: this.actions_hotkeys[i].key,
+              ctrl: this.actions_hotkeys[i].ctrl,
+              stopEvent: true,
+              handler:
+                function(k, e){
+                  this.run_action_hotkeys(k,e);
+                },
+              scope:this });
+          }
+      }
   }
 
 });
@@ -3443,7 +3490,12 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
 
   ,handle_key_event : function(e) {
     // console.log("20140514 handle_key_event", e, this.keyhandlers);
-    var h = this.keyhandlers[e.keyCode];
+    if (this.keyhandlers){
+        var h = this.keyhandlers[e.keyCode];
+        }
+    else if (this.keys !== undefined){
+        var h = this.keys[e.keyCode];
+        }
     if (h) {
         h(this);
         e.stopEvent();
@@ -3551,7 +3603,8 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
     delete this.ls_bbar_actions
     if (actions) {
         this.cmenu = actions.cmenu;
-        this.keyhandlers = actions.keyhandlers;
+//        this.keyhandlers = actions.keyhandlers;
+        this.keys = new Ext.KeyMap(this.elements,actions.keyhandlers);
     }
     
     if (!this.hide_top_toolbar) {  

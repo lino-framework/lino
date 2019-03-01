@@ -9,10 +9,27 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-02-22
+==========
+
+Uploading files under Python 3 caused a server error :message:`Exception Value:
+a bytes-like object is required, not 'str'` (:ticket:`2845`).
+
+Released Lino 19.2.1.
+
+Fixed a bug in which caused a UnicodeEncodeError in
+:ref:`lino.specs.export_excel` on `Travis
+<https://travis-ci.org/lino-framework/book/jobs/497045894#L4665>`__ and
+possibly in other situations as well.
+
+Released Lino 19.2.2.
+
+
 2019-02-17
 ==========
 
-Have the renderer return a js string that when eval'd reloads the dashboard, rather than a hard-coded string.
+Have the renderer return a js string that when eval'd reloads the dashboard,
+rather than a hard-coded string.
 
 2019-02-14
 ==========
@@ -33,7 +50,7 @@ Added a button "Close and save window" (:ticket:`2816`)
 2019-02-09
 ==========
 
-Released Lino 19.2.0 to PyPi.
+Released Lino 19.2.0 to PyPI.
 
 Added two columns volume library_file in UploadsByController
 
