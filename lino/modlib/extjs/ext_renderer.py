@@ -972,6 +972,8 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
             dh.layout._formpanel_name
         yield "  layout: 'fit',"
         yield "  auto_save: true,"
+        if tbl.get_actions_hotkeys():
+            yield "  actions_hotkeys: %s," % py2js(tbl.get_actions_hotkeys())
         if dh.layout.window_size and dh.layout.window_size[1] == 'auto':
             yield "  autoHeight: true,"
         if settings.SITE.is_installed('contenttypes') and issubclass(tbl, dbtables.Table):
@@ -1055,7 +1057,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
             yield "  action_name: %s," % py2js(action.action.action_name)
         if isinstance(action.action, ShowInsert):
             yield "  default_record_id: -99999,"
-            
+
         yield "  initComponent : function() {"
         a = rpt.detail_action
         if a:

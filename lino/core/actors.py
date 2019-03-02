@@ -631,7 +631,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     :attr:`lino.core.tables.AbstractTable.preview_limit`.
 
     """
-    
+
     def __init__(self, *args, **kw):
         raise Exception("Actors should never get instantiated")
 
@@ -675,6 +675,17 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
         """
         return None
+
+    @classmethod
+    def get_actions_hotkeys(self):
+        if self.workflow_state_field:
+            actions_hotkeys = []
+            for workflow_action in  self.workflow_state_field.choicelist.workflow_actions:
+                actions_hotkeys.append({'key': str(workflow_action.target_state.name)[0],
+                                        'ctrl': False,
+                                        'ba':"Lino.{}".format(workflow_action.full_name(self))})
+            return actions_hotkeys
+
 
     @classmethod
     def get_row_by_pk(self, ar, pk):
