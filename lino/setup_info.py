@@ -93,19 +93,23 @@ SETUP_INFO.update(long_description="""
     href="https://pypi.python.org/pypi/lino/"><img alt="pypi_license"
     src="https://img.shields.io/pypi/l/lino.svg" /></a>
 
-Lino is a high-level framework for writing desktop-like customized
-database applications based on `Django <https://www.djangoproject.com/>`_
-and `Sencha ExtJS <http://www.sencha.com/products/extjs/>`_.
-Lino applications are Django projects
-where the application developer does not need to write any
-URLconf, HTML nor CSS (`more <http://lino-framework.org/about/what.html>`__).
+Lino is a high-level framework for writing desktop-like customized database
+applications based on `Django <https://www.djangoproject.com/>`_ and `Sencha
+ExtJS <http://www.sencha.com/products/extjs/>`_. Lino applications are Django
+projects where the application developer does not need to write any URLconf,
+HTML nor CSS (`more <http://lino-framework.org/about/what.html>`__).
 
-- Changes are documented at http://core.lino-framework.org
-
-- Most documentation is in the Lino Book at http://www.lino-framework.org
+- This repository is a part of the Lino framework which is documented as a
+  whole in the Lino Book at http://www.lino-framework.org
 
 - For *introductions* and *commercial information* about Lino 
   see http://www.saffre-rumma.net
+  
+- Please report any issues in the **book** repository:
+  https://github.com/lino-framework/book
+  
+- Changes to this repository are documented at
+  http://core.lino-framework.org/changes/
 
 """)
 
