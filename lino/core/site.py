@@ -1559,9 +1559,9 @@ class Site(object):
     def get_database_settings(self):
         """Return a dict to be set as the :setting:`DATABASE` setting.
         
-        The default behaviour uses SQLiite on a file named
-        :xfile:`default.db` in the :attr:`cache_dir`, and in
-        ``:memory:`` when :attr:`cache_dir` is `None`.
+        The default behaviour uses SQLite (1) on a file named
+        :xfile:`default.db` in the :attr:`cache_dir` if that attribute is
+        specified, and (2) in ``:memory:`` when :attr:`cache_dir` is `None`.
 
         And alternative might be for example::
 
