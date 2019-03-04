@@ -64,7 +64,7 @@
         {{ javascript(extjs.build_lib_url('examples/ux/Spinner.js')) }}
     {%- endif -%}
     {{ javascript(site.build_static_url("extjs/Ext.ux.form.DateTime.js")) }}
-    {%- if site.use_websockets -%}
+    {%- if site.use_websockets and False -%}
         {{ javascript(site.build_static_url("channels/js/websocketbridge.js")) }}
     {%- endif -%}
     {%- if run_jasmine -%}  {# site.use_jasmine #}

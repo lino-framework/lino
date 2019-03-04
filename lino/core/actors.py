@@ -8,11 +8,13 @@ See :doc:`/dev/actors`.
 
 
 """
+import logging;
 # from six import string_types
 from builtins import str
+
 from future.utils import with_metaclass
 
-import logging ; logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 import copy
 
@@ -677,14 +679,15 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         return None
 
     @classmethod
-    def get_actions_hotkeys(self):
-        if self.workflow_state_field:
-            actions_hotkeys = []
-            for workflow_action in  self.workflow_state_field.choicelist.workflow_actions:
-                actions_hotkeys.append({'key': str(workflow_action.target_state.name)[0],
-                                        'ctrl': False,
-                                        'ba':"Lino.{}".format(workflow_action.full_name(self))})
-            return actions_hotkeys
+    def get_actions_hotkeys(cls):
+        return None
+        # if self.workflow_state_field:
+        #     actions_hotkeys = []
+        #     for workflow_action in  self.workflow_state_field.choicelist.workflow_actions:
+        #         actions_hotkeys.append({'key': str(workflow_action.target_state.name)[0],
+        #                                 'ctrl': False,
+        #                                 'ba':"Lino.{}".format(workflow_action.full_name(self))})
+        #     return actions_hotkeys
 
 
     @classmethod
