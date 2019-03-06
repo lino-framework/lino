@@ -3326,6 +3326,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
             wincfg.keys.push({
               key: this.actions_hotkeys[i].key,
               ctrl: this.actions_hotkeys[i].ctrl,
+              shift : this.actions_hotkeys[i].shift,
               stopEvent: true,
               handler:
                 function(k, e){

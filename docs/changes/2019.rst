@@ -15,6 +15,11 @@ Changes 2019 in Lino
 
 Added CSS classnames to insert, detail, form and actionForm Panel for use in e2e testing. 
 
+2019-03-04
+==========
+
+Make it possible to the actions_hotkeys of a panel to set the 'shift' options.
+
 2019-02-22
 ==========
 
