@@ -10,10 +10,12 @@ Changes 2019 in Lino
   :local:
 
 
-2019-03-05
+
+2019-03-06
 ==========
 
-Added CSS classnames to insert, detail, form and actionForm Panel for use in e2e testing. 
+Added CSS classnames to insert, detail, form and actionForm Panel for use in e2e testing.
+Also for classnames for confirmation dialogs and main-menu, and action panel ok + cancel buttons.
 
 2019-03-04
 ==========

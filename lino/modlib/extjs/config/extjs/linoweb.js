@@ -1576,7 +1576,7 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
     
     if (result.xcallback) {
         //~ var config = {title:"{{_('Confirmation')}}"};
-        var config = {title:result.xcallback.title};
+        var config = {cls:"l-confirmation", title:result.xcallback.title};
         //~ config.buttons = Ext.MessageBox.YESNOCANCEL;
         //~ config.buttons = Ext.MessageBox.YESNO;
         var p = {};
@@ -2521,10 +2521,11 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel, {
   //~ ,autoHeight: true
   //~ ,frame: true
   window_title : "Action Parameters",
+  cls : "l-ActionFormPanel",
   constructor : function(config){
     config.buttons = [
-        {text: 'OK', handler: this.on_ok, scope: this},
-        {text: 'Cancel', handler: this.on_cancel, scope: this}
+        {text: 'OK', handler: this.on_ok, scope: this, cls:"l-ok"},
+        {text: 'Cancel', handler: this.on_cancel, scope: this, cls:"l-cancel"}
     ];
     Lino.ActionFormPanel.superclass.constructor.call(this, config);
   }
@@ -2972,7 +2973,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
             this_.save(todo);
         } else {
           //~ console.log('20111217 do_when_clean() form is dirty',this.form);
-          var config = {title:"{{_('Confirmation')}}"};
+          var config = {cls:"l-confirmation", title:"{{_('Confirmation')}}"};
           config.buttons = Ext.MessageBox.YESNOCANCEL;
           config.msg = "{{_('Save changes to current record ?')}}";
           config.fn = function(buttonId,text,opt) {

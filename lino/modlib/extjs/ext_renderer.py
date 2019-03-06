@@ -452,6 +452,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
             bbar=dict(xtype='toolbar', items=js_code('Lino.status_bar')),
             #~ title=self.site.title,
             tbar=js_code('Lino.main_menu'),
+            tbarCfg={"cls": "l-mainmenu"}
         )
         return win
 
