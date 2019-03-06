@@ -970,6 +970,17 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
         yield ""
         yield "Lino.%s = Ext.extend(Lino.FormPanel,{" % \
             dh.layout._formpanel_name
+
+        if dh.layout._formpanel_name.endswith('.DetailFormPanel'):
+            yield "cls: \"l-DetailFormPanel\","
+        if dh.layout._formpanel_name.endswith('.InsertFormPanel'):
+            yield "cls: \"l-InsertFormPanel\","
+        if dh.layout._formpanel_name.endswith('.ParamsPanel'):
+            yield "cls: \"l-ParamsPanel\","
+        if dh.layout._formpanel_name.endswith('_ActionFormPanel'):
+            yield "cls: \"l-ActionFormPanel\","
+
+
         yield "  layout: 'fit',"
         yield "  auto_save: true,"
         if tbl.get_actions_hotkeys():

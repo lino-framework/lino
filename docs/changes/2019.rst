@@ -9,6 +9,12 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+
+2019-03-05
+==========
+
+Added CSS classnames to insert, detail, form and actionForm Panel for use in e2e testing. 
+
 2019-02-22
 ==========
 
