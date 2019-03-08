@@ -54,6 +54,9 @@ URL_PARAM_SUBST_USER = 'su'
 substitute user
 """
 
+URL_PARAM_LINO_VERSION = "lv"
+"""Version number of linoweb.js for version clash checking"""
+
 URL_PARAM_DEVICE_TYPE = 'dt'
 """
 Connected device type (used by Openui5)
@@ -105,6 +108,7 @@ URL_PARAMS = [
     'URL_PARAM_REQUESTING_PANEL',
     'URL_PARAM_SHOW_PARAMS_PANEL',
     'URL_PARAM_SUBST_USER',
+    'URL_PARAM_LINO_VERSION',
     'URL_PARAM_USER_LANGUAGE',
     'URL_PARAM_ACTION_STEP',
     'URL_PARAM_SELECTED',

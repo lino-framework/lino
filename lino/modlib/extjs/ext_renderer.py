@@ -1306,5 +1306,6 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
             yield "LANGUAGE_CHOICES = %s;" % py2js(
                 list(settings.SITE.LANGUAGE_CHOICES))
             yield "MEDIA_URL = %s;" % py2js(settings.SITE.build_media_url())
+            yield "GEN_TIMESTAMP = %s;" % py2js(rt.settings.SITE.kernel.code_mtime)
 
         return '\n'.join(fn())

@@ -310,12 +310,25 @@ Ext.Element.addMethods(
 
 
 Ext.namespace('Lino');
-    
-    
+
+Lino.insert_linoweb_version = function(p){
+    p.{{constants.URL_PARAM_LINO_VERSION}} = GEN_TIMESTAMP;
+};
+
+// used on ajax return object
+Lino.check_linoweb_version = function(response){
+    if (response.version_mismatch) {
+        Ext.MessageBox.alert('Version Missmatch', "You are using an old version of this site, please press OK to reload",
+            function () {
+                window.location.reload(true)
+            });
+    }
+};
 
 //~ Lino.subst_user_field = new Ext.form.ComboBox({});
 //~ Lino.subst_user = null;
 Lino.insert_subst_user = function(p){
+    Lino.insert_linoweb_version(p);
     //~ console.log('20120714 insert_subst_user',Lino.subst_user,p);
     //~ if (Lino.subst_user_field.getValue()) {
     if (p.{{constants.URL_PARAM_SUBST_USER}}) return;
@@ -645,7 +658,10 @@ Lino.Viewport = Ext.extend(Lino.Viewport, {
             //~ console.log('Lino.do_action()',action,'returned from js_code in',result);
           };
         }
+        Lino.check_linoweb_version(response)
       };
+      var p = {}
+      Lino.insert_linoweb_version(p);
       var action = {
         url : '{{extjs.build_plain_url("api","main_html")}}',
         waitMsg: "{{_('Please wait...')}}",

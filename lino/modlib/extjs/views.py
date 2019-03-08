@@ -138,6 +138,10 @@ class MainHtml(View):
         ui = settings.SITE.kernel
         # ~ raise Exception("20131023")
         ar = BaseRequest(request)
+        print(request.GET.get(constants.URL_PARAM_LINO_VERSION), settings.SITE.kernel.code_mtime)
+        if request.GET.get(constants.URL_PARAM_LINO_VERSION) != settings.SITE.kernel.code_mtime:
+            ar.set_response(version_mismatch=True)
+
         html = settings.SITE.get_main_html(
             request, extjs=settings.SITE.plugins.extjs)
         html = settings.SITE.plugins.extjs.renderer.html_text(html)
@@ -509,6 +513,9 @@ class ApiElement(View):
         fmt = request.GET.get(
             constants.URL_PARAM_FORMAT, ba.action.default_format)
 
+        if request.GET.get(constants.URL_PARAM_LINO_VERSION) != settings.SITE.kernel.code_mtime:
+            ar.set_response(version_mismatch=True)
+
         if ba.action.opens_a_window:
 
             if fmt == constants.URL_FORMAT_JSON:
@@ -603,6 +610,8 @@ class ApiList(View):
             constants.URL_PARAM_FORMAT,
             ar.bound_action.action.default_format)
         # print(20170921, fmt)
+        if request.GET.get(constants.URL_PARAM_LINO_VERSION) != settings.SITE.kernel.code_mtime:
+            ar.set_response(version_mismatch=True)
 
         if fmt == constants.URL_FORMAT_JSON:
             rows = [rh.store.row2list(ar, row)
