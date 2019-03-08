@@ -130,6 +130,17 @@ class AdminIndex(View):
         #         kw.update(on_ready=renderer.action_call(request, a, {}))
         return http.HttpResponse(renderer.html_page(request, **kw))
 
+def test_version_mismatch(request):
+    print(float(request.GET.get(constants.URL_PARAM_LINO_VERSION)) != settings.SITE.kernel.code_mtime,
+          float(request.GET.get(constants.URL_PARAM_LINO_VERSION)), settings.SITE.kernel.code_mtime)
+    if float(request.GET.get(constants.URL_PARAM_LINO_VERSION)) != settings.SITE.kernel.code_mtime:
+        return dict(alert=_("Version mismatch"),
+                    message=_("Your browser is using a previous version of the site, press OK to reload the site"),
+                    alert_eval_js="window.location.reload(true);")
+    else:
+        return {}
+
+
 
 class MainHtml(View):
     def get(self, request, *args, **kw):
@@ -138,14 +149,11 @@ class MainHtml(View):
         ui = settings.SITE.kernel
         # ~ raise Exception("20131023")
         ar = BaseRequest(request)
-        print(request.GET.get(constants.URL_PARAM_LINO_VERSION), settings.SITE.kernel.code_mtime)
-        if request.GET.get(constants.URL_PARAM_LINO_VERSION) != settings.SITE.kernel.code_mtime:
-            ar.set_response(version_mismatch=True)
-
         html = settings.SITE.get_main_html(
             request, extjs=settings.SITE.plugins.extjs)
         html = settings.SITE.plugins.extjs.renderer.html_text(html)
         ar.success(html=html)
+        ar.set_response(**test_version_mismatch(request))
         return ui.default_renderer.render_action_response(ar)
 
 
@@ -512,10 +520,6 @@ class ApiElement(View):
 
         fmt = request.GET.get(
             constants.URL_PARAM_FORMAT, ba.action.default_format)
-
-        if request.GET.get(constants.URL_PARAM_LINO_VERSION) != settings.SITE.kernel.code_mtime:
-            ar.set_response(version_mismatch=True)
-
         if ba.action.opens_a_window:
 
             if fmt == constants.URL_FORMAT_JSON:
@@ -530,6 +534,7 @@ class ApiElement(View):
                         success=False, message=NOT_FOUND % (rpt, pk))
                 else:
                     datarec = ar.elem2rec_detailed(elem)
+                datarec.update(test_version_mismatch(request))
                 return json_response(datarec)
 
             after_show = ar.get_status(record_id=pk)
@@ -610,8 +615,6 @@ class ApiList(View):
             constants.URL_PARAM_FORMAT,
             ar.bound_action.action.default_format)
         # print(20170921, fmt)
-        if request.GET.get(constants.URL_PARAM_LINO_VERSION) != settings.SITE.kernel.code_mtime:
-            ar.set_response(version_mismatch=True)
 
         if fmt == constants.URL_FORMAT_JSON:
             rows = [rh.store.row2list(ar, row)
@@ -633,6 +636,7 @@ class ApiList(View):
                 kw.update(
                     param_values=ar.actor.params_layout.params_store.pv2dict(
                         ar, ar.param_values))
+            kw.update(test_version_mismatch(request))
             return json_response(kw)
 
         if fmt == constants.URL_FORMAT_HTML:

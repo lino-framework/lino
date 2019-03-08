@@ -64,6 +64,10 @@ class ValidActionResponses(object):
     alert and should be presented in a dialog box to be confirmed by
     the user.
     """
+    alert_eval_js = None
+    """
+    Js code to be evaluated after the confirmation of the alert dialog.
+    """
 
     success = None
 

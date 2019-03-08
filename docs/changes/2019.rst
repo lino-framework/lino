@@ -10,12 +10,22 @@ Changes 2019 in Lino
   :local:
 
 
+2019-03-08
+==========
+
+Added alert_eval_js responce option, which is a js string that is evaluated 
+after the alert dialog is closed.
+
+Added Version checking, so that the server alerts the browser when it's running 
+an old version of lino. 
 
 2019-03-06
 ==========
 
-Added CSS classnames to insert, detail, form and actionForm Panel for use in e2e testing.
-Also for classnames for confirmation dialogs and main-menu, and action panel ok + cancel buttons.
+Added CSS classnames to insert, detail, form and actionForm Panel for use in 
+e2e testing.
+Also for classnames for confirmation dialogs and main-menu, and action panel 
+ok + cancel buttons.
 
 2019-03-04
 ==========

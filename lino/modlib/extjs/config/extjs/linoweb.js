@@ -315,15 +315,6 @@ Lino.insert_linoweb_version = function(p){
     p.{{constants.URL_PARAM_LINO_VERSION}} = GEN_TIMESTAMP;
 };
 
-// used on ajax return object
-Lino.check_linoweb_version = function(response){
-    if (response.version_mismatch) {
-        Ext.MessageBox.alert('Version Missmatch', "You are using an old version of this site, please press OK to reload",
-            function () {
-                window.location.reload(true)
-            });
-    }
-};
 
 //~ Lino.subst_user_field = new Ext.form.ComboBox({});
 //~ Lino.subst_user = null;
@@ -474,6 +465,7 @@ Lino.MainPanel = {
   ,get_base_params : function() {  // Lino.MainPanel
     var p = {};
     Lino.insert_subst_user(p);
+    Lino.insert_linoweb_version(p);
     return p;
   }
   ,add_params_panel : function (tbar) {
@@ -643,22 +635,23 @@ Lino.Viewport = Ext.extend(Lino.Viewport, {
               // cmp.removeAll(true);  // 20140829
               cmp.update(result.html, true);
           }
-          if (result.message) {
-              if (result.alert) {
-                  //~ Ext.MessageBox.alert('Alert',result.alert_msg);
-                  Ext.MessageBox.alert('Alert',result.message);
-              } else {
-                  Lino.notify(result.message);
-              }
-          }
-          
+
+        if (result.message) {
+            //~ if (result.alert && ! gridmode) {
+            if (result.alert) { // 20120628b
+                //~ Ext.MessageBox.alert('Alert',result.alert_msg);
+                if (result.alert === true) result.alert = "{{_('Alert')}}";
+                Ext.MessageBox.alert(result.alert, result.message, function(){eval(result.alert_eval_js)});
+            } else {
+                Lino.notify(result.message);
+            }
+        }
           if (result.notify_msg) Lino.notify(result.notify_msg);
           if (result.js_code) { 
             var jsr = result.js_code(caller);
             //~ console.log('Lino.do_action()',action,'returned from js_code in',result);
           };
         }
-        Lino.check_linoweb_version(response)
       };
       var p = {}
       Lino.insert_linoweb_version(p);
@@ -1728,7 +1721,7 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
         if (result.alert) { // 20120628b 
             //~ Ext.MessageBox.alert('Alert',result.alert_msg);
             if (result.alert === true) result.alert = "{{_('Alert')}}";
-            Ext.MessageBox.alert(result.alert, result.message);
+            Ext.MessageBox.alert(result.alert, result.message, function(){eval(result.alert_eval_js)});
         } else {
             Lino.notify(result.message);
         }
@@ -2167,7 +2160,7 @@ Lino.call_ajax_action = function(
   // console.log("20170731 Lino.call_ajax_action", Ext.Ajax, p, actionName, step);
   
   if (panel.loadMask) panel.loadMask.show(); 
-    
+  Lino.insert_linoweb_version(p)
   // Ext.Ajax.params = {}; 
   Ext.Ajax.request({
     method: method
@@ -3026,6 +3019,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     p.{{constants.URL_PARAM_REQUESTING_PANEL}} = this.getId();
     p.{{constants.URL_PARAM_FORMAT}} = '{{constants.URL_FORMAT_JSON}}';
     this.add_param_values(p);
+    Lino.insert_linoweb_version(p);
     if (this.loadMask) this.loadMask.show();
     Ext.Ajax.request({ 
       waitMsg: 'Loading record...',
@@ -3041,6 +3035,16 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
           // console.log('20150905 load_record_id success', rec);
           this.set_param_values(rec.param_values);
           this.set_current_record(rec, after);
+          if (rec.message) {
+            //~ if (rec.alert && ! gridmode) {
+            if (rec.alert) { // 20120628b
+                //~ Ext.MessageBox.alert('Alert',rec.alert_msg);
+                if (rec.alert === true) rec.alert = "{{_('Alert')}}";
+                Ext.MessageBox.alert(rec.alert, rec.message, function(){eval(rec.alert_eval_js)});
+            } else {
+                Lino.notify(rec.message);
+            }
+          }
         }
       },
       failure: Lino.ajax_error_handler(this)
@@ -3551,8 +3555,19 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
       url: '{{extjs.build_plain_url("api")}}' + this.ls_url
       ,method: "GET"
       //~ ,url: ADMIN_URL + '/restful' + this.ls_url
-      //~ ,restful: true 
-      //~ ,listeners: {load:on_proxy_load} 
+      //~ ,restful: true
+      ,listeners: {load: function (proxy, req, optps) {
+            var result = req.reader.arrayData;
+            // Used for lino version validation
+            if (result.message) { //
+                if (result.alert) { // 20120628b
+                    if (result.alert === true) result.alert = "{{_('Alert')}}";
+                    Ext.MessageBox.alert(result.alert, result.message, function(){eval(result.alert_eval_js)});
+                } else {
+                    Lino.notify(result.message);
+                }
+            }
+            } }
       //~ ,listeners: {write:on_proxy_write} 
     });
     //~ config.store = new Ext.data.JsonStore({ 
