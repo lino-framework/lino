@@ -94,7 +94,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
     # is_prepared = False
 
     extjs_version = 3
-    
+
     def __init__(self, plugin):
         super(ExtRenderer, self).__init__(plugin)
         JsCacheRenderer.__init__(self)
@@ -262,7 +262,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
         if ar is None:
             sar = ba.request(**request_kwargs)
         else:
-            
+
             sar = ar.spawn(ba, **request_kwargs)
         return self.ar2js(sar, obj, **status)
 
@@ -289,7 +289,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
                     py2js(status))
             return "Lino.%s.run(%s)" % (bound_action.full_name(), py2js(rp))
         # raise Exception("20180620 {}".format(bound_action))
-        
+
         # used e.g. the invoicing.StartInvoicing action (visible in
         # roger or lydia).
         return "%s()" % self.get_panel_btn_handler(bound_action)
@@ -421,7 +421,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
             }
             context.update(kw)
             return tpl.render(context)
-    
+
         return with_user_profile(user.user_type, getit)
 
     def html_page_main_window(self, on_ready, request, site):
@@ -465,7 +465,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
         if settings.SITE.user_model is not None:
 
             # users = settings.SITE.models.users
-            
+
             # if request.user.profile.has_required_roles([SiteUser]):
             if request.user.authenticated:
                 if request.subst_user:
@@ -680,7 +680,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
             # x = str(rpt)
             # if x == 'working.WorkedHours':
             #     raise Exception("20180803 {0}".format(x))
-            
+
             rh = rpt.get_handle()
             if isinstance(rpt, type) and issubclass(rpt, (
                     tables.AbstractTable, choicelists.ChoiceList)):
@@ -804,7 +804,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
             txt = a.button_text or a.get_label()
             if len(txt) == 1:
                 txt = ONE_CHAR_LABEL.format(txt)
-                
+
             kw.update(text=txt)
         kw.update(
             #~ name=a.name,
@@ -819,7 +819,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
         if a.help_text:
             # if a.__class__.__name__ in ('ChangePassword', 'SubmitDetail'):
             #     logger.info("20160829 a2btn() %r %r", a, str(a.help_text))
-            
+
             # A tooltip becomes visible only on buttons with an
             # iconCls. On a button which has only text we must use
             # Lino.quicktip_renderer. But I didn't find out why this
@@ -981,11 +981,18 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
         if dh.layout._formpanel_name.endswith('_ActionFormPanel'):
             yield "cls: \"l-ActionFormPanel\","
 
+        def prepare_actions_hotkeys(actions_hotkeys):
+            for action_hotkeys in actions_hotkeys:
+                js_action = """Lino.row_action_handler('{}', 'GET', null)""".format(action_hotkeys.get('ba'))
+                action_hotkeys.update({
+                    'ba':js_action
+                })
+            return actions_hotkeys
 
         yield "  layout: 'fit',"
         yield "  auto_save: true,"
         if tbl.get_actions_hotkeys():
-            yield "  actions_hotkeys: %s," % py2js(tbl.get_actions_hotkeys())
+            yield "  actions_hotkeys: %s," % py2js(prepare_actions_hotkeys(tbl.get_actions_hotkeys()))
         if dh.layout.window_size and dh.layout.window_size[1] == 'auto':
             yield "  autoHeight: true,"
         if settings.SITE.is_installed('contenttypes') and issubclass(tbl, dbtables.Table):

@@ -9,6 +9,11 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-03-12
+==========
+
+Add a new method :meth:`Actor.get_actions_hotkeys` to enable hotkeys binding to actions on table.This method should
+return a list of hotkeys.
 
 2019-03-08
 ==========

@@ -680,15 +680,13 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     @classmethod
     def get_actions_hotkeys(cls):
-        return None
-        # if self.workflow_state_field:
-        #     actions_hotkeys = []
-        #     for workflow_action in  self.workflow_state_field.choicelist.workflow_actions:
-        #         actions_hotkeys.append({'key': str(workflow_action.target_state.name)[0],
-        #                                 'ctrl': False,
-        #                                 'ba':"Lino.{}".format(workflow_action.full_name(self))})
-        #     return actions_hotkeys
-
+        """
+        This method add hotkey for any available action on the table.
+        :return:list of hotkeys [{'key': key,
+                                'ctrl': Bool,
+                                'shift': Bool,
+                                'ba': action_name}]
+        """
 
     @classmethod
     def get_row_by_pk(self, ar, pk):
