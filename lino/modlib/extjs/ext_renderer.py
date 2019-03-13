@@ -86,6 +86,7 @@ def prepare_label(mi):
     #~ return label
 
 
+
 class ExtRenderer(JsRenderer, JsCacheRenderer):
     """An HTML renderer that uses the ExtJS Javascript toolkit.
 
@@ -195,6 +196,17 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
         if not a.action_name:
             return False
         return True
+
+    @staticmethod
+    def actions_hotkeys2js(actions_hotkeys):
+
+        for action_hotkeys in actions_hotkeys:
+            js_action = """Lino.row_action_handler('{}', 'GET', null)""".format(action_hotkeys.get('ba'))
+            action_hotkeys.update({
+                'ba':js_action
+            })
+        return actions_hotkeys
+
 
     def window_action_button(
             self, ar, ba, status=None,
@@ -970,7 +982,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
 
         yield ""
         yield "Lino.%s = Ext.extend(Lino.FormPanel,{" % \
-            dh.layout._formpanel_name
+              dh.layout._formpanel_name
 
         if dh.layout._formpanel_name.endswith('.DetailFormPanel'):
             yield "cls: \"l-DetailFormPanel\","
@@ -981,18 +993,11 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
         if dh.layout._formpanel_name.endswith('_ActionFormPanel'):
             yield "cls: \"l-ActionFormPanel\","
 
-        def prepare_actions_hotkeys(actions_hotkeys):
-            for action_hotkeys in actions_hotkeys:
-                js_action = """Lino.row_action_handler('{}', 'GET', null)""".format(action_hotkeys.get('ba'))
-                action_hotkeys.update({
-                    'ba':js_action
-                })
-            return actions_hotkeys
-
         yield "  layout: 'fit',"
         yield "  auto_save: true,"
-        if tbl.get_actions_hotkeys():
-            yield "  actions_hotkeys: %s," % py2js(prepare_actions_hotkeys(tbl.get_actions_hotkeys()))
+        hotkeys = tbl.get_actions_hotkeys()
+        if hotkeys:
+            yield "  actions_hotkeys: %s," % py2js(self.actions_hotkeys2js(hotkeys))
         if dh.layout.window_size and dh.layout.window_size[1] == 'auto':
             yield "  autoHeight: true,"
         if settings.SITE.is_installed('contenttypes') and issubclass(tbl, dbtables.Table):
@@ -1023,11 +1028,11 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
             for ln in on_render:
                 yield "      " + ln
             yield "      Lino.%s.superclass.onRender.call(this, ct, position);" % \
-                dh.layout._formpanel_name
+                  dh.layout._formpanel_name
             yield "    }"
 
         yield "    Lino.%s.superclass.initComponent.call(this);" % \
-            dh.layout._formpanel_name
+              dh.layout._formpanel_name
 
         # Seems that checkboxes don't emit a change event
         # when they are changed:
