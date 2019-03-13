@@ -717,7 +717,7 @@ class MailRenderer(HtmlRenderer):
         if actor.model:
             return "{}api/{}/{}/{}".format(
                 settings.SITE.mobile_server_url or settings.SITE.server_url,
-                actor.model._meta.app_label, actor.model.__name__, pk)
+                actor.model._meta.app_label, actor.model.get_default_table().__name__, pk)
         return "{}api/{}/{}/{}".format(
             settings.SITE.server_url,
             actor.app_label, actor.__name__, pk)
