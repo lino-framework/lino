@@ -716,7 +716,7 @@ class MailRenderer(HtmlRenderer):
         #     'api', actor.app_label, actor.__name__, str(pk), *args, **kw)
         if actor.model:
             return "{}api/{}/{}/{}".format(
-                settings.SITE.server_url,
+                settings.SITE.mobile_server_url or settings.SITE.server_url,
                 actor.model._meta.app_label, actor.model.__name__, pk)
         return "{}api/{}/{}/{}".format(
             settings.SITE.server_url,

@@ -9,6 +9,11 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-03-13
+==========
+
+Added `mobile_server_url` attr to SITE, for use in sending notification emails. 
+
 2019-03-12
 ==========
 

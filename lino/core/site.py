@@ -300,6 +300,12 @@ class Site(object):
 
     """
 
+    mobile_server_url = None
+    """The URL to a mobile friedly version of the site. 
+    Used instead of :attr:`server_url` when sending emails sent by 
+    :class:`lino.modlib.notify.Message` 
+    """
+
     device_type = 'desktop'
     """
     The default device type used on this server.  Should be one of
