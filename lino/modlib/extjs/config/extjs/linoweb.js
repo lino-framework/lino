@@ -191,7 +191,7 @@ Ext.Ajax.on('beforerequest', function (conn, options) {
      if (typeof(options.headers) == "undefined") {
        options.headers = {'X-CSRFToken': Ext.util.Cookies.get('csrftoken')};
      } else {
-       options.headers.extend({'X-CSRFToken': Ext.util.Cookies.get('csrftoken')});
+       options.headers['X-CSRFToken'] = Ext.util.Cookies.get('csrftoken');
      }                        
    }
 }, this);
@@ -3220,14 +3220,18 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
 
   ,save2 : function(after, action_name) {
     var rec = this.get_current_record();
-    if (!rec) { 
+    var p = {};
+    var panel = this;
+
+    if (!rec) {
         Lino.notify("Sorry, no current record."); 
         return; 
     }
-    var panel = this;
-    if (this.has_file_upload) this.form.fileUpload = true;
+    if (this.has_file_upload) {
+        p.csrfmiddlewaretoken = Ext.util.Cookies.get('csrftoken')
+        this.form.fileUpload = true;
+    }
     this.loadMask.show();
-    var p = {};
     Ext.apply(p, this.get_base_params());
     p.{{constants.URL_PARAM_REQUESTING_PANEL}} = this.getId();
     p.{{constants.URL_PARAM_ACTION_NAME}} = action_name;

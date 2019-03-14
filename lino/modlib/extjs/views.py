@@ -36,7 +36,7 @@ from django.views.generic import View
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
 
-from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_protect
 from django.utils.translation import ugettext as _
 from django.utils.encoding import force_text
 from lino.core import auth
@@ -604,6 +604,7 @@ class ApiElement(View):
 
 
 class ApiList(View):
+    @method_decorator(csrf_protect)
     def post(self, request, app_label=None, actor=None):
         ar = action_request(app_label, actor, request, request.POST, True)
         ar.renderer = settings.SITE.kernel.extjs_renderer
