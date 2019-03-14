@@ -9,6 +9,11 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-03-14
+==========
+
+Added ensure_csrf_cookie decorator to all entry point views in extjs.
+
 2019-03-13
 ==========
 

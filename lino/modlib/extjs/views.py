@@ -36,6 +36,7 @@ from django.views.generic import View
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
 
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.utils.translation import ugettext as _
 from django.utils.encoding import force_text
 from lino.core import auth
@@ -119,6 +120,7 @@ class AdminIndex(View):
     Similar to PlainIndex
     """
 
+    @method_decorator(ensure_csrf_cookie)
     def get(self, request, *args, **kw):
         # logger.info("20150427 AdminIndex.get()")
         # settings.SITE.startup()
@@ -484,6 +486,8 @@ NOT_FOUND = "%s has no row with primary key %r"
 
 
 class ApiElement(View):
+
+    @method_decorator(ensure_csrf_cookie)
     def get(self, request, app_label=None, actor=None, pk=None):
         ui = settings.SITE.kernel
         rpt = requested_actor(app_label, actor)
@@ -605,6 +609,7 @@ class ApiList(View):
         ar.renderer = settings.SITE.kernel.extjs_renderer
         return settings.SITE.kernel.run_action(ar)
 
+    @method_decorator(ensure_csrf_cookie)
     def get(self, request, app_label=None, actor=None):
         ar = action_request(app_label, actor, request, request.GET, True)
         ar.renderer = settings.SITE.kernel.extjs_renderer
