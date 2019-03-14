@@ -3243,8 +3243,8 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
         success: function(form, action) {
           this.loadMask.hide();
           if (this.has_file_upload) { action.result = {
-              close_window:	true
-              message:	"Upload has been created."
+              close_window:	true,
+              message:	"Upload has been created.",
               success:	true
           }}
           Lino.notify(action.result.message);
