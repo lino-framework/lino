@@ -608,7 +608,12 @@ class ApiList(View):
     def post(self, request, app_label=None, actor=None):
         ar = action_request(app_label, actor, request, request.POST, True)
         ar.renderer = settings.SITE.kernel.extjs_renderer
-        return settings.SITE.kernel.run_action(ar)
+        response = settings.SITE.kernel.run_action(ar)
+        if request.POST['_document_domain'] and response['Content-Type'] == "text/html":
+            # have same-origin policy work for iframe of file upload. see ticket #2885
+            response.content= """<html><head><script type="text/javascript">document.domain="{}";</script></head><body>{}</body></html>""".format(
+                    request.POST["_document_domain"],response.content.decode("utf-8") )
+        return response
 
     @method_decorator(ensure_csrf_cookie)
     def get(self, request, app_label=None, actor=None):

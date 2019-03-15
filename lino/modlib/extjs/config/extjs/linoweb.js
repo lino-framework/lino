@@ -3229,6 +3229,8 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     }
     if (this.has_file_upload) {
         p.csrfmiddlewaretoken = Ext.util.Cookies.get('csrftoken');
+        document.domain = document.domain;
+        p._document_domain = document.domain;
         this.form.fileUpload = true;
     }
     this.loadMask.show();
@@ -3242,11 +3244,6 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
         scope: this,
         success: function(form, action) {
           this.loadMask.hide();
-          if (this.has_file_upload) { action.result = {
-              close_window:	true,
-              message:	"Upload has been created.",
-              success:	true
-          }}
           Lino.notify(action.result.message);
           Lino.handle_action_result(this, action.result, after);
         },
