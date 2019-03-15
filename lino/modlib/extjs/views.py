@@ -179,6 +179,7 @@ class unused_Authenticate(View):
             return ar.renderer.render_action_response(ar)
         raise http.Http404()
 
+    @method_decorator(csrf_protect)
     def post(self, request, *args, **kw):
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -425,6 +426,7 @@ class Restful(View):
     Used to collaborate with a restful Ext.data.Store.
     """
 
+    @method_decorator(csrf_protect)
     def post(self, request, app_label=None, actor=None, pk=None):
         rpt = requested_actor(app_label, actor)
         ar = rpt.request(request=request)
@@ -445,6 +447,7 @@ class Restful(View):
                 ar, instance, ar.ah.store.list_fields)])
         return json_response(ar.response)
 
+    @method_decorator(csrf_protect)
     def delete(self, request, app_label=None, actor=None, pk=None):
         rpt = requested_actor(app_label, actor)
         ar = rpt.request(request=request)
@@ -463,6 +466,7 @@ class Restful(View):
         kw.update(title=str(ar.get_title()))
         return json_response(kw)
 
+    @method_decorator(csrf_protect)
     def put(self, request, app_label=None, actor=None, pk=None):
         rpt = requested_actor(app_label, actor)
         ar = rpt.request(request=request)
@@ -567,6 +571,7 @@ class ApiElement(View):
 
         return settings.SITE.kernel.run_action(ar)
 
+    @method_decorator(csrf_protect)
     def post(self, request, app_label=None, actor=None, pk=None):
         ar = action_request(
             app_label, actor, request, request.POST, True,
@@ -578,6 +583,7 @@ class ApiElement(View):
             ar.set_selected_pks(pk)
         return settings.SITE.kernel.run_action(ar)
 
+    @method_decorator(csrf_protect)
     def put(self, request, app_label=None, actor=None, pk=None):
         data = http.QueryDict(request.body)  # raw_post_data before Django 1.4
         # print("20180712 ApiElement.put() %s" % data)
@@ -587,6 +593,7 @@ class ApiElement(View):
         ar.set_selected_pks(pk)
         return settings.SITE.kernel.run_action(ar)
 
+    @method_decorator(csrf_protect)
     def delete(self, request, app_label=None, actor=None, pk=None):
         data = http.QueryDict(request.body)
         ar = action_request(
@@ -610,7 +617,8 @@ class ApiList(View):
         ar.renderer = settings.SITE.kernel.extjs_renderer
         response = settings.SITE.kernel.run_action(ar)
         if request.POST.get('_document_domain', None) and response['Content-Type'] == "text/html":
-            # have same-origin policy work for iframe of file upload. see ticket #2885
+            # Have same-origin policy work for iframe of file upload. see ticket #2885
+            # https://stackoverflow.com/questions/22627392/extjs-fileuplaod-cross-origin-frame
             response.content= """<html><head><script type="text/javascript">document.domain="{}";</script></head><body>{}</body></html>""".format(
                     request.POST["_document_domain"],response.content.decode("utf-8") )
         return response
@@ -715,6 +723,8 @@ class ApiList(View):
 
 
 class GridConfig(View):
+
+    @method_decorator(csrf_protect)
     def put(self, request, app_label=None, actor=None):
         rpt = requested_actor(app_label, actor)
         PUT = http.QueryDict(request.body)  # raw_post_data before Django 1.4
