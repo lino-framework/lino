@@ -609,7 +609,7 @@ class ApiList(View):
         ar = action_request(app_label, actor, request, request.POST, True)
         ar.renderer = settings.SITE.kernel.extjs_renderer
         response = settings.SITE.kernel.run_action(ar)
-        if request.POST['_document_domain'] and response['Content-Type'] == "text/html":
+        if request.POST.get('_document_domain', None) and response['Content-Type'] == "text/html":
             # have same-origin policy work for iframe of file upload. see ticket #2885
             response.content= """<html><head><script type="text/javascript">document.domain="{}";</script></head><body>{}</body></html>""".format(
                     request.POST["_document_domain"],response.content.decode("utf-8") )
