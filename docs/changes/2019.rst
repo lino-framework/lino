@@ -9,6 +9,11 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-03-15
+==========
+
+Fixed file upload dialog not closing correctly. 
+
 2019-03-14
 ==========
 
