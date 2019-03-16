@@ -12,6 +12,11 @@ Changes 2019 in Lino
 2019-03-15
 ==========
 
+Release Lino 19.3.0
+
+2019-03-15
+==========
+
 Fixed file upload dialog not closing correctly. 
 
 2019-03-14
