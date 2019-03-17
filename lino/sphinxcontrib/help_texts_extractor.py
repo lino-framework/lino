@@ -167,9 +167,9 @@ class HelpTextExtractor(object):
         if exception:
             return
         # found_docs also contains excluded files
-        print('20181004 found={}, all={}, processed={}'.format(
-            len(app.env.found_docs), len(app.env.all_docs),
-            self.docs_processed))
+        # print('20181004 found={}, all={}, processed={}'.format(
+        #     len(app.env.found_docs), len(app.env.all_docs),
+        #     self.docs_processed))
         if self.docs_processed < len(app.env.found_docs):
         # if self.docs_processed < len(app.env.all_docs):
             logger.info(
