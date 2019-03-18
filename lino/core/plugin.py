@@ -60,12 +60,9 @@ class Plugin(object):
     """
     
     needs_plugins = []
-    """A list of names of plugins on which this plugin depends.
-
-    Lino will automatically add these to your
-    `INSTALLED_APPS` if necessary.
-    Note that Lino will add them *after* your app.
-    To have them *before* your app, specify them explicitly.
+    """A list of names of plugins needed by this plugin.
+    
+    The default implementation of :meth:`get_required_plugins` returns this list.
 
     """
 
@@ -214,6 +211,24 @@ class Plugin(object):
             if not hasattr(self, k):
                 raise Exception("%s has no attribute %s" % (self, k))
             setattr(self, k, v)
+
+    def get_required_plugins(self):
+        """Return a list of names of plugins needed by this plugin.
+
+        The default implementation returns :attr:`needs_plugins`.
+
+        Lino will automatically install these plugins if necessary.
+
+        Note that Lino will add them *before* your plugin.
+
+        Note that only the app_label (not the whole plugin name) is used when testing whether a plugin is installed.
+        IOW if a plugin requires another plugin "stdlib.foo" and an application
+        installs some plugin "mylib.foo".
+
+
+        """
+
+        return self.needs_plugins
 
     def get_used_libs(self, html=None):
         return []

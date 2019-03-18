@@ -108,8 +108,12 @@ PLUGIN_CONFIGS = {}
 def configure_plugin(app_label, **kwargs):
     """
     Set one or several configuration settings of the given plugin
-    *before* the :setting:`SITE` has been instantiated.  See
-    :doc:`/dev/plugins`.
+    *before* the :setting:`SITE` has been instantiated.
+
+    This might get deprecated some day. Consider using the
+    :meth:`Site.get_plugin_configs` method instead.
+
+    See :doc:`/dev/plugins`.
     """
     # if PLUGIN_CONFIGS is None:
     #     raise ImproperlyConfigured(
@@ -1332,8 +1336,6 @@ class Site(object):
         #~ print "20130404 ok?"
         if 'no_local' in kwargs:
             kwargs.pop('no_local')
-            # For the moment we just silently ignore it, but soon:
-            # if False:
             raise ChangedAPI("The no_local argument is no longer needed.")
 
         self._welcome_handlers = []
@@ -1630,6 +1632,20 @@ class Site(object):
 
         self.apply_languages()
 
+    def get_plugin_configs(self):
+        """Return a series of plugin configuration settings.
+
+        This is called before plugins are loaded.  :attr:`rt.plugins` is not
+        yet populated.
+
+        The method must return an iterator that yields tuples with three items
+        each: The name of the plugin, the name of the setting and the
+        value to set.
+
+
+        """
+        return []
+
     def load_plugins(self):
         """Load all plugins and build the :setting:`INSTALLED_APPS` setting
         for Django.
@@ -1640,11 +1656,25 @@ class Site(object):
         """
         # Called internally during `__init__` method.
 
-        requested_apps = []
-        apps_modifiers = self.get_apps_modifiers()
-
         if hasattr(self, 'hidden_apps'):
             raise ChangedAPI("Replace hidden_apps by get_apps_modifiers()")
+
+        def setpc(pc):
+            if isinstance(pc, tuple):
+                if len(pc) != 3:
+                    raise Exception("20190318")
+                app_label, k, value = pc
+                d = PLUGIN_CONFIGS.setdefault(app_label, {})
+                d[k] = value
+            else:  # expect an iterable returned by super()
+                for x in pc:
+                    setpc(x)
+
+        for pc in self.get_plugin_configs():
+            setpc(pc)
+
+        requested_apps = []
+        apps_modifiers = self.get_apps_modifiers()
 
         def add(x):
             if isinstance(x, six.string_types):
@@ -1708,27 +1738,28 @@ class Site(object):
             if cfg:
                 p.configure(**cfg)
 
+            self.plugins.define(k, p)
+
             needed_by = p
             while needed_by.needed_by is not None:
                 needed_by = needed_by.needed_by
-            for dep in p.needs_plugins:
+            for dep in p.get_required_plugins():
                 k2 = dep.rsplit('.')[-1]
                 if k2 not in self.plugins:
                     install_plugin(dep, needed_by=needed_by)
                     # plugins.append(dep)
 
-            # actual_apps.append(app_name)
             plugins.append(p)
-            self.plugins.define(k, p)
             for dp in p.disables_plugins:
                 disabled_plugins.add(dp)
 
-        # lino_startup is always the first plugin:
-        # install_plugin(str('lino.modlib.lino_startup'))
+        # lino is always the first plugin:
         install_plugin(str('lino'))
 
         for app_name in requested_apps:
             install_plugin(app_name)
+
+        # raise Exception("20190318 {} {}".format([p.app_label for p in plugins], ''))
 
         if apps_modifiers:
             raise Exception(
@@ -1741,7 +1772,7 @@ class Site(object):
         # if self.get_auth_method() == 'session':
         if self.user_model:
             k = str('django.contrib.sessions')
-            if not k in self.plugins:
+            if k not in self.plugins:
                 install_plugin(k)
 
         for p in plugins:

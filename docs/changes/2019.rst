@@ -9,6 +9,15 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-03-18
+==========
+
+Added two new methods
+:meth:`lino.core.site.Site.get_plugin_configs` and
+:meth:`lino.core.plugin.Plugin.get_required_plugins`.
+Feature used by :mod:`lino_xl.lib.vat`.
+
+
 2019-03-15
 ==========
 
