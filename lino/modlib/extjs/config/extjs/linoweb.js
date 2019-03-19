@@ -1554,7 +1554,7 @@ Lino.action_handler = function (panel, on_success, on_confirm) {
           else panel = Lino.viewport;
       }
       
-    if (panel.loadMask) panel.loadMask.hide(); // 20120211
+    if (oadMask) panel.loadMask.hide(); // 20120211
     if (!response.responseText) return ;
     var result = Ext.decode(response.responseText);
     Lino.handle_action_result(panel, result, on_success, on_confirm);
@@ -1666,7 +1666,7 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
               panel.set_status(st);
           } else {
               // console.log("20150514 run detail_handler.");
-              if (panel.ls_detail_handler == detail_handler){st.base_params = panel.get_base_params();}
+              if (panel !== undefined && panel.ls_detail_handler == detail_handler){st.base_params = panel.get_base_params();}
               detail_handler.run(null, st);
           }
 
