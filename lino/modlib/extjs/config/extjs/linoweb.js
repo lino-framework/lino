@@ -1554,7 +1554,7 @@ Lino.action_handler = function (panel, on_success, on_confirm) {
           else panel = Lino.viewport;
       }
       
-    if (oadMask) panel.loadMask.hide(); // 20120211
+    if (panel.loadMask) panel.loadMask.hide(); // 20120211
     if (!response.responseText) return ;
     var result = Ext.decode(response.responseText);
     Lino.handle_action_result(panel, result, on_success, on_confirm);
