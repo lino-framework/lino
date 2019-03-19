@@ -29,6 +29,8 @@ from builtins import str
 
 import json
 
+from os import environ
+
 from django import http
 from django.db import models
 from django.conf import settings
@@ -133,11 +135,11 @@ class AdminIndex(View):
         return http.HttpResponse(renderer.html_page(request, **kw))
 
 def test_version_mismatch(request):
-    if request.GET.get(constants.URL_PARAM_LINO_VERSION) is not None and \
+    if not environ.get("PYCHARM_HOSTED", False) and request.GET.get(constants.URL_PARAM_LINO_VERSION) is not None and \
                        float(request.GET.get(constants.URL_PARAM_LINO_VERSION)) != settings.SITE.kernel.code_mtime:
         return dict(alert=_("Version mismatch"),
                     message=_("Your browser is using a previous version of the site, press OK to reload the site"),
-                    alert_eval_js="window.location.reload(true);")
+                    alert_evalhtop_js="window.location.reload(true);")
     else:
         return {}
 

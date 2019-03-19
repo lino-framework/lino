@@ -9,6 +9,12 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-03-19
+==========
+
+Disabled force refresh on update feature when running Lino on Pycharm.
+
+
 2019-03-18
 ==========
 
