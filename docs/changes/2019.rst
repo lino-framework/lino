@@ -15,6 +15,8 @@ Changes 2019 in Lino
 Disabled force refresh on update feature when running Lino on Pycharm.
 Fixed minor bug when submitting new ticket from dashboard in extjs3
 
+Restore DEL key on the grid.
+
 2019-03-18
 ==========
 

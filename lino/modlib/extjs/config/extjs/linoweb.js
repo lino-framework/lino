@@ -1387,15 +1387,16 @@ Ext.override(Ext.grid.CellSelectionModel, {
                     }
                     break;
                 }
-            // case e.DELETE:
-            //     if (!e.hasModifier()) {
-            //         if (!g.editing) {
-            //             e.stopEvent();
-            //             Lino.delete_selected(g);
-            //             return;
-            //         }
-            //         break;
-            //     }
+            case e.DELETE:
+                if (!e.hasModifier()) {
+                    if (!g.editing) {
+                        e.stopEvent();
+                        // Lino.delete_selected(g);
+                        Lino.row_action_handler('delete_selected','GET',null)(g);
+                        return;
+                    }
+                    break;
+                }
 
             case e.ENTER:
                 e.stopEvent();
