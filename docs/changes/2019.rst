@@ -17,6 +17,8 @@ Fixed minor bug when submitting new ticket from dashboard in extjs3
 
 Restore DEL key on the grid.
 
+Released Lino 19.3.1 to PyPI.
+
 2019-03-18
 ==========
 
