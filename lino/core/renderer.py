@@ -55,11 +55,11 @@ def add_user_language(kw, ar):
     if len(settings.SITE.languages) == 1:
         return
     lang = get_language()
-    
-    # We set 'ul' only when it is not the default language. But 
+
+    # We set 'ul' only when it is not the default language. But
 
     # print('20170113 add_user_language', lang, ar.request.LANGUAGE_CODE)
-    
+
     if False:
         # set it aways because it seems that it is rather difficult to
         # verify which will be the default language.
@@ -73,7 +73,7 @@ def add_user_language(kw, ar):
     #~ elif lang != settings.SITE.DEFAULT_LANGUAGE.django_code:
     elif lang != settings.SITE.get_default_language():
         kw.setdefault(constants.URL_PARAM_USER_LANGUAGE, lang)
-        
+
     # print("20170113 add_user_language", ar, kw, lang, u.language, settings.SITE.get_default_language())
 
 
@@ -115,30 +115,30 @@ class Renderer(object):
 
     # def get_detail_action(self, ar, obj):
         # a = obj.get_detail_action(ar)
-        
+
         # if a is not None:
         #     if ar is None or a.get_bound_action_permission(ar, obj, None):
         #         return a
-            
+
     def get_detail_url(self, actor, pk, *args, **kw):
         # return str(actor)+"/"+str(pk)
         return "Detail"  # many doctests depend on this
 
-        
+
     def render_action_response(self, ar):
         """Builds a JSON response from response information stored in given
         ActionRequest.
 
         """
         return json_response(ar.response, ar.content_type)
-    
+
     # def render_action_response(self, ar):
     #     """In a plain HTML UI this will return a full HTML index page, in
     #     ExtJS it will return JSON code.
 
     #     """
     #     raise NotImplementedError()
-        
+
 
 class HtmlRenderer(Renderer):
     """
@@ -161,7 +161,7 @@ class HtmlRenderer(Renderer):
     def js2url(self, js):
         """There is no Javascript here."""
         return js
-    
+
     def href(self, url, text):
         return E.a(text, href=url)
 
@@ -200,7 +200,7 @@ class HtmlRenderer(Renderer):
             k = "h" + str(header_level)
             h = getattr(E, k)(six.text_type(ar.get_title()))
             yield h
-            
+
         yield ar.table2xhtml(**kwargs)
 
         # if show_toolbar:
@@ -215,7 +215,7 @@ class HtmlRenderer(Renderer):
         action request `ar`.
         """
         return self.not_implemented_js
-        
+
     def instance_handler(self, ar, obj, ba):
         """
         Return a string of Javascript code which would open a detail window
@@ -263,7 +263,7 @@ request `tar`."""
 
     def href_button(self, url, text, title=None, icon_name=None, **kw):
         """Returns an etree object of a ``<a href>`` tag to the given URL
-        `url`. 
+        `url`.
 
         `url` is what goes into the `href` part. If `url` is `None`,
         then we return just a ``<b>`` tag.
@@ -322,7 +322,7 @@ request `tar`."""
         <lino.core.dbtables.TableRequest>`: a button :guilabel:`[New]`
         followed possibly (if the request has rows) by a
         :guilabel:`[Show last]` and a :guilabel:`[Show all]` button.
-        
+
         See also :srcref:`docs/tickets/56`.
 
         """
@@ -365,7 +365,7 @@ request `tar`."""
         ba = obj.get_detail_action(ar)
         if ba is not None:
             return self.get_detail_url(ba.actor, obj.pk)
-        
+
     def obj2html(self, ar, obj, text=None, **kwargs):
         """Return a html representation of a pointer to the given database
         object.
@@ -475,8 +475,10 @@ request `tar`."""
                     assert item.renderer is not None
                     elems.extend(self.table2story(item, **kwargs))
                 elif isinstance(item, DashboardItem):
-                    elems.append(
-                        self.show_story(ar, item.render(ar), **kwargs))
+                    elems.append(E.div(
+                        self.show_story(ar, item.render(ar), **kwargs),
+                        CLASS="dashboard-item " + item.actor.actor_id if getattr(item, "actor", False) else ""
+                    ))
                 elif isiterable(item):
                     elems.append(self.show_story(ar, item, **kwargs))
                     # for i in self.show_story(item, *args, **kwargs):
@@ -486,7 +488,7 @@ request `tar`."""
         except Warning as e:
             elems.append(str(e))
         # print("20180907 show_story in {} : {}".format(ar.renderer, elems))
-        return E.div(*elems)
+        return E.div(*elems) if elems else ""
 
     def show_menu(self, ar, mnu, level=1):
         """
@@ -552,7 +554,7 @@ class TextRenderer(HtmlRenderer):
 
     def get_request_url(self, ar, *args, **kw):
         return None
-       
+
     def menu2rst(self, ar, mnu, level=1):
         """Used by :meth:`show_menu`."""
 
@@ -596,7 +598,7 @@ class TextRenderer(HtmlRenderer):
     def show_table(self, *args, **kwargs):
         for ln in self.table2story(*args, **kwargs):
             print(ln)
-              
+
     def table2story(self, ar, column_names=None, header_level=None,
                     header_links=None, nosummary=False, stripped=True,
                     show_links=False, **kwargs):
@@ -628,7 +630,7 @@ class TextRenderer(HtmlRenderer):
                         recno, fields, row, sums)])
             else:
                 rows.append([x for x in ar.row2text(fields, row, sums)])
-                
+
         if header_level is not None:
             h = rstgen.header(header_level, ar.get_title())
             if stripped:
@@ -636,7 +638,7 @@ class TextRenderer(HtmlRenderer):
             yield h
             # s = h + "\n" + s
             # s = tostring(E.h2(ar.get_title())) + s
-                
+
         if len(rows) == 0:
             s = str(ar.no_data_text)
             if not stripped:
@@ -661,7 +663,7 @@ class TextRenderer(HtmlRenderer):
         """Render the given story as reStructuredText to stdout."""
         from lino.core.actors import Actor
         from lino.core.requests import ActionRequest
-        
+
         try:
             for item in forcetext(story):
                 if iselement(item):
@@ -704,10 +706,10 @@ class TestRenderer(TextRenderer):
     def show_table(self, *args, **kwargs):
         return '\n'.join(self.table2story(*args, **kwargs))
 
-    
+
 class MailRenderer(HtmlRenderer):
     """
-    A Lino renderer to be used when sending emails.  
+    A Lino renderer to be used when sending emails.
 
     Subclassed by :class:`lino.modlib.jinja.renderer.JinjaRenderer`
     """
@@ -721,7 +723,7 @@ class MailRenderer(HtmlRenderer):
         return "{}api/{}/{}/{}".format(
             settings.SITE.server_url,
             actor.app_label, actor.__name__, pk)
-    
+
     def show_story(self, *args, **kwargs):
         e = super(MailRenderer, self).show_story(*args, **kwargs)
         return tostring(e)
@@ -840,7 +842,7 @@ class JsRenderer(HtmlRenderer):
         return "Lino.list_action_handler(%s,%s,%s,%s)()" % (
             py2js(url), py2js(ba.action.action_name),
             py2js(ba.action.http_method),pp)
-        
+
 
     def get_detail_url(self, actor, pk, *args, **kw):
         return self.plugin.build_plain_url(

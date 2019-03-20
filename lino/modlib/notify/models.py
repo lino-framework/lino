@@ -369,7 +369,8 @@ class MyMessages(My, Messages):
     required_roles = dd.login_required(OfficeUser)
     # column_names = "created subject owner sent workflow_buttons *"
     column_names = "created subject message_type workflow_buttons *"
-    order_by = ['-created']
+    created_order = "-created"
+    order_by = [created_order]
     # hide_headers = True
     display_mode = 'summary'
 
@@ -379,7 +380,7 @@ class MyMessages(My, Messages):
     @classmethod
     def get_table_summary(cls, mi, ar):
         qs = rt.models.notify.Message.objects.filter(
-            user=ar.get_user()).order_by('created')
+            user=ar.get_user()).order_by(cls.created_order)
         qs = qs.filter(seen__isnull=True)
         # mark_all = rt.models.notify.MyMessages.get_action_by_name(
         #     'mark_all_seen')

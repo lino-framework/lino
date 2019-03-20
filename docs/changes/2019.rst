@@ -9,6 +9,10 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-03-20
+==========
+Fixed notification order on dashboard. 
+
 2019-03-19
 ==========
 
