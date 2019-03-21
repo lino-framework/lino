@@ -477,7 +477,7 @@ request `tar`."""
                 elif isinstance(item, DashboardItem):
                     elems.append(E.div(
                         self.show_story(ar, item.render(ar), **kwargs),
-                        CLASS="dashboard-item " + item.actor.actor_id if getattr(item, "actor", False) else ""
+                        CLASS="dashboard-item " + item.actor.actor_id.replace(".","-") if getattr(item, "actor", False) else ""
                     ))
                 elif isiterable(item):
                     elems.append(self.show_story(ar, item, **kwargs))

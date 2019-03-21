@@ -59,23 +59,19 @@ def groupname(s):
 class MarkAllSeen(dd.Action):
     select_rows = False
     http_method = 'POST'
+    show_in_plain = True
 
     label = _("Mark all as seen")
+    button_text = "✓"  # u"\u2713"
 
-    def run_from_ui(self, ar):
+    def run_from_ui(self, ar, **kwargs):
         qs = rt.models.notify.Message.objects.filter(
             user=ar.get_user(), seen__isnull=True)
+        for obj in qs:
+            obj.seen = timezone.now()
+            obj.save()
+        ar.success(eval_js='window.top.document.querySelectorAll(".' + ar.actor.actor_id.replace(".","-") + '")[0].classList.add("dashboard-item-closed"); console.log("lel")')
 
-        def ok(ar):
-            for obj in qs:
-                obj.seen = timezone.now()
-                obj.save()
-            ar.success(refresh_all=True)
-
-        ar.confirm(
-            ok,
-            _("Mark {} notifications as seen.").format(qs.count()),
-            _("Are you sure?"))
 
 
 class MarkSeen(dd.Action):

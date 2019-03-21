@@ -12,6 +12,8 @@ Changes 2019 in Lino
 2019-03-20
 ==========
 Fixed notification order on dashboard. 
+Added .dashboard-item class to divs in the dashboard. 
+Made mark_all_seen action of MyMessages render in dashboard, and not require post-run refresh.
 
 2019-03-19
 ==========

@@ -139,7 +139,7 @@ def test_version_mismatch(request):
                        float(request.GET.get(constants.URL_PARAM_LINO_VERSION)) != settings.SITE.kernel.code_mtime:
         return dict(alert=_("Version mismatch"),
                     message=_("Your browser is using a previous version of the site, press OK to reload the site"),
-                    alert_evalhtop_js="window.location.reload(true);")
+                    alert_eval_js="window.location.reload(true);")
     else:
         return {}
 

@@ -15,6 +15,16 @@ e.g. welfare.jobs.NewJobsOverview needs
 }
 */
 
+.dashboard-item-closed {
+	max-height: 0px !important;
+	overflow:hidden;
+}
+
+.dashboard-item {
+	max-height: 110vh;
+	transition: height 2s ease-in;
+}
+
 .lino-auto-height {
   white-space: normal;
   overflow: visible;
