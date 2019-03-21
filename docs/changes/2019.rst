@@ -12,8 +12,9 @@ Changes 2019 in Lino
 2019-03-21
 ==========
 
-Add optional _ar param to @dd.chooser() methods, to be able to access current user and actor info.
-Used by :meth:`lino_noi.lib.tickets.models.Ticket.site_choices`
+Added optional ``_ar`` keyword param to :func:`@dd.chooser
+<lino.utils.choosers.chooser>` methods, to be able to access current user and
+actor info.  Used by the chooser for :attr:`lino_noi.lib.tickets.Ticket.site`
 
 2019-03-20
 ==========
