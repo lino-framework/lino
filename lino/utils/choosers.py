@@ -72,7 +72,10 @@ class Chooser(FieldChooser):
         self.context_values = []
         self.context_fields = []
         for name in self.context_params:
+            if name == "_ar":
+                continue
             f = self.get_data_elem(name)
+
             if f is None:
                 raise Exception(
                     "No data element '%s' in %s "
@@ -142,8 +145,11 @@ class Chooser(FieldChooser):
         Return a list of choices for this chooser,
         using a HttpRequest to build the context.
         """
-        kw = {}
+        kw = {
+            "_ar": tbl.request(request, user=request.user),
+        }
 
+        # ba = tbl.get_url_action(tbl.default_elem_action_name)
         # 20120202
         if tbl.master_field is not None:
             rqdata = getrqdata(request)

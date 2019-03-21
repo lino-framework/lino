@@ -9,8 +9,15 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-03-21
+==========
+
+Add optional _ar param to @dd.chooser() methods, to be able to access current user and actor info.
+Used by :meth:`lino_noi.lib.tickets.models.Ticket.site_choices`
+
 2019-03-20
 ==========
+
 Fixed notification order on dashboard. 
 Added .dashboard-item class to divs in the dashboard. 
 Made mark_all_seen action of MyMessages render in dashboard, and not require post-run refresh.
