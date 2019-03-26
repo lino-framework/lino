@@ -12,16 +12,14 @@ Django model.
 
 
 """
-from builtins import str
 from builtins import object
+from builtins import str
 
-from django.db import models
-
-from lino.utils.instantiator import make_converter
-from lino.core import constants
-
-from lino.core.utils import getrqdata
 from lino.api import rt
+from lino.core import constants
+from lino.core.utils import getrqdata
+from lino.utils.instantiator import make_converter
+
 
 class BaseChooser(object):
     pass
@@ -145,9 +143,10 @@ class Chooser(FieldChooser):
         Return a list of choices for this chooser,
         using a HttpRequest to build the context.
         """
-        kw = {
-            "_ar": tbl.request(request, user=request.user),
-        }
+        # kw = {
+        #     "_ar": tbl.request(request, user=request.user),
+        # }
+        kw = {}
 
         # ba = tbl.get_url_action(tbl.default_elem_action_name)
         # 20120202
