@@ -143,10 +143,10 @@ class Chooser(FieldChooser):
         Return a list of choices for this chooser,
         using a HttpRequest to build the context.
         """
-        # kw = {
-        #     "_ar": tbl.request(request, user=request.user),
-        # }
-        kw = {}
+        kw = {
+            "_ar": tbl.request(request=request, user=request.user),
+        }
+        # kw = {}
 
         # ba = tbl.get_url_action(tbl.default_elem_action_name)
         # 20120202
