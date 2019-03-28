@@ -138,20 +138,20 @@ class Chooser(FieldChooser):
             args.append(context.get(varname, None))
         return self.meth(*args)
 
-    def get_request_choices(self, request, tbl):
+    def get_request_choices(self, ar, tbl):
         """
         Return a list of choices for this chooser,
         using a HttpRequest to build the context.
         """
         kw = {
-            "_ar": tbl.request(request=request, user=request.user),
+            "_ar": ar,
         }
         # kw = {}
 
         # ba = tbl.get_url_action(tbl.default_elem_action_name)
         # 20120202
         if tbl.master_field is not None:
-            rqdata = getrqdata(request)
+            rqdata = getrqdata(ar.request)
             if tbl.master is not None:
                 master = tbl.master
             else:
@@ -173,7 +173,7 @@ class Chooser(FieldChooser):
                     raise Exception("There's no %s with primary key %r" %
                                     (master.__name__, pk))
 
-        for k, v in list(request.GET.items()):
+        for k, v in list(ar.request.GET.items()):
             kw[str(k)] = v
 
         # logger.info(
