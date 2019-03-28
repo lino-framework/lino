@@ -181,11 +181,14 @@ def when_prepared(*model_specs):
 def inject_action(model_spec, **actions):
     """
     Add the specified action(s) to the specified model.
+
+    This can also be used to inject any other class attribute on a model, e.g.
+    choosers.
+
     """
     def todo(model):
         model.define_action(**actions)
     return do_when_prepared(todo, model_spec)
-
 
 def update_model(model_spec, **actions):
     """
