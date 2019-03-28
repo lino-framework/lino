@@ -58,7 +58,7 @@ class ChangeNotifier(dd.Model):
         def get_change_owner(self):
             return self
 
-        def get_change_observers(self):
+        def get_change_observers(self, ar=None):
             """
             Return or yield a list of `(user, mail_mode)` tuples who are
             observing changes on this object.  Returning an empty list
@@ -73,7 +73,7 @@ class ChangeNotifier(dd.Model):
                 return []
             if not isinstance(owner, ChangeNotifier):
                 return []
-            return owner.get_change_observers()
+            return owner.get_change_observers(ar)
 
 
         def get_notify_message_type(self):
@@ -95,6 +95,6 @@ class ChangeNotifier(dd.Model):
                 return (subject, self.get_change_body(ar, cw))
             # owner = self.get_change_owner()
             # rt.models.notify.Message.emit_notification(
-            #     ar, owner, mt, msg, self.get_change_observers())
+            #     ar, owner, mt, msg, self.get_change_observers(ar))
             rt.models.notify.Message.emit_notification(
-                ar, self, mt, msg, self.get_change_observers())
+                ar, self, mt, msg, self.get_change_observers(ar))

@@ -93,12 +93,12 @@ class Comment(CreatedModified, UserAuthored, Controllable,
     #         return None
     #     return super(Comment, self).get_change_message_type(ar)
     
-    def get_change_observers(self):
+    def get_change_observers(self, ar=None):
         if isinstance(self.owner, ChangeNotifier):
             obs = self.owner
         else:
             obs = super(Comment, self)
-        for u in obs.get_change_observers():
+        for u in obs.get_change_observers(ar):
             yield u
 
     def get_change_subject(self, ar, cw):

@@ -677,6 +677,7 @@ class Model(models.Model, fields.TableRow):
         elem.before_ui_save(ar)
         elem.save(force_insert=True)
         # yes, `on_ui_created` comes *after* save()
+        ar.selected_rows.append(elem)
         on_ui_created.send(elem, request=ar.request)
         elem.after_ui_create(ar)
         elem.after_ui_save(ar, None)

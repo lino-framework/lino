@@ -9,6 +9,12 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-03-28
+==========
+
+Added ``ar`` param for :func:`notify.mixins.ChangeNotifie.get_change_observers`.
+After creating record add elem to ar.selected_rows.
+
 2019-03-21
 ==========
 
