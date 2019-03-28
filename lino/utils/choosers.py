@@ -56,7 +56,13 @@ class Chooser(FieldChooser):
         #~ self.field = model._meta.get_field(fldname)
         self.meth = meth
         from lino.core.gfks import is_foreignkey
-        if not is_foreignkey(field):
+        from lino.core.choicelists import ChoiceListField
+        if isinstance(field, ChoiceListField):
+            self.simple_values = getattr(meth, 'simple_values', False)
+            self.instance_values = getattr(meth, 'instance_values', True)
+            self.force_selection = getattr(
+                meth, 'force_selection', self.force_selection)
+        elif not is_foreignkey(field):
             self.simple_values = getattr(meth, 'simple_values', False)
             self.instance_values = getattr(meth, 'instance_values', False)
             self.force_selection = getattr(

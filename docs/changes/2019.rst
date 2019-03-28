@@ -15,9 +15,8 @@ Changes 2019 in Lino
 Added ``ar`` param for :func:`notify.mixins.ChangeNotifie.get_change_observers`.
 After creating record add elem to ar.selected_rows.
 
-It is now possible to define a choices method for a ChoiceListField.
-
-
+It is now possible to define a choices method for a
+:class:`lino.core.choicelists.ChoiceListField`.
 
 2019-03-21
 ==========
