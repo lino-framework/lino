@@ -44,14 +44,16 @@ Example on how to use a ChoiceList in your model::
 
 """
 from __future__ import unicode_literals
-from django.utils.six import python_2_unicode_compatible,text_type
-from past.builtins import cmp
-from builtins import object
-from builtins import str
-from future.utils import with_metaclass
-import six
 
 import logging
+from builtins import object
+from builtins import str
+
+import six
+from django.utils.six import python_2_unicode_compatible, text_type
+from future.utils import with_metaclass
+from past.builtins import cmp
+
 logger = logging.getLogger(__name__)
 
 import warnings
@@ -749,6 +751,21 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
                     return False
             return True
         return [choice[0] for choice in self.choices if f(choice[0])]
+
+    @classmethod
+    def filter_choice(self, **fkw):
+        """
+        Apply the fkw filter and return the list of filtered choices.
+        :param fkw:
+        :return:
+        """
+        def f(item):
+            for k, v in list(fkw.items()):
+                if getattr(item, k) != v:
+                    return False
+            return True
+
+        return [choice for choice in self.choices if f(choice[0])]
 
     @classmethod
     def get_list_items(self):

@@ -9,6 +9,11 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-03-28
+==========
+.. currentmodule:: lino.core.choicelists
+Add a new method :meth:`filter_choice` to :class:`ChoiceList` to return filtered choices.
+
 2019-03-21
 ==========
 
