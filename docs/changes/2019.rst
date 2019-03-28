@@ -15,6 +15,9 @@ Changes 2019 in Lino
 Added ``ar`` param for :func:`notify.mixins.ChangeNotifie.get_change_observers`.
 After creating record add elem to ar.selected_rows.
 
+.. currentmodule:: lino.core.choicelists
+Add a new method :meth:`filter_choice` to :class:`ChoiceList` to return filtered choices.
+
 2019-03-21
 ==========
 
