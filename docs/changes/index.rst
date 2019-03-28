@@ -6,9 +6,7 @@
 Changes in Lino
 ===============
 
-This covers changes in the the Lino framework, i.e. in :mod:`lino` (the "Core")
-and :mod:`lino_xl` (the "Extensions Library").
-
+API changes in the :mod:`lino` package.
 
 .. toctree::
    :maxdepth: 1
