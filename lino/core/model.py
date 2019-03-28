@@ -352,22 +352,6 @@ class Model(models.Model, fields.TableRow):
         #             str(cls.__name__), kwargs))
         # return qs
 
-    def get_choices_text(self, request, actor, field):
-        """
-        Return the text to be displayed when an instance of this model
-        is being used as a choice in a combobox of a ForeignKey field
-        pointing to this model.
-        `request` is the web request,
-        `actor` is the requesting actor.
-
-        The default behaviour is to simply return `str(self)`.
-
-        A usage example
-        is :class:`lino_xl.lib.countries.Place`.
-
-        """
-        return str(self)
-
     def disable_delete(self, ar=None):
         """
         Decide whether this database object may be deleted.  Return `None`

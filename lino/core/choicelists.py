@@ -752,20 +752,20 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
             return True
         return [choice[0] for choice in self.choices if f(choice[0])]
 
-    @classmethod
-    def filter_choice(self, **fkw):
-        """
-        Apply the fkw filter and return the list of filtered choices.
-        :param fkw:
-        :return:
-        """
-        def f(item):
-            for k, v in list(fkw.items()):
-                if getattr(item, k) != v:
-                    return False
-            return True
-
-        return [choice for choice in self.choices if f(choice[0])]
+    # @classmethod
+    # def filter_choice(self, **fkw):
+    #     """
+    #     Apply the fkw filter and return the list of filtered choices.
+    #     :param fkw:
+    #     :return:
+    #     """
+    #     def f(item):
+    #         for k, v in list(fkw.items()):
+    #             if getattr(item, k) != v:
+    #                 return False
+    #         return True
+    #
+    #     return [choice for choice in self.choices if f(choice[0])]
 
     @classmethod
     def get_list_items(self):

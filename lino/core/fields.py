@@ -1090,6 +1090,22 @@ class TableRow(object):
         if a.get_view_permission(ar.get_user().user_type):
             return a
 
+    def get_choices_text(self, request, actor, field):
+        """
+        Return the text to be displayed when an instance of this model
+        is being used as a choice in a combobox of a ForeignKey field
+        pointing to this model.
+        `request` is the web request,
+        `actor` is the requesting actor.
+
+        The default behaviour is to simply return `str(self)`.
+
+        A usage example
+        is :class:`lino_xl.lib.countries.Place`.
+
+        """
+        return str(self)
+
 
 def wildcard_data_elems(model):
     """
