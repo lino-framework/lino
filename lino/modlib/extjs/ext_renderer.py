@@ -876,8 +876,8 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
                         #~ varname = varname_field(f)
                         #~ on_render.append("%s.on('change',Lino.chooser_handler(%s,%r));" % (varname,e.ext_name,f.name))
                         on_render.append(
-                            "%s.on('change',Lino.chooser_handler(%s,'%s'));" % (
-                                el.as_ext(), e.as_ext(), f.name))
+                            "typeof %s !== 'undefined' && %s.on('change',Lino.chooser_handler(%s,'%s'));" % (
+                                el.as_ext(), el.as_ext(), e.as_ext(), f.name))
         return on_render
 
     SUPPRESSED = set(('items', 'layout'))

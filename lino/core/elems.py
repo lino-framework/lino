@@ -2069,6 +2069,8 @@ class Panel(Container):
                     if e.vflex:
                         e.update(flex=e.height or e.preferred_height)
                     e.update(split=True)
+                # lino.utils.jsgen.VisibleComponent#ext_options catches edge case where due to user view permission
+                # Ticket #2916
                 self.elements[0].update(region='north')
                 self.elements[1].update(region='center')
                 if len(self.elements) == 3:

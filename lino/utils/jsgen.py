@@ -357,6 +357,15 @@ class VisibleComponent(Component, Permittable):
         for e in self.walk():
             yield '<tr><td>' + sep.join([py2html(e, n) for n in cols]) + '</td></tr>'
 
+    def ext_options(self, **kw):
+        kw = Component.ext_options(self, **kw)
+        # edge case of invalid extjs layout when user doesn't have permision to view vflex items. Ticket #2916
+        if getattr(self, 'vflex', False) and kw.get('region', "") != "center" and \
+                get_user_profile() and \
+                len([e for e in getattr(getattr(self, 'parent',None), "elements",[])
+                     if e.get_view_permission(get_user_profile())]) == 1:
+            kw['region'] = 'center'
+        return kw
 
 def declare_vars(v):
     """
