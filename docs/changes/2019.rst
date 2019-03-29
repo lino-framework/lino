@@ -8,6 +8,13 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-03-29
+==========
+
+:mod:`lino.utils.choosers` now accepts choosers on char fields 
+without a display method.
+
+
 2019-03-28
 ==========
 

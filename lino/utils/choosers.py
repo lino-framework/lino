@@ -1,4 +1,4 @@
-# Copyright 2009-2018 Rumma & Ko Ltd
+# Copyright 2009-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Extends the possibilities for defining choices for fields of a
@@ -210,7 +210,7 @@ class Chooser(FieldChooser):
             return m(value)
         #~ raise NotImplementedError
         #~ assert not self.simple_values
-        m = getattr(obj, "get_" + self.field.name + "_display")
+        m = getattr(obj, "get_" + self.field.name + "_display", str)
         #~ if m is None:
             #~ raise Exception("")
         return m(value)
