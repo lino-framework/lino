@@ -13,7 +13,7 @@ Changes 2019 in Lino
 
 :mod:`lino.utils.choosers` now accepts choosers on char fields 
 without a display method.
-
+Lino catches edge case of bad extjs code generation. Ticket #2916
 
 2019-03-28
 ==========
