@@ -150,7 +150,7 @@ class Chooser(FieldChooser):
         using a HttpRequest to build the context.
         """
         kw = {
-            "_ar": ar,
+            "ar": ar,
         }
         # kw = {}
 
