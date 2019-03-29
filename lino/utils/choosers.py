@@ -76,7 +76,7 @@ class Chooser(FieldChooser):
         self.context_values = []
         self.context_fields = []
         for name in self.context_params:
-            if name == "_ar":
+            if name == "ar":
                 continue
             f = self.get_data_elem(name)
 
@@ -150,7 +150,7 @@ class Chooser(FieldChooser):
         using a HttpRequest to build the context.
         """
         kw = {
-            "_ar": ar,
+            "ar": ar,
         }
         # kw = {}
 
