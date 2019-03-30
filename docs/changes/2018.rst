@@ -1,4 +1,4 @@
-.. include:: /../../book/docs/shared/include/defs.rst
+.. include:: /../docs/shared/include/defs.rst
 .. _lino.changes.2018:
 
 ====================
