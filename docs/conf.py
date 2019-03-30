@@ -63,7 +63,6 @@ language = 'en'
 # for source files.
 exclude_patterns = [
     '.build/*',
-    'include/*',
     'shared/include/*',
 ]
 
