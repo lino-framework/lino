@@ -196,6 +196,13 @@ Ext.Ajax.on('beforerequest', function (conn, options) {
    }
 }, this);
 
+// Ext.apply(Ext.EventManager, function(){
+//     return{
+//         getKeyEvent : function(){
+//                //return useKeydown ? 'keydown' : 'keypress';
+//            return 'keydown';
+//            },
+// }});
 
 /* This probably worked, but was not used in real world.
 My fix for the "Cannot set QuickTips dismissDelay to 0" bug,
@@ -1176,6 +1183,22 @@ Ext.override(Ext.grid.CellSelectionModel, {
             }
         }
 
+    },
+    // Override this function to put the listeners always on the keydown event regardless of the browser.See #2887
+    initEvents : function(){
+        this.grid.on('cellmousedown', this.handleMouseDown, this);
+        // this.grid.on(Ext.EventManager.getKeyEvent(), this.handleKeyDown, this);
+        this.grid.on('keydown', this.handleKeyDown, this);
+        this.grid.getView().on({
+            scope: this,
+            refresh: this.onViewChange,
+            rowupdated: this.onRowUpdated,
+            beforerowremoved: this.clearSelections,
+            beforerowsinserted: this.clearSelections
+        });
+        if(this.grid.isEditor){
+            this.grid.on('beforeedit', this.beforeEdit,  this);
+        }
     },
     handleKeyDown : function(e){
         /* removed because F2 wouldn't pass
