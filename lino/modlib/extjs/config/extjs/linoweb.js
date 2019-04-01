@@ -2909,7 +2909,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
       this.set_current_record(status.data_record);
       //~ return;
     } else {
-        var record_id = status.record_id || this.default_record_id;
+        var record_id = status.record_id != undefined ? status.record_id : this.default_record_id;
         if (record_id != undefined) { 
           /* possible values include 0 and null, 0 being a valid record id, 
           null the equivalent of undefined
