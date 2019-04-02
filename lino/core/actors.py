@@ -682,10 +682,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     def get_actions_hotkeys(cls):
         """
         This method add hotkey for any available action on the table.
-        :return:list of hotkeys [{'key': key,
-                                'ctrl': Bool,
-                                'shift': Bool,
-                                'ba': action_name}]
+        Return list of hotkeys [{'key': key,'ctrl': Bool,'shift': Bool,'ba': action_name}].
         """
 
     @classmethod
