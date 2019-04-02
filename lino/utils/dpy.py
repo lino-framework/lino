@@ -124,7 +124,8 @@ class FakeDeserializedObject(base.DeserializedObject):
 
     """
 
-    def __init__(self, deserializer, object):
+    def __init__(self, deserializer, object, **kw):
+        super(FakeDeserializedObject,self).__init__(object, deserializer, **kw)
         self.object = object
         # self.name = name
         self.deserializer = deserializer
