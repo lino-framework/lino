@@ -116,6 +116,10 @@ Ext.ux.MonthPickerPlugin = function() {
 
 Ext.preg('monthPickerPlugin', Ext.ux.MonthPickerPlugin);  
 
+// Override this function to put the listeners always on the keydown event regardless of the browser.See #2887
+Ext.EventManager.getKeyEvent = function() {
+  return 'keydown';
+};
 
 /**
 JC Watsons solution (adapted to ExtJS 3.3.1 by LS) is elegant and simple:
