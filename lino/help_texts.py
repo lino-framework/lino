@@ -541,7 +541,6 @@ launched by this test case."""),
     'lino.utils.pythontest.TestCase.run_django_admin_command_cd' : _("""Run django-admin.py CMD in the given directory."""),
     'lino.utils.pythontest.TestCase.run_docs_doctests' : _("""Run a simple doctest for specified file after importing the docs
 conf.py (which causes the demo database to be activated)."""),
-    'lino.utils.quantities.Duration' : _("""A duration, expressed in hours:minutes."""),
     'lino.utils.report.EmptyTableRow' : _("""Base class for virtual rows of an EmptyTable.
 An EmptyTableRow instance"""),
     'lino.utils.report.EmptyTableRow.get_print_templates' : _("""Overrides

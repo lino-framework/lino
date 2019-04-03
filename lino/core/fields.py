@@ -748,8 +748,8 @@ class QuantityField(CharField):
     Implemented as a CharField (sorting or filter ranges may not work
     as expected).
 
-    When you set `blank=True`, then you should declare `null=True` as
-    well.
+    When you set `blank=True`, then you should also declare `null=True`.
+
     """
     description = _("Quantity (Decimal or Duration)")
 
@@ -767,8 +767,8 @@ class QuantityField(CharField):
 
     def to_python(self, value):
         """
-        Excerpt from `Django doc
-        <https://docs.djangoproject.com/en/dev/howto/custom-model-fields/#django.db.models.Field.to_python>`__:
+        Excerpt from `Django docs
+        <https://docs.djangoproject.com/en/1.11/howto/custom-model-fields/#converting-values-to-python-objects>`__:
 
             As a general rule, the method should deal gracefully with
             any of the following arguments:
@@ -777,7 +777,7 @@ class QuantityField(CharField):
             - A string (e.g., from a deserializer).
             - Whatever the database returns for the column type you’re using.
 
-        I'd add "Any value specified for this field when instantiating
+        I'd add "Any value potentially specified for this field when instantiating
         a model."
 
         >>> to_python(None)
@@ -817,6 +817,8 @@ class DurationField(QuantityField):
 
     Note that you cannot use SUM or AVG agregators on these fields
     since the database does not know how to calculate sums from them.
+
+
     """
     def from_db_value(self, value, expression, connection, context):
         return Duration(value) if value else self.get_default()

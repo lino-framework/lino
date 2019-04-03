@@ -171,9 +171,6 @@ class Ended(CombinedDateTime):
         return self.get_duration()
 
 
-
-
-
 class DateRange(Model):
     """
     Mixin for models which represent a period whose start and end are

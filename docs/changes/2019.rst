@@ -8,6 +8,12 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-04-03
+==========
+
+Fixed :ticket:`2937` (Cannot add Duration and time).
+Updated the documentation about the :mod:`lino.utils.quantities` module.
+
 2019-03-29
 ==========
 
