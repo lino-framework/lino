@@ -3848,7 +3848,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
         //~ Ext.apply(options.params,this.containing_panel.get_master_params());
         this.set_base_params(this.containing_panel.get_master_params());
         // 20130911
-        if (!this.store.baseParams.{{constants.URL_PARAM_MASTER_PK}}) {  
+        if (this.store.baseParams.{{constants.URL_PARAM_MASTER_PK}} === undefined ) {
             return;
         }
     }

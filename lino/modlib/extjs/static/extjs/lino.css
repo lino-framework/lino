@@ -16,12 +16,13 @@ e.g. welfare.jobs.NewJobsOverview needs
 */
 
 .dashboard-item-closed {
-	max-height: 0px !important;
+	/*max-height: 0px !important;*/
 	overflow:hidden;
+	display: none;
 }
 
 .dashboard-item {
-	max-height: 110vh;
+	/*max-height: 110vh;*/
 	transition: height 2s ease-in;
 }
 
