@@ -33,7 +33,7 @@ SETUP_INFO = dict(
 
 install_requires = [
     # 'Sphinx',
-    'Django',
+    'Django<2.2',
     'atelier', 'unipath', 'python_dateutil', 'dateparser',
     'etgen',
     'Babel', 'lxml',
