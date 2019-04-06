@@ -2469,6 +2469,9 @@ Lino.HtmlBoxPanel = Ext.extend(Lino.HtmlBoxPanel, {
   //~ enable : function() { var tb = this.getBottomToolbar(); if(tb) tb.enable()},
   onRender : function(ct, position){
     Lino.HtmlBoxPanel.superclass.onRender.call(this, ct, position);
+    Ext.getDoc().addKeyListener(Ext.EventObject.ESC, function(k,e) {
+      this.get_containing_window().close();
+    },this);
     //~ console.log(20111125,this.containing_window);
     if (this.containing_panel) {
       this.containing_panel.on('enable',this.enable,this);
