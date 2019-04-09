@@ -133,6 +133,13 @@
 				validateContentTask.delay( 250 );
 			} .createDelegate(this));
 
+			this.ed.onKeyUp.add(function(ed, controlManager) {
+				if (controlManager.keyCode == Ext.EventObject.ESC && this.ownerCt != undefined){
+					this.ownerCt.get_containing_window().close();
+      		controlManager.stopPropagation();
+				}
+			} .createDelegate(this));
+
 			// Set up editor events' handlers
 			this.ed.onBeforeRenderUI.add(function(ed, controlManager) {
 				// Replace control manager

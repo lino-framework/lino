@@ -2442,7 +2442,6 @@ Ext.override(Ext.form.HtmlEditor, {
     }
 });
 
-
 Lino.HtmlBoxPanel = Ext.extend(Ext.Panel, Lino.PanelMixin);
 Lino.HtmlBoxPanel = Ext.extend(Lino.HtmlBoxPanel, Lino.FieldBoxMixin);
 Lino.HtmlBoxPanel = Ext.extend(Lino.HtmlBoxPanel, {
@@ -2470,7 +2469,12 @@ Lino.HtmlBoxPanel = Ext.extend(Lino.HtmlBoxPanel, {
   onRender : function(ct, position){
     Lino.HtmlBoxPanel.superclass.onRender.call(this, ct, position);
     Ext.getDoc().addKeyListener(Ext.EventObject.ESC, function(k,e) {
-      this.get_containing_window().close();
+      // this.get_containing_window().close();
+      this.get_containing_window().main_item.do_when_clean(false,function() { 
+        if (Lino.current_window ) {
+          Lino.close_window();
+        }
+      });
     },this);
     //~ console.log(20111125,this.containing_window);
     if (this.containing_panel) {
@@ -4818,7 +4822,11 @@ Lino.Window = Ext.extend(Ext.Window,{
   },
   hide : function() { 
       this.main_item.do_when_clean(false,function() { 
-        Lino.close_window(); });
+        if (Lino.current_window){
+          Lino.close_window(); 
+        }
+        });
+          
   },
   hide_really : function() { 
     Lino.Window.superclass.hide.call(this);
