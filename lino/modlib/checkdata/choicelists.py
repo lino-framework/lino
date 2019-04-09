@@ -1,4 +1,4 @@
-# Copyright 2015-2017 Rumma & Ko Ltd
+# Copyright 2015-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
@@ -47,8 +47,16 @@ class Checker(dd.Choice):
     severity = None
     self = None
     model = None
-    """The model to be checked. This may be an abstract model.  It can
-    also be None, but then you must define your own
+    """
+    The model to be checked.  If this is a string, Lino will resolve it at startup.
+      
+    If this is an abstract model, :meth:`get_checkable_models`  will
+    potentially yield more than one model.
+    
+    If this is `None`, the checker is unbound, i.e. the problem messages will
+    not be bound to a particular database object.
+    
+    You might also define your own
     :meth:`get_checkable_models` method.
 
     """
@@ -83,6 +91,14 @@ class Checker(dd.Choice):
         Checkers.add_item_instance(cls.self)
 
     @classmethod
+    def update_unbound_problems(cls, **kwargs):
+        assert cls.self.model is None
+        cls.self.update_problems(**kwargs)
+        todo, done = cls.self.update_problems(**kwargs)
+        msg = "Found {0} and fixed {1} data problems for {2}."
+        dd.logger.info(msg.format(len(todo), len(done), cls.self))
+
+    @classmethod
     def check_instance(cls, *args, **kwargs):
         """
         Run :meth:`get_checkdata_problems` on this checker for the given
@@ -93,16 +109,20 @@ class Checker(dd.Choice):
     def get_checkable_models(self):
         """Return a list of the models to check.
 
-        The default implementation expects :attr:`model` to be set.
+        The default implementation uses the :attr:`model`.
         """
+        if self.model is None:
+            return [None]
         return rt.models_by_base(self.model, toplevel_only=True)
 
     def resolve_model(self, site):
         if isinstance(self.model, six.string_types):
             self.model = dd.resolve_model(self.model, strict=True)
 
-    def update_problems(self, obj, delete=True, fix=False):
-        """Update the problems of this checker and the specified object.
+    def update_problems(self, obj=None, delete=True, fix=False):
+        """Update the problems of this checker for the specified object.
+
+        ``obj`` is `None` on unbound checkers.
 
         When `delete` is False, the caller is responsible for deleting
         any existing objects.
@@ -110,8 +130,8 @@ class Checker(dd.Choice):
         """
         Problem = rt.models.checkdata.Problem
         if delete:
-            gfk = Problem.owner
-            qs = Problem.objects.filter(**gfk2lookup(gfk, obj, checker=self))
+            qs = Problem.objects.filter(
+                **gfk2lookup(Problem.owner, obj, checker=self))
             qs.delete()
 
         done = []
@@ -142,7 +162,7 @@ class Checker(dd.Choice):
     def get_checkdata_problems(self, obj, fix=False):
         """Return or yield a series of `(fixable, message)` tuples, each
         describing a data problem. `fixable` is a boolean
-        saying whther this problem can be automatically fixed. And if
+        saying whether this problem can be automatically fixed. And if
         `fix` is `True`, this method is also responsible for fixing
         it.
 
@@ -151,7 +171,7 @@ class Checker(dd.Choice):
 
     def get_responsible_user(self, obj):
         """The :attr:`user <lino.modlib.checkdata.models.Problem.user>` to
-        be considered as reponsible for problems detected by this
+        be considered responsible for problems detected by this
         checker on the given database object `obj`.
 
         The given `obj` will always be an instance of :attr:`model`.
@@ -190,5 +210,5 @@ class Checkers(dd.ChoiceList):
 
 @dd.receiver(dd.pre_analyze)
 def resolve_checkers(sender, **kw):
-    for chk in Checkers.objects():
+    for chk in Checkers.get_list_items():
         chk.resolve_model(sender)

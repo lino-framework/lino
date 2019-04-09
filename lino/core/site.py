@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2018 Rumma & Ko Ltd
+# Copyright 2009-2019 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 # doctest lino/core/site.py
 
@@ -795,7 +795,7 @@ class Site(object):
     demo_fixtures = []
     """
     The list of fixtures to be loaded by the :manage:`prep`
-    command.
+    command.  See also :ref:`demo_fixtures`.
 
     """
 
@@ -1733,24 +1733,24 @@ class Site(object):
             app_class = getattr(app_mod, 'Plugin', None)
             if app_class is None:
                 app_class = Plugin
-            p = app_class(self, k, app_name, app_mod, needed_by)
+            ip = app_class(self, k, app_name, app_mod, needed_by)
             cfg = PLUGIN_CONFIGS.pop(k, None)
             if cfg:
-                p.configure(**cfg)
+                ip.configure(**cfg)
 
-            self.plugins.define(k, p)
+            self.plugins.define(k, ip)
 
-            needed_by = p
-            while needed_by.needed_by is not None:
-                needed_by = needed_by.needed_by
-            for dep in p.get_required_plugins():
+            needed_by = ip
+            # while needed_by.needed_by is not None:
+            #     needed_by = needed_by.needed_by
+            for dep in ip.get_required_plugins():
                 k2 = dep.rsplit('.')[-1]
                 if k2 not in self.plugins:
                     install_plugin(dep, needed_by=needed_by)
                     # plugins.append(dep)
 
-            plugins.append(p)
-            for dp in p.disables_plugins:
+            plugins.append(ip)
+            for dp in ip.disables_plugins:
                 disabled_plugins.add(dp)
 
         # lino is always the first plugin:
@@ -3246,9 +3246,9 @@ site. :manage:`diag` is a command-line shortcut to this.
         """
         s = ''
         s += rstgen.header(1, "Plugins")
-        for n, kp in enumerate(self.plugins.items()):
+        for n, p in enumerate(self.installed_plugins):
             s += "%d. " % (n + 1)
-            s += "%s : %s\n" % kp
+            s += "{} : {}\n".format(p.app_label, p)
         # s += "config_dirs: %s\n" % repr(self.confdirs.config_dirs)
         s += "\n"
         s += rstgen.header(1, "Config directories")
@@ -3430,13 +3430,25 @@ site. :manage:`diag` is a command-line shortcut to this.
         - `setup_explorer_menu`
         - `setup_site_menu`
 
-        These predefined top-level items ("Master", "Main", "Reports",
-        "Configuration"... are themselves configurable in
+        These predefined top-level items ("Master", "Reports",
+        "Configuration", "Explorer" ... are themselves configurable in
         :attr:`top_level_menus`)
 
         """
         from django.apps import apps
         apps = [a.models_module for a in apps.get_app_configs()]
+
+        # change the "technical" plugin order into the order visible to the end
+        # user.  The end user wants to see menu entries of explicitly installed
+        # plugins before those of automatically installed plugins.
+
+        plugins = []
+        for p in self.installed_plugins:
+            if p.needed_by is None:  # explicitly installed
+                plugins.append(p)
+        for p in self.installed_plugins:
+            if p.needed_by is not None:  # automatically installed
+                plugins.append(p)
 
         for k, label in self.top_level_menus:
             methname = "setup_{0}_menu".format(k)
@@ -3451,7 +3463,7 @@ Please convert to Plugin method".format(mod, methname)
                 menu = main
             else:
                 menu = main.add_menu(k, label)
-            for p in self.installed_plugins:
+            for p in plugins:
                 meth = getattr(p, methname, None)
                 if meth is not None:
                     meth(self, user_type, menu)

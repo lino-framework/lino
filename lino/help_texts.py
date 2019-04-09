@@ -194,7 +194,7 @@ object."""),
     'lino.modlib.changes.ChangesByMaster' : _("""Slave Table showing the changes related to the current object,
 including those applied to "child" objects."""),
     'lino.modlib.changes.ChangesByMaster.model' : _("""alias of Change"""),
-    'lino.modlib.checkdata.Plugin' : _("""See /dev/plugins."""),
+    'lino.modlib.checkdata.Plugin' : _("""The config descriptor for this plugin."""),
     'lino.modlib.checkdata.Plugin.responsible_user' : _("""The username
 of the main checkdata responsible, i.e. a designated
 user who will be attributed to data problems for which
@@ -204,18 +204,16 @@ method)."""),
     'lino.modlib.checkdata.Plugin.on_plugins_loaded' : _("""Set responsible_user to "'robin' if this is a demo site
 (is_demo_site)."""),
     'lino.modlib.checkdata.Checker' : _("""Base class for the choices of Checkers."""),
-    'lino.modlib.checkdata.Checker.model' : _("""The model to be checked. This may be an abstract model.  It can
-also be None, but then you must define your own
-get_checkable_models() method."""),
+    'lino.modlib.checkdata.Checker.model' : _("""The model to be checked.  If this is a string, Lino will resolve it at startup."""),
     'lino.modlib.checkdata.Checker.get_checkable_models' : _("""Return a list of the models to check."""),
-    'lino.modlib.checkdata.Checker.update_problems' : _("""Update the problems of this checker and the specified object."""),
+    'lino.modlib.checkdata.Checker.update_problems' : _("""Update the problems of this checker for the specified object."""),
     'lino.modlib.checkdata.Checker.get_checkdata_problems' : _("""Return or yield a series of (fixable, message) tuples, each
 describing a data problem. fixable is a boolean
-saying whther this problem can be automatically fixed. And if
+saying whether this problem can be automatically fixed. And if
 fix is True, this method is also responsible for fixing
 it."""),
     'lino.modlib.checkdata.Checker.get_responsible_user' : _("""The user to
-be considered as reponsible for problems detected by this
+be considered responsible for problems detected by this
 checker on the given database object obj."""),
     'lino.modlib.checkdata.Checkers' : _("""The list of data problem types known by this application."""),
     'lino.modlib.checkdata.Checkers.item_class' : _("""alias of Checker"""),

@@ -90,8 +90,10 @@ class Choice(fields.TableRow):
     pk = None
     
     value = None
-    """(a string) The value to use e.g. when this choice is being
-                stored in a database."""
+
+    """(a string) The value to use e.g. when this choice is being stored in a
+    database."""
+
     text = None
     """A translatable string containing the text to show to the user.
 
@@ -118,10 +120,9 @@ class Choice(fields.TableRow):
     
         """
         if value is not None:
-            self.value = value
-        if not isinstance(self.value, six.string_types):
-            raise Exception("value must be a string")
-        self.pk = self.value
+            if not isinstance(value, six.string_types):
+                raise Exception("value must be a string")
+            self.value = self.pk = value
         if name is not None:
             self.name = name
         # if name is not None:
@@ -137,9 +138,6 @@ class Choice(fields.TableRow):
             self.text = text
         for k, v in kwargs.items():
             setattr(self, k, v)
-
-    def __eq__(self, other):
-        return self.value == other.value
 
     # def deconstruct(self):
     #     return ('str', self.value, {})
@@ -157,12 +155,9 @@ class Choice(fields.TableRow):
             
     def attach(i, cls):
         i.choicelist = cls
-        dt = cls.display_text(i)
-        cls.choices.append((i, dt))
-        # cls.preferred_width = max(cls.preferred_width, len(unicode(dt)))
-        cls.items_dict[i.value] = i
-        #~ cls.items_dict[i] = i
-        if len(i.value) > cls.max_length:
+        if i.value is None:
+            i.pk = i.value = str(len(cls.choices)+1)
+        elif len(i.value) > cls.max_length:
             if len(cls._fields) > 0:
                 raise Exception(
                     "%s cannot add value %r because fields exist "
@@ -175,6 +170,13 @@ Django creates copies of them when inheriting models.
             #~ for fld in cls._fields:
                 #~ fld.set_max_length(cls.max_length)
 
+        dt = cls.display_text(i)
+        cls.choices.append((i, dt))
+        # cls.preferred_width = max(cls.preferred_width, len(unicode(dt)))
+        cls.items_dict[i.value] = i
+        #~ cls.items_dict[i] = i
+
+
     def remove(self):
         """Remove this choice from its list.
 
@@ -183,6 +185,8 @@ Django creates copies of them when inheriting models.
         self.choicelist.remove_item(self)
 
     def __len__(self):
+        # if self.value is None:
+        #     return 1
         return len(self.value)
 
     def __cmp__(self, other):
@@ -191,30 +195,43 @@ Django creates copies of them when inheriting models.
         return cmp(self.value, other)
 
     def __eq__(self, other):
+        # if self.value is None:
+        #     return super(Choice, self).__eq__(other)
         if other.__class__ is self.__class__:
             return (self.value == other.value)
         return self.value == other
 
     def __ne__(self, other):
+        # if self.value is None:
+        #     return super(Choice, self).__neq__(other)
         if other.__class__ is self.__class__:
             return (self.value != other.value)
         return (self.value != other)
 
     def __lt__(self, other):
+        # if self.value is None:
+        #     return super(Choice, self).__lt__(other)
         if other.__class__ is self.__class__:
             return (self.value < other.value)
         return (self.value < other)
+
     def __le__(self, other):
+        # if self.value is None:
+        #     return super(Choice, self).__le__(other)
         if other.__class__ is self.__class__:
             return (self.value <= other.value)
         return (self.value <= other)
 
     def __gt__(self, other):
+        # if self.value is None:
+        #     return super(Choice, self).__gt__(other)
         if other.__class__ is self.__class__:
             return (self.value > other.value)
         return (self.value > other)
 
     def __ge__(self, other):
+        # if self.value is None:
+        #     return super(Choice, self).__ge__(other)
         if other.__class__ is self.__class__:
             return (self.value >= other.value)  
         return (self.value >= other)
@@ -582,7 +599,7 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
         #~ if cls is ChoiceList:
             #~ raise Exception("Cannot define items on the base class")
         is_duplicate = False
-        if i.value in cls.items_dict:
+        if i.value is not None and i.value in cls.items_dict:
             raise Exception("Duplicate value %r in %s." % (i.value, cls))
             warnings.warn("Duplicate value %r in %s." % (i.value, cls))
             is_duplicate = True

@@ -48,7 +48,7 @@ from lino.api import ad, _
 
 
 class Plugin(ad.Plugin):
-    """See :doc:`/dev/plugins`.
+    """The config descriptor for this plugin.
 
     .. attribute:: responsible_user
 

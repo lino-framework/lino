@@ -221,9 +221,10 @@ class Plugin(object):
 
         Note that Lino will add them *before* your plugin.
 
-        Note that only the app_label (not the whole plugin name) is used when testing whether a plugin is installed.
-        IOW if a plugin requires another plugin "stdlib.foo" and an application
-        installs some plugin "mylib.foo".
+        Note that only the app_label (not the whole plugin name) is used when
+        testing whether a plugin is installed. IOW if a plugin says it requires
+        a plugin "stdlib.foo" and an application already has some plugin
+        "mylib.foo" installed, "mylib" satisfies "stdlib.foo".
 
 
         """
@@ -382,7 +383,11 @@ class Plugin(object):
         if self.menu_group:
             if self.menu_group in self.site.plugins:
                 return self.site.plugins.get(self.menu_group)
-        return self.needed_by or self
+
+        needed_by = self
+        while needed_by.needed_by is not None:
+            needed_by = needed_by.needed_by
+        return needed_by
 
     def setup_user_prefs(self, up):
         """

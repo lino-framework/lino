@@ -4,10 +4,6 @@
 """
 Lino's comments framework.  See :doc:`/specs/comments`.
 
-.. autosummary::
-   :toctree:
-
-    fixtures.demo2
 """
 
 from lino import ad, _

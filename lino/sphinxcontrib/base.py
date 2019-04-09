@@ -44,3 +44,6 @@ def setup(app):
     app.add_object_type(str('tcname'), str('tcname'),
                         objname='template context name',
                         indextemplate='pair: %s; template context name')
+    app.add_object_type(str('fixture'), str('fixture'),
+                        objname='demo fixture name',
+                        indextemplate='pair: %s; demo fixture name')

@@ -121,7 +121,7 @@ class Duration(Quantity):
     #         minutes.to_integral())
 
     def __radd__(self, other, **kwargs):
-        # add a Duration to a datetime.datatime
+        # add a Duration to a datetime.datetime
         if isinstance(other, datetime.datetime):
             return other + self.as_timedelta()
         other = convert_from(other, **kwargs)
