@@ -1,4 +1,4 @@
-# Copyright 2015-2018 Rumma & Ko Ltd
+# Copyright 2015-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Adds printing functionality to a Lino application.
@@ -17,4 +17,7 @@ class Plugin(ad.Plugin):
 
     # needs_plugins = ['lino_xl.lib.appypod']
     # needs_plugins = ['lino.modlib.checkdata']
+
+    # we don't specify checkdata as needed plugin because checkdata would
+    # require users
 

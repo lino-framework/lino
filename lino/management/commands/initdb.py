@@ -2,29 +2,25 @@
 # Copyright 2009-2019 Rumma & Ko Ltd.
 # License: BSD, see LICENSE for more details.
 
-""".. management_command:: initdb
+"""
+See the page about :manage:`initdb` in the Developer's Guide.
 
-Performs an initialization of the database, replacing all data by
-default data loaded from the specified fixtures.
 
-This command REMOVES *all existing tables* from the database (not only
-Django tables), then runs Django's `migrate` to create all tables, and
-`loaddata` commands to load the specified fixtures for all plugins.
+The command performs three actions in one:
 
-This is functionally equivalent to running Django's :manage:`flush`
-command followed by :manage:`loaddata`, but the command-line options
-are a bit different and :manage:`initdb` it is more efficient when
-using SQLite.
+- it flushes the database specified in your :xfile:`settings.py`,
+  i.e. issues a ``DROP TABLE`` for every table used by your application.
+
+- it runs Django's :manage:`migrate` command to re-create all tables,
+
+- it runs Django's :manage:`loaddata` command to load the specified
+  fixtures.
+
 
 This also adds a `warning filter
 <https://docs.python.org/2/library/warnings.html#warning-filter>`__ to
 ignore Django's warnings about empty fixtures. (See
 :djangoticket:`18213`).
-
-See also :ref:`lino.dev.initdb`.
-
-History
-=======
 
 This reimplements a simplified version of Django's `reset` command,
 without the possibility of deleting *only some* data (the thing which

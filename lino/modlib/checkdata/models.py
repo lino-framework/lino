@@ -276,7 +276,9 @@ def set_checkdata_actions(sender, **kw):
     model for which there is at least one Checker
 
     """
-    for m in list(get_checkable_models().keys()):
+    for m in get_checkable_models().keys():
+        if m is None:
+            continue
         assert m is not Problem
         m.define_action(check_data=UpdateProblemsByController(m))
         m.define_action(fix_problems=FixProblemsByController(m))
@@ -330,12 +332,17 @@ def check_data(args=[], fix=True):
     final_sums = [0, 0, 0]
     with translation.override('en'):
         for m, checkers in mc.items():
-            ct = rt.models.contenttypes.ContentType.objects.get_for_model(m)
-            Problem.objects.filter(owner_type=ct).delete()
-            name = str(m._meta.verbose_name_plural)
-            qs = m.objects.all()
-            msg = "Running {0} data checkers on {1} {2}...".format(
-                len(checkers), qs.count(), name)
+            if m is None:
+                qs = [None]
+                name = "unbound data"
+                msg = "Running {0} checkers on {1}...".format(len(checkers), name)
+            else:
+                ct = rt.models.contenttypes.ContentType.objects.get_for_model(m)
+                Problem.objects.filter(owner_type=ct).delete()
+                name = str(m._meta.verbose_name_plural)
+                qs = m.objects.all()
+                msg = "Running {0} data checkers on {1} {2}...".format(
+                    len(checkers), qs.count(), name)
             dd.logger.debug(msg)
             sums = [0, 0, name]
             for obj in qs:

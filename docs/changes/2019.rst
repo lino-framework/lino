@@ -8,6 +8,34 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-04-09
+==========
+
+In :meth:`lino.core.site.Site.setup_menu` we now differentiate between the "technical"
+plugin order and the order "visible to the end user".  The end user wants
+to see menu entries of explicitly installed plugins before those of
+automatically installed plugins.
+
+Lino now supports **choicelist items without a value**. When no value is
+specified, the :attr:`value <lino.core.choicelists.Choice.value>` (the sequence
+number) is set automatically when it is added to the choicelist.  Such choices
+should not be stored to the database, otherwise they are like normal
+choicelists. :class:`lino_xl.lib.vat.VatRules` is the first usage example.
+
+Lino now supports unbound data checkers. If
+:attr:`lino.modlib.checkdata.Checker.model` is `None`, the checker is
+unbound, i.e. the problem messages will not be bound to a particular
+database object.
+
+Fixed a bug in :manage:`diag` : the plugins were listed in a random
+arbitrary order.
+
+:attr:`lino.core.plugin.Plugin.needed_by` is now the immediate parent, not the
+top-level parent. The loop to the top is now done only in
+:meth:`lino.core.plugin.Plugin.get_menu_group`.
+
+
+
 2019-04-03
 ==========
 

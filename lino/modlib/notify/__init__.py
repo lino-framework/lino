@@ -5,7 +5,6 @@
 
 See :doc:`/specs/notify`.
 
-
 """
 
 from lino import DJANGO2

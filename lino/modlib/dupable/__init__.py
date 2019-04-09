@@ -19,7 +19,7 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("Dupe control")
 
-    needs_plugins = ['lino.modlib.gfks']
+    needs_plugins = ['lino.modlib.gfks', 'lino.modlib.checkdata']
 
     def setup_explorer_menu(self, site, user_type, main):
         mg = site.plugins.system
