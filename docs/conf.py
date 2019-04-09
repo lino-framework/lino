@@ -14,6 +14,7 @@ from lino.sphinxcontrib import configure
 configure(globals())
 
 extensions += ['lino.sphinxcontrib.logo']
+extensions += ['lino.sphinxcontrib.base']
 
 
 from atelier.sphinxconf import interproject
