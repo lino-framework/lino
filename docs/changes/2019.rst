@@ -8,6 +8,12 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-04-10
+==========
+
+Fixed a bug in :mod:`lino.utils.quantities` which caused ``1*Duration("0:15")``
+to print ``0.250000000000000000`` instead of ``0:15``.
+
 2019-04-09
 ==========
 

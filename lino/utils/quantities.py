@@ -47,7 +47,9 @@ class Quantity(Decimal):
 
     def __rmul__(self, other, **kwargs):
         other = convert_from(other, **kwargs)
-        return Decimal.__rmul__(self, other, **kwargs)
+        return self.__class__(Decimal.__rmul__(self, other, **kwargs))
+        # return Decimal.__rmul__(self, other, **kwargs)
+        # see Luc's blog 20190410
 
     def __truediv__(self, *args, **kw):
         return self.__class__(Decimal.__truediv__(self, *args, **kw))
@@ -81,6 +83,13 @@ class Percentage(Quantity):
     # def __str__(self):
     #     return "{}%".format(self * 100)
     #     # return str(self._value)
+
+    def __rmul__(self, other, **kwargs):
+        other = convert_from(other, **kwargs)
+        # return self.__class__(Decimal.__rmul__(self, other, **kwargs))
+        return Decimal.__rmul__(self, other, **kwargs)
+        # see Luc's blog 20190410
+
 
 
 class Duration(Quantity):
