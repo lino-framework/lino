@@ -8,6 +8,10 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-04-11
+==========
+Released Lino 19.4.0 to PyPI.
+
 2019-04-10
 ==========
 
