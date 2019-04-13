@@ -16,6 +16,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 import datetime
+from dateutil.relativedelta import relativedelta 
 
 from django.db import models
 from django.core.exceptions import ValidationError
@@ -382,7 +383,7 @@ class Born(model.Model):
             if today is None:
                 today = settings.SITE.today()
             try:
-                return today - self.birth_date.as_date()
+                return relativedelta(today , self.birth_date.as_date())
             except ValueError:
                 pass
 
@@ -391,13 +392,13 @@ class Born(model.Model):
         a = self.get_exact_age(today)
         if a is None:
             return str(_('unknown'))
-        years = old_div(a.days, 365)
+        years = a.years
         if years == 1:
             s = _("{} year").format(years)
         else:
             s = _("{} years").format(years)
         if years <= 4:
-            months = old_div(a.days - years * 365, 30)
+            months = a.months
             if months == 1:
                 s += " " + _("{} month").format(months)
             else:
