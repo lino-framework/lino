@@ -10,7 +10,11 @@ Changes 2019 in Lino
 
 2019-04-13
 ==========
-:ticket:`2946` Fix calcul of person's age. 
+
+:ticket:`2946` Fix calcul of person's age.
+
+New option :attr:`lino.modlib.users.StartPlan.update_after_start`
+
 
 2019-04-11
 ==========
