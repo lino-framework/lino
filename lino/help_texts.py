@@ -900,6 +900,7 @@ of this object."""),
     'lino.modlib.users.UserAuthored' : _("""Inherits from Authored."""),
     'lino.modlib.users.UserAuthored.user' : _("""The author of this object.
 A pointer to lino.modlib.users.models.User."""),
+    'lino.modlib.users.StartPlan.update_after_start' : _("""Whether to run Plan.update_plan() after starting the plan."""),
     'lino.modlib.users.UserPlan' : _("""Mixin for anything that represents some plan of a given user on a
 given day.  The mixin makes sure that there is only one instance
 per user.  This instance is considered of low value and to be

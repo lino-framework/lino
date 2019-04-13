@@ -339,8 +339,9 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     master_key = None
     """The name of a ForeignKey field of this table's :attr:`model` that
-    points to it's :attr:`master`.  The :attr:`master_key` is
-    automatically added to :attr:`hidden_columns`.
+    points to its :attr:`master`.  
+    
+    The :attr:`master_key` is automatically added to :attr:`hidden_columns`.
 
     """
 
@@ -697,10 +698,10 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         """Return the `master_instance` corresponding to the specified primary
         key.
 
-        You need to override this only on slave actors whose
-        :attr:`master` is something else than a database model,
+        You need to override this on slave actors whose
+        :attr:`master` is not a database model,
         e.g. the :class:`ProblemsByChecker
-        <lino.modlib.checkdata.models.ProblemsByChecker>` table.
+        <lino.modlib.checkdata.ProblemsByChecker>` table.
 
         `ar` is the action request on this actor. `model` is the
         :attr:`master`, except if :attr:`master` is `ContentType` (in

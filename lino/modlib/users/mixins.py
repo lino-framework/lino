@@ -174,23 +174,13 @@ class My(dbtables.Table):
         kw['user'] = ar.get_user()
         return kw
 
-class UpdatePlan(dd.Action):
-    
-    label = _("Update plan")
-    icon_name = 'lightning'
-    sort_index = 53
-
-    def run_from_ui(self, ar, **kw):
-        for plan in ar.selected_rows:
-            plan.run_update_plan(ar)
-        ar.success(refresh=True)
-
 class StartPlan(dd.Action):
     show_in_bbar = False
     # icon_name = 'basket'
     sort_index = 52
     select_rows = False
     http_method = 'POST'
+    update_after_start = False
 
     def get_button_label(self, actor):
         return self.label or actor.model._meta.verbose_name
@@ -217,7 +207,20 @@ class StartPlan(dd.Action):
         plan = pm.run_start_plan(ar.get_user(), **options)
         # plan = self.defining_actor.model.run_start_plan(
         #     ar.get_user(), **options)
+        if self.update_after_start:
+            plan.run_update_plan(ar)
         ar.goto_instance(plan)
+
+
+class UpdatePlan(dd.Action):
+    label = _("Update plan")
+    icon_name = 'lightning'
+    sort_index = 53
+
+    def run_from_ui(self, ar, **kw):
+        for plan in ar.selected_rows:
+            plan.run_update_plan(ar)
+        ar.success(refresh=True)
 
 
 class UserPlan(UserAuthored):
