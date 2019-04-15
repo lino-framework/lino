@@ -4628,7 +4628,7 @@ Lino.ComboBox = Ext.extend(Ext.form.ComboBox,{
     //~ if (this.contextValues === undefined) {
         //~ this.contextValues = Array(); // this.contextParams.length);
     //~ }
-    if (this.contextParams[name] != value) {
+    if ((this.contextParams[name] != value) || (this.contextParams[name] == undefined)) {
       //~ console.log('setContextValue 1',this.contextParams);
       this.contextParams[name] = value;
       this.lastQuery = null;
