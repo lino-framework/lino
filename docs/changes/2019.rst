@@ -8,6 +8,19 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-04-15
+==========
+
+.. currentmodule:: lino.core
+
+New method :meth:`requests.BaseRequest.goto_pk`.  This required a change in
+:xfile:`linoweb.js` where I add a global :func:`Lino.goto_record_id` function.
+
+Moved :attr:`handle_uploaded_files <actors.Actor.handle_uploaded_files>` from
+:mod:`dbtables` to :mod:`actors` because it is also possible on a virtual table
+like DailyView.
+
+
 2019-04-13
 ==========
 
