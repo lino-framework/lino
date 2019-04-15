@@ -324,6 +324,8 @@ class BaseRequest(object):
 
     def spawn(self, spec=None, **kw):
         """
+        Deprecated. Use spawn_request() if possible.
+
         Create a new action request using default values from this one and
         the action specified by `spec`.
 
@@ -333,7 +335,6 @@ class BaseRequest(object):
         - a :class:`BoundAction` instance
         - another action request (deprecated use)
 
-        Deprecated. Use spawn_request() if spec is
         """
         from lino.core.actors import resolve_action
         if isinstance(spec, ActionRequest):  # deprecated use
@@ -602,6 +603,22 @@ class BaseRequest(object):
 
     def goto_instance(self, *args, **kwargs):
         return self.renderer.goto_instance(self, *args, **kwargs)
+
+    def goto_pk(self, pk, *args, **kwargs):
+        """Navigate to the record with the specified primary key.
+
+        This is similar to :meth:`goto_instance` but works only in a detail
+        view.  It has the advantage of not doing permission checks and no
+        database lookup just for rendering a link. """
+
+        r = self.renderer
+        js = "Lino.goto_record_id(%s)" % pk
+        url = r.js2url(js)
+        return r.href(url, *args, **kwargs)
+        # ba = self.actor.detail_action
+        # js = self.renderer.action_call(self, ba, dict(record_id=pk))
+        # kwargs.update(eval_js=js)
+        # self.set_response(**kwargs)
 
     def close_window(self, **kw):
         """Ask client to close the current window. This is the same as

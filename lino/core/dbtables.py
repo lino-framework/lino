@@ -186,12 +186,6 @@ class Table(AbstractTable):
 
     """
 
-    handle_uploaded_files = None
-    """
-    Handler for uploaded files.
-    Same remarks as for :attr:`lino.core.actors.Actor.disabled_fields`.
-    """
-
     @classmethod
     def add_quick_search_filter(cls, qs, search_text):
         """Add a filter to the given queryset `qs` in order to apply a quick

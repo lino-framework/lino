@@ -363,6 +363,11 @@ Lino.set_subst_user = function(id, name) {
         Lino.permalink_handler(Lino.current_window)();
 }
 
+Lino.goto_record_id = function(pk) {
+
+    if (Lino.current_window)
+        Lino.current_window.main_item.goto_record_id(pk);
+}
 
 
 //~ Lino.select_subst_user = function(cmp,rec,value){

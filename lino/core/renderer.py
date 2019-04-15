@@ -746,7 +746,7 @@ class JsRenderer(HtmlRenderer):
 
 
     def goto_instance(self, ar, obj, detail_action=None, **kw):
-        """Ask the client to display a :term:`detail window` on the given
+        """Ask the client to display a detail window on the given
         record. The client might ignore this if Lino does not know a
         detail window.
 

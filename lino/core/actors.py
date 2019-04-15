@@ -635,6 +635,12 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     """
 
+    handle_uploaded_files = None
+    """
+    Handler for uploaded files.
+    Same remarks as for :attr:`lino.core.actors.Actor.disabled_fields`.
+    """
+
     def __init__(self, *args, **kw):
         raise Exception("Actors should never get instantiated")
 
