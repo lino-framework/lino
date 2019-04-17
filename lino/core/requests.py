@@ -612,8 +612,10 @@ class BaseRequest(object):
         database lookup just for rendering a link. """
 
         r = self.renderer
-        js = "Lino.goto_record_id(%s)" % pk
-        url = r.js2url(js)
+        if r.extjs_version:
+            url = r.js2url("Lino.goto_record_id(%s)" % pk)
+        else:
+            url = r.get_detail_url(self.actor, pk)
         return r.href(url, *args, **kwargs)
         # ba = self.actor.detail_action
         # js = self.renderer.action_call(self, ba, dict(record_id=pk))
