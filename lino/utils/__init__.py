@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2018 Rumma & Ko Ltd
+# Copyright 2009-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """:mod:`lino.utils` (the top-level module) contains a few often-used
@@ -206,27 +206,37 @@ class IncompleteDate(object):
     """
     Naive representation of a potentially incomplete gregorian date.
 
-    Once upon a time in the year 2011:
-    >>> print (IncompleteDate(2011, 0, 0).strftime("%d.%m.%Y"))
+    For example you can say "Once upon a time in the year 2011":
+
+    >>> print(IncompleteDate(2011, 0, 0).strftime("%d.%m.%Y"))
     00.00.2011
 
-    >>> print (IncompleteDate(1532, 0, 0))
+    Unlike :class:`datetime.date` objects an incomplete date can hold years
+    before 1970.
+
+    >>> print(IncompleteDate(1532, 0, 0))
     1532-00-00
-    >>> print (IncompleteDate(1990, 0, 1))
-    1990-00-01
-    >>> print (IncompleteDate(0, 6, 1))
+
+    On June 1st (but we don't say the year):
+
+    >>> print(IncompleteDate(0, 6, 1))
     0000-06-01
+
+    On the first day of the month in 1990:
+
+    >>> print(IncompleteDate(1990, 0, 1))
+    1990-00-01
 
     W.A. Mozart's birth date:
 
-    >>> print (IncompleteDate(1756, 1, 27))
+    >>> print(IncompleteDate(1756, 1, 27))
     1756-01-27
 
     Christ's birth date:
 
-    >>> print (IncompleteDate(-7, 12, 25))
+    >>> print(IncompleteDate(-7, 12, 25))
     -7-12-25
-    >>> print (IncompleteDate(-7, 12, 25).strftime("%d.%m.%Y"))
+    >>> print(IncompleteDate(-7, 12, 25).strftime("%d.%m.%Y"))
     25.12.-7
 
     Note that you cannot convert all incomplete dates
@@ -244,11 +254,11 @@ class IncompleteDate(object):
     An IncompleteDate is allowed to be complete:
 
     >>> d = IncompleteDate.parse('2011-11-19')
-    >>> print (d)
+    >>> print(d)
     2011-11-19
     >>> d.is_complete()
     True
-    >>> print (repr(d.as_date()))
+    >>> print(repr(d.as_date()))
     datetime.date(2011, 11, 19)
 
     >>> d = IncompleteDate.parse('2008-03-24')
@@ -465,7 +475,7 @@ def workdays(start, end):
     ...     a = i2d(start)
     ...     b = i2d(end)
     ...     if workdays(a,b) != expected:
-    ...        print ("Got %d instead of %d for (%s,%s)" % (workdays(a,b),expected,a,b))
+    ...        print("Got %d instead of %d for (%s,%s)" % (workdays(a,b),expected,a,b))
 
     """
     #~ for d in range(start,end,ONE_DAY):
