@@ -796,11 +796,13 @@ Usage example see lino_book.projects.pisa."""),
     'lino.modlib.summaries.Summarized' : _("""Model mixin for database objects that have summary fields."""),
     'lino.modlib.summaries.Summarized.delete_them_all' : _("""Set this to True if all instances of this model should be considered
 temporary data to be deleted by checksummaries."""),
-    'lino.modlib.summaries.Summarized.compute_results' : _("""Update all the summary fields on this database object."""),
+    'lino.modlib.summaries.Summarized.compute_results' : _("""Action for updating all the summary fields on this database object."""),
     'lino.modlib.summaries.Summarized.reset_summary_data' : _("""Set all counters and sums to 0."""),
     'lino.modlib.summaries.Summarized.compute_summary_values' : _("""Reset summary data fields (reset_summary_data()), for
 every collector (get_summary_collectors()) loop over its
 database objects and collect data, then save this record."""),
+    'lino.modlib.summaries.Summarized.update_for_filter' : _("""Runs compute_summary_values() on a a filtered queryset
+based on keyword arguments."""),
     'lino.modlib.summaries.Summarized.get_summary_collectors' : _("""To be implemented by subclasses. This must yield a sequence
 of (collector, qs) tuples, where collector is a callable
 and qs a queryset. Lino will call collector for each obj
