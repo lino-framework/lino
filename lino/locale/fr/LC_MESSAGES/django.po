@@ -5,18 +5,19 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version:  \n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2019-03-29 13:24+0200\n"
-"PO-Revision-Date: 2019-02-12 10:54+0200\n"
+"PO-Revision-Date: 2019-04-19 10:54+0100\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language: fr\n"
 "Language-Team: \n"
-"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.6.0\n"
+"X-Generator: Poedit 2.0.6\n"
 
 #: lino/help_texts.py:7
 msgid ""
@@ -1369,8 +1370,7 @@ msgstr ""
 #: lino/help_texts.py:466
 msgid ""
 "A Converter for ForeignKey and ManyToManyField. \n"
-"If the lookup_field is a BabelField, then it tries all available "
-"languages."
+"If the lookup_field is a BabelField, then it tries all available languages."
 msgstr ""
 
 #: lino/help_texts.py:468
@@ -1939,8 +1939,7 @@ msgstr ""
 #: lino/help_texts.py:656
 msgid ""
 "A mixin for models that require their every object to have a scan or pdf\n"
-"file of the \"receipt\", i.e. the document serving as the legal proof of "
-"this\n"
+"file of the \"receipt\", i.e. the document serving as the legal proof of this\n"
 "database object.  A usage example are purchase invoices in an accounting\n"
 "system."
 msgstr ""
@@ -2772,8 +2771,7 @@ msgstr "Pas de panique, ceci n'est certainement pas ta faute."
 #: lino/config/500.html:9
 msgid ""
 "Maybe we are working on the server, \n"
-"please check the <a href=\"{{site.hoster_status_url}}\">hoster status "
-"page</a>."
+"please check the <a href=\"{{site.hoster_status_url}}\">hoster status page</a>."
 msgstr ""
 "Il est possible que nous sommes en train de travailler sur le serveur, \n"
 "vérifie notre <a href=\"{{site.hoster_status_url}}\">page d'état</a>."
@@ -2809,11 +2807,11 @@ msgstr "Ceci est un site de démonstration Lino."
 
 #: lino/config/admin_main_base.html:31
 msgid ""
-"Try also the other <a href=\"http://lino-framework.org/demos.html\">demo "
-"sites</a>."
+"Try also the other <a href=\"http://lino-framework.org/demos.html\">demo sites</"
+"a>."
 msgstr ""
-"Essayez également les autres <a href=\"http://lino-"
-"framework.org/demos.html\">sites de démonstration</a>."
+"Essayez également les autres <a href=\"http://lino-framework.org/demos.html"
+"\">sites de démonstration</a>."
 
 #: lino/config/admin_main_base.html:32
 #, python-format
@@ -2830,8 +2828,8 @@ msgstr ""
 
 #: lino/config/admin_main_base.html:47
 msgid ""
-"Unlike the <a href=\"/\">web content section</a> there is now a GUI menu "
-"bar in the upper part of the screen."
+"Unlike the <a href=\"/\">web content section</a> there is now a GUI menu bar in "
+"the upper part of the screen."
 msgstr ""
 
 #: lino/config/admin_main_base.html:52
@@ -3123,8 +3121,8 @@ msgstr ""
 #, python-format
 msgid "Cannot delete %(model)s %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
-"Impossible de supprimer %(model)s %(self)s parce que %(count)d  %(refs)s "
-"y font référence."
+"Impossible de supprimer %(model)s %(self)s parce que %(count)d  %(refs)s y font "
+"référence."
 
 #: lino/core/model.py:681 lino/core/requests.py:1009
 #, python-format
@@ -3716,30 +3714,26 @@ msgid "Home"
 msgstr "Départ"
 
 #: lino/modlib/bootstrap3/views.py:144 lino/modlib/bootstrap3/views.py:225
-#: lino/modlib/extjs/config/extjs/linoweb.js:3713
-#: lino/modlib/forms/views.py:132 lino/modlib/forms/views.py:212
-#: lino/modlib/odata/views.py:74
+#: lino/modlib/extjs/config/extjs/linoweb.js:3713 lino/modlib/forms/views.py:132
+#: lino/modlib/forms/views.py:212 lino/modlib/odata/views.py:74
 msgid "First page"
 msgstr "Première page"
 
 #: lino/modlib/bootstrap3/views.py:145 lino/modlib/bootstrap3/views.py:227
-#: lino/modlib/extjs/config/extjs/linoweb.js:3715
-#: lino/modlib/forms/views.py:133 lino/modlib/forms/views.py:214
-#: lino/modlib/odata/views.py:76
+#: lino/modlib/extjs/config/extjs/linoweb.js:3715 lino/modlib/forms/views.py:133
+#: lino/modlib/forms/views.py:214 lino/modlib/odata/views.py:76
 msgid "Previous page"
 msgstr "Page précédente"
 
 #: lino/modlib/bootstrap3/views.py:157 lino/modlib/bootstrap3/views.py:229
-#: lino/modlib/extjs/config/extjs/linoweb.js:3716
-#: lino/modlib/forms/views.py:145 lino/modlib/forms/views.py:216
-#: lino/modlib/odata/views.py:78
+#: lino/modlib/extjs/config/extjs/linoweb.js:3716 lino/modlib/forms/views.py:145
+#: lino/modlib/forms/views.py:216 lino/modlib/odata/views.py:78
 msgid "Next page"
 msgstr "Page suivante"
 
 #: lino/modlib/bootstrap3/views.py:158 lino/modlib/bootstrap3/views.py:231
-#: lino/modlib/extjs/config/extjs/linoweb.js:3714
-#: lino/modlib/forms/views.py:146 lino/modlib/forms/views.py:218
-#: lino/modlib/odata/views.py:80
+#: lino/modlib/extjs/config/extjs/linoweb.js:3714 lino/modlib/forms/views.py:146
+#: lino/modlib/forms/views.py:218 lino/modlib/odata/views.py:80
 msgid "Last page"
 msgstr "Dernière page"
 
@@ -3814,8 +3808,7 @@ msgstr ""
 msgid "Checkdata"
 msgstr ""
 
-#: lino/modlib/checkdata/choicelists.py:25
-#: lino/modlib/checkdata/choicelists.py:26
+#: lino/modlib/checkdata/choicelists.py:25 lino/modlib/checkdata/choicelists.py:26
 msgid "Checkdata feedback"
 msgstr ""
 
@@ -4108,9 +4101,10 @@ msgstr ""
 
 #: lino/modlib/extjs/views.py:141
 msgid ""
-"Your browser is using a previous version of the site, press OK to reload "
-"the site"
+"Your browser is using a previous version of the site, press OK to reload the site"
 msgstr ""
+"Votre navigateur utilise une version obsolète du site, appuyez sur OK ensuite "
+"Ctrl+F5 pour recharger le site."
 
 #: lino/modlib/extjs/views.py:206 lino/modlib/users/actions.py:191
 msgid "Failed to log in as {}."
@@ -4125,8 +4119,8 @@ msgstr ""
 #, python-format
 msgid "Error while saving GC for %(table)s: %(error)s"
 msgstr ""
-"Une erreur est apparue pendant la sauvgarde de la configuration pour "
-"%(table)s: %(error)s"
+"Une erreur est apparue pendant la sauvgarde de la configuration pour %(table)s: "
+"%(error)s"
 
 #: lino/modlib/extjs/config/extjs/linoweb.js:502
 msgid "Show or hide the table parameters panel"
@@ -4167,8 +4161,8 @@ msgid ""
 "If the error persists, try reloading the browser page ([SHIFT+CTRL+R] in "
 "Firefox)."
 msgstr ""
-"Si l'erreur persiste, essayez de recharger la page dans votre navigateur "
-"(MAJ+CTRL+R dans Firefox)."
+"Si l'erreur persiste, essayez de recharger la page dans votre navigateur (MAJ"
+"+CTRL+R dans Firefox)."
 
 #: lino/modlib/extjs/config/extjs/linoweb.js:1498
 msgid "Database problem"
@@ -4568,12 +4562,12 @@ msgstr "Imprimer"
 #: lino/modlib/printing/actions.py:95
 #, fuzzy
 msgid ""
-"Your printable document ({}) should now open in a new browser window. If "
-"it doesn't, please ask your system administrator."
+"Your printable document ({}) should now open in a new browser window. If it "
+"doesn't, please ask your system administrator."
 msgstr ""
-"Votre document imprimable (fichier %(doc)s) devrait maintenant apparaître"
-" dans une nouvelle fenêtre. Sinon consultez %(help)s ou demandez votre  "
-"administrateur système."
+"Votre document imprimable (fichier %(doc)s) devrait maintenant apparaître dans "
+"une nouvelle fenêtre. Sinon consultez %(help)s ou demandez votre  administrateur "
+"système."
 
 #: lino/modlib/printing/actions.py:177
 #, python-format
@@ -4586,8 +4580,8 @@ msgstr "Modifier le modèle d'impression"
 
 #: lino/modlib/printing/actions.py:262
 msgid ""
-"Before you can edit this template we must create a local copy on the "
-"server. This will exclude the template from future updates."
+"Before you can edit this template we must create a local copy on the server. "
+"This will exclude the template from future updates."
 msgstr ""
 
 #: lino/modlib/printing/actions.py:272
@@ -5179,4 +5173,3 @@ msgstr ""
 
 #~ msgid "Mark {} notifications as seen."
 #~ msgstr "Mode de notification e-mail"
-
