@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2018 Rumma & Ko Ltd
+# Copyright 2008-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
@@ -175,6 +175,7 @@ Django creates copies of them when inheriting models.
         # cls.preferred_width = max(cls.preferred_width, len(unicode(dt)))
         cls.items_dict[i.value] = i
         #~ cls.items_dict[i] = i
+        cls.choices.sort(key=lambda x: x[0].value)
 
 
     def remove(self):

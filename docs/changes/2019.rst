@@ -8,6 +8,16 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-04-23
+==========
+
+Choicelists are now always sorted by their value.  For example
+:mod:`lino_xl.lib.orders` adds a journal group "Orders" to
+:class:`lino_xl.lib.ledger.JournalGroups` with value "05" which means that we
+want it to comes before the "Sales" group.  The ordering of journal groups
+influences the ordering of items of the main menu.
+
+
 2019-04-15
 ==========
 
