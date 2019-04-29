@@ -3467,6 +3467,8 @@ Please convert to Plugin method".format(mod, methname)
                 meth = getattr(p, methname, None)
                 if meth is not None:
                     meth(self, user_type, menu)
+                    # print("20190430 {} {} ({}) --> {}".format(
+                    #       k, p.app_label, p.needed_by, [i.name for i in main.items]))
 
     def get_middleware_classes(self):
         """Yields the strings to be stored in

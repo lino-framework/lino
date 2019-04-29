@@ -8,8 +8,19 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-04-30
+==========
+
+Undid the change on 2019-04-23 (:ticket:`2975`): Choicelists are sorted by
+their natural order of creation.  To sort them by their value, you can now call
+:meth:`lino.core.choicelists.Choicelist.sort`.  This is done for
+:class:`lino_xl.lib.ledger.JournalGroups` by :mod:`lino_xl.lib.orders`, and for
+:class:`lino_xl.lib.ledger.CommonAccounts` by :mod:`lino_xl.lib.ledger`
+
+
 2019-04-29
 ==========
+
 Add use_detail_params_value as a new attribute to the :class:`lino.core.dbtables.Table`.
 
 2019-04-23

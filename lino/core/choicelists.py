@@ -17,18 +17,21 @@ Defining your own ChoiceLists
 
 `add_item` takes at least 2 and optionally a third positional argument:
 
-- The `value` is used to store this Choice in the database and for
-  sorting the choices.
+- The `value` is used to store this Choice in the database.
 - The `text` is what the user sees. It should be translatable.
 - The optional `name` is used to install this choice as a class
   attribute on the ChoiceList.
 
   
-The `value` must be a string.
+The `value` must be either None or a string.
   
 >>> MyColors.add_item(1, _("Green"), 'green')
 >>> MyColors.add_item(1, _("Green"), 'verbose_name_plural')
+
   
+The items are sorted by their order of creation, not by their value.
+This is visible e.g. in :class:`lino_xl.lib.cal.DurationUnits`.
+
 
 ChoiceListField
 ---------------
@@ -175,8 +178,6 @@ Django creates copies of them when inheriting models.
         # cls.preferred_width = max(cls.preferred_width, len(unicode(dt)))
         cls.items_dict[i.value] = i
         #~ cls.items_dict[i] = i
-        cls.choices.sort(key=lambda x: x[0].value)
-
 
     def remove(self):
         """Remove this choice from its list.
@@ -479,8 +480,7 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
 
     @classmethod
     def get_data_rows(self, ar=None):
-        """When showing a :class:`ChoiceList` as a table, the items are sorted
-        by their order of creation, not by their value.
+        """
 
         """
         # return sorted(self.items())
@@ -527,6 +527,18 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
     # @classmethod  # was not used
     # def setup_field(cls, fld):
     #     pass
+
+    @classmethod
+    def sort(cls):
+        """
+        Sort the items by their value.
+
+        Used for example by :mod:`lino_xl.lib.orders` where we add a journal
+        group to :class:`lino_xl.lib.ledger.JournalGroups` and want it to come
+        before the other groups.
+
+        """
+        cls.choices.sort(key=lambda x: x[0].value)
 
     @classmethod
     def field(cls, *args, **kw):

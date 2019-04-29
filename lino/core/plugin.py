@@ -245,7 +245,7 @@ class Plugin(object):
     def on_plugins_loaded(self, site):
         """
         Called exactly once on each installed plugin, when the
-        :class:`Site` has loaded all plugins but *before* calling
+        :class:`Site` has loaded all plugins, but *before* calling
         :meth:`setup_plugins`.  All this happens before settings are
         ready and long before the models modules start to load.
 
