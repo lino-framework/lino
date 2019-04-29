@@ -1744,7 +1744,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         is `html`.
         """
         ar = cls.request(
-            master, request=ar.request, param_values=ar.param_values,
+            master, request=ar.request, param_values=ar.param_values if getattr(cls, "use_detail_params_value", False) else {},
             is_on_main_actor=False)
         ar.renderer = settings.SITE.kernel.default_renderer
         el = ar.table2xhtml()
