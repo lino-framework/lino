@@ -332,3 +332,8 @@ http://www.sencha.com/forum/showthread.php?70195-NumberField-and-Right-Alignment
 .field-margin {
     margin-bottom: 22px;
 }
+
+.cal-week {
+	position: absolute;
+	margin-left: -22px;
+}
