@@ -843,6 +843,7 @@ class ShowDetail(Action):
     show_in_workflow = False
     save_action_name = 'submit_detail'
     callable_from = 't'
+    use_param_panel = True
 
     sort_index = 20
 
