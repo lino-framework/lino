@@ -34,6 +34,8 @@ from lino.utils import isiterable
 from lino.utils.jsgen import py2js, js_code
 from etgen.html import E, tostring, iselement, forcetext, to_rst
 from lino.core import constants
+from lino.core.fields import TableRow
+
 from lino.core.menus import Menu, MenuItem
 # from etgen.html import _html2rst as html2rst
 # from etgen.html import html2rst
@@ -801,7 +803,7 @@ class JsRenderer(HtmlRenderer):
                 apv = ba.action.action_param_defaults(ar, obj)
             ps = ba.action.params_layout.params_store
             kw.update(field_values=ps.pv2dict(ar, apv))
-        if isinstance(obj, models.Model):
+        if isinstance(obj, (models.Model, TableRow)):
             kw.update(record_id=obj.pk)
 
         return kw
