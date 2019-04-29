@@ -990,6 +990,8 @@ class BaseRequest(object):
             rec.update(disable_delete=rh.actor.disable_delete(elem, ar))
         if rh.actor.show_detail_navigator and with_navinfo:
             rec.update(navinfo=navinfo(ar.data_iterator, elem))
+        if ar.actor.parameters:
+            rec.update(param_values=ar.actor.params_layout.params_store.pv2dict(ar, ar.param_values))
 
         return rec
 

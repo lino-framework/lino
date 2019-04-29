@@ -1104,6 +1104,8 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
 
         kw = dict()
         #~ kw.update(empty_title=%s,rh.actor.get_button_label()
+        if getattr(rh.actor,'use_detail_params_value',None):
+            kw.update(use_detail_params_value=True)
         kw.update(ls_url=rh.actor.actor_url())
         kw.update(ls_store_fields=[js_code(f.as_js(f.name))
                   for f in rh.store.list_fields])

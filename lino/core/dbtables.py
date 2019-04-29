@@ -185,6 +185,7 @@ class Table(AbstractTable):
     fields in Grid views should be expanded in by default or not.
 
     """
+    use_detail_params_value = False
 
     @classmethod
     def add_quick_search_filter(cls, qs, search_text):

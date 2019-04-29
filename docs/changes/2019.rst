@@ -8,6 +8,10 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-04-29
+==========
+Add use_detail_params_value as a new attribute to the :class:`lino.core.dbtables.Table`.
+
 2019-04-23
 ==========
 
