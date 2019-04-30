@@ -21,3 +21,7 @@ class Plugin(ad.Plugin):
     # we don't specify checkdata as needed plugin because checkdata would
     # require users
 
+    def post_site_startup(self, site):
+        super(Plugin, self).post_site_startup(site)
+        site.models.printing.BuildMethods.sort()
+
