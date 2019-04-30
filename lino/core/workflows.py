@@ -189,7 +189,7 @@ class Workflow(choicelists.ChoiceList):
             #             cls, used_on_models))
             else:
                 cls.verbose_name_plural = _("States")
-
+        cls.sort()
 
 
     @classmethod
