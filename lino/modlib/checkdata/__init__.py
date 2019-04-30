@@ -96,6 +96,10 @@ class Plugin(ad.Plugin):
         if site.is_demo_site:
             self.configure(responsible_user='robin')
 
+    def post_site_startup(self, site):
+        super(Plugin, self).post_site_startup(site)
+        site.models.checkdata.Checkers.sort()
+
     def setup_main_menu(self, site, user_type, m):
         g = site.plugins.office
         m = m.add_menu(g.app_label, g.verbose_name)
