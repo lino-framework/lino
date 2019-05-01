@@ -37,7 +37,7 @@ e.g. welfare.jobs.NewJobsOverview needs
 }
 
 .x-grid3-hd-inner {
-  white-space: normal; 
+  white-space: normal;
 }
 
 .lino-info {
@@ -67,13 +67,13 @@ e.g. welfare.jobs.NewJobsOverview needs
 .x-item-disabled, .x-tree-node-disabled, .x-date-disabled
 */
 .x-item-disabled {
-  color: blue; 
-  /*   opacity: 1;  
+  color: blue;
+  /*   opacity: 1;
   font-weight: bold; */
 }
 
 .x-item-disabled * {
-  color: blue !important; 
+  color: blue !important;
   /*font-weight: bold !important; */
 }
 
@@ -96,13 +96,13 @@ e.g. welfare.jobs.NewJobsOverview needs
 /* See blog/2011/0603
 */
 .x-form-item-label{
-    white-space: nowrap; 
+    white-space: nowrap;
 }
 
 
 
 
-/* 
+/*
 .x-form-field { padding: 10px; }
 */
 
@@ -118,7 +118,7 @@ body.mceContentBody {
 }
 */
 body.mceNonEditable {
-  color: blue !important; 
+  color: blue !important;
 }
 
 /*
@@ -161,16 +161,16 @@ table.htmlText td,th {
 	margin-top:3px;
 	margin-left:20px;
 	margin-bottom:3px;
-	list-style-type: decimal; 
-	list-style-image: none; 
+	list-style-type: decimal;
+	list-style-image: none;
 	list-style-position: outside;
 	}
 .htmlText ul {
 	margin-top:3px;
 	margin-left:20px;
 	margin-bottom:3px;
-	list-style-type: square; 
-	list-style-image: none; 
+	list-style-type: square;
+	list-style-image: none;
 	list-style-position: outside;
 	}
 .htmlText strong {
@@ -203,7 +203,7 @@ table.htmlText tr td {
 
 
 
-/* 
+/*
 The following are 
 Alexander Dawson's CSS tooltips
 from <http://sixrevisions.com/css/css-only-tooltips/>,
@@ -213,7 +213,7 @@ adapted for usage in an ExtJS application.
 
 .x-form-item-label .tooltip {
 	border-bottom: 1px dotted #000000; color: #000000; outline: none;
-	cursor: help; 
+	cursor: help;
 	text-decoration: none;
 	position: relative;
 }
@@ -222,15 +222,15 @@ adapted for usage in an ExtJS application.
 	position: absolute;
 }
 .x-form-item-label .tooltip:hover span {
-	border-radius: 5px 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px; 
-	box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1); -webkit-box-shadow: 5px 5px rgba(0, 0, 0, 0.1); 
+	border-radius: 5px 5px; -moz-border-radius: 5px; -webkit-border-radius: 5px;
+	box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.1); -webkit-box-shadow: 5px 5px rgba(0, 0, 0, 0.1);
 	-moz-box-shadow: 5px 5px rgba(0, 0, 0, 0.1);
 	font-family: Calibri, Tahoma, Geneva, sans-serif;
 	position: absolute; left: 1em; top: 2em; z-index: 99;
 	overflow: visible;
-    white-space: normal; 
+    white-space: normal;
 	margin-left: 0; width: 250px;
-	
+
 }
 .x-form-item-label .tooltip:hover img {
 	border: 0; margin: -10px 0 0 -55px;
@@ -281,7 +281,7 @@ adapted for usage in an ExtJS application.
 }
 
 
-/* 
+/*
 .x-tip 
   .x-tip-tl
     .x-tip-tr
@@ -321,7 +321,7 @@ adapted for usage in an ExtJS application.
 /* border: 1px solid #FFAD33;  */
 
 
-/* 
+/*
 Thanks to Animal in 
 http://www.sencha.com/forum/showthread.php?70195-NumberField-and-Right-Alignment
 */
@@ -333,7 +333,30 @@ http://www.sencha.com/forum/showthread.php?70195-NumberField-and-Right-Alignment
     margin-bottom: 22px;
 }
 
+.lino-nav-cal h2 {
+    margin-bottom: 2px;
+}
+.lino-nav-cal h2>span{
+    width: 14ch;
+    display: inline-block;
+}
 .cal-week {
 	position: absolute;
 	margin-left: -22px;
+}
+.cal-month-table {
+	display: None;
+	position: absolute;
+    margin-left: -96px;
+    margin-top: 1px;
+    border: solid;
+	box-sizing: border-box;
+	background: #dfe8f6;
+	z-index: 1;
+	padding: 10px;
+	border-color: blue;
+}
+
+.lino-nav-cal span>span:hover .cal-month-table {
+    display: inline-block;
 }
