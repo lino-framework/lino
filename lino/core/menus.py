@@ -1,18 +1,17 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2018 Rumma & Ko Ltd
+# Copyright 2009-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
 Defines the classes :class:`MenuItem` and :class:`Menu`
 """
 from builtins import str
-# import six
+import six
 # str = six.text_type
 
 from builtins import object
 
-import logging
-logger = logging.getLogger(__name__)
+import logging ; logger = logging.getLogger(__name__)
 
 from django.conf import settings
 
@@ -269,6 +268,9 @@ class Menu(MenuItem):
         if ba is None:
             ba = obj.get_default_table().detail_action
             kw.update(action=ba)
+        # elif isinstance(ba, six.string_types):
+        #     ba = obj.get_default_table().get_action_by_name(ba)
+        #     kw.update(action=ba)
         return self.add_item_instance(MenuItem(**kw))
 
     def add_item(self, name, label, **kw):
