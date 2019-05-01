@@ -130,8 +130,13 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
 
         if isinstance(v, menus.MenuItem):
             if v.instance is not None:
-                h = self.instance_handler(None, v.instance, None)
+                # h = self.instance_handler(None, v.instance, None)
+                h = self.instance_handler(None, v.instance, v.bound_action)
+                # 20190501 not passing the v.bound_action seems an obvious bug,
+                # though there is probably no use case where the bug was visible
+                
                 assert h is not None
+                # print(20190430, h)
                 js = "function() {%s}" % h
                 return self.handler_item(v, js, None)
             elif v.bound_action is not None:
@@ -268,7 +273,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
         :ba:  The bound action
         :request_kwargs: keyword arguments to forwarded to the child action request
 
-        Any kwyword other arguments are forwarded to :meth:`ar2js`.
+        Any other keyword arguments are forwarded to :meth:`ar2js`.
 
         """
         if ar is None:
