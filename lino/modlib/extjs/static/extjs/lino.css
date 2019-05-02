@@ -345,18 +345,39 @@ http://www.sencha.com/forum/showthread.php?70195-NumberField-and-Right-Alignment
 	margin-left: -22px;
 }
 .cal-month-table {
-	display: None;
+/* 	display: None; */
+
+  	visibility: hidden;
+  	opacity: 0;
+  	transition: visibility 0s, opacity 0.5s linear;
 	position: absolute;
-    margin-left: -96px;
-    margin-top: 1px;
-    border: solid;
+  	margin-left: -96px;
+  	margin-top: 1px;
+  	border: solid;
 	box-sizing: border-box;
 	background: #dfe8f6;
 	z-index: 1;
-	padding: 10px;
+	padding: 12px;
 	border-color: blue;
+  	display: inline-block;
 }
-
+.cal-month-cell h3{
+	padding-bottom: 3px;
+}
+.cal-month-cell.other-month h3 a{
+	color: #5c5c5c;
+}
+.cal-month-cell.other-month a{
+	color: darkgray;
+}
+.cal-month-cell {
+	color: #5c5c5c;
+	min-height: 13ch;
+	border: lightgray solid 1px;
+	padding: 3px;
+	box-sizing: content-box;
+}
 .lino-nav-cal span>span:hover .cal-month-table {
-    display: inline-block;
+	visibility: visible;
+	opacity: 1;
 }
