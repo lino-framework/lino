@@ -381,3 +381,6 @@ http://www.sencha.com/forum/showthread.php?70195-NumberField-and-Right-Alignment
 	visibility: visible;
 	opacity: 1;
 }
+.current-day{
+	background-color: gainsboro;
+}
