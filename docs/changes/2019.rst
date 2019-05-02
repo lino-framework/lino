@@ -8,6 +8,14 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-05-02
+==========
+
+- Lino (:class:`lino.mixins.ref.StructuredReferrable`) now handles topics with
+  an empty reference more elegantly. Use case
+  :class:`lino_xl.lib.topics.Topic` with empty
+  :attr:`ref <lino_xl.lib.topics.Topic.ref>` field.
+
 2019-04-30
 ==========
 
