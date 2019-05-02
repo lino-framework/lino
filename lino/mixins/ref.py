@@ -139,7 +139,9 @@ class StructuredReferrable(Referrable):
     
     # def get_choices_text(self, request, actor, field):
     def __str__(self):
-        return "({}) {}".format(self.ref, self.get_designation())
+        if self.ref:
+            return "({}) {}".format(self.ref, self.get_designation())
+        return self.get_designation()
 
     # def get_designation(self):
     #     raise NotImplementedError()
