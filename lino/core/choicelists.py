@@ -304,11 +304,7 @@ class ChoiceListMeta(actors.ActorMetaClass):
         cls.items_dict = {}
         cls.clear()
         cls._fields = []
-        cls._lazy_items = []
-        #~ cls.max_length = 1
-        #~ assert not hasattr(cls,'items') 20120620
-        #~ for i in cls.items:
-            #~ cls.add_item(i)
+        # cls._lazy_items = []
         return cls
 
 
@@ -496,10 +492,14 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
 
     @classmethod
     def clear(cls):
-        """
+        """Clear the list, i.e. remove all items.
+
+        This is used when you want to restart from scratch for building a
+        choicelist.
+
         """
         # remove previously defined choices from class dict:
-        for ci in list(cls.items_dict.values()):
+        for ci in cls.items_dict.values():
             if ci.name:
                 delattr(cls, ci.name)
         cls.removed_names = frozenset()
@@ -579,12 +579,14 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
         is not necessarily resolvable at that moment.
 
         """
-        @receiver(pre_analyze)
-        def func(sender, **kw):
+        @receiver(pre_analyze, weak=False)
+        def func(sender, **ignored):
             # logger.info("20170802 okay %s", cls)
             cls.add_item(*args, **kwargs)
             
-        cls._lazy_items.append(func)
+        # cls._lazy_items.append(func)
+        # we must store the func somewhere because receiver only connects it to
+        # the signal, which is a weak reference.
             
     @classmethod
     def add_item(cls, *args, **kw):

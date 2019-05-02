@@ -11,10 +11,17 @@ Changes 2019 in Lino
 2019-05-02
 ==========
 
-- Lino (:class:`lino.mixins.ref.StructuredReferrable`) now handles topics with
-  an empty reference more elegantly. Use case
-  :class:`lino_xl.lib.topics.Topic` with empty
-  :attr:`ref <lino_xl.lib.topics.Topic.ref>` field.
+Lino (:class:`lino.mixins.ref.StructuredReferrable`) now handles topics with
+an empty reference more elegantly. Use case
+:class:`lino_xl.lib.topics.Topic` with empty
+:attr:`ref <lino_xl.lib.topics.Topic.ref>` field.
+
+Removed a hack which caused side effects when trying to sort a choicelist with
+lazy items). The :meth:`lino.core.choicelists.ChoiceList.add_item_lazy` method
+now specifies `weak=False` for the receiver (as explained in the docs for
+`Signal.connect
+<https://docs.djangoproject.com/en/2.2/topics/signals/#django.dispatch.Signal.connect>`__)
+instead of storing the wrapper function itself.
 
 2019-04-30
 ==========
