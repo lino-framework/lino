@@ -1021,6 +1021,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                 else:
                     dtla = actions.ShowDetail(cls.detail_layout)
             cls.detail_action = cls._bind_action('detail_action', dtla)
+            if cls.use_detail_param_panel:
+                cls.detail_action.action.use_param_panel = True
             # if str(cls).endswith("Days"):
             #     logger.info("20181230 %r detail_action is %r", cls, cls.detail_action)
             if cls.editable:

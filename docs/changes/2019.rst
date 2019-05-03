@@ -8,6 +8,12 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-05-03
+==========
+
+Added :attr:`lino.utils.Parametrizable.use_detail_param_panel` which causes  
+he params panel to be shown in the detail view.
+
 2019-05-02
 ==========
 

@@ -340,6 +340,9 @@ http://www.sencha.com/forum/showthread.php?70195-NumberField-and-Right-Alignment
     width: 14ch;
     display: inline-block;
 }
+.lino-nav-cal span.cal-nav-today{
+
+}
 .cal-week {
 	position: absolute;
 	margin-left: -22px;
