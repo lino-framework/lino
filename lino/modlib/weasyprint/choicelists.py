@@ -48,7 +48,7 @@ class WeasyBuildMethod(DjangoBuildMethod):
             cmd_options = elem.get_build_options(self)
             dd.logger.info(
                 "%s render %s -> %s (%r, %s)",
-                self.name, tpl, filename, lang, cmd_options)
+                self.name, tpl.lino_template_names, filename, lang, cmd_options)
             context = elem.get_printable_context(ar)
             html = tpl.render(context)
             self.html2file(html, filename)

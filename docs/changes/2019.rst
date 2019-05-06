@@ -8,6 +8,13 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-05-06
+==========
+
+weasyprint now logs the template names when rendering a template.
+
+cgi.escape is deprecated in Python 3
+
 2019-05-03
 ==========
 

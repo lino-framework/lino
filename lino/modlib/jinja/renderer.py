@@ -1,4 +1,4 @@
-# Copyright 2015-2017 Rumma & Ko Ltd
+# Copyright 2015-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
@@ -9,7 +9,7 @@ directories. TODO: do only one common loop for both.
 
 from os.path import join, dirname, isdir
 from builtins import str
-import cgi
+from lino import PYAFTER26
 import datetime
 import jinja2
 
@@ -30,6 +30,10 @@ from lino.core.renderer import MailRenderer
 
 from lino.api import rt
 
+if PYAFTER26:
+    from html import escape
+else:
+    from cgi import escape
 
 class JinjaRenderer(MailRenderer):
 
@@ -130,7 +134,7 @@ class JinjaRenderer(MailRenderer):
             tr=settings.SITE.babelitem,
             # dd=dd,
             rt=rt,
-            escape=cgi.escape,
+            escape=escape,
             Counter=Counter,
             SumCollector=SumCollector,
             # lino=self.modules,  # experimental

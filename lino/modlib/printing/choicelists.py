@@ -101,19 +101,22 @@ class DjangoBuildMethod(TemplatedBuildMethod):
 
     def get_template(self, action, elem):
         tpls = action.get_print_templates(self, elem)
+        # print('20190506 get_template', tpls)
         if len(tpls) == 0:
             raise Warning("No templates defined for %r" % elem)
         tpls2 = []
         for i in tpls:
             for g in elem.get_template_groups():
                 tpls2.append(g+'/'+i)
-        #~ logger.debug('make_pisa_html %s',tpls)
+        # print('20190506 get_template', tpls2)
         # prefix = '/'.join(elem.get_template_groups())
         # if prefix:
         #     prefix += '/'
         # tpls = [prefix + tpl for tpl in tpls]
         try:
-            return select_template(tpls2)
+            tpl = select_template(tpls2)
+            tpl.lino_template_names = tpls2
+            return tpl
         except TemplateDoesNotExist as e:
             raise Warning("No template found for %s (%s)" % (e, tpls2))
         except Exception as e:

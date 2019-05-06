@@ -58,6 +58,7 @@ class BasePrintAction(Action):
     #     return isinstance(caller, (ShowTable, ShowDetail))
 
     def get_print_templates(self, bm, elem):
+        # print("20190506 BasePrintAction.get_print_templates", elem)
         return elem.get_print_templates(bm, self)
 
     def get_printable_context(self, bm, elem, ar):
