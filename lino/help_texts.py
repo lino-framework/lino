@@ -721,7 +721,7 @@ document."""),
     'lino.modlib.printing.Printable.get_print_language' : _("""Return a Django language code to be activated when an instance
 of this is being printed.  The default implementation returns
 the Site's default language."""),
-    'lino.modlib.printing.Printable.get_print_templates' : _("""Return a list of filenames of templates for the specified
+    'lino.modlib.printing.Printable.get_print_templates' : _("""Return a list of file names of templates for the specified
 build method.  Returning an empty list means that this item is
 not printable.  For subclasses of SimpleBuildMethod
 the returned list may not contain more than 1 element."""),

@@ -611,7 +611,7 @@ class Parametrizable(object):
     use_detail_param_panel = False
     """
     Set to true if you want the params panel to be displayed in the detail view. 
-    Used only in :class:`lino_xl.lib.cal.CalView
+    Used only in :class:`lino_xl.lib.cal.CalView`.
     """
 
     _layout_class = NotImplementedError
