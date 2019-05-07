@@ -1,12 +1,9 @@
-# Copyright 2015 Rumma & Ko Ltd
+# Copyright 2015-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-"""Serves as menu hook for several other modules.
+"""Provides a menu hook for several other plugins.
 
-.. autosummary::
-   :toctree:
-
-    roles
+See :doc:`/specs/office`.
 
 """
 
