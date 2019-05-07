@@ -81,6 +81,11 @@ class CombinedDateTime(dd.Model):
         date and time fields.
 
         `name` can be 'start' or 'end'.
+
+        The optional `altname` can be used e.g. in a single-day calendar event
+        to support having `end_date` empty, meaning "same as `start_date`".
+        In that case you should ask ``get_datetime("end", "start")``.
+
         """
         d = getattr(self, name + '_date')
         t = getattr(self, name + '_time')
