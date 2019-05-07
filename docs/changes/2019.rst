@@ -8,6 +8,11 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-05-07
+==========
+
+Released Lino 19.5.0 to PyPI.
+
 2019-05-06
 ==========
 
@@ -84,6 +89,7 @@ New option :attr:`lino.modlib.users.StartPlan.update_after_start`
 
 2019-04-11
 ==========
+
 Released Lino 19.4.0 to PyPI.
 
 2019-04-10
