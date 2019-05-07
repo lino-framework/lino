@@ -309,11 +309,6 @@ Jinja renderer."""),
     'lino.modlib.notify.Plugin.keep_unseen' : _("""Whether to keep unseen messages when removing old messages
 according to remove_after."""),
     'lino.modlib.office.Plugin' : _("""See /dev/plugins."""),
-    'lino.modlib.office.roles.OfficeUser' : _("""Has access to office functionality like calendar, notes and
-uploads."""),
-    'lino.modlib.office.roles.OfficeOperator' : _("""Can manage office functionality for other users (but not for
-himself)."""),
-    'lino.modlib.office.roles.OfficeStaff' : _("""Can manage configuration of office functionality."""),
     'lino.modlib.printing.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.restful.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.smtpd.Plugin' : _("""See /dev/plugins."""),
