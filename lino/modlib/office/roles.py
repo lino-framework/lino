@@ -7,11 +7,13 @@
 # from lino.core.roles import UserRole, SiteUser, SiteAdmin
 from lino.core.roles import UserRole
 
+
 class OfficeUser(UserRole):
     """
     Has access to office functionality like calendar, notes and
     uploads.
     """
+
 
 class OfficeOperator(UserRole):
     """
@@ -21,10 +23,11 @@ class OfficeOperator(UserRole):
     An office operator can create their own notes and uploads, but no
     calendar entries.
 
-    For example the `lino_xl.lib.cal.ui.OverdueAppointments` table
+    For example the `lino_xl.lib.cal.OverdueAppointments` table
     requires :class:`OfficeStaff` and is *not* available for
     :class:`OfficeOperator`.
     """
+
 
 class OfficeStaff(OfficeUser, OfficeOperator):
     """
