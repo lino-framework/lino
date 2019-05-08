@@ -8,6 +8,11 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-05-08
+==========
+
+Translations.
+
 2019-05-07
 ==========
 

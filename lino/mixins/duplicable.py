@@ -108,7 +108,7 @@ class Duplicate(actions.Action):
                 ar2.goto_instance(new)
         obj = ar.selected_rows[0]
         ar.confirm(
-            ok, _("This will create a copy of {}").format(obj),
+            ok, _("This will create a copy of {}.").format(obj),
             _("Are you sure?"))
 
 
