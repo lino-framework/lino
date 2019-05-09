@@ -990,13 +990,13 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
               dh.layout._formpanel_name
 
         if dh.layout._formpanel_name.endswith('.DetailFormPanel'):
-            yield "cls: \"l-DetailFormPanel\","
+            yield "cls: %s," % py2js("l-DetailFormPanel " + tbl.actor_id.replace(".", "-"))
         if dh.layout._formpanel_name.endswith('.InsertFormPanel'):
-            yield "cls: \"l-InsertFormPanel\","
+            yield "cls: %s," % py2js("l-InsertFormPanel " + tbl.actor_id.replace(".", "-"))
         if dh.layout._formpanel_name.endswith('.ParamsPanel'):
-            yield "cls: \"l-ParamsPanel\","
+            yield "cls: %s," % py2js("l-ParamsPanel " + tbl.actor_id.replace(".", "-"))
         if dh.layout._formpanel_name.endswith('_ActionFormPanel'):
-            yield "cls: \"l-ActionFormPanel\","
+            yield "cls: %s," % py2js("l-ActionFormPanel " + tbl.actor_id.replace(".", "-"))
 
         yield "  layout: 'fit',"
         yield "  auto_save: true,"

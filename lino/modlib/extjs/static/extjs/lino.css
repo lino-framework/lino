@@ -355,7 +355,6 @@ http://www.sencha.com/forum/showthread.php?70195-NumberField-and-Right-Alignment
   	transition: visibility 0s, opacity 0.5s linear;
 	position: absolute;
   	margin-left: -96px;
-  	margin-top: 1px;
   	border: solid;
 	box-sizing: border-box;
 	background: #dfe8f6;
@@ -364,8 +363,15 @@ http://www.sencha.com/forum/showthread.php?70195-NumberField-and-Right-Alignment
 	border-color: blue;
   	display: inline-block;
 }
-.cal-month-cell h3{
+.cal-month-table a {
+	font-weight: normal;
+}
+.cal-month-cell div.header{
 	padding-bottom: 3px;
+}
+
+cal-month-cell td>a{
+	text-decoration: none;
 }
 .cal-month-cell.other-month h3 a{
 	color: #5c5c5c;
@@ -373,17 +379,25 @@ http://www.sencha.com/forum/showthread.php?70195-NumberField-and-Right-Alignment
 .cal-month-cell.other-month a{
 	color: darkgray;
 }
-.cal-month-cell {
+.cal-MonthlyView td.x-grid3-cell:not(.x-grid3-cell-first) {
 	color: #5c5c5c;
-	min-height: 13ch;
+	min-height: 14ch;
 	border: lightgray solid 1px;
 	padding: 3px;
 	box-sizing: content-box;
+}
+
+.cal-MonthlyView td.x-grid3-cell-first  {
+  vertical-align: middle;
+}
+
+.cal-MonthlyView table[name="cal.MonthlyPlanner.grid"] {
+	height: 100%;
 }
 .lino-nav-cal span>span:hover .cal-month-table {
 	visibility: visible;
 	opacity: 1;
 }
 .current-day{
-	background-color: gainsboro;
+/* 	background-color: gainsboro; */
 }

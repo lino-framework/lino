@@ -34,7 +34,7 @@ from etgen import html as xghtml
 from etgen.html import E
 from lino.utils import jsgen
 from lino.core.utils import getrqdata
-from .fields import RemoteField, FakeField
+from .fields import RemoteField, FakeField, TableRow
 
 from .requests import ActionRequest
 
@@ -687,9 +687,10 @@ class TableRequest(ActionRequest):
                 if self.actor.known_values.get(k, None) != v:
                     bp[k] = v
         if self.master_instance is not None:
-            if isinstance(self.master_instance, models.Model):
+            if isinstance(self.master_instance, (models.Model, TableRow)):
                 bp[constants.URL_PARAM_MASTER_PK] = self.master_instance.pk
-                if settings.SITE.is_installed('contenttypes'):
+                if (isinstance(self.master_instance, models.Model) and
+                              settings.SITE.is_installed('contenttypes')):
                     from django.contrib.contenttypes.models import ContentType
                     mt = ContentType.objects.get_for_model(
                         self.master_instance.__class__).pk
