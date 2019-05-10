@@ -445,3 +445,16 @@ http://www.sencha.com/forum/showthread.php?70195-NumberField-and-Right-Alignment
 	margin-left: 0.3ch;
 	margin-bottom: 0.5ch;
 }
+.tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+
+  /* Position the tooltip */
+  position: absolute;
+  z-index: 1;
+}
