@@ -373,8 +373,11 @@ http://www.sencha.com/forum/showthread.php?70195-NumberField-and-Right-Alignment
 /*.cal-month-cell.other-month h3 a{*/
 	/*color: #5c5c5c;*/
 /*}*/
-.cal-month-cell.cal-in-past p a{
+.cal-month-cell.cal-in-past a {
 	color: darkgray;
+}
+.cal-month-cell.cal-in-past div.header a {
+	color: unset;
 }
 .cal-MonthlyView table[name="cal.MonthlyPlanner.grid"] {
 	height: 100%;
