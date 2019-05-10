@@ -382,6 +382,16 @@ http://www.sencha.com/forum/showthread.php?70195-NumberField-and-Right-Alignment
 .cal-MonthlyView table[name="cal.MonthlyPlanner.grid"] {
 	height: 100%;
 }
+.cal-MonthlyView table[name="cal.MonthlyPlanner.grid"] tr:nth-child(1) th{
+	height: 1ch;
+}
+.cal-WeeklyView table[name="cal.WeeklyPlanner.grid"] td>a{
+	margin-bottom: 3px;
+	display: block;
+}
+.cal-WeeklyView table[name="cal.WeeklyPlanner.grid"] tr td:nth-child(1) {
+	white-space: nowrap;
+}
 /*For extjs grid of cal view, never going to be used? */
 .cal-MonthlyView td.x-grid3-cell:not(.x-grid3-cell-first) {
 	color: #5c5c5c;
