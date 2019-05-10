@@ -417,7 +417,7 @@ http://www.sencha.com/forum/showthread.php?70195-NumberField-and-Right-Alignment
 .fixed-table tbody{
 	vertical-align: unset;
 }
-.fixed-table td p{
+.fixed-table td div{
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
