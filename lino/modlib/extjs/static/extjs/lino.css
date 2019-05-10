@@ -422,3 +422,13 @@ http://www.sencha.com/forum/showthread.php?70195-NumberField-and-Right-Alignment
     overflow: hidden;
     text-overflow: ellipsis;
 }
+.dot {
+  height: 7px;
+  width: 7px;
+  border-radius: 50%;
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 0.3ch;
+	margin-left: 0.3ch;
+	margin-bottom: 0.5ch;
+}
