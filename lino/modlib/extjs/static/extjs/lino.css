@@ -370,15 +370,16 @@ http://www.sencha.com/forum/showthread.php?70195-NumberField-and-Right-Alignment
 	padding-bottom: 3px;
 }
 
-cal-month-cell td>a{
-	text-decoration: none;
-}
-.cal-month-cell.other-month h3 a{
-	color: #5c5c5c;
-}
-.cal-month-cell.other-month a{
+/*.cal-month-cell.other-month h3 a{*/
+	/*color: #5c5c5c;*/
+/*}*/
+.cal-month-cell.cal-in-past p a{
 	color: darkgray;
 }
+.cal-MonthlyView table[name="cal.MonthlyPlanner.grid"] {
+	height: 100%;
+}
+/*For extjs grid of cal view, never going to be used? */
 .cal-MonthlyView td.x-grid3-cell:not(.x-grid3-cell-first) {
 	color: #5c5c5c;
 	min-height: 14ch;
@@ -391,13 +392,33 @@ cal-month-cell td>a{
   vertical-align: middle;
 }
 
-.cal-MonthlyView table[name="cal.MonthlyPlanner.grid"] {
-	height: 100%;
-}
+
 .lino-nav-cal span>span:hover .cal-month-table {
 	visibility: visible;
 	opacity: 1;
 }
+.other-month{
+ 	background-color: gainsboro;
+}
 .current-day{
-/* 	background-color: gainsboro; */
+	background-color: #fbfbfb;
+}
+
+.fixed-table{
+    width: 100%;
+	height: 100%;
+    table-layout: fixed;
+
+    /*not really necessary, removes extra white space */
+    border-collapse: collapse;
+    border-spacing: 0;
+    border: 0;
+}
+.fixed-table tbody{
+	vertical-align: unset;
+}
+.fixed-table td p{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
