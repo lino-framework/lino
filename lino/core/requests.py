@@ -640,8 +640,13 @@ class BaseRequest(object):
     def get_total_count(self):
         """
         TableRequest overrides this to return the number of rows.
+
+        For other requests we assume that there is one row.  This is used e.g.
+        when courses.StatusReport is shown in the the dashboard. A Report
+        returns always 1 because otherwise the dashboard believes it is empty.
+
         """
-        return -1
+        return 1
     
     def get_data_value(self, obj, name):
         """
@@ -1180,7 +1185,7 @@ class ActorRequest(BaseRequest):
 
 class ActionRequest(ActorRequest):
     """
-    Holds information about an indivitual web request and provides
+    Holds information about an individual web request and provides
     methods like
 
     - :meth:`get_user <lino.core.actions.BaseRequest.get_user>`
@@ -1216,6 +1221,12 @@ class ActionRequest(ActorRequest):
         self.bound_action = action or actor.default_action
         BaseRequest.__init__(self, **kw)
         self.ah = actor.get_request_handle(self)
+
+    def __str__(self):
+        return "{0} {1}".format(self.__class__.__name__, self.bound_action)
+
+    def __repr__(self):
+        return "{0} {1}".format(self.__class__.__name__, self.bound_action)
 
     def setup(self,
               known_values=None,
