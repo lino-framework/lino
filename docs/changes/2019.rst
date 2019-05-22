@@ -8,6 +8,11 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-05-22
+==========
+
+Fixed :ticket:`3010`.
+
 2019-05-10
 ==========
 

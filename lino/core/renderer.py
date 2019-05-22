@@ -464,6 +464,7 @@ request `tar`."""
         """
         from lino.core.actors import Actor
         from lino.core.tables import TableRequest
+        from lino.core.requests import ActionRequest
         elems = []
         try:
             for item in forcetext(story):
@@ -476,6 +477,10 @@ request `tar`."""
                 elif isinstance(item, TableRequest):
                     assert item.renderer is not None
                     elems.extend(self.table2story(item, **kwargs))
+                elif isinstance(item, ActionRequest):
+                    # example : courses.StatusReport in dashboard
+                    assert item.renderer is not None
+                    elems.append(self.show_story(ar, item.actor.get_story(None, ar), **kwargs))
                 elif isinstance(item, DashboardItem):
                     elems.append(E.div(
                         self.show_story(ar, item.render(ar), **kwargs),
@@ -664,6 +669,7 @@ class TextRenderer(HtmlRenderer):
     def show_story(self, ar, story, stripped=True, **kwargs):
         """Render the given story as reStructuredText to stdout."""
         from lino.core.actors import Actor
+        from lino.core.tables import TableRequest
         from lino.core.requests import ActionRequest
 
         try:
@@ -676,9 +682,13 @@ class TextRenderer(HtmlRenderer):
                 elif isinstance(item, DashboardItem):
                     self.show_story(
                         ar, item.render(ar), stripped, **kwargs)
-                elif isinstance(item, ActionRequest):
+                elif isinstance(item, TableRequest):
                     self.show_table(item, stripped=stripped, **kwargs)
                     # print(item.table2rst(*args, **kwargs))
+                elif isinstance(item, ActionRequest):
+                    # example : courses.StatusReport in dashboard
+                    assert item.renderer is not None
+                    self.show_story(ar, item.actor.get_story(None, ar), **kwargs)
                 elif isiterable(item):
                     self.show_story(ar, item, stripped, **kwargs)
                     # for i in self.show_story(ar, item, *args, **kwargs):

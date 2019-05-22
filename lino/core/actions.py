@@ -880,10 +880,10 @@ class ShowEmptyTable(ShowDetail):
     
     def get_label(self):
         return self.label or self.defining_actor.label
-    
 
     def as_bootstrap_html(self, ar):
         return super(ShowEmptyTable, self).as_bootstrap_html(ar, '-99998')
+
 
 class ShowInsert(TableAction):
     """

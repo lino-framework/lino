@@ -777,7 +777,9 @@ class BaseRequest(object):
         return self.renderer.show_story(self, *args, **kwargs)
     
     def show_dashboard(self):
-        """Utility method to show the dashboard of """
+        """Show the dashboard of the user who made this request.
+
+        Utility method  for doctests."""
         return self.show_story(
             self.get_user().get_preferences().dashboard_items)
 
@@ -866,8 +868,6 @@ class BaseRequest(object):
         with translation.override(language):
             print(menuselection_text(mi))
 
-    
-
     def window_action_button(self, *args, **kwargs):
         # settings.SITE.logger.info(
         #     "20160529 window_action_button %s %s", args, self.renderer)
@@ -901,7 +901,6 @@ class BaseRequest(object):
         # if len(buttons) == 0:
         #     return None
         # return E.p(*buttons, **btnattrs)
-    
 
     def ar2button(self, *args, **kwargs):
         """Return an HTML element with a button for running this action

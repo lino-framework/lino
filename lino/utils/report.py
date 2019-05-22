@@ -172,18 +172,24 @@ class EmptyTable(Frame):
 
 class Report(EmptyTable):
     """
-    Deprecated. Replace by users.UserPlan and mixins.Story.
 
-    A special kind of :class:`EmptyTable` used to create complex
-    "reports".  A report is a series of headings, paragraphs and
-    tables combined into a single printable and previewable document.
+    A special kind of :class:`EmptyTable` used to create "reports".  A report
+    is a series of headings, paragraphs and tables combined into a single
+    printable and previewable document.
 
     When subclassing this, application code must either define
     :attr:`report_items` or implement an alternative :meth:`get_story`.
 
+    Usage examples:
     :class:`lino_xl.lib.courses.StatusReport`
     :class:`lino_xl.lib.ledger.Situation`
     :class:`lino_xl.lib.ledger.ActivityReport`
+    :class:`lino_welfare.modlib.integ.ActivityReport`
+
+    Note that there is also :class:`lino.modlib.users.UserPlan` and
+    :class:`lino.mixins.Story` for more expensive "reports" where you use
+    cached data :class:`lino_xl.lib.sheets.Report`.
+
     """
 
     detail_layout = "body"
