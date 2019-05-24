@@ -1000,6 +1000,7 @@ class SaveGridCell(Action):
     sort_index = 10
     show_in_workflow = False
     action_name = 'grid_put'
+    http_method = "PUT"
     readonly = False
     auto_save = False
     callable_from = None
@@ -1028,7 +1029,6 @@ class SubmitDetail(SaveGridCell):
     help_text = _("Save changes in this form")
     label = _("Save")
     action_name = ShowDetail.save_action_name
-    http_method = "PUT"
     submit_form_data = True
     callable_from = 'd'
 

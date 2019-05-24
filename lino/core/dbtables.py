@@ -185,8 +185,10 @@ class Table(AbstractTable):
     fields in Grid views should be expanded in by default or not.
 
     """
-    use_detail_params_value = False
 
+    use_detail_params_value = False
+    """If when in a detail view will override default param values with the detail's pv values.
+    """
     @classmethod
     def add_quick_search_filter(cls, qs, search_text):
         """Add a filter to the given queryset `qs` in order to apply a quick
