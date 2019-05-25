@@ -91,7 +91,7 @@ def extract_from_part(parsed):
                 for x in extract_from_part(item):
                     yield x
             elif item.ttype is Keyword:
-                return StopIteration
+                return
             else:
                 yield item
         elif item.ttype is Keyword and item.value.upper() == 'FROM':
