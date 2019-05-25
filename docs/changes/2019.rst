@@ -1,3 +1,4 @@
+
 .. include:: /../docs/shared/include/defs.rst
 .. _lino.changes.2019:
 
@@ -8,10 +9,15 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-05-25
+==========
+
+Fixed
+
 2019-05-22
 ==========
 
-Fixed :ticket:`3010`.
+Fixed :ticket:`3010` (subclasses of Report are not shown in the dashboard).
 
 2019-05-10
 ==========
