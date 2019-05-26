@@ -1050,6 +1050,7 @@ class CreateRow(Action):
     show_in_workflow = False
     readonly = False
     callable_from = None
+    http_method = "POST"
 
     # select_rows = False
     # submit_form_data = True

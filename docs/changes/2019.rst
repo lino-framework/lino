@@ -12,6 +12,11 @@ Changes 2019 in Lino
 2019-05-25
 ==========
 
+Changed :attr:`http_method` of CreateRow to "POST"
+
+2019-05-25
+==========
+
 Fixed
 
 2019-05-22
