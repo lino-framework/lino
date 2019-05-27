@@ -102,22 +102,13 @@ def extract_table_identifiers(token_stream):
     for item in token_stream:
         if isinstance(item, IdentifierList):
             for identifier in item.get_identifiers():
-                try:
-                    yield identifier.get_name()
-                except StopIteration:
-                    return
+                yield identifier.get_name()
         elif isinstance(item, Identifier):
-            try:
-                yield item.get_name()
-            except StopIteration:
-                return
+            yield item.get_name()
         # It's a bug to check for Keyword here, but in the example
         # above some tables names are identified as keywords...
         elif item.ttype is Keyword:
-            try:
-                yield item.value
-            except StopIteration:
-                return
+            yield item.value
 
 def extract_tables(stmt):
     stream = extract_from_part(stmt)
