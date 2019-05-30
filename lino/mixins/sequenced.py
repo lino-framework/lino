@@ -34,6 +34,49 @@ from lino.utils import join_elems
 from .duplicable import Duplicable, Duplicate
 
 
+class MoveByN(actions.Action):
+    """Move this row N rows upwards or downwards.
+
+    This action is available on any :class:`Sequenced` object as
+    :attr:`Sequenced.MoveByN`.
+
+    It is currently only used by React to allow for drag and drop reording.
+
+    """
+
+    # label = _("Up")
+    # label = "\u2191" thin arrow up
+    # label = "\u25b2" # triangular arrow up
+    # label = "\u25B2"  # ▲ Black up-pointing triangle
+    # label = "↑"  #
+    custom_handler = True
+    # icon_name = 'arrow_up'
+    #~ icon_file = 'arrow_up.png'
+    readonly = False
+    show_in_bbar = False
+
+    def get_action_permission(self, ar, obj, state):
+        if ar.data_iterator is None:
+            return False
+        if not super(MoveByN, self).get_action_permission(ar, obj, state):
+            return False
+        if ar.data_iterator.count() == 0:
+            return False
+        return True
+
+    def run_from_ui(self, ar, **kw):
+        obj = ar.selected_rows[0]
+        obj.seqno += int(ar.request.GET['seqno'])
+        obj.seqno_changed(ar)
+        # obj.full_clean()
+        obj.save()
+        kw = dict()
+        kw.update(refresh_all=True)
+        kw.update(message=_("Reordered."))
+        ar.success(**kw)
+
+
+
 class MoveUp(actions.Action):
     """Move this row one row upwards.
 
@@ -200,6 +243,12 @@ class Sequenced(Duplicable):
     """The :class:`MoveDown` action on this object.
 
     """
+
+    move_by_n = MoveByN()
+    """The :class:`MoveByN` action on this object.
+
+    """
+
 
     def __str__(self):
         return str(_("Row # %s") % self.seqno)
