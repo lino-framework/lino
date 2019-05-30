@@ -1,26 +1,37 @@
 #!/bin/bash
-# Copyright 2015-2016 Luc Saffre
+# Copyright 2015-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 #
-# Run `git pull` on all repositories used by this project. Also remove
-# all `*.pyc` files.
+# Run `pip --update` for this environment. 
+# Run `git pull` on repositories in develop mode (`pip -e`)
+# Also remove all `*.pyc` files in these repositories.
 #
+# NOTE THIS IS A TEMPLATE TO BE COPIED TO A PRODUCTION SITE.
+# YOU SHOULD ADAPT IT MANUALLY AND THEN REMOVE THIS NOTE.
 
 set -e
+umask 0007
 
+PRJDIR=`pwd`
+
+. env/bin/activate
+
+echo "Run pull.sh in $PRJDIR" >> freeze.log
 date >> freeze.log
 pip freeze >> freeze.log
 
-function pull_here() {
+pip install -U lino
+pip install -U xl
+
+function pull() {
+    repo=$1
+    cd $repo
     pwd
     git pull
     find -name '*.pyc' -exec rm -f {} +
+    cd $PRJDIR
 }
 
-REPOS=/path/to/your/repositories
 
-cd $REPOS/lino ; pull_here
-cd $REPOS/xl ; pull_here
-cd $REPOS/cosi ; pull_here
-cd $REPOS/voga ; pull_here
+pull repositories/cosi
 
