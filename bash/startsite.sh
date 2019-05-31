@@ -19,13 +19,17 @@ umask 0007
 # CONFIG SECTION:
 
 PROJECTS_ROOT=/usr/local/lino
+PROJECTS_PREFIX=prod_sites
 ARCH_DIR=/var/backups/lino
 ENVDIR=env
 REPOSDIR=repositories
 USERGROUP=www-data
+DB_BACKEND=mysql
+DB_USERNAME=lino
+DB_PASSWD=1234
 
-# END OF CONFIG SECTION. IF DECIDE TO EDIT BELOW THIS ROW, PLEASE CONSIDER
-# SHARING YOUR THOUGHTS BACK TO THE PROJECT
+# END OF CONFIG SECTION. IF YOU EDIT BELOW THIS ROW, PLEASE CONSIDER
+# SHARING YOUR THOUGHTS BACK TO THE PROJECT.
 
 if groups | grep &>/dev/null '\b$USERGROUP\b'
 then
@@ -64,13 +68,21 @@ USAGE
 }
 
 
-function install() {
-    if ! [ -d $PROJECTS_ROOT ] ; then
-        echo Create $PROJECTS_ROOT
-        sudo mkdir $PROJECTS_ROOT
+function check_dir_exist() {
+    name=$1
+    if ! [ -d $name ] ; then
+        echo Create $name
+        sudo mkdir $name
     fi
-    sudo chmod g+ws $PROJECTS_ROOT
-    sudo chown :$USERGROUP $PROJECTS_ROOT
+    sudo chmod g+ws $name
+    sudo chown :$USERGROUP $name
+}
+
+function install() {
+    check_dir_exist $PROJECTS_ROOT
+    check_dir_exist $PROJECTS_ROOT/$PROJECTS_PREFIX
+
+    sudo apt install virtualenv
 }
 
 if [ "$1" = "-h"  -o "$1" = "--help" ] ; then
@@ -110,8 +122,13 @@ cd $prjdir
 
 virtualenv $ENVDIR
 . $ENVDIR/bin/activate
+
+pip install -U pip
+pip install -U setuptools
+
 mkdir $REPOSDIR
 cd $REPOSDIR
 git clone https://github.com/lino-framework/$appname.git
 pip install -e $appname
-
+wget https://raw.githubusercontent.com/lino-framework/lino/master/bash/make_snapshot.sh
+wget https://raw.githubusercontent.com/lino-framework/lino/master/bash/pull.sh
