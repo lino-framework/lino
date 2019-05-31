@@ -24,9 +24,6 @@ ARCH_DIR=/var/backups/lino
 ENVDIR=env
 REPOSDIR=repositories
 USERGROUP=www-data
-DB_BACKEND=mysql
-DB_USERNAME=lino
-DB_PASSWD=1234
 
 # END OF CONFIG SECTION. IF YOU EDIT BELOW THIS ROW, PLEASE CONSIDER
 # SHARING YOUR THOUGHTS BACK TO THE PROJECT.
@@ -83,6 +80,9 @@ function install() {
     check_dir_exist $PROJECTS_ROOT/$PROJECTS_PREFIX
 
     sudo apt install virtualenv
+
+    sudo pip install cookiecutter
+
 }
 
 if [ "$1" = "-h"  -o "$1" = "--help" ] ; then
@@ -115,20 +115,8 @@ then
     exit -1
 fi
 
-sudo mkdir $prjdir
-sudo chown :$USERGROUP $prjdir
-sudo chmod g+wx $prjdir
+mkdir $prjdir
 cd $prjdir
 
-virtualenv $ENVDIR
-. $ENVDIR/bin/activate
 
-pip install -U pip
-pip install -U setuptools
-
-mkdir $REPOSDIR
-cd $REPOSDIR
-git clone https://github.com/lino-framework/$appname.git
-pip install -e $appname
-wget https://raw.githubusercontent.com/lino-framework/lino/master/bash/make_snapshot.sh
-wget https://raw.githubusercontent.com/lino-framework/lino/master/bash/pull.sh
+cookiecutter https://github.com/lino-framework/cookiecutter-startsite
