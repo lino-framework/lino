@@ -14,6 +14,8 @@ Changes 2019 in Lino
 
 Added a new function :func:`lino.modlib.printing.weekdays` to the global default print context.
 
+Released Lino 19.6.0 to PyPI.
+
 2019-05-25
 ==========
 
