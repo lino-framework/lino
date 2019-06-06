@@ -70,28 +70,30 @@ else:
 
 SETUP_INFO.update(install_requires=install_requires)
 
+
+# .. raw:: html
+#
+#     <a class="reference external"
+#     href="http://lino.readthedocs.io/en/latest/?badge=latest"><img
+#     alt="Documentation Status"
+#     src="https://readthedocs.org/projects/lino/badge/?version=latest"
+#     /></a> <a class="reference external"
+#     href="https://coveralls.io/github/lino-framework/book?branch=master"><img
+#     alt="coverage"
+#     src="https://coveralls.io/repos/github/lino-framework/book/badge.svg?branch=master"
+#     /></a> <a class="reference external"
+#     href="https://travis-ci.org/lino-framework/book?branch=stable"><img
+#     alt="build"
+#     src="https://travis-ci.org/lino-framework/book.svg?branch=stable"
+#     /></a> <a class="reference external"
+#     href="https://pypi.python.org/pypi/lino/"><img alt="pypi_v"
+#     src="https://img.shields.io/pypi/v/lino.svg" /></a> <a
+#     class="reference external"
+#     href="https://pypi.python.org/pypi/lino/"><img alt="pypi_license"
+#     src="https://img.shields.io/pypi/l/lino.svg" /></a>
+
+
 SETUP_INFO.update(long_description="""
-
-.. raw:: html
-
-    <a class="reference external" 
-    href="http://lino.readthedocs.io/en/latest/?badge=latest"><img
-    alt="Documentation Status"
-    src="https://readthedocs.org/projects/lino/badge/?version=latest"
-    /></a> <a class="reference external"
-    href="https://coveralls.io/github/lino-framework/book?branch=master"><img
-    alt="coverage"
-    src="https://coveralls.io/repos/github/lino-framework/book/badge.svg?branch=master"
-    /></a> <a class="reference external"
-    href="https://travis-ci.org/lino-framework/book?branch=stable"><img
-    alt="build"
-    src="https://travis-ci.org/lino-framework/book.svg?branch=stable"
-    /></a> <a class="reference external"
-    href="https://pypi.python.org/pypi/lino/"><img alt="pypi_v"
-    src="https://img.shields.io/pypi/v/lino.svg" /></a> <a
-    class="reference external"
-    href="https://pypi.python.org/pypi/lino/"><img alt="pypi_license"
-    src="https://img.shields.io/pypi/l/lino.svg" /></a>
 
 Lino is a high-level framework for writing desktop-like customized database
 applications based on `Django <https://www.djangoproject.com/>`_ and `Sencha
