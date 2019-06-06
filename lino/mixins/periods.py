@@ -273,6 +273,17 @@ class ObservedDateRange(ParameterPanel):
         )
         super(ObservedDateRange, self).__init__(**kwargs)
 
+    @classmethod
+    def param_defaults(cls, ar, **kw):
+        # Theoretically this would cause default values to also be set when
+        # using Monthly or Yearly as the parameter panel of an action. Doesn't
+        # work in extjs because action parameters don't use their default
+        # values.
+        kw = super(ObservedDateRange, cls).param_defaults(ar, **kw)
+        kw.update(start_date=cls.get_default_start_date())
+        kw.update(end_date=cls.get_default_end_date())
+        return kw
+
 
 class Yearly(ObservedDateRange):
 

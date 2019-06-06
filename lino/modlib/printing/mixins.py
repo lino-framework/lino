@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2017 Rumma & Ko Ltd
+# Copyright 2009-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 from __future__ import unicode_literals, print_function
@@ -27,6 +27,11 @@ from .choicelists import BuildMethods
 from .actions import (DirectPrintAction, CachedPrintAction,
                       ClearCacheAction, EditTemplate)
 
+
+def weekdays(d):
+    for i in range(5):
+        yield d
+        d += datetime.timedelta(days=1)
 
 def register_build_method(bm):
     # not used.
@@ -131,6 +136,7 @@ class Printable(Model):
         kw.update(language=self.get_print_language() or \
                   settings.SITE.DEFAULT_LANGUAGE.django_code)
         kw.update(site=settings.SITE)
+        kw.update(weekdays=weekdays)
         return kw
 
     def before_printable_build(self, bm):

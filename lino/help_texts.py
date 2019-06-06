@@ -58,6 +58,8 @@ description that is being tested for duplicates."""),
     'lino.dupable.Dupable.dupable_word_model' : _("""Full name of the model used to hold dupable words for instances of
 this model.  Applications can specify a string which will be
 resolved at startup to the model's class object."""),
+    'lino.dupable.Dupable.on_analyze' : _("""Setup the dupable_word_model attribute.  This will be
+called only on concrete subclasses."""),
     'lino.dupable.Dupable.dupable_matches_required' : _("""Return the minimum number of words that must sound alike before
 two rows should be considered similar."""),
     'lino.dupable.Dupable.update_dupable_words' : _("""Update the phonetic words of this row."""),
@@ -130,6 +132,12 @@ name used by humans to refer to an individual object."""),
     'lino.ref.Referrable.ref_max_length' : _("""The preferred width of the ref field."""),
     'lino.ref.Referrable.on_duplicate' : _("""Before saving a duplicated object for the first time, we must
 change the ref in order to avoid an IntegrityError."""),
+    'lino.ref.Referrable.get_by_ref' : _("""Return the object identified by the given reference."""),
+    'lino.ref.Referrable.quick_search_filter' : _("""Overrides the default behaviour defined in
+lino.core.model.Model.quick_search_filter(). For
+Referrable objects, when quick-searching for a text containing
+only digits, the user usually means the ref and not
+the primary key."""),
     'lino.ref.StructuredReferrable' : _("""A referrable whose ref field is used to define a hierarchical
 structure and is displayed together with the designation."""),
     'lino.ref.StructuredReferrable.get_designation' : _("""Return the "designation" part (without the reference)."""),
@@ -144,11 +152,14 @@ Registered objects are not editable."""),
 named "draft" and "registered".
 There may be additional states.
 Every state must have an extra attribute "is_editable"."""),
+    'lino.registrable.Registrable.get_registrable_fields' : _("""Return a list of the fields which are disabled when this is
+registered (i.e. state is not editable)."""),
     'lino.registrable.Registrable.get_row_permission' : _("""Only rows in an editable state may be edited."""),
     'lino.registrable.Registrable.register' : _("""Register this object.  The base implementation just sets the state
 to "registered"."""),
     'lino.registrable.Registrable.deregister' : _("""Deregister this object.  The base implementation just sets the
 state to "draft"."""),
+    'lino.sequenced.MoveByN' : _("""Move this row N rows upwards or downwards."""),
     'lino.sequenced.MoveUp' : _("""Move this row one row upwards."""),
     'lino.sequenced.MoveDown' : _("""Move this row one row downwards."""),
     'lino.sequenced.DuplicateSequenced' : _("""Duplicate this row."""),
@@ -162,6 +173,7 @@ below this one."""),
     'lino.sequenced.Sequenced.move_buttons' : _("""Displays buttons for certain actions on this row:"""),
     'lino.sequenced.Sequenced.move_action_names' : _("""The names of the actions to display in the move_buttons
 column."""),
+    'lino.sequenced.Sequenced.move_by_n' : _("""The MoveByN action on this object."""),
     'lino.sequenced.Sequenced.get_siblings' : _("""Return a Django Queryset with all siblings of this, or None if
 this is a root element which cannot have any siblings."""),
     'lino.sequenced.Sequenced.set_seqno' : _("""Initialize seqno to the seqno of eldest sibling + 1."""),
@@ -205,6 +217,10 @@ method)."""),
 (is_demo_site)."""),
     'lino.modlib.checkdata.Checker' : _("""Base class for the choices of Checkers."""),
     'lino.modlib.checkdata.Checker.model' : _("""The model to be checked.  If this is a string, Lino will resolve it at startup."""),
+    'lino.modlib.checkdata.Checker.activate' : _("""Application developers must call this on their subclass in order to
+"register" or "activate" it."""),
+    'lino.modlib.checkdata.Checker.check_instance' : _("""Run get_checkdata_problems() on this checker for the given
+instance."""),
     'lino.modlib.checkdata.Checker.get_checkable_models' : _("""Return a list of the models to check."""),
     'lino.modlib.checkdata.Checker.update_problems' : _("""Update the problems of this checker for the specified object."""),
     'lino.modlib.checkdata.Checker.get_checkdata_problems' : _("""Return or yield a series of (fixable, message) tuples, each
@@ -369,6 +385,8 @@ this document."""),
 this document."""),
     'lino.sphinxcontrib.actordoc.Lino2rstDirective' : _("""Defines the lino2rst directive."""),
     'lino.utils.IncompleteDate' : _("""Naive representation of a potentially incomplete gregorian date."""),
+    'lino.utils.IncompleteDate.parse' : _("""Parse the given string and return an IncompleteDate
+object."""),
     'lino.utils.IncompleteDate.get_age' : _("""Return age in years as integer."""),
     'lino.utils.SumCollector' : _("""A dictionary of sums to be collected using an arbitrary key."""),
     'lino.utils.SumCollector.collect' : _("""This returns an empty string"""),
@@ -540,9 +558,12 @@ An EmptyTableRow instance"""),
 lino.modlib.printing.mixins.Printable.get_print_templates()"""),
     'lino.utils.report.EmptyTable' : _("""A "Table" that has exactly one virtual row and thus is visible
 only using a Detail view on that row."""),
+    'lino.utils.report.EmptyTable.get_print_templates' : _("""Called from EmptyTableRow."""),
     'lino.utils.report.Report' : _("""A special kind of EmptyTable used to create "reports".  A report
 is a series of headings, paragraphs and tables combined into a single
 printable and previewable document."""),
+    'lino.utils.report.Report.get_story' : _("""Yield a sequence of story items. Every item can be (1) an
+ElementTree element or (2) a table or (3) an action request."""),
     'lino.utils.restify.HTMLTranslator' : _("""Suppress surrounding DIV tag. Used by restify()."""),
     'lino.utils.sendchanges.Emitter' : _("""The object returned by register()."""),
     'lino.utils.sendchanges.Emitter.register' : _("""Register this emitter."""),
