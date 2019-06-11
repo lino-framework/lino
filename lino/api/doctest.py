@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015-2018 Rumma & Ko Ltd
+# Copyright 2015-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
@@ -15,6 +15,7 @@ import django
 django.setup()
 from lino.api.shell import *
 from django.utils import translation
+from django.utils.encoding import force_text
 from django.test import Client
 from django.db import connection, reset_queries as reset_sql_queries
 import json
@@ -36,6 +37,7 @@ from lino.core.menus import find_menu_item
 from lino.sphinxcontrib.actordoc import menuselection_text
 from pprint import pprint
 from lino.utils.diag import visible_for
+from lino.core.utils import full_model_name
 
 from lino.core.menus import Menu
 from lino.core.actions import ShowTable
@@ -336,6 +338,25 @@ def show_fields(model, fieldnames=None, columns=False, all=None):
                               unindent(ht)])
 
     print(table(cols, cells).strip())
+
+def show_fields_by_type(fldtype):
+    """Print a list of all fields (in all models) that have the specified type.
+    """
+    from lino.core.utils import (sorted_models_list)
+    items = []
+    for model in sorted_models_list():
+        flds = []
+        for f in model._meta.fields:
+            if isinstance(f, fldtype):
+                name = f.name
+                verbose_name = force_text(f.verbose_name).strip()
+                txt = "{verbose_name} ({name})".format(**locals())
+                flds.append(txt)
+        if len(flds):
+            txt = "{model} : {fields}".format(
+                model=full_model_name(model), fields=", ".join(flds))
+            items.append(txt)
+    print(rstgen.ul(items))
 
 
 def show_columns(*args, **kwargs):

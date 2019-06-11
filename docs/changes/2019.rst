@@ -9,6 +9,12 @@ Changes 2019 in Lino
 .. contents::
   :local:
 
+2019-06-11
+==========
+
+Changed the API for using **bleached** text fields. See :doc:`/dev/bleach`.
+
+
 2019-06-06
 ==========
 

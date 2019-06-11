@@ -1,4 +1,4 @@
-# Copyright 2012-2017 Rumma & Ko Ltd
+# Copyright 2012-2018 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Database models for this plugin.
@@ -101,7 +101,8 @@ class Change(dd.Model):
         master_type, blank=True, null=True)
     master = GenericForeignKey('master_type', 'master_id', _("Master"))
 
-    diff = dd.RichTextField(_("Changes"), format='plain', blank=True)
+    diff = dd.RichTextField(
+        _("Changes"), format='plain', blank=True, editable=False)
     changed_fields = dd.CharField(
         _("Fields"), max_length=250, blank=True)
 

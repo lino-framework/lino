@@ -91,6 +91,7 @@ class RichTextField(models.TextField):
     def __init__(self, *args, **kw):
         self.textfield_format = kw.pop(
             'format', kw.pop('textfield_format', None))
+        self.bleached = kw.pop('bleached', None)
         super(RichTextField, self).__init__(*args, **kw)
 
     def set_format(self, fmt):

@@ -24,7 +24,7 @@ from etgen.html import E, forcetext
 from lino.core import fields
 from lino.core import signals
 from lino.core import actions
-from .fields import make_remote_field
+from .fields import make_remote_field, RichTextField
 from .utils import error2str
 from .utils import obj2str
 from .diff import ChangeWatcher
@@ -32,6 +32,11 @@ from .utils import obj2unicode
 from .utils import class_dict_items
 from .signals import on_ui_created, pre_ui_delete, pre_ui_save
 from .workflows import ChangeStateAction
+
+try:
+    import bleach
+except ImportError:
+    bleach = None
 
 
 
@@ -273,6 +278,7 @@ class Model(models.Model, fields.TableRow):
 
     _widget_options = {}
     _lino_tables = []
+    _bleached_fields = []
 
     def as_list_item(self, ar):
         return E.li(str(self))
@@ -515,6 +521,17 @@ class Model(models.Model, fields.TableRow):
         #             # if model.__name__ == "Course":
         #             #     print("20181212", model)
         #             break
+        bleached_fields = []
+        for f in cls._meta.get_fields():
+            if isinstance(f, RichTextField):
+                if f.editable and \
+                    (f.bleached is True or
+                        f.bleached is None and settings.SITE.textfield_bleached):
+                    bleached_fields.append(f.name)
+        cls._bleached_fields = tuple(bleached_fields)
+        if hasattr(cls, 'bleached_fields'):
+            raise ChangedAPI("Replace bleached_fields by bleached=True on each field")
+
 
     @classmethod
     def lookup_or_create(model, lookup_field, value, **known_values):
@@ -619,7 +636,24 @@ class Model(models.Model, fields.TableRow):
         event as user modified by setting a default state.
 
         """
-        pass
+
+        if bleach:
+            for k in self._bleached_fields:
+                old = getattr(self, k)
+                if old is None:
+                    continue
+                try:
+                    new = bleach.clean(
+                        old, tags=settings.SITE.bleach_allowed_tags, strip=True)
+                except TypeError as e:
+                    logger.warning(
+                        "Could not bleach %r : %s (%s)", old, e, self)
+                    continue
+                if old != new:
+                    logger.debug(
+                        "Bleaching %s from %r to %r", k, old, new)
+                setattr(self, k, new)
+
 
     def after_ui_save(self, ar, cw):
         """Like :meth:`before_ui_save`, but

@@ -1086,6 +1086,22 @@ class Site(object):
     The default value is :mod:`lino.core.urls`.
     """
 
+
+    bleach_allowed_tags = ['a', 'b', 'i', 'em', 'ul', 'ol', 'li', 'strong',
+                    'p', 'br', 'span', 'pre', 'def', 'table', 'th', 'tr',
+                    'td', 'thead', 'tfoot', 'tbody']
+
+    """A list of tag names which are to *remain* in HTML comments if
+    bleaching is active.
+    
+    See :doc:`/dev/bleach`.
+    """
+
+    textfield_bleached = False
+    """Default value for `RichTextField.textfield_bleached`.
+    
+    See :doc:`/dev/bleach`.
+    """
     textfield_format = 'plain'
     """
     The default format for text fields.  Valid choices are currently

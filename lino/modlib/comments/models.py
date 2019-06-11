@@ -39,7 +39,7 @@ class Comment(CreatedModified, UserAuthored, Controllable,
 
     # ALLOWED_TAGS = ['a', 'b', 'i', 'em', 'ul', 'ol', 'li']
     # bleached_fields = 'short_text more_text'
-    bleached_fields = 'body'
+    # bleached_fields = 'body'
 
     # if dd.plugins.comments.user_must_publish:
     #     # e.g. in amici we don't have notify

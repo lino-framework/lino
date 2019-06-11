@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2012-2017 Rumma & Ko Ltd
+# Copyright 2012-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """Some diagnostic utilities."""
 
@@ -20,7 +20,7 @@ from lino.core.elems import Container, Wrapper, FieldElement
 from lino.modlib.users.choicelists import UserTypes
 from lino.core import actors
 from lino.core import actions
-from lino.core.utils import get_models
+from lino.core.utils import get_models, sorted_models_list
 from lino.core.utils import full_model_name as fmn
 from lino.api import dd
 
@@ -165,13 +165,12 @@ class Analyzer(object):
                       "{help_text}".format(**locals())
                 items.append(txt)
         return rstgen.ul(items)
-    
+
     def show_db_overview(self):
         """Return a reStructredText-formatted "database overview" report.
         Used by test cases in tested documents.
 
         """
-        from lino.core.utils import (full_model_name, sorted_models_list)
 
         models_list = sorted_models_list()
         apps = [p.app_label for p in settings.SITE.installed_plugins]
@@ -193,7 +192,7 @@ class Analyzer(object):
                 i += 1
                 cells = []
                 #~ cells.append(str(i))
-                cells.append(full_model_name(model))
+                cells.append(fmn(model))
                 cells.append(model.get_default_table())
                 #~ cells.append(str(model))
                 #~ if model._meta.managed:
