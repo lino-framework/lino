@@ -12,12 +12,3 @@ Welcome to the **Lino** project homepage.
   print(SETUP_INFO['long_description'])
 
 
-Content
-========
-
-.. toctree::
-   :maxdepth: 1
-
-   changes/index
-
-   
