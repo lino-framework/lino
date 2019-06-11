@@ -12,7 +12,8 @@ Changes 2019 in Lino
 2019-06-11
 ==========
 
-Changed the API for using **bleached** text fields. See :doc:`/dev/bleach`.
+Changed the API for using **bleached** text fields. 
+See :attr`lino.core.fields.RichTextField.bleached`.
 
 
 2019-06-06
