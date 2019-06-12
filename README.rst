@@ -19,7 +19,7 @@ HTML nor CSS (`more <http://lino-framework.org/about/what.html>`__).
 - Your feedback is welcome.  Our `community page
   <http://www.lino-framework.org/community>`__ explains how to contact us.
   
-- Changes to this particular repository are listed at
-  http://core.lino-framework.org/changes/
+- API changes to this repository are logged at
+  http://www.lino-framework.org/changes/
 
 
