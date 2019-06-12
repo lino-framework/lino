@@ -109,7 +109,7 @@ HTML nor CSS (`more <http://lino-framework.org/about/what.html>`__).
   <http://www.lino-framework.org/community>`__ explains how to contact us.
   
 - Changes to this particular repository are listed at
-  http://core.lino-framework.org/changes/
+  http://www.lino-framework.org/changes/
 
 """)
 
