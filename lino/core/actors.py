@@ -851,7 +851,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     @classmethod
     def class_init(cls):
-        """Called internally at site startup. Don't override.
+        """Called internally at site startup.
 
         """
         # logger.info("20180201 class_init", cls)

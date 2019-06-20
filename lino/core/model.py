@@ -474,11 +474,11 @@ class Model(models.Model, fields.TableRow):
         self.hidden_elements = self.hidden_elements | set(names)
 
     @classmethod
-    def setup_parameters(cls, fields):
+    def setup_parameters(cls, params):
         """Inheritable hook for defining parameters.
         Called once per actor at site startup.
 
-        It receives a `dict` object `fields` and is expected to return
+        It receives a `dict` object `params` and is expected to return
         that `dict` which it may update.
 
         See also :meth:`get_simple_parameters`.
@@ -486,7 +486,7 @@ class Model(models.Model, fields.TableRow):
         Usage example: :class:`lino.modlib.comments.Comment`.
 
         """
-        return fields
+        return params
 
     @classmethod
     def get_simple_parameters(cls):
