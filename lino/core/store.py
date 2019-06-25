@@ -808,9 +808,6 @@ def create_atomizer(holder, fld, name):
     if name is None:
         return
         # raise Exception("20181023 create_atomizer() {}".format(fld))
-    if isinstance(fld, models.ManyToOneRel):
-        # raise Exception("20190625 {} {} {}".format(holder, fld, name))
-        return
     if isinstance(fld, fields.RemoteField):
         """
         Hack: we create a StoreField based on the remote field,
@@ -904,6 +901,9 @@ def create_atomizer(holder, fld, name):
         return DisplayStoreField(fld, name)
     if isinstance(fld, models.IntegerField):
         return IntegerStoreField(fld, name)
+    if isinstance(fld, models.ManyToOneRel):
+        # raise Exception("20190625 {} {} {}".format(holder, fld, name))
+        return
     kw = {}
     if choosers.uses_simple_values(holder, fld):
         return StoreField(fld, name, **kw)
