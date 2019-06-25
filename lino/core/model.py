@@ -625,7 +625,7 @@ class Model(models.Model, fields.TableRow):
         pass
 
     def before_ui_save(self, ar):
-        """A hook for adding customized code to be executed each time an
+        """A hook for adding custom code to be executed each time an
         instance of this model gets updated via the user interface and
         **before** the changes are written to the database.
 
@@ -686,11 +686,15 @@ class Model(models.Model, fields.TableRow):
         self._disabled_fields = None
 
     def after_ui_create(self, ar):
-        """Called when a user creates a new object instance in a grid or through a insert action."""
+        """
+        Hook to define custom behaviour to run when a user has create a new instance
+        of this model.
+        """
         # print(19062017, "Ticket 1910")
         pass
 
     def save_new_instance(elem, ar):
+        """Save this instance and fire related behaviour."""
         pre_ui_save.send(sender=elem.__class__, instance=elem, ar=ar)
         elem.before_ui_save(ar)
         elem.save(force_insert=True)
@@ -698,7 +702,7 @@ class Model(models.Model, fields.TableRow):
         on_ui_created.send(elem, request=ar.request)
         ar.selected_rows.append(elem)
         elem.after_ui_create(ar)
-        if ar is not None:
+        if ar and ar.actor:
             ar.actor.after_create_instance(elem, ar)
         elem.after_ui_save(ar, None)
 
