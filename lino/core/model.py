@@ -695,9 +695,11 @@ class Model(models.Model, fields.TableRow):
         elem.before_ui_save(ar)
         elem.save(force_insert=True)
         # yes, `on_ui_created` comes *after* save()
-        ar.selected_rows.append(elem)
         on_ui_created.send(elem, request=ar.request)
+        ar.selected_rows.append(elem)
         elem.after_ui_create(ar)
+        if ar is not None:
+            ar.actor.after_create_instance(elem, ar)
         elem.after_ui_save(ar, None)
 
     def save_existing_instance(self, ar):

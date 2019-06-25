@@ -1,4 +1,4 @@
-# Copyright 2009-2018 Rumma & Ko Ltd
+# Copyright 2009-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """Defines the "store" and its "fields" .
 
@@ -808,6 +808,9 @@ def create_atomizer(holder, fld, name):
     if name is None:
         return
         # raise Exception("20181023 create_atomizer() {}".format(fld))
+    if isinstance(fld, models.ManyToOneRel):
+        # raise Exception("20190625 {} {} {}".format(holder, fld, name))
+        return
     if isinstance(fld, fields.RemoteField):
         """
         Hack: we create a StoreField based on the remote field,

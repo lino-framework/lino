@@ -338,10 +338,18 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     """
 
     master_key = None
-    """The name of a ForeignKey field of this table's :attr:`model` that
-    points to its :attr:`master`.  
+    """The name of a field of this table's :attr:`model` that
+    points to its :attr:`master`.
     
-    The :attr:`master_key` is automatically added to :attr:`hidden_columns`.
+    The field named by :attr:`master_key` should usually be a
+    :class:`ForeignKey` field.
+    
+    Special cases: :class:`lino_xl.lib.cal.EntriesByGuest` shows the entries
+    having a presence pointing to this guest.
+
+    Note that the :attr:`master_key` is automatically added to
+    :attr:`hidden_columns`.
+    
 
     """
 

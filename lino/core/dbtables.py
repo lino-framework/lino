@@ -695,6 +695,21 @@ class Table(AbstractTable):
         instance.on_create(ar)
         return instance
 
+    @classmethod
+    def after_create_instance(cls, obj, ar):
+        """
+
+        A hook for code to be executed when a new instance has been created in
+        this table.
+
+        This is for actor-specific behaviour.  You can do the equivalent for
+        every table on a model by defining an :meth:`after_ui_create
+        <lino.core.model.Model.after_ui_create>` method on the model.
+
+        Usage example: :class:`lino_xl.lib.cal.GuestsByPartner`.
+
+        """
+        pass
 
     # @classmethod
     # def ajax_update(self,request):
