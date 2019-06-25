@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2018 Rumma & Ko Ltd
+# Copyright 2009-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
@@ -14,12 +14,16 @@ from django.utils.encoding import force_text
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
+from django.apps import apps ; get_models = apps.get_models
+
 from lino.api import dd, rt
 from lino.core import actions
+from lino.core.utils import full_model_name
+from lino.core.roles import SiteStaff
 
 from lino.modlib.printing.choicelists import BuildMethods
+from lino.modlib.checkdata.choicelists import Checker
 
-from lino.core.roles import SiteStaff
 
 # import them here to have them on rt.models.system:
 from .choicelists import YesNo, Genders, PeriodEvents
@@ -201,3 +205,28 @@ class SiteConfigs(dd.Table):
 #                     'user_type', UserTypes.field())
 #     dd.inject_field(settings.SITE.user_model, 'language', dd.LanguageField())
 
+
+
+class BleachChecker(Checker):
+
+    verbose_name = _("Find unbleached html content")
+    model = dd.Model
+
+    def get_checkable_models(self):
+
+        for m in super(BleachChecker, self).get_checkable_models():
+            if len(m._bleached_fields):
+                yield m
+
+    def get_checkdata_problems(self, obj, fix=False):
+        t = tuple(obj.fields_to_bleach())
+        if len(t):
+            fldnames = ', '.join([k for k, old, new in t])
+            yield (True, _("Fields {} have unbleached content.").format(fldnames))
+            if fix:
+                obj.before_ui_save(None)
+                obj.full_clean()
+                obj.save()
+
+
+BleachChecker.activate()

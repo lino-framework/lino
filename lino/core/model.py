@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2018 Rumma & Ko Ltd
+# Copyright 2009-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 "Defines the :class:`Model` class."
@@ -636,11 +636,17 @@ class Model(models.Model, fields.TableRow):
         event as user modified by setting a default state.
 
         """
+        for k, old, new in self.fields_to_bleach():
+            setattr(self, k, new)
+
+    def fields_to_bleach(self):
 
         if bleach:
             for k in self._bleached_fields:
                 old = getattr(self, k)
                 if old is None:
+                    continue
+                if not old.startswith("<"):
                     continue
                 try:
                     new = bleach.clean(
@@ -652,7 +658,7 @@ class Model(models.Model, fields.TableRow):
                 if old != new:
                     logger.debug(
                         "Bleaching %s from %r to %r", k, old, new)
-                setattr(self, k, new)
+                    yield k, old, new
 
 
     def after_ui_save(self, ar, cw):
@@ -1251,4 +1257,5 @@ def pre_delete_handler(sender, instance=None, **kw):
                         obj2str(instance))
             for obj in qs:
                 obj.delete()
+
 
