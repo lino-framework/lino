@@ -92,15 +92,15 @@ class Referrable(model.Model):
 @python_2_unicode_compatible
 class StructuredReferrable(Referrable):
     """
-    A referrable whose `ref` field is used to define a hierarchical
-    structure and is displayed together with the designation.
+
+    A referrable whose `ref` field is used to define a hierarchical structure.
 
     Example::
 
         1       Foos
          10     Good foos
-           1000 Perfect foos
-           1020 Amazing foos
+           1000 Nice foos
+           1020 Obedient foos
          11     Bad foos
            1100 Nasty foo
            1110 Lazy foo
@@ -109,8 +109,18 @@ class StructuredReferrable(Referrable):
            2090 Other bars
 
     The length of the reference determines the hierarchic level: the
-    shorter it is, the higher the level.  Automatically differentiates
-    between "headings" and "leaves".
+    shorter it is, the higher the level.
+
+    The hierarchic level becomes visible a virtual field :attr:`ref_description`
+    in together with the designation.
+
+    .. attribute:: ref_description
+
+        Displays the structured together with the designation.
+
+    The mixin differentiates between "headings" and "leaves": objects whose
+    :attr:`ref` has :attr:`ref_max_length` characters are considered "leaves"
+    while all other objects are "headings".
 
     Subclasses must provide a method :meth:`get_designation`.
 
@@ -125,6 +135,11 @@ class StructuredReferrable(Referrable):
         
     ref_max_length = 4
     
+    def __str__(self):
+        if self.ref:
+            return "({}) {}".format(self.ref, self.get_designation())
+        return self.get_designation()
+
     @classmethod
     def get_usable_items(cls):
         return cls.objects.annotate(
@@ -132,20 +147,11 @@ class StructuredReferrable(Referrable):
                 ref_len=cls.ref_max_length)
     
     @classmethod
-    def get_header_objects(cls):
+    def get_heading_objects(cls):
         return cls.objects.annotate(
             ref_len=Length('ref')).exclude(
                 ref_len=cls.ref_max_length)
     
-    # def get_choices_text(self, request, actor, field):
-    def __str__(self):
-        if self.ref:
-            return "({}) {}".format(self.ref, self.get_designation())
-        return self.get_designation()
-
-    # def get_designation(self):
-    #     raise NotImplementedError()
-
     def is_heading(self):
         if self.ref is None:
             return True

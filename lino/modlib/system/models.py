@@ -221,7 +221,7 @@ class BleachChecker(Checker):
     def get_checkdata_problems(self, obj, fix=False):
         t = tuple(obj.fields_to_bleach())
         if len(t):
-            fldnames = ', '.join([k for k, old, new in t])
+            fldnames = ', '.join([f.name for f, old, new in t])
             yield (True, _("Fields {} have unbleached content.").format(fldnames))
             if fix:
                 obj.before_ui_save(None)

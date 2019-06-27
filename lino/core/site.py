@@ -1088,8 +1088,8 @@ class Site(object):
 
 
     bleach_allowed_tags = ['a', 'b', 'i', 'em', 'ul', 'ol', 'li', 'strong',
-                    'p', 'br', 'span', 'pre', 'def', 'table', 'th', 'tr',
-                    'td', 'thead', 'tfoot', 'tbody']
+                    'p', 'br', 'span', 'pre', 'def', 'div',
+                    'table', 'th', 'tr', 'td', 'thead', 'tfoot', 'tbody']
 
     """A list of tag names which are to *remain* in HTML comments if
     bleaching is active.
@@ -1097,7 +1097,7 @@ class Site(object):
     See :doc:`/dev/bleach`.
     """
 
-    textfield_bleached = False
+    textfield_bleached = True
     """Default value for `RichTextField.textfield_bleached`.
     
     See :doc:`/dev/bleach`.

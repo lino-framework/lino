@@ -140,6 +140,7 @@ only digits, the user usually means the ref and not
 the primary key."""),
     'lino.ref.StructuredReferrable' : _("""A referrable whose ref field is used to define a hierarchical
 structure and is displayed together with the designation."""),
+    'lino.ref.StructuredReferrable.ref_description' : _("""Displays the structured together with the designation."""),
     'lino.ref.StructuredReferrable.get_designation' : _("""Return the "designation" part (without the reference)."""),
     'lino.registrable.RegistrableState' : _("""Base class"""),
     'lino.registrable.RegistrableState.is_editable' : _("""Whether the registrable object having this state should be

@@ -24,8 +24,7 @@ from __future__ import unicode_literals, print_function
 import six
 from builtins import object
 
-import logging
-logger = logging.getLogger(__name__)
+import logging ; logger = logging.getLogger(__name__)
 
 import os
 from os.path import join, dirname, exists
@@ -75,6 +74,7 @@ from lino.core.signals import (pre_ui_build, post_ui_build,
                                pre_startup, post_startup,
                                pre_analyze, post_analyze)
 
+from .exceptions import ChangedAPI
 from .plugin import Plugin
 from .ddh import DisableDeleteHandler
 from .utils import resolve_model
@@ -84,14 +84,13 @@ from .utils import obj2str
 from .utils import get_models
 from .utils import resolve_fields_list
 from .utils import djangoname
+from .utils import class_dict_items
 
 # from .inject import collect_virtual_fields
 from .fields import set_default_verbose_name
 
 
 startup_rlock = threading.RLock()  # Lock() or RLock()?
-
-# from .utils import class_dict_items
 
 
 
@@ -393,6 +392,21 @@ class Kernel(object):
                         raise Exception(msg.format(
                             f.remote_field, f.remote_field.model))
                     f.remote_field.model._lino_ddh.add_fk(m or model, f)
+
+            fieldnames = {f.name for f in model._meta.get_fields()}
+            # print("20190627 checking ", model, fieldnames)
+            for m, k, v in class_dict_items(model):
+                if isinstance(v, fields.VirtualField) and k in fieldnames:
+                    f = model._meta.get_field(k)
+                    if f.__class__ is v.__class__:
+                        # a copy of the virtual field in parent has already been attached
+                        # print("20190627 ignoring", m, k, v, f)
+                        continue
+                    raise ChangedAPI(
+                        "{} field {}.{} hidden by virtual field of same name.".format(
+                            f.__class__.__name__, fmn(model), k))
+
+
 
 
         # Protect the foreign keys by removing Django's default

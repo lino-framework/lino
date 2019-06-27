@@ -4,8 +4,6 @@
 """
 Database models for `lino.modlib.checkdata`.
 
-.. autosummary::
-
 """
 
 from __future__ import unicode_literals, print_function
@@ -16,6 +14,7 @@ from collections import OrderedDict
 
 from django.db import models
 from django.utils import translation
+from django.template.defaultfilters import pluralize
 
 from lino.core.gfks import gfk2lookup
 from lino.modlib.gfks.mixins import Controllable
@@ -359,8 +358,10 @@ def check_data(args=[], fix=True):
             final_sums[0] += 1
             final_sums[1] += sums[0]
             final_sums[2] += sums[1]
-    msg = "Done %d checkers, found %d and fixed %d problems."
-    dd.logger.info(msg, *final_sums)
+    msg = "Done %d %s, found %d and fixed %d problems."
+    done, found, fixed = final_sums
+    what = pluralize(done, "check,checks")
+    dd.logger.info(msg, done, what, found, fixed)
 
 
 @dd.schedule_daily()

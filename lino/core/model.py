@@ -286,21 +286,40 @@ class Model(models.Model, fields.TableRow):
     @classmethod
     def collect_virtual_fields(model):
         """Declare every virtual field defined on this model to Django.
+
         We use Django's undocumented :meth:`add_field` method.
 
-        Make a copy if the field is inherited, in order to avoid side effects like
-        #2592
+        Make a copy if the field is inherited, in order to avoid side effects
+        like #2592.
 
-        If a model defines both a database field and a virtualfield of same name,
-        then the virtualfield is being ignored.
+        Raise an exception if the model defines both a database field and a
+        virtual field of same name.
 
         """
         if model._meta.abstract:  # 20181023
             return
+        # print("201906274 collect_virtual_fields a ", model, model._meta.fields)
+        # fieldnames = {f.name for f in model._meta.get_fields()}
+        # inject_field() can call this when Models aren't loaded yet.
         fieldnames = {f.name for f in
                       model._meta.private_fields + model._meta.local_fields}
+        # print("201906274 collect_virtual_fields b ", fieldnames)
         for m, k, v in class_dict_items(model):
-            if isinstance(v, fields.VirtualField) and k not in fieldnames:
+            if isinstance(v, fields.VirtualField):
+                # print("201906274 collect_virtual_fields c", m, k, v)
+                if k in fieldnames:
+                    # There are different possible reasons for this case.  E.g.
+                    # a copy of virtual field in parent has already been
+                    # attached.
+                    continue
+                    # f = model._meta.get_field(k)
+                    # if f.__class__ is v.__class__:
+                    #     # print("20190627 ignoring", m, k, v, f)
+                    #     continue
+                    # raise ChangedAPI(
+                    #     "Virtual field {}.{} hides {} "
+                    #     "of same name.".format(
+                    #         full_model_name(model), k, f.__class__.__name__))
                 if m is not model:
                     # if k == "overview" and model.__name__ == "DailyPlannerRow":
                     #     print("20181022", m, model)
@@ -527,7 +546,7 @@ class Model(models.Model, fields.TableRow):
                 if f.editable and \
                     (f.bleached is True or
                         f.bleached is None and settings.SITE.textfield_bleached):
-                    bleached_fields.append(f.name)
+                    bleached_fields.append(f)
         cls._bleached_fields = tuple(bleached_fields)
         if hasattr(cls, 'bleached_fields'):
             raise ChangedAPI("Replace bleached_fields by bleached=True on each field")
@@ -636,16 +655,17 @@ class Model(models.Model, fields.TableRow):
         event as user modified by setting a default state.
 
         """
-        for k, old, new in self.fields_to_bleach():
-            setattr(self, k, new)
+        for f, old, new in self.fields_to_bleach():
+            setattr(self, f.name, new)
 
     def fields_to_bleach(self):
 
         if bleach:
-            for k in self._bleached_fields:
-                old = getattr(self, k)
+            for f in self._bleached_fields:
+                old = getattr(self, f.name)
                 if old is None:
                     continue
+                # print("20190626", self, f, old)
                 if not old.startswith("<"):
                     continue
                 try:
@@ -657,8 +677,8 @@ class Model(models.Model, fields.TableRow):
                     continue
                 if old != new:
                     logger.debug(
-                        "Bleaching %s from %r to %r", k, old, new)
-                    yield k, old, new
+                        "Bleaching %s from %r to %r", f.name, old, new)
+                    yield f, old, new
 
 
     def after_ui_save(self, ar, cw):
