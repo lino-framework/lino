@@ -138,8 +138,7 @@ lino.core.model.Model.quick_search_filter(). For
 Referrable objects, when quick-searching for a text containing
 only digits, the user usually means the ref and not
 the primary key."""),
-    'lino.ref.StructuredReferrable' : _("""A referrable whose ref field is used to define a hierarchical
-structure and is displayed together with the designation."""),
+    'lino.ref.StructuredReferrable' : _("""A referrable whose ref field is used to define a hierarchical structure."""),
     'lino.ref.StructuredReferrable.ref_description' : _("""Displays the structured together with the designation."""),
     'lino.ref.StructuredReferrable.get_designation' : _("""Return the "designation" part (without the reference)."""),
     'lino.registrable.RegistrableState' : _("""Base class"""),
@@ -502,7 +501,10 @@ required_roles."""),
 two properties name and url."""),
     'lino.utils.media.MediaFile.name' : _("""return the filename on the server"""),
     'lino.utils.media.MediaFile.get_url' : _("""return the url that points to file on the server"""),
+    'lino.utils.memo.Suggester' : _("""Holds the configuration for the behaviour of a given "trigger"."""),
     'lino.utils.memo.Parser' : _("""The memo parser."""),
+    'lino.utils.memo.Parser.add_suggester' : _("""trigger is a short text, usually one character, like "@" or "#",
+which will trigger a list of autocomplete suggestions to pop up."""),
     'lino.utils.memo.Parser.register_django_model' : _("""Register the given string name as command for referring to
 database rows of the given Django database model model."""),
     'lino.utils.memo.Parser.parse' : _("""Parse the given string s, replacing memo commands by their

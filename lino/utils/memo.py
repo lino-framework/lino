@@ -1,159 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2006-2018 Rumma & Ko Ltd
+# Copyright 2006-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-r""" A simple markup parser that expands "commands" found in an input
-string to produce a resulting output string.  Commands are in the form
-``[KEYWORD ARGS]``.  The caller defines itself all commands, there are
-no predefined commands.
-
-..  This document is part of the Lino test suite.  You can test it
-    individually with::
-
-        $ doctest lino/utils/memo.py
-
-A concrete real-world specification is in :doc:`/specs/noi/memo`
-
-
-Usage example
--------------
-
-Instantiate a parser:
-
->>> from lino.utils.memo import Parser
->>> p = Parser()
-
-We declare a "command handler" function `url2html` and register it:
-
->>> def url2html(parser, s):
-...     print("[DEBUG] url2html() got %r" % s)
-...     if not s: return "XXX"
-...     url, text = s.split(None,1)
-...     return '<a href="%s">%s</a>' % (url,text)
->>> p.register_command('url', url2html)
-
-The intended usage of our example handler is ``[url URL TEXT]``, where
-URL is the URL to link to, and TEXT is the label of the link:
-
->>> print(p.parse('This is a [url http://xyz.com test].'))
-[DEBUG] url2html() got 'http://xyz.com test'
-This is a <a href="http://xyz.com">test</a>.
-
-
-A command handler will be called with one parameter: the portion of
-text between the KEYWORD and the closing square bracket.  Not
-including the whitespace after the keyword.  It must return the text
-which is to replace the ``[KEYWORD ARGS]`` fragment.  It is
-responsible for parsing the text that it receives as parameter.
-
-If an exception occurs during the command handler, the final exception
-message is inserted into the result.  
-
-To demonstrate this, our example implementation has a bug, it doesn't
-support the case of having only an URL without TEXT (we use an
-ellipsis because the error message varies with Python versions):
-
->>> print(p.parse('This is a [url http://xyz.com].'))  #doctest: +ELLIPSIS
-[DEBUG] url2html() got 'http://xyz.com'
-This is a [ERROR ... in ...'[url http://xyz.com]' at position 10-30].
-
-
-Newlines preceded by a backslash will be removed before the command
-handler is called:
-
->>> print(p.parse('''This is [url http://xy\
-... z.com another test].'''))
-[DEBUG] url2html() got 'http://xyz.com another test'
-This is <a href="http://xyz.com">another test</a>.
-
-The whitespace between the KEYWORD and ARGS can be any whitespace,
-including newlines:
-
->>> print(p.parse('''This is a [url
-... http://xyz.com test].'''))
-[DEBUG] url2html() got 'http://xyz.com test'
-This is a <a href="http://xyz.com">test</a>.
-
-The ARGS part is optional (it's up to the command handler to react
-accordingly, our handler function returns XXX in that case):
-
->>> print(p.parse('''This is a [url] test.'''))
-[DEBUG] url2html() got ''
-This is a XXX test.
-
-The ARGS part may contain pairs of square brackets:
-
->>> print(p.parse('''This is a [url 
-... http://xyz.com test with [more] brackets].'''))
-[DEBUG] url2html() got 'http://xyz.com test with [more] brackets'
-This is a <a href="http://xyz.com">test with [more] brackets</a>.
-
-Fragments of text between brackets that do not match any registered
-command will be left unchanged:
-
->>> print(p.parse('''This is a [1] test.'''))
-This is a [1] test.
-
->>> print(p.parse('''This is a [foo bar] test.'''))
-This is a [foo bar] test.
-
->>> print(p.parse('''Text with only [opening square bracket.'''))
-Text with only [opening square bracket.
-
-Special handling
-----------------
-
-Leading and trailing spaces are always removed from command text:
-
->>> print(p.parse("[url http://example.com Trailing space  ]."))
-[DEBUG] url2html() got 'http://example.com Trailing space'
-<a href="http://example.com">Trailing space</a>.
-
->>> print(p.parse("[url http://example.com   Leading space]."))
-[DEBUG] url2html() got 'http://example.com   Leading space'
-<a href="http://example.com">Leading space</a>.
-
-Non-breaking and zero-width spaces are treated like normal spaces:
-
->>> print(p.parse(u"[url\u00A0http://example.com example.com]."))
-[DEBUG] url2html() got 'http://example.com example.com'
-<a href="http://example.com">example.com</a>.
-
->>> print(p.parse(u"[url \u200bhttp://example.com example.com]."))
-[DEBUG] url2html() got 'http://example.com example.com'
-<a href="http://example.com">example.com</a>.
-
->>> print(p.parse(u"[url&nbsp;http://example.com example.com]."))
-[DEBUG] url2html() got 'http://example.com example.com'
-<a href="http://example.com">example.com</a>.
-
-Limits
-------
-
-A single closing square bracket as part of ARGS will not produce the
-desired result:
-
->>> print(p.parse('''This is a [url
-... http://xyz.com The character "\]"].'''))
-[DEBUG] url2html() got 'http://xyz.com The character "\\'
-This is a <a href="http://xyz.com">The character "\</a>"].
-
-Execution flow statements like `[if ...]` and `[endif ...]` or ``[for
-...]`` and ``[endfor ...]`` would be nice.
-
-
-
-The ``[=expression]`` form
---------------------------
-
-Instantiate a new parser with and without a context:
-
->>> print(p.parse('''\
-... The answer is [=a*a*5-a].''', a=3))
-The answer is 42.
-
->>> print(p.parse('''<ul>[="".join(['<li>%s</li>' % (i+1) for i in range(5)])]</ul>'''))
-<ul><li>1</li><li>2</li><li>3</li><li>4</li><li>5</li></ul>
+"""See introduction in :doc:`/dev/memo`.
 
 """
 from __future__ import unicode_literals
@@ -166,6 +15,7 @@ import re
 import inspect
 
 from etgen import etree
+# from django.db import models
 
 
 COMMAND_REGEX = re.compile(r"\[(\w+)\s*((?:[^[\]]|\[.*?\])*?)\]")
@@ -173,8 +23,49 @@ COMMAND_REGEX = re.compile(r"\[(\w+)\s*((?:[^[\]]|\[.*?\])*?)\]")
 
 EVAL_REGEX = re.compile(r"\[=((?:[^[\]]|\[.*?\])*?)\]")
 
+
+class Suggester(object):
+    """
+
+    Holds the configuration for the behaviour of a given "trigger".
+
+    Every value of :attr:`Parser.suggesters` is an instance of this.
+
+
+    """
+    def __init__(self, trigger, data, fldname, formatter=str, getter=None):
+        self.trigger = trigger
+        self.data = data
+        self.fldname = fldname
+        self.formatter = formatter
+
+        fld = data.model._meta.get_field(fldname)
+
+        # if isinstance(fld, models.IntegerField):
+        #     searchkw = {}
+
+        if getter is None:
+            def getter(abbr):
+                return data.get(**{fldname: abbr})
+
+        self.getter = getter
+
+    def get_suggestions(self, abbr=''):
+        flt = self.data.model.quick_search_filter(abbr)
+        for obj in self.data.filter(flt):
+            yield (getattr(obj, self.fldname), self.formatter(obj))
+
+    def get_object(self, abbr):
+        return self.getter(abbr)
+
+
 class Parser(object):
-    """The memo parser. """
+    """The memo parser.
+
+    Every Lino site has a global memo parser stored in
+    :attr:`lino.core.site.Site.kernel.memo_parser`.
+
+    """
 
     safe_mode = False
 
@@ -182,6 +73,32 @@ class Parser(object):
         self.commands = dict()
         self.context = context
         self.renderers = dict()
+        self.suggesters = dict()
+
+    def add_suggester(self, *args, **kwargs):
+
+        """
+
+        `trigger` is a short text, usually one character, like "@" or "#",
+        which will trigger a list of autocomplete suggestions to pop up.
+
+        `func` is a callable expected to yield a series of suggestions to be
+        displayed in text editor.
+
+        Every suggestion is expected to be a tuple `(abbr, text)`, where `abbr` is
+        the abbreviation to come after the trigger (e.g. a username or a ticket
+        number), and text is a full description of this suggestion to be displayed
+        in the list.
+
+        Usage examples: see :mod:`lino_xl.lib.tickets` and :mod:`lino.modlib.users`
+
+        """
+
+        s = Suggester(*args, **kwargs)
+        if s.trigger in self.suggesters:
+            raise Exception("Duplicate suggester for {}".format(s.trigger))
+        self.suggesters[s.trigger] = s
+
 
     def register_command(self, cmd, func):
         # print("20170210 register_command {} {}".format(cmd, func))

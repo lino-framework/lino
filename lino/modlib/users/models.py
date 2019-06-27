@@ -307,3 +307,17 @@ class Permission(dd.Model):
         abstract = True
 
 
+@dd.receiver(dd.post_startup)
+def setup_memo_commands(sender=None, **kwargs):
+    # See :doc:`/specs/memo`
+
+    mp = sender.kernel.memo_parser
+
+    mp.add_suggester(
+        "@",
+        sender.models.users.User.objects.filter(
+            username__isnull=False).order_by('username'),
+        'username')
+
+
+
