@@ -799,13 +799,20 @@ class Model(models.Model, fields.TableRow):
         return [self.obj2href(ar)]
 
     def on_duplicate(self, ar, master):
-        """Called by :class:`lino.mixins.duplicable.Duplicate` on
-        the new row instance and on all related objects.
+        """
+        Called after duplicating a row on the new row instance.
+
+        Also called recursively on all related objects.  Where "related
+        objects" means those which point to the master using a FK which is
+        listed in :attr:`allow_cascaded_delete
+        <lino.core.model.Model.allow_cascaded_delete>`.
+
+        Called by the :class:`lino.mixins.duplicable.Duplicate` action.
 
         `ar` is the action request that asked to duplicate.
 
         If `master` is not None, then this is a cascaded duplicate
-        initiated be a :meth:`duplicate` on the specified `master`.
+        initiated by a :meth:`duplicate` on the specified `master`.
 
         Note that this is called *before* saving the object for the
         first time.
@@ -818,10 +825,6 @@ class Model(models.Model, fields.TableRow):
         don't need to :meth:`save` because Lino checks for
         modifications and saves the master a second time when needed.
 
-        Note also that "related objects" means only those which point
-        to the master using a FK which is listed in
-        :attr:`allow_cascaded_delete
-        <lino.core.model.Model.allow_cascaded_delete>`.
 
         """
         pass

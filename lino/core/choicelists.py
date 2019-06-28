@@ -801,8 +801,8 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
     @classmethod
     def get_list_items(self):
         return [choice[0] for choice in self.choices]
-    objects = get_list_items
-    items = get_list_items
+    objects = get_list_items  # deprecated alias for backwards compat
+    items = get_list_items   # deprecated alias for backwards compat
 
     @classmethod
     def get_text_for_value(self, value):
