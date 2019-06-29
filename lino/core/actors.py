@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2018 Rumma & Ko Ltd
+# Copyright 2009-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """This defines :class:`Actor` and related classes.
@@ -8,13 +8,11 @@ See :doc:`/dev/actors`.
 
 
 """
-import logging;
 # from six import string_types
 from builtins import str
-
 from future.utils import with_metaclass
 
-logger = logging.getLogger(__name__)
+import logging; logger = logging.getLogger(__name__)
 
 import copy
 
@@ -34,7 +32,9 @@ from lino.core.utils import resolve_model
 from lino.core.utils import error2str
 from lino.core.utils import qs2summary
 from lino.core.utils import ParameterPanel
+from lino.core.utils import navinfo
 from lino.utils import curry, AttrDict, is_string
+
 from etgen.html import E, forcetext, tostring
 
 from .roles import SiteUser
@@ -779,6 +779,19 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         if self.get_handle_name is None:
             return self._get_handle(ar, _handle_attr_name)
         return self._get_handle(ar, self.get_handle_name(ar))
+
+    @classmethod
+    def get_navinfo(cls, ar, obj):
+        """
+        Return navigation info for the given obj in the given ar.
+
+        The default implementation assumes that you navigate on the
+        :attr:`data_iterator`.
+
+        :class:`lino_xl.lib.cal.CalendarView` overrides this.
+
+        """
+        return navinfo(ar.data_iterator, obj)
 
     @classmethod
     def is_valid_row(self, row):

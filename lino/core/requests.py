@@ -35,7 +35,7 @@ from .boundaction import BoundAction
 from .signals import on_ui_created, pre_ui_save
 from .diff import ChangeWatcher
 from .utils import getrqdata
-from .utils import navinfo, obj2unicode
+from .utils import obj2unicode
 from .utils import obj2str
 from .exceptions import ChangedAPI
 
@@ -993,7 +993,7 @@ class BaseRequest(object):
         if ar.actor.editable:
             rec.update(disable_delete=rh.actor.disable_delete(elem, ar))
         if rh.actor.show_detail_navigator and with_navinfo:
-            rec.update(navinfo=navinfo(ar.data_iterator, elem))
+            rec.update(navinfo=rh.actor.get_navinfo(ar, elem))
         if ar.actor.parameters:
             rec.update(param_values=ar.actor.params_layout.params_store.pv2dict(ar, ar.param_values))
 
