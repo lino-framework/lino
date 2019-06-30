@@ -23,7 +23,7 @@ SETUP_INFO = dict(
     version='19.6.3',
     description="A framework for writing desktop-like web applications "
                 "using Django and ExtJS or React",
-    license='BSD License',
+    license='BSD-2-Clause',
     # obsoletes=['djangosite', 'north'],
     author='Luc Saffre',
     author_email='luc@lino-framework.org',
