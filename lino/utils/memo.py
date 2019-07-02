@@ -199,11 +199,13 @@ All remaining arguments are used as the text of the link.
         trigger = matchobj.group(2)
         abbr = matchobj.group(3)
         suggester = self.suggesters[trigger] # can't key error as regex is created from the keys
-        obj = suggester.get_object(abbr)
         try:
+            obj = suggester.get_object(abbr)
             return whitespace + self.format_value(self.context["ar"].obj2html(obj))
         except Exception as e:
-            return self.handle_error(obj, e)
+            # likley a mismatch or bag pk, return full match
+            # return self.handle_error(matchobj, e)
+            return matchobj.group(0)
 
     def cmd_match(self, matchobj):
         cmd = matchobj.group(1)
