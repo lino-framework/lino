@@ -17,7 +17,6 @@ import inspect
 from etgen import etree
 # from django.db import models
 
-
 COMMAND_REGEX = re.compile(r"\[(\w+)\s*((?:[^[\]]|\[.*?\])*?)\]")
 #                                       ===...... .......=
 
@@ -98,6 +97,10 @@ class Parser(object):
         if s.trigger in self.suggesters:
             raise Exception("Duplicate suggester for {}".format(s.trigger))
         self.suggesters[s.trigger] = s
+
+    def compile_suggestor_regex(self):
+        triggers = r"".join(["\\" if key in "[\^$.|?*+(){}" else "" + key for key in self.suggesters.keys()])
+        return re.compile(r"([^\w])?([" + triggers + "])(\w+)")
 
 
     def register_command(self, cmd, func):
@@ -190,12 +193,24 @@ All remaining arguments are used as the text of the link.
             return str(etree.tostring(v))
         return str(v)
 
+    def suggester_match(self, matchobj):
+        whitespace = matchobj.group(1)
+        whitespace = "" if whitespace is None else whitespace
+        trigger = matchobj.group(2)
+        abbr = matchobj.group(3)
+        suggester = self.suggesters[trigger] # can't key error as regex is created from the keys
+        obj = suggester.get_object(abbr)
+        try:
+            return whitespace + self.format_value(self.context["ar"].obj2html(obj))
+        except Exception as e:
+            return self.handle_error(obj, e)
+
     def cmd_match(self, matchobj):
         cmd = matchobj.group(1)
         cmdh = self.commands.get(cmd, None)
         if cmdh is None:
             return matchobj.group(0)
-        
+
         params = matchobj.group(2)
         params = params.replace('\\\n', ' ')
         params = params.replace(u'\xa0', ' ')
@@ -224,6 +239,10 @@ All remaining arguments are used as the text of the link.
         """
         #~ self.context = context
         self.context.update(context)
+        suggestor_regex = self.compile_suggestor_regex()
+
+        s = suggestor_regex.sub(self.suggester_match, s)
+
         s = COMMAND_REGEX.sub(self.cmd_match, s)
         if not self.safe_mode:
             s = EVAL_REGEX.sub(self.eval_match, s)
@@ -240,7 +259,7 @@ All remaining arguments are used as the text of the link.
         if h is None:
             return "**{}**".format(obj)
         return h(obj, **options)
-        
+
 
 def _test():
     import doctest
