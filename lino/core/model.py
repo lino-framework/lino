@@ -521,6 +521,7 @@ class Model(models.Model, fields.TableRow):
 
     @classmethod
     def on_analyze(cls, site):
+
         if isinstance(cls.workflow_owner_field, six.string_types):
             cls.workflow_owner_field = cls.get_data_elem(
                 cls.workflow_owner_field)

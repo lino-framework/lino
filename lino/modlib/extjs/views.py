@@ -652,6 +652,9 @@ class ApiList(View):
                       success=True,
                       no_data_text=ar.no_data_text,
                       title=str(ar.get_title()))
+            if False:  # 20190703 but not yet used
+                kw.update(list_url=ar.open_in_own_window_button())
+
             if ar.actor.parameters:
                 kw.update(
                     param_values=ar.actor.params_layout.params_store.pv2dict(
@@ -675,9 +678,9 @@ class ApiList(View):
             #     after_show.update(data_record=rec)
 
             kw = dict(on_ready=
-            ar.renderer.action_call(
-                ar.request,
-                ar.bound_action, after_show))
+                ar.renderer.action_call(
+                    ar.request,
+                    ar.bound_action, after_show))
             # ~ print '20110714 on_ready', params
             kw.update(title=ar.get_title())
             return http.HttpResponse(ar.renderer.html_page(request, **kw))

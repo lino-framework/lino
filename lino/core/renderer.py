@@ -240,9 +240,14 @@ class HtmlRenderer(Renderer):
         # return self.href(uri, text or force_text(obj))
         return self.href(uri, text or str(obj))
 
-    def href_to_request(self, sar, tar, text=None, **kw):
-        """Return a string with an URL which would run the given target
-request `tar`."""
+    def href_to_request(self, ar, tar, text=None, **kw):
+        """
+
+        Return a string with an URL which would run the given target request
+        `tar`."""
+
+        # TODO: remove the `ar` as it is not needed.
+
         uri = self.js2url(self.request_handler(tar))
         return self.href_button_action(
             tar.bound_action, uri, text or tar.get_title(), **kw)
@@ -250,9 +255,13 @@ request `tar`."""
     def href_button_action(
             self, ba, url, text=None, title=None, icon_name=NOT_GIVEN, **kw):
         """
-        changed 20130905 for "Must read eID card button"
-        but that caused icons to not appear in workflow_buttons.
+
+        Return an etree element of a ``<a href>`` tag which when clicked would
+        execute the given bound action `ba`.
+
         """
+        # changed 20130905 for "Must read eID card button"
+        # but that caused icons to not appear in workflow_buttons.
         if icon_name is NOT_GIVEN:
             icon_name = ba.action.icon_name
         if 'style' not in kw:
@@ -264,7 +273,7 @@ request `tar`."""
         return self.href_button(url, text, title, icon_name=icon_name, **kw)
 
     def href_button(self, url, text, title=None, icon_name=None, **kw):
-        """Returns an etree object of a ``<a href>`` tag to the given URL
+        """Return an etree element of a ``<a href>`` tag to the given URL
         `url`.
 
         `url` is what goes into the `href` part. If `url` is `None`,
@@ -302,6 +311,17 @@ request `tar`."""
 
         """
         return str(ba.action)
+
+    def open_in_own_window_button(self, ar):
+        """
+        Return a button which opens the given table request in its own window.
+
+        """
+        return self.window_action_button(
+            ar, ar.actor.default_action,
+            label="⏏",  # 23CF
+            style="text-decoration:none;",
+            title=_("Show this table in own window"))
 
     def window_action_button(
             self, ar, ba,

@@ -291,8 +291,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
         a = bound_action.action
         if a.opens_a_window or (a.parameters and not a.no_params_window):
             if request and request.subst_user:
-                status[
-                    constants.URL_PARAM_SUBST_USER] = request.subst_user
+                status[constants.URL_PARAM_SUBST_USER] = request.subst_user
             if isinstance(a, ShowEmptyTable):
                 status.update(record_id=-99998)
             if request is None:

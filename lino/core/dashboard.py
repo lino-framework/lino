@@ -59,12 +59,15 @@ class DashboardItem(Permittable):
                 return
         if self.header_level is not None:
             buttons = sar.plain_toolbar_buttons()
-            buttons.append(
-                ar.window_action_button(
-                    T.default_action,
-                    label="⏏", # 23CF
-                    style="text-decoration:none;",
-                    title=_("Show this table in own window")))
+            if True:
+                buttons.append(sar.open_in_own_window_button())
+            else:
+                buttons.append(
+                    ar.window_action_button(
+                        T.default_action,
+                        label="⏏", # 23CF
+                        style="text-decoration:none;",
+                        title=_("Show this table in own window")))
             
             elems = []
             for b in buttons:

@@ -146,6 +146,8 @@ class MonthlySummarized(Summarized):
             raise Exception(
                 "Invalid summary_period {!r} for {}".format(
                     cls.summary_period, cls))
+        super(MonthlySummarized, cls).on_analyze(site)
+
 
     @classmethod
     def get_summary_periods(cls):

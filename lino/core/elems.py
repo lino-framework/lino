@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2018 Rumma & Ko Ltd
+# Copyright 2009-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """Defines "layout elements" (widgets).
 
@@ -35,6 +35,7 @@ from lino.core import fields
 from lino.core.actions import Action, Permittable
 from lino.core import constants
 from lino.core.gfks import GenericRelation
+from lino.modlib.bootstrap3.views import table2html
 
 from lino.utils.ranges import constrain
 from lino.utils import jsgen
@@ -56,7 +57,7 @@ from lino.core.gfks import GenericForeignKey
 from lino.utils.format_date import fds
 
 from etgen import etree
-from etgen.html import E, forcetext
+from etgen.html import E, forcetext, tostring
 from lino.utils import is_string
 
 from lino.core.site import html2text
@@ -2262,7 +2263,6 @@ class GridElement(Container):
             yield th
 
     def as_plain_html(self, ar, obj):
-        from lino.modlib.bootstrap3.views import table2html
         sar = ar.spawn(self.actor.default_action, master_instance=obj)
         yield table2html(sar, as_main=(self.name == "main"))
         # yield sar.as_bootstrap_html(as_main=(self.name == "main"))
@@ -2596,12 +2596,19 @@ def create_layout_element(lh, name, **kw):
             # displays a "summary" of that table. The panel will have
             # a tool button to "open that table in its own
             # window". The format of that summary is defined by the
-            # `display_mode` of the table. `display_mode` is
-            # a string with one of the following values:
+            # `display_mode` of the table.
+
             if lh.ui.renderer.extjs_version is not None:
-                kw.update(tools=[
-                    js_code("Lino.show_in_own_window_button(Lino.%s)" %
-                            de.default_action.full_name())])
+                js = "Lino.show_in_own_window_button(Lino.%s)" % de.default_action.full_name()
+                kw.update(tools=[js_code(js)])
+                if False:
+                    js = 'alert("Oops")'
+                    url = lh.ui.renderer.js2url(js)
+                    btn = lh.ui.renderer.href_button(
+                        url, "⏏",  # 23CF
+                        title=_("Show this table in own window"),
+                        style="text-decoration:none;")
+                    kw.update(label='{} {}'.format(de.get_label(), tostring(btn)))
             if de.display_mode == 'grid':
                 kw.update(hide_top_toolbar=True)
                 if de.preview_limit is not None:

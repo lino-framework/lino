@@ -102,9 +102,9 @@ class PhoneticWordBase(dd.Model):
     def __str__(self):
         return self.word
 
-    @classmethod
-    def on_analyze(cls, site):
-        pass
+    # @classmethod
+    # def on_analyze(cls, site):
+    #     pass
         # import metaphone as fuzzy
         # cls._fuzzy_DMetaphone = fuzzy.doublemetaphone()
         # import fuzzy

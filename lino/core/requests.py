@@ -66,7 +66,7 @@ class ValidActionResponses(object):
     """
     alert_eval_js = None
     """
-    Js code to be evaluated after the confirmation of the alert dialog.
+    Javascript code to be evaluated after the confirmation of the alert dialog.
     """
 
     success = None
@@ -74,6 +74,14 @@ class ValidActionResponses(object):
     errors = None
     html = None
     rows = None
+    no_data_text = None
+    title = None
+    """The dynamic title to give to the window or component which shows this response.
+    """
+
+    count = None
+    """The number of rows in a list response."""
+
     navinfo = None
     data_record = None
     """
@@ -317,7 +325,7 @@ class BaseRequest(object):
 
     def spawn_request(self, **kw):
         """
-        Create a new of same class which inherits from this one.
+        Create a new request of same class which inherits from this one.
         """
         kw.update(parent=self)
         return self.__class__(**kw)
@@ -868,6 +876,9 @@ class BaseRequest(object):
         with translation.override(language):
             print(menuselection_text(mi))
 
+    def open_in_own_window_button(self, *args, **kwargs):
+        return self.renderer.open_in_own_window_button(self, *args, **kwargs)
+
     def window_action_button(self, *args, **kwargs):
         # settings.SITE.logger.info(
         #     "20160529 window_action_button %s %s", args, self.renderer)
@@ -979,15 +990,9 @@ class BaseRequest(object):
         if ar.actor.hide_top_toolbar or ar.bound_action.action.hide_top_toolbar:
             rec.update(title=ar.get_detail_title(elem))
         else:
-            #~ print(ar.get_title())
-            #~ print(dd.obj2str(elem))
-            #~ print(repr(unicode(elem)))
-            if True:  # before 20131017
-                rec.update(title=ar.get_title() + u" » " +
-                           ar.get_detail_title(elem))
-            else:  # todo
-                rec.update(title=tostring(ar.href_to_request(ar))
-                           + u" » " + ar.get_detail_title(elem))
+            rec.update(title=ar.get_breadcrumbs(elem))
+            # rec.update(title=ar.get_title() + u" » " +
+            #            ar.get_detail_title(elem))
         rec.update(id=elem.pk)
         # rec.update(id=ar.actor.get_pk_field().value_from_object(elem))
         if ar.actor.editable:
@@ -998,6 +1003,18 @@ class BaseRequest(object):
             rec.update(param_values=ar.actor.params_layout.params_store.pv2dict(ar, ar.param_values))
 
         return rec
+
+    def get_breadcrumbs(self, elem=None):
+        list_title = self.get_title()
+        # TODO: make it clickable so that we can return from detail to list view
+        if elem is None:
+            return list_title
+        else:
+            # print("20190703", self.actor, self.actor.default_action)
+            sar = self.spawn_request(actor=self.actor)
+            list_title = tostring(
+                sar.href_to_request(sar, list_title, icon_name=None))
+            return list_title + u" » " + self.get_detail_title(elem)
 
     def form2obj_and_save(ar, data, elem, is_new):
         """
