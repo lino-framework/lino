@@ -4,6 +4,15 @@
 
 """See introduction in :doc:`/dev/memo`.
 
+TODO:
+
+- the auto-completer might insert the full text into the editor after the
+  pattern. The user can then decide whether to leave it or not.
+
+- The memo commands might also be defined as suggesters with a trigger of type
+  "[ticket ". Note that in that case we need to add a new attribute "suffix"
+  which would be empty for # and @ but "]" for memo commands.
+
 """
 from __future__ import unicode_literals
 

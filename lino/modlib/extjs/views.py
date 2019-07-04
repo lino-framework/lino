@@ -46,9 +46,10 @@ from lino.core import auth
 from lino.core.signals import pre_ui_delete
 from lino.core.utils import obj2unicode
 
-from etgen import html as xghtml
+# from etgen import html as xghtml
+from etgen.html import E, tostring, Document
 
-E = xghtml.E
+# E = xghtml.E
 
 from lino.utils import ucsv
 from lino.utils import isiterable
@@ -650,10 +651,14 @@ class ApiList(View):
             kw = dict(count=total_count,
                       rows=rows,
                       success=True,
-                      no_data_text=ar.no_data_text,
-                      title=str(ar.get_title()))
-            if False:  # 20190703 but not yet used
-                kw.update(list_url=ar.open_in_own_window_button())
+                      no_data_text=ar.no_data_text)
+
+            if True:
+                kw.update(title=str(ar.get_title()))
+            else:
+                # 20190704 work in progress.
+                # add open_in_own_window button after title of slave panel
+                kw.update(title=str(ar.get_title()) + " " + tostring(ar.open_in_own_window_button()))
 
             if ar.actor.parameters:
                 kw.update(
@@ -682,7 +687,9 @@ class ApiList(View):
                     ar.request,
                     ar.bound_action, after_show))
             # ~ print '20110714 on_ready', params
+
             kw.update(title=ar.get_title())
+
             return http.HttpResponse(ar.renderer.html_page(request, **kw))
 
         if fmt == 'csv':
@@ -716,7 +723,7 @@ class ApiList(View):
                                 MAX_ROW_COUNT)
             response = http.HttpResponse(
                 content_type='text/html;charset="utf-8"')
-            doc = xghtml.Document(force_text(ar.get_title()))
+            doc = Document(force_text(ar.get_title()))
             doc.body.append(E.h1(doc.title))
             t = doc.add_table()
             # ~ settings.SITE.kernel.ar2html(ar,t,ar.data_iterator)

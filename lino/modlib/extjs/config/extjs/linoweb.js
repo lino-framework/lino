@@ -3646,6 +3646,9 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
         if (this_.containing_window)
             this_.set_window_title(this_.store.reader.arrayData.title);
             //~ this_.containing_window.setTitle(this_.store.reader.arrayData.title);
+        // 20190704 add open_in_own_window button after title of slave panel
+        // else if (! (this_ instanceof Ext.TabPanel)) this_.setTitle(this_.store.reader.arrayData.title);
+
         if (!this.is_searching) { // disabled 20121025: quick_search_field may not lose focus
           this.is_searching = false;
           if (this_.selModel.getSelectedCell){
