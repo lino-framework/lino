@@ -98,7 +98,7 @@ class Parser(object):
             raise Exception("Duplicate suggester for {}".format(s.trigger))
         self.suggesters[s.trigger] = s
 
-    def compile_suggestor_regex(self):
+    def compile_suggester_regex(self):
         triggers = r"".join(["\\" if key in "[\^$.|?*+(){}" else "" + key for key in self.suggesters.keys()])
         return re.compile(r"([^\w])?([" + triggers + "])(\w+)")
 
@@ -199,11 +199,12 @@ All remaining arguments are used as the text of the link.
         trigger = matchobj.group(2)
         abbr = matchobj.group(3)
         suggester = self.suggesters[trigger] # can't key error as regex is created from the keys
+        ar = self.context["ar"]  # don't break silently
         try:
             obj = suggester.get_object(abbr)
-            return whitespace + self.format_value(self.context["ar"].obj2html(obj))
+            return whitespace + etree.tostring(ar.obj2html(obj, trigger+abbr, title=str(obj)))
         except Exception as e:
-            # likley a mismatch or bag pk, return full match
+            # likely a mismatch or bad pk, return full match
             # return self.handle_error(matchobj, e)
             return matchobj.group(0)
 
@@ -239,11 +240,10 @@ All remaining arguments are used as the text of the link.
         Parse the given string `s`, replacing memo commands by their
         result.
         """
-        #~ self.context = context
         self.context.update(context)
-        suggestor_regex = self.compile_suggestor_regex()
-
-        s = suggestor_regex.sub(self.suggester_match, s)
+        if self.suggesters and 'ar' in self.context:
+            suggester_regex = self.compile_suggester_regex()
+            s = suggester_regex.sub(self.suggester_match, s)
 
         s = COMMAND_REGEX.sub(self.cmd_match, s)
         if not self.safe_mode:

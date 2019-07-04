@@ -159,3 +159,7 @@ class Registrable(model.Model):
         yield cls.workflow_state_field.name
 
 
+    def on_duplicate(self, ar, master):
+        self.state = self.workflow_state_field.choicelist.draft
+        super(Registrable, self).on_duplicate(ar, master)
+

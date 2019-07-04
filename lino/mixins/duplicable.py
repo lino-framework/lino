@@ -34,7 +34,7 @@ class Duplicate(actions.Action):
     # icon_name = 'arrow_divide'
     sort_index = 11
     show_in_workflow = False
-    readonly = False  # like ShowInsert. See docs/blog/2012/0726
+    # readonly = False  # like ShowInsert. See docs/blog/2012/0726
     callable_from = 'td'
 
     def get_view_permission(self, user_type):
@@ -74,6 +74,7 @@ class Duplicate(actions.Action):
                     setattr(new, f.name, None)
 
         new.on_duplicate(ar, None)
+        new.full_clean()
         new.save(force_insert=True)
         cw = ChangeWatcher(new)
 
