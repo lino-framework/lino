@@ -18,13 +18,13 @@ from __future__ import unicode_literals
 
 from builtins import str
 from builtins import object
+
 import logging ; logger = logging.getLogger(__name__)
-# from inspect import getsourcefile
+
 import re
 import inspect
 
 from etgen import etree
-# from django.db import models
 
 COMMAND_REGEX = re.compile(r"\[(\w+)\s*((?:[^[\]]|\[.*?\])*?)\]")
 #                                       ===...... .......=
@@ -70,9 +70,6 @@ class Suggester(object):
 class Parser(object):
     """The memo parser.
 
-    Every Lino site has a global memo parser stored in
-    :attr:`lino.core.site.Site.kernel.memo_parser`.
-
     """
 
     safe_mode = False
@@ -82,6 +79,7 @@ class Parser(object):
         self.context = context
         self.renderers = dict()
         self.suggesters = dict()
+        # self.front_end = front_end
 
     def add_suggester(self, *args, **kwargs):
 
@@ -111,12 +109,18 @@ class Parser(object):
         triggers = r"".join(["\\" if key in "[\^$.|?*+(){}" else "" + key for key in self.suggesters.keys()])
         return re.compile(r"([^\w])?([" + triggers + "])(\w+)")
 
+    def register_command(self, cmdname, func):
+        """Register a memo command identified by the given text `cmd`.
 
-    def register_command(self, cmd, func):
-        # print("20170210 register_command {} {}".format(cmd, func))
-        self.commands[cmd] = func
+        `func` is the ommand handler.  It must be a callable which will be
+        called with two positional arguments `ar` and `params`.
+
+        """
+        # print("20170210 register_command {} {}".format(cmdname, func))
+        self.commands[cmdname] = func
 
     def register_renderer(self, cl, func):
+        """Register the given function `func` as a renderer for objects of class `cl`."""
         # print("20181205", str(cl))
         # if str(cl).endswith("Person'>"):
         #     raise Exception("20181205")
@@ -152,7 +156,7 @@ class Parser(object):
             def rnd(obj):
                 return "[{} {}] ({})".format(name, obj.id, title(obj))
         if cmd is None:
-            def cmd(parser, s):
+            def cmd(ar, s):
                 """
 Insert a reference to the specified database object.
 
@@ -168,7 +172,7 @@ All remaining arguments are used as the text of the link.
                     pk = args[0]
                     txt = args[1]
 
-                ar = parser.context['ar']
+                # ar = parser.context.get('ar', None)
                 kw = dict()
                 # dd.logger.info("20161019 %s", ar.renderer)
                 pk = int(pk)
@@ -186,56 +190,62 @@ All remaining arguments are used as the text of the link.
         self.register_command(name, cmd)
         self.register_renderer(model, rnd)
             
-        
-    def eval_match(self, matchobj):
-        expr = matchobj.group(1)
-        try:
-            return self.format_value(eval(expr, self.context))
-        except Exception as e:
-            # don't log an exception because that might cause lots of
-            # emails to the admins.
-            # logger.warning(e)
-            return self.handle_error(matchobj, e)
+    def eval_match_func(self, context):
+        def func(matchobj):
+            expr = matchobj.group(1)
+            try:
+                return self.format_value(eval(expr, context))
+            except Exception as e:
+                # don't log an exception because that might cause lots of
+                # emails to the admins.
+                # logger.warning(e)
+                return self.handle_error(matchobj, e)
+        return func
 
     def format_value(self, v):
         if etree.iselement(v):
             return str(etree.tostring(v))
         return str(v)
 
-    def suggester_match(self, matchobj):
-        whitespace = matchobj.group(1)
-        whitespace = "" if whitespace is None else whitespace
-        trigger = matchobj.group(2)
-        abbr = matchobj.group(3)
-        suggester = self.suggesters[trigger] # can't key error as regex is created from the keys
-        ar = self.context["ar"]  # don't break silently
-        try:
-            obj = suggester.get_object(abbr)
-            return whitespace + etree.tostring(ar.obj2html(obj, trigger+abbr, title=str(obj)))
-        except Exception as e:
-            # likely a mismatch or bad pk, return full match
-            # return self.handle_error(matchobj, e)
-            return matchobj.group(0)
+    def suggester_match_func(self, ar):
 
-    def cmd_match(self, matchobj):
-        cmd = matchobj.group(1)
-        cmdh = self.commands.get(cmd, None)
-        if cmdh is None:
-            return matchobj.group(0)
+        def func(matchobj):
+            whitespace = matchobj.group(1)
+            whitespace = "" if whitespace is None else whitespace
+            trigger = matchobj.group(2)
+            abbr = matchobj.group(3)
+            suggester = self.suggesters[trigger] # can't key error as regex is created from the keys
+            try:
+                obj = suggester.get_object(abbr)
+                return whitespace + etree.tostring(ar.obj2html(obj, trigger+abbr, title=str(obj)))
+            except Exception as e:
+                # likely a mismatch or bad pk, return full match
+                # return self.handle_error(matchobj, e)
+                return matchobj.group(0)
+        return func
 
-        params = matchobj.group(2)
-        params = params.replace('\\\n', ' ')
-        params = params.replace(u'\xa0', ' ')
-        params = params.replace(u'\u200b', ' ')
-        params = params.replace('&nbsp;', ' ')
-        params = str(params.strip())
-        try:
-            return self.format_value(cmdh(self, params))
-        except Exception as e:
-            # logger.warning(e)
-            # don't log an exception because that might cause lots of
-            # emails to the admins.
-            return self.handle_error(matchobj, e)
+    def cmd_match_func(self, ar):
+
+        def func(matchobj):
+            cmd = matchobj.group(1)
+            cmdh = self.commands.get(cmd, None)
+            if cmdh is None:
+                return matchobj.group(0)
+
+            params = matchobj.group(2)
+            params = params.replace('\\\n', ' ')
+            params = params.replace(u'\xa0', ' ')
+            params = params.replace(u'\u200b', ' ')
+            params = params.replace('&nbsp;', ' ')
+            params = str(params.strip())
+            try:
+                return self.format_value(cmdh(ar, params))
+            except Exception as e:
+                # logger.warning(e)
+                # don't log an exception because that might cause lots of
+                # emails to the admins.
+                return self.handle_error(matchobj, e)
+        return func
 
     def handle_error(self, mo, e):
         #~ return mo.group(0)
@@ -244,20 +254,33 @@ All remaining arguments are used as the text of the link.
         # logger.debug(msg)
         return msg
 
-    def parse(self, s, **context):
+    def parse(self, src, ar=None, context=None):
         """
-        Parse the given string `s`, replacing memo commands by their
+        Parse the given string `src`, replacing memo commands by their
         result.
-        """
-        self.context.update(context)
-        if self.suggesters and 'ar' in self.context:
-            suggester_regex = self.compile_suggester_regex()
-            s = suggester_regex.sub(self.suggester_match, s)
 
-        s = COMMAND_REGEX.sub(self.cmd_match, s)
+        `ar` is the action request asking to parse. User permissions and
+        front-end renderer of this request apply.
+
+        `context` is a dict of variables to make available when parsing
+        expressions in safe mode.
+
+        """
+        if self.suggesters:
+            regex = self.compile_suggester_regex()
+            mf = self.suggester_match_func(ar)
+            src = regex.sub(mf, src)
+
+        src = COMMAND_REGEX.sub(self.cmd_match_func(ar), src)
         if not self.safe_mode:
-            s = EVAL_REGEX.sub(self.eval_match, s)
-        return s
+            # run-time context overrides the global parser context
+            ctx = dict()
+            ctx.update(self.context)
+            if context is not None:
+                ctx.update(context)
+            ctx.update(ar=ar)
+            src = EVAL_REGEX.sub(self.eval_match_func(ctx), src)
+        return src
 
     def obj2memo(self, obj, **options):
         """Render the given database object as memo markup.

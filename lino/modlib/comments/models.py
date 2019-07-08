@@ -12,7 +12,7 @@ from lino.mixins import CreatedModified, BabelNamed
 from lino.modlib.users.mixins import UserAuthored
 from lino.modlib.notify.mixins import ChangeNotifier
 from lino.modlib.gfks.mixins import Controllable
-from lino.mixins.bleached import BleachedPreviewBody
+from lino.modlib.memo.mixins import Previewable
 from .choicelists import CommentEvents
 # from .choicelists import PublishAllComments, PublishComment
 
@@ -30,7 +30,7 @@ class CommentType(BabelNamed):
     
 @dd.python_2_unicode_compatible
 class Comment(CreatedModified, UserAuthored, Controllable,
-              ChangeNotifier, BleachedPreviewBody):
+              ChangeNotifier, Previewable):
     class Meta(object):
         app_label = 'comments'
         abstract = dd.is_abstract_model(__name__, 'Comment')

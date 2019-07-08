@@ -15,7 +15,7 @@ class Plugin(ad.Plugin):
 
     site_js_snippets = ['comments/comments.js']
     
-    needs_plugins = ['lino.modlib.office', 'lino.modlib.gfks']
+    needs_plugins = ['lino.modlib.office', 'lino.modlib.memo']
 
     # user_must_publish = True
     # """

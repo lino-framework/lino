@@ -90,7 +90,8 @@ class Comments(dd.Table):
 
     @classmethod
     def as_li(cls, self, ar):
-        chunks = [ar.parse_memo(self.body_preview)]
+        # chunks = [ar.parse_memo(self.short_preview)]
+        chunks = [self.short_preview]
 
         by = _("{0} by {1}").format(
             naturaltime(self.created), str(self.user))
@@ -125,7 +126,7 @@ class MyComments(My, Comments):
     required_roles = dd.login_required(CommentsUser)
     auto_fit_column_widths = True
     order_by = ["-modified"]
-    column_names = "id modified body_preview owner workflow_buttons *"
+    column_names = "id modified short_preview owner workflow_buttons *"
 
 
 class AllComments(Comments):
@@ -151,7 +152,7 @@ class CommentsByX(Comments):
 class RecentComments(Comments):
     required_roles = dd.login_required(CommentsReader)
     # required_roles = set([CommentsReader])
-    column_names = "body_preview modified user *"
+    column_names = "short_preview modified user *"
     stay_in_grid = True
     order_by = ["-modified"]
     label = _("Recent comments")

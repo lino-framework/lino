@@ -162,6 +162,7 @@ lino.modlib.languages.fixtures
 lino.management
 lino.management.commands
 lino.modlib.odata
+lino.modlib.memo
 lino.modlib.office
 lino.modlib.checkdata
 lino.modlib.checkdata.fixtures

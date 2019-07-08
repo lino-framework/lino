@@ -311,8 +311,10 @@ class Permission(dd.Model):
 def setup_memo_commands(sender=None, **kwargs):
     # See :doc:`/specs/memo`
 
-    mp = sender.kernel.memo_parser
+    if not sender.is_installed('memo'):
+        return
 
+    mp = sender.plugins.memo.parser
     mp.add_suggester(
         "@",
         sender.models.users.User.objects.filter(

@@ -589,16 +589,15 @@ class BaseRequest(object):
                 ok_func(self)
 
     def parse_memo(self, txt, **context):
-        context.update(ar=self)
-        return settings.SITE.kernel.memo_parser.parse(txt, **context)
+        return settings.SITE.plugins.memo.parser.parse(txt, self, context)
 
     def obj2memo(self, *args, **kwargs):
         """
         Calls the site's parser's :meth:`obj2memo
-        <lino.utils.memo.Parser.obj2memo>` method.
+        <lino.modlib.memo.parser.Parser.obj2memo>` method.
         """
         # kwargs.update(ar=self)
-        return settings.SITE.kernel.memo_parser.obj2memo(*args, **kwargs)
+        return settings.SITE.plugins.memo.parser.obj2memo(*args, **kwargs)
 
     # def parse_memo(self, html):
     #     return self.renderer.parse_memo(html, ar=self)

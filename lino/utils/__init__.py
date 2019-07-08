@@ -33,7 +33,6 @@ function for general use. It has also many subpackages and submodules.
     log
     mdbtools
     media
-    memo
     mldbc
     mti
     odsreader
@@ -46,7 +45,6 @@ function for general use. It has also many subpackages and submodules.
     restify
     screenshots
     sendchanges
-    soup
     sqllog
     ssin
     test

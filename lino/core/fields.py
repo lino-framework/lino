@@ -74,19 +74,7 @@ class PasswordField(models.CharField):
 
 
 class RichTextField(models.TextField):
-
-    """Like Django's `models.TextField`, but you can specify a keyword
-    argument :attr:`textfield_format`.
-
-    .. attribute:: textfield_format
-
-        Override the global
-        :attr:`lino.core.site.Site.textfield_format` setting.
-    
-        For backwards compatibility `format` is an alias for
-        `textfield_format`.
-
-    """
+    # See :doc:`/dev/textfield`.
 
     def __init__(self, *args, **kw):
         self.textfield_format = kw.pop(

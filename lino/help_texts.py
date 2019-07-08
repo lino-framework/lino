@@ -501,15 +501,6 @@ required_roles."""),
 two properties name and url."""),
     'lino.utils.media.MediaFile.name' : _("""return the filename on the server"""),
     'lino.utils.media.MediaFile.get_url' : _("""return the url that points to file on the server"""),
-    'lino.utils.memo.Suggester' : _("""Holds the configuration for the behaviour of a given "trigger"."""),
-    'lino.utils.memo.Parser' : _("""The memo parser."""),
-    'lino.utils.memo.Parser.add_suggester' : _("""trigger is a short text, usually one character, like "@" or "#",
-which will trigger a list of autocomplete suggestions to pop up."""),
-    'lino.utils.memo.Parser.register_django_model' : _("""Register the given string name as command for referring to
-database rows of the given Django database model model."""),
-    'lino.utils.memo.Parser.parse' : _("""Parse the given string s, replacing memo commands by their
-result."""),
-    'lino.utils.memo.Parser.obj2memo' : _("""Render the given database object as memo markup."""),
     'lino.utils.mldbc.fields.BabelCharField' : _("""Define a variable number of CharField database fields, one for
 each language of your lino.core.site.Site.languages.  See
 mldbc."""),
@@ -625,10 +616,10 @@ tzinfo which contains the time zone info object."""),
 as a client contact."""),
     'lino.modlib.users.User.coaching_type' : _("""The coaching type used for new coachings of this user."""),
     'lino.modlib.users.User.coaching_supervisor' : _("""Notify me when a coach has been assigned."""),
-    'lino.modlib.comments.Comment' : _("""A comment is a short text which some user writes about some
-other database object. It has no recipient."""),
+    'lino.modlib.comments.Comment' : _("""A comment is a short text which some user writes about some database
+object. It has no recipient."""),
     'lino.modlib.comments.Comment.body' : _("""The full body text of your comment."""),
-    'lino.modlib.comments.Comment.body_preview' : _("""The first paragraph of your body."""),
+    'lino.modlib.comments.Comment.short_preview' : _("""The first paragraph of your body."""),
     'lino.modlib.comments.Comment.user' : _("""The author of the comment."""),
     'lino.modlib.comments.Comment.owner' : _("""A generic foreign key to the commentable database object to
 which this comment relates."""),

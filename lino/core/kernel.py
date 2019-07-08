@@ -62,7 +62,6 @@ from lino.core import choicelists
 from lino.core import workflows
 from lino.core import tables
 from lino.core import constants
-from lino.utils.memo import Parser
 from etgen.html import E
 from lino.core.requests import ActorRequest
 from lino.core.model import Model
@@ -160,7 +159,7 @@ class Kernel(object):
 
     .. attribute:: memo_parser
 
-        An instance of :class:`lino.utils.memo.Parser`.
+        Obsolete. Was moved to :mod:`lino.modlib.memo`.
 
     """
     default_ui = None
@@ -562,17 +561,7 @@ class Kernel(object):
 
         # site.resolve_virtual_fields()
 
-        self.memo_parser = Parser()
-
-        def url2html(parser, s):
-            url_text = s.split(None, 1)
-            if len(url_text) == 1:
-                url = text = url_text[0]
-            else:
-                url, text = url_text
-            return '<a href="%s" target="_blank">%s</a>' % (url, text)
-
-        self.memo_parser.register_command('url', url2html)
+        # self.memo_parser = Parser()
 
         if 'LINO_BUILD_CACHE_ON_STARTUP' in os.environ:
             site.build_js_cache_on_startup = True

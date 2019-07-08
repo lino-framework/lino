@@ -3,21 +3,58 @@
 # License: BSD (see file COPYING for details)
 """
 
-Content moved to :doc:`docs/dev/bleach`.
+See :doc:`docs/specs/memo`.
 
 """
-import six
+
+from bs4 import BeautifulSoup
 
 from django.conf import settings
+
 from lino.core.model import Model
 from lino.core.fields import fields_list, RichTextField
 from lino.utils.restify import restify
-from lino.utils.soup import truncate_comment
 from lino.core.exceptions import ChangedAPI
 from etgen.html import E, tostring
 from lino.api import _
 
 from lxml import html as lxml_html
+
+
+def truncate_comment(html_str, max_p_len=None):
+    """
+    Return a shortened preview of a html string, containing at most one
+    paragraph with at most `max_p_len` characters.
+
+    :html_str: the raw string of html
+    :max_p_len: max number of characters in the paragraph.
+
+    See usage examples in :doc:`/specs/comments`.
+
+    """
+    html_str = html_str.strip()  # remove leading or trailing newlines
+    if not html_str.startswith('<'):
+        # it's plain text without html tags
+        ps = html_str.split('\n\n', 1)
+        txt = ps[0]
+        if max_p_len is not None and len(txt) > max_p_len:
+            txt = txt[:max_p_len] + "..."
+        elif len(ps) > 1:
+            txt = txt + " (...)"
+        return txt
+    soup = BeautifulSoup(html_str, "html.parser")
+    ps = soup.find_all(["p", "h1", "h2", "h3", "h4", "h5", "h6", "h7", "h8", "h9"])
+    if len(ps) > 0:
+        txt = ps[0].text
+        if max_p_len is not None and len(txt) > max_p_len:
+            txt = txt[:max_p_len] + "..."
+        elif len(ps) > 1:
+            txt = txt + " (...)"
+        return txt
+        # ps[0].string = (txt)
+        # return six.text_type(ps[0])
+    return html_str
+
 
 def rich_text_to_elems(ar, description):
     """
@@ -62,24 +99,24 @@ def body_subject_to_elems(ar, title, description):
 
 
 
-class BleachedPreviewBody(Model):
+class Previewable(Model):
 
     class Meta:
         abstract = True
 
-    # bleached_fields = 'body'
-
     body = RichTextField(_("Body"), blank=True, format='html', bleached=True)
-    body_preview = RichTextField(_("Preview"), blank=True, editable=False)
+    short_preview = RichTextField(_("Preview"), blank=True, editable=False)
+    full_preview = RichTextField(_("Preview (full)"), blank=True, editable=False)
 
-    # def full_clean(self, *args, **kwargs):
     def before_ui_save(self, ar):
-        """Fills the body_preview field.
+        """Fills the preview fields.
 
         """
         # super(BleachedPreviewBody, self).full_clean(*args, **kwargs)
-        super(BleachedPreviewBody, self).before_ui_save(ar)
-        self.body_preview = truncate_comment(self.body)
+        super(Previewable, self).before_ui_save(ar)
+        parse = settings.SITE.plugins.memo.parser.parse
+        self.short_preview = parse(truncate_comment(self.body), ar)
+        self.full_preview = parse(self.body, ar)
 
 
    

@@ -85,7 +85,7 @@ class Analyzer(object):
     
     def show_memo_commands(self, doctestfmt=False):
         rst = ""
-        mp = settings.SITE.kernel.memo_parser
+        mp = settings.SITE.plugins.memo.parser
         items = []
         for cmd, func in sorted(mp.commands.items()):
             doc = unindent(func.__doc__ or '')
