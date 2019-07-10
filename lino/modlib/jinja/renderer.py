@@ -27,6 +27,7 @@ from lino.utils.jinja import Counter
 from lino.utils import SumCollector
 
 from lino.core.renderer import MailRenderer
+from lino.core.requests import BaseRequest
 
 from lino.api import rt
 
@@ -103,10 +104,6 @@ class JinjaRenderer(MailRenderer):
             # ar.renderer = settings.SITE.plugins.bootstrap3.renderer
             return tostring(E.ul(*[obj.as_list_item(ar) for obj in ar]))
 
-        from lino.core.requests import BaseRequest
-
-        ar = BaseRequest(renderer=settings.SITE.kernel.default_renderer)
-
         self.jinja_env.globals.update(
             settings=settings,
             site=settings.SITE,
@@ -119,7 +116,7 @@ class JinjaRenderer(MailRenderer):
             len=len,
             E=E,
             tostring=tostring,
-            ar=ar,
+            ar=BaseRequest(renderer=settings.SITE.kernel.default_renderer),
             # _=_,
             now=datetime.datetime.now(),
             mtos=settings.SITE.decfmt,  # obsolete

@@ -4,11 +4,11 @@
 """
 See introduction in :doc:`/dev/ar`.
 """
+
 from builtins import str
 import six
 
-import logging
-logger = logging.getLogger(__name__)
+import logging ; logger = logging.getLogger(__name__)
 
 from copy import copy
 from xml.sax.saxutils import escape
