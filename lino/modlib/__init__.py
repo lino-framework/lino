@@ -1,4 +1,4 @@
-# Copyright 2008-2017 Rumma & Ko Ltd
+# Copyright 2008-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """The standard model library included with Lino.
@@ -6,15 +6,16 @@
 A collection of ready-to-use plugins (Django calls them "apps") for
 Lino applications.
 
-"System plugins"
-================
+System plugins
+==============
 
 .. autosummary::
    :toctree:
 
-    gfks
-    system
     users
+    gfks
+    memo
+    system
 
 Utilities
 =========
@@ -27,8 +28,8 @@ Utilities
     printing
     summaries
 
-"User interfaces"
-=================
+Front ends
+==========
 
 .. autosummary::
    :toctree:
