@@ -1294,7 +1294,7 @@ class ActionRequest(ActorRequest):
                     # call get_layout_handle to make sure that
                     # params_store has been created:
                     self.actor.params_layout.get_layout_handle(
-                        self.renderer.plugin)
+                        self.renderer.front_end)
                     ps = self.actor.params_layout.params_store
                     # print('20160329 requests.py', ps, self.actor.parameters)
                     if ps is not None:

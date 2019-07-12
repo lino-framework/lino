@@ -150,7 +150,7 @@ class SignOut(dd.Action):
         auth.logout(ar.request)
         ar.success(
             _("User {} logged out.").format(user),
-            goto_url=ar.renderer.plugin.build_plain_url())
+            goto_url=ar.renderer.front_end.build_plain_url())
 
 from etgen.html import E
 # from lino.core.fields import DisplayField, DummyField
@@ -195,7 +195,7 @@ class SignIn(dd.Action):
             ar.success(
                 _("Now logged in as {}").format(user),
                 close_window=True,
-                goto_url=ar.renderer.plugin.build_plain_url())
+                goto_url=ar.renderer.front_end.build_plain_url())
 
 
 

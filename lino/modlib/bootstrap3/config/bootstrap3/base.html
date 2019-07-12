@@ -14,10 +14,10 @@
     <div class="container-fluid lino-bs-header">
       {% if site.user_model and not site.default_user and not site.admin_ui -%}
         {% if ar.user.authenticated -%}
-          <a href="{{ar.renderer.plugin.build_plain_url('auth')}}?an=logout">{{_("Sign out")}}</a>
+          <a href="{{ar.renderer.front_end.build_plain_url('auth')}}?an=logout">{{_("Sign out")}}</a>
         {% else -%}
         <form class="form-inline" method="POST"
-             action="{{ar.renderer.plugin.build_plain_url('auth')}}">
+             action="{{ar.renderer.front_end.build_plain_url('auth')}}">
         <input name="username" type="username" class="input-small" placeholder="Username">
         <input name="password" type"password" class="input-small" placeholder="Password">
         <button type="submit" class="btn">{{_("Sign in")}}</button>

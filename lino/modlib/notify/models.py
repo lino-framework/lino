@@ -204,8 +204,10 @@ class Message(UserAuthored, Controllable, Created):
         qs = qs.filter(mail_mode=mm).order_by('user')
         if qs.count() == 0:
             return
-        from lino.core.renderer import MailRenderer
-        ar = rt.login(renderer=MailRenderer())
+        # from lino.core.renderer import MailRenderer
+        # ar = rt.login(renderer=MailRenderer())
+        # ar = rt.login(renderer=dd.plugins.memo.front_end.renderer)
+        ar = rt.login()
         context = ar.get_printable_context()
         sender = settings.SERVER_EMAIL
         template = rt.get_template('notify/summary.eml')

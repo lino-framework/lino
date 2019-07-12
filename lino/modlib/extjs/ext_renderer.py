@@ -334,12 +334,12 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
             return self.action_call(None, ba, dict(record_id=obj.pk))
 
     def get_actor_url(self, actor, *args, **kw):
-        return self.plugin.build_plain_url(
+        return self.front_end.build_plain_url(
             "api",
             actor.app_label, actor.__name__, *args, **kw)
 
     def get_home_url(self, *args, **kw):
-        return self.plugin.build_plain_url(*args, **kw)
+        return self.front_end.build_plain_url(*args, **kw)
 
     def get_request_url(self, ar, *args, **kw):
         """
@@ -359,7 +359,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
         #~ kw = self.request2kw(rr,**kw)
         if ar.bound_action != ar.actor.default_action:
             kw[constants.URL_PARAM_ACTION_NAME] = ar.bound_action.action.action_name
-        return self.plugin.build_plain_url(
+        return self.front_end.build_plain_url(
             'api', ar.actor.app_label, ar.actor.__name__, *args, **kw)
 
     # def show_table(
@@ -427,7 +427,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
             tpl = env.get_template('extjs/index.html')
             context = {
                 'site': settings.SITE,
-                'extjs': self.plugin,
+                'extjs': self.front_end,
                 'ext_renderer': self,
                 'py2js': py2js,  # TODO: Should be template filter
                 'jsgen': jsgen,  # TODO: Should be in filters
@@ -456,7 +456,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
             items=dashboard,
         )
         if not on_ready:
-            html = site.get_main_html(request, extjs=self.plugin)
+            html = site.get_main_html(request, extjs=self.front_end)
             html = self.html_text(html)
             dashboard.update(html=html)
 
@@ -594,7 +594,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
             language=translation.get_language(),
             # ext_requests=constants,
             constants=constants,
-            extjs=self.plugin,  # 20171227
+            extjs=self.front_end,  # 20171227
         )
 
         context.update(_=_)
@@ -663,13 +663,13 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
 
         #~ f.write('\n/* Application FormPanel subclasses */\n')
         for fl in self.param_panels:
-            lh = fl.get_layout_handle(self.plugin)
+            lh = fl.get_layout_handle(self.front_end)
             if must_render(lh, user_type):
                 for ln in self.js_render_ParamsPanelSubclass(lh):
                     f.write(ln + '\n')
 
         for fl in self.action_param_panels:
-            lh = fl.get_layout_handle(self.plugin)
+            lh = fl.get_layout_handle(self.front_end)
             if must_render(lh, user_type):
                 for ln in self.js_render_ActionFormPanelSubclass(lh):
                     f.write(ln + '\n')
@@ -677,7 +677,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
         assert user_type == get_user_profile()
 
         for fl in self.form_panels:
-            lh = fl.get_layout_handle(self.plugin)
+            lh = fl.get_layout_handle(self.front_end)
             if must_render(lh, user_type):
                 for ln in self.js_render_FormPanelSubclass(lh):
                     f.write(ln + '\n')
@@ -1310,7 +1310,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
         """
 
         # extjs = settings.SITE.plugins.extjs
-        extjs = self.plugin
+        extjs = self.front_end
 
         def fn():
             yield "// lino.js --- generated %s by %s for %s." % (

@@ -9,26 +9,24 @@ directories. TODO: do only one common loop for both.
 
 from os.path import join, dirname, isdir
 from builtins import str
-from lino import PYAFTER26
 import datetime
 import jinja2
-
-SUBDIR_NAME = 'config'
 
 from django.conf import settings
 
 from django.utils.translation import ugettext
 from django.utils.translation import pgettext
-from lino.utils import iif
-from lino.utils import format_date
+
 from etgen import html as xghtml
 from etgen.html import E, tostring
+
+from lino import PYAFTER26
+from lino.utils import iif
+from lino.utils import format_date
 from lino.utils.jinja import Counter
 from lino.utils import SumCollector
-
-from lino.core.renderer import MailRenderer
+from lino.core.renderer import HtmlRenderer
 from lino.core.requests import BaseRequest
-
 from lino.api import rt
 
 if PYAFTER26:
@@ -36,7 +34,11 @@ if PYAFTER26:
 else:
     from cgi import escape
 
-class JinjaRenderer(MailRenderer):
+SUBDIR_NAME = 'config'
+
+
+# class JinjaRenderer(MailRenderer):
+class JinjaRenderer(HtmlRenderer):
 
     tableattrs = dict()
     cellattrs = dict()
@@ -153,3 +155,7 @@ class JinjaRenderer(MailRenderer):
     #     e = super(JinjaRenderer, self).show_table(*args, **kwargs)
     #     return tostring(e)
 
+    def show_story(self, *args, **kwargs):
+        """Render the story and return it as a string."""
+        e = super(JinjaRenderer, self).show_story(*args, **kwargs)
+        return tostring(e)

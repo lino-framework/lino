@@ -296,19 +296,11 @@ class Site(object):
     Used e.g. in a :menuselection:`Site --> About` dialog box.
     """
 
-    # server_url = None
-    server_url = "http://127.0.0.1:8000/"
-    """The "official" URL used by "normal" users when accessing this Lino
-    site. This is used by templates such as the email sent by
-    :class:`lino.modlib.notify.Message`
-
-    """
-
-    mobile_server_url = None
-    """The URL to a mobile friedly version of the site. 
-    Used instead of :attr:`server_url` when sending emails sent by 
-    :class:`lino.modlib.notify.Message` 
-    """
+    # mobile_server_url = None
+    # """The URL to a mobile friedly version of the site.
+    # Used instead of :attr:`server_url` when sending emails sent by
+    # :class:`lino.modlib.notify.Message`
+    # """
 
     device_type = 'desktop'
     """
@@ -1954,11 +1946,15 @@ class Site(object):
                 cls, attrname))
 
     def setup_plugins(self):
-        """This method is called exactly once during site startup, after
+        """
+        Deprecated. Use :meth:`get_plugin_configs` instead.
+
+        This method is called exactly once during site startup, after
         :meth:`load_plugins` but before populating the models
         registry.
 
         See :ref:`dev.plugins`.
+
 
         """
         pass
@@ -3629,6 +3625,21 @@ Please convert to Plugin method".format(mod, methname)
         #     yield 'lino.modlib.bootstrap3'
 
         # yield "lino.modlib.lino_startup"
+
+    # server_url = None
+    server_url = "http://127.0.0.1:8000/"
+    """The "official" URL used by "normal" users when accessing this Lino
+    site.
+     
+    This is used by templates such as :xfile:`summary.eml` (used by
+    :mod:`lino.modlib.notify` to send notification emails)
+    
+    Django has a `HttpRequest.build_absolute_uri()
+    <https://docs.djangoproject.com/en/2.2/ref/request-response/#django.http.HttpRequest.build_absolute_uri>`__
+    method, but e.g. notification emails are sent via :manage:`linod` where no
+    HttpRequest exists. That's why we need to manually set :attr:`server_url`.
+
+    """
 
     site_prefix = '/'
     """The string to prefix to every URL of the Lino web interface.

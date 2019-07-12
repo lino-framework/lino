@@ -1,4 +1,4 @@
-<body>
+<html><head><base href="{{settings.SITE.server_url}}" target="_blank"></head><body>
 {% if len(messages) == 1 %}
 {% set msg = messages[0] %}
 ({{fds(msg.created.date())}} {{msg.created.time().strftime('%H:%M')}})
@@ -13,4 +13,4 @@
 </div>
 {% endfor %}
 {% endif %}
-</body>
+</body></html>

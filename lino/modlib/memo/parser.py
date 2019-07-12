@@ -79,7 +79,6 @@ class Parser(object):
         self.context = context
         self.renderers = dict()
         self.suggesters = dict()
-        # self.front_end = front_end
 
     def add_suggester(self, *args, **kwargs):
 

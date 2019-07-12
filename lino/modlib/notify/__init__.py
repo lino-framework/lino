@@ -1,4 +1,4 @@
-# Copyright 2008-2018 Rumma & Ko Ltd
+# Copyright 2008-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Adds functionality for managing notification messages.
@@ -21,7 +21,7 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("Messages")
 
-    needs_plugins = ['lino.modlib.users', 'lino.modlib.gfks']
+    needs_plugins = ['lino.modlib.users', 'lino.modlib.memo']
 
     remove_after = 24
     """Automatically remove notification messages after x hours.

@@ -31,25 +31,25 @@ class Renderer(HtmlRenderer):
             add_user_language(kw, ar)
             return self.get_detail_url(ba.actor, obj.pk, **kw)
 
-    def get_detail_url(self, actor, pk, *args, **kw):
-        return self.plugin.build_plain_url(
-            actor.app_label,
-            actor.__name__,
-            str(pk), *args, **kw)
+    # def get_detail_url(self, actor, pk, *args, **kw):
+    #     return self.front_end.build_plain_url(
+    #         actor.app_label,
+    #         actor.__name__,
+    #         str(pk), *args, **kw)
 
     # def pk2url(self, model, pk, **kw):
     #     """Overrides :meth:`lino.core.renderer.Renderer.pk2url`.
     #     """
     #     if pk is not None:
-    #         return self.plugin.build_plain_url(
+    #         return self.front_end.build_plain_url(
     #             model._meta.app_label, model.__name__, str(pk), **kw)
 
     def get_home_url(self, *args, **kw):
-        return self.plugin.build_plain_url(*args, **kw)
+        return self.front_end.build_plain_url(*args, **kw)
 
     def get_request_url(self, ar, *args, **kw):
         if ar.actor.__name__ == "Main":
-            return self.plugin.build_plain_url(*args, **kw)
+            return self.front_end.build_plain_url(*args, **kw)
 
         st = ar.get_status()
         kw.update(st['base_params'])
@@ -66,7 +66,7 @@ class Renderer(HtmlRenderer):
             kw.setdefault(ext_requests.URL_PARAM_SORT, sc)
         #~ print '20120901 TODO get_request_url'
 
-        return self.plugin.build_plain_url(
+        return self.front_end.build_plain_url(
             ar.actor.app_label, ar.actor.__name__, *args, **kw)
 
     def request_handler(self, ar, *args, **kw):

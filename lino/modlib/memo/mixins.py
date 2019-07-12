@@ -12,6 +12,7 @@ from bs4 import BeautifulSoup
 from django.conf import settings
 
 from lino.core.model import Model
+from lino.core.requests import BaseRequest
 from lino.core.fields import fields_list, RichTextField
 from lino.utils.restify import restify
 from lino.core.exceptions import ChangedAPI
@@ -112,6 +113,12 @@ class Previewable(Model):
         """Fills the preview fields.
 
         """
+        front_end = settings.SITE.plugins.memo.front_end
+        if front_end is not None:
+            if ar is None or ar.renderer.front_end is not front_end:
+                # ar = ar.spawn_request(renderer=front_end.renderer)
+                ar = BaseRequest(renderer=front_end.renderer)
+
         # super(BleachedPreviewBody, self).full_clean(*args, **kwargs)
         super(Previewable, self).before_ui_save(ar)
         parse = settings.SITE.plugins.memo.parser.parse

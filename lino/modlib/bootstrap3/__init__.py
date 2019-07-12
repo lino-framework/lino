@@ -54,6 +54,13 @@ class Plugin(Plugin):
         ]
         return urls
 
+    def get_detail_url(self, actor, pk, *args, **kw):
+        return self.build_plain_url(
+            actor.app_label,
+            actor.__name__,
+            str(pk), *args, **kw)
+
+
     def get_used_libs(self, html=False):
         if html is not None:
             yield ("Bootstrap", '3.3.4', "http://getbootstrap.com")

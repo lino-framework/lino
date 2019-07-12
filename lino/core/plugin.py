@@ -415,4 +415,29 @@ class Plugin(object):
     def setup_layout_element(self, el):
         pass
     
-    
+    # def get_detail_url(self, actor, pk, *args, **kw):
+    #     if actor.model:
+    #         return "{}api/{}/{}/{}".format(
+    #             self.server_url,
+    #             actor.model._meta.app_label, actor.model.get_default_table().__name__, pk)
+    #     return "{}api/{}/{}/{}".format(
+    #         self.server_url,
+    #         actor.app_label, actor.__name__, pk)
+
+    def get_detail_url(self, actor, pk, *args, **kw):
+        """
+        Return the URL to the given database row.
+
+        This is only a relative URL. Get the fully qualified URI by prefixing
+        :attr:`lino.core.site.Site.server_url`.
+
+        """
+        parts = ['api']
+        if actor.model:
+            parts += [actor.model._meta.app_label,
+                      actor.model.get_default_table().__name__]
+        else:
+            parts += [actor.app_label, actor.__name__]
+        parts.append(str(pk))
+
+        return self.build_plain_url(*parts, *args, **kw)

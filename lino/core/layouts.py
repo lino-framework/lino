@@ -372,7 +372,7 @@ class LayoutHandle(object):
 
     def get_choices_url(self, *args, **kw):
         return self.layout.get_choices_url(
-            settings.SITE.kernel.default_renderer.plugin,
+            settings.SITE.kernel.default_renderer.front_end,
             *args, **kw)
 
 

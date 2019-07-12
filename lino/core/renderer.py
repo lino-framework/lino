@@ -8,14 +8,13 @@ Defines :class:`HtmlRenderer` and :class:`TextRenderer`.
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import logging
 from builtins import object
 # str = six.text_type
 from builtins import str
 
 import six
 
-logger = logging.getLogger(__name__)
+import logging ; logger = logging.getLogger(__name__)
 
 from cgi import escape
 from atelier import rstgen
@@ -104,10 +103,10 @@ class Renderer(object):
     not_implemented_js = None
     extjs_version = None
 
-    def __init__(self, plugin=None):
+    def __init__(self, front_end=None):
         # if not isinstance(plugin, Plugin):
         #     raise Exception("{} is not a Plugin".format(plugin))
-        self.plugin = plugin
+        self.front_end = front_end
 
     def ar2js(self, ar, obj, **status):
         """
@@ -122,10 +121,8 @@ class Renderer(object):
         #     if ar is None or a.get_bound_action_permission(ar, obj, None):
         #         return a
 
-    def get_detail_url(self, actor, pk, *args, **kw):
-        # return str(actor)+"/"+str(pk)
-        return "Detail"  # many doctests depend on this
-
+    def get_detail_url(self, *args, **kwargs):
+        return self.front_end.get_detail_url(*args, **kwargs)
 
     def render_action_response(self, ar):
         """Builds a JSON response from response information stored in given
@@ -476,10 +473,9 @@ class HtmlRenderer(Renderer):
 
     def show_story(self, ar, story, stripped=True, **kwargs):
         """
-        Render the given story as an HTML element. Ignore `stripped`
-        because it makes no sense in HTML.
+        Render the given story and return it as an HTML tree DIV element.
 
-        A story is an iterable of things that can be rendered.
+        Ignore `stripped` because it makes no sense in HTML.
 
         """
         from lino.core.actors import Actor
@@ -581,6 +577,10 @@ class TextRenderer(HtmlRenderer):
 
     def get_request_url(self, ar, *args, **kw):
         return None
+
+    def get_detail_url(self, actor, pk, *args, **kw):
+        # return str(actor)+"/"+str(pk)
+        return "Detail"  # many doctests depend on this
 
     def menu2rst(self, ar, mnu, level=1):
         """Used by :meth:`show_menu`."""
@@ -739,26 +739,16 @@ class TestRenderer(TextRenderer):
         return '\n'.join(self.table2story(*args, **kwargs))
 
 
-class MailRenderer(HtmlRenderer):
-    """
-    A Lino renderer to be used when sending emails.
-
-    Subclassed by :class:`lino.modlib.jinja.renderer.JinjaRenderer`
-    """
-    def get_detail_url(self, actor, pk, *args, **kw):
-        # return self.plugin.build_plain_url(
-        #     'api', actor.app_label, actor.__name__, str(pk), *args, **kw)
-        if actor.model:
-            return "{}api/{}/{}/{}".format(
-                settings.SITE.mobile_server_url or settings.SITE.server_url,
-                actor.model._meta.app_label, actor.model.get_default_table().__name__, pk)
-        return "{}api/{}/{}/{}".format(
-            settings.SITE.server_url,
-            actor.app_label, actor.__name__, pk)
-
-    def show_story(self, *args, **kwargs):
-        e = super(MailRenderer, self).show_story(*args, **kwargs)
-        return tostring(e)
+# class MailRenderer(HtmlRenderer):
+#     """
+#     A Lino renderer to be used when sending emails.
+#
+#     Subclassed by :class:`lino.modlib.jinja.renderer.JinjaRenderer`
+#     """
+#     def show_story(self, *args, **kwargs):
+#         """Render the story and return it as a string."""
+#         e = super(MailRenderer, self).show_story(*args, **kwargs)
+#         return tostring(e)
 
 
 class JsRenderer(HtmlRenderer):
@@ -867,19 +857,13 @@ class JsRenderer(HtmlRenderer):
         # params = self.get_action_params(ar, ba, obj)
         # url = ar.get_request_url()
 
-        url = self.plugin.build_plain_url(
+        url = self.front_end.build_plain_url(
             ar.actor.app_label, ar.actor.__name__)
         params = ar.get_status().get('base_params', None)
         pp = "function() {return %s;}" % py2js(params)
         return "Lino.list_action_handler(%s,%s,%s,%s)()" % (
             py2js(url), py2js(ba.action.action_name),
             py2js(ba.action.http_method),pp)
-
-
-    def get_detail_url(self, actor, pk, *args, **kw):
-        return self.plugin.build_plain_url(
-            'api', actor.app_label, actor.__name__, str(pk), *args, **kw)
-
 
     def obj2url(self, ar, obj):
         return self.js2url(self.instance_handler(ar, obj, None))

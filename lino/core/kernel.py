@@ -162,7 +162,7 @@ class Kernel(object):
         Obsolete. Was moved to :mod:`lino.modlib.memo`.
 
     """
-    default_ui = None
+    default_ui = None  # TODO: rename this to front_end
     admin_ui = None
 
     # _singleton_instance = None
