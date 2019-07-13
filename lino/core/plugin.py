@@ -439,5 +439,5 @@ class Plugin(object):
         else:
             parts += [actor.app_label, actor.__name__]
         parts.append(str(pk))
-
-        return self.build_plain_url(*parts, *args, **kw)
+        parts += args
+        return self.build_plain_url(*parts, **kw)
