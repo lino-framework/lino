@@ -51,6 +51,9 @@ class Plugin(ad.Plugin):
 
     # """
 
+    def get_requirements(self, site):
+        yield "channels"
+
     def get_used_libs(self, html=None):
         try:
             import channels

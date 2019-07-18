@@ -53,7 +53,6 @@ Front ends
     weasyprint
     dashboard
     davlink
-    social_auth
 
 "Enterprise Resources"
 ======================

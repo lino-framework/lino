@@ -322,6 +322,10 @@ class Plugin(object):
         """
         return []
 
+    def get_requirements(self, site):
+        """Return an iteration of required Python packages."""
+        return []
+
     def get_css_includes(self, site):
         return []
 
