@@ -4,10 +4,11 @@
 .. autosummary::
    :toctree:
 
+    configure
+    prep
+    initdb
     diag
     dump2py
-    initdb
-    prep
     mergedata
     monitor
     run

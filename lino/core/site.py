@@ -1864,6 +1864,18 @@ class Site(object):
         # global PLUGIN_CONFIGS
         # PLUGIN_CONFIGS = None
 
+    def get_requirements(self):
+        """Collect :xfile:`help_texts.py` modules"""
+        reqs = set()
+        for p in self.installed_plugins:
+            for r in p.get_requirements(self):
+                reqs.add(r)
+        if self.textfield_bleached:
+            reqs.add("bleach")
+        if self.social_auth_backends:
+            reqs.add("social-auth-app-django")
+        return sorted(reqs)
+
     def load_help_texts(self):
         """Collect :xfile:`help_texts.py` modules"""
         for p in self.installed_plugins:

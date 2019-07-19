@@ -194,16 +194,16 @@ class Command(BaseCommand):
             help='The directory where to write output files.')
         parser.add_argument('--noinput', action='store_false',
                             dest='interactive', default=True,
-                            help='Do not prompt for input of any kind.'),
+                            help='Do not prompt for input of any kind.')
         parser.add_argument('--tolerate', action='store_true',
                             dest='tolerate', default=False,
                             help='Tolerate database errors.')
         parser.add_argument('-o', '--overwrite', action='store_true',
                             dest='overwrite', default=False,
-                            help='Overwrite existing files.'),
+                            help='Overwrite existing files.')
         parser.add_argument('-m', '--max-row-count', type=int,
                             dest='max_row_count', default=50000,
-                            help='Maximum number of rows per file.'),
+                            help='Maximum number of rows per file.')
 
     def write_files(self):
         puts("Writing {0}...".format(self.main_file))

@@ -113,3 +113,7 @@ class Plugin(ad.Plugin):
         # m.add_action('checkdata.Severities')
         # m.add_action('checkdata.Feedbacks')
 
+    def get_requirements(self, site):
+        yield "schedule"
+
+
