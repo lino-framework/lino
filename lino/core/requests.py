@@ -1110,6 +1110,24 @@ class ActorRequest(BaseRequest):
         obj = self.actor.create_instance(self, **kw)
         return obj
 
+    def create_instances_from_request(self, **kwargs):
+        elems = []
+        if self.actor.handle_uploaded_files is not None:
+            files = self.request.FILES.getlist("file")
+            for f in files:
+                e = self.create_instance( **kwargs)
+                self.actor.handle_uploaded_files(e, self.request, file=f)
+                elems.append(e)
+        else:
+            elems.append(self.create_instance( **kwargs))
+
+        if self.request is not None:
+            for e in elems:
+                self.ah.store.form2obj(self, self.request.POST or self.rqdata, e, True)
+        for e in elems:
+            e.full_clean()
+        return elems
+
     def create_instance_from_request(self, **kwargs):
         elem = self.create_instance( **kwargs)
         if self.actor.handle_uploaded_files is not None:

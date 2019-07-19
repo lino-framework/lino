@@ -49,19 +49,18 @@ class Uploadable(Model):
         _("MIME type"),
         blank=True, max_length=255, editable=False)
 
-    def handle_uploaded_files(self, request):
+    def handle_uploaded_files(self, request, file=None):
         #~ from django.core.files.base import ContentFile
-        if not 'file' in request.FILES:
+        if not file and not 'file' in request.FILES:
             logger.debug("No 'file' has been submitted.")
             return
-        uf = request.FILES['file']  # an UploadedFile instance
+        uf = file or request.FILES['file']  # an UploadedFile instance
         #~ cf = ContentFile(request.FILES['file'].read())
         #~ print f
         #~ raise NotImplementedError
         #~ dir,name = os.path.split(f.name)
         #~ if name != f.name:
             #~ print "Aha: %r contains a path! (%s)" % (f.name,__file__)
-
         self.size = uf.size
         self.mimetype = uf.content_type
 
@@ -70,7 +69,7 @@ class Uploadable(Model):
         # bytes object, but we want the name to remain a str.
 
         #~ logger.info('20121004 handle_uploaded_files() %r',uf.name)
-        name = str(uf.name.encode('ascii', 'replace'))
+        name = uf.name.encode('ascii', 'replace').decode('ascii')
         name = name.replace('?', '_')
 
         # Django magics:

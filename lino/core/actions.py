@@ -163,14 +163,14 @@ class Action(Parametrizable, Permittable):
     """
     #~ __metaclass__ = ActionMetaClass
     _layout_class = layouts.ActionParamsLayout
-    
+
     label = None
     """
     The label of this action. A short descriptive text in user
     language. Used e.g. on menu items. Also on toolbar buttons if they
     have neither :attr:`icon_name` nor :attr:`button_text`.
     """
-    
+
     button_text = None
     """
     The text to appear on buttons for this action. If this is not
@@ -185,16 +185,16 @@ class Action(Parametrizable, Permittable):
 
     Not yet implemented. This is currently being ignored.
     """
-    
+
     debug_permissions = False
     save_action_name = None
-    
+
     disable_primary_key = True
     """
     Whether primary key fields should be disabled when using this
     action. This is `True` for all actions except :class:`ShowInsert`.
     """
-    
+
     keep_user_values = False
     """
     Whether the parameter window should keep its values between
@@ -211,7 +211,7 @@ class Action(Parametrizable, Permittable):
     """
     ui5_icon_name = None
     hidden_elements = frozenset()
-    
+
     combo_group = None
     """
     The name of another action to which to "attach" this action.
@@ -296,7 +296,7 @@ class Action(Parametrizable, Permittable):
       the action.  `None` means: ask the user.
 
     """
-    
+
     extjs_main_panel = None
     """
     Used by :mod:`lino_xl.lib.extensible` and
@@ -310,7 +310,7 @@ class Action(Parametrizable, Permittable):
 
 
     """
-    
+
     js_handler = None
     """
     This is usually `None`.  Otherwise it is the name of a Javascript
@@ -318,14 +318,14 @@ class Action(Parametrizable, Permittable):
     been defined in a :attr:`lino.core.plugin.Plugin.site_js_snippets`
     of the plugin.
     """
-    
+
     action_name = None
     """
     Internally used to store the name of this action within the
     defining Actor's namespace.
 
     """
-    
+
     defining_actor = None
     """
     The :class:`lino.core.actors.Actor` who uses this action for the
@@ -338,25 +338,25 @@ class Action(Parametrizable, Permittable):
     """
     See :attr:`lino.core.utils.Parametrizable.parameters`.
     """
-    
+
     key = None
     """
     Not used. The keyboard hotkey to associate to this action in a
     user interface.
     """
-    
+
     default_format = 'html'
     """
     Used internally.
     """
-    
+
     editable = True
     """
                    
     Whether the parameter fields should be editable.
     Setting this to False seems nonsense.
     """
-    
+
     readonly = True
     """
     Whether this action is readonly, i.e. does not change any data in
@@ -396,13 +396,13 @@ class Action(Parametrizable, Permittable):
     ticket.  In this use case the name should rather be
     `requires_authorship`.
     """
-    
+
     opens_a_window = False
     """
     Whether this action opens a window.  If this is True, the user
     interface is responsible for rendering that window.
     """
-    
+
     hide_top_toolbar = False
     """
     Used internally if :attr:`opens_a_window` to say whether the
@@ -421,7 +421,7 @@ class Action(Parametrizable, Permittable):
     Whether this action should be displayed as a button in the toolbar
     of a plain html view.
     """
-    
+
     show_in_bbar = True
     """
     Whether this action should be displayed as a button in the toolbar
@@ -436,7 +436,7 @@ class Action(Parametrizable, Permittable):
     attribute explicitly set to `False` because otherwise they would be
     visible in the toolbar.
     """
-    
+
     show_in_workflow = False
     """
     Whether this action should be displayed in the
@@ -444,14 +444,14 @@ class Action(Parametrizable, Permittable):
     column.  If this is True, then Lino will automatically set
     :attr:`custom_handler` to True.
     """
-    
+
     custom_handler = False
     """
     Whether this action is implemented as Javascript function call.
     This is necessary if you want your action to be callable using an
     "action link" (html button).
     """
-    
+
     select_rows = True
     """
     True if this action needs an object to act on.
@@ -464,7 +464,7 @@ class Action(Parametrizable, Permittable):
     HTTP method to use when this action is called using an AJAX call.
 
     """
-    
+
     preprocessor = 'null'  # None
     """
     Name of a Javascript function to be invoked on the web client when
@@ -488,7 +488,7 @@ class Action(Parametrizable, Permittable):
     :meth:`lino.modlib.uploads.AreaUploads.get_table_summary`).
     
     """
-    
+
     callable_from = "td"
     """
     A string that specifies from which :attr:`window_type` this action
@@ -498,7 +498,7 @@ class Action(Parametrizable, Permittable):
     (including ShowEmptyTable which is subclass of ShowDetail). But
     not callable from ShowInsert.
     """
-    
+
     hide_virtual_fields = False
     required_states = None
 
@@ -620,7 +620,7 @@ class Action(Parametrizable, Permittable):
         action has no explicit label.
         """
         return self.label or self.action_name
-    
+
     def get_button_label(self, actor):
         if actor is None or actor.default_action is None:
             return self.label
@@ -821,7 +821,7 @@ class ShowTable(TableAction):
 
     def get_label(self):
         return self.label or self.defining_actor.label
-    
+
     def get_window_layout(self, actor):
         #~ return self.actor.list_layout
         return None
@@ -877,7 +877,7 @@ class ShowEmptyTable(ShowDetail):
     # def attach_to_actor(self, actor, name):
     #     self.label = actor.label
     #     return super(ShowEmptyTable, self).attach_to_actor(actor, name)
-    
+
     def get_label(self):
         return self.label or self.defining_actor.label
 
@@ -905,7 +905,7 @@ class ShowInsert(TableAction):
 
     ui5_icon_name = "sap-icon://add"
     help_text = _("Insert a new record")
-    
+
     show_in_workflow = False
     opens_a_window = True
     window_type = 'i'
@@ -1014,7 +1014,7 @@ class SaveGridCell(Action):
         # We also need *either* `rows` (when this was called from a
         # Grid) *or* `goto_instance` (when this was called from a
         # form).
-        
+
 
 class SubmitDetail(SaveGridCell):
     """Save changes in the detail form.
@@ -1036,10 +1036,12 @@ class SubmitDetail(SaveGridCell):
         # logger.info("20140423 SubmitDetail")
         for elem in ar.selected_rows:
             elem.save_existing_instance(ar)
-            if ar.actor.stay_in_grid:
-                ar.close_window()
-            else:
-                ar.goto_instance(elem)
+            if not settings.SITE.is_installed("react"):
+                # No point in clos
+                if ar.actor.stay_in_grid:
+                    ar.close_window()
+                else:
+                    ar.goto_instance(elem)
 
 class CreateRow(Action):
     """
@@ -1080,7 +1082,33 @@ class CreateRow(Action):
             return
 
         ar.goto_instance(elem)
-        
+
+        # No need to ask refresh_all since closing the window will
+        # automatically refresh the underlying window.
+
+    def save_new_instances(self, ar, elems):
+        """Currently only used for file uploads."""
+        for e in elems:
+            e.save_new_instance(ar)
+
+        ar.success(_("%s files have been uploaded: %s") % (len(elems), "\n".join([obj2unicode(elem) for elem in elems])))
+
+        # print(19062017, "Ticket 1910")
+        if ar.actor.handle_uploaded_files is None:
+            ar.set_response(rows=[ar.ah.store.row2list(ar, elem[0])])
+            ar.set_response(navinfo=navinfo(ar.data_iterator,elem[0]))
+        else:
+            # Must set text/html for file uploads, otherwise the
+            # browser adds a <PRE></PRE> tag around the AJAX response.
+            ar.set_content_type('text/html')
+
+        # if ar.actor.stay_in_grid and ar.requesting_panel:
+        if ar.actor.stay_in_grid:
+            # do not open a detail window on the new instance
+            return
+
+        ar.goto_instance(elem[0])
+
         # No need to ask refresh_all since closing the window will
         # automatically refresh the underlying window.
 
@@ -1105,9 +1133,15 @@ class SubmitInsert(CreateRow):
         # is going to be closed (this disturbs at least in ticket
         # #219)
         ar.requesting_panel = None
-        elem = ar.create_instance_from_request(**kwargs)
-        self.save_new_instance(ar, elem)
-        ar.set_response(close_window=True)
+        if ar.actor.handle_uploaded_files is not None and len(ar.request.FILES.getlist("file")) > 1:
+            # Multiple uploads possible, note plural method names.
+            elems = ar.create_instances_from_request(**kwargs)
+            self.save_new_instances(ar, elems)
+            ar.set_response(close_window=True)
+        else:
+            elem = ar.create_instance_from_request(**kwargs)
+            self.save_new_instance(ar, elem)
+            ar.set_response(close_window=True)
         # if settings.SITE.is_installed("react"):
         #     ar.goto_instance(elem)
 
@@ -1129,7 +1163,7 @@ class ExplicitRefresh(Action): # experimental 20170929
     js_handler = 'function(btn, evt) {console.log("20170928", this); this.refresh()}'
     # def run_from_ui(self, ar, **kw):
     #     ar.set_response(refresh_all=True)
-    
+
 class ShowSlaveTable(Action):
     """
     An action which opens a window showing another table (to be
@@ -1231,11 +1265,11 @@ class DeleteSelected(MultipleRowAction):
             if msg is not None:
                 ar.error(None, msg, alert=True)
                 return
-        
+
         def ok(ar2):
             super(DeleteSelected, self).run_from_ui(ar, **kw)
             ar2.success(record_deleted=True)
-            
+
             # hack required for extjs: 
             if ar2.actor.detail_action:
                 ar2.set_response(

@@ -136,8 +136,8 @@ def has_fk(rr, name):
 
 
 def model2actor(m):
-    def f(table, *args):
-        return m(*args)
+    def f(table, *args, **kwargs):
+        return m(*args, **kwargs)
     return classmethod(f)
 
 
