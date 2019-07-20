@@ -24,13 +24,11 @@ class Renderer(HtmlRenderer):
         ba = obj.get_detail_action(ar)
         if ba is not None:
             add_user_language(kw, ar)
-            return self.get_detail_url(ba.actor, obj.pk, **kw)
+            return self.get_detail_url(ar, ba.actor, obj.pk, **kw)
 
-    def get_detail_url(self, actor, pk, *args, **kw):
+    def get_detail_url(self, ar, actor, pk, *args, **kw):
         return self.front_end.build_plain_url(
-            actor.app_label,
-            actor.__name__,
-            str(pk), *args, **kw)
+            ar, actor.app_label, actor.__name__, str(pk), *args, **kw)
 
     def get_home_url(self, *args, **kw):
         return self.front_end.build_plain_url(*args, **kw)

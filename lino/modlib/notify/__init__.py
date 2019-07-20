@@ -7,13 +7,18 @@ See :doc:`/specs/notify`.
 
 """
 
+import six
 from lino import DJANGO2
 from lino.api import ad, _
-
+from lino.core.utils import is_devserver
 try:
-    import asgi_redis
-except:
-    redis = False
+    import redis
+except ImportError:
+    redis = None
+try:
+    import channels
+except ImportError:
+    channels = None
 
 
 class Plugin(ad.Plugin):
@@ -51,22 +56,9 @@ class Plugin(ad.Plugin):
 
     # """
 
-    def get_requirements(self, site):
-        yield "channels"
-
-    def get_used_libs(self, html=None):
-        try:
-            import channels
-            version = channels.__version__
-        except ImportError:
-            version = self.site.not_found_msg
-        name = "Channels ({})".format(
-            "active" if self.site.use_websockets else "inactive")
-
-        yield (name, version, "https://github.com/django/channels")
-
     def on_init(self):
-        if self.site.use_websockets:
+        if self.site.use_websockets and channels is not None:
+            # if channels is not installed, we cannot use it as a plugin because even :manage:`configure` would fail.
             self.needs_plugins.append('channels')
 
             sd = self.site.django_settings
@@ -80,14 +72,32 @@ class Plugin(ad.Plugin):
                 sd['ASGI_APPLICATION'] = "lino.modlib.notify.routing2.application"
                 cld["BACKEND"] = "channels_redis.core.RedisChannelLayer"
                 cld['CONFIG'] = {"hosts": [("localhost", 6379)], }
-            if redis:
-                try:
-                    cld['BACKEND'] = "asgi_redis.RedisChannelLayer"
-                    cld['CONFIG'] = {"hosts": [("localhost", 6379)], }
-                except redis.ConnectionError:
-                    pass
+            if False:  # not is_devserver():
+                cld['BACKEND'] = "asgi_redis.RedisChannelLayer"
+                cld['CONFIG'] = {"hosts": [("localhost", 6379)], }
 
+    def get_requirements(self, site):
+        if site.use_websockets:
+            if six.PY2:
+                yield 'channels<2'
+                # yield 'asgiref~=1.1'
+            else:
+                yield 'channels'
+                # yield 'asgiref'
+                yield 'channels_redis'
+            if False:  # not is_devserver():
+                yield 'asgi_redis'
 
+    def get_used_libs(self, html=None):
+        try:
+            import channels
+            version = channels.__version__
+        except ImportError:
+            version = self.site.not_found_msg
+        name = "Channels ({})".format(
+            "active" if self.site.use_websockets else "inactive")
+
+        yield (name, version, "https://github.com/django/channels")
 
     def get_js_includes(self, settings, language):
         if self.site.use_websockets:

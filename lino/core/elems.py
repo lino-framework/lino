@@ -670,7 +670,7 @@ class FieldElement(LayoutElement):
         """
         if self.field.primary_key:
             # print(20170301, ar.renderer)
-            url = ar.renderer.get_detail_url(ar.actor, v)
+            url = ar.get_detail_url(ar.actor, v)
             # 20171227 in extjs6 above line was:
             # url = ar.pk2url(v)
             if url is not None:

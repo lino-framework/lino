@@ -1865,7 +1865,10 @@ class Site(object):
         # PLUGIN_CONFIGS = None
 
     def get_requirements(self):
-        """Collect :xfile:`help_texts.py` modules"""
+        """
+        Collect requirements from plugins. Add some more requirements which
+        depend on options in the local :xfile:`settings.py` file.
+        """
         reqs = set()
         for p in self.installed_plugins:
             for r in p.get_requirements(self):

@@ -54,7 +54,7 @@ class Plugin(Plugin):
         ]
         return urls
 
-    def get_detail_url(self, actor, pk, *args, **kw):
+    def get_detail_url(self, ar, actor, pk, *args, **kw):
         return self.build_plain_url(
             actor.app_label,
             actor.__name__,

@@ -383,7 +383,7 @@ class HtmlRenderer(Renderer):
     def obj2url(self, ar, obj):
         ba = obj.get_detail_action(ar)
         if ba is not None:
-            return self.get_detail_url(ba.actor, obj.pk)
+            return self.get_detail_url(ar, ba.actor, obj.pk)
 
     def obj2html(self, ar, obj, text=None, **kwargs):
         """Return a html representation of a pointer to the given database
@@ -578,9 +578,9 @@ class TextRenderer(HtmlRenderer):
     def get_request_url(self, ar, *args, **kw):
         return None
 
-    def get_detail_url(self, actor, pk, *args, **kw):
-        # return str(actor)+"/"+str(pk)
-        return "Detail"  # many doctests depend on this
+    # def get_detail_url(self, actor, pk, *args, **kw):
+    #     # return str(actor)+"/"+str(pk)
+    #     return "Detail"  # many doctests depend on this
 
     def menu2rst(self, ar, mnu, level=1):
         """Used by :meth:`show_menu`."""
@@ -866,7 +866,13 @@ class JsRenderer(HtmlRenderer):
             py2js(ba.action.http_method),pp)
 
     def obj2url(self, ar, obj):
-        return self.js2url(self.instance_handler(ar, obj, None))
+        ba = obj.get_detail_action(ar)
+        if ba is None:
+            return None
+        if ar.request is not None:
+            return self.js2url(self.instance_handler(ar, obj, None))
+        return self.get_detail_url(ar, ba.actor, obj.pk)
+
 
     def add_help_text(self, kw, help_text, title, datasource, fieldname):
         if settings.SITE.use_quicktips:

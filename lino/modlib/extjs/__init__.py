@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2016 Rumma & Ko Ltd
+# Copyright 2009-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Adds the default Lino user interface based on ExtJS.
@@ -194,6 +194,26 @@ class Plugin(Plugin):
         from . import views
         return views.AdminIndex.as_view()
 
+    # def get_detail_url(self, ar, actor, pk, *args, **kw):
+    #     if ar.request is None:
+    #         # todo: return the permalink
+    #         raise Exception()
+    #     else:
+    #         # return the javascript version
+    #         if actor.model:
+    #             return self.build_plain_url(
+    #                 'api', actor.model._meta.app_label,
+    #                 actor.model.get_default_table().__name__, pk)
+    #             # return "{}api/{}/{}/{}".format(
+    #             #     self.site.server_url,
+    #             #     actor.model._meta.app_label, actor.model.get_default_table().__name__, pk)
+    #         return self.build_plain_url(
+    #             'api', actor.app_label, actor.__name__, pk)
+    #         # return "{}api/{}/{}/{}".format(
+    #         #     self.site.server_url,
+    #         #     actor.app_label, actor.__name__, pk)
+
+
     def get_patterns(self):
 
         from django.conf import settings
@@ -240,4 +260,4 @@ class Plugin(Plugin):
             urlpatterns.append(
                 url(rx + r'run-jasmine$', views.RunJasmine.as_view()))
         return urlpatterns
-        
+

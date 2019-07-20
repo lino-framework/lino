@@ -602,6 +602,9 @@ class BaseRequest(object):
     # def parse_memo(self, html):
     #     return self.renderer.parse_memo(html, ar=self)
 
+    def get_detail_url(self, *args, **kwargs):
+        return self.renderer.get_detail_url(self, *args, **kwargs)
+
     def set_callback(self, *args, **kw):
         return settings.SITE.kernel.set_callback(self, *args, **kw)
 
@@ -622,7 +625,7 @@ class BaseRequest(object):
         if r.extjs_version:
             url = r.js2url("Lino.goto_record_id(%s)" % pk)
         else:
-            url = r.get_detail_url(self.actor, pk)
+            url = self.get_detail_url(self.actor, pk)
         return r.href(url, *args, **kwargs)
         # ba = self.actor.detail_action
         # js = self.renderer.action_call(self, ba, dict(record_id=pk))
@@ -1207,7 +1210,7 @@ class ActorRequest(BaseRequest):
         return url
         
     def pk2url(self, pk):
-        return self.renderer.get_detail_url(self.actor, pk)
+        return self.get_detail_url(self.actor, pk)
     
     def run(self, *args, **kw):
         """

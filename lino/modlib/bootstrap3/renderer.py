@@ -29,7 +29,7 @@ class Renderer(HtmlRenderer):
             # no need to check again:
             # if ar is None or a.get_bound_action_permission(ar, obj, None):
             add_user_language(kw, ar)
-            return self.get_detail_url(ba.actor, obj.pk, **kw)
+            return self.get_detail_url(ar, ba.actor, obj.pk, **kw)
 
     # def get_detail_url(self, actor, pk, *args, **kw):
     #     return self.front_end.build_plain_url(

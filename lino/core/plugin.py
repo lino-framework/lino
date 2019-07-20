@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2018 Rumma & Ko Ltd
+# Copyright 2008-2019 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 
 """This defines the :class:`Plugin` class.
@@ -323,7 +323,20 @@ class Plugin(object):
         return []
 
     def get_requirements(self, site):
-        """Return an iteration of required Python packages."""
+        """
+
+        Return an iteration of required Python packages.
+
+        These will be installed during :manage:`configure`.
+
+        Plugins can use quite sophisticated logic to decide which packages they
+        require. For example :mod:`lino_xl.lib.appypod` check whether the
+        package is already installed in order to support the use case when a
+        developer has a clone of the appy sources and uses this version. In
+        this case we don't want to override it. Similar for
+        :mod:`lino_xl.lib.mailbox` and its django_mailbox requirement.
+
+        """
         return []
 
     def get_css_includes(self, site):
@@ -419,23 +432,20 @@ class Plugin(object):
     def setup_layout_element(self, el):
         pass
     
-    # def get_detail_url(self, actor, pk, *args, **kw):
-    #     if actor.model:
-    #         return "{}api/{}/{}/{}".format(
-    #             self.server_url,
-    #             actor.model._meta.app_label, actor.model.get_default_table().__name__, pk)
-    #     return "{}api/{}/{}/{}".format(
-    #         self.server_url,
-    #         actor.app_label, actor.__name__, pk)
-
-    def get_detail_url(self, actor, pk, *args, **kw):
+    def get_detail_url(self, ar, actor, pk, *args, **kw):
         """
         Return the URL to the given database row.
 
         This is only a relative URL. Get the fully qualified URI by prefixing
         :attr:`lino.core.site.Site.server_url`.
 
+        The extjs frontend overrides this and returns different URIs depending
+        on whether `ar.request` is set or not.
+
         """
+        from lino.core.renderer import TextRenderer
+        if ar.renderer.__class__ is TextRenderer:
+            return "Detail"  # many doctests depend on this
         parts = ['api']
         if actor.model:
             parts += [actor.model._meta.app_label,

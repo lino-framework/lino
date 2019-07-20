@@ -47,7 +47,8 @@ install_requires = [
     # 'cairocffi',  # 'cairocffi<0.7',
     # 'bleach',
     # 'html5lib',  # version 7x9 (not 9x9) required by bleach
-    'schedule==0.5.0',
+    # 'schedule==0.5.0',  # why a version restriction?
+    'schedule',
     # 'django-wkhtmltopdf',
     'beautifulsoup4',]
 

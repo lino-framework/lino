@@ -1,25 +1,24 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2018 Rumma & Ko Ltd
+# Copyright 2011-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 from __future__ import unicode_literals
-
-import json
 from builtins import object
 from builtins import str
+
+import logging ; logger = logging.getLogger(__name__)
+import json
 from io import StringIO
-
 from lxml import etree
-
-from lino import DJANGO2
-
-html_parser = etree.HTMLParser()
+from datetime import timedelta
 
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
 from django.utils import translation
+from etgen.html import E, tostring
 
+from lino import DJANGO2
 from lino.api import dd, rt, _
 
 # from lino.core.roles import SiteStaff
@@ -30,20 +29,16 @@ from lino.core.site import html2text
 from lino.mixins import Created, ObservedDateRange
 from lino.modlib.gfks.mixins import Controllable
 # from lino.modlib.notify.consumers import PUBLIC_GROUP
-from .mixins import PUBLIC_GROUP
 from lino.modlib.users.mixins import UserAuthored, My
 from lino.modlib.office.roles import OfficeUser
 
 from lino.utils.format_date import fds
-from etgen.html import E, tostring
 
-from datetime import timedelta
-
+from .mixins import PUBLIC_GROUP
 from .choicelists import MessageTypes, MailModes
 
-import logging
 
-logger = logging.getLogger(__name__)
+html_parser = etree.HTMLParser()
 
 
 def groupname(s):
@@ -206,8 +201,9 @@ class Message(UserAuthored, Controllable, Created):
             return
         # from lino.core.renderer import MailRenderer
         # ar = rt.login(renderer=MailRenderer())
-        # ar = rt.login(renderer=dd.plugins.memo.front_end.renderer)
-        ar = rt.login()
+        ar = rt.login(renderer=dd.plugins.memo.front_end.renderer)
+        # ar = rt.login()
+        # ar = rt.login(renderer=settings.SITE.kernel.default_ui.renderer)
         context = ar.get_printable_context()
         sender = settings.SERVER_EMAIL
         template = rt.get_template('notify/summary.eml')
