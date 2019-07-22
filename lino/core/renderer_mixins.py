@@ -181,7 +181,7 @@ class JsCacheRenderer():
             logger.debug(
                 "Not building site cache because " +
                 "directory '%s' (settings.MEDIA_ROOT) does not exist.",
-                settings.STATIC_ROOT)
+                settings.MEDIA_ROOT)
             return
 
         started = time.time()
