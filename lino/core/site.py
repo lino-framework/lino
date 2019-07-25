@@ -516,10 +516,14 @@ class Site(object):
 
     user_model = None
     """
-    If :mod:`lino.modlib.users` is installed, this holds a reference to
-    the model class which represents a user of the system. Default
-    value is `None`, meaning that this application has no user
+    The database model used for users.
+    This is automatically set to ``'users.User'`` when
+    :mod:`lino.modlib.users` is installed.
+    
+    Default value is `None`, meaning that this application has no user
     management.  See also :meth:`set_user_model`
+    
+    See :doc:`/topics/auth`.    
     """
 
     social_auth_backends = None
@@ -530,10 +534,9 @@ class Site(object):
     Having this at a value different from `None` means that this site
     uses authentication via third-party providers.
 
-    Sites which use this must also install PSA into their
-    environment::
-
-      $ pip install social-auth-app-django
+    Sites which use this feature must also install PSA into their environment
+    (``pip install social-auth-app-django``, which is done automatically by
+    :manage:`configure`).
 
     Depending on the backend you must also add credentials in your
     local :xfile:`settings.py` file, e.g.::
@@ -579,7 +582,7 @@ class Site(object):
 
     auth_middleware = None
     """
-    Override used Authorisation middlewares with supplied tuple of
+    Override used authorisation middlewares with supplied tuple of
     middleware class names.
 
     If None, use logic described in :doc:`/topics/auth`
@@ -961,12 +964,14 @@ class Site(object):
 
     webdav_url = None
     """
-    The URL prefix for webdav files.  In a normal production
-    configuration you should leave this to `None`, Lino will set a
-    default value "/media/webdav/", supposing that your Apache is
-    configured as described in :doc:`/admin/webdav`.
     
-    This may be used to simulate a :term:`WebDAV` location on a
+    The URL location for webdav files.  In a normal production configuration
+    you should leave this unchanged and Lino will set the  default value
+    ``'/media/webdav/'``. You also need to configure your web
+    server to actually serve the files below this location using the WebDAV
+    protocol. See :doc:`/admin/webdav`.
+    
+    Obsolete: This may be used to simulate a :term:`WebDAV` location on a
     development server.  For example on a Windows machine, you may set
     it to ``w:\``, and before invoking :manage:`runserver`, you issue in
     a command prompt::
@@ -976,19 +981,12 @@ class Site(object):
 
     webdav_protocol = None
     """
-    Set this to a string like e.g. 'wdav' in order to use a custom
-    protocol for opening editable printable documents.  In this case
-    Lino expects the browser to be configured to understand the given
-    protocol.
-
-    When an *editable* printable document has been generated, Lino
-    does not open a new browser window on that document but invokes
-    the client's Office application.  That application accesses the
-    document either via a WebDAV link (on a production server) or a
-    ``file://`` link (on a development server).
-
-    This is the functional successor for 
-    :mod:`lino.modlib.davlink` which is now deprecated.
+    
+    Set this to a string like e.g. 'wdav' to instruct Lino to use this custom
+    protocol instead of ``http`` when linking to "editable" printable documents.
+    
+    See :doc:`/admin/webdav`.
+    
 
     """
 

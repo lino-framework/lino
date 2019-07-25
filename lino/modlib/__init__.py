@@ -52,7 +52,6 @@ Front ends
     wkhtmltopdf
     weasyprint
     dashboard
-    davlink
 
 "Enterprise Resources"
 ======================
