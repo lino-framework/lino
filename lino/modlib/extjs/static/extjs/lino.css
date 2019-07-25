@@ -398,7 +398,7 @@ http://www.sencha.com/forum/showthread.php?70195-NumberField-and-Right-Alignment
 	min-height: 14ch;
 	border: lightgray solid 1px;
 	padding: 3px;
-	box-sizing: content-box;
+	box-sizing: border-box;
 }
 
 .cal-MonthlyView td.x-grid3-cell-first  {
