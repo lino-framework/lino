@@ -52,7 +52,7 @@ def ar2workbook(ar, column_names=None):
     sheet = workbook.active
     sheet.title = sheet_name(ar.get_title())
 
-    duration_style= NamedStyle(name='duration', number_format="HH:MM")
+    duration_style= NamedStyle(name='duration', number_format="[hh]:mm;@")
 
     bold_font = Font(name='Calibri', size=11, bold=True, )
 
@@ -69,13 +69,22 @@ def ar2workbook(ar, column_names=None):
             sf = column.field._lino_atomizer
             value = sf.full_value_from_object(row, ar)
             style = None
+            set_explicit_value = False
             if type(value) == bool:
                 value = value and 1 or 0
             elif isinstance(value, Choice):
                 value = six.text_type(value)
             elif isinstance(value, Duration):
                 style = duration_style
-                value = datetime.datetime.strptime(six.text_type(value), "%H:%M")
+                negative = False
+                time = six.text_type(value)
+                if time.startswith("-"):
+                    time = time.strip("-")
+                    negative = True
+                time = time.split(":")
+                value = datetime.timedelta(hours=int(time[0]), minutes=int(time[1]))
+                if negative: # Make negative.
+                    value = value - value - value
             elif iselement(value):
                 value = to_rst(value)
                 # dd.logger.info("20160716 %s", value)
@@ -94,9 +103,13 @@ def ar2workbook(ar, column_names=None):
                 value = six.text_type(value)
             try:
                 cell = sheet.cell(row=r + 1, column=c + 1)
-                cell.value = value
                 if style is not None:
                     cell.style = style
+                # if set_explicit_value:
+                #     cell._value = value
+                #     cell.data_type = "d"
+                # else:
+                cell.value = value
             except ValueError as e:
                 raise e
                 raise Exception("20190222 {} {}".format(value.__class__, value))
