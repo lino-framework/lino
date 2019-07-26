@@ -69,7 +69,6 @@ def ar2workbook(ar, column_names=None):
             sf = column.field._lino_atomizer
             value = sf.full_value_from_object(row, ar)
             style = None
-            set_explicit_value = False
             if type(value) == bool:
                 value = value and 1 or 0
             elif isinstance(value, Choice):
@@ -105,13 +104,8 @@ def ar2workbook(ar, column_names=None):
                 cell = sheet.cell(row=r + 1, column=c + 1)
                 if style is not None:
                     cell.style = style
-                # if set_explicit_value:
-                #     cell._value = value
-                #     cell.data_type = "d"
-                # else:
                 cell.value = value
             except ValueError as e:
-                raise e
                 raise Exception("20190222 {} {}".format(value.__class__, value))
 
     return workbook
