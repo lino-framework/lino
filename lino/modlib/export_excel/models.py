@@ -21,6 +21,7 @@ from lino.utils import IncompleteDate
 from lino.utils.media import TmpMediaFile
 from lino.utils.quantities import Duration
 
+import datetime
 
 def sheet_name(s):
     s = s[:31]
@@ -32,6 +33,7 @@ def sheet_name(s):
 def ar2workbook(ar, column_names=None):
     from openpyxl import Workbook
     from openpyxl.styles import Font
+    from openpyxl.styles import NamedStyle
     # local import to avoid the following traceback:
     # Error in sys.exitfunc:
     # Traceback (most recent call last):
@@ -50,6 +52,8 @@ def ar2workbook(ar, column_names=None):
     sheet = workbook.active
     sheet.title = sheet_name(ar.get_title())
 
+    duration_style= NamedStyle(name='duration', number_format="HH:MM")
+
     bold_font = Font(name='Calibri', size=11, bold=True, )
 
     fields, headers, widths = ar.get_field_info(column_names)
@@ -64,10 +68,14 @@ def ar2workbook(ar, column_names=None):
         for r, row in enumerate(ar.data_iterator, start=1):
             sf = column.field._lino_atomizer
             value = sf.full_value_from_object(row, ar)
+            style = None
             if type(value) == bool:
                 value = value and 1 or 0
-            elif isinstance(value, (Duration, Choice)):
+            elif isinstance(value, Choice):
                 value = six.text_type(value)
+            elif isinstance(value, Duration):
+                style = duration_style
+                value = datetime.datetime.strptime(six.text_type(value), "%H:%M")
             elif iselement(value):
                 value = to_rst(value)
                 # dd.logger.info("20160716 %s", value)
@@ -85,8 +93,12 @@ def ar2workbook(ar, column_names=None):
                 # ValueError: Cannot convert 'Hans Altenberg' to Excel
                 value = six.text_type(value)
             try:
-                sheet.cell(row=r + 1, column=c + 1).value = value
+                cell = sheet.cell(row=r + 1, column=c + 1)
+                cell.value = value
+                if style is not None:
+                    cell.style = style
             except ValueError as e:
+                raise e
                 raise Exception("20190222 {} {}".format(value.__class__, value))
 
     return workbook
