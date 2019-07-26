@@ -447,7 +447,7 @@ class Plugin(object):
         if ar.renderer.__class__ is TextRenderer:
             return "Detail"  # many doctests depend on this
         parts = ['api']
-        if actor.model:
+        if getattr(actor.model, "_meta", False):
             parts += [actor.model._meta.app_label,
                       actor.model.get_default_table().__name__]
         else:
