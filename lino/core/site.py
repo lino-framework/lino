@@ -450,7 +450,9 @@ class Site(object):
     """
     
     migration_module = None
-    """The full Python path of a module to use for all migrations.
+    """The full Python path of  
+    the plugin which holds Django migrations for all plugins 
+    of this application.
     """
 
     hidden_languages = None
