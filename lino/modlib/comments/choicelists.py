@@ -3,6 +3,8 @@
 # License: BSD (see file COPYING for details)
 
 from lino.api import dd, rt, _
+from datetime import datetime
+import pytz
 from lino.modlib.system.choicelists import ObservedEvent
 # from .roles import CommentsUser
 
@@ -13,12 +15,14 @@ class ObservedTime(ObservedEvent):
 
     def add_filter(self, qs, pv):
         if pv.start_date:
+            start_datetime = datetime.combine(pv.start_date, datetime.min.time()).replace(tzinfo=pytz.UTC)
             qs = qs.filter(**{
-                self.name + '__date__gte': pv.start_date,
+                self.name + '__gte': start_datetime,
                 self.name + '__isnull': False})
         if pv.end_date:
+            end_datetime = datetime.combine(pv.end_date, datetime.max.time()).replace(tzinfo=pytz.UTC)
             qs = qs.filter(**{
-                self.name + '__date__lte': pv.end_date,
+                self.name + '__lte': end_datetime,
                 self.name + '__isnull': False})
         return qs
 
