@@ -35,7 +35,7 @@ class Plugin(ad.Plugin):
     forever.
 
     """
-    
+
     keep_unseen = True
     """Whether to keep unseen messages when removing old messages
     according to :attr:`remove_after`.
@@ -45,7 +45,7 @@ class Plugin(ad.Plugin):
     them automatically.
 
     """
-    
+
     media_name = 'js'
 
     # email_subject_template = "Message about {obj.owner}"
@@ -57,9 +57,12 @@ class Plugin(ad.Plugin):
     # """
 
     def on_init(self):
-        if self.site.use_websockets and channels is not None:
-            # if channels is not installed, we cannot use it as a plugin because even :manage:`configure` would fail.
+        if self.site.use_websockets:
             self.needs_plugins.append('channels')
+            if channels is None:
+                # if channels is not installed, we cannot use it as a plugin
+                # because even :manage:`install` would fail.
+                return
 
             sd = self.site.django_settings
             # the dict which will be used to create settings
