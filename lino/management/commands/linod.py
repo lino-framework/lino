@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2016 Luc Saffre
+# Copyright 2016-2019 Rumma & Ko Ltd
 # License: BSD, see file LICENSE for more details.
 
 """This defines the :manage:`linod` management command.
@@ -11,11 +11,11 @@ Usage and instllation see :ref:`admin.linod`
 from __future__ import print_function
 
 import time
-try:
-    import schedule
-except ImportError:
-    pass  # ignore it here so that autodoc can work without requiring
-          # schedule.
+from django.conf import settings
+
+from django.core.management.base import BaseCommand
+# import lino
+from lino.api import dd
 
 # For the schedule logger we set level to WARNING because
 # otherwise it would log a message every 10 seconds when
@@ -23,10 +23,6 @@ except ImportError:
 # logger configuration.
 # import logging
 # logging.getLogger('schedule').setLevel(logging.WARNING)
-
-from django.core.management.base import BaseCommand
-# import lino
-from lino.api import dd
 
 
 class Command(BaseCommand):
@@ -43,6 +39,10 @@ class Command(BaseCommand):
         # lino.site_startup()
         # # rt.startup()
         # schedule.logger.setLevel(logging.WARNING)
+        if not settings.SITE.use_linod:
+            dd.logger.info("This site does not use linod.")
+            return
+        import schedule
         n = len(schedule.jobs)
         if n == 0:
             dd.logger.info("This site has no scheduled jobs.")
@@ -55,4 +55,3 @@ class Command(BaseCommand):
         while True:
             schedule.run_pending()
             time.sleep(1)
-

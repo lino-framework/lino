@@ -205,12 +205,12 @@ try:
     import schedule
 except ImportError as e:
     # logger.info("schedule not installed (%s)", e)
-    schedule = False
+    schedule = None
 
 
 def schedule_often(every=10):
     def decorator(func):
-        if schedule:
+        if settings.SITE.use_linod:
             schedule.every(every).seconds.do(func)
         return func
     return decorator
@@ -218,9 +218,8 @@ def schedule_often(every=10):
 
 def schedule_daily(at="20:00"):
     def decorator(func):
-        if schedule:
+        if settings.SITE.use_linod:
             # schedule.every(10).seconds.do(func)
             schedule.every().day.at(at).do(func)
         return func
     return decorator
-    

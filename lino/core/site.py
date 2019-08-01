@@ -550,6 +550,10 @@ class Site(object):
     project.
     """
 
+    use_linod = False
+    """Set this to `True` in order to activate :manage:`linod` on thi site.
+    """
+
     use_security_features = False
     """
     Set this to `True` in order to activate a selection of security
@@ -1027,7 +1031,7 @@ class Site(object):
     user interface on this :class:`Site`.
 
     Default value is :mod:`lino.modlib.extjs`. Other candidates are
-    :mod:`lino.modlib.bootstrap3`, :mod:`lino_xl.lib.pages` and
+    :mod:`lino_react.react`, :mod:`lino.modlib.bootstrap3`, :mod:`lino_xl.lib.pages` and
     :mod:`lino_extjs6.extjs6` .
 
     Another possibility is to set it to `None`. In that case you will
