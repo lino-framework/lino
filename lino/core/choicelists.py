@@ -313,6 +313,17 @@ class ChoiceListMeta(actors.ActorMetaClass):
 #~ choicelist_column_fields['text'] = fields.VirtualField(models.CharField())
 #~ choicelist_column_fields['name'] = fields.VirtualField(models.CharField())
 
+class CallableChoice(object):
+    def __repr__(self):
+        return "{}.as_callable('{}')".format(repr(self.ChoiceList), self.name)
+    def __eq__(self, other):
+        return self.ChoiceList == other.ChoiceList and self.name == other.name
+    def __init__(self,ChoiceList, name):
+        self.ChoiceList = ChoiceList
+        self.name = name
+    def __call__(self, *args, **kwargs):
+        return self.ChoiceList.get_by_name(self.name)
+        return self.callfn(*args, **kwargs)
 
 class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
 
@@ -746,9 +757,8 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
             state = MyStates.field(default=MyStates.as_callable('foo'))
 
         """
-        def f():
-            return self.get_by_name(name)
-        return f
+
+        return CallableChoice(self, name)
 
     @classmethod
     def get_default_value(self):
