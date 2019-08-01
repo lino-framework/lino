@@ -4,7 +4,7 @@
 .. autosummary::
    :toctree:
 
-    configure
+    install
     prep
     initdb
     diag

@@ -2,26 +2,32 @@
 # Copyright 2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-""".. management_command:: configure
+""".. management_command:: install
 
-Runs 'pip install' for all requirements.
+Runs 'pip install --upgrade' for all requirements.
 
 Options:
 
-.. option:: --noinstall
+.. option:: -l, --list
+
+    Don't actually install, just print a list of the requirements to stdout.
+
 .. option:: --noinput
 
     Do not prompt for user input of any kind.
 
 
-TODO: options for just displaying them,
+.. management_command:: configure
+
+    Old name for :manage:`install`.
+
 
 """
 
 from __future__ import print_function
 
 import subprocess
-
+from atelier.utils import confirm
 from django.core.management.base import BaseCommand
 from django.conf import settings
 
@@ -51,11 +57,14 @@ class Command(BaseCommand):
                             help="Just list the requirements, don't install them.")
 
     def handle(self, *args, **options):
-        lst = options['list']
-        for r in settings.SITE.get_requirements():
-            if lst:
-                print(r)
-            else:
-                runcmd("pip install --upgrade " + r)
-
-
+        reqs = set(settings.SITE.get_requirements())
+        if len(reqs) == 0:
+            print("No requirements")
+        else:
+            reqs = sorted(reqs)
+            if options['list']:
+                print('\n'.join(reqs))
+                return
+            cmd = "pip install --upgrade {}".format(' '.join(reqs))
+            if not options['interactive'] or confirm("{} (y/n) ?".format(cmd)):
+                runcmd(cmd)
