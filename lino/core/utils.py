@@ -109,13 +109,13 @@ Django's `validate_email()`, but does not raise an exception.
 
 def is_devserver():
     """Returns `True` if this process is running as a development server.
-    
+
     Thanks to Aryeh Leib Taurog in `How can I tell whether my Django
     application is running on development server or not?
     <http://stackoverflow.com/questions/1291755>`_
-    
+
     My additions:
-    
+
     - Added the `len(sys.argv) > 1` test because in a wsgi application
       the process is called without arguments.
     - Not only for `runserver` but also for `testserver` and `test`.
@@ -126,7 +126,7 @@ def is_devserver():
        return True
     if len(sys.argv) <= 1:
         return False
-    if sys.argv[0].endswith("doctest.py"):
+    if sys.argv[0].endswith("doctest.py") or sys.argv[0].endswith("doctest_utf8.py"):
         return True
     if sys.argv[1] in ('runserver', 'testserver', 'test', "makescreenshots"):
         return True
@@ -308,11 +308,11 @@ class UnresolvedModel(object):
 
     """The object returned by :func:`resolve_model` if the specified model
     is not installed.
-    
+
     We don't want :func:`resolve_model` to raise an Exception because
     there are cases of :ref:`datamig` where it would disturb.  Asking
     for a non-installed model is not a sin, but trying to use it is.
-    
+
     I didn't yet bother very much about finding a way to make the
     `model_spec` appear in error messages such as
     :message:`AttributeError: UnresolvedModel instance has no
@@ -346,7 +346,7 @@ def resolve_model(model_spec, app_label=None, strict=False):
     Using this method is better than simply importing the class
     object, because Lino applications can override the model
     implementation.
-    
+
     This function **does not** trigger a loading of Django's model
     cache, so you should not use it at module-level of a
     :xfile:`models.py` module.
@@ -405,18 +405,18 @@ def resolve_app(app_label, strict=False):
 
     If the optional second argument `strict` is `True`, raise
     ImportError if the app is not installed.
-    
+
     This function is designed for use in models modules and available
     through the shortcut ``dd.resolve_app``.
-    
+
     For example, instead of writing::
-    
+
         from lino.modlib.sales import models as sales
-        
+
     it is recommended to write::
-        
+
         sales = dd.resolve_app('sales')
-        
+
     because it makes your code usable (1) in applications that don't
     have the 'sales' module installed and (2) in applications who have
     another implementation of the `sales` module
@@ -498,7 +498,7 @@ def navinfo(qs, elem):
     """Return a dict with navigation information for the given model
     instance `elem` within the given queryset.  The dictionary
     contains the following keys:
-    
+
     :recno:   row number (index +1) of elem in qs
     :first:   pk of the first element in qs (None if qs is empty)
     :prev:    pk of the previous element in qs (None if qs is empty)
@@ -524,7 +524,7 @@ def navinfo(qs, elem):
         id_list = list(qs.values_list('pk', flat=True))
     if LEN > 0:
         """
-        Uncommented the following assert because it failed in certain circumstances 
+        Uncommented the following assert because it failed in certain circumstances
         (see `/blog/2011/1220`)
         """
         #~ assert len(id_list) == ar.total_count, \
@@ -615,7 +615,7 @@ class Parametrizable(object):
 
     use_detail_param_panel = False
     """
-    Set to true if you want the params panel to be displayed in the detail view. 
+    Set to true if you want the params panel to be displayed in the detail view.
     Used only in :class:`lino_xl.lib.cal.CalView`.
     """
 
@@ -628,20 +628,20 @@ class Parametrizable(object):
         wl = self.get_window_layout(actor)
         if wl is not None:
             return wl.window_size
-        
+
     def check_params(self, pv):
         """Called when a request comes in."""
         # Actor overrides this as a class method
         if isinstance(self.parameters, ParameterPanel):
             self.parameters.check_values(pv)
-    
+
 
 class ParameterPanel(object):
     """
     A utility class for defining reusable definitions for
     :attr:`parameters <lino.core.actors.Actor.parameters>`.
 
-    Subclassed e.g. by 
+    Subclassed e.g. by
     :class:`lino.mixins.periods.ObservedDateRange`.
     :class:`lino_xl.lib.ledger.AccountingPeriodRange`.
     """
@@ -662,10 +662,10 @@ class ParameterPanel(object):
 
     def update(self, *args, **kw):
         return self.fields.update(*args, **kw)
-    
+
     def setdefault(self, *args, **kw):
         return self.fields.setdefault(*args, **kw)
-    
+
     def __iter__(self, *args, **kw):
         return self.fields.__iter__(*args, **kw)
 
@@ -715,7 +715,7 @@ class PseudoRequest(object):
     subst_user = None
     requesting_panel = None
     success = None
-    
+
     def __init__(self, username):
         self.username = username
         self._user = None
@@ -758,13 +758,13 @@ def lazy_format(tpl, *args, **kwargs):
     def f():
         return tpl.format(*args, **kwargs)
     return lazy(f, six.text_type)()
-    
+
 simplify_parts = set(
     ['models', 'desktop', 'ui', 'choicelists', 'actions', 'mixins'])
 
 def simplify_name(name):
     """
-    Simplify the given full Python name. 
+    Simplify the given full Python name.
 
     Removes any part 'models', 'desktop', 'ui', 'choicelists',
     'mixins' or 'actions' from the name.
@@ -777,7 +777,7 @@ def simplify_name(name):
         if e in parts:
             parts.remove(e)
     return '.'.join(parts)
-    
+
 def resolve_fields_list(model, k, collection_type=tuple, default=None):
     qsf = getattr(model, k)
     if qsf is None:
@@ -802,7 +802,7 @@ def resolve_fields_list(model, k, collection_type=tuple, default=None):
             "{0}.{1} must be None or a string "
             "of space-separated field names (not {2})".format(
                 model, k, qsf))
-            
+
 def class_dict_items(cl, exclude=None):
     if exclude is None:
         exclude = set()
@@ -813,4 +813,3 @@ def class_dict_items(cl, exclude=None):
     for b in cl.__bases__:
         for i in class_dict_items(b, exclude):
             yield i
-

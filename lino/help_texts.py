@@ -260,7 +260,6 @@ for fixing this problem."""),
     'lino.modlib.comments.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.dashboard.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.dashboard.UpdateWidgets' : _("""Create or update the dashboard widgets for this user."""),
-    'lino.modlib.davlink.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.export_excel.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.extjs.Plugin' : _("""Extends lino.core.plugin.Plugin."""),
     'lino.modlib.extjs.Plugin.enter_submits_form' : _("""Whether the ENTER key (or CTRL+ENTER when in a

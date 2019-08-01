@@ -109,17 +109,17 @@ class ValidActionResponses(object):
     close_window = None
     record_deleted = None
     xcallback = None
-    
+
     goto_url = None
     """
     Leave current page and go to the given URL.
     """
-    
+
     open_url = None
     """
     Open the given URL in a new browser window.
     """
-    
+
     open_webdav_url = None
     info_message = None
     warning_message = None
@@ -171,7 +171,7 @@ def bool2text(x):
     if x:
         return _("Yes")
     return _("No")
-    
+
 class BaseRequest(object):
     """
     Base class of all action requests.
@@ -234,7 +234,7 @@ class BaseRequest(object):
                 is_on_main_actor = False
             # is_on_main_actor = False
         self.is_on_main_actor = is_on_main_actor
-            
+
         self.setup(**kw)
 
     def setup(self,
@@ -448,7 +448,7 @@ class BaseRequest(object):
                 return self.bound_action.get_row_permission(self, obj, state)
         return self.bound_action.get_bound_action_permission(
             self, None, None)
-        
+
     def set_response(self, **kw):
         """
         Set (some part of) the response to be sent when the action request
@@ -469,7 +469,7 @@ class BaseRequest(object):
             if not hasattr(ValidActionResponses, k):
                 raise Exception("Unknown key %r in action response." % k)
         self.response.update(kw)
-            
+
     def error(self, e=None, message=None, **kw):
         """
         Shortcut to :meth:`set_response` used to set an error response.
@@ -481,9 +481,9 @@ class BaseRequest(object):
         characters with a special meaning in HTML. For example::
 
             NotImplementedError: <dl> inside <text:p>
-    
+
         will be converted to::
-    
+
             NotImplementedError: &lt;dl&gt; inside &lt;text:p&gt;
         """
         kw.update(success=False)
@@ -562,7 +562,7 @@ class BaseRequest(object):
         """
         Execute the specified callable `ok_func` after the user has
         confirmed the specified message.
-        
+
         The confirmation message may be specified as a series of
         positional arguments which will be concatenated to a single
         prompt.
@@ -657,7 +657,7 @@ class BaseRequest(object):
 
         """
         return 1
-    
+
     def get_data_value(self, obj, name):
         """
         Return the value of the virtual field `name` for this action
@@ -678,7 +678,7 @@ class BaseRequest(object):
         """
         Run the given instance action `ia` in a child request of this
         request.
-        
+
         Additional arguments are forwarded to the action.
         Returns the response of the child request.
         Does not modify response of parent request.
@@ -701,7 +701,7 @@ class BaseRequest(object):
              stripped=True, show_links=False, header_links=False,
              **kwargs):
         """
-        Show the specified table or action using the current renderer.  
+        Show the specified table or action using the current renderer.
 
         The first argument specifies the table or actor to show. It is
         forwarded to :meth:`spawn`.
@@ -785,7 +785,7 @@ class BaseRequest(object):
         <lino.core.renderer.HtmlRenderer.show_story>` method.
         """
         return self.renderer.show_story(self, *args, **kwargs)
-    
+
     def show_dashboard(self):
         """Show the dashboard of the user who made this request.
 
@@ -1208,10 +1208,10 @@ class ActorRequest(BaseRequest):
             # url = url.unsplit()
         print("20180410 {}", url)
         return url
-        
+
     def pk2url(self, pk):
         return self.get_detail_url(self.actor, pk)
-    
+
     def run(self, *args, **kw):
         """
         Runs this action request.
@@ -1227,7 +1227,7 @@ class ActionRequest(ActorRequest):
     - :meth:`get_user <lino.core.actions.BaseRequest.get_user>`
     - :meth:`confirm <lino.core.actions.BaseRequest.confirm>`
     - :meth:`spawn <lino.core.actions.BaseRequest.spawn>`
-    
+
     An `ActionRequest` is also a :class:`BaseRequest` and inherits its
     methods.
 
@@ -1235,7 +1235,7 @@ class ActionRequest(ActorRequest):
 
     - :meth:`lino.core.actors.Actor.request`
     - :meth:`lino.core.actions.Action.request`
-        
+
 
     """
     create_kw = None
@@ -1336,7 +1336,7 @@ class ActionRequest(ActorRequest):
             # print("20160329 ok", pv)
             self.param_values = AttrDict(**pv)
             # self.actor.check_params(self.param_values)
-            
+
         action = self.bound_action.action
         if action.parameters is not None:
             if len(self.selected_rows) == 1:
@@ -1372,7 +1372,7 @@ class ActionRequest(ActorRequest):
         return six.text_type(self.actor)
         #~ s = self.get_title()
         #~ return s.encode('us-ascii','replace')
-        
+
 
 
 class InstanceAction(object):
@@ -1384,7 +1384,7 @@ class InstanceAction(object):
 
         The bound action that will run.
 
-    .. attribute:: instance 
+    .. attribute:: instance
 
         The database object on which the action will run.
 
@@ -1441,11 +1441,11 @@ class InstanceAction(object):
 
     def run_from_session(self, ses, **kwargs):
         """
-        Run this instance action in a child request of given session.  
+        Run this instance action in a child request of given session.
 
         Additional arguments are forwarded to the action.
         Returns the response of the child request.
-        Doesn't modify response of parent request.  
+        Doesn't modify response of parent request.
         """
         ar = self.request_from(ses, **kwargs)
         self.bound_action.action.run_from_code(ar)
@@ -1453,7 +1453,7 @@ class InstanceAction(object):
 
     def __call__(self, *args, **kwargs):
         """
-        Run this instance action in an anonymous base request.  
+        Run this instance action in an anonymous base request.
 
         Additional arguments are forwarded to the action.
         Returns the response of the base request.
@@ -1481,6 +1481,3 @@ class InstanceAction(object):
         # logger.info("20150202 ia.get_row_permission() %s using %s",
         #             self, state)
         return self.bound_action.get_row_permission(ar, self.instance, state)
-
-
-

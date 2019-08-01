@@ -162,7 +162,7 @@ class Site(object):
         See :doc:`/dev/plugins`
 
     .. attribute:: LANGUAGE_CHOICES
-    
+
         A tuple in the format expected by Django's `choices
         <https://docs.djangoproject.com/en/1.11/ref/models/fields/#choices>`__
         attribute, used e.g. by :class:`LanguageField
@@ -190,7 +190,7 @@ class Site(object):
     site_locale = None
     """
     The `locale <https://docs.python.org/2/library/locale.html>`__ to
-    use for certain localized things on this site.  
+    use for certain localized things on this site.
 
     Used by :meth:`format_currency`.
 
@@ -199,7 +199,7 @@ class Site(object):
 
         sudo locale-gen de_BE.utf8
     """
-    
+
     confdirs = None
     """
     This attribute is available only after site startup.  See
@@ -321,7 +321,7 @@ class Site(object):
     used by :mod:`lino.modlib.notify` when generating the mail body.
 
     """
-    
+
     make_missing_dirs = True
     """Set this to `False` if you don't want Lino to automatically create
     missing directories when needed.  If this is False, Lino will
@@ -441,7 +441,7 @@ class Site(object):
     # see docs/settings.rst
     migration_class = None
     """
-    If you maintain a data migrator module for your application, 
+    If you maintain a data migrator module for your application,
     specify its name here.
 
     See :ref:`datamig` and/or :func:`lino.utils.dpy.install_migrations`.
@@ -449,9 +449,11 @@ class Site(object):
     TODO: rename this to `migrator_class`
 
     """
-    
+
     migration_module = None
-    """The full Python path of a module to use for all migrations.
+    """The full Python path of
+    the plugin which holds Django migrations for all plugins
+    of this application.
     """
 
     hidden_languages = None
@@ -490,7 +492,7 @@ class Site(object):
     database never contains duplicate cities.  This behaviour might
     disturb e.g. when importing legacy data that did not have this
     restriction.  Set it to True to remove the UNIQUE clause.
-    
+
     Changing this setting might affect your database structure and
     thus require a :doc:`/topics/datamig` if your application uses
     :mod:`lino_xl.lib.countries`.
@@ -501,7 +503,7 @@ class Site(object):
     synchronizing with CalDAV server.  Locally created calendar
     components in remote calendars will get a UID based on this
     parameter, using ``"%s@%s" % (self.pk, settings.SITE.kernel)``.
-    
+
     The default value is ``'myuid'``, and you should certainly
     override this on a production server that uses remote calendars.
 
@@ -520,11 +522,11 @@ class Site(object):
     The database model used for users.
     This is automatically set to ``'users.User'`` when
     :mod:`lino.modlib.users` is installed.
-    
+
     Default value is `None`, meaning that this application has no user
     management.  See also :meth:`set_user_model`
-    
-    See :doc:`/topics/auth`.    
+
+    See :doc:`/topics/auth`.
     """
 
     social_auth_backends = None
@@ -536,8 +538,7 @@ class Site(object):
     uses authentication via third-party providers.
 
     Sites which use this feature must also install PSA into their environment
-    (``pip install social-auth-app-django``, which is done automatically by
-    :manage:`configure`).
+    (which is done automatically by :manage:`install`).
 
     Depending on the backend you must also add credentials in your
     local :xfile:`settings.py` file, e.g.::
@@ -550,12 +551,16 @@ class Site(object):
     project.
     """
 
+    use_linod = False
+    """Set this to `True` in order to activate :manage:`linod` on thi site.
+    """
+
     use_security_features = False
     """
     Set this to `True` in order to activate a selection of security
     features to protect against miscellaneous attacks.  You can do
     this only if your application is being served via HTTPS.  The idea
-    is to provide a reasonable security out of the box.  
+    is to provide a reasonable security out of the box.
 
     This will activate some middleware and set some security-related
     settings.  This is a new feature and not much tested.  As a hoster
@@ -574,7 +579,7 @@ class Site(object):
     advantage of also setting :setting:`MIDDLEWARE_CLASSES`
     automatically.
     """
-    
+
     # use_auth = True
     # """Whether this site uses authentication.  If this is set to `False`,
     # all requests are anonymous (as if :attr:`user_model` was `None`).
@@ -587,7 +592,7 @@ class Site(object):
     middleware class names.
 
     If None, use logic described in :doc:`/topics/auth`
-  
+
 
     """
 
@@ -625,7 +630,7 @@ class Site(object):
     The full Python path of the **workflows module** to be used on this
     site.
     """
-    
+
     custom_layouts_module = None
     """The full Python path of the **custom layouts module** used on this
     site.
@@ -663,12 +668,12 @@ class Site(object):
     build_js_cache_on_startup = False
     """Whether the Javascript cache files should be built on startup for
     all user profiles and languages.
-    
+
     On a production server this should be `True` for best performance,
     but often this is not necessary, so default value is `False`,
     which means that each file is built upon need (when a first
     request comes in).
-    
+
     You can also set it to `None`, which means that Lino decides
     automatically during startup: it becomes `False` if either
     :func:`lino.core.utils.is_devserver` returns True or
@@ -730,7 +735,7 @@ class Site(object):
     The recommended but not yet fully implemented "modern" style is to
     use unicode symbols instead of icons.
     """
-    
+
     use_new_unicode_symbols = False
     """Whether to use "new" unicode symbols (e.g. from the `Miscellaneous
     Symbols and Pictographs
@@ -740,7 +745,7 @@ class Site(object):
     Currently used by :mod:`lino_noi.lib.noi.workflows`
 
     """
-    
+
     use_experimental_features = False
     """Whether to include "experimental features". Deprecated.
     lino_xl.lib.inspect
@@ -748,11 +753,11 @@ class Site(object):
     site_config_defaults = {}
     """
     Default values to be used when creating the :attr:`site_config`.
-    
+
     Usage example::
-    
+
       site_config_defaults = dict(default_build_method='appypdf')
-      
+
 
     """
 
@@ -773,14 +778,14 @@ class Site(object):
     is_demo_site = True
     """When this is `True`, then this site runs in "demo" mode.  "Demo
     mode" means:
-    
+
     - the welcome text for anonymous users says "This demo site has X
       users, they all have "1234" as password", followed by a list of
       available usernames.
-    
+
     Default value is `True`.  On a production site you will of course
     set this to `False`.
-    
+
     See also :attr:`demo_fixtures` and :attr:`the_demo_date`.
 
     """
@@ -890,7 +895,7 @@ class Site(object):
     ldap_auth_server = None
     """
     This should be a string with the domain name and DNS (separated by a
-    space) of the LDAP server to be used for authentication.  
+    space) of the LDAP server to be used for authentication.
 
     Example::
 
@@ -952,7 +957,7 @@ class Site(object):
 
     use_vinylfox = False
     """
-    Whether to use VinylFox extensions for HtmlEditor. 
+    Whether to use VinylFox extensions for HtmlEditor.
     This feature was experimental and doesn't yet work (and maybe never will).
     See `/blog/2011/0523`.
     """
@@ -965,29 +970,29 @@ class Site(object):
 
     webdav_url = None
     """
-    
+
     The URL location for webdav files.  In a normal production configuration
     you should leave this unchanged and Lino will set the  default value
     ``'/media/webdav/'``. You also need to configure your web
     server to actually serve the files below this location using the WebDAV
     protocol. See :doc:`/admin/webdav`.
-    
+
     Obsolete: This may be used to simulate a :term:`WebDAV` location on a
     development server.  For example on a Windows machine, you may set
     it to ``w:\``, and before invoking :manage:`runserver`, you issue in
     a command prompt::
-    
+
         subst w: <dev_project_path>\media\webdav
     """
 
     webdav_protocol = None
     """
-    
+
     Set this to a string like e.g. 'wdav' to instruct Lino to use this custom
     protocol instead of ``http`` when linking to "editable" printable documents.
-    
+
     See :doc:`/admin/webdav`.
-    
+
 
     """
 
@@ -1027,16 +1032,16 @@ class Site(object):
     user interface on this :class:`Site`.
 
     Default value is :mod:`lino.modlib.extjs`. Other candidates are
-    :mod:`lino.modlib.bootstrap3`, :mod:`lino_xl.lib.pages` and
+    :mod:`lino_react.react`, :mod:`lino.modlib.bootstrap3`, :mod:`lino_xl.lib.pages` and
     :mod:`lino_extjs6.extjs6` .
 
     Another possibility is to set it to `None`. In that case you will
     probably also set :attr:`root_urlconf` to a custom URL dispatcher.
     Usage example for this see :mod:`lino.projects.cms`.
     """
-    
+
     admin_ui = None
-    
+
 
     mobile_view = False
     """
@@ -1050,10 +1055,10 @@ class Site(object):
     <lino.core.layouts.BaseLayout.main_m>` and :attr:`column_names_m
     <lino.core.tables.AbstractTable.column_names_m>` respectively.
     """
-    
+
     detail_main_name = 'main'
     # detail_main_name = 'main_m'
-    
+
     design_name = 'desktop'
     """
     The name of the design to use. The default value is
@@ -1084,13 +1089,13 @@ class Site(object):
 
     """A list of tag names which are to *remain* in HTML comments if
     bleaching is active.
-    
+
     See :doc:`/dev/bleach`.
     """
 
     textfield_bleached = True
     """Default value for `RichTextField.textfield_bleached`.
-    
+
     See :doc:`/dev/bleach`.
     """
     textfield_format = 'plain'
@@ -1158,7 +1163,7 @@ class Site(object):
     <lino.core.layouts.create_layout_element>`) to report errors of
     style "Unknown element "postings.PostingsByController
     ('postings')" referred in layout <PageDetail on pages.Pages>."
-    
+
     Setting this to `False` is useful when there's some problem
     *within* the framework.
     """
@@ -1168,7 +1173,7 @@ class Site(object):
     This should be True unless this site is being used just for autodoc
     or similar applications.
     """
-    
+
     strict_choicelist_values = True
     """
     Whether invalid values in a ChoiceList should raise an exception.
@@ -1182,15 +1187,15 @@ class Site(object):
     dictionary that will be used as keyword parameters to Python
     `csv.writer()
     <http://docs.python.org/library/csv.html#csv.writer>`_
-    
+
     Possible keys include:
-    
+
     - encoding :
       the charset to use when responding to a CSV request.
       See
       http://docs.python.org/library/codecs.html#standard-encodings
       for a list of available values.
-      
+
     - many more allowed keys are explained in
       `Dialects and Formatting Parameters
       <http://docs.python.org/library/csv.html#csv-fmt-params>`_.
@@ -1326,14 +1331,14 @@ class Site(object):
         :xfile:`settings.py`.
 
         """
-        
+
         if hasattr(self, 'setup_choicelists'):
             raise ChangedAPI("setup_choicelists is no longer supported")
         if hasattr(self, 'setup_workflows'):
             raise ChangedAPI("setup_workflows is no longer supported")
         if hasattr(self, 'beid_protocol'):
             raise ChangedAPI("Replace Site.beid_protocol by plugins.beid.urlhandler_prefix")
-        
+
 
         # if len(_INSTANCES):
         #     raise Exception("20161219")
@@ -1360,10 +1365,10 @@ class Site(object):
         self.run_lino_site_module()
         self.override_settings(**kwargs)
         self.load_plugins()
-        
+
         for p in self.installed_plugins:
             p.on_plugins_loaded(self)
-        
+
         if self.migration_module is not None:
             MIGRATION_MODULES = {}
 
@@ -1579,7 +1584,7 @@ class Site(object):
 
     def get_database_settings(self):
         """Return a dict to be set as the :setting:`DATABASE` setting.
-        
+
         The default behaviour uses SQLite (1) on a file named
         :xfile:`default.db` in the :attr:`cache_dir` if that attribute is
         specified, and (2) in ``:memory:`` when :attr:`cache_dir` is `None`.
@@ -1593,7 +1598,7 @@ class Site(object):
                         'NAME': 'test_' + self.project_name,
                         'USER': 'django',
                         'PASSWORD': os.environ['MYSQL_PASSWORD'],
-                        'HOST': 'localhost',                  
+                        'HOST': 'localhost',
                         'PORT': 3306,
                         'OPTIONS': {
                            "init_command": "SET storage_engine=MyISAM",
@@ -1601,7 +1606,7 @@ class Site(object):
                     }
                 }
 
-        
+
 
         """
         if self.cache_dir is None:
@@ -1702,7 +1707,7 @@ class Site(object):
 
         for x in self.get_installed_apps():
             add(x)
-            
+
         for x in self.local_apps:
             add(x)
 
@@ -1860,7 +1865,7 @@ class Site(object):
                 self.installed_plugin_modules.add(pp.__module__)
 
         # print("20160524 %s", self.installed_plugin_modules)
-                        
+
         # raise Exception("20140825 %s", self.override_modlib_models)
 
         # Tried to prevent accidental calls to configure_plugin()
@@ -1896,7 +1901,7 @@ class Site(object):
                 pass
 
     def load_actors(self):
-        """Collect :xfile:`desktop.py` modules.  
+        """Collect :xfile:`desktop.py` modules.
 
         Note the situation when a :xfile:`desktop.py` module exists
         but causes itself an ImportError because it contains a
@@ -1954,7 +1959,7 @@ class Site(object):
                     # coded help text gets overridden only if docs
                     # provide a more specific help text.
                     return
-                    
+
             else:
                 if debug:
                     print("20170824 {}.{}.help_text found using {}".format(
@@ -2055,9 +2060,9 @@ class Site(object):
                     CSRF_USE_SESSIONS=True,
                     SESSION_COOKIE_SECURE=True,
                     CSRF_COOKIE_SECURE=True)
-                
+
         # self.define_settings(AUTH_USER_MODEL=self.user_model)
-        
+
         self.define_settings(
             MIDDLEWARE=tuple(self.get_middleware_classes()))
 
@@ -2084,7 +2089,7 @@ class Site(object):
             LOGIN_REDIRECT_URL = '/',
             # LOGIN_REDIRECT_URL = '/accounts/profile/',
             LOGOUT_REDIRECT_URL = None)
-        
+
 
         def collect_settings_subdirs(lst, name, max_count=None):
             def add(p):
@@ -2203,7 +2208,7 @@ class Site(object):
         self.user_model = spec
         if self.user_types_module is None:
             self.user_types_module = 'lino.core.user_types'
-            
+
     def get_auth_method(self):
         """Returns the authentication method used on this site. This is one of
         `None`, `'remote'` or `'session'`.
@@ -2287,7 +2292,7 @@ class Site(object):
     def define_settings(self, **kwargs):
         """Same as :meth:`update_settings`, but raises an exception if a
         setting already exists.
-        
+
         TODO: Currently this exception is deactivated.  Because it
         doesn't work as expected.  For some reason (maybe because
         settings is being imported twice on a devserver) it raises a
@@ -2447,7 +2452,7 @@ class Site(object):
 
                 def __init__(self):
                     settings.SITE.setup_model_spec(self, 'the_model')
-    
+
             # user code:
             class MyThing(ThingBase):
                 the_model = "contacts.Partner"
@@ -2484,7 +2489,7 @@ class Site(object):
     def for_each_app(self, func, *args, **kw):
         """
         Call the given function on each installed plugin.  Successor of
-        :meth:`on_each_app`.  
+        :meth:`on_each_app`.
 
         This also loops over plugins that don't have a models module
         and the base plugins of plugins which extend some plugin.
@@ -2640,7 +2645,7 @@ class Site(object):
     def setup_layouts(self):
         '''
         Hook for subclasses to add or modify layouts.
-        
+
         Usage example::
 
             def setup_layouts(self):
@@ -2925,18 +2930,18 @@ class Site(object):
         """Use this in Python fixtures or tests to test whether a Site
         instance supports a given language.  `code` must be a
         Django-style language code.
-        
+
         On a site with only one locale of a language (and optionally
         some other languages), you can use only the language code to
         get a tuple of :data:`LanguageInfo` objects.
-        
+
         >>> from lino.core.site import TestSite as Site
         >>> Site(languages="en-us fr de-be de").get_language_info('en')
         LanguageInfo(django_code='en-us', name='en_US', index=0, suffix='')
-        
+
         On a site with two locales of a same language (e.g. 'en-us'
         and 'en-gb'), the simple code 'en' yields that first variant:
-        
+
         >>> site = Site(languages="en-us en-gb")
         >>> print(site.get_language_info('en'))
         LanguageInfo(django_code='en-us', name='en_US', index=0, suffix='')
@@ -2947,22 +2952,22 @@ class Site(object):
     def resolve_languages(self, languages):
         """
         This is used by `UserType`.
-        
+
         Examples:
-        
+
         >>> from lino.core.site import TestSite as Site
         >>> lst = Site(languages="en fr de nl et pt").resolve_languages('en fr')
         >>> [i.name for i in lst]
         ['en', 'fr']
-        
+
         You may not specify languages which don't exist on this site:
-        
+
         >>> Site(languages="en fr de").resolve_languages('en nl')
         Traceback (most recent call last):
         ...
         Exception: Unknown language code 'nl' (must be one of ['en', 'fr', 'de'])
-        
-        
+
+
         """
         rv = []
         if isinstance(languages, six.string_types):
@@ -2990,7 +2995,7 @@ class Site(object):
         """
         The django code of the default language to use in every
         :class:`lino.utils.mldbc.fields.LanguageField`.
-        
+
         """
         return self.DEFAULT_LANGUAGE.django_code
 
@@ -3008,7 +3013,7 @@ class Site(object):
         >>> site = Site(languages='fr de es')
         >>> site.str2kw('name', _("January")) == {'name_de': 'Januar', 'name': 'janvier', 'name_es': 'Enero'}
         True
-        
+
 
         """
         from django.utils import translation
@@ -3028,29 +3033,29 @@ class Site(object):
 
         The field names where this info gets stored depends on the
         Site's `languages` distribution.
-        
+
         >>> Site(languages="de-be en").babelkw('name',**kw) == {'name_en': 'Hello', 'name': 'Hallo'}
         True
-        
+
         >>> Site(languages="en de-be").babelkw('name',**kw) == {'name_de_BE': 'Hallo', 'name': 'Hello'}
         True
-        
+
         >>> Site(languages="en-gb de").babelkw('name',**kw) == {'name_de': 'Hallo', 'name': 'Hello'}
         True
-        
+
         >>> Site(languages="en").babelkw('name',**kw) == {'name': 'Hello'}
         True
-        
+
         >>> Site(languages="de-be en").babelkw('name',de="Hallo",en="Hello") == {'name_en': 'Hello', 'name': 'Hallo'}
         True
 
-        In the following example `babelkw` attributes the 
+        In the following example `babelkw` attributes the
         keyword `de` to the *first* language variant:
-        
+
         >>> Site(languages="de-ch de-be").babelkw('name',**kw) == {'name': 'Hallo'}
         True
-        
-        
+
+
         """
         d = dict()
         for simple, info in self.language_dict.items():
@@ -3106,7 +3111,7 @@ given object `obj`. The dict will have one key for each
         """
         Return a list of the babel values of this field in the order of
         this Site's :attr:`Site.languages` attribute.
-        
+
         """
         return [str(getattr(obj, name + li.suffix)) for li in self.languages]
         #~ l = [ getattr(obj,name) ]
@@ -3519,7 +3524,7 @@ Please convert to Plugin method".format(mod, methname)
         yield 'django.middleware.common.CommonMiddleware'
         if self.languages and len(self.languages) > 1:
             yield 'django.middleware.locale.LocaleMiddleware'
-            
+
         if self.user_model:
             yield 'django.contrib.sessions.middleware.SessionMiddleware'
             # yield 'django.contrib.auth.middleware.AuthenticationMiddleware'
@@ -3528,7 +3533,7 @@ Please convert to Plugin method".format(mod, methname)
             yield 'lino.core.auth.middleware.DeviceTypeMiddleware'
         else:
             yield 'lino.core.auth.middleware.NoUserMiddleware'
-            
+
         if self.get_auth_method() == 'remote':
             # yield 'django.contrib.auth.middleware.RemoteUserMiddleware'
             yield 'lino.core.auth.middleware.RemoteUserMiddleware'
@@ -3536,11 +3541,11 @@ Please convert to Plugin method".format(mod, methname)
             yield 'lino.modlib.ipdict.middleware.Middleware'
         if self.social_auth_backends:
             yield 'social_django.middleware.SocialAuthExceptionMiddleware'
-            
-                    
+
+
         if True:
             yield 'lino.utils.ajax.AjaxExceptionResponse'
-            
+
         if self.use_security_features:
             yield 'django.middleware.security.SecurityMiddleware'
             yield 'django.middleware.clickjacking.XFrameOptionsMiddleware'
@@ -3625,19 +3630,19 @@ Please convert to Plugin method".format(mod, methname)
 
         if self.use_ipdict:
             yield 'lino.modlib.ipdict'
-            
+
         if self.social_auth_backends:
             yield 'social_django'
 
         yield self.default_ui
-        
+
         if self.admin_ui is not None:
             if self.admin_ui == self.default_ui:
                 raise Exception(
                     "admin_ui (if specified) must be different "
                     "from default_ui")
             yield self.admin_ui
-            
+
         # if self.default_ui == "extjs":
         #     yield 'lino.modlib.extjs'
         #     yield 'lino.modlib.bootstrap3'
@@ -3650,10 +3655,10 @@ Please convert to Plugin method".format(mod, methname)
     server_url = "http://127.0.0.1:8000/"
     """The "official" URL used by "normal" users when accessing this Lino
     site.
-     
+
     This is used by templates such as :xfile:`summary.eml` (used by
     :mod:`lino.modlib.notify` to send notification emails)
-    
+
     Django has a `HttpRequest.build_absolute_uri()
     <https://docs.djangoproject.com/en/2.2/ref/request-response/#django.http.HttpRequest.build_absolute_uri>`__
     method, but e.g. notification emails are sent via :manage:`linod` where no
@@ -3676,13 +3681,13 @@ Please convert to Plugin method".format(mod, methname)
     When this Site is running under something else than a development
     server, this setting must correspond to your web server's
     configuration.  For example if you have::
-    
+
         WSGIScriptAlias /foo /home/luc/mypy/lino_sites/foo/wsgi.py
-      
+
     Then your :xfile:`settings.py` should specify::
-    
+
         site_prefix = '/foo/'
-    
+
     See also :ref:`mass_hosting`.
 
     """
@@ -3751,7 +3756,7 @@ signature as `django.core.mail.EmailMessage`.
         #                    from_email=sender, body=body, to=recipients)
 
         # from django.core.mail import EmailMessage
-        
+
         # msg = EmailMessage(subject=subject,
         #                    from_email=sender, body=body, to=recipients)
         # self.logger.info(
@@ -3792,11 +3797,11 @@ signature as `django.core.mail.EmailMessage`.
 
     def login(self, username=None, **kw):
         """Open a session as the user with the given `username`.
-    
+
         For usage from a shell or a tested document.  Does not require
         any password because when somebody has command-line access we
         trust that she has already authenticated.
-    
+
         It returns a
         :class:`BaseRequest <lino.core.requests.BaseRequest>` object.
 
@@ -3854,7 +3859,7 @@ signature as `django.core.mail.EmailMessage`.
         >>> self.decimal_group_separator = '.'
         >>> print(self.decfmt(x))
         1.234,00
-        
+
         >>> self.decimal_group_separator = "oops"
         >>> print(self.decfmt(x))
         1oops234,00
@@ -3876,13 +3881,13 @@ signature as `django.core.mail.EmailMessage`.
         if six.PY2:
             res = res.decode(locale.nl_langinfo(locale.CODESET))
         return res
-        
+
 
     LOOKUP_OP = '__iexact'
 
     def lookup_filter(self, fieldname, value, **kw):
         """
-        Return a `models.Q` to be used if you want to search for a given 
+        Return a `models.Q` to be used if you want to search for a given
         string in any of the languages for the given babel field.
         """
         from django.db.models import Q
@@ -3913,10 +3918,10 @@ class TestSite(Site):
     examples.
 
     Example::
-    
+
     >> from lino.core.site import Site
     >> Site(globals(), ...)
-    
+
     >> from lino.core.site import TestSite as Site
     >> Site(...)
 
@@ -3941,7 +3946,7 @@ def _test():
     res = doctest.testmod()
     if res.failed > 0:
         raise Exception("{0} (see earlier output)".format(res))
-        
+
 
 if __name__ == "__main__":
     _test()

@@ -159,7 +159,7 @@ class Action(Parametrizable, Permittable):
     The first argument is the optional `label`, other arguments should
     be specified as keywords and can be any of the existing class
     attributes.
-           
+
     """
     #~ __metaclass__ = ActionMetaClass
     _layout_class = layouts.ActionParamsLayout
@@ -280,7 +280,7 @@ class Action(Parametrizable, Permittable):
 
     submit_form_data = False
     """
-    Should the running of the action include all known form values in 
+    Should the running of the action include all known form values in
     the request.
     """
 
@@ -352,7 +352,7 @@ class Action(Parametrizable, Permittable):
 
     editable = True
     """
-                   
+
     Whether the parameter fields should be editable.
     Setting this to False seems nonsense.
     """
@@ -475,18 +475,18 @@ class Action(Parametrizable, Permittable):
     """
     On actions that opens_a_window this must be a unique one-letter
     string expressing the window type.
-    
+
     Allowed values are:
-    
+
     - None : opens_a_window is False
     - 't' : ShowTable
     - 'd' : ShowDetail
     - 'i' : ShowInsert
-    
+
     This can be used e.g. by a summary view to decide how to present the
     summary data (usage example
     :meth:`lino.modlib.uploads.AreaUploads.get_table_summary`).
-    
+
     """
 
     callable_from = "td"
@@ -540,6 +540,12 @@ class Action(Parametrizable, Permittable):
         """
         Return a decorator which turns an instance method on a model or a
         class method on an actor into an action of this class.
+
+        The decorated method will be installed as the actions's
+        :meth:`run_from_ui <Action.run_from_ui>` method.
+
+        All arguments are forwarded to :meth:`Action.__init__`.
+
         """
         def decorator(fn):
             assert not 'required' in kw
@@ -1240,7 +1246,7 @@ class DeleteSelected(MultipleRowAction):
     if True:  # settings.SITE.use_silk_icons:
         icon_name = 'delete'
     else:
-        button_text = u"⊖"  # 2296 CIRCLED MINUS	
+        button_text = u"⊖"  # 2296 CIRCLED MINUS
         # button_text = u"⊟"  # 229F SQUARED MINUS
 
     ui5_icon_name = 'sap-icon://less'
@@ -1270,7 +1276,7 @@ class DeleteSelected(MultipleRowAction):
             super(DeleteSelected, self).run_from_ui(ar, **kw)
             ar2.success(record_deleted=True)
 
-            # hack required for extjs: 
+            # hack required for extjs:
             if ar2.actor.detail_action:
                 ar2.set_response(
                     detail_handler_name=ar2.actor.detail_action.full_name())
@@ -1309,5 +1315,3 @@ def get_view_permission(e):
             return False  # bug 3 (bcss_summary) blog/2012/0927
         parent = parent.parent
     return True
-
-

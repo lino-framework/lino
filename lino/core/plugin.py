@@ -58,10 +58,10 @@ class Plugin(object):
     to :attr:`verbose_name`.
 
     """
-    
+
     needs_plugins = []
     """A list of names of plugins needed by this plugin.
-    
+
     The default implementation of :meth:`get_required_plugins` returns this list.
 
     """
@@ -266,13 +266,13 @@ class Plugin(object):
         This will be called exactly once, when models are ready.
         """
         pass
-    
+
     def post_site_startup(self, site):
         """
         This will be called exactly once, when models are ready.
         """
         pass
-    
+
     @classmethod
     def extends_from(cls):
         """Return the plugin from which this plugin inherits."""
@@ -327,14 +327,15 @@ class Plugin(object):
 
         Return an iteration of required Python packages.
 
-        These will be installed during :manage:`configure`.
+        These will be installed during :manage:`install`.
 
         Plugins can use quite sophisticated logic to decide which packages they
         require. For example :mod:`lino_xl.lib.appypod` check whether the
-        package is already installed in order to support the use case when a
-        developer has a clone of the appy sources and uses this version. In
-        this case we don't want to override it. Similar for
-        :mod:`lino_xl.lib.mailbox` and its django_mailbox requirement.
+        :mod:`appy` package is already installed and does not require it then.
+        This is to support the use case when a developer has a clone of the appy
+        sources and uses this version. In this case we don't want to override
+        it. Similar for :mod:`lino_xl.lib.mailbox` and its :mod:`django_mailbox`
+        requirement.
 
         """
         return []
@@ -379,7 +380,7 @@ class Plugin(object):
         Return the plugin (a :class:`Plugin` instance) into whose menu
         this plugin should add its menu commands.
 
-        This returns `self` by default, unless 
+        This returns `self` by default, unless
 
         - this plugin defines an explicit :attr:`menu_group`. In this
           case return the named plugin.
@@ -412,7 +413,7 @@ class Plugin(object):
         instantiated.
         """
         pass
-    
+
     def get_dashboard_items(self, user):
         """Return or yield a sequence of items to be rendered on the
         dashboard.
@@ -421,7 +422,7 @@ class Plugin(object):
 
         Every item is expected to be either an instance of
         :class:`lino.core.dashboard.DashboardItem`, or a
-        :class:`lino.core.actors.Actor`. 
+        :class:`lino.core.actors.Actor`.
 
         Tables are shown with a limit of
         :attr:`lino.core.tables.AbstractTable.preview_limit` rows.
@@ -431,7 +432,7 @@ class Plugin(object):
 
     def setup_layout_element(self, el):
         pass
-    
+
     def get_detail_url(self, ar, actor, pk, *args, **kw):
         """
         Return the URL to the given database row.
