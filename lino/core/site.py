@@ -1372,11 +1372,14 @@ class Site(object):
         if self.migrations_package is not None:
             MIGRATION_MODULES = {}
             for p in self.installed_plugins:
-                    migrations_module = import_module(self.migrations_package)
-                    dir = join(migrations_module.__file__.rstrip("__init__.py"), p.app_label)
-                    self.makedirs_if_missing(dir)
-                    open(join(dir, "__init__.py"),"a").close() # touch __init__ file.
-                    MIGRATION_MODULES[p.app_label] = self.migrations_package + "." + p.app_label
+                if p.app_label == "contenttypes":
+                    # contenttypes is pure django and handles its own migrations
+                    continue
+                migrations_module = import_module(self.migrations_package)
+                dir = join(migrations_module.__file__.rstrip("__init__.py"), p.app_label)
+                self.makedirs_if_missing(dir)
+                open(join(dir, "__init__.py"),"a").close() # touch __init__ file.
+                MIGRATION_MODULES[p.app_label] = self.migrations_package + "." + p.app_label
             self.django_settings.update(MIGRATION_MODULES=MIGRATION_MODULES)
             #self.makedirs_if_missing
 
