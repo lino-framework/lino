@@ -67,6 +67,10 @@ from django.utils.deconstruct import deconstructible
 from django.db import models
 from django.conf import settings
 
+from django.db.migrations.serializer import BaseSerializer
+from django.db.migrations.writer import MigrationWriter
+
+
 from atelier.utils import is_string
 from lino.core import actions
 from lino.core import actors
@@ -1024,6 +1028,31 @@ class MultiChoiceListField(ChoiceListField):
     def get_text_for_value(self, value):
         return ', '.join([
             self.choicelist.get_text_for_value(bc.value) for bc in value])
+
+
+
+# from lino.core.choicelists import Choice, ChoiceList, CallableChoice
+
+
+class ChoiceSerializer(BaseSerializer):
+    def serialize(self):
+        return "rt.models.{}.{}.{}".format(self.value.choicelist.app_label, self.value.choicelist.__name__,self.value.name), {'from lino.api.shell import rt'}
+
+MigrationWriter.register_serializer(Choice, ChoiceSerializer)
+
+class ChoiceListSerializer(BaseSerializer):
+    def serialize(self):
+        return "rt.models.{}.{}".format(self.value.choicelist.app_label, self.value.choicelist.__name__,self.value.name), {'from lino.api.shell import rt'}
+MigrationWriter.register_serializer(ChoiceList, ChoiceListSerializer)
+
+
+class CallableChoiceSerializer(BaseSerializer):
+    def serialize(self):
+
+        choice = self.value()
+        return "rt.models.{}.{}.as_callable('{}')".format(choice.choicelist.app_label, choice.choicelist.__name__, choice.name), {'from lino.api.shell import rt'}
+
+MigrationWriter.register_serializer(CallableChoice, CallableChoiceSerializer)
 
 
 def _test():
