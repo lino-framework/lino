@@ -156,6 +156,6 @@ default_app_config = 'lino.AppConfig'
 # deprecated use, only for backwards compat:
 from django.utils.translation import ugettext_lazy as _
 
-intersphinx_urls = dict(docs="http://core.lino-framework.org")
+# intersphinx_urls = dict(docs="http://core.lino-framework.org")
 srcref_url = 'https://github.com/lino-framework/lino/blob/master/%s'
 doc_trees = ['docs']
