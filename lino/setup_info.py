@@ -55,11 +55,9 @@ install_requires = [
 if PY2:
     install_requires.append('reportlab<2.7')
     install_requires.append('weasyprint<0.43')
-    # install_requires.append('appy')
 else:
     install_requires.append('reportlab')
     install_requires.append('weasyprint')
-    # For appy on python3
     install_requires.append('zodb')
     install_requires.append('DateTime')
     # install_requires.append('appy@svn+https://svn.forge.pallavi.be/appy-dev/dev1')
