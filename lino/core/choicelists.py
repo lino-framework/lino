@@ -1046,7 +1046,7 @@ class ChoiceListSerializer(BaseSerializer):
 MigrationWriter.register_serializer(ChoiceList, ChoiceListSerializer)
 
 
-class CallableChoice"Serializer"(BaseSerializer):
+class CallableChoiceSerializer(BaseSerializer):
     def serialize(self):
 
         choice = self.value()
