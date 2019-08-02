@@ -41,6 +41,10 @@ def contribute_to_class(field, cls, fieldclass, **kw):
     if cls._meta.abstract:
         return
     kw.update(blank=True)
+    if "__fake__" in repr(cls):
+        # Used to test if we're creating a migration, in that case we don't want to add new fields,
+        # As they're already detected during site startup.
+        return
     for lang in settings.SITE.BABEL_LANGS:
         kw.update(verbose_name=format_lazy(u"{}{}",
             field.verbose_name, ' (' + lang.django_code + ')'))

@@ -49,6 +49,7 @@ from lino.core.exceptions import ChangedAPI
 
 from html2text import HTML2Text
 
+from importlib import import_module, reload
 
 # _INSTANCES = []
 
@@ -1369,11 +1370,17 @@ class Site(object):
             p.on_plugins_loaded(self)
 
         if self.migration_module is not None:
-            self.django_settings.update(
-                MIGRATION_MODULES={
-                    p.app_label:self.migration_module
-                    for p in self.installed_plugins})
+            MIGRATION_MODULES = {}
 
+            for p in self.installed_plugins:
+                    migrations_module = import_module(self.migration_module)
+                    dir = join(migrations_module.__file__.rstrip("__init__.py"), p.app_label)
+                    self.makedirs_if_missing(dir)
+                    open(join(dir, "__init__.py"),"a").close() # touch __init__ file.
+                    MIGRATION_MODULES[p.app_label] = self.migration_module + "." + p.app_label
+            self.django_settings.update(MIGRATION_MODULES=MIGRATION_MODULES)
+            #self.makedirs_if_missing
+            
         self.setup_plugins()
         self.install_settings()
 
