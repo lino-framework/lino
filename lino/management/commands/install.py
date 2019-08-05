@@ -38,6 +38,7 @@ def runcmd(cmd, **kw):  # same code as in getlino.py
     # kw.update(stderr=subprocess.STDOUT)
     kw.update(shell=True)
     kw.update(universal_newlines=True)
+    kw.update(check=True)
     # subprocess.check_output(cmd, **kw)
     subprocess.run(cmd, **kw)
     # os.system(cmd)
