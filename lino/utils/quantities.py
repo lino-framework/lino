@@ -14,17 +14,14 @@ from decimal import Decimal
 
 DEC2HOUR = old_div(Decimal(1), Decimal(60))
 
-from django.utils.deconstruct import deconstructible
+# from django.utils.deconstruct import deconstructible
 
-@deconstructible
+# @deconstructible
 class Quantity(Decimal):
 
-    # def __new__(cls, value="0", context=None):
-    #     cv = convert_from(value, context)
-    #     self = Decimal.__new__(cls, cv, context)
-    #     self._text = str(value)
-    #     return self
-    #
+    def __new__(cls, *args, **kwargs):
+        raise Exception("You cannot instantiate the Quantity base class.")
+        
     def __str__(self):
         # return "{}%".format(self * 100)
         return self._text
@@ -59,10 +56,8 @@ class Quantity(Decimal):
     __div__ = __truediv__
     __rdiv__ = __rtruediv__
 
-    # def __eq__(self, *args, **kw):
-    #     return self.__class__(Decimal.__eq__(self, *args, **kw))
-    # def __neq__(self, *args, **kw):
-    #     return self.__class__(Decimal.__neq__(self, *args, **kw))
+    def deconstruct(self):
+        return (self.__module__ + "." + self.__class__.__name__, (self._text), {})
 
 
 class Percentage(Quantity):
@@ -94,7 +89,7 @@ class Percentage(Quantity):
 
 
 
-@deconstructible
+# @deconstructible
 class Duration(Quantity):
 
     def __new__(cls, value="0:00", context=None):
@@ -183,14 +178,3 @@ def parse_decimal(s):
         raise Exception("Invalid decimal value %r" % s)
     s = s.replace(',', '.')
     return Decimal(s)
-
-
-
-
-
-def _test():
-    import doctest
-    doctest.testmod()
-
-if __name__ == "__main__":
-    _test()
