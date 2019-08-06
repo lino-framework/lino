@@ -14,7 +14,9 @@ from decimal import Decimal
 
 DEC2HOUR = old_div(Decimal(1), Decimal(60))
 
+from django.utils.deconstruct import deconstructible
 
+@deconstructible
 class Quantity(Decimal):
 
     # def __new__(cls, value="0", context=None):
@@ -92,6 +94,7 @@ class Percentage(Quantity):
 
 
 
+@deconstructible
 class Duration(Quantity):
 
     def __new__(cls, value="0:00", context=None):
@@ -180,6 +183,9 @@ def parse_decimal(s):
         raise Exception("Invalid decimal value %r" % s)
     s = s.replace(',', '.')
     return Decimal(s)
+
+
+
 
 
 def _test():
