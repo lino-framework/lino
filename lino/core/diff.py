@@ -72,7 +72,7 @@ class ChangeWatcher(object):
                     if old != new:
                         lst.append((k, old, new))
         return sorted(lst, key=lambda x: x[0])
-            
+
         # for k, old in self.original_state.items():
         #     if k not in ignored_fields:
         #         if watched_fields is None or k in watched_fields:
@@ -123,7 +123,7 @@ class ChangeWatcher(object):
                     for op, n in counters.items()])
             return E.li(
                 E.b(str(f.verbose_name)), " : ", txt)
-            
+
         if isinstance(f, models.DateTimeField):
             return
         if isinstance(f, models.ForeignKey):
@@ -142,14 +142,20 @@ class ChangeWatcher(object):
         return E.li(
             E.b(str(f.verbose_name)), " : ",
             u"{0} --> {1}".format(old, new))
-        
+
+    def get_old_value(self, fieldname):
+        """Return the old value of the specified field."""
+        return self.original_state[fieldname]
+
     def has_changed(self, fieldname):
+        """Return True if the specified field has changed."""
         old = self.original_state[fieldname]
         if old != self.watched.__dict__.get(fieldname, NOT_PROVIDED):
             return True
         return False
-        
+
     def is_dirty(self):
+        """Return True if any watched field has changed."""
         #~ if self.is_new:
             #~ return True
         for k, v in self.original_state.items():
@@ -162,5 +168,3 @@ class ChangeWatcher(object):
         on_ui_updated.send(
             sender=self.watched.__class__, watcher=self,
             request=ar)
-
-

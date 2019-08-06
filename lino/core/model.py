@@ -77,14 +77,14 @@ class Model(models.Model, fields.TableRow):
         Called when field FOO of an instance of this model has been
         modified through the user interface.
 
-        For every field named "FOO", if the model has a method called
-        "FOO_changed", then this method will be installed as a field-level
-        post-edit trigger.
-
         Example::
 
-          def city_changed(self, oldvalue):
-              print("City changed from %s to %s!" % (oldvalue, self.city))
+          def city_changed(self, ar):
+              print("User {} changed city of {} to {}!".format(
+                  ar.get_user(), self, self.city))
+
+        Note: If you want to know the old value when reacting to a change,
+        consider writing :meth:`after_ui_save` instead.
 
     .. method:: FOO_choices
 
@@ -132,8 +132,8 @@ class Model(models.Model, fields.TableRow):
     startup.
 
     """
-    
-    
+
+
     allow_cascaded_delete = frozenset()
     """A set of names of `ForeignKey` or `GenericForeignKey` fields of
     this model that allow for cascaded delete.
@@ -141,17 +141,17 @@ class Model(models.Model, fields.TableRow):
     If this is a simple string, Lino expects it to be a
     space-separated list of filenames and convert it into a set at
     startup.
-    
+
     Lino by default forbids to delete any object that is referenced by
     other objects. Users will get a message of type "Cannot delete X
     because n Ys refer to it".
-    
+
     Example: Lino should not refuse to delete a Mail just because it
     has some Recipient.  When deleting a Mail, Lino should also delete
     its Recipients.  That's why
     :class:`lino_xl.lib.outbox.models.Recipient` has
     ``allow_cascaded_delete = 'mail'``.
-    
+
     This is also used by :class:`lino.mixins.duplicable.Duplicate` to
     decide whether slaves of a record being duplicated should be
     duplicated as well.
@@ -162,7 +162,7 @@ class Model(models.Model, fields.TableRow):
     <https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.ForeignKey.on_delete>`_
     to ``PROTECT`` for all FK fields that are not listed in the
     ``allow_cascaded_delete`` of their model.
-    
+
     """
 
     grid_post = actions.CreateRow()
@@ -172,20 +172,20 @@ class Model(models.Model, fields.TableRow):
     override it.
 
     """
-    
+
     allow_merge_action = False
     """Whether this model should have a merge action.
 
     See :class:`lino.core.merge.MergeAction`
     """
-    
+
     show_in_site_search = True
     """Set this to `False` if you really don't want this model to occur
     in the site-wide search
     (:class:`lino.modlib.about.models.SiteSearch`).
 
     """
-    
+
     quick_search_fields = None
     """
     Explicitly specify the fields to be included in queries with a
@@ -410,7 +410,7 @@ class Model(models.Model, fields.TableRow):
         # In case of MTI, every concrete model has its own ddh.
         # Deleting an Invoice will also delete the Voucher. Ask all
         # MTI parents (other than self) whether they have a veto .
-        
+
         for b in self.__class__.__bases__:
             if issubclass(b, models.Model) \
                and b is not models.Model and not b._meta.abstract:
@@ -432,7 +432,7 @@ class Model(models.Model, fields.TableRow):
     def delete(self, **kw):
         """
         Double-check to avoid "murder bug" (20150623).
-        
+
         """
         msg = self.disable_delete(None)
         if msg is not None:
@@ -458,7 +458,7 @@ class Model(models.Model, fields.TableRow):
     def define_action(cls, **kw):
         """Adds one or several actions or other class attributes to this
         model.
-        
+
         Attributes must be specified using keyword arguments, the
         specified keys must not yet exist on the model.
 
@@ -688,14 +688,14 @@ class Model(models.Model, fields.TableRow):
 
         Arguments:
 
-            ar: the action request 
-  
-            cw: the :class:`ChangeWatcher` object, or `None` if this is
-                a new instance.
-        
+            ar: the action request
+
+            cw: the :class:`ChangeWatcher <lino.core.diff.ChangeWatcher>`
+                object, or `None` if this is a new instance.
+
         Called after a PUT or POST on this row, and after the row has
         been saved.
-        
+
         Used by
         :class:`lino_welfare.modlib.debts.models.Budget`
         to fill default entries to a new Budget,
@@ -776,14 +776,14 @@ class Model(models.Model, fields.TableRow):
 
     def get_mailable_recipients(self):
         """
-        Return or yield a list of (type,partner) tuples to be 
+        Return or yield a list of (type,partner) tuples to be
         used as recipents when creating an outbox.Mail from this object.
         """
         return []
 
     def get_postable_recipients(self):
         """
-        Return or yield a list of Partners to be 
+        Return or yield a list of Partners to be
         used as recipents when creating a posting.Post from this object.
         """
         return []
@@ -908,7 +908,7 @@ class Model(models.Model, fields.TableRow):
         if ar is None:
             return ''
         return self.get_workflow_buttons(ar)
-    
+
     def get_workflow_buttons(obj, ar):
         l = []
         actor = ar.actor
@@ -1071,7 +1071,7 @@ class Model(models.Model, fields.TableRow):
             return states
         raise Exception(
             "Cannot resolve stateset specifier {!r}".format(states))
-    
+
     @classmethod
     def get_layout_aliases(cls):
         """
@@ -1095,7 +1095,7 @@ class Model(models.Model, fields.TableRow):
             if issubclass(b, cls):
                 wo.update(b._widget_options)
         model._widget_options = wo
-        
+
         if issubclass(model, cls):
             return
 
@@ -1154,11 +1154,11 @@ class Model(models.Model, fields.TableRow):
         return """
 
 .. graphviz::
-   
+
    digraph foo {
 %s
   }
-  
+
 """ % s
 
     @classmethod
@@ -1281,5 +1281,3 @@ def pre_delete_handler(sender, instance=None, **kw):
                         obj2str(instance))
             for obj in qs:
                 obj.delete()
-
-
