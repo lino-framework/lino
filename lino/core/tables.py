@@ -180,7 +180,7 @@ class AbstractTable(actors.Actor):
     :attr:`mobile_view <lino.core.site.Site.mobile_view>` is True.
 
     """
-    
+
     column_names = '*'
     """A string that describes the list of columns of this table.
 
@@ -202,7 +202,7 @@ class AbstractTable(actors.Actor):
     columns and finally by `date`.
 
     If ``'*'`` is not present in the string only explicitly named
-    columns will be available. 
+    columns will be available.
 
     See also :meth:`setup_column` and :meth:`get_column_names`.
 
@@ -213,20 +213,20 @@ class AbstractTable(actors.Actor):
     The columns that must remain visible when this table is rendered
     on a tablet device.
     """
-    
+
     mobile_columns = None
     """
     The columns that must remain visible when this table is rendered
     on a mobile device.
     """
-    
+
     popin_columns = None
     """
     The columns that must pop in below the first column if there is no
     space to render them on the device.
-    
+
     If None: All columns not listed in mobile_columns nor Tablet_columns
-    will not pop-in. 
+    will not pop-in.
     """
 
     start_at_bottom = False
@@ -234,12 +234,10 @@ class AbstractTable(actors.Actor):
     bottom*.  Unlike reverse ordering, the rows remain in their
     natural order, but when we open a grid on this table, we want it
     to start on the last page.
-    
-    First use case are :class:`ml.sales.InvoicesByJournal` and
-    :class:`ml.ledger.InvoicesByJournal`.
-    But the result is not yet satisfying.
 
-    New since :srcref:`docs/tickets/143`.
+    Use cases would be :class:`lino_xl.lib.sales.InvoicesByJournal` and
+    :class:`lino_xl.lib.ledger.InvoicesByJournal` but the result is not yet
+    satisfying.
 
     """
 
@@ -269,12 +267,12 @@ class AbstractTable(actors.Actor):
     This will be called with a
     :class:`lino.core.requests.TableRequest` object and is expected to
     return or yield the list of "rows"::
-    
+
         @classmethod
         def get_data_rows(self, ar):
             ...
             yield somerow
-            
+
     Model tables may also define such a method in case they need local
     filtering.
 
@@ -292,12 +290,12 @@ class AbstractTable(actors.Actor):
     :class:`Site <lino.core.site.Site>`, which itself has a hard-coded
     default value of 15 and which you can override in your
     :xfile:`settings.py`.
-    
+
     If you set this to `None`, preview requests for this table will
     request all rows.  Since preview tables usually have no paging
     toolbar, that's theoretically what we want (but can lead to waste
     of performance if there are many rows).
-    
+
     Test case and description in the tested docs of :ref:`cosi`.
 
     """
@@ -307,7 +305,7 @@ class AbstractTable(actors.Actor):
     Number of text rows per data row.
 
     """
-    
+
     variable_row_height = False
     """
     Set this to `True` if you want each row to get the height that it
@@ -429,7 +427,7 @@ class AbstractTable(actors.Actor):
     is main item or not.
 
     """
-    
+
     grid_configs = []
     """
     Will be filled during :meth:`lino.core.table.Table.do_setup`.
@@ -478,14 +476,14 @@ method in order to sort the rows of the queryset.
     extra = None
     """
     Examples::
-    
+
       extra = dict(select=dict(lower_name='lower(name)'))
-      # (or if you prefer:) 
+      # (or if you prefer:)
       # extra = {'select':{'lower_name':'lower(name)'},'order_by'=['lower_name']}
-    
+
     List of SQL functions and which RDBMS supports them:
     http://en.wikibooks.org/wiki/SQL_Dialects_Reference/Functions_and_expressions/String_functions
-    
+
     """
 
     hide_sums = False
@@ -523,7 +521,7 @@ method in order to sort the rows of the queryset.
                 if cls.model._lino_default_table is None:
                     cls.model._lino_default_table = cls
 
-        
+
     @classmethod
     def spawn(cls, suffix, **kw):
         kw['app_label'] = cls.app_label
@@ -616,7 +614,7 @@ method in order to sort the rows of the queryset.
         """
         Return a dict with the "master keywords" for this table
         and a given `master_instance`.
-        
+
         For example, if you have two models :class:`Book` and
         :class:`Author`, and a foreign key :attr:`Book.author` which
         points to the author of the book, and a table `BooksByAuthor`
@@ -644,7 +642,7 @@ method in order to sort the rows of the queryset.
             # UsersWithClients as "slave" of the "table" Home
         elif self.master is models.Model:
             pass
-                
+
         elif isinstance(self.master_field, GenericForeignKey):
             kw = gfk2lookup(self.master_field, master_instance, **kw)
         elif self.master_field is not None:
@@ -770,7 +768,7 @@ class VentilatedColumns(VirtualTable):
 
         self.column_names = self.column_names_template.format(
             vcolumns=names)
-        
+
         #~ logger.info("20131114 setup_columns() --> %s",self.column_names)
 
     @classmethod
