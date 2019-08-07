@@ -552,7 +552,10 @@ class Site(object):
     """
 
     use_linod = False
-    """Set this to `True` in order to activate :manage:`linod` on thi site.
+    """
+    Whether this site uses the Lino daemon for running scheduled
+    tasks.  See :ref:`admin.linod`.
+
     """
 
     use_security_features = False
@@ -1889,6 +1892,8 @@ class Site(object):
             reqs.add("bleach")
         if self.social_auth_backends:
             reqs.add("social-auth-app-django")
+        if self.use_linod:
+            reqs.add("schedule")
         return sorted(reqs)
 
     def load_help_texts(self):
