@@ -58,11 +58,11 @@ class Plugin(ad.Plugin):
 
     def on_init(self):
         if self.site.use_websockets:
-            self.needs_plugins.append('channels')
             if channels is None:
                 # if channels is not installed, we cannot use it as a plugin
                 # because even :manage:`install` would fail.
                 return
+            self.needs_plugins.append('channels')
 
             sd = self.site.django_settings
             # the dict which will be used to create settings
