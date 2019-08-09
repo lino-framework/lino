@@ -14,9 +14,6 @@ from decimal import Decimal
 
 DEC2HOUR = old_div(Decimal(1), Decimal(60))
 
-# from django.utils.deconstruct import deconstructible
-
-# @deconstructible
 class Quantity(Decimal):
 
     def __new__(cls, *args, **kwargs):
@@ -57,7 +54,7 @@ class Quantity(Decimal):
     __rdiv__ = __rtruediv__
 
     def deconstruct(self):
-        return (self.__module__ + "." + self.__class__.__name__, (self._text), {})
+        return (self.__module__ + "." + self.__class__.__name__, (self._text,), {})
 
 
 class Percentage(Quantity):
@@ -89,7 +86,6 @@ class Percentage(Quantity):
 
 
 
-# @deconstructible
 class Duration(Quantity):
 
     def __new__(cls, value="0:00", context=None):
