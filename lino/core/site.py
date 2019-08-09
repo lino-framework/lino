@@ -1483,12 +1483,13 @@ class Site(object):
 
     def setup_logging(self):
         """Modifies the :data:`DEFAULT_LOGGING
-        <django.utils.log.DEFAULT_LOGGING>` dictionary *before* Django
-        passes it to the `logging.config.dictConfig
+        <django.utils.log.DEFAULT_LOGGING>` setting.
+
+        This is called *before* any plugins are loaded because  all this must
+        happen *before* Django passes the setting to the
+        `logging.config.dictConfig
         <https://docs.python.org/3/library/logging.config.html#logging.config.dictConfig>`__
         function.
-
-        Note that this is called *before* any plugins are loaded.
 
         It is designed to work with the :setting:`LOGGING` and
         :setting:`LOGGER_CONFIG` settings unmodified.
@@ -1579,6 +1580,10 @@ class Site(object):
         dblogger['propagate'] = False
         dblogger['level'] = os.environ.get('LINO_SQL_LOGLEVEL', 'WARNING')
         dblogger['handlers'] = loggercfg['handlers']
+
+        if False:  # see 2019-08-09
+            logger = d['loggers'].setdefault('django.utils.autoreload', {})
+            logger['level'] = 'INFO'
 
         # self.update_settings(LOGGING=d)
         # from pprint import pprint
