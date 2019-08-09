@@ -35,7 +35,7 @@ from atelier import rstgen
 
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import get_language
-# from django.core.exceptions import ImproperlyConfigured
+from django.db.utils import DatabaseError
 
 from lino.core.plugin import Plugin
 
@@ -3406,8 +3406,9 @@ site. :manage:`diag` is a command-line shortcut to this.
                     id=self.config_id)
                 # print("20180502 loaded SiteConfig {}",
                 #       obj2str(self._site_config, True))
-            #~ except (SiteConfig.DoesNotExist,DatabaseError):
-            except SiteConfig.DoesNotExist:
+            except (SiteConfig.DoesNotExist, DatabaseError):
+                # e.g. during migrate the SiteConfig maybe doesn't yet exist
+            # except SiteConfig.DoesNotExist:
             #~ except Exception,e:
                 kw = dict(id=self.config_id)
                 #~ kw.update(settings.SITE.site_config_defaults)
