@@ -1372,6 +1372,20 @@ class Site(object):
         for p in self.installed_plugins:
             p.on_plugins_loaded(self)
 
+        # doesn't yet work
+        if False:
+            MPNAME = "migrations"
+            if self.migrations_package is None:
+                mpp = self.project_dir.child(MPNAME)
+                if mpp.exists():
+                    self.migrations_package = self.__module__ + '.' + MPNAME
+                    # sm = import_module(os.getenv('DJANGO_SETTINGS_MODULE'))
+                    # self.migrations_package = sm.__name__ + '.' + MPNAME
+                    print(self.migrations_package)
+                    fn = mpp.child("__init__.py")
+                    if not fn.exists():
+                        fn.touch()
+
         if self.migrations_package is not None:
             MIGRATION_MODULES = {}
             for p in self.installed_plugins:
@@ -1381,7 +1395,7 @@ class Site(object):
                 migrations_module = import_module(self.migrations_package)
                 dir = join(migrations_module.__file__.rstrip("__init__.py"), p.app_label)
                 self.makedirs_if_missing(dir)
-                open(join(dir, "__init__.py"),"a").close() # touch __init__ file.
+                open(join(dir, "__init__.py"), "a").close() # touch __init__ file.
                 MIGRATION_MODULES[p.app_label] = self.migrations_package + "." + p.app_label
             self.django_settings.update(MIGRATION_MODULES=MIGRATION_MODULES)
             #self.makedirs_if_missing
