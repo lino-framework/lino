@@ -15,6 +15,7 @@ from atelier.utils import unindent
 from django.conf import settings
 from django.utils.encoding import force_text
 
+from lino.modlib.system.choicelists import PeriodEvents
 from lino.core.layouts import BaseLayout
 from lino.core.elems import Container, Wrapper, FieldElement
 from lino.modlib.users.choicelists import UserTypes
@@ -62,7 +63,7 @@ class Analyzer(object):
             return str(a.full_name())
         self.window_actions = list(sorted(l, key=f))
         self.custom_actions = list(sorted(self.custom_actions, key=f))
-    
+
     def show_window_fields(self):
         self.analyze()
         items = []
@@ -82,7 +83,7 @@ class Analyzer(object):
                     ba.full_name(), visible_for(ba)))
 
         return rstgen.ul(items)
-    
+
     def show_memo_commands(self, doctestfmt=False):
         rst = ""
         mp = settings.SITE.plugins.memo.parser
@@ -93,7 +94,7 @@ class Analyzer(object):
                 # doc = doc.splitlines()[0]
                 items.append(
                     "[{0} ...] : {1}".format(cmd, doc))
-            
+
         # rst += "\n**Commands**"
         # rst += rstgen.boldheader("Commands")
         rst += rstgen.ul(items)
@@ -108,10 +109,10 @@ class Analyzer(object):
             if len(items):
                 rst += "\n**Renderers**"
                 rst += rstgen.ul(items)
-        
+
 
         return rst
-    
+
     def show_dialog_actions(self, doctestfmt=False):
         self.analyze()
         items = []
@@ -123,7 +124,7 @@ class Analyzer(object):
                         py2rst(ba.action, doctestfmt)))
 
         print(rstgen.ul(items))
-    
+
     def show_action_permissions(self, *classes):
         self.analyze()
         items = []
@@ -134,7 +135,7 @@ class Analyzer(object):
                         ba.full_name(), visible_for(ba)))
 
         return rstgen.ul(items)
-    
+
     def show_database_structure(self):
         """Show a bullet list of all models and their fields."""
         self.analyze()
@@ -254,27 +255,32 @@ class Analyzer(object):
                 items2 = sorted(items2)
                 items1.append("{0} :\n{1}".format(
                     fmn(target), rstgen.ul(items2)))
-    
+
         items1 = sorted(items1)
         return rstgen.ul(items1)
 
-    def show_complexity_factors(self):
+    def get_complexity_factors(self, today=None):
         self.analyze()
-        items = []
-        items.append("{0} plugins".format(len(dd.plugins)))
-        items.append("{0} models".format(len(get_models())))
-        items.append("{0} user roles".format(
-            len(settings.SITE.user_roles)))
-        items.append("{0} user types".format(len(UserTypes.objects())))
-        items.append("{0} views".format(len(
-            [a for a in actors.actors_list if not a.abstract])))
+        yield "{0} plugins".format(len(dd.plugins))
+        yield "{0} models".format(len(get_models()))
+        User = settings.SITE.user_model
+        if today and User:
+            qs = User.objects.filter(username__isnull=False)
+            qs = PeriodEvents.active.add_filter(qs, today)
+            yield "{0} users".format(qs.count())
+        yield "{0} user roles".format(len(settings.SITE.user_roles))
+        yield "{0} user types".format(len(UserTypes.objects()))
+        yield "{0} views".format(len(
+            [a for a in actors.actors_list if not a.abstract]))
         dialog_actions = [ba for ba in analyzer.custom_actions +
                           analyzer.window_actions if
                           ba.action.parameters]
-        items.append("{0} dialog actions".format(len(dialog_actions)))
-        return rstgen.ul(items)
-        
-    
+        yield "{0} dialog actions".format(len(dialog_actions))
+
+    def show_complexity_factors(self):
+        return rstgen.ul(list(self.get_complexity_factors()))
+
+
 def visible_for(ba):
     """Shows a list of user profiles for which this action is visible."""
     if ba is None:
@@ -333,7 +339,7 @@ def py2rst(self, doctestfmt=False):
     if isinstance(self, BaseLayout):
         lh = self.get_layout_handle(settings.SITE.kernel.default_ui)
         return py2rst(lh.main, doctestfmt)
-        
+
     if isinstance(self, Wrapper):
         self = self.wrapped
 
@@ -359,12 +365,10 @@ def py2rst(self, doctestfmt=False):
                 s += rstgen.ul(children)
             else:
                 s += ": " + ', '.join(children)
-                
+
     return s
 
 
 analyzer = Analyzer()
 """This is a docstring
 """
-
-

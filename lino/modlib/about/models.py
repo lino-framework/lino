@@ -1,4 +1,4 @@
-# Copyright 2012-2018 Rumma & Ko Ltd
+# Copyright 2012-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
@@ -19,6 +19,7 @@ from lino.utils.report import EmptyTable
 from lino.core.utils import get_models
 
 from lino.utils.code import codetime
+from lino.utils.diag import analyzer
 from etgen.html import E
 
 from lino.api import rt, dd
@@ -29,24 +30,24 @@ class SiteSearch(dd.VirtualTable):
     required_roles = dd.login_required(SiteSearcher)
     label = _("Search")
     column_names = "description matches"
-    
-   
+
+
     # _site_search_tables = []
     # @classmethod
     # def register(cls, t):
     #     assert t not in cls._site_search_tables
     #     cls._site_search_tables.append(t)
-        
+
     # disabled_models = set()
     # @classmethod
     # def disable_model(cls, m):
     #     cls.disabled_models.add(m)
-        
+
     @classmethod
     def get_data_rows(cls, ar):
         if ar.quick_search is None or len(ar.quick_search) < 2:
             return
-        
+
         user_type = ar.get_user().user_type
         # for model in rt.models_by_base(Searchable):
         for model in get_models():
@@ -110,7 +111,7 @@ class SiteSearch(dd.VirtualTable):
             raise Exception("{} : {}".format(e, s))
         # return etree.fromstring(', '.join(chunks))
         # return E.raw(', '.join(chunks))
-        
+
 def setup_quicklinks(site, user, m):
     m.add_action('about.SiteSearch')
 
@@ -160,7 +161,7 @@ class About(EmptyTable):
             s = _("We are running with simulated date set to {0}.").format(
                 dd.fdf(settings.SITE.the_demo_date))
             body.append(E.p(s))
-            
+
         body.append(E.p(str(_("Source timestamps:"))))
         items = []
         times = []
@@ -177,6 +178,9 @@ class About(EmptyTable):
         for label, value in times:
             items.append(E.li(str(label), ' : ', E.b(dtfmt(value))))
         body.append(E.ul(*items))
+        body.append(E.p("{} : {}".format(
+            _("Complexity factors"),
+            ', '.join(analyzer.get_complexity_factors(dd.today())))))
         return rt.html_text(E.div(*body))
 
     @dd.displayfield(_("Server status"))
@@ -184,5 +188,3 @@ class About(EmptyTable):
         return rt.html_text(
             E.p(_("%s pending threads") %
                 len(settings.SITE.kernel.pending_threads)))
-
-
