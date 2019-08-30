@@ -134,7 +134,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
                 h = self.instance_handler(None, v.instance, v.bound_action)
                 # 20190501 not passing the v.bound_action seems an obvious bug,
                 # though there is probably no use case where the bug was visible
-                
+
                 assert h is not None
                 # print(20190430, h)
                 js = "function() {%s}" % h
@@ -228,9 +228,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
     def quick_manage_toolbar(self, ar, obj):
         """Returns a HTML chunk that displays a "toolbar" with a series of
         "quick manage buttons": one "Insert" and another to open the
-        Table.
-
-        Usage example in :ref:`sunto`.
+        table.
 
         """
         sar = ar.actor.insert_action.request_from(ar)

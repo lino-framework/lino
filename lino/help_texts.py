@@ -280,7 +280,7 @@ directory."""),
 using a Javascript link to this action."""),
     'lino.modlib.extjs.ext_renderer.ExtRenderer.quick_manage_toolbar' : _("""Returns a HTML chunk that displays a "toolbar" with a series of
 "quick manage buttons": one "Insert" and another to open the
-Table."""),
+table."""),
     'lino.modlib.extjs.ext_renderer.ExtRenderer.unused_insert_button' : _("""Called via lino.core.requests.ActionRequest.insert_button()."""),
     'lino.modlib.extjs.ext_renderer.ExtRenderer.action_call_on_instance' : _("""Note that ba.actor may differ from ar.actor when defined on a
 different actor. Remember e.g. the "Must read eID card" action
@@ -608,6 +608,7 @@ which is encoded in the given encoding."""),
     'lino.api.dd.VirtualTable' : _("""Shortcut to lino.core.tables.VirtualTable"""),
     'lino.api.dd.VentilatingTable' : _("""Shortcut to lino.core.choicelists.ChoiceList"""),
     'lino.api.dd.Frame' : _("""Shortcut to lino.core.frames.Frame"""),
+    'lino.modlib.about.About' : _("""A dialog window which displays some information about the site."""),
     'lino.modlib.about.TimeZones' : _("""The list of time zones available on this site."""),
     'lino.modlib.about.TimeZones.default' : _("""The default time zone on this server, corresponding to
 TIME_ZONE.  Unlike TIME_ZONE (which is a
