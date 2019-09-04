@@ -19,6 +19,7 @@ extensions += ['lino.sphinxcontrib.base']
 
 from atelier.sphinxconf import interproject
 interproject.configure(globals())
+intersphinx_mapping['cg'] = ('http://community.lino-framework.org/', None)
 
 from lino import SETUP_INFO
 
@@ -150,4 +151,3 @@ htmlhelp_basename = 'lino'
 
 extlinks = {}
 extlinks.update(ticket=('http://bugs.saffre-rumma.net/tickets/Ticket/%s', '#'))
-

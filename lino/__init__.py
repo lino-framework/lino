@@ -1,16 +1,17 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2002-2018 Rumma & Ko Ltd
+# Copyright 2002-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
-The :mod:`lino` package is the core of the Lino framework.
+See :ref:`lino` for non-technical documentation.
 
-This is the base plugin for all Lino applications, added automatically
-to your `INSTALLED_APPS`. It defines no models, but some template
-files, django admin commands, translation messages and the core
-:xfile:`help_texts.py` file.
+The :mod:`lino` package itself is the first plugin for all Lino
+applications, added automatically to your :setting:`INSTALLED_APPS`. It defines
+no models, but some template files, django admin commands, translation messages
+and the core :xfile:`help_texts.py` file.
 
-.. rubric:: submodules
+The :mod:`lino` package is the root for the subpackages that define core
+functionalites:
 
 .. autosummary::
    :toctree:
@@ -45,6 +46,7 @@ from .setup_info import SETUP_INFO
 __version__ = SETUP_INFO['version']
 intersphinx_urls = dict(docs="http://core.lino-framework.org")
 srcref_url = 'https://github.com/lino-framework/lino/blob/master/%s'
+# srcref_url = 'https://github.com/lino-framework/lino/tree/master/%s'
 doc_trees = ['docs']
 
 if sys.version_info[0] > 2:

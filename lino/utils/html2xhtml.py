@@ -69,7 +69,7 @@ to "<p>foo</p><p>bar</p><p>baz</p>".
 <p>baz</p>
 
 
-  
+
 
 """
 
@@ -116,7 +116,7 @@ except OSError:
     # We can simply ignore it since it is just for building the docs.
     from lino.utils.mytidylib import html2xhtml
     # TODO: emulate it well enough so that at least the test suite passes
-    
+
     HAS_TIDYLIB = False
 
 
