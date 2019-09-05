@@ -96,7 +96,8 @@ try:
         # options.update(output_xml=1)
         options.update(output_xhtml=1)
         document, errors = tidy_fragment(html, options=options)
-        if errors:
+        if False:  # errors:
+            # LS 20190905 disabled error checking, see my blog
             #~ raise Exception(repr(errors))
             raise Exception("Errors while processing %s\n==========\n%s" %
                             (html, errors))
