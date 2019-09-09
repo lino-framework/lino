@@ -34,7 +34,7 @@
 
     Emitted each time `lino.core.utils.TestCase.setUp` is called.
     Lino uses this signal to reset its SiteConfig cache.
-    
+
     It is necessary because (afaics) the Django test runner doesn't
     send a 'connected' signal when it restores the database to a
     virgin state before running a new test case.
@@ -57,7 +57,7 @@
 
     Sent before a database object gets saved using the web user
     interface.
-    
+
     - `sender`   the database model
     - `instance` the database object which is going to be saved.
     - `ar` the action request
@@ -76,27 +76,28 @@
               the model instance and information about the changes)
 
     :request: the BaseRequest object
-    
+
 .. data:: pre_merge
-    
+
     Sent when a model instance is being merged into another instance.
-    
+
 .. data:: auto_create
-    
-    The :attr:`auto_create` signal is sent when
-    :func:`lookup_or_create <>` silently created a model instance.
+
+    The :attr:`auto_create` signal is sent when :func:`lookup_or_create
+    <lino.core.models.Model.lookup_or_create>` silently created a model
+    instance.
 
     Arguments sent with this signal:
 
     - ``sender`` : The model instance that has been created.
     - ``field`` : The database field
     - ``known_values`` : The specified known values
-    
+
 .. data:: pre_remove_child
 .. data:: pre_add_child
-    
+
     Sent when an MTI child has been added. Arguments to the handler are:
-    
+
     - `sender` : the parent (a database object instance)
     - `request` : the HttpRequest which asks to create an MTI child
     - `child` : the child model (a class object)
@@ -121,4 +122,3 @@ pre_ui_delete = Signal(['request'])
 pre_ui_build = Signal()
 post_ui_build = Signal()
 # database_connected = Signal()
-
