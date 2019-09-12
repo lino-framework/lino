@@ -50,6 +50,7 @@ from lino.core.exceptions import ChangedAPI
 from html2text import HTML2Text
 from importlib import import_module, reload
 
+import re
 
 # _INSTANCES = []
 
@@ -2610,11 +2611,20 @@ class Site(object):
 
     def parse_time(self, s):
         """
-        Convert a string formatted using :attr:`time_format_strftime` or
-        :attr:`time_format_extjs` into a `datetime.time` instance.
+        Convert a string into a `datetime.time` instance using regex.
+        only supports hours and min, not seconds.
         """
-        hms = list(map(int, s.split(':')))
-        return datetime.time(*hms)
+        # hms = list(map(int, s.split(':')))
+        # return datetime.time(*hms)
+        reg = re.compile(r"^(\d(?:\d(?=[.,:; ]?\d\d|[.,:; ]\d|$))?)?[.,:; ]?(\d{0,2})$")
+        match = reg.match(s)
+        if match is None:
+            raise ValueError("%s is not a valid time"%s)
+        hours, mins = match.groups()
+        hours = int(hours) if hours != "" else 0
+        mins = int(mins) if mins != "" else 0
+        return datetime.time(hour=hours, minute=mins)
+
 
     def parse_datetime(self, s):
         """
