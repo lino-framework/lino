@@ -152,7 +152,7 @@ class CommentsByX(Comments):
 class RecentComments(Comments):
     required_roles = dd.login_required(CommentsReader)
     # required_roles = set([CommentsReader])
-    column_names = "short_preview modified user *"
+    column_names = "short_preview modified user owner *"
     stay_in_grid = True
     order_by = ["-modified"]
     label = _("Recent comments")
