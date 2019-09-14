@@ -22,13 +22,12 @@ ENVDIR=$PROJECT_DIR/env
 # MYSQL_PASSWORD=
 # MYSQL_DBNAME=
 
-# Directory where to put the temporary snapshot files.
-# This is relative to PROJECT_DIR 
-# WARNING: everything in this directory will be deleted without confirmation
+# Directory relative to PROJECT_DIR where to put the temporary snapshot files.
+# WARNING: files in this directory will be overwritten without confirmation
 SNAPSHOTDIR=snapshot
 
 # name of target zip file to be created:
-# This is relative to PROJECT_DIR 
+# This is relative to PROJECT_DIR
 ZIPFILE=snapshot.zip
 
 if [ ! -d "$PROJECT_DIR" ]; then
@@ -52,18 +51,19 @@ if [ -f $ZIPFILE ]
   mv $ZIPFILE $ARCFILE
 fi
 
-if [ -d $ENVDIR ]
-  then
-  . $ENVDIR/bin/activate
-fi
+#if [ -d $ENVDIR ]
+#  then
+#  . $ENVDIR/bin/activate
+#fi
 
-if [ -d $SNAPSHOTDIR ]
-  then
-    rm $SNAPSHOTDIR/* 
-    rmdir $SNAPSHOTDIR
-fi
+#if [ -d $SNAPSHOTDIR ]
+#  then
+#    rm $SNAPSHOTDIR/*
+#    rmdir $SNAPSHOTDIR
+#fi
 
-python manage.py dump2py $SNAPSHOTDIR
+. $ENVDIR/bin/activate
+python manage.py dump2py -o --max-row-count 10000 $SNAPSHOTDIR
 pip freeze > $SNAPSHOTDIR/requirements.txt
 if [ "$MYSQL_USERNAME" != "" ] ; then
   echo -n "Writing MySQL dump..."
@@ -79,4 +79,3 @@ zip $ZIPFILE *.py *.sh
 
 # delete all files older than 60 days in ARCHDIR:
 find $ARCH_DIR -maxdepth 1 -depth -name '*.zip' -mtime +60 -delete
-
