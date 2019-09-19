@@ -435,6 +435,7 @@ but this Deserializer does not bypass pre_save/save methods."""),
     'lino.utils.dbfreader.FPTFile' : _("""Represents an FPT block file"""),
     'lino.utils.dbfreader.DBTFile' : _("""Represents a DBT block file"""),
     'lino.utils.diag.Analyzer' : _("""The class of the lino.utils.diag.analyzer object."""),
+    'lino.utils.diag.Analyzer.show_window_fields' : _("""List all window actions and the form fields they contain."""),
     'lino.utils.diag.Analyzer.show_database_structure' : _("""Show a bullet list of all models and their fields."""),
     'lino.utils.diag.Analyzer.show_db_overview' : _("""Return a reStructredText-formatted "database overview" report.
 Used by test cases in tested documents."""),
