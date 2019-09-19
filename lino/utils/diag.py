@@ -17,6 +17,7 @@ from django.utils.encoding import force_text
 
 from lino.modlib.system.choicelists import PeriodEvents
 from lino.core.layouts import BaseLayout
+from lino.core.fields import DummyField
 from lino.core.elems import Container, Wrapper, FieldElement
 from lino.modlib.users.choicelists import UserTypes
 from lino.core import actors
@@ -65,6 +66,8 @@ class Analyzer(object):
         self.custom_actions = list(sorted(self.custom_actions, key=f))
 
     def show_window_fields(self):
+        """List all window actions and the form fields they contain.
+        """
         self.analyze()
         items = []
         for ba in analyzer.window_actions:
@@ -310,7 +313,7 @@ def layout_fields(ba):
     if wl is None:
         return ''
     lh = wl.get_layout_handle(settings.SITE.kernel.default_ui)
-    elems = [str(f.name) for f in lh._store_fields]
+    elems = [str(f.name) for f in lh._store_fields if not isinstance(f, DummyField)]
     return ', '.join(elems)
     # return fill(' '.join(elems), 50)
 
