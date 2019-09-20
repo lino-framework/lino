@@ -1182,7 +1182,13 @@ class Site(object):
     """
     Whether invalid values in a ChoiceList should raise an exception.
 
-    This should be `True` except for exceptional situations.
+    This should be `True` except for exceptional situations.  Setting this to
+    `True` won't allow you to store invalid choicelist values in the database,
+    but at least Lino will not raise an exception as soon as it reads an invalid
+    value from existing data.  This can happen e.g. after a code upgrade without
+    data migration.  In such a situation you may want to run
+    :xfile:`make_snapshot.sh` in order to migrate the data.
+
     """
 
     csv_params = dict()

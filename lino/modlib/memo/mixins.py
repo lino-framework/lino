@@ -1,11 +1,6 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2016-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
-"""
-
-See :doc:`docs/specs/memo`.
-
-"""
 
 from bs4 import BeautifulSoup
 
@@ -16,6 +11,7 @@ from lino.core.requests import BaseRequest
 from lino.core.fields import fields_list, RichTextField
 from lino.utils.restify import restify
 from lino.core.exceptions import ChangedAPI
+from lino.modlib.checkdata.choicelists import Checker
 from etgen.html import E, tostring
 from lino.api import _
 
@@ -23,16 +19,6 @@ from lxml import html as lxml_html
 
 
 def truncate_comment(html_str, max_p_len=None):
-    """
-    Return a shortened preview of a html string, containing at most one
-    paragraph with at most `max_p_len` characters.
-
-    :html_str: the raw string of html
-    :max_p_len: max number of characters in the paragraph.
-
-    See usage examples in :doc:`/specs/comments`.
-
-    """
     html_str = html_str.strip()  # remove leading or trailing newlines
     if not html_str.startswith('<'):
         # it's plain text without html tags
@@ -58,9 +44,6 @@ def truncate_comment(html_str, max_p_len=None):
 
 
 def rich_text_to_elems(ar, description):
-    """
-    A RichTextField can contain HTML markup or plain text.
-    """
     if description.startswith("<"):
         # desc = E.raw('<div>%s</div>' % self.description)
         desc = lxml_html.fragments_fromstring(ar.parse_memo(description))
@@ -83,16 +66,10 @@ def rich_text_to_elems(ar, description):
     # return [desc]
 
 def body_subject_to_elems(ar, title, description):
-    """
-    Convert the given `title` and `description` to a list of HTML
-    elements.
-
-    Used by :mod:`lino.modlib.notify` and by :mod:`lino_xl.lib.sales`
-    """
     if description:
         elems = [E.p(E.b(title), E.br())]
         elems += rich_text_to_elems(ar, description)
-        
+
     else:
         elems = [E.b(title)]
         # return E.span(self.title)
@@ -109,21 +86,38 @@ class Previewable(Model):
     short_preview = RichTextField(_("Preview"), blank=True, editable=False)
     full_preview = RichTextField(_("Preview (full)"), blank=True, editable=False)
 
-    def before_ui_save(self, ar):
-        """Fills the preview fields.
-
-        """
+    def get_previews(self, ar=None):
         front_end = settings.SITE.plugins.memo.front_end
         if front_end is not None:
             if ar is None or ar.renderer.front_end is not front_end:
                 # ar = ar.spawn_request(renderer=front_end.renderer)
                 ar = BaseRequest(renderer=front_end.renderer)
 
-        # super(BleachedPreviewBody, self).full_clean(*args, **kwargs)
-        super(Previewable, self).before_ui_save(ar)
         parse = settings.SITE.plugins.memo.parser.parse
-        self.short_preview = parse(truncate_comment(self.body), ar)
-        self.full_preview = parse(self.body, ar)
+        short = parse(truncate_comment(self.body), ar)
+        full = parse(self.body, ar)
+        return (short, full)
+
+    def before_ui_save(self, ar):
+        """Fills the preview fields.
+
+        """
+        super(Previewable, self).before_ui_save(ar)
+        self.short_preview, self.full_preview = self.get_previews(ar)
 
 
-   
+
+class PreviewableChecker(Checker):
+    verbose_name = _("Check for previewables needing update")
+    model = Previewable
+
+    def get_checkdata_problems(self, obj, fix=False):
+        short, full = self.get_previews()
+        if self.short_preview != short or self.full_preview != full:
+            if fix:
+                self.short_preview = short
+                self.full_preview = full
+            else:
+                yield (True, _("Preview needs update"))
+
+PreviewableChecker.activate()
