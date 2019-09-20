@@ -38,6 +38,7 @@ install_requires = [
     'etgen',
     'Babel', 'lxml',
     'beautifulsoup4',
+    'odfpy',
     # 'pisa',
     'jinja2', 'pytidylib', 'PyYAML',
     'clint',  # lino.modlib.checkdata.management.commands
