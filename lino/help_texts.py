@@ -696,6 +696,11 @@ django.contrib.ContentType."""),
     'lino.modlib.gkfs.GenericForeignKeyIdField' : _("""Use this instead of models.PositiveIntegerField for fields that
 are part of a GFK and you want Lino to render them using a
 Combobox."""),
+    'lino.modlib.memo.Previewable' : _("""Adds three rich text fields (lino.core.fields.RichTextField):"""),
+    'lino.modlib.memo.Previewable.body' : _("""An editable text body."""),
+    'lino.modlib.memo.Previewable.short_preview' : _("""A read-only short preview of body."""),
+    'lino.modlib.memo.Previewable.full_preview' : _("""A read-only full preview of body."""),
+    'lino.modlib.memo.PreviewableChecker' : _("""Check for previewables needing update."""),
     'lino.modlib.notify.Message' : _("""The Django model that represents a notification message."""),
     'lino.modlib.notify.Message.user' : _("""The recipient."""),
     'lino.modlib.notify.Message.owner' : _("""The database object which controls this message."""),
