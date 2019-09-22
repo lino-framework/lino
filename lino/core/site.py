@@ -357,17 +357,21 @@ class Site(object):
     project_dir = None
     """Full path to your local project directory.
 
-    Lino automatically sets this to the directory of the
-    :xfile:`settings.py` file (or however your
-    :envvar:`DJANGO_SETTINGS_MODULE` is named).
-    It is recommended to not override this variable.
+    This is the directory containing your :xfile:`settings.py` file (more
+    precisely the directory containing the source file of your
+    :envvar:`DJANGO_SETTINGS_MODULE`).  Note that when using a *settings
+    package*, :attr:`project_dir` points to the :file:`settings` subdir of what
+    :ref:`getlino` calls the project directory.
 
-    Note that when using a *settings package*, :attr:`project_dir`
-    points to the :file:`settings` subdir of what we would intuitively
-    consider the project directory.
+    Lino sets this automatically when the :class:`Site` initializes.
 
-    If the :attr:`project_dir` contains a :xfile:`config` directory,
-    this will be added to the config search path.
+    The :attr:`project_dir` contains some paging subdirectories with special
+    meaning:
+
+    - a :xfile:`config` directory will be added to the config search path.
+    - a :xfile:`log` directory will activate logging to a :xfile:`lino.log` file.
+    - a :xfile:`migrations` directory will activate Django migrations.
+    - a :xfile:`media` directory contains generated and uploaded files to be published by the webserver
 
     """
 
@@ -453,8 +457,12 @@ class Site(object):
 
     migrations_package = None
     """The full Python name of
-    the plugin which holds Django migrations for all plugins
-    of this application.
+    the local package that holds Django migrations for all plugins
+    of this site.
+
+    You might manually specify a name, but the recommended way is to create a
+    :xfile:`migrations` directory.  See :doc:`/specs/migrate`.
+
     """
 
     hidden_languages = None
@@ -1379,33 +1387,39 @@ class Site(object):
         for p in self.installed_plugins:
             p.on_plugins_loaded(self)
 
-        # doesn't yet work
-        if False:
+        if self.migrations_package is None:
             MPNAME = "migrations"
-            if self.migrations_package is None:
-                mpp = self.project_dir.child(MPNAME)
-                if mpp.exists():
-                    self.migrations_package = self.__module__ + '.' + MPNAME
-                    # sm = import_module(os.getenv('DJANGO_SETTINGS_MODULE'))
-                    # self.migrations_package = sm.__name__ + '.' + MPNAME
-                    print(self.migrations_package)
-                    fn = mpp.child("__init__.py")
-                    if not fn.exists():
-                        fn.touch()
+            mpp = self.project_dir.child(MPNAME)
+            if mpp.exists():
+                # parts = self.__module__.split('.')
+                parts = os.getenv('DJANGO_SETTINGS_MODULE').split('.')
+                # i = parts.index('settings')
+                # mpn = '.'.join(parts[i]) + '.' + MPNAME
+                mpn = '.'.join(parts[:-1]) + '.' + MPNAME
+                # print("Local migrations package {} ({}).".format(mpn, mpp))
+                self.migrations_package = mpn
+                # self.migrations_package = self.__module__ + '.' + MPNAME
+                # sm = import_module()
+                # self.migrations_package = sm.__name__ + '.' + MPNAME
+                fn = mpp.child("__init__.py")
+                if not fn.exists():
+                    fn.write_file('') # touch __init__ file.
+            else:
+                # print("No Django migrations because {} does not exist.".format(mpp))
+                pass
 
         if self.migrations_package is not None:
+            migrations_module = import_module(self.migrations_package)
             MIGRATION_MODULES = {}
             for p in self.installed_plugins:
                 if p.app_label in ("contenttypes", "sessions", "staticfiles"):
                     # pure django plugins handle their own migrations
                     continue
-                migrations_module = import_module(self.migrations_package)
                 dir = join(migrations_module.__file__.rstrip("__init__.py"), p.app_label)
                 self.makedirs_if_missing(dir)
                 open(join(dir, "__init__.py"), "a").close() # touch __init__ file.
                 MIGRATION_MODULES[p.app_label] = self.migrations_package + "." + p.app_label
             self.django_settings.update(MIGRATION_MODULES=MIGRATION_MODULES)
-            #self.makedirs_if_missing
 
         self.setup_plugins()
         self.install_settings()

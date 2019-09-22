@@ -22,13 +22,13 @@ Defining your own ChoiceLists
 - The optional `name` is used to install this choice as a class
   attribute on the ChoiceList.
 
-  
+
 The `value` must be either None or a string.
-  
+
 >>> MyColors.add_item(1, _("Green"), 'green')
 >>> MyColors.add_item(1, _("Green"), 'verbose_name_plural')
 
-  
+
 The items are sorted by their order of creation, not by their value.
 This is visible e.g. in :class:`lino_xl.lib.cal.DurationUnits`.
 
@@ -40,7 +40,7 @@ Example on how to use a ChoiceList in your model::
 
   from django.db import models
   from lino.modlib.properties.models import HowWell
-  
+
   class KnownLanguage(models.Model):
       spoken = HowWell.field(verbose_name=_("spoken"))
       written = HowWell.field(verbose_name=_("written"))
@@ -95,7 +95,7 @@ class Choice(fields.TableRow):
     choicelist = None
     remark = None
     pk = None
-    
+
     value = None
 
     """(a string) The value to use e.g. when this choice is being stored in a
@@ -119,12 +119,12 @@ class Choice(fields.TableRow):
 
     def __init__(self, value=None, text=None, name=None, **kwargs):
         """Create a new :class:`Choice` instance.
-    
+
         Parameters: see :attr:`value`, :attr:`text` and :attr:`name`.
         Any keyword arguments will become attributes on the instance.
 
         This is also being called from :meth:`Choicelist.add_item`.
-    
+
         """
         if value is not None:
             if not isinstance(value, six.string_types):
@@ -139,7 +139,8 @@ class Choice(fields.TableRow):
         #     self.name = name
         if text is None:
             if self.text is None:
-                self.text = self.__class__.__name__
+                # self.text = self.__class__.__name__
+                self.text = self.value
         else:
             # assert_pure(text)
             self.text = text
@@ -159,7 +160,7 @@ class Choice(fields.TableRow):
             if not hasattr(self, k):
                 raise Exception("%s has no attribute `%s`" % (self, k))
             setattr(self, k, v)
-            
+
     def attach(i, cls):
         i.choicelist = cls
         if i.value is None:
@@ -186,7 +187,7 @@ Django creates copies of them when inheriting models.
     def remove(self):
         """Remove this choice from its list.
 
-        Usage example see 
+        Usage example see
         """
         self.choicelist.remove_item(self)
 
@@ -239,7 +240,7 @@ Django creates copies of them when inheriting models.
         # if self.value is None:
         #     return super(Choice, self).__ge__(other)
         if other.__class__ is self.__class__:
-            return (self.value >= other.value)  
+            return (self.value >= other.value)
         return (self.value >= other)
 
     __hash__ = object.__hash__
@@ -355,7 +356,7 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
 
     Note that this specifies the *default* default value for *all*
     :class:`ChoiceListField <lino.core.choicelists.ChoiceListField>`
-    of this choicelist, including parameter fields.  
+    of this choicelist, including parameter fields.
 
     You can remove that "default default value" for all tables by
     specifying `default=''`. There are two places where you can
@@ -367,7 +368,7 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
         ClientStates.default_value = 'coached'
 
         parameters = ObservedDateRange(
-            ... 
+            ...
             client_state=ClientStates.field(blank=True, default=''))
 
     Note that the default values of parameter fields of a table which
@@ -391,7 +392,7 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
     your choicelist.
 
     """
-    
+
     preferred_foreignkey_width = 20
     """
     Default preferred with for ChoiceList fields to this list.
@@ -524,7 +525,7 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
 
     @classmethod
     def remove_item(cls, i):
-        """Remove the specified item from this list. Called by 
+        """Remove the specified item from this list. Called by
         :meth:`Choice.remove`.
         """
         del cls.items_dict[i.value]
@@ -601,7 +602,7 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
         # cls._lazy_items.append(func)
         # we must store the func somewhere because receiver only connects it to
         # the signal, which is a weak reference.
-            
+
     @classmethod
     def add_item(cls, *args, **kw):
         """Instantiates a new choice and adds it to this list. Signature is
@@ -787,7 +788,7 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
         if len(lst) == 1:
             return lst[0]
         return None
-    
+
     @classmethod
     def filter(self, **fkw):
         def f(item):
@@ -834,20 +835,20 @@ class ChoiceListField(models.CharField):
 
     """A field that stores a value to be selected from a
     :class:`ChoiceList`.
-    
+
     ChoiceListField cannot be nullable since they are implemented as
     CharFields.  Therefore when filtering on empty values in a
     database query you cannot use ``__isnull``.  The following query
     won't work as expected::
-    
+
       for u in users.User.objects.filter(user_type__isnull=False):
-      
+
     You must either check for an empty string::
-      
+
       for u in users.User.objects.exclude(user_type='')
 
     or use the ``__gte`` operator::
-      
+
       for u in users.User.objects.filter(user_type__gte=dd.UserLevels.guest):
 
     """
@@ -887,7 +888,7 @@ class ChoiceListField(models.CharField):
     #     for a in self.choicelist.workflow_actions:
     #         logger.info("20150122 %s %s", a.action_name, a)
     #         setattr(cls, a.action_name, a)
-    
+
     def deconstruct(self):
         """
         Needed for Django 1.7+, see

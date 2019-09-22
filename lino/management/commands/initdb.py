@@ -39,7 +39,7 @@ Note that Lino does not use Django's migration framework, so
 `--run-syncdb
 <https://docs.djangoproject.com/en/1.11/ref/django-admin/#django-admin-option---run-syncdb>`_
 option which "allows creating tables for apps without
-migrations".    
+migrations".
 The Django docs add that "While this isn’t recommended, the
 migrations framework is sometimes too slow on large projects with
 hundreds of models."  Yes, we go the way which is not recommended.
@@ -138,13 +138,13 @@ class Command(BaseCommand):
             if not confirm("""We are going to flush your database (%s).
 Are you sure (y/n) ?""" % dbname):
                 raise CommandError("User abort.")
-            
+
         fixtures = options.pop('fixtures', args)
 
         # print(20160817, fixtures, options)
 
         options.update(interactive=False)
-        
+
         # the following log message was useful on Travis 20150104
         if options.get('verbosity', 1) > 0:
             dd.logger.info(
@@ -163,7 +163,7 @@ Are you sure (y/n) ?""" % dbname):
             # "no database selected" since Django would try to
             # continue on the dropped database:
             del connections[using]
-            
+
             # now reconnect and set foreign_key_checks to 0
             conn = connections[using]
             cursor = conn.cursor()
@@ -221,12 +221,13 @@ Are you sure (y/n) ?""" % dbname):
 
         settings.SITE._site_config = None  # clear cached instance
 
-        if engine == 'django.db.backends.postgresql':
-            # a first time to create tables of contenttypes. At
-            # least on PostgreSQL this is required because for
-            # some reason the syncdb fails when contenttypes is
-            # not initialized.
-            call_command('migrate', **options)
+        # if engine == 'django.db.backends.postgresql':
+        #     # a first time to create tables of contenttypes. At
+        #     # least on PostgreSQL this is required because for
+        #     # some reason the syncdb fails when contenttypes is
+        #     # not initialized.
+        #     call_command('migrate', **options)
+        call_command('makemigrations', interactive=False, verbosity=0)
         call_command('migrate', '--run-syncdb', **options)
 
         if len(fixtures):
@@ -235,7 +236,7 @@ Are you sure (y/n) ?""" % dbname):
 
             options.pop('interactive')
             call_command('loaddata', *fixtures, **options)
-            
+
             # if engine == 'django.db.backends.postgresql':
             #     foralltables(using, "ALTER TABLE {} ENABLE TRIGGER ALL;")
 
