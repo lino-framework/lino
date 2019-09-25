@@ -45,10 +45,10 @@ class Lockable(dd.Model):
         ar.get_user().get_preferences().unlock_row(self)
         ar.success(refresh=True)
         
-    def after_ui_save(self, ar, cw):
-        up = ar.get_user().get_preferences()
-        up.unlock_row(self)
-        super(Lockable, self).after_ui_save(ar, cw)
+    # def after_ui_save(self, ar, cw):
+    #     up = ar.get_user().get_preferences()
+    #     up.unlock_row(self)
+    #     super(Lockable, self).after_ui_save(ar, cw)
 
     def save_existing_instance(self, ar):
         # this is called from both SubmitDetail and SaveGridCell
@@ -56,6 +56,8 @@ class Lockable(dd.Model):
         if not up.has_row_lock(self):
             up.lock_row(self)
         super(Lockable, self).save_existing_instance(ar)
+        up.unlock_row(self)
+
         
     def disabled_fields(self, ar):
         df = super(Lockable, self).disabled_fields(ar)
@@ -64,8 +66,9 @@ class Lockable(dd.Model):
             df.add('acquire_lock')
         else:
             df.add('release_lock')
-            if ar.bound_action.action.window_type == "d":
+            if ar.bound_action.action.window_type != "t":
                 df |= self.lockable_fields
+                df.add('submit_detail')
             
         # dd.logger.info("20181008 lockable_fields %s", self.lockable_fields)
         return df
