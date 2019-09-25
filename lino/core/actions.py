@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2018 Rumma & Ko Ltd
+# Copyright 2009-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """This defines the :class:`Action` class and the :func:`action`
@@ -9,10 +9,10 @@ decorator, and some of the standard actions.  See :ref:`dev.actions`.
 import six
 from builtins import str
 
-import logging
-logger = logging.getLogger(__name__)
+import logging ; logger = logging.getLogger(__name__)
 
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as gettext
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.text import format_lazy
 from django.utils.encoding import force_text
@@ -1286,12 +1286,8 @@ class DeleteSelected(MultipleRowAction):
             d.update(type=ar.actor.model._meta.verbose_name)
         else:
             d.update(type=ar.actor.model._meta.verbose_name_plural)
-        ar.confirm(
-            ok,
-            format_lazy(u"{}\n{}",
-                _("You are about to delete %(num)d %(type)s:\n"
-                  "%(targets)s") % d,
-                _("Are you sure ?")))
+        msg = gettext("You are about to delete %(num)d %(type)s:\n%(targets)s") % d
+        ar.confirm(ok, u"{}\n{}".format(msg, gettext("Are you sure ?")))
 
     def run_on_row(self, obj, ar):
         obj.delete_instance(ar)

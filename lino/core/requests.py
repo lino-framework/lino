@@ -21,6 +21,7 @@ from xml.sax.saxutils import escape
 
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as gettext
 from django.utils.translation import get_language
 from django.utils import translation
 from django.utils import timezone
@@ -579,9 +580,9 @@ class BaseRequest(object):
         cb = self.add_callback(*msgs)
 
         def noop(ar):
-            return ar.success(_("Aborted"))
-        cb.add_choice('yes', ok_func, _("Yes"))
-        cb.add_choice('no', noop, _("No"))
+            return ar.success(gettext("Aborted"))
+        cb.add_choice('yes', ok_func, gettext("Yes"))
+        cb.add_choice('no', noop, gettext("No"))
         self.set_callback(cb)
 
         if not self.renderer.is_interactive:

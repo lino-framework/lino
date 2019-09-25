@@ -36,6 +36,7 @@ import codecs
 import atexit
 import threading
 from importlib import import_module
+# import dill
 
 
 from django.apps import AppConfig
@@ -106,8 +107,9 @@ class CallbackChoice(object):
     def __init__(self, name, func, label):
         self.name = name
         #~ self.index = index
+        # self.func_s = dill.dumps(func)
         self.func = func
-        self.label = label
+        self.label = str(label)
 
 
 class Callback(object):
@@ -847,8 +849,10 @@ class Kernel(object):
                     logger.info("run_callback {0} {1} {2}".format(
                         thread_id, cb.message, c.name))
                     # ar.info(cb.message)
+                # func = dill.loads(c.func_s)
+                func = c.func
                 try:
-                    c.func(ar)
+                    func(ar)
                 except Warning as e:
                     ar.error(e, alert=True)
                 return ar.renderer.render_action_response(ar)
