@@ -177,7 +177,7 @@ class Kernel(object):
     #     return cls._singleton_instance
 
     def __init__(self, site):
-        
+
         # logger.info("20140227 Kernel.__init__() a")
 
         # from importlib import import_module
@@ -219,7 +219,7 @@ class Kernel(object):
         if self._code_mtime is None:
             self._code_mtime = codetime()
         return self._code_mtime
-        
+
 
     def kernel_startup(self, site):
         """This is a part of a Lino site startup.  The Django Model
@@ -311,7 +311,7 @@ class Kernel(object):
                 model.quick_search_fields_digit = tuple(fields_list)
             else:
                 resolve_fields_list(model, 'quick_search_fields_digit')
-                
+
             if model._meta.abstract:
                 raise Exception("Tiens?")
 
@@ -351,7 +351,7 @@ class Kernel(object):
             site.user_roles.sort(key=djangoname)
 
         # site.setup_choicelists()
-        
+
         # site.setup_workflows()
 
         # Check for nullable charfields.
@@ -410,9 +410,9 @@ class Kernel(object):
 
         # Protect the foreign keys by removing Django's default
         # behaviour of having on_delete with CASCADE as default.
-        
+
         self.protect_foreignkeys(models_list)
-        
+
         if site.workflows_module:
             import_module(site.workflows_module)
 
@@ -424,7 +424,7 @@ class Kernel(object):
         pre_analyze.send(site, models_list=models_list)
         # logger.info("20150429 pre_analyze signal done")
         # MergeActions are defined in pre_analyze.
-        
+
         # MergeAction needs the info in _lino_ddh to correctly find
         # keep_volatiles
 
@@ -471,7 +471,7 @@ class Kernel(object):
         for model in models_list:
             for f in model._meta.get_fields():
                 site.install_help_text(f, model, f.name)
-                
+
         actors.discover()
 
         logger.debug("actors.initialize()")
@@ -500,7 +500,7 @@ class Kernel(object):
                 # rpt.collect_actions()
                 model._lino_default_table = rpt
 
-        
+
         #~ choosers.discover()
         actions.discover_choosers()
 
@@ -538,7 +538,7 @@ class Kernel(object):
         # properties.PropsByGroup.  The latter would not install a
         # `detail_action` during her after_site_setup() and also would
         # never get it later.
-        
+
         # In a first loop we run it on actors who are being used as
         # default tables for a model. Because the defining_actor of
         # model actions will be the first actor to which they get
@@ -572,7 +572,7 @@ class Kernel(object):
         # web.site_setup(site)
 
         for a in actors.actors_list:
-            
+
             site.install_help_text(a)
             if a.parameters is not None:
                 for name, fld in a.parameters.items():
@@ -597,7 +597,7 @@ class Kernel(object):
                     for name, fld in ba.action.parameters.items():
                         site.install_help_text(
                             fld, ba.action.__class__, name)
-            
+
         self.reserved_names = [getattr(constants, n)
                                for n in constants.URL_PARAMS]
 
@@ -634,14 +634,14 @@ class Kernel(object):
         # 20160530
 
         for a in actors.actors_list:
-            
+
             if a.get_welcome_messages is not None:
                 site.add_welcome_handler(
                     a.get_welcome_messages, a, "get_welcome_messages")
             if a.welcome_message_when_count is not None:
-                
+
                 def handler(cls):
-                
+
                     def get_welcome_messages(ar):
                         sar = ar.spawn(cls)
                         # if not cls.get_view_permission(ar.get_user().user_type):
@@ -656,7 +656,7 @@ class Kernel(object):
                             chunks.append('.')
                             yield E.span(*chunks)
                     return get_welcome_messages
-               
+
                 site.add_welcome_handler(
                     handler(a), a, 'welcome_message_when_count')
 
@@ -704,7 +704,7 @@ class Kernel(object):
                 assert fk.remote_field.model is model
                 if fk.remote_field.on_delete == models.CASCADE:
                     if must_protect(m, fk, model):
-                        # 20170921 removed disturbing debug message 
+                        # 20170921 removed disturbing debug message
                         # msg = (
                         #     "Setting {0}.{1}.on_delete to PROTECT because "
                         #     "field is not specified in "
@@ -717,7 +717,7 @@ class Kernel(object):
                                "but on_delete is not CASCADE").format(
                             fmn(m), fk.name)
                         raise Exception(msg)
-    
+
                     if fk.remote_field.on_delete == models.SET_NULL:
                         if not fk.null:
                             msg = ("{0}.{1} has on_delete SET_NULL but "
@@ -729,7 +729,7 @@ class Kernel(object):
                         msg = ("{0}.{1} has custom on_delete").format(
                             fmn(m), fk.name, fk.remote_field.on_delete)
                         logger.debug(msg)
-                
+
     def get_generic_related(self, obj):
         """Yield a series of `(gfk, fk_field, queryset)` tuples which together
          will return all database objects for which the given
@@ -761,13 +761,13 @@ class Kernel(object):
     def get_broken_generic_related(self, model):
         """Yield all database objects of this model which have some broken
         GFK field.
-    
+
         This is a slow query which does an additional database request
         for each row. (Is there a possibility to do this in a single
         SQL query?)
-    
+
         Each yielded object has two special attributes:
-    
+
         - `_message` : a textual description of the problem
         - `_todo` : 'delete', 'clear' or 'manual'
 
@@ -812,7 +812,8 @@ class Kernel(object):
         """Continue the action which was started in a previous request and
         which asked for user interaction via a :class:`Callback`.
 
-        This is called from `lino.core.views.Callbacks`.
+        This is called from :class:`lino.modlib.extjs.views.Callbacks` and
+        similar places in other front ends.
 
         """
         # logger.info("20131212 get_callback %s %s", thread_id, button_id)
@@ -901,14 +902,14 @@ class Kernel(object):
         in a user-friendly way.
 
         """
-        
+
         if not ar.get_permission():
             msg = "{} has no permission to run this request".format(
                 ar.get_user())
             msg = "No permission to run {}".format(ar)
             # raise Exception(msg)
             raise PermissionDenied(msg)
-        
+
         a = ar.bound_action.action
         if not a.readonly:
             if self.site.readonly:
@@ -976,7 +977,7 @@ class Kernel(object):
 
     def must_build_site_cache(self):
         self._must_build = True
-        
+
     def make_cache_file(self, fn, write, force=False):
         """Make the specified cache file.  This is used internally at server
         startup.
@@ -1005,7 +1006,7 @@ class Kernel(object):
             logger.debug("Building %s ...", fn)
         else:
             logger.info("Building %s ...", fn)
-            
+
         self.site.makedirs_if_missing(dirname(fn))
         f = codecs.open(fn, 'w', encoding='utf-8')
         try:
@@ -1022,8 +1023,8 @@ class Kernel(object):
     # def setup_static_link(self, urlpatterns, short_name,
     #                       attr_name=None, source=None):
 
-    
-def site_startup(self):    
+
+def site_startup(self):
     """This is being imported and called from
     :meth:`lino.core.site.Site.startup`. It is implemented here in
     order to avoid local imports.
@@ -1043,7 +1044,7 @@ def site_startup(self):
             # messages (e.g. Duplicate label in workflow setup)
 
             # print("20161219 starting up (pid:%s)" % os.getpid())
-            
+
             return
 
         if self._startup_done:
@@ -1054,7 +1055,7 @@ def site_startup(self):
 
         # print(
         #     "20161219 Site.startup() %s (pid:%s)" % (self, os.getpid()))
-        
+
         # print "20151010 Site.startup()"
 
         # if AFTER17:
@@ -1067,7 +1068,7 @@ def site_startup(self):
 
         # print("20181230 SITE.models ready {}".format(self.models.keys()))
         # the following was equivalent of above until Django 1.9
-        
+
         # for p in self.installed_plugins:
         #     # m = loading.load_app(p.app_name, False)
         #     # In Django17+ we cannot say can_postpone=False,
@@ -1120,8 +1121,8 @@ def site_startup(self):
         post_startup.send(self)
         self._startup_done = True
 
-        
-    
+
+
 CHOICELISTS = {}
 master_tables = []
 slave_tables = []
@@ -1157,7 +1158,7 @@ def is_candidate(T):
 
 def register_actors():
     """This is being called at startup.
-    
+
     - Each model can receive a number of "slaves".
       Slaves are tables whose data depends on an instance
       of another model (their master).
@@ -1191,7 +1192,7 @@ def register_actors():
     # for model in get_models():
     #     # Note that automatic models (created by ManyToManyField with
     #     # a `through`) do not yet exist here.
-        
+
     #     # Not getattr but __dict__.get because of the mixins.Listings
     #     # trick:
     #     rpt = model.__dict__.get('_lino_default_table', None)
@@ -1217,7 +1218,7 @@ def register_actors():
             raise Exception(
                 "20160712 invalid master {!r} in {}".format(
                     rpt.master, rpt))
-            
+
         if issubclass(rpt.master, models.Model):
             # rpt.master = resolve_model(rpt.master)
             slaves = getattr(rpt.master, "_lino_slaves", None)
@@ -1253,7 +1254,7 @@ def register_model_table(rpt):
     if rpt.model is None:
         # logger.debug("20111113 %s is an abstract report", rpt)
         return
-    
+
     lst = rpt.model._lino_tables + [rpt]
     rpt.model._lino_tables = lst
     if rpt.master is None:
@@ -1270,5 +1271,3 @@ def register_model_table(rpt):
     else:
         # logger.debug("20120102 register %s : slave for %r", rpt.actor_id, rpt.master_key)
         slave_tables.append(rpt)
-
-

@@ -44,7 +44,7 @@ def get_available_items(user):
             lst.append(i)
     return lst
 
-    
+
 class UserPrefs(object):
     """A volatile object which holds the preferences of a user.
 
@@ -68,7 +68,7 @@ class UserPrefs(object):
     def has_row_lock(self, obj):
         k = (obj.__class__, obj.pk)
         return k in self.locked_rows
-        
+
     def lock_row(self, obj):
         k = (obj.__class__, obj.pk)
         if k in reg.locked_rows:
@@ -79,13 +79,15 @@ class UserPrefs(object):
             settings.SITE.logger.debug("%s locks %s.%s", self.user, *k)
             reg.locked_rows.add(k)
             self.locked_rows.add(k)
-        
+
     def unlock_row(self, obj):
         k = (obj.__class__, obj.pk)
         if not k in self.locked_rows:
             # silently ignore a request to unlock a row if it wasn't
             # locked.  This can happen e.g. when user click Save on a
             # row that wasn't locked.
+            settings.SITE.logger.debug(
+                "%s cannot unlock %s.%s because it was not locked", self.user, *k)
             return
         with prefs_rlock:
             settings.SITE.logger.debug(
@@ -93,13 +95,13 @@ class UserPrefs(object):
             reg.locked_rows.remove(k)
             self.locked_rows.remove(k)
             obj._disabled_fields = None  # clear cache
-        
+
     def invalidate(self):
         k = self.user.username
         reg.user_prefs.pop(k, None)
         # like del, but no problem if it didn't exist.
-        
-        
+
+
 class Registry(object):
     """
     A volatile singleton which holds
@@ -113,7 +115,7 @@ class Registry(object):
     def __init__(self):
         self.user_prefs = {}
         self.locked_rows = set()
-        
+
     def get(self, user):
         k = user.username
         prefs = self.user_prefs.get(k, None)
@@ -121,10 +123,10 @@ class Registry(object):
             prefs = UserPrefs(self, user)
             self.user_prefs[k] = prefs
         return prefs
-    
+
     def clear(self, user):
         k = user.username
         del self.user_prefs[k]
-        
-    
+
+
 reg = Registry()

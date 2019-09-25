@@ -1616,9 +1616,9 @@ class Site(object):
         dblogger['level'] = os.environ.get('LINO_SQL_LOGLEVEL', 'WARNING')
         dblogger['handlers'] = loggercfg['handlers']
 
-        if False:  # see 2019-08-09
-            logger = d['loggers'].setdefault('django.utils.autoreload', {})
-            logger['level'] = 'INFO'
+        # https://code.djangoproject.com/ticket/30554
+        logger = d['loggers'].setdefault('django.utils.autoreload', {})
+        logger['level'] = 'INFO'
 
         # self.update_settings(LOGGING=d)
         # from pprint import pprint

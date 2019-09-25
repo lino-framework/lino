@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2018 Rumma & Ko Ltd
+# Copyright 2009-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """
 See introduction in :doc:`/dev/ar`.
@@ -987,6 +987,7 @@ class BaseRequest(object):
         changing the quick filter (search_change) of a detail view.
 
         """
+        logger.debug("20190924 elem2rec_detailed %s", elem)
         rh = ar.ah
         rec = ar.elem2rec1(rh, elem, None, **rec)
         if ar.actor.hide_top_toolbar or ar.bound_action.action.hide_top_toolbar:
