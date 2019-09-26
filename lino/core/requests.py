@@ -215,6 +215,10 @@ class BaseRequest(object):
             rqdata = getrqdata(request)
             kw = self.parse_req(request, rqdata, **kw)
         if parent is not None:
+            assert request is None
+            if parent.actor is None:
+                # 20190926 we want to have javascript extjs links in dasboard. 
+                self.request = parent.request
             self._confirm_answer = parent._confirm_answer
             for k in inheritable_attrs:
                 if k in kw:

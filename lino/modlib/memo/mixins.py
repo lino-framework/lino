@@ -87,11 +87,10 @@ class Previewable(Model):
     full_preview = RichTextField(_("Preview (full)"), blank=True, editable=False)
 
     def get_previews(self, ar=None):
-        front_end = settings.SITE.plugins.memo.front_end
-        if front_end is not None:
-            if ar is None or ar.renderer.front_end is not front_end:
-                # ar = ar.spawn_request(renderer=front_end.renderer)
-                ar = BaseRequest(renderer=front_end.renderer)
+        front_end = settings.SITE.plugins.memo.front_end or settings.SITE.default_ui
+        if ar is None or ar.renderer.front_end is not front_end:
+            ar = BaseRequest(renderer=front_end.renderer)
+            # print("20190926 using BaseRequest with front end {}".format(front_end))
 
         parse = settings.SITE.plugins.memo.parser.parse
         short = parse(truncate_comment(self.body), ar)

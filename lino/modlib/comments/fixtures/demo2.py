@@ -5,8 +5,12 @@
 Adds some demo comments.
 
 """
+import datetime
+from atelier.utils import i2t
 from lino.utils import Cycler
 from lino.api import rt, dd
+from django.conf import settings
+from django.utils.timezone import make_aware
 
 styled = """<h1 style="color: #5e9ca0;">Styled comment <span style="color: #2b2301;">pasted from word!</span> </h1>"""
 table = """<table class="editorDemoTable"><thead>
@@ -21,6 +25,9 @@ breaking = u'<p>breaking <!--[if gte mso 9]><xml>\n <o:OfficeDocumentSettings>\n
 cond_comment = '<p><!--[if gte foo 123]>A conditional comment<![endif]--></p>\n<p>Hello</p>'
 plain1 = "Some plain text."
 plain2 = "Two paragraphs of plain text.\n\nThe second paragraph."
+
+
+
 def objects():
     TXT = Cycler([styled, table, lorem, short_lorem, breaking, cond_comment,
                   plain1, plain2])
@@ -32,6 +39,13 @@ def objects():
         return
     Comment = rt.models.comments.Comment
     User = rt.models.users.User
+
+    Comment.auto_touch = False
+    now = datetime.datetime.combine(dd.today(-30), i2t(822))
+    if settings.USE_TZ:
+        now = make_aware(now)
+    DELTA = datetime.timedelta(minutes=34)
+
     for i in range(12):
         for u in User.objects.all():
             owner = OWNERS.pop()
@@ -41,4 +55,6 @@ def objects():
                 txt = TXT.pop()# txt = "Hackerish comment"
             obj = Comment(user=u, owner=owner, body=txt)
             obj.before_ui_save(None)
+            obj.modified = now
             yield obj
+            now += DELTA

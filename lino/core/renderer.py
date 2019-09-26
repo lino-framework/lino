@@ -633,7 +633,6 @@ class TextRenderer(HtmlRenderer):
         Render the given table request as reStructuredText to stdout.  See
         :meth:`ar.show <lino.core.request.BaseRequest.show>`.
         """
-
         if ar.actor.master is not None and not nosummary:
             if ar.actor.display_mode == 'summary':
                 s = to_rst(
@@ -891,4 +890,3 @@ class JsRenderer(HtmlRenderer):
                         py2js(title),
                         py2js(ttt)))
                 ))
-

@@ -1,9 +1,9 @@
 <div style="margin:5px">
-  
+
 {% set user = ar.get_user() %}
-  
+
 {{ before_welcome }}
-            
+
 {% if site.readonly and site.kernel.default_renderer.is_interactive %}
 <p><b>{{_("This server is running in READONLY mode.")}}</b></p>
 {% endif %}
@@ -37,7 +37,7 @@
         </p>
         {% endif %}
         {% endblock %}
-        
+
     {% endblock %}
 {% else %}
   {% block hello_anonymous %}
@@ -84,7 +84,7 @@
       </p>
         {% if site.is_demo_site %}
             <p>
-            {{_("This demo site has %d users:") % 
+            {{_("This demo site has %d users:") %
             site.models.users.UsersOverview.request().get_total_count()}}
             </p>
             {{as_ul('users.UsersOverview')}}
@@ -97,7 +97,7 @@
 {% endif %}
 
 {{ after_welcome }}
-            
+
 {% block admin_main_items %}
 {{ tostring(ar.show_dashboard()) }}
 {% endblock %}
