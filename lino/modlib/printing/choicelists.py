@@ -8,15 +8,12 @@ Choicelists for `lino.modlib.printing`.
 """
 
 from __future__ import unicode_literals, print_function
-
-import logging
 # from future import standard_library
 # standard_library.install_aliases()
 from builtins import str
-
 import six
 
-logger = logging.getLogger(__name__)
+import logging ; logger = logging.getLogger(__name__)
 
 import os
 import io
@@ -269,15 +266,15 @@ class XmlBuildMethod(DjangoBuildMethod):
             context = action.get_printable_context(self, elem, ar)
             xml = tpl.render(context)
             self.write2file(xml, filename)
-            
+
         self.validate_result_file(filename)
         return os.path.getmtime(filename)
-    
+
     def validate_result_file(self, filename):
         """Validate the generated file.
         """
         pass
-    
+
     def write2file(self, txt, filename):
         if six.PY2:
             txt = txt.encode("utf-8")

@@ -574,7 +574,7 @@ class BaseRequest(object):
         this one.
 
         In a non-interactive environment the `ok_func` function is
-        called directly (i.e. we don't ask any confirmation and act as
+        called directly (i.e. we don't ask any confirmation and act as if
         confirmation had been given).
         """
         cb = self.add_callback(*msgs)
