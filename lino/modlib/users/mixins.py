@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2018 Rumma & Ko Ltd
+# Copyright 2011-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 from __future__ import unicode_literals
@@ -30,16 +30,16 @@ class Authored(Printable):
         abstract = True
 
     # author_field_name = None
-    
+
     manager_roles_required = dd.login_required(SiteStaff)
 
     def get_author(self):
         return self.user
         # return getattr(self, self.author_field_name)
-    
+
     def set_author(self, user):
         raise NotImplementedError()
-    
+
     def on_duplicate(self, ar, master):
         """The default behaviour after duplicating is to change the author to
         the user who requested the duplicate.
@@ -96,13 +96,13 @@ class Authored(Printable):
             return super(Authored, self).get_print_language()
         return u.language
 
-    
+
 class UserAuthored(Authored):
     class Meta(object):
         abstract = True
 
     workflow_owner_field = 'user'
-    # author_field_name = 'user'    
+    # author_field_name = 'user'
     user = dd.ForeignKey(
         'users.User',
         verbose_name=_("Author"),
@@ -112,7 +112,7 @@ class UserAuthored(Authored):
     def set_author(self, user):
         self.user = user
         # setattr(self, self.author_field_name, user)
-        
+
     def on_create(self, ar):
         """
         Adds the requesting user to the `user` field.
@@ -186,21 +186,21 @@ class StartPlan(dd.Action):
         return self.label or actor.model._meta.verbose_name
         # return format_lazy(
         #     pgettext("singular", "My {}"), actor.model._meta.verbose_name)
-        
+
     # def attach_to_actor(self, owner, name):
     #     self.label = format_lazy(
     #         _("Start new {}"), owner.model._meta.verbose_name)
     #     # self.label = owner.model._meta.verbose_name
     #     print("20180905 {} on {} {}".format(name, owner, self.label))
     #     return super(StartPlan, self).attach_to_actor(owner, name)
-    
+
     def get_options(self, ar):
         return {}
 
     def get_plan_model(self):
         return self.defining_actor.model
         # return ar.actor.model
-    
+
     def run_from_ui(self, ar, **kw):
         options = self.get_options(ar)
         pm = self.get_plan_model()
@@ -228,14 +228,16 @@ class UserPlan(UserAuthored):
         abstract = True
 
     today = models.DateField(_("Today"), default=dd.today)
-    
+
     update_plan = UpdatePlan()
     start_plan = StartPlan()
-    
+
     @classmethod
     def run_start_plan(cls, user, **options):
-        try:
-            plan = cls.objects.get(user=user)
+        qs = cls.objects.filter(user=user)
+        num = qs.count()
+        if num == 1:
+            plan = qs.first()
             changed = False
             for k, v in options.items():
                 if getattr(plan, k) != v:
@@ -247,7 +249,11 @@ class UserPlan(UserAuthored):
                     changed = True
             if changed:
                 plan.reset_plan()
-        except cls.DoesNotExist:
+        else:
+            if num > 1:
+                dd.logger.warning("Got {} {} for {}".format(
+                num, cls._meta.verbose_name_plural, user))
+                qs.delete()
             plan = cls(user=user, **options)
         plan.full_clean()
         plan.save()
@@ -261,7 +267,7 @@ class UserPlan(UserAuthored):
         """
         pass
 
-   
+
 class AssignToMe(dd.Action):
     """Set yourself as assigned user.
 
@@ -273,7 +279,7 @@ class AssignToMe(dd.Action):
     show_in_workflow = True
     show_in_bbar = False  # added 20180515 for noi. possible side
                           # effects in welfare.
-    
+
     # readonly = False
     required_roles = dd.login_required(Helper)
 
@@ -281,7 +287,7 @@ class AssignToMe(dd.Action):
     # button_text = u"\u26d1"  # ⛑
     # button_text = u"\u261D"  # ☝
     button_text = u"\u270B"  # ✋
-    
+
     # help_text = _("You become assigned to this.")
 
     def get_action_permission(self, ar, obj, state):
@@ -329,12 +335,12 @@ class TakeAuthorship(dd.Action):
     label = _("Take")
     show_in_workflow = True
     show_in_bbar = False
-    
+
     # This action modifies the object, but we don't tell Lino about it
     # because we want that even non-manager users can run it on
     # objects authored by others.
     # readonly = False
-    
+
     required_roles = dd.login_required(AuthorshipTaker)
 
     button_text = u"\u2691"
@@ -408,16 +414,15 @@ class Assignable(Authored):
         user = ar.get_user()
         if self.assigned_to == user:
             s.add('assign_to_me')
-        
+
         if self.disable_author_assign and user == self.get_author():
             s.add('assign_to_me')
             s.add('take')
         return s
-    
+
 
     def on_create(self, ar):
         # 20130722 e.g. CreateClientEvent sets assigned_to it explicitly
         if self.assigned_to is None:
             self.assigned_to = ar.subst_user
         super(Assignable, self).on_create(ar)
-    
