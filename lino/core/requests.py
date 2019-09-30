@@ -217,7 +217,7 @@ class BaseRequest(object):
         if parent is not None:
             assert request is None
             if parent.actor is None:
-                # 20190926 we want to have javascript extjs links in dasboard. 
+                # 20190926 we want to have javascript extjs links in dasboard.
                 self.request = parent.request
             self._confirm_answer = parent._confirm_answer
             for k in inheritable_attrs:
@@ -704,6 +704,7 @@ class BaseRequest(object):
     def show(self, spec=None, master_instance=None, column_names=None,
              header_level=None, language=None, nosummary=False,
              stripped=True, show_links=False, header_links=False,
+             display_mode=None,
              **kwargs):
         """
         Show the specified table or action using the current renderer.
@@ -726,6 +727,16 @@ class BaseRequest(object):
                     <lino.core.tables.AbstractTable.display_mode>`
                     set to ``'summary'``, force rendering it as a
                     table.
+
+        :display_mode: override the table's :attr:`display_mode
+                       <lino.core.tables.AbstractTable.display_mode>`.
+
+                       Unlike :option:`nosummer` this can be used to ask a
+                       summary for a table that would not show as summary by
+                       default. Instead of saying `nosummary=True` you can say
+                       `display_mode="grid"` or `display_mode="html"` (The
+                       display modes "grid" and "html" have the same result in a
+                       printed document or in a tested spec).
 
         :header_level: show also the table header (using specified
                        level)
@@ -777,7 +788,7 @@ class BaseRequest(object):
                 ar, column_names=column_names, header_level=header_level,
                 header_links=header_links,
                 nosummary=nosummary, stripped=stripped,
-                show_links=show_links)
+                show_links=show_links, display_mode=display_mode)
 
         if language:
             with translation.override(language):
