@@ -179,7 +179,7 @@ class HtmlRenderer(Renderer):
         return html
 
     def table2story(self, ar, nosummary=False, stripped=True,
-                    show_links=False, header_level=None,
+                    show_links=False, header_level=None, display_mode=None,
                     **kwargs):
         """
         Returns a HTML element representing the given action request as a
@@ -189,9 +189,11 @@ class HtmlRenderer(Renderer):
         Silently ignores the parameters `stripped` and `header_links`
         since for HTML these options have no meaning.
         """
+        if display_mode is None:
+            display_mode = ar.actor.display_mode
         # if ar.actor.master is not None and not nosummary:
         if not nosummary:
-            if ar.actor.display_mode == 'summary':
+            if display_mode == 'summary':
                 yield ar.actor.get_table_summary(ar.master_instance, ar)
                 return
 
@@ -628,13 +630,16 @@ class TextRenderer(HtmlRenderer):
 
     def table2story(self, ar, column_names=None, header_level=None,
                     header_links=None, nosummary=False, stripped=True,
-                    show_links=False, **kwargs):
+                    show_links=False, display_mode=None, **kwargs):
         """
         Render the given table request as reStructuredText to stdout.  See
         :meth:`ar.show <lino.core.request.BaseRequest.show>`.
         """
-        if ar.actor.master is not None and not nosummary:
-            if ar.actor.display_mode == 'summary':
+        if display_mode is None:
+            display_mode = ar.actor.display_mode
+        # if ar.actor.master is not None and not nosummary:
+        if not nosummary:
+            if display_mode == 'summary':
                 s = to_rst(
                     ar.actor.get_table_summary(ar.master_instance, ar),
                     stripped=stripped)

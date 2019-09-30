@@ -884,7 +884,7 @@ class Model(models.Model, fields.TableRow):
             def summary_row(self, ar):
                 elems = [ar.obj2html(self)]
                 if self.city:
-                    elems. += [" (", ar.obj2html(self.city), ")"]
+                    elems += [" (", ar.obj2html(self.city), ")"]
                 return E.p(*elems)
         """
         yield ar.obj2html(self)
