@@ -39,7 +39,7 @@ class Plugin(ad.Plugin):
         m.add_action('users.Authorities')
         m.add_action('users.UserTypes')
         m.add_action('users.UserRoles')
-        if site.social_auth_backends is not None:
+        if site.social_auth_backends:
             m.add_action('users.SocialAuths')
 
 
