@@ -3689,6 +3689,9 @@ Please convert to Plugin method".format(mod, methname)
             yield 'lino.modlib.ipdict'
 
         if self.social_auth_backends:
+            if isinstance(self.social_auth_backends, list) and len(self.social_auth_backends) == 0:
+                raise Exception("Incorrect value for social_auth_backends,"
+                "social_auth_backends should be None or non empty list.")
             yield 'social_django'
 
         yield self.default_ui
