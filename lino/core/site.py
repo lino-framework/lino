@@ -332,6 +332,27 @@ class Site(object):
     """
     userdocs_prefix = ''
 
+    project_dir = None
+    """Full path to your local project directory.
+
+    This is the directory containing your :xfile:`settings.py` file (more
+    precisely the directory containing the source file of your
+    :envvar:`DJANGO_SETTINGS_MODULE`).  Note that when using a *settings
+    package*, :attr:`project_dir` points to the :file:`settings` subdir of what
+    :ref:`getlino` calls the project directory.
+
+    Lino sets this automatically when the :class:`Site` initializes.
+
+    The :attr:`project_dir` contains some paging subdirectories with special
+    meaning:
+
+    - a :xfile:`config` directory will be added to the config search path.
+    - a :xfile:`log` directory will activate logging to a :xfile:`lino.log` file.
+    - a :xfile:`migrations` directory will activate Django migrations.
+    - a :xfile:`media` directory contains generated and uploaded files to be published by the webserver
+
+    """
+
     project_name = None
     """A nickname for this project.
 
@@ -353,27 +374,6 @@ class Site(object):
     This is either the same as :attr:`project_dir` or (if
     :envvar:`LINO_CACHE_ROOT` is set), will be set to
     :envvar:`LINO_CACHE_ROOT` + :attr:`project_name`.
-
-    """
-
-    project_dir = None
-    """Full path to your local project directory.
-
-    This is the directory containing your :xfile:`settings.py` file (more
-    precisely the directory containing the source file of your
-    :envvar:`DJANGO_SETTINGS_MODULE`).  Note that when using a *settings
-    package*, :attr:`project_dir` points to the :file:`settings` subdir of what
-    :ref:`getlino` calls the project directory.
-
-    Lino sets this automatically when the :class:`Site` initializes.
-
-    The :attr:`project_dir` contains some paging subdirectories with special
-    meaning:
-
-    - a :xfile:`config` directory will be added to the config search path.
-    - a :xfile:`log` directory will activate logging to a :xfile:`lino.log` file.
-    - a :xfile:`migrations` directory will activate Django migrations.
-    - a :xfile:`media` directory contains generated and uploaded files to be published by the webserver
 
     """
 
