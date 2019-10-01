@@ -333,13 +333,15 @@ class Site(object):
     userdocs_prefix = ''
 
     project_name = None
-    """A nickname for this project. This is used to set :attr:`cache_dir`
-    and therefore should be unique for all Lino projects in a given
-    development environment.
+    """A nickname for this project.
 
-    If this is None, Lino will find a default value by splitting
-    :attr:`project_dir` and taking the last part (or the second-last
-    if the last part is 'settings'.
+    This is used only when :envvar:`LINO_CACHE_ROOT` is set, and only to set the
+    :attr:`cache_dir`.     In that case all Lino projects in a given repository
+    must have a unique project name.
+
+    If this is `None`, Lino will find a default value by splitting
+    :attr:`project_dir` and taking the last part (or the second-last if the last
+    part is 'settings'.
 
     """
 
