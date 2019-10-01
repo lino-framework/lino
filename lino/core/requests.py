@@ -731,9 +731,9 @@ class BaseRequest(object):
         :display_mode: override the table's :attr:`display_mode
                        <lino.core.tables.AbstractTable.display_mode>`.
 
-                       Unlike :option:`nosummary` this can be used to ask a
-                       summary for a table that would not show as summary by
-                       default. Instead of saying `nosummary=True` you can say
+                       Unlike `nosummary` this can be used to ask a summary for
+                       a table that would not show as summary by default.
+                       Instead of saying `nosummary=True` you can say
                        `display_mode="grid"` or `display_mode="html"` (The
                        display modes "grid" and "html" have the same result in a
                        printed document or in a tested spec).

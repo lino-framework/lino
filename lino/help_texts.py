@@ -924,13 +924,12 @@ of this object."""),
     'lino.modlib.users.UserAuthored.user' : _("""The author of this object.
 A pointer to lino.modlib.users.models.User."""),
     'lino.modlib.users.StartPlan.update_after_start' : _("""Whether to run Plan.update_plan() after starting the plan."""),
-    'lino.modlib.users.UserPlan' : _("""Mixin for anything that represents some plan of a given user on a
-given day.  The mixin makes sure that there is only one instance
-per user.  This instance is considered of low value and to be
-reused frequently."""),
-    'lino.modlib.users.UserPlan.user' : _("""The user who manages this plan."""),
+    'lino.modlib.users.UserPlan' : _("""Mixin for anything that represents a "plan" of a given user on a given day."""),
+    'lino.modlib.users.UserPlan.user' : _("""The user who owns and uses this plan."""),
     'lino.modlib.users.UserPlan.today' : _("""This date of this plan.  This is automatically set to today
 each time the plan is called or updated."""),
+    'lino.modlib.users.UserPlan.run_start_plan' : _("""Return the database object for this plan and user.
+or create"""),
     'lino.modlib.users.UserPlan.update_plan' : _("""Implementing models should provide this method."""),
     'lino.modlib.users.UpdatePlan' : _("""Build a new list of suggestions.
 This will remove all current suggestions."""),
