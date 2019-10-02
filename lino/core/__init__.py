@@ -46,3 +46,6 @@ Contains Lino's core functionalities.
 
 """
 
+KERNEL_CALLBACKS = False
+"""Whether to use the old approach where callbacks are managed by the kernel.
+"""

@@ -32,6 +32,10 @@ from lino.utils import AttrDict
 from etgen.html import E, tostring, iselement
 from lino.core.auth.utils import AnonymousUser
 
+from lino.core import KERNEL_CALLBACKS
+if not KERNEL_CALLBACKS:
+    from lino.core import callbacks
+
 from .boundaction import BoundAction
 from .signals import on_ui_created, pre_ui_save
 from .diff import ChangeWatcher
@@ -611,10 +615,16 @@ class BaseRequest(object):
         return self.renderer.get_detail_url(self, *args, **kwargs)
 
     def set_callback(self, *args, **kw):
-        return settings.SITE.kernel.set_callback(self, *args, **kw)
+        if KERNEL_CALLBACKS:
+            return settings.SITE.kernel.set_callback(self, *args, **kw)
+        else:
+            return callbacks.set_callback(self, *args, **kw)
 
     def add_callback(self, *args, **kw):
-        return settings.SITE.kernel.add_callback(self, *args, **kw)
+        if KERNEL_CALLBACKS:
+            return settings.SITE.kernel.add_callback(self, *args, **kw)
+        else:
+            return callbacks.add_callback(self, *args, **kw)
 
     def goto_instance(self, *args, **kwargs):
         return self.renderer.goto_instance(self, *args, **kwargs)
