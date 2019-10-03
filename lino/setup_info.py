@@ -35,7 +35,7 @@ install_requires = [
     # 'Sphinx',
     'Django',
     'atelier', 'unipath', 'python_dateutil', 'dateparser',
-    'etgen',
+    'etgen','docutils',
     'Babel', 'lxml',
     'beautifulsoup4',
     'odfpy',
