@@ -15,6 +15,7 @@ from os.path import join, dirname, exists
 
 from django.conf import settings
 from django.utils.translation import ugettext as _
+from django.utils.encoding import force_text
 # from lino.core.requests import ActorRequest
 
 CLONEABLE_ATTRS = frozenset("""ah request user subst_user
