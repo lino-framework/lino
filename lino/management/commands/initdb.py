@@ -221,12 +221,12 @@ Are you sure (y/n) ?""" % dbname):
 
         settings.SITE._site_config = None  # clear cached instance
 
-        # if engine == 'django.db.backends.postgresql':
+        if engine == 'django.db.backends.postgresql':
         #     # a first time to create tables of contenttypes. At
         #     # least on PostgreSQL this is required because for
         #     # some reason the syncdb fails when contenttypes is
         #     # not initialized.
-        #     call_command('migrate', **options)
+            call_command('migrate', **options)
         call_command('makemigrations', interactive=False, verbosity=0)
         call_command('migrate', '--run-syncdb', **options)
 
