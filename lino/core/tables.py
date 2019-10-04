@@ -291,12 +291,18 @@ class AbstractTable(actors.Actor):
     default value of 15 and which you can override in your
     :xfile:`settings.py`.
 
-    If you set this to `None`, preview requests for this table will
+    If you set this to `0`, preview requests for this table will
     request all rows.  Since preview tables usually have no paging
     toolbar, that's theoretically what we want (but can lead to waste
-    of performance if there are many rows).
+    of performance if there are many rows). 
+    
+    In React if set to `0` the paging toolbar which usually is 
+    present in the detail view, will be removed, as it has no use, as
+    all rows wil be displayed. 
 
     Test case and description in the tested docs of :ref:`cosi`.
+    
+    
 
     """
 

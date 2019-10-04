@@ -509,10 +509,14 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     a Detail Window to specify only the current element without
     prefixing the Tables's title.
     
+    If used in a grid view in React will remove the top toolbar 
+    and selection tools.
+    
     This option is `True` in
     :class:`lino.models.SiteConfigs`,
     :class:`lino_welfare.pcsw.models.Home`,
-    :class:`lino.modlib.users.desktop.MySettings`.
+    :class:`lino.modlib.users.desktop.MySettings`,
+    :class:`lino_xl.cal.CalenderView`.
 
     """
     _label = None
