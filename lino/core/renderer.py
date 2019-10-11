@@ -829,9 +829,6 @@ class JsRenderer(HtmlRenderer):
             kw.update(field_values=ps.pv2dict(ar, apv))
         if isinstance(obj, (models.Model, TableRow)):
             kw.update(record_id=obj.pk)
-        else:
-            kw.update(record_id=obj)
-
 
         return kw
 
@@ -855,11 +852,10 @@ class JsRenderer(HtmlRenderer):
 
         # 20140429 `ar` is now None, see :ref:`welfare.tested.integ`
         if ba.action.select_rows:
-            params = self.get_action_params(ar, ba, obj, **status)
-            pk = obj.pk if isinstance(obj, models.Model) else obj
+            params = self.get_action_params(ar, ba, obj)
             return "Lino.%s(%s,%s,%s,%s)" % (
                 ba.full_name(), py2js(rp),
-                py2js(ar.is_on_main_actor), py2js(pk), py2js(params))
+                py2js(ar.is_on_main_actor), py2js(obj.pk), py2js(params))
         # assert obj is None
         # return "oops"
         # params = self.get_action_params(ar, ba, obj)

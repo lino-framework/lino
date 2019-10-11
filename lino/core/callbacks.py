@@ -5,9 +5,7 @@
 from __future__ import unicode_literals, print_function
 from builtins import object
 
-import logging;
-
-logger = logging.getLogger(__name__)
+import logging ; logger = logging.getLogger(__name__)
 
 import sys
 import os
@@ -18,9 +16,6 @@ from os.path import join, dirname, exists
 from django.conf import settings
 from django.utils.translation import ugettext as _
 from django.utils.encoding import force_text
-
-from hashlib import md5
-
 # from lino.core.requests import ActorRequest
 
 CLONEABLE_ATTRS = frozenset("""ah request user subst_user
@@ -29,7 +24,7 @@ action_param_values""".split())
 
 
 class CallbackChoice(object):
-    # ~ def __init__(self,name,label,func):
+    #~ def __init__(self,name,label,func):
 
     def __init__(self, name, func, label):
         self.name = name
@@ -50,14 +45,11 @@ class Callback(object):
     """
     title = _('Confirmation')
 
-    def __init__(self, ar, message, uid=None):
+    def __init__(self, ar, message):
         self.message = message
         self.choices = []
         self.choices_dict = {}
         self.ar = ar
-        self.uid = uid if uid is not None else str(md5(self.message.encode()).digest())
-
-
 
     def __repr__(self):
         return "Callback(%r)" % self.message
@@ -80,11 +72,6 @@ class Callback(object):
         self.choices.append(cbc)
         self.choices_dict[name] = cbc
         return cbc
-
-    def run(self, choice):
-        if choice not in self.choices_dict:
-            raise Exception("Can not run choice|%s| not in avaliable choices %s"%(choice,self.choices_dict))
-        self.choices_dict[choice].func(self.ar)
 
 class CallbackManager(object):
 
@@ -168,29 +155,20 @@ class CallbackManager(object):
     def set_callback(self, ar, cb):
         """
         """
-        cb_id = cb.uid
+        k = "{0:x}".format(hash(cb))
+        self.pending_threads[k] = cb
+        # logger.info("20160526 Stored %r in %r" % (
+        #     h, self.pending_threads))
 
-        answer = ar.xcallback_answers.get("xcallback__" + cb_id, None)
-        if answer is None:
+        buttons = dict()
+        for c in cb.choices:
+            buttons[c.name] = c.label
 
-            buttons = dict()
-            rq_data = { k:v[0] if len(v) == 1 else v for k,v in ar.rqdata.lists()}
-            rq_data.pop("_dc", None)
-            for c in cb.choices:
-                buttons[c.name] = c.label
-                buttons[c.name + "_resendEvalJs"] =ar.renderer.ar2js(ar, ar.selected_rows, rqdata=rq_data, xcallback={
-                    "xcallback_id" :cb_id,
-                    "choice" : c.name
-                })
-            xcallback = dict(
-                id=cb_id,
+        ar.success(
+            cb.message, xcallback=dict(
+                id=k,
                 title=cb.title,
-                buttons=buttons)
-            return ar.success(
-                cb.message, xcallback=xcallback)
-
-        else:
-            cb.run(answer)
+                buttons=buttons))
 
 # mpman = Manager()
 mgr = CallbackManager()

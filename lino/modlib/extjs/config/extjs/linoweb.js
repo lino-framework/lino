@@ -1614,7 +1614,16 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
         config.buttons = result.xcallback.buttons;
         config.msg = result.message;
         config.fn = function(buttonId, text, opt) {
-          eval(result.xcallback.buttons[buttonId + "_resendEvalJs"])
+          panel.loadMask.show();
+          //~ Lino.insert_subst_user(p);
+          Ext.Ajax.request({
+            method: 'GET',
+            url: '{{extjs.build_plain_url("callbacks")}}/'
+                  + result.xcallback.id + '/' + buttonId,
+            params: p,
+            failure: Lino.ajax_error_handler(panel),
+            success: Lino.action_handler(panel, on_success, on_confirm)
+          });
         }
         Ext.MessageBox.show(config);
         return;
@@ -2263,15 +2272,6 @@ Lino.run_row_action = function(
      params.{{constants.URL_PARAM_SELECTED}} = pk
   }
   Lino.insert_subst_user(params);
-
-  if (params.rq_data) {
-      Ext.apply(params, params.rq_data);
-      delete(params.rq_data)
-  }
-  if (params.xcallback){
-      params["xcallback__"+params.xcallback.xcallback_id] =params.xcallback.choice;
-      delete(params.xcallback)
-  }
 
   var fn = function(panel, btn, step) {
     Lino.call_ajax_action(panel, meth, url, params, actionName, step, fn);
