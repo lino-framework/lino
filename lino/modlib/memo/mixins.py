@@ -111,11 +111,11 @@ class PreviewableChecker(Checker):
     model = Previewable
 
     def get_checkdata_problems(self, obj, fix=False):
-        short, full = self.get_previews()
-        if self.short_preview != short or self.full_preview != full:
+        short, full = obj.get_previews()
+        if obj.short_preview != short or obj.full_preview != full:
             if fix:
-                self.short_preview = short
-                self.full_preview = full
+                obj.short_preview = short
+                obj.full_preview = full
             else:
                 yield (True, _("Preview needs update"))
 

@@ -11,6 +11,7 @@ from lino.utils import Cycler
 from lino.api import rt, dd
 from django.conf import settings
 from django.utils.timezone import make_aware
+from lino.modlib.comments.mixins import Commentable
 
 styled = """<h1 style="color: #5e9ca0;">Styled comment <span style="color: #2b2301;">pasted from word!</span> </h1>"""
 table = """<table class="editorDemoTable"><thead>
@@ -29,32 +30,30 @@ plain2 = "Two paragraphs of plain text.\n\nThe second paragraph."
 
 
 def objects():
-    TXT = Cycler([styled, table, lorem, short_lorem, breaking, cond_comment,
-                  plain1, plain2])
-
-    if not dd.is_installed('tickets'):
-        return
-    OWNERS = Cycler(rt.models.tickets.Ticket.objects.all())
-    if len(OWNERS) == 0:
-        return
     Comment = rt.models.comments.Comment
     User = rt.models.users.User
-
     Comment.auto_touch = False
-    now = datetime.datetime.combine(dd.today(-30), i2t(822))
-    if settings.USE_TZ:
-        now = make_aware(now)
-    DELTA = datetime.timedelta(minutes=34)
+    TXT = Cycler([styled, table, lorem, short_lorem, breaking, cond_comment,
+                  plain1, plain2])
+    for model in rt.models_by_base(Commentable):
+        OWNERS = Cycler(model.objects.all())
+        if len(OWNERS) == 0:
+            return
 
-    for i in range(12):
-        for u in User.objects.all():
-            owner = OWNERS.pop()
-            if owner.private:
-                txt = "<p>Very confidential comment</p>"
-            else:
-                txt = TXT.pop()# txt = "Hackerish comment"
-            obj = Comment(user=u, owner=owner, body=txt)
-            obj.before_ui_save(None)
-            obj.modified = now
-            yield obj
-            now += DELTA
+        now = datetime.datetime.combine(dd.today(-30), i2t(822))
+        if settings.USE_TZ:
+            now = make_aware(now)
+        DELTA = datetime.timedelta(minutes=34)
+
+        for i in range(12):
+            for u in User.objects.all():
+                owner = OWNERS.pop()
+                if owner.private:
+                    txt = "<p>Very confidential comment</p>"
+                else:
+                    txt = TXT.pop()# txt = "Hackerish comment"
+                obj = Comment(user=u, owner=owner, body=txt)
+                obj.before_ui_save(None)
+                obj.modified = now
+                yield obj
+                now += DELTA

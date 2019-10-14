@@ -171,7 +171,7 @@ class RecentComments(Comments):
         return kw
 
     @classmethod
-    def get_table_summary(cls, obj, ar):
+    def unused_get_table_summary(cls, obj, ar):
         sar = cls.request_from(
             ar, master_instance=obj, limit=cls.preview_limit)
 
@@ -195,7 +195,7 @@ class RecentComments(Comments):
 
     @classmethod
     def get_table_summary(cls, obj, ar):
-        print("20190926 get_table_summary", ar.request)
+        # print("20190926 get_table_summary", ar.request)
         sar = cls.request_from(
             ar, master_instance=obj, limit=cls.preview_limit)
 
@@ -212,17 +212,18 @@ class RecentComments(Comments):
                 t = _("Modified " + o.modified.strftime('%Y-%m-%d %H:%M') )
 
             items = [ar.obj2html(o, naturaltime(o.created), title=t)]
-
+            items += [" by ", ar.obj2html(o.user, o.user.username)]
             if o.owner_id:
-                items += [" by ", ar.obj2html(o.user, o.user.username)]
-                items += ["@", ar.obj2html(o.owner.site, o.owner.site.ref)]
+                group = o.owner.get_comment_group()
+                if group is not None:
+                    items += ["@", ar.obj2html(group, group.ref)]
                 # items += [" about ", ar.obj2html(o.owner)]
                 items += [" about ", o.owner.obj2href(ar)]
             try:
                 # el = etree.fromstring(o.short_preview, parser=html_parser)
                 el = lxml.html.fragments_fromstring(o.short_preview) #, parser=cls.html_parser)
                 # el = etree.fromstring("<div>{}</div>".format(o.full_preview), parser=cls.html_parser)
-                print(20190926, tostring(el))
+                # print(20190926, tostring(el))
             except Exception as e:
                 el = [o.short_preview]
                 # print(20190926, o.full_preview)

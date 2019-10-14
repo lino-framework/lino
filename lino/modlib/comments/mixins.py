@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015-2018 Rumma & Ko Ltd
+# Copyright 2015-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 from builtins import object
@@ -14,11 +14,12 @@ class Commentable(dd.Model):
         abstract = True
 
     private = models.BooleanField(_("Private"), default=False)
-    
+
     def on_commented(self, comment, ar, cw):
         pass
-    
+
     def get_rfc_description(self, ar):
         return ''
 
-        
+    def get_comment_group(self):
+        return None

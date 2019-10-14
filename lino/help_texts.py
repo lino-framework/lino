@@ -625,8 +625,10 @@ object. It has no recipient."""),
     'lino.modlib.comments.Comment.body' : _("""The full body text of your comment."""),
     'lino.modlib.comments.Comment.short_preview' : _("""The first paragraph of your body."""),
     'lino.modlib.comments.Comment.user' : _("""The author of the comment."""),
-    'lino.modlib.comments.Comment.owner' : _("""A generic foreign key to the commentable database object to
-which this comment relates."""),
+    'lino.modlib.comments.Comment.owner' : _("""The topic this comment is about. This field is a Generic Foreign Key, i.e. users can
+basically comment on any database object.  It is however the application
+developer who decides where comments can be created and how they are being
+displayed."""),
     'lino.modlib.comments.Comment.published' : _("""When this comment has been published. A timestamp."""),
     'lino.modlib.comments.Comments.show_published' : _("""Whether to show only (un)published comments, independently of
 the publication date."""),
@@ -650,6 +652,8 @@ Commentable as it should be displayed by the slave summary of
 CommentsByOwner."""),
     'lino.modlib.comments.Commentable.on_commented' : _("""This is automatically called when a comment has been created
 or modified."""),
+    'lino.modlib.comments.Commentable.get_comment_group' : _("""Return either None or a database object that represents the commenting group
+where this comment is being done."""),
     'lino.modlib.files.Volume' : _("""The Django model representing a file volume."""),
     'lino.modlib.files.Volume.id' : _("""The primary key used to point to this volume from a database object."""),
     'lino.modlib.files.Volume.ref' : _("""The full path of the root folder."""),
