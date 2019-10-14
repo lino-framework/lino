@@ -116,10 +116,10 @@ class ValidActionResponses(object):
     """
     Used for dialogs asking simple yes/no/later style question
     Includes all the data the client needs inorder to send the same action
-    request again, but with some extra confirmation values. 
-    
+    request again, but with some extra confirmation values.
+
     is a dict which includes the following values:
-    
+
     - actor_id : The id of the actor
     - an : The action name of the action which was run
     - sr : List of selected values
@@ -829,7 +829,7 @@ class BaseRequest(object):
     def show_dashboard(self):
         """Show the dashboard of the user who made this request.
 
-        Utility method  for doctests."""
+        Utility method for doctests."""
         return self.show_story(
             self.get_user().get_preferences().dashboard_items)
 

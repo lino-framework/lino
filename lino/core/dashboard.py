@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2016-2018 Rumma & Ko Ltd
+# Copyright 2016-2019 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 """Defines the :class:`DashboardItem` class.
 
@@ -32,13 +32,13 @@ class DashboardItem(Permittable):
     width = None
     header_level = None
     min_count = None
-    
+
     def __init__(self, name, header_level=2, min_count=1):
         self.name = name
         self.header_level = header_level
         self.min_count = min_count
-        
-        
+
+
     def render(self, ar):
         """Yield a list of etree html elements"""
 
@@ -59,33 +59,24 @@ class DashboardItem(Permittable):
                 return
         if self.header_level is not None:
             buttons = sar.plain_toolbar_buttons()
-            if True:
-                buttons.append(sar.open_in_own_window_button())
-            else:
-                buttons.append(
-                    ar.window_action_button(
-                        T.default_action,
-                        label="⏏", # 23CF
-                        style="text-decoration:none;",
-                        title=_("Show this table in own window")))
-            
+            buttons.append(sar.open_in_own_window_button())
             elems = []
             for b in buttons:
                 elems.append(b)
                 elems.append(' ')
-            
+
             yield E.h2(str(
                 sar.actor.get_title_base(sar)), ' ', *elems)
 
         yield sar
-            
+
 class ActorItem(DashboardItem):
     """A dashboard item which simply renders a given actor.
     The actor should be a table, other usage is untested.
 
     Usage examples:
-    - :mod:`lino_xl.lib.blogs` 
-    - :mod:`lino_book.projects.events` 
+    - :mod:`lino_xl.lib.blogs`
+    - :mod:`lino_book.projects.events`
 
     .. attribute:: header_level
 
@@ -95,7 +86,7 @@ class ActorItem(DashboardItem):
     def __init__(self, actor, **kwargs):
         self.actor = actor
         super(ActorItem, self).__init__(str(actor), **kwargs)
-        
+
     def get_view_permission(self, user_type):
         return self.actor.default_action.get_view_permission(user_type)
 
@@ -114,7 +105,7 @@ class ActorItem(DashboardItem):
         sar = ar.spawn(T, limit=T.preview_limit)
         for i in self.render_request(ar, sar):
             yield i
-    
+
 class RequestItem(DashboardItem):
     """
     Experimentally used in `lino_book.projects.events`.
@@ -122,14 +113,14 @@ class RequestItem(DashboardItem):
     def __init__(self, sar, **kwargs):
         self.sar = sar
         super(RequestItem, self).__init__(None, **kwargs)
-        
+
     def get_view_permission(self, user_type):
         return self.sar.get_permission()
-    
+
     def render(self, ar):
         for i in self.render_request(ar, self.sar):
             yield i
-        
+
 
 # class CustomItem(DashboardItem):
 #     """Won't work. Not used and not tested."""
@@ -138,7 +129,6 @@ class RequestItem(DashboardItem):
 #         self.args = args
 #         self.kwargs = kwargs
 #         super(CustomItem, self).__init__(name)
-        
+
 #     def render(self, ar):
 #         return self.func(ar, *self.args, **self.kwargs)
-                          
