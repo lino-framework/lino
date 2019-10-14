@@ -637,8 +637,8 @@ class TextRenderer(HtmlRenderer):
         """
         if display_mode is None:
             display_mode = ar.actor.display_mode
-        if ar.actor.master is not None and not nosummary:
-        # if not nosummary:
+        # if ar.actor.master is not None and not nosummary:
+        if not nosummary:
             if display_mode == 'summary':
                 s = to_rst(
                     ar.actor.get_table_summary(ar.master_instance, ar),
