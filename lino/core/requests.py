@@ -32,9 +32,7 @@ from lino.utils import AttrDict
 from etgen.html import E, tostring, iselement
 from lino.core.auth.utils import AnonymousUser
 
-from lino.core import KERNEL_CALLBACKS
-if not KERNEL_CALLBACKS:
-    from lino.core import callbacks
+from lino.core import callbacks
 
 from .boundaction import BoundAction
 from .signals import on_ui_created, pre_ui_save
@@ -113,7 +111,19 @@ class ValidActionResponses(object):
     refresh_all = None
     close_window = None
     record_deleted = None
+
     xcallback = None
+    """
+    Used for dialogs asking simple yes/no/later style question
+    Includes all the data the client needs inorder to send the same action
+    request again, but with some extra confirmation values. 
+    
+    is a dict which includes the following values:
+    
+    - actor_id : The id of the actor
+    - an : The action name of the action which was run
+    - sr : List of selected values
+    """
 
     goto_url = None
     """
@@ -211,19 +221,21 @@ class BaseRequest(object):
     content_type = 'application/json'
     requesting_panel = None
 
+    xcallback_answers = {}
+
     def __init__(self, request=None, parent=None,
                  is_on_main_actor=True, **kw):
         self.request = request
         self.response = dict()
         if request is not None:
-            rqdata = getrqdata(request)
-            kw = self.parse_req(request, rqdata, **kw)
+            self.rqdata = getrqdata(request)
+            kw = self.parse_req(request, self.rqdata, **kw)
         if parent is not None:
             assert request is None
             if parent.actor is None:
                 # 20190926 we want to have javascript extjs links in dasboard.
                 self.request = parent.request
-            self._confirm_answer = parent._confirm_answer
+            self.xcallback_answers = parent.xcallback_answers
             for k in inheritable_attrs:
                 if k in kw:
                     if kw[k] is None:
@@ -255,7 +267,8 @@ class BaseRequest(object):
               master_instance=None,
               limit=None,
               requesting_panel=None,
-              renderer=None):
+              renderer=None,
+              xcallback_answers=None):
         self.requesting_panel = requesting_panel
         self.master_instance = master_instance
         if user is None:
@@ -272,6 +285,8 @@ class BaseRequest(object):
             assert selected_pks is None
         if selected_pks is not None:
             self.set_selected_pks(*selected_pks)
+        if xcallback_answers is not None:
+            self.xcallback_answers = xcallback_answers
 
     def parse_req(self, request, rqdata, **kw):
         """
@@ -301,6 +316,8 @@ class BaseRequest(object):
             selected = rqdata.getlist(constants.URL_PARAM_SELECTED)
             kw.update(selected_pks=selected)
 
+        kw.update(xcallback_answers= { id:rqdata[id] for id in [callbackID for callbackID in rqdata.keys() if callbackID.startswith("xcallback__")]})
+
         #~ if settings.SITE.user_model:
             #~ username = rqdata.get(constants.URL_PARAM_SUBST_USER,None)
             #~ if username:
@@ -328,7 +345,7 @@ class BaseRequest(object):
         # self.tableattrs = other.tableattrs
         self.user = other.user
         self.subst_user = other.subst_user
-        self._confirm_answer = other._confirm_answer
+        self.xcallback_answers = other.xcallback_answers
         # self.master_instance = other.master_instance  # added 20150218
         self.requesting_panel = other.requesting_panel
 
@@ -591,11 +608,14 @@ class BaseRequest(object):
             return ar.success(gettext("Aborted"))
         cb.add_choice('yes', ok_func, gettext("Yes"))
         cb.add_choice('no', noop, gettext("No"))
-        self.set_callback(cb)
 
         if not self.renderer.is_interactive:
             if self._confirm_answer:
-                ok_func(self)
+                return ok_func(self)
+
+        self.set_callback(cb) # Moved down as if an xcallback_answer is in the request, we run the function.
+                              # In non_interactive mode, the ok_func would be called twice.
+
 
     def parse_memo(self, txt, **context):
         return settings.SITE.plugins.memo.parser.parse(txt, self, context)
@@ -615,16 +635,10 @@ class BaseRequest(object):
         return self.renderer.get_detail_url(self, *args, **kwargs)
 
     def set_callback(self, *args, **kw):
-        if KERNEL_CALLBACKS:
-            return settings.SITE.kernel.set_callback(self, *args, **kw)
-        else:
-            return callbacks.set_callback(self, *args, **kw)
+        return callbacks.set_callback(self, *args, **kw)
 
     def add_callback(self, *args, **kw):
-        if KERNEL_CALLBACKS:
-            return settings.SITE.kernel.add_callback(self, *args, **kw)
-        else:
-            return callbacks.add_callback(self, *args, **kw)
+        return callbacks.add_callback(self, *args, **kw)
 
     def goto_instance(self, *args, **kwargs):
         return self.renderer.goto_instance(self, *args, **kwargs)
