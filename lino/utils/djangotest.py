@@ -24,7 +24,7 @@ from django.utils import translation
 import json
 from atelier.utils import AttrDict
 from lino.core.signals import testcase_setup # , database_ready
-
+from lino.core.callbacks import applyCallbackChoice
 from .test import CommonTestCase
 
 
@@ -154,18 +154,21 @@ class DjangoManageTestCase(DjangoTestCase, CommonTestCase):
 
         """
         result = self.client_json_dict(meth, username, url, *data, **extra)
+
         for expected, answer in dialog:
             self.assertEquivalent(expected, result.message)
             if answer is None:
                 return result
             cb = result.xcallback
             self.assertEqual(cb['title'], "Confirmation")
-            self.assertEqual(cb['buttons'], {'yes': 'Yes', 'no': 'No'})
-            url = '/callbacks/{}/yes'.format(cb['id'])
-            result = self.client_json_dict(
-                self.client.get, username, url, **extra)
+            self.assertEqual(cb['buttons']['yes'], 'Yes')
+            self.assertEqual(cb['buttons']['no'], 'No')
+            # print(extra)
+            applyCallbackChoice(result, *data, "yes")
+            # print(extra)
+            result = self.client_json_dict(meth, username, url, *data, **extra)
             self.assertEqual(result.success, True)
-            
+
         raise Exception("last item of dialog must have answer None")
 
 

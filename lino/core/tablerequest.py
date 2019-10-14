@@ -130,7 +130,7 @@ class TableRequest(ActionRequest):
                     offset = self.limit * page_num
                 self._sliced_data_iterator = self._sliced_data_iterator[
                     offset:]
-            if self.limit is not None:
+            if self.limit is not None and self.limit != 0:
                 self._sliced_data_iterator = self._sliced_data_iterator[
                     :self.limit]
         # logger.info("20171116 executed : %s", self._sliced_data_iterator)

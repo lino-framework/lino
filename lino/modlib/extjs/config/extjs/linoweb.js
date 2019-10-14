@@ -1614,16 +1614,7 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
         config.buttons = result.xcallback.buttons;
         config.msg = result.message;
         config.fn = function(buttonId, text, opt) {
-          panel.loadMask.show();
-          //~ Lino.insert_subst_user(p);
-          Ext.Ajax.request({
-            method: 'GET',
-            url: '{{extjs.build_plain_url("callbacks")}}/'
-                  + result.xcallback.id + '/' + buttonId,
-            params: p,
-            failure: Lino.ajax_error_handler(panel),
-            success: Lino.action_handler(panel, on_success, on_confirm)
-          });
+          eval(result.xcallback.buttons[buttonId + "_resendEvalJs"])
         }
         Ext.MessageBox.show(config);
         return;
@@ -2273,6 +2264,15 @@ Lino.run_row_action = function(
   }
   Lino.insert_subst_user(params);
 
+  if (params.rq_data) {
+      Ext.apply(params, params.rq_data);
+      delete(params.rq_data)
+  }
+  if (params.xcallback){
+      params["xcallback__"+params.xcallback.xcallback_id] =params.xcallback.choice;
+      delete(params.xcallback)
+  }
+
   var fn = function(panel, btn, step) {
     Lino.call_ajax_action(panel, meth, url, params, actionName, step, fn);
   }
@@ -2622,7 +2622,11 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel, {
     // wrap into function to prepare possible recursive call
     var fn = function(panel, btn, step) {
       var p = {};
-      self.add_field_values(p)
+      self.add_field_values(p);
+      if (self.xcallback && self.rqdata ) {
+          Ext.apply(p, self.rqdata);
+          Ext.apply(p, self.xcallback);
+      }
       if (panel) Ext.apply(p, panel.get_base_params());
       delete p.{{constants.URL_PARAM_PARAM_VALUES}};
       // console.log("20150130", p.{{constants.URL_PARAM_PARAM_VALUES}});
@@ -2637,9 +2641,12 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel, {
   }
   /* ActionFormPanel*/
   ,set_status : function(status, rp){
-    this.requesting_panel = Ext.getCmp(rp);
+    if (rp) this.requesting_panel = Ext.getCmp(rp);
     //~ console.log('20120918 ActionFormPanel.set_status()',status,rp,this.requesting_panel);
     this.clear_base_params();
+    this.set_field_values();
+    this.set_base_params({});
+    this.record_id = undefined;
     // this.loadMask.hide();  // 20180727
     if (status == undefined) status = {};
     //~ if (status.param_values)
@@ -2648,6 +2655,14 @@ Lino.ActionFormPanel = Ext.extend(Lino.ActionFormPanel, {
     if (status.field_values) this.set_field_values(status.field_values);
     if (status.base_params) this.set_base_params(status.base_params);
     if (status.record_id) this.record_id = status.record_id;
+    if (status.xcallback && status.rqdata) {
+      this.xcallback = {["xcallback__"+status.xcallback.xcallback_id] : status.xcallback.choice};
+      this.rqdata = status.rqdata;
+      this.on_ok()
+    } else {
+        delete this.xcallback // insure no callback data if not in status
+        delete this.rqdata
+    }
   }
 
   ,before_row_edit : function(record) {}
