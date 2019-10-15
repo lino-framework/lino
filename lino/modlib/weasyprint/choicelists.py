@@ -36,7 +36,6 @@ class WeasyBuildMethod(DjangoBuildMethod):
         if filename is None:
             return
         tpl = self.get_template(action, elem)
-
         lang = str(elem.get_print_language()
                    or settings.SITE.DEFAULT_LANGUAGE.django_code)
         ar = copy(ar)
@@ -80,4 +79,3 @@ class WeasyPdfBuildMethod(WeasyBuildMethod):
 add = BuildMethods.add_item_instance
 add(WeasyHtmlBuildMethod())
 add(WeasyPdfBuildMethod())
-

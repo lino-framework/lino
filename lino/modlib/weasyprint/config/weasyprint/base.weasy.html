@@ -1,19 +1,17 @@
 <html>
 <head>
 {%- block head %}
-<meta charset="UTF-8"> 
+<meta charset="UTF-8">
 <style type="text/css">
 table {
     border-collapse: collapse;
-}
-table {
     width: 100%;
 }
 table, td, th {
     border: 1px solid black;
     padding: 2pt;
 }
-body { 
+body {
     font-family: "Liberation sans", "Arial", "Helvetica";
     font-size: 10pt;
 }
@@ -21,59 +19,89 @@ body {
 table th {
     font-size: 8pt;
 }
-p { 
+p {
     padding: 0;
-    margin: 0;  
+    margin: 0;
 }
+
+.text-cell {
+    text-align: left;
+    vertical-align: top;
+}
+
+.number-cell {
+    text-align: right;
+    vertical-align: top;
+}
+
 
 @page {
-    margin: 10mm; margin-top: 15mm; margin-bottom: 15mm; 
-    size: {{page_size}};
+    size:{%- block pagesize %}landscape{%- endblock %};
+    font-family: "Liberation sans", "arial";
+    font-size: 10pt;
+    {%- block bottomright %}
     @bottom-right {
-        content: counter(page) "/" counter(pages);
+        vertical-align: top;
+        content: '{{_("Page")}} ' counter(page) ' {{_("of")}} ' counter(pages);
     }
-}
+    {%- endblock %}
+    {%- block bottomleft %}
+    @bottom-left {
+        vertical-align: top;
+        content: '{{_("Printed")}} ' '{{fdm(dd.today())}}' ' {{_("at")}} ' {{now.time().strftime("%H:%M")}};
+    }
+    {%- endblock %}
 
+    {% set logo_file = rt.find_config_file("logo.jpg", "weasyprint") %}
+    {% if logo_file %}
+    margin: 15mm; margin-top: 35mm; margin-bottom: 15mm;
+    @top-right {
+      height: 20mm;
+      // width: 40mm;
+      padding: 0px;
+      text-align: right;
+      // background-image: url(file://{{logo_file}});
+      // background-size: contain;
+      content: url(file://{{logo_file}});
+    }
+    {% else %}
+    margin: 15mm; margin-top: 15mm; margin-bottom: 15mm;
+    {% endif %}
+}
 
 @media print {
   tr.avoid {
     page-break-inside: avoid !important;
-  } 
-}
-@media screen {
-    div.footer_div {
-        display: none;
-    }
-}
-@media print {
-    div.footer_div {
-        position: fixed;
-        bottom: -5mm;
-        width: 100%;
-        border-top: solid 1pt;
-        padding: 2pt;
-    }
+  }
 }
 
+
+{#
+  20191015 removed footer_div as it seems to not be used
+  @media screen {
+      div.footer_div {
+          display: none;
+      }
+  }
+  @media print {
+      div.footer_div {
+          position: fixed;
+          bottom: -5mm;
+          width: 100%;
+          border-top: solid 1pt;
+          padding: 2pt;
+      }
+  }
+#}
 </style>
 {%- endblock %}
 </head>
 <body>
 {%- block header %}
-<h1>{{obj}}</h1>
 {%- endblock %}
-
-{%- block footer %}
-<div class="footer_div">
-{{obj}}
-</div>
-{%- endblock %}
-
 {%- block intro %}
 {%- endblock %}
-
 {%- block main %}
 {%- endblock %}
 </body>
 </html>
-

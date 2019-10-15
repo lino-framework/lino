@@ -22,7 +22,7 @@ from xml.sax.saxutils import escape
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext as gettext
-from django.utils.translation import get_language
+from django.utils.translation import get_language, activate
 from django.utils import translation
 from django.utils import timezone
 from django.core import exceptions
@@ -434,6 +434,7 @@ class BaseRequest(object):
             now=timezone.now(),
             getattr=getattr,
             restify=restify,
+            activate_language=activate,
             requested_language=get_language())
 
         def parse(s):
