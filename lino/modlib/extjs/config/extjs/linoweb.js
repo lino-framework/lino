@@ -2186,11 +2186,17 @@ Lino.call_ajax_action = function(
 
 
 
-Lino.row_action_handler = function(actionName, hm, pp) {
+Lino.row_action_handler = function(actionName, hm, pp,rqData,xcallback ) {
   var fn = function(panel, btn, step) {
       var p = {};
       // console.log('20150514 row_action_handler');
       if (pp) { p = pp(panel); if (! p) return; }
+      if (rqData) {
+          Ext.apply(p, rqData);
+      }
+      if (xcallback){
+          p["xcallback__"+xcallback.xcallback_id] =xcallback.choice;
+      }
 
       if (!panel || panel.get_current_record == undefined) { // AFTER_20130725
         // console.log('20140930 row_action_handler 2', panel);
@@ -2214,12 +2220,20 @@ Lino.row_action_handler = function(actionName, hm, pp) {
   return fn;
 };
 
-Lino.list_action_handler = function(ls_url,actionName,hm,pp) {
+Lino.list_action_handler = function(ls_url,actionName,hm,pp, rqData, xcallback) {
   var url = '{{extjs.build_plain_url("api")}}' + ls_url
   var fn = function(panel,btn,step) {
       var p = {};
       //~ console.log("20121210 Lino.list_action_handler",arguments);
       if (pp) { p = pp(panel);  if (! p) return; }
+
+      if (rqData) {
+          Ext.apply(p, rqData);
+      }
+      if (xcallback){
+          p["xcallback__"+xcallback.xcallback_id] =xcallback.choice;
+      }
+
       if (panel) { // may be undefined when called e.g. from quicklink
           panel.add_param_values(p, true);
           Ext.apply(p, panel.get_base_params());

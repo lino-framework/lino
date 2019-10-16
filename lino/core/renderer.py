@@ -857,21 +857,21 @@ class JsRenderer(HtmlRenderer):
         if ba.action.select_rows:
             params = self.get_action_params(ar, ba, obj, **status)
             pk = obj.pk if isinstance(obj, models.Model) else obj
-            return "Lino.%s(%s,%s,%s,%s)" % (
-                ba.full_name(), py2js(rp),
-                py2js(ar.is_on_main_actor), py2js(pk), py2js(params))
+            return (f"Lino.{ba.full_name()}({py2js(rp)} ,{py2js(ar.is_on_main_actor)},{py2js(pk)},{py2js(params)})")
         # assert obj is None
-        # return "oops"
         # params = self.get_action_params(ar, ba, obj)
         # url = ar.get_request_url()
 
         url = self.front_end.build_plain_url(
             ar.actor.app_label, ar.actor.__name__)
-        params = ar.get_status().get('base_params', None)
+        params = ar.get_status().get('base_params', None) # dont use **statuc on ar.get_status to not modify existing code.
+
+        rqData, xcallback = py2js(status.get("rqdata", None)), py2js(status.get("xcallback", None))
         pp = "function() {return %s;}" % py2js(params)
-        return "Lino.list_action_handler(%s,%s,%s,%s)()" % (
+
+        return "Lino.list_action_handler(%s,%s,%s,%s,%s,%s)()" % (
             py2js(url), py2js(ba.action.action_name),
-            py2js(ba.action.http_method),pp)
+            py2js(ba.action.http_method),pp, rqData, xcallback)
 
     def obj2url(self, ar, obj):
         ba = obj.get_detail_action(ar)
