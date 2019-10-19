@@ -857,7 +857,7 @@ class JsRenderer(HtmlRenderer):
         if ba.action.select_rows:
             params = self.get_action_params(ar, ba, obj, **status)
             pk = obj.pk if isinstance(obj, models.Model) else obj
-            return (f"Lino.{ba.full_name()}({py2js(rp)} ,{py2js(ar.is_on_main_actor)},{py2js(pk)},{py2js(params)})")
+            return (f"Lino.{ba.full_name()}({py2js(rp)},{py2js(ar.is_on_main_actor)},{py2js(pk)},{py2js(params)})")
         # assert obj is None
         # params = self.get_action_params(ar, ba, obj)
         # url = ar.get_request_url()
