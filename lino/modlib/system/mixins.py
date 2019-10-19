@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2018 Rumma & Ko Ltd
+# Copyright 2011-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 from __future__ import unicode_literals
@@ -13,7 +13,7 @@ from lino.core.utils import resolve_fields_list, models_by_base
 
 class Lockable(dd.Model):
     """
-    Mixin to add row-level edit locking to any model. 
+    Mixin to add row-level edit locking to any model.
 
     Models with row-level edit locking are not editable in detail view
     by default.  All form fields are disabled. The user must click
@@ -26,9 +26,9 @@ class Lockable(dd.Model):
     """
     lockable_fields = None
 
-    locked_by = dd.ForeignKey(rt.settings.SITE.user_model, null=True, default=None, blank=True, on_delete=dd.SET_NULL)
-
-
+    locked_by = dd.ForeignKey(
+        rt.settings.SITE.user_model, null=True, default=None, blank=True,
+        on_delete=dd.SET_NULL)
 
     class Meta(object):
         abstract = True
@@ -60,7 +60,7 @@ class Lockable(dd.Model):
     def lock_row(self, ar=None, user=""):
         user = user if user else ar.get_user()
 
-        if self.locked_by != None:
+        if self.locked_by_id != None:
             msg = _("{} is being edited by another user. "
                     "Please try again later.")
             raise Warning(msg.format(self))
@@ -69,8 +69,7 @@ class Lockable(dd.Model):
         rt.settings.SITE.logger.debug("%s locks %s.%s" % (user, self.__class__, self.pk))
 
 
-    @dd.action(_("Abort"), sort_index=100,
-               auto_save=None, callable_from='d')
+    @dd.action(_("Abort"), sort_index=100, auto_save=None, callable_from='d')
     def release_lock(self, ar):
         self.unlock_row(ar)
         ar.success(refresh=True)
@@ -116,7 +115,6 @@ class Lockable(dd.Model):
         super(Lockable, self).save_existing_instance(ar)
         self.unlock_row(ar)
 
-        
     def disabled_fields(self, ar):
         df = super(Lockable, self).disabled_fields(ar)
         df.add("locked_by")
@@ -127,8 +125,6 @@ class Lockable(dd.Model):
             if ar.bound_action.action.window_type != "t":
                 df |= self.lockable_fields
                 df.add('submit_detail')
-            
+
         # dd.logger.info("20181008 lockable_fields %s", self.lockable_fields)
         return df
-
-
