@@ -7,6 +7,7 @@ Contains Lino's core functionalities.
     actions
     actors
     boundaction
+    callbacks
     choicelists
     constants
     dashboard
@@ -42,6 +43,5 @@ Contains Lino's core functionalities.
     views
     workflows
     auth
-
 
 """

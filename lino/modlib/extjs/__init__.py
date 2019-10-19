@@ -81,13 +81,13 @@ class Plugin(Plugin):
     # media_base_url = "http://extjs-public.googlecode.com/" + \
     #                  "svn/tags/extjs-3.3.1/release/"
     """The URL from where to include the ExtJS library files.
-    
+
     The default value points to the `extjs-public
     <http://code.google.com/p/extjs-public/>`_ repository and thus
     requires the clients to have an internet connection.  This
     relieves newcomers from the burden of having to specify a download
     location in their :xfile:`settings.py`.
-    
+
     On a production site you'll probably want to download and serve
     these files yourself by setting this to `None` and setting
     :attr:`extjs_root` (or a symbolic link "extjs" in your
@@ -170,7 +170,7 @@ class Plugin(Plugin):
         for n in ICON_NAMES:
             url = site.build_static_url('images', 'mjames', n + '.png')
             yield tpl.format(n, url)
-            
+
         yield """
 .x-tbar-done{ background-image: url(/static/images/mjames/accept.png) !important; }
 .x-tbar-parameters{ background-image: url(/static/images/mjames/database_gear.png) !important; }
@@ -248,9 +248,9 @@ class Plugin(Plugin):
                 '(?P<an>\w+)/(?P<field>\w+)$',
                 views.ActionParamChoices.as_view()),
             # the thread_id can be a negative number:
-            url(rx + r'callbacks/(?P<thread_id>[\-0-9a-zA-Z]+)/'
-                '(?P<button_id>\w+)$',
-                views.Callbacks.as_view())
+            # url(rx + r'callbacks/(?P<thread_id>[\-0-9a-zA-Z]+)/'
+            #     '(?P<button_id>\w+)$',
+            #     views.Callbacks.as_view())
         ]
         if settings.SITE.use_eid_applet:
             urlpatterns.append(
@@ -260,4 +260,3 @@ class Plugin(Plugin):
             urlpatterns.append(
                 url(rx + r'run-jasmine$', views.RunJasmine.as_view()))
         return urlpatterns
-

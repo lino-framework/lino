@@ -62,14 +62,14 @@ class BasePrintAction(Action):
         return elem.get_print_templates(bm, self)
 
     def get_printable_context(self, bm, elem, ar):
-        """A hook for defining action-specific context variables.  
+        """A hook for defining action-specific context variables.
         The default
         implementation calls
         :meth:`lino.core.model.Model.get_printable_context`.
 
         """
         return elem.get_printable_context(ar)
-    
+
     def before_build(self, bm, elem):
         """Return the target filename if a document needs to be built,
         otherwise return ``None``.
@@ -239,7 +239,7 @@ class EditTemplate(BasePrintAction):
             ar.info(msg)
             raise Warning("WebDAV is not enabled. "
                           "Contact your system administrator.")
-            
+
         def doit(ar):
             ar.info("Going to open url: %s " % url)
             if settings.SITE.webdav_protocol:
@@ -247,12 +247,13 @@ class EditTemplate(BasePrintAction):
             else:
                 ar.success(open_webdav_url=url)
             # logger.info('20140313 EditTemplate %r', kw)
-    
+
         if filename == local_file:
             doit(ar)
         else:
+            # raise Exception("20191019 {} is not {}".format(filename, local_file))
             ar.info("Gonna copy %s to %s", filename, local_file)
-            
+
             def ok(ar2):
                 logger.info(
                     "%s made local template copy %s", ar.user, local_file)
@@ -265,7 +266,7 @@ class EditTemplate(BasePrintAction):
                 "local copy on the server. "
                 "This will exclude the template from future updates.")
             ar.confirm(ok, msg, _("Are you sure?"))
-                
+
 
 class ClearCacheAction(Action):
     sort_index = 51
@@ -311,5 +312,3 @@ class ClearCacheAction(Action):
                     _("This will discard all changes in the generated file."),
                     _("Are you sure?"))
         return doit(ar)
-
-

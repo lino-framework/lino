@@ -1149,9 +1149,7 @@ class Site(object):
     Note also that there is no warranty that actually *each* request
     is being logged.  It corrently works only for requests that are
     being processed by the kernel's :meth:`run_action
-    <lino.core.kernel.Kernel.run_action>` or
-    :meth:`run_callback
-    <lino.core.kernel.Kernel.run_callback>` methods.
+    <lino.core.kernel.Kernel.run_action>` methods.
     """
 
     verbose_client_info_message = False

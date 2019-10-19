@@ -607,12 +607,15 @@ class BaseRequest(object):
 
         def noop(ar):
             return ar.success(gettext("Aborted"))
-        cb.add_choice('yes', ok_func, gettext("Yes"))
-        cb.add_choice('no', noop, gettext("No"))
 
         if not self.renderer.is_interactive:
             if self._confirm_answer:
                 return ok_func(self)
+            else:
+                return noop(self)
+
+        cb.add_choice('yes', ok_func, gettext("Yes"))
+        cb.add_choice('no', noop, gettext("No"))
 
         self.set_callback(cb) # Moved down as if an xcallback_answer is in the request, we run the function.
                               # In non_interactive mode, the ok_func would be called twice.

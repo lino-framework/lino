@@ -1,13 +1,13 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2009-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
+"""Callback handling
+"""
 
 from __future__ import unicode_literals, print_function
 from builtins import object
 
-import logging;
-
-logger = logging.getLogger(__name__)
+import logging; logger = logging.getLogger(__name__)
 
 import sys
 import os
@@ -57,11 +57,8 @@ class Callback(object):
         self.choices_dict = {}
         self.ar = ar
 
-
         str_msg = tostring(message).encode()
         self.uid = uid if uid is not None else str(md5(str_msg).digest())
-
-
 
     def __repr__(self):
         return "Callback(%r)" % self.message
@@ -90,7 +87,7 @@ class Callback(object):
             raise Exception("Can not run choice|%s| not in avaliable choices %s"%(choice,self.choices_dict))
         self.choices_dict[choice].func(self.ar)
 
-class CallbackManager(object):
+class unused_CallbackManager(object):
 
     def __init__(self):
 
@@ -146,56 +143,51 @@ class CallbackManager(object):
         ar.error("Invalid button %r for callback %r" % (button_id, thread_id))
         return ar.renderer.render_action_response(ar)
 
-    def add_callback(self, ar, *msgs):
-        """
-        Returns an *action callback* which will initiate a dialog thread by
-        asking a question to the user and suspending execution until
-        the user's answer arrives in a next HTTP request.
+def add_callback(ar, *msgs):
+    """
+    Returns an *action callback* which will initiate a dialog thread by
+    asking a question to the user and suspending execution until
+    the user's answer arrives in a next HTTP request.
 
-        Calling this from an Action's :meth:`run_from_ui
-        <lino.core.actions.Action.run_from_ui>` method will interrupt
-        the execution, send the specified message back to the user,
-        adding the executables `yes` and optionally `no` to a queue of
-        pending "dialog threads".
+    Calling this from an Action's :meth:`run_from_ui
+    <lino.core.actions.Action.run_from_ui>` method will interrupt
+    the execution, send the specified message back to the client.
 
-        The client will display the prompt and will continue this
-        thread by requesting
-        :class:`lino.modlib.extjs.views.Callbacks`.
-        """
-        if len(msgs) > 1:
-            msg = '\n'.join([force_text(s) for s in msgs])
-        else:
-            msg = msgs[0]
-        # logger.info("20160526 add_callback(%s)", msg)
-        return Callback(ar, msg)
+    The client will display the prompt and do another request on the same action
+    but with the given answer.
 
-    def set_callback(self, ar, cb):
-        """
-        """
-        cb_id = cb.uid
+    """
+    if len(msgs) > 1:
+        msg = '\n'.join([force_text(s) for s in msgs])
+    else:
+        msg = msgs[0]
+    # logger.info("20160526 add_callback(%s)", msg)
+    return Callback(ar, msg)
 
-        answer = ar.xcallback_answers.get("xcallback__" + cb_id, None)
-        if answer is None:
+def set_callback(ar, cb):
+    """
+    """
+    cb_id = cb.uid
+    answer = ar.xcallback_answers.get("xcallback__" + cb_id, None)
+    if answer is None:
+        buttons = dict()
+        rq_data = { k:v[0] if len(v) == 1 else v
+            for k,v in (ar.rqdata.lists() if getattr(ar, "rqdata", None) is not None else {})}
+        rq_data.pop("_dc", None)
+        for c in cb.choices:
+            buttons[c.name] = c.label
+            buttons[c.name + "_resendEvalJs"] = ar.renderer.ar2js(
+                ar, ar.selected_rows, rqdata= rq_data, xcallback={
+                    "xcallback_id" : cb_id,
+                    "choice" : c.name })
+        xcallback = dict(
+            id=cb_id,
+            title=cb.title,
+            buttons=buttons)
+        return ar.success(cb.message, xcallback=xcallback)
 
-            buttons = dict()
-
-            rq_data = { k:v[0] if len(v) == 1 else v for k,v in (ar.rqdata.lists() if getattr(ar,"rqdata", None)is not None else {})}
-            rq_data.pop("_dc", None)
-            for c in cb.choices:
-                buttons[c.name] = c.label
-                buttons[c.name + "_resendEvalJs"] =ar.renderer.ar2js(ar, ar.selected_rows, rqdata=rq_data, xcallback={
-                    "xcallback_id" :cb_id,
-                    "choice" : c.name
-                })
-            xcallback = dict(
-                id=cb_id,
-                title=cb.title,
-                buttons=buttons)
-            return ar.success(
-                cb.message, xcallback=xcallback)
-
-        else:
-            cb.run(answer)
+    else:
+        cb.run(answer)
 
 def popCallBack(resp):
     """
@@ -210,12 +202,12 @@ def applyCallbackChoice(resp = {}, data={}, choice="yes"):
     Used in testing
     """
     data.update(popCallBack(resp))
-    callack = {"xcallback__" + resp["xcallback"]['id'] : choice}
-    data.update(callack)
+    callback = {"xcallback__" + resp["xcallback"]['id'] : choice}
+    data.update(callback)
     return data
 # mpman = Manager()
-mgr = CallbackManager()
-
-set_callback = mgr.set_callback
-add_callback = mgr.add_callback
-run_callback = mgr.run_callback
+# mgr = CallbackManager()
+#
+# set_callback = mgr.set_callback
+# add_callback = mgr.add_callback
+# run_callback = mgr.run_callback

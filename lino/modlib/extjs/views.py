@@ -64,7 +64,7 @@ from lino.core.views import json_response, json_response_kw
 from lino.core import constants
 from lino.core.requests import BaseRequest, PhantomRow
 
-from lino.core import callbacks
+# from lino.core import callbacks
 
 MAX_ROW_COUNT = 300
 
@@ -231,9 +231,9 @@ class EidAppletService(View):
         return ui.success(html='Hallo?')
 
 
-class Callbacks(View):
-    def get(self, request, thread_id, button_id):
-        return callbacks.run_callback(request, thread_id, button_id)
+# class Callbacks(View):
+#     def get(self, request, thread_id, button_id):
+#         return callbacks.run_callback(request, thread_id, button_id)
 
 
 def choices_for_field(ar, holder, field):
