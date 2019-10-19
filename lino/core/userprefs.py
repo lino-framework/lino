@@ -58,43 +58,11 @@ class UserPrefs(object):
     def __init__(self, site, user):
         self.user = user
         self.dashboard_items = get_available_items(self.user)
-        # a set of (model, pk) of very locked row
-        self.locked_rows = set()
         for p in settings.SITE.installed_plugins:
             p.setup_user_prefs(self)
         settings.SITE.logger.debug(
             "User preferences for %s have been initialized.", self.user)
 
-    def has_row_lock(self, obj):
-        k = (obj.__class__, obj.pk)
-        return k in self.locked_rows
-
-    def lock_row(self, obj):
-        k = (obj.__class__, obj.pk)
-        if k in reg.locked_rows:
-            msg = _("{} is being edited by another user. "
-                    "Please try again later.")
-            raise Warning(msg.format(obj))
-        with prefs_rlock:
-            settings.SITE.logger.debug("%s locks %s.%s", self.user, *k)
-            reg.locked_rows.add(k)
-            self.locked_rows.add(k)
-
-    def unlock_row(self, obj):
-        k = (obj.__class__, obj.pk)
-        if not k in self.locked_rows:
-            # silently ignore a request to unlock a row if it wasn't
-            # locked.  This can happen e.g. when user click Save on a
-            # row that wasn't locked.
-            settings.SITE.logger.debug(
-                "%s cannot unlock %s.%s because it was not locked", self.user, *k)
-            return
-        with prefs_rlock:
-            settings.SITE.logger.debug(
-                "%s releases lock on %s.%s", self.user, *k)
-            reg.locked_rows.remove(k)
-            self.locked_rows.remove(k)
-            obj._disabled_fields = None  # clear cache
 
     def invalidate(self):
         k = self.user.username
@@ -107,14 +75,12 @@ class Registry(object):
     A volatile singleton which holds
 
     .. attribute:: user_prefs
-    .. attribute:: locked_rows
 
     A set of (model, pk) of very locked row
 
     """
     def __init__(self):
         self.user_prefs = {}
-        self.locked_rows = set()
 
     def get(self, user):
         k = user.username
