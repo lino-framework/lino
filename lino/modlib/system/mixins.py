@@ -118,7 +118,7 @@ class Lockable(dd.Model):
     def disabled_fields(self, ar):
         df = super(Lockable, self).disabled_fields(ar)
         df.add("locked_by")
-        if self.has_row_lock(ar):
+        if self.pk is None or self.has_row_lock(ar):
             df.add('acquire_lock')
         else:
             df.add('release_lock')
