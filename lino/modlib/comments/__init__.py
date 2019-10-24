@@ -40,6 +40,7 @@ class Plugin(ad.Plugin):
         mg = site.plugins.office
         m = m.add_menu(mg.app_label, mg.verbose_name)
         m.add_action('comments.AllComments')
+        m.add_action('comments.Mentions')
 
     def get_dashboard_items(self, user):
         # if self.user_must_publish:

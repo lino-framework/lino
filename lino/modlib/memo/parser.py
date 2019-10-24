@@ -206,6 +206,14 @@ All remaining arguments are used as the text of the link.
             return str(etree.tostring(v))
         return str(v)
 
+    def get_all_objects(self, src):
+        regex = self.compile_suggester_regex()
+        all_matchs = re.findall(regex, src)
+        res = []
+        for match in all_matchs:
+            res.append(self.suggesters[match[1]].get_object(match[2]))
+        return res
+
     def suggester_match_func(self, ar):
 
         def func(matchobj):

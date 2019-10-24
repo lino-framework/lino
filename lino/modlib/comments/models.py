@@ -1,10 +1,12 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2018 Rumma & Ko Ltd
+# Copyright 2013-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 from builtins import object
 
 from django.db import models
+from django.contrib.contenttypes.models import ContentType
+from django.conf import settings
 
 from lino.api import dd, rt, _
     
@@ -80,6 +82,14 @@ class Comment(CreatedModified, UserAuthored, Controllable,
         super(Comment, self).after_ui_save(ar, cw)
         if self.owner_id:
             self.owner.on_commented(self, ar, cw)
+        if dd.is_installed("memo"):
+            get_all_objects = settings.SITE.plugins.memo.parser.get_all_objects(self.body)
+            for ref_object in get_all_objects:
+                created_mention = Mention(comment=self,
+                        owner_id=ref_object.pk,
+                        owner_type=ContentType.objects.get_for_model(ref_object.__class__))
+                created_mention.touch()
+                created_mention.save()
         
     # def full_clean(self):
     #     super(Comment, self).full_clean()
@@ -158,6 +168,16 @@ class Comment(CreatedModified, UserAuthored, Controllable,
 
 dd.update_field(Comment, 'user', editable=False)
 
+class Mention(CreatedModified,Controllable,UserAuthored):
+    
+    class Meta(object):
+        app_label = 'comments'
+        abstract = dd.is_abstract_model(__name__, 'Mention')
+        verbose_name = _("Mention")
+        verbose_name_plural = _("Mentions")
+
+    comment = dd.ForeignKey(
+        'comments.Comment', blank=True, null=True, verbose_name=_("Comment"))
 
 from .ui import *
 

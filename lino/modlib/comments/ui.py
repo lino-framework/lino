@@ -309,3 +309,16 @@ class CommentsByRFC(CommentsByX):
 
 def comments_by_owner(obj):
     return CommentsByRFC.request(master_instance=obj)
+
+class Mentions(dd.Table):
+    required_roles = dd.login_required(CommentsStaff)
+    model = "comments.Mention"
+    column_names = "comment owner created *"
+    detail_layout = """
+    id comment owner created
+    """
+
+class MentionsByOwner(Mentions):
+    master_key = "owner"
+
+
