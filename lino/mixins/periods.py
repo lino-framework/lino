@@ -1,4 +1,4 @@
-# Copyright 2014-2018 Rumma & Ko Ltd
+# Copyright 2014-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
@@ -68,7 +68,7 @@ class CombinedDateTime(dd.Model):
             # value = value.astimezone(tz)
             # value = tz.localize(value)
             value = value.astimezone(self.get_time_zone().tzinfo)
-            
+
         setattr(self, name + '_date', value.date())
         t = value.time()
         if not t:
@@ -137,14 +137,14 @@ class Started(CombinedDateTime):
 class Ended(CombinedDateTime):
     """
     Mixin for models with two fields :attr:`end_date` and
-    :attr:`end_time`. 
+    :attr:`end_time`.
 
     .. attribute:: end_date
     .. attribute:: end_time
     """
     class Meta:
         abstract = True
-        
+
     end_date = models.DateField(
         blank=True, null=True,
         verbose_name=_("End Date"))
@@ -247,6 +247,8 @@ class DateRange(Model):
                 help_text=_("End date of observed period")))
         super(DateRange, cls).setup_parameters(fields)
 
+DateRange.set_widget_options('start_date', width=10)
+DateRange.set_widget_options('end_date', width=10)
 
 class ObservedDateRange(ParameterPanel):
     """:class:`lino.core.param_panel.ParameterPanel` with two fields
@@ -329,5 +331,3 @@ class Today(ParameterPanel):
                 help_text=_("Date of observation")),
         )
         super(Today, self).__init__(**kw)
-
-
