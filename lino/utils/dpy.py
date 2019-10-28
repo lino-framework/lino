@@ -76,9 +76,9 @@ def create_mti_child(parent_model, pk, child_model, **kw):
     #             pk,
     #             parent_model.__name__,
     #             ignored))
-    
+
     child_obj = child_model(**kw)
-    
+
     if len(pfields):
         parent_obj = parent_model.objects.get(pk=pk)
         for k, v in pfields.items():
@@ -158,6 +158,7 @@ class FakeDeserializedObject(base.DeserializedObject):
                 try:
                     obj.full_clean()
                 except ValidationError as e:
+                    # raise Exception("{0} : {1}".format(obj2str(obj), e))
                     raise  # Exception("{0} : {1}".format(obj2str(obj), e))
             obj.save(*args, **kw)
             logger.debug("%s has been saved" % obj2str(obj))
@@ -316,7 +317,7 @@ data."""
             h(self)
 
         # logger.info("Loaded %d objects", self.count_objects)
-    
+
         if self.save_later:
             count = 0
             s = ''
@@ -617,5 +618,3 @@ def override(globals_dict):
         #     globals_dict[func.__name__] = func
         # return wrapper
     return override_decorator
-
-

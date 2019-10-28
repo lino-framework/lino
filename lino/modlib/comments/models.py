@@ -9,7 +9,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 
 from lino.api import dd, rt, _
-    
+
 from lino.mixins import CreatedModified, BabelNamed
 from lino.modlib.users.mixins import UserAuthored
 from lino.modlib.notify.mixins import ChangeNotifier
@@ -29,7 +29,7 @@ class CommentType(BabelNamed):
         verbose_name = _("Comment Type")
         verbose_name_plural = _("Comment Types")
 
-    
+
 @dd.python_2_unicode_compatible
 class Comment(CreatedModified, UserAuthored, Controllable,
               ChangeNotifier, Previewable):
@@ -77,7 +77,7 @@ class Comment(CreatedModified, UserAuthored, Controllable,
 
     #     # else:
     #     #     return cls.objects.exclude(owner__private=True)
-        
+
     def after_ui_save(self, ar, cw):
         super(Comment, self).after_ui_save(ar, cw)
         if self.owner_id:
@@ -90,19 +90,19 @@ class Comment(CreatedModified, UserAuthored, Controllable,
                         owner_type=ContentType.objects.get_for_model(ref_object.__class__))
                 created_mention.touch()
                 created_mention.save()
-        
+
     # def full_clean(self):
     #     super(Comment, self).full_clean()
     #     self.owner.setup_comment(self)
 
     def get_change_owner(self):
         return self.owner or self
-    
+
     # def get_change_message_type(self, ar):
     #     if self.published is None:
     #         return None
     #     return super(Comment, self).get_change_message_type(ar)
-    
+
     def get_change_observers(self, ar=None):
         if isinstance(self.owner, ChangeNotifier):
             obs = self.owner
@@ -117,7 +117,7 @@ class Comment(CreatedModified, UserAuthored, Controllable,
         else:
             s = _("{user} modified comment on {obj}")
         return s.format(user=ar.get_user(), obj=self.owner)
-    
+
     def get_change_body(self, ar, cw):
         if cw is None:
             s = _("{user} commented on {obj}")
@@ -168,16 +168,14 @@ class Comment(CreatedModified, UserAuthored, Controllable,
 
 dd.update_field(Comment, 'user', editable=False)
 
-class Mention(CreatedModified,Controllable,UserAuthored):
-    
+class Mention(CreatedModified, Controllable, UserAuthored):
+
     class Meta(object):
         app_label = 'comments'
         abstract = dd.is_abstract_model(__name__, 'Mention')
         verbose_name = _("Mention")
         verbose_name_plural = _("Mentions")
 
-    comment = dd.ForeignKey(
-        'comments.Comment', blank=True, null=True, verbose_name=_("Comment"))
+    comment = dd.ForeignKey('comments.Comment', blank=True, null=True)
 
 from .ui import *
-

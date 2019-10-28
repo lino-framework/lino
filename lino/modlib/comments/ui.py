@@ -7,7 +7,7 @@ from builtins import str
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
-from lino.api import dd
+from lino.api import dd, rt
 from lino.modlib.users.mixins import My
 from etgen.html import E, tostring
 # from lxml import etree
@@ -61,6 +61,46 @@ class Comments(dd.Table):
     #~ hidden_columns = frozenset(['body'])
     #~ order_by = ["id"]
     #~ label = _("Notes")
+
+
+    @classmethod
+    def get_table_summary(cls, obj, ar):
+        # print("20190926 get_table_summary", ar.request)
+        sar = cls.request_from(
+            ar, master_instance=obj, limit=cls.preview_limit)
+
+        # print "20170208", sar.limit
+        chunks = []
+        for o in sar.sliced_data_iterator:
+
+            if (o.modified - o.created).total_seconds() < 1:
+                t = _("Created " + o.created.strftime('%Y-%m-%d %H:%M') )
+            else:
+                t = _("Modified " + o.modified.strftime('%Y-%m-%d %H:%M') )
+
+            items = [ar.obj2html(o, naturaltime(o.created), title=t)]
+            items += [" by ", ar.obj2html(o.user, o.user.username)]
+            if o.owner_id:
+                group = o.owner.get_comment_group()
+                if group is not None:
+                    items += ["@", ar.obj2html(group, group.ref)]
+                items += [" about ", o.owner.obj2href(ar)]
+            try:
+                # el = etree.fromstring(o.short_preview, parser=html_parser)
+                el = lxml.html.fragments_fromstring(o.short_preview) #, parser=cls.html_parser)
+                # el = etree.fromstring("<div>{}</div>".format(o.full_preview), parser=cls.html_parser)
+                # print(20190926, tostring(el))
+            except Exception as e:
+                el = [o.short_preview]
+                # print(20190926, o.full_preview)
+                el += " [{}]".format(e)
+            # items += [" ", el]
+            items += [" : "] + el
+
+            chunks.append(E.p(*items))
+
+        return E.div(*chunks)
+
 
     @classmethod
     def get_comment_header(cls, comment, ar):
@@ -139,6 +179,7 @@ class AllComments(Comments):
 class CommentsByX(Comments):
     required_roles = dd.login_required(CommentsReader)
     order_by = ["-created"]
+    # order_by = ["-modified"]
     display_mode = "summary"
 
 
@@ -152,121 +193,15 @@ class CommentsByX(Comments):
 #         kw.update(show_published=dd.YesNo.no)
 #         return kw
 
-class RecentComments(Comments):
+class RecentComments(CommentsByX):
     required_roles = dd.login_required(CommentsReader)
     # required_roles = set([CommentsReader])
     column_names = "short_preview modified user owner *"
     stay_in_grid = True
-    order_by = ["-modified"]
+    # order_by = ["-modified"]
     label = _("Recent comments")
     preview_limit = 10
-    display_mode = "summary"
-
-    @classmethod
-    def unused_param_defaults(cls, ar, **kw):
-        # don't hide future comments. This can happen when I modify in a demo...
-        kw = super(RecentComments, cls).param_defaults(ar, **kw)
-        kw.update(observed_event=CommentEvents.modified)
-        kw.update(end_date=dd.today())
-        return kw
-
-    @classmethod
-    def unused_get_table_summary(cls, obj, ar):
-        sar = cls.request_from(
-            ar, master_instance=obj, limit=cls.preview_limit)
-
-        # print "20170208", sar.limit
-        html = ""
-        items = []
-        for o in sar.sliced_data_iterator:
-            li = cls.as_li(o, ar)
-            # if o.owner: #Catch for ownerless hackerish comments
-            #     li += _(" On: ") + tostring(ar.obj2html(o.owner))
-
-            # items.append("<li>{}</li>".format(li))
-            items.append("<p>{}</p>".format(li))
-            # items.append(li)
-        # html += "<p>" + tostring(btn) + "</p>"
-
-        if len(items) > 0:
-            html += "<div>{0}</div>".format(''.join(items))
-
-        return ar.html_text(html)
-
-    @classmethod
-    def get_table_summary(cls, obj, ar):
-        # print("20190926 get_table_summary", ar.request)
-        sar = cls.request_from(
-            ar, master_instance=obj, limit=cls.preview_limit)
-
-        # print "20170208", sar.limit
-        chunks = []
-        for o in sar.sliced_data_iterator:
-
-            # by = _("{0} by {1}").format(
-            #     naturaltime(o.created), str(o.user))
-
-            if (o.modified - o.created).total_seconds() < 1:
-                t = _("Created " + o.created.strftime('%Y-%m-%d %H:%M') )
-            else:
-                t = _("Modified " + o.modified.strftime('%Y-%m-%d %H:%M') )
-
-            items = [ar.obj2html(o, naturaltime(o.created), title=t)]
-            items += [" by ", ar.obj2html(o.user, o.user.username)]
-            if o.owner_id:
-                group = o.owner.get_comment_group()
-                if group is not None:
-                    items += ["@", ar.obj2html(group, group.ref)]
-                # items += [" about ", ar.obj2html(o.owner)]
-                items += [" about ", o.owner.obj2href(ar)]
-            try:
-                # el = etree.fromstring(o.short_preview, parser=html_parser)
-                el = lxml.html.fragments_fromstring(o.short_preview) #, parser=cls.html_parser)
-                # el = etree.fromstring("<div>{}</div>".format(o.full_preview), parser=cls.html_parser)
-                # print(20190926, tostring(el))
-            except Exception as e:
-                el = [o.short_preview]
-                # print(20190926, o.full_preview)
-                el += " [{}]".format(e)
-            # items += [" ", el]
-            items += [" : "] + el
-
-            chunks.append(E.p(*items))
-
-        return E.div(*chunks)
-
-
-    @classmethod
-    def as_li(cls, self, ar):
-        # chunks = [ar.parse_memo(self.short_preview)]
-
-        by = _("{0} by {1}").format(
-            naturaltime(self.created), str(self.user))
-
-        if (self.modified - self.created).total_seconds() < 1:
-            t = _("Created " + self.created.strftime('%Y-%m-%d %H:%M') )
-        else:
-            t = _("Modified " + self.modified.strftime('%Y-%m-%d %H:%M') )
-
-        chunks = [tostring(ar.obj2html(self, by, title=t))]
-        if self.owner_id:
-            chunks += [" about ", tostring(ar.obj2html(self.owner))]
-            chunks += [" on ", tostring(ar.obj2html(self.owner.site)), ")"]
-
-        chunks += [self.full_preview]
-
-        # if ar.get_user().authenticated:
-        #     sar = cls.insert_action.request_from(ar)
-        #     # print(20170217, sar)
-        #     sar.known_values = dict(reply_to=self, owner=self.owner)
-        #     if sar.get_permission():
-        #         btn = sar.ar2button(
-        #             None, _("Reply"), icon_name=None)
-        #         chunks.append(' '+tostring(btn))
-
-        html = ''.join(chunks)
-        return html
-        # return "<li>" + html + "</li>"
+    # display_mode = "summary"
 
 
 
@@ -306,6 +241,30 @@ class CommentsByRFC(CommentsByX):
         html += "</ul>"
         return ar.html_text(html)
 
+class CommentsByMentioned(CommentsByX):
+    # show all comments that mention the master instance
+    master = dd.Model
+    label = _("Mentions")
+    # label = _("Comments mentioning this")
+
+    @classmethod
+    def get_filter_kw(cls, ar, **kw):
+        mi = ar.master_instance
+        if mi is None:
+            return None
+        Mention = rt.models.comments.Mention
+        mkw = gfk2lookup(Mention.owner, mi)
+        mentions = Mention.objects.filter(**mkw).values_list('comment_id', flat=True)
+        # mentions = [o.comment_id for o in Mention.objects.filter(**mkw)]
+        # print(mkw, mentions)
+        # return super(CommentsByMentioned, cls).get_filter_kw(ar, **kw)
+        kw.update(id__in=mentions)
+        return kw
+
+
+class CommentsByComment(CommentsByX):
+    master_key = 'reply_to'
+
 
 def comments_by_owner(obj):
     return CommentsByRFC.request(master_instance=obj)
@@ -320,5 +279,3 @@ class Mentions(dd.Table):
 
 class MentionsByOwner(Mentions):
     master_key = "owner"
-
-
