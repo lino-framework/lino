@@ -11,6 +11,7 @@ import re
 import cgi
 import datetime
 
+from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
@@ -185,6 +186,7 @@ class About(EmptyTable):
 
     @dd.displayfield(_("Server status"))
     def server_status(cls, obj, ar):
+        st = settings.SITE.startup_time
         return rt.html_text(
-            E.p(_("%s pending threads") %
-                len(settings.SITE.kernel.pending_threads)))
+            E.p(_("Running since {} ({}) ").format(
+                st, naturaltime(st))))
