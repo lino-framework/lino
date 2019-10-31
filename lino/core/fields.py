@@ -223,6 +223,10 @@ class FakeField(object):
     default = NOT_PROVIDED
     generate_reverse_relation = False  # needed when AFTER17
     remote_field = None
+
+    wildcard_data_elem = False
+    """Whether to consider this field as wildcard data element.
+    """
     sortable_by = None
     """
     A list of names of real fields to be used for sorting when this
@@ -230,14 +234,14 @@ class FakeField(object):
     automatically, on virtual fields you can set it yourself.
     """
 
-    # required by Django 1.8:
+    # required by Django 1.8+:
     is_relation = False
     concrete = False
     auto_created = False
     column = None
     empty_values = set([None, ''])
 
-    # required by Django 1.10:
+    # required by Django 1.10+:
     one_to_many = False
     one_to_one = False
 
@@ -430,7 +434,7 @@ class VirtualField(FakeField):
         Normal VirtualFields are read-only and not editable.
         We don't want to require application developers to explicitly
         specify `editable=False` in their return_type::
-        
+
           @dd.virtualfield(dd.PriceField(_("Total")))
           def total(self, ar=None):
               return self.total_excl + self.total_vat
@@ -841,8 +845,8 @@ class IncompleteDateField(models.CharField):
         # msgkw.update(ex3=IncompleteDate(0, 7, 23)
         #              .strftime(settings.SITE.date_format_strftime))
         kw.setdefault('help_text', _("""\
-Uncomplete dates are allowed, e.g. 
-"00.00.1980" means "some day in 1980", 
+Uncomplete dates are allowed, e.g.
+"00.00.1980" means "some day in 1980",
 "00.07.1980" means "in July 1980"
 or "23.07.0000" means "on a 23th of July"."""))
         models.CharField.__init__(self, *args, **kw)
@@ -1106,7 +1110,10 @@ def wildcard_data_elems(model):
     meta = model._meta
     for f in meta.fields:
         # if not isinstance(f, fields.RichTextField):
-        if not isinstance(f, VirtualField):
+        if isinstance(f, VirtualField):
+            if f.wildcard_data_elem:
+                yield f
+        else:
             if not getattr(f, '_lino_babel_field', False):
                 yield f
     for f in meta.many_to_many:
