@@ -44,6 +44,9 @@ from .exceptions import ChangedAPI
 
 CATCHED_AJAX_EXCEPTIONS = (Warning, exceptions.ValidationError)
 
+def noop(ar):
+    return ar.success(gettext("Aborted"))
+
 
 class ValidActionResponses(object):
     """
@@ -599,27 +602,25 @@ class BaseRequest(object):
         message. In a web context this will be another object than
         this one.
 
-        In a non-interactive environment the `ok_func` function is
-        called directly (i.e. we don't ask any confirmation and act as if
-        confirmation had been given).
+        In a non-interactive environment (e.g. in a doctest or when using #
+        :class:`lino.core.renderer.TestRenderer`) the `ok_func` function (or
+        :func:`noop`) is called directly depending on the value of
+        :attr:`_confirm_answer` which potentially has been set by a previous
+        call to :meth:`set_confirm_answer`.
+        
         """
         cb = self.add_callback(*msgs)
-
-        def noop(ar):
-            return ar.success(gettext("Aborted"))
+        cb.add_choice('yes', ok_func, gettext("Yes"))
+        cb.add_choice('no', noop, gettext("No"))
 
         self.set_callback(cb)
+
         if not self.renderer.is_interactive:
-            # A non interactive renderer (i.e. in a doctest) ignores xcallback
-            # and won't call the action again but we want to test what it would
-            # have asked.
             if self._confirm_answer:
                 return ok_func(self)
             else:
                 return noop(self)
 
-        cb.add_choice('yes', ok_func, gettext("Yes"))
-        cb.add_choice('no', noop, gettext("No"))
 
 
 
