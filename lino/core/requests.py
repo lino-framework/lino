@@ -608,7 +608,11 @@ class BaseRequest(object):
         def noop(ar):
             return ar.success(gettext("Aborted"))
 
+        self.set_callback(cb)
         if not self.renderer.is_interactive:
+            # A non interactive renderer (i.e. in a doctest) ignores xcallback
+            # and won't call the action again but we want to test what it would
+            # have asked.
             if self._confirm_answer:
                 return ok_func(self)
             else:
@@ -617,8 +621,6 @@ class BaseRequest(object):
         cb.add_choice('yes', ok_func, gettext("Yes"))
         cb.add_choice('no', noop, gettext("No"))
 
-        self.set_callback(cb) # Moved down as if an xcallback_answer is in the request, we run the function.
-                              # In non_interactive mode, the ok_func would be called twice.
 
 
     def parse_memo(self, txt, **context):
