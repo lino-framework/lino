@@ -1,17 +1,13 @@
 # Copyright 2012-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-"""
-Database models for `lino.modlib.about`.
-
-"""
 from builtins import str
 
 import re
 import cgi
 import datetime
 
-from django.contrib.humanize.templatetags.humanize import naturaltime
+# from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 
@@ -127,7 +123,7 @@ class About(EmptyTable):
     hide_top_toolbar = True
     detail_layout = dd.DetailLayout("""
     about_html
-    server_status
+    # server_status
     """, window_size=(60, 20))
 
     @dd.constant()
@@ -184,9 +180,9 @@ class About(EmptyTable):
             ', '.join(analyzer.get_complexity_factors(dd.today())))))
         return rt.html_text(E.div(*body))
 
-    @dd.displayfield(_("Server status"))
-    def server_status(cls, obj, ar):
-        st = settings.SITE.startup_time
-        return rt.html_text(
-            E.p(_("Running since {} ({}) ").format(
-                st, naturaltime(st))))
+    # @dd.displayfield(_("Server status"))
+    # def server_status(cls, obj, ar):
+    #     st = settings.SITE.startup_time
+    #     return rt.html_text(
+    #         E.p(_("Running since {} ({}) ").format(
+    #             st, naturaltime(st))))
