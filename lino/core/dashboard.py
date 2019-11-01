@@ -70,6 +70,15 @@ class DashboardItem(Permittable):
 
         yield sar
 
+    def serialize(self):
+        return dict(
+            name=self.name,
+            header_level=self.header_level
+        )
+
+    def __repr__(self):
+        return f"{self.__class__}({self.name},header_level={self.header_levbel}, min_count={self.min_count}"
+
 class ActorItem(DashboardItem):
     """A dashboard item which simply renders a given actor.
     The actor should be a table, other usage is untested.
@@ -105,6 +114,11 @@ class ActorItem(DashboardItem):
         sar = ar.spawn(T, limit=T.preview_limit)
         for i in self.render_request(ar, sar):
             yield i
+
+    def serialize(self):
+        d = super(ActorItem, self).serialize()
+        d.update(actor=self.actor.actor_id)
+        return d
 
 class RequestItem(DashboardItem):
     """
