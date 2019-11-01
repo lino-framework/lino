@@ -709,16 +709,23 @@ class BaseRequest(object):
         """
         return self.subst_user or self.user
 
-    def run(self, ia, *args, **kw):
+    def run(self, ia, *args, **kwargs):
         """
-        Run the given instance action `ia` in a child request of this
+        Run the given :term:`instance action` `ia` in a child request of this
         request.
 
         Additional arguments are forwarded to the action.
         Returns the response of the child request.
         Does not modify response of parent request.
+
+        Usage examples:
+        :ref:`dev.custom_actions` defines a custom action and then runs it.
+        :ref:`voga.specs.voga` and :ref:`voga.specs.sales`
+        use :attr:`lino_xl.lib.exceprts.Excerpt.do_print` to generate a printable document.
+        The :fixture:`demo2` fixture of :mod:`lino_xl.lib.excerpts` does the same (but for generating demo data).
+        :ref:`dev.users` calls :attr:`lino.modlib.users.User.change_password` with arguments.
         """
-        return ia.run_from_session(self, *args, **kw)
+        return ia.run_from_session(self, *args, **kwargs)
 
     def story2html(self, story, *args, **kwargs):
         """
