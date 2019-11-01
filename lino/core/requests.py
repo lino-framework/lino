@@ -844,7 +844,7 @@ class BaseRequest(object):
 
         Utility method for doctests."""
 
-        if getattr(self.renderer, "hide_dashboard_items", False):
+        if self.renderer.hide_dashboard_items:
             return ""
         else:
             return self.show_story(

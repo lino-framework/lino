@@ -103,6 +103,11 @@ class Renderer(object):
     not_implemented_js = None
     extjs_version = None
 
+    hide_dashboard_items = False
+    """Don't show dashboard items when rendering :xfile:`admin_main.html`.
+    
+    """
+
     def __init__(self, front_end=None):
         # if not isinstance(plugin, Plugin):
         #     raise Exception("{} is not a Plugin".format(plugin))
