@@ -44,6 +44,9 @@ from .exceptions import ChangedAPI
 
 CATCHED_AJAX_EXCEPTIONS = (Warning, exceptions.ValidationError)
 
+def noop(ar):
+    return ar.success(gettext("Aborted"))
+
 
 class ValidActionResponses(object):
     """
@@ -236,6 +239,7 @@ class BaseRequest(object):
                 # 20190926 we want to have javascript extjs links in dasboard.
                 self.request = parent.request
             self.xcallback_answers = parent.xcallback_answers
+            self._confirm_answer = parent._confirm_answer
             for k in inheritable_attrs:
                 if k in kw:
                     if kw[k] is None:
@@ -599,26 +603,24 @@ class BaseRequest(object):
         message. In a web context this will be another object than
         this one.
 
-        In a non-interactive environment the `ok_func` function is
-        called directly (i.e. we don't ask any confirmation and act as if
-        confirmation had been given).
+        In a non-interactive renderer (e.g. in a doctest or when using #
+        :class:`lino.core.renderer.TestRenderer`) the `ok_func` function (or
+        :func:`noop`) is called directly depending on the value of
+        :attr:`_confirm_answer` which potentially has been set by a previous
+        call to :meth:`set_confirm_answer`.
+
         """
         cb = self.add_callback(*msgs)
+        cb.add_choice('yes', ok_func, gettext("Yes"))
+        cb.add_choice('no', noop, gettext("No"))
 
-        def noop(ar):
-            return ar.success(gettext("Aborted"))
+        self.set_callback(cb)
 
         if not self.renderer.is_interactive:
             if self._confirm_answer:
                 return ok_func(self)
             else:
                 return noop(self)
-
-        cb.add_choice('yes', ok_func, gettext("Yes"))
-        cb.add_choice('no', noop, gettext("No"))
-
-        self.set_callback(cb) # Moved down as if an xcallback_answer is in the request, we run the function.
-                              # In non_interactive mode, the ok_func would be called twice.
 
 
     def parse_memo(self, txt, **context):

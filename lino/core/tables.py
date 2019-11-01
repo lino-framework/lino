@@ -294,15 +294,15 @@ class AbstractTable(actors.Actor):
     If you set this to `0`, preview requests for this table will
     request all rows.  Since preview tables usually have no paging
     toolbar, that's theoretically what we want (but can lead to waste
-    of performance if there are many rows). 
-    
-    In React if set to `0` the paging toolbar which usually is 
+    of performance if there are many rows).
+
+    In React if set to `0` the paging toolbar which usually is
     present in the detail view, will be removed, as it has no use, as
-    all rows wil be displayed. 
+    all rows wil be displayed.
 
     Test case and description in the tested docs of :ref:`cosi`.
-    
-    
+
+
 
     """
 
@@ -759,7 +759,14 @@ class VentilatedColumns(VirtualTable):
     columns
     """
     ventilated_column_suffix = ':5'
+
     column_names_template = ''
+    """
+    The template to use for :attr:`column_names`.   It can contain a string
+    ``{vcolumns}`` which will be replaced by a space separate list of the column
+    names given by :meth:`get_ventilated_columns`.
+    """
+
     abstract = True
 
     @classmethod
