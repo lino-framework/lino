@@ -834,8 +834,13 @@ class BaseRequest(object):
         """Show the dashboard of the user who made this request.
 
         Utility method for doctests."""
-        return self.show_story(
-            self.get_user().get_preferences().dashboard_items)
+
+        if getattr(self.renderer, "hide_dashboard_items", False):
+            return ""
+        else:
+            return self.show_story(
+                self.get_user().get_preferences().dashboard_items)
+
 
     def show_menu(self, language=None, **kwargs):
         """Show the main menu for the requesting user using the requested
