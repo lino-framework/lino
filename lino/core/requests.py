@@ -239,6 +239,7 @@ class BaseRequest(object):
                 # 20190926 we want to have javascript extjs links in dasboard.
                 self.request = parent.request
             self.xcallback_answers = parent.xcallback_answers
+            self._confirm_answer = parent._confirm_answer
             for k in inheritable_attrs:
                 if k in kw:
                     if kw[k] is None:
@@ -602,12 +603,12 @@ class BaseRequest(object):
         message. In a web context this will be another object than
         this one.
 
-        In a non-interactive environment (e.g. in a doctest or when using #
+        In a non-interactive renderer (e.g. in a doctest or when using #
         :class:`lino.core.renderer.TestRenderer`) the `ok_func` function (or
         :func:`noop`) is called directly depending on the value of
         :attr:`_confirm_answer` which potentially has been set by a previous
         call to :meth:`set_confirm_answer`.
-        
+
         """
         cb = self.add_callback(*msgs)
         cb.add_choice('yes', ok_func, gettext("Yes"))
@@ -620,8 +621,6 @@ class BaseRequest(object):
                 return ok_func(self)
             else:
                 return noop(self)
-
-
 
 
     def parse_memo(self, txt, **context):
