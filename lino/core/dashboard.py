@@ -77,7 +77,7 @@ class DashboardItem(Permittable):
         )
 
     def __repr__(self):
-        return f"{self.__class__}({self.name},header_level={self.header_levbel}, min_count={self.min_count}"
+        return f"{self.__class__}({self.name},header_level={self.header_level},min_count={self.min_count})"
 
 class ActorItem(DashboardItem):
     """A dashboard item which simply renders a given actor.
