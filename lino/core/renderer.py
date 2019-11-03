@@ -500,8 +500,10 @@ class HtmlRenderer(Renderer):
                     assert item.renderer is not None
                     elems.append(self.show_story(ar, item.actor.get_story(None, ar), **kwargs))
                 elif isinstance(item, DashboardItem):
-                    elems.append(E.div(
-                        self.show_story(ar, item.render(ar), **kwargs),
+                    html = self.show_story(ar, item.render(ar), **kwargs)
+                    if html:
+                        elems.append(E.div(
+                        html,
                         CLASS="dashboard-item " + item.actor.actor_id.replace(".","-") if getattr(item, "actor", False) else ""
                     ))
                 elif isiterable(item):

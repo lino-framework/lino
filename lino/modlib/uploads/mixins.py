@@ -17,5 +17,6 @@ class UploadController(dd.Model):
 
         show_uploads = dd.ShowSlaveTable(
             'uploads.UploadsByController',
+            react_icon_name= "pi-upload",
             button_text=u"🖿")  # u"\u1F5BF"
 
