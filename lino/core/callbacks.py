@@ -166,24 +166,29 @@ def add_callback(ar, *msgs):
 
 def set_callback(ar, cb):
     """
+    Runs when confimation is requred, checks if answer is present in request data, if so, runs corisponding function
+    Otherwise returns with data that will pop up a dialog.
     """
     cb_id = cb.uid
     answer = ar.xcallback_answers.get("xcallback__" + cb_id, None)
     if answer is None:
-        buttons = dict()
-        rq_data = { k:v[0] if len(v) == 1 else v
-            for k,v in (ar.rqdata.lists() if getattr(ar, "rqdata", None) is not None else {})}
-        rq_data.pop("_dc", None)
-        for c in cb.choices:
-            buttons[c.name] = c.label
-            buttons[c.name + "_resendEvalJs"] = ar.renderer.ar2js(
-                ar, ar.selected_rows, rqdata= rq_data, xcallback={
-                    "xcallback_id" : cb_id,
-                    "choice" : c.name })
+        buttons = []
         xcallback = dict(
             id=cb_id,
             title=cb.title,
             buttons=buttons)
+
+        rq_data = { k:v[0] if len(v) == 1 else v
+            for k,v in (ar.rqdata.lists() if getattr(ar, "rqdata", None) is not None else {})}
+        rq_data.pop("_dc", None)
+
+        for c in cb.choices:
+            buttons.append([c.name, c.label])
+            xcallback[c.name + "_resendEvalJs"] = ar.renderer.ar2js(
+                ar, ar.selected_rows, rqdata= rq_data, xcallback={
+                    "xcallback_id" : cb_id,
+                    "choice" : c.name })
+        # print(buttons)
         return ar.success(cb.message, xcallback=xcallback)
 
     else:

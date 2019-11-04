@@ -474,7 +474,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
         """Build the "user menu", i.e. the menu in the top right corner.
 
         TODO: move this to :mod:`lino.modlib.users`.
-
+        TODO: Have react do same,
         """
         if settings.SITE.user_model is not None:
 

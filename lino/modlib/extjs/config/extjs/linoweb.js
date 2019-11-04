@@ -1611,10 +1611,11 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
         //~ config.buttons = Ext.MessageBox.YESNO;
         var p = {};
         Lino.insert_subst_user(p);
-        config.buttons = result.xcallback.buttons;
+        config.buttons = {};
+        result.xcallback.buttons.forEach((button) => config.buttons[button[0]] = button[1]);
         config.msg = result.message;
         config.fn = function(buttonId, text, opt) {
-          eval(result.xcallback.buttons[buttonId + "_resendEvalJs"])
+          eval(result.xcallback[buttonId + "_resendEvalJs"])
         }
         Ext.MessageBox.show(config);
         return;
