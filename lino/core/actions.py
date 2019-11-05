@@ -1276,7 +1276,7 @@ class DeleteSelected(MultipleRowAction):
 
         def ok(ar2):
             super(DeleteSelected, self).run_from_ui(ar, **kw)
-            ar2.success(record_deleted=True)
+            ar2.success(record_deleted=True, refresh_all=False)
 
             # hack required for extjs:
             if ar2.actor.detail_action:
