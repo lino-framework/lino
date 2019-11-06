@@ -28,6 +28,8 @@ from lino.core.auth.utils import AnonymousUser
 from lino.modlib.about.choicelists import TimeZones
 from lino.modlib.printing.mixins import Printable
 
+from lino.core.roles import Supervisor
+
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
@@ -261,6 +263,24 @@ class User(AbstractBaseUser, Contactable, CreatedModified, DateRange,
     #     self.send_welcome_email()
 
     # send_email = SendWelcomeMail()
+    def usertext(self):
+        return "{0} {1}, {3} ({2})".format(
+            self.last_name, self.first_name, self.username, self.user_type)
+
+    def get_authorities(self):
+
+        if self.user_type.has_required_roles([Supervisor]):
+            users = settings.SITE.user_model.objects.exclude(
+                    user_type='').exclude(id=self.id)
+        else:
+            qs = rt.models.users.Authority.objects.filter(
+                authorized=self).exclude(user__user_type='').select_related("user")
+            qs = qs.order_by(
+                'user__last_name', 'user__first_name',
+                'user__username')
+            users = [a.user for a in qs]
+        return [(u.id, u.usertext()) for u in users]
+
 
 class Authority(UserAuthored):
     class Meta(object):

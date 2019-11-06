@@ -51,7 +51,6 @@ from lino.utils import jsgen
 from lino.utils.jsgen import py2js, js_code
 from etgen.html import E, iselement
 
-from lino.core.roles import Supervisor
 
 from lino.modlib.users.utils import get_user_profile, with_user_profile
 
@@ -472,9 +471,6 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
 
     def html_page_user(self, request, site):
         """Build the "user menu", i.e. the menu in the top right corner.
-
-        TODO: move this to :mod:`lino.modlib.users`.
-        TODO: Have react do same,
         """
         if settings.SITE.user_model is not None:
 
@@ -498,30 +494,14 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
                 yield "Lino.user = %s;" % py2js(
                     dict(id=user.id, name=str(user)))
 
-                def usertext(u):
-                    return "{0} {1}, {3} ({2})".format(
-                        u.last_name, u.first_name, u.username, u.user_type)
-
-                if user.user_type.has_required_roles([Supervisor]):
-                    authorities = [
-                        (u.id, usertext(u))
-                        for u in settings.SITE.user_model.objects.exclude(
-                            user_type='').exclude(id=user.id)]
-                else:
-                    qs = rt.models.users.Authority.objects.filter(
-                        authorized=user).exclude(user__user_type='')
-                    qs = qs.order_by(
-                        'user__last_name', 'user__first_name',
-                        'user__username')
-                    authorities = [
-                        (a.user.id, usertext(a.user)) for a in qs]
-
                 a = rt.models.users.MySettings.default_action
                 handler = self.action_call(None, a, dict(record_id=user.pk))
                 handler = "function(){%s}" % handler
                 mysettings = dict(text=_("My settings"),
                                   handler=js_code(handler))
                 login_menu_items = [mysettings]
+
+                authorities = user.get_authorities()
                 if len(authorities):
                     act_as = [
                         dict(text=t, handler=js_code(
