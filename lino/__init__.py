@@ -39,10 +39,6 @@ from os.path import join, dirname
 
 from .setup_info import SETUP_INFO
 
-# # Python 3 equivalent of "execfile(filename)":
-# filename = join(dirname(__file__), 'setup_info.py')
-# exec(compile(open(filename, "rb").read(), filename, 'exec'))
-
 __version__ = SETUP_INFO['version']
 intersphinx_urls = dict(docs="http://core.lino-framework.org")
 srcref_url = 'https://github.com/lino-framework/lino/blob/master/%s'
