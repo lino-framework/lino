@@ -210,6 +210,7 @@ class Action(Parametrizable, Permittable):
 
     """
     ui5_icon_name = None
+    react_icon_name = None
     hidden_elements = frozenset()
 
     combo_group = None
@@ -1175,7 +1176,7 @@ class ShowSlaveTable(Action):
     An action which opens a window showing another table (to be
     specified when instantiating the action).
     """
-    TABLE2ACTION_ATTRS = ('help_text', 'icon_name', 'label',
+    TABLE2ACTION_ATTRS = ('help_text', 'icon_name', 'react_icon_name', 'label',
                           'sort_index', 'required_roles', 'button_text')
     show_in_bbar = True
 
@@ -1199,7 +1200,8 @@ class ShowSlaveTable(Action):
             self.slave_table = T
         for k in self.TABLE2ACTION_ATTRS:
             if k not in self.explicit_attribs:
-                setattr(self, k, getattr(self.slave_table, k))
+                attr = getattr(self.slave_table, k, None)
+                setattr(self, k, attr)
         return super(ShowSlaveTable, self).attach_to_actor(actor, name)
 
     def run_from_ui(self, ar, **kw):
@@ -1274,7 +1276,7 @@ class DeleteSelected(MultipleRowAction):
 
         def ok(ar2):
             super(DeleteSelected, self).run_from_ui(ar, **kw)
-            ar2.success(record_deleted=True)
+            ar2.success(record_deleted=True, refresh_all=False)
 
             # hack required for extjs:
             if ar2.actor.detail_action:

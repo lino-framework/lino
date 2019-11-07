@@ -161,8 +161,7 @@ class DjangoManageTestCase(DjangoTestCase, CommonTestCase):
                 return result
             cb = result.xcallback
             self.assertEqual(cb['title'], "Confirmation")
-            self.assertEqual(cb['buttons']['yes'], 'Yes')
-            self.assertEqual(cb['buttons']['no'], 'No')
+            self.assertEqual(cb['buttons'], [[x, x.title()] for x in "yes no".split()])
             # print(extra)
             applyCallbackChoice(result, *data, "yes")
             # print(extra)
