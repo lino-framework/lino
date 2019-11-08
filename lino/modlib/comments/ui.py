@@ -73,7 +73,7 @@ class Comments(dd.Table):
         chunks = []
         for o in sar.sliced_data_iterator:
 
-            if (o.modified - o.created).total_seconds() < 1:
+            if o.modified is None or (o.modified - o.created).total_seconds() < 1:
                 t = _("Created " + o.created.strftime('%Y-%m-%d %H:%M') )
             else:
                 t = _("Modified " + o.modified.strftime('%Y-%m-%d %H:%M') )
