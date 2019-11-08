@@ -928,7 +928,10 @@ class ShowInsert(TableAction):
     http_method = "POST"
 
     def get_action_title(self, ar):
-        return _("Insert into %s") % force_text(ar.get_title())
+        # return _("Insert into %s") % force_text(ar.get_title())
+        if ar.actor.model is None:
+            return _("Insert into %s") % force_text(ar.get_title())
+        return format_lazy(_("New {}"), ar.actor.model._meta.verbose_name)
 
     def get_window_layout(self, actor):
         return actor.insert_layout or actor.detail_layout
