@@ -83,8 +83,8 @@ class Comment(CreatedModified, UserAuthored, Controllable,
         if self.owner_id:
             self.owner.on_commented(self, ar, cw)
         if dd.is_installed("memo"):
-            get_all_objects = settings.SITE.plugins.memo.parser.get_all_objects(self.body)
-            for ref_object in get_all_objects:
+            ref_objects = settings.SITE.plugins.memo.parser.get_referred_objects(self.body)
+            for ref_object in ref_objects:
                 created_mention = Mention(comment=self,
                         owner_id=ref_object.pk,
                         owner_type=ContentType.objects.get_for_model(ref_object.__class__))

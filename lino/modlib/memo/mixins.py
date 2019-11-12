@@ -105,7 +105,6 @@ class Previewable(Model):
         self.short_preview, self.full_preview = self.get_previews(ar)
 
 
-
 class PreviewableChecker(Checker):
     verbose_name = _("Check for previewables needing update")
     model = Previewable

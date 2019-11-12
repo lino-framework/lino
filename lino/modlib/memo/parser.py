@@ -144,7 +144,7 @@ class Parser(object):
         Register the given string `name` as command for referring to
         database rows of the given Django database model `model`.
 
-        Optional keyword arguments are 
+        Optional keyword arguments are
 
         - `cmd` the command handler used by :meth:`parse`
         - `rnd` the renderer function for :meth:`obj2memo`
@@ -188,7 +188,7 @@ All remaining arguments are used as the text of the link.
 
         self.register_command(name, cmd)
         self.register_renderer(model, rnd)
-            
+
     def eval_match_func(self, context):
         def func(matchobj):
             expr = matchobj.group(1)
@@ -206,13 +206,17 @@ All remaining arguments are used as the text of the link.
             return str(etree.tostring(v))
         return str(v)
 
-    def get_all_objects(self, src):
+    def get_referred_objects(self, text):
+        """Yield all database objects referred in the given `text` using a suggester.
+        """
         regex = self.compile_suggester_regex()
-        all_matchs = re.findall(regex, src)
-        res = []
+        all_matchs = re.findall(regex, text)
         for match in all_matchs:
-            res.append(self.suggesters[match[1]].get_object(match[2]))
-        return res
+            suggester = self.suggesters[match[1]]
+            try:
+                yield suggester.get_object(match[2])
+            except Exception:
+                pass  #
 
     def suggester_match_func(self, ar):
 
