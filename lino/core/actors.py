@@ -728,7 +728,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         """
         if issubclass(model, models.Model):
             try:
-                return model.objects.get(pk=pk)
+                return model.get_request_queryset(ar).get(pk=pk)
             except ValueError:
                 return None
             except model.DoesNotExist:

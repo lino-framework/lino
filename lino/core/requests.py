@@ -8,7 +8,9 @@ See introduction in :doc:`/dev/ar`.
 from builtins import str
 import six
 
-import logging ; logger = logging.getLogger(__name__)
+import logging;
+
+logger = logging.getLogger(__name__)
 
 from copy import copy
 from xml.sax.saxutils import escape
@@ -43,6 +45,7 @@ from .utils import obj2str
 from .exceptions import ChangedAPI
 
 CATCHED_AJAX_EXCEPTIONS = (Warning, exceptions.ValidationError)
+
 
 def noop(ar):
     return ar.success(gettext("Aborted"))
@@ -153,6 +156,7 @@ class ValidActionResponses(object):
     :meth:`ActorRequest.goto_instance`.
     """
 
+
 class VirtualRow(object):
 
     def __init__(self, **kw):
@@ -185,10 +189,12 @@ class PhantomRow(VirtualRow):
 inheritable_attrs = frozenset(
     'user subst_user renderer requesting_panel master_instance'.split())
 
+
 def bool2text(x):
     if x:
         return _("Yes")
     return _("No")
+
 
 class BaseRequest(object):
     """
@@ -274,7 +280,8 @@ class BaseRequest(object):
               renderer=None,
               xcallback_answers=None):
         self.requesting_panel = requesting_panel
-        self.master_instance = master_instance
+        if master_instance is not None:
+            self.master_instance = master_instance
         if user is None:
             self.user = AnonymousUser()
         else:
@@ -320,7 +327,10 @@ class BaseRequest(object):
             selected = rqdata.getlist(constants.URL_PARAM_SELECTED)
             kw.update(selected_pks=selected)
 
-        kw.update(xcallback_answers= { id:rqdata[id] for id in [callbackID for callbackID in rqdata.keys() if callbackID.startswith("xcallback__")]})
+
+
+        kw.update(xcallback_answers={id: rqdata[id] for id in [callbackID for callbackID in rqdata.keys() if
+                                                               callbackID.startswith("xcallback__")]})
 
         #~ if settings.SITE.user_model:
             #~ username = rqdata.get(constants.URL_PARAM_SUBST_USER,None)
@@ -411,7 +421,7 @@ class BaseRequest(object):
             kw[n] = getattr(models, n)
 
         if False:  # 20150803 why was this?  It disturbed e.g. for the bs3
-                   # language selector.
+            # language selector.
             sar = copy(self)
             sar.renderer = settings.SITE.kernel.html_renderer
             kw['ar'] = sar
@@ -433,7 +443,7 @@ class BaseRequest(object):
             bool2text=bool2text,
             bool2js=lambda b: "true" if b else "false",
             unicode=str,  # backwards-compatibility. In new template
-                          # you should prefer `str`.
+            # you should prefer `str`.
             pgettext=pgettext,
             now=timezone.now(),
             getattr=getattr,
@@ -448,6 +458,7 @@ class BaseRequest(object):
             kw.pop('self', None)
             return dd.plugins.jinja.renderer.jinja_env.from_string(
                 s).render(**kw)
+
         kw.update(parse=parse)
         return kw
 
@@ -456,7 +467,7 @@ class BaseRequest(object):
         Given a tuple of primary keys, set :attr:`selected_rows` to a list
         of corresponding database objects.
         """
-        #~ print 20131003, selected_pks
+        # ~ print 20131003, selected_pks
         self.selected_rows = []
         for pk in selected_pks:
             if pk:
@@ -621,7 +632,6 @@ class BaseRequest(object):
                 return ok_func(self)
             else:
                 return noop(self)
-
 
     def parse_memo(self, txt, **context):
         return settings.SITE.plugins.memo.parser.parse(txt, self, context)
@@ -799,7 +809,7 @@ class BaseRequest(object):
           {{ar.show('users.UsersOverview')}}
         """
         from lino.utils.report import Report
-        #from lino.core.actors import Actor
+        # from lino.core.actors import Actor
 
         if master_instance is not None:
             kwargs.update(master_instance=master_instance)
@@ -810,7 +820,7 @@ class BaseRequest(object):
             assert not kwargs
             ar = spec
         else:
-            #assert isinstance(spec, type) and issubclass(spec, Actor)
+            # assert isinstance(spec, type) and issubclass(spec, Actor)
             ar = self.spawn(spec, **kwargs)
             # return self.renderer.show_story(spec, **kwargs)
 
@@ -849,7 +859,6 @@ class BaseRequest(object):
         else:
             return self.show_story(
                 self.get_user().get_preferences().dashboard_items)
-
 
     def show_menu(self, language=None, **kwargs):
         """Show the main menu for the requesting user using the requested
@@ -957,7 +966,7 @@ class BaseRequest(object):
         return self.renderer.row_action_button_ar(obj, self, *args, **kw)
 
     def plain_toolbar_buttons(self, **btnattrs):
-        #btnattrs = {'class': "plain-toolbar"}
+        # btnattrs = {'class': "plain-toolbar"}
         cls = self.actor
         buttons = []
         if cls is not None:
@@ -1154,7 +1163,7 @@ class ActorRequest(BaseRequest):
         #    and not self.actor.force_phantom_row:
         #     return
         if self.create_kw is None or not self.actor.editable \
-           or not self.actor.allow_create:
+                or not self.actor.allow_create:
             return
         if not self.actor.get_create_permission(self):
             return
@@ -1177,11 +1186,11 @@ class ActorRequest(BaseRequest):
         if self.actor.handle_uploaded_files is not None:
             files = self.request.FILES.getlist("file")
             for f in files:
-                e = self.create_instance( **kwargs)
+                e = self.create_instance(**kwargs)
                 self.actor.handle_uploaded_files(e, self.request, file=f)
                 elems.append(e)
         else:
-            elems.append(self.create_instance( **kwargs))
+            elems.append(self.create_instance(**kwargs))
 
         if self.request is not None:
             for e in elems:
@@ -1191,7 +1200,7 @@ class ActorRequest(BaseRequest):
         return elems
 
     def create_instance_from_request(self, **kwargs):
-        elem = self.create_instance( **kwargs)
+        elem = self.create_instance(**kwargs)
         if self.actor.handle_uploaded_files is not None:
             self.actor.handle_uploaded_files(elem, self.request)
 
@@ -1329,10 +1338,10 @@ class ActionRequest(ActorRequest):
               action_param_values={},
               **kw):
         BaseRequest.setup(self, **kw)
-        #~ 20120111
-        #~ self.known_values = known_values or self.report.known_values
-        #~ if self.report.known_values:
-        #~ d = dict(self.report.known_values)
+        # ~ 20120111
+        # ~ self.known_values = known_values or self.report.known_values
+        # ~ if self.report.known_values:
+        # ~ d = dict(self.report.known_values)
         kv = dict()
         for k, v in list(self.actor.known_values.items()):
             kv.setdefault(k, v)
@@ -1429,9 +1438,8 @@ class ActionRequest(ActorRequest):
 
     def get_base_filename(self):
         return six.text_type(self.actor)
-        #~ s = self.get_title()
-        #~ return s.encode('us-ascii','replace')
-
+        # ~ s = self.get_title()
+        # ~ return s.encode('us-ascii','replace')
 
 
 class InstanceAction(object):
@@ -1453,8 +1461,8 @@ class InstanceAction(object):
     """
 
     def __init__(self, action, actor, instance, owner):
-        #~ print "Bar"
-        #~ self.action = action
+        # ~ print "Bar"
+        # ~ self.action = action
         self.bound_action = actor.get_action_by_name(action.action_name)
         if self.bound_action is None:
             raise Exception("%s has not action %r" % (actor, action))

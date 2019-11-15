@@ -14,6 +14,7 @@ from past.utils import old_div
 import six
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 from types import GeneratorType
@@ -42,9 +43,9 @@ WARNINGS_LOGGED = dict()
 
 
 def column_header(col):
-        #~ if col.label:
-            #~ return join_elems(col.label.split('\n'),sep=E.br)
-        #~ return [unicode(col.name)]
+    # ~ if col.label:
+    # ~ return join_elems(col.label.split('\n'),sep=E.br)
+    # ~ return [unicode(col.name)]
     label = col.get_label()
     if label is None:
         return col.name
@@ -85,7 +86,7 @@ class TableRequest(ActionRequest):
             if self._data_iterator is None:
                 raise Exception("No data iterator for {}".format(self))
         except Warning as e:
-            #~ logger.info("20130809 Warning %s",e)
+            # ~ logger.info("20130809 Warning %s",e)
             self.no_data_text = six.text_type(e)
             self._data_iterator = []
         except Exception as e:
@@ -117,9 +118,9 @@ class TableRequest(ActionRequest):
                 offset = self.limit * page
                 # offset = max_offset - self.offset
                 self._sliced_data_iterator = self._sliced_data_iterator[
-                    offset:]
+                                             offset:]
                 self._sliced_data_iterator = self._sliced_data_iterator[
-                    :self.limit]
+                                             :self.limit]
         else:
             if self.offset is not None:
                 offset = self.offset
@@ -129,10 +130,10 @@ class TableRequest(ActionRequest):
                     page_num = int(old_div(num, self.limit))
                     offset = self.limit * page_num
                 self._sliced_data_iterator = self._sliced_data_iterator[
-                    offset:]
+                                             offset:]
             if self.limit is not None and self.limit != 0:
                 self._sliced_data_iterator = self._sliced_data_iterator[
-                    :self.limit]
+                                             :self.limit]
         # logger.info("20171116 executed : %s", self._sliced_data_iterator)
 
     def must_execute(self):
@@ -159,8 +160,8 @@ class TableRequest(ActionRequest):
                 group = self.actor.group_from_row(row)
                 group.process_row(l, row)
             return l
-        #~ logger.info("20120914 tables.get_data_iterator %s",self)
-        #~ logger.info("20120914 tables.get_data_iterator %s",self.actor)
+        # ~ logger.info("20120914 tables.get_data_iterator %s",self)
+        # ~ logger.info("20120914 tables.get_data_iterator %s",self.actor)
         # print("20181121 get_data_iterator", self.actor)
         return self.actor.get_request_queryset(self)
 
@@ -176,8 +177,8 @@ class TableRequest(ActionRequest):
             #     return di.count()
             # except Exception as e:
             #     raise e.__class__("{} : {}".format(self, e))
-        #~ if di is None:
-            #~ raise Exception("data_iterator is None: %s" % self)
+        # ~ if di is None:
+        # ~ raise Exception("data_iterator is None: %s" % self)
         if False:
             return len(di)
         else:
@@ -211,42 +212,11 @@ class TableRequest(ActionRequest):
 
         """
         # logger.info("20120723 %s.parse_req() %s", self.actor, rqdata)
-        #~ rh = self.ah
-        master = kw.get('master', self.actor.master)
-        if master is not None:
+        # ~ rh = self.ah
+        if "master_instance" not in kw:
+            kw.update(master_mt=rqdata.get(constants.URL_PARAM_MASTER_TYPE, None),
+                      master_mk=rqdata.get(constants.URL_PARAM_MASTER_PK, None))
 
-            if not isinstance(master, type):
-                raise Exception("20150216 not a type: %r" % master)
-            if settings.SITE.is_installed('contenttypes'):
-                from django.contrib.contenttypes.models import ContentType
-                if issubclass(master, models.Model) and (
-                        master is ContentType or master._meta.abstract):
-                    mt = rqdata.get(constants.URL_PARAM_MASTER_TYPE)
-                    try:
-                        master = kw['master'] = ContentType.objects.get(
-                            pk=mt).model_class()
-                    except ContentType.DoesNotExist:
-                        pass
-                        # master is None
-
-            if 'master_instance' not in kw:
-                pk = rqdata.get(constants.URL_PARAM_MASTER_PK, None)
-                #~ print '20100406a', self.actor,URL_PARAM_MASTER_PK,"=",pk
-                #~ if pk in ('', '-99999'):
-                if pk == '':
-                    pk = None
-                if pk is None:
-                    kw['master_instance'] = None
-                else:
-                    mi = self.actor.get_master_instance(self, master, pk)
-                    if mi is None:
-                        raise ObjectDoesNotExist(
-                            "Invalid master key {0} for {1}".format(
-                                pk, self.actor))
-                    kw['master_instance'] = mi
-
-                # ~ print '20100212', self #, kw['master_instance']
-        #~ print '20100406b', self.actor,kw
 
         if settings.SITE.use_filterRow:
             exclude = dict()
@@ -281,11 +251,11 @@ class TableRequest(ActionRequest):
 
         kw = ActionRequest.parse_req(self, request, rqdata, **kw)
 
-        #~ kw.update(self.report.known_values)
-        #~ for fieldname, default in self.report.known_values.items():
-            #~ v = request.REQUEST.get(fieldname,None)
-            #~ if v is not None:
-                #~ kw[fieldname] = v
+        # ~ kw.update(self.report.known_values)
+        # ~ for fieldname, default in self.report.known_values.items():
+        # ~ v = request.REQUEST.get(fieldname,None)
+        # ~ if v is not None:
+        # ~ kw[fieldname] = v
 
         quick_search = rqdata.get(constants.URL_PARAM_FILTER, None)
         if quick_search:
@@ -302,10 +272,11 @@ class TableRequest(ActionRequest):
                 sort = [sort]
             if sort is not None:
                 def si(k):
-                   if k[0] == '-':
-                       return k[1:]
-                   else:
-                       return '-' + k 
+                    if k[0] == '-':
+                        return k[1:]
+                    else:
+                        return '-' + k
+
                 sort_dir = rqdata.get(constants.URL_PARAM_SORTDIR, 'ASC')
                 if sort_dir == 'DESC':
                     sort = [si(k) for k in sort]
@@ -336,7 +307,9 @@ class TableRequest(ActionRequest):
               offset=None, limit=None,
               master=None,
               title=None,
-              master_id=None,
+              master_instance=None,
+              master_mk=None,
+              master_mt=None,
               filter=None,
               gridfilters=None,
               exclude=None,
@@ -346,7 +319,7 @@ class TableRequest(ActionRequest):
         self.quick_search = quick_search
         self.order_by = order_by
 
-        #~ logger.info("20120519 %s.setup()",self)
+        # ~ logger.info("20120519 %s.setup()",self)
         self.filter = filter
         self.gridfilters = gridfilters
         self.exclude = exclude or self.actor.exclude
@@ -357,19 +330,22 @@ class TableRequest(ActionRequest):
             # master might still be None
         self.master = master
 
+
         if title is not None:
             self.title = title
 
-        if master_id is not None:
+        if "master_id" in kw:
             raise Exception("20150218 deprecated?")
             # assert master_instance is None
             # master_instance = self.master.objects.get(pk=master_id)
 
         self.page_length = self.actor.page_length
 
-        #~ logger.info("20120121 %s.setup() done",self)
+        # ~ logger.info("20120121 %s.setup() done",self)
 
         ActionRequest.setup(self, **kw)
+
+        self.master_instance = master_instance or self.get_master_instance(master, master_mk, master_mt)
 
         self.actor.setup_request(self)
 
@@ -385,7 +361,35 @@ class TableRequest(ActionRequest):
 
         if limit is not None:
             self.limit = limit
-            
+
+    def get_master_instance(self, master, mk, mt):
+        master_instance = None
+        if master is not None:
+            if not isinstance(master, type):
+                raise Exception("20150216 not a type: %r" % master)
+
+            # Convert MT to class
+            if settings.SITE.is_installed('contenttypes'):
+                from django.contrib.contenttypes.models import ContentType
+                if (issubclass(master, models.Model)
+                        and (master is ContentType or master._meta.abstract)
+                        and mt is not None):
+                    try:
+                        master = ContentType.objects.get(
+                            pk=mt).model_class()
+                    except ContentType.DoesNotExist:
+                        pass
+                        # master is None
+            pk = mk
+            if pk == '':
+                pk = None
+            if pk is not None:
+                master_instance = self.actor.get_master_instance(self, master, pk)
+                if master_instance is None:
+                    raise ObjectDoesNotExist(
+                        "Invalid master key {0} for {1}".format(
+                            pk, self.actor))
+        return master_instance
 
     def to_rst(self, *args, **kw):
         """Returns a string representing this table request in
@@ -465,13 +469,13 @@ class TableRequest(ActionRequest):
             # if cellwidths and self.renderer.is_interactive:
             if cellwidths:
                 totwidth = sum([int(w) for w in cellwidths])
-                widths = [str(int(int(w)*100/totwidth))+"%"
-                        for w in cellwidths]
+                widths = [str(int(int(w) * 100 / totwidth)) + "%"
+                          for w in cellwidths]
                 for i, td in enumerate(headers):
                     # td.set('width', six.text_type(cellwidths[i]))
                     td.set('width', widths[i])
             tble.head.append(xghtml.E.tr(*headers))
-        #~ print 20120623, ar.actor
+        # ~ print 20120623, ar.actor
         recno = 0
         for obj in data_iterator:
             cells = ar.row2html(
@@ -545,7 +549,7 @@ class TableRequest(ActionRequest):
                     columns = [e for e in columns if not e.hidden]
                 else:
                     ah = ar.actor.get_request_handle(ar)
-                    
+
                     columns = ah.list_layout.main.columns
                     # print(20160530, ah, columns, ah.list_layout.main)
 
@@ -559,25 +563,25 @@ class TableRequest(ActionRequest):
                     #     raise AttributeError("20160529 %s : %s" % (e, ex))
                 #
                 columns = [e for e in columns if not
-                           e.value.get('hidden', False)]
+                e.value.get('hidden', False)]
 
                 columns = [e for e in columns if not e.hidden]
 
                 # if str(ar.actor) == "isip.ExamPolicies":
-                    # from lino.modlib.extjs.elems import is_hidden_babel_field
-                    # print("20180103", [c.name for c in columns])
-                    # print("20180103", [c.field for c in columns])
-                    # print("20180103", [c.value['hidden'] for c in columns])
-                    # print("20180103", [
-                    #     is_hidden_babel_field(c.field) for c in columns])
-                    # print("20180103", [
-                    #     getattr(c.field, '_babel_language', None)
-                    #     for c in columns])
+                # from lino.modlib.extjs.elems import is_hidden_babel_field
+                # print("20180103", [c.name for c in columns])
+                # print("20180103", [c.field for c in columns])
+                # print("20180103", [c.value['hidden'] for c in columns])
+                # print("20180103", [
+                #     is_hidden_babel_field(c.field) for c in columns])
+                # print("20180103", [
+                #     getattr(c.field, '_babel_language', None)
+                #     for c in columns])
                 widths = ["%d" % (col.width or col.preferred_width)
                           for col in columns]
                 # print("20180831 {}".format(widths))
-                #~ 20130415 widths = ["%d%%" % (col.width or col.preferred_width) for col in columns]
-                #~ fields = [col.field._lino_atomizer for col in columns]
+                # ~ 20130415 widths = ["%d%%" % (col.width or col.preferred_width) for col in columns]
+                # ~ fields = [col.field._lino_atomizer for col in columns]
                 fields = columns
 
             headers = [column_header(col) for col in fields]
@@ -591,10 +595,10 @@ class TableRequest(ActionRequest):
                     header = oh.get(e.name, None)
                     if header is not None:
                         headers[i] = header
-                #~ print 20120507, oh, headers
+                # ~ print 20120507, oh, headers
 
             return fields, headers, widths
-    
+
         u = ar.get_user()
         if u is None:
             return getit()
@@ -643,9 +647,9 @@ class TableRequest(ActionRequest):
                 else:
                     getter = sf.full_value_from_object
                     v = getter(row, self)
-                    
+
                 if v is None:
-                # if not v:
+                    # if not v:
                     yield ''
                 else:
                     sums[i] += fld.value2num(v)
@@ -692,7 +696,7 @@ class TableRequest(ActionRequest):
             if isinstance(self.master_instance, (models.Model, TableRow)):
                 bp[constants.URL_PARAM_MASTER_PK] = self.master_instance.pk
                 if (isinstance(self.master_instance, models.Model) and
-                              settings.SITE.is_installed('contenttypes')):
+                        settings.SITE.is_installed('contenttypes')):
                     from django.contrib.contenttypes.models import ContentType
                     mt = ContentType.objects.get_for_model(
                         self.master_instance.__class__).pk
@@ -703,7 +707,7 @@ class TableRequest(ActionRequest):
                 #                    ContentType)
             else:  # if self.master is None:
                 bp[constants.URL_PARAM_MASTER_PK] = self.master_instance
-            
+
         return kw
 
     def __repr__(self):
@@ -723,5 +727,3 @@ class TableRequest(ActionRequest):
             kw.update(request=format_request(self.request))
         return "<%s %s(%s)>" % (
             self.__class__.__name__, self.bound_action.full_name(), kw)
-
-
