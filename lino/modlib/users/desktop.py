@@ -72,6 +72,7 @@ class Users(dd.Table):
     #~ order_by = "last_name first_name".split()
     order_by = ["username"]
     active_fields = 'partner'
+    required_roles = dd.login_required(SiteAdmin)
 
     parameters = dict(
         user_type=UserTypes.field(blank=True))
@@ -104,7 +105,6 @@ class Users(dd.Table):
 
 
 class AllUsers(Users):
-    required_roles = dd.login_required(SiteAdmin)
     send_welcome_email = SendWelcomeMail()
 
 class UsersOverview(Users):

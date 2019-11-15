@@ -159,6 +159,9 @@ class User(AbstractBaseUser, Contactable, CreatedModified, DateRange,
         rv = super(User, self).disabled_fields(ar)
         user = ar.get_user()
         if not user.user_type.has_required_roles([SiteAdmin]):
+            if not dd.is_installed("online"): 
+                rv.add("submit_insert")
+                rv.add("insert")
             rv.add('send_email')
             rv.add('user_type')
             if user != self:
