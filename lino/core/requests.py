@@ -1351,6 +1351,7 @@ class ActionRequest(ActorRequest):
 
         request = self.request
 
+        # Must have master instance already
         if self.actor.parameters is not None:
             pv = self.actor.param_defaults(self)
 

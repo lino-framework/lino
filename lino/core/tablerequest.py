@@ -342,10 +342,9 @@ class TableRequest(ActionRequest):
         self.page_length = self.actor.page_length
 
         # ~ logger.info("20120121 %s.setup() done",self)
+        self.master_instance = master_instance or self.get_master_instance(master, master_mk, master_mt)
 
         ActionRequest.setup(self, **kw)
-
-        self.master_instance = master_instance or self.get_master_instance(master, master_mk, master_mt)
 
         self.actor.setup_request(self)
 
