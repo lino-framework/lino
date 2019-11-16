@@ -28,7 +28,7 @@ from django.utils.translation import get_language, activate
 from django.utils import translation
 from django.utils import timezone
 from django.core import exceptions
-
+from django.db import models
 from lino.core import constants
 from lino.utils import AttrDict
 from etgen.html import E, tostring, iselement
@@ -274,14 +274,15 @@ class BaseRequest(object):
               current_project=None,
               selected_pks=None,
               selected_rows=None,
+              master=None,
               master_instance=None,
+              master_mk=None,
+              master_mt=None,
               limit=None,
               requesting_panel=None,
               renderer=None,
               xcallback_answers=None):
         self.requesting_panel = requesting_panel
-        if master_instance is not None:
-            self.master_instance = master_instance
         if user is None:
             self.user = AnonymousUser()
         else:
@@ -298,6 +299,9 @@ class BaseRequest(object):
             self.set_selected_pks(*selected_pks)
         if xcallback_answers is not None:
             self.xcallback_answers = xcallback_answers
+
+        self.master = master if master is not None else self.actor.master if self.actor is not None else None
+        self.master_instance = master_instance if  master_instance is not None else self.get_master_instance(self.master, master_mk, master_mt)
 
     def parse_req(self, request, rqdata, **kw):
         """
@@ -476,6 +480,35 @@ class BaseRequest(object):
                     self.selected_rows.append(obj)
         # self.selected_rows = filter(lambda x: x, self.selected_rows)
         # note: ticket #523 was because the GET contained an empty pk ("&sr=")
+
+    def get_master_instance(self, master, mk, mt):
+        master_instance = None
+        if master is not None:
+            if not isinstance(master, type):
+                raise Exception("20150216 not a type: %r" % master)
+
+            # Convert MT to class
+            if settings.SITE.is_installed('contenttypes'):
+                from django.contrib.contenttypes.models import ContentType
+                if (issubclass(master, models.Model)
+                        and (master is ContentType or master._meta.abstract)
+                        and mt is not None):
+                    try:
+                        master = ContentType.objects.get(
+                            pk=mt).model_class()
+                    except ContentType.DoesNotExist:
+                        pass
+                        # master is None
+            pk = mk
+            if pk == '':
+                pk = None
+            if pk is not None:
+                master_instance = self.actor.get_master_instance(self, master, pk)
+                if master_instance is None:
+                    raise exceptions.ObjectDoesNotExist(
+                        "Invalid master key {0} for {1}".format(
+                            pk, self.actor))
+        return master_instance
 
     def get_permission(self):
         """

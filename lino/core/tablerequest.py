@@ -305,11 +305,7 @@ class TableRequest(ActionRequest):
               quick_search=None,
               order_by=None,
               offset=None, limit=None,
-              master=None,
               title=None,
-              master_instance=None,
-              master_mk=None,
-              master_mt=None,
               filter=None,
               gridfilters=None,
               exclude=None,
@@ -325,12 +321,6 @@ class TableRequest(ActionRequest):
         self.exclude = exclude or self.actor.exclude
         self.extra = extra
 
-        if master is None:
-            master = self.actor.master
-            # master might still be None
-        self.master = master
-
-
         if title is not None:
             self.title = title
 
@@ -342,7 +332,6 @@ class TableRequest(ActionRequest):
         self.page_length = self.actor.page_length
 
         # ~ logger.info("20120121 %s.setup() done",self)
-        self.master_instance = master_instance or self.get_master_instance(master, master_mk, master_mt)
 
         ActionRequest.setup(self, **kw)
 
@@ -361,34 +350,6 @@ class TableRequest(ActionRequest):
         if limit is not None:
             self.limit = limit
 
-    def get_master_instance(self, master, mk, mt):
-        master_instance = None
-        if master is not None:
-            if not isinstance(master, type):
-                raise Exception("20150216 not a type: %r" % master)
-
-            # Convert MT to class
-            if settings.SITE.is_installed('contenttypes'):
-                from django.contrib.contenttypes.models import ContentType
-                if (issubclass(master, models.Model)
-                        and (master is ContentType or master._meta.abstract)
-                        and mt is not None):
-                    try:
-                        master = ContentType.objects.get(
-                            pk=mt).model_class()
-                    except ContentType.DoesNotExist:
-                        pass
-                        # master is None
-            pk = mk
-            if pk == '':
-                pk = None
-            if pk is not None:
-                master_instance = self.actor.get_master_instance(self, master, pk)
-                if master_instance is None:
-                    raise ObjectDoesNotExist(
-                        "Invalid master key {0} for {1}".format(
-                            pk, self.actor))
-        return master_instance
 
     def to_rst(self, *args, **kw):
         """Returns a string representing this table request in
