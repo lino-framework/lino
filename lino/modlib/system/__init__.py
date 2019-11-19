@@ -1,15 +1,8 @@
-# Copyright 2014-2018 Rumma & Ko Ltd
+# Copyright 2014-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-"""Defines some system models, especially the :class:`SiteConfig` model.
-
-This plugin is installed in most Lino applications.
-
-.. autosummary::
-   :toctree:
-
-   choicelists
-   models
+"""Defines some "system features", especially the :class:`SiteConfig` model.
+See :doc:`/specs/system`.
 
 
 """
@@ -30,7 +23,7 @@ class Plugin(ad.Plugin):
     def setup_config_menu(self, site, user_type, m):
         system = m.add_menu(self.app_label, self.verbose_name)
         system.add_instance_action(site.site_config)
-        
+
 
     def on_site_startup(self, site):
         super(Plugin, self).on_site_startup(site)
@@ -49,4 +42,3 @@ class Plugin(ad.Plugin):
                     yield E.div(*chunks)
 
             site.add_welcome_handler(welcome_messages)
-

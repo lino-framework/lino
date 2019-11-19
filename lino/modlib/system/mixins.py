@@ -12,18 +12,6 @@ from lino.core.utils import resolve_fields_list, models_by_base
 
 
 class Lockable(dd.Model):
-    """
-    Mixin to add row-level edit locking to any model.
-
-    Models with row-level edit locking are not editable in detail view
-    by default.  All form fields are disabled. The user must click
-    :guilabel:`Edit` in order to request an edit lock for that row.
-    This will enable all fields (except those which are disabled for
-    some other reason).
-
-    Caveats: locking a row and then navigating away without changing
-    anything will leave the row locked.
-    """
     lockable_fields = None
 
     locked_by = dd.ForeignKey(

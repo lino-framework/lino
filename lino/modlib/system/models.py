@@ -2,9 +2,6 @@
 # Copyright 2009-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-"""
-Database models for this plugin.
-"""
 from builtins import object
 from builtins import str
 
@@ -31,11 +28,6 @@ from .mixins import Lockable
 
 
 class BuildSiteCache(dd.Action):
-
-    """
-    Rebuild the site cache.
-    This action is available on :class:`About`.
-    """
     label = _("Rebuild site cache")
     url_action_name = "buildjs"
 
@@ -52,20 +44,6 @@ Please report any anomalies.""",
 
 
 class SiteConfigManager(models.Manager):
-    """
-    Always return the cached instance which holds the one and only
-    database instance.
-
-    This is to avoid the following situation:
-
-    - User 1 opens the :menuselection:`Configure --> System--> System
-      Parameters` dialog
-    - User 2 creates a new Person (which increases `next_partner_id`)
-    - User 1 clicks on `Save`.
-
-    `next_partner_id` may not get overwritten by its old value when
-    User 1 clicks "Save".
-    """ 
 
     def get(self, *args, **kwargs):
         return settings.SITE.site_config
@@ -73,46 +51,6 @@ class SiteConfigManager(models.Manager):
 
 @dd.python_2_unicode_compatible
 class SiteConfig(dd.Model):
-    """
-    This model has exactly one instance, used to store persistent
-    global site parameters.  Application code sees this instance as
-    the :attr:`settings.SITE.site_config
-    <lino.core.site.Site.site_config>` property.
-
-    .. attribute:: default_build_method
-
-        The default build method to use when rendering printable documents.
-
-        If this field is empty, Lino uses the value found in
-        :attr:`lino.core.site.Site.default_build_method`.
-
-    .. attribute:: simulate_today
-
-        A constant user-defined date to be substituted as current
-        system date.
-
-        This should be empty except in situations such as *a
-        posteriori* data entry in a prototype.
-
-    .. attribute:: site_company
-
-        The organisation who runs this site.  This is used e.g. when
-        printing your address in certain documents or reports.  Or
-        newly created partners inherit the country of the site owner.
-
-        If no plugin named 'contacts' is intalled, then this is a
-        dummy field which always contains `None`.
-
-
-    .. attribute:: hide_events_before
-
-        If this is not empty, any calendar events before that date are
-        being hidden in certain places.
-
-        For example OverdueEvents, EntriesByController, ...
-
-        Injected by :mod:`lino_xl.lib.cal`.
-    """
 
     class Meta(object):
         abstract = dd.is_abstract_model(__name__, 'SiteConfig')
@@ -133,7 +71,7 @@ class SiteConfig(dd.Model):
         blank=True, null=True,
         verbose_name=_("Site owner"),
         related_name='site_company_sites')
-    
+
 
     def __str__(self):
         return force_text(_("Site Parameters"))
@@ -175,11 +113,6 @@ models.signals.post_migrate.connect(my_handler)
 
 class SiteConfigs(dd.Table):
 
-    """
-    The table used to present the :class:`SiteConfig` row in a Detail form.
-    See also :meth:`lino.Lino.get_site_config`.
-    Deserves more documentation.
-    """
     model = 'system.SiteConfig'
     required_roles = dd.login_required(SiteStaff)
     # default_action = actions.ShowDetail()
@@ -195,7 +128,7 @@ class SiteConfigs(dd.Table):
     def get_default_action(cls):
         return actions.ShowDetail(cls.detail_layout)
 
-    
+
 
     do_build = BuildSiteCache()
 
