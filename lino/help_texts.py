@@ -814,11 +814,8 @@ one for each month."""),
     'lino.modlib.system.Lockable' : _("""Mixin to add row-level edit locking to any model."""),
     'lino.modlib.system.BuildSiteCache' : _("""Rebuild the site cache.
 This action is available on About."""),
-    'lino.modlib.system.SiteConfigs' : _("""The table used to present the SiteConfig row in a Detail form.
-See also lino.core.site.Site.get_site_config()."""),
-    'lino.modlib.system.SiteConfig' : _("""This model has exactly one instance, used to store persistent
-global site parameters.  Application code sees this instance as
-the settings.SITE.site_config property."""),
+    'lino.modlib.system.SiteConfigs' : _("""The table used to present the SiteConfig row in a Detail form."""),
+    'lino.modlib.system.SiteConfig' : _("""A singleton database object used to store persistent site parameters."""),
     'lino.modlib.system.SiteConfig.default_build_method' : _("""The default build method to use when rendering printable documents."""),
     'lino.modlib.system.SiteConfig.simulate_today' : _("""A constant user-defined date to be substituted as current
 system date."""),
