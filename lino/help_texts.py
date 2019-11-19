@@ -334,37 +334,6 @@ according to remove_after."""),
     'lino.modlib.summaries.Plugin.start_year' : _("""The first year for which summaries should be computed."""),
     'lino.modlib.summaries.Plugin.end_year' : _("""The last year for which summaries should be computed."""),
     'lino.modlib.system.Plugin' : _("""See /dev/plugins."""),
-    'lino.modlib.system.YesNo' : _("""A choicelist with two values "Yes" and "No"."""),
-    'lino.modlib.system.Genders' : _("""Defines the two possible choices "male" and "female"
-for the gender of a person."""),
-    'lino.modlib.system.ObservedEvent' : _("""Base class for choices of "observed event"-style choicelists."""),
-    'lino.modlib.system.ObservedEvent.add_filter' : _("""Add a filter to the given Django queryset. The given obj must be
-either a datetime.date object or must have two attributes
-start_date and end_date. The easiest way is to have it an
-instance of DateRange or DateRangeValue."""),
-    'lino.modlib.system.PeriodEvents' : _("""The list of things you can observe on a
-lino.mixins.periods.DateRange."""),
-    'lino.modlib.system.BuildSiteCache' : _("""Rebuild the site cache.
-This action is available on About."""),
-    'lino.modlib.system.SiteConfigManager' : _("""Always return the cached instance which holds the one and only
-database instance."""),
-    'lino.modlib.system.SiteConfig' : _("""This model has exactly one instance, used to store persistent
-global site parameters.  Application code sees this instance as
-the settings.SITE.site_config property."""),
-    'lino.modlib.system.SiteConfig.default_build_method' : _("""The default build method to use when rendering printable documents."""),
-    'lino.modlib.system.SiteConfig.simulate_today' : _("""A constant user-defined date to be substituted as current
-system date."""),
-    'lino.modlib.system.SiteConfig.site_company' : _("""The organisation who runs this site.  This is used e.g. when
-printing your address in certain documents or reports.  Or
-newly created partners inherit the country of the site owner."""),
-    'lino.modlib.system.SiteConfig.hide_events_before' : _("""If this is not empty, any calendar events before that date are
-being hidden in certain places."""),
-    'lino.modlib.system.SiteConfig.update' : _("""Set some field of the SiteConfig object and store it to the
-database."""),
-    'lino.modlib.system.SiteConfigs' : _("""The table used to present the SiteConfig row in a Detail form.
-See also lino.Lino.get_site_config().
-Deserves more documentation."""),
-    'lino.modlib.system.SiteConfigs.model' : _("""alias of SiteConfig"""),
     'lino.modlib.tinymce.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.tinymce.Plugin.document_domain' : _("""The domain name of this production site."""),
     'lino.modlib.tinymce.Plugin.window_width' : _("""The initial width of the window to use when editing in own
@@ -694,7 +663,7 @@ subclasses."""),
     'lino.modlib.gkfs.ContentTypes' : _("""Lino installs this as the default table for
 django.contrib.ContentType."""),
     'lino.modlib.gkfs.ContentTypes.base_classes' : _("""Display a clickable list of all MTI parents, i.e. base models"""),
-    'lino.modlib.gkfs.HelpText' : _("""A custom help text to be displayed for a given field."""),
+    'lino.modlib.gkfs.HelpText' : _("""Django model to represent a customized help text."""),
     'lino.modlib.gkfs.BrokenGFKs' : _("""Shows all database objects who have a broken GeneriForeignKey field."""),
     'lino.modlib.gkfs.GenericForeignKey' : _("""Add verbose_name and help_text to Django's GFK."""),
     'lino.modlib.gkfs.GenericForeignKeyIdField' : _("""Use this instead of models.PositiveIntegerField for fields that
@@ -842,6 +811,35 @@ one for each month."""),
     'lino.modlib.summaries.MonthlySlaveSummary' : _("""A combination of SlaveSummary and MonthlySummarized."""),
     'lino.modlib.summaries.CheckSummaries' : _("""Web UI version of checksummaries."""),
     'lino.modlib.summaries.UpdateSummariesByMaster' : _("""Update summary data for this object."""),
+    'lino.modlib.system.Lockable' : _("""Mixin to add row-level edit locking to any model."""),
+    'lino.modlib.system.BuildSiteCache' : _("""Rebuild the site cache.
+This action is available on About."""),
+    'lino.modlib.system.SiteConfigs' : _("""The table used to present the SiteConfig row in a Detail form.
+See also lino.core.site.Site.get_site_config()."""),
+    'lino.modlib.system.SiteConfig' : _("""This model has exactly one instance, used to store persistent
+global site parameters.  Application code sees this instance as
+the settings.SITE.site_config property."""),
+    'lino.modlib.system.SiteConfig.default_build_method' : _("""The default build method to use when rendering printable documents."""),
+    'lino.modlib.system.SiteConfig.simulate_today' : _("""A constant user-defined date to be substituted as current
+system date."""),
+    'lino.modlib.system.SiteConfig.site_company' : _("""The organisation who runs this site.  This is used e.g. when
+printing your address in certain documents or reports.  Or
+newly created partners inherit the country of the site owner."""),
+    'lino.modlib.system.SiteConfig.hide_events_before' : _("""If this is not empty, any calendar events before that date are
+being hidden in certain places."""),
+    'lino.modlib.system.SiteConfigManager' : _("""Always return the cached instance which holds the one and only
+database instance."""),
+    'lino.modlib.system.BleachChecker' : _("""A data checker used to find unbleached html content."""),
+    'lino.modlib.system.Genders' : _("""Defines the two possible choices "male" and "female"
+for the gender of a person."""),
+    'lino.modlib.system.YesNo' : _("""A choicelist with two values "Yes" and "No"."""),
+    'lino.modlib.system.ObservedEvent' : _("""Base class for choices of "observed event"-style choicelists."""),
+    'lino.modlib.system.ObservedEvent.add_filter' : _("""Add a filter to the given Django queryset. The given obj must be
+either a datetime.date object or must have two attributes
+start_date and end_date. The easiest way is to have it an
+instance of DateRange or DateRangeValue."""),
+    'lino.modlib.system.PeriodEvents' : _("""The list of things you can observe on a
+lino.mixins.periods.DateRange."""),
     'lino.modlib.tinymce.TextFieldTemplate' : _("""A reusable block of text that can be selected from a text editor to
 be inserted into the text being edited."""),
     'lino.modlib.uploads.Upload' : _("""Django model representing an upload."""),
