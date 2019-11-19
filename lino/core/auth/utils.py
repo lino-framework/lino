@@ -34,10 +34,11 @@ class AnonymousUser(SimpleSingleton):
     language = None
     readonly = True
     pk = None
+    id = None
     time_zone =  None
     notify_myself = False
     user_type = None
-    
+
     def __init__(self):
         settings.SITE.startup()
         from lino.modlib.users.choicelists import UserTypes
@@ -70,10 +71,10 @@ class AnonymousUser(SimpleSingleton):
         # 20131022 AttributeError at /api/outbox/MyOutbox : 'AnonymousUser'
         # object has no attribute 'get_typed_instance'
         return self
-    
+
     def get_username(self):
         return self.username
-    
+
     def get_preferences(self):
         """Return the preferences of this user. The returned object is a
         :class:`lino.core.userprefs.UserPrefs` object.
@@ -81,13 +82,13 @@ class AnonymousUser(SimpleSingleton):
         """
         from lino.core import userprefs
         return userprefs.reg.get(self)
-    
+
     def is_authenticated(self):
         return False
-    
+
     def has_perm(self, perm, obj=None):
         return False
-    
+
     def has_perms(self, perm_list, obj=None):
         for perm in perm_list:
             if not self.has_perm(perm, obj):
@@ -155,4 +156,3 @@ class AnonymousUser(SimpleSingleton):
 #                     user = None
 
 #     return user or AnonymousUser()
-
