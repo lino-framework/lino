@@ -1040,13 +1040,19 @@ class Model(models.Model, fields.TableRow):
         after the join.
 
         """
+        qs = cls.get_queryset(ar.get_user(), **filter)
+        if ar.actor.only_fields is not None:
+            qs = qs.only(ar.actor.only_fields)
+        return qs
+
+    @classmethod
+    def get_queryset(cls, user, **filter):
+        """
+        Get the base queryset, used for user level row filtering in :class:`lino_xl.lib.tickets.Ticket`
+        """
         if filter:
             return cls.objects.filter(**filter)
         return cls.objects.all()
-        # qs = cls.objects.all()
-        # if ar.actor.only_fields is not None:
-        #     qs = qs.only(ar.actor.only_fields)
-        # return qs
 
     @classmethod
     def get_title_tags(self, ar):
@@ -1202,6 +1208,7 @@ LINO_MODEL_ATTRIBS = (
     'hidden_elements',
     'get_simple_parameters',
     'get_request_queryset',
+    'get_queryset',
     'get_title_tags',
     'get_default_table',
     'get_default_table',

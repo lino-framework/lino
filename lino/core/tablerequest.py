@@ -217,7 +217,6 @@ class TableRequest(ActionRequest):
             kw.update(master_mt=rqdata.get(constants.URL_PARAM_MASTER_TYPE, None),
                       master_mk=rqdata.get(constants.URL_PARAM_MASTER_PK, None))
 
-
         if settings.SITE.use_filterRow:
             exclude = dict()
             for f in self.ah.store.fields:
@@ -350,6 +349,34 @@ class TableRequest(ActionRequest):
         if limit is not None:
             self.limit = limit
 
+    def get_master_instance(self, master, mk, mt):
+        master_instance = None
+        if master is not None:
+            if not isinstance(master, type):
+                raise Exception("20150216 not a type: %r" % master)
+
+            # Convert MT to class
+            if settings.SITE.is_installed('contenttypes'):
+                from django.contrib.contenttypes.models import ContentType
+                if (issubclass(master, models.Model)
+                        and (master is ContentType or master._meta.abstract)
+                        and mt is not None):
+                    try:
+                        master = ContentType.objects.get(
+                            pk=mt).model_class()
+                    except ContentType.DoesNotExist:
+                        pass
+                        # master is None
+            pk = mk
+            if pk == '':
+                pk = None
+            if pk is not None:
+                master_instance = self.actor.get_master_instance(self, master, pk)
+                if master_instance is None:
+                    raise ObjectDoesNotExist(
+                        "Invalid master key {0} for {1}".format(
+                            pk, self.actor))
+        return master_instance
 
     def to_rst(self, *args, **kw):
         """Returns a string representing this table request in
