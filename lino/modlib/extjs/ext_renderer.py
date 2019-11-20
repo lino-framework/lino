@@ -517,7 +517,8 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
 
                 if site.remote_user_header is None:
                     # 20170921
-                    a = user.sign_out.bound_action
+                    a = rt.models.users.MySettings.get_action_by_name('sign_out')
+                    # a = user.sign_out.bound_action
                     js = self.action_call(None, a, {})
                     js = "function(){%s}" % js
                     login_menu_items.append(

@@ -80,7 +80,7 @@ class User(AbstractBaseUser, Contactable, CreatedModified, DateRange,
     # seems that Django doesn't like nullable username
     # username = dd.NullCharField(_('Username'), max_length=30, unique=True)
     username = models.CharField(_('Username'), max_length=30, unique=True)
-    
+
     user_type = UserTypes.field(blank=True)
     initials = models.CharField(_('Initials'), max_length=10, blank=True)
     first_name = models.CharField(_('First name'), max_length=30, blank=True)
@@ -106,13 +106,13 @@ class User(AbstractBaseUser, Contactable, CreatedModified, DateRange,
         if self.end_date and self.end_date < dd.today():
             return False
         return True
-        
+
     def get_as_user(self):
         """
         Overrides :meth:`lino_xl.lib.contacts.Partner.get_as_user`.
         """
         return self
-    
+
     def get_full_name(self):
         if not self.first_name and not self.last_name:
             return self.initials or self.username or str(self.pk)
@@ -130,7 +130,7 @@ class User(AbstractBaseUser, Contactable, CreatedModified, DateRange,
     #     # for backend in get_social_auth_backends()
     #     # elems.append(E.a("foo"))
     #     # return E.p(elems)
-    
+
     def get_person(self):
         if self.partner:
             return self.partner.get_mti_child('person')
@@ -139,7 +139,7 @@ class User(AbstractBaseUser, Contactable, CreatedModified, DateRange,
 
     def is_editable_by_all(self):
         return False
-    
+
     def get_row_permission(self, ar, state, ba):
         # import pdb ; pdb.set_trace()
         if not ba.action.readonly:
@@ -159,9 +159,11 @@ class User(AbstractBaseUser, Contactable, CreatedModified, DateRange,
         rv = super(User, self).disabled_fields(ar)
         user = ar.get_user()
         if not user.user_type.has_required_roles([SiteAdmin]):
-            if not dd.is_installed("online"): 
-                rv.add("submit_insert")
-                rv.add("insert")
+            # LS 20191120 uncommented the following as it is useless anyway
+            # (there is no pluing named "online")
+            # if not dd.is_installed("online"):
+            #     rv.add("submit_insert")
+            #     rv.add("insert")
             rv.add('send_email')
             rv.add('user_type')
             if user != self:
@@ -184,7 +186,7 @@ class User(AbstractBaseUser, Contactable, CreatedModified, DateRange,
         #     if self.first_name and self.last_name:
         #         self.initials = self.first_name[0] + self.last_name[0]
         super(User, self).full_clean(*args, **kw)
-        
+
     def on_create(self, ar):
         self.start_date = dd.today()
         super(User, self).on_create(ar)
@@ -204,7 +206,7 @@ class User(AbstractBaseUser, Contactable, CreatedModified, DateRange,
         context = self.get_printable_context(ar)
         # dict(obj=self, E=E, rt=rt)
         return template.render(**context)
-        
+
     def as_list_item(self, ar):
         pv = dict(username=self.username)
         if settings.SITE.is_demo_site:
@@ -254,11 +256,11 @@ class User(AbstractBaseUser, Contactable, CreatedModified, DateRange,
         :class:`lino.core.userprefs.UserPrefs` object.
         """
         return userprefs.reg.get(self)
-    
+
     @classmethod
     def get_anonymous_user(cls):
         return AnonymousUser()
-    
+
     # @dd.action(label=_("Send e-mail"),
     #            show_in_bbar=True, show_in_workflow=False,
     #            button_text="✉")  # u"\u2709"
@@ -304,7 +306,7 @@ class Authority(UserAuthored):
             #~ .exclude(level__gte=UserLevels.admin)
         return qs
 
-dd.update_field(Authority, 'user', null=False)    
+dd.update_field(Authority, 'user', null=False)
 
 @dd.receiver(dd.pre_startup)
 def inject_partner_field(sender=None, **kwargs):
@@ -323,7 +325,7 @@ def inject_partner_field(sender=None, **kwargs):
             return
     dd.inject_field(User, 'partner', dd.DummyField())
 
-    
+
 class Permission(dd.Model):
     class Meta(object):
         app_label = 'users'
@@ -343,6 +345,3 @@ def setup_memo_commands(sender=None, **kwargs):
         sender.models.users.User.objects.filter(
             username__isnull=False).order_by('username'),
         'username')
-
-
-
