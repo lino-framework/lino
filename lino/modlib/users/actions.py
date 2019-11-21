@@ -42,7 +42,7 @@ class SendWelcomeMail(dd.Action):
     email
     subject
     """
-    
+
     def action_param_defaults(self, ar, obj, **kw):
         kw = super(SendWelcomeMail, self).action_param_defaults(
             ar, obj, **kw)
@@ -56,7 +56,7 @@ class SendWelcomeMail(dd.Action):
         # body = E.fromstring(body)
         # kw.update(body_text=body)
         return kw
-    
+
     # def get_action_permission(self, ar, obj, state):
     #     user = ar.get_user()
     #     if not obj.email:
@@ -77,7 +77,7 @@ class SendWelcomeMail(dd.Action):
         # body = ar.action_param_values.body_text
         # body = "<body>" + body + "</body>"
         email = "{} <{}>".format(obj, email)
-        
+
         body = obj.get_welcome_email_body(ar)
         print(20170102, obj, email, body)
         # send_welcome_email(obj)
@@ -96,7 +96,7 @@ class ChangePassword(dd.Action):
     button_text = u"\u2731" # 'HEAVY ASTERISK' (✱)
     # icon_name = "disk"
     label = _("Change password")
-    
+
     parameters = dict(
         current=dd.PasswordField(_("Current password"), blank=True),
         new1=dd.PasswordField(_("New password"), blank=True),
@@ -111,14 +111,14 @@ class ChangePassword(dd.Action):
     # def get_action_permission(self, ar, obj, state):
     #     user = ar.get_user()
     #     # print("20160825", obj, user)
-    #     if obj != user and \
+    #     if obj.id != user.id and \
     #        not user.user_type.has_required_roles([SiteAdmin]):
     #         return False
     #     return super(
     #         ChangePassword, self).get_action_permission(ar, obj, state)
 
     def run_from_ui(self, ar, **kw):
-        
+
         pv = ar.action_param_values
         if pv.new1 != pv.new2:
             ar.error("New passwords didn't match!")
@@ -135,6 +135,7 @@ class ChangePassword(dd.Action):
             else:
                 ar.info("Incorrect current password for %s." % obj)
 
+        auth.login(ar.request, obj)
         msg = _("New password has been set for {}.").format(
             ', '.join(done_for))
         ar.success(msg, alert=True)
@@ -143,7 +144,8 @@ class SignOut(dd.Action):
     label = _("Sign out")
     select_rows = False
     default_format = 'ajax'
-    
+    show_in_bbar = False
+
     def run_from_ui(self, ar, **kw):
         # print(20170921, ar.request)
         user = ar.get_user()
@@ -218,4 +220,3 @@ class SignInWithSocialAuth(SignIn):
     password
     social_auth_links
     """, label_align="left", window_size=(60,10))
-

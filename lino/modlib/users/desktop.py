@@ -42,10 +42,10 @@ class UserDetail(dd.DetailLayout):
     """
 
     main_m = """
-    username 
+    username
     user_type
     partner
-    first_name last_name 
+    first_name last_name
     initials
     email language time_zone
     id created modified
@@ -72,6 +72,7 @@ class Users(dd.Table):
     #~ order_by = "last_name first_name".split()
     order_by = ["username"]
     active_fields = 'partner'
+    abstract = True
     required_roles = dd.login_required(SiteAdmin)
 
     parameters = dict(
@@ -158,13 +159,13 @@ if settings.SITE.social_auth_backends:
             "Sites with social_auth_backends must also install PSA "
             "into their environment: "
             "$ pip install social-auth-app-django")
-    
+
 
     class SocialAuths(dd.Table):
         label = _("Third-party authorizations")
         required_roles = dd.login_required(SiteAdmin)
         model = 'social_django.UserSocialAuth'
-        
+
     class SocialAuthsByUser(SocialAuths):
         required_roles = dd.login_required(SiteUser)
         master_key = 'user'
@@ -183,7 +184,7 @@ class UserRoles(dd.VirtualTable):
     @classmethod
     def get_data_rows(self, ar):
         return settings.SITE.user_roles
-    
+
     @dd.displayfield(_("Name"))
     def name(self, obj, ar):
         return djangoname(obj)
@@ -211,4 +212,3 @@ class UserRoles(dd.VirtualTable):
             names.append(name+":3")
         # cls.column_names = "name:20 description:40 " + ' '.join(names)
         cls.column_names = "name:20 " + ' '.join(names)
-    

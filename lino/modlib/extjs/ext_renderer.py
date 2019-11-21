@@ -918,7 +918,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
         assert tbl.action_name is not None
             #~ raise Exception("20121009 action_name of %r is None" % tbl)
         yield "  action_name: '%s'," % tbl.action_name
-        yield "  ls_url: %s," % py2js(dh.layout._url)
+        # 20191121 yield "  ls_url: %s," % py2js(dh.layout._url)
         yield "  window_title: %s," % py2js(tbl.label)
         # if not tbl.select_rows:
         #     yield "  default_record_id: -99999,"
@@ -1271,10 +1271,11 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
                 p.update(hide_window_title=True)
 
             p.update(is_main_window=True)  # workaround for problem 20111206
+            p.update(ls_url=ba.actor.actor_url())  # 20191121
             yield "  var p = %s;" % py2js(p)
             if params_panel:
                 if ba.action.parameters:
-                    yield "  return new Lino.%s({});" % wl._formpanel_name
+                    yield "  return new Lino.%s(p);" % wl._formpanel_name
                 else:
                     yield "  p.params_panel = new Lino.%s({});" % params_panel.layout._formpanel_name
                     yield "  return new %s(p);" % mainPanelClass

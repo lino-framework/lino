@@ -286,6 +286,10 @@ class User(AbstractBaseUser, Contactable, CreatedModified, DateRange,
             users = [a.user for a in qs]
         return [(u.id, u.usertext()) for u in users]
 
+    # @classmethod
+    # def get_default_table(cls):
+    #     return rt.models.users.MySettings
+
 
 class Authority(UserAuthored):
     class Meta(object):
