@@ -194,7 +194,7 @@ class CommentsByX(Comments):
 #         return kw
 
 class RecentComments(CommentsByX):
-    required_roles = dd.login_required(CommentsReader)
+    required_roles = dd.login_required(CommentsStaff)
     # required_roles = set([CommentsReader])
     column_names = "short_preview modified user owner *"
     stay_in_grid = True
