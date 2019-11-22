@@ -286,7 +286,7 @@ class Table(AbstractTable):
 
         """
         try:
-            return self.model.objects.get(pk=pk)
+            return self.model.get_queryset(ar.get_user()).get(pk=pk)
         except ValueError:
             return None
         except self.model.DoesNotExist:
