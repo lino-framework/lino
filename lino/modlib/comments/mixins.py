@@ -30,12 +30,6 @@ class Commentable(dd.Model):
 
     @classmethod
     def add_comments_filter(cls, qs, user):
-        """
-        Override this to define your own privacy settings.
-        Default behavious is that comments are visible only to real users (not to anonymous).
-        Usage example in :class:`lino_noi.lib.tickets.Ticket`
-
-        """
         if user.is_anonymous:
             qs = qs.none()
         return qs
