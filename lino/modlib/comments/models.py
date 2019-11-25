@@ -16,6 +16,7 @@ from lino.modlib.notify.mixins import ChangeNotifier
 from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.memo.mixins import Previewable
 from .choicelists import CommentEvents
+from .mixins import Commentable
 # from .choicelists import PublishAllComments, PublishComment
 
 
@@ -54,12 +55,27 @@ class Comment(CreatedModified, UserAuthored, Controllable,
     reply_to = dd.ForeignKey(
         'self', blank=True, null=True, verbose_name=_("Reply to"))
     # more_text = dd.RichTextField(_("More text"), blank=True)
-    # private = models.BooleanField(_("Private"), default=False)
+
+    # private = models.BooleanField(_("Private"), default=True)
     comment_type = dd.ForeignKey(
         'comments.CommentType', blank=True, null=True)
     # published = models.DateTimeField(
     #     _("Published"), blank=True, null=True)
 
+    # @classmethod
+    # def on_analyze(cls, site):
+    #     from django.contrib.contenttypes.fields import GenericRelation
+    #     from lino.core.utils import models_by_base
+    #     from lino.core.inject import inject_field
+    #     # from lino.modlib.comments.mixins import Commentable
+    #     for m in models_by_base(Commentable):
+    #         if m.commentable_generic_relation is not None:
+    #             inject_field(cls,
+    #                 m.commentable_generic_relation,
+    #                 GenericRelation(m, content_type_field='owner_type', object_id_field='owner_id',
+    #                     related_query_name=m.commentable_generic_relation + "s"))
+    #             # print("20191125 {}".format(m))
+    #
     def __str__(self):
         return u'%s #%s' % (self._meta.verbose_name, self.pk)
         # return _('{user} {time}').format(
@@ -77,6 +93,13 @@ class Comment(CreatedModified, UserAuthored, Controllable,
 
     #     # else:
     #     #     return cls.objects.exclude(owner__private=True)
+
+    @classmethod
+    def get_queryset(cls, user):
+        qs = super(Comment, cls).get_queryset(user)
+        for m in rt.models_by_base(Commentable):
+            qs = m.add_comments_filter(qs, user)
+        return qs
 
     def after_ui_save(self, ar, cw):
         super(Comment, self).after_ui_save(ar, cw)

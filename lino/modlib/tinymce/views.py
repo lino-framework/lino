@@ -27,9 +27,9 @@ class Templates(View):
             pk=None, fldname=None, tplname=None, **kw):
 
         if request.method == 'GET':
-
             rpt = requested_actor(app_label, actor)
-            elem = rpt.get_row_by_pk(None, pk)
+            ar = rpt.request(request=request)
+            elem = rpt.get_row_by_pk(ar, pk)
             if elem is None:
                 raise http.Http404("%s %s does not exist." % (rpt, pk))
 
@@ -57,4 +57,3 @@ class Templates(View):
             js = "var tinyMCETemplateList = %s;" % py2js(templates)
             return http.HttpResponse(js, content_type='text/json')
         raise http.Http404("Method %r not supported" % request.method)
-

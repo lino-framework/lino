@@ -105,7 +105,7 @@ class Renderer(object):
 
     hide_dashboard_items = False
     """Don't show dashboard items when rendering :xfile:`admin_main.html`.
-    
+
     """
 
     def __init__(self, front_end=None):
@@ -506,7 +506,7 @@ class HtmlRenderer(Renderer):
                     elems.append(self.show_story(ar, item.actor.get_story(None, ar), **kwargs))
                 elif isinstance(item, DashboardItem):
                     html = self.show_story(ar, item.render(ar), **kwargs)
-                    if html:
+                    if len(html):
                         elems.append(E.div(
                         html,
                         CLASS="dashboard-item " + item.actor.actor_id.replace(".","-") if getattr(item, "actor", False) else ""

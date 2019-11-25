@@ -43,17 +43,17 @@ class UserTypeContext(object):
     """A context manager which activates a current user type."""
     def __init__(self, user_type):
         self.user_type = user_type
-        
+
     def __enter__(self):
         global _for_user_profile
         self.old = _for_user_profile
         _for_user_profile = self.user_type
-        
+
     def __exit__(self, exc_type, exc_value, traceback):
         global _for_user_profile
         _for_user_profile = self.old
-        
-        
+
+
 # def set_user_profile(up):
 #     global _for_user_profile
 #     _for_user_profile = up
@@ -73,5 +73,3 @@ def create_user(username, user_type=None, **kw):
     else:
         # return dd.plugins.skills.supplier_model(first_name=first_name)
         return rt.models.contacts.Person(first_name=first_name)
-
-

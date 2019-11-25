@@ -250,10 +250,10 @@ class Plugin(object):
         ready and long before the models modules start to load.
 
         This is used for initializing default values of plugin
-        attributes which (a) depend on other plugins but (b) should be
+        attributes that (a) depend on other plugins but (b) should be
         overridable in :meth:`lino.core.site.Site.setup_plugins`.
 
-        For example :mod:`groups` used this to set a default value to
+        For example :mod:`groups` uses this to set a default value to
         the :attr:`commentable_model` for :mod:`comments` plugin.
 
         Or :mod:`lino.modlib.checkdata` uses it to set

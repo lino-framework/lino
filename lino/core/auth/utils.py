@@ -38,6 +38,7 @@ class AnonymousUser(SimpleSingleton):
     time_zone =  None
     notify_myself = False
     user_type = None
+    is_anonymous = True
 
     def __init__(self):
         settings.SITE.startup()

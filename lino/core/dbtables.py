@@ -283,6 +283,8 @@ class Table(AbstractTable):
         """Implements :meth:`get_row_by_pk
         <lino.core.actors.Actor.get_row_by_pk>` for a database
         table.
+        
+        Note: `ar` may not be None.
 
         """
         try:
@@ -568,7 +570,7 @@ class Table(AbstractTable):
         # print("20181121b get_request_queryset", self)
 
         def apply(qs):
-        
+
             # print("20160329 {}".format(qs.query))
             if qs is None:
                 return self.model.objects.none()
@@ -652,7 +654,7 @@ class Table(AbstractTable):
         <lino.core.model.Model.get_request_queryset>`.
 
         Override this to use e.g. select_related() or to return a list.
-   
+
         Example::
 
           def get_queryset(self):
@@ -683,7 +685,7 @@ class Table(AbstractTable):
             yield t
         for t in self.model.get_title_tags(ar):
             yield t
-        
+
     @classmethod
     def create_instance(self, ar, **kw):
         """
@@ -742,4 +744,3 @@ def table_factory(model):
 def column_choices(rptname):
     rpt = actors.get_actor(rptname)
     return rpt.column_choices()
-

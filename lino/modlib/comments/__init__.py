@@ -14,7 +14,7 @@ class Plugin(ad.Plugin):
     verbose_name = _("Comments")
 
     site_js_snippets = ['comments/comments.js']
-    
+
     needs_plugins = ['lino.modlib.office', 'lino.modlib.memo']
 
     # user_must_publish = True
@@ -29,7 +29,6 @@ class Plugin(ad.Plugin):
         # if self.user_must_publish:
         #     m.add_action('comments.MyPendingComments')
         m.add_action('comments.RecentComments')
-        
 
     def setup_config_menu(self, site, user_type, m):
         mg = site.plugins.office
