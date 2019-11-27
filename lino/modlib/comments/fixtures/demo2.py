@@ -9,6 +9,7 @@ import datetime
 from atelier.utils import i2t
 from lino.utils import Cycler
 from lino.api import rt, dd
+from lino.core.requests import BaseRequest
 from django.conf import settings
 from django.utils.timezone import make_aware
 from lino.modlib.comments.mixins import Commentable
@@ -45,15 +46,19 @@ def objects():
             now = make_aware(now)
         DELTA = datetime.timedelta(minutes=34)
 
+        owner = OWNERS.pop()
         for i in range(12):
             for u in User.objects.all():
-                owner = OWNERS.pop()
-                if owner.private:
-                    txt = "<p>Very confidential comment</p>"
-                else:
-                    txt = TXT.pop()# txt = "Hackerish comment"
-                obj = Comment(user=u, owner=owner, body=txt)
-                obj.before_ui_save(None)
+                ses = BaseRequest(user=u)
+                # if owner.private:
+                #     txt = "<p>Confidential comment</p>"
+                # else:
+                #     txt = TXT.pop() # txt = "Hackerish comment"
+                obj = Comment(user=u, owner=owner, body=TXT.pop())
+                obj.after_ui_create(ses)
+                obj.before_ui_save(ses)
                 obj.modified = now
                 yield obj
                 now += DELTA
+                if i % 3:
+                    owner = OWNERS.pop()

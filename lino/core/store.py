@@ -31,8 +31,7 @@ from __future__ import print_function
 from builtins import str
 from builtins import object
 
-import logging
-logger = logging.getLogger(__name__)
+import logging ; logger = logging.getLogger(__name__)
 
 import datetime
 
@@ -57,6 +56,7 @@ from lino.utils import curry
 from lino.utils import iif
 from lino.utils.format_date import fds
 from lino.core.requests import PhantomRow
+from lino.core.gfks import GenericForeignKey, GenericRel
 from lino.utils import IncompleteDate
 
 
@@ -69,11 +69,11 @@ class StoreField(object):
 
         The database field (a subclass of
         `django.db.models.fields.Field`)
-    
+
     .. attribute:: options
 
         A `dict` with options to be used by :meth:`as_js`.
-    
+
 
     Note: `value_from_object` and `full_value_from_object` are
     similar, but for ForeignKeyStoreField and GenericForeignKeyField
@@ -188,7 +188,7 @@ class StoreField(object):
 
     def set_value_in_object(self, ar, instance, v):
         # logger.info("20180712 super set_value_in_object() %s", v)
-        
+
         old_value = self.value_from_object(instance, ar.request)
         # old_value = getattr(instance,self.field.attname)
         if old_value != v:
@@ -224,12 +224,12 @@ class RelatedMixin(object):
             return getattr(obj, self.name)
         except relto_model.DoesNotExist:
             return None
-        
+
     def format_value(self, ar, v):
         if ar is None:
             return v.get_choices_text(None, None, self.field)
         return v.get_choices_text(ar, ar.actor, self.field)
-    
+
 
 
 class ComboStoreField(StoreField):
@@ -315,7 +315,7 @@ class ForeignKeyStoreField(RelatedMixin, ComboStoreField):
         if not relto_model:
             # logger.info("20111209 get_value_text: no relto_model")
             return
-   
+
         try:
             return relto_model.objects.get(pk=v)
         except ValueError:
@@ -340,7 +340,7 @@ class OneToOneStoreField(RelatedMixin, StoreField):
         if ar is None:
             return str(v)
         return v.obj2href(ar)
-   
+
 
 
 # class LinkedForeignKeyField(ForeignKeyStoreField):
@@ -466,9 +466,9 @@ class DisabledFieldsStoreField(SpecialStoreField):
 
     """
     See also blog entries 20100803, 20111003, 20120901
-    
+
     Note some special cases:
-    
+
     - :attr:`lino.modlib.vat.VatDocument.total_incl` (readonly virtual
       PriceField) must be disabled and may not get submitted.  ExtJS
       requires us to set this dynamically each time.
@@ -476,13 +476,12 @@ class DisabledFieldsStoreField(SpecialStoreField):
     - JobsOverview.body (a virtual HtmlBox) or Model.workflow_buttons
       (a displayfield) must *not* have the 'disabled' css class.
 
-    - after submitting a Lockable, the 
+    - after submitting a Lockable, the
 
     """
     name = str('disabled_fields')
 
     def __init__(self, store):
-        from lino.core.gfks import GenericForeignKey
         SpecialStoreField.__init__(self, store)
         self.always_disabled = set()
         for f in self.store.all_fields:
@@ -622,6 +621,30 @@ class GenericForeignKeyField(DisplayStoreField):
             return str(v)
         return ar.obj2html(v)
 
+class GenericRelField(RelatedMixin, DisplayStoreField):
+
+    def full_value_from_object(self, obj, ar=None):
+        v = getattr(obj, self.name, None)
+        if v is None:
+            return None
+        return v.first()
+        # v = v(manager='objects')
+        # raise Exception("20191126 full_value_from_object(%s, %s) --> %s" % (obj, self.name, v))
+        # return v(manager='objects').first()
+        # return v
+        # return v.first()
+        # raise Exception("20191126 full_value_from_object(%s, %s) --> %s" % (obj, self.name, v))
+        # return v.get_user_queryset().first()
+        # raise Exception("20191126 full_value_from_object() %s" % v.instance)
+        # return v.instance
+        # if v is None:
+        #     return ''
+        # if ar is None:
+        #     return str(v)
+        # if ar.renderer is None:
+        #     return str(v)
+        # return ar.obj2html(v)
+
 
 class DecimalStoreField(StoreField):
     # def __init__(self,field,name,**kw):
@@ -655,7 +678,7 @@ class IntegerStoreField(StoreField):
 
 class AutoStoreField(StoreField):
 
-    """A :class:`StoreField` for 
+    """A :class:`StoreField` for
     `AutoField <https://docs.djangoproject.com/en/dev/ref/models/fields/#autofield>`__
 
     """
@@ -778,7 +801,7 @@ class MethodStoreField(StoreField):
         # meth = getattr(obj,self.field.name)
         # ~ #logger.debug('MethodStoreField.obj2dict() %s',self.field.name)
         # d[self.field.name] = self.slave_report.()
-        
+
 #class OneToOneRelStoreField(RelatedMixin, StoreField):
 class OneToOneRelStoreField(StoreField):
     def full_value_from_object(self, obj, ar=None):
@@ -836,7 +859,7 @@ def create_atomizer(holder, fld, name):
         sf.full_value_from_object = curry(full_value_from_object, sf)
         sf.set_value_in_object = curry(set_value_in_object, sf)
         return sf
-    
+
     meth = getattr(fld, '_return_type_for_method', None)
     if meth is not None:
         # uh, this is tricky...
@@ -871,9 +894,10 @@ def create_atomizer(holder, fld, name):
         return OneToOneRelStoreField(fld, name)
 
     if settings.SITE.is_installed('contenttypes'):
-        from lino.core.gfks import GenericForeignKey
         if isinstance(fld, GenericForeignKey):
             return GenericForeignKeyField(fld, name)
+        if isinstance(fld, GenericRel):
+            return GenericRelField(fld, name)
         from lino.modlib.gfks.fields import GenericForeignKeyIdField
         if isinstance(fld, GenericForeignKeyIdField):
             return ComboStoreField(fld, name)
@@ -1033,9 +1057,9 @@ class Store(BaseStore):
             for fld in self.list_fields:
                 """
                 Django's Field.__cmp__() does::
-                
+
                   return cmp(self.creation_counter, other.creation_counter)
-                  
+
                 which causes an exception when trying to compare a field
                 with an object of other type.
                 """
@@ -1135,7 +1159,7 @@ class Store(BaseStore):
         changed_triggers = []
         for f in self.all_fields:
             if f.name not in disabled_fields:
-                try:  
+                try:
                     if f.form2obj(ar, instance, form_values, is_new):
                         # Check whether FOO_changed exists
                         m = getattr(instance, f.name + "_changed", None)
@@ -1171,7 +1195,7 @@ class Store(BaseStore):
         """
         Used to set `disabled_actions_index`.
         Was used to write definition of Ext.ensible.cal.CalendarMappings
-        and Ext.ensible.cal.EventMappings 
+        and Ext.ensible.cal.EventMappings
         """
         # logger.info("20111214 column_names: %s",list(self.column_names()))
         return list(self.column_names()).index(name)

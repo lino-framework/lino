@@ -404,7 +404,7 @@ class Choices(View):
             # ~ qs = ar.get_data_iterator()
             qs = ar.data_iterator
 
-            # ~ qs = rpt.request(self).get_queryset()
+            # ~ qs = rpt.request(self).get_user_queryset()
 
             def row2dict(obj, d):
                 d[constants.CHOICES_TEXT_FIELD] = str(obj)

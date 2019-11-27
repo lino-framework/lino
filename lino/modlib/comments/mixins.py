@@ -2,22 +2,16 @@
 # Copyright 2015-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-from builtins import object
-
 from django.db import models
+from django.db.models import Q
 
 from lino.api import dd, _
-# from django.utils.translation import ugettext_lazy as _
-# from lino.core.model import Model
 
+from .roles import PrivateCommentsReader
 
 class Commentable(dd.Model):
     class Meta(object):
         abstract = True
-
-    # commentable_generic_relation = None
-
-    private = models.BooleanField(_("Private"), default=False)
 
     def on_commented(self, comment, ar, cw):
         pass
@@ -29,7 +23,13 @@ class Commentable(dd.Model):
         return None
 
     @classmethod
-    def add_comments_filter(cls, qs, user):
+    def get_comments_filter(cls, user):
+        if user.user_type.has_required_roles([PrivateCommentsReader]):
+            return None
         if user.is_anonymous:
-            qs = qs.none()
-        return qs
+            return Q(private=False)
+        return Q(private=False) | Q(user=user)
+
+    def is_comment_private(self, comment, ar):
+        """Whether the given comment should be private."""
+        return dd.plugins.comments.private_default

@@ -1,4 +1,4 @@
-# Copyright 2013-2018 Rumma & Ko Ltd
+# Copyright 2013-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
@@ -17,10 +17,8 @@ class Plugin(ad.Plugin):
 
     needs_plugins = ['lino.modlib.office', 'lino.modlib.memo']
 
-    # user_must_publish = True
-    # """
-    # Whether the users are invited to "publish" their comments.
-    # """
+    private_default = True
+    """Whether comments are private by default."""
 
     def setup_main_menu(self, site, user_type, m):
         mg = site.plugins.office

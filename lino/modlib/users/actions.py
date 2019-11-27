@@ -135,7 +135,8 @@ class ChangePassword(dd.Action):
             else:
                 ar.info("Incorrect current password for %s." % obj)
 
-        auth.login(ar.request, obj)
+        if ar.request is not None:
+            auth.login(ar.request, obj)
         msg = _("New password has been set for {}.").format(
             ', '.join(done_for))
         ar.success(msg, alert=True)

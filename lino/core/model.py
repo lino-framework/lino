@@ -714,7 +714,7 @@ class Model(models.Model, fields.TableRow):
 
     def after_ui_create(self, ar):
         """
-        Hook to define custom behaviour to run when a user has create a new instance
+        Hook to define custom behaviour to run when a user has created a new instance
         of this model.
         """
         # print(19062017, "Ticket 1910")
@@ -1040,13 +1040,13 @@ class Model(models.Model, fields.TableRow):
         after the join.
 
         """
-        qs = cls.get_queryset(ar.get_user(), **filter)
+        qs = cls.get_user_queryset(ar.get_user(), **filter)
         if ar.actor.only_fields is not None:
             qs = qs.only(ar.actor.only_fields)
         return qs
 
     @classmethod
-    def get_queryset(cls, user, **filter):
+    def get_user_queryset(cls, user, **filter):
         """
         Get the base queryset, used for user level row filtering in :class:`lino_xl.lib.tickets.Ticket`
         """
@@ -1208,7 +1208,7 @@ LINO_MODEL_ATTRIBS = (
     'hidden_elements',
     'get_simple_parameters',
     'get_request_queryset',
-    'get_queryset',
+    'get_user_queryset',
     'get_title_tags',
     'get_default_table',
     'get_default_table',

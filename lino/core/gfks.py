@@ -18,7 +18,7 @@ if settings.SITE.is_installed('contenttypes'):
     from django.contrib.contenttypes.fields import GenericForeignKey \
         as DjangoGenericForeignKey
 
-    from django.contrib.contenttypes.fields import GenericRelation
+    from django.contrib.contenttypes.fields import GenericRelation, GenericRel
 
     def is_foreignkey(fld):
         return isinstance(fld, (ForeignKey, DjangoGenericForeignKey))
@@ -26,6 +26,7 @@ else:
     GenericForeignKey = UnresolvedField
     ContentType = UnresolvedModel
     GenericRelation = UnresolvedField
+    GenericRel = UnresolvedField
 
     def is_foreignkey(fld):
         return isinstance(fld, ForeignKey)
@@ -56,5 +57,3 @@ def gfk2lookup(gfk, obj, **kw):
             return kw
         kw[gfk.fk_field] = obj.pk
     return kw
-
-

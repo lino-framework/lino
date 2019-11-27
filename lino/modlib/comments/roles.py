@@ -1,4 +1,4 @@
-# Copyright 2015-2018 Rumma & Ko Ltd
+# Copyright 2015-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """User roles for this plugin.
 
@@ -24,4 +24,6 @@ class CommentsStaff(CommentsUser):
 
     """
 
-
+class PrivateCommentsReader(UserRole):
+    """A user who has unfiltered access to private comments."""
+    pass

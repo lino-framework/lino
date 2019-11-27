@@ -5,6 +5,7 @@
 from builtins import object
 
 from django.db import models
+from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 
@@ -40,66 +41,42 @@ class Comment(CreatedModified, UserAuthored, Controllable,
         verbose_name = _("Comment")
         verbose_name_plural = _("Comments")
 
-    # ALLOWED_TAGS = ['a', 'b', 'i', 'em', 'ul', 'ol', 'li']
-    # bleached_fields = 'short_text more_text'
-    # bleached_fields = 'body'
-
-    # if dd.plugins.comments.user_must_publish:
-    #     # e.g. in amici we don't have notify
-    #     publish_this = PublishComment()
-    #     publish_all = PublishAllComments()
-
-    # short_text = dd.RichTextField(_("Short text"))
-    # owner = dd.ForeignKey(commentable_model, blank=True, null=True)
-
     reply_to = dd.ForeignKey(
         'self', blank=True, null=True, verbose_name=_("Reply to"))
     # more_text = dd.RichTextField(_("More text"), blank=True)
 
-    # private = models.BooleanField(_("Private"), default=True)
-    comment_type = dd.ForeignKey(
-        'comments.CommentType', blank=True, null=True)
-    # published = models.DateTimeField(
-    #     _("Published"), blank=True, null=True)
+    private = models.BooleanField(
+        _("Private"), default=dd.plugins.comments.private_default)
 
-    # @classmethod
-    # def on_analyze(cls, site):
-    #     from django.contrib.contenttypes.fields import GenericRelation
-    #     from lino.core.utils import models_by_base
-    #     from lino.core.inject import inject_field
-    #     # from lino.modlib.comments.mixins import Commentable
-    #     for m in models_by_base(Commentable):
-    #         if m.commentable_generic_relation is not None:
-    #             inject_field(cls,
-    #                 m.commentable_generic_relation,
-    #                 GenericRelation(m, content_type_field='owner_type', object_id_field='owner_id',
-    #                     related_query_name=m.commentable_generic_relation + "s"))
-    #             # print("20191125 {}".format(m))
-    #
+    comment_type = dd.ForeignKey('comments.CommentType', blank=True, null=True)
+
     def __str__(self):
         return u'%s #%s' % (self._meta.verbose_name, self.pk)
         # return _('{user} {time}').format(
         #     user=self.user, obj=self.owner,
         #     time=naturaltime(self.modified))
 
-    # @classmethod
-    # def get_request_queryset(cls, ar, **filter):
-    #     # if commentable_model is None:
-    #     #     return cls.objects.all()
-    #     # if ar.get_user().user_type.has_required_roles([SiteUser]):
-    #     if ar.get_user().authenticated:
-    #         return cls.objects.all()
-    #     return super(Comment, cls).get_request_queryset(ar, **filter)
-
-    #     # else:
-    #     #     return cls.objects.exclude(owner__private=True)
-
     @classmethod
-    def get_queryset(cls, user):
-        qs = super(Comment, cls).get_queryset(user)
+    def get_user_queryset(cls, user):
+        qs = super(Comment, cls).get_user_queryset(user)
+
+        if not user.user_type.has_required_roles([CommentsReader]):
+            return qs.none()
+
+        filters = []
         for m in rt.models_by_base(Commentable):
-            qs = m.add_comments_filter(qs, user)
-        return qs
+            flt = m.get_comments_filter(user)
+            if flt is not None:
+                ct = rt.models.contenttypes.ContentType.objects.get_for_model(m)
+                filters.append(flt | ~Q(owner_type=ct))
+        if len(filters):
+            qs = qs.filter(*filters)
+        return qs.distinct()  # add distinct because filter might be on a join
+
+    def after_ui_create(self, ar):
+        super(Comment, self).after_ui_create(ar)
+        if self.owner_id:
+            self.private = self.owner.is_comment_private(self, ar)
 
     def after_ui_save(self, ar, cw):
         super(Comment, self).after_ui_save(ar, cw)
@@ -190,6 +167,7 @@ class Comment(CreatedModified, UserAuthored, Controllable,
         return qs
 
 dd.update_field(Comment, 'user', editable=False)
+Comment.update_controller_field(verbose_name=_('Topic'))
 
 class Mention(CreatedModified, Controllable, UserAuthored):
 

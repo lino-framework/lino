@@ -34,7 +34,7 @@ from lino.core import layouts
 from lino.core import fields
 from lino.core.actions import Action, Permittable
 from lino.core import constants
-from lino.core.gfks import GenericRelation
+from lino.core.gfks import GenericRelation, GenericRel
 from lino.modlib.bootstrap3.views import table2html
 
 from lino.utils.ranges import constrain
@@ -839,7 +839,7 @@ class CharFieldElement(FieldElement):
 
     def __init__(self, *args, **kw):
         FieldElement.__init__(self, *args, **kw)
-        # See 20180828 and 20181014 
+        # See 20180828 and 20181014
         self.preferred_width = 1 + min(20, max(3, self.field.max_length or 0))
 
     def get_field_options(self, **kw):
@@ -1599,6 +1599,10 @@ class GenericForeignKeyElement(DisplayElement):
         # needed for as_plain_html()
         return getattr(obj, self.field.name)
 
+class GenericRelElement(GenericForeignKeyElement):
+    pass
+
+
 
 class RecurrenceElement(DisplayElement):
     value_template = "new Ext.ensible.cal.RecurrenceField(%s)"
@@ -1682,7 +1686,7 @@ class HtmlBoxElement(DisplayElement):
 class SlaveSummaryPanel(HtmlBoxElement):
     """
     The panel used to display a slave table whose `display_mode` is
-    'summary'.  
+    'summary'.
 
     Note that this creates an automatic VirtualField which is a bit
     special because it is created during :func:`create_layout_element`
@@ -2385,6 +2389,9 @@ def field2elem(layout_handle, field, **kw):
     # if field.name == 'item_ref':
     #     print("20180828", kw)
 
+    if isinstance(field, GenericRel):
+        return GenericRelElement(layout_handle, field, **kw)
+
     rnd = layout_handle.ui.renderer
     holder = layout_handle.layout.get_chooser_holder()
     ch = holder.get_chooser_for_field(field.name)
@@ -2697,7 +2704,7 @@ def create_field_element(lh, field, **kw):
     e = field2elem(lh, field, **kw)
     # if not lh.layout.editable and isinstance(e, ForeignKeyElement):
     #     raise Exception(20160907)
-    #     return CharFieldElement(lh, field, **kw)   
+    #     return CharFieldElement(lh, field, **kw)
 
     assert e.field is not None, "e.field is None for %s.%s" % (lh.layout, kw)
     lh.add_store_field(e.field)

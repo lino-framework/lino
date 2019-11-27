@@ -283,12 +283,12 @@ class Table(AbstractTable):
         """Implements :meth:`get_row_by_pk
         <lino.core.actors.Actor.get_row_by_pk>` for a database
         table.
-        
+
         Note: `ar` may not be None.
 
         """
         try:
-            return self.model.get_queryset(ar.get_user()).get(pk=pk)
+            return self.model.get_user_queryset(ar.get_user()).get(pk=pk)
         except ValueError:
             return None
         except self.model.DoesNotExist:
@@ -564,7 +564,7 @@ class Table(AbstractTable):
         Return the iterable of Django database objects for the specified
         action request.
 
-        The default implementation calls :meth:`get_queryset` and then
+        The default implementation calls :meth:`get_user_queryset` and then
         applies request parameters.
         """
         # print("20181121b get_request_queryset", self)
@@ -657,7 +657,7 @@ class Table(AbstractTable):
 
         Example::
 
-          def get_queryset(self):
+          def get_queryset(self, **ar):
               return self.model.objects.select_related('country', 'city')
 
         """
