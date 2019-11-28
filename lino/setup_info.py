@@ -44,7 +44,8 @@ install_requires = [
     'clint',  # lino.modlib.checkdata.management.commands
     'django-localflavor',  # lino.modlib.sepa
     # 'django-iban',  # lino.modlib.sepa
-    'openpyxl', 'html2text',
+    'openpyxl==3.0.1',
+     'html2text',
     # 'cairocffi',  # 'cairocffi<0.7',
     # 'bleach',
     # 'html5lib',  # version 7x9 (not 9x9) required by bleach
