@@ -78,10 +78,7 @@ class CheckedSubmitInsert(SubmitInsert):
             ok(ar)
 
 
-from django.utils.encoding import python_2_unicode_compatible
 
-
-@python_2_unicode_compatible
 class PhoneticWordBase(dd.Model):
     """Base class for the table of phonetic words of a given dupable
     model. For every (non-abstract) dupable model there must be a
@@ -181,7 +178,7 @@ class Dupable(dd.Model):
     def dupable_matches_required(self):
         """Return the minimum number of words that must sound alike before
         two rows should be considered similar.
-        
+
         """
         return 2
 
@@ -256,7 +253,7 @@ class DupableChecker(Checker):
     """
     verbose_name = _("Check for missing phonetic words")
     model = Dupable
-    
+
     def get_checkdata_problems(self, obj, fix=False):
         msg = obj.update_dupable_words(fix)
         if msg:
@@ -310,4 +307,3 @@ class SimilarObjects(dd.VirtualTable):
             chunks.append(_("Phonetic words: {0}").format(words))
             return E.p(*join_elems(chunks))
         return ''
-

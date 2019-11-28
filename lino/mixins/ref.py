@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2010-2018 Rumma & Ko Ltd
+# Copyright 2010-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
@@ -12,7 +12,6 @@ from builtins import str
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.functions import Length
-from django.utils.encoding import python_2_unicode_compatible
 
 from etgen.html import E
 from lino.core import model
@@ -35,7 +34,7 @@ class Referrable(model.Model):
         abstract = True
 
     allow_merge_action = True
-    
+
     ref_max_length = 40
     """
     The preferred width of the :attr:`ref` field.
@@ -89,7 +88,7 @@ class Referrable(model.Model):
         return super(Referrable, cls).quick_search_filter(search_text, prefix)
 
 
-@python_2_unicode_compatible
+
 class StructuredReferrable(Referrable):
     """
 
@@ -132,9 +131,9 @@ class StructuredReferrable(Referrable):
     """
     class Meta:
         abstract = True
-        
+
     ref_max_length = 4
-    
+
     def __str__(self):
         if self.ref:
             return "({}) {}".format(self.ref, self.get_designation())
@@ -145,13 +144,13 @@ class StructuredReferrable(Referrable):
         return cls.objects.annotate(
             ref_len=Length('ref')).filter(
                 ref_len=cls.ref_max_length)
-    
+
     @classmethod
     def get_heading_objects(cls):
         return cls.objects.annotate(
             ref_len=Length('ref')).exclude(
                 ref_len=cls.ref_max_length)
-    
+
     def is_heading(self):
         if self.ref is None:
             return True
@@ -168,5 +167,3 @@ class StructuredReferrable(Referrable):
         if self.is_heading():
             s = E.b(s)
         return s
-
-    

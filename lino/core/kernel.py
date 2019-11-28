@@ -44,12 +44,12 @@ from django.apps import apps
 from django.conf import settings
 from django.core import exceptions
 from django.utils.encoding import force_text
+from django.utils.text import format_lazy
+from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import PermissionDenied
 from django.db.utils import DatabaseError
 
 from django.db import models
-
-from django.utils.translation import ugettext_lazy as _
 
 import lino  # for is_testing
 from lino.utils import codetime
@@ -988,15 +988,17 @@ def get_choicelist(i):
 
 
 def choicelist_choices():
-    """Return a list of all choicelists defined for this application."""
+    """Return a list of all choicelists defined for this application.
+
+    Used by :attr:`lino_xl.lib.properties.PropTypes.choicelist`
+    """
     l = []
     for k, v in CHOICELISTS.items():
         if v.verbose_name_plural is None:
-            text = v.__name__
+            text = k
         else:
-            text = v.verbose_name_plural
+            text = format_lazy("{} ({})", k, v.verbose_name_plural)
         l.append((k, text))
-
     l.sort(key=lambda x: x[0])
     return l
 

@@ -109,7 +109,7 @@ class FixProblemsByController(UpdateProblemsByController):
     label = _("Fix data problems")
     fix_them = True
 
-@dd.python_2_unicode_compatible
+
 class Problem(Controllable, UserAuthored):
     """Represents a detected data problem.
 

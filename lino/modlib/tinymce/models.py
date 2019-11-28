@@ -15,7 +15,7 @@ from lino.modlib.office.roles import OfficeUser
 from lino.api import dd
 
 
-@dd.python_2_unicode_compatible
+
 class TextFieldTemplate(UserAuthored):
 
     class Meta(object):

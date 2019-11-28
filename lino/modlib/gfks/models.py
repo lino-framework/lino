@@ -58,7 +58,7 @@ class ContentTypes(dd.Table):
         return E.p(*join_elems(chunks, sep=', '))
 
 
-@dd.python_2_unicode_compatible
+
 class HelpText(dd.Model):
     class Meta(object):
         app_label = 'gfks'

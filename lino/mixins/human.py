@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2008-2018 Rumma & Ko Ltd
+# Copyright 2008-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """
 
@@ -16,13 +16,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 import datetime
-from dateutil.relativedelta import relativedelta 
+from dateutil.relativedelta import relativedelta
 
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import pgettext_lazy as pgettext
-from django.utils.encoding import python_2_unicode_compatible
 from django.conf import settings
 
 from lino.utils import join_words
@@ -47,13 +46,13 @@ NAME_PREFIXES |= set([p + ' ' for p in name_prefixes2])
 def strip_name_prefix(s):
     """Strip name prefix from given family name `s`."""
     s = s.upper()
-    
+
     def strip_from(s, lst):
         for p in lst:
             p = p + ' '
             if s.startswith(p):
                 s = s[len(p):]
-        return s  
+        return s
 
     s = strip_from(s, name_prefixes2)
     s = strip_from(s, name_prefixes1)
@@ -143,12 +142,12 @@ def get_salutation(gender, nominative=False):
     """
     Returns "Mr" or "Mrs" or a translation thereof, depending on the
     gender and the current language.
-    
+
     Note that the English abbreviations `Mr
     <http://en.wikipedia.org/wiki/Mr.>`_ and `Mrs
     <http://en.wikipedia.org/wiki/Mrs.>`_ are written either *with*
     (AE) or *without* (BE) a dot.
-    
+
     The optional keyword argument `nominative` is used only in certain
     languages like German: specifying ``nominative=True`` for a male
     person will return the nominative or direct form "Herr" instead of
@@ -163,7 +162,7 @@ def get_salutation(gender, nominative=False):
     return pgettext("indirect salutation", "Mr")
 
 
-@python_2_unicode_compatible
+
 class Human(model.Model):
     """
     Base class for models that represent a human.
@@ -174,7 +173,7 @@ class Human(model.Model):
         qualification like "Dr." or "PhD".
 
         If given, the content of this field comes always *between*
-        salutation and name.  
+        salutation and name.
 
     .. attribute:: first_name
 
@@ -254,7 +253,7 @@ class Human(model.Model):
         and `wikipedia.org <https://en.wikipedia.org/wiki/Title>`__
         """
         return ''
-    
+
     def get_full_name(
             self, salutation=True, upper=None, **salutation_options):
         """
@@ -314,7 +313,7 @@ class Human(model.Model):
         for p in super(Human, cls).get_simple_parameters():
             yield p
         yield 'gender'
-        
+
     # no longer needed after 20170826
     # @classmethod
     # def setup_parameters(cls, **fields):
@@ -367,7 +366,7 @@ class Born(model.Model):
         """
         if self.birth_date:
             return self.birth_date.get_age(today or settings.SITE.today())
-        
+
     def get_exact_age(self, today=None):
         """
         Return the age as a :class:`datetime.timedelta` object.

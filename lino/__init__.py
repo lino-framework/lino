@@ -92,7 +92,7 @@ elif VERSION[0] == 2:
     AFTER17 = True
     AFTER18 = True
 else:
-    raise Exception("Unsupported Django version %s" % VERSION)
+    pass  # version 3 or above
 
 
 def startup(settings_module=None):

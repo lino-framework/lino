@@ -1,4 +1,4 @@
-# Copyright 2009-2018 Rumma & Ko Ltd
+# Copyright 2009-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """
 
@@ -24,10 +24,8 @@ from lino.modlib.printing.mixins import DirectPrintAction
 from etgen.html import E
 
 
-from django.utils.encoding import python_2_unicode_compatible
 
 
-@python_2_unicode_compatible
 class EmptyTableRow(VirtualRow, Printable):
     """
     Base class for virtual rows of an :class:`EmptyTable`.
@@ -83,9 +81,9 @@ class EmptyTableRow(VirtualRow, Printable):
         return self._table.get_build_options(bm, **opts)
 
     def get_subtitle(self, ar):
-        
+
         return ', '.join(self._table.get_title_tags(ar))
-        
+
     def __getattr__(self, name):
         """
         Since there is only one EmptyTableRow class, we simulate a
@@ -156,7 +154,7 @@ class EmptyTable(Frame):
     @classmethod
     def wildcard_data_elems(self):
         return self.parameters.values()
-        
+
     @classmethod
     def get_data_elem(self, name):
         de = super(EmptyTable, self).get_data_elem(name)
@@ -271,6 +269,6 @@ class Report(EmptyTable):
         # obj = self.create_instance(ar)
         # return """\
         # .. raw:: html
-        
+
         #    %s
         # """ % tostring(obj.body).replace('\n', ' ')

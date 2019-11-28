@@ -108,7 +108,7 @@ class ClearSeen(dd.Action):
         ar.success(refresh_all=True)
 
 
-@dd.python_2_unicode_compatible
+
 class Message(UserAuthored, Controllable, Created):
     class Meta(object):
         app_label = 'notify'

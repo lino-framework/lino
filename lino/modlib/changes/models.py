@@ -53,7 +53,7 @@ add('A', _("Add child"), 'add_child')
 add('M', _("Merge"), 'merge')
 
 
-@dd.python_2_unicode_compatible
+
 class Change(dd.Model):
     """A registered change in the database.
 

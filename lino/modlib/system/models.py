@@ -49,7 +49,7 @@ class SiteConfigManager(models.Manager):
         return settings.SITE.site_config
 
 
-@dd.python_2_unicode_compatible
+
 class SiteConfig(dd.Model):
 
     class Meta(object):

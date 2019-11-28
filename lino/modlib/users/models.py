@@ -1,11 +1,10 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2018 Rumma & Ko Ltd
+# Copyright 2011-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 from builtins import str
 from builtins import object
 
-from django.utils.encoding import python_2_unicode_compatible
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
@@ -58,7 +57,7 @@ class UserManager(BaseUserManager):
 
 
 
-@python_2_unicode_compatible
+
 class User(AbstractBaseUser, Contactable, CreatedModified, DateRange,
            Printable):
     class Meta(object):

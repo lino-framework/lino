@@ -791,7 +791,7 @@ class QuantityField(CharField):
             #         "Invalid value {} for {} : {}".format(value, self, e))
         return None
 
-    def from_db_value(self, value, expression, connection, context):
+    def from_db_value(self, value, expression, connection, context=None):
         return quantities.parse(value) if value else self.get_default()
 
     # def get_db_prep_value(self, value, connection, prepared=False):
@@ -813,7 +813,7 @@ class DurationField(QuantityField):
 
 
     """
-    def from_db_value(self, value, expression, connection, context):
+    def from_db_value(self, value, expression, connection, context=None):
         return Duration(value) if value else self.get_default()
 
     def to_python(self, value):
@@ -859,7 +859,7 @@ or "23.07.0000" means "on a 23th of July"."""))
     # def get_internal_type(self):
     #     return "CharField"
 
-    def from_db_value(self, value, expression, connection, context):
+    def from_db_value(self, value, expression, connection, context=None):
         return IncompleteDate.parse(value) if value else self.get_default()
         # if value:
         #     return IncompleteDate.parse(value)

@@ -44,7 +44,7 @@ class UpdateWidgets(dd.Action):
 dd.inject_action('users.User', update_widgets=UpdateWidgets())
 
 
-@dd.python_2_unicode_compatible
+
 class Widget(UserAuthored, Sequenced):
     """
     """

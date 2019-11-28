@@ -42,7 +42,7 @@ from etgen.html import E
 
 from .mixins import Dupable
 
-@dd.python_2_unicode_compatible
+
 class PhoneticWord(Controllable):
     """Base class for the table of phonetic words of a given dupable
     model. For every (non-abstract) dupable model there must be a

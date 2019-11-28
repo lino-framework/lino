@@ -29,7 +29,7 @@ from .choicelists import Shortcuts, UploadAreas
 from .mixins import UploadController
 
 
-@dd.python_2_unicode_compatible
+
 class Volume(Referrable):
 
     class Meta:
@@ -124,7 +124,7 @@ def filename_leaf(name):
     return name
 
 
-@dd.python_2_unicode_compatible
+
 class Upload(mixins.Uploadable, UserAuthored, Controllable):
     class Meta(object):
         abstract = dd.is_abstract_model(__name__, 'Upload')

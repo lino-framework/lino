@@ -32,7 +32,7 @@ class CommentType(BabelNamed):
         verbose_name_plural = _("Comment Types")
 
 
-@dd.python_2_unicode_compatible
+
 class Comment(CreatedModified, UserAuthored, Controllable,
               ChangeNotifier, Previewable):
     class Meta(object):

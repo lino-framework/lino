@@ -25,7 +25,6 @@ class IPRecord(object):
         self.last_failure = None
         self.last_request = None
 
-# #six.python_2_unicode_compatible
 # class UserIPRecord(object):
 #     def __init__(self, ip, username):
 #         self.ip = ip
@@ -44,22 +43,22 @@ class IPRecord(object):
 
 class Plugin(ad.Plugin):
     "See :doc:`/dev/plugins`."
-    
+
     max_blacklist_time = timedelta(minutes=1)
     max_failed_auth_per_ip = 4 # Should be set in settings.SITE?
     # blacklist = {}
     ip_records = {}
-        
+
     def get_ip_record(self, request, username):
         addr = self.get_client_id(request)
         k = (addr, username)
-        
+
         ip = self.ip_records.get(k, None)
         if ip is None:
             ip = IPRecord(addr, username)
             self.ip_records[k] = ip
         return ip
-    
+
     @staticmethod
     def get_client_id(request):
         # from http://stackoverflow.com/questions/4581789/how-do-i-get-user-ip-address-in-django

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2018 Rumma & Ko Ltd
+# Copyright 2012-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Defines the model mixin :class:`BabelNamed`.
@@ -11,14 +11,13 @@ from builtins import object
 
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from django.utils.encoding import python_2_unicode_compatible
 
 from lino.core import model
 
 from .fields import BabelCharField
 
 
-@python_2_unicode_compatible
+
 class BabelNamed(model.Model):
 
     """
@@ -37,12 +36,12 @@ class BabelNamed(model.Model):
 
     def __str__(self):
         return self.get_designation()
-    
+
     def get_designation(self):
         return settings.SITE.babelattr(self, 'name')
 
 
-@python_2_unicode_compatible
+
 class BabelDesignated(model.Model):
 
     """
@@ -62,8 +61,6 @@ class BabelDesignated(model.Model):
 
     def __str__(self):
         return self.get_designation()
-    
+
     def get_designation(self):
         return settings.SITE.babelattr(self, 'designation')
-
-

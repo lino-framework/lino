@@ -172,10 +172,8 @@ class VirtualRow(object):
         return False
 
 
-from django.utils.encoding import python_2_unicode_compatible
 
 
-@python_2_unicode_compatible
 class PhantomRow(VirtualRow):
 
     def __init__(self, request, **kw):

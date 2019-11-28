@@ -10,7 +10,7 @@ import datetime
 
 from django.db import models
 from django.conf import settings
-from django.utils import six
+import six
 from django.utils.translation import ugettext_lazy as _
 from django.utils.timezone import make_aware
 

@@ -13,7 +13,6 @@ import logging ; logger = logging.getLogger(__name__)
 
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext as gettext
-from django.utils.encoding import python_2_unicode_compatible
 from django.utils.text import format_lazy
 from django.utils.encoding import force_text
 from django.conf import settings
@@ -151,7 +150,7 @@ def make_params_layout_handle(self):
         settings.SITE.kernel.default_ui)
 
 
-@python_2_unicode_compatible
+
 class Action(Parametrizable, Permittable):
     """
     Abstract base class for all actions.

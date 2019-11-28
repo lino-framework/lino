@@ -228,6 +228,8 @@ def uses_simple_values(holder, fld):
         ch = holder.get_chooser_for_field(fld.name)
         if ch is not None:
             return ch.simple_values
+    if fld.choices is None:
+        return True
     choices = list(fld.choices)
     if len(choices) == 0:
         return True

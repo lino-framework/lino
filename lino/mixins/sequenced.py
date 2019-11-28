@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2017 Rumma & Ko Ltd
+# Copyright 2009-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """Defines the model mixins :class:`Sequenced` and
 :class:`Hierarchical`.
@@ -179,10 +179,7 @@ class DuplicateSequenced(Duplicate):
         return super(DuplicateSequenced, self).run_from_code(ar, **kw)
 
 
-from django.utils.encoding import python_2_unicode_compatible
 
-
-@python_2_unicode_compatible
 class Sequenced(Duplicable):
     """Mixin for models that have a field :attr:`seqno` containing a
     "sequence number".
@@ -336,11 +333,11 @@ class Sequenced(Duplicable):
                 n += 1
 
             seq_no += 1
-            
+
         ar.success(message=_("Renumbered {} of {} siblings.").format(
             n, qs.count()))
         ar.set_response(refresh_all=True)
-        
+
     @fields.displayfield(_("Move"))
     def move_buttons(obj, ar):
         if ar is None:
@@ -416,7 +413,7 @@ class Hierarchical(Duplicable):
         return rv
 
     def get_parental_line(self):
-        """Return an ordered list of all ancestors of this instance.  
+        """Return an ordered list of all ancestors of this instance.
 
         The last element of the list is this.
         A top-level project is its own root.
@@ -451,4 +448,3 @@ class Hierarchical(Duplicable):
         clan |= set(l3)
         # print 20150421, projects
         return clan
-

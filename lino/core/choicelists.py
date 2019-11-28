@@ -53,7 +53,7 @@ from builtins import object
 from builtins import str
 
 import six
-from django.utils.six import python_2_unicode_compatible, text_type
+from six import text_type
 from future.utils import with_metaclass
 from past.builtins import cmp
 
@@ -85,7 +85,7 @@ VALUE_FIELD = models.CharField(_("value"), max_length=20)
 VALUE_FIELD.attname = 'value'
 
 @deconstructible
-@python_2_unicode_compatible
+
 class Choice(fields.TableRow):
     """A constant value whose unicode representation depends on the
     current language at runtime.  Every item of a :class:`ChoiceList`
@@ -913,7 +913,7 @@ class ChoiceListField(models.CharField):
     #~ def set_max_length(self,ml):
         #~ self.max_length = ml
 
-    def from_db_value(self, value, expression, connection, context):
+    def from_db_value(self, value, expression, connection, context=None):
         if value is None:
             return None
         return self.choicelist.to_python(value)
@@ -1003,7 +1003,7 @@ class MultiChoiceListField(ChoiceListField):
     #~ def set_max_length(self,ml):
         #~ self.max_length = (ml+1) * self.max_values
 
-    def from_db_value(self, value, expression, connection, context):
+    def from_db_value(self, value, expression, connection, context=None):
         return [self.choicelist.to_python(v) for v in value.split(self.delimiter_char)]
 
     def to_python(self, value):
