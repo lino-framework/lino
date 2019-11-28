@@ -990,7 +990,9 @@ def get_choicelist(i):
 def choicelist_choices():
     """Return a list of all choicelists defined for this application.
 
-    Used by :attr:`lino_xl.lib.properties.PropTypes.choicelist`
+    Used by :attr:`lino_xl.lib.properties.PropTypes.choicelist`.
+
+    Tested in :ref:`dev.choicelists`.
     """
     l = []
     for k, v in CHOICELISTS.items():

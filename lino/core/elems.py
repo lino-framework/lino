@@ -2367,9 +2367,9 @@ _FIELD2ELEM = (
     (fields.DatePickerField, DatePickerFieldElement),
     (models.DateField, DateFieldElement),
     (models.TimeField, TimeFieldElement),
+    (models.AutoField, AutoFieldElement),
     (models.IntegerField, IntegerFieldElement),
     (models.DecimalField, DecimalFieldElement),
-    (models.AutoField, AutoFieldElement),
     (models.BooleanField, BooleanFieldElement),
     # TODO: Lino currently renders NullBooleanField like BooleanField
     (models.NullBooleanField, BooleanFieldElement),
@@ -2381,6 +2381,8 @@ TRIGGER_BUTTON_WIDTH = 3
 
 
 def field2elem(layout_handle, field, **kw):
+    """Create the appropriate layout element for the given database field.
+    """
     if isinstance(field, models.OneToOneField):
         # logger.info("20180712 field2elem OneToOneField %s", field)
         return GenericForeignKeyElement(layout_handle, field, **kw)

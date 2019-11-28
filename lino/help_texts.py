@@ -615,7 +615,8 @@ Comments.observed_event."""),
     'lino.modlib.comments.CommentType' : _("""The CommentType model is not being used in production,
 one day we will probably remove it."""),
     'lino.modlib.comments.CommentTypes' : _("""The table with all existing comment types."""),
-    'lino.modlib.comments.Commentable' : _("""Mixin for models that can be subject to comments."""),
+    'lino.modlib.comments.Commentable' : _("""Mixin for models whose instances can be discussion topic of
+comments."""),
     'lino.modlib.comments.Commentable.get_rfc_description' : _("""Return a HTML formatted string with the description of this
 Commentable as it should be displayed by the slave summary of
 CommentsByOwner."""),
