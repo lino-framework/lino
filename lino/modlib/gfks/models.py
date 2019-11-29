@@ -1,17 +1,16 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2010-2018 Rumma & Ko Ltd
+# Copyright 2010-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 from builtins import str
 from builtins import object
 
-
-from django.contrib.contenttypes.models import ContentType, models
-
+from django import VERSION
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.db.utils import DatabaseError
 from django.db.models import FieldDoesNotExist
+from django.contrib.contenttypes.models import ContentType, models
 
 from lino.core.roles import SiteStaff
 from lino.api import dd, rt
@@ -19,6 +18,13 @@ from etgen.html import E
 from lino.utils import join_elems
 
 from lino.core.utils import get_models
+
+
+if VERSION[0] > 2:
+    # restore Django 2 behaviour
+    def old__ct_str(self):
+        return self.name
+    ContentType.__str__ = old__ct_str
 
 
 class ContentTypes(dd.Table):
@@ -133,7 +139,7 @@ class BrokenGFKs(dd.VirtualTable):
         for model in get_models(include_auto_created=True):
             for obj in f(model):
                 yield obj
-    
+
     @dd.displayfield(_("Database object"))
     def database_object(self, obj, ar):
         return ar.obj2html(obj)
