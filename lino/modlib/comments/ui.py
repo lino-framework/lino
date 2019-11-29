@@ -45,10 +45,11 @@ class Comments(dd.Table):
     reply_to owner owner_type owner_id
     # comment_type
     body
-    """, window_size=(60, 10), hidden_elements="reply_to owner owner_type owner_id")
+    private
+    """, window_size=(60, 13), hidden_elements="reply_to owner owner_type owner_id")
 
     detail_layout = """
-    id user created modified
+    id user created modified private
     reply_to owner owner_type owner_id comment_type
     body
     """
@@ -218,6 +219,7 @@ class CommentsByRFC(CommentsByX):
     reply_to
     # comment_type
     body
+    private
     """, window_size=(60, 13), hidden_elements="reply_to")
 
 

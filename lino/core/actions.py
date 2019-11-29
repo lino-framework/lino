@@ -949,7 +949,7 @@ class ShowInsert(TableAction):
 
     def create_instance(self, ar):
         """
-        create a temporary instance that will not be saved, used only to
+        Create a temporary instance that will not be saved, used only to
         build the button.
         """
         return ar.create_instance()

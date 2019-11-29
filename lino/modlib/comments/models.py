@@ -73,8 +73,13 @@ class Comment(CreatedModified, UserAuthored, Controllable,
             qs = qs.filter(*filters)
         return qs.distinct()  # add distinct because filter might be on a join
 
-    def after_ui_create(self, ar):
-        super(Comment, self).after_ui_create(ar)
+    # def after_ui_create(self, ar):
+    #     super(Comment, self).after_ui_create(ar)
+    #     if self.owner_id:
+    #         self.private = self.owner.is_comment_private(self, ar)
+
+    def on_create(self, ar):
+        super(Comment, self).on_create(ar)
         if self.owner_id:
             self.private = self.owner.is_comment_private(self, ar)
 

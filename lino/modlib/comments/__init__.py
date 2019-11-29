@@ -18,7 +18,12 @@ class Plugin(ad.Plugin):
     needs_plugins = ['lino.modlib.office', 'lino.modlib.memo']
 
     private_default = True
-    """Whether comments are private by default."""
+    """Whether comments are private by default.
+
+    The default value for the :attr:`lino.modlib.comments.Comment.private`
+    field.
+
+    """
 
     def setup_main_menu(self, site, user_type, m):
         mg = site.plugins.office
