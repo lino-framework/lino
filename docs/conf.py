@@ -18,7 +18,7 @@ extensions += ['lino.sphinxcontrib.base']
 
 
 from atelier.sphinxconf import interproject
-interproject.configure(globals())
+interproject.configure(globals(), 'atelier')
 intersphinx_mapping['cg'] = ('http://community.lino-framework.org/', None)
 
 from lino import SETUP_INFO
