@@ -3,15 +3,12 @@
 # License: BSD (see file COPYING for details)
 
 """
-See :ref:`lino` for non-technical documentation.
+The :mod:`lino` package is the main plugin used by all Lino applications,
+and the root for the subpackages that define core functionalites.
 
-The :mod:`lino` package itself is the first plugin for all Lino
-applications, added automatically to your :setting:`INSTALLED_APPS`. It defines
-no models, but some template files, django admin commands, translation messages
-and the core :xfile:`help_texts.py` file.
-
-The :mod:`lino` package is the root for the subpackages that define core
-functionalites:
+As a plugin it is added automatically to your :setting:`INSTALLED_APPS`. It
+defines no models, some template files, a series of django admin commands, core
+translation messages and the core :xfile:`help_texts.py` file.
 
 .. autosummary::
    :toctree:
