@@ -645,8 +645,7 @@ class FieldElement(LayoutElement):
 
                 kw.update(fieldLabel=label)
         if self.editable:
-            if not self.field.blank:
-                kw.update(allowBlank=False)
+            kw.update(allowBlank=self.field.blank)
             kw.update(selectOnFocus=True)
         else:
             kw.update(disabled=True)

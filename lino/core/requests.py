@@ -629,7 +629,7 @@ class BaseRequest(object):
         """
         self._confirm_answer = ans
 
-    def confirm(self, ok_func, *msgs):
+    def confirm(self, ok_func, *msgs, uid=None):
         """
         Execute the specified callable `ok_func` after the user has
         confirmed the specified message.
@@ -650,7 +650,7 @@ class BaseRequest(object):
         call to :meth:`set_confirm_answer`.
 
         """
-        cb = self.add_callback(*msgs)
+        cb = self.add_callback(*msgs, uid=uid)
         cb.add_choice('yes', ok_func, gettext("Yes"))
         cb.add_choice('no', noop, gettext("No"))
 

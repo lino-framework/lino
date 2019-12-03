@@ -9,7 +9,9 @@ decorator, and some of the standard actions.  See :ref:`dev.actions`.
 import six
 from builtins import str
 
-import logging ; logger = logging.getLogger(__name__)
+import logging;
+
+logger = logging.getLogger(__name__)
 
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext as gettext
@@ -19,8 +21,8 @@ from django.conf import settings
 from django.db import models
 
 from django.apps import apps
-get_models = apps.get_models
 
+get_models = apps.get_models
 
 from lino.core import constants
 from lino.core import layouts
@@ -36,6 +38,7 @@ from .utils import resolve_model
 from .utils import navinfo
 from .utils import Parametrizable
 from .requests import InstanceAction
+
 
 def check_for_chooser(holder, field):
     # holder is either a Model, an Actor or an Action.
@@ -58,13 +61,13 @@ def check_for_chooser(holder, field):
 
 def discover_choosers():
     logger.debug("Discovering choosers for model fields...")
-    #~ logger.debug("Instantiate model reports...")
+    # ~ logger.debug("Instantiate model reports...")
     for model in get_models():
-        #~ n = 0
+        # ~ n = 0
         allfields = model._meta.fields
         for field in allfields:
             check_for_chooser(model, field)
-        #~ logger.debug("Discovered %d choosers in model %s.",n,model)
+        # ~ logger.debug("Discovered %d choosers in model %s.",n,model)
 
 
 def install_layout(cls, k, layout_class, **options):
@@ -150,7 +153,6 @@ def make_params_layout_handle(self):
         settings.SITE.kernel.default_ui)
 
 
-
 class Action(Parametrizable, Permittable):
     """
     Abstract base class for all actions.
@@ -160,7 +162,7 @@ class Action(Parametrizable, Permittable):
     attributes.
 
     """
-    #~ __metaclass__ = ActionMetaClass
+    # ~ __metaclass__ = ActionMetaClass
     _layout_class = layouts.ActionParamsLayout
 
     label = None
@@ -547,6 +549,7 @@ class Action(Parametrizable, Permittable):
         All arguments are forwarded to :meth:`Action.__init__`.
 
         """
+
         def decorator(fn):
             assert not 'required' in kw
             # print 20140422, fn.__name__
@@ -556,10 +559,11 @@ class Action(Parametrizable, Permittable):
             def wrapped(ar):
                 obj = ar.selected_rows[0]
                 return fn(obj, ar)
+
             a.run_from_ui = wrapped
             return a
-        return decorator
 
+        return decorator
 
     def get_required_roles(self, actor):
         return actor.required_roles
@@ -583,7 +587,7 @@ class Action(Parametrizable, Permittable):
 
         """
         return self.opens_a_window or (
-            self.parameters and not self.no_params_window)
+                self.parameters and not self.no_params_window)
 
     def get_status(self, ar, **kw):
         if self.parameters is not None:
@@ -639,7 +643,7 @@ class Action(Parametrizable, Permittable):
     def full_name(self, actor):
         if self.action_name is None:
             raise Exception("Tried to full_name() on %r" % self)
-            #~ return repr(self)
+            # ~ return repr(self)
         if self.parameters and not self.no_params_window:
             return self.defining_actor.actor_id + '.' + self.action_name
         return str(actor) + '.' + self.action_name
@@ -673,8 +677,8 @@ class Action(Parametrizable, Permittable):
             return repr(self)
         return str(self.defining_actor) + ':' + self.action_name
 
-    #~ def set_permissions(self,*args,**kw)
-        #~ self.permission = perms.factory(*args,**kw)
+    # ~ def set_permissions(self,*args,**kw)
+    # ~ self.permission = perms.factory(*args,**kw)
 
     def attach_to_workflow(self, wf, name):
         if self.action_name is not None:
@@ -829,7 +833,7 @@ class ShowTable(TableAction):
         return self.label or self.defining_actor.label
 
     def get_window_layout(self, actor):
-        #~ return self.actor.list_layout
+        # ~ return self.actor.list_layout
         return None
 
     def get_window_size(self, actor):
@@ -875,7 +879,7 @@ class ShowEmptyTable(ShowDetail):
     use_param_panel = True
     action_name = 'show'
     default_format = 'html'
-    #~ hide_top_toolbar = True
+    # ~ hide_top_toolbar = True
     hide_navigator = True
     icon_name = None
     callable_from = 't'
@@ -973,7 +977,6 @@ class ShowInsert(TableAction):
 #     # required_roles = set([SiteUser])
 
 
-
 # this is a first attempt to solve the "cannot use active fields in
 # insert window" problem.  not yet ready for use. the idea is that
 # active fields should not send a real "save" request (either POST or
@@ -1052,6 +1055,7 @@ class SubmitDetail(SaveGridCell):
                 else:
                     ar.goto_instance(elem)
 
+
 class CreateRow(Action):
     """
     Called when user edited a cell of a phantom record in a grid.
@@ -1079,7 +1083,7 @@ class CreateRow(Action):
             # decoding problems on the client when responding to a
             # file upload
             ar.set_response(rows=[ar.ah.store.row2list(ar, elem)])
-            ar.set_response(navinfo=navinfo(ar.data_iterator,elem))
+            ar.set_response(navinfo=navinfo(ar.data_iterator, elem))
         else:
             # Must set text/html for file uploads, otherwise the
             # browser adds a <PRE></PRE> tag around the AJAX response.
@@ -1100,12 +1104,13 @@ class CreateRow(Action):
         for e in elems:
             e.save_new_instance(ar)
 
-        ar.success(_("%s files have been uploaded: %s") % (len(elems), "\n".join([obj2unicode(elem) for elem in elems])))
+        ar.success(
+            _("%s files have been uploaded: %s") % (len(elems), "\n".join([obj2unicode(elem) for elem in elems])))
 
         # print(19062017, "Ticket 1910")
         if ar.actor.handle_uploaded_files is None:
             ar.set_response(rows=[ar.ah.store.row2list(ar, elem[0])])
-            ar.set_response(navinfo=navinfo(ar.data_iterator,elem[0]))
+            ar.set_response(navinfo=navinfo(ar.data_iterator, elem[0]))
         else:
             # Must set text/html for file uploads, otherwise the
             # browser adds a <PRE></PRE> tag around the AJAX response.
@@ -1154,9 +1159,11 @@ class SubmitInsert(CreateRow):
         # if settings.SITE.is_installed("react"):
         #     ar.goto_instance(elem)
 
-            # ar.set_response(
-            #     eval_js=ar.renderer.obj2url(ar, elem).replace('javascript:', '', 1)
-            # )
+        # ar.set_response(
+        #     eval_js=ar.renderer.obj2url(ar, elem).replace('javascript:', '', 1)
+        # )
+
+
 # class SubmitInsertAndStay(SubmitInsert):
 #     sort_index = 11
 #     switch_to_detail = False
@@ -1165,13 +1172,14 @@ class SubmitInsert(CreateRow):
 #     help_text = _("Don't open a detail window on the new record")
 
 
-class ExplicitRefresh(Action): # experimental 20170929
+class ExplicitRefresh(Action):  # experimental 20170929
     label = _("Go")
     show_in_bbar = False
     # js_handler = 'function(panel) {panel.refresh()}'
     js_handler = 'function(btn, evt) {console.log("20170928", this); this.refresh()}'
     # def run_from_ui(self, ar, **kw):
     #     ar.set_response(refresh_all=True)
+
 
 class ShowSlaveTable(Action):
     """
@@ -1195,9 +1203,9 @@ class ShowSlaveTable(Action):
         if isinstance(self.slave_table, six.string_types):
             T = settings.SITE.models.resolve(self.slave_table)
             if T is None:
-                msg = "Invalid action {} on actor {!r}: "\
+                msg = "Invalid action {} on actor {!r}: " \
                       "no table named {}".format(
-                          name, actor, self.slave_table)
+                    name, actor, self.slave_table)
                 raise Exception(msg)
             self.slave_table = T
         for k in self.TABLE2ACTION_ATTRS:
@@ -1236,7 +1244,7 @@ class MultipleRowAction(Action):
 
         msg = _("%d row(s) have been updated.") % n
         ar.info(msg)
-        #~ ar.success(msg,**kw)
+        # ~ ar.success(msg,**kw)
 
 
 class DeleteSelected(MultipleRowAction):
@@ -1260,12 +1268,13 @@ class DeleteSelected(MultipleRowAction):
     readonly = False
     show_in_workflow = False
     # required_roles = set([SiteUser])
-    #~ callable_from = (ShowTable,ShowDetail)
-    #~ needs_selection = True
+    # ~ callable_from = (ShowTable,ShowDetail)
+    # ~ needs_selection = True
     label = _("Delete")
-    #~ url_action_name = 'delete'
+    # ~ url_action_name = 'delete'
     key = keyboard.DELETE  # (ctrl=True)
-    #~ client_side = True
+
+    # ~ client_side = True
 
     def run_from_ui(self, ar, **kw):
         objects = []
@@ -1291,11 +1300,13 @@ class DeleteSelected(MultipleRowAction):
         else:
             d.update(type=ar.actor.model._meta.verbose_name_plural)
         msg = gettext("You are about to delete %(num)d %(type)s:\n%(targets)s") % d
-        ar.confirm(ok, u"{}\n{}".format(msg, gettext("Are you sure ?")))
+        ar.confirm(ok, u"{}\n{}".format(msg, gettext("Are you sure ?")),
+                   uid="deleting %(num)d %(type)s pks=" % d + "".join([str(t.pk) for t in ar.selected_rows]))
 
     def run_on_row(self, obj, ar):
         obj.delete_instance(ar)
         return 1
+
 
 action = Action.decorate
 

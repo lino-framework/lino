@@ -143,7 +143,7 @@ class unused_CallbackManager(object):
         ar.error("Invalid button %r for callback %r" % (button_id, thread_id))
         return ar.renderer.render_action_response(ar)
 
-def add_callback(ar, *msgs):
+def add_callback(ar, *msgs, uid=None):
     """
     Returns an *action callback* which will initiate a dialog thread by
     asking a question to the user and suspending execution until
@@ -162,7 +162,7 @@ def add_callback(ar, *msgs):
     else:
         msg = msgs[0]
     # logger.info("20160526 add_callback(%s)", msg)
-    return Callback(ar, msg)
+    return Callback(ar, msg, uid=uid)
 
 def set_callback(ar, cb):
     """
