@@ -963,13 +963,13 @@ class Model(models.Model, fields.TableRow):
             if isinstance(self, settings.SITE.project_model):
                 return self
 
-    def to_html(self, **kw):
-        import lino.ui.urls  # hack: trigger ui instantiation
-        actor = self.get_default_table()
-        kw.update(renderer=settings.SITE.kernel.text_renderer)
-        ar = actor.request(**kw)
-        return self.preview(ar)
-        #~ username = kw.pop('username',None)
+    # def to_html(self, **kw):
+    #     import lino.ui.urls  # hack: trigger ui instantiation
+    #     actor = self.get_default_table()
+    #     kw.update(renderer=settings.SITE.kernel.text_renderer)
+    #     ar = actor.request(**kw)
+    #     return self.preview(ar)
+    #     #~ username = kw.pop('username',None)
 
     def get_typed_instance(self, model):
         """

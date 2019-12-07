@@ -287,7 +287,7 @@ def show_workflow(actions, all=False, language=None):
 def show_fields(model, fieldnames=None, columns=False, all=None):
     """
     Print an overview description of the specified fields of the
-    specified model. 
+    specified model.
 
     If model is an action or table, print the parameter fields of that
     action or table.

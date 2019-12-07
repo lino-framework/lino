@@ -13,6 +13,7 @@ from atelier import rstgen
 from atelier.utils import unindent
 
 from django.conf import settings
+from django.db import models
 from django.utils.encoding import force_text
 
 from lino.modlib.system.choicelists import PeriodEvents
@@ -317,49 +318,87 @@ def layout_fields(ba):
     return ', '.join(elems)
     # return fill(' '.join(elems), 50)
 
+def elem_label(e):
+    if isinstance(e, FieldElement):
+        return "**%s** (%s)" % (str(e.field.verbose_name), e.field.name)
+    elif e.get_label() is None:
+        return "(%s)" % e.name
+    else:
+        return "**%s** (%s)" % (str(e.get_label()), e.name)
 
-def py2rst(self, doctestfmt=False):
-    """Render any Python object as reStructuredText.
 
-    Where "any" currently means a layout or a layout element.
-    :class:`lino.core.layouts.BaseLayout`
-    :mod:`lino.modlib.extjs.elems`
+def py2rst(self, doctestfmt=False, fmt=None):
+    """
+    Return a textual representation of the given Python object as a
+    reStructuredText bullet list.
+
+    The Python object can be a layout, a layout element, an action or a
+    database object.
+
+    If it is an action, it must have parameters, and py2rst will render the
+    params_layout.
+
+    If it is a database object, you will get  a textual representation of a
+    detail window on that object.
 
     If the optional argument `doctestfmt` is specified as `True`, then
-    output contains less blank lines which might be invalid
+    output contains less blank lines, which might be invalid
     reStructuredText but is more doctest-friendly.
 
+    TODO: move this functionality to lino.api.doctests and rename it to
+    something that reflects better what it does.
+
     """
+    from lino.core.store import get_atomizer
+    
+    if isinstance(self, models.Model) and fmt is None:
+        ar = self.get_default_table().request()
+        def fmt(e):
+            s = elem_label(e)
+            if isinstance(e, FieldElement):
+                sf = get_atomizer(self.__class__, e.field, e.field.name)
+                getter = sf.full_value_from_object
+                value = getter(self, ar)
+                # value = e.value_from_object(self, None)
+                if value is not None:
+                    s += ": " + e.format_value(ar, value)
+            return s
+
+        dt = self.get_default_table()
+        lh = dt.detail_layout.get_layout_handle()
+        return py2rst(lh.main, doctestfmt, fmt)
+
     if isinstance(self, actions.Action):
         s = str(self)
         if self.params_layout:
             lh = self.params_layout.get_layout_handle(
                 settings.SITE.kernel.default_ui)
             s += '\n'
-            s += py2rst(lh.main, doctestfmt)
+            s += py2rst(lh.main, doctestfmt, fmt)
         return s
+
 
     if isinstance(self, BaseLayout):
         lh = self.get_layout_handle(settings.SITE.kernel.default_ui)
-        return py2rst(lh.main, doctestfmt)
+        return py2rst(lh.main, doctestfmt, fmt)
 
     if isinstance(self, Wrapper):
         self = self.wrapped
 
-    if isinstance(self, FieldElement):
-        s = "**%s** (%s)" % (str(self.field.verbose_name), self.field.name)
-    elif self.get_label() is None:
-        s = "(%s)" % self.name
-    else:
-        s = "**%s** (%s)" % (str(self.get_label()), self.name)
-    if visible_for(self) != visible_for(self.parent):
-        s += " [visible for %s]" % visible_for(self)
+    if fmt is None:
+        def fmt(e):
+            s = elem_label(e)
+            if visible_for(e) != visible_for(e.parent):
+                s += " [visible for %s]" % visible_for(e)
+            return s
+
+    s = fmt(self)
     if isinstance(self, Container):
         use_ul = False
         for e in self.elements:
             if isinstance(e, Container):
                 use_ul = True
-        children = [py2rst(e, doctestfmt) for e in self.elements]
+        children = [py2rst(e, doctestfmt, fmt) for e in self.elements]
         if len(children):
             if use_ul:
                 s += ':\n'
