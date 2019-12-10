@@ -62,7 +62,7 @@ class Converter(object):
 class LookupConverter(Converter):
 
     """
-    A Converter for ForeignKey and ManyToManyField. 
+    A Converter for ForeignKey and ManyToManyField.
     If the lookup_field is a BabelField, then it tries all available languages.
     """
 
@@ -113,6 +113,8 @@ class ChoiceConverter(Converter):
     """Converter for :class:`ChoiceListField
     <lino.core.choicelists.ChoiceListField>`.
 
+    If you specify a string, then it can be a *value* or a *name*.
+
     """
 
     def convert(self, **kw):
@@ -120,7 +122,11 @@ class ChoiceConverter(Converter):
 
         if value is not None:
             if not isinstance(value, self.field.choicelist.item_class):
-                kw[self.field.name] = self.field.choicelist.get_by_value(value)
+                # kw[self.field.name] = self.field.choicelist.get_by_value(value)
+                kw[self.field.name] = self.field.choicelist.to_python(value)
+                # if self.field.name == "vat_class":
+                #     print("20191210 convert {} from {} --> {}".format(
+                #         value, self.field.choicelist.items_dict, kw[self.field.name]))
         return kw
 
 
@@ -199,7 +205,7 @@ class ManyToManyConverter(LookupConverter):
 
 def make_converter(f, lookup_fields={}):
     from lino.core.gfks import GenericForeignKey
-    
+
     if isinstance(f, models.ForeignKey):
         return ForeignKeyConverter(f, lookup_fields.get(f.name, "pk"))
     if isinstance(f, GenericForeignKey):
@@ -315,12 +321,12 @@ class Instantiator(object):
             else:
                 kw[fld.name] = v
 
-        for name, v in list(kw.items()):
+        for name, v in kw.items():
             if "__" in name:
                 del kw[name]
                 fld = make_remote_field(self.model, name)
                 setters.append((fld, v))
-            
+
         # kw.update(self.default_values)
         for k, v in self.default_values.items():
             kw.setdefault(k, v)
@@ -332,16 +338,17 @@ class Instantiator(object):
               # ' '.join([f.name for f in self.model._meta._field_name_cache]))
 
         m2m = kw.pop("_m2m")
+        # print("20191210 {}({})", self.model, kw)
         instance = self.model(**kw)
         instance.full_clean()
         if m2m or len(setters):
             instance.save()
-            
+
         for fld, v in setters:
             fld.setter(instance, v)
-        
+
         if m2m:
-            for k, v in list(m2m.items()):
+            for k, v in m2m.items():
                 queryset = getattr(instance, k)
                 queryset.add(*v)
         return instance

@@ -66,7 +66,7 @@ from django.utils.functional import lazy
 from django.utils.deconstruct import deconstructible
 from django.db import models
 from django.conf import settings
-
+from django.db.models import NOT_PROVIDED
 from django.db.migrations.serializer import BaseSerializer
 from django.db.migrations.writer import MigrationWriter
 
@@ -514,7 +514,7 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
         choicelist.
 
         """
-        # remove previously defined choices from class dict:
+        # remove previously defined named choices from class dict:
         for ci in cls.items_dict.values():
             if ci.name:
                 delattr(cls, ci.name)
@@ -660,10 +660,10 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
         #     return value
         if not value:
             return None
-        v = cls.items_dict.get(value) or cls.get_by_name(value, None)
+        v = cls.items_dict.get(value) or cls.get_by_name(value)
         if v is not None:
             return v
-        nv = cls.old2new.get(value, None)
+        nv = cls.old2new.get(value)
         if nv is not None:
             v = cls.items_dict.get(nv)
             if v is not None:

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2018 Rumma & Ko Ltd
+# Copyright 2009-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """
 Defines :class:`HtmlRenderer` and :class:`TextRenderer`.
@@ -21,6 +21,7 @@ from atelier import rstgen
 
 from django.conf import settings
 from django.db import models
+from django.db.models.fields import NOT_PROVIDED
 # from django.utils.encoding import force_text
 from django.utils.text import format_lazy
 
@@ -84,10 +85,6 @@ def add_user_language(kw, ar):
         #~ if ul:
             #~ translation.activate(ul)
             #~ request.LANGUAGE_CODE = translation.get_language()
-
-
-class NOT_GIVEN(object):
-    pass
 
 
 class Renderer(object):
@@ -257,7 +254,7 @@ class HtmlRenderer(Renderer):
             tar.bound_action, uri, text or tar.get_title(), **kw)
 
     def href_button_action(
-            self, ba, url, text=None, title=None, icon_name=NOT_GIVEN, **kw):
+            self, ba, url, text=None, title=None, icon_name=NOT_PROVIDED, **kw):
         """
 
         Return an etree element of a ``<a href>`` tag which when clicked would
@@ -266,7 +263,7 @@ class HtmlRenderer(Renderer):
         """
         # changed 20130905 for "Must read eID card button"
         # but that caused icons to not appear in workflow_buttons.
-        if icon_name is NOT_GIVEN:
+        if icon_name is NOT_PROVIDED:
             icon_name = ba.action.icon_name
         if 'style' not in kw:
             if icon_name is None:
