@@ -447,7 +447,7 @@ to indicate that all deferred objects should get saved before going on."""),
     'lino.utils.dpy.Migrator' : _("""The SITE's Migrator class is instantiated by install_migrations."""),
     'lino.utils.dpy.Migrator.after_load' : _("""Declare a function to be called after all data has been loaded."""),
     'lino.utils.dpy.Migrator.before_load' : _("""Declare a function to be called before loading dumped data."""),
-    'lino.utils.instantiator.LookupConverter' : _("""A Converter for ForeignKey and ManyToManyField. 
+    'lino.utils.instantiator.LookupConverter' : _("""A Converter for ForeignKey and ManyToManyField.
 If the lookup_field is a BabelField, then it tries all available languages."""),
     'lino.utils.instantiator.ChoiceConverter' : _("""Converter for ChoiceListField."""),
     'lino.utils.instantiator.ForeignKeyConverter' : _("""Converter for ForeignKey fields."""),
