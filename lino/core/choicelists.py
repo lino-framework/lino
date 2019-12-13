@@ -660,14 +660,12 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
         #     return value
         if not value:
             return None
+        nv = cls.old2new.get(value)
+        if nv is not None:
+            value = nv
         v = cls.items_dict.get(value) or cls.get_by_name(value)
         if v is not None:
             return v
-        nv = cls.old2new.get(value)
-        if nv is not None:
-            v = cls.items_dict.get(nv)
-            if v is not None:
-                return v
         if settings.SITE.strict_choicelist_values:
             raise UnresolvedChoice(
                 "Unresolved value %r (%s) for %s (set "

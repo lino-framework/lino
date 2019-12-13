@@ -112,8 +112,8 @@ class UsersOverview(Users):
     required_roles = set([])
     column_names = 'username user_type language'
     exclude = dict(user_type='')
+    # abstract = not settings.SITE.is_demo_site
     sign_in = SignIn()
-    abstract = not settings.SITE.is_demo_site
     # if settings.SITE.social_auth_backends is None:
     #     sign_in = SignIn()
     # else:

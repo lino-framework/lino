@@ -473,10 +473,6 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
         """Build the "user menu", i.e. the menu in the top right corner.
         """
         if settings.SITE.user_model is not None:
-
-            # users = settings.SITE.models.users
-
-            # if request.user.profile.has_required_roles([SiteUser]):
             if request.user.authenticated:
                 if request.subst_user:
                     yield "Lino.set_subst_user(%s,%s);" % (
@@ -537,11 +533,11 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
                 yield "Lino.main_menu = Lino.main_menu.concat(['->',%s]);" % py2js(login_menu)
 
             else:
-                a = rt.models.users.UsersOverview.get_action_by_name('sign_in')
-                js = self.action_call(None, a, {})
+                ba = rt.models.users.UsersOverview.get_action_by_name('sign_in')
+                js = self.action_call(None, ba, {})
                 js = "function(){%s}" % js
                 login_buttons = [ dict(
-                    xtype="button", text=a.get_button_label(),
+                    xtype="button", text=ba.get_button_label(),
                     handler=js_code(js)) ]
                 # login_buttons = [
                 #     dict(xtype="button", text=_("Log in"),
@@ -549,7 +545,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
                 #     #~ dict(xtype="button",text="Register",handler=Lino.register),
                 # ]
                 yield "Lino.main_menu = \
-                Lino.main_menu.concat(['->',%s]);" % py2js(login_buttons)
+                Lino.main_menu.concat(['->', %s]);" % py2js(login_buttons)
 
     def before_row_edit(self, panel):
         from lino.core.actions import get_view_permission
