@@ -37,3 +37,19 @@ notifications:
         - secure: PI5TM+LEssN/WbnMmRylCnEkhmME/VmyKcFik25cZvnfKQcqp9gHTZ6xCVSFbPFF12u+RCohqs/joA7xMaBlVVmCwU8NNubw75xO8apLoaCcAAOMy/mRLDIpNDzRELt+LLp7HNyjvOT8nf1xmTfrbX/44ImJjHfIdgT6UPGhr+o=
     on_success: change
     on_failure: always
+
+# Thanks to https://github.com/plume-lib/trigger-travis
+jobs:
+  include:
+    - stage: trigger downstream
+      script: |
+        echo "TRAVIS_BRANCH=$TRAVIS_BRANCH TRAVIS_PULL_REQUEST=$TRAVIS_PULL_REQUEST"
+        if [[ ($TRAVIS_BRANCH == master) &&
+              ($TRAVIS_PULL_REQUEST == false) ]] ; then
+          curl -LO --retry 3 https://raw.githubusercontent.com/plume-lib/trigger-travis/master/trigger-travis.sh
+          sh trigger-travis.sh lino-framework welfare $TRAVIS_ACCESS_TOKEN
+          sh trigger-travis.sh lino-framework presto $TRAVIS_ACCESS_TOKEN
+          sh trigger-travis.sh lino-framework ciao $TRAVIS_ACCESS_TOKEN
+          sh trigger-travis.sh lino-framework amici $TRAVIS_ACCESS_TOKEN
+          sh trigger-travis.sh lino-framework book $TRAVIS_ACCESS_TOKEN
+        fi
