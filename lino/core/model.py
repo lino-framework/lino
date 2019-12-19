@@ -360,23 +360,6 @@ class Model(models.Model, fields.TableRow):
         # inherit from TableRow
 
 
-    @classmethod
-    def add_param_filter(cls, qs, lookup_prefix='', **kwargs):
-        """Add filters to queryset using table parameter fields.
-
-        This is called for every simple parameter.
-
-        Usage example is :class:`DeploymentsByTicket
-        <lino_xl.lib.deploy.desktop.DeploymentsByTicket>`.
-
-        """
-        return qs.filter(**kwargs)
-        # if len(kwargs):
-        #     raise Exception(
-        #         "{}.add_param_filter got unknown argument {}".format(
-        #             str(cls.__name__), kwargs))
-        # return qs
-
     def disable_delete(self, ar=None):
         """
         Decide whether this database object may be deleted.  Return `None`
@@ -518,6 +501,23 @@ class Model(models.Model, fields.TableRow):
         the database field of the same name.
         """
         return []
+
+    @classmethod
+    def add_param_filter(cls, qs, lookup_prefix='', **kwargs):
+        """Add filters to queryset using table parameter fields.
+
+        This is called for every simple parameter.
+
+        Usage example is :class:`DeploymentsByTicket
+        <lino_xl.lib.deploy.desktop.DeploymentsByTicket>`.
+
+        """
+        return qs.filter(**kwargs)
+        # if len(kwargs):
+        #     raise Exception(
+        #         "{}.add_param_filter got unknown argument {}".format(
+        #             str(cls.__name__), kwargs))
+        # return qs
 
     @classmethod
     def on_analyze(cls, site):
