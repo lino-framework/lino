@@ -125,7 +125,8 @@ def parse_name(text):
     """Parse the given `text` and return a dict of `first_name` and
     `last_name` value.
 
-    Extends :func:`name2kw` by raising a  ValidationError if necessary.
+    Extends :func:`name2kw` by raising a ValidationError if necessary and by
+    capitalizing each part of the name.
 
     """
     kw = name2kw(text, last_name_first=False)
