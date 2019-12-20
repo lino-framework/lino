@@ -108,11 +108,13 @@ class Model(models.Model, fields.TableRow):
 
     .. method:: create_FOO_choice
 
-        For every field named "FOO" (which must have a chooser), if
-        the model has a method called "create_FOO_choice", then this
-        chooser will be a "learning" chooser.  That is, users can
-        enter text into the combobox, and Lino will create a new
-        database object from it.
+        For every field named "FOO" for which a chooser exists, if the model
+        also has a method called "create_FOO_choice", then this chooser will be
+        a "learning" chooser. That is, users can enter text into the combobox,
+        and Lino will create a new database object from it.
+
+        This works only if FOO is (1) a foreign key and (2) has a chooser.
+        See :term:`learning foreign key`.
 
     """
 
