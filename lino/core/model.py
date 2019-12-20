@@ -181,7 +181,7 @@ class Model(models.Model, fields.TableRow):
     show_in_site_search = True
     """Set this to `False` if you really don't want this model to occur
     in the site-wide search
-    (:class:`lino.modlib.about.models.SiteSearch`).
+    (:class:`lino.modlib.about.SiteSearch`).
 
     """
 
@@ -559,7 +559,7 @@ class Model(models.Model, fields.TableRow):
     @classmethod
     def lookup_or_create(model, lookup_field, value, **known_values):
         """
-        Look-up whether there is a model instance having
+        Look up whether there is a model instance having
         `lookup_field` with value `value`
         (and optionally other `known_values` matching exactly).
 
