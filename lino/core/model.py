@@ -4,11 +4,8 @@
 
 "Defines the :class:`Model` class."
 
-from __future__ import unicode_literals
-from __future__ import print_function
 import six
 
-from builtins import str
 from builtins import object
 
 import logging ; logger = logging.getLogger(__name__)
@@ -274,6 +271,10 @@ class Model(models.Model, fields.TableRow):
     change_watcher_spec = None
     """
     Internally used by :meth:`watch_changes`
+    """
+
+    disable_create_choice = False
+    """Whether to disable any automatic creation by learning choosers.
     """
 
     _widget_options = {}
