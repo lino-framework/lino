@@ -467,10 +467,7 @@ class Kernel(object):
 
         #~ logger.info(settings.INSTALLED_APPS)
 
-        site.setup_layouts()
-
         site.on_each_app('site_setup')
-        # Deprecated. Use custom_layouts_module instead.
 
 
         # Actor.after_site_setup() is called after the plugins's

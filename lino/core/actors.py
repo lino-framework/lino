@@ -133,9 +133,9 @@ class ActorMetaClass(type):
         you cannot set this yourself in a subclass
         because otherwise it gets complex when inheriting reports from other
         app_labels."
-        On 20110912 I cancelled change 20110822 because PersonsByOffer 
+        On 20110912 I cancelled change 20110822 because PersonsByOffer
         should clearly get app_label 'jobs' and not 'contacts'.
-        
+
         """
 
         if classDict.get('app_label', None) is None:
@@ -312,12 +312,12 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     app_label = None
     """
     Specify this if you want to "override" an existing actor.
-    
+
     The default value is deduced from the module where the subclass is
     defined.
-    
+
     Note that this attribute is not inherited from base classes.
-    
+
     :func:`lino.core.table.table_factory` also uses this.
     """
 
@@ -340,16 +340,16 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     master_key = None
     """The name of a field of this table's :attr:`model` that
     points to its :attr:`master`.
-    
+
     The field named by :attr:`master_key` should usually be a
     :class:`ForeignKey` field.
-    
+
     Special cases: :class:`lino_xl.lib.cal.EntriesByGuest` shows the entries
     having a presence pointing to this guest.
 
     Note that the :attr:`master_key` is automatically added to
     :attr:`hidden_columns`.
-    
+
 
     """
 
@@ -374,7 +374,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     Set this to `True` on a workflow if you want to disable workflow
     control based on the state of the object.
-    
+
     Note that you must set this to True before importing any library workflows
     because permission handlers are defined when a workflow is imported. """
 
@@ -410,7 +410,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     of the :class:`lino.core.model.Model`.
 
     Note that these names are not being verified to be names of
-    existing fields. This fact is being used by UNION tables like 
+    existing fields. This fact is being used by UNION tables like
     :class:`lino_xl.lib.vat.IntracomInvoices`
 
     """
@@ -508,10 +508,10 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     and a "Delete" buttons.  In ExtJS UI also influences the title of
     a Detail Window to specify only the current element without
     prefixing the Tables's title.
-    
-    If used in a grid view in React will remove the top toolbar 
+
+    If used in a grid view in React will remove the top toolbar
     and selection tools.
-    
+
     This option is `True` in
     :class:`lino.models.SiteConfigs`,
     :class:`lino_welfare.pcsw.models.Home`,
@@ -607,7 +607,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     detail_template = None    # deprecated: use insert_layout instead
     insert_template = None    # deprecated: use detail_layout instead
-    
+
     help_text = None
     """
     A help text that shortly explains what the default action of this
@@ -617,7 +617,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     If this is not given by the code, Lino will potentially set it at
     startup when loading the :xfile:`help_texts.py` files.
     """
-    
+
     detail_action = None
     update_action = None
     insert_action = None
@@ -631,7 +631,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     Set this to `True` to prevent Lino from generating useless
     JavaScript if this is just an abstract base class to be inherited
     by other actors.
-    
+
     Note that this class attribute is not inherited to subclasses.
 
     """
@@ -750,14 +750,14 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     def get_disabled_fields(cls, obj, ar):
         """
         Return the cached set of disabled fields for this `obj` and `ar`.
-        
+
         """
         df = getattr(obj, '_disabled_fields', None)
         if df is None:
             df = cls.make_disabled_fields(obj, ar)
             setattr(obj, '_disabled_fields', df)
         return df
-    
+
     @classmethod
     def make_disabled_fields(cls, obj, ar):
         """
@@ -858,8 +858,13 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         # logger.info("18072017, h:|%s|, hname:|%s| #1955"%(h, hname))
         if h is None:
             h = self._handle_class(self)
-            setattr(self, hname, h)
+            # don't store the handle instance when an exception occurs during
+            # setup_handle. Because if the exception is caught by calling code,
+            # the unfinished handle would remain in memory and get used by
+            # subsequent calls, causing tracebacks like "AttributeError:
+            # 'TableHandle' object has no attribute 'store'"
             settings.SITE.kernel.setup_handle(h, ar)
+            setattr(self, hname, h)
         # logger.info("18072017, h:|%s|, h.store:|%s|, #1955"%(h, getattr(h,'store',None)))
         return h
 
@@ -933,10 +938,10 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
             else:
                 lst.append(n)
         cls.simple_parameters = tuple(lst)
-        
+
         if cls.parameters is None and len(cls.simple_parameters) > 0 :
             cls.parameters = {}
-            
+
         for name in cls.simple_parameters:
             if name not in cls.parameters:
                 fld = copy.copy(cls.get_data_elem(name))
@@ -1078,7 +1083,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         # if isinstance(cls.workflow_state_field, string_types):
             cls.workflow_state_field = cls.get_data_elem(
                 cls.workflow_state_field)
-            
+
         # note that the fld may be None e.g. cal.Component
         if cls.workflow_state_field is not None:
             for a in cls.workflow_state_field.choicelist.workflow_actions:
@@ -1096,7 +1101,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         cls._actions_list.sort(
             key=lambda a: (a.action.sort_index, a.action.action_name))
         # cls._actions_list = tuple(cls._actions_list)
-        
+
         # build a dict which maps state.name to a set of action names
         # to be disabled on objects having that state:
         cls._state_to_disabled_actions = {}
@@ -1125,7 +1130,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                         for k in st2da.keys():
                             if k not in required_states:
                                 st2da[k].add(ba.action.action_name)
-        
+
 
     @classmethod
     def _bind_action(cls, k, a):
@@ -1305,7 +1310,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         # same as in Parametrizable, but here it is a class method
         if isinstance(cls.parameters, ParameterPanel):
             return cls.parameters.check_values(pv)
-    
+
     @classmethod
     def get_row_state(self, obj):
         if self.workflow_state_field is not None:
@@ -1598,7 +1603,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                 parent.__class__))
         return [ba for ba in self._actions_list
                 if ba.action.is_callable_from(parent)]
-        
+
     @classmethod
     def get_actions(self):
         """
@@ -1857,5 +1862,3 @@ def resolve_action(spec, action=None):
 
     raise Exception("Action spec %r returned invalid object %r" %
                     (givenspec, spec))
-
-    

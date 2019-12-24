@@ -2698,30 +2698,6 @@ class Site(object):
             if m.allow_merge_action:
                 m.define_action(merge_row=MergeAction(m))
 
-    def setup_layouts(self):
-        '''
-        Hook for subclasses to add or modify layouts.
-
-        Usage example::
-
-            def setup_layouts(self):
-                super(Site, self).setup_layouts()
-
-                self.models.system.SiteConfigs.set_detail_layout("""
-                site_company next_partner_id:10
-                default_build_method
-                clients_account   sales_account
-                suppliers_account purchases_account
-                """)
-
-                self.models.ledger.Accounts.set_detail_layout("""
-                ref:10 name id:5
-                seqno group type clearable
-                ledger.MovementsByAccount
-                """)
-        '''
-        pass
-
     def add_user_field(self, name, fld):
         if self.user_model:
             from lino.api import dd

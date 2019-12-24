@@ -5,12 +5,7 @@
 Defines :class:`HtmlRenderer` and :class:`TextRenderer`.
 """
 
-from __future__ import print_function
-from __future__ import unicode_literals
-
 from builtins import object
-# str = six.text_type
-from builtins import str
 
 import six
 
