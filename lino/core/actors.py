@@ -863,8 +863,12 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
             # the unfinished handle would remain in memory and get used by
             # subsequent calls, causing tracebacks like "AttributeError:
             # 'TableHandle' object has no attribute 'store'"
-            settings.SITE.kernel.setup_handle(h, ar)
             setattr(self, hname, h)
+            try:
+                settings.SITE.kernel.setup_handle(h, ar)
+            except Exception as e:
+                delattr(self, hname)
+
         # logger.info("18072017, h:|%s|, h.store:|%s|, #1955"%(h, getattr(h,'store',None)))
         return h
 
