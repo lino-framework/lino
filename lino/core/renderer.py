@@ -512,7 +512,7 @@ class HtmlRenderer(Renderer):
         except Warning as e:
             elems.append(str(e))
         # print("20180907 show_story in {} : {}".format(ar.renderer, elems))
-        return E.div(*elems) if elems else ""
+        return E.div(*elems) if len(elems) else ""
 
     def show_menu(self, ar, mnu, level=1):
         """
