@@ -11,8 +11,6 @@
 #
 #   $ python setup.py test -s tests.PackagesTests
 
-from __future__ import unicode_literals
-
 import sys
 
 PY2 = sys.version_info[0] == 2
@@ -20,7 +18,7 @@ PY3 = sys.version_info[0] == 3
 
 SETUP_INFO = dict(
     name='lino',
-    version='19.12.2',
+    version='19.12.3',
     description="A framework for writing desktop-like web applications "
                 "using Django and ExtJS or React",
     license='BSD-2-Clause',
