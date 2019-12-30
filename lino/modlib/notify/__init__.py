@@ -7,7 +7,6 @@ See :doc:`/specs/notify`.
 
 """
 
-import six
 from lino import DJANGO2
 from lino.api import ad, _
 from lino.core.utils import is_devserver
@@ -81,13 +80,9 @@ class Plugin(ad.Plugin):
 
     def get_requirements(self, site):
         if site.use_websockets:
-            if six.PY2:
-                yield 'channels<2'
-                # yield 'asgiref~=1.1'
-            else:
-                yield 'channels'
-                # yield 'asgiref'
-                yield 'channels_redis'
+            yield 'channels'
+            # yield 'asgiref'
+            yield 'channels_redis'
             if False:  # not is_devserver():
                 yield 'asgi_redis'
 
