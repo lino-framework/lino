@@ -81,7 +81,7 @@ class Comments(dd.Table):
 
             items = [ar.obj2html(o, naturaltime(o.created), title=t)]
             items += [" by ", ar.obj2html(o.user, o.user.username)]
-            if o.owner_id:
+            if o.owner:
                 group = o.owner.get_comment_group()
                 if group is not None:
                     items += ["@", ar.obj2html(group, group.ref)]
