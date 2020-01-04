@@ -511,8 +511,8 @@ class Model(models.Model, fields.TableRow):
 
         This is called for every simple parameter.
 
-        Usage example is :class:`DeploymentsByTicket
-        <lino_xl.lib.deploy.desktop.DeploymentsByTicket>`.
+        Usage examples: :class:`DeploymentsByTicket
+        <lino_xl.lib.deploy.desktop.DeploymentsByTicket>`, :mod:`lino_book.projects.min3.lib.contacts`.
 
         """
         return qs.filter(**kwargs)

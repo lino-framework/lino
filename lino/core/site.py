@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2019 Rumma & Ko Ltd
+# Copyright 2009-2020 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 # doctest lino/core/site.py
 
@@ -13,11 +13,6 @@ Defines the :class:`Site` class. For an overview see
 
 """
 
-from __future__ import unicode_literals, print_function
-from builtins import map
-from builtins import str
-import six
-
 import os
 import sys
 from os.path import normpath, dirname, join, isdir, relpath, exists
@@ -27,7 +22,8 @@ import warnings
 import collections
 import locale
 from importlib import import_module
-from six.moves.urllib.parse import urlencode
+# from six.moves.urllib.parse import urlencode
+from urllib.parse import urlencode
 
 from unipath import Path
 from atelier.utils import AttrDict, date_offset, tuple_py2
@@ -1456,7 +1452,7 @@ class Site(object):
             and not %r
             """ % (self.__class__.__name__, settings_globals))
 
-        if isinstance(local_apps, six.string_types):
+        if isinstance(local_apps, str):
             local_apps = [local_apps]
         self.local_apps = local_apps
 
@@ -1580,6 +1576,8 @@ class Site(object):
             console['stream'] = sys.stdout
             console['filters'] = []
             console['level'] = level
+
+        # when Site is instantiated several times, we keep the existing file handler
         if self.logger_filename and 'file' not in handlers:
             logdir = self.project_dir.child('log')
             if logdir.isdir():
@@ -1597,7 +1595,11 @@ class Site(object):
                     'encoding': 'UTF-8',
                     'formatter': 'verbose',
                 }
-                loggercfg['handlers'].append('file')
+
+        # when a file handler exist, we have the loggers use it even if this
+        # instance didn't create it:
+        if 'file' in handlers:
+            loggercfg['handlers'].append('file')
 
         for name in self.auto_configure_logger_names.split():
             # if name not in d['loggers']:
@@ -1740,7 +1742,7 @@ class Site(object):
         apps_modifiers = self.get_apps_modifiers()
 
         def add(x):
-            if isinstance(x, six.string_types):
+            if isinstance(x, str):
                 app_label = x.split('.')[-1]
                 x = apps_modifiers.pop(app_label, x)
                 if x:
@@ -1765,7 +1767,7 @@ class Site(object):
             # print("20170505 install_plugin({})".format(app_name))
             # Django does not accept newstr, and we don't want to see
             # ``u'applabel'`` in doctests.
-            app_name = six.text_type(app_name)
+            app_name = str(app_name)
             # print("20160524 install_plugin(%r)" % app_name)
             app_mod = import_module(app_name)
 
@@ -2505,7 +2507,7 @@ class Site(object):
                 the_model = "contacts.Partner"
         """
         spec = getattr(obj, name)
-        if spec and isinstance(spec, six.string_types):
+        if spec and isinstance(spec, str):
             if not self.is_installed_model_spec(spec):
                 setattr(obj, name, None)
                 return
@@ -2840,7 +2842,7 @@ class Site(object):
             #~ self.languages = (info,)
             #~ self.language_dict[info.name] = info
         else:
-            if isinstance(self.languages, six.string_types):
+            if isinstance(self.languages, str):
                 self.languages = str(self.languages).split()
             #~ lc = [x for x in self.django_settings.get('LANGUAGES' if x[0] in languages]
             #~ lc = language_choices(*self.languages)
@@ -3002,10 +3004,10 @@ class Site(object):
 
         """
         rv = []
-        if isinstance(languages, six.string_types):
+        if isinstance(languages, str):
             languages = str(languages).split()
         for k in languages:
-            if isinstance(k, six.string_types):
+            if isinstance(k, str):
                 li = self.get_language_info(k)
                 if li is None:
                     raise Exception(
@@ -3051,7 +3053,7 @@ class Site(object):
         from django.utils import translation
         for simple, info in self.language_dict.items():
             with translation.override(simple):
-                kw[name + info.suffix] = six.text_type(txt)
+                kw[name + info.suffix] = str(txt)
         return kw
 
     def babelkw(self, name, **kw):
@@ -3093,7 +3095,7 @@ class Site(object):
         for simple, info in self.language_dict.items():
             v = kw.get(simple, None)
             if v is not None:
-                d[name + info.suffix] = six.text_type(v)
+                d[name + info.suffix] = str(v)
         return d
 
     def args2kw(self, name, *args):
@@ -3901,8 +3903,8 @@ signature as `django.core.mail.EmailMessage`.
         <https://docs.python.org/2/library/locale.html#locale.currency>`__.
         """
         res = locale.currency(*args, **kwargs)
-        if six.PY2:
-            res = res.decode(locale.nl_langinfo(locale.CODESET))
+        # if six.PY2:
+        #     res = res.decode(locale.nl_langinfo(locale.CODESET))
         return res
 
 
