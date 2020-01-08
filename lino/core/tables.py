@@ -1,27 +1,18 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2018 Rumma & Ko Ltd
+# Copyright 2009-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Defines the classes :class:`AbstractTable` and
 :class:`VirtualTable`.
 
 """
-from __future__ import print_function
-
-import logging
-# import six
-# str = six.text_type
-from builtins import str
-
-# from builtins import object
-logger = logging.getLogger(__name__)
+import logging ; logger = logging.getLogger(__name__)
 
 import os
 import yaml
 
 from django.db import models
 from django.conf import settings
-
 from django.utils.translation import ugettext_lazy as _
 
 from lino.core import actors

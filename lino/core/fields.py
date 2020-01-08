@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2018 Rumma & Ko Ltd
+# Copyright 2008-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """

@@ -1,13 +1,9 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2019 Rumma & Ko Ltd
+# Copyright 2009-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """
 Defines :class:`HtmlRenderer` and :class:`TextRenderer`.
 """
-
-from builtins import object
-
-import six
 
 import logging ; logger = logging.getLogger(__name__)
 
@@ -196,7 +192,7 @@ class HtmlRenderer(Renderer):
 
         if header_level is not None:
             k = "h" + str(header_level)
-            h = getattr(E, k)(six.text_type(ar.get_title()))
+            h = getattr(E, k)(str(ar.get_title()))
             yield h
 
         yield ar.table2xhtml(**kwargs)
@@ -394,7 +390,7 @@ class HtmlRenderer(Renderer):
         if text is None:
             # text = (force_text(obj),)
             text = (str(obj),)
-        elif isinstance(text, six.string_types) or iselement(text):
+        elif isinstance(text, str) or iselement(text):
             text = (text,)
         url = self.obj2url(ar, obj)
         if url is None:

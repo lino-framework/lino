@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2019 Rumma & Ko Ltd
+# Copyright 2009-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """This defines :class:`Actor` and related classes.
@@ -8,8 +8,6 @@ See :doc:`/dev/actors`.
 
 
 """
-# from six import string_types
-from builtins import str
 from future.utils import with_metaclass
 
 import logging; logger = logging.getLogger(__name__)

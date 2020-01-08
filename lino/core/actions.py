@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2019 Rumma & Ko Ltd
+# Copyright 2009-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """This defines the :class:`Action` class and the :func:`action`
@@ -7,11 +7,8 @@ decorator, and some of the standard actions.  See :ref:`dev.actions`.
 
 """
 import six
-from builtins import str
 
-import logging;
-
-logger = logging.getLogger(__name__)
+import logging; logger = logging.getLogger(__name__)
 
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ugettext as gettext
@@ -929,6 +926,12 @@ class ShowInsert(TableAction):
     # readonly = False
     select_rows = False
     http_method = "POST"
+
+    def attach_to_actor(self, owner, name):
+        super(ShowInsert, self).attach_to_actor(owner, name)
+        if owner.model is not None:
+            self.help_text = format_lazy(
+                _("Open a window to insert a new {}."), owner.model._meta.verbose_name)
 
     def get_action_title(self, ar):
         # return _("Insert into %s") % force_text(ar.get_title())

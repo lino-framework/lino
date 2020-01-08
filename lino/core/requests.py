@@ -1,23 +1,14 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2019 Rumma & Ko Ltd
+# Copyright 2009-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """
 See introduction in :doc:`/dev/ar`.
 """
 
-from builtins import str
-import six
-
 import logging; logger = logging.getLogger(__name__)
 
 from copy import copy
 from xml.sax.saxutils import escape
-# from urlparse import urlsplit
-# from six.moves.urllib.parse import urlencode
-# try:
-#     from html import escape
-# except ImportError:
-#     from cgi import escape
 
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -179,7 +170,7 @@ class PhantomRow(VirtualRow):
         VirtualRow.__init__(self, **kw)
 
     def __str__(self):
-        return six.text_type(self._ar.get_action_title())
+        return str(self._ar.get_action_title())
 
 
 inheritable_attrs = frozenset(
@@ -566,7 +557,7 @@ class BaseRequest(object):
                 kw.update(errors=e.message_dict)
         if message is None:
             try:
-                message = six.text_type(e)
+                message = str(e)
             except UnicodeDecodeError as e:
                 message = repr(e)
             message = escape(message)
@@ -1168,7 +1159,7 @@ class BaseRequest(object):
             kw.update(message=msg, alert=True)
         """
         if text is None:
-            text = six.text_type(_("the documentation"))
+            text = str(_("the documentation"))
         url = settings.SITE.help_url
         if docname is not None:
             url = "%s/help/%s.html" % (url, docname)
@@ -1384,7 +1375,7 @@ class ActionRequest(ActorRequest):
         if self.actor.parameters is not None:
             pv = self.actor.param_defaults(self)
 
-            for k in list(pv.keys()):
+            for k in pv.keys():
                 if k not in self.actor.parameters:
                     raise Exception(
                         "%s.param_defaults() returned invalid keyword %r" %
@@ -1396,7 +1387,7 @@ class ActionRequest(ActorRequest):
             # is a parameter `client_state`, we override that
             # parameter's default value.
 
-            for k, v in list(self.known_values.items()):
+            for k, v in self.known_values.items():
                 if k in pv:
                     pv[k] = v
 
@@ -1424,7 +1415,7 @@ class ActionRequest(ActorRequest):
                             "in {1!r}".format(
                                 self.actor.params_layout, self.actor))
             else:
-                for k in list(param_values.keys()):
+                for k in param_values.keys():
                     if k not in pv:
                         raise Exception(
                             "Invalid key '%s' in param_values of %s "
@@ -1455,7 +1446,7 @@ class ActionRequest(ActorRequest):
 
     def set_action_param_values(self, **action_param_values):
         apv = self.action_param_values
-        for k in list(action_param_values.keys()):
+        for k in action_param_values.keys():
             if k not in apv:
                 raise Exception(
                     "Invalid key '%s' in action_param_values "
@@ -1467,7 +1458,7 @@ class ActionRequest(ActorRequest):
         raise NotImplementedError
 
     def get_base_filename(self):
-        return six.text_type(self.actor)
+        return str(self.actor)
         # ~ s = self.get_title()
         # ~ return s.encode('us-ascii','replace')
 
