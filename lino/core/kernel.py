@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2019 Rumma & Ko Ltd
+# Copyright 2009-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """This defines the :class:`Kernel` class.
@@ -20,9 +20,6 @@ something which is loaded *in first place*. That's not true for Lino's
 application.
 
 """
-from __future__ import unicode_literals, print_function
-import six
-from builtins import object
 
 import logging ; logger = logging.getLogger(__name__)
 
@@ -217,19 +214,19 @@ class Kernel(object):
 
             Model.django2lino(model)
 
-            if isinstance(model.hidden_columns, six.string_types):
+            if isinstance(model.hidden_columns, str):
                 model.hidden_columns = frozenset(
                     fields.fields_list(model, model.hidden_columns))
 
-            if isinstance(model.active_fields, six.string_types):
+            if isinstance(model.active_fields, str):
                 model.active_fields = frozenset(
                     fields.fields_list(model, model.active_fields))
 
-            if isinstance(model.allow_cascaded_delete, six.string_types):
+            if isinstance(model.allow_cascaded_delete, str):
                 model.allow_cascaded_delete = frozenset(
                     fields.fields_list(model, model.allow_cascaded_delete))
 
-            if isinstance(model.allow_cascaded_copy, six.string_types):
+            if isinstance(model.allow_cascaded_copy, str):
                 model.allow_cascaded_copy = frozenset(
                     fields.fields_list(model, model.allow_cascaded_copy))
 
@@ -312,7 +309,7 @@ class Kernel(object):
                 #     msg = "Nullable CharField %s in %s" % (f.name, model)
                 #     raise Exception(msg)
                 if isinstance(f, models.ForeignKey):
-                    if isinstance(f.remote_field.model, six.string_types):
+                    if isinstance(f.remote_field.model, str):
                         raise Exception("Could not resolve target %r of "
                                         "ForeignKey '%s' in %s "
                                         "(models are %s)" %
@@ -588,7 +585,7 @@ class Kernel(object):
                             return
                         num = sar.get_total_count()
                         if num > cls.welcome_message_when_count:
-                            chunks = [six.text_type(_("You have "))]
+                            chunks = [str(_("You have "))]
                             txt = _("{0} items in {1}").format(num, cls.label)
                             chunks.append(ar.href_to_request(sar, txt))
                             chunks.append('.')
@@ -913,7 +910,7 @@ def site_startup(self):
         #     django.setup()
 
         for a in apps.get_app_configs():
-            self.models.define(six.text_type(a.label), a.models_module)
+            self.models.define(str(a.label), a.models_module)
 
         # print("20181230 SITE.models ready {}".format(self.models.keys()))
         # the following was equivalent of above until Django 1.9
@@ -941,7 +938,7 @@ def site_startup(self):
         #         logger.debug("No module {0}.models", p.app_name)
         #         # print(rrrr)
 
-        #     self.models.define(six.text_type(p.app_label), m)
+        #     self.models.define(str(p.app_label), m)
 
         pre_startup.send(self)
 
@@ -1063,7 +1060,7 @@ def register_actors():
 
     logger.debug("Analyze %d slave tables...", len(slave_tables))
     for rpt in slave_tables:
-        if isinstance(rpt.master, six.string_types):
+        if isinstance(rpt.master, str):
             raise Exception("20150216 unresolved master")
         if isinstance(rpt.master, UnresolvedModel):
             continue
