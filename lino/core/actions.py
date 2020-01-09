@@ -838,9 +838,7 @@ class ShowTable(TableAction):
 
 
 class ShowDetail(Action):
-    """Open a detail window on this record.
-
-    """
+    help_text = _("Open a detail window on this record.")
     action_name = 'detail'
     label = _("Detail")
     icon_name = 'application_form'
@@ -928,10 +926,10 @@ class ShowInsert(TableAction):
     http_method = "POST"
 
     def attach_to_actor(self, owner, name):
-        super(ShowInsert, self).attach_to_actor(owner, name)
         if owner.model is not None:
             self.help_text = format_lazy(
                 _("Open a window to insert a new {}."), owner.model._meta.verbose_name)
+        return super(ShowInsert, self).attach_to_actor(owner, name)
 
     def get_action_title(self, ar):
         # return _("Insert into %s") % force_text(ar.get_title())
