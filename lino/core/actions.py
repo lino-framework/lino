@@ -928,7 +928,7 @@ class ShowInsert(TableAction):
     def attach_to_actor(self, owner, name):
         if owner.model is not None:
             self.help_text = format_lazy(
-                _("Open a window to insert a new {}."), owner.model._meta.verbose_name)
+                _("Open a dialog window to insert a new {}."), owner.model._meta.verbose_name)
         return super(ShowInsert, self).attach_to_actor(owner, name)
 
     def get_action_title(self, ar):
