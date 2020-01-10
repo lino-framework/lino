@@ -1,14 +1,12 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2018 Rumma & Ko Ltd
+# Copyright 2009-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """
 .. autosummary::
 
 """
-from builtins import object
 
-import logging
-logger = logging.getLogger(__name__)
+import logging ; logger = logging.getLogger(__name__)
 
 import os
 
@@ -48,9 +46,9 @@ class BoundAction(object):
         # required = set()
         # required |= actor.required_roles
         required |= action.required_roles
-        
+
         if True:  # 20170902 useful when debugging permission problems
-            self.required = required  
+            self.required = required
 
         debug_permissions = actor.debug_permissions and \
             action.debug_permissions
@@ -117,7 +115,7 @@ class BoundAction(object):
     def get_row_permission(self, ar, obj, state):
         """Checks whether this bound action has permission to run on the given
         database object.
-        
+
         This will check requirements specified on the *actor*, which
         by default checks those defined on the *model*, which in turn
         checks those defined on the *action* by calling
@@ -180,5 +178,3 @@ class BoundAction(object):
     def __repr__(self):
         return "<%s(%s, %r)>" % (
             self.__class__.__name__, self.actor, self.action)
-
-

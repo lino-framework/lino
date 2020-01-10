@@ -28,7 +28,7 @@ def json_response(x, content_type='application/json', status=200):
             s = py2js(x)
         except Exception as e:
             raise Exception("Failed to render {!r} : {}".format(x, e))
-    
+
     # Theroretically we should send content_type='application/json'
     # (http://stackoverflow.com/questions/477816/the-right-json-content-type),
     # but "File uploads are not performed using Ajax submission, that
@@ -39,7 +39,7 @@ def json_response(x, content_type='application/json', status=200):
     # body."
     # (http://docs.sencha.com/ext-js/3-4/#!/api/Ext.form.BasicForm)
     # See 20120209.
-    
+
     return http.HttpResponse(s, content_type=content_type, status=status)
     #~ return HttpResponse(s, content_type='text/html')
     #~ return HttpResponse(s, content_type='application/json')
@@ -86,12 +86,12 @@ def action_request(app_label, actor, request, rqdata, is_list, **kw):
     user = request.subst_user or request.user
     if True:  # False:  # 20130829
         if not a.get_view_permission(user.user_type):
+            # print("20200110 {} {}".format(a.required, user.user_type.role.__class__))
             raise exceptions.PermissionDenied(
-                "As %s you have no permission to run this action."
+                "As %s you have no view permission for this action."
                 % user.user_type)
                 # The text of an Exception may not be
                 # internationalized because some error handling code
                 # may want to write it to a plain ascii stream.
     ar = rpt.request(request=request, action=a, rqdata=rqdata, **kw)
     return ar
-

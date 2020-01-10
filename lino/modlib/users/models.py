@@ -1,9 +1,6 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2019 Rumma & Ko Ltd
+# Copyright 2011-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
-
-from builtins import str
-from builtins import object
 
 from django.db import models
 from django.conf import settings

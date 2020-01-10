@@ -1,11 +1,9 @@
-# Copyright 2011-2018 Rumma & Ko Ltd
+# Copyright 2011-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Defines built-in user roles. See :ref:`permissions`.
 
 """
-from builtins import object
-
 
 class UserRole(object):
     """
@@ -17,7 +15,7 @@ class UserRole(object):
     def satisfies_requirement(self, required_roles):
         """
         Return `True` if this user role satisfies the specified role
-        requirement.  
+        requirement.
 
         `required_roles` is the set of required roles (class objects).
         Every item is either a class object (subclass of
@@ -46,7 +44,7 @@ class UserRole(object):
 
 class Anonymous(UserRole):
     """The role used by anonymous guest sessions."""
-    
+
 class SiteUser(UserRole):
     """Every authenticated user has this role."""
 
@@ -89,7 +87,7 @@ class SiteAdmin(SiteStaff, Supervisor, Explorer):
 def login_required(*args):
     """Return a set of roles to be used for a required_roles.
 
-    An API shortcut available in :mod:`lino.api.dd`. 
+    An API shortcut available in :mod:`lino.api.dd`.
 
     """
     if len(args):
@@ -163,5 +161,3 @@ def checkmro(*args):
                 print("{} inherits {} is already in {}".format(cl, b, bases[b]))
             else:
                 bases[b] = cl
-
-            

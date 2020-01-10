@@ -1,12 +1,11 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2018 Rumma & Ko Ltd
+# Copyright 2011-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """Desktop UI for this plugin.
 
 Documentation is in :doc:`/specs/users` and :doc:`/dev/users`
 
 """
-from __future__ import unicode_literals
 
 from textwrap import wrap
 

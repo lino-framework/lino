@@ -1,12 +1,9 @@
-# Copyright 2011-2018 Rumma & Ko Ltd
+# Copyright 2011-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Defines the choicelists for :mod:`lino.modlib.users`.
 
 """
-
-from __future__ import unicode_literals
-from builtins import str
 
 from django.conf import settings
 from atelier.utils import unindent
@@ -85,7 +82,7 @@ class UserType(Choice):
         """
         for mt in args:
             self.mask_message_types.add(mt)
-            
+
     def has_required_roles(self, required_roles):
         """
         Return `True` if this user type's :attr:`role` satisfies the
@@ -117,7 +114,7 @@ class UserTypes(ChoiceList):
     preferred_foreignkey_width = 20
 
     # readonly = models.BooleanField(_("Read-only"), default=False)
-    
+
     hidden_languages = settings.SITE.hidden_languages
     """Default value for the
     :attr:`hidden_languages<UserType.hidden_languages>` of newly
@@ -133,6 +130,3 @@ class UserTypes(ChoiceList):
 # add('000', _("Anonymous"), UserRole, 'anonymous', readonly=True)
 # add('100', _("User"), SiteUser, 'user')
 # add('900', _("Administrator"), SiteAdmin, 'admin')
-
-
-

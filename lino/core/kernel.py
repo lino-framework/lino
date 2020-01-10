@@ -748,7 +748,6 @@ class Kernel(object):
         in a user-friendly way.
 
         """
-
         if not ar.get_permission():
             msg = "{} has no permission to run this request".format(
                 ar.get_user())
