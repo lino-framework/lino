@@ -1732,7 +1732,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
 
         """
-        for k, pf in list(self.parameters.items()):
+        for k, pf in self.parameters.items():
             # if not isinstance(pf, fields.DummyField):
             kw[k] = pf.get_default()
         return kw
