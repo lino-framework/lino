@@ -6,7 +6,6 @@
 decorator, and some of the standard actions.  See :ref:`dev.actions`.
 
 """
-import six
 
 import logging; logger = logging.getLogger(__name__)
 
@@ -81,7 +80,7 @@ def install_layout(cls, k, layout_class, **options):
         dl = getattr(cls, k)
     if dl is None:
         return
-    if isinstance(dl, six.string_types):
+    if isinstance(dl, str):
         if '\n' in dl or not '.' in dl:
             setattr(cls, k, layout_class(dl, cls, **options))
         else:
@@ -1201,7 +1200,7 @@ class ShowSlaveTable(Action):
         return self.get_label() or self.slave_table.label
 
     def attach_to_actor(self, actor, name):
-        if isinstance(self.slave_table, six.string_types):
+        if isinstance(self.slave_table, str):
             T = settings.SITE.models.resolve(self.slave_table)
             if T is None:
                 msg = "Invalid action {} on actor {!r}: " \

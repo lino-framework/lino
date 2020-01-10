@@ -1,4 +1,4 @@
-# Copyright 2009-2019 Rumma & Ko Ltd
+# Copyright 2009-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """Defines the "store" and its "fields" .
 
@@ -23,13 +23,6 @@ Other usages:
   :meth:`lino.core.tablerequest.TableRequest.row2text`)
 
 """
-
-from __future__ import unicode_literals
-from __future__ import print_function
-# import six
-# str = six.text_type
-from builtins import str
-from builtins import object
 
 import logging ; logger = logging.getLogger(__name__)
 
@@ -158,7 +151,9 @@ class StoreField(object):
         if v == '':
             # print(20160611, self.field.empty_strings_allowed,
             #       self.field.name, self.form2obj_default)
-            if self.field.null:
+            if not isinstance(self.field, (models.Field, fields.FakeField)):
+                v = None  # e.g. GenericForeignKey
+            elif self.field.null:
                 v = None
             elif self.field.empty_strings_allowed:
                 v = self.parse_form_value(v, instance)

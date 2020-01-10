@@ -1287,6 +1287,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         """
         if cls.model is None:
             return
+        if not isinstance(cls.model, type):
+            raise Exception("{}.model is not a class".format(cls))
         if issubclass(cls.model, models.Model):
             cls.model.setup_parameters(fields)
 

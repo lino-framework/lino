@@ -6,11 +6,6 @@
 Defines extended database field classes and utility functions
 related to fields.
 """
-from __future__ import unicode_literals, print_function
-
-from builtins import str
-import six
-# from builtins import object
 
 import logging ; logger = logging.getLogger(__name__)
 import datetime
@@ -213,6 +208,7 @@ class FakeField(object):
     primary_key = False
     editable = False
     name = None
+    null = True
     serialize = False
     verbose_name = None
     help_text = None
@@ -461,7 +457,7 @@ class VirtualField(FakeField):
 
         f = self.return_type
 
-        if isinstance(f, six.string_types):
+        if isinstance(f, str):
             f = self.return_type = resolve_field(f)
 
         if isinstance(f, FakeField):
@@ -783,7 +779,7 @@ class QuantityField(CharField):
             return value
         if value:
             # try:
-            if isinstance(value, six.string_types):
+            if isinstance(value, str):
                 return quantities.parse(value)
             return Decimal(value)
             # except Exception as e:
@@ -1195,7 +1191,7 @@ def pointer_factory(cls, othermodel, *args, **kw):
     """
     if othermodel is None:
         return DummyField(othermodel, *args, **kw)
-    if isinstance(othermodel, six.string_types):
+    if isinstance(othermodel, str):
         if not settings.SITE.is_installed_model_spec(othermodel):
             return DummyField(othermodel, *args, **kw)
 
@@ -1263,7 +1259,7 @@ def make_remote_field(model, name):
             raise Exception(
                 "Invalid remote field {0} for {1}".format(name, cls))
 
-        if isinstance(model, six.string_types):
+        if isinstance(model, str):
             # Django 1.9 no longer resolves the
             # rel.model of ForeignKeys on abstract
             # models, so we do it here.

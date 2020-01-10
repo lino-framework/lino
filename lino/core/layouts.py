@@ -1,14 +1,10 @@
-# Copyright 2009-2018 Rumma & Ko Ltd
+# Copyright 2009-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """See :doc:`/dev/layouts/index`.
 
 """
 
-from __future__ import unicode_literals
-from builtins import str
-from builtins import object
-import six
 import logging ; logger = logging.getLogger(__name__)
 import re
 
@@ -81,12 +77,14 @@ class Panel(object):
 
 class LayoutHandle(object):
     """
-    A `LayoutHandle` analyzes an instance of :class:`BaseLayout` or a some
-    subclass thereof and holds the resulting metadata, especially the layout
+    A layout handle analyzes a layout (an instance of :class:`BaseLayout` or a some
+    subclass thereof) and holds the resulting metadata, especially the layout
     elements and panels provided by the renderer.
 
-    The implementation of layout elements is left to the ui renderer,
-    but we differentiate *panels* from *atomic elements*. A panel is a
+    The implementation of layout elements is delegated to the front end.  So
+    there is one layout handle per layout per front end.
+
+    We differentiate *panels* from *atomic elements*. A panel is a
     group of elements and is either *vertical* or *horizontal*.
 
     LayoutHandle is not meant to be subclassed. The same class is used
@@ -147,7 +145,7 @@ class LayoutHandle(object):
             # if 'label_align' in kwargs:
             #     print("20170921 desc2elem", elemname, desc, kwargs)
 
-        if not isinstance(desc, six.string_types):
+        if not isinstance(desc, str):
             raise Exception("{} is {} (must be a string)".format(
                 elemname, desc))
 
@@ -171,7 +169,7 @@ class LayoutHandle(object):
                     explicit_specs.add(name)
                 elif len(spec) > 1:
                     remote_wildcards.append(spec)
-                    
+
             for rwspec in remote_wildcards:
                 assert rwspec.endswith('__*')
                 rmodel = rwspec[:-3]
@@ -215,7 +213,7 @@ class LayoutHandle(object):
         if "\n" in desc:
             # it's a vertical box
             vertical = True
-            
+
             # To get a hbox, the template string must not contain any
             # newline.
 
@@ -297,7 +295,7 @@ class LayoutHandle(object):
                     be.hidden = True
             else:
                 e.hidden = True
-        
+
         self.ui.setup_layout_element(e)
         self.layout.setup_element(self, e)
         self._names[name] = e
@@ -413,7 +411,7 @@ class BaseLayout(object):
     """Lino sets this to False for layouts on a non-editable actor.
 
     """
-    
+
     main = None
     """The description of the main element of this layout.
 
@@ -422,7 +420,7 @@ class BaseLayout(object):
     <lino.core.tables.AbstractTable.column_names>`.
 
     """
-    
+
     main_m = None
     """An optional alternative for :attr:`main` to use when
     :attr:`mobile_view <lino.core.site.Site.mobile_view>` is True.
@@ -450,7 +448,7 @@ class BaseLayout(object):
             # The following test is deactivated because it is possible
             # to dynamically define subpanels on a panel,
             # e.g. MergeAction.keep_volatiles
-            
+
             # if not hasattr(self, k):
             #     raise Exception("Got unexpected keyword %s=%r" % (k,v))
             setattr(self, k, v)
@@ -467,7 +465,7 @@ class BaseLayout(object):
     def set_datasource(self, ds):
         self._datasource = ds
         if ds is not None:
-            if isinstance(self.hidden_elements, six.string_types):
+            if isinstance(self.hidden_elements, str):
                 self.hidden_elements = set(fields_list(
                     ds, self.hidden_elements))
             self.hidden_elements |= ds.hidden_elements
@@ -691,7 +689,7 @@ class ColumnsLayout(FieldLayout):
     Lino automatically creates one instance of this for every table
     using the string specified in that table's :attr:`column_names
     <lino.core.tables.AbstractTable.column_names>` attribute.
-    
+
     """
     join_str = " "
 
@@ -751,6 +749,3 @@ class ActionParamsLayout(ParamsLayout):
             self._datasource.defining_actor.__name__,
             self._datasource.action_name,
             field.name, **kw)
-
-
-
