@@ -1,12 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2019 Rumma & Ko Ltd
+# Copyright 2009-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 "Defines the :class:`Model` class."
-
-import six
-
-from builtins import object
 
 import logging ; logger = logging.getLogger(__name__)
 import copy
@@ -462,7 +458,7 @@ class Model(models.Model, fields.TableRow):
 
     @classmethod
     def add_active_field(cls, names):
-        if isinstance(cls.active_fields, six.string_types):
+        if isinstance(cls.active_fields, str):
             cls.active_fields = frozenset(
                 fields.fields_list(cls, cls.active_fields))
         cls.active_fields = cls.active_fields | fields.fields_list(cls, names)
@@ -525,10 +521,10 @@ class Model(models.Model, fields.TableRow):
     @classmethod
     def on_analyze(cls, site):
 
-        if isinstance(cls.workflow_owner_field, six.string_types):
+        if isinstance(cls.workflow_owner_field, str):
             cls.workflow_owner_field = cls.get_data_elem(
                 cls.workflow_owner_field)
-        if isinstance(cls.workflow_state_field, six.string_types):
+        if isinstance(cls.workflow_state_field, str):
             cls.workflow_state_field = cls.get_data_elem(
                 cls.workflow_state_field)
         # for vf in cls._meta.private_fields:
@@ -574,7 +570,7 @@ class Model(models.Model, fields.TableRow):
         fkw = dict()
         fkw.update(known_values)
 
-        if isinstance(lookup_field, six.string_types):
+        if isinstance(lookup_field, str):
             lookup_field = model._meta.get_field(lookup_field)
         if isinstance(lookup_field, BabelCharField):
             flt = settings.SITE.lookup_filter(
@@ -1072,7 +1068,7 @@ class Model(models.Model, fields.TableRow):
         """
         if states is None:
             return None
-        elif isinstance(states, six.string_types):
+        elif isinstance(states, str):
             fld = cls.workflow_state_field
             return set(
                 [fld.choicelist.get_by_name(x) for x in states.split()])

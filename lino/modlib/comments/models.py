@@ -1,8 +1,7 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2019 Rumma & Ko Ltd
+# Copyright 2013-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-from builtins import object
 
 from django.db import models
 from django.db.models import Q
@@ -16,6 +15,7 @@ from lino.modlib.users.mixins import UserAuthored
 from lino.modlib.notify.mixins import ChangeNotifier
 from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.memo.mixins import Previewable
+from lino.modlib.publisher.mixins import Publishable
 from .choicelists import CommentEvents
 from .mixins import Commentable
 # from .choicelists import PublishAllComments, PublishComment
@@ -34,12 +34,14 @@ class CommentType(BabelNamed):
 
 
 class Comment(CreatedModified, UserAuthored, Controllable,
-              ChangeNotifier, Previewable):
+              ChangeNotifier, Previewable, Publishable):
     class Meta(object):
         app_label = 'comments'
         abstract = dd.is_abstract_model(__name__, 'Comment')
         verbose_name = _("Comment")
         verbose_name_plural = _("Comments")
+
+    publisher_location = "c"
 
     reply_to = dd.ForeignKey(
         'self', blank=True, null=True, verbose_name=_("Reply to"))
