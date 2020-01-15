@@ -1,23 +1,19 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2019 Rumma & Ko Ltd
+# Copyright 2009-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-from __future__ import unicode_literals, print_function
-# from builtins import object
 
 import os
 import datetime
 
 from django.db import models
 from django.conf import settings
-import six
 from django.utils.translation import ugettext_lazy as _
 from django.utils.timezone import make_aware
 
 from lino.api import rt
 from lino.modlib.checkdata.choicelists import Checker
 
-# from lino.core import actions
 from lino.utils.choosers import chooser
 from lino.core.model import Model
 from lino.mixins.duplicable import Duplicable
@@ -58,7 +54,7 @@ class PrintableType(Model):
         `PrintableType` but an **instance method** on `Printable`.
 
         """
-        return [six.text_type(cls.templates_group)]  # or full_model_name(cls)
+        return [str(cls.templates_group)]  # or full_model_name(cls)
 
     @chooser(simple_values=True)
     def template_choices(cls, build_method):
@@ -77,7 +73,7 @@ class PrintableType(Model):
 
 
 class Printable(Model):
-    
+
     class Meta(object):
         abstract = True
 
@@ -144,7 +140,7 @@ class Printable(Model):
 
 
 class CachedPrintable(Duplicable, Printable):
-    
+
     class Meta(object):
         abstract = True
 
@@ -212,7 +208,7 @@ class CachedPrintable(Duplicable, Printable):
 
 
 class TypedPrintable(CachedPrintable):
-    
+
     type = None
 
     class Meta(object):
@@ -255,7 +251,7 @@ class TypedPrintable(CachedPrintable):
 class CachedPrintableChecker(Checker):
     model = CachedPrintable
     verbose_name = _("Check for missing target files")
-    
+
     def get_checkdata_problems(self, obj, fix=False):
         if obj.build_time is not None:
             t = obj.get_cache_mtime()
