@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino 19.12.3\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-01-14 13:03+0200\n"
+"POT-Creation-Date: 2020-01-16 17:09+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3656,7 +3656,7 @@ msgstr ""
 msgid "Children"
 msgstr ""
 
-#: lino/mixins/uploadable.py:45 lino/modlib/uploads/models.py:127
+#: lino/mixins/uploadable.py:45
 msgid "File"
 msgstr ""
 
@@ -4455,7 +4455,7 @@ msgstr ""
 msgid "Preview needs update"
 msgstr ""
 
-#: lino/modlib/notify/__init__.py:26
+#: lino/modlib/notify/__init__.py:25
 msgid "Messages"
 msgstr ""
 
@@ -4622,19 +4622,19 @@ msgstr ""
 msgid "Print method"
 msgstr ""
 
-#: lino/modlib/printing/mixins.py:53
+#: lino/modlib/printing/mixins.py:49
 msgid "Template"
 msgstr ""
 
-#: lino/modlib/printing/mixins.py:156
+#: lino/modlib/printing/mixins.py:152
 msgid "build time"
 msgstr ""
 
-#: lino/modlib/printing/mixins.py:257
+#: lino/modlib/printing/mixins.py:253
 msgid "Check for missing target files"
 msgstr ""
 
-#: lino/modlib/printing/mixins.py:263
+#: lino/modlib/printing/mixins.py:259
 msgid "Seems to have been built ({bt}), but cache file is missing ."
 msgstr ""
 
@@ -4763,24 +4763,24 @@ msgstr ""
 msgid "Template Text"
 msgstr ""
 
-#: lino/modlib/uploads/__init__.py:15 lino/modlib/uploads/choicelists.py:45
+#: lino/modlib/uploads/__init__.py:15 lino/modlib/uploads/choicelists.py:40
 msgid "Uploads"
 msgstr ""
 
-#: lino/modlib/uploads/choicelists.py:34
+#: lino/modlib/uploads/choicelists.py:29
 msgid "Upload shortcut"
 msgstr ""
 
-#: lino/modlib/uploads/choicelists.py:35
+#: lino/modlib/uploads/choicelists.py:30
 msgid "Upload shortcuts"
 msgstr ""
 
-#: lino/modlib/uploads/choicelists.py:42
-msgid "Upload Area"
+#: lino/modlib/uploads/choicelists.py:37
+msgid "Upload area"
 msgstr ""
 
-#: lino/modlib/uploads/choicelists.py:43
-msgid "Upload Areas"
+#: lino/modlib/uploads/choicelists.py:38
+msgid "Upload areas"
 msgstr ""
 
 #: lino/modlib/uploads/models.py:31
@@ -4800,11 +4800,11 @@ msgid "Base URL"
 msgstr ""
 
 #: lino/modlib/uploads/models.py:57
-msgid "Upload Type"
+msgid "Upload type"
 msgstr ""
 
 #: lino/modlib/uploads/models.py:58
-msgid "Upload Types"
+msgid "Upload types"
 msgstr ""
 
 #: lino/modlib/uploads/models.py:63
@@ -4827,8 +4827,12 @@ msgstr ""
 msgid "Add a (+) button when there is no upload of this type."
 msgstr ""
 
+#: lino/modlib/uploads/models.py:127
+msgid "Upload file"
+msgstr ""
+
 #: lino/modlib/uploads/models.py:128
-msgid "Files"
+msgid "Upload files"
 msgstr ""
 
 #: lino/modlib/uploads/models.py:133

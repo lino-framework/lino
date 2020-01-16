@@ -5,18 +5,19 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version:  lino\n"
+"Project-Id-Version: lino\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-14 13:03+0200\n"
-"PO-Revision-Date: 2020-01-09 13:23+0200\n"
+"POT-Creation-Date: 2020-01-16 17:09+0200\n"
+"PO-Revision-Date: 2020-01-16 18:03+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language: de\n"
 "Language-Team: \n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.7.0\n"
+"X-Generator: Poedit 2.0.6\n"
 
 #: lino/help_texts.py:7
 msgid ""
@@ -233,8 +234,8 @@ msgid ""
 "Used to specify a professional position or academic\n"
 "qualification like \"Dr.\" or \"PhD\"."
 msgstr ""
-"Eventuelle berufliche Position oder akademischer Titel, z.B. \"Dr.\" oder"
-" \"Prof.\""
+"Eventuelle berufliche Position oder akademischer Titel, z.B. \"Dr.\" oder "
+"\"Prof.\""
 
 #: lino/help_texts.py:78
 msgid "The first name, also known as given name."
@@ -673,8 +674,7 @@ msgstr ""
 
 #: lino/help_texts.py:219
 msgid ""
-"The model to be checked.  If this is a string, Lino will resolve it at "
-"startup."
+"The model to be checked.  If this is a string, Lino will resolve it at startup."
 msgstr ""
 
 #: lino/help_texts.py:220
@@ -1342,8 +1342,7 @@ msgstr ""
 #: lino/help_texts.py:450
 msgid ""
 "A Converter for ForeignKey and ManyToManyField.\n"
-"If the lookup_field is a BabelField, then it tries all available "
-"languages."
+"If the lookup_field is a BabelField, then it tries all available languages."
 msgstr ""
 
 #: lino/help_texts.py:452
@@ -1844,8 +1843,7 @@ msgstr ""
 
 #: lino/help_texts.py:625
 msgid ""
-"Return either None or a database object that represents the commenting "
-"group\n"
+"Return either None or a database object that represents the commenting group\n"
 "where this comment is being done."
 msgstr ""
 
@@ -1914,8 +1912,7 @@ msgstr ""
 #: lino/help_texts.py:643
 msgid ""
 "A mixin for models that require their every object to have a scan or pdf\n"
-"file of the \"receipt\", i.e. the document serving as the legal proof of "
-"this\n"
+"file of the \"receipt\", i.e. the document serving as the legal proof of this\n"
 "database object.  A usage example are purchase invoices in an accounting\n"
 "system."
 msgstr ""
@@ -2779,8 +2776,7 @@ msgstr ""
 
 #: lino/help_texts.py:927
 msgid ""
-"Mixin for anything that represents a \"plan\" of a given user on a given "
-"day."
+"Mixin for anything that represents a \"plan\" of a given user on a given day."
 msgstr ""
 
 #: lino/help_texts.py:928
@@ -2861,12 +2857,11 @@ msgstr "Keine Panik, dies ist mit Sicherheit nicht Deine Schuld."
 #: lino/config/500.html:9
 msgid ""
 "Maybe we are working on the server, \n"
-"please check the <a href=\"{{site.hoster_status_url}}\">hoster status "
-"page</a>."
+"please check the <a href=\"{{site.hoster_status_url}}\">hoster status page</a>."
 msgstr ""
 "Möglicherweise arbeiten wir gerade am Server,\n"
-"bitte schau nach auf unserer <a href=\"{{site.hoster_status_url"
-"}}\">Status-Seite</a>."
+"bitte schau nach auf unserer <a href=\"{{site.hoster_status_url}}\">Status-"
+"Seite</a>."
 
 #: lino/config/500.html:11
 msgid "We apologize for the inconvenience."
@@ -2875,8 +2870,8 @@ msgstr "Wir bitten um Verständnis."
 #: lino/config/500.html:12
 msgid "If you can reproduce this message, please tell us how you did that."
 msgstr ""
-"Bitte informiere uns über das Problem falls Du diese Meldung "
-"reproduzieren kannst."
+"Bitte informiere uns über das Problem falls Du diese Meldung reproduzieren "
+"kannst."
 
 #: lino/config/admin_main_base.html:8
 msgid "This server is running in READONLY mode."
@@ -2901,11 +2896,11 @@ msgstr "Dies ist eine Demo-Anwendung."
 
 #: lino/config/admin_main_base.html:31
 msgid ""
-"Try also the other <a href=\"http://lino-framework.org/demos.html\">demo "
-"sites</a>."
+"Try also the other <a href=\"http://lino-framework.org/demos.html\">demo sites</"
+"a>."
 msgstr ""
-"Probieren Sie auch die anderen <a href=\"http://lino-"
-"framework.org/demos.html\">Online-Demos</a> aus."
+"Probieren Sie auch die anderen <a href=\"http://lino-framework.org/demos.html"
+"\">Online-Demos</a> aus."
 
 #: lino/config/admin_main_base.html:32
 #, python-format
@@ -2922,8 +2917,8 @@ msgstr ""
 
 #: lino/config/admin_main_base.html:47
 msgid ""
-"Unlike the <a href=\"/\">web content section</a> there is now a GUI menu "
-"bar in the upper part of the screen."
+"Unlike the <a href=\"/\">web content section</a> there is now a GUI menu bar in "
+"the upper part of the screen."
 msgstr ""
 
 #: lino/config/admin_main_base.html:52
@@ -3013,9 +3008,9 @@ msgid "%s has been created."
 msgstr "%s wurde erstellt."
 
 #: lino/core/actions.py:1108
-#, fuzzy, python-format
+#, python-format
 msgid "%s files have been uploaded: %s"
-msgstr "%d Datensätze wurden gelöscht."
+msgstr "%s Dateien wurden hochgeladen: %s"
 
 #: lino/core/actions.py:1137 lino/modlib/changes/models.py:48
 msgid "Create"
@@ -3155,9 +3150,9 @@ msgid ""
 "\"00.07.1980\" means \"in July 1980\"\n"
 "or \"23.07.0000\" means \"on a 23th of July\"."
 msgstr ""
-"Unkomplette Datumsangaben sind erlaubt, z.B. \"%(ex1)s\" heißt "
-"\"irgendwann im Jahr 1980\", \"%(ex2)s\" heißt \"im Juli 1980\"oder "
-"\"%(ex3)s\" heißt \"an einem 23. Juli\"."
+"Unkomplette Datumsangaben sind erlaubt, z.B. \"%(ex1)s\" heißt \"irgendwann im "
+"Jahr 1980\", \"%(ex2)s\" heißt \"im Juli 1980\"oder \"%(ex3)s\" heißt \"an "
+"einem 23. Juli\"."
 
 #: lino/core/kernel.py:588
 msgid "You have "
@@ -3235,8 +3230,7 @@ msgstr ""
 #, python-format
 msgid "Cannot delete %(model)s %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
-"Kann %(model)s %(self)s nicht löschen weil %(count)d %(refs)s darauf "
-"verweisen."
+"Kann %(model)s %(self)s nicht löschen weil %(count)d %(refs)s darauf verweisen."
 
 #: lino/core/model.py:747 lino/core/requests.py:1141
 #, python-format
@@ -3700,7 +3694,7 @@ msgstr "Vater/Mutter"
 msgid "Children"
 msgstr "Kinder"
 
-#: lino/mixins/uploadable.py:45 lino/modlib/uploads/models.py:127
+#: lino/mixins/uploadable.py:45
 msgid "File"
 msgstr "Datei"
 
@@ -3814,30 +3808,26 @@ msgid "Home"
 msgstr "Startseite"
 
 #: lino/modlib/bootstrap3/views.py:144 lino/modlib/bootstrap3/views.py:225
-#: lino/modlib/extjs/config/extjs/linoweb.js:3782
-#: lino/modlib/forms/views.py:132 lino/modlib/forms/views.py:212
-#: lino/modlib/odata/views.py:74
+#: lino/modlib/extjs/config/extjs/linoweb.js:3782 lino/modlib/forms/views.py:132
+#: lino/modlib/forms/views.py:212 lino/modlib/odata/views.py:74
 msgid "First page"
 msgstr "Erste Seite"
 
 #: lino/modlib/bootstrap3/views.py:145 lino/modlib/bootstrap3/views.py:227
-#: lino/modlib/extjs/config/extjs/linoweb.js:3784
-#: lino/modlib/forms/views.py:133 lino/modlib/forms/views.py:214
-#: lino/modlib/odata/views.py:76
+#: lino/modlib/extjs/config/extjs/linoweb.js:3784 lino/modlib/forms/views.py:133
+#: lino/modlib/forms/views.py:214 lino/modlib/odata/views.py:76
 msgid "Previous page"
 msgstr "Vorige Seite"
 
 #: lino/modlib/bootstrap3/views.py:157 lino/modlib/bootstrap3/views.py:229
-#: lino/modlib/extjs/config/extjs/linoweb.js:3785
-#: lino/modlib/forms/views.py:145 lino/modlib/forms/views.py:216
-#: lino/modlib/odata/views.py:78
+#: lino/modlib/extjs/config/extjs/linoweb.js:3785 lino/modlib/forms/views.py:145
+#: lino/modlib/forms/views.py:216 lino/modlib/odata/views.py:78
 msgid "Next page"
 msgstr "Nächste Seite"
 
 #: lino/modlib/bootstrap3/views.py:158 lino/modlib/bootstrap3/views.py:231
-#: lino/modlib/extjs/config/extjs/linoweb.js:3783
-#: lino/modlib/forms/views.py:146 lino/modlib/forms/views.py:218
-#: lino/modlib/odata/views.py:80
+#: lino/modlib/extjs/config/extjs/linoweb.js:3783 lino/modlib/forms/views.py:146
+#: lino/modlib/forms/views.py:218 lino/modlib/odata/views.py:80
 msgid "Last page"
 msgstr "Letzte Seite"
 
@@ -3907,8 +3897,7 @@ msgstr ""
 msgid "Checkdata"
 msgstr ""
 
-#: lino/modlib/checkdata/choicelists.py:25
-#: lino/modlib/checkdata/choicelists.py:26
+#: lino/modlib/checkdata/choicelists.py:25 lino/modlib/checkdata/choicelists.py:26
 msgid "Checkdata feedback"
 msgstr ""
 
@@ -4205,8 +4194,8 @@ msgstr ""
 
 #: lino/modlib/extjs/views.py:144
 msgid ""
-"Your browser is using a previous version of the site, press OK to reload "
-"the site"
+"Your browser is using a previous version of the site, press OK to reload the "
+"site"
 msgstr ""
 
 #: lino/modlib/extjs/views.py:209 lino/modlib/users/actions.py:190
@@ -4261,8 +4250,8 @@ msgid ""
 "If the error persists, try reloading the browser page ([SHIFT+CTRL+R] in "
 "Firefox)."
 msgstr ""
-"Falls der Fehler sich wiederholt, laden Sie die Seite im Browser neu "
-"([SHIFT+CTRL+R] in Firefox)."
+"Falls der Fehler sich wiederholt, laden Sie die Seite im Browser neu ([SHIFT"
+"+CTRL+R] in Firefox)."
 
 #: lino/modlib/extjs/config/extjs/linoweb.js:1518
 msgid "Database problem"
@@ -4534,7 +4523,7 @@ msgstr ""
 msgid "Preview needs update"
 msgstr ""
 
-#: lino/modlib/notify/__init__.py:26
+#: lino/modlib/notify/__init__.py:25
 #, fuzzy
 msgid "Messages"
 msgstr "Meldung"
@@ -4671,8 +4660,8 @@ msgstr "Drucken"
 #: lino/modlib/printing/actions.py:96
 #, fuzzy
 msgid ""
-"Your printable document ({}) should now open in a new browser window. If "
-"it doesn't, please ask your system administrator."
+"Your printable document ({}) should now open in a new browser window. If it "
+"doesn't, please ask your system administrator."
 msgstr ""
 "Das druckbare Dokument (Datei %(doc)s) müsste sich jetzt in einem neuen "
 "Browserfenster öffnen. Andernfalls bitte  %(help)s konsultieren oder den "
@@ -4689,8 +4678,8 @@ msgstr "Vorlage bearbeiten"
 
 #: lino/modlib/printing/actions.py:264
 msgid ""
-"Before you can edit this template we must create a local copy on the "
-"server. This will exclude the template from future updates."
+"Before you can edit this template we must create a local copy on the server. "
+"This will exclude the template from future updates."
 msgstr ""
 
 #: lino/modlib/printing/actions.py:274
@@ -4710,20 +4699,20 @@ msgstr "Dadurch gehen alle manuellen Änderungen im generierten Dokument verlore
 msgid "Print method"
 msgstr "Druckmethode"
 
-#: lino/modlib/printing/mixins.py:53
+#: lino/modlib/printing/mixins.py:49
 msgid "Template"
 msgstr "Vorlage"
 
-#: lino/modlib/printing/mixins.py:156
+#: lino/modlib/printing/mixins.py:152
 msgid "build time"
 msgstr "Druckdatum"
 
-#: lino/modlib/printing/mixins.py:257
+#: lino/modlib/printing/mixins.py:253
 #, fuzzy
 msgid "Check for missing target files"
 msgstr "Sind die phonetischen Wörter aktualisiert?"
 
-#: lino/modlib/printing/mixins.py:263
+#: lino/modlib/printing/mixins.py:259
 msgid "Seems to have been built ({bt}), but cache file is missing ."
 msgstr ""
 
@@ -4856,24 +4845,24 @@ msgstr "Bezeichnung"
 msgid "Template Text"
 msgstr "Vorlagentext"
 
-#: lino/modlib/uploads/__init__.py:15 lino/modlib/uploads/choicelists.py:45
+#: lino/modlib/uploads/__init__.py:15 lino/modlib/uploads/choicelists.py:40
 msgid "Uploads"
 msgstr "Uploads"
 
-#: lino/modlib/uploads/choicelists.py:34
+#: lino/modlib/uploads/choicelists.py:29
 msgid "Upload shortcut"
 msgstr ""
 
-#: lino/modlib/uploads/choicelists.py:35
+#: lino/modlib/uploads/choicelists.py:30
 msgid "Upload shortcuts"
 msgstr ""
 
-#: lino/modlib/uploads/choicelists.py:42
-msgid "Upload Area"
+#: lino/modlib/uploads/choicelists.py:37
+msgid "Upload area"
 msgstr "Upload-Bereich"
 
-#: lino/modlib/uploads/choicelists.py:43
-msgid "Upload Areas"
+#: lino/modlib/uploads/choicelists.py:38
+msgid "Upload areas"
 msgstr "Upload-Bereiche"
 
 #: lino/modlib/uploads/models.py:31
@@ -4893,11 +4882,11 @@ msgid "Base URL"
 msgstr ""
 
 #: lino/modlib/uploads/models.py:57
-msgid "Upload Type"
+msgid "Upload type"
 msgstr "Upload-Art"
 
 #: lino/modlib/uploads/models.py:58
-msgid "Upload Types"
+msgid "Upload types"
 msgstr "Upload-Arten"
 
 #: lino/modlib/uploads/models.py:63
@@ -4922,14 +4911,17 @@ msgstr "Begonnen"
 msgid "Add a (+) button when there is no upload of this type."
 msgstr ""
 
+#: lino/modlib/uploads/models.py:127
+msgid "Upload file"
+msgstr "Upload-Datei"
+
 #: lino/modlib/uploads/models.py:128
-#, fuzzy
-msgid "Files"
-msgstr "Datei"
+msgid "Upload files"
+msgstr "Upload-Dateien"
 
 #: lino/modlib/uploads/models.py:133
 msgid "Library file"
-msgstr ""
+msgstr "Bibliotheksdatei"
 
 #: lino/modlib/uploads/models.py:185
 msgid "Uploaded by"
@@ -4940,7 +4932,6 @@ msgid "Edit metadata of the uploaded file."
 msgstr "Angaben über die hochgeladene Datei bearbeiten."
 
 #: lino/modlib/uploads/models.py:333
-#, fuzzy
 msgid "Open the file in a new browser window"
 msgstr "Hochgeladene Datei in einem neuen Browserfenster öffnen"
 
@@ -4957,14 +4948,13 @@ msgid "Open the uploaded file in a new browser window"
 msgstr "Hochgeladene Datei in einem neuen Browserfenster öffnen"
 
 #: lino/modlib/uploads/models.py:436
-#, fuzzy
 msgctxt "uploaded file"
 msgid "Last"
-msgstr "Letzter"
+msgstr "Letzte"
 
 #: lino/modlib/uploads/models.py:440
 msgid "All {0} files"
-msgstr ""
+msgstr "Alle {0} Dateien"
 
 #: lino/modlib/users/__init__.py:21 lino/modlib/users/models.py:63
 msgid "Users"
@@ -5362,3 +5352,5 @@ msgstr "Prüfziffer ist %(found)d, müsste sein %(expected)d"
 #~ msgid "Server status"
 #~ msgstr "Server-Status"
 
+#~ msgid "Files"
+#~ msgstr "Dateien"

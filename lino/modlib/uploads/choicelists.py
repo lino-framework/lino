@@ -1,15 +1,10 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2010-2018 Rumma & Ko Ltd
+# Copyright 2010-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-import logging
-logger = logging.getLogger(__name__)
-
-from django.utils.translation import ugettext_lazy as _
 
 from lino.modlib.office.roles import OfficeStaff
-
-from lino.api import dd, rt
+from lino.api import dd, rt, _
 
 
 class Shortcut(dd.Choice):
@@ -39,8 +34,8 @@ class Shortcuts(dd.ChoiceList):
 
 class UploadAreas(dd.ChoiceList):
     required_roles = dd.login_required(OfficeStaff)
-    verbose_name = _("Upload Area")
-    verbose_name_plural = _("Upload Areas")
+    verbose_name = _("Upload area")
+    verbose_name_plural = _("Upload areas")
 add = UploadAreas.add_item
 add('90', _("Uploads"), 'general')
 
