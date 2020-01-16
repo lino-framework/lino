@@ -121,7 +121,7 @@ class Plugin(ad.Plugin):
         if request.user.authenticated:
             user_name = request.user.username
         site_title = site.title or 'Lino-framework'
-        if False and self.site.default_ui == 'lino_react.react':
+        if self.site.default_ui == 'lino_react.react':
             js_to_add = ("""
         <script type="text/javascript">
             // Note that the path doesn't matter for routing; any WebSocket
