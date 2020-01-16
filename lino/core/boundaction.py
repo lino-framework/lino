@@ -7,7 +7,6 @@
 """
 
 import logging ; logger = logging.getLogger(__name__)
-
 import os
 
 from django.conf import settings
@@ -21,7 +20,7 @@ from lino.core.permissions import (
 
 class BoundAction(object):
 
-    """An Action which is bound to an Actor.  If an Actor has subclasses,
+    """An Action that is bound to an Actor.  If an Actor has subclasses,
     each subclass "inherits" its actions.
 
     """

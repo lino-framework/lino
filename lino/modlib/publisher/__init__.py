@@ -4,6 +4,16 @@
 
 from lino.api.ad import Plugin
 
+from lino.core.dashboard import DashboardItem
+
+class PublisherDashboardItem(DashboardItem):
+
+    def __init__(self, obj, **kwargs):
+        self.obj = obj
+        super(PublisherDashboardItem, self).__init__(None, **kwargs)
+
+    def render(self, ar):
+        return obj.get_publisher_response(ar)
 
 class Plugin(Plugin):
 
@@ -19,3 +29,11 @@ class Plugin(Plugin):
             if m.publisher_location is not None:
                 yield url('^{}/(?P<pk>.+)$'.format(m.publisher_location),
                     views.Element.as_view(publisher_model=m))
+
+    def get_dashboard_items(self, user):
+        from lino.core.utils import models_by_base
+        from .mixins import Publishable
+        for m in models_by_base(Publishable):
+            if m.publisher_location is not None:
+                for obj in m.get_dashboard_objects(user):
+                    yield PublisherDashboardItem(obj)

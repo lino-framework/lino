@@ -1,14 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2019 Rumma & Ko Ltd
+# Copyright 2008-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-from builtins import str
-from builtins import object
-
 import os
-
-# import logging
-# logger = logging.getLogger(__name__)
 
 from django.db import models
 from django.conf import settings
@@ -87,13 +81,13 @@ class Volumes(dd.Table):
     required_roles = dd.login_required(OfficeStaff)
 
     insert_layout = """
-    ref description 
-    root_dir 
-    base_url 
+    ref description
+    root_dir
+    base_url
     """
     detail_layout = """
-    ref description 
-    root_dir base_url 
+    ref description
+    root_dir base_url
     overview
     """
 
@@ -128,8 +122,10 @@ def filename_leaf(name):
 class Upload(mixins.Uploadable, UserAuthored, Controllable):
     class Meta(object):
         abstract = dd.is_abstract_model(__name__, 'Upload')
-        verbose_name = _("Upload")
-        verbose_name_plural = _("Uploads")
+        # verbose_name = _("Upload")
+        # verbose_name_plural = _("Uploads")
+        verbose_name = _("File")
+        verbose_name_plural = _("Files")
 
     upload_area = UploadAreas.field(default='general')
     type = dd.ForeignKey("uploads.UploadType", blank=True, null=True)
@@ -197,7 +193,7 @@ class Uploads(dd.Table):
 
     detail_layout = dd.DetailLayout("""
     file user
-    volume:10 library_file:40 
+    volume:10 library_file:40
     upload_area type description
     owner
     """, window_size=(80, 'auto'))
@@ -375,8 +371,8 @@ class UploadsByController(AreaUploads):
     column_names = "file volume library_file type description user *"
 
     insert_layout = dd.InsertLayout("""
-    file 
-    volume library_file 
+    file
+    volume library_file
     type
     description
     """, hidden_elements="volume", window_size=(60, 'auto'))
@@ -451,4 +447,3 @@ def before_analyze(sender, **kwargs):
         dd.inject_field(i.model_spec, i.name, vf)
         # logger.info("Installed upload shortcut field %s.%s",
         #             i.model_spec, i.name)
-
