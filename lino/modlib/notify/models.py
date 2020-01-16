@@ -36,10 +36,9 @@ from lino.utils.format_date import fds
 
 from .mixins import PUBLIC_GROUP
 from .choicelists import MessageTypes, MailModes
-
+from .api import send_notification, NOTIFICATION
 
 html_parser = etree.HTMLParser()
-
 
 def groupname(s):
     # Remove any invalid characters from the given string so that it can
@@ -274,12 +273,7 @@ class Message(UserAuthored, Controllable, Created):
                 "text": json.dumps(message),
             })
         else:
-            from channels.layers import get_channel_layer
-            channel_layer = get_channel_layer()
-            from asgiref.sync import async_to_sync
-            async_to_sync(channel_layer.group_send)(user.username, {"type": "send.notification",
-                                                                    "text": message['body']})
-
+            send_notification(user, **message)
         return
 
 

@@ -16,7 +16,7 @@ from django.utils.functional import LazyObject
 
 from lino.core.auth.utils import AnonymousUser
 from . import consumers2 as consumers
-
+from .chat_consumer import ReactChatConsumer
 
 def _get_user_session_key(session):
     # This value in the session is always serialized to a string, so we need
@@ -94,6 +94,7 @@ AuthMiddlewareStack = lambda inner: CookieMiddleware(
 
 websocket_urlpatterns = [
     url(r"^lino/$", consumers.LinoConsumer),
+    url(r"^WS/$", ReactChatConsumer)
 ]
 
 application = ProtocolTypeRouter({
