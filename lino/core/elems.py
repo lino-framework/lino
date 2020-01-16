@@ -1045,6 +1045,11 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
             kw.setdefault('preferred_width', pw)
         actor = self.field.remote_field.model.get_default_table()
         if not isinstance(self.layout_handle.layout, ColumnsLayout):
+            if actor.detail_action:
+                kw.update(detail_action=action_name(actor.detail_action))
+            if actor.insert_action:
+                kw.update(insert_action=action_name(actor.insert_action))
+            #kw.update(detail_action=actor.detail_action)
             if self.layout_handle.ui.renderer.extjs_version is not None:
                 if actor is None:
                     raise Exception("20181229 {!r} {}".format(self,
@@ -2398,6 +2403,7 @@ def field2elem(layout_handle, field, **kw):
     ch = holder.get_chooser_for_field(field.name)
 
     if ch:
+        kw.update(can_create_choice=ch.can_create_choice)
         if ch.can_create_choice or not ch.force_selection:
             kw.update(forceSelection=False)
         elif rnd.extjs_version == 6:
