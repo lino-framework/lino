@@ -54,8 +54,8 @@ class Volume(Referrable):
 class UploadType(mixins.BabelNamed):
     class Meta(object):
         abstract = dd.is_abstract_model(__name__, 'UploadType')
-        verbose_name = _("Upload Type")
-        verbose_name_plural = _("Upload Types")
+        verbose_name = _("Upload type")
+        verbose_name_plural = _("Upload types")
 
     upload_area = UploadAreas.field(default='general')
 
@@ -124,8 +124,8 @@ class Upload(mixins.Uploadable, UserAuthored, Controllable):
         abstract = dd.is_abstract_model(__name__, 'Upload')
         # verbose_name = _("Upload")
         # verbose_name_plural = _("Uploads")
-        verbose_name = _("File")
-        verbose_name_plural = _("Files")
+        verbose_name = _("Upload file")
+        verbose_name_plural = _("Upload files")
 
     upload_area = UploadAreas.field(default='general')
     type = dd.ForeignKey("uploads.UploadType", blank=True, null=True)
