@@ -1,10 +1,6 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2019 Rumma & Ko Ltd
+# Copyright 2011-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
-
-from __future__ import unicode_literals
-from builtins import object
-from builtins import str
 
 import logging ; logger = logging.getLogger(__name__)
 import json

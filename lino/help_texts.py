@@ -840,7 +840,7 @@ instance of DateRange or DateRangeValue."""),
 lino.mixins.periods.DateRange."""),
     'lino.modlib.tinymce.TextFieldTemplate' : _("""A reusable block of text that can be selected from a text editor to
 be inserted into the text being edited."""),
-    'lino.modlib.uploads.Upload' : _("""Django model representing an upload."""),
+    'lino.modlib.uploads.Upload' : _("""Django model representing an upload file."""),
     'lino.modlib.uploads.Upload.type' : _("""The type of this upload."""),
     'lino.modlib.uploads.Upload.file' : _("""Pointer to the uploaded file. See
 lino.mixins.uploadable.Uploadable.file"""),
@@ -852,14 +852,13 @@ uploaded file in a new browser window."""),
 UploadsByController."""),
     'lino.modlib.uploads.MyUploads' : _("""Shows my uploads (i.e. those whose author is the current user)."""),
     'lino.modlib.uploads.UploadsByController' : _("""Shows the uploads controlled by this database object."""),
-    'lino.modlib.uploads.UploadType' : _("""The type of an upload."""),
+    'lino.modlib.uploads.UploadType' : _("""Django model representing an upload type."""),
     'lino.modlib.uploads.UploadType.shortcut' : _("""Optional pointer to a virtual upload shortcut field.  If
 this is not empty, then the given shortcut field will manage
 uploads of this type.  See also Shortcuts."""),
     'lino.modlib.uploads.UploadTypes' : _("""The table with all existing upload types."""),
     'lino.modlib.uploads.UploadController.show_uploads' : _("""Show uploads in a grid table."""),
-    'lino.modlib.uploads.Shortcuts' : _("""The list of upload shortcut fields which have been declared on this
-Site."""),
+    'lino.modlib.uploads.Shortcuts' : _("""The list of available upload shortcut fields in this application."""),
     'lino.modlib.users.User' : _("""Fields:"""),
     'lino.modlib.users.User.authenticated' : _("""This is always True.  Compare with
 AnonymousUser.authenticated."""),
