@@ -1287,7 +1287,9 @@ class DeleteSelected(MultipleRowAction):
 
         def ok(ar2):
             super(DeleteSelected, self).run_from_ui(ar, **kw)
-            ar2.success(record_deleted=True, refresh_all=False)
+            # refresh_all must be True e.g. for when user deletes an item of a
+            # bank statement
+            ar2.success(record_deleted=True, refresh_all=True)
 
             # hack required for extjs:
             if ar2.actor.detail_action:

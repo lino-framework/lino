@@ -282,13 +282,18 @@ class BaseRequest(object):
         if selected_rows is not None:
             self.selected_rows = selected_rows
             assert selected_pks is None
-        if selected_pks is not None:
-            self.set_selected_pks(*selected_pks)
         if xcallback_answers is not None:
             self.xcallback_answers = xcallback_answers
 
         self.master = master if master is not None else self.actor.master if self.actor is not None else None
-        self.master_instance = master_instance if  master_instance is not None else self.get_master_instance(self.master, master_mk, master_mt)
+        self.master_instance = master_instance if master_instance is not None else self.get_master_instance(self.master, master_mk, master_mt)
+
+        # set_selected_pks() is called when the master_instance has been set.
+        # e.g. SuggestedMovements.set_selected_pks() needs to know the voucher
+        # because the D/C of a DueMovement depends on the "target".
+
+        if selected_pks is not None:
+            self.set_selected_pks(*selected_pks)
 
     def parse_req(self, request, rqdata, **kw):
         """
@@ -1363,7 +1368,7 @@ class ActionRequest(ActorRequest):
         # ~ if self.report.known_values:
         # ~ d = dict(self.report.known_values)
         kv = dict()
-        for k, v in list(self.actor.known_values.items()):
+        for k, v in self.actor.known_values.items():
             kv.setdefault(k, v)
         if known_values:
             kv.update(known_values)
