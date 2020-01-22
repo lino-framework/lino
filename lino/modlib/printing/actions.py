@@ -1,13 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2018 Rumma & Ko Ltd
+# Copyright 2009-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-from __future__ import unicode_literals, print_function
-# from builtins import str
-import six
-
-import logging
-logger = logging.getLogger(__name__)
+import logging ; logger = logging.getLogger(__name__)
 
 import os
 import shutil
@@ -80,13 +75,13 @@ class BasePrintAction(Action):
         if not filename:
             return
         if os.path.exists(filename):
-            logger.debug(u"%s %s -> overwrite existing %s.",
+            logger.debug("%s %s -> overwrite existing %s.",
                          bm, elem, filename)
             os.remove(filename)
         else:
             # logger.info("20121221 makedirs_if_missing %s",os.path.dirname(filename))
             rt.makedirs_if_missing(os.path.dirname(filename))
-        logger.debug(u"%s : %s -> %s", bm, elem, filename)
+        logger.debug("%s : %s -> %s", bm, elem, filename)
         return filename
 
     def notify_done(self, ar, bm, leaf, url, **kw):
@@ -114,7 +109,7 @@ class BasePrintAction(Action):
     def run_from_ui(self, ar, **kw):
         elem = ar.selected_rows[0]
         bm = self.build_method or elem.get_build_method()
-        if isinstance(bm, six.string_types):
+        if isinstance(bm, str):
             bm = BuildMethods.get_by_value(bm)
         bm.build(ar, self, elem)
         mf = bm.get_target(self, elem)

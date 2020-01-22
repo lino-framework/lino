@@ -230,9 +230,10 @@ class Action(Parametrizable, Permittable):
     parameters before calling the action.
 
     Setting this attribute to `True` means that the calling code must
-    explicitly set all parameter values.  Usage example is the
+    explicitly set all parameter values.  Usage example are the
     :attr:`lino_xl.lib.polls.models.AnswersByResponse.answer_buttons`
-    virtual field.
+    and :attr:`lino_xl.lib-tickets.Ticket.quick_assign_to`
+    virtual fields.
 
     """
     sort_index = 90
