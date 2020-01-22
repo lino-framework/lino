@@ -71,7 +71,11 @@ class ValidActionResponses(object):
 
     errors = None
     html = None
+
     rows = None
+    """An iterable of database objects that will be serialized as a list.
+    """
+    
     no_data_text = None
     title = None
     """The dynamic title to give to the window or component which shows this response.
