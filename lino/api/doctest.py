@@ -1,15 +1,12 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015-2019 Rumma & Ko Ltd
+# Copyright 2015-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
 A selection of names to be used in tested documents.
 """
 
-from __future__ import print_function, unicode_literals
-
-import six
-from builtins import str
+import six  # TODO: remove here and then run all doctests
 
 import django
 django.setup()
@@ -32,7 +29,7 @@ from etgen.html import E, tostring, to_rst
 from lino.utils.diag import analyzer
 from lino.utils import diag
 from lino.utils.sql import sql_summary
-from lino.core import actors
+from lino.core import actors, kernel
 from lino.core.menus import find_menu_item
 from lino.sphinxcontrib.actordoc import menuselection_text
 from pprint import pprint
@@ -114,7 +111,7 @@ def demo_get(
                      expected_rows, kwargs)
     # Django test client does not like future pseudo-unicode strings
     # See #870
-    url = six.text_type(settings.SITE.buildurl(case.url_base, **case.kwargs))
+    url = str(settings.SITE.buildurl(case.url_base, **case.kwargs))
     # print(20160329, url)
     if False:
         msg = 'Using remote authentication, but no user credentials found.'
@@ -130,7 +127,7 @@ def demo_get(
     if False:
         # removed 20161202 because (1) it was relatively useless and
         # (2) caused a PermissionDenied warning
-        response = test_client.get(url, REMOTE_USER=six.text_type('foo'))
+        response = test_client.get(url, REMOTE_USER=str('foo'))
         if response.status_code != 403:
             raise Exception(
                 "Status code %s other than 403 for anonymous on GET %s" % (
@@ -326,7 +323,7 @@ def show_fields(model, fieldnames=None, columns=False, all=None):
             get_field = model.parameters.get
             if fieldnames is None:
                 fieldnames = model.params_layout.main
-    if isinstance(fieldnames, six.string_types):
+    if isinstance(fieldnames, str):
         fieldnames = fieldnames.split()
     for n in fieldnames:
         fld = get_field(n)
@@ -394,11 +391,11 @@ def walk_menu_items(username=None, severe=True):
             if isinstance(mi.bound_action.action, ShowTable):
                 mt = mi.bound_action.actor
                 url = 'api/{}/{}'.format(mt.app_label, mt.__name__)
-                url = six.text_type(settings.SITE.buildurl(url, fmt='json'))
+                url = str(settings.SITE.buildurl(url, fmt='json'))
 
                 item = menuselection_text(mi) + " : "
                 try:
-                    response = test_client.get(url, REMOTE_USER=six.text_type(username))
+                    response = test_client.get(url, REMOTE_USER=str(username))
                     result = check_json_result(
                         response, None,
                         "GET %s for user %s" % (url, username))
@@ -470,7 +467,7 @@ def str2languages(txt):
     lst = []
     for lng in settings.SITE.languages:
         with translation.override(lng.django_code):
-            lst.append(six.text_type(txt))
+            lst.append(str(txt))
     return lst
 
 def show_choicelist(cls):
@@ -482,6 +479,17 @@ def show_choicelist(cls):
     rows = []
     for i in cls.get_list_items():
         row = [i.value, i.name] + str2languages(i.text)
+        rows.append(row)
+    print(table(headers, rows))
+
+def show_choicelists():
+    """
+    Show all the choicelists defined in this application.
+    """
+    headers = ["name", "preferred_width"] + [lng.name for lng in settings.SITE.languages]
+    rows = []
+    for i in sorted(kernel.CHOICELISTS.values(), key=lambda s: str(s)):
+        row = [str(i), i.preferred_width] + str2languages(i.verbose_name_plural)
         rows.append(row)
     print(table(headers, rows))
 

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2019 Rumma & Ko Ltd
+# Copyright 2008-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
@@ -46,18 +46,9 @@ Example on how to use a ChoiceList in your model::
       written = HowWell.field(verbose_name=_("written"))
 
 """
-from __future__ import unicode_literals
 
-import logging
-from builtins import object
-from builtins import str
-
-import six
-from six import text_type
 from future.utils import with_metaclass
 from past.builtins import cmp
-
-logger = logging.getLogger(__name__)
 
 import warnings
 
@@ -85,7 +76,6 @@ VALUE_FIELD = models.CharField(_("value"), max_length=20)
 VALUE_FIELD.attname = 'value'
 
 @deconstructible
-
 class Choice(fields.TableRow):
     """A constant value whose unicode representation depends on the
     current language at runtime.  Every item of a :class:`ChoiceList`
@@ -127,7 +117,7 @@ class Choice(fields.TableRow):
 
         """
         if value is not None:
-            if not isinstance(value, six.string_types):
+            if not isinstance(value, str):
                 raise Exception("value must be a string")
             self.value = self.pk = value
         if name is not None:
@@ -265,7 +255,7 @@ Django creates copies of them when inheriting models.
         # return self.text
         if self.choicelist.show_values:
             return "{0} ({1})".format(self.value, self.text)
-        return text_type(self.text)
+        return str(self.text)
 
     @classmethod
     def get_chooser_for_field(cls, fieldname):
@@ -617,12 +607,15 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
     @classmethod
     def class_init(cls):
         super(ChoiceList, cls).class_init()
+        if cls.abstract:
+            return
         if cls.preferred_width is None:
             pw = 4
             for i in cls.get_list_items():
                 dt = cls.display_text(i)
                 pw = max(pw, len(dt))
             cls.preferred_width = pw
+            # print("20200122b setting preferred_width for {} to {}".format(cls, cls.preferred_width))
 
     @classmethod
     def add_item_instance(cls, i):
@@ -722,8 +715,8 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
             def fn(bc):
                 # return "%s (%s)" % (bc.value, str(bc))
                 return "{0} ({1})".format(bc.value, bc)
-            return lazy(fn, str, six.text_type)(bc)
-        return lazy(str, str, six.text_type)(bc)
+            return lazy(fn, str, str)(bc)
+        return lazy(str, str, str)(bc)
 
     @classmethod
     def get_by_name(self, name, *args):
@@ -741,7 +734,7 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
         Return the item (a :class:`Choice` instance) corresponding to the
         specified `value`.
         """
-        if not isinstance(value, six.string_types):
+        if not isinstance(value, str):
             raise Exception("%r is not a string" % value)
         #~ print "get_text_for_value"
         #~ return self.items_dict.get(value, None)
