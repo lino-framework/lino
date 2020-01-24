@@ -753,8 +753,8 @@ class VentilatedColumns(VirtualTable):
 
     column_names_template = ''
     """
-    The template to use for :attr:`column_names`.   It can contain a string
-    ``{vcolumns}`` which will be replaced by a space separate list of the column
+    The template to use for :attr:`column_names`.   It should contain a string
+    ``{vcolumns}`` which will be replaced by a space-separated list of the column
     names given by :meth:`get_ventilated_columns`.
     """
 
@@ -770,8 +770,7 @@ class VentilatedColumns(VirtualTable):
             self.add_virtual_field('vc' + str(i), vf)
             names += ' ' + vf.name + self.ventilated_column_suffix
 
-        self.column_names = self.column_names_template.format(
-            vcolumns=names)
+        self.column_names = self.column_names_template.format(vcolumns=names)
 
         #~ logger.info("20131114 setup_columns() --> %s",self.column_names)
 

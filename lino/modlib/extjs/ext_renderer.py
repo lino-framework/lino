@@ -1,20 +1,12 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2019 Rumma & Ko Ltd
+# Copyright 2009-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
 Defines the :class:`ExtRenderer` class.
 """
 
-from __future__ import print_function
-from __future__ import unicode_literals
-
-import logging
-from builtins import str
-
-import six
-
-logger = logging.getLogger(__name__)
+import logging ; logger = logging.getLogger(__name__)
 
 import cgi
 import time
@@ -22,19 +14,15 @@ import time
 from django.conf import settings
 from django.db import models
 from django.utils import translation
-
 from django.utils.translation import ugettext as _
 
-from lino.core.gfks import ContentType
-
-from lino.api import rt
+from etgen.html import E, iselement
 
 import lino
 from lino.core import constants
 from lino.core.renderer import JsRenderer
 from lino.core.renderer_mixins import JsCacheRenderer
-
-from lino.api.ad import Plugin
+from lino.core.gfks import ContentType
 
 from lino.core.actions import (ShowEmptyTable, ShowDetail,
                                ShowInsert, ShowTable, SubmitDetail,
@@ -49,8 +37,8 @@ from lino.core import menus
 # from lino.core import auth
 from lino.utils import jsgen
 from lino.utils.jsgen import py2js, js_code
-from etgen.html import E, iselement
-
+from lino.api import rt
+from lino.api.ad import Plugin
 
 from lino.modlib.users.utils import get_user_profile, with_user_profile
 
@@ -393,7 +381,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
         does a lot of CSS magic which neutralizes the "usual" effects
         of most html tags.
         """
-        if isinstance(html, six.string_types):
+        if isinstance(html, str):
             return '<div class="htmlText">{0}</div>'.format(html)
         if not iselement(html):
             raise Exception("{!r} is not an element".format(html))
@@ -1237,7 +1225,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
                 # if isinstance(ws[0], basestring) and ws[0].endswith("%"):
                 #     windowConfig.update(
                 #         width=js_code('Lino.perc2width(%s)' % ws[0][:-1]))
-                if isinstance(ws[0], six.string_types):
+                if isinstance(ws[0], str):
                     windowConfig.update(width=ws[0])
                 else:
                     windowConfig.update(
