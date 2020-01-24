@@ -1,12 +1,7 @@
 # -*- coding: utf-8 -*-
-# Copyright 2012-2019 Rumma & Ko Ltd
+# Copyright 2012-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """Some diagnostic utilities."""
-
-from __future__ import unicode_literals
-from builtins import str
-from builtins import object
-import six
 
 # from textwrap import fill
 from atelier import rstgen
@@ -18,6 +13,7 @@ from django.utils.encoding import force_text
 
 from lino.modlib.system.choicelists import PeriodEvents
 from lino.core.layouts import BaseLayout
+from lino.core.layouts import ParamsLayout
 from lino.core.fields import DummyField
 from lino.core.elems import Container, Wrapper, FieldElement
 from lino.modlib.users.choicelists import UserTypes
@@ -46,7 +42,7 @@ class Analyzer(object):
                 if ba.action.is_window_action():
                     wl = ba.get_window_layout() or ba.action.params_layout
                     if wl is not None:
-                        if isinstance(wl, six.string_types):
+                        if isinstance(wl, str):
                             raise Exception("20150323 : {0}".format(ba))
                             # Was used to find Exception: 20150323 :
                             # <BoundAction(checkdata.Checkers,
@@ -121,6 +117,7 @@ class Analyzer(object):
         self.analyze()
         items = []
         for ba in analyzer.custom_actions + analyzer.window_actions:
+            # if ba.action.parameters and not ba.action.no_params_window:
             if ba.action.parameters:
                 items.append(
                     "{0} : {1}".format(
@@ -277,8 +274,8 @@ class Analyzer(object):
         yield "{0} views".format(len(
             [a for a in actors.actors_list if not a.abstract]))
         dialog_actions = [ba for ba in analyzer.custom_actions +
-                          analyzer.window_actions if
-                          ba.action.parameters]
+                          analyzer.window_actions
+                          if ba.action.parameters and not ba.action.no_params_window]
         yield "{0} dialog actions".format(len(dialog_actions))
 
     def show_complexity_factors(self):
@@ -350,7 +347,7 @@ def py2rst(self, doctestfmt=False, fmt=None):
 
     """
     from lino.core.store import get_atomizer
-    
+
     if isinstance(self, models.Model) and fmt is None:
         ar = self.get_default_table().request()
         def fmt(e):
