@@ -25,8 +25,6 @@ Summary from <http://en.wikipedia.org/wiki/Restful>:
 
 
 """
-from builtins import str
-
 import json
 
 from os import environ

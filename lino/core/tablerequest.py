@@ -653,10 +653,11 @@ class TableRequest(ActionRequest):
                 for i, fld in enumerate(columns)]
 
     def get_title(self):
+        # print(20200125, self.title, self.master_instance)
         if self.title is not None:
             return self.title
-        if self.master_instance is not None:
-            self.master_instance
+        # if self.master_instance is not None:
+        #     self.master_instance
         return self.actor.get_title(self)
 
     def get_status(self, **kw):
