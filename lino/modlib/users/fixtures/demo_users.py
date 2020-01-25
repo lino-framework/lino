@@ -1,28 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2010-2018 Rumma & Ko Ltd
+# Copyright 2010-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-"""This fixture installs fictive root users (administrators), one for
-each language.  These names are being used by the  online demo
-sites.
-
-.. Lino currently knows demo users for the following languages:
-  .. lino2rst::
-  ses = rt.login()
-  ses.show(rt.models.users.Users,
-    column_names="username first_name last_name language")
-
-We are trying to sound realistic without actually hitting any real
-person.  If one of the above names happens to match yours, just let us
-know and we will change it.
-
-"""
-
-from __future__ import unicode_literals
-
-import logging
-logger = logging.getLogger(__name__)
-
+import logging ; logger = logging.getLogger(__name__)
 
 from django.conf import settings
 from lino.modlib.users.choicelists import UserTypes
@@ -67,4 +47,3 @@ def objects():
                 kw = root_user(lang)
                 if kw:
                     yield User(**kw)
-
