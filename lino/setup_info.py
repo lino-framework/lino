@@ -18,7 +18,7 @@ PY3 = sys.version_info[0] == 3
 
 SETUP_INFO = dict(
     name='lino',
-    version='20.1.0',
+    version='20.1.1',
     description="A framework for writing desktop-like web applications "
                 "using Django and ExtJS or React",
     license='BSD-2-Clause',
