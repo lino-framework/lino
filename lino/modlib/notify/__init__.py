@@ -121,67 +121,13 @@ class Plugin(ad.Plugin):
         if request.user.authenticated:
             user_name = request.user.username
         site_title = site.title or 'Lino-framework'
-        if False and self.site.default_ui == 'lino_react.react':
-            js_to_add = ("""
+        if self.site.default_ui == 'lino_react.react':
+            js_to_add = """
         <script type="text/javascript">
-            // Note that the path doesn't matter for routing; any WebSocket
-            // connection gets bumped over to WebSocket consumers
-            var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
-            var ws_path = ws_scheme+ "://" + window.location.host + "/lino/";
-            console.log("Connecting to " + ws_path);
-            var webSocketBridge = new WebSocket(ws_path);
-            var username = '%s' ;
-            // webSocketBridge.connect();
-            lino_connecting = function() {
-                console.log("lino connecting ...");
-                webSocketBridge.send({
-                            "command": "user_connect",
-                            "username": username
-                        });
-            }
-            //webSocketBridge.addEventListener('open', function() {
-            //    lino_connecting();
-            //});
-            // Helpful debugging
-            webSocketBridge.onclose = function () {
-                console.log("Disconnected from chat socket");
-            }
-
-            onGranted = console.log("onGranted");
-            onDenied = console.log("onDenied");
-            // Ask for permission if it's not already granted
-            Push.Permission.request(onGranted,onDenied);
-
-            webSocketBridge.onmessage = function(e) {
-                var data = e.data;
-                Push.Permission.request(onGranted,onDenied);
-                console.log("We get the message ",data);
-                // var message = data['message'];
-                try {
-                    Push.create( %s , {
-                        body: data,
-                        icon: '/static/img/lino-logo.png',
-                        onClick: function () {
-                            window.focus();
-                            """ + site.kernel.default_renderer.reload_js() + """
-                            this.close();
-                        }
-                    });
-                    if (false && Number.isInteger(action["id"])){
-                        webSocketBridge.stream('lino').send({message_id: action["id"]})
-                        webSocketBridge.send(JSON.stringify({
-                                        "command": "seen",
-                                        "message_id": action["id"],
-                                    }));
-                                }
-                    }
-                catch(err) {
-                    console.log(err.message);
-                }
-            }
-        // end of onReady()"
+            window.Lino = window.Lino || {}
+            window.Lino.useWebSockets = true;
         </script>
-            """) % (user_name, py2js(site_title))
+            """
         else:
             js_to_add = ("""
         <script type="text/javascript">

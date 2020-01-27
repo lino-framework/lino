@@ -3,7 +3,9 @@ import json
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 
-from pprint import pprint
+from lino.api import rt, dd
+
+
 
 class ReactChatConsumer(WebsocketConsumer):
     def connect(self):
@@ -23,13 +25,16 @@ class ReactChatConsumer(WebsocketConsumer):
         pass
 
     def receive(self, text_data):
-        text_data_json = json.loads(text_data)
-        pprint(text_data_json)
-        # message = text_data_json['message']
-        #
-        # self.send(text_data=json.dumps({
-        #     'message': message
-        # }))
+        data = json.loads(text_data)
+        print(20201701, text_data)
+
+        user =self.scope.get('user', False)
+
+        # Very Basic auth for confirming that this user is the on sending this message.
+        if user:
+            data["user"] = user
+            if dd.is_installed("chat"):
+                rt.models.resolve("chat.ChatMessage").onRecive(data)
 
     def send_notification(self, text):
         ## just passes data through. real work is done in .api

@@ -4,8 +4,6 @@
 
 import json
 
-from lino.api import rt
-
 NOTIFICATION = "NOTIFICATION"
 CHAT = "CHAT"
 
@@ -39,23 +37,3 @@ def send_notification(user, id, subject, body, created):
     async_to_sync(channel_layer.group_send)(user.username,
                                             {"type": "send_notification",  # method name in consumer
                                              "text": json.dumps(msg)})  # data
-
-def send_global_chat(id, user, body, created):
-
-    from channels.layers import get_channel_layer
-    from asgiref.sync import async_to_sync
-
-    msg = dict(
-        type=CHAT,
-        id=id,
-        body=body,
-        created=created,
-        user=user.username,
-    )
-
-    channel_layer = get_channel_layer()
-    for user in rt.models.resolve("user.User").objects.exclude(user_type=None):
-            async_to_sync(channel_layer.group_send)(user.username,
-                                            {"type": "send_notification",  # method name in consumer
-                                             "text": json.dumps(msg)})  # data
-
