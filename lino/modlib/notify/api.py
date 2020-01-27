@@ -54,7 +54,7 @@ def send_global_chat(id, user, body, created):
     )
 
     channel_layer = get_channel_layer()
-    for user in rt.models.resolve("user.User").objects.exclude(user_type=None):
+    for user in rt.models.resolve("users.User").objects.exclude(user_type=None):
             async_to_sync(channel_layer.group_send)(user.username,
                                             {"type": "send_notification",  # method name in consumer
                                              "text": json.dumps(msg)})  # data

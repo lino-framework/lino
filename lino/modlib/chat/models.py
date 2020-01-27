@@ -89,6 +89,13 @@ class ChatMessage(UserAuthored, Created):
         newMsg.save()
         newMsg.send_global_message()
 
+    @dd.action(_("ChatsMsg"))
+    def getChats(self, ar):
+        # doto, have work.
+        last_ten = ChatMessage.objects.order_by('-created')[:10]
+        last_ten_in_ascending_order = reversed(last_ten)
+        return ar.success(rows=[(c.user.username, c.body,c.created) for c in last_ten_in_ascending_order])
+
 
 # TODO Status table
 # Each row should be a 1 to many relation with Chatmessage
@@ -116,6 +123,7 @@ class ChatMessage(UserAuthored, Created):
 class ChatMessages(dd.Table):
     model = 'chat.ChatMessage'
     column_names = "created user body *"
+    required_roles = set([])
     # cell_edit = False
 
     detail_layout = dd.DetailLayout("""
@@ -149,10 +157,10 @@ class ChatMessages(dd.Table):
         #     qs = qs.filter(seen__isnull=True)
         return qs
 
-    @dd.action("getChats")
-    def getChats(self, ar):
-        # doto, have work.
-        return ar.success(rows=[(c.user, c.body) for c in ChatMessage.objects.order_by("created")[:10]])
+    #@dd.action(_("ChatsMsg"))
+    #def getChats(self, ar):
+    #    # doto, have work.
+    #    return ar.success(rows=[(c.user, c.body) for c in ChatMessage.objects.order_by("created")[:10]])
 
 # class AllMessages(Messages):
 #     required_roles = dd.login_required(dd.SiteAdmin)

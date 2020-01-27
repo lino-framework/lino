@@ -51,7 +51,7 @@ class Plugin(ad.Plugin):
 
     def setup_explorer_menu(self, site, user_type, m):
         # todo,
-        pass
+        #pass
         p = site.plugins.system
         m = m.add_menu(p.app_label, p.verbose_name)
         m.add_action('chat.ChatMessages')
