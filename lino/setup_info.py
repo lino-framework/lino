@@ -161,6 +161,8 @@ lino.management.commands
 lino.modlib.odata
 lino.modlib.memo
 lino.modlib.office
+lino.modlib.chat
+lino.modlib.chat.fixtures
 lino.modlib.checkdata
 lino.modlib.checkdata.fixtures
 lino.modlib.checkdata.management
