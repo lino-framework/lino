@@ -34,7 +34,9 @@ class ReactChatConsumer(WebsocketConsumer):
         if user:
             data["user"] = user
             if dd.is_installed("chat"):
-                rt.models.resolve("chat.ChatMessage").onRecive(data)
+                ChatMessage = rt.models.resolve("chat.ChatMessage")
+                if data.get('function') and hasattr(ChatMessage,data.get('function')):
+                    getattr(ChatMessage,data.get('function'))(data)
 
     def send_notification(self, text):
         ## just passes data through. real work is done in .api
