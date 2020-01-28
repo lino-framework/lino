@@ -13,6 +13,7 @@ from future.utils import with_metaclass
 import logging; logger = logging.getLogger(__name__)
 
 import copy
+import traceback
 
 from django.db import models
 from django.conf import settings
@@ -698,8 +699,10 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     @classmethod
     def get_actions_hotkeys(cls):
         """
-        This method add hotkey for any available action on the table.
-        Return list of hotkeys [{'key': key,'ctrl': Bool,'shift': Bool,'ba': action_name}].
+        Return or yield a list of hotkeys to be linked to named actions.
+
+        [{'key': key, 'ctrl': Bool, 'shift': Bool, 'ba': action_name}]
+
         """
 
     @classmethod
@@ -865,6 +868,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
             try:
                 settings.SITE.kernel.setup_handle(h, ar)
             except Exception as e:
+                traceback.print_exc()
+                logger.error("%s setup_handle failed with %s", self, e)
                 delattr(self, hname)
 
         # logger.info("18072017, h:|%s|, h.store:|%s|, #1955"%(h, getattr(h,'store',None)))
@@ -1083,8 +1088,13 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                 cls.workflow_owner_field)
         if is_string(cls.workflow_state_field):
         # if isinstance(cls.workflow_state_field, string_types):
-            cls.workflow_state_field = cls.get_data_elem(
-                cls.workflow_state_field)
+            fld = cls.get_data_elem(cls.workflow_state_field)
+            if fld is None:
+                raise Exception(
+                    "Failed to resolve {}.workflow_state_field {}".format(
+                        cls,cls.workflow_state_field))
+            cls.workflow_state_field = fld
+
 
         # note that the fld may be None e.g. cal.Component
         if cls.workflow_state_field is not None:

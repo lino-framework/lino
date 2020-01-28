@@ -458,7 +458,11 @@ class VirtualField(FakeField):
         f = self.return_type
 
         if isinstance(f, str):
-            f = self.return_type = resolve_field(f)
+            try:
+                f = self.return_type = resolve_field(f)
+            except Exception as e:
+                raise Exception(
+                    "Invalid return type spec {} for {} : {}".format(f, self, e))
 
         if isinstance(f, FakeField):
             sortable_by = f.sortable_by

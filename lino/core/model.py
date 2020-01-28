@@ -855,6 +855,7 @@ class Model(models.Model, fields.TableRow):
 
         """
         watcher = ChangeWatcher(row)
+        # assert hasattr(row, state_field.attname)
         old = getattr(row, state_field.attname)
         target_state.choicelist.before_state_change(row, ar, old, target_state)
         row.before_state_change(ar, old, target_state)
@@ -1078,6 +1079,15 @@ class Model(models.Model, fields.TableRow):
             "Cannot resolve stateset specifier {!r}".format(states))
 
     @classmethod
+    def get_actions_hotkeys(cls):
+        """
+        Return or yield a list of hotkeys to be linked to named actions.
+
+        [{'key': key, 'ctrl': Bool, 'shift': Bool, 'ba': action_name}]
+
+        """
+
+    @classmethod
     def get_layout_aliases(cls):
         """
 
@@ -1212,6 +1222,7 @@ LINO_MODEL_ATTRIBS = (
     'get_default_table',
     'get_default_table',
     'get_layout_aliases',
+    'get_actions_hotkeys',
     # 'get_template_group',
     'get_related_project',
     'obj2href',

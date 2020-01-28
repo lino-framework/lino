@@ -1,25 +1,50 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2010-2018 Rumma & Ko Ltd
+# Copyright 2010-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """
 This defines the :class:`Registable` model mixin.
 """
 
-from __future__ import unicode_literals
-
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 from lino.core import model
+from lino.core.actions import Action
 from lino.core.workflows import ChangeStateAction
 from lino.core.exceptions import ChangedAPI
 
-
-
 from lino.core.workflows import State
+
+
+class ToggleState(Action):
+    # show_in_bbar = False
+    # button_text = _("Toggle state")
+    # sort_index = 52
+    label = _("Toggle state")
+    # action_name = "changemystate"
+    button_text = "⏼" # 23FC Toggle power
+
+    def run_from_ui(self, ar, **kw):
+        obj = ar.selected_rows[0]
+        fld = ar.actor.workflow_state_field
+        chl = fld.choicelist  # VoucherStates
+        # print("20190722", obj)
+        if obj.state == chl.draft:
+            obj.set_workflow_state(ar, fld, chl.registered)
+        elif obj.state == chl.registered:
+            obj.set_workflow_state(ar, fld, chl.draft)
+        else:
+            raise Warning(_("Cannot toggle from state {}").format(obj.state))
+        # obj.full_clean()
+        # obj.save()
+        ar.set_response(refresh=True)
+
+
+
 
 class RegistrableState(State):
     """
-    Base class 
+    Base class
     """
     is_editable = True
     """
@@ -49,14 +74,19 @@ class Registrable(model.Model):
         abstract = True
 
     workflow_state_field = 'state'
+    toggle_state = ToggleState()
 
     _registrable_fields = None
 
     @classmethod
     def on_analyze(cls, site):
         super(Registrable, cls).on_analyze(site)
+        if cls.workflow_state_field is None:
+            raise Exception("{} has no workflow_state_field".format(cls))
         chl = cls.workflow_state_field.choicelist
         ic = chl.item_class
+        # if not issubclass(chl.item_class, RegistrableState):
+        #     raise Exception("Invalid choicelist for {} state".format(cls))
         k = 'is_editable'
         if not hasattr(ic, k):
             fld = getattr(chl, k, None)
@@ -66,11 +96,18 @@ class Registrable(model.Model):
                     "has no attribute {}".format(cls, ic, k))
         cls._registrable_fields = set(cls.get_registrable_fields(site))
 
+    @classmethod
+    def get_actions_hotkeys(cls):
+        return [{'key': 'x',
+                'ctrl': True,
+                'shift': False,
+                'ba': 'toggle_state'}]
+
 
     @classmethod
     def get_registrable_fields(cls, site):
         """
-        Return a list of the fields which are *disabled* when this is
+        Return a list of the fields that are *disabled* when this is
         *registered* (i.e. `state` is not `editable`).
 
         Usage example::
@@ -156,10 +193,13 @@ class Registrable(model.Model):
     def get_simple_parameters(cls):
         for p in super(Registrable, cls).get_simple_parameters():
             yield p
-        yield cls.workflow_state_field.name
+        # if isinstance(cls.workflow_state_field, str):
+        #     raise Exception("Unresolved workflow state field in {}".format(cls))
+        yield "state"
+        # yield cls.workflow_state_field.name fails e.g. for vat.VatInvoices
+        # because the actor is on an abstract model
 
 
     def on_duplicate(self, ar, master):
         self.state = self.workflow_state_field.choicelist.draft
         super(Registrable, self).on_duplicate(ar, master)
-

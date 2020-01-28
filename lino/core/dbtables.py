@@ -1,16 +1,13 @@
-# Copyright 2009-2018 Rumma & Ko Ltd
+# Copyright 2009-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
 This defines the :class:`Table` class.
 """
-from __future__ import print_function
-from builtins import str
 import six
 # str = six.text_type
 
-import logging
-logger = logging.getLogger(__name__)
+import logging ; logger = logging.getLogger(__name__)
 
 import datetime
 
@@ -269,6 +266,10 @@ class Table(AbstractTable):
             # if vf.name == name:
                 # return vf
         # return cls.model._meta.get_field(name)
+
+    @classmethod
+    def get_actions_hotkeys(cls):
+        return cls.model.get_actions_hotkeys()
 
     @classmethod
     def get_widget_options(cls, name, **options):

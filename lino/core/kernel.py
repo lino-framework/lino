@@ -414,7 +414,12 @@ class Kernel(object):
 
         logger.debug("actors.initialize()")
         for a in actors.actors_list:
-            a.class_init()
+            # a.class_init()
+            try:
+                a.class_init()
+            except Exception as e:
+                logger.error("Failed to initialize actor %s : %s", a, e)
+                raise # Exception("Failed to class_init {} : {}".format(a, e))
 
         register_actors()
 
