@@ -167,7 +167,7 @@ def str2hex(s):
 def hex2str(value):
     """
     Convert the hexadecimal representation of a string to the original
-    string. 
+    string.
 
     See also :func:`str2hex`.
 
@@ -305,7 +305,7 @@ class IncompleteDate(object):
         >>> IncompleteDate.parse('JUN. 1968')
         IncompleteDate('1968-06-00')
         """
-        
+
         if s.startswith('-'):
             bc = True
             s = s[1:]
@@ -563,10 +563,18 @@ class SumCollector(object):
     >>> sc.collect("a", 12)
     >>> sc.collect("b", 23)
     >>> sc.collect("a", 34)
-    >>> from future.utils import iteritems
-    >>> sorted(list(iteritems(sc)))
-    [('a', 46), ('b', 23)]
+    >>> sc
+    OrderedDict([('a', 46), ('b', 23)])
 
+    >>> sc = SumCollector()
+    >>> from lino.utils.quantities import Duration
+    >>> sc.collect("a", Duration("0:30"))
+    >>> sc.collect("a", Duration("0:35"))
+    >>> sc.collect("b", Duration("0:00"))
+    >>> sc.a
+    Duration('1:05')
+    >>> sc.b
+    Duration('0:00')
 
     This is also included in the default context used by the Jinja
     renderer (:mod:`lino.modlib.jinja`) when rendering templates,
@@ -579,7 +587,7 @@ class SumCollector(object):
         self._sums = OrderedDict()
 
     def collect(self, k, value):
-        """This returns an empty string """
+        """Add the given value to the sum at the given key k."""
         if value is None:
             return
         if k in self._sums:
@@ -608,7 +616,7 @@ class SimpleSingleton(object):
             cls._instance = object.__new__(cls, *args, **kwargs)
         return cls._instance
 
-    
+
 
 
 def _test():

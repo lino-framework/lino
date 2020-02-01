@@ -1,12 +1,9 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2019 Rumma & Ko Ltd
+# Copyright 2012-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """See :doc:`/dev/quantities`."""
 
-from __future__ import division
-from builtins import str
-import six
 from past.utils import old_div
 
 import datetime
@@ -18,7 +15,7 @@ class Quantity(Decimal):
 
     def __new__(cls, *args, **kwargs):
         raise Exception("You cannot instantiate the Quantity base class.")
-        
+
     def __str__(self):
         # return "{}%".format(self * 100)
         return self._text
@@ -62,7 +59,7 @@ class Percentage(Quantity):
     def __new__(cls, value="0%", context=None):
         if value is NotImplemented:
             return value
-        if isinstance(value, six.string_types):
+        if isinstance(value, str):
             text = value
             if text[-1] != "%":
                 text += "%"
@@ -143,7 +140,7 @@ class Duration(Quantity):
 
 
 def convert_from(value, context=None):
-    if isinstance(value, six.string_types):
+    if isinstance(value, str):
         return parse(value)
     if isinstance(value, datetime.timedelta):
         return Duration(value)
@@ -174,3 +171,6 @@ def parse_decimal(s):
         raise Exception("Invalid decimal value %r" % s)
     s = s.replace(',', '.')
     return Decimal(s)
+
+
+ZERO_DURATION = Duration('0:00')

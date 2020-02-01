@@ -790,13 +790,14 @@ class Model(models.Model, fields.TableRow):
     def get_mobile_list_item_elems(self, ar):
         return [self.obj2href(ar)]
 
-    def get_overview_elems(self, ar):
-        """This is expected to return a list of HTML elements to be wrapped
-        into a `<DIV>`.
-
-        """
-        # return [ar.obj2html(self)]
-        return [self.obj2href(ar)]
+    # moved to TableRow
+    # def get_overview_elems(self, ar):
+    #     """This is expected to return a list of HTML elements to be wrapped
+    #     into a `<DIV>`.
+    #
+    #     """
+    #     # return [ar.obj2html(self)]
+    #     return [self.obj2href(ar)]
 
     def on_duplicate(self, ar, master):
         """

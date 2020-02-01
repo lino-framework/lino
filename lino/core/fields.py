@@ -1101,6 +1101,14 @@ class TableRow(object):
         """
         return str(self)
 
+    def get_overview_elems(self, ar):
+        """This is expected to return a list of HTML elements to be wrapped
+        into a `<DIV>`.
+
+        """
+        # return [ar.obj2html(self)]
+        return [self.obj2href(ar)]
+
 
 def wildcard_data_elems(model):
     """
