@@ -1,7 +1,5 @@
-# Copyright 2012-2019 Rumma & Ko Ltd
+# Copyright 2012-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
-
-from builtins import str
 
 import re
 import cgi
@@ -57,7 +55,8 @@ class SiteSearch(dd.VirtualTable):
                 sar = t.request(
                     parent=ar, quick_search=ar.quick_search)
                 for obj in sar:
-                    yield obj
+                    if obj.show_in_site_search:  # don't show calview.HeaderRow
+                        yield obj
 
     @dd.displayfield(_("Description"))
     def description(self, obj, ar):
@@ -69,6 +68,8 @@ class SiteSearch(dd.VirtualTable):
 
     @dd.displayfield(_("Matches"))
     def matches(self, obj, ar):
+        # if not obj.__class__.show_in_site_search:
+        #     return ""
         def bold(mo):
             return "<b>{}</b>".format(mo.group(0))
         matches = {}
