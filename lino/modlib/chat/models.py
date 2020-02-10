@@ -102,7 +102,7 @@ class ChatMessage(UserAuthored, Created):
         # doto, have work.
         last_ten = ChatMessage.objects.order_by('-created')[:10]
         last_ten_in_ascending_order = reversed(last_ten)
-        return ar.success(rows=[(c.user.username, c.body, c.created, c.seen, c.pk) for c in last_ten_in_ascending_order])
+        return ar.success(rows=[(c.user.username, c.body, c.created, c.seen, c.pk, c.user.id) for c in last_ten_in_ascending_order])
 
 
 # TODO Status table
