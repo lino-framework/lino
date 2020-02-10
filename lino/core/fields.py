@@ -458,7 +458,11 @@ class VirtualField(FakeField):
         f = self.return_type
 
         if isinstance(f, str):
-            f = self.return_type = resolve_field(f)
+            try:
+                f = self.return_type = resolve_field(f)
+            except Exception as e:
+                raise Exception(
+                    "Invalid return type spec {} for {} : {}".format(f, self, e))
 
         if isinstance(f, FakeField):
             sortable_by = f.sortable_by
@@ -1096,6 +1100,14 @@ class TableRow(object):
 
         """
         return str(self)
+
+    def get_overview_elems(self, ar):
+        """This is expected to return a list of HTML elements to be wrapped
+        into a `<DIV>`.
+
+        """
+        # return [ar.obj2html(self)]
+        return [self.obj2href(ar)]
 
 
 def wildcard_data_elems(model):

@@ -1,19 +1,12 @@
 # -*- coding: utf-8 -*-
-# Copyright 2008-2019 Rumma & Ko Ltd
+# Copyright 2008-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """
 
 See test cases and examples in :doc:`/specs/human`.
 
-
 """
-from __future__ import division
-from builtins import str
 from past.utils import old_div
-from builtins import object
-
-import logging
-logger = logging.getLogger(__name__)
 
 import datetime
 from dateutil.relativedelta import relativedelta

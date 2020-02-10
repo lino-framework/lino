@@ -98,6 +98,10 @@ if False:  # 20130710
 class TableHandle(object):
     """
     For every table we create one "handle" per renderer.
+
+    See also :meth:`lino.core.actors.Actor.setup_handle` which is called during
+    startup and sets more attributes.
+
     """
 
     _layouts = None

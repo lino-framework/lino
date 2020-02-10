@@ -152,7 +152,7 @@ Registered objects are not editable."""),
 named "draft" and "registered".
 There may be additional states.
 Every state must have an extra attribute "is_editable"."""),
-    'lino.registrable.Registrable.get_registrable_fields' : _("""Return a list of the fields which are disabled when this is
+    'lino.registrable.Registrable.get_registrable_fields' : _("""Return a list of the fields that are disabled when this is
 registered (i.e. state is not editable)."""),
     'lino.registrable.Registrable.get_row_permission' : _("""Only rows in an editable state may be edited."""),
     'lino.registrable.Registrable.register' : _("""Register this object.  The base implementation just sets the state

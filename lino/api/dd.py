@@ -2,12 +2,8 @@
 # Copyright 2011-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-from __future__ import unicode_literals
-from __future__ import print_function
 
-
-import logging
-logger = logging.getLogger(__name__)
+import logging ; logger = logging.getLogger(__name__)
 
 # logger.info("20140227 dd.py a")
 

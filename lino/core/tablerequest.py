@@ -1,21 +1,11 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2019 Rumma & Ko Ltd
+# Copyright 2009-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Defines the `TableRequest` class.
 
 """
-from __future__ import division
-from __future__ import print_function
-# from future import standard_library
-# standard_library.install_aliases()
-from builtins import str
 from past.utils import old_div
-import six
-
-import logging
-
-logger = logging.getLogger(__name__)
 
 from types import GeneratorType
 import sys
@@ -49,7 +39,7 @@ def column_header(col):
     label = col.get_label()
     if label is None:
         return col.name
-    return six.text_type(label)
+    return str(label)
 
 
 class TableRequest(ActionRequest):
@@ -87,7 +77,7 @@ class TableRequest(ActionRequest):
                 raise Exception("No data iterator for {}".format(self))
         except Warning as e:
             # ~ logger.info("20130809 Warning %s",e)
-            self.no_data_text = six.text_type(e)
+            self.no_data_text = str(e)
             self._data_iterator = []
         except Exception as e:
             if not settings.SITE.catch_layout_exceptions:
@@ -96,10 +86,10 @@ class TableRequest(ActionRequest):
             # rather often and since exception loggers usually send an
             # email to the local system admin, make sure to log each
             # exception only once.
-            self.no_data_text = six.text_type(e)
-            w = WARNINGS_LOGGED.get(six.text_type(e))
+            self.no_data_text = str(e)
+            w = WARNINGS_LOGGED.get(str(e))
             if w is None:
-                WARNINGS_LOGGED[six.text_type(e)] = True
+                WARNINGS_LOGGED[str(e)] = True
                 raise
                 # logger.exception(e)
             self._data_iterator = []
@@ -507,7 +497,7 @@ class TableRequest(ActionRequest):
             else:
                 data = getrqdata(ar.request)
                 columns = [
-                    six.text_type(x) for x in
+                    str(x) for x in
                     data.getlist(constants.URL_PARAM_COLUMNS)]
             if columns:
                 all_widths = data.getlist(constants.URL_PARAM_WIDTHS)

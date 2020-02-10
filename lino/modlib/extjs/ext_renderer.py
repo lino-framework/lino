@@ -1074,6 +1074,8 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
         if getattr(rh.actor,'use_detail_params_value',None):
             kw.update(use_detail_params_value=True)
         kw.update(ls_url=rh.actor.actor_url())
+        if not hasattr(rh, 'store'):
+            raise AttributeError("20200128 {} has no store".format(rh))
         kw.update(ls_store_fields=[js_code(f.as_js(f.name))
                   for f in rh.store.list_fields])
         if rh.store.pk is not None:
@@ -1143,6 +1145,8 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
             yield "    this.ls_insert_handler = Lino.%s;" % a.full_name()
 
         yield "    var ww = this.containing_window;"
+        if not hasattr(rh, 'list_layout'):
+            raise AttributeError("20200128 {} has no list_layout".format(rh))
         for ln in jsgen.declare_vars(rh.list_layout.main.columns):
             yield "    " + ln
 
