@@ -5,15 +5,17 @@ from channels.generic.websocket import WebsocketConsumer
 
 from lino.api import rt, dd
 
+import logging
+logger = logging.getLogger(__name__)
 
 
 class ReactChatConsumer(WebsocketConsumer):
     def connect(self):
         self.accept()
         if self.scope.get('user', False):
-            username = self.scope["user"].username # ideally should be user.PK..
-            self.add_group(username)
-            self.add_group("CHAT")
+            group_uid = str(self.scope["user"].pk) # ideally should be user.PK..
+            self.add_group(group_uid)
+            self.add_group("CHAT") # not used.
 
 
     def add_group(self, group_uid):
@@ -26,7 +28,7 @@ class ReactChatConsumer(WebsocketConsumer):
 
     def receive(self, text_data):
         data = json.loads(text_data)
-        print(20201701, text_data)
+        # logger.info("Recived WS data: " + text_data)
 
         user =self.scope.get('user', False)
 

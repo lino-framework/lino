@@ -38,7 +38,7 @@ def send_notification(user, id, subject, body, created):
         created=created,
     )
     channel_layer = get_channel_layer()
-    async_to_sync(channel_layer.group_send)(user.username,
+    async_to_sync(channel_layer.group_send)(user.pk,
                                             {"type": "send_notification",  # method name in consumer
                                              "text": json.dumps(msg)})  # data
 
@@ -58,7 +58,7 @@ def send_global_chat(id, user, body, created):
     try:
         channel_layer = get_channel_layer()
         for user in rt.models.resolve("users.User").objects.exclude(user_type=None):
-            async_to_sync(channel_layer.group_send)(user.username,
+            async_to_sync(channel_layer.group_send)(str(user.pk),
                                                     {"type": "send_notification",  # method name in consumer
                                                      "text": json.dumps(msg)})  # data
     except Exception as E:
