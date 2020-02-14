@@ -5,6 +5,8 @@
 import json
 
 from lino.api import rt
+import logging
+logger = logging.getLogger(__name__)
 
 NOTIFICATION = "NOTIFICATION"
 CHAT = "CHAT"
@@ -53,9 +55,11 @@ def send_global_chat(id, user, body, created):
         user=user.username,
     )
 
-    channel_layer = get_channel_layer()
-    for user in rt.models.resolve("users.User").objects.exclude(user_type=None):
+    try:
+        channel_layer = get_channel_layer()
+        for user in rt.models.resolve("users.User").objects.exclude(user_type=None):
             async_to_sync(channel_layer.group_send)(user.username,
-                                            {"type": "send_notification",  # method name in consumer
-                                             "text": json.dumps(msg)})  # data
-
+                                                    {"type": "send_notification",  # method name in consumer
+                                                     "text": json.dumps(msg)})  # data
+    except Exception as E:
+        logger.exception(E)
