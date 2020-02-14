@@ -7,6 +7,7 @@ from lino.utils.format_date import fds
 from lino.modlib.office.roles import OfficeUser
 from lino.modlib.users.mixins import UserAuthored, My
 from lino.modlib.gfks.mixins import Controllable
+from lino.modlib.memo.mixins import Previewable
 from lino.mixins import Created, ObservedDateRange
 from lino.core.site import html2text
 from lino.core.gfks import gfk2lookup
@@ -44,7 +45,7 @@ def groupname(s):
     return s.encode('ascii', 'ignore')
 
 
-class ChatMessage(UserAuthored, Created):
+class ChatMessage(UserAuthored, Created, Previewable):
     class Meta(object):
         app_label = 'chat'
         verbose_name = _("Chat message")
@@ -55,7 +56,7 @@ class ChatMessage(UserAuthored, Created):
 
     seen = models.DateTimeField(_("seen"), null=True, editable=False)
     sent = models.DateTimeField(_("sent"), null=True, editable=False)
-    body = dd.RichTextField(_("Body"), editable=False, format='html')
+    #body = dd.RichTextField(_("Body"), editable=False, format='html')
 
     def __str__(self):
         return "{}: {}".format(self.user, self.body)
@@ -102,7 +103,7 @@ class ChatMessage(UserAuthored, Created):
         # doto, have work.
         last_ten = ChatMessage.objects.order_by('-created')[:10]
         last_ten_in_ascending_order = reversed(last_ten)
-        return ar.success(rows=[(c.user.username, c.body, c.created, c.seen, c.pk, c.user.id) for c in last_ten_in_ascending_order])
+        return ar.success(rows=[(c.user.username, ar.parse_memo(c.body), c.created, c.seen, c.pk, c.user.id) for c in last_ten_in_ascending_order])
 
 
 # TODO Status table
