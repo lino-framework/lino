@@ -24,7 +24,8 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("Chat")
 
-    needs_plugins = ['lino.modlib.notify']
+    needs_plugins = ['lino.modlib.notify','lino_xl.lib.groups']
+    #extends_models = ['Group']
 
     media_name = 'js'
 
