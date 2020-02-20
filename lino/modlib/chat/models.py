@@ -8,7 +8,7 @@ from lino.modlib.office.roles import OfficeUser
 from lino.modlib.users.mixins import UserAuthored, My
 from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.memo.mixins import Previewable
-from lino.mixins import Created, ObservedDateRange
+from lino.mixins import Created, ObservedDateRange,BabelNamed, Referrable
 #from lino_noi.lib.groups.models import Group
 from lino.core.site import html2text
 from lino.core.gfks import gfk2lookup
@@ -52,7 +52,7 @@ class ChatMessage(UserAuthored, Created, Previewable):
     seen = models.DateTimeField(_("seen"), null=True, editable=False)
     sent = models.DateTimeField(_("sent"), null=True, editable=False)
     group = dd.ForeignKey(
-        'groups.Group', blank=True, null=True, related_name="messages")
+        'chat.ChatGroup', verbose_name=_(u'Group'), related_name="messages")
     #body = dd.RichTextField(_("Body"), editable=False, format='html')
 
     def __str__(self):
@@ -88,7 +88,8 @@ class ChatMessage(UserAuthored, Created, Previewable):
     def onRecive(Cls, data):
         args = dict(
             user=data['user'],
-            body=data['body']
+            body=data['body']['body'],
+            group_id=data['body']['group_id'],
         )
         newMsg = Cls(**args)
         newMsg.full_clean()
@@ -102,14 +103,33 @@ class ChatMessage(UserAuthored, Created, Previewable):
         last_ten_in_ascending_order = reversed(last_ten)
         return ar.success(rows=[(c.user.username, ar.parse_memo(c.body), c.created, c.seen, c.pk, c.user.id) for c in last_ten_in_ascending_order])
 
-@dd.action(_("ChatsGroupChats"))
-def getGroupChats(self, ar):
-    Group = rt.models.resolve("groups.Group")
-    last_ten = Group.objects.all()[:10]
-    last_ten_in_ascending_order = reversed(last_ten)
-    return ar.success(rows=[(c.name, c.id) for c in last_ten_in_ascending_order])
+
+class ChatGroup(Referrable, Created, BabelNamed):
+    class Meta(object):
+        app_label = 'chat'
+        verbose_name = _("Chat group")
+        verbose_name_plural = _("Chat groups")
+        ordering = ['created', 'id']
+
+    # message_type = MessageTypes.field(default="change")
 
 
-dd.inject_action(
-    'groups.Group',
-    getGroupChats=getGroupChats)
+    @dd.action(_("ChatsGroupChats"))
+    def getGroupChats(self, ar):
+        if self.id:
+             obj = [self]
+        else:
+            obj = ChatGroup.objects.prefetch_related('messages').all()[:10]
+        rows = []
+        for c in obj:
+            messages = []
+            all_messages = c.messages.all()[:10]
+            last_ten = reversed(all_messages)
+            for m in last_ten:
+                messages.append((m.user.username, ar.parse_memo(m.body), m.created, m.seen, m.pk, m.user.id))
+            rows.append({
+                'name': c.name,
+                'id':c.id,
+                'messages':messages
+            })
+        return ar.success(rows=rows)
