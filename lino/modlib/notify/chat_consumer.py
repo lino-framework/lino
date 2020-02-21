@@ -27,18 +27,22 @@ class ReactChatConsumer(WebsocketConsumer):
         pass
 
     def receive(self, text_data):
-        data = json.loads(text_data)
-        # logger.info("Recived WS data: " + text_data)
+        try:
+            data = json.loads(text_data)
+            # logger.info("Recived WS data: " + text_data)
 
-        user =self.scope.get('user', False)
+            user =self.scope.get('user', False)
 
-        # Very Basic auth for confirming that this user is the on sending this message.
-        if user:
-            data["user"] = user
-            if dd.is_installed("chat"):
-                ChatMessage = rt.models.resolve("chat.ChatMessage")
-                if data.get('function') and hasattr(ChatMessage,data.get('function')):
-                    getattr(ChatMessage,data.get('function'))(data)
+            # Very Basic auth for confirming that this user is the on sending this message.
+            if user:
+                data["user"] = user
+                if dd.is_installed("chat"):
+                    ChatMessage = rt.models.resolve("chat.ChatMessage")
+                    if data.get('function') and hasattr(ChatMessage,data.get('function')):
+                        getattr(ChatMessage,data.get('function'))(data)
+        except Exception as E:
+            logger.exception(E)
+
 
     def send_notification(self, text):
         ## just passes data through. real work is done in .api

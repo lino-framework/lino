@@ -56,6 +56,8 @@ class Plugin(ad.Plugin):
         p = site.plugins.system
         m = m.add_menu(p.app_label, p.verbose_name)
         m.add_action('chat.ChatMessages')
+        m.add_action('chat.ChatGroups')
+
 
     def get_head_lines(self, site, request):
         """Adds a JS constant to let react know we want to include WS chat info"""

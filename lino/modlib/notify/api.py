@@ -37,10 +37,15 @@ def send_notification(user, id, subject, body, created):
         body=body,
         created=created,
     )
-    channel_layer = get_channel_layer()
-    async_to_sync(channel_layer.group_send)(str(user.pk),
-                                            {"type": "send_notification",  # method name in consumer
-                                             "text": json.dumps(msg)})  # data
+
+    try:
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(str(user.pk),
+                                                {"type": "send_notification",  # method name in consumer
+                                                 "text": json.dumps(msg)})  # data
+
+    except Exception as E:
+        logger.exception(E)
 
 def send_global_chat(id, user, body, created):
 

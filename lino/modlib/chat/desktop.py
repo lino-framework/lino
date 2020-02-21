@@ -4,6 +4,29 @@
 
 from lino.api import dd
 
+class ChatGroups(dd.Table):
+    model = 'chat.ChatGroup'
+    column_names = "created user title description *"
+    required_roles = set([])
+    # cell_edit = False
+
+    detail_layout = dd.DetailLayout("""
+     title 
+     created 
+     user 
+     description
+     ChatMembers
+    """, window_size=(50, 15))
+
+    insert_layout = dd.InsertLayout("""
+    title
+    description
+    """)
+
+class ChatMembers(dd.Table):
+    model = "chat.ChatGroupMember"
+    master_key = "group"
+
 
 class ChatMessages(dd.Table):
     model = 'chat.ChatMessage'
