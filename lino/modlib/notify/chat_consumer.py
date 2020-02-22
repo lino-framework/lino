@@ -42,6 +42,7 @@ class ReactChatConsumer(WebsocketConsumer):
                         getattr(ChatMessage,data.get('function'))(data)
         except Exception as E:
             logger.exception(E)
+            raise E
 
 
     def send_notification(self, text):
