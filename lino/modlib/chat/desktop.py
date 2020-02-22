@@ -3,7 +3,6 @@
 # License: BSD (see file COPYING for details)
 
 from lino.api import dd
-
 class ChatGroups(dd.Table):
     model = 'chat.ChatGroup'
     column_names = "created user title description *"
@@ -27,15 +26,16 @@ class ChatMembers(dd.Table):
     model = "chat.ChatGroupMember"
     master_key = "group"
 
+# from lino.core.roles import UserRole
 
 class ChatMessages(dd.Table):
     model = 'chat.ChatMessage'
     column_names = "created user body *"
-    required_roles = set([])
+    # required_roles = [UserRole]
     # cell_edit = False
 
     detail_layout = dd.DetailLayout("""
-     user 
+     user group 
      body
     """, window_size=(50, 15))
 
@@ -64,6 +64,3 @@ class ChatMessages(dd.Table):
         # elif pv.show_seen == dd.YesNo.no:
         #     qs = qs.filter(seen__isnull=True)
         return qs
-
-
-

@@ -10,7 +10,10 @@
 #
 # from django.conf import settings
 # from django.utils.timezone import make_aware
+from lino.modlib.chat.models import ChatGroup
 
 
 def objects():
-    return []
+    groups = ['General', 'Customers request']
+    for group in groups:
+        yield ChatGroup(title=group).save()
