@@ -63,7 +63,7 @@ from django.apps import AppConfig
 #     from lino.api.shell import settings
 
 
-DJANGO_DEFAULT_LANGUAGE = 'en-us'
+DJANGO_DEFAULT_LANGUAGE = 'en'
 
 
 def assert_django_code(django_code):

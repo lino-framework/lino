@@ -373,7 +373,7 @@ class Site(object):
 
     """
 
-    languages = 'en'
+    languages = None
     """The language distribution used on this site.  It has its own
     chapter :doc:`/dev/languages` in the Developers Guide.
 
@@ -2923,7 +2923,6 @@ class Site(object):
             self.LANGUAGE_CHOICES.append((code, lazy_text))
 
         if self.languages is None:
-
             _add_language(DJANGO_DEFAULT_LANGUAGE, _("English"))
 
         else:
