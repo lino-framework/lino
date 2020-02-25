@@ -2918,7 +2918,6 @@ class Site(object):
             self.LANGUAGE_DICT[code] = lazy_text
             self.LANGUAGE_CHOICES.append((code, lazy_text))
 
-        LANGUAGES.append((DJANGO_DEFAULT_LANGUAGE, _("English")))
         if self.languages is None:
             _add_language(DJANGO_DEFAULT_LANGUAGE, _("English"))
 
