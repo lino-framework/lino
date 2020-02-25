@@ -1071,6 +1071,8 @@ class Site(object):
 
     design_name = 'desktop'
     """
+    Deprecated. We plan to remove the design_name attribute.
+    
     The name of the design to use. The default value is
     ``'desktop'``. The value should be one of ``'desktop'`` or
     ``'mobile'``.
@@ -1951,6 +1953,8 @@ class Site(object):
 
     def load_actors(self):
         """Collect :xfile:`desktop.py` modules.
+
+        Deprecated. We plan to remove the design_name attribute.
 
         Note the situation when a :xfile:`desktop.py` module exists
         but causes itself an ImportError because it contains a
