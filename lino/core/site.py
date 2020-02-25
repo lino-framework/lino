@@ -373,7 +373,7 @@ class Site(object):
 
     """
 
-    languages = None
+    languages = 'en'
     """The language distribution used on this site.  It has its own
     chapter :doc:`/dev/languages` in the Developers Guide.
 
