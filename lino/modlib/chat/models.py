@@ -11,6 +11,7 @@ from lino.modlib.memo.mixins import Previewable
 from lino.mixins import Created, ObservedDateRange, BabelNamed, Referrable
 # from lino_noi.lib.groups.models import Group
 from lino.core.site import html2text
+from lino.core.requests import BaseRequest
 from lino.core.gfks import gfk2lookup
 from lino.api import dd, rt, _
 from lino import DJANGO2
@@ -25,6 +26,8 @@ from lxml import etree
 from io import StringIO
 import json
 import logging
+
+from django.core.serializers.json import DjangoJSONEncoder
 
 logger = logging.getLogger(__name__)
 
@@ -59,8 +62,8 @@ class ChatGroup(UserAuthored, Created, Referrable):
         qs = ChatGroupMember.objects.filter(user=ar.get_user()).select_related("group")
 
         rows = [{"id": cp.group.pk,
-                "title": cp.group.title,
-                "unseen": cp.group.get_unseen_count(ar)} for cp in qs]
+                 "title": cp.group.title,
+                 "unseen": cp.group.get_unseen_count(ar)} for cp in qs]
 
         return ar.success(rows=rows)
 
@@ -68,7 +71,6 @@ class ChatGroup(UserAuthored, Created, Referrable):
         """
         Returns count of messages that haven't been seen yet."""
         return ChatProps.objects.filter(chat__group=self, user=ar.get_user(), seen=None).count()
-
 
     @dd.action(_("Load GroupChat"))
     def loadGroupChat(self, ar):
@@ -134,17 +136,17 @@ class ChatMessage(UserAuthored, Created, Previewable):
     #     self.user, self.owner)
 
     def send_global_message(self):
-        message = {
-            "id": self.pk,
-            # "subject": str(self.subject),
-            "user": self.user,
-            "body": html2text(self.body),
-            "created": self.created.strftime("%a %d %b %Y %H:%M"),
-        }
+        # message = {
+        #     "id": self.pk,
+        #     # "subject": str(self.subject),
+        #     "user": self.user,
+        #     "body": html2text(self.body),
+        #     "created": self.created.strftime("%a %d %b %Y %H:%M"),
+        # }
         logger.info("Sending Message %s:#%s" % (self.user, self.pk))
-        send_global_chat(**message)
-        self.sent = timezone.now()
-        self.save()
+        send_global_chat(self)
+        # self.sent = timezone.now()
+        # self.save()
 
     @classmethod
     def markAsSeen(Cls, data):
@@ -207,5 +209,18 @@ class ChatProps(UserAuthored, Created):
         # verbose_name_plural = _("Chat messages")
         ordering = ['user', 'chat']
 
-    chat = dd.ForeignKey(ChatMessage)
+    def serialize(self, ar=None):
+        if ar is None:
+            ar = BaseRequest()
+        return (
+        self.user.username,
+        ar.parse_memo(self.chat.body),
+        json.loads(json.dumps(self.created, cls=DjangoJSONEncoder)),
+        json.loads(json.dumps(self.seen, cls=DjangoJSONEncoder)),
+        self.chat.pk,
+        self.chat.user.id,
+        self.chat.group.id)
+
+    chat = dd.ForeignKey(ChatMessage, related_name="chatProps")
     seen = models.DateTimeField(_("seen"), null=True, editable=False, default=None)
+    sent = models.DateTimeField(_("sent"), null=True, editable=False, default=None)
