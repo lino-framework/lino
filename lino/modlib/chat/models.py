@@ -151,7 +151,7 @@ class ChatMessage(UserAuthored, Created, Previewable):
 
     @classmethod
     def markAsSeen(Cls, data):
-        msg_ids = data['body']
+        msg_ids = [chat[4] for chat in data['body']]
         oldMsg = Cls.objects.filter(pk__in=msg_ids, seen__isnull=True)
         oldMsg.update(seen=timezone.now())
 
@@ -209,7 +209,7 @@ class ChatProps(UserAuthored, Created):
         if ar is None:
             ar = BaseRequest()
         return (
-        self.user.username,
+        self.chat.user.username,
         ar.parse_memo(self.chat.body),
         json.loads(json.dumps(self.created, cls=DjangoJSONEncoder)),
         json.loads(json.dumps(self.seen, cls=DjangoJSONEncoder)),

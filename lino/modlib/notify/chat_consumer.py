@@ -37,7 +37,7 @@ class ReactChatConsumer(WebsocketConsumer):
             if user:
                 data["user"] = user
                 if dd.is_installed("chat"):
-                    ChatMessage = rt.models.resolve("chat.ChatMessage")
+                    ChatMessage = rt.models.resolve("chat.ChatMessage") # TODO HAVE WHITELIST OF FUNCTIONS!
                     if data.get('function') and hasattr(ChatMessage,data.get('function')):
                         getattr(ChatMessage,data.get('function'))(data)
         except Exception as E:
