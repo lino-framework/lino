@@ -123,6 +123,7 @@ class ChatMessage(UserAuthored, Created, Previewable):
     sent = models.DateTimeField(_("sent"), null=True, editable=False)
     group = dd.ForeignKey(
         'chat.ChatGroup', blank=True, null=True, verbose_name=_(u'Group'), related_name="messages")
+    hash = dd.CharField(_("Hash"), max_length=25, null=True, blank=True)
 
     # body = dd.RichTextField(_("Body"), editable=False, format='html')
 
@@ -161,6 +162,7 @@ class ChatMessage(UserAuthored, Created, Previewable):
             user=data['user'],
             body=data['body']['body'],
             group_id=data['body']['group_id'],
+            hash=data['body']['hash']
         )
         newMsg = Cls(**args)
         newMsg.full_clean()
@@ -169,12 +171,6 @@ class ChatMessage(UserAuthored, Created, Previewable):
         newMsg.send_global_message()
 
     def after_ui_create(self, *args):
-        # print(self)
-
-        # Place holder
-        self.group = dd.resolve_model("chat.ChatGroup").objects.all()[0]
-        self.save()
-
         for sub in self.group.ChatGroupsMembers.all().select_related("user"):
             props = ChatProps(chat=self, user=sub.user)
             props.full_clean()
@@ -219,7 +215,8 @@ class ChatProps(UserAuthored, Created):
         json.loads(json.dumps(self.seen, cls=DjangoJSONEncoder)),
         self.chat.pk,
         self.chat.user.id,
-        self.chat.group.id)
+        self.chat.group.id,
+        self.chat.hash)
 
     chat = dd.ForeignKey(ChatMessage, related_name="chatProps")
     seen = models.DateTimeField(_("seen"), null=True, editable=False, default=None)
