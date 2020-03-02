@@ -6,6 +6,7 @@ import json
 
 from lino.api import rt
 import logging
+from django.utils.timezone import now
 logger = logging.getLogger(__name__)
 
 NOTIFICATION = "NOTIFICATION"
@@ -47,24 +48,26 @@ def send_notification(user, id, subject, body, created):
     except Exception as E:
         logger.exception(E)
 
-def send_global_chat(id, user, body, created):
 
+def send_global_chat(message):
+    """
+    Sends a WS message to each user using ChatProps"""
     from channels.layers import get_channel_layer
     from asgiref.sync import async_to_sync
 
-    msg = dict(
-        type=CHAT,
-        id=id,
-        body=body,
-        created=created,
-        user=user.username,
-    )
+    for chat in message.chatProps.all():
+        msg = dict(
+            type=CHAT,
+            chat=chat.serialize())
 
-    try:
-        channel_layer = get_channel_layer()
-        for user in rt.models.resolve("users.User").objects.exclude(user_type=None):
-            async_to_sync(channel_layer.group_send)(str(user.pk),
-                                                    {"type": "send_notification",  # method name in consumer
+        try:
+            assert bool(chat.user)
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(str(chat.user.pk),
+                                                    {"type": "send_notification",
+                                                     # just pointer to method name in consumer
                                                      "text": json.dumps(msg)})  # data
-    except Exception as E:
-        logger.exception(E)
+            chat.sent = now()
+            chat.save()
+        except Exception as E:
+            logger.exception(E)

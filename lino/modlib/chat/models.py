@@ -8,9 +8,10 @@ from lino.modlib.office.roles import OfficeUser
 from lino.modlib.users.mixins import UserAuthored, My
 from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.memo.mixins import Previewable
-from lino.mixins import Created, ObservedDateRange,BabelNamed, Referrable
-#from lino_noi.lib.groups.models import Group
+from lino.mixins import Created, ObservedDateRange, BabelNamed, Referrable
+# from lino_noi.lib.groups.models import Group
 from lino.core.site import html2text
+from lino.core.requests import BaseRequest
 from lino.core.gfks import gfk2lookup
 from lino.api import dd, rt, _
 from lino import DJANGO2
@@ -25,8 +26,10 @@ from lxml import etree
 from io import StringIO
 import json
 import logging
-logger = logging.getLogger(__name__)
 
+from django.core.serializers.json import DjangoJSONEncoder
+
+logger = logging.getLogger(__name__)
 
 html_parser = etree.HTMLParser()
 
@@ -40,33 +43,53 @@ def groupname(s):
     s = s.replace('@', '-')
     return s.encode('ascii', 'ignore')
 
-class ChatGroup(UserAuthored, Created, Referrable, BabelNamed):
 
+class ChatGroup(UserAuthored, Created, Referrable):
     class Meta(object):
         app_label = 'chat'
         verbose_name = _("Chat group")
         verbose_name_plural = _("Chat groups")
         ordering = ['created', 'id']
-    title = dd.CharField(max_length=20)
-    description = dd.RichTextField(max_length=200)
 
-    @dd.action(_("ChatsGroupChats"))
-    def getGroupChats(self, ar):
-        if self.id:
-             obj = [self]
-        else:
-            obj = ChatGroup.objects.prefetch_related('messages').all()[:10]
+    title = dd.CharField(max_length=20)
+    description = dd.RichTextField(max_length=200, blank=True, null=True);
+
+    @dd.action(_("getChatGroups"))
+    def getChatGroups(self, ar):
+        """
+        Returns info on all GroupChats for this user.
+        """
+        qs = ChatGroupMember.objects.filter(user=ar.get_user()).select_related("group")
+
+        rows = [{"id": cp.group.pk,
+                 "title": cp.group.title,
+                 "unseen": cp.group.get_unseen_count(ar)} for cp in qs]
+
+        return ar.success(rows=rows)
+
+    def get_unseen_count(self, ar):
+        """
+        Returns count of messages that haven't been seen yet."""
+        return ChatProps.objects.filter(chat__group=self, user=ar.get_user(), seen=None).count()
+
+    @dd.action(_("Load GroupChat"))
+    def loadGroupChat(self, ar):
+        """Returns chat messages for a given chat"""
         rows = []
-        for c in obj:
+        for group in ar.selected_rows:
             messages = []
-            all_messages = c.messages.all()[:10]
-            last_ten = reversed(all_messages)
-            for m in last_ten:
-                messages.append((m.user.username, ar.parse_memo(m.body), m.created, m.seen, m.pk, m.user.id))
+            # all_messages = group.messages.all()[:10]
+            last_ten = ChatProps.objects.filter(user=ar.get_user(),
+                                                chat__group=self
+                                                ).order_by(
+                '-created').select_related("chat")
+            for cp in last_ten:
+                messages.append(
+                    (cp.user.username, ar.parse_memo(cp.chat.body), cp.created, cp.seen, cp.chat.pk, cp.chat.user.id))
             rows.append({
-                'name': c.name,
-                'id':c.id,
-                'messages':messages
+                'title': group.title,
+                'id': group.id,
+                'messages': messages
             })
         return ar.success(rows=rows)
 
@@ -83,8 +106,9 @@ class ChatGroupMember(Created):
 
     group = dd.ForeignKey(ChatGroup,
 
-        related_name="ChatGroupsMembers",
+                          related_name="ChatGroupsMembers",
                           )
+
 
 class ChatMessage(UserAuthored, Created, Previewable):
     class Meta(object):
@@ -98,8 +122,10 @@ class ChatMessage(UserAuthored, Created, Previewable):
     seen = models.DateTimeField(_("seen"), null=True, editable=False)
     sent = models.DateTimeField(_("sent"), null=True, editable=False)
     group = dd.ForeignKey(
-        'chat.ChatGroup', blank=True, null=True,  verbose_name=_(u'Group'), related_name="messages")
-    #body = dd.RichTextField(_("Body"), editable=False, format='html')
+        'chat.ChatGroup', blank=True, null=True, verbose_name=_(u'Group'), related_name="messages")
+    hash = dd.CharField(_("Hash"), max_length=25, null=True, blank=True)
+
+    # body = dd.RichTextField(_("Body"), editable=False, format='html')
 
     def __str__(self):
         return "{}: {}".format(self.user, self.body)
@@ -111,31 +137,32 @@ class ChatMessage(UserAuthored, Created, Previewable):
     #     self.user, self.owner)
 
     def send_global_message(self):
-
-        message = {
-            "id": self.pk,
-            # "subject": str(self.subject),
-            "user": self.user,
-            "body": html2text(self.body),
-            "created": self.created.strftime("%a %d %b %Y %H:%M"),
-        }
+        # message = {
+        #     "id": self.pk,
+        #     # "subject": str(self.subject),
+        #     "user": self.user,
+        #     "body": html2text(self.body),
+        #     "created": self.created.strftime("%a %d %b %Y %H:%M"),
+        # }
         logger.info("Sending Message %s:#%s" % (self.user, self.pk))
-        send_global_chat(**message)
-        self.sent = timezone.now()
-        self.save()
+        send_global_chat(self)
+        # self.sent = timezone.now()
+        # self.save()
 
     @classmethod
     def markAsSeen(Cls, data):
-        msg_ids = data['body']
-        oldMsg = Cls.objects.filter(pk__in=msg_ids,seen__isnull=True)
+        msg_ids = [chat[4] for chat in data['body']]
+        oldMsg = Cls.objects.filter(pk__in=msg_ids, seen__isnull=True)
         oldMsg.update(seen=timezone.now())
 
     @classmethod
     def onRecive(Cls, data):
+        print(data)
         args = dict(
             user=data['user'],
             body=data['body']['body'],
             group_id=data['body']['group_id'],
+            hash=data['body']['hash']
         )
         newMsg = Cls(**args)
         newMsg.full_clean()
@@ -144,12 +171,6 @@ class ChatMessage(UserAuthored, Created, Previewable):
         newMsg.send_global_message()
 
     def after_ui_create(self, *args):
-        # print(self)
-
-        #Place holder
-        self.group=dd.resolve_model("chat.ChatGroup").objects.all()[0]
-        self.save()
-
         for sub in self.group.ChatGroupsMembers.all().select_related("user"):
             props = ChatProps(chat=self, user=sub.user)
             props.full_clean()
@@ -157,23 +178,22 @@ class ChatMessage(UserAuthored, Created, Previewable):
 
         # super(ChatMessage, self).after_ui_save()
 
-
-
     @dd.action(_("ChatsMsg"))
     def getChats(self, ar):
-
         # return ar.success(rows=[])
-
 
         # doto, have work.
         last_ten_seen = ChatProps.objects.filter(seen__isnull=False).order_by('-created').select_related("chat")[:10]
-        unseen = ChatProps.objects.filter(user=ar.get_user(), chat=self, seen__isnull=True).order_by('-created').select_related("chat")
+        unseen = ChatProps.objects.filter(user=ar.get_user(), chat=self, seen__isnull=True).order_by(
+            '-created').select_related("chat")
 
         last_ten_in_ascending_order = reversed(last_ten_seen)
         unseen_in_ascending_order = reversed(unseen)
         rows = [
-            [(c.chat.user.username, ar.parse_memo(c.chat.body), c.chat.created, c.seen, c.chat.pk, c.chat.user.id) for c in last_ten_in_ascending_order],
-            [(c.chat.user.username, ar.parse_memo(c.chat.body), c.chat.created, c.seen, c.chat.pk, c.chat.user.id)for c in unseen_in_ascending_order]
+            [(c.chat.user.username, ar.parse_memo(c.chat.body), c.chat.created, c.seen, c.chat.pk, c.chat.user.id) for c
+             in last_ten_in_ascending_order],
+            [(c.chat.user.username, ar.parse_memo(c.chat.body), c.chat.created, c.seen, c.chat.pk, c.chat.user.id) for c
+             in unseen_in_ascending_order]
         ]
         return ar.success(rows=rows)
 
@@ -184,9 +204,20 @@ class ChatProps(UserAuthored, Created):
         # verbose_name = _("Chat message")
         # verbose_name_plural = _("Chat messages")
         ordering = ['user', 'chat']
-    chat = dd.ForeignKey(ChatMessage)
+
+    def serialize(self, ar=None):
+        if ar is None:
+            ar = BaseRequest()
+        return (
+        self.chat.user.username,
+        ar.parse_memo(self.chat.body),
+        json.loads(json.dumps(self.created, cls=DjangoJSONEncoder)),
+        json.loads(json.dumps(self.seen, cls=DjangoJSONEncoder)),
+        self.chat.pk,
+        self.chat.user.id,
+        self.chat.group.id,
+        self.chat.hash)
+
+    chat = dd.ForeignKey(ChatMessage, related_name="chatProps")
     seen = models.DateTimeField(_("seen"), null=True, editable=False, default=None)
-
-
-
-
+    sent = models.DateTimeField(_("sent"), null=True, editable=False, default=None)
