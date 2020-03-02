@@ -293,7 +293,6 @@ class Authority(UserAuthored):
         verbose_name = _("Authority")
         verbose_name_plural = _("Authorities")
 
-
     authorized = dd.ForeignKey(settings.SITE.user_model)
 
     @dd.chooser()
@@ -320,7 +319,7 @@ def inject_partner_field(sender=None, **kwargs):
                 'contacts.Partner', blank=True, null=True,
                 related_name='users_by_partner',
                 on_delete=models.PROTECT))
-            # a related_name is needed so that Avanti can have aClient
+            # a related_name is needed so that Avanti can have a Client
             # who inherits from both Partner and UserAuthored
             return
     dd.inject_field(User, 'partner', dd.DummyField())
