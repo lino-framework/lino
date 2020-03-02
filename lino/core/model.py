@@ -221,13 +221,6 @@ class Model(models.Model, fields.TableRow):
 
     """
 
-    hidden_columns = frozenset()
-    """If specified, this is the default value for
-    :attr:`hidden_columns<lino.core.tables.AbstractTable.hidden_columns>`
-    of every `Table` on this model.
-
-    """
-
     hidden_elements = frozenset()
     """If specified, this is the default value for
     :attr:`hidden_elements<lino.core.tables.AbstractTable.hidden_elements>`
@@ -1101,7 +1094,7 @@ class Model(models.Model, fields.TableRow):
     @classmethod
     def django2lino(cls, model):
         """
-        A list of the attributes to be copied to Django models which do
+        Injects additional methods into a pure Django model that does
         not inherit from :class:`lino.core.model.Model`.  Used by
         :mod:`lino.core.kernel`
 

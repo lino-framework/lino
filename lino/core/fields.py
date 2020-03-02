@@ -1005,6 +1005,13 @@ class TableRow(object):
 
     _lino_default_table = None
 
+    hidden_columns = frozenset()
+    """If specified, this is the default value for
+    :attr:`hidden_columns<lino.core.tables.AbstractTable.hidden_columns>`
+    of every `Table` on this model.
+
+    """
+
     @classmethod
     def get_default_table(self):
         """Used internally. Lino chooses during the kernel startup, for each

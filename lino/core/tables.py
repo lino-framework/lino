@@ -256,6 +256,8 @@ class AbstractTable(actors.Actor):
 
     get_data_rows = None
     """
+    Maybe deprecated.  Use get_request_queryset() instead.
+
     Virtual tables *must* define this method, normal (model-based)
     tables *may* define it.
 

@@ -75,7 +75,7 @@ class ValidActionResponses(object):
     rows = None
     """An iterable of database objects that will be serialized as a list.
     """
-    
+
     no_data_text = None
     title = None
     """The dynamic title to give to the window or component which shows this response.
@@ -372,7 +372,7 @@ class BaseRequest(object):
 
     def spawn(self, spec=None, **kw):
         """
-        Deprecated. Use spawn_request() if possible.
+        Deprecated. Use the more explicit spawn_request() if possible.
 
         Create a new action request using default values from this one and
         the action specified by `spec`.
