@@ -70,26 +70,21 @@ class ChatGroup(UserAuthored, Created, Referrable):
     def get_unseen_count(self, ar):
         """
         Returns count of messages that haven't been seen yet."""
-        return ChatProps.objects.filter(chat__group=self, user=ar.get_user(), seen=None).count()
+        return ChatProps.objects.filter(chat__group=self, user=ar.get_user(), seen__isnull=True).count()
 
     @dd.action(_("Load GroupChat"))
     def loadGroupChat(self, ar):
         """Returns chat messages for a given chat"""
         rows = []
         for group in ar.selected_rows:
-            messages = []
-            # all_messages = group.messages.all()[:10]
-            last_ten = ChatProps.objects.filter(user=ar.get_user(),
+             last_ten = ChatProps.objects.filter(user=ar.get_user(),
                                                 chat__group=self
                                                 ).order_by(
                 '-created').select_related("chat")
-            for cp in last_ten:
-                messages.append(
-                    (cp.user.username, ar.parse_memo(cp.chat.body), cp.created, cp.seen, cp.chat.pk, cp.chat.user.id))
-            rows.append({
+             rows.append({
                 'title': group.title,
                 'id': group.id,
-                'messages': messages
+                'messages': [cp.serialize(ar) for cp in last_ten]
             })
         return ar.success(rows=rows)
 
@@ -151,9 +146,10 @@ class ChatMessage(UserAuthored, Created, Previewable):
 
     @classmethod
     def markAsSeen(Cls, data):
-        msg_ids = [chat[4] for chat in data['body']]
-        oldMsg = Cls.objects.filter(pk__in=msg_ids, seen__isnull=True)
-        oldMsg.update(seen=timezone.now())
+        group_id = data['body'][0]
+        # msg_ids = [chat[3] for chat in data['body'][1]]
+        ChatProps.objects.filter(chat__group__pk=group_id, user=data['user'], seen__isnull=True).update(seen=timezone.now())
+
 
     @classmethod
     def onRecive(Cls, data):
