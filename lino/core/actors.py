@@ -205,6 +205,7 @@ class ActorMetaClass(type):
 
     @property
     def label(cls):
+        # return cls.get_label()  # 20200307
         return cls.get_actor_label()
 
     @property
@@ -1186,6 +1187,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     @classmethod
     def get_label(self):
         return self.label
+        # return self._label  # 20200307
 
     @classmethod
     def get_actor_label(self):

@@ -633,6 +633,7 @@ class Action(Parametrizable, Permittable):
             return self.label
         if self is actor.default_action.action:
             return actor.label
+            # return actor.get_actor_label()  # 20200307
         else:
             return self.button_text or self.label
             # since 20140923 return u"%s %s" % (self.label, actor.label)

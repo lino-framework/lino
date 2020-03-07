@@ -361,7 +361,7 @@ this document."""),
 object."""),
     'lino.utils.IncompleteDate.get_age' : _("""Return age in years as integer."""),
     'lino.utils.SumCollector' : _("""A dictionary of sums to be collected using an arbitrary key."""),
-    'lino.utils.SumCollector.collect' : _("""This returns an empty string"""),
+    'lino.utils.SumCollector.collect' : _("""Add the given value to the sum at the given key k."""),
     'lino.utils.addressable.Addressable' : _("""General mixin (not only for Django models) to encapsulate the
 generating of "traditional" ("snail") mail addresses."""),
     'lino.utils.addressable.Addressable.address' : _("""A property which calls get_address()."""),

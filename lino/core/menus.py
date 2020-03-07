@@ -1,13 +1,10 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2019 Rumma & Ko Ltd
+# Copyright 2009-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
 Defines the classes :class:`MenuItem` and :class:`Menu`
 """
-from builtins import str
-import six
-# str = six.text_type
 
 from builtins import object
 
@@ -182,25 +179,25 @@ class Menu(MenuItem):
     """
     If set to True, avoid lonely menu items by lifting them up one level.
     This is not done for top-level menus
-    
+
     For example the following menu::
-        
+
         Foo           Bar         Baz
         |Foobar       |BarBaz
          |Copy
          |Paste
         |FooBarBaz
          | Insert
-         
+
     would become::
-         
+
         Foo           BarBaz        Baz
-        |Foobar       
+        |Foobar
          |Copy
          |Paste
         |Insert
-         
-    
+
+
     """
 
     def __init__(self, user_type, name, label=None, parent=None, **kw):
@@ -222,10 +219,10 @@ class Menu(MenuItem):
         """
         while len(self.items) and self.items[-1].label.startswith('-'):
             del self.items[-1]
-            
+
         while len(self.items) and self.items[0].label.startswith('-'):
             del self.items[0]
-            
+
         for mi in self.items:
             mi.compress()
 
@@ -268,7 +265,7 @@ class Menu(MenuItem):
         if ba is None:
             ba = obj.get_default_table().detail_action
             kw.update(action=ba)
-        # elif isinstance(ba, six.string_types):
+        # elif isinstance(ba, str):
         #     ba = obj.get_default_table().get_action_by_name(ba)
         #     kw.update(action=ba)
         return self.add_item_instance(MenuItem(**kw))

@@ -1,17 +1,13 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2019 Rumma & Ko Ltd
+# Copyright 2009-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """Defines "layout elements" (widgets).
 
 """
 
-from __future__ import unicode_literals, print_function
-from builtins import str
 import six
 
-import logging
-
-logger = logging.getLogger(__name__)
+import logging ; logger = logging.getLogger(__name__)
 
 from cgi import escape
 import decimal
@@ -2238,6 +2234,7 @@ class GridElement(Container):
 
     def get_label(self):
         return self.actor.label
+        # return self.actor.get_actor_label()  # 20200307
 
     def get_view_permission(self, user_type):
         # skip Container parent:
@@ -2613,8 +2610,9 @@ def create_layout_element(lh, name, **kw):
             # `display_mode` of the table.
 
             if lh.ui.renderer.extjs_version is not None:
-                js = "Lino.show_in_own_window_button(Lino.%s)" % de.default_action.full_name()
-                kw.update(tools=[js_code(js)])
+                if de.label is not None:
+                    js = "Lino.show_in_own_window_button(Lino.%s)" % de.default_action.full_name()
+                    kw.update(tools=[js_code(js)])
                 if False:
                     js = 'alert("Oops")'
                     url = lh.ui.renderer.js2url(js)

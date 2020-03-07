@@ -599,7 +599,7 @@ class TableRequest(ActionRequest):
 
             headers = [column_header(col) for col in fields]
 
-            # if str(ar.actor).endswith("DailyPlanner"):
+            # if str(ar.actor).endswith("DailySlave"):
             #     print("20181022", fields[0].field.verbose_name)
 
             oh = ar.actor.override_column_headers(ar)
