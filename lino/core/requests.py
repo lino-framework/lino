@@ -223,6 +223,8 @@ class BaseRequest(object):
 
     xcallback_answers = {}
 
+    _status = None  # cache when get_status() is called multiple times
+
     def __init__(self, request=None, parent=None,
                  is_on_main_actor=True, **kw):
         self.request = request
@@ -1243,6 +1245,8 @@ class ActorRequest(BaseRequest):
         this request.
 
         """
+        if self._status is not None and not kw:
+            return self._status
         if self.actor.parameters:
             kw.update(
                 param_values=self.actor.params_layout.params_store.pv2dict(
@@ -1257,6 +1261,7 @@ class ActorRequest(BaseRequest):
 
         if self.subst_user is not None:
             bp[constants.URL_PARAM_SUBST_USER] = self.subst_user.id
+        self._status = kw
         return kw
 
     # def spawn(self, actor, **kw):

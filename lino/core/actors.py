@@ -463,7 +463,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     <lino.core.actions.Action.readonly>` is `False`.
 
     The
-    :class:`changes.Changes <lino.modlib.changes.models.Changes>`
+    :class:`changes.Changes <lino.modlib.changes.Changes>`
     table is an example where this is being used: nobody should
     ever edit something in the table of Changes.  The user
     interface uses this to generate optimized JS code for this

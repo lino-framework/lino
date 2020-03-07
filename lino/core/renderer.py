@@ -406,8 +406,9 @@ class HtmlRenderer(Renderer):
     def ar2button(self, ar, obj=None, label=None, title=None, **kwargs):
         ba = ar.bound_action
         label = label or ba.get_button_label()
-        status = ar.get_status()
-        js = self.ar2js(ar, obj, **status)
+        if ar._status is None:
+            ar._status = ar.get_status()
+        js = self.ar2js(ar, obj, **ar._status)
         uri = self.js2url(js)
         return self.href_button_action(
             ba, uri, label, title or ba.action.help_text, **kwargs)
@@ -504,7 +505,7 @@ class HtmlRenderer(Renderer):
                     # for i in self.show_story(item, *args, **kwargs):
                     #     yield i
                 else:
-                    raise Exception("Cannot handle %r" % item)
+                    raise Exception("Cannot handle story item %r" % item)
         except Warning as e:
             elems.append(str(e))
         # print("20180907 show_story in {} : {}".format(ar.renderer, elems))
@@ -645,6 +646,9 @@ class TextRenderer(HtmlRenderer):
 
         fields, headers, widths = ar.get_field_info(column_names)
 
+        # if str(ar.actor) == "working.WorkedHours":
+        #     yield "20200306 fields {}".format(headers)
+
         sums = [fld.zero for fld in fields]
         rows = []
         recno = 0
@@ -665,6 +669,8 @@ class TextRenderer(HtmlRenderer):
             # s = h + "\n" + s
             # s = tostring(E.h2(ar.get_title())) + s
 
+        # if str(ar.actor) == "working.WorkedHours":
+        #     yield "20200306 rows {}".format(rows)
         if len(rows) == 0:
             s = str(ar.no_data_text)
             if not stripped:

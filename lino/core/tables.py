@@ -258,8 +258,8 @@ class AbstractTable(actors.Actor):
     """
     Maybe deprecated.  Use get_request_queryset() instead.
 
-    Virtual tables *must* define this method, normal (model-based)
-    tables *may* define it.
+    Virtual tables *must* define this method, model-based tables *may* define
+    it. e.g. in case they need local filtering.
 
     This will be called with a
     :class:`lino.core.requests.TableRequest` object and is expected to
@@ -269,9 +269,6 @@ class AbstractTable(actors.Actor):
         def get_data_rows(self, ar):
             ...
             yield somerow
-
-    Model tables may also define such a method in case they need local
-    filtering.
 
     """
 
@@ -524,6 +521,9 @@ method in order to sort the rows of the queryset.
                 if cls.model._lino_default_table is None:
                     cls.model._lino_default_table = cls
 
+    # @classmethod
+    # def get_request_queryset(self, ar, **filter):
+    #     return []
 
     @classmethod
     def spawn(cls, suffix, **kw):

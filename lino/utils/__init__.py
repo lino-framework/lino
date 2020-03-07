@@ -448,6 +448,7 @@ def unicode_string(x):
 
 
 ONE_DAY = datetime.timedelta(days=1)
+ONE_WEEK = datetime.timedelta(days=7)
 
 
 def workdays(start, end):

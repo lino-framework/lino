@@ -61,6 +61,42 @@ class TableRequest(ActionRequest):
 
     _data_iterator = None
     _sliced_data_iterator = None
+    _insert_sar = None
+
+    def gen_insert_button(self, target, button_attrs=dict(style="float: right;"), **values):
+        """
+        Generate an insert button using a cached insertable object.
+
+        This a more efficient alternative to saying::
+
+            ar.target.insert_action
+
+            if self.insert_action is not None:
+                ir = self.insert_action.request_from(ar)
+                if ir.get_permission():
+                    btn = ir.ar2button()
+
+
+        `target` is the actor into which we want to insert an object.
+        `button_label` is the optional button label.
+        `values` is a dict of extra default values to apply to the insertable object.
+
+        First usage example is in :mod:`lino_xl.lib.calview`.
+
+        """
+        if self._insert_sar is None:
+            self._insert_sar = target.insert_action.request_from(self)
+        else:
+            assert self._insert_sar.actor is target
+        if self._insert_sar.get_permission():
+            st = self._insert_sar.get_status()
+            st['data_record']['data'].update(values)
+            # obj = st['data_record']
+            # for k, v in values.items():
+            #     setattr(obj, k, v)
+            # print(20200302, st['data_record'])
+            return self._insert_sar.ar2button(**button_attrs)
+
 
     def execute(self):
         """This will actually call the :meth:`get_data_iterator` and run the
@@ -86,7 +122,7 @@ class TableRequest(ActionRequest):
             # rather often and since exception loggers usually send an
             # email to the local system admin, make sure to log each
             # exception only once.
-            self.no_data_text = str(e)
+            self.no_data_text = "{} (set catch_layout_exceptions to see details)".format(e)
             w = WARNINGS_LOGGED.get(str(e))
             if w is None:
                 WARNINGS_LOGGED[str(e)] = True
@@ -654,7 +690,9 @@ class TableRequest(ActionRequest):
         """Extends :meth:`lino.core.requests.ActorRequest.get_status`.
 
         """
-        kw = ActionRequest.get_status(self, **kw)
+        if self._status is not None and not kw:
+            return self._status
+        self._status = kw = ActionRequest.get_status(self, **kw)
         bp = kw['base_params']
         if self.quick_search:
             bp[constants.URL_PARAM_FILTER] = self.quick_search

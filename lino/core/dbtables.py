@@ -643,6 +643,7 @@ class Table(AbstractTable):
                     for obj in qs:
                         yield obj
             return func()
+        assert not filter
         qs = self.get_queryset(ar)
         return apply(qs)
 
