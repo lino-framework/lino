@@ -52,11 +52,7 @@ class UserManager(BaseUserManager):
         return self._create_user(username, email, password, **extra_fields)
 
 
-
-
-
-class User(AbstractBaseUser, Contactable, CreatedModified, DateRange,
-           Printable):
+class User(AbstractBaseUser, Contactable, CreatedModified, Printable, DateRange):
     class Meta(object):
         app_label = 'users'
         verbose_name = _('User')

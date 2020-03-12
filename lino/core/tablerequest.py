@@ -67,15 +67,15 @@ class TableRequest(ActionRequest):
         """
         Generate an insert button using a cached insertable object.
 
-        This a more efficient alternative to saying::
-
-            ar.target.insert_action
+        This is functionally equivalent to saying::
 
             if self.insert_action is not None:
                 ir = self.insert_action.request_from(ar)
                 if ir.get_permission():
-                    btn = ir.ar2button()
+                    return ir.ar2button()
 
+        The difference is that gen_insert_button is more efficient when you do
+        this more than once during a single request.
 
         `target` is the actor into which we want to insert an object.
         `button_label` is the optional button label.

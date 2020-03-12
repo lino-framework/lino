@@ -176,7 +176,30 @@ class Ended(CombinedDateTime):
         return self.get_duration()
 
 
-class DateRange(Model):
+class DateRangeObservable(Model):
+    class Meta(object):
+        abstract = True
+
+    get_default_start_date = None
+    get_default_end_date = None
+
+    @classmethod
+    def setup_parameters(cls, fields):
+        fields.update(
+            start_date=models.DateField(
+                _("Period from"), blank=True, null=True,
+                default=cls.get_default_start_date,
+                help_text=_("Start date of observed period")))
+        fields.update(
+            end_date=models.DateField(
+                _("until"),
+                blank=True, null=True,
+                default=cls.get_default_end_date,
+                help_text=_("End date of observed period")))
+        super(DateRangeObservable, cls).setup_parameters(fields)
+
+
+class DateRange(DateRangeObservable):
     """
     Mixin for models which represent a period whose start and end are
     date fields.
@@ -229,23 +252,6 @@ class DateRange(Model):
             return pgettext("date range", "until %s") % s
         return self.empty_period_text
 
-    get_default_start_date = None
-    get_default_end_date = None
-
-    @classmethod
-    def setup_parameters(cls, fields):
-        fields.update(
-            start_date=models.DateField(
-                _("Period from"), blank=True, null=True,
-                default=cls.get_default_start_date,
-                help_text=_("Start date of observed period")))
-        fields.update(
-            end_date=models.DateField(
-                _("until"),
-                blank=True, null=True,
-                default=cls.get_default_end_date,
-                help_text=_("End date of observed period")))
-        super(DateRange, cls).setup_parameters(fields)
 
 DateRange.set_widget_options('start_date', width=10)
 DateRange.set_widget_options('end_date', width=10)
