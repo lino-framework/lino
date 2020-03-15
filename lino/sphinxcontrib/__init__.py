@@ -37,9 +37,13 @@ def configure(globals_dict, settings_module_name=None):
 
         # globals_dict.update(
         #     template_bridge=str('lino.sphinxcontrib.DjangoTemplateBridge'))
+
+    intersphinx_mapping = globals_dict.setdefault('intersphinx_mapping', dict())
+    intersphinx_mapping['cg'] = ('http://community.lino-framework.org/', None)
+    intersphinx_mapping['book'] = ('http://www.lino-framework.org/', None)
     return sphinxconf.configure(globals_dict)
 
-    
+
 
 # from sphinx.jinja2glue import BuiltinTemplateLoader
 
@@ -65,5 +69,3 @@ def configure(globals_dict, settings_module_name=None):
 #         from django.conf import settings
 #         context.update(settings=settings)
 #         return super(DjangoTemplateBridge, self).render_string(source, context)
-
-
