@@ -196,7 +196,7 @@ class Message(UserAuthored, Controllable, Created):
             return
         # from lino.core.renderer import MailRenderer
         # ar = rt.login(renderer=MailRenderer())
-        ar = rt.login(renderer=dd.plugins.memo.front_end.renderer)
+        ar = rt.login(renderer=dd.plugins.memo.front_end.renderer, permalink_uris=True)
         # ar = rt.login()
         # ar = rt.login(renderer=settings.SITE.kernel.default_ui.renderer)
         context = ar.get_printable_context()

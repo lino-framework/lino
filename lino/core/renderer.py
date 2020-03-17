@@ -878,9 +878,9 @@ class JsRenderer(HtmlRenderer):
         ba = obj.get_detail_action(ar)
         if ba is None:
             return None
-        if ar.request is not None:
-            return self.js2url(self.instance_handler(ar, obj, None))
-        return self.get_detail_url(ar, ba.actor, obj.pk)
+        if ar.permalink_uris:
+            return self.get_detail_url(ar, ba.actor, obj.pk)
+        return self.js2url(self.instance_handler(ar, obj, None))
 
 
     def add_help_text(self, kw, help_text, title, datasource, fieldname):

@@ -272,17 +272,17 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
         st = ar.get_status(**kw)
         return self.action_call(ar, ar.bound_action, st)
 
-    def action_call(self, request, bound_action, status):
+    def action_call(self, ar, bound_action, status):
         a = bound_action.action
         if a.opens_a_window or (a.parameters and not a.no_params_window):
-            if request and request.subst_user:
-                status[constants.URL_PARAM_SUBST_USER] = request.subst_user
+            if ar and ar.subst_user:
+                status[constants.URL_PARAM_SUBST_USER] = ar.subst_user
             if isinstance(a, ShowEmptyTable):
                 status.update(record_id=-99998)
-            if request is None:
+            if ar is None:
                 rp = None
             else:
-                rp = request.requesting_panel
+                rp = ar.requesting_panel
             if status:
                 return "Lino.%s.run(%s,%s)" % (
                     bound_action.full_name(),

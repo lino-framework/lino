@@ -203,8 +203,27 @@ class BaseRequest(object):
     action_param_values = None
     param_values = None
     bound_action = None
+
     known_values = {}
+    """A dict of known values used for filtering and when inserting new rows.
+    """
+
     is_on_main_actor = True
+    """Whether this request is on the main actor.
+
+    Set this explicitly to False if the JS client should remove certain
+    information when issuing AJAX requests.
+
+    """
+
+    permalink_uris = False
+    """
+    Set this explicitly to True if you want Lino to generate permalink URIs
+    instead of javascript URIs.  Used e.g. when sending email notifications with
+    actions.  Used only by renderers that make a difference (i.e. extjs).
+    See :ref:`permalink_uris` for details and test coverage.
+    """
+
     master_instance = None
     """
     The database object which acts as master. This is `None` for master
@@ -226,18 +245,19 @@ class BaseRequest(object):
     _status = None  # cache when get_status() is called multiple times
 
     def __init__(self, request=None, parent=None,
-                 is_on_main_actor=True, **kw):
+                 is_on_main_actor=True, permalink_uris=None, **kw):
         self.response = dict()
+
         if request is not None:
+            assert parent is None
             self.request = request
             self.rqdata = getrqdata(request)
             kw = self.parse_req(request, self.rqdata, **kw)
-        if parent is not None:
-            assert request is None
+        elif parent is not None:
             # if parent.actor is None:
             # 20190926 we want to have javascript extjs links in dasboard
-            # 20200317 and in a slave table summary
-            self.request = parent.request
+            # 20200317 and in slave table summaries
+            # self.request = parent.request
             self.xcallback_answers = parent.xcallback_answers
             self._confirm_answer = parent._confirm_answer
             for k in inheritable_attrs:
@@ -258,8 +278,11 @@ class BaseRequest(object):
             elif parent.actor is not None and parent.actor is not self.actor:
                 is_on_main_actor = False
             # is_on_main_actor = False
-        self.is_on_main_actor = is_on_main_actor
+            if permalink_uris is None:
+                permalink_uris = parent.permalink_uris
 
+        self.is_on_main_actor = is_on_main_actor
+        self.permalink_uris = permalink_uris
         self.setup(**kw)
 
     def setup(self,
