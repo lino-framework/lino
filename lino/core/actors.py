@@ -1804,7 +1804,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     summary_sep = E.br
 
     @classmethod
-    def get_table_summary(self, obj, ar):
+    def get_table_summary(cls, obj, ar):
         """Return the HTML paragraph to be displayed by
         :class:`lino.core.elems.TableSummaryPanel`.  That is (1) in a
         detail form when :attr:`display_mode` is `summary` or (2)
@@ -1814,10 +1814,12 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         each table which invokes this method.
 
         """
-        ar = ar.spawn(self, master_instance=obj, is_on_main_actor=False)
-        p = qs2summary(ar, ar.data_iterator, self.summary_sep)
-        if self.insert_action is not None:
-            ir = self.insert_action.request_from(ar)
+        # ar = ar.spawn(self, master_instance=obj, is_on_main_actor=False)
+        sar = ar.spawn_request(actor=cls, master_instance=obj, is_on_main_actor=False)
+        # sar = cls.request_from(ar, master_instance=obj)
+        p = qs2summary(sar, sar.data_iterator, cls.summary_sep)
+        if cls.insert_action is not None:
+            ir = cls.insert_action.request_from(ar)
             if ir.get_permission():
                 btn = ir.ar2button()
                 if len(p):

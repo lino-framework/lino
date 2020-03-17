@@ -8,19 +8,6 @@ after each complete build of the doctree.
 
 See :doc:`/dev/help_texts` for a topic overview.
 
-Usage
-=====
-
-In your :xfile:`conf.py` file, add
-:mod:`lino.sphinxcontrib.help_texts_extractor` to your ``extensions``
-and define a ``help_texts_builder_targets`` setting::
-
-    extensions += ['lino.sphinxcontrib.help_texts_extractor']
-    help_texts_builder_targets = {
-        'lino_algus.': 'lino_algus.lib.algus'
-    }
-    
-
 Internals
 =========
 
@@ -70,9 +57,9 @@ Example of a class description::
 Example of a field description::
 
     <desc desctype="attribute" domain="py" noindex="False" objtype="attribute">
-      <desc_signature class="Plan" first="False" fullname="Plan.journal" 
-            ids="lino_xl.lib.invoicing.models.Plan.journal" 
-            module="lino_xl.lib.invoicing.models" 
+      <desc_signature class="Plan" first="False" fullname="Plan.journal"
+            ids="lino_xl.lib.invoicing.models.Plan.journal"
+            module="lino_xl.lib.invoicing.models"
             names="lino_xl.lib.invoicing.models.Plan.journal">
         <desc_name>journal</desc_name>
       </desc_signature>
@@ -129,7 +116,7 @@ class HelpTextExtractor(object):
         # we must write our files only when all documents have been
         # processed (i.e. usually after a "clean")
         self.docs_processed = 0
-        
+
         targets = app.env.config.help_texts_builder_targets
         # print(20160725, targets)
         for root, modname in targets.items():
@@ -139,7 +126,7 @@ class HelpTextExtractor(object):
             #     raise Exception("No such file: {}".format(htf))
             self.name2file[root] = htf
             self.name2dict[root] = OrderedDict()
-            
+
         print("Collecting help texts for {}".format(
             ' '.join(self.name2file.values())))
 
@@ -256,5 +243,3 @@ def setup(app):
     app.connect('builder-inited', hte.initialize)
     app.connect('doctree-read', hte.extract_help_texts)
     app.connect('build-finished', hte.write_help_texts_files)
-
-

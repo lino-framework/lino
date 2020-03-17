@@ -57,7 +57,7 @@ def qs2summary(ar, objects, separator=comma, max_items=5, **kw):
         if n:
             elems.append(separator())
         n += 1
-        elems += list(ar.summary_row(i, **kw))
+        elems.extend(ar.summary_row(i, **kw))
         if n >= max_items:
             elems += [separator(), '...']
             break

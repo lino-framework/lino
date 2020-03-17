@@ -227,16 +227,17 @@ class BaseRequest(object):
 
     def __init__(self, request=None, parent=None,
                  is_on_main_actor=True, **kw):
-        self.request = request
         self.response = dict()
         if request is not None:
+            self.request = request
             self.rqdata = getrqdata(request)
             kw = self.parse_req(request, self.rqdata, **kw)
         if parent is not None:
             assert request is None
-            if parent.actor is None:
-                # 20190926 we want to have javascript extjs links in dasboard.
-                self.request = parent.request
+            # if parent.actor is None:
+            # 20190926 we want to have javascript extjs links in dasboard
+            # 20200317 and in a slave table summary
+            self.request = parent.request
             self.xcallback_answers = parent.xcallback_answers
             self._confirm_answer = parent._confirm_answer
             for k in inheritable_attrs:
