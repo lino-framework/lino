@@ -1,16 +1,11 @@
-# Copyright 2010-2018 Rumma & Ko Ltd
+# Copyright 2010-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """
 A collection of utilities which require Django settings to be
 importable.
 """
 
-from __future__ import unicode_literals
-from __future__ import print_function
-import six
-# from builtins import object
-from builtins import str
-
+import copy
 import sys
 import datetime
 # import yaml
@@ -184,9 +179,6 @@ def obj2str(i, force_detailed=False):
             return str(i)  # AutoField is long on mysql, int on sqlite
         if isinstance(i, datetime.date):
             return i.isoformat()
-        if six.PY2:
-            if isinstance(i, unicode):
-                i = str(i)
         # if isinstance(i, str):
         #     return repr(i)[1:]
         return repr(i)
@@ -358,7 +350,7 @@ def resolve_model(model_spec, app_label=None, strict=False):
 
     """
     # ~ models.get_apps() # trigger django.db.models.loading.cache._populate()
-    if isinstance(model_spec, six.string_types):
+    if isinstance(model_spec, str):
         if '.' in model_spec:
             app_label, model_name = model_spec.split(".")
         else:
@@ -387,7 +379,7 @@ def resolve_model(model_spec, app_label=None, strict=False):
                 if len(loading.cache.postponed) > 0:
                     print(("POSTPONED:", loading.cache.postponed))
 
-            if isinstance(strict, six.string_types):
+            if isinstance(strict, str):
                 raise Exception(strict % model_spec)
             raise ImportError(
                 "resolve_model(%r,app_label=%r) found %r "
@@ -757,7 +749,7 @@ def lazy_format(tpl, *args, **kwargs):
     """
     def f():
         return tpl.format(*args, **kwargs)
-    return lazy(f, six.text_type)()
+    return lazy(f, str)()
 
 simplify_parts = set(
     ['models', 'desktop', 'ui', 'choicelists', 'actions', 'mixins'])
@@ -786,7 +778,7 @@ def resolve_fields_list(model, k, collection_type=tuple, default=None):
         pass
     elif isinstance(qsf, collection_type):
         pass
-    elif isinstance(qsf, six.string_types):
+    elif isinstance(qsf, str):
         lst = []
         for n in qsf.split():
             f = model.get_data_elem(n)
@@ -813,3 +805,15 @@ def class_dict_items(cl, exclude=None):
     for b in cl.__bases__:
         for i in class_dict_items(b, exclude):
             yield i
+
+def dbfield2params_field(db_field):
+
+    """originally just for setting up actor parameters from get_simple_params()
+    but also used in calview."""
+
+    fld = copy.copy(db_field)
+    fld.blank = True
+    fld.null = True
+    fld.default = None
+    fld.editable = True
+    return fld

@@ -468,33 +468,6 @@ class Model(models.Model, fields.TableRow):
         self.hidden_elements = self.hidden_elements | set(names)
 
     @classmethod
-    def setup_parameters(cls, params):
-        """Inheritable hook for defining parameters.
-        Called once per actor at site startup.
-
-        It receives a `dict` object `params` and is expected to return
-        that `dict` which it may update.
-
-        See also :meth:`get_simple_parameters`.
-
-        Usage example: :class:`lino.modlib.comments.Comment`.
-
-        """
-        return params
-
-    @classmethod
-    def get_simple_parameters(cls):
-        """
-        Return or yield a list of names of simple parameter fields of every
-        `Table` on this model.
-
-        When the list contains names for which no parameter field is
-        defined, then Lino creates that parameter field as a copy of
-        the database field of the same name.
-        """
-        return []
-
-    @classmethod
     def add_param_filter(cls, qs, lookup_prefix='', **kwargs):
         """Add filters to queryset using table parameter fields.
 

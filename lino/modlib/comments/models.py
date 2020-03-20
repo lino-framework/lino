@@ -11,6 +11,7 @@ from django.conf import settings
 from lino.api import dd, rt, _
 
 from lino.mixins import CreatedModified, BabelNamed
+from lino.mixins.periods import DateRangeObservable
 from lino.modlib.users.mixins import UserAuthored
 from lino.modlib.notify.mixins import ChangeNotifier
 from lino.modlib.gfks.mixins import Controllable
@@ -34,7 +35,7 @@ class CommentType(BabelNamed):
 
 
 class Comment(CreatedModified, UserAuthored, Controllable,
-              ChangeNotifier, Previewable, Publishable):
+              ChangeNotifier, Previewable, Publishable, DateRangeObservable):
     class Meta(object):
         app_label = 'comments'
         abstract = dd.is_abstract_model(__name__, 'Comment')
@@ -148,15 +149,15 @@ class Comment(CreatedModified, UserAuthored, Controllable,
     def setup_parameters(cls, fields):
         fields.update(
             observed_event=CommentEvents.field(blank=True))
-        fields.update(
-            start_date=models.DateField(
-                _("Period from"), blank=True, null=True,
-                help_text=_("Start date of observed period")))
-        fields.update(
-            end_date=models.DateField(
-                _("until"),
-                blank=True, null=True,
-                help_text=_("End date of observed period")))
+        # fields.update(
+        #     start_date=models.DateField(
+        #         _("Period from"), blank=True, null=True,
+        #         help_text=_("Start date of observed period")))
+        # fields.update(
+        #     end_date=models.DateField(
+        #         _("until"),
+        #         blank=True, null=True,
+        #         help_text=_("End date of observed period")))
         # fields.update(
         #     show_published=dd.YesNo.field(_("Published"), blank=True))
         super(Comment, cls).setup_parameters(fields)
@@ -167,10 +168,6 @@ class Comment(CreatedModified, UserAuthored, Controllable,
         pv = ar.param_values
         if pv.observed_event:
             qs = pv.observed_event.add_filter(qs, pv)
-        # if pv.show_published == dd.YesNo.yes:
-        #     qs = qs.filter(published__isnull=False)
-        # elif pv.show_published == dd.YesNo.no:
-        #     qs = qs.filter(published__isnull=True)
         return qs
 
 dd.update_field(Comment, 'user', editable=False)

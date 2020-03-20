@@ -260,6 +260,9 @@ class ObservedDateRange(ParameterPanel):
     """:class:`lino.core.param_panel.ParameterPanel` with two fields
     `start_date` and `end_date` which default to empty.
 
+    Note that you must define yourself a get_request_queryset method in order to
+    actually use these two parameter fields.
+
     """
 
     get_default_start_date = None

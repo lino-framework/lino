@@ -426,3 +426,10 @@ class Assignable(Authored):
         if self.assigned_to is None:
             self.assigned_to = ar.subst_user
         super(Assignable, self).on_create(ar)
+
+
+    @classmethod
+    def get_simple_parameters(cls):
+        for p in super(Assignable, cls).get_simple_parameters():
+            yield p
+        yield 'assigned_to'

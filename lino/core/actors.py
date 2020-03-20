@@ -31,7 +31,7 @@ from lino.core.utils import resolve_model
 from lino.core.utils import error2str
 from lino.core.utils import qs2summary
 from lino.core.utils import ParameterPanel
-from lino.core.utils import navinfo
+from lino.core.utils import navinfo, dbfield2params_field
 from lino.utils import curry, AttrDict, is_string
 
 from etgen.html import E, forcetext, tostring
@@ -43,7 +43,6 @@ ACTOR_SEP = '.'
 actor_classes = []
 actors_dict = None
 actors_list = None
-
 
 def discover():
     global actor_classes
@@ -952,12 +951,10 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
         for name in cls.simple_parameters:
             if name not in cls.parameters:
-                fld = copy.copy(cls.get_data_elem(name))
-                fld.blank = True
-                fld.null = True
-                fld.default = None
-                fld.editable = True
-                cls.parameters[name] = fld
+                db_field = cls.get_data_elem(name)
+                if db_field is None:
+                    raise Exception("get_simple_parameters() returned invalid name '{}'".format(name))
+                cls.parameters[name] = dbfield2params_field(db_field)
         # if len(cls.parameters) == 0:
         #     cls.parameters = None # backwards compatibility
 
@@ -1267,8 +1264,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         for k in self.simple_parameters:
             v = getattr(ar.param_values, k)
             if v:
-                yield str(self.parameters[k].verbose_name) \
-                    + ' ' + str(v)
+                yield str(self.parameters[k].verbose_name) + ' ' + str(v)
 
     @classmethod
     def setup_request(self, ar):
@@ -1289,7 +1285,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         pass
 
     @classmethod
-    def setup_parameters(cls, fields):
+    def setup_parameters(cls, params):
         """Inheritable hook for defining parameters. Called once per actor at
         site startup.  The default implementation just calls
         :meth:`setup_parameters
@@ -1301,8 +1297,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
             return
         if not isinstance(cls.model, type):
             raise Exception("{}.model is not a class".format(cls))
-        if issubclass(cls.model, models.Model):
-            cls.model.setup_parameters(fields)
+        if issubclass(cls.model, fields.TableRow):
+            cls.model.setup_parameters(params)
 
     @classmethod
     def get_simple_parameters(cls):
@@ -1310,7 +1306,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         Expected to return a list of names of parameter fields.
 
         """
-        if isinstance(cls.model, type) and issubclass(cls.model, models.Model):
+        if isinstance(cls.model, type) and issubclass(cls.model, fields.TableRow):
             return cls.model.get_simple_parameters()
         return []
 

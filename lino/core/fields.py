@@ -1013,6 +1013,37 @@ class TableRow(object):
     """
 
     @classmethod
+    def setup_parameters(cls, params):
+        """Inheritable hook for defining parameters.
+        Called at site startup once for each actor using this model.
+
+        It receives a `dict` object `params` and is alloed to update that
+        `dict`, which will be used to fill the actor's `parameters`.
+
+        See also :meth:`get_simple_parameters`.
+
+        """
+        pass
+
+    @classmethod
+    def get_simple_parameters(cls):
+        """
+        Return or yield a list of names of simple parameter fields of every
+        actor that uses this model.
+
+        When the list contains names for which no parameter field is
+        defined, then Lino creates that parameter field as a copy of
+        the database field of the same name.
+
+        This is also called by :meth:`get_title_tags`, you don't need to
+        manually define title tags for simple parameters.
+
+        """
+        return []
+
+
+
+    @classmethod
     def get_default_table(self):
         """Used internally. Lino chooses during the kernel startup, for each
         model, one of the discovered Table subclasses as the "default

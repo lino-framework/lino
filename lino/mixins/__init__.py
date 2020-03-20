@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2010-2018 Rumma & Ko Ltd
+# Copyright 2010-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
@@ -21,13 +21,12 @@ by applications and the :ref:`xl`. But none of them is mandatory.
 
 """
 
-from __future__ import unicode_literals
-from builtins import str
 from builtins import object
 
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
+from django.utils.text import format_lazy
 from django.utils import timezone
 from django.contrib.humanize.templatetags.humanize import naturaltime
 
@@ -48,13 +47,13 @@ class Contactable(model.Model):
 
     email = models.EmailField(_('e-mail address'), blank=True)
     language = LanguageField(default=models.NOT_PROVIDED, blank=True)
-    
+
     def get_as_user(self):
         """Return the user object representing this contactable.
 
         """
         raise NotImplementedError()
-        
+
 
 class Phonable(model.Model):
     """
@@ -69,7 +68,7 @@ class Phonable(model.Model):
     phone = models.CharField(_('Phone'), max_length=200, blank=True)
     gsm = models.CharField(_('GSM'), max_length=200, blank=True)
     fax = models.CharField(_('Fax'), max_length=200, blank=True)
-    
+
 
 class Modified(model.Model):
     """
@@ -88,7 +87,7 @@ class Modified(model.Model):
     If you set this to `False`, :attr:`modified` is updated only when
     you explicitly call :meth:`touch`.
     """
-    
+
     class Meta(object):
         abstract = True
 
@@ -212,6 +211,21 @@ class ProjectRelated(model.Model):
         for p in super(ProjectRelated, self).get_postable_recipients():
             yield p
 
+    @classmethod
+    def get_simple_parameters(cls):
+        for p in super(ProjectRelated, cls).get_simple_parameters():
+            yield p
+        # if settings.SITE.project_model:
+        yield 'project'
+
+    # @classmethod
+    # def setup_parameters(cls, params):
+    #     super(ProjectRelated, cls).setup_parameters(params)
+    #     if settings.SITE.project_model:
+    #         params['project'].help_text = format_lazy(
+    #             _("Show only entries having this {project}."),
+    #             project=settings.SITE.project_model._meta.verbose_name)
+
 
 class Story(model.Model):
     class Meta:
@@ -219,7 +233,7 @@ class Story(model.Model):
 
     def get_story(self, ar):
         return []
-    
+
     @fields.virtualfield(fields.HtmlBox())
     def body(self, ar):
         if ar is None:
@@ -236,7 +250,7 @@ class Story(model.Model):
             self.get_story(apr.ar), master_instance=self))
         return str('').join(chunks)  # must be utf8 encoded
 
-            
+
 
 
 from .ref import Referrable, StructuredReferrable
@@ -252,4 +266,3 @@ from lino.utils.mldbc.fields import BabelCharField, BabelTextField
 from lino.utils.mldbc.mixins import BabelNamed, BabelDesignated
 
 from lino.mixins.human import Human, Born
-
