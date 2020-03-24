@@ -24,7 +24,6 @@ def builder_inited(app):
 
 
 def setup(app):
-    app.add_stylesheet('linodocs.css')
+    app.add_css_file('linodocs.css')
     # app.add_stylesheet('centeredlogo.css')
     app.connect('builder-inited', builder_inited)
-
