@@ -186,6 +186,15 @@ class Table(AbstractTable):
     use_detail_params_value = False
     """If when in a detail view will override default param values with the detail's pv values.
     """
+
+    react_responsive = True
+    """If viewing the grid view on a mobile, should the grid use responsive mode
+    Default: True"""
+
+    react_big_search = False
+    """If True will position the quick search input to the bottom of the header and have it full width.
+    Default: False"""
+
     @classmethod
     def add_quick_search_filter(cls, qs, search_text):
         """Add a filter to the given queryset `qs` in order to apply a quick
