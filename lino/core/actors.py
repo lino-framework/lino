@@ -833,6 +833,13 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     @classmethod
     def summary_row(cls, ar, obj, **kw):
+        """
+        Return a HTML representation of the given  data row `obj` for usage in a
+        summary panel.
+
+        See also :meth:`lino.core.model.Model.summary_row`.
+
+        """
         return obj.summary_row(ar, **kw)
 
     @classmethod
@@ -1066,7 +1073,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
         if cls.editable:
             if cls.allow_create:
-                # cls.create_action = cls._bind_action(actions.SubmitInsert())
                 # if cls.detail_action and not cls.hide_top_toolbar:
                 if cls.insert_layout and not cls.hide_top_toolbar:
                     cls.insert_action = cls._bind_action(
@@ -1815,7 +1821,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         # sar = cls.request_from(ar, master_instance=obj)
         p = qs2summary(sar, sar.data_iterator, cls.summary_sep)
         if cls.insert_action is not None:
-            ir = cls.insert_action.request_from(ar)
+            ir = cls.insert_action.request_from(sar)
             if ir.get_permission():
                 btn = ir.ar2button()
                 if len(p):

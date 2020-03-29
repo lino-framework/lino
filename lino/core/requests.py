@@ -951,6 +951,27 @@ class BaseRequest(object):
     def summary_row(self, obj, **kwargs):
         return obj.summary_row(self, **kwargs)
 
+    def is_obvious_field(self, name):
+        """
+        Return True if the given field is "obvious" in the context of this action request.
+
+        For example when you are viewing the partners living in a given city,
+        then the city field is "obvious" and doesn't need to be displayed for
+        each partner.
+
+        This is used e.g. in customized :meth:`summary_row` methods.
+
+        General rule: in a request on a slave table, the master instance is
+        an obvious value.
+
+        """
+        if name in self.known_values:
+            return True
+        if self.actor.master_key and self.actor.master_key == name:
+            return True
+        return False
+
+
     def obj2html(self, obj, *args, **kwargs):
         """
         Return a HTML element which represents a pointer to the given

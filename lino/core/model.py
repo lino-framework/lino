@@ -843,16 +843,32 @@ class Model(models.Model, fields.TableRow):
 
     def summary_row(self, ar, **kw):
         """
-        Return or yield a sequence of HTML elements that describes this
-        record in a summary panel.
+        Return a HTML representation of this database object in a summary panel.
 
-        Usage example::
+        The default representation is the text returned by :meth:`__str__` in a
+        link that opens the detail view on this database object.
+
+        More exactly this should return or yield a sequence of HTML element tree
+        elements.
+
+        The description may
+        vary depending on the given action request.
+
+        For example a partner model of a given application may want to always
+        show the city of a partner unless city is among the known values::
 
             def summary_row(self, ar):
                 elems = [ar.obj2html(self)]
-                if self.city:
+                if self.city and not "city" in ar.known_values:
                     elems += [" (", ar.obj2html(self.city), ")"]
                 return E.p(*elems)
+
+        Note that this is called by the class method of same name on
+        :class:`lino.core.actors.Actor`, which can potentially be customized and
+        can potentially decide to not call the model method.
+
+        TODO: rename this to `get_row_description` and write documentation.
+
         """
         yield ar.obj2html(self)
 

@@ -166,25 +166,26 @@ class ProjectRelated(model.Model):
     class Meta(object):
         abstract = True
 
-    if settings.SITE.project_model:
-        project = fields.ForeignKey(
-            settings.SITE.project_model,
-            blank=True, null=True,
-            related_name="%(app_label)s_%(class)s_set_by_project",
-        )
-    else:
-        project = fields.DummyField('project')
+    project = fields.ForeignKey(
+        settings.SITE.project_model,
+        blank=True, null=True,
+        related_name="%(app_label)s_%(class)s_set_by_project")
 
     def get_related_project(self):
         if settings.SITE.project_model:
             return self.project
 
-    def summary_row(self, ar, **kw):
-        s = [ar.obj2html(self)]
+    # def on_create(self, ar):
+    #     super(ProjectRelated, self).on_create(ar)
+    #     print(20200327, ar.actor.master_key, ar.master_instance)
+    #     if ar.actor.master_key and ar.actor.master_key == "project":
+    #         self.project = ar.master_instance
+
+    def summary_row(self, ar, **kwargs):
+        s = list(super(ProjectRelated, self).summary_row(ar, **kwargs))
+        # s = [ar.obj2html(self)]
         if settings.SITE.project_model:
-            # if self.project and not dd.has_fk(rr,'project'):
-            if self.project:
-                # s += " (" + ui.obj2html(self.project) + ")"
+            if self.project and not ar.is_obvious_field("project"):
                 s += [" (", ar.obj2html(self.project), ")"]
         return s
 
