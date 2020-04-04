@@ -1072,7 +1072,7 @@ class Site(object):
     design_name = 'desktop'
     """
     Deprecated. We plan to remove the design_name attribute.
-    
+
     The name of the design to use. The default value is
     ``'desktop'``. The value should be one of ``'desktop'`` or
     ``'mobile'``.
@@ -3040,7 +3040,7 @@ class Site(object):
         """
         Return a dictionary which maps the internal field names for
         babelfield `name` to their respective translation of the given
-        lazy translatable string `text`.
+        lazy translatable string `txt`.
 
         >>> from django.utils.translation import ugettext_lazy as _
         >>> from lino.core.site import TestSite as Site

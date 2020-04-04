@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2019 Rumma & Ko Ltd
+# Copyright 2009-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """Defines the model mixins :class:`Sequenced` and
 :class:`Hierarchical`.
@@ -12,17 +12,11 @@ order which can be manipulated by the user using actions
 
 """
 
-from __future__ import unicode_literals
-from builtins import str
-from builtins import object
-
-import logging
-logger = logging.getLogger(__name__)
+# from builtins import object
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
-
 
 from lino.core import actions
 from lino.core import fields
