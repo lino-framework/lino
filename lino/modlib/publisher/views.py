@@ -3,18 +3,16 @@
 # License: BSD (see file COPYING for details)
 
 
-import logging ; logger = logging.getLogger(__name__)
-
 from django.views.generic import View
 
-
-
+from lino.core.requests import BaseRequest
 
 
 class Element(View):
-    
+
     publisher_model = None
 
     def get(self, request, pk=None):
         obj = self.publisher_model.objects.get(id=pk)
-        return obj.get_publisher_response(request)
+        ar = BaseRequest(request=request)
+        return obj.get_publisher_response(ar)

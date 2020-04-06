@@ -1,8 +1,18 @@
 <html>
 <body>
+{%- block toolbar %}
+<p align="right">
+  {{ar.obj2html(obj, _("Edit"))}}
+  <a href="{{obj.publisher_url()}}">permalink</a>
+  <a href="oops">Sign in</a>
+</p>
+{%- endblock %}
+{%- block header %}
 <h1>{{obj}}</h1>
-<p>Lorem ipsum ...</p>
+{%- endblock %}
+{%- block main %}
 <p>This is a {{obj.__class__._meta.verbose_name}}.</p>
 <p>(<a href="{{obj.publisher_url()}}">permalink</a>)</p>
+{%- endblock %}
 </body>
 </html>
