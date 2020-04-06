@@ -13,7 +13,7 @@ class PublisherDashboardItem(DashboardItem):
         super(PublisherDashboardItem, self).__init__(None, **kwargs)
 
     def render(self, ar):
-        return obj.get_publisher_response(ar)
+        return self.obj.get_publisher_response(ar.request)
 
 class Plugin(Plugin):
 

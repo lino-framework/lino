@@ -22,16 +22,16 @@ class Publishable(Printable):
     def publisher_url(self):
         return "/{}/{}".format(self.publisher_location, self.pk)
 
-    def get_publisher_response(self, ar):
+    def get_publisher_response(self, request):
         env = settings.SITE.plugins.jinja.renderer.jinja_env
         template = env.get_template(self.publisher_template)
-        context = ar.get_printable_context(obj=self)
-        # context = dict(obj=self, request=request, language=get_language())
+        # context = ar.get_printable_context(obj=self)
+        context = dict(obj=self, request=request, language=get_language())
         response = http.HttpResponse(
             template.render(**context),
             content_type='text/html;charset="utf-8"')
         return response
 
     @classmethod
-    def get_dashboard_items(cls, user):
+    def get_dashboard_objects(cls, user):
         return []
