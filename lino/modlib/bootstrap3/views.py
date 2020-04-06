@@ -1,15 +1,11 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2017 Rumma & Ko Ltd
+# Copyright 2009-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Views for `lino.modlib.bootstrap3`.
 
 """
-from __future__ import division
 from past.utils import old_div
-
-import logging
-logger = logging.getLogger(__name__)
 
 from django import http
 from django.conf import settings
@@ -17,6 +13,9 @@ from django.views.generic import View
 from django.core import exceptions
 from django.utils.translation import ugettext as _
 from django.utils.translation import get_language
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_protect
+
 # from django.contrib import auth
 from lino.core import auth
 
@@ -158,7 +157,7 @@ def table2html(ar, as_main=True):
     buttons.append(('>>', _("Last page"), last_url))
 
     return E.div(buttons2pager(buttons), t.as_element())
-        
+
 
 def layout2html(ar, elem):
 
@@ -249,13 +248,13 @@ class Element(View):
 
 
         main = layout2html(ar, elem)
-       
+
         # The `method="html"` argument isn't available in Python 2.6,
         # only 2.7.  It is useful to avoid side effects in case of
         # empty elements: the default method (xml) writes an empty
         # E.div() as "<div/>" while in HTML5 it must be "<div></div>"
         # (and the ending / is ignored).
-        
+
         #~ return tostring(main, method="html")
         #~ return tostring(main)
         # return main
@@ -282,7 +281,7 @@ class Authenticate(View):
             #~ del request.session['password']
             target = '/'
             return http.HttpResponseRedirect(target)
-            
+
 
             # ar = BaseRequest(request)
             # ar.success("User %r logged out." % username)
@@ -311,11 +310,12 @@ class Authenticate(View):
         #     # print "20150428 Now logged in as %r (%s)" % (username, user)
         # return ar.renderer.render_action_response(ar)
 
-        
+
 class Index(View):
     """
     Render the main page.
     """
+    @method_decorator(ensure_csrf_cookie)
     def get(self, request, *args, **kw):
         # raise Exception("20171122 {} {}".format(
         #     get_language(), settings.MIDDLEWARE_CLASSES))

@@ -253,6 +253,8 @@ class BaseRequest(object):
             self.request = request
             self.rqdata = getrqdata(request)
             kw = self.parse_req(request, self.rqdata, **kw)
+            if permalink_uris is None:
+                permalink_uris = False  # todo: which default value?
         elif parent is not None:
             # if parent.actor is None:
             # 20190926 we want to have javascript extjs links in dasboard

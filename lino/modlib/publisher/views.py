@@ -2,8 +2,11 @@
 # Copyright 2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-
+from django.conf import settings
+from django import http
 from django.views.generic import View
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_protect
 
 from lino.core.requests import BaseRequest
 
@@ -14,5 +17,23 @@ class Element(View):
 
     def get(self, request, pk=None):
         obj = self.publisher_model.objects.get(id=pk)
-        ar = BaseRequest(request=request)
+        ar = BaseRequest(request=request, renderer=settings.SITE.kernel.default_renderer, permalink_uris=True)
         return obj.get_publisher_response(ar)
+
+
+class Index(View):
+    """
+    Render the main page.
+    """
+    @method_decorator(ensure_csrf_cookie)
+    def get(self, request, *args, **kw):
+        # raise Exception("20171122 {} {}".format(
+        #     get_language(), settings.MIDDLEWARE_CLASSES))
+        ar = BaseRequest(request=request, renderer=settings.SITE.kernel.default_renderer, permalink_uris=True)
+        env = settings.SITE.plugins.jinja.renderer.jinja_env
+        template = env.get_template("publisher/index.pub.html")
+        context = ar.get_printable_context(obj=self)
+        response = http.HttpResponse(
+            template.render(**context),
+            content_type='text/html;charset="utf-8"')
+        return response
