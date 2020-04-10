@@ -2344,6 +2344,13 @@ class TabPanel(Panel):
         main[0].set("class", main[0].get("class") + " in active")
         yield main
 
+class ReactiveElement(SlaveSummaryPanel):
+
+    def __init__(self, lh, actor, **kw):
+        self.reactive_elem_name = actor.reactive_elem_name
+        super(ReactiveElement, self).__init__(lh, actor, **kw)
+
+
 
 _FIELD2ELEM = (
     # (dd.Constant, ConstantElement),
@@ -2649,6 +2656,13 @@ def create_layout_element(lh, name, **kw):
                 e.add_requirements(*de.required_roles)
                 lh.add_store_field(e.field)
                 return e
+
+            elif de.display_mode == 'reactive':
+                e = ReactiveElement(lh, de, **kw)
+                e.add_requirements(*de.required_roles)
+                lh.add_store_field(e.field)
+                return e
+
             else:
                 raise Exception(
                     "Invalid display_mode %r" % de.display_mode)

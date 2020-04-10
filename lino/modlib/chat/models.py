@@ -53,6 +53,7 @@ class ChatGroup(UserAuthored, Created, Referrable):
 
     title = dd.CharField(max_length=20)
     description = dd.RichTextField(max_length=200, blank=True, null=True);
+    ticket = dd.ForeignKey("tickets.Ticket", blank=True, null=True);
 
     @dd.action(_("getChatGroups"))
     def getChatGroups(self, ar):
@@ -76,9 +77,12 @@ class ChatGroup(UserAuthored, Created, Referrable):
     def loadGroupChat(self, ar):
         """Returns chat messages for a given chat"""
         rows = []
+        if 'mk' in ar.rqdata:
+            # master = rt.models.resolve("contenttypes.ContentType").get(pk=ar.rqdata['mt']).get(pk=ar.rqdata["mk"])
+            ar.selected_rows = [ChatGroup.objects.get(ticket__pk=ar.rqdata['mk'])]
         for group in ar.selected_rows:
              last_ten = ChatProps.objects.filter(user=ar.get_user(),
-                                                chat__group=self
+                                                chat__group=group
                                                 ).order_by(
                 '-created').select_related("chat")
              rows.append({
@@ -212,7 +216,9 @@ class ChatProps(UserAuthored, Created):
         self.chat.pk,
         self.chat.user.id,
         self.chat.group.id,
-        self.chat.hash)
+        self.chat.hash,
+        self.chat.ticket.id if self.chat.ticket else None,
+        )
 
     chat = dd.ForeignKey(ChatMessage, related_name="chatProps")
     seen = models.DateTimeField(_("seen"), null=True, editable=False, default=None)

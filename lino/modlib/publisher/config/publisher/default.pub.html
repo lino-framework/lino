@@ -2,20 +2,20 @@
 <body>
 
 {%- block toolbar %}
-<p align="right">
-  {{tostring(ar.obj2html(obj, "Edit"))}}
-  <a href="{{obj.publisher_url()}}">permalink</a>
-  <a href="oops">Sign in</a>
-</p>
+    <p align="right">
+        {{ tostring(ar.obj2html(obj, "Edit")) }}
+        <a href="{{ obj.publisher_url(True) }}">List</a>
+        <a href="{{ obj.publisher_url() }}">permalink</a>
+        <a href="oops">Sign in</a>
+    </p>
 {%- endblock %}
 
 {%- block header %}
-<h1>{{obj}}</h1>
+    <h1>{{ obj }}</h1>
 {%- endblock %}
 
 {%- block main %}
-<p>This is a {{obj.__class__._meta.verbose_name}}.</p>
-<p>(<a href="{{obj.publisher_url()}}">permalink</a>)</p>
+    <p>This is a {{ obj.__class__._meta.verbose_name }}.</p>
 {%- endblock %}
 
 </body>

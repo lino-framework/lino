@@ -16,9 +16,9 @@ class Element(View):
     publisher_model = None
 
     def get(self, request, pk=None):
-        obj = self.publisher_model.objects.get(id=pk)
         ar = BaseRequest(request=request, renderer=settings.SITE.kernel.default_renderer, permalink_uris=True)
-        return obj.get_publisher_response(ar)
+        obj = self.publisher_model.objects.get(id=pk) if pk is not None else None
+        return self.publisher_model.get_publisher_response(ar, obj)
 
 
 class Index(View):

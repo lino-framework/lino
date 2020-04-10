@@ -1,0 +1,9 @@
+{% block listItem %}
+    <li>
+        <div>
+            {{ obj }}
+            {{ obj.description }}</div>
+        <a href="{{ obj.publisher_url() }}">Details</a>
+        <span style="float:right;">{{ tostring(ar.obj2html(obj, "edit")) }}</span>
+    </li>
+{% endblock %}

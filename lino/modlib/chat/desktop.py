@@ -10,7 +10,7 @@ class ChatGroups(dd.Table):
     # cell_edit = False
 
     detail_layout = dd.DetailLayout("""
-     title 
+     title ticket
      created 
      user 
      description
@@ -64,3 +64,10 @@ class ChatMessages(dd.Table):
         # elif pv.show_seen == dd.YesNo.no:
         #     qs = qs.filter(seen__isnull=True)
         return qs
+
+
+class ChatsByTicket(ChatMessages):
+    # column_names = "chat__seen "
+    display_mode = "reactive"
+    reactive_elem_name = "chatter"
+    master_key = "group__ticket"

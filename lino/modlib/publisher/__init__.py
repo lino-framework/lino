@@ -29,6 +29,8 @@ class Plugin(Plugin):
             if m.publisher_location is not None:
                 yield url('^{}/(?P<pk>.+)$'.format(m.publisher_location),
                     views.Element.as_view(publisher_model=m))
+                yield url('^{}/$'.format(m.publisher_location),
+                    views.Element.as_view(publisher_model=m))
         yield url('^index$',views.Index.as_view())
 
     def get_dashboard_items(self, user):
