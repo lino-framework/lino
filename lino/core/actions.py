@@ -554,7 +554,7 @@ class Action(Parametrizable, Permittable):
             a = cls(*args, **kw)
 
             def wrapped(ar):
-                obj = ar.selected_rows[0]
+                obj = ar.selected_rows[0] if ar.selected_rows else ar.actor.model
                 return fn(obj, ar)
 
             a.run_from_ui = wrapped
