@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2019 Rumma & Ko Ltd
+# Copyright 2009-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 # Note that this module may not have a docstring because any
@@ -18,7 +18,7 @@ PY3 = sys.version_info[0] == 3
 
 SETUP_INFO = dict(
     name='lino',
-    version='20.4.0',
+    version='20.4.1',
     description="A framework for writing desktop-like web applications "
                 "using Django and ExtJS or React",
     license='BSD-2-Clause',
