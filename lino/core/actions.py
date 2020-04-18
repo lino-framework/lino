@@ -198,6 +198,12 @@ class Action(Parametrizable, Permittable):
     different calls. If this is True, Lino does not fill any default
     values and leaves those from a previous call.
 
+    Deprecated because it (1) is not used on any production site, (2) has a
+    least two side effect: the fields *never* get a default value, even not on
+    first execution, and you cannot explicitly specify programmatic field
+    values. And (3) we actually wouldn't want to specify this per action but per
+    field.
+
     """
     icon_name = None
     """

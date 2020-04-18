@@ -753,9 +753,6 @@ class Model(models.Model, fields.TableRow):
         """
         return []
 
-    def get_mobile_list_item_elems(self, ar):
-        return [self.obj2href(ar)]
-
     # moved to TableRow
     # def get_overview_elems(self, ar):
     #     """This is expected to return a list of HTML elements to be wrapped
@@ -851,8 +848,7 @@ class Model(models.Model, fields.TableRow):
         More exactly this should return or yield a sequence of HTML element tree
         elements.
 
-        The description may
-        vary depending on the given action request.
+        The description may vary depending on the given action request.
 
         For example a partner model of a given application may want to always
         show the city of a partner unless city is among the known values::
@@ -872,11 +868,18 @@ class Model(models.Model, fields.TableRow):
         """
         yield ar.obj2html(self)
 
+    @fields.displayfield(_("Name"), max_length=15)
+    def name_column(self, ar):
+        return str(self)
+
     @fields.displayfield(_("Description"))
     def mobile_item(self, ar):
         if ar is None:
             return ''
         return E.div(*forcetext(self.get_mobile_list_item_elems(ar)))
+
+    def get_mobile_list_item_elems(self, ar):
+        return [self.obj2href(ar)]
 
     # @fields.displayfield(_("Description"))
     # @fields.htmlbox(_("Overview"))

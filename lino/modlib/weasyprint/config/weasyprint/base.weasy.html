@@ -77,22 +77,25 @@ p {
 
 
 {#
-  20191015 removed footer_div as it seems to not be used
-  @media screen {
-      div.footer_div {
-          display: none;
-      }
-  }
-  @media print {
-      div.footer_div {
-          position: fixed;
-          bottom: -5mm;
-          width: 100%;
-          border-top: solid 1pt;
-          padding: 2pt;
-      }
-  }
+  Usage example in your template::
+
+    <div class="footer_div">{{obj}}</div>
+
 #}
+@media screen {
+    div.footer_div {
+        display: none;
+    }
+}
+@media print {
+    div.footer_div {
+        position: fixed;
+        bottom: -5mm;
+        width: 100%;
+        border-top: solid 1pt;
+        padding: 2pt;
+    }
+}
 </style>
 {%- endblock %}
 </head>
@@ -102,6 +105,13 @@ p {
 {%- block intro %}
 {%- endblock %}
 {%- block main %}
+<p>You probably want to use a template that overrides the main block.</p>
+<p>Available fields in <em>{{obj.__class__}}</em>:</p>
+<ul>
+{% for fld in obj._meta.get_fields() %}
+<li>{{fld.verbose_name}} : {{getattr(obj, fld.name, "---")}}</li>
+{% endfor %}
+</ul>
 {%- endblock %}
 </body>
 </html>

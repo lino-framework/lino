@@ -110,10 +110,11 @@ class User(AbstractBaseUser, Contactable, CreatedModified, Printable, DateRange)
             return self.initials or self.username or str(self.pk)
         return u'{} {}'.format(self.first_name, self.last_name).strip()
 
-    @dd.displayfield(_("Name"), max_length=15)
-    def name_column(self, request):
-        # return join_words(self.last_name.upper(),self.first_name)
-        return str(self)
+    # name_column is now defined in core.model.Model
+    # @dd.displayfield(_("Name"), max_length=15)
+    # def name_column(self, ar):
+    #     # return join_words(self.last_name.upper(),self.first_name)
+    #     return str(self)
 
     # @dd.displayfield(_("Other authentication providers"))
     # def social_auth_links(self, ar=None):

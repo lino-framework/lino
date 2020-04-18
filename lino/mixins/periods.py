@@ -1,13 +1,10 @@
-# Copyright 2014-2019 Rumma & Ko Ltd
+# Copyright 2014-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
 Defines classes related to date ranges.
 
 """
-
-from __future__ import unicode_literals
-from builtins import object
 
 import datetime
 try:
@@ -325,6 +322,21 @@ class Monthly(ObservedDateRange):
 
     def get_default_end_date(self):
         return last_day_of_month(dd.today())
+
+
+class Weekly(ObservedDateRange):
+
+    """An :class:`ObservedDateRange` which defaults to the current week.
+
+    """
+
+    def get_default_start_date(self):
+        d = dd.today()
+        return d - datetime.timedelta(days=d.weekday())
+
+    def get_default_end_date(self):
+        d = dd.today()
+        return d + datetime.timedelta(days=6-d.weekday())
 
 
 class Today(ParameterPanel):

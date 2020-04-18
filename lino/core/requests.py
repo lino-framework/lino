@@ -976,7 +976,7 @@ class BaseRequest(object):
 
     def obj2html(self, obj, *args, **kwargs):
         """
-        Return a HTML element which represents a pointer to the given
+        Return a HTML element that represents a pointer to a detail view of the given
         database object. Depending on the renderer this will be more
         or less clickable.
         """
@@ -1068,15 +1068,15 @@ class BaseRequest(object):
         """
         return self.renderer.ar2button(self, *args, **kwargs)
 
-    def instance_action_button(self, ai, *args, **kw):
-        """Return an HTML element with a button which would run the given
+    def instance_action_button(self, ia, *args, **kwargs):
+        """Return an HTML element with a button that would run the given
         :class:`InstanceAction <lino.core.requests.InstanceAction>`
-        ``ai`` on the client.
+        ``ia`` on the client.
 
         """
-        # logger.info("20141106 %s", ai.instance)
+        # logger.info("20200417 %s", ia)
         return self.renderer.row_action_button(
-            ai.instance, self, ai.bound_action, *args, **kw)
+            ia.instance, self, ia.bound_action, *args, **kwargs)
 
     def action_button(self, ba, obj, *args, **kwargs):
         """Returns the HTML of an action link which will run the specified
