@@ -1,12 +1,10 @@
     # -*- coding: UTF-8 -*-
-# Copyright 2012-2018 Rumma & Ko Ltd
+# Copyright 2012-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """
 Defines the classes used for defining workflows.  See
 :doc:`/dev/workflows`.
 """
-from builtins import str
-import six
 
 from django.utils.functional import Promise
 from django.utils.translation import ugettext_lazy as _
@@ -16,13 +14,6 @@ from django.db import models
 from lino.core import actions
 from lino.core import choicelists
 from lino.core.utils import models_by_base
-
-# from django.utils.encoding import force_text
-# from django.utils.functional import lazy
-# def _string_format(tpl, *args, **kwargs):
-#     args = tuple([force_text(s) for s in args])
-#     return tpl.format(*args, **kwargs)
-# string_format = lazy(_string_format, basestring)
 
 
 class State(choicelists.Choice):
@@ -38,16 +29,17 @@ class State(choicelists.Choice):
     """
 
     button_text = None
+    transition = None  # how to get into this state
 
     def add_transition(self, label=None,
                        help_text=None,
-                       notify=False,
+                       # notify=False,
                        name=None,
                        #~ icon_file=None,
                        icon_name=None,
                        debug_permissions=None,
                        required_states=None,
-                       required_roles=None):
+                       required_roles=None, **kwargs):
         """
         Declare an transition action which makes an object enter this
         state.
@@ -61,68 +53,73 @@ class State(choicelists.Choice):
         the transition action later by another action.  Otherwise Lino
         will generate an internal name.
         """
+        if self.transition is not None:
+            raise Exception("Tried to add another transition to {}".format(self))
+
         workflow_actions = self.choicelist.workflow_actions
         i = len(workflow_actions)
-        
-        kw = dict()
+
+        # kwargs = dict()
         if help_text is not None:
-            kw.update(help_text=help_text)
+            kwargs.update(help_text=help_text)
         if icon_name is not None:
-            kw.update(icon_name=icon_name)
-        kw.update(sort_index=200 + i)
-        if label and not isinstance(label, (six.string_types, Promise)):
+            kwargs.update(icon_name=icon_name)
+        kwargs.update(sort_index=200 + i)
+        if label and not isinstance(label, (str, Promise)):
             # it's a subclass of ChangeStateAction
             assert isinstance(label, type)
             assert issubclass(label, ChangeStateAction)
             if name is None:
                 name = label.action_name
             if required_roles:
-                raise Exception(
-                    "Cannot specify requirements when using your own class")
+                kwargs.update(required_roles=required_roles)
+                # raise Exception(
+                #     "Cannot specify requirements when using custom action")
             if required_states:
-                raise Exception(
-                    "Cannot specify requirements when using your own class")
-            if notify:
-                raise NotImplementedError(
-                    "Cannot specify notify=True when using your own class")
-            if debug_permissions:
-                raise Exception(
-                    "Cannot specify debug_permissions "
-                    "when using your own class")
+                kwargs.update(required_states=required_states)
+                # raise Exception(
+                #     "Cannot specify requirements when using custom action")
+            # if notify:
+            #     raise NotImplementedError(
+            #         "Cannot specify notify when using custom action")
+            # if debug_permissions:
+            #     kwargs.update(debug_permissions=debug_permissions)
+                # raise Exception(
+                #     "Cannot specify debug_permissions when using custom action")
             for a in workflow_actions:
                 if isinstance(a, label):
-                    raise Exception("Duplicate transition label %s" % a)
-            a = label(self, **kw)
+                    raise Exception("Duplicate transition class %s" % a)
+            a = label(self, **kwargs)
         else:
             if required_states:
-                kw.update(required_states=required_states)
-            if notify:
-                raise NotImplementedError(
-                    "Since 20160718 you must write your own action "
-                    "class if you want it to be notifying.")
-                # cl = NotifyingChangeStateAction
-            else:
-                cl = ChangeStateAction
+                kwargs.update(required_states=required_states)
+            # if notify:
+            #     raise NotImplementedError(
+            #         "Since 20160718 you must write your own action "
+            #         "class if you want it to be notifying.")
+            #     # cl = NotifyingChangeStateAction
+            # else:
+            # cl = ChangeStateAction
             if label is None:
                 label = self.button_text or self.text
-            a = cl(self, required_roles, label=label, **kw)
-            if debug_permissions:
-                a.debug_permissions = debug_permissions
+            a = ChangeStateAction(self, required_roles, label=label, **kwargs)
 
         if name is None:
-            #~ name = 'mark_' + self.value
             name = 'wf' + str(i + 1)
-        
+
         for x in workflow_actions:
             if x.action_name == name:
                 raise Exception(
                     "Duplicate transition name {0}".format(name))
-    
+
+        if debug_permissions:
+            a.debug_permissions = debug_permissions
+
         a.attach_to_workflow(self.choicelist, name)
-
         self.choicelist.workflow_actions = workflow_actions + [a]
+        self.transition = a
 
-    # add_workflow = add_transition  # backwards compat
+
 
 
 class Workflow(choicelists.ChoiceList):
@@ -223,7 +220,9 @@ class Workflow(choicelists.ChoiceList):
     def clear_transitions(cls):
         assert cls._state_to_disabled_actions is None
         cls.workflow_actions = []
-        
+        for st in cls.get_list_items():
+            st.transition = None
+
 
 class ChangeStateAction(actions.Action):
     """
@@ -260,7 +259,7 @@ class ChangeStateAction(actions.Action):
         #~ logger.info('20120930 ChangeStateAction %s %s', actor,target_state)
         if self.label is None:
             self.label = target_state.text
-            
+
         if self.button_text is None:
             self.button_text = target_state.button_text
 
@@ -297,7 +296,7 @@ class ChangeStateAction(actions.Action):
 
         """
         pass
-    
+
     def execute(self, ar, obj):
         def doit(ar):
             self.before_execute(ar, obj)
@@ -305,13 +304,12 @@ class ChangeStateAction(actions.Action):
                 ar,
                 ar.actor.workflow_state_field,
                 self.target_state)
-            
-        
-        
+
+
+
         if self.confirmation_msg_template is None:
             doit(ar)
         else:
             ctx = self.get_confirmation_msg_context(ar, obj)
             msg = self.confirmation_msg_template.format(**ctx)
             ar.confirm(doit, msg, _("Are you sure?"))
-

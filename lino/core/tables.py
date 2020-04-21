@@ -18,8 +18,8 @@ from django.utils.translation import ugettext_lazy as _
 from lino.core import actors
 from lino.core import actions
 from lino.core import fields
-from lino.core.tablerequest import TableRequest
 from lino.core.utils import resolve_fields_list
+from lino.core.tablerequest import TableRequest
 
 
 class InvalidRequest(Exception):

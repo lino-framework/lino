@@ -938,11 +938,11 @@ class ChoiceListField(models.CharField):
     def get_prep_value(self, value):
         """
         Excerpt from `Django docs
-        <https://docs.djangoproject.com/en/1.11/howto/custom-model-fields/#converting-python-objects-to-query-values>`__:
+        <https://docs.djangoproject.com/en/3.0/howto/custom-model-fields/#converting-python-objects-to-query-values>`__:
         "If you override `to_python()
-        <https://docs.djangoproject.com/en/1.11/ref/models/fields/#django.db.models.Field.to_python>`__
+        <https://docs.djangoproject.com/en/3.0/ref/models/fields/#django.db.models.Field.to_python>`__
         you also have to override `get_prep_value()
-        <https://docs.djangoproject.com/en/1.11/ref/models/fields/#django.db.models.Field.get_prep_value>`__
+        <https://docs.djangoproject.com/en/3.0/ref/models/fields/#django.db.models.Field.get_prep_value>`__
         to convert Python objects back to query values."
         """
         #~ if self.attname == 'query_register':

@@ -1,10 +1,9 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2019 Rumma & Ko Ltd
+# Copyright 2009-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """Callback handling
 """
 
-from __future__ import unicode_literals, print_function
 from builtins import object
 
 import logging; logger = logging.getLogger(__name__)
@@ -16,7 +15,7 @@ from os.path import join, dirname, exists
 # from multiprocessing import Process, Manager
 
 from django.conf import settings
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import force_text
 
 from etgen.html import tostring

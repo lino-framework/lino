@@ -49,7 +49,6 @@ from lino.utils import curry
 from lino.utils import iif
 from lino.utils.format_date import fds
 from lino.core.requests import PhantomRow
-from lino.core.gfks import GenericForeignKey, GenericRel
 from lino.utils import IncompleteDate
 
 
@@ -477,6 +476,7 @@ class DisabledFieldsStoreField(SpecialStoreField):
     name = str('disabled_fields')
 
     def __init__(self, store):
+        from lino.core.gfks import GenericForeignKey
         SpecialStoreField.__init__(self, store)
         self.always_disabled = set()
         for f in self.store.all_fields:
@@ -889,11 +889,12 @@ def create_atomizer(holder, fld, name):
         return OneToOneRelStoreField(fld, name)
 
     if settings.SITE.is_installed('contenttypes'):
+        from lino.core.gfks import GenericForeignKey, GenericRel
+        from lino.modlib.gfks.fields import GenericForeignKeyIdField
         if isinstance(fld, GenericForeignKey):
             return GenericForeignKeyField(fld, name)
         if isinstance(fld, GenericRel):
             return GenericRelField(fld, name)
-        from lino.modlib.gfks.fields import GenericForeignKeyIdField
         if isinstance(fld, GenericForeignKeyIdField):
             return ComboStoreField(fld, name)
 

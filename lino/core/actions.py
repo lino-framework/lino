@@ -507,7 +507,7 @@ class Action(Parametrizable, Permittable):
     hide_virtual_fields = False
     required_states = None
 
-    def __init__(self, label=None, **kw):
+    def __init__(self, label=None, **kwargs):
         if label is not None:
             self.label = label
 
@@ -515,7 +515,7 @@ class Action(Parametrizable, Permittable):
         #     self.show_in_bbar = False
         #     # see ticket #105
 
-        for k, v in list(kw.items()):
+        for k, v in kwargs.items():
             if not hasattr(self, k):
                 raise Exception("Invalid action keyword %s" % k)
             setattr(self, k, v)
