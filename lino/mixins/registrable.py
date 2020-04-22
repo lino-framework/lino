@@ -58,13 +58,13 @@ class Registrable(model.Model):
 
     """
     Base class to anything that may be "registered" and "deregistered"
-    (e.g. Invoices, Vouchers, Declarations, Reservations,...).
+    (e.g. Invoices, Vouchers, Declarations, ...).
     "Registered" means "this object has been taken account of".
     Registered objects are not editable.
 
     .. attribute:: state
 
-        The ChoiceList of this  field must have at least two items
+        The ChoiceList of this field must have at least two items
         named "draft" and "registered".
         There may be additional states.
         Every state must have an extra attribute "is_editable".
@@ -84,6 +84,9 @@ class Registrable(model.Model):
         if cls.workflow_state_field is None:
             raise Exception("{} has no workflow_state_field".format(cls))
         chl = cls.workflow_state_field.choicelist
+        for k in ('draft', 'registered'):
+            if not hasattr(chl, k):
+                raise Exception("{} has no value '{}'".format(chl, k))
         ic = chl.item_class
         # if not issubclass(chl.item_class, RegistrableState):
         #     raise Exception("Invalid choicelist for {} state".format(cls))
