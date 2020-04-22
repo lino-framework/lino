@@ -839,12 +839,11 @@ class CharFieldElement(FieldElement):
 
     def get_field_options(self, **kw):
         kw = FieldElement.get_field_options(self, **kw)
-        kw.update(maxLength=self.field.max_length)
         if self.field.max_length is not None:
+            kw.update(maxLength=self.field.max_length)
             if self.field.max_length <= 10:
                 kw.update(boxMinWidth=js_code('Lino.chars2width(%d)' %
                                               self.field.max_length))
-
         for lino_name, extjs_name in (
                 ('regex', 'regex'),
                 ('mask_re', 'maskRe'),
