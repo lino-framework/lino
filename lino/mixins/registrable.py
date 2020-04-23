@@ -36,24 +36,33 @@ class Registrable(model.Model):
 
     """
 
-    Base class to anything that may be "registered" and "deregistered" (e.g.
-    Invoices, Vouchers, Declarations, Reservations, ...). "Registered" means
-    "this object has been taken account of". Registered objects are not
-    editable.
+    Base class to anything that may be "registered" and "deregistered", where
+    "registered" means "this object has been taken account of".
+
+    For example, when a :term:`ledgervoucher` is registered, its associated
+    :term:`ledger movements <ledger movement>` have been generated.
+    Deregistering a voucher will first delete these movements.
+
+    Registered objects are usually not editable, but this readonlyness is
+    usually limited to certain fields.
+
+    :class:`lino_xl.lib.cal.Reservation` is an example of a registrable that is
+    not a ledger voucher.
+
+    Subclasses must themselves define a field :attr:`state`.
 
     .. attribute:: state
 
         The workflow state field.
 
-        Subclasses must themselves define a field :attr:`state`, which must be a
-        choicelist field, and the choices representing these states must be
-        subclasses of :class:`RegistrableState`.
+        This field must be a choicelist field, and the choices representing
+        these states must be subclasses of :class:`RegistrableState`.
 
         There must be one state named "draft", which will be set e.g. after
         duplicating a registered object.
 
-        There is no need to have a state named "registered".
-        Actually "registered" means "in a non editable state".
+        There is no need to have a state named "registered". Actually
+        "registered" means "in a non editable state".
 
     """
     class Meta(object):
