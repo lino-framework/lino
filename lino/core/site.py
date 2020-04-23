@@ -2062,10 +2062,10 @@ class Site(object):
             cache_root = os.environ.get('LINO_CACHE_ROOT', None)
             if cache_root:
                 self.django_settings.update(
-                    STATIC_ROOT=Path(cache_root).child('collectstatic'))
+                    STATIC_ROOT=Path(cache_root).child('static_root'))
             else:
                 self.django_settings.update(
-                    STATIC_ROOT=self.cache_dir.child('static'))
+                    STATIC_ROOT=self.cache_dir.child('static_root'))
         if not self.django_settings.get('STATIC_URL', False):
             self.update_settings(STATIC_URL='/static/')
 
@@ -2191,16 +2191,16 @@ class Site(object):
 
         fixture_dirs = list(self.django_settings.get('FIXTURE_DIRS', []))
         locale_paths = list(self.django_settings.get('LOCALE_PATHS', []))
-        sfd = list(self.django_settings.get('STATICFILES_DIRS', []))
+        # sfd = list(self.django_settings.get('STATICFILES_DIRS', []))
         # sfd.append(self.cache_dir.child('genjs'))
         collect_settings_subdirs(fixture_dirs, 'fixtures', 1)
         collect_settings_subdirs(locale_paths, 'locale')
-        collect_settings_subdirs(sfd, 'static')
+        # collect_settings_subdirs(sfd, 'static')
         self.update_settings(FIXTURE_DIRS=tuple(fixture_dirs))
         self.update_settings(LOCALE_PATHS=tuple(locale_paths))
-        root = self.django_settings['STATIC_ROOT']
-        sfd = tuple([x for x in sfd if x != root])
-        self.update_settings(STATICFILES_DIRS=sfd)
+        # root = self.django_settings['STATIC_ROOT']
+        # sfd = tuple([x for x in sfd if x != root])
+        # self.update_settings(STATICFILES_DIRS=sfd)
 
         # print(20150331, self.django_settings['FIXTURE_DIRS'])
 
@@ -2414,7 +2414,7 @@ class Site(object):
 
     def get_settings_subdirs(self, subdir_name):
         """Yield all (existing) directories named `subdir_name` of this Site's
-        project directory and it's inherited project directories.
+        project directory and its inherited project directories.
 
         """
 
