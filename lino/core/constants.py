@@ -1,11 +1,8 @@
-# Copyright 2009-2016 Rumma & Ko Ltd
+# Copyright 2009-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """Defines explicit code names for URL parameters
 
 """
-# import six
-# str = six.text_type
-from builtins import str
 
 _handle_attr_name = '_lino_ui_handle'
 

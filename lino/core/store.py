@@ -941,10 +941,17 @@ class ParameterStore(BaseStore):
         self.param_fields = []
 
         holder = params_layout_handle.layout.get_chooser_holder()
+        # debug = False
         for pf in params_layout_handle._store_fields:
             sf = create_atomizer(holder, pf, pf.name)
             if sf is not None:
+                # if "__" in pf.name:
+                #     print("20200423 ParameterStore", pf.name, sf)
+                #     debug  = True
                 self.param_fields.append(sf)
+
+        # if debug:
+        #     print("20200423 ParameterStore2", self.param_fields)
 
         self.param_fields = tuple(self.param_fields)
         self.url_param = url_param
@@ -955,7 +962,10 @@ class ParameterStore(BaseStore):
             self.__class__.__name__, self.params_layout_handle)
 
     def pv2dict(self, ar, pv, **d):
+        # debug = False
         for fld in self.param_fields:
+            # if "__" in fld.name:
+            #     debug = True
             v = pv.get(fld.name, None)
             fld.value2dict(ar, v, d, None)
             # try:
@@ -963,6 +973,8 @@ class ParameterStore(BaseStore):
             #     fld.value2dict(ar, v, d, None)
             # except Exception as e:
             #     raise e.__class__("{} : {}".format(fld, e))
+        # if debug:
+        #     print("20200423", d)
         return d
 
     def pv2list(self, ar, pv, **d):  # new since 20140930
@@ -997,7 +1009,8 @@ class ParameterStore(BaseStore):
                     "%s expects a list of %d values but got %d: %s" % (
                         self, len(self.param_fields), len(pv), pv))
             for i, f in enumerate(self.param_fields):
-                kw[f.field.name] = parse(f, pv[i])
+                # kw[f.field.name] = parse(f, pv[i])
+                kw[f.name] = parse(f, pv[i])  # 20200423 support remote fields in parameters
         elif self.url_param == "fv":
             # try to get data from dict style in main body of request
             for i, f in enumerate(self.param_fields):

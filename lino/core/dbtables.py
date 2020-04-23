@@ -597,6 +597,8 @@ class Table(AbstractTable):
             spv = dict()
             for k in self.simple_parameters:
                 v = getattr(ar.param_values, k)
+                # if "room" in k:
+                #     print("20200423", k, v, ar.param_values.keys())
                 if v is not None:
                     spv[k] = v
             qs = self.model.add_param_filter(qs, **spv)

@@ -294,6 +294,7 @@ class RemoteField(FakeField):
         self.func = getter
         self.name = name
         self.attname = name
+        # self.db_column = name  # 20200423
         self.field = fld
         self.verbose_name = fld.verbose_name
         self.help_text = fld.help_text

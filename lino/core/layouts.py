@@ -716,6 +716,8 @@ class ParamsLayout(BaseLayout):
         de = self._datasource.get_param_elem(name)
         if de is None:
             de = self._datasource.get_data_elem(name)
+        # if "__" in name:
+        #     print("20200423 ParamsLayout.get_data_elem()", name, de)
         return de
 
     def setup_handle(self, lh):

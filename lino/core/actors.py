@@ -962,6 +962,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                 if db_field is None:
                     raise Exception("get_simple_parameters() returned invalid name '{}'".format(name))
                 cls.parameters[name] = dbfield2params_field(db_field)
+                # if "__" in name:
+                #     print("20200423", cls.parameters)
         # if len(cls.parameters) == 0:
         #     cls.parameters = None # backwards compatibility
 
