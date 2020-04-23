@@ -15,7 +15,7 @@ Defines the :class:`Site` class. For an overview see
 
 import os
 import sys
-from os.path import normpath, dirname, join, isdir, relpath, exists
+from os.path import normpath, dirname, join, isdir, relpath, exists, abspath
 import inspect
 import datetime
 import warnings
@@ -49,6 +49,11 @@ from importlib import import_module, reload
 import re
 
 # _INSTANCES = []
+
+def classdir(cl):
+    # return the full absolute resolved path name of the directory containing
+    # the file that defines class cl.
+    return abspath(dirname(inspect.getfile(cl)))
 
 def html2text(html):
     text_maker = HTML2Text()
@@ -2146,7 +2151,6 @@ class Site(object):
 
         def collect_settings_subdirs(lst, name, max_count=None):
             def add(p):
-                p = p.resolve()
                 p = p.replace(os.sep, "/")
                 if p not in lst:
                     lst.append(p)
@@ -2413,9 +2417,9 @@ class Site(object):
         project directory and it's inherited project directories.
 
         """
+
         # if local settings.py doesn't subclass Site:
-        if self.project_dir != normpath(dirname(
-                inspect.getfile(self.__class__))):
+        if self.project_dir != classdir(self.__class__):
             pth = join(self.project_dir, subdir_name)
             if isdir(pth):
                 yield pth
@@ -2423,7 +2427,7 @@ class Site(object):
         for cl in self.__class__.__mro__:
             #~ logger.info("20130109 inspecting class %s",cl)
             if cl is not object and not inspect.isbuiltin(cl):
-                pth = join(dirname(inspect.getfile(cl)), subdir_name)
+                pth = join(classdir(cl), subdir_name)
                 if isdir(pth):
                     yield pth
 
