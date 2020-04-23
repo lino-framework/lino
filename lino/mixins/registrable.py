@@ -39,7 +39,7 @@ class Registrable(model.Model):
     Base class to anything that may be "registered" and "deregistered", where
     "registered" means "this object has been taken account of".
 
-    For example, when a :term:`ledgervoucher` is registered, its associated
+    For example, when a :term:`voucher` is registered, its associated
     :term:`ledger movements <ledger movement>` have been generated.
     Deregistering a voucher will first delete these movements.
 

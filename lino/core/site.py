@@ -2146,6 +2146,7 @@ class Site(object):
 
         def collect_settings_subdirs(lst, name, max_count=None):
             def add(p):
+                p = p.resolve()
                 p = p.replace(os.sep, "/")
                 if p not in lst:
                     lst.append(p)
