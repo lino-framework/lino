@@ -16,35 +16,13 @@ from lino.core.exceptions import ChangedAPI
 from lino.core.workflows import State
 
 
-class ToggleState(Action):
-    # show_in_bbar = False
-    # button_text = _("Toggle state")
-    # sort_index = 52
-    label = _("Toggle state")
-    # action_name = "changemystate"
-    button_text = "⏼" # 23FC Toggle power
-
-    def run_from_ui(self, ar, **kw):
-        obj = ar.selected_rows[0]
-        fld = ar.actor.workflow_state_field
-        chl = fld.choicelist  # VoucherStates
-        # print("20190722", obj)
-        if obj.state == chl.draft:
-            obj.set_workflow_state(ar, fld, chl.registered)
-        elif obj.state == chl.registered:
-            obj.set_workflow_state(ar, fld, chl.draft)
-        else:
-            raise Warning(_("Cannot toggle from state {}").format(obj.state))
-        # obj.full_clean()
-        # obj.save()
-        ar.set_response(refresh=True)
-
-
-
 
 class RegistrableState(State):
     """
-    Base class
+
+    Base class for the choices of the choicelist that defines the :attr:`state`
+    field of any :class:`Registrable`.
+
     """
     is_editable = True
     """
@@ -57,24 +35,31 @@ class RegistrableState(State):
 class Registrable(model.Model):
 
     """
-    Base class to anything that may be "registered" and "deregistered"
-    (e.g. Invoices, Vouchers, Declarations, ...).
-    "Registered" means "this object has been taken account of".
-    Registered objects are not editable.
+
+    Base class to anything that may be "registered" and "deregistered" (e.g.
+    Invoices, Vouchers, Declarations, Reservations, ...). "Registered" means
+    "this object has been taken account of". Registered objects are not
+    editable.
 
     .. attribute:: state
 
-        The ChoiceList of this field must have at least two items
-        named "draft" and "registered".
-        There may be additional states.
-        Every state must have an extra attribute "is_editable".
+        The workflow state field.
+
+        Subclasses must themselves define a field :attr:`state`, which must be a
+        choicelist field, and the choices representing these states must be
+        subclasses of :class:`RegistrableState`.
+
+        There must be one state named "draft", which will be set e.g. after
+        duplicating a registered object.
+
+        There is no need to have a state named "registered".
+        Actually "registered" means "in a non editable state".
 
     """
     class Meta(object):
         abstract = True
 
     workflow_state_field = 'state'
-    toggle_state = ToggleState()
 
     _registrable_fields = None
 
@@ -84,12 +69,12 @@ class Registrable(model.Model):
         if cls.workflow_state_field is None:
             raise Exception("{} has no workflow_state_field".format(cls))
         chl = cls.workflow_state_field.choicelist
-        for k in ('draft', 'registered'):
-            if not hasattr(chl, k):
-                raise Exception("{} has no value '{}'".format(chl, k))
+        # for k in ('draft', 'registered'):
+        #     if not hasattr(chl, k):
+        #         raise Exception("{} has no value '{}'".format(chl, k))
         ic = chl.item_class
-        # if not issubclass(chl.item_class, RegistrableState):
-        #     raise Exception("Invalid choicelist for {} state".format(cls))
+        if not issubclass(chl.item_class, RegistrableState):
+            raise Exception("Invalid choicelist {} for {} state".format(chl, cls))
         k = 'is_editable'
         if not hasattr(ic, k):
             fld = getattr(chl, k, None)
@@ -98,14 +83,6 @@ class Registrable(model.Model):
                     "The workflow state field for {} uses {} which "
                     "has no attribute {}".format(cls, ic, k))
         cls._registrable_fields = set(cls.get_registrable_fields(site))
-
-    @classmethod
-    def get_actions_hotkeys(cls):
-        return [{'key': 'x',
-                'ctrl': True,
-                'shift': False,
-                'ba': 'toggle_state'}]
-
 
     @classmethod
     def get_registrable_fields(cls, site):
