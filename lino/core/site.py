@@ -53,7 +53,7 @@ import re
 def classdir(cl):
     # return the full absolute resolved path name of the directory containing
     # the file that defines class cl.
-    return abspath(dirname(inspect.getfile(cl)))
+    return realpath(dirname(inspect.getfile(cl)))
 
 def html2text(html):
     text_maker = HTML2Text()
