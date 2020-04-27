@@ -291,6 +291,8 @@ def choices_for_field(ar, holder, field):
 
     if isinstance(field, fields.RemoteField):
         field = field.field
+        if isinstance(field, fields.VirtualField):  # 20200425
+            field = field.return_type
 
     if isinstance(field, models.ForeignKey):
         m = field.remote_field.model

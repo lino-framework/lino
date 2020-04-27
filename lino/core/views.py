@@ -1,10 +1,8 @@
-# Copyright 2010-2015 Rumma & Ko Ltd
+# Copyright 2010-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """Utility functions used by :mod:`lino.modlib.extjs.views`.
 
 """
-
-from __future__ import unicode_literals
 
 from django.conf import settings
 from django.db import models

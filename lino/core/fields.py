@@ -24,8 +24,8 @@ from lino.core.exceptions import ChangedAPI
 from lino.utils import get_class_attr
 from lino.utils import IncompleteDate
 from lino.utils import quantities
+from lino.utils import choosers
 from lino.utils.quantities import Duration
-
 
 def validate_incomplete_date(value):
     """Raise ValidationError if user enters e.g. a date 30.02.2009.
@@ -219,6 +219,7 @@ class FakeField(object):
     default = NOT_PROVIDED
     generate_reverse_relation = False  # needed when AFTER17
     remote_field = None
+    blank = True  # 20200425
 
     wildcard_data_elem = False
     """Whether to consider this field as wildcard data element.
@@ -284,7 +285,7 @@ class RemoteField(FakeField):
 
     .. attribute:: field
 
-        The bottom-level field object.
+        The bottom-level (leaf) field object.
 
     """
     #~ primary_key = False
@@ -313,8 +314,20 @@ class RemoteField(FakeField):
         #~ print 20120424, self.name
         #~ settings.SITE.register_virtual_field(self)
 
-        if isinstance(fld, models.ForeignKey) or (isinstance(fld, VirtualField) and isinstance(fld.return_type, models.ForeignKey)):
-            self.remote_field = self.field.remote_field
+        # The remote_field of a FK field has nothing to do with our RemoteField,
+        # it is set by Django on each FK field and points to
+
+        if isinstance(fld, VirtualField) and isinstance(fld.return_type, models.ForeignKey):
+            fld.lino_resolve_type()  # 20200425
+            fk = fld.return_type
+        elif isinstance(fld, models.ForeignKey):
+            fk = fld
+        else:
+            fk = None
+        if fk is not None:
+            # if not fk.remote_field:
+            #     raise Exception("20200425 {} has no remote_field".format(fk))
+            self.remote_field = fk.remote_field
             from lino.core import store
             store.get_atomizer(self.remote_field, self, name)
 
@@ -345,7 +358,7 @@ class DisplayField(FakeField):
     translatable text or a :mod:`HTML element <etgen.html>`.
     """
     choices = None
-    blank = True
+    blank = True  # 20200425
     drop_zone = None
     max_length = None
 
@@ -357,8 +370,9 @@ class DisplayField(FakeField):
     # using a DisplayField as return_type of a VirtualField
 
     def to_python(self, *args, **kw):
-        raise NotImplementedError(
-            "%s.to_python(%s,%s)", (self.name, args, kw))
+        return None
+        # raise NotImplementedError(
+        #     "{}.to_python({},{})".format(self.name, args, kw))
 
     def save_form_data(self, *args, **kw):
         raise NotImplementedError
@@ -400,6 +414,11 @@ class HtmlBox(DisplayField):
 
 #     def __repr__(self):
 #         return "<{0}>.{1}".format(repr(self.instance), self.vf.name)
+
+class VirtualModel:
+    def __init__(self, model):
+        self.wrapped_model = model
+        self._meta = model._meta
 
 VFIELD_ATTRIBS = frozenset('''to_python choices save_form_data
   value_to_string max_length remote_field
@@ -475,6 +494,9 @@ class VirtualField(FakeField):
         if isinstance(f, models.ForeignKey):
             f.remote_field.model = resolve_model(f.remote_field.model)
             set_default_verbose_name(f)
+            self.get_lookup = f.remote_field.get_lookup  # 20200425
+            self.get_path_info = f.remote_field.get_path_info  # 20200425
+            self.remote_field = f.remote_field
 
         for k in VFIELD_ATTRIBS:
             setattr(self, k, getattr(f, k, None))
@@ -491,8 +513,6 @@ class VirtualField(FakeField):
         from lino.core import store
         store.get_atomizer(self.model, self, self.name)
 
-
-
         # print("20181023 Done: lino_resolve_type() for {}".format(self))
 
 
@@ -503,6 +523,11 @@ class VirtualField(FakeField):
         self.model = model
         self.name = name
         self.attname = name
+        if hasattr(self.return_type, 'model'):
+            # logger.info("20200425 return_type for virtual field %s has a model", self)
+            return
+        self.return_type.model = VirtualModel(model)
+        self.return_type.column = None
 
         # if name == "overview":
         #     print("20181022", self, self.verbose_name)
@@ -1250,50 +1275,6 @@ def pointer_factory(cls, othermodel, *args, **kw):
     return cls(othermodel, *args, **kw)
 
 
-
-def unused_get_data_elem_from_model(cls, name):
-
-    """
-
-    Return the named data element from model if it exists. This can be a
-    database field, a :class:`lino.core.fields.RemoteField`, a
-    :class:`lino.core.fields.VirtualField` or a Django-style virtual field
-    (GenericForeignKey).
-
-    Works for edge cases like ContentType (which is a pure Django model) or
-    lino_xl.lib.cal.Day (which is not a Django model at all)
-
-    """
-    #~ logger.info("20120202 get_data_elem %r,%r",model,name)
-
-    for m in cls.mro():  # __mro__:
-        if issubclass(m, models.Model):
-
-            if not name.startswith('__'):
-                rf = make_remote_field(cls, name)
-                if rf:
-                    return rf
-            try:
-                return cls._meta.get_field(name)
-            except models.FieldDoesNotExist:
-                pass
-
-            for vf in cls._meta.private_fields:
-                if vf.name == name:
-                    return vf
-
-        elif issubclass(m, TableRow):
-
-            de = m.get_data_elem(name)
-            if de is not None:
-                return de
-
-        de = getattr(m, name, None)
-        if de is not None:
-            return de
-
-    # return get_class_attr(cls, name)
-
 def make_remote_field(model, name):
     parts = name.split('__')
     if len(parts) == 1:
@@ -1305,6 +1286,7 @@ def make_remote_field(model, name):
     cls = model
     field_chain = []
     editable = False
+    leaf_chooser = None
     for n in parts:
         if model is None:
             raise Exception(
@@ -1322,18 +1304,25 @@ def make_remote_field(model, name):
             raise Exception(
                 "Invalid RemoteField %s.%s (no field %s in %s)" %
                 (full_model_name(model), name, n, full_model_name(model)))
+
         # make sure that the atomizer gets created.
         store.get_atomizer(model, fld, fld.name)
+
+        if isinstance(fld, VirtualField):
+            fld.lino_resolve_type()
+        leaf_chooser = choosers.check_for_chooser(model, fld)
+
         field_chain.append(fld)
         if isinstance(fld, models.OneToOneRel):
             editable = True
         if getattr(fld, 'remote_field', None):
             model = fld.remote_field.model
-        elif getattr(fld, 'rel', None):
-            raise Exception("20180712")
-            model = fld.rel.model
         else:
             model = None
+
+    if leaf_chooser is not None:
+        d = choosers.get_choosers_dict(cls)
+        d[name] = leaf_chooser
 
     def getter(obj, ar=None):
         try:
@@ -1355,7 +1344,9 @@ def make_remote_field(model, name):
             return None
 
     if not editable:
-        return RemoteField(getter, name, fld)
+        rf = RemoteField(getter, name, fld)
+        # choosers.check_for_chooser(model, rf)
+        return rf
 
     def setter(obj, value):
         # logger.info("20180712 %s setter() %s", name, value)
@@ -1398,4 +1389,6 @@ def make_remote_field(model, name):
                 return str(e)
             return False
 
-    return RemoteField(getter, name, fld, setter)
+    rf = RemoteField(getter, name, fld, setter)
+    # choosers.check_for_chooser(model, rf)
+    return rf

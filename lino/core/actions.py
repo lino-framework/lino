@@ -16,17 +16,14 @@ from django.utils.encoding import force_text
 from django.conf import settings
 from django.db import models
 
-from django.apps import apps
-
-get_models = apps.get_models
+from django.apps import apps ; get_models = apps.get_models
 
 from lino.core import constants
 from lino.core import layouts
 from lino.core import fields
 from lino.core import keyboard
 from lino.modlib.users.utils import get_user_profile
-from lino.utils.choosers import Chooser
-from lino.core.fields import set_default_verbose_name
+from lino.utils.choosers import check_for_chooser
 
 from .permissions import Permittable
 from .utils import obj2unicode
@@ -34,26 +31,6 @@ from .utils import resolve_model
 from .utils import navinfo
 from .utils import Parametrizable
 from .requests import InstanceAction
-
-
-def check_for_chooser(holder, field):
-    # holder is either a Model, an Actor or an Action.
-    if isinstance(field, fields.DummyField):
-        return
-    methname = field.name + "_choices"
-    m = getattr(holder, methname, None)
-    if m is not None:
-        ch = Chooser(holder, field, m)
-        d = holder.__dict__.get('_choosers_dict', None)
-        if d is None:
-            d = dict()
-            setattr(holder, '_choosers_dict', d)
-        if ch in d:
-            raise Exception("Redefinition of chooser %s" % field)
-        d[field.name] = ch
-    # if field.name == 'city':
-    #     logger.info("20140822 chooser for %s.%s", holder, field.name)
-
 
 def discover_choosers():
     logger.debug("Discovering choosers for model fields...")
@@ -138,7 +115,7 @@ def setup_params_choosers(self):
                 msg = "Invalid target %s in parameter {} of {}".format(
                     k, self)
                 fld.remote_field.model = resolve_model(fld.remote_field.model, strict=msg)
-                set_default_verbose_name(fld)
+                fields.set_default_verbose_name(fld)
 
             check_for_chooser(self, fld)
 

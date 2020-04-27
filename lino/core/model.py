@@ -477,6 +477,7 @@ class Model(models.Model, fields.TableRow):
         <lino_xl.lib.deploy.desktop.DeploymentsByTicket>`, :mod:`lino_book.projects.min3.lib.contacts`.
 
         """
+        # print("20200425", kwargs)
         return qs.filter(**kwargs)
         # if len(kwargs):
         #     raise Exception(
@@ -974,6 +975,8 @@ class Model(models.Model, fields.TableRow):
     @classmethod
     def get_chooser_for_field(cls, fieldname):
         d = getattr(cls, '_choosers_dict', {})
+        # if fieldname.endswith("__municipality"):
+        #     print("20200425 Model.get_chooser_for_field", cls, fieldname, d)
         return d.get(fieldname, None)
 
     @classmethod

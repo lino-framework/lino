@@ -1,228 +1,20 @@
-# Copyright 2009-2018 Rumma & Ko Ltd
+# Copyright 2009-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Defines the :class:`Instantiator` class and some other utilities
 used for generating database objects in :ref:`python fixtures <dpy>`.
 
-Example values:
-
->>> import json
->>> s = '<a href="javascript:Lino.pcsw.Clients.detail.run(\
-null,{ &quot;record_id&quot;: 116 })">BASTIAENSEN Laurent (116)</a>'
->>> print(json.dumps(GFK_HACK.match(s).groups()))
-["pcsw.Clients", "116"]
-
->>> s = '<a href="javascript:Lino.cal.Guests.detail.run(\
-null,{ &quot;record_id&quot;: 6 })">Gast #6 ("Termin #51")</a>'
->>> print(json.dumps(GFK_HACK.match(s).groups()))
-["cal.Guests", "6"]
-
 """
 
-from __future__ import unicode_literals
-from __future__ import print_function
-from builtins import str
-import six
-from builtins import object
+# from builtins import object
 
-
-import re
-GFK_HACK = re.compile(r'^<a href="javascript:Lino\.(\w+\.\w+)\.detail\.run\(.*,\{ &quot;record_id&quot;: (\w+) \}\)">.*</a>$')
-
-import logging
-logger = logging.getLogger(__name__)
-
-
-import decimal
-import datetime
-from dateutil import parser as dateparser
-
-from django.db import models
-from django.conf import settings
+# import logging ; logger = logging.getLogger(__name__)
 
 from lino.core.utils import resolve_model, UnresolvedModel
-
-from lino.utils import i2d  # for backward compatibility of .py fixtures
 from lino.core.utils import obj2str
+from lino.utils import i2d  # for backward compatibility of .py fixtures
 from lino.core.fields import make_remote_field, RemoteField
-
-class DataError(Exception):
-    pass
-
-
-class Converter(object):
-
-    def __init__(self, field):
-        self.field = field
-
-    def convert(self, **kw):
-        return kw
-
-
-class LookupConverter(Converter):
-
-    """
-    A Converter for ForeignKey and ManyToManyField.
-    If the lookup_field is a BabelField, then it tries all available languages.
-    """
-
-    def __init__(self, field, lookup_field):
-        Converter.__init__(self, field)
-        model = field.remote_field.model
-        if lookup_field == 'pk':
-            self.lookup_field = model._meta.pk
-        else:
-            self.lookup_field = model._meta.get_field(lookup_field)
-        # self.lookup_field = lookup_field
-
-    def lookup(self, value, **kw):
-        model = self.field.remote_field.model
-        if isinstance(value, model):
-            return value
-        return model.lookup_or_create(self.lookup_field, value, **kw)
-
-        # if isinstance(self.lookup_field,babel.BabelCharField):
-            # flt  = babel.lookup_filter(self.lookup_field.name,value,**kw)
-        # else:
-            # kw[self.lookup_field.name] = value
-            # flt = models.Q(**kw)
-        # try:
-            # return model.objects.get(flt)
-        # except MultipleObjectsReturned,e:
-            # raise model.MultipleObjectsReturned("%s.objects lookup(%r) : %s" % (model.__name__,value,e))
-        # except model.DoesNotExist,e:
-            # raise model.DoesNotExist("%s.objects lookup(%r) : %s" % (model.__name__,value,e))
-
-
-class DateConverter(Converter):
-
-    def convert(self, **kw):
-        value = kw.get(self.field.name)
-        if not isinstance(value, datetime.date):
-            if value:  # keep out empty strings
-                if type(value) == int:
-                    value = str(value)
-                d = dateparser.parse(value)
-                d = datetime.date(d.year, d.month, d.day)
-                kw[self.field.name] = d
-        return kw
-
-
-class ChoiceConverter(Converter):
-
-    """Converter for :class:`ChoiceListField
-    <lino.core.choicelists.ChoiceListField>`.
-
-    If you specify a string, then it can be a *value* or a *name*.
-
-    """
-
-    def convert(self, **kw):
-        value = kw.get(self.field.name)
-
-        if value is not None:
-            if not isinstance(value, self.field.choicelist.item_class):
-                # kw[self.field.name] = self.field.choicelist.get_by_value(value)
-                kw[self.field.name] = self.field.choicelist.to_python(value)
-                # if self.field.name == "vat_class":
-                #     print("20191210 convert {} from {} --> {}".format(
-                #         value, self.field.choicelist.items_dict, kw[self.field.name]))
-        return kw
-
-
-class DecimalConverter(Converter):
-
-    def convert(self, **kw):
-        value = kw.get(self.field.name)
-        if value is not None:
-            if not isinstance(value, decimal.Decimal):
-                kw[self.field.name] = decimal.Decimal(value)
-        return kw
-
-
-class ForeignKeyConverter(LookupConverter):
-
-    """Converter for ForeignKey fields."""
-
-    def convert(self, **kw):
-        value = kw.get(self.field.name)
-        if value is not None:
-            if value == '':
-                value = None
-            else:
-                value = self.lookup(value)
-            kw[self.field.name] = value
-            # logger.info("20111213 %s %s -> %r", self.field.name,self.__class__,value)
-        return kw
-
-
-class GenericForeignKeyConverter(Converter):
-
-    """Converter for GenericForeignKey fields."""
-
-    def convert(self, **kw):
-        value = kw.get(self.field.name)
-        if value is not None:
-            if value == '':
-                value = None
-            else:
-                mo = GFK_HACK.match(value)
-                if mo is not None:
-                    actor = settings.SITE.models.resolve(mo.group(1))
-                    pk = mo.group(2)
-                    value = actor.get_row_by_pk(None, pk)
-                    # ct = ContentType.objects.get_for_model(actor.model)
-                    # value = self.lookup(value)
-                else:
-                    raise Exception("Could not parse %r" % value)
-            kw[self.field.name] = value
-        return kw
-
-
-class ManyToManyConverter(LookupConverter):
-
-    """Converter for ManyToMany fields."""
-    splitsep = None
-
-    # def lookup(self,value):
-        # model = self.field.remote_field.model
-        # try:
-            # return model.objects.get(
-              # **{self.lookup_field: value})
-        # except model.DoesNotExist,e:
-            # raise DataError("%s.objects.get(%r) : %s" % (
-              # model.__name__,value,e))
-
-    def convert(self, **kw):
-        values = kw.get(self.field.name)
-        if values is not None:
-            del kw[self.field.name]
-            l = [self.lookup(value)
-                 for value in values.split(self.splitsep)]
-            kw['_m2m'][self.field.name] = l
-        return kw
-
-
-def make_converter(f, lookup_fields={}):
-    from lino.core.gfks import GenericForeignKey
-
-    if isinstance(f, models.ForeignKey):
-        return ForeignKeyConverter(f, lookup_fields.get(f.name, "pk"))
-    if isinstance(f, GenericForeignKey):
-        return GenericForeignKeyConverter(f)
-    # if isinstance(f,fields.LinkedForeignKey):
-        # return LinkedForeignKeyConverter(f,lookup_fields.get(f.name,"pk"))
-    if isinstance(f, models.ManyToManyField):
-        return ManyToManyConverter(f, lookup_fields.get(f.name, "pk"))
-    if isinstance(f, models.DateField):
-        return DateConverter(f)
-    if isinstance(f, models.DecimalField):
-        return DecimalConverter(f)
-    from lino.core import choicelists
-    if isinstance(f, choicelists.ChoiceListField):
-        # if f.name == 'p_book':
-            # print "20131012 b", f
-        return ChoiceConverter(f)
+from lino.utils.choosers import make_converter
 
 
 class Instantiator(object):
@@ -246,7 +38,7 @@ class Instantiator(object):
         # if self.model._meta.pk is None:
             # raise Exception("Model %r is not installed (_meta.pk is None)." % self.model)
         # if type(fieldnames) == str:
-        if isinstance(fieldnames, six.string_types):
+        if isinstance(fieldnames, str):
             fieldnames = fieldnames.split()
         self.default_values = kw
         #self.fieldnames = fieldnames
@@ -312,7 +104,7 @@ class Instantiator(object):
         setters = []
         for i, v in enumerate(values):
             fld = self.fields[i]
-            if isinstance(v, six.string_types):
+            if isinstance(v, str):
                 v = v.strip()
                 if len(v) == 0:
                     continue

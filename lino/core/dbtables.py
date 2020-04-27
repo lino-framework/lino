@@ -594,6 +594,7 @@ class Table(AbstractTable):
                 qs = qs.exclude(**ar.exclude)
                 # qs = qs.exclude(ar.exclude)
 
+            # 20200425
             spv = dict()
             for k in self.simple_parameters:
                 v = getattr(ar.param_values, k)
@@ -602,6 +603,7 @@ class Table(AbstractTable):
                 if v is not None:
                     spv[k] = v
             qs = self.model.add_param_filter(qs, **spv)
+            # qs = self.model.add_param_filter(qs, **ar.param_values)
 
             if self.filter:
                 qs = qs.filter(self.filter)
