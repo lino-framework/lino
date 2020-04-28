@@ -16,6 +16,26 @@
 
 from atelier import sphinxconf
 
+
+from sphinx.ext import autosummary
+from typing import Any, Dict, List, Tuple
+
+# patch for autosummary. This version of import_by_name doesn't swallow the traceback
+# and imports only the first item prefixes
+def my_import_by_name(name: str, prefixes: List[str] = [None]) -> Tuple[str, Any, Any, str]:
+    """Import a Python object that has the given *name*, under one of the
+    *prefixes*.  The first name that succeeds is used.
+    """
+    for prefix in prefixes:
+        if prefix:
+            prefixed_name = '.'.join([prefix, name])
+        else:
+            prefixed_name = name
+        obj, parent, modname = autosummary._import_by_name(prefixed_name)
+        return prefixed_name, obj, parent, modname
+
+autosummary.import_by_name = my_import_by_name
+
 def configure(globals_dict, settings_module_name=None):
     """
     Same as :func:`atelier.sphinxconf.configure` but with an
