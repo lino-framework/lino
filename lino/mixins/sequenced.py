@@ -187,6 +187,8 @@ class Sequenced(Duplicable):
         Create a duplicate of this object and insert the new object
         below this one.
 
+        Implemented by :class:`DuplicateSequenced`
+
     .. attribute:: move_up
 
         Exchange the :attr:`seqno` of this item and the previous item.
@@ -221,24 +223,10 @@ class Sequenced(Duplicable):
     seqno = models.IntegerField(_("No."), blank=True, null=False)
 
     duplicate = DuplicateSequenced()
-    """The :class:`DuplicateSequenced` action for this object.
-
-    """
 
     move_up = MoveUp()
-    """The :class:`MoveUp` action on this object.
-
-    """
-
     move_down = MoveDown()
-    """The :class:`MoveDown` action on this object.
-
-    """
-
     move_by_n = MoveByN()
-    """The :class:`MoveByN` action on this object.
-
-    """
 
 
     def __str__(self):
@@ -352,8 +340,7 @@ Sequenced.set_widget_options('seqno', hide_sum=True)
 
 
 class Hierarchical(Duplicable):
-    """Abstract model mixin for things that have a "parent" and
-    "siblings".
+    """Model mixin for things that have a "parent" and "siblings".
 
     Pronounciation: [hai'ra:kikl]
 
