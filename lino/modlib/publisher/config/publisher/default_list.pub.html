@@ -3,7 +3,7 @@
     <p align="right">
         {{ tostring(ar.obj2html(obj, "Edit")) }}
         {# <a href="{{obj.publisher_url()}}">permalink</a> #}
-        <a href="oops">Sign in</a>
+        <a href="/login/">Sign in</a>
     </p>
 {%- endblock %}
 
@@ -14,7 +14,7 @@
 {%- block main %}
     <p>The following {{ model._meta.verbose_name_plural }} are available:
         {% for obj in model.objects.all() %}
-            {% include model.listTemplate %}
+            {% include model.list_template %}
         {% endfor %}
     </p>
 {%- endblock %}

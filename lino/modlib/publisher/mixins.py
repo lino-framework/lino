@@ -38,7 +38,7 @@ class Publishable(Printable):
     publisher_template = "publisher/default.pub.html"
     publisher_list_template = "publisher/default_list.pub.html"
 
-    listTemplate = "publisher/default_list_item.html"
+    list_template = "publisher/default_list_item.html"
 
     preview_publication = PreviewPublication()
 
