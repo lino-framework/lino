@@ -26,6 +26,11 @@ def configure(globals_dict, settings_module_name=None):
     if settings_module_name is not None:
         from lino import startup
         startup(settings_module_name)
+        
+        print("Lino and Django started using {}.".format(settings_module_name))
+        from django.conf import settings
+        print(settings.SITE.welcome_text())
+        # print(settings.SITE.diagnostic_report_rst())
 
         # os.environ['DJANGO_SETTINGS_MODULE'] = settings_module_name
 
