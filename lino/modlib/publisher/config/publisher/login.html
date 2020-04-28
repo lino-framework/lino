@@ -1,0 +1,17 @@
+{% extends "publisher/base.html" %}
+
+{% block css %}
+    {{ super() }}
+
+{% endblock %}
+
+{% block main %}
+    <h2> Login </h2>
+    <form method="post" target="/login/">
+      {{ csrf_token }}
+        <p><label for="username">Username :</label><input id="username" name="username"></p>
+        <p><label for="password">Password:</label><input id="password" type="password" name="password" placeholder="password"> <br/></p>
+        <button type="submit">Submit</button>
+    </form>
+{% endblock %}
+
