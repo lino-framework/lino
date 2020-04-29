@@ -16,11 +16,12 @@
 
 from atelier import sphinxconf
 
-
+import sys
 from sphinx.ext import autosummary
 from typing import Any, Dict, List, Tuple
 from sphinx.ext.autodoc.importer import import_module
-import sys
+from sphinx.util import logging ; logger = logging.getLogger(__name__)
+
 
 # patch for autosummary. This version of import_by_name doesn't swallow the traceback
 # and imports only the first item prefixes
@@ -73,7 +74,7 @@ def _import_by_name(name: str) -> Tuple[Any, Any, str]:
             try:
                 import_module(modname)
             except ImportError as e:
-                print("Failed to import {} : {}".format(modname, e))
+                logger.info("Failed to import %s : %s", modname, e)
                 continue
 
             if modname in sys.modules:
