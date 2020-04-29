@@ -155,7 +155,7 @@ class Plugin(object):
 
     url_prefix = None
     """
-    The url prefix under which this app should ask to
+    The url prefix under which this plugin should ask to
     install its url patterns.
     """
 

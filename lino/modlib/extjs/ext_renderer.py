@@ -364,9 +364,10 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
         d = dict(text=prepare_label(mi), handler=js_code(handler))
         if mi.bound_action and mi.bound_action.action.icon_name:
             d.update(iconCls='x-tbar-' + mi.bound_action.action.icon_name)
+        # if help_text:
+        #     d.update(tooltip=help_text, tooltipType='title')
+        # 20200429 seems that tooltipType 'title' doesn't work on menu items
         if settings.SITE.use_quicktips and help_text:
-            # d.update(tooltip=help_text)
-            # d.update(tooltipType='title')
             d.update(listeners=dict(render=js_code(
                 "Lino.quicktip_renderer(%s,%s)" % (
                     py2js('Foo'), py2js(help_text)))
@@ -795,6 +796,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
         )
         if a.key:
             kw.update(keycode=a.key.keycode)
+
         if a.help_text:
             # if a.__class__.__name__ in ('ChangePassword', 'SubmitDetail'):
             #     logger.info("20160829 a2btn() %r %r", a, str(a.help_text))
@@ -802,16 +804,16 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
             # A tooltip becomes visible only on buttons with an
             # iconCls. On a button which has only text we must use
             # Lino.quicktip_renderer. But I didn't find out why this
-            # doesn't seem to work.
-            if a.icon_name:
-                kw.update(tooltip=a.help_text)
-            elif settings.SITE.use_quicktips:
-                kw.update(listeners=dict(render=js_code(
-                    "Lino.quicktip_renderer('a2btn',%s)" %
-                    py2js(a.help_text))
-                ))
+                # doesn't seem to work.
+            kw.update(tooltip=a.help_text, tooltipType='title')
+            # if not a.icon_name:
+            #     kw.update(tooltipType='title')
+            #    kw.update(listen   ers=dict(render=js_code(
+            #        "Lino.quicktip_renderer('a2btn',%s)" %
+            #        py2js(a.help_text))
+            #    ))
         elif a.icon_name:
-            kw.update(tooltip=a.get_label())
+            kw.update(tooltip=a.get_label(), tooltipType='title')
         return kw
 
     def build_on_render(self, main):

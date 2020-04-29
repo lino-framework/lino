@@ -31,7 +31,7 @@ class Plugin(Plugin):
                     views.Element.as_view(publisher_model=m))
                 yield url('^{}/$'.format(m.publisher_location),
                     views.Element.as_view(publisher_model=m))
-        yield url('^index$',views.Index.as_view())
+        yield url('^$',views.Index.as_view())
         yield url('^login$',views.Login.as_view())
 
     def get_dashboard_items(self, user):
