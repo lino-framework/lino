@@ -19,6 +19,8 @@ from atelier import sphinxconf
 
 from sphinx.ext import autosummary
 from typing import Any, Dict, List, Tuple
+from sphinx.ext.autodoc.importer import import_module
+import sys
 
 # patch for autosummary. This version of import_by_name doesn't swallow the traceback
 # and imports only the first item prefixes
@@ -31,8 +33,50 @@ def my_import_by_name(name: str, prefixes: List[str] = [None]) -> Tuple[str, Any
             prefixed_name = '.'.join([prefix, name])
         else:
             prefixed_name = name
-        obj, parent, modname = autosummary._import_by_name(prefixed_name)
+        obj, parent, modname = _import_by_name(prefixed_name)
         return prefixed_name, obj, parent, modname
+
+# remove the outer try..except
+def _import_by_name(name: str) -> Tuple[Any, Any, str]:
+        """Import a Python object given its full name."""
+        # try:
+        name_parts = name.split('.')
+
+        # try first interpret `name` as MODNAME.OBJ
+        modname = '.'.join(name_parts[:-1])
+        if modname:
+            try:
+                mod = import_module(modname)
+                return getattr(mod, name_parts[-1]), mod, modname
+            except (ImportError, IndexError, AttributeError):
+                pass
+
+        # ... then as MODNAME, MODNAME.OBJ1, MODNAME.OBJ1.OBJ2, ...
+        last_j = 0
+        modname = None
+        for j in reversed(range(1, len(name_parts) + 1)):
+            last_j = j
+            modname = '.'.join(name_parts[:j])
+            try:
+                import_module(modname)
+            except ImportError:
+                continue
+
+            if modname in sys.modules:
+                break
+
+        if last_j < len(name_parts):
+            parent = None
+            obj = sys.modules[modname]
+            for obj_name in name_parts[last_j:]:
+                parent = obj
+                obj = getattr(obj, obj_name)
+            return obj, parent, modname
+        else:
+            return sys.modules[modname], None, modname
+        # except (ValueError, ImportError, AttributeError, KeyError) as e:
+        #     raise ImportError(*e.args)
+
 
 autosummary.import_by_name = my_import_by_name
 

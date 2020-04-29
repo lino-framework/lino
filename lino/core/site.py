@@ -21,11 +21,13 @@ import datetime
 import warnings
 import collections
 import locale
-from importlib import import_module
 # from six.moves.urllib.parse import urlencode
 from urllib.parse import urlencode
 
 from unipath import Path
+from html2text import HTML2Text
+from importlib import import_module, reload
+
 from atelier.utils import AttrDict, date_offset, tuple_py2
 from atelier import rstgen
 
@@ -43,8 +45,6 @@ from lino.core.utils import simplify_name, get_models
 from lino.core.exceptions import ChangedAPI
 # from .roles import SiteUser
 
-from html2text import HTML2Text
-from importlib import import_module, reload
 
 import re
 
