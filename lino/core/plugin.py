@@ -159,6 +159,11 @@ class Plugin(object):
     install its url patterns.
     """
 
+    force_url_prefix = False
+    """
+    Force lino to use the url_prefix, even if it's the default ui.
+    """
+
     site_js_snippets = []
     """
     List of js snippets to be injected into the `lino_*.js` file.
