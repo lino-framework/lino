@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2016-2019 Rumma & Ko Ltd
+# Copyright 2016-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 '''
@@ -73,12 +73,7 @@ Example of a field description::
     </desc>
 '''
 
-from __future__ import print_function
-from __future__ import unicode_literals
-
 from collections import OrderedDict
-
-import six
 
 from docutils import nodes
 from docutils import core
@@ -177,8 +172,8 @@ class HelpTextExtractor(object):
             fd = open(fn, "w")
 
             def writeln(s):
-                if six.PY2:
-                    s = s.encode('utf-8')
+                # if six.PY2:
+                #     s = s.encode('utf-8')
                 fd.write(s)
                 fd.write("\n")
 

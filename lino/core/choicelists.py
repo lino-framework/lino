@@ -594,15 +594,14 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
         # the signal, which is a weak reference.
 
     @classmethod
-    def add_item(cls, *args, **kw):
+    def add_item(cls, *args, **kwargs):
         """Instantiates a new choice and adds it to this list. Signature is
         that of the :meth:`Choice.__init__` method (which might have
         been overridden if you defined a customized
         :attr:`item_class`.
 
         """
-        return cls.add_item_instance(
-            cls.item_class(*args, **kw))
+        return cls.add_item_instance(cls.item_class(*args, **kwargs))
 
     @classmethod
     def class_init(cls):

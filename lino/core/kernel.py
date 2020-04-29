@@ -560,7 +560,8 @@ class Kernel(object):
 
         for p in self.site.installed_plugins:
             if p.app_name == self.site.default_ui:
-                p.url_prefix = None
+                if not p.force_url_prefix:
+                    p.url_prefix = None
                 self.default_renderer = p.renderer
                 self.default_ui = p
                 self.html_renderer = HtmlRenderer(p)

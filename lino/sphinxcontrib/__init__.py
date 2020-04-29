@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2002-2017 Luc Saffre
+# Copyright 2002-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Some extensions for Sphinx.
@@ -16,31 +16,45 @@
 
 from atelier import sphinxconf
 
-
+import sys
 from sphinx.ext import autosummary
 from typing import Any, Dict, List, Tuple
 from sphinx.ext.autodoc.importer import import_module
-import sys
+from sphinx.util import logging ; logger = logging.getLogger(__name__)
+
 
 # patch for autosummary. This version of import_by_name doesn't swallow the traceback
 # and imports only the first item prefixes
-def my_import_by_name(name: str, prefixes: List[str] = [None]) -> Tuple[str, Any, Any, str]:
-    """Import a Python object that has the given *name*, under one of the
-    *prefixes*.  The first name that succeeds is used.
-    """
-    for prefix in prefixes:
-        if prefix:
-            prefixed_name = '.'.join([prefix, name])
-        else:
-            prefixed_name = name
-        obj, parent, modname = _import_by_name(prefixed_name)
-        return prefixed_name, obj, parent, modname
+# def my_import_by_name(name: str, prefixes: List[str] = [None]) -> Tuple[str, Any, Any, str]:
+#     """Import a Python object that has the given *name*, under one of the
+#     *prefixes*.  The first name that succeeds is used.
+#     """
+#     for prefix in prefixes:
+#         if prefix:
+#             prefixed_name = '.'.join([prefix, name])
+#         else:
+#             prefixed_name = name
+#         obj, parent, modname = _import_by_name(prefixed_name)
+#         return prefixed_name, obj, parent, modname
 
-# remove the outer try..except
+# temporary patch reports failed imports
 def _import_by_name(name: str) -> Tuple[Any, Any, str]:
-        """Import a Python object given its full name."""
-        # try:
+    """Import a Python object given its full name."""
+
+    try:
         name_parts = name.split('.')
+
+        # # 20200429 first try whether it is a full module name
+        # try:
+        #     mod = import_module(name)
+        #     parent_name = '.'.join(name_parts[:-1])
+        #     if parent_name:
+        #         parent = import_module(parent_name)
+        #     else:
+        #         parent = None
+        #     return parent, mod, name
+        # except ImportError:
+        #     pass
 
         # try first interpret `name` as MODNAME.OBJ
         modname = '.'.join(name_parts[:-1])
@@ -59,7 +73,8 @@ def _import_by_name(name: str) -> Tuple[Any, Any, str]:
             modname = '.'.join(name_parts[:j])
             try:
                 import_module(modname)
-            except ImportError:
+            except ImportError as e:
+                logger.info("Failed to import %s : %s", modname, e)
                 continue
 
             if modname in sys.modules:
@@ -74,11 +89,12 @@ def _import_by_name(name: str) -> Tuple[Any, Any, str]:
             return obj, parent, modname
         else:
             return sys.modules[modname], None, modname
-        # except (ValueError, ImportError, AttributeError, KeyError) as e:
-        #     raise ImportError(*e.args)
+    except (ValueError, ImportError, AttributeError, KeyError) as e:
+        raise ImportError(*e.args)
 
+# autosummary.import_by_name = my_import_by_name
+autosummary._import_by_name = _import_by_name
 
-autosummary.import_by_name = my_import_by_name
 
 def configure(globals_dict, settings_module_name=None):
     """
