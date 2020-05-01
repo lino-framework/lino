@@ -916,7 +916,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         cls.collect_virtual_fields()
 
         # set the verbose_name of the detail_link field
-        model = cls.model
+        # model = cls.model
         if isinstance(model, type) and issubclass(model, models.Model):
             de = cls.detail_link
             assert de.model is not None
@@ -931,18 +931,29 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                     cls.virtual_fields['detail_link'] = de
                     # cls.add_virtual_field('detail_link', de)
 
+    @classmethod
+    def init_layouts(cls):
+
+        # 20200430 this was previously part of class_init, but is now called in
+        # a second loop. Because calview.EventsParams copies parameters from Events.
+
         actions.install_layout(cls, 'detail_layout', layouts.DetailLayout)
         actions.install_layout(
             cls, 'insert_layout', layouts.InsertLayout,
             window_size=(cls.insert_layout_width, 'auto'))
 
-        if cls.parameters is None:
+        if cls.abstract:
+            return
+
+        if 'parameters' in cls.__dict__:
+            cls.setup_parameters(cls.parameters)
+        else:
             params = {}
+            if cls.parameters is not None:
+                params.update(cls.parameters)
             cls.setup_parameters(params)
             if len(params):
                 cls.parameters = params
-        else:
-            cls.setup_parameters(cls.parameters)
 
         lst = []
         for n in cls.get_simple_parameters():
@@ -960,7 +971,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
             if name not in cls.parameters:
                 db_field = cls.get_data_elem(name)
                 if db_field is None:
-                    raise Exception("get_simple_parameters() returned invalid name '{}'".format(name))
+                    raise Exception("{}.get_simple_parameters() returned invalid name '{}'".format(cls, name))
                 cls.parameters[name] = dbfield2params_field(db_field)
                 # if "__" in name:
                 #     print("20200423", cls.parameters)
@@ -1304,7 +1315,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         if cls.model is None:
             return
         if not isinstance(cls.model, type):
-            raise Exception("{}.model is not a class".format(cls))
+            raise Exception("{}.model is {!r} (must be a class)".format(cls, cls.model))
         if issubclass(cls.model, fields.TableRow):
             cls.model.setup_parameters(params)
 

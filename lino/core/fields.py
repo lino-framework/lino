@@ -297,9 +297,14 @@ class RemoteField(FakeField):
         self.attname = name
         # self.db_column = name  # 20200423
         self.field = fld
+        # for k in ('verbose_name', 'help_text', 'blank', 'default', 'null'):
+        #     kwargs.setdefault(k, getattr(fld, k))
         self.verbose_name = fld.verbose_name
         self.help_text = fld.help_text
-        self.blank = fld.blank
+        # self.blank = fld.blank
+        self.blank = True
+        self.default = None
+        # self.null = fld.null
         # self.null = getattr(fld, 'null', None)
         self.max_length = getattr(fld, 'max_length', None)
         self.max_digits = getattr(fld, 'max_digits', None)
@@ -1289,8 +1294,9 @@ def make_remote_field(model, name):
     leaf_chooser = None
     for n in parts:
         if model is None:
-            raise Exception(
-                "Invalid remote field {0} for {1}".format(name, cls))
+            return
+            # raise Exception(
+            #     "Invalid remote field {0} for {1}".format(name, cls))
 
         if isinstance(model, str):
             # Django 1.9 no longer resolves the
@@ -1301,9 +1307,10 @@ def make_remote_field(model, name):
 
         fld = model.get_data_elem(n)
         if fld is None:
-            raise Exception(
-                "Invalid RemoteField %s.%s (no field %s in %s)" %
-                (full_model_name(model), name, n, full_model_name(model)))
+            return
+            # raise Exception(
+            #     "Invalid RemoteField %s.%s (no field %s in %s)" %
+            #     (full_model_name(model), name, n, full_model_name(model)))
 
         # make sure that the atomizer gets created.
         store.get_atomizer(model, fld, fld.name)

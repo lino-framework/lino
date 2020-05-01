@@ -964,9 +964,10 @@ class ParameterStore(BaseStore):
     def pv2dict(self, ar, pv, **d):
         # debug = False
         for fld in self.param_fields:
-            # if "__" in fld.name:
             #     debug = True
             v = pv.get(fld.name, None)
+            # if "__" in fld.name:
+            #     print("20200430", fld, v)
             fld.value2dict(ar, v, d, None)
             # try:
             #     v = pv.get(fld.name, None)

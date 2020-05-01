@@ -414,12 +414,16 @@ class Kernel(object):
 
         logger.debug("actors.initialize()")
         for a in actors.actors_list:
-            # a.class_init()
-            try:
-                a.class_init()
-            except Exception as e:
-                logger.error("Failed to initialize actor %s : %s", a, e)
-                raise # Exception("Failed to class_init {} : {}".format(a, e))
+            a.class_init()
+            # try:
+            #     a.class_init()
+            # except Exception as e:
+            #     logger.error("Failed to initialize actor %s : %s", a, e)
+            #     raise # Exception("Failed to class_init {} : {}".format(a, e))
+
+
+        for a in actors.actors_list:
+            a.init_layouts()
 
         register_actors()
 
@@ -440,6 +444,7 @@ class Kernel(object):
                 # print ("20170104 No table for {}, created default table.".format(model))
                 register_model_table(rpt)
                 rpt.class_init()
+                rpt.init_layouts()
                 # rpt.collect_actions()
                 model._lino_default_table = rpt
 

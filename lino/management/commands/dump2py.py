@@ -14,17 +14,17 @@ migration.
 Usage: cd to your project directory and say::
 
   $ python manage.py dump2py TARGET
-  
+
 This will create a python dump of your database to the directory
 `TARGET`.
 
 The directory will contain a file :xfile:`restore.py` and a series of
 `.py` files (one for every model) which are being :func:`execfile`\ d
-from that :xfile:`restore.py`.  
+from that :xfile:`restore.py`.
 
 Options:
 
-.. option:: --noinput 
+.. option:: --noinput
 
     Do not prompt for user input of any kind.
 
@@ -52,6 +52,12 @@ Options:
 
     The default value has been "clinically tested" and should be small enough
     for most machines.
+
+    Hint: When your process gets killed, before using this option, consider
+    restarting the web services on your server and trying again. The web
+    services can occupy considerable amounts of memory on a long-running
+    :term:`production site`. A simple :xfile:`reload_services.sh`  can fix your
+    issue.
 
 .. You might theoretically use Django's :manage:`dumpdata` command for
    writing a Python fixture, but this possibility is currently
@@ -156,7 +162,7 @@ def write_create_function(model, stream):
             raise Exception(msg)
         pm, pf = list(model._meta.parents.items())[0]
         fields = [f for f in fields if f != pf]
-        
+
     stream.write("    kw = dict()\n")
     for f in fields:
         if f.model is model:
@@ -248,7 +254,7 @@ if settings.USE_TZ:
 else:
     def dt(*args):
         return datetime(*args)
-        
+
 def new_content_type_id(m):
     if m is None: return m
     ct = settings.SITE.models.contenttypes.ContentType.objects.get_for_model(m)
@@ -256,10 +262,10 @@ def new_content_type_id(m):
     return ct.pk
 
 def pmem():
-    # Thanks to https://stackoverflow.com/questions/938733/total-memory-used-by-python-process    
+    # Thanks to https://stackoverflow.com/questions/938733/total-memory-used-by-python-process
     process = psutil.Process(os.getpid())
     print(process.memory_info().rss)
-    
+
 def execfile(fn, *args):
     logger.info("Execute file %s ...", fn)
     six.exec_(compile(open(fn, "rb").read(), fn, 'exec'), *args)
@@ -275,15 +281,15 @@ def bv2kw(fieldname, values):
     Needed if `Site.languages` changed between dumpdata and loaddata
     """
     return settings.SITE.babelkw(fieldname, %s)
-    
+
 ''' % s)
         self.models = sorted_models_list()
-        
+
         if settings.SITE.is_installed('contenttypes'):
             from django.contrib.contenttypes.models import ContentType
             self.models = [m for m in self.models
                            if not issubclass(m, ContentType)]
-        
+
         if settings.SITE.is_installed('sessions'):
             from django.contrib.sessions.models import Session
             self.models = [m for m in self.models
@@ -388,7 +394,7 @@ def main(args):
             '    logger.info("Loaded %d objects", loader.count_objects)\n')
         self.stream.write(
             "    call_command('resetsequences')\n")
-        
+
         self.stream.write("""
 if __name__ == '__main__':
     import argparse
@@ -396,7 +402,7 @@ if __name__ == '__main__':
     parser.add_argument('--noinput', dest='interactive',
         action='store_false', default=True,
         help="Don't ask for confirmation before flushing the database.")
-    parser.add_argument('--quick', dest='quick', 
+    parser.add_argument('--quick', dest='quick',
         action='store_true',default=False,
         help='Do not call full_clean() on restored instances.')
 
