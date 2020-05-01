@@ -105,10 +105,11 @@ class LayoutHandle(object):
         self._names = {}
 
         # self.define_panel('main', layout.main)
-        if settings.SITE.mobile_view:
-            main = layout.main_m or layout.main
-        else:
-            main = layout.main
+        # if settings.SITE.mobile_view:
+        #     main = layout.main_m or layout.main
+        # else:
+        #     main = layout.main
+        main = layout.main
         self.define_panel('main', main)
 
         self.main = self._names.get('main')
@@ -421,11 +422,11 @@ class BaseLayout(object):
 
     """
 
-    main_m = None
-    """An optional alternative for :attr:`main` to use when
-    :attr:`mobile_view <lino.core.site.Site.mobile_view>` is True.
-
-    """
+    # main_m = None
+    # """An optional alternative for :attr:`main` to use when
+    # :attr:`mobile_view <lino.core.site.Site.mobile_view>` is True.
+    #
+    # """
 
     def __init__(self, main=None, datasource=None,
                  hidden_elements=None, **kw):

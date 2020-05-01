@@ -961,7 +961,8 @@ class BaseRequest(object):
         then the city field is "obvious" and doesn't need to be displayed for
         each partner.
 
-        This is used e.g. in customized :meth:`summary_row` methods.
+        This is used e.g. in customized :meth:`lino.core.model.Model.summary_row`
+        :meth:`lino.core.model.Model.as_summary_row` methods.
 
         General rule: in a request on a slave table, the master instance is
         an obvious value.

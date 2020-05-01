@@ -40,17 +40,17 @@ class UserDetail(dd.DetailLayout):
     remarks:40 AuthoritiesGiven:20 SocialAuthsByUser:30
     """
 
-    main_m = """
-    username
-    user_type
-    partner
-    first_name last_name
-    initials
-    email language time_zone
-    id created modified
-    remarks
-    AuthoritiesGiven
-    """
+    # main_m = """
+    # username
+    # user_type
+    # partner
+    # first_name last_name
+    # initials
+    # email language time_zone
+    # id created modified
+    # remarks
+    # AuthoritiesGiven
+    # """
 
 
 class UserInsertLayout(dd.InsertLayout):
@@ -83,7 +83,7 @@ class Users(dd.Table):
     column_names = 'username user_type first_name last_name *'
     detail_layout = 'users.UserDetail'
     insert_layout = UserInsertLayout()
-    column_names_m = 'mobile_item *'
+    # column_names_m = 'mobile_item *'
 
     @classmethod
     def render_list_item(cls, obj, ar):
