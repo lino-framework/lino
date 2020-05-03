@@ -128,10 +128,14 @@ class Model(models.Model, fields.TableRow):
 
     """
 
-
     allow_cascaded_delete = frozenset()
     """A set of names of `ForeignKey` or `GenericForeignKey` fields of
     this model that allow for cascaded delete.
+
+    Unlike with Dango's `on_delete
+    <https://docs.djangoproject.com/en/3.0/ref/models/fields/#django.db.models.ForeignKey.on_delete>`__
+    attribute you control cascaded delete behaviour on the model whose instances
+    are going to be deleted.
 
     If this is a simple string, Lino expects it to be a
     space-separated list of filenames and convert it into a set at
@@ -151,10 +155,10 @@ class Model(models.Model, fields.TableRow):
     decide whether slaves of a record being duplicated should be
     duplicated as well.
 
-    A startup (in :meth:`kernel_startup
+    At startup (in :meth:`kernel_startup
     <lino.core.kernel.Kernel.kernel_startup>`) Lino automatically sets
     `on_delete
-    <https://docs.djangoproject.com/en/dev/ref/models/fields/#django.db.models.ForeignKey.on_delete>`_
+    <https://docs.djangoproject.com/en/3.0/ref/models/fields/#django.db.models.ForeignKey.on_delete>`__
     to ``PROTECT`` for all FK fields that are not listed in the
     ``allow_cascaded_delete`` of their model.
 
@@ -907,7 +911,7 @@ class Model(models.Model, fields.TableRow):
     #
     # def get_mobile_list_item_elems(self, ar):
     #     return [self.obj2href(ar)]
-    #
+
     # @fields.displayfield(_("Description"))
     # @fields.htmlbox(_("Overview"))
     @fields.htmlbox()
