@@ -399,6 +399,8 @@ class AbstractTable(actors.Actor):
     - `'grid'` (default) to render as a grid.
     - `'summary'` to render a summary in a HtmlBoxPanel.
     - `'html'` to render plain html a HtmlBoxPanel.
+    - `'cards'` to render a defined layout as a grid of cards (react only)
+    - `'list'` to render a defined layout as a list of cards (react only
 
     See :doc:`/dev/table_summaries`.
 

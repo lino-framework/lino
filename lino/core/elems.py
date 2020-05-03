@@ -2627,7 +2627,7 @@ def create_layout_element(lh, name, **kw):
                         title=_("Show this table in own window"),
                         style="text-decoration:none;")
                     kw.update(label='{} {}'.format(de.get_label(), tostring(btn)))
-            if de.display_mode == 'grid':
+            if de.display_mode in ['grid', 'card', 'list']:
                 kw.update(hide_top_toolbar=True)
                 if de.preview_limit is not None:
                     kw.update(preview_limit=de.preview_limit)
