@@ -7,6 +7,7 @@ from django.db import models
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
+from etgen.html import E, tostring
 
 from lino.api import dd, rt, _
 
@@ -169,6 +170,34 @@ class Comment(CreatedModified, UserAuthored, Controllable,
         if pv.observed_event:
             qs = pv.observed_event.add_filter(qs, pv)
         return qs
+
+    def summary_row(o, ar):
+
+        if o.modified is None or (o.modified - o.created).total_seconds() < 1:
+            t = _("Created " + o.created.strftime('%Y-%m-%d %H:%M') )
+        else:
+            t = _("Modified " + o.modified.strftime('%Y-%m-%d %H:%M') )
+
+        yield ar.obj2html(o, naturaltime(o.created), title=t)
+        yield " by "
+        yield ar.obj2html(o.user, o.user.username)
+        if not ar.is_obvious_field('owner'):
+            if o.owner:
+                group = o.owner.get_comment_group()
+                if group is not None:
+                     yield "@"
+                     yield ar.obj2html(group, group.ref)
+                yield " about "
+                yield o.owner.obj2href(ar)
+        yield " : "
+        try:
+            # el = etree.fromstring(o.short_preview, parser=html_parser)
+            for e in lxml.html.fragments_fromstring(o.short_preview): #, parser=cls.html_parser)
+                yield e
+            # el = etree.fromstring("<div>{}</div>".format(o.full_preview), parser=cls.html_parser)
+            # print(20190926, tostring(el))
+        except Exception as e:
+            yield "{} [{}]".format(o.short_preview, e)
 
 dd.update_field(Comment, 'user', editable=False)
 Comment.update_controller_field(verbose_name=_('Topic'))

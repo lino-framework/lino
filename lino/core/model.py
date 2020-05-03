@@ -12,7 +12,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
-from etgen.html import E, forcetext
+from etgen.html import E, forcetext, tostring
 
 from lino.core import fields
 from lino.core import signals
@@ -266,6 +266,11 @@ class Model(models.Model, fields.TableRow):
 
     disable_create_choice = False
     """Whether to disable any automatic creation by learning choosers.
+    """
+
+    summary_row_template = None
+    """
+    An optional name of a template to use for :meth:`as_summary_row`.
     """
 
     _widget_options = {}
@@ -839,15 +844,36 @@ class Model(models.Model, fields.TableRow):
         """
         pass
 
+    def as_summary_row(self, ar):
+        """
+        Return a raw HTML string representing this object in a data view as a
+        single paragraph.
+
+        The string should represent a single ``<p>``.
+
+        If :attr:`summary_row_template` is set, this will render this object
+        using the named template, otherwise it will call :meth:`summary_row` and
+        wrap the result into a paragraph.
+
+
+        """
+        if self.summary_row_template:
+            # not tested
+            env = settings.SITE.plugins.jinja.renderer.jinja_env
+            template = env.get_template(self.summary_row_template)
+            context = ar.get_printable_context(obj=self)
+            return template.render(**context)
+        return tostring(E.p(*self.summary_row(ar)))
+
     def summary_row(self, ar, **kw):
         """
-        Return a HTML representation of this database object in a summary panel.
+        Yield a sequence of ElementTree elements that represent this database
+        object in a summary panel.
+
+        The elements will be wrapped into a `<p>` by :meth:`as_summary_row`.
 
         The default representation is the text returned by :meth:`__str__` in a
         link that opens the detail view on this database object.
-
-        More exactly this should return or yield a sequence of HTML element tree
-        elements.
 
         The description may vary depending on the given action request.
 
@@ -873,15 +899,15 @@ class Model(models.Model, fields.TableRow):
     def name_column(self, ar):
         return str(self)
 
-    @fields.displayfield(_("Description"))
-    def mobile_item(self, ar):
-        if ar is None:
-            return ''
-        return E.div(*forcetext(self.get_mobile_list_item_elems(ar)))
-
-    def get_mobile_list_item_elems(self, ar):
-        return [self.obj2href(ar)]
-
+    # @fields.displayfield(_("Description"))
+    # def mobile_item(self, ar):
+    #     if ar is None:
+    #         return ''
+    #     return E.div(*forcetext(self.get_mobile_list_item_elems(ar)))
+    #
+    # def get_mobile_list_item_elems(self, ar):
+    #     return [self.obj2href(ar)]
+    #
     # @fields.displayfield(_("Description"))
     # @fields.htmlbox(_("Overview"))
     @fields.htmlbox()
@@ -1212,7 +1238,8 @@ LINO_MODEL_ATTRIBS = (
     'get_default_table',
     'get_layout_aliases',
     'get_actions_hotkeys',
-    # 'get_template_group',
+    'as_summary_row',
+    'summary_row_template',
     'get_related_project',
     'obj2href',
     'quick_search_fields',

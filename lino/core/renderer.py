@@ -469,7 +469,7 @@ class HtmlRenderer(Renderer):
 
     def show_story(self, ar, story, stripped=True, **kwargs):
         """
-        Render the given story and return it as an HTML tree DIV element.
+        Render the given story and return it as a raw HTML string.
 
         Ignore `stripped` because it makes no sense in HTML.
 
@@ -482,24 +482,34 @@ class HtmlRenderer(Renderer):
             for item in forcetext(story):
                 # print("20180907 {}".format(item))
                 if iselement(item):
-                    elems.append(item)
+                    # 20200501 elems.append(item)
+                    elems.append(tostring(item))
                 elif isinstance(item, type) and issubclass(item, Actor):
                     ar = item.default_action.request(parent=ar)
-                    elems.extend(self.table2story(ar, **kwargs))
+                    # 20200501 elems.extend(self.table2story(ar, **kwargs))
+                    elems += [tostring(e) for e in self.table2story(ar, **kwargs)]
                 elif isinstance(item, TableRequest):
                     assert item.renderer is not None
-                    elems.extend(self.table2story(item, **kwargs))
+                    # 20200501 elems.extend(self.table2story(item, **kwargs))
+                    elems += [tostring(e) for e in self.table2story(item, **kwargs)]
                 elif isinstance(item, ActionRequest):
                     # example : courses.StatusReport in dashboard
                     assert item.renderer is not None
-                    elems.append(self.show_story(ar, item.actor.get_story(None, ar), **kwargs))
+                    # 20200501 elems.append(self.show_story(ar, item.actor.get_story(None, ar), **kwargs))
+                    elems += [tostring(e) for e in self.show_story(ar, item.actor.get_story(None, ar), **kwargs)]
                 elif isinstance(item, DashboardItem):
                     html = self.show_story(ar, item.render(ar), **kwargs)
-                    if len(html):
-                        elems.append(E.div(
-                        html,
-                        CLASS="dashboard-item " + item.actor.actor_id.replace(".","-") if getattr(item, "actor", False) else ""
-                    ))
+                    # 20200501 if len(html):
+                    #     elems.append(E.div(
+                    #     html,
+                    #     CLASS="dashboard-item " + item.actor.actor_id.replace(".","-") if getattr(item, "actor", False) else ""
+                    if html: # should always be a string, never a list
+                        if hasattr(item, "actor"):
+                            css_class = "dashboard-item " + item.actor.actor_id.replace(".","-")
+                        else:
+                            css_class = ''
+                        elems.append('<div class="{}">{}</div>'.format(css_class, html))
+
                 elif isiterable(item):
                     elems.append(self.show_story(ar, item, **kwargs))
                     # for i in self.show_story(item, *args, **kwargs):
@@ -509,7 +519,10 @@ class HtmlRenderer(Renderer):
         except Warning as e:
             elems.append(str(e))
         # print("20180907 show_story in {} : {}".format(ar.renderer, elems))
-        return E.div(*elems) if len(elems) else ""
+        # return E.div(*elems) if len(elems) else ""
+        if len(elems):
+            return "<div>{}</div>".format(''.join(elems))
+        return ""
 
     def show_menu(self, ar, mnu, level=1):
         """
