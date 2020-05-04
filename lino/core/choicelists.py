@@ -508,6 +508,8 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
         for ci in cls.items_dict.values():
             if ci.name:
                 delattr(cls, ci.name)
+                if cls.__name__ == "UserTypes":
+                    print("20200504 clear {} {} {}".format(cls, ci.name, ci))
         cls.removed_names = frozenset()
         cls.items_dict = {}
         cls.choices = []  # remove blank_item from choices
@@ -630,8 +632,10 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
             if not is_duplicate:
                 if i.name in cls.__dict__:
                     raise Exception(
-                        "An item named %r is already defined in %s" % (
-                            i.name, cls.__name__))
+                        "An item named %r is already defined in %s (%s)" % (
+                            i.name, cls.__name__, cls.__dict__))
+            if cls.__name__ == "UserTypes":
+                print("20200504 add {} {} {}".format(cls, i.name, i))
             setattr(cls, i.name, i)
             #~ i.name = name
         return i

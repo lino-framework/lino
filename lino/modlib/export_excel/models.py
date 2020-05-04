@@ -1,11 +1,10 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2014-2019 Josef Kejzlar, Rumma & Ko Ltd, Hamza Khchine
+# Copyright 2014-2020 Josef Kejzlar, Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Database models for `lino.modlib.export_excel`.
 
 """
-import six
 import os
 
 from django.conf import settings
@@ -44,10 +43,10 @@ def ar2workbook(ar, column_names=None):
     # TypeError: 'NoneType' object is not iterable
 
     # workbook = Workbook(guess_types=True)
-    
+
     # removed `guess_types=True` because it caused trouble in openpyxl
     # 3.4.0 and because I don't know whether it is needed.
-    
+
     workbook = Workbook()
     sheet = workbook.active
     sheet.title = sheet_name(ar.get_title())
@@ -59,7 +58,7 @@ def ar2workbook(ar, column_names=None):
     fields, headers, widths = ar.get_field_info(column_names)
 
     for c, column in enumerate(fields):
-        sheet.cell(row=1, column=c + 1).value = six.text_type(headers[c])
+        sheet.cell(row=1, column=c + 1).value = str(headers[c])
         sheet.cell(row=1, column=c + 1).font = bold_font
         # sheet.col(c).width = min(256 * widths[c] / 7, 65535)
         # 256 == 1 character width, max width=65535
@@ -72,11 +71,11 @@ def ar2workbook(ar, column_names=None):
             if type(value) == bool:
                 value = value and 1 or 0
             elif isinstance(value, Choice):
-                value = six.text_type(value)
+                value = str(value)
             elif isinstance(value, Duration):
                 style = duration_style
                 negative = False
-                time = six.text_type(value)
+                time = str(value)
                 if time.startswith("-"):
                     time = time.strip("-")
                     negative = True
@@ -88,18 +87,18 @@ def ar2workbook(ar, column_names=None):
                 value = to_rst(value)
                 # dd.logger.info("20160716 %s", value)
             elif isinstance(value, Promise):
-                value = six.text_type(value)
+                value = str(value)
             elif isinstance(value, IncompleteDate):
                 if value.is_complete():
                     value = value.as_date()
                 else:
-                    value = six.text_type(value)
+                    value = str(value)
             elif isinstance(value, Model):
-                value = six.text_type(value)
-            elif isinstance(value, six.text_type):
+                value = str(value)
+            elif isinstance(value, str):
                 # if it is a future.newstr, change it to a real string to avoid
                 # ValueError: Cannot convert 'Hans Altenberg' to Excel
-                value = six.text_type(value)
+                value = str(value)
             try:
                 cell = sheet.cell(row=r + 1, column=c + 1)
                 if style is not None:
