@@ -65,14 +65,14 @@ class UserType(Choice):
 
         del self.kw
 
-    def __repr__(self):
-        #~ s = self.__class__.__name__
-        s = str(self.choicelist)
-        if self.name:
-            s += "." + self.name
-        s += ":" + self.value
-        return s
-
+    # def __repr__(self):
+    #     #~ s = self.__class__.__name__
+    #     s = str(self.choicelist)
+    #     if self.name:
+    #         s += "." + self.name
+    #     s += ":" + self.value
+    #     return s
+    #
 
     def mask_notifications(self, *args):
         """

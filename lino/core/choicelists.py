@@ -5,46 +5,6 @@
 """
 Defines the classes :class:`Choice` and :class:`ChoiceList`.  See
 :doc:`/dev/choicelists`.
-
-
-Defining your own ChoiceLists
------------------------------
-
->>> class MyColors(Choicelist):
-...     verbose_name_plural = "My colors"
->>> MyColors.add_item('01', ("Red"), 'red')
->>> MyColors.add_item('02', ("Green"), 'green')
-
-`add_item` takes at least 2 and optionally a third positional argument:
-
-- The `value` is used to store this Choice in the database.
-- The `text` is what the user sees. It should be translatable.
-- The optional `name` is used to install this choice as a class
-  attribute on the ChoiceList.
-
-
-The `value` must be either None or a string.
-
->>> MyColors.add_item(1, _("Green"), 'green')
->>> MyColors.add_item(1, _("Green"), 'verbose_name_plural')
-
-
-The items are sorted by their order of creation, not by their value.
-This is visible e.g. in :class:`lino_xl.lib.cal.DurationUnits`.
-
-
-ChoiceListField
----------------
-
-Example on how to use a ChoiceList in your model::
-
-  from django.db import models
-  from lino.modlib.properties.models import HowWell
-
-  class KnownLanguage(models.Model):
-      spoken = HowWell.field(verbose_name=_("spoken"))
-      written = HowWell.field(verbose_name=_("written"))
-
 """
 
 from future.utils import with_metaclass
@@ -96,18 +56,20 @@ class Choice(fields.TableRow):
 
     """
 
-    name = None
-    """A string to be used as attribute name on the choicelist for
-    referring to this choice from application code.
+    names = ''
+    """
+
+    A list of names to be used as attribute name on the choicelist for referring
+    to this choice from application code.
 
     If this is `None` or not specified, the choice is a nameless
     choice, which is a full-fledged choice object but is not
-    accessible as a class attribute on its choicelists
+    accessible as a class attribute on its choicelist.
 
     """
 
 
-    def __init__(self, value=None, text=None, name=None, **kwargs):
+    def __init__(self, value=None, text=None, names=None, **kwargs):
         """Create a new :class:`Choice` instance.
 
         Parameters: see :attr:`value`, :attr:`text` and :attr:`name`.
@@ -115,13 +77,22 @@ class Choice(fields.TableRow):
 
         This is also being called from :meth:`Choicelist.add_item`.
 
+        If `names` is given, it should be either an iterable of strings or a
+        string of space-separated names.  Each name will be installed as an
+        attribute of the choicelist that contains this choice and must be a
+        valid Python identifier.  Lino will refuse to add duplicate names.
+
         """
         if value is not None:
             if not isinstance(value, str):
                 raise Exception("value must be a string")
             self.value = self.pk = value
-        if name is not None:
-            self.name = name
+        if names is None:
+            names = self.names
+        if isinstance(names, str):
+            names = tuple(names.split())
+        self.names = names
+
         # if name is not None:
         #     if self.name is None:
         #         self.name = value
@@ -136,6 +107,17 @@ class Choice(fields.TableRow):
             self.text = text
         for k, v in kwargs.items():
             setattr(self, k, v)
+
+
+    @property
+    def name(self):
+       if len(self.names) == 0:
+           return None
+       # elif len(self.names) == 1:
+       else:
+           return self.names[0]
+       # raise Exception("{} has multiple names".format(self))
+       # return ' '.join(self.names[0])
 
     # def deconstruct(self):
     #     return ('str', self.value, {})
@@ -239,11 +221,12 @@ Django creates copies of them when inheriting models.
         #~ return curry(getattr(self.choicelist, name),self)
 
     def __repr__(self):
-        if self.name is None:
-            return "<%s:%s>" % (self.choicelist.__name__, self.value)
-        else:
+        # when there several names, we use the first one
+        if len(self.names) > 0:
             return "<%s.%s:%s>" % (
-                self.choicelist.__name__, self.name, self.value)
+                self.choicelist, self.names[0], self.value)
+        else:
+            return "<%s:%s>" % (self.choicelist, self.value)
 
     # def __str__(self):
     #     if self.name:
@@ -278,7 +261,7 @@ class UnresolvedValue(Choice):
         self.value = value
         self.text = "Unresolved value %r for %s" % (
             value, choicelist.__name__)
-        self.name = None
+        self.names = {}
 
 
 class ChoiceListMeta(actors.ActorMetaClass):
@@ -311,9 +294,9 @@ class ChoiceListMeta(actors.ActorMetaClass):
 class CallableChoice(object):
     def __repr__(self):
         return "{}.as_callable('{}')".format(repr(self.ChoiceList), self.name)
-    def __eq__(self, other):
-        return self.ChoiceList == other.ChoiceList and self.name == other.name
-    def __init__(self,ChoiceList, name):
+    # def __eq__(self, other):
+    #     return self.ChoiceList == other.ChoiceList and self.name == other.name
+    def __init__(self, ChoiceList, name):
         self.ChoiceList = ChoiceList
         self.name = name
     def __call__(self, *args, **kwargs):
@@ -466,7 +449,7 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
 
     @fields.virtualfield(models.CharField(_("name"), max_length=20))
     def name(cls, choice, ar):
-        return choice.name or ''
+        return ' '.join(choice.names)
 
     @fields.displayfield(_("Remark"))
     def remark(cls, choice, ar):
@@ -506,10 +489,10 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
         """
         # remove previously defined named choices from class dict:
         for ci in cls.items_dict.values():
-            if ci.name:
-                delattr(cls, ci.name)
-                if cls.__name__ == "UserTypes":
-                    print("20200504 clear {} {} {}".format(cls, ci.name, ci))
+            for name in ci.names:
+                delattr(cls, name)
+                # if cls.__name__ == "UserTypes":
+                #     print("20200504 clear {} {} {}".format(cls, ci.name, ci))
         cls.removed_names = frozenset()
         cls.items_dict = {}
         cls.choices = []  # remove blank_item from choices
@@ -521,10 +504,10 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
         :meth:`Choice.remove`.
         """
         del cls.items_dict[i.value]
-        if i.name:
-            cls.removed_names |= frozenset([i.name])
+        for name in i.names:
+            cls.removed_names.add(name)
             # print(20161215, cls.removed_names)
-            delattr(cls, i.name)
+            delattr(cls, name)
         for n, el in enumerate(cls.choices):
             if el[0] == i:
                 del cls.choices[n]
@@ -627,17 +610,17 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
             raise Exception("Duplicate value %r in %s." % (i.value, cls))
             warnings.warn("Duplicate value %r in %s." % (i.value, cls))
             is_duplicate = True
-        i.attach(cls)
-        if i.name:
+        for name in i.names:
             if not is_duplicate:
-                if i.name in cls.__dict__:
+                if name in cls.__dict__:
                     raise Exception(
-                        "An item named %r is already defined in %s (%s)" % (
-                            i.name, cls.__name__, cls.__dict__))
-            if cls.__name__ == "UserTypes":
-                print("20200504 add {} {} {}".format(cls, i.name, i))
-            setattr(cls, i.name, i)
+                        "An attribute named %r is already defined in %s" % (
+                            name, cls.__name__))
+            # if cls.__name__ == "UserTypes":
+            #     print("20200504 add {} {} {}".format(cls, i.name, i))
+            setattr(cls, name, i)
             #~ i.name = name
+        i.attach(cls)
         return i
 
     @classmethod
@@ -753,10 +736,12 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
 
         Usage example::
 
-            state = MyStates.field(default=MyStates.as_callable('foo'))
+            foo_state = MyStates.as_callable('foo')
+
+        This is used internally when you specify a string as default value of a
+        choicelist field.
 
         """
-
         return CallableChoice(self, name)
 
     @classmethod
@@ -1031,28 +1016,26 @@ class MultiChoiceListField(ChoiceListField):
 
 class ChoiceSerializer(BaseSerializer):
     def serialize(self):
-        return "rt.models.{}.{}.{}".format(self.value.choicelist.app_label, self.value.choicelist.__name__,self.value.name), {'from lino.api.shell import rt'}
+        return ("rt.models.{}.{}.get_by_value('{}')".format(
+            self.value.choicelist.app_label, self.value.choicelist.__name__,
+                self.value.value),
+            {'from lino.api.shell import rt'})
 
 MigrationWriter.register_serializer(Choice, ChoiceSerializer)
 
 class ChoiceListSerializer(BaseSerializer):
     def serialize(self):
-        return "rt.models.{}.{}".format(self.value.choicelist.app_label, self.value.choicelist.__name__,self.value.name), {'from lino.api.shell import rt'}
+        return ("rt.models.{}.{}".format(
+            self.value.choicelist.app_label, self.value.choicelist.__name__),
+            {'from lino.api.shell import rt'})
 MigrationWriter.register_serializer(ChoiceList, ChoiceListSerializer)
 
 
 class CallableChoiceSerializer(BaseSerializer):
     def serialize(self):
-
         choice = self.value()
-        return "rt.models.{}.{}.as_callable('{}')".format(choice.choicelist.app_label, choice.choicelist.__name__, choice.name), {'from lino.api.shell import rt'}
+        return ("rt.models.{}.{}.as_callable('{}')".format(
+            choice.choicelist.app_label, choice.choicelist.__name__, choice.name),
+            {'from lino.api.shell import rt'})
 
 MigrationWriter.register_serializer(CallableChoice, CallableChoiceSerializer)
-
-
-def _test():
-    import doctest
-    doctest.testmod()
-
-if __name__ == "__main__":
-    _test()

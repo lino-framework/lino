@@ -7,12 +7,6 @@ Choicelists for `lino.modlib.printing`.
 
 """
 
-from __future__ import unicode_literals, print_function
-# from future import standard_library
-# standard_library.install_aliases()
-from builtins import str
-import six
-
 import logging ; logger = logging.getLogger(__name__)
 
 import os
@@ -45,13 +39,13 @@ class BuildMethod(Choice):
     cache_name = 'cache'
     use_webdav = False
 
-    def __init__(self, name=None, **kwargs):
-        # For build methods, `Choice.name` and `Choice.value` are the
+    def __init__(self, names=None, **kwargs):
+        # For build methods, `Choice.names` and `Choice.value` are the
         # same.
-        if name is None:
-            name = self.name
+        if names is None:
+            names = self.name
         super(BuildMethod, self).__init__(
-            name, self.__class__.__name__, name, **kwargs)
+            names, self.__class__.__name__, names, **kwargs)
 
     def get_target(self, action, elem):
         "used by `get_target_name`"
@@ -81,7 +75,8 @@ class TemplatedBuildMethod(BuildMethod):
     def __init__(self, *args, **kwargs):
         super(TemplatedBuildMethod, self).__init__(*args, **kwargs)
         if self.templates_name is None:
-            self.templates_name = self.name
+            assert len(self.names) == 1
+            self.templates_name = self.names[0]
 
     def get_default_template(self, obj):
         """Theoretically it is possible to write build methods which override
@@ -136,10 +131,7 @@ class PisaBuildMethod(DjangoBuildMethod):
     template_ext = '.pisa.html'
 
     def build(self, ar, action, elem):
-        if six.PY2:
-            import ho.pisa as pisa
-        else:
-            from xhtml2pdf import pisa
+        from xhtml2pdf import pisa
         # pisa.showLogging()
         tpl = self.get_template(action, elem)
         filename = action.before_build(self, elem)
@@ -276,8 +268,6 @@ class XmlBuildMethod(DjangoBuildMethod):
         pass
 
     def write2file(self, txt, filename):
-        if six.PY2:
-            txt = txt.encode("utf-8")
         open(filename, 'w').write(txt)
 
 

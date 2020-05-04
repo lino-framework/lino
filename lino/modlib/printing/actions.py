@@ -75,8 +75,7 @@ class BasePrintAction(Action):
         if not filename:
             return
         if os.path.exists(filename):
-            logger.debug("%s %s -> overwrite existing %s.",
-                         bm, elem, filename)
+            logger.debug("%s %s -> overwrite existing %s.", bm, elem, filename)
             os.remove(filename)
         else:
             # logger.info("20121221 makedirs_if_missing %s",os.path.dirname(filename))
