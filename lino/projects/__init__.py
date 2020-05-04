@@ -5,8 +5,7 @@ Technical
 .. autosummary::
    :toctree:
 
-   lino.projects.std
+   std
 
 
 """
-
