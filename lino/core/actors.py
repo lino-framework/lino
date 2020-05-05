@@ -1055,9 +1055,9 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     def _collect_actions(cls):
         """
         Loops through the class dict and collects all Action instances,
-        calling `_attach_action` which will set their `actor` attribute.
+        calling :meth:`_attach_action`, which will set their `actor` attribute.
         Before this we create `insert_action` and `detail_action` if necessary.
-        Also fill _actions_list.
+        Also fill :attr:`_actions_list`.
         """
 
         default_action = cls.get_default_action()

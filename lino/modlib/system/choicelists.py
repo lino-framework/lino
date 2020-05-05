@@ -1,8 +1,7 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2019 Rumma & Ko Ltd
+# Copyright 2011-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-from __future__ import unicode_literals
 import datetime
 
 from django.utils.translation import ugettext_lazy as _
@@ -36,7 +35,7 @@ class ObservedEvent(Choice):
     def __init__(self, value, name=None, **kwargs):
         if name is None and isidentifier(value):
             name = value
-        super(ObservedEvent, self).__init__(value, name=name, **kwargs)
+        super(ObservedEvent, self).__init__(value, names=name, **kwargs)
 
     def add_filter(self, qs, pv):
         return qs

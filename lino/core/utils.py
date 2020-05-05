@@ -817,3 +817,41 @@ def dbfield2params_field(db_field):
     fld.default = None
     fld.editable = True
     return fld
+
+def db2param(spec):
+    """
+    Return a copy of the specified :term:`database field` for usage as an
+    :term:`actor parameter` field.
+
+    A usage example is :class:`lino_xl.lib.tickets.SpawnTicket` action. This
+    action has two parameter fields, one for the type of link to create, the
+    other for the summary of the ticket to create. We might copy the definitions
+    of these to fields from their respective models and say::
+
+        parameters = dict(
+            link_type=LinkTypes.field(default='requires'),
+            ticket_summary=models.CharField(
+                pgettext("Ticket", "Summary"), max_length=200,
+                blank=False,
+                help_text=_("Short summary of the problem."))
+            )
+
+    But it is easier and more maintainable to say::
+
+        parameters = dict(
+            link_type=db2param('tickets.Link.type'),
+            ticket_summary=db2param('tickets.Ticket.summary'))
+
+    Unfortunately that doesn't yet work because actions get instantiated when
+    models aren't yet fully loaded :-/
+
+    TODO: One idea to get it working is to say that parameter fields can be
+    specified as names of fields, and Lino would resolve them at startup::
+
+        parameters = dict(
+            link_type='tickets.Link.type',
+            ticket_summary='tickets.Ticket.summary')
+
+
+    """
+    return dbfield2params_field(resolve_field(spec))
