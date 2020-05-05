@@ -54,7 +54,7 @@ def install_layout(cls, k, layout_class, **options):
     #     print("20160329 install_layout", k, layout_class)
     dl = cls.__dict__.get(k, None)
     if dl is None:  # and not cls._class_init_done:
-        dl = getattr(cls, k)
+        dl = getattr(cls, k, None)
     if dl is None:
         return
     if isinstance(dl, str):
@@ -516,6 +516,20 @@ class Action(Parametrizable, Permittable):
             return self
         return InstanceAction(
             self, instance.get_default_table(), instance, owner)
+
+    def get_django_form(self):
+        """returns a django form object based on the params of this action"""
+        from django import forms
+
+        mapping = {
+            "PasswordField":"CharField"
+        }
+
+        class LinoForm(forms.Form):
+            pass
+        for name,field in self.parameters.items():
+            setattr(LinoForm, name, getattr(forms, mapping.get(field.__class__.__name__,field.__class__.__name__))())
+        return LinoForm
 
     @classmethod
     def decorate(cls, *args, **kw):

@@ -938,9 +938,11 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         # a second loop. Because calview.EventsParams copies parameters from Events.
 
         actions.install_layout(cls, 'detail_layout', layouts.DetailLayout)
-        actions.install_layout(
-            cls, 'insert_layout', layouts.InsertLayout,
+        actions.install_layout(cls, 'insert_layout', layouts.InsertLayout,
             window_size=(cls.insert_layout_width, 'auto'))
+        actions.install_layout(cls, 'card_layout', layouts.DetailLayout,
+            # window_size=(cls.card_layout_width, 'auto')
+        )
 
         if cls.abstract:
             return
