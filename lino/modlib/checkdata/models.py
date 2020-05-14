@@ -1,4 +1,4 @@
-# Copyright 2015-2017 Rumma & Ko Ltd
+# Copyright 2015-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
@@ -6,10 +6,7 @@ Database models for `lino.modlib.checkdata`.
 
 """
 
-from __future__ import unicode_literals, print_function
-import six
 from builtins import object
-from builtins import str
 from collections import OrderedDict
 
 from django.db import models
@@ -144,7 +141,7 @@ class Problem(Controllable, UserAuthored):
         ordering = ['owner_type', 'owner_id', 'checker']
 
     allow_merge_action = False
-    
+
     # problem_type = ProblemTypes.field()
     checker = Checkers.field(verbose_name=_("Checker"))
     # severity = Severities.field()
@@ -161,7 +158,7 @@ class Problem(Controllable, UserAuthored):
     #     fields.update(checker=Checkers.field(
     #         blank=True, help_text=_("Only problems by this checker.")))
     #     return fields
-                      
+
     def __str__(self):
         return self.message
 

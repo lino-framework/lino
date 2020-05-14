@@ -184,6 +184,10 @@ class WithUserMiddleware(MiddlewareMixin):
             else:
                 activate(settings.SITE.models.about.TimeZones.default.tzinfo)
 
+        if user.is_anonymous:
+            request.subst_user = None
+            return
+
         rqdata = request2data(request, user_language)
         if rqdata is None:
             return

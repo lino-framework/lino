@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2018 Rumma & Ko Ltd
+# Copyright 2013-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
@@ -13,7 +13,6 @@ Calls :manage:`initdb` using the application's
 Introduction see :ref:`lino.tutorial.hello`.
 
 """
-import six
 
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
@@ -38,7 +37,7 @@ class Command(BaseCommand):
             return
 
         args = settings.SITE.demo_fixtures
-        if isinstance(args, six.string_types):
+        if isinstance(args, str):
             args = args.split()
         options['fixtures'] = args
         # super(Command, self).handle(*args, **options)

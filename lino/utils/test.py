@@ -1,19 +1,16 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2016 Rumma & Ko Ltd
+# Copyright 2013-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Defines the :class:`DocTest` and :class:`DemoTestCase` classes.
 
 """
 
-from __future__ import print_function, unicode_literals
-
 # import sys
 # import codecs
 # sys.stdout = codecs.getwriter('utf8')(sys.stdout)
 
-import logging
-logger = logging.getLogger(__name__)
+import logging ; logger = logging.getLogger(__name__)
 
 import os
 import json
@@ -66,7 +63,7 @@ class CommonTestCase(unittest.TestCase):
             self.assertEqual(set(result.keys()), set(expected_keys.split()))
         return result
 
-    
+
 
     def assertEquivalent(self, a, b, report_plain=False):
         """Compares two strings `a` (expected) and `b` (got), ignoring
@@ -209,3 +206,56 @@ class DemoTestCase(PythonTestCase, CommonTestCase):
         # except Exception as e:
         #     print("%s:\n%s" % (url, e))
         #     raise
+
+
+
+#class WebIndexTestCase(DjangoManageTestCase):
+#class WebIndexTestCase(RemoteAuthTestCase):
+class WebIndexTestCase(DemoTestCase):
+    """
+
+    Test whether a :manage:`runserver` on this database would respond with 200
+    to an anonymous request.
+
+    You add this to your test suite by just importing it. No subclassing needed.
+
+    By convention this is done in a file :xfile:`test_webindex.py`, i.e. when
+    such a file is present in the :xfile:`tests` directory of a demo project,
+    this test is being run as part of :manage:`test`.
+
+    """
+    # 20200513 : WebIndexTestCase now runs on the populatd demo data, not as an empty django test case
+
+    # removed 20150819 because it took unbearably much time for
+    # welfare test suite:
+    # override_djangosite_settings = dict(
+    #     build_js_cache_on_startup=True)
+
+    tested_urls = ('/', '/?su=3', '/?su=1234')
+
+    def test_get_index(self):
+        from django.conf import settings
+        # client = Client()
+        for url in self.tested_urls:
+            # print("20200513", url)
+            res = self.client.get(url)
+            self.assertEqual(
+                res.status_code, 200,
+                "Status code %s other than 200 for anonymous on GET %s" % (
+                    res.status_code, url))
+
+        if settings.SITE.user_model:
+            for user in settings.SITE.user_model.objects.all():
+                if user.user_type:
+                    self.client.force_login(user)
+                    res = self.client.get(url)
+                    self.assertEqual(
+                        res.status_code, 200,
+                        "Status code {} for {} on GET {}".format(
+                            res.status_code, user, url))
+
+        # res = client.get(url, REMOTE_USER='robin')
+        # self.assertEqual(
+        #     res.status_code, 200,
+        #     "Status code %s other than 200 for robin on GET %s" % (
+        #         res.status_code, url))
