@@ -1,4 +1,4 @@
-# Copyright: Copyright 2011-2018 Rumma & Ko Ltd
+# Copyright: Copyright 2011-2020 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 
 """
@@ -6,26 +6,23 @@ Two TestCase classes for writing tests be run using Django's test
 runner (i.e. `manage.py test`).
 """
 
-from __future__ import print_function
-
-import logging
-
-logger = logging.getLogger(__name__)
+import logging ; logger = logging.getLogger(__name__)
 
 import sys
+import json
 
 from django.conf import settings
 from django.test import TestCase as DjangoTestCase,TransactionTestCase
 from django.core.management import call_command
-from django.test import Client
+# from django.test import Client
 from django.db import connection, reset_queries, connections, DEFAULT_DB_ALIAS
 from django.utils import translation
 
-import json
 from atelier.utils import AttrDict
 from lino.core.signals import testcase_setup # , database_ready
 from lino.core.callbacks import applyCallbackChoice
 from .test import CommonTestCase
+from .test import WebIndexTestCase  # backwards compatibility
 
 
 class DjangoManageTestCase(DjangoTestCase, CommonTestCase):
@@ -43,7 +40,7 @@ class DjangoManageTestCase(DjangoTestCase, CommonTestCase):
 
     defining_module = None
     """When you decorate your subclass of TestCase, you must also specify::
-    
+
         defining_module = __name__
 
     Because a decorator will change your class's `__module__`
@@ -104,13 +101,13 @@ class DjangoManageTestCase(DjangoTestCase, CommonTestCase):
 
     def get_json_dict(self, *args, **kwargs):
         return self.client_json_dict(self.client.get, *args, **kwargs)
-    
+
     def post_json_dict(self, *args, **kwargs):
         return self.client_json_dict(self.client.post, *args, **kwargs)
-    
+
     def put_json_dict(self, *args, **kwargs):
         return self.client_json_dict(self.client.put, *args, **kwargs)
-    
+
     def client_json_dict(self, meth, username, url, *data, **extra):
         """Send a POST or PUT to client with given username, url and data. The
         client is expected to respond with a JSON encoded
@@ -190,30 +187,6 @@ class RemoteAuthTestCase(DjangoManageTestCase):
 TestCase = RemoteAuthTestCase
 
 
-#class WebIndexTestCase(DjangoManageTestCase):
-class WebIndexTestCase(RemoteAuthTestCase):
-    """Designed to be just imported. No subclassing needed."""
-
-    # removed 20150819 because it took unbearably much time for
-    # welfare test suite:
-    # override_djangosite_settings = dict(
-    #     build_js_cache_on_startup=True)
-
-    def test_get_index(self):
-        client = Client()
-        url = '/'
-        res = client.get(url)
-        self.assertEqual(
-            res.status_code, 200,
-            "Status code %s other than 200 for anonymous on GET %s" % (
-                res.status_code, url))
-        # res = client.get(url, REMOTE_USER='robin')
-        # self.assertEqual(
-        #     res.status_code, 200,
-        #     "Status code %s other than 200 for robin on GET %s" % (
-        #         res.status_code, url))
-
-
 class NoAuthTestCase(DjangoManageTestCase):
 
     def __call__(self, *args, **kw):
@@ -250,4 +223,3 @@ class RestoreTestCase(TransactionTestCase):
                         "--noinput"]
             sys.argv = ["manage.py", "run"] + run_args
             call_command("run", *run_args)
-    

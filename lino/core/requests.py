@@ -1054,7 +1054,12 @@ class BaseRequest(object):
                     if ba.action.show_in_plain:
                         ir = ba.request_from(self)
                         if ir.get_permission():
-                            buttons.append(ir.ar2button(**btnattrs))
+                            # try:
+                            #     btn = ir.ar2button(**btnattrs)
+                            # except AttributeError:
+                            #     raise Exception("20200513 {}".format(ir))
+                            btn = ir.ar2button(**btnattrs)
+                            buttons.append(btn)
         # print("20181106", cls, self.bound_action, buttons)
         return buttons
         # if len(buttons) == 0:
@@ -1356,7 +1361,7 @@ class ActorRequest(BaseRequest):
             # url = urlsplit(url)
             # url.scheme = settings.SITE.webdav_protocol
             # url = url.unsplit()
-        print("20180410 {}", url)
+        # print("20180410 {}", url)
         return url
 
     def pk2url(self, pk):

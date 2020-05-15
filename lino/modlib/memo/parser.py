@@ -14,11 +14,6 @@ TODO:
   which would be empty for # and @ but "]" for memo commands.
 
 """
-from __future__ import unicode_literals
-
-from builtins import str
-from builtins import object
-
 import logging ; logger = logging.getLogger(__name__)
 
 import re
