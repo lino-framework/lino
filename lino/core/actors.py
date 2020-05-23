@@ -604,6 +604,10 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     and name) and it makes no sense to have an insert window.
     """
 
+    card_layout = None
+    """
+    Define a layout for a card view of the table."""
+
     detail_template = None    # deprecated: use insert_layout instead
     insert_template = None    # deprecated: use detail_layout instead
 
@@ -1221,6 +1225,10 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
         """
         return str(obj)
+
+    @classmethod
+    def get_card_title(self, ar, obj):
+        return self.get_detail_title(ar, obj)
 
     @classmethod
     def get_choices_text(self, obj, request, field):

@@ -46,7 +46,7 @@ def discover_choosers():
 def install_layout(cls, k, layout_class, **options):
     """
     - `cls` is the actor (a class object)
-    - `k` is one of 'detail_layout', 'insert_layout', 'params_layout'
+    - `k` is one of 'detail_layout', 'insert_layout', 'params_layout', 'card_layout'
     - `layout_class`
 
     """

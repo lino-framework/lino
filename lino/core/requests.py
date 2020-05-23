@@ -1096,6 +1096,9 @@ class BaseRequest(object):
     def get_detail_title(self, elem):
         return self.actor.get_detail_title(self, elem)
 
+    def get_card_title(self, elem):
+        return self.actor.get_card_title(self, elem)
+
     def as_button(self, *args, **kw):
         """Return a button which when activated executes (a copy of)
         this request.

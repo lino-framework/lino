@@ -42,7 +42,7 @@ URL_PARAM_USER_LANGUAGE = 'ul'
 override user language
 """
 
-
+URL_PARAM_WINDOW_TYPE = 'wt'
 #~ URL_PARAM_EUSER = 'euser'
 #~ URL_PARAM_EUSER = 'su'
 
