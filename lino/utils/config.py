@@ -19,11 +19,9 @@ One possibility might be to write a special Jinja Template class...
 
 """
 
-from __future__ import unicode_literals
 from builtins import object
 
-import logging
-logger = logging.getLogger(__name__)
+import logging ; logger = logging.getLogger(__name__)
 
 import os
 from os.path import join, abspath, dirname, isdir
@@ -63,14 +61,12 @@ class ConfigDirCache(object):
         self._init = True
         self.site = site
         self.scan_config_dirs()
-        
+
     def scan_config_dirs(self):
         """Scan the file system and populate :attr:`config_dirs`."""
         config_dirs = []
 
         for pth in self.site.get_settings_subdirs(SUBDIR_NAME):
-            if six.PY2:
-                pth = pth.decode(fs_encoding)
             config_dirs.append(ConfigDir(pth, False))
 
         def add_config_dir(name, mod):
@@ -83,7 +79,6 @@ class ConfigDirCache(object):
         self.site.for_each_app(add_config_dir)
 
         self.LOCAL_CONFIG_DIR = None
-
         p = self.site.cache_dir.child(SUBDIR_NAME)
         if isdir(p):
             self.LOCAL_CONFIG_DIR = ConfigDir(p, True)
@@ -114,6 +109,7 @@ class ConfigDirCache(object):
             for cd in self.config_dirs:
                 ffn = join(cd.name, prefix, fn)
                 if os.path.exists(ffn):
+                    logger.debug("Found config file %s", ffn)
                     return ffn
 
     def find_config_files(self, pattern, *groups):

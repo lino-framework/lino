@@ -1523,7 +1523,7 @@ class Site(object):
         """Modifies the :data:`DEFAULT_LOGGING
         <django.utils.log.DEFAULT_LOGGING>` setting.
 
-        This is called *before* any plugins are loaded because  all this must
+        This is called *before* any plugins are loaded because all this must
         happen *before* Django passes the setting to the
         `logging.config.dictConfig
         <https://docs.python.org/3/library/logging.config.html#logging.config.dictConfig>`__
@@ -1533,11 +1533,6 @@ class Site(object):
         :setting:`LOGGER_CONFIG` settings unmodified.
 
         It does the following modifications:
-
-        - (does not) configure the console handler to write to stdout
-          instead of Django's default stderr (as explained `here
-          <http://codeinthehole.com/writing/console-logging-to-stdout-in-django/>`__)
-          because that breaks testing.
 
         - Define a *default logger configuration* which is initially
           the same as the one used by Django::
@@ -1554,6 +1549,11 @@ class Site(object):
 
         - Apply the default logger configuration to every logger name
           in :attr:`auto_configure_logger_names`.
+
+        - (does no longer) configure the console handler to write to stdout
+          instead of Django's default stderr (as explained `here
+          <http://codeinthehole.com/writing/console-logging-to-stdout-in-django/>`__)
+          because that breaks testing.
 
         It does nothing at all if :attr:`auto_configure_logger_names`
         is set to `None` or empty.

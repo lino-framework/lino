@@ -1399,3 +1399,10 @@ def make_remote_field(model, name):
     rf = RemoteField(getter, name, fld, setter)
     # choosers.check_for_chooser(model, rf)
     return rf
+
+# # would be nice for lino_xl.lib.vat.VatItemBase.item_total
+# class FieldAlias(VirtualField):
+#     def __init__(self, orig_name):
+#         ...
+#
+#
