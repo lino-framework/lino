@@ -97,11 +97,11 @@ class Comments(dd.Table):
             # btn.set("style", "padding-left:10px")
             ch += [" [", btn, "]"]
 
-        ch.append(' ')
-        ch.append(
-            E.a(u"⁜", onclick="toggle_visibility('comment-{}');".format(
-                comment.id), title=str(_("Hide")), href="#")
-        )
+        # ch.append(' ')
+        # ch.append(
+        #     E.a(u"⁜", onclick="toggle_visibility('comment-{}');".format(
+        #         comment.id), title=str(_("Hide")), href="#")
+        # )
         return tostring(ch)
 
     # @classmethod
@@ -154,7 +154,18 @@ class CommentsByX(Comments):
     order_by = ["-created"]
     # order_by = ["-modified"]
     display_mode = "summary"
+    card_layout = dd.DetailLayout("""
+    card_summary
+    CommentsByComment
+    """)
 
+    #
+
+    @classmethod
+    def get_card_title(self, ar, obj):
+        """Overrides the default behaviour
+        """
+        return ar.actor.get_comment_header(obj, ar)
 
 # class MyPendingComments(MyComments):
 #     label = _("My pending comments")
@@ -187,6 +198,8 @@ class CommentsByRFC(CommentsByX):
     master_key = 'owner'
     column_names = "body created user *"
     stay_in_grid = True
+    display_mode = "list"
+    simple_slavegrid_header = True
     insert_layout = dd.InsertLayout("""
     reply_to
     # comment_type
@@ -198,7 +211,6 @@ class CommentsByRFC(CommentsByX):
     @classmethod
     def get_table_summary(self, obj, ar):
         sar = self.request_from(ar, master_instance=obj)
-
         html = obj.get_rfc_description(ar)
         sar = self.insert_action.request_from(sar)
         if sar.get_permission():
@@ -238,7 +250,14 @@ class CommentsByMentioned(CommentsByX):
 
 class CommentsByComment(CommentsByX):
     master_key = 'reply_to'
+    display_mode = "list"
+    borderless_list_mode = True
+    title = _("Replies")
+    simple_slavegrid_header = True
 
+
+    paginator_template = "PrevPageLink NextPageLink"
+    hide_if_empty = True
 
 def comments_by_owner(obj):
     return CommentsByRFC.request(master_instance=obj)

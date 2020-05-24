@@ -411,6 +411,12 @@ class AbstractTable(actors.Actor):
     Used to limit the rendering of slave card views. 
     """
 
+    hide_if_empty = False
+    """
+    In a detail view if a slave table is empty, it's element will be hidden
+    """
+
+
     stay_in_grid = False
     """Set this to True if Lino should prefer grid mode and not open a
     detail window on a newly created record.  :class:`SubmitDetail
