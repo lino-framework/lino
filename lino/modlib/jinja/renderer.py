@@ -1,4 +1,4 @@
-# Copyright 2015-2019 Rumma & Ko Ltd
+# Copyright 2015-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
@@ -8,7 +8,6 @@ directories. TODO: do only one common loop for both.
 """
 
 from os.path import join, dirname, isdir
-from builtins import str
 import datetime
 import jinja2
 
@@ -20,7 +19,6 @@ from django.utils.translation import pgettext
 from etgen import html as xghtml
 from etgen.html import E, tostring
 
-from lino import PYAFTER26
 from lino.utils import iif
 from lino.utils import format_date
 from lino.utils.jinja import Counter
@@ -29,10 +27,7 @@ from lino.core.renderer import HtmlRenderer
 from lino.core.requests import BaseRequest
 from lino.api import rt
 
-if PYAFTER26:
-    from html import escape
-else:
-    from cgi import escape
+from html import escape
 
 SUBDIR_NAME = 'config'
 

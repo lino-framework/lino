@@ -151,12 +151,6 @@ from lino.modlib.system.choicelists import Genders, PeriodEvents, YesNo
 
 from importlib import import_module
 
-# The following are not only shortcuts, they also are a preparation to
-# encapsulate the `settings.SITE` name. It is possible that after
-# Django 1.7 we no longer need a `settings.SITE`. So I plan to
-# deprecate direct access to settings.SITE in application code. I am
-# not yet 100% sure whether this will be possible and makes sense.
-
 decfmt = settings.SITE.decfmt
 str2kw = settings.SITE.str2kw
 

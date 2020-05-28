@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-16 17:09+0200\n"
-"PO-Revision-Date: 2020-01-16 18:03+0200\n"
+"PO-Revision-Date: 2020-05-24 02:46+0300\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language: de\n"
 "Language-Team: \n"
@@ -5097,14 +5097,12 @@ msgid "of"
 msgstr ""
 
 #: lino/modlib/weasyprint/config/weasyprint/base.weasy.html:51
-#, fuzzy
 msgid "Printed"
-msgstr "Drucken"
+msgstr "Ausgedruckt"
 
 #: lino/modlib/weasyprint/config/weasyprint/base.weasy.html:51
-#, fuzzy
 msgid "at"
-msgstr "Letzter"
+msgstr "um"
 
 #: lino/modlib/wkhtmltopdf/__init__.py:32
 msgid "wkHtmlToPdf"
