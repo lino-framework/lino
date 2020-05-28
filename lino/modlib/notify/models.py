@@ -292,6 +292,13 @@ class Messages(dd.Table):
     column_names = "created subject user seen sent *"
     # cell_edit = False
 
+    card_layout = """
+    user seen 
+    subject
+    workflow_buttons
+    """
+
+
     # detail_layout = dd.DetailLayout("""
     # created user seen sent owner
     # overview

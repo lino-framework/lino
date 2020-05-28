@@ -604,6 +604,10 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     and name) and it makes no sense to have an insert window.
     """
 
+    card_layout = None
+    """
+    Define a layout for a card view of the table."""
+
     detail_template = None    # deprecated: use insert_layout instead
     insert_template = None    # deprecated: use detail_layout instead
 
@@ -938,9 +942,11 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         # a second loop. Because calview.EventsParams copies parameters from Events.
 
         actions.install_layout(cls, 'detail_layout', layouts.DetailLayout)
-        actions.install_layout(
-            cls, 'insert_layout', layouts.InsertLayout,
+        actions.install_layout(cls, 'insert_layout', layouts.InsertLayout,
             window_size=(cls.insert_layout_width, 'auto'))
+        actions.install_layout(cls, 'card_layout', layouts.DetailLayout,
+            # window_size=(cls.card_layout_width, 'auto')
+        )
 
         if cls.abstract:
             return
@@ -1219,6 +1225,10 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
         """
         return str(obj)
+
+    @classmethod
+    def get_card_title(self, ar, obj):
+        return self.get_detail_title(ar, obj)
 
     @classmethod
     def get_choices_text(self, obj, request, field):

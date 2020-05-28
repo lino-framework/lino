@@ -1041,6 +1041,8 @@ class Store(BaseStore):
         self.all_fields = []
         self.list_fields = []
         self.detail_fields = []
+        self.detail_fields = []
+        self.card_fields = []
         self.primary_keys = set([])
 
         def addfield(sf):
@@ -1060,6 +1062,11 @@ class Store(BaseStore):
         if form:
             dh = form.get_layout_handle(settings.SITE.kernel.default_ui)
             self.collect_fields(self.detail_fields, dh)
+
+        form = rh.actor.card_layout
+        if form:
+            dh = form.get_layout_handle(settings.SITE.kernel.default_ui)
+            self.collect_fields(self.card_fields, dh)
 
         if self.pk is not None:
             self.pk_index = 0
@@ -1111,6 +1118,7 @@ class Store(BaseStore):
         self.all_fields = tuple(self.all_fields)
         self.list_fields = tuple(self.list_fields)
         self.detail_fields = tuple(self.detail_fields)
+        self.card_fields = tuple(self.card_fields)
 
     def collect_fields(self, fields, *layouts):
         """`fields` is a pointer to either `self.detail_fields` or

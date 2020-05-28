@@ -406,6 +406,11 @@ class AbstractTable(actors.Actor):
 
     """
 
+    max_render_depth = 2
+    """
+    Used to limit the rendering of slave card views. 
+    """
+
     stay_in_grid = False
     """Set this to True if Lino should prefer grid mode and not open a
     detail window on a newly created record.  :class:`SubmitDetail

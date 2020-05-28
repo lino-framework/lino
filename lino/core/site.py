@@ -2729,6 +2729,8 @@ class Site(object):
 
         try:
             import mod_wsgi
+            if getattr(mod_wsgi, "version", None) is None:
+                raise ImportError
             version = "{0}.{1}".format(*mod_wsgi.version)
             yield ("mod_wsgi", version, "http://www.modwsgi.org/")
         except ImportError:
