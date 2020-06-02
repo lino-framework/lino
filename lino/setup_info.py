@@ -153,6 +153,8 @@ lino.modlib.gfks
 lino.modlib.gfks.fixtures
 lino.modlib.ipdict
 lino.modlib.jinja
+lino.modlib.jinja.management
+lino.modlib.jinja.management.commands
 lino.modlib.importfilters
 lino.modlib.languages
 lino.modlib.languages.fixtures

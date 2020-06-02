@@ -3902,6 +3902,8 @@ signature as `django.core.mail.EmailMessage`.
         kw.setdefault('sep', self.decimal_group_separator)
         kw.setdefault('dp', self.decimal_separator)
         from lino.utils import moneyfmt
+        if v is None:
+            return ""
         return moneyfmt(v, places=places, **kw)
 
     def format_currency(self, *args, **kwargs):

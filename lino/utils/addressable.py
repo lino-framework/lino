@@ -9,8 +9,6 @@ $ python setup.py test -s tests.UtilsTests.test_addressable
 
 """
 
-from __future__ import print_function
-
 from etgen.html import E, lines2p, tostring
 
 
@@ -20,7 +18,7 @@ class Addressable(object):
 
     It differentiates between the "person" and the "location" part of
     an address.  For example::
-    
+
         Mr. Luc Saffre     | person
         Rumma & Ko OÜ      | person
         Uus 1              | location
@@ -73,7 +71,7 @@ class Addressable(object):
     def get_address_html(self, *args, **kwargs):
         """Returns the full postal address a a string containing html
         markup of style::
-        
+
             <p>line1<br/>line2...</p>
 
         This returns always exactly one paragraph, even if the address
@@ -88,7 +86,7 @@ class Addressable(object):
         >>> addr = TestAddress('line1', 'line2')
         >>> print(addr.get_address_html(**{'class':"Recipient"}))
         <p class="Recipient">line1<br/>line2</p>
-          
+
         If `min_height` is specified, makes sure that the string
         contains at least that many lines. Adds as many empty lines
         (``<br/>``) as needed.  This is useful in a template which
@@ -127,4 +125,3 @@ class TestAddress(Addressable):
 
     def address_location_lines(self):
         return self.lines
-
