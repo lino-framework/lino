@@ -288,6 +288,10 @@ class ForeignKeyStoreField(RelatedMixin, ComboStoreField):
             # logger.info("20120109 %s -> %s -> %r",obj,self,v)
         if v is None:
             return (None, None)
+        elif v == constants.CHOICES_BLANK_FILTER_VALUE:
+            return (v, _("Blank"))
+        elif v == constants.CHOICES_NOT_BLANK_FILTER_VALUE:
+            return (v, _("Not Blank"))
         else:
             return (v.pk, self.format_value(ar, v))
             #return (v.pk, str(v))
@@ -1001,6 +1005,8 @@ class ParameterStore(BaseStore):
                 # can never be unset.  charfields have
                 # empty_strings_allowed e.g. id field may be empty.
                 # But don't do this for other cases.
+            elif form_value in (constants.CHOICES_BLANK_FILTER_VALUE, constants.CHOICES_NOT_BLANK_FILTER_VALUE):
+                return form_value
             else:
                 return sf.parse_form_value(form_value, None)
 
@@ -1019,7 +1025,7 @@ class ParameterStore(BaseStore):
                     kw[f.name] = parse(f, data[f.name + "Hidden"])
                 elif f.name in data:
                     kw[f.name] = parse(f, data[f.name])
-        # print(20160329, kw)
+        print(20160329, kw)
         return kw
 
 

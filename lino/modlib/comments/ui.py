@@ -14,6 +14,8 @@ import lxml
 from lino.core.gfks import gfk2lookup
 from .roles import CommentsReader, CommentsUser, CommentsStaff
 from .choicelists import CommentEvents
+from lino import mixins
+from lino.core.constants import CHOICES_BLANK_FILTER_VALUE
 
 
 class CommentTypes(dd.Table):
@@ -37,7 +39,7 @@ class Comments(dd.Table):
     required_roles = dd.login_required(CommentsUser)
 
     model = 'comments.Comment'
-    params_layout = "start_date end_date observed_event user"
+    params_layout = "start_date end_date observed_event user reply_to"
 
     insert_layout = dd.InsertLayout("""
     reply_to owner owner_type owner_id
@@ -50,16 +52,23 @@ class Comments(dd.Table):
     id user created modified private
     reply_to owner owner_type owner_id comment_type
     body
+    CommentsByComment
     """
 
     # html_parser = etree.HTMLParser()
 
-    #~ column_names = "id date user type event_type subject * body_html"
-    #~ column_names = "id date user event_type type project subject * body"
-    #~ hide_columns = "body"
-    #~ hidden_columns = frozenset(['body'])
-    #~ order_by = ["id"]
-    #~ label = _("Notes")
+    # ~ column_names = "id date user type event_type subject * body_html"
+    # ~ column_names = "id date user event_type type project subject * body"
+    # ~ hide_columns = "body"
+    # ~ hidden_columns = frozenset(['body'])
+    # ~ order_by = ["id"]
+    # ~ label = _("Notes")
+
+    @classmethod
+    def get_simple_parameters(cls):
+        for p in super(Comments, cls).get_simple_parameters():
+            yield p
+        yield "reply_to"
 
     @classmethod
     def get_table_summary(cls, obj, ar):
@@ -73,7 +82,6 @@ class Comments(dd.Table):
         chunks = [o.as_summary_row(ar) for o in sar.sliced_data_iterator]
         html = '\n'.join(chunks)
         return "<div>{}</div>".format(html)
-
 
     @classmethod
     def get_comment_header(cls, comment, ar):
@@ -149,6 +157,7 @@ class AllComments(Comments):
     required_roles = dd.login_required(CommentsStaff)
     order_by = ["-created"]
 
+
 class CommentsByX(Comments):
     required_roles = dd.login_required(CommentsReader)
     order_by = ["-created"]
@@ -159,13 +168,12 @@ class CommentsByX(Comments):
     CommentsByComment
     """)
 
-    #
-
     @classmethod
     def get_card_title(self, ar, obj):
         """Overrides the default behaviour
         """
         return ar.actor.get_comment_header(obj, ar)
+
 
 # class MyPendingComments(MyComments):
 #     label = _("My pending comments")
@@ -188,7 +196,6 @@ class RecentComments(CommentsByX):
     # display_mode = "summary"
 
 
-
 class CommentsByType(CommentsByX):
     master_key = 'comment_type'
     column_names = "body created user *"
@@ -207,6 +214,32 @@ class CommentsByRFC(CommentsByX):
     private
     """, window_size=(60, 13), hidden_elements="reply_to")
 
+    @classmethod
+    def param_defaults(cls, ar, **kw):
+        kw = super(CommentsByRFC, cls).param_defaults(ar, **kw)
+        kw['reply_to'] = CHOICES_BLANK_FILTER_VALUE
+        kw['user'] = ar.get_user()
+        # print("comments pd", kw)
+        return kw
+
+    @classmethod
+    def get_main_card(self, ar):
+        ticket_obj = ar.master_instance
+        sar = self.request_from(ar, master_instance=ticket_obj)
+        html=ticket_obj.get_rfc_description(ar)
+        sar = self.insert_action.request_from(sar)
+        if sar.get_permission():
+            btn = sar.ar2button(None, _("Write comment"), icon_name=None)
+            html += "<p>" + tostring(btn) + "</p>"
+
+        if html:
+            return dict(
+                card_title="Description",
+                main_card_body=html, # main_card_body is special keyword
+                id="[main_card]" # needed for map key in react...
+            )
+        else:
+            return None
 
     @classmethod
     def get_table_summary(self, obj, ar):
@@ -227,10 +260,12 @@ class CommentsByRFC(CommentsByX):
         html += "</ul>"
         return ar.html_text(html)
 
+
 class CommentsByMentioned(CommentsByX):
     # show all comments that mention the master instance
     master = dd.Model
     label = _("Mentions")
+
     # label = _("Comments mentioning this")
 
     @classmethod
@@ -255,12 +290,13 @@ class CommentsByComment(CommentsByX):
     title = _("Replies")
     simple_slavegrid_header = True
 
-
     paginator_template = "PrevPageLink NextPageLink"
     hide_if_empty = True
 
+
 def comments_by_owner(obj):
     return CommentsByRFC.request(master_instance=obj)
+
 
 class Mentions(dd.Table):
     required_roles = dd.login_required(CommentsStaff)
@@ -269,6 +305,7 @@ class Mentions(dd.Table):
     detail_layout = """
     id comment owner created
     """
+
 
 class MentionsByOwner(Mentions):
     master_key = "owner"

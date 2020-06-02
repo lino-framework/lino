@@ -1255,6 +1255,10 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         return self.get_detail_title(ar, obj)
 
     @classmethod
+    def get_main_card(self, ar,):
+        return None
+
+    @classmethod
     def get_choices_text(self, obj, request, field):
         """
         Return the text to be displayed in a combo box
