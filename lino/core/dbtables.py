@@ -600,7 +600,7 @@ class Table(AbstractTable):
             for k in self.simple_parameters:
                 v = getattr(ar.param_values, k)
                 # if "room" in k:
-                print("20200423", k, v, self.simple_parameters, ar.param_values)
+                # print("20200423", k, v, self.simple_parameters, ar.param_values)
                 if v == constants.CHOICES_BLANK_FILTER_VALUE:
                     spv[k+"__isnull"] = True
                 elif v == constants.CHOICES_NOT_BLANK_FILTER_VALUE:
