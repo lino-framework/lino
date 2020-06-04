@@ -1188,7 +1188,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
             action.action.preprocessor)
         yield "  };"
         yield "  var panel = Ext.getCmp(rp);"
-        yield "  if(panel) panel.do_when_clean(true, h); else h();"
+        yield "  if(panel && !params.rqdata) panel.do_when_clean(true, h); else h();"
         yield "};"
 
     def js_render_window_action(self, rh, ba):

@@ -177,14 +177,14 @@ def set_callback(ar, cb):
             title=cb.title,
             buttons=buttons)
 
-        rq_data = { k:v[0] if len(v) == 1 else v
+        rqdata = { k:v[0] if len(v) == 1 else v
             for k,v in (ar.rqdata.lists() if getattr(ar, "rqdata", None) is not None else {})}
-        rq_data.pop("_dc", None)
+        rqdata.pop("_dc", None)
 
         for c in cb.choices:
             buttons.append([c.name, c.label])
             xcallback[c.name + "_resendEvalJs"] = ar.renderer.ar2js(
-                ar, ar.selected_rows, rqdata= rq_data, xcallback={
+                ar, ar.selected_rows, rqdata= rqdata, xcallback={
                     "xcallback_id" : cb_id,
                     "choice" : c.name })
         # print(buttons)
