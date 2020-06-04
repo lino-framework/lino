@@ -1615,7 +1615,14 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
         result.xcallback.buttons.forEach((button) => config.buttons[button[0]] = button[1]);
         config.msg = result.message;
         config.fn = function(buttonId, text, opt) {
-          eval(result.xcallback[buttonId + "_resendEvalJs"])
+          var xcallback = {};
+          xcallback["xcallback__" + result.xcallback.id] = buttonId;
+          xcallback["query"] = "";
+          panel.set_base_params(xcallback);
+          var eval_js = result.xcallback[buttonId + "_resendEvalJs"];
+          // delete(result.xcallback);
+          eval(eval_js);
+          
         }
         Ext.MessageBox.show(config);
         return;
@@ -2263,6 +2270,7 @@ Lino.run_row_action = function(
     actionName, params, preprocessor) {
   //~ var panel = action.get_window().main_item;
   // console.log("20140930 Lino.run_row_action", params);
+  if (pk.length == 0 ) return;
   url = '{{extjs.build_plain_url("api")}}' + url  + '/' + pk;
   var panel = Ext.getCmp(requesting_panel);
   // var params = {}
