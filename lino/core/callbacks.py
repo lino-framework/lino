@@ -144,7 +144,7 @@ class unused_CallbackManager(object):
 
 def add_callback(ar, *msgs, uid=None):
     """
-    Returns an *action callback* which will initiate a dialog thread by
+    Returns an *action callback* that will initiate a dialog thread by
     asking a question to the user and suspending execution until
     the user's answer arrives in a next HTTP request.
 

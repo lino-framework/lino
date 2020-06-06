@@ -681,7 +681,6 @@ class BaseRequest(object):
         cb = self.add_callback(*msgs, uid=uid)
         cb.add_choice('yes', ok_func, gettext("Yes"))
         cb.add_choice('no', noop, gettext("No"))
-
         self.set_callback(cb)
 
         if not self.renderer.is_interactive:
