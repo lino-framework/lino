@@ -518,6 +518,30 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     :class:`lino_xl.cal.CalenderView`.
 
     """
+
+    simple_slavegrid_header = False
+    """
+    If True the slave grid in a detail will be simplified
+    """
+
+    # paginator_rowsPerPageOptions = None
+    # """Array of integer values to display inside rows per page dropdown in the paginator."""
+
+    paginator_template = None
+    """
+    Paginator elements can be customized using the template property using the predefined keys, default value is 
+    "FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown". 
+    Here are the available elements that can be placed inside a paginator.
+    
+    FirstPageLink
+    PrevPageLink
+    PageLinks
+    NextPageLink
+    LastPageLink
+    RowsPerPageDropdown
+    CurrentPageReport
+    """
+
     _label = None
     _editable = None
     _known_values = {}
@@ -1229,6 +1253,10 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     @classmethod
     def get_card_title(self, ar, obj):
         return self.get_detail_title(ar, obj)
+
+    @classmethod
+    def get_main_card(self, ar,):
+        return None
 
     @classmethod
     def get_choices_text(self, obj, request, field):

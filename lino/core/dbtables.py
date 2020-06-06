@@ -24,6 +24,7 @@ from lino.core import fields
 from lino.core import actions
 from lino.core.model import Model
 from lino.core import actors
+from lino.core import constants
 
 from lino.core.choicelists import ChoiceListField
 from .utils import models_by_base
@@ -599,9 +600,14 @@ class Table(AbstractTable):
             for k in self.simple_parameters:
                 v = getattr(ar.param_values, k)
                 # if "room" in k:
-                #     print("20200423", k, v, ar.param_values.keys())
-                if v is not None:
+                # print("20200423", k, v, self.simple_parameters, ar.param_values)
+                if v == constants.CHOICES_BLANK_FILTER_VALUE:
+                    spv[k+"__isnull"] = True
+                elif v == constants.CHOICES_NOT_BLANK_FILTER_VALUE:
+                    spv[k+"__isnull"] = False
+                elif v is not None:
                     spv[k] = v
+
             qs = self.model.add_param_filter(qs, **spv)
             # qs = self.model.add_param_filter(qs, **ar.param_values)
 
@@ -612,7 +618,7 @@ class Table(AbstractTable):
                 qs = qs.filter(ar.filter)
 
             if ar.known_values:
-                # logger.info("20120111 known values %r", ar.known_values)
+                logger.info("20120111 known values %r", ar.known_values)
                 d = {}
                 for k, v in list(ar.known_values.items()):
                     if v is None:

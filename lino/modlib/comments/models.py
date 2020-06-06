@@ -171,6 +171,19 @@ class Comment(CreatedModified, UserAuthored, Controllable,
             qs = pv.observed_event.add_filter(qs, pv)
         return qs
 
+    @dd.htmlbox()
+    def card_summary(self, ar):
+        if not ar:
+            return ""
+        # header = ar.actor.get_comment_header(self, ar) if ar else ""
+        body = ar.parse_memo(self.body)
+        # for e in lxml.html.fragments_fromstring(self.short_preview):  # , parser=cls.html_parser)
+        #     html += tostring(e)
+
+        return "<div><p>{}</p></div>".format(
+            # header,
+            body)
+
     def summary_row(o, ar):
 
         if o.modified is None or (o.modified - o.created).total_seconds() < 1:
