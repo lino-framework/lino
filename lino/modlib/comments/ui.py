@@ -218,8 +218,6 @@ class CommentsByRFC(CommentsByX):
     def param_defaults(cls, ar, **kw):
         kw = super(CommentsByRFC, cls).param_defaults(ar, **kw)
         kw['reply_to'] = CHOICES_BLANK_FILTER_VALUE
-        kw['user'] = ar.get_user()
-        # print("comments pd", kw)
         return kw
 
     @classmethod
