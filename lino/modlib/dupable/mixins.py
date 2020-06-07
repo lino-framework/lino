@@ -1,10 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2014-2017 Rumma & Ko Ltd
+# Copyright 2014-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-from __future__ import unicode_literals
 from builtins import map
-from builtins import str
 from builtins import object
 
 from django.conf import settings
@@ -81,7 +79,7 @@ class Dupable(dd.Model):
     def dupable_matches_required(self):
         """Return the minimum number of words that must sound alike before
         two rows should be considered similar.
-        
+
         """
         return 2
 
@@ -155,7 +153,7 @@ class Dupable(dd.Model):
         return qs[:limit]
 
 
-    
+
 
 
 from lino.modlib.checkdata.choicelists import Checker
@@ -169,19 +167,19 @@ class DupableChecker(Checker):
     """
     verbose_name = _("Check for missing phonetic words")
     model = Dupable
-    
+
     def get_checkdata_problems(self, obj, fix=False):
         msg = obj.update_dupable_words(fix)
         if msg:
             yield (True, msg)
-            
+
 
 DupableChecker.activate()
 
 class SimilarObjectsChecker(Checker):
     model = Dupable
     verbose_name = _("Check for similar objects")
-    
+
     def get_checkdata_problems(self, obj, fix=False):
         lst = list(obj.find_similar_instances(1))
         if len(lst):
@@ -189,4 +187,4 @@ class SimilarObjectsChecker(Checker):
                 clients=', '.join(map(str, lst)))
             yield (False, msg)
 
-SimilarObjectsChecker.activate()    
+SimilarObjectsChecker.activate()
