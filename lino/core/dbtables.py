@@ -618,7 +618,7 @@ class Table(AbstractTable):
                 qs = qs.filter(ar.filter)
 
             if ar.known_values:
-                logger.info("20120111 known values %r", ar.known_values)
+                # logger.info("20120111 known values %r", ar.known_values)
                 d = {}
                 for k, v in list(ar.known_values.items()):
                     if v is None:
