@@ -616,9 +616,13 @@ class GenericForeignKeyField(DisplayStoreField):
             return ''
         if ar is None:
             return str(v)
-        if ar.renderer is None:
+        if getattr(ar, "renderer", None) is None:
             return str(v)
         return ar.obj2html(v)
+
+    def parse_form_value(self, v, obj):
+        v = getattr(obj, self.name, None)
+        return v
 
 class GenericRelField(RelatedMixin, DisplayStoreField):
 
