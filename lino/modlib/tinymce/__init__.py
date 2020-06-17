@@ -93,11 +93,12 @@ class Plugin(ad.Plugin):
             yield ("Ext.ux.TinyMCE", '0.8.4', "http://www.byte-force.com")
 
     def get_js_includes(self, settings, language):
-        if TINYMCE_VERSION.startswith('3'):
-            yield self.build_lib_url('tiny_mce.js')
-        else:
-            yield self.build_lib_url('tinymce.min.js')
-        yield settings.SITE.build_static_url("byteforce", "Ext.ux.TinyMCE.js")
+        if settings.SITE.kernel.default_renderer.extjs_version:
+            if TINYMCE_VERSION.startswith('3'):
+                yield self.build_lib_url('tiny_mce.js')
+            else:
+                yield self.build_lib_url('tinymce.min.js')
+            yield settings.SITE.build_static_url("byteforce", "Ext.ux.TinyMCE.js")
 
     def get_patterns(self):
         from django.conf.urls import url

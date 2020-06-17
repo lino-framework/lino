@@ -9,7 +9,7 @@ import six
 
 import logging ; logger = logging.getLogger(__name__)
 
-from cgi import escape
+from html import escape
 import decimal
 
 from django.db import models
