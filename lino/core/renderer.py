@@ -7,7 +7,7 @@ Defines :class:`HtmlRenderer` and :class:`TextRenderer`.
 
 import logging ; logger = logging.getLogger(__name__)
 
-from cgi import escape
+from html import escape
 from atelier import rstgen
 
 from django.conf import settings
@@ -830,7 +830,7 @@ class JsRenderer(HtmlRenderer):
     def js2url(self, js):
         if not js:
             return None
-        js = escape(js)
+        js = escape(js, quote=False)
         return 'javascript:' + js
 
     def get_action_status(self, ar, ba, obj, **kw):

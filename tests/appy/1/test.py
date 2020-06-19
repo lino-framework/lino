@@ -211,7 +211,7 @@ run_test(11,"TABLE 2 with head and foot",HTML=html)
 #~ # 12 : 
 
 #
-import cgi
+from html import escape
 from lino.utils.htmlgen import UL
 items = '''un deux trois
 quatre cinq
@@ -219,7 +219,7 @@ siz sept huit'''.splitlines()
 cells = []
 cells.append('''<p>BISA</p>'''+UL(items))
 cells.append('''<p>RCYCLE</p>'''+UL(items))
-html = '<h1>%s</h1>' % cgi.escape(u"Le douzième essai")
+html = '<h1>%s</h1>' % escape(u"Le douzième essai")
 #~ head = ''.join(['<col width="30" />' for c in cells])
 #~ head = '<colgroup>%s</colgroup>' % head
 s = ''.join(['<td valign="top">%s</td>' % c for c in cells])

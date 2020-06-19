@@ -2,7 +2,7 @@
 # License: BSD (see file COPYING for details)
 
 import re
-import cgi
+from html import escape
 import datetime
 
 # from django.contrib.humanize.templatetags.humanize import naturaltime
@@ -90,7 +90,7 @@ class SiteSearch(dd.VirtualTable):
                     s = matches.get(de, None)
                     if s is None:
                         s = str(de.value_from_object(obj))
-                        s = cgi.escape(s)
+                        s = escape(s, quote=False)
                     r, count = re.subn(w, bold, s, flags=re.IGNORECASE)
                     if count:
                         matches[de] = r

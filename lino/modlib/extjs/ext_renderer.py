@@ -8,7 +8,7 @@ Defines the :class:`ExtRenderer` class.
 
 import logging ; logger = logging.getLogger(__name__)
 
-import cgi
+from html import escape
 import time
 
 from django.conf import settings
@@ -1284,7 +1284,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
 
         def fn():
             yield "// lino.js --- generated %s by %s for %s." % (
-                time.ctime(), cgi.escape(settings.SITE.site_version()),
+                time.ctime(), escape(settings.SITE.site_version()),
                 get_user_profile())
             # lino.__version__)
             #~ // $site.title ($lino.welcome_text())

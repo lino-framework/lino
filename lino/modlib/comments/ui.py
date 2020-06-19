@@ -284,6 +284,7 @@ class CommentsByMentioned(CommentsByX):
 class CommentsByComment(CommentsByX):
     master_key = 'reply_to'
     display_mode = "list"
+    stay_in_grid = True
     borderless_list_mode = True
     title = _("Replies")
     simple_slavegrid_header = True
