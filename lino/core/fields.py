@@ -1045,11 +1045,13 @@ class TableRow(object):
 
     @classmethod
     def setup_parameters(cls, params):
-        """Inheritable hook for defining parameters.
+        """Inheritable hook for defining parameters for every actor on this model.
+
         Called at site startup once for each actor using this model.
 
-        It receives a `dict` object `params` and is alloed to update that
-        `dict`, which will be used to fill the actor's `parameters`.
+        Toes not return anything. Receives a `dict` object `params` and is
+        expected to update that `dict`, which will be used to fill the actor's
+        :attr:`parameters`.
 
         See also :meth:`get_simple_parameters`.
 
