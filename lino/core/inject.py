@@ -1,11 +1,7 @@
-# Copyright 2011-2018 Rumma & Ko Ltd
+# Copyright 2011-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-import logging
-
-from six import string_types
-
-logger = logging.getLogger(__name__)
+import logging ; logger = logging.getLogger(__name__)
 
 import inspect
 import copy
@@ -54,9 +50,9 @@ def fix_field_cache(model):
 def on_class_prepared(sender, **kw):
     """This is Lino's general `class_prepared` handler.
     It does two things:
-    
+
     - Run pending calls to :func:`inject_field` and :func:`update_field`.
-    
+
     - Apply a workaround for Django's ticket 10808.  In a diamond
       inheritance pattern, `_meta._field_cache` contains certain
       fields twice.  So we remove these duplicate fields from
@@ -65,7 +61,7 @@ def on_class_prepared(sender, **kw):
 
     """
     model = sender
-        
+
     # collect_virtual_fields() first time because virtual fields might
     # get updated
     # collect_virtual_fields(model)
@@ -84,7 +80,7 @@ def on_class_prepared(sender, **kw):
     # # collect_virtual_fields() second time because new virtual fields
     # # might have been injected
     # collect_virtual_fields(model)
-    
+
 
 def fmt(func_caller):
     f, caller = func_caller
@@ -148,7 +144,7 @@ def do_when_prepared(todo, *model_specs):
             # e.g. inject_field during autodoc when user_model is None
             continue
 
-        if isinstance(model_spec, string_types):
+        if isinstance(model_spec, str):
             k = model_spec
             model = PREPARED_MODELS.get(k, None)
             if model is None:
@@ -237,7 +233,7 @@ def inject_field(model_spec, name, field, doc=None, active=False):
         field.__doc__ = doc
 
     def todo(model):
-        # logger.info("20150820 gonna inject_field %s %s", model.__name__, name)
+        # logger.info("20200621 gonna inject_field %s into %s", name, model)
         if True:  # 20181023
             try:
                 model._meta.get_field(name)
@@ -259,14 +255,14 @@ def update_field(model_spec, name, **kw):
     :class:`Human <lino.mixins.human.Human>` defines a field
     `first_name` which may not be blank.  If you inherit from this
     mixin but want `first_name` to be optional::
-    
+
       class MyPerson(mixins.Human):
           ...
       dd.update_field(MyPerson, 'first_name', blank=True)
-      
+
     Or you want to change the label of a field defined in an inherited
     mixin, as done in :mod:`lino_xl.lib.outbox.models`::
-    
+
       dd.update_field(Mail, 'user', verbose_name=_("Sender"))
     """
     # if name == "overview":

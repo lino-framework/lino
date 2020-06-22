@@ -343,12 +343,6 @@ class Kernel(object):
                         "{} field {}.{} hidden by virtual field of same name.".format(
                             f.__class__.__name__, fmn(model), k))
 
-
-
-
-        # Protect the foreign keys by removing Django's default
-        # behaviour of having on_delete with CASCADE as default.
-
         self.protect_foreignkeys(models_list)
 
         if site.workflows_module:
@@ -620,6 +614,9 @@ class Kernel(object):
         """Change `on_delete` from CASCADE (Django's default value) to PROTECT
         for foreignkeys that need to be protected.
 
+        Protect the foreign keys by removing Django's default
+        behaviour of having on_delete with CASCADE as default.
+
         Basically we protect all FK fields that are not listed in
         their model's :attr:`allow_cascaded_delete
         <lino.core.model.Model.allow_cascaded_delete>`. With one
@@ -627,6 +624,10 @@ class Kernel(object):
         <lino.mixins.polymorphic.Polymorphic>` must not
         become protected (because Lino handles it automatically, see
         :meth:`lino.mixins.polymorphic.Polymorphic.disable_delete`).
+
+        Note that this does not protect FK fields that get defined afterwards,
+        e.g. during pre_analyze, e.g. the purchase_account field defined by
+        TradeTypes.purchases in ledger.
 
         """
 
@@ -655,7 +656,7 @@ class Kernel(object):
                         #     "Setting {0}.{1}.on_delete to PROTECT because "
                         #     "field is not specified in "
                         #     "allow_cascaded_delete.").format(fmn(m), fk.name)
-                        # logger.debug(msg)
+                        # logger.info(msg)
                         fk.remote_field.on_delete = models.PROTECT
                 else:
                     if fk.name in m.allow_cascaded_delete:
