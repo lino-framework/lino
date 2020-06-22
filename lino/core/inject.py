@@ -38,12 +38,30 @@ def fix_field_cache(model):
         for f in parent._meta.local_fields:
             used_fields[f.name] = f
             used_fields[f.attname] = f
+            
+    # def msg(name):
+    #     parent = used_fields.get(name).model
+    #     print("20200622 Not adding {} to {} because inherited from {}".format(
+    #         name, model, parent))
+
     for f in model._meta.local_fields:
-        if not (used_fields.get(f.name) or used_fields.get(f.attname) or None):
+        if used_fields.get(f.name):
+            pass  # msg(f.name)
+        elif used_fields.get(f.attname):
+            pass  # msg(f.attname)
+        else:
             new_cache.append(f)
         #~ raise Exception("20131110 %r" % (model._meta._field_cache,))
     model._meta.local_fields = new_cache
+    # model._meta._expire_cache()
     # print(model._meta.fields)
+
+    # from django.apps import apps
+    # for m in apps.get_models():
+    #     if issubclass(m, model):
+    #         m._meta._expire_cache()
+    # django.core.exceptions.AppRegistryNotReady: Models aren't loaded yet.
+
 
 
 @receiver(class_prepared)
@@ -139,8 +157,10 @@ def do_when_prepared(todo, *model_specs):
     #~ caller = inspect.getframeinfo(inspect.currentframe().f_back)[2]
     #~ caller = inspect.getframeinfo(caller.f_back)[2]
 
+    # logger.info("20200622 test %s for %s", caller, model_specs)
     for model_spec in model_specs:
         if model_spec is None:
+            # logger.info("20200622 Ignore %s for %s", caller, model_spec)
             # e.g. inject_field during autodoc when user_model is None
             continue
 
@@ -152,13 +172,14 @@ def do_when_prepared(todo, *model_specs):
                 injects.append((todo, caller))
                 #~ d[name] = field
                 #~ if model_spec == "system.SiteConfig":
-                #~ logger.info("20131110 Defer %s for %s", todo, model_spec)
+                # logger.info("20200622 Defer %s for %s", caller, model_spec)
                 continue
         else:
             model = model_spec
             #~ k = model_spec._meta.app_label + '.' + model_spec.__name__
         #~ if model._meta.abstract:
             #~ raise Exception("Trying do_when_prepared on abstract model %s" % model)
+        # logger.info("20200622 Run %s for %s", caller, model)
         todo(model)
 
 

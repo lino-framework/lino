@@ -377,6 +377,14 @@ class Kernel(object):
         for model in models_list:
             model.collect_virtual_fields()
 
+        # after injecting a field to a model, we must also reload the field
+        # cache for all MTI childern of that model. This can't be done by
+        # inject_field() because when inject_field() runs, the full list of
+        # models is not yet known.  So we do it now.  After this point we must
+        # not inject more fields.
+        for model in models_list:
+            model._meta._expire_cache()
+
         # for vt in virtual_tables:
         #     if vt.model is not None:
         #         assert vt.model._lino_default_table is None

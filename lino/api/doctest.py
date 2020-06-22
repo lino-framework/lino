@@ -486,10 +486,10 @@ def show_choicelists():
     """
     Show all the choicelists defined in this application.
     """
-    headers = ["name", "preferred_width"] + [lng.name for lng in settings.SITE.languages]
+    headers = ["name", "#items", "preferred_width"] + [lng.name for lng in settings.SITE.languages]
     rows = []
     for i in sorted(kernel.CHOICELISTS.values(), key=lambda s: str(s)):
-        row = [str(i), i.preferred_width] + str2languages(i.verbose_name_plural)
+        row = [str(i), len(i.choices), i.preferred_width] + str2languages(i.verbose_name_plural)
         rows.append(row)
     print(table(headers, rows))
 

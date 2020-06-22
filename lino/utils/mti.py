@@ -1,15 +1,11 @@
-# Copyright 2009-2016 Luc Saffre
+# Copyright 2009-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
 A collection of tools around :doc:`multi-table inheritance </dev/mti>`.
 
-
-
 """
-from builtins import str
-import logging
-logger = logging.getLogger(__name__)
+import logging ; logger = logging.getLogger(__name__)
 
 from django.db import models
 from django.db import router
@@ -60,7 +56,7 @@ class ChildCollector(Collector):
             # related_objects = model._meta.get_all_related_objects(
             #         include_hidden=True, include_proxy_eq=True,
             #         local_only=True)
-            
+
             for related in related_objects:
                 field = related.field
                 if field.remote_field.on_delete == DO_NOTHING:
@@ -195,7 +191,7 @@ def insert_child(obj, child_model, full_clean=False, **attrs):
                      parent=obj.__class__.__name__,
                      message=msg))
     return new_obj
-        
+
 
 def mtichild(p, model, **kw):
     """Create an MTI child, optionally set some attributes, save it to the
@@ -289,4 +285,3 @@ class EnableChild(VirtualField):
 
 
 from lino.utils.dpy import create_mti_child as create_child
-
