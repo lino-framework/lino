@@ -41,6 +41,7 @@ install_requires = [
     'jinja2', 'pytidylib', 'PyYAML',
     'clint',  # lino.modlib.checkdata.management.commands
     'django-localflavor',  # lino.modlib.sepa
+    'django-click',  # for passwd command
     # 'django-iban',  # lino.modlib.sepa
     'openpyxl',  # removed version requirement 'openpyxl==3.0.1',
      'html2text',
