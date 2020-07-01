@@ -4,8 +4,6 @@
 """
 This defines the :class:`Table` class.
 """
-import six
-# str = six.text_type
 
 import logging ; logger = logging.getLogger(__name__)
 
@@ -354,12 +352,12 @@ class Table(AbstractTable):
             self.model = None
 
         if self.model is not None:
-            if isinstance(self.hidden_columns, six.string_types):
+            if isinstance(self.hidden_columns, str):
                 self.hidden_columns = frozenset(
                     fields.fields_list(self.model, self.hidden_columns))
             self.hidden_columns |= self.model.hidden_columns
 
-            if isinstance(self.active_fields, six.string_types):
+            if isinstance(self.active_fields, str):
                 self.active_fields = frozenset(
                     fields.fields_list(self.model, self.active_fields))
             self.active_fields |= self.model.active_fields

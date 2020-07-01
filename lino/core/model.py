@@ -708,12 +708,6 @@ class Model(models.Model, fields.TableRow):
             ar.actor.after_create_instance(elem, ar)
         elem.after_ui_save(ar, None)
 
-    def save_existing_instance(self, ar):
-        watcher = ChangeWatcher(self)
-        ar.ah.store.form2obj(ar, ar.rqdata, self, False)
-        self.full_clean()
-        self.save_watched_instance(ar, watcher)
-
     def save_watched_instance(elem, ar, watcher):
         if watcher.is_dirty():
             pre_ui_save.send(sender=elem.__class__, instance=elem, ar=ar)

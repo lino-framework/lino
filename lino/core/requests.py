@@ -1322,6 +1322,19 @@ class ActorRequest(BaseRequest):
         self._status = kw
         return kw
 
+    def clear_cached_status(self):
+        """Remove any previously computed status information.
+
+        The status information of a request is cached to avoid performance
+        issues e.g. in calendar views where a many buttons can be rendered for a
+        same request and where the status information can be relatively heavy.
+
+        But sometimes you don't want this. In that case you call
+        :meth:`clear_cached_status`.
+
+        """
+        self._status = None
+
     # def spawn(self, actor, **kw):
     #     """Same as :meth:`BaseRequest.spawn`, except that the first positional
     #     argument is an `actor`.

@@ -1,9 +1,6 @@
 # Copyright 2010-2017 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-from __future__ import unicode_literals
-from builtins import str
-import six
 import difflib
 
 from django.db.models.fields import NOT_PROVIDED
@@ -11,7 +8,6 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 from lino.core.signals import on_ui_updated
-from lino.core.fields import VirtualField
 from etgen.html import E
 # from .utils import obj2str
 from .utils import obj2unicode
@@ -132,9 +128,9 @@ class ChangeWatcher(object):
             if new:
                 new = f.remote_field.model.objects.get(pk=new)
         elif isinstance(f, ChoiceListField):
-            if isinstance(old, six.string_types):
+            if isinstance(old, str):
                 old = f.choicelist.get_by_value(old)
-            if isinstance(new, six.string_types):
+            if isinstance(new, str):
                 new = f.choicelist.get_by_value(new)
         else:
             old = obj2unicode(old)

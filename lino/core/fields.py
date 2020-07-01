@@ -20,12 +20,14 @@ from django.utils.functional import cached_property
 
 from lino.core.utils import resolve_field, full_model_name, resolve_model
 from lino.core.exceptions import ChangedAPI
+from lino.core.diff import ChangeWatcher
 
 from lino.utils import get_class_attr
 from lino.utils import IncompleteDate
 from lino.utils import quantities
 from lino.utils import choosers
 from lino.utils.quantities import Duration
+
 
 def validate_incomplete_date(value):
     """Raise ValidationError if user enters e.g. a date 30.02.2009.
@@ -1179,6 +1181,12 @@ class TableRow(object):
         """
         # return [ar.obj2html(self)]
         return [self.obj2href(ar)]
+
+    def save_existing_instance(self, ar):
+        watcher = ChangeWatcher(self)
+        ar.ah.store.form2obj(ar, ar.rqdata, self, False)
+        self.full_clean()
+        self.save_watched_instance(ar, watcher)
 
 
 def wildcard_data_elems(model):
