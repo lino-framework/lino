@@ -24,7 +24,8 @@ script:
 
 after_script:
   - |
-    echo "TRAVIS_BRANCH:$TRAVIS_BRANCH TRAVIS_PULL_REQUEST:$TRAVIS_PULL_REQUEST"
+    echo TRAVIS_BRANCH: $TRAVIS_BRANCH
+    echo TRAVIS_PULL_REQUEST: $TRAVIS_PULL_REQUEST
     if [[ ("$TRAVIS_BRANCH" == "master") && ("$TRAVIS_PULL_REQUEST" = "false") ]]
     then
       bash ./travis/after_script.sh
