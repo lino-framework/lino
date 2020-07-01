@@ -11,5 +11,5 @@ Config directories
 ==================
 
 {% for cd in settings.SITE.confdirs.config_dirs -%}
-- {{cd.name}} {{" [writeable]" if cd.writable else ""}} {% if cd.writable %} [writeable]" {% endif %}
+- {{cd.name}}{% if cd.writeable %} [writeable] {% endif %}
 {% endfor %}

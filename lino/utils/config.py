@@ -63,11 +63,14 @@ class ConfigDirCache(object):
         self.scan_config_dirs()
 
     def scan_config_dirs(self):
-        """Scan the file system and populate :attr:`config_dirs`."""
-        config_dirs = []
+        """Scan the file system and populate :attr:`config_dirs`.
 
-        for pth in self.site.get_settings_subdirs(SUBDIR_NAME):
-            config_dirs.append(ConfigDir(pth, False))
+        Example of a special case is the apc demo project, which has a local
+        config dir.  When the apc tests are run on travis (i.e. LINO_CACHE_ROOT
+        is set), we must not forget to add it (:ticket:`3705`).
+
+        """
+        config_dirs = []
 
         def add_config_dir(name, mod):
             pth = join(dirname(mod.__file__), SUBDIR_NAME)
@@ -78,16 +81,27 @@ class ConfigDirCache(object):
 
         self.site.for_each_app(add_config_dir)
 
-        self.LOCAL_CONFIG_DIR = None
-        p = self.site.cache_dir.child(SUBDIR_NAME)
-        if isdir(p):
-            self.LOCAL_CONFIG_DIR = ConfigDir(p, True)
-            config_dirs.append(self.LOCAL_CONFIG_DIR)
-
         config_dirs.reverse()
+
+        self.LOCAL_CONFIG_DIR = None
+        local_pth = self.site.cache_dir.child(SUBDIR_NAME)
+        for pth in self.site.get_settings_subdirs(SUBDIR_NAME):
+            writeable = pth == local_pth
+            cd = ConfigDir(pth, writeable)
+            config_dirs.insert(0, cd)
+            if writeable:
+                self.LOCAL_CONFIG_DIR = cd
+
+        # self.LOCAL_CONFIG_DIR = None
+        # p = self.site.cache_dir.child(SUBDIR_NAME)
+        # if isdir(p):
+        #     self.LOCAL_CONFIG_DIR = ConfigDir(p, True)
+        #     config_dirs.append(self.LOCAL_CONFIG_DIR)
+
+
         self.config_dirs = tuple(config_dirs)
 
-        # logger.info('config_dirs:\n%s', '\n'.join([
+        # print('20200701 config_dirs:\n', '\n'.join([
         #     repr(cd) for cd in config_dirs]))
 
     def find_config_file(self, fn, *groups):

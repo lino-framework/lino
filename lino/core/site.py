@@ -2418,18 +2418,26 @@ class Site(object):
 
         """
 
-        # if local settings.py doesn't subclass Site:
-        if self.project_dir != classdir(self.__class__):
+        found = set()
+        # print("20200701 compare", self.cache_dir, classdir(self.__class__))
+        # if self.cache_dir != classdir(self.__class__):
+        if True:
             pth = join(self.project_dir, subdir_name)
             if isdir(pth):
                 yield pth
+                # print("20200701 found", pth)
+                found.add(pth)
 
+        # if local settings.py doesn't subclass Site:
         for cl in self.__class__.__mro__:
-            #~ logger.info("20130109 inspecting class %s",cl)
+            # print("20130109 inspecting class %s" % cl)
             if cl is not object and not inspect.isbuiltin(cl):
                 pth = join(classdir(cl), subdir_name)
-                if isdir(pth):
+                if isdir(pth) and not pth in found:
+                # if isdir(pth):
                     yield pth
+                    found.add(pth)
+
 
     def makedirs_if_missing(self, dirname):
         """Make missing directories if they don't exist and if
