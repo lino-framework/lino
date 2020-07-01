@@ -1,7 +1,5 @@
 #!/bin/bash
-
 #First arg repo name, second arg commit message, last API key
-
 #https://docs.travis-ci.com/user/triggering-builds
 
 REPO=$1
@@ -25,4 +23,3 @@ curl -s -X POST \
    -H "Authorization: token ${API_KEY}" \
    -d "$body" \
    "$URL"
-
