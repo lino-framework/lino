@@ -21,6 +21,16 @@ table.preamble td {
     border: none;
     padding: 6pt;
 }
+table.footer {
+    border: none;
+    background-color: lightgreen;
+    width: 100%;
+    font-size: 10pt;
+}
+table.footer td {
+    border: none;
+    padding: 2pt;
+}
 span.page_num_of::after {
   content: '{{_("Page")}} ' counter(page) ' {{_("of {0}").format("")}} ' counter(pages);
 }
@@ -31,11 +41,11 @@ span.printed_time::after {
 
 body {
     font-family: "Liberation sans", "Arial", "Helvetica";
-    font-size: 10pt;
+    font-size: 12pt;
 }
 
 table th {
-    font-size: 8pt;
+    font-size: 10pt;
 }
 p {
     padding: 0;
@@ -131,7 +141,7 @@ div.recipient {
         // bottom: -5mm;
         bottom: 0;
         width: 100%;
-        border-top: solid 1pt;
+        // border-top: solid 1pt;
         padding: 2pt;
         margin: 0;
     }

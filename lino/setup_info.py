@@ -13,9 +13,6 @@
 
 import sys
 
-PY2 = sys.version_info[0] == 2
-PY3 = sys.version_info[0] == 3
-
 SETUP_INFO = dict(
     name='lino',
     version='20.7.0',
@@ -53,20 +50,16 @@ install_requires = [
     # 'django-wkhtmltopdf',
     'beautifulsoup4',]
 
-if PY2:
-    install_requires.append('reportlab<2.7')
-    install_requires.append('weasyprint<0.43')
-else:
-    install_requires.append('reportlab')
-    install_requires.append('weasyprint')
-    install_requires.append('zodb')
-    install_requires.append('DateTime')
-    # install_requires.append('appy@svn+https://svn.forge.pallavi.be/appy-dev/dev1')
-    # 'django-mailbox@git+https://github.com/cylonoven/django-mailbox#egg=django-mailbox'
-    # SETUP_INFO.update(dependency_links=[
-    #     "svn+https://svn.forge.pallavi.be/appy-dev/dev1#egg=appy-dev"
-        # "git+https://github.com/lino-framework/appypod.git@dbf123584cd9c5ef4a35e8efb9f489eaa54e26f2#egg=appy-dev"
-    # ])
+install_requires.append('reportlab')
+install_requires.append('weasyprint')
+install_requires.append('zodb')
+install_requires.append('DateTime')
+# install_requires.append('appy@svn+https://svn.forge.pallavi.be/appy-dev/dev1')
+# 'django-mailbox@git+https://github.com/cylonoven/django-mailbox#egg=django-mailbox'
+# SETUP_INFO.update(dependency_links=[
+#     "svn+https://svn.forge.pallavi.be/appy-dev/dev1#egg=appy-dev"
+    # "git+https://github.com/lino-framework/appypod.git@dbf123584cd9c5ef4a35e8efb9f489eaa54e26f2#egg=appy-dev"
+# ])
 
 SETUP_INFO.update(install_requires=install_requires)
 
