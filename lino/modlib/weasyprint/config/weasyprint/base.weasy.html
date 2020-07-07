@@ -71,7 +71,6 @@ div.recipient {
     vertical-align: top;
 }
 
-
 @page {
     size: {%- block pagesize %}landscape{%- endblock %};
     margin: 10mm; margin-left: 17mm;
@@ -90,8 +89,8 @@ div.recipient {
     }
     {%- endblock bottomright %}
 
-    {# set logo_file = rt.find_config_file("top-right.jpg", "weasyprint") #}
-    {% if False  %}
+    {% set logo_file = rt.find_config_file("top-right.jpg", "weasyprint") %}
+    {% if logo_file  %}
     margin: 15mm; margin-top: 35mm; margin-bottom: 15mm;
     @top-right {
       height: 20mm;
