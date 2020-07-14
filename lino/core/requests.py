@@ -415,7 +415,7 @@ class BaseRequest(object):
         from lino.core.actors import resolve_action
         if isinstance(spec, ActionRequest):  # deprecated use
             # raise Exception("20160627 Deprecated")
-            for k, v in list(kw.items()):
+            for k, v in kw.items():
                 assert hasattr(spec, k)
                 setattr(spec, k, v)
             spec.setup_from(self)

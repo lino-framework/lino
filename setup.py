@@ -1,6 +1,7 @@
 from setuptools import setup
 fn = 'lino/setup_info.py'
-exec(compile(open(fn, "rb").read(), fn, 'exec'))
+with open(fn, "rb") as fd:
+    exec(compile(fd.read(), fn, 'exec'))
 # above line is equivalent to the line below, except that it works
 # also in Python 3:
 # execfile(fn)

@@ -53,6 +53,7 @@ import warnings
 warnings.filterwarnings(
     "error", "DateTimeField .* received a naive datetime (.*) while time zone support is active.",
     RuntimeWarning, "django.db.models.fields")
+warnings.filterwarnings("error", category=ResourceWarning)
 
 from django.conf import settings
 from django.apps import AppConfig

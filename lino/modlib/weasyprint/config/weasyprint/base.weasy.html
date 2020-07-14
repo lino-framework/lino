@@ -29,7 +29,7 @@ table.footer {
 }
 table.footer td {
     border: none;
-    padding: 2pt;
+    padding: 6pt;
 }
 span.page_num_of::after {
   content: '{{_("Page")}} ' counter(page) ' {{_("of {0}").format("")}} ' counter(pages);
@@ -73,7 +73,12 @@ div.recipient {
 
 @page {
     size: {%- block pagesize %}landscape{%- endblock %};
-    margin: 10mm; margin-left: 17mm;
+    margin: {{dd.plugins.weasyprint.margin}}mm;
+    margin-bottom: {{dd.plugins.weasyprint.margin+dd.plugins.weasyprint.footer_height}}mm;
+    {%- if dd.plugins.weasyprint.top_right_image -%}
+    margin-top: {{dd.plugins.weasyprint.margin+dd.plugins.weasyprint.header_height}}mm;
+    {%- endif -%}
+    margin-left: {{dd.plugins.weasyprint.margin_left}}mm;
     font-family: "Liberation sans", "arial";
     font-size: 10pt;
     {%- block bottomleft %}
@@ -89,20 +94,20 @@ div.recipient {
     }
     {%- endblock bottomright %}
 
-    {% set logo_file = rt.find_config_file("top-right.jpg", "weasyprint") %}
-    {% if logo_file  %}
-    margin: 15mm; margin-top: 35mm; margin-bottom: 15mm;
+    {%- block topright %}
+    {% if dd.plugins.weasyprint.top_right_image %}
     @top-right {
-      height: 20mm;
-      width: 40mm;
-      padding: 0px;
+      height: {{dd.plugins.weasyprint.header_height}}mm;
+      width: {{dd.plugins.weasyprint.top_right_width}}mm;
+      padding: 0mm;
       text-align: right;
-      background-image: url(file://{{logo_file}});
+      background-image: url(file://{{dd.plugins.weasyprint.top_right_image}});
       background-size: cover;
       content: "";  // may be empty but must exist, otherwise bg is not rendered
-      // content: url(file://{{logo_file}});
+      // content: url(file://{{dd.plugins.weasyprint.top_right_image}});
     }
     {% endif %}
+    {%- endblock topright %}
 }
 
 @media print {
@@ -111,21 +116,6 @@ div.recipient {
   }
 }
 
-{#
-  // Usage example in your template::
-
-    <div class="footer_div">{{obj}}</div>
-
-  // example for a logo in the header:
-
-    {% set logo_file = rt.find_config_file("logo.jpg", "weasyprint") %}
-    {% if logo_file %}
-    <div class="header_div">
-    <img src="file://{{logo_file}}" style="height:20mm">
-    </div>
-    {% endif %}
-
-#}
 @media screen {
     div.footer_div {
         display: none;
@@ -160,7 +150,12 @@ div.recipient {
 </head>
 <body>
 {%- block header %}
-{%- endblock %}
+{% if dd.plugins.weasyprint.header_image %}
+<div class="header_div">
+<img src="file://{{dd.plugins.weasyprint.header_image}}" style="height:{{dd.plugins.weasyprint.header_height}}mm">
+</div>
+{% endif %}
+{%- endblock header %}
 {%- block footer %}
 {%- endblock %}
 {%- block intro %}
