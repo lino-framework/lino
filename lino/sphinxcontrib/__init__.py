@@ -123,8 +123,8 @@ def configure(globals_dict, settings_module_name=None):
         #     template_bridge=str('lino.sphinxcontrib.DjangoTemplateBridge'))
 
     intersphinx_mapping = globals_dict.setdefault('intersphinx_mapping', dict())
-    intersphinx_mapping['cg'] = ('http://community.lino-framework.org/', None)
-    intersphinx_mapping['book'] = ('http://www.lino-framework.org/', None)
+    intersphinx_mapping['cg'] = ('https://community.lino-framework.org/', None)
+    intersphinx_mapping['book'] = ('https://www.lino-framework.org/', None)
     return sphinxconf.configure(globals_dict)
 
 

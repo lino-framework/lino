@@ -2517,7 +2517,7 @@ def create_layout_element(lh, name, **kw):
     Create a layout element from the named data element.
     """
 
-    if settings.SITE.catch_layout_exceptions:
+    if False:  # settings.SITE.catch_layout_exceptions:
         try:
             de = lh.get_data_elem(name)
         except Exception as e:

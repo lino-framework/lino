@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2013 Rumma & Ko Ltd
+# Copyright 2011-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """
 Adds all languages of the world to your database.
@@ -9,9 +9,9 @@ This is an integration of different sources:
 
 - http://www.sil.org/iso639-3/iso-639-3_20100707.tab
 - http://www.sil.org/iso639-3/download.asp
-- German designations (ISO 639-2/B) from 
+- German designations (ISO 639-2/B) from
   http://www.d-nb.de/standardisierung/pdf/sprachencodes_dt.pdf
-- French designations from 
+- French designations from
   http://fr.wikipedia.org/wiki/Liste_des_codes_ISO_639-1
 
 
@@ -24,39 +24,10 @@ import codecs
 
 from django.conf import settings
 
-from lino.utils import dblogger as logger
+# from lino.utils import dblogger as logger
 
 from lino.api import dd
 from lino.modlib.languages.models import Language
-
-
-LANGUAGES = {}
-
-"""
-"""
-fn = os.path.join(os.path.dirname(__file__), 'iso-639-3_20100707.tab')
-n = 0
-#~ for ln in file(fn).readlines():
-for ln in codecs.open(fn, encoding="UTF-8").readlines():
-    n += 1
-    if ln:
-        rec = ln.split('\t')
-        if len(rec) != 8:
-            logger.warning("Ignored line %d (len(rec) is %d)", n, len(rec))
-        elif len(rec[0]) != 3:
-            logger.warning("Ignored line %d", n)
-        else:
-            language_type = rec[5]
-            if language_type == 'L':
-                ref_name = rec[6]
-                if ref_name:
-                    code = rec[0]
-                    if len(rec[1]) == 3:
-                        code = rec[1]
-                    LANGUAGES[code] = dict(en=ref_name, iso2=rec[3])
-            else:
-                logger.debug("Ignored line %d : language type is %r",
-                             n, language_type)
 
 
 """
@@ -561,237 +532,268 @@ Zuñi-Sprache zun
 
 
 # copied from http://fr.wikipedia.org/wiki/Liste_des_codes_ISO_639-1
-french = u"""
-aa	aar	aar	Afar	Afaraf	Afar	
-ab	abk	abk	Abkhaze	Аҧсуа	Abkhazian	
-ae	ave	ave	Avestique	Avesta	Avestan	
-af	afr	afr	Afrikaans	Afrikaans	Afrikaans	
-ak	aka	aka + 2	Akan	Akan	Akan	
-am	amh	amh	Amharique	አማርኛ	Amharic	
-an	arg	arg	Aragonais	Aragonés	Aragonese	
+french = """
+aa	aar	aar	Afar	Afaraf	Afar
+ab	abk	abk	Abkhaze	Аҧсуа	Abkhazian
+ae	ave	ave	Avestique	Avesta	Avestan
+af	afr	afr	Afrikaans	Afrikaans	Afrikaans
+ak	aka	aka + 2	Akan	Akan	Akan
+am	amh	amh	Amharique	አማርኛ	Amharic
+an	arg	arg	Aragonais	Aragonés	Aragonese
 ar	ara	ara + 30	Arabe	 العربية	Arabic	L'arabe standard est arb en ISO 639-3
-as	asm	asm	Assamais	অসমীয়া	Assamese	
-av	ava	ava	Avar	авар мацӀ ; магӀарул мацӀ	Avaric	
-ay	aym	aym + 2	Aymara	Aymar aru	Aymara	
-az	aze	aze + 2	Azéri	Azərbaycan dili	Azerbaijani	
-ba	bak	bak	Bachkir	башҡорт теле	Bashkir	
-be	bel	bel	Biélorusse	Беларуская	Belarusian	
-bg	bul	bul	Bulgare	български език	Bulgarian	
+as	asm	asm	Assamais	অসমীয়া	Assamese
+av	ava	ava	Avar	авар мацӀ ; магӀарул мацӀ	Avaric
+ay	aym	aym + 2	Aymara	Aymar aru	Aymara
+az	aze	aze + 2	Azéri	Azərbaycan dili	Azerbaijani
+ba	bak	bak	Bachkir	башҡорт теле	Bashkir
+be	bel	bel	Biélorusse	Беларуская	Belarusian
+bg	bul	bul	Bulgare	български език	Bulgarian
 bh	bih	--	Bihari	भोजपुरी	Bihari	Code de langue collective pour le bhojpuri, le magahi et le maithili
-bi	bis	bis	Bichelamar	Bislama	Bislama	
-bm	bam	bam	Bambara	Bamanankan	Bambara	
-bn	ben	ben	Bengalî	বাংলা	Bengali	
-bo	tib/bod	bod	Tibétain	བོད་ཡིག	Tibetan	
-br	bre	bre	Breton	Brezhoneg	Breton	
-bs	bos	bos	Bosnien	Bosanski jezik	Bosnian	
-ca	cat	cat	Catalan	Català	Catalan	
-ce	che	che	Tchétchène	нохчийн мотт	Chechen	
-ch	cha	cha	Chamorro	Chamoru	Chamorro	
-co	cos	cos	Corse	Corsu ; lingua corsa	Corsian	
-cr	cre	cre + 6	Cri	ᓀᐦᐃᔭᐍᐏᐣ	Cree	
-cs	cze/ces	ces	Tchèque	Česky ; čeština	Czech	
-cu	chu	chu	Vieux slave	Словѣньскъ	Church Slavic	
-cv	chv	chv	Tchouvache	чӑваш чӗлхи	Chuvash	
-cy	wel/cym	cym	Gallois	Cymraeg	Welsh	
-da	dan	dan	Danois	Dansk	Danish	
-de	ger/deu	deu	Allemand	Deutsch	German	
-dv	div	div	Divehi	 ދިވެހި	Divehi	
-dz	dzo	dzo	Dzongkha	རྫོང་ཁ	Dzongkha	
-ee	ewe	ewe	Ewe	Ɛʋɛgbɛ	Ewe	
-el	gre/ell	ell	Grec moderne	Ελληνικά	Greek	
-en	eng	eng	Anglais	English	English	
-eo	epo	epo	Espéranto	Esperanto	Esperanto	
-es	spa	spa	Espagnol	Español; castellano	Spanish	
-et	est	est	Estonien	Eesti keel	Estonian	
-eu	baq/eus	eus	Basque	Euskara	Basque	
-fa	per/fas	fas + 2	Persan	 فارسی	Persian	
-ff	ful	ful + 9	Peul	Fulfulde	Fulah	
-fi	fin	fin	Finnois	Suomen kieli	Finnish	
-fj	fij	fij	Fidjien	Vosa Vakaviti	Fijian	
-fo	fao	fao	Féringien	Føroyskt	Faroese	
-fr	fre/fra	fra	Français	Français ; langue française	French	
-fy	fry	fry + 3	Frison	Frysk	Western Frisian	
-ga	gle	gle	Irlandais	Gaeilge	Irish	
-gd	gla	gla	Écossais	Gàidhlig	Scottish Gaelic	
-gl	glg	glg	Galicien	Galego	Galician	
-gn	grn	grn + 5	Guarani	Avañe'ẽ	Guarani	
-gu	guj	guj	Gujarâtî	ગુજરાતી	Gujarati	
-gv	glv	glv	Mannois	Ghaelg	Manx	
-ha	hau	hau	Haoussa	 هَوُسَ	Hausa	
-he	heb	heb	Hébreu	 עברית	Hebrew	
-hi	hin	hin	Hindî	हिन्दी ; हिंदी	Hindi	
-ho	hmo	hmo	Hiri motu	Hiri Motu	Hiri Motu	
-hr	scr/hrv	hrv	Croate	Hrvatski	Croatian	
-ht	hat	hat	Créole haïtien	Kreyòl ayisyen	Haitian	
-hu	hun	hun	Hongrois	Magyar	Hungarian	
-hy	arm/hye	hye	Arménien	Հայերեն	Armenian	
-hz	her	her	Herero	Otjiherero	Herero	
-ia	ina	ina	Interlingua	Interlingua	Interlingua	
-id	ind	ind	Indonésien	Bahasa Indonesia	Indonesian	
-ie	ile	ile	Occidental	Interlingue	Interlingue	
-ig	ibo	ibo	Igbo	Igbo	Igbo	
-ii	iii	iii	Yi	ꆇꉙ	Sichuan Yi	
-ik	ipk	ipk + 2	Inupiaq	Iñupiaq ; Iñupiatun	Inupiaq	
-io	ido	ido	Ido	Ido	Ido	
-is	ice/isl	isl	Islandais	Íslenska	Icelandic	
-it	ita	ita	Italien	Italiano	Italian	
-iu	iku	iku + 2	Inuktitut	ᐃᓄᒃᑎᑐᑦ	Inuktitut	
-ja	jpn	jpn	Japonais	日本語 (にほんご)	Japanese	
-jv	jav	jav	Javanais	Basa Jawa	Javanese	
-ka	geo/kat	kat	Géorgien	ქართული	Georgian	
-kg	kon	kon + 3	Kikongo	KiKongo	Kongo	
-ki	kik	kik	Kikuyu	Gĩkũyũ	Kikuyu	
-kj	kua	kua	Kuanyama	Kuanyama	Kwanyama	
-kk	kaz	kaz	Kazakh	Қазақ тілі	Kazakh	
-kl	kal	kal	Kalaallisut	Kalaallisut ; kalaallit oqaasii	Kalaallisut	
-km	khm	khm	Khmer	ភាសាខ្មែរ	Khmer	
-kn	kan	kan	Kannara	ಕನ್ನಡ	Kannada	
-ko	kor	kor	Coréen	한국어 (韓國語) ; 조선말 (朝鮮語)	Korean	
-kr	kau	kau + 3	Kanouri	Kanuri	Kanuri	
-ks	kas	kas	Kashmiri	कश्मीरी ; كشميري	Kashmiri	
-ku	kur	kur + 3	Kurde	Kurdî ; كوردی	Kurdish	
-kv	kom	kom + 2	Komi	коми кыв	Komi	
-kw	cor	cor	Cornique	Kernewek	Cornish	
-ky	kir	kir	Kirghiz	кыргыз тили	Kirghiz	
-la	lat	lat	Latin	Latine ; lingua latina	Latin	
-lb	ltz	ltz	Luxembourgeois	Lëtzebuergesch	Luxembourgish	
-lg	lug	lug	Ganda	Luganda	Ganda	
-li	lim	lim	Limbourgeois	Limburgs	Limburgish	
-ln	lin	lin	Lingala	Lingála	Lingala	
-lo	lao	lao	Lao	ພາສາລາວ	Lao	
-lt	lit	lit	Lituanien	Lietuvių kalba	Lithuanian	
-lu	lub	lub	Tchiluba	cilubà	Luba-Katanga	
-lv	lav	lav	Letton	Latviešu valoda	Latvian	
-mg	mlg	mlg + 10	Malgache	Fiteny malagasy	Malagasy	
-mh	mah	mah	Marshallais	Kajin M̧ajeļ	Marshallese	
-mi	mao/mri	mri	Māori de Nouvelle-Zélande	Te reo Māori	Māori	
-mk	mac/mkd	mkd	Macédonien	македонски јазик	Macedonian	
-ml	mal	mal	Malayalam	മലയാളം	Malayalam	
-mn	mon	mon + 2	Mongol	Монгол	Mongolian	
-mo	mol	mol	Moldave	лимба молдовеняскэ	Moldavian	
-mr	mar	mar	Marâthî	मराठी	Marathi	
-ms	may/msa	msa + 13	Malais	Bahasa Melayu ; بهاس ملايو	Malay	
-mt	mlt	mlt	Maltais	Malti	Maltese	
-my	bur/mya	mya	Birman	ဗမာစာ	Burmese	
-na	nau	nau	Nauruan	Ekakairũ Naoero	Nauru	
-nb	nob	nob	Norvégien Bokmål	Norsk bokmål	Norwegian Bokmål	
-nd	nde	nde	Ndébélé du Nord	isiNdebele	North Ndebele	
-ne	nep	nep	Népalais	नेपाली	Nepali	
-ng	ndo	ndo	Ndonga	Owambo	Ndonga	
-nl	dut/nld	nld	Néerlandais	Nederlands	Dutch	
-nn	nno	nno	Norvégien Nynorsk	Norsk nynorsk	Norwegian Nynorsk	
-no	nor	nor + 2	Norvégien	Norsk	Norwegian	
-nr	nbl	nbl	Ndébélé du Sud	Ndébélé	South Ndebele	
-nv	nav	nav	Navajo	Diné bizaad ; Dinékʼehǰí	Navajo	
-ny	nya	nya	Chichewa	ChiCheŵa ; chinyanja	Chichewa	
-oc	oci	oci + 5	Occitan	Occitan	Occitan	
-oj	oji	oji + 7	Ojibwé	ᐊᓂᔑᓈᐯᒧᐎᓐ	Ojibwa	
-om	orm	orm + 4	Oromo	Afaan Oromoo	Oromo	
-or	ori	ori	Oriya	ଓଡ଼ିଆ	Oriya	
-os	oss	oss	Ossète	Ирон æвзаг	Ossetian	
-pa	pan	pan	Panjâbî	ਪੰਜਾਬੀ ; پنجابی	Panjabi	
+bi	bis	bis	Bichelamar	Bislama	Bislama
+bm	bam	bam	Bambara	Bamanankan	Bambara
+bn	ben	ben	Bengalî	বাংলা	Bengali
+bo	tib/bod	bod	Tibétain	བོད་ཡིག	Tibetan
+br	bre	bre	Breton	Brezhoneg	Breton
+bs	bos	bos	Bosnien	Bosanski jezik	Bosnian
+ca	cat	cat	Catalan	Català	Catalan
+ce	che	che	Tchétchène	нохчийн мотт	Chechen
+ch	cha	cha	Chamorro	Chamoru	Chamorro
+co	cos	cos	Corse	Corsu ; lingua corsa	Corsian
+cr	cre	cre + 6	Cri	ᓀᐦᐃᔭᐍᐏᐣ	Cree
+cs	cze/ces	ces	Tchèque	Česky ; čeština	Czech
+cu	chu	chu	Vieux slave	Словѣньскъ	Church Slavic
+cv	chv	chv	Tchouvache	чӑваш чӗлхи	Chuvash
+cy	wel/cym	cym	Gallois	Cymraeg	Welsh
+da	dan	dan	Danois	Dansk	Danish
+de	ger/deu	deu	Allemand	Deutsch	German
+dv	div	div	Divehi	 ދިވެހި	Divehi
+dz	dzo	dzo	Dzongkha	རྫོང་ཁ	Dzongkha
+ee	ewe	ewe	Ewe	Ɛʋɛgbɛ	Ewe
+el	gre/ell	ell	Grec moderne	Ελληνικά	Greek
+en	eng	eng	Anglais	English	English
+eo	epo	epo	Espéranto	Esperanto	Esperanto
+es	spa	spa	Espagnol	Español; castellano	Spanish
+et	est	est	Estonien	Eesti keel	Estonian
+eu	baq/eus	eus	Basque	Euskara	Basque
+fa	per/fas	fas + 2	Persan	 فارسی	Persian
+ff	ful	ful + 9	Peul	Fulfulde	Fulah
+fi	fin	fin	Finnois	Suomen kieli	Finnish
+fj	fij	fij	Fidjien	Vosa Vakaviti	Fijian
+fo	fao	fao	Féringien	Føroyskt	Faroese
+fr	fre/fra	fra	Français	Français ; langue française	French
+fy	fry	fry + 3	Frison	Frysk	Western Frisian
+ga	gle	gle	Irlandais	Gaeilge	Irish
+gd	gla	gla	Écossais	Gàidhlig	Scottish Gaelic
+gl	glg	glg	Galicien	Galego	Galician
+gn	grn	grn + 5	Guarani	Avañe'ẽ	Guarani
+gu	guj	guj	Gujarâtî	ગુજરાતી	Gujarati
+gv	glv	glv	Mannois	Ghaelg	Manx
+ha	hau	hau	Haoussa	 هَوُسَ	Hausa
+he	heb	heb	Hébreu	 עברית	Hebrew
+hi	hin	hin	Hindî	हिन्दी ; हिंदी	Hindi
+ho	hmo	hmo	Hiri motu	Hiri Motu	Hiri Motu
+hr	scr/hrv	hrv	Croate	Hrvatski	Croatian
+ht	hat	hat	Créole haïtien	Kreyòl ayisyen	Haitian
+hu	hun	hun	Hongrois	Magyar	Hungarian
+hy	arm/hye	hye	Arménien	Հայերեն	Armenian
+hz	her	her	Herero	Otjiherero	Herero
+ia	ina	ina	Interlingua	Interlingua	Interlingua
+id	ind	ind	Indonésien	Bahasa Indonesia	Indonesian
+ie	ile	ile	Occidental	Interlingue	Interlingue
+ig	ibo	ibo	Igbo	Igbo	Igbo
+ii	iii	iii	Yi	ꆇꉙ	Sichuan Yi
+ik	ipk	ipk + 2	Inupiaq	Iñupiaq ; Iñupiatun	Inupiaq
+io	ido	ido	Ido	Ido	Ido
+is	ice/isl	isl	Islandais	Íslenska	Icelandic
+it	ita	ita	Italien	Italiano	Italian
+iu	iku	iku + 2	Inuktitut	ᐃᓄᒃᑎᑐᑦ	Inuktitut
+ja	jpn	jpn	Japonais	日本語 (にほんご)	Japanese
+jv	jav	jav	Javanais	Basa Jawa	Javanese
+ka	geo/kat	kat	Géorgien	ქართული	Georgian
+kg	kon	kon + 3	Kikongo	KiKongo	Kongo
+ki	kik	kik	Kikuyu	Gĩkũyũ	Kikuyu
+kj	kua	kua	Kuanyama	Kuanyama	Kwanyama
+kk	kaz	kaz	Kazakh	Қазақ тілі	Kazakh
+kl	kal	kal	Kalaallisut	Kalaallisut ; kalaallit oqaasii	Kalaallisut
+km	khm	khm	Khmer	ភាសាខ្មែរ	Khmer
+kn	kan	kan	Kannara	ಕನ್ನಡ	Kannada
+ko	kor	kor	Coréen	한국어 (韓國語) ; 조선말 (朝鮮語)	Korean
+kr	kau	kau + 3	Kanouri	Kanuri	Kanuri
+ks	kas	kas	Kashmiri	कश्मीरी ; كشميري	Kashmiri
+ku	kur	kur + 3	Kurde	Kurdî ; كوردی	Kurdish
+kv	kom	kom + 2	Komi	коми кыв	Komi
+kw	cor	cor	Cornique	Kernewek	Cornish
+ky	kir	kir	Kirghiz	кыргыз тили	Kirghiz
+la	lat	lat	Latin	Latine ; lingua latina	Latin
+lb	ltz	ltz	Luxembourgeois	Lëtzebuergesch	Luxembourgish
+lg	lug	lug	Ganda	Luganda	Ganda
+li	lim	lim	Limbourgeois	Limburgs	Limburgish
+ln	lin	lin	Lingala	Lingála	Lingala
+lo	lao	lao	Lao	ພາສາລາວ	Lao
+lt	lit	lit	Lituanien	Lietuvių kalba	Lithuanian
+lu	lub	lub	Tchiluba	cilubà	Luba-Katanga
+lv	lav	lav	Letton	Latviešu valoda	Latvian
+mg	mlg	mlg + 10	Malgache	Fiteny malagasy	Malagasy
+mh	mah	mah	Marshallais	Kajin M̧ajeļ	Marshallese
+mi	mao/mri	mri	Māori de Nouvelle-Zélande	Te reo Māori	Māori
+mk	mac/mkd	mkd	Macédonien	македонски јазик	Macedonian
+ml	mal	mal	Malayalam	മലയാളം	Malayalam
+mn	mon	mon + 2	Mongol	Монгол	Mongolian
+mo	mol	mol	Moldave	лимба молдовеняскэ	Moldavian
+mr	mar	mar	Marâthî	मराठी	Marathi
+ms	may/msa	msa + 13	Malais	Bahasa Melayu ; بهاس ملايو	Malay
+mt	mlt	mlt	Maltais	Malti	Maltese
+my	bur/mya	mya	Birman	ဗမာစာ	Burmese
+na	nau	nau	Nauruan	Ekakairũ Naoero	Nauru
+nb	nob	nob	Norvégien Bokmål	Norsk bokmål	Norwegian Bokmål
+nd	nde	nde	Ndébélé du Nord	isiNdebele	North Ndebele
+ne	nep	nep	Népalais	नेपाली	Nepali
+ng	ndo	ndo	Ndonga	Owambo	Ndonga
+nl	dut/nld	nld	Néerlandais	Nederlands	Dutch
+nn	nno	nno	Norvégien Nynorsk	Norsk nynorsk	Norwegian Nynorsk
+no	nor	nor + 2	Norvégien	Norsk	Norwegian
+nr	nbl	nbl	Ndébélé du Sud	Ndébélé	South Ndebele
+nv	nav	nav	Navajo	Diné bizaad ; Dinékʼehǰí	Navajo
+ny	nya	nya	Chichewa	ChiCheŵa ; chinyanja	Chichewa
+oc	oci	oci + 5	Occitan	Occitan	Occitan
+oj	oji	oji + 7	Ojibwé	ᐊᓂᔑᓈᐯᒧᐎᓐ	Ojibwa
+om	orm	orm + 4	Oromo	Afaan Oromoo	Oromo
+or	ori	ori	Oriya	ଓଡ଼ିଆ	Oriya
+os	oss	oss	Ossète	Ирон æвзаг	Ossetian
+pa	pan	pan	Panjâbî	ਪੰਜਾਬੀ ; پنجابی	Panjabi
 pi	pli	pli	Pâli	पािऴ	Pāli
-pl	pol	pol	Polonais	Polski	Polish	
-ps	pus	pus + 3	Pachto	 پښتو	Pashto	
-pt	por	por	Portugais	Português	Portuguese	
-qu	que	que + 44	Quechua	Runa Simi ; Kichwa	Quechua	
-rm	roh	roh	Romanche	Rumantsch grischun	Raeto-Romance	
-rn	run	run	Kirundi	kiRundi	Kirundi	
-ro	rum/ron	ron	Roumain	Română	Romanian	
-ru	rus	rus	Russe	русский язык	Russian	
-rw	kin	kin	Kinyarwanda	Kinyarwanda	Kinyarwanda	
-sa	san	san	Sanskrit	संस्कृतम्	Sanskrit	
-sc	srd	srd + 4	Sarde	sardu	Sardinian	
-sd	snd	snd	Sindhi	सिन्धी ; سنڌي، سندھی	Sindhi	
-se	sme	sme	Same du Nord	Davvisámegiella	Northern Sami	
-sg	sag	sag	Sango	Yângâ tî sängö	Sango	
-si	sin	sin	Cingalais	සිංහල	Sinhalese	
-sk	slo/slk	slk	Slovaque	Slovenčina	Slovak	
-sl	slv	slv	Slovène	Slovenščina	Slovene	
-sm	smo	smo	Samoan	Gagana fa'a Samoa	Samoan	
-sn	sna	sna	Shona	chiShona	Shona	
-so	som	som	Somali	Soomaaliga ; af Soomaali	Somali	
-sq	alb/sqi	sqi + 4	Albanais	Shqip	Albanian	
-sr	scc/srp	srp	Serbe	српски језик	Serbian	
-ss	ssw	ssw	Siswati	SiSwati	Swati	
-st	sot	sot	Sotho du Sud	seSotho	Sotho	
-su	sun	sun	Soundanais	Basa Sunda	Sundanese	
-sv	swe	swe	Suédois	Svenska	Swedish	
-sw	swa	swa + 2	Swahili	Kiswahili	Swahili	
-ta	tam	tam	Tamoul	தமிழ்	Tamil	
-te	tel	tel	Télougou	తెలుగు	Telugu	
-tg	tgk	tgk	Tadjik	тоҷикӣ ; toğikī ; تاجیکی	Tajik	
-th	tha	tha	Thaï	ไทย	Thai	
-ti	tir	tir	Tigrinya	ትግርኛ	Tigrinya	
-tk	tuk	tuk	Turkmène	Türkmen ; Түркмен	Turkmen	
-tl	tgl	tgl	Tagalog	Tagalog	Tagalog	
-tn	tsn	tsn	Tswana	seTswana	Tswana	
-to	ton	ton	Tongien	faka Tonga	Tonga	
-tr	tur	tur	Turc	Türkçe	Turkish	
-ts	tso	tso	Tsonga	xiTsonga	Tsonga	
-tt	tat	tat	Tatar	татарча ; tatarça ; تاتارچا	Tatar	
-tw	twi	twi	Twi	Twi	Twi	
-ty	tah	tah	Tahitien	Reo Mā`ohi	Tahitian	
-ug	uig	uig	Ouïghour	Uyƣurqə ; ئۇيغۇرچ	Uighur	
-uk	ukr	ukr	Ukrainien	українська мова	Ukrainian	
-ur	urd	urd	Ourdou	 اردو	Urdu	
-uz	uzb	uzb + 2	Ouzbek	O'zbek ; Ўзбек ; أۇزبېك	Uzbek	
-ve	ven	ven	Venda	tshiVenḓa	Venda	
-vi	vie	vie	Vietnamien	Tiếng Việt	Vietnamese	
-vo	vol	vol	Volapük	Volapük	Volapük	
-wa	wln	wln	Wallon	Walon	Walloon	
-wo	wol	wol	Wolof	Wollof	Wolof	
-xh	xho	xho	Xhosa	isiXhosa	Xhosa	
-yi	yid	yid + 2	Yiddish	 ייִדיש	Yiddish	
-yo	yor	yor	Yoruba	Yorùbá	Yoruba	
-za	zha	zha + 2	Zhuang	Saɯ cueŋƅ ; Saw cuengh	Zhuang	
-zh	chi/zho	zho + 13	Chinois	中文, 汉语, 漢語	Chinese	
+pl	pol	pol	Polonais	Polski	Polish
+ps	pus	pus + 3	Pachto	 پښتو	Pashto
+pt	por	por	Portugais	Português	Portuguese
+qu	que	que + 44	Quechua	Runa Simi ; Kichwa	Quechua
+rm	roh	roh	Romanche	Rumantsch grischun	Raeto-Romance
+rn	run	run	Kirundi	kiRundi	Kirundi
+ro	rum/ron	ron	Roumain	Română	Romanian
+ru	rus	rus	Russe	русский язык	Russian
+rw	kin	kin	Kinyarwanda	Kinyarwanda	Kinyarwanda
+sa	san	san	Sanskrit	संस्कृतम्	Sanskrit
+sc	srd	srd + 4	Sarde	sardu	Sardinian
+sd	snd	snd	Sindhi	सिन्धी ; سنڌي، سندھی	Sindhi
+se	sme	sme	Same du Nord	Davvisámegiella	Northern Sami
+sg	sag	sag	Sango	Yângâ tî sängö	Sango
+si	sin	sin	Cingalais	සිංහල	Sinhalese
+sk	slo/slk	slk	Slovaque	Slovenčina	Slovak
+sl	slv	slv	Slovène	Slovenščina	Slovene
+sm	smo	smo	Samoan	Gagana fa'a Samoa	Samoan
+sn	sna	sna	Shona	chiShona	Shona
+so	som	som	Somali	Soomaaliga ; af Soomaali	Somali
+sq	alb/sqi	sqi + 4	Albanais	Shqip	Albanian
+sr	scc/srp	srp	Serbe	српски језик	Serbian
+ss	ssw	ssw	Siswati	SiSwati	Swati
+st	sot	sot	Sotho du Sud	seSotho	Sotho
+su	sun	sun	Soundanais	Basa Sunda	Sundanese
+sv	swe	swe	Suédois	Svenska	Swedish
+sw	swa	swa + 2	Swahili	Kiswahili	Swahili
+ta	tam	tam	Tamoul	தமிழ்	Tamil
+te	tel	tel	Télougou	తెలుగు	Telugu
+tg	tgk	tgk	Tadjik	тоҷикӣ ; toğikī ; تاجیکی	Tajik
+th	tha	tha	Thaï	ไทย	Thai
+ti	tir	tir	Tigrinya	ትግርኛ	Tigrinya
+tk	tuk	tuk	Turkmène	Türkmen ; Түркмен	Turkmen
+tl	tgl	tgl	Tagalog	Tagalog	Tagalog
+tn	tsn	tsn	Tswana	seTswana	Tswana
+to	ton	ton	Tongien	faka Tonga	Tonga
+tr	tur	tur	Turc	Türkçe	Turkish
+ts	tso	tso	Tsonga	xiTsonga	Tsonga
+tt	tat	tat	Tatar	татарча ; tatarça ; تاتارچا	Tatar
+tw	twi	twi	Twi	Twi	Twi
+ty	tah	tah	Tahitien	Reo Mā`ohi	Tahitian
+ug	uig	uig	Ouïghour	Uyƣurqə ; ئۇيغۇرچ	Uighur
+uk	ukr	ukr	Ukrainien	українська мова	Ukrainian
+ur	urd	urd	Ourdou	 اردو	Urdu
+uz	uzb	uzb + 2	Ouzbek	O'zbek ; Ўзбек ; أۇزبېك	Uzbek
+ve	ven	ven	Venda	tshiVenḓa	Venda
+vi	vie	vie	Vietnamien	Tiếng Việt	Vietnamese
+vo	vol	vol	Volapük	Volapük	Volapük
+wa	wln	wln	Wallon	Walon	Walloon
+wo	wol	wol	Wolof	Wollof	Wolof
+xh	xho	xho	Xhosa	isiXhosa	Xhosa
+yi	yid	yid + 2	Yiddish	 ייִדיש	Yiddish
+yo	yor	yor	Yoruba	Yorùbá	Yoruba
+za	zha	zha + 2	Zhuang	Saɯ cueŋƅ ; Saw cuengh	Zhuang
+zh	chi/zho	zho + 13	Chinois	中文, 汉语, 漢語	Chinese
 zu	zul	zul	Zoulou	isiZulu	Zulu
 """
 
 
-n = 0
-for ln in german.splitlines():
-    n += 1
-    if ln:
-        ln = ln.strip()
-        if not ln[-4:-3].isspace():
-            logger.warning("german %d: syntax", n)
-        else:
-            code = ln[-3:]
-            name = ln[:-4]
-            d = LANGUAGES.get(code, None)
-            if d is None:
-                pass
-                #~ logger.warning("%r in german but not english",code)
-                #~ d = dict(en=name)
-                #~ LANGUAGES[code] = d
-            else:
-                d.update(de=name)
-
-n = 0
-for ln in french.splitlines():
-    n += 1
-    if ln:
-        ln = ln.strip()
-        rec = ln.split('\t')
-        if len(rec) < 6:
-            logger.warning("Ignored french:%d:%s (len(rec) is %d)",
-                           n, ln, len(rec))
-        code = rec[1]
-        if len(code) == 7:
-            if code[3:4] == '/':
-                code = code[:3]
-            else:
-                code = None
-        if code:
-            name = rec[3]
-            d = LANGUAGES.get(code, None)
-            if d is not None:
-                d.update(fr=name)
 
 
 def objects():
+
+    LANGUAGES = {}
+
+    fn = os.path.join(os.path.dirname(__file__), 'iso-639-3_20100707.tab')
+    n = 0
+    #~ for ln in file(fn).readlines():
+    with codecs.open(fn, encoding="UTF-8") as fd:
+        for ln in fd.readlines():
+            n += 1
+            if ln:
+                rec = ln.split('\t')
+                if len(rec) != 8:
+                    dd.logger.warning("Ignored line %d (len(rec) is %d)", n, len(rec))
+                elif len(rec[0]) != 3:
+                    dd.logger.warning("Ignored line %d", n)
+                else:
+                    language_type = rec[5]
+                    if language_type == 'L':
+                        ref_name = rec[6]
+                        if ref_name:
+                            code = rec[0]
+                            if len(rec[1]) == 3:
+                                code = rec[1]
+                            LANGUAGES[code] = dict(en=ref_name, iso2=rec[3])
+                    else:
+                        dd.logger.debug("Ignored line %d : language type is %r",
+                                     n, language_type)
+
+    n = 0
+    for ln in german.splitlines():
+        n += 1
+        if ln:
+            ln = ln.strip()
+            if not ln[-4:-3].isspace():
+                logger.warning("german %d: syntax", n)
+            else:
+                code = ln[-3:]
+                name = ln[:-4]
+                d = LANGUAGES.get(code, None)
+                if d is None:
+                    pass
+                    #~ logger.warning("%r in german but not english",code)
+                    #~ d = dict(en=name)
+                    #~ LANGUAGES[code] = d
+                else:
+                    d.update(de=name)
+
+    n = 0
+    for ln in french.splitlines():
+        n += 1
+        if ln:
+            ln = ln.strip()
+            rec = ln.split('\t')
+            if len(rec) < 6:
+                logger.warning("Ignored french:%d:%s (len(rec) is %d)",
+                               n, ln, len(rec))
+            code = rec[1]
+            if len(code) == 7:
+                if code[3:4] == '/':
+                    code = code[:3]
+                else:
+                    code = None
+            if code:
+                name = rec[3]
+                d = LANGUAGES.get(code, None)
+                if d is not None:
+                    d.update(fr=name)
+                                     
+
+
     n = 0
     for code, kw in LANGUAGES.items():
         iso2 = kw['iso2']
