@@ -8,7 +8,7 @@
 <p><b>{{_("This server is running in READONLY mode.")}}</b></p>
 {% endif %}
 
-{% if user.authenticated %}
+{% if user.is_authenticated %}
     {% block hello_user %}
         <p>{{_("Quick links:")}}
         {% for mi in settings.SITE.get_quicklinks(user).items %}

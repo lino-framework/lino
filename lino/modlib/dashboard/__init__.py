@@ -28,7 +28,7 @@ class Plugin(ad.Plugin):
         m.add_action('dashboard.AllWidgets')
 
     def setup_user_prefs(self, up):
-        if not up.user.authenticated:
+        if not up.user.is_authenticated:
             return
         qs = self.site.models.dashboard.Widget.objects.filter(
             user=up.user, visible=True).order_by('seqno')
@@ -47,4 +47,3 @@ class Plugin(ad.Plugin):
             else:
                 lst.append(i)
         up.dashboard_items = lst
-        

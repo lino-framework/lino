@@ -100,7 +100,7 @@ class Comments(dd.Table):
         sar.known_values = dict(
             reply_to=comment, **gfk2lookup(
                 comment.__class__.owner, comment.owner))
-        if ar.get_user().authenticated:
+        if ar.get_user().is_authenticated:
             btn = sar.ar2button(None, _(" Reply "), icon_name=None)
             # btn.set("style", "padding-left:10px")
             ch += [" [", btn, "]"]

@@ -1,11 +1,9 @@
-# Copyright 2011-2017 Rumma & Ko Ltd
+# Copyright 2011-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Utilities for authentication. Adapted from `django.contrib.auth`.
 
 """
-from __future__ import unicode_literals
-from builtins import object
 
 from django.conf import settings
 from django.utils.crypto import constant_time_compare
@@ -21,10 +19,13 @@ class AnonymousUser(SimpleSingleton):
     See also :attr:`lino.core.site.Site.anonymous_user_type`.
 
     """
-    authenticated = False
+    # authenticated = False
+
+    is_authenticated = False
     """This is always `False`.
-    See also :attr:`lino.modlib.users.models.User.authenticated`.
+    See also :attr:`lino.modlib.users.User.is_authenticated`.
     """
+
     is_active = False
 
     email = None
@@ -83,9 +84,6 @@ class AnonymousUser(SimpleSingleton):
         """
         from lino.core import userprefs
         return userprefs.reg.get(self)
-
-    def is_authenticated(self):
-        return False
 
     def has_perm(self, perm, obj=None):
         return False

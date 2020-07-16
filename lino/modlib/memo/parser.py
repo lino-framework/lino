@@ -131,8 +131,9 @@ class Parser(object):
             # raise Exception(
             #     "Duplicate renderer for {} : {} and {}".format(
             #         cl, fmt(ex), fmt(func)))
-            logger.info("Ignore duplicate renderer for {} : {} and {}".format(
-                   cl, fmt(ex), fmt(func)))
+            # logger.info("Ignore duplicate renderer for {} : {} and {}".format(
+            #        cl, fmt(ex), fmt(func)))
+            # Ignore silently
             return
         self.renderers[cl] = func
 

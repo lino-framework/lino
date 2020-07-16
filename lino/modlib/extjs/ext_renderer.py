@@ -462,7 +462,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
         """Build the "user menu", i.e. the menu in the top right corner.
         """
         if settings.SITE.user_model is not None:
-            if request.user.authenticated:
+            if request.user.is_authenticated:
                 if request.subst_user:
                     yield "Lino.set_subst_user(%s,%s);" % (
                         py2js(request.subst_user.id),

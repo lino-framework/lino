@@ -118,7 +118,7 @@ class Plugin(ad.Plugin):
             return
         from lino.utils.jsgen import py2js
         user_name = "anony"
-        if request.user.authenticated:
+        if request.user.is_authenticated:
             user_name = request.user.username
         site_title = site.title or 'Lino-framework'
         if self.site.default_ui == 'lino_react.react':
@@ -189,7 +189,7 @@ class Plugin(ad.Plugin):
         yield js_to_add
 
     def get_dashboard_items(self, user):
-        if user.authenticated:
+        if user.is_authenticated:
             # yield ActorItem(
             #     self.models.notify.MyMessages, header_level=None)
             yield self.site.models.notify.MyMessages

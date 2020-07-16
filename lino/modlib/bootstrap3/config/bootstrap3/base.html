@@ -13,7 +13,7 @@
     {% block header %}
     <div class="container-fluid lino-bs-header">
       {% if site.user_model and not site.default_user and not site.admin_ui -%}
-        {% if ar.user.authenticated -%}
+        {% if ar.user.is_authenticated -%}
           <a href="{{ar.renderer.front_end.build_plain_url('auth')}}?an=logout">{{_("Sign out")}}</a>
         {% else -%}
         <form class="form-inline" method="POST"
@@ -58,9 +58,9 @@
           <div class="container-fluid">
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                   {{menu}}
-              </div>  
-           </div>  
-        </nav>  
+              </div>
+           </div>
+        </nav>
       {% endif -%}
     {% endblock %}
     {% block main %}
