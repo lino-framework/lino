@@ -907,16 +907,17 @@ class Site(object):
     default value is ``"REMOTE_USER"``.
 
     """
-    ldap_auth_server = None
-    """
-    This should be a string with the domain name and DNS (separated by a
-    space) of the LDAP server to be used for authentication.
-
-    Example::
-
-      ldap_auth_server = 'DOMAIN_NAME SERVER_DNS'
-
-    """
+    
+    # ldap_auth_server = None
+    # """
+    # This should be a string with the domain name and DNS (separated by a
+    # space) of the LDAP server to be used for authentication.
+    #
+    # Example::
+    #
+    #   ldap_auth_server = 'DOMAIN_NAME SERVER_DNS'
+    #
+    # """
 
     use_gridfilters = True
 

@@ -8,7 +8,6 @@ Changes:
 - added support for use_ipdict
 
 """
-from __future__ import unicode_literals
 
 from django.contrib.auth import get_user_model
 from django.conf import settings
@@ -17,7 +16,7 @@ from datetime import datetime
 from django.core.exceptions import PermissionDenied
 from lino.api import _
 
-   
+
 class ModelBackend(object):
     """
     Authenticates against settings.AUTH_USER_MODEL.
@@ -35,9 +34,9 @@ class ModelBackend(object):
                     # block this request, don't ask other backends
                     raise PermissionDenied(msg.format(rec.addr))
                     # return msg.format(rec.addr)
-                
+
         UserModel = get_user_model()
-        
+
         if username is None:
             username = kwargs.get(UserModel.USERNAME_FIELD)
         try:

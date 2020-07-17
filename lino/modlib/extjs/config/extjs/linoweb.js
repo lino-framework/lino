@@ -1,5 +1,5 @@
 /*
- Copyright 2009-2015 Luc Saffre
+ Copyright 2009-2020 Rumma & Ko Ltd
  License: BSD (see file COPYING for details)
 */
 
@@ -1742,6 +1742,7 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
 
     if(result.record_deleted && panel.ls_detail_handler == detail_handler) {
         panel.after_delete();
+        return;  // added 20200717 to fix #3715
     }
 
     if (result.refresh_all) {
@@ -3014,6 +3015,7 @@ Lino.FormPanel = Ext.extend(Lino.FormPanel,{
     this.base_params[k] = v;
   }
   ,after_delete : function() {
+    console.log("20200717", this.current_record.navinfo);
     if (this.current_record.navinfo.next)
       this.moveNext();
     else if (this.current_record.navinfo.prev)

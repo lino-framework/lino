@@ -1301,7 +1301,7 @@ class DeleteSelected(MultipleRowAction):
         else:
             d.update(type=ar.actor.model._meta.verbose_name_plural)
         msg = gettext("You are about to delete %(num)d %(type)s:\n%(targets)s") % d
-        ar.confirm(ok, u"{}\n{}".format(msg, gettext("Are you sure ?")),
+        ar.confirm(ok, "{}\n{}".format(msg, gettext("Are you sure ?")),
                    uid="deleting %(num)d %(type)s pks=" % d + "".join([str(t.pk) for t in ar.selected_rows]))
 
     def run_on_row(self, obj, ar):
