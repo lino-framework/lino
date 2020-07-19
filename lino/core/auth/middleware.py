@@ -1,11 +1,7 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2017 Rumma & Ko Ltd
+# Copyright 2017-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 # This started as a copy of Django 1.11 django.contrib.auth.middleware.
-
-from __future__ import unicode_literals
-import six
-from builtins import object
 
 from django.core import exceptions
 from django.utils import translation
