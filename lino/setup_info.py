@@ -30,27 +30,20 @@ install_requires = [
     # 'Sphinx',
     'Django',
     'atelier', 'unipath', 'python_dateutil', 'dateparser',
-    'etgen','docutils',
+    'etgen', # 'docutils',
     'Babel', 'lxml',
-    'beautifulsoup4',
     'odfpy',
-    # 'pisa',
     'jinja2', 'pytidylib', 'PyYAML',
     'clint',  # lino.modlib.checkdata.management.commands
     'django-localflavor',  # lino.modlib.sepa
     'django-click',  # for passwd command
-    # 'django-iban',  # lino.modlib.sepa
     'openpyxl',  # removed version requirement 'openpyxl==3.0.1',
-     'html2text',
-    # 'cairocffi',  # 'cairocffi<0.7',
-    # 'bleach',
-    # 'html5lib',  # version 7x9 (not 9x9) required by bleach
-    # 'schedule==0.5.0',  # why a version restriction?
-    'schedule',
-    # 'django-wkhtmltopdf',
-    'beautifulsoup4',]
+    'html2text',
+    'schedule']
 
-install_requires.append('reportlab')
+# install_requires.append('docutils')
+# install_requires.append('beautifulsoup4')
+# install_requires.append('reportlab')
 install_requires.append('weasyprint')
 install_requires.append('zodb')
 install_requires.append('DateTime')
