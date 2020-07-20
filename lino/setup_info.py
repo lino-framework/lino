@@ -15,7 +15,7 @@ import sys
 
 SETUP_INFO = dict(
     name='lino',
-    version='20.7.3',
+    version='20.7.4',
     description="A framework for writing desktop-like web applications "
                 "using Django and ExtJS or React",
     license='BSD-2-Clause',
@@ -29,7 +29,7 @@ SETUP_INFO = dict(
 install_requires = [
     # 'Sphinx',
     'Django',
-    # 'atelier', 
+    # 'atelier',
     'unipath', 'python_dateutil', 'dateparser',
     'etgen', # 'docutils',
     'Babel', 'lxml',
