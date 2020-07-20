@@ -43,7 +43,7 @@ install_requires = [
     'schedule']
 
 # install_requires.append('docutils')
-# install_requires.append('beautifulsoup4')
+install_requires.append('beautifulsoup4')  # lino.modlib.memo.mixins
 # install_requires.append('reportlab')
 install_requires.append('weasyprint')
 install_requires.append('zodb')
