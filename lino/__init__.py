@@ -30,6 +30,8 @@ translation messages and the core :xfile:`help_texts.py` file.
 # from __future__ import absolute_import
 # from builtins import str
 
+import setuptools # avoid UserWarning "Distutils was imported before Setuptools"?
+
 import sys
 import os
 from os.path import join, dirname
