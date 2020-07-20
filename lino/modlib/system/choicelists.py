@@ -7,7 +7,7 @@ import datetime
 from django.utils.translation import ugettext_lazy as _
 from django.db.models import Q
 
-from atelier.utils import isidentifier
+from lino.utils import isidentifier
 
 from lino.core.choicelists import ChoiceList, Choice
 from lino.utils.dates import DateRangeValue

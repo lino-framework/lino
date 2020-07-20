@@ -28,7 +28,7 @@ from unipath import Path
 from html2text import HTML2Text
 from importlib import import_module, reload
 
-from atelier.utils import AttrDict, date_offset, tuple_py2
+from lino.utils import AttrDict, date_offset
 from atelier import rstgen
 
 from django.utils.translation import ugettext_lazy as _
@@ -907,7 +907,7 @@ class Site(object):
     default value is ``"REMOTE_USER"``.
 
     """
-    
+
     # ldap_auth_server = None
     # """
     # This should be a string with the domain name and DNS (separated by a
@@ -2577,7 +2577,7 @@ class Site(object):
     def demo_date(self, *args, **kwargs):
         """
         Deprecated. Should be replaced by :meth:`today`.  Compute a date
-        using :func:`atelier.utils.date_offset` based on the process
+        using :func:`lino.utils.date_offset` based on the process
         startup time (or :attr:`the_demo_date` if this is set).
 
         Used in Python fixtures and unit tests.
@@ -3136,7 +3136,7 @@ given object `obj`. The dict will have one key for each
         Examples:
 
         >>> from lino.core.site import TestSite as Site
-        >>> from atelier.utils import AttrDict
+        >>> from lino.utils import AttrDict
         >>> def testit(site_languages):
         ...     site = Site(languages=site_languages)
         ...     obj = AttrDict(site.babelkw(
@@ -3245,7 +3245,7 @@ given object `obj`. The dict will have one key for each
                 return args[0]
             default_value = args[0]
             return values.get(info.name, default_value)
-        args = tuple_py2(args)
+        # args = tuple_py2(args)
         # print(type(args))
         raise ValueError("%(values)s is more than 1 default value." %
                          dict(values=args))
@@ -3276,7 +3276,7 @@ given object `obj`. The dict will have one key for each
         >>> from __future__ import unicode_literals
         >>> from django.utils import translation
         >>> from lino.core.site import TestSite as Site
-        >>> from atelier.utils import AttrDict
+        >>> from lino.utils import AttrDict
         >>> def testit(site_languages):
         ...     site = Site(languages=site_languages)
         ...     obj = AttrDict(site.babelkw(

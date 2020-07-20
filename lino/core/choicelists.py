@@ -22,7 +22,7 @@ from django.db.migrations.serializer import BaseSerializer
 from django.db.migrations.writer import MigrationWriter
 
 
-from atelier.utils import is_string
+from lino.utils import is_string
 from lino.core import actions
 from lino.core import actors
 from lino.core import tables

@@ -5,7 +5,7 @@
 #
 # import datetime
 # from django.utils import translation
-# from atelier.utils import i2t
+# from lino.utils import i2t
 from lino.api import dd, rt, _
 #
 # from django.conf import settings

@@ -29,7 +29,8 @@ SETUP_INFO = dict(
 install_requires = [
     # 'Sphinx',
     'Django',
-    'atelier', 'unipath', 'python_dateutil', 'dateparser',
+    # 'atelier', 
+    'unipath', 'python_dateutil', 'dateparser',
     'etgen', # 'docutils',
     'Babel', 'lxml',
     'odfpy',

@@ -18,7 +18,7 @@ from django.core.management import call_command
 from django.db import connection, reset_queries, connections, DEFAULT_DB_ALIAS
 from django.utils import translation
 
-from atelier.utils import AttrDict
+from lino.utils import AttrDict
 from lino.core.signals import testcase_setup # , database_ready
 from lino.core.callbacks import applyCallbackChoice
 from .test import CommonTestCase

@@ -22,7 +22,7 @@ from django.db.models import loading
 import lino
 #from lino.core.utils import app_labels
 from lino.utils import curry
-from lino.utils import rstgen
+from atelier import rstgen
 from lino.utils.restify import doc2rst, abstract
 from lino.core import kernel
 

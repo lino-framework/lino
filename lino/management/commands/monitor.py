@@ -3,8 +3,8 @@
 # License: BSD (see file COPYING for details)
 
 """
-Writes a status report about this Site. 
-Used to monitor a production database. 
+Writes a status report about this Site.
+Used to monitor a production database.
 """
 # from future import standard_library
 # standard_library.install_aliases()
@@ -39,7 +39,7 @@ except ImproperlyConfigured:
 
 
 import lino
-from lino.utils import rstgen
+from atelier import rstgen
 from lino.core.utils import obj2str, full_model_name, sorted_models_list
 
 

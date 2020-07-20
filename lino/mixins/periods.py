@@ -19,7 +19,7 @@ from django.utils.translation import pgettext_lazy as pgettext
 from django.core.exceptions import ValidationError
 from django.utils.timezone import is_aware
 
-from atelier.utils import last_day_of_month
+from lino.utils import last_day_of_month
 from lino.api import dd
 from lino.core.model import Model
 from lino.utils.format_date import fdl, fds

@@ -6,7 +6,7 @@ Adds some demo comments.
 
 """
 import datetime
-from atelier.utils import i2t
+from lino.utils import i2t
 from lino.utils import Cycler
 from lino.api import rt, dd
 from lino.core.requests import BaseRequest
