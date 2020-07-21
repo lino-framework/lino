@@ -204,8 +204,9 @@ class Site(object):
 
     confdirs = None
     """
-    This attribute is available only after site startup.  See
-    :mod:`lino.utils.config`.
+    Pointer to the config directories registry.
+    See :ref:`config_dirs` and :mod:`lino.utils.config`.
+    Lino sets this attribute during site startup.
     """
 
     kernel = None

@@ -55,6 +55,12 @@ import warnings
 warnings.filterwarnings(
     "error", "DateTimeField .* received a naive datetime (.*) while time zone support is active.",
     RuntimeWarning, "django.db.models.fields")
+
+# doesn't work here because that's too late:
+# warnings.filterwarnings(
+#     "ignore", "Distutils was imported before Setuptools. This usage is discouraged and may exhibit undesirable behaviors or errors. Please use Setuptools' objects directly or at least import Setuptools first.",
+#     UserWarning, "setuptools.distutils_patch")
+
 # TODO: get everything to work even when ResourceWarning gives an error
 # warnings.filterwarnings("error", category=ResourceWarning)
 
