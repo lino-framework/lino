@@ -29,7 +29,7 @@ from html2text import HTML2Text
 from importlib import import_module, reload
 
 from lino.utils import AttrDict, date_offset
-from atelier import rstgen
+import rstgen
 
 from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import get_language

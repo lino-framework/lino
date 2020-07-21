@@ -25,7 +25,7 @@ from __future__ import print_function
 import re
 import sys
 import textwrap
-from atelier import rstgen
+import rstgen
 
 
 def p(kw, sql_width=60):

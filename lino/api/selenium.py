@@ -31,7 +31,7 @@ import subprocess
 import traceback
 
 from unipath import Path
-from atelier import rstgen
+import rstgen
 from atelier.utils import unindent
 
 from selenium import webdriver

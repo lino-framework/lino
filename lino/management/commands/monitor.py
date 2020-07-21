@@ -39,7 +39,7 @@ except ImproperlyConfigured:
 
 
 import lino
-from atelier import rstgen
+import rstgen
 from lino.core.utils import obj2str, full_model_name, sorted_models_list
 
 

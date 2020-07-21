@@ -34,7 +34,7 @@ from lino.core import kernel
 from lino.core import actions
 from lino.core.utils import app_labels
 from lino.utils import confirm
-from atelier import rstgen
+import rstgen
 from lino.core.menus import Menu, MenuItem
 from lino.utils import jsgen
 from lino.management.commands.makedocs import GeneratingCommand

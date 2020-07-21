@@ -4,7 +4,7 @@
 """Some diagnostic utilities."""
 
 # from textwrap import fill
-from atelier import rstgen
+import rstgen
 from atelier.utils import unindent
 
 from django.conf import settings

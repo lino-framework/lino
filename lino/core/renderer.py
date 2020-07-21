@@ -8,7 +8,7 @@ Defines :class:`HtmlRenderer` and :class:`TextRenderer`.
 import logging ; logger = logging.getLogger(__name__)
 
 from html import escape
-from atelier import rstgen
+import rstgen
 
 from django.conf import settings
 from django.db import models

@@ -16,7 +16,7 @@ import os
 import sys
 import time
 import fnmatch
-from atelier import rstgen
+import rstgen
 
 
 def codefiles(pattern='*'):

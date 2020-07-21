@@ -83,7 +83,7 @@ from lino.core import actions
 from lino.core import choicelists
 from lino.core import kernel
 from atelier.utils import unindent
-from atelier import rstgen
+import rstgen
 from lino.core.utils import full_model_name
 from lino.ad import Plugin
 from lino.utils.diag import analyzer

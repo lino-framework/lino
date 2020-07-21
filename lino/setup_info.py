@@ -46,7 +46,7 @@ install_requires = [
 install_requires.append('beautifulsoup4')  # lino.modlib.memo.mixins
 # install_requires.append('reportlab')
 install_requires.append('weasyprint')
-install_requires.append('zodb')
+# install_requires.append('zodb')
 install_requires.append('DateTime')
 # install_requires.append('appy@svn+https://svn.forge.pallavi.be/appy-dev/dev1')
 # 'django-mailbox@git+https://github.com/cylonoven/django-mailbox#egg=django-mailbox'

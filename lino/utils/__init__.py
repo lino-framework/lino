@@ -68,7 +68,7 @@ from collections import OrderedDict
 # import locale
 import dateparser
 
-# from atelier import rstgen
+# import rstgen
 from etgen.utils import join_elems
 
 from lino.utils.cycler import Cycler
