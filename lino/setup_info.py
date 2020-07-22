@@ -15,7 +15,7 @@ import sys
 
 SETUP_INFO = dict(
     name='lino',
-    version='20.7.5',
+    version='20.7.6',
     description="A framework for writing desktop-like web applications "
                 "using Django and ExtJS or React",
     license='BSD-2-Clause',
