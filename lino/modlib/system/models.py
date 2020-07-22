@@ -2,9 +2,6 @@
 # Copyright 2009-2019 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-from builtins import object
-from builtins import str
-
 from django.conf import settings
 from django.utils.encoding import force_text
 
@@ -104,7 +101,7 @@ def my_handler(sender, **kw):
     #~ dd.database_connected.send(sender,**kw)
 
 from django.test.signals import setting_changed
-from lino.utils.djangotest import testcase_setup
+from lino.core.signals import testcase_setup
 setting_changed.connect(my_handler)
 testcase_setup.connect(my_handler)
 dd.connection_created.connect(my_handler)

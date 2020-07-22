@@ -42,7 +42,8 @@ install_requires = [
     'html2text',
     'schedule']
 
-# install_requires.append('docutils')
+install_requires.append('Sphinx')  # lino.utils.restify
+install_requires.append('docutils')  # lino.modlib.memo.mixins
 install_requires.append('beautifulsoup4')  # lino.modlib.memo.mixins
 # install_requires.append('reportlab')
 install_requires.append('weasyprint')

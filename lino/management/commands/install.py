@@ -65,6 +65,7 @@ class Command(BaseCommand):
                 print('\n'.join(reqs))
                 return
             runcmd('pip install --upgrade pip')
-            cmd = "pip install --upgrade --trusted-host svn.forge.pallavi.be {}".format(' '.join(reqs))
+            # cmd = "pip install --upgrade --trusted-host svn.forge.pallavi.be {}".format(' '.join(reqs))
+            cmd = "pip install --upgrade {}".format(' '.join(reqs))
             if not options['interactive'] or confirm("{} (y/n) ?".format(cmd)):
                 runcmd(cmd)
