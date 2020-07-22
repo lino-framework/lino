@@ -14,13 +14,13 @@ for a Lino application.
 
   :settings: The Django settings module which is active while building
              the docs.
-            
+
   :dd: The :mod:`lino.api.dd` module.
-            
+
   :rt: The :mod:`lino.api.rt` module.
-            
+
   Plus the app_label of each installed plugin.
-            
+
 
 .. rst:directive:: fields_list
 
@@ -32,7 +32,7 @@ for a Lino application.
 .. rst:role:: menupath
 
    Render the given menu command specifier as a `menuselection` role.
-            
+
 .. rst:directive:: actor
 
 Usage::
@@ -82,7 +82,7 @@ from lino.core import actors
 from lino.core import actions
 from lino.core import choicelists
 from lino.core import kernel
-from atelier.utils import unindent
+from rstgen.utils import unindent
 import rstgen
 from lino.core.utils import full_model_name
 from lino.ad import Plugin
@@ -503,7 +503,7 @@ class ActorDirective(Lino2rstDirective):
                 s = ''
                 name = str(fld.model) + '.' + fld.name
                 title = force_text(fld.verbose_name).strip()
-                
+
                 s += "\n.. index::\n   single: "
                 s += str(_('%(field)s (field in %(model)s)') % dict(
                     field=title, model=model_ref(fld.model)))
@@ -642,4 +642,3 @@ def setup(app):
     app.add_directive('currentproject', CurrentProject)
     app.add_directive('django2rst', Lino2rstDirective)  # backward compat
     app.add_directive('lino2rst', Lino2rstDirective)
-    

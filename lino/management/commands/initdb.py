@@ -70,7 +70,7 @@ from django.db import models
 from lino.api import dd
 
 from lino import AFTER17, AFTER18
-from atelier.utils import confirm
+from rstgen.utils import confirm
 
 USE_SQLDELETE = True
 

@@ -17,11 +17,8 @@ object for which there are data checkers.
 
 """
 
-from __future__ import unicode_literals, print_function
-
 from django.core.management.base import BaseCommand, CommandError
 
-from atelier.utils import list_py2
 from lino.modlib.checkdata.choicelists import Checkers
 from lino.modlib.checkdata.models import check_data
 
@@ -55,7 +52,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         app = options.get('checkers', args)
         if app:
-            args += tuple(list_py2(app))
+            args += tuple(app)
         if options['list']:
             rt.show(Checkers, column_names="value text")
         else:

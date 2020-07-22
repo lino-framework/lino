@@ -24,10 +24,8 @@ Options:
 
 """
 
-from __future__ import print_function
-
 import subprocess
-from atelier.utils import confirm
+from rstgen.utils import confirm
 from django.core.management.base import BaseCommand
 from django.conf import settings
 

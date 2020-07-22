@@ -7,11 +7,11 @@ Not yet implemented.
 Compares screenshots below DIR1 with those below DIR2.
 Fails and writes a comprehensible report if one of the mismatches.
 
-Intended use is to run this as a test case, 
-specifying 
-the output of the last makescreenshots run 
+Intended use is to run this as a test case,
+specifying
+the output of the last makescreenshots run
 (demo/media/cache/screenshots)
-as DIR1 and `userdocs/scrennshots` 
+as DIR1 and `userdocs/scrennshots`
 ("official", "confirmed" screenshots) as DIR2.
 
 """
@@ -40,7 +40,7 @@ from django.test.testcases import StoppableWSGIServer
 
 from lino.core.utils import obj2str, full_model_name, sorted_models_list
 from lino.utils import screenshots
-from atelier.utils import SubProcessParent
+from rstgen.utils import SubProcessParent
 
 
 class Command(BaseCommand):

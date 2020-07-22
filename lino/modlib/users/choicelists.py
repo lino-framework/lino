@@ -6,7 +6,7 @@
 """
 
 from django.conf import settings
-from atelier.utils import unindent
+from rstgen.utils import unindent
 
 from lino.core.choicelists import ChoiceList, Choice
 from lino.core.roles import SiteAdmin, check_required_roles

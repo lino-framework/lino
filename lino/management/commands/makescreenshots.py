@@ -38,7 +38,7 @@ from django.test.testcases import StoppableWSGIServer
 
 from lino.core.utils import obj2str, full_model_name, sorted_models_list
 from lino.utils import screenshots
-from atelier.utils import SubProcessParent
+from rstgen.utils import SubProcessParent
 
 
 PHANTOMJS = '/home/luc/snapshots/phantomjs-1.9.0-linux-i686/bin/phantomjs'
@@ -93,8 +93,8 @@ page.onError = function (msg, trace) {
     })
 }
 
-var is_loaded = function() { 
-  return page.evaluate(function() { 
+var is_loaded = function() {
+  return page.evaluate(function() {
       // console.log('evaluate()');
         // return !Ext.Ajax.isLoading();
         // return (document.readyState == 'complete');
@@ -114,16 +114,16 @@ var is_loaded = function() {
   );
 };
 
-var todo = function(ok) { 
+var todo = function(ok) {
     console.log("Rendering to",output,ok);
     page.render(output);
-    if (ok) 
+    if (ok)
         phantom.exit();
     else
         phantom.exit(2);
 };
 
-var on_opened = function(status) { 
+var on_opened = function(status) {
     if (status !== 'success') {
         console.log('Unable to load ',address,'status is:',status);
         phantom.exit(1);

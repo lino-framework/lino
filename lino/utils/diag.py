@@ -5,7 +5,7 @@
 
 # from textwrap import fill
 import rstgen
-from atelier.utils import unindent
+from rstgen.utils import unindent
 
 from django.conf import settings
 from django.db import models
