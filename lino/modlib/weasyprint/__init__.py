@@ -17,7 +17,10 @@ warnings.filterwarnings(
 warnings.filterwarnings(
     "ignore", '@font-face support needs Pango >= 1.38')
 
-import imagesize
+try:
+    import imagesize
+except ImportError:
+    imagesize = None
 
 from lino.api import ad, _
 
@@ -45,14 +48,20 @@ class Plugin(ad.Plugin):
     margin_left = 17
     margin = 10
 
+    def get_requirements(self, site):
+        yield "imagesize"
+
     def on_site_startup(self, site):
         if self.header_height:
             for ext in ('jpg', 'png'):
                 fn = site.confdirs.find_config_file("top-right."+ext, "weasyprint")
                 if fn:
                     self.top_right_image = fn
-                    w, h = imagesize.get(fn)
                     if self.top_right_width is None:
+                        if imagesize is None:
+                            site.logger.warning("imagesize is not installed")
+                            continue
+                        w, h = imagesize.get(fn)
                         self.top_right_width = self.header_height * w / h
                 fn = site.confdirs.find_config_file("header."+ext, "weasyprint")
                 if fn:

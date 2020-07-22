@@ -74,26 +74,7 @@ from etgen.utils import join_elems
 from lino.utils.cycler import Cycler
 from lino.utils.code import codefiles, codetime
 
-
-def confirm(prompt=None, default="y"):
-    # copy of atelier.utils.confirm
-    """
-    Ask for user confirmation from the console.
-    """
-    # if six.PY2:
-    #     prompt = prompt.encode(
-    #         sys.stdin.encoding or locale.getpreferredencoding(True))
-    # print(20160324, type(prompt))
-    prompt += " [Y,n]?"
-    while True:
-        ln = input(prompt)
-        if not ln:
-            ln = default
-        if ln.lower() in ('y', 'j', 'o'):
-            return True
-        if ln.lower() == 'n':
-            return False
-        print("Please answer Y or N")
+from rstgen.utils import confirm, i2d, i2t
 
 
 class AttrDict(dict):
@@ -194,60 +175,6 @@ def iif(condition, true_value, false_value=None):
     if condition:
         return true_value
     return false_value
-
-
-def i2d(i):
-    # copy of atelier.utils.i2d
-    """
-    Convert `int` to `date`. Examples:
-
-    >>> i2d(20121224)
-    datetime.date(2012, 12, 24)
-    >>> i2d(20080324)
-    datetime.date(2008, 3, 24)
-
-    The date format is always YYYYMMDD, even if YYYYDDMM would give a valid date
-    as well.
-
-    >>> i2d(20080305)
-    datetime.date(2008, 3, 5)
-
-
-    """
-    s = str(i)
-    if len(s) != 8:
-        raise Exception("Invalid date specification {0}.".format(i))
-    d = dateparser.parse(s, ['%Y%m%d'], settings={'STRICT_PARSING': True})
-    d = datetime.date(d.year, d.month, d.day)
-    # print(i, "->", v)
-    return d
-
-
-def i2t(s):
-    """
-    Convert `int` to `time`. Examples:
-
-    >>> i2t(815)
-    datetime.time(8, 15)
-
-    >>> i2t(1230)
-    datetime.time(12, 30)
-
-    >>> i2t(12)
-    datetime.time(12, 0)
-
-    >>> i2t(1)
-    datetime.time(1, 0)
-
-    """
-    s = str(s)
-    if len(s) == 4:
-        return datetime.time(int(s[:2]), int(s[2:]))
-    if len(s) == 3:
-        return datetime.time(int(s[:1]), int(s[1:]))
-    if len(s) <= 2:
-        return datetime.time(int(s), 0)
-    raise ValueError(s)
 
 
 def last_day_of_month(d):
