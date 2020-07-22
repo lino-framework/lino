@@ -85,11 +85,22 @@ class ConfigDirCache(object):
 
         self.LOCAL_CONFIG_DIR = None
         local_pth = self.site.cache_dir.child(SUBDIR_NAME)
+        found = False
         for pth in self.site.get_settings_subdirs(SUBDIR_NAME):
             writeable = pth == local_pth
             cd = ConfigDir(pth, writeable)
             config_dirs.insert(0, cd)
             if writeable:
+                found = True
+                self.LOCAL_CONFIG_DIR = cd
+        if not found:
+            # e.g. when LINO_CACHE_ROOT is used, the local_pth is not among the
+            # settings subdirs. Usually there is no local_pth in that case, but
+            # some doctests create it as an empty directory.
+            assert self.LOCAL_CONFIG_DIR is None
+            if local_pth.exists():
+                cd = ConfigDir(local_pth, True)
+                config_dirs.insert(0, cd)
                 self.LOCAL_CONFIG_DIR = cd
 
         # self.LOCAL_CONFIG_DIR = None
