@@ -1,12 +1,7 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2017 Rumma & Ko Ltd
+# Copyright 2017-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-"""The models module for this plugin.
-
-"""
-# from builtins import object
-# from builtins import str
 
 from datetime import datetime
 from django.conf import settings
@@ -41,10 +36,11 @@ class Connections(dd.VirtualTable):
     @classmethod
     def get_data_rows(cls, ar):
         # return dd.plugins.ipdict.ip_records.values()
+        never = settings.SITE.startup_time
         return reversed(sorted(
             dd.plugins.ipdict.ip_records.values(),
-            key=lambda x: x.last_request))
-    
+            key=lambda x: x.last_request or never))
+
     @dd.displayfield(_("IP address"))
     def ip_address(self, obj, ar):
         return obj.addr
@@ -69,8 +65,8 @@ class Connections(dd.VirtualTable):
     def last_login(self, obj, ar):
         return format_timestamp(obj.last_login)
 
-    
-            
+
+
 
 @dd.receiver(user_login_failed)
 def on_login_failed(sender=None, credentials=None, request=None,

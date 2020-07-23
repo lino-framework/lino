@@ -319,12 +319,17 @@ def get_checkable_models(*args):
     return checkable_models
 
 
-def check_data(args=[], fix=True):
+def check_data(args=[], fix=True, prune=False):
     """Called by :manage:`checkdata`. See there."""
     Problem = rt.models.checkdata.Problem
     mc = get_checkable_models(*args)
     if len(mc) == 0 and len(args) > 0:
         raise Exception("No checker matches {0}".format(args))
+    if prune:
+        qs = Problem.all()
+        msg = "Prune {} existing messages...".format(qs.count())
+        dd.logger.info(msg)
+
     final_sums = [0, 0, 0]
     with translation.override('en'):
         for m, checkers in mc.items():

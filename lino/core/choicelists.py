@@ -642,7 +642,7 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
         nv = cls.old2new.get(value)
         if nv is not None:
             value = nv
-        v = cls.items_dict.get(value) or cls.get_by_name(value)
+        v = cls.items_dict.get(value) or cls.get_by_name(value, None)
         if v is not None:
             return v
         if settings.SITE.strict_choicelist_values:

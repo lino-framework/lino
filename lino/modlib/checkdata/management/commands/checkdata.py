@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015-2016 by Rumma & Ko Ltd.
+# Copyright 2015-2020 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 """Defines the :manage:`checkdata` management command:
 
@@ -48,6 +48,10 @@ class Command(BaseCommand):
             '-f', '--fix', action='store_true', dest='fix',
             default=False,
             help="Fix any repairable problems.")
+        parser.add_argument(
+            '-p', '--prune', action='store_true', dest='prune',
+            default=False,
+            help="Remove all existing problem messages first.")
 
     def handle(self, *args, **options):
         app = options.get('checkers', args)
@@ -57,4 +61,4 @@ class Command(BaseCommand):
             rt.show(Checkers, column_names="value text")
         else:
             rt.startup()
-            check_data(args=args, fix=options['fix'])
+            check_data(args=args, fix=options['fix'], prune=options['prune'])
