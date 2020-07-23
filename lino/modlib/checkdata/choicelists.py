@@ -1,15 +1,10 @@
-# Copyright 2015-2019 Rumma & Ko Ltd
+# Copyright 2015-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
 Choicelists for `lino.modlib.checkdata`.
 
-
 """
-
-from __future__ import unicode_literals, print_function
-from builtins import str
-import six
 
 from django.utils import translation
 from lino.core.gfks import gfk2lookup
@@ -38,7 +33,7 @@ if False:
     add("20", _("Warning"), 'warning')
     add("30", _("Error"), 'error')
 
-    
+
 class Checker(dd.Choice):
     """Base class for the choices of :class:`Checkers`.
 
@@ -49,13 +44,13 @@ class Checker(dd.Choice):
     model = None
     """
     The model to be checked.  If this is a string, Lino will resolve it at startup.
-      
+
     If this is an abstract model, :meth:`get_checkable_models`  will
     potentially yield more than one model.
-    
+
     If this is `None`, the checker is unbound, i.e. the problem messages will
     not be bound to a particular database object.
-    
+
     You might also define your own
     :meth:`get_checkable_models` method.
 
@@ -105,7 +100,7 @@ class Checker(dd.Choice):
         instance.
         """
         return cls.self.get_checkdata_problems(*args, **kwargs)
-        
+
     def get_checkable_models(self):
         """Return a list of the models to check.
 
@@ -116,7 +111,7 @@ class Checker(dd.Choice):
         return rt.models_by_base(self.model, toplevel_only=True)
 
     def resolve_model(self, site):
-        if isinstance(self.model, six.string_types):
+        if isinstance(self.model, str):
             self.model = dd.resolve_model(self.model, strict=True)
 
     def update_problems(self, obj=None, delete=True, fix=False):
@@ -140,7 +135,7 @@ class Checker(dd.Choice):
             if fixable:
                 # attn: do not yet translate
                 # msg = string_concat(u"(\u2605) ", msg)
-                msg = format_lazy(u"(\u2605) {}", msg)
+                msg = format_lazy("(\u2605) {}", msg)
             if fixable and fix:
                 done.append(msg)
             else:
@@ -174,7 +169,8 @@ class Checker(dd.Choice):
         be considered responsible for problems detected by this
         checker on the given database object `obj`.
 
-        The given `obj` will always be an instance of :attr:`model`.
+        The given `obj` is an instance of :attr:`model`, unless for unbound
+        checkers (i.e. whose :attr:`model` is `None`).
 
         The default implementation returns the *main checkdata
         responsible* defined for this site (see

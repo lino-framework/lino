@@ -273,7 +273,7 @@ class AreaUploads(Uploads):
 
     @classmethod
     def format_row_in_slave_summary(self, ar, obj):
-        """almost as unicode, but without the type
+        """almost as str(), but without the type
         """
         return obj.description or filename_leaf(obj.file.name) \
             or str(obj.id)
