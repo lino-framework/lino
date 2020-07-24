@@ -1429,7 +1429,8 @@ class ActionRequest(ActorRequest):
         self.rqdata = rqdata
         self.bound_action = action or actor.default_action
         BaseRequest.__init__(self, **kw)
-        self.ah = actor.get_request_handle(self)
+        if not actor.is_abstract():
+            self.ah = actor.get_request_handle(self)
 
     def __str__(self):
         return "{0} {1}".format(self.__class__.__name__, self.bound_action)

@@ -904,9 +904,10 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
             try:
                 settings.SITE.kernel.setup_handle(h, ar)
             except Exception as e:
-                traceback.print_exc()
-                logger.error("%s setup_handle failed with %s", self, e)
+                # traceback.print_exc()
+                logger.warning("%s setup_handle failed with %s", self, e)
                 delattr(self, hname)
+                # raise
 
         # logger.info("18072017, h:|%s|, h.store:|%s|, #1955"%(h, getattr(h,'store',None)))
         return h
@@ -934,12 +935,12 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                 "{0} must convert `required` to `required_roles`".format(cls))
 
         master = getattr(cls, 'master', None)
-        if is_string(master):
+        if isinstance(master, str):
         # if isinstance(master, string_types):
             cls.master = resolve_model(master)
 
         model = getattr(cls, 'model', None)
-        if is_string(model):
+        if isinstance(model, str):
             model = cls.model = resolve_model(model)
 
         cls.collect_virtual_fields()
@@ -969,9 +970,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         actions.install_layout(cls, 'detail_layout', layouts.DetailLayout)
         actions.install_layout(cls, 'insert_layout', layouts.InsertLayout,
             window_size=(cls.insert_layout_width, 'auto'))
-        actions.install_layout(cls, 'card_layout', layouts.DetailLayout,
-            # window_size=(cls.card_layout_width, 'auto')
-        )
+        actions.install_layout(cls, 'card_layout', layouts.DetailLayout)
 
         if cls.abstract:
             return
