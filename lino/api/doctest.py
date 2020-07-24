@@ -50,8 +50,10 @@ HttpQuery = collections.namedtuple(
 
 settings.SITE.is_testing = True
 
-def get_json_dict(username, uri, an='detail'):
+def get_json_dict(username, uri, an='detail', **kwargs):
     url = '/api/{0}?fmt=json&an={1}'.format(uri, an)
+    for k, v in kwargs.items():
+        url += "&{}={}".format(k, v)
     test_client.force_login(rt.login(username).user)
     res = test_client.get(url, REMOTE_USER=username)
     assert res.status_code == 200

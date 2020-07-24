@@ -7,11 +7,7 @@ See :doc:`/dev/delete`.
 
 """
 
-from __future__ import unicode_literals
-from builtins import object
-
-import logging
-logger = logging.getLogger(__name__)
+# import logging ; logger = logging.getLogger(__name__)
 
 from django.conf import settings
 from django.db import models

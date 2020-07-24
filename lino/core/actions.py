@@ -30,6 +30,7 @@ from .utils import obj2unicode
 from .utils import resolve_model
 from .utils import navinfo
 from .utils import Parametrizable
+from .utils import traverse_ddh_fklist
 from .requests import InstanceAction
 
 def discover_choosers():
@@ -1284,6 +1285,29 @@ class DeleteSelected(MultipleRowAction):
                 ar.error(None, msg, alert=True)
                 return
 
+        # build a list of volatile related objects that will be deleted together
+        # with this one
+        cascaded_objects = {}
+        kernel = settings.SITE.kernel
+        for obj in ar.selected_rows:
+            for m, fk in traverse_ddh_fklist(obj.__class__):
+                # print(20200724, fk)
+                if fk.name in m.allow_cascaded_delete:
+                    qs = m.objects.filter(**{fk.name:obj})
+                    n = qs.count()
+                    if n:
+                        if m in cascaded_objects:
+                            cascaded_objects[m] += n
+                        else:
+                            cascaded_objects[m] = n
+
+            # print "20141208 generic related objects for %s:" % obj
+            for gfk, fk_field, qs in kernel.get_generic_related(obj):
+                if gfk.name in qs.model.allow_cascaded_delete:
+                    n = qs.count()
+                    if n:
+                        cascaded_objects[qs.model] = n
+
         def ok(ar2):
             super(DeleteSelected, self).run_from_ui(ar, **kw)
             # refresh_all must be True e.g. for when user deletes an item of a
@@ -1300,8 +1324,17 @@ class DeleteSelected(MultipleRowAction):
             d.update(type=ar.actor.model._meta.verbose_name)
         else:
             d.update(type=ar.actor.model._meta.verbose_name_plural)
-        msg = gettext("You are about to delete %(num)d %(type)s:\n%(targets)s") % d
-        ar.confirm(ok, "{}\n{}".format(msg, gettext("Are you sure ?")),
+            if len(objects) > 10:
+                objects = objects[:9] + ["..."]
+        msg = gettext("You are about to delete %(num)d %(type)s\n(%(targets)s)") % d
+
+        if len(cascaded_objects):
+            lst = ["{} {}".format(n, m._meta.verbose_name if n == 1 else m._meta.verbose_name_plural)
+                for m, n in cascaded_objects.items()]
+            msg += "\n" + gettext("as well as all related volatile records ({})").format(
+                ", ".join(lst))
+
+        ar.confirm(ok, "{}. {}".format(msg, gettext("Are you sure?")),
                    uid="deleting %(num)d %(type)s pks=" % d + "".join([str(t.pk) for t in ar.selected_rows]))
 
     def run_on_row(self, obj, ar):

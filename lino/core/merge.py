@@ -7,13 +7,9 @@ This defines the :class:`MergeAction` class.
 It should not be used on models that have MTI children.
 
 """
-# import six
-# str = six.text_type
-from builtins import str
-from builtins import object
+#from builtins import object
 
-import logging
-logger = logging.getLogger(__name__)
+import logging ; logger = logging.getLogger(__name__)
 
 from django.db import models
 from django.conf import settings
@@ -24,32 +20,12 @@ from lino.core import actions
 from lino.core import layouts
 from lino.core import fields
 from lino.core.signals import pre_merge
-from lino.core.utils import full_model_name
+from lino.core.utils import full_model_name, traverse_ddh_fklist
 from lino.core.roles import Expert
 from etgen.html import E
 from lino.api import rt
 
 
-def traverse_ddh_fklist(model, ignore_mti_parents=True):
-    """When an application uses MTI (e.g. with a Participant model being a
-    specialization of Person, which itself a specialization of
-    Partner) and we merge two Participants, then we must of course
-    also merge their invoices and bank statement items (linked via a
-    FK to Partner) and their contact roles (linked via a FK to
-    Person).
-
-    """
-    for base in model.mro():
-        ddh = getattr(base, '_lino_ddh', None)
-        if ddh is not None:
-            for (m, fk) in ddh.fklist:
-                if ignore_mti_parents and isinstance(fk, models.OneToOneField):
-                    pass
-                    # logger.info("20160621 ignore OneToOneField %s", fk)
-                else:
-                    # logger.info("20160621 yield %s (%s)",
-                    #             fk, fk.__class__)
-                    yield (m, fk)
 
 
 class MergeAction(actions.Action):
@@ -140,7 +116,7 @@ class MergeAction(actions.Action):
 
         if ar.action_param_values.merge_to is None:
             raise Warning(_("You must specify a merge target."))
-        
+
         mp = MergePlan(obj, ar.action_param_values.merge_to,
                        ar.action_param_values)
         msg = mp.build_confirmation_message()
@@ -258,7 +234,7 @@ class MergePlan(object):
                 # ~ # setattr(qs,gfk.name,merge_to)
                 #~ i.full_clean()
                 #~ i.save()
-                
+
         # Build the return message
         msg = _("Merged %(this)s into %(merge_to)s. "
                 "Updated %(updated)d related rows.") % dict(
@@ -271,5 +247,3 @@ class MergePlan(object):
         # Delete the reference to the deleted object:
         del self.obj
         return msg
-
-

@@ -168,7 +168,6 @@ class Problem(Controllable, UserAuthored):
     def get_simple_parameters(cls):
         for p in super(Problem, cls).get_simple_parameters():
             yield p
-        # yield 'user'
         yield 'checker'
 
 dd.update_field(Problem, 'user', verbose_name=_("Responsible"))

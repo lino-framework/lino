@@ -855,3 +855,25 @@ def db2param(spec):
 
     """
     return dbfield2params_field(resolve_field(spec))
+
+
+def traverse_ddh_fklist(model, ignore_mti_parents=True):
+    """When an application uses MTI (e.g. with a Participant model being a
+    specialization of Person, which itself a specialization of
+    Partner) and we merge two Participants, then we must of course
+    also merge their invoices and bank statement items (linked via a
+    FK to Partner) and their contact roles (linked via a FK to
+    Person).
+
+    """
+    for base in model.mro():
+        ddh = getattr(base, '_lino_ddh', None)
+        if ddh is not None:
+            for (m, fk) in ddh.fklist:
+                if ignore_mti_parents and isinstance(fk, models.OneToOneField):
+                    pass
+                    # logger.info("20160621 ignore OneToOneField %s", fk)
+                else:
+                    # logger.info("20160621 yield %s (%s)",
+                    #             fk, fk.__class__)
+                    yield (m, fk)
