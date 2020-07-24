@@ -140,7 +140,9 @@ class Problem(Controllable, UserAuthored):
         verbose_name_plural = _("Data problems")
         ordering = ['owner_type', 'owner_id', 'checker']
 
+    controller_is_optional = False
     allow_merge_action = False
+    allow_cascaded_delete = 'owner'
 
     # problem_type = ProblemTypes.field()
     checker = Checkers.field(verbose_name=_("Checker"))
