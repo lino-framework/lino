@@ -1,18 +1,12 @@
 # Copyright 2015-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-"""
-Choicelists for `lino.modlib.checkdata`.
-
-"""
-
 from django.utils import translation
 from lino.core.gfks import gfk2lookup
 from lino.core.roles import SiteStaff
 from django.utils.text import format_lazy
 
 from lino.api import dd, rt, _
-
 
 if False:
 
@@ -35,26 +29,10 @@ if False:
 
 
 class Checker(dd.Choice):
-    """Base class for the choices of :class:`Checkers`.
-
-    """
     verbose_name = None
     severity = None
     self = None
     model = None
-    """
-    The model to be checked.  If this is a string, Lino will resolve it at startup.
-
-    If this is an abstract model, :meth:`get_checkable_models`  will
-    potentially yield more than one model.
-
-    If this is `None`, the checker is unbound, i.e. the problem messages will
-    not be bound to a particular database object.
-
-    You might also define your own
-    :meth:`get_checkable_models` method.
-
-    """
 
     help_text = None
 
@@ -73,13 +51,6 @@ class Checker(dd.Choice):
 
     @classmethod
     def activate(cls):
-        """Application developers must call this on their subclass in order to
-        "register" or "activate" it.
-
-        This actually just creates an instance and adds it as a choice
-        to the :class:`Checkers` choicelist.
-
-        """
         if cls.self is not None:
             raise Exception("Duplicate call to {0}.activate()".format(cls))
         cls.self = cls()
@@ -95,17 +66,9 @@ class Checker(dd.Choice):
 
     @classmethod
     def check_instance(cls, *args, **kwargs):
-        """
-        Run :meth:`get_checkdata_problems` on this checker for the given
-        instance.
-        """
         return cls.self.get_checkdata_problems(*args, **kwargs)
 
     def get_checkable_models(self):
-        """Return a list of the models to check.
-
-        The default implementation uses the :attr:`model`.
-        """
         if self.model is None:
             return [None]
         return rt.models_by_base(self.model, toplevel_only=True)
@@ -115,14 +78,6 @@ class Checker(dd.Choice):
             self.model = dd.resolve_model(self.model, strict=True)
 
     def update_problems(self, obj=None, delete=True, fix=False):
-        """Update the problems of this checker for the specified object.
-
-        ``obj`` is `None` on unbound checkers.
-
-        When `delete` is False, the caller is responsible for deleting
-        any existing objects.
-
-        """
         Problem = rt.models.checkdata.Problem
         if delete:
             qs = Problem.objects.filter(
@@ -155,40 +110,13 @@ class Checker(dd.Choice):
         return (todo, done)
 
     def get_checkdata_problems(self, obj, fix=False):
-        """Return or yield a series of `(fixable, message)` tuples, each
-        describing a data problem. `fixable` is a boolean
-        saying whether this problem can be automatically fixed. And if
-        `fix` is `True`, this method is also responsible for fixing
-        it.
-
-        """
         return []
 
     def get_responsible_user(self, obj):
-        """The :attr:`user <lino.modlib.checkdata.models.Problem.user>` to
-        be considered responsible for problems detected by this
-        checker on the given database object `obj`.
-
-        The given `obj` is an instance of :attr:`model`, unless for unbound
-        checkers (i.e. whose :attr:`model` is `None`).
-
-        The default implementation returns the *main checkdata
-        responsible* defined for this site (see
-        :attr:`responsible_user
-        <lino.modlib.checkdata.Plugin.responsible_user>`).
-
-        """
         return dd.plugins.checkdata.get_responsible_user(self, obj)
 
 
 class Checkers(dd.ChoiceList):
-    """The list of data problem types known by this application.
-
-    This was the first use case of a :class:`ChoiceList
-    <lino.core.choicelists.ChoiceList>` with a :attr:`detail_layout
-    <lino.core.actors.Actor.detail_layout>`.
-
-    """
     required_roles = dd.login_required(SiteStaff)
     verbose_name = _("Data checker")
     verbose_name_plural = _("Data checkers")

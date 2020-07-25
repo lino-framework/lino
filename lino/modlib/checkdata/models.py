@@ -1,10 +1,6 @@
 # Copyright 2015-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-"""
-Database models for `lino.modlib.checkdata`.
-
-"""
 
 from builtins import object
 from collections import OrderedDict
@@ -108,32 +104,6 @@ class FixProblemsByController(UpdateProblemsByController):
 
 
 class Problem(Controllable, UserAuthored):
-    """Represents a detected data problem.
-
-    Database objects of this model are considered temporary data which
-    may be updated automatically without user interaction.
-
-    .. attribute:: checker
-
-       The :class:`Checker
-       <lino.modlib.checkdata.choicelists.Checker>` which reported
-       this problem.
-
-    .. attribute:: message
-
-       The message text. This is a concatenation of all messages that
-       were yeld by the :attr:`checker`.
-
-    .. attribute:: user
-
-       The :class:`user <lino.modlib.users.models.User>` reponsible
-       for fixing this problem.
-
-       This field is being filled by the :meth:`get_responsible_user
-       <lino.modlib.checkdata.choicelists.Checker.get_responsible_user>`
-       method of the :attr:`checker`.
-
-    """
     class Meta(object):
         app_label = 'checkdata'
         verbose_name = _("Data problem")
@@ -178,7 +148,6 @@ Problem.update_controller_field(verbose_name = _('Database object'))
 
 
 class Problems(dd.Table):
-    "The base table for :class:`Problem` objects."
     model = 'checkdata.Problem'
     column_names = "user owner message #fixable checker *"
     auto_fit_column_widths = True

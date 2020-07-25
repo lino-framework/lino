@@ -1,44 +1,15 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015-2019 Rumma & Ko Ltd
+# Copyright 2015-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Adds functionality for handling data problems.
 
-A data problem is a database integrity problem which is not
-visible by the DBMS because detecting it requires higher business
-intelligence.  Some data problems can be fixed automatically,
-others need human interaction.
-
-The application developer writes **data checkers**,
-i.e. pieces of code which contain that business intelligence and which
-are attached to a given model.
-
-Examples of data problems are:
-
-- :class:`lino_xl.lib.countries.models.PlaceChecker`
-- :class:`lino_xl.lib.beid.mixins.BeIdCardHolderChecker`
-- :class:`lino_xl.lib.addresses.mixins.AddressOwnerChecker`
-- :class:`lino.mixins.dupable.DupableChecker`
-- :class:`lino_welfare.modlib.pcsw.models.SSINChecker`
-- :class:`lino_welfare.modlib.pcsw.models.ClientCoachingsChecker`
-- :class:`lino_welfare.modlib.isip.mixins.OverlappingContractsChecker`
-- :class:`lino_welfare.modlib.dupable_clients.models.SimilarClientsChecker`
-
-
-
-Users automatically get a button "Update data problems" on
-objects for which there is at least one checker available.
-
-The application developer can also add a :class:`ProblemsByOwner`
-table to the `detail_layout` of any model.
-
+See :doc:`/specs/checkdata`.
 
 .. autosummary::
    :toctree:
 
     roles
-    choicelists
-    models
     fixtures.checkdata
     management.commands.checkdata
 
@@ -115,5 +86,3 @@ class Plugin(ad.Plugin):
 
     def get_requirements(self, site):
         yield "schedule"
-
-
