@@ -69,7 +69,7 @@ class Addressable(object):
     address = property(get_address)
 
     def get_address_html(self, *args, **kwargs):
-        """Returns the full postal address a a string containing html
+        """Returns the full postal address as a string containing html
         markup of style::
 
             <p>line1<br/>line2...</p>

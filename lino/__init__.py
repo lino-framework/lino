@@ -90,11 +90,7 @@ DJANGO2 = True
 if VERSION[0] == 1:
     DJANGO2 = False
     if VERSION[1] < 10:
-        raise Exception("Unsupported Django version %s" % VERSION)
-    # if VERSION[1] > 6:
-    #     AFTER17 = True
-    #     if VERSION[1] > 8:
-    #         AFTER18 = True
+        raise Exception("Unsupported Django version {}".format(VERSION))
 elif VERSION[0] == 2:
     AFTER17 = True
     AFTER18 = True
