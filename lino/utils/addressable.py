@@ -1,11 +1,13 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2018 Rumma & Ko Ltd
+# Copyright 2013-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-"""Used by :class:`lino_xl.lib.appypod.mixins.PrintLabelsAction` and
+"""Used by :class:`lino_xl.lib.appypod.PrintLabelsAction` and
 :mod:`lino_xl.lib.contacts`.
 
-$ python setup.py test -s tests.UtilsTests.test_addressable
+.. How to test this:
+    $ go book
+    $ python setup.py test -s tests.test_utils.UtilsTests.test_addressable
 
 """
 
