@@ -528,6 +528,9 @@ class Site(object):
     project" in your application.  Models which inherit from
     :class:`ProjectRelated <lino.mixins.ProjectRelated>` then have an
     additional ForeignKey to this model.
+
+    TODO: convert this into a plugin setting (probably of the office plugin).
+
     """
 
     user_model = None
