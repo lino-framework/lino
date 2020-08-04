@@ -1,14 +1,9 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2019 Rumma & Ko Ltd
+# Copyright 2011-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
-
-from __future__ import unicode_literals
-from builtins import object
 
 from lino.api import dd, _, rt
 from lino.core.utils import resolve_fields_list, models_by_base
-
-
 
 
 class Lockable(dd.Model):
