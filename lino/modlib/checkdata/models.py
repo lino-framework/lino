@@ -296,7 +296,7 @@ def check_data(args=[], fix=True, prune=False):
     if len(mc) == 0 and len(args) > 0:
         raise Exception("No checker matches {0}".format(args))
     if prune:
-        qs = Problem.all()
+        qs = Problem.objects.all()
         msg = "Prune {} existing messages...".format(qs.count())
         dd.logger.info(msg)
 

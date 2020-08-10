@@ -87,11 +87,8 @@ SEE ALSO
 - :doc:`/dev/dump2py`
 """
 
-from __future__ import unicode_literals
-from builtins import str
 from io import open
-import logging
-logger = logging.getLogger(__name__)
+import logging ; logger = logging.getLogger(__name__)
 
 import os
 from decimal import Decimal
