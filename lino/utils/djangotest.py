@@ -110,7 +110,7 @@ class DjangoManageTestCase(DjangoTestCase, CommonTestCase):
 
     def client_json_dict(self, meth, username, url, *data, **extra):
         """Send a POST or PUT to client with given username, url and data. The
-        client is expected to respond with a JSON encoded
+        server is expected to respond with a JSON encoded
         response. Parse the response's content (which is expected to
         contain a dict), convert this dict to an AttrDict before
         returning it.

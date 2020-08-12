@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2017-2018 Rumma & Ko Ltd
+# Copyright 2017-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
@@ -7,14 +7,16 @@
 
 Runs a Qt client for this application.
 
-This works only under Python 3 and it requires to manually install
-`PyQt5 <https://en.wikipedia.org/wiki/PyQt>`_::
+To see it in action, install a  `Lino contributor environment
+<lino.dev.install>`__, manually install `PyQt5
+<https://en.wikipedia.org/wiki/PyQt>`__ and then run it in any of the Lino demo
+projects. For example::
 
-    pip install pyqt5
+    $ pip install pyqt5
+    $ go min2
+    $ python manage.py qtclient
 
 """
-
-from __future__ import print_function
 
 from django.core.management.base import BaseCommand
 from django.conf import settings
@@ -36,29 +38,29 @@ class ItemCaller(object):
     def __init__(self, win, mi):
         self.mi = mi
         self.win  = win
-        
+
     def __call__(self, event):
         if False:
             QMessageBox.question(
                 self.win, str(self.mi.label),
                 str(self.mi.help_text),
-                QMessageBox.Yes | 
+                QMessageBox.Yes |
                 QMessageBox.No, QMessageBox.Yes)
 
         self.frm = DetailForm(self.win, self.mi)
         self.frm.show()
-            
+
 
 class DetailForm(QWidget):
-    
+
     def __init__(self, win, mi):
         self.mi = mi
         super().__init__(win)
-        self.setWindowTitle(str(self.mi.label))    
+        self.setWindowTitle(str(self.mi.label))
         self.initUI()
-        
+
     def initUI(self):
-        
+
         okButton = QPushButton("OK")
         cancelButton = QPushButton("Cancel")
 
@@ -70,23 +72,23 @@ class DetailForm(QWidget):
         vbox = QVBoxLayout()
         vbox.addStretch(1)
         vbox.addLayout(hbox)
-        
-        self.setLayout(vbox)    
-        
+
+        self.setLayout(vbox)
+
         self.setGeometry(300, 300, 300, 150)
         # self.show()
 
 
 class LinoClient(QMainWindow):
-    
+
     def __init__(self):
         super().__init__()
         self.initUI()
-        
+
     def initUI(self):
 
         textEdit = QTextEdit()
-        self.setCentralWidget(textEdit)        
+        self.setCentralWidget(textEdit)
 
         self.setGeometry(300, 300, 300, 220)
         self.center()
@@ -100,7 +102,7 @@ class LinoClient(QMainWindow):
         self.load_menu(menu, self.menubar)
         self.show()
         self.statusBar().showMessage('Ready')
-        
+
     def load_menu(self, menu, menubar):
         for mi in menu.items:
             if isinstance(mi, Menu):
@@ -133,21 +135,21 @@ class LinoClient(QMainWindow):
         # btn.clicked.connect(QCoreApplication.instance().quit)
         # btn.setToolTip('This is a <b>QPushButton</b> widget')
         # btn.resize(btn.sizeHint())
-        # btn.move(50, 50)               
-    
+        # btn.move(50, 50)
+
     # def show_detail(self, event):
     #     self.detail_form = DetailForm()
     #     self.detail_form.show()
-        
+
     def closeEvent(self, event):
-        
+
         if True:
             event.accept()
             return
-        
+
         reply = QMessageBox.question(self, 'MessageBox',
             "This will close the window! Are you sure?",
-                                     QMessageBox.Yes | 
+                                     QMessageBox.Yes |
                                      QMessageBox.No, QMessageBox.Yes)
 
         if reply == QMessageBox.Yes:
@@ -156,13 +158,13 @@ class LinoClient(QMainWindow):
             event.ignore()
 
     def center(self):
-        
+
         qr = self.frameGeometry()
         cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
-            
-	
+
+
 class Command(BaseCommand):
     help = __doc__
 
@@ -170,7 +172,5 @@ class Command(BaseCommand):
 
         app = QApplication(sys.argv)
         self.ex = LinoClient()
-        # sys.exit(app.exec_())          
+        # sys.exit(app.exec_())
         return app.exec_()
-
-

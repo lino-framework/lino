@@ -16,5 +16,6 @@
     linod
     resetsequences
     makemigdump
+    qtclient
 
 """
