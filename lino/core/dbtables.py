@@ -10,6 +10,7 @@ import logging ; logger = logging.getLogger(__name__)
 import datetime
 
 from django.conf import settings
+from django.core.exceptions import FieldDoesNotExist
 from django.db.models.fields import NOT_PROVIDED
 from django.utils.translation import ugettext_lazy as _
 
@@ -427,7 +428,7 @@ class Table(AbstractTable):
                         raise Exception(
                             "Unsupported master_key {0}.{1} ({2})".format(
                                 self, fk, fk.__class__))
-                except models.FieldDoesNotExist:
+                except FieldDoesNotExist:
                     for vf in self.model._meta.private_fields:
                         if vf.name == self.master_key:
                             fk = vf
@@ -475,7 +476,7 @@ class Table(AbstractTable):
                             fieldname)
                         assert direct
                         assert not m2m
-                    except models.FieldDoesNotExist:
+                    except FieldDoesNotExist:
                         raise Exception("Unknown fieldname %r in %s.order_by" %
                                         (fieldname, self))
 

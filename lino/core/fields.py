@@ -15,6 +15,7 @@ from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.core.exceptions import ValidationError
+from django.core.exceptions import FieldDoesNotExist
 from django.db.models.fields import NOT_PROVIDED
 from django.utils.functional import cached_property
 
@@ -1255,10 +1256,10 @@ def fields_list(model, field_names):
         else:
             e = model.get_data_elem(name)
             if e is None:
-                raise models.FieldDoesNotExist(
+                raise FieldDoesNotExist(
                     "No data element %r in %s" % (name, model))
             if not hasattr(e, 'name'):
-                raise models.FieldDoesNotExist(
+                raise FieldDoesNotExist(
                     "%s %r in %s has no name" % (e.__class__, name, model))
             if isinstance(e, DummyField):
                 pass

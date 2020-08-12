@@ -6,7 +6,7 @@ from django import VERSION
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from django.db.utils import DatabaseError
-from django.db.models import FieldDoesNotExist
+from django.core.exceptions import FieldDoesNotExist
 from django.contrib.contenttypes.models import ContentType, models
 
 from lino.core.roles import SiteStaff

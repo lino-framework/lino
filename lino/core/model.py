@@ -10,6 +10,7 @@ import copy
 from django.db import models
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.core.exceptions import FieldDoesNotExist
 from django.utils.translation import ugettext_lazy as _
 
 from etgen.html import E, forcetext, tostring
@@ -348,7 +349,7 @@ class Model(models.Model, fields.TableRow):
                 return rf
         try:
             return cls._meta.get_field(name)
-        except models.FieldDoesNotExist:
+        except FieldDoesNotExist:
             pass
 
         for vf in cls._meta.private_fields:

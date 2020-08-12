@@ -306,7 +306,7 @@ class Chooser(FieldChooser):
             cv = make_converter(f)
             if cv is not None:
                 self.converters.append(cv)
-        #~ except models.FieldDoesNotExist,e:
+        #~ except FieldDoesNotExist as e:
             #~ print e
 
         if hasattr(model, "create_%s_choice" % field.name):

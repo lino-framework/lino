@@ -31,7 +31,7 @@ from lino.core.actors import Actor
 
 from lino.core.dbtables import has_fk
 from lino.core.dbtables import Table
-from django.db.models.fields import FieldDoesNotExist
+from django.core.exceptions import FieldDoesNotExist
 from django.db import models
 
 from lino.core.frames import Frame
