@@ -110,9 +110,12 @@ def delete_child(obj, child_model, ar=None, using=None):
 
     # 20160720 TODO: Django has added the keep_parents argument, and
     # we should use this before Django 1.10 but this still seems to
-    # delete objects that are related to parents. So we sill cannot
+    # delete objects that are related to parents. So we still cannot
     # use it.
-    if True:
+    # 20200812 Django 3.1 forced me to look back into this. Seems that the
+    # kwarg collect_related is what we needed.
+
+    if False:
         collector = ChildCollector(using=using)
         collector.collect([child])
         # raise Exception(repr(collector.data))
@@ -131,7 +134,9 @@ def delete_child(obj, child_model, ar=None, using=None):
     else:
         collector = Collector(using=using)
         collector.collect([child], source=obj.__class__,
-                          nullable=True, keep_parents=True)
+                          nullable=True,
+                          keep_parents=True,
+                          collect_related=True)
     collector.delete()
 
     #~ setattr(obj,child_model.__name__.lower(),None)
@@ -141,7 +146,7 @@ def delete_child(obj, child_model, ar=None, using=None):
     # child when saving the form, but the response to the PUT returns
     # still a True value because it works on the same memory instance
     # (`obj`).  User sees the effect only after clicking the refresh
-    # button.  Fortunately there's no problem if the user unchecks the
+    # button.  Luckily there's no problem if the user unchecks the
     # field and saves the form a second time.
 
 
