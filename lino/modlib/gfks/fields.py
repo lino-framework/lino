@@ -66,7 +66,7 @@ class GenericForeignKeyIdField(models.PositiveIntegerField):
 
     def deconstruct(self):
         # needed for Django 1.7
-        # https://docs.djangoproject.com/en/dev/howto/custom-model-fields/#custom-field-deconstruct-method
+        # https://docs.djangoproject.com/en/3.1/howto/custom-model-fields/#custom-field-deconstruct-method
 
         name, path, args, kwargs = super(
             GenericForeignKeyIdField, self).deconstruct()

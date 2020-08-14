@@ -25,7 +25,7 @@ ignore Django's warnings about empty fixtures. (See
 This reimplements a simplified version of Django's `reset` command,
 without the possibility of deleting *only some* data (the thing which
 caused so big problems that Django 1.3. decided to `deprecate this
-command <https://docs.djangoproject.com/en/dev/releases/1.3\
+command <https://docs.djangoproject.com/en/3.1/releases/1.3\
 /#reset-and-sqlreset-management-commands>`__.
 
 Deleting all data and table definitions from a database is not always

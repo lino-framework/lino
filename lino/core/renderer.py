@@ -794,7 +794,7 @@ class JsRenderer(HtmlRenderer):
         either `data_record` or a `record_id`.
 
         Usually `data_record`, except if it is a `file upload
-        <https://docs.djangoproject.com/en/dev/topics/http/file-uploads/>`_
+        <https://docs.djangoproject.com/en/3.1/topics/http/file-uploads/>`_
         where some mysterious decoding problems (:blogref:`20120209`)
         force us to return a `record_id` which has the same visible
         result but using an additional GET.

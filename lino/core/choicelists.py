@@ -663,7 +663,7 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
         #~ We must make it dynamic since e.g. UserTypes can change after
         #~ the fields have been created.
 
-        #~ https://docs.djangoproject.com/en/dev/ref/models/fields/
+        #~ https://docs.djangoproject.com/en/3.1/ref/models/fields/
         #~ note that choices can be any iterable object -- not necessarily
         #~ a list or tuple. This lets you construct choices dynamically.
         #~ But if you find yourself hacking choices to be dynamic, you're
@@ -871,7 +871,7 @@ class ChoiceListField(models.CharField):
     def deconstruct(self):
         """
         Needed for Django 1.7+, see
-        https://docs.djangoproject.com/en/dev/howto/custom-model-fields/#custom-field-deconstruct-method
+        https://docs.djangoproject.com/en/3.1/howto/custom-model-fields/#custom-field-deconstruct-method
         """
 
         name, path, args, kwargs = super(ChoiceListField, self).deconstruct()

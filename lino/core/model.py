@@ -2,7 +2,7 @@
 # Copyright 2009-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-"Defines the :class:`Model` class."
+"Defines the :class:`Model` class.  See :ref:`dev.models`."
 
 import logging ; logger = logging.getLogger(__name__)
 import copy
@@ -36,82 +36,12 @@ except ImportError:
 
 
 class Model(models.Model, fields.TableRow):
-    """Lino adds a series of features to Django's `Model
-    <https://docs.djangoproject.com/en/dev/ref/models/class/>`_
-    class.  If a Lino application includes plain Django Model
-    classes, Lino will "extend" these by adding the attributes and
-    methods defined here to these classes.
-
-    .. attribute:: workflow_buttons
-
-        A virtual field that displays the **workflow actions** for
-        this row.  This is a compact but intuitive representation of
-        the current workflow state, together with a series of
-        clickable actions.
-
-    .. attribute:: overview
-
-        A fragment of HTML describing this object in a customizable story of
-        paragraphs.
-
-        Customizable using :meth:`get_overview_elems`.
-
-    .. attribute:: detail_link
-
-        A virtual field which displays this database row as a clickable link
-        which opens the detail window.  Functionally equivalent to a double
-        click, but more intuitive in some places.
+    """
+    Lino's extension of the plain Django Model class.
 
     .. method:: full_clean
 
         This is defined by Django.
-
-    .. method:: FOO_changed
-
-        Called when field FOO of an instance of this model has been
-        modified through the user interface.
-
-        Example::
-
-          def city_changed(self, ar):
-              print("User {} changed city of {} to {}!".format(
-                  ar.get_user(), self, self.city))
-
-        Note: If you want to know the old value when reacting to a change,
-        consider writing :meth:`after_ui_save` instead.
-
-    .. method:: FOO_choices
-
-        Return a queryset or list of allowed choices for field FOO.
-
-        For every field named "FOO", if the model has a method called
-        "FOO_choices" (which must be decorated by :func:`dd.chooser`),
-        then this method will be installed as a chooser for this
-        field.
-
-        Example of a context-sensitive chooser method::
-
-          country = dd.ForeignKey(
-              'countries.Country', blank=True, null=True)
-          city = dd.ForeignKey(
-              'countries.City', blank=True, null=True)
-
-          @chooser()
-          def city_choices(cls,country):
-              if country is not None:
-                  return country.place_set.order_by('name')
-              return cls.city.field.remote_field.model.objects.order_by('name')
-
-
-    .. method:: create_FOO_choice
-
-        For every field named "FOO" for which a chooser exists, if the model
-        also has a method called "create_FOO_choice", then this chooser will be
-        a :term:`learning chooser`. That is, users can enter text into the
-        combobox, and Lino will create a new database object from it.
-
-        This works only if FOO is (1) a foreign key and (2) has a chooser.
-        See also :term:`learning foreign key`.
 
     """
 
@@ -167,8 +97,11 @@ class Model(models.Model, fields.TableRow):
 
     grid_post = actions.CreateRow()
     submit_insert = actions.SubmitInsert()
-    """This is the action represented by the "Create" button of an Insert
-    window. See :mod:`lino.mixins.dupable` for an example of how to
+    """
+    The :class:`SubmitInsert <lino.core.actions.SubmitInsert>` action to be executed when the
+    when the users submits an insert window.
+
+    See :mod:`lino.mixins.dupable` for an example of how to
     override it.
 
     """
@@ -363,35 +296,6 @@ class Model(models.Model, fields.TableRow):
 
 
     def disable_delete(self, ar=None):
-        """
-        Decide whether this database object may be deleted.  Return `None`
-        if it is okay to delete this object, otherwise a nonempty
-        translatable string with a message that explains in user
-        language why this object cannot be deleted.
-
-        The argument `ar` contains the action request which is trying
-        to delete. `ar` is possibly `None` when this is being called
-        from a script or batch process.
-
-        The default behaviour checks whether there are any related
-        objects which would not get cascade-deleted and thus produce a
-        database integrity error.
-
-        You can override this method e.g. for defining additional
-        conditions.  Example::
-
-          def disable_delete(self, ar=None):
-              msg = super(MyModel, self).disable_delete(ar)
-              if msg is not None:
-                  return msg
-              if self.is_imported:
-                  return _("Cannot delete imported records.")
-
-        When overriding, be careful to not skip the `super` method.
-
-        Note that :class:`lino.mixins.polymorphic.Polymorphic`
-        overrides this.
-        """
         # In case of MTI, every concrete model has its own ddh.
         # Deleting an Invoice will also delete the Voucher. Ask all
         # MTI parents (other than self) whether they have a veto .

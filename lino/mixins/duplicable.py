@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2019 Rumma & Ko Ltd
+# Copyright 2012-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Defines the model mixin :class:`Duplicable`.  "duplicable"
@@ -7,12 +7,6 @@
 ['duplikət], ['du:plikeit]".
 
 """
-
-from __future__ import unicode_literals, print_function
-from builtins import object
-
-import logging
-logger = logging.getLogger(__name__)
 
 from django.utils.translation import ugettext_lazy as _
 
@@ -23,7 +17,7 @@ from lino.core.roles import Expert
 
 
 class Duplicate(actions.Action):
-    """Duplicate the selected row. 
+    """Duplicate the selected row.
 
     This will call :meth:`lino.core.model.Model.on_duplicate` on the
     new object and on related objects.
@@ -36,6 +30,7 @@ class Duplicate(actions.Action):
     show_in_workflow = False
     # readonly = False  # like ShowInsert. See docs/blog/2012/0726
     callable_from = 'td'
+    # required_roles = set([Expert])
 
     def get_view_permission(self, user_type):
         # the action is readonly because it doesn't write to the
@@ -44,10 +39,10 @@ class Duplicate(actions.Action):
         if user_type:
             if user_type.readonly:
                 return False
-            if not user_type.has_required_roles([Expert]):
-                return False
+            # if not user_type.has_required_roles([Expert]):
+            #     return False
         return super(Duplicate, self).get_view_permission(user_type)
-        
+
     def run_from_code(self, ar, **known_values):
         obj = ar.selected_rows[0]
         related = []
@@ -90,7 +85,7 @@ class Duplicate(actions.Action):
         if cw.is_dirty():
             new.full_clean()
             new.save()
-            
+
         return new
 
     def run_from_ui(self, ar, **kw):
@@ -117,7 +112,7 @@ class Duplicable(model.Model):
 
     """Adds a row action "Duplicate" which duplicates (creates a clone
     of) the object it was called on.
-    
+
     Subclasses may override :meth:`lino.core.model.Model.on_duplicate`
     to customize the default behaviour, which is to copy all fields
     except the primary key and all related objects that are

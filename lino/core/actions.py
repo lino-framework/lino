@@ -341,50 +341,8 @@ class Action(Parametrizable, Permittable):
     """
 
     readonly = True
-    """
-    Whether this action is readonly, i.e. does not change any data in
-    the current data object.
-
-    Setting this to `False` will (1) disable the action for
-    `readonly` user types or when
-    :attr:`lino.core.site.Site.readonly` is True, and (2) will
-    cause it to be logged when :attr:`log_each_action_request
-    <lino.core.site.Site.log_each_action_request>` is set to
-    `True`.
-
-    Note that :class:`ShowInsert` is readonly because it does not
-    modify the current data object.  For example the button would
-    be disabled on a registered invoice.
-
-    Note that when a readonly action actually *does* modify the
-    object, Lino won't "notice" it.
-
-    Discussion
-
-    Maybe we should change the name `readonly` to `modifying` or
-    `writing` (and set the default value `False`).  Because for the
-    application developer that looks more natural.  Or --maybe better
-    but probably with even more consequences-- the default value
-    should be `False`.  Because being readonly, for actions, is a kind
-    of "privilege": they don't get logged, they also exists for
-    readonly users...  It would be more "secure" when the developer
-    must explicitly "say something" it when granting that privilege.
-
-    Another subtlety is the fact that this attribute is used by
-    :class:`lino.modlib.users.UserAuthored`.  For example the
-    :class:`StartTicketSession
-    <lino_xl.lib.working.StartTicketSession>` action in :ref:`noi` is
-    declared "readonly" because we want Workers who are not Triagers
-    to see this action even if they are not the author (reporter) of a
-    ticket.  In this use case the name should rather be
-    `requires_authorship`.
-    """
 
     opens_a_window = False
-    """
-    Whether this action opens a window.  If this is True, the user
-    interface is responsible for rendering that window.
-    """
 
     hide_top_toolbar = False
     """
@@ -807,9 +765,6 @@ class TableAction(Action):
 
 
 class ShowTable(TableAction):
-    """
-    Open a window with a grid editor on this table as main widget.
-    """
     use_param_panel = True
     show_in_workflow = False
     opens_a_window = True
@@ -817,13 +772,6 @@ class ShowTable(TableAction):
     action_name = 'grid'
     select_rows = False
     callable_from = None
-
-    # def is_callable_from(self, caller):
-    #     return False
-
-    # def attach_to_actor(self, actor, name):
-    #     self.label = actor.label
-    #     return super(ShowTable, self).attach_to_actor(actor, name)
 
     def get_label(self):
         return self.label or self.defining_actor.label
@@ -890,11 +838,6 @@ class ShowEmptyTable(ShowDetail):
 
 
 class ShowInsert(TableAction):
-    """
-    Open the Insert window filled with a row of blank or default
-    values.  The new row will be actually created only when this
-    window gets submitted.
-    """
     save_action_name = 'submit_insert'
     show_in_plain = True
     disable_primary_key = False
@@ -1128,12 +1071,6 @@ class CreateRow(Action):
 
 
 class SubmitInsert(CreateRow):
-    """
-    Create a new database row using the data specified in the insert
-    window.  Called when the OK button of an Insert Window was
-    clicked.  Installed as `submit_insert` on every `dd.Model
-    <lino.core.model.Model>`.
-    """
     label = _("Create")
     action_name = None  # 'post'
     help_text = _("Create the record and open a detail window on it")

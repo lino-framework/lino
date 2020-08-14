@@ -1,13 +1,14 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2018 Rumma & Ko Ltd
+# Copyright 2013-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """
 This defines the :class:`MergeAction` class.
 
-It should not be used on models that have MTI children.
+This action is automatically installed on every model except those that have
+:attr:`allow_merge_action <lino.core.model.Model.allow_merge_action>` set to
+False. For example it should not be used on models that have MTI children.
 
 """
-#from builtins import object
 
 import logging ; logger = logging.getLogger(__name__)
 
@@ -24,8 +25,6 @@ from lino.core.utils import full_model_name, traverse_ddh_fklist
 from lino.core.roles import Expert
 from etgen.html import E
 from lino.api import rt
-
-
 
 
 class MergeAction(actions.Action):

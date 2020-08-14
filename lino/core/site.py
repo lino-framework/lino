@@ -1033,7 +1033,7 @@ class Site(object):
     This is Lino's equivalent of Django's :setting:`SITE_ID` setting.
     Lino applications don't need ``django.contrib.sites`` (`The
     "sites" framework
-    <https://docs.djangoproject.com/en/dev/ref/contrib/sites/>`_)
+    <https://docs.djangoproject.com/en/3.1/ref/contrib/sites/>`_)
     because an analog functionality is provided by
     :mod:`lino.modlib.system`.
     """
@@ -3708,7 +3708,7 @@ Please convert to Plugin method".format(mod, methname)
     :mod:`lino.modlib.notify` to send notification emails)
 
     Django has a `HttpRequest.build_absolute_uri()
-    <https://docs.djangoproject.com/en/2.2/ref/request-response/#django.http.HttpRequest.build_absolute_uri>`__
+    <https://docs.djangoproject.com/en/3.1/ref/request-response/#django.http.HttpRequest.build_absolute_uri>`__
     method, but e.g. notification emails are sent via :manage:`linod` where no
     HttpRequest exists. That's why we need to manually set :attr:`server_url`.
 
