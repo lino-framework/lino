@@ -1995,6 +1995,7 @@ class Site(object):
         if cls is None:
             cls = fld
         debug = False
+        # debug = attrname == 'municipality' and cls.__name__ == "Client"
         if not hasattr(fld, 'help_text'):  # e.g. virtual fields don't
                                            # have a help_text attribute
             if debug:
@@ -2015,21 +2016,23 @@ class Site(object):
             # if attrname == "update_missing_rates":
             #     print("20181004 {} {} {}".format(cls, k, txt))
             if txt is None:
-                if debug:
+                if False and debug:
                     print("20170824 {}.{} : no help_text using {!r}".format(
                         cls, attrname, k))
                 if fld.help_text:
-                    # coded help text gets overridden only if docs
+                    # hard-coded help text gets overridden only if docs
                     # provide a more specific help text.
                     return
 
             else:
                 if debug:
-                    print("20170824 {}.{}.help_text found using {}".format(
-                        cls, attrname, k))
+                    # from lino.api import dd
+                    # dd.logger.info("20200818 site.py %s", fld.__hash__())
+                    print("20170824 {}.{}.help_text {!r} found using {} --> {}".format(
+                        cls, attrname, txt, k, fld))
                 fld.help_text = txt
                 return
-        if debug:
+        if False and debug:
             print("20170824 {}.{} : no help_text".format(
                 cls, attrname))
 
@@ -2389,6 +2392,7 @@ class Site(object):
             except locale.Error as e:
                 self.logger.warning("%s : %s", self.site_locale, e)
         self.clear_site_config()
+        self._help_texts = None  # free unused help texts
 
     def do_site_startup(self):
         """

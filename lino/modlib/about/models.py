@@ -25,6 +25,7 @@ class SiteSearch(dd.VirtualTable):
     required_roles = dd.login_required(SiteSearcher)
     label = _("Search")
     column_names = "description matches"
+    private_apps = frozenset(['sessions', 'contenttypes', 'users'])
 
 
     # _site_search_tables = []
@@ -46,7 +47,8 @@ class SiteSearch(dd.VirtualTable):
         user_type = ar.get_user().user_type
         # for model in rt.models_by_base(Searchable):
         for model in get_models():
-            # if model not in cls.disabled_models:
+            if model._meta.app_label in cls.private_apps:
+                continue
             if model.show_in_site_search:
                 t = model.get_default_table()
                 # for t in cls._site_search_tables:

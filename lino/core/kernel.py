@@ -409,8 +409,13 @@ class Kernel(object):
 
         # Install help texts to all database fields:
         for model in models_list:
-            for f in model._meta.get_fields():
+            for f in model._meta.get_fields(include_parents=False):
+            # for f in model._meta.get_fields():
                 site.install_help_text(f, model, f.name)
+            # for f in model._meta.private_fields:
+            #     site.install_help_text(f, model, f.name)
+            # if model.__name__ == "Client":
+            #     print(' '.join([f.name for f in model._meta.private_fields]))
 
         actors.discover()
 

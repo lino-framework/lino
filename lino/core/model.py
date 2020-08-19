@@ -256,8 +256,8 @@ class Model(models.Model, fields.TableRow):
                     #     "of same name.".format(
                     #         full_model_name(model), k, f.__class__.__name__))
                 if m is not model:
-                    # if k == "overview" and model.__name__ == "DailyPlannerRow":
-                    #     print("20181022", m, model)
+                    # if k == "municipality" and model.__name__ == "Client":
+                    #     print("20200818", m, model)
                     # settings.SITE.VIRTUAL_FIELDS.pop(v)
                     v = copy.deepcopy(v)
                 settings.SITE.register_virtual_field(v)

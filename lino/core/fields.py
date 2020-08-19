@@ -431,7 +431,7 @@ class VirtualModel:
 VFIELD_ATTRIBS = frozenset('''to_python choices save_form_data
   value_to_string max_length remote_field
   max_digits verbose_name decimal_places
-  help_text blank'''.split())
+  blank'''.split())
 
 class VirtualField(FakeField):
     """
@@ -508,6 +508,10 @@ class VirtualField(FakeField):
 
         for k in VFIELD_ATTRIBS:
             setattr(self, k, getattr(f, k, None))
+
+        # copy help_text if it hasn't been set by help_texts_extractor
+        if f.help_text and not self.help_text:
+            self.help_text = f.help_text
 
         # if self.name == 'detail_pointer':
         #     logger.info('20170905 resolve_type 1 %s on %s',
