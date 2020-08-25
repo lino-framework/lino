@@ -139,6 +139,7 @@ class JsCacheRenderer():
                 "%s.DetailFormPanel" % res)
             add(res, self.form_panels, res.insert_layout,
                 "%s.InsertFormPanel" % res)
+            # if res.parameters is not None:
             add(res, self.param_panels, res.params_layout,
                 "%s.ParamsPanel" % res)
 

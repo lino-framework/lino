@@ -5,8 +5,6 @@
 
 """
 
-import six
-
 import logging ; logger = logging.getLogger(__name__)
 
 from html import escape
@@ -1032,7 +1030,7 @@ class ForeignKeyElement(ComplexRemoteComboFieldElement):
         kw = super(ForeignKeyElement, self).get_field_options(**kw)
         if not self.field.remote_field:
             raise Exception("20171210 %r" % self.field.__class__)
-        if isinstance(self.field.remote_field.model, six.string_types):
+        if isinstance(self.field.remote_field.model, str):
             raise Exception("20130827 %s.remote_field.model is %r" %
                             (self.field, self.field.remote_field.model))
         pw = self.field.remote_field.model.preferred_foreignkey_width

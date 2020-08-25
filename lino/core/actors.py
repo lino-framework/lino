@@ -994,19 +994,23 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                 lst.append(n)
         cls.simple_parameters = tuple(lst)
 
-        if cls.parameters is None and len(cls.simple_parameters) > 0 :
-            cls.parameters = {}
-
-        for name in cls.simple_parameters:
-            if name not in cls.parameters:
-                db_field = cls.get_data_elem(name)
-                if db_field is None:
-                    raise Exception("{}.get_simple_parameters() returned invalid name '{}'".format(cls, name))
-                cls.parameters[name] = dbfield2params_field(db_field)
-                # if "__" in name:
-                #     print("20200423", cls.parameters)
-        # if len(cls.parameters) == 0:
-        #     cls.parameters = None # backwards compatibility
+        if len(cls.simple_parameters) > 0:
+            if cls.parameters is None :
+                cls.parameters = {}
+            for name in cls.simple_parameters:
+                if name not in cls.parameters:
+                    db_field = cls.get_data_elem(name)
+                    if db_field is None:
+                        raise Exception("{}.get_simple_parameters() returned invalid name '{}'".format(cls, name))
+                    cls.parameters[name] = dbfield2params_field(db_field)
+                    # if "__" in name:
+                    #     print("20200423", cls.parameters)
+            if len(cls.parameters) == 0:
+                raise Exception("20200825")
+                # cls.parameters = None # backwards compatibility
+        # if cls.__name__.endswith("Users"):
+        #     print("20200825 {}.register_params {} {}".format(
+        #         cls, cls.parameters, cls.params_layout))
 
     @classmethod
     def collect_virtual_fields(cls):
@@ -1613,7 +1617,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
         if not self.is_abstract():
             actions.register_params(self)
-
             self._collect_actions()
 
         if not self.is_abstract():

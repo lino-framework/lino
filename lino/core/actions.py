@@ -92,7 +92,7 @@ def register_params(cls):
     instance).
 
     """
-    if cls.parameters:
+    if cls.parameters is not None:
         for k, v in cls.parameters.items():
             v.set_attributes_from_name(k)
             v.table = cls
@@ -103,10 +103,18 @@ def register_params(cls):
                 cls.parameters.keys())
         install_layout(cls, 'params_layout', cls._layout_class)
 
+    # e.g. ledger.ByJournal is just a mixin but provides a default value for its children
     elif cls.params_layout is not None:
         raise Exception(
             "{} has a params_layout but no parameters".format(
                 cls))
+
+    # if isinstance(cls, type) and cls.__name__.endswith("Users"):
+    # # if isinstance(cls, type) and cls.model is not None and cls.model.__name__ == "User":
+    #     # if str(cls.model) != "users.User":
+    #     #     raise Exception("{} {}".format(cls, cls.model))
+    #     print("20200825 {}.register_params {} {}".format(
+    #         cls, cls.parameters, cls.params_layout))
 
 
 def setup_params_choosers(self):

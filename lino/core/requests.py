@@ -1457,10 +1457,8 @@ class ActionRequest(ActorRequest):
 
         request = self.request
 
-        # Must have master instance already
         if self.actor.parameters is not None:
             pv = self.actor.param_defaults(self)
-
             for k in pv.keys():
                 if k not in self.actor.parameters:
                     raise Exception(
@@ -1486,7 +1484,13 @@ class ActionRequest(ActorRequest):
                 if self.actor.master_key in pv:
                     pv[self.actor.master_key] = self.master_instance
             if param_values is None:
-                if request is not None:
+                if self.actor.params_layout is None:
+                    pass # 20200825 e.g. users.Users
+                    # raise Exception(
+                    #     "{} has parameters ({}) but no params_layout. {}".format(
+                    #     self.actor, self.actor.parameters, self.actor._setup_done))
+
+                elif request is not None:
                     # call get_layout_handle to make sure that
                     # params_store has been created:
                     self.actor.params_layout.get_layout_handle(
@@ -1511,6 +1515,9 @@ class ActionRequest(ActorRequest):
             # print("20160329 ok", pv)
             self.param_values = AttrDict(**pv)
             # self.actor.check_params(self.param_values)
+
+        if self.bound_action is None:
+            return  # 20200825 e.g. a request on an abstract table
 
         action = self.bound_action.action
         if action.parameters is not None:

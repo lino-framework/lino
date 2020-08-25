@@ -155,7 +155,7 @@ class LayoutHandle(object):
 
         # expand aliases (configurable fields)
         for alias, repl in self.layout._datasource.get_layout_aliases():
-            desc = re.sub(r"\b"+alias+r"\b", repl, desc)
+            desc = re.sub(r"\b" + alias + r"\b", repl, desc)
 
         # expand wildcards
         if '*' in desc:

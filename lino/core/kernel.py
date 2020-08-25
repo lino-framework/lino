@@ -455,7 +455,6 @@ class Kernel(object):
                 # rpt.collect_actions()
                 model._lino_default_table = rpt
 
-
         #~ choosers.discover()
         actions.discover_choosers()
 
