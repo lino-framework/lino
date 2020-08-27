@@ -853,7 +853,7 @@ display the list of available users."""),
     'lino.modlib.users.User' : _("""Fields:"""),
     'lino.modlib.users.User.authenticated' : _("""No longer used. See as is_authenticated."""),
     'lino.modlib.users.User.is_authenticated' : _("""This is always True.  Compare with
-AnonymousUser.authenticated."""),
+AnonymousUser.is_authenticated."""),
     'lino.modlib.users.User.username' : _("""Must be unique and cannot be empty."""),
     'lino.modlib.users.User.initials' : _("""The nickname or initials of this user. This does not need to
 be unique but should provide a reasonably identifying
@@ -868,8 +868,9 @@ exists) and otherwise None."""),
     'lino.modlib.users.User.get_full_name' : _("""Return the first_name plus the last_name, with a space in
 between. If both fields are empty, return the initials
 or the username."""),
-    'lino.modlib.users.User.start_date' : _("""The site administrator can optionally specify a date when a
-user started or stopped to be active."""),
+    'lino.modlib.users.User.start_date' : _("""If start_date is given, then the user cannot sign in
+before that date.  If end_date is given, then the user
+cannot sign in after that date."""),
     'lino.modlib.users.Authority' : _("""Django model used to represent a authority."""),
     'lino.modlib.users.Authority.user' : _("""The user who gives the right of representation. author of this
 authority"""),
