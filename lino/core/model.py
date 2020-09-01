@@ -202,9 +202,9 @@ class Model(models.Model, fields.TableRow):
     Internally used by :meth:`watch_changes`
     """
 
-    disable_create_choice = False
-    """Whether to disable any automatic creation by learning choosers.
-    """
+    # disable_create_choice = False
+    # """Whether to disable any automatic creation by learning choosers.
+    # """
 
     summary_row_template = None
     """
@@ -432,6 +432,32 @@ class Model(models.Model, fields.TableRow):
         if hasattr(cls, 'bleached_fields'):
             raise ChangedAPI("Replace bleached_fields by bleached=True on each field")
 
+    @classmethod
+    def create_from_choice(cls, text):
+        """
+        Called when a learning combo has been submitted.
+        Create a persistent database object if the given text contains enough information.
+        """
+        # if cls.disable_create_choice:
+        #     return
+        values = cls.parse_to_dict(text)
+        if values is None:
+            raise ValidationError(
+                _("Cannot create {obj} from '{text}'").format(
+                obj=cls._meta.verbose_name, text=text))
+        obj = cls(**values)
+        obj.full_clean()
+        obj.save()
+        return obj
+
+
+    @classmethod
+    def parse_to_dict(cls, text):
+        """
+        Return a dict of the fields to fill when the given text contains enough
+        information for creating a new database object.
+        """
+        return None
 
     @classmethod
     def lookup_or_create(model, lookup_field, value, **known_values):
