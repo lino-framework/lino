@@ -128,7 +128,7 @@ class StoreField(object):
         #     return None
         return self.field.to_python(v)
 
-    def extract_form_data(self, post_data):
+    def extract_form_data(self, obj, post_data):
         # logger.info("20130128 StoreField.extract_form_data %s",self.name)
         return post_data.get(self.name, None)
 
@@ -140,7 +140,7 @@ class StoreField(object):
         - sales.Invoice.number may be blank
 
         """
-        v = self.extract_form_data(post_data)
+        v = self.extract_form_data(instance, post_data)
         # logger.info("20180712 %s.form2obj() %s = %r",
         #             self.__class__.__name__, self.name, v)
         if v is None:
@@ -244,8 +244,7 @@ class ComboStoreField(StoreField):
         yield self.name
         yield self.name + constants.CHOICES_HIDDEN_SUFFIX
 
-    def extract_form_data(self, post_data):
-        # logger.info("20130128 ComboStoreField.extract_form_data %s",self.name)
+    def extract_form_data(self, obj, post_data):
         return post_data.get(self.name + constants.CHOICES_HIDDEN_SUFFIX, None)
 
     # def obj2list(self,request,obj):
@@ -296,12 +295,41 @@ class ForeignKeyStoreField(RelatedMixin, ComboStoreField):
             return (v.pk, self.format_value(ar, v))
             #return (v.pk, str(v))
 
+    def extract_form_data(self, obj, post_data):
+        # returns a tuple with both values
+        # logger.info("20130128 ComboStoreField.extract_form_data %s",self.name)
+        text = post_data.get(self.name, None)
+        pk = post_data.get(self.name + constants.CHOICES_HIDDEN_SUFFIX, None)
+        if pk is None and text is None:
+            return
+        relto_model = self.get_rel_to(obj)
+        if not relto_model:
+            # logger.info("20111209 get_value_text: no relto_model")
+            return
+
+        if pk is not None:
+            # print("20200901 parse_form_value", v, obj)
+            try:
+                return relto_model.objects.get(pk=pk)
+            except ValueError:
+                pass
+            except relto_model.DoesNotExist:
+                pass
+            # don't return here because for learning comboboxes, extjs sets both
+            # partner and partnerHidden to the text
+
+        if text and obj is not None:
+            ch = obj.__class__.get_chooser_for_field(self.field.name)
+            if ch and ch.can_create_choice:
+                # print("20200901 can_create_choice", obj, v)
+                return ch.create_choice(obj, text)
+
     def parse_form_value(self, v, obj):
         """Convert the form field value (expected to contain a primary key)
         into the corresponding database object. If it is an invalid
         primary key, return None.
 
-        If this comes from a *learning* ExtJS ComboBox
+        If this comes from a *learning* ComboBox
         (i.e. :attr:`can_create_choice
         <lino.core.choosers.Chooser.can_create_choice>` is True) the
         value will be the text entered by the user. In that case, call
@@ -309,11 +337,14 @@ class ForeignKeyStoreField(RelatedMixin, ComboStoreField):
         <lino.core.choosers.Chooser.create_choice>`.
 
         """
+        if not isinstance(v, str):
+            return v
         relto_model = self.get_rel_to(obj)
         if not relto_model:
             # logger.info("20111209 get_value_text: no relto_model")
             return
 
+        # print("20200901 parse_form_value", v, obj)
         try:
             return relto_model.objects.get(pk=v)
         except ValueError:
@@ -324,6 +355,7 @@ class ForeignKeyStoreField(RelatedMixin, ComboStoreField):
         if obj is not None:
             ch = obj.__class__.get_chooser_for_field(self.field.name)
             if ch and ch.can_create_choice:
+                # print("20200901 can_create_choice", obj, v)
                 return ch.create_choice(obj, v)
         return None
 

@@ -50,16 +50,17 @@ from etgen.html import E, tostring, Document
 # E = xghtml.E
 
 from lino.utils import ucsv
-from lino.utils import isiterable
 from lino.utils import dblogger
 
+from lino.core import constants
 from lino.core import actions
 from lino.core import fields
+from lino.core.fields import choices_for_field
 
 from lino.core.views import requested_actor, action_request
 from lino.core.views import json_response, json_response_kw
+from lino.core.views import choices_response
 
-from lino.core import constants
 from lino.core.requests import BaseRequest, PhantomRow
 
 # from lino.core import callbacks
@@ -232,138 +233,6 @@ class EidAppletService(View):
 # class Callbacks(View):
 #     def get(self, request, thread_id, button_id):
 #         return callbacks.run_callback(request, thread_id, button_id)
-
-
-def choices_for_field(ar, holder, field):
-    """
-    Return the choices for the given field and the given HTTP request
-    whose `holder` is either a Model, an Actor or an Action.
-    """
-    if not holder.get_view_permission(ar.request.user.user_type):
-        raise Exception(
-            "{user} has no permission for {holder}".format(
-                user=ar.request.user, holder=holder))
-    # model = holder.get_chooser_model()
-    chooser = holder.get_chooser_for_field(field.name)
-    # logger.info('20140822 choices_for_field(%s.%s) --> %s',
-    #             holder, field.name, chooser)
-    if chooser:
-        qs = chooser.get_request_choices(ar, holder)
-        if not isiterable(qs):
-            raise Exception("%s.%s_choices() returned non-iterable %r" % (
-                holder.model, field.name, qs))
-        if chooser.simple_values:
-            def row2dict(obj, d):
-                d[constants.CHOICES_TEXT_FIELD] = str(obj)
-                d[constants.CHOICES_VALUE_FIELD] = obj
-                return d
-        elif chooser.instance_values:
-            # same code as for ForeignKey
-            def row2dict(obj, d):
-                d[constants.CHOICES_TEXT_FIELD] = holder.get_choices_text(
-                    obj, ar.request, field)
-                d[constants.CHOICES_VALUE_FIELD] = obj.pk
-                return d
-        else:  # values are (value, text) tuples
-            def row2dict(obj, d):
-                d[constants.CHOICES_TEXT_FIELD] = str(obj[1])
-                d[constants.CHOICES_VALUE_FIELD] = obj[0]
-                return d
-        return (qs, row2dict)
-
-    if field.choices:
-        qs = field.choices
-
-        def row2dict(obj, d):
-            if type(obj) is list or type(obj) is tuple:
-                d[constants.CHOICES_TEXT_FIELD] = str(obj[1])
-                d[constants.CHOICES_VALUE_FIELD] = obj[0]
-            else:
-                d[constants.CHOICES_TEXT_FIELD] = holder.get_choices_text(
-                    obj, ar.request, field)
-                d[constants.CHOICES_VALUE_FIELD] = str(obj)
-            return d
-
-        return (qs, row2dict)
-
-    if isinstance(field, fields.VirtualField):
-        field = field.return_type
-
-    if isinstance(field, fields.RemoteField):
-        field = field.field
-        if isinstance(field, fields.VirtualField):  # 20200425
-            field = field.return_type
-
-    if isinstance(field, models.ForeignKey):
-        m = field.remote_field.model
-        t = m.get_default_table()
-        qs = t.request(request=ar.request).data_iterator
-
-        # logger.info('20120710 choices_view(FK) %s --> %s', t, qs.query)
-
-        def row2dict(obj, d):
-            d[constants.CHOICES_TEXT_FIELD] = holder.get_choices_text(
-                obj, ar.request, field)
-            d[constants.CHOICES_VALUE_FIELD] = obj.pk
-            return d
-    else:
-        raise http.Http404("No choices for %s" % field)
-    return (qs, row2dict)
-
-
-def choices_response(actor, request, qs, row2dict, emptyValue):
-    """
-    :param actor: requesting Actor
-    :param request: web request
-    :param qs: list of django model QS,
-    :param row2dict: function for converting data set into a dict for json
-    :param emptyValue: The Text value to represent None in the choice-list
-    :return: json web responce
-
-    Filters data-set acording to quickseach
-    Counts total rows in the set,
-    Calculates offset and limit
-    Adds None value
-    returns
-    """
-    quick_search = request.GET.get(constants.URL_PARAM_FILTER, None)
-    offset = request.GET.get(constants.URL_PARAM_START, None)
-    limit = request.GET.get(constants.URL_PARAM_LIMIT, None)
-    if isinstance(qs, models.QuerySet):
-        qs = qs.filter(qs.model.quick_search_filter(quick_search)) if quick_search else qs
-        count = qs.count()
-
-        if offset:
-            qs = qs[int(offset):]
-            # ~ kw.update(offset=int(offset))
-
-        if limit:
-            # ~ kw.update(limit=int(limit))
-            qs = qs[:int(limit)]
-
-        rows = [row2dict(row, {}) for row in qs]
-
-    else:
-        rows = [row2dict(row, {}) for row in qs]
-        if quick_search:
-            txt = quick_search.lower()
-
-            rows = [row for row in rows
-                    if txt in row[constants.CHOICES_TEXT_FIELD].lower()]
-        count = len(rows)
-        rows = rows[int(offset):] if offset else rows
-        rows = rows[:int(limit)] if limit else rows
-
-    # Add None choice
-    if emptyValue is not None and not quick_search:
-        empty = dict()
-        empty[constants.CHOICES_TEXT_FIELD] = emptyValue
-        empty[constants.CHOICES_VALUE_FIELD] = None
-        rows.insert(0, empty)
-
-    return json_response_kw(count=count, rows=rows)
-    # ~ return json_response_kw(count=len(rows),rows=rows)
-    # ~ return json_response_kw(count=len(rows),rows=rows,title=_('Choices for %s') % fldname)
 
 
 class ActionParamChoices(View):

@@ -22,7 +22,9 @@ from django.utils.functional import cached_property
 from lino.core.utils import resolve_field, full_model_name, resolve_model
 from lino.core.exceptions import ChangedAPI
 from lino.core.diff import ChangeWatcher
+from lino.core import constants
 
+from lino.utils import isiterable
 from lino.utils import get_class_attr
 from lino.utils import IncompleteDate
 from lino.utils import quantities
@@ -1408,3 +1410,79 @@ def make_remote_field(model, name):
 #         ...
 #
 #
+
+def choices_for_field(ar, holder, field):
+    """
+    Return the choices for the given field and the given HTTP request
+    whose `holder` is either a Model, an Actor or an Action.
+    """
+    if not holder.get_view_permission(ar.request.user.user_type):
+        raise Exception(
+            "{user} has no permission for {holder}".format(
+                user=ar.request.user, holder=holder))
+    # model = holder.get_chooser_model()
+    chooser = holder.get_chooser_for_field(field.name)
+    # logger.info('20140822 choices_for_field(%s.%s) --> %s',
+    #             holder, field.name, chooser)
+    if chooser:
+        qs = chooser.get_request_choices(ar, holder)
+        if not isiterable(qs):
+            raise Exception("%s.%s_choices() returned non-iterable %r" % (
+                holder.model, field.name, qs))
+        if chooser.simple_values:
+            def row2dict(obj, d):
+                d[constants.CHOICES_TEXT_FIELD] = str(obj)
+                d[constants.CHOICES_VALUE_FIELD] = obj
+                return d
+        elif chooser.instance_values:
+            # same code as for ForeignKey
+            def row2dict(obj, d):
+                d[constants.CHOICES_TEXT_FIELD] = holder.get_choices_text(
+                    obj, ar.request, field)
+                d[constants.CHOICES_VALUE_FIELD] = obj.pk
+                return d
+        else:  # values are (value, text) tuples
+            def row2dict(obj, d):
+                d[constants.CHOICES_TEXT_FIELD] = str(obj[1])
+                d[constants.CHOICES_VALUE_FIELD] = obj[0]
+                return d
+        return (qs, row2dict)
+
+    if field.choices:
+        qs = field.choices
+
+        def row2dict(obj, d):
+            if type(obj) is list or type(obj) is tuple:
+                d[constants.CHOICES_TEXT_FIELD] = str(obj[1])
+                d[constants.CHOICES_VALUE_FIELD] = obj[0]
+            else:
+                d[constants.CHOICES_TEXT_FIELD] = holder.get_choices_text(
+                    obj, ar.request, field)
+                d[constants.CHOICES_VALUE_FIELD] = str(obj)
+            return d
+
+        return (qs, row2dict)
+
+    if isinstance(field, VirtualField):
+        field = field.return_type
+
+    if isinstance(field, RemoteField):
+        field = field.field
+        if isinstance(field, VirtualField):  # 20200425
+            field = field.return_type
+
+    if isinstance(field, models.ForeignKey):
+        m = field.remote_field.model
+        t = m.get_default_table()
+        qs = t.request(request=ar.request).data_iterator
+
+        # logger.info('20120710 choices_view(FK) %s --> %s', t, qs.query)
+
+        def row2dict(obj, d):
+            d[constants.CHOICES_TEXT_FIELD] = holder.get_choices_text(
+                obj, ar.request, field)
+            d[constants.CHOICES_VALUE_FIELD] = obj.pk
+            return d
+    else:
+        raise http.Http404("No choices for %s" % field)
+    return (qs, row2dict)

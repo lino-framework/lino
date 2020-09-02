@@ -12,19 +12,22 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.exceptions import FieldDoesNotExist
 from django.utils.translation import ugettext_lazy as _
+from django.db.models.signals import pre_delete
 
 from etgen.html import E, forcetext, tostring
 
 from lino.core import fields
 from lino.core import signals
 from lino.core import actions
+
+
 from .fields import make_remote_field, RichTextField
 from .utils import error2str
 from .utils import obj2str
 from .diff import ChangeWatcher
 from .utils import obj2unicode
 from .utils import class_dict_items
-from .signals import on_ui_created, pre_ui_delete, pre_ui_save
+from .signals import receiver, on_ui_created, pre_ui_delete, pre_ui_save
 from .workflows import ChangeStateAction
 
 try:
@@ -440,7 +443,7 @@ class Model(models.Model, fields.TableRow):
         """
         # if cls.disable_create_choice:
         #     return
-        values = cls.parse_to_dict(text)
+        values = cls.choice_text_to_dict(text)
         if values is None:
             raise ValidationError(
                 _("Cannot create {obj} from '{text}'").format(
@@ -452,7 +455,7 @@ class Model(models.Model, fields.TableRow):
 
 
     @classmethod
-    def parse_to_dict(cls, text):
+    def choice_text_to_dict(cls, text):
         """
         Return a dict of the fields to fill when the given text contains enough
         information for creating a new database object.
@@ -1185,10 +1188,6 @@ LINO_MODEL_ATTRIBS = (
     'print_subclasses_graph',
     'grid_post', 'submit_insert', 'delete_veto_message', '_lino_tables',
     'show_in_site_search', 'allow_merge_action')
-
-
-from lino.core.signals import receiver
-from django.db.models.signals import pre_delete
 
 
 @receiver(pre_delete)

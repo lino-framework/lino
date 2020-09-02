@@ -92,4 +92,77 @@ def action_request(app_label, actor, request, rqdata, is_list, **kw):
                 # internationalized because some error handling code
                 # may want to write it to a plain ascii stream.
     ar = rpt.request(request=request, action=a, rqdata=rqdata, **kw)
+    # print("20200901", ar, rqdata)
     return ar
+
+
+def choices_response(actor, request, qs, row2dict, emptyValue, field=None):
+    """
+    :param actor: requesting Actor
+    :param request: web request
+    :param qs: list of django model QS,
+    :param row2dict: function for converting data set into a dict for json
+    :param emptyValue: The Text value to represent None in the choice-list
+    :param is_blank_value: The Text value to represent filtering rows that are blank in PV the choice-list
+    :param is_not_blank_value: The Text value to represent filtering rows that are not blank in PV the choice-list
+
+    :return: json web responce
+
+    Filters data-set acording to quickseach
+    Counts total rows in the set,
+    Calculates offset and limit
+    Adds None value
+    returns
+    """
+    quick_search = request.GET.get(constants.URL_PARAM_FILTER, None)
+    offset = request.GET.get(constants.URL_PARAM_START, None)
+    limit = request.GET.get(constants.URL_PARAM_LIMIT, None)
+    wt = request.GET.get(constants.URL_PARAM_WINDOW_TYPE, None)
+
+    if isinstance(qs, models.QuerySet):
+        qs = qs.filter(qs.model.quick_search_filter(quick_search)) if quick_search else qs
+        count = qs.count()
+
+        if offset:
+            qs = qs[int(offset):]
+            # ~ kw.update(offset=int(offset))
+
+        if limit:
+            # ~ kw.update(limit=int(limit))
+            qs = qs[:int(limit)]
+
+        rows = [row2dict(row, {}) for row in qs]
+
+    else:
+        rows = [row2dict(row, {}) for row in qs]
+        if quick_search:
+            txt = quick_search.lower()
+
+            rows = [row for row in rows
+                    if txt in row[constants.CHOICES_TEXT_FIELD].lower()]
+        count = len(rows)
+        rows = rows[int(offset):] if offset else rows
+        rows = rows[:int(limit)] if limit else rows
+
+    if wt == constants.WINDOW_TYPE_PARAMS and field and field.blank:
+        rows.insert(0, {
+            # constants.CHOICES_TEXT_FIELD: actor.get_blank_filter_text(),
+            constants.CHOICES_TEXT_FIELD: _("Blank"),
+            constants.CHOICES_VALUE_FIELD: constants.CHOICES_BLANK_FILTER_VALUE
+        })
+        rows.insert(1, {
+            # constants.CHOICES_TEXT_FIELD: actor.get_not_blank_filter_text(),
+            constants.CHOICES_TEXT_FIELD: _("Not Blank"),
+            constants.CHOICES_VALUE_FIELD: constants.CHOICES_NOT_BLANK_FILTER_VALUE
+        })
+
+    # Add None choice
+    if emptyValue is not None and not quick_search:
+        empty = dict()
+        empty[constants.CHOICES_TEXT_FIELD] = emptyValue
+        empty[constants.CHOICES_VALUE_FIELD] = None
+        rows.insert(0, empty)
+
+    return json_response_kw(count=count, rows=rows)
+    # ~ return json_response_kw(count=len(rows),rows=rows)
+    # ~ return json_response_kw(count=len(rows),rows=rows,title=_('Choices for %s') % fldname)
