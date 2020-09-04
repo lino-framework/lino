@@ -36,8 +36,5 @@ class UploaderPanel(dd.Frame):
         return UploaderAction()
 
 
-def setup_quicklinks(site, user, m):
-    m.add_action('awesomeuploader.UploaderPanel')
-
 
 # __all__ = ['UploaderPanel']

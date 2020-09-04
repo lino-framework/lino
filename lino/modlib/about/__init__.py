@@ -15,3 +15,6 @@ class Plugin(ad.Plugin):
     def setup_site_menu(self, site, user_type, m):
         m.add_action(site.models.about.About)
         # m.add_action(site.models.about.SiteSearch)
+
+    def get_quicklinks(site, user):
+        yield 'about.SiteSearch'

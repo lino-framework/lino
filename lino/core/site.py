@@ -3491,17 +3491,20 @@ site. :manage:`diag` is a command-line shortcut to this.
 
     def get_quicklinks(self, user):
         from lino.core import menus
-        m = menus.Toolbar(user.user_type, 'quicklinks')
-        self.setup_quicklinks(user, m)
-        return m
+        tb = menus.Toolbar(user.user_type, 'quicklinks')
+        # self.setup_quicklinks(user, m)
+        for p in self.sorted_plugins:
+            for ql in p.get_quicklinks(user):
+                tb.add_action(ql)
+        return tb
 
-    def setup_quicklinks(self, user, m):
-        """Override this in application-specific (or even local)
-        :xfile:`settings.py` files to define a series of *quick links*
-        to appear below the main menu bar.
-
-        """
-        self.on_each_app('setup_quicklinks', user, m)
+    # def setup_quicklinks(self, user, m):
+    #     """Override this in application-specific (or even local)
+    #     :xfile:`settings.py` files to define a series of *quick links*
+    #     to appear below the main menu bar.
+    #
+    #     """
+    #     self.on_each_app('setup_quicklinks', user, m)
 
     def get_site_menu(self, user_type):
         """
@@ -3515,6 +3518,23 @@ site. :manage:`diag` is a command-line shortcut to this.
         main.compress()
         return main
 
+    _sorted_plugins = None
+
+    @property
+    def sorted_plugins(self):
+        # change the "technical" plugin order into the order visible to the end
+        # user.  The end user wants to see menu entries of explicitly installed
+        # plugins before those of automatically installed plugins.
+        if self._sorted_plugins is None:
+            self._sorted_plugins = []
+            for p in self.installed_plugins:
+                if p.needed_by is None:  # explicitly installed
+                    self._sorted_plugins.append(p)
+            for p in self.installed_plugins:
+                if p.needed_by is not None:  # automatically installed
+                    self._sorted_plugins.append(p)
+        return self._sorted_plugins
+
     def setup_menu(self, user_type, main):
         """Set up the application's menu structure.
 
@@ -3523,18 +3543,6 @@ site. :manage:`diag` is a command-line shortcut to this.
         """
         from django.apps import apps
         apps = [a.models_module for a in apps.get_app_configs()]
-
-        # change the "technical" plugin order into the order visible to the end
-        # user.  The end user wants to see menu entries of explicitly installed
-        # plugins before those of automatically installed plugins.
-
-        plugins = []
-        for p in self.installed_plugins:
-            if p.needed_by is None:  # explicitly installed
-                plugins.append(p)
-        for p in self.installed_plugins:
-            if p.needed_by is not None:  # automatically installed
-                plugins.append(p)
 
         for k, label in self.top_level_menus:
             methname = "setup_{0}_menu".format(k)
@@ -3549,7 +3557,7 @@ Please convert to Plugin method".format(mod, methname)
                 menu = main
             else:
                 menu = main.add_menu(k, label)
-            for p in plugins:
+            for p in self.sorted_plugins:
                 meth = getattr(p, methname, None)
                 if meth is not None:
                     meth(self, user_type, menu)

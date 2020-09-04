@@ -419,6 +419,16 @@ class Plugin(object):
         """
         pass
 
+    def get_quicklinks(self, user):
+        """Return or yield a sequence of actions of the "quick links" toolbar.
+
+        Called by :meth:`lino.core.site.Site.setup_quicklinks`.
+
+        Every item is expected to be a subclass of
+        :class:`lino.core.actors.Actor`.
+        """
+        return []
+
     def get_dashboard_items(self, user):
         """Return or yield a sequence of items to be rendered on the
         dashboard.

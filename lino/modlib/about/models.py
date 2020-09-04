@@ -112,8 +112,6 @@ class SiteSearch(dd.VirtualTable):
         # return etree.fromstring(', '.join(chunks))
         # return E.raw(', '.join(chunks))
 
-def setup_quicklinks(site, user, m):
-    m.add_action('about.SiteSearch')
 
 class About(EmptyTable):
     """

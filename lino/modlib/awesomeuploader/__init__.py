@@ -62,4 +62,5 @@ class Plugin(ad.Plugin):
         m = m.add_menu(mg.app_label, mg.verbose_name)
         m.add_action('awesomeuploader.UploaderPanel')
 
-
+    def getquicklinks(site, user):
+        yield 'awesomeuploader.UploaderPanel'
