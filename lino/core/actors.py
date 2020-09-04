@@ -14,11 +14,13 @@ import logging; logger = logging.getLogger(__name__)
 
 import copy
 import traceback
+from types import GeneratorType
 
 from django.db import models
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 
+from lino.utils import isiterable
 from lino.core import fields
 from lino.core import actions
 from lino.core import layouts
@@ -986,12 +988,17 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                 cls.parameters = params
 
         lst = []
-        for n in cls.get_simple_parameters():
-            if n in lst:
+        def append(n):
+            if isinstance(n, (GeneratorType, list, tuple)):
+                for i in n:
+                    append(i)
+            elif n in lst:
                 logger.warning(
                     "Removed duplicate name %s returned by %s.get_simple_parameters()", n, cls)
             else:
                 lst.append(n)
+        for n in cls.get_simple_parameters():
+            append(n)
         cls.simple_parameters = tuple(lst)
 
         if len(cls.simple_parameters) > 0:
