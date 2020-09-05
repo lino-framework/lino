@@ -388,8 +388,7 @@ class TableRequest(ActionRequest):
                         and (master is ContentType or master._meta.abstract)
                         and mt is not None):
                     try:
-                        master = ContentType.objects.get(
-                            pk=mt).model_class()
+                        master = ContentType.objects.get(pk=mt).model_class()
                     except ContentType.DoesNotExist:
                         pass
                         # master is None

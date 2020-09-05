@@ -133,6 +133,9 @@ class User(AbstractBaseUser, Contactable, CreatedModified, Printable, DateRange)
     def is_editable_by_all(self):
         return False
 
+    def has_required_roles(self, *args):
+        return self.user_type.has_required_roles(*args)
+
     def get_row_permission(self, ar, state, ba):
         # import pdb ; pdb.set_trace()
         if not ba.action.readonly:
