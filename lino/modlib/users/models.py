@@ -270,7 +270,7 @@ class User(AbstractBaseUser, Contactable, CreatedModified, Printable, DateRange)
 
     def get_authorities(self):
 
-        if self.user_type.has_required_roles([Supervisor]):
+        if self.has_required_roles([Supervisor]):
             users = settings.SITE.user_model.objects.exclude(
                     user_type='').exclude(id=self.id)
         else:

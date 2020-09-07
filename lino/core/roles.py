@@ -80,7 +80,7 @@ class Explorer(UserRole):
 
 
 class SiteAdmin(SiteStaff, Supervisor, Explorer):
-    """The root user of this system. """
+    """A user role that grants all permissions. """
     pass
 
 

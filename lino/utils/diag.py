@@ -261,6 +261,10 @@ class Analyzer(object):
         return rstgen.ul(items1)
 
     def get_complexity_factors(self, today=None):
+        """
+        Yield a series of plain text lines that describe the complexity factors of this application.
+
+        """
         self.analyze()
         yield "{0} plugins".format(len(dd.plugins))
         yield "{0} models".format(len(get_models()))
@@ -269,7 +273,7 @@ class Analyzer(object):
             qs = User.objects.filter(username__isnull=False)
             qs = PeriodEvents.active.add_filter(qs, today)
             yield "{0} users".format(qs.count())
-        yield "{0} user roles".format(len(settings.SITE.user_roles))
+        # yield "{0} user roles".format(len(settings.SITE.user_roles))
         yield "{0} user types".format(len(UserTypes.objects()))
         yield "{0} views".format(len(
             [a for a in actors.actors_list if not a.abstract]))

@@ -8,12 +8,13 @@ Documentation is in :doc:`/specs/users` and :doc:`/dev/users`
 """
 
 from textwrap import wrap
+from importlib import import_module
 
 from django.conf import settings
 from django.db import models
 from lino.api import dd, rt, _
 from lino.core import actions
-from lino.core.roles import SiteAdmin, SiteUser
+from lino.core.roles import SiteAdmin, SiteUser, UserRole
 from lino.core.utils import djangoname
 
 from .choicelists import UserTypes
@@ -180,10 +181,20 @@ class UserRoles(dd.VirtualTable):
     label = _("User roles")
     required_roles = dd.login_required(SiteAdmin)
 
-
     @classmethod
     def get_data_rows(self, ar):
-        return settings.SITE.user_roles
+        user_roles = set()
+        utm = settings.SITE.user_types_module
+        if utm:
+            m = import_module(utm)
+            for k in dir(m):
+                v = getattr(m, k)
+                if not v is UserRole:
+                    if isinstance(v, type) and issubclass(v, UserRole):
+                        user_roles.add(v)
+        # for ut in UserTypes.get_list_items():
+        #     user_roles.remove(ut.role.__class__)
+        return sorted(user_roles, key=djangoname)
 
     @dd.displayfield(_("Name"))
     def name(self, obj, ar):

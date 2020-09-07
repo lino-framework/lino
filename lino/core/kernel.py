@@ -50,6 +50,7 @@ from django.db import models
 
 import lino  # for is_testing
 from lino.utils import codetime
+# from lino.utils import isiterable
 from lino.core import layouts
 from lino.core import actors
 from lino.core import actions
@@ -79,7 +80,7 @@ from .utils import full_model_name as fmn
 from .utils import obj2str
 from .utils import get_models
 from .utils import resolve_fields_list
-from .utils import djangoname
+# from .utils import djangoname
 from .utils import class_dict_items
 
 # from .inject import collect_virtual_fields
@@ -277,16 +278,18 @@ class Kernel(object):
         #         if k.startswith('setup_'):
         #             site.modules.define(app_label, k, v)
 
-        site.user_roles = []
+        # site.user_roles = set()
         if site.user_types_module:
-            m = import_module(site.user_types_module)
-            for k in dir(m):
-                v = getattr(m, k)
-                if not v is UserRole:
-                    if isinstance(v, type) and issubclass(v, UserRole):
-                        if v.__module__ != site.user_types_module:
-                            site.user_roles.append(v)
-            site.user_roles.sort(key=djangoname)
+            import_module(site.user_types_module)
+            # for k in dir(m):
+            #     v = getattr(m, k)
+            #     if not v is UserRole:
+            #         if isinstance(v, type) and issubclass(v, UserRole):
+            #             # if v.__module__ != site.user_types_module:
+            #             if True:
+            #                 site.user_roles.add(v)
+            # for ut in site.models.users.UserTypes.get_list_items():
+            #     site.user_roles.discard(ut.role.__class__)
 
         # site.setup_choicelists()
 
@@ -583,9 +586,13 @@ class Kernel(object):
                 if p.app_name == self.site.admin_ui:
                     self.admin_ui  = p
 
-        # 20160530
-
+        # site.user_roles = set()
         for a in actors.actors_list:
+            # for x in a.required_roles:
+            #     if isinstance(x, (tuple, list)):
+            #         site.user_roles.update(x)
+            #     else:
+            #         site.user_roles.add(x)
 
             if a.get_welcome_messages is not None:
                 site.add_welcome_handler(
@@ -611,6 +618,22 @@ class Kernel(object):
 
                 site.add_welcome_handler(
                     handler(a), a, 'welcome_message_when_count')
+
+        # Remove "meaningless" user roles, i.e. those which are either used by all
+        # types or by no type. This seems to be
+        # must_remove = set()
+        # for r in site.user_roles:
+        #     all = True
+        #     none = True
+        #     for ut in site.models.users.UserTypes.get_list_items():
+        #         # if ut.has_required_roles([r]):
+        #         if isinstance(ut.role, r):
+        #             none = False
+        #         else:
+        #             all = False
+        #     if all or none:
+        #         must_remove.add(r)
+        # site.user_roles -= must_remove
 
         post_ui_build.send(self)
 
