@@ -378,6 +378,7 @@ Used by test cases in tested documents."""),
     'lino.utils.diag.Analyzer.show_foreign_keys' : _("""Return a list that shows how database objects are being referred to
 by some other database object. This information is important
 (1) before deleting objects and (2) when merging them."""),
+    'lino.utils.diag.Analyzer.get_complexity_factors' : _("""Yield a series of plain text lines that describe the complexity factors of this application."""),
     'lino.utils.djangotest.DjangoManageTestCase' : _("""Adds some extensions to the Django TestCase."""),
     'lino.utils.djangotest.DjangoManageTestCase.override_djangosite_settings' : _("""If specified, this is a dict of Site
 attributes to override before running the test."""),
