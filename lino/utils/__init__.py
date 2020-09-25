@@ -76,7 +76,6 @@ from lino.utils.code import codefiles, codetime
 
 from rstgen.utils import confirm, i2d, i2t
 
-
 class AttrDict(dict):
 
     """
@@ -485,6 +484,23 @@ class IncompleteDate(object):
 
         >>> IncompleteDate.parse('JUN. 1968')
         IncompleteDate('1968-06-00')
+
+        >>> IncompleteDate.parse('13 maart 1953')
+        IncompleteDate('1953-03-13')
+
+        >>> IncompleteDate.parse('13 januari 1953')
+        IncompleteDate('1953-01-13')
+
+        Return None when we could not understand the string.
+
+        >>> IncompleteDate.parse('foo bar')
+
+        dateparser unfortunately does not understand that "MAAR" is the
+        abbreviation for dutch "MAART" (which means "March"). So here it returns
+        None:
+
+        >>> IncompleteDate.parse('13 MAAR 1953')
+
         """
 
         if s.startswith('-'):
@@ -495,11 +511,16 @@ class IncompleteDate(object):
         try:
             y, m, d = list(map(int, s.split('-')))
         except ValueError:
+            # the following is useless because dateparser automatically understands many languages.
+            # from django.conf import settings
+            # lng = [li.django_code for li in settings.SITE.languages]
             pd = dateparser.parse(
                 s, settings={'STRICT_PARSING': True})
             if pd is None:
                 pd = dateparser.parse(
                     s, settings={'PREFER_DAY_OF_MONTH': 'first'})
+                if pd is None:
+                    return None
                 y, m, d = pd.year, pd.month, 0
             else:
                 y, m, d = pd.year, pd.month, pd.day
