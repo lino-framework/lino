@@ -3,10 +3,9 @@
 Plugins
 =======
 
-{% for p in settings.SITE.installed_plugins %}
+{% for p in settings.SITE.installed_plugins -%}
 - {{p.app_label}} : {{p}}
-{%- endfor %}
-
+{% endfor %}
 Config directories
 ==================
 

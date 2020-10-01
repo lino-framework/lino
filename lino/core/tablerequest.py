@@ -48,14 +48,11 @@ class TableRequest(ActionRequest):
     <lino.core.tables.AbstractTable>`.
 
     """
-
     master = None
-
     extra = None
     title = None
     filter = None
     # known_values = None
-
     limit = None
     offset = None
 
@@ -438,7 +435,7 @@ class TableRequest(ActionRequest):
                   header_links=False, hide_sums=None):
         """
         Render this table into an existing :class:`etgen.html.Table`
-        instance.  This is central method is used by all Lino
+        instance.  This central method is used by all Lino
         renderers.
 
         Arguments:

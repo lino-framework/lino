@@ -466,7 +466,7 @@ class Table(AbstractTable):
                 raise Exception("%s.order_by is %r (must be a list or tuple)" %
                                 (self, self.order_by))
             if False:
-                # good idea, but doesn't yet work for foreign fields,
+                # good idea, but doesn't yet work for remote fields,
                 # e.g. order_by = ['content_type__app_label']
                 for fieldname in self.order_by:
                     if fieldname.startswith('-'):
@@ -640,7 +640,8 @@ class Table(AbstractTable):
                 qs = qs.extra(**extra)
             order_by = ar.order_by or self.order_by
             if order_by:
-                # logger.info("20120122 order_by %s",order_by)
+                # if str(ar.actor) == "sheets.BalanceEntriesByReport":
+                #     print("20120122 order_by {}".format(order_by))
                 qs = qs.order_by(*order_by)
             if self.debug_sql:
                 logger.info("%s %s", self.debug_sql, qs.query)

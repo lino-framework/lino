@@ -1,4 +1,4 @@
-# Copyright 2014-2015 Rumma & Ko Ltd
+# Copyright 2014-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
@@ -82,7 +82,7 @@ class Plugin(ad.Plugin):
         # u = ar.get_user()
         # print("20170607", u)
         return template.render(**context)
-    
+
     def render_jinja(self, ar, tplname, context):
         """Render the named Jinja template, replacing ar.renderer by the
         Jinja renderer.
@@ -99,5 +99,3 @@ def get_environment(**options):
     # print 20160116, options
     from django.conf import settings
     return settings.SITE.plugins.jinja.renderer.jinja_env
-
-

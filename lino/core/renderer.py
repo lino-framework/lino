@@ -669,8 +669,7 @@ class TextRenderer(HtmlRenderer):
             recno += 1
             if show_links:
                 rows.append([
-                    to_rst(x) for x in ar.row2html(
-                        recno, fields, row, sums)])
+                    to_rst(x) for x in ar.row2html(recno, fields, row, sums)])
             else:
                 rows.append([x for x in ar.row2text(fields, row, sums)])
 

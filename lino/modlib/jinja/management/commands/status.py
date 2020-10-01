@@ -2,13 +2,6 @@
 # Copyright 2012-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-""".. management_command:: status
-
-Write a diagnostic status report about this :term:`Lino site`.
-
-A functional replacement for the :manage:`diag` command.
-
-"""
 
 from django.core.management.base import BaseCommand
 from django.conf import settings

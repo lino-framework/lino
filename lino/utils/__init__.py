@@ -757,17 +757,17 @@ class SumCollector(object):
 
     >>> sc = SumCollector()
     >>> sc.collect("a", 12)
-    >>> sc.collect("a", None)
-    >>> sc.collect("a", 5)
-    >>> sc.a
-    17
-
-    >>> sc = SumCollector()
-    >>> sc.collect("a", 12)
     >>> sc.collect("b", 23)
     >>> sc.collect("a", 34)
     >>> sc
     OrderedDict([('a', 46), ('b', 23)])
+
+    >>> sc = SumCollector()
+    >>> sc.collect("a", 12)
+    >>> sc.collect("a", None)
+    >>> sc.collect("a", 5)
+    >>> sc.a
+    17
 
     >>> sc = SumCollector()
     >>> from lino.utils.quantities import Duration

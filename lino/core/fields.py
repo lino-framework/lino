@@ -145,7 +145,7 @@ class MonthField(models.DateField):
 class PriceField(models.DecimalField):
     """
     A thin wrapper around Django's `DecimalField
-    <https://docs.djangoproject.com/en/1.11/ref/models/fields/#decimalfield>`_
+    <https://docs.djangoproject.com/en/3.1/ref/models/fields/#decimalfield>`_
     which adds default values for `decimal_places`, `max_length` and
     `max_digits`.
     """
