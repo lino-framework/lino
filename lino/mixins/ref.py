@@ -1,13 +1,10 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2010-2019 Rumma & Ko Ltd
+# Copyright 2010-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
 Defines the :class:`Referrable` model mixin.
 """
-
-from __future__ import unicode_literals
-from builtins import str
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _

@@ -1,13 +1,13 @@
-#coding: latin1
+# -*- coding: UTF-8 -*-
 ## Copyright 2003-2009 Rumma & Ko Ltd
 ## This file is part of the Lino project.
-## Lino is free software; you can redistribute it and/or modify 
+## Lino is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation; either version 3 of the License, or
 ## (at your option) any later version.
-## Lino is distributed in the hope that it will be useful, 
+## Lino is distributed in the hope that it will be useful,
 ## but WITHOUT ANY WARRANTY; without even the implied warranty of
-## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ## GNU General Public License for more details.
 ## You should have received a copy of the GNU General Public License
 ## along with Lino; if not, see <http://www.gnu.org/licenses/>.
@@ -23,7 +23,7 @@ from lino.utils import dbfreader
 dataPath = os.path.dirname(__file__)
 
 class Case(unittest.TestCase):
-    
+
     def test01(self):
         f = dbfreader.DBFFile(os.path.join(dataPath,"NAT.DBF"),
                               codepage="cp850")
@@ -48,7 +48,7 @@ TVAPICT: Character (25)
 ATTRIB: Character (5)
 IDREG: Character (1)
 ISOCODE: Character (2)""")
-        
+
         s = "\n".join([rec["NAME"].strip() for rec in f.fetchall()])
         #print s
         ae(s,u"""\
@@ -57,21 +57,21 @@ Luxemburg
 Deutschland
 Niederlande
 Frankreich
-Großbritannien
+GroÃŸbritannien
 Italien
 Irland
 Spanien
 Portugal
 Schweiz
-Österreich
-Dänemark
+Ã–sterreich
+DÃ¤nemark
 United States of America""")
 
-        
+
     def test02(self):
         f = dbfreader.DBFFile(os.path.join(dataPath,"PAR.DBF"),
                               codepage="cp850")
-        
+
         ae = self.assertEqual
         ae(f.has_memo(),True)
         ae(f.get_version(),"dBASE III+ with memo")
@@ -122,7 +122,7 @@ GSM: Character (18)""")
         #print s
         ae(s,u"""\
 |000008|Ausdemwald|
-|000012|Müller AG|
+|000012|Mï¿½ller AG|
 |000013|Bodard|
 |000014|Mendelssohn GmbH|
 |000015|INTERMOBIL s.a.|""")
@@ -134,7 +134,7 @@ GSM: Character (18)""")
 Das ist der Memotext zu Norbert Ausdemwald (IdPar 000008).
 Hier ist eine zweite Zeile.
 
-Auf der vierten Zeile kommen weiche Zeilensprünge (ASCII 141) hinzu, die von memoedit() automatisch eingefügt werden, wenn eine Zeile länger als der Texteditor ist. Hinter "von" und "der" müsste jeweils ein ASCII 141 sein.
+Auf der vierten Zeile kommen weiche ZeilensprÃ¼nge (ASCII 141) hinzu, die von memoedit() automatisch eingefÃ¼gt werden, wenn eine Zeile lÃ¤nger als der Texteditor ist. Hinter "von" und "der" mÃ¼sste jeweils ein ASCII 141 sein.
 Und jetzt ist Schluss. Ohne Leerzeile hinter dem Ausrufezeichen!""")
 
 
