@@ -335,7 +335,7 @@ class Site(object):
     userdocs_prefix = ''
 
     project_dir = None
-    """Full path to your local project directory.
+    """Full path to the :term:`Django project directory` for this site.
 
     This is the directory containing your :xfile:`settings.py` file (more
     precisely the directory containing the source file of your
@@ -345,7 +345,7 @@ class Site(object):
 
     Lino sets this automatically when the :class:`Site` initializes.
 
-    The :attr:`project_dir` contains some paging subdirectories with special
+    The :attr:`project_dir` contains some subdirectories with special
     meaning:
 
     - a :xfile:`config` directory will be added to the config search path.
