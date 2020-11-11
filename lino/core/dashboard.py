@@ -1,11 +1,9 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2016-2019 Rumma & Ko Ltd
+# Copyright 2016-2020 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 """Defines the :class:`DashboardItem` class.
 
 """
-from __future__ import unicode_literals
-from builtins import str
 
 from lino.api import _
 from lino.core.permissions import Permittable

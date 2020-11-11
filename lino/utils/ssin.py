@@ -6,7 +6,6 @@
 
 """
 from __future__ import division
-from builtins import str
 
 from past.utils import old_div
 
@@ -135,7 +134,7 @@ def ssin_validator(ssin):
     msg = ssin_veto(ssin)
     if msg:
         raise ValidationError(msg)
-    
+
 def ssin_veto(ssin):
     ssin = ssin.strip()
     if not ssin:
@@ -159,5 +158,3 @@ def ssin_veto(ssin):
         return force_text(_("Invalid SSIN %s :") % ssin) \
             + _("Check digit is %(found)d but should be %(expected)d") % dict(
                 expected=xtest, found=found)
-
-
