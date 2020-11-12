@@ -3666,15 +3666,18 @@ Please convert to Plugin method".format(mod, methname)
         self._welcome_handlers.append(func)
 
     def get_installed_apps(self):
-        """Yield the list of apps to be installed on this site.  Each item
-        must be either a string (unicode being converted to str) or a
-        *generator* which will be iterated recursively (again
-        expecting either strings or generators of strings).
+        """
+        Yield the list of apps to be installed on this site.
+
+        Each item must be either a string or a *generator* to be iterated
+        recursively (again expecting either strings or generators of strings).
 
         Lino will call this method exactly once when the :class:`Site`
         instantiates.  The resulting list of names will then possibly
         altered by the :meth:`get_apps_modifiers` method before being
         assigned to the :setting:`INSTALLED_APPS` setting.
+
+        More explanations in :doc:`/dev/site`.
 
         """
 
