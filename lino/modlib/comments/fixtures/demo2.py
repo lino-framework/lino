@@ -57,7 +57,7 @@ def objects():
                 obj = Comment(user=u, owner=owner, body=TXT.pop())
                 obj.on_create(ses)
                 obj.after_ui_create(ses)
-                obj.before_ui_save(ses)
+                obj.before_ui_save(ses, None)
                 obj.modified = now
                 yield obj
                 now += DELTA

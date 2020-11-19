@@ -553,12 +553,12 @@ class Model(models.Model, fields.TableRow):
         """
         pass
 
-    def before_ui_save(self, ar):
+    def before_ui_save(self, ar, cw):
         """A hook for adding custom code to be executed each time an
         instance of this model gets updated via the user interface and
         **before** the changes are written to the database.
 
-        Deprecated.  Use the :data:`pre_ui_save
+        Consider using the :data:`pre_ui_save
         <lino.core.signals.pre_ui_save>` signal instead.
 
         Example in :class:`lino_xl.lib.cal.Event` to mark the
@@ -632,7 +632,7 @@ class Model(models.Model, fields.TableRow):
     def save_new_instance(elem, ar):
         """Save this instance and fire related behaviour."""
         pre_ui_save.send(sender=elem.__class__, instance=elem, ar=ar)
-        elem.before_ui_save(ar)
+        elem.before_ui_save(ar, None)
         elem.save(force_insert=True)
         # yes, `on_ui_created` comes *after* save()
         on_ui_created.send(elem, request=ar.request)
@@ -645,7 +645,7 @@ class Model(models.Model, fields.TableRow):
     def save_watched_instance(elem, ar, watcher):
         if watcher.is_dirty():
             pre_ui_save.send(sender=elem.__class__, instance=elem, ar=ar)
-            elem.before_ui_save(ar)
+            elem.before_ui_save(ar, watcher)
             elem.save(force_update=True)
             watcher.send_update(ar)
             ar.success(_("%s has been updated.") % obj2unicode(elem))

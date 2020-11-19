@@ -154,7 +154,7 @@ class BleachChecker(Checker):
             fldnames = ', '.join([f.name for f, old, new in t])
             yield (True, _("Fields {} have unbleached content.").format(fldnames))
             if fix:
-                obj.before_ui_save(None)
+                obj.before_ui_save(None, None)
                 obj.full_clean()
                 obj.save()
 

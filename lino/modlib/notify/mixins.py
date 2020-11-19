@@ -1,9 +1,5 @@
-# Copyright 2016-2018 Rumma & Ko Ltd
+# Copyright 2016-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
-
-from __future__ import unicode_literals
-
-from builtins import str
 
 from etgen.html import E, tostring
 
@@ -78,7 +74,7 @@ class ChangeNotifier(dd.Model):
 
         def get_notify_message_type(self):
             return rt.models.notify.MessageTypes.change
-    
+
         def after_ui_save(self, ar, cw):
             # Emits notification about the change to every observer.
             super(ChangeNotifier, self).after_ui_save(ar, cw)

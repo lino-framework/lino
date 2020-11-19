@@ -97,11 +97,11 @@ class Previewable(Model):
         full = parse(self.body, ar)
         return (short, full)
 
-    def before_ui_save(self, ar):
+    def before_ui_save(self, ar, cw):
         """Fills the preview fields.
 
         """
-        super(Previewable, self).before_ui_save(ar)
+        super(Previewable, self).before_ui_save(ar, cw)
         self.short_preview, self.full_preview = self.get_previews(ar)
 
 

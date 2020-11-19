@@ -1192,7 +1192,7 @@ class BaseRequest(object):
 
         if is_new or watcher.is_dirty():
             pre_ui_save.send(sender=elem.__class__, instance=elem, ar=ar)
-            elem.before_ui_save(ar)
+            elem.before_ui_save(ar, watcher)
 
             kw2save = {}
             if is_new:
