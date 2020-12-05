@@ -28,14 +28,14 @@ cond_comment = '<p><!--[if gte foo 123]>A conditional comment<![endif]--></p>\n<
 plain1 = "Some plain text."
 plain2 = "Two paragraphs of plain text.\n\nThe second paragraph."
 
+BODIES = Cycler([styled, table, lorem, short_lorem, breaking, cond_comment,
+                plain1, plain2])
 
 
 def objects():
     Comment = rt.models.comments.Comment
     User = rt.models.users.User
     Comment.auto_touch = False
-    TXT = Cycler([styled, table, lorem, short_lorem, breaking, cond_comment,
-                  plain1, plain2])
     for model in rt.models_by_base(Commentable):
         OWNERS = Cycler(model.objects.all())
         if len(OWNERS) == 0:
@@ -47,6 +47,8 @@ def objects():
         DELTA = datetime.timedelta(minutes=34)
 
         owner = OWNERS.pop()
+        reply_to = None
+        j = 0
         for i in range(12):
             for u in User.objects.all():
                 ses = BaseRequest(user=u)
@@ -54,12 +56,18 @@ def objects():
                 #     txt = "<p>Confidential comment</p>"
                 # else:
                 #     txt = TXT.pop() # txt = "Hackerish comment"
-                obj = Comment(user=u, owner=owner, body=TXT.pop())
+                obj = Comment(user=u, owner=owner, body=BODIES.pop(), reply_to=reply_to)
                 obj.on_create(ses)
                 obj.after_ui_create(ses)
                 obj.before_ui_save(ses, None)
                 obj.modified = now
                 yield obj
+                if reply_to is None:
+                    reply_to = obj
                 now += DELTA
-                if i % 3:
+                j += 1
+                if j % 7 == 0:
                     owner = OWNERS.pop()
+                    reply_to = None
+                elif j % 5 == 0:
+                    reply_to = None

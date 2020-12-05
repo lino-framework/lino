@@ -27,7 +27,7 @@ from lino.core import layouts
 from lino.core.requests import ActionRequest
 from lino.core.boundaction import BoundAction
 from lino.core.exceptions import ChangedAPI
-from lino.core.constants import _handle_attr_name
+from lino.core.constants import _handle_attr_name, CHOICES_BLANK_FILTER_VALUE
 from lino.core.permissions import add_requirements, Permittable
 from lino.core.utils import resolve_model
 from lino.core.utils import error2str
@@ -865,10 +865,11 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     @classmethod
     def summary_row(cls, ar, obj, **kw):
         """
-        Return a HTML representation of the given  data row `obj` for usage in a
+        Return a HTML representation of the given data row `obj` for usage in a
         summary panel.
 
-        See also :meth:`lino.core.model.Model.summary_row`.
+        The default implementation calls
+        :meth:`lino.core.model.Model.summary_row`.
 
         """
         return obj.summary_row(ar, **kw)
@@ -1125,6 +1126,12 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                 cls.submit_detail = cls._bind_action(
                     'submit_detail', actions.SubmitDetail())
 
+        # avoid inheriting the following actions from parent:
+        cls.insert_action = None
+        cls.delete_action = None
+        cls.update_action = None
+        cls.validate_form = None
+
         if cls.editable:
             if cls.allow_create:
                 # if cls.detail_action and not cls.hide_top_toolbar:
@@ -1331,7 +1338,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                 yield t
         for k in self.simple_parameters:
             v = getattr(ar.param_values, k)
-            if v:
+            if v and v != CHOICES_BLANK_FILTER_VALUE:
                 yield str(self.parameters[k].verbose_name) + ' ' + str(v)
 
     @classmethod
@@ -1878,9 +1885,11 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
         """
         # ar = ar.spawn(self, master_instance=obj, is_on_main_actor=False)
-        sar = ar.spawn_request(actor=cls, master_instance=obj, is_on_main_actor=False)
-        # sar = cls.request_from(ar, master_instance=obj)
-        p = qs2summary(sar, sar.data_iterator, cls.summary_sep)
+        # sar = ar.spawn_request(actor=cls, master_instance=obj,
+        #     is_on_main_actor=False)
+        sar = cls.request_from(ar, master_instance=obj, is_on_main_actor=False)
+        p = qs2summary(sar, sar.data_iterator, separator=cls.summary_sep,
+                max_items=cls.preview_limit)
         if cls.insert_action is not None:
             ir = cls.insert_action.request_from(sar)
             if ir.get_permission():

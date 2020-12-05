@@ -13,15 +13,16 @@ from django.core.exceptions import ValidationError
 from django.core.exceptions import FieldDoesNotExist
 from django.utils.translation import ugettext_lazy as _
 from django.db.models.signals import pre_delete
+from django.utils.text import format_lazy
 
-from etgen.html import E, forcetext, tostring
+from etgen.html import E, forcetext, tostring, join_elems
 
 from lino.core import fields
 from lino.core import signals
 from lino.core import actions
 
 
-from .fields import make_remote_field, RichTextField
+from .fields import make_remote_field, RichTextField, displayfield
 from .utils import error2str
 from .utils import obj2str
 from .diff import ChangeWatcher
@@ -848,8 +849,9 @@ class Model(models.Model, fields.TableRow):
             return ''
         return E.div(*forcetext(self.get_overview_elems(ar)))
 
-    @fields.displayfield(_("Workflow"))
+    @fields.displayfield(_("Workflow"), help_text="List of actions that change the workflow state of this object.")
     def workflow_buttons(self, ar):
+
         if ar is None:
             return ''
         return self.get_workflow_buttons(ar)
@@ -1043,6 +1045,64 @@ class Model(models.Model, fields.TableRow):
 
         """
         return []
+
+    @classmethod
+    def add_picker(model, fldname):
+        """Add a picker for the named choicelist field.
+
+        A picker is a virtual field that shows all the available choices in a
+        way that you can click on them to change the underlying choicelist
+        field's value.  Functionally similar to a radio button, but causes
+        immediate submit instead of waiting until the form gets submitted.
+
+        """
+        fld = model._meta.get_field(fldname)
+        cls = fld.choicelist
+        action_name = "do_pick_" + fldname
+        vfield_name = "pick_" + fldname
+
+        class QuickSetChoice(actions.Action):
+
+            label = cls.verbose_name
+            icon_name = None
+            show_in_bbar = False
+            no_params_window = True
+            parameters = dict(choice=cls.field())
+
+            def run_from_ui(self, ar, **kw):
+                obj = ar.selected_rows[0]
+                pv = ar.action_param_values
+                setattr(obj, fld.attname, pv.choice)
+                obj.full_clean()
+                obj.save()
+                ar.success(refresh=True)
+
+        ai = QuickSetChoice()
+        setattr(model, action_name, ai)
+
+        lbl = format_lazy(_("Pick {}"), cls.verbose_name)
+
+        @displayfield(lbl, editable=True)
+        def pick_choice(self, ar):
+            if ar is None:
+                return self.reply_emotion
+            elems = []
+            ba = ar.actor.get_action_by_name(action_name)
+            for v in cls.get_list_items():
+                kw = dict(action_param_values=dict(choice=v))
+                label = str(v)
+                if fld.value_from_object(self) == v:
+                    elems.append(E.b(label))
+                else:
+                    if fldname in ar.actor.get_disabled_fields(self, ar):
+                        pass  # elems.append(label)
+                    else:
+                        elems.append(ar.action_button(
+                            ba, self, label=label, request_kwargs=kw))
+            return E.p(*join_elems(elems, sep=" | "))
+
+        setattr(model, vfield_name, pick_choice)
+
 
     @classmethod
     def django2lino(cls, model):

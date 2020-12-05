@@ -8,6 +8,18 @@ import pytz
 from lino.modlib.system.choicelists import ObservedEvent
 # from .roles import CommentsUser
 
+
+class Emotions(dd.ChoiceList):
+    verbose_name = _("Emotion")
+    verbose_name_plural = _("Emotions")
+
+add = Emotions.add_item
+add('ok', _("Okay"), 'ok')
+add('like', _("Like"), 'like')
+add('dislike', _("Dislike"), 'dislike')
+add('angry', _("Angry"), 'angry')
+
+
 class ObservedTime(ObservedEvent):
 
     def __init__(self, value, name, text):
@@ -29,7 +41,7 @@ class ObservedTime(ObservedEvent):
 class CommentEvents(dd.ChoiceList):
     verbose_name = _("Observed event")
     verbose_name_plural = _("Observed events")
-     
+
 
 
 def add(*args):
@@ -47,7 +59,7 @@ add('20', 'modified', _("Modified"))
 #     show_in_bbar = False
 #     required_roles = dd.login_required(CommentsUser)
 
-    
+
 #     def run_from_ui(self, ar, **kw):
 #         for obj in ar.selected_rows:
 #             obj.do_publish(ar)
@@ -61,7 +73,7 @@ add('20', 'modified', _("Modified"))
 #     show_in_bbar = True
 #     select_rows = False
 #     default_format = 'ajax'
-    
+
 #     def run_from_ui(self, ar, **kw):
 #         n = ar.get_total_count()
 #         def ok(ar):
@@ -73,5 +85,3 @@ add('20', 'modified', _("Modified"))
 #         ar.confirm(
 #             ok, _("This will publish {} comments.").format(n),
 #             _("Are you sure?"))
-
-        

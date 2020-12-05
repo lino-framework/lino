@@ -2,10 +2,11 @@
 # Copyright 2013-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ngettext
 from django.contrib.humanize.templatetags.humanize import naturaltime
+from django.db import models
 
-from lino.api import dd, rt
+from lino.api import dd, rt, gettext, _
 from lino.modlib.users.mixins import My
 from etgen.html import E, tostring
 # from lxml import etree
@@ -35,6 +36,34 @@ class CommentTypes(dd.Table):
     """
 
 
+class CommentDetail(dd.DetailLayout):
+    main = "general more"
+
+    general = dd.Panel("""
+    general1:30 CommentsByComment:30
+    """, label=_("General"))
+
+    general1 = """
+    owner reply_to private
+    pick_reply_emotion reply_vote
+    full_preview
+    """
+    # general2 = """
+    # CommentsByComment
+    # """
+
+    more = dd.Panel("""
+    body more2
+    """, label=_("More"))
+
+    more2 = """
+    id user
+    owner_type owner_id
+    created modified
+    comment_type
+    """
+
+
 class Comments(dd.Table):
     required_roles = dd.login_required(CommentsUser)
 
@@ -42,18 +71,14 @@ class Comments(dd.Table):
     params_layout = "start_date end_date observed_event user reply_to"
 
     insert_layout = dd.InsertLayout("""
-    reply_to owner owner_type owner_id
+    reply_to reply_emotion
+    owner owner_type owner_id
     # comment_type
     body
-    private
-    """, window_size=(60, 13), hidden_elements="reply_to owner owner_type owner_id")
+    reply_vote private
+    """, window_size=(60, 15), hidden_elements="reply_to owner owner_type owner_id")
 
-    detail_layout = """
-    id user created modified private
-    reply_to owner owner_type owner_id comment_type
-    body
-    CommentsByComment
-    """
+    detail_layout = "comments.CommentDetail"
 
     # html_parser = etree.HTMLParser()
 
@@ -70,18 +95,18 @@ class Comments(dd.Table):
             yield p
         yield "reply_to"
 
-    @classmethod
-    def get_table_summary(cls, obj, ar):
-        # print("20190926 get_table_summary", ar.request)
-        sar = cls.request_from(ar, master_instance=obj, limit=cls.preview_limit)
-        # print "20170208", sar.limit
-        # chunks = []
-        # for o in sar.sliced_data_iterator:
-        #     chunks.append(E.p(*o.as_summary_row(ar)))
-        # return E.div(*chunks)
-        chunks = [o.as_summary_row(ar) for o in sar.sliced_data_iterator]
-        html = '\n'.join(chunks)
-        return "<div>{}</div>".format(html)
+    # @classmethod
+    # def get_table_summary(cls, obj, ar):
+    #     # print("20190926 get_table_summary", ar.request)
+    #     sar = cls.request_from(ar, master_instance=obj, limit=cls.preview_limit)
+    #     # print "20170208", sar.limit
+    #     # chunks = []
+    #     # for o in sar.sliced_data_iterator:
+    #     #     chunks.append(E.p(*o.as_summary_row(ar)))
+    #     # return E.div(*chunks)
+    #     chunks = [o.as_summary_row(ar) for o in sar.sliced_data_iterator]
+    #     html = '\n'.join(chunks)
+    #     return "<div>{}</div>".format(html)
 
     @classmethod
     def get_comment_header(cls, comment, ar):
@@ -174,6 +199,51 @@ class CommentsByX(Comments):
         """
         return ar.actor.get_comment_header(obj, ar)
 
+    @classmethod
+    def get_request_queryset(cls, ar, **filter):
+        qs = super(CommentsByX, cls).get_request_queryset(ar, **filter)
+        return qs.annotate(num_replies=models.Count('replies_to_this'))
+
+    @classmethod
+    def summary_row(cls, ar, o, **kw):
+        # adds count replies
+        if o.modified is None or (o.modified - o.created).total_seconds() < 1:
+            t = _("Created " + o.created.strftime('%Y-%m-%d %H:%M') )
+        else:
+            t = _("Modified " + o.modified.strftime('%Y-%m-%d %H:%M') )
+
+        yield ar.obj2html(o, naturaltime(o.created), title=t)
+        yield " by "
+        by = o.user.username
+        yield E.b(by)
+
+        # When `reply_to` is obvious, then `owner` is "obviously obvious" even
+        # though that might not be said explicitly.
+        if not ar.is_obvious_field('reply_to'):
+            if o.reply_to:
+                yield " {} ".format(_("in reply to"))
+                yield E.b(o.reply_to.user.username)
+            if not ar.is_obvious_field('owner'):
+                if o.owner:
+                    yield " {} ".format(_("about"))
+                    yield o.owner.obj2href(ar)
+                    group = o.owner.get_comment_group()
+                    if group and group.ref:
+                         yield "@" + group.ref
+        replies  = o.__class__.objects.filter(reply_to=o)
+        if o.num_replies > 0:
+            txt = ngettext("{} reply", "{} replies", o.num_replies).format(o.num_replies)
+            yield " ({})".format(txt)
+        yield " : "
+        try:
+            # el = etree.fromstring(o.short_preview, parser=html_parser)
+            for e in lxml.html.fragments_fromstring(o.short_preview): #, parser=cls.html_parser)
+                yield e
+            # el = etree.fromstring("<div>{}</div>".format(o.full_preview), parser=cls.html_parser)
+            # print(20190926, tostring(el))
+        except Exception as e:
+            yield "{} [{}]".format(o.short_preview, e)
+
 
 # class MyPendingComments(MyComments):
 #     label = _("My pending comments")
@@ -205,10 +275,10 @@ class CommentsByRFC(CommentsByX):
     master_key = 'owner'
     column_names = "body created user *"
     stay_in_grid = True
-    display_mode = "list"
+    # display_mode = "list"
     simple_slavegrid_header = True
     insert_layout = dd.InsertLayout("""
-    reply_to
+    reply_to #reply_emotion
     # comment_type
     body
     private
@@ -239,32 +309,34 @@ class CommentsByRFC(CommentsByX):
         else:
             return None
 
-    @classmethod
-    def get_table_summary(self, obj, ar):
-        sar = self.request_from(ar, master_instance=obj)
-        html = obj.get_rfc_description(ar)
-        sar = self.insert_action.request_from(sar)
-        if sar.get_permission():
-            btn = sar.ar2button(None, _("Write comment"), icon_name=None)
-            html += "<p>" + tostring(btn) + "</p>"
-
-        html += "<ul>"
-        for c in sar:
-            html += "<li>{}<div id=\"{}\">{}</div></li>".format(
-                self.get_comment_header(c, sar),
-                "comment-" + str(c.id),
-                ar.parse_memo(c.body))
-
-        html += "</ul>"
-        return ar.html_text(html)
+    # @classmethod
+    # def get_table_summary(self, obj, ar):
+    #     sar = self.request_from(ar, master_instance=obj)
+    #     html = obj.get_rfc_description(ar)
+    #     sar = self.insert_action.request_from(sar)
+    #     if sar.get_permission():
+    #         btn = sar.ar2button(None, _("Write comment"), icon_name=None)
+    #         html += "<p>" + tostring(btn) + "</p>"
+    #
+    #     html += "<ul>"
+    #     for c in sar:
+    #         html += "<li>{}<div id=\"{}\">{}</div></li>".format(
+    #             self.get_comment_header(c, sar),
+    #             "comment-" + str(c.id),
+    #             ar.parse_memo(c.body))
+    #
+    #     html += "</ul>"
+    #     return ar.html_text(html)
 
 
 class CommentsByMentioned(CommentsByX):
     # show all comments that mention the master instance
     master = dd.Model
-    label = _("Mentions")
-
+    label = _("Mentioned in")
     # label = _("Comments mentioning this")
+    # insert_layout = None
+    # detail_layout = None
+    editable = False
 
     @classmethod
     def get_filter_kw(cls, ar, **kw):
@@ -283,10 +355,11 @@ class CommentsByMentioned(CommentsByX):
 
 class CommentsByComment(CommentsByX):
     master_key = 'reply_to'
-    display_mode = "list"
+    # display_mode = "list"
     stay_in_grid = True
     borderless_list_mode = True
-    title = _("Replies")
+    # title = _("Replies")
+    label = _("Replies")
     simple_slavegrid_header = True
 
     paginator_template = "PrevPageLink NextPageLink"
@@ -299,11 +372,12 @@ def comments_by_owner(obj):
 
 class Mentions(dd.Table):
     required_roles = dd.login_required(CommentsStaff)
+    editable = False
     model = "comments.Mention"
     column_names = "comment owner created *"
-    detail_layout = """
-    id comment owner created
-    """
+    # detail_layout = """
+    # id comment owner created
+    # """
 
 
 class MentionsByOwner(Mentions):

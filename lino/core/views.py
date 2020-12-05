@@ -12,6 +12,7 @@ from django.core import exceptions
 from lino.core import constants
 from lino.core import actors
 from lino.utils.jsgen import py2js
+from lino.api import _
 
 
 def json_response_kw(**kw):

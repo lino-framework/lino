@@ -1,20 +1,11 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2018 Rumma & Ko Ltd
+# Copyright 2009-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """
 Defines :class:`JsCacheRenderer`.
 """
 
-from __future__ import unicode_literals
-from __future__ import print_function
-import six
-# str = six.text_type
-from builtins import str
-from builtins import object
-
-import logging
-
-logger = logging.getLogger(__name__)
+import logging ; logger = logging.getLogger(__name__)
 
 from django.conf import settings
 

@@ -860,7 +860,8 @@ AnonymousUser.is_authenticated."""),
     'lino.modlib.users.User.initials' : _("""The nickname or initials of this user. This does not need to
 be unique but should provide a reasonably identifying
 function."""),
-    'lino.modlib.users.User.user_type' : _("""The user_type of a user is what defines her or his permissions."""),
+    'lino.modlib.users.User.user_type' : _("""The user type given to this user. Users having this field empty
+are considered inactive and cannot log in."""),
     'lino.modlib.users.User.partner' : _("""Pointer to the Partner instance related to
 this user."""),
     'lino.modlib.users.User.person' : _("""A virtual read-only field which returns the Person MTI child of the partner (if it

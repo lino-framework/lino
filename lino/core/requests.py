@@ -265,7 +265,7 @@ class BaseRequest(object):
             for k in inheritable_attrs:
                 if k in kw:
                     if kw[k] is None:
-                        raise Exception("%s : %s=None" % (kw, k))
+                        raise Exception("%s : %s is None" % (kw, k))
                 else:
                     kw[k] = getattr(parent, k)
             kv = kw.setdefault('known_values', {})

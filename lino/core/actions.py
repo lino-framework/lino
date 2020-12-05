@@ -896,7 +896,7 @@ class ShowInsert(TableAction):
 
     def get_view_permission(self, user_type):
         # the action is readonly because it doesn't write to the
-        # current object, but since it does modify the adtabase we
+        # current object, but since it does modify the database we
         # want to hide it for readonly users.
         if user_type and user_type.readonly:
             return False

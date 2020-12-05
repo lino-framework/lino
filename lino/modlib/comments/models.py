@@ -5,6 +5,7 @@
 
 from django.db import models
 from django.db.models import Q
+from django.core import validators
 from django.contrib.contenttypes.models import ContentType
 from django.conf import settings
 from etgen.html import E, tostring
@@ -18,7 +19,7 @@ from lino.modlib.notify.mixins import ChangeNotifier
 from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.memo.mixins import Previewable
 from lino.modlib.publisher.mixins import Publishable
-from .choicelists import CommentEvents
+from .choicelists import CommentEvents, Emotions
 from .mixins import Commentable
 # from .choicelists import PublishAllComments, PublishComment
 
@@ -46,19 +47,34 @@ class Comment(CreatedModified, UserAuthored, Controllable,
     publisher_location = "c"
 
     reply_to = dd.ForeignKey(
-        'self', blank=True, null=True, verbose_name=_("Reply to"))
+        'self', blank=True, null=True, verbose_name=_("Reply to"),
+        related_name="replies_to_this")
     # more_text = dd.RichTextField(_("More text"), blank=True)
 
     private = models.BooleanField(
         _("Private"), default=dd.plugins.comments.private_default)
 
     comment_type = dd.ForeignKey('comments.CommentType', blank=True, null=True)
+    reply_emotion = Emotions.field(default="ok")
+    reply_vote = models.BooleanField(_("Upvote"), null=True, blank=True)
+    # reply_vote = models.SmallIntegerField(_("Vote"), default=0,
+    #     validators=[validators.MinValueValidator(-1),
+    #         validators.MaxValueValidator(1)])
 
     def __str__(self):
-        return u'%s #%s' % (self._meta.verbose_name, self.pk)
+        return '{} #{}'.format(self._meta.verbose_name, self.pk)
         # return _('{user} {time}').format(
         #     user=self.user, obj=self.owner,
         #     time=naturaltime(self.modified))
+
+    def disabled_fields(self, ar):
+        rv = super(Comment, self).disabled_fields(ar)
+        if not self.reply_to_id:
+            # rv.add("do_pick_reply_emotion")
+            # rv.add("pick_reply_emotion")
+            rv.add("reply_emotion")
+            rv.add("reply_vote")
+        return rv
 
     @classmethod
     def get_user_queryset(cls, user):
@@ -184,36 +200,12 @@ class Comment(CreatedModified, UserAuthored, Controllable,
             # header,
             body)
 
-    def summary_row(o, ar):
+    # def summary_row(o, ar):
 
-        if o.modified is None or (o.modified - o.created).total_seconds() < 1:
-            t = _("Created " + o.created.strftime('%Y-%m-%d %H:%M') )
-        else:
-            t = _("Modified " + o.modified.strftime('%Y-%m-%d %H:%M') )
-
-        yield ar.obj2html(o, naturaltime(o.created), title=t)
-        yield " by "
-        yield ar.obj2html(o.user, o.user.username)
-        if not ar.is_obvious_field('owner'):
-            if o.owner:
-                group = o.owner.get_comment_group()
-                if group is not None:
-                     yield "@"
-                     yield ar.obj2html(group, group.ref)
-                yield " about "
-                yield o.owner.obj2href(ar)
-        yield " : "
-        try:
-            # el = etree.fromstring(o.short_preview, parser=html_parser)
-            for e in lxml.html.fragments_fromstring(o.short_preview): #, parser=cls.html_parser)
-                yield e
-            # el = etree.fromstring("<div>{}</div>".format(o.full_preview), parser=cls.html_parser)
-            # print(20190926, tostring(el))
-        except Exception as e:
-            yield "{} [{}]".format(o.short_preview, e)
 
 dd.update_field(Comment, 'user', editable=False)
 Comment.update_controller_field(verbose_name=_('Topic'))
+Comment.add_picker('reply_emotion')
 
 class Mention(CreatedModified, Controllable, UserAuthored):
 

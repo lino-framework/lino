@@ -1,9 +1,6 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2016-2018 Rumma & Ko Ltd
+# Copyright 2016-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
-
-from __future__ import unicode_literals
-# from builtins import str
 
 from lino.utils import isidentifier
 
@@ -12,12 +9,12 @@ from lino.api import dd, _, pgettext
 
 class MessageType(dd.Choice):
     #required_roles = set({})
-    
+
     def __init__(self, value, text, **kwargs):
         if not isidentifier(value):
             raise Exception("{} not a valid identifier".format(value))
         super(MessageType, self).__init__(value, text, value, **kwargs)
-        
+
     # def add_requirements(self, *args):
     #     """
     #     Add the specified user roles as requirements to this message type.
@@ -47,7 +44,7 @@ add('change', pgettext("message type", "Change"))
 class MailModes(dd.ChoiceList):
     verbose_name = _("Notification mode")
     verbose_name_plural = _("Notification modes")
-    
+
 add = MailModes.add_item
 add('silent', _("Silent"), 'silent')
 add('never', _("No mails"), 'never')
