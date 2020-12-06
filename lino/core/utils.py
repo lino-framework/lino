@@ -43,7 +43,11 @@ def comma():
 def qs2summary(ar, objects, separator=comma, max_items=5, **kw):
     """Render a collection of objects as a single paragraph.
 
+    :param separator: separator to use between objects. This must be a callable.
     :param max_items: don't include more than the specified number of items.
+
+    The separator must be a callable because with etree you may not reuse a same
+    element instance several times.
 
     """
     elems = []
@@ -56,7 +60,7 @@ def qs2summary(ar, objects, separator=comma, max_items=5, **kw):
         if n >= max_items:
             elems += [separator(), '...']
             break
-    return E.p(*elems)
+    return elems
 
 
 def getrqdata(request):

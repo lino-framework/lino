@@ -12,11 +12,12 @@ from etgen.html import E, tostring
 # from lxml import etree
 import lxml
 # from lino.utils.soup import truncate_comment
-from lino.core.gfks import gfk2lookup
-from .roles import CommentsReader, CommentsUser, CommentsStaff
-from .choicelists import CommentEvents
 from lino import mixins
 from lino.core.constants import CHOICES_BLANK_FILTER_VALUE
+from lino.core.utils import qs2summary
+from lino.core.gfks import gfk2lookup
+from .roles import CommentsReader, CommentsUser, CommentsStaff
+from .choicelists import CommentEvents, Emotions
 
 
 class CommentTypes(dd.Table):
@@ -40,16 +41,16 @@ class CommentDetail(dd.DetailLayout):
     main = "general more"
 
     general = dd.Panel("""
-    general1:30 CommentsByComment:30
+    general1:30 RepliesByComment:30
     """, label=_("General"))
 
     general1 = """
-    owner reply_to private
-    pick_reply_emotion reply_vote
+    owner reply_to
+    emotion private
     full_preview
     """
     # general2 = """
-    # CommentsByComment
+    # RepliesByComment
     # """
 
     more = dd.Panel("""
@@ -71,11 +72,10 @@ class Comments(dd.Table):
     params_layout = "start_date end_date observed_event user reply_to"
 
     insert_layout = dd.InsertLayout("""
-    reply_to reply_emotion
-    owner owner_type owner_id
+    reply_to owner owner_type owner_id
     # comment_type
     body
-    reply_vote private
+    emotion private
     """, window_size=(60, 15), hidden_elements="reply_to owner owner_type owner_id")
 
     detail_layout = "comments.CommentDetail"
@@ -125,7 +125,8 @@ class Comments(dd.Table):
         sar.known_values = dict(
             reply_to=comment, **gfk2lookup(
                 comment.__class__.owner, comment.owner))
-        if ar.get_user().is_authenticated:
+        # if ar.get_user().is_authenticated:
+        if sar.has_permission():
             btn = sar.ar2button(None, _(" Reply "), icon_name=None)
             # btn.set("style", "padding-left:10px")
             ch += [" [", btn, "]"]
@@ -190,7 +191,7 @@ class CommentsByX(Comments):
     display_mode = "summary"
     card_layout = dd.DetailLayout("""
     card_summary
-    CommentsByComment
+    RepliesByComment
     """)
 
     @classmethod
@@ -204,6 +205,34 @@ class CommentsByX(Comments):
         qs = super(CommentsByX, cls).get_request_queryset(ar, **filter)
         return qs.annotate(num_replies=models.Count('replies_to_this'))
 
+
+    @classmethod
+    def get_table_summary(cls, obj, ar):
+        sar = cls.request_from(ar, master_instance=obj, is_on_main_actor=False)
+        elems = []
+        n = 0
+        for com in sar.data_iterator:
+            n += 1
+            if n > cls.preview_limit:
+                elems.append(E.p("..."))
+                break
+            elems.append(E.p(*cls.summary_row(sar, com)))
+
+        if cls.insert_action is not None:
+            ir = cls.insert_action.request_from(sar)
+            if ir.get_permission():
+                chunks = [gettext("Write new comment:"), " "]
+                for i, emo in enumerate(Emotions.get_list_items()):
+                    if i:
+                        chunks.append(" | ")
+                    ir.known_values.update(emotion=emo)
+                    ir.clear_cached_status()
+                    chunks.append(ir.ar2button(
+                        None, emo.button_text or emo.text, icon_name=None,
+                        title=str(emo.text)))
+                elems.append(E.p(*chunks))
+        return E.div(*elems)
+
     @classmethod
     def summary_row(cls, ar, o, **kw):
         # adds count replies
@@ -212,8 +241,12 @@ class CommentsByX(Comments):
         else:
             t = _("Modified " + o.modified.strftime('%Y-%m-%d %H:%M') )
 
+        if o.emotion.button_text:
+            yield o.emotion.button_text
+            yield " "
+
         yield ar.obj2html(o, naturaltime(o.created), title=t)
-        yield " by "
+        yield " {} ".format(_("by"))
         by = o.user.username
         yield E.b(by)
 
@@ -234,15 +267,16 @@ class CommentsByX(Comments):
         if o.num_replies > 0:
             txt = ngettext("{} reply", "{} replies", o.num_replies).format(o.num_replies)
             yield " ({})".format(txt)
-        yield " : "
-        try:
-            # el = etree.fromstring(o.short_preview, parser=html_parser)
-            for e in lxml.html.fragments_fromstring(o.short_preview): #, parser=cls.html_parser)
-                yield e
-            # el = etree.fromstring("<div>{}</div>".format(o.full_preview), parser=cls.html_parser)
-            # print(20190926, tostring(el))
-        except Exception as e:
-            yield "{} [{}]".format(o.short_preview, e)
+        if o.short_preview:
+            yield " : "
+            try:
+                # el = etree.fromstring(o.short_preview, parser=html_parser)
+                for e in lxml.html.fragments_fromstring(o.short_preview): #, parser=cls.html_parser)
+                    yield e
+                # el = etree.fromstring("<div>{}</div>".format(o.full_preview), parser=cls.html_parser)
+                # print(20190926, tostring(el))
+            except Exception as e:
+                yield "{} [{}]".format(o.short_preview, e)
 
 
 # class MyPendingComments(MyComments):
@@ -278,7 +312,7 @@ class CommentsByRFC(CommentsByX):
     # display_mode = "list"
     simple_slavegrid_header = True
     insert_layout = dd.InsertLayout("""
-    reply_to #reply_emotion
+    reply_to emotion
     # comment_type
     body
     private
@@ -353,7 +387,7 @@ class CommentsByMentioned(CommentsByX):
         return kw
 
 
-class CommentsByComment(CommentsByX):
+class RepliesByComment(CommentsByX):
     master_key = 'reply_to'
     # display_mode = "list"
     stay_in_grid = True

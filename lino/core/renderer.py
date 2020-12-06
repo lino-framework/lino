@@ -890,6 +890,9 @@ class JsRenderer(HtmlRenderer):
         ba = obj.get_detail_action(ar)
         if ba is None:
             return None
+        if not ba.get_row_permission(ar, obj, None):
+            # fixes #3857
+            return None
         if ar.permalink_uris:
             return self.get_detail_url(ar, ba.actor, obj.pk)
         return self.js2url(self.instance_handler(ar, obj, None))

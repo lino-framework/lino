@@ -1,8 +1,10 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2016-2019 Rumma & Ko Ltd
+# Copyright 2016-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 from bs4 import BeautifulSoup
+from lxml import html as lxml_html
+from etgen.html import E, tostring
 
 from django.conf import settings
 
@@ -12,10 +14,8 @@ from lino.core.fields import fields_list, RichTextField
 from lino.utils.restify import restify
 from lino.core.exceptions import ChangedAPI
 from lino.modlib.checkdata.choicelists import Checker
-from etgen.html import E, tostring
 from lino.api import _
 
-from lxml import html as lxml_html
 
 
 def truncate_comment(html_str, max_p_len=None):

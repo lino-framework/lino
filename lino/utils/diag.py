@@ -117,8 +117,8 @@ class Analyzer(object):
         self.analyze()
         items = []
         for ba in analyzer.custom_actions + analyzer.window_actions:
-            # if ba.action.parameters and not ba.action.no_params_window:
-            if ba.action.parameters:
+            if ba.action.parameters and not ba.action.no_params_window:
+            # if ba.action.parameters:
                 items.append(
                     "{0} : {1}".format(
                         ba.full_name(),

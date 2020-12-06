@@ -22,13 +22,8 @@ class State(choicelists.Choice):
     <lino.core.choicelists.Choice>` that adds the
     :meth:`add_transition` method.
 
-    .. attribute:: button_text
-
-        The text to appear on buttons representing this state.
-
     """
 
-    button_text = None
     transition = None  # how to get into this state
 
     def add_transition(self, label=None,
@@ -147,7 +142,6 @@ class Workflow(choicelists.ChoiceList):
     verbose_name = _("State")
     # verbose_name_plural = _("States")
     verbose_name_plural = None
-    button_text = models.CharField(_("Button text"), blank=True)
     column_names = "value name text button_text"
     abstract = True
 

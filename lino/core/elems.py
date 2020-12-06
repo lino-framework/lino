@@ -24,6 +24,8 @@ from django.db.models.fields.related import \
 from django.db.models.fields.related import ManyToManyRel, ManyToOneRel
 from django.db.models.fields import NOT_PROVIDED
 
+from etgen.html import E
+
 from lino.core import layouts
 from lino.core import fields
 from lino.core.actions import Action, Permittable
@@ -1712,7 +1714,7 @@ class ManyRelatedObjectElement(HtmlBoxElement):
         name = relobj.field.remote_field.related_name
 
         def f(obj, ar):
-            return qs2summary(ar, getattr(obj, name).all())
+            return E.p(*qs2summary(ar, getattr(obj, name).all()))
 
         box = fields.HtmlBox(name)
         fld = fields.VirtualField(box, f)
@@ -1728,7 +1730,7 @@ class ManyToManyElement(HtmlBoxElement):
         name = relobj.field.name
 
         def f(obj, ar):
-            return qs2summary(ar, getattr(obj, name).all())
+            return E.p(*qs2summary(ar, getattr(obj, name).all()))
 
         box = fields.HtmlBox(relobj.field.verbose_name)
         fld = fields.VirtualField(box, f)

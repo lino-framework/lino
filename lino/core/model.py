@@ -815,15 +815,15 @@ class Model(models.Model, fields.TableRow):
 
             def summary_row(self, ar):
                 elems = [ar.obj2html(self)]
-                if self.city and not "city" in ar.known_values:
+                if self.city and not ar.is_obvious_field("city"):
                     elems += [" (", ar.obj2html(self.city), ")"]
-                return E.p(*elems)
+                return elems
 
         Note that this is called by the class method of same name on
-        :class:`lino.core.actors.Actor`, which can potentially be customized and
-        can potentially decide to not call the model method.
+        :class:`lino.core.actors.Actor`, which may be customized and may decide
+        to not call the model method.
 
-        TODO: rename this to `get_row_description` and write documentation.
+        TODO: rename this to `row2summary` and write documentation.
 
         """
         yield ar.obj2html(self)
@@ -1085,12 +1085,12 @@ class Model(models.Model, fields.TableRow):
         @displayfield(lbl, editable=True)
         def pick_choice(self, ar):
             if ar is None:
-                return self.reply_emotion
+                return fld.value_from_object(self)
             elems = []
             ba = ar.actor.get_action_by_name(action_name)
             for v in cls.get_list_items():
                 kw = dict(action_param_values=dict(choice=v))
-                label = str(v)
+                label = str(v.button_text or v.text)
                 if fld.value_from_object(self) == v:
                     elems.append(E.b(label))
                 else:

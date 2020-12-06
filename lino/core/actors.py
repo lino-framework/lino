@@ -1135,7 +1135,9 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         if cls.editable:
             if cls.allow_create:
                 # if cls.detail_action and not cls.hide_top_toolbar:
-                if cls.insert_layout and not cls.hide_top_toolbar:
+                # if cls.insert_layout and not cls.hide_top_toolbar:
+                # NB polls.AnswerRemarksByAnswer has hide_top_toolbar but we need its insert_action.
+                if cls.insert_layout:
                     cls.insert_action = cls._bind_action(
                         'insert_action', cls.get_insert_action())
             if not cls.hide_top_toolbar:
@@ -1875,21 +1877,21 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     @classmethod
     def get_table_summary(cls, obj, ar):
-        """Return the HTML paragraph to be displayed by
+        """Return the HTML `<div>` to be displayed by
         :class:`lino.core.elems.TableSummaryPanel`.  That is (1) in a
         detail form when :attr:`display_mode` is `summary` or (2)
         in a grid.
 
-        Lino internally creates a virtualfield ``slave_summary`` on
-        each table which invokes this method.
+        Lino internally creates a virtualfield ``slave_summary`` on each table
+        that invokes this method.
 
         """
         # ar = ar.spawn(self, master_instance=obj, is_on_main_actor=False)
         # sar = ar.spawn_request(actor=cls, master_instance=obj,
         #     is_on_main_actor=False)
         sar = cls.request_from(ar, master_instance=obj, is_on_main_actor=False)
-        p = qs2summary(sar, sar.data_iterator, separator=cls.summary_sep,
-                max_items=cls.preview_limit)
+        p = E.div(*qs2summary(sar, sar.data_iterator, separator=cls.summary_sep,
+                max_items=cls.preview_limit))
         if cls.insert_action is not None:
             ir = cls.insert_action.request_from(sar)
             if ir.get_permission():

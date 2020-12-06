@@ -55,8 +55,8 @@ class Comment(CreatedModified, UserAuthored, Controllable,
         _("Private"), default=dd.plugins.comments.private_default)
 
     comment_type = dd.ForeignKey('comments.CommentType', blank=True, null=True)
-    reply_emotion = Emotions.field(default="ok")
-    reply_vote = models.BooleanField(_("Upvote"), null=True, blank=True)
+    emotion = Emotions.field(default="ok")
+    # reply_vote = models.BooleanField(_("Upvote"), null=True, blank=True)
     # reply_vote = models.SmallIntegerField(_("Vote"), default=0,
     #     validators=[validators.MinValueValidator(-1),
     #         validators.MaxValueValidator(1)])
@@ -67,14 +67,14 @@ class Comment(CreatedModified, UserAuthored, Controllable,
         #     user=self.user, obj=self.owner,
         #     time=naturaltime(self.modified))
 
-    def disabled_fields(self, ar):
-        rv = super(Comment, self).disabled_fields(ar)
-        if not self.reply_to_id:
-            # rv.add("do_pick_reply_emotion")
-            # rv.add("pick_reply_emotion")
-            rv.add("reply_emotion")
-            rv.add("reply_vote")
-        return rv
+    # def disabled_fields(self, ar):
+    #     rv = super(Comment, self).disabled_fields(ar)
+    #     if not self.reply_to_id:
+    #         # rv.add("do_pick_reply_emotion")
+    #         # rv.add("pick_reply_emotion")
+    #         rv.add("reply_emotion")
+    #         rv.add("reply_vote")
+    #     return rv
 
     @classmethod
     def get_user_queryset(cls, user):
@@ -205,7 +205,7 @@ class Comment(CreatedModified, UserAuthored, Controllable,
 
 dd.update_field(Comment, 'user', editable=False)
 Comment.update_controller_field(verbose_name=_('Topic'))
-Comment.add_picker('reply_emotion')
+# Comment.add_picker('emotion')
 
 class Mention(CreatedModified, Controllable, UserAuthored):
 

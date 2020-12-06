@@ -12,12 +12,19 @@ from lino.modlib.system.choicelists import ObservedEvent
 class Emotions(dd.ChoiceList):
     verbose_name = _("Emotion")
     verbose_name_plural = _("Emotions")
+    column_names = "value name text button_text"
 
+# ⁈:2048  👍:1F44D  👎:1F44E  ✅:2705  ❎:274e  😠:1F620 😀:1F600 😐:1f610
 add = Emotions.add_item
 add('ok', _("Okay"), 'ok')
-add('like', _("Like"), 'like')
-add('dislike', _("Dislike"), 'dislike')
-add('angry', _("Angry"), 'angry')
+# add('but', _("But"), 'but', button_text="⁈")
+add('agree', _("Agree"), 'agree', button_text="✅")
+add('disagree', _("Disagree"), 'disagree', button_text="❎")
+# add('like', _("Like"), 'like', button_text="👍")
+# add('dislike', _("Dislike"), 'dislike', button_text="👎")
+# add('happy', _("Happy"), 'happy', button_text="😀")
+# add('angry', _("Angry"), 'angry', button_text="😠")
+# add('skeptical', _("Skeptical"), 'skeptical', button_text="😐")
 
 
 class ObservedTime(ObservedEvent):

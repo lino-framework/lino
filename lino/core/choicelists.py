@@ -41,33 +41,40 @@ class Choice(fields.TableRow):
     current language at runtime.  Every item of a :class:`ChoiceList`
     must be an instance of :class:`Choice` or a subclass thereof.
 
+    .. attribute:: choicelist
+
+        The choice list that owns this choice.
+
+    .. attribute:: value
+
+        (a string) The value to use e.g. when this choice is being stored in a
+        database.
+
+    .. attribute:: text
+
+        A translatable string containing the text to show to the user.
+
+    .. attribute:: names
+
+        A list of names to be used as attribute name on the choicelist for referring
+        to this choice from application code.
+
+        If this is `None` or not specified, the choice is a nameless
+        choice, which is a full-fledged choice object but is not
+        accessible as a class attribute on its choicelist.
+
+    .. attribute:: button_text
+
+        The text to appear on buttons representing this state.
+
     """
     choicelist = None
     remark = None
     pk = None
-
     value = None
-
-    """(a string) The value to use e.g. when this choice is being stored in a
-    database."""
-
     text = None
-    """A translatable string containing the text to show to the user.
-
-    """
-
     names = ''
-    """
-
-    A list of names to be used as attribute name on the choicelist for referring
-    to this choice from application code.
-
-    If this is `None` or not specified, the choice is a nameless
-    choice, which is a full-fledged choice object but is not
-    accessible as a class attribute on its choicelist.
-
-    """
-
+    button_text = None
 
     def __init__(self, value=None, text=None, names=None, **kwargs):
         """Create a new :class:`Choice` instance.
@@ -417,6 +424,8 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
     hidden_columns = frozenset(['workflow_buttons'])
 
     column_names = 'value name text *'
+    
+    button_text = models.CharField(_("Button text"), blank=True)
 
     old2new = {}
     """
