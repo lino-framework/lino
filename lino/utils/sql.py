@@ -11,7 +11,7 @@ parsed.
 from __future__ import print_function
 
 # import lino
-# lino.startup('lino_book.projects.team.settings.demo')
+# lino.startup('lino_book.projects.noi1e.settings.demo')
 # import django
 # print django.__file__
 # from lino.api.doctest import *

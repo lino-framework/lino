@@ -563,7 +563,7 @@ class Site(object):
         '1234567890-a1b2c3d4e5.apps.googleusercontent.com'
       SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'SH6da...'
 
-    A working example is in the :mod:`lino_book.projects.team` demo
+    A working example is in the :mod:`lino_book.projects.noi1e` demo
     project.
     """
 
