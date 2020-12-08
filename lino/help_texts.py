@@ -200,6 +200,8 @@ object."""),
     'lino.modlib.changes.ChangesByMaster' : _("""Slave Table showing the changes related to the current object,
 including those applied to "child" objects."""),
     'lino.modlib.changes.ChangesByMaster.model' : _("""alias of Change"""),
+    'lino.modlib.chat.Plugin' : _("""See lino.core.plugin.Plugin."""),
+    'lino.modlib.chat.Plugin.get_head_lines' : _("""Adds a JS constant to let react know we want to include WS chat info"""),
     'lino.modlib.checkdata.Plugin' : _("""The config descriptor for this plugin."""),
     'lino.modlib.checkdata.Plugin.responsible_user' : _("""The username
 of the main checkdata responsible, i.e. a designated

@@ -210,13 +210,6 @@ class CommentsByX(Comments):
     def get_table_summary(cls, obj, ar):
         sar = cls.request_from(ar, master_instance=obj, is_on_main_actor=False)
         elems = []
-        n = 0
-        for com in sar.data_iterator:
-            n += 1
-            if n > cls.preview_limit:
-                elems.append(E.p("..."))
-                break
-            elems.append(E.p(*cls.summary_row(sar, com)))
 
         if cls.insert_action is not None:
             ir = cls.insert_action.request_from(sar)
@@ -231,6 +224,15 @@ class CommentsByX(Comments):
                         None, emo.button_text or emo.text, icon_name=None,
                         title=str(emo.text)))
                 elems.append(E.p(*chunks))
+
+        n = 0
+        for com in sar.data_iterator:
+            n += 1
+            if n > cls.preview_limit:
+                elems.append(E.p("..."))
+                break
+            elems.append(E.p(*cls.summary_row(sar, com)))
+
         return E.div(*elems)
 
     @classmethod
