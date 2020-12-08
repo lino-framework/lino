@@ -16,13 +16,6 @@ System plugins
     gfks
     memo
     system
-
-Utilities
-=========
-
-.. autosummary::
-   :toctree:
-
     jinja
     checkdata
     printing
@@ -37,8 +30,8 @@ Front ends
     bootstrap3
     extjs
 
-"Options"
-=========
+Optional features
+=================
 
 .. autosummary::
    :toctree:
@@ -46,20 +39,28 @@ Front ends
     about
     export_excel
     tinymce
-    notify
     restful
-    changes
     wkhtmltopdf
     weasyprint
     dashboard
 
-"Enterprise Resources"
-======================
+Communication
+=============
 
 .. autosummary::
    :toctree:
 
     comments
+    notify
+    changes
+    chat
+
+Enterprise Resources
+====================
+
+.. autosummary::
+   :toctree:
+
     importfilters
     languages
     office

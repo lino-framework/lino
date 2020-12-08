@@ -1,9 +1,14 @@
 # Copyright 2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-"""Adds functionality for instant messageing through websockets.
+"""Adds functionality for instant messaging through websockets.
 
-See :doc:`/specs/chat`.
+This plugin is a proof of concept with surprising results, but it is in standby
+mode now.  It is underdocumented and not covered by any tests. We have abandoned
+our dream of writing an instant messenger client in Lino. We rather hope that
+sooner or later some free IM client will emerge, and that Lino would rather
+integrate with it than replace it.
+
 
 """
 
@@ -24,8 +29,7 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("Chat")
 
-    needs_plugins = ['lino.modlib.notify','lino_xl.lib.groups']
-    #extends_models = ['Group']
+    needs_plugins = ['lino.modlib.notify', 'lino_xl.lib.groups']
 
     media_name = 'js'
 
