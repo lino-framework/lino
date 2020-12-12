@@ -1,10 +1,8 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2018 Rumma & Ko Ltd
+# Copyright 2013-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """Defines the :class:`MediaFile` class.
 """
-from builtins import str
-from builtins import object
 
 from os.path import join
 
@@ -20,7 +18,7 @@ class MediaFile(object):
     """
     Represents a file on the server below :setting:`MEDIA_ROOT` with
     two properties :attr:`name` and :attr:`url`.
-   
+
     It also takes into consideration the settings
     :attr:`webdav_root <lino.core.site.Site.webdav_root>`
     :attr:`webdav_protocol <lino.core.site.Site.webdav_protocol>`
@@ -51,7 +49,7 @@ class MediaFile(object):
             if settings.SITE.webdav_protocol:
                 url = settings.SITE.webdav_protocol + "://" + url
             return url
-            
+
         return settings.SITE.build_media_url(*self.parts)
 
 
