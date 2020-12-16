@@ -2,7 +2,6 @@
 # Copyright 2013-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-
 from django.db import models
 from django.db.models import Q
 from django.core import validators
@@ -21,12 +20,12 @@ from lino.modlib.memo.mixins import Previewable
 from lino.modlib.publisher.mixins import Publishable
 from .choicelists import CommentEvents, Emotions
 from .mixins import Commentable
+from .fields import MyEmotionField
 # from .choicelists import PublishAllComments, PublishComment
-
-
 
 if dd.is_installed("inbox"):
     from lino_xl.lib.inbox.models import comment_email
+
 
 class CommentType(BabelNamed):
     class Meta(object):
@@ -55,11 +54,19 @@ class Comment(CreatedModified, UserAuthored, Controllable,
         _("Private"), default=dd.plugins.comments.private_default)
 
     comment_type = dd.ForeignKey('comments.CommentType', blank=True, null=True)
-    emotion = Emotions.field(default="ok")
     # reply_vote = models.BooleanField(_("Upvote"), null=True, blank=True)
     # reply_vote = models.SmallIntegerField(_("Vote"), default=0,
     #     validators=[validators.MinValueValidator(-1),
     #         validators.MaxValueValidator(1)])
+
+    my_emotion = MyEmotionField()
+
+    def get_my_emotion(self, ar):
+        if ar is None:
+            return
+        mr = rt.models.comments.Reaction.objects.filter(user=ar.get_user(), comment=self).first()
+        if mr:
+            return mr.emotion
 
     def __str__(self):
         return '{} #{}'.format(self._meta.verbose_name, self.pk)
@@ -203,9 +210,10 @@ class Comment(CreatedModified, UserAuthored, Controllable,
     # def summary_row(o, ar):
 
 
+
 dd.update_field(Comment, 'user', editable=False)
 Comment.update_controller_field(verbose_name=_('Topic'))
-# Comment.add_picker('emotion')
+Comment.add_picker('my_emotion')
 
 class Mention(CreatedModified, Controllable, UserAuthored):
 
@@ -216,5 +224,20 @@ class Mention(CreatedModified, Controllable, UserAuthored):
         verbose_name_plural = _("Mentions")
 
     comment = dd.ForeignKey('comments.Comment', blank=True, null=True)
+
+
+class Reaction(CreatedModified, UserAuthored, DateRangeObservable):
+
+    class Meta(object):
+        app_label = 'comments'
+        abstract = dd.is_abstract_model(__name__, 'Reaction')
+        verbose_name = _("Reaction")
+        verbose_name_plural = _("Reactions")
+
+    allow_cascaded_delete = 'user comment'
+
+    comment = dd.ForeignKey('comments.Comment', related_name="reactions_to_this")
+    emotion = Emotions.field(default="ok")
+
 
 from .ui import *

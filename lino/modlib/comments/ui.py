@@ -18,6 +18,7 @@ from lino.core.utils import qs2summary
 from lino.core.gfks import gfk2lookup
 from .roles import CommentsReader, CommentsUser, CommentsStaff
 from .choicelists import CommentEvents, Emotions
+from .fields import MyEmotionField
 
 
 class CommentTypes(dd.Table):
@@ -45,8 +46,8 @@ class CommentDetail(dd.DetailLayout):
     """, label=_("General"))
 
     general1 = """
-    owner reply_to
-    emotion private
+    owner private
+    reply_to pick_my_emotion
     full_preview
     """
     # general2 = """
@@ -75,7 +76,7 @@ class Comments(dd.Table):
     reply_to owner owner_type owner_id
     # comment_type
     body
-    emotion private
+    private
     """, window_size=(60, 15), hidden_elements="reply_to owner owner_type owner_id")
 
     detail_layout = "comments.CommentDetail"
@@ -203,7 +204,10 @@ class CommentsByX(Comments):
     @classmethod
     def get_request_queryset(cls, ar, **filter):
         qs = super(CommentsByX, cls).get_request_queryset(ar, **filter)
-        return qs.annotate(num_replies=models.Count('replies_to_this'))
+        qs = qs.annotate(num_replies=models.Count('replies_to_this'))
+        qs = qs.annotate(num_reactions=models.Count('reactions_to_this'))
+        # qs = qs.annotate(my_emotion='reaction__emotion')
+        return qs
 
 
     @classmethod
@@ -212,18 +216,33 @@ class CommentsByX(Comments):
         elems = []
 
         if cls.insert_action is not None:
+
             ir = cls.insert_action.request_from(sar)
+            # print(20170217, sar)
+            # sar.known_values = dict(
+            #     reply_to=comment, **gfk2lookup(
+            #         comment.__class__.owner, comment.owner))
+            # if ar.get_user().is_authenticated:
             if ir.get_permission():
-                chunks = [gettext("Write new comment:"), " "]
-                for i, emo in enumerate(Emotions.get_list_items()):
-                    if i:
-                        chunks.append(" | ")
-                    ir.known_values.update(emotion=emo)
-                    ir.clear_cached_status()
-                    chunks.append(ir.ar2button(
-                        None, emo.button_text or emo.text, icon_name=None,
-                        title=str(emo.text)))
-                elems.append(E.p(*chunks))
+                # ir.known_values.update(emotion=emo)
+                ir.known_values.update(reply_to=obj)
+                # **gfk2lookup(obj.__class__.owner, obj.owner)
+                ir.clear_cached_status()
+                btn = ir.ar2button(None, _(" Reply "), icon_name=None)
+                # btn.set("style", "padding-left:10px")
+                elems += [" [", btn, "]"]
+
+            # if ir.get_permission():
+            #     chunks = [gettext("Write new comment:"), " "]
+            #     for i, emo in enumerate(Emotions.get_list_items()):
+            #         if i:
+            #             chunks.append(" | ")
+            #         ir.known_values.update(emotion=emo)
+            #         ir.clear_cached_status()
+            #         chunks.append(ir.ar2button(
+            #             None, emo.button_text or emo.text, icon_name=None,
+            #             title=str(emo.text)))
+            #     elems.append(E.p(*chunks))
 
         n = 0
         for com in sar.data_iterator:
@@ -237,21 +256,43 @@ class CommentsByX(Comments):
 
     @classmethod
     def summary_row(cls, ar, o, **kw):
-        # adds count replies
+
+        # Here we do another db request on each comment just to get the user's
+        # emotion. That's  suboptimal and should rather be a annotation:
+
+        if o.num_reactions:
+            # my_emotion = MyEmotionField.value_from_object(o, ar)
+
+            e = o.get_my_emotion(ar)
+            if e is not None:
+                yield " {} ".format(e.button_text or e.text)
+            # else:
+            #     yield " foo "
+
+        # Reaction = rt.models.comments.Reaction
+        # qs = Reaction.objects.filter(comment=o)
+        # c = qs.count()
+        # if c:
+        #     my_reaction = qs.filter(user=ar.get_user()).first()
+        #     if my_reaction and my_reaction.emotion:
+
+        #
         if o.modified is None or (o.modified - o.created).total_seconds() < 1:
             t = _("Created " + o.created.strftime('%Y-%m-%d %H:%M') )
         else:
             t = _("Modified " + o.modified.strftime('%Y-%m-%d %H:%M') )
 
-        if o.emotion.button_text:
-            yield o.emotion.button_text
-            yield " "
+        # if o.emotion.button_text:
+        #     yield o.emotion.button_text
+        #     yield " "
 
         yield ar.obj2html(o, naturaltime(o.created), title=t)
         yield " {} ".format(_("by"))
         by = o.user.username
         yield E.b(by)
 
+
+        # Show `reply_to` and `owner` unless they are obvious.
         # When `reply_to` is obvious, then `owner` is "obviously obvious" even
         # though that might not be said explicitly.
         if not ar.is_obvious_field('reply_to'):
@@ -265,10 +306,16 @@ class CommentsByX(Comments):
                     group = o.owner.get_comment_group()
                     if group and group.ref:
                          yield "@" + group.ref
-        replies  = o.__class__.objects.filter(reply_to=o)
+
+        if o.num_reactions:
+            txt = ngettext("{} reaction", "{} reactions", o.num_reactions).format(o.num_reactions)
+            yield " ({})".format(txt)
+
+        # replies  = o.__class__.objects.filter(reply_to=o)
         if o.num_replies > 0:
             txt = ngettext("{} reply", "{} replies", o.num_replies).format(o.num_replies)
             yield " ({})".format(txt)
+
         if o.short_preview:
             yield " : "
             try:
@@ -314,7 +361,7 @@ class CommentsByRFC(CommentsByX):
     # display_mode = "list"
     simple_slavegrid_header = True
     insert_layout = dd.InsertLayout("""
-    reply_to emotion
+    reply_to
     # comment_type
     body
     private
@@ -418,3 +465,10 @@ class Mentions(dd.Table):
 
 class MentionsByOwner(Mentions):
     master_key = "owner"
+
+
+class Reactions(dd.Table):
+    required_roles = dd.login_required(CommentsStaff)
+    editable = False
+    model = "comments.Reaction"
+    column_names = "comment user emotion created *"

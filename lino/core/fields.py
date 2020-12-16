@@ -609,12 +609,12 @@ class VirtualField(FakeField):
     #~ def get_choices(self): return self.return_type.choices
     #~ choices = property(get_choices)
 
-    def set_value_in_object(self, request, obj, value):
+    def set_value_in_object(self, ar, obj, value):
         """
         Stores the specified `value` in the specified model instance
         `obj`.  `request` may be `None`.
 
-        Note that any implementation must also return `obj`, and
+        Note that any implementation must return `obj`, and
         callers must be ready to get another instance.  This special
         behaviour is needed to implement
         :class:`lino.utils.mti.EnableChild`.
@@ -624,7 +624,6 @@ class VirtualField(FakeField):
         #     raise NotImplementedError("Cannot write %s to field %s" %
         #                               (value, self))
 
-    #~ def value_from_object(self,request,obj):
     def value_from_object(self, obj, ar=None):
         """
         Return the value of this field in the specified model instance

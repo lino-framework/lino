@@ -43,6 +43,7 @@ class Plugin(ad.Plugin):
         m = m.add_menu(mg.app_label, mg.verbose_name)
         m.add_action('comments.AllComments')
         m.add_action('comments.Mentions')
+        m.add_action('comments.Reactions')
 
     def get_dashboard_items(self, user):
         # if self.user_must_publish:

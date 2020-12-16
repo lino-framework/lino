@@ -1072,7 +1072,10 @@ class Model(models.Model, fields.TableRow):
             def run_from_ui(self, ar, **kw):
                 obj = ar.selected_rows[0]
                 pv = ar.action_param_values
-                setattr(obj, fld.attname, pv.choice)
+                if isinstance(fld, fields.VirtualField):
+                    fld.set_value_in_object(ar, obj, pv.choice)
+                else:
+                    setattr(obj, fld.attname, pv.choice)
                 obj.full_clean()
                 obj.save()
                 ar.success(refresh=True)
@@ -1086,19 +1089,21 @@ class Model(models.Model, fields.TableRow):
         def pick_choice(self, ar):
             if ar is None:
                 return fld.value_from_object(self)
+            # ▶: U+25B6, ◀: U+25C0
+            selected_tpl = "▶{}◀"
             elems = []
             ba = ar.actor.get_action_by_name(action_name)
             for v in cls.get_list_items():
                 kw = dict(action_param_values=dict(choice=v))
                 label = str(v.button_text or v.text)
-                if fld.value_from_object(self) == v:
-                    elems.append(E.b(label))
+                if fld.value_from_object(self, ar) == v:
+                    elems.append(E.b(selected_tpl.format(label)))
                 else:
                     if fldname in ar.actor.get_disabled_fields(self, ar):
                         pass  # elems.append(label)
                     else:
                         elems.append(ar.action_button(
-                            ba, self, label=label, request_kwargs=kw))
+                            ba, self, label=label, request_kwargs=kw, title=v.text))
             return E.p(*join_elems(elems, sep=" | "))
 
         setattr(model, vfield_name, pick_choice)
