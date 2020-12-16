@@ -215,7 +215,8 @@ class CommentsByX(Comments):
         sar = cls.request_from(ar, master_instance=obj, is_on_main_actor=False)
         elems = []
 
-        if cls.insert_action is not None:
+
+        if cls.insert_action is not None and isinstance(obj, cls.model):
 
             ir = cls.insert_action.request_from(sar)
             # print(20170217, sar)
