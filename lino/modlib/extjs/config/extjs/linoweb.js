@@ -419,8 +419,8 @@ Lino.MainPanel = {
   }
   ,get_permalink : function() {
     var p = Ext.apply({}, this.get_base_params());
-    delete p.fmt;
-    delete p.lv;
+    delete p.{{constants.URL_PARAM_FORMAT}};
+    delete p.{{constants.URL_PARAM_LINO_VERSION}};
     Ext.apply(p, this.get_permalink_params());
 
     if (this.toggle_params_panel_btn) {

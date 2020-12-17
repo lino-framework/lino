@@ -60,7 +60,7 @@ def codetime(*args, **kw):
             # print 20130204, filename, time.ctime(mtime)
             code_mtime = mtime
             pivot = filename
-    # print '20130204 codetime:', time.ctime(code_mtime), pivot
+    # print('20130204 codetime:', args, time.ctime(code_mtime), pivot)
     return code_mtime
 
 
@@ -124,10 +124,10 @@ class SourceFile(object):
 def analyze_rst(*packages):
     """
     Example:
-    
+
     >>> from lino.utils.code import analyze_rst
     >>> print analyze_rst('lino')
-      
+
     """
     fields = 'count_code count_doc count_comment count_total'.split()
     headers = ["name", "code lines", "doc lines",

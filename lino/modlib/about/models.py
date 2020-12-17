@@ -7,6 +7,7 @@ import datetime
 
 # from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as gettext
 from django.conf import settings
 
 
@@ -20,6 +21,17 @@ from etgen.html import E
 from lino.api import rt, dd
 from .roles import SiteSearcher
 from .choicelists import TimeZones
+
+def dtfmt(dt):
+    if isinstance(dt, float):
+        # assert dt
+        dt = datetime.datetime.fromtimestamp(dt)
+        # raise ValueError("Expected float, go %r" % dt)
+    return gettext("%(date)s at %(time)s") % dict(
+        date=dd.fds(dt.date()),
+        time=settings.SITE.strftime(dt.time()))
+
+
 
 class SiteSearch(dd.VirtualTable):
     required_roles = dd.login_required(SiteSearcher)
@@ -139,22 +151,13 @@ class About(EmptyTable):
                 lng.django_code for lng in settings.SITE.languages])))
 
         # print "20121112 startup_time", settings.SITE.startup_time.date()
-        def dtfmt(dt):
-            if isinstance(dt, float):
-                dt = datetime.datetime.fromtimestamp(dt)
-                # raise ValueError("Expected float, go %r" % dt)
-            return str(_("%(date)s at %(time)s")) % dict(
-                date=dd.fds(dt.date()),
-                time=settings.SITE.strftime(dt.time()))
-
-        value = settings.SITE.startup_time
-        label = _("Server uptime")
-        body.append(E.p(
-            str(label), ' : ', E.b(dtfmt(value)),
-            ' ({})'.format(settings.TIME_ZONE)))
+        # showing startup time here makes no sense as this is a constant text
+        # body.append(E.p(
+        #     gettext("Server uptime"), ' : ',
+        #     E.b(dtfmt(settings.SITE.startup_time)),
+        #     ' ({})'.format(settings.TIME_ZONE)))
         if settings.SITE.is_demo_site:
-            s = str(_("This is a Lino demo site."))
-            body.append(E.p(s))
+            body.append(E.p(gettext(_("This is a Lino demo site."))))
         if settings.SITE.the_demo_date:
             s = _("We are running with simulated date set to {0}.").format(
                 dd.fdf(settings.SITE.the_demo_date))
@@ -163,7 +166,11 @@ class About(EmptyTable):
         body.append(E.p(str(_("Source timestamps:"))))
         items = []
         times = []
-        packages = set(['lino', 'django', 'atelier'])
+        packages = set(['django'])
+
+        items.append(E.li(gettext("Server timestamp"), ' : ',
+            E.b(dtfmt(settings.SITE.kernel.code_mtime))))
+
         for p in settings.SITE.installed_plugins:
             packages.add(p.app_name.split('.')[0])
         for src in packages:
