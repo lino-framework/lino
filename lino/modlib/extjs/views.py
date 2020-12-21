@@ -363,6 +363,7 @@ class ApiElement(View):
 
     @method_decorator(ensure_csrf_cookie)
     def get(self, request, app_label=None, actor=None, pk=None):
+        # this is also used by the react front end
         ui = settings.SITE.kernel
         rpt = requested_actor(app_label, actor)
         # if not rpt.get_view_permission(request.user.user_type):
@@ -387,13 +388,22 @@ class ApiElement(View):
             # print(
             #     "20170116 views.ApiElement.get", ba,
             #     ar.action_param_values)
-            elem = ar.selected_rows[0]
+            if len(ar.selected_rows):
+                elem = ar.selected_rows[0]
+            else:
+                raise http.Http404("No permission to see {} {}.".format(rpt, action_name))
         else:
             ar = ba.request(request=request)
             elem = None
 
-        ar.renderer = ui.extjs_renderer
+        # ar.renderer = ui.extjs_renderer
+        ar.renderer = ui.default_renderer
         ah = ar.ah
+
+        if not ar.get_permission():
+            msg = "No permission to run {}".format(ar)
+            # raise Exception(msg)
+            raise PermissionDenied(msg)
 
         fmt = request.GET.get(
             constants.URL_PARAM_FORMAT, ba.action.default_format)
@@ -421,9 +431,9 @@ class ApiElement(View):
                 after_show.update(active_tab=tab)
 
             return http.HttpResponse(
-                ui.extjs_renderer.html_page(
+                ar.renderer.html_page(
                     request, ba.action.label,
-                    on_ready=ui.extjs_renderer.action_call(
+                    on_ready=ar.renderer.action_call(
                         request, ba, after_show)))
 
         # if isinstance(ba.action, actions.RedirectAction):
