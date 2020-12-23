@@ -308,7 +308,7 @@ class CallableChoice(object):
         self.name = name
     def __call__(self, *args, **kwargs):
         return self.ChoiceList.get_by_name(self.name)
-        return self.callfn(*args, **kwargs)
+        # return self.callfn(*args, **kwargs)
 
 class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
 
@@ -424,7 +424,7 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
     hidden_columns = frozenset(['workflow_buttons'])
 
     column_names = 'value name text *'
-    
+
     button_text = models.CharField(_("Button text"), blank=True)
 
     old2new = {}
@@ -767,8 +767,8 @@ class ChoiceList(with_metaclass(ChoiceListMeta, tables.AbstractTable)):
 
     @classmethod
     def find(cls, **fkw):
-        """Find and return the choice which satisfies the given search
-        criteria.  Return None if no choice is found or if more than
+        """Find and return the choice that satisfies the given search
+        criteria.  Return `None` if no choice is found or if more than
         one choice is found.
 
         """

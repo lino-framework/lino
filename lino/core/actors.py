@@ -65,6 +65,19 @@ def discover():
 
 
 def register_actor(a):
+    """
+
+    Internally called during startup process to insert a
+    actor class in the global actors_list and actors_dict.
+
+    Special attention is given to the case when a plugin extends another plugin
+    and redefines an actor of same name.  In that case we want the ordering to
+    remain as it was from the beginning. Actor overrides are not appended to the
+    end but replaced, in order to not disturb the finding of
+    `_lino_default_table`.
+
+
+    """
     #~ logger.debug("register_actor %s",a)
     if not a.abstract:
         if not settings.SITE.is_installed(a.app_label):
@@ -73,8 +86,11 @@ def register_actor(a):
             return
     old = actors_dict.define(a.app_label, a.__name__, a)
     if old is not None:
-        actors_list.remove(old)
-    actors_list.append(a)
+        i = actors_list.index(old)
+        actors_list[i] = a
+        # actors_list.remove(old)
+    else:
+        actors_list.append(a)
     return a
 
 

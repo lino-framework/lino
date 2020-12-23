@@ -199,7 +199,7 @@ class Kernel(object):
             m = '.'.join(app_name_model.split('.')[-2:])
             resolve_model(
                 m,
-                strict="{!r} tries to extend unresolved model '%s'".format(
+                strict="{!r} declares to extend unresolved model '%s'".format(
                     p.__module__))
                 # strict="%s plugin tries to extend unresolved model '%%s'" %
                 # p.__class__.__module__)
@@ -265,7 +265,7 @@ class Kernel(object):
 
         site.load_actors()
 
-        # raise Exception("20190102 {!r}".format(site.models.courses.CoursesByLine.detail_link))
+        # raise Exception("20190102 {!r}".format(site.models.courses.ActivitiesByLine.detail_link))
 
         # vip_classes = (layouts.BaseLayout, fields.Dummy)
         # for a in models.get_apps():
@@ -999,10 +999,7 @@ def site_startup(self):
 
         # logger.info("20150428 user_interfaces %s", self.user_interfaces)
 
-        # from lino.core.kernel import Kernel
         self.kernel = Kernel(self)
-        # self.kernel.kernel_startup(self)
-        # self.ui = self.kernel  # internal backwards compat
 
         self.do_site_startup()
 
@@ -1141,8 +1138,6 @@ def register_choicelist(cl):
         # logger.warning("ChoiceList name '%s' already defined by %s",
         #                k, CHOICELISTS[k])
     CHOICELISTS[k] = cl
-
-
 
 def register_model_table(rpt):
     # logger.debug("20120103 register_report %s", rpt.actor_id)

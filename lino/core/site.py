@@ -2336,7 +2336,7 @@ class Site(object):
         `app_label`. For example, the following might work but is not
         recommended::
 
-                kw.update(courses='my.modlib.mycourses')
+                kw.update(courses='my.modlib.MyActivities')
 
         """
 

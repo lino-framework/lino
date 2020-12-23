@@ -1143,8 +1143,8 @@ class TableRow(object):
         <lino.core.menus.Menu.add_instance_action>`.
 
         Usage example: :class:`courses.Course
-        <lino_xl.lib.courses.models.Course>` overrides this to return
-        the detail_action depending on the CourseArea.
+        <lino_xl.lib.courses.Course>` overrides this to return
+        the detail_action depending on the ActivityLayout.
 
         """
         a = getattr(self, '_detail_action', None)
