@@ -862,22 +862,36 @@ def db2param(spec):
 
 
 def traverse_ddh_fklist(model, ignore_mti_parents=True):
-    """When an application uses MTI (e.g. with a Participant model being a
+    """
+    Return an iterator over each foreign key (in other models) that points to
+    this model.  Used e.g. to predict the related objects that are going to be
+    deleted in cascade when a database object is being deleted.
+
+    When an application uses MTI (e.g. with a Participant model being a
     specialization of Person, which itself a specialization of
     Partner) and we merge two Participants, then we must of course
     also merge their invoices and bank statement items (linked via a
     FK to Partner) and their contact roles (linked via a FK to
     Person).
 
+    See also :ticket:`3891` (Lino says there are 2 related adresses when there
+    is only one).
+
     """
+    found = set()
     for base in model.mro():
         ddh = getattr(base, '_lino_ddh', None)
         if ddh is not None:
-            for (m, fk) in ddh.fklist:
+            for k in ddh.fklist:
+                # k is a tuple (m, fk)
+                (m, fk) = k
                 if ignore_mti_parents and isinstance(fk, models.OneToOneField):
                     pass
                     # logger.info("20160621 ignore OneToOneField %s", fk)
+                elif k in found:
+                    pass
                 else:
                     # logger.info("20160621 yield %s (%s)",
                     #             fk, fk.__class__)
-                    yield (m, fk)
+                    found.add(k)
+                    yield k

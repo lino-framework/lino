@@ -1235,12 +1235,13 @@ class DeleteSelected(MultipleRowAction):
         cascaded_objects = {}
         kernel = settings.SITE.kernel
         for obj in ar.selected_rows:
+            # print(20201229, "selected:", obj)
             for m, fk in traverse_ddh_fklist(obj.__class__):
-                # print(20200724, fk)
                 if fk.name in m.allow_cascaded_delete:
                     qs = m.objects.filter(**{fk.name:obj})
                     n = qs.count()
                     if n:
+                        # print(20201229, n, fk, m, qs)
                         if m in cascaded_objects:
                             cascaded_objects[m] += n
                         else:

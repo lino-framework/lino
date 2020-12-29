@@ -32,7 +32,8 @@ def javascript(url):
 class Plugin(ad.Plugin):
     "See :doc:`/dev/plugins`."
 
-    needs_plugins = ['lino.modlib.office', 'lino.modlib.extjs']
+    needs_plugins = ['lino.modlib.office']
+    # needs_plugins = ['lino.modlib.office', 'lino.modlib.extjs']
 
     site_js_snippets = ['tinymce/tinymce.js']
 
@@ -134,5 +135,3 @@ class Plugin(ad.Plugin):
             mg = site.plugins.office
             m = m.add_menu(mg.app_label, mg.verbose_name)
             m.add_action('tinymce.TextFieldTemplates')
-
-
