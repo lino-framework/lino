@@ -1,4 +1,4 @@
-# Copyright 2012-2015 Rumma & Ko Ltd
+# Copyright 2012-2020 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Defines a Loader which is automatically installed to
@@ -6,20 +6,9 @@
 
 """
 
-from __future__ import unicode_literals
-from __future__ import print_function
-from builtins import object
-
-import logging
-logger = logging.getLogger(__name__)
-
 from jinja2.exceptions import TemplateNotFound
-
-
 from django.conf import settings
-# from django.utils.translation import ugettext_lazy as _
 from django.template.loaders.base import Loader as BaseLoader
-
 from django.template import TemplateDoesNotExist
 
 from lino.core import requests
@@ -65,4 +54,3 @@ class Loader(BaseLoader):
             raise TemplateDoesNotExist(template_name)
         template = DjangoJinjaTemplate(jt)
         return template, None
-
