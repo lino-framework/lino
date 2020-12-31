@@ -1148,6 +1148,7 @@ class TableRow(object):
 
         """
         a = getattr(self, '_detail_action', None)
+        # print("20201230 get_detail_action", ar.actor, ar.actor.model, self.__class__)
         if a is None:
             if ar and ar.actor and ar.actor.model \
                and self.__class__ is ar.actor.model:

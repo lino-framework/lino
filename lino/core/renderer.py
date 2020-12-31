@@ -217,7 +217,6 @@ class HtmlRenderer(Renderer):
         """
         if ba is None:
             ba = obj.get_detail_action(ar)
-        # print(20180831, ar.actor)
         # ba = obj.__class__.get_default_table().detail_action
         # print(20180831, ba.get_view_permission(ar.get_user().user_type))
         if ba is not None:
@@ -810,10 +809,12 @@ class JsRenderer(HtmlRenderer):
         <lino.core.model.Model.get_detail_action>`.
 
         """
+        # print("20201230a goto_instance", ar.actor, detail_action)
         if ar.actor is not None:
             da = detail_action or obj.get_detail_action(ar)
             if da is None:
                 return
+            # print("20201230b goto_instance", da.actor, ar.actor)
             if da.actor == ar.actor:
                 ar.set_response(detail_handler_name=da.full_name())
                 if ar.actor.handle_uploaded_files is not None:
@@ -825,6 +826,7 @@ class JsRenderer(HtmlRenderer):
         js = self.instance_handler(ar, obj, detail_action)
         kw.update(eval_js=js)
         ar.set_response(**kw)
+        # print("20201230c", ar.actor, js)
 
     def js2url(self, js):
         if not js:

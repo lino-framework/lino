@@ -1092,6 +1092,7 @@ class SubmitInsert(CreateRow):
         # is going to be closed (this disturbs at least in ticket
         # #219)
         ar.requesting_panel = None
+        # print("20201230 SubmitInsert.run_from_ui", ar)
         if ar.actor.handle_uploaded_files is not None and len(ar.request.FILES.getlist("file")) > 1:
             # Multiple uploads possible, note plural method names.
             elems = ar.create_instances_from_request(**kwargs)
