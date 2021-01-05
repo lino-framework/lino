@@ -1,22 +1,6 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2017-2020 Rumma & Ko Ltd
+# Copyright 2017-2021 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
-
-"""
-.. management_command:: qtclient
-
-Runs a Qt client for this application.
-
-To see it in action, install a  `Lino contributor environment
-<lino.dev.install>`__, manually install `PyQt5
-<https://en.wikipedia.org/wiki/PyQt>`__ and then run it in any of the Lino demo
-projects. For example::
-
-    $ pip install pyqt5
-    $ go min2
-    $ python manage.py qtclient
-
-"""
 
 from django.core.management.base import BaseCommand
 from django.conf import settings
@@ -166,7 +150,7 @@ class LinoClient(QMainWindow):
 
 
 class Command(BaseCommand):
-    help = __doc__
+    help = """Run a Qt client for this site."""
 
     def handle(self, *args, **options):
 

@@ -1,52 +1,6 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2019 Rumma & Ko Ltd.
+# Copyright 2009-2021 Rumma & Ko Ltd.
 # License: BSD, see LICENSE for more details.
-
-"""
-See the page about :manage:`initdb` in the Developer's Guide.
-
-
-The command performs three actions in one:
-
-- it flushes the database specified in your :xfile:`settings.py`,
-  i.e. issues a ``DROP TABLE`` for every table used by your application.
-
-- it runs Django's :manage:`migrate` command to re-create all tables,
-
-- it runs Django's :manage:`loaddata` command to load the specified
-  fixtures.
-
-
-This also adds a `warning filter
-<https://docs.python.org/2/library/warnings.html#warning-filter>`__ to
-ignore Django's warnings about empty fixtures. (See
-:djangoticket:`18213`).
-
-This reimplements a simplified version of Django's `reset` command,
-without the possibility of deleting *only some* data (the thing which
-caused so big problems that Django 1.3. decided to `deprecate this
-command <https://docs.djangoproject.com/en/3.1/releases/1.3\
-/#reset-and-sqlreset-management-commands>`__.
-
-Deleting all data and table definitions from a database is not always
-trivial. It is not tested on PostgreSQL. In MySQL we use a somewhat
-hackerish and MySQL-specific DROP DATABASE and CREATE DATABASE because
-even with `constraint_checks_disabled` we had sporadic errors. See
-:blogref:`20150328`
-
-Note that Lino does not use Django's migration framework, so
-:manage:`initdb` runs Django's `migrate` command with the
-`--run-syncdb
-<https://docs.djangoproject.com/en/1.11/ref/django-admin/#django-admin-option---run-syncdb>`_
-option which "allows creating tables for apps without
-migrations".
-The Django docs add that "While this isn’t recommended, the
-migrations framework is sometimes too slow on large projects with
-hundreds of models."  Yes, we go the way which is not recommended.
-
-"""
-
-from __future__ import unicode_literals
 
 import os
 

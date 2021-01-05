@@ -1,11 +1,7 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012 Luc Saffre
+# Copyright 2012-2021 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-"""
-Writes a status report about this Site.
-Used to monitor a production database.
-"""
 # from future import standard_library
 # standard_library.install_aliases()
 
@@ -75,7 +71,7 @@ def compare(old, new):
 
 
 class Command(BaseCommand):
-    help = __doc__
+    help = "Experimental work. Don't use this."
 
     def add_arguments(self, parser):
         parser.add_argument(

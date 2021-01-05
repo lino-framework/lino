@@ -1,12 +1,6 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2016 Luc Saffre
+# Copyright 2013-2021 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
-
-""".. management_command:: show
-
-Show the content of a specified table to standard output.
-
-"""
 
 import argparse
 
@@ -15,7 +9,7 @@ from django.core.management.base import BaseCommand, CommandError
 
 
 class Command(BaseCommand):
-    # help = __doc__
+    help = "Show the content of a specified table to standard output."
     # args = "action_spec [options] [args ...]"
 
     def add_arguments(self, parser):
@@ -25,11 +19,8 @@ class Command(BaseCommand):
         parser.add_argument('-l', '--language', action='store', dest='language',
                             help="The language to use. "
                                  "Default is the site's default language.")
-        parser.add_argument('action_spec', 
+        parser.add_argument('action_spec',
                             help='The table to show.')
-
-        parser.description = "Show the content of a specified table to standard output."
-        
 
     def handle(self, *args, **options):
         if True:  # Django 1.10

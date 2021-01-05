@@ -1,18 +1,6 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2020 Rumma & Ko Ltd
+# Copyright 2013-2021 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
-
-"""
-
-.. management_command:: initdb_demo
-.. management_command:: prep
-
-Calls :manage:`initdb` using the application's
-:attr:`lino.core.site.Site.demo_fixtures`.
-
-Introduction see :ref:`lino.tutorial.hello`.
-
-"""
 
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
@@ -21,8 +9,7 @@ from lino.management.commands.initdb import CommandError
 
 
 class Command(BaseCommand):
-    """Flushes the database and loads the default demo fixtures.
-    """
+    help = "Flush the database and load the default demo fixtures."
 
     def handle(self, *args, **options):
         fixtures = options.get('fixtures', args)

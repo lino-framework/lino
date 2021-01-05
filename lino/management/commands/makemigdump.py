@@ -1,19 +1,6 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2018 Rumma & Ko Ltd
+# Copyright 2018-2021 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
-
-"""
-.. management_command:: makemigdump
-
-Create a dump for migration tests.
-
-Calls :manage:`dump2py` to create python dump in a
-`tests/dumps/<version>` directory
-
-
-See :doc:`/dev/migtests`
-"""
-import six
 
 from django.conf import settings
 from django.db import DEFAULT_DB_ALIAS
@@ -32,9 +19,9 @@ class Command(BaseCommand):
           # skip if the project has no  :xfile:`test_restore.py` file.
           # dumpdir = "tests/dumps/" + version
           # python manage.py dump2py dumpdir
-          # error if 
+          # error if
 
-        
+
         fixtures = options.get('fixtures', args)
         if len(fixtures) > 0:
             raise CommandError(
@@ -47,7 +34,7 @@ class Command(BaseCommand):
             return
 
         args = settings.SITE.demo_fixtures
-        if isinstance(args, six.string_types):
+        if isinstance(args, str):
             args = args.split()
         options['fixtures'] = args
         # super(Command, self).handle(*args, **options)

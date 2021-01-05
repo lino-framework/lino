@@ -1,14 +1,6 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2016-2019 Rumma & Ko Ltd
+# Copyright 2016-2021 Rumma & Ko Ltd
 # License: BSD, see file LICENSE for more details.
-
-"""This defines the :manage:`linod` management command.
-
-Usage and instllation see :ref:`admin.linod`
-
-"""
-
-from __future__ import print_function
 
 import time
 from django.conf import settings
@@ -26,6 +18,7 @@ from lino.api import dd
 
 
 class Command(BaseCommand):
+    help = """Run a Lino daemon for this site."""
 
     def add_arguments(self, parser):
         super(Command, self).add_arguments(parser)

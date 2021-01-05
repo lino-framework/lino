@@ -15,9 +15,6 @@ file."""),
     'lino.api.selenium.Album.stabilize' : _("""Wait until the screen has become stable.  This measn that the
 browser has processed all Javascript, including ExtJS.onReady,
 that all AJAX requests have finised."""),
-    'lino.management.commands.initdb.Command' : _("""Flush the database and load the specified fixtures."""),
-    'lino.management.commands.makemigdump.Command' : _("""Create a dump for migration tests."""),
-    'lino.management.commands.prep.Command' : _("""Flushes the database and loads the default demo fixtures."""),
     'lino.Contactable' : _("""Mixin for models that represent somebody who can be contacted by
 email."""),
     'lino.Contactable.get_as_user' : _("""Return the user object representing this contactable."""),

@@ -2,31 +2,6 @@
 # Copyright 2014 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-""".. management_command:: mergedata
-
-Takes the full name of a python module as argument. It then imports
-this module and expects it to define a function `objects` in its
-global namespace. It calls this function and expects it to yield a
-series of Django instance objects which have not yet been saved. It
-then compares these objects with the "corresponding data" in the
-database and prints a summary to stdout. It then suggests to merge the
-new data into the database.
-
-- It never *deletes* any stored records.
-- All incoming objects either replace an existing (stored) object, or
-  will be added to the database.
-- If an incoming object has a non-empty primary key, then it replaces
-  the corresponding stored object. Otherwise, if the model has
-  `unique` fields, then these cause potential replacement.
-
-Currently the command is only partly implemented, it doesn't yet
-update existing records.  But it detects whether records are new, and
-adds only those.
-
-"""
-
-from __future__ import print_function
-from __future__ import unicode_literals
 
 import logging
 logger = logging.getLogger(__name__)
@@ -39,7 +14,7 @@ from importlib import import_module
 
 
 class Command(BaseCommand):
-    help = __doc__
+    help = "Work in process"
     args = "action_spec [args ...]"
 
     def add_arguments(self, parser):
@@ -54,7 +29,7 @@ class Command(BaseCommand):
 
     def merge_module(self, name):
         m = import_module(name)
-        
+
         for obj in m.objects():
             M = obj.__class__
             if obj.pk is None:
@@ -95,5 +70,3 @@ class Command(BaseCommand):
 
         for name in args:
             self.merge_module(name)
-
-

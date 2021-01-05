@@ -1,28 +1,6 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2019 Rumma & Ko Ltd
+# Copyright 2019-2021 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
-
-""".. management_command:: install
-
-Runs 'pip install --upgrade' for all requirements.
-
-Options:
-
-.. option:: -l, --list
-
-    Don't actually install, just print a list of the requirements to stdout.
-
-.. option:: --noinput
-
-    Do not prompt for user input of any kind.
-
-
-.. management_command:: configure
-
-    Old name for :manage:`install`.
-
-
-"""
 
 import subprocess
 from rstgen.utils import confirm
@@ -43,7 +21,7 @@ def runcmd(cmd, **kw):  # same code as in getlino.py
 
 
 class Command(BaseCommand):
-    help = __doc__
+    help = "Run 'pip install --upgrade' for all Python packages required by this site."
 
     requires_system_checks = False
 
