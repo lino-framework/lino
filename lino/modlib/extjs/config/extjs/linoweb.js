@@ -1675,11 +1675,13 @@ Lino.handle_action_result = function (panel, result, on_success, on_confirm) {
           if (panel instanceof Lino.FormPanel
               && panel.ls_detail_handler == detail_handler)
             {
-              // console.log("20150514 use panel.set_status().");
+              // console.log("20210106 use panel.set_status().");
+              st.base_params = panel.get_base_params();
               panel.set_status(st);
           } else {
-              // console.log("20150514 run detail_handler.");
-              if (panel !== undefined && panel.ls_detail_handler == detail_handler){st.base_params = panel.get_base_params();}
+              // console.log("20210106 run detail_handler.");
+              if (panel !== undefined && panel.ls_detail_handler == detail_handler){
+                st.base_params = panel.get_base_params();}
               detail_handler.run(null, st);
           }
 
