@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2020 Rumma & Ko Ltd
+# Copyright 2009-2021 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """This defines :class:`Actor` and related classes.
@@ -41,6 +41,18 @@ from etgen.html import E, forcetext, tostring
 from .roles import SiteUser
 
 ACTOR_SEP = '.'
+
+# The well-known standard actions are described by (usually) always a same
+# action instance.
+
+SUBMIT_DETAIL = actions.SubmitDetail()
+DELETE_ACTION = actions.DeleteSelected()
+# INSERT_ACTION = actions.ShowInsert()
+UPDATE_ACTION = actions.SaveGridCell()
+VALIDATE_FORM = actions.ValidateForm()
+
+
+# actors are automatically discovered at startup.
 
 actor_classes = []
 actors_dict = None
@@ -92,15 +104,6 @@ def register_actor(a):
     else:
         actors_list.append(a)
     return a
-
-
-
-#~ class ClassProperty(property):
-    #~ def __get__(self, cls, owner):
-        #~ return self.fget.__get__(None, owner)()
-#~
-
-
 
 
 def field_getter(name):
@@ -1121,7 +1124,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         if default_action is not None:
             # cls.default_action = cls._bind_action(default_action)
             cls.default_action = cls._bind_action(
-                'default_action', default_action)
+                'default_action', default_action, True)
 
         if cls.detail_layout:
             if default_action and isinstance(
@@ -1133,14 +1136,15 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                     dtla = cls.detail_action.action
                 else:
                     dtla = actions.ShowDetail(cls.detail_layout)
-            cls.detail_action = cls._bind_action('detail_action', dtla)
+            cls.detail_action = cls._bind_action('detail_action', dtla, True)
             if cls.use_detail_param_panel:
                 cls.detail_action.action.use_param_panel = True
             # if str(cls).endswith("Days"):
             #     logger.info("20181230 %r detail_action is %r", cls, cls.detail_action)
             if cls.editable:
                 cls.submit_detail = cls._bind_action(
-                    'submit_detail', actions.SubmitDetail())
+                    'submit_detail', SUBMIT_DETAIL, True)
+
 
         # avoid inheriting the following actions from parent:
         cls.insert_action = None
@@ -1155,15 +1159,15 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                 # NB polls.AnswerRemarksByAnswer has hide_top_toolbar but we need its insert_action.
                 if cls.insert_layout:
                     cls.insert_action = cls._bind_action(
-                        'insert_action', cls.get_insert_action())
+                        'insert_action', cls.get_insert_action(), True)
             if not cls.hide_top_toolbar:
                 cls.delete_action = cls._bind_action(
-                    'delete_action', actions.DeleteSelected())
+                    'delete_action', DELETE_ACTION, True)
             cls.update_action = cls._bind_action(
-                'update_action', actions.SaveGridCell())
+                'update_action', UPDATE_ACTION, True)
             if cls.detail_layout:
                 cls.validate_form = cls._bind_action(
-                    'validate_form', actions.ValidateForm())
+                    'validate_form', VALIDATE_FORM, True)
 
         if is_string(cls.workflow_owner_field):
         # if isinstance(cls.workflow_owner_field, string_types):
@@ -1184,14 +1188,17 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
             for a in cls.workflow_state_field.choicelist.workflow_actions:
                 setattr(cls, a.action_name, a)
 
-        # Bind all my actions, including those inherited from parent actors.
-        # Allow disabling inherited actions by setting them to None in subclass.
+        # Bind all custom actions, including those inherited from parent actors.
+
+        # NB is it still true that an actor can refuse to inherit some action
+        # from a parent by defining a class attribute of same name that contains
+        # something else?
 
         for b in cls.mro():
             for k, v in b.__dict__.items():
                 v = cls.__dict__.get(k, v)
                 if isinstance(v, actions.Action):
-                    cls._bind_action(k, v)
+                    cls._bind_action(k, v, False)
 
         cls._actions_list.sort(
             key=lambda a: (a.action.sort_index, a.action.action_name))
@@ -1228,18 +1235,20 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
 
     @classmethod
-    def _bind_action(cls, k, a):
-        # for internal use during _collect_actions()
+    def _bind_action(cls, k, a, override):
+        # Only for internal use during _collect_actions().
+        # This is used in two different kinds of contexts: (a) when binding the
+        # action shortcuts (defaul_action, insert_actions etc) to every actor
+        # and (b) when discovering custom actions.
+        # The `override` argument says what to do when an action of that name
+        # has already been bound to this actor.
+        # An example for (b) is finan.SuggestionsByVoucherItem which overrides
+        # the `do_fill` action defined by its parent finan.SuggestionsByVoucher.
+
         if not a.attach_to_actor(cls, k):
             return
-        # if str(cls) == "integ.ActivityReport": # and a.__class__.__name__ == "ShowDetail":
-        #     print("20190110", k, a.action_name)
-
-        try:
-            ba = BoundAction(cls, a)
-        except Exception as e:
-            raise Exception("Cannot bind {!r} to {!r} : {}".format(
-                a, cls, e))
+        # if str(cls) == "finan.SuggestionsByPaymentOrderItem": # and a.__class__.__name__ == "ShowDetail":
+        #     print("20210106", k, a.action_name, a.__class__)
 
         names = [k]
         if a.action_name and a.action_name != k:
@@ -1248,7 +1257,20 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         for name in names:
             if name in cls._actions_dict:
                 old = cls._actions_dict[name]
-                cls._actions_list.remove(old)
+                # if old.actor is cls:
+                #     return old
+                # if str(cls) == "system.SiteConfigs": # and a.__class__.__name__ == "ShowDetail":
+                #     print("20210106 ignore {} {} because {} exists".format(k, a.__class__, old))
+                if override:
+                    cls._actions_list.remove(old)
+                else:
+                    return old
+
+        ba = BoundAction(cls, a)
+        # try:
+        #     ba = BoundAction(cls, a)
+        # except Exception as e:
+        #     raise Exception("Cannot bind {!r} to {!r} : {}".format(a, cls, e))
 
         for name in names:
             cls._actions_dict[name] = ba
@@ -1264,6 +1286,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     @classmethod
     def get_insert_action(cls):
+        # create a new instance for each actor because attach_to_actor will
+        # modify the help_text
         return actions.ShowInsert()
 
     @classmethod

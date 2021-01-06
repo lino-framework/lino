@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2020 Rumma & Ko Ltd
+# Copyright 2009-2021 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """This defines the :class:`Action` class and the :func:`action`
@@ -34,7 +34,7 @@ from .utils import traverse_ddh_fklist
 from .requests import InstanceAction
 
 def discover_choosers():
-    logger.debug("Discovering choosers for model fields...")
+    logger.debug("Discovering choosers for database fields...")
     # ~ logger.debug("Instantiate model reports...")
     for model in get_models():
         # ~ n = 0
@@ -856,7 +856,7 @@ class ShowInsert(TableAction):
     else:
         # button_text = u"❏"  # 274F Lower right drop-shadowed white square
         # button_text = u"⊞"  # 229e SQUARED PLUS
-        button_text = u"⊕"  # 2295 circled plus
+        button_text = "⊕"  # 2295 circled plus
 
     ui5_icon_name = "sap-icon://add"
     help_text = _("Insert a new record")
@@ -1204,7 +1204,7 @@ class DeleteSelected(MultipleRowAction):
     if True:  # settings.SITE.use_silk_icons:
         icon_name = 'delete'
     else:
-        button_text = u"⊖"  # 2296 CIRCLED MINUS
+        button_text = "⊖"  # 2296 CIRCLED MINUS
         # button_text = u"⊟"  # 229F SQUARED MINUS
 
     ui5_icon_name = 'sap-icon://less'
