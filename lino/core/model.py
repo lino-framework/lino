@@ -763,9 +763,10 @@ class Model(models.Model, fields.TableRow):
         target_state.choicelist.before_state_change(row, ar, old, target_state)
         row.before_state_change(ar, old, target_state)
         setattr(row, state_field.attname, target_state)
-        row.save()
+        # row.save()
         target_state.choicelist.after_state_change(row, ar, old, target_state)
         row.after_state_change(ar, old, target_state)
+        row.save()
         watcher.send_update(ar)
         row.after_ui_save(ar, watcher)
 
