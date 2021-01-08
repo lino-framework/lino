@@ -255,18 +255,18 @@ class Site(object):
 
     """
 
+    hoster_status_url = "http://bugs.saffre-rumma.net/"
+    """This is mentioned in :xfile:`500.html`.
+    """
+
     title = None
     """The title of this web site to appear in the browser window.  If
     this is None, Lino will use :attr:`verbose_name` as default value.
 
     """
 
-    hoster_status_url = "http://bugs.saffre-rumma.net/"
-    """This is mentioned in :xfile:`500.html`.
-    """
-
     verbose_name = "yet another Lino application"
-    """The name of this application, to be displayed to end-users at
+    """The name of this application, to be displayed to end users at
     different places.
 
     Note the difference between :attr:`title` and
@@ -1060,7 +1060,7 @@ class Site(object):
 
     Another possibility is to set it to `None`. In that case you must
     probably also set :attr:`root_urlconf` to a custom URL dispatcher.
-    
+
     """
 
     admin_ui = None
@@ -1447,6 +1447,8 @@ class Site(object):
 
         self.load_help_texts()
 
+        if self.title is None:
+            self.title = self.project_name
 
     def init_before_local(self, settings_globals, local_apps):
         """If your :attr:`project_dir` contains no :xfile:`models.py`, but

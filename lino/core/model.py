@@ -766,6 +766,7 @@ class Model(models.Model, fields.TableRow):
         # row.save()
         target_state.choicelist.after_state_change(row, ar, old, target_state)
         row.after_state_change(ar, old, target_state)
+        # row.full_clean()
         row.save()
         watcher.send_update(ar)
         row.after_ui_save(ar, watcher)
