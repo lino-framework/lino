@@ -12,7 +12,7 @@
   <div class="container-fluid">
     {% block header %}
     <div class="container-fluid lino-bs-header">
-      {% if site.user_model and not site.default_user and not site.admin_ui -%}
+      {% if site.user_model and not site.default_user and not site.admin_ui and site.use_auth -%}
         {% if ar.user.is_authenticated -%}
           <a href="{{ar.renderer.front_end.build_plain_url('auth')}}?an=logout">{{_("Sign out")}}</a>
         {% else -%}

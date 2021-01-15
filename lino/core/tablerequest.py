@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2020 Rumma & Ko Ltd
+# Copyright 2009-2021 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """Defines the `TableRequest` class.
@@ -399,6 +399,9 @@ class TableRequest(ActionRequest):
                         "Invalid master key {0} for {1}".format(
                             pk, self.actor))
         return master_instance
+
+    def summary_row(self, obj, **kwargs):
+        return self.actor.summary_row(self, obj, **kwargs)
 
     def to_rst(self, *args, **kw):
         """Returns a string representing this table request in

@@ -1,10 +1,7 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2017 Luc Saffre
+# Copyright 2012-2021 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-
-from __future__ import unicode_literals
-from builtins import str
 
 from lino.core import constants as ext_requests
 from lino.core.renderer import HtmlRenderer
@@ -85,4 +82,3 @@ class Renderer(HtmlRenderer):
 
     def render_action_response(self, ar):
         return index_response(ar)
-

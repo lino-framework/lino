@@ -690,6 +690,7 @@ class ParameterPanel(object):
         """
         pass
 
+
 class PseudoRequest(object):
     """A Django HTTP request which isn't really one.
 

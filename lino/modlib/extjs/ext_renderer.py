@@ -461,80 +461,81 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
     def html_page_user(self, request, site):
         """Build the "user menu", i.e. the menu in the top right corner.
         """
-        if settings.SITE.user_model is not None:
-            if request.user.is_authenticated:
-                if request.subst_user:
-                    yield "Lino.set_subst_user(%s,%s);" % (
-                        py2js(request.subst_user.id),
-                        py2js(str(request.subst_user)))
-                    user_text = str(request.user) + \
-                        " (" + _("as") + " " + \
-                        str(request.subst_user) + ")"
-                else:
-                    yield "Lino.set_subst_user();"
-                    user_text = str(request.user)
-
-                user = request.user
-
-                yield "Lino.user = %s;" % py2js(
-                    dict(id=user.id, name=str(user)))
-
-                a = rt.models.users.MySettings.default_action
-                handler = self.action_call(None, a, dict(record_id=user.pk))
-                handler = "function(){%s}" % handler
-                mysettings = dict(text=_("My settings"),
-                                  handler=js_code(handler))
-                login_menu_items = [mysettings]
-
-                authorities = user.get_authorities()
-                if len(authorities):
-                    act_as = [
-                        dict(text=t, handler=js_code(
-                            "function(){Lino.set_subst_user(%s, %s)}" % (v, py2js(t))))
-                        for v, t in authorities]
-                            #~ for v,t in user.get_received_mandates()]
-                    act_as.insert(0, dict(
-                        text=_("Myself"),
-                        handler=js_code("function(){Lino.set_subst_user(null)}")))
-                    act_as = dict(text=_("Act as..."), menu=dict(items=act_as))
-
-                    login_menu_items.insert(0, act_as)
-
-                if site.remote_user_header is None:
-                    # 20170921
-                    a = rt.models.users.MySettings.get_action_by_name('sign_out')
-                    # a = user.sign_out.bound_action
-                    js = self.action_call(None, a, {})
-                    js = "function(){%s}" % js
-                    login_menu_items.append(
-                        dict(text=a.get_button_label(), handler=js_code(js)))
-                # the following was never used
-                #     if auth.get_auth_middleware().can_change_password(request, request.user):
-                #         login_menu_items.append(
-                #             dict(text=_("Change password"), handler=js_code('Lino.change_password')))
-                #         login_menu_items.append(
-                #             dict(text=_("Forgot password"), handler=js_code('Lino.forgot_password')))
-
-                login_menu = dict(
-                    text=user_text,
-                    menu=dict(items=login_menu_items))
-
-                yield "Lino.main_menu = Lino.main_menu.concat(['->',%s]);" % py2js(login_menu)
-
+        if settings.SITE.user_model is None or not settings.SITE.use_auth:
+            return
+        if request.user.is_authenticated:
+            if request.subst_user:
+                yield "Lino.set_subst_user(%s,%s);" % (
+                    py2js(request.subst_user.id),
+                    py2js(str(request.subst_user)))
+                user_text = str(request.user) + \
+                    " (" + _("as") + " " + \
+                    str(request.subst_user) + ")"
             else:
-                ba = rt.models.users.UsersOverview.get_action_by_name('sign_in')
-                js = self.action_call(None, ba, {})
+                yield "Lino.set_subst_user();"
+                user_text = str(request.user)
+
+            user = request.user
+
+            yield "Lino.user = %s;" % py2js(
+                dict(id=user.id, name=str(user)))
+
+            a = rt.models.users.MySettings.default_action
+            handler = self.action_call(None, a, dict(record_id=user.pk))
+            handler = "function(){%s}" % handler
+            mysettings = dict(text=_("My settings"),
+                              handler=js_code(handler))
+            login_menu_items = [mysettings]
+
+            authorities = user.get_authorities()
+            if len(authorities):
+                act_as = [
+                    dict(text=t, handler=js_code(
+                        "function(){Lino.set_subst_user(%s, %s)}" % (v, py2js(t))))
+                    for v, t in authorities]
+                        #~ for v,t in user.get_received_mandates()]
+                act_as.insert(0, dict(
+                    text=_("Myself"),
+                    handler=js_code("function(){Lino.set_subst_user(null)}")))
+                act_as = dict(text=_("Act as..."), menu=dict(items=act_as))
+
+                login_menu_items.insert(0, act_as)
+
+            if site.remote_user_header is None:
+                # 20170921
+                a = rt.models.users.MySettings.get_action_by_name('sign_out')
+                # a = user.sign_out.bound_action
+                js = self.action_call(None, a, {})
                 js = "function(){%s}" % js
-                login_buttons = [ dict(
-                    xtype="button", text=ba.get_button_label(),
-                    handler=js_code(js)) ]
-                # login_buttons = [
-                #     dict(xtype="button", text=_("Log in"),
-                #          handler=js_code('Lino.show_login_window')),
-                #     #~ dict(xtype="button",text="Register",handler=Lino.register),
-                # ]
-                yield "Lino.main_menu = \
-                Lino.main_menu.concat(['->', %s]);" % py2js(login_buttons)
+                login_menu_items.append(
+                    dict(text=a.get_button_label(), handler=js_code(js)))
+            # the following was never used
+            #     if auth.get_auth_middleware().can_change_password(request, request.user):
+            #         login_menu_items.append(
+            #             dict(text=_("Change password"), handler=js_code('Lino.change_password')))
+            #         login_menu_items.append(
+            #             dict(text=_("Forgot password"), handler=js_code('Lino.forgot_password')))
+
+            login_menu = dict(
+                text=user_text,
+                menu=dict(items=login_menu_items))
+
+            yield "Lino.main_menu = Lino.main_menu.concat(['->',%s]);" % py2js(login_menu)
+
+        else:
+            ba = rt.models.users.UsersOverview.get_action_by_name('sign_in')
+            js = self.action_call(None, ba, {})
+            js = "function(){%s}" % js
+            login_buttons = [ dict(
+                xtype="button", text=ba.get_button_label(),
+                handler=js_code(js)) ]
+            # login_buttons = [
+            #     dict(xtype="button", text=_("Log in"),
+            #          handler=js_code('Lino.show_login_window')),
+            #     #~ dict(xtype="button",text="Register",handler=Lino.register),
+            # ]
+            yield "Lino.main_menu = \
+            Lino.main_menu.concat(['->', %s]);" % py2js(login_buttons)
 
     def before_row_edit(self, panel):
         from lino.core.actions import get_view_permission
@@ -579,6 +580,15 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
         menu = settings.SITE.get_site_menu(user_type)
         menu.add_item(
             'home', _("Home"), javascript="Lino.handle_home_button()")
+
+        if len(settings.SITE.languages) > 1:
+            for lang in settings.SITE.languages:
+                # if lang.django_code == requested_language:
+                menu.add_item(
+                    lang.django_code, lang.name,
+                    javascript='Lino.set_user_language("{}")'.format(
+                        lang.django_code))
+
         f.write("Lino.main_menu = %s;\n" % py2js(menu))
 
         """Call Ext.namespace for *all* actors because

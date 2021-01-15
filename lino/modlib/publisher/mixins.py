@@ -35,10 +35,8 @@ class Publishable(Printable):
         app_label = 'publisher'
 
     publisher_location = None
-    publisher_template = "publisher/default.pub.html"
-    publisher_list_template = "publisher/default_list.pub.html"
-
-    list_template = "publisher/default_list_item.html"
+    publisher_page_template = "publisher/page.pub.html"
+    publisher_item_template = "publisher/item.pub.html"
 
     preview_publication = PreviewPublication()
 
@@ -50,22 +48,31 @@ class Publishable(Printable):
     #     else:
     #         ar.success(open_url=self.publisher_url(self, not sr_selected))
 
-    def publisher_url(self, list=False):
-        if list:
-            return "/{}/".format(self.publisher_location)
+    def publisher_url(self):
         return "/{}/{}".format(self.publisher_location, self.pk)
 
-    @classmethod
-    def get_publisher_response(cls, ar, obj=None):
+    # def publisher_url(self, list=False):
+    #     if list:
+    #         return "/{}/".format(self.publisher_location)
+    #     return "/{}/{}".format(self.publisher_location, self.pk)
+
+    def render_from(self, tplname, ar):
         env = settings.SITE.plugins.jinja.renderer.jinja_env
-        template = env.get_template(cls.publisher_template if obj else cls.publisher_list_template)
-        context = ar.get_printable_context(obj=obj, model=cls)
+        context = ar.get_printable_context(obj=self)
+        template = env.get_template(tplname)
+        # print("20210112 publish {} {} using {}".format(cls, obj, template))
         # context = dict(obj=self, request=request, language=get_language())
-        response = http.HttpResponse(
-            template.render(**context),
-            content_type='text/html;charset="utf-8"')
-        return response
+        return template.render(**context)
+
+    def get_publisher_response(self, ar):
+        html = self.render_from(self.publisher_page_template, ar)
+        return http.HttpResponse(html, content_type='text/html;charset="utf-8"')
 
     @classmethod
-    def get_dashboard_objects(cls, user):
+    def render_dashboard_items(cls, ar):
+        for obj in cls.get_dashboard_objects(ar):
+            yield obj.render_from(obj.publisher_item_template, ar)
+
+    @classmethod
+    def get_dashboard_objects(cls, ar):
         return []

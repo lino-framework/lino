@@ -8,6 +8,7 @@
 <p><b>{{_("This server is running in READONLY mode.")}}</b></p>
 {% endif %}
 
+{% if site.use_auth %}
 {% if user.is_authenticated %}
     {% block hello_user %}
         <p>{{_("Quick links:")}}
@@ -17,10 +18,10 @@
         {% if extjs.autorefresh_seconds %}
         <a href="javascript:Lino.autorefresh();">autorefresh</a>
         {% endif %}
-        [<a href={{"javascript:"+settings.SITE.kernel.default_renderer.reload_js()}} style="text-decoration:none">{{_("Refresh")}}</a>]
+        [<a href={{"javascript:"+site.kernel.default_renderer.reload_js()}} style="text-decoration:none">{{_("Refresh")}}</a>]
         </p>
         <p>{{_("Hi, %(user)s!") % dict(user=user)}}
-        {% for msg in settings.SITE.get_welcome_messages(ar) %}
+        {% for msg in site.get_welcome_messages(ar) %}
             {{ tostring(msg) }}
         {% endfor %}
         </p>
@@ -95,11 +96,16 @@
       {% endif %}
   {% endblock %}
 {% endif %}
+{% endif %}
 
 {{ after_welcome }}
 
 {% block admin_main_items %}
-{{ tostring(ar.show_dashboard()) }}
+{% if not ar.renderer.hide_dashboard_items %}
+{% for i in user.get_preferences().dashboard_items %}
+{{''.join(i.render(ar))}}
+{% endfor %}
+{% endif %}
 {% endblock %}
 
 </div>

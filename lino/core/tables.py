@@ -408,7 +408,7 @@ class AbstractTable(actors.Actor):
 
     max_render_depth = 2
     """
-    Used to limit the rendering of slave card views. 
+    Used to limit the rendering of slave card views.
     """
 
     hide_if_empty = False

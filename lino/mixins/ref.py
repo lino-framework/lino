@@ -58,17 +58,24 @@ class Referrable(model.Model):
         super(Referrable, self).on_duplicate(ar, master)
 
     @classmethod
-    def get_by_ref(cls, ref, default=models.NOT_PROVIDED):
+    def get_by_ref(cls, ref, default=models.NOT_PROVIDED, **more):
         """
         Return the object identified by the given reference.
         """
+        if default is models.NOT_PROVIDED:
+            return cls.objects.get(ref=ref, **more)
         try:
-            return cls.objects.get(ref=ref)
+            return cls.objects.get(ref=ref, **more)
         except cls.DoesNotExist:
-            if default is models.NOT_PROVIDED:
-                raise cls.DoesNotExist(
-                    "No %s with reference %r" % (str(cls._meta.verbose_name), ref))
             return default
+            
+        # try:
+        #     return cls.objects.get(ref=ref, **more)
+        # except cls.DoesNotExist:
+        #     if default is models.NOT_PROVIDED:
+        #         raise cls.DoesNotExist(
+        #             "No %s with reference %r" % (str(cls._meta.verbose_name), ref))
+        #     return default
 
     @classmethod
     def quick_search_filter(cls, search_text, prefix=''):

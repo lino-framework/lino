@@ -332,7 +332,10 @@ Lino.insert_linoweb_version = function(p){
 Lino.insert_subst_user = function(p){
     Lino.insert_linoweb_version(p);
     //~ console.log('20120714 insert_subst_user',Lino.subst_user,p);
-    //~ if (Lino.subst_user_field.getValue()) {
+    if (!p.{{constants.URL_PARAM_USER_LANGUAGE}})
+      if (Lino.user_language)
+        p.{{constants.URL_PARAM_USER_LANGUAGE}} = Lino.user_language;
+
     if (p.{{constants.URL_PARAM_SUBST_USER}}) return;
     if (Lino.subst_user) {
         //~ p.{{constants.URL_PARAM_SUBST_USER}} = Lino.subst_user_field.getValue();
@@ -359,6 +362,14 @@ Lino.set_subst_user = function(id, name) {
     Lino.subst_user = id;
     if (Lino.current_window)
         Lino.current_window.main_item.set_base_param("{{constants.URL_PARAM_SUBST_USER}}",id);
+    if (Lino.viewport)
+        Lino.permalink_handler(Lino.current_window)();
+}
+
+Lino.set_user_language = function(lang) {
+    Lino.user_language = lang;
+    if (Lino.current_window)
+        Lino.current_window.main_item.set_base_param("{{constants.URL_PARAM_USER_LANGUAGE}}", lang);
     if (Lino.viewport)
         Lino.permalink_handler(Lino.current_window)();
 }

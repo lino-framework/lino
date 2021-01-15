@@ -55,9 +55,11 @@ def classdir(cl):
     # the file that defines class cl.
     return os.path.realpath(dirname(inspect.getfile(cl)))
 
-def html2text(html):
+def html2text(html, **kwargs):
     text_maker = HTML2Text()
     text_maker.unicode_snob = True
+    for k, v in kwargs.items():
+        setattr(text_maker, k, v)
     return text_maker.handle(html)
 
 PRINT_EMAIL = """send email
@@ -228,6 +230,11 @@ class Site(object):
     :setting:`DATABASES` of some other (non-readonly) site, and that
     :manage:`initdb` will do nothing.
 
+    """
+
+    use_auth = True
+    """Whether to use authentication.
+    Set this to False on site instances that should not provide any possibility to sign in.
     """
 
     history_aware_logging = False
@@ -3586,7 +3593,7 @@ Please convert to Plugin method".format(mod, methname)
         if self.languages and len(self.languages) > 1:
             yield 'django.middleware.locale.LocaleMiddleware'
 
-        if self.user_model:
+        if self.user_model and self.use_auth:
             yield 'django.contrib.sessions.middleware.SessionMiddleware'
             # yield 'django.contrib.auth.middleware.AuthenticationMiddleware'
             yield 'lino.core.auth.middleware.AuthenticationMiddleware'

@@ -182,10 +182,9 @@ class HtmlRenderer(Renderer):
         Silently ignores the parameters `stripped` and `header_links`
         since for HTML these options have no meaning.
         """
-        if display_mode is None:
-            display_mode = ar.actor.display_mode
-        # if ar.actor.master is not None and not nosummary:
         if not nosummary:
+            if display_mode is None:
+                display_mode = ar.actor.display_mode
             if display_mode == 'summary':
                 yield ar.actor.get_table_summary(ar.master_instance, ar)
                 return
@@ -480,7 +479,9 @@ class HtmlRenderer(Renderer):
         try:
             for item in forcetext(story):
                 # print("20180907 {}".format(item))
-                if iselement(item):
+                if isinstance(item, str):
+                    elems.append(item)
+                elif iselement(item):
                     # 20200501 elems.append(item)
                     elems.append(tostring(item))
                 elif isinstance(item, type) and issubclass(item, Actor):
@@ -497,17 +498,19 @@ class HtmlRenderer(Renderer):
                     # 20200501 elems.append(self.show_story(ar, item.actor.get_story(None, ar), **kwargs))
                     elems += [tostring(e) for e in self.show_story(ar, item.actor.get_story(None, ar), **kwargs)]
                 elif isinstance(item, DashboardItem):
-                    html = self.show_story(ar, item.render(ar), **kwargs)
-                    # 20200501 if len(html):
-                    #     elems.append(E.div(
-                    #     html,
-                    #     CLASS="dashboard-item " + item.actor.actor_id.replace(".","-") if getattr(item, "actor", False) else ""
-                    if html: # should always be a string, never a list
-                        if hasattr(item, "actor"):
-                            css_class = "dashboard-item " + item.actor.actor_id.replace(".","-")
-                        else:
-                            css_class = ''
-                        elems.append('<div class="{}">{}</div>'.format(css_class, html))
+                    elems.extend(item.render(ar, **kwargs))
+                    # html = self.show_story(ar, item.render(ar), **kwargs)
+                    # elems.append(html)
+                    # # 20200501 if len(html):
+                    # #     elems.append(E.div(
+                    # #     html,
+                    # #     CLASS="dashboard-item " + item.actor.actor_id.replace(".","-") if getattr(item, "actor", False) else ""
+                    # if html: # should always be a string, never a list
+                    #     if hasattr(item, "actor"):
+                    #         css_class = "dashboard-item " + item.actor.actor_id.replace(".","-")
+                    #     else:
+                    #         css_class = ''
+                    #     elems.append('<div class="{}">{}</div>'.format(css_class, html))
 
                 elif isiterable(item):
                     elems.append(self.show_story(ar, item, **kwargs))
@@ -525,8 +528,9 @@ class HtmlRenderer(Renderer):
 
     def show_menu(self, ar, mnu, level=1):
         """
-        Render the given menu as an HTML element.
-        Used for writing test cases.
+        Render the given menu as an HTML etree element.
+
+        Used by bootstrap3 front end.
         """
         if not isinstance(mnu, Menu):
             assert isinstance(mnu, MenuItem)
@@ -572,9 +576,11 @@ class HtmlRenderer(Renderer):
     def add_help_text(self, kw, help_text, title, datasource, fieldname):
         pass
 
+
 class TextRenderer(HtmlRenderer):
     """
-    Lino renderer which renders tables as reStructuredText to stdout.
+    Renders things as reStructuredText to stdout.
+
     Used for doctests and console output.
     See also :class:`TestRenderer`.
     """
@@ -591,46 +597,6 @@ class TextRenderer(HtmlRenderer):
     # def get_detail_url(self, actor, pk, *args, **kw):
     #     # return str(actor)+"/"+str(pk)
     #     return "Detail"  # many doctests depend on this
-
-    def menu2rst(self, ar, mnu, level=1):
-        """Used by :meth:`show_menu`."""
-
-        if not isinstance(mnu, Menu):
-            return str(mnu.label)
-
-        has_submenus = False
-        for i in mnu.items:
-            if isinstance(i, Menu):
-                has_submenus = True
-        items = [self.menu2rst(ar, mi, level + 1) for mi in mnu.items]
-        if has_submenus:
-            s = rstgen.ul(items).strip() + '\n'
-            if mnu.label is not None:
-                s = str(mnu.label) + ' :\n\n' + s
-        else:
-            s = ', '.join(items)
-            if mnu.label is not None:
-                s = str(mnu.label) + ' : ' + s
-        return s
-
-    def show_menu(self, ar, mnu, stripped=True, level=1):
-        """
-        Render the given menu as a reStructuredText
-        formatted bullet list.
-        Called from :meth:`lino.core.requests.BaseRequest.show_menu`.
-
-        :stripped: remove lots of blanklines which are necessary for
-                   reStructuredText but disturbing in a doctest
-                   snippet.
-
-        """
-        s = self.menu2rst(ar, mnu, level)
-        if stripped:
-            for ln in s.splitlines():
-                if ln.strip():
-                    print(ln)
-        else:
-            print(s)
 
     def show_table(self, *args, **kwargs):
         for ln in self.table2story(*args, **kwargs):
@@ -716,8 +682,7 @@ class TextRenderer(HtmlRenderer):
                     ar = item.default_action.request(parent=ar)
                     self.show_table(ar, stripped=stripped, **kwargs)
                 elif isinstance(item, DashboardItem):
-                    self.show_story(
-                        ar, item.render(ar), stripped, **kwargs)
+                    self.show_story(ar, item.get_story(ar), stripped, **kwargs)
                 elif isinstance(item, TableRequest):
                     self.show_table(item, stripped=stripped, **kwargs)
                     # print(item.table2rst(*args, **kwargs))

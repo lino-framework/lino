@@ -43,8 +43,8 @@ for p in site.installed_plugins:
 if site.social_auth_backends:
     urlpatterns.append(
         url('^oauth/', include('social_django.urls', namespace='social')))
-        
-        
+
+
 
 if site.django_admin_prefix:  # not tested
     from django.contrib import admin
@@ -73,3 +73,5 @@ if is_devserver():
 
     # pat = r'^{0}(?P<path>.*)$'.format(settings.STATIC_URL[1:])
     # urlpatterns.append(url(pat, serve))
+
+# print("20210114", urlpatterns)

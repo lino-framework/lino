@@ -905,34 +905,20 @@ class BaseRequest(object):
         """
         return self.renderer.show_story(self, *args, **kwargs)
 
-    def show_dashboard(self):
-        """Show the dashboard of the user who made this request.
+    # def show_dashboard(self):  moved to lino.api.doctest
 
-        Utility method for doctests."""
+        # for i in self.get_user().get_preferences().dashboard_items:
+        #     print(i)
 
-        if self.renderer.hide_dashboard_items:
-            return ""
-        else:
-            return self.show_story(
-                self.get_user().get_preferences().dashboard_items)
-
-    def show_menu(self, language=None, **kwargs):
-        """Show the main menu for the requesting user using the requested
-        renderer.
-
-        This is used in tested docs.
-
-        :language: explicitly select another language than that
-                   specified in the requesting user's :attr:`language
-                   <lino.modlib.users.models.User.language>` field.
-
-        """
-        user = self.get_user()
-        if language is None:
-            language = user.language
-        with translation.override(language):
-            mnu = settings.SITE.get_site_menu(user.user_type)
-            self.renderer.show_menu(self, mnu, **kwargs)
+        # if self.renderer.hide_dashboard_items:
+        #     return ""
+        # else:
+            # chunks = []
+            # for i in self.get_user().get_preferences().dashboard_items:
+            #     chunks.extend(i.render(self))
+            # return ''.join(chunks)
+        # return self.show_story(
+        #     self.get_user().get_preferences().dashboard_items)
 
     def get_home_url(self, *args, **kw):
         """Return URL to the "home page" as defined by the renderer, without

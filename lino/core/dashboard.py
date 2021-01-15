@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2016-2020 Rumma & Ko Ltd
+# Copyright 2016-2021 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 """Defines the :class:`DashboardItem` class.
 
@@ -8,6 +8,7 @@
 from lino.api import _
 from lino.core.permissions import Permittable
 from etgen.html import E, tostring
+
 
 class DashboardItem(Permittable):
     """Base class for all dashboard items.
@@ -36,11 +37,11 @@ class DashboardItem(Permittable):
         self.header_level = header_level
         self.min_count = min_count
 
+    def render(self, ar, **kwargs):
+        """Yield a list of html chunks."""
+        return []
 
-    def render(self, ar):
-        """Yield a list of etree html elements"""
-
-    def render_request(self, ar, sar):
+    def render_request(self, ar, sar, **kwargs):
         """
         Render the given table action
         request. `ar` is the incoming request (the one which displays
@@ -50,11 +51,15 @@ class DashboardItem(Permittable):
         This is a helper function for shared use by :class:`ActorItem`
         and :class:`RequestItem`.
         """
-        T = sar.actor
+        from lino.core.tables import TableRequest
+        from lino.core.requests import ActionRequest
+        # T = sar.actor
+        # print("20210112 render_request()", sar.actor, sar)
         if self.min_count is not None:
             if sar.get_total_count() < self.min_count:
                 # print("20180212 render no rows in ", sar)
                 return
+        yield '<div class="dashboard-item">'
         if self.header_level is not None:
             buttons = sar.plain_toolbar_buttons()
             buttons.append(sar.open_in_own_window_button())
@@ -62,11 +67,20 @@ class DashboardItem(Permittable):
             for b in buttons:
                 elems.append(b)
                 elems.append(' ')
+            yield tostring(E.h2(str(sar.actor.get_title_base(sar)), ' ', *elems))
 
-            yield E.h2(str(
-                sar.actor.get_title_base(sar)), ' ', *elems)
+        assert sar.renderer is not None
+        if isinstance(sar, TableRequest):
+            for e in sar.renderer.table2story(sar, **kwargs):
+                yield tostring(e)
+        elif isinstance(sar, ActionRequest):
+            # example : courses.StatusReport in dashboard
+            for e in sar.renderer.show_story(ar, sar.actor.get_story(None, ar), **kwargs):
+                yield tostring(e)
+        else:
+            yield "Cannot render {}".format(sar)
+        yield '</div>'
 
-        yield sar
 
     def serialize(self):
         return dict(
@@ -75,7 +89,8 @@ class DashboardItem(Permittable):
         )
 
     def __repr__(self):
-        return f"{self.__class__}({self.name},header_level={self.header_level},min_count={self.min_count})"
+        return f"{self.__class__.__module__}.{self.__class__.__name__}({self.name},header_level={self.header_level},min_count={self.min_count})"
+
 
 class ActorItem(DashboardItem):
     """A dashboard item which simply renders a given actor.
@@ -96,8 +111,14 @@ class ActorItem(DashboardItem):
 
     def get_view_permission(self, user_type):
         return self.actor.default_action.get_view_permission(user_type)
+        # rv = self.actor.default_action.get_view_permission(user_type)
+        # print("20210112 get_view_permission", self.actor, rv)
+        # return rv
 
-    def render(self, ar):
+    def get_story(self, ar):
+        yield self.actor
+
+    def render(self, ar, **kwargs):
         """Render this table to the dashboard.
 
         - Do nothing if there is no data.
@@ -108,15 +129,26 @@ class ActorItem(DashboardItem):
           :meth:`lino.core.requests.BaseRequest.show`
 
         """
+
+        # from lino.core.tables import AbstractTable
         T = self.actor
-        sar = ar.spawn(T, limit=T.preview_limit)
-        for i in self.render_request(ar, sar):
+        # if isinstance(T, AbstractTable):
+        sar = T.request(limit=T.preview_limit, parent=ar)
+        # sar = ar.spawn(T, limit=T.preview_limit)
+        # sar = ar.spawn_request(actor=T, limit=T.preview_limit)
+
+        # print("20210112 render()", ar, sar, ar.get_user(), sar.get_user())
+        for i in self.render_request(ar, sar, **kwargs):
             yield i
+        # return
+        # for e in T.get_story(None, ar):
+        #     yield tostring(e)
 
     def serialize(self):
         d = super(ActorItem, self).serialize()
         d.update(actor=self.actor.actor_id)
         return d
+
 
 class RequestItem(DashboardItem):
     """
@@ -127,10 +159,16 @@ class RequestItem(DashboardItem):
         super(RequestItem, self).__init__(None, **kwargs)
 
     def get_view_permission(self, user_type):
-        return self.sar.get_permission()
+        return  self.sar.get_permission()
+        # rv = self.sar.get_permission()
+        # print("20210112 get_view_permission", self.sar, rv)
+        # return rv
 
-    def render(self, ar):
-        for i in self.render_request(ar, self.sar):
+    def get_story(self, ar):
+        yield self.sar
+
+    def render(self, ar, **kwargs):
+        for i in self.render_request(ar, self.sar, **kwargs):
             yield i
 
 

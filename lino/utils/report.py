@@ -120,7 +120,7 @@ class EmptyTable(Frame):
     hide_navigator = True
     default_list_action_name = 'show'
     default_elem_action_name = 'show'
-
+    display_mode = None  # for Actor
     build_method = None
 
     @classmethod

@@ -1,0 +1,15 @@
+{% extends "bootstrap3/base.html" %}
+
+{% block main %}
+<div class="row-fluid">
+    <h1>{{ obj }}</h1>
+    <p>This is a {{ obj.__class__._meta.verbose_name }}.</p>
+</div>
+{% endblock %}
+
+{%- block toolbar %}
+    <p align="right">
+        {{ tostring(ar.obj2html(obj, "Edit")) }}
+        <a href="{{ obj.publisher_url() }}">permalink</a>
+    </p>
+{%- endblock %}

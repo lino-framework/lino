@@ -1876,6 +1876,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         """
         Return an action request on this actor which inherits from the
         given parent request.
+
+        Deprecated. Rather call cls.request(parent=ar)
         """
         sar = cls.request(*args, **kwargs)
         sar.setup_from(ar)

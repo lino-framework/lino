@@ -152,6 +152,8 @@ class My(dbtables.Table):
 
     """
 
+    # required_roles = dd.login_required()
+
     @classmethod
     def get_actor_label(self):
         if self.model is None:

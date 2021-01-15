@@ -47,9 +47,11 @@ class Plugin(Plugin):
             # url(rx + r'/?$', views.Index.as_view()),
             url(rx + r'$', views.Index.as_view()),
             url(rx + r'auth', views.Authenticate.as_view()),
-            url(rx + r'(?P<app_label>\w+)/(?P<actor>\w+)$',
+            # NB app_label must be at least 3 chars long to avoid clash with
+            # publisher patterns
+            url(rx + r'(?P<app_label>\w\w\w+)/(?P<actor>\w+)$',
                 views.List.as_view()),
-            url(rx + r'(?P<app_label>\w+)/(?P<actor>\w+)/(?P<pk>.+)$',
+            url(rx + r'(?P<app_label>\w\w\w+)/(?P<actor>\w+)/(?P<pk>.+)$',
                 views.Element.as_view()),
         ]
         return urls
@@ -69,4 +71,3 @@ class Plugin(Plugin):
     def get_index_view(self):
         from . import views
         return views.Index.as_view()
-
