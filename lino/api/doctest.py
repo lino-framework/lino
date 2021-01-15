@@ -544,7 +544,7 @@ def show_dashboard(username, **options):
     html = settings.SITE.get_main_html(request, extjs=ui)
     print(html2text(html, **options))
 
-def menu2rst(ar, mnu, level=1):
+def menu2rst(mnu, level=1):
     """Recursive utility used by :func:`show_menu`.
     """
     if not isinstance(mnu, Menu):
@@ -554,7 +554,7 @@ def menu2rst(ar, mnu, level=1):
     for i in mnu.items:
         if isinstance(i, Menu):
             has_submenus = True
-    items = [menu2rst(ar, mi, level + 1) for mi in mnu.items]
+    items = [menu2rst(mi, level + 1) for mi in mnu.items]
     if has_submenus:
         s = rstgen.ul(items).strip() + '\n'
         if mnu.label is not None:
@@ -586,7 +586,7 @@ def show_menu(username, language=None, stripped=True, level=1):
         language = user.language
     with translation.override(language):
         mnu = settings.SITE.get_site_menu(user.user_type)
-        s = menu2rst(ar, mnu, level)
+        s = menu2rst(mnu, level)
         if stripped:
             for ln in s.splitlines():
                 if ln.strip():

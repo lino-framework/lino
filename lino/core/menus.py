@@ -1,14 +1,10 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2020 Rumma & Ko Ltd
+# Copyright 2009-2021 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
 Defines the classes :class:`MenuItem` and :class:`Menu`
 """
-
-from builtins import object
-
-import logging ; logger = logging.getLogger(__name__)
 
 from django.conf import settings
 
@@ -171,8 +167,8 @@ def create_item(spec, action=None, help_text=None, **kw):
 
 class Menu(MenuItem):
     """
-    Represents a menu. A menu is conceptually a :class:`MenuItem`
-    which contains other menu items.
+    Represents a menu. A menu is a :class:`MenuItem`
+    that contains other menu items.
     """
 
     avoid_lonely_items = False
@@ -304,7 +300,6 @@ class Menu(MenuItem):
                 return
             if not mi.bound_action.get_view_permission(self.user_type):
                 return
-            #~ logger.info("20130129 _add_item %s for %s",mi.label,self.user_type)
         if mi.name is not None:
             old = self.items_dict.get(mi.name)
             if old is not None:
