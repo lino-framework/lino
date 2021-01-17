@@ -12,8 +12,9 @@
 
 """
 
-from lino.api import ad
 from datetime import timedelta
+from lino.utils import get_client_ip_address
+from lino.api import ad
 
 class IPRecord(object):
     def __init__(self, addr, username):
@@ -50,7 +51,7 @@ class Plugin(ad.Plugin):
     ip_records = {}
 
     def get_ip_record(self, request, username):
-        addr = self.get_client_id(request)
+        addr = get_client_ip_address(request)
         k = (addr, username)
 
         ip = self.ip_records.get(k, None)
@@ -59,16 +60,7 @@ class Plugin(ad.Plugin):
             self.ip_records[k] = ip
         return ip
 
-    @staticmethod
-    def get_client_id(request):
-        # from http://stackoverflow.com/questions/4581789/how-do-i-get-user-ip-address-in-django
-        x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-        if x_forwarded_for:
-            ip = x_forwarded_for.split(',')[0]
-        else:
-            ip = request.META.get('REMOTE_ADDR')
-        return ip or "(unknown)"  # see ticket #2605
-
-
-    def setup_site_menu(config, site, user_type, m):
-        m.add_action(site.modules.ipdict.Connections)
+    def pop_ip_record(self, request, username):
+        addr = get_client_ip_address(request)
+        k = (addr, username)
+        return self.ip_records.pop(k, None)

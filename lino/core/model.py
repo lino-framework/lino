@@ -1198,6 +1198,8 @@ class Model(models.Model, fields.TableRow):
 LINO_MODEL_ATTRIBS = (
     'collect_virtual_fields',
     'define_action',
+    'get_workflow_buttons',
+    'workflow_buttons',
     'delete_instance',
     'setup_parameters',
     'add_param_filter',

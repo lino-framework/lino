@@ -177,3 +177,6 @@ class BoundAction(object):
     def __repr__(self):
         return "<%s(%s, %r)>" % (
             self.__class__.__name__, self.actor, self.action)
+
+    def __str__(self):
+        return "{} on {}".format(self.action, self.actor)

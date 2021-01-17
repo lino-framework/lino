@@ -1,7 +1,9 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2017-2020 Rumma & Ko Ltd
+# Copyright 2017-2021 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 # This started as a copy of Django 1.11 django.contrib.auth.middleware.
+
+import datetime
 
 from django.core import exceptions
 from django.utils import translation
@@ -12,6 +14,7 @@ from django import http
 from lino.core import constants
 from .utils import AnonymousUser
 
+from lino.utils import get_client_ip_address
 from lino.core import auth
 from lino.core.auth import load_backend
 from .backends import RemoteUserBackend
@@ -19,6 +22,8 @@ from django.core.exceptions import ImproperlyConfigured
 from django.utils.deprecation import MiddlewareMixin
 from django.utils.functional import SimpleLazyObject
 
+ACTIVITY_SLOT = datetime.timedelta(seconds=10)
+# time to wait before we update last_activity in session
 
 def get_user(request):
     if not hasattr(request, '_cached_user'):
@@ -149,6 +154,8 @@ def request2data(request, user_language=None):
 
     request.requesting_panel = rqdata.get(
         constants.URL_PARAM_REQUESTING_PANEL, None)
+    request.device_type = rqdata.get(
+        constants.URL_PARAM_DEVICE_TYPE, settings.SITE.device_type)
 
     if len(settings.SITE.languages) > 1:
         user_language = rqdata.get(
@@ -165,6 +172,7 @@ class NoUserMiddleware(MiddlewareMixin):
         if settings.USE_TZ:
             activate(settings.SITE.models.about.TimeZones.default.tzinfo)
         request.subst_user = None
+        request.device_type = None
         request.user = AnonymousUser()
         request2data(request)
 
@@ -182,7 +190,22 @@ class WithUserMiddleware(MiddlewareMixin):
 
         if user.is_anonymous:
             request.subst_user = None
+            request.requesting_panel = None
             return
+        update = False
+        now = datetime.datetime.now()
+        last = request.session.get('last_activity', None)
+        if last is None:
+            update = True
+        else:
+            last = datetime.datetime.strptime(last, "%Y-%m-%dT%H:%M:%S.%f")
+            if now - last > ACTIVITY_SLOT:
+                # print("20210116 update last activity")
+                update = True
+        if update:
+            # information shown in users.ActiveSessions
+            request.session['last_activity'] = now.isoformat()
+            request.session['last_ip_addr'] = get_client_ip_address(request)
 
         rqdata = request2data(request, user_language)
         if rqdata is None:
@@ -201,16 +224,17 @@ class WithUserMiddleware(MiddlewareMixin):
         request.subst_user = su
 
 
-class DeviceTypeMiddleware(MiddlewareMixin):
-    """Sets the `device_type` attribute on every incoming request.
-    """
-    def process_request(self, request):
-        user = request.user
-        user_language = user.language  # or settings.SITE.get_default_language()
-        rqdata = request2data(request, user_language)
-        if rqdata is None:
-            return
 
-        dt = rqdata.get(
-            constants.URL_PARAM_DEVICE_TYPE, settings.SITE.device_type)
-        request.device_type = dt
+# class DeviceTypeMiddleware(MiddlewareMixin):
+#     """Sets the `device_type` attribute on every incoming request.
+#     """
+#     def process_request(self, request):
+#         user = request.user
+#         user_language = user.language  # or settings.SITE.get_default_language()
+#         rqdata = request2data(request, user_language)
+#         if rqdata is None:
+#             return
+#
+#         dt = rqdata.get(
+#             constants.URL_PARAM_DEVICE_TYPE, settings.SITE.device_type)
+#         request.device_type = dt

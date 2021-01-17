@@ -35,7 +35,7 @@ from django.conf import settings
 from django.views.generic import View
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
-
+from django.core.exceptions import PermissionDenied
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_protect
 from django.utils.translation import ugettext as _
 from django.utils.encoding import force_text

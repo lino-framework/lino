@@ -3598,15 +3598,15 @@ Please convert to Plugin method".format(mod, methname)
             # yield 'django.contrib.auth.middleware.AuthenticationMiddleware'
             yield 'lino.core.auth.middleware.AuthenticationMiddleware'
             yield 'lino.core.auth.middleware.WithUserMiddleware'
-            yield 'lino.core.auth.middleware.DeviceTypeMiddleware'
+            # yield 'lino.core.auth.middleware.DeviceTypeMiddleware'
         else:
             yield 'lino.core.auth.middleware.NoUserMiddleware'
 
         if self.get_auth_method() == 'remote':
             # yield 'django.contrib.auth.middleware.RemoteUserMiddleware'
             yield 'lino.core.auth.middleware.RemoteUserMiddleware'
-        if self.use_ipdict:
-            yield 'lino.modlib.ipdict.middleware.Middleware'
+        # if self.use_ipdict:
+        #     yield 'lino.modlib.ipdict.middleware.Middleware'
         if self.social_auth_backends:
             yield 'social_django.middleware.SocialAuthExceptionMiddleware'
 

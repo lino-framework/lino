@@ -1,9 +1,10 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2011-2020 Rumma & Ko Ltd
+# Copyright 2011-2021 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
 
 from lino.api import dd, rt, _
 from lino.core.roles import SiteAdmin
@@ -166,6 +167,18 @@ from etgen.html import E
 #         return SocialAuthField()
 #     return DummyField()
 
+def validate_sessions_limit(request):
+    if dd.plugins.users.active_sessions_limit == -1:
+        return
+    qs = rt.models.sessions.Session.objects.filter(
+        expire_date__gt=timezone.now())
+    if request.session.session_key:
+        qs = qs.exclude(session_key=request.session.session_key)
+    if qs.count() >= dd.plugins.users.active_sessions_limit:
+        raise Warning(
+            _("There are more than {} active user sessions. Please try again later.").format(
+                dd.plugins.users.active_sessions_limit))
+
 
 class SignIn(dd.Action):
     label = _("Sign in")
@@ -183,6 +196,7 @@ class SignIn(dd.Action):
     http_method = "POST"
 
     def run_from_ui(self, ar, **kw):
+        validate_sessions_limit(ar.request)
         pv = ar.action_param_values
         user = auth.authenticate(
             ar.request, username=pv.username, password=pv.password)

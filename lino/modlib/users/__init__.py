@@ -19,10 +19,9 @@ from lino.api import ad, _
 
 class Plugin(ad.Plugin):
     verbose_name = _("Users")
-
     needs_plugins = ['lino.modlib.system']
-
     online_registration = False
+    active_sessions_limit = -1
 
     def on_init(self):
         super(Plugin, self).on_init()
@@ -42,4 +41,5 @@ class Plugin(ad.Plugin):
         if site.social_auth_backends is not None:
             m.add_action('users.SocialAuths')
 
-
+    def setup_site_menu(self, site, user_type, m):
+        m.add_action('users.Sessions')
