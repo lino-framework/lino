@@ -1,4 +1,4 @@
-# Copyright 2013-2015 by Rumma & Ko Ltd.
+# Copyright 2013-2021 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 
 """An extended :class:`TestCase` for the plain python tests of a Lino
@@ -56,7 +56,7 @@ class TestCase(TestCase):
 
     def run_django_manage_test(self, cwd=None, **kw):
         """Run `python manage.py test` command in the given directory."""
-        args = ["python", "manage.py"]
+        args = [sys.executable, "manage.py"]
         args += ["test"]
         if cwd is not None:
             args += ["--top-level-directory=" + os.path.abspath(cwd)]
@@ -97,7 +97,8 @@ class TestCase(TestCase):
         """Run `django-admin.py CMD` in the given directory.
         """
         kw.update(cwd=cwd)
-        args = ["python", "manage.py"]
+        args = [sys.executable, "manage.py"]
+        # args += ["--top-level-directory=" + os.path.abspath(cwd)]
         args += cmdargs
         # args += ["--settings=settings"]
         # args += ["--pythonpath=."]
@@ -106,13 +107,13 @@ class TestCase(TestCase):
     def run_docs_doctests(self, filename):
         """Run a simple doctest for specified file after importing the docs
         `conf.py` (which causes the demo database to be activated).
-        
+
         This is used e.g. for testing pages like those below
         :doc:`/tested/index`.
-        
-        
+
+
         http://docs.python.org/2/library/doctest.html#doctest.REPORT_ONLY_FIRST_FAILURE
-        
+
         These tests may fail for the simple reason that the demo database
         has not been initialized (in that case, run `fab initdb`).
 

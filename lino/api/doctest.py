@@ -161,43 +161,6 @@ def demo_get(
     #     raise
 
 
-def screenshot(obj, filename, rstname, username='robin'):
-    """Insert a screenshot of the detail window for the given database
-    object.
-
-    Usage example in the source code of
-    http://xl.lino-framework.org/specs/holidays.html.
-
-    Problems: doesn't seem to wait long enough and
-    therefore produces a white .png file.
-
-    How to specify the filename? the current directory when doctest is
-    running is normally the project root, but that's not sure. Best
-    place would be the same directory as the rst file, but how to know
-    that name from within a tested snippet?
-
-    """
-    from lino.api.selenium import Album, runserver
-
-    assert filename.endswith('.png')
-    assert rstname.endswith('.rst')
-
-    ar = rt.login(renderer=dd.plugins.extjs.renderer)
-    ba = obj.get_detail_action()
-    uri = ar.get_detail_url(ba.actor, obj.pk)
-    print(uri)
-
-    def f(driver):
-        app = Album(driver)
-        driver.get("http://127.0.0.1:8000" + uri)
-        # driver.get(uri)
-        app.stabilize()
-        if not driver.get_screenshot_as_file(filename):
-            app.error("Failed to create {0}".format(filename))
-
-    runserver(settings.SETTINGS_MODULE, f)
-
-
 def show_menu_path(spec, language=None):
     """
     Print the menu path of the given actor or action.

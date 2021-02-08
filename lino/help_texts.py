@@ -875,10 +875,6 @@ or the username."""),
     'lino.modlib.users.User.start_date' : _("""If start_date is given, then the user cannot sign in
 before that date.  If end_date is given, then the user
 cannot sign in after that date."""),
-    'lino.modlib.users.Authority' : _("""Django model used to represent a authority."""),
-    'lino.modlib.users.Authority.user' : _("""The user who gives the right of representation. author of this
-authority"""),
-    'lino.modlib.users.Authority.authorized' : _("""The user who gets the right to represent the author"""),
     'lino.modlib.users.UserTypes' : _("""The list of user types available in this application."""),
     'lino.modlib.users.UserType' : _("""Base class for all user types.
 Any instance if this represents a possible user type."""),
@@ -891,8 +887,17 @@ is hidden_languages.  This
 is used on multilingual sites with more than 4 or 5 languages."""),
     'lino.modlib.users.UserType.context' : _("""Return a context manager so you can write code to be run with
 this as the current user type:"""),
-    'lino.modlib.users.Plugin' : _("""See /dev/plugins."""),
-    'lino.modlib.users.Plugin.online_registration' : _("""Whether this site offers online registration of new users."""),
+    'lino.modlib.users.Sessions' : _("""Show a list of all user sessions."""),
+    'lino.modlib.users.Authority' : _("""Django model used to represent a authority."""),
+    'lino.modlib.users.Authority.user' : _("""The user who gives the right of representation. author of this
+authority"""),
+    'lino.modlib.users.Authority.authorized' : _("""The user who gets the right to represent the author"""),
+    'lino.modlib.users.Plugin.active_sessions_limit' : _("""The sessions limit for this site. The default value -1 means
+that there is no limitation. Setting this to 0 will prevent any new
+login attempt and might be useful as a temporary value before shutting
+down a site."""),
+    'lino.modlib.users.Plugin.online_registration' : _("""Whether this site offers online registration
+of new users."""),
     'lino.modlib.users.Helper' : _("""Somebody who can help others by running AssignToMe
 action."""),
     'lino.modlib.users.AuthorshipTaker' : _("""Somebody who can help others by running TakeAuthorship

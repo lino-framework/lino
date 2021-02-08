@@ -1,38 +1,59 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2015-2018 Rumma & Ko Ltd
+# Copyright 2015-2021 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 """
-Used by :xfile:`make_screenshots.py` and :xfile:`maketour.py` scripts.
+Defines the :class:`Tour` class and a :func:`runserver` function.
 
-Defines an :class:`Album` class and a :func:`runserver` function. An
-"album" represents a directory with screenshot images and their
-`index.rst` file.
+A "tour" here means a virtual tour of a Lino site using  `Selenium
+<https://www.selenium.dev/documentation/en/>`__ to look around and watch into
+every corner, taking screenshots on the go. Before leaving, the tour also writes
+an `index.rst` file that lists the screenshot images.
 
-Note that one :xfile:`maketour.py` file might generate several albums
-during a single `runserver` process, e.g. one for each language.
+Usage example::
 
+  $ go noi1e
+  $ python manage.py run maketour.py
 
-`Introducing the Selenium-WebDriver API by Example
-<http://www.seleniumhq.org/docs/03_webdriver.jsp#introducing-the-selenium-webdriver-api-by-example>`__
+The result of above example is published as :ref:`noi1e.tour`.
 
-`INVOKE_SERVER` does not work at the moment. It seems that
-:meth:`driver.get` does not wait if the server is just starting up and
-therefore not even yet responding to connection requests. The only
-workaround for this is currently to run the webserver process in a
-different terminal.
+.. xfile:: maketour.py
+
+    By convention, the default tour of a demo project is in a file named
+    :xfile:`maketour.py`.
+
+TODO: compare the generated snapshots with those of a "reviewed" result from an
+earlier version.  Use `PIL.ImageChops.difference` (see `here
+<https://stackoverflow.com/questions/5224433/python-pil-screenshot-comparing>`__
+for ideas).  Generate a second page `diffs.rst` for every tour, to report these
+differences so that a human reviewer can decide whether the new result is
+acceptable or not.
+
+Implementation note: The tricky part was to figure out how to start a
+:manage:`runserver` in background, run some arbitrary code and then terminate
+the server proces. We create a :class:`subprocess.Popen` object that will
+execute :manage:`runserver`, then we must call :meth:`communicate` to let it
+live (but we do this in a thread in background), and finally we call
+:meth:`terminate` to let it die in peace.
+
 """
 
-from __future__ import unicode_literals, absolute_import, print_function
-import six
 import os
 import sys
 import time
 import subprocess
 import traceback
+# from multiprocessing import Process
+from threading import Thread
 
-from unipath import Path
+# threads in Python can't be stopped or killed, but runserver needs to run
+# another process in background and needs to kill it when the job is done.
+
+from pathlib import Path
+import shutil
 import rstgen
+import requests
 from atelier.utils import unindent
+from django.conf import settings
 
 from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
@@ -40,68 +61,106 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.command import Command
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
+# from django.core.management import execute_from_command_line
 
-INVOKE_SERVER = False
+django_admin = shutil.which('django-admin')
+runserver_cmd = [django_admin, 'runserver', '--noreload']
 
-def runserver(settings_module, func, driver=None):
 
-    if driver is None:
-        driver = webdriver.Firefox() # service_log_path=os.path.devnull)
-        # driver = webdriver.Chrome('/usr/bin/chromium-browser')
-
-    if INVOKE_SERVER:
-        env = dict()
-        if False:
-            env.update(LINO_BUILD_CACHE_ON_STARTUP='yes')
-        env.update(os.environ)
-        args = ['django-admin', 'runserver', '--noreload', '--settings',
-                settings_module]
-        server = subprocess.Popen(args, stdout=None, stderr=None, env=env)
-
-        # driver.implicitly_wait(10) # seconds
-        # time.sleep(10)
-        # startup_time = 1
-        # print("Sleeping {} seconds while server wakes up...".format(startup_time))
-        # time.sleep(startup_time)
-    try:
-        url = "http://127.0.0.1:8000/"
-        # driver.execute(Command.GET, {'url': url})
-        driver.get(url)
-        func(driver)
-    except Exception as e:
-        print(e)
-        import traceback
-        traceback.print_exc()
-
-    if INVOKE_SERVER:
-        server.terminate()
-        
-    driver.quit()
-    
-
-class Album(object):
+def runserver(func, url="http://127.0.0.1:8000/", *args, **kwargs):
     """
-    Generates one directory of screenshots images and their `index.rst`
+    Run a Django development server in background and wait until it responds to
+    web requests.
+    """
+
+    server_process = None
+    proc_name = "runserver " + settings.SETTINGS_MODULE
+
+    try:
+        print("Starting server {} in background...".format(proc_name))
+        server_process = subprocess.Popen(runserver_cmd, shell=False, universal_newlines=True)
+        Thread(target=server_process.communicate, name=proc_name).start()
+        print("Waiting for server {} to respond".format(proc_name))
+        while True:
+            try:
+                response = requests.get(url)
+                if response.status_code == 200:
+                    # print(response.text)
+                    break
+            except Exception as e:
+                print(f"... not yet ready ({e})")
+                time.sleep(1)
+
+        print("OK, here we go...")
+        func(*args, **kwargs)
+
+    finally:
+
+        if server_process is not None:
+            print("Terminating server {}".format(proc_name))
+            server_process.terminate()
+
+IMAGE_DIRECTIVE = """
+
+.. image:: {imgname}
+    :alt: {caption}
+    :width: {width}
+
+"""
+
+INTRO_TEMPLATE = """
+
+A series of screenshots taken from the
+:mod:`{settings_module}` demo project.
+
+.. include:: /../docs/shared/include/defs.rst
+
+"""
+
+class Tour(object):
+    """
+    Generates a directory of screenshots images and their `index.rst`
     file.
     """
     screenshot_root = None
+    screenshot_suffix = ".png"
     screenshots = []
+
+    """A list of tuples `(name, desc)`, where `desc` is another
+    tuple `(imgname, caption, before, after)`.
+    """
+
     title = None
     intro = None
     ref = None
     error_message = None
-    
-    def __init__(self, driver, root=None, title="Screenshots",
-                 ref=None, intro=None):
-        self.driver = driver
-        self.actionChains = ActionChains(driver)
+    language = None
+    languages = []
+    server_url = "http://127.0.0.1:8000/"
+    images_width = 90
 
-        if root is not None:
-            self.screenshot_root = Path(root)
-            self.screenshots = []
-            self.title = title
-            self.intro = intro
-            self.ref = ref
+    def __init__(self, main_func, output_path=None, title="Screenshots",
+                 ref=None, intro=None):
+        self.main_func = main_func
+
+        if not isinstance(output_path, Path):
+            raise Exception("output_path must be a pathlib.Path instance")
+
+        if intro is None:
+            intro = INTRO_TEMPLATE.format(
+                settings_module=settings.SETTINGS_MODULE)
+
+        self.screenshot_root = output_path
+        self.screenshots = []
+        self.title = title
+        self.intro = intro
+        self.ref = ref
+
+    def set_language(self, language):
+        self.language = language
+        if language not in self.languages:
+            self.languages.append(language)
 
     def checktitle(self, title):
         if self.driver.title != title:
@@ -109,21 +168,23 @@ class Album(object):
                 self.driver.title, title))
             sys.exit(-1)
 
-    def screenshot(self, name, caption, before='', after=''):
-        
-        filename = self.screenshot_root.child(name)
-        if not self.driver.get_screenshot_as_file(filename):
-            print("Failed to write {0}".format(filename))
-            sys.exit(-1)
-        print("Wrote screenshot {0} ...".format(filename))
-        before = unindent(before)
-        after = unindent(after)
-        self.screenshots.append((name, caption, before, after))
-
     def error(self, msg):
         raise Exception(msg)
         # print(msg)
         # sys.exit(-1)
+
+    def find_clickable(self, text):
+        try:
+            return self.driver.find_element(By.XPATH, '//button[text()="{}"]'.format(text))
+        except NoSuchElementException:
+            return self.driver.find_element(By.LINK_TEXT, text)
+
+    def is_stale(self, elem):
+        try:
+            self.hover(elem)
+            return False
+        except StaleElementReferenceException:
+            return True
 
     def doubleclick(self, elem):
         self.actionChains.double_click(elem).perform()
@@ -145,14 +206,51 @@ class Album(object):
         """
         WebDriverWait(self.driver, 10).until(
             EC.invisibility_of_element_located(
+                (By.CLASS_NAME, "ext-el-mask-msg")))
                 # (By.CLASS_NAME, "ext-el-mask-msg x-mask-loading")))
+                # (By.CLASS_NAME, "x-mask-loading")))
+        WebDriverWait(self.driver, 10).until(
+            EC.invisibility_of_element_located(
                 (By.CSS_SELECTOR, ".x-mask-loading")))
+        # WebDriverWait(self.driver, 10).until(
+        #     EC.presence_of_element_located(
+        #         (By.ID, "body")))
         WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located(
-                (By.ID, "body")))
-            
+                (By.ID, "dashboard")))
+        # time.sleep(1)
+
+    def name2path(self, name):
+        if self.language is None:
+            return Path(name + self.screenshot_suffix)
+        return Path(name + "_" + self.language + self.screenshot_suffix)
+
+    def screenshot(self, name, caption, before='', after=''):
+        self.stabilize()
+        imgname = self.name2path(name)
+        pth = self.screenshot_root / imgname
+        pth.parent.mkdir(exist_ok=True)
+        if not self.driver.get_screenshot_as_file(str(pth)):
+            raise Exception("Failed to write {0}".format(pth))
+            # sys.exit(-1)
+        print("Wrote screenshot {0} ...".format(pth))
+        before = unindent(before)
+        after = unindent(after)
+        screenshot = None
+        for ss in self.screenshots:
+            if ss[0] == name:
+                screenshot = ss
+                break
+        if screenshot is None:
+            screenshot = (name, [], caption, before, after)
+            self.screenshots.append(screenshot)
+        screenshot[1].append(imgname)
+
     def write_index(self):
-        index = self.screenshot_root.child('index.rst')
+        index = self.screenshot_root / 'index.rst'
+        if len(self.screenshots) == 0:
+            print("No file {} because there are no screenshots.".format(index))
+            return
         if self.ref:
             content = ".. _{0}:\n\n".format(self.ref)
         else:
@@ -163,20 +261,15 @@ class Album(object):
             content += unindent(self.intro)
             content += "\n\n\n"
 
-        for name, caption, before, after in self.screenshots:
+        for name, imgnames, caption, before, after in self.screenshots:
             content += "\n\n"
             content += rstgen.header(2, caption)
-            content += """
-
-{before}
-
-.. image:: {name}
-    :alt: {caption}
-    :width: 500
-
-{after}
-
-""".format(**locals())
+            content += "\n\n"+ before + "\n\n"
+            # imgname = filename.name
+            width = "{}%".format(self.images_width / len(imgnames))
+            for imgname in imgnames:
+                content += IMAGE_DIRECTIVE.format(**locals())
+            content += "\n\n"+ after + "\n\n"
 
         if self.error_message:
             content += "\n\n"
@@ -190,17 +283,37 @@ class Album(object):
             content += isep.join(self.error_message.splitlines())
             content += "\n\n"
 
-        if six.PY2:
-            content = content.encode('utf-8')
-        index.write_file(content)
+        index.write_text(content)
 
-    def run(self, func):    
+    def run_from_server(self, *args, **kwargs):
+        self.driver.get(self.server_url)
+        self.checktitle(settings.SITE.title)
         try:
-            func(self)
+            self.main_func(self)
         except Exception as e:
             print(e)
             self.error_message = traceback.format_exc()
             traceback.print_exc()
 
-        self.write_index()
+    def make(self, driver=None, headless=True, *args, **kwargs):
+        """
+        Make the tour. Open a selenium driver, start the development server in
+        background, run the :attr:`main_func`, write the :file:`index.rst` files.
+        """
 
+        if driver is None:
+            op = webdriver.FirefoxOptions();
+            op.headless = headless
+            driver = webdriver.Firefox(options=op)
+            # driver.set_page_load_timeout(10)
+
+        self.driver = driver
+        self.actionChains = ActionChains(driver)
+
+        try:
+            runserver(self.run_from_server, url=self.server_url, *args, **kwargs)
+        finally:
+            print("Terminating browser driver", driver)
+            driver.quit()
+
+        self.write_index()
