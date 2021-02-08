@@ -4,36 +4,7 @@
 """
 Defines the :class:`Tour` class and a :func:`runserver` function.
 
-A "tour" here means a virtual tour of a Lino site using  `Selenium
-<https://www.selenium.dev/documentation/en/>`__ to look around and watch into
-every corner, taking screenshots on the go. Before leaving, the tour also writes
-an `index.rst` file that lists the screenshot images.
-
-Usage example::
-
-  $ go noi1e
-  $ python manage.py run maketour.py
-
-The result of above example is published as :ref:`noi1e.tour`.
-
-.. xfile:: maketour.py
-
-    By convention, the default tour of a demo project is in a file named
-    :xfile:`maketour.py`.
-
-TODO: compare the generated snapshots with those of a "reviewed" result from an
-earlier version.  Use `PIL.ImageChops.difference` (see `here
-<https://stackoverflow.com/questions/5224433/python-pil-screenshot-comparing>`__
-for ideas).  Generate a second page `diffs.rst` for every tour, to report these
-differences so that a human reviewer can decide whether the new result is
-acceptable or not.
-
-Implementation note: The tricky part was to figure out how to start a
-:manage:`runserver` in background, run some arbitrary code and then terminate
-the server proces. We create a :class:`subprocess.Popen` object that will
-execute :manage:`runserver`, then we must call :meth:`communicate` to let it
-live (but we do this in a thread in background), and finally we call
-:meth:`terminate` to let it die in peace.
+See :doc:`/dev/tours`.
 
 """
 
