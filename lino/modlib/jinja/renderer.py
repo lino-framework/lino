@@ -57,7 +57,8 @@ class JinjaRenderer(HtmlRenderer):
             #~ logger.info("20130717 jinja loader %s %s",name,SUBDIR_NAME)
             if isdir(join(dirname(m.__file__), SUBDIR_NAME)):
                 loader = jinja2.PackageLoader(name, SUBDIR_NAME)
-                loaders.append(loader)
+                loaders.insert(0, loader)
+                # loaders.append(loader)
                 prefix_loaders[name] = loader
         settings.SITE.for_each_app(func)
 
@@ -113,6 +114,7 @@ class JinjaRenderer(HtmlRenderer):
             len=len,
             E=E,
             tostring=tostring,
+            isinstance=isinstance,
             ar=BaseRequest(renderer=settings.SITE.kernel.default_renderer),
             # _=_,
             now=datetime.datetime.now(),

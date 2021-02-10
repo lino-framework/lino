@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2017 Rumma & Ko Ltd
+# Copyright 2009-2021 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """This defines the :class:`ConfigDirCache` which Lino instantiates
@@ -18,8 +18,6 @@ returns a `Template`, and Jinja templates don't know their filename.
 One possibility might be to write a special Jinja Template class...
 
 """
-
-from builtins import object
 
 import logging ; logger = logging.getLogger(__name__)
 
@@ -86,13 +84,13 @@ class ConfigDirCache(object):
         self.LOCAL_CONFIG_DIR = None
         local_pth = self.site.cache_dir.child(SUBDIR_NAME)
         found = False
-        for pth in self.site.get_settings_subdirs(SUBDIR_NAME):
-            writeable = pth == local_pth
-            cd = ConfigDir(pth, writeable)
-            config_dirs.insert(0, cd)
-            if writeable:
-                found = True
-                self.LOCAL_CONFIG_DIR = cd
+        # for pth in self.site.get_settings_subdirs(SUBDIR_NAME):
+        #     writeable = pth == local_pth
+        #     cd = ConfigDir(pth, writeable)
+        #     config_dirs.insert(0, cd)
+        #     if writeable:
+        #         found = True
+        #         self.LOCAL_CONFIG_DIR = cd
         if not found:
             # e.g. when LINO_CACHE_ROOT is used, the local_pth is not among the
             # settings subdirs. Usually there is no local_pth in that case, but
@@ -108,7 +106,6 @@ class ConfigDirCache(object):
         # if isdir(p):
         #     self.LOCAL_CONFIG_DIR = ConfigDir(p, True)
         #     config_dirs.append(self.LOCAL_CONFIG_DIR)
-
 
         self.config_dirs = tuple(config_dirs)
 

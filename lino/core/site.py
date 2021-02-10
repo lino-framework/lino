@@ -2449,7 +2449,8 @@ class Site(object):
                 # print("20200701 found", pth)
                 found.add(pth)
 
-        # if local settings.py doesn't subclass Site:
+        # If the settings.py doesn't subclass Site, then we also want to get
+        # the inherited subdirs.
         for cl in self.__class__.__mro__:
             # print("20130109 inspecting class %s" % cl)
             if cl is not object and not inspect.isbuiltin(cl):
