@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-01-17 19:33+0200\n"
+"POT-Creation-Date: 2021-02-11 21:01+0200\n"
 "PO-Revision-Date: 2013-06-15 18:57-0300\n"
 "Last-Translator: Flavio Gondin <flvgondin@gmail.com>\n"
 "Language: pt_BR\n"
@@ -567,7 +567,6 @@ msgstr ""
 #: lino/help_texts.py:283 lino/help_texts.py:284 lino/help_texts.py:285
 #: lino/help_texts.py:286 lino/help_texts.py:289 lino/help_texts.py:290
 #: lino/help_texts.py:302 lino/help_texts.py:304 lino/help_texts.py:310
-#: lino/help_texts.py:894
 msgid "See /dev/plugins."
 msgstr ""
 
@@ -2648,40 +2647,26 @@ msgid ""
 msgstr ""
 
 #: lino/help_texts.py:878
-msgid "Django model used to represent a authority."
-msgstr ""
-
-#: lino/help_texts.py:879
-msgid ""
-"The user who gives the right of representation. author of this\n"
-"authority"
-msgstr ""
-
-#: lino/help_texts.py:881
-msgid "The user who gets the right to represent the author"
-msgstr ""
-
-#: lino/help_texts.py:882
 msgid "The list of user types available in this application."
 msgstr ""
 
-#: lino/help_texts.py:883
+#: lino/help_texts.py:879
 msgid ""
 "Base class for all user types.\n"
 "Any instance if this represents a possible user type."
 msgstr ""
 
-#: lino/help_texts.py:885
+#: lino/help_texts.py:881
 msgid ""
 "The role of users having this type. This is an instance of\n"
 "<lino.core.roles.UserRole> or some subclass thereof."
 msgstr ""
 
-#: lino/help_texts.py:887
+#: lino/help_texts.py:883
 msgid "Whether users of this type get only write-proteced access."
 msgstr ""
 
-#: lino/help_texts.py:888
+#: lino/help_texts.py:884
 msgid ""
 "A subset of languages\n"
 "which should be hidden for users of this type.  Default value\n"
@@ -2689,132 +2674,160 @@ msgid ""
 "is used on multilingual sites with more than 4 or 5 languages."
 msgstr ""
 
-#: lino/help_texts.py:892
+#: lino/help_texts.py:888
 msgid ""
 "Return a context manager so you can write code to be run with\n"
 "this as the current user type:"
 msgstr ""
 
-#: lino/help_texts.py:895
-msgid "Whether this site offers online registration of new users."
+#: lino/help_texts.py:890
+msgid "Show a list of all user sessions."
 msgstr ""
 
-#: lino/help_texts.py:896
+#: lino/help_texts.py:891
+msgid "Django model used to represent a authority."
+msgstr ""
+
+#: lino/help_texts.py:892
+msgid ""
+"The user who gives the right of representation. author of this\n"
+"authority"
+msgstr ""
+
+#: lino/help_texts.py:894
+msgid "The user who gets the right to represent the author"
+msgstr ""
+
+#: lino/help_texts.py:895
+msgid ""
+"The sessions limit for this site. The default value -1 means\n"
+"that there is no limitation. Setting this to 0 will prevent any new\n"
+"login attempt and might be useful as a temporary value before shutting\n"
+"down a site."
+msgstr ""
+
+#: lino/help_texts.py:899
+msgid ""
+"Whether this site offers online registration\n"
+"of new users."
+msgstr ""
+
+#: lino/help_texts.py:901
 msgid ""
 "Somebody who can help others by running AssignToMe\n"
 "action."
 msgstr ""
 
-#: lino/help_texts.py:898
+#: lino/help_texts.py:903
 msgid ""
 "Somebody who can help others by running TakeAuthorship\n"
 "action."
 msgstr ""
 
-#: lino/help_texts.py:900
+#: lino/help_texts.py:905
 msgid "Send a welcome mail to this user."
 msgstr ""
 
-#: lino/help_texts.py:901
+#: lino/help_texts.py:906
 msgid "Change the password of this user."
 msgstr ""
 
-#: lino/help_texts.py:902
+#: lino/help_texts.py:907
 msgid ""
 "The current password. Leave empty if the user has no password\n"
 "yet. And SiteAdmin users don't need to specify this at all."
 msgstr ""
 
-#: lino/help_texts.py:904
+#: lino/help_texts.py:909
 #, fuzzy
 msgid "The new password."
 msgstr "Mudar senha"
 
-#: lino/help_texts.py:905
+#: lino/help_texts.py:910
 msgid "The new password a second time. Both passwords must match."
 msgstr ""
 
-#: lino/help_texts.py:906
+#: lino/help_texts.py:911
 msgid ""
 "Open a window which asks for username and password and which\n"
 "authenticates as this user when submitted."
 msgstr ""
 
-#: lino/help_texts.py:908
+#: lino/help_texts.py:913
 msgid ""
 "Sign out the current user and return to the welcome screen for\n"
 "anonymous visitors."
 msgstr ""
 
-#: lino/help_texts.py:910
+#: lino/help_texts.py:915
 msgid ""
 "The list of required roles for getting permission to edit\n"
 "other users' work."
 msgstr ""
 
-#: lino/help_texts.py:912
+#: lino/help_texts.py:917
 msgid ""
 "No longer used. The name of the field that defines the author\n"
 "of this object."
 msgstr ""
 
-#: lino/help_texts.py:914
+#: lino/help_texts.py:919
 msgid "Inherits from Authored."
 msgstr ""
 
-#: lino/help_texts.py:915
+#: lino/help_texts.py:920
 msgid ""
 "The author of this object.\n"
 "A pointer to lino.modlib.users.models.User."
 msgstr ""
 
-#: lino/help_texts.py:917
+#: lino/help_texts.py:922
 msgid "Whether to run Plan.update_plan() after starting the plan."
 msgstr ""
 
-#: lino/help_texts.py:918
+#: lino/help_texts.py:923
 msgid ""
 "Mixin for anything that represents a \"plan\" of a given user on a given "
 "day."
 msgstr ""
 
-#: lino/help_texts.py:919
+#: lino/help_texts.py:924
 msgid "The user who owns and uses this plan."
 msgstr ""
 
-#: lino/help_texts.py:920
+#: lino/help_texts.py:925
 msgid ""
 "This date of this plan.  This is automatically set to today\n"
 "each time the plan is called or updated."
 msgstr ""
 
-#: lino/help_texts.py:922
+#: lino/help_texts.py:927
 msgid ""
 "Return the database object for this plan and user.\n"
 "or create"
 msgstr ""
 
-#: lino/help_texts.py:924
+#: lino/help_texts.py:929
 msgid "Implementing models should provide this method."
 msgstr ""
 
-#: lino/help_texts.py:925
+#: lino/help_texts.py:930
 msgid ""
 "Build a new list of suggestions.\n"
 "This will remove all current suggestions."
 msgstr ""
 
-#: lino/help_texts.py:927
+#: lino/help_texts.py:932
 msgid "The base class for both build methods."
 msgstr ""
 
-#: lino/help_texts.py:928
+#: lino/help_texts.py:933
 msgid ""
 "Renders the input template and returns the unmodified output as\n"
 "plain HTML."
 msgstr ""
 
-#: lino/help_texts.py:930
+#: lino/help_texts.py:935
 msgid ""
 "Like WeasyBuildMethod, but the rendered HTML is then\n"
 "passed through weasyprint which converts from HTML to PDF."
@@ -3328,21 +3341,21 @@ msgstr "Explorateur"
 msgid "Site"
 msgstr "Site"
 
-#: lino/core/site.py:2962 lino/modlib/languages/fixtures/few_languages.py:26
+#: lino/core/site.py:2963 lino/modlib/languages/fixtures/few_languages.py:26
 msgid "English"
 msgstr ""
 
-#: lino/core/site.py:3853
+#: lino/core/site.py:3854
 #, fuzzy
 msgid "This is "
 msgstr "Liste de choix"
 
-#: lino/core/site.py:3862
+#: lino/core/site.py:3863
 #, fuzzy
 msgid " using "
 msgstr "Envoi postal"
 
-#: lino/core/site.py:3907
+#: lino/core/site.py:3908
 #, python-format
 msgid "%(place)s, %(date)s"
 msgstr ""
@@ -5250,7 +5263,7 @@ msgid "Kill"
 msgstr ""
 
 #: lino/modlib/users/desktop.py:260
-#, fuzzy, python-format
+#, fuzzy
 msgid "Session {} has been deleted."
 msgstr "Enregistrement %s a été mis à jour."
 
@@ -9533,16 +9546,16 @@ msgstr ""
 #~ msgid "Contract Durations"
 #~ msgstr "Personnes de contact"
 
-#~ msgid "Job Sector"
+#~ msgid "Activity sector"
 #~ msgstr ""
 
-#~ msgid "Job Sectors"
+#~ msgid "Activity sectors"
 #~ msgstr ""
 
-#~ msgid "Job Function"
+#~ msgid "Job title"
 #~ msgstr "Fonction"
 
-#~ msgid "Job Functions"
+#~ msgid "Job titles"
 #~ msgstr "Fonctions"
 
 #~ msgid "Job Experience"
@@ -11683,5 +11696,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Flushes the database and loads the default demo fixtures."
+#~ msgstr ""
+
+#~ msgid "Whether this site offers online registration of new users."
 #~ msgstr ""
 
