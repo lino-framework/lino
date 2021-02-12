@@ -461,6 +461,8 @@ class ApiElement(View):
             ar.selected_rows = [elem]
         else:
             ar.set_selected_pks(pk)
+        # print("20210212 ApiElement.post()", ar, pk, ar.selected_rows)
+        # print("20210212 ApiElement.post()", request.POST)
         return settings.SITE.kernel.run_action(ar)
 
     @method_decorator(csrf_protect)

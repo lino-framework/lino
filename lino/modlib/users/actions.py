@@ -196,6 +196,8 @@ class SignIn(dd.Action):
     http_method = "POST"
 
     def run_from_ui(self, ar, **kw):
+        ipdict = dd.plugins.ipdict
+        # print("20210212 SignIn.run_from_ui()", ipdict.ip_records)
         validate_sessions_limit(ar.request)
         pv = ar.action_param_values
         user = auth.authenticate(

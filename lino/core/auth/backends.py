@@ -23,17 +23,24 @@ class ModelBackend(object):
     """
 
     def authenticate(self, request, username=None, password=None, **kwargs):
+        # print("20210212 authenticate()", username)
         if settings.SITE.use_ipdict:
             ipdict = settings.SITE.plugins.ipdict
-            rec = ipdict.get_ip_record(request, 'anonymous')
+            rec = ipdict.get_ip_record(request)
+            # print("20210212 authenticate()", rec)
             if rec.blacklisted_since is not None:
                 since = datetime.now() - rec.blacklisted_since
+                # print("20210212 blacklisted since {} ({} < {}?)".format(
+                #     rec.blacklisted_since, since, ipdict.max_blacklist_time))
+                rec.blacklisted_since = datetime.now()
                 if since < ipdict.max_blacklist_time:
-                    msg = _("Blacklisted IP {} : contact your "
-                            "system administrator")
+                    msg = _("Too many authentication failures from {}").format(
+                        rec.addr)
                     # block this request, don't ask other backends
-                    raise PermissionDenied(msg.format(rec.addr))
+                    # print("20210212", msg)
+                    raise Warning(msg)
                     # return msg.format(rec.addr)
+                    # return
 
         UserModel = get_user_model()
 

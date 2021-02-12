@@ -1,4 +1,4 @@
-# Copyright: Copyright 2011-2020 Rumma & Ko Ltd
+# Copyright: Copyright 2011-2021 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 
 """
@@ -12,7 +12,7 @@ import sys
 import json
 
 from django.conf import settings
-from django.test import TestCase as DjangoTestCase,TransactionTestCase
+from django.test import TestCase as DjangoTestCase, TransactionTestCase
 from django.core.management import call_command
 # from django.test import Client
 from django.db import connection, reset_queries, connections, DEFAULT_DB_ALIAS
@@ -33,7 +33,7 @@ class DjangoManageTestCase(DjangoTestCase, CommonTestCase):
     longMessage = True  # see unittest. used for check_json_result
 
     override_djangosite_settings = dict()
-    """If specified, this is a dict of :class:`Site<lino.core.site.Site>`
+    """If specified, this is a dict of :class:`Site <lino.core.site.Site>`
     attributes to override before running the test.
 
     """
@@ -65,12 +65,12 @@ class DjangoManageTestCase(DjangoTestCase, CommonTestCase):
         testcase_setup.send(self)
         return super(DjangoManageTestCase, self).__call__(*args, **kw)
 
-    def tearDown(self):
-        super(DjangoManageTestCase, self).tearDown()
-
-    def setUp(self):
-        super(DjangoManageTestCase, self).setUp()
-        # 20151203 database_ready.send(self)
+    # def tearDown(self):
+    #     super(DjangoManageTestCase, self).tearDown()
+    #
+    # def setUp(self):
+    #     super(DjangoManageTestCase, self).setUp()
+    #     # 20151203 database_ready.send(self)
 
     def check_sql_queries(self, *expected):
         """Checks whether the specified expected SQL queries match to those
@@ -109,19 +109,16 @@ class DjangoManageTestCase(DjangoTestCase, CommonTestCase):
         return self.client_json_dict(self.client.put, *args, **kwargs)
 
     def client_json_dict(self, meth, username, url, *data, **extra):
-        """Send a POST or PUT to client with given username, url and data. The
-        server is expected to respond with a JSON encoded
-        response. Parse the response's content (which is expected to
-        contain a dict), convert this dict to an AttrDict before
-        returning it.
-
+        """
+        Send a GET or POST or PUT to client with given username, url and data.
+        The server is expected to respond with a JSON encoded response. Parse
+        the response's content (which is expected to contain a dict), convert
+        this dict to an AttrDict before returning it.
         """
         ar = settings.SITE.login(username)
         self.client.force_login(ar.user)
         extra[settings.SITE.remote_user_header] = username
         # extra.update(REMOTE_USER=username)
-        # print(20170609, settings.MIDDLEWARE_CLASSES)
-        # print(20170609, settings.AUTHENTICATION_BACKENDS)
         res = meth(url, *data, **extra)
         if res.status_code != 200:
             raise Exception("{} gave status code {} instead of 200".format(
