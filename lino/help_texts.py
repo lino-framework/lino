@@ -10,11 +10,15 @@ Lino."""),
     'lino.api.doctest.HttpQuery.kwargs' : _("""Alias for field number 4"""),
     'lino.api.doctest.HttpQuery.url_base' : _("""Alias for field number 1"""),
     'lino.api.doctest.HttpQuery.username' : _("""Alias for field number 0"""),
-    'lino.api.selenium.Album' : _("""Generates one directory of screenshots images and their index.rst
+    'lino.api.selenium.Tour' : _("""Generates a directory of screenshots images and their index.rst
 file."""),
-    'lino.api.selenium.Album.stabilize' : _("""Wait until the screen has become stable.  This measn that the
+    'lino.api.selenium.Tour.screenshots' : _("""A list of tuples (name, desc), where desc is another
+tuple (imgname, caption, before, after)."""),
+    'lino.api.selenium.Tour.stabilize' : _("""Wait until the screen has become stable.  This measn that the
 browser has processed all Javascript, including ExtJS.onReady,
 that all AJAX requests have finised."""),
+    'lino.api.selenium.Tour.make' : _("""Make the tour. Open a selenium driver, start the development server in
+background, run the main_func, write the index.rst files."""),
     'lino.Contactable' : _("""Mixin for models that represent somebody who can be contacted by
 email."""),
     'lino.Contactable.get_as_user' : _("""Return the user object representing this contactable."""),

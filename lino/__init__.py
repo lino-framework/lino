@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2002-2019 Rumma & Ko Ltd
+# Copyright 2002-2021 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
@@ -7,8 +7,9 @@ The :mod:`lino` package is the main plugin used by all Lino applications,
 and the root for the subpackages that define core functionalites.
 
 As a plugin it is added automatically to your :setting:`INSTALLED_APPS`. It
-defines no models, some template files, a series of django admin commands, core
-translation messages and the core :xfile:`help_texts.py` file.
+defines no models, some template files, a series of :term:`django-admin commands
+<django-admin command>`, the core translation messages and the core
+:xfile:`help_texts.py` file.
 
 .. autosummary::
    :toctree:
@@ -106,20 +107,12 @@ def startup(settings_module=None):
     module.  If this is specified, set the
     :envvar:`DJANGO_SETTINGS_MODULE` environment variable.
 
-    This is called automatically when a process is invoked by an
-    *admin command*.
+    This is called automatically when a process is invoked by a
+    :term:`django-admin command`.
 
-    In a document to be tested using :cmd:`doctest` you need to call
-    it manually using e.g.:
+    This is usually called in the initialization code snippet of a :doc:`tested
+    document </dev/doctests>`.
 
-    >>> import lino
-    >>> lino.startup('my.project.settings')
-
-    Above two lines are recommended over the old-style method (the
-    only one only until Django 1.6)::
-
-    >>> import os
-    >>> os.environ['DJANGO_SETTINGS_MODULE'] = 'my.project.settings'
     """
     if settings_module:
         os.environ['DJANGO_SETTINGS_MODULE'] = settings_module
@@ -129,11 +122,11 @@ def startup(settings_module=None):
 
 
 class AppConfig(AppConfig):
-    """This is the only :class:`django.apps.AppConfig` object used by
-Lino.
+    """
 
-    Lino applications use the :class:`lino.core.plugins.Plugin`
-    because it has some additional functionality.
+    This is the only :class:`django.apps.AppConfig` object used by Lino. Lino
+    applications instead use the :class:`lino.core.plugins.Plugin` class to
+    define plugins. See :doc:`/dev/plugins`.
 
     """
     name = 'lino'
