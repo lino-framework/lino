@@ -11,14 +11,13 @@ class IPRecord(object):
         self.addr = addr
         self.login_failures = 0
         self.blacklisted_since = None
-        self.last_login = None
-        self.last_failure = None
-        self.last_request = None
+        # self.last_login = None
+        # self.last_failure = None
+        # self.last_request = None
 
     def __repr__(self):  # just for debugging
-        return "{} {} {} {}".format(
-            self.addr, self.login_failures,
-            self.last_failure, self.blacklisted_since)
+        return "{} {} {}".format(
+            self.addr, self.login_failures, self.blacklisted_since)
 
 
 class Plugin(ad.Plugin):
