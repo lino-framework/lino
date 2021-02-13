@@ -17,6 +17,11 @@ class Plugin(ad.Plugin):
 
     needs_plugins = ['lino.modlib.office', 'lino.modlib.memo']
 
+    # emotion_range = "social"
+    emotion_range = "business"
+    """Which range of emotion icons to provide. Either "business" or "social".
+    """
+
     private_default = True
     """Whether comments are private by default.
 

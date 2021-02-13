@@ -117,7 +117,6 @@ class PreviewableChecker(Checker):
                 obj.full_preview = full
                 obj.full_clean()
                 obj.save()
-            else:
-                yield (True, _("Preview needs update"))
+            yield (True, _("Preview needs update"))
 
 PreviewableChecker.activate()

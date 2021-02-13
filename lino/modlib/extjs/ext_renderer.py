@@ -386,7 +386,7 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
             return '<div class="htmlText">{0}</div>'.format(html)
         if not iselement(html):
             raise Exception("{!r} is not an element".format(html))
-        if html.tag in ('div', 'span'):
+        if html.tag in ('div', 'span', 'p'):
             html.set('class', 'htmlText')
             return html
         return E.div(html, **{'class': 'htmlText'})

@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2020 Rumma & Ko Ltd
+# Copyright 2013-2021 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 from django.utils.translation import ngettext
@@ -19,6 +19,7 @@ from lino.core.gfks import gfk2lookup
 from .roles import CommentsReader, CommentsUser, CommentsStaff
 from .choicelists import CommentEvents, Emotions
 from .fields import MyEmotionField
+from .mixins import Commentable
 
 
 class CommentTypes(dd.Table):
@@ -215,35 +216,34 @@ class CommentsByX(Comments):
         sar = cls.request_from(ar, master_instance=obj, is_on_main_actor=False)
         elems = []
 
-
-        if cls.insert_action is not None and isinstance(obj, cls.model):
-
+        if cls.insert_action is not None:
             ir = cls.insert_action.request_from(sar)
-            # print(20170217, sar)
-            # sar.known_values = dict(
-            #     reply_to=comment, **gfk2lookup(
-            #         comment.__class__.owner, comment.owner))
-            # if ar.get_user().is_authenticated:
             if ir.get_permission():
-                # ir.known_values.update(emotion=emo)
-                ir.known_values.update(reply_to=obj)
-                # **gfk2lookup(obj.__class__.owner, obj.owner)
-                ir.clear_cached_status()
-                btn = ir.ar2button(None, _(" Reply "), icon_name=None)
-                # btn.set("style", "padding-left:10px")
-                elems += [" [", btn, "]"]
-
-            # if ir.get_permission():
-            #     chunks = [gettext("Write new comment:"), " "]
-            #     for i, emo in enumerate(Emotions.get_list_items()):
-            #         if i:
-            #             chunks.append(" | ")
-            #         ir.known_values.update(emotion=emo)
-            #         ir.clear_cached_status()
-            #         chunks.append(ir.ar2button(
-            #             None, emo.button_text or emo.text, icon_name=None,
-            #             title=str(emo.text)))
-            #     elems.append(E.p(*chunks))
+                if isinstance(obj, cls.model):
+                    # we are showing the replies to another comment
+                    ir.known_values.update(reply_to=obj)
+                    # **gfk2lookup(obj.__class__.owner, obj.owner)
+                    ir.clear_cached_status()
+                    # btn = ir.ar2button(None, _(" Reply "), icon_name=None)
+                    btn = ir.ar2button(None,
+                        title=_("Reply to {} about {}").format(
+                            obj, obj.owner))
+                    # btn.set("style", "padding-left:10px")
+                    elems.append(E.p(btn))
+                    # elems += [" [", btn, "]"]
+                elif isinstance(obj, Commentable):
+                    # we are showing the comment about a Commentable
+                    btn = ir.ar2button(
+                        None, title=_("Start a new {} about {}").format(
+                            cls.model._meta.verbose_name, obj))
+                    # btn = ir.ar2button(
+                    #         None, _("Write new comment:"), # icon_name=None,
+                    #         title=_("Start a new comment about {}").format(obj))
+                    elems.append(E.p(btn))
+                    # elems += [" [", btn, "]"]
+                else:
+                    # this should never happen...
+                    pass
 
         n = 0
         for com in sar.data_iterator:
@@ -253,7 +253,7 @@ class CommentsByX(Comments):
                 break
             elems.append(E.p(*cls.summary_row(sar, com)))
 
-        return E.div(*elems)
+        return ar.html_text(E.div(*elems))
 
     @classmethod
     def summary_row(cls, ar, o, **kw):
@@ -308,7 +308,7 @@ class CommentsByX(Comments):
                     if group and group.ref:
                          yield "@" + group.ref
 
-        if o.num_reactions:
+        if False and o.num_reactions:
             txt = ngettext("{} reaction", "{} reactions", o.num_reactions).format(o.num_reactions)
             yield " ({})".format(txt)
 
