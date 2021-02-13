@@ -1,14 +1,12 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2020 Rumma & Ko Ltd
+# Copyright 2013-2021 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-"""Defines the :class:`DocTest` and :class:`DemoTestCase` classes.
+"""Defines some TestCase classes that are meant for writing general Python test
+cases (not Django test cases, which are defined in
+:mod:`lino.utils.djangotest`).
 
 """
-
-# import sys
-# import codecs
-# sys.stdout = codecs.getwriter('utf8')(sys.stdout)
 
 import logging ; logger = logging.getLogger(__name__)
 
@@ -18,6 +16,8 @@ import unittest
 import doctest
 
 from lino.utils.pythontest import TestCase as PythonTestCase
+from lino.utils import AttrDict
+from lino.core import constants
 
 import collections
 HttpQuery = collections.namedtuple(
@@ -148,15 +148,37 @@ class DemoTestCase(PythonTestCase, CommonTestCase):
     database, *without* using the Django test runner (i.e. without
     creating a temporary test database).
 
-    It expects the demo database to be initialized, and it works only in
-    an environment with :attr:`lino.core.site.Site.remote_user_header`
-    set to ``'REMOTE_USER'``.
+    It expects the demo database to be initialized.
+
+    Unless in an environment with
+    :attr:`lino.core.site.Site.remote_user_header` set to ``'REMOTE_USER'``.
 
     """
     def __call__(self, *args, **kw):
         from django.test import Client
         self.client = Client()
         return super(DemoTestCase, self).__call__(*args, **kw)
+
+    def login(self, username, pwd):
+        """
+
+        Invoke the :class:`lino.modlib.users.SignIn` action for the given
+        username and password. Unlike :meth:`django.test.Client.force_login`,
+        this simulates a real login, which later causes Lino to build the JS
+        cache for this user.
+
+        """
+
+        data = {
+            constants.URL_PARAM_FIELD_VALUES: [username, pwd],
+            constants.URL_PARAM_ACTION_NAME: 'sign_in'}
+        url = "/api/users/UsersOverview/-99998"
+        res = self.client.post(url, data)
+        self.assertEqual(res.status_code, 200)
+        content = res.content.decode()
+        d = json.loads(content)
+        # return str(d.keys())
+        return AttrDict(d)
 
     def demo_get(self, username, url_base, json_fields, expected_rows,
                  **kwargs):
@@ -208,9 +230,6 @@ class DemoTestCase(PythonTestCase, CommonTestCase):
         #     raise
 
 
-
-#class WebIndexTestCase(DjangoManageTestCase):
-#class WebIndexTestCase(RemoteAuthTestCase):
 class WebIndexTestCase(DemoTestCase):
     """
 
@@ -218,10 +237,12 @@ class WebIndexTestCase(DemoTestCase):
     to an anonymous request.
 
     You add this to your test suite by just importing it. No subclassing needed.
-
     By convention this is done in a file :xfile:`test_webindex.py`, i.e. when
     such a file is present in the :xfile:`tests` directory of a demo project,
     this test is being run as part of :manage:`test`.
+
+    This test uses the demo database content populated by :manage:`prep`, i.e.
+    it is not a Django test, i.e. does not create a new database.
 
     """
     # 20200513 : WebIndexTestCase now runs on the populatd demo data, not as an empty django test case
@@ -247,12 +268,14 @@ class WebIndexTestCase(DemoTestCase):
         if settings.SITE.user_model:
             for user in settings.SITE.user_model.objects.all():
                 if user.user_type:
-                    self.client.force_login(user)
-                    res = self.client.get(url)
-                    self.assertEqual(
-                        res.status_code, 200,
-                        "Status code {} for {} on GET {}".format(
-                            res.status_code, user, url))
+                    d = self.login(user.username, '1234')
+                    # self.client.force_login(user)
+                    for url in self.tested_urls:
+                        res = self.client.get(url)
+                        self.assertEqual(
+                            res.status_code, 200,
+                            "Status code {} for {} on GET {}".format(
+                                res.status_code, user, url))
 
         # res = client.get(url, REMOTE_USER='robin')
         # self.assertEqual(
