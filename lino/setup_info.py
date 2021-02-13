@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2020 Rumma & Ko Ltd
+# Copyright 2009-2021 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 # Note that this module may not have a docstring because any
@@ -15,7 +15,7 @@ import sys
 
 SETUP_INFO = dict(
     name='lino',
-    version='21.1.2',
+    version='21.2.0',
     description="A framework for writing desktop-like web applications "
                 "using Django and ExtJS or React",
     license='BSD-2-Clause',
