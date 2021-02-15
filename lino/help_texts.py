@@ -260,9 +260,6 @@ extjs/index.html template."""),
 row_action_button()"""),
     'lino.modlib.extjs.ext_renderer.ExtRenderer.linolib_intro' : _("""Called from linolib.js."""),
     'lino.modlib.extjs.views.AdminIndex' : _("""Similar to PlainIndex"""),
-    'lino.modlib.extjs.views.unused_Authenticate' : _("""This view is being used when remote_user_header is
-empty (and user_model not).
-lino.core.auth.SessionUserMiddleware"""),
     'lino.modlib.extjs.views.Restful' : _("""Used to collaborate with a restful Ext.data.Store."""),
     'lino.modlib.gfks.Plugin' : _("""Base class for this plugin."""),
     'lino.modlib.importfilters.Plugin' : _("""See /dev/plugins."""),
@@ -474,7 +471,7 @@ besides the SimpleOdsReader.headers attrribute,
 another list of pure ASCII strings which must be valid Python 
 attribute names."""),
     'lino.utils.pythontest.TestCase' : _("""An extended atelier.test.TestCase to be run using
-setup.py in the root of a project which may contain
+setup.py in the root of a project that may contain
 several Django projects."""),
     'lino.utils.pythontest.TestCase.django_settings_module' : _("""The DJANGO_SETTINGS_MODULE to set for each subprocess
 launched by this test case."""),
@@ -483,6 +480,8 @@ launched by this test case."""),
     'lino.utils.pythontest.TestCase.run_django_admin_command_cd' : _("""Run django-admin.py CMD in the given directory."""),
     'lino.utils.pythontest.TestCase.run_docs_doctests' : _("""Run a simple doctest for specified file after importing the docs
 conf.py (which causes the demo database to be activated)."""),
+    'lino.utils.pythontest.TestCase.do_test_demo_project' : _("""Run test and demotest in a subprocess in the given
+demo project."""),
     'lino.utils.report.EmptyTableRow' : _("""Base class for virtual rows of an EmptyTable.
 An EmptyTableRow instance"""),
     'lino.utils.report.EmptyTableRow.get_print_templates' : _("""Overrides
@@ -513,7 +512,9 @@ Intended for use with the django development server."""),
     'lino.utils.test.HttpQuery.kwargs' : _("""Alias for field number 4"""),
     'lino.utils.test.HttpQuery.url_base' : _("""Alias for field number 1"""),
     'lino.utils.test.HttpQuery.username' : _("""Alias for field number 0"""),
-    'lino.utils.test.CommonTestCase' : _("""An extended django.test.TestCase."""),
+    'lino.utils.test.CommonTestCase' : _("""A unittest.TestCase (not a django.test.TestCase) that
+starts a Django test client on a demo database populated using
+prep."""),
     'lino.utils.test.CommonTestCase.create_obj' : _("""Create the given database object, run full_clean() and
 save(), return the object."""),
     'lino.utils.test.CommonTestCase.check_json_result' : _("""Checks the result of response which is expected to return a
@@ -528,15 +529,12 @@ default."""),
     'lino.utils.test.DocTest' : _("""Looks for a file "index.rst" in your project_dir and (if it exists)
 runs doctest on it."""),
     'lino.utils.test.DocTest.doctest_files' : _("""The files to be tested."""),
-    'lino.utils.test.DemoTestCase' : _("""Used to define tests that are to be run directly in the demo
-database, without using the Django test runner (i.e. without
-creating a temporary test database)."""),
+    'lino.utils.test.DemoTestCase' : _("""Base class for unit tests that are meant to run directly in a demo
+project that has been initialized with prep."""),
     'lino.utils.test.DemoTestCase.login' : _("""Invoke the lino.modlib.users.SignIn action for the given
 username and password. Unlike django.test.Client.force_login(),
 this simulates a real login, which later causes Lino to build the JS
 cache for this user."""),
-    'lino.utils.test.WebIndexTestCase' : _("""Test whether a runserver on this database would respond with 200
-to an anonymous request."""),
     'lino.utils.ucsv.UTF8Recoder' : _("""Iterator that reads an encoded stream and reencodes the input to UTF-8"""),
     'lino.utils.ucsv.UnicodeReader' : _("""A CSV reader which will iterate over lines in the CSV file "f",
 which is encoded in the given encoding."""),

@@ -9,6 +9,7 @@ import os
 import sys
 import doctest
 import warnings
+from pathlib import Path
 
 from atelier.test import TestCase
 
@@ -129,3 +130,16 @@ class TestCase(TestCase):
             optionflags=doctest.REPORT_ONLY_FIRST_FAILURE)
         if res.failed:
             self.fail("doctest {0} failed.".format(n))
+
+
+    demo_projects_root = '.'
+    def do_test_demo_project(self, prjname):
+        """
+
+        Run :manage:`test` and :manage:`demotest` in a subprocess in the given
+        demo project.
+
+        """
+        pth = Path(self.demo_projects_root) / prjname
+        self.run_django_manage_test(pth)
+        self.run_django_admin_command_cd(pth, "demotest")

@@ -23,7 +23,6 @@ from lino.utils import AttrDict
 from lino.core.signals import testcase_setup # , database_ready
 from lino.core.callbacks import applyCallbackChoice
 from .test import CommonTestCase
-from .test import WebIndexTestCase  # backwards compatibility
 
 
 class DjangoManageTestCase(DjangoTestCase, CommonTestCase):

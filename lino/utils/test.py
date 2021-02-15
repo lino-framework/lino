@@ -144,14 +144,15 @@ class DocTest(unittest.TestCase):
 
 
 class DemoTestCase(PythonTestCase, CommonTestCase):
-    """Used to define tests that are to be run directly in the demo
-    database, *without* using the Django test runner (i.e. without
-    creating a temporary test database).
+    """
 
-    It expects the demo database to be initialized.
+    Base class for unit tests that are meant to run directly in a demo
+    project that has been initialized with :manage:`prep`.
 
-    Unless in an environment with it requires
-    :attr:`lino.core.site.Site.remote_user_header` set to ``'REMOTE_USER'``.
+    It expects the demo database to be initialized, and it should be read-only,
+    i.e. not modify any data.
+
+    This is used by the :manage:`demotest` command.
 
     """
     def __call__(self, *args, **kw):
@@ -187,17 +188,13 @@ class DemoTestCase(PythonTestCase, CommonTestCase):
                          expected_rows, kwargs)
         url = settings.SITE.buildurl(case.url_base, **case.kwargs)
 
-        if True:
-            msg = 'Using remote authentication, but no user credentials found.'
-            try:
-                response = self.client.get(url)
-                self.fail("Expected '%s'" % msg)
-                #~ raise Exception("Expected '%s'" % msg)
-            except Exception:
-                pass
-                #~ self.tc.assertEqual(str(e),msg)
-                #~ if str(e) != msg:
-                        #~ raise Exception("Expected %r but got %r" % (msg,str(e)))
+        msg = 'Using remote authentication, but no user credentials found.'
+        try:
+            response = self.client.get(url)
+            self.fail("Expected '%s'" % msg)
+            #~ raise Exception("Expected '%s'" % msg)
+        except Exception:
+            pass
 
         response = self.client.get(url, REMOTE_USER='foo')
         self.assertEqual(
@@ -206,82 +203,19 @@ class DemoTestCase(PythonTestCase, CommonTestCase):
                 response.status_code, url))
 
         response = self.client.get(url, REMOTE_USER=case.username)
-        # try:
-        if True:
-            user = settings.SITE.user_model.objects.get(
-                username=case.username)
-            result = self.check_json_result(
-                response, case.json_fields,
-                "GET %s for user %s" % (url, user))
+        user = settings.SITE.user_model.objects.get(
+            username=case.username)
+        result = self.check_json_result(
+            response, case.json_fields,
+            "GET %s for user %s" % (url, user))
 
-            num = case.expected_rows
-            if num is not None:
-                if not isinstance(num, tuple):
-                    num = [num]
-                if result['count'] not in num:
-                    msg = "%s got %s rows instead of %s" % (
-                        url, result['count'], num)
-                    #~ raise Exception("[%d] %s" % (i, msg))
-                    self.fail(msg)
-                    #~ failures += 1
-
-        # except Exception as e:
-        #     print("%s:\n%s" % (url, e))
-        #     raise
-
-
-WebIndexTestCase = None
-# no longer used. These things are now covered by :manage:`demotest`.
-
-class unused_WebIndexTestCase(DemoTestCase):
-    """
-
-    Test whether a :manage:`runserver` on this database would respond with 200
-    to an anonymous request.
-
-    You add this to your test suite by just importing it. No subclassing needed.
-    By convention this is done in a file :xfile:`test_webindex.py`, i.e. when
-    such a file is present in the :xfile:`tests` directory of a demo project,
-    this test is being run as part of :manage:`test`.
-
-    This test uses the demo database content populated by :manage:`prep`, i.e.
-    it is not a Django test, i.e. does not create a new database.
-
-    """
-    # 20200513 : WebIndexTestCase now runs on the populatd demo data, not as an empty django test case
-
-    # removed 20150819 because it took unbearably much time for
-    # welfare test suite:
-    # override_djangosite_settings = dict(
-    #     build_js_cache_on_startup=True)
-
-    tested_urls = ('/', '/?su=3', '/?su=1234')
-
-    def test_get_index(self):
-        from django.conf import settings
-        # client = Client()
-        for url in self.tested_urls:
-            # print("20200513", url)
-            res = self.client.get(url)
-            self.assertEqual(
-                res.status_code, 200,
-                "Status code %s other than 200 for anonymous on GET %s" % (
-                    res.status_code, url))
-
-        if settings.SITE.user_model:
-            for user in settings.SITE.user_model.objects.all():
-                if user.user_type:
-                    d = self.login(user.username, '1234')
-                    # self.client.force_login(user)
-                    for url in self.tested_urls:
-                        res = self.client.get(url)
-                        self.assertEqual(
-                            res.status_code, 200,
-                            "Status code {} for {} on GET {}".format(
-                                res.status_code, user, url))
-
-        # res = client.get(url, REMOTE_USER='robin')
-        # self.assertEqual(
-        #     res.status_code, 200,
-        #     "Status code %s other than 200 for robin on GET %s" % (
-        #         res.status_code, url))
+        num = case.expected_rows
+        if num is not None:
+            if not isinstance(num, tuple):
+                num = [num]
+            if result['count'] not in num:
+                msg = "%s got %s rows instead of %s" % (
+                    url, result['count'], num)
+                #~ raise Exception("[%d] %s" % (i, msg))
+                self.fail(msg)
+                #~ failures += 1

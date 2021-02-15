@@ -11,19 +11,19 @@ indirectly) into your local :xfile:`settings.py` using::
 from lino.api.ad import Site, configure_plugin, _
 
 
-# def TIM2LINO_LOCAL(alias, obj):
-#     """Hook for local special treatment on instances that have been
-#     imported from TIM.
-#
-#     """
-#     return obj
-#
-#
-# def TIM2LINO_USERNAME(userid):
-#     if userid == "WRITE":
-#         return None
-#     return userid.lower()
-#
+def TIM2LINO_LOCAL(alias, obj):
+    """Hook for local special treatment on instances that have been
+    imported from TIM.
+
+    """
+    return obj
+
+
+def TIM2LINO_USERNAME(userid):
+    if userid == "WRITE":
+        return None
+    return userid.lower()
+
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
