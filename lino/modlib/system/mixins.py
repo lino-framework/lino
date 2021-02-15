@@ -40,9 +40,8 @@ class Lockable(dd.Model):
         self.lock_row(ar)
         ar.success(refresh=True)
 
-    def lock_row(self, ar=None, user=""):
-        user = user if user else ar.get_user()
-
+    def lock_row(self, ar):
+        user = ar.get_user()
         if self.locked_by_id != None:
             msg = _("{} is being edited by another user. "
                     "Please try again later.")
@@ -50,6 +49,7 @@ class Lockable(dd.Model):
         self.locked_by = user
         self.save()
         rt.settings.SITE.logger.debug("%s locks %s.%s" % (user, self.__class__, self.pk))
+        self._disabled_fields = None  # clear cache
 
 
     @dd.action(_("Abort"), sort_index=100, auto_save=None, callable_from='d')
@@ -57,12 +57,12 @@ class Lockable(dd.Model):
         self.unlock_row(ar)
         ar.success(refresh=True)
 
-    def unlock_row(self, ar=None, user=""):
-        user = user if user else ar.get_user()
+    def unlock_row(self, ar):
+        user = ar.get_user()
 
         if self.locked_by == user:
             rt.settings.SITE.logger.debug(
-                "%s releases lock on %s.%s", self.user, self.__class__, self.pk)
+                "%s releases lock on %s.%s", user, self.__class__, self.pk)
             self.locked_by = None
             self.save()
             self._disabled_fields = None  # clear cache

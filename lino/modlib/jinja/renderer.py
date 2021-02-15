@@ -13,7 +13,7 @@ import jinja2
 
 from django.conf import settings
 
-from django.utils.translation import ugettext
+from django.utils.translation import gettext
 from django.utils.translation import pgettext
 
 from etgen import html as xghtml
@@ -139,7 +139,7 @@ class JinjaRenderer(HtmlRenderer):
         )
 
         def translate(s):
-            return ugettext(str(s))
+            return gettext(str(s))
         self.jinja_env.globals.update(_=translate)
 
         def ptranslate(ctx, s):

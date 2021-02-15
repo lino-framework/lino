@@ -7,7 +7,7 @@ Adds an arbitrary selection of a few languages.
 
 from __future__ import unicode_literals
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 # from lino.utils.instantiator import Instantiator
 from lino.api import dd, rt
 

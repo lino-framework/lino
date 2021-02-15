@@ -8,7 +8,7 @@
 
 """
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from lino.core import actions
 from lino.core import model

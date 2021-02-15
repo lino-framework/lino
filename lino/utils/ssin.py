@@ -11,8 +11,8 @@ from past.utils import old_div
 
 
 from django.core.exceptions import ValidationError
-from django.utils.encoding import force_text
-from django.utils.translation import ugettext_lazy as _
+from django.utils.encoding import force_str
+from django.utils.translation import gettext_lazy as _
 
 from lino.modlib.system.choicelists import Genders
 
@@ -71,8 +71,8 @@ def new_format_ssin(s):
         return ''
     if len(s) != 11:
         raise Exception(
-            force_text(_('Invalid SSIN %s : ') % s)
-            + force_text(_('A raw SSIN must have 11 positions')))
+            force_str(_('Invalid SSIN %s : ') % s)
+            + force_str(_('A raw SSIN must have 11 positions')))
     return s[:2] + '.' + s[2:4] + '.' + s[4:6] + '-' + s[6:9] + '.' + s[9:]
 
 
@@ -99,8 +99,8 @@ def format_ssin(raw_ssin):
         return ''
     if len(raw_ssin) != 11:
         raise ValidationError(
-            force_text(_('Invalid SSIN %s : ') % raw_ssin)
-            + force_text(_('A raw SSIN must have 11 positions')))
+            force_str(_('Invalid SSIN %s : ') % raw_ssin)
+            + force_str(_('A raw SSIN must have 11 positions')))
     bd = raw_ssin[:6]
     sn = raw_ssin[6:9]
     cd = raw_ssin[9:]
@@ -120,8 +120,8 @@ def format_ssin(raw_ssin):
     if is_ok('2' + bd + sn):
         return bd + ' ' + sn + YEAR2000 + cd
     raise ValidationError(
-        force_text(_('Invalid SSIN %s : ') % raw_ssin)
-        + force_text(_('Could not recognize checkdigit')))
+        force_str(_('Invalid SSIN %s : ') % raw_ssin)
+        + force_str(_('Could not recognize checkdigit')))
 
 format_niss = format_ssin
 
@@ -140,8 +140,8 @@ def ssin_veto(ssin):
     if not ssin:
         return
     if len(ssin) != 13:
-        return force_text(_('Invalid SSIN %s : ') % (ssin)) + \
-            force_text(_('A formatted SSIN must have 13 positions'))
+        return force_str(_('Invalid SSIN %s : ') % (ssin)) + \
+            force_str(_('A formatted SSIN must have 13 positions'))
     xtest = ssin[:6] + ssin[7:10]
     if ssin[10] == "=":
         #~ print 'yes'
@@ -155,6 +155,6 @@ def ssin_veto(ssin):
         xtest = 97
     found = int(ssin[11:13])
     if xtest != found:
-        return force_text(_("Invalid SSIN %s :") % ssin) \
+        return force_str(_("Invalid SSIN %s :") % ssin) \
             + _("Check digit is %(found)d but should be %(expected)d") % dict(
                 expected=xtest, found=found)

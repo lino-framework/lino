@@ -11,7 +11,7 @@ from django import http
 from django.conf import settings
 from django.views.generic import View
 from django.core import exceptions
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.utils.translation import get_language
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_protect

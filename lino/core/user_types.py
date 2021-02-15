@@ -9,7 +9,7 @@ This can be used directly as :attr:`user_types_module
 <lino.core.site.Site.user_types_module>` for simple applications.
 """
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from lino.core.roles import UserRole, SiteAdmin, SiteUser
 # from lino.modlib.office.roles import OfficeUser, OfficeStaff
 from lino.modlib.users.choicelists import UserTypes

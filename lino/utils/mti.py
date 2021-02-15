@@ -12,7 +12,7 @@ from django.db import router
 # from django.db.models.deletion import Collector
 from django.db.models.deletion import Collector, DO_NOTHING
 from django.core.exceptions import ValidationError
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 from lino.core.utils import resolve_model

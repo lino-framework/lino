@@ -14,8 +14,8 @@ import logging ; logger = logging.getLogger(__name__)
 
 from django.db import models
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import ugettext
+from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext
 
 from lino.core import actions
 from lino.core import layouts
@@ -197,11 +197,11 @@ class MergePlan(object):
             if len(parts) != 0:
                 items.append(E.li(', '.join(parts), ' ', E.b(prefix)))
 
-        collect_summary(ugettext("will be deleted."), self.volatiles)
-        collect_summary(ugettext("will get reassigned."),
+        collect_summary(gettext("will be deleted."), self.volatiles)
+        collect_summary(gettext("will get reassigned."),
                         self.related + self.generic_related)
-        items.append(E.li(ugettext("%s will be deleted") % self.obj))
-        msg = ugettext("Are you sure you want to merge "
+        items.append(E.li(gettext("%s will be deleted") % self.obj))
+        msg = gettext("Are you sure you want to merge "
                 "%(this)s into %(merge_to)s?") % dict(
                     this=self.obj, merge_to=self.merge_to)
         if len(items) != 0:

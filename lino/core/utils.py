@@ -15,7 +15,7 @@ from django.db.models import Q
 from django.core.exceptions import FieldDoesNotExist
 from django.utils.functional import lazy
 from importlib import import_module
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.conf import settings
 from django.core import exceptions
 from django.http import QueryDict

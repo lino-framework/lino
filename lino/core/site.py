@@ -31,7 +31,7 @@ from importlib import import_module, reload
 from lino.utils import AttrDict, date_offset
 import rstgen
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.utils.translation import get_language
 from django.db.utils import DatabaseError
 
@@ -3079,7 +3079,7 @@ class Site(object):
         babelfield `name` to their respective translation of the given
         lazy translatable string `txt`.
 
-        >>> from django.utils.translation import ugettext_lazy as _
+        >>> from django.utils.translation import gettext_lazy as _
         >>> from lino.core.site import TestSite as Site
         >>> site = Site(languages='de fr es')
         >>> site.str2kw('name', _("January")) == {'name_fr': 'janvier', 'name': 'Januar', 'name_es': 'Enero'}
@@ -3846,7 +3846,7 @@ signature as `django.core.mail.EmailMessage`.
         places.
 
         """
-        from django.utils.translation import ugettext as _
+        from django.utils.translation import gettext as _
 
         p = []
         sep = ''

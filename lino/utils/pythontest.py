@@ -15,10 +15,10 @@ from atelier.test import TestCase
 
 class TestCase(TestCase):
     """An extended :class:`atelier.test.TestCase` to be run using
-    :xfile:`setup.py` in the root of a project which may contain
+    :xfile:`setup.py` in the root of a project that may contain
     several Django projects.
 
-    This is different from the classes in :mod:`lino.utils.djangotest`
+    This is different from the classes in :mod:`lino.utils.djangotest`,
     which are designed for unit tests to be run using `djange-admin
     test` within a particular Django project.
 
@@ -37,22 +37,10 @@ class TestCase(TestCase):
         return env
 
     def setUp(self):
-
         if self.django_settings_module:
             from lino.core.signals import testcase_setup
             testcase_setup.send(self)
         super(TestCase, self).setUp()
-
-    def run_docs_django_tests(self, n, **kw):
-        warnings.warn("run_docs_django_tests is deprecated")
-        args = ["django-admin.py"]
-        args += ["test"]
-        args += ["--settings=%s" % n]
-        args += ["--failfast"]
-        args += ["--traceback"]
-        args += ["--verbosity=0"]
-        args += ["--pythonpath=%s" % self.project_root.child('docs')]
-        self.run_subprocess(args, **kw)
 
     def run_django_manage_test(self, cwd=None, **kw):
         """Run `python manage.py test` command in the given directory."""

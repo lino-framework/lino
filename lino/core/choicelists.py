@@ -12,7 +12,7 @@ from past.builtins import cmp
 
 import warnings
 
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.utils.functional import lazy
 from django.utils.deconstruct import deconstructible
 from django.db import models
@@ -241,7 +241,7 @@ Django creates copies of them when inheriting models.
     #     return str(self.text)
 
     def __str__(self):
-        # return force_text(self.text, errors="replace")
+        # return force_str(self.text, errors="replace")
         # return self.text
         if self.choicelist.show_values:
             return "{0} ({1})".format(self.value, self.text)

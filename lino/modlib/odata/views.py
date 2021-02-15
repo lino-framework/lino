@@ -15,7 +15,7 @@ from django import http
 from django.conf import settings
 from django.views.generic import View
 from django.core import exceptions
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 # from django.contrib import auth
 from lino.core import auth
 

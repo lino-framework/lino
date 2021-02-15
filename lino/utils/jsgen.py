@@ -31,30 +31,20 @@ var p14 = { "items": [ fld22, fld33 ], "title": "Panel", "xtype": "panel" };
 
 """
 
-from __future__ import unicode_literals
-from builtins import str
-from builtins import object
-from future.types import newstr
-import six
-
-import logging
-logger = logging.getLogger(__name__)
-
 import types
 import datetime
 import decimal
 import fractions
-
+import json
 
 from django.conf import settings
-import json
 from django.utils.functional import Promise
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.db.models.fields import NOT_PROVIDED
 
+from etgen import etree
 from lino.utils import IncompleteDate
 from lino.utils.quantities import Quantity
-from etgen import etree
 from lino.utils import curry
 from lino.core.permissions import Permittable
 from lino.core.permissions import make_view_permission_handler
@@ -410,8 +400,6 @@ def py2js(v, compact=True):
     """Note that None values are rendered as ``null`` (not ``undefined``.
 
     """
-    # assert _for_user_profile is not None
-    # logger.debug("py2js(%r)",v)
     for cv in CONVERTERS:
         v = cv(v)
 
@@ -425,15 +413,15 @@ def py2js(v, compact=True):
             # raise Exception("20120121b %r is of type %s" % (v,type(v)))
         # return v
     if isinstance(v, Promise):
-        # v = force_text(v)
-        return json.dumps(force_text(v.encode('utf8')))
+        # v = force_str(v)
+        return json.dumps(force_str(v.encode('utf8')))
 
     if isinstance(v, types.GeneratorType):
         return "".join([py2js(x, compact=compact) for x in v])
     if etree.iselement(v):
-        return json.dumps(force_text(etree.tostring(v)))
+        return json.dumps(force_str(etree.tostring(v)))
         # try:
-        #     return json.dumps(force_text(etree.tostring(v)))
+        #     return json.dumps(force_str(etree.tostring(v)))
         # except Exception as e:
         #     return json.dumps("Failed to render {!r} : {}".format(v, e))
 
@@ -464,17 +452,8 @@ def py2js(v, compact=True):
             if (not isinstance(v, VisibleComponent))
             or v.get_view_permission(get_user_profile())]
 
-        if six.PY2:
-            # "sorted(v.items())" without sortkey caused TypeError when
-            # the dictionary contained a mixture of unicode and
-            # future.types.newstr objects.
-            def sortkey(x):
-                if isinstance(x[0], newstr):
-                    return six.text_type(x[0])
-                return x[0]
-        else:
-            def sortkey(x):
-                return x[0]
+        def sortkey(x):
+            return x[0]
 
         items = sorted(items, key=sortkey)
         # try:

@@ -33,7 +33,7 @@ from django.db import models
 
 from django.utils import translation
 from django.utils.module_loading import import_string
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 #from django.db import IntegrityError
 from django.core.serializers import base
@@ -275,7 +275,7 @@ class LoaderBase(object):
         self.count_objects += 1
 
     def register_failure(self, obj, e):
-        msg = force_text(e)
+        msg = force_str(e)
         d = self.save_later.setdefault(obj.object.__class__, {})
         l = d.setdefault(msg, [])
         count = len(l)

@@ -16,6 +16,7 @@ import unittest
 import doctest
 
 from lino.utils.pythontest import TestCase as PythonTestCase
+from lino.utils.instantiator import create_row
 from lino.utils import AttrDict
 from lino.core import constants
 
@@ -26,7 +27,11 @@ HttpQuery = collections.namedtuple(
 
 
 class CommonTestCase(unittest.TestCase):
-    """An extended `django.test.TestCase`.
+    """
+
+    A :class:`unittest.TestCase` (not a :class:`django.test.TestCase`) that
+    starts a Django test client on a demo database populated using
+    :manage:`prep`.
 
     """
 
@@ -34,14 +39,11 @@ class CommonTestCase(unittest.TestCase):
         """Create the given database object, run :meth:`full_clean` and
         :meth:`save`, return the object.
 
-        Deprecated. Use :func:`lino.utils.instantiator.create_row`
-        instead.
+        This is here for backwards compatibility.
+        New code should use :func:`lino.utils.instantiator.create_row` instead.
 
         """
-        obj = model(**values)
-        obj.full_clean()
-        obj.save()
-        return obj
+        return create_row(model, **values)
 
     def check_json_result(self, response, expected_keys=None, msg=''):
         """Checks the result of response which is expected to return a
@@ -62,8 +64,6 @@ class CommonTestCase(unittest.TestCase):
         if expected_keys is not None:
             self.assertEqual(set(result.keys()), set(expected_keys.split()))
         return result
-
-
 
     def assertEquivalent(self, a, b, report_plain=False):
         """Compares two strings `a` (expected) and `b` (got), ignoring
@@ -150,7 +150,7 @@ class DemoTestCase(PythonTestCase, CommonTestCase):
 
     It expects the demo database to be initialized.
 
-    Unless in an environment with
+    Unless in an environment with it requires
     :attr:`lino.core.site.Site.remote_user_header` set to ``'REMOTE_USER'``.
 
     """
@@ -230,7 +230,10 @@ class DemoTestCase(PythonTestCase, CommonTestCase):
         #     raise
 
 
-class WebIndexTestCase(DemoTestCase):
+WebIndexTestCase = None
+# no longer used. These things are now covered by :manage:`demotest`.
+
+class unused_WebIndexTestCase(DemoTestCase):
     """
 
     Test whether a :manage:`runserver` on this database would respond with 200

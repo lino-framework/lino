@@ -10,7 +10,7 @@ Database models for `lino.modlib.bootstrap3`.
 
 from django.conf import settings
 from lino.core.tables import AbstractTable
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from lino.api import dd
 

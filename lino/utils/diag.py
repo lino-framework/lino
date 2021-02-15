@@ -9,7 +9,7 @@ from rstgen.utils import unindent
 
 from django.conf import settings
 from django.db import models
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 from lino.modlib.system.choicelists import PeriodEvents
 from lino.core.layouts import BaseLayout
@@ -161,8 +161,8 @@ class Analyzer(object):
             if field_names is None or f.name in field_names:
                 name = f.name
                 ref = model.__module__ + '.' + model.__name__ + '.' + name
-                verbose_name = force_text(f.verbose_name).strip()
-                help_text = force_text(f.help_text).replace('\n', ' ')
+                verbose_name = force_str(f.verbose_name).strip()
+                help_text = force_str(f.help_text).replace('\n', ' ')
                 txt = "**{verbose_name}** (:attr:`{name} <{ref}>`) : " \
                       "{help_text}".format(**locals())
                 items.append(txt)

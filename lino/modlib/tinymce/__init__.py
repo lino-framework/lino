@@ -102,7 +102,8 @@ class Plugin(ad.Plugin):
             yield settings.SITE.build_static_url("byteforce", "Ext.ux.TinyMCE.js")
 
     def get_patterns(self):
-        from django.conf.urls import url
+        from django.urls import re_path as url
+        # from django.conf.urls import url
         from . import views
 
         rx = '^'

@@ -32,13 +32,13 @@ from os import environ
 from django import http
 from django.db import models
 from django.conf import settings
+from django.core.exceptions import PermissionDenied
 from django.views.generic import View
 from django.views.decorators.cache import never_cache
 from django.utils.decorators import method_decorator
-from django.core.exceptions import PermissionDenied
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_protect
-from django.utils.translation import ugettext as _
-from django.utils.encoding import force_text
+from django.utils.translation import gettext as _
+from django.utils.encoding import force_str
 from lino.core import auth
 
 from lino.core.signals import pre_ui_delete
@@ -162,55 +162,6 @@ class MainHtml(View):
         ar.success(html=html)
         ar.set_response(**test_version_mismatch(request))
         return ui.default_renderer.render_action_response(ar)
-
-
-class unused_Authenticate(View):
-    """This view is being used when :setting:`remote_user_header` is
-    empty (and :setting:`user_model` not).
-    :class:`lino.core.auth.SessionUserMiddleware`
-
-    """
-
-    def get(self, request, *args, **kw):
-        action_name = request.GET.get(constants.URL_PARAM_ACTION_NAME)
-        if action_name == 'logout':
-            username = request.session.pop('username', None)
-            auth.logout(request)
-            # request.session.pop('password', None)
-            # ~ username = request.session['username']
-            # ~ del request.session['password']
-
-            ar = BaseRequest(request)
-            ar.success("User %r logged out." % username)
-            return ar.renderer.render_action_response(ar)
-        raise http.Http404()
-
-    @method_decorator(csrf_protect)
-    def post(self, request, *args, **kw):
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = auth.authenticate(
-            request, username=username, password=password)
-        if user is not None:
-            # user.is_authenticated:
-            auth.login(request, user)
-
-        ar = BaseRequest(request)
-        # mw = auth.get_auth_middleware()
-        # msg = mw.authenticate(username, password, request)
-        # if msg:
-        #     request.session.pop('username', None)
-        #     ar.error(msg)
-        # else:
-        #     request.session['username'] = username
-        #     # request.session['password'] = password
-        # ar.success(("Now logged in as %r" % username))
-        #     # print "20150428 Now logged in as %r (%s)" % (username, user)
-        if user is None:
-            ar.error(_("Failed to log in as {}.".format(username)))
-        else:
-            ar.success(("Now logged in as %r" % username))
-        return ar.renderer.render_action_response(ar)
 
 
 class RunJasmine(View):
@@ -602,7 +553,7 @@ class ApiList(View):
                                 MAX_ROW_COUNT)
             response = http.HttpResponse(
                 content_type='text/html;charset="utf-8"')
-            doc = Document(force_text(ar.get_title()))
+            doc = Document(force_str(ar.get_title()))
             doc.body.append(E.h1(doc.title))
             t = doc.add_table()
             # ~ settings.SITE.kernel.ar2html(ar,t,ar.data_iterator)

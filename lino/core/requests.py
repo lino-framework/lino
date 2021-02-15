@@ -11,8 +11,8 @@ from copy import copy
 from xml.sax.saxutils import escape
 
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import ugettext as gettext
+from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext
 from django.utils.translation import get_language, activate
 from django.utils import translation
 from django.utils import timezone
@@ -437,7 +437,7 @@ class BaseRequest(object):
         documents.
         """
         # from django.conf import settings
-        from django.utils.translation import ugettext
+        from django.utils.translation import gettext
         from django.utils.translation import pgettext
         from lino.api import dd, rt
         from lino.utils import iif
@@ -456,7 +456,7 @@ class BaseRequest(object):
         else:
             kw['ar'] = self
 
-        kw['_'] = ugettext
+        kw['_'] = gettext
         kw.update(
             E=E, tostring=tostring,
             dd=dd,

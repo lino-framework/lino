@@ -13,11 +13,11 @@ import rstgen
 from django.conf import settings
 from django.db import models
 from django.db.models.fields import NOT_PROVIDED
-# from django.utils.encoding import force_text
+# from django.utils.encoding import force_str
 from django.utils.text import format_lazy
 
 
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.utils.translation import get_language
 
 from etgen.html2rst import RstTable
@@ -224,10 +224,10 @@ class HtmlRenderer(Renderer):
     def href_to(self, ar, obj, text=None):
         h = self.obj2url(ar, obj)
         if h is None:
-            # return escape(force_text(obj))
+            # return escape(force_str(obj))
             return escape(str(obj))
         uri = self.js2url(h)
-        # return self.href(uri, text or force_text(obj))
+        # return self.href(uri, text or force_str(obj))
         return self.href(uri, text or str(obj))
 
     def href_to_request(self, ar, tar, text=None, **kw):
@@ -386,7 +386,7 @@ class HtmlRenderer(Renderer):
 
         """
         if text is None:
-            # text = (force_text(obj),)
+            # text = (force_str(obj),)
             text = (str(obj),)
         elif isinstance(text, str) or iselement(text):
             text = (text,)
@@ -703,7 +703,7 @@ class TextRenderer(HtmlRenderer):
         """Used by :meth:`lino.core.requests.BaseRequest.obj2str`.
         """
         if text is None:
-            # text = force_text(obj)
+            # text = force_str(obj)
             text = str(obj)
         # return "**{0}**".format(text)
         return settings.SITE.obj2text_template.format(text)

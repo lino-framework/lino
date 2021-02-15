@@ -72,9 +72,9 @@ from docutils.nodes import fully_normalize_name
 
 from django.db import models
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.utils import translation
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 from lino.api import dd, rt
 
@@ -109,13 +109,13 @@ def app_name(a):
 
 def actor_ref(rpt, text=None):
     if text is None:
-        text = force_text(rpt.label or rpt.title or str(rpt))
+        text = force_str(rpt.label or rpt.title or str(rpt))
     return ':ddref:`%s <%s>`' % (text, rpt)
 
 
 def model_ref(m, text=None):
     if text is None:
-        text = force_text(m._meta.verbose_name)
+        text = force_str(m._meta.verbose_name)
     return ':ref:`%s <%s>`' % (text, model_name(m))
 
 
@@ -193,7 +193,7 @@ def fields_table(fields):
         ]
         #~ for lng in babel.AVAILABLE_LANGUAGES:
             #~ babel.set_language(lng)
-            #~ cells.append(force_text(_(f.verbose_name)))
+            #~ cells.append(force_str(_(f.verbose_name)))
         #~ cells.append(f.help_text)
         return cells
     rows = [rowfmt(f) for f in fields if not hasattr(f, '_lino_babel_field')]
@@ -206,7 +206,7 @@ def get_actor_description(self):
     """
     body = "\n\n"
     if self.help_text:
-        body += unindent(force_text(self.help_text).strip()) + "\n\n"
+        body += unindent(force_str(self.help_text).strip()) + "\n\n"
 
     #~ ll = self.get_handle().list_layout
     #~ if ll is not None:
@@ -227,7 +227,7 @@ def get_actor_description(self):
     #~ body = "\n\n"
     #~ help_text = getattr(self,'help_text',None)
     #~ if help_text:
-        #~ body += unindent(force_text(help_text).strip()) + "\n\n"
+        #~ body += unindent(force_str(help_text).strip()) + "\n\n"
 #~
     #~ body += fields_table(self._meta.fields)
     #~
@@ -448,7 +448,7 @@ class ActorsOverviewDirective(Lino2rstDirective):
                 if not isinstance(cls, type):
                     raise Exception("%s is not an actor." % self.content[0])
                 desc = "**{0}** (:class:`{1} <{2}>`)".format(
-                    force_text(cls.label),
+                    force_str(cls.label),
                     cls.__name__,
                     cls.__module__ + '.' + cls.__name__
                 )
@@ -457,7 +457,7 @@ class ActorsOverviewDirective(Lino2rstDirective):
                     desc += _(" (Menu %s)") % menuselection(mi)
                     #~ print(str(mi.label).strip())
                 if cls.help_text:
-                    desc += "  : " + force_text(cls.help_text).strip()
+                    desc += "  : " + force_str(cls.help_text).strip()
 
                 # items.append("%s : %s" % (actor_ref(cls), cls.help_text or ''))
                 items.append(desc)
@@ -502,7 +502,7 @@ class ActorDirective(Lino2rstDirective):
                 fld = cls
                 s = ''
                 name = str(fld.model) + '.' + fld.name
-                title = force_text(fld.verbose_name).strip()
+                title = force_str(fld.verbose_name).strip()
 
                 s += "\n.. index::\n   single: "
                 s += str(_('%(field)s (field in %(model)s)') % dict(
@@ -532,7 +532,7 @@ class ActorDirective(Lino2rstDirective):
 
                 s = ''
                 name = model_name(model).lower()
-                title = force_text(model._meta.verbose_name)
+                title = force_str(model._meta.verbose_name)
                 s += "\n.. index::\n   single: "
                 s += str(_('%(model)s (model in %(app)s)') % dict(
                     model=title, app=model._meta.app_label))
@@ -585,7 +585,7 @@ class ActorDirective(Lino2rstDirective):
 
             if issubclass(cls, actors.Actor):
 
-                title = force_text(cls.label or cls.title)
+                title = force_str(cls.label or cls.title)
                 indextext = _('%(actor)s (view in %(app)s)') % dict(
                     actor=title, app=cls.app_label)
                 name = actor_name(cls)

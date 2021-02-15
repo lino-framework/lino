@@ -18,7 +18,7 @@ class Site(Site):
         tb.add_action(self.modules.contacts.Companies.detail_action)
 
     def setup_menu(self, user_type, main):
-        from django.utils.translation import ugettext_lazy as _
+        from django.utils.translation import gettext_lazy as _
         from django.db import models
 
         def doit(methodname, *args):

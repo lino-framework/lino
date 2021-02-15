@@ -38,7 +38,8 @@ class Plugin(Plugin):
         # ui.bs3_renderer = self.renderer
 
     def get_patterns(self):
-        from django.conf.urls import url
+        # from django.conf.urls import url
+        from django.urls import re_path as url
         from . import views
 
         rx = '^'

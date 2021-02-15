@@ -20,7 +20,7 @@ every installed plugin once on it. This feature is used by
 import threading
 
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from .actors import Actor
 from .dashboard import ActorItem, DashboardItem

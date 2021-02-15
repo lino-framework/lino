@@ -73,6 +73,7 @@ def action_request(app_label, actor, request, rqdata, is_list, **kw):
     rpt = requested_actor(app_label, actor)
     action_name = rqdata.get(constants.URL_PARAM_ACTION_NAME, None)
     if not action_name:
+        # print("20210215", rqdata)
         if is_list:
             action_name = rpt.default_list_action_name
         else:

@@ -31,8 +31,8 @@ import datetime
 from django.conf import settings
 from django.db import models
 from django.core import exceptions
-from django.utils.translation import ugettext_lazy as _
-from django.utils.encoding import force_text
+from django.utils.translation import gettext_lazy as _
+from django.utils.encoding import force_str
 from lino import AFTER17
 
 from lino.utils.jsgen import py2js
@@ -120,7 +120,7 @@ class StoreField(object):
         # """
         # Add the necessary :term:`odfpy` element(s) to the containing element `tc`.
         # """
-        # params.update(text=force_text(v))
+        # params.update(text=force_str(v))
         # tc.addElement(odf.text.P(**params))
 
     def parse_form_value(self, v, obj):
@@ -138,11 +138,13 @@ class StoreField(object):
         - setting a CharField to '' will store either '' or None,
           depending on whether the field is nullable or not.
         - sales.Invoice.number may be blank
+        - setting a Person.city to blank must not create a new Place "Select a Place..."
 
         """
         v = self.extract_form_data(instance, post_data)
-        # logger.info("20180712 %s.form2obj() %s = %r",
-        #             self.__class__.__name__, self.name, v)
+        # if self.name in 'nationality city':
+        #     logger.info("20210213 %s.form2obj() %s = %r from %s",
+        #                 self.__class__.__name__, self.name, v, post_data)
         if v is None:
             # means that the field wasn't part of the submitted form. don't
             # touch it.
@@ -194,7 +196,7 @@ class StoreField(object):
         Return a plain textual representation as a unicode string
         of the given value `v`.   Note that `v` might be `None`.
         """
-        return force_text(v)
+        return force_str(v)
 
 
 class RelatedMixin(object):
@@ -296,33 +298,41 @@ class ForeignKeyStoreField(RelatedMixin, ComboStoreField):
             #return (v.pk, str(v))
 
     def extract_form_data(self, obj, post_data):
-        # returns a tuple with both values
         # logger.info("20130128 ComboStoreField.extract_form_data %s",self.name)
-        text = post_data.get(self.name, None)
         pk = post_data.get(self.name + constants.CHOICES_HIDDEN_SUFFIX, None)
-        if pk is None and text is None:
+        if pk is None:
+            # for FK fields the fooHidden must be provided by
+            # the form, otherwise we consider the field as not included in the form.
+            # This is not an error because not all forms submit all fields.
+            # logger.info("20210214 incomplete form data for %s", self)
+            # raise Exception("20210214 incomplete form data for %s" % self)
             return
+
+        if not pk:
+            return ''
+            # return an empty string because None would mean to not touch the
+            # field. Field.blank and Field.none are handled later.
+
         relto_model = self.get_rel_to(obj)
         if not relto_model:
+            raise Warning("extract_form_data found no relto_model for %s" % self)
             # logger.info("20111209 get_value_text: no relto_model")
-            return
+            # return
 
-        if pk is not None:
-            # print("20200901 parse_form_value", v, obj)
-            try:
-                return relto_model.objects.get(pk=pk)
-            except ValueError:
-                pass
-            except relto_model.DoesNotExist:
-                pass
-            # don't return here because for learning comboboxes, extjs sets both
-            # partner and partnerHidden to the text
+        # print("20200901 parse_form_value", v, obj)
+        try:
+            return relto_model.objects.get(pk=pk)
+        except (ValueError, relto_model.DoesNotExist):
+            # For learning comboboxes, extjs sets fooHidden to contain the
+            # text that did not find a matching pk.
 
-        if text and obj is not None:
-            ch = obj.__class__.get_chooser_for_field(self.field.name)
-            if ch and ch.can_create_choice:
-                # print("20200901 can_create_choice", obj, v)
-                return ch.create_choice(obj, text)
+            if obj is not None:
+                ch = obj.__class__.get_chooser_for_field(self.field.name)
+                if ch and ch.can_create_choice:
+                    # print("20200901 can_create_choice", obj, v)
+                    return ch.create_choice(obj, pk)
+
+        raise Warning("Got invalid non-empty pk {} for {}".format(pk, self))
 
     def parse_form_value(self, v, obj):
         """Convert the form field value (expected to contain a primary key)
@@ -632,7 +642,7 @@ class BooleanStoreField(StoreField):
         return constants.parse_boolean(v)
 
     def format_value(self, ar, v):
-        return force_text(iif(v, _("Yes"), _("No")))
+        return force_str(iif(v, _("Yes"), _("No")))
 
 
 class DisplayStoreField(StoreField):
@@ -1214,8 +1224,8 @@ class Store(BaseStore):
         Store the `form_values` into the `instance` by calling
         :meth:`form2obj` for every store field.
         """
-        # logger.info("20180813")
         disabled_fields = set(self.actor.get_disabled_fields(instance, ar))
+        # logger.info("20210213 form2obj %s %s", disabled_fields, [f.name for f in self.all_fields])
         changed_triggers = []
         for f in self.all_fields:
             if f.name not in disabled_fields:

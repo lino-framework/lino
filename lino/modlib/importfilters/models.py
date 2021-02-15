@@ -15,11 +15,11 @@ logger = logging.getLogger(__name__)
 from django.conf import settings
 from django.contrib.contenttypes import models as contenttypes
 from django.contrib.contenttypes.models import ContentType
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 
 
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 from lino.api import dd, rt

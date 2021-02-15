@@ -12,7 +12,7 @@ import django
 django.setup()
 from lino.api.shell import *
 from django.utils import translation
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.test import Client
 from django.db import connection, reset_queries as reset_sql_queries
 import json
@@ -313,7 +313,7 @@ def show_fields_by_type(fldtype):
         for f in model._meta.fields:
             if isinstance(f, fldtype):
                 name = f.name
-                verbose_name = force_text(f.verbose_name).strip()
+                verbose_name = force_str(f.verbose_name).strip()
                 txt = "{verbose_name} ({name})".format(**locals())
                 flds.append(txt)
         if len(flds):

@@ -53,7 +53,8 @@ class AjaxExceptionResponse(MiddlewareMixin):
     # exceptions on a production site in order to debug problems like #2699
 
     def process_exception(self, request, exception):
-        if request.is_ajax():
+        # if request.is_ajax():  # See https://docs.djangoproject.com/en/3.1/releases/3.1/
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             (exc_type, exc_info, tb) = sys.exc_info()
 
             # response to client:
@@ -76,5 +77,3 @@ class AjaxExceptionResponse(MiddlewareMixin):
             # if isinstance(exception, ObjectDoesNotExist):
             #     return HttpResponseBadRequest(response)
             # return HttpResponseServerError(response)
-
-

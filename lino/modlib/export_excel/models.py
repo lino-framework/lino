@@ -10,7 +10,7 @@ import os
 from django.conf import settings
 from django.db.models import Model
 from django.utils.functional import Promise
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from etgen.html import iselement, to_rst
 
 from lino.core import actions

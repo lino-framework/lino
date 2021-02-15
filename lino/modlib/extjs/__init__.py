@@ -31,7 +31,7 @@ from __future__ import unicode_literals
 from __future__ import print_function
 
 from lino.api.ad import Plugin
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 # raise Exception("20160528")
 
@@ -217,7 +217,9 @@ class Plugin(Plugin):
     def get_patterns(self):
 
         from django.conf import settings
-        from django.conf.urls import url  # patterns
+        # django.conf.urls.url() is deprecated in favor of django.urls.re_path
+        # from django.conf.urls import url  # patterns
+        from django.urls import re_path as url
         from . import views
 
         self.renderer.build_site_cache()

@@ -40,9 +40,9 @@ from django.apps import AppConfig
 from django.apps import apps
 from django.conf import settings
 from django.core import exceptions
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.text import format_lazy
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import PermissionDenied
 from django.db.utils import DatabaseError
 

@@ -13,7 +13,7 @@ from decimal import Decimal
 
 from django.conf import settings
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 from django.core.exceptions import FieldDoesNotExist
 from django.db.models.fields import NOT_PROVIDED
@@ -1178,6 +1178,7 @@ class TableRow(object):
 
     def save_existing_instance(self, ar):
         watcher = ChangeWatcher(self)
+        # print("20210213 save_existing_instance", ar.ah, ar.rqdata, self.disabled_fields)
         ar.ah.store.form2obj(ar, ar.rqdata, self, False)
         self.full_clean()
         self.save_watched_instance(ar, watcher)

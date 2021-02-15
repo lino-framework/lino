@@ -7,7 +7,7 @@ Defines the classes used for defining workflows.  See
 """
 
 from django.utils.functional import Promise
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.utils.text import format_lazy
 from django.db import models
 

@@ -8,7 +8,7 @@ See :doc:`/specs/system`.
 """
 
 from lino import ad, _
-from django.utils.translation import ugettext
+from django.utils.translation import gettext
 from etgen.html import E, join_elems
 
 
@@ -35,7 +35,7 @@ class Plugin(ad.Plugin):
                 locked_rows = list(Lockable.get_lockable_rows(ar.get_user()))
                 if locked_rows:
                     chunks = [
-                        ugettext("You have a dangling edit lock on"), " "]
+                        gettext("You have a dangling edit lock on"), " "]
                     chunks += join_elems(
                         [ar.obj2html(obj) for obj in locked_rows], ", ")
                     chunks.append('.')

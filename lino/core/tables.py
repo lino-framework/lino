@@ -13,7 +13,7 @@ import yaml
 
 from django.db import models
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from lino.core import actors
 from lino.core import actions

@@ -9,10 +9,10 @@ decorator, and some of the standard actions.  See :ref:`dev.actions`.
 
 import logging; logger = logging.getLogger(__name__)
 
-from django.utils.translation import ugettext_lazy as _
-from django.utils.translation import ugettext as gettext
+from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext
 from django.utils.text import format_lazy
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.conf import settings
 from django.db import models
 
@@ -627,7 +627,7 @@ class Action(Parametrizable, Permittable):
             name)
 
     def __str__(self):
-        # return force_text(self.label)
+        # return force_str(self.label)
         # return str(self.get_label())
         return str(self.get_label())
 
@@ -882,9 +882,9 @@ class ShowInsert(TableAction):
         return super(ShowInsert, self).attach_to_actor(owner, name)
 
     def get_action_title(self, ar):
-        # return _("Insert into %s") % force_text(ar.get_title())
+        # return _("Insert into %s") % force_str(ar.get_title())
         if ar.actor.model is None:
-            return _("Insert into %s") % force_text(ar.get_title())
+            return _("Insert into %s") % force_str(ar.get_title())
         return format_lazy(_("New {}"), ar.actor.model._meta.verbose_name)
 
     def get_window_layout(self, actor):
@@ -996,8 +996,9 @@ class SubmitDetail(SaveGridCell):
     callable_from = 'd'
 
     def run_from_ui(self, ar, **kw):
-        # logger.info("20140423 SubmitDetail")
+        # logger.info("20210213a SubmitDetail")
         for elem in ar.selected_rows:
+            # logger.info("20210213b SubmitDetail %s", elem)
             elem.save_existing_instance(ar)
             if not settings.SITE.is_installed("react"):
                 # No point in clos

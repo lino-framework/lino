@@ -1,25 +1,23 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2020 Rumma & Ko Ltd
+# Copyright 2009-2021 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """Callback handling
 """
-
-from builtins import object
 
 import logging; logger = logging.getLogger(__name__)
 
 import sys
 import os
 from os.path import join, dirname, exists
+from hashlib import md5
 
 # from multiprocessing import Process, Manager
 
 from django.conf import settings
-from django.utils.translation import ugettext_lazy as _
-from django.utils.encoding import force_text
+from django.utils.translation import gettext_lazy as _
+from django.utils.encoding import force_str
 
 from etgen.html import tostring
-from hashlib import md5
 
 # from lino.core.requests import ActorRequest
 
@@ -157,7 +155,7 @@ def add_callback(ar, *msgs, uid=None):
 
     """
     if len(msgs) > 1:
-        msg = '\n'.join([force_text(s) for s in msgs])
+        msg = '\n'.join([force_str(s) for s in msgs])
     else:
         msg = msgs[0]
     # logger.info("20160526 add_callback(%s)", msg)
@@ -200,7 +198,7 @@ def popCallBack(resp):
     """
     return {cb:c for cb,c in resp.items() if cb.startswith("xcallback__")}
 
-def applyCallbackChoice(resp = {}, data={}, choice="yes"):
+def applyCallbackChoice(resp={}, data={}, choice="yes"):
     """
     Looks up all other callback IDs from a previous responce as well as adds your new choice to the data for resending.
     Used in testing
@@ -209,6 +207,7 @@ def applyCallbackChoice(resp = {}, data={}, choice="yes"):
     callback = {"xcallback__" + resp["xcallback"]['id'] : choice}
     data.update(callback)
     return data
+
 # mpman = Manager()
 # mgr = CallbackManager()
 #
