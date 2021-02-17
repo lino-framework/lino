@@ -832,12 +832,15 @@ lino.mixins.periods.DateRange."""),
     'lino.modlib.tinymce.TextFieldTemplate' : _("""A reusable block of text that can be selected from a text editor to
 be inserted into the text being edited."""),
     'lino.modlib.uploads.Upload' : _("""Django model representing an upload file."""),
-    'lino.modlib.uploads.Upload.file' : _("""Pointer to the file itself (a Django FileField)."""),
-    'lino.modlib.uploads.Upload.mimetype' : _("""The Media type
-of the file.  See also this thread
-about length of MIME type field."""),
+    'lino.modlib.uploads.Upload.file' : _("""Pointer to the uploaded file itself (a Django FileField)."""),
+    'lino.modlib.uploads.Upload.file_size' : _("""The size of the file in bytes. Not yet implemented."""),
+    'lino.modlib.uploads.Upload.mimetype' : _("""The media type of the
+uploaded file."""),
     'lino.modlib.uploads.Upload.type' : _("""The type of this upload."""),
     'lino.modlib.uploads.Upload.description' : _("""A short description entered manually by the user."""),
+    'lino.modlib.uploads.Upload.volume' : _("""A pointer to the library volume where this file is stored."""),
+    'lino.modlib.uploads.Upload.upload_area' : _("""The upload area this file belongs to."""),
+    'lino.modlib.uploads.Upload.library_file' : _("""The path of this file, relative the volume's root."""),
     'lino.modlib.uploads.Upload.description_link' : _("""Almost the same as description, but if file is
 not empty, the text is clickable, and clicking on it opens the
 uploaded file in a new browser window."""),
