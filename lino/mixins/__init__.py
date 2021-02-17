@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2010-2020 Rumma & Ko Ltd
+# Copyright 2010-2021 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
@@ -15,13 +15,10 @@ by applications and the :ref:`xl`. But none of them is mandatory.
     human
     periods
     polymorphic
-    uploadable
     ref
     registrable
 
 """
-
-from builtins import object
 
 from django.db import models
 from django.conf import settings
@@ -104,7 +101,7 @@ class Modified(model.Model):
 
 class Created(model.Model):
     """
-    Adds a a timestamp field which holds the creation time of every
+    Adds a timestamp field which holds the creation time of every
     individual database object.
 
     .. attribute:: created
@@ -143,14 +140,10 @@ class CreatedModified(Created, Modified):
 class ProjectRelated(model.Model):
 
     """
-    Mixin for models that are related to a "project". This adds a
-    field named `project` and related default behaviour.
+    Mixin for models that are related to a "project",
+    i.e. to an object of the type given by your `lino.core.site.Site.project_model`.
 
-    A project in this context means what the users consider "the
-    central most important model that is used to classify most other
-    things".  For example in :ref:`avanti` the "project" is a Client
-    while in :ref:`tera` it is a therapy.  The application's project
-    model is specified in :attr:`lino.core.site.Site.project_model`.
+    This adds a field named :attr:`project` and related methods.
 
 
     .. attribute:: project
@@ -261,7 +254,6 @@ from lino.mixins.sequenced import Sequenced, Hierarchical
 from lino.mixins.periods import DateRange
 from lino.mixins.periods import ObservedDateRange, Yearly, Monthly, Today
 from lino.mixins.polymorphic import Polymorphic
-from lino.mixins.uploadable import Uploadable
 
 from lino.utils.mldbc.fields import BabelCharField, BabelTextField
 from lino.utils.mldbc.mixins import BabelNamed, BabelDesignated

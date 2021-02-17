@@ -14,6 +14,7 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("Uploads")
     menu_group = "office"
+    max_file_size = 10
 
     def setup_main_menu(self, site, user_type, m):
         mg = self.get_menu_group()
@@ -31,4 +32,3 @@ class Plugin(ad.Plugin):
         m = m.add_menu(mg.app_label, mg.verbose_name)
         m.add_action('uploads.AllUploads')
         m.add_action('uploads.UploadAreas')
-

@@ -531,12 +531,21 @@ class Site(object):
 
     project_model = None
     """
-    Optionally set this to the full name of a model used as "central
-    project" in your application.  Models which inherit from
-    :class:`ProjectRelated <lino.mixins.ProjectRelated>` then have an
-    additional ForeignKey to this model.
+    Specifies the application's project model.
 
-    TODO: convert this into a plugin setting (probably of the office plugin).
+    A project in this context means what the users consider "the central most
+    important thing that is used to classify most other things".  For example in
+    :ref:`avanti` the "project" is a Client while in :ref:`tera` it is a
+    therapy.
+
+    This can be either `None` (the default value) or the full name of the model
+    used as "central project model" in this application.
+
+    If this is not `None`, all models that inherit from :class:`ProjectRelated
+    <lino.mixins.ProjectRelated>` will have an additional ForeignKey to this
+    model.
+
+    TODO: convert this into a plugin setting of the office plugin?
 
     """
 

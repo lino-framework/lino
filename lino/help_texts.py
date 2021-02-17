@@ -29,12 +29,12 @@ phone."""),
 every individual database object."""),
     'lino.Modified.modified' : _("""The time when this database object was last modified."""),
     'lino.Modified.auto_touch' : _("""Whether to touch objects automatically when saving them."""),
-    'lino.Created' : _("""Adds a a timestamp field which holds the creation time of every
+    'lino.Created' : _("""Adds a timestamp field which holds the creation time of every
 individual database object."""),
     'lino.Created.created' : _("""The time when this object was created."""),
     'lino.CreatedModified' : _("""Adds two timestamp fields created and modified."""),
-    'lino.ProjectRelated' : _("""Mixin for models that are related to a "project". This adds a
-field named project and related default behaviour."""),
+    'lino.ProjectRelated' : _("""Mixin for models that are related to a "project",
+i.e. to an object of the type given by your lino.core.site.Site.project_model."""),
     'lino.ProjectRelated.project' : _("""Pointer to the project to which this object is related."""),
     'lino.ProjectRelated.update_owned_instance' : _("""When a project-related object controls
 another project-related object, then the controlled
@@ -178,11 +178,6 @@ this is a root element which cannot have any siblings."""),
     'lino.sequenced.Hierarchical' : _("""Model mixin for things that have a "parent" and "siblings"."""),
     'lino.sequenced.Hierarchical.get_parental_line' : _("""Return an ordered list of all ancestors of this instance."""),
     'lino.sequenced.Hierarchical.whole_clan' : _("""Return a set of this instance and all children and grandchildren."""),
-    'lino.uploadable.Uploadable' : _("""Mixin for objects that represent an uploadable file."""),
-    'lino.uploadable.Uploadable.file' : _("""Pointer to the file itself (a Django FileField)."""),
-    'lino.uploadable.Uploadable.mimetype' : _("""The Media type
-of the file.  See also this thread
-about length of MIME type field."""),
     'lino.modlib.about.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.bootstrap3.renderer.Renderer' : _("""A  HTML render that uses Bootstrap3."""),
     'lino.modlib.bootstrap3.views.List' : _("""Render a list of records."""),
@@ -837,9 +832,11 @@ lino.mixins.periods.DateRange."""),
     'lino.modlib.tinymce.TextFieldTemplate' : _("""A reusable block of text that can be selected from a text editor to
 be inserted into the text being edited."""),
     'lino.modlib.uploads.Upload' : _("""Django model representing an upload file."""),
+    'lino.modlib.uploads.Upload.file' : _("""Pointer to the file itself (a Django FileField)."""),
+    'lino.modlib.uploads.Upload.mimetype' : _("""The Media type
+of the file.  See also this thread
+about length of MIME type field."""),
     'lino.modlib.uploads.Upload.type' : _("""The type of this upload."""),
-    'lino.modlib.uploads.Upload.file' : _("""Pointer to the uploaded file. See
-lino.mixins.uploadable.Uploadable.file"""),
     'lino.modlib.uploads.Upload.description' : _("""A short description entered manually by the user."""),
     'lino.modlib.uploads.Upload.description_link' : _("""Almost the same as description, but if file is
 not empty, the text is clickable, and clicking on it opens the
@@ -848,11 +845,18 @@ uploaded file in a new browser window."""),
 UploadsByController."""),
     'lino.modlib.uploads.MyUploads' : _("""Shows my uploads (i.e. those whose author is the current user)."""),
     'lino.modlib.uploads.UploadsByController' : _("""Shows the uploads controlled by this database object."""),
+    'lino.modlib.uploads.UploadBase' : _("""Abstract base class of Upload.
+This was named lino.mixins.uploadable.Uploadable until 20210217.
+It encapsulates some really basic
+functionality. Its usage is deprecated. If you were inheriting from
+lino.mixins.Uploadable, you should convert that model to point to
+an Upload instead."""),
     'lino.modlib.uploads.UploadType' : _("""Django model representing an upload type."""),
     'lino.modlib.uploads.UploadType.shortcut' : _("""Optional pointer to a virtual upload shortcut field.  If
 this is not empty, then the given shortcut field will manage
 uploads of this type.  See also Shortcuts."""),
     'lino.modlib.uploads.UploadTypes' : _("""The table with all existing upload types."""),
+    'lino.modlib.uploads.UploadController' : _("""Model mixin that turns a model into an upload controller."""),
     'lino.modlib.uploads.UploadController.show_uploads' : _("""Show uploads in a grid table."""),
     'lino.modlib.uploads.Shortcuts' : _("""The list of available upload shortcut fields in this application."""),
     'lino.modlib.users.Users' : _("""Base class for all tables of User."""),

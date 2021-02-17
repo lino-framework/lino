@@ -20,7 +20,7 @@ from lino.modlib.office.roles import OfficeUser, OfficeStaff, OfficeOperator
 from lino.mixins import Referrable
 
 from .choicelists import Shortcuts, UploadAreas
-from .mixins import UploadController
+from .mixins import UploadBase, UploadController
 
 
 
@@ -119,11 +119,10 @@ def filename_leaf(name):
 
 
 
-class Upload(mixins.Uploadable, UserAuthored, Controllable):
+class Upload(UploadBase, UserAuthored, Controllable):
+
     class Meta(object):
         abstract = dd.is_abstract_model(__name__, 'Upload')
-        # verbose_name = _("Upload")
-        # verbose_name_plural = _("Uploads")
         verbose_name = _("Upload file")
         verbose_name_plural = _("Upload files")
 
