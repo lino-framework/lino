@@ -1036,10 +1036,6 @@ class CreateRow(Action):
             # file upload
             ar.set_response(rows=[ar.ah.store.row2list(ar, elem)])
             ar.set_response(navinfo=navinfo(ar.data_iterator, elem))
-        else:
-            # Must set text/html for file uploads, otherwise the
-            # browser adds a <PRE></PRE> tag around the AJAX response.
-            ar.set_content_type('text/html')
 
         # if ar.actor.stay_in_grid and ar.requesting_panel:
         if ar.actor.stay_in_grid:
@@ -1093,6 +1089,13 @@ class SubmitInsert(CreateRow):
         # is going to be closed (this disturbs at least in ticket
         # #219)
         ar.requesting_panel = None
+
+        if ar.actor.handle_uploaded_files is not None:
+            # Must set text/html for file uploads, otherwise the
+            # browser adds a <PRE></PRE> tag around the AJAX response.
+            # 20210217 And this is true also in case of a ValidationError
+            ar.set_content_type('text/html')
+
         # print("20201230 SubmitInsert.run_from_ui", ar)
         if ar.actor.handle_uploaded_files is not None and len(ar.request.FILES.getlist("file")) > 1:
             # Multiple uploads possible, note plural method names.

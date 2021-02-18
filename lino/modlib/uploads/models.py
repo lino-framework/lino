@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2008-2020 Rumma & Ko Ltd
+# Copyright 2008-2021 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 import os
@@ -9,6 +9,8 @@ from django.conf import settings
 from django.utils.text import format_lazy
 # from lino.api import string_concat
 from django.utils.translation import pgettext_lazy as pgettext
+from django.template.defaultfilters import filesizeformat
+from django.core.exceptions import ValidationError
 
 from etgen.html import E, join_elems, tostring
 from lino.api import dd, rt, _
@@ -20,8 +22,14 @@ from lino.modlib.office.roles import OfficeUser, OfficeStaff, OfficeOperator
 from lino.mixins import Referrable
 
 from .choicelists import Shortcuts, UploadAreas
-from .mixins import UploadBase, UploadController
+from .mixins import UploadController
 
+
+def filename_leaf(name):
+    i = name.rfind('/')
+    if i != -1:
+        return name[i + 1:]
+    return name
 
 
 class Volume(Referrable):
@@ -75,48 +83,68 @@ class UploadType(mixins.BabelNamed):
 
     shortcut = Shortcuts.field(blank=True)
 
+class UploadBase(dd.Model):
 
-class Volumes(dd.Table):
-    model = 'uploads.Volume'
-    required_roles = dd.login_required(OfficeStaff)
+    class Meta(object):
+        abstract = True
 
-    insert_layout = """
-    ref description
-    root_dir
-    base_url
-    """
-    detail_layout = """
-    ref description
-    root_dir base_url
-    overview
-    """
+    file = models.FileField(
+        _("File"), blank=True, upload_to=dd.plugins.uploads.upload_to_tpl)
+    mimetype = models.CharField(
+        _("MIME type"), blank=True, max_length=255, editable=False)
 
+    def handle_uploaded_files(self, request, file=None):
+        #~ from django.core.files.base import ContentFile
+        if not file and not 'file' in request.FILES:
+            dd.logger.debug("No 'file' has been submitted.")
+            return
+        uf = file or request.FILES['file']  # an UploadedFile instance
+        #~ cf = ContentFile(request.FILES['file'].read())
+        #~ print f
+        #~ raise NotImplementedError
+        #~ dir,name = os.path.split(f.name)
+        #~ if name != f.name:
+            #~ print "Aha: %r contains a path! (%s)" % (f.name,__file__)
+        self.size = uf.size
+        self.mimetype = uf.content_type
 
+        if self.size > dd.plugins.uploads.max_file_size:
+            raise ValidationError(
+                _("File size is {}! Must be below {}.").format(
+                    filesizeformat(self.size),
+                    filesizeformat(dd.plugins.uploads.max_file_size)))
 
-class UploadTypes(dd.Table):
-    required_roles = dd.login_required(OfficeStaff)
-    model = 'uploads.UploadType'
-    column_names = "upload_area name max_number wanted shortcut *"
-    order_by = ["upload_area", "name"]
+        # Certain Python versions or systems don't manage non-ascii filenames,
+        # so we replace any non-ascii char by "_". In Py3, encode() returns a
+        # bytes object, but we want the name to remain a str.
 
-    insert_layout = """
-    name
-    upload_area
-    """
+        #~ dd.logger.info('20121004 handle_uploaded_files() %r',uf.name)
+        name = uf.name.encode('ascii', 'replace').decode('ascii')
+        name = name.replace('?', '_')
 
-    detail_layout = """
-    id upload_area wanted max_number shortcut
-    name
-    uploads.UploadsByType
-    """
+        # Django magics:
+        self.file = name  # assign a string
+        ff = self.file  # get back a FileField instance !
+        #~ print 'uf=',repr(uf),'ff=',repr(ff)
 
+        #~ if not ispure(uf.name):
+            #~ raise Exception('uf.name is a %s!' % type(uf.name))
 
-def filename_leaf(name):
-    i = name.rfind('/')
-    if i != -1:
-        return name[i + 1:]
-    return name
+        ff.save(name, uf, save=False)
 
+        # The expression `self.file`
+        # now yields a FieldFile instance that has been created from `uf`.
+        # see Django FileDescriptor.__get__()
+
+        dd.logger.info("Wrote uploaded file %s", ff.path)
+
+    def get_file_button(self, text=None):
+        if text is None:
+            text = str(self)
+        if self.file.name:
+            url = settings.SITE.build_media_url(self.file.name)
+            return E.a(text, href=url, target="_blank")
+        return text
 
 
 class Upload(UploadBase, UserAuthored, Controllable):
@@ -130,6 +158,7 @@ class Upload(UploadBase, UserAuthored, Controllable):
     type = dd.ForeignKey("uploads.UploadType", blank=True, null=True)
     volume = dd.ForeignKey("uploads.Volume", blank=True, null=True)
     library_file = models.CharField(_("Library file"), max_length=255, blank=True)
+    file_size = models.IntegerField(_("File size"), editable=False, null=True)
 
     description = models.CharField(
         _("Description"), max_length=200, blank=True)
@@ -175,13 +204,57 @@ class Upload(UploadBase, UserAuthored, Controllable):
             return M.objects.all()
         return M.objects.filter(upload_area=upload_area)
 
-    def save(self, *args, **kw):
+    def full_clean(self, *args, **kw):
+        super(Upload, self).full_clean(*args, **kw)
         if self.type is not None:
             self.upload_area = self.type.upload_area
-        super(Upload, self).save(*args, **kw)
+        if self.file :
+            # if self.file.size > dd.plugins.uploads.max_file_size:
+            #     raise ValidationError(
+            #         _("File size is {}! Must be below {}.").format(
+            #             filesizeformat(self.file.size),
+            #             filesizeformat(dd.plugins.uploads.max_file_size)))
+            self.file_size = self.file.size
+        else:
+            self.file_size = None
 
 
 dd.update_field(Upload, 'user', verbose_name=_("Uploaded by"))
+
+
+class Volumes(dd.Table):
+    model = 'uploads.Volume'
+    required_roles = dd.login_required(OfficeStaff)
+
+    insert_layout = """
+    ref description
+    root_dir
+    base_url
+    """
+    detail_layout = """
+    ref description
+    root_dir base_url
+    overview
+    """
+
+
+
+class UploadTypes(dd.Table):
+    required_roles = dd.login_required(OfficeStaff)
+    model = 'uploads.UploadType'
+    column_names = "upload_area name max_number wanted shortcut *"
+    order_by = ["upload_area", "name"]
+
+    insert_layout = """
+    name
+    upload_area
+    """
+
+    detail_layout = """
+    id upload_area wanted max_number shortcut
+    name
+    uploads.UploadsByType
+    """
 
 
 class Uploads(dd.Table):

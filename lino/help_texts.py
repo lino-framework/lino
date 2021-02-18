@@ -298,6 +298,7 @@ window."""),
     'lino.modlib.tinymce.Plugin.media_name' : _("""Lino currently includes three versions of TinyMCE, but for
 production sites we still use the eldest version 3.4.8."""),
     'lino.modlib.uploads.Plugin' : _("""See /dev/plugins."""),
+    'lino.modlib.uploads.Plugin.max_file_size' : _("""Refuse to upload files that are larger than this."""),
     'lino.modlib.users.utils.UserTypeContext' : _("""A context manager which activates a current user type."""),
     'lino.modlib.weasyprint.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.weasyprint.Plugin.header_height' : _("""Height of header in mm. Set to None if you want no header."""),

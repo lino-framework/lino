@@ -182,8 +182,6 @@ class JsCacheRenderer():
         settings.SITE.on_each_app('setup_site_cache', force)
 
         settings.SITE.makedirs_if_missing(
-            os.path.join(settings.MEDIA_ROOT, 'upload'))
-        settings.SITE.makedirs_if_missing(
             os.path.join(settings.MEDIA_ROOT, 'webdav'))
 
         if force or settings.SITE.build_js_cache_on_startup:

@@ -6,6 +6,7 @@
 
 
 """
+from os.path import join
 from lino import ad, _
 
 
@@ -14,7 +15,22 @@ class Plugin(ad.Plugin):
 
     verbose_name = _("Uploads")
     menu_group = "office"
+
     max_file_size = 10
+    """Refuse to upload files that are larger than this."""
+
+    upload_to_tpl = 'uploads/%Y/%m'
+    """The value to use as
+    `upload_to
+  <https://docs.djangoproject.com/en/3.1/ref/models/fields/#django.db.models.FileField.upload_to>`__
+    for the :attr:`Upload.file` field.
+    """
+
+    def on_ui_init(self, kernel):
+        from django.conf import settings
+        super(Plugin, self).on_ui_init(kernel)
+        kernel.site.makedirs_if_missing(
+            join(settings.MEDIA_ROOT, 'uploads'))
 
     def setup_main_menu(self, site, user_type, m):
         mg = self.get_menu_group()

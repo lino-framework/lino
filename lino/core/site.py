@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2009-2020 Rumma & Ko Ltd
+# Copyright 2009-2021 Rumma & Ko Ltd
 # License: BSD, see LICENSE for more details.
 # doctest lino/core/site.py
 

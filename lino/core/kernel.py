@@ -105,48 +105,12 @@ class Kernel(object):
     default_ui = None  # TODO: rename this to front_end
     admin_ui = None
 
-    # _singleton_instance = None
-
-    # @classmethod
-    # def instance(cls, site):
-    #     if cls._singleton_instance is None:
-    #         cls._singleton_instance = cls(site)
-    #     elif cls._singleton_instance.site is not site:
-    #         site.logger().info("Overriding SITE instance")
-    #         cls._singleton_instance.site = site
-    #     return cls._singleton_instance
-
     def __init__(self, site):
-
         # logger.info("20140227 Kernel.__init__() a")
-
-        # from importlib import import_module
-        # # For every plugin, Lino checks whether the package contains a
-        # # module named `ui` and, if yes, imports this module. The
-        # # benefit of this is that all "Lino extensions" to the models
-        # # can be moved out of :xfile:`models.py` into a separate file
-        # # :xfile:`ui.py`.
-        # # print '\n'.join([p.app_name for p in self.installed_plugins])
-        # for p in site.installed_plugins:
-        #     # fn = dirname(inspect.getfile(p.app_module))
-        #     # fn = join(fn, 'ui.py')
-        #     try:
-        #         x = p.app_name + '.ui'
-        #         import_module(x)
-        #         logger.info("20150416 imported %s", x)
-        #     except Exception as e:
-        #     # except ImportError as e:
-        #         if str(e) != "No module named ui":
-        #             logger.warning("Failed to import %s : %s", x, e)
-        #             # raise Exception("Failed to import %s : %s" % (x, e))
-
         self.site = site
         self.GFK_LIST = []
-        # self.widgets = WidgetFactory()
-
         self.kernel_startup(site)
         # logger.info("20140227 Kernel.__init__() done")
-
 
     _code_mtime = None
 
