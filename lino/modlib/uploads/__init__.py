@@ -10,14 +10,16 @@ from os.path import join
 from lino import ad, _
 
 
+KB = 2 ** 10
+
 class Plugin(ad.Plugin):
     "See :doc:`/dev/plugins`."
 
     verbose_name = _("Uploads")
     menu_group = "office"
 
-    max_file_size = 10
-    """Refuse to upload files that are larger than this."""
+    max_file_size = 500 * KB
+    """Refuse to upload files that are larger than this (in bytes)."""
 
     upload_to_tpl = 'uploads/%Y/%m'
     """The value to use as
