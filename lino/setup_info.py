@@ -174,6 +174,7 @@ lino.modlib.system
 lino.modlib.tinymce
 lino.modlib.tinymce.fixtures
 lino.modlib.uploads
+lino.modlib.uploads.fixtures
 lino.modlib.users
 lino.modlib.users.fixtures
 lino.modlib.weasyprint

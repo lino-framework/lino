@@ -22,15 +22,26 @@ class Plugin(ad.Plugin):
     upload_to_tpl = 'uploads/%Y/%m'
     """The value to use as
     `upload_to
-  <https://docs.djangoproject.com/en/3.1/ref/models/fields/#django.db.models.FileField.upload_to>`__
+    <https://docs.djangoproject.com/en/3.1/ref/models/fields/#django.db.models.FileField.upload_to>`__
     for the :attr:`Upload.file` field.
+    """
+
+    remove_orphaned_files = False
+    """
+    Whether `checkdata --fix` should automatically delete orphaned files in the
+    uploads folder.
+
     """
 
     def on_ui_init(self, kernel):
         from django.conf import settings
         super(Plugin, self).on_ui_init(kernel)
-        kernel.site.makedirs_if_missing(
-            join(settings.MEDIA_ROOT, 'uploads'))
+        kernel.site.makedirs_if_missing(self.get_uploads_root())
+
+    def get_uploads_root(self):
+        # from django.conf import settings
+        # return join(settings.SITE.MEDIA_ROOT, 'uploads')
+        return join(self.site.django_settings['MEDIA_ROOT'], 'uploads')
 
     def setup_main_menu(self, site, user_type, m):
         mg = self.get_menu_group()

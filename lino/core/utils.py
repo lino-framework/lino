@@ -240,9 +240,10 @@ def models_by_base(base, toplevel_only=False):
     base class.
 
     If `toplevel_only` is True, then do not include MTI children.
+    See :ref:`tested.core_utils` for more explanations.
 
-    Changed 2015-11-03: The list is sorted alphabetically using
-    :func:`full_model_name` because anyway the sort order was
+    The list is sorted alphabetically using :func:`full_model_name`.
+    Before 2015-11-03 it was
     unpredictable and changed between Django versions.
 
     """

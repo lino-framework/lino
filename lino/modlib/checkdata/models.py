@@ -1,8 +1,6 @@
-# Copyright 2015-2020 Rumma & Ko Ltd
+# Copyright 2015-2021 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-
-from builtins import object
 from collections import OrderedDict
 
 from django.db import models
@@ -60,15 +58,6 @@ class FixProblem(UpdateProblem):
 
 
 class UpdateProblemsByController(dd.Action):
-    """Updates the table of data problems for a given database
-    object, also removing those messages which no longer exist. This
-    action does not change anything else in the database.
-
-    This action is automatically being installed on each model for
-    which there is at least one active :class:`Checker
-    <lino.modlib.checkdata.choicelists.Checker>`.
-
-    """
     icon_name = 'bell'
     ui5_icon_name = "sap-icon://bell"
     label = _("Check data")
@@ -95,10 +84,6 @@ class UpdateProblemsByController(dd.Action):
 
 
 class FixProblemsByController(UpdateProblemsByController):
-    """Update data problems, repairing those which are
-    automatically fixable.
-
-    """
     label = _("Fix data problems")
     fix_them = True
 
@@ -212,9 +197,7 @@ class ProblemsByChecker(Problems):
 
 
 class MyProblems(Problems):
-    """Shows the data problems assigned to this user.
 
-    """
     required_roles = dd.login_required(CheckdataUser)
     label = _("Data problems assigned to me")
 
@@ -238,10 +221,6 @@ class MyProblems(Problems):
 
 @dd.receiver(dd.pre_analyze)
 def set_checkdata_actions(sender, **kw):
-    """Installs the :class:`UpdateProblemsByController` action on every
-    model for which there is at least one Checker
-
-    """
     for m in get_checkable_models().keys():
         if m is None:
             continue
@@ -268,12 +247,6 @@ def check_instance(obj):
             yield prb
 
 def get_checkable_models(*args):
-    """
-    Return an `OrderedDict` mapping each model which has at least one
-    checker to a list of these checkers.
-
-    The dict is ordered to avoid that checkers run in a random order.
-    """
     checkable_models = OrderedDict()
     for chk in Checkers.get_list_items():
         if len(args):
@@ -299,17 +272,22 @@ def check_data(args=[], fix=True, prune=False):
         qs = Problem.objects.all()
         msg = "Prune {} existing messages...".format(qs.count())
         dd.logger.info(msg)
+        qs.delete()
 
     final_sums = [0, 0, 0]
     with translation.override('en'):
         for m, checkers in mc.items():
             if m is None:
+                qs = Problem.objects.filter(
+                    **gfk2lookup(Problem.owner, None, checker__in=checkers))
+                qs.delete()
                 qs = [None]
                 name = "unbound data"
                 msg = "Running {0} checkers on {1}...".format(len(checkers), name)
             else:
                 ct = rt.models.contenttypes.ContentType.objects.get_for_model(m)
-                Problem.objects.filter(owner_type=ct).delete()
+                qs = Problem.objects.filter(owner_type=ct, checker__in=checkers)
+                qs.delete()
                 name = str(m._meta.verbose_name_plural)
                 qs = m.objects.all()
                 msg = "Running {0} data checkers on {1} {2}...".format(
@@ -319,7 +297,7 @@ def check_data(args=[], fix=True, prune=False):
             for obj in qs:
                 for chk in checkers:
                     todo, done = chk.update_problems(obj, False, fix)
-                    sums[0] += len(todo)
+                    sums[0] += len(todo) + len(done)
                     sums[1] += len(done)
             if sums[0] or sums[1]:
                 msg = "Found {0} and fixed {1} data problems in {2}."

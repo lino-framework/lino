@@ -3,8 +3,12 @@
 # License: BSD (see file COPYING for details)
 
 import os
+from os.path import join, exists
+import glob
+from pathlib import Path
 
 from django.db import models
+from django.db.models.fields.files import FieldFile
 from django.conf import settings
 from django.utils.text import format_lazy
 # from lino.api import string_concat
@@ -20,9 +24,10 @@ from lino.modlib.gfks.mixins import Controllable
 from lino.modlib.users.mixins import UserAuthored, My
 from lino.modlib.office.roles import OfficeUser, OfficeStaff, OfficeOperator
 from lino.mixins import Referrable
+from lino.modlib.checkdata.choicelists import Checker
 
 from .choicelists import Shortcuts, UploadAreas
-from .mixins import UploadController
+from .mixins import UploadController, safe_filename
 
 
 def filename_leaf(name):
@@ -74,7 +79,7 @@ class UploadType(mixins.BabelNamed):
         #     "\n",
         #     _("-1 means no limit.")))
         help_text=format_lazy(
-            u"{}\n{}",
+            "{}\n{}",
             _("No need to upload more uploads than N of this type."),
             _("-1 means no limit.")))
     wanted = models.BooleanField(
@@ -119,8 +124,7 @@ class UploadBase(dd.Model):
         # bytes object, but we want the name to remain a str.
 
         #~ dd.logger.info('20121004 handle_uploaded_files() %r',uf.name)
-        name = uf.name.encode('ascii', 'replace').decode('ascii')
-        name = name.replace('?', '_')
+        name = safe_filename(uf.name)
 
         # Django magics:
         self.file = name  # assign a string
@@ -208,18 +212,74 @@ class Upload(UploadBase, UserAuthored, Controllable):
         super(Upload, self).full_clean(*args, **kw)
         if self.type is not None:
             self.upload_area = self.type.upload_area
-        if self.file :
-            # if self.file.size > dd.plugins.uploads.max_file_size:
-            #     raise ValidationError(
-            #         _("File size is {}! Must be below {}.").format(
-            #             filesizeformat(self.file.size),
-            #             filesizeformat(dd.plugins.uploads.max_file_size)))
-            self.file_size = self.file.size
-        else:
-            self.file_size = None
+
+        self.file_size = self.get_real_file_size()
+
+    def get_real_file_size(self):
+        if self.file:
+            return self.file.size
+        if self.volume_id and self.library_file:
+            pth = join(self.volume.root_dir, self.library_file)
+            return os.path.get_size(pth)
 
 
 dd.update_field(Upload, 'user', verbose_name=_("Uploaded by"))
+
+
+class UploadChecker(Checker):
+    verbose_name = _("Check metadata of upload files")
+    model = Upload
+
+    def get_checkdata_problems(self, obj, fix=False):
+        if obj.file:
+            if not exists(join(settings.MEDIA_ROOT, obj.file.name)):
+                yield (False, format_lazy(
+                    _("Upload entry {} has no file"), obj.file.name))
+                return
+
+        file_size = obj.get_real_file_size()
+
+        if obj.file_size != file_size:
+            tpl = "Stored file size {} differs from real file size {}"
+            yield (False, format_lazy(tpl, obj.file_size, file_size))
+
+UploadChecker.activate()
+
+
+class UploadsFolderChecker(Checker):
+    verbose_name = _("Find orphaned files in uploads folder")
+
+    def get_checkdata_problems(self, obj, fix=False):
+        assert obj is None  # this is an unbound checker
+        Upload = rt.models.uploads.Upload
+        pth = dd.plugins.uploads.get_uploads_root()
+        start = len(settings.MEDIA_ROOT) + 1
+        # for filename in glob.iglob(join(pth,"**/*")):
+        for filename in Path(pth).rglob("*"):
+            # print(filename)
+            if filename.is_dir():
+                continue
+            rel_filename = str(filename)[start:]
+            qs = Upload.objects.filter(file=rel_filename)
+            n = qs.count()
+            if n == 0:
+                msg = format_lazy(_("File {} has no upload entry."), rel_filename)
+                # print(msg)
+                yield (dd.plugins.uploads.remove_orphaned_files, msg)
+                if fix and dd.plugins.uploads.remove_orphaned_files:
+                    filename.unlink()
+                    # obj = Upload(file=FieldFile(rel_filename))
+                    # # obj = Upload(file=filename)
+                    # obj.full_clean()
+                    # obj.save()
+            # else:
+            #     print("{} has {} entries.".format(filename, n))
+            # elif n > 1:
+            #     msg = _("Multiple upload entries for {} ").format(filename)
+            #     yield (False, msg)
+            #     This is no problem. A same file should be linkable to diffeerent controlers.
+
+UploadsFolderChecker.activate()
 
 
 class Volumes(dd.Table):
@@ -279,26 +339,18 @@ class Uploads(dd.Table):
     """
 
     parameters = mixins.ObservedDateRange(
-        # user=dd.ForeignKey(
-        #     'users.User', blank=True, null=True,
-        #     verbose_name=_("Uploaded by")),
         upload_type=dd.ForeignKey(
             'uploads.UploadType', blank=True, null=True))
     params_layout = "start_date end_date user upload_type"
-
-    # simple_parameters = ['user']
 
     @classmethod
     def get_request_queryset(cls, ar, **filter):
         qs = super(Uploads, cls).get_request_queryset(ar, **filter)
         pv = ar.param_values
-
         if pv.user:
             qs = qs.filter(user=pv.user)
-
         if pv.upload_type:
             qs = qs.filter(type=pv.upload_type)
-
         return qs
 
 
@@ -452,6 +504,7 @@ class UploadsByController(AreaUploads):
     @classmethod
     def format_upload(self, obj):
         return str(obj.type)
+
 
 @dd.receiver(dd.pre_analyze)
 def before_analyze(sender, **kwargs):

@@ -299,6 +299,11 @@ window."""),
 production sites we still use the eldest version 3.4.8."""),
     'lino.modlib.uploads.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.uploads.Plugin.max_file_size' : _("""Refuse to upload files that are larger than this."""),
+    'lino.modlib.uploads.Plugin.upload_to_tpl' : _("""The value to use as
+upload_to
+for the Upload.file field."""),
+    'lino.modlib.uploads.Plugin.remove_orphaned_files' : _("""Whether checkdata --fix should automatically delete orphaned files in the
+uploads folder."""),
     'lino.modlib.users.utils.UserTypeContext' : _("""A context manager which activates a current user type."""),
     'lino.modlib.weasyprint.Plugin' : _("""See /dev/plugins."""),
     'lino.modlib.weasyprint.Plugin.header_height' : _("""Height of header in mm. Set to None if you want no header."""),
@@ -557,7 +562,8 @@ problem."""),
 were yielded by the checker."""),
     'lino.modlib.checkdata.Problem.user' : _("""The user responsible for fixing this
 problem."""),
-    'lino.modlib.checkdata.Problems' : _("""The base table for problem message objects."""),
+    'lino.modlib.checkdata.Problems' : _("""The base table for problem message entries."""),
+    'lino.modlib.checkdata.MyProblems' : _("""Shows the problem message entries assigned to me."""),
     'lino.modlib.checkdata.Checkers' : _("""The list of data checkers known by this application."""),
     'lino.modlib.checkdata.Checker' : _("""Base class for all data checkers."""),
     'lino.modlib.checkdata.Checker.model' : _("""The model to be checked.  If this is a string, Lino will resolve it at startup."""),
@@ -575,6 +581,10 @@ for fixing it."""),
     'lino.modlib.checkdata.Checker.get_responsible_user' : _("""The site user to be considered responsible for problems detected by this
 checker on the given database object obj. This will be stored in
 user."""),
+    'lino.modlib.checkdata.lino.core.model.Model.fix_problems' : _("""Update data problem messages and repair those which are automatically fixable."""),
+    'lino.modlib.checkdata.lino.core.model.Model.check_data' : _("""Update data problem messages for this database object,
+also removing messages that no longer exist.
+This action does not change anything else in the database."""),
     'lino.modlib.contacts.Partner.client_contact_type' : _("""Setting this field on a partner makes this partner available
 as a client contact."""),
     'lino.modlib.users.User.coaching_type' : _("""The coaching type used for new coachings of this user."""),

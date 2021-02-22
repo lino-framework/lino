@@ -80,8 +80,15 @@ class Checker(dd.Choice):
     def update_problems(self, obj=None, delete=True, fix=False):
         Problem = rt.models.checkdata.Problem
         if delete:
-            qs = Problem.objects.filter(
-                **gfk2lookup(Problem.owner, obj, checker=self))
+            # if obj is None:
+            #     flt = {
+            #         Problem.owner.ct_field.name + "__isnull": True,
+            #         Problem.owner.fk_field.name + "__isnull": True
+            #     }
+            # else:
+            #     flt = gfk2lookup(Problem.owner, obj, checker=self)
+            flt = gfk2lookup(Problem.owner, obj, checker=self)
+            qs = Problem.objects.filter(**flt)
             qs.delete()
 
         done = []
@@ -103,10 +110,16 @@ class Checker(dd.Choice):
             else:
                 lang = user.language
             with translation.override(lang):
-                msg = '\n'.join([str(s) for s in todo])
-            prb = Problem(owner=obj, message=msg, checker=self, user=user)
-            prb.full_clean()
-            prb.save()
+                if obj is None:
+                    for msg in todo:
+                        prb = Problem(message=str(msg), checker=self, user=user)
+                        prb.full_clean()
+                        prb.save()
+                else:
+                    msg = '\n'.join([str(s) for s in todo])
+                    prb = Problem(owner=obj, message=msg, checker=self, user=user)
+                    prb.full_clean()
+                    prb.save()
         return (todo, done)
 
     def get_checkdata_problems(self, obj, fix=False):
