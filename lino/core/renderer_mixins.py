@@ -93,13 +93,20 @@ class JsCacheRenderer():
             # collector: one of form_panels, param_panels or
             # action_param_panels
             # fl : a FormLayout
+            # if str(fl).endswith("Given"):
+            #     print("20210223 add", fl)
+            # if str(res).endswith("MyCoursesGiven"):
+            #     print("20210223 gonna add {} for {}".format(fl, res))
             if fl is None:
                 return
             if fl._datasource is None:
+                # raise Exception("20210223 {}".format(res))
                 return  # 20130804
 
             if fl._datasource != res:
-                fl._other_datasources.add(res)
+                fl.add_datasource(res)
+                # if str(res).endswith("MyCoursesGiven"):
+                #     print("20210223 added", fl._other_datasources)
                 # if str(res).startswith('newcomers.AvailableCoaches'):
                 #     logger.info("20150716 %s also needed by %s", fl, res)
                 # if str(res) == 'courses.Pupils':

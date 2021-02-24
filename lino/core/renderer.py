@@ -858,7 +858,7 @@ class JsRenderer(HtmlRenderer):
         if ba is None:
             return None
         if not ba.get_row_permission(ar, obj, None):
-            # fixes #3857
+            # fixes #3857 (Lino links to a ticket and then says it doesn't exist)
             return None
         if ar.permalink_uris:
             return self.get_detail_url(ar, ba.actor, obj.pk)

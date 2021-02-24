@@ -435,7 +435,7 @@ class BaseLayout(object):
         """
         self._labels = self.override_labels()
         self._added_panels = dict()
-        self._other_datasources = set()
+        self._other_datasources = []
         self.hidden_elements = hidden_elements or set()
         self._element_options = dict()
         if main is not None:
@@ -463,6 +463,11 @@ class BaseLayout(object):
             self.__class__.__module__, self.__class__.__name__,
             self._datasource)
 
+    def add_datasource(self, ds):
+        if ds in self._other_datasources:
+            return
+        self._other_datasources.append(ds)
+
     def set_datasource(self, ds):
         self._datasource = ds
         if ds is not None:
@@ -473,6 +478,12 @@ class BaseLayout(object):
             self.editable = ds.editable
             #~ if str(ds).endswith('Partners'):
                 #~ print "20130124 set_datasource ", self,self.hidden_elements
+
+    def get_datasources(self):
+        # used by Course.get_detail_action
+        yield self._datasource
+        for ds in self._other_datasources:
+            yield ds
 
     def get_chooser_holder(self):
         return self._datasource

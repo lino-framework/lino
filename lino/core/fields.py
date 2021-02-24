@@ -1130,8 +1130,8 @@ class TableRow(object):
         a detail window.  Return `None` when no detail form exists or
         the requesting user has no permission to see it.
 
-        `ar` is the action request who asks to see a detail.
-        If the action requests's actor can be used for this model,
+        `ar` is the action request that asks to see the detail.
+        If the action request's actor can be used for this model,
         then use its `detail_action`. Otherwise use the
         `detail_action` of this model's default table.
 
@@ -1142,9 +1142,9 @@ class TableRow(object):
         :meth:`Menu.add_instance_action
         <lino.core.menus.Menu.add_instance_action>`.
 
-        Usage example: :class:`courses.Course
-        <lino_xl.lib.courses.Course>` overrides this to return
-        the detail_action depending on the ActivityLayout.
+        Usage example: :class:`courses.Course <lino_xl.lib.courses.Course>`
+        overrides this to return the detail action depending on the
+        :term:`activity layout`.
 
         """
         a = getattr(self, '_detail_action', None)

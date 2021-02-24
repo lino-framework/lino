@@ -626,13 +626,27 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
             Return True if the given form layout `fl` is needed for
             user_type.
             """
+            # print("20210223", lh.layout._datasource)
+            # if str(lh.layout._datasource) == "courses.CourseDetail":
+            # if str(lh.layout._datasource) == "courses.Activities":
+            #     print("20210223 must_render",
+            #         user_type, lh.main.get_view_permission(user_type),
+            #         lh.layout)
+
             if not lh.main.get_view_permission(user_type):
                 return False
-            if lh.layout._datasource.get_view_permission(user_type):
-                return True
-            for ds in lh.layout._other_datasources:
+            for ds in lh.layout.get_datasources():
                 if ds.get_view_permission(user_type):
                     return True
+            # if lh.layout._datasource.get_view_permission(user_type):
+            #     # if str(lh.layout._datasource) == "courses.Activities":
+            #     #     print("20210223 must_render returns True", lh.layout._datasource)
+            #     return True
+            # for ds in lh.layout._other_datasources:
+            #     if ds.get_view_permission(user_type):
+            #         # if str(lh.layout._datasource) == "courses.Activities":
+            #         #     print("20210223 must_render returns True", ds)
+            #         return True
             return False
 
         #~ f.write('\n/* Application FormPanel subclasses */\n')

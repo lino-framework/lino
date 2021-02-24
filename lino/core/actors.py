@@ -1111,6 +1111,47 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         return cls.editable
 
     @classmethod
+    def get_request_detail_action(cls, ar):
+        """
+        Return the detail action of this actor, respecting the user's view
+        permissions.
+
+        This is equivalent to the actors's :attr:`detail_action`, except when
+        the model's :meth:`get_detail_action` method returns a table for which
+        the user has no view permission.  In that case we don't want Lino to
+        give up too quickly because there is still a possibility that the same
+        layout is used on other tables, to which the user does have permission.
+
+        An example is described in :ref:`avanti.specs.get_request_detail_action`
+
+        """
+        ut = ar.get_user().user_type
+        ba = cls.detail_action
+        if ba.action is ar.actor.detail_action.action:
+            # 20210223 When this actor uses the same action, don't return
+            # the default area actor because the user might not have
+            # permission to see the defining actor. See
+            # specs/avanti/courses.rst
+            # return ar.actor.detail_action
+            ba = ar.actor.detail_action
+            if ba.allow_view(ut):
+            # if ba.get_view_permission(ut):
+                # print("20210223", ba, "is allowed for", ut)
+                return ba
+        # e.g. the owner of a cal.Event
+        # wl = table.get_detail_layout()
+        # for ds in wl.layout.get_datasources():
+        for ds in ba.action.owner.get_datasources():
+            if ds.default_action.get_view_permission(ut):
+                ba = ds.detail_action
+                # if ba.allow_view(ut):
+                if ba.get_view_permission(ut):
+                    # print("20210223", ba, "is allowed for", ut)
+                    return ba
+        return None
+
+
+    @classmethod
     def _collect_actions(cls):
         """
         Loops through the class dict and collects all Action instances,
@@ -1759,8 +1800,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     @classmethod
     def get_detail_elems(cls, *args):
         """
-        An optional first argument is the user interface plugin, a
-        :class:`Plugin` instance.  If this is None, will use
+        An optional first argument is the front end plugin, a
+        :class:`Plugin` instance.  If this is None, use
         :attr:`settings.SITE.kernel.default_ui
         <lino.core.kernel.Kernel.default_ui>`.
 
