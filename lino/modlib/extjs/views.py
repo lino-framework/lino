@@ -333,7 +333,7 @@ class ApiElement(View):
             # ~ print 20131004, ba.actor
             # Use url selected rows as selected PKs if defined, otherwise use the PK defined in the url path
             sr = request.GET.getlist(constants.URL_PARAM_SELECTED)
-            if not sr:
+            if len(sr) == 0:
                 sr = [pk]
             ar = ba.request(request=request, selected_pks=sr)
             # print(

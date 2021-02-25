@@ -150,7 +150,7 @@ class MenuItem(object):
         return js
 
 
-def create_item(spec, action=None, help_text=None, **kw):
+def create_item(user_type, spec, action=None, help_text=None, **kw):
     """
     """
     a = resolve_action(spec, action)
@@ -244,7 +244,7 @@ class Menu(MenuItem):
         self.items = newitems
 
     def add_action(self, *args, **kw):
-        mi = create_item(*args, **kw)
+        mi = create_item(self.user_type, *args, **kw)
         return self.add_item_instance(mi)
 
     def add_instance_action(self, obj, **kw):

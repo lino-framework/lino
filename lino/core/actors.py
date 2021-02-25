@@ -1127,7 +1127,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         """
         ut = ar.get_user().user_type
         ba = cls.detail_action
-        if ba.action is ar.actor.detail_action.action:
+        if ar.actor and ba.action is ar.actor.detail_action.action:
             # 20210223 When this actor uses the same action, don't return
             # the default area actor because the user might not have
             # permission to see the defining actor. See
@@ -1142,6 +1142,9 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         # wl = table.get_detail_layout()
         # for ds in wl.layout.get_datasources():
         for ds in ba.action.owner.get_datasources():
+            if ds.default_action is None:
+                # print("20210224", ds)
+                continue
             if ds.default_action.get_view_permission(ut):
                 ba = ds.detail_action
                 # if ba.allow_view(ut):

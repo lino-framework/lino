@@ -1159,6 +1159,7 @@ class TableRow(object):
                 #         ar.actor, self.__class__, ar.actor.model))
                 dt = self.__class__.get_default_table()
                 if dt is not None:
+                    # a = dt.get_request_detail_action(ar)
                     a = dt.detail_action
         if a is None or ar is None:
             return a
