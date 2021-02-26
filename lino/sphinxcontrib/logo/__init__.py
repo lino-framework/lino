@@ -11,16 +11,16 @@ Also adds some css styling.
 
 """
 
-from unipath import Path
+from pathlib import Path
 
 
 def builder_inited(app):
     """Define certain settings
     """
-    mydir = Path(__file__).parent.child('static').absolute()
-    app.config.html_static_path.append(mydir)
-    app.config.html_logo = mydir.child('logo_web3.png')
-    app.config.html_favicon = mydir.child('favicon.ico')
+    mydir = (Path(__file__).parent / 'static').absolute()
+    app.config.html_static_path.append(str(mydir))
+    app.config.html_logo = str(mydir / 'logo_web3.png')
+    app.config.html_favicon = str(mydir / 'favicon.ico')
 
 
 def setup(app):

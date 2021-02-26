@@ -1,7 +1,7 @@
 /*
 
 Thanks to:
-- <holger.spill@gmail.com> in sphinx-users@googlegroups.com November 2012 
+- <holger.spill@gmail.com> in sphinx-users@googlegroups.com November 2012
 - http://ask.metafilter.com/156206/Using-a-character-as-a-custom-list-bullet
 - Mark Newhouse at http://www.alistapart.com/articles/taminglists
 - http://www.w3.org/TR/CSS2/syndata.html#escaped-characters
@@ -40,7 +40,7 @@ table.scrollwide td {
 	white-space: nowrap;
 }
 
-/* centered image captions would be nice. doesn't work. 
+/* centered image captions would be nice. doesn't work.
    e.g. http://lino-framework.org/tutorials/layouts.html
 */
 p.caption {
@@ -60,4 +60,11 @@ div.body {
     background-color: #FFF;
     color: #3E4349;
     padding: 30px 30px;
+}
+
+img.pi-button {
+    width: 1.1em;
+    height: 1.1em;
+    background-color: LightSkyBlue;
+    border: 3px solid LightSkyBlue;
 }
