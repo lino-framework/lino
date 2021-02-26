@@ -11,6 +11,8 @@ from lino import ad, _
 
 
 KB = 2 ** 10
+MB = 2 ** 20
+
 
 class Plugin(ad.Plugin):
     "See :doc:`/dev/plugins`."
