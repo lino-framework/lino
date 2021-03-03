@@ -13,7 +13,7 @@ Example::
 
   class Foo(models.Model):
       name = BabelCharField(_("Foo"), max_length=200)
-      
+
 
 .. autosummary::
 
@@ -33,7 +33,7 @@ from django.utils.text import format_lazy
 
 from lino.core.fields import RichTextField
 
-LANGUAGE_CODE_MAX_LENGTH = 5
+LANGUAGE_CODE_MAX_LENGTH = 7
 
 
 def contribute_to_class(field, cls, fieldclass, **kw):
@@ -107,5 +107,3 @@ class LanguageField(models.CharField):
         )
         defaults.update(kw)
         models.CharField.__init__(self, *args, **defaults)
-
-

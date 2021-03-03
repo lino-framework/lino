@@ -42,7 +42,7 @@ class Command(BaseCommand):
             return
         dd.logger.info("%d scheduled jobs:", n)
         for i, job in enumerate(schedule.jobs, 1):
-            dd.logger.info("[%d] %s", i, job)
+            dd.logger.info("[%d] %r", i, job)
         if options['list_jobs']:
             return
         while True:
