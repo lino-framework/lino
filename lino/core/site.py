@@ -5,7 +5,7 @@
 
 """
 Defines the :class:`Site` class. For an overview see
-:doc:`/dev/site` and :doc:`/dev/plugins`.
+:doc:`/dev/site` and :doc:`/dev/plugins` and :doc:`/dev/languages`
 
 ..  doctest init:
     >>> import lino
@@ -73,15 +73,7 @@ Subject: {subject}
 
 LanguageInfo = collections.namedtuple(
     'LanguageInfo', ('django_code', 'name', 'index', 'suffix'))
-"""
-A named tuple with four fields:
-
-- `django_code` -- how Django calls this language
-- `name` --        how Lino calls it
-- `index` --       the position in the :attr:`Site.languages` tuple
-- `suffix` --      the suffix to append to babel fields for this language
-
-"""
+":noindex:"
 
 
 def to_locale(language):
@@ -164,15 +156,6 @@ class Site(object):
         <lino.api.rt.models>`.
 
         See :doc:`/dev/plugins`
-
-    .. attribute:: LANGUAGE_CHOICES
-
-        A tuple in the format expected by Django's `choices
-        <https://docs.djangoproject.com/en/1.11/ref/models/fields/#choices>`__
-        attribute, used e.g. by :class:`LanguageField
-        <lino.utils.mldbc.fields.LanguageField>`. It's content is
-        automatically populated from :attr:`languages` and application
-        code should not change it's value.
 
     .. attribute:: beid_protocol
 
@@ -267,45 +250,13 @@ class Site(object):
     """
 
     title = None
-    """The title of this web site to appear in the browser window.  If
-    this is None, Lino will use :attr:`verbose_name` as default value.
-
-    """
 
     verbose_name = "yet another Lino application"
-    """The name of this application, to be displayed to end users at
-    different places.
-
-    Note the difference between :attr:`title` and
-    :attr:`verbose_name`:
-
-    - :attr:`title` may be None, :attr:`verbose_name` not.
-
-    - :attr:`title` is used by the
-      :srcref:`index.html <lino/modlib/extjs/config/extjs/index.html>` for
-      :mod:`lino.modlib.extjs`.
-
-    - :attr:`title` and :attr:`verbose_name` are used by
-      :xfile:`admin_main.html` to generate the fragments "Welcome to the
-      **title** site" and "We are running **verbose_name** version
-      **x.y**"  (the latter only if :attr:`version` is set).
-
-    - :meth:`site_version` uses :attr:`verbose_name` (not :attr:`title`)
-
-    IOW, the :attr:`title` is rather for usage by local system
-    administrators, while the :attr:`verbose_name` is rather for usage
-    by application developers.
-
-    """
 
     version = None
     "The version number."
 
     url = None
-    """
-    The URL of the website that describes this application.
-    Used e.g. in a :menuselection:`Site --> About` dialog box.
-    """
 
     # mobile_server_url = None
     # """The URL to a mobile friedly version of the site.
@@ -387,11 +338,6 @@ class Site(object):
     """
 
     languages = None
-    """The language distribution used on this site.  It has its own
-    chapter :doc:`/dev/languages` in the Developers Guide.
-
-    """
-
     not_found_msg = '(not installed)'
 
     django_settings = None
@@ -410,7 +356,6 @@ class Site(object):
     """
 
     plugins = None
-
     models = None
 
     top_level_menus = [
@@ -477,13 +422,6 @@ class Site(object):
     """
 
     hidden_languages = None
-    """A string with a space-separated list of django codes of languages
-    that should be hidden.
-
-    Lino Welfare uses this because the demo database has 4
-    languages of which one (`nl`) is hidden by default.
-
-    """
 
     BABEL_LANGS = tuple()
 
@@ -1731,17 +1669,6 @@ class Site(object):
         self.apply_languages()
 
     def get_plugin_configs(self):
-        """Return a series of plugin configuration settings.
-
-        This is called before plugins are loaded.  :attr:`rt.plugins` is not
-        yet populated.
-
-        The method must return an iterator that yields tuples with three items
-        each: The name of the plugin, the name of the setting and the
-        value to set.
-
-
-        """
         return []
 
     def load_plugins(self):
@@ -1797,7 +1724,7 @@ class Site(object):
         disabled_plugins = set()
 
         def install_plugin(app_name, needed_by=None):
-            # print("20170505 install_plugin({})".format(app_name))
+            # print("20210305 install_plugin({})".format(app_name))
             # Django does not accept newstr, and we don't want to see
             # ``u'applabel'`` in doctests.
             app_name = str(app_name)
@@ -2319,46 +2246,8 @@ class Site(object):
             return 'session'  # model backend
         return 'remote'  # remote user backend
 
-    def get_apps_modifiers(self, **kw):
-        """
-        Override or hide individual plugins of an existing application.
-
-        Deprecated because this approach increases complexity instead of
-        simplifying things.
-
-        For example, if your site inherits from
-        :mod:`lino.projects.min2`::
-
-            def get_apps_modifiers(self, **kw):
-                kw.update(sales=None)
-                kw.update(courses='my.modlib.courses')
-                return kw
-
-        The default implementation returns an empty dict.
-
-        This method adds an additional level of customization because
-        it lets you remove or replace individual plugins from
-        :setting:`INSTALLED_APPS` without rewriting your own
-        :meth:`get_installed_apps`.
-
-        This will be called during Site instantiation and is expected to
-        return a dict of `app_label` to `full_python_path`
-        mappings which you want to override in the list of plugins
-        returned by :meth:`get_installed_apps`.
-
-        Mapping an `app_label` to `None` will remove that plugin from
-        :setting:`INSTALLED_APPS`.
-
-        It is theoretically possible but not recommended to replace an
-        existing `app_label` by an app with a different
-        `app_label`. For example, the following might work but is not
-        recommended::
-
-                kw.update(courses='my.modlib.MyActivities')
-
-        """
-
-        return kw
+    def get_apps_modifiers(self, **kwargs):
+        return kwargs
 
     def is_hidden_app(self, app_label):
         """
@@ -2636,24 +2525,14 @@ class Site(object):
         return date_offset(base, *args, **kwargs)
 
     def welcome_text(self):
-        """
-        Returns the text to display in a console window when this
-        application starts.
-        """
         return "This is %s using %s." % (
             self.site_version(), self.using_text())
 
     def using_text(self):
-        """
-        Text to display in a console window when Lino starts.
-        """
         return ', '.join([u"%s %s" % (n, v)
                           for n, v, u in self.get_used_libs()])
 
     def site_version(self):
-        """
-        Used in footnote or header of certain printed documents.
-        """
         if self.version:
             return self.verbose_name + ' ' + self.version
         return self.verbose_name
@@ -2785,50 +2664,13 @@ class Site(object):
         import babel
         yield ("Babel", babel.__version__, "http://babel.edgewall.org/")
 
-        #~ import tidylib
-        #~ version = getattr(tidylib,'__version__','')
-        #~ yield ("tidylib",version,"http://countergram.com/open-source/pytidylib")
-
-        #~ import pyPdf
-        #~ version = getattr(pyPdf,'__version__','')
-        #~ yield ("pyPdf",version,"http://countergram.com/open-source/pytidylib")
-
         import jinja2
         version = getattr(jinja2, '__version__', '')
         yield ("Jinja", version, "http://jinja.pocoo.org/")
 
-        # import sphinx
-        # version = getattr(sphinx, '__version__', '')
-        # yield ("Sphinx", version, "http://sphinx-doc.org/")
-
         import dateutil
         version = getattr(dateutil, '__version__', '')
         yield ("python-dateutil", version, "http://labix.org/python-dateutil")
-
-        #~ try:
-            #~ import Cheetah
-            #~ version = Cheetah.Version
-            #~ yield ("Cheetah",version ,"http://cheetahtemplate.org/")
-        #~ except ImportError:
-            #~ pass
-
-        # try:
-        #     from odf import opendocument
-        #     version = opendocument.__version__
-        # except ImportError:
-        #     version = self.not_found_msg
-        # yield ("OdfPy", version, "http://pypi.python.org/pypi/odfpy")
-
-        # try:
-        #     import docutils
-        #     version = docutils.__version__
-        # except ImportError:
-        #     version = self.not_found_msg
-        # yield ("docutils", version, "http://docutils.sourceforge.net/")
-
-        # import yaml
-        # version = getattr(yaml, '__version__', '')
-        # yield ("PyYaml", version, "http://pyyaml.org/")
 
         if self.social_auth_backends is not None:
             try:
@@ -3010,48 +2852,9 @@ class Site(object):
                            if x[0] in self.LANGUAGE_DICT])
 
     def get_language_info(self, code):
-        """Use this in Python fixtures or tests to test whether a Site
-        instance supports a given language.  `code` must be a
-        Django-style language code.
-
-        On a site with only one locale of a language (and optionally
-        some other languages), you can use only the language code to
-        get a tuple of :data:`LanguageInfo` objects.
-
-        >>> from lino.core.site import TestSite as Site
-        >>> Site(languages="en-us fr de-be de").get_language_info('en')
-        LanguageInfo(django_code='en-us', name='en_US', index=0, suffix='')
-
-        On a site with two locales of a same language (e.g. 'en-us'
-        and 'en-gb'), the simple code 'en' yields that first variant:
-
-        >>> site = Site(languages="en-us en-gb")
-        >>> print(site.get_language_info('en'))
-        LanguageInfo(django_code='en-us', name='en_US', index=0, suffix='')
-
-        """
         return self.language_dict.get(code, None)
 
     def resolve_languages(self, languages):
-        """
-        This is used by `UserType`.
-
-        Examples:
-
-        >>> from lino.core.site import TestSite as Site
-        >>> lst = Site(languages="en fr de nl et pt").resolve_languages('en fr')
-        >>> [i.name for i in lst]
-        ['en', 'fr']
-
-        You may not specify languages which don't exist on this site:
-
-        >>> Site(languages="en fr de").resolve_languages('en nl')
-        Traceback (most recent call last):
-        ...
-        Exception: Unknown language code 'nl' (must be one of ['en', 'fr', 'de'])
-
-
-        """
         rv = []
         if isinstance(languages, str):
             languages = str(languages).split()
@@ -3075,30 +2878,9 @@ class Site(object):
         return l
 
     def get_default_language(self):
-        """
-        The django code of the default language to use in every
-        :class:`lino.utils.mldbc.fields.LanguageField`.
-
-        """
         return self.DEFAULT_LANGUAGE.django_code
 
     def str2kw(self, name, txt,  **kw):
-        """
-        Return a dictionary which maps the internal field names for
-        babelfield `name` to their respective translation of the given
-        lazy translatable string `txt`.
-
-        >>> from django.utils.translation import gettext_lazy as _
-        >>> from lino.core.site import TestSite as Site
-        >>> site = Site(languages='de fr es')
-        >>> site.str2kw('name', _("January")) == {'name_fr': 'janvier', 'name': 'Januar', 'name_es': 'Enero'}
-        True
-        >>> site = Site(languages='fr de es')
-        >>> site.str2kw('name', _("January")) == {'name_de': 'Januar', 'name': 'janvier', 'name_es': 'Enero'}
-        True
-
-
-        """
         from django.utils import translation
         for simple, info in self.language_dict.items():
             with translation.override(simple):
@@ -3106,40 +2888,6 @@ class Site(object):
         return kw
 
     def babelkw(self, name, **kw):
-        """
-        Return a dict with appropriate resolved field names for a
-        BabelField `name` and a set of hard-coded values.
-
-        You have some hard-coded multilingual content in a fixture:
-        >>> from lino.core.site import TestSite as Site
-        >>> kw = dict(de="Hallo", en="Hello", fr="Salut")
-
-        The field names where this info gets stored depends on the
-        Site's `languages` distribution.
-
-        >>> Site(languages="de-be en").babelkw('name',**kw) == {'name_en': 'Hello', 'name': 'Hallo'}
-        True
-
-        >>> Site(languages="en de-be").babelkw('name',**kw) == {'name_de_BE': 'Hallo', 'name': 'Hello'}
-        True
-
-        >>> Site(languages="en-gb de").babelkw('name',**kw) == {'name_de': 'Hallo', 'name': 'Hello'}
-        True
-
-        >>> Site(languages="en").babelkw('name',**kw) == {'name': 'Hello'}
-        True
-
-        >>> Site(languages="de-be en").babelkw('name',de="Hallo",en="Hello") == {'name_en': 'Hello', 'name': 'Hallo'}
-        True
-
-        In the following example `babelkw` attributes the
-        keyword `de` to the *first* language variant:
-
-        >>> Site(languages="de-ch de-be").babelkw('name',**kw) == {'name': 'Hallo'}
-        True
-
-
-        """
         d = dict()
         for simple, info in self.language_dict.items():
             v = kw.get(simple, None)
@@ -3148,10 +2896,6 @@ class Site(object):
         return d
 
     def args2kw(self, name, *args):
-        """
-        Takes the basename of a BabelField and the values for each language.
-        Returns a `dict` mapping the actual fieldnames to their values.
-        """
         assert len(args) == len(self.languages)
         kw = {name: args[0]}
         for i, lang in enumerate(self.BABEL_LANGS):
@@ -3159,30 +2903,6 @@ class Site(object):
         return kw
 
     def field2kw(self, obj, name, **known_values):
-        """Return a `dict` with all values of the BabelField `name` in the
-given object `obj`. The dict will have one key for each
-:attr:`languages`.
-
-        Examples:
-
-        >>> from lino.core.site import TestSite as Site
-        >>> from lino.utils import AttrDict
-        >>> def testit(site_languages):
-        ...     site = Site(languages=site_languages)
-        ...     obj = AttrDict(site.babelkw(
-        ...         'name', de="Hallo", en="Hello", fr="Salut"))
-        ...     return site,obj
-
-
-        >>> site, obj = testit('de en')
-        >>> site.field2kw(obj, 'name') == {'de': 'Hallo', 'en': 'Hello'}
-        True
-
-        >>> site, obj = testit('fr et')
-        >>> site.field2kw(obj, 'name') == {'fr': 'Salut'}
-        True
-
-        """
         # d = { self.DEFAULT_LANGUAGE.name : getattr(obj,name) }
         for lng in self.languages:
             v = getattr(obj, name + lng.suffix, None)
@@ -3191,11 +2911,6 @@ given object `obj`. The dict will have one key for each
         return known_values
 
     def field2args(self, obj, name):
-        """
-        Return a list of the babel values of this field in the order of
-        this Site's :attr:`Site.languages` attribute.
-
-        """
         return [str(getattr(obj, name + li.suffix)) for li in self.languages]
         #~ l = [ getattr(obj,name) ]
         #~ for lang in self.BABEL_LANGS:
@@ -3203,62 +2918,6 @@ given object `obj`. The dict will have one key for each
         #~ return l
 
     def babelitem(self, *args, **values):
-        """
-        Given a dictionary with babel values, return the
-        value corresponding to the current language.
-
-        This is available in templates as a function `tr`.
-
-        >>> kw = dict(de="Hallo", en="Hello", fr="Salut")
-
-        >>> from lino.core.site import TestSite as Site
-        >>> from django.utils import translation
-
-        A Site with default language "de":
-
-        >>> site = Site(languages="de en")
-        >>> tr = site.babelitem
-        >>> with translation.override('de'):
-        ...    print(tr(**kw))
-        Hallo
-
-        >>> with translation.override('en'):
-        ...    print(tr(**kw))
-        Hello
-
-        If the current language is not found in the specified `values`,
-        then it returns the site's default language:
-
-        >>> with translation.override('jp'):
-        ...    print(tr(en="Hello", de="Hallo", fr="Salut"))
-        Hallo
-
-        Testing detail: default language should be "de" in our example, but
-        we are playing here with more than one Site instance while Django
-        knows only one "default language" which is the one specified in
-        `lino.projects.docs.settings`.
-
-        Another way is to specify an explicit default value using a
-        positional argument. In that case the language's default language
-        doesn'n matter:
-
-        >>> with translation.override('jp'):
-        ...    print(tr("Tere", de="Hallo", fr="Salut"))
-        Tere
-
-        >>> with translation.override('de'):
-        ...     print(tr("Tere", de="Hallo", fr="Salut"))
-        Hallo
-
-        You may not specify more than one default value:
-
-        >>> tr("Hello", "Hallo")
-        Traceback (most recent call last):
-        ...
-        ValueError: ('Hello', 'Hallo') is more than 1 default value.
-
-
-        """
         if len(args) == 0:
             info = self.language_dict.get(
                 get_language(), self.DEFAULT_LANGUAGE)
@@ -3289,59 +2948,6 @@ given object `obj`. The dict will have one key for each
             return self.babelitem(**v)
 
     def babelattr(self, obj, attrname, default=NOT_PROVIDED, language=None):
-        """
-        Return the value of the specified babel field `attrname` of `obj`
-        in the current language.
-
-        This is to be used in multilingual document templates.  For
-        example in a document template of a Contract you may use the
-        following expression::
-
-          babelattr(self.type, 'name')
-
-        This will return the correct value for the current language.
-
-        Examples:
-
-        >>> from __future__ import unicode_literals
-        >>> from django.utils import translation
-        >>> from lino.core.site import TestSite as Site
-        >>> from lino.utils import AttrDict
-        >>> def testit(site_languages):
-        ...     site = Site(languages=site_languages)
-        ...     obj = AttrDict(site.babelkw(
-        ...         'name', de="Hallo", en="Hello", fr="Salut"))
-        ...     return site, obj
-
-
-        >>> site,obj = testit('de en')
-        >>> with translation.override('de'):
-        ...     print(site.babelattr(obj,'name'))
-        Hallo
-
-        >>> with translation.override('en'):
-        ...     print(site.babelattr(obj,'name'))
-        Hello
-
-        If the object has no translation for a given language, return
-        the site's default language.  Two possible cases:
-
-        The language exists on the site, but the object has no
-        translation for it:
-
-        >>> site,obj = testit('en es')
-        >>> with translation.override('es'):
-        ...     print(site.babelattr(obj, 'name'))
-        Hello
-
-        Or a language has been activated which doesn't exist on the site:
-
-        >>> with translation.override('fr'):
-        ...     print(site.babelattr(obj, 'name'))
-        Hello
-
-
-        """
         if language is None:
             language = get_language()
         info = self.language_dict.get(language, self.DEFAULT_LANGUAGE)
@@ -3688,21 +3294,6 @@ Please convert to Plugin method".format(mod, methname)
         self._welcome_handlers.append(func)
 
     def get_installed_apps(self):
-        """
-        Yield the list of apps to be installed on this site.
-
-        Each item must be either a string or a *generator* to be iterated
-        recursively (again expecting either strings or generators of strings).
-
-        Lino will call this method exactly once when the :class:`Site`
-        instantiates.  The resulting list of names will then possibly
-        altered by the :meth:`get_apps_modifiers` method before being
-        assigned to the :setting:`INSTALLED_APPS` setting.
-
-        More explanations in :doc:`/dev/site`.
-
-        """
-
         if self.django_admin_prefix:
             yield 'django.contrib.admin'  # not tested
 

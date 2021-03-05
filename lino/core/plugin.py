@@ -229,8 +229,7 @@ class Plugin(object):
         Note that only the app_label (not the whole plugin name) is used when
         testing whether a plugin is installed. IOW if a plugin says it requires
         a plugin "stdlib.foo" and an application already has some plugin
-        "mylib.foo" installed, "mylib" satisfies "stdlib.foo".
-
+        "mylib.foo" installed, then "mylib.foo" satisfies "stdlib.foo".
 
         """
 
