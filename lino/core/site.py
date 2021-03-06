@@ -2887,12 +2887,14 @@ class Site(object):
                 kw[name + info.suffix] = str(txt)
         return kw
 
-    def babelkw(self, name, **kw):
+    def babelkw(self, name, txt=None, **kw):
         d = dict()
         for simple, info in self.language_dict.items():
             v = kw.get(simple, None)
             if v is not None:
                 d[name + info.suffix] = str(v)
+        if txt is not None:
+            d = str2kw(name, txt, **d)
         return d
 
     def args2kw(self, name, *args):

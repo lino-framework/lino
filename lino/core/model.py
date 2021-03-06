@@ -40,7 +40,6 @@ except ImportError:
 
 
 
-
 class Model(models.Model, fields.TableRow):
     """
     Lino's extension of the plain Django Model class.
@@ -217,6 +216,10 @@ class Model(models.Model, fields.TableRow):
                     #     "Virtual field {}.{} hides {} "
                     #     "of same name.".format(
                     #         full_model_name(model), k, f.__class__.__name__))
+                # if k == "workflow_buttons":
+                #     print("20210306 attach virtual field from {} to {}".format(m, model))
+                # if m is not model or not issubclass(model, Model):
+                #     # don't reuse a virtual field injected to a plain Django model
                 if m is not model:
                     # if k == "municipality" and model.__name__ == "Client":
                     #     print("20200818", m, model)
@@ -251,10 +254,9 @@ class Model(models.Model, fields.TableRow):
             if vf.name == name:
                 return vf
         return getattr(cls, name, None)
-
         # we cannot return super(Model, cls).get_data_elem(name) here because
         # get_data_elem is grafted also to pure Django models which don't
-        # inherit from TableRow
+        # inherit from lino.core.Model
 
 
     def disable_delete(self, ar=None):
@@ -749,7 +751,7 @@ class Model(models.Model, fields.TableRow):
         """
         yield ar.obj2html(self)
 
-    @fields.displayfield(_("Name"), max_length=15)
+    @displayfield(_("Name"), max_length=15)
     def name_column(self, ar):
         return str(self)
 
@@ -770,7 +772,7 @@ class Model(models.Model, fields.TableRow):
             return ''
         return E.div(*forcetext(self.get_overview_elems(ar)))
 
-    @fields.displayfield(_("Workflow"), help_text="List of actions that change the workflow state of this object.")
+    @displayfield(_("Workflow"), help_text="List of actions that change the workflow state of this object.")
     def workflow_buttons(self, ar):
         if ar is None:
             return ''
@@ -1032,9 +1034,8 @@ class Model(models.Model, fields.TableRow):
     @classmethod
     def django2lino(cls, model):
         """
-        Injects additional methods into a pure Django model that does
-        not inherit from :class:`lino.core.model.Model`.  Used by
-        :mod:`lino.core.kernel`
+        Inject Lino model methods into a pure Django model that does
+        not inherit from :class:`lino.core.model.Model`.
 
         """
         wo = {}
@@ -1045,6 +1046,8 @@ class Model(models.Model, fields.TableRow):
 
         if issubclass(model, cls):
             return
+
+        # print("20210306 djago2lino", cls, model)
 
         for k in LINO_MODEL_ATTRIBS:
             if not hasattr(model, k):

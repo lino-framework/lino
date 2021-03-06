@@ -413,9 +413,11 @@ class Table(AbstractTable):
                     # assert direct
                     # assert not m2m
                     if fk is None:
+                        candidates = ', '.join(
+                            [f.name for f in self.model._meta.get_fields()])
                         raise Exception(
-                            "Invalid master_key {} on {}".format(
-                                self.master_key, self))
+                            "Invalid master_key '{}' for {} ({} has fields {})".format(
+                                self.master_key, self, self.model, candidates))
                     if fk.remote_field:
                         master_model = fk.remote_field.model
                     elif isinstance(fk, ChoiceListField):

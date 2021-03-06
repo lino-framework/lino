@@ -1,7 +1,7 @@
-# Copyright 2011-2020 Rumma & Ko Ltd
+# Copyright 2011-2021 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
-import logging ; logger = logging.getLogger(__name__)
+# import logging ; logger = logging.getLogger(__name__)
 
 import inspect
 import copy
@@ -25,7 +25,6 @@ PREPARED_MODELS = dict()
 
 
 
-
 def fix_field_cache(model):
     """
     Remove duplicate entries in the field cache of the specified model
@@ -38,7 +37,7 @@ def fix_field_cache(model):
         for f in parent._meta.local_fields:
             used_fields[f.name] = f
             used_fields[f.attname] = f
-            
+
     # def msg(name):
     #     parent = used_fields.get(name).model
     #     print("20200622 Not adding {} to {} because inherited from {}".format(
@@ -98,7 +97,6 @@ def on_class_prepared(sender, **kw):
     # # collect_virtual_fields() second time because new virtual fields
     # # might have been injected
     # collect_virtual_fields(model)
-
 
 def fmt(func_caller):
     f, caller = func_caller
@@ -180,6 +178,8 @@ def do_when_prepared(todo, *model_specs):
         #~ if model._meta.abstract:
             #~ raise Exception("Trying do_when_prepared on abstract model %s" % model)
         # logger.info("20200622 Run %s for %s", caller, model)
+        # from lino.core.model import Model
+        # Model.django2lino(model)
         todo(model)
 
 
@@ -299,7 +299,7 @@ def update_field(model_spec, name, **kw):
         if de is None:
             msg = "Cannot update unresolved field %s.%s" % (model, name)
             raise Exception(msg)
-            logger.warning(msg)
+            # logger.warning(msg)
         # update_data_element(model, name, de, **kw)
 
         # if de.model is not model:

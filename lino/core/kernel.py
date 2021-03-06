@@ -83,7 +83,6 @@ from .utils import resolve_fields_list
 # from .utils import djangoname
 from .utils import class_dict_items
 
-# from .inject import collect_virtual_fields
 from .fields import set_default_verbose_name
 from lino.core.requests import ActorRequest
 

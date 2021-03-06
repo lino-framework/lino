@@ -162,9 +162,8 @@ if settings.SITE.social_auth_backends:
     except ImportError:
         raise Exception(
             "Sites with social_auth_backends must also install PSA "
-            "into their environment: "
-            "$ pip install social-auth-app-django")
-
+            "into their environment. Run `pm install` or "
+            "`pip install social-auth-app-django`")
 
     class SocialAuths(dd.Table):
         label = _("Third-party authorizations")
@@ -174,6 +173,7 @@ if settings.SITE.social_auth_backends:
     class SocialAuthsByUser(SocialAuths):
         required_roles = dd.login_required(SiteUser)
         master_key = 'user'
+
 else:
 
     class SocialAuthsByUser(dd.Dummy):
