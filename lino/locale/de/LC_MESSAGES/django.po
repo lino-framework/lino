@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  lino\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-03-03 17:39+0200\n"
+"POT-Creation-Date: 2021-03-07 10:40+0600\n"
 "PO-Revision-Date: 2021-02-13 12:50+0200\n"
 "Last-Translator: Luc Saffre <luc.saffre@gmail.com>\n"
 "Language: de\n"
@@ -3200,7 +3200,7 @@ msgstr "Art"
 msgid "%(value)r (invalid choice for %(list)s)"
 msgstr "%(value)r (ungültige Auswahl für %(list)s)"
 
-#: lino/core/dbtables.py:546
+#: lino/core/dbtables.py:548
 msgid "You have no permission to delete this row."
 msgstr "Sie haben nicht die Berechtigung, diese Zeile zu löschen."
 
@@ -3255,19 +3255,19 @@ msgstr ""
 "\"irgendwann im Jahr 1980\", \"%(ex2)s\" heißt \"im Juli 1980\"oder "
 "\"%(ex3)s\" heißt \"an einem 23. Juli\"."
 
-#: lino/core/kernel.py:576
+#: lino/core/kernel.py:575
 msgid "You have "
 msgstr "Du hast "
 
-#: lino/core/kernel.py:577
+#: lino/core/kernel.py:576
 msgid "{0} items in {1}"
 msgstr "{0} Einträge in {1}"
 
-#: lino/core/kernel.py:752
+#: lino/core/kernel.py:751
 msgid "User abandoned"
 msgstr ""
 
-#: lino/core/kernel.py:772
+#: lino/core/kernel.py:771
 msgid "Server is in readonly mode"
 msgstr ""
 
@@ -3327,37 +3327,37 @@ msgstr "Sind Sie sicher, dass Sie %(this)s nach %(merge_to)s fusionieren wollen?
 msgid "Merged %(this)s into %(merge_to)s. Updated %(updated)d related rows."
 msgstr ""
 
-#: lino/core/model.py:294
+#: lino/core/model.py:296
 #, python-format
 msgid "Cannot delete %(model)s %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
 "Kann %(model)s %(self)s nicht löschen weil %(count)d %(refs)s darauf "
 "verweisen."
 
-#: lino/core/model.py:404
+#: lino/core/model.py:406
 msgid "Cannot create {obj} from '{text}'"
 msgstr ""
 
-#: lino/core/model.py:607 lino/core/requests.py:1196
+#: lino/core/model.py:609 lino/core/requests.py:1196
 #, python-format
 msgid "%s has been updated."
 msgstr "%s wurde aktualisiert."
 
-#: lino/core/model.py:609 lino/core/requests.py:1198
+#: lino/core/model.py:611 lino/core/requests.py:1198
 #, python-format
 msgid "%s : nothing to save."
 msgstr "%s : nichts zu speichern."
 
-#: lino/core/model.py:752 lino/modlib/importfilters/models.py:35
+#: lino/core/model.py:754 lino/modlib/importfilters/models.py:35
 #: lino/modlib/users/desktop.py:203
 msgid "Name"
 msgstr "Name"
 
-#: lino/core/model.py:773
+#: lino/core/model.py:775
 msgid "Workflow"
 msgstr ""
 
-#: lino/core/model.py:1006
+#: lino/core/model.py:1008
 msgid "Pick {}"
 msgstr "{} auswählen"
 
@@ -3407,39 +3407,39 @@ msgstr "die Dokumentation"
 msgid "No data to display"
 msgstr "Keine Daten anzuzeigen"
 
-#: lino/core/site.py:417 lino/modlib/changes/models.py:102
+#: lino/core/site.py:362 lino/modlib/changes/models.py:102
 msgid "Master"
 msgstr "Stammdaten"
 
-#: lino/core/site.py:419
+#: lino/core/site.py:364
 msgid "Reports"
 msgstr "Berichte"
 
-#: lino/core/site.py:420
+#: lino/core/site.py:365
 msgid "Configure"
 msgstr "Konfigurierung"
 
-#: lino/core/site.py:421
+#: lino/core/site.py:366
 msgid "Explorer"
 msgstr ""
 
-#: lino/core/site.py:422
+#: lino/core/site.py:367
 msgid "Site"
 msgstr "Site"
 
-#: lino/core/site.py:2972 lino/modlib/languages/fixtures/few_languages.py:26
+#: lino/core/site.py:2814 lino/modlib/languages/fixtures/few_languages.py:26
 msgid "English"
 msgstr ""
 
-#: lino/core/site.py:3863
+#: lino/core/site.py:3456
 msgid "This is "
 msgstr "Dies ist "
 
-#: lino/core/site.py:3872
+#: lino/core/site.py:3465
 msgid " using "
 msgstr " unter "
 
-#: lino/core/site.py:3917
+#: lino/core/site.py:3510
 #, python-format
 msgid "%(place)s, %(date)s"
 msgstr "%(place)s, den %(date)s"
@@ -5323,7 +5323,7 @@ msgstr "Erteilte Vollmachten"
 msgid "Authorities taken"
 msgstr "Erhaltene Vollmachten"
 
-#: lino/modlib/users/desktop.py:170
+#: lino/modlib/users/desktop.py:169
 msgid "Third-party authorizations"
 msgstr ""
 
