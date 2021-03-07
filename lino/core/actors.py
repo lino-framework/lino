@@ -283,16 +283,17 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         Note that this handler will be called independently of whether
         the user has permission to view the actor or not.
     """
+
     required_roles = set([SiteUser])
-    """See :attr:`lino.core.permissions.Permittable.required_roles`"""
+    """See :doc:`/dev/perms`."""
 
     model = None
     """The model on which this table iterates.
 
-    The application programmer can specify either the model class
-    itself or a string of type ``'app.Model'``.
+    The :term:`application developer` can specify either the model class itself
+    or a string of type ``'app.Model'``.
 
-    This should be `None` on all tables which are not subclass of
+    This should be `None` on all tables that are not subclass of
     :class:`lino.core.dbtables.Table`.
 
     """
@@ -351,7 +352,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     details_of_master_template = _("%(details)s of %(master)s")
 
-
     parameters = None
     "See :attr:`lino.core.utils.Parametrizable.parameters`."
 
@@ -382,14 +382,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     """
 
     simple_parameters = None
-    """A tuple of names of filter parameters which are handled
-    automatically.
-
-    Application developers should not set this attribute directly,
-    they should rather define a :meth:`get_simple_parameters` on the
-    model.
-
-    """
 
     hidden_elements = frozenset()
 
@@ -407,22 +399,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     get_welcome_messages = None
     get_row_classes = None
     window_size = None
-    """Set this to a tuple of `(height, width)` to have this actor
-    display in a modal non-maximized window.
-
-    - `height` must be either an integer expressing a number of rows
-      or the string "auto".  If it is auto, then the window should not
-      contain any v-flexible component.
-
-    - `width` must be either an integer expressing a number of rows
-      or a string of style "90%".
-
-      Note that a relative width will be converted to a number of
-      pixels when the window is rendered for the first time. That is,
-      if you close the window, resize your browser window and reopen
-      the same window, you will get the old size.
-
-    """
 
     default_list_action_name = 'grid'
     default_elem_action_name = 'detail'
@@ -439,46 +415,10 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     """
 
     insert_layout_width = 60
-    """
-    When specifying an :attr:`insert_layout` using a simple a multline
-    string, then Lino will instantiate a FormPanel with this width.
-    """
-
     hide_window_title = False
-    """
-    This is set to `True` e.h. in home pages
-    (e.g. :class:`lino_welfare.modlib.pcsw.models.Home`).
-
-    """
-
     allow_create = True
-    """
-    If this is False, the table won't have any insert_action.
-    """
-
     hide_headers = False
-    """Set this to True in order to hide the column headers.
-
-    This is ignored when the table is rendered in an ExtJS grid.
-    """
-
     hide_top_toolbar = False
-    """
-    Whether a Detail Window should have navigation buttons, a "New"
-    and a "Delete" buttons.  In ExtJS UI also influences the title of
-    a Detail Window to specify only the current element without
-    prefixing the Tables's title.
-
-    If used in a grid view in React will remove the top toolbar
-    and selection tools.
-
-    This option is `True` in
-    :class:`lino.models.SiteConfigs`,
-    :class:`lino_welfare.pcsw.models.Home`,
-    :class:`lino.modlib.users.desktop.MySettings`,
-    :class:`lino_xl.cal.CalenderView`.
-
-    """
 
     simple_slavegrid_header = False
     """
@@ -506,88 +446,13 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     _label = None
     _editable = None
     _known_values = {}
-
     title = None
-    """
-    The text to appear e.g. as window title when the actor's default
-    action has been called.  If this is not set, Lino will use the
-    :attr:`label` as title.
-    """
-
     button_text = None
-    """The text to appear on buttons of a ShowSlaveTable action for this
-    actor.
-
-    """
-
     label = None
-
     default_action = None
     actor_id = None
-
     detail_layout = None
-    '''
-    Define the layout to use for the detail window.  Actors with
-    :attr:`detail_layout` will get a `show_detail` action.
-
-    When you define a :attr:`detail_layout`, you will probably also
-    want to define a :attr:`insert_layout`.
-
-    The :attr:`detail_layout` is normally an instance of
-    :class:`DetailLayout <lino.core.layouts.DetailLayout>` or a
-    subclass thereof.  For example::
-
-        class FooDetail(dd.DetailLayout):
-            ...
-
-        class Foos(dd.Table):
-            ...
-            detail_layout = FooDetail()
-
-    It is possible and recommended to specify :attr:`detail_layout` as
-    a string, in which case it will be resolved at startup as follows:
-
-    If the string contains at least one newline (or no newline and
-    also no dot) then it is taken as the :attr:`main` of a
-    :class:`DetailLayout <lino.core.layouts.DetailLayout>`.
-    For example::
-
-        class Foos(dd.Table):
-            ...
-            detail_layout = """
-            id name
-            description
-            """
-
-    If the string contains a dot ('.') and *does not contain* any
-    newlines, then Lino takes this as the name of the class to be
-    instantiated and used.
-
-    For example::
-
-        class Courses(dd.Table):
-            ...
-            detail_layout = 'courses.CourseDetail'
-
-    This feature makes it possible to override the detail layout in an
-    extended plugin. Before this you had to define a new class and to
-    assign an instance of that class to every actor which uses it.
-    But e.g. in :mod:`lino_xl.lib.courses` we have a lot of subclasses
-    of the :class:`Courses` actor.
-    '''
-
     insert_layout = None
-    """
-    Define the form layout to use for the insert window.
-
-    If there's a :attr:`detail_layout` but no :attr:`insert_layout`,
-    the table won't have any (+) button to create a new row via a
-    dialog window, but users can still create rows by writing into the
-    phantom row. Example of this is
-    :class:`lino_xl.lib.courses.Topics` which has a detail layout
-    with slave tables, but the model itself has only two fields (id
-    and name) and it makes no sense to have an insert window.
-    """
 
     card_layout = None
     """
@@ -597,15 +462,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     insert_template = None    # deprecated: use detail_layout instead
 
     help_text = None
-    """
-    A help text that shortly explains what the default action of this
-    actor does.  In a graphical user interface this will be rendered
-    as a **tooltip** text.
-
-    If this is not given by the code, Lino will potentially set it at
-    startup when loading the :xfile:`help_texts.py` files.
-    """
-
     detail_action = None
     update_action = None
     insert_action = None
@@ -624,10 +480,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     """
     sum_text_column = 0
-    """The index of the column which should hold the text to display on
-    the totals row (returned by :meth:`get_sum_text`).
-
-    """
 
     preview_limit = None
     """For non-table actors this is always `None`, otherwise see
@@ -650,7 +502,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         Actor-level hook for overriding the formating when rendering
         this table as plain html.
 
-        For example :class:`ml.cal.Events` overrides this.
+        For example :class:`lino_xl.lib.cal.Events` overrides this.
         """
         pass
 
@@ -752,10 +604,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     @classmethod
     def make_disabled_fields(cls, obj, ar):
         """
-        Return a set of disabled fields for the specified object and
-        request.
-
-        See :doc:`/dev/disabled_fields`.
+        Used internally. Return a set of disabled fields for the specified
+        object and request. See :doc:`/dev/disable`.
         """
 
         s = set()
@@ -823,14 +673,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     @classmethod
     def summary_row(cls, ar, obj, **kw):
-        """
-        Return a HTML representation of the given data row `obj` for usage in a
-        summary panel.
-
-        The default implementation calls
-        :meth:`lino.core.model.Model.summary_row`.
-
-        """
         return obj.summary_row(ar, **kw)
 
     @classmethod
@@ -1028,10 +870,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     @classmethod
     def get_create_permission(self, ar):
-        """Dynamic test per request.  This is being called only when
-        :attr:`allow_create` is True.
-
-        """
         if not settings.SITE.user_types_module:
             return True
         if ar.get_user().user_type.readonly:
@@ -1040,10 +878,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     @classmethod
     def get_row_permission(cls, obj, ar, state, ba):
-        """Returns True or False whether the given action request
-        ActionRequest `ar` is allowed on the given row instance `row`.
-
-        """
         if ba.action.readonly:
             return True
         if ar.get_user().user_type.readonly:
@@ -1281,9 +1115,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     @classmethod
     def get_actor_label(self):
-        """Compute the label of this actor.
-
-        """
         return self._label or self.__name__
 
     @classmethod
@@ -1316,17 +1147,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     @classmethod
     def get_title(self, ar):
-        """Return the title of this actor for the given action request `ar`.
-
-        The default implementation calls :meth:`get_title_base` and
-        :meth:`get_title_tags` and returns a string of type `BASE [
-        (TAG, TAG...)]`.
-
-        Override this if your table's title should mention for example
-        filter conditions.  See also :meth:`Table.get_title
-        <lino.core.dbtables.Table.get_title>`.
-
-        """
         title = self.get_title_base(ar)
         # tags = list(self.get_title_tags(ar))
         tags = [str(t) for t in self.get_title_tags(ar)]
@@ -1336,14 +1156,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     @classmethod
     def get_title_base(self, ar):
-        """
-        Return the base part of the title. This should be a translatable
-        string. This is called by :meth:`get_title` to construct the
-        actual title.
-
-        It is also called by
-        :meth:`lino.core.dashboard.DashboardItem.render_request`
-        """
         title = self.title or self.label
         # if self.master is not None:
         if ar.master_instance is not None:
@@ -1354,11 +1166,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     @classmethod
     def get_title_tags(self, ar):
-        """
-        Yield a list of translatable strings to be added to the base part
-        of the title. This is called by :meth:`get_title` to construct
-        the actual title.
-        """
         if isinstance(self.parameters, ParameterPanel):
             for t in self.parameters.get_title_tags(ar):
                 yield t
@@ -1403,10 +1210,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     @classmethod
     def get_simple_parameters(cls):
-        """Inheritable hook for defining which parameters are simple.
-        Expected to return a list of names of parameter fields.
-
-        """
         if isinstance(cls.model, type) and issubclass(cls.model, fields.TableRow):
             return cls.model.get_simple_parameters()
         return []
@@ -1464,10 +1267,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
     @classmethod
     def get_sum_text(self, ar, sums):
-        """
-        Return the text to display on the totals row.
-        The default implementation returns "Total (N rows)".
-        """
         return str(_("Total (%d rows)") % ar.get_total_count())
 
     @classmethod

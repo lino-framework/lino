@@ -568,7 +568,7 @@ def navinfo(qs, elem):
 
 class Parametrizable(object):
     """
-    Base class for both Actors and Actions.
+    Base class for both Actors and Actions.  See :doc:`/dev/parameters`.
 
     This is a pseudo-mixins with common functionality for both actors
     and actions,
@@ -584,37 +584,10 @@ class Parametrizable(object):
     active_fields = None  # 20121006
     master_field = None
     known_values = None
-
     parameters = None
-    """
-    User-definable parameter fields for this actor or action.  Set this
-    to a `dict` of `name = models.XyzField()` pairs.
-
-    On an actor you can alternatively or additionally implement a
-    class method :meth:`lino.core.actors.Actor.setup_parameters`.
-
-    TODO: write documentation.
-    """
-
     params_layout = None
-    """
-    The layout to be used for the parameter panel.
-    If this table or action has parameters, specify here how they
-    should be laid out in the parameters panel.
-    """
-
     params_panel_hidden = True
-    """
-    If this table has parameters, set this to True if the parameters
-    panel should be initially hidden when this table is being
-    displayed.
-    """
-
     use_detail_param_panel = False
-    """
-    Set to true if you want the params panel to be displayed in the detail view.
-    Used only in :class:`lino_xl.lib.cal.CalView`.
-    """
 
     _layout_class = NotImplementedError
 
