@@ -4,7 +4,10 @@
 
 """Defines the :class:`Model` class.
 
-See :ref:`dev.models` and :doc:`/tested/ddh`."""
+See :ref:`dev.models`, :doc:`/dev/disable_delete`, :doc:`/dev/disabled_fields`
+, :doc:`/dev/model_format`
+
+"""
 
 import logging ; logger = logging.getLogger(__name__)
 import copy
@@ -121,11 +124,6 @@ class Model(models.Model, fields.TableRow):
     """
 
     hidden_elements = frozenset()
-    """If specified, this is the default value for
-    :attr:`hidden_elements<lino.core.tables.AbstractTable.hidden_elements>`
-    of every `Table` on this model.
-
-    """
 
     # simple_parameters = frozenset()
     # """If specified, this is the default value for :attr:`simple_parameters
@@ -258,7 +256,6 @@ class Model(models.Model, fields.TableRow):
         # get_data_elem is grafted also to pure Django models which don't
         # inherit from lino.core.Model
 
-
     def disable_delete(self, ar=None):
         # In case of MTI, every concrete model has its own ddh.
         # Deleting an Invoice will also delete the Voucher. Ask all
@@ -274,12 +271,6 @@ class Model(models.Model, fields.TableRow):
         return self.__class__._lino_ddh.disable_delete_on_object(self)
 
     def disabled_fields(self, ar):
-        """
-        Return a set of names of fields that should be disabled (not
-        editable) for this record.
-
-        See :doc:`/dev/disabled_fields`.
-        """
         return set()
 
     def delete(self, **kw):
@@ -332,10 +323,6 @@ class Model(models.Model, fields.TableRow):
 
     @classmethod
     def hide_elements(self, *names):
-        """Mark the named data elements (fields) as hidden.  They remain in
-        the database but are not visible in the user interface.
-
-        """
         for name in names:
             if self.get_data_elem(name) is None:
                 raise Exception("%s has no element '%s'" % (self, name))
@@ -875,10 +862,10 @@ class Model(models.Model, fields.TableRow):
 
         List of widget options that can be set:
 
-        `width`
-        `preferred_width`
         `label`
         `editable`
+        `width`
+        `preferred_width`
         `preferred_height`
         `hide_sum`
 

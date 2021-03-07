@@ -245,13 +245,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     <lino.core.choicelists.ChoiceList>` and :class:`Frame
     <lino.core.frames.Frame>`.
 
-    .. attribute:: label
-
-        The text to appear e.g. on a button that will call the default
-        action of an actor.  This attribute is *not* inherited to
-        subclasses.  For :class:`Actor` subclasses that don't have a
-        label, Lino will call :meth:`get_actor_label`.
-
     .. attribute:: known_values
 
         A `dict` of `fieldname` -> `value` pairs that specify "known values".
@@ -277,23 +270,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         and :class:`lino_xl.lib.events.EventsByType` override this to
         implement dynamic columns depending on it's master_instance.
 
-
-    .. classmethod:: get_row_classes(self, ar)
-
-        If a method of this name is defined on an actor, then it must
-        be a class method which takes an :class:`ar
-        <lino.core.requests.BaseRequest>` as single argument and
-        returns either None or a string "red", "green" or "blue"
-        (todo: add more colors and styles). Example::
-
-            @classmethod
-            def get_row_classes(cls,obj,ar):
-                if obj.client_state == ClientStates.newcomer:
-                    return 'green'
-
-        Defining this method will cause an additional special
-        `RowClassStoreField` field in the :class:`lino.core.Store`
-        objects of this actor.
 
     .. classmethod:: get_welcome_messages(self, ar)
 
@@ -374,13 +350,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     """
 
     details_of_master_template = _("%(details)s of %(master)s")
-    """Used to build the title of a request on this table when it is a
-    slave table (i.e. :attr:`master` is not None). The default value
-    is defined as follows::
 
-        details_of_master_template = _("%(details)s of %(master)s")
-
-    """
 
     parameters = None
     "See :attr:`lino.core.utils.Parametrizable.parameters`."
@@ -422,18 +392,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     """
 
     hidden_elements = frozenset()
-    """A set of names of layout elements which are hidden by default.
-
-    The default is an empty set except for
-    :class:`lino.core.dbtables.Table` where this will be populated from
-    :attr:`hidden_elements <lino.core.model.Model.hidden_elements>`
-    of the :class:`lino.core.model.Model`.
-
-    Note that these names are not being verified to be names of
-    existing fields. This fact is being used by UNION tables like
-    :class:`lino_xl.lib.vat.IntracomInvoices`
-
-    """
 
     detail_html_template = 'bootstrap3/detail.html'
     """The template to be used for rendering a row of this actor as a
@@ -473,24 +431,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     # delete_required = set()
 
     editable = None
-    """Set this explicitly to `True` or `False` to make the whole table
-    editable or not.  Otherwise Lino will guess what you want during
-    startup and set it to `False` if the actor is a Table and has a
-    `get_data_rows` method (which usually means that it is a virtual
-    table), otherwise to `True`.
-
-    Non-editable actors won't even call :meth:`get_view_permission`
-    for actions whose :attr:`readonly
-    <lino.core.actions.Action.readonly>` is `False`.
-
-    The
-    :class:`changes.Changes <lino.modlib.changes.Changes>`
-    table is an example where this is being used: nobody should
-    ever edit something in the table of Changes.  The user
-    interface uses this to generate optimized JS code for this
-    case.
-
-    """
 
     auto_apply_params = True
     """Whether the parameter values of the parameter panel should be
