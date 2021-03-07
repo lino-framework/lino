@@ -30,6 +30,8 @@ def root_user(lang, **kw):
         kw.update(first_name="Rodrigo", last_name="Rosalez")
     elif lang == 'nl':
         kw.update(first_name="Rik", last_name="Rozenbos")
+    elif lang == 'bn':
+        kw.update(first_name="Roby", last_name="Raza")
     else:
         logger.warning("No demo user for language %r.", lang)
         return None

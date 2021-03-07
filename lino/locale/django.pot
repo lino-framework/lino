@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino 21.3.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-03-07 10:40+0600\n"
+"POT-Creation-Date: 2021-03-07 09:13+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3117,12 +3117,12 @@ msgstr ""
 msgid "Are you sure?"
 msgstr ""
 
-#: lino/core/actors.py:376
+#: lino/core/actors.py:352
 #, python-format
 msgid "%(details)s of %(master)s"
 msgstr ""
 
-#: lino/core/actors.py:1494 lino/core/tables.py:806 lino/mixins/ref.py:163
+#: lino/core/actors.py:1434 lino/core/tables.py:806 lino/mixins/ref.py:163
 #: lino/modlib/about/models.py:75 lino/modlib/importfilters/models.py:111
 #: lino/modlib/notify/actions.py:15 lino/modlib/tinymce/models.py:26
 #: lino/modlib/uploads/models.py:51 lino/modlib/uploads/models.py:168
@@ -3130,7 +3130,7 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: lino/core/actors.py:1531
+#: lino/core/actors.py:1471
 #, python-format
 msgid "Total (%d rows)"
 msgstr ""
@@ -3290,35 +3290,35 @@ msgstr ""
 msgid "Merged %(this)s into %(merge_to)s. Updated %(updated)d related rows."
 msgstr ""
 
-#: lino/core/model.py:296
+#: lino/core/model.py:287
 #, python-format
 msgid "Cannot delete %(model)s %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
 
-#: lino/core/model.py:406
+#: lino/core/model.py:393
 msgid "Cannot create {obj} from '{text}'"
 msgstr ""
 
-#: lino/core/model.py:609 lino/core/requests.py:1196
+#: lino/core/model.py:596 lino/core/requests.py:1196
 #, python-format
 msgid "%s has been updated."
 msgstr ""
 
-#: lino/core/model.py:611 lino/core/requests.py:1198
+#: lino/core/model.py:598 lino/core/requests.py:1198
 #, python-format
 msgid "%s : nothing to save."
 msgstr ""
 
-#: lino/core/model.py:754 lino/modlib/importfilters/models.py:35
+#: lino/core/model.py:741 lino/modlib/importfilters/models.py:35
 #: lino/modlib/users/desktop.py:203
 msgid "Name"
 msgstr ""
 
-#: lino/core/model.py:775
+#: lino/core/model.py:762
 msgid "Workflow"
 msgstr ""
 
-#: lino/core/model.py:1008
+#: lino/core/model.py:995
 msgid "Pick {}"
 msgstr ""
 
