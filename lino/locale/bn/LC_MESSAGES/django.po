@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino 21.3.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2021-03-07 09:13+0200\n"
-"PO-Revision-Date: 2021-03-07 09:32+0200\n"
+"PO-Revision-Date: 2021-03-07 18:45+0600\n"
 "Language: bn\n"
 "Language-Team: bn <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.0\n"
 "Last-Translator: \n"
-"X-Generator: Poedit 2.0.6\n"
+"X-Generator: Poedit 2.4.2\n"
 
 #: lino/help_texts.py:6
 msgid ""
@@ -1635,7 +1635,7 @@ msgstr ""
 
 #: lino/help_texts.py:551
 msgid "A dialog window which displays some information about the site."
-msgstr ""
+msgstr "সাইট সংক্রান্ত কিছু সাধারন তথ্যের ডায়ালগ উইনডো।"
 
 #: lino/help_texts.py:552
 msgid "The list of time zones available on this site."
@@ -1674,7 +1674,7 @@ msgstr ""
 
 #: lino/help_texts.py:565
 msgid "The base table for problem messages."
-msgstr ""
+msgstr "সমস্যা সংক্রান্ত বার্তার ছক।"
 
 #: lino/help_texts.py:566
 msgid "Shows the problem messages assigned to me."
@@ -1682,7 +1682,7 @@ msgstr ""
 
 #: lino/help_texts.py:567
 msgid "The list of data checkers known by this application."
-msgstr ""
+msgstr "এই অ্যাপ্লিকেশনের অন্তর্ভুক্ত সকল তথ্য পরীক্ষকের তালিকা।"
 
 #: lino/help_texts.py:568
 msgid "Base class for all data checkers."
@@ -2569,7 +2569,7 @@ msgstr ""
 
 #: lino/help_texts.py:856
 msgid "Shows my uploads (i.e. those whose author is the current user)."
-msgstr ""
+msgstr "আমার আপলোড সমূহ (i.e. ওগুলো, যেগুলোর রচয়িতা বর্তমান ব্যবহারকারী)।"
 
 #: lino/help_texts.py:857
 msgid "Shows the uploads controlled by this database object."
@@ -2598,7 +2598,7 @@ msgstr ""
 
 #: lino/help_texts.py:868
 msgid "The table with all existing upload types."
-msgstr ""
+msgstr "সম্ভব্য আপলোডের ধরন সমূহের তালিকা।"
 
 #: lino/help_texts.py:869
 msgid "Model mixin that turns a model into an upload controller."
@@ -2622,7 +2622,7 @@ msgstr ""
 
 #: lino/help_texts.py:874
 msgid "Shows the list of all users on this site."
-msgstr ""
+msgstr "সাইটের সকল ব্যবহারকারীদের তালিকা।"
 
 #: lino/help_texts.py:875
 msgid ""
@@ -2699,7 +2699,7 @@ msgstr ""
 
 #: lino/help_texts.py:900
 msgid "The list of user types available in this application."
-msgstr ""
+msgstr "এই অ্যাপ্লিকেশনে অন্তর্ভুক্ত সকল প্রকার ব্যবহারকারীর ধরনের তালিকা।"
 
 #: lino/help_texts.py:901
 msgid ""
@@ -2733,7 +2733,7 @@ msgstr ""
 
 #: lino/help_texts.py:912
 msgid "Show a list of all user sessions."
-msgstr ""
+msgstr "সকল ইউজার সেশনের তালিকা।"
 
 #: lino/help_texts.py:913
 msgid "Django model used to represent a authority."
@@ -2934,35 +2934,39 @@ msgstr ""
 
 #: lino/config/admin_main_base.html:14
 msgid "Quick links:"
-msgstr ""
+msgstr "কুইক লিংকঃ"
 
 #: lino/config/admin_main_base.html:21
 msgid "Refresh"
-msgstr ""
+msgstr "রিফ্রেশ"
 
 #: lino/config/admin_main_base.html:23
 #, python-format
 msgid "Hi, %(user)s!"
-msgstr ""
+msgstr "হাই, %(user)s!"
 
 #: lino/config/admin_main_base.html:31 lino/modlib/about/models.py:160
 msgid "This is a Lino demo site."
-msgstr ""
+msgstr "এটি একটি লিনো ডেমো সাইট।"
 
 #: lino/config/admin_main_base.html:32
 msgid ""
 "Try also the other <a href=\"http://lino-framework.org/demos.html\">demo "
 "sites</a>."
 msgstr ""
+"চাইলে, অন্যান্য <a href=\"http://lino-framework.org/demos.html\">ডেমো সাইট</a> "
+"গুলো-ও ঘুরে দেখতে পারেন।"
 
 #: lino/config/admin_main_base.html:33
 #, python-format
 msgid "Your feedback is welcome to %s or directly to the person who invited you."
 msgstr ""
+"এই সাইটের ব্যাপারে %s -এ অথবা যার মাধ্যমে আমাদের খোঁজ পেয়েছেন তার নিকট আপনার "
+"প্রতিক্রিয়া আমাদের নিকট খুবই গুরুত্বপূর্ণ।"
 
 #: lino/config/admin_main_base.html:35 lino/modlib/about/models.py:162
 msgid "We are running with simulated date set to {0}."
-msgstr ""
+msgstr "আমরা কৃত্রিম দিনক্ষণ {0} -এ আমাদের যাত্রা শুরু করছি।"
 
 #: lino/config/admin_main_base.html:47
 msgid "You have entered the <b>admin</b> section."
@@ -3302,7 +3306,7 @@ msgstr ""
 #: lino/core/model.py:741 lino/modlib/importfilters/models.py:35
 #: lino/modlib/users/desktop.py:203
 msgid "Name"
-msgstr ""
+msgstr "নাম"
 
 #: lino/core/model.py:762
 msgid "Workflow"
@@ -3364,19 +3368,19 @@ msgstr ""
 
 #: lino/core/site.py:364
 msgid "Reports"
-msgstr ""
+msgstr "রিপোর্ট"
 
 #: lino/core/site.py:365
 msgid "Configure"
-msgstr ""
+msgstr "কনফিগার"
 
 #: lino/core/site.py:366
 msgid "Explorer"
-msgstr ""
+msgstr "অনুসন্ধান"
 
 #: lino/core/site.py:367
 msgid "Site"
-msgstr ""
+msgstr "সাইট"
 
 #: lino/core/site.py:2814 lino/modlib/languages/fixtures/few_languages.py:26
 msgid "English"
@@ -3432,7 +3436,7 @@ msgstr ""
 
 #: lino/core/user_types.py:28
 msgid "Administrator"
-msgstr ""
+msgstr "পরিচালক"
 
 #: lino/core/utils.py:542
 #, python-format
@@ -3777,7 +3781,7 @@ msgstr ""
 
 #: lino/modlib/about/models.py:133
 msgid "About"
-msgstr ""
+msgstr "প্রামাণ্য"
 
 #: lino/modlib/about/models.py:134
 msgid "Show information about this site."
@@ -3849,7 +3853,7 @@ msgstr ""
 #: lino/modlib/bootstrap3/views.py:50 lino/modlib/extjs/ext_renderer.py:582
 #: lino/modlib/forms/views.py:51
 msgid "Home"
-msgstr ""
+msgstr "হোম"
 
 #: lino/modlib/bootstrap3/views.py:143 lino/modlib/bootstrap3/views.py:224
 #: lino/modlib/extjs/config/extjs/linoweb.js:3799 lino/modlib/forms/views.py:132
@@ -3878,7 +3882,7 @@ msgstr ""
 #: lino/modlib/bootstrap3/config/bootstrap3/base.html:17
 #: lino/modlib/users/actions.py:142
 msgid "Sign out"
-msgstr ""
+msgstr "সাইন আউট"
 
 #: lino/modlib/bootstrap3/config/bootstrap3/base.html:23
 #: lino/modlib/users/actions.py:184
@@ -4028,7 +4032,7 @@ msgstr ""
 
 #: lino/modlib/checkdata/choicelists.py:135
 msgid "Data checkers"
-msgstr ""
+msgstr "তথ্য পরীক্ষক"
 
 #: lino/modlib/checkdata/models.py:25 lino/modlib/checkdata/models.py:63
 msgid "Check data"
@@ -4044,7 +4048,7 @@ msgstr ""
 
 #: lino/modlib/checkdata/models.py:95
 msgid "Data problems"
-msgstr ""
+msgstr "তথ্য সমস্যা"
 
 #: lino/modlib/checkdata/models.py:103
 msgid "Checker"
@@ -4328,15 +4332,15 @@ msgstr ""
 
 #: lino/modlib/extjs/ext_renderer.py:486
 msgid "My settings"
-msgstr ""
+msgstr "আমার সেটিং"
 
 #: lino/modlib/extjs/ext_renderer.py:498
 msgid "Myself"
-msgstr ""
+msgstr "আমি"
 
 #: lino/modlib/extjs/ext_renderer.py:500
 msgid "Act as..."
-msgstr ""
+msgstr "ভূমিকা..."
 
 #: lino/modlib/extjs/ext_renderer.py:1128
 msgid "No data to display."
@@ -4548,7 +4552,7 @@ msgstr ""
 
 #: lino/modlib/gfks/models.py:69
 msgid "Help Texts"
-msgstr ""
+msgstr "সহায়ক বাক্য"
 
 #: lino/modlib/gfks/models.py:72 lino/modlib/importfilters/models.py:37
 msgid "Model"
@@ -4896,7 +4900,7 @@ msgstr ""
 
 #: lino/modlib/system/__init__.py:19
 msgid "System"
-msgstr ""
+msgstr "সিস্টেম"
 
 #: lino/modlib/system/__init__.py:38
 msgid "You have a dangling edit lock on"
@@ -4964,7 +4968,7 @@ msgstr ""
 
 #: lino/modlib/system/models.py:74
 msgid "Site Parameters"
-msgstr ""
+msgstr "সাইট প্যারামিটার"
 
 #: lino/modlib/system/models.py:142
 msgid "Find unbleached html content"
@@ -4980,7 +4984,7 @@ msgstr ""
 
 #: lino/modlib/tinymce/models.py:23
 msgid "Text Field Templates"
-msgstr ""
+msgstr "টেক্সট ফিল্ড টেম্পলেট"
 
 #: lino/modlib/tinymce/models.py:25 lino/utils/mldbc/mixins.py:32
 #: lino/utils/mldbc/mixins.py:57
@@ -5009,7 +5013,7 @@ msgstr ""
 
 #: lino/modlib/uploads/choicelists.py:38
 msgid "Upload areas"
-msgstr ""
+msgstr "স্থান আপলোড"
 
 #: lino/modlib/uploads/models.py:44
 msgid "Library volume"
@@ -5017,7 +5021,7 @@ msgstr ""
 
 #: lino/modlib/uploads/models.py:45
 msgid "Library volumes"
-msgstr ""
+msgstr "গ্রন্থ খন্ড"
 
 #: lino/modlib/uploads/models.py:49
 msgid "Root directory"
@@ -5033,7 +5037,7 @@ msgstr ""
 
 #: lino/modlib/uploads/models.py:71
 msgid "Upload types"
-msgstr ""
+msgstr "আপলোডের ধরন"
 
 #: lino/modlib/uploads/models.py:76
 msgid "Max. number"
@@ -5073,7 +5077,7 @@ msgstr ""
 
 #: lino/modlib/uploads/models.py:159
 msgid "Upload files"
-msgstr ""
+msgstr "ফাইল আপলোড"
 
 #: lino/modlib/uploads/models.py:164
 msgid "Library file"
@@ -5134,7 +5138,7 @@ msgstr ""
 
 #: lino/modlib/users/__init__.py:21 lino/modlib/users/models.py:59
 msgid "Users"
-msgstr ""
+msgstr "ব্যাবহারকারী"
 
 #: lino/modlib/users/actions.py:14
 msgid "Welcome mail"
@@ -5194,7 +5198,7 @@ msgstr ""
 
 #: lino/modlib/users/choicelists.py:108
 msgid "User types"
-msgstr ""
+msgstr "ব্যবহারকারীর ধরন"
 
 #: lino/modlib/users/choicelists.py:125
 msgid "User role"
@@ -5214,7 +5218,7 @@ msgstr ""
 
 #: lino/modlib/users/desktop.py:185
 msgid "User roles"
-msgstr ""
+msgstr "ব্যবহারকারীর ভূমিকা"
 
 #: lino/modlib/users/desktop.py:242
 msgid "Kill"
@@ -5226,7 +5230,7 @@ msgstr ""
 
 #: lino/modlib/users/desktop.py:270
 msgid "User sessions"
-msgstr ""
+msgstr "ইউজার সেশন"
 
 #: lino/modlib/users/desktop.py:314
 msgid "session key"
@@ -5242,7 +5246,7 @@ msgstr ""
 
 #: lino/modlib/users/mixins.py:164
 msgid "My {}"
-msgstr ""
+msgstr "আমার {}"
 
 #: lino/modlib/users/mixins.py:215
 msgid "Update plan"
@@ -5286,7 +5290,7 @@ msgstr ""
 
 #: lino/modlib/users/models.py:294
 msgid "Authorities"
-msgstr ""
+msgstr "কর্তৃপক্ষ"
 
 #: lino/modlib/users/fixtures/std.py:26
 msgid "Welcome letter"
