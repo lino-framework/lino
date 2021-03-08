@@ -1,12 +1,10 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2013-2020 Rumma & Ko Ltd
+# Copyright 2013-2021 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """
 This defines the :class:`MergeAction` class.
 
-This action is automatically installed on every model except those that have
-:attr:`allow_merge_action <lino.core.model.Model.allow_merge_action>` set to
-False. For example it should not be used on models that have MTI children.
+See :doc:`/dev/merge`.
 
 """
 
@@ -28,11 +26,6 @@ from lino.api import rt
 
 
 class MergeAction(actions.Action):
-    """Merge this object into another object of same class.
-
-    This action has a dynamically generated parameters window.
-
-    """
     label = _("Merge")
     icon_name = 'arrow_join'
     ui5_icon_name = "sap-icon://font-awesome-solid/code-branch"

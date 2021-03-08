@@ -441,11 +441,6 @@ class AbstractTable(actors.Actor):
 
     """
 
-    grid_configs = []
-    """
-    Will be filled during :meth:`lino.core.table.Table.do_setup`.
-    """
-
     order_by = None
     """If specified, this must be a tuple or list of field names which
 will be passed to Django's `order_by
@@ -605,26 +600,6 @@ method in order to sort the rows of the queryset.
         for cc in self.virtual_fields.values():
             yield cc
         #~ return []
-
-    @classmethod
-    def save_grid_config(self, index, data):
-        raise Exception("20130710")
-        if len(self.grid_configs) == 0:
-            gc = GridConfig(self, data, '%s.gc' % self)
-            self.grid_configs.append(gc)
-        else:
-            gc = self.grid_configs[index]
-        gc.data = data
-        gc.validate()
-        #~ self.grid_configs[index] = gc
-        return gc.save_config()
-        #~ filename = self.get_grid_config_file(gc)
-        #~ f = open(filename,'w')
-        # ~ f.write("# Generated file. Delete it to restore default configuration.\n")
-        #~ d = dict(grid_configs=self.grid_configs)
-        #~ f.write(yaml.dump(d))
-        #~ f.close()
-        #~ return "Grid Config has been saved to %s" % filename
 
     @classmethod
     def get_filter_kw(self, ar, **kw):

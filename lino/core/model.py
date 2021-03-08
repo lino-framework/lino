@@ -4,8 +4,8 @@
 
 """Defines the :class:`Model` class.
 
-See :ref:`dev.models`, :doc:`/dev/disable_delete`, :doc:`/dev/disabled_fields`
-, :doc:`/dev/model_format`
+See :ref:`dev.models`, :doc:`/dev/delete`, :doc:`/dev/disable`,
+:doc:`/dev/hide`, :doc:`/dev/format`
 
 """
 
@@ -61,63 +61,17 @@ class Model(models.Model, fields.TableRow):
 
     grid_post = actions.CreateRow()
     submit_insert = actions.SubmitInsert()
-    """
-    The :class:`SubmitInsert <lino.core.actions.SubmitInsert>` action to be executed when the
-    when the users submits an insert window.
-
-    See :mod:`lino.mixins.dupable` for an example of how to
-    override it.
-
-    """
 
     allow_merge_action = False
-    """Whether this model should have a merge action.
-
-    See :class:`lino.core.merge.MergeAction`
-    """
 
     show_in_site_search = True
-    """Set this to `False` if you really don't want this model to occur
-    in the site-wide search
-    (:class:`lino.modlib.about.SiteSearch`).
-
-    """
 
     quick_search_fields = None
-    """
-    Explicitly specify the fields to be included in queries with a
-    quick search value.
-
-    In your model declarations this should be either `None` or a
-    `string` containing a space-separated list of field names.  During
-    server startup resolves it into a tuple of data elements.
-
-    If it is `None`, Lino installs a list of all CharFields on the
-    model.
-
-    If you want to not inherit this field from a parent using standard
-    MRO, then you must set that field explictly to `None`.
-
-    This is also used when a gridfilter has been set on a foreign key
-    column which points to this model.
-
-    **Special quick search strings**
-
-    If the search string starts with "#", then Lino searches for a row
-    with that *primary key*.
-
-    If the search string starts with "*", then Lino searches for a row
-    with that *reference*.
-    """
 
     quick_search_fields_digit = None
-    """Same as :attr:`quick_search_fields`, but this list is used when the
-    search text contains only digits (and does not start with '0').
-
-    """
 
     active_fields = frozenset()
-    """If specified, this is the default value for
+    """Deprecated. If specified, this is the default value for
     :attr:`active_fields<lino.core.tables.AbstractTable.active_fields>`
     of every `Table` on this model.
 
@@ -133,13 +87,6 @@ class Model(models.Model, fields.TableRow):
     # """
 
     preferred_foreignkey_width = None
-    """The default preferred width (in characters) of widgets that
-    display a ForeignKey to this model.
-
-    If not specified, the default default `preferred_width`
-    for ForeignKey fields is *20*.
-
-    """
 
     workflow_state_field = None
     """If this is set on a Model, then it will be used as default value
@@ -166,9 +113,6 @@ class Model(models.Model, fields.TableRow):
     # """
 
     summary_row_template = None
-    """
-    An optional name of a template to use for :meth:`as_summary_row`.
-    """
 
     _widget_options = {}
     _lino_tables = []
@@ -381,10 +325,6 @@ class Model(models.Model, fields.TableRow):
 
     @classmethod
     def create_from_choice(cls, text):
-        """
-        Called when a learning combo has been submitted.
-        Create a persistent database object if the given text contains enough information.
-        """
         # if cls.disable_create_choice:
         #     return
         values = cls.choice_text_to_dict(text)
@@ -400,10 +340,6 @@ class Model(models.Model, fields.TableRow):
 
     @classmethod
     def choice_text_to_dict(cls, text):
-        """
-        Return a dict of the fields to fill when the given text contains enough
-        information for creating a new database object.
-        """
         return None
 
     @classmethod
@@ -483,32 +419,9 @@ class Model(models.Model, fields.TableRow):
         return flt
 
     def on_create(self, ar):
-        """
-        Override this to set default values that depend on the request.
-
-        The difference with Django's `pre_init
-        <https://docs.djangoproject.com/en/1.11/ref/signals/#pre-init>`__
-        and `post_init
-        <https://docs.djangoproject.com/en/1.11/ref/signals/#post-init>`__
-        signals is that (1) you override the method instead of binding
-        a signal and (2) you get the action request as argument.
-
-        Used e.g. by :class:`lino_xl.lib.notes.Note`.
-        """
         pass
 
     def before_ui_save(self, ar, cw):
-        """A hook for adding custom code to be executed each time an
-        instance of this model gets updated via the user interface and
-        **before** the changes are written to the database.
-
-        Consider using the :data:`pre_ui_save
-        <lino.core.signals.pre_ui_save>` signal instead.
-
-        Example in :class:`lino_xl.lib.cal.Event` to mark the
-        event as user modified by setting a default state.
-
-        """
         for f, old, new in self.fields_to_bleach():
             setattr(self, f.name, new)
 
@@ -536,40 +449,10 @@ class Model(models.Model, fields.TableRow):
 
 
     def after_ui_save(self, ar, cw):
-        """Like :meth:`before_ui_save`, but
-        **after** the changes are written to the database.
-
-        Arguments:
-
-            ar: the action request
-
-            cw: the :class:`ChangeWatcher <lino.core.diff.ChangeWatcher>`
-                object, or `None` if this is a new instance.
-
-        Called after a PUT or POST on this row, and after the row has
-        been saved.
-
-        Used by
-        :class:`lino_welfare.modlib.debts.models.Budget`
-        to fill default entries to a new Budget,
-        or by :class:`lino_welfare.modlib.cbss.models.CBSSRequest`
-        to execute the request,
-        or by
-        :class:`lino_welfare.modlib.jobs.models.Contract`
-        :class:`lino_welfare.modlib.pcsw.models.Coaching`
-        :class:`lino.modlib.vat.models.Vat`.
-        Or :class:`lino_welfare.modlib.households.models.Household`
-        overrides this in order to call its `populate` method.
-
-        """
         # Invalidate disabled_fields cache
         self._disabled_fields = None
 
     def after_ui_create(self, ar):
-        """
-        Hook to define custom behaviour to run when a user has created a new instance
-        of this model.
-        """
         # print(19062017, "Ticket 1910")
         pass
 
@@ -610,16 +493,10 @@ class Model(models.Model, fields.TableRow):
         return ba.get_bound_action_permission(ar, self, state)
 
     def update_owned_instance(self, controllable):
-        """
-        Called by :class:`lino.modlib.gfks.Controllable`.
-        """
         #~ print '20120627 tools.Model.update_owned_instance'
         pass
 
     def after_update_owned_instance(self, controllable):
-        """
-        Called by :class:`lino.modlib.gfks.Controllable`.
-        """
         pass
 
     def get_mailable_recipients(self):
@@ -688,18 +565,6 @@ class Model(models.Model, fields.TableRow):
         pass
 
     def as_summary_row(self, ar):
-        """
-        Return a raw HTML string representing this object in a data view as a
-        single paragraph.
-
-        The string should represent a single ``<p>``.
-
-        If :attr:`summary_row_template` is set, this will render this object
-        using the named template, otherwise it will call :meth:`summary_row` and
-        wrap the result into a paragraph.
-
-
-        """
         if self.summary_row_template:
             # not tested
             env = settings.SITE.plugins.jinja.renderer.jinja_env
@@ -709,33 +574,6 @@ class Model(models.Model, fields.TableRow):
         return tostring(E.p(*self.summary_row(ar)))
 
     def summary_row(self, ar, **kw):
-        """
-        Yield a sequence of ElementTree elements that represent this database
-        object in a summary panel.
-
-        The elements will be wrapped into a `<p>` by :meth:`as_summary_row`.
-
-        The default representation is the text returned by :meth:`__str__` in a
-        link that opens the detail view on this database object.
-
-        The description may vary depending on the given action request.
-
-        For example a partner model of a given application may want to always
-        show the city of a partner unless city is among the known values::
-
-            def summary_row(self, ar):
-                elems = [ar.obj2html(self)]
-                if self.city and not ar.is_obvious_field("city"):
-                    elems += [" (", ar.obj2html(self.city), ")"]
-                return elems
-
-        Note that this is called by the class method of same name on
-        :class:`lino.core.actors.Actor`, which may be customized and may decide
-        to not call the model method.
-
-        TODO: rename this to `row2summary` and write documentation.
-
-        """
         yield ar.obj2html(self)
 
     @displayfield(_("Name"), max_length=15)
@@ -850,27 +688,6 @@ class Model(models.Model, fields.TableRow):
 
     @classmethod
     def set_widget_options(self, name, **options):
-        """
-        Set default values for the widget options of a given element.
-
-        Usage example::
-
-            JobSupplyment.set_widget_options('duration', width=10)
-
-        has the same effect as specifying ``duration:10`` each time
-        when using this element in a layout.
-
-        List of widget options that can be set:
-
-        `label`
-        `editable`
-        `width`
-        `preferred_width`
-        `preferred_height`
-        `hide_sum`
-
-
-        """
         # from lino.modlib.extjs.elems import FieldElement
         # for k in options.keys():
         #     if not hasattr(FieldElement, k):
