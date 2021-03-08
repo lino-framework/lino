@@ -3762,16 +3762,16 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
       })];
       tbar = this.add_params_panel(tbar);
       var menu = [];
-      var set_gc = function(index) {
-        return function() {
-          //~ console.log('set_gc() 20100812');
-          this.getColumnModel().setConfig(this.ls_columns);
-        }
-      }
-      for (var i = 0; i < this.ls_grid_configs.length;i++) {
-        var gc = this.ls_grid_configs[i];
-        menu.push({text:gc.label,handler:set_gc(i),scope:this})
-      }
+      // var set_gc = function(index) {
+      //   return function() {
+      //     //~ console.log('set_gc() 20100812');
+      //     this.getColumnModel().setConfig(this.ls_columns);
+      //   }
+      // }
+      // for (var i = 0; i < this.ls_grid_configs.length;i++) {
+      //   var gc = this.ls_grid_configs[i];
+      //   menu.push({text:gc.label,handler:set_gc(i),scope:this})
+      // }
       if(menu.length > 1) {
         tbar = tbar.concat([
           { text:"{{_('View')}}",
