@@ -3765,8 +3765,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
       var set_gc = function(index) {
         return function() {
           //~ console.log('set_gc() 20100812');
-          this.getColumnModel().setConfig(
-              this.apply_grid_config(index,this.ls_grid_configs,this.ls_columns));
+          this.getColumnModel().setConfig(this.ls_columns);
         }
       }
       for (var i = 0; i < this.ls_grid_configs.length;i++) {
@@ -3830,7 +3829,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
         return rec
       };
     };
-    this.columns  = this.apply_grid_config(this.gc_name,this.ls_grid_configs,this.ls_columns);
+    this.columns  = this.ls_columns;
 
     Lino.GridPanel.superclass.initComponent.call(this);
 
@@ -4112,78 +4111,6 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
     //~ this.refresh();
   },
 
-  apply_grid_config : function(index,grid_configs,rpt_columns) {
-    //~ var rpt_columns = this.ls_columns;
-    var gc = grid_configs[index];
-    //~ console.log('apply_grid_config() 20100812',name,gc);
-    this.gc_name = index;
-    if (gc == undefined) {
-      return rpt_columns;
-      //~ config.columns = config.ls_columns;
-      //~ return;
-    }
-    //~ delete config.ls_filters
-
-    //~ console.log(20100805,config.ls_columns);
-    var columns = Array(gc.columns.length);
-    for (var j = 0; j < rpt_columns.length;j++) {
-      var col = rpt_columns[j];
-      for (var i = 0; i < gc.columns.length; i++) {
-        if (col.dataIndex == gc.{{constants.URL_PARAM_COLUMNS}}[i]) {
-          col.width = gc.{{constants.URL_PARAM_WIDTHS}}[i];
-          col.hidden = gc.{{constants.URL_PARAM_HIDDENS}}[i];
-          columns[i] = col;
-          break;
-        }
-      }
-    }
-
-    //~ var columns = Array(rpt_columns.length);
-    //~ for (var i = 0; i < rpt_columns.length; i++) {
-      //~ columns[i] = rpt_columns[gc.columns[i]];
-      //~ columns[i].width = gc.widths[i];
-    //~ }
-
-    //~ if (gc.hidden_cols) {
-      //~ for (var i = 0; i < gc.hidden_cols.length; i++) {
-        //~ var hc = gc.hidden_cols[i];
-        //~ for (var j = 0; j < columns.length;j++) {
-          //~ var col = columns[j];
-          //~ if (col.dataIndex == hc) {
-            //~ col.hidden = true;
-            //~ break
-          //~ }
-        //~ }
-      //~ }
-    //~ }
-    if (gc.filters) {
-      //~ console.log(20100811,'config.ls_filters',config.ls_filters);
-      //~ console.log(20100811,'config.ls_grid_config.filters',config.ls_grid_config.filters);
-      for (var i = 0; i < gc.filters.length; i++) {
-        var fv = gc.filters[i];
-        for (var j = 0; j < columns.length;j++) {
-          var col = columns[j];
-          if (col.dataIndex == fv.field) {
-            //~ console.log(20100811, f,' == ',fv);
-            if (fv.type == 'string') {
-              col.filter.value = fv.value;
-              //~ if (fv.comparison !== undefined) f.comparison = fv.comparison;
-            } else {
-              //~ console.log(20100811, fv);
-              col.filter.value = {};
-              col.filter.value[fv.comparison] = fv.value;
-            }
-            break;
-          }
-        };
-      }
-    }
-
-    return columns;
-    //~ config.columns = cols;
-    //~ delete config.ls_columns
-  },
-
   get_current_grid_config : function () {
     var cm = this.getColumnModel();
     var widths = Array(cm.config.length);
@@ -4209,83 +4136,12 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
     //~ p['widths'] = widths;
     //~ p['hiddens'] = hiddens;
     //~ p['columns'] = columns;
-    p['name'] = this.gc_name;
+    // p['name'] = this.gc_name;
     //~ var gc = this.ls_grid_configs[this.gc_name];
     //~ if (gc !== undefined)
         //~ p['label'] = gc.label
     //~ console.log('20100810 save_grid_config',p);
     return p;
-  },
-
-  unused_manage_grid_configs : function() {
-    var data = [];
-    for (k in this.ls_grid_configs) {
-      var v = this.ls_grid_configs[k];
-      var i = [k,String(v.columns),String(v.hidden_cols),String(v.filters)];
-      data.push(i)
-    }
-    if (this.ls_grid_configs[this.gc_name] == undefined) {
-      var v = this.get_current_grid_config();
-      var i = [k,String(v.columns),String(v.hidden_cols),String(v.filters)];
-      data.push(i);
-    }
-    //~ console.log(20100811, data);
-    var main = new Ext.grid.GridPanel({
-      store: new Ext.data.ArrayStore({
-        idIndex:0,
-        fields:['name','columns','hidden_cols','filters'],
-        autoDestroy:true,
-        data: data}),
-      //~ autoHeight:true,
-      selModel: new Ext.grid.RowSelectionModel(),
-      listeners: {
-        rowdblclick: function(grid,rowIndex,e) {
-          console.log('row doubleclicked',grid, rowIndex,e);
-        },
-        rowclick: function(grid,rowIndex,e) {
-          console.log('row clicked',grid, rowIndex,e);
-        }
-      },
-      columns: [
-        {dataIndex:'name',header:'Name'},
-        {dataIndex:'columns',header:'columns'},
-        {dataIndex:'hidden_cols',header:'hidden columns'},
-        {dataIndex:'filters',header:'filters'}
-      ]
-    });
-    var win = new Ext.Window({title:'GridConfigs Manager',layout:'fit',items:main,height:200});
-    win.show();
-  },
-
-  unused_edit_grid_config : function(name) {
-    gc = this.ls_grid_configs[name];
-    var win = new Ext.Window({
-      title:'Edit Grid Config',layout:'vbox',
-      //~ layoutConfig:'stretch'
-      items:[
-        {xtype:'text', value: gc.name},
-        {xtype:'text', value: gc.columns},
-        {xtype:'text', value: gc.hidden_cols},
-        {xtype:'text', value: gc.filters}
-      ]
-    });
-    win.show();
-  },
-
-  unused_save_grid_config : function () {
-    //~ console.log('TODO: save_grid_config',this);
-    //~ p.column_widths = Ext.pluck(this.colModel.columns,'width');
-    var a = {
-      params:this.get_current_grid_config(),
-      method:'PUT',
-      url:'{{extjs.build_plain_url("grid_config")}}' + this.ls_url,
-      success: Lino.action_handler(this),
-      scope: this,
-      failure: Lino.ajax_error_handler(this)
-    };
-    this.loadMask.show(); // 20120211
-    Ext.Ajax.request(a);
-    //~ Lino.do_action(this,a);
   },
 
   on_beforeedit : function(e) {
