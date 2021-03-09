@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino 21.3.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2021-03-07 09:13+0200\n"
-"PO-Revision-Date: 2021-03-07 18:45+0600\n"
+"PO-Revision-Date: 2021-03-09 18:19+0600\n"
 "Language: bn\n"
 "Language-Team: bn <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -213,7 +213,7 @@ msgstr ""
 
 #: lino/help_texts.py:72
 msgid "Duplicate the selected row."
-msgstr ""
+msgstr "বাছাইকৃত শারির প্রতিলিপি তৈরি করুন।"
 
 #: lino/help_texts.py:73
 msgid "This actually runs the action."
@@ -234,22 +234,24 @@ msgid ""
 "Used to specify a professional position or academic\n"
 "qualification like \"Dr.\" or \"PhD\"."
 msgstr ""
+"পেশাগত বা একাডেমীক পদ বুঝাতে ব্যবহার হয়।\n"
+"যেমন, \"Dr\" অথবা \"PhD\"।"
 
 #: lino/help_texts.py:79
 msgid "The first name, also known as given name."
-msgstr ""
+msgstr "নামের প্রথমাংশ, দেয়া নাম হিসেবেও পরিচিত।"
 
 #: lino/help_texts.py:80
 msgid "The last name, also known as family name."
-msgstr ""
+msgstr "নামের শেষাংশ, বংশীও নাম হিসেবেও পরিচিত।"
 
 #: lino/help_texts.py:81
 msgid "A space-separated list of all middle names."
-msgstr ""
+msgstr "নামের সকল মধ্যাংশ গুলোর তালিকা।"
 
 #: lino/help_texts.py:82
 msgid "The sex of this person (male or female)."
-msgstr ""
+msgstr "এই লোকটির লিঙ্গভেদ (পুরুষ বা নারী)।"
 
 #: lino/help_texts.py:83
 msgid ""
@@ -289,7 +291,7 @@ msgstr ""
 
 #: lino/help_texts.py:98
 msgid "Virtual field displaying the age in years."
-msgstr ""
+msgstr "বছর গণনায় বয়স।"
 
 #: lino/help_texts.py:99
 msgid ""
@@ -384,7 +386,7 @@ msgstr ""
 msgid ""
 "A virtual field which defines buttons for switching between the\n"
 "different views."
-msgstr ""
+msgstr "ভিন্ন চিত্রের ছকে পরিবর্তনের কৃত্রিম বোতাম।"
 
 #: lino/help_texts.py:129
 msgid "Return the specified specialization or None."
@@ -2223,6 +2225,8 @@ msgid ""
 "Timestamp of the built target file. Contains None\n"
 "if no build hasn't been called yet."
 msgstr ""
+"উল্লেখ্য ফাইল তৈরির টাইমস্ট্যাম্প। None থাকবে\n"
+"যদি কোন ফাইল তৈরি হয়ে না থাকে।"
 
 #: lino/help_texts.py:742
 msgid ""
@@ -2234,6 +2238,13 @@ msgid ""
 "do_print by a\n"
 "lino_xl.lib.excerpts.CreateExcerpt instance."
 msgstr ""
+"যেকোনো শারি প্রিন্ট করার জন্য ব্যবহারিত একশন।\n"
+"সাধারণ ভাবে এটি DirectPrintAction অথবা\n"
+"CachedPrintAction এর একটি instance।\n"
+"এবং যদি lino_xl.lib.excerpts ইন্সটল করা থাকে তবে\n"
+"এটা সম্ভব যে set_excerpts_actions do_print কে\n"
+"lino_xl.lib.excerpts.CreateExcerpt instance দিয়ে\n"
+"পরিবর্তন করে।"
 
 #: lino/help_texts.py:749
 msgid ""
@@ -2283,7 +2294,7 @@ msgstr ""
 
 #: lino/help_texts.py:763
 msgid "Defines the Clear cache button on a Printable record."
-msgstr ""
+msgstr "প্রিন্ট করার মত শারি গুলোর কেশ (cache) মুছে ফেলুন।"
 
 #: lino/help_texts.py:764
 msgid ""
@@ -2522,37 +2533,39 @@ msgstr ""
 
 #: lino/help_texts.py:842
 msgid "Pointer to the uploaded file itself (a Django FileField)."
-msgstr ""
+msgstr "আপলোড করা ফাইলটি নির্দেশ করে (একটি Django FileField)।"
 
 #: lino/help_texts.py:843
 msgid "The size of the file in bytes. Not yet implemented."
-msgstr ""
+msgstr "ফাইলটির সাইজ (bytes). এখনো সক্রিয় নয়।"
 
 #: lino/help_texts.py:844
 msgid ""
 "The media type of the\n"
 "uploaded file."
 msgstr ""
+"আপলোড করা ফাইলটির\n"
+"মিডিয়ার ধরন।"
 
 #: lino/help_texts.py:846
 msgid "The type of this upload."
-msgstr ""
+msgstr "এই আপলোডটির ধরন।"
 
 #: lino/help_texts.py:847
 msgid "A short description entered manually by the user."
-msgstr ""
+msgstr "ব্যবহারকারীর ম্যানুয়ালি সমার্পিত ছোট বর্ণনা।"
 
 #: lino/help_texts.py:848
 msgid "A pointer to the library volume where this file is stored."
-msgstr ""
+msgstr "নথিশালার পথ নির্দেশ করে যেখানে এই ফাইলটি জমা আছে।"
 
 #: lino/help_texts.py:849
 msgid "The upload area this file belongs to."
-msgstr ""
+msgstr "এই আপলোড করা ফাইলটি যে অঞ্চলের।"
 
 #: lino/help_texts.py:850
 msgid "The path of this file, relative the volume's root."
-msgstr ""
+msgstr "ভলিউম রুট থেকে এই ফাইলটির আপেক্ষিক পাথ।"
 
 #: lino/help_texts.py:851
 msgid ""
@@ -2560,6 +2573,9 @@ msgid ""
 "not empty, the text is clickable, and clicking on it opens the\n"
 "uploaded file in a new browser window."
 msgstr ""
+"পূর্বে দেখা বর্ণনার মতই, কিন্তু যদি ফাইলটি\n"
+"ফাঁকা না হয় তবে এই বর্ণনাতে ক্লিক করলে ফাইলটির বিস্তারিত নতুন\n"
+"একটি ব্রাউজার উইন্ডোতে ওপেন হবে।"
 
 #: lino/help_texts.py:854
 msgid ""
@@ -2606,7 +2622,7 @@ msgstr ""
 
 #: lino/help_texts.py:870
 msgid "Show uploads in a grid table."
-msgstr ""
+msgstr "গ্রিড ছকে আপলোড গুলো দেখুন।"
 
 #: lino/help_texts.py:871
 msgid "The list of available upload shortcut fields in this application."
@@ -2830,6 +2846,8 @@ msgid ""
 "The author of this object.\n"
 "A pointer to lino.modlib.users.models.User."
 msgstr ""
+"এই বস্তুটির রচয়িতা।\n"
+"lino.modlib.users.models.User নির্দেশ করে।"
 
 #: lino/help_texts.py:944
 msgid "Whether to run Plan.update_plan() after starting the plan."
@@ -3023,7 +3041,7 @@ msgstr ""
 
 #: lino/core/actions.py:796
 msgid "Open a detail window on this record."
-msgstr ""
+msgstr "বাছাইকৃত শারিটির বিস্তারিত দেখুন।"
 
 #: lino/core/actions.py:798
 msgid "Detail"
@@ -3039,7 +3057,7 @@ msgstr ""
 
 #: lino/core/actions.py:881
 msgid "Open a dialog window to insert a new {}."
-msgstr ""
+msgstr "ছকে নতুন {} যোগ করুন।"
 
 #: lino/core/actions.py:887
 #, python-format
@@ -3087,7 +3105,7 @@ msgstr ""
 
 #: lino/core/actions.py:1215
 msgid "Delete this record"
-msgstr ""
+msgstr "বাছাইকৃত শারিটি মুছে ফেলুন।"
 
 #: lino/core/actions.py:1223 lino/modlib/changes/models.py:50
 msgid "Delete"
@@ -3122,7 +3140,7 @@ msgstr ""
 #: lino/modlib/uploads/models.py:51 lino/modlib/uploads/models.py:168
 #: lino/modlib/uploads/models.py:183 lino/modlib/users/desktop.py:207
 msgid "Description"
-msgstr ""
+msgstr "বর্ণনা"
 
 #: lino/core/actors.py:1471
 #, python-format
@@ -3211,6 +3229,10 @@ msgid ""
 "\"00.07.1980\" means \"in July 1980\"\n"
 "or \"23.07.0000\" means \"on a 23th of July\"."
 msgstr ""
+"অসম্পূর্ণ দিনও গ্রহণযোগ্য, যেমন,\n"
+"\"০০.০০.১৯৮০\" মানে, ১৯৮০ সালের যেকোনো দিন,\n"
+"\"০০.০৭.১৯৮০\" মানে, ১৯৮০ সালের জুলাই মাসের যেকোনো দিন,\n"
+"অথবা \"২৩.০৭.০০০০\" মানে যেকোনো বছরের ২৩শে জুলাই।"
 
 #: lino/core/kernel.py:575
 msgid "You have "
@@ -3234,7 +3256,7 @@ msgstr ""
 
 #: lino/core/merge.py:36 lino/modlib/changes/models.py:53
 msgid "Merge"
-msgstr ""
+msgstr "একত্রিত করুন।"
 
 #: lino/core/merge.py:50
 msgid "into..."
@@ -3310,7 +3332,7 @@ msgstr "নাম"
 
 #: lino/core/model.py:762
 msgid "Workflow"
-msgstr ""
+msgstr "কর্মধারা"
 
 #: lino/core/model.py:995
 msgid "Pick {}"
@@ -3360,7 +3382,7 @@ msgstr ""
 
 #: lino/core/requests.py:1229
 msgid "No data to display"
-msgstr ""
+msgstr "দেখার কিছু নেই (^_^)"
 
 #: lino/core/site.py:362 lino/modlib/changes/models.py:102
 msgid "Master"
@@ -3548,27 +3570,27 @@ msgstr ""
 #: lino/mixins/human.py:197
 msgctxt "(of a human)"
 msgid "Title"
-msgstr ""
+msgstr "শিরোনাম"
 
 #: lino/mixins/human.py:201 lino/modlib/users/models.py:78
 msgid "First name"
-msgstr ""
+msgstr "নাম (প্রথমাংশ)"
 
 #: lino/mixins/human.py:204
 msgid "Middle name"
-msgstr ""
+msgstr "নাম (মধ্যাংশ)"
 
 #: lino/mixins/human.py:207 lino/modlib/users/models.py:79
 msgid "Last name"
-msgstr ""
+msgstr "নাম (শেষাংশ)"
 
 #: lino/mixins/human.py:354
 msgid "Birth date"
-msgstr ""
+msgstr "জন্ম তারিখ"
 
 #: lino/mixins/human.py:383
 msgid "Age"
-msgstr ""
+msgstr "বয়স"
 
 #: lino/mixins/human.py:387
 msgid "unknown"
@@ -3847,7 +3869,7 @@ msgstr ""
 
 #: lino/modlib/bootstrap3/models.py:20 lino/modlib/forms/models.py:20
 msgid "Show this table in Bootstrap3 interface"
-msgstr ""
+msgstr "এই ছকটি Bootstrap3 তে দেখুন।"
 
 #: lino/modlib/bootstrap3/config/bootstrap3/base.html:30
 #: lino/modlib/bootstrap3/views.py:50 lino/modlib/extjs/ext_renderer.py:582
@@ -3859,25 +3881,25 @@ msgstr "হোম"
 #: lino/modlib/extjs/config/extjs/linoweb.js:3799 lino/modlib/forms/views.py:132
 #: lino/modlib/forms/views.py:212 lino/modlib/odata/views.py:74
 msgid "First page"
-msgstr ""
+msgstr "প্রথম পাতা"
 
 #: lino/modlib/bootstrap3/views.py:144 lino/modlib/bootstrap3/views.py:226
 #: lino/modlib/extjs/config/extjs/linoweb.js:3801 lino/modlib/forms/views.py:133
 #: lino/modlib/forms/views.py:214 lino/modlib/odata/views.py:76
 msgid "Previous page"
-msgstr ""
+msgstr "পূর্ববর্তী পাতা"
 
 #: lino/modlib/bootstrap3/views.py:156 lino/modlib/bootstrap3/views.py:228
 #: lino/modlib/extjs/config/extjs/linoweb.js:3802 lino/modlib/forms/views.py:145
 #: lino/modlib/forms/views.py:216 lino/modlib/odata/views.py:78
 msgid "Next page"
-msgstr ""
+msgstr "পরবর্তী পাতা"
 
 #: lino/modlib/bootstrap3/views.py:157 lino/modlib/bootstrap3/views.py:230
 #: lino/modlib/extjs/config/extjs/linoweb.js:3800 lino/modlib/forms/views.py:146
 #: lino/modlib/forms/views.py:218 lino/modlib/odata/views.py:80
 msgid "Last page"
-msgstr ""
+msgstr "শেষ পাতা"
 
 #: lino/modlib/bootstrap3/config/bootstrap3/base.html:17
 #: lino/modlib/users/actions.py:142
@@ -3960,7 +3982,7 @@ msgstr ""
 
 #: lino/modlib/chat/models.py:102 lino/modlib/users/mixins.py:105
 msgid "Author"
-msgstr ""
+msgstr "রচয়িতা"
 
 #: lino/modlib/chat/models.py:115
 msgid "Chat message"
@@ -4036,11 +4058,11 @@ msgstr "তথ্য পরীক্ষক"
 
 #: lino/modlib/checkdata/models.py:25 lino/modlib/checkdata/models.py:63
 msgid "Check data"
-msgstr ""
+msgstr "তথ্য পরিক্ষা"
 
 #: lino/modlib/checkdata/models.py:55 lino/modlib/checkdata/models.py:87
 msgid "Fix data problems"
-msgstr ""
+msgstr "তথ্য সমস্যা ঠিক করুন।"
 
 #: lino/modlib/checkdata/models.py:94
 msgid "Data problem"
@@ -4312,7 +4334,7 @@ msgstr ""
 
 #: lino/modlib/export_excel/models.py:115
 msgid "Export this table as an .xls document"
-msgstr ""
+msgstr "এই ছকটি .xls (এক্সেল) এ বের করুন।"
 
 #: lino/modlib/extjs/__init__.py:69
 msgid "Admin"
@@ -4344,7 +4366,7 @@ msgstr "ভূমিকা..."
 
 #: lino/modlib/extjs/ext_renderer.py:1128
 msgid "No data to display."
-msgstr ""
+msgstr "দেখার কিছু নেই (^_^)।"
 
 #: lino/modlib/extjs/views.py:111
 #, python-format
@@ -4373,7 +4395,7 @@ msgstr ""
 
 #: lino/modlib/extjs/config/extjs/linoweb.js:530
 msgid "Show or hide the table parameters panel"
-msgstr ""
+msgstr "ছকের পরামিতি প্যানেল খুলুন বা বন্ধ করুন।"
 
 #: lino/modlib/extjs/config/extjs/linoweb.js:651
 #: lino/modlib/extjs/config/extjs/linoweb.js:691
@@ -4480,7 +4502,7 @@ msgstr ""
 
 #: lino/modlib/extjs/config/extjs/linoweb.js:3740
 msgid "Quick search"
-msgstr ""
+msgstr "কুইক সার্চ"
 
 #: lino/modlib/extjs/config/extjs/linoweb.js:3745
 msgid "Quick Search"
@@ -4502,17 +4524,17 @@ msgstr ""
 #: lino/modlib/weasyprint/config/weasyprint/base.weasy.html:35
 #: lino/modlib/weasyprint/config/weasyprint/base.weasy.html:93
 msgid "Page"
-msgstr ""
+msgstr "পৃষ্ঠা"
 
 #: lino/modlib/extjs/config/extjs/linoweb.js:3797
 #: lino/modlib/weasyprint/config/weasyprint/base.weasy.html:35
 #: lino/modlib/weasyprint/config/weasyprint/base.weasy.html:93
 msgid "of {0}"
-msgstr ""
+msgstr "মোট {0} টি থেকে"
 
 #: lino/modlib/extjs/config/extjs/linoweb.js:3798
 msgid "Displaying {0} - {1} of {2}"
-msgstr ""
+msgstr "{2} শারির মধ্যে দেখছেন {0} - {1}"
 
 #: lino/modlib/extjs/config/extjs/linoweb.js:4295
 msgid "This record is disabled"
@@ -4520,11 +4542,11 @@ msgstr ""
 
 #: lino/modlib/extjs/config/extjs/linoweb.js:4850
 msgid "Save and close the window."
-msgstr ""
+msgstr "সংরক্ষণ শেষে ছকটি বন্ধ করুন।"
 
 #: lino/modlib/extjs/config/extjs/linoweb.js:4857
 msgid "Edit help texts for fields on this model."
-msgstr ""
+msgstr "এই ছকের উপাদান গুলোর সম্বন্ধ সহায়ক বাক্যে পরিবর্তন আনুন।"
 
 #: lino/modlib/extjs/config/extjs/linoweb.js:5034
 msgid "Cannot show MTI child if checkbox is off."
@@ -4532,15 +4554,15 @@ msgstr ""
 
 #: lino/modlib/gfks/mixins.py:23
 msgid "Controlled by"
-msgstr ""
+msgstr "নিয়ন্ত্রক"
 
 #: lino/modlib/gfks/mixins.py:34 lino/modlib/gfks/mixins.py:58
 msgid "(type)"
-msgstr ""
+msgstr "(ধরন)"
 
 #: lino/modlib/gfks/mixins.py:40 lino/modlib/gfks/mixins.py:53
 msgid "(object)"
-msgstr ""
+msgstr "(বস্তু)"
 
 #: lino/modlib/gfks/models.py:38
 msgid "Base classes"
@@ -4633,7 +4655,7 @@ msgstr ""
 
 #: lino/modlib/languages/models.py:23 lino/utils/mldbc/fields.py:100
 msgid "Language"
-msgstr ""
+msgstr "ভাষা"
 
 #: lino/modlib/languages/fixtures/few_languages.py:24
 msgid "German"
@@ -4766,7 +4788,7 @@ msgstr ""
 
 #: lino/modlib/notify/models.py:277
 msgid "Recipient"
-msgstr ""
+msgstr "প্রাপক"
 
 #: lino/modlib/notify/models.py:283
 msgid "Notify myself"
@@ -4828,7 +4850,7 @@ msgstr ""
 
 #: lino/modlib/printing/choicelists.py:277
 msgid "Print method"
-msgstr ""
+msgstr "প্রিন্ট করার মাধ্যম"
 
 #: lino/modlib/printing/mixins.py:49
 msgid "Template"
@@ -4836,7 +4858,7 @@ msgstr ""
 
 #: lino/modlib/printing/mixins.py:152
 msgid "build time"
-msgstr ""
+msgstr "তৈরির সময়"
 
 #: lino/modlib/printing/mixins.py:253
 msgid "Check for missing target files"
@@ -4912,7 +4934,7 @@ msgstr ""
 
 #: lino/modlib/system/choicelists.py:26
 msgid "Gender"
-msgstr ""
+msgstr "লিঙ্গ"
 
 #: lino/modlib/system/choicelists.py:29
 msgid "Male"
@@ -5009,7 +5031,7 @@ msgstr ""
 
 #: lino/modlib/uploads/choicelists.py:37
 msgid "Upload area"
-msgstr ""
+msgstr "আপলোডের অঞ্চল"
 
 #: lino/modlib/uploads/choicelists.py:38
 msgid "Upload areas"
@@ -5017,7 +5039,7 @@ msgstr "স্থান আপলোড"
 
 #: lino/modlib/uploads/models.py:44
 msgid "Library volume"
-msgstr ""
+msgstr "লাইব্রেরী ভলিউম"
 
 #: lino/modlib/uploads/models.py:45
 msgid "Library volumes"
@@ -5033,7 +5055,7 @@ msgstr ""
 
 #: lino/modlib/uploads/models.py:70
 msgid "Upload type"
-msgstr ""
+msgstr "আপলোডের ধরন"
 
 #: lino/modlib/uploads/models.py:71
 msgid "Upload types"
@@ -5065,7 +5087,7 @@ msgstr ""
 
 #: lino/modlib/uploads/models.py:99
 msgid "MIME type"
-msgstr ""
+msgstr "মাইম (MIME)"
 
 #: lino/modlib/uploads/models.py:118
 msgid "File size is {}! Must be below {}."
@@ -5081,15 +5103,15 @@ msgstr "ফাইল আপলোড"
 
 #: lino/modlib/uploads/models.py:164
 msgid "Library file"
-msgstr ""
+msgstr "নথি বই"
 
 #: lino/modlib/uploads/models.py:165
 msgid "File size"
-msgstr ""
+msgstr "ফাইল সাইজ"
 
 #: lino/modlib/uploads/models.py:226
 msgid "Uploaded by"
-msgstr ""
+msgstr "আপলোড করেছেন"
 
 #: lino/modlib/uploads/models.py:230
 msgid "Check metadata of upload files"
