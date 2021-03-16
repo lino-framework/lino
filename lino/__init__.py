@@ -40,10 +40,10 @@ from os.path import join, dirname
 from .setup_info import SETUP_INFO
 
 __version__ = SETUP_INFO['version']
-intersphinx_urls = dict(docs="http://core.lino-framework.org")
+# intersphinx_urls = dict(docs="http://core.lino-framework.org")
 srcref_url = 'https://github.com/lino-framework/lino/blob/master/%s'
 # srcref_url = 'https://github.com/lino-framework/lino/tree/master/%s'
-doc_trees = ['docs']
+# doc_trees = ['docs']
 
 if sys.version_info[0] > 2:
     PYAFTER26 = True

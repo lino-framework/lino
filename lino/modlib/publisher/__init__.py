@@ -22,7 +22,7 @@ class Plugin(Plugin):
     # ui_handle_attr_name = "publisher"
 
     def get_patterns(self):
-        from django.conf.urls import url
+        from django.urls import re_path as url
         from lino.core.utils import models_by_base
         from . import views
         from .mixins import Publishable
