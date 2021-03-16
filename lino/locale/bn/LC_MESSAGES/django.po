@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: lino 21.3.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2021-03-12 16:01+0600\n"
-"PO-Revision-Date: 2021-03-12 19:05+0600\n"
+"PO-Revision-Date: 2021-03-14 17:11+0600\n"
 "Last-Translator: \n"
 "Language: bn\n"
 "Language-Team: bn <LL@li.org>\n"
@@ -404,7 +404,7 @@ msgstr ""
 
 #: lino/help_texts.py:133
 msgid "The reference. This must be either empty or unique."
-msgstr ""
+msgstr "রেফারেন্স। এটি খালি অথবা অদ্বিতীয় হতে হবে।"
 
 #: lino/help_texts.py:134
 msgid "The preferred width of the ref field."
@@ -499,7 +499,7 @@ msgstr ""
 
 #: lino/help_texts.py:163
 msgid "Duplicate this row."
-msgstr ""
+msgstr "এই শারির প্রতিলিপি তৈরি করুন।"
 
 #: lino/help_texts.py:164
 msgid ""
@@ -527,7 +527,7 @@ msgstr ""
 
 #: lino/help_texts.py:171
 msgid "Displays buttons for certain actions on this row:"
-msgstr ""
+msgstr "এই শারিতে নির্দিষ্ট কীর্তি প্রয়োগ করার জন্য বোতাম।"
 
 #: lino/help_texts.py:172
 msgid ""
@@ -2611,6 +2611,9 @@ msgid ""
 "this is not empty, then the given shortcut field will manage\n"
 "uploads of this type.  See also Shortcuts."
 msgstr ""
+"ঐচ্ছিক ভারচুয়াল আপলোডের স্বর ক্ষেত্র নির্দেশ করে। যদি\n"
+"এই ক্ষেত্রটি খালি না হয় তবে হ্রস্বতম ক্ষেত্রটি এই ধরনের আপলোডগুলো\n"
+"পরিচালনা করবে। Shortcuts দেখুন।"
 
 #: lino/help_texts.py:868
 msgid "The table with all existing upload types."
@@ -3777,7 +3780,7 @@ msgstr ""
 
 #: lino/mixins/sequenced.py:323
 msgid "Move"
-msgstr ""
+msgstr "পদক্ষেপ"
 
 #: lino/mixins/sequenced.py:352
 msgid "Parent"
@@ -4856,7 +4859,7 @@ msgstr "প্রিন্ট করার মাধ্যম"
 
 #: lino/modlib/printing/mixins.py:49
 msgid "Template"
-msgstr ""
+msgstr "টেম্পলেট"
 
 #: lino/modlib/printing/mixins.py:152
 msgid "build time"
@@ -5017,7 +5020,7 @@ msgstr "আখ্যা"
 
 #: lino/modlib/tinymce/models.py:33
 msgid "Template Text"
-msgstr ""
+msgstr "টেম্পলেট লিখনি"
 
 #: lino/modlib/uploads/__init__.py:20 lino/modlib/uploads/choicelists.py:40
 msgid "Uploads"
@@ -5025,7 +5028,7 @@ msgstr ""
 
 #: lino/modlib/uploads/choicelists.py:29
 msgid "Upload shortcut"
-msgstr ""
+msgstr "আপলোড স্বর"
 
 #: lino/modlib/uploads/choicelists.py:30
 msgid "Upload shortcuts"
@@ -5049,11 +5052,11 @@ msgstr "গ্রন্থ খন্ড"
 
 #: lino/modlib/uploads/models.py:49
 msgid "Root directory"
-msgstr ""
+msgstr "মূল ডিরেক্টরি"
 
 #: lino/modlib/uploads/models.py:50
 msgid "Base URL"
-msgstr ""
+msgstr "বেস ইউআরএল (URL)"
 
 #: lino/modlib/uploads/models.py:70
 msgid "Upload type"
@@ -5065,23 +5068,23 @@ msgstr "আপলোডের ধরন"
 
 #: lino/modlib/uploads/models.py:76
 msgid "Max. number"
-msgstr ""
+msgstr "সর্বোচ্চ সংখ্যা"
 
 #: lino/modlib/uploads/models.py:83
 msgid "No need to upload more uploads than N of this type."
-msgstr ""
+msgstr "এই সংখ্যার অধিক আপলোডের প্রয়োজন নেই।"
 
 #: lino/modlib/uploads/models.py:84
 msgid "-1 means no limit."
-msgstr ""
+msgstr "-1 মানে সিমাবিহিন।"
 
 #: lino/modlib/uploads/models.py:86
 msgid "Wanted"
-msgstr ""
+msgstr "ওয়ান্টেড"
 
 #: lino/modlib/uploads/models.py:87
 msgid "Add a (+) button when there is no upload of this type."
-msgstr ""
+msgstr "এই ধরনের আপলোড না থাকলে টিক দিন।"
 
 #: lino/modlib/uploads/models.py:97
 msgid "File"
