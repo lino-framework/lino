@@ -7,8 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lino 21.3.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2021-03-07 09:13+0200\n"
-"PO-Revision-Date: 2021-03-09 18:19+0600\n"
+"POT-Creation-Date: 2021-03-12 16:01+0600\n"
+"PO-Revision-Date: 2021-03-14 17:11+0600\n"
+"Last-Translator: \n"
 "Language: bn\n"
 "Language-Team: bn <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -16,7 +17,6 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.0\n"
-"Last-Translator: \n"
 "X-Generator: Poedit 2.4.2\n"
 
 #: lino/help_texts.py:6
@@ -95,7 +95,7 @@ msgstr ""
 
 #: lino/help_texts.py:30
 msgid "The time when this database object was last modified."
-msgstr ""
+msgstr "যে সময় এই ডাটাবেইজ-বস্তুটি সর্বশেষ পরিবর্তন করা হয়েছিল।"
 
 #: lino/help_texts.py:31
 msgid "Whether to touch objects automatically when saving them."
@@ -109,7 +109,7 @@ msgstr ""
 
 #: lino/help_texts.py:34
 msgid "The time when this object was created."
-msgstr ""
+msgstr "যে সময় এই ডাটাবেইজ-বস্তুটি তৈরি করা হয়েছিল।"
 
 #: lino/help_texts.py:35
 msgid "Adds two timestamp fields created and modified."
@@ -404,7 +404,7 @@ msgstr ""
 
 #: lino/help_texts.py:133
 msgid "The reference. This must be either empty or unique."
-msgstr ""
+msgstr "রেফারেন্স। এটি খালি অথবা অদ্বিতীয় হতে হবে।"
 
 #: lino/help_texts.py:134
 msgid "The preferred width of the ref field."
@@ -461,7 +461,7 @@ msgstr ""
 
 #: lino/help_texts.py:152
 msgid "The workflow state field."
-msgstr ""
+msgstr "কর্মধারার বর্তমান অবস্থা।"
 
 #: lino/help_texts.py:153
 msgid ""
@@ -499,7 +499,7 @@ msgstr ""
 
 #: lino/help_texts.py:163
 msgid "Duplicate this row."
-msgstr ""
+msgstr "এই শারির প্রতিলিপি তৈরি করুন।"
 
 #: lino/help_texts.py:164
 msgid ""
@@ -527,7 +527,7 @@ msgstr ""
 
 #: lino/help_texts.py:171
 msgid "Displays buttons for certain actions on this row:"
-msgstr ""
+msgstr "এই শারিতে নির্দিষ্ট কীর্তি প্রয়োগ করার জন্য বোতাম।"
 
 #: lino/help_texts.py:172
 msgid ""
@@ -2611,6 +2611,9 @@ msgid ""
 "this is not empty, then the given shortcut field will manage\n"
 "uploads of this type.  See also Shortcuts."
 msgstr ""
+"ঐচ্ছিক ভারচুয়াল আপলোডের স্বর ক্ষেত্র নির্দেশ করে। যদি\n"
+"এই ক্ষেত্রটি খালি না হয় তবে হ্রস্বতম ক্ষেত্রটি এই ধরনের আপলোডগুলো\n"
+"পরিচালনা করবে। Shortcuts দেখুন।"
 
 #: lino/help_texts.py:868
 msgid "The table with all existing upload types."
@@ -2663,7 +2666,7 @@ msgstr ""
 
 #: lino/help_texts.py:882
 msgid "Must be unique and cannot be empty."
-msgstr ""
+msgstr "অবশ্যই অদ্বিতীয় হতে হবে এবং খালি হতে পারবে না।"
 
 #: lino/help_texts.py:883
 msgid ""
@@ -2671,12 +2674,16 @@ msgid ""
 "be unique but should provide a reasonably identifying\n"
 "function."
 msgstr ""
+"ব্যবহারকারীর ডাক নাম। এটি অদ্বিতীয় হতে হবে না কিন্তু ব্যবহারকারীকে\n"
+"যুক্তিসঙ্গত ভাবে চিহ্নিত করতে কর্যকরি হবে।"
 
 #: lino/help_texts.py:886
 msgid ""
 "The user type given to this user. Users having this field empty\n"
 "are considered inactive and cannot log in."
 msgstr ""
+"ব্যবহারকারীকে দেয়া ব্যবহারকারীর-ধরন। যে ব্যবহারকারীর এই ক্ষেত্রটি খালি\n"
+"তাকে নিষ্ক্রিয় বিবেচনা করা হবে এবং সে লগইন করতে পারবে না।"
 
 #: lino/help_texts.py:888
 msgid ""
@@ -2693,7 +2700,7 @@ msgstr ""
 
 #: lino/help_texts.py:892
 msgid "Not used in Lino."
-msgstr ""
+msgstr "লিনোতে ব্যবহার হয় না।"
 
 #: lino/help_texts.py:893
 msgid "Returns either the initials or get_full_name()."
@@ -2712,6 +2719,9 @@ msgid ""
 "before that date.  If end_date is given, then the user\n"
 "cannot sign in after that date."
 msgstr ""
+"যদি সূচনা কাল (start_date) দেয়া হয়ে থাকে তবে এর ব্যবহারকারী\n"
+"এই দিনের পূর্বে লগইন করতে পারবে না। যদি শেষ কাল (end_date)\n"
+"দেয়া হয়ে থাকে তবে এর ব্যবহারকারী এই দিনের পর লগইন করতে পারবে না।"
 
 #: lino/help_texts.py:900
 msgid "The list of user types available in this application."
@@ -2797,7 +2807,7 @@ msgstr ""
 
 #: lino/help_texts.py:928
 msgid "Change the password of this user."
-msgstr ""
+msgstr "এই ব্যবহারকারীর পাসওয়ার্ড পরিবর্তন করুন।"
 
 #: lino/help_texts.py:929
 msgid ""
@@ -3045,7 +3055,7 @@ msgstr "বাছাইকৃত শারিটির বিস্তারি�
 
 #: lino/core/actions.py:798
 msgid "Detail"
-msgstr ""
+msgstr "বিস্তারিত"
 
 #: lino/core/actions.py:853 lino/core/renderer.py:346
 msgid "New"
@@ -3129,12 +3139,12 @@ msgstr ""
 msgid "Are you sure?"
 msgstr ""
 
-#: lino/core/actors.py:352
+#: lino/core/actors.py:353
 #, python-format
 msgid "%(details)s of %(master)s"
 msgstr ""
 
-#: lino/core/actors.py:1434 lino/core/tables.py:806 lino/mixins/ref.py:163
+#: lino/core/actors.py:1237 lino/core/tables.py:781 lino/mixins/ref.py:163
 #: lino/modlib/about/models.py:75 lino/modlib/importfilters/models.py:111
 #: lino/modlib/notify/actions.py:15 lino/modlib/tinymce/models.py:26
 #: lino/modlib/uploads/models.py:51 lino/modlib/uploads/models.py:168
@@ -3142,7 +3152,7 @@ msgstr ""
 msgid "Description"
 msgstr "বর্ণনা"
 
-#: lino/core/actors.py:1471
+#: lino/core/actors.py:1270
 #, python-format
 msgid "Total (%d rows)"
 msgstr ""
@@ -3254,87 +3264,87 @@ msgstr ""
 msgid "General"
 msgstr ""
 
-#: lino/core/merge.py:36 lino/modlib/changes/models.py:53
+#: lino/core/merge.py:29 lino/modlib/changes/models.py:53
 msgid "Merge"
 msgstr "একত্রিত করুন।"
 
-#: lino/core/merge.py:50
+#: lino/core/merge.py:43
 msgid "into..."
 msgstr ""
 
-#: lino/core/merge.py:51
+#: lino/core/merge.py:44
 msgid "Reason"
 msgstr ""
 
-#: lino/core/merge.py:96
+#: lino/core/merge.py:89
 msgid "Also reassign volatile related objects"
 msgstr ""
 
-#: lino/core/merge.py:117
+#: lino/core/merge.py:110
 msgid "You must specify a merge target."
 msgstr ""
 
-#: lino/core/merge.py:144
+#: lino/core/merge.py:137
 msgid "Cannot merge an instance to itself."
 msgstr ""
 
-#: lino/core/merge.py:168
+#: lino/core/merge.py:161
 #, python-format
 msgid "Merge %(origin)s into %(target)s"
 msgstr ""
 
-#: lino/core/merge.py:200
+#: lino/core/merge.py:193
 msgid "will be deleted."
 msgstr ""
 
-#: lino/core/merge.py:201
+#: lino/core/merge.py:194
 msgid "will get reassigned."
 msgstr ""
 
-#: lino/core/merge.py:203
+#: lino/core/merge.py:196
 #, python-format
 msgid "%s will be deleted"
 msgstr ""
 
-#: lino/core/merge.py:204
+#: lino/core/merge.py:197
 #, python-format
 msgid "Are you sure you want to merge %(this)s into %(merge_to)s?"
 msgstr ""
 
-#: lino/core/merge.py:238
+#: lino/core/merge.py:231
 #, python-format
 msgid "Merged %(this)s into %(merge_to)s. Updated %(updated)d related rows."
 msgstr ""
 
-#: lino/core/model.py:287
+#: lino/core/model.py:231
 #, python-format
 msgid "Cannot delete %(model)s %(self)s because %(count)d %(refs)s refer to it."
 msgstr ""
 
-#: lino/core/model.py:393
+#: lino/core/model.py:333
 msgid "Cannot create {obj} from '{text}'"
 msgstr ""
 
-#: lino/core/model.py:596 lino/core/requests.py:1196
+#: lino/core/model.py:479 lino/core/requests.py:1196
 #, python-format
 msgid "%s has been updated."
 msgstr ""
 
-#: lino/core/model.py:598 lino/core/requests.py:1198
+#: lino/core/model.py:481 lino/core/requests.py:1198
 #, python-format
 msgid "%s : nothing to save."
 msgstr ""
 
-#: lino/core/model.py:741 lino/modlib/importfilters/models.py:35
+#: lino/core/model.py:579 lino/modlib/importfilters/models.py:35
 #: lino/modlib/users/desktop.py:203
 msgid "Name"
 msgstr "নাম"
 
-#: lino/core/model.py:762
+#: lino/core/model.py:600
 msgid "Workflow"
 msgstr "কর্মধারা"
 
-#: lino/core/model.py:995
+#: lino/core/model.py:812
 msgid "Pick {}"
 msgstr ""
 
@@ -3444,7 +3454,7 @@ msgstr ""
 msgid "Invalid value for this field (%s)."
 msgstr ""
 
-#: lino/core/tables.py:829
+#: lino/core/tables.py:804
 msgid "Button"
 msgstr ""
 
@@ -3454,7 +3464,7 @@ msgstr ""
 
 #: lino/core/user_types.py:27 lino/modlib/users/models.py:58
 msgid "User"
-msgstr ""
+msgstr "ব্যবহারকারী"
 
 #: lino/core/user_types.py:28
 msgid "Administrator"
@@ -3507,12 +3517,12 @@ msgstr ""
 
 #: lino/mixins/__init__.py:91 lino/modlib/comments/choicelists.py:59
 msgid "Modified"
-msgstr ""
+msgstr "পরিবর্তন কাল"
 
 #: lino/mixins/__init__.py:117 lino/mixins/__init__.py:119
 #: lino/modlib/comments/choicelists.py:58
 msgid "Created"
-msgstr ""
+msgstr "প্রণয়ন কাল"
 
 #: lino/mixins/dupable.py:65 lino/modlib/dupable/mixins.py:33
 #, python-format
@@ -3635,7 +3645,7 @@ msgstr ""
 
 #: lino/mixins/periods.py:120 lino/mixins/periods.py:213
 msgid "Start date"
-msgstr ""
+msgstr "সূচনা কাল"
 
 #: lino/mixins/periods.py:123
 msgid "Start time"
@@ -3770,7 +3780,7 @@ msgstr ""
 
 #: lino/mixins/sequenced.py:323
 msgid "Move"
-msgstr ""
+msgstr "পদক্ষেপ"
 
 #: lino/mixins/sequenced.py:352
 msgid "Parent"
@@ -3865,7 +3875,7 @@ msgstr ""
 
 #: lino/modlib/bootstrap3/models.py:19 lino/modlib/forms/models.py:19
 msgid "HTML"
-msgstr ""
+msgstr "এইচ টি এম এল (HTML)"
 
 #: lino/modlib/bootstrap3/models.py:20 lino/modlib/forms/models.py:20
 msgid "Show this table in Bootstrap3 interface"
@@ -3878,25 +3888,25 @@ msgid "Home"
 msgstr "হোম"
 
 #: lino/modlib/bootstrap3/views.py:143 lino/modlib/bootstrap3/views.py:224
-#: lino/modlib/extjs/config/extjs/linoweb.js:3799 lino/modlib/forms/views.py:132
+#: lino/modlib/extjs/config/extjs/linoweb.js:3798 lino/modlib/forms/views.py:132
 #: lino/modlib/forms/views.py:212 lino/modlib/odata/views.py:74
 msgid "First page"
 msgstr "প্রথম পাতা"
 
 #: lino/modlib/bootstrap3/views.py:144 lino/modlib/bootstrap3/views.py:226
-#: lino/modlib/extjs/config/extjs/linoweb.js:3801 lino/modlib/forms/views.py:133
+#: lino/modlib/extjs/config/extjs/linoweb.js:3800 lino/modlib/forms/views.py:133
 #: lino/modlib/forms/views.py:214 lino/modlib/odata/views.py:76
 msgid "Previous page"
 msgstr "পূর্ববর্তী পাতা"
 
 #: lino/modlib/bootstrap3/views.py:156 lino/modlib/bootstrap3/views.py:228
-#: lino/modlib/extjs/config/extjs/linoweb.js:3802 lino/modlib/forms/views.py:145
+#: lino/modlib/extjs/config/extjs/linoweb.js:3801 lino/modlib/forms/views.py:145
 #: lino/modlib/forms/views.py:216 lino/modlib/odata/views.py:78
 msgid "Next page"
 msgstr "পরবর্তী পাতা"
 
 #: lino/modlib/bootstrap3/views.py:157 lino/modlib/bootstrap3/views.py:230
-#: lino/modlib/extjs/config/extjs/linoweb.js:3800 lino/modlib/forms/views.py:146
+#: lino/modlib/extjs/config/extjs/linoweb.js:3799 lino/modlib/forms/views.py:146
 #: lino/modlib/forms/views.py:218 lino/modlib/odata/views.py:80
 msgid "Last page"
 msgstr "শেষ পাতা"
@@ -4330,7 +4340,7 @@ msgstr ""
 
 #: lino/modlib/export_excel/models.py:114
 msgid "Export to .xls"
-msgstr ""
+msgstr "এক্সেল (.xls) বের করুন"
 
 #: lino/modlib/export_excel/models.py:115
 msgid "Export this table as an .xls document"
@@ -4388,11 +4398,6 @@ msgstr ""
 msgid "List contains more than %d rows"
 msgstr ""
 
-#: lino/modlib/extjs/views.py:598
-#, python-format
-msgid "Error while saving GC for %(table)s: %(error)s"
-msgstr ""
-
 #: lino/modlib/extjs/config/extjs/linoweb.js:530
 msgid "Show or hide the table parameters panel"
 msgstr "ছকের পরামিতি প্যানেল খুলুন বা বন্ধ করুন।"
@@ -4414,7 +4419,7 @@ msgid "Alert"
 msgstr ""
 
 #: lino/modlib/extjs/config/extjs/linoweb.js:917
-#: lino/modlib/extjs/config/extjs/linoweb.js:4300
+#: lino/modlib/extjs/config/extjs/linoweb.js:4156
 msgid "This field is disabled"
 msgstr ""
 
@@ -4512,43 +4517,43 @@ msgstr ""
 msgid "Enter a text to use as quick search filter"
 msgstr ""
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:3778
+#: lino/modlib/extjs/config/extjs/linoweb.js:3777
 msgid "View"
 msgstr ""
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:3780
+#: lino/modlib/extjs/config/extjs/linoweb.js:3779
 msgid "Select another view of this report"
 msgstr ""
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:3796
+#: lino/modlib/extjs/config/extjs/linoweb.js:3795
 #: lino/modlib/weasyprint/config/weasyprint/base.weasy.html:35
 #: lino/modlib/weasyprint/config/weasyprint/base.weasy.html:93
 msgid "Page"
 msgstr "পৃষ্ঠা"
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:3797
+#: lino/modlib/extjs/config/extjs/linoweb.js:3796
 #: lino/modlib/weasyprint/config/weasyprint/base.weasy.html:35
 #: lino/modlib/weasyprint/config/weasyprint/base.weasy.html:93
 msgid "of {0}"
 msgstr "মোট {0} টি থেকে"
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:3798
+#: lino/modlib/extjs/config/extjs/linoweb.js:3797
 msgid "Displaying {0} - {1} of {2}"
 msgstr "{2} শারির মধ্যে দেখছেন {0} - {1}"
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:4295
+#: lino/modlib/extjs/config/extjs/linoweb.js:4151
 msgid "This record is disabled"
 msgstr ""
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:4850
+#: lino/modlib/extjs/config/extjs/linoweb.js:4706
 msgid "Save and close the window."
 msgstr "সংরক্ষণ শেষে ছকটি বন্ধ করুন।"
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:4857
+#: lino/modlib/extjs/config/extjs/linoweb.js:4713
 msgid "Edit help texts for fields on this model."
 msgstr "এই ছকের উপাদান গুলোর সম্বন্ধ সহায়ক বাক্যে পরিবর্তন আনুন।"
 
-#: lino/modlib/extjs/config/extjs/linoweb.js:5034
+#: lino/modlib/extjs/config/extjs/linoweb.js:4890
 msgid "Cannot show MTI child if checkbox is off."
 msgstr ""
 
@@ -4570,7 +4575,7 @@ msgstr ""
 
 #: lino/modlib/gfks/models.py:68
 msgid "Help Text"
-msgstr ""
+msgstr "সহায়ক বাক্য"
 
 #: lino/modlib/gfks/models.py:69
 msgid "Help Texts"
@@ -4578,20 +4583,20 @@ msgstr "সহায়ক বাক্য"
 
 #: lino/modlib/gfks/models.py:72 lino/modlib/importfilters/models.py:37
 msgid "Model"
-msgstr ""
+msgstr "মডেল"
 
 #: lino/modlib/gfks/models.py:73 lino/modlib/importfilters/models.py:60
 msgid "Field"
-msgstr ""
+msgstr "ক্ষেত্র"
 
 #: lino/modlib/gfks/models.py:75 lino/modlib/importfilters/models.py:39
 #: lino/modlib/importfilters/models.py:63
 msgid "HelpText"
-msgstr ""
+msgstr "সহায়ক বাক্য"
 
 #: lino/modlib/gfks/models.py:103
 msgid "Verbose name"
-msgstr ""
+msgstr "শব্দবহুল নাম"
 
 #: lino/modlib/gfks/models.py:109
 msgid "database field"
@@ -4812,7 +4817,7 @@ msgstr ""
 
 #: lino/modlib/printing/actions.py:35
 msgid "Print"
-msgstr ""
+msgstr "প্রিন্ট"
 
 #: lino/modlib/printing/actions.py:90
 msgid ""
@@ -4837,7 +4842,7 @@ msgstr ""
 
 #: lino/modlib/printing/actions.py:268
 msgid "Clear cache"
-msgstr ""
+msgstr "কেশ (cache) মুছেফেলুন"
 
 #: lino/modlib/printing/actions.py:288
 #, python-format
@@ -4854,7 +4859,7 @@ msgstr "প্রিন্ট করার মাধ্যম"
 
 #: lino/modlib/printing/mixins.py:49
 msgid "Template"
-msgstr ""
+msgstr "টেম্পলেট"
 
 #: lino/modlib/printing/mixins.py:152
 msgid "build time"
@@ -4970,7 +4975,7 @@ msgstr ""
 
 #: lino/modlib/system/models.py:28
 msgid "Rebuild site cache"
-msgstr ""
+msgstr "সাইট কেশ (cache) আবার নির্মাণ করুন"
 
 #: lino/modlib/system/models.py:54
 msgid "Site configuration"
@@ -4978,15 +4983,15 @@ msgstr ""
 
 #: lino/modlib/system/models.py:60
 msgid "Default build method"
-msgstr ""
+msgstr "সাধারন নির্মাণ প্রক্রিয়া"
 
 #: lino/modlib/system/models.py:64
 msgid "Simulated date"
-msgstr ""
+msgstr "অনুকৃত দিন"
 
 #: lino/modlib/system/models.py:69
 msgid "Site owner"
-msgstr ""
+msgstr "সাইটের মালিক"
 
 #: lino/modlib/system/models.py:74
 msgid "Site Parameters"
@@ -5011,11 +5016,11 @@ msgstr "টেক্সট ফিল্ড টেম্পলেট"
 #: lino/modlib/tinymce/models.py:25 lino/utils/mldbc/mixins.py:32
 #: lino/utils/mldbc/mixins.py:57
 msgid "Designation"
-msgstr ""
+msgstr "আখ্যা"
 
 #: lino/modlib/tinymce/models.py:33
 msgid "Template Text"
-msgstr ""
+msgstr "টেম্পলেট লিখনি"
 
 #: lino/modlib/uploads/__init__.py:20 lino/modlib/uploads/choicelists.py:40
 msgid "Uploads"
@@ -5023,7 +5028,7 @@ msgstr ""
 
 #: lino/modlib/uploads/choicelists.py:29
 msgid "Upload shortcut"
-msgstr ""
+msgstr "আপলোড স্বর"
 
 #: lino/modlib/uploads/choicelists.py:30
 msgid "Upload shortcuts"
@@ -5047,11 +5052,11 @@ msgstr "গ্রন্থ খন্ড"
 
 #: lino/modlib/uploads/models.py:49
 msgid "Root directory"
-msgstr ""
+msgstr "মূল ডিরেক্টরি"
 
 #: lino/modlib/uploads/models.py:50
 msgid "Base URL"
-msgstr ""
+msgstr "বেস ইউআরএল (URL)"
 
 #: lino/modlib/uploads/models.py:70
 msgid "Upload type"
@@ -5063,23 +5068,23 @@ msgstr "আপলোডের ধরন"
 
 #: lino/modlib/uploads/models.py:76
 msgid "Max. number"
-msgstr ""
+msgstr "সর্বোচ্চ সংখ্যা"
 
 #: lino/modlib/uploads/models.py:83
 msgid "No need to upload more uploads than N of this type."
-msgstr ""
+msgstr "এই সংখ্যার অধিক আপলোডের প্রয়োজন নেই।"
 
 #: lino/modlib/uploads/models.py:84
 msgid "-1 means no limit."
-msgstr ""
+msgstr "-1 মানে সিমাবিহিন।"
 
 #: lino/modlib/uploads/models.py:86
 msgid "Wanted"
-msgstr ""
+msgstr "ওয়ান্টেড"
 
 #: lino/modlib/uploads/models.py:87
 msgid "Add a (+) button when there is no upload of this type."
-msgstr ""
+msgstr "এই ধরনের আপলোড না থাকলে টিক দিন।"
 
 #: lino/modlib/uploads/models.py:97
 msgid "File"
@@ -5176,7 +5181,7 @@ msgstr ""
 
 #: lino/modlib/users/actions.py:94
 msgid "Change password"
-msgstr ""
+msgstr "পাসওয়ার্ড পরিবর্তন করুন"
 
 #: lino/modlib/users/actions.py:97
 msgid "Current password"
@@ -5216,7 +5221,7 @@ msgstr ""
 
 #: lino/modlib/users/choicelists.py:107
 msgid "User type"
-msgstr ""
+msgstr "ব্যবহারকারীর ধরন"
 
 #: lino/modlib/users/choicelists.py:108
 msgid "User types"
@@ -5300,7 +5305,7 @@ msgstr ""
 
 #: lino/modlib/users/models.py:77
 msgid "Initials"
-msgstr ""
+msgstr "ডাক নাম"
 
 #: lino/modlib/users/models.py:80
 msgid "Remarks"
