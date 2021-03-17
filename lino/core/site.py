@@ -2880,21 +2880,22 @@ class Site(object):
     def get_default_language(self):
         return self.DEFAULT_LANGUAGE.django_code
 
-    def str2kw(self, name, txt,  **kw):
+    def str2kw(self, field_name, txt, **kw):
         from django.utils import translation
         for simple, info in self.language_dict.items():
             with translation.override(simple):
-                kw[name + info.suffix] = str(txt)
+                kw[field_name + info.suffix] = str(txt)
         return kw
 
     def babelkw(self, name, txt=None, **kw):
-        d = dict()
+        if txt is None:
+            d = dict()
+        else:
+            d = self.str2kw(name, txt)
         for simple, info in self.language_dict.items():
             v = kw.get(simple, None)
             if v is not None:
                 d[name + info.suffix] = str(v)
-        if txt is not None:
-            d = self.str2kw(name, txt, **d)
         return d
 
     def args2kw(self, name, *args):
