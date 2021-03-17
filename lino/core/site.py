@@ -2894,7 +2894,7 @@ class Site(object):
             if v is not None:
                 d[name + info.suffix] = str(v)
         if txt is not None:
-            d = str2kw(name, txt, **d)
+            d = self.str2kw(name, txt, **d)
         return d
 
     def args2kw(self, name, *args):
