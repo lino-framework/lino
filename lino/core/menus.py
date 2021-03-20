@@ -154,14 +154,16 @@ def create_item(user_type, spec, action=None, help_text=None, **kw):
     """
     """
     a = resolve_action(spec, action)
+    # if str(spec).startswith("webshop"):
+    #     print("20210319", spec, action, a)
+    kw.update(action=a)
     if help_text is None:
-        if a == a.actor.default_action:
+        if a is a.actor.default_action:
             help_text = a.actor.help_text or a.action.help_text
         else:
             help_text = a.action.help_text
     if help_text is not None:
         kw.update(help_text=help_text)
-    kw.update(action=a)
     return MenuItem(**kw)
 
 

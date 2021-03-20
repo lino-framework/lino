@@ -113,11 +113,11 @@ class ValidActionResponses(object):
 
     xcallback = None
     """
-    Used for dialogs asking simple yes/no/later style question
-    Includes all the data the client needs inorder to send the same action
+    Used for dialogs asking simple yes/no/later style questions.
+    Includes all the data the client needs in order to send the same action
     request again, but with some extra confirmation values.
 
-    is a dict which includes the following values:
+    Is a dict which includes the following values:
 
     - actor_id : The id of the actor
     - an : The action name of the action which was run

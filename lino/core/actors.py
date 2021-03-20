@@ -1732,26 +1732,27 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 
 
 def resolve_action(spec, action=None):
-    """
-    Return the `BoundAction` object corresponding to the given
-    specifier `spec`. The specifier can be:
-
-    - a model or a table
-    - a bound action
-    - an action instance
-    - a string of the form ``myapp.MyModel`` (i.e. resolving to a model)
-    - a string of the form ``myapp.MyModels`` (i.e. resolving to a table)
-
-    If it is an action instance, Lino will use the
-    :attr:`definiing_actor` of that action.
-
-    """
     givenspec = spec
 
     # if isinstance(spec, string_types):
     if is_string(spec):
         site = settings.SITE
-        spec = site.models.resolve(spec)
+        # if spec.startswith('webshop.'):
+        #     print("20210320", spec, repr(site.models.resolve(spec)))
+        # spec = site.models.resolve(spec)
+        parts = spec.split('.')
+        if len(parts) < 2 or len(parts) > 3:
+            raise Exception("Invalid action specifier '{}' (must be of form `plugin_name.ClassName[.action_name]`).".format(spec))
+        app = site.models[parts[0]]
+        cls = getattr(app, parts[1])
+        if len(parts) == 2:
+            spec = cls
+        else:
+            assert action is None
+            if issubclass(cls, Actor):
+                spec = cls.get_action_by_name(parts[2])
+            else:
+                spec = getattr(cls, parts[2])
         # spec = site.actors.resolve(spec) or site.models.resolve(spec)
 
     if isinstance(spec, BoundAction):
@@ -1766,7 +1767,7 @@ def resolve_action(spec, action=None):
 
     if isinstance(spec, type) and issubclass(spec, Actor):
         if action:
-            a = spec.get_url_action(action)
+            a = spec.get_action_by_name(action)
             #~ print 20121210, a
             if a is None:
                 raise Exception(

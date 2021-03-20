@@ -30,7 +30,6 @@ function for general use. It has also many subpackages and submodules.
     jscompressor
     jsgen
     latex
-    log
     mdbtools
     media
     mldbc
