@@ -173,6 +173,7 @@ class My(dbtables.Table):
         kw['user'] = ar.get_user()
         return kw
 
+
 class StartPlan(dd.Action):
     show_in_bbar = False
     # icon_name = 'basket'

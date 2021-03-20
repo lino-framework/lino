@@ -357,8 +357,8 @@ class BaseRequest(object):
 
 
 
-        kw.update(xcallback_answers={id: rqdata[id] for id in [callbackID for callbackID in rqdata.keys() if
-                                                               callbackID.startswith("xcallback__")]})
+        kw.update(xcallback_answers={id: rqdata[id] for id in [
+            callbackID for callbackID in rqdata.keys() if callbackID.startswith("xcallback__")]})
 
         #~ if settings.SITE.user_model:
             #~ username = rqdata.get(constants.URL_PARAM_SUBST_USER,None)
@@ -606,7 +606,11 @@ class BaseRequest(object):
         Tell the client to consider the action as successful. This is the
         same as :meth:`set_response` with `success=True`.
 
-        First argument should be a textual message.
+        First argument should be a translatable message.
+
+        If you want the message to be shown as an alert message, specify
+        `alert=True`.
+
         """
         kw.update(success=True)
         if alert is not None:
@@ -662,19 +666,26 @@ class BaseRequest(object):
         Execute the specified callable `ok_func` after the user has
         confirmed the specified message.
 
-        The confirmation message may be specified as a series of
-        positional arguments which will be concatenated to a single
-        prompt.
+        The confirmation message may be specified as a series of positional
+        arguments, which will be concatenated to a single prompt.
 
-        The callable will be called with a single positional argument
-        which will be the action request that confirmed the
-        message. In a web context this will be another object than
-        this one.
+        Pitfall: an action that uses :meth:`ar.confirm
+        <lino.core.requests.BaseRequest.confirm>` will be called several times,
+        once for each call to :meth:`confirm`. The full text of the confirmation
+        message must remain the same each time because it serves as the
+        identifier for connecting the two AJAX requests. If the action does
+        changes to the database before its last call to :meth:`confirm`, it must
+        take care to actually do them only when :attr:`xcallback_answers` is an
+        empty `dict`.
+
+        The callable will be called with a single positional argument, which
+        will be the action request that confirmed the message. In a web context
+        this will be another object than this one.
 
         In a non-interactive renderer (e.g. in a doctest or when using #
         :class:`lino.core.renderer.TestRenderer`) the `ok_func` function (or
         :func:`noop`) is called directly depending on the value of
-        :attr:`_confirm_answer` which potentially has been set by a previous
+        :attr:`_confirm_answer`, which potentially has been set by a previous
         call to :meth:`set_confirm_answer`.
 
         """

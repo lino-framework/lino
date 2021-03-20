@@ -36,14 +36,9 @@ class CallbackChoice(object):
 
 
 class Callback(object):
-    """A callback is a question that rose during an AJAX action.
-    The original action is pending until we get a request
+    """A callback is a question that rose during an action.
+    The action's execution is pending until we get a request
     that answers the question.
-
-    TODO: move all callback-related code out of
-    :mod:`lino.core.kernel` into to a separate module and install it
-    as a "kernel plugin" in a similar way as :mod:`lino.core.web` and
-    :mod:`lino.utils.config`.
 
     """
     title = _('Confirmation')
@@ -81,7 +76,8 @@ class Callback(object):
 
     def run(self, choice):
         if choice not in self.choices_dict:
-            raise Exception("Can not run choice|%s| not in avaliable choices %s"%(choice,self.choices_dict))
+            raise Exception("Can not run choice|%s| not in available choices %s" % (
+                choice, self.choices_dict))
         self.choices_dict[choice].func(self.ar)
 
 class unused_CallbackManager(object):
