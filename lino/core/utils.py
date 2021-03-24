@@ -294,11 +294,11 @@ def inrange_filter(fld, rng, **kw):
 
 def babelkw(*args, **kw):
     return settings.SITE.babelkw(*args, **kw)
+babel_values = babelkw  # old alias for backwards compatibility
 
 
 def babelattr(*args, **kw):
     return settings.SITE.babelattr(*args, **kw)
-babel_values = babelkw  # old alias for backwards compatibility
 
 
 class UnresolvedModel(object):
