@@ -365,7 +365,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     Set this to `True` on a workflow if you want to disable workflow
     control based on the state of the object.
 
-    Note that you must set this to True before importing any library workflows
+    Note that you must set this to True *before* importing any library workflows
     because permission handlers are defined when a workflow is imported. """
 
     sort_index = 60
@@ -403,9 +403,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     default_list_action_name = 'grid'
     default_elem_action_name = 'detail'
 
-    # update_required = set()
-    # delete_required = set()
-
     editable = None
 
     auto_apply_params = True
@@ -421,27 +418,8 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     hide_top_toolbar = False
 
     simple_slavegrid_header = False
-    """
-    If True the slave grid in a detail will be simplified
-    """
-
-    # paginator_rowsPerPageOptions = None
-    # """Array of integer values to display inside rows per page dropdown in the paginator."""
 
     paginator_template = None
-    """
-    Paginator elements can be customized using the template property using the predefined keys, default value is
-    "FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown".
-    Here are the available elements that can be placed inside a paginator.
-
-    FirstPageLink
-    PrevPageLink
-    PageLinks
-    NextPageLink
-    LastPageLink
-    RowsPerPageDropdown
-    CurrentPageReport
-    """
 
     _label = None
     _editable = None
@@ -482,10 +460,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     sum_text_column = 0
 
     preview_limit = None
-    """For non-table actors this is always `None`, otherwise see
-    :attr:`lino.core.tables.AbstractTable.preview_limit`.
-
-    """
 
     handle_uploaded_files = None
     """
@@ -633,10 +607,10 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         The default implementation assumes that you navigate on the
         :attr:`data_iterator`.
 
-        :class:`lino_xl.lib.cal.CalendarView` overrides this.
+        :class:`lino_xl.lib.calview.DayNavigator` overrides this.
 
         """
-        return navinfo(ar.data_iterator, obj)
+        return navinfo(ar.data_iterator, obj, ar.limit)
 
     @classmethod
     def is_valid_row(self, row):

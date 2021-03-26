@@ -41,6 +41,22 @@ def column_header(col):
         return col.name
     return str(label)
 
+def sliced_data_iterator(qs, offset, limit):
+    # qs is either a Django QuerySet or iterable
+    # When limit is None or 0, offset cannot be -1
+    if offset is not None:
+        if offset == -1:
+            if isinstance(qs, QuerySet):
+                num = qs.count()
+            else:
+                num = len(qs)
+            page_num = num // limit
+            offset = limit * page_num
+        qs = qs[offset:]
+    if limit is not None and limit != 0:
+        qs = qs[:limit]
+    return qs
+
 
 class TableRequest(ActionRequest):
     """A specialized :class:`ActionRequest
@@ -130,33 +146,8 @@ class TableRequest(ActionRequest):
         if isinstance(self._data_iterator, GeneratorType):
             # print 20150718, self._data_iterator
             self._data_iterator = tuple(self._data_iterator)
-        self._sliced_data_iterator = self._data_iterator
-        if False:  # self.actor.start_at_bottom:
-            if self.offset is not None:
-                assert self.limit is not None
-                num = self.get_total_count()
-                max_pages = int(old_div(num, self.limit))
-                page = old_div(self.offset, self.limit)
-                page = max_pages - page
-                offset = self.limit * page
-                # offset = max_offset - self.offset
-                self._sliced_data_iterator = self._sliced_data_iterator[
-                                             offset:]
-                self._sliced_data_iterator = self._sliced_data_iterator[
-                                             :self.limit]
-        else:
-            if self.offset is not None:
-                offset = self.offset
-                if offset == -1:
-                    assert self.limit is not None
-                    num = self.get_total_count()
-                    page_num = int(old_div(num, self.limit))
-                    offset = self.limit * page_num
-                self._sliced_data_iterator = self._sliced_data_iterator[
-                                             offset:]
-            if self.limit is not None and self.limit != 0:
-                self._sliced_data_iterator = self._sliced_data_iterator[
-                                             :self.limit]
+        self._sliced_data_iterator = sliced_data_iterator(
+            self._data_iterator, self.offset, self.limit)
         # logger.info("20171116 executed : %s", self._sliced_data_iterator)
 
     def must_execute(self):
@@ -202,7 +193,7 @@ class TableRequest(ActionRequest):
             #     raise e.__class__("{} : {}".format(self, e))
         # ~ if di is None:
         # ~ raise Exception("data_iterator is None: %s" % self)
-        if False:
+        if True:
             return len(di)
         else:
             try:

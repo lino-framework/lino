@@ -213,7 +213,8 @@ class HelpTextExtractor(object):
         content = '\n'.join(content)
         if '"""' in content:
             msg = '{} : First paragraph of content may not contain \'"""\'. '
-            raise Exception(msg.format(sig['names'][0]))
+            raise Exception(msg.format(sig))
+            # raise Exception(msg.format(sig['names'][0]))
         if content.startswith('"'):
             content = " " + content
         if content.endswith('"'):

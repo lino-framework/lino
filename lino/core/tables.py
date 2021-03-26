@@ -170,38 +170,7 @@ class AbstractTable(actors.Actor):
 
     """
 
-    # column_names_m = None
-    # """An optional alternative for :attr:`column_names` to use when
-    # :attr:`mobile_view <lino.core.site.Site.mobile_view>` is True.
-    #
-    # """
-
     column_names = '*'
-    """A string that describes the list of columns of this table.
-
-    Lino will automatically create a
-    :class:`lino.core.layouts.ColumnsLayout` from this.
-    This string must not contain any newline characters because a
-    ColumnsLayout's `main` panel descriptor must be horizontal.
-
-    Default value is ``'*'``. Where all columns are included.
-    This wildcard character means "all columns which have not been
-    named explicitly can be selected by the user and inserted at
-    this point". It can be combined with explicitly specified names.
-
-    For example::
-
-      column_names = "name owner * date"
-
-    specifies that `name` and `owner` come first, followed by inserted
-    columns and finally by `date`.
-
-    If ``'*'`` is not present in the string only explicitly named
-    columns will be available.
-
-    See also :meth:`setup_column` and :meth:`get_column_names`.
-
-    """
 
     tablet_columns = None
     """
@@ -224,17 +193,17 @@ class AbstractTable(actors.Actor):
     will not pop-in.
     """
 
-    start_at_bottom = False
-    """Set this to `True` if you want your table to *start at the
-    bottom*.  Unlike reverse ordering, the rows remain in their
-    natural order, but when we open a grid on this table, we want it
-    to start on the last page.
-
-    Use cases would be :class:`lino_xl.lib.sales.InvoicesByJournal` and
-    :class:`lino_xl.lib.ledger.InvoicesByJournal` but the result is not yet
-    satisfying.
-
-    """
+    # start_at_bottom = False
+    # """Set this to `True` if you want your table to *start at the
+    # bottom*.  Unlike reverse ordering, the rows remain in their
+    # natural order, but when we open a grid on this table, we want it
+    # to start on the last page.
+    #
+    # Use cases would be :class:`lino_xl.lib.sales.InvoicesByJournal` and
+    # :class:`lino_xl.lib.ledger.InvoicesByJournal` but the result is not yet
+    # satisfying.
+    #
+    # """
 
     group_by = None
     """
@@ -273,32 +242,6 @@ class AbstractTable(actors.Actor):
     """
 
     preview_limit = settings.SITE.preview_limit
-    """The maximum number of rows to fetch when this table is being
-    displayed in "preview mode", i.e. (1) as a slave table in a detail
-    window or (2) as a dashboard item (:meth:`get_dashboard_items
-    <lino.core.site.Site.get_dashboard_items>`) in
-    :xfile:`admin_main.html`.
-
-    The default value for this is the :attr:`preview_limit
-    <lino.core.site.Site.preview_limit>` class attribute of your
-    :class:`Site <lino.core.site.Site>`, which itself has a hard-coded
-    default value of 15 and which you can override in your
-    :xfile:`settings.py`.
-
-    If you set this to `0`, preview requests for this table will
-    request all rows.  Since preview tables usually have no paging
-    toolbar, that's theoretically what we want (but can lead to waste
-    of performance if there are many rows).
-
-    In React if set to `0` the paging toolbar which usually is
-    present in the detail view, will be removed, as it has no use, as
-    all rows wil be displayed.
-
-    Test case and description in the tested docs of :ref:`cosi`.
-
-
-
-    """
 
     row_height = 1
     """
@@ -340,23 +283,6 @@ class AbstractTable(actors.Actor):
     """
 
     hidden_columns = frozenset()
-    """If given, this is specifies the data elements that should be
-    hidden by default when rendering this table.  Example::
-
-      hidden_columns = "long_name expected_date"
-
-    **Value** : Application code should specify this as a *single
-    string* containing a space-separated list of field names.  Lino
-    will automatically resolve this during server startup using
-    :func:`lino.core.utils.fields_list`.  The runtime value of this
-    attribute is a *set of strings*, each one the name of a data
-    element. Defaults to an empty set.
-
-    **Inheritance** : Note that this can be specified either on a
-    :class:`Model` or on a :class:`Table`.  Lino will make a union of
-    both.
-
-    """
 
     form_class = None
     help_url = None
@@ -392,19 +318,6 @@ class AbstractTable(actors.Actor):
     """
 
     display_mode = 'grid'
-    """
-    How to display this table when it is a slave in a detail
-    window. Must be one of the following values:
-
-    - `'grid'` (default) to render as a grid.
-    - `'summary'` to render a summary in a HtmlBoxPanel.
-    - `'html'` to render plain html a HtmlBoxPanel.
-    - `'cards'` to render a defined layout as a grid of cards (react only)
-    - `'list'` to render a defined layout as a list of cards (react only
-
-    See :doc:`/dev/table_summaries`.
-
-    """
 
     max_render_depth = 2
     """

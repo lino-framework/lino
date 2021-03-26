@@ -26,7 +26,6 @@ from lino.core import fields
 from lino.core import signals
 from lino.core import actions
 
-
 from .fields import make_remote_field, RichTextField, displayfield
 from .utils import error2str
 from .utils import obj2str
@@ -35,6 +34,7 @@ from .utils import obj2unicode
 from .utils import class_dict_items
 from .signals import receiver, on_ui_created, pre_ui_delete, pre_ui_save
 from .workflows import ChangeStateAction
+from .tablerequest import TableRequest, sliced_data_iterator
 
 try:
     import bleach
@@ -513,15 +513,6 @@ class Model(models.Model, fields.TableRow):
         """
         return []
 
-    # moved to TableRow
-    # def get_overview_elems(self, ar):
-    #     """This is expected to return a list of HTML elements to be wrapped
-    #     into a `<DIV>`.
-    #
-    #     """
-    #     # return [ar.obj2html(self)]
-    #     return [self.obj2href(ar)]
-
     def on_duplicate(self, ar, master):
         pass
 
@@ -596,6 +587,41 @@ class Model(models.Model, fields.TableRow):
         if ar is None:
             return ''
         return E.div(*forcetext(self.get_overview_elems(ar)))
+
+    @fields.htmlbox()
+    def navigation_panel(self, ar):
+        if not isinstance(ar, TableRequest):
+            return None
+        items = []
+        navinfo = ar.actor.get_navinfo(ar, self)
+        if navinfo is None:
+            return None
+        nav_items = [
+            ar.goto_pk(navinfo['first'], "⏮ "), # 23EE
+            ar.goto_pk(navinfo['prev_page'], "⏪ "), # 23Ea
+            ar.goto_pk(navinfo['prev'], "◀ "),  # 25C0
+            navinfo['message'],
+            ar.goto_pk(navinfo['next'], " ▶"),  # 25B6
+            ar.goto_pk(navinfo['next_page'], " ⏩"), # 23E9
+            ar.goto_pk(navinfo['last'], " ⏭") # 0x23ED
+            ]
+        items.append(E.p(*nav_items))
+        # print("20210325", navinfo)
+        # raise Exception("20")
+
+        qs = sliced_data_iterator(ar.data_iterator, navinfo['offset'], ar.limit)
+        for obj in qs:
+            if obj.pk == self.pk:
+                items.append(E.b(str(obj)))
+            else:
+                items.append(ar.obj2html(obj))
+        # return E.ul(*items, **{'class': 'layout-wrapper layout-sidebar'})
+        # return E.div(*items, **{'class': 'l-component'})
+        # items = join_elems([E.p(i) for i in items])
+        items = join_elems(items, sep=E.br)
+        kwargs = {'class': 'list-item', 'style': 'width:15em;'}
+        return ar.html_text(E.div(*items, **kwargs))
+
 
     @displayfield(_("Workflow"), help_text="List of actions that change the workflow state of this object.")
     def workflow_buttons(self, ar):

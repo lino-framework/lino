@@ -726,23 +726,27 @@ class BaseRequest(object):
     def goto_instance(self, *args, **kwargs):
         return self.renderer.goto_instance(self, *args, **kwargs)
 
-    def goto_pk(self, pk, *args, **kwargs):
+    def goto_pk(self, pk, text, **kwargs):
         """Navigate to the record with the specified primary key.
 
-        This is similar to :meth:`goto_instance` but works only in a detail
-        view.  It has the advantage of not doing permission checks and no
-        database lookup just for rendering a link. """
+        When `pk`  is `None`, returns just the text.
+        The `text` argument is mandatory.
+
+        This is similar to :meth:`goto_instance`, but is more lightweight (does
+        not do permission checks and no database lookup) and therefore works
+        only in a detail view.
+
+        """
 
         r = self.renderer
+        if pk is None:
+            return text
         if r.extjs_version:
             url = r.js2url("Lino.goto_record_id(%s)" % pk)
         else:
             url = self.get_detail_url(self.actor, pk)
-        return r.href(url, *args, **kwargs)
-        # ba = self.actor.detail_action
-        # js = self.renderer.action_call(self, ba, dict(record_id=pk))
-        # kwargs.update(eval_js=js)
-        # self.set_response(**kwargs)
+        return r.href(url, text, **kwargs)
+        
 
     def close_window(self, **kw):
         """Ask client to close the current window. This is the same as

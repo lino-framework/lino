@@ -6,7 +6,6 @@
 See test cases and examples in :doc:`/specs/human`.
 
 """
-from past.utils import old_div
 
 import datetime
 from dateutil.relativedelta import relativedelta

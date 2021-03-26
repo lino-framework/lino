@@ -1113,12 +1113,6 @@ class TableRow(object):
         #     raise Exception("Oops, {} on {} is {}".format(name, cls, v))
 
     def obj2href(self, ar, *args, **kwargs):
-        """Return a html representation of a pointer to the given database
-        object.
-
-        Examples see :ref:`obj2href`.
-
-        """
         if ar is None:
             if len(args):
                 return args[0]
@@ -1170,10 +1164,6 @@ class TableRow(object):
         return str(self)
 
     def get_overview_elems(self, ar):
-        """This is expected to return a list of HTML elements to be wrapped
-        into a `<DIV>`.
-
-        """
         # return [ar.obj2html(self)]
         return [self.obj2href(ar)]
 
@@ -1202,8 +1192,8 @@ def wildcard_data_elems(model):
     for f in meta.many_to_many:
         yield f
     for f in meta.private_fields:
-        #if not isinstance(f, VirtualField):
-        yield f
+        if not isinstance(f, VirtualField) or f.wildcard_data_elem:
+            yield f
     # todo: for slave in self.report.slaves
 
 

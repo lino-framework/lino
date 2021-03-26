@@ -1,4 +1,4 @@
-# Copyright 2010-2020 Rumma & Ko Ltd
+# Copyright 2010-2021 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 """
 A collection of utilities which require Django settings to be
@@ -491,10 +491,11 @@ def resolve_field(name, app_label=None):
     # return UnresolvedField(name)
 
 
-def navinfo(qs, elem):
+def navinfo(qs, elem, limit=None):
     """Return a dict with navigation information for the given model
-    instance `elem` within the given queryset.  The dictionary
-    contains the following keys:
+    instance `elem` within the given queryset.
+
+    The returned dictionary contains the following keys:
 
     :recno:   row number (index +1) of elem in qs
     :first:   pk of the first element in qs (None if qs is empty)
@@ -502,31 +503,37 @@ def navinfo(qs, elem):
     :next:    pk of the next element in qs (None if qs is empty)
     :last:    pk of the last element in qs (None if qs is empty)
     :message: text "Row x of y" or "No navigation"
+    :id_list: list of the primary keys
+
+    Used by :meth:`lino.core.actors.Actor.get_navinfo`.
 
     """
     first = None
     prev = None
     next = None
+    prev_page = None
+    next_page = None
     last = None
     recno = 0
     message = None
+    page_num = None
+    offset = None
+
     #~ LEN = ar.get_total_count()
     if isinstance(qs, (list, tuple)):
-        LEN = len(qs)
+        num = len(qs)
         id_list = [obj.pk for obj in qs]
         #~ logger.info('20130714')
     else:
-        LEN = qs.count()
+        num = qs.count()
         # this algorithm is clearly quicker on queries with a few thousand rows
         id_list = list(qs.values_list('pk', flat=True))
-    if LEN > 0:
-        """
-        Uncommented the following assert because it failed in certain circumstances
-        (see `/blog/2011/1220`)
-        """
-        #~ assert len(id_list) == ar.total_count, \
-            #~ "len(id_list) is %d while ar.total_count is %d" % (len(id_list),ar.total_count)
-        #~ print 20111220, id_list
+    if num > 0:
+        # Uncommented the following assert because it failed in certain circumstances
+        # (see `/blog/2011/1220`)
+        # assert len(id_list) == ar.total_count, \
+            # "len(id_list) is %d while ar.total_count is %d" % (len(id_list),ar.total_count)
+        # print 20111220, id_list
         try:
             i = id_list.index(elem.pk)
         except ValueError:
@@ -535,17 +542,25 @@ def navinfo(qs, elem):
             recno = i + 1
             first = id_list[0]
             last = id_list[-1]
+            if limit:
+                page_num = i // limit
+                offset = limit * page_num
             if i > 0:
-                prev = id_list[i - 1]
+                prev = id_list[i-1]
+                if limit:
+                    prev_page = id_list[max(0, offset-limit+1)]
             if i < len(id_list) - 1:
                 next = id_list[i + 1]
+                if limit:
+                    next_page = id_list[min(num-1, offset+limit+2)]
             message = _("Row %(rowid)d of %(rowcount)d") % dict(
-                rowid=recno, rowcount=LEN)
+                rowid=recno, rowcount=num)
     if message is None:
         message = _("No navigation")
     return dict(
         first=first, prev=prev, next=next, last=last, recno=recno,
-        message=message)
+        message=message, prev_page=prev_page, next_page=next_page,
+        offset=offset)
 
 
 # class Handle(object):
