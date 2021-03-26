@@ -373,15 +373,19 @@ class Action(Parametrizable, Permittable):
 
     show_in_bbar = True
     """
-    Whether this action should be displayed as a button in the toolbar
-    and the context menu of a full grid.
+
+    Whether this action should be displayed in the toolbar.
+
+    TODO: rename this to `show_in_toolbar`.
+
+    In ExtJS this will also cause it to be in the context menu of a grid.
 
     For example the :class:`CheckinVisitor
-    <lino_xl.lib.reception.models.CheckinVisitor>`,
+    <lino_xl.lib.reception.CheckinVisitor>`,
     :class:`ReceiveVisitor
-    <lino_xl.lib.reception.models.ReceiveVisitor>` and
+    <lino_xl.lib.reception.ReceiveVisitor>` and
     :class:`CheckoutVisitor
-    <lino_xl.lib.reception.models.CheckoutVisitor>` actions have this
+    <lino_xl.lib.reception.CheckoutVisitor>` actions have this
     attribute explicitly set to `False` because otherwise they would be
     visible in the toolbar.
     """

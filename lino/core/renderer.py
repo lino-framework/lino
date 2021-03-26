@@ -749,45 +749,10 @@ class JsRenderer(HtmlRenderer):
 
 
     def goto_instance(self, ar, obj, detail_action=None, **kw):
-        """Ask the client to display a detail window on the given
-        record. The client might ignore this if Lino does not know a
-        detail window.
-
-        This is a utility wrapper around :meth:`set_response` which sets
-        either `data_record` or a `record_id`.
-
-        Usually `data_record`, except if it is a `file upload
-        <https://docs.djangoproject.com/en/3.1/topics/http/file-uploads/>`_
-        where some mysterious decoding problems (:blogref:`20120209`)
-        force us to return a `record_id` which has the same visible
-        result but using an additional GET.
-
-        If the calling window is a detail on the same table, then it
-        should simply get updated to the given record. Otherwise open a
-        new detail window.
-
-        If the detail layout of the current actor can be used for the
-        object to be displayed, we don't want to open a new detail
-        window.
-
-        This calls :meth:`obj.get_detail_action
-        <lino.core.model.Model.get_detail_action>`.
-
+        """Instruct the client to display a detail window on the given
+        record.
         """
         # print("20201230a goto_instance", ar.actor, detail_action)
-        if ar.actor is not None:
-            da = detail_action or obj.get_detail_action(ar)
-            if da is None:
-                return
-            # print("20201230b goto_instance", da.actor, ar.actor)
-            if da.actor == ar.actor:
-                ar.set_response(detail_handler_name=da.full_name())
-                if ar.actor.handle_uploaded_files is not None:
-                    ar.set_response(record_id=obj.pk)
-                else:
-                    ar.set_response(
-                        data_record=ar.elem2rec_detailed(obj))
-                return
         js = self.instance_handler(ar, obj, detail_action)
         kw.update(eval_js=js)
         ar.set_response(**kw)

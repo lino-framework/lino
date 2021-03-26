@@ -1321,3 +1321,45 @@ class ExtRenderer(JsRenderer, JsCacheRenderer):
             yield "GEN_TIMESTAMP = %s;" % py2js(rt.settings.SITE.kernel.code_mtime)
 
         return '\n'.join(fn())
+
+    def goto_instance(self, ar, obj, detail_action=None, **kw):
+        """
+
+        See JsRenderer.goto_instance(), but when this is called while the detail
+        window is already open (only on another record), then we don't want to
+        redirect to another page because that would take more time.
+
+        This is a utility wrapper around :meth:`set_response` which sets
+        either `data_record` or a `record_id`.
+
+        Usually `data_record`, except if it is a `file upload
+        <https://docs.djangoproject.com/en/3.1/topics/http/file-uploads/>`_
+        where some mysterious decoding problems (:blogref:`20120209`)
+        force us to return a `record_id` which has the same visible
+        result but using an additional GET.
+
+        If the calling window is a detail on the same table, then it
+        should simply get updated to the given record. Otherwise open a
+        new detail window.
+
+        If the detail layout of the current actor can be used for the
+        object to be displayed, we don't want to open a new detail
+        window.
+
+
+        """
+        if ar.actor is not None:
+            da = detail_action or obj.get_detail_action(ar)
+            if da is None:
+                # print("20210325 goto_instance no da")
+                return
+            # print("20201230b goto_instance", da.actor, ar.actor)
+            if da.actor == ar.actor:
+                ar.set_response(detail_handler_name=da.full_name())
+                if ar.actor.handle_uploaded_files is not None:
+                    ar.set_response(record_id=obj.pk)
+                else:
+                    ar.set_response(
+                        data_record=ar.elem2rec_detailed(obj))
+                return
+        return super(ExtRenderer, self).goto_instance(ar, obj, detail_action, **kw)
