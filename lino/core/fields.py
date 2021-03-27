@@ -432,7 +432,7 @@ class VirtualModel:
 
 VFIELD_ATTRIBS = frozenset('''to_python choices save_form_data
   value_to_string max_length remote_field
-  max_digits verbose_name decimal_places
+  max_digits verbose_name decimal_places wildcard_data_elem
   blank'''.split())
 
 class VirtualField(FakeField):

@@ -254,6 +254,9 @@ extjs/index.html template."""),
     'lino.modlib.extjs.ext_renderer.ExtRenderer.js_render_custom_action' : _("""Defines the non-window action handler used by
 row_action_button()"""),
     'lino.modlib.extjs.ext_renderer.ExtRenderer.linolib_intro' : _("""Called from linolib.js."""),
+    'lino.modlib.extjs.ext_renderer.ExtRenderer.goto_instance' : _("""See JsRenderer.goto_instance(), but when this is called while the detail
+window is already open (only on another record), then we don't want to
+redirect to another page because that would take more time."""),
     'lino.modlib.extjs.views.AdminIndex' : _("""Similar to PlainIndex"""),
     'lino.modlib.extjs.views.Restful' : _("""Used to collaborate with a restful Ext.data.Store."""),
     'lino.modlib.gfks.Plugin' : _("""Base class for this plugin."""),

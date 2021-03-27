@@ -379,7 +379,7 @@ class Born(model.Model):
             except ValueError:
                 pass
 
-    @fields.displayfield(_("Age"))
+    @fields.displayfield(_("Age"), wildcard_data_elem=True)
     def age(self, ar, today=None):
         a = self.get_exact_age(today)
         if a is None:
