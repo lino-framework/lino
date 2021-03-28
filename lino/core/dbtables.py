@@ -191,7 +191,7 @@ class Table(AbstractTable):
     """If viewing the grid view on a mobile, should the grid use responsive mode
     Default: True"""
 
-    react_big_search = False
+    #react_big_search = False
     """If True will position the quick search input to the bottom of the header and have it full width.
     Default: False"""
 
