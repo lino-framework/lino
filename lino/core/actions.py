@@ -148,21 +148,11 @@ class Action(Parametrizable, Permittable):
     _layout_class = layouts.ActionParamsLayout
 
     label = None
-    """
-    The label of this action. A short descriptive text in user
-    language. Used e.g. on menu items. Also on toolbar buttons if they
-    have neither :attr:`icon_name` nor :attr:`button_text`.
-    """
-
     button_text = None
-    """
-    The text to appear on buttons for this action. If this is not
-    defined, the :attr:`label` is used.
-    """
 
     button_color = None
     """
-    The color to be used on icon-less buttons for this action
+    The olor to be used on icon-less buttons for this action
     (i.e. which have no :attr:`icon_name`).  See also
     :attr:`lino.core.site.Site.use_silk_icons`.
 
@@ -259,15 +249,6 @@ class Action(Parametrizable, Permittable):
 
     """
     help_text = None
-    """
-    A help text that shortly explains what this action does.  In a
-    graphical user interface this will be rendered as a **tooltip**
-    text.
-
-    If this is not given by the code, Lino will potentially set it at
-    startup when loading the :xfile:`help_texts.py` files.
-
-    """
 
     submit_form_data = False
     """
