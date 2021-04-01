@@ -121,7 +121,7 @@ start_date and end_date which default to empty."""),
     'lino.periods.Monthly' : _("""An ObservedDateRange which defaults to the current month."""),
     'lino.periods.Weekly' : _("""An ObservedDateRange which defaults to the current week."""),
     'lino.periods.Today' : _("""A ParameterPanel
-with a field today which defaults to today."""),
+with a field today that defaults to today."""),
     'lino.polymorphic.Polymorphic' : _("""Mixin for models that use Multiple Table Inheritance to implement
 polymorphism."""),
     'lino.polymorphic.Polymorphic.mti_navigator' : _("""A virtual field which defines buttons for switching between the

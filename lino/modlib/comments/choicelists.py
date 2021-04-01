@@ -51,8 +51,6 @@ class CommentEvents(dd.ChoiceList):
     verbose_name = _("Observed event")
     verbose_name_plural = _("Observed events")
 
-
-
 def add(*args):
     CommentEvents.add_item_instance(ObservedTime(*args))
 add('10', 'created', _("Created"))

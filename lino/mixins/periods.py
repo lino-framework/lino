@@ -1,4 +1,4 @@
-# Copyright 2014-2020 Rumma & Ko Ltd
+# Copyright 2014-2021 Rumma & Ko Ltd
 # License: BSD (see file COPYING for details)
 
 """
@@ -202,7 +202,7 @@ class DateRange(DateRangeObservable):
     date fields.
 
     Designed for usage with
-    :class:`lino.modlib.system.choicelists.PeriodEvents`.
+    :class:`lino.modlib.system.PeriodEvents`.
     """
 
     class Meta(object):
@@ -341,7 +341,7 @@ class Weekly(ObservedDateRange):
 
 class Today(ParameterPanel):
     """A :class:`ParameterPanel <lino.core.param_panel.ParameterPanel>`
-    with a field `today` which defaults to today.
+    with a field `today` that defaults to today.
 
     """
     def __init__(self, verbose_name=_("Situation on"), **kw):
