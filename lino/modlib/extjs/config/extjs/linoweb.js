@@ -3761,7 +3761,7 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
           //~ id: "seachString"
       })];
       tbar = this.add_params_panel(tbar);
-      var menu = [];
+      // var menu = [];
       // var set_gc = function(index) {
       //   return function() {
       //     //~ console.log('set_gc() 20100812');
@@ -3772,14 +3772,14 @@ Lino.GridPanel = Ext.extend(Lino.GridPanel, {
       //   var gc = this.ls_grid_configs[i];
       //   menu.push({text:gc.label,handler:set_gc(i),scope:this})
       // }
-      if(menu.length > 1) {
-        tbar = tbar.concat([
-          { text:"{{_('View')}}",
-            menu: menu,
-            tooltip:"{{_('Select another view of this report')}}"
-          }
-        ]);
-      }
+      // if(menu.length > 1) {
+      //   tbar = tbar.concat([
+      //     { text:"{{_('View')}}",
+      //       menu: menu,
+      //       tooltip:"{{_('Select another view of this report')}}"
+      //     }
+      //   ]);
+      // }
 
       if (actions) {
         tbar = tbar.concat(actions.bbar);

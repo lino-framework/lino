@@ -746,7 +746,7 @@ class BaseRequest(object):
         else:
             url = self.get_detail_url(self.actor, pk)
         return r.href(url, text, **kwargs)
-        
+
 
     def close_window(self, **kw):
         """Ask client to close the current window. This is the same as
@@ -1147,7 +1147,8 @@ class BaseRequest(object):
         # logger.debug("20190924 elem2rec_detailed %s", elem)
         rh = ar.ah
         rec = ar.elem2rec1(rh, elem, None, **rec)
-        if ar.actor.hide_top_toolbar or ar.bound_action.action.hide_top_toolbar:
+        # if ar.actor.hide_top_toolbar or ar.bound_action.action.hide_top_toolbar:
+        if ar.actor.hide_top_toolbar:
             rec.update(title=ar.get_detail_title(elem))
         else:
             rec.update(title=ar.get_breadcrumbs(elem))

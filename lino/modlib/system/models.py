@@ -114,18 +114,19 @@ class SiteConfigs(dd.Table):
     required_roles = dd.login_required(SiteStaff)
     # default_action = actions.ShowDetail()
     #~ has_navigator = False
-    hide_top_toolbar = True
+    hide_navigator = True
+    allow_delete = False
+    # hide_top_toolbar = True
     #~ can_delete = perms.never
-    detail_layout = """
+    detail_layout = dd.DetailLayout("""
     default_build_method
     # lino.ModelsBySite
-    """
+    """, window_size=(60, 'auto'))
 
     @classmethod
     def get_default_action(cls):
         return actions.ShowDetail(cls.detail_layout)
-
-
+        # return actions.ShowDetail(cls.detail_layout, hide_navigator=True)
 
     do_build = BuildSiteCache()
 

@@ -333,18 +333,18 @@ class Action(Parametrizable, Permittable):
 
     opens_a_window = False
 
-    hide_top_toolbar = False
-    """
-    Used internally if :attr:`opens_a_window` to say whether the
-    window has a top toolbar.
-
-    """
-    hide_navigator = False
-    """
-    Used internally if :attr:`opens_a_window` to say whether the
-    window has a navigator.
-
-    """
+    # hide_top_toolbar = False
+    # """
+    # Used internally if :attr:`opens_a_window` to say whether the
+    # window has a top toolbar.
+    #
+    # """
+    # hide_navigator = False
+    # """
+    # Used internally if :attr:`opens_a_window` to say whether the
+    # window has a navigator.
+    #
+    # """
 
     show_in_plain = False
     """
@@ -815,7 +815,7 @@ class ShowEmptyTable(ShowDetail):
     action_name = 'show'
     default_format = 'html'
     # ~ hide_top_toolbar = True
-    hide_navigator = True
+    # hide_navigator = True
     icon_name = None
     callable_from = 't'
 
@@ -849,9 +849,9 @@ class ShowInsert(TableAction):
     show_in_workflow = False
     opens_a_window = True
     window_type = 'i'
-    hide_navigator = True
+    # hide_navigator = True
     sort_index = 10
-    hide_top_toolbar = True
+    # hide_top_toolbar = True
     # required_roles = set([SiteUser])
     action_name = 'insert'
     key = keyboard.INSERT  # (ctrl=True)

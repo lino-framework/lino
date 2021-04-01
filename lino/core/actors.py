@@ -414,8 +414,10 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     insert_layout_width = 60
     hide_window_title = False
     allow_create = True
+    allow_delete = True
     hide_headers = False
-    hide_top_toolbar = False
+    hide_top_toolbar = False  # Deprecated. Supported only by ExtJS
+    hide_navigator = False
 
     simple_slavegrid_header = False
 
@@ -952,7 +954,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                 if cls.insert_layout:
                     cls.insert_action = cls._bind_action(
                         'insert_action', cls.get_insert_action(), True)
-            if not cls.hide_top_toolbar:
+            if cls.allow_delete:
                 cls.delete_action = cls._bind_action(
                     'delete_action', DELETE_ACTION, True)
             cls.update_action = cls._bind_action(
