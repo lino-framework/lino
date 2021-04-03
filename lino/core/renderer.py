@@ -236,7 +236,8 @@ class HtmlRenderer(Renderer):
         Return a string with an URL which would run the given target request
         `tar`."""
 
-        # TODO: remove the `ar` as it is not needed.
+        if ar.actor.hide_navigator:
+            return tar.get_title()
 
         uri = self.js2url(self.request_handler(tar))
         return self.href_button_action(
