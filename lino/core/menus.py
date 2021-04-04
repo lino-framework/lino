@@ -151,19 +151,26 @@ class MenuItem(object):
 
 
 def create_item(user_type, spec, action=None, help_text=None, **kw):
-    """
-    """
-    a = resolve_action(spec, action)
-    # if str(spec).startswith("webshop"):
-    #     print("20210319", spec, action, a)
-    kw.update(action=a)
-    if help_text is None:
-        if a is a.actor.default_action:
-            help_text = a.actor.help_text or a.action.help_text
-        else:
-            help_text = a.action.help_text
-    if help_text is not None:
-        kw.update(help_text=help_text)
+    
+    if isinstance(spec, dict):
+        assert help_text is None
+        assert action is None
+        kw.update(spec)
+        action_spec = spec.get('action', None)
+        if action_spec is not None:
+            kw.update(action=resolve_action(action_spec))
+    else:
+        a = resolve_action(spec, action)
+        # if str(spec).startswith("webshop"):
+        #     print("20210319", spec, action, a)
+        kw.update(action=a)
+        if help_text is None:
+            if a is a.actor.default_action:
+                help_text = a.actor.help_text or a.action.help_text
+            else:
+                help_text = a.action.help_text
+        if help_text is not None:
+            kw.update(help_text=help_text)
     return MenuItem(**kw)
 
 

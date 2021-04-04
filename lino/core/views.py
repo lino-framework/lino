@@ -72,17 +72,20 @@ def action_request(app_label, actor, request, rqdata, is_list, **kw):
     # print(20160329, rqdata.keys())
     rpt = requested_actor(app_label, actor)
     action_name = rqdata.get(constants.URL_PARAM_ACTION_NAME, None)
+    a = None
     if not action_name:
         # print("20210215", rqdata)
         if is_list:
             action_name = rpt.default_list_action_name
         else:
-            action_name = rpt.default_elem_action_name
-    a = rpt.get_url_action(action_name)
+            a = rpt.detail_action
+            # action_name = rpt.default_elem_action_name
     if a is None:
-        raise http.Http404(
-            "%s has no url action %r (possible values are %s)" % (
-                rpt, action_name, rpt.get_url_action_names()))
+        a = rpt.get_url_action(action_name)
+        if a is None:
+            raise http.Http404(
+                "%s has no url action %r (possible values are %s)" % (
+                    rpt, action_name, rpt.get_url_action_names()))
     user = request.subst_user or request.user
     if True:  # False:  # 20130829
         if not a.get_view_permission(user.user_type):
@@ -94,7 +97,7 @@ def action_request(app_label, actor, request, rqdata, is_list, **kw):
                 # internationalized because some error handling code
                 # may want to write it to a plain ascii stream.
     ar = rpt.request(request=request, action=a, rqdata=rqdata, **kw)
-    # print("20200901", ar, rqdata)
+    # print("20210403b", a.action.__class__, rqdata)
     return ar
 
 

@@ -478,8 +478,6 @@ method in order to sort the rows of the queryset.
 
     @classmethod
     def get_default_action(cls):
-        #~ return actions.BoundAction(cls,cls.grid)
-        #~ return 'grid'
         return actions.ShowTable()
 
     @classmethod
@@ -609,12 +607,15 @@ method in order to sort the rows of the queryset.
         To be combined with the `show` management command.
         """
         settings.SITE.startup()
+        ba = None
         if pk is not None:
             if an is None:
-                an = self.default_elem_action_name
+                # an = self.default_elem_action_name
+                ba = self.detail_action
         elif an is None:
             an = self.default_list_action_name
-        ba = self.get_action_by_name(an)
+        if ba is None:
+            ba = self.get_action_by_name(an)
         #~ print ba
         if pk is None:
             ar = self.request(action=ba)

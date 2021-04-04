@@ -283,6 +283,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         Note that this handler will be called independently of whether
         the user has permission to view the actor or not.
     """
+    _detail_action_class = actions.ShowDetail
 
     required_roles = set([SiteUser])
     """See :doc:`/dev/perms`."""
@@ -401,7 +402,7 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
     window_size = None
 
     default_list_action_name = 'grid'
-    default_elem_action_name = 'detail'
+    # default_elem_action_name = 'detail'
 
     editable = None
 
@@ -903,7 +904,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                     return ba
         return None
 
-
     @classmethod
     def _collect_actions(cls):
         """
@@ -913,23 +913,11 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
         Also fill :attr:`_actions_list`.
         """
 
-        default_action = cls.get_default_action()
-
-        if default_action is not None:
-            # cls.default_action = cls._bind_action(default_action)
-            cls.default_action = cls._bind_action(
-                'default_action', default_action, True)
-
         if cls.detail_layout:
-            if default_action and isinstance(
-                    default_action, actions.ShowDetail) and \
-                    default_action.owner == cls.detail_layout:
-                dtla = default_action
+            if cls.detail_action and cls.detail_action.action.owner == cls.detail_layout:
+                dtla = cls.detail_action.action
             else:
-                if cls.detail_action and cls.detail_action.action.owner == cls.detail_layout:
-                    dtla = cls.detail_action.action
-                else:
-                    dtla = actions.ShowDetail(cls.detail_layout)
+                dtla = cls._detail_action_class(cls.detail_layout)
             cls.detail_action = cls._bind_action('detail_action', dtla, True)
             if cls.use_detail_param_panel:
                 cls.detail_action.action.use_param_panel = True
@@ -938,7 +926,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
             if cls.editable:
                 cls.submit_detail = cls._bind_action(
                     'submit_detail', SUBMIT_DETAIL, True)
-
 
         # avoid inheriting the following actions from parent:
         cls.insert_action = None
@@ -964,7 +951,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                     'validate_form', VALIDATE_FORM, True)
 
         if is_string(cls.workflow_owner_field):
-        # if isinstance(cls.workflow_owner_field, string_types):
             cls.workflow_owner_field = cls.get_data_elem(
                 cls.workflow_owner_field)
         if is_string(cls.workflow_state_field):
@@ -975,7 +961,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                     "Failed to resolve {}.workflow_state_field {}".format(
                         cls,cls.workflow_state_field))
             cls.workflow_state_field = fld
-
 
         # note that the fld may be None e.g. cal.Component
         if cls.workflow_state_field is not None:
@@ -993,6 +978,13 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
                 v = cls.__dict__.get(k, v)
                 if isinstance(v, actions.Action):
                     cls._bind_action(k, v, False)
+
+        da = cls.get_default_action()
+        if da is not None:
+            if isinstance(da, actions.Action):
+                cls.default_action = cls._bind_action('default_action', da, True)
+            else:
+                cls.default_action = da
 
         cls._actions_list.sort(
             key=lambda a: (a.action.sort_index, a.action.action_name))
@@ -1710,7 +1702,6 @@ class Actor(with_metaclass(ActorMetaClass, type('NewBase', (actions.Parametrizab
 def resolve_action(spec, action=None):
     givenspec = spec
 
-    # if isinstance(spec, string_types):
     if is_string(spec):
         site = settings.SITE
         # if spec.startswith('webshop.'):

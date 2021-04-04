@@ -112,6 +112,7 @@ class EmptyTable(Frame):
     Subclassed by :class:`lino.modlib.about.About` and
     :class:`Report`.
     """
+    _detail_action_class = ShowEmptyTable
 
     #~ debug_permissions = True
     #~ has_navigator = False
@@ -119,13 +120,13 @@ class EmptyTable(Frame):
     abstract = True
     hide_navigator = True
     default_list_action_name = 'show'
-    default_elem_action_name = 'show'
+    # default_elem_action_name = 'show'
     display_mode = None  # for Actor
     build_method = None
 
     @classmethod
     def get_default_action(cls):
-        return ShowEmptyTable(cls.detail_layout)
+        return cls.detail_action
 
     @classmethod
     def get_template_groups(self):

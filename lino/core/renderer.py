@@ -232,16 +232,16 @@ class HtmlRenderer(Renderer):
 
     def href_to_request(self, ar, tar, text=None, **kw):
         """
-
-        Return a string with an URL which would run the given target request
+        Return a string with an URL that would run the given target request
         `tar`."""
+        if text is None:
+            text = tar.get_title()
 
-        if ar.actor.hide_navigator:
-            return tar.get_title()
+        if ar and ar.actor and ar.actor.hide_navigator:
+            return text
 
         uri = self.js2url(self.request_handler(tar))
-        return self.href_button_action(
-            tar.bound_action, uri, text or tar.get_title(), **kw)
+        return self.href_button_action(tar.bound_action, uri, text, **kw)
 
     def href_button_action(
             self, ba, url, text=None, title=None, icon_name=NOT_PROVIDED, **kw):

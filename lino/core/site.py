@@ -3134,7 +3134,6 @@ site. :manage:`diag` is a command-line shortcut to this.
         for p in self.sorted_plugins:
             for ql in p.get_quicklinks(user):
                 tb.add_action(ql)
-        # self.on_each_app('setup_quicklinks', user, m)
 
     def get_site_menu(self, user_type):
         """

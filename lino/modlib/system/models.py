@@ -125,8 +125,7 @@ class SiteConfigs(dd.Table):
 
     @classmethod
     def get_default_action(cls):
-        return actions.ShowDetail(cls.detail_layout)
-        # return actions.ShowDetail(cls.detail_layout, hide_navigator=True)
+        return cls.detail_action
 
     do_build = BuildSiteCache()
 

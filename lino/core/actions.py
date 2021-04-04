@@ -814,8 +814,6 @@ class ShowEmptyTable(ShowDetail):
     use_param_panel = True
     action_name = 'show'
     default_format = 'html'
-    # ~ hide_top_toolbar = True
-    # hide_navigator = True
     icon_name = None
     callable_from = 't'
 

@@ -153,7 +153,6 @@ class MainHtml(View):
     def get(self, request, *args, **kw):
         # ~ logger.info("20130719 MainHtml")
         settings.SITE.startup()
-        ui = settings.SITE.kernel
         # ~ raise Exception("20131023")
         ar = BaseRequest(request)
         html = settings.SITE.get_main_html(
@@ -161,26 +160,18 @@ class MainHtml(View):
         html = settings.SITE.plugins.extjs.renderer.html_text(html)
         ar.success(html=html)
         ar.set_response(**test_version_mismatch(request))
-        return ui.default_renderer.render_action_response(ar)
+        return settings.SITE.kernel.default_renderer.render_action_response(ar)
 
 
 class RunJasmine(View):
-    """
-    """
-
     def get(self, request, *args, **kw):
-        ui = settings.SITE.kernel
         return http.HttpResponse(
-            ui.extjs_renderer.html_page(request, run_jasmine=True))
+            settings.SITE.kernel.extjs_renderer.html_page(request, run_jasmine=True))
 
 
 class EidAppletService(View):
-    """
-    """
-
     def post(self, request, *args, **kw):
-        ui = settings.SITE.kernel
-        return ui.success(html='Hallo?')
+        return settings.SITE.kernel.success(html='Hallo?')
 
 
 # class Callbacks(View):
@@ -315,22 +306,23 @@ class ApiElement(View):
     @method_decorator(ensure_csrf_cookie)
     def get(self, request, app_label=None, actor=None, pk=None):
         # this is also used by the react front end
-        ui = settings.SITE.kernel
         rpt = requested_actor(app_label, actor)
         # if not rpt.get_view_permission(request.user.user_type):
         #     raise PermissionDenied("{} has permission to view {}".format(
         #         request.user.user_type, rpt))
         # print(rpt, request.user.user_type)
 
-        action_name = request.GET.get(constants.URL_PARAM_ACTION_NAME,
-                                      rpt.default_elem_action_name)
-        ba = rpt.get_url_action(action_name)
-        if ba is None:
-            raise http.Http404("%s has no action %r" % (rpt, action_name))
+        action_name = request.GET.get(constants.URL_PARAM_ACTION_NAME, None)
+        if action_name:
+            ba = rpt.get_url_action(action_name)
+            if ba is None:
+                raise http.Http404("%s has no action %r" % (rpt, action_name))
+        else:
+            ba = rpt.detail_action
+            if ba is None:
+                raise http.Http404("%s has no detail_action" % rpt)
 
         if pk and pk != '-99999' and pk != '-99998':
-            # ~ ar = ba.request(request=request,selected_pks=[pk])
-            # ~ print 20131004, ba.actor
             # Use url selected rows as selected PKs if defined, otherwise use the PK defined in the url path
             sr = request.GET.getlist(constants.URL_PARAM_SELECTED)
             if len(sr) == 0:
@@ -347,9 +339,7 @@ class ApiElement(View):
             ar = ba.request(request=request)
             elem = None
 
-        # ar.renderer = ui.extjs_renderer
-        ar.renderer = ui.default_renderer
-        ah = ar.ah
+        ar.renderer = settings.SITE.kernel.default_renderer
 
         if not ar.get_permission():
             msg = "No permission to run {}".format(ar)
@@ -359,14 +349,13 @@ class ApiElement(View):
         fmt = request.GET.get(
             constants.URL_PARAM_FORMAT, ba.action.default_format)
         if ba.action.opens_a_window:
-
             if fmt == constants.URL_FORMAT_JSON:
                 if pk == '-99999':
                     elem = ar.create_instance()
-                    datarec = ar.elem2rec_insert(ah, elem)
+                    datarec = ar.elem2rec_insert(ar.ah, elem)
                 elif pk == '-99998':
                     elem = ar.create_instance()
-                    datarec = elem2rec_empty(ar, ah, elem)
+                    datarec = elem2rec_empty(ar, ar.ah, elem)
                 elif elem is None:
                     datarec = dict(
                         success=False, message=NOT_FOUND % (rpt, pk))
@@ -386,12 +375,6 @@ class ApiElement(View):
                     request, ba.action.label,
                     on_ready=ar.renderer.action_call(
                         request, ba, after_show)))
-
-        # if isinstance(ba.action, actions.RedirectAction):
-        #     target = ba.action.get_target_url(elem)
-        #     if target is None:
-        #         raise http.Http404("%s failed for %r" % (ba, elem))
-        #     return http.HttpResponseRedirect(target)
 
         if pk == '-99998':
             assert elem is None
@@ -517,9 +500,7 @@ class ApiList(View):
                     ar.request,
                     ar.bound_action, after_show))
             # ~ print '20110714 on_ready', params
-
             kw.update(title=ar.get_title())
-
             return http.HttpResponse(ar.renderer.html_page(request, **kw))
 
         if fmt == 'csv':

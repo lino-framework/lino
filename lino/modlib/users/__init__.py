@@ -43,3 +43,8 @@ class Plugin(ad.Plugin):
 
     def setup_site_menu(self, site, user_type, m):
         m.add_action('users.Sessions')
+
+    def get_quicklinks(self, user):
+        yield dict(instance=user,
+            action='users.MySettings',
+            label=_("My settings"))
