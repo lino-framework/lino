@@ -150,8 +150,12 @@ class MenuItem(object):
         return js
 
 
-def create_item(user_type, spec, action=None, help_text=None, **kw):
-    
+def create_item(unused, spec, action=None, help_text=None, **kw):
+    """Create a menu item according to the specified arguments.
+
+    TODO: explain the arguments and their meaning.
+
+    """
     if isinstance(spec, dict):
         assert help_text is None
         assert action is None
@@ -253,12 +257,16 @@ class Menu(MenuItem):
         self.items = newitems
 
     def add_action(self, *args, **kw):
-        mi = create_item(self.user_type, *args, **kw)
+        """
+        Add a menu item to this menu.
+        All arguments are forwarded to :func:`create_item`.
+        """
+        mi = create_item(None, *args, **kw)
         return self.add_item_instance(mi)
 
     def add_instance_action(self, obj, **kw):
         """
-        Add an action which displays the given database object instance in
+        Add an action that displays the given database object instance in
         a detail form for editing.
 
         Used e.g. for the :menuselection`Configure --> System --> Site
