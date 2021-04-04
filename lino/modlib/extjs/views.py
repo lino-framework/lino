@@ -418,13 +418,6 @@ class ApiElement(View):
         ar.set_selected_pks(pk)
         return settings.SITE.kernel.run_action(ar)
 
-    def old_delete(self, request, app_label=None, actor=None, pk=None):
-        rpt = requested_actor(app_label, actor)
-        ar = rpt.request(request=request)
-        ar.set_selected_pks(pk)
-        elem = ar.selected_rows[0]
-        return delete_element(ar, elem)
-
 
 class ApiList(View):
     @method_decorator(csrf_protect)

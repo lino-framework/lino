@@ -173,17 +173,6 @@ class Comment(CreatedModified, UserAuthored, Controllable,
     def setup_parameters(cls, fields):
         fields.update(
             observed_event=CommentEvents.field(blank=True))
-        # fields.update(
-        #     start_date=models.DateField(
-        #         _("Period from"), blank=True, null=True,
-        #         help_text=_("Start date of observed period")))
-        # fields.update(
-        #     end_date=models.DateField(
-        #         _("until"),
-        #         blank=True, null=True,
-        #         help_text=_("End date of observed period")))
-        # fields.update(
-        #     show_published=dd.YesNo.field(_("Published"), blank=True))
         super(Comment, cls).setup_parameters(fields)
 
     @classmethod
