@@ -88,4 +88,4 @@ class Plugin(ad.Plugin):
         from django.urls import re_path as url
         from . import views
 
-        return [ url('^suggestions/$', views.Suggestions.as_view()) ]
+        return [ url('^suggestions$', views.Suggestions.as_view()) ]
