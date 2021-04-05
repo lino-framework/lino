@@ -87,9 +87,5 @@ class Plugin(ad.Plugin):
         # from django.conf.urls import url
         from django.urls import re_path as url
         from . import views
-        
-        urls = [
-            url('^suggestions/(?P<mention_char>\w+)/(?P<search_term>\w+)/$',
-                views.Suggestions.as_view())]
 
-        return urls
+        return [ url('^suggestions/$', views.Suggestions.as_view()) ]
