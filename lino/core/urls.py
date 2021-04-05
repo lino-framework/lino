@@ -1,5 +1,5 @@
 # Copyright 2009-2017 Rumma & Ko Ltd
-# License: BSD (see file COPYING for details)
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 
 """The default URLconf module for Lino applications.
 As an application developer you don't need to worry about this.

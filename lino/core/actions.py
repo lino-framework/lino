@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2009-2021 Rumma & Ko Ltd
-# License: BSD (see file COPYING for details)
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 
 """This defines the :class:`Action` class and the :func:`action`
 decorator, and some of the standard actions.  See :ref:`dev.actions`.

@@ -1,15 +1,7 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2009-2021 Rumma & Ko Ltd
-# License: BSD (see file COPYING for details)
-
-# Note that this module may not have a docstring because any
-# global variable defined here will override the global
-# namespace of lino/__init__.py who includes it with execfile.
-
-# This module is part of the Lino test suite.
-# To test only this module:
-#
-#   $ python setup.py test -s tests.PackagesTests
+# License: GNU Affero General Public License v3 (see file COPYING for details)
+# python setup.py test -s tests.PackagesTests
 
 import sys
 
@@ -22,7 +14,7 @@ SETUP_INFO = dict(
     # obsoletes=['djangosite', 'north'],
     author='Luc Saffre',
     author_email='luc@lino-framework.org',
-    url="http://www.lino-framework.org",
+    url="https://www.lino-framework.org",
     # ~ test_suite = 'lino.test_apps',
     test_suite='tests')
 
@@ -83,21 +75,17 @@ SETUP_INFO.update(install_requires=install_requires)
 
 SETUP_INFO.update(long_description="""
 
-Lino is a high-level framework for writing desktop-like customized database
-applications based on `Django <https://www.djangoproject.com/>`_ and `Sencha
-ExtJS <http://www.sencha.com/products/extjs/>`_. Lino applications are Django
-projects where the application developer does not need to write any URLconf,
-HTML nor CSS (`more <http://lino-framework.org/about/what.html>`__).
+This is the core package of the Lino framework.
 
-- This repository is considered an integral part of the Lino framework, which is
-  documented as a whole in the `Lino Book
-  <http://www.lino-framework.org/about/overview.html>`__.
+This repository is an integral part of the Lino framework, which is
+documented as a whole in the `Lino Book
+<https://www.lino-framework.org/about/overview.html>`__.
 
-- Your feedback is welcome.  Our `community page
-  <http://www.lino-framework.org/community>`__ explains how to contact us.
+Your feedback is welcome.  Our `community page
+<http://www.lino-framework.org/community>`__ explains how to contact us.
 
-- API changes to this repository are logged at
-  http://www.lino-framework.org/changes/
+API changes to this repository are logged at
+http://www.lino-framework.org/changes/
 
 """)
 
@@ -109,7 +97,7 @@ Environment :: Web Environment
 Framework :: Django
 Intended Audience :: Developers
 Intended Audience :: System Administrators
-License :: OSI Approved :: BSD License
+License :: OSI Approved :: GNU Affero General Public License v3
 Natural Language :: English
 Natural Language :: French
 Natural Language :: German

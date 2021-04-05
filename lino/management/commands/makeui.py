@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2011 Rumma & Ko Ltd
-# License: BSD (see file COPYING for details)
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 """
 Generate the local files for running :mod:`lino.ui.qx`.
 """

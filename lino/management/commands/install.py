@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2019-2021 Rumma & Ko Ltd
-# License: BSD (see file COPYING for details)
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 
 import subprocess
 from rstgen.utils import confirm

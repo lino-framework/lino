@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2002-2021 Rumma & Ko Ltd
-# License: BSD (see file COPYING for details)
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 
 """
 The :mod:`lino` package is the main plugin used by all Lino applications,

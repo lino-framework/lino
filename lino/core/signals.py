@@ -1,5 +1,5 @@
 # Copyright 2013-2020 Rumma & Ko Ltd
-# License: BSD (see file COPYING for details)
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 
 """This defines Lino's standard system signals.
 

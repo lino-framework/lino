@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2017-2018 Rumma & Ko Ltd
-# License: BSD (see file COPYING for details)
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 """Print a summary of a series of SQL queries.
 
 If invoked from command line, expects as argument the log file to be

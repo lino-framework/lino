@@ -1,5 +1,5 @@
 # Copyright 2016-2018 Rumma & Ko Ltd
-# License: BSD (see file COPYING for details)
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 
 """A framework for defining and managing summary tables.
 See :doc:`/specs/summaries`.

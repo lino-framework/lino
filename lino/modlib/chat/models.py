@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2011-2020 Rumma & Ko Ltd
-# License: BSD (see file COPYING for details)
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 
 from lino.modlib.notify.api import send_notification, send_global_chat
 from lino.utils.format_date import fds

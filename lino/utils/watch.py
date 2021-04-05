@@ -1,5 +1,5 @@
 # Copyright 2012-2017 Rumma & Ko Ltd
-# License: BSD (see file COPYING for details)
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 """It defines the functions :func:`watch_changes` and
 :func:`watch_all_changes`.
 

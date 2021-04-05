@@ -1,5 +1,5 @@
 # Copyright 2003-2009-2016 Luc Saffre
-# License: BSD (see file COPYING for details)
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 
 # Based on original work by Lars Garshol
 # http://www.garshol.priv.no/download/software/python/dbfreader.py

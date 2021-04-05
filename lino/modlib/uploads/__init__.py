@@ -1,5 +1,5 @@
 # Copyright 2010-2018 Rumma & Ko Ltd
-# License: BSD (see file COPYING for details)
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 
 """Adds functionality for uploading files to the server and managing them.  See
 :doc:`/specs/uploads`.

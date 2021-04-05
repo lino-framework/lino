@@ -1,5 +1,5 @@
 # Copyright 2015-2016 Rumma & Ko Ltd
-# License: BSD (see file COPYING for details)
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 
 '''This defines the :class:`Counter` class, a utility used in Jinja
 templates to generate self-incrementing counters for sections,

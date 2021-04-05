@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2011-2016 Rumma & Ko Ltd
-# License: BSD (see file COPYING for details)
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 
 """This module contains mainly a utility function :func:`html2odf`
 which converts an ElementTree object generated using

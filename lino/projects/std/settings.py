@@ -1,5 +1,5 @@
 # Copyright 2009-2016 Rumma & Ko Ltd
-# License: BSD (see file COPYING for details)
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 
 """This defines Lino default settings. You include this (directly or
 indirectly) into your local :xfile:`settings.py` using::

@@ -1,5 +1,5 @@
 # Copyright 2013-2016 Luc Saffre
-# License: BSD (see file COPYING for details)
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 
 """
 This is used by tests/__init__.py

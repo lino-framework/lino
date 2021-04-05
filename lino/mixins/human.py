@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 # Copyright 2008-2020 Rumma & Ko Ltd
-# License: BSD (see file COPYING for details)
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 """
 
 See test cases and examples in :doc:`/specs/human`.

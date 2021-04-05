@@ -1,5 +1,5 @@
 # Copyright 2010-2020 Rumma & Ko Ltd
-# License: BSD (see file COPYING for details)
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 """Utility functions used by :mod:`lino.modlib.extjs.views`.
 
 """

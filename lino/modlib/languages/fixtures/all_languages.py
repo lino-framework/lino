@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2011-2020 Rumma & Ko Ltd
-# License: BSD (see file COPYING for details)
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 """
 Adds all languages of the world to your database.
 Labels (designations) are available in English, German and French.

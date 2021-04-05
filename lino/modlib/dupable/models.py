@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2014-2017 Rumma & Ko Ltd
-# License: BSD (see file COPYING for details)
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 
 """Defines the :class:`Dupable` model mixin and related functionality
 to assist users in finding unwanted duplicate database records.

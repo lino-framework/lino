@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2013-2020 Rumma & Ko Ltd
-# License: BSD (see file COPYING for details)
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 
 """Used by :class:`lino_xl.lib.appypod.PrintLabelsAction` and
 :mod:`lino_xl.lib.contacts`.

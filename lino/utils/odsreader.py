@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2012-2016 Rumma & Ko Ltd
-# License: BSD (see file COPYING for details)
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 
 r""" OdsReader uses odfpy to extract data from an .ods document
 (OpenOffice.org spreadsheet).

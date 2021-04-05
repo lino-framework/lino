@@ -1,5 +1,5 @@
 # Copyright 2010-2015 Rumma & Ko Ltd
-# License: BSD (see file COPYING for details)
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 """Send an email to a configurable list of addresses when a
 configurable database item has been changed.
 

@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2012-2013 Luc Saffre
-# License: BSD (see file COPYING for details)
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 
 """
 Not yet implemented.

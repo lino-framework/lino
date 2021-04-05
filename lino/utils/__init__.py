@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2009-2020 Rumma & Ko Ltd
-# License: BSD (see file COPYING for details)
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 
 """:mod:`lino.utils` (the top-level module) contains a few often-used
 function for general use. It has also many subpackages and submodules.

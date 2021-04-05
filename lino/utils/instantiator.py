@@ -1,5 +1,5 @@
 # Copyright 2009-2020 Rumma & Ko Ltd
-# License: BSD (see file COPYING for details)
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 
 """Defines the :class:`Instantiator` class and some other utilities
 used for generating database objects in :ref:`python fixtures <dpy>`.

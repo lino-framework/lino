@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2017-2021 Rumma & Ko Ltd
-# License: BSD (see file COPYING for details)
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 # This started as a copy of Django 1.11 django.contrib.auth.middleware.
 
 import datetime

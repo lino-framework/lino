@@ -1,5 +1,5 @@
 # Copyright 2012-2017 Rumma & Ko Ltd
-# License: BSD (see file COPYING for details)
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 
 """Adds functionality for recording database changes into a database
 table.  See :ref:`dev.watch` for an introduction.
