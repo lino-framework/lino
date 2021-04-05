@@ -1,4 +1,4 @@
-# Copyright 2008-2019 Rumma & Ko Ltd
+# Copyright 2008-2021 Rumma & Ko Ltd
 # License: GNU Affero General Public License v3 (see file COPYING for details)
 
 """See :doc:`/specs/memo`.
@@ -6,13 +6,10 @@
 Every Lino site has a global memo parser stored in `SITE.plugins.memo.parser`.
 
 
-
 """
 
 from importlib import import_module
-
 from lino.api import ad
-
 from .parser import Parser
 
 
@@ -33,26 +30,26 @@ class Plugin(ad.Plugin):
     # front_end = 'lino_react.react'
     # front_end = 'bootstrap3'
     """The front end to use when writing previews.
-    
+
     If this is `None`, Lino will use the default front end
     (:attr:`lino.core.site.Site.default_ui`).
-    
+
     Used on sites that are available via more than one web front ends.  The
     site maintainer must then decide which front end is the primary one.
-    
+
     For example, if you have two sites jane (extjs) and hobbit (react), in the
     :xfile:`settings.py` file for Jane you will say::
 
         def get_installed_apps(self):
             yield super(Site, self).get_installed_apps()
             yield 'lino_react.react'
-    
+
         def get_plugin_configs(self):
             for i in super(Site, self).get_plugin_configs():
                 yield i
             yield ('memo', 'front_end', 'react')
-    
-    
+
+
     """
 
     def on_plugins_loaded(self, site):
@@ -86,3 +83,13 @@ class Plugin(ad.Plugin):
         #     front_end = m
         #     break
 
+    def get_patterns(self):
+        # from django.conf.urls import url
+        from django.urls import re_path as url
+        from . import views
+        
+        urls = [
+            url('^suggestions/(?P<mention_char>\w+)/(?P<search_term>\w+)/$',
+                views.Suggestions.as_view())]
+
+        return urls
