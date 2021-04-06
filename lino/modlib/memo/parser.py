@@ -56,7 +56,7 @@ class Suggester(object):
     def get_suggestions(self, query=''):
         flt = self.data.model.quick_search_filter(query)
         for obj in self.data.filter(flt)[:5]:
-            yield (getattr(obj, self.fldname), self.formatter(obj))
+            yield {'value': getattr(obj, self.fldname), 'description': self.formatter(obj)}
 
     def get_object(self, abbr):
         return self.getter(abbr)
