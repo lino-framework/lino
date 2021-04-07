@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2017 Rumma & Ko Ltd.
-# License: BSD, see LICENSE for more details.
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 
 """This package contains code from django.contrib.auth which needed a
 little adaptation for Lino.

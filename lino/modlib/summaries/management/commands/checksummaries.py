@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2016-2018 Rumma & Ko Ltd
-# License: BSD, see LICENSE for more details.
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 
 from __future__ import unicode_literals, print_function
 

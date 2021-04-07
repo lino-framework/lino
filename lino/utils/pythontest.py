@@ -1,5 +1,5 @@
 # Copyright 2013-2021 Rumma & Ko Ltd
-# License: BSD, see LICENSE for more details.
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 
 """An extended :class:`TestCase` for the plain python tests of a Lino
 project.

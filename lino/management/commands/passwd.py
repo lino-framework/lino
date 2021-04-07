@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2020 by Rumma & Ko Ltd.
-# License: BSD, see file LICENSE for more details.
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 
 """
 This defines the :manage:`passwd` management command.

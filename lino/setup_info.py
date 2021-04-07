@@ -11,11 +11,9 @@ SETUP_INFO = dict(
     description="A framework for writing desktop-like web applications "
                 "using Django and ExtJS or React",
     license='COPYING',
-    # obsoletes=['djangosite', 'north'],
     author='Luc Saffre',
     author_email='luc@lino-framework.org',
-    url="https://www.lino-framework.org",
-    # ~ test_suite = 'lino.test_apps',
+    url="https://github.com/lino-framework/lino",
     test_suite='tests')
 
 install_requires = [
