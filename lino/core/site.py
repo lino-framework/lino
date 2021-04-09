@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2009-2021 Rumma & Ko Ltd
-# License: BSD, see LICENSE for more details.
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 # doctest lino/core/site.py
 
 """
@@ -299,7 +299,7 @@ class Site(object):
     precisely the directory containing the source file of your
     :envvar:`DJANGO_SETTINGS_MODULE`).  Note that when using a *settings
     package*, :attr:`project_dir` points to the :file:`settings` subdir of what
-    :ref:`getlino` calls the project directory.
+    :term:`getlino` calls the project directory.
 
     Lino sets this automatically when the :class:`Site` initializes.
 
@@ -451,9 +451,9 @@ class Site(object):
     disturb e.g. when importing legacy data that did not have this
     restriction.  Set it to True to remove the UNIQUE clause.
 
-    Changing this setting might affect your database structure and
-    thus require a :doc:`/topics/datamig` if your application uses
-    :mod:`lino_xl.lib.countries`.
+    Changing this setting might affect your database structure if your
+    application uses :mod:`lino_xl.lib.countries`.
+
     """
 
     uid = 'myuid'
@@ -496,29 +496,7 @@ class Site(object):
     Default value is `None`, meaning that this application has no user
     management.  See also :meth:`set_user_model`
 
-    See :doc:`/topics/auth`.
-    """
-
-    social_auth_backends = None
-    """
-    A list of backends for `Python Social Auth
-    <https://github.com/python-social-auth>`__ (PSA).
-
-    Having this at a value different from `None` means that this site
-    uses authentication via third-party providers.
-
-    Sites which use this feature must also install PSA into their environment
-    (which is done automatically by :manage:`install`).
-
-    Depending on the backend you must also add credentials in your
-    local :xfile:`settings.py` file, e.g.::
-
-      SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = \
-        '1234567890-a1b2c3d4e5.apps.googleusercontent.com'
-      SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'SH6da...'
-
-    A working example is in the :mod:`lino_book.projects.noi1e` demo
-    project.
+    See also :doc:`/specs/users`.
     """
 
     use_linod = False
@@ -526,31 +504,6 @@ class Site(object):
     Whether this site uses the Lino daemon for running scheduled
     tasks.  See :ref:`admin.linod`.
 
-    """
-
-    use_security_features = False
-    """
-    Set this to `True` in order to activate a selection of security
-    features to protect against miscellaneous attacks.  You can do
-    this only if your application is being served via HTTPS.  The idea
-    is to provide a reasonable security out of the box.
-
-    This will activate some middleware and set some security-related
-    settings.  This is a new feature and not much tested.  As a hoster
-    you may prefer adding security manually using your established
-    standards (regarding security Lino does not add anything to plain
-    Django).  See also :doc:`/admin/security`.
-    """
-
-    use_ipdict = False
-    """
-    Whether this site uses :mod:`lino.modlib.ipdict`.
-
-    Note that :mod:`lino.modlib.ipdict` unlike normal plugins should
-    not be installed by adding it to your :meth:`get_installed_apps`
-    method but by setting this attribute.  This approach has the
-    advantage of also setting :setting:`MIDDLEWARE_CLASSES`
-    automatically.
     """
 
     # use_auth = True
@@ -564,49 +517,7 @@ class Site(object):
     Override used authorisation middlewares with supplied tuple of
     middleware class names.
 
-    If None, use logic described in :doc:`/topics/auth`
-
-
-    """
-
-    user_types_module = None
-    """
-    The name of the **user types module** to be used on this site.
-
-    Default value is `None`, meaning that permission control is
-    inactive: everything is permitted.  But note that
-    :meth:`set_user_model` sets it to :mod:`lino.core.user_types`.
-
-    This must be set if you want to enable permission control based on
-    user roles defined in :attr:`Permittable.required_roles
-    <lino.core.permissions.Permittable.required_roles>` and
-    :attr:`UserType.role
-    <lino.modlib.users.choicelists.UserType.role>`.
-
-    If set, Lino will import the named module during site startup. It
-    is expected to define application-specific user roles (if
-    necessary) and to fill the :class:`UserTypes
-    <lino.modlib.users.choicelists.UserTypes>` choicelist.
-
-    For example::
-
-        class Site(Site):
-            user_types_module = 'myapp.user_types'
-
-    Examples of such user types modules are
-    :mod:`lino.core.user_types` and
-    :mod:`lino_noi.lib.noi.user_types`.
-    """
-
-    workflows_module = None
-    """
-    The full Python path of the **workflows module** to be used on this
-    site.
-    """
-
-    custom_layouts_module = None
-    """The full Python path of the **custom layouts module** used on this
-    site.
+    If None, use logic described in :ref:`admin.auth`
 
     """
 
@@ -936,39 +847,21 @@ class Site(object):
     See `/blog/2011/0523`.
     """
 
+    # the following attributes are documented in hg/docs/admin/settings.py
+    # default_ui = 'lino_extjs6.extjs6'
+    default_ui = 'lino.modlib.extjs'
     webdav_root = None
-    """
-    The path on server to store webdav files.
-    Default is :attr:`cache_dir` + ´/media/webdav'.
-    """
-
     webdav_url = None
-    """
-
-    The URL location for webdav files.  In a normal production configuration
-    you should leave this unchanged and Lino will set the  default value
-    ``'/media/webdav/'``. You also need to configure your web
-    server to actually serve the files below this location using the WebDAV
-    protocol. See :doc:`/admin/webdav`.
-
-    Obsolete: This may be used to simulate a :term:`WebDAV` location on a
-    development server.  For example on a Windows machine, you may set
-    it to ``w:\``, and before invoking :manage:`runserver`, you issue in
-    a command prompt::
-
-        subst w: <dev_project_path>\media\webdav
-    """
-
     webdav_protocol = None
-    """
+    use_security_features = False
+    use_ipdict = False
+    user_types_module = None
+    workflows_module = None
+    custom_layouts_module = None
+    root_urlconf = 'lino.core.urls'
+    social_auth_backends = None
 
-    Set this to a string like e.g. 'wdav' to instruct Lino to use this custom
-    protocol instead of ``http`` when linking to "editable" printable documents.
 
-    See :doc:`/admin/webdav`.
-
-
-    """
 
     sidebar_width = 0
     """
@@ -999,23 +892,6 @@ class Site(object):
     tables who don't specify their own one.  Default value is 15.
     """
 
-    # default_ui = 'lino_extjs6.extjs6'
-    default_ui = 'lino.modlib.extjs'
-    """
-    The full Python name of the plugin that acts as default
-    :term:`front end` on this :class:`Site`.
-
-    Default value is :mod:`lino.modlib.extjs`. Other candidates are
-    :mod:`lino_react.react`,
-    :mod:`lino.modlib.bootstrap3`,
-    :mod:`lino_openui5.openui5`,
-    :mod:`lino_xl.lib.pages` and
-    :mod:`lino_extjs6.extjs6` .
-
-    Another possibility is to set it to `None`. In that case you must
-    probably also set :attr:`root_urlconf` to a custom URL dispatcher.
-
-    """
 
     admin_ui = None
 
@@ -1052,15 +928,6 @@ class Site(object):
     ``from .desktop import *`` statement at the end of the
     :xfile:`models.py` module.
     """
-
-    root_urlconf = 'lino.core.urls'
-    """
-    The value to be attribute to :setting:`ROOT_URLCONF` when this
-    :class:`Site` instantiates.
-
-    The default value is :mod:`lino.core.urls`.
-    """
-
 
     bleach_allowed_tags = ['a', 'b', 'i', 'em', 'ul', 'ol', 'li', 'strong',
                     'p', 'br', 'span', 'pre', 'def', 'div',
@@ -1200,27 +1067,6 @@ class Site(object):
     appy_params = dict(
         ooPort=8100, pythonWithUnoPath='/usr/bin/python3',
         raiseOnError=True)
-    """
-    Used by :class:`lino_xl.lib.appypod.choicelist.AppyBuildMethod`.
-
-    Allowed keyword arguments for `appy.pod.renderer.Render` are::
-
-      pythonWithUnoPath=None,
-      ooPort=2002
-      stylesMapping={}
-      forceOoCall=False,
-      finalizeFunction=None
-      overwriteExisting=False
-      raiseOnError=False
-      imageResolver=None
-
-    See `the source code
-    <http://bazaar.launchpad.net/~appy-dev/appy/trunk/view/head:/pod/renderer.py>`_
-    for details.
-
-    See also :doc:`/admin/oood`
-    """
-
     #~ decimal_separator = '.'
     decimal_separator = ','
     """
@@ -1464,6 +1310,10 @@ class Site(object):
         self.update_settings(SERIALIZATION_MODULES={
             "py": "lino.utils.dpy",
         })
+
+        # before Django 3.2 an automatic id was always django.db.models.AutoField
+        # self.update_settings(DEFAULT_AUTO_FIELD='django.db.models.AutoField')
+        self.update_settings(DEFAULT_AUTO_FIELD='django.db.models.BigAutoField')
 
         if self.site_prefix != '/':
             if not self.site_prefix.endswith('/'):

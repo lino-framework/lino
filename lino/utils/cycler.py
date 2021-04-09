@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2013-2014 by Rumma & Ko Ltd.
-# License: BSD, see LICENSE for more details.
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 
 """
 Turns a list of items into an endless loop.

@@ -1,12 +1,12 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2017-2018 Rumma & Ko Ltd
+# Copyright 2017-2021 Rumma & Ko Ltd
 # License: GNU Affero General Public License v3 (see file COPYING for details)
 """
 Adds Lino-specific Sphinx setup.
 
 .. rst:directive:: tcname
 
-    Used for documenting template context names. 
+    Used for documenting template context names.
 
 .. rst:role:: tcname
 
@@ -14,13 +14,6 @@ Adds Lino-specific Sphinx setup.
 
 
 """
-from __future__ import print_function, unicode_literals
-import six
-# from builtins import str
-# Exception occurred:
-#   File "site-packages/sphinx/registry.py", line 137, in add_object_type
-#     'doc_field_types': doc_field_types})
-# TypeError: type() argument 1 must be string, not newstr
 
 def my_escape(s):
     s = s.replace("\u25b6 ", "")
@@ -28,11 +21,11 @@ def my_escape(s):
 
 
 def menuselection_text(mi):
-    s = my_escape(six.text_type(mi.label).strip())
+    s = my_escape(str(mi.label).strip())
     p = mi.parent
     while p is not None:
         if p.label:
-            s = my_escape(six.text_type(p.label).strip()) + " --> " + s
+            s = my_escape(str(p.label).strip()) + " --> " + s
         p = p.parent
     return s
 

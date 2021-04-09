@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2013-2021 by Rumma & Ko Ltd.
-# License: BSD, see file LICENSE for more details.
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 
 from io import open
 import logging ; logger = logging.getLogger(__name__)

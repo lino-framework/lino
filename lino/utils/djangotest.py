@@ -1,5 +1,5 @@
 # Copyright: Copyright 2011-2021 Rumma & Ko Ltd
-# License: BSD, see LICENSE for more details.
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 
 """
 Two TestCase classes for writing tests be run using Django's test

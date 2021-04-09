@@ -1,8 +1,8 @@
-# Copyright 2016-2018 Rumma & Ko Ltd
+# Copyright 2016-2021 Rumma & Ko Ltd
 # License: GNU Affero General Public License v3 (see file COPYING for details)
 
 """This plugins installs two build methods for generating
-:doc:`printable documents </admin/printing>` using `weasyprint
+:term:`printable documents <printable document>` using `weasyprint
 <http://weasyprint.org/>`__.
 
 See :doc:`/specs/weasyprint`.

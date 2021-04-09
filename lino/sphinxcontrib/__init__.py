@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2002-2020 Rumma & Ko Ltd
+# Copyright 2002-2021 Rumma & Ko Ltd
 # License: GNU Affero General Public License v3 (see file COPYING for details)
 
 """Some extensions for Sphinx.
@@ -14,142 +14,99 @@
 
 """
 
-from atelier import sphinxconf
-
 import sys
-from sphinx.ext import autosummary
+from pathlib import Path
 from typing import Any, Dict, List, Tuple
+
+from atelier import sphinxconf
+from sphinx.ext import autosummary
 from sphinx.ext.autodoc.importer import import_module
 from sphinx.util import logging ; logger = logging.getLogger(__name__)
 
+if False:
+    # temporary patch reports failed imports
+    def _import_by_name(name: str) -> Tuple[Any, Any, str]:
+        """Import a Python object given its full name."""
 
-# patch for autosummary. This version of import_by_name doesn't swallow the traceback
-# and imports only the first item prefixes
-# def my_import_by_name(name: str, prefixes: List[str] = [None]) -> Tuple[str, Any, Any, str]:
-#     """Import a Python object that has the given *name*, under one of the
-#     *prefixes*.  The first name that succeeds is used.
-#     """
-#     for prefix in prefixes:
-#         if prefix:
-#             prefixed_name = '.'.join([prefix, name])
-#         else:
-#             prefixed_name = name
-#         obj, parent, modname = _import_by_name(prefixed_name)
-#         return prefixed_name, obj, parent, modname
+        try:
+            name_parts = name.split('.')
 
-# temporary patch reports failed imports
-def _import_by_name(name: str) -> Tuple[Any, Any, str]:
-    """Import a Python object given its full name."""
+            # # 20200429 first try whether it is a full module name
+            # try:
+            #     mod = import_module(name)
+            #     parent_name = '.'.join(name_parts[:-1])
+            #     if parent_name:
+            #         parent = import_module(parent_name)
+            #     else:
+            #         parent = None
+            #     return parent, mod, name
+            # except ImportError:
+            #     pass
 
-    try:
-        name_parts = name.split('.')
+            # try first interpret `name` as MODNAME.OBJ
+            modname = '.'.join(name_parts[:-1])
+            if modname:
+                try:
+                    mod = import_module(modname)
+                    return getattr(mod, name_parts[-1]), mod, modname
+                except (ImportError, IndexError, AttributeError):
+                    pass
 
-        # # 20200429 first try whether it is a full module name
-        # try:
-        #     mod = import_module(name)
-        #     parent_name = '.'.join(name_parts[:-1])
-        #     if parent_name:
-        #         parent = import_module(parent_name)
-        #     else:
-        #         parent = None
-        #     return parent, mod, name
-        # except ImportError:
-        #     pass
+            # ... then as MODNAME, MODNAME.OBJ1, MODNAME.OBJ1.OBJ2, ...
+            last_j = 0
+            modname = None
+            for j in reversed(range(1, len(name_parts) + 1)):
+                last_j = j
+                modname = '.'.join(name_parts[:j])
+                try:
+                    import_module(modname)
+                except ImportError as e:
+                    logger.info("Failed to import %s : %s", modname, e)
+                    continue
 
-        # try first interpret `name` as MODNAME.OBJ
-        modname = '.'.join(name_parts[:-1])
-        if modname:
-            try:
-                mod = import_module(modname)
-                return getattr(mod, name_parts[-1]), mod, modname
-            except (ImportError, IndexError, AttributeError):
-                pass
+                if modname in sys.modules:
+                    break
 
-        # ... then as MODNAME, MODNAME.OBJ1, MODNAME.OBJ1.OBJ2, ...
-        last_j = 0
-        modname = None
-        for j in reversed(range(1, len(name_parts) + 1)):
-            last_j = j
-            modname = '.'.join(name_parts[:j])
-            try:
-                import_module(modname)
-            except ImportError as e:
-                logger.info("Failed to import %s : %s", modname, e)
-                continue
+            if last_j < len(name_parts):
+                parent = None
+                obj = sys.modules[modname]
+                for obj_name in name_parts[last_j:]:
+                    parent = obj
+                    obj = getattr(obj, obj_name)
+                return obj, parent, modname
+            else:
+                return sys.modules[modname], None, modname
+        except (ValueError, ImportError, AttributeError, KeyError) as e:
+            raise ImportError(*e.args)
 
-            if modname in sys.modules:
-                break
-
-        if last_j < len(name_parts):
-            parent = None
-            obj = sys.modules[modname]
-            for obj_name in name_parts[last_j:]:
-                parent = obj
-                obj = getattr(obj, obj_name)
-            return obj, parent, modname
-        else:
-            return sys.modules[modname], None, modname
-    except (ValueError, ImportError, AttributeError, KeyError) as e:
-        raise ImportError(*e.args)
-
-# autosummary.import_by_name = my_import_by_name
-autosummary._import_by_name = _import_by_name
+    # autosummary.import_by_name = my_import_by_name
+    autosummary._import_by_name = _import_by_name
 
 
-def configure(globals_dict, settings_module_name=None):
+def configure(globals_dict, django_settings_module=None):
     """
     Same as :func:`atelier.sphinxconf.configure` but with an
-    additional positional argument `settings_module_name` (the name of
+    additional positional argument `django_settings_module` (the name of
     a Django settings module).  If this argument is specified, call
     :meth:`lino.startup` with it.
     """
-    if settings_module_name is not None:
+    if django_settings_module is not None:
         from lino import startup
-        startup(settings_module_name)
-        print("Django started with DJANGO_SETTINGS_MODULE={}.".format(settings_module_name))
+        startup(django_settings_module)
+        print("Django started with DJANGO_SETTINGS_MODULE={}.".format(django_settings_module))
         from django.conf import settings
         print(settings.SITE.welcome_text())
-        # print(settings.SITE.diagnostic_report_rst())
 
-        # os.environ['DJANGO_SETTINGS_MODULE'] = settings_module_name
+    sphinxconf.configure(globals_dict)
+    im = globals_dict['intersphinx_mapping']
+    im['cg'] = ('https://community.lino-framework.org/', None)
+    im['book'] = ('https://www.lino-framework.org/', None)
+    extlinks = globals_dict['extlinks']
+    extlinks['ticket'] = ('https://jane.mylino.net/#/api/tickets/AllTickets/%s', '#')
 
-        # # Trigger loading of Djangos model cache in order to avoid
-        # # side effects that would occur when this happens later while
-        # # importing one of the models modules.
-        # from django.conf import settings
-        # settings.SITE.startup()
+    mydir = Path(__file__).parent.absolute()
+    globals_dict['templates_path'] += [str(mydir / '.templates')]
 
-        # globals_dict.update(
-        #     template_bridge=str('lino.sphinxcontrib.DjangoTemplateBridge'))
-
-    intersphinx_mapping = globals_dict.setdefault('intersphinx_mapping', dict())
-    intersphinx_mapping['cg'] = ('https://community.lino-framework.org/', None)
-    intersphinx_mapping['book'] = ('https://www.lino-framework.org/', None)
-    return sphinxconf.configure(globals_dict)
-
-
-
-# from sphinx.jinja2glue import BuiltinTemplateLoader
-
-
-# class DjangoTemplateBridge(BuiltinTemplateLoader):
-
-#     """The :meth:`configure` method installs this as `template_bridge
-#     <http://sphinx-doc.org/config.html#confval-template_bridge>`_ for
-#     Sphinx.  It causes a template variable ``settings`` to be added
-#     the Sphinx template context. This cannot be done using
-#     `html_context
-#     <http://sphinx-doc.org/config.html#confval-html_context>`_ because
-#     Django settings are not pickleable.
-
-#     """
-
-#     def render(self, template, context):
-#         from django.conf import settings
-#         context.update(settings=settings)
-#         return super(DjangoTemplateBridge, self).render(template, context)
-
-#     def render_string(self, source, context):
-#         from django.conf import settings
-#         context.update(settings=settings)
-#         return super(DjangoTemplateBridge, self).render_string(source, context)
+    fn = mydir / 'default_conf.py'
+    with open(fn, "rb") as fd:
+        exec(compile(fd.read(), fn, 'exec'), globals_dict)

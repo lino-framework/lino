@@ -1,21 +1,6 @@
-#coding: latin1
-## Copyright 2005 Rumma & Ko Ltd
-
-## This file is part of the Lino project.
-
-## Lino is free software; you can redistribute it and/or modify it
-## under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 2 of the License, or
-## (at your option) any later version.
-
-## Lino is distributed in the hope that it will be useful, but WITHOUT
-## ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-## or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
-## License for more details.
-
-## You should have received a copy of the GNU General Public License
-## along with Lino; if not, write to the Free Software Foundation,
-## Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+# -*- coding: utf-8 -*-
+# Copyright 2005 Rumma & Ko Ltd
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 
 """
 """
@@ -27,7 +12,6 @@ import formatter
 import urllib2
 
 URL="http://de.wikipedia.org/wiki/Liste_der_St%C3%A4dte_in_Deutschland"
-#URL=u"http://de.wikipedia.org/wiki/Liste_der_Städte_in_Deutschland"
 
 
 class WikipediaCitiesParser(HTMLParser):
@@ -40,9 +24,6 @@ class WikipediaCitiesParser(HTMLParser):
         self._name=None
         self._url=None
 
-
-    
-    #def unknown_starttag(self, tag, attrs):
     def handle_starttag(self, tag, attrs):
         #print "unknown_starttag", tag
         if tag == "dd":
@@ -57,7 +38,7 @@ class WikipediaCitiesParser(HTMLParser):
                 for attr,v in attrs:
                     if attr == "href":
                         self._url=v
-            
+
     #def unknown_endtag(self, tag):
     def handle_endtag(self, tag):
         if tag == "dd":
@@ -89,7 +70,7 @@ class WikipediaCitiesParser(HTMLParser):
 
 
 if __name__ == "__main__":
-    
+
     print "name\tbundesland_name"
     parser=WikipediaCitiesParser()
     if False:
@@ -104,6 +85,3 @@ if __name__ == "__main__":
     parser.feed(f.read())
     parser.close()
     f.close()
-    
-
-    

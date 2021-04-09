@@ -746,7 +746,7 @@ class CharField(models.CharField):
     An extension around Django's `models.CharField`.
 
     Adds two keywords `mask_re` and `strip_chars_re` which, when using
-    the ExtJS ui, will be rendered as the `maskRe` and `stripCharsRe`
+    the ExtJS front end, will be rendered as the `maskRe` and `stripCharsRe`
     config options of `TextField` as described in the `ExtJS
     documentation
     <http://docs.sencha.com/extjs/3.4.0/#!/api/Ext.form.TextField>`__,
@@ -768,10 +768,10 @@ class CharField(models.CharField):
         self.strip_chars_re = kw.pop('strip_chars_re', None)
         self.mask_re = kw.pop('mask_re', None)
         self.regex = kw.pop('regex', None)
-        models.CharField.__init__(self, *args, **kw)
+        super(CharField, self).__init__(*args, **kw)
 
 
-class QuantityField(CharField):
+class QuantityField(models.CharField):
     """
     A field that accepts :class:`Quantity
     <lino.utils.quantities.Quantity>`, :class:`Percentage
@@ -788,12 +788,10 @@ class QuantityField(CharField):
 
     def __init__(self, *args, **kw):
         kw.setdefault('max_length', 6)
-        models.Field.__init__(self, *args, **kw)
+        super(QuantityField, self).__init__(*args, **kw)
         if self.blank and not self.null:
             raise ChangedAPI(
                 "When `blank` is True, `null` must be True as well.")
-
-        #~ models.CharField.__init__(self,*args,**kw)
 
     #~ def get_internal_type(self):
         #~ return "CharField"
@@ -801,31 +799,25 @@ class QuantityField(CharField):
     def to_python(self, value):
         """
         Excerpt from `Django docs
-        <https://docs.djangoproject.com/en/1.11/howto/custom-model-fields/#converting-values-to-python-objects>`__:
+        <https://docs.djangoproject.com/en/3.1/howto/custom-model-fields/#converting-values-to-python-objects>`__:
 
-            As a general rule, the method should deal gracefully with
+            As a general rule, :meth:`to_python` should deal gracefully with
             any of the following arguments:
 
-            - An instance of the correct type (e.g., Hand in our ongoing example).
+            - An instance of the correct type (e.g., `Hand` in our ongoing example).
             - A string (e.g., from a deserializer).
-            - Whatever the database returns for the column type you’re using.
+            - `None` (if the field allows `null=True`)
 
-        I'd add "Any value potentially specified for this field when instantiating
-        a model."
+        I'd add "Any value allowed for this field when instantiating a model."
 
-        >>> to_python(None)
-        >>> to_python(30)
-        >>> to_python(30L)
-        >>> to_python('')
-        >>> to_python(Decimal(0))
         """
         if isinstance(value, Decimal):
-            return value
+            return quantities.Quantity(value)
         if value:
             # try:
             if isinstance(value, str):
                 return quantities.parse(value)
-            return Decimal(value)
+            return quantities.Quantity(value)
             # except Exception as e:
             #     raise ValidationError(
             #         "Invalid value {} for {} : {}".format(value, self, e))

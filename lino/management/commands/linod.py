@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 # Copyright 2016-2021 Rumma & Ko Ltd
-# License: BSD, see file LICENSE for more details.
+# License: GNU Affero General Public License v3 (see file COPYING for details)
 
 import time
 from django.conf import settings
