@@ -1,24 +1,34 @@
 # -*- coding: UTF-8 -*-
-# Copyright 2012-2020 Rumma & Ko Ltd
+# Copyright 2012-2021 Rumma & Ko Ltd
 # License: GNU Affero General Public License v3 (see file COPYING for details)
 
 """See :doc:`/dev/quantities`."""
 
-from past.utils import old_div
-
 import datetime
 from decimal import Decimal
 
-DEC2HOUR = old_div(Decimal(1), Decimal(60))
+DEC2HOUR = Decimal(1) / Decimal(60)
 
 class Quantity(Decimal):
 
-    def __new__(cls, *args, **kwargs):
-        raise Exception("You cannot instantiate the Quantity base class.")
+    # def __new__(cls, *args, **kwargs):
+    #     raise Exception("You cannot instantiate the Quantity base class.")
+
+    def __new__(cls, value=None, context=None):
+        if value is NotImplemented:
+            return value
+        if isinstance(value, str):
+            value = Decimal(value)
+        self = Decimal.__new__(cls, value, context)
+        self._text = str(value)
+        return self
 
     def __str__(self):
         # return "{}%".format(self * 100)
         return self._text
+
+    def __len__(self):
+        return len(str(self))
 
     def __repr__(self):
         return "%s('%s')" % (self.__class__.__name__, self)
@@ -107,7 +117,7 @@ class Duration(Quantity):
             else:
                 cv = Decimal(value)
                 hours = int(cv)
-                minutes = old_div((cv - hours), DEC2HOUR).to_integral()
+                minutes = ((cv - hours) / DEC2HOUR).to_integral()
                 # minutes = old_div((hours - int(self)), DEC2HOUR)
                 text = '%d:%02d' % (hours, minutes)
         self = Decimal.__new__(cls, cv, context)
@@ -170,7 +180,7 @@ def parse_decimal(s):
     if '.' in s and ',' in s:
         raise Exception("Invalid decimal value %r" % s)
     s = s.replace(',', '.')
-    return Decimal(s)
+    return Quantity(s)
 
 
 ZERO_DURATION = Duration('0:00')

@@ -1311,6 +1311,10 @@ class Site(object):
             "py": "lino.utils.dpy",
         })
 
+        # before Django 3.2 an automatic id was always django.db.models.AutoField
+        # self.update_settings(DEFAULT_AUTO_FIELD='django.db.models.AutoField')
+        self.update_settings(DEFAULT_AUTO_FIELD='django.db.models.BigAutoField')
+
         if self.site_prefix != '/':
             if not self.site_prefix.endswith('/'):
                 raise Exception("`site_prefix` must end with a '/'!")
