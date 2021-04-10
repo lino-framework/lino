@@ -56,10 +56,21 @@ class Suggester(object):
     def get_suggestions(self, query=''):
         flt = self.data.model.quick_search_filter(query)
         for obj in self.data.filter(flt)[:5]:
-            yield {'value': getattr(obj, self.fldname), 'description': self.formatter(obj)}
+            yield {'value': getattr(obj, self.fldname), 'title': self.formatter(obj), 'link': self.get_href(obj)}
 
     def get_object(self, abbr):
         return self.getter(abbr)
+
+    def get_href(self, obj, ar=None):
+        an = obj.get_detail_action(ar)
+        return r"javascript:window.App.runAction({" + \
+            f"'actorId': '{self.formatter(an.actor)}', " + \
+            "'an': 'detail', " + \
+            "'rp': null, " + \
+            r"'status': {" + \
+                f"'record_id': {self.formatter(obj.pk)}" + \
+            r"}" + \
+        r"})"
 
 
 class Parser(object):
