@@ -5,7 +5,7 @@
 
 """
 Defines the :class:`Site` class. For an overview see
-:doc:`/dev/site` and :doc:`/dev/plugins` and :doc:`/dev/languages`
+:doc:`/dev/site` and :doc:`/dev/plugins` and :doc:`/dev/languages`.
 
 ..  doctest init:
     >>> import lino
