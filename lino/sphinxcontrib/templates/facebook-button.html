@@ -1,0 +1,13 @@
+{%- set url = public_url + "/" + (pagename[:-5] if pagename.endswith('index') else pagename +"/") -%}
+<a href="https://www.facebook.com/sharer/sharer.php?u={{url|e}}" title="Share on Facebook" target="_blank">
+  {% include 'icons/facebook.svg' %}
+</a>
+
+<!---
+<a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false">Tweet</a>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+---!>
+
+<a href="https://twitter.com/share?ref_src={{url|e}}" title="Share on Twitter" target="_blank">
+  {% include 'icons/twitter.svg' %}
+</a>

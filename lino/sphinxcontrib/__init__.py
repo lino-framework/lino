@@ -85,10 +85,22 @@ if False:
 
 def configure(globals_dict, django_settings_module=None):
     """
-    Same as :func:`atelier.sphinxconf.configure` but with an
-    additional positional argument `django_settings_module` (the name of
-    a Django settings module).  If this argument is specified, call
+    Adds to your :xfile:`conf.py` an arbitrary series of things that all
+    Sphinx docs configuration files have in common.
+
+    To be called from inside the Sphinx :xfile:`conf.py` as follows::
+
+      from lino.sphinxcontrib import configure
+      configure(globals())
+
+
+    This will also call as :func:`atelier.sphinxconf.configure`, but will then
+    add more things specific to the Lino framework.
+
+    You can specify an additional positional argument `django_settings_module`
+    (the name of a Django settings module).  If this argument is specified, call
     :meth:`lino.startup` with it.
+
     """
     if django_settings_module is not None:
         from lino import startup
@@ -105,7 +117,8 @@ def configure(globals_dict, django_settings_module=None):
     extlinks['ticket'] = ('https://jane.mylino.net/#/api/tickets/AllTickets/%s', '#')
 
     mydir = Path(__file__).parent.absolute()
-    globals_dict['templates_path'] += [str(mydir / '.templates')]
+    tp = globals_dict.setdefault('templates_path', [])
+    tp.append(str(mydir / 'templates'))
 
     fn = mydir / 'default_conf.py'
     with open(fn, "rb") as fd:

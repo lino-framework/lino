@@ -1,0 +1,12 @@
+{% if 'url' in SETUP_INFO %}
+View <a href="{{SETUP_INFO['url']}}/-/blob/master/docs/{{ pagename|e }}.rst"
+  rel="nofollow">source code</a>.
+{%- set url = public_url + "/" + (pagename[:-5] if pagename.endswith('index') else pagename +"/") -%}
+<br>
+{% endif %}
+Online link: <a href="{{url}}">{{url}}</a>.
+{#
+Share on <a href="https://www.facebook.com/sharer/sharer.php?u={{url|e}}" target="_blank">
+Facebook</a>
+or <a href="http://twitter.com/share/tweet/?url={{url|e}}" target="_blank">Twitter</a>.
+#}

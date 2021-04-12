@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # this is being read using exec() by lino.sphinxcontrib.configure()
 
-USE_PYDATA_THEME = True
+USE_PYDATA_THEME = False
 
 # from atelier.sphinxconf import configure
 from pathlib import Path
@@ -44,6 +44,8 @@ def get_lang_selector(language, pagename, sep=" | "):
             html += '<a href="{}">{}</a>'.format(href, lng)
     # html += "</p>"
     return html
+
+html_context.update(get_lang_selector=get_lang_selector)
 
 
 # extlinks = {}
@@ -210,11 +212,6 @@ else:
             'searchbox.html',
             'links.html'
             ]}
-
-
-html_context = {
-    'get_lang_selector': get_lang_selector,
-}
 
 
 
