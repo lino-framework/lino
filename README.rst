@@ -2,9 +2,7 @@
 The ``lino`` package
 ====================
 
-
-
-
+Warning: This repository is no longer maintained. Development has moved to https://gitlab.com/lino/-framework/lino
 
 This is the core package of the Lino framework.
 
